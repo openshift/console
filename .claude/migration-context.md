@@ -12,9 +12,25 @@ Shared reference for migrating Console's Cypress e2e tests to Playwright. Used b
 
 ## Test Selectors
 
-Config: `testIdAttribute: 'data-test'` in `playwright.config.ts` — `page.getByTestId('x')` queries `[data-test="x"]`.
+Config: `testIdAttribute: 'data-test'` in `frontend/playwright.config.ts` (from root of the project) so `page.getByTestId('x')` queries `[data-test="x"]`.
 
-**Always use `page.getByTestId('x')`** for element selection. If a React element only has a legacy test attribute (`data-test-id`, `data-test-selector`, `data-test-action`, `data-test-dropdown-menu`, etc.), add `data-test="x"` to the element. Never remove legacy `data-test-*` attributes — external consumers may depend on them.
+**Always use `page.getByTestId('x')`** for element selection. If a React element only has a legacy test attribute (`data-test-id`, `data-test-selector`, `data-test-action`, `data-test-dropdown-menu`, etc.) but no `data-test`, **add `data-test="<value>"` to the React component source** so `page.getByTestId()` can be used. Never remove legacy `data-test-*` attributes — external consumers may depend on them.
+
+### How to add `data-test` during migration
+
+When migrating a Cypress test that uses `cy.get('[data-test-id="x"]')` or `cy.byLegacyTestID('x')`:
+
+1. Find the React component that renders the element with `data-test-id="x"`.
+2. Add `data-test="x"` alongside the existing `data-test-id="x"`.
+3. In the Playwright page object, use `this.page.getByTestId('x')` instead of `this.page.locator('[data-test-id="x"]')`.
+
+```tsx
+// Before (React component)
+<div data-test-id="horizontal-link-Details">Details</div>
+
+// After — data-test added, data-test-id preserved
+<div data-test="horizontal-link-Details" data-test-id="horizontal-link-Details">Details</div>
+```
 
 ---
 
@@ -25,10 +41,10 @@ Config: `testIdAttribute: 'data-test'` in `playwright.config.ts` — `page.getBy
 | Cypress                               | Playwright                                                                                                |
 | ------------------------------------- | --------------------------------------------------------------------------------------------------------- |
 | `cy.get('[data-test="x"]')`           | `page.getByTestId('x')` (page object: `this.page.getByTestId('x')`)                                       |
-| `cy.get('[data-test-id="x"]')`        | `page.locator('[data-test-id="x"]')`                                                                      |
+| `cy.get('[data-test-id="x"]')`        | Add `data-test="x"` to the React component, then use `page.getByTestId('x')`                              |
 | `cy.byTestID('x')`                    | `page.getByTestId('x')`                                                                                   |
-| `cy.byLegacyTestID('x')`              | `page.locator('[data-test-id="x"]')`                                                                      |
-| `cy.byTestRows('resource-row')`       | `page.locator('[data-test-rows="resource-row"]')`                                                         |
+| `cy.byLegacyTestID('x')`              | Add `data-test="x"` to the React component, then use `page.getByTestId('x')`                              |
+| `cy.byTestRows('resource-row')`       | Add `data-test="resource-row"` to the React component, then use `page.getByTestId('resource-row')`        |
 | `cy.byButtonText('Save')`             | `page.getByRole('button', { name: 'Save' })`                                                              |
 | `cy.contains('text')`                 | `page.getByText('text')` or `page.locator('selector', { hasText: 'text' })`                               |
 | `cy.contains('selector', 'text')`     | `page.locator('selector', { hasText: 'text' })` or `page.locator('selector').filter({ hasText: 'text' })` |
@@ -39,8 +55,8 @@ Config: `testIdAttribute: 'data-test'` in `playwright.config.ts` — `page.getBy
 
 | Cypress                            | Playwright                                                                                          |
 | ---------------------------------- | --------------------------------------------------------------------------------------------------- |
-| `cy.get(s).click()`                | `await this.robustClick(this.page.locator(s))` (page object)                                        |
-| `cy.get(s).click({ force: true })` | `await this.robustClick(this.page.locator(s), { force: true })`                                     |
+| `cy.get(s).click()`                | In page objects: `await this.robustClick(locator)`. In specs: `await locator.click()`               |
+| `cy.get(s).click({ force: true })` | Page object: `await this.robustClick(locator, { force: true })`. Spec: `locator.click({ force: true })` |
 | `cy.get(s).type('text')`           | `await this.page.locator(s).fill('text')`                                                           |
 | `cy.get(s).clear().type('text')`   | `await this.page.locator(s).fill('text')` (fill clears first)                                       |
 | `cy.get(s).select('option')`       | `await this.page.locator(s).selectOption('option')`                                                 |
@@ -90,13 +106,13 @@ Config: `testIdAttribute: 'data-test'` in `playwright.config.ts` — `page.getBy
 
 | Cypress                                      | Playwright                                                          |
 | -------------------------------------------- | ------------------------------------------------------------------- |
-| `cy.exec('oc create ...')`                   | `KubernetesClient.createCustomResource(...)`                        |
-| `cy.exec('oc delete ...')`                   | `KubernetesClient.deleteCustomResource(...)`                        |
-| `cy.exec('oc get ... -o jsonpath')`          | `KubernetesClient.getCustomResource(...)`                           |
-| `cy.exec('oc patch ...')`                    | `KubernetesClient.patchConfigMap(...)` or equivalent K8s API method |
-| `cy.create(resourceJSON)`                    | `KubernetesClient.createCustomResource(...)`                        |
-| `cy.deleteProject(name)`                     | `cleanup.trackNamespace(name)` — auto-deleted after test            |
-| `cy.resourceShouldBeDeleted(ns, kind, name)` | `KubernetesClient.getCustomResource(...)` should throw 404          |
+| `cy.exec('oc create ...')`                   | `k8sClient.createCustomResource(...)` (via `k8sClient` fixture)     |
+| `cy.exec('oc delete ...')`                   | `k8sClient.deleteCustomResource(...)`                               |
+| `cy.exec('oc get ... -o jsonpath')`          | `k8sClient.getCustomResource(...)`                                  |
+| `cy.exec('oc patch ...')`                    | `k8sClient.patchConfigMap(...)` or equivalent K8s API method        |
+| `cy.create(resourceJSON)`                    | `k8sClient.createCustomResource(...)`                               |
+| `cy.deleteProject(name)`                     | `cleanup.trackNamespace(name)` — registers for auto-deletion after test |
+| `cy.resourceShouldBeDeleted(ns, kind, name)` | `k8sClient.getCustomResource(...)` should throw 404                 |
 
 ### Conditional Logic
 
@@ -143,11 +159,11 @@ describe("Resource lifecycle", () => {
 import { test, expect } from "../../fixtures";
 
 test.describe("Resource lifecycle", { tag: ["@admin"] }, () => {
-  test("verify resource details after creation", async ({ page, cleanup }) => {
+  test("verify resource details after creation", async ({ page, cleanup, k8sClient }) => {
     const ns = `test-${Date.now()}`;
 
     await test.step("Create resource", async () => {
-      await KubernetesClient.createNamespace(ns);
+      await k8sClient.createNamespace(ns);
       cleanup.trackNamespace(ns);
       // create resource via API or UI
     });
@@ -178,9 +194,9 @@ Every `cy.customCommand()` maps to a page object method. Tests call page objects
 | `cy.initAdmin()`                                           | Admin project `storageState`                                              |
 | `cy.visitAndWait(url)`                                     | `pageObject.goTo(url)`                                                    |
 | `cy.clickNavLink([...])`                                   | `navPage.clickNavLink(...)`                                               |
-| `cy.createProject(name)` / `cy.createProjectWithCLI(name)` | `KubernetesClient.createNamespace(name)` + `cleanup.trackNamespace(name)` |
-| `cy.deleteProject(name)` / `cy.deleteProjectWithCLI(name)` | `cleanup` fixture handles it                                              |
-| `cy.resourceShouldBeDeleted(ns, kind, name)`               | `await KubernetesClient.getCustomResource(...)` should throw              |
+| `cy.createProject(name)` / `cy.createProjectWithCLI(name)` | `k8sClient.createNamespace(name)` + `cleanup.trackNamespace(name)` |
+| `cy.deleteProject(name)` / `cy.deleteProjectWithCLI(name)` | `cleanup.trackNamespace(name)` — registers for auto-deletion after test  |
+| `cy.resourceShouldBeDeleted(ns, kind, name)`               | `await k8sClient.getCustomResource(...)` should throw                    |
 | `checkErrors()`                                            | Not needed — Playwright catches uncaught exceptions                       |
 
 ### Rule 4: Replace Fixed Waits with Condition-Based Waits
@@ -198,22 +214,24 @@ await expect(async () => {
 }).toPass({ timeout: 120_000 });
 ```
 
-### Rule 5: Replace `cy.exec('oc ...')` with KubernetesClient
+### Rule 5: Replace `cy.exec('oc ...')` with `k8sClient` Fixture
 
-All cluster interactions go through `KubernetesClient` — never shell commands in tests.
+All cluster interactions go through the `k8sClient` fixture (an instance of `KubernetesClient` injected per-worker) — never shell commands in tests.
 
 ```typescript
 // NEVER
 cy.exec("oc delete deployment test-app -n test-ns");
 
-// ALWAYS
-await KubernetesClient.deleteCustomResource(
-  "apps",
-  "v1",
-  "test-ns",
-  "deployments",
-  "test-app",
-);
+// ALWAYS — destructure k8sClient from the test fixtures
+test('deletes resource', async ({ page, cleanup, k8sClient }) => {
+  await k8sClient.deleteCustomResource(
+    "apps",
+    "v1",
+    "test-ns",
+    "deployments",
+    "test-app",
+  );
+});
 ```
 
 ### Rule 6: Replace `cy.get(...).within(...)` with Scoped Locators
@@ -276,18 +294,14 @@ import { test, expect } from "../../fixtures";
 test.describe("Operator tests", { tag: ["@admin"] }, () => {
   let namespace: string;
 
-  test.beforeAll(async ({ browser }) => {
+  test.beforeAll(async ({ k8sClient }) => {
     namespace = `aut-operator-${Date.now()}`;
-    const page = await browser.newPage();
-    await KubernetesClient.createNamespace(namespace);
+    await k8sClient.createNamespace(namespace);
     // install operator or create expensive resource
-    await page.close();
   });
 
-  test.afterAll(async ({ browser }) => {
-    const page = await browser.newPage();
-    await KubernetesClient.deleteNamespace(namespace);
-    await page.close();
+  test.afterAll(async ({ k8sClient }) => {
+    await k8sClient.deleteNamespace(namespace);
   });
 
   test("verify operator installed", async ({ page }) => {
@@ -309,30 +323,35 @@ Use `KubernetesClient` in `test.beforeAll` to create resources via API (faster t
 
 ## Page Object Pattern
 
-- Extend `BasePage` (provides `robustClick()`, `waitForLoadingComplete()`, `goTo()`)
-- Locators as `private readonly` properties
-- Actions as `async` methods
-- Use `robustClick()` for clicks intercepted by PatternFly overlays
+- Extend `BasePage` (provides `robustClick()`, `waitForLoadingComplete()`, `goTo()`, `navigateToTab()`, `clickButtonByText()`, `switchPerspective()`)
+- Locators as `private readonly` properties. Use `getByTestId()` for `data-test` attributes, `locator()` for other selectors
+- Expose locators to specs via getter methods (e.g., `getPageHeading(): Locator`) — specs should not access private locators directly
+- Actions as `async` methods returning `Promise<void>`
+- Use `robustClick()` inside page objects for clicks intercepted by PatternFly overlays; specs use plain `.click()`
 - Locator priority: `getByTestId` > `getByRole` > `getByText` > `locator`
+
+e.g.
 
 ```typescript
 // e2e/pages/cluster-settings.ts
-import { BasePage } from "./base-page";
+import type { Locator } from "@playwright/test";
+import BasePage from "./base-page";
 
 export class ClusterSettingsPage extends BasePage {
-  private readonly detailsTab = this.page.locator(
-    '[data-test-id="horizontal-link-Details"]',
-  );
-  private readonly upstreamServerUrl = this.page.locator(
-    '[data-test-id="cv-upstream-server-url"]',
-  );
+  private readonly detailsTab = this.page.getByTestId("horizontal-link-Details");
+  private readonly pageHeading = this.page.getByTestId("cluster-settings-page-heading");
+  private readonly upstreamServerUrl = this.page.getByTestId("cv-upstream-server-url");
 
-  async navigateToDetails() {
+  async navigateToDetails(): Promise<void> {
     await this.goTo("/settings/cluster");
-    await this.detailsTab.waitFor();
+    await this.detailsTab.waitFor({ state: "visible" });
   }
 
-  async clickUpstreamServerUrl() {
+  getPageHeading(): Locator {
+    return this.pageHeading;
+  }
+
+  async clickUpstreamServerUrl(): Promise<void> {
     await this.robustClick(this.upstreamServerUrl);
   }
 }
@@ -391,7 +410,8 @@ For each Cypress file being migrated:
 - [ ] Document each `it` block's intent in plain language
 - [ ] Search existing page objects in `e2e/pages/` for reusable methods
 - [ ] Identify test isolation strategy (A, B, or C)
-- [ ] Create/extend page objects with needed locators and methods
+- [ ] Add `data-test` attributes to React components that only have legacy test attributes (`data-test-id`, etc.)
+- [ ] Create/extend page objects with `getByTestId()` locators and methods
 - [ ] Write the spec file using project template
 - [ ] Replace all `cy.wait()` with condition-based waits
 - [ ] Replace all `cy.exec('oc ...')` with KubernetesClient calls
