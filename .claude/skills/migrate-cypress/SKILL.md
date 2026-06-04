@@ -1,6 +1,10 @@
 ---
 name: migrate-cypress
-description: Migrate a Cypress test file to Playwright following Console's architecture. Use when user says "migrate", "convert cypress", "port to playwright", or provides a .cy.ts or .feature file path.
+description: Migrate a Cypress test file (.cy.ts) or Gherkin feature file (.feature) to Playwright following Console's architecture. This is the ONLY skill for Cypress-to-Playwright conversion work, you can perform full migration, analysis-only (--analyze), or dry-run (--dry-run) modes.
+when_to_use: |
+  TRIGGER on: "migrate", "convert cypress", "port to playwright", file paths ending in .cy.ts or .feature in a migration context, requests to rewrite Gherkin scenarios as Playwright specs, or explicit /migrate-cypress invocations. Also trigger when user mentions converting "old cypress tests", "remaining e2e tests", or moving test suites from Cypress to Playwright.
+  DO NOT trigger for: writing new Playwright tests from scratch (no Cypress source), fixing or debugging existing .spec.ts files (use debug-test instead), running test suites, editing test infrastructure (base-page.ts, fixtures, KubernetesClient), or questions about Playwright API without migration intent.
+model: opus
 argument-hint: "<path/to/file.cy.ts or .feature> [--analyze] [--dry-run]"
 allowed-tools: Read, Write, Edit, Bash(find *), Bash(grep *), Bash(ls *), Bash(npx tsc *), Bash(npx playwright *), Bash(git diff *), Bash(git status), mcp__plugin_playwright_playwright__browser_navigate, mcp__plugin_playwright_playwright__browser_snapshot, mcp__plugin_playwright_playwright__browser_click, mcp__plugin_playwright_playwright__browser_console_messages, mcp__plugin_playwright_playwright__browser_take_screenshot, mcp__plugin_playwright_playwright__browser_resize, mcp__plugin_playwright_playwright__browser_run_code_unsafe, mcp__plugin_playwright_playwright__browser_evaluate, mcp__plugin_playwright_playwright__browser_close, mcp__plugin_playwright_playwright__browser_type, mcp__plugin_playwright_playwright__browser_wait_for, mcp__plugin_playwright_playwright__browser_network_requests, AskUserQuestion
 ---
@@ -52,7 +56,7 @@ Tests requiring developer auth go in a `developer/` subdirectory (e.g. `e2e/test
 
 1. Read the Cypress file and all imported views, constants, types, and custom commands. For `.feature` files, also resolve step definitions (`support/step-definitions/`), page actions (`support/pages/`), and page object selectors (`support/pageObjects/`).
 2. Extract intent — document what each `it` block or `Scenario` tests in plain language
-3. Search existing page objects and clients for reusable methods: `find frontend/e2e/pages -name "*.ts" 2>/dev/null`
+3. Search existing page objects and clients for reusable methods (from project root): `find frontend/e2e/pages frontend/e2e/clients -name "*.ts" 2>/dev/null`
 4. Identify gaps — missing locators, page object methods
 5. Determine test isolation strategy (self-contained, shared resources, or API-created — see migration-context.md for details)
 6. Produce a migration plan mapping Cypress blocks to Playwright components
@@ -73,16 +77,29 @@ If MCP is unavailable or no cluster is reachable, log a warning: "Playwright MCP
 
 ### Phase 3: Implementation
 
-1. Create/extend page objects with locators and interaction methods. Example:
+1. Create/extend page objects with locators and interaction methods. Follow the established pattern:
+   - Import `Locator` type from `@playwright/test` and default-import `BasePage`
+   - Use `getByTestId()` for `data-test` attributes, `locator()` for other selectors
+   - Expose locators via getter methods (`getX(): Locator`), keep locator properties `private readonly`
+   - Use `robustClick()` inside page objects; specs use plain `.click()`.  
+
+Example:
    ```typescript
    // e2e/pages/cluster-settings.ts
+   import type { Locator } from "@playwright/test";
+   import BasePage from "./base-page";
+
    export class ClusterSettingsPage extends BasePage {
-     private readonly detailsTab = this.page.locator(
-       '[data-test-id="horizontal-link-Details"]',
-     );
-     async navigateToDetails() {
+     private readonly detailsTab = this.page.getByTestId("horizontal-link-Details");
+     private readonly pageHeading = this.page.getByTestId("cluster-settings-page-heading");
+
+     async navigateToDetails(): Promise<void> {
        await this.goTo("/settings/cluster");
-       await this.detailsTab.waitFor();
+       await this.detailsTab.waitFor({ state: "visible" });
+     }
+
+     getPageHeading(): Locator {
+       return this.pageHeading;
      }
    }
    ```
@@ -100,7 +117,7 @@ If MCP is unavailable or no cluster is reachable, log a warning: "Playwright MCP
 
 ### Phase 4: Validation
 
-1. Run with `npx playwright test --project=<package> <output-file> --retries=0 --ui`. The project name matches the package directory under `e2e/tests/` (e.g. `--project=helm`, `--project=console`). For developer tests, use `--project=<package>-developer`. Note: `e2e/.env` may override `WEB_CONSOLE_URL` with a remote cluster URL. If running against localhost, ensure the user has updated `e2e/.env` or override with `WEB_CONSOLE_URL=http://localhost:9000`.
+1. Run with `npx playwright test --project=<package> <output-file> --retries=0`. The project name matches the package directory under `e2e/tests/` (e.g. `--project=helm`, `--project=console`). For developer tests, use `--project=<package>-developer`. Add `--ui` only if the user requests interactive debugging. Note: `e2e/.env` may override `WEB_CONSOLE_URL` with a remote cluster URL. If running against localhost, ensure the user has updated `e2e/.env` or override with `WEB_CONSOLE_URL=http://localhost:9000`.
 2. Debug failures using Playwright MCP (navigate → snapshot → console → network)
 3. Verify no orphaned resources after run
 4. Produce migration summary:
