@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { K8S_VERB_DELETE } from '@console/dynamic-plugin-sdk/src/api/constants';
+import { K8S_VERB_DELETE, K8S_VERB_UPDATE } from '@console/dynamic-plugin-sdk/src/api/constants';
 import type { Action } from '@console/dynamic-plugin-sdk/src/extensions/actions';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { DeleteModalOverlay } from '@console/internal/components/modals/delete-modal';
@@ -44,6 +44,7 @@ const useOperatorActions = ({ resource, subscription }): [Action[], boolean, any
         cta: {
           href: `${resourceObjPath(subscription, referenceFor(subscription))}/yaml`,
         },
+        accessReview: asAccessReview(SubscriptionModel, subscription, K8S_VERB_UPDATE),
       },
       {
         id: 'uninstall-operator',

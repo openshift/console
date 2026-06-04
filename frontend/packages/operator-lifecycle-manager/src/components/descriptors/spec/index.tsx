@@ -11,6 +11,7 @@ import {
 } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { useAccessReview } from '@console/dynamic-plugin-sdk';
 import type { LabelListProps } from '@console/internal/components/utils';
 import {
   LoadingInline,
@@ -20,9 +21,10 @@ import {
   LabelList,
 } from '@console/internal/components/utils';
 import type { Selector as SelectorType } from '@console/internal/module/k8s';
-import { k8sPatch, k8sUpdate } from '@console/internal/module/k8s';
+import { k8sPatch, k8sUpdate, referenceFor } from '@console/internal/module/k8s';
 import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import { DASH } from '@console/shared/src/constants/ui';
+import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { DefaultCapability, K8sResourceLinkCapability, SecretCapability } from '../common';
 import type { CapabilityProps, Error } from '../types';
 import { SpecCapability } from '../types';
@@ -50,6 +52,14 @@ const PodCount: FC<SpecCapabilityProps<number>> = ({
     specDescriptor: descriptor,
     specValue: value,
   });
+  const [k8sModel] = useK8sModel(referenceFor(obj));
+  const [canUpdate] = useAccessReview({
+    group: k8sModel?.apiGroup,
+    resource: k8sModel?.plural,
+    namespace: obj?.metadata?.namespace,
+    name: obj?.metadata?.name,
+    verb: 'update',
+  });
 
   return (
     <DetailsItem
@@ -58,6 +68,7 @@ const PodCount: FC<SpecCapabilityProps<number>> = ({
       obj={obj}
       path={fullPath}
       onEdit={launchConfigureSizeModal}
+      canEdit={canUpdate}
     >
       {_.isNil(value) ? '-' : `${value} pods`}
     </DetailsItem>
@@ -170,6 +181,14 @@ const BooleanSwitch: FC<SpecCapabilityProps<boolean>> = ({
   const [checked, setChecked] = useState(Boolean(value));
   const [confirmed, setConfirmed] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
+  const [k8sModel] = useK8sModel(referenceFor(obj));
+  const [canUpdate] = useAccessReview({
+    group: k8sModel?.apiGroup,
+    resource: k8sModel?.plural,
+    namespace: obj?.metadata?.namespace,
+    name: obj?.metadata?.name,
+    verb: 'update',
+  });
 
   const errorCb = (err: Error): void => {
     setConfirmed(false);
@@ -200,6 +219,7 @@ const BooleanSwitch: FC<SpecCapabilityProps<boolean>> = ({
         <Switch
           id={descriptor.path}
           isChecked={checked}
+          isDisabled={!canUpdate}
           onChange={(_event, val) => {
             setChecked(val);
             setConfirmed(false);
@@ -209,7 +229,7 @@ const BooleanSwitch: FC<SpecCapabilityProps<boolean>> = ({
         />
         &nbsp;&nbsp;
         {checked !== Boolean(value) && confirmed && <LoadingInline />}
-        {checked !== Boolean(value) && !confirmed && (
+        {checked !== Boolean(value) && !confirmed && canUpdate && (
           <>
             &nbsp;&nbsp;
             <Button className="pf-m-link--align-left" type="button" variant="link" onClick={update}>
@@ -240,6 +260,14 @@ const CheckboxUIComponent: FC<SpecCapabilityProps<boolean>> = ({
   const { t } = useTranslation('olm');
   const [checked, setChecked] = useState(Boolean(value));
   const [confirmed, setConfirmed] = useState(false);
+  const [k8sModel] = useK8sModel(referenceFor(obj));
+  const [canUpdate] = useAccessReview({
+    group: k8sModel?.apiGroup,
+    resource: k8sModel?.plural,
+    namespace: obj?.metadata?.namespace,
+    name: obj?.metadata?.name,
+    verb: 'update',
+  });
 
   const patchFor = (val: boolean) => [
     { op: 'add', path: `/spec/${getPatchPathFromDescriptor(descriptor)}`, value: val },
@@ -256,6 +284,7 @@ const CheckboxUIComponent: FC<SpecCapabilityProps<boolean>> = ({
           id={descriptor.path}
           style={{ marginLeft: '10px' }}
           isChecked={checked}
+          isDisabled={!canUpdate}
           data-checked-state={checked}
           label={label}
           onChange={(_event, val) => {
@@ -265,7 +294,7 @@ const CheckboxUIComponent: FC<SpecCapabilityProps<boolean>> = ({
         />
         &nbsp;&nbsp;
         {checked !== Boolean(value) && confirmed && <LoadingInline />}
-        {checked !== Boolean(value) && !confirmed && (
+        {checked !== Boolean(value) && !confirmed && canUpdate && (
           <>
             &nbsp;&nbsp;
             <Button className="pf-m-link--align-left" type="button" variant="link" onClick={update}>
@@ -296,6 +325,14 @@ const UpdateStrategy: FC<SpecCapabilityProps> = ({
     specDescriptor: descriptor,
     specValue: value,
   });
+  const [k8sModel] = useK8sModel(referenceFor(obj));
+  const [canUpdate] = useAccessReview({
+    group: k8sModel?.apiGroup,
+    resource: k8sModel?.plural,
+    namespace: obj?.metadata?.namespace,
+    name: obj?.metadata?.name,
+    verb: 'update',
+  });
 
   return (
     <DetailsItem
@@ -303,6 +340,7 @@ const UpdateStrategy: FC<SpecCapabilityProps> = ({
       label={label}
       obj={obj}
       onEdit={launchUpdateStrategyModal}
+      canEdit={canUpdate}
       path={fullPath}
     >
       {value?.type ?? t('None')}
