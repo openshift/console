@@ -4277,12 +4277,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@shipwright-plugin/integration-tests@workspace:packages/shipwright-plugin/integration-tests":
-  version: 0.0.0-use.local
-  resolution: "@shipwright-plugin/integration-tests@workspace:packages/shipwright-plugin/integration-tests"
-  languageName: unknown
-  linkType: soft
-
 "@sinclair/typebox@npm:^0.34.0":
   version: 0.34.41
   resolution: "@sinclair/typebox@npm:0.34.41"
