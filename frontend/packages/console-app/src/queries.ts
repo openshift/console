@@ -12,7 +12,7 @@ import { PodModel } from '@console/internal/models';
 // to rely on the number of kube-apiserver pods instead of the number of
 // Prometheus targets it has.
 export const API_SERVERS_UP =
-  '(sum(up{job="apiserver",namespace="default"} == 1) / count(kube_pod_labels{label_app="openshift-kube-apiserver",label_apiserver="true",namespace="openshift-kube-apiserver"})) * 100"';
+  '(sum(up{job="apiserver",namespace="default"} == 1) / count(kube_pod_labels{label_app="openshift-kube-apiserver",label_apiserver="true",namespace="openshift-kube-apiserver"})) * 100';
 export const CONTROLLER_MANAGERS_UP =
   '(sum(up{job="kube-controller-manager",namespace="openshift-kube-controller-manager"} == 1) / count(up{job="kube-controller-manager",namespace="openshift-kube-controller-manager"})) * 100';
 export const SCHEDULERS_UP =
