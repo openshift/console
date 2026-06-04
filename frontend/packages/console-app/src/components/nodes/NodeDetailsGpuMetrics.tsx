@@ -248,7 +248,6 @@ const NodeDetailsGpuMetrics: FC<NodeDetailsGpuMetricsProps> = ({ node }) => {
         <div className="co-table-container pf-v6-u-mt-md">
           <Table
             variant="compact"
-            borders
             gridBreakPoint=""
             aria-label={t('console-app~Per-device GPU metrics')}
           >
@@ -265,12 +264,12 @@ const NodeDetailsGpuMetrics: FC<NodeDetailsGpuMetricsProps> = ({ node }) => {
             <Tbody>
               {rows.map((row) => (
                 <Tr key={row.id}>
-                  <Td>{row.label}</Td>
-                  <Td>{row.utilization}</Td>
-                  <Td>{row.temperature}</Td>
-                  <Td>{row.power}</Td>
-                  <Td>{row.fbUsed}</Td>
-                  <Td>{row.fbFree}</Td>
+                  <Td dataLabel={t('console-app~GPU device')}>{row.label}</Td>
+                  <Td dataLabel={t('console-app~Utilization')}>{row.utilization}</Td>
+                  <Td dataLabel={t('console-app~Temperature')}>{row.temperature}</Td>
+                  <Td dataLabel={t('console-app~Power usage')}>{row.power}</Td>
+                  <Td dataLabel={t('console-app~Framebuffer memory used')}>{row.fbUsed}</Td>
+                  <Td dataLabel={t('console-app~Framebuffer memory free')}>{row.fbFree}</Td>
                 </Tr>
               ))}
             </Tbody>

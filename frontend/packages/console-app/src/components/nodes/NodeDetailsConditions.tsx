@@ -18,7 +18,7 @@ const NodeDetailsConditions: FC<NodeDetailsConditionsProps> = ({ node }) => {
     <PaneBody>
       <SectionHeading text={t('console-app~Node conditions')} />
       <div className="co-table-container">
-        <Table variant="compact" borders gridBreakPoint="">
+        <Table variant="compact" gridBreakPoint="">
           <Thead>
             <Tr>
               <Th>{t('console-app~Type')}</Th>
@@ -31,17 +31,17 @@ const NodeDetailsConditions: FC<NodeDetailsConditionsProps> = ({ node }) => {
           <Tbody>
             {_.map(node.status.conditions, (c, i) => (
               <Tr key={i}>
-                <Td>
+                <Td dataLabel={t('console-app~Type')}>
                   <CamelCaseWrap value={c.type} />
                 </Td>
-                <Td>{c.status || '-'}</Td>
-                <Td>
+                <Td dataLabel={t('console-app~Status')}>{c.status || '-'}</Td>
+                <Td dataLabel={t('console-app~Reason')}>
                   <CamelCaseWrap value={c.reason} />
                 </Td>
-                <Td>
+                <Td dataLabel={t('console-app~Updated')}>
                   <Timestamp timestamp={c.lastHeartbeatTime} />
                 </Td>
-                <Td>
+                <Td dataLabel={t('console-app~Changed')}>
                   <Timestamp timestamp={c.lastTransitionTime} />
                 </Td>
               </Tr>

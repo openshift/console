@@ -40,7 +40,7 @@ describe('NodeDetailsConditions', () => {
     expect(screen.getByText('Node conditions')).toBeVisible();
   });
 
-  it('should render a PatternFly table with five column headers', () => {
+  it('should render a table with five column headers', () => {
     const node = createMockNode([
       {
         type: 'Ready',

@@ -148,7 +148,7 @@ describe('NodeDetailsGpuMetrics', () => {
     expect(screen.getAllByText('8.0 GiB')).toHaveLength(2);
   });
 
-  it('renders a PatternFly table with six column headers and correct row count', () => {
+  it('renders a table with six column headers and correct row count', () => {
     const countResp = makeScalarResponse('2');
     const utilResp = makeResponse([
       { gpu: '0', value: '45', modelName: 'Tesla T4' },

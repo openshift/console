@@ -31,7 +31,7 @@ describe('NodeDetailsImages', () => {
     expect(screen.getByText('Images')).toBeVisible();
   });
 
-  it('should render a PatternFly table with correct column headers', () => {
+  it('should render a table with correct column headers', () => {
     const node = createMockNode([]);
     render(<NodeDetailsImages node={node} />);
 

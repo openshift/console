@@ -18,7 +18,7 @@ const NodeDetailsImages: FC<NodeDetailsImagesProps> = ({ node }) => {
     <PaneBody>
       <SectionHeading text={t('console-app~Images')} />
       <div className="co-table-container">
-        <Table variant="compact" borders gridBreakPoint="">
+        <Table variant="compact" gridBreakPoint="">
           <Thead>
             <Tr>
               <Th>{t('console-app~Name')}</Th>
@@ -28,12 +28,18 @@ const NodeDetailsImages: FC<NodeDetailsImagesProps> = ({ node }) => {
           <Tbody>
             {_.map(images, (image, i) => (
               <Tr key={i}>
-                <Td className="pf-m-break-word co-select-to-copy">
+                <Td
+                  dataLabel={t('console-app~Name')}
+                  modifier="breakWord"
+                  className="co-select-to-copy"
+                >
                   {image.names.find(
                     (name: string) => !name.includes('@') && !name.includes('<none>'),
                   ) || image.names[0]}
                 </Td>
-                <Td>{humanizeBinaryBytes(image.sizeBytes).string || '-'}</Td>
+                <Td dataLabel={t('console-app~Size')}>
+                  {humanizeBinaryBytes(image.sizeBytes).string || '-'}
+                </Td>
               </Tr>
             ))}
           </Tbody>
