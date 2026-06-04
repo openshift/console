@@ -23,6 +23,13 @@ export interface CleanupFixture {
     plural: string,
     type?: string,
   ): void;
+  trackClusterCustomResource(
+    name: string,
+    apiGroup: string,
+    apiVersion: string,
+    plural: string,
+    type?: string,
+  ): void;
   readonly count: number;
   executeCleanup(): Promise<void>;
   shouldSkipCleanup(): boolean;
@@ -95,6 +102,22 @@ export function createCleanupFixture(testName: string): CleanupFixture {
       });
     },
 
+    trackClusterCustomResource(
+      name: string,
+      apiGroup: string,
+      apiVersion: string,
+      plural: string,
+      type?: string,
+    ) {
+      resources.push({
+        name,
+        apiGroup,
+        apiVersion,
+        plural,
+        type: type || `Cluster:${plural}`,
+      });
+    },
+
     get count() {
       return resources.length;
     },
@@ -139,6 +162,13 @@ export function createCleanupFixture(testName: string): CleanupFixture {
               resource.apiGroup,
               resource.apiVersion,
               resource.namespace,
+              resource.plural,
+              resource.name,
+            );
+          } else if (resource.apiGroup) {
+            await client.deleteClusterCustomResource(
+              resource.apiGroup,
+              resource.apiVersion,
               resource.plural,
               resource.name,
             );

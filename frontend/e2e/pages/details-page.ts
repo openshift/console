@@ -12,6 +12,15 @@ export class DetailsPage extends BasePage {
     return this.pageHeading;
   }
 
+  async clickPageAction(actionName: string): Promise<void> {
+    await this.robustClick(this.page.getByTestId('actions-menu-button'));
+    await this.robustClick(this.page.getByTestId(actionName));
+  }
+
+  getBreadcrumb(index: number): Locator {
+    return this.page.getByTestId(`breadcrumb-link-${index}`);
+  }
+
   /**
    * Select a specific tab by name
    */

@@ -200,7 +200,11 @@ const CurrentVersion: FC<CurrentVersionProps> = ({ cv }) => {
     return desiredVersion ? (
       <>
         <div>
-          <span className="co-select-to-copy" data-test-id="cluster-version">
+          <span
+            className="co-select-to-copy"
+            data-test="cluster-version"
+            data-test-id="cluster-version"
+          >
             {desiredVersion}
           </span>
         </div>
@@ -217,7 +221,11 @@ const CurrentVersion: FC<CurrentVersionProps> = ({ cv }) => {
   return lastVersion ? (
     <>
       <div>
-        <span className="co-select-to-copy" data-test-id="cluster-version">
+        <span
+          className="co-select-to-copy"
+          data-test="cluster-version"
+          data-test-id="cluster-version"
+        >
           {lastVersion}
         </span>
       </div>

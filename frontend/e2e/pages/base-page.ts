@@ -1,5 +1,17 @@
 import type { Locator, Page } from '@playwright/test';
 
+export async function getEditorContent(page: Page): Promise<string> {
+  return page.evaluate(() => {
+    return (window as any).monaco?.editor?.getModels()?.[0]?.getValue() ?? '';
+  });
+}
+
+export async function setEditorContent(page: Page, content: string): Promise<void> {
+  await page.evaluate((text) => {
+    (window as any).monaco?.editor?.getModels()?.[0]?.setValue(text);
+  }, content);
+}
+
 export default abstract class BasePage {
   constructor(public readonly page: Page) {}
 
@@ -97,6 +109,14 @@ export default abstract class BasePage {
   async clickButtonByText(buttonText: string): Promise<void> {
     const button = this.page.getByRole('button', { name: buttonText });
     await this.robustClick(button);
+  }
+
+  async getEditorContent(): Promise<string> {
+    return getEditorContent(this.page);
+  }
+
+  async setEditorContent(content: string): Promise<void> {
+    await setEditorContent(this.page, content);
   }
 
   async switchPerspective(target: 'Developer' | 'Administrator'): Promise<void> {

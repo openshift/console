@@ -435,6 +435,36 @@ export default class KubernetesClient {
     }
   }
 
+  async createClusterCustomResource(
+    group: string,
+    version: string,
+    plural: string,
+    body: Record<string, unknown>,
+  ): Promise<unknown> {
+    const response = await this.coApi.createClusterCustomObject({
+      body,
+      group,
+      plural,
+      version,
+    });
+    return response;
+  }
+
+  async deleteClusterCustomResource(
+    group: string,
+    version: string,
+    plural: string,
+    name: string,
+  ): Promise<void> {
+    try {
+      await this.coApi.deleteClusterCustomObject({ group, name, plural, version });
+    } catch (err) {
+      if (!isNotFound(err)) {
+        throw err;
+      }
+    }
+  }
+
   async getCustomResource(
     group: string,
     version: string,

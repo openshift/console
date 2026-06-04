@@ -1,6 +1,7 @@
 import { Page, expect } from '@playwright/test';
 import jsYaml from 'js-yaml';
 import KubernetesClient from '../../../clients/kubernetes-client';
+import { getEditorContent, setEditorContent } from '../../../pages/base-page';
 
 const CRD_LIST_URL = '/k8s/cluster/apiextensions.k8s.io~v1~CustomResourceDefinition';
 
@@ -53,20 +54,14 @@ export async function waitForYamlEditor(page: Page): Promise<void> {
  * Get the current content from the Monaco YAML editor
  */
 export async function getYamlEditorContent(page: Page): Promise<string> {
-  return page.evaluate(() => {
-    const monacoEditor = (window as any).monaco?.editor?.getModels()?.[0];
-    return monacoEditor?.getValue() || '';
-  });
+  return getEditorContent(page);
 }
 
 /**
  * Set content in the Monaco YAML editor
  */
 export async function setYamlEditorContent(page: Page, yaml: string): Promise<void> {
-  await page.evaluate((yamlContent) => {
-    const monacoEditor = (window as any).monaco?.editor?.getModels()?.[0];
-    monacoEditor?.setValue(yamlContent);
-  }, yaml);
+  await setEditorContent(page, yaml);
 }
 
 /**

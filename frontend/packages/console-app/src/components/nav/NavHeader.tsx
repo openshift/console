@@ -26,6 +26,7 @@ const PerspectiveDropdownItem: FC<PerspectiveDropdownItemProps> = ({ perspective
   return (
     <SelectOption
       key={perspective.properties.id}
+      data-test="perspective-switcher-menu-option"
       data-test-id="perspective-switcher-menu-option"
       onClick={(e: MouseEvent<HTMLLinkElement>) => {
         e.preventDefault();
@@ -93,6 +94,7 @@ const NavHeader: FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
         toggle={(toggleRef: Ref<MenuToggleElement>) => (
           <MenuToggle
             isFullWidth
+            data-test="perspective-switcher-toggle"
             data-test-id="perspective-switcher-toggle"
             isExpanded={isPerspectiveDropdownOpen}
             ref={toggleRef}
@@ -121,7 +123,11 @@ const NavHeader: FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
       </Select>
     </div>
   ) : (
-    <div data-test-id="perspective-switcher-toggle" id="core-platform-perspective">
+    <div
+      data-test="perspective-switcher-toggle"
+      data-test-id="perspective-switcher-toggle"
+      id="core-platform-perspective"
+    >
       <Title headingLevel="h2" size="md">
         <RhUiGearGroupFillIcon /> {t('Core platform')}
       </Title>

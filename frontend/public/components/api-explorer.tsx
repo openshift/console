@@ -1025,7 +1025,11 @@ const APIResourcePage_ = (props) => {
       <PageTitleContext.Provider value={titleProviderValues}>
         <ScrollToTopOnMount />
         <PageHeading
-          title={<div data-test-id="api-explorer-resource-title">{kindObj.label}</div>}
+          title={
+            <div data-test="api-explorer-resource-title" data-test-id="api-explorer-resource-title">
+              {kindObj.label}
+            </div>
+          }
           breadcrumbs={breadcrumbs}
         />
         <HorizontalNav pages={pages} customData={{ kindObj, namespace }} noStatusBox />

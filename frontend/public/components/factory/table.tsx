@@ -118,6 +118,7 @@ export const TableRow: FC<TableRowProps> = ({ id, index, trKey, style, className
       {...props}
       data-id={id}
       data-index={index}
+      data-test="resource-row"
       data-test-rows="resource-row"
       data-key={trKey}
       style={style}

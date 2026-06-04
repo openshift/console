@@ -28,6 +28,7 @@ export const ErrorPage404: FC<PfErrorStateProps> = (props) => {
     <>
       <DocumentTitle>{t('Page Not Found (404)')}</DocumentTitle>
       <PfErrorState
+        data-test="error-page"
         status="none"
         icon={NotFoundIcon}
         headingLevel="h1"
