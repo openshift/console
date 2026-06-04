@@ -1,4 +1,5 @@
 import type { FC } from 'react';
+import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { CamelCaseWrap } from '@console/dynamic-plugin-sdk';
@@ -17,36 +18,36 @@ const NodeDetailsConditions: FC<NodeDetailsConditionsProps> = ({ node }) => {
     <PaneBody>
       <SectionHeading text={t('console-app~Node conditions')} />
       <div className="co-table-container">
-        <table className="pf-v6-c-table pf-m-compact pf-m-border-rows">
-          <thead className="pf-v6-c-table__thead">
-            <tr className="pf-v6-c-table__tr">
-              <th className="pf-v6-c-table__th">{t('console-app~Type')}</th>
-              <th className="pf-v6-c-table__th">{t('console-app~Status')}</th>
-              <th className="pf-v6-c-table__th">{t('console-app~Reason')}</th>
-              <th className="pf-v6-c-table__th">{t('console-app~Updated')}</th>
-              <th className="pf-v6-c-table__th">{t('console-app~Changed')}</th>
-            </tr>
-          </thead>
-          <tbody className="pf-v6-c-table__tbody">
+        <Table variant="compact" borders gridBreakPoint="">
+          <Thead>
+            <Tr>
+              <Th>{t('console-app~Type')}</Th>
+              <Th>{t('console-app~Status')}</Th>
+              <Th>{t('console-app~Reason')}</Th>
+              <Th>{t('console-app~Updated')}</Th>
+              <Th>{t('console-app~Changed')}</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
             {_.map(node.status.conditions, (c, i) => (
-              <tr className="pf-v6-c-table__tr" key={i}>
-                <td className="pf-v6-c-table__td">
+              <Tr key={i}>
+                <Td>
                   <CamelCaseWrap value={c.type} />
-                </td>
-                <td className="pf-v6-c-table__td">{c.status || '-'}</td>
-                <td className="pf-v6-c-table__td">
+                </Td>
+                <Td>{c.status || '-'}</Td>
+                <Td>
                   <CamelCaseWrap value={c.reason} />
-                </td>
-                <td className="pf-v6-c-table__td">
+                </Td>
+                <Td>
                   <Timestamp timestamp={c.lastHeartbeatTime} />
-                </td>
-                <td className="pf-v6-c-table__td">
+                </Td>
+                <Td>
                   <Timestamp timestamp={c.lastTransitionTime} />
-                </td>
-              </tr>
+                </Td>
+              </Tr>
             ))}
-          </tbody>
-        </table>
+          </Tbody>
+        </Table>
       </div>
     </PaneBody>
   );

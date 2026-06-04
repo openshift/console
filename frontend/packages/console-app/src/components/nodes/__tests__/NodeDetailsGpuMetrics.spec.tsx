@@ -148,6 +148,43 @@ describe('NodeDetailsGpuMetrics', () => {
     expect(screen.getAllByText('8.0 GiB')).toHaveLength(2);
   });
 
+  it('renders a PatternFly table with six column headers and correct row count', () => {
+    const countResp = makeScalarResponse('2');
+    const utilResp = makeResponse([
+      { gpu: '0', value: '45', modelName: 'Tesla T4' },
+      { gpu: '1', value: '78', modelName: 'Tesla T4' },
+    ]);
+
+    mockUsePrometheusPoll
+      .mockReturnValueOnce([countResp, null, false])
+      .mockReturnValueOnce([utilResp, null, false])
+      .mockReturnValueOnce([emptyResponse, null, false])
+      .mockReturnValueOnce([emptyResponse, null, false])
+      .mockReturnValueOnce([emptyResponse, null, false])
+      .mockReturnValueOnce([emptyResponse, null, false]);
+
+    render(<NodeDetailsGpuMetrics node={baseNode} />);
+
+    const table = screen.getByRole('grid', { name: 'Per-device GPU metrics' });
+    expect(table).toBeInTheDocument();
+
+    const columnHeaders = screen.getAllByRole('columnheader');
+    expect(columnHeaders).toHaveLength(6);
+    expect(screen.getByRole('columnheader', { name: 'GPU device' })).toBeInTheDocument();
+    expect(screen.getByRole('columnheader', { name: 'Utilization' })).toBeInTheDocument();
+    expect(screen.getByRole('columnheader', { name: 'Temperature' })).toBeInTheDocument();
+    expect(screen.getByRole('columnheader', { name: 'Power usage' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('columnheader', { name: 'Framebuffer memory used' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('columnheader', { name: 'Framebuffer memory free' }),
+    ).toBeInTheDocument();
+
+    const rows = screen.getAllByRole('row');
+    expect(rows).toHaveLength(3);
+  });
+
   it('shows the not-available message when node has capacity but no metric data', () => {
     mockUsePrometheusPoll.mockReturnValue([emptyResponse, null, false]);
     render(<NodeDetailsGpuMetrics node={baseNode} />);

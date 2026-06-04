@@ -31,10 +31,13 @@ describe('NodeDetailsImages', () => {
     expect(screen.getByText('Images')).toBeVisible();
   });
 
-  it('should render table headers', () => {
+  it('should render a PatternFly table with correct column headers', () => {
     const node = createMockNode([]);
     render(<NodeDetailsImages node={node} />);
 
+    expect(screen.getByRole('grid')).toBeVisible();
+    const columnHeaders = screen.getAllByRole('columnheader');
+    expect(columnHeaders).toHaveLength(2);
     expect(screen.getByRole('columnheader', { name: 'Name' })).toBeVisible();
     expect(screen.getByRole('columnheader', { name: 'Size' })).toBeVisible();
   });

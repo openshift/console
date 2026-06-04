@@ -40,6 +40,50 @@ describe('NodeDetailsConditions', () => {
     expect(screen.getByText('Node conditions')).toBeVisible();
   });
 
+  it('should render a PatternFly table with five column headers', () => {
+    const node = createMockNode([
+      {
+        type: 'Ready',
+        status: 'True',
+        reason: 'KubeletReady',
+        lastHeartbeatTime: '2024-01-15T10:00:00Z',
+        lastTransitionTime: '2024-01-15T10:00:00Z',
+      },
+    ]);
+    render(<NodeDetailsConditions node={node} />);
+
+    const columnHeaders = screen.getAllByRole('columnheader');
+    expect(columnHeaders).toHaveLength(5);
+    expect(screen.getByRole('columnheader', { name: 'Type' })).toBeVisible();
+    expect(screen.getByRole('columnheader', { name: 'Status' })).toBeVisible();
+    expect(screen.getByRole('columnheader', { name: 'Reason' })).toBeVisible();
+    expect(screen.getByRole('columnheader', { name: 'Updated' })).toBeVisible();
+    expect(screen.getByRole('columnheader', { name: 'Changed' })).toBeVisible();
+  });
+
+  it('should render the correct number of rows for conditions', () => {
+    const node = createMockNode([
+      {
+        type: 'Ready',
+        status: 'True',
+        reason: 'KubeletReady',
+        lastHeartbeatTime: '2024-01-15T10:00:00Z',
+        lastTransitionTime: '2024-01-15T10:00:00Z',
+      },
+      {
+        type: 'MemoryPressure',
+        status: 'False',
+        reason: 'KubeletHasSufficientMemory',
+        lastHeartbeatTime: '2024-01-15T09:00:00Z',
+        lastTransitionTime: '2024-01-15T09:00:00Z',
+      },
+    ]);
+    render(<NodeDetailsConditions node={node} />);
+
+    const rows = screen.getAllByRole('row');
+    expect(rows).toHaveLength(3);
+  });
+
   it('should render condition type', () => {
     const node = createMockNode([
       {
