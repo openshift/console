@@ -128,7 +128,12 @@ const AlertRoutingModal: FC<AlertRoutingModalProps> = ({ config, secret, cancel,
         >
           {t('Save')}
         </Button>
-        <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
+        <Button
+          variant="link"
+          onClick={cancel}
+          data-test="modal-cancel-action"
+          data-test-id="modal-cancel-action"
+        >
           {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>

@@ -197,6 +197,7 @@ const EnvFromPairElement: FC<EnvFromPairElementProps> = ({
       </GridItem>
       <GridItem span={5} className="pairs-list__name-field">
         <TextInput
+          data-test="env-prefix"
           data-test-id="env-prefix"
           type="text"
           placeholder={valueString}
@@ -214,6 +215,7 @@ const EnvFromPairElement: FC<EnvFromPairElementProps> = ({
                 <RhUiMinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />
               }
               type="button"
+              data-test="pairs-list__delete-from-btn"
               data-test-id="pairs-list__delete-from-btn"
               aria-label={t('Delete')}
               className="pairs-list__span-btns"

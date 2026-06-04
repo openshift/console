@@ -77,6 +77,15 @@ export class ListPage extends BasePage {
     await this.robustClick(this.page.getByTestId(actionName));
   }
 
+  async clickResourceRowKebabAction(resourceName: string, actionName: string): Promise<void> {
+    const row = this.resourceRows
+      .filter({ hasText: resourceName })
+      .first();
+    const kebab = row.getByTestId('kebab-button');
+    await this.robustClick(kebab);
+    await this.robustClick(this.page.getByTestId(actionName));
+  }
+
   async filterByCheckbox(filterName: string, checkboxLabel: string): Promise<void> {
     const dataViewToggle = this.dataViewFilters.locator('.pf-v6-c-menu-toggle').first();
     const standardToggle = this.page.getByTestId('filter-dropdown-toggle').locator('button');
@@ -114,12 +123,15 @@ export class ListPage extends BasePage {
     const dropdownButton = this.namespaceDropdown.getByRole('button');
     await this.robustClick(dropdownButton);
 
+    const searchInput = this.page.getByRole('searchbox', { name: 'Select project...' });
+    // eslint-disable-next-line no-restricted-syntax
+    await searchInput.waitFor({ state: 'visible' });
+
     const systemSwitch = this.page.getByTestId('showSystemSwitch');
     if ((await systemSwitch.count()) > 0 && !(await systemSwitch.isChecked())) {
       await systemSwitch.check();
     }
 
-    const searchInput = this.page.getByRole('searchbox', { name: 'Select project...' });
     await searchInput.fill(projectName);
     const item = this.page.getByRole('menuitem', { name: projectName, exact: true });
     await this.robustClick(item);

@@ -84,6 +84,22 @@ export function createCleanupFixture(testName: string): CleanupFixture {
       });
     },
 
+    trackClusterCustomResource(
+      name: string,
+      apiGroup: string,
+      apiVersion: string,
+      plural: string,
+      type?: string,
+    ) {
+      resources.push({
+        name,
+        apiGroup,
+        apiVersion,
+        plural,
+        type: type || plural,
+      });
+    },
+
     trackCustomResource(
       name: string,
       namespace: string,
@@ -95,22 +111,6 @@ export function createCleanupFixture(testName: string): CleanupFixture {
       resources.push({
         name,
         namespace,
-        apiGroup,
-        apiVersion,
-        plural,
-        type: type || plural,
-      });
-    },
-
-    trackClusterCustomResource(
-      name: string,
-      apiGroup: string,
-      apiVersion: string,
-      plural: string,
-      type?: string,
-    ) {
-      resources.push({
-        name,
         apiGroup,
         apiVersion,
         plural,

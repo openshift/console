@@ -235,6 +235,7 @@ const BaseRollbackModal: FC<RollbackModalProps> = (props) => {
           variant="link"
           onClick={props.cancel}
           type="button"
+          data-test="modal-cancel-action"
           data-test-id="modal-cancel-action"
         >
           {t('Cancel')}
