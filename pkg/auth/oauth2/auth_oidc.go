@@ -105,7 +105,7 @@ func (o *oidcAuth) refreshSession(ctx context.Context, w http.ResponseWriter, r 
 		&oauth2.Token{RefreshToken: cookieRefreshToken},
 	).Token()
 	if err != nil {
-		return nil, fmt.Errorf("failed to refresh a token %s: %w", cookieRefreshToken, err)
+		return nil, fmt.Errorf("failed to refresh a token: %w", err)
 	}
 
 	ls, err := o.sessions.UpdateTokens(w, r, o.verify, newTokens)
@@ -125,29 +125,36 @@ func (o *oidcAuth) DeleteSession(w http.ResponseWriter, r *http.Request) {
 	o.sessions.DeleteSession(w, r)
 }
 
+// logout handles the OIDC logout flow by constructing a logout redirect URL
+// with an id_token_hint appended (when available) and returning it as JSON.
 func (o *oidcAuth) logout(w http.ResponseWriter, r *http.Request) {
 	logoutURL := o.logoutRedirectURLWithIDTokenHint(w, r)
 	o.DeleteSession(w, r)
 
 	if logoutURL != "" {
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(map[string]string{
+		if err := json.NewEncoder(w).Encode(map[string]string{
 			"logoutRedirectURL": logoutURL,
-		})
+		}); err != nil {
+			klog.Errorf("failed to write logout redirect response: %v", err)
+		}
 		return
 	}
 
 	w.WriteHeader(http.StatusNoContent)
 }
 
+// logoutRedirectURLWithIDTokenHint builds the logout redirect URL with the
+// id_token_hint query parameter appended, per the OIDC RP-Initiated Logout spec.
+// It uses a non-refreshing session lookup to avoid hitting the IdP token endpoint.
 func (o *oidcAuth) logoutRedirectURLWithIDTokenHint(w http.ResponseWriter, r *http.Request) string {
 	baseURL := o.LogoutRedirectURL()
 	if baseURL == "" {
 		return ""
 	}
 
-	ls, err := o.getLoginState(w, r)
-	if err != nil {
+	ls, err := o.sessions.GetSession(w, r)
+	if err != nil || ls == nil {
 		klog.V(4).Infof("could not retrieve session for id_token_hint: %v", err)
 		return baseURL
 	}

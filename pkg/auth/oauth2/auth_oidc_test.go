@@ -789,7 +789,8 @@ func Test_oidcAuth_logoutRedirectURLWithIDTokenHint(t *testing.T) {
 			}
 
 			if tt.logoutRedirectOverride != "" {
-				expectedBase, _ := url.Parse(tt.logoutRedirectOverride)
+				expectedBase, err := url.Parse(tt.logoutRedirectOverride)
+				require.NoError(t, err)
 				require.Equal(t, expectedBase.Host, parsed.Host)
 				require.Equal(t, expectedBase.Path, parsed.Path)
 				for key, vals := range expectedBase.Query() {
