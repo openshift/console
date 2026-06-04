@@ -114,8 +114,8 @@ $co-channel-height: 60px;
 
 .co-channel-switch {
   background-color: $co-channel-color;
-  height: $co-channel-height;
   clip-path: polygon(0 0, 2px 0, 100% calc(100% - 2px), 100% 100%, calc(100% - 4px) 100%, 0 4px);
+  height: $co-channel-height;
   position: absolute;
   right: -4px;
   top: -28px;

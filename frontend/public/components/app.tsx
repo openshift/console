@@ -41,7 +41,6 @@ import CloudShellDrawer from '@console/webterminal-plugin/src/components/cloud-s
 import {
   ContextProviderExtensionWrapper,
   DetectContext,
-  PageSkeleton,
 } from '@console/app/src/components/detect-context/DetectContext';
 import { FeatureFlagExtensionLoader } from '@console/app/src/components/flags/FeatureFlagExtensionLoader';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
@@ -88,7 +87,9 @@ root.render(<LoadingBox blame="Init" />);
 // interceptor calls authSvc.handle401() which handles the redirect.
 coFetch(`${window.SERVER_FLAGS.basePath}api/kubernetes/api`, {
   priority: 'high',
-}).catch(() => {});
+})
+  .then(() => document.documentElement.classList.remove('co-auth-pending'))
+  .catch(() => {});
 
 // TODO: remove when upgrading to @xterm/xterm 7.0.0 - github.com/openshift/console/issues/16486
 delete process.title;
@@ -100,7 +101,7 @@ initI18n();
 linkify.set({ fuzzyLink: false });
 
 const App: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const location = useLocation();
   const params = useParams();
 
@@ -248,7 +249,7 @@ const App: FC = () => {
   };
 
   const content = (
-    <Suspense fallback={<PageSkeleton blame="AppContent" />}>
+    <Suspense fallback={<LoadingBox blame="AppContent" />}>
       <ConsoleNotifier location="BannerTop" />
       <QuickStartDrawer>
         <CloudShellDrawer>
@@ -278,7 +279,7 @@ const App: FC = () => {
               }
               skipToContent={
                 <SkipToContent href={`${location.pathname}${location.search}#content-scrollable`}>
-                  {t('public~Skip to content')}
+                  {t('Skip to content')}
                 </SkipToContent>
               }
               notificationDrawer={

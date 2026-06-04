@@ -19,6 +19,39 @@ body,
   visibility: hidden;
 }
 
+.co-page-skeleton__auth-pending {
+  display: none;
+}
+
+.co-auth-pending {
+  .co-page-skeleton__auth-pending {
+    display: contents;
+  }
+
+  .co-page-skeleton__authenticated {
+    display: none;
+  }
+}
+
+@keyframes co-page-skeleton-fade-in {
+  to {
+    opacity: 1;
+  }
+}
+
+.co-page-skeleton__slow-msg {
+  animation: var(--pf-t--global--motion--duration--fade--long) ease-in 20s forwards
+    co-page-skeleton-fade-in;
+  left: 50%;
+  opacity: 0;
+  position: absolute;
+  transform: translateX(-50%);
+
+  @media (prefers-reduced-motion: reduce) {
+    animation-duration: 0s;
+  }
+}
+
 .co-p-has-sidebar {
   display: flex;
   flex: 1;

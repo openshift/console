@@ -1756,6 +1756,8 @@
   "Select all <1>{{count}}</1> {{label}}.": "Select all <1>{{count}}</1> {{label}}.",
   "{{label}} table": "{{label}} table",
   "Filter by label": "Filter by label",
+  "Unable to connect to the server. This could be due to network or server issues.": "Unable to connect to the server. This could be due to network or server issues.",
+  "The console is taking longer than usual to load.": "The console is taking longer than usual to load.",
   "Selected group is unavailable": "Selected group is unavailable",
   "Enter at least one user": "Enter at least one user",
   "Error occurred": "Error occurred",
