@@ -1,5 +1,10 @@
 import type { Extension } from '@console/dynamic-plugin-sdk/src/types';
-import { isTranslatableString, getTranslationKey, translateExtension } from '../extension-i18n';
+import {
+  isTranslatableString,
+  getTranslationKey,
+  getNamespacesFromExtensions,
+  translateExtension,
+} from '../extension-i18n';
 
 const nonTranslatableStrings: string[] = ['', null, undefined, '%', 'a%', '%a', '%%', 'foo'];
 
@@ -24,6 +29,44 @@ describe('getTranslationKey', () => {
     nonTranslatableStrings.forEach((s) => {
       expect(getTranslationKey(s)).toBe(undefined);
     });
+  });
+});
+
+describe('getNamespacesFromExtensions', () => {
+  it('extracts unique namespaces from translatable strings across extensions', () => {
+    const extensions: Extension[] = [
+      {
+        type: 'Nav/Item',
+        properties: { name: '%plugin__acm~Home%', section: '%plugin__acm~Overview%' },
+      },
+      {
+        type: 'Nav/Item',
+        properties: { name: '%plugin__mce~Clusters%' },
+      },
+    ];
+    expect(getNamespacesFromExtensions(extensions).sort()).toEqual(['plugin__acm', 'plugin__mce']);
+  });
+
+  it('returns an empty array when no translatable strings have namespaces', () => {
+    const extensions: Extension[] = [
+      { type: 'Foo/Bar', properties: { name: '%keyWithoutNs%' } },
+      { type: 'Foo/Bar', properties: { name: 'plain string' } },
+    ];
+    expect(getNamespacesFromExtensions(extensions)).toEqual([]);
+  });
+
+  it('returns an empty array for extensions with no translatable strings', () => {
+    const extensions: Extension[] = [{ type: 'Foo/Bar', properties: { count: 42, flag: true } }];
+    expect(getNamespacesFromExtensions(extensions)).toEqual([]);
+  });
+
+  it('deduplicates namespaces across multiple extensions', () => {
+    const extensions: Extension[] = [
+      { type: 'Nav/Item', properties: { name: '%plugin__acm~Home%' } },
+      { type: 'Nav/Item', properties: { name: '%plugin__acm~Overview%' } },
+      { type: 'Nav/Item', properties: { name: '%plugin__acm~Search%' } },
+    ];
+    expect(getNamespacesFromExtensions(extensions)).toEqual(['plugin__acm']);
   });
 });
 
