@@ -139,10 +139,7 @@ export const authSvc = {
           authSvc.logoutRedirect(next);
         }
       })
-      // eslint-disable-next-line no-console
-      .catch((e) => {
-        // eslint-disable-next-line no-console
-        console.error('Error logging out', e);
+      .catch(() => {
         authSvc.logoutRedirect(next);
       });
   }),
