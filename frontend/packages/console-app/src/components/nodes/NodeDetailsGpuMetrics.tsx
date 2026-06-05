@@ -10,6 +10,7 @@ import {
   GridItem,
   Spinner,
 } from '@patternfly/react-core';
+import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import type { PrometheusResponse, PrometheusResult } from '@console/internal/components/graphs';
 import { PrometheusEndpoint } from '@console/internal/components/graphs/helpers';
@@ -245,33 +246,34 @@ const NodeDetailsGpuMetrics: FC<NodeDetailsGpuMetricsProps> = ({ node }) => {
 
       {!isLoading && hasMetrics && (
         <div className="co-table-container pf-v6-u-mt-md">
-          <table
-            className="pf-v6-c-table pf-m-compact pf-m-border-rows"
+          <Table
+            variant="compact"
+            gridBreakPoint=""
             aria-label={t('console-app~Per-device GPU metrics')}
           >
-            <thead className="pf-v6-c-table__thead">
-              <tr className="pf-v6-c-table__tr">
-                <th className="pf-v6-c-table__th">{t('console-app~GPU device')}</th>
-                <th className="pf-v6-c-table__th">{t('console-app~Utilization')}</th>
-                <th className="pf-v6-c-table__th">{t('console-app~Temperature')}</th>
-                <th className="pf-v6-c-table__th">{t('console-app~Power usage')}</th>
-                <th className="pf-v6-c-table__th">{t('console-app~Framebuffer memory used')}</th>
-                <th className="pf-v6-c-table__th">{t('console-app~Framebuffer memory free')}</th>
-              </tr>
-            </thead>
-            <tbody className="pf-v6-c-table__tbody">
+            <Thead>
+              <Tr>
+                <Th>{t('console-app~GPU device')}</Th>
+                <Th>{t('console-app~Utilization')}</Th>
+                <Th>{t('console-app~Temperature')}</Th>
+                <Th>{t('console-app~Power usage')}</Th>
+                <Th>{t('console-app~Framebuffer memory used')}</Th>
+                <Th>{t('console-app~Framebuffer memory free')}</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
               {rows.map((row) => (
-                <tr className="pf-v6-c-table__tr" key={row.id}>
-                  <td className="pf-v6-c-table__td">{row.label}</td>
-                  <td className="pf-v6-c-table__td">{row.utilization}</td>
-                  <td className="pf-v6-c-table__td">{row.temperature}</td>
-                  <td className="pf-v6-c-table__td">{row.power}</td>
-                  <td className="pf-v6-c-table__td">{row.fbUsed}</td>
-                  <td className="pf-v6-c-table__td">{row.fbFree}</td>
-                </tr>
+                <Tr key={row.id}>
+                  <Td dataLabel={t('console-app~GPU device')}>{row.label}</Td>
+                  <Td dataLabel={t('console-app~Utilization')}>{row.utilization}</Td>
+                  <Td dataLabel={t('console-app~Temperature')}>{row.temperature}</Td>
+                  <Td dataLabel={t('console-app~Power usage')}>{row.power}</Td>
+                  <Td dataLabel={t('console-app~Framebuffer memory used')}>{row.fbUsed}</Td>
+                  <Td dataLabel={t('console-app~Framebuffer memory free')}>{row.fbFree}</Td>
+                </Tr>
               ))}
-            </tbody>
-          </table>
+            </Tbody>
+          </Table>
         </div>
       )}
 
