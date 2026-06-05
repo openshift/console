@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { getUser } from '@console/dynamic-plugin-sdk';
+import { AsyncComponent } from '@console/internal/components/utils';
 import { useAccessReview2 } from '@console/internal/components/utils/rbac';
 import { StatusBox, LoadError } from '@console/internal/components/utils/status-box';
 import { UserInfo } from '@console/internal/module/k8s';
@@ -19,7 +20,6 @@ import {
   startWorkspace,
   CLOUD_SHELL_PHASE,
 } from './cloud-shell-utils';
-import CloudshellExec from './CloudShellExec';
 import { CLOUD_SHELL_NAMESPACE, CLOUD_SHELL_NAMESPACE_CONFIG_STORAGE_KEY } from './const';
 import CloudShellAdminSetup from './setup/CloudShellAdminSetup';
 import CloudShellDeveloperSetup from './setup/CloudShellDeveloperSetup';
@@ -216,7 +216,12 @@ const CloudShellTerminal: React.FCC<
 
   if (initData && workspaceNamespace) {
     return (
-      <CloudshellExec
+      <AsyncComponent
+        loader={() =>
+          import('./CloudShellExec' /* webpackChunkName: "cloud-shell-exec" */).then(
+            (m) => m.default,
+          )
+        }
         workspaceName={workspaceName}
         namespace={workspaceNamespace}
         workspaceId={workspaceId}
