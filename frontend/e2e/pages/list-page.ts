@@ -11,18 +11,29 @@ export class ListPage extends BasePage {
   private readonly namespaceDropdown = this.page.getByTestId('namespace-bar-dropdown');
 
   async waitForListLoad(): Promise<void> {
+    await this.waitForLoadingComplete();
     await this.dataViewTable.or(this.page.getByTestId('page-heading')).first().waitFor({
       state: 'visible',
     });
   }
 
+  async waitForTableLoad(): Promise<void> {
+    await this.waitForLoadingComplete();
+    await this.dataViewTable.waitFor({ state: 'visible', timeout: 60_000 });
+  }
+
   async filterByName(name: string): Promise<void> {
+    const filterInput = this.nameFilterInput;
+    if (await filterInput.isVisible({ timeout: 3_000 }).catch(() => false)) {
+      await filterInput.fill(name);
+      return;
+    }
     await this.dataViewFilters.waitFor({ state: 'visible', timeout: 60_000 });
     const filterToggle = this.dataViewFilters.locator('.pf-v6-c-menu-toggle').first();
     await this.robustClick(filterToggle);
     await this.page.locator('.pf-v6-c-menu__list-item', { hasText: 'Name' }).click();
-    await this.nameFilterInput.waitFor({ state: 'visible' });
-    await this.nameFilterInput.fill(name);
+    await filterInput.waitFor({ state: 'visible' });
+    await filterInput.fill(name);
   }
 
   getCell(resourceName: string, cellName = 'name'): Locator {
@@ -56,6 +67,14 @@ export class ListPage extends BasePage {
     const searchInput = this.page.getByRole('searchbox', { name: 'Select project...' });
     await searchInput.fill(projectName);
     const item = this.page.getByRole('menuitem', { name: projectName, exact: true });
+    await this.robustClick(item);
+    await this.waitForLoadingComplete();
+  }
+
+  async selectAllProjects(): Promise<void> {
+    const dropdownButton = this.namespaceDropdown.getByRole('button');
+    await this.robustClick(dropdownButton);
+    const item = this.page.getByRole('menuitem', { name: 'All Projects', exact: true });
     await this.robustClick(item);
     await this.waitForLoadingComplete();
   }

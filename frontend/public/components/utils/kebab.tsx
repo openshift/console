@@ -70,7 +70,13 @@ const KebabItem_: FC<KebabItemProps & { isAllowed: boolean }> = ({
       onClick={(e) => !isDisabled && onClick(e, option)}
       autoFocus={autoFocus}
       isDisabled={isDisabled}
-      data-test={option.labelKey ? t(option.labelKey, option.labelKind) : option.label}
+      data-test={
+        option.labelKey
+          ? t(option.labelKey, option.labelKind)
+          : typeof option.label === 'string'
+          ? option.label
+          : undefined
+      }
       data-test-action={option.labelKey ? t(option.labelKey, option.labelKind) : option.label}
       icon={option.icon}
     >

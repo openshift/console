@@ -98,8 +98,8 @@ test.describe('Quotas', { tag: ['@admin'] }, () => {
     const listPage = new ListPage(page);
 
     await nav.navigateToAdministration('ResourceQuotas');
-    await listPage.selectProject('All Projects');
-    await listPage.waitForListLoad();
+    await listPage.selectAllProjects();
+    await listPage.waitForTableLoad();
     await listPage.filterByName(quotaName);
     await expect(listPage.getCell(quotaName)).toBeVisible();
   });
@@ -110,8 +110,8 @@ test.describe('Quotas', { tag: ['@admin'] }, () => {
     const details = new DetailsPage(page);
 
     await nav.navigateToAdministration('ResourceQuotas');
-    await listPage.selectProject('All Projects');
-    await listPage.waitForListLoad();
+    await listPage.selectAllProjects();
+    await listPage.waitForTableLoad();
     await listPage.filterByName(clusterQuotaName);
     await expect(listPage.getCell(clusterQuotaName)).toBeVisible();
 
@@ -130,7 +130,7 @@ test.describe('Quotas', { tag: ['@admin'] }, () => {
 
     await nav.navigateToAdministration('ResourceQuotas');
     await listPage.selectProject(namespace);
-    await listPage.waitForListLoad();
+    await listPage.waitForTableLoad();
     await listPage.filterByName(quotaName);
     await expect(listPage.getCell(quotaName)).toBeVisible();
   });
@@ -142,7 +142,7 @@ test.describe('Quotas', { tag: ['@admin'] }, () => {
 
     await nav.navigateToAdministration('ResourceQuotas');
     await listPage.selectProject(namespace);
-    await listPage.waitForListLoad();
+    await listPage.waitForTableLoad();
     await listPage.filterByName(clusterQuotaName);
     await expect(listPage.getCell(clusterQuotaName)).toBeVisible();
 

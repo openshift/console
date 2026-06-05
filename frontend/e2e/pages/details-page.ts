@@ -14,7 +14,11 @@ export class DetailsPage extends BasePage {
 
   async clickPageAction(actionName: string): Promise<void> {
     await this.robustClick(this.page.getByTestId('actions-menu-button'));
-    await this.robustClick(this.page.getByTestId(actionName));
+    const action = this.page
+      .getByTestId(actionName)
+      .or(this.page.locator(`[data-test-action="${actionName}"]`))
+      .first();
+    await this.robustClick(action);
   }
 
   getBreadcrumb(index: number): Locator {
