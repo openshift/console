@@ -38,6 +38,7 @@ type oidcConfig struct {
 	issuerURL              string
 	logoutRedirectOverride string
 	clientID               string
+	consoleBaseAddress     string
 	cookiePath             string
 	secureCookies          bool
 	constructOAuth2Config  oauth2ConfigConstructor
@@ -146,7 +147,10 @@ func (o *oidcAuth) logout(w http.ResponseWriter, r *http.Request) {
 
 // logoutRedirectURLWithIDTokenHint builds the logout redirect URL with the
 // id_token_hint query parameter appended, per the OIDC RP-Initiated Logout spec.
-// It uses a non-refreshing session lookup to avoid hitting the IdP token endpoint.
+// Returns empty when the session or id_token is unavailable — the caller should
+// fall back to 204 so the frontend uses the static logout redirect instead of
+// navigating to the IdP logout endpoint without a hint (which would cause a
+// redirect loop via post_logout_redirect_uri).
 func (o *oidcAuth) logoutRedirectURLWithIDTokenHint(w http.ResponseWriter, r *http.Request) string {
 	baseURL := o.LogoutRedirectURL()
 	if baseURL == "" {
@@ -156,22 +160,28 @@ func (o *oidcAuth) logoutRedirectURLWithIDTokenHint(w http.ResponseWriter, r *ht
 	ls, err := o.sessions.GetSession(w, r)
 	if err != nil || ls == nil {
 		klog.V(4).Infof("could not retrieve session for id_token_hint: %v", err)
-		return baseURL
+		return ""
 	}
 
 	idToken := ls.AccessToken()
 	if idToken == "" {
-		return baseURL
+		return ""
 	}
 
 	parsed, err := url.Parse(baseURL)
 	if err != nil {
 		klog.Errorf("failed to parse logout redirect URL: %v", err)
-		return baseURL
+		return ""
 	}
 
 	q := parsed.Query()
 	q.Set("id_token_hint", idToken)
+	if !q.Has("client_id") && o.clientID != "" {
+		q.Set("client_id", o.clientID)
+	}
+	if !q.Has("post_logout_redirect_uri") && o.consoleBaseAddress != "" {
+		q.Set("post_logout_redirect_uri", o.consoleBaseAddress)
+	}
 	parsed.RawQuery = q.Encode()
 	return parsed.String()
 }

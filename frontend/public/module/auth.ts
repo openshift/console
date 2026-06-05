@@ -178,8 +178,11 @@ export const authSvc = {
     }
   },
 
-  // Handle 401 responses with redirect loop detection
-  handle401: (next) => {
+  // Handle 401 responses with redirect loop detection.
+  // Wrapped in _.once so that only the first 401 per page load triggers the
+  // flow — the SPA fires many API calls concurrently and each would otherwise
+  // increment the redirect counter past MAX_AUTH_REDIRECTS within a single load.
+  handle401: _.once((next) => {
     const redirectCount = incrementAuthRedirectCount();
 
     // If we've exceeded the max redirects, redirect to the error page
@@ -204,7 +207,7 @@ export const authSvc = {
 
     // Proceed with normal logout flow
     authSvc.logout(next);
-  },
+  }),
 
   // Reset redirect counter (called on successful k8s requests)
   resetRedirectCount: () => {

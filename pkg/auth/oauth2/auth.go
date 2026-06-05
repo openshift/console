@@ -28,6 +28,7 @@ import (
 const (
 	stateCookieName   = "login-state"
 	errorOAuth        = "oauth_error"
+	stateLength       = 32 // hex-encoded 16 random bytes
 	errorLoginState   = "login_state_error"
 	errorCookie       = "cookie_error"
 	errorInternal     = "internal_error"
@@ -107,6 +108,7 @@ type Config struct {
 	LogoutRedirectOverride string // overrides the OIDC provider's front-channel logout URL
 	IssuerCA               string
 	RedirectURL            string
+	ConsoleBaseAddress     string // used as post_logout_redirect_uri in OIDC RP-Initiated Logout
 	ClientID               string
 	ClientSecret           string
 	Scope                  []string
@@ -200,6 +202,7 @@ func NewOAuth2Authenticator(ctx context.Context, config *Config) (*OAuth2Authent
 		issuerURL:              c.IssuerURL,
 		logoutRedirectOverride: c.LogoutRedirectOverride,
 		clientID:               c.ClientID,
+		consoleBaseAddress:     c.ConsoleBaseAddress,
 		cookiePath:             c.CookiePath,
 		secureCookies:          c.SecureCookies,
 		constructOAuth2Config:  a.oauth2ConfigConstructor,
@@ -287,10 +290,12 @@ func (a *OAuth2Authenticator) LoginFunc(w http.ResponseWriter, r *http.Request) 
 	state := hex.EncodeToString(randData[:])
 
 	cookie := http.Cookie{
-		Name:     stateCookieName,
+		Name:     stateCookieName + "-" + state[:8],
 		Value:    state,
 		HttpOnly: true,
 		Secure:   a.secureCookies,
+		Path:     "/auth",
+		MaxAge:   300,
 	}
 	http.SetCookie(w, &cookie)
 	http.Redirect(w, r, a.oauth2Config().AuthCodeURL(state), http.StatusSeeOther)
@@ -321,11 +326,20 @@ func (a *OAuth2Authenticator) CallbackFunc(fn func(loginInfo sessions.LoginJSON,
 			return
 		}
 
-		cookieState, err := r.Cookie(stateCookieName)
-		if err != nil {
-			klog.Errorf("failed to parse state cookie: %v", err)
-			a.redirectAuthError(w, errorMissingState)
-			return
+		// Look up the per-state cookie for this login flow.
+		var cookieState *http.Cookie
+		if len(urlState) == stateLength {
+			cookieState, _ = r.Cookie(stateCookieName + "-" + urlState[:8])
+		}
+		if cookieState == nil {
+			// Fall back to legacy single cookie for rolling-update compat.
+			var cookieErr error
+			cookieState, cookieErr = r.Cookie(stateCookieName)
+			if cookieErr != nil {
+				klog.Errorf("failed to parse state cookie: %v", cookieErr)
+				a.redirectAuthError(w, errorMissingState)
+				return
+			}
 		}
 
 		// Lack of both `error` and `code` indicates some other redirect with no params.
@@ -341,10 +355,12 @@ func (a *OAuth2Authenticator) CallbackFunc(fn func(loginInfo sessions.LoginJSON,
 		}
 
 		if urlState != cookieState.Value {
-			klog.Error("state in url does not match State cookie")
+			klog.Errorf("state in url does not match state cookie %s", cookieState.Name)
 			a.redirectAuthError(w, errorInvalidState)
 			return
 		}
+		http.SetCookie(w, &http.Cookie{Name: cookieState.Name, Path: "/auth", MaxAge: -1})
+
 		ctx := oidc.ClientContext(r.Context(), a.clientFunc())
 		oauthConfig := a.oauth2Config()
 		token, err := oauthConfig.Exchange(ctx, code)

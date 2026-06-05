@@ -600,12 +600,12 @@ func Test_oidcAuth_logout(t *testing.T) {
 			wantJSON:               false,
 		},
 		{
-			name:                   "no session, returns JSON with base URL (no id_token_hint)",
+			name:                   "no session, returns 204",
 			logoutRedirectOverride: "https://keycloak.example.com/logout?client_id=console",
 			initSession:            false,
-			wantStatus:             http.StatusOK,
+			wantStatus:             http.StatusNoContent,
 			wantIDTokenHint:        false,
-			wantJSON:               true,
+			wantJSON:               false,
 		},
 	}
 
@@ -692,17 +692,21 @@ func Test_oidcAuth_logoutRedirectURLWithIDTokenHint(t *testing.T) {
 	defer closePort()
 
 	tests := []struct {
-		name                   string
-		logoutRedirectOverride string
-		initSession            bool
-		wantEmpty              bool
-		wantIDTokenHint        bool
+		name                      string
+		logoutRedirectOverride    string
+		consoleBaseAddress        string
+		initSession               bool
+		wantEmpty                 bool
+		wantIDTokenHint           bool
+		wantClientID              string
+		wantPostLogoutRedirectURI string
 	}{
 		{
 			name:                   "appends id_token_hint when session and redirect URL exist",
 			logoutRedirectOverride: "https://keycloak.example.com/logout?client_id=console",
 			initSession:            true,
 			wantIDTokenHint:        true,
+			wantClientID:           "console",
 		},
 		{
 			name:                   "returns empty when no redirect URL configured",
@@ -711,16 +715,43 @@ func Test_oidcAuth_logoutRedirectURLWithIDTokenHint(t *testing.T) {
 			wantEmpty:              true,
 		},
 		{
-			name:                   "returns base URL without hint when no session",
+			name:                   "returns empty when no session",
 			logoutRedirectOverride: "https://keycloak.example.com/logout?client_id=console",
 			initSession:            false,
-			wantIDTokenHint:        false,
+			wantEmpty:              true,
 		},
 		{
-			name:                   "preserves existing query parameters",
-			logoutRedirectOverride: "https://keycloak.example.com/logout?client_id=console&post_logout_redirect_uri=https%3A%2F%2Fconsole.example.com",
-			initSession:            true,
-			wantIDTokenHint:        true,
+			name:                      "preserves existing query parameters",
+			logoutRedirectOverride:    "https://keycloak.example.com/logout?client_id=console&post_logout_redirect_uri=https%3A%2F%2Fconsole.example.com",
+			initSession:               true,
+			wantIDTokenHint:           true,
+			wantClientID:              "console",
+			wantPostLogoutRedirectURI: "https://console.example.com",
+		},
+		{
+			name:                      "adds client_id and post_logout_redirect_uri when not present",
+			logoutRedirectOverride:    "https://keycloak.example.com/logout",
+			consoleBaseAddress:        "https://console.example.com",
+			initSession:               true,
+			wantIDTokenHint:           true,
+			wantClientID:              testClientID,
+			wantPostLogoutRedirectURI: "https://console.example.com",
+		},
+		{
+			name:                      "does not overwrite existing client_id or post_logout_redirect_uri",
+			logoutRedirectOverride:    "https://keycloak.example.com/logout?client_id=original&post_logout_redirect_uri=https%3A%2F%2Foriginal.example.com",
+			consoleBaseAddress:        "https://console.example.com",
+			initSession:               true,
+			wantIDTokenHint:           true,
+			wantClientID:              "original",
+			wantPostLogoutRedirectURI: "https://original.example.com",
+		},
+		{
+			name:                   "returns empty without session even with consoleBaseAddress",
+			logoutRedirectOverride: "https://keycloak.example.com/logout",
+			consoleBaseAddress:     "https://console.example.com",
+			initSession:            false,
+			wantEmpty:              true,
 		},
 	}
 
@@ -736,6 +767,7 @@ func Test_oidcAuth_logoutRedirectURLWithIDTokenHint(t *testing.T) {
 					issuerURL:              providerURL.String(),
 					logoutRedirectOverride: tt.logoutRedirectOverride,
 					clientID:               testClientID,
+					consoleBaseAddress:     tt.consoleBaseAddress,
 					secureCookies:          true,
 					constructOAuth2Config:  testOAuth2ConfigConstructor,
 				},
@@ -788,14 +820,19 @@ func Test_oidcAuth_logoutRedirectURLWithIDTokenHint(t *testing.T) {
 				require.Empty(t, parsed.Query().Get("id_token_hint"))
 			}
 
+			if tt.wantClientID != "" {
+				require.Equal(t, tt.wantClientID, parsed.Query().Get("client_id"))
+			}
+
+			if tt.wantPostLogoutRedirectURI != "" {
+				require.Equal(t, tt.wantPostLogoutRedirectURI, parsed.Query().Get("post_logout_redirect_uri"))
+			}
+
 			if tt.logoutRedirectOverride != "" {
 				expectedBase, err := url.Parse(tt.logoutRedirectOverride)
 				require.NoError(t, err)
 				require.Equal(t, expectedBase.Host, parsed.Host)
 				require.Equal(t, expectedBase.Path, parsed.Path)
-				for key, vals := range expectedBase.Query() {
-					require.Equal(t, vals, parsed.Query()[key], "original query param %q should be preserved", key)
-				}
 			}
 		})
 	}

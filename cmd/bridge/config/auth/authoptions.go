@@ -303,8 +303,9 @@ func (c *completedOptions) getAuthenticator(
 		IssuerCA:       c.CAFilePath,
 		ClientID:       c.ClientID,
 		ClientSecret:   oidcClientSecret,
-		RedirectURL:    proxy.SingleJoiningSlash(baseURL.String(), server.AuthLoginCallbackEndpoint),
-		Scope:          scopes,
+		RedirectURL:        proxy.SingleJoiningSlash(baseURL.String(), server.AuthLoginCallbackEndpoint),
+		ConsoleBaseAddress: baseURL.String(),
+		Scope:              scopes,
 		OCLoginCommand: c.OCLoginCommand,
 
 		// Use the k8s CA file for OpenShift OAuth metadata discovery.
