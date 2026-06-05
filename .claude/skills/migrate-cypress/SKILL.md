@@ -44,7 +44,6 @@ Migrated tests go under `e2e/tests/<package>/` based on their source package:
 | `packages/knative-plugin/integration-tests/`             | `knative`          | `e2e/tests/knative/`        |
 | `packages/operator-lifecycle-manager/integration-tests/` | `olm`              | `e2e/tests/olm/`            |
 | `packages/topology/integration-tests/`                   | `topology`         | `e2e/tests/topology/`       |
-| `packages/shipwright-plugin/integration-tests/`          | `shipwright`       | `e2e/tests/shipwright/`     |
 | `packages/webterminal-plugin/integration-tests/`         | `webterminal`      | `e2e/tests/webterminal/`    |
 | `packages/console-telemetry-plugin/integration-tests/`   | `telemetry`        | `e2e/tests/telemetry/`      |
 
