@@ -301,6 +301,32 @@ export const PodStatus: FC<PodStatusProps> = ({ pod }) => {
     );
   }
   if (
+    (status === 'CreateContainerError' || status === 'CreateContainerConfigError') &&
+    containerStatusStateWaiting
+  ) {
+    return (
+      <PodStatusPopover
+        headerContent={t('public~Container creation failed')}
+        bodyContent={containerStatusStateWaiting.state?.waiting?.message || ''}
+        footerContent={
+          <Content>
+            <Content component={ContentVariants.p}>
+              {t(
+                'public~This error indicates that the container could not be created. Common causes include missing ConfigMaps, Secrets, or volume mounts, and invalid security contexts.',
+              )}
+            </Content>
+            <Content component={ContentVariants.p}>
+              <Link to={`${resourcePath('Pod', pod.metadata.name, pod.metadata.namespace)}/events`}>
+                {t('public~View events')}
+              </Link>
+            </Content>
+          </Content>
+        }
+        status={status}
+      />
+    );
+  }
+  if (
     (status === 'CrashLoopBackOff' || status === 'ErrImagePull' || status === 'ImagePullBackOff') &&
     containerStatusStateWaiting
   ) {
@@ -505,6 +531,10 @@ export const PodList: FC<PodListProps> = ({
       {
         value: 'CrashLoopBackOff',
         label: t('public~CrashLoopBackOff'),
+      },
+      {
+        value: 'CreateContainerError',
+        label: t('public~CreateContainerError'),
       },
       // Use title "Completed" to match what appears in the status column for the pod.
       // The pod phase is "Succeeded," but the container state is "Completed."

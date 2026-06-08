@@ -78,6 +78,8 @@ const Status: FC<StatusProps> = ({ status, title, children, iconOnly, noTooltip,
 
     case 'ContainerCannotRun':
     case 'CrashLoopBackOff':
+    case 'CreateContainerConfigError':
+    case 'CreateContainerError':
     case 'Critical':
     case 'ErrImagePull':
     case 'Error':

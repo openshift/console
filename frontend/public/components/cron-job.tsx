@@ -67,6 +67,7 @@ const getPodFilters = (t: TFunction): RowFilter<PodKind>[] => [
       { id: 'Pending', title: t('public~Pending') },
       { id: 'Terminating', title: t('public~Terminating') },
       { id: 'CrashLoopBackOff', title: t('public~CrashLoopBackOff') },
+      { id: 'CreateContainerError', title: t('public~CreateContainerError') },
       // Use title "Completed" to match what appears in the status column for the pod.
       // The pod phase is "Succeeded," but the container state is "Completed."
       { id: 'Succeeded', title: t('public~Completed') },
