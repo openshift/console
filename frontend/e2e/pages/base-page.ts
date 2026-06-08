@@ -1,14 +1,20 @@
 import type { Locator, Page } from '@playwright/test';
 
 export async function getEditorContent(page: Page): Promise<string> {
+  await page.waitForFunction(() => (window as any).monaco?.editor?.getModels()?.[0], {
+    timeout: 10_000,
+  });
   return page.evaluate(() => {
-    return (window as any).monaco?.editor?.getModels()?.[0]?.getValue() ?? '';
+    return (window as any).monaco.editor.getModels()[0].getValue();
   });
 }
 
 export async function setEditorContent(page: Page, content: string): Promise<void> {
+  await page.waitForFunction(() => (window as any).monaco?.editor?.getModels()?.[0], {
+    timeout: 10_000,
+  });
   await page.evaluate((text) => {
-    (window as any).monaco?.editor?.getModels()?.[0]?.setValue(text);
+    (window as any).monaco.editor.getModels()[0].setValue(text);
   }, content);
 }
 

@@ -114,7 +114,7 @@ export function createCleanupFixture(testName: string): CleanupFixture {
         apiGroup,
         apiVersion,
         plural,
-        type: type || `Cluster:${plural}`,
+        type: type || plural,
       });
     },
 

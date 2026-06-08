@@ -378,6 +378,97 @@ export default class KubernetesClient {
     } as any);
   }
 
+  async createConfigMap(
+    name: string,
+    namespace: string,
+    data: Record<string, string> = {},
+  ): Promise<void> {
+    await this.k8sApi.createNamespacedConfigMap({
+      namespace,
+      body: { apiVersion: 'v1', kind: 'ConfigMap', metadata: { name, namespace }, data },
+    });
+  }
+
+  async createSecret(
+    name: string,
+    namespace: string,
+    data: Record<string, string> = {},
+  ): Promise<void> {
+    await this.k8sApi.createNamespacedSecret({
+      namespace,
+      body: { apiVersion: 'v1', kind: 'Secret', metadata: { name, namespace }, data },
+    });
+  }
+
+  async mergePatchResource(apiPath: string, patch: object): Promise<void> {
+    const opts: https.RequestOptions = {};
+    this.kubeConfig.applyToHTTPSOptions(opts);
+    const cluster = this.kubeConfig.getCurrentCluster();
+    const url = new URL(apiPath, cluster?.server);
+    const body = JSON.stringify(patch);
+    const proxyUrl = KubernetesClient.getProxyUrl();
+    const agent = proxyUrl ? KubernetesClient.createProxyAgent(proxyUrl) : undefined;
+    await new Promise<void>((resolve, reject) => {
+      const req = https.request(
+        {
+          hostname: url.hostname,
+          port: url.port || 443,
+          path: url.pathname,
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/merge-patch+json',
+            'Content-Length': Buffer.byteLength(body),
+            ...opts.headers,
+          },
+          rejectUnauthorized: false,
+          ca: opts.ca,
+          cert: opts.cert,
+          key: opts.key,
+          agent,
+        },
+        (res) => {
+          let data = '';
+          res.on('data', (chunk) => (data += chunk));
+          res.on('end', () => {
+            if (res.statusCode && res.statusCode >= 200 && res.statusCode < 300) {
+              resolve();
+            } else {
+              reject(new Error(`Patch failed: ${res.statusCode} ${data}`));
+            }
+          });
+        },
+      );
+      req.setTimeout(30_000, () => {
+        req.destroy(new Error('mergePatchResource request timed out after 30s'));
+      });
+      req.on('error', reject);
+      req.write(body);
+      req.end();
+    });
+  }
+
+  async annotateConfigMap(
+    name: string,
+    namespace: string,
+    annotations: Record<string, string | null>,
+  ): Promise<void> {
+    await this.mergePatchResource(
+      `/api/v1/namespaces/${namespace}/configmaps/${name}`,
+      { metadata: { annotations } },
+    );
+  }
+
+  async labelConfigMap(
+    name: string,
+    namespace: string,
+    labels: Record<string, string | null>,
+  ): Promise<void> {
+    await this.mergePatchResource(
+      `/api/v1/namespaces/${namespace}/configmaps/${name}`,
+      { metadata: { labels } },
+    );
+  }
+
   async deleteConfigMap(name: string, namespace: string): Promise<void> {
     try {
       await this.k8sApi.deleteNamespacedConfigMap({ name, namespace });

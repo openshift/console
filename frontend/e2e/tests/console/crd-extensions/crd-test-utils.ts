@@ -1,4 +1,6 @@
-import { Page, expect } from '@playwright/test';
+import type { Page } from '@playwright/test';
+
+import { expect } from '../../../fixtures';
 import jsYaml from 'js-yaml';
 import KubernetesClient from '../../../clients/kubernetes-client';
 import { getEditorContent, setEditorContent } from '../../../pages/base-page';

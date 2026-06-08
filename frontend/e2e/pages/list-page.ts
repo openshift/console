@@ -9,31 +9,36 @@ export class ListPage extends BasePage {
     '[data-ouia-component-id="DataViewFilters"]',
   );
   private readonly namespaceDropdown = this.page.getByTestId('namespace-bar-dropdown');
+  private readonly legacyResourceRows = this.page.locator('[data-test-rows="resource-row"]');
+  private readonly legacyNameFilter = this.page.getByTestId('name-filter-input');
+  private readonly createButton = this.page.getByTestId('item-create');
 
   async waitForListLoad(): Promise<void> {
     await this.waitForLoadingComplete();
-    await this.dataViewTable.or(this.page.getByTestId('page-heading')).first().waitFor({
-      state: 'visible',
-    });
+    await this.page
+      .getByTestId('page-heading')
+      .waitFor({ state: 'visible', timeout: 60_000 });
   }
 
   async waitForTableLoad(): Promise<void> {
     await this.waitForLoadingComplete();
-    await this.dataViewTable.waitFor({ state: 'visible', timeout: 60_000 });
+    await this.dataViewTable
+      .or(this.legacyResourceRows.first())
+      .first()
+      .waitFor({ state: 'visible', timeout: 60_000 });
   }
 
   async filterByName(name: string): Promise<void> {
-    const filterInput = this.nameFilterInput;
-    if (await filterInput.isVisible({ timeout: 3_000 }).catch(() => false)) {
-      await filterInput.fill(name);
-      return;
-    }
-    await this.dataViewFilters.waitFor({ state: 'visible', timeout: 60_000 });
     const filterToggle = this.dataViewFilters.locator('.pf-v6-c-menu-toggle').first();
     await this.robustClick(filterToggle);
     await this.page.locator('.pf-v6-c-menu__list-item', { hasText: 'Name' }).click();
-    await filterInput.waitFor({ state: 'visible' });
-    await filterInput.fill(name);
+    await this.nameFilterInput.waitFor({ state: 'visible' });
+    await this.nameFilterInput.fill(name);
+  }
+
+  async legacyFilterByName(name: string): Promise<void> {
+    await this.legacyNameFilter.clear();
+    await this.legacyNameFilter.fill(name);
   }
 
   getCell(resourceName: string, cellName = 'name'): Locator {
@@ -43,6 +48,56 @@ export class ListPage extends BasePage {
   async clickRowByName(resourceName: string): Promise<void> {
     const link = this.getCell(resourceName).locator('a').first();
     await this.robustClick(link);
+  }
+
+  async legacyClickRowByName(resourceName: string): Promise<void> {
+    const link = this.page.locator(`a[data-test-id="${resourceName}"]`);
+    await this.robustClick(link);
+  }
+
+  getNamespaceDropdown(): Locator {
+    return this.namespaceDropdown;
+  }
+
+  getDataViewTable(): Locator {
+    return this.dataViewTable;
+  }
+
+  getLegacyResourceRows(): Locator {
+    return this.legacyResourceRows;
+  }
+
+  getCreateButton(): Locator {
+    return this.createButton;
+  }
+
+  async clickCreateYAMLButton(): Promise<void> {
+    await this.robustClick(this.createButton);
+  }
+
+  async clickCreateYAMLDropdownButton(): Promise<void> {
+    await this.robustClick(this.createButton);
+    const yamlMenuItem = this.page.locator('[data-test-dropdown-menu="yaml"]');
+    if ((await yamlMenuItem.count()) > 0) {
+      await this.robustClick(yamlMenuItem);
+    }
+  }
+
+  async clickKebabAction(resourceName: string, actionName: string): Promise<void> {
+    const cell = this.getCell(resourceName);
+    const row = cell.locator('xpath=ancestor::tr');
+    const kebab = row.getByTestId('kebab-button');
+    await this.robustClick(kebab);
+    await this.robustClick(this.page.getByTestId(actionName));
+  }
+
+  async legacyClickKebabAction(resourceName: string, actionName: string): Promise<void> {
+    const row = this.legacyResourceRows
+      .filter({ hasText: resourceName })
+      .first();
+    const kebab = row.getByTestId('kebab-button');
+    await this.robustClick(kebab);
+    await this.robustClick(this.page.getByTestId(actionName));
   }
 
   async filterByCheckbox(filterName: string, checkboxLabel: string): Promise<void> {
@@ -61,9 +116,25 @@ export class ListPage extends BasePage {
     await this.robustClick(checkboxFilter);
   }
 
+  async clickFirstLinkInFirstRow(): Promise<void> {
+    const link = this.page.locator('[data-test^="data-view-cell-"]').first().locator('a').first();
+    await this.robustClick(link);
+  }
+
+  async getFirstCellText(): Promise<string> {
+    const link = this.page.locator('[data-test^="data-view-cell-"]').first().locator('a').first();
+    return (await link.textContent()) ?? '';
+  }
+
   async selectProject(projectName: string): Promise<void> {
     const dropdownButton = this.namespaceDropdown.getByRole('button');
     await this.robustClick(dropdownButton);
+
+    const systemSwitch = this.page.getByTestId('showSystemSwitch');
+    if ((await systemSwitch.count()) > 0 && !(await systemSwitch.isChecked())) {
+      await systemSwitch.check();
+    }
+
     const searchInput = this.page.getByRole('searchbox', { name: 'Select project...' });
     await searchInput.fill(projectName);
     const item = this.page.getByRole('menuitem', { name: projectName, exact: true });
