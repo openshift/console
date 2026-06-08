@@ -117,6 +117,69 @@ func TestOLMHandler_catalogdMetasHandler(t *testing.T) {
 	})
 }
 
+func TestOLMHandler_lifecycleHandler(t *testing.T) {
+	t.Run("should reject invalid catalogNamespace", func(t *testing.T) {
+		c := cache.New(5*time.Minute, 10*time.Minute)
+		service := NewCatalogService(&http.Client{}, nil, c)
+		handler := NewOLMHandler("", nil, service)
+
+		req := httptest.NewRequest("GET", "/api/olm/lifecycle/evil.attacker.com/redhat-operators/test-operator", nil)
+		rr := httptest.NewRecorder()
+		handler.ServeHTTP(rr, req)
+
+		assert.Equal(t, http.StatusBadRequest, rr.Code)
+		assert.Contains(t, rr.Body.String(), "invalid catalogNamespace")
+	})
+
+	t.Run("should reject catalogNamespace with dots", func(t *testing.T) {
+		c := cache.New(5*time.Minute, 10*time.Minute)
+		service := NewCatalogService(&http.Client{}, nil, c)
+		handler := NewOLMHandler("", nil, service)
+
+		req := httptest.NewRequest("GET", "/api/olm/lifecycle/my.namespace/redhat-operators/test-operator", nil)
+		rr := httptest.NewRecorder()
+		handler.ServeHTTP(rr, req)
+
+		assert.Equal(t, http.StatusBadRequest, rr.Code)
+	})
+
+	t.Run("should reject invalid catalogName with uppercase", func(t *testing.T) {
+		c := cache.New(5*time.Minute, 10*time.Minute)
+		service := NewCatalogService(&http.Client{}, nil, c)
+		handler := NewOLMHandler("", nil, service)
+
+		req := httptest.NewRequest("GET", "/api/olm/lifecycle/openshift-marketplace/HAS-CAPS/test-operator", nil)
+		rr := httptest.NewRecorder()
+		handler.ServeHTTP(rr, req)
+
+		assert.Equal(t, http.StatusBadRequest, rr.Code)
+	})
+
+	t.Run("should reject non-GET methods", func(t *testing.T) {
+		c := cache.New(5*time.Minute, 10*time.Minute)
+		service := NewCatalogService(&http.Client{}, nil, c)
+		handler := NewOLMHandler("", nil, service)
+
+		req := httptest.NewRequest("POST", "/api/olm/lifecycle/openshift-marketplace/redhat-operators/test-operator", nil)
+		rr := httptest.NewRecorder()
+		handler.ServeHTTP(rr, req)
+
+		assert.Equal(t, http.StatusMethodNotAllowed, rr.Code)
+	})
+
+	t.Run("should return 404 when URL does not match pattern", func(t *testing.T) {
+		c := cache.New(5*time.Minute, 10*time.Minute)
+		service := NewCatalogService(&http.Client{}, nil, c)
+		handler := NewOLMHandler("", nil, service)
+
+		req := httptest.NewRequest("GET", "/api/olm/lifecycle/openshift-marketplace/redhat-operators", nil)
+		rr := httptest.NewRecorder()
+		handler.ServeHTTP(rr, req)
+
+		assert.Equal(t, http.StatusNotFound, rr.Code)
+	})
+}
+
 func TestOLMHandler_catalogIconHandler(t *testing.T) {
 	t.Run("should return icon when found in cache", func(t *testing.T) {
 		c := cache.New(5*time.Minute, 10*time.Minute)

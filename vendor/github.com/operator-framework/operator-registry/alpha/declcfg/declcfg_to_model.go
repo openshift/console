@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/blang/semver/v4"
+	"go.podman.io/image/v5/docker/reference"
 	"k8s.io/apimachinery/pkg/util/sets"
 	"k8s.io/apimachinery/pkg/util/validation"
 
@@ -128,11 +129,29 @@ func ConvertToModel(cfg DeclarativeConfig) (model.Model, error) {
 			return nil, fmt.Errorf("package %q does not match %q property %q", b.Package, property.TypePackage, props.Packages[0].PackageName)
 		}
 
+		if err := validateImagePullSpec(b.Image, "package %q bundle %q image", b.Package, b.Name); err != nil {
+			return nil, err
+		}
+		for i, rel := range b.RelatedImages {
+			if err := validateImagePullSpec(rel.Image, "package %q bundle %q relatedImages[%d].image", b.Package, b.Name, i); err != nil {
+				return nil, err
+			}
+		}
+
 		// Parse version from the package property.
 		rawVersion := props.Packages[0].Version
 		ver, err := semver.Parse(rawVersion)
 		if err != nil {
 			return nil, fmt.Errorf("error parsing bundle %q version %q: %v", b.Name, rawVersion, err)
+		}
+
+		// Parse release version from the package property.
+		var relver model.Release
+		if props.Packages[0].Release != "" {
+			relver, err = model.NewRelease(props.Packages[0].Release)
+			if err != nil {
+				return nil, fmt.Errorf("error parsing bundle %q release version %q: %v", b.Name, props.Packages[0].Release, err)
+			}
 		}
 
 		channelDefinedEntries[b.Package] = channelDefinedEntries[b.Package].Delete(b.Name)
@@ -147,6 +166,8 @@ func ConvertToModel(cfg DeclarativeConfig) (model.Model, error) {
 				mb.Objects = b.Objects
 				mb.PropertiesP = props
 				mb.Version = ver
+				// TODO: Jordan: follow-up will evolve the internal types for more consistent use of VersionRelease
+				mb.Release = semver.Version{Pre: relver}
 			}
 		}
 		if !found {
@@ -178,7 +199,6 @@ func ConvertToModel(cfg DeclarativeConfig) (model.Model, error) {
 	deprecationsByPackage := sets.New[string]()
 
 	for i, deprecation := range cfg.Deprecations {
-
 		// no need to validate schema, since it could not be unmarshaled if missing/invalid
 
 		if deprecation.Package == "" {
@@ -246,6 +266,7 @@ func ConvertToModel(cfg DeclarativeConfig) (model.Model, error) {
 }
 
 func relatedImagesToModelRelatedImages(in []RelatedImage) []model.RelatedImage {
+	// nolint:prealloc
 	var out []model.RelatedImage
 	for _, p := range in {
 		out = append(out, model.RelatedImage{
@@ -254,4 +275,16 @@ func relatedImagesToModelRelatedImages(in []RelatedImage) []model.RelatedImage {
 		})
 	}
 	return out
+}
+
+// validateImagePullSpec checks that a non-empty image pull spec is valid
+// Empty pull specs are not validated.
+func validateImagePullSpec(pullSpec, errFormat string, errArgs ...interface{}) error {
+	if pullSpec == "" {
+		return nil
+	}
+	if _, err := reference.ParseNormalizedNamed(pullSpec); err != nil {
+		return fmt.Errorf(errFormat+": invalid image pull spec %q: %w", append(errArgs, pullSpec, err)...)
+	}
+	return nil
 }

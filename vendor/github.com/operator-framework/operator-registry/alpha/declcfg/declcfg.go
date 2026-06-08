@@ -5,15 +5,26 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strings"
 
-	prettyunmarshaler "github.com/operator-framework/operator-registry/pkg/prettyunmarshaler"
-
+	"github.com/blang/semver/v4"
 	"golang.org/x/text/cases"
 	utilerrors "k8s.io/apimachinery/pkg/util/errors"
 	"k8s.io/apimachinery/pkg/util/sets"
 
+	"github.com/operator-framework/operator-registry/alpha/model"
 	"github.com/operator-framework/operator-registry/alpha/property"
+	prettyunmarshaler "github.com/operator-framework/operator-registry/pkg/prettyunmarshaler"
+	"github.com/operator-framework/operator-registry/pkg/registry"
 )
+
+// Re-export VersionRelease/Release types/functions from model package to make it possible for users to only include this package and avoid import cycles
+type (
+	Release        = model.Release
+	VersionRelease = model.VersionRelease
+)
+
+var NewRelease = model.NewRelease
 
 const (
 	SchemaPackage     = "olm.package"
@@ -206,4 +217,125 @@ func (destination *DeclarativeConfig) Merge(src *DeclarativeConfig) {
 	destination.Bundles = append(destination.Bundles, src.Bundles...)
 	destination.Others = append(destination.Others, src.Others...)
 	destination.Deprecations = append(destination.Deprecations, src.Deprecations...)
+}
+
+// usesLegacyReleaseVersion returns true if the bundle's CSV contains an olm.substitutesFor annotation.
+// It checks three possible sources in order:
+// 1. CsvJSON field
+// 2. olm.csv.metadata property
+// 3. olm.bundle.object property containing a CSV
+// Returns false if no substitutesFor annotation is found.
+// NB: this can only return true for registry+v1 bundles which always have a CSV
+func (b *Bundle) usesLegacyReleaseVersion() bool {
+	const substitutesForAnnotationKey = "olm.substitutesFor"
+
+	// Path 1: Check CsvJSON field if present
+	if b.CsvJSON != "" {
+		var csv registry.ClusterServiceVersion
+		if err := json.Unmarshal([]byte(b.CsvJSON), &csv); err == nil {
+			return csv.GetSubstitutesFor() != ""
+		}
+		// On error, fall through to check other sources
+	}
+
+	// Path 2 & 3: Check properties
+	for _, prop := range b.Properties {
+		switch prop.Type {
+		case property.TypeCSVMetadata:
+			var csvMeta property.CSVMetadata
+			if err := json.Unmarshal(prop.Value, &csvMeta); err != nil {
+				continue
+			}
+			if csvMeta.Annotations != nil {
+				if substitutes, ok := csvMeta.Annotations[substitutesForAnnotationKey]; ok && substitutes != "" {
+					return true
+				}
+			}
+
+		case property.TypeBundleObject:
+			var bundleObj property.BundleObject
+			if err := json.Unmarshal(prop.Value, &bundleObj); err != nil {
+				continue
+			}
+			var csv registry.ClusterServiceVersion
+			if err := json.Unmarshal(bundleObj.Data, &csv); err == nil {
+				return csv.GetSubstitutesFor() != ""
+			}
+		}
+	}
+
+	return false
+}
+
+// order by version, then
+// release, if present
+func (b *Bundle) Compare(other *Bundle) int {
+	if b.Name == other.Name {
+		return 0
+	}
+	avr, err := b.VersionRelease()
+	if err != nil {
+		return 0
+	}
+	otherVr, err := other.VersionRelease()
+	if err != nil {
+		return 0
+	}
+	return avr.Compare(otherVr)
+}
+
+// constructs a VersionRelease from the olm.package property of the bundle
+// this handles the cases where the property is present, missing, or duplicated
+// if a release field is present in the property, it is used as-is
+// if it is NOT present in the property, but the version field contains build metadata,
+// we attempt to convert the build metadata into a release and strip the build metadata from the version.
+// This is to support bundles that use the legacy approach of encoding release information in the build metadata field of the version
+func (b *Bundle) VersionRelease() (*VersionRelease, error) {
+	var (
+		vr *VersionRelease
+	)
+	// loop over all properties, and do not break if we find a package property, in order to check for duplicates
+	for _, prop := range b.Properties {
+		switch prop.Type {
+		case property.TypePackage:
+			var p property.Package
+
+			// if we encounter more than one olm.package property, return an error
+			if vr != nil {
+				return nil, fmt.Errorf("must be exactly one property of type %q", SchemaPackage)
+			}
+
+			if err := json.Unmarshal(prop.Value, &p); err != nil {
+				return nil, fmt.Errorf("unable to unmarshal \"olm.package\" property for bundle %q: %v", b.Name, err)
+			}
+			pv, err := semver.Parse(p.Version)
+			if err != nil {
+				return nil, fmt.Errorf("invalid semver version %q in \"olm.package\" property for bundle %q: %v", p.Version, b.Name, err)
+			}
+			pr, err := NewRelease(p.Release)
+			if err != nil {
+				return nil, fmt.Errorf("invalid release %q in \"olm.package\" property for bundle %q: %v", p.Release, b.Name, err)
+			}
+			vr = &VersionRelease{
+				Version: pv,
+				Release: pr,
+			}
+		}
+	}
+	if vr == nil {
+		return nil, fmt.Errorf("no \"olm.package\" property found for bundle %q", b.Name)
+	}
+
+	// if the bundle's release isn't provided, see if we can use the legacy build metadata release approach to identify a release
+	// if successful, remove the build metadata from the version. Only attempt for bundles using legacy release versioning.
+	if len(vr.Release) == 0 && vr.Version.Build != nil && b.usesLegacyReleaseVersion() {
+		newrel, err := NewRelease(strings.Join(vr.Version.Build, "."))
+		if err != nil {
+			return nil, fmt.Errorf("unable to convert build metadata to release for bundle %q: %v", b.Name, err)
+		}
+		vr.Release = newrel
+		vr.Version.Build = nil
+	}
+
+	return vr, nil
 }
