@@ -18,11 +18,16 @@ describe('Source secrets', () => {
   });
 
   beforeEach(() => {
+    // ensure the test project is selected to avoid flakes
+    cy.visit(`/k8s/cluster/projects/${testName}`);
     cy.visit(`/k8s/ns/${testName}/secrets/`);
     secrets.clickCreateSecretDropdownButton('source');
   });
 
   afterEach(() => {
+    cy.exec(`oc delete secret -n ${testName} ${basicSourceSecretName} ${sshSourceSecretName}`, {
+      failOnNonZeroExit: false,
+    });
     checkErrors();
   });
 
@@ -37,6 +42,7 @@ describe('Source secrets', () => {
     cy.byTestID('secret-username').type(basicSourceSecretUsername);
     cy.byTestID('secret-password').type(basicSourceSecretPassword);
     secrets.save();
+    cy.byTestID('loading-indicator').should('not.exist');
     secrets.detailsPageIsLoaded(basicSourceSecretName);
 
     cy.log('Verify secret');
@@ -47,11 +53,16 @@ describe('Source secrets', () => {
 
     cy.log('Edit secret');
     detailsPage.clickPageActionFromDropdown('Edit Secret');
+    // Wait for form to load and hydrate with current values
+    cy.byLegacyTestID('resource-title').contains('Edit source secret');
+    cy.byTestID('secret-username').should('have.value', basicSourceSecretUsername);
+    cy.byTestID('secret-password').should('have.value', basicSourceSecretPassword);
     cy.byTestID('secret-username').clear();
     cy.byTestID('secret-username').type(basicSourceSecretUsernameUpdated);
     cy.byTestID('secret-password').clear();
     cy.byTestID('secret-password').type(basicSourceSecretPasswordUpdated);
     secrets.save();
+    cy.byTestID('loading-indicator').should('not.exist');
 
     cy.log('Verify edit');
     secrets.detailsPageIsLoaded(basicSourceSecretName);
@@ -72,23 +83,28 @@ describe('Source secrets', () => {
     cy.byTestDropDownMenu('kubernetes.io/ssh-auth').click();
     cy.byLegacyTestID('file-input-textarea').type(sshSourceSecretSSHKey);
     secrets.save();
+    cy.byTestID('loading-indicator').should('not.exist');
     secrets.detailsPageIsLoaded(sshSourceSecretName);
 
     cy.log('Verify secret');
     secrets.checkSecret({
-      'ssh-privatekey': `${sshSourceSecretSSHKey}\n`,
+      'ssh-privatekey': sshSourceSecretSSHKey,
     });
 
     cy.log('Edit secret');
     detailsPage.clickPageActionFromDropdown('Edit Secret');
+    // Wait for form to load and hydrate with current values
+    cy.byLegacyTestID('resource-title').contains('Edit source secret');
+    cy.byLegacyTestID('file-input-textarea').should('contain.value', sshSourceSecretSSHKey);
     cy.byLegacyTestID('file-input-textarea').clear();
     cy.byLegacyTestID('file-input-textarea').type(sshSourceSecretSSHKeUpdated);
     secrets.save();
+    cy.byTestID('loading-indicator').should('not.exist');
 
     cy.log('Verify edit');
     secrets.detailsPageIsLoaded(sshSourceSecretName);
     secrets.checkSecret({
-      'ssh-privatekey': `${sshSourceSecretSSHKeUpdated}\n`,
+      'ssh-privatekey': sshSourceSecretSSHKeUpdated,
     });
 
     cy.log('Delete secret');
