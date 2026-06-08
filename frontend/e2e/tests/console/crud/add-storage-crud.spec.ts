@@ -80,12 +80,8 @@ test.describe('Add storage for workloads', { tag: ['@admin'] }, () => {
       });
 
       await test.step('Verify storage is attached', async () => {
-        await expect(
-          page.locator(`[data-test-volume-name-for="${pvcName}"]`),
-        ).toHaveText(pvcName);
-        await expect(
-          page.locator(`[data-test-mount-path-for="${pvcName}"]`),
-        ).toHaveText(mountPath);
+        await expect(page.getByTestId(`volume-name-${pvcName}`)).toHaveText(pvcName);
+        await expect(page.getByTestId(`mount-path-${pvcName}`)).toHaveText(mountPath);
       });
     });
   }

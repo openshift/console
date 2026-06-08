@@ -1,6 +1,7 @@
 import type { Page } from '@playwright/test';
-import { expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
+
+import { expect } from '../fixtures';
 import type { Result } from 'axe-core';
 
 const INCLUDED_IMPACTS = new Set(['serious', 'critical']);

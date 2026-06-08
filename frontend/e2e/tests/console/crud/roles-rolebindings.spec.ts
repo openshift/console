@@ -8,6 +8,7 @@ import { Navigation } from '../../../pages/navigation';
 import { RoleBindingPage } from '../../../pages/role-binding-page';
 
 test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
+  test.describe.configure({ mode: 'serial' });
   let namespace: string;
   let roleName: string;
   let clusterRoleName: string;
@@ -169,7 +170,7 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
 
     await nav.navigateToUserManagement('Roles');
     await listPage.waitForListLoad();
-    await listPage.selectProject('All Projects');
+    await listPage.selectAllProjects();
     await listPage.waitForListLoad();
     await listPage.filterByCheckbox('Role', 'cluster');
     await listPage.filterByName(clusterRoleName);
@@ -196,7 +197,7 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
 
       await nav.navigateToUserManagement(rolesOrBindings);
       await listPage.waitForListLoad();
-      await listPage.selectProject('All Projects');
+      await listPage.selectAllProjects();
       await listPage.waitForListLoad();
       await listPage.filterByCheckbox(
         rolesOrBindings === 'Roles' ? 'Role' : 'Kind',
@@ -252,7 +253,7 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
 
       await nav.navigateToUserManagement(rolesOrBindings);
       await listPage.waitForListLoad();
-      await listPage.selectProject('All Projects');
+      await listPage.selectAllProjects();
       await listPage.waitForListLoad();
       await listPage.filterByCheckbox(
         rolesOrBindings === 'Roles' ? 'Role' : 'Kind',

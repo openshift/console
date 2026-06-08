@@ -63,7 +63,8 @@ test.describe('Quotas', { tag: ['@admin'] }, () => {
     });
 
     await test.step('Navigate back to list', async () => {
-      await page.locator('[data-test-id="breadcrumb-link-0"]').click();
+      const details2 = new DetailsPage(page);
+      await details2.getBreadcrumb(0).click();
       const listPage2 = new ListPage(page);
       await listPage2.waitForListLoad();
     });
@@ -120,9 +121,7 @@ test.describe('Quotas', { tag: ['@admin'] }, () => {
     await test.step('Verify breadcrumb', async () => {
       await listPage.clickRowByName(clusterQuotaName);
       await details.waitForPageLoad();
-      await expect(
-        page.locator('[data-test-id="breadcrumb-link-0"]'),
-      ).toContainText('ClusterResourceQuota');
+      await expect(details.getBreadcrumb(0)).toContainText('ClusterResourceQuota');
     });
   });
 
@@ -151,9 +150,7 @@ test.describe('Quotas', { tag: ['@admin'] }, () => {
     await test.step('Verify breadcrumb', async () => {
       await listPage.clickRowByName(clusterQuotaName);
       await details.waitForPageLoad();
-      await expect(
-        page.locator('[data-test-id="breadcrumb-link-0"]'),
-      ).toContainText('AppliedClusterResourceQuota');
+      await expect(details.getBreadcrumb(0)).toContainText('AppliedClusterResourceQuota');
     });
   });
 });
