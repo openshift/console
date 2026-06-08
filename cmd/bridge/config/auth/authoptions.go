@@ -298,15 +298,15 @@ func (c *completedOptions) getAuthenticator(
 
 	// Config for logging into console.
 	oidcClientConfig := &oauth2.Config{
-		AuthSource:     authSource,
-		IssuerURL:      userAuthOIDCIssuerURL.String(),
-		IssuerCA:       c.CAFilePath,
-		ClientID:       c.ClientID,
-		ClientSecret:   oidcClientSecret,
+		AuthSource:         authSource,
+		IssuerURL:          userAuthOIDCIssuerURL.String(),
+		IssuerCA:           c.CAFilePath,
+		ClientID:           c.ClientID,
+		ClientSecret:       oidcClientSecret,
 		RedirectURL:        proxy.SingleJoiningSlash(baseURL.String(), server.AuthLoginCallbackEndpoint),
 		ConsoleBaseAddress: baseURL.String(),
 		Scope:              scopes,
-		OCLoginCommand: c.OCLoginCommand,
+		OCLoginCommand:     c.OCLoginCommand,
 
 		// Use the k8s CA file for OpenShift OAuth metadata discovery.
 		// This might be different than IssuerCA.
