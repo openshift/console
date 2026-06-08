@@ -90,20 +90,22 @@ export type SubPageComponentProps<R extends K8sResourceCommon = NodeKind> = {
 export type NodeSubNavTab = Extension<
   'console.node/sub-nav-tab',
   {
-    /** Which detail tab to add the sub-tab to. Supported values are 'configuration' and 'health'. */
-    parentTab: 'configuration' | 'health';
+    /** Which detail tab to add the sub-tab to. Valid values: configuration, health, workload. */
+    parentTab: 'configuration' | 'health' | 'workload';
     /**
-     * The page that displays as a subtab. It takes tab name as name and priority of the tab.
+     * The page that displays as a sub-tab. It requires the tab name and its corresponding priority.
      *
      * Notes:
      * The UI displays tabs in priority order from highest to lowest. Default built-in tab priorities include:
-     * - **configuration:**
+     * - **configuration**:
      *   - storage/70
      *   - machine/50
      *   - high-availability/30
-     * - **health:**
+     * - **health**:
      *   - performance/70
      *   - logs/30
+     * - **workload**:
+     *   - pods/30
      */
     page: {
       /**
