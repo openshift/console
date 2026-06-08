@@ -228,7 +228,7 @@ const SearchPage_: FC<SearchProps> = (props) => {
     const model = modelFor(item);
     // API discovery happens asynchronously. Avoid runtime errors if the model hasn't loaded.
     if (!model) {
-      return '';
+      return kindForReference(item);
     }
     const { labelPlural, labelPluralKey, apiVersion, apiGroup } = model;
     return (
