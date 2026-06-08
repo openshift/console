@@ -6,7 +6,7 @@ import { InventoryStatusGroup } from './status-group';
 
 const POD_PHASE_GROUP_MAPPING = {
   [InventoryStatusGroup.NOT_MAPPED]: ['Running', 'Succeeded'],
-  [InventoryStatusGroup.ERROR]: ['CrashLoopBackOff', 'Failed'],
+  [InventoryStatusGroup.ERROR]: ['CrashLoopBackOff', 'CreateContainerError', 'Failed'],
   [InventoryStatusGroup.PROGRESS]: ['Terminating', 'Pending'],
   [InventoryStatusGroup.WARN]: ['Unknown'],
 };

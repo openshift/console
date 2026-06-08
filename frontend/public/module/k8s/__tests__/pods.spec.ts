@@ -1,4 +1,4 @@
-import { podPhase, podReadiness, podRestarts } from '../../k8s/pods';
+import { podPhase, podPhaseFilterReducer, podReadiness, podRestarts } from '../../k8s/pods';
 
 describe('podPhase', () => {
   let pod;
@@ -56,6 +56,72 @@ describe('podPhase', () => {
     ];
     const phase: string = podPhase(pod);
     expect(phase).toEqual('Unschedulable');
+  });
+});
+
+describe('podPhaseFilterReducer', () => {
+  const basePod = { metadata: {}, status: {} };
+
+  it('returns Terminating for pods with a deletion timestamp', () => {
+    const pod = { ...basePod, metadata: { deletionTimestamp: '2024-01-01T00:00:00Z' } };
+    expect(podPhaseFilterReducer(pod as any)).toEqual('Terminating');
+  });
+
+  it('returns CrashLoopBackOff when container is in CrashLoopBackOff', () => {
+    const pod = {
+      ...basePod,
+      status: {
+        phase: 'Running',
+        containerStatuses: [{ state: { waiting: { reason: 'CrashLoopBackOff' } } }],
+      },
+    };
+    expect(podPhaseFilterReducer(pod as any)).toEqual('CrashLoopBackOff');
+  });
+
+  it('returns CreateContainerError when container has CreateContainerError', () => {
+    const pod = {
+      ...basePod,
+      status: {
+        phase: 'Pending',
+        containerStatuses: [
+          { state: { waiting: { reason: 'CreateContainerError', message: 'setup failed' } } },
+        ],
+      },
+    };
+    expect(podPhaseFilterReducer(pod as any)).toEqual('CreateContainerError');
+  });
+
+  it('returns CreateContainerError when container has CreateContainerConfigError', () => {
+    const pod = {
+      ...basePod,
+      status: {
+        phase: 'Pending',
+        containerStatuses: [
+          {
+            state: {
+              waiting: {
+                reason: 'CreateContainerConfigError',
+                message: 'configmap "missing" not found',
+              },
+            },
+          },
+        ],
+      },
+    };
+    expect(podPhaseFilterReducer(pod as any)).toEqual('CreateContainerError');
+  });
+
+  it('falls back to pod.status.phase for unrecognized statuses', () => {
+    const pod = {
+      ...basePod,
+      status: { phase: 'Running' },
+    };
+    expect(podPhaseFilterReducer(pod as any)).toEqual('Running');
+  });
+
+  it('returns Unknown when pod has no status.phase', () => {
+    const pod = { ...basePod, status: { phase: undefined } };
+    expect(podPhaseFilterReducer(pod as any)).toEqual('Unknown');
   });
 });
 

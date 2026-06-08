@@ -264,11 +264,17 @@ export const podPhase = (pod: PodKind): PodPhase => {
 
 export const podPhaseFilterReducer = (pod: PodKind): PodPhase => {
   const status = podPhase(pod);
+  if (!status) {
+    return _.get(pod, 'status.phase', 'Unknown');
+  }
   if (status === 'Terminating') {
     return status;
   }
   if (status.includes('CrashLoopBackOff')) {
     return 'CrashLoopBackOff';
+  }
+  if (status === 'CreateContainerError' || status === 'CreateContainerConfigError') {
+    return 'CreateContainerError';
   }
   return _.get(pod, 'status.phase', 'Unknown');
 };
