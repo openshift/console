@@ -6,10 +6,12 @@ import { DetailsPage } from '../../../pages/details-page';
 import { ListPage } from '../../../pages/list-page';
 import { Navigation } from '../../../pages/navigation';
 
-const quotaName = 'example-resource-quota';
-const clusterQuotaName = 'example-cluster-resource-quota';
+const testId = Date.now();
+const quotaName = `test-resource-quota-${testId}`;
+const clusterQuotaName = `test-cluster-resource-quota-${testId}`;
 
 test.describe('Quotas', { tag: ['@admin'] }, () => {
+  test.describe.configure({ mode: 'serial' });
   let namespace: string;
 
   test.beforeAll(async ({ k8sClient }) => {
