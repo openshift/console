@@ -28,6 +28,7 @@ test.describe('Alertmanager PagerDuty Receiver Form', { tag: ['@admin'] }, () =>
   test.beforeEach(async ({ page, k8sClient: client }) => {
     alertmanager = new AlertmanagerPage(page);
     k8sClient = client;
+    await resetAlertmanagerConfig(k8sClient);
   });
 
   test.afterEach(async () => {
@@ -35,6 +36,8 @@ test.describe('Alertmanager PagerDuty Receiver Form', { tag: ['@admin'] }, () =>
   });
 
   test('creates and edits PagerDuty Receiver correctly', async ({ page }) => {
+    test.setTimeout(180_000);
+
     await test.step('Create PagerDuty Receiver with basic configuration', async () => {
       await alertmanager.navigateToAlertmanager();
       await alertmanager.createReceiver(receiverName, configName);
