@@ -106,7 +106,7 @@
   "Create Event Sink": "Create Event Sink",
   "Tech Preview": "Tech Preview",
   "Community": "Community",
-  "Note: Some fields may not be represented in this form view. Please select \"YAML view\" for full control.": "Note: Some fields may not be represented in this form view. Please select \"YAML view\" for full control.",
+  "Some fields might not be displayed in this form view. Select \"YAML view\" to edit all fields.": "Some fields might not be displayed in this form view. Select \"YAML view\" to edit all fields.",
   "Broker cannot be created": "Broker cannot be created",
   "You do not have write access in this project.": "You do not have write access in this project.",
   "Create": "Create",

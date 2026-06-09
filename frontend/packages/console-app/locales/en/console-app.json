@@ -32,7 +32,7 @@
   "High contrast": "High contrast",
   "Enhances contrast between interface elements for readability.": "Enhances contrast between interface elements for readability.",
   "Perspective": "Perspective",
-  "If a perspective is not selected, the console defaults to the last viewed.": "If a perspective is not selected, the console defaults to the last viewed.",
+  "If you don't select a perspective, the console defaults to the last viewed.": "If you don't select a perspective, the console defaults to the last viewed.",
   "Project": "Project",
   "If a project is not selected, the console defaults to the last viewed.": "If a project is not selected, the console defaults to the last viewed.",
   "Create/Edit resource method": "Create/Edit resource method",

@@ -62,7 +62,7 @@ const EventSinkForm: FC<FormikProps<FormikValues> & OwnProps> = ({
             }
             isInline
             title={t(
-              'knative-plugin~Note: Some fields may not be represented in this form view. Please select "YAML view" for full control of object creation.',
+              'knative-plugin~Some fields might not be displayed in this form view. Select "YAML view" to edit all fields.',
             )}
             variant="info"
           />

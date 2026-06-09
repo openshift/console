@@ -41,7 +41,7 @@ export const PodTraffic: FC<PodTrafficProp> = ({ podName, namespace, tooltipFlag
           <Tooltip
             position="top"
             content={
-              receivingTraffic ? t('public~Receiving Traffic') : t('public~Not Receiving Traffic')
+              receivingTraffic ? t('public~Receiving traffic') : t('public~Not receiving traffic')
             }
           >
             {receivingTraffic ? <ConnectedIcon /> : <DisconnectedIcon />}

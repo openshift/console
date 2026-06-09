@@ -145,7 +145,7 @@ export const PodRing: FC<PodRingProps> = ({
                 return isNonScalable && clickCount >= 1 ? (
                   <Tooltip
                     content={t(
-                      'console-shared~This image is not intended to run with more than one replica. Scaling up may cause unexpected behavior.',
+                      'console-shared~This image is not intended to run with more than one replica. Scaling up is not supported and might cause issues.',
                     )}
                   >
                     {scaleUpButton}

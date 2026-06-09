@@ -235,7 +235,7 @@
   "Select {{item}}": "Select {{item}}",
   "Add {{item}}": "Add {{item}}",
   "Advanced configuration": "Advanced configuration",
-  "Note: Some fields may not be represented in this form. Please select \"YAML View\" for full control of object creation.": "Note: Some fields may not be represented in this form. Please select \"YAML View\" for full control of object creation.",
+  "Some fields might not be displayed in this form. Select \"YAML view\" to edit all fields.": "Some fields might not be displayed in this form. Select \"YAML view\" to edit all fields.",
   "No provided APIs defined": "No provided APIs defined",
   "This application was not properly installed or configured.": "This application was not properly installed or configured.",
   "No operands found": "No operands found",

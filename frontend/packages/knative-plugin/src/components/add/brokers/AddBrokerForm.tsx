@@ -95,7 +95,7 @@ const AddBrokerForm: FC<FormikProps<AddBrokerFormYamlValues> & AddBrokerFormProp
               }
               isInline
               title={t(
-                'knative-plugin~Note: Some fields may not be represented in this form view. Please select "YAML view" for full control.',
+                'knative-plugin~Some fields might not be displayed in this form view. Select "YAML view" to edit all fields.',
               )}
               variant="info"
             />

@@ -56,9 +56,7 @@ export const DynamicForm: FC<DynamicFormProps> = ({
         isInline
         className="co-alert co-break-word"
         variant="info"
-        title={t(
-          'console-shared~A form is not available for this resource. Please use the YAML view.',
-        )}
+        title={t('console-shared~A form is not available for this resource. Use the YAML view.')}
       />
     );
   }
@@ -69,7 +67,7 @@ export const DynamicForm: FC<DynamicFormProps> = ({
         className="co-alert co-break-word"
         variant="danger"
         title={t(
-          'console-shared~There is some issue in this form view. Please select "YAML view" for full control.',
+          'console-shared~There is an issue in this form view. Select "YAML view" for full control.',
         )}
       />
     );
@@ -83,7 +81,7 @@ export const DynamicForm: FC<DynamicFormProps> = ({
           className="co-alert co-break-word"
           variant="info"
           title={t(
-            'console-shared~Note: Some fields may not be represented in this form view. Please select "YAML view" for full control.',
+            'console-shared~Some fields might not be displayed in this form view. Select "YAML view" to edit all fields.',
           )}
         />
       )}

@@ -306,13 +306,13 @@ export const PodStatus: FC<PodStatusProps> = ({ pod }) => {
   ) {
     return (
       <PodStatusPopover
-        headerContent={t('public~Container creation failed')}
+        headerContent={t("public~Couldn't create container")}
         bodyContent={containerStatusStateWaiting.state?.waiting?.message || ''}
         footerContent={
           <Content>
             <Content component={ContentVariants.p}>
               {t(
-                'public~This error indicates that the container could not be created. Common causes include missing ConfigMaps, Secrets, or volume mounts, and invalid security contexts.',
+                "public~The container didn't start. Common causes include missing ConfigMaps, Secrets, or volume mounts, and invalid security contexts.",
               )}
             </Content>
             <Content component={ContentVariants.p}>
@@ -333,17 +333,17 @@ export const PodStatus: FC<PodStatusProps> = ({ pod }) => {
     let footerLinks: ReactNode;
     let headerTitle = '';
     if (status === 'CrashLoopBackOff') {
-      headerTitle = t('public~Pod crash loop back-off');
+      headerTitle = t('public~Pod crash loop backoff');
       const containers: ContainerSpec[] = pod.spec.containers;
       footerLinks = (
         <Content>
           <Content component={ContentVariants.p}>
             {t(
-              'public~CrashLoopBackOff indicates that the application within the container is failing to start properly.',
+              'public~CrashLoopBackOff indicates that the application in the container is repeatedly failing to start.',
             )}
           </Content>
           <Content component={ContentVariants.p}>
-            {t('public~To troubleshoot, view logs and events, then debug in terminal.')}
+            {t('public~To troubleshoot, view logs and events, or open a terminal session.')}
           </Content>
           <Content component={ContentVariants.p}>
             <Link to={`${resourcePath('Pod', pod.metadata.name, pod.metadata.namespace)}/logs`}>
