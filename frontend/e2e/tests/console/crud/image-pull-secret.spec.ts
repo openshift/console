@@ -12,7 +12,7 @@ test.describe('Image pull secret', { tag: ['@admin'] }, () => {
   });
 
   test.afterAll(async ({ k8sClient }) => {
-    await k8sClient.deleteNamespace(namespace).catch(() => {});
+    await k8sClient.deleteNamespace(namespace);
   });
 
   test('create image pull secret with whitespace-trimmed input values', async ({ page }) => {
@@ -27,12 +27,8 @@ test.describe('Image pull secret', { tag: ['@admin'] }, () => {
 
     await test.step('Navigate to Secrets and open Create Image Pull Secret form', async () => {
       await nav.navigateToWorkloads('Secrets');
-      await listPage.waitForListLoad();
       await listPage.selectProject(namespace);
-      await listPage.waitForListLoad();
-
-      await page.getByTestId('item-create').click();
-      await page.getByRole('menuitem', { name: 'Image pull secret' }).click();
+      await listPage.clickCreateDropdownItem('Image pull secret');
 
       await expect(page.getByRole('heading', { level: 1 })).toContainText(
         'Create image pull secret',

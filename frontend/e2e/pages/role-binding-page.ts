@@ -6,13 +6,13 @@ export class RoleBindingPage extends BasePage {
   private readonly roleDropdown = this.page.getByTestId('role-dropdown');
   private readonly subjectNameInput = this.page.getByTestId('subject-name');
   private readonly saveChangesButton = this.page.getByTestId('save-changes');
+
   async fillName(name: string): Promise<void> {
     await this.nameInput.fill(name);
   }
 
   private async fillSearchInput(text: string): Promise<void> {
     const input = this.page.getByTestId('console-select-search-input').locator('input');
-    await input.waitFor({ state: 'visible' });
     await input.fill(text);
   }
 
@@ -43,6 +43,9 @@ export class RoleBindingPage extends BasePage {
 
   async save(): Promise<void> {
     await this.robustClick(this.saveChangesButton);
-    await this.page.getByTestId('loading-indicator').waitFor({ state: 'detached' }).catch(() => {});
+    await this.page
+      .getByTestId('loading-indicator')
+      .waitFor({ state: 'detached', timeout: 5_000 })
+      .catch(() => {});
   }
 }

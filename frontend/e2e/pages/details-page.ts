@@ -34,8 +34,7 @@ export class DetailsPage extends BasePage {
    * Click a kebab menu action (assumes menu is already open)
    */
   async clickKebabAction(actionId: string): Promise<void> {
-    const action = this.page.getByTestId(actionId);
-    await this.robustClick(action);
+    await this.robustClick(this.page.getByTestId(actionId));
   }
 
   /**

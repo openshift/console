@@ -27,23 +27,19 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
 
   test.afterAll(async ({ k8sClient }) => {
     const deletions = [
-      k8sClient
-        .deleteClusterCustomResource(
-          'rbac.authorization.k8s.io',
-          'v1',
-          'clusterroles',
-          clusterRoleName,
-        )
-        .catch(() => {}),
-      k8sClient
-        .deleteClusterCustomResource(
-          'rbac.authorization.k8s.io',
-          'v1',
-          'clusterrolebindings',
-          clusterRoleBindingName,
-        )
-        .catch(() => {}),
-      k8sClient.deleteNamespace(namespace).catch(() => {}),
+      k8sClient.deleteClusterCustomResource(
+        'rbac.authorization.k8s.io',
+        'v1',
+        'clusterroles',
+        clusterRoleName,
+      ),
+      k8sClient.deleteClusterCustomResource(
+        'rbac.authorization.k8s.io',
+        'v1',
+        'clusterrolebindings',
+        clusterRoleBindingName,
+      ),
+      k8sClient.deleteNamespace(namespace),
     ];
     await Promise.all(deletions);
   });
@@ -59,7 +55,6 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
       await listPage.waitForListLoad();
 
       await page.getByTestId('item-create').click();
-      await page.getByTestId('resource-sidebar').waitFor({ state: 'visible' });
       await page.getByTestId('code-editor').waitFor({ state: 'visible' });
 
       const content = await getEditorContent(page);
@@ -82,7 +77,6 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
 
     await test.step('Create ClusterRole via YAML editor', async () => {
       await page.getByTestId('item-create').click();
-      await page.getByTestId('resource-sidebar').waitFor({ state: 'visible' });
       await page.getByTestId('code-editor').waitFor({ state: 'visible' });
 
       const content = await getEditorContent(page);

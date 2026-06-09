@@ -22,7 +22,7 @@ test.describe('Add storage for workloads', { tag: ['@admin'] }, () => {
   });
 
   test.afterAll(async ({ k8sClient }) => {
-    await k8sClient.deleteNamespace(namespace).catch(() => {});
+    await k8sClient.deleteNamespace(namespace);
   });
 
   for (const resourceType of workloadTypes) {
@@ -41,7 +41,6 @@ test.describe('Add storage for workloads', { tag: ['@admin'] }, () => {
             await yamlViewInput.click();
           }
 
-          await page.getByTestId('resource-sidebar').waitFor({ state: 'visible' });
           await page.getByTestId('code-editor').waitFor({ state: 'visible' });
 
           const content = await getEditorContent(page);
@@ -57,12 +56,13 @@ test.describe('Add storage for workloads', { tag: ['@admin'] }, () => {
           await setEditorContent(page, yaml.dump(parsed, { sortKeys: true }));
         } else {
           await page.goto(`/k8s/ns/${namespace}/${resourceType}/~new`);
-          await page.getByTestId('resource-sidebar').waitFor({ state: 'visible' });
           await page.getByTestId('code-editor').waitFor({ state: 'visible' });
         }
 
-        await page.getByTestId('save-changes').click();
-        await expect(page.getByTestId('yaml-error')).not.toBeAttached();
+        const saveButton = page.getByTestId('save-changes');
+        const yamlError = page.getByTestId('yaml-error');
+        await saveButton.click();
+        await expect(yamlError).not.toBeAttached();
       });
 
       await test.step('Add storage via Actions dropdown', async () => {
@@ -70,13 +70,15 @@ test.describe('Add storage for workloads', { tag: ['@admin'] }, () => {
         await details.waitForPageLoad();
         await details.clickPageAction('Add storage');
 
-        await page.getByTestId('claim-name').waitFor({ state: 'visible' });
         await page.getByTestId('Create new claim-radio-input').click();
         await page.getByTestId('pvc-name').fill(pvcName);
         await page.getByTestId('pvc-size').fill(pvcSize);
         await page.getByTestId('mount-path').fill(mountPath);
-        await page.getByTestId('save-changes').click();
-        await expect(page.getByTestId('yaml-error')).not.toBeAttached();
+
+        const saveButton = page.getByTestId('save-changes');
+        const yamlError = page.getByTestId('yaml-error');
+        await saveButton.click();
+        await expect(yamlError).not.toBeAttached();
       });
 
       await test.step('Verify storage is attached', async () => {

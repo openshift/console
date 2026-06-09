@@ -9,8 +9,8 @@ export class ListPage extends BasePage {
     '[data-ouia-component-id="DataViewFilters"]',
   );
   private readonly namespaceDropdown = this.page.getByTestId('namespace-bar-dropdown');
-  private readonly legacyResourceRows = this.page.locator('[data-test-rows="resource-row"]');
-  private readonly legacyNameFilter = this.page.getByTestId('name-filter-input');
+  private readonly resourceRows = this.page.getByTestId('resource-row');
+  private readonly nameFilter = this.page.getByTestId('name-filter-input');
   private readonly createButton = this.page.getByTestId('item-create');
 
   async waitForListLoad(): Promise<void> {
@@ -23,7 +23,7 @@ export class ListPage extends BasePage {
   async waitForTableLoad(): Promise<void> {
     await this.waitForLoadingComplete();
     await this.dataViewTable
-      .or(this.legacyResourceRows.first())
+      .or(this.resourceRows.first())
       .first()
       .waitFor({ state: 'visible', timeout: 60_000 });
   }
@@ -32,13 +32,11 @@ export class ListPage extends BasePage {
     const filterToggle = this.dataViewFilters.locator('.pf-v6-c-menu-toggle').first();
     await this.robustClick(filterToggle);
     await this.page.locator('.pf-v6-c-menu__list-item', { hasText: 'Name' }).click();
-    await this.nameFilterInput.waitFor({ state: 'visible' });
     await this.nameFilterInput.fill(name);
   }
 
-  async legacyFilterByName(name: string): Promise<void> {
-    await this.legacyNameFilter.clear();
-    await this.legacyNameFilter.fill(name);
+  async filterByNameInput(name: string): Promise<void> {
+    await this.nameFilter.fill(name);
   }
 
   getCell(resourceName: string, cellName = 'name'): Locator {
@@ -50,9 +48,8 @@ export class ListPage extends BasePage {
     await this.robustClick(link);
   }
 
-  async legacyClickRowByName(resourceName: string): Promise<void> {
-    const link = this.page.locator(`a[data-test-id="${resourceName}"]`);
-    await this.robustClick(link);
+  async clickRowByResourceName(resourceName: string): Promise<void> {
+    await this.robustClick(this.page.getByTestId(resourceName));
   }
 
   getNamespaceDropdown(): Locator {
@@ -63,21 +60,26 @@ export class ListPage extends BasePage {
     return this.dataViewTable;
   }
 
-  getLegacyResourceRows(): Locator {
-    return this.legacyResourceRows;
+  getResourceRows(): Locator {
+    return this.resourceRows;
   }
 
   getCreateButton(): Locator {
     return this.createButton;
   }
 
-  async clickCreateYAMLButton(): Promise<void> {
+  async clickCreateButton(): Promise<void> {
     await this.robustClick(this.createButton);
+  }
+
+  async clickCreateDropdownItem(itemName: string): Promise<void> {
+    await this.robustClick(this.createButton);
+    await this.page.getByRole('menuitem', { name: itemName }).click();
   }
 
   async clickCreateYAMLDropdownButton(): Promise<void> {
     await this.robustClick(this.createButton);
-    const yamlMenuItem = this.page.locator('[data-test-dropdown-menu="yaml"]');
+    const yamlMenuItem = this.page.getByTestId('dropdown-menu-yaml');
     if ((await yamlMenuItem.count()) > 0) {
       await this.robustClick(yamlMenuItem);
     }
@@ -91,8 +93,8 @@ export class ListPage extends BasePage {
     await this.robustClick(this.page.getByTestId(actionName));
   }
 
-  async legacyClickKebabAction(resourceName: string, actionName: string): Promise<void> {
-    const row = this.legacyResourceRows
+  async clickResourceRowKebabAction(resourceName: string, actionName: string): Promise<void> {
+    const row = this.resourceRows
       .filter({ hasText: resourceName })
       .first();
     const kebab = row.getByTestId('kebab-button');
@@ -139,7 +141,6 @@ export class ListPage extends BasePage {
     await searchInput.fill(projectName);
     const item = this.page.getByRole('menuitem', { name: projectName, exact: true });
     await this.robustClick(item);
-    await this.waitForLoadingComplete();
   }
 
   async selectAllProjects(): Promise<void> {
@@ -147,6 +148,5 @@ export class ListPage extends BasePage {
     await this.robustClick(dropdownButton);
     const item = this.page.getByRole('menuitem', { name: 'All Projects', exact: true });
     await this.robustClick(item);
-    await this.waitForLoadingComplete();
   }
 }
