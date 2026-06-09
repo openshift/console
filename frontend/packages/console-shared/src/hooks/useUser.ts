@@ -1,11 +1,20 @@
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getUser, getUserResource, setUserResource } from '@console/dynamic-plugin-sdk';
-import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { UserModel } from '@console/internal/models';
-import type { UserKind } from '@console/internal/module/k8s/types';
+import type { UserKind, WatchK8sResource } from '@console/internal/module/k8s/types';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
+
+const userWatchResource: WatchK8sResource = {
+  groupVersionKind: {
+    group: UserModel.apiGroup,
+    version: UserModel.apiVersion,
+    kind: UserModel.kind,
+  },
+  name: '~',
+};
 
 /**
  * Custom hook that provides centralized user data fetching and management.
@@ -25,9 +34,8 @@ export const useUser = () => {
   const userResource = useConsoleSelector(getUserResource);
 
   // Fetch user resource from k8s API
-  const [userResourceData, userResourceLoaded, userResourceError] = useK8sGet<UserKind>(
-    UserModel,
-    '~',
+  const [userResourceData, userResourceLoaded, userResourceError] = useK8sWatchResource<UserKind>(
+    userWatchResource,
   );
 
   // Update Redux when user resource is loaded

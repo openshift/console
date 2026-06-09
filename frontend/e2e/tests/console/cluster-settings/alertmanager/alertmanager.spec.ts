@@ -34,6 +34,7 @@ test.describe('Alertmanager', { tag: ['@admin'] }, () => {
   test.beforeEach(async ({ page, k8sClient: client }) => {
     alertmanager = new AlertmanagerPage(page);
     k8sClient = client;
+    await resetAlertmanagerConfig(k8sClient);
   });
 
   test.afterEach(async () => {

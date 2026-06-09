@@ -2,6 +2,9 @@ import type { FC, Provider as ProviderComponent, ReactNode } from 'react';
 import { createContext, Suspense, useContext, useEffect } from 'react';
 import type { LoadedAndResolvedExtension } from '@openshift/dynamic-plugin-sdk';
 import {
+  Button,
+  Content,
+  ContentVariants,
   Masthead,
   MastheadContent,
   MastheadMain,
@@ -10,6 +13,7 @@ import {
   PageSidebar,
   PageSidebarBody,
 } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import { createPath, useLocation } from 'react-router';
 import type { Perspective, ReduxReducer, ContextProvider } from '@console/dynamic-plugin-sdk';
 import {
@@ -52,29 +56,67 @@ const EnhancedProvider: FC<{
 
 const PF_BREAKPOINT_XL = 1200;
 
-/** Empty PatternFly Page shell shown while DetectContext is initializing. */
-export const PageSkeleton: FC<{ blame: string }> = ({ blame }) => (
-  <Page
-    isContentFilled
-    masthead={
-      <Masthead>
-        <MastheadMain />
-        <MastheadContent>
-          <div className="co-page-skeleton__masthead-spacer" />
-        </MastheadContent>
-      </Masthead>
-    }
-    sidebar={
-      <PageSidebar isSidebarOpen={window.innerWidth >= PF_BREAKPOINT_XL}>
-        <PageSidebarBody />
-      </PageSidebar>
-    }
-  >
-    <PageSection isFilled hasBodyWrapper={false}>
-      <LoadingBox blame={blame} />
-    </PageSection>
-  </Page>
-);
+const SlowLoadingMessage: FC<{ message: string }> = ({ message }) => {
+  const { t } = useTranslation('public');
+  return (
+    <Content className="co-page-skeleton__slow-msg pf-v6-u-text-align-center pf-v6-u-mt-lg">
+      <Content component={ContentVariants.p}>{message}</Content>
+      <Button
+        variant="link"
+        isInline
+        className="pf-v6-u-mt-sm"
+        onClick={() => window.location.reload()}
+      >
+        {t('Refresh')}
+      </Button>
+    </Content>
+  );
+};
+
+/**
+ * Empty PatternFly Page shell shown while DetectContext is initializing. Intended to
+ * only be rendered once at the start of page load
+ */
+const PageSkeleton: FC<{ blame: string }> = ({ blame }) => {
+  const { t } = useTranslation('public');
+
+  return (
+    <>
+      <div className="co-page-skeleton__auth-pending">
+        <LoadingBox blame={blame}>
+          <SlowLoadingMessage
+            message={t(
+              'Unable to connect to the server. This could be due to network or server issues.',
+            )}
+          />
+        </LoadingBox>
+      </div>
+      <Page
+        className="co-page-skeleton__authenticated"
+        isContentFilled
+        masthead={
+          <Masthead>
+            <MastheadMain />
+            <MastheadContent>
+              <div className="co-page-skeleton__masthead-spacer" />
+            </MastheadContent>
+          </Masthead>
+        }
+        sidebar={
+          <PageSidebar isSidebarOpen={window.innerWidth >= PF_BREAKPOINT_XL}>
+            <PageSidebarBody />
+          </PageSidebar>
+        }
+      >
+        <PageSection isFilled hasBodyWrapper={false}>
+          <LoadingBox blame={blame}>
+            <SlowLoadingMessage message={t('The console is taking longer than usual to load.')} />
+          </LoadingBox>
+        </PageSection>
+      </Page>
+    </>
+  );
+};
 
 /** Wraps children in plugin-provided context providers resolved by DetectContext. */
 export const ContextProviderExtensionWrapper: FC<{ children: ReactNode }> = ({ children }) => {

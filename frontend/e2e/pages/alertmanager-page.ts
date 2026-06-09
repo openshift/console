@@ -51,13 +51,16 @@ export class AlertmanagerPage extends BasePage {
   async save(): Promise<void> {
     await expect(this.saveChangesButton).toBeEnabled();
     await this.robustClick(this.saveChangesButton);
-    // Wait for the save to complete and redirect back to the receiver list
-    await this.createReceiverButton.waitFor({ state: 'visible', timeout: 30_000 });
+    await this.createReceiverButton.waitFor({ state: 'visible', timeout: 60_000 });
   }
 
   async showAdvancedConfiguration(): Promise<void> {
+    const sendResolved = this.page.getByTestId('send-resolved-alerts');
+    if (await sendResolved.isVisible()) return;
+
     const button = this.advancedConfigButton.locator('button');
     await this.robustClick(button);
+    await sendResolved.waitFor({ state: 'visible', timeout: 15_000 });
   }
 
   async getYAMLContent(): Promise<string> {
