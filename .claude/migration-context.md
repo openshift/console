@@ -500,7 +500,7 @@ private readonly resourceRows = this.page.getByTestId('resource-row');
 
 ## k8sClient Cleanup
 
-`KubernetesClient.deleteNamespace()` and `KubernetesClient.deleteCustomResource()` catch errors and call `isNotFound(err)` to silently swallow 404 "not found" responses. Do NOT wrap these cleanup calls in try/catch blocks. Note: `deleteClusterCustomResource` is not implemented in `KubernetesClient` — do not reference it.
+`KubernetesClient.deleteNamespace()`, `KubernetesClient.deleteCustomResource()`, and `KubernetesClient.deleteClusterCustomResource()` catch errors and call `isNotFound(err)` to silently swallow 404 "not found" responses. Do NOT wrap these cleanup calls in try/catch blocks.
 
 ```typescript
 // WRONG — unnecessary error handling
@@ -530,7 +530,7 @@ test.afterAll(async ({ k8sClient }) => {
 - **Never use `page.waitForTimeout()`** as a replacement for `cy.wait()`. Find the condition to wait for
 - **Never add `waitFor()` before an action** — `fill()`, `click()`, `check()`, etc. already auto-wait for actionability
 - **Never use legacy test attribute selectors** (`[data-test-rows="..."]`, `[data-test-id="..."]`, `[data-test-dropdown-menu="..."]`) — add `data-test` to the React source and use `getByTestId()`
-- **Never wrap k8sClient cleanup in try/catch** — `deleteNamespace` and `deleteCustomResource` already swallow 404s
+- **Never wrap k8sClient cleanup in try/catch** — `deleteNamespace`, `deleteCustomResource`, and `deleteClusterCustomResource` already swallow 404s
 - **Never prefix methods with `legacy`** — name for what it does, not its age
 - **Never put locators in spec files** when a page object exists or should exist
 - **Never rely on test order** — each `test()` must work independently.

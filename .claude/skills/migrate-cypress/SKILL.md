@@ -149,7 +149,7 @@ Example:
 - **No fixed waits** — replace `cy.wait(ms)` with condition-based waits or assertion timeouts
 - **No redundant `waitFor()`** — `fill()`, `click()`, `check()`, etc. auto-wait for actionability; only use `waitFor()` when waiting for state without acting on the element
 - **No shell commands** — replace `cy.exec('oc ...')` with `KubernetesClient`
-- **No try/catch in cleanup** — `k8sClient.deleteNamespace()` and `deleteCustomResource()` already swallow 404 errors
+- **No try/catch in cleanup** — `k8sClient.deleteNamespace()`, `deleteCustomResource()`, and `deleteClusterCustomResource()` already swallow 404 errors
 - **Add `data-test` to React source** — when the component only has legacy test attributes (`data-test-id`, `data-test-rows`, etc.), add `data-test` alongside and use `getByTestId()`
 - **Framework-first** — use existing page objects before creating new ones
 - **Correct layer** — locators in page objects, test scenarios in specs; common multi-step interactions belong in page object methods, not inline in specs
