@@ -170,7 +170,7 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
   // so that the i18n-parser can find them, and keep them in sync with the locale json file.
   // Changes made in this comment block take effect after `yarn i18n` is run.
   // const resources = [
-  //   t('console-app~Quick Starts'),
+  //   t('console-app~Quick starts'),
   //   t('console-app~No results found'),
   //   t('console-app~No results match the filter criteria. Remove filters or clear all filters to show results.'),
   //   t('console-app~Clear all filters'),

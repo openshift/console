@@ -112,7 +112,7 @@ const QuickStartConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
   const [saveStatus, setSaveStatus] = useState<SaveStatusProps>();
   const save = useDebounceCallback(() => {
     fireTelemetryEvent('Console cluster configuration changed', {
-      customize: 'Quick Starts',
+      customize: 'Quick starts',
       disabled,
     });
     setSaveStatus({ status: 'in-progress' });

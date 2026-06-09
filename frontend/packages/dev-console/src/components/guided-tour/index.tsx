@@ -66,8 +66,8 @@ const getGuidedTour = (): TourDataType => ({
     },
     {
       placement: 'bottom',
-      // t('devconsole~User Preferences')
-      heading: '%devconsole~User Preferences%',
+      // t('devconsole~User preferences')
+      heading: '%devconsole~User preferences%',
       content: userPreferencesTourText,
       selector: getSelector('tour-user-button'),
     },

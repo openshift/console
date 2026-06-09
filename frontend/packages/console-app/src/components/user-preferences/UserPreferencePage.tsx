@@ -130,11 +130,11 @@ const UserPreferencePage: FC = () => {
     <>
       <DocumentTitle>
         {activeTab
-          ? t('console-app~User Preferences {{activeTab}}', { activeTab })
-          : t('console-app~User Preferences')}
+          ? t('console-app~User preferences {{activeTab}}', { activeTab })
+          : t('console-app~User preferences')}
       </DocumentTitle>
       <PageHeading
-        title={t('console-app~User Preferences')}
+        title={t('console-app~User preferences')}
         helpText={t(
           'console-app~Set your individual preferences for the console experience. Any changes will be autosaved.',
         )}
