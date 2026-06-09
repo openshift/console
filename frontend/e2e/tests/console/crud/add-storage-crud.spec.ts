@@ -65,7 +65,6 @@ test.describe('Add storage for workloads', { tag: ['@admin'] }, () => {
 
       await test.step('Add storage via Actions dropdown', async () => {
         const details = new DetailsPage(page);
-        await details.waitForPageLoad();
         await details.clickPageAction('Add storage');
 
         await page.getByTestId('Create new claim-radio-input').click();

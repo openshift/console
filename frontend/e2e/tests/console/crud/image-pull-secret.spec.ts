@@ -55,7 +55,6 @@ test.describe('Image pull secret', { tag: ['@admin'] }, () => {
       await page.getByTestId('save-changes').click();
 
       const details = new DetailsPage(page);
-      await details.waitForPageLoad();
       await expect(details.getPageHeading()).toContainText(secretName);
     });
   });

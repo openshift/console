@@ -47,8 +47,6 @@ test.describe('Quotas', { tag: ['@admin'] }, () => {
       await page.getByTestId('save-changes').click();
       await expect(page.getByTestId('yaml-error')).not.toBeAttached();
 
-      const details = new DetailsPage(page);
-      await details.waitForPageLoad();
     });
 
     await test.step('Navigate back to list', async () => {
@@ -76,8 +74,6 @@ test.describe('Quotas', { tag: ['@admin'] }, () => {
       await page.getByTestId('save-changes').click();
       await expect(page.getByTestId('yaml-error')).not.toBeAttached();
 
-      const details = new DetailsPage(page);
-      await details.waitForPageLoad();
     });
   });
 
@@ -105,7 +101,7 @@ test.describe('Quotas', { tag: ['@admin'] }, () => {
 
     await test.step('Verify breadcrumb', async () => {
       await listPage.clickRowByName(clusterQuotaName);
-      await details.waitForPageLoad();
+
       await expect(details.getBreadcrumb(0)).toContainText('ClusterResourceQuota');
     });
   });
@@ -134,7 +130,7 @@ test.describe('Quotas', { tag: ['@admin'] }, () => {
 
     await test.step('Verify breadcrumb', async () => {
       await listPage.clickRowByName(clusterQuotaName);
-      await details.waitForPageLoad();
+
       await expect(details.getBreadcrumb(0)).toContainText('AppliedClusterResourceQuota');
     });
   });

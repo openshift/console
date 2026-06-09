@@ -1,6 +1,5 @@
 import type { Page } from '@playwright/test';
 import { test, expect } from '../../../fixtures';
-import { DetailsPage } from '../../../pages/details-page';
 import { testA11y } from '../../../utils/a11y';
 
 type RouteConfig = {
@@ -55,8 +54,7 @@ const routes: RouteConfig[] = [
   {
     path: '/api-resource/ns/default/core~v1~Pod',
     waitFor: async (page) => {
-      const details = new DetailsPage(page);
-      await details.waitForPageLoad();
+      await expect(page.getByTestId('page-heading')).toBeVisible();
     },
   },
   {
@@ -119,8 +117,7 @@ const routes: RouteConfig[] = [
   {
     path: '/k8s/ns/openshift-monitoring/monitoring.coreos.com~v1~Alertmanager/main',
     waitFor: async (page) => {
-      const details = new DetailsPage(page);
-      await details.waitForPageLoad();
+      await expect(page.getByTestId('resource-title')).toBeVisible();
     },
   },
   {

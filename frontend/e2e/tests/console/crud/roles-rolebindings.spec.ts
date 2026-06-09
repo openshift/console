@@ -60,9 +60,6 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
 
       await page.getByTestId('save-changes').click();
       await expect(page.getByTestId('yaml-error')).not.toBeAttached();
-
-      const details = new DetailsPage(page);
-      await details.waitForPageLoad();
     });
 
     await test.step('Navigate back to Roles list', async () => {
@@ -81,9 +78,6 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
 
       await page.getByTestId('save-changes').click();
       await expect(page.getByTestId('yaml-error')).not.toBeAttached();
-
-      const details = new DetailsPage(page);
-      await details.waitForPageLoad();
     });
   });
 
@@ -102,9 +96,6 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
       await rbPage.fillSubjectName('subject-name');
       await rbPage.save();
       await expect(page.getByTestId('yaml-error')).not.toBeAttached();
-
-      const details = new DetailsPage(page);
-      await details.waitForPageLoad();
     });
 
     await test.step('Create ClusterRoleBinding', async () => {
@@ -119,22 +110,17 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
       await rbPage.fillSubjectName('subject-name');
       await rbPage.save();
       await expect(page.getByTestId('yaml-error')).not.toBeAttached();
-
-      const details = new DetailsPage(page);
-      await details.waitForPageLoad();
     });
   });
 
   test('displays Resource names and Verbs columns in Role rules table', async ({ page }) => {
     const nav = new Navigation(page);
     const listPage = new ListPage(page);
-    const details = new DetailsPage(page);
 
     await nav.navigateToUserManagement('Roles');
     await listPage.selectProject(namespace);
     await listPage.filterByName(roleName);
     await listPage.clickRowByName(roleName);
-    await details.waitForPageLoad();
 
     await expect(page.locator('th', { hasText: 'Resource names' })).toBeVisible();
     await expect(page.locator('th', { hasText: 'Verbs' })).toBeVisible();
@@ -146,14 +132,12 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
   }) => {
     const nav = new Navigation(page);
     const listPage = new ListPage(page);
-    const details = new DetailsPage(page);
 
     await nav.navigateToUserManagement('Roles');
     await listPage.selectAllProjects();
     await listPage.filterByCheckbox('Role', 'cluster');
     await listPage.filterByName(clusterRoleName);
     await listPage.clickRowByName(clusterRoleName);
-    await details.waitForPageLoad();
 
     await expect(page.locator('th', { hasText: 'Resource names' })).toBeVisible();
     await expect(page.locator('th', { hasText: 'Verbs' })).toBeVisible();
@@ -181,7 +165,6 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
       );
       await listPage.filterByName(name);
       await listPage.clickRowByName(name);
-      await details.waitForPageLoad();
 
       await expect(namespaceDropdown).toContainText(namespace);
 
@@ -206,7 +189,6 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
       );
       await listPage.filterByName(name);
       await listPage.clickRowByName(name);
-      await details.waitForPageLoad();
 
       await expect(namespaceDropdown).toContainText(namespace);
 
@@ -231,7 +213,6 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
       );
       await listPage.filterByName(clusterName);
       await listPage.clickRowByName(clusterName);
-      await details.waitForPageLoad();
 
       await expect(namespaceDropdown).not.toBeAttached();
 
@@ -256,7 +237,6 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
       );
       await listPage.filterByName(clusterName);
       await listPage.clickRowByName(clusterName);
-      await details.waitForPageLoad();
 
       await expect(namespaceDropdown).not.toBeAttached();
 
