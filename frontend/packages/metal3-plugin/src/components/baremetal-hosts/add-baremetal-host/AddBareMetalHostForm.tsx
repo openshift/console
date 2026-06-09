@@ -40,7 +40,7 @@ const AddBareMetalHostForm: FC<AddBareMetalHostFormProps> = ({
         name="name"
         label={t('metal3-plugin~Name')}
         placeholder="openshift-worker"
-        helpText={t('metal3-plugin~Provide a unique name for the new Bare metal host.')}
+        helpText={t('metal3-plugin~Provide a unique name for the new BareMetalHost.')}
         required
         isDisabled={isEditing}
       />
@@ -136,7 +136,7 @@ const AddBareMetalHostForm: FC<AddBareMetalHostFormProps> = ({
         submitLabel={isEditing ? t('metal3-plugin~Save') : t('metal3-plugin~Create')}
         errorMessage={status && status.submitError}
         disableSubmit={isSubmitting || !dirty || !_.isEmpty(errors)}
-        infoTitle={t('metal3-plugin~Bare metal host has been updated')}
+        infoTitle={t('metal3-plugin~BareMetalHost has been updated')}
         infoMessage={t('metal3-plugin~Click reload to see the recent changes')}
         showAlert={showUpdated}
       />

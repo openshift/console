@@ -53,14 +53,14 @@ const BareMetalHostDisks: FC<BareMetalHostDisksProps> = ({ obj: host, loadError,
       <PaneBody>
         <Table
           data={disks}
-          aria-label="Bare metal host Disks"
+          aria-label="BareMetalHost Disks"
           Header={DisksTableHeader(t)}
           Row={DisksTableRow}
           loaded={loaded}
           loadError={
             loadError ||
             (loaded && !host
-              ? { message: t('metal3-plugin~Bare metal host is not available') }
+              ? { message: t('metal3-plugin~BareMetalHost is not available') }
               : undefined)
           }
           getRowProps={getRowProps}
