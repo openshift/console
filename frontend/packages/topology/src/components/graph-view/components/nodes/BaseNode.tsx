@@ -99,7 +99,7 @@ const BaseNodeComponent: FC<BaseNodeProps> = ({
           raiseLabelOnHover={false}
           {...rest}
         >
-          <g data-test-id="base-node-handler">
+          <g data-test-id="base-node-handler" data-test="base-node-handler">
             {icon && showDetails && (
               <>
                 <circle fill="var(--pf-t--color--white)" cx={cx} cy={cy} r={innerRadius + 6} />
