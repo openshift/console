@@ -142,7 +142,7 @@
     "properties": {
       "id": "dev-console.CatalogTypesConfiguration",
       "groupId": "developer",
-      "label": "%devconsole~Software catalog types%",
+      "label": "%devconsole~Software Catalog Types%",
       "description": "%devconsole~A list of software catalog types that are not shown to users.%",
       "field": {
         "type": "custom",
@@ -176,7 +176,7 @@
     "type": "dev-console.add/action-group",
     "properties": {
       "id": "developer-catalog",
-      "name": "%devconsole~Software catalog%",
+      "name": "%devconsole~Software Catalog%",
       "insertBefore": "serverless-function"
     }
   },
@@ -699,7 +699,7 @@
       "id": "developer-catalog",
       "perspective": "admin",
       "section": "ecosystem",
-      "name": "%devconsole~Software catalog%",
+      "name": "%devconsole~Software Catalog%",
       "href": "/catalog",
       "namespaced": true,
       "startsWith": ["catalog", "operatorhub"],

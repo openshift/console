@@ -55,7 +55,7 @@ const InstalledSoftwarePage: FC = () => {
   return (
     <>
       <NamespaceBar />
-      <MultiTabListPage title={t('olm-v1~Installed software')} pages={pages} />
+      <MultiTabListPage title={t('olm-v1~Installed Software')} pages={pages} />
     </>
   );
 };

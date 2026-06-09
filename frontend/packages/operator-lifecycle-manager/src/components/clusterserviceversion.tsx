@@ -630,7 +630,7 @@ const CSVListNoDataEmptyMsg = () => {
         <div>
           <Trans ns="olm">
             Discover and install Operators from the{' '}
-            <Link to="/catalog?catalogType=operator">Software catalog</Link>.
+            <Link to="/catalog?catalogType=operator">Software Catalog</Link>.
           </Trans>
         </div>
       )}
@@ -819,7 +819,7 @@ const ClusterServiceVersionList: FC<ClusterServiceVersionListProps> = ({
         data={filterOperators(data, allNamespaceActive)}
         loaded={loaded}
         {...rest}
-        aria-label={t('olm~Installed operators')}
+        aria-label={t('olm~Installed Operators')}
         Header={allNamespaceActive ? AllProjectsTableHeader : SingleProjectTableHeader}
         Row={InstalledOperatorTableRow}
         EmptyMsg={CSVListEmptyMsg}
@@ -877,12 +877,12 @@ export const ClusterServiceVersionsPage: FC<ClusterServiceVersionsPageProps> = (
     };
   }, [lifecycleEnabled, selectedColumns, t]);
 
-  const title = t('olm~Installed operators');
+  const title = t('olm~Installed Operators');
   const olmURL = getDocumentationURL(documentationURLs.operators);
   const helpText = (
     <>
       {t(
-        'olm~Installed operators are represented by ClusterServiceVersions within this Namespace.',
+        'olm~Installed Operators are represented by ClusterServiceVersions within this Namespace.',
       )}
       {!isManaged() && (
         <Trans ns="olm">
@@ -1451,7 +1451,7 @@ export const ClusterServiceVersionDetailsPage: FC = (props) => {
       customData={{ subscriptions, subscription, subscriptionsLoaded, subscriptionsLoadError }}
       breadcrumbsFor={() => [
         {
-          name: t('olm~Installed operators'),
+          name: t('olm~Installed Operators'),
           path: getBreadcrumbPath(params),
         },
         { name: t('olm~Operator details'), path: location.pathname },

@@ -101,7 +101,7 @@ const EditDefaultSourcesModal: FC<EditDefaultSourcesModalProps> = ({
           {Object.values(userSelectedDefaultSourceToggleState).includes(true) && (
             <Alert variant="warning" title={t('olm~Disable CatalogSource')} isInline>
               {t(
-                'olm~By disabling a default source, the operators it provides will no longer appear in Software catalog and any operator that has been installed from this source will no longer receive updates until the source is re-enabled. Disabling the source will also remove the corresponding OperatorSource and CatalogSource resources from the cluster.',
+                'olm~By disabling a default source, the operators it provides will no longer appear in Software Catalog and any operator that has been installed from this source will no longer receive updates until the source is re-enabled. Disabling the source will also remove the corresponding OperatorSource and CatalogSource resources from the cluster.',
               )}
             </Alert>
           )}

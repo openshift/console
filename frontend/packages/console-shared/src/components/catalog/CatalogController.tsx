@@ -117,7 +117,7 @@ export const CatalogController: FC<CatalogControllerProps> = ({
     });
     const crumbs = [
       {
-        name: t('console-shared~Software catalog'),
+        name: t('console-shared~Software Catalog'),
         path: `${pathname}?${params.toString()}`,
       },
     ];

@@ -232,7 +232,7 @@ This extension allows plugins to contribute a provider for a catalog item type. 
 
 ### Summary 
 
-This extension allows plugins to contribute a new type of catalog item. For example, a Helm plugin can define<br/>a new catalog item type as HelmCharts that it wants to contribute to the Software catalog.
+This extension allows plugins to contribute a new type of catalog item. For example, a Helm plugin can define<br/>a new catalog item type as HelmCharts that it wants to contribute to the Software Catalog.
 
 ### Properties
 
@@ -631,7 +631,7 @@ Adds new Console feature flag driven by the presence of a CRD on the cluster.
 
 ### Summary 
 
-This extension identifies a resource used to manage the configuration of the cluster.<br/>A link to the resource will be added to the Administration - Cluster settings - Configuration page.
+This extension identifies a resource used to manage the configuration of the cluster.<br/>A link to the resource will be added to the Administration - Cluster Settings - Configuration page.
 
 ### Properties
 

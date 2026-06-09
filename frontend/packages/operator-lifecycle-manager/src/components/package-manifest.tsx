@@ -144,7 +144,7 @@ export const PackageManifestsPage: FC<PackageManifestsPageProps> = (props) => {
   const helpText = (
     <Trans ns="olm">
       Catalogs are groups of Operators you can make available on the cluster. Use the{' '}
-      <Link to="/catalog?catalogType=operator">Software catalog</Link> to subscribe and grant
+      <Link to="/catalog?catalogType=operator">Software Catalog</Link> to subscribe and grant
       namespaces access to use installed Operators.
     </Trans>
   );

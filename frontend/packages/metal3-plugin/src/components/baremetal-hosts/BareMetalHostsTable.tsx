@@ -138,7 +138,7 @@ const BareMetalHostsTable: FC<BareMetalHostsTableProps> = (props) => {
     <Table
       {...props}
       defaultSortField="host.metadata.name"
-      aria-label={t('metal3-plugin~BareMetalHosts')}
+      aria-label={t('metal3-plugin~Bare Metal Hosts')}
       Header={HostsTableHeader(t)}
       Row={HostsTableRow}
       virtualize

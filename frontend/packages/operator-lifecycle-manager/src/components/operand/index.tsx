@@ -769,7 +769,7 @@ const DefaultOperandDetailsPage: FC<DefaultOperandDetailsPageProps> = ({ k8sMode
       createRedirect
       breadcrumbsFor={() => [
         {
-          name: t('olm~Installed operators'),
+          name: t('olm~Installed Operators'),
           path: `/k8s/ns/${params.ns}/${ClusterServiceVersionModel.plural}`,
         },
         {

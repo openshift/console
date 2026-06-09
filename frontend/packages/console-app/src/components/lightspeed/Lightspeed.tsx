@@ -133,7 +133,7 @@ const Lightspeed: FC = () => {
           {canInstallLightspeed ? (
             <StackItem className="pf-v6-u-text-align-center">
               <Button variant="primary" size="lg" onClick={onInstallClick}>
-                {t('console-app~Get started in Software catalog')}
+                {t('console-app~Get started in Software Catalog')}
               </Button>
             </StackItem>
           ) : (

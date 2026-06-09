@@ -520,7 +520,7 @@ APIResourcesList.displayName = 'APIResourcesList';
 
 export const APIExplorerPage: FC<{}> = () => {
   const { t } = useTranslation();
-  const title = t('public~API explorer');
+  const title = t('public~API Explorer');
   return (
     <>
       <DocumentTitle>{title}</DocumentTitle>

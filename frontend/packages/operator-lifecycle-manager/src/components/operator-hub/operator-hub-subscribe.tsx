@@ -859,7 +859,7 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
         title={t('olm~Install Operator')}
         breadcrumbs={[
           {
-            name: t('olm~Software catalog'),
+            name: t('olm~Software Catalog'),
             path: `/catalog/ns/${activeNamespace}?catalogType=operator&${search.toString()}`,
           },
           { name: t('olm~Operator Installation'), path: url },

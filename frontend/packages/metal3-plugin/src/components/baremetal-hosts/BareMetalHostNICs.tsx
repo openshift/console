@@ -52,14 +52,14 @@ const BareMetalHostNICs: FC<BareMetalHostNICsProps> = ({ obj: host, loadError, l
       <PaneBody>
         <Table
           data={nics}
-          aria-label={t('metal3-plugin~BareMetalHost NICs')}
+          aria-label={t('metal3-plugin~Bare Metal Host NICs')}
           Header={NICsTableHeader(t)}
           Row={NICsTableRow}
           loaded={loaded}
           loadError={
             loadError ||
             (loaded && !host
-              ? { message: t('metal3-plugin~BareMetalHost is not available') }
+              ? { message: t('metal3-plugin~Bare metal host is not available') }
               : undefined)
           }
           getRowProps={getRowProps}

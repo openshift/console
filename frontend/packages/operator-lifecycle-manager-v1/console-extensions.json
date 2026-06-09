@@ -120,7 +120,7 @@
     "properties": {
       "id": "installed-software",
       "section": "ecosystem",
-      "name": "%olm-v1~Installed software%",
+      "name": "%olm-v1~Installed Software%",
       "insertAfter": "developer-catalog",
       "href": "/installed-software",
       "namespaced": true,

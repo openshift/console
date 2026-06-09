@@ -1180,7 +1180,7 @@ const ClusterOperatorTabPage: FC<ClusterOperatorTabPageProps> = ({ obj: cv }) =>
 export const ClusterSettingsPage: FC = () => {
   const { t } = useTranslation();
   const hasClusterAutoscaler = useFlag(FLAGS.CLUSTER_AUTOSCALER);
-  const title = t('public~Cluster settings');
+  const title = t('public~Cluster Settings');
 
   const [objData, objLoaded, objLoadError] = useK8sWatchResource<ClusterVersionKind>({
     kind: clusterVersionReference,
@@ -1220,7 +1220,7 @@ export const ClusterSettingsPage: FC = () => {
     },
   ];
   const titleProviderValues = {
-    telemetryPrefix: 'Cluster settings',
+    telemetryPrefix: 'Cluster Settings',
     titlePrefix: title,
   };
 

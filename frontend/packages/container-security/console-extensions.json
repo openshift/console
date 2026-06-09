@@ -29,7 +29,7 @@
       "id": "imagevulnerabilities",
       "perspective": "admin",
       "section": "administration",
-      "name": "Image vulnerabilities",
+      "name": "Image Vulnerabilities",
       "insertBefore": "customresourcedefinitions",
       "model": {
         "group": "secscan.quay.redhat.com",
@@ -127,7 +127,7 @@
   {
     "type": "console.dashboards/overview/health/resource",
     "properties": {
-      "title": "Image vulnerabilities",
+      "title": "Image Vulnerabilities",
       "resources": {
         "imageManifestVuln": {
           "kind": "secscan.quay.redhat.com~v1alpha1~ImageManifestVuln",

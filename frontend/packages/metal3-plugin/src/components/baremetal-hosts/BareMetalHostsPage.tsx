@@ -152,7 +152,7 @@ const BareMetalHostsPage: FC<BareMetalHostsPageProps> = (props) => {
       resources={resources}
       flatten={flattenResources}
       ListComponent={BareMetalHostsTable}
-      title={t('metal3-plugin~BareMetalHosts')}
+      title={t('metal3-plugin~Bare Metal Hosts')}
     />
   );
 };

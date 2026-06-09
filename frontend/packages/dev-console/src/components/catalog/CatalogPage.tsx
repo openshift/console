@@ -30,7 +30,7 @@ const PageContents: FC = () => {
   }
 
   return showCreateProjectListPage ? (
-    <CreateProjectListPage title={t('devconsole~Software catalog')}>
+    <CreateProjectListPage title={t('devconsole~Software Catalog')}>
       {(openProjectModal) => (
         <Trans t={t} ns="devconsole">
           Select a Project to view the software catalog
@@ -48,7 +48,7 @@ const PageContents: FC = () => {
         <CatalogController
           {...service}
           enableDetailsPanel
-          title={t('devconsole~Software catalog')}
+          title={t('devconsole~Software Catalog')}
           description={t(
             'devconsole~Add shared applications, services, event sources, or source-to-image builders to your Project from the software catalog. Cluster administrators can customize the content made available in the catalog.',
           )}

@@ -119,7 +119,7 @@ const BareMetalHostDetails: FC<BareMetalHostDetailsProps> = ({
 
   return (
     <PaneBody>
-      <SectionHeading text={t('metal3-plugin~BareMetalHost Details')} />
+      <SectionHeading text={t('metal3-plugin~Bare Metal Host Details')} />
       <Grid hasGutter>
         <GridItem sm={6} id="name-description-column">
           <DescriptionList>

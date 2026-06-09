@@ -53,7 +53,7 @@ const useDeleteAction = (kindObj: K8sKind, host, status) => {
     () => ({
       delete: () => ({
         id: 'delete-host',
-        label: t('metal3-plugin~Delete BareMetalHost'),
+        label: t('metal3-plugin~Delete Bare Metal Host'),
         cta: () =>
           launchModal(DeleteModalOverlay, {
             kind: kindObj,
@@ -74,7 +74,7 @@ const useEditAction = (kindObj: K8sKind, host: BareMetalHostKind) => {
     () => ({
       edit: () => ({
         id: 'edit-host',
-        label: t('metal3-plugin~Edit BareMetalHost'),
+        label: t('metal3-plugin~Edit Bare Metal Host'),
         cta: {
           href: `/k8s/ns/${getNamespace(host)}/${kindObj && referenceForModel(kindObj)}/${getName(
             host,
