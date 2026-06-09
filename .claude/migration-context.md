@@ -97,7 +97,7 @@ When migrating a Cypress test that uses `cy.get('[data-test-id="x"]')` or `cy.by
 
 | Cypress                                                  | Playwright                                                                                                                                                |
 | -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `cy.wait(3000)`                                          |  Use web assertions e.g. `await expect(locator).toBeVisible()` or condition-based waits. Only use `page.waitForTimeout()` as absolute last resort during debugging. |
+| `cy.wait(3000)`                                          | **AVOID.** Use `await expect(locator).toBeVisible()` or condition-based waits. Only use `page.waitForTimeout()` as absolute last resort during debugging. |
 | `cy.get(s, { timeout }).click()`                         | `await locator.click({ timeout })` — pass timeout to the action, not a separate `waitFor()`. All Playwright actions accept a `timeout` option             |
 | `cy.get(s, { timeout }).should('be.visible')`            | `await expect(locator).toBeVisible({ timeout })` — pass timeout to the assertion                                                                          |
 | `cy.get(s, { timeout })` (no action, just waiting)       | `await locator.waitFor({ state: 'visible', timeout })` — only when no action or assertion follows                                                         |
@@ -446,6 +446,7 @@ The MCP's tracked page stays on `about:blank` — use the `p` reference from the
 Playwright action methods (`fill()`, `click()`, `check()`, `uncheck()`, `selectOption()`, `type()`, `press()`) **auto-wait for the element to be actionable** (visible, enabled, stable). You do NOT need an explicit `waitFor()` before calling these actions. This includes `robustClick()` in page objects — it also auto-waits.
 
 > **ESLint enforcement:** The `no-restricted-syntax` rule in `e2e/.eslintrc.cjs` warns on all `.waitFor()` calls. Legitimate uses must have `// eslint-disable-next-line no-restricted-syntax`. This catches redundant `waitFor()` at lint time — `yarn eslint` will flag new violations.
+
 
 ```typescript
 // WRONG — redundant waitFor before an action

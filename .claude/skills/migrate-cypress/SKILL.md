@@ -82,6 +82,7 @@ If MCP is unavailable or no cluster is reachable, log a warning: "Playwright MCP
    - If the React component only has a legacy test attribute (`data-test-id`, `data-test-rows`, `data-test-dropdown-menu`, etc.) but no `data-test`, **add `data-test` to the React component source** and use `getByTestId()` — never use legacy attribute selectors directly
    - Expose locators via getter methods (`getX(): Locator`), keep locator properties `private readonly`
    - Use `robustClick()` inside page objects; specs use plain `.click()`
+   - Do NOT add `waitFor()` before action methods (`fill()`, `click()`, `check()`) — Playwright auto-waits for actionability
    - Do NOT name methods or locators with a `legacy` prefix — name for what they do
 
 Example:
@@ -146,6 +147,7 @@ Example:
 - **Never transliterate** — understand intent, use idiomatic Playwright APIs
 - **Self-contained tests** — merge sequential `it` blocks into one `test()` with `test.step()`
 - **No fixed waits** — replace `cy.wait(ms)` with condition-based waits or assertion timeouts
+- **No redundant `waitFor()`** — `fill()`, `click()`, `check()`, etc. auto-wait for actionability; only use `waitFor()` when waiting for state without acting on the element
 - **No shell commands** — replace `cy.exec('oc ...')` with `KubernetesClient`
 - **No try/catch in cleanup** — `k8sClient.deleteNamespace()` and `deleteCustomResource()` already swallow 404 errors
 - **Add `data-test` to React source** — when the component only has legacy test attributes (`data-test-id`, `data-test-rows`, etc.), add `data-test` alongside and use `getByTestId()`
