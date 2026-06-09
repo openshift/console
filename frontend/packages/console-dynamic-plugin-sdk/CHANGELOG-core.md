@@ -10,6 +10,10 @@ For current development version of Console, use `4.x.0-prerelease.n` packages.
 For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility
 table in [Console dynamic plugins README](./README.md).
 
+## 4.23.0-prerelease.3 - TBD
+
+- Added `@openshift/api-types` as a dependency and replaced `K8sResourceCommon` and depdendent types with imports from that package ([CONSOLE-5355], [#16585])
+
 ## 4.23.0-prerelease.2 - 2026-05-27
 
 - Updated `@patternfly/react-topology` peer dependency semver range to `~6.5.0` ([OCPBUGS-86488], [#16491])
@@ -226,6 +230,7 @@ table in [Console dynamic plugins README](./README.md).
 [CONSOLE-5093]: https://issues.redhat.com/browse/CONSOLE-5093
 [CONSOLE-5108]: https://issues.redhat.com/browse/CONSOLE-5108
 [CONSOLE-5273]: https://issues.redhat.com/browse/CONSOLE-5273
+[CONSOLE-5355]: https://issues.redhat.com/browse/CONSOLE-5355
 [OCPBUGS-19048]: https://issues.redhat.com/browse/OCPBUGS-19048
 [OCPBUGS-30077]: https://issues.redhat.com/browse/OCPBUGS-30077
 [OCPBUGS-31355]: https://issues.redhat.com/browse/OCPBUGS-31355
@@ -310,3 +315,4 @@ table in [Console dynamic plugins README](./README.md).
 [#16241]: https://github.com/openshift/console/pull/16241
 [#16400]: https://github.com/openshift/console/pull/16400
 [#16491]: https://github.com/openshift/console/pull/16491
+[#16585]: https://github.com/openshift/console/pull/16585

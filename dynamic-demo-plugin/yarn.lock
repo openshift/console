@@ -169,6 +169,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@openshift-console/dynamic-plugin-sdk@portal:../frontend/packages/console-dynamic-plugin-sdk/dist/core::locator=%40console%2Fdynamic-demo-plugin%40workspace%3A."
   dependencies:
+    "@openshift/api-types": "npm:^1.0.0"
     "@openshift/dynamic-plugin-sdk": "npm:^8.0.0"
     immutable: "npm:^3.8.3"
     lodash: "npm:^4.17.21"
@@ -199,6 +200,13 @@ __metadata:
       optional: true
   languageName: node
   linkType: soft
+
+"@openshift/api-types@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@openshift/api-types@npm:1.0.0"
+  checksum: 10c0/8eb7c324b993145615622f1f809520c6a7be733cc17f3f0718530511da94d269e4ed15a63e9eb4312262bf9895dbc5debe625cec132b9abb005f10df304a6944
+  languageName: node
+  linkType: hard
 
 "@openshift/dynamic-plugin-sdk-webpack@npm:^5.1.1":
   version: 5.1.1

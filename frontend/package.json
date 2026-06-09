@@ -149,6 +149,7 @@
   },
   "dependencies": {
     "@monaco-editor/react": "^4.7.0",
+    "@openshift/api-types": "^1.0.0",
     "@openshift/dynamic-plugin-sdk": "^8.0.0",
     "@openshift/dynamic-plugin-sdk-webpack": "^5.1.1",
     "@patternfly/patternfly": "~6.5.2",

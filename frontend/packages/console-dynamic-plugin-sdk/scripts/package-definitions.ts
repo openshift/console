@@ -130,7 +130,13 @@ export const getCorePackage: GetPackageDefinition = (
     dependencies: {
       ...parseDeps(
         rootPackage,
-        ['@openshift/dynamic-plugin-sdk', 'immutable', 'reselect', 'typesafe-actions'],
+        [
+          '@openshift/api-types',
+          '@openshift/dynamic-plugin-sdk',
+          'immutable',
+          'reselect',
+          'typesafe-actions',
+        ],
         missingDepCallback,
       ),
       ...parseDepsAs(rootPackage, { 'lodash-es': 'lodash' }, missingDepCallback),
