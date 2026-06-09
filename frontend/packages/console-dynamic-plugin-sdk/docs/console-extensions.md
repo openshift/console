@@ -812,8 +812,8 @@ Use this extension to add custom sub-tabs to the Node details page.<br/><br/>Not
 
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
-| `parentTab` | `'configuration'` | no | Which detail tab to add the sub-tab to. Only the 'configuration' tab supports adding sub-tabs at this time. |
-| `page` | `{ tabId: string; name: string; priority: number; }` | no | The page that displays as a subtab. It takes tab name as name and priority of the tab.<br/><br/>Notes:<br/>The UI displays tabs in priority order from highest to lowest. Default built-in tab priorities include:<br/>- **configuration:**<br/>  - storage/70<br/>  - machine/50<br/>  - high-availability/30 |
+| `parentTab` | `'configuration' \| 'health'` | no | Which detail tab to add the sub-tab to. Supported values are 'configuration' and 'health'. |
+| `page` | `{ tabId: string; name: string; priority: number; }` | no | The page that displays as a subtab. It takes tab name as name and priority of the tab.<br/><br/>Notes:<br/>The UI displays tabs in priority order from highest to lowest. Default built-in tab priorities include:<br/>- **configuration:**<br/>  - storage/70<br/>  - machine/50<br/>  - high-availability/30<br/>- **health:**<br/>  - performance/70<br/>  - logs/30 |
 | `component` | `CodeRef<ComponentType<SubPageComponentProps<NodeKind>>>` | no | The component that renders the sub-tab contents. It receives the Node resource as the obj prop. |
 
 ---
