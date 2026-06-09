@@ -41,7 +41,6 @@ test.describe('Add storage for workloads', { tag: ['@admin'] }, () => {
             await yamlViewInput.click();
           }
 
-          await page.getByTestId('code-editor').waitFor({ state: 'visible' });
 
           const content = await getEditorContent(page);
           const parsed = yaml.load(content) as Record<string, any>;
@@ -56,7 +55,6 @@ test.describe('Add storage for workloads', { tag: ['@admin'] }, () => {
           await setEditorContent(page, yaml.dump(parsed, { sortKeys: true }));
         } else {
           await page.goto(`/k8s/ns/${namespace}/${resourceType}/~new`);
-          await page.getByTestId('code-editor').waitFor({ state: 'visible' });
         }
 
         const saveButton = page.getByTestId('save-changes');

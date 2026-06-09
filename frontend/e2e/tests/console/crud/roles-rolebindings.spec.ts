@@ -50,12 +50,8 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
 
     await test.step('Create Role via YAML editor', async () => {
       await nav.navigateToUserManagement('Roles');
-      await listPage.waitForListLoad();
       await listPage.selectProject(namespace);
-      await listPage.waitForListLoad();
-
       await page.getByTestId('item-create').click();
-      await page.getByTestId('code-editor').waitFor({ state: 'visible' });
 
       const content = await getEditorContent(page);
       const parsed = yaml.load(content) as Record<string, any>;
@@ -72,12 +68,10 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
     await test.step('Navigate back to Roles list', async () => {
       const details = new DetailsPage(page);
       await details.getBreadcrumb(0).click();
-      await listPage.waitForListLoad();
     });
 
     await test.step('Create ClusterRole via YAML editor', async () => {
       await page.getByTestId('item-create').click();
-      await page.getByTestId('code-editor').waitFor({ state: 'visible' });
 
       const content = await getEditorContent(page);
       const parsed = yaml.load(content) as Record<string, any>;
@@ -98,9 +92,6 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
 
     await test.step('Create RoleBinding', async () => {
       await nav.navigateToUserManagement('RoleBindings');
-      const listPage = new ListPage(page);
-      await listPage.waitForListLoad();
-
       await page.getByTestId('item-create').click();
       await expect(page.getByTestId('title')).toHaveText('Create RoleBinding');
 
@@ -118,9 +109,6 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
 
     await test.step('Create ClusterRoleBinding', async () => {
       await nav.navigateToUserManagement('RoleBindings');
-      const listPage = new ListPage(page);
-      await listPage.waitForListLoad();
-
       await page.getByTestId('item-create').click();
       await expect(page.getByTestId('title')).toHaveText('Create RoleBinding');
 
@@ -143,9 +131,7 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
     const details = new DetailsPage(page);
 
     await nav.navigateToUserManagement('Roles');
-    await listPage.waitForListLoad();
     await listPage.selectProject(namespace);
-    await listPage.waitForListLoad();
     await listPage.filterByName(roleName);
     await listPage.clickRowByName(roleName);
     await details.waitForPageLoad();
@@ -163,9 +149,7 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
     const details = new DetailsPage(page);
 
     await nav.navigateToUserManagement('Roles');
-    await listPage.waitForListLoad();
     await listPage.selectAllProjects();
-    await listPage.waitForListLoad();
     await listPage.filterByCheckbox('Role', 'cluster');
     await listPage.filterByName(clusterRoleName);
     await listPage.clickRowByName(clusterRoleName);
@@ -190,9 +174,7 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
       const namespaceDropdown = page.getByTestId('namespace-bar-dropdown');
 
       await nav.navigateToUserManagement(rolesOrBindings);
-      await listPage.waitForListLoad();
       await listPage.selectAllProjects();
-      await listPage.waitForListLoad();
       await listPage.filterByCheckbox(
         rolesOrBindings === 'Roles' ? 'Role' : 'Kind',
         'namespace',
@@ -204,7 +186,6 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
       await expect(namespaceDropdown).toContainText(namespace);
 
       await details.getBreadcrumb(0).click();
-      await listPage.waitForListLoad();
       await expect(namespaceDropdown).toContainText('All Projects');
     });
 
@@ -218,9 +199,7 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
       const namespaceDropdown = page.getByTestId('namespace-bar-dropdown');
 
       await nav.navigateToUserManagement(rolesOrBindings);
-      await listPage.waitForListLoad();
       await listPage.selectProject(namespace);
-      await listPage.waitForListLoad();
       await listPage.filterByCheckbox(
         rolesOrBindings === 'Roles' ? 'Role' : 'Kind',
         'namespace',
@@ -232,7 +211,6 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
       await expect(namespaceDropdown).toContainText(namespace);
 
       await details.getBreadcrumb(0).click();
-      await listPage.waitForListLoad();
       await expect(namespaceDropdown).toContainText(namespace);
     });
 
@@ -246,9 +224,7 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
       const namespaceDropdown = page.getByTestId('namespace-bar-dropdown');
 
       await nav.navigateToUserManagement(rolesOrBindings);
-      await listPage.waitForListLoad();
       await listPage.selectAllProjects();
-      await listPage.waitForListLoad();
       await listPage.filterByCheckbox(
         rolesOrBindings === 'Roles' ? 'Role' : 'Kind',
         'cluster',
@@ -260,7 +236,6 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
       await expect(namespaceDropdown).not.toBeAttached();
 
       await details.getBreadcrumb(0).click();
-      await listPage.waitForListLoad();
       await expect(namespaceDropdown).toContainText('All Projects');
     });
 
@@ -274,9 +249,7 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
       const namespaceDropdown = page.getByTestId('namespace-bar-dropdown');
 
       await nav.navigateToUserManagement(rolesOrBindings);
-      await listPage.waitForListLoad();
       await listPage.selectProject(namespace);
-      await listPage.waitForListLoad();
       await listPage.filterByCheckbox(
         rolesOrBindings === 'Roles' ? 'Role' : 'Kind',
         'cluster',
@@ -288,7 +261,6 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
       await expect(namespaceDropdown).not.toBeAttached();
 
       await details.getBreadcrumb(0).click();
-      await listPage.waitForListLoad();
       await expect(namespaceDropdown).toContainText(namespace);
     });
   }

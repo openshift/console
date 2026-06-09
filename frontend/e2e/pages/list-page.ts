@@ -13,21 +13,6 @@ export class ListPage extends BasePage {
   private readonly nameFilter = this.page.getByTestId('name-filter-input');
   private readonly createButton = this.page.getByTestId('item-create');
 
-  async waitForListLoad(): Promise<void> {
-    await this.waitForLoadingComplete();
-    await this.page
-      .getByTestId('page-heading')
-      .waitFor({ state: 'visible', timeout: 60_000 });
-  }
-
-  async waitForTableLoad(): Promise<void> {
-    await this.waitForLoadingComplete();
-    await this.dataViewTable
-      .or(this.resourceRows.first())
-      .first()
-      .waitFor({ state: 'visible', timeout: 60_000 });
-  }
-
   async filterByName(name: string): Promise<void> {
     const filterToggle = this.dataViewFilters.locator('.pf-v6-c-menu-toggle').first();
     await this.robustClick(filterToggle);
@@ -103,7 +88,6 @@ export class ListPage extends BasePage {
   }
 
   async filterByCheckbox(filterName: string, checkboxLabel: string): Promise<void> {
-    await this.dataViewFilters.waitFor({ state: 'visible', timeout: 60_000 });
     const filterToggle = this.dataViewFilters.locator('.pf-v6-c-menu-toggle').first();
     await this.robustClick(filterToggle);
     await this.page.locator('.pf-v6-c-menu__list-item', { hasText: filterName }).click();

@@ -36,11 +36,8 @@ test.describe('Quotas', { tag: ['@admin'] }, () => {
     await test.step('Create ResourceQuota via YAML editor', async () => {
       await nav.navigateToAdministration('ResourceQuotas');
       await listPage.selectProject(namespace);
-      await listPage.waitForListLoad();
-
       await page.getByTestId('item-create').click();
 
-      await page.getByTestId('save-changes').waitFor({ state: 'visible' });
       const content = await getEditorContent(page);
       const parsed = yaml.load(content) as Record<string, any>;
       parsed.metadata.name = quotaName;
@@ -55,16 +52,12 @@ test.describe('Quotas', { tag: ['@admin'] }, () => {
     });
 
     await test.step('Navigate back to list', async () => {
-      const details2 = new DetailsPage(page);
-      await details2.getBreadcrumb(0).click();
-      const listPage2 = new ListPage(page);
-      await listPage2.waitForListLoad();
+      await new DetailsPage(page).getBreadcrumb(0).click();
     });
 
     await test.step('Create ClusterResourceQuota via YAML editor', async () => {
       await page.getByTestId('item-create').click();
 
-      await page.getByTestId('save-changes').waitFor({ state: 'visible' });
       const crqYaml = {
         apiVersion: 'quota.openshift.io/v1',
         kind: 'ClusterResourceQuota',
@@ -94,7 +87,7 @@ test.describe('Quotas', { tag: ['@admin'] }, () => {
 
     await nav.navigateToAdministration('ResourceQuotas');
     await listPage.selectAllProjects();
-    await listPage.waitForTableLoad();
+
     await listPage.filterByName(quotaName);
     await expect(listPage.getCell(quotaName)).toBeVisible();
   });
@@ -106,7 +99,7 @@ test.describe('Quotas', { tag: ['@admin'] }, () => {
 
     await nav.navigateToAdministration('ResourceQuotas');
     await listPage.selectAllProjects();
-    await listPage.waitForTableLoad();
+
     await listPage.filterByName(clusterQuotaName);
     await expect(listPage.getCell(clusterQuotaName)).toBeVisible();
 
@@ -123,7 +116,7 @@ test.describe('Quotas', { tag: ['@admin'] }, () => {
 
     await nav.navigateToAdministration('ResourceQuotas');
     await listPage.selectProject(namespace);
-    await listPage.waitForTableLoad();
+
     await listPage.filterByName(quotaName);
     await expect(listPage.getCell(quotaName)).toBeVisible();
   });
@@ -135,7 +128,7 @@ test.describe('Quotas', { tag: ['@admin'] }, () => {
 
     await nav.navigateToAdministration('ResourceQuotas');
     await listPage.selectProject(namespace);
-    await listPage.waitForTableLoad();
+
     await listPage.filterByName(clusterQuotaName);
     await expect(listPage.getCell(clusterQuotaName)).toBeVisible();
 
