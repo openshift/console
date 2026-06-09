@@ -202,13 +202,11 @@ test.describe('Perspective query parameters', { tag: ['@admin'] }, () => {
       await page.goto('/k8s/cluster/projects');
 
       const toggle = page.getByTestId('perspective-switcher-toggle');
-      await toggle.waitFor({ state: 'visible' });
       await toggle.click();
 
       const devOption = page
         .getByTestId('perspective-switcher-menu-option')
         .filter({ hasText: 'Developer' });
-      await devOption.waitFor({ state: 'visible' });
       await devOption.click();
 
       const toggleText = page

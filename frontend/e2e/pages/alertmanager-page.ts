@@ -1,6 +1,6 @@
-import { expect } from '@playwright/test';
 import yaml from 'js-yaml';
 
+import { expect } from '../fixtures';
 import BasePage from './base-page';
 
 type AlertmanagerConfig = {

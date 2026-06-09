@@ -17,8 +17,6 @@ export async function navigateToCRDInstances(page: Page, crd: string): Promise<v
   await searchInput.fill(crd);
 
   const crdRow = page.getByRole('row', { name: new RegExp(crd, 'i') });
-  await expect(crdRow).toBeVisible({ timeout: 30000 });
-
   const kebabButton = crdRow.getByTestId('kebab-button');
   await kebabButton.click();
   await page.getByRole('menuitem', { name: 'View instances' }).click();
@@ -36,8 +34,6 @@ export async function navigateToCRDInstancesViaDetails(page: Page, crd: string):
   await searchInput.fill(crd);
 
   const crdRow = page.getByRole('row', { name: new RegExp(crd, 'i') });
-  await expect(crdRow).toBeVisible({ timeout: 30000 });
-
   const crdLink = crdRow.getByRole('link', { name: new RegExp(crd, 'i') });
   await crdLink.click();
 
