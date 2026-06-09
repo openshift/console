@@ -223,7 +223,7 @@ const useDefaultSamples = () => {
         {
           title: t('Add catalog categories'),
           description: t(
-            'Provides a list of default categories which are shown in the Software Catalog. The categories must be added below customization developerCatalog.',
+            'Provides a list of default categories which are shown in the Software catalog. The categories must be added below customization developerCatalog.',
           ),
           id: 'devcatalog-categories',
           snippet: true,
@@ -266,7 +266,7 @@ const useDefaultSamples = () => {
         {
           title: t('Add sub-catalog types'),
           description: t(
-            'Provides a list of all the available sub-catalog types which are shown in the Software Catalog. The types must be added below spec customization developerCatalog',
+            'Provides a list of all the available sub-catalog types which are shown in the Software catalog. The types must be added below spec customization developerCatalog',
           ),
           id: 'devcatalog-types',
           snippet: true,

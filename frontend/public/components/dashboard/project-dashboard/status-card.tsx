@@ -20,7 +20,7 @@ export const StatusCard = memo(() => {
     DashboardsOverviewHealthResourceSubsystem
   >(isDashboardsOverviewHealthResourceSubsystem);
   const subsystem = useMemo(
-    () => subsystemExtensions.find((s) => s.properties.title === 'Image Vulnerabilities'),
+    () => subsystemExtensions.find((s) => s.properties.title === 'Image vulnerabilities'),
     [subsystemExtensions],
   );
   const namespace = obj?.metadata?.name;

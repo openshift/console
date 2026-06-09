@@ -1040,7 +1040,7 @@
     "properties": {
       "perspective": "admin",
       "id": "usermanagement",
-      "name": "%console-app~User Management%",
+      "name": "%console-app~User management%",
       "dataAttributes": { "data-quickstart-id": "qs-nav-usermanagement" }
     }
   },
@@ -1113,7 +1113,7 @@
       "section": "home",
       "id": "explore",
       "insertAfter": "search",
-      "name": "%console-app~API Explorer%",
+      "name": "%console-app~API explorer%",
       "href": "/api-explorer",
       "startsWith": ["api-resource"]
     }
@@ -1135,7 +1135,7 @@
     "properties": {
       "id": "operators",
       "section": "ecosystem",
-      "name": "%console-app~Installed Operators%",
+      "name": "%console-app~Installed operators%",
       "insertAfter": "developer-catalog",
       "model": {
         "kind": "ClusterServiceVersion",
@@ -1742,7 +1742,7 @@
       "perspective": "admin",
       "section": "administration",
       "id": "clustersettings",
-      "name": "%console-app~Cluster Settings%",
+      "name": "%console-app~Cluster settings%",
       "href": "/settings/cluster",
       "startsWith": [
         "settings/idp",
@@ -1936,7 +1936,7 @@
   {
     "type": "console.dashboards/overview/health/resource",
     "properties": {
-      "title": "%console-app~Dynamic Plugins%",
+      "title": "%console-app~Dynamic plugins%",
       "resources": { "$codeRef": "DynamicPluginsPopover.dynamicPluginsResources" },
       "healthHandler": { "$codeRef": "getDynamicPluginHealthState.getDynamicPluginHealthState" },
       "popupComponent": { "$codeRef": "DynamicPluginsPopover" },
@@ -2747,7 +2747,7 @@
       "perspective": "admin",
       "section": "administration",
       "id": "consoleplugins",
-      "name": "%console-app~Dynamic Plugins%",
+      "name": "%console-app~Dynamic plugins%",
       "href": "/k8s/cluster/operator.openshift.io~v1~Console/cluster/console-plugins"
     },
     "flags": { "required": ["CAN_GET_CONSOLE_OPERATOR_CONFIG"] }

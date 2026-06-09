@@ -18,8 +18,8 @@ export const HOST_STATUS_UNMANAGED = 'unmanaged';
 export const HOST_STATUS_DETACHED = 'detached';
 
 export const BareMetalHostModel: K8sKind = {
-  label: 'Bare Metal Host',
-  labelPlural: 'Bare Metal Hosts',
+  label: 'Bare metal host',
+  labelPlural: 'Bare metal hosts',
   apiVersion: 'v1alpha1',
   apiGroup: 'metal3.io',
   plural: 'baremetalhosts',

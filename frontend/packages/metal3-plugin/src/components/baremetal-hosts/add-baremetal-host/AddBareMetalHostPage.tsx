@@ -14,15 +14,15 @@ const AddBareMetalHostPage: FC = () => {
 
   const isEditing = !!name;
   const title = isEditing
-    ? t('metal3-plugin~Edit Bare Metal Host')
-    : t('metal3-plugin~Add Bare Metal Host');
+    ? t('metal3-plugin~Edit Bare metal host')
+    : t('metal3-plugin~Add Bare metal host');
   return (
     <>
       <DocumentTitle>{title}</DocumentTitle>
       <PageHeading
         title={title}
         helpText={t(
-          'metal3-plugin~Expand the hardware inventory by registering a new Bare Metal Host.',
+          'metal3-plugin~Expand the hardware inventory by registering a new Bare metal host.',
         )}
       />
       <PaneBody className="co-m-pane__form">

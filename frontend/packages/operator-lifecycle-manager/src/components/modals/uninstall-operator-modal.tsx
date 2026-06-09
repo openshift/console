@@ -229,8 +229,8 @@ export const UninstallOperatorModal: FC<UninstallOperatorModalProps> = ({
   const closeAndRedirect = useCallback(() => {
     close();
     // if url contains subscription name (ex: "codeready-workspaces") or installedCSV version (ex: "crwoperator.v2.9.0")
-    // redirect to ClusterServiceVersion "Installed Operators" list page,
-    // else uninstalled from "Installed Operators" list page, so do not redirect
+    // redirect to ClusterServiceVersion "Installed operators" list page,
+    // else uninstalled from "Installed operators" list page, so do not redirect
     if (
       window.location.pathname.split('/').includes(subscription.metadata.name) ||
       window.location.pathname.split('/').includes(subscription?.status?.installedCSV)

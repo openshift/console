@@ -69,8 +69,8 @@
         "version": "v1alpha1",
         "kind": "BareMetalHost"
       },
-      "label": "%metal3-plugin~Bare Metal Host%",
-      "labelPlural": "%metal3-plugin~Bare Metal Hosts%",
+      "label": "%metal3-plugin~Bare metal host%",
+      "labelPlural": "%metal3-plugin~Bare metal hosts%",
       "abbr": "BMH",
       "color": "#2b9af3"
     }
@@ -122,7 +122,7 @@
     "properties": {
       "id": "baremetal",
       "section": "compute",
-      "name": "%metal3-plugin~Bare Metal Hosts%",
+      "name": "%metal3-plugin~Bare metal hosts%",
       "insertBefore": "computeseparator",
       "model": {
         "kind": "BareMetalHost",

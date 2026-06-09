@@ -39,7 +39,7 @@ const RestartHostModal: OverlayComponent<RestartHostModalProps> = (props) => {
       aria-labelledby="restart-host-modal-title"
     >
       <ModalHeader
-        title={t('metal3-plugin~Restart Bare Metal Host')}
+        title={t('metal3-plugin~Restart Bare metal host')}
         data-test-id="modal-title"
         labelId="restart-host-modal-title"
       />

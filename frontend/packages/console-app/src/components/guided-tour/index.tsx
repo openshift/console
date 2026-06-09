@@ -45,8 +45,8 @@ const getGuidedTour = (): TourDataType => ({
     },
     {
       placement: 'right',
-      // t('console-app~Software Catalog')
-      heading: '%console-app~Software Catalog%',
+      // t('console-app~Software catalog')
+      heading: '%console-app~Software catalog%',
       // t('console-app~Add shared applications, services, event sources, or source-to-image builders to your project. Cluster administrators can customize the content made available in the catalog.')
       content:
         '%console-app~Add shared applications, services, event sources, or source-to-image builders to your project. Cluster administrators can customize the content made available in the catalog.%',

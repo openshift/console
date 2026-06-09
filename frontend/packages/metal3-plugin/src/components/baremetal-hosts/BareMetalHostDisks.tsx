@@ -53,7 +53,7 @@ const BareMetalHostDisks: FC<BareMetalHostDisksProps> = ({ obj: host, loadError,
       <PaneBody>
         <Table
           data={disks}
-          aria-label="Bare Metal Host Disks"
+          aria-label="Bare metal host Disks"
           Header={DisksTableHeader(t)}
           Row={DisksTableRow}
           loaded={loaded}

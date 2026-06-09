@@ -28,9 +28,9 @@ describe('NavItemHref', () => {
   });
 
   it('should use href directly when not namespaced', () => {
-    renderWithProviders(<NavItemHref href="/cluster-settings">Cluster Settings</NavItemHref>);
+    renderWithProviders(<NavItemHref href="/cluster-settings">Cluster settings</NavItemHref>);
 
-    const link = screen.getByRole('link', { name: 'Cluster Settings' });
+    const link = screen.getByRole('link', { name: 'Cluster settings' });
     expect(link).toHaveAttribute('href', '/cluster-settings');
   });
 
