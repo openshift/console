@@ -12,6 +12,7 @@ const obj = {
       },
       spec: {
         displayName: 'helm - Helm 3 CLI',
+        description: '',
         links: [],
       },
     },
@@ -22,6 +23,7 @@ const obj = {
       },
       spec: {
         displayName: 'oc - OpenShift Command Line Interface (CLI)',
+        description: '',
         links: [],
       },
     },

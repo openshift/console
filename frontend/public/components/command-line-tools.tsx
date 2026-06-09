@@ -16,16 +16,8 @@ import { referenceForModel } from '../module/k8s';
 import { MarkdownView } from '@console/shared/src/components/markdown/MarkdownView';
 import { useCopyCodeModal } from '@console/shared/src/hooks/useCopyCodeModal';
 import { useK8sWatchResource } from './utils/k8s-watch-hook';
-import type { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { ConsoleCLIDownloadKind } from '@openshift/api-types/dist/openshift/latest';
 import { LoadingBox } from './utils/status-box';
-
-type CLIDownload = K8sResourceCommon & {
-  spec: {
-    displayName: string;
-    description?: string;
-    links: { href: string; text?: string }[];
-  };
-};
 
 export const CommandLineTools: FC<CommandLineToolsProps> = ({ obj }) => {
   const { t } = useTranslation();
@@ -113,12 +105,12 @@ export const CommandLineToolsPage = () => {
     );
   }
 
-  return <CommandLineTools obj={{ data: cliDownloads as CLIDownload[], loaded, loadError }} />;
+  return <CommandLineTools obj={{ data: cliDownloads as ConsoleCLIDownloadKind[], loaded, loadError }} />;
 };
 
 type CommandLineToolsProps = {
   obj: {
-    data: CLIDownload[];
+    data: ConsoleCLIDownloadKind[];
     loaded: boolean;
     loadError?: unknown;
   };

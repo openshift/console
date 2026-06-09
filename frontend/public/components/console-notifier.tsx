@@ -6,20 +6,7 @@ import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { referenceForModel } from '../module/k8s';
 import { ConsoleNotificationModel } from '../models/index';
 import { useK8sWatchResource } from './utils/k8s-watch-hook';
-import type { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-
-type ConsoleNotification = K8sResourceCommon & {
-  spec: {
-    location?: 'BannerTop' | 'BannerBottom' | 'BannerTopBottom';
-    backgroundColor?: string;
-    color?: string;
-    text: string;
-    link?: {
-      href: string;
-      text?: string;
-    };
-  };
-};
+import { ConsoleNotificationKind } from '@openshift/api-types/dist/openshift/latest';
 
 type ConsoleNotifierProps = {
   location: 'BannerTop' | 'BannerBottom' | 'BannerTopBottom';
@@ -27,7 +14,7 @@ type ConsoleNotifierProps = {
 
 export const ConsoleNotifier: FC<ConsoleNotifierProps> = ({ location }) => {
   const shouldFetch = useFlag(FLAGS.CONSOLE_NOTIFICATION);
-  const [notifications, loaded, loadError] = useK8sWatchResource<ConsoleNotification[]>(
+  const [notifications, loaded, loadError] = useK8sWatchResource<ConsoleNotificationKind[]>(
     shouldFetch
       ? {
           kind: referenceForModel(ConsoleNotificationModel),
