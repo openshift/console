@@ -6,7 +6,7 @@ import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { referenceForModel } from '../module/k8s';
 import { ConsoleNotificationModel } from '../models/index';
 import { useK8sWatchResource } from './utils/k8s-watch-hook';
-import { ConsoleNotificationKind } from '@openshift/api-types/dist/openshift/latest';
+import type { ConsoleNotificationKind } from '@openshift/api-types/dist/openshift/latest';
 
 type ConsoleNotifierProps = {
   location: 'BannerTop' | 'BannerBottom' | 'BannerTopBottom';

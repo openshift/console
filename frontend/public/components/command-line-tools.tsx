@@ -105,7 +105,9 @@ export const CommandLineToolsPage = () => {
     );
   }
 
-  return <CommandLineTools obj={{ data: cliDownloads as ConsoleCLIDownloadKind[], loaded, loadError }} />;
+  return (
+    <CommandLineTools obj={{ data: cliDownloads as ConsoleCLIDownloadKind[], loaded, loadError }} />
+  );
 };
 
 type CommandLineToolsProps = {
