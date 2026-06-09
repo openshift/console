@@ -41,7 +41,6 @@ test.describe('Add storage for workloads', { tag: ['@admin'] }, () => {
             await yamlViewInput.click();
           }
 
-
           const content = await getEditorContent(page);
           const parsed = yaml.load(content) as Record<string, any>;
           parsed.metadata.name = name;

@@ -78,15 +78,6 @@ export class ListPage extends BasePage {
     await this.robustClick(this.page.getByTestId(actionName));
   }
 
-  async clickResourceRowKebabAction(resourceName: string, actionName: string): Promise<void> {
-    const row = this.resourceRows
-      .filter({ hasText: resourceName })
-      .first();
-    const kebab = row.getByTestId('kebab-button');
-    await this.robustClick(kebab);
-    await this.robustClick(this.page.getByTestId(actionName));
-  }
-
   async filterByCheckbox(filterName: string, checkboxLabel: string): Promise<void> {
     const filterToggle = this.dataViewFilters.locator('.pf-v6-c-menu-toggle').first();
     await this.robustClick(filterToggle);

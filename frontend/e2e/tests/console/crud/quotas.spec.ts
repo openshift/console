@@ -46,7 +46,6 @@ test.describe('Quotas', { tag: ['@admin'] }, () => {
 
       await page.getByTestId('save-changes').click();
       await expect(page.getByTestId('yaml-error')).not.toBeAttached();
-
     });
 
     await test.step('Navigate back to list', async () => {
@@ -73,7 +72,6 @@ test.describe('Quotas', { tag: ['@admin'] }, () => {
 
       await page.getByTestId('save-changes').click();
       await expect(page.getByTestId('yaml-error')).not.toBeAttached();
-
     });
   });
 
