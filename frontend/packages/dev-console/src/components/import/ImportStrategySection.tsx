@@ -8,7 +8,7 @@ import {
   SplitItem,
   Split,
 } from '@patternfly/react-core';
-import { PencilAltIcon, UndoIcon } from '@patternfly/react-icons';
+import { RhUiEditIcon, RhUiUndoIcon } from '@patternfly/react-icons';
 import type { FormikValues } from 'formik';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -142,7 +142,7 @@ const ImportStrategySection: FC<ImportStrategySectionProps> = ({ builderImages }
                 variant={ButtonVariant.link}
                 className="odc-import-strategy-section__edit-strategy-button"
                 onClick={handleEditStrategy}
-                icon={!showEditImportStrategy ? <PencilAltIcon /> : <UndoIcon />}
+                icon={!showEditImportStrategy ? <RhUiEditIcon /> : <RhUiUndoIcon />}
                 iconPosition="end"
                 data-test="import-strategy-button"
               >

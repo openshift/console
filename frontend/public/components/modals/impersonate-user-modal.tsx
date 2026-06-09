@@ -27,7 +27,7 @@ import {
   Flex,
   FlexItem,
 } from '@patternfly/react-core';
-import { TimesIcon, ExclamationCircleIcon } from '@patternfly/react-icons';
+import { RhUiCloseIcon, RhUiErrorFillIcon } from '@patternfly/react-icons';
 import { FieldLevelHelp } from '../utils/field-level-help';
 import { useK8sWatchResource } from '../utils/k8s-watch-hook';
 import { GroupModel } from '../../models';
@@ -219,7 +219,7 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
               }}
               aria-label="Clear input"
             >
-              <TimesIcon aria-hidden />
+              <RhUiCloseIcon aria-hidden />
             </Button>
           )}
         </TextInputGroupUtilities>
@@ -271,7 +271,7 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
             {usernameError && (
               <FormHelperText>
                 <HelperText>
-                  <HelperTextItem variant="error" icon={<ExclamationCircleIcon />}>
+                  <HelperTextItem variant="error" icon={<RhUiErrorFillIcon />}>
                     {usernameError}
                   </HelperTextItem>
                 </HelperText>

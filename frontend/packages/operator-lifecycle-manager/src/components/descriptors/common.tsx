@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useMemo, useState } from 'react';
 import { Button } from '@patternfly/react-core';
-import { EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';
+import { RhUiViewIcon, RhUiViewOffIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { SecretValue } from '@console/internal/components/configmap-and-secret-data';
@@ -101,12 +101,12 @@ export const SecretCapability: FC<CommonCapabilityProps<string>> = ({
         >
           {reveal ? (
             <>
-              <EyeSlashIcon className="co-icon-space-r" />
+              <RhUiViewOffIcon className="co-icon-space-r" />
               {t('olm~Hide values')}
             </>
           ) : (
             <>
-              <EyeIcon className="co-icon-space-r" />
+              <RhUiViewIcon className="co-icon-space-r" />
               {t('olm~Reveal values')}
             </>
           )}

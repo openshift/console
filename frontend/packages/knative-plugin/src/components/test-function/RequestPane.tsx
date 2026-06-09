@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useState } from 'react';
 import { Button, TextInputTypes, ExpandableSection } from '@patternfly/react-core';
-import { PlusCircleIcon } from '@patternfly/react-icons';
+import { RhUiAddCircleFillIcon } from '@patternfly/react-icons';
 import type { FormikProps, FormikValues } from 'formik/dist/types';
 import { useTranslation } from 'react-i18next';
 import { AsyncComponent } from '@console/internal/components/utils/async';
@@ -122,7 +122,10 @@ const RequestPane: FC<FormikProps<FormikValues>> = ({ setFieldValue, values }) =
           ) : (
             <Button
               icon={
-                <PlusCircleIcon data-test-id="pairs-list__add-icon" className="co-icon-space-r" />
+                <RhUiAddCircleFillIcon
+                  data-test-id="pairs-list__add-icon"
+                  className="co-icon-space-r"
+                />
               }
               className="pf-m-link--align-left"
               data-test="add-optional-header"

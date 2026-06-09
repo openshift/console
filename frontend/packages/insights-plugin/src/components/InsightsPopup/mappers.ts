@@ -1,7 +1,7 @@
 import {
-  AngleDoubleDownIcon,
-  AngleDoubleUpIcon,
-  CriticalRiskIcon,
+  RhUiDoubleCaretDownIcon,
+  RhUiDoubleCaretUpIcon,
+  RhUiSeverityCriticalFillIcon,
   EqualsIcon,
 } from '@patternfly/react-icons';
 import {
@@ -15,10 +15,10 @@ import * as _ from 'lodash';
 import type { PrometheusResponse } from '@console/internal/components/graphs';
 
 export const riskIcons = {
-  low: AngleDoubleDownIcon,
+  low: RhUiDoubleCaretDownIcon,
   moderate: EqualsIcon,
-  important: AngleDoubleUpIcon,
-  critical: CriticalRiskIcon,
+  important: RhUiDoubleCaretUpIcon,
+  critical: RhUiSeverityCriticalFillIcon,
 };
 
 export const colorScale = [red200.value, orange300.value, gold400.value, blue50.value];

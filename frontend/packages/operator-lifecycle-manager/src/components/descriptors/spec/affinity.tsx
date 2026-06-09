@@ -7,7 +7,7 @@ import {
   DescriptionListTerm,
   Tooltip,
 } from '@patternfly/react-core';
-import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { RhUiMinusCircleIcon, RhUiAddCircleFillIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import type {
@@ -98,7 +98,7 @@ const NodeAffinityRule: FC<NodeAffinityRuleProps> = ({
     <div className="co-affinity-term">
       {showRemoveButton && (
         <Button
-          icon={<MinusCircleIcon className="co-icon-space-r" />}
+          icon={<RhUiMinusCircleIcon className="co-icon-space-r" />}
           type="button"
           className="co-affinity-term__remove"
           onClick={onClickRemove}
@@ -211,7 +211,7 @@ export const NodeAffinity: FC<NodeAffinityProps> = ({ affinity, onChange, uid = 
           ))}
           <div>
             <Button
-              icon={<PlusCircleIcon className="co-icon-space-r" />}
+              icon={<RhUiAddCircleFillIcon className="co-icon-space-r" />}
               type="button"
               onClick={addRequiredRule}
               variant="link"
@@ -246,7 +246,7 @@ export const NodeAffinity: FC<NodeAffinityProps> = ({ affinity, onChange, uid = 
           ))}
           <div>
             <Button
-              icon={<PlusCircleIcon className="co-icon-space-r" />}
+              icon={<RhUiAddCircleFillIcon className="co-icon-space-r" />}
               type="button"
               onClick={addPreferredRule}
               variant="link"
@@ -304,7 +304,7 @@ const PodAffinityRule: FC<PodAffinityRuleProps> = ({
     <div className="co-affinity-term">
       {showRemoveButton && (
         <Button
-          icon={<MinusCircleIcon className="co-icon-space-r" />}
+          icon={<RhUiMinusCircleIcon className="co-icon-space-r" />}
           type="button"
           className="co-affinity-term__remove"
           onClick={onClickRemove}
@@ -433,7 +433,7 @@ export const PodAffinity: FC<PodAffinityProps> = ({ affinity, onChange, uid = ''
           ))}
           <div>
             <Button
-              icon={<PlusCircleIcon className="co-icon-space-r" />}
+              icon={<RhUiAddCircleFillIcon className="co-icon-space-r" />}
               type="button"
               onClick={addRequiredRule}
               variant="link"
@@ -471,7 +471,7 @@ export const PodAffinity: FC<PodAffinityProps> = ({ affinity, onChange, uid = ''
 
           <div>
             <Button
-              icon={<PlusCircleIcon className="co-icon-space-r" />}
+              icon={<RhUiAddCircleFillIcon className="co-icon-space-r" />}
               type="button"
               onClick={addPreferredRule}
               variant="link"

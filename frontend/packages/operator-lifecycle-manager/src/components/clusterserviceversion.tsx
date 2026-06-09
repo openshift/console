@@ -16,7 +16,7 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
-import { AddCircleOIcon, PencilAltIcon } from '@patternfly/react-icons';
+import { RhUiAddCircleIcon, RhUiEditIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import { sortable, wrappable } from '@patternfly/react-table';
 import * as _ from 'lodash';
@@ -301,7 +301,7 @@ const ConsolePlugins: FC<ConsolePluginsProps> = ({ csvPlugins, trusted }) => {
                     })
                   }
                   variant="link"
-                  icon={<PencilAltIcon />}
+                  icon={<RhUiEditIcon />}
                   iconPosition="end"
                 >
                   <>
@@ -1012,7 +1012,7 @@ export const CRDCard: FC<CRDCardProps> = ({ csv, crd, required, ...rest }) => {
         <RequireCreatePermission model={model} namespace={csv.metadata.namespace}>
           <CardFooter>
             <Link to={createRoute}>
-              <AddCircleOIcon className="co-icon-space-r" />
+              <RhUiAddCircleIcon className="co-icon-space-r" />
               {t('olm~Create instance')}
             </Link>
           </CardFooter>

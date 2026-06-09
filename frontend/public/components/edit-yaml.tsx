@@ -9,7 +9,7 @@ import { action } from 'typesafe-actions';
 import { ActionType, getOLSCodeBlock } from '@console/internal/reducers/ols';
 import { safeLoad, safeLoadAll, safeDump } from 'js-yaml';
 import { ActionGroup, Alert, Button } from '@patternfly/react-core';
-import { DownloadIcon, CompressIcon, ExpandIcon } from '@patternfly/react-icons';
+import { RhUiDownloadIcon, RhUiCompressIcon, RhUiExpandIcon } from '@patternfly/react-icons';
 import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { FLAGS, ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
@@ -832,7 +832,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
       isDisabled={!canUseFullScreen}
       aria-label={t('public~Toggle fullscreen mode')}
       tooltipProps={{ content: t('public~Toggle fullscreen mode') }}
-      icon={isFullscreen ? <CompressIcon /> : <ExpandIcon />}
+      icon={isFullscreen ? <RhUiCompressIcon /> : <RhUiExpandIcon />}
     />
   );
 
@@ -963,7 +963,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
                   </Button>
                   {canDownload && (
                     <Button
-                      icon={<DownloadIcon />}
+                      icon={<RhUiDownloadIcon />}
                       type="submit"
                       variant="secondary"
                       className="pf-v6-c-button--align-right pf-v6-u-display-none pf-v6-u-display-flex-on-sm"

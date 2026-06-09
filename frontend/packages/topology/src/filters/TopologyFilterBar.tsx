@@ -10,7 +10,7 @@ import {
   Button,
   ToolbarFilter,
 } from '@patternfly/react-core';
-import { InfoCircleIcon } from '@patternfly/react-icons';
+import { RhUiInformationFillIcon } from '@patternfly/react-icons';
 import type { Visualization } from '@patternfly/react-topology';
 import { isNode } from '@patternfly/react-topology';
 import { Trans, useTranslation } from 'react-i18next';
@@ -202,7 +202,7 @@ const TopologyFilterBar: FC<TopologyFilterBarProps> = ({
                 }
               >
                 <Button
-                  icon={<InfoCircleIcon />}
+                  icon={<RhUiInformationFillIcon />}
                   variant="link"
                   className="odc-topology-filter-bar__info-icon"
                   aria-label={t('topology~Find by name')}

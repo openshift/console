@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { memo, Children } from 'react';
 import { Button, Popover, PopoverProps } from '@patternfly/react-core';
-import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
+import { RhUiQuestionMarkCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 
 export const FieldLevelHelp = memo<FieldLevelHelpProps>(
@@ -17,7 +17,7 @@ export const FieldLevelHelp = memo<FieldLevelHelpProps>(
         hasAutoWidth={popoverHasAutoWidth}
       >
         <Button
-          icon={<OutlinedQuestionCircleIcon className="co-field-level-help__icon" />}
+          icon={<RhUiQuestionMarkCircleIcon className="co-field-level-help__icon" />}
           aria-label={t('public~Help')}
           variant="link"
           isInline

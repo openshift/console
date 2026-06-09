@@ -1,4 +1,4 @@
-import { CatalogIcon, SignOutAltIcon } from '@patternfly/react-icons';
+import { RhUiCatalogAltIcon, SignOutAltIcon } from '@patternfly/react-icons';
 import type { AddActionGroup, ResolvedExtension, AddAction } from '@console/dynamic-plugin-sdk';
 import type { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { helmCatalogIconSVG } from '@console/helm-plugin/src/utils/icons';
@@ -15,7 +15,7 @@ const allServices: AddActionExtension = {
     description: 'Browse the catalog to discover, deploy and connect to services',
     groupId: 'developer-catalog',
     href: '/catalog/ns/:namespace',
-    icon: <CatalogIcon />,
+    icon: <RhUiCatalogAltIcon />,
     id: 'dev-catalog',
     label: 'From Catalog',
   },
@@ -30,7 +30,7 @@ const database: AddActionExtension = {
     description: 'Browse the catalog to discover database services to add to your application',
     groupId: 'developer-catalog',
     href: '/catalog/ns/:namespace?category=databases',
-    icon: <CatalogIcon />,
+    icon: <RhUiCatalogAltIcon />,
     id: 'dev-catalog-databases',
     label: 'Database',
   },
@@ -45,7 +45,7 @@ const operatorBacked: AddActionExtension = {
     description: 'Browse the catalog to discover and deploy operator managed services',
     groupId: 'developer-catalog',
     href: '/catalog/ns/:namespace?catalogType=OperatorBackedService',
-    icon: <CatalogIcon />,
+    icon: <RhUiCatalogAltIcon />,
     id: 'operator-backed',
     label: 'Operator Backed',
   },
@@ -148,7 +148,7 @@ const containerImagesAction: AddActionExtension = {
     description: 'Deploy an existing Image from an Image registry or Image stream tag',
     groupId: 'container-images',
     href: '/deploy-image/ns/:namespace',
-    icon: <CatalogIcon />,
+    icon: <RhUiCatalogAltIcon />,
     id: 'deploy-image',
     label: 'Container images',
   },
@@ -210,7 +210,7 @@ const uploadJar: AddActionExtension = {
     description: 'Upload a JAR file from your local desktop to OpenShift',
     groupId: 'local-machine',
     href: '/upload-jar/ns/:namespace',
-    icon: <CatalogIcon />,
+    icon: <RhUiCatalogAltIcon />,
     id: 'upload-jar',
     label: 'Upload JAR file',
   },
@@ -224,7 +224,7 @@ const actionWithoutGroupId: AddActionExtension = {
   properties: {
     description: 'This is an action without a groupId',
     href: '/',
-    icon: <CatalogIcon />,
+    icon: <RhUiCatalogAltIcon />,
     id: 'no-groupId',
     label: 'Action Without GroupId',
   },
@@ -240,7 +240,7 @@ const actionWithUnavailableGroupId: AddActionExtension = {
       'This is an action with a groupId that is not available in the add group extensions',
     groupId: 'alien-group',
     href: '/',
-    icon: <CatalogIcon />,
+    icon: <RhUiCatalogAltIcon />,
     id: 'alien-groupId',
     label: 'Action With Unavailable GroupId',
   },

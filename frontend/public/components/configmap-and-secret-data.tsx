@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { useState, useMemo } from 'react';
 import { Base64 } from 'js-base64';
 import { saveAs } from 'file-saver';
-import { EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';
+import { RhUiViewIcon, RhUiViewOffIcon } from '@patternfly/react-icons';
 import {
   Button,
   DescriptionList,
@@ -123,12 +123,12 @@ const SecretDataRevealButton: FC<SecretDataRevealButtonProps> = ({ reveal, onCli
     >
       {reveal ? (
         <>
-          <EyeSlashIcon className="co-icon-space-r" />
+          <RhUiViewOffIcon className="co-icon-space-r" />
           {t('public~Hide values')}
         </>
       ) : (
         <>
-          <EyeIcon className="co-icon-space-r" />
+          <RhUiViewIcon className="co-icon-space-r" />
           {t('public~Reveal values')}
         </>
       )}

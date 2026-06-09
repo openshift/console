@@ -8,7 +8,7 @@ import {
   ButtonType,
   Tooltip,
 } from '@patternfly/react-core';
-import { MinusCircleIcon } from '@patternfly/react-icons';
+import { RhUiMinusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { InputField } from '../InputField';
 import type {
@@ -71,7 +71,7 @@ const TextColumnItemContent: FC<TextColumnItemProps> = ({
         <FlexItem>
           <Tooltip content={tooltipDeleteRow || t('console-shared~Remove')}>
             <Button
-              icon={<MinusCircleIcon />}
+              icon={<RhUiMinusCircleIcon />}
               aria-label={tooltipDeleteRow || t('console-shared~Remove')}
               variant={ButtonVariant.plain}
               type={ButtonType.button}

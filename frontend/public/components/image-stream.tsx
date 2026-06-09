@@ -14,7 +14,7 @@ import {
   GridItem,
   Popover,
 } from '@patternfly/react-core';
-import { QuestionCircleIcon } from '@patternfly/react-icons';
+import { RhUiQuestionMarkCircleFillIcon } from '@patternfly/react-icons';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import {
   K8sResourceKind,
@@ -209,7 +209,7 @@ export const ExampleDockerCommandPopover: FC<ImageStreamManipulationHelpProps> =
       }
     >
       <Button
-        icon={<QuestionCircleIcon className="co-icon-space-r" />}
+        icon={<RhUiQuestionMarkCircleFillIcon className="co-icon-space-r" />}
         className="pf-v6-u-display-none pf-v6-u-display-inline-flex-on-sm"
         type="button"
         variant="link"

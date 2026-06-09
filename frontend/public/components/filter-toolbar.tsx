@@ -21,7 +21,7 @@ import {
   ToolbarToggleGroup,
   Tooltip,
 } from '@patternfly/react-core';
-import { FilterIcon, ColumnsIcon } from '@patternfly/react-icons';
+import { RhUiFilterIcon, RhUiColumnsIcon } from '@patternfly/react-icons';
 import {
   RowFilterItem,
   ColumnLayout,
@@ -363,7 +363,7 @@ export const FilterToolbar: FC<FilterToolbarProps> = ({
     >
       <ToolbarContent>
         {(rowFilters?.length > 0 || !hideNameLabelFilters) && (
-          <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md">
+          <ToolbarToggleGroup toggleIcon={<RhUiFilterIcon />} breakpoint="md">
             {rowFilters?.length > 0 && (
               <ToolbarItem>
                 {_.reduce(
@@ -400,7 +400,7 @@ export const FilterToolbar: FC<FilterToolbarProps> = ({
                           isExpanded={isOpen}
                         >
                           <span>
-                            <FilterIcon className="span--icon__right-margin" />
+                            <RhUiFilterIcon className="span--icon__right-margin" />
                             {t('public~Filter')}
                           </span>
                         </MenuToggle>
@@ -503,7 +503,7 @@ export const FilterToolbar: FC<FilterToolbarProps> = ({
             <ToolbarItem>
               <Tooltip content={t('public~Manage columns')} trigger="mouseenter">
                 <Button
-                  icon={<ColumnsIcon />}
+                  icon={<RhUiColumnsIcon />}
                   variant="plain"
                   onClick={() =>
                     launchModal(LazyColumnManagementModalOverlay, {

@@ -16,7 +16,7 @@ import {
   Radio,
   TextInput,
 } from '@patternfly/react-core';
-import { ExclamationCircleIcon } from '@patternfly/react-icons';
+import { RhUiErrorFillIcon } from '@patternfly/react-icons';
 
 import { ClusterVersionModel } from '../../models';
 import { ClusterVersionKind, k8sPatch } from '../../module/k8s';
@@ -160,7 +160,7 @@ const ConfigureClusterUpstreamModal = (props: ConfigureClusterUpstreamModalProps
                     {invalidCustomURL && (
                       <FormHelperText className="pf-v6-u-mt-sm">
                         <HelperText>
-                          <HelperTextItem icon={<ExclamationCircleIcon />} variant="error">
+                          <HelperTextItem icon={<RhUiErrorFillIcon />} variant="error">
                             {t('public~Please enter a URL.')}
                           </HelperTextItem>
                         </HelperText>

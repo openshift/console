@@ -11,7 +11,7 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
-import { SyncAltIcon, UnknownIcon } from '@patternfly/react-icons';
+import { RhUiSyncIcon, RhUiUnknownIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 
@@ -68,11 +68,11 @@ const clusterOperatorReference: K8sResourceKindReference = referenceForModel(Clu
 const getIcon = (status: OperatorStatus) => {
   return {
     [OperatorStatus.Available]: <GreenCheckCircleIcon />,
-    [OperatorStatus.Progressing]: <SyncAltIcon />,
+    [OperatorStatus.Progressing]: <RhUiSyncIcon />,
     [OperatorStatus.Degraded]: <YellowExclamationTriangleIcon />,
     [OperatorStatus.CannotUpdate]: <YellowExclamationTriangleIcon />,
     [OperatorStatus.Unavailable]: <RedExclamationCircleIcon />,
-    [OperatorStatus.Unknown]: <UnknownIcon />,
+    [OperatorStatus.Unknown]: <RhUiUnknownIcon />,
   }[status];
 };
 

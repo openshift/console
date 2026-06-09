@@ -12,7 +12,7 @@ import {
   FormFieldGroup,
   ActionGroup,
 } from '@patternfly/react-core';
-import { MinusCircleIcon } from '@patternfly/react-icons';
+import { RhUiMinusCircleIcon } from '@patternfly/react-icons';
 
 export const PullSecretCredentialEntry: FC<PullSecretCredentialEntryProps> = ({
   id,
@@ -56,7 +56,7 @@ export const PullSecretCredentialEntry: FC<PullSecretCredentialEntryProps> = ({
             type="button"
             variant="link"
             data-test="remove-entry-button"
-            icon={<MinusCircleIcon />}
+            icon={<RhUiMinusCircleIcon />}
           >
             {t('public~Remove credentials')}
           </Button>

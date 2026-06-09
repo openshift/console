@@ -2,10 +2,10 @@ import type { ReactNode, FC } from 'react';
 import { useState } from 'react';
 import { ExpandableSection } from '@patternfly/react-core';
 import {
-  CheckCircleIcon,
-  ExclamationCircleIcon,
-  InProgressIcon,
-  UnknownIcon,
+  RhUiCheckCircleFillIcon,
+  RhUiErrorFillIcon,
+  RhUiInProgressIcon,
+  RhUiUnknownIcon,
 } from '@patternfly/react-icons';
 import {
   t_color_green_50 as okColor,
@@ -62,7 +62,7 @@ const useOperatorHealth = (t: ConsoleTFunction, name: string): OperatorHealthTyp
   if (!isLoaded) {
     return {
       message: t('vsphere-plugin~Pending'),
-      icon: <InProgressIcon />,
+      icon: <RhUiInProgressIcon />,
       level: OperatorHealthLevel.Unknown,
     };
   }
@@ -72,7 +72,7 @@ const useOperatorHealth = (t: ConsoleTFunction, name: string): OperatorHealthTyp
     console.error(`Failed to load operator "${name}": `, error);
     return {
       message: t('vsphere-plugin~Error'),
-      icon: <ExclamationCircleIcon color={errorColor.value} />,
+      icon: <RhUiErrorFillIcon color={errorColor.value} />,
       level: OperatorHealthLevel.Error,
     };
   }
@@ -90,7 +90,7 @@ const useOperatorHealth = (t: ConsoleTFunction, name: string): OperatorHealthTyp
   if (progressing === 'True') {
     return {
       message: t('vsphere-plugin~Progressing'),
-      icon: <InProgressIcon />,
+      icon: <RhUiInProgressIcon />,
       level: OperatorHealthLevel.Progressing,
     };
   }
@@ -98,7 +98,7 @@ const useOperatorHealth = (t: ConsoleTFunction, name: string): OperatorHealthTyp
   if (degraded === 'True') {
     return {
       message: t('vsphere-plugin~Degraded'),
-      icon: <ExclamationCircleIcon color={errorColor.value} />,
+      icon: <RhUiErrorFillIcon color={errorColor.value} />,
       level: OperatorHealthLevel.Degraded,
     };
   }
@@ -106,14 +106,14 @@ const useOperatorHealth = (t: ConsoleTFunction, name: string): OperatorHealthTyp
   if (available === 'True') {
     return {
       message: t('vsphere-plugin~Healthy'),
-      icon: <CheckCircleIcon color={okColor.value} />,
+      icon: <RhUiCheckCircleFillIcon color={okColor.value} />,
       level: OperatorHealthLevel.Healthy,
     };
   }
 
   return {
     message: t('vsphere-plugin~Unknown'),
-    icon: <UnknownIcon />,
+    icon: <RhUiUnknownIcon />,
     level: OperatorHealthLevel.Unknown,
   };
 };

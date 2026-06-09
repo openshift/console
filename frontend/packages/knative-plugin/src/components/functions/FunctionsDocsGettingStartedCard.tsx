@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { FlagIcon } from '@patternfly/react-icons';
+import { RhUiFlagIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import type { GettingStartedLink } from '@console/shared/src/components/getting-started/GettingStartedCard';
 import { GettingStartedCard } from '@console/shared/src/components/getting-started/GettingStartedCard';
@@ -32,7 +32,7 @@ export const FunctionsDocsGettingStartedCard: FC = () => {
   return (
     <GettingStartedCard
       id="serverless-features"
-      icon={<FlagIcon color="var(--co-global--palette--orange-400)" aria-hidden="true" />}
+      icon={<RhUiFlagIcon color="var(--co-global--palette--orange-400)" aria-hidden="true" />}
       title={t('knative-plugin~Explore serverless functions')}
       titleColor={'var(--co-global--palette--orange-400)'}
       description={t(

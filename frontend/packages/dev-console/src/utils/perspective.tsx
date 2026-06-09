@@ -1,4 +1,4 @@
-import { CodeIcon } from '@patternfly/react-icons';
+import { RhUiCodeIcon } from '@patternfly/react-icons';
 import { shallowEqual } from 'react-redux';
 import type { Perspective, ResolvedExtension } from '@console/dynamic-plugin-sdk';
 import { getFlagsObject, flagPending } from '@console/internal/reducers/features';
@@ -14,7 +14,7 @@ export const usePerspectiveDetection = () => {
   return [enablePerspective, loadingFlag] as [boolean, boolean];
 };
 
-export const icon: ResolvedExtension<Perspective>['properties']['icon'] = { default: CodeIcon };
+export const icon: ResolvedExtension<Perspective>['properties']['icon'] = { default: RhUiCodeIcon };
 
 export const getLandingPageURL: ResolvedExtension<Perspective>['properties']['landingPageURL'] = (
   flags,

@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { Button } from '@patternfly/react-core';
-import { AngleDownIcon, AngleRightIcon } from '@patternfly/react-icons';
+import { RhUiCaretDownIcon, RhUiCaretRightIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 
 import './EventPubSubExpandButton.scss';
@@ -19,9 +19,9 @@ const EventPubSubExpandButton: FC<EventPubSubExpandButtonProps> = ({ rowSelected
         <>
           <span className="kn-event-pubsub-expand-button__link">{title}</span>
           {rowSelected ? (
-            <AngleDownIcon className="kn-event-pubsub-expand-button__icon" />
+            <RhUiCaretDownIcon className="kn-event-pubsub-expand-button__icon" />
           ) : (
-            <AngleRightIcon className="kn-event-pubsub-expand-button__icon" />
+            <RhUiCaretRightIcon className="kn-event-pubsub-expand-button__icon" />
           )}
         </>
       }

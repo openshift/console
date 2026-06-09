@@ -6,7 +6,7 @@ import {
   AccordionToggle,
   AccordionContent,
 } from '@patternfly/react-core';
-import { InProgressIcon, QuestionCircleIcon } from '@patternfly/react-icons';
+import { RhUiInProgressIcon, RhUiQuestionMarkCircleFillIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import type { DashboardsInventoryItemGroup } from '@console/dynamic-plugin-sdk';
@@ -29,10 +29,10 @@ const defaultStatusGroupIcons = {
   [InventoryStatusGroup.WARN]: <YellowExclamationTriangleIcon />,
   [InventoryStatusGroup.ERROR]: <RedExclamationCircleIcon />,
   [InventoryStatusGroup.PROGRESS]: (
-    <InProgressIcon className="co-inventory-card__status-icon--progress" />
+    <RhUiInProgressIcon className="co-inventory-card__status-icon--progress" />
   ),
   [InventoryStatusGroup.UNKNOWN]: (
-    <QuestionCircleIcon className="co-inventory-card__status-icon--question" />
+    <RhUiQuestionMarkCircleFillIcon className="co-inventory-card__status-icon--question" />
   ),
 };
 

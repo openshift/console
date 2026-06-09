@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { Button, Tooltip } from '@patternfly/react-core';
-import { PlusCircleIcon } from '@patternfly/react-icons';
+import { RhUiAddCircleFillIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 
 interface MultiColumnFieldFooterProps {
@@ -25,7 +25,7 @@ const MultiColumnFieldFooter: FC<MultiColumnFieldFooterProps> = ({
       variant="link"
       isAriaDisabled={disableAddRow}
       onClick={!disableAddRow ? onAdd : undefined}
-      icon={<PlusCircleIcon />}
+      icon={<RhUiAddCircleFillIcon />}
       isInline
     >
       {addLabel || t('console-shared~Add values')}

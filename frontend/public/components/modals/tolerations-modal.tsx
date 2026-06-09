@@ -12,7 +12,7 @@ import {
   Tooltip,
 } from '@patternfly/react-core';
 import { Table, Thead, Tr, Th, Td, Tbody } from '@patternfly/react-table';
-import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { RhUiMinusCircleIcon, RhUiAddCircleFillIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { EmptyBox } from '../utils/status-box';
@@ -199,7 +199,7 @@ const TolerationsModal = (props: TolerationsModalProps) => {
                           <Tooltip content={t('public~Remove')}>
                             <Button
                               icon={
-                                <MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />
+                                <RhUiMinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />
                               }
                               type="button"
                               onClick={() => remove(i)}
@@ -217,7 +217,10 @@ const TolerationsModal = (props: TolerationsModalProps) => {
           )}
           <Button
             icon={
-              <PlusCircleIcon data-test-id="pairs-list__add-icon" className="co-icon-space-r" />
+              <RhUiAddCircleFillIcon
+                data-test-id="pairs-list__add-icon"
+                className="co-icon-space-r"
+              />
             }
             iconPosition="left"
             onClick={addRow}

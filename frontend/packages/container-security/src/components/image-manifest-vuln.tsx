@@ -8,7 +8,7 @@ import {
   GridItem,
   Tooltip,
 } from '@patternfly/react-core';
-import { ExclamationTriangleIcon } from '@patternfly/react-icons';
+import { RhUiWarningFillIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import { sortable, Table as PfTable, Thead, Th, Tbody, Td, Tr } from '@patternfly/react-table';
 import type { TFunction } from 'i18next';
@@ -183,7 +183,7 @@ const ImageManifestVulnTableRow: FC<RowFunctionArgs<ImageManifestVuln>> = ({ obj
       <TableData className={tableColumnClasses[2]}>
         {obj.status?.highestSeverity ? (
           <>
-            <ExclamationTriangleIcon color={priorityFor(obj.status.highestSeverity).color.value} />
+            <RhUiWarningFillIcon color={priorityFor(obj.status.highestSeverity).color.value} />
             &nbsp;{obj.status.highestSeverity}
           </>
         ) : (
@@ -385,7 +385,7 @@ const ContainerVulnerabilities: FC<ContainerVulnerabilitiesProps> = (props) => {
                   vulnFor(status),
                   (vuln) => (
                     <span style={{ display: 'flex', alignItems: 'center' }}>
-                      <ExclamationTriangleIcon
+                      <RhUiWarningFillIcon
                         color={priorityFor(_.get(vuln.status, 'highestSeverity')).color.value}
                       />
                       &nbsp;

@@ -21,7 +21,7 @@ import {
   Pagination,
   Bullseye,
 } from '@patternfly/react-core';
-import { FilterIcon } from '@patternfly/react-icons';
+import { RhUiFilterIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 
@@ -384,7 +384,7 @@ const APIResourcesList: FC = () => {
     <PaneBody>
       <Toolbar className="pf-m-toggle-group-container">
         <ToolbarContent>
-          <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md">
+          <ToolbarToggleGroup toggleIcon={<RhUiFilterIcon />} breakpoint="md">
             <ToolbarItem>
               <ConsoleSelect
                 autocompleteFilter={autocompleteGroups}

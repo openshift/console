@@ -14,7 +14,7 @@ import { ProjectModel } from '../models';
 import { K8sResourceKind } from '../module/k8s/types';
 import { useCreateNamespaceOrProjectModal } from '@console/shared/src/hooks/useCreateNamespaceOrProjectModal';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
-import { ClusterIcon } from '@patternfly/react-icons';
+import { RhUiServerStackIcon } from '@patternfly/react-icons';
 import { ExternalLinkButton } from '@console/shared/src/components/links/ExternalLinkButton';
 
 export const OpenShiftGettingStarted: FC<OpenShiftGettingStartedProps> = () => {
@@ -60,7 +60,7 @@ export const OpenShiftGettingStarted: FC<OpenShiftGettingStartedProps> = () => {
   return (
     <ConsoleEmptyState
       variant={EmptyStateVariant.sm}
-      icon={ClusterIcon}
+      icon={RhUiServerStackIcon}
       title={t('public~Hello, world')}
       primaryActions={primaryActions}
       secondaryActions={secondaryActions}

@@ -12,7 +12,7 @@ import {
   SwitchProps,
 } from '@patternfly/react-core';
 import {
-  CogIcon,
+  RhUiSettingsIcon,
   PaintRollerIcon,
   FontIcon,
   ICursorIcon,
@@ -55,7 +55,7 @@ interface ConfigModalItemProps {
 }
 
 const ConfigModalItem: React.FC<ConfigModalItemProps> = ({
-  icon = <CogIcon />,
+  icon = <RhUiSettingsIcon />,
   description,
   title,
   id = `ConfigModalItem-${title.replace(/\s+/g, '-').toLowerCase()}`,
@@ -94,7 +94,7 @@ interface ConfigModalSwitchProps extends Omit<ConfigModalItemProps, 'slot'> {
 }
 
 const ConfigModalSwitch: React.FC<ConfigModalSwitchProps> = ({
-  icon = <CogIcon />,
+  icon = <RhUiSettingsIcon />,
   description,
   title,
   id = `ConfigModalSwitch-${title.replace(/\s+/g, '-').toLowerCase()}`,
@@ -300,7 +300,7 @@ export const EditYamlSettingsModal: FC<AppendToProps> = ({ appendTo }) => {
       <CodeEditorControl
         aria-label={t('Editor settings')}
         aria-haspopup="dialog"
-        icon={<CogIcon />}
+        icon={<RhUiSettingsIcon />}
         onClick={() => setIsModalOpen(true)}
         tooltipProps={{ content: t('Editor settings') }}
       />

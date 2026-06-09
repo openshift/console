@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { InProgressIcon, OffIcon, OnRunningIcon } from '@patternfly/react-icons';
+import { RhUiInProgressIcon, RhUiOffIcon, OnRunningIcon } from '@patternfly/react-icons';
 import {
   HOST_POWER_STATUS_POWERED_OFF,
   HOST_POWER_STATUS_POWERED_ON,
@@ -14,8 +14,8 @@ const BareMetalHostPowerStatusIcon: FC<BareMetalHostPowerStatusIconProps> = ({
   ...iconProps
 }) => {
   if (powerStatus === HOST_POWER_STATUS_POWERED_ON) return <OnRunningIcon {...iconProps} />;
-  if (powerStatus === HOST_POWER_STATUS_POWERED_OFF) return <OffIcon {...iconProps} />;
-  return <InProgressIcon {...iconProps} />;
+  if (powerStatus === HOST_POWER_STATUS_POWERED_OFF) return <RhUiOffIcon {...iconProps} />;
+  return <RhUiInProgressIcon {...iconProps} />;
 };
 
 export default BareMetalHostPowerStatusIcon;

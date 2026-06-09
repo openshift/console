@@ -1,12 +1,12 @@
 import type { ReactNode, FC } from 'react';
 import {
-  BanIcon,
+  RhUiBanIcon,
   ClipboardListIcon,
   HourglassHalfIcon,
   HourglassStartIcon,
   NotStartedIcon,
-  SyncAltIcon,
-  UnknownIcon,
+  RhUiSyncIcon,
+  RhUiUnknownIcon,
 } from '@patternfly/react-icons';
 import type { StatusComponentProps } from '../../../extensions/console-types';
 import { DASH } from '../../constants';
@@ -60,7 +60,7 @@ const Status: FC<StatusProps> = ({ status, title, children, iconOnly, noTooltip,
     case 'Updating':
     case 'Upgrading':
     case 'PendingInstall':
-      return <StatusIconAndText {...statusProps} icon={<SyncAltIcon />} />;
+      return <StatusIconAndText {...statusProps} icon={<RhUiSyncIcon />} />;
 
     case 'Cancelled':
     case 'Deleting':
@@ -70,7 +70,7 @@ const Status: FC<StatusProps> = ({ status, title, children, iconOnly, noTooltip,
     case 'Terminating':
     case 'Superseded':
     case 'Uninstalling':
-      return <StatusIconAndText {...statusProps} icon={<BanIcon />} />;
+      return <StatusIconAndText {...statusProps} icon={<RhUiBanIcon />} />;
 
     case 'Warning':
     case 'RequiresApproval':
@@ -115,7 +115,7 @@ const Status: FC<StatusProps> = ({ status, title, children, iconOnly, noTooltip,
       return <InfoStatus {...statusProps}>{children}</InfoStatus>;
 
     case 'Unknown':
-      return <StatusIconAndText {...statusProps} icon={<UnknownIcon />} />;
+      return <StatusIconAndText {...statusProps} icon={<RhUiUnknownIcon />} />;
 
     case 'PipelineNotStarted':
       return <StatusIconAndText {...statusProps} icon={<NotStartedIcon />} />;

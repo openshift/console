@@ -21,7 +21,7 @@ import {
   DataViewTable,
   DataViewToolbar,
 } from '@patternfly/react-data-view';
-import { ColumnsIcon, UndoIcon } from '@patternfly/react-icons';
+import { RhUiColumnsIcon, RhUiUndoIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import { InnerScrollContainer, Tbody, Td, Tr } from '@patternfly/react-table';
 import { Trans, useTranslation } from 'react-i18next';
@@ -278,7 +278,7 @@ export const ConsoleDataView = <
                     data-test="manage-columns"
                   >
                     <Tooltip content={t('public~Manage columns')} trigger="mouseenter">
-                      <ColumnsIcon />
+                      <RhUiColumnsIcon />
                     </Tooltip>
                   </ResponsiveAction>
                 )}
@@ -291,7 +291,7 @@ export const ConsoleDataView = <
                     data-test="reset-column-widths"
                   >
                     <Tooltip content={t('public~Reset column widths')} trigger="mouseenter">
-                      <UndoIcon />
+                      <RhUiUndoIcon />
                     </Tooltip>
                   </ResponsiveAction>
                 )}

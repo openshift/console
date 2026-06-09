@@ -1,6 +1,10 @@
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
-import { MinusCircleIcon, PlusCircleIcon, ExclamationCircleIcon } from '@patternfly/react-icons';
+import {
+  RhUiMinusCircleIcon,
+  RhUiAddCircleFillIcon,
+  RhUiErrorFillIcon,
+} from '@patternfly/react-icons';
 import {
   Button,
   Content,
@@ -95,7 +99,7 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
                 <InputGroupItem>
                   <Tooltip content={t('public~Remove')}>
                     <Button
-                      icon={<MinusCircleIcon />}
+                      icon={<RhUiMinusCircleIcon />}
                       type="button"
                       onClick={() => removeRoutingLabel(i)}
                       aria-label={t('public~Remove')}
@@ -113,7 +117,7 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
         <FormHelperText className="pf-v6-u-mb-0">
           <HelperText>
             <HelperTextItem
-              icon={<ExclamationCircleIcon />}
+              icon={<RhUiErrorFillIcon />}
               variant="error"
               id="routing-labels-help"
               aria-live="polite"
@@ -126,7 +130,7 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
       )}
       {!isDefaultReceiver && (
         <Button
-          icon={<PlusCircleIcon />}
+          icon={<RhUiAddCircleFillIcon />}
           onClick={addRoutingLabel}
           type="button"
           variant="link"

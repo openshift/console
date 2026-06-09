@@ -19,7 +19,7 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
-import { CompressIcon, ExpandIcon } from '@patternfly/react-icons';
+import { RhUiCompressIcon, RhUiExpandIcon } from '@patternfly/react-icons';
 /* eslint-disable import/named */
 import { useTranslation } from 'react-i18next';
 
@@ -174,7 +174,7 @@ const TemplateFormField: FC<TemplateFormFieldProps> = ({
         onClick={() => setIsTextArea(!isTextArea)}
         variant="control"
       >
-        {isTextArea ? <CompressIcon /> : <ExpandIcon />}
+        {isTextArea ? <RhUiCompressIcon /> : <RhUiExpandIcon />}
       </Button>
     </Tooltip>
   );

@@ -1,6 +1,6 @@
 import {
   BoltIcon,
-  CatalogIcon,
+  RhUiCatalogAltIcon,
   DatabaseIcon,
   ExportIcon,
   FileUploadIcon,
@@ -19,7 +19,7 @@ export const deployIconElement = <OsImageIcon />;
 
 export const samplesIconElement = <LaptopCodeIcon />;
 
-export const softwareCatalogIconElement = <CatalogIcon />;
+export const softwareCatalogIconElement = <RhUiCatalogAltIcon />;
 
 export const databaseCatalogIconElement = <DatabaseIcon />;
 

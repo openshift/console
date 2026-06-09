@@ -25,7 +25,7 @@ import {
   TextInputGroupUtilities,
   Tooltip,
 } from '@patternfly/react-core';
-import { TimesIcon } from '@patternfly/react-icons';
+import { RhUiCloseIcon } from '@patternfly/react-icons';
 
 const RECENT_SEARCH_ITEMS = 5;
 const MAX_VISIBLE_ITEMS = 250;
@@ -475,7 +475,7 @@ export const ResourceListDropdown_: FC<ResourceListDropdownProps> = (props) => {
               />
               <TextInputGroupUtilities {...(!inputValue ? { style: { display: 'none' } } : {})}>
                 <Button
-                  icon={<TimesIcon aria-hidden />}
+                  icon={<RhUiCloseIcon aria-hidden />}
                   variant="plain"
                   onClick={onClearButtonClick}
                   aria-label={t('public~Clear input value')}

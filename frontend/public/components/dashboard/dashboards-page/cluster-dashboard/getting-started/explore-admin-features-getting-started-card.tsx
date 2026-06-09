@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { useMemo } from 'react';
 import * as semver from 'semver';
 import { useTranslation } from 'react-i18next';
-import { FlagIcon } from '@patternfly/react-icons';
+import { RhUiFlagIcon } from '@patternfly/react-icons';
 import { FLAGS } from '@console/shared/src/constants/common';
 import { useOpenShiftVersion } from '@console/shared/src/hooks/useClusterVersion';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
@@ -68,7 +68,7 @@ export const ExploreAdminFeaturesGettingStartedCard: FC = () => {
   return (
     <GettingStartedCard
       id="admin-features"
-      icon={<FlagIcon color="var(--co-global--palette--orange-400)" aria-hidden="true" />}
+      icon={<RhUiFlagIcon color="var(--co-global--palette--orange-400)" aria-hidden="true" />}
       title={t('public~Explore new features and capabilities')}
       titleColor={'var(--co-global--palette--orange-400)'}
       links={links}

@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { Button } from '@patternfly/react-core';
-import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { RhUiMinusCircleIcon, RhUiAddCircleFillIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import { Table, Thead, Tr, Th, Td, Tbody } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
@@ -68,7 +68,7 @@ const MatchExpression: FC<MatchExpressionProps> = ({
       </Td>
       <Td isActionCell>
         <Button
-          icon={<MinusCircleIcon />}
+          icon={<RhUiMinusCircleIcon />}
           type="button"
           onClick={onClickRemove}
           aria-label="Delete"
@@ -121,7 +121,7 @@ export const MatchExpressions: FC<MatchExpressionsProps> = ({
         <Tr>
           <Td>
             <Button
-              icon={<PlusCircleIcon className="co-icon-space-r" />}
+              icon={<RhUiAddCircleFillIcon className="co-icon-space-r" />}
               type="button"
               onClick={addExpression}
               variant="link"

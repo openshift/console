@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { useContext, useState, useEffect, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardBody, CardHeader, CardTitle, DescriptionList } from '@patternfly/react-core';
-import { InProgressIcon } from '@patternfly/react-icons';
+import { RhUiInProgressIcon } from '@patternfly/react-icons';
 import { BlueArrowCircleUpIcon } from '@console/shared/src/components/status/icons';
 import { FLAGS } from '@console/shared/src/constants/common';
 import {
@@ -61,7 +61,7 @@ const ClusterVersion: FC<ClusterVersionProps> = ({ cv }) => {
           <span className="co-select-to-copy">{desiredVersion}</span>
           <div>
             <Link to="/settings/cluster/">
-              <InProgressIcon className="co-icon-and-text__icon" />
+              <RhUiInProgressIcon className="co-icon-and-text__icon" />
               {t('public~Updating')}
             </Link>
           </div>

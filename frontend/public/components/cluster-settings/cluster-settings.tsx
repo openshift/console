@@ -25,7 +25,7 @@ import {
 import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 
-import { AddCircleOIcon, PauseCircleIcon, PencilAltIcon } from '@patternfly/react-icons';
+import { RhUiAddCircleIcon, RhUiPauseCircleIcon, RhUiEditIcon } from '@patternfly/react-icons';
 
 import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import { MarkdownView } from '@console/shared/src/components/markdown/MarkdownView';
@@ -174,7 +174,7 @@ const CurrentChannel: FC<CurrentChannelProps> = ({ cv, canUpgrade }) => {
   const label = cv.spec.channel || t('public~Not configured');
   return canUpgrade ? (
     <Button
-      icon={<PencilAltIcon />}
+      icon={<RhUiEditIcon />}
       iconPosition="end"
       type="button"
       isInline
@@ -838,7 +838,7 @@ export const MachineConfigPoolsArePausedAlert: FC<MachineConfigPoolsArePausedAle
       title={t('public~{{resource}} updates are paused.', {
         resource: NodeModel.label,
       })}
-      customIcon={<PauseCircleIcon />}
+      customIcon={<RhUiPauseCircleIcon />}
       actionLinks={
         workerMachineConfigPoolIsEditable && (
           <AlertActionLink
@@ -1084,7 +1084,7 @@ const ClusterVersionDetailsTable: FC<ClusterVersionDetailsTableProps> = ({
               <DescriptionListDescription>
                 {_.isEmpty(autoscalers) ? (
                   <Link to={`${resourcePathFromModel(ClusterAutoscalerModel)}/~new`}>
-                    <AddCircleOIcon className="co-icon-space-r" />
+                    <RhUiAddCircleIcon className="co-icon-space-r" />
                     {t('public~Create autoscaler')}
                   </Link>
                 ) : (

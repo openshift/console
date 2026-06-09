@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useRef, useState, useCallback } from 'react';
 import { Button, Flex, FlexItem } from '@patternfly/react-core';
-import { CompressIcon, DownloadIcon, ExpandIcon } from '@patternfly/react-icons';
+import { RhUiCompressIcon, RhUiDownloadIcon, RhUiExpandIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import { saveAs } from 'file-saver';
 import { useTranslation } from 'react-i18next';
@@ -76,7 +76,7 @@ const LogsWrapperComponent: FC<LogsWrapperComponentProps> = ({
       >
         <FlexItem className="odc-multi-stream-logs__button" align={{ default: 'alignRight' }}>
           <Button variant="link" onClick={downloadLogs} isInline>
-            <DownloadIcon className="odc-multi-stream-logs__icon" />
+            <RhUiDownloadIcon className="odc-multi-stream-logs__icon" />
             {t('shipwright-plugin~Download')}
           </Button>
         </FlexItem>
@@ -90,7 +90,7 @@ const LogsWrapperComponent: FC<LogsWrapperComponentProps> = ({
                 isDisabled={downloadAllStatus}
                 isInline
               >
-                <DownloadIcon className="odc-multi-stream-logs__icon" />
+                <RhUiDownloadIcon className="odc-multi-stream-logs__icon" />
                 {downloadAllLabel || t('shipwright-plugin~Download all')}
                 {downloadAllStatus && <LoadingInline />}
               </Button>
@@ -103,12 +103,12 @@ const LogsWrapperComponent: FC<LogsWrapperComponentProps> = ({
             <Button variant="link" onClick={fullscreenToggle} isInline>
               {isFullscreen ? (
                 <>
-                  <CompressIcon className="odc-multi-stream-logs__icon" />
+                  <RhUiCompressIcon className="odc-multi-stream-logs__icon" />
                   {t('shipwright-plugin~Collapse')}
                 </>
               ) : (
                 <>
-                  <ExpandIcon className="odc-multi-stream-logs__icon" />
+                  <RhUiExpandIcon className="odc-multi-stream-logs__icon" />
                   {t('shipwright-plugin~Expand')}
                 </>
               )}

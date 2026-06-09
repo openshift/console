@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useRef, useMemo, memo } from 'react';
 import { Tooltip } from '@patternfly/react-core';
-import { QuestionCircleIcon } from '@patternfly/react-icons';
+import { RhUiQuestionMarkCircleFillIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import { t_color_gray_50 as customTaskColor } from '@patternfly/react-tokens';
 import type { Node, NodeModel } from '@patternfly/react-topology';
@@ -121,7 +121,7 @@ const CustomTaskComponent: FC<CustomTaskProps> = ({
               color: customTaskColor.value,
             }}
           >
-            {<QuestionCircleIcon />}
+            {<RhUiQuestionMarkCircleFillIcon />}
           </svg>
         </>
       )}

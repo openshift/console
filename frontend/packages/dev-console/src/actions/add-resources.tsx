@@ -1,7 +1,7 @@
 import {
   BoltIcon,
-  CatalogIcon,
-  DatabaseIcon,
+  RhUiCatalogAltIcon,
+  RhUiStorageIcon,
   FileUploadIcon,
   GitAltIcon,
   LaptopCodeIcon,
@@ -81,7 +81,7 @@ export const AddActions: { [name: string]: ActionFactory } = {
   SoftwareCatalog: (namespace, application, contextSource, path, accessReviewDisabled) => ({
     id: 'dev-catalog',
     label: i18next.t('devconsole~From Catalog'),
-    icon: <CatalogIcon />,
+    icon: <RhUiCatalogAltIcon />,
     cta: {
       href: resolvedURLWithParams('/catalog/ns/:namespace', namespace, application, contextSource),
     },
@@ -91,7 +91,7 @@ export const AddActions: { [name: string]: ActionFactory } = {
   DatabaseCatalog: (namespace, application, contextSource, path, accessReviewDisabled) => ({
     id: 'dev-catalog-databases',
     label: i18next.t('devconsole~Database'),
-    icon: <DatabaseIcon />,
+    icon: <RhUiStorageIcon />,
     cta: {
       href: resolvedURLWithParams(
         '/catalog/ns/:namespace?category=databases',

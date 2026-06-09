@@ -5,8 +5,8 @@ import {
   ArrowCircleUpIcon,
   ResourcesAlmostFullIcon,
   ResourcesFullIcon,
-  SyncAltIcon,
-  UnknownIcon,
+  RhUiSyncIcon,
+  RhUiUnknownIcon,
 } from '@patternfly/react-icons';
 import type { ColoredIconProps } from '@console/dynamic-plugin-sdk';
 
@@ -19,13 +19,13 @@ export {
 
 export const GrayUnknownIcon: FC<ColoredIconProps> = ({ className, title, size }) => (
   <Icon size={size}>
-    <UnknownIcon className={className} title={title} />
+    <RhUiUnknownIcon className={className} title={title} />
   </Icon>
 );
 
 export const BlueSyncIcon: FC<ColoredIconProps> = ({ className, title, size }) => (
   <Icon status="info" size={size}>
-    <SyncAltIcon className={className} title={title} />
+    <RhUiSyncIcon className={className} title={title} />
   </Icon>
 );
 

@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useRef } from 'react';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { RhUiExternalLinkFillIcon } from '@patternfly/react-icons';
 import type { Node } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { Decorator } from '@console/topology/src/components/graph-view/components/nodes/decorators/Decorator';
@@ -34,7 +34,7 @@ const RevisionRouteDecorator: FC<RevisionRouteDecoratorProps> = ({ element, radi
       <g ref={ref}>
         <Decorator x={x} y={y} radius={radius} href={url} external>
           <g transform={`translate(-${radius / 2}, -${radius / 2})`}>
-            <ExternalLinkAltIcon
+            <RhUiExternalLinkFillIcon
               style={{ fontSize: radius }}
               title={t('knative-plugin~Open URL')}
             />

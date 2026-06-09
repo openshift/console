@@ -11,7 +11,7 @@ import {
   Th,
   Tr,
 } from '@patternfly/react-table';
-import { BanIcon } from '@patternfly/react-icons';
+import { RhUiBanIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 
 import { DetailsPage } from './factory/details';
@@ -83,7 +83,7 @@ const Established: FC<{ crd: CustomResourceDefinitionKind }> = ({ crd }) => {
     </span>
   ) : (
     <span>
-      <BanIcon title={t('public~false')} />
+      <RhUiBanIcon title={t('public~false')} />
     </span>
   );
 };

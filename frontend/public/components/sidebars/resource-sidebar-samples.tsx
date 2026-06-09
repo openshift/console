@@ -7,7 +7,7 @@ import { BasicCodeEditor } from '@console/shared/src/components/editor/BasicCode
 import {
   ChevronDownIcon,
   ChevronRightIcon,
-  DownloadIcon,
+  RhUiDownloadIcon,
   PasteIcon,
 } from '@patternfly/react-icons';
 import { Sample } from '@console/shared/src/hooks/useResourceSidebarSamples';
@@ -46,7 +46,7 @@ const ResourceSidebarSample: FC<ResourceSidebarSampleProps> = ({
         </LevelItem>
         <LevelItem>
           <Button
-            icon={<DownloadIcon className="co-icon-space-r" />}
+            icon={<RhUiDownloadIcon className="co-icon-space-r" />}
             type="button"
             variant="link"
             data-test="download-sample"

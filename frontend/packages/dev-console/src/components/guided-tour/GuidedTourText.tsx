@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { PlusCircleIcon } from '@patternfly/react-icons';
+import { RhUiAddCircleFillIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import * as semver from 'semver';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
@@ -83,7 +83,7 @@ const SearchTourText: FC = () => {
             color: 'var(--pf-t--global--icon--color--brand--default)',
           }}
         >
-          <PlusCircleIcon /> {t('devconsole~Add to navigation')}
+          <RhUiAddCircleFillIcon /> {t('devconsole~Add to navigation')}
         </span>{' '}
         {t('devconsole~link next to your search result.')}
       </p>

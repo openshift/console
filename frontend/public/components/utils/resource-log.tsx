@@ -39,11 +39,11 @@ import {
 import { LogViewer, LogViewerSearch } from '@patternfly/react-log-viewer';
 import {
   BugIcon,
-  CompressIcon,
-  DownloadIcon,
-  ExpandIcon,
+  RhUiCompressIcon,
+  RhUiDownloadIcon,
+  RhUiExpandIcon,
   OutlinedPlayCircleIcon,
-  SearchIcon,
+  RhUiSearchIcon,
 } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import {
@@ -428,7 +428,7 @@ const LogControls: FC<LogControlsProps> = ({
           <ToolbarGroup align={{ default: 'alignEnd' }}>
             {!_.isEmpty(podLogLinks) && renderPodLogLinks()}
             <ToolbarGroup>
-              <ToolbarToggleGroup toggleIcon={<SearchIcon />} breakpoint="lg">
+              <ToolbarToggleGroup toggleIcon={<RhUiSearchIcon />} breakpoint="lg">
                 <ToolbarItem>
                   <LogViewerSearch
                     onFocus={() => {
@@ -456,7 +456,7 @@ const LogControls: FC<LogControlsProps> = ({
                     variant="plain"
                     href={currentLogURL}
                     download={getLogDownloadFilename(resource, containerName)}
-                    icon={<DownloadIcon />}
+                    icon={<RhUiDownloadIcon />}
                   />
                 </Tooltip>
               </ToolbarItem>
@@ -466,7 +466,7 @@ const LogControls: FC<LogControlsProps> = ({
                     <Button
                       variant="plain"
                       onClick={toggleFullscreen}
-                      icon={isFullscreen ? <CompressIcon /> : <ExpandIcon />}
+                      icon={isFullscreen ? <RhUiCompressIcon /> : <RhUiExpandIcon />}
                     />
                   </Tooltip>
                 </ToolbarItem>

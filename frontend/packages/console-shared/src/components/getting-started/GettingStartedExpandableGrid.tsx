@@ -8,7 +8,7 @@ import {
   CardExpandableContent,
   Popover,
 } from '@patternfly/react-core';
-import { TimesIcon, OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
+import { RhUiCloseIcon, RhUiQuestionMarkCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { GettingStartedShowState } from './useGettingStartedShowState';
 
@@ -77,7 +77,7 @@ export const GettingStartedExpandableGrid: FC<GettingStartedExpandableGridProps>
               <Button
                 variant="plain"
                 aria-label={t('console-shared~Close')}
-                icon={<TimesIcon />}
+                icon={<RhUiCloseIcon />}
                 onClick={handleClose}
               />
             ),
@@ -95,7 +95,7 @@ export const GettingStartedExpandableGrid: FC<GettingStartedExpandableGridProps>
           {titleTooltip && (
             <Popover bodyContent={titleTooltip} triggerAction="hover">
               <span role="button" aria-label={t('console-shared~More info')}>
-                <OutlinedQuestionCircleIcon />
+                <RhUiQuestionMarkCircleIcon />
               </span>
             </Popover>
           )}

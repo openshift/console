@@ -14,7 +14,7 @@ import {
   Tooltip,
 } from '@patternfly/react-core';
 import type { TextInputProps } from '@patternfly/react-core';
-import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { RhUiMinusCircleIcon, RhUiAddCircleFillIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 
 import { NameValueEditorPair, EnvFromPair, EnvType } from './types';
@@ -149,7 +149,7 @@ const PairElement: FC<PairElementProps> = ({
         <GridItem span={1} className="pairs-list__action">
           <Tooltip content={toolTip || t('Remove')}>
             <Button
-              icon={<MinusCircleIcon className="pairs-list__delete-icon" />}
+              icon={<RhUiMinusCircleIcon className="pairs-list__delete-icon" />}
               type="button"
               data-test="delete-button"
               aria-label={t('Delete')}
@@ -210,7 +210,9 @@ const EnvFromPairElement: FC<EnvFromPairElementProps> = ({
         <GridItem span={1} className="pairs-list__action">
           <Tooltip content={t('Remove')}>
             <Button
-              icon={<MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />}
+              icon={
+                <RhUiMinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />
+              }
               type="button"
               data-test-id="pairs-list__delete-from-btn"
               aria-label={t('Delete')}
@@ -368,7 +370,7 @@ export const NameValueEditor: FC<NameValueEditorProps> = ({
               <ActionListItem>
                 <Button
                   icon={
-                    <PlusCircleIcon
+                    <RhUiAddCircleFillIcon
                       data-test-id="pairs-list__add-icon"
                       className="co-icon-space-r"
                     />
@@ -386,7 +388,7 @@ export const NameValueEditor: FC<NameValueEditorProps> = ({
                 <ActionListItem>
                   <Button
                     icon={
-                      <PlusCircleIcon
+                      <RhUiAddCircleFillIcon
                         data-test-id="pairs-list__add-icon"
                         className="co-icon-space-r"
                       />
@@ -539,7 +541,7 @@ export const EnvFromEditor: FC<EnvFromEditorProps> = ({
           <ActionList>
             <ActionListGroup>
               <Button
-                icon={<PlusCircleIcon />}
+                icon={<RhUiAddCircleFillIcon />}
                 className="pf-m-link--align-left"
                 onClick={handleAppend}
                 type="button"

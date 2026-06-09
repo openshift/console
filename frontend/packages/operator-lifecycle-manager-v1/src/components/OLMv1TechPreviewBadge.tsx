@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { Button, Label, Popover } from '@patternfly/react-core';
-import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
+import { RhUiQuestionMarkCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 
 /**
@@ -27,7 +27,7 @@ export const OLMv1TechPreviewBadge: FC = () => {
       </Label>{' '}
       <Popover aria-label={t('olm-v1~OLMv1 information')} bodyContent={popoverContent}>
         <Button
-          icon={<OutlinedQuestionCircleIcon aria-hidden="true" />}
+          icon={<RhUiQuestionMarkCircleIcon aria-hidden="true" />}
           aria-label={t('olm-v1~OLMv1 information')}
           variant="link"
           isInline

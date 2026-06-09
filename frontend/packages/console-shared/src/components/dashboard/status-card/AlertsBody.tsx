@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { Children } from 'react';
 import { EmptyState, EmptyStateVariant, EmptyStateBody } from '@patternfly/react-core';
-import { UnknownIcon } from '@patternfly/react-icons';
+import { RhUiUnknownIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import type { AlertsBodyProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 
@@ -12,7 +12,7 @@ const AlertsBody: FC<AlertsBodyProps> = ({ error = false, children }) => {
       <div className="co-status-card__alerts-body">
         {error ? (
           <EmptyState
-            icon={UnknownIcon}
+            icon={RhUiUnknownIcon}
             variant={EmptyStateVariant.full}
             className="co-status-card__alerts-msg"
           >

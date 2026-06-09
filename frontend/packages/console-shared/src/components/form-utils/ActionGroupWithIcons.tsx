@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { CloseButton } from '@patternfly/react-component-groups';
 import { ActionGroup, Button, ButtonVariant } from '@patternfly/react-core';
-import { CheckIcon } from '@patternfly/react-icons';
+import { RhUiCheckIcon } from '@patternfly/react-icons';
 import type { ActionGroupWithIconsProps } from './form-utils-types';
 
 export const ActionGroupWithIcons: FC<ActionGroupWithIconsProps> = ({
@@ -13,7 +13,7 @@ export const ActionGroupWithIcons: FC<ActionGroupWithIconsProps> = ({
     <ActionGroup className="pf-v6-c-form pf-v6-c-form__actions--right">
       {onSubmit && (
         <Button
-          icon={<CheckIcon />}
+          icon={<RhUiCheckIcon />}
           type="submit"
           onClick={onSubmit}
           variant={ButtonVariant.plain}

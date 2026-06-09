@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useState, useEffect } from 'react';
 import { Button, Split, SplitItem, Bullseye, Tooltip } from '@patternfly/react-core';
-import { AngleDownIcon, AngleUpIcon, AutomationIcon } from '@patternfly/react-icons';
+import { RhUiCaretDownIcon, RhUiCaretUpIcon, RhUiAutomationIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import type { ImpersonateKind } from '@console/dynamic-plugin-sdk';
@@ -117,7 +117,7 @@ export const PodRing: FC<PodRingProps> = ({
             type="button"
             variant="link"
             data-test="enable-autoscale"
-            icon={<AutomationIcon />}
+            icon={<RhUiAutomationIcon />}
             onClick={() => handleClick(1)}
           >
             {t('console-shared~Enable Autoscale')}
@@ -131,7 +131,7 @@ export const PodRing: FC<PodRingProps> = ({
               {(() => {
                 const scaleUpButton = (
                   <Button
-                    icon={<AngleUpIcon style={{ fontSize: '20' }} />}
+                    icon={<RhUiCaretUpIcon style={{ fontSize: '20' }} />}
                     type="button"
                     variant="plain"
                     aria-label={t('console-shared~Increase the Pod count')}
@@ -155,7 +155,7 @@ export const PodRing: FC<PodRingProps> = ({
                 );
               })()}
               <Button
-                icon={<AngleDownIcon style={{ fontSize: '20' }} />}
+                icon={<RhUiCaretDownIcon style={{ fontSize: '20' }} />}
                 type="button"
                 variant="plain"
                 aria-label={t('console-shared~Decrease the Pod count')}

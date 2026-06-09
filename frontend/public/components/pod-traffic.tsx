@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Tooltip } from '@patternfly/react-core';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { EndpointSliceKind } from '../module/k8s';
-import { ConnectedIcon, DisconnectedIcon } from '@patternfly/react-icons';
+import { RhUiConnectedIcon, RhUiDisconnectedIcon } from '@patternfly/react-icons';
 import { EndPointSliceModel } from '@console/app/src/models';
 import { LoadingInline } from '@console/internal/components/utils/status-box';
 import Status from '@console/dynamic-plugin-sdk/src/app/components/status/Status';
@@ -44,11 +44,13 @@ export const PodTraffic: FC<PodTrafficProp> = ({ podName, namespace, tooltipFlag
               receivingTraffic ? t('public~Receiving traffic') : t('public~Not receiving traffic')
             }
           >
-            {receivingTraffic ? <ConnectedIcon /> : <DisconnectedIcon />}
+            {receivingTraffic ? <RhUiConnectedIcon /> : <RhUiDisconnectedIcon />}
           </Tooltip>
         </div>
       )
     );
   }
-  return loaded && !loadError && (receivingTraffic ? <ConnectedIcon /> : <DisconnectedIcon />);
+  return (
+    loaded && !loadError && (receivingTraffic ? <RhUiConnectedIcon /> : <RhUiDisconnectedIcon />)
+  );
 };
