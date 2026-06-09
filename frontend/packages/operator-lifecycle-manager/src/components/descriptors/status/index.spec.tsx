@@ -59,9 +59,9 @@ describe('Status descriptor details items', () => {
   });
 
   it('renders a resource status', () => {
-    descriptor['x-descriptors'] = [
+    descriptor['x-descriptors'] = ([
       `${StatusCapability.k8sResourcePrefix}Service`,
-    ] as SpecCapability[];
+    ] as unknown) as SpecCapability[];
     descriptor.path = 'service';
     wrapper = wrapper.setProps({ descriptor });
     const resourceLink = wrapper.find(ResourceLink);

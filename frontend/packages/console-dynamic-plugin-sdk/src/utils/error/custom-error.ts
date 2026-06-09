@@ -42,7 +42,8 @@ export class CustomError extends Error {
 }
 
 export class ErrorWithCause extends CustomError {
-  constructor(message: string, readonly cause?: unknown) {
+  constructor(message: string, cause?: unknown) {
     super(message);
+    Object.assign(this, { cause });
   }
 }

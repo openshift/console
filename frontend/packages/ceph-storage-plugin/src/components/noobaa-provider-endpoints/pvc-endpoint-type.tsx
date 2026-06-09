@@ -20,7 +20,7 @@ export const PVCType: React.FC<PVCTypeProps> = ({ state, dispatch }) => {
   const { t } = useTranslation();
 
   const [size, setSize] = React.useState('50');
-  const [, updateState] = React.useState();
+  const [, updateState] = React.useState<object>();
   const units = {
     GiB: 'GiB',
     TiB: 'TiB',
