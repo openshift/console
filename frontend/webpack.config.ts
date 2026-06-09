@@ -17,6 +17,7 @@ import { ExtensionValidatorPlugin } from '@console/dynamic-plugin-sdk/src/webpac
 import {
   dynamicModulePackageSpecs,
   dynamicModuleImportTransformFilter,
+  getDynamicModuleImportSkipPrefixes,
 } from '@console/dynamic-plugin-sdk/src/webpack/ConsoleRemotePlugin';
 import {
   DynamicModuleImportPlugin,
@@ -295,6 +296,10 @@ const config: Configuration = {
         '@console/dynamic-plugin-sdk/dist/webpack/lib/webpack/loaders/dynamic-module-import-loader',
       dynamicModuleMaps,
       moduleFilter: dynamicModuleImportTransformFilter,
+      skipImportPrefixes: getDynamicModuleImportSkipPrefixes([
+        // Missing export in @patternfly/react-core/src/components/OverflowMenu/index.ts
+        '@patternfly/react-core/dist/esm/components/OverflowMenu/OverflowMenuContext',
+      ]),
     }),
     new webpack.container.ModuleFederationPlugin({
       shared: getWebpackSharedModules(),

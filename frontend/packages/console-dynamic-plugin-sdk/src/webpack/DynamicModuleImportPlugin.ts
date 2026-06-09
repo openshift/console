@@ -132,6 +132,11 @@ export type DynamicModuleImportPluginOptions = {
    * Such transformations should only apply to JavaScript or TypeScript code.
    */
   moduleFilter: (moduleRequest: string) => boolean;
+
+  /**
+   * Skip transforming imports whose module specifier matches one of these prefixes.
+   */
+  skipImportPrefixes: string[];
 };
 
 /**
@@ -148,6 +153,7 @@ export class DynamicModuleImportPlugin implements WebpackPluginInstance {
       loader = '@openshift-console/dynamic-plugin-sdk-webpack/lib/webpack/loaders/dynamic-module-import-loader',
       dynamicModuleMaps,
       moduleFilter,
+      skipImportPrefixes,
     } = this.options;
 
     compiler.hooks.thisCompilation.tap(DynamicModuleImportPlugin.name, (compilation) => {
@@ -166,14 +172,7 @@ export class DynamicModuleImportPlugin implements WebpackPluginInstance {
             const loaderOptions: DynamicModuleImportLoaderOptions = {
               dynamicModuleMaps,
               resourceMetadata: { jsx: /\.(jsx|tsx)$/.test(moduleRequest) },
-              skipImportPrefixes: [
-                // Imports for PatternFly deprecated APIs
-                '@patternfly/react-core/deprecated',
-                // Imports for PatternFly internal APIs (not exposed via package index)
-                '@patternfly/react-icons/dist/esm/createIcon',
-                '@patternfly/react-core/dist/esm/components/Tooltip/',
-                '@patternfly/react-core/dist/esm/components/Popover/',
-              ],
+              skipImportPrefixes,
             };
 
             normalModule.loaders.push({ loader, options: loaderOptions } as any);
