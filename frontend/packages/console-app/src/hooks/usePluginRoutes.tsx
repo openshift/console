@@ -23,12 +23,17 @@ const LazyRoutePage: FC<LazyRoutePageProps> = ({ extension }) => {
         uid,
         lazy(async () => {
           const Component = await component();
+          if (typeof Component !== 'function') {
+            throw new Error(
+              `Plugin "${pluginName}" route component resolved to ${typeof Component} (extension ${uid})`,
+            );
+          }
           return { default: Component };
         }),
       );
     }
     return lazyComponentCache.get(uid);
-  }, [uid, component]);
+  }, [uid, component, pluginName]);
 
   return (
     <Suspense fallback={<LoadingBox blame={`${pluginName}: ${extension.uid}`} />}>
