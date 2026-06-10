@@ -18,7 +18,7 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import { fromRequirements } from '@console/internal/module/k8s/selector';
 import { isCatalogTypeEnabled, useIsDeveloperCatalogEnabled } from '@console/shared';
 import { ErrorBoundaryFallbackPage, withFallback } from '@console/shared/src/components/error';
-import { parseJSONAnnotation } from '@console/shared/src/utils/annotations';
+import { parseJSONArrayAnnotation } from '@console/shared/src/utils/annotations';
 import { iconFor } from '..';
 import { OPERATOR_TYPE_ANNOTATION, NON_STANDALONE_ANNOTATION_VALUE } from '../../const';
 import {
@@ -102,10 +102,10 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
             currentCSVDesc?.annotations ?? {};
           const [parsedInfraFeatures, validSubscription] = ANNOTATIONS_WITH_JSON.map(
             (annotationKey) =>
-              parseJSONAnnotation(currentCSVAnnotations, annotationKey, () =>
+              parseJSONArrayAnnotation(currentCSVAnnotations, annotationKey, () =>
                 // eslint-disable-next-line no-console
                 console.warn(`Error parsing annotation in PackageManifest ${pkg.metadata.name}`),
-              ) ?? [],
+              ),
           );
 
           const validSubscriptionFilters = validSubscription.reduce(
