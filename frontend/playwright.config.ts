@@ -6,6 +6,7 @@ dotenv.config({ path: path.resolve(__dirname, 'e2e', '.env'), quiet: true });
 import { defineConfig, devices } from '@playwright/test';
 
 const isCI = !!process.env.OPENSHIFT_CI || !!process.env.CI;
+const chrome = { ...devices['Desktop Chrome'], userAgent: 'ConsoleIntegrationTestEnvironment' };
 const isDebug = process.env.DEBUG === '1' || process.env.DEBUG === 'true';
 const baseURL = process.env.WEB_CONSOLE_URL || 'http://localhost:9000';
 
@@ -92,7 +93,7 @@ export default defineConfig({
       testMatch: 'admin-auth.setup.ts',
       dependencies: ['cluster-setup'],
       use: {
-        ...devices['Desktop Chrome'],
+        ...chrome,
         ignoreHTTPSErrors: true,
         launchOptions: {
           args: chromeArgs,
@@ -105,7 +106,7 @@ export default defineConfig({
       testMatch: 'developer-auth.setup.ts',
       dependencies: ['cluster-setup'],
       use: {
-        ...devices['Desktop Chrome'],
+        ...chrome,
         ignoreHTTPSErrors: true,
         launchOptions: {
           args: chromeArgs,
@@ -124,7 +125,7 @@ export default defineConfig({
       testIgnore: '**/developer/**',
       dependencies: ['admin-auth'],
       use: {
-        ...devices['Desktop Chrome'],
+        ...chrome,
         storageState: adminStorageState,
       },
     })),
@@ -134,7 +135,7 @@ export default defineConfig({
           testDir: path.resolve(__dirname, 'e2e', 'tests', pkg, 'developer'),
           dependencies: ['developer-auth'],
           use: {
-            ...devices['Desktop Chrome'],
+            ...chrome,
             storageState: developerStorageState,
           },
         }))

@@ -66,7 +66,7 @@ describe('ConfigureCountModal - Non-scalable image warning', () => {
     expect(screen.getByText('Non-scalable image')).toBeVisible();
     expect(
       screen.getByText(
-        'This image is not intended to run with more than one replica. Running multiple instances may cause unexpected behavior.',
+        'This image is not intended to run with more than one replica. Running multiple instances is not supported and might cause issues.',
       ),
     ).toBeVisible();
   });

@@ -59,14 +59,14 @@ const LAST_CONSOLE_ACTIVITY_TIMESTAMP_LOCAL_STORAGE_KEY = 'last-console-activity
 
 const defaultHelpLinks = [
   {
-    // t('public~Learning Portal')
-    label: 'Learning Portal',
+    // t('public~Learning portal')
+    label: 'Learning portal',
     externalLink: true,
     href: 'https://learn.openshift.com/?ref=webconsole',
   },
   {
-    // t('public~OpenShift Blog')
-    label: 'OpenShift Blog',
+    // t('public~OpenShift blog')
+    label: 'OpenShift blog',
     externalLink: true,
     href: 'https://blog.openshift.com',
   },
@@ -305,7 +305,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
         isSection: true,
         actions: [
           {
-            label: t('public~Signal Correlation'),
+            label: t('public~Signal correlation'),
             callback: (e) => {
               e.preventDefault();
               dispatch(reduxAction('openTroubleshootingPanel'));
@@ -358,7 +358,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
         ...(tour
           ? [
               {
-                label: t('public~Guided Tour'),
+                label: t('public~Guided tour'),
                 callback: handleGuidedTourClick,
               },
             ]
@@ -366,7 +366,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
         ...(quickstartFlag
           ? [
               {
-                label: t('public~Quick Starts'),
+                label: t('public~Quick starts'),
                 component: LinkTo('/quickstart'),
                 dataTest: 'masthead-quick-starts',
               },
@@ -383,7 +383,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
         ...(consoleCLIDownloadFlag
           ? [
               {
-                label: t('public~Command Line Tools'),
+                label: t('public~Command line tools'),
                 callback: () => {
                   fireTelemetryEvent('CLI Clicked');
                 },
@@ -394,7 +394,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
         ...(reportBugLink
           ? [
               {
-                label: t('public~Share Feedback'),
+                label: t('public~Share feedback'),
                 callback: (e) => {
                   e.preventDefault();
                   onFeedbackModal();
@@ -525,7 +525,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
     const actions = [];
     const userActions: MastheadAction[] = [
       {
-        label: t('public~User Preferences'),
+        label: t('public~User preferences'),
         component: LinkTo('/user-preferences'),
       },
     ];
@@ -548,7 +548,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
     // Add impersonate option if not currently impersonating
     if (!impersonate) {
       userActions.unshift({
-        label: t('public~Impersonate User'),
+        label: t('public~Impersonate user'),
         callback: () => setIsImpersonateModalOpen(true),
         dataTest: 'impersonate-user',
       });

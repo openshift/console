@@ -34,7 +34,7 @@ export const useTransformedQuickStarts = (quickStarts: QuickStart[]): CatalogIte
         );
         return {
           name: qs.spec.displayName,
-          type: t('topology~Quick Starts'),
+          type: t('topology~Quick starts'),
           uid: qs.metadata.uid,
           cta: {
             callback: () => setActiveQuickStart(qs.metadata.name, qs.spec.tasks?.length),

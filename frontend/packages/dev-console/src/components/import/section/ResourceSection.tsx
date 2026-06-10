@@ -115,7 +115,7 @@ const ResourceSection: FC<ResourceSectionProps> = ({ flags }) => {
             <p className="pf-v6-c-form__helper-text">
               <Trans t={t} ns="devconsole">
                 Resource type to generate. The default can be set in{' '}
-                <Link to="/user-preferences/applications">User Preferences</Link>.
+                <Link to="/user-preferences/applications">User preferences</Link>.
               </Trans>
             </p>
           }

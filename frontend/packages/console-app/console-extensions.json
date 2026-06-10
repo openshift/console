@@ -838,7 +838,7 @@
       "id": "console.preferredPerspective",
       "label": "%console-app~Perspective%",
       "groupId": "general",
-      "description": "%console-app~If a perspective is not selected, the console defaults to the last viewed.%",
+      "description": "%console-app~If you don't select a perspective, the console defaults to the last viewed.%",
       "field": {
         "type": "custom",
         "component": { "$codeRef": "PreferredPerspectiveSelect" }

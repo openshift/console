@@ -70,8 +70,8 @@ export const CommandLineTools: FC<CommandLineToolsProps> = ({ obj }) => {
 
   return (
     <>
-      <DocumentTitle>{t('public~Command Line Tools')}</DocumentTitle>
-      <PageHeading title={t('public~Command Line Tools')} />
+      <DocumentTitle>{t('public~Command line tools')}</DocumentTitle>
+      <PageHeading title={t('public~Command line tools')} />
       <PaneBody>
         {showCopyLoginCommand && (
           <>
@@ -106,8 +106,8 @@ export const CommandLineToolsPage = () => {
   if (!loaded && !loadError) {
     return (
       <>
-        <DocumentTitle>{t('public~Command Line Tools')}</DocumentTitle>
-        <PageHeading title={t('public~Command Line Tools')} />
+        <DocumentTitle>{t('public~Command line tools')}</DocumentTitle>
+        <PageHeading title={t('public~Command line tools')} />
         <LoadingBox />
       </>
     );

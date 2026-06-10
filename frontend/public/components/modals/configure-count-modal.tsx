@@ -106,7 +106,7 @@ export const ConfigureCountModal: OverlayComponent<ConfigureCountModalProps> = (
             className="pf-v6-u-mb-md"
           >
             {t(
-              'public~This image is not intended to run with more than one replica. Running multiple instances may cause unexpected behavior.',
+              'public~This image is not intended to run with more than one replica. Running multiple instances is not supported and might cause issues.',
             )}
           </Alert>
         )}
