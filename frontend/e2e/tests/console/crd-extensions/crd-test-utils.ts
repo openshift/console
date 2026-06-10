@@ -11,11 +11,10 @@ export async function navigateToCRDInstances(page: Page, crd: string): Promise<v
   await nav.navigateToCRDs();
 
   const searchInput = page.locator('input[placeholder="Filter by name"]');
-  await searchInput.waitFor({ state: 'visible', timeout: 30000 });
   await searchInput.fill(crd);
 
   const crdRow = page.getByRole('row', { name: new RegExp(crd, 'i') });
-  await crdRow.waitFor({ state: 'visible', timeout: 30000 });
+  await expect(crdRow).toBeVisible({ timeout: 30000 });
 
   const kebabButton = crdRow.getByTestId('kebab-button');
   await kebabButton.click();
@@ -32,11 +31,10 @@ export async function navigateToCRDInstancesViaDetails(page: Page, crd: string):
   await nav.navigateToCRDs();
 
   const searchInput = page.locator('input[placeholder="Filter by name"]');
-  await searchInput.waitFor({ state: 'visible', timeout: 30000 });
   await searchInput.fill(crd);
 
   const crdRow = page.getByRole('row', { name: new RegExp(crd, 'i') });
-  await crdRow.waitFor({ state: 'visible', timeout: 30000 });
+  await expect(crdRow).toBeVisible({ timeout: 30000 });
 
   const crdLink = crdRow.getByRole('link', { name: new RegExp(crd, 'i') });
   await crdLink.click();
@@ -49,7 +47,7 @@ export async function navigateToCRDInstancesViaDetails(page: Page, crd: string):
  * Wait for Monaco YAML editor to load and be ready
  */
 export async function waitForYamlEditor(page: Page): Promise<void> {
-  await page.getByRole('button', { name: 'Copy code to clipboard' }).waitFor();
+  await expect(page.getByRole('button', { name: 'Copy code to clipboard' })).toBeVisible();
 }
 
 /**

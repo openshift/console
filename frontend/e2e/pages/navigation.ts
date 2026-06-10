@@ -15,8 +15,6 @@ export class Navigation {
     // Navigate to home first to ensure app is loaded
     await this.page.goto('/');
     const sectionButton = this.page.getByRole('button', { name: section });
-    await sectionButton.waitFor({ state: 'visible' });
-
     await sectionButton.click();
     await this.page.getByRole('link', { name: link }).click();
     await this.page.waitForLoadState('domcontentloaded');

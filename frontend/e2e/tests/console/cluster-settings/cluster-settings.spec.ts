@@ -53,7 +53,7 @@ test.describe('Cluster Settings', { tag: ['@admin'] }, () => {
     await test.step('Navigate to Configuration tab', async () => {
       await clusterSettings.navigateToConfiguration();
       // Wait for configuration resources to load
-      await page.getByTestId('ClusterVersion').waitFor({ state: 'visible', timeout: 30_000 });
+      await expect(page.getByTestId('ClusterVersion')).toBeVisible({ timeout: 30_000 });
     });
 
     await test.step('Click ClusterVersion and select YAML tab', async () => {

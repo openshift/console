@@ -4,22 +4,6 @@ import BasePage from './base-page';
 
 export class DetailsPage extends BasePage {
   private readonly pageHeading = this.page.getByTestId('page-heading');
-  private readonly resourceTitle = this.page.getByTestId('resource-title');
-  private readonly skeletonLoader = this.page.getByTestId('skeleton-detail-view');
-
-  /**
-   * Wait for the details page to load
-   */
-  async waitForPageLoad(): Promise<void> {
-    await this.skeletonLoader.waitFor({ state: 'detached', timeout: 30_000 }).catch(() => {
-      // Skeleton may not appear for fast loads
-    });
-    // Wait for either resource title or page heading to be visible
-    await Promise.race([
-      this.resourceTitle.waitFor({ state: 'visible', timeout: 30_000 }),
-      this.pageHeading.waitFor({ state: 'visible', timeout: 30_000 }),
-    ]);
-  }
 
   /**
    * Get the page heading locator
@@ -42,7 +26,6 @@ export class DetailsPage extends BasePage {
    */
   async clickKebabAction(actionId: string): Promise<void> {
     const action = this.page.locator(`[data-test-action="${actionId}"]`);
-    await action.waitFor({ state: 'visible', timeout: 10_000 });
     await this.robustClick(action);
   }
 
@@ -64,15 +47,10 @@ export class DetailsPage extends BasePage {
 
   /**
    * Click a resource row to navigate to its details
-   * Set waitForLoad=false to skip waiting for page load (useful for in-page navigation)
    */
-  async clickResourceRow(resourceId: string, waitForLoad = true): Promise<void> {
+  async clickResourceRow(resourceId: string): Promise<void> {
     const row = this.getResourceRow(resourceId);
-    await row.waitFor({ state: 'visible', timeout: 30_000 });
     await this.robustClick(row);
-    if (waitForLoad) {
-      await this.waitForPageLoad();
-    }
   }
 
   /**

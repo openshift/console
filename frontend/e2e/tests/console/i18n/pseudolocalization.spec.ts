@@ -33,7 +33,7 @@ test.describe('Pseudolocalization', { tag: ['@admin'] }, () => {
     page,
   }) => {
     await page.goto(dashboardUrl);
-    await page.getByTestId('activity').first().waitFor({ state: 'visible' });
+    await expect(page.getByTestId('activity').first()).toBeVisible();
 
     await test.step('Verify masthead help menu is pseudolocalized', async () => {
       await page.getByTestId('help-dropdown-toggle').click();

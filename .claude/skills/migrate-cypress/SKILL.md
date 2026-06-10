@@ -79,8 +79,10 @@ If MCP is unavailable or no cluster is reachable, log a warning: "Playwright MCP
 1. Create/extend page objects with locators and interaction methods. Follow the established pattern:
    - Import `Locator` type from `@playwright/test` and default-import `BasePage`
    - Use `getByTestId()` for `data-test` attributes, `locator()` for other selectors
+   - If the React component only has a legacy test attribute (`data-test-id`, `data-test-rows`, `data-test-dropdown-menu`, etc.) but no `data-test`, **add `data-test` to the React component source** and use `getByTestId()` — never use legacy attribute selectors directly
    - Expose locators via getter methods (`getX(): Locator`), keep locator properties `private readonly`
-   - Use `robustClick()` inside page objects; specs use plain `.click()`.  
+   - Use `robustClick()` inside page objects; specs use plain `.click()`
+   - Do NOT name methods or locators with a `legacy` prefix — name for what they do
 
 Example:
    ```typescript
@@ -145,8 +147,10 @@ Example:
 - **Self-contained tests** — merge sequential `it` blocks into one `test()` with `test.step()`
 - **No fixed waits** — replace `cy.wait(ms)` with condition-based waits or assertion timeouts
 - **No shell commands** — replace `cy.exec('oc ...')` with `KubernetesClient`
+- **No try/catch in cleanup** — `k8sClient.deleteNamespace()` and `deleteCustomResource()` already swallow 404 errors
+- **Add `data-test` to React source** — when the component only has legacy test attributes (`data-test-id`, `data-test-rows`, etc.), add `data-test` alongside and use `getByTestId()`
 - **Framework-first** — use existing page objects before creating new ones
-- **Correct layer** — locators in page objects, test scenarios in specs
+- **Correct layer** — locators in page objects, test scenarios in specs; common multi-step interactions belong in page object methods, not inline in specs
 
 ## Troubleshooting
 

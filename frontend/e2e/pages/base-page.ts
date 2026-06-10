@@ -21,6 +21,7 @@ export default abstract class BasePage {
     try {
       const count = await loadingElements.count().catch(() => 0);
       if (count > 0) {
+        // eslint-disable-next-line no-restricted-syntax
         await loadingElements.first().waitFor({ state: 'hidden', timeout: timeoutMs });
       }
     } catch {
@@ -61,6 +62,7 @@ export default abstract class BasePage {
     for (let attempt = 1; attempt <= retries; attempt++) {
       try {
         await this.waitForLoadingComplete(Math.min(attemptTimeout / 4, 3_000));
+        // eslint-disable-next-line no-restricted-syntax
         await locator.waitFor({ state: 'visible', timeout: attemptTimeout });
         await locator.scrollIntoViewIfNeeded({ timeout: attemptTimeout / 3 });
 

@@ -151,7 +151,7 @@ test.describe.skip('Cluster Settings cluster update modal', { tag: ['@admin'] },
       });
 
       await page.reload();
-      await page.getByTestId('horizontal-link-Details').waitFor({ state: 'visible' });
+      await expect(page.getByTestId('horizontal-link-Details')).toBeVisible();
 
       // Open update modal and dropdown
       await clusterSettings.openUpdateModal();
@@ -186,7 +186,7 @@ test.describe.skip('Cluster Settings cluster update modal', { tag: ['@admin'] },
       });
 
       await page.reload();
-      await page.getByTestId('horizontal-link-Details').waitFor({ state: 'visible' });
+      await expect(page.getByTestId('horizontal-link-Details')).toBeVisible();
 
       // Verify not-recommended alert on main page
       const mainPageAlert = page.getByTestId('cv-not-recommended-alert');

@@ -1,4 +1,5 @@
 import type { Locator } from '@playwright/test';
+import { expect } from '@playwright/test';
 
 import BasePage from './base-page';
 
@@ -28,6 +29,7 @@ export class WebTerminalPage extends BasePage {
   async waitForTerminalIconVisible(maxRetries = 10): Promise<void> {
     await this.goTo('/');
     try {
+      // eslint-disable-next-line no-restricted-syntax
       await this.terminalIcon.waitFor({ state: 'visible', timeout: 30_000 });
       return;
     } catch {
@@ -36,6 +38,7 @@ export class WebTerminalPage extends BasePage {
     for (let attempt = 0; attempt < maxRetries; attempt++) {
       await this.page.reload();
       try {
+        // eslint-disable-next-line no-restricted-syntax
         await this.terminalIcon.waitFor({ state: 'visible', timeout: 15_000 });
         return;
       } catch {
@@ -47,16 +50,18 @@ export class WebTerminalPage extends BasePage {
 
   async clickTerminalIcon(): Promise<void> {
     await this.robustClick(this.terminalIcon);
+    // eslint-disable-next-line no-restricted-syntax
     await this.loadingBox.waitFor({ state: 'detached', timeout: 60_000 }).catch(() => {});
   }
 
   async waitForTerminalWindow(timeoutMs = 60_000): Promise<void> {
-    await this.terminalContainer.waitFor({ state: 'visible', timeout: timeoutMs });
-    await this.terminalWindow.waitFor({ state: 'visible', timeout: timeoutMs });
+    await expect(this.terminalContainer).toBeVisible({ timeout: timeoutMs });
+    await expect(this.terminalWindow).toBeVisible({ timeout: timeoutMs });
   }
 
   async closeTerminalDrawer(): Promise<void> {
     await this.robustClick(this.drawerCloseButton);
+    // eslint-disable-next-line no-restricted-syntax
     await this.terminalContainer.waitFor({ state: 'hidden', timeout: 10_000 }).catch(() => {});
   }
 
@@ -67,12 +72,10 @@ export class WebTerminalPage extends BasePage {
   }
 
   async clickAdvancedTimeout(): Promise<void> {
-    await this.timeoutLink.waitFor({ state: 'visible', timeout: 30_000 });
     await this.robustClick(this.timeoutLink);
   }
 
   async setTimeoutValue(value: string): Promise<void> {
-    await this.incrementButton.waitFor({ state: 'visible', timeout: 10_000 });
     await this.robustClick(this.incrementButton);
     await this.timeoutInput.fill(value);
     await this.timeoutInput.press('Tab');
@@ -99,7 +102,7 @@ export class WebTerminalPage extends BasePage {
   }
 
   async getResourceTitle(): Promise<string> {
-    await this.resourceTitle.waitFor({ state: 'visible' });
+    await expect(this.resourceTitle).toBeVisible();
     return (await this.resourceTitle.textContent()) || '';
   }
 

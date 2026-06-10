@@ -55,8 +55,6 @@ test.describe('Create namespace from install operators', { tag: ['@admin'] }, ()
   test('creates namespace from operator install page', async ({ page }) => {
     await test.step('Navigate to catalog and open operator details', async () => {
       await page.goto('/catalog/ns/default?catalogType=operator');
-      await page.getByPlaceholder('Filter by keyword...').waitFor({ state: 'visible' });
-
       await page.getByPlaceholder('Filter by keyword...').fill(operatorName);
       await page.getByTestId(`operator-${operatorName}`).click();
     });

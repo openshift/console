@@ -90,7 +90,7 @@ test.describe(`${crd} CRD`, { tag: ['@admin'] }, () => {
 
             // Wait for the list to load
             const instanceRow = page.getByRole('row', { name: new RegExp(name) });
-            await instanceRow.waitFor({ state: 'visible', timeout: 10000 });
+            await expect(instanceRow).toBeVisible({ timeout: 10000 });
 
             // Click kebab menu and delete
             const kebabButton = instanceRow.getByTestId('kebab-button');
