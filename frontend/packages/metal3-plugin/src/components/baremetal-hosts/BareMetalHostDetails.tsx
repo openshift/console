@@ -7,7 +7,7 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
-import { RebootingIcon } from '@patternfly/react-icons';
+import { RhUiRefreshIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { StatusIconAndText } from '@console/dynamic-plugin-sdk';
@@ -75,7 +75,7 @@ const PowerStatus = ({ host }: { host: BareMetalHostKind }) => {
         icon={<BareMetalHostPowerStatusIcon powerStatus={powerStatus} />}
       />
       {isHostScheduledForRestart(host) && (
-        <StatusIconAndText title={t('metal3-plugin~Restart pending')} icon={<RebootingIcon />} />
+        <StatusIconAndText title={t('metal3-plugin~Restart pending')} icon={<RhUiRefreshIcon />} />
       )}
     </>
   );

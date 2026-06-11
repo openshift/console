@@ -1,5 +1,5 @@
 import type { ReactNode, FC } from 'react';
-import { RhUiInProgressIcon, MaintenanceIcon } from '@patternfly/react-icons';
+import { RhUiInProgressIcon, RhUiBuildIcon } from '@patternfly/react-icons';
 import { PopoverStatus, StatusIconAndText } from '@console/dynamic-plugin-sdk';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { getNodeMaintenancePhase } from '../../selectors/node-maintenance';
@@ -27,7 +27,7 @@ const MaintenancePopover: FC<MaintenancePopoverProps> = ({
       statusBody={
         <StatusIconAndText
           title={title}
-          icon={phase === 'Succeeded' ? <MaintenanceIcon /> : <RhUiInProgressIcon />}
+          icon={phase === 'Succeeded' ? <RhUiBuildIcon /> : <RhUiInProgressIcon />}
           className={className}
         />
       }

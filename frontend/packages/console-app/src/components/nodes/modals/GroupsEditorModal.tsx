@@ -26,7 +26,7 @@ import {
   Spinner,
   TextInput,
 } from '@patternfly/react-core';
-import { OutlinedTrashAltIcon } from '@patternfly/react-icons';
+import { RhUiTrashIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
@@ -315,7 +315,7 @@ const GroupsEditorModal: OverlayComponent<ModalComponentProps> = ({ closeOverlay
                                   groupName,
                                 })}
                                 hasNoPadding
-                                icon={<OutlinedTrashAltIcon />}
+                                icon={<RhUiTrashIcon />}
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   removeGroup(groupName);

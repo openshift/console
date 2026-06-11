@@ -38,11 +38,11 @@ import {
 } from '@patternfly/react-core';
 import { LogViewer, LogViewerSearch } from '@patternfly/react-log-viewer';
 import {
-  BugIcon,
+  RhUiBugIcon,
   RhUiCompressIcon,
   RhUiDownloadIcon,
   RhUiExpandIcon,
-  OutlinedPlayCircleIcon,
+  RhUiPlayCircleIcon,
   RhUiSearchIcon,
 } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
@@ -162,7 +162,7 @@ const FooterButton = ({ setStatus, linesBehind, className }) => {
     setStatus(STREAM_ACTIVE);
   };
   return (
-    <Button icon={<OutlinedPlayCircleIcon />} className={className} onClick={handleClick} isBlock>
+    <Button icon={<RhUiPlayCircleIcon />} className={className} onClick={handleClick} isBlock>
       &nbsp;{resumeText}
     </Button>
   );
@@ -391,7 +391,12 @@ const LogControls: FC<LogControlsProps> = ({
     showDebugAction(resource, containerName) &&
     (isWindowsPod(resource) ? (
       <Tooltip content={t('Debug in terminal is not currently available for Windows containers.')}>
-        <Button variant="control" isDisabled icon={<BugIcon />} aria-label={t('Debug container')} />
+        <Button
+          variant="control"
+          isDisabled
+          icon={<RhUiBugIcon />}
+          aria-label={t('Debug container')}
+        />
       </Tooltip>
     ) : (
       <Tooltip content={t('Debug container')}>
@@ -404,7 +409,7 @@ const LogControls: FC<LogControlsProps> = ({
               resource.metadata.namespace,
             )}/containers/${containerName}/debug`,
           )}
-          icon={<BugIcon />}
+          icon={<RhUiBugIcon />}
           aria-label={t('Debug container')}
           data-test="debug-container-link"
         />

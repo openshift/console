@@ -1,11 +1,11 @@
 import {
-  BoltIcon,
+  RhUiOperatorIcon,
   RhUiCatalogAltIcon,
   RhUiStorageIcon,
-  FileUploadIcon,
+  RhUiUploadIcon,
   GitAltIcon,
-  LaptopCodeIcon,
-  OsImageIcon,
+  RhUiLaptopIcon,
+  RhUiContainerIcon,
 } from '@patternfly/react-icons';
 import i18next from 'i18next';
 import type { Action } from '@console/dynamic-plugin-sdk/src';
@@ -66,7 +66,7 @@ export const AddActions: { [name: string]: ActionFactory } = {
   ContainerImage: (namespace, application, contextSource, path, accessReviewDisabled) => ({
     id: 'deploy-image',
     label: i18next.t('devconsole~Container Image'),
-    icon: <OsImageIcon />,
+    icon: <RhUiContainerIcon />,
     cta: {
       href: resolvedURLWithParams(
         '/deploy-image/ns/:namespace',
@@ -106,7 +106,7 @@ export const AddActions: { [name: string]: ActionFactory } = {
   Samples: (namespace, application, contextSource, path, accessReviewDisabled) => ({
     id: 'import-from-samples',
     label: i18next.t('devconsole~Samples'),
-    icon: <LaptopCodeIcon />,
+    icon: <RhUiLaptopIcon />,
     cta: {
       href: resolvedURLWithParams('/samples/ns/:namespace', namespace, application, contextSource),
     },
@@ -116,7 +116,7 @@ export const AddActions: { [name: string]: ActionFactory } = {
   OperatorBacked: (namespace, application, contextSource, path, accessReviewDisabled) => ({
     id: 'operator-backed',
     label: i18next.t('devconsole~Operator Backed'),
-    icon: <BoltIcon />,
+    icon: <RhUiOperatorIcon />,
     cta: {
       href: resolvedURLWithParams(
         '/catalog/ns/:namespace?catalogType=OperatorBackedService',
@@ -131,7 +131,7 @@ export const AddActions: { [name: string]: ActionFactory } = {
   UploadJarFile: (namespace, application, contextSource, path, accessReviewDisabled) => ({
     id: 'upload-jar',
     label: i18next.t('devconsole~Upload JAR file'),
-    icon: <FileUploadIcon />,
+    icon: <RhUiUploadIcon />,
     cta: {
       href: resolvedURLWithParams(
         '/upload-jar/ns/:namespace',

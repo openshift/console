@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { List, ListItem } from '@patternfly/react-core';
-import { LongArrowAltRightIcon } from '@patternfly/react-icons';
+import { RhUiLongArrowRightIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { ResourceLink, SidebarSectionHeading } from '@console/internal/components/utils';
 import type { K8sResourceKind, RouteKind } from '@console/internal/module/k8s';
@@ -18,7 +18,7 @@ const ServicePortList: FC<ServicePortListProps> = ({ service }) => {
           <span className="pf-v6-u-text-color-subtle">{t('topology~Service port:')}</span>{' '}
           {name || `${protocol}/${port}`}
           &nbsp;
-          <LongArrowAltRightIcon />
+          <RhUiLongArrowRightIcon />
           &nbsp;
           <span className="pf-v6-u-text-color-subtle">{t('topology~Pod port:')}</span> {targetPort}
         </li>

@@ -11,7 +11,7 @@ import {
   TabTitleText,
   PageSection,
 } from '@patternfly/react-core';
-import { RhUiWarningFillIcon, RhUiLockIcon } from '@patternfly/react-icons';
+import { RhUiWarningFillIcon, RhStandardPadlockLockedIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate } from 'react-router';
 import { LoadingBox } from '@console/internal/components/utils/status-box';
@@ -113,7 +113,7 @@ const ClusterConfigurationPage: FC = () => {
         ) : clusterConfigurationTabs.length === 0 ? (
           <EmptyState
             headingLevel="h1"
-            icon={RhUiLockIcon}
+            icon={RhStandardPadlockLockedIcon}
             titleText={<>{t('console-app~Insufficient permissions')}</>}
           >
             <EmptyStateBody>

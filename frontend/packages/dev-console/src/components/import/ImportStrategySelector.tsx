@@ -5,7 +5,7 @@ import { Tile } from '@patternfly/react-core/deprecated';
 import {
   RhUiContainerIcon,
   GitAltIcon,
-  LayerGroupIcon,
+  RhUiFileCodeIcon,
   RhUiStarFillIcon,
 } from '@patternfly/react-icons';
 import type { FormikValues } from 'formik';
@@ -55,7 +55,7 @@ const ImportStrategySelector: FC = () => {
       build: BuildStrategyType.Devfile,
       priority: 2,
       detectedFiles: [],
-      icon: <LayerGroupIcon />,
+      icon: <RhUiFileCodeIcon />,
       isDisabled: type === GitProvider.UNSURE,
       disabledReason:
         type === GitProvider.UNSURE

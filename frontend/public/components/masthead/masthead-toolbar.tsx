@@ -7,10 +7,10 @@ import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useNavigate } from 'react-router';
 import {
-  RhUiNotificationFillIcon,
+  RhUiNotificationIcon,
   RhUiEllipsisVerticalIcon,
-  RhUiThumbnailViewSmallIcon,
-  RhUiQuestionMarkCircleFillIcon,
+  RhUiMenuSwitcherIcon,
+  RhUiQuestionMarkCircleIcon,
 } from '@patternfly/react-icons';
 import {
   Dropdown,
@@ -767,7 +767,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
                       isExpanded={isKebabDropdownOpen}
                       data-test-id="application-launcher"
                     >
-                      <RhUiThumbnailViewSmallIcon />
+                      <RhUiMenuSwitcherIcon />
                     </MenuToggle>
                   )}
                   ref={applicationLauncherMenuRef}
@@ -804,7 +804,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
                     data-tour-id="tour-help-button"
                     data-quickstart-id="qs-masthead-help"
                   >
-                    <RhUiQuestionMarkCircleFillIcon alt="" />
+                    <RhUiQuestionMarkCircleIcon alt="" />
                   </MenuToggle>
                 )}
                 ref={helpMenuRef}
@@ -834,7 +834,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
                 count={alertCount}
                 data-quickstart-id="qs-masthead-notifications"
               >
-                <RhUiNotificationFillIcon />
+                <RhUiNotificationIcon />
               </NotificationBadge>
             )}
             <ToolbarItem>{renderMenu(true)}</ToolbarItem>

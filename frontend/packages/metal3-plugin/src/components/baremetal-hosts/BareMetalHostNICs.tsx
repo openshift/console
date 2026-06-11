@@ -1,5 +1,8 @@
 import type { FC } from 'react';
-import { OutlinedCheckSquareIcon, OutlinedSquareIcon } from '@patternfly/react-icons';
+import {
+  RhMicronsCheckboxCompleteIcon,
+  RhMicronsCheckboxIncompleteIcon,
+} from '@patternfly/react-icons';
 import { sortable } from '@patternfly/react-table';
 import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
@@ -29,7 +32,9 @@ const NICsTableRow: FC<RowFunctionArgs<BareMetalHostNIC>> = ({ obj: nic }) => {
     <>
       <TableData>{name}</TableData>
       <TableData>{model}</TableData>
-      <TableData>{pxe ? <OutlinedCheckSquareIcon /> : <OutlinedSquareIcon />}</TableData>
+      <TableData>
+        {pxe ? <RhMicronsCheckboxCompleteIcon /> : <RhMicronsCheckboxIncompleteIcon />}
+      </TableData>
       <TableData>{ip}</TableData>
       <TableData>{speedGbps} Gbps</TableData>
       <TableData>{mac}</TableData>

@@ -1,10 +1,10 @@
 import type { ReactNode, FC } from 'react';
 import {
   RhUiBanIcon,
-  ClipboardListIcon,
-  HourglassHalfIcon,
-  HourglassStartIcon,
-  NotStartedIcon,
+  RhUiBlueprintIcon,
+  RhUiInProgressIcon,
+  RhUiNewProcessIcon,
+  RhUiNotStartedIcon,
   RhUiSyncIcon,
   RhUiUnknownIcon,
 } from '@patternfly/react-icons';
@@ -37,14 +37,14 @@ const Status: FC<StatusProps> = ({ status, title, children, iconOnly, noTooltip,
   const statusProps = { title: title || status, iconOnly, noTooltip, className };
   switch (status) {
     case 'New':
-      return <StatusIconAndText {...statusProps} icon={<HourglassStartIcon />} />;
+      return <StatusIconAndText {...statusProps} icon={<RhUiNewProcessIcon />} />;
 
     case 'Pending':
     case 'pending':
-      return <StatusIconAndText {...statusProps} icon={<HourglassHalfIcon />} />;
+      return <StatusIconAndText {...statusProps} icon={<RhUiInProgressIcon />} />;
 
     case 'Planning':
-      return <StatusIconAndText {...statusProps} icon={<ClipboardListIcon />} />;
+      return <StatusIconAndText {...statusProps} icon={<RhUiBlueprintIcon />} />;
 
     case 'ContainerCreating':
     case 'UpgradePending':
@@ -118,7 +118,7 @@ const Status: FC<StatusProps> = ({ status, title, children, iconOnly, noTooltip,
       return <StatusIconAndText {...statusProps} icon={<RhUiUnknownIcon />} />;
 
     case 'PipelineNotStarted':
-      return <StatusIconAndText {...statusProps} icon={<NotStartedIcon />} />;
+      return <StatusIconAndText {...statusProps} icon={<RhUiNotStartedIcon />} />;
 
     default:
       return status ? <StatusIconAndText {...statusProps} /> : <>{DASH}</>;

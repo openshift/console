@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@patternfly/react-core';
-import { RebootingIcon } from '@patternfly/react-icons';
+import { RhUiRefreshIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
@@ -85,7 +85,7 @@ const PowerStatus = ({ obj }: { obj: BareMetalHostKind }) => {
       title={restartScheduled ? t('metal3-plugin~Restart pending') : powerStatus}
       icon={
         restartScheduled ? (
-          <RebootingIcon />
+          <RhUiRefreshIcon />
         ) : (
           <BareMetalHostPowerStatusIcon powerStatus={powerStatus} />
         )

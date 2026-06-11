@@ -15,7 +15,7 @@ import {
   HelperText,
   HelperTextItem,
 } from '@patternfly/react-core';
-import { HelpIcon } from '@patternfly/react-icons';
+import { RhUiQuestionMarkIcon } from '@patternfly/react-icons';
 import type { FormikValues } from 'formik';
 import { useFormikContext } from 'formik';
 import * as fuzzy from 'fuzzysearch';
@@ -188,7 +188,7 @@ const WebhookSection: FC<WebhoookSectionProps> = ({ pac, formContextField }) => 
               </p>
             }
           >
-            <HelpIcon />
+            <RhUiQuestionMarkIcon />
           </Tooltip>
         }
         required

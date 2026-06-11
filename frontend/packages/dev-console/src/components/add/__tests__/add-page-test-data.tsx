@@ -1,4 +1,4 @@
-import { RhUiCatalogAltIcon, SignOutAltIcon } from '@patternfly/react-icons';
+import { RhUiCatalogAltIcon } from '@patternfly/react-icons';
 import type { AddActionGroup, ResolvedExtension, AddAction } from '@console/dynamic-plugin-sdk';
 import type { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { helmCatalogIconSVG } from '@console/helm-plugin/src/utils/icons';
@@ -164,7 +164,7 @@ const eventSource: AddActionExtension = {
       'Create an Event source to register interest in a class of events from a particular system',
     groupId: 'developer-catalog',
     href: '/catalog/ns/:namespace?catalogType=EventSource',
-    icon: <SignOutAltIcon />,
+    icon: <RhUiCatalogAltIcon />,
     id: 'knative-event-source',
     label: 'Event Source',
   },

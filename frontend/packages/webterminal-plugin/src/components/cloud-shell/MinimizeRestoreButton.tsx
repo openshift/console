@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import type { ButtonProps } from '@patternfly/react-core';
 import { Tooltip, Button } from '@patternfly/react-core';
-import { OutlinedWindowMinimizeIcon, RhUiRestoreWindowIcon } from '@patternfly/react-icons';
+import { RhUiMinusIcon, RhUiRestoreWindowIcon } from '@patternfly/react-icons';
 
 type MinimizeRestoreButtonProps = Omit<ButtonProps, 'onClick'> & {
   minimizeText: string;
@@ -29,7 +29,7 @@ export const MinimizeRestoreButton: FC<MinimizeRestoreButtonProps> = ({
       content={minimize ? minimizeText : restoreText}
     >
       <Button
-        icon={minimize ? <OutlinedWindowMinimizeIcon /> : <RhUiRestoreWindowIcon />}
+        icon={minimize ? <RhUiMinusIcon /> : <RhUiRestoreWindowIcon />}
         variant="plain"
         type="button"
         onClick={minimize ? onMinimize : onRestore}

@@ -26,7 +26,7 @@ import {
   TextInput,
   InputGroupItem,
 } from '@patternfly/react-core';
-import { ChartLineIcon } from '@patternfly/react-icons';
+import { RhUiMonitoringIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -93,7 +93,7 @@ const GraphEmptyState: FC<GraphEmptyStateProps> = ({ children, title }) => (
   <div className="query-browser__wrapper graph-empty-state">
     <EmptyState
       headingLevel="h2"
-      icon={ChartLineIcon}
+      icon={RhUiMonitoringIcon}
       titleText={<>{title}</>}
       variant={EmptyStateVariant.full}
     >

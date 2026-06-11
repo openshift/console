@@ -13,9 +13,9 @@ import {
 } from '@patternfly/react-core';
 import {
   RhUiSettingsIcon,
-  PaintRollerIcon,
+  RhUiAutoLightDarkModeIcon,
   FontIcon,
-  ICursorIcon,
+  RhUiCommentIcon,
   MouseIcon,
 } from '@patternfly/react-icons';
 import { FC, ReactNode, ComponentProps, useState, useMemo } from 'react';
@@ -170,7 +170,7 @@ const ThemeConfigItem: FC = () => {
       title={t('Theme')}
       description={t('Select the code editor color theme')}
       id="ConfigModalItem-color-theme"
-      icon={<PaintRollerIcon />}
+      icon={<RhUiAutoLightDarkModeIcon />}
       slot={
         <SimpleSelect
           toggleProps={{
@@ -236,7 +236,7 @@ const TooltipConfigItem = () => {
       description={t('Show tooltips for Resource names, Field names, and definitions')}
       onChange={(_e, checked) => setShowTooltips(checked)}
       isChecked={showTooltips}
-      icon={<ICursorIcon />}
+      icon={<RhUiCommentIcon />}
     />
   );
 };

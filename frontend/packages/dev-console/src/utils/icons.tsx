@@ -1,32 +1,32 @@
 import {
-  BoltIcon,
+  RhUiOperatorIcon,
   RhUiCatalogAltIcon,
-  DatabaseIcon,
-  ExportIcon,
-  FileUploadIcon,
+  RhUiStorageIcon,
+  RhUiExportIcon,
+  RhUiUploadIcon,
   GitAltIcon,
-  LaptopCodeIcon,
-  OsImageIcon,
-  OutlinedFileCodeIcon,
-  ShareSquareIcon,
+  RhUiLaptopIcon,
+  RhUiContainerIcon,
+  RhUiFileCodeIcon,
+  RhUiShareIcon,
 } from '@patternfly/react-icons';
 
 export const gitIconElement = <GitAltIcon />;
 
-export const yamlIconElement = <OutlinedFileCodeIcon />;
+export const yamlIconElement = <RhUiFileCodeIcon />;
 
-export const deployIconElement = <OsImageIcon />;
+export const deployIconElement = <RhUiContainerIcon />;
 
-export const samplesIconElement = <LaptopCodeIcon />;
+export const samplesIconElement = <RhUiLaptopIcon />;
 
 export const softwareCatalogIconElement = <RhUiCatalogAltIcon />;
 
-export const databaseCatalogIconElement = <DatabaseIcon />;
+export const databaseCatalogIconElement = <RhUiStorageIcon />;
 
-export const operatorCatalogIconElement = <BoltIcon />;
+export const operatorCatalogIconElement = <RhUiOperatorIcon />;
 
-export const uploadJarIconElement = <FileUploadIcon />;
+export const uploadJarIconElement = <RhUiUploadIcon />;
 
-export const shareProjectIconElement = <ShareSquareIcon />;
+export const shareProjectIconElement = <RhUiShareIcon />;
 
-export const exportApplicationIconElement = <ExportIcon />;
+export const exportApplicationIconElement = <RhUiExportIcon />;

@@ -5,10 +5,10 @@ import { Button, Level, LevelItem, List, ListItem, Title } from '@patternfly/rea
 import { Language } from '@patternfly/react-code-editor';
 import { BasicCodeEditor } from '@console/shared/src/components/editor/BasicCodeEditor';
 import {
-  ChevronDownIcon,
-  ChevronRightIcon,
   RhUiDownloadIcon,
-  PasteIcon,
+  RhUiClipboardIcon,
+  RhUiCaretDownIcon,
+  RhUiCaretRightIcon,
 } from '@patternfly/react-icons';
 import { Sample } from '@console/shared/src/hooks/useResourceSidebarSamples';
 import { useTranslation } from 'react-i18next';
@@ -34,7 +34,7 @@ const ResourceSidebarSample: FC<ResourceSidebarSampleProps> = ({
       <Level>
         <LevelItem>
           <Button
-            icon={<PasteIcon className="co-icon-space-r" />}
+            icon={<RhUiClipboardIcon className="co-icon-space-r" />}
             type="button"
             variant="link"
             data-test="load-sample"
@@ -131,7 +131,7 @@ const ResourceSidebarSnippet: FC<ResourceSidebarSnippetProps> = ({
       <Level>
         <LevelItem>
           <Button
-            icon={<PasteIcon className="co-icon-space-r" />}
+            icon={<RhUiClipboardIcon className="co-icon-space-r" />}
             type="button"
             variant="link"
             isInline
@@ -145,12 +145,12 @@ const ResourceSidebarSnippet: FC<ResourceSidebarSnippetProps> = ({
             {yamlPreviewOpen ? (
               <>
                 {t('public~Hide YAML')}
-                <ChevronDownIcon className="co-icon-space-l" />
+                <RhUiCaretDownIcon className="co-icon-space-l" />
               </>
             ) : (
               <>
                 {t('public~Show YAML')}
-                <ChevronRightIcon className="co-icon-space-l" />
+                <RhUiCaretRightIcon className="co-icon-space-l" />
               </>
             )}
           </Button>

@@ -6,7 +6,7 @@ import {
   MenuToggleElement,
   Tooltip,
 } from '@patternfly/react-core';
-import { RhUiAddCircleFillIcon } from '@patternfly/react-icons';
+import { RhUiAddCircleIcon } from '@patternfly/react-icons';
 import { ALL_NAMESPACES_KEY, FLAGS } from '@console/shared/src/constants/common';
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils/namespace';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
@@ -99,7 +99,7 @@ const QuickCreate: FC<QuickCreateProps> = ({ namespace }) => {
             data-test="quick-create-dropdown"
             data-tour-id="tour-quick-create-button"
             data-quickstart-id="qs-masthead-import"
-            icon={<RhUiAddCircleFillIcon alt="" />}
+            icon={<RhUiAddCircleIcon alt="" />}
           />
         </Tooltip>
       )}
