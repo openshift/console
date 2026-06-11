@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import * as _ from 'lodash';
-import { BanIcon, PendingIcon, SyncAltIcon } from '@patternfly/react-icons';
+import { RhUiBanIcon, RhUiPendingIcon, RhUiSyncIcon } from '@patternfly/react-icons';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { resourcePath } from './utils/resource-link';
 import { fromNow } from './utils/datetime';
@@ -40,11 +40,11 @@ const BuildSummaryStatusIcon: FC<BuildSummaryStatusIconProps> = ({ status }) => 
   const statusClass = _.lowerCase(status);
   const icon = {
     new: '',
-    pending: <PendingIcon />,
-    running: <SyncAltIcon className="co-spin" />,
+    pending: <RhUiPendingIcon />,
+    running: <RhUiSyncIcon className="co-spin" />,
     complete: <GreenCheckCircleIcon />,
     failed: <RedExclamationCircleIcon />,
-    cancelled: <BanIcon />,
+    cancelled: <RhUiBanIcon />,
   }[statusClass];
 
   return icon ? (

@@ -11,7 +11,7 @@ import {
   SelectOption,
 } from '@patternfly/react-core';
 
-import { FilterIcon } from '@patternfly/react-icons';
+import { RhUiFilterIcon } from '@patternfly/react-icons';
 import { TextFilter } from './factory/text-filter';
 
 export enum searchFilterValues {
@@ -68,7 +68,7 @@ export const SearchFilterDropdown: FC<SearchFilterDropdownProps> = ({
                 ref={toggleRef}
                 isExpanded={isOpen}
                 onClick={onToggle}
-                icon={<FilterIcon />}
+                icon={<RhUiFilterIcon />}
                 id="search-filter-toggle"
               >
                 {t(selected)}

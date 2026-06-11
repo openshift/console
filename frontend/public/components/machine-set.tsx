@@ -23,7 +23,7 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
-import { PencilAltIcon } from '@patternfly/react-icons';
+import { RhUiEditIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 
@@ -161,7 +161,7 @@ const MachineCounts: FC<MachineCountsProps> = ({ resourceKind, resource }) => {
           <DescriptionListDescription>
             {canUpdate ? (
               <Button
-                icon={<PencilAltIcon />}
+                icon={<RhUiEditIcon />}
                 iconPosition="end"
                 variant="link"
                 type="button"

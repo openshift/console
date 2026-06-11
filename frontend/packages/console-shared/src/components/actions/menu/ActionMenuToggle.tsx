@@ -1,7 +1,7 @@
 import type { RefObject, SetStateAction, FC } from 'react';
 import { useEffect } from 'react';
 import { MenuToggle } from '@patternfly/react-core';
-import { EllipsisVIcon } from '@patternfly/react-icons';
+import { RhUiEllipsisVerticalIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { ActionMenuVariant } from '../types';
 
@@ -91,7 +91,7 @@ const ActionMenuToggle: FC<ActionMenuToggleProps> = ({
       onFocus={onToggleHover}
       onMouseOver={onToggleHover}
     >
-      {isKebabVariant ? <EllipsisVIcon /> : toggleLabel}
+      {isKebabVariant ? <RhUiEllipsisVerticalIcon /> : toggleLabel}
     </MenuToggle>
   );
 };

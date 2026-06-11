@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useMemo } from 'react';
 import { Button, Popover } from '@patternfly/react-core';
-import { HelpIcon } from '@patternfly/react-icons';
+import { RhUiQuestionMarkIcon } from '@patternfly/react-icons';
 import type { K8sKind } from '@console/internal/module/k8s';
 import { getPropertyDescription } from '@console/internal/module/k8s';
 import { MarkdownView } from '@console/shared/src/components/markdown/MarkdownView';
@@ -37,7 +37,7 @@ export const SchemaFieldHelp: FC<SchemaFieldHelpProps> = ({
       }
     >
       <Button variant="plain" aria-label={ariaLabel}>
-        <HelpIcon />
+        <RhUiQuestionMarkIcon />
       </Button>
     </Popover>
   );

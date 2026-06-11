@@ -2,7 +2,12 @@ import type { FC, ReactNode } from 'react';
 import { useCallback } from 'react';
 import { FormGroup, Grid, GridItem, Tooltip } from '@patternfly/react-core';
 import { Tile } from '@patternfly/react-core/deprecated';
-import { CubeIcon, GitAltIcon, LayerGroupIcon, StarIcon } from '@patternfly/react-icons';
+import {
+  RhUiContainerIcon,
+  GitAltIcon,
+  RhUiFileCodeIcon,
+  RhUiStarFillIcon,
+} from '@patternfly/react-icons';
 import type { FormikValues } from 'formik';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -50,7 +55,7 @@ const ImportStrategySelector: FC = () => {
       build: BuildStrategyType.Devfile,
       priority: 2,
       detectedFiles: [],
-      icon: <LayerGroupIcon />,
+      icon: <RhUiFileCodeIcon />,
       isDisabled: type === GitProvider.UNSURE,
       disabledReason:
         type === GitProvider.UNSURE
@@ -63,7 +68,7 @@ const ImportStrategySelector: FC = () => {
       build: BuildStrategyType.Docker,
       priority: 1,
       detectedFiles: [],
-      icon: <CubeIcon />,
+      icon: <RhUiContainerIcon />,
     },
     {
       name: 'Builder Image',
@@ -127,7 +132,7 @@ const ImportStrategySelector: FC = () => {
                 >
                   {recommendedStrategy?.type === item.type && (
                     <span className="odc-import-strategy-selector__recommended">
-                      <StarIcon />
+                      <RhUiStarFillIcon />
                     </span>
                   )}
                 </Tile>
@@ -146,7 +151,7 @@ const ImportStrategySelector: FC = () => {
               >
                 {recommendedStrategy?.type === item.type && (
                   <span className="odc-import-strategy-selector__recommended">
-                    <StarIcon />
+                    <RhUiStarFillIcon />
                   </span>
                 )}
               </Tile>

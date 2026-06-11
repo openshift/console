@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useState, useEffect } from 'react';
 import { GridItem } from '@patternfly/react-core';
-import { InfoCircleIcon } from '@patternfly/react-icons';
+import { RhUiInformationFillIcon } from '@patternfly/react-icons';
 import type { FormikValues } from 'formik';
 import { useFormikContext } from 'formik';
 import { safeDump, safeLoad } from 'js-yaml';
@@ -86,7 +86,7 @@ const HelmChartVersionDropdown: FC<HelmChartVersionDropdownProps> = ({
           </Trans>
         </p>
         <p>
-          <InfoCircleIcon color="var(--pf-t--global--icon--color--status--info--default)" />{' '}
+          <RhUiInformationFillIcon color="var(--pf-t--global--icon--color--status--info--default)" />{' '}
           <Trans t={t} ns="helm-plugin">
             Values from your current release are merged with the new chart{"'"}s defaults. Review
             the YAML or form before upgrading.

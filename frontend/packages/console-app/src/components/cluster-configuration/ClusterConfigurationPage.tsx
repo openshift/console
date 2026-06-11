@@ -11,7 +11,7 @@ import {
   TabTitleText,
   PageSection,
 } from '@patternfly/react-core';
-import { ExclamationTriangleIcon, LockIcon } from '@patternfly/react-icons';
+import { RhUiWarningFillIcon, RhStandardPadlockLockedIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate } from 'react-router';
 import { LoadingBox } from '@console/internal/components/utils/status-box';
@@ -113,7 +113,7 @@ const ClusterConfigurationPage: FC = () => {
         ) : clusterConfigurationTabs.length === 0 ? (
           <EmptyState
             headingLevel="h1"
-            icon={LockIcon}
+            icon={RhStandardPadlockLockedIcon}
             titleText={<>{t('console-app~Insufficient permissions')}</>}
           >
             <EmptyStateBody>
@@ -144,7 +144,7 @@ const ClusterConfigurationPage: FC = () => {
               <section className="co-cluster-configuration-page pf-v6-c-tab-content">
                 <Status
                   status={IconStatus.warning}
-                  icon={<ExclamationTriangleIcon />}
+                  icon={<RhUiWarningFillIcon />}
                   label={t('console-app~{{section}} not found', { section: activeTabId })}
                 />
               </section>

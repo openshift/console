@@ -9,7 +9,6 @@ import {
   HelperText,
   HelperTextItem,
 } from '@patternfly/react-core';
-import { PercentIcon } from '@patternfly/react-icons';
 import type { FormikErrors } from 'formik';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -54,8 +53,8 @@ const HPAUtilizationField: FC<HPAUtilizationFieldProps> = ({
             aria-describedby={`${type}-utilization-unit`}
           />
         </InputGroupItem>
-        <InputGroupText id={`${type}-utilization-unit`}>
-          <PercentIcon />
+        <InputGroupText isPlain id={`${type}-utilization-unit`}>
+          %
         </InputGroupText>
       </InputGroup>
 

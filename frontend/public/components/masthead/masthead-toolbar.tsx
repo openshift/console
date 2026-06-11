@@ -6,7 +6,12 @@ import { shallowEqual } from 'react-redux';
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useNavigate } from 'react-router';
-import { BellIcon, EllipsisVIcon, ThIcon, QuestionCircleIcon } from '@patternfly/react-icons';
+import {
+  RhUiNotificationIcon,
+  RhUiEllipsisVerticalIcon,
+  RhUiMenuSwitcherIcon,
+  RhUiQuestionMarkCircleIcon,
+} from '@patternfly/react-icons';
 import {
   Dropdown,
   Divider,
@@ -641,7 +646,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
               isExpanded={isKebabDropdownOpen}
               data-quickstart-id="qs-masthead-utilitymenu"
             >
-              <EllipsisVIcon />
+              <RhUiEllipsisVerticalIcon />
             </MenuToggle>
           )}
           ref={kebabMenuRef}
@@ -762,7 +767,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
                       isExpanded={isKebabDropdownOpen}
                       data-test-id="application-launcher"
                     >
-                      <ThIcon />
+                      <RhUiMenuSwitcherIcon />
                     </MenuToggle>
                   )}
                   ref={applicationLauncherMenuRef}
@@ -799,7 +804,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
                     data-tour-id="tour-help-button"
                     data-quickstart-id="qs-masthead-help"
                   >
-                    <QuestionCircleIcon alt="" />
+                    <RhUiQuestionMarkCircleIcon alt="" />
                   </MenuToggle>
                 )}
                 ref={helpMenuRef}
@@ -829,7 +834,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
                 count={alertCount}
                 data-quickstart-id="qs-masthead-notifications"
               >
-                <BellIcon />
+                <RhUiNotificationIcon />
               </NotificationBadge>
             )}
             <ToolbarItem>{renderMenu(true)}</ToolbarItem>

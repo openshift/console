@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { CatalogIcon } from '@patternfly/react-icons';
+import { RhUiCatalogAltIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { SAMPLE_CATALOG_TYPE_ID } from '@console/dev-console/src/const';
 import { getDisabledAddActions } from '@console/dev-console/src/utils/useAddActionExtensions';
@@ -95,7 +95,9 @@ export const SampleGettingStartedCard: FC<SampleGettingStartedCardProps> = ({ fe
         return (
           <GettingStartedCard
             id="samples"
-            icon={<CatalogIcon color="var(--co-global--palette--blue-400)" aria-hidden="true" />}
+            icon={
+              <RhUiCatalogAltIcon color="var(--co-global--palette--blue-400)" aria-hidden="true" />
+            }
             title={t('knative-plugin~Create functions using samples')}
             titleColor={'var(--co-global--palette--blue-400)'}
             description={t('knative-plugin~Choose a code sample to create a function.')}

@@ -12,7 +12,7 @@ import {
   GridItem,
   Tooltip,
 } from '@patternfly/react-core';
-import { PauseCircleIcon, SyncAltIcon } from '@patternfly/react-icons';
+import { RhUiPauseCircleIcon, RhUiSyncIcon } from '@patternfly/react-icons';
 import { TableColumn } from '@console/dynamic-plugin-sdk';
 
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -262,13 +262,13 @@ const MachineConfigPoolUpdateStatus: FC<MachineConfigPoolUpdateStatusProps> = ({
     case MCPUpdateStatus.Paused:
       return (
         <>
-          <PauseCircleIcon /> {t('public~Paused')}
+          <RhUiPauseCircleIcon /> {t('public~Paused')}
         </>
       );
     case MCPUpdateStatus.Updating:
       return (
         <>
-          <SyncAltIcon className="co-spin co-icon-space-r" />
+          <RhUiSyncIcon className="co-spin co-icon-space-r" />
           {t('public~Updating')}
         </>
       );

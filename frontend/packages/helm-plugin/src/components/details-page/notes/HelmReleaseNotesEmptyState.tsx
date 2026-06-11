@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { EmptyState, EmptyStateBody, EmptyStateVariant } from '@patternfly/react-core';
-import { InfoCircleIcon } from '@patternfly/react-icons';
+import { RhStandardInfoIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 
 const HelmReleaseNotesEmptyState: FC = () => {
@@ -8,7 +8,7 @@ const HelmReleaseNotesEmptyState: FC = () => {
   return (
     <EmptyState
       headingLevel="h2"
-      icon={InfoCircleIcon}
+      icon={RhStandardInfoIcon}
       titleText={<>{t('helm-plugin~No release notes available')}</>}
       variant={EmptyStateVariant.full}
     >

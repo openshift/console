@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import type { FC } from 'react';
-import { SearchIcon } from '@patternfly/react-icons';
+import { RhUiSearchIcon } from '@patternfly/react-icons';
 import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 
@@ -19,7 +19,7 @@ const Requirement: FC<RequirementProps> = ({ kind, requirements, namespace = '' 
   return (
     <div className="co-m-requirement">
       <Link className={`co-m-requirement__link co-text-${kind.toLowerCase()}`} to={to}>
-        <SearchIcon className="co-m-requirement__icon co-icon-flex-child" />
+        <RhUiSearchIcon className="co-m-requirement__icon co-icon-flex-child" />
         <span className="co-m-requirement__label">{requirementAsString.replace(/,/g, ', ')}</span>
       </Link>
     </div>

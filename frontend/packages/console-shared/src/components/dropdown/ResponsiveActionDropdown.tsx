@@ -10,7 +10,7 @@ import {
 import type { MenuToggleElement } from '@patternfly/react-core';
 // Import context from source since it's not in public API
 import { OverflowMenuContext } from '@patternfly/react-core/dist/esm/components/OverflowMenu/OverflowMenuContext';
-import { EllipsisVIcon } from '@patternfly/react-icons';
+import { RhUiEllipsisVerticalIcon } from '@patternfly/react-icons';
 
 export type ResponsiveActionDropdownProps = {
   /** Label for the action button (shown on desktop) */
@@ -76,7 +76,7 @@ const InternalDropdown: FC<InternalDropdownProps> = ({
           data-test={dataTest}
           aria-label={isBelowBreakpoint ? ariaLabel || label : undefined}
         >
-          {isBelowBreakpoint ? <EllipsisVIcon /> : label}
+          {isBelowBreakpoint ? <RhUiEllipsisVerticalIcon /> : label}
         </MenuToggle>
       )}
     >

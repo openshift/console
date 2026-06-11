@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { Button, Tooltip } from '@patternfly/react-core';
-import { MagicIcon } from '@patternfly/react-icons';
+import { RhUiAiExperienceIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { action } from 'typesafe-actions';
 import type { CodeEditorToolbarProps } from '@console/dynamic-plugin-sdk';
@@ -23,7 +23,7 @@ export const AskOpenShiftLightspeedButton: FC = () => {
         variant="plain"
         onClick={() => dispatch(openOLS())}
         aria-label={t('Ask OpenShift Lightspeed')}
-        icon={<MagicIcon />}
+        icon={<RhUiAiExperienceIcon />}
       />
     </Tooltip>
   ) : null;

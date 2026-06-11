@@ -9,7 +9,7 @@ import {
   SplitItem,
   ExpandableSection,
 } from '@patternfly/react-core';
-import { AddCircleOIcon } from '@patternfly/react-icons';
+import { RhUiAddCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import type {
   CertificateSigningRequestKind,
@@ -132,7 +132,7 @@ const StatusTitle: FC<StatusTitleProps> = ({ title }) => {
   return (
     <StatusIconAndText
       title={title || t('console-app~Approval required')}
-      icon={<AddCircleOIcon />}
+      icon={<RhUiAddCircleIcon />}
     />
   );
 };

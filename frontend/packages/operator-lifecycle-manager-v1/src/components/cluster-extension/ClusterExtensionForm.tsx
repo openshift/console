@@ -18,7 +18,7 @@ import {
   Alert,
   PageSection,
 } from '@patternfly/react-core';
-import { PencilAltIcon } from '@patternfly/react-icons';
+import { RhUiEditIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
@@ -483,7 +483,7 @@ const ClusterExtensionForm: FC<ClusterExtensionFormProps> = ({ formData = {}, on
                         minWidth: 'auto',
                       }}
                     >
-                      <PencilAltIcon />
+                      <RhUiEditIcon />
                     </Button>
                   )}
                 </span>
@@ -571,7 +571,7 @@ const ClusterExtensionForm: FC<ClusterExtensionFormProps> = ({ formData = {}, on
                         minWidth: 'auto',
                       }}
                     >
-                      <PencilAltIcon />
+                      <RhUiEditIcon />
                     </Button>
                   )}
                 </span>

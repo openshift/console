@@ -19,7 +19,7 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
-import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { RhUiMinusCircleIcon, RhUiAddCircleFillIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import * as Immutable from 'immutable';
 import type { JSONSchema6, JSONSchema6TypeName } from 'json-schema';
@@ -1025,7 +1025,7 @@ export const DEPRECATED_CreateOperandForm: FC<OperandFormProps> = ({
               {fieldLists.length > 1 && (
                 <div className="co-array-field-group__remove">
                   <Button
-                    icon={<MinusCircleIcon className="co-icon-space-r" />}
+                    icon={<RhUiMinusCircleIcon className="co-icon-space-r" />}
                     type="button"
                     className="co-array-field-group__remove-btn"
                     onClick={() => removeArrayFieldGroup(fieldLists, index)}
@@ -1042,7 +1042,7 @@ export const DEPRECATED_CreateOperandForm: FC<OperandFormProps> = ({
           ))}
           <div>
             <Button
-              icon={<PlusCircleIcon className="co-icon-space-r" />}
+              icon={<RhUiAddCircleFillIcon className="co-icon-space-r" />}
               type="button"
               onClick={() => addArrayFieldGroup(fieldLists)}
               variant="link"

@@ -17,7 +17,7 @@ import {
   TextInputGroupUtilities,
   Button,
 } from '@patternfly/react-core';
-import { TimesIcon } from '@patternfly/react-icons';
+import { RhUiCloseIcon } from '@patternfly/react-icons';
 import type { FormikValues } from 'formik';
 import { useField, useFormikContext } from 'formik';
 import * as _ from 'lodash';
@@ -315,7 +315,7 @@ export const MultiTypeaheadField: FC<MultiTypeaheadFieldProps> = ({
             {...(field.value.length === 0 ? { style: { display: 'none' } } : {})}
           >
             <Button
-              icon={<TimesIcon aria-hidden />}
+              icon={<RhUiCloseIcon aria-hidden />}
               variant="plain"
               onClick={onClearButtonClick}
               aria-label={t('console-shared~Clear filter')}

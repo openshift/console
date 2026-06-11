@@ -10,7 +10,7 @@ import {
   MenuContent,
   MenuList,
 } from '@patternfly/react-core';
-import { ExclamationCircleIcon } from '@patternfly/react-icons';
+import { RhStandardAlertIcon } from '@patternfly/react-icons';
 import fuzzysearch from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -104,7 +104,7 @@ const NamespaceDropdown: FC = () => {
   const loadErrorState: JSX.Element | null = optionsLoadError ? (
     <EmptyState
       headingLevel="h4"
-      icon={ExclamationCircleIcon}
+      icon={RhStandardAlertIcon}
       titleText={<>{t('console-app~Unable to load')}</>}
       data-test={'dropdown console.preferredNamespace error'}
     >

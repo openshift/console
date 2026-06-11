@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useContext, useState } from 'react';
 import { Button, ButtonVariant, Tooltip } from '@patternfly/react-core';
-import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { RhUiMinusCircleIcon, RhUiAddCircleFillIcon } from '@patternfly/react-icons';
 import type { FormikValues } from 'formik';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -83,7 +83,7 @@ const HealthCheckProbe: FC<HealthCheckProbeProps> = ({ probeType }) => {
           {!viewOnly && (
             <Tooltip content={t('devconsole~Remove')} position="right">
               <Button
-                icon={<MinusCircleIcon />}
+                icon={<RhUiMinusCircleIcon />}
                 className="pf-m-plain--align-left"
                 variant={ButtonVariant.plain}
                 onClick={handleDeleteProbe}
@@ -102,7 +102,7 @@ const HealthCheckProbe: FC<HealthCheckProbeProps> = ({ probeType }) => {
         className="pf-m-link--align-left"
         variant={ButtonVariant.link}
         onClick={handleAddProbe}
-        icon={<PlusCircleIcon />}
+        icon={<RhUiAddCircleFillIcon />}
       >
         {t('devconsole~Add {{addHealthCheckProbe}}', {
           addHealthCheckProbe: getHealthChecksProbeConfig(probeType, t).formTitle,

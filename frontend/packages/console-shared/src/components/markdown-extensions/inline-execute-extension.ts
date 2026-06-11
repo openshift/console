@@ -1,5 +1,9 @@
 import { useMemo } from 'react';
-import { CheckIconConfig, CopyIconConfig, PlayIconConfig } from '@patternfly/react-icons';
+import {
+  RhUiCheckIconConfig,
+  RhUiCopyIconConfig,
+  RhUiPlayIconConfig,
+} from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { getSvgFromPfIconConfig } from '@console/shared/src/utils/icon-utils';
 import { useCloudShellAvailable } from '@console/webterminal-plugin/src/components/cloud-shell/useCloudShellAvailable';
@@ -28,7 +32,7 @@ export const useInlineExecuteCommandExtension = () => {
               <button class="pf-v6-c-button pf-m-plain" type="button" aria-label="${t(
                 'console-shared~Copy to clipboard',
               )}" ${MARKDOWN_COPY_BUTTON_ID}="${groupType}">
-                ${getSvgFromPfIconConfig(CopyIconConfig)}
+                ${getSvgFromPfIconConfig(RhUiCopyIconConfig)}
               </button>
             </div>
             ${
@@ -37,8 +41,8 @@ export const useInlineExecuteCommandExtension = () => {
                 <button class="pf-v6-c-button pf-m-plain ocs-markdown-execute-snippet__button" type="button" aria-label="${t(
                   'console-shared~Run in Web Terminal',
                 )}" ${MARKDOWN_EXECUTE_BUTTON_ID}="${groupType}">
-                  ${getSvgFromPfIconConfig(PlayIconConfig)}
-                  ${getSvgFromPfIconConfig(CheckIconConfig)}
+                  ${getSvgFromPfIconConfig(RhUiPlayIconConfig)}
+                  ${getSvgFromPfIconConfig(RhUiCheckIconConfig)}
                 </button>
               </div>`
                 : ''

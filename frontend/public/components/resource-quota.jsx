@@ -3,11 +3,11 @@ import * as _ from 'lodash';
 import { useParams, Link } from 'react-router';
 import { Table as PfTable, Thead, Tbody, Tr, Th, Td } from '@patternfly/react-table';
 import {
-  OutlinedCircleIcon,
-  ResourcesAlmostEmptyIcon,
-  ResourcesAlmostFullIcon,
-  ResourcesFullIcon,
-  UnknownIcon,
+  RhUiResourcesEmptyIcon,
+  RhUiResourcesAlmostEmptyIcon,
+  RhUiResourcesAlmostFullIcon,
+  RhUiResourcesFullIcon,
+  RhUiUnknownIcon,
 } from '@patternfly/react-icons';
 import { Trans, useTranslation } from 'react-i18next';
 import AppliedClusterResourceQuotaCharts from '@console/app/src/components/resource-quota/AppliedClusterResourceQuotaCharts';
@@ -164,15 +164,15 @@ const QuotaStatus = ({ resourcesAtQuota }) => {
 };
 
 export const UsageIcon = ({ percent }) => {
-  let usageIcon = <UnknownIcon />;
+  let usageIcon = <RhUiUnknownIcon />;
   if (percent === 0) {
-    usageIcon = <OutlinedCircleIcon className="co-resource-quota-empty" />;
+    usageIcon = <RhUiResourcesEmptyIcon className="co-resource-quota-empty" />;
   } else if (percent > 0 && percent < 50) {
-    usageIcon = <ResourcesAlmostEmptyIcon className="co-resource-quota-almost-empty" />;
+    usageIcon = <RhUiResourcesAlmostEmptyIcon className="co-resource-quota-almost-empty" />;
   } else if (percent >= 50 && percent < 100) {
-    usageIcon = <ResourcesAlmostFullIcon className="co-resource-quota-almost-full" />;
+    usageIcon = <RhUiResourcesAlmostFullIcon className="co-resource-quota-almost-full" />;
   } else if (percent === 100) {
-    usageIcon = <ResourcesFullIcon className="co-resource-quota-full" />;
+    usageIcon = <RhUiResourcesFullIcon className="co-resource-quota-full" />;
   } else if (percent > 100) {
     usageIcon = <YellowExclamationTriangleIcon className="co-resource-quota-exceeded" />;
   }

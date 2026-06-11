@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { HourglassHalfIcon } from '@patternfly/react-icons';
+import { RhUiPendingIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import type { StatusComponentProps } from '@console/dynamic-plugin-sdk';
 import {
@@ -36,7 +36,7 @@ const PendingStatus: FC<StatusComponentProps> = (props) => {
   return (
     <GenericStatus
       {...props}
-      Icon={HourglassHalfIcon}
+      Icon={RhUiPendingIcon}
       title={props.title || t('console-shared~Pending')}
     />
   );

@@ -1,7 +1,7 @@
 import type { FC, ReactNode, MouseEvent } from 'react';
 import * as _ from 'lodash';
 import { css } from '@patternfly/react-styles';
-import { PencilAltIcon } from '@patternfly/react-icons';
+import { RhUiEditIcon } from '@patternfly/react-icons';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -40,7 +40,7 @@ const PropertyPath: FC<{ kind: string; path: string | string[] }> = ({ kind, pat
 const EditButton: FC<EditButtonProps> = (props) => {
   return (
     <Button
-      icon={<PencilAltIcon />}
+      icon={<RhUiEditIcon />}
       iconPosition="end"
       type="button"
       variant="link"

@@ -2,7 +2,7 @@ import type { ComponentType, FC, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import { Button, DescriptionList } from '@patternfly/react-core';
-import { PencilAltIcon } from '@patternfly/react-icons';
+import { RhUiEditIcon } from '@patternfly/react-icons';
 import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpgrade';
 import { useAnnotationsModal } from '@console/shared/src/hooks/useAnnotationsModal';
 import { useLabelsModal } from '@console/shared/src/hooks/useLabelsModal';
@@ -123,7 +123,7 @@ export const ResourceSummary: FC<ResourceSummaryProps> = ({
         <DetailsItem label={t('public~Tolerations')} obj={resource} path={tolerationsPath}>
           {canUpdate ? (
             <Button
-              icon={<PencilAltIcon />}
+              icon={<RhUiEditIcon />}
               iconPosition="end"
               type="button"
               isInline
@@ -146,7 +146,7 @@ export const ResourceSummary: FC<ResourceSummaryProps> = ({
         <DetailsItem label={t('public~Annotations')} obj={resource} path="metadata.annotations">
           {canUpdate ? (
             <Button
-              icon={<PencilAltIcon />}
+              icon={<RhUiEditIcon />}
               iconPosition="end"
               data-test="edit-annotations"
               type="button"
@@ -223,7 +223,7 @@ export const UpstreamConfigDetailsItem: FC<UpstreamConfigDetailsItemProps> = ({ 
           }}
           variant="link"
           isDisabled={!canUpgrade}
-          icon={<PencilAltIcon />}
+          icon={<RhUiEditIcon />}
           iconPosition="end"
         >
           {resource?.spec?.upstream || t('public~Default update server')}

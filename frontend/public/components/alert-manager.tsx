@@ -10,7 +10,7 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
-import { PencilAltIcon } from '@patternfly/react-icons';
+import { RhUiEditIcon } from '@patternfly/react-icons';
 import { DASH } from '@console/shared/src/constants/ui';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { referenceForModel, K8sResourceKind, TableColumn } from '../module/k8s';
@@ -91,7 +91,7 @@ const Details: FC<DetailsProps> = (props) => {
               <DescriptionListTerm>Replicas</DescriptionListTerm>
               <DescriptionListDescription>
                 <Button
-                  icon={<PencilAltIcon />}
+                  icon={<RhUiEditIcon />}
                   iconPosition="end"
                   variant="link"
                   type="button"

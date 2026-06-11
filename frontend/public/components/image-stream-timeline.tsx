@@ -1,5 +1,7 @@
 import type { FC } from 'react';
 import * as _ from 'lodash';
+// Icons are purely decorative. Probably want to replace these with CSS in the future.
+// eslint-disable-next-line no-restricted-imports
 import { CircleIcon, SquareIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 

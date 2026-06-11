@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import type { AllQuickStartStates, QuickStart } from '@patternfly/quickstarts';
 import { QuickStartStatus, getQuickStartStatus } from '@patternfly/quickstarts';
-import { RouteIcon } from '@patternfly/react-icons';
+import { RhUiRouteIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { QuickStartsLoader } from '@console/app/src/components/quick-starts/loader/QuickStartsLoader';
 import { useQuickStartContext } from '@console/shared/src/hooks/useQuickStartContext';
@@ -108,7 +108,9 @@ export const QuickStartGettingStartedCard: FC<QuickStartGettingStartedCardProps>
         return (
           <GettingStartedCard
             id="quick-start"
-            icon={<RouteIcon color="var(--co-global--palette--purple-600)" aria-hidden="true" />}
+            icon={
+              <RhUiRouteIcon color="var(--co-global--palette--purple-600)" aria-hidden="true" />
+            }
             title={title || t('console-shared~Build with guided documentation')}
             titleColor={'var(--co-global--palette--purple-600)'}
             description={

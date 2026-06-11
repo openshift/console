@@ -6,7 +6,7 @@ import {
   EmptyStateActions,
   EmptyStateFooter,
 } from '@patternfly/react-core';
-import { TopologyIcon } from '@patternfly/react-icons';
+import { RhUiTopologyIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
@@ -19,7 +19,7 @@ export const LimitExceededState: FC<LimitExceededStateProps> = ({ onShowTopology
   return (
     <EmptyState
       headingLevel="h4"
-      icon={TopologyIcon}
+      icon={RhUiTopologyIcon}
       titleText={<>{t(`topology~Loading is taking longer than expected`)}</>}
     >
       <EmptyStateBody>

@@ -1,6 +1,6 @@
 /* eslint-disable no-barrel-files/no-barrel-files */
 import type { ReactElement } from 'react';
-import { InProgressIcon } from '@patternfly/react-icons';
+import { RhUiInProgressIcon } from '@patternfly/react-icons';
 import type { TFunction } from 'i18next';
 import { HealthState } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import {
@@ -53,7 +53,7 @@ export const healthStateMapping: { [key in HealthState]: HealthStateMappingValue
   [HealthState.PROGRESS]: {
     priority: 2,
     health: HealthState.PROGRESS,
-    icon: <InProgressIcon title="In progress" />,
+    icon: <RhUiInProgressIcon title="In progress" />,
   },
   [HealthState.UPDATING]: {
     priority: 3,

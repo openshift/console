@@ -10,7 +10,7 @@ import {
   HelperText,
   HelperTextItem,
 } from '@patternfly/react-core';
-import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { RhUiMinusCircleIcon, RhUiAddCircleFillIcon } from '@patternfly/react-icons';
 import type { FormikValues } from 'formik';
 import { FieldArray, useField, useFormikContext } from 'formik';
 import { get, uniqueId } from 'lodash';
@@ -70,7 +70,7 @@ const KeyValueFileInputField: FC<KeyValueEntryFormProps & FieldProps> = ({
                 {!disableRemoveAction && (
                   <FlexItem className="key-value--remove-button">
                     <Button
-                      icon={<MinusCircleIcon className="co-icon-space-r" />}
+                      icon={<RhUiMinusCircleIcon className="co-icon-space-r" />}
                       type="button"
                       data-test="remove-key-value-button"
                       onClick={() => {
@@ -110,7 +110,7 @@ const KeyValueFileInputField: FC<KeyValueEntryFormProps & FieldProps> = ({
             );
           })}
           <Button
-            icon={<PlusCircleIcon className="co-icon-space-r" />}
+            icon={<RhUiAddCircleFillIcon className="co-icon-space-r" />}
             className="pf-m-link--align-left"
             onClick={() => arrayHelpers.push({ key: '', value: '' })}
             type="button"

@@ -20,7 +20,7 @@ import {
   SelectProps,
   TextInput,
 } from '@patternfly/react-core';
-import { ExclamationCircleIcon } from '@patternfly/react-icons';
+import { RhUiErrorFillIcon } from '@patternfly/react-icons';
 import { safeLoad } from 'js-yaml';
 
 import { APIError } from '@console/shared/src/types/resource';
@@ -454,7 +454,7 @@ const ReceiverBaseForm: FC<ReceiverBaseFormProps> = ({
               <FormHelperText>
                 <HelperText>
                   <HelperTextItem
-                    icon={<ExclamationCircleIcon />}
+                    icon={<RhUiErrorFillIcon />}
                     variant="error"
                     id="receiver-name-help"
                     aria-live="polite"

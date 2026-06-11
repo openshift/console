@@ -8,7 +8,7 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
-import { PencilAltIcon } from '@patternfly/react-icons';
+import { RhUiEditIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import {
@@ -105,7 +105,7 @@ const NodeDetailsOverview: FC<NodeDetailsOverviewProps> = ({ node }) => {
               <DescriptionListDescription>
                 {canUpdate ? (
                   <Button
-                    icon={<PencilAltIcon />}
+                    icon={<RhUiEditIcon />}
                     iconPosition="end"
                     variant="link"
                     type="button"
@@ -133,7 +133,7 @@ const NodeDetailsOverview: FC<NodeDetailsOverviewProps> = ({ node }) => {
               <DescriptionListDescription>
                 {canUpdate ? (
                   <Button
-                    icon={<PencilAltIcon />}
+                    icon={<RhUiEditIcon />}
                     iconPosition="end"
                     variant="link"
                     type="button"

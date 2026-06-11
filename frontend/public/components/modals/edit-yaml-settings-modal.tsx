@@ -12,11 +12,14 @@ import {
   SwitchProps,
 } from '@patternfly/react-core';
 import {
-  CogIcon,
-  PaintRollerIcon,
+  // Icons do not have a suitable RH icon yet
+  /* eslint-disable no-restricted-imports */
   FontIcon,
-  ICursorIcon,
   MouseIcon,
+  /* eslint-enable no-restricted-imports */
+  RhUiAutoLightDarkModeIcon,
+  RhUiCommentIcon,
+  RhUiSettingsIcon,
 } from '@patternfly/react-icons';
 import { FC, ReactNode, ComponentProps, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -55,7 +58,7 @@ interface ConfigModalItemProps {
 }
 
 const ConfigModalItem: React.FC<ConfigModalItemProps> = ({
-  icon = <CogIcon />,
+  icon = <RhUiSettingsIcon />,
   description,
   title,
   id = `ConfigModalItem-${title.replace(/\s+/g, '-').toLowerCase()}`,
@@ -94,7 +97,7 @@ interface ConfigModalSwitchProps extends Omit<ConfigModalItemProps, 'slot'> {
 }
 
 const ConfigModalSwitch: React.FC<ConfigModalSwitchProps> = ({
-  icon = <CogIcon />,
+  icon = <RhUiSettingsIcon />,
   description,
   title,
   id = `ConfigModalSwitch-${title.replace(/\s+/g, '-').toLowerCase()}`,
@@ -170,7 +173,7 @@ const ThemeConfigItem: FC = () => {
       title={t('Theme')}
       description={t('Select the code editor color theme')}
       id="ConfigModalItem-color-theme"
-      icon={<PaintRollerIcon />}
+      icon={<RhUiAutoLightDarkModeIcon />}
       slot={
         <SimpleSelect
           toggleProps={{
@@ -236,7 +239,7 @@ const TooltipConfigItem = () => {
       description={t('Show tooltips for Resource names, Field names, and definitions')}
       onChange={(_e, checked) => setShowTooltips(checked)}
       isChecked={showTooltips}
-      icon={<ICursorIcon />}
+      icon={<RhUiCommentIcon />}
     />
   );
 };
@@ -300,7 +303,7 @@ export const EditYamlSettingsModal: FC<AppendToProps> = ({ appendTo }) => {
       <CodeEditorControl
         aria-label={t('Editor settings')}
         aria-haspopup="dialog"
-        icon={<CogIcon />}
+        icon={<RhUiSettingsIcon />}
         onClick={() => setIsModalOpen(true)}
         tooltipProps={{ content: t('Editor settings') }}
       />

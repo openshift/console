@@ -19,7 +19,7 @@ import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 
-import { PencilAltIcon } from '@patternfly/react-icons';
+import { RhUiEditIcon } from '@patternfly/react-icons';
 import { Link } from 'react-router';
 
 import { Status } from '@console/shared/src/components/status/Status';
@@ -924,7 +924,7 @@ export const PullSecret = (props) => {
       ))
     ) : (
       <Button
-        icon={<PencilAltIcon />}
+        icon={<RhUiEditIcon />}
         iconPosition="end"
         variant="link"
         type="button"

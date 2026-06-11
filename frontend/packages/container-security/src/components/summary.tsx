@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { ChartDonut } from '@patternfly/react-charts/victory';
 import { Stack, StackItem, pluralize } from '@patternfly/react-core';
-import { ExclamationTriangleIcon } from '@patternfly/react-icons';
+import { RhUiWarningFillIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
@@ -104,7 +104,7 @@ export const SecurityBreakdownPopup: FC<SecurityBreakdownPopupProps> = ({
                     !_.isEmpty(vulnsFor(priority.value)) ? (
                       <div className="co-status-popup__row" key={priority.value}>
                         <div>
-                          <ExclamationTriangleIcon
+                          <RhUiWarningFillIcon
                             color={priority.color.value}
                             title={priority.title}
                           />
@@ -163,7 +163,7 @@ export const SecurityBreakdownPopup: FC<SecurityBreakdownPopupProps> = ({
               ]).map((v, key) => (
                 <div className="co-status-popup__row" key={v.metadata.name}>
                   <span>
-                    <ExclamationTriangleIcon
+                    <RhUiWarningFillIcon
                       color={priorityFor(v.status?.highestSeverity).color.value}
                     />{' '}
                     <Link

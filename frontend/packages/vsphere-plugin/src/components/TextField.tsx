@@ -8,7 +8,7 @@ import {
   HelperTextItem,
   TextInput,
 } from '@patternfly/react-core';
-import { ExclamationCircleIcon } from '@patternfly/react-icons';
+import { RhUiErrorFillIcon } from '@patternfly/react-icons';
 import { useField } from 'formik';
 
 interface TextFieldProps extends TextInputProps {
@@ -51,7 +51,7 @@ const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
         {hasError && (
           <FormHelperText>
             <HelperText>
-              <HelperTextItem icon={<ExclamationCircleIcon />} variant={'error'}>
+              <HelperTextItem icon={<RhUiErrorFillIcon />} variant={'error'}>
                 {meta.error}
               </HelperTextItem>
             </HelperText>

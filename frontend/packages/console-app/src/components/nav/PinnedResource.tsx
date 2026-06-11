@@ -1,6 +1,6 @@
 import type { FC, MouseEvent } from 'react';
 import { Button, Flex, FlexItem, Truncate } from '@patternfly/react-core';
-import { MinusCircleIcon } from '@patternfly/react-icons';
+import { RhUiMinusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import type { K8sModel } from '@console/internal/module/k8s';
 import { modelFor } from '@console/internal/module/k8s';
@@ -31,7 +31,7 @@ const RemoveButton: FC<RemoveButtonProps> = ({ resourceRef, navResources, onChan
   };
   return (
     <Button
-      icon={<MinusCircleIcon />}
+      icon={<RhUiMinusCircleIcon />}
       variant="link"
       aria-label={t('console-app~Unpin')}
       onClick={(e) => unPin(e, resourceRef)}

@@ -7,7 +7,7 @@ import {
   EmptyStateActions,
   EmptyStateFooter,
 } from '@patternfly/react-core';
-import { TopologyIcon } from '@patternfly/react-icons';
+import { RhUiTopologyIcon } from '@patternfly/react-icons';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
@@ -21,7 +21,7 @@ const TopologyEmptyState: FC<TopologyEmptyStateProps> = ({ setIsQuickSearchOpen 
   return (
     <EmptyState
       headingLevel="h3"
-      icon={TopologyIcon}
+      icon={RhUiTopologyIcon}
       titleText={<>{t('topology~No resources found')}</>}
       className="odc-topology__empty-state"
       variant={EmptyStateVariant.full}

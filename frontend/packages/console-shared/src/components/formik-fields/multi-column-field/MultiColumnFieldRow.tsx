@@ -2,7 +2,7 @@ import type { ReactNode, ReactElement, FC } from 'react';
 import { Children, cloneElement } from 'react';
 import type { gridItemSpanValueShape } from '@patternfly/react-core';
 import { Tooltip, Button, ButtonVariant, ButtonType, GridItem, Grid } from '@patternfly/react-core';
-import { MinusCircleIcon } from '@patternfly/react-icons';
+import { RhUiMinusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import './MultiColumnField.scss';
 
@@ -54,7 +54,7 @@ const DEFAULT_ROW_RENDERER = ({
         <div className={'odc-multi-column-field__col--button'}>
           <Tooltip content={tooltipDeleteRow || t('console-shared~Remove')}>
             <Button
-              icon={<MinusCircleIcon />}
+              icon={<RhUiMinusCircleIcon />}
               data-test="delete-row"
               aria-label={tooltipDeleteRow || t('console-shared~Remove')}
               variant={ButtonVariant.plain}

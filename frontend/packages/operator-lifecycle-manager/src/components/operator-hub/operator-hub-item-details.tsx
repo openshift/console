@@ -14,7 +14,7 @@ import {
   StackItem,
   AlertVariant,
 } from '@patternfly/react-core';
-import { CheckCircleIcon } from '@patternfly/react-icons';
+import { RhUiCheckCircleFillIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
@@ -74,7 +74,7 @@ export const CapabilityLevel: FC<CapabilityLevelProps> = ({ capability }) => {
             key={level}
           >
             {active && (
-              <CheckCircleIcon
+              <RhUiCheckCircleFillIcon
                 color="var(--pf-t--global--icon--color--brand--default)"
                 className="properties-side-panel-pf-property-value__capability-level-icon"
                 title={t('olm~Checked')}

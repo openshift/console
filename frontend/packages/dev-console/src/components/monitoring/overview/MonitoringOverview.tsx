@@ -11,7 +11,7 @@ import {
   EmptyState,
   EmptyStateBody,
 } from '@patternfly/react-core';
-import { InfoCircleIcon } from '@patternfly/react-icons';
+import { RhStandardInfoIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import type { Alert } from '@console/dynamic-plugin-sdk';
@@ -139,7 +139,7 @@ const MonitoringOverview: FC<MonitoringOverviewProps> = (props) => {
             {resource.kind === DeploymentConfigModel.kind ? (
               <EmptyState
                 headingLevel="h2"
-                icon={InfoCircleIcon}
+                icon={RhStandardInfoIcon}
                 titleText={<>{t('devconsole~No metrics found')}</>}
               >
                 <EmptyStateBody>

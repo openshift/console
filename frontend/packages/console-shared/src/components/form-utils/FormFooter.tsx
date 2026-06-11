@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { ActionGroup, Alert, Button, ButtonVariant, PageSection } from '@patternfly/react-core';
-import { DownloadIcon } from '@patternfly/react-icons';
+import { RhUiDownloadIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { ButtonBar } from '@console/internal/components/utils/button-bar';
 import type { FormFooterProps } from './form-utils-types';
@@ -93,7 +93,7 @@ export const FormFooter: FC<FormFooterProps> = ({
               variant={ButtonVariant.secondary}
               className="pf-v6-c-button--align-right pf-v6-u-display-none pf-v6-u-display-flex-on-sm"
               onClick={handleDownload}
-              icon={<DownloadIcon />}
+              icon={<RhUiDownloadIcon />}
             >
               {t('console-shared~Download')}
             </Button>

@@ -9,7 +9,7 @@ import {
   GridItem,
   TextInputTypes,
 } from '@patternfly/react-core';
-import { MinusCircleIcon } from '@patternfly/react-icons';
+import { RhUiMinusCircleIcon } from '@patternfly/react-icons';
 import type { FormikValues } from 'formik';
 import { useFormikContext } from 'formik';
 import * as _ from 'lodash';
@@ -109,7 +109,7 @@ const VolumeForm: FC<VolumeFormProps> = ({ namePrefix, onDelete, namespace }) =>
       <GridItem span={1}>
         <Bullseye>
           <Button
-            icon={<MinusCircleIcon />}
+            icon={<RhUiMinusCircleIcon />}
             variant={ButtonVariant.plain}
             type={ButtonType.button}
             onClick={onDelete}

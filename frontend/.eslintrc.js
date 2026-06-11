@@ -81,6 +81,13 @@ module.exports = {
             message: "For consistency, import { act } from '@testing-library/react'",
           },
         ],
+        patterns: [
+          {
+            group: ['@patternfly/react-icons'],
+            importNamePattern: '^(?!Rh|createIcon)',
+            message: 'Use RhMicron, RhUi, or RhStandard icon variants instead of Font Awesome icons.',
+          },
+        ],
       },
     ],
     'no-var': 'error',

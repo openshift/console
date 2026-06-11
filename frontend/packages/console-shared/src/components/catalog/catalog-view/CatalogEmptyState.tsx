@@ -7,7 +7,7 @@ import {
   EmptyStateActions,
   EmptyStateFooter,
 } from '@patternfly/react-core';
-import { SearchIcon } from '@patternfly/react-icons';
+import { RhStandardMagnifyingGlassIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 
 type CatalogEmptyStateProps = {
@@ -19,7 +19,7 @@ export const CatalogEmptyState: FC<CatalogEmptyStateProps> = ({ onClear }) => {
   return (
     <EmptyState
       headingLevel="h2"
-      icon={SearchIcon}
+      icon={RhStandardMagnifyingGlassIcon}
       titleText={<>{t('console-shared~No results found')}</>}
       variant={EmptyStateVariant.full}
     >

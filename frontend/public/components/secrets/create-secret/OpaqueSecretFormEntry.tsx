@@ -5,7 +5,7 @@ import { Base64 } from 'js-base64';
 import { TextInput, Button, FormGroup, ActionGroup, FormFieldGroup } from '@patternfly/react-core';
 import { DroppableFileInput } from './DropableFileInput';
 import { OpaqueSecretFormEntryProps } from './types';
-import { MinusCircleIcon } from '@patternfly/react-icons';
+import { RhUiMinusCircleIcon } from '@patternfly/react-icons';
 
 export const OpaqueSecretFormEntry: FC<OpaqueSecretFormEntryProps> = ({
   onChange,
@@ -44,7 +44,7 @@ export const OpaqueSecretFormEntry: FC<OpaqueSecretFormEntryProps> = ({
             onClick={() => removeEntry(index)}
             variant="link"
             data-test="remove-entry-button"
-            icon={<MinusCircleIcon />}
+            icon={<RhUiMinusCircleIcon />}
           >
             {t('public~Remove key/value')}
           </Button>

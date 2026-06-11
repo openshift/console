@@ -1,7 +1,7 @@
 import type { FC, ReactNode } from 'react';
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { Accordion, Button } from '@patternfly/react-core';
-import { PauseIcon, PlayIcon } from '@patternfly/react-icons';
+import { RhUiPauseIcon, RhUiPlayIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 import type {
@@ -123,7 +123,7 @@ const PauseButton: FC<PauseButtonProps> = ({ paused, togglePause }) => {
       isInline
       onClick={togglePause}
       className="co-activity-card__recent-actions"
-      icon={paused ? <PlayIcon /> : <PauseIcon />}
+      icon={paused ? <RhUiPlayIcon /> : <RhUiPauseIcon />}
       data-test-id="events-pause-button"
       data-test="events-pause-button"
     >

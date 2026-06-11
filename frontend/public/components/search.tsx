@@ -19,7 +19,7 @@ import {
   ToolbarFilter,
   ToolbarItem,
 } from '@patternfly/react-core';
-import { PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
+import { RhUiAddCircleFillIcon, RhUiMinusCircleIcon } from '@patternfly/react-icons';
 import { getBadgeFromType } from '@console/shared/src/components/badges/badge-factory';
 import { usePinnedResources } from '@console/shared/src/hooks/usePinnedResources';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
@@ -335,12 +335,12 @@ const SearchPage_: FC<SearchProps> = (props) => {
                     >
                       {pinnedResources.includes(resource) ? (
                         <>
-                          <MinusCircleIcon className="co-search-group__pin-toggle__icon" />
+                          <RhUiMinusCircleIcon className="co-search-group__pin-toggle__icon" />
                           {t('public~Remove from navigation')}
                         </>
                       ) : (
                         <>
-                          <PlusCircleIcon className="co-search-group__pin-toggle__icon" />
+                          <RhUiAddCircleFillIcon className="co-search-group__pin-toggle__icon" />
                           {t('public~Add to navigation')}
                         </>
                       )}

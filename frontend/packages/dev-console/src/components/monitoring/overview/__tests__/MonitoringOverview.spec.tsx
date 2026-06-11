@@ -69,11 +69,6 @@ jest.mock('@console/internal/models', () => ({
   DeploymentConfigModel: { kind: 'DeploymentConfig' },
 }));
 
-jest.mock('@patternfly/react-icons', () => ({
-  ...jest.requireActual('@patternfly/react-icons'),
-  InfoCircleIcon: () => 'InfoCircleIcon',
-}));
-
 describe('Monitoring Metric Section', () => {
   const monitoringOverviewProps: React.ComponentProps<typeof MonitoringOverview> = {
     resource: {

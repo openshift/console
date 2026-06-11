@@ -38,12 +38,12 @@ import {
 } from '@patternfly/react-core';
 import { LogViewer, LogViewerSearch } from '@patternfly/react-log-viewer';
 import {
-  BugIcon,
-  CompressIcon,
-  DownloadIcon,
-  ExpandIcon,
-  OutlinedPlayCircleIcon,
-  SearchIcon,
+  RhUiBugIcon,
+  RhUiCompressIcon,
+  RhUiDownloadIcon,
+  RhUiExpandIcon,
+  RhUiPlayCircleIcon,
+  RhUiSearchIcon,
 } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import {
@@ -162,7 +162,7 @@ const FooterButton = ({ setStatus, linesBehind, className }) => {
     setStatus(STREAM_ACTIVE);
   };
   return (
-    <Button icon={<OutlinedPlayCircleIcon />} className={className} onClick={handleClick} isBlock>
+    <Button icon={<RhUiPlayCircleIcon />} className={className} onClick={handleClick} isBlock>
       &nbsp;{resumeText}
     </Button>
   );
@@ -391,7 +391,12 @@ const LogControls: FC<LogControlsProps> = ({
     showDebugAction(resource, containerName) &&
     (isWindowsPod(resource) ? (
       <Tooltip content={t('Debug in terminal is not currently available for Windows containers.')}>
-        <Button variant="control" isDisabled icon={<BugIcon />} aria-label={t('Debug container')} />
+        <Button
+          variant="control"
+          isDisabled
+          icon={<RhUiBugIcon />}
+          aria-label={t('Debug container')}
+        />
       </Tooltip>
     ) : (
       <Tooltip content={t('Debug container')}>
@@ -404,7 +409,7 @@ const LogControls: FC<LogControlsProps> = ({
               resource.metadata.namespace,
             )}/containers/${containerName}/debug`,
           )}
-          icon={<BugIcon />}
+          icon={<RhUiBugIcon />}
           aria-label={t('Debug container')}
           data-test="debug-container-link"
         />
@@ -428,7 +433,7 @@ const LogControls: FC<LogControlsProps> = ({
           <ToolbarGroup align={{ default: 'alignEnd' }}>
             {!_.isEmpty(podLogLinks) && renderPodLogLinks()}
             <ToolbarGroup>
-              <ToolbarToggleGroup toggleIcon={<SearchIcon />} breakpoint="lg">
+              <ToolbarToggleGroup toggleIcon={<RhUiSearchIcon />} breakpoint="lg">
                 <ToolbarItem>
                   <LogViewerSearch
                     onFocus={() => {
@@ -456,7 +461,7 @@ const LogControls: FC<LogControlsProps> = ({
                     variant="plain"
                     href={currentLogURL}
                     download={getLogDownloadFilename(resource, containerName)}
-                    icon={<DownloadIcon />}
+                    icon={<RhUiDownloadIcon />}
                   />
                 </Tooltip>
               </ToolbarItem>
@@ -466,7 +471,7 @@ const LogControls: FC<LogControlsProps> = ({
                     <Button
                       variant="plain"
                       onClick={toggleFullscreen}
-                      icon={isFullscreen ? <CompressIcon /> : <ExpandIcon />}
+                      icon={isFullscreen ? <RhUiCompressIcon /> : <RhUiExpandIcon />}
                     />
                   </Tooltip>
                 </ToolbarItem>

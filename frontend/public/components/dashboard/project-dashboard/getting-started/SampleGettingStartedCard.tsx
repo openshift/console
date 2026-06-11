@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { CatalogIcon } from '@patternfly/react-icons';
+import { RhUiCatalogAltIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
@@ -87,7 +87,9 @@ export const SampleGettingStartedCard: FC<SampleGettingStartedCardProps> = ({ fe
         return (
           <GettingStartedCard
             id="samples"
-            icon={<CatalogIcon color="var(--co-global--palette--blue-400)" aria-hidden="true" />}
+            icon={
+              <RhUiCatalogAltIcon color="var(--co-global--palette--blue-400)" aria-hidden="true" />
+            }
             title={t('public~Create applications using samples')}
             titleColor={'var(--co-global--palette--blue-400)'}
             description={t(

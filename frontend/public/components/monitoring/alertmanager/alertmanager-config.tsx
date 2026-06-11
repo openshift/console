@@ -22,7 +22,7 @@ import {
   GridItem,
   ButtonVariant,
 } from '@patternfly/react-core';
-import { PencilAltIcon } from '@patternfly/react-icons';
+import { RhUiEditIcon } from '@patternfly/react-icons';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useTranslation } from 'react-i18next';
 
@@ -369,7 +369,7 @@ const getReceiverDataViewRows = (
           !integrationTypesLabel ? (
             <Link to={`/settings/cluster/alertmanagerconfig/receivers/${receiver.name}/edit`}>
               {t('public~Configure')}
-              <PencilAltIcon className="co-icon-space-l" />
+              <RhUiEditIcon className="co-icon-space-l" />
             </Link>
           ) : (
             integrationTypesLabel

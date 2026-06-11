@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { LogSnippet } from '@patternfly/react-component-groups';
 import { Button, List, ListItem } from '@patternfly/react-core';
-import { SyncAltIcon } from '@patternfly/react-icons';
+import { RhUiSyncIcon } from '@patternfly/react-icons';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import { StatusIconAndText } from '@console/dynamic-plugin-sdk';
@@ -105,7 +105,7 @@ const BuildOverviewItem: FC<BuildOverviewListItemProps> = ({ build }) => {
         <div className="build-overview__status co-icon-and-text">
           <div className="co-icon-and-text__icon co-icon-flex-child">
             {phase === 'Running' ? (
-              <StatusIconAndText icon={<SyncAltIcon />} title={phase} spin iconOnly />
+              <StatusIconAndText icon={<RhUiSyncIcon />} title={phase} spin iconOnly />
             ) : (
               <Status status={phase} iconOnly />
             )}

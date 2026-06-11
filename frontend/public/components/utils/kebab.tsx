@@ -12,7 +12,7 @@ import {
   MenuToggleElement,
   Tooltip,
 } from '@patternfly/react-core';
-import { EllipsisVIcon } from '@patternfly/react-icons';
+import { RhUiEllipsisVerticalIcon } from '@patternfly/react-icons';
 import { useNavigate } from 'react-router';
 import { impersonateStateToProps, ImpersonateKind } from '@console/dynamic-plugin-sdk';
 import { AccessReviewResourceAttributes, K8sKind, K8sResourceKind } from '../../module/k8s';
@@ -216,7 +216,7 @@ export const Kebab: KebabComponent = (props) => {
             isDisabled={isDisabled}
             aria-label={t('public~Actions')}
             variant="plain"
-            icon={<EllipsisVIcon />}
+            icon={<RhUiEllipsisVerticalIcon />}
           />
         )}
         shouldFocusToggleOnSelect

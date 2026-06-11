@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useRef } from 'react';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
-import { ExternalLinkAltIcon, LinkIcon } from '@patternfly/react-icons';
+import { RhUiExternalLinkFillIcon, RhUiLinkIcon } from '@patternfly/react-icons';
 import type {
   Node,
   WithDragNodeProps,
@@ -73,7 +73,10 @@ const SinkUriNode: FC<SinkUriNodeProps> = ({
                 external
               >
                 <g transform={`translate(-${DECORATOR_RADIUS / 2}, -${DECORATOR_RADIUS / 2})`}>
-                  <ExternalLinkAltIcon style={{ fontSize: DECORATOR_RADIUS }} title="Open URL" />
+                  <RhUiExternalLinkFillIcon
+                    style={{ fontSize: DECORATOR_RADIUS }}
+                    title="Open URL"
+                  />
                 </g>
               </Decorator>
             </g>
@@ -102,7 +105,7 @@ const SinkUriNode: FC<SinkUriNodeProps> = ({
           {...rest}
         >
           <g transform={`translate(${cx / 2}, ${cy / 2})`}>
-            <LinkIcon style={{ fontSize: radius }} />
+            <RhUiLinkIcon style={{ fontSize: radius }} />
           </g>
         </BaseNode>
       </g>

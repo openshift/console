@@ -15,7 +15,7 @@ import {
   GridItem,
   Grid,
 } from '@patternfly/react-core';
-import { InProgressIcon, PencilAltIcon } from '@patternfly/react-icons';
+import { RhUiInProgressIcon, RhUiEditIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
 import * as _ from 'lodash';
@@ -178,7 +178,7 @@ export const SubscriptionStatus: FC<{ subscription: SubscriptionKind }> = ({ sub
         <UpgradeApprovalLink subscription={subscription} />
       ) : (
         <span>
-          <InProgressIcon className="text-primary" /> {t('olm~Upgrading')}
+          <RhUiInProgressIcon className="text-primary" /> {t('olm~Upgrading')}
         </span>
       );
     case SubscriptionState.SubscriptionStateAtLatest:
@@ -622,7 +622,7 @@ const SubscriptionUpdates: FC<SubscriptionUpdatesProps> = ({
                 variant="link"
                 isDisabled={!pkg}
                 data-test="subscription-channel-update-button"
-                icon={<PencilAltIcon />}
+                icon={<RhUiEditIcon />}
                 iconPosition="end"
               >
                 {obj.spec.channel || t('olm~No channel')}
@@ -649,7 +649,7 @@ const SubscriptionUpdates: FC<SubscriptionUpdatesProps> = ({
             <>
               <div>
                 <Button
-                  icon={<PencilAltIcon />}
+                  icon={<RhUiEditIcon />}
                   iconPosition="end"
                   type="button"
                   isInline

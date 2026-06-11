@@ -1,12 +1,12 @@
 import type { ReactNode, FC } from 'react';
 import {
-  BanIcon,
-  ClipboardListIcon,
-  HourglassHalfIcon,
-  HourglassStartIcon,
-  NotStartedIcon,
-  SyncAltIcon,
-  UnknownIcon,
+  RhUiBanIcon,
+  RhUiBlueprintIcon,
+  RhUiInProgressIcon,
+  RhUiNewProcessIcon,
+  RhUiNotStartedIcon,
+  RhUiSyncIcon,
+  RhUiUnknownIcon,
 } from '@patternfly/react-icons';
 import type { StatusComponentProps } from '../../../extensions/console-types';
 import { DASH } from '../../constants';
@@ -37,14 +37,14 @@ const Status: FC<StatusProps> = ({ status, title, children, iconOnly, noTooltip,
   const statusProps = { title: title || status, iconOnly, noTooltip, className };
   switch (status) {
     case 'New':
-      return <StatusIconAndText {...statusProps} icon={<HourglassStartIcon />} />;
+      return <StatusIconAndText {...statusProps} icon={<RhUiNewProcessIcon />} />;
 
     case 'Pending':
     case 'pending':
-      return <StatusIconAndText {...statusProps} icon={<HourglassHalfIcon />} />;
+      return <StatusIconAndText {...statusProps} icon={<RhUiInProgressIcon />} />;
 
     case 'Planning':
-      return <StatusIconAndText {...statusProps} icon={<ClipboardListIcon />} />;
+      return <StatusIconAndText {...statusProps} icon={<RhUiBlueprintIcon />} />;
 
     case 'ContainerCreating':
     case 'UpgradePending':
@@ -60,7 +60,7 @@ const Status: FC<StatusProps> = ({ status, title, children, iconOnly, noTooltip,
     case 'Updating':
     case 'Upgrading':
     case 'PendingInstall':
-      return <StatusIconAndText {...statusProps} icon={<SyncAltIcon />} />;
+      return <StatusIconAndText {...statusProps} icon={<RhUiSyncIcon />} />;
 
     case 'Cancelled':
     case 'Deleting':
@@ -70,7 +70,7 @@ const Status: FC<StatusProps> = ({ status, title, children, iconOnly, noTooltip,
     case 'Terminating':
     case 'Superseded':
     case 'Uninstalling':
-      return <StatusIconAndText {...statusProps} icon={<BanIcon />} />;
+      return <StatusIconAndText {...statusProps} icon={<RhUiBanIcon />} />;
 
     case 'Warning':
     case 'RequiresApproval':
@@ -115,10 +115,10 @@ const Status: FC<StatusProps> = ({ status, title, children, iconOnly, noTooltip,
       return <InfoStatus {...statusProps}>{children}</InfoStatus>;
 
     case 'Unknown':
-      return <StatusIconAndText {...statusProps} icon={<UnknownIcon />} />;
+      return <StatusIconAndText {...statusProps} icon={<RhUiUnknownIcon />} />;
 
     case 'PipelineNotStarted':
-      return <StatusIconAndText {...statusProps} icon={<NotStartedIcon />} />;
+      return <StatusIconAndText {...statusProps} icon={<RhUiNotStartedIcon />} />;
 
     default:
       return status ? <StatusIconAndText {...statusProps} /> : <>{DASH}</>;

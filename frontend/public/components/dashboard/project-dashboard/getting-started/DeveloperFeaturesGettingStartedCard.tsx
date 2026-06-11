@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { FlagIcon } from '@patternfly/react-icons';
+import { RhUiFlagIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import * as semver from 'semver';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
@@ -52,7 +52,7 @@ export const DeveloperFeaturesGettingStartedCard: FC = () => {
   return (
     <GettingStartedCard
       id="developer-features"
-      icon={<FlagIcon color="var(--co-global--palette--orange-400)" aria-hidden="true" />}
+      icon={<RhUiFlagIcon color="var(--co-global--palette--orange-400)" aria-hidden="true" />}
       title={t('public~Explore new developer features')}
       titleColor={'var(--co-global--palette--orange-400)'}
       description={t('public~Explore new features and resources within the developer perspective.')}
