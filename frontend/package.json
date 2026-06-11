@@ -354,7 +354,8 @@
     "ua-parser-js": "^0.7.24",
     "@types/jest": "21.x",
     "glob-parent": "^5.1.2",
-    "postcss": "^8.2.13"
+    "postcss": "^8.2.13",
+    "shell-quote": "^1.8.4"
   },
   "husky": {
     "hooks": {
