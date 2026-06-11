@@ -356,7 +356,8 @@
     "glob-parent": "^5.1.2",
     "postcss": "^8.2.13",
     "axios@npm:^0.21.1": "patch:axios@npm%3A0.33.0#~/.yarn/patches/axios-npm-0.33.0-023deda7e4.patch",
-    "immutable": "3.8.3"
+    "immutable": "3.8.3",
+    "shell-quote": "^1.8.4"
   },
   "husky": {
     "hooks": {
