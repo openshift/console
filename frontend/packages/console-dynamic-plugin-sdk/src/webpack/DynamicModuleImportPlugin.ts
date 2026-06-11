@@ -156,30 +156,15 @@ export class DynamicModuleImportPlugin implements WebpackPluginInstance {
       skipImportPrefixes,
     } = this.options;
 
-    compiler.hooks.thisCompilation.tap(DynamicModuleImportPlugin.name, (compilation) => {
-      const modifiedModules: string[] = [];
+    const loaderOptions: DynamicModuleImportLoaderOptions = {
+      dynamicModuleMaps,
+      skipImportPrefixes,
+    };
 
-      compiler.webpack.NormalModule.getCompilationHooks(compilation).beforeLoaders.tap(
-        DynamicModuleImportPlugin.name,
-        (_loaders, normalModule) => {
-          const { userRequest } = normalModule;
-
-          const moduleRequest = userRequest.substring(
-            userRequest.lastIndexOf('!') === -1 ? 0 : userRequest.lastIndexOf('!') + 1,
-          );
-
-          if (!modifiedModules.includes(moduleRequest) && moduleFilter(moduleRequest)) {
-            const loaderOptions: DynamicModuleImportLoaderOptions = {
-              dynamicModuleMaps,
-              resourceMetadata: { jsx: /\.(jsx|tsx)$/.test(moduleRequest) },
-              skipImportPrefixes,
-            };
-
-            normalModule.loaders.push({ loader, options: loaderOptions } as any);
-            modifiedModules.push(moduleRequest);
-          }
-        },
-      );
+    compiler.options.module.rules.push({
+      test: (resource: string) => moduleFilter(resource),
+      enforce: 'pre',
+      use: [{ loader, options: loaderOptions }],
     });
   }
 }
