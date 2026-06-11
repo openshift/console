@@ -207,15 +207,6 @@ export const dynamicModuleImportTransformFilter = (moduleRequest: string) => {
   return isCode && (!isVendor || moduleRequest.includes('/node_modules/@openshift-console/'));
 };
 
-export const getDynamicModuleImportSkipPrefixes = (additionalPrefixes: string[] = []) =>
-  _.uniq([
-    '@patternfly/react-core/deprecated',
-    '@patternfly/react-icons/dist/esm/createIcon',
-    '@patternfly/react-core/dist/esm/components/Tooltip/',
-    '@patternfly/react-core/dist/esm/components/Popover/',
-    ...additionalPrefixes,
-  ]);
-
 export type ConsoleRemotePluginOptions = Partial<{
   /**
    * Console dynamic plugin metadata.
@@ -485,9 +476,7 @@ export class ConsoleRemotePlugin implements WebpackPluginInstance {
     new DynamicModuleImportPlugin({
       dynamicModuleMaps: this.dynamicModuleMaps,
       moduleFilter: sharedDynamicModuleSettings.moduleFilter ?? dynamicModuleImportTransformFilter,
-      skipImportPrefixes: getDynamicModuleImportSkipPrefixes(
-        sharedDynamicModuleSettings.skipImportPrefixes,
-      ),
+      skipImportPrefixes: sharedDynamicModuleSettings.skipImportPrefixes,
     }).apply(compiler);
 
     // Post-build validations performed before emitting assets

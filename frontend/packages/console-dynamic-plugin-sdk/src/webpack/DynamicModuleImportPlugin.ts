@@ -26,6 +26,16 @@ export type DynamicModulePackageSpecs = {
 const isDynamicModuleMap = (obj: unknown): obj is DynamicModuleMap =>
   _.isPlainObject(obj) && Object.values(obj).every((value) => typeof value === 'string');
 
+const defaultDynamicModuleImportSkipPrefixes = [
+  // Imports for PatternFly deprecated APIs
+  '@patternfly/react-core/deprecated',
+  // Imports for PatternFly internal APIs (not exposed via package index)
+  '@patternfly/react-icons/dist/esm/createIcon',
+  '@patternfly/react-core/dist/esm/components/Tooltip/',
+  '@patternfly/react-core/dist/esm/components/Popover/',
+  '@patternfly/react-core/dist/esm/components/OverflowMenu/OverflowMenuContext',
+];
+
 /**
  * Parse or generate dynamic module maps for the provided packages.
  */
@@ -136,7 +146,7 @@ export type DynamicModuleImportPluginOptions = {
   /**
    * Skip transforming imports whose module specifier matches one of these prefixes.
    */
-  skipImportPrefixes: string[];
+  skipImportPrefixes?: string[];
 };
 
 /**
@@ -153,12 +163,15 @@ export class DynamicModuleImportPlugin implements WebpackPluginInstance {
       loader = '@openshift-console/dynamic-plugin-sdk-webpack/lib/webpack/loaders/dynamic-module-import-loader',
       dynamicModuleMaps,
       moduleFilter,
-      skipImportPrefixes,
+      skipImportPrefixes = [],
     } = this.options;
 
     const loaderOptions: DynamicModuleImportLoaderOptions = {
       dynamicModuleMaps,
-      skipImportPrefixes,
+      skipImportPrefixes: _.uniq([
+        ...defaultDynamicModuleImportSkipPrefixes,
+        ...skipImportPrefixes,
+      ]),
     };
 
     compiler.options.module.rules.push({
