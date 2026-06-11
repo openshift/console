@@ -13,12 +13,6 @@
   {
     "type": "console.flag",
     "properties": {
-      "handler": { "$codeRef": "detectIntegrationTest.handler" }
-    }
-  },
-  {
-    "type": "console.flag",
-    "properties": {
       "handler": { "$codeRef": "isOpenShift5.handler" }
     }
   },
@@ -29,8 +23,7 @@
       "tour": { "$codeRef": "getGuidedTour" }
     },
     "flags": {
-      "required": ["CONSOLE_CAPABILITY_GUIDEDTOUR_IS_ENABLED"],
-      "disallowed": ["INTEGRATION_TEST"]
+      "required": ["CONSOLE_CAPABILITY_GUIDEDTOUR_IS_ENABLED"]
     }
   },
   {
