@@ -6746,13 +6746,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"array-filter@npm:~0.0.0":
-  version: 0.0.1
-  resolution: "array-filter@npm:0.0.1"
-  checksum: 10c0/fa7319954cbc81af9ce371250c39028d335c817c8f95410dc76b6f173230f29fd673849a8a7fd7124e58b37d0ddd7152c1c625adf7bba439a5bfa36b7cf77c8c
-  languageName: node
-  linkType: hard
-
 "array-flatten@npm:1.1.1":
   version: 1.1.1
   resolution: "array-flatten@npm:1.1.1"
@@ -6785,20 +6778,6 @@ __metadata:
     es-abstract: "npm:^1.17.0"
     is-string: "npm:^1.0.5"
   checksum: 10c0/735bbbf73100451e73f212180b7f9e922aa6466ec84ef0300af8562992cb518e61db6434ef91d9c7af422e665d98a5a62e27f077ae318334d207a36c8b06493a
-  languageName: node
-  linkType: hard
-
-"array-map@npm:~0.0.0":
-  version: 0.0.0
-  resolution: "array-map@npm:0.0.0"
-  checksum: 10c0/eac16cd5549434dbb020feef8b1b62d44b0cdf12f2eeb577778fe9713ebc35f95d064e04bf7db5ed32270755e2d83299b8235300b6b6c475bc55b00f3fa7755c
-  languageName: node
-  linkType: hard
-
-"array-reduce@npm:~0.0.0":
-  version: 0.0.0
-  resolution: "array-reduce@npm:0.0.0"
-  checksum: 10c0/7c15d6f5de439525afb81444f9e9fd41927a7277a66e2cc848628182060762f23a861d99bc7138300464ce695b09d337df809fd93c686c1482ed88c5137c5034
   languageName: node
   linkType: hard
 
@@ -24897,22 +24876,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"shell-quote@npm:^1.4.2":
-  version: 1.7.2
-  resolution: "shell-quote@npm:1.7.2"
-  checksum: 10c0/656aefdcdc394560ca091140a58b95e97f43d5e14bb60ff4a92556ca48841e49af6e837441e887c7890c7a86ae8542960c90e460a86799b68c53271784909edb
-  languageName: node
-  linkType: hard
-
-"shell-quote@npm:^1.6.1":
-  version: 1.6.1
-  resolution: "shell-quote@npm:1.6.1"
-  dependencies:
-    array-filter: "npm:~0.0.0"
-    array-map: "npm:~0.0.0"
-    array-reduce: "npm:~0.0.0"
-    jsonify: "npm:~0.0.0"
-  checksum: 10c0/6c3011671b55ef64f022d83d4b1fb0b2f35f4c75dcbad8f7bd8d50285f07927544af80e3e753f155d8763c41ba84fe3898e5727ecb4f2b7f8752d3b097b41001
+"shell-quote@npm:^1.8.4":
+  version: 1.8.4
+  resolution: "shell-quote@npm:1.8.4"
+  checksum: 10c0/86c93678bc394cb81f5ddcdc87df9c95d279ef9652775cd1cd1eed361404169a8d8cbaacaeed232ab09919e36ee1e5363863570390d78571f8c22b7f6312fb40
   languageName: node
   linkType: hard
 
