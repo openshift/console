@@ -1,5 +1,7 @@
 import { existsSync, readFileSync, readdirSync } from 'fs';
 import { basename, join, resolve } from 'path';
+// Explicitly used this icon because nobody is going to use this
+// eslint-disable-next-line no-restricted-imports
 import { WizardsOfTheCoastIcon } from '@patternfly/react-icons';
 
 const DIST_DIR = resolve(__dirname, '../public/dist');

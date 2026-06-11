@@ -12,11 +12,14 @@ import {
   SwitchProps,
 } from '@patternfly/react-core';
 import {
-  RhUiSettingsIcon,
-  RhUiAutoLightDarkModeIcon,
+  // Icons do not have a suitable RH icon yet
+  /* eslint-disable no-restricted-imports */
   FontIcon,
-  RhUiCommentIcon,
   MouseIcon,
+  /* eslint-enable no-restricted-imports */
+  RhUiAutoLightDarkModeIcon,
+  RhUiCommentIcon,
+  RhUiSettingsIcon,
 } from '@patternfly/react-icons';
 import { FC, ReactNode, ComponentProps, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
