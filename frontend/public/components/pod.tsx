@@ -465,6 +465,7 @@ export const PodConnectLoader: FC<PodConnectLoaderProps> = ({
   initialContainer,
   infoMessage,
   attach = false,
+  cleanupOnDetach,
 }) => (
   <PaneBody>
     <Grid>
@@ -477,6 +478,7 @@ export const PodConnectLoader: FC<PodConnectLoaderProps> = ({
             infoMessage={infoMessage}
             initialContainer={initialContainer}
             attach={attach}
+            cleanupOnDetach={cleanupOnDetach}
           />
         </div>
       </GridItem>
@@ -571,6 +573,7 @@ type PodConnectLoaderProps = {
   infoMessage?: ReactElement;
   initialContainer?: string;
   attach?: boolean;
+  cleanupOnDetach?: { type: 'namespace' | 'pod'; name: string; namespace?: string };
 };
 
 type PodDetailsProps = {
