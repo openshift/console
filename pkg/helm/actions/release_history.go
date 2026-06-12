@@ -1,8 +1,8 @@
 package actions
 
 import (
-	"helm.sh/helm/v3/pkg/action"
-	"helm.sh/helm/v3/pkg/release"
+	"helm.sh/helm/v4/pkg/action"
+	release "helm.sh/helm/v4/pkg/release/v1"
 )
 
 func GetReleaseHistory(name string, conf *action.Configuration) ([]*release.Release, error) {

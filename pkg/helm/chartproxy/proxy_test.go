@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"golang.org/x/net/context"
-	"helm.sh/helm/v3/pkg/repo"
+	repo "helm.sh/helm/v4/pkg/repo/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/client-go/rest"

@@ -4,8 +4,8 @@ import (
 	"errors"
 	"strings"
 
-	"helm.sh/helm/v3/pkg/action"
-	"helm.sh/helm/v3/pkg/release"
+	"helm.sh/helm/v4/pkg/action"
+	release "helm.sh/helm/v4/pkg/release/v1"
 )
 
 func RollbackRelease(releaseName string, revision int, conf *action.Configuration) (*release.Release, error) {

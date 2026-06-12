@@ -6,8 +6,8 @@ import (
 	"strings"
 
 	"github.com/openshift/console/pkg/helm/metrics"
-	"helm.sh/helm/v3/pkg/action"
-	"helm.sh/helm/v3/pkg/release"
+	"helm.sh/helm/v4/pkg/action"
+	release "helm.sh/helm/v4/pkg/release/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	corev1client "k8s.io/client-go/kubernetes/typed/core/v1"
 )

@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"strconv"
 
-	"helm.sh/helm/v3/pkg/action"
-	"helm.sh/helm/v3/pkg/chart"
-	"helm.sh/helm/v3/pkg/release"
+	"helm.sh/helm/v4/pkg/action"
+	chart "helm.sh/helm/v4/pkg/chart/v2"
+	release "helm.sh/helm/v4/pkg/release/v1"
 	kv1 "k8s.io/api/core/v1"
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/rest"

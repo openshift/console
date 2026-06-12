@@ -9,10 +9,10 @@ import (
 	"strings"
 
 	"github.com/openshift/api/helm/v1beta1"
-	"helm.sh/helm/v3/pkg/action"
-	"helm.sh/helm/v3/pkg/chart/loader"
-	"helm.sh/helm/v3/pkg/cli"
-	"helm.sh/helm/v3/pkg/releaseutil"
+	"helm.sh/helm/v4/pkg/action"
+	"helm.sh/helm/v4/pkg/chart/v2/loader"
+	"helm.sh/helm/v4/pkg/cli"
+	releaseutil "helm.sh/helm/v4/pkg/release/v1/util"
 	"k8s.io/client-go/dynamic"
 	corev1client "k8s.io/client-go/kubernetes/typed/core/v1"
 )
