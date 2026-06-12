@@ -28,7 +28,7 @@ func main() {
 		klog.Fatalf("Failed to configure downloads server config: %v", err)
 		os.Exit(1)
 	}
-	defer os.RemoveAll(downloadsServerConfig.TempDir)
+	downloadsServerConfig.CreateArchivesInBackground()
 
 	// Listen for incoming connections
 	klog.Infof("Server started. Listening on http://0.0.0.0:%s", downloadsServerConfig.Port)
