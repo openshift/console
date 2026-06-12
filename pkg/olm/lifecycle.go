@@ -41,19 +41,19 @@ func (o *OLMHandler) lifecycleHandler(w http.ResponseWriter, r *http.Request) {
 
 	if !isValidK8sName(catalogNamespace) {
 		klog.Infof("[lifecycle] Invalid catalogNamespace: %q", catalogNamespace)
-		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: "invalid catalogNamespace"})
+		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: "The catalog namespace is not valid."})
 		return
 	}
 
 	if !isValidK8sName(catalogName) {
 		klog.Infof("[lifecycle] Invalid catalogName: %q", catalogName)
-		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: "invalid catalogName"})
+		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: "The catalog name is not valid."})
 		return
 	}
 
 	if packageName == "" {
 		klog.Infof("[lifecycle] Missing packageName")
-		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: "packageName is required"})
+		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: "The package name is required."})
 		return
 	}
 
@@ -63,7 +63,7 @@ func (o *OLMHandler) lifecycleHandler(w http.ResponseWriter, r *http.Request) {
 	conn, err := grpc.NewClient(target, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		klog.Errorf("[lifecycle] Failed to create gRPC client for %s: %v", target, err)
-		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: fmt.Sprintf("failed to create gRPC client: %v", err)})
+		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: "Failed to connect to the catalog source."})
 		return
 	}
 	defer conn.Close()
@@ -85,7 +85,7 @@ func (o *OLMHandler) lifecycleHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		if err == io.EOF {
 			klog.Infof("[lifecycle] No lifecycle data for %s/%s", catalogName, packageName)
-			serverutils.SendResponse(w, http.StatusNotFound, serverutils.ApiError{Err: "no lifecycle data found"})
+			serverutils.SendResponse(w, http.StatusNotFound, serverutils.ApiError{Err: "No lifecycle data is available for this package."})
 			return
 		}
 		handleGRPCError(w, catalogName, packageName, err)
@@ -96,7 +96,7 @@ func (o *OLMHandler) lifecycleHandler(w http.ResponseWriter, r *http.Request) {
 	// contains additional documents, treat it as ambiguous data.
 	if _, err := stream.Recv(); err == nil {
 		klog.Errorf("[lifecycle] Multiple lifecycle documents returned for %s/%s — expected exactly one", catalogName, packageName)
-		serverutils.SendResponse(w, http.StatusConflict, serverutils.ApiError{Err: "multiple lifecycle documents found for package"})
+		serverutils.SendResponse(w, http.StatusConflict, serverutils.ApiError{Err: "Multiple lifecycle records exist for this package."})
 		return
 	} else if err != io.EOF {
 		handleGRPCError(w, catalogName, packageName, err)
@@ -106,7 +106,7 @@ func (o *OLMHandler) lifecycleHandler(w http.ResponseWriter, r *http.Request) {
 	jsonBytes, err := protojson.Marshal(result)
 	if err != nil {
 		klog.Errorf("[lifecycle] Failed to marshal lifecycle response: %v", err)
-		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: "failed to marshal response"})
+		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: "An error occurred while processing the response."})
 		return
 	}
 
@@ -120,19 +120,19 @@ func handleGRPCError(w http.ResponseWriter, catalogName, packageName string, err
 	st, ok := grpcstatus.FromError(err)
 	if !ok {
 		klog.Errorf("[lifecycle] gRPC call failed for %s/%s: %v", catalogName, packageName, err)
-		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: "catalog source unavailable"})
+		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: "The catalog source is unavailable. Try again later."})
 		return
 	}
 
 	switch st.Code() {
 	case codes.Unimplemented:
 		klog.Infof("[lifecycle] ExperimentalListPackageCustomSchemas not supported by catalog %s", catalogName)
-		serverutils.SendResponse(w, http.StatusServiceUnavailable, serverutils.ApiError{Err: "lifecycle metadata not available for this catalog"})
+		serverutils.SendResponse(w, http.StatusServiceUnavailable, serverutils.ApiError{Err: "Lifecycle metadata is not available for this catalog."})
 	case codes.Unavailable:
 		klog.Infof("[lifecycle] CatalogSource %s gRPC unavailable: %v", catalogName, st.Message())
-		serverutils.SendResponse(w, http.StatusServiceUnavailable, serverutils.ApiError{Err: "catalog source unavailable"})
+		serverutils.SendResponse(w, http.StatusServiceUnavailable, serverutils.ApiError{Err: "The catalog source is unavailable. Try again later."})
 	default:
 		klog.Errorf("[lifecycle] gRPC error for %s/%s: code=%s msg=%s", catalogName, packageName, st.Code(), st.Message())
-		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("catalog source error: %s", st.Message())})
+		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: "An error occurred while contacting the catalog source."})
 	}
 }

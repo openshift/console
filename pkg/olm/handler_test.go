@@ -128,7 +128,7 @@ func TestOLMHandler_lifecycleHandler(t *testing.T) {
 		handler.ServeHTTP(rr, req)
 
 		assert.Equal(t, http.StatusBadRequest, rr.Code)
-		assert.Contains(t, rr.Body.String(), "invalid catalogNamespace")
+		assert.Contains(t, rr.Body.String(), "The catalog namespace is not valid.")
 	})
 
 	t.Run("should reject catalogNamespace with dots", func(t *testing.T) {

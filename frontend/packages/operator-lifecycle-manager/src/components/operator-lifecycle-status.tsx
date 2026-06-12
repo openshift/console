@@ -1,12 +1,23 @@
 import type { FC } from 'react';
-import { Label, Tooltip } from '@patternfly/react-core';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  Button,
+  DescriptionListTerm,
+  Label,
+  Popover,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import * as semver from 'semver';
 import {
+  BlueInfoCircleIcon,
   GreenCheckCircleIcon,
-  YellowExclamationTriangleIcon,
 } from '@console/dynamic-plugin-sdk/src/app/components/status/icons';
-import { ONE_YEAR } from '@console/shared/src/constants/time';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { RedExclamationCircleIcon } from '@console/shared/src/components/status/icons';
+import { dateFormatter } from '@console/shared/src/utils/datetime';
+import { getClusterVersion } from '../hooks/useOperatorLifecycle';
 
 type LifecyclePhase = {
   name: string;
@@ -87,12 +98,17 @@ const parseLocalEndOfDay = (dateStr: string): number => {
   return new Date(y, m - 1, d, 23, 59, 59, 999).getTime();
 };
 
-type SupportPhaseInfo = {
-  currentPhase: LifecyclePhase;
-  allPhases: LifecyclePhase[];
-};
+export enum SupportPhaseStatus {
+  Active = 'active',
+  SelfSupport = 'self-support',
+  NoData = 'no-data',
+}
 
-export type SupportPhaseResult = SupportPhaseInfo | 'self-support' | 'no-data';
+export type SupportPhaseResult = {
+  status: SupportPhaseStatus;
+  currentPhase?: LifecyclePhase;
+  allPhases?: LifecyclePhase[];
+};
 
 export const getSupportPhase = (
   lifecycle: LifecycleData | undefined,
@@ -100,13 +116,13 @@ export const getSupportPhase = (
   currentDate: Date = new Date(),
 ): SupportPhaseResult => {
   if (!lifecycle?.versions) {
-    return 'no-data';
+    return { status: SupportPhaseStatus.NoData };
   }
 
   const versionEntry = findVersionEntry(lifecycle.versions, operatorVersion);
 
   if (!Array.isArray(versionEntry?.phases) || versionEntry.phases.length === 0) {
-    return 'no-data';
+    return { status: SupportPhaseStatus.NoData };
   }
 
   const now = currentDate.getTime();
@@ -118,16 +134,16 @@ export const getSupportPhase = (
     const begin = parseLocalStartOfDay(phase.startDate);
     const end = parseLocalEndOfDay(phase.endDate);
     if (now >= begin && now <= end) {
-      return { currentPhase: phase, allPhases };
+      return { status: SupportPhaseStatus.Active, currentPhase: phase, allPhases };
     }
   }
 
   const lastPhase = allPhases[allPhases.length - 1];
   if (now > parseLocalEndOfDay(lastPhase.endDate)) {
-    return 'self-support';
+    return { status: SupportPhaseStatus.SelfSupport, allPhases };
   }
 
-  return { currentPhase: allPhases[0], allPhases };
+  return { status: SupportPhaseStatus.Active, currentPhase: allPhases[0], allPhases };
 };
 
 export const ClusterCompatibilityStatus: FC<{ compatible: CompatibilityResult }> = ({
@@ -137,70 +153,155 @@ export const ClusterCompatibilityStatus: FC<{ compatible: CompatibilityResult }>
 
   if (compatible === 'compatible') {
     return (
-      <Label status="success" variant="outline" data-test="cluster-compatibility-compatible">
-        {t('Compatible')}
-      </Label>
+      <span data-test="cluster-compatibility-compatible">
+        <GreenCheckCircleIcon /> {t('Compatible')}
+      </span>
     );
   }
   if (compatible === 'incompatible') {
     return (
-      <Label status="danger" variant="outline" data-test="cluster-compatibility-incompatible">
-        {t('Incompatible')}
-      </Label>
+      <span data-test="cluster-compatibility-incompatible">
+        <RedExclamationCircleIcon /> {t('Incompatible')}
+      </span>
     );
   }
   return (
-    <Label variant="outline" data-test="cluster-compatibility-no-data">
+    <span data-test="cluster-compatibility-no-data" aria-label={t('No data available')}>
       -
-    </Label>
+    </span>
   );
 };
 
-const TWELVE_MONTHS_MS = ONE_YEAR;
+const formatDate = (date: Date): string => dateFormatter.format(date);
 
-const getLastPhaseEndDate = (phases: LifecyclePhase[]): Date => {
+const LifecycleDatesFooter: FC = () => {
+  const { t } = useTranslation('olm');
+  const clusterVersion = getClusterVersion();
+  const clusterMinor = clusterVersion ? parseMinorVersion(clusterVersion) : undefined;
+
+  return (
+    <>
+      <hr className="pf-v6-u-mb-sm pf-v6-u-mt-0" />
+      <span className="pf-v6-u-color-200">
+        {t('May not reflect your actual SKU. Check your actual SKU for extended support.')}
+      </span>
+      <div className="pf-v6-u-mt-sm">
+        <ExternalLink href="https://access.redhat.com/support/policy/updates/openshift_operators/lifecycle">
+          {t('OpenShift Operator life cycle')}
+        </ExternalLink>
+      </div>
+      {clusterMinor && (
+        <div>
+          <ExternalLink
+            href={`https://access.redhat.com/support/policy/updates/openshift#ocp${clusterMinor.replace(
+              '.',
+              '',
+            )}`}
+          >
+            {t('OpenShift life cycle ({{version}})', { version: clusterMinor })}
+          </ExternalLink>
+        </div>
+      )}
+      <div>
+        <ExternalLink href="https://access.redhat.com/product-life-cycles">
+          {t('Red Hat product life cycles')}
+        </ExternalLink>
+      </div>
+    </>
+  );
+};
+
+const LifecycleDatesPopover: FC<{
+  phases: LifecyclePhase[];
+  children: React.ReactElement;
+}> = ({ phases, children }) => {
+  const { t } = useTranslation('olm');
   const sorted = [...phases].sort(
     (a, b) => parseLocalEndOfDay(a.endDate) - parseLocalEndOfDay(b.endDate),
   );
-  return new Date(parseLocalEndOfDay(sorted[sorted.length - 1].endDate));
-};
-
-const formatDate = (date: Date): string => {
-  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-};
-
-export const SupportPhaseStatus: FC<{
-  phase: SupportPhaseResult;
-  currentDate?: Date;
-}> = ({ phase, currentDate = new Date() }) => {
-  const { t } = useTranslation('olm');
-
-  if (phase === 'self-support') {
-    return (
-      <Label status="danger" variant="outline" data-test="support-phase-self-support">
-        {t('Self-support')}
-      </Label>
-    );
-  }
-
-  if (phase === 'no-data') {
-    return (
-      <Label variant="outline" data-test="support-phase-no-data">
-        -
-      </Label>
-    );
-  }
-
-  const lastPhaseEnd = getLastPhaseEndDate(phase.allPhases);
-  const remainingMs = lastPhaseEnd.getTime() - currentDate.getTime();
-  const hasLongSupport = remainingMs > TWELVE_MONTHS_MS;
 
   return (
-    <Tooltip content={phase.currentPhase.name}>
-      <span data-test={hasLongSupport ? 'support-phase-long' : 'support-phase-short'}>
-        {hasLongSupport ? <GreenCheckCircleIcon /> : <YellowExclamationTriangleIcon />}{' '}
-        {formatDate(lastPhaseEnd)}
+    <Popover
+      headerContent={t('Lifecycle dates')}
+      appendTo="inline"
+      position="left"
+      onHide={() => (document.activeElement as HTMLElement)?.blur()}
+      bodyContent={
+        <DescriptionList isHorizontal isCompact>
+          {sorted.map((p) => (
+            <DescriptionListGroup key={p.name}>
+              <DescriptionListTerm>{p.name}</DescriptionListTerm>
+              <DescriptionListDescription>
+                {formatDate(new Date(parseLocalEndOfDay(p.endDate)))}
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+          ))}
+        </DescriptionList>
+      }
+      footerContent={<LifecycleDatesFooter />}
+      data-test="lifecycle-dates-popover"
+    >
+      {children}
+    </Popover>
+  );
+};
+
+export const SupportPhaseBadge: FC<{ phase: SupportPhaseResult }> = ({ phase }) => {
+  const { t } = useTranslation('olm');
+
+  if (phase.status === SupportPhaseStatus.SelfSupport && phase.allPhases) {
+    return (
+      <LifecycleDatesPopover phases={phase.allPhases}>
+        <Button
+          variant="link"
+          type="button"
+          data-test="support-phase-self-support"
+          onClick={(e) => e.preventDefault()}
+          aria-haspopup="dialog"
+          isInline
+        >
+          <Label variant="outline" icon={<BlueInfoCircleIcon />} textMaxWidth="100%">
+            {t('Self-support')}
+          </Label>
+        </Button>
+      </LifecycleDatesPopover>
+    );
+  }
+
+  if (phase.status === SupportPhaseStatus.NoData) {
+    return (
+      <span data-test="support-phase-no-data" aria-label={t('No data available')}>
+        -
       </span>
-    </Tooltip>
+    );
+  }
+
+  if (phase.status === SupportPhaseStatus.Active && phase.currentPhase && phase.allPhases) {
+    const endDate = formatDate(new Date(parseLocalEndOfDay(phase.currentPhase.endDate)));
+
+    return (
+      <span data-test="support-phase-badge">
+        <LifecycleDatesPopover phases={phase.allPhases}>
+          <Button
+            variant="link"
+            type="button"
+            onClick={(e) => e.preventDefault()}
+            aria-haspopup="dialog"
+            isInline
+          >
+            <Label variant="outline" icon={<BlueInfoCircleIcon />} textMaxWidth="100%">
+              {phase.currentPhase.name}
+            </Label>
+          </Button>
+        </LifecycleDatesPopover>{' '}
+        {endDate}
+      </span>
+    );
+  }
+
+  return (
+    <span data-test="support-phase-no-data" aria-label={t('No data available')}>
+      -
+    </span>
   );
 };
