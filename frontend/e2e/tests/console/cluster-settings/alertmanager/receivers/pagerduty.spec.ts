@@ -8,7 +8,9 @@ import { resetAlertmanagerConfig } from '../alertmanager-test-utils';
 
 test.describe.configure({ mode: 'serial' });
 
-test.describe('Alertmanager PagerDuty Receiver Form', { tag: ['@admin'] }, () => {
+// Skipped due to flakes: OCPBUGS-88451
+// eslint-disable-next-line playwright/no-skipped-test
+test.describe.skip('Alertmanager PagerDuty Receiver Form', { tag: ['@admin'] }, () => {
   let alertmanager: AlertmanagerPage;
   let k8sClient: KubernetesClient;
 

@@ -18,27 +18,34 @@ import type {
   PersistentVolumeClaimKind,
 } from '@console/internal/module/k8s';
 
-// Add missing latestBuild to Build
+// Add missing latestBuild to Build and ensure K8sResourceCommon compatibility
 export type Build =
-  | (IBuildV1Alpha1 & { latestBuild?: BuildRun })
-  | (IBuildV1Beta1 & { latestBuild?: BuildRun });
+  | (IBuildV1Alpha1 & { latestBuild?: BuildRun } & K8sResourceCommon)
+  | (IBuildV1Beta1 & { latestBuild?: BuildRun } & K8sResourceCommon);
 
 export type BuildSpec = IBuildV1Alpha1['spec'] & IBuildV1Beta1['spec'];
 
 export type BuildStatus = IBuildV1Alpha1['status'] & IBuildV1Beta1['status'];
 
-export type ClusterBuildStrategyKind = IClusterBuildStrategyV1Alpha1 | IClusterBuildStrategyV1Beta1;
+export type ClusterBuildStrategyKind =
+  | (IClusterBuildStrategyV1Alpha1 & K8sResourceCommon)
+  | (IClusterBuildStrategyV1Beta1 & K8sResourceCommon);
 
-export type BuildStrategyKind = IBuildStrategyV1Alpha1 | IBuildStrategyV1Beta1;
+export type BuildStrategyKind =
+  | (IBuildStrategyV1Alpha1 & K8sResourceCommon)
+  | (IBuildStrategyV1Beta1 & K8sResourceCommon);
 
 // Make status.conditions compatible with @console/internal/components/conditions props
+// and ensure K8sResourceCommon compatibility
 export type BuildRun =
-  | (IBuildRunV1Alpha1 & {
-      status?: { conditions?: K8sResourceCondition[]; latestTaskRunRef?: string };
-    })
-  | (IBuildRunV1Beta1 & {
-      status?: { conditions?: K8sResourceCondition[]; taskRunName?: string };
-    });
+  | (IBuildRunV1Alpha1 &
+      K8sResourceCommon & {
+        status?: { conditions?: K8sResourceCondition[]; latestTaskRunRef?: string };
+      })
+  | (IBuildRunV1Beta1 &
+      K8sResourceCommon & {
+        status?: { conditions?: K8sResourceCondition[]; taskRunName?: string };
+      });
 
 // The enum values need to match the dynamic-plugin `Status` `status` prop.
 // A translation (title) is added in the BuildRunStatus component.

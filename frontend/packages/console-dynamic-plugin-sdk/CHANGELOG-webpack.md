@@ -10,6 +10,10 @@ For current development version of Console, use `4.x.0-prerelease.n` packages.
 For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility
 table in [Console dynamic plugins README](./README.md).
 
+## 4.23.0-prerelease.3 - TBD
+
+- `DynamicModuleImportLoaderOptions` allows extending `skipImportPrefixes`, which suppresses build warnings ([OCPBUGS-88319], [#16585])
+
 ## 4.23.0-prerelease.1 - 2026-05-19
 
 - Fix `resolveDynamicModuleMaps` to skip unavailable packages ([OCPBUGS-84338], [#16340])
@@ -145,6 +149,7 @@ table in [Console dynamic plugins README](./README.md).
 [OCPBUGS-66345]: https://issues.redhat.com/browse/OCPBUGS-66345
 [OCPBUGS-83823]: https://issues.redhat.com/browse/OCPBUGS-83823
 [OCPBUGS-84338]: https://issues.redhat.com/browse/OCPBUGS-84338
+[OCPBUGS-88319]: https://issues.redhat.com/browse/OCPBUGS-88319
 [#13188]: https://github.com/openshift/console/pull/13188
 [#13388]: https://github.com/openshift/console/pull/13388
 [#13521]: https://github.com/openshift/console/pull/13521
@@ -172,3 +177,4 @@ table in [Console dynamic plugins README](./README.md).
 [#16224]: https://github.com/openshift/console/pull/16224
 [#16340]: https://github.com/openshift/console/pull/16340
 [#16376]: https://github.com/openshift/console/pull/16376
+[#16585]: https://github.com/openshift/console/pull/16585

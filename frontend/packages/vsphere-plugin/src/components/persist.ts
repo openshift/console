@@ -1,3 +1,4 @@
+import type { SecretKind } from '@openshift/api-types/dist/kubernetes/latest';
 import { safeLoad, dump } from 'js-yaml';
 import type { ConsoleTFunction } from '@console/dynamic-plugin-sdk';
 import type { K8sModel } from '@console/dynamic-plugin-sdk/src/api/core-api';
@@ -13,7 +14,6 @@ import {
 import type { ConfigMap } from '../resources/configMap';
 import type { Infrastructure } from '../resources/infrastructure';
 import type { KubeControllerManager } from '../resources/kubeControllerManager';
-import type { Secret } from '../resources/secret';
 import type { ConnectionFormFormikValues, PersistOp, ProviderCM } from './types';
 import { encodeBase64, getErrorMessage } from './utils';
 
@@ -43,7 +43,7 @@ const getPersistSecretOp = async (
   };
 
   try {
-    const secret = await k8sGet<Secret>({
+    const secret = await k8sGet<SecretKind>({
       model: secretModel,
       name: VSPHERE_CREDS_SECRET_NAME,
       ns: VSPHERE_CREDS_SECRET_NAMESPACE,
@@ -71,7 +71,7 @@ const getPersistSecretOp = async (
       });
   } catch (e) {
     // Not found, create one
-    const data: Secret = {
+    const data: SecretKind = {
       apiVersion: secretModel.apiVersion,
       kind: secretModel.kind,
       metadata: {

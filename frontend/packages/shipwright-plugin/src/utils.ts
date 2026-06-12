@@ -4,7 +4,11 @@ import { useLocation, useParams } from 'react-router';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import type { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { useFlag } from '@console/dynamic-plugin-sdk/src/lib-core';
-import type { K8sResourceCondition, K8sResourceKind } from '@console/internal/module/k8s';
+import type {
+  K8sResourceCommon,
+  K8sResourceCondition,
+  K8sResourceKind,
+} from '@console/internal/module/k8s';
 import { useTabbedTableBreadcrumbsFor } from '@console/shared/src/hooks/useTabbedTableBreadcrumb';
 import { getBuildRunStatus } from './components/buildrun-status/BuildRunStatus';
 import { BUILDRUN_TO_RESOURCE_MAP_LABEL } from './const';
@@ -102,8 +106,9 @@ export const byCreationTime = (left: K8sResourceKind, right: K8sResourceKind): n
 export const isV1Alpha1Resource = (
   resource: Build | BuildRun,
 ): resource is
-  | IBuildV1Alpha1
-  | (IBuildRunV1Alpha1 & { status?: { conditions?: K8sResourceCondition[] } }) => {
+  | (IBuildV1Alpha1 & K8sResourceCommon)
+  | (IBuildRunV1Alpha1 &
+      K8sResourceCommon & { status?: { conditions?: K8sResourceCondition[] } }) => {
   return resource.apiVersion === 'shipwright.io/v1alpha1';
 };
 

@@ -7,7 +7,9 @@ import KubernetesClient from '../../../../../clients/kubernetes-client';
 
 test.describe.configure({ mode: 'serial' });
 
-test.describe('Alertmanager Email Receiver Form', { tag: ['@admin'] }, () => {
+// Skipped due to flakes: OCPBUGS-88451
+// eslint-disable-next-line playwright/no-skipped-test
+test.describe.skip('Alertmanager Email Receiver Form', { tag: ['@admin'] }, () => {
   let alertmanager: AlertmanagerPage;
   let k8sClient: KubernetesClient;
 

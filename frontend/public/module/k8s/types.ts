@@ -16,9 +16,28 @@ import {
   TaintEffect,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { EventInvolvedObject } from './event';
+import type { MachineHealthCheckKind } from '@openshift/api-types/dist/openshift/latest';
 
 export * from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 export * from '@console/dynamic-plugin-sdk/src/api/common-types';
+
+export type {
+  SecretKind,
+  ConfigMapKind,
+  PersistentVolumeKind,
+  EndpointSliceKind,
+  VolumeAttributesClassKind,
+  StorageClassKind as StorageClassResourceKind,
+} from '@openshift/api-types/dist/kubernetes/latest';
+export type {
+  ConsoleLinkKind,
+  ConsolePluginKind,
+  MachineHealthCheckKind,
+  ControlPlaneMachineSetKind,
+} from '@openshift/api-types/dist/openshift/latest';
+export type MachineHealthCondition = NonNullable<
+  NonNullable<MachineHealthCheckKind['spec']>['unhealthyConditions']
+>[number];
 
 export type PartialObjectMetadata = {
   apiVersion: string;
@@ -480,28 +499,6 @@ export type HorizontalPodAutoscalerKind = K8sResourceCommon & {
   };
 };
 
-export type StorageClassResourceKind = {
-  provisioner: string;
-  reclaimPolicy?: string;
-  volumeBindingMode?: string;
-  allowVolumeExpansion?: boolean;
-  parameters?: {
-    [key: string]: string;
-  };
-} & K8sResourceCommon;
-
-export type VolumeAttributesClassKind = {
-  driverName: string;
-  parameters?: {
-    [key: string]: string;
-  };
-} & K8sResourceCommon;
-
-export type ConfigMapKind = {
-  data?: { [key: string]: string };
-  binaryData?: { [key: string]: string };
-} & K8sResourceCommon;
-
 type JobTemplate = {
   metadata: ObjectMetadata;
   spec: {
@@ -751,27 +748,6 @@ export type MachineSetKind = {
   };
 } & K8sResourceCommon;
 
-export type ControlPlaneMachineSetKind = {
-  spec: {
-    replicas: number;
-    selector: Selector;
-    state?: string;
-    strategy?: {
-      type?: string;
-    };
-    template: {
-      machineType: string;
-    };
-  };
-  status: {
-    replicas?: number;
-    readyReplicas?: number;
-    updatedReplicas?: number;
-    unavailableReplicas?: number;
-    conditions?: K8sResourceCondition[];
-  };
-} & K8sResourceCommon;
-
 export type Patch = {
   op: string;
   path: string;
@@ -1016,12 +992,6 @@ export type GroupKind = {
  */
 export type K8sKind = K8sModel;
 
-export type SecretKind = {
-  data?: { [key: string]: string };
-  stringData?: { [key: string]: string };
-  type?: string;
-} & K8sResourceCommon;
-
 export type ListKind<R extends K8sResourceCommon> = K8sResourceCommon & {
   items: R[];
 };
@@ -1046,19 +1016,6 @@ export type EventKind = {
     state?: string;
   };
 } & K8sResourceCommon;
-
-export type MachineHealthCondition = {
-  type: string;
-  status: string;
-  timeout: string;
-};
-
-export type MachineHealthCheckKind = K8sResourceCommon & {
-  spec: {
-    selector: Selector;
-    unhealthyConditions: MachineHealthCondition[];
-  };
-};
 
 export type VolumeSnapshotKind = K8sResourceCommon & {
   status?: VolumeSnapshotStatus & {
@@ -1137,85 +1094,6 @@ export type PersistentVolumeClaimKind = K8sResourceCommon & {
   };
 };
 
-export type PersistentVolumeKind = K8sResourceCommon & {
-  spec: {
-    storageClassName?: string;
-    claimRef?: {
-      namespace: string;
-      name: string;
-    };
-    capacity: { storage: string };
-    storage: string;
-    accessModes: string[];
-    persistentVolumeReclaimPolicy: string;
-    volumeMode?: string;
-    csi?: {
-      driver: string;
-      volumeHandle: string;
-      fsType?: string;
-      readOnly?: boolean;
-      volumeAttributes?: { [key: string]: string };
-      nodeStageSecretRef?: { name: string; namespace: string };
-      nodePublishSecretRef?: { name: string; namespace: string };
-    };
-  };
-  status: {
-    phase: string;
-  };
-};
-
-export type ConsoleLinkKind = K8sResourceCommon & {
-  spec: {
-    applicationMenu?: {
-      imageURL?: string;
-      section: string;
-    };
-    href: string;
-    location: 'ApplicationMenu' | 'HelpMenu' | 'UserMenu' | 'NamespaceDashboard';
-    namespaceDashboard?: {
-      namespaceSelector?: {
-        matchExpressions?: { key?: string; operator?: string; values?: string[] }[];
-        matchLabels?: { [key: string]: string };
-      };
-      namespaces?: string[];
-    };
-    text: string;
-  };
-};
-
-export type ConsolePluginKind = K8sResourceCommon & {
-  spec: {
-    displayName: string;
-    backend: {
-      service: {
-        basePath?: string;
-        name: string;
-        namespace: string;
-        port: number;
-      };
-      type: 'Service';
-    };
-    i18n?: {
-      loadType: 'Preload' | 'Lazy' | '';
-    };
-    proxy?: ConsolePluginProxy[];
-  };
-};
-
-type ConsolePluginProxy = {
-  alias: string;
-  authorization?: 'UserToken' | 'None';
-  caCertificate?: string;
-  endpoint: {
-    service: {
-      name: string;
-      namespace: string;
-      port: string;
-    };
-    type: 'Service';
-  };
-};
-
 export type K8sPodControllerKind = {
   spec?: {
     replicas?: number;
@@ -1272,17 +1150,6 @@ export type ReplicationControllerKind = {
 } & K8sResourceCommon;
 
 export type ReplicaSetKind = {} & ReplicationControllerKind;
-
-type EndpointSlice = {
-  kind?: string;
-  name?: string;
-  namespace?: string;
-  uid?: string;
-};
-
-export type EndpointSliceKind = {
-  endpoints?: EndpointSlice[];
-} & K8sResourceCommon;
 
 type RoleRef = {
   kind: string;
