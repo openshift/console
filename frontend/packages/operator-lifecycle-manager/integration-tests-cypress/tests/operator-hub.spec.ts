@@ -1,5 +1,6 @@
 import { checkErrors, testName } from '../../../integration-tests-cypress/support';
 import { nav } from '../../../integration-tests-cypress/views/nav';
+import { OPERATOR_HUB_LOAD_TIMEOUT, operatorHub } from '../views/operator-hub.view';
 
 xdescribe('Interacting with OperatorHub', () => {
   before(() => {
@@ -23,13 +24,17 @@ xdescribe('Interacting with OperatorHub', () => {
     cy.log('navigate to OperatorHub');
     nav.sidenav.clickNavLink(['Operators', 'OperatorHub']);
     cy.url().should('include', `/operatorhub/ns/${testName}`);
+    operatorHub.waitForLoaded();
     cy.log('more than one tile should be present');
     cy.get('.catalog-tile-pf').its('length').should('be.gt', 0);
   });
 
   it('displays OperatorHub tiles filtered by "Source"', () => {
+    operatorHub.waitForLoaded();
     cy.log('enable the Red Hat filter');
-    cy.byTestID('catalogSourceDisplayName-red-hat').click();
+    cy.byTestID('catalogSourceDisplayName-red-hat', { timeout: OPERATOR_HUB_LOAD_TIMEOUT })
+      .should('be.visible')
+      .click();
     cy.log('more than one tile should be present');
     cy.get('.catalog-tile-pf').its('length').should('be.gt', 0);
     cy.log('track which tile is first');
@@ -40,17 +45,20 @@ xdescribe('Interacting with OperatorHub', () => {
         const origCatalogTitleTxt = $origCatalogTitle.find('.catalog-tile-pf-title').text();
         cy.log(`first Red Hat filtered tile title text is ${origCatalogTitleTxt}`);
         cy.log('disable the Red Hat filter');
-        cy.byTestID('catalogSourceDisplayName-red-hat').click();
+        cy.byTestID('catalogSourceDisplayName-red-hat', { timeout: OPERATOR_HUB_LOAD_TIMEOUT })
+          .should('be.visible')
+          .click();
         cy.log('enable the Certified filter');
-        cy.byTestID('catalogSourceDisplayName-certified').click();
-        cy.log('more than one tile should be present');
-        cy.get('.catalog-tile-pf').its('length').should('be.gt', 0);
-        cy.log('the first tile title text for Certified should not be the same as Red Hat');
-        cy.get('.catalog-tile-pf')
-          .first()
-          .find('.catalog-tile-pf-title')
-          .invoke('text')
-          .should('not.equal', origCatalogTitleTxt);
+        cy.byTestID('catalogSourceDisplayName-certified', { timeout: OPERATOR_HUB_LOAD_TIMEOUT })
+          .should('be.visible')
+          .click();
+        cy.log('wait for the Certified results to replace the Red Hat list');
+        cy.get('.catalog-tile-pf').should(($tiles) => {
+          expect($tiles.length).to.be.gt(0);
+          expect($tiles.first().find('.catalog-tile-pf-title').text()).not.to.equal(
+            origCatalogTitleTxt,
+          );
+        });
       });
   });
 
