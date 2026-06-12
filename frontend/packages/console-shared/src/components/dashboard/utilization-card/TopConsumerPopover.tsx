@@ -3,20 +3,19 @@ import * as React from 'react';
 import { Button, Popover, PopoverPosition } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
-import { useActivePerspective, LIMIT_STATE, Humanize } from '@console/dynamic-plugin-sdk';
+import { Humanize, LIMIT_STATE, useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { getPrometheusQueryResponse } from '@console/internal/actions/dashboards';
 import {
-  withDashboardResources,
   DashboardItemProps,
+  withDashboardResources,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
 import { DataPoint } from '@console/internal/components/graphs';
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { K8sKind, referenceForModel, K8sResourceCommon } from '@console/internal/module/k8s';
-import { getName, getNamespace, useFlag } from '../../..';
-import { FLAGS } from '../../../constants';
+import { K8sKind, K8sResourceCommon, referenceForModel } from '@console/internal/module/k8s';
+import { FLAGS, getName, getNamespace, useFlag } from '../../..';
 import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '../../status';
 import Status from '../status-card/StatusPopup';
 
@@ -198,7 +197,7 @@ export const PopoverBody = withDashboardResources<DashboardItemProps & PopoverBo
       const monitoringURL =
         canAccessMonitoring && activePerspective === 'admin'
           ? `/monitoring/query-browser?${monitoringParams.toString()}`
-          : `/dev-monitoring/ns/${namespace}/metrics?${monitoringParams.toString()}`;
+          : `/dev-monitoring/ns/${namespace}/query-browser?${monitoringParams.toString()}`;
 
       let body: React.ReactNode;
       if (error || consumersLoadError) {

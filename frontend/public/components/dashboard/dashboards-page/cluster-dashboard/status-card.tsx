@@ -33,7 +33,9 @@ import {
   WatchK8sResource,
 } from '@console/dynamic-plugin-sdk';
 import { Gallery, GalleryItem, Card, CardHeader, CardTitle } from '@patternfly/react-core';
-import { BlueArrowCircleUpIcon, FLAGS, useCanClusterUpgrade } from '@console/shared';
+import { BlueArrowCircleUpIcon } from '@console/shared/src/components/status/icons';
+import { ALL_NAMESPACES_KEY, FLAGS } from '@console/shared/src/constants/common';
+import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpgrade';
 
 import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
 import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
@@ -62,6 +64,7 @@ import {
   useNamespacedNotificationAlerts,
   useNotificationAlerts,
 } from '@console/shared/src/hooks/useNotificationAlerts';
+import { useActiveNamespace } from '@console/shared/src';
 
 const filterSubsystems = (
   subsystems: (
@@ -150,6 +153,7 @@ export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels
   const [dynamicSubsystemExtensions] = useResolvedExtensions<
     DynamicDashboardsOverviewHealthSubsystem
   >(isDynamicDashboardsOverviewHealthSubsystem);
+  const [, setActiveNamespace] = useActiveNamespace();
 
   const subsystems = React.useMemo(() => {
     const filteredSubsystems = filterSubsystems(
@@ -251,7 +255,14 @@ export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels
         actions={{
           actions: (
             <>
-              <Link to="/monitoring/alerts" data-test="status-card-view-alerts">
+              <Link
+                to="/monitoring/alerts"
+                data-test="status-card-view-alerts"
+                onClick={() => {
+                  // Set all namespaces selection so alert list is unfiltered
+                  setActiveNamespace(ALL_NAMESPACES_KEY);
+                }}
+              >
                 {t('public~View alerts')}
               </Link>
             </>

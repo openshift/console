@@ -94,15 +94,9 @@ describe('PrometheusGraphLink', () => {
       },
       {
         perspective: 'dev',
-        canGetNS: false,
-        expectedUrl: '/dev-monitoring/ns/default/metrics?query0=test',
-        description: 'dev perspective with CAN_GET_NS=false',
-      },
-      {
-        perspective: 'dev',
         canGetNS: true,
         expectedUrl: '/dev-monitoring/ns/default/metrics?query0=test',
-        description: 'dev perspective with CAN_GET_NS=true',
+        description: 'dev perspective graph link',
       },
     ];
 

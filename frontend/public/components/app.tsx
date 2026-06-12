@@ -71,6 +71,9 @@ import { usePackageManifestCheck } from '@console/shared/src/hooks/usePackageMan
 import { useCSPViolationDetector } from '@console/app/src/hooks/useCSPViolationDetector';
 import { useNotificationPoller } from '@console/app/src/hooks/useNotificationPoller';
 
+// TODO: remove when upgrading to @xterm/xterm 7.0.0 - github.com/openshift/console/issues/16486
+delete process.title;
+
 initI18n();
 
 // Disable linkify 'fuzzy links' across the app.
