@@ -29,8 +29,6 @@ test.describe('Favorites', { tag: ['@admin'] }, () => {
 
     await test.step('Remove a favorite by clicking the favorite button again', async () => {
       await page.getByTestId('favorite-button').click();
-
-      await sidebar.getByRole('button', { name: 'Favorites' }).click();
       await expect(page.getByTestId('no-favorites-message')).toBeVisible();
     });
 
@@ -44,8 +42,6 @@ test.describe('Favorites', { tag: ['@admin'] }, () => {
       await expect(sidebar).toContainText('Overview');
 
       await page.getByTestId('remove-favorite-button').click();
-
-      await sidebar.getByRole('button', { name: 'Favorites' }).click();
       await expect(page.getByTestId('no-favorites-message')).toBeVisible();
     });
 
@@ -78,5 +74,6 @@ test.describe('Favorites', { tag: ['@admin'] }, () => {
       await page.goto('/k8s/all-namespaces/apps~v1~DaemonSet');
       await expect(page.getByTestId('favorite-button').first()).toBeDisabled();
     });
+
   });
 });
