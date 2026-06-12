@@ -2,6 +2,7 @@ import type { FC } from 'react';
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { Tabs, Tab } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { AsyncComponent } from '@console/internal/components/utils';
 import { cleanupDetachedResource } from '@console/internal/module/detached-ws-registry';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
@@ -11,7 +12,6 @@ import { removeDetachedSession } from '../../redux/actions/cloud-shell-actions';
 import { useDetachedSessions } from '../../redux/reducers/cloud-shell-selectors';
 import { sendActivityTick } from './cloud-shell-utils';
 import CloudShellTerminal from './CloudShellTerminal';
-import DetachedPodExec from './DetachedPodExec';
 import { TICK_INTERVAL } from './useActivityTick';
 import './MultiTabbedTerminal.scss';
 
@@ -206,7 +206,12 @@ export const MultiTabbedTerminal: FC<MultiTabbedTerminalProps> = ({ onClose }) =
               }}
               title={label}
             >
-              <DetachedPodExec
+              <AsyncComponent
+                loader={() =>
+                  import('./DetachedPodExec' /* webpackChunkName: "detached-pod-exec" */).then(
+                    (m) => m.default,
+                  )
+                }
                 sessionId={session.id}
                 podName={session.podName}
                 namespace={session.namespace}
