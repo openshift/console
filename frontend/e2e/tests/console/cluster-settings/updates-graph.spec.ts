@@ -1,5 +1,6 @@
 import { test, expect } from '../../../fixtures';
 import { ClusterSettingsPage } from '../../../pages/cluster-settings-page';
+import { stubWebSocketWatches } from './cluster-settings-test-utils';
 
 const CLUSTER_VERSION_URL = '**/apis/config.openshift.io/v1/clusterversions/version';
 
@@ -93,6 +94,8 @@ const clusterVersionWithGraphData = {
 test.describe('Cluster Settings updates graph', { tag: ['@admin'] }, () => {
   test('displays updates graph with available updates across channels', async ({ page }) => {
     const clusterSettings = new ClusterSettingsPage(page);
+
+    await stubWebSocketWatches(page, ['config.openshift.io/v1/clusterversions']);
 
     await test.step('Setup: Mock cluster version with graph data', async () => {
       await page.route(CLUSTER_VERSION_URL, async (route) => {

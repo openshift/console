@@ -4,6 +4,7 @@ import {
   clusterVersionWithoutChannel,
   clusterVersionWithDesiredChannels,
 } from '../../../mocks/cluster-version';
+import { stubWebSocketWatches } from './cluster-settings-test-utils';
 
 const CLUSTER_VERSION_URL = '**/apis/config.openshift.io/v1/clusterversions/version';
 
@@ -11,9 +12,8 @@ test.describe('Cluster Settings channel modal', { tag: ['@admin', '@smoke'] }, (
   test('changes based on cluster version', async ({ page }) => {
     const clusterSettings = new ClusterSettingsPage(page);
 
-    // Use a mutable reference so the single route handler can serve different
-    // mock data across steps without unroute/route gaps that let real API
-    // responses (including WebSocket watch updates) slip through.
+    await stubWebSocketWatches(page, ['config.openshift.io/v1/clusterversions']);
+
     let activeMock = clusterVersionWithoutChannel;
     await page.route(CLUSTER_VERSION_URL, async (route) => {
       await route.fulfill({

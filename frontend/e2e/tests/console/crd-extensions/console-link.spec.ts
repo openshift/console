@@ -88,22 +88,34 @@ test.describe(`${crd} CRD`, { tag: ['@admin'] }, () => {
           await test.step('Delete the ConsoleLink instance', async () => {
             await page.goto(`/k8s/cluster/console.openshift.io~v1~${crd}`);
 
-            // Wait for the list to load
             const instanceRow = page.getByRole('row', { name: new RegExp(name) });
             await expect(instanceRow).toBeVisible({ timeout: 10000 });
 
-            // Click kebab menu and delete
-            const kebabButton = instanceRow.getByTestId('kebab-button');
-            await kebabButton.click();
+            // Watch updates re-render the list, which can close the kebab
+            // menu or detach the delete item between actions. Retry the
+            // entire open-and-click sequence until it succeeds.
             const deleteItem = page.getByRole('menuitem', { name: `Delete ${crd}` });
-            await expect(deleteItem).toBeEnabled();
-            await deleteItem.click();
+            await expect
+              .poll(
+                async () => {
+                  try {
+                    if (!(await deleteItem.isVisible().catch(() => false))) {
+                      await instanceRow.getByTestId('kebab-button').click();
+                    }
+                    if (!(await deleteItem.isEnabled().catch(() => false))) return false;
+                    await deleteItem.click({ timeout: 2_000 });
+                    return true;
+                  } catch {
+                    return false;
+                  }
+                },
+                { timeout: 30_000 },
+              )
+              .toBe(true);
 
-            // Confirm deletion in modal
             await expect(page.getByRole('heading', { name: `Delete ${crd}?` })).toBeVisible();
             await page.getByTestId('confirm-action').click();
 
-            // Verify the instance is gone
             await expect(instanceRow).not.toBeVisible({ timeout: 10000 });
           });
         } finally {
