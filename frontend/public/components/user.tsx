@@ -98,7 +98,7 @@ const NoDataEmptyMsgDetail = () => {
           <>
             <p>
               {t(
-                'public~Add identity providers (IDPs) to the OAuth configuration to allow others to log in.',
+                'Add identity providers (IDPs) to the OAuth configuration to allow others to log in.',
               )}
             </p>
             <p>

@@ -35,9 +35,7 @@ export const FunctionsDocsGettingStartedCard: FC = () => {
       icon={<RhUiFlagIcon color="var(--co-global--palette--orange-400)" aria-hidden="true" />}
       title={t('Explore serverless functions')}
       titleColor={'var(--co-global--palette--orange-400)'}
-      description={t(
-        'knative-plugin~Explore new features and resources within the serverless functions.',
-      )}
+      description={t('Explore new features and resources within the serverless functions.')}
       links={links}
     />
   );

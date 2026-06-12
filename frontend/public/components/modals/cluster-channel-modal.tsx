@@ -68,10 +68,10 @@ const ClusterChannelModal = (props: ClusterChannelModalProps) => {
             <Content component={ContentVariants.p}>
               {channelsExist
                 ? t(
-                    'public~The current version is available in the channels listed in the dropdown below. Select a channel that reflects the desired version. Critical security updates will be delivered to any vulnerable channels.',
+                    'The current version is available in the channels listed in the dropdown below. Select a channel that reflects the desired version. Critical security updates will be delivered to any vulnerable channels.',
                   )
                 : t(
-                    'public~Input a channel that reflects the desired version. To verify if the version exists in a channel, save and check the update status. Critical security updates will be delivered to any vulnerable channels.',
+                    'Input a channel that reflects the desired version. To verify if the version exists in a channel, save and check the update status. Critical security updates will be delivered to any vulnerable channels.',
                   )}
             </Content>
             {!isManaged() && (

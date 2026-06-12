@@ -237,9 +237,7 @@ export const AddLDAPPage = () => {
               required
               initialValues={attributesID}
               onChange={(c: string[]) => setAttributesID(c)}
-              helpText={t(
-                'public~The list of attributes whose values should be used as the user ID.',
-              )}
+              helpText={t('The list of attributes whose values should be used as the user ID.')}
             />
             <ListInput
               label={t('Preferred username')}
@@ -247,7 +245,7 @@ export const AddLDAPPage = () => {
               initialValues={attributesPreferredUsername}
               onChange={(c: string[]) => setAttributesPreferredUsername(c)}
               helpText={t(
-                'public~The list of attributes whose values should be used as the preferred username.',
+                'The list of attributes whose values should be used as the preferred username.',
               )}
             />
             <ListInput
@@ -256,7 +254,7 @@ export const AddLDAPPage = () => {
               initialValues={attributesName}
               onChange={(c: string[]) => setAttributesName(c)}
               helpText={t(
-                'public~The list of attributes whose values should be used as the display name.',
+                'The list of attributes whose values should be used as the display name.',
               )}
             />
             <ListInput
@@ -264,7 +262,7 @@ export const AddLDAPPage = () => {
               id="ldap-attribute-email"
               onChange={(c: string[]) => setAttributesEmail(c)}
               helpText={t(
-                'public~The list of attributes whose values should be used as the email address.',
+                'The list of attributes whose values should be used as the email address.',
               )}
             />
             <div className="co-form-section__separator" />

@@ -95,7 +95,7 @@ const CreateKnatifyPage: FC = () => {
       if (svcData) {
         helpers.setStatus({
           submitError: t(
-            'knative-plugin~There is an existing placeholder Service with name {{name}} in namespace {{namespace}}. Please provide another name',
+            'There is an existing placeholder Service with name {{name}} in namespace {{namespace}}. Please provide another name',
             {
               name: values.name,
               namespace: values.project.name,
@@ -126,7 +126,7 @@ const CreateKnatifyPage: FC = () => {
         title={t('Make Serverless')}
         badge={getBadgeFromType(BadgeType.TECH)}
         helpText={t(
-          'knative-plugin~This feature will create a new serverless deployment next to your existing deployment. Other configurations, including the traffic pattern, can be modified in the form.',
+          'This feature will create a new serverless deployment next to your existing deployment. Other configurations, including the traffic pattern, can be modified in the form.',
         )}
       />
       {isResourceLoaded ? (

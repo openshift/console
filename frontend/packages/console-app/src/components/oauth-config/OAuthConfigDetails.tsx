@@ -114,7 +114,7 @@ export const OAuthConfigDetails: FC<OAuthDetailsProps> = ({ obj }: { obj: OAuthK
           >
             <>
               {t(
-                'console-app~Authentication is being reconfigured. The new identity provider will be available after reconfiguration is complete.',
+                'Authentication is being reconfigured. The new identity provider will be available after reconfiguration is complete.',
               )}{' '}
               <Link to={resourcePathFromModel(ClusterOperatorModel, 'authentication')}>
                 {t('View authentication conditions for reconfiguration status.')}

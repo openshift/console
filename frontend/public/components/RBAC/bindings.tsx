@@ -619,7 +619,7 @@ const BaseEditRoleBinding: FC<BaseEditRoleBindingProps> = (props) => {
       value: 'RoleBinding',
       label: t('Namespace role binding (RoleBinding)'),
       description: t(
-        'public~Grant the permissions to a user or set of users within the selected namespace.',
+        'Grant the permissions to a user or set of users within the selected namespace.',
       ),
     },
     {
@@ -627,7 +627,7 @@ const BaseEditRoleBinding: FC<BaseEditRoleBindingProps> = (props) => {
       value: 'ClusterRoleBinding',
       label: t('Cluster-wide role binding (ClusterRoleBinding)'),
       description: t(
-        'public~Grant the permissions to a user or set of users at the cluster level and in all namespaces.',
+        'Grant the permissions to a user or set of users at the cluster level and in all namespaces.',
       ),
     },
   ];
@@ -648,7 +648,7 @@ const BaseEditRoleBinding: FC<BaseEditRoleBindingProps> = (props) => {
       <PageHeading
         title={<div data-test="title">{title}</div>}
         helpText={t(
-          'public~Associate a user/group to the selected role to define the type of access and resources that are allowed.',
+          'Associate a user/group to the selected role to define the type of access and resources that are allowed.',
         )}
       />
       <PaneBody>

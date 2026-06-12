@@ -155,9 +155,7 @@ const QuickCreate: FC<QuickCreateProps> = ({ namespace }) => {
                 navigate(getContainerImageURL(namespace));
               }}
               tooltipProps={{
-                content: t(
-                  'public~Deploy an existing Image from an Image registry or Image stream tag',
-                ),
+                content: t('Deploy an existing Image from an Image registry or Image stream tag'),
                 position: 'left',
               }}
               data-test="qc-container-images"

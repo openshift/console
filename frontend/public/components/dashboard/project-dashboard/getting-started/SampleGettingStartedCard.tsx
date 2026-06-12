@@ -92,9 +92,7 @@ export const SampleGettingStartedCard: FC<SampleGettingStartedCardProps> = ({ fe
             }
             title={t('Create applications using samples')}
             titleColor={'var(--co-global--palette--blue-400)'}
-            description={t(
-              'public~Choose a code sample to get started creating an application with.',
-            )}
+            description={t('Choose a code sample to get started creating an application with.')}
             links={links}
             moreLink={moreLink}
           />

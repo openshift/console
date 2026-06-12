@@ -308,7 +308,7 @@ export const PodStatus: FC<PodStatusProps> = ({ pod }) => {
           <Content>
             <Content component={ContentVariants.p}>
               {t(
-                "public~The container didn't start. Common causes include missing ConfigMaps, Secrets, or volume mounts, and invalid security contexts.",
+                "The container didn't start. Common causes include missing ConfigMaps, Secrets, or volume mounts, and invalid security contexts.",
               )}
             </Content>
             <Content component={ContentVariants.p}>
@@ -335,7 +335,7 @@ export const PodStatus: FC<PodStatusProps> = ({ pod }) => {
         <Content>
           <Content component={ContentVariants.p}>
             {t(
-              'public~CrashLoopBackOff indicates that the application in the container is repeatedly failing to start.',
+              'CrashLoopBackOff indicates that the application in the container is repeatedly failing to start.',
             )}
           </Content>
           <Content component={ContentVariants.p}>

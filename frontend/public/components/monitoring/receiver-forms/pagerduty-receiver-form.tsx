@@ -129,7 +129,7 @@ const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
             formValues={formValues}
             dispatchFormChange={dispatchFormChange}
             tooltip={t(
-              'public~Checking this box will write the URL to the global section of the configuration file where it will become the default URL for future PagerDuty receivers.',
+              'Checking this box will write the URL to the global section of the configuration file where it will become the default URL for future PagerDuty receivers.',
             )}
           />
         </GridItem>

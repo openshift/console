@@ -88,7 +88,7 @@ const HelmURLChartForm: FC<FormikProps<HelmURLChartFormData> & HelmURLChartFormP
         <FormHeader
           title={t('Install Helm chart from URL')}
           helpText={t(
-            'helm-plugin~To install a Helm chart, enter the chart URL - Open Container Initiative (OCI) URL or HTTP/HTTPS tar file and version.',
+            'To install a Helm chart, enter the chart URL - Open Container Initiative (OCI) URL or HTTP/HTTPS tar file and version.',
           )}
           marginBottom="lg"
         />
@@ -100,7 +100,7 @@ const HelmURLChartForm: FC<FormikProps<HelmURLChartFormData> & HelmURLChartFormP
                 name="chartURL"
                 label={t('Chart URL')}
                 helpText={t(
-                  'helm-plugin~The OCI URL or HTTP/HTTPS tar file for the Helm chart; for example - oci://registry.example.com/charts/mychart or https://example.com/chart-1.0.0.tgz.',
+                  'The OCI URL or HTTP/HTTPS tar file for the Helm chart; for example - oci://registry.example.com/charts/mychart or https://example.com/chart-1.0.0.tgz.',
                 )}
                 placeholder="oci://registry.example.com/charts/mychart or https://example.com/chart-1.0.0.tgz"
                 required
@@ -139,7 +139,7 @@ const HelmURLChartForm: FC<FormikProps<HelmURLChartFormData> & HelmURLChartFormP
                 showBadge
                 autocompleteFilter={autocompleteFilter}
                 helpText={t(
-                  'helm-plugin~A secret with "username" and "password" keys for OCI/HTTP(S) authentication',
+                  'A secret with "username" and "password" keys for OCI/HTTP(S) authentication',
                 )}
               />
             </GridItem>

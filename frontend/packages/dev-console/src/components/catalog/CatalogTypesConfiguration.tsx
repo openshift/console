@@ -243,7 +243,7 @@ const CatalogTypesConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
     <FormSection title={t('Software Catalog')} data-test="catalog-types form-section">
       <FormHelperText>
         {t(
-          'devconsole~Another option to customize and standardize your development process. As an admin, you can disable the complete Software Catalog, or individual sub-catalogs (available as Types in the Software Catalog). Also here the "Search" and "Topology" will still show such resources.',
+          'Another option to customize and standardize your development process. As an admin, you can disable the complete Software Catalog, or individual sub-catalogs (available as Types in the Software Catalog). Also here the "Search" and "Topology" will still show such resources.',
         )}
       </FormHelperText>
       <DualListSelector

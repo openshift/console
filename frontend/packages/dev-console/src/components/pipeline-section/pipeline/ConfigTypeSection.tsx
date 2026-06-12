@@ -31,7 +31,7 @@ const ConfigTypeSection: FC<ConfigTypeSectionProps> = ({ pac, formContextField }
     <>
       <Content component="p">
         {t(
-          'devconsole~A GitHub App is already set up for this cluster. To use it, install the GitHub app on your personal account or GitHub organization.',
+          'A GitHub App is already set up for this cluster. To use it, install the GitHub app on your personal account or GitHub organization.',
         )}
       </Content>
       <br />

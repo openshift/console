@@ -57,7 +57,7 @@ export const useValuesFileUploadContext = (): FileUploadContextType => {
             variant: AlertVariant.warning,
             title: t('Incompatible file type'),
             content: t(
-              'console-app~{{fileName}} cannot be uploaded. Only {{fileExtensions}} files are supported currently. Try another file.',
+              '{{fileName}} cannot be uploaded. Only {{fileExtensions}} files are supported currently. Try another file.',
               {
                 fileName: f.name,
                 fileExtensions: fileExtensions.toString(),

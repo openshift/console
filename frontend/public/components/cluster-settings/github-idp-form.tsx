@@ -158,7 +158,7 @@ export const AddGitHubPage = () => {
       <PageHeading
         title={title}
         helpText={t(
-          'public~You can use the GitHub integration to connect to either GitHub or GitHub Enterprise. For GitHub Enterprise, you must provide the hostname of your instance and can optionally provide a CA certificate bundle to use in requests to the server.',
+          'You can use the GitHub integration to connect to either GitHub or GitHub Enterprise. For GitHub Enterprise, you must provide the hostname of your instance and can optionally provide a CA certificate bundle to use in requests to the server.',
         )}
       />
       <PaneBody>
@@ -255,9 +255,7 @@ export const AddGitHubPage = () => {
             label={t('Team')}
             id="team-list-input"
             onChange={(c: string[]) => setTeams(c)}
-            helpText={t(
-              'public~Restricts which teams are allowed to log in. The format is <org>/<team>.',
-            )}
+            helpText={t('Restricts which teams are allowed to log in. The format is <org>/<team>.')}
           />
           <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
             <ActionGroup className="pf-v6-c-form">

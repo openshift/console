@@ -36,7 +36,7 @@ const EventSourcePage: FC = () => {
       <PageHeading
         title={t('Create Event Source')}
         helpText={t(
-          'knative-plugin~Create an Event source to register interest in a class of events from a particular system. Configure using YAML and form views.',
+          'Create an Event source to register interest in a class of events from a particular system. Configure using YAML and form views.',
         )}
       />
 

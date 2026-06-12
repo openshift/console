@@ -116,7 +116,7 @@ export const QuickStartGettingStartedCard: FC<QuickStartGettingStartedCardProps>
             description={
               description ||
               t(
-                'console-shared~Follow guided documentation to build applications and familiarize yourself with key features.',
+                'Follow guided documentation to build applications and familiarize yourself with key features.',
               )
             }
             links={links}

@@ -31,7 +31,7 @@ const UnderMaintenancePopoverContent: FC<UnderMaintenancePopoverContentProps> = 
     <>
       <p>
         {t(
-          "metal3-plugin~Node is under maintenance. The cluster will automatically rebuild node's data 30 minutes after entering maintenance.",
+          "Node is under maintenance. The cluster will automatically rebuild node's data 30 minutes after entering maintenance.",
         )}
       </p>
       <DescriptionList>

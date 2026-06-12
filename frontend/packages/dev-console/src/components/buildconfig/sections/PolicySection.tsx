@@ -25,13 +25,13 @@ const PolicySection: FC<{}> = () => {
 
   const helpText: Record<BuildConfigRunPolicy, string> = {
     [BuildConfigRunPolicy.Serial]: t(
-      'devconsole~Builds triggered from this Build Configuration will run one at the time, in the order they have been triggered.',
+      'Builds triggered from this Build Configuration will run one at the time, in the order they have been triggered.',
     ),
     [BuildConfigRunPolicy.Parallel]: t(
-      'devconsole~Builds triggered from this Build Configuration will run all at the same time. The order in which they will finish is not guaranteed.',
+      'Builds triggered from this Build Configuration will run all at the same time. The order in which they will finish is not guaranteed.',
     ),
     [BuildConfigRunPolicy.SerialLatestOnly]: t(
-      'devconsole~Builds triggered from this Build Configuration will run one at the time. When a currently running build completes, the next build that will run is the latest build created. Other queued builds will be cancelled.',
+      'Builds triggered from this Build Configuration will run one at the time. When a currently running build completes, the next build that will run is the latest build created. Other queued builds will be cancelled.',
     ),
   };
 
@@ -39,7 +39,7 @@ const PolicySection: FC<{}> = () => {
     <FormSection
       title={t('Policy')}
       subTitle={t(
-        'devconsole~The build run policy describes the order in which the builds created from the build configuration should run.',
+        'The build run policy describes the order in which the builds created from the build configuration should run.',
       )}
       dataTest="section policy"
     >

@@ -273,7 +273,7 @@ export const SubscriptionsList = requireOperatorGroup((props: SubscriptionsListP
       EmptyMsg={() => (
         <ConsoleEmptyState title={t('No Subscriptions found')}>
           {t(
-            'olm~Each Namespace can subscribe to a single channel of a package for automatic updates.',
+            'Each Namespace can subscribe to a single channel of a package for automatic updates.',
           )}
         </ConsoleEmptyState>
       )}
@@ -323,7 +323,7 @@ const CatalogSourceHealthAlert = ({ health, source, sourceNamespace }) => {
         title={t('CatalogSource health unknown')}
       >
         {t(
-          'olm~This operator cannot be updated. The health of CatalogSource "{{source}}" is unknown. It may have been disabled or removed from the cluster.',
+          'This operator cannot be updated. The health of CatalogSource "{{source}}" is unknown. It may have been disabled or removed from the cluster.',
           { source },
         )}
         {source && sourceNamespace && (

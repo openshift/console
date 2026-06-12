@@ -176,7 +176,7 @@ export const AddKeystonePage = () => {
       <PageHeading
         title={title}
         helpText={t(
-          'public~Adding Keystone enables shared authentication with an OpenStack server configured to store users in an internal Keystone database.',
+          'Adding Keystone enables shared authentication with an OpenStack server configured to store users in an internal Keystone database.',
         )}
       />
       <PaneBody>
@@ -229,7 +229,7 @@ export const AddKeystonePage = () => {
               label={t('Certificate')}
               filenamePlaceholder={t('PEM-encoded TLS client certificate file')}
               textareaFieldHelpText={t(
-                'public~PEM-encoded TLS client certificate to present when connecting to the server.',
+                'PEM-encoded TLS client certificate to present when connecting to the server.',
               )}
             />
             <DroppableFileInput
@@ -239,7 +239,7 @@ export const AddKeystonePage = () => {
               label={t('Key')}
               filenamePlaceholder={t('PEM-encoded TLS private key file')}
               textareaFieldHelpText={t(
-                'public~PEM-encoded TLS private key for the client certificate. Required if certificate is specified.',
+                'PEM-encoded TLS private key for the client certificate. Required if certificate is specified.',
               )}
             />
           </div>

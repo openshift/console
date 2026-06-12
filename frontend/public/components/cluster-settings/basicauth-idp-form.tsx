@@ -175,7 +175,7 @@ export const AddBasicAuthPage: FC = () => {
       <PageHeading
         title={title}
         helpText={t(
-          'public~Basic authentication is a generic backend integration mechanism that allows users to authenticate with credentials validated against a remote identity provider.',
+          'Basic authentication is a generic backend integration mechanism that allows users to authenticate with credentials validated against a remote identity provider.',
         )}
       />
       <PaneBody>
@@ -213,7 +213,7 @@ export const AddBasicAuthPage: FC = () => {
               label={t('Certificate')}
               filenamePlaceholder={t('PEM-encoded TLS client certificate file')}
               textareaFieldHelpText={t(
-                'public~PEM-encoded TLS client certificate to present when connecting to the server.',
+                'PEM-encoded TLS client certificate to present when connecting to the server.',
               )}
             />
             <DroppableFileInput
@@ -223,7 +223,7 @@ export const AddBasicAuthPage: FC = () => {
               label={t('Key')}
               filenamePlaceholder={t('PEM-encoded TLS private key file')}
               textareaFieldHelpText={t(
-                'public~PEM-encoded TLS private key for the client certificate. Required if certificate is specified.',
+                'PEM-encoded TLS private key for the client certificate. Required if certificate is specified.',
               )}
             />
           </div>

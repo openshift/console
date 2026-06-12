@@ -32,7 +32,7 @@ const NoOperatorGroupMsg: FC = () => {
   return (
     <ConsoleEmptyState title={t('Namespace not enabled')} primaryActions={actions}>
       {t(
-        'olm~The Operator Lifecycle Manager will not watch this Namespace because it is not configured with an OperatorGroup.',
+        'The Operator Lifecycle Manager will not watch this Namespace because it is not configured with an OperatorGroup.',
       )}
     </ConsoleEmptyState>
   );

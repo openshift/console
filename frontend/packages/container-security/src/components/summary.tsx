@@ -86,7 +86,7 @@ export const SecurityBreakdownPopup: FC<SecurityBreakdownPopupProps> = ({
               `container-security~This project's container images from Quay are analyzed to identify vulnerabilities. Images from other registries are not scanned.`,
             )
           : t(
-              'container-security~Container images from Quay are analyzed to identify vulnerabilities. Images from other registries are not scanned.',
+              'Container images from Quay are analyzed to identify vulnerabilities. Images from other registries are not scanned.',
             )}
       </StackItem>
       {!_.isEmpty(resource) ? (

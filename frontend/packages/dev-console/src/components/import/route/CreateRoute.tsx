@@ -11,9 +11,7 @@ const CreateRoute: FC = () => {
         type={TextInputTypes.text}
         name="route.hostname"
         label={t('Hostname')}
-        helpText={t(
-          'devconsole~Public hostname for the route. If not specified, a hostname is generated.',
-        )}
+        helpText={t('Public hostname for the route. If not specified, a hostname is generated.')}
       />
       <InputField
         type={TextInputTypes.text}

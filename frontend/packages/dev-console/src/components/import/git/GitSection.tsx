@@ -483,12 +483,12 @@ const GitSection: FC<GitSectionProps> = ({
         }
         case RepoStatus.GitTypeNotDetected: {
           return t(
-            'devconsole~URL is valid but a git type could not be identified. Please select a git type from the options below',
+            'URL is valid but a git type could not be identified. Please select a git type from the options below',
           );
         }
         case RepoStatus.PrivateRepo: {
           return t(
-            'devconsole~If this is a private repository, enter a source Secret in advanced Git options',
+            'If this is a private repository, enter a source Secret in advanced Git options',
           );
         }
         case RepoStatus.ResourceNotFound: {
@@ -496,13 +496,13 @@ const GitSection: FC<GitSectionProps> = ({
         }
         case RepoStatus.InvalidGitTypeSelected: {
           return t(
-            'devconsole~The selected git type might not be valid or the repository is private. Please try selecting another git type or enter a source Secret in advanced Git options',
+            'The selected git type might not be valid or the repository is private. Please try selecting another git type or enter a source Secret in advanced Git options',
           );
         }
         /* Special case for Gitea as it throws 404 for all kinds of negatives */
         case RepoStatus.GiteaRepoUnreachable: {
           return t(
-            'devconsole~The Gitea repository is unreachable. The repository might be private or does not exist',
+            'The Gitea repository is unreachable. The repository might be private or does not exist',
           );
         }
         default: {

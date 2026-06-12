@@ -185,7 +185,7 @@ export const ExampleDockerCommandPopover: FC<ImageStreamManipulationHelpProps> =
         <div>
           <p>
             {t(
-              'public~Create a new ImageStreamTag by pushing an image to this ImageStream with the desired tag.',
+              'Create a new ImageStreamTag by pushing an image to this ImageStream with the desired tag.',
             )}
           </p>
           <br />

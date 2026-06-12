@@ -12,9 +12,7 @@ const AdminNamespaceSection: FC = () => {
         type={TextInputTypes.text}
         name="namespace"
         label={t('Project')}
-        helpText={t(
-          'webterminal-plugin~This Project will be used to initialize your command line terminal',
-        )}
+        helpText={t('This Project will be used to initialize your command line terminal')}
         isDisabled
         required
       />

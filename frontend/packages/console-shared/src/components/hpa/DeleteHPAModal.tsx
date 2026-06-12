@@ -43,10 +43,9 @@ const DeleteHPAModal: FC<DeleteHPAModalProps> = ({ close, cancel, hpa, workload 
                 <b>{hpaName}</b> {t('from')} <b>{workloadName}</b>?
               </p>
               <p>
-                {t(
-                  'console-shared~The resources that are attached to the {{hpaLabel}} will be deleted.',
-                  { hpaLabel: HorizontalPodAutoscalerModel.label },
-                )}
+                {t('The resources that are attached to the {{hpaLabel}} will be deleted.', {
+                  hpaLabel: HorizontalPodAutoscalerModel.label,
+                })}
               </p>
             </>
           ) : (

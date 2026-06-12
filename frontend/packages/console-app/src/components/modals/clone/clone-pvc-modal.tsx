@@ -183,9 +183,7 @@ const ClonePVCModal = (props: ClonePVCModalProps) => {
               <FormHelperText>
                 <HelperText>
                   <HelperTextItem variant="error">
-                    {t(
-                      'console-app~Size should be equal or greater than the requested size of PVC.',
-                    )}
+                    {t('Size should be equal or greater than the requested size of PVC.')}
                   </HelperTextItem>
                 </HelperText>
               </FormHelperText>

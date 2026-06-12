@@ -70,7 +70,7 @@ export const OpenShiftGettingStarted: FC<OpenShiftGettingStartedProps> = () => {
       ) : (
         <p>
           {t(
-            "public~To get started, you'll need a project. Currently, you can't create or access any projects.",
+            "To get started, you'll need a project. Currently, you can't create or access any projects.",
           )}
           {!createProjectMessage && t(" You'll need to contact a cluster administrator for help.")}
         </p>

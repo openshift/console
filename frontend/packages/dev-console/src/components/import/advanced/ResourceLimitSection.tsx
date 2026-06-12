@@ -22,7 +22,7 @@ const ResourceLimitSection: FC<ResourceLimitSectionProps> = ({ hideTitle }) => {
     <FormSection
       title={!hideTitle && t('Resource limit')}
       subTitle={t(
-        'devconsole~Resource limits control how much CPU and memory a container will consume on a node.',
+        'Resource limits control how much CPU and memory a container will consume on a node.',
       )}
       fullWidth
     >
@@ -48,9 +48,7 @@ const ResourceLimitSection: FC<ResourceLimitSectionProps> = ({ hideTitle }) => {
         inputAriaLabel={t('CPU limit')}
         unitName="limits.cpu.limitUnit"
         unitOptions={CPUUnits}
-        helpText={t(
-          'devconsole~The maximum amount of CPU the Container is allowed to use when running.',
-        )}
+        helpText={t('The maximum amount of CPU the Container is allowed to use when running.')}
       />
 
       <TertiaryHeading altSpacing="pf-v6-u-my-0">{t('Memory')}</TertiaryHeading>
@@ -69,9 +67,7 @@ const ResourceLimitSection: FC<ResourceLimitSectionProps> = ({ hideTitle }) => {
         inputAriaLabel={t('Memory limit')}
         unitName="limits.memory.limitUnit"
         unitOptions={MemoryUnits}
-        helpText={t(
-          'devconsole~The maximum amount of Memory the Container is allowed to use when running.',
-        )}
+        helpText={t('The maximum amount of Memory the Container is allowed to use when running.')}
       />
     </FormSection>
   );

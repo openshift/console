@@ -72,7 +72,7 @@ const StartNodeMaintenanceModal: OverlayComponent<StartNodeMaintenanceModalProps
         <Stack hasGutter>
           <StackItem>
             {t(
-              'metal3-plugin~All managed workloads will be moved off of this node. New workloads and data will not be added to this node until maintenance is stopped.',
+              'All managed workloads will be moved off of this node. New workloads and data will not be added to this node until maintenance is stopped.',
             )}
           </StackItem>
           <StackItem>
@@ -99,7 +99,7 @@ const StartNodeMaintenanceModal: OverlayComponent<StartNodeMaintenanceModalProps
                 isInline
               >
                 {t(
-                  'metal3-plugin~Maintenance should not be started until the health of the storage cluster is restored.',
+                  'Maintenance should not be started until the health of the storage cluster is restored.',
                 )}
               </Alert>
             </StackItem>

@@ -313,7 +313,7 @@ const InstallingMessage: FC<InstallingMessageProps> = ({ namespace, obj }) => {
           t(' Once the Operator is installed additional configuration will be required.')}
         {initializationResource &&
           t(
-            'olm~ Once the Operator is installed the required custom resource will be available for creation.',
+            ' Once the Operator is installed the required custom resource will be available for creation.',
           )}
       </p>
       <ActionGroup className="pf-v6-c-form pf-v6-c-form__group--no-top-margin">

@@ -136,9 +136,7 @@ export const StatusValidations: FC<StatusValidationProps> = ({
   if ([HOST_STATUS_UNKNOWN, ...HOST_STATUS_ERROR].includes(status)) {
     validations.push({
       title: t('The bare metal host is not healthy.'),
-      description: t(
-        'metal3-plugin~The host cannot be powered off gracefully untils its health is restored.',
-      ),
+      description: t('The host cannot be powered off gracefully untils its health is restored.'),
       level: 'warning',
     });
   }
@@ -147,7 +145,7 @@ export const StatusValidations: FC<StatusValidationProps> = ({
     validations.push({
       title: t('The node is starting maintenance.'),
       description: t(
-        'metal3-plugin~The node cannot be powered off gracefully until it finishes entering maintenance.',
+        'The node cannot be powered off gracefully until it finishes entering maintenance.',
       ),
       level: 'info',
     });
@@ -156,9 +154,7 @@ export const StatusValidations: FC<StatusValidationProps> = ({
   if (status === NODE_STATUS_STOPPING_MAINTENANCE) {
     validations.push({
       title: t('The node is stopping maintenance.'),
-      description: t(
-        'metal3-plugin~The node cannot be powered off gracefully while it is exiting maintenance.',
-      ),
+      description: t('The node cannot be powered off gracefully while it is exiting maintenance.'),
       level: 'info',
     });
   }
@@ -167,7 +163,7 @@ export const StatusValidations: FC<StatusValidationProps> = ({
     validations.push({
       title: t('This node contains DaemonSet pods.'),
       description: t(
-        'metal3-plugin~These DaemonSets will prevent some pods from being moved. This should not prevent the host from powering off gracefully.',
+        'These DaemonSets will prevent some pods from being moved. This should not prevent the host from powering off gracefully.',
       ),
       level: 'info',
       detail: (
@@ -184,7 +180,7 @@ export const StatusValidations: FC<StatusValidationProps> = ({
     validations.push({
       title: t('This host contains unmanaged static pods.'),
       description: t(
-        'metal3-plugin~These pods must be moved manually to continue running after the host powers off.',
+        'These pods must be moved manually to continue running after the host powers off.',
       ),
       level: 'warning',
       detail: (

@@ -45,7 +45,7 @@ const AdvancedGitOptions: FC<{
           name={`${fieldPrefix}git.dir`}
           label={t('Context dir')}
           helpText={t(
-            'devconsole~Optional subdirectory for the source code, used as a context directory for build.',
+            'Optional subdirectory for the source code, used as a context directory for build.',
           )}
           onChange={handleGitDirChange}
         />

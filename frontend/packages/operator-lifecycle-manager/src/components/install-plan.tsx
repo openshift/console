@@ -294,11 +294,11 @@ export const NeedInstallPlanPermissions: FC<NeedInstallPlanPermissionsProps> = (
     >
       {username
         ? t(
-            'olm~User "{{user}}" does not have permissions to patch resource InstallPlans in API group "{{apiGroup}}" in the namespace "{{namespace}}."',
+            'User "{{user}}" does not have permissions to patch resource InstallPlans in API group "{{apiGroup}}" in the namespace "{{namespace}}."',
             { user: username, apiGroup, namespace: installPlan.metadata.namespace },
           )
         : t(
-            'olm~User does not have permissions to patch resource InstallPlans in API group "{{apiGroup}}" in the namespace "{{namespace}}."',
+            'User does not have permissions to patch resource InstallPlans in API group "{{apiGroup}}" in the namespace "{{namespace}}."',
             { apiGroup, namespace: installPlan.metadata.namespace },
           )}
     </Alert>
@@ -324,7 +324,7 @@ export const InstallPlanDetails: FC<InstallPlanDetailsProps> = ({ obj }) => {
           <InstallPlanHint
             title={t('Review manual InstallPlan')}
             body={t(
-              'olm~Inspect the requirements for the components specified in this InstallPlan before approving.',
+              'Inspect the requirements for the components specified in this InstallPlan before approving.',
             )}
             footer={
               <Link

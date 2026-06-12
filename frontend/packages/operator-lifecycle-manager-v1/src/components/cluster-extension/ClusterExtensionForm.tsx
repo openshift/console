@@ -442,7 +442,7 @@ const ClusterExtensionForm: FC<ClusterExtensionFormProps> = ({ formData = {}, on
             <HelperText>
               <HelperTextItem>
                 {t(
-                  'olm-v1~Namespace for the operator controller, manifest, etc. A dedicated operator namespace is recommended.',
+                  'Namespace for the operator controller, manifest, etc. A dedicated operator namespace is recommended.',
                 )}
               </HelperTextItem>
             </HelperText>
@@ -529,7 +529,7 @@ const ClusterExtensionForm: FC<ClusterExtensionFormProps> = ({ formData = {}, on
             <HelperText>
               <HelperTextItem>
                 {t(
-                  'olm-v1~Service account must be in the selected namespace. A dedicated service account for the operator is recommended.',
+                  'Service account must be in the selected namespace. A dedicated service account for the operator is recommended.',
                 )}
               </HelperTextItem>
             </HelperText>

@@ -85,7 +85,7 @@ const HPADetailsForm: FC = () => {
           }
           isInline
           title={t(
-            'devconsole~Note: Some fields may not be represented in this form view. Please select "YAML view" for full control.',
+            'Note: Some fields may not be represented in this form view. Please select "YAML view" for full control.',
           )}
           variant="info"
         />

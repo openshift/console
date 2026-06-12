@@ -82,7 +82,7 @@ const ConfigureClusterUpstreamModal = (props: ConfigureClusterUpstreamModalProps
       <ModalBody>
         <Content component={ContentVariants.p}>
           {t(
-            'public~Select a configuration to receive updates. Updates can be configured to receive information from Red Hat or a custom update service.',
+            'Select a configuration to receive updates. Updates can be configured to receive information from Red Hat or a custom update service.',
           )}
         </Content>
         {!isManaged() && !isUpstream() && (

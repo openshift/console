@@ -167,7 +167,7 @@ const MachineConfigPoolCounts: FC<MachineConfigPoolCountsProps> = ({ obj }) => {
           <DescriptionListDescription>
             <Tooltip
               content={t(
-                'public~Total number of machines targeted by the pool that have the CurrentMachineConfig as their config.',
+                'Total number of machines targeted by the pool that have the CurrentMachineConfig as their config.',
               )}
             >
               <span>
@@ -182,7 +182,7 @@ const MachineConfigPoolCounts: FC<MachineConfigPoolCountsProps> = ({ obj }) => {
           <DescriptionListDescription>
             <Tooltip
               content={t(
-                'public~Total number of unavailable (non-ready) machines targeted by the pool. A node is marked unavailable if it is in updating state or NodeReady condition is false.',
+                'Total number of unavailable (non-ready) machines targeted by the pool. A node is marked unavailable if it is in updating state or NodeReady condition is false.',
               )}
             >
               <span>

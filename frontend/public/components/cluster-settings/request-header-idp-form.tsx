@@ -132,7 +132,7 @@ export const AddRequestHeaderPage = () => {
       <PageHeading
         title={title}
         helpText={t(
-          'public~Use request header to identify users from request header values. It is typically used in combination with an authenticating proxy, which sets the request header value.',
+          'Use request header to identify users from request header values. It is typically used in combination with an authenticating proxy, which sets the request header value.',
         )}
       />
       <PaneBody>
@@ -157,7 +157,7 @@ export const AddRequestHeaderPage = () => {
             </span>
             <div className="help-block" id="challenge-url-help">
               {t(
-                'public~The URL to redirect unauthenticated requests from OAuth clients which expect interactive logins.',
+                'The URL to redirect unauthenticated requests from OAuth clients which expect interactive logins.',
               )}
             </div>
           </div>
@@ -175,7 +175,7 @@ export const AddRequestHeaderPage = () => {
             </span>
             <div className="help-block" id="login-url-help">
               {t(
-                'public~The URL to redirect unauthenticated requests from OAuth clients which expect WWW-Authenticate challenges.',
+                'The URL to redirect unauthenticated requests from OAuth clients which expect WWW-Authenticate challenges.',
               )}
             </div>
           </div>

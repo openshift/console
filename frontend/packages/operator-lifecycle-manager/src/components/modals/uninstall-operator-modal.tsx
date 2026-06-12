@@ -308,12 +308,12 @@ export const UninstallOperatorModal: FC<UninstallOperatorModalProps> = ({
           <>
             {' '}
             {t(
-              'olm~Select the checkbox below to also remove all Operands associated with this Operator.',
+              'Select the checkbox below to also remove all Operands associated with this Operator.',
             )}
           </>
         )}{' '}
         {t(
-          'olm~If your Operator configured off-cluster resources, these will continue to run and require manual cleanup.',
+          'If your Operator configured off-cluster resources, these will continue to run and require manual cleanup.',
         )}
       </p>
       {removePlugins && (
@@ -475,7 +475,7 @@ const OperandDeleteProgress: FC<{
       <div className="co-alert--margin-top">
         <p>
           {t(
-            'olm~The operands have been marked for deletion and are being removed. Canceling this operation will leave the Operator installed though its operand instances will continue to be deleted.',
+            'The operands have been marked for deletion and are being removed. Canceling this operation will leave the Operator installed though its operand instances will continue to be deleted.',
           )}
         </p>
       </div>
@@ -491,7 +491,7 @@ const OperandsLoadedErrorAlert: FC<{ operandsLoadedErrorMessage: string }> = ({
     <Alert variant="warning" className="co-alert" title={t('Cannot load Operands')} isInline>
       <p>
         {t(
-          'olm~There was an error loading operands for this operator. Operands will need to be deleted manually.',
+          'There was an error loading operands for this operator. Operands will need to be deleted manually.',
         )}
       </p>
       <p>{operandsLoadedErrorMessage}</p>
@@ -544,7 +544,7 @@ const OperandDeletionErrorAlert: FC<{
     <Alert variant="danger" className="co-alert" title={t('Error deleting Operands')} isInline>
       <p>
         {t(
-          'olm~There were errors deleting the following Operands, they will need to be deleted manually:',
+          'There were errors deleting the following Operands, they will need to be deleted manually:',
         )}
       </p>
       <OperandErrorList

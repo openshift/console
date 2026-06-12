@@ -238,7 +238,7 @@ const useNodesColumns = (
                 modifier: 'nowrap',
                 info: {
                   tooltip: t(
-                    'console-app~This count is based on your access permissions and might not include all virtual machines.',
+                    'This count is based on your access permissions and might not include all virtual machines.',
                   ),
                   tooltipProps: {
                     isContentLeftAligned: true,

@@ -91,7 +91,7 @@ const JarSection: FC = () => {
         name="fileUpload.javaArgs"
         label={t('Optional Java arguments')}
         helpText={t(
-          'devconsole~Optional Java arguments are saved as JAVA_ARGS environment variable to customize your application.',
+          'Optional Java arguments are saved as JAVA_ARGS environment variable to customize your application.',
         )}
         data-test-id="upload-jar-form-java-args"
         placeholder={t('JAVA_ARGS')}

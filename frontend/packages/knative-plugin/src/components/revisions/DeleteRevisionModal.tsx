@@ -45,9 +45,7 @@ const DeleteRevisionModal: FC<Props> = (props) => {
                 isInline
                 className="co-alert"
                 variant="custom"
-                title={t(
-                  'knative-plugin~Update the traffic distribution among the remaining Revisions',
-                )}
+                title={t('Update the traffic distribution among the remaining Revisions')}
               />
               <TrafficSplittingFields {...props} />
             </>

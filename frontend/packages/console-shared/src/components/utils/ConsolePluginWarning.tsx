@@ -15,7 +15,7 @@ export const ConsolePluginWarning: FC<ConsolePluginWarningProps> = ({
       <Alert variant="warning" isInline title={t('Enabling console plugin')}>
         <p>
           {t(
-            'console-shared~This console plugin will be able to provide a custom interface and run any Kubernetes command as the logged in user. Make sure you trust it before enabling.',
+            'This console plugin will be able to provide a custom interface and run any Kubernetes command as the logged in user. Make sure you trust it before enabling.',
           )}
         </p>
       </Alert>

@@ -71,7 +71,7 @@ export const ConfigureUpdateStrategy: FC<ConfigureUpdateStrategyProps> = ({
         checked={strategyType === 'RollingUpdate'}
         label={`${t('RollingUpdate')} (${t('default')})`}
         description={t(
-          'public~Execute a smooth roll out of the new revision, based on the settings below',
+          'Execute a smooth roll out of the new revision, based on the settings below',
         )}
         autoFocus={strategyType === 'RollingUpdate'}
         body={
@@ -101,7 +101,7 @@ export const ConfigureUpdateStrategy: FC<ConfigureUpdateStrategyProps> = ({
                 <HelperText>
                   <HelperTextItem id="input-max-unavailable-help">
                     {t(
-                      'public~Percentage of total number of pods or the maximum number ' +
+                      'Percentage of total number of pods or the maximum number ' +
                         'of pods that can be unavailable during the update(optional)',
                     )}
                   </HelperTextItem>
@@ -134,7 +134,7 @@ export const ConfigureUpdateStrategy: FC<ConfigureUpdateStrategyProps> = ({
                 <HelperText>
                   <HelperTextItem id="input-max-surge-help">
                     {t(
-                      'public~Percentage of total number of pods or the maximum number ' +
+                      'Percentage of total number of pods or the maximum number ' +
                         'of pods that can be scheduled above the original number of pods(optional)',
                     )}
                   </HelperTextItem>

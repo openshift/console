@@ -38,7 +38,7 @@ const ImportSampleForm: FC<Props> = ({
             name="name"
             label={t('Name')}
             helpText={t(
-              'devconsole~A unique name given to the component that will be used to name associated resources.',
+              'A unique name given to the component that will be used to name associated resources.',
             )}
             data-test-id="application-form-app-name"
             required

@@ -160,7 +160,7 @@ export const AddOpenIDIDPPage = () => {
       <PageHeading
         title={title}
         helpText={t(
-          'public~Integrate with an OpenID Connect identity provider using an Authorization Code Flow.',
+          'Integrate with an OpenID Connect identity provider using an Authorization Code Flow.',
         )}
       />
       <PaneBody>
@@ -213,7 +213,7 @@ export const AddOpenIDIDPPage = () => {
             </span>
             <div className="help-block" id="issuer-help">
               {t(
-                'public~The URL that the OpenID provider asserts as its issuer identifier. It must use the https scheme with no URL query parameters or fragment.',
+                'The URL that the OpenID provider asserts as its issuer identifier. It must use the https scheme with no URL query parameters or fragment.',
               )}
             </div>
           </div>
@@ -224,7 +224,7 @@ export const AddOpenIDIDPPage = () => {
             </Title>
             <p>
               {t(
-                'public~Claims map metadata from the OpenID provider to an OpenShift user. The first non-empty claim is used.',
+                'Claims map metadata from the OpenID provider to an OpenShift user. The first non-empty claim is used.',
               )}
             </p>
             <ListInput
@@ -239,18 +239,14 @@ export const AddOpenIDIDPPage = () => {
               id="openid-claims-name"
               initialValues={claimNames}
               onChange={(c: string[]) => setClaimNames(c)}
-              helpText={t(
-                'public~The list of claims whose values should be used as the display name.',
-              )}
+              helpText={t('The list of claims whose values should be used as the display name.')}
             />
             <ListInput
               label={t('Email')}
               id="openid-claims-email"
               initialValues={claimEmails}
               onChange={(c: string[]) => setClaimEmails(c)}
-              helpText={t(
-                'public~The list of claims whose values should be used as the email address.',
-              )}
+              helpText={t('The list of claims whose values should be used as the email address.')}
             />
           </div>
           <div className="co-form-section__separator" />

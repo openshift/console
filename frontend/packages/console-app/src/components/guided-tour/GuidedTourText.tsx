@@ -11,7 +11,7 @@ const HelpTourText: FC = () => {
   return (
     <>
       {t(
-        'console-app~Access our new quick starts where you can learn more about creating or deploying an application using OpenShift Developer Console. You can also restart this tour anytime here.',
+        'Access our new quick starts where you can learn more about creating or deploying an application using OpenShift Developer Console. You can also restart this tour anytime here.',
       )}
     </>
   );
@@ -24,7 +24,7 @@ const UserPrefrencesTourText: FC = () => {
   return (
     <>
       {t(
-        'console-app~Set your individual console preferences including default views, language, import settings, and more.',
+        'Set your individual console preferences including default views, language, import settings, and more.',
       )}
     </>
   );

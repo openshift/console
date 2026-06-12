@@ -239,7 +239,7 @@ export const ServiceLevelText: FC<ServiceLevelTextProps> = ({ clusterID, inline 
       {!inline && !level ? (
         <FieldLevelHelp>
           {t(
-            'public~API failed to return the Service Level Agreement setting for this cluster. Check again later.',
+            'API failed to return the Service Level Agreement setting for this cluster. Check again later.',
           )}
         </FieldLevelHelp>
       ) : null}
@@ -311,7 +311,7 @@ export const ServiceLevelNotification: FC<{
       <NotificationDrawerListItemBody>
         <>
           {`${notificationStart} ${t(
-            'public~For continued support, upgrade your cluster or transfer cluster ownership to an account with an active subscription.',
+            'For continued support, upgrade your cluster or transfer cluster ownership to an account with an active subscription.',
           )}`}{' '}
           <ExternalLink href={getOCMLink(clusterID)}>{t('Get support')}</ExternalLink>
         </>

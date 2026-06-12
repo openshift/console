@@ -59,7 +59,7 @@ export const useCustomNodeActions = ({
           isDisabled={inProgress}
           data-test="bulk-mark-schedulable"
           description={t(
-            'console-app~Applies to {{nodeCount}} selected nodes that are currently unschedulable.',
+            'Applies to {{nodeCount}} selected nodes that are currently unschedulable.',
             { nodeCount: unschedulableCount },
           )}
         >
@@ -76,7 +76,7 @@ export const useCustomNodeActions = ({
           isDisabled={inProgress}
           data-test="bulk-mark-unschedulable"
           description={t(
-            'console-app~Applies to {{nodeCount}} selected nodes that are currently schedulable.',
+            'Applies to {{nodeCount}} selected nodes that are currently schedulable.',
             { nodeCount: schedulableCount },
           )}
         >

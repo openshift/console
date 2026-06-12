@@ -15,9 +15,7 @@ const RecreateStrategy: FC<StrategyFieldProps> = ({ resourceType, resourceObj })
         style={{ maxWidth: 'unset' }}
         label={t('Timeout')}
         type={TextInputTypes.number}
-        helpText={t(
-          'devconsole~The number of seconds to wait for a pod to scale up before giving up',
-        )}
+        helpText={t('The number of seconds to wait for a pod to scale up before giving up')}
       />
       <AdvancedStrategyOptions dataAttribute="recreateParams" resourceObj={resourceObj} />
     </div>

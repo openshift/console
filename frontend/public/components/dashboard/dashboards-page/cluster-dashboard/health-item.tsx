@@ -82,9 +82,7 @@ const OperatorsPopup: FC<OperatorsPopupProps> = ({ resources, operatorSubsystems
   return (
     <Stack hasGutter>
       <StackItem>
-        {t(
-          'public~Operators create, configure, and manage applications by extending the Kubernetes API.',
-        )}
+        {t('Operators create, configure, and manage applications by extending the Kubernetes API.')}
       </StackItem>
       {sections}
     </Stack>

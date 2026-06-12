@@ -192,9 +192,7 @@ export const SyncedEditorField: FC<SyncedEditorFieldProps> = ({
       {disabledFormAlert && (
         <Alert
           variant="custom"
-          title={t(
-            'console-shared~Form view is disabled for this chart because the schema is not available',
-          )}
+          title={t('Form view is disabled for this chart because the schema is not available')}
           actionClose={<AlertActionCloseButton onClose={() => setDisabledFormAlert(false)} />}
           isInline
         />

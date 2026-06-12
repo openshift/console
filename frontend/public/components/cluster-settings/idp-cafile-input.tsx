@@ -25,7 +25,7 @@ export const IDPCAFileInput: FC<IDPCAFileInputProps> = ({
         label={t('CA file')}
         filenamePlaceholder={t('PEM-encoded CA bundle')}
         textareaFieldHelpText={t(
-          'public~PEM-encoded CA certificate file used to verify the remote server certificate.',
+          'PEM-encoded CA certificate file used to verify the remote server certificate.',
         )}
         isRequired={isRequired}
       />

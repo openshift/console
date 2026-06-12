@@ -172,7 +172,7 @@ const SecureRouteFields: FC = () => {
     <div className="pf-v6-c-form">
       <span>
         {t(
-          'devconsole~The defaults below will only apply to the Import from Git and Deploy Image forms when creating Deployments or Deployment Configs.',
+          'The defaults below will only apply to the Import from Git and Deploy Image forms when creating Deployments or Deployment Configs.',
         )}
       </span>
       <Checkbox
@@ -184,7 +184,7 @@ const SecureRouteFields: FC = () => {
         onChange={onSecureRouteChecked}
         aria-label={t('Secure route')}
         description={t(
-          'devconsole~Routes can be secured using several TLS termination types for serving certificates.',
+          'Routes can be secured using several TLS termination types for serving certificates.',
         )}
         isDisabled={!preferredRoutingOptionsLoaded}
         className="odc-secure-route-fields__secure-route"

@@ -74,7 +74,7 @@ const AddBareMetalHostForm: FC<AddBareMetalHostFormProps> = ({
         name="bootMACAddress"
         label={t('Boot MAC Address')}
         helpText={t(
-          'metal3-plugin~The MAC address of the NIC connected to the network that will be used to provision the host.',
+          'The MAC address of the NIC connected to the network that will be used to provision the host.',
         )}
         required
       />
@@ -83,7 +83,7 @@ const AddBareMetalHostForm: FC<AddBareMetalHostFormProps> = ({
         name="enablePowerManagement"
         label={t('Enable power management')}
         helpText={t(
-          'metal3-plugin~Provide credentials for the hosts baseboard management controller (BMC) device to enable OpenShift to control its power state. This is required for automatic machine health check remediation.',
+          'Provide credentials for the hosts baseboard management controller (BMC) device to enable OpenShift to control its power state. This is required for automatic machine health check remediation.',
         )}
       />
       {values.enablePowerManagement && (
@@ -94,7 +94,7 @@ const AddBareMetalHostForm: FC<AddBareMetalHostFormProps> = ({
             name="BMCAddress"
             label={t('Baseboard Management Console (BMC) Address')}
             helpText={t(
-              'metal3-plugin~The URL for communicating with the hosts baseboard management controller device.',
+              'The URL for communicating with the hosts baseboard management controller device.',
             )}
             required
           />
@@ -103,7 +103,7 @@ const AddBareMetalHostForm: FC<AddBareMetalHostFormProps> = ({
             name="disableCertificateVerification"
             label={t('Disable Certificate Verification')}
             helpText={t(
-              'metal3-plugin~Disable verification of server certificates when using HTTPS to connect to the BMC. This is required when the server certificate is self-signed, but is insecure because it allows a man-in-the-middle to intercept the connection.',
+              'Disable verification of server certificates when using HTTPS to connect to the BMC. This is required when the server certificate is self-signed, but is insecure because it allows a man-in-the-middle to intercept the connection.',
             )}
           />
           <InputField

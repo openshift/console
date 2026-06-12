@@ -31,7 +31,7 @@ const ConfigMapFormFields: FC = () => {
         label={t('Immutable')}
         data-test="configmap-immutable"
         helpText={t(
-          'public~Immutable, if set to true, ensures that data stored in the ConfigMap cannot be updated',
+          'Immutable, if set to true, ensures that data stored in the ConfigMap cannot be updated',
         )}
       />
 

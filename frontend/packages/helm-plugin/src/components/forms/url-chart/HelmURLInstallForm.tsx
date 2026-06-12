@@ -97,7 +97,7 @@ const HelmURLInstallForm: FC<FormikProps<HelmURLInstallFormData> & HelmURLInstal
       {chartHasValues && (
         <>
           {t(
-            'helm-plugin~Complete the form to create a Helm release. The Helm chart authors might have provided some default values.',
+            'Complete the form to create a Helm release. The Helm chart authors might have provided some default values.',
           )}{' '}
           &nbsp;
         </>
@@ -158,7 +158,7 @@ const HelmURLInstallForm: FC<FormikProps<HelmURLInstallFormData> & HelmURLInstal
                 autocompleteFilter={autocompleteFilter}
                 disabled
                 helpText={t(
-                  'helm-plugin~A secret with "username" and "password" keys for OCI/HTTP(S) authentication',
+                  'A secret with "username" and "password" keys for OCI/HTTP(S) authentication',
                 )}
               />
             </GridItem>
@@ -169,7 +169,7 @@ const HelmURLInstallForm: FC<FormikProps<HelmURLInstallFormData> & HelmURLInstal
             <Alert
               variant="info"
               title={t(
-                "helm-plugin~Helm release is not configurable since the Helm Chart doesn't define any values.",
+                "Helm release is not configurable since the Helm Chart doesn't define any values.",
               )}
               isInline
             />

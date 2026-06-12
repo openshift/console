@@ -52,7 +52,7 @@ export const BasicAuthSubform: FC<BasicAuthSubformProps> = ({ onChange, stringDa
           <HelperText>
             <HelperTextItem>
               {t(
-                'public~Password or token for Git authentication. Required if a ca.crt or .gitconfig file is not specified.',
+                'Password or token for Git authentication. Required if a ca.crt or .gitconfig file is not specified.',
               )}
             </HelperTextItem>
           </HelperText>

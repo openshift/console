@@ -192,7 +192,7 @@ const PDBForm: FC<PodDisruptionBudgetFormProps> = ({
                   <Title headingLevel="h3">{t('Selector')}</Title>
                   <Content component="p" className="pdb-form-popover__description">
                     {t(
-                      'console-app~Label query over pods whose evictions are managed by the disruption budget. Anull selector will match no pods, while an empty ({}) selector will select all pods within the namespace.',
+                      'Label query over pods whose evictions are managed by the disruption budget. Anull selector will match no pods, while an empty ({}) selector will select all pods within the namespace.',
                     )}
                   </Content>
                 </FieldLevelHelp>
@@ -211,9 +211,7 @@ const PDBForm: FC<PodDisruptionBudgetFormProps> = ({
                   <FormHelperText>
                     <HelperText>
                       <HelperTextItem variant="warning">
-                        {t(
-                          'console-app~Resource is already covered by another PodDisruptionBudget',
-                        )}
+                        {t('Resource is already covered by another PodDisruptionBudget')}
                       </HelperTextItem>
                     </HelperText>
                   </FormHelperText>
@@ -288,7 +286,7 @@ const PDBForm: FC<PodDisruptionBudgetFormProps> = ({
                   isInline
                 >
                   {t(
-                    'console-app~A maxUnavailable of 0% or 0 or a minAvailable of 100% or greater than or equal to the number of replicas is permitted but can block nodes from being drained.',
+                    'A maxUnavailable of 0% or 0 or a minAvailable of 100% or greater than or equal to the number of replicas is permitted but can block nodes from being drained.',
                   )}
                 </Alert>
               </FormAlert>

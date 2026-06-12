@@ -133,9 +133,7 @@ const CloudShellTerminal: FC<CloudShellTerminalInternalProps & WithUserPreferenc
   // initialize the terminal once it is Running
   useEffect(() => {
     let unmounted = false;
-    const defaultError = t(
-      'webterminal-plugin~Failed to connect to your OpenShift command line terminal',
-    );
+    const defaultError = t('Failed to connect to your OpenShift command line terminal');
 
     if (workspacePhase === CLOUD_SHELL_PHASE.RUNNING) {
       initTerminal(username, workspaceName, workspaceNamespace)

@@ -114,7 +114,7 @@ const BuildStrategySelector: FC<BuildStrategySelectorProps> = ({ namespace, form
         ariaLabel={t('Cluster Build Strategy')}
         placeholderText={t('Select Build Strategy')}
         helpText={t(
-          'shipwright-plugin~Cluster Build Strategies define a shared group of steps, needed to fullfil the application build process.',
+          'Cluster Build Strategies define a shared group of steps, needed to fullfil the application build process.',
         )}
         options={clusterBuildStrategyOptions}
         toggleOnSelection

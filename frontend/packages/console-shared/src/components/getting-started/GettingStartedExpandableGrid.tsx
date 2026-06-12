@@ -39,9 +39,7 @@ const TitlePopoverContent = () => {
 
   return (
     <span className="ocs-getting-started-expandable-grid__tooltip">
-      {t(
-        'console-shared~Use our collection of resources to help you get started with the Console.',
-      )}
+      {t('Use our collection of resources to help you get started with the Console.')}
     </span>
   );
 };

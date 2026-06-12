@@ -252,7 +252,7 @@ export const PodsOverviewContent: FC<PodsOverviewContentProps> = ({
       }
     >
       {t(
-        'console-shared~Waiting for the first build to run successfully. You may temporarily see "ImagePullBackOff" and "ErrImagePull" errors while waiting.',
+        'Waiting for the first build to run successfully. You may temporarily see "ImagePullBackOff" and "ErrImagePull" errors while waiting.',
       )}
     </Alert>
   ) : null;

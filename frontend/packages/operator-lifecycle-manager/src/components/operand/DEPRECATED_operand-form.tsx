@@ -1114,7 +1114,7 @@ export const DEPRECATED_CreateOperandForm: FC<OperandFormProps> = ({
             className="co-alert co-break-word"
             variant="info"
             title={t(
-              'olm~Some fields might not be displayed in this form. Select "YAML view" to edit all fields.',
+              'Some fields might not be displayed in this form. Select "YAML view" to edit all fields.',
             )}
           />
           <form className="co-dynamic-form" onSubmit={submit}>

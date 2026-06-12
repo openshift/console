@@ -97,7 +97,7 @@ export const useDeleteConnectorAction = (
   const openConfirm = useWarningModal({
     title: t('Delete Connector?'),
     children: t(
-      'topology~Deleting the visual connector removes the `connects-to` annotation from the resources. Are you sure you want to delete the visual connector?',
+      'Deleting the visual connector removes the `connects-to` annotation from the resources. Are you sure you want to delete the visual connector?',
     ),
     confirmButtonLabel: t('Delete'),
     confirmButtonVariant: ButtonVariant.danger,

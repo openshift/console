@@ -140,7 +140,7 @@ export const useCSPViolationDetector = () => {
             variant: AlertVariant.warning,
             title: t('Content Security Policy violation in Console plugin'),
             content: t(
-              "public~{{pluginName}} might have violated the Console Content Security Policy. Refer to the browser's console logs for details.",
+              "{{pluginName}} might have violated the Console Content Security Policy. Refer to the browser's console logs for details.",
               {
                 pluginName,
               },

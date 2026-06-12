@@ -117,7 +117,7 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
       if (!desiredRecommendedUpdate && !desiredNotRecommendedUpdate) {
         setError(
           t(
-            'public~Version {{desiredVersion}} not found among the supported updates. Select another version.',
+            'Version {{desiredVersion}} not found among the supported updates. Select another version.',
             { desiredVersion },
           ),
         );
@@ -234,7 +234,7 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
                   {t('Include versions with known issues')}
                   <FieldLevelHelp>
                     {t(
-                      'public~These versions are supported, but include known issues. Review the known issues before updating.',
+                      'These versions are supported, but include known issues. Review the known issues before updating.',
                     )}
                   </FieldLevelHelp>
                 </>
@@ -248,7 +248,7 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
                 className="pf-v6-u-mt-sm"
                 isInline
                 title={t(
-                  'public~Updating this cluster to {{desiredVersion}} is supported, but includes known issues.  Review the known issues before updating.',
+                  'Updating this cluster to {{desiredVersion}} is supported, but includes known issues.  Review the known issues before updating.',
                   { desiredVersion: desiredNotRecommendedUpdate.release.version },
                 )}
                 variant="info"
@@ -275,7 +275,7 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
                 {t('Update options')}
                 <FieldLevelHelp>
                   {t(
-                    'public~Full cluster update allows you to update all your Nodes, but takes longer. Control plane only update allows you to pause worker and custom pool Nodes to accommodate your maintenance schedule.',
+                    'Full cluster update allows you to update all your Nodes, but takes longer. Control plane only update allows you to pause worker and custom pool Nodes to accommodate your maintenance schedule.',
                   )}
                 </FieldLevelHelp>
               </>
@@ -290,7 +290,7 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
               id={upgradeTypes.Full}
               value={upgradeTypes.Full}
               description={t(
-                'public~{{master}}, {{worker}}, and custom pool {{resource}} are updated concurrently. This might take longer, so make sure to allocate enough time for maintenance.',
+                '{{master}}, {{worker}}, and custom pool {{resource}} are updated concurrently. This might take longer, so make sure to allocate enough time for maintenance.',
                 {
                   master: NodeTypeNames.Master,
                   worker: NodeTypeNames.Worker,
@@ -307,7 +307,7 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
                     isInline
                     isPlain
                     title={t(
-                      'public~Paused {{worker}} or custom pool {{resource}} updates will be resumed. If you want to update only the control plane, select "Control plane only update" below.',
+                      'Paused {{worker}} or custom pool {{resource}} updates will be resumed. If you want to update only the control plane, select "Control plane only update" below.',
                       { worker: NodeTypeNames.Worker, resource: NodeModel.label },
                     )}
                     data-test="update-cluster-modal-paused-nodes-warning"
@@ -324,7 +324,7 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
               id={upgradeTypes.Partial}
               value={upgradeTypes.Partial}
               description={t(
-                'public~Pause {{worker}} or custom pool {{resource}} updates to accommodate your maintenance schedule.',
+                'Pause {{worker}} or custom pool {{resource}} updates to accommodate your maintenance schedule.',
                 { worker: NodeTypeNames.Worker, resource: NodeModel.label },
               )}
               className="pf-v6-u-mb-md"

@@ -44,7 +44,7 @@ export const MarkAsSchedulablePopover: FC<NodePopoverContentProps<NodeStatusReso
       <Stack hasGutter>
         <StackItem>
           {t(
-            "console-app~No new Pods or workloads will be placed on this Node until it's marked as schedulable.",
+            "No new Pods or workloads will be placed on this Node until it's marked as schedulable.",
           )}
         </StackItem>
         <StackItem>

@@ -58,7 +58,7 @@ export const CreateOperand: FC<CreateOperandProps> = ({
   );
 
   const formHelpText = t(
-    'olm~Create by completing the form. Default values may be provided by the Operator authors.',
+    'Create by completing the form. Default values may be provided by the Operator authors.',
   );
 
   const [activePerspective] = useActivePerspective();
@@ -107,7 +107,7 @@ export const CreateOperand: FC<CreateOperandProps> = ({
         newMethod === EditorType.Form
           ? formHelpText
           : t(
-              'olm~Create by manually entering YAML or JSON definitions, or by dragging and dropping a file into the editor.',
+              'Create by manually entering YAML or JSON definitions, or by dragging and dropping a file into the editor.',
             ),
       );
     },

@@ -80,7 +80,7 @@ export const useRetryRolloutAction = (resource: DeploymentConfigKind): Action =>
       disabled: !canRetry,
       disabledTooltip: !canRetry
         ? t(
-            'console-app~This action is only enabled when the latest revision of the ReplicationController resource is in a failed state.',
+            'This action is only enabled when the latest revision of the ReplicationController resource is in a failed state.',
           )
         : undefined,
       accessReview: {

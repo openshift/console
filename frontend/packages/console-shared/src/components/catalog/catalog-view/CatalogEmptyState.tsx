@@ -25,7 +25,7 @@ export const CatalogEmptyState: FC<CatalogEmptyStateProps> = ({ onClear }) => {
     >
       <EmptyStateBody>
         {t(
-          'console-shared~No results match the filter criteria. Remove filters or clear all filters to show results.',
+          'No results match the filter criteria. Remove filters or clear all filters to show results.',
         )}
       </EmptyStateBody>
       <EmptyStateFooter>

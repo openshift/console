@@ -255,9 +255,7 @@ const ImageSearch: FC = () => {
         ref={inputRef}
         type={TextInputTypes.text}
         name="searchTerm"
-        placeholder={t(
-          'devconsole~docker.io/openshift/hello-openshift or quay.io/<username>/<image-name>',
-        )}
+        placeholder={t('docker.io/openshift/hello-openshift or quay.io/<username>/<image-name>')}
         helpText={helpText}
         helpTextInvalid={helpText}
         validated={validated}

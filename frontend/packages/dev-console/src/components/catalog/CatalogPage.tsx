@@ -50,7 +50,7 @@ const PageContents: FC = () => {
           enableDetailsPanel
           title={t('Software Catalog')}
           description={t(
-            'devconsole~Add shared applications, services, event sources, or source-to-image builders to your Project from the software catalog. Cluster administrators can customize the content made available in the catalog.',
+            'Add shared applications, services, event sources, or source-to-image builders to your Project from the software catalog. Cluster administrators can customize the content made available in the catalog.',
           )}
         />
       )}

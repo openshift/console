@@ -246,7 +246,7 @@ export const CreatePVCForm: FC<CreatePVCFormProps> = (props) => {
         )}
         <p className="help-block" id="label-selector-help">
           {t(
-            'public~PersistentVolume resources that match all label selectors will be considered for binding.',
+            'PersistentVolume resources that match all label selectors will be considered for binding.',
           )}
         </p>
       </div>

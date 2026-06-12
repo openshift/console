@@ -110,7 +110,7 @@ const BaseLabelsModal: FC<BaseLabelsModalProps> = ({
           {messageKey
             ? t(messageKey, messageVariables)
             : t(
-                'public~Labels help you organize and select resources. Adding labels below will let you query for objects that have similar, overlapping or dissimilar labels.',
+                'Labels help you organize and select resources. Adding labels below will let you query for objects that have similar, overlapping or dissimilar labels.',
               )}
         </Content>
         <Form id="labels-form" onSubmit={submit}>

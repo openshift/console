@@ -111,9 +111,7 @@ const ControlPlaneMachineSetCounts: FC<ControlPlaneMachineSetCountsProps> = ({ r
           <DescriptionListTerm>{t('Unavailable count')}</DescriptionListTerm>
           <DescriptionListDescription>
             <Tooltip
-              content={t(
-                'public~The number of unavailable replicas for this ControlPlaneMachineSet.',
-              )}
+              content={t('The number of unavailable replicas for this ControlPlaneMachineSet.')}
             >
               {unavailableReplicas ? (
                 <span>

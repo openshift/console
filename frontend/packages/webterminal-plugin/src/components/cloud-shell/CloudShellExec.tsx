@@ -170,10 +170,9 @@ const CloudShellExec: FC<CloudShellExecProps> = ({
           .then((cr) => {
             const stopReason = cr.metadata.annotations[CLOUD_SHELL_STOPPED_BY_ANNOTATION];
             if (stopReason) {
-              stoppedByError = t(
-                'webterminal-plugin~The terminal connection has closed due to {{reason}}.',
-                { reason: stopReason },
-              );
+              stoppedByError = t('The terminal connection has closed due to {{reason}}.', {
+                reason: stopReason,
+              });
             }
             setCustomResource(cr);
           })

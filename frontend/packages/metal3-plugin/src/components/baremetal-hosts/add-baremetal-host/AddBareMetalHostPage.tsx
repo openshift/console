@@ -19,9 +19,7 @@ const AddBareMetalHostPage: FC = () => {
       <DocumentTitle>{title}</DocumentTitle>
       <PageHeading
         title={title}
-        helpText={t(
-          'metal3-plugin~Expand the hardware inventory by registering a new Bare Metal Host.',
-        )}
+        helpText={t('Expand the hardware inventory by registering a new Bare Metal Host.')}
       />
       <PaneBody className="co-m-pane__form">
         <AddBareMetalHost namespace={namespace} name={name} enablePowerMgmt={enablePowerMgmt} />

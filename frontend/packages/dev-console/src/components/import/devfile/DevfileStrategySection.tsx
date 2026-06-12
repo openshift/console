@@ -89,7 +89,7 @@ const DevfileStrategySection: FC = () => {
       return t('Devfile not detected');
     }
     return t(
-      'devconsole~Allows the builds to use a different path to locate your Devfile, relative to the Context Dir field',
+      'Allows the builds to use a different path to locate your Devfile, relative to the Context Dir field',
     );
   }, [t, type, validated]);
 

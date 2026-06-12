@@ -32,9 +32,7 @@ const AdvancedRouteOptions: FC<AdvancedRouteOptionsProps> = ({ canCreateRoute, r
               <SelectorInputField
                 name="route.labels"
                 label={t('Labels')}
-                helpText={t(
-                  'devconsole~Additional labels which are only added to the Route resource.',
-                )}
+                helpText={t('Additional labels which are only added to the Route resource.')}
                 placeholder="app.io/type=frontend"
                 dataTest="route-labels"
               />
@@ -44,9 +42,7 @@ const AdvancedRouteOptions: FC<AdvancedRouteOptionsProps> = ({ canCreateRoute, r
           <Alert
             variant="info"
             isInline
-            title={t(
-              'devconsole~Select the checkbox "Create a route" to edit advanced routing options',
-            )}
+            title={t('Select the checkbox "Create a route" to edit advanced routing options')}
           />
         )}
       </FormSection>

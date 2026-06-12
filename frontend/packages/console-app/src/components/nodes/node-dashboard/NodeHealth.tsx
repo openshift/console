@@ -67,12 +67,9 @@ export const HealthChecksPopup: FC<HealthChecksPopupProps> = ({
   return (
     <Stack hasGutter>
       <StackItem>
-        {t(
-          'console-app~{{ machineHealthCheckLabelPlural }} automatically remediate node health issues.',
-          {
-            machineHealthCheckLabelPlural: MachineHealthCheckModel.labelPlural,
-          },
-        )}
+        {t('{{ machineHealthCheckLabelPlural }} automatically remediate node health issues.', {
+          machineHealthCheckLabelPlural: MachineHealthCheckModel.labelPlural,
+        })}
       </StackItem>
       {!!machineHealthChecks?.length && (
         <StackItem>
@@ -128,12 +125,9 @@ export const HealthChecksPopup: FC<HealthChecksPopupProps> = ({
             title="Multiple resources"
             className="co-node-health__popup-alert"
           >
-            {t(
-              'console-app~Only one {{ machineHealthCheckLabel }} resource should match this node.',
-              {
-                machineHealthCheckLabel: MachineHealthCheckModel.label,
-              },
-            )}
+            {t('Only one {{ machineHealthCheckLabel }} resource should match this node.', {
+              machineHealthCheckLabel: MachineHealthCheckModel.label,
+            })}
           </Alert>
         </StackItem>
       )}

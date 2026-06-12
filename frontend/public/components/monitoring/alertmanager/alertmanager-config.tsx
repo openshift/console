@@ -502,7 +502,7 @@ const ReceiversEmptyState: FC<{}> = () => {
     >
       <EmptyStateBody>
         {t(
-          'public~Create a receiver to get OpenShift alerts through other services such as email or a chat platform. The first receiver you create will become the default receiver and will automatically receive all alerts from this cluster. Subsequent receivers can have specific sets of alerts routed to them.',
+          'Create a receiver to get OpenShift alerts through other services such as email or a chat platform. The first receiver you create will become the default receiver and will automatically receive all alerts from this cluster. Subsequent receivers can have specific sets of alerts routed to them.',
         )}
       </EmptyStateBody>
     </EmptyState>
@@ -538,7 +538,7 @@ const Receivers: FC<ReceiversProps> = ({ secret, config }) => {
         >
           <div className="co-pre-line">
             {t(
-              'public~Configure the {{receiverString}} to ensure that you learn about important issues with your cluster.',
+              'Configure the {{receiverString}} to ensure that you learn about important issues with your cluster.',
               { receiverString },
             )}
           </div>

@@ -61,9 +61,7 @@ const ImportStrategySection: FC<ImportStrategySectionProps> = ({ builderImages }
       [ImportStrategy.DEVFILE]: t('The Devfile at {{filePath}} is recommended.', {
         filePath: devfile?.devfilePath,
       }),
-      [ImportStrategy.SERVERLESS_FUNCTION]: t(
-        'devconsole~The Serverless function strategy is recommended.',
-      ),
+      [ImportStrategy.SERVERLESS_FUNCTION]: t('The Serverless function strategy is recommended.'),
       [ImportStrategy.DOCKERFILE]: t('The Dockerfile at {{filePath}} is recommended.', {
         filePath: docker?.dockerfilePath,
       }),

@@ -89,9 +89,7 @@ const ParameterSection: FC<ParametersSectionProps> = () => {
           <ParameterFields params={requiredParams} />
         ) : (
           <span className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle">
-            {t(
-              'shipwright-plugin~No required parameters are associated with the selected build strategy.',
-            )}
+            {t('No required parameters are associated with the selected build strategy.')}
           </span>
         )}
         {optionalParams.length > 0 && (

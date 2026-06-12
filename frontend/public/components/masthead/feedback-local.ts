@@ -11,13 +11,13 @@ export function useFeedbackLocal(reportBug: ReturnType<typeof getReportBugLink>)
     cancel: t('Cancel'),
     close: t('Close'),
     describeBug: t(
-      'public~Describe the bug you encountered. For urgent issues, open a support case instead.',
+      'Describe the bug you encountered. For urgent issues, open a support case instead.',
     ),
     describeBugUrgentCases: t(
-      'public~Describe the bug you encountered. For urgent issues, open a support case instead.',
+      'Describe the bug you encountered. For urgent issues, open a support case instead.',
     ),
     describeReportBug: t(
-      'public~Describe the bug you encountered. Include where it is located and what action caused it. If this issue is urgent or blocking your workflow,',
+      'Describe the bug you encountered. Include where it is located and what action caused it. If this issue is urgent or blocking your workflow,',
     ),
     directInfluence:
       'public~your feedback will directly influence the future of Red Hat’s products. Opt in below to hear about future research opportunities via email.',
@@ -29,15 +29,15 @@ export function useFeedbackLocal(reportBug: ReturnType<typeof getReportBugLink>)
     howIsConsoleExperience: t('What has your experience been like so far?'),
     joinMailingList: t('Join mailing list'),
     informDirectionDescription: t(
-      'public~By participating in feedback sessions, usability tests, and interviews with our',
+      'By participating in feedback sessions, usability tests, and interviews with our',
     ),
     informDirection: t('Inform the direction of Red Hat'),
     learnAboutResearchOpportunities: t(
-      'public~Learn about opportunities to share your feedback with our User Research Team.',
+      'Learn about opportunities to share your feedback with our User Research Team.',
     ),
     openSupportCase: reportBug.label,
     problemProcessingRequest: t(
-      'public~There was a problem processing the request. Try reloading the page. If the problem persists, contact',
+      'There was a problem processing the request. Try reloading the page. If the problem persists, contact',
     ),
     support: t('Support'),
     redHatSupport: t('Red Hat support'),
@@ -49,16 +49,16 @@ export function useFeedbackLocal(reportBug: ReturnType<typeof getReportBugLink>)
     somethingWentWrong: t('Something went wrong'),
     submitFeedback: t('"Submit feedback'),
     teamWillReviewBug: t(
-      'public~We appreciate your feedback and our team will review your report shortly',
+      'We appreciate your feedback and our team will review your report shortly',
     ),
     tellAboutExperience: t('Tell us about your experience'),
     thankYouForFeedback: t('Thank you, we appreciate your feedback.'),
     thankYouForInterest: t(
-      'public~Thank you for your interest in user research. You have been added to our mailing list.',
+      'Thank you for your interest in user research. You have been added to our mailing list.',
     ),
     userResearchTeam: t('User Research Team'),
     weNeverSharePersonalInformation: t(
-      'public~We never share your personal information, and you can opt out at any time.',
+      'We never share your personal information, and you can opt out at any time.',
     ),
   };
 }

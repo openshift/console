@@ -70,7 +70,7 @@ const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
             formValues={formValues}
             dispatchFormChange={dispatchFormChange}
             tooltip={t(
-              'public~Checking this box will write the API URL to the global section of the configuration file where it will become the default API URL for future Slack receivers.',
+              'Checking this box will write the API URL to the global section of the configuration file where it will become the default API URL for future Slack receivers.',
             )}
           />
         </GridItem>

@@ -14,7 +14,7 @@ const DevPerspectiveTourText: FC = () => {
   return (
     <>
       {t(
-        "devconsole~Get started with a tour of some of the key areas in OpenShift {{version}}'s Developer perspective that can help you complete workflows and be more productive.",
+        "Get started with a tour of some of the key areas in OpenShift {{version}}'s Developer perspective that can help you complete workflows and be more productive.",
         { version },
       )}
     </>
@@ -30,12 +30,12 @@ const PerspectiveSwitcherTourText: FC = () => {
       <p>{t('Switch between the Developer and Core platform perspectives.')}</p>
       <p>
         {t(
-          'devconsole~Use the Core platform perspective to manage workload storage, networking, cluster settings, and more. This may require additional user access.',
+          'Use the Core platform perspective to manage workload storage, networking, cluster settings, and more. This may require additional user access.',
         )}
       </p>
       <p>
         {t(
-          'devconsole~Use the Developer perspective to build applications and associated components and services, define how they work together, and monitor their health over time.',
+          'Use the Developer perspective to build applications and associated components and services, define how they work together, and monitor their health over time.',
         )}
       </p>
     </>
@@ -50,7 +50,7 @@ const WebTerminalGuidedTourText: FC = () => {
     <>
       <p>
         {t(
-          'devconsole~Use command line tools directly from the Console. CLIs are pre-installed and fully authenticated when you need them.',
+          'Use command line tools directly from the Console. CLIs are pre-installed and fully authenticated when you need them.',
         )}
       </p>
       <p>
@@ -71,12 +71,12 @@ const SearchTourText: FC = () => {
     <>
       <p>
         {t(
-          'devconsole~Search for resources in your Project by simply starting to type or scrolling through a list of existing resources.',
+          'Search for resources in your Project by simply starting to type or scrolling through a list of existing resources.',
         )}
       </p>
       <p>
         {t(
-          'devconsole~Add frequently accessed resources to your side navigation for quick access. Look for the',
+          'Add frequently accessed resources to your side navigation for quick access. Look for the',
         )}{' '}
         <span
           style={{

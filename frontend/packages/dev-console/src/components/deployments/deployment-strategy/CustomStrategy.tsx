@@ -29,7 +29,7 @@ const CustomStrategy: FC<StrategyFieldProps> = ({ resourceObj }) => {
         addLabel={t('Add another argument')}
         placeholder={t('Add argument')}
         helpText={t(
-          'devconsole~Enter the command to run inside the container. The command is considered successful if its exit code is 0.',
+          'Enter the command to run inside the container. The command is considered successful if its exit code is 0.',
         )}
       />
       <EnvironmentField

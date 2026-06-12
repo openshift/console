@@ -884,10 +884,11 @@ const APIResourceAccessReview: FC<APIResourceTabProps> = ({
         <p className="co-m-pane__explanation">
           {namespaced &&
             namespace &&
-            t(
-              'public~The following subjects can {{verb}} {{plural}} in namespace {{ namespace }}',
-              { verb, plural, namespace },
-            )}
+            t('The following subjects can {{verb}} {{plural}} in namespace {{ namespace }}', {
+              verb,
+              plural,
+              namespace,
+            })}
           {namespaced &&
             !namespace &&
             t('The following subjects can {{verb}} {{plural}} in all namespaces', {

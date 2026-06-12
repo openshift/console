@@ -103,7 +103,7 @@ const Lightspeed: FC = () => {
             </Title>
             <Content component="p" className="pf-v6-u-color-200 pf-v6-u-font-size-lg pf-v6-u-mb-md">
               {t(
-                "console-app~Unlock possibilities and enhance productivity with the AI-powered assistant's expert guidance in your OpenShift web console.",
+                "Unlock possibilities and enhance productivity with the AI-powered assistant's expert guidance in your OpenShift web console.",
               )}
             </Content>
           </StackItem>
@@ -116,13 +116,11 @@ const Lightspeed: FC = () => {
                 {t('Get fast answers to questions you have related to OpenShift')}
               </ListItem>
               <ListItem>
-                {t(
-                  "console-app~Quickly troubleshoot with OpenShift Lightspeed's extensive knowledge",
-                )}
+                {t("Quickly troubleshoot with OpenShift Lightspeed's extensive knowledge")}
               </ListItem>
               <ListItem>
                 {t(
-                  'console-app~Understand your cluster resources, such as the number of pods running on a particular namespace',
+                  'Understand your cluster resources, such as the number of pods running on a particular namespace',
                 )}
               </ListItem>
               <ListItem>
@@ -141,7 +139,7 @@ const Lightspeed: FC = () => {
               <Alert variant="info" isInline title={t('Must have administrator access')}>
                 <Content component="p">
                   {t(
-                    'console-app~Contact your administrator and ask them to install Red Hat OpenShift Lightspeed.',
+                    'Contact your administrator and ask them to install Red Hat OpenShift Lightspeed.',
                   )}
                 </Content>
               </Alert>

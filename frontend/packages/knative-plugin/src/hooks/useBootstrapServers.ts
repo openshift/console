@@ -39,12 +39,9 @@ export const useBootstrapServers = (namespace: string): [SelectInputOption[], st
           ];
       placeholder = t('Add bootstrap servers');
     } else if (isKafkasLoadError) {
-      placeholder = t(
-        'knative-plugin~{{loadErrorMessage}}. Try adding bootstrap servers manually.',
-        {
-          loadErrorMessage: `${kafkas.loadError.message}, ${kafkaconnections.loadError.message}`,
-        },
-      );
+      placeholder = t('{{loadErrorMessage}}. Try adding bootstrap servers manually.', {
+        loadErrorMessage: `${kafkas.loadError.message}, ${kafkaconnections.loadError.message}`,
+      });
     } else {
       bootstrapServersOptions = [{ value: t('Loading bootstrap servers...'), disabled: true }];
       placeholder = '...';

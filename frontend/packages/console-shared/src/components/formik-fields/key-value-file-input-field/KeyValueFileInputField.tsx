@@ -98,9 +98,7 @@ const KeyValueFileInputField: FC<KeyValueEntryFormProps & FieldProps> = ({
                     data-test={`value-${idx.toString()}`}
                     name={`${name}.${idx.toString()}.value`}
                     label={t('Value')}
-                    helpText={t(
-                      'console-shared~Drag and drop file with your value here or browse to upload it.',
-                    )}
+                    helpText={t('Drag and drop file with your value here or browse to upload it.')}
                     onChange={(fileData: string) => {
                       onChange && onChange(fileData, `${name}.${idx.toString()}`);
                     }}

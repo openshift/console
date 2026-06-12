@@ -43,7 +43,7 @@ const ServerlessFunctionSection = ({ builderImages }) => {
           } else {
             setHelpText(
               t(
-                'devconsole~Unsupported Runtime detected. Please update the Repository URL or change the Build Strategy to continue.',
+                'Unsupported Runtime detected. Please update the Repository URL or change the Build Strategy to continue.',
               ),
             );
           }

@@ -167,7 +167,7 @@ const TelemetryConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
       <FormSection title={t('Analytics')} data-test="telemetry form-section">
         <FormHelperText>
           {t(
-            'console-telemetry-plugin~As admin you can decide sending telemetry events to a pre-configured Red Hat proxy that can be forwarded to third-party services for analysis.',
+            'As admin you can decide sending telemetry events to a pre-configured Red Hat proxy that can be forwarded to third-party services for analysis.',
           )}
         </FormHelperText>
         <TelemetryAnalyticsSelect

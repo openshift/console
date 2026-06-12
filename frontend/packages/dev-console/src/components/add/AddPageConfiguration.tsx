@@ -149,7 +149,7 @@ const AddPageConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
     <FormSection title={t('Add page')} data-test="add-page form-section">
       <FormHelperText>
         {t(
-          'devconsole~Option to disable individual actions from the "+Add" page to simplify and standardize your development processes. Users can still create resources from a cli or via YAML. The "Search" and "Topology" will still show such resources.',
+          'Option to disable individual actions from the "+Add" page to simplify and standardize your development processes. Users can still create resources from a cli or via YAML. The "Search" and "Topology" will still show such resources.',
         )}
       </FormHelperText>
       <DualListSelector

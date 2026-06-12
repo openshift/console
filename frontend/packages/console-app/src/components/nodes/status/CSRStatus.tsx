@@ -57,11 +57,11 @@ const CSRPopoverContent: FC<CSRPopoverContentProps> = ({ csr, serverCSR, onPatch
   };
 
   const clientCSRDesc = t(
-    'console-app~This node has requested to join the cluster. After approving its certificate signing request the node will begin running workloads.',
+    'This node has requested to join the cluster. After approving its certificate signing request the node will begin running workloads.',
   );
 
   const ServerCSRDesc = t(
-    'console-app~This node has a pending server certificate signing request. Approve the request to enable all networking functionality on this node.',
+    'This node has a pending server certificate signing request. Approve the request to enable all networking functionality on this node.',
   );
 
   return (

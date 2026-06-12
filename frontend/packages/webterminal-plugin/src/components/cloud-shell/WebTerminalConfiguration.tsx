@@ -192,9 +192,7 @@ const WebTerminalConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
       <FormHelperText>
         <HelperText>
           <HelperTextItem>
-            {t(
-              'webterminal-plugin~As admin you can change the default timeout and image of Web Terminal.',
-            )}
+            {t('As admin you can change the default timeout and image of Web Terminal.')}
           </HelperTextItem>
         </HelperText>
       </FormHelperText>
@@ -239,7 +237,7 @@ const WebTerminalConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
           key="timeout-value-checkbox"
           onChange={() => setTimeoutCheckBox(!timeoutCheckBox)}
           label={t(
-            'webterminal-plugin~Mark the configuration resource as "Unmanaged" to keep the default timeout even after operator restart or update.',
+            'Mark the configuration resource as "Unmanaged" to keep the default timeout even after operator restart or update.',
           )}
           isDisabled={readonly}
         />
@@ -271,7 +269,7 @@ const WebTerminalConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
           key="image-value-checkbox"
           onChange={() => setImageCheckBox(!imageCheckBox)}
           label={t(
-            'webterminal-plugin~Mark the configuration resource as "Unmanaged" to keep the default image even after operator restart or update.',
+            'Mark the configuration resource as "Unmanaged" to keep the default image even after operator restart or update.',
           )}
           isDisabled={readonly}
         />

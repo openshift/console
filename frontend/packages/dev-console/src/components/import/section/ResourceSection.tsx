@@ -71,7 +71,7 @@ const ResourceSection: FC<ResourceSectionProps> = ({ flags }) => {
         label: t(ReadableResourcesNames[Resources.Kubernetes]),
         value: Resources.Kubernetes,
         description: t(
-          'devconsole~A {{deploymentLabel}} enables declarative updates for Pods and ReplicaSets.',
+          'A {{deploymentLabel}} enables declarative updates for Pods and ReplicaSets.',
           { deploymentLabel: DeploymentModel.label },
         ),
       });
@@ -81,7 +81,7 @@ const ResourceSection: FC<ResourceSectionProps> = ({ flags }) => {
         label: t(ReadableResourcesNames[Resources.OpenShift]),
         value: Resources.OpenShift,
         description: t(
-          'devconsole~A {{deploymentConfigLabel}} defines the template for a Pod and manages deploying new Images or configuration changes.',
+          'A {{deploymentConfigLabel}} defines the template for a Pod and manages deploying new Images or configuration changes.',
           { deploymentConfigLabel: DeploymentConfigModel.label },
         ),
       });
@@ -91,9 +91,7 @@ const ResourceSection: FC<ResourceSectionProps> = ({ flags }) => {
       options.push({
         label: t(ReadableResourcesNames[Resources.KnativeService]),
         value: Resources.KnativeService,
-        description: t(
-          'devconsole~A type of deployment that enables Serverless scaling to 0 when idle.',
-        ),
+        description: t('A type of deployment that enables Serverless scaling to 0 when idle.'),
       });
     }
     return options;

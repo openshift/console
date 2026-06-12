@@ -286,7 +286,7 @@ const PipelineTemplate: FC<PipelineTemplateProps> = ({ builderImages, existingPi
                       content={
                         <p>
                           {t(
-                            'devconsole~Automatically configure a new Pipeline Repository for your Git repository. This will automatically trigger new PipelineRuns on new commits or Pull Requests based on your configuration in your source code.',
+                            'Automatically configure a new Pipeline Repository for your Git repository. This will automatically trigger new PipelineRuns on new commits or Pull Requests based on your configuration in your source code.',
                           )}
                         </p>
                       }
@@ -308,7 +308,7 @@ const PipelineTemplate: FC<PipelineTemplateProps> = ({ builderImages, existingPi
                       content={
                         <p>
                           {t(
-                            'devconsole~Use an installed Pipeline from your cluster to build and deploy your component. Pipelines are from "openshift" namespace that support the relevant runtime are shown below.',
+                            'Use an installed Pipeline from your cluster to build and deploy your component. Pipelines are from "openshift" namespace that support the relevant runtime are shown below.',
                           )}
                         </p>
                       }
@@ -329,7 +329,7 @@ const PipelineTemplate: FC<PipelineTemplateProps> = ({ builderImages, existingPi
                     <br />
                     <ExpandableSection
                       toggleText={`${isExpanded ? t('Hide') : t('Show')} ${t(
-                        'devconsole~pipeline visualization',
+                        'pipeline visualization',
                       )}`}
                       isExpanded={isExpanded}
                       onToggle={() => setIsExpanded(!isExpanded)}
@@ -354,9 +354,7 @@ const PipelineTemplate: FC<PipelineTemplateProps> = ({ builderImages, existingPi
             fullWidth
           />
           <ExpandableSection
-            toggleText={`${isExpanded ? t('Hide') : t('Show')} ${t(
-              'devconsole~pipeline visualization',
-            )}`}
+            toggleText={`${isExpanded ? t('Hide') : t('Show')} ${t('pipeline visualization')}`}
             isExpanded={isExpanded}
             onToggle={() => setIsExpanded(!isExpanded)}
           >

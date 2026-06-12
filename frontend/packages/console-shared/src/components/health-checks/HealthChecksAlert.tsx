@@ -78,11 +78,9 @@ export const HealthChecksAlert: FC<HealthChecksAlertProps> = ({ resource }) => {
 
   const alertMessage =
     _.size(containersName) > 1
-      ? t(
-          'console-shared~Not all Containers have health checks to ensure your Application is running correctly.',
-        )
+      ? t('Not all Containers have health checks to ensure your Application is running correctly.')
       : t(
-          'console-shared~Container {{containersName}} does not have health checks to ensure your Application is running correctly.',
+          'Container {{containersName}} does not have health checks to ensure your Application is running correctly.',
           { containersName: _.map(containersName) },
         );
 

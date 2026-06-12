@@ -14,7 +14,7 @@ const IntroductionText: FC = () => {
     <>
       <Content component={ContentVariants.p}>
         {t(
-          'console-app~Introducing a fresh modern look to the console! With this update, we made changes to the user interface to enhance usability and streamline your workflow. This includes improved navigation and visual refinement to help manage your applications and infrastructure more easily.',
+          'Introducing a fresh modern look to the console! With this update, we made changes to the user interface to enhance usability and streamline your workflow. This includes improved navigation and visual refinement to help manage your applications and infrastructure more easily.',
         )}
       </Content>
       <Content component={ContentVariants.h6}>{t('What do you want to do next?')}</Content>

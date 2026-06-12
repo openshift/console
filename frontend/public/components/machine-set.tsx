@@ -188,7 +188,7 @@ const MachineCounts: FC<MachineCountsProps> = ({ resourceKind, resource }) => {
           <DescriptionListDescription>
             <Tooltip
               content={t(
-                'public~The number of ready replicas for this MachineSet. A machine is considered ready when the node has been created and is ready.',
+                'The number of ready replicas for this MachineSet. A machine is considered ready when the node has been created and is ready.',
               )}
             >
               <span>
@@ -205,7 +205,7 @@ const MachineCounts: FC<MachineCountsProps> = ({ resourceKind, resource }) => {
           <DescriptionListDescription>
             <Tooltip
               content={t(
-                'public~The number of available replicas (ready for at least minReadySeconds) for this MachineSet.',
+                'The number of available replicas (ready for at least minReadySeconds) for this MachineSet.',
               )}
             >
               <span>

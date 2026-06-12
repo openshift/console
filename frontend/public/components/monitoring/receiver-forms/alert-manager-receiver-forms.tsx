@@ -166,7 +166,7 @@ const AlertMsg: FC<AlertMsgProps> = ({ type }) => {
       return (
         <>
           {t(
-            'public~Your default receiver will automatically receive all alerts from this cluster that are not caught by other receivers first.',
+            'Your default receiver will automatically receive all alerts from this cluster that are not caught by other receivers first.',
           )}
         </>
       );
@@ -174,7 +174,7 @@ const AlertMsg: FC<AlertMsgProps> = ({ type }) => {
       return (
         <>
           {t(
-            'public~The routing labels for this receiver are configured to capture critical alerts. Finish setting up this receiver by selecting a "Receiver Type" to choose a destination for these alerts. If this receiver is deleted, critical alerts will go to the default receiver instead.',
+            'The routing labels for this receiver are configured to capture critical alerts. Finish setting up this receiver by selecting a "Receiver Type" to choose a destination for these alerts. If this receiver is deleted, critical alerts will go to the default receiver instead.',
           )}
         </>
       );
@@ -182,7 +182,7 @@ const AlertMsg: FC<AlertMsgProps> = ({ type }) => {
       return (
         <>
           {t(
-            'public~The Watchdog alert fires constantly to confirm that your alerting stack is functioning correctly. This receiver is configured to prevent it from creating unnecessary notifications. You can edit this receiver if you plan to use the information that Watchdog provides, otherwise this receiver should remain in its current state with no set receiver type.',
+            'The Watchdog alert fires constantly to confirm that your alerting stack is functioning correctly. This receiver is configured to prevent it from creating unnecessary notifications. You can edit this receiver if you plan to use the information that Watchdog provides, otherwise this receiver should remain in its current state with no set receiver type.',
           )}
         </>
       );

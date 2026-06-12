@@ -107,9 +107,7 @@ const AddServerlessFunctionForm: FC<FormikProps<FormikValues> & AddServerlessFun
               );
               if (res?.values?.builder && res?.values?.builder !== 's2i') {
                 setHelpText(
-                  t(
-                    'devconsole~Unsupported builder strategy detected. s2i is currently supported.',
-                  ),
+                  t('Unsupported builder strategy detected. s2i is currently supported.'),
                 );
                 setStatus({ errors: 'Builder strategy not supported' });
               }

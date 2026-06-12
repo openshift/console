@@ -22,7 +22,7 @@ const EventingChannelPage: FC = () => {
       <PageHeading
         title={t('Channel')}
         helpText={t(
-          'knative-plugin~Create a Knative Channel to create an event forwarding and persistence layer with in-memory and reliable implementations',
+          'Create a Knative Channel to create an event forwarding and persistence layer with in-memory and reliable implementations',
         )}
       />
       <AddChannel

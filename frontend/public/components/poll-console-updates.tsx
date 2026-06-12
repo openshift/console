@@ -163,7 +163,7 @@ export const PollConsoleUpdates = memo(() => {
     variant: AlertVariant.warning,
     title: t('Web console update is available'),
     content: t(
-      'public~There has been an update to the web console. Ensure any changes have been saved and refresh your browser to access the latest version.',
+      'There has been an update to the web console. Ensure any changes have been saved and refresh your browser to access the latest version.',
     ),
     timeout: false,
     dismissible: true,

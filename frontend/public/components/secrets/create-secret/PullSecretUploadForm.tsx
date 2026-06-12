@@ -59,7 +59,7 @@ export const PullSecretUploadForm: FC<PullSecretUploadFormProps> = ({
         label={t('Configuration file')}
         filenamePlaceholder={t('Upload a .dockercfg or .docker/config.json file.')}
         textareaFieldHelpText={t(
-          'public~File with credentials and other configuration for connecting to a secured image registry.',
+          'File with credentials and other configuration for connecting to a secured image registry.',
         )}
         isRequired={true}
         errorMessage={parseError ? t('Configuration file should be in JSON format.') : undefined}

@@ -54,7 +54,7 @@ const AdvancedStrategyOptions: FC<{
           <LifecycleHookField
             title={t('Mid Lifecycle Hook')}
             subTitle={t(
-              'devconsole~Mid hooks execute after the previous deployment is scaled down to zero and before the first pod of the new deployment is created.',
+              'Mid hooks execute after the previous deployment is scaled down to zero and before the first pod of the new deployment is created.',
             )}
             dataAttribute={dataAttribute}
             resourceObj={resourceObj}

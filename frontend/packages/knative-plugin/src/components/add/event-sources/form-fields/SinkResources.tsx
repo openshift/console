@@ -194,7 +194,7 @@ const SinkResources: FC<SinkResourcesProps> = ({ namespace, isMoveSink }) => {
         <>
           <Alert variant="custom" title={t('No resources available')} isInline>
             {t(
-              'knative-plugin~Select the URI option, or exit this form and create a Knative Service, Broker, or Channel first.',
+              'Select the URI option, or exit this form and create a Knative Service, Broker, or Channel first.',
             )}
           </Alert>
           &nbsp;

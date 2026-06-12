@@ -42,7 +42,7 @@ export const BuildOption: FC<BuildOptionProps> = ({ isDisabled, importStrategy }
         label: t(ReadableBuildOptions[BuildOptions.SHIPWRIGHT_BUILD]),
         value: BuildOptions.SHIPWRIGHT_BUILD,
         description: t(
-          'devconsole~Shipwright is an extensible framework for building container images on OpenShift Container Platform cluster.',
+          'Shipwright is an extensible framework for building container images on OpenShift Container Platform cluster.',
         ),
       });
     }
@@ -52,7 +52,7 @@ export const BuildOption: FC<BuildOptionProps> = ({ isDisabled, importStrategy }
         label: t(ReadableBuildOptions[BuildOptions.BUILDS]),
         value: BuildOptions.BUILDS,
         description: t(
-          'devconsole~Build configuration describes build definitions used for transforming source code into a runnable container image.',
+          'Build configuration describes build definitions used for transforming source code into a runnable container image.',
         ),
       });
     }
@@ -63,7 +63,7 @@ export const BuildOption: FC<BuildOptionProps> = ({ isDisabled, importStrategy }
         label: t(ReadableBuildOptions[BuildOptions.PIPELINES]),
         value: BuildOptions.PIPELINES,
         description: t(
-          'devconsole~Build using pipeline describes a process for transforming source code into a runnable container image. Pipelines support can be added using Red Hat OpenShift Pipelines Operator.',
+          'Build using pipeline describes a process for transforming source code into a runnable container image. Pipelines support can be added using Red Hat OpenShift Pipelines Operator.',
         ),
       });
     }

@@ -276,7 +276,7 @@ const NodeDetailsGpuMetrics: FC<NodeDetailsGpuMetricsProps> = ({ node }) => {
       {!isLoading && !hasMetrics && hasCapacity && (
         <p className="text-secondary">
           {t(
-            'console-app~GPU metrics are not available. Make sure the NVIDIA DCGM exporter is scraping metrics and labeling them with the node name.',
+            'GPU metrics are not available. Make sure the NVIDIA DCGM exporter is scraping metrics and labeling them with the node name.',
           )}
         </p>
       )}

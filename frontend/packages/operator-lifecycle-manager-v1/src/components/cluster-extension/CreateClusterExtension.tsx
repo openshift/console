@@ -66,7 +66,7 @@ const CreateClusterExtension: FC = () => {
       <PageHeading
         title={t('Create ClusterExtension')}
         helpText={t(
-          'olm-v1~Create a ClusterExtension to add functionality to your cluster. Operator Lifecycle Manager v1 manages ClusterExtensions.',
+          'Create a ClusterExtension to add functionality to your cluster. Operator Lifecycle Manager v1 manages ClusterExtensions.',
         )}
       />
       <SyncedEditor

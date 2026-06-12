@@ -197,7 +197,7 @@ export const OperatorVersionSelect: FC<OperatorVersionSelectProps> = ({
           isInline
           className="co-alert co-alert--margin-top co-alert__update-approval"
           title={t(
-            'olm~Manual update approval is required when not installing the latest version for the selected channel.',
+            'Manual update approval is required when not installing the latest version for the selected channel.',
           )}
         />
       )}

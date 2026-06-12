@@ -1721,8 +1721,6 @@
   "{{resourceKinds}} maintain the desired number of healthy pods.": "{{resourceKinds}} maintain the desired number of healthy pods.",
   "{{label}} table": "{{label}} table",
   "Core platform": "Core platform",
-  "{{pluginName}} might have violated the Console Content Security Policy. Refer to the browser's console logs for details.": "{{pluginName}} might have violated the Console Content Security Policy. Refer to the browser's console logs for details.",
-  "Query results include range vectors, which cannot be graphed. Try adding a function to transform the data.": "Query results include range vectors, which cannot be graphed. Try adding a function to transform the data.",
   "unknown host": "unknown host",
   "Just now": "Just now",
   "{{count}} day_one": "{{count}} day",

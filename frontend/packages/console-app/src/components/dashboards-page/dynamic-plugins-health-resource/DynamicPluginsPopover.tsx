@@ -34,7 +34,7 @@ const DynamicPluginsPopover: FC<DynamicPluginsPopoverProps> = ({ consolePlugins 
     <Stack hasGutter>
       <StackItem>
         {t(
-          'console-app~A dynamic plugin allows you to add custom pages and other extensions to your interface at runtime.',
+          'A dynamic plugin allows you to add custom pages and other extensions to your interface at runtime.',
         )}
       </StackItem>
       {failedPlugins.length > 0 && (
@@ -60,9 +60,7 @@ const DynamicPluginsPopover: FC<DynamicPluginsPopoverProps> = ({ consolePlugins 
               variant="warning"
               isInline
               isPlain
-              title={t(
-                'console-app~One or more plugins might have Content Security Policy violations.',
-              )}
+              title={t('One or more plugins might have Content Security Policy violations.')}
             />
           )}
           <Link

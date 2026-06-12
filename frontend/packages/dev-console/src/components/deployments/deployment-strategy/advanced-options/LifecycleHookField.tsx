@@ -142,7 +142,7 @@ const LifecycleHookField: FC<LifecycleHookFieldProps> = ({
           icon={!lifecycleHookExist && <RhUiAddCircleFillIcon />}
         >
           {`${lifecycleHookExist ? t('Edit') : t('Add')} ${t(
-            'devconsole~{{lifecycleHookName}} lifecycle hook',
+            '{{lifecycleHookName}} lifecycle hook',
             {
               lifecycleHookName,
             },

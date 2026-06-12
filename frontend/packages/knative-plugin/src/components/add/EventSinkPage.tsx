@@ -38,7 +38,7 @@ const EventSinkPage: FC = () => {
       <PageHeading
         title={t('Create Event Sink')}
         helpText={t(
-          'knative-plugin~Create an Event sink to receive incoming events from a particular source. Configure using YAML and form views.',
+          'Create an Event sink to receive incoming events from a particular source. Configure using YAML and form views.',
         )}
       />
       {loaded && isValidSink && !createSinkAccessLoading && createSinkAccess ? (

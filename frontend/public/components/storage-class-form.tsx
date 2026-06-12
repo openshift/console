@@ -619,7 +619,7 @@ const StorageClassFormInner: FC<StorageClassFormProps> = (props) => {
             />
             <span className="help-block">
               {t(
-                'public~Determines what happens to persistent volumes when the associated persistent volume claim is deleted. Defaults to "Delete"',
+                'Determines what happens to persistent volumes when the associated persistent volume claim is deleted. Defaults to "Delete"',
               )}
             </span>
           </div>
@@ -639,7 +639,7 @@ const StorageClassFormInner: FC<StorageClassFormProps> = (props) => {
             />
             <span className="help-block">
               {t(
-                'public~Determines when persistent volume claims will be provisioned and bound. Defaults to "WaitForFirstConsumer"',
+                'Determines when persistent volume claims will be provisioned and bound. Defaults to "WaitForFirstConsumer"',
               )}
             </span>
           </div>
@@ -661,9 +661,7 @@ const StorageClassFormInner: FC<StorageClassFormProps> = (props) => {
               dataTest="storage-class-provisioner-dropdown"
             />
             <span className="help-block">
-              {t(
-                'public~Determines what volume plugin is used for provisioning PersistentVolumes.',
-              )}
+              {t('Determines what volume plugin is used for provisioning PersistentVolumes.')}
             </span>
           </div>
 

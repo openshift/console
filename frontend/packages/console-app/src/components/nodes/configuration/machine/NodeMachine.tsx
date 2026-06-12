@@ -71,7 +71,7 @@ const NodeMachine: ComponentType<PageComponentProps<NodeKind>> = ({ obj }) => {
         <SectionHeading text={t('Machine')} />
         <Content component="p">
           {t(
-            'console-app~This section details the provisioning and configuration of the node, from the underlying machine, OS, and hardware specifications to the applied system-level configurations. Use this information to understand the origin of the node and how to configure it to run workloads.',
+            'This section details the provisioning and configuration of the node, from the underlying machine, OS, and hardware specifications to the applied system-level configurations. Use this information to understand the origin of the node and how to configure it to run workloads.',
           )}
         </Content>
       </PaneBody>

@@ -344,7 +344,7 @@ const ConsolePluginStatus: FC<ConsolePluginStatusProps> = ({ csv, csvPlugins }) 
           <div>
             <p>
               {t(
-                'olm~To let this operator provide a custom interface and run its own code in your console, enable its console plugin in the operator details.',
+                'To let this operator provide a custom interface and run its own code in your console, enable its console plugin in the operator details.',
               )}
             </p>
             <Link to={resourceObjPath(csv, referenceFor(csv))}>{t('View operator details')}</Link>
@@ -598,7 +598,7 @@ const CSVListNoDataEmptyMsg = () => {
   const { t } = useTranslation('olm');
   const project = useActiveNamespace();
   const noOperatorsInSingleNamespaceMessage = t(
-    'olm~No Operators are available for project {{project}}.',
+    'No Operators are available for project {{project}}.',
     { project },
   );
   const noOperatorsInAllNamespacesMessage = t('No Operators are available.');
@@ -879,9 +879,7 @@ export const ClusterServiceVersionsPage: FC<ClusterServiceVersionsPageProps> = (
   const olmURL = getDocumentationURL(documentationURLs.operators);
   const helpText = (
     <>
-      {t(
-        'olm~Installed Operators are represented by ClusterServiceVersions within this Namespace.',
-      )}
+      {t('Installed Operators are represented by ClusterServiceVersions within this Namespace.')}
       {!isManaged() && (
         <Trans ns="olm">
           {' '}

@@ -42,9 +42,7 @@ const SampleCatalog: FC = () => {
                   {...catalogItems}
                   hideSidebar
                   title={t('Samples')}
-                  description={t(
-                    'devconsole~Get Started using applications by choosing a code sample.',
-                  )}
+                  description={t('Get Started using applications by choosing a code sample.')}
                 />
               );
             }}

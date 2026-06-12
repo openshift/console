@@ -35,7 +35,7 @@ const IconSection: FC = () => {
           <HelperText>
             <HelperTextItem>
               {t(
-                'devconsole~The icon represents your Image in Topology view. A label or annotation will also be added to the resource defining the icon.',
+                'The icon represents your Image in Topology view. A label or annotation will also be added to the resource defining the icon.',
               )}
             </HelperTextItem>
           </HelperText>

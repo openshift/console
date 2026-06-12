@@ -26,7 +26,7 @@ const SinkUri: FC = () => {
         <HelperText>
           <HelperTextItem>
             {t(
-              'knative-plugin~A Universal Resource Indicator where events are going to be delivered. Ex. "http://cluster.example.com/svc"',
+              'A Universal Resource Indicator where events are going to be delivered. Ex. "http://cluster.example.com/svc"',
             )}
           </HelperTextItem>
         </HelperText>

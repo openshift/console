@@ -36,11 +36,7 @@ export const ErrorPage404: FC<PfErrorStateProps> = (props) => {
           <>
             {t("We couldn't find that page.")}
             {isDeletedFavorite && (
-              <p>
-                {t(
-                  'public~If you would like to remove it from your favorites list, unfavorite it.',
-                )}
-              </p>
+              <p>{t('If you would like to remove it from your favorites list, unfavorite it.')}</p>
             )}
           </>
         }

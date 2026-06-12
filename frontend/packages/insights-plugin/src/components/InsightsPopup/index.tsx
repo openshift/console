@@ -106,7 +106,7 @@ export const InsightsPopup: FC<PrometheusHealthPopupProps> = ({ responses, k8sRe
       </StackItem>
       <StackItem className="pf-v6-u-text-color-subtle">
         {t(
-          'insights-plugin~Red Hat Lightspeed Advisor identifies and prioritizes risks to security, performance, availability, and stability of your clusters.',
+          'Red Hat Lightspeed Advisor identifies and prioritizes risks to security, performance, availability, and stability of your clusters.',
         )}
       </StackItem>
       {error ? (

@@ -15,7 +15,7 @@ export const OLMv1TechPreviewBadge: FC = () => {
   const popoverContent = (
     <div>
       {t(
-        'olm-v1~Lets you use OLMv1 (Tech Preview), a streamlined redesign of OLMv0. OLMv1 simplifies operator management with declarative APIs, enhanced security, and direct, GitOps-friendly control over upgrades.',
+        'Lets you use OLMv1 (Tech Preview), a streamlined redesign of OLMv0. OLMv1 simplifies operator management with declarative APIs, enhanced security, and direct, GitOps-friendly control over upgrades.',
       )}
     </div>
   );

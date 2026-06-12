@@ -104,7 +104,7 @@ const ClusterConfigurationPage: FC = () => {
       <PageHeading
         title={t('Cluster configuration')}
         helpText={t(
-          'console-app~Set cluster-wide configuration for the console experience. Your changes will be autosaved and will affect after a refresh.',
+          'Set cluster-wide configuration for the console experience. Your changes will be autosaved and will affect after a refresh.',
         )}
       />
       <PageSection>
@@ -117,9 +117,7 @@ const ClusterConfigurationPage: FC = () => {
             titleText={<>{t('Insufficient permissions')}</>}
           >
             <EmptyStateBody>
-              {t(
-                'console-app~You do not have sufficient permissions to read any cluster configuration.',
-              )}
+              {t('You do not have sufficient permissions to read any cluster configuration.')}
             </EmptyStateBody>
           </EmptyState>
         ) : (

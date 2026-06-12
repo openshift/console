@@ -55,7 +55,7 @@ const DockerSection: FC = () => {
       return t('Dockerfile not detected');
     }
     return t(
-      'devconsole~Allows the builds to use a different path to locate your Dockerfile, relative to the Context Dir field.',
+      'Allows the builds to use a different path to locate your Dockerfile, relative to the Context Dir field.',
     );
   }, [t, validated]);
 

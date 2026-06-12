@@ -97,9 +97,7 @@ const NamespaceSection: FC<NamespaceSectionProps> = ({ flags }) => {
             : undefined
         }
         onLoad={handleOnLoad}
-        helpText={t(
-          'webterminal-plugin~This Project will be used to initialize your command line terminal',
-        )}
+        helpText={t('This Project will be used to initialize your command line terminal')}
       />
       {namespace.value === CREATE_NAMESPACE_KEY && (
         <div className="wt-project-name" data-test="input-field-newNamespace">

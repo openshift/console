@@ -26,7 +26,7 @@ const FunctionsList: FC<TableProps> = (props) => {
     >
       <span>
         {t(
-          'knative-plugin~Serverless functions are single-purpose, programmatic functions that are hosted on managed infrastructure.',
+          'Serverless functions are single-purpose, programmatic functions that are hosted on managed infrastructure.',
         )}
       </span>
       <div className="odc-functions__empty-list__dropdown">

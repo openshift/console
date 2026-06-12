@@ -311,7 +311,7 @@ const PinnedResourcesConfiguration: FC<PinnedResourcesConfigurationProps> = ({
     <FormSection title={t('Pre-pinned navigation items')} data-test="pinned-resource form-section">
       <FormHelperText>
         {t(
-          'devconsole~As admin you can change the pinned resources that are shown to users by default. Users can still override this configuration and add or reorder their pinned resources. As soon as a user changes the default settings, new default settings are no longer applied.',
+          'As admin you can change the pinned resources that are shown to users by default. Users can still override this configuration and add or reorder their pinned resources. As soon as a user changes the default settings, new default settings are no longer applied.',
         )}
       </FormHelperText>
       <DualListSelector

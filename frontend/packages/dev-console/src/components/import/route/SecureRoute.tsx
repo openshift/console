@@ -65,7 +65,7 @@ const SecureRoute: FC = () => {
         label={t('Secure Route')}
         formLabel={t('Security')}
         helpText={t(
-          'devconsole~Routes can be secured using several TLS termination types for serving certificates.',
+          'Routes can be secured using several TLS termination types for serving certificates.',
         )}
       />
       {secure && (
@@ -92,28 +92,28 @@ const SecureRoute: FC = () => {
               </Title>
               <FormHelperText>
                 {t(
-                  "devconsole~TLS certificates for edge and re-encrypt termination. If not specified, the router's default certificate is used.",
+                  "TLS certificates for edge and re-encrypt termination. If not specified, the router's default certificate is used.",
                 )}
               </FormHelperText>
               <DroppableFileInputField
                 name="route.tls.certificate"
                 label={t('Certificate')}
                 helpText={t(
-                  'devconsole~The PEM format certificate. Upload file by dragging & dropping, selecting it, or pasting from the clipboard.',
+                  'The PEM format certificate. Upload file by dragging & dropping, selecting it, or pasting from the clipboard.',
                 )}
               />
               <DroppableFileInputField
                 name="route.tls.key"
                 label={t('Private Key')}
                 helpText={t(
-                  'devconsole~The PEM format key. Upload file by dragging & dropping, selecting it, or pasting from the clipboard.',
+                  'The PEM format key. Upload file by dragging & dropping, selecting it, or pasting from the clipboard.',
                 )}
               />
               <DroppableFileInputField
                 name="route.tls.caCertificate"
                 label={t('CA certificate')}
                 helpText={t(
-                  'devconsole~The PEM format CA certificate chain. Upload file by dragging & dropping, selecting it, or pasting from the clipboard.',
+                  'The PEM format CA certificate chain. Upload file by dragging & dropping, selecting it, or pasting from the clipboard.',
                 )}
               />
               {tls.termination === 'reencrypt' && (
@@ -121,7 +121,7 @@ const SecureRoute: FC = () => {
                   name="route.tls.destinationCaCertificate"
                   label={t('Destination CA Certificate')}
                   helpText={t(
-                    'devconsole~The PEM format CA certificate chain to validate the endpoint certificate for re-encrypt termination. Upload file by dragging & dropping, selecting it, or pasting from the clipboard.',
+                    'The PEM format CA certificate chain to validate the endpoint certificate for re-encrypt termination. Upload file by dragging & dropping, selecting it, or pasting from the clipboard.',
                   )}
                 />
               )}

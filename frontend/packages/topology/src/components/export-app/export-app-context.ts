@@ -84,7 +84,7 @@ export const useExportAppFormToast = () => {
         variant: AlertVariant.info,
         title: t('Export application'),
         content: t(
-          'topology~All the resources are exported successfully from {{namespace}}. Click below to download it.',
+          'All the resources are exported successfully from {{namespace}}. Click below to download it.',
           {
             namespace: expNamespace,
           },

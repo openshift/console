@@ -70,7 +70,7 @@ const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
           formValues={formValues}
           dispatchFormChange={dispatchFormChange}
           tooltip={t(
-            'public~Checking this box will write these values to the global section of the configuration file where they will become defaults for future email receivers.',
+            'Checking this box will write these values to the global section of the configuration file where they will become defaults for future email receivers.',
           )}
         />
         <FormGroup label={t('From address')} fieldId="email-from" isRequired>

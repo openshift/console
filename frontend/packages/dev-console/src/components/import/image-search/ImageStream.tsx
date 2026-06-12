@@ -161,7 +161,7 @@ const ImageStream: FC<ImageStreamProps> = ({
               variant="warning"
               isInline
               title={t(
-                'devconsole~Service account default will need pull authority to deploy Images from {{namespace}}',
+                'Service account default will need pull authority to deploy Images from {{namespace}}',
                 { namespace: imageStream.namespace },
               )}
             >

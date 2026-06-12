@@ -37,10 +37,7 @@ const ChannelRow: FC<RowFunctionArgs<EventChannelKind>> = ({ obj }) => {
       <TableData columnID="ready">{(readyCondition && readyCondition.status) || '-'}</TableData>
       <TableData columnID="condition">
         {obj.status
-          ? t(
-              'knative-plugin~{{OKcount}} OK / {{conditionsSize}}',
-              getConditionStats(obj.status.conditions),
-            )
+          ? t('{{OKcount}} OK / {{conditionsSize}}', getConditionStats(obj.status.conditions))
           : '-'}
       </TableData>
       <TableData>{kind.label}</TableData>

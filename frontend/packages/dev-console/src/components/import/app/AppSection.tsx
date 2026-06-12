@@ -66,7 +66,7 @@ const AppSection: FC<AppSectionProps> = ({
         name={subPath ? `${subPath}.name` : 'name'}
         label={t('Name')}
         helpText={t(
-          'devconsole~A unique name given to the component that will be used to name associated resources.',
+          'A unique name given to the component that will be used to name associated resources.',
         )}
         isDisabled={formType.value && formType.value === 'edit'}
         required={!(formType.value && formType.value === 'edit')}

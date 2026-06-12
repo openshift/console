@@ -29,7 +29,7 @@ const VirtualMachinesInventoryItems: FC = () => {
       <DescriptionListTermHelp
         text={t('Virtual machines')}
         textHelp={t(
-          'console-app~The total shown is based on your access permissions and might not include all virtual machines.',
+          'The total shown is based on your access permissions and might not include all virtual machines.',
         )}
       />
       <DescriptionListDescription>

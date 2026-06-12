@@ -66,9 +66,7 @@ export const OpaqueSecretFormEntry: FC<OpaqueSecretFormEntryProps> = ({
         isBase64Input={entry.isBinary_}
         id={`${entry.uid}-value`}
         label={t('Value')}
-        filenamePlaceholder={t(
-          'public~Drag and drop file with your value here or browse to upload it.',
-        )}
+        filenamePlaceholder={t('Drag and drop file with your value here or browse to upload it.')}
       />
     </FormFieldGroup>
   );

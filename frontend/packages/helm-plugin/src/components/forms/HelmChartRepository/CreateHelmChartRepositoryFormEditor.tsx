@@ -105,9 +105,7 @@ const CreateHelmChartRepositoryFormEditor: FC<CreateHelmChartRepositoryFormEdito
             {
               label: t('Cluster scoped (HelmChartRepository)'),
               value: 'HelmChartRepository',
-              children: t(
-                'helm-plugin~Add Helm Chart Repository at the cluster level and in all namespaces.',
-              ),
+              children: t('Add Helm Chart Repository at the cluster level and in all namespaces.'),
               isChecked: formData.scope === 'HelmChartRepository',
             },
           ]}
@@ -151,7 +149,7 @@ const CreateHelmChartRepositoryFormEditor: FC<CreateHelmChartRepositoryFormEdito
         <FormSection>
           <p className="pf-v6-c-form__helper-text">
             {t(
-              'helm-plugin~Add credentials and custom certificate authority (CA) certificates to connect to private helm chart repository.',
+              'Add credentials and custom certificate authority (CA) certificates to connect to private helm chart repository.',
             )}
           </p>
           <ResourceDropdownField

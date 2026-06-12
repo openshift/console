@@ -35,9 +35,7 @@ export const GettingStartedSection: FC = () => {
         <QuickStartGettingStartedCard
           featured={['serverless-functions-using-cli', 'serverless-functions-using-ide']}
           title={t('Create function with guided documentation')}
-          description={t(
-            'knative-plugin~Follow guided documentation to create serverless functions.',
-          )}
+          description={t('Follow guided documentation to create serverless functions.')}
         />
         <FunctionsDocsGettingStartedCard />
       </GettingStartedExpandableGrid>

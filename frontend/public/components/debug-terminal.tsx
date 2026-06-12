@@ -77,7 +77,7 @@ const DebugTerminalInner: FC<DebugTerminalInnerProps> = ({ debugPod, initialCont
       variant="info"
       isInline
       title={t(
-        'public~This temporary pod has a modified entrypoint command to debug a failing container. The pod will be deleted when the terminal window is closed.',
+        'This temporary pod has a modified entrypoint command to debug a failing container. The pod will be deleted when the terminal window is closed.',
       )}
     />
   );

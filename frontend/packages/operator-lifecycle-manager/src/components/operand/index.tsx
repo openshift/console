@@ -305,7 +305,7 @@ const OperandList: FC<OperandListProps> = (props) => {
         ) : (
           <ConsoleEmptyState title={t('No operands found')}>
             {t(
-              'olm~Operands are declarative components used to define the behavior of the application.',
+              'Operands are declarative components used to define the behavior of the application.',
             )}
           </ConsoleEmptyState>
         )

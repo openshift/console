@@ -183,7 +183,7 @@ const WebhookSection: FC<WebhoookSectionProps> = ({ pac, formContextField }) => 
             content={
               <p>
                 {t(
-                  'devconsole~The secret is required to set the Build status and to attach the webhook to the Git repository.',
+                  'The secret is required to set the Build status and to attach the webhook to the Git repository.',
                 )}
               </p>
             }
@@ -212,7 +212,7 @@ const WebhookSection: FC<WebhoookSectionProps> = ({ pac, formContextField }) => 
             activeChildren: (
               <ResourceDropdownField
                 helpText={t(
-                  'devconsole~Secret with the Git access token for pulling pipeline and tasks from your Git repository.',
+                  'Secret with the Git access token for pulling pipeline and tasks from your Git repository.',
                 )}
                 name={`${fieldPrefix}webhook.secretRef`}
                 resources={resources}
@@ -251,7 +251,7 @@ const WebhookSection: FC<WebhoookSectionProps> = ({ pac, formContextField }) => 
             <HelperText>
               <HelperTextItem>
                 {t(
-                  'devconsole~We have detected a URL that can be used to configure the webhook. It will be created and attached to the Git repository.',
+                  'We have detected a URL that can be used to configure the webhook. It will be created and attached to the Git repository.',
                 )}
               </HelperTextItem>
             </HelperText>

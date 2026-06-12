@@ -25,7 +25,7 @@ const ControlPlanePopup: FC<PrometheusHealthPopupProps> = ({ responses }) => {
     <Stack hasGutter>
       <StackItem>
         {t(
-          'console-app~Components of the control plane are responsible for maintaining and reconciling the state of the cluster.',
+          'Components of the control plane are responsible for maintaining and reconciling the state of the cluster.',
         )}
       </StackItem>
       <StackItem>

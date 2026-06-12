@@ -198,9 +198,7 @@ const HelmInstallUpgradePage: FC = () => {
         if (isGoingToTopology(resources)) {
           const secretId = res?.metadata?.uid;
           redirect = helmRelease?.info?.notes
-            ? `${config.redirectURL}?selectId=${secretId}&selectTab=${t(
-                'helm-plugin~Release notes',
-              )}`
+            ? `${config.redirectURL}?selectId=${secretId}&selectTab=${t('Release notes')}`
             : config.redirectURL;
         } else {
           redirect = `/helm-releases/ns/${namespace}/release/${releaseName}`;

@@ -606,12 +606,12 @@ export const EnvironmentPage: FC<EnvironmentPageProps> = (props) => {
               <FieldLevelHelp>
                 <>
                   {t(
-                    'public~Add new values by referencing an existing ConfigMap or Secret. Drag and drop environment variables within this section to change the order in which they are run.',
+                    'Add new values by referencing an existing ConfigMap or Secret. Drag and drop environment variables within this section to change the order in which they are run.',
                   )}
                   <br />
                   <strong>{t('Note:')}</strong>{' '}
                   {t(
-                    'public~If identical values exist in both lists, the single value in the list above will take precedence.',
+                    'If identical values exist in both lists, the single value in the list above will take precedence.',
                   )}
                 </>
               </FieldLevelHelp>

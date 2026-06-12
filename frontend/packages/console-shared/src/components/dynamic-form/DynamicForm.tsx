@@ -66,9 +66,7 @@ export const DynamicForm: FC<DynamicFormProps> = ({
         isInline
         className="co-alert co-break-word"
         variant="danger"
-        title={t(
-          'console-shared~There is an issue in this form view. Select "YAML view" for full control.',
-        )}
+        title={t('There is an issue in this form view. Select "YAML view" for full control.')}
       />
     );
   };
@@ -81,7 +79,7 @@ export const DynamicForm: FC<DynamicFormProps> = ({
           className="co-alert co-break-word"
           variant="info"
           title={t(
-            'console-shared~Some fields might not be displayed in this form view. Select "YAML view" to edit all fields.',
+            'Some fields might not be displayed in this form view. Select "YAML view" to edit all fields.',
           )}
         />
       )}

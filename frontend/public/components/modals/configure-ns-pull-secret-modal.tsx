@@ -164,7 +164,7 @@ const ConfigureNamespacePullSecret: FC<ConfigureNamespacePullSecretProps> = (pro
             <GridItem>
               <Content component={ContentVariants.p}>
                 {t(
-                  'public~Specify default credentials to be used to authenticate and download containers within this namespace. These credentials will be the default unless a pod references a specific pull Secret.',
+                  'Specify default credentials to be used to authenticate and download containers within this namespace. These credentials will be the default unless a pod references a specific pull Secret.',
                 )}
               </Content>
             </GridItem>
@@ -278,7 +278,7 @@ const ConfigureNamespacePullSecret: FC<ConfigureNamespacePullSecretProps> = (pro
                   />
                   <Content component={ContentVariants.p} id="namespace-pull-secret-file-help">
                     {t(
-                      'public~Properly configured Docker config file in JSON format. Will be base64 encoded after upload.',
+                      'Properly configured Docker config file in JSON format. Will be base64 encoded after upload.',
                     )}
                   </Content>
                 </GridItem>

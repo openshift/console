@@ -58,9 +58,7 @@ const AdvancedImageOptions: FC = () => {
       <ResourceDropdownField
         name="formData.imagePullSecret"
         label={t('Pull Secret')}
-        helpText={t(
-          'devconsole~Secret for authentication when pulling image from a secured registry.',
-        )}
+        helpText={t('Secret for authentication when pulling image from a secured registry.')}
         placeholder={t('Select Secret name')}
         resources={resources}
         resourceFilter={filterData}

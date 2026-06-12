@@ -13,7 +13,7 @@ export const SaveStatus: FC<SaveStatusProps> = ({ status, error }) => {
     return (
       <Alert variant="success" data-test="success-alert" isInline title={t('Saved.')}>
         {t(
-          'console-shared~This config update requires a console rollout, this can take up to a minute and require a browser refresh.',
+          'This config update requires a console rollout, this can take up to a minute and require a browser refresh.',
         )}
       </Alert>
     );

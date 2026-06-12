@@ -220,9 +220,7 @@ const RestorePVCModal: FC<RestorePVCModalProps> = ({ close, cancel, resource }) 
               <FormHelperText>
                 <HelperText>
                   <HelperTextItem variant="error">
-                    {t(
-                      'console-app~Size should be equal or greater than the restore size of snapshot.',
-                    )}
+                    {t('Size should be equal or greater than the restore size of snapshot.')}
                   </HelperTextItem>
                 </HelperText>
               </FormHelperText>

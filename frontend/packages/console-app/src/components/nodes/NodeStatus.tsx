@@ -80,10 +80,9 @@ export const NodeStatusWithExtensions: FC<NodeStatusWithExtensionsProps> = ({
             current={_.startCase(item)}
             consumers={PressureQueries[item](node.metadata.name)}
             humanize={humanizeMap[item]}
-            description={t(
-              "console-app~This node's {{conditionDescription}}. Performance may be degraded.",
-              { conditionDescription: conditionDescriptionMap[item] },
-            )}
+            description={t("This node's {{conditionDescription}}. Performance may be degraded.", {
+              conditionDescription: conditionDescriptionMap[item],
+            })}
           />
         </div>
       ))}

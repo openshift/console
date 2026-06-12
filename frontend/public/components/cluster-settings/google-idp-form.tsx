@@ -110,7 +110,7 @@ export const AddGooglePage = () => {
       <PageHeading
         title={title}
         helpText={t(
-          'public~You can use Google integration for users authenticating with Google credentials.',
+          'You can use Google integration for users authenticating with Google credentials.',
         )}
       />
       <PaneBody>

@@ -89,7 +89,7 @@ export const useSecretDescription = (formType: SecretFormType): string => {
   switch (formType) {
     case SecretFormType.generic:
       return t(
-        'public~Key/value secrets let you inject sensitive data into your application as files or environment variables.',
+        'Key/value secrets let you inject sensitive data into your application as files or environment variables.',
       );
     case SecretFormType.source:
       return t('Source secrets let you authenticate against a Git server.');

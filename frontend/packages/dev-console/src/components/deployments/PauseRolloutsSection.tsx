@@ -16,7 +16,7 @@ const PauseRolloutsSection: FC<{ name: string; resourceType: string }> = ({
         name={name}
         label={t('Pause rollouts for this {{resourceLabel}}', { resourceLabel })}
         helpText={t(
-          'devconsole~Pausing lets you make changes without triggering a rollout. You can resume rollouts at any time.',
+          'Pausing lets you make changes without triggering a rollout. You can resume rollouts at any time.',
         )}
       />
     </FormSection>

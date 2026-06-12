@@ -214,7 +214,7 @@ const OperatorHubItemDetailsHint: FC<OperatorHubItemDetailsHintProps> = (props) 
           <HintTitle>{t('Community Operator')}</HintTitle>
           <HintBody>
             {t(
-              'olm~This is a community provided Operator. These are Operators which have not been vetted or verified by Red Hat. Community Operators should be used with caution because their stability is unknown. Red Hat provides no support for community Operators.',
+              'This is a community provided Operator. These are Operators which have not been vetted or verified by Red Hat. Community Operators should be used with caution because their stability is unknown. Red Hat provides no support for community Operators.',
             )}
           </HintBody>
           <HintFooter>
@@ -293,7 +293,7 @@ export const OperatorDescription: FC<OperatorDescriptionProps> = ({
         <StackItem>
           <DismissableAlert title={t('Cluster in STS Mode')} variant={AlertVariant.warning}>
             {t(
-              'olm~This cluster is using AWS Security Token Service to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, you must provide a role ARN (with an attached policy) during installation. Please see the operator description for more details.',
+              'This cluster is using AWS Security Token Service to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, you must provide a role ARN (with an attached policy) during installation. Please see the operator description for more details.',
             )}
           </DismissableAlert>
         </StackItem>
@@ -305,7 +305,7 @@ export const OperatorDescription: FC<OperatorDescriptionProps> = ({
             variant={AlertVariant.warning}
           >
             {t(
-              'olm~This cluster is using Azure Workload Identity / Federated Identity to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, provide the Client ID, Tenant ID, and Subscription ID during installation. See the operator description for more details.',
+              'This cluster is using Azure Workload Identity / Federated Identity to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, provide the Client ID, Tenant ID, and Subscription ID during installation. See the operator description for more details.',
             )}
           </DismissableAlert>
         </StackItem>
@@ -317,7 +317,7 @@ export const OperatorDescription: FC<OperatorDescriptionProps> = ({
             variant={AlertVariant.warning}
           >
             {t(
-              'olm~This cluster is using GCP Workload Identity / Federated Identity to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, provide the Pool ID, Provider ID, and Service Account Email during installation. See the operator description for more details.',
+              'This cluster is using GCP Workload Identity / Federated Identity to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, provide the Pool ID, Provider ID, and Service Account Email during installation. See the operator description for more details.',
             )}
           </DismissableAlert>
         </StackItem>

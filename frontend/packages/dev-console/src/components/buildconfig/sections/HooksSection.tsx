@@ -39,7 +39,7 @@ const HooksSection: FC<{}> = () => {
         name="formData.hooks.enabled"
         label={t('Run build hooks after image is built')}
         helpText={t(
-          'devconsole~Build hooks allow you to run commands at the end of the build to verify the image.',
+          'Build hooks allow you to run commands at the end of the build to verify the image.',
         )}
       />
 
@@ -71,7 +71,7 @@ const HooksSection: FC<{}> = () => {
           addLabel={t('Add command')}
           placeholder={t('Command')}
           helpText={t(
-            'devconsole~Enter the command to run inside the container. The command is considered successful if its exit code is 0.',
+            'Enter the command to run inside the container. The command is considered successful if its exit code is 0.',
           )}
           disableDeleteRow={commands?.length === 1}
         />

@@ -122,9 +122,7 @@ const TelemetryUserPreferenceDropdown: FC = () => {
         <FormHelperText>
           <HelperText>
             <HelperTextItem>
-              {t(
-                'console-telemetry-plugin~Select a option whether to send telemetry events or not.',
-              )}
+              {t('Select a option whether to send telemetry events or not.')}
             </HelperTextItem>
           </HelperText>
         </FormHelperText>

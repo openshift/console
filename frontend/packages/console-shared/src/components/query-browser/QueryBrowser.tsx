@@ -904,7 +904,7 @@ const QueryBrowserWrapped: FC<QueryBrowserProps> = ({
     return (
       <GraphEmptyState title={t('Ungraphable results')}>
         {t(
-          'public~Query results include range vectors, which cannot be graphed. Try adding a function to transform the data.',
+          'Query results include range vectors, which cannot be graphed. Try adding a function to transform the data.',
         )}
       </GraphEmptyState>
     );

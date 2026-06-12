@@ -380,7 +380,7 @@ const AttachStorageForm: FC<AttachStorageFormProps> = (props) => {
               </span>
               <p className="help-block" id="subpath-help">
                 {t(
-                  'public~Optional path within the volume from which it will be mounted into the container. Defaults to the root of the volume.',
+                  'Optional path within the volume from which it will be mounted into the container. Defaults to the root of the volume.',
                 )}
               </p>
             </div>

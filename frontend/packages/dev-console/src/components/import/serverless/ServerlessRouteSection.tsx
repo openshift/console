@@ -92,9 +92,7 @@ const ServerlessRouteSection: FC = () => {
               title={t('Domain mapping(s) will be updated')}
             >
               <div style={{ marginBottom: 'var(--pf-t--global--spacer--sm)' }}>
-                {t(
-                  'devconsole~Warning: The following domain(s) will be removed from the associated service',
-                )}
+                {t('Warning: The following domain(s) will be removed from the associated service')}
               </div>
               {domainsInUse.length > 0 && (
                 <ul>

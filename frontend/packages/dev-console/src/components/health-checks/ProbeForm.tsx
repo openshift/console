@@ -67,9 +67,7 @@ const ProbeForm: FC<ProbeFormProps> = ({ onSubmit, onClose, probeType }) => {
           name={`healthChecks.${probeType}.data.failureThreshold`}
           label={t('Failure threshold')}
           style={{ maxWidth: '100%' }}
-          helpText={t(
-            'devconsole~How many times the probe will try starting or restarting before giving up.',
-          )}
+          helpText={t('How many times the probe will try starting or restarting before giving up.')}
           isDisabled={viewOnly}
         />
         <InputField
@@ -78,7 +76,7 @@ const ProbeForm: FC<ProbeFormProps> = ({ onSubmit, onClose, probeType }) => {
           label={t('Success threshold')}
           style={{ maxWidth: '100%' }}
           helpText={t(
-            'devconsole~How many consecutive successes for the probe to be considered successful after having failed.',
+            'How many consecutive successes for the probe to be considered successful after having failed.',
           )}
           isDisabled={viewOnly}
         />
@@ -86,9 +84,7 @@ const ProbeForm: FC<ProbeFormProps> = ({ onSubmit, onClose, probeType }) => {
           type={TextInputTypes.text}
           name={`healthChecks.${probeType}.data.initialDelaySeconds`}
           label={t('Initial delay')}
-          helpText={t(
-            'devconsole~How long to wait after the Container starts before checking its health.',
-          )}
+          helpText={t('How long to wait after the Container starts before checking its health.')}
           afterInput={<InputGroupText>{t('seconds')}</InputGroupText>}
           style={{ maxWidth: '100%' }}
           isDisabled={viewOnly}
@@ -107,7 +103,7 @@ const ProbeForm: FC<ProbeFormProps> = ({ onSubmit, onClose, probeType }) => {
           name={`healthChecks.${probeType}.data.timeoutSeconds`}
           label={t('Timeout')}
           helpText={t(
-            'devconsole~How long to wait for the probe to finish, if the time is exceeded, the probe is considered failed.',
+            'How long to wait for the probe to finish, if the time is exceeded, the probe is considered failed.',
           )}
           afterInput={<InputGroupText>{t('seconds')}</InputGroupText>}
           style={{ maxWidth: '100%' }}

@@ -20,7 +20,7 @@ export const ConsolePluginFormGroup: FC<ConsolePluginFormGroupProps> = ({
         <label className="co-required">{t('Console plugin', { count: csvPluginsCount })}</label>
         <FieldLevelHelp>
           {t(
-            'olm~This operator includes a console plugin which provides a custom interface that can be included in the console. The console plugin will prompt for the console to be refreshed once it has been enabled. Make sure you trust this console plugin before enabling.',
+            'This operator includes a console plugin which provides a custom interface that can be included in the console. The console plugin will prompt for the console to be refreshed once it has been enabled. Make sure you trust this console plugin before enabling.',
           )}
         </FieldLevelHelp>
         {csvPlugins.map((plugin) => (

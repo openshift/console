@@ -84,7 +84,7 @@ export const InstallPlanApprovalModal: FC<InstallPlanApprovalModalProps> = ({
               value={InstallPlanApproval.Manual}
               label={t('Manual')}
               description={t(
-                'olm~New updates need to be manually approved before installation begins.',
+                'New updates need to be manually approved before installation begins.',
               )}
               onChange={() => setSelectedApprovalStrategy(InstallPlanApproval.Manual)}
               isChecked={selectedApprovalStrategy === InstallPlanApproval.Manual}

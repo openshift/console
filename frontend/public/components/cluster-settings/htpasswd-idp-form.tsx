@@ -118,7 +118,7 @@ export const AddHTPasswdPage = () => {
       <PageHeading
         title={title}
         helpText={t(
-          'public~HTPasswd validates usernames and passwords against a flat file generated using the htpasswd command.',
+          'HTPasswd validates usernames and passwords against a flat file generated using the htpasswd command.',
         )}
       />
       <PaneBody>
@@ -130,9 +130,7 @@ export const AddHTPasswdPage = () => {
               inputFileData={htpasswdFileContent}
               id="htpasswd-file"
               label={t('HTPasswd file')}
-              filenamePlaceholder={t(
-                'public~Upload an HTPasswd file created using the htpasswd command.',
-              )}
+              filenamePlaceholder={t('Upload an HTPasswd file created using the htpasswd command.')}
               isRequired
             />
           </div>

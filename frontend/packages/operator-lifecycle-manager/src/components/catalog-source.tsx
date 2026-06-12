@@ -131,7 +131,7 @@ export const CatalogSourceDetails: FC<CatalogSourceDetailsProps> = ({
               label={t('Availability')}
               obj={catalogSource}
               description={t(
-                'olm~Denotes whether this CatalogSource provides operators to a specific namespace, or the entire cluster.',
+                'Denotes whether this CatalogSource provides operators to a specific namespace, or the entire cluster.',
               )}
             >
               {catsrcNamespace}
@@ -139,9 +139,7 @@ export const CatalogSourceDetails: FC<CatalogSourceDetailsProps> = ({
             <DetailsItem
               label="Endpoint"
               obj={catalogSource}
-              description={t(
-                "olm~The ConfigMap, image, or address for this CatalogSource's registry.",
-              )}
+              description={t("The ConfigMap, image, or address for this CatalogSource's registry.")}
             >
               {getEndpoint(catalogSource)}
             </DetailsItem>
@@ -416,7 +414,7 @@ const DisabledPopover: FC<DisabledPopoverProps> = ({ operatorHub, sourceName }) 
     >
       <p>
         {t(
-          'olm~Operators provided by this source will not appear in Software Catalog and any operators installed from this source will not receive updates until this source is re-enabled.',
+          'Operators provided by this source will not appear in Software Catalog and any operators installed from this source will not receive updates until this source is re-enabled.',
         )}
       </p>
       <Button isInline variant="link" onClick={onClickEnable}>

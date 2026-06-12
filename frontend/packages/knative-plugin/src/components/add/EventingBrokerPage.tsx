@@ -21,7 +21,7 @@ const EventingBrokerPage: FC = () => {
       <PageHeading
         title={t('Broker')}
         helpText={t(
-          'knative-plugin~Create a Broker to define an event mesh for collecting a pool of events and route those events based on attributes, through triggers',
+          'Create a Broker to define an event mesh for collecting a pool of events and route those events based on attributes, through triggers',
         )}
       />
       <QueryFocusApplication>

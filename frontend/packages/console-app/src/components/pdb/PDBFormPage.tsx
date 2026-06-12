@@ -60,7 +60,7 @@ export const PDBFormPage: FC = () => {
 
   const formHelpText = t('Create by completing the form.');
   const yamlHelpText = t(
-    'console-app~Create by manually entering YAML or JSON definitions, or by dragging and dropping a file into the editor.',
+    'Create by manually entering YAML or JSON definitions, or by dragging and dropping a file into the editor.',
   );
   const initialPDB = {
     name: '',

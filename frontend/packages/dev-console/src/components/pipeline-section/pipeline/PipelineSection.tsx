@@ -67,7 +67,7 @@ const PipelineSection: FC<PipelineSectionProps> = ({ flags, builderImages, exist
             isInline
             variant="info"
             title={t(
-              'devconsole~Select a Builder Image and resource to see if there is a pipeline template available for this runtime.',
+              'Select a Builder Image and resource to see if there is a pipeline template available for this runtime.',
             )}
           />
         )}

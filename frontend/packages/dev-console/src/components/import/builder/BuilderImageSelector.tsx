@@ -57,12 +57,12 @@ const BuilderImageSelector: FC<BuilderImageSelectorProps> = ({
         existingPipeline?.metadata?.labels[PIPELINE_RUNTIME_LABEL] &&
       PipelineChangeAlert(
         t(
-          'devconsole~Changing to this builder image will update your associated Pipeline and remove any customization you may have applied.',
+          'Changing to this builder image will update your associated Pipeline and remove any customization you may have applied.',
         ),
       )
     : PipelineChangeAlert(
         t(
-          'devconsole~There are no supported pipelines available for {{builderImage}}. Changing to this builder image will disconnect your associated Pipeline.',
+          'There are no supported pipelines available for {{builderImage}}. Changing to this builder image will disconnect your associated Pipeline.',
           { builderImage: imageName },
         ),
       );

@@ -560,7 +560,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
       const objModel = getModel(obj);
       if (!objModel) {
         return t(
-          'public~The server doesn\'t have a resource type "kind: {{kind}}, apiVersion: {{apiVersion}}".',
+          'The server doesn\'t have a resource type "kind: {{kind}}, apiVersion: {{apiVersion}}".',
           { kind: obj.kind, apiVersion: obj.apiVersion },
         );
       }
@@ -624,7 +624,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
       if (namespace !== newNamespace) {
         handleError(
           t(
-            'public~Cannot change resource namespace (original: "{{namespace}}", updated: "{{newNamespace}}").',
+            'Cannot change resource namespace (original: "{{namespace}}", updated: "{{newNamespace}}").',
             { namespace, newNamespace },
           ),
         );
@@ -632,10 +632,10 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
       }
       if (props.obj.kind !== obj.kind) {
         handleError(
-          t(
-            'public~Cannot change resource kind (original: "{{original}}", updated: "{{updated}}").',
-            { original: props.obj.kind, updated: obj.kind },
-          ),
+          t('Cannot change resource kind (original: "{{original}}", updated: "{{updated}}").', {
+            original: props.obj.kind,
+            updated: obj.kind,
+          }),
         );
         return;
       }
@@ -645,10 +645,10 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
 
       if (apiGroup !== newAPIGroup) {
         handleError(
-          t(
-            'public~Cannot change API group (original: "{{apiGroup}}", updated: "{{newAPIGroup}}").',
-            { apiGroup, newAPIGroup },
-          ),
+          t('Cannot change API group (original: "{{apiGroup}}", updated: "{{newAPIGroup}}").', {
+            apiGroup,
+            newAPIGroup,
+          }),
         );
         return;
       }
@@ -849,7 +849,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
               </Trans>
             ) : (
               t(
-                'public~Create by manually entering YAML or JSON definitions, or by dragging and dropping a file into the editor.',
+                'Create by manually entering YAML or JSON definitions, or by dragging and dropping a file into the editor.',
               )
             ))
           }

@@ -108,7 +108,7 @@ const AlertEmptyState: FC<AlertEmptyProps> = ({ drawerToggle }) => {
     >
       <EmptyStateBody>
         {t(
-          'public~There are currently no critical alerts firing. There may be firing alerts of other severities or silenced critical alerts however.',
+          'There are currently no critical alerts firing. There may be firing alerts of other severities or silenced critical alerts however.',
         )}
       </EmptyStateBody>
       <EmptyStateFooter>

@@ -72,7 +72,7 @@ export const BuildStrategySelector: FC<BuildStrategySelectorProps> = ({
       ariaLabel={t('Cluster Build Strategy')}
       placeholderText={t('Select Cluster Build Strategy')}
       helpText={t(
-        'devconsole~Cluster Build Strategies define a shared group of steps, needed to fullfil the application build process.',
+        'Cluster Build Strategies define a shared group of steps, needed to fullfil the application build process.',
       )}
       getLabelFromValue={(value: string) => t(ReadableClusterBuildStrategies[value])}
       options={clusterBuildStrategyOptions}

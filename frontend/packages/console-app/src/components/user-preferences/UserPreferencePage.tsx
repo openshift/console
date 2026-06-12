@@ -134,7 +134,7 @@ const UserPreferencePage: FC = () => {
       <PageHeading
         title={t('User preferences')}
         helpText={t(
-          'console-app~Set your individual preferences for the console experience. Any changes will be autosaved.',
+          'Set your individual preferences for the console experience. Any changes will be autosaved.',
         )}
       />
       <PageSection>

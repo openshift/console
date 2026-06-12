@@ -183,7 +183,7 @@ export const AboutModal: FC<AboutModalProps> = (props) => {
       {!customBranding && (
         <Content component={ContentVariants.p}>
           {t(
-            "public~OpenShift is Red Hat's container application platform that allows developers to quickly develop, host, and scale applications in a cloud environment.",
+            "OpenShift is Red Hat's container application platform that allows developers to quickly develop, host, and scale applications in a cloud environment.",
           )}
         </Content>
       )}

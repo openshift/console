@@ -289,7 +289,7 @@ const ChannelHeader: FC<{}> = () => {
         <Content>
           <Content component={ContentVariants.p}>
             {t(
-              'public~Channels help to control the pace of updates and recommend the appropriate release versions. Update channels are tied to a minor version of OpenShift Container Platform, for example 4.5.',
+              'Channels help to control the pace of updates and recommend the appropriate release versions. Update channels are tied to a minor version of OpenShift Container Platform, for example 4.5.',
             )}
           </Content>
           {!isManaged() && (
@@ -396,7 +396,7 @@ const ChannelVersionDot: FC<ChannelVersionDotProps> = ({ current, updateBlocked,
           {updateBlocked && (
             <p data-test="cv-channel-version-dot-blocked-info">
               {t(
-                'public~See the alert above the visualization for instructions on how to unblock this version.',
+                'See the alert above the visualization for instructions on how to unblock this version.',
               )}
             </p>
           )}
@@ -508,7 +508,7 @@ const NodesUpdatesGroup: FC<NodesUpdatesGroupProps> = ({
             {!isMaster && (
               <FieldLevelHelp>
                 {t(
-                  'public~{{name}} {{resource}} may continue to update after the update of {{master}} {{resource}} and {{resource2}} are complete.',
+                  '{{name}} {{resource}} may continue to update after the update of {{master}} {{resource}} and {{resource2}} are complete.',
                   {
                     name,
                     resource: NodeModel.labelPlural,
@@ -772,7 +772,7 @@ export const ClusterNotUpgradeableAlert: FC<ClusterNotUpgradeableAlertProps> = (
       title={
         currentVersionParsed && newerUpdateParsed
           ? t(
-              'public~This cluster should not be updated to {{nextMajorMinorVersion}}. You can continue to update to patch releases in {{currentMajorMinorVersion}}.',
+              'This cluster should not be updated to {{nextMajorMinorVersion}}. You can continue to update to patch releases in {{currentMajorMinorVersion}}.',
               { nextMajorMinorVersion, currentMajorMinorVersion },
             )
           : t('This cluster should not be updated to the next minor version.')
@@ -966,9 +966,7 @@ const ClusterVersionDetailsTable: FC<ClusterVersionDetailsTableProps> = ({
                         className="pf-v6-u-my-sm"
                         isInline
                         isPlain
-                        title={t(
-                          'public~Click "Select a version" to view versions with known issues.',
-                        )}
+                        title={t('Click "Select a version" to view versions with known issues.')}
                         variant="info"
                         data-test="cv-not-recommended-alert"
                       />
@@ -1103,7 +1101,7 @@ const ClusterVersionDetailsTable: FC<ClusterVersionDetailsTableProps> = ({
             <Content>
               <Content component={ContentVariants.p} className="help-block pf-v6-u-mb-lg">
                 {t(
-                  'public~There is a threshold for rendering update data which may cause gaps in the information below.',
+                  'There is a threshold for rendering update data which may cause gaps in the information below.',
                 )}
               </Content>
             </Content>

@@ -44,9 +44,7 @@ export const ConfigMapFormEditor: FC<FormikProps<any> & ConfigMapFormEditorProps
   const LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY = 'console.configMapForm.editor.lastView';
   const isStale = !!configMap && configMap?.metadata?.resourceVersion !== resourceVersion;
   const immutableCfg = !!configMap && configMap.immutable;
-  const immutableCfgError = t(
-    'public~Cannot update the object when immutable field is set to true',
-  );
+  const immutableCfgError = t('Cannot update the object when immutable field is set to true');
   const disableSubmit =
     immutableCfg ||
     (editorType === EditorType.YAML ? !dirty : !dirty || !_.isEmpty(errors)) ||
@@ -89,7 +87,7 @@ export const ConfigMapFormEditor: FC<FormikProps<any> & ConfigMapFormEditorProps
         <FormHeader
           title={title}
           helpText={t(
-            'public~Config maps hold key-value pairs that can be used in pods to read application configuration.',
+            'Config maps hold key-value pairs that can be used in pods to read application configuration.',
           )}
         />
         <SyncedEditorField

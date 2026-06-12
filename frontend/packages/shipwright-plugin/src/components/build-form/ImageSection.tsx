@@ -16,7 +16,7 @@ const ImageSection: FC<{ namespace: string }> = ({ namespace }) => {
         required
         autoComplete="off"
         helpText={t(
-          'shipwright-plugin~Example for OpenShift internal registry: image-registry.openshift-image-registry.svc:5000/<image-namespace>/<image-name>:latest',
+          'Example for OpenShift internal registry: image-registry.openshift-image-registry.svc:5000/<image-namespace>/<image-name>:latest',
         )}
       />
       <PushSecretSelector formContextField="formData.outputImage.secret" namespace={namespace} />

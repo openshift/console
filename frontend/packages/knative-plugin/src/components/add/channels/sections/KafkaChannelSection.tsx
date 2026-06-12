@@ -10,16 +10,12 @@ const KafkaChannelSection: FC = () => {
       <NumberSpinnerField
         name="formData.data.kafkachannel.numPartitions"
         label={t('Number of Partitions')}
-        helpText={t(
-          'knative-plugin~The number of partitions of a Kafka topic. By default is, set to 1.',
-        )}
+        helpText={t('The number of partitions of a Kafka topic. By default is, set to 1.')}
       />
       <NumberSpinnerField
         name="formData.data.kafkachannel.replicationFactor"
         label={t('Replication factor')}
-        helpText={t(
-          'knative-plugin~The Replication factor of a Kafka topic. By default is, set to 1.',
-        )}
+        helpText={t('The Replication factor of a Kafka topic. By default is, set to 1.')}
       />
     </FormSection>
   );

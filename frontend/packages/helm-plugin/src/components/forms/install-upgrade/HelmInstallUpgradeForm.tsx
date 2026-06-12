@@ -169,7 +169,7 @@ const HelmInstallUpgradeForm: FC<
             <Alert
               variant="info"
               title={t(
-                "helm-plugin~Helm release is not configurable since the Helm Chart doesn't define any values.",
+                "Helm release is not configurable since the Helm Chart doesn't define any values.",
               )}
               isInline
             />

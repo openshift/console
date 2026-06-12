@@ -249,12 +249,9 @@ const useDeprovisionAction = (host, machine, machineSet, bmoEnabled) => {
   const deprovisionModalLauncher = useWarningModal({
     title: t('Deprovision {{name}}', { name: getName(host) }),
     children: machineSet
-      ? t(
-          'metal3-plugin~Are you sure you want to delete {{name}} machine and scale down its machine set?',
-          {
-            name: getName(machine),
-          },
-        )
+      ? t('Are you sure you want to delete {{name}} machine and scale down its machine set?', {
+          name: getName(machine),
+        })
       : t('Are you sure you want to delete {{name}} machine?', {
           name: getName(machine),
         }),

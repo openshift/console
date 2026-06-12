@@ -62,7 +62,7 @@ const HPAUtilizationField: FC<HPAUtilizationFieldProps> = ({
           ) : (
             <HelperTextItem>
               {t(
-                'devconsole~{{label}} request and limit must be set before {{label}} utilization can be set.',
+                '{{label}} request and limit must be set before {{label}} utilization can be set.',
                 { label },
               )}
             </HelperTextItem>

@@ -24,9 +24,7 @@ const PingSourceSection: FC<PingSourceSectionProps> = ({ title, fullWidth }) => 
         type={TextInputTypes.text}
         name={`formData.data.${EventSources.PingSource}.schedule`}
         label={t('Schedule')}
-        helpText={t(
-          'knative-plugin~Schedule is described using the unix-cron string format (* * * * *)',
-        )}
+        helpText={t('Schedule is described using the unix-cron string format (* * * * *)')}
         required
       />
     </FormSection>

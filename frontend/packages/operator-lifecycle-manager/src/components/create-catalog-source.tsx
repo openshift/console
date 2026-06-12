@@ -96,7 +96,7 @@ export const CreateCatalogSource = () => {
       <PageHeading
         title={title}
         helpText={t(
-          'olm~Create a CatalogSource in order to make operators available in Software Catalog.',
+          'Create a CatalogSource in order to make operators available in Software Catalog.',
         )}
       />
       <PaneBody>

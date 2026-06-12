@@ -61,11 +61,9 @@ export const useHealthChecksAlert = (element: GraphElement): DetailsResourceAler
 
   const alertMessage =
     containersName?.length > 1
-      ? t(
-          'topology~Not all Containers have health checks to ensure your application is running correctly.',
-        )
+      ? t('Not all Containers have health checks to ensure your application is running correctly.')
       : t(
-          'topology~Container {{containersName}} does not have health checks to ensure your application is running correctly.',
+          'Container {{containersName}} does not have health checks to ensure your application is running correctly.',
           { containersName },
         );
 

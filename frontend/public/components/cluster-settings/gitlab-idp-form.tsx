@@ -149,7 +149,7 @@ export const AddGitLabPage = () => {
       <PageHeading
         title={title}
         helpText={t(
-          'public~You can use GitLab integration for users authenticating with GitLab credentials.',
+          'You can use GitLab integration for users authenticating with GitLab credentials.',
         )}
       />
       <PaneBody>

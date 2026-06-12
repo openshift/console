@@ -149,12 +149,12 @@ export const DeploymentConfigDeprecationAlert: FC = () => {
     >
       <p>
         {t(
-          'public~Feature development of DeploymentConfigs will be deprecated in OpenShift Container Platform 4.14.',
+          'Feature development of DeploymentConfigs will be deprecated in OpenShift Container Platform 4.14.',
         )}
       </p>
       <p>
         {t(
-          'public~DeploymentConfigs will continue to be supported for security and critical fixes, but you should migrate to Deployments wherever it is possible.',
+          'DeploymentConfigs will continue to be supported for security and critical fixes, but you should migrate to Deployments wherever it is possible.',
         )}
       </p>
       {!isManaged() && (

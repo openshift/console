@@ -120,9 +120,7 @@ const DefaultCreateProjectModal: OverlayComponent<CreateProjectModalProps> = ({
       <ModalHeader title={t('Create Project')} labelId="create-project-modal-title" />
       <ModalBody>
         <Content component={ContentVariants.p}>
-          {t(
-            'console-shared~An OpenShift project is an alternative representation of a Kubernetes namespace.',
-          )}
+          {t('An OpenShift project is an alternative representation of a Kubernetes namespace.')}
         </Content>
         {!isManaged() && (
           <Content component={ContentVariants.p}>
@@ -140,12 +138,12 @@ const DefaultCreateProjectModal: OverlayComponent<CreateProjectModalProps> = ({
               <FieldLevelHelp>
                 <Content component={ContentVariants.p}>
                   {t(
-                    "console-shared~A Project name must consist of lower case alphanumeric characters or '-', and must start and end with an alphanumeric character (e.g. 'my-name' or '123-abc').",
+                    "A Project name must consist of lower case alphanumeric characters or '-', and must start and end with an alphanumeric character (e.g. 'my-name' or '123-abc').",
                   )}
                 </Content>
                 <Content component={ContentVariants.p}>
                   {t(
-                    "console-shared~You must create a Namespace to be able to create projects that begin with 'openshift-', 'kubernetes-', or 'kube-'.",
+                    "You must create a Namespace to be able to create projects that begin with 'openshift-', 'kubernetes-', or 'kube-'.",
                   )}
                 </Content>
               </FieldLevelHelp>

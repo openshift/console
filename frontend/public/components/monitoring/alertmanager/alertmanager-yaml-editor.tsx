@@ -76,7 +76,7 @@ const AlertmanagerYAMLEditor: FC<AlertmanagerYAMLEditorProps> = ({ obj: secret }
       <PageSection hasBodyWrapper={false} className="pf-v6-u-pb-0">
         <Content component={ContentVariants.p}>
           {t(
-            'public~Update this YAML to configure Routes, Receivers, Groupings and other Alertmanager settings.',
+            'Update this YAML to configure Routes, Receivers, Groupings and other Alertmanager settings.',
           )}
         </Content>
       </PageSection>

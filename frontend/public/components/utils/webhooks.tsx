@@ -159,7 +159,7 @@ export const WebhookTriggers: FC<WebhookTriggersProps> = (props) => {
     if (!_.has(webhookSecret, 'data.WebHookSecretKey')) {
       launchModal(ErrorModal, {
         error: t(
-          'public~Secret referenced in the {{triggerProperty}} webhook trigger does not contain "WebHookSecretKey" key. Webhook trigger won’t work due to the invalid secret reference',
+          'Secret referenced in the {{triggerProperty}} webhook trigger does not contain "WebHookSecretKey" key. Webhook trigger won’t work due to the invalid secret reference',
           { triggerProperty },
         ),
       });
