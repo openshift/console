@@ -46,8 +46,6 @@ import (
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
-	"k8s.io/apimachinery/pkg/util/jsonmergepatch"
-	"k8s.io/apimachinery/pkg/util/mergepatch"
 	"k8s.io/apimachinery/pkg/util/strategicpatch"
 	"k8s.io/apimachinery/pkg/watch"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
@@ -85,7 +83,7 @@ type Client struct {
 	// Namespace allows to bypass the kubeconfig file for the choice of the namespace
 	Namespace string
 
-	kubeClient kubernetes.Interface
+	kubeClient *kubernetes.Clientset
 }
 
 func init() {
@@ -113,7 +111,7 @@ func New(getter genericclioptions.RESTClientGetter) *Client {
 var nopLogger = func(_ string, _ ...interface{}) {}
 
 // getKubeClient get or create a new KubernetesClientSet
-func (c *Client) getKubeClient() (kubernetes.Interface, error) {
+func (c *Client) getKubeClient() (*kubernetes.Clientset, error) {
 	var err error
 	if c.kubeClient == nil {
 		c.kubeClient, err = c.Factory.KubernetesClientSet()
@@ -133,7 +131,7 @@ func (c *Client) IsReachable() error {
 	if err != nil {
 		return errors.Wrap(err, "Kubernetes cluster unreachable")
 	}
-	if _, err := client.Discovery().ServerVersion(); err != nil {
+	if _, err := client.ServerVersion(); err != nil {
 		return errors.Wrap(err, "Kubernetes cluster unreachable")
 	}
 	return nil
@@ -381,7 +379,14 @@ func (c *Client) BuildTable(reader io.Reader, validate bool) (ResourceList, erro
 	return result, scrubValidationError(err)
 }
 
-func (c *Client) update(original, target ResourceList, force, threeWayMerge bool) (*Result, error) {
+// Update takes the current list of objects and target list of objects and
+// creates resources that don't already exist, updates resources that have been
+// modified in the target configuration, and deletes resources from the current
+// configuration that are not present in the target configuration. If an error
+// occurs, a Result will still be returned with the error, containing all
+// resource updates, creations, and deletions that were attempted. These can be
+// used for cleanup or other logging purposes.
+func (c *Client) Update(original, target ResourceList, force bool) (*Result, error) {
 	updateErrors := []string{}
 	res := &Result{}
 
@@ -416,7 +421,7 @@ func (c *Client) update(original, target ResourceList, force, threeWayMerge bool
 			return errors.Errorf("no %s with the name %q found", kind, info.Name)
 		}
 
-		if err := updateResource(c, info, originalInfo.Object, force, threeWayMerge); err != nil {
+		if err := updateResource(c, info, originalInfo.Object, force); err != nil {
 			c.Log("error updating the resource %q:\n\t %v", info.Name, err)
 			updateErrors = append(updateErrors, err.Error())
 		}
@@ -455,31 +460,6 @@ func (c *Client) update(original, target ResourceList, force, threeWayMerge bool
 		res.Deleted = append(res.Deleted, info)
 	}
 	return res, nil
-}
-
-// Update takes the current list of objects and target list of objects and
-// creates resources that don't already exist, updates resources that have been
-// modified in the target configuration, and deletes resources from the current
-// configuration that are not present in the target configuration. If an error
-// occurs, a Result will still be returned with the error, containing all
-// resource updates, creations, and deletions that were attempted. These can be
-// used for cleanup or other logging purposes.
-//
-// The difference to Update is that UpdateThreeWayMerge does a three-way-merge
-// for unstructured objects.
-func (c *Client) UpdateThreeWayMerge(original, target ResourceList, force bool) (*Result, error) {
-	return c.update(original, target, force, true)
-}
-
-// Update takes the current list of objects and target list of objects and
-// creates resources that don't already exist, updates resources that have been
-// modified in the target configuration, and deletes resources from the current
-// configuration that are not present in the target configuration. If an error
-// occurs, a Result will still be returned with the error, containing all
-// resource updates, creations, and deletions that were attempted. These can be
-// used for cleanup or other logging purposes.
-func (c *Client) Update(original, target ResourceList, force bool) (*Result, error) {
-	return c.update(original, target, force, false)
 }
 
 // Delete deletes Kubernetes resources specified in the resources list with
@@ -637,7 +617,7 @@ func deleteResource(info *resource.Info, policy metav1.DeletionPropagation) erro
 		})
 }
 
-func createPatch(target *resource.Info, current runtime.Object, threeWayMergeForUnstructured bool) ([]byte, types.PatchType, error) {
+func createPatch(target *resource.Info, current runtime.Object) ([]byte, types.PatchType, error) {
 	oldData, err := json.Marshal(current)
 	if err != nil {
 		return nil, types.StrategicMergePatchType, errors.Wrap(err, "serializing current configuration")
@@ -665,7 +645,7 @@ func createPatch(target *resource.Info, current runtime.Object, threeWayMergeFor
 
 	// Unstructured objects, such as CRDs, may not have a not registered error
 	// returned from ConvertToVersion. Anything that's unstructured should
-	// use generic JSON merge patch. Strategic Merge Patch is not supported
+	// use the jsonpatch.CreateMergePatch. Strategic Merge Patch is not supported
 	// on objects like CRDs.
 	_, isUnstructured := versionedObject.(runtime.Unstructured)
 
@@ -673,19 +653,6 @@ func createPatch(target *resource.Info, current runtime.Object, threeWayMergeFor
 	_, isCRD := versionedObject.(*apiextv1beta1.CustomResourceDefinition)
 
 	if isUnstructured || isCRD {
-		if threeWayMergeForUnstructured {
-			// from https://github.com/kubernetes/kubectl/blob/b83b2ec7d15f286720bccf7872b5c72372cb8e80/pkg/cmd/apply/patcher.go#L129
-			preconditions := []mergepatch.PreconditionFunc{
-				mergepatch.RequireKeyUnchanged("apiVersion"),
-				mergepatch.RequireKeyUnchanged("kind"),
-				mergepatch.RequireMetadataKeyUnchanged("name"),
-			}
-			patch, err := jsonmergepatch.CreateThreeWayJSONMergePatch(oldData, newData, currentData, preconditions...)
-			if err != nil && mergepatch.IsPreconditionFailed(err) {
-				err = fmt.Errorf("%w: at least one field was changed: apiVersion, kind or name", err)
-			}
-			return patch, types.MergePatchType, err
-		}
 		// fall back to generic JSON merge patch
 		patch, err := jsonpatch.CreateMergePatch(oldData, newData)
 		return patch, types.MergePatchType, err
@@ -700,7 +667,7 @@ func createPatch(target *resource.Info, current runtime.Object, threeWayMergeFor
 	return patch, types.StrategicMergePatchType, err
 }
 
-func updateResource(c *Client, target *resource.Info, currentObj runtime.Object, force, threeWayMergeForUnstructured bool) error {
+func updateResource(c *Client, target *resource.Info, currentObj runtime.Object, force bool) error {
 	var (
 		obj    runtime.Object
 		helper = resource.NewHelper(target.Client, target.Mapping).WithFieldManager(getManagedFieldsManager())
@@ -716,7 +683,7 @@ func updateResource(c *Client, target *resource.Info, currentObj runtime.Object,
 		}
 		c.Log("Replaced %q with kind %s for kind %s", target.Name, currentObj.GetObjectKind().GroupVersionKind().Kind, kind)
 	} else {
-		patch, patchType, err := createPatch(target, currentObj, threeWayMergeForUnstructured)
+		patch, patchType, err := createPatch(target, currentObj)
 		if err != nil {
 			return errors.Wrap(err, "failed to create patch")
 		}
@@ -843,48 +810,6 @@ func (c *Client) waitForPodSuccess(obj runtime.Object, name string) (bool, error
 	}
 
 	return false, nil
-}
-
-// GetPodList uses the kubernetes interface to get the list of pods filtered by listOptions
-func (c *Client) GetPodList(namespace string, listOptions metav1.ListOptions) (*v1.PodList, error) {
-	podList, err := c.kubeClient.CoreV1().Pods(namespace).List(context.Background(), listOptions)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get pod list with options: %+v with error: %v", listOptions, err)
-	}
-	return podList, nil
-}
-
-// OutputContainerLogsForPodList is a helper that outputs logs for a list of pods
-func (c *Client) OutputContainerLogsForPodList(podList *v1.PodList, namespace string, writerFunc func(namespace, pod, container string) io.Writer) error {
-	for _, pod := range podList.Items {
-		for _, container := range pod.Spec.Containers {
-			options := &v1.PodLogOptions{
-				Container: container.Name,
-			}
-			request := c.kubeClient.CoreV1().Pods(namespace).GetLogs(pod.Name, options)
-			err2 := copyRequestStreamToWriter(request, pod.Name, container.Name, writerFunc(namespace, pod.Name, container.Name))
-			if err2 != nil {
-				return err2
-			}
-		}
-	}
-	return nil
-}
-
-func copyRequestStreamToWriter(request *rest.Request, podName, containerName string, writer io.Writer) error {
-	readCloser, err := request.Stream(context.Background())
-	if err != nil {
-		return errors.Errorf("Failed to stream pod logs for pod: %s, container: %s", podName, containerName)
-	}
-	defer readCloser.Close()
-	_, err = io.Copy(writer, readCloser)
-	if err != nil {
-		return errors.Errorf("Failed to copy IO from logs for pod: %s, container: %s", podName, containerName)
-	}
-	if err != nil {
-		return errors.Errorf("Failed to close reader for pod: %s, container: %s", podName, containerName)
-	}
-	return nil
 }
 
 // scrubValidationError removes kubectl info from the message.

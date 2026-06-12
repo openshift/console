@@ -21,7 +21,6 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"log/slog"
 	"net/url"
 	"os"
 	"path"
@@ -456,11 +455,7 @@ func (i *Install) performInstall(rel *release.Release, toBeAdopted kube.Resource
 	if len(toBeAdopted) == 0 && len(resources) > 0 {
 		_, err = i.cfg.KubeClient.Create(resources)
 	} else if len(resources) > 0 {
-		if i.TakeOwnership {
-			_, err = i.cfg.KubeClient.(kube.InterfaceThreeWayMerge).UpdateThreeWayMerge(toBeAdopted, resources, i.Force)
-		} else {
-			_, err = i.cfg.KubeClient.Update(toBeAdopted, resources, i.Force)
-		}
+		_, err = i.cfg.KubeClient.Update(toBeAdopted, resources, i.Force)
 	}
 	if err != nil {
 		return rel, err
@@ -619,7 +614,7 @@ func writeToFile(outputDir string, name string, data string, append bool) error 
 
 	defer f.Close()
 
-	_, err = fmt.Fprintf(f, "---\n# Source: %s\n%s\n", name, data)
+	_, err = f.WriteString(fmt.Sprintf("---\n# Source: %s\n%s\n", name, data))
 
 	if err != nil {
 		return err
@@ -751,12 +746,6 @@ func (c *ChartPathOptions) LocateChart(name string, settings *cli.EnvSettings) (
 	version := strings.TrimSpace(c.Version)
 
 	if _, err := os.Stat(name); err == nil {
-		// Issue #7862: Helm prioritizes local charts over repository URL.
-		// This behavior is maintained for backwards compatibility but with a warning.
-		if c.RepoURL != "" {
-			slog.Warn("local chart found in current working directory. repository url ignored", "chart", name, "repository", c.RepoURL)
-		}
-
 		abs, err := filepath.Abs(name)
 		if err != nil {
 			return abs, err

@@ -19,11 +19,11 @@ package registry
 import (
 	"strings"
 
-	"oras.land/oras-go/v2/registry"
+	orasregistry "oras.land/oras-go/pkg/registry"
 )
 
 type reference struct {
-	orasReference registry.Reference
+	orasReference orasregistry.Reference
 	Registry      string
 	Repository    string
 	Tag           string
@@ -60,7 +60,7 @@ func newReference(raw string) (result reference, err error) {
 		}
 	}
 
-	result.orasReference, err = registry.ParseReference(raw)
+	result.orasReference, err = orasregistry.ParseReference(raw)
 	if err != nil {
 		return result, err
 	}

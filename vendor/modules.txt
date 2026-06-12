@@ -40,8 +40,8 @@ github.com/Microsoft/go-winio/internal/fs
 github.com/Microsoft/go-winio/internal/socket
 github.com/Microsoft/go-winio/internal/stringbuffer
 github.com/Microsoft/go-winio/pkg/guid
-# github.com/ProtonMail/go-crypto v1.1.6
-## explicit; go 1.17
+# github.com/ProtonMail/go-crypto v1.3.0
+## explicit; go 1.22.0
 github.com/ProtonMail/go-crypto/bitcurves
 github.com/ProtonMail/go-crypto/brainpool
 github.com/ProtonMail/go-crypto/eax
@@ -50,6 +50,7 @@ github.com/ProtonMail/go-crypto/ocb
 github.com/ProtonMail/go-crypto/openpgp
 github.com/ProtonMail/go-crypto/openpgp/aes/keywrap
 github.com/ProtonMail/go-crypto/openpgp/armor
+github.com/ProtonMail/go-crypto/openpgp/clearsign
 github.com/ProtonMail/go-crypto/openpgp/ecdh
 github.com/ProtonMail/go-crypto/openpgp/ecdsa
 github.com/ProtonMail/go-crypto/openpgp/ed25519
@@ -104,7 +105,7 @@ github.com/cloudevents/sdk-go/v2/event/datacodec/xml
 github.com/cloudevents/sdk-go/v2/protocol
 github.com/cloudevents/sdk-go/v2/protocol/http
 github.com/cloudevents/sdk-go/v2/types
-# github.com/cloudflare/circl v1.6.1
+# github.com/cloudflare/circl v1.6.3
 ## explicit; go 1.22.0
 github.com/cloudflare/circl/dh/x25519
 github.com/cloudflare/circl/dh/x448
@@ -235,6 +236,9 @@ github.com/docker/go-connections/tlsconfig
 # github.com/docker/go-metrics v0.0.1
 ## explicit; go 1.11
 github.com/docker/go-metrics
+# github.com/dylibso/observe-sdk/go v0.0.0-20240819160327-2d926c5d788a
+## explicit; go 1.21
+github.com/dylibso/observe-sdk/go
 # github.com/emicklei/go-restful/v3 v3.13.0
 ## explicit; go 1.13
 github.com/emicklei/go-restful/v3
@@ -257,12 +261,26 @@ github.com/evanphx/json-patch/v5/internal/json
 # github.com/exponent-io/jsonpath v0.0.0-20210407135951-1de76d718b3f
 ## explicit; go 1.15
 github.com/exponent-io/jsonpath
+# github.com/extism/go-sdk v1.7.1
+## explicit; go 1.22.0
+github.com/extism/go-sdk
 # github.com/fatih/color v1.18.0
 ## explicit; go 1.17
 github.com/fatih/color
 # github.com/felixge/httpsnoop v1.0.4
 ## explicit; go 1.13
 github.com/felixge/httpsnoop
+# github.com/fluxcd/cli-utils v0.37.2-flux.1
+## explicit; go 1.25.0
+github.com/fluxcd/cli-utils/pkg/kstatus/polling/aggregator
+github.com/fluxcd/cli-utils/pkg/kstatus/polling/clusterreader
+github.com/fluxcd/cli-utils/pkg/kstatus/polling/collector
+github.com/fluxcd/cli-utils/pkg/kstatus/polling/engine
+github.com/fluxcd/cli-utils/pkg/kstatus/polling/event
+github.com/fluxcd/cli-utils/pkg/kstatus/polling/statusreaders
+github.com/fluxcd/cli-utils/pkg/kstatus/status
+github.com/fluxcd/cli-utils/pkg/kstatus/watcher
+github.com/fluxcd/cli-utils/pkg/object
 # github.com/fsnotify/fsnotify v1.9.0
 ## explicit; go 1.17
 github.com/fsnotify/fsnotify
@@ -270,7 +288,7 @@ github.com/fsnotify/fsnotify/internal
 # github.com/fxamacker/cbor/v2 v2.9.0
 ## explicit; go 1.20
 github.com/fxamacker/cbor/v2
-# github.com/go-errors/errors v1.4.2
+# github.com/go-errors/errors v1.5.1
 ## explicit; go 1.14
 github.com/go-errors/errors
 # github.com/go-git/gcfg v1.5.1-0.20230307220236-3a3c6141e376
@@ -409,6 +427,9 @@ github.com/gobwas/glob/syntax/ast
 github.com/gobwas/glob/syntax/lexer
 github.com/gobwas/glob/util/runes
 github.com/gobwas/glob/util/strings
+# github.com/gofrs/flock v0.13.0
+## explicit; go 1.24.0
+github.com/gofrs/flock
 # github.com/gogo/protobuf v1.3.2
 ## explicit; go 1.15
 github.com/gogo/protobuf/proto
@@ -537,6 +558,9 @@ github.com/helm/chart-testing/v3/pkg/util
 # github.com/huandu/xstrings v1.5.0
 ## explicit; go 1.12
 github.com/huandu/xstrings
+# github.com/ianlancetaylor/demangle v0.0.0-20240805132620-81f5be970eca
+## explicit; go 1.13
+github.com/ianlancetaylor/demangle
 # github.com/inconshreveable/mousetrap v1.1.0
 ## explicit; go 1.18
 github.com/inconshreveable/mousetrap
@@ -820,6 +844,49 @@ github.com/stretchr/testify/require
 # github.com/subosito/gotenv v1.6.0
 ## explicit; go 1.18
 github.com/subosito/gotenv
+# github.com/tetratelabs/wabin v0.0.0-20230304001439-f6f874872834
+## explicit; go 1.18
+github.com/tetratelabs/wabin/binary
+github.com/tetratelabs/wabin/ieee754
+github.com/tetratelabs/wabin/leb128
+github.com/tetratelabs/wabin/wasm
+# github.com/tetratelabs/wazero v1.11.0
+## explicit; go 1.24.0
+github.com/tetratelabs/wazero
+github.com/tetratelabs/wazero/api
+github.com/tetratelabs/wazero/experimental
+github.com/tetratelabs/wazero/experimental/sys
+github.com/tetratelabs/wazero/imports/wasi_snapshot_preview1
+github.com/tetratelabs/wazero/internal/descriptor
+github.com/tetratelabs/wazero/internal/engine/interpreter
+github.com/tetratelabs/wazero/internal/engine/wazevo
+github.com/tetratelabs/wazero/internal/engine/wazevo/backend
+github.com/tetratelabs/wazero/internal/engine/wazevo/backend/isa/amd64
+github.com/tetratelabs/wazero/internal/engine/wazevo/backend/isa/arm64
+github.com/tetratelabs/wazero/internal/engine/wazevo/backend/regalloc
+github.com/tetratelabs/wazero/internal/engine/wazevo/frontend
+github.com/tetratelabs/wazero/internal/engine/wazevo/ssa
+github.com/tetratelabs/wazero/internal/engine/wazevo/wazevoapi
+github.com/tetratelabs/wazero/internal/expctxkeys
+github.com/tetratelabs/wazero/internal/filecache
+github.com/tetratelabs/wazero/internal/fsapi
+github.com/tetratelabs/wazero/internal/ieee754
+github.com/tetratelabs/wazero/internal/internalapi
+github.com/tetratelabs/wazero/internal/leb128
+github.com/tetratelabs/wazero/internal/moremath
+github.com/tetratelabs/wazero/internal/platform
+github.com/tetratelabs/wazero/internal/sock
+github.com/tetratelabs/wazero/internal/sys
+github.com/tetratelabs/wazero/internal/sysfs
+github.com/tetratelabs/wazero/internal/u32
+github.com/tetratelabs/wazero/internal/u64
+github.com/tetratelabs/wazero/internal/version
+github.com/tetratelabs/wazero/internal/wasip1
+github.com/tetratelabs/wazero/internal/wasm
+github.com/tetratelabs/wazero/internal/wasm/binary
+github.com/tetratelabs/wazero/internal/wasmdebug
+github.com/tetratelabs/wazero/internal/wasmruntime
+github.com/tetratelabs/wazero/sys
 # github.com/x448/float16 v0.8.4
 ## explicit; go 1.11
 github.com/x448/float16
@@ -874,6 +941,11 @@ go.opentelemetry.io/otel/trace
 go.opentelemetry.io/otel/trace/embedded
 go.opentelemetry.io/otel/trace/internal/telemetry
 go.opentelemetry.io/otel/trace/noop
+# go.opentelemetry.io/proto/otlp v1.10.0
+## explicit; go 1.24.0
+go.opentelemetry.io/proto/otlp/common/v1
+go.opentelemetry.io/proto/otlp/resource/v1
+go.opentelemetry.io/proto/otlp/trace/v1
 # go.podman.io/image/v5 v5.40.0
 ## explicit; go 1.25.6
 go.podman.io/image/v5/docker/reference
@@ -995,7 +1067,7 @@ golang.org/x/text/unicode/norm
 # golang.org/x/time v0.14.0
 ## explicit; go 1.24.0
 golang.org/x/time/rate
-# gomodules.xyz/jsonpatch/v2 v2.4.0
+# gomodules.xyz/jsonpatch/v2 v2.5.0
 ## explicit; go 1.20
 gomodules.xyz/jsonpatch/v2
 # google.golang.org/genproto/googleapis/api v0.0.0-20260401024825-9d38bb4040a9
@@ -1133,8 +1205,8 @@ gopkg.in/yaml.v2
 # gopkg.in/yaml.v3 v3.0.1
 ## explicit
 gopkg.in/yaml.v3
-# helm.sh/helm/v3 v3.20.1
-## explicit; go 1.25.0
+# helm.sh/helm/v3 v3.17.1
+## explicit; go 1.23.0
 helm.sh/helm/v3/internal/fileutil
 helm.sh/helm/v3/internal/resolver
 helm.sh/helm/v3/internal/sympath
@@ -1174,6 +1246,56 @@ helm.sh/helm/v3/pkg/strvals
 helm.sh/helm/v3/pkg/time
 helm.sh/helm/v3/pkg/time/ctime
 helm.sh/helm/v3/pkg/uploader
+# helm.sh/helm/v4 v4.1.4
+## explicit; go 1.25.0
+helm.sh/helm/v4/internal/chart/v3
+helm.sh/helm/v4/internal/chart/v3/loader
+helm.sh/helm/v4/internal/copystructure
+helm.sh/helm/v4/internal/fileutil
+helm.sh/helm/v4/internal/logging
+helm.sh/helm/v4/internal/plugin
+helm.sh/helm/v4/internal/plugin/schema
+helm.sh/helm/v4/internal/resolver
+helm.sh/helm/v4/internal/statusreaders
+helm.sh/helm/v4/internal/sympath
+helm.sh/helm/v4/internal/third_party/dep/fs
+helm.sh/helm/v4/internal/third_party/k8s.io/kubernetes/deployment/util
+helm.sh/helm/v4/internal/tlsutil
+helm.sh/helm/v4/internal/urlutil
+helm.sh/helm/v4/internal/version
+helm.sh/helm/v4/pkg/action
+helm.sh/helm/v4/pkg/chart
+helm.sh/helm/v4/pkg/chart/common
+helm.sh/helm/v4/pkg/chart/common/util
+helm.sh/helm/v4/pkg/chart/loader
+helm.sh/helm/v4/pkg/chart/loader/archive
+helm.sh/helm/v4/pkg/chart/v2
+helm.sh/helm/v4/pkg/chart/v2/lint
+helm.sh/helm/v4/pkg/chart/v2/lint/rules
+helm.sh/helm/v4/pkg/chart/v2/lint/support
+helm.sh/helm/v4/pkg/chart/v2/loader
+helm.sh/helm/v4/pkg/chart/v2/util
+helm.sh/helm/v4/pkg/cli
+helm.sh/helm/v4/pkg/downloader
+helm.sh/helm/v4/pkg/engine
+helm.sh/helm/v4/pkg/getter
+helm.sh/helm/v4/pkg/helmpath
+helm.sh/helm/v4/pkg/helmpath/xdg
+helm.sh/helm/v4/pkg/ignore
+helm.sh/helm/v4/pkg/kube
+helm.sh/helm/v4/pkg/kube/fake
+helm.sh/helm/v4/pkg/postrenderer
+helm.sh/helm/v4/pkg/provenance
+helm.sh/helm/v4/pkg/pusher
+helm.sh/helm/v4/pkg/registry
+helm.sh/helm/v4/pkg/release
+helm.sh/helm/v4/pkg/release/common
+helm.sh/helm/v4/pkg/release/v1
+helm.sh/helm/v4/pkg/release/v1/util
+helm.sh/helm/v4/pkg/repo/v1
+helm.sh/helm/v4/pkg/storage
+helm.sh/helm/v4/pkg/storage/driver
+helm.sh/helm/v4/pkg/uploader
 # k8s.io/api v0.35.4
 ## explicit; go 1.25.0
 k8s.io/api/admission/v1
@@ -1664,6 +1786,7 @@ k8s.io/client-go/util/apply
 k8s.io/client-go/util/cert
 k8s.io/client-go/util/connrotation
 k8s.io/client-go/util/consistencydetector
+k8s.io/client-go/util/csaupgrade
 k8s.io/client-go/util/flowcontrol
 k8s.io/client-go/util/homedir
 k8s.io/client-go/util/jsonpath
@@ -1733,6 +1856,11 @@ oras.land/oras-go/pkg/auth/docker
 oras.land/oras-go/pkg/content
 oras.land/oras-go/pkg/context
 oras.land/oras-go/pkg/oras
+oras.land/oras-go/pkg/registry
+oras.land/oras-go/pkg/registry/remote
+oras.land/oras-go/pkg/registry/remote/auth
+oras.land/oras-go/pkg/registry/remote/internal/errutil
+oras.land/oras-go/pkg/registry/remote/internal/syncutil
 oras.land/oras-go/pkg/target
 # oras.land/oras-go/v2 v2.6.0
 ## explicit; go 1.23.0
@@ -1821,8 +1949,8 @@ sigs.k8s.io/controller-runtime/pkg/webhook/internal/metrics
 ## explicit; go 1.23
 sigs.k8s.io/json
 sigs.k8s.io/json/internal/golang/encoding/json
-# sigs.k8s.io/kustomize/api v0.20.1
-## explicit; go 1.22.7
+# sigs.k8s.io/kustomize/api v0.21.1
+## explicit; go 1.24.0
 sigs.k8s.io/kustomize/api/filters/annotations
 sigs.k8s.io/kustomize/api/filters/fieldspec
 sigs.k8s.io/kustomize/api/filters/filtersutil
@@ -1867,8 +1995,8 @@ sigs.k8s.io/kustomize/api/provider
 sigs.k8s.io/kustomize/api/resmap
 sigs.k8s.io/kustomize/api/resource
 sigs.k8s.io/kustomize/api/types
-# sigs.k8s.io/kustomize/kyaml v0.20.1
-## explicit; go 1.22.7
+# sigs.k8s.io/kustomize/kyaml v0.21.1
+## explicit; go 1.24.0
 sigs.k8s.io/kustomize/kyaml/comments
 sigs.k8s.io/kustomize/kyaml/errors
 sigs.k8s.io/kustomize/kyaml/ext

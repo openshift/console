@@ -49,7 +49,6 @@ type waiter struct {
 func (w *waiter) waitForResources(created ResourceList) error {
 	w.log("beginning wait for %d resources with timeout of %v", len(created), w.timeout)
 
-	startTime := time.Now()
 	ctx, cancel := context.WithTimeout(context.Background(), w.timeout)
 	defer cancel()
 
@@ -58,7 +57,7 @@ func (w *waiter) waitForResources(created ResourceList) error {
 		numberOfErrors[i] = 0
 	}
 
-	err := wait.PollUntilContextCancel(ctx, 2*time.Second, true, func(ctx context.Context) (bool, error) {
+	return wait.PollUntilContextCancel(ctx, 2*time.Second, true, func(ctx context.Context) (bool, error) {
 		waitRetries := 30
 		for i, v := range created {
 			ready, err := w.c.IsReady(ctx, v)
@@ -79,15 +78,6 @@ func (w *waiter) waitForResources(created ResourceList) error {
 		}
 		return true, nil
 	})
-
-	elapsed := time.Since(startTime).Round(time.Second)
-	if err != nil {
-		w.log("wait for resources failed after %v: %v", elapsed, err)
-	} else {
-		w.log("wait for resources succeeded within %v", elapsed)
-	}
-
-	return err
 }
 
 func (w *waiter) isRetryableError(err error, resource *resource.Info) bool {
