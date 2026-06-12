@@ -95,7 +95,9 @@ test.describe(`${crd} CRD`, { tag: ['@admin'] }, () => {
             // Click kebab menu and delete
             const kebabButton = instanceRow.getByTestId('kebab-button');
             await kebabButton.click();
-            await page.getByRole('menuitem', { name: `Delete ${crd}` }).click();
+            const deleteItem = page.getByRole('menuitem', { name: `Delete ${crd}` });
+            await expect(deleteItem).toBeEnabled();
+            await deleteItem.click();
 
             // Confirm deletion in modal
             await expect(page.getByRole('heading', { name: `Delete ${crd}?` })).toBeVisible();

@@ -1,14 +1,14 @@
 import { Page, expect } from '@playwright/test';
 import jsYaml from 'js-yaml';
 import KubernetesClient from '../../../clients/kubernetes-client';
-import { Navigation } from '../../../pages/navigation';
+
+const CRD_LIST_URL = '/k8s/cluster/apiextensions.k8s.io~v1~CustomResourceDefinition';
 
 /**
  * Navigate to CRD instances page via kebab menu "View instances"
  */
 export async function navigateToCRDInstances(page: Page, crd: string): Promise<void> {
-  const nav = new Navigation(page);
-  await nav.navigateToCRDs();
+  await page.goto(CRD_LIST_URL);
 
   const searchInput = page.locator('input[placeholder="Filter by name"]');
   await searchInput.fill(crd);
@@ -27,8 +27,7 @@ export async function navigateToCRDInstances(page: Page, crd: string): Promise<v
  * Navigate to CRD details page via link click, then switch to Instances tab
  */
 export async function navigateToCRDInstancesViaDetails(page: Page, crd: string): Promise<void> {
-  const nav = new Navigation(page);
-  await nav.navigateToCRDs();
+  await page.goto(CRD_LIST_URL);
 
   const searchInput = page.locator('input[placeholder="Filter by name"]');
   await searchInput.fill(crd);
