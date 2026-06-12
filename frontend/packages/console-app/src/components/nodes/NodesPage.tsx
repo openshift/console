@@ -180,14 +180,14 @@ const useNodesColumns = (
   vmsEnabled: boolean,
   nodeMgmtV1Enabled: boolean,
 ): { columns: TableColumn<NodeRowItem>[]; resetAllColumnWidths: () => void } => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(NodeModel);
 
   const columns = useMemo(() => {
     return [
       createSelectionColumn<NodeRowItem>(),
       {
-        title: t('console-app~Name'),
+        title: t('Name'),
         id: nodeColumnInfo.name.id,
         sort: 'metadata.name',
         resizableProps: getResizableProps(nodeColumnInfo.name.id),
@@ -197,7 +197,7 @@ const useNodesColumns = (
         },
       },
       {
-        title: t('console-app~Status'),
+        title: t('Status'),
         id: nodeColumnInfo.status.id,
         sort: sortWithCSRResource(nodeReadiness, 'False'),
         resizableProps: getResizableProps(nodeColumnInfo.status.id),
@@ -208,7 +208,7 @@ const useNodesColumns = (
       ...(nodeMgmtV1Enabled
         ? [
             {
-              title: t('console-app~Groups'),
+              title: t('Groups'),
               id: nodeColumnInfo.groups.id,
               sort: 'groups',
               resizableProps: getResizableProps(nodeColumnInfo.groups.id),
@@ -219,7 +219,7 @@ const useNodesColumns = (
           ]
         : []),
       {
-        title: t('console-app~Machine set'),
+        title: t('Machine set'),
         id: nodeColumnInfo.machineOwner.id,
         sort: 'machineOwner.name',
         resizableProps: getResizableProps(nodeColumnInfo.machineOwner.id),
@@ -230,7 +230,7 @@ const useNodesColumns = (
       ...(vmsEnabled
         ? [
             {
-              title: t('console-app~Virtual machines'),
+              title: t('Virtual machines'),
               id: nodeColumnInfo.vms.id,
               sort: 'virtualMachines',
               resizableProps: getResizableProps(nodeColumnInfo.vms.id),
@@ -238,7 +238,7 @@ const useNodesColumns = (
                 modifier: 'nowrap',
                 info: {
                   tooltip: t(
-                    'console-app~This count is based on your access permissions and might not include all virtual machines.',
+                    'This count is based on your access permissions and might not include all virtual machines.',
                   ),
                   tooltipProps: {
                     isContentLeftAligned: true,
@@ -249,7 +249,7 @@ const useNodesColumns = (
           ]
         : []),
       {
-        title: t('console-app~Pods'),
+        title: t('Pods'),
         id: nodeColumnInfo.pods.id,
         sort: sortWithCSRResource(nodePods, 0),
         resizableProps: getResizableProps(nodeColumnInfo.pods.id),
@@ -258,7 +258,7 @@ const useNodesColumns = (
         },
       },
       {
-        title: t('console-app~Memory'),
+        title: t('Memory'),
         id: nodeColumnInfo.memory.id,
         sort: sortWithCSRResource(nodeMemory, 0),
         resizableProps: getResizableProps(nodeColumnInfo.memory.id),
@@ -267,7 +267,7 @@ const useNodesColumns = (
         },
       },
       {
-        title: t('console-app~CPU'),
+        title: t('CPU'),
         id: nodeColumnInfo.cpu.id,
         sort: sortWithCSRResource(nodeCPU, 0),
         resizableProps: getResizableProps(nodeColumnInfo.cpu.id),
@@ -276,7 +276,7 @@ const useNodesColumns = (
         },
       },
       {
-        title: t('console-app~Roles'),
+        title: t('Roles'),
         id: nodeColumnInfo.role.id,
         sort: sortWithCSRResource(nodeRolesSort, ''),
         resizableProps: getResizableProps(nodeColumnInfo.role.id),
@@ -286,7 +286,7 @@ const useNodesColumns = (
         additional: true,
       },
       {
-        title: t('console-app~Architecture'),
+        title: t('Architecture'),
         id: nodeColumnInfo.architecture.id,
         sort: sortWithCSRResource(nodeArch, ''),
         resizableProps: getResizableProps(nodeColumnInfo.architecture.id),
@@ -296,7 +296,7 @@ const useNodesColumns = (
         additional: true,
       },
       {
-        title: t('console-app~Filesystem'),
+        title: t('Filesystem'),
         id: nodeColumnInfo.filesystem.id,
         sort: sortWithCSRResource(nodeFS, 0),
         resizableProps: getResizableProps(nodeColumnInfo.filesystem.id),
@@ -306,7 +306,7 @@ const useNodesColumns = (
         additional: true,
       },
       {
-        title: t('console-app~Created'),
+        title: t('Created'),
         id: nodeColumnInfo.created.id,
         sort: 'metadata.creationTimestamp',
         resizableProps: getResizableProps(nodeColumnInfo.created.id),
@@ -316,7 +316,7 @@ const useNodesColumns = (
         additional: true,
       },
       {
-        title: t('console-app~Instance type'),
+        title: t('Instance type'),
         id: nodeColumnInfo.instanceType.id,
         sort: sortWithCSRResource(nodeInstanceType, ''),
         resizableProps: getResizableProps(nodeColumnInfo.instanceType.id),
@@ -326,7 +326,7 @@ const useNodesColumns = (
         additional: true,
       },
       {
-        title: t('console-app~Machine'),
+        title: t('Machine'),
         id: nodeColumnInfo.machine.id,
         sort: sortWithCSRResource(nodeMachine, ''),
         resizableProps: getResizableProps(nodeColumnInfo.machine.id),
@@ -336,7 +336,7 @@ const useNodesColumns = (
         additional: true,
       },
       {
-        title: t('console-app~MachineConfigPool'),
+        title: t('MachineConfigPool'),
         id: nodeColumnInfo.machineConfigPool.id,
         sort: 'machineConfigPool.metadata.name',
         resizableProps: getResizableProps(nodeColumnInfo.machineConfigPool.id),
@@ -346,7 +346,7 @@ const useNodesColumns = (
         additional: true,
       },
       {
-        title: t('console-app~Labels'),
+        title: t('Labels'),
         id: nodeColumnInfo.labels.id,
         sort: 'metadata.labels',
         resizableProps: getResizableProps(nodeColumnInfo.labels.id),
@@ -357,7 +357,7 @@ const useNodesColumns = (
         additional: true,
       },
       {
-        title: t('console-app~Zone'),
+        title: t('Zone'),
         id: nodeColumnInfo.zone.id,
         sort: sortWithCSRResource(nodeZone, ''),
         resizableProps: getResizableProps(nodeColumnInfo.zone.id),
@@ -367,7 +367,7 @@ const useNodesColumns = (
         additional: true,
       },
       {
-        title: t('console-app~Uptime'),
+        title: t('Uptime'),
         id: nodeColumnInfo.uptime.id,
         sort: sortWithCSRResource(nodeUptime, ''),
         resizableProps: getResizableProps(nodeColumnInfo.uptime.id),
@@ -390,10 +390,10 @@ const useNodesColumns = (
 };
 
 const CPUCell: FC<{ cores: number; totalCores: number }> = ({ cores, totalCores }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   return Number.isFinite(cores) && Number.isFinite(totalCores) ? (
     <>
-      {t('console-app~{{formattedCores}} cores / {{totalCores}} cores', {
+      {t('{{formattedCores}} cores / {{totalCores}} cores', {
         formattedCores: formatCores(cores),
         totalCores,
       })}
@@ -663,7 +663,7 @@ const NodeList: FC<NodeListProps> = ({
   selectedColumns,
   nodeMgmtV1Enabled = false,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const { columns, resetAllColumnWidths } = useNodesColumns(vmsEnabled, nodeMgmtV1Enabled);
   const nodeMetrics = useConsoleSelector<NodeMetrics>(({ UI }) => UI.getIn(['metrics', 'node']));
   const columnManagementID = referenceForModel(NodeModel);
@@ -708,7 +708,7 @@ const NodeList: FC<NodeListProps> = ({
   const columnLayout = useMemo(
     () => ({
       id: columnManagementID,
-      type: t('console-app~Node'),
+      type: t('Node'),
       columns: columns
         .filter((col) => col.id !== 'select' && col.id !== nodeColumnInfo.actions.id)
         .map((col) => ({
@@ -728,15 +728,15 @@ const NodeList: FC<NodeListProps> = ({
     () => [
       {
         value: 'Ready',
-        label: t('console-app~Ready'),
+        label: t('Ready'),
       },
       {
         value: 'Not Ready',
-        label: t('console-app~Not Ready'),
+        label: t('Not Ready'),
       },
       {
         value: 'Discovered',
-        label: t('console-app~Discovered'),
+        label: t('Discovered'),
       },
     ],
     [t],
@@ -746,11 +746,11 @@ const NodeList: FC<NodeListProps> = ({
     () => [
       {
         value: 'control-plane',
-        label: t('console-app~control-plane'),
+        label: t('control-plane'),
       },
       {
         value: 'worker',
-        label: t('console-app~worker'),
+        label: t('worker'),
       },
     ],
     [t],
@@ -810,36 +810,36 @@ const NodeList: FC<NodeListProps> = ({
       <DataViewCheckboxFilter
         key="status"
         filterId="status"
-        title={t('console-app~Status')}
-        placeholder={t('console-app~Filter by status')}
+        title={t('Status')}
+        placeholder={t('Filter by status')}
         options={nodeStatusFilterOptions}
       />,
       <DataViewCheckboxFilter
         key="roles"
         filterId="roles"
-        title={t('console-app~Roles')}
-        placeholder={t('console-app~Filter by roles')}
+        title={t('Roles')}
+        placeholder={t('Filter by roles')}
         options={nodeRoleFilterOptions}
       />,
       <DataViewCheckboxFilter
         key="architecture"
         filterId="architecture"
-        title={t('console-app~Architecture')}
-        placeholder={t('console-app~Filter by architecture')}
+        title={t('Architecture')}
+        placeholder={t('Filter by architecture')}
         options={nodeArchitectureFilterOptions}
       />,
       <DataViewCheckboxFilter
         key="machineOwners"
         filterId="machineOwners"
-        title={t('console-app~Machine set')}
-        placeholder={t('console-app~Filter by machine set')}
+        title={t('Machine set')}
+        placeholder={t('Filter by machine set')}
         options={machineSetFilterOptions}
       />,
       <DataViewCheckboxFilter
         key="machineConfigPools"
         filterId="machineConfigPools"
-        title={t('console-app~MachineConfigPool')}
-        placeholder={t('console-app~Filter by MachineConfigPool')}
+        title={t('MachineConfigPool')}
+        placeholder={t('Filter by MachineConfigPool')}
         options={machineConfigPoolFilterOptions}
       />,
     ],
@@ -973,7 +973,7 @@ const useWatchResourcesIfAllowed = <R extends K8sResourceCommon[]>(
 
 export const NodesPage: FC<NodesPageProps> = ({ selector }) => {
   const dispatch = useConsoleDispatch();
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const launchOverlay = useOverlay();
   const nodeMgmtV1Enabled = useFlag(FLAG_NODE_MGMT_V1);
 
@@ -1111,13 +1111,13 @@ export const NodesPage: FC<NodesPageProps> = ({ selector }) => {
 
   return (
     <>
-      <ListPageHeader title={t('public~Nodes')}>
+      <ListPageHeader title={t('Nodes')}>
         {nodeMgmtV1Enabled && !isEditLoading && canEdit ? (
           <Button
             variant={ButtonVariant.secondary}
             onClick={() => launchOverlay(GroupsEditorModal, {})}
           >
-            {t('console-app~Edit groups')}
+            {t('Edit groups')}
           </Button>
         ) : null}
       </ListPageHeader>

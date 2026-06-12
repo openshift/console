@@ -40,7 +40,7 @@ type CSRPopoverContentProps = {
 };
 
 const CSRPopoverContent: FC<CSRPopoverContentProps> = ({ csr, serverCSR, onPatch }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const [inProgress, setInProgress] = useState(false);
   const [error, setError] = useState<string>();
   const updateCSR = async (approve: boolean) => {
@@ -57,11 +57,11 @@ const CSRPopoverContent: FC<CSRPopoverContentProps> = ({ csr, serverCSR, onPatch
   };
 
   const clientCSRDesc = t(
-    'console-app~This node has requested to join the cluster. After approving its certificate signing request the node will begin running workloads.',
+    'This node has requested to join the cluster. After approving its certificate signing request the node will begin running workloads.',
   );
 
   const ServerCSRDesc = t(
-    'console-app~This node has a pending server certificate signing request. Approve the request to enable all networking functionality on this node.',
+    'This node has a pending server certificate signing request. Approve the request to enable all networking functionality on this node.',
   );
 
   return (
@@ -69,7 +69,7 @@ const CSRPopoverContent: FC<CSRPopoverContentProps> = ({ csr, serverCSR, onPatch
       <StackItem>{serverCSR ? ServerCSRDesc : clientCSRDesc}</StackItem>
       <StackItem>
         <div>
-          <b>{t('console-app~Request')}</b>
+          <b>{t('Request')}</b>
         </div>
         <div>
           <ResourceLink
@@ -84,7 +84,7 @@ const CSRPopoverContent: FC<CSRPopoverContentProps> = ({ csr, serverCSR, onPatch
       </StackItem>
       <StackItem>
         <div>
-          <b>{t('console-app~Created')}</b>
+          <b>{t('Created')}</b>
         </div>
         <div>
           <Timestamp timestamp={csr.metadata.creationTimestamp} />
@@ -99,7 +99,7 @@ const CSRPopoverContent: FC<CSRPopoverContentProps> = ({ csr, serverCSR, onPatch
               isDisabled={inProgress}
               isInline
             >
-              {t('console-app~Approve')}
+              {t('Approve')}
             </Button>
           </SplitItem>
           <SplitItem>
@@ -109,7 +109,7 @@ const CSRPopoverContent: FC<CSRPopoverContentProps> = ({ csr, serverCSR, onPatch
               isDisabled={inProgress}
               isInline
             >
-              {t('console-app~Deny')}
+              {t('Deny')}
             </Button>
           </SplitItem>
         </Split>
@@ -128,13 +128,8 @@ type StatusTitleProps = {
 };
 
 const StatusTitle: FC<StatusTitleProps> = ({ title }) => {
-  const { t } = useTranslation();
-  return (
-    <StatusIconAndText
-      title={title || t('console-app~Approval required')}
-      icon={<RhUiAddCircleIcon />}
-    />
-  );
+  const { t } = useTranslation('console-app');
+  return <StatusIconAndText title={title || t('Approval required')} icon={<RhUiAddCircleIcon />} />;
 };
 
 export const ServerCSRPopoverContent: FC<NodePopoverContentProps<NodeStatusResources>> = ({
@@ -159,13 +154,13 @@ type ClientCSRStatusProps = CSRPopoverContentProps & {
 };
 
 const ClientCSRStatus: FC<ClientCSRStatusProps> = ({ title, ...rest }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <>
       <PopoverStatus
-        title={t('console-app~Certificate approval required')}
+        title={t('Certificate approval required')}
         statusBody={<StatusTitle title={title} />}
         isVisible={isOpen}
         shouldClose={() => setIsOpen(false)}
@@ -173,7 +168,7 @@ const ClientCSRStatus: FC<ClientCSRStatusProps> = ({ title, ...rest }) => {
       >
         <CSRPopoverContent {...rest} onPatch={() => setIsOpen(false)} />
       </PopoverStatus>
-      <SecondaryStatus status={t('console-app~Approval required')} />
+      <SecondaryStatus status={t('Approval required')} />
     </>
   );
 };

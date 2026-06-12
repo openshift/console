@@ -27,7 +27,7 @@ const TopologyPageToolbar: FC<TopologyPageToolbarProps> = observer(function Topo
   viewType,
   onViewChange,
 }) {
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   const isMobile = useIsMobile();
   const { extensions } = useContext<FileUploadContextType>(FileUploadContext);
   const showGraphView = viewType === TopologyViewType.graph;
@@ -35,9 +35,7 @@ const TopologyPageToolbar: FC<TopologyPageToolbarProps> = observer(function Topo
   const { namespace, isEmptyModel } = dataModelContext;
   const createResourceAccess: string[] = useAddToProjectAccess(namespace);
   const allImportAccess = createResourceAccess.includes(allImportResourceAccess);
-  const viewChangeTooltipContent = showGraphView
-    ? t('topology~List view')
-    : t('topology~Graph view');
+  const viewChangeTooltipContent = showGraphView ? t('List view') : t('Graph view');
 
   if (!namespace) {
     return null;
@@ -47,7 +45,7 @@ const TopologyPageToolbar: FC<TopologyPageToolbarProps> = observer(function Topo
     <>
       {!isMobile ? (
         <Popover
-          aria-label={t('topology~Shortcuts')}
+          aria-label={t('Shortcuts')}
           bodyContent={getTopologyShortcuts(t, {
             supportedFileTypes: extensions,
             isEmptyModel,
@@ -64,7 +62,7 @@ const TopologyPageToolbar: FC<TopologyPageToolbarProps> = observer(function Topo
             icon={<RhUiQuestionMarkCircleFillIcon />}
             data-test-id="topology-view-shortcuts"
           >
-            {t('topology~View shortcuts')}
+            {t('View shortcuts')}
           </Button>
         </Popover>
       ) : null}

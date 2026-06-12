@@ -11,8 +11,8 @@ type TextFilterProps = Omit<TextInputProps, 'type' | 'tabIndex'> & {
 export const TextFilter: FC<TextFilterProps> = (props) => {
   const { label, placeholder, autoFocus = false, ...otherInputProps } = props;
   const { ref } = useDocumentListener<HTMLInputElement>();
-  const { t } = useTranslation();
-  const placeholderText = placeholder ?? t('public~Filter {{label}}...', { label });
+  const { t } = useTranslation('public');
+  const placeholderText = placeholder ?? t('Filter {{label}}...', { label });
 
   return (
     <div className="co-text-filter">

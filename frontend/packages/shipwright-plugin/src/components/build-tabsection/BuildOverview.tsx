@@ -28,7 +28,7 @@ type BuildsOverviewProps = {
 };
 
 const BuildsOverview: FC<BuildsOverviewProps> = ({ item: { builds, buildRuns, obj } }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('shipwright-plugin');
   const resourceLabel = obj.metadata?.labels?.[BUILDRUN_TO_RESOURCE_MAP_LABEL];
   const buildRunModel = useFlag('SHIPWRIGHT_BUILDRUN')
     ? referenceForModel(BuildRunModel)
@@ -52,7 +52,7 @@ const BuildsOverview: FC<BuildsOverviewProps> = ({ item: { builds, buildRuns, ob
 
   return (
     <>
-      <SidebarSectionHeading text={t('shipwright-plugin~BuildRuns')}>
+      <SidebarSectionHeading text={t('BuildRuns')}>
         {buildRunsforResource.length > MAX_VISIBLE && (
           <Link
             className="sidebar__section-view-all"
@@ -62,7 +62,7 @@ const BuildsOverview: FC<BuildsOverviewProps> = ({ item: { builds, buildRuns, ob
               obj.metadata?.namespace,
             )}?labels=${BUILDRUN_TO_RESOURCE_MAP_LABEL}=${encodeURIComponent(resourceLabel)}`}
           >
-            {t('shipwright-plugin~View all {{buildLength}}', {
+            {t('View all {{buildLength}}', {
               buildLength: buildRunsforResource.length,
             })}
           </Link>

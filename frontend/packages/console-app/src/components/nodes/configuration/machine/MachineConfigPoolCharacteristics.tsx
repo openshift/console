@@ -15,16 +15,16 @@ type MachineConfigPoolCharacteristicsProps = {
 };
 
 const MachineConfigPoolCharacteristics: FC<MachineConfigPoolCharacteristicsProps> = ({ obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const configuration = obj?.status?.configuration;
 
   return (
     <DescriptionList>
       {configuration && (
         <>
-          <SectionHeading text={t('console-app~MachineConfigs')} />
+          <SectionHeading text={t('MachineConfigs')} />
           <DescriptionListGroup>
-            <DescriptionListTerm>{t('console-app~Current configuration')}</DescriptionListTerm>
+            <DescriptionListTerm>{t('Current configuration')}</DescriptionListTerm>
             <DescriptionListDescription>
               {configuration.name ? (
                 <ResourceLink
@@ -38,9 +38,7 @@ const MachineConfigPoolCharacteristics: FC<MachineConfigPoolCharacteristicsProps
             </DescriptionListDescription>
           </DescriptionListGroup>
           <DescriptionListGroup>
-            <DescriptionListTerm>
-              {t('console-app~Current configuration source')}
-            </DescriptionListTerm>
+            <DescriptionListTerm>{t('Current configuration source')}</DescriptionListTerm>
             <DescriptionListDescription>
               {configuration.source?.length
                 ? configuration.source.map((nextSource) => (

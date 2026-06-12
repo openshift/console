@@ -15,7 +15,7 @@ type BuildRunLogsTabProps = {
 };
 
 const BuildRunLogsTab: FC<BuildRunLogsTabProps> = ({ obj: buildRun }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('shipwright-plugin');
   const { ns: namespace } = useParams();
 
   const taskRunRef = isV1Alpha1Resource(buildRun)
@@ -35,15 +35,13 @@ const BuildRunLogsTab: FC<BuildRunLogsTabProps> = ({ obj: buildRun }) => {
   if (!taskRunRef) {
     return (
       <StatusBox
-        label={t('shipwright-plugin~Logs')}
-        loadError={
-          new Error(t("shipwright-plugin~BuildRun status doesn't contain a TaskRun reference yet."))
-        }
+        label={t('Logs')}
+        loadError={new Error(t("BuildRun status doesn't contain a TaskRun reference yet."))}
       />
     );
   }
   if (!taskRun && taskRunLoadError) {
-    return <StatusBox label={t('shipwright-plugin~Logs')} loadError={taskRunLoadError} />;
+    return <StatusBox label={t('Logs')} loadError={taskRunLoadError} />;
   }
   if (!taskRun && !taskRunLoaded) {
     return <LoadingBox />;

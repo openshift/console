@@ -17,13 +17,13 @@ interface DefaultDecoratorProps {
 
 export const UrlDecorator: FC<DefaultDecoratorProps> = ({ element, radius, x, y }) => {
   const ref = useRef();
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   const resourceObj = getResource(element);
   const url = useRoutesURL(resourceObj);
   if (!url) {
     return null;
   }
-  const label = t('topology~Open URL');
+  const label = t('Open URL');
   return (
     <Tooltip triggerRef={ref} key="route" content={label} position={TooltipPosition.right}>
       <g ref={ref}>

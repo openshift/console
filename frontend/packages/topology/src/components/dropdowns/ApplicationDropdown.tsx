@@ -11,7 +11,7 @@ type ApplicationDropdownProps = Omit<ResourceDropdownProps, 'dataSelector' | 'pl
 };
 
 const ApplicationDropdown: FC<ApplicationDropdownProps> = ({ namespace, ...props }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
 
   const watchedBaseResources = useMemo(() => getBaseWatchedResources(namespace), [namespace]);
 
@@ -40,7 +40,7 @@ const ApplicationDropdown: FC<ApplicationDropdownProps> = ({ namespace, ...props
       resources={resources}
       loaded={loaded}
       loadError={loadError}
-      placeholder={t('topology~Select an application')}
+      placeholder={t('Select an application')}
       dataSelector={['metadata', 'labels', 'app.kubernetes.io/part-of']}
     />
   );

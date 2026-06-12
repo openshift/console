@@ -11,7 +11,7 @@ type ModelStatusBoxProps = {
 };
 
 const ModelStatusBox: FC<ModelStatusBoxProps> = ({ groupVersionKind, children }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const [model, inFlight] = useK8sModel(groupVersionKind);
 
   if (!model && inFlight) {
@@ -21,7 +21,7 @@ const ModelStatusBox: FC<ModelStatusBoxProps> = ({ groupVersionKind, children })
     return (
       <ErrorPage404
         bodyText={t(
-          "olm~The server doesn't have a resource type {{kind}}. Try refreshing the page if it was recently added.",
+          "The server doesn't have a resource type {{kind}}. Try refreshing the page if it was recently added.",
           { kind: kindForReference(groupVersionKind) },
         )}
       />

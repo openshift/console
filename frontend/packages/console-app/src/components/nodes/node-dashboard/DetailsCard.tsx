@@ -38,7 +38,7 @@ const DetailsCard: FC = () => {
   const detailsLink = `${resourcePathFromModel(NodeModel, obj.metadata.name)}/details`;
   const instanceType = obj.metadata.labels?.['beta.kubernetes.io/instance-type'];
   const zone = obj.metadata.labels?.['topology.kubernetes.io/zone'];
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const launchOverlay = useOverlay();
   const nodeMgmtV1Enabled = useFlag(FLAG_NODE_MGMT_V1);
 
@@ -54,41 +54,41 @@ const DetailsCard: FC = () => {
         actions={{
           actions: (
             <>
-              <Link to={detailsLink}>{t('console-app~View all')}</Link>
+              <Link to={detailsLink}>{t('View all')}</Link>
             </>
           ),
           hasNoOffset: false,
           className: 'co-overview-card__actions',
         }}
       >
-        <CardTitle>{t('console-app~Details')}</CardTitle>
+        <CardTitle>{t('Details')}</CardTitle>
       </CardHeader>
       <CardBody>
         <DescriptionList>
-          <OverviewDetailItem isLoading={!obj} title={t('console-app~Node name')}>
+          <OverviewDetailItem isLoading={!obj} title={t('Node name')}>
             {obj.metadata.name}
           </OverviewDetailItem>
-          <OverviewDetailItem isLoading={!obj} title={t('console-app~Roles')}>
+          <OverviewDetailItem isLoading={!obj} title={t('Roles')}>
             <NodeRoles node={obj} />
           </OverviewDetailItem>
           <OverviewDetailItem
             isLoading={!obj}
-            title={t('console-app~Instance type')}
-            error={!instanceType ? t('console-app~Not available') : undefined}
+            title={t('Instance type')}
+            error={!instanceType ? t('Not available') : undefined}
           >
             {instanceType}
           </OverviewDetailItem>
           <OverviewDetailItem
             isLoading={!obj}
-            title={t('console-app~Zone')}
-            error={!zone ? t('console-app~Not available') : undefined}
+            title={t('Zone')}
+            error={!zone ? t('Not available') : undefined}
           >
             {zone}
           </OverviewDetailItem>
-          <OverviewDetailItem isLoading={!obj} title={t('console-app~Node addresses')}>
+          <OverviewDetailItem isLoading={!obj} title={t('Node addresses')}>
             <NodeIPList ips={getNodeAddresses(obj)} expand />
           </OverviewDetailItem>
-          <OverviewDetailItem isLoading={!obj} title={t('console-app~Uptime')}>
+          <OverviewDetailItem isLoading={!obj} title={t('Uptime')}>
             <NodeUptime obj={obj} />
           </OverviewDetailItem>
           {nodeMgmtV1Enabled ? (
@@ -98,7 +98,7 @@ const DetailsCard: FC = () => {
                 <dt className="pf-v6-c-description-list__term" data-test="detail-item-title">
                   <span className="pf-v6-c-description-list__text pf-v6-u-w-100">
                     <Flex justifyContent={{ default: 'justifyContentSpaceBetween' }}>
-                      <FlexItem>{t('console-app~Groups')}</FlexItem>
+                      <FlexItem>{t('Groups')}</FlexItem>
                       {!isEditLoading && canEdit ? (
                         <FlexItem>
                           <Button
@@ -106,7 +106,7 @@ const DetailsCard: FC = () => {
                             isInline
                             onClick={() => launchOverlay(NodeGroupsEditorModal, { node: obj })}
                           >
-                            {t('console-app~Edit')}
+                            {t('Edit')}
                           </Button>
                         </FlexItem>
                       ) : null}

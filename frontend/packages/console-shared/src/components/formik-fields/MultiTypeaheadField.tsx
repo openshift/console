@@ -52,7 +52,7 @@ export const MultiTypeaheadField: FC<MultiTypeaheadFieldProps> = ({
     })),
   );
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
 
   const [field, { touched, error }] = useField<string[]>(name);
   const { setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
@@ -92,7 +92,7 @@ export const MultiTypeaheadField: FC<MultiTypeaheadFieldProps> = ({
         newSelectOptions = [
           ...newSelectOptions,
           {
-            children: t('console-shared~Create new option "{{option}}"', { option: inputValue }),
+            children: t('Create new option "{{option}}"', { option: inputValue }),
             value: CREATE_NEW,
           },
         ];
@@ -292,7 +292,7 @@ export const MultiTypeaheadField: FC<MultiTypeaheadFieldProps> = ({
           aria-label={ariaLabel}
           aria-controls={`${ID_PREFIX}-listbox`}
         >
-          <LabelGroup aria-label={t('console-shared~Current selections')}>
+          <LabelGroup aria-label={t('Current selections')}>
             {field.value.map((selection) => (
               <Label
                 variant="outline"
@@ -301,7 +301,7 @@ export const MultiTypeaheadField: FC<MultiTypeaheadFieldProps> = ({
                   ev.stopPropagation();
                   onSelect(selection);
                 }}
-                closeBtnAriaLabel={t('console-shared~Remove {{singularLabel}}', {
+                closeBtnAriaLabel={t('Remove {{singularLabel}}', {
                   singularLabel: getChildren(selection),
                 })}
               >
@@ -318,7 +318,7 @@ export const MultiTypeaheadField: FC<MultiTypeaheadFieldProps> = ({
               icon={<RhUiCloseIcon aria-hidden />}
               variant="plain"
               onClick={onClearButtonClick}
-              aria-label={t('console-shared~Clear filter')}
+              aria-label={t('Clear filter')}
             />
           </TextInputGroupUtilities>
         )}
@@ -357,7 +357,7 @@ export const MultiTypeaheadField: FC<MultiTypeaheadFieldProps> = ({
           ))}
           {(!isCreatable || !inputValue) && filteredSelectOptions.length === 0 && (
             <SelectOption isDisabled id={NO_RESULTS}>
-              {noResultsFoundText || t('console-shared~No results found')}
+              {noResultsFoundText || t('No results found')}
             </SelectOption>
           )}
         </SelectList>

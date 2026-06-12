@@ -30,7 +30,7 @@ const ExpandPVCModal: FC<ExpandPVCModalProps> = ({ resource, kind, close, cancel
   const [requestSizeUnit, setRequestSizeUnit] = useState(defaultSize[1] || 'Gi');
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const navigate = useNavigate();
 
   const handleRequestSizeInputChange = (obj) => {
@@ -65,7 +65,7 @@ const ExpandPVCModal: FC<ExpandPVCModalProps> = ({ resource, kind, close, cancel
 
   return (
     <>
-      <ModalHeader title={t('public~Expand {{kind}}', { kind: kind.label })} />
+      <ModalHeader title={t('Expand {{kind}}', { kind: kind.label })} />
       <ModalBody>
         <Content component={ContentVariants.p}>
           <Trans t={t} ns="public">
@@ -76,9 +76,9 @@ const ExpandPVCModal: FC<ExpandPVCModalProps> = ({ resource, kind, close, cancel
           </Trans>
         </Content>
         <Form id="expand-pvc-form" onSubmit={submit}>
-          <FormGroup label={t('public~Total size')} isRequired fieldId="pvc-expand-size-input">
+          <FormGroup label={t('Total size')} isRequired fieldId="pvc-expand-size-input">
             <RequestSizeInput
-              name={t('public~requestSize')}
+              name={t('requestSize')}
               required
               onChange={handleRequestSizeInputChange}
               defaultRequestSizeUnit={requestSizeUnit}
@@ -99,10 +99,10 @@ const ExpandPVCModal: FC<ExpandPVCModalProps> = ({ resource, kind, close, cancel
           data-test="confirm-action"
           form="expand-pvc-form"
         >
-          {t('public~Expand')}
+          {t('Expand')}
         </Button>
         <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
-          {t('public~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </>

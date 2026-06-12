@@ -7,7 +7,7 @@ import { InputField } from '@console/shared/src/components/formik-fields/InputFi
 import ImageStream from '../../import/image-search/ImageStream';
 
 const ContainerImageField: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const {
     values: {
       formData: { fromImageStreamTag },
@@ -18,11 +18,11 @@ const ContainerImageField: FC = () => {
     <>
       <CheckboxField
         name="formData.fromImageStreamTag"
-        label={t('devconsole~Deploy image from an image stream tag')}
+        label={t('Deploy image from an image stream tag')}
       />
       {fromImageStreamTag ? (
         <ImageStream
-          label={t('devconsole~Image stream tag')}
+          label={t('Image stream tag')}
           formContextField="formData"
           reloadCount={formReloadCount}
           dataTest="image-stream-tag"
@@ -31,8 +31,8 @@ const ContainerImageField: FC = () => {
       ) : (
         <InputField
           name="formData.imageName"
-          label={t('devconsole~Image Name')}
-          helpText={t('devconsole~Container image name')}
+          label={t('Image Name')}
+          helpText={t('Container image name')}
           data-test="image-name"
           required
         />

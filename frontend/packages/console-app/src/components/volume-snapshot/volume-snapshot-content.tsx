@@ -109,7 +109,7 @@ const useVolumeSnapshotContentColumns = (): {
   columns: TableColumn<VolumeSnapshotContentKind>[];
   resetAllColumnWidths: () => void;
 } => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
     VolumeSnapshotContentModel,
   );
@@ -117,14 +117,14 @@ const useVolumeSnapshotContentColumns = (): {
   const columns: TableColumn<VolumeSnapshotContentKind>[] = useMemo(
     () => [
       {
-        title: t('console-app~Name'),
+        title: t('Name'),
         sort: 'metadata.name',
         id: tableColumnInfo[0].id,
         resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: { ...nameCellProps, modifier: 'nowrap' },
       },
       {
-        title: t('console-app~Status'),
+        title: t('Status'),
         sort: (data, direction) =>
           data.sort(sortResourceByValue(direction, sorts.volumeSnapshotStatus)),
         id: tableColumnInfo[1].id,
@@ -132,7 +132,7 @@ const useVolumeSnapshotContentColumns = (): {
         props: { modifier: 'nowrap' },
       },
       {
-        title: t('console-app~Size'),
+        title: t('Size'),
         sort: (data, direction) =>
           data.sort(sortResourceByValue(direction, sorts.volumeSnapshotContentSize)),
         id: tableColumnInfo[2].id,
@@ -140,21 +140,21 @@ const useVolumeSnapshotContentColumns = (): {
         props: { modifier: 'nowrap' },
       },
       {
-        title: t('console-app~VolumeSnapshot'),
+        title: t('VolumeSnapshot'),
         sort: 'spec.volumeSnapshotRef.name',
         id: tableColumnInfo[3].id,
         resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: { modifier: 'nowrap' },
       },
       {
-        title: t('console-app~SnapshotClass'),
+        title: t('SnapshotClass'),
         sort: 'spec.volumeSnapshotClassName',
         id: tableColumnInfo[4].id,
         resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: { modifier: 'nowrap' },
       },
       {
-        title: t('console-app~Created at'),
+        title: t('Created at'),
         sort: 'metadata.creationTimestamp',
         id: tableColumnInfo[5].id,
         resizableProps: getResizableProps(tableColumnInfo[5].id),
@@ -200,7 +200,7 @@ const VolumeSnapshotContentPage: FC<VolumeSnapshotContentPageProps> = ({
   showTitle = true,
   canCreate = true,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
 
   const [resources, loaded, loadError] = useK8sWatchResource<VolumeSnapshotContentKind[]>({
     groupVersionKind: {
@@ -216,7 +216,7 @@ const VolumeSnapshotContentPage: FC<VolumeSnapshotContentPageProps> = ({
       <ListPageHeader title={showTitle ? t(VolumeSnapshotContentModel.labelPluralKey || '') : ''}>
         {canCreate && (
           <ListPageCreate groupVersionKind={kind}>
-            {t('console-app~Create VolumeSnapshotContent')}
+            {t('Create VolumeSnapshotContent')}
           </ListPageCreate>
         )}
       </ListPageHeader>

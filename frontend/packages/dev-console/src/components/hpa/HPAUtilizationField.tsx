@@ -36,12 +36,9 @@ const HPAUtilizationField: FC<HPAUtilizationFieldProps> = ({
   const value: number = metric?.resource?.target?.averageUtilization;
   const thisErrorMetric = errors.formData?.spec?.metrics?.[index] as FormikErrors<HPAMetric>;
   const error: string = thisErrorMetric?.resource?.target?.averageUtilization;
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   return (
-    <FormGroup
-      fieldId={`${type}-utilization`}
-      label={t('devconsole~{{label}} Utilization', { label })}
-    >
+    <FormGroup fieldId={`${type}-utilization`} label={t('{{label}} Utilization', { label })}>
       <InputGroup>
         <InputGroupItem isFill>
           <TextInput
@@ -65,7 +62,7 @@ const HPAUtilizationField: FC<HPAUtilizationFieldProps> = ({
           ) : (
             <HelperTextItem>
               {t(
-                'devconsole~{{label}} request and limit must be set before {{label}} utilization can be set.',
+                '{{label}} request and limit must be set before {{label}} utilization can be set.',
                 { label },
               )}
             </HelperTextItem>

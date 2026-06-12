@@ -29,7 +29,7 @@ import { PrometheusResponse } from '../../../graphs';
 const viewEvents = '/k8s/all-namespaces/events';
 
 const RecentEvent: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const [eventsData, eventsLoaded, eventsLoadError] = useK8sWatchResource<EventKind[]>({
     isList: true,
@@ -51,7 +51,7 @@ const RecentEvent: FC = () => {
           <Divider />
           <CardFooter>
             <Link to={viewEvents} data-test="events-view-all-link">
-              {t('public~View all events')}
+              {t('View all events')}
             </Link>
           </CardFooter>
         </>
@@ -174,12 +174,12 @@ const OngoingActivityComponent: FC<OngoingActivityProps> = ({ models }) => {
 const OngoingActivity = connect(mapStateToProps)(OngoingActivityComponent);
 
 export const ActivityCard = memo(() => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   return (
     <Card data-test-id="activity-card">
       <CardHeader>
-        <CardTitle>{t('public~Activity')}</CardTitle>
+        <CardTitle>{t('Activity')}</CardTitle>
       </CardHeader>
       <ActivityBody className="co-overview-dashboard__activity-body">
         <OngoingActivity />

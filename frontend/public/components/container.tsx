@@ -61,7 +61,7 @@ const getResourceLimitsValue = (container: ContainerSpec) => {
 };
 
 const Lifecycle: FC<LifecycleProps> = ({ lifecycle }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const fields = lifecycle && k8sProbe.mapLifecycleConfigToFields(lifecycle);
   const postStart = _.get(fields, 'postStart.cmd');
   const preStop = _.get(fields, 'preStop.cmd');
@@ -113,11 +113,11 @@ const Probe: FC<ProbeProps> = ({ probe, podIP }) => {
 Probe.displayName = 'Probe';
 
 const Ports: FC<PortsProps> = ({ ports }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   if (!ports || !ports.length) {
     return (
-      <ConsoleEmptyState title={t('public~No ports have been exposed')}>
-        {t('public~Ports allow for traffic to enter this container')}
+      <ConsoleEmptyState title={t('No ports have been exposed')}>
+        {t('Ports allow for traffic to enter this container')}
       </ConsoleEmptyState>
     );
   }
@@ -126,8 +126,8 @@ const Ports: FC<PortsProps> = ({ ports }) => {
     <table className="pf-v6-c-table pf-m-compact pf-m-border-rows">
       <thead className="pf-v6-c-table__thead">
         <tr className="pf-v6-c-table__tr">
-          <th className="pf-v6-c-table__th">{t('public~Name')}</th>
-          <th className="pf-v6-c-table__th">{t('public~Container')}</th>
+          <th className="pf-v6-c-table__th">{t('Name')}</th>
+          <th className="pf-v6-c-table__th">{t('Container')}</th>
         </tr>
       </thead>
       <tbody>
@@ -143,11 +143,11 @@ const Ports: FC<PortsProps> = ({ ports }) => {
 };
 
 const VolumeMounts: FC<VolumeMountProps> = ({ volumeMounts }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   if (!volumeMounts || !volumeMounts.length) {
     return (
-      <ConsoleEmptyState title={t('public~No volumes have been mounted')}>
-        {t('public~Volumes allow data to be shared as files with the pod')}
+      <ConsoleEmptyState title={t('No volumes have been mounted')}>
+        {t('Volumes allow data to be shared as files with the pod')}
       </ConsoleEmptyState>
     );
   }
@@ -156,16 +156,16 @@ const VolumeMounts: FC<VolumeMountProps> = ({ volumeMounts }) => {
     <table className="pf-v6-c-table pf-m-compact pf-m-border-rows">
       <thead className="pf-v6-c-table__thead">
         <tr className="pf-v6-c-table__tr">
-          <th className="pf-v6-c-table__th">{t('public~Access')}</th>
-          <th className="pf-v6-c-table__th">{t('public~Location')}</th>
-          <th className="pf-v6-c-table__th">{t('public~Mount path')}</th>
+          <th className="pf-v6-c-table__th">{t('Access')}</th>
+          <th className="pf-v6-c-table__th">{t('Location')}</th>
+          <th className="pf-v6-c-table__th">{t('Mount path')}</th>
         </tr>
       </thead>
       <tbody>
         {volumeMounts.map((v: VolumeMount) => (
           <tr className="pf-v6-c-table__tr" key={v.name}>
             <td className="pf-v6-c-table__td">
-              {v.readOnly === true ? t('public~Read only') : t('public~Read/write')}
+              {v.readOnly === true ? t('Read only') : t('Read/write')}
             </td>
             <td className="pf-v6-c-table__td pf-m-break-word co-select-to-copy">{v.name}</td>
             <td className="pf-v6-c-table__td">
@@ -184,11 +184,11 @@ const VolumeMounts: FC<VolumeMountProps> = ({ volumeMounts }) => {
 VolumeMounts.displayName = 'VolumeMounts';
 
 const Env: FC<EnvProps> = ({ env }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   if (!env || !env.length) {
     return (
-      <ConsoleEmptyState title={t('public~No variables have been set')}>
-        {t('public~An easy way to pass configuration values')}
+      <ConsoleEmptyState title={t('No variables have been set')}>
+        {t('An easy way to pass configuration values')}
       </ConsoleEmptyState>
     );
   }
@@ -196,13 +196,13 @@ const Env: FC<EnvProps> = ({ env }) => {
   const value = (e: EnvVar) => {
     const v = e.valueFrom;
     if (_.has(v, 'fieldRef')) {
-      return t('public~field: {{fieldPath}}', v.fieldRef);
+      return t('field: {{fieldPath}}', v.fieldRef);
     } else if (_.has(v, 'resourceFieldRef')) {
-      return t('public~resource: {{resource}}', v.resourceFieldRef);
+      return t('resource: {{resource}}', v.resourceFieldRef);
     } else if (_.has(v, 'configMapKeyRef')) {
-      return t('public~config-map: {{name}}/{{key}}', v.configMapKeyRef);
+      return t('config-map: {{name}}/{{key}}', v.configMapKeyRef);
     } else if (_.has(v, 'secretKeyRef')) {
-      return t('public~secret: {{name}}/{{key}}', v.secretKeyRef);
+      return t('secret: {{name}}/{{key}}', v.secretKeyRef);
     }
     return e.value;
   };
@@ -211,8 +211,8 @@ const Env: FC<EnvProps> = ({ env }) => {
     <table className="pf-v6-c-table pf-m-compact pf-m-border-rows">
       <thead className="pf-v6-c-table__thead">
         <tr className="pf-v6-c-table__tr">
-          <th className="pf-v6-c-table__th">{t('public~Name')}</th>
-          <th className="pf-v6-c-table__th">{t('public~Value')}</th>
+          <th className="pf-v6-c-table__th">{t('Name')}</th>
+          <th className="pf-v6-c-table__th">{t('Value')}</th>
         </tr>
       </thead>
       <tbody className="pf-v6-c-table__tbody">
@@ -261,7 +261,7 @@ const getContainerStateValue = (state: any) => {
 };
 
 export const ContainerDetailsList: FC<ContainerDetailsListProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const params = useParams();
   const pod = props.obj;
   const container = getContainer(pod, params.name);
@@ -281,22 +281,22 @@ export const ContainerDetailsList: FC<ContainerDetailsListProps> = (props) => {
 
       <Grid hasGutter>
         <GridItem lg={4}>
-          <SectionHeading text={t('public~Container details')} />
+          <SectionHeading text={t('Container details')} />
           <DescriptionList>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('public~State')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('State')}</DescriptionListTerm>
               <DescriptionListDescription>
                 <Status status={stateValue} />
               </DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('public~Last State')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Last State')}</DescriptionListTerm>
               <DescriptionListDescription>
                 <ContainerLastState containerLastState={status?.lastState} />
               </DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('public~ID')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('ID')}</DescriptionListTerm>
               <DescriptionListDescription>
                 {status?.containerID ? (
                   <div className="co-break-all co-select-to-copy">{status.containerID}</div>
@@ -306,55 +306,55 @@ export const ContainerDetailsList: FC<ContainerDetailsListProps> = (props) => {
               </DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('public~Restarts')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Restarts')}</DescriptionListTerm>
               <DescriptionListDescription>
                 {getContainerRestartCount(status)}
               </DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('public~Resource requests')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Resource requests')}</DescriptionListTerm>
               <DescriptionListDescription>
                 {getResourceRequestsValue(container) || '-'}
               </DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('public~Resource limits')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Resource limits')}</DescriptionListTerm>
               <DescriptionListDescription>
                 {getResourceLimitsValue(container) || '-'}
               </DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('public~Lifecycle hooks')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Lifecycle hooks')}</DescriptionListTerm>
               <DescriptionListDescription>
                 <Lifecycle lifecycle={container.lifecycle} />
               </DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('public~Readiness probe')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Readiness probe')}</DescriptionListTerm>
               <DescriptionListDescription>
                 <Probe probe={container.readinessProbe} podIP={pod.status.podIP || '-'} />
               </DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('public~Liveness probe')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Liveness probe')}</DescriptionListTerm>
               <DescriptionListDescription>
                 <Probe probe={container.livenessProbe} podIP={pod.status.podIP || '-'} />
               </DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('public~Started')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Started')}</DescriptionListTerm>
               <DescriptionListDescription>
                 <Timestamp timestamp={state.startedAt} />
               </DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('public~Finished')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Finished')}</DescriptionListTerm>
               <DescriptionListDescription>
                 <Timestamp timestamp={state.finishedAt} />
               </DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('public~Pod')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Pod')}</DescriptionListTerm>
               <DescriptionListDescription>
                 <ResourceLink kind="Pod" name={params.podName} namespace={params.ns} />
               </DescriptionListDescription>
@@ -363,10 +363,10 @@ export const ContainerDetailsList: FC<ContainerDetailsListProps> = (props) => {
         </GridItem>
 
         <GridItem lg={4}>
-          <SectionHeading text={t('public~Image details')} />
+          <SectionHeading text={t('Image details')} />
           <DescriptionList>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('public~Image')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Image')}</DescriptionListTerm>
               <DescriptionListDescription>
                 {imageName ? (
                   <div className="co-break-all co-select-to-copy">{imageName}</div>
@@ -376,11 +376,11 @@ export const ContainerDetailsList: FC<ContainerDetailsListProps> = (props) => {
               </DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('public~Image version/tag')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Image version/tag')}</DescriptionListTerm>
               <DescriptionListDescription>{imageTag || '-'}</DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('public~Command')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Command')}</DescriptionListTerm>
               <DescriptionListDescription>
                 {container.command ? (
                   <CodeBlock className="co-code-block--no-header">
@@ -392,7 +392,7 @@ export const ContainerDetailsList: FC<ContainerDetailsListProps> = (props) => {
               </DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('public~Args')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Args')}</DescriptionListTerm>
               <DescriptionListDescription>
                 {container.args ? (
                   <CodeBlock>
@@ -404,7 +404,7 @@ export const ContainerDetailsList: FC<ContainerDetailsListProps> = (props) => {
               </DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('public~Pull policy')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Pull policy')}</DescriptionListTerm>
               <DescriptionListDescription>
                 {getPullPolicyLabel(container)}
               </DescriptionListDescription>
@@ -413,16 +413,16 @@ export const ContainerDetailsList: FC<ContainerDetailsListProps> = (props) => {
         </GridItem>
 
         <GridItem lg={4}>
-          <SectionHeading text={t('public~Network')} />
+          <SectionHeading text={t('Network')} />
           <DescriptionList>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('public~Node')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Node')}</DescriptionListTerm>
               <DescriptionListDescription>
                 <NodeLink name={pod.spec.nodeName} />
               </DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('public~Pod IP')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Pod IP')}</DescriptionListTerm>
               <DescriptionListDescription>{pod.status.podIP || '-'}</DescriptionListDescription>
             </DescriptionListGroup>
           </DescriptionList>
@@ -433,21 +433,21 @@ export const ContainerDetailsList: FC<ContainerDetailsListProps> = (props) => {
         </GridItem>
 
         <GridItem lg={4}>
-          <SectionHeading text={t('public~Ports')} />
+          <SectionHeading text={t('Ports')} />
           <div className="co-table-container">
             <Ports ports={container.ports} />
           </div>
         </GridItem>
 
         <GridItem lg={4}>
-          <SectionHeading text={t('public~Mounted volumes')} />
+          <SectionHeading text={t('Mounted volumes')} />
           <div className="co-table-container">
             <VolumeMounts volumeMounts={container.volumeMounts} />
           </div>
         </GridItem>
 
         <GridItem lg={4}>
-          <SectionHeading text={t('public~Environment variables')} />
+          <SectionHeading text={t('Environment variables')} />
           <div className="co-table-container">
             <Env env={container.env} />
           </div>
@@ -479,7 +479,7 @@ const getContainerStatusStateValue = (pod: PodKind, containerName: string) => {
 };
 
 export const ContainerDetails: FC<ContainerDetailsProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const params = useParams();
   const location = useLocation();
 
@@ -503,12 +503,12 @@ export const ContainerDetails: FC<ContainerDetailsProps> = (props) => {
         kind="Container"
         getResourceStatus={() => containerStateValue}
         breadcrumbsFor={() => [
-          { name: t('public~Pods'), path: getBreadcrumbPath(params, 'pods') },
+          { name: t('Pods'), path: getBreadcrumbPath(params, 'pods') },
           {
             name: params.podName,
             path: resourcePath('Pod', params.podName, params.ns),
           },
-          { name: t('public~Container details'), path: location.pathname },
+          { name: t('Container details'), path: location.pathname },
         ]}
         obj={{ data: props.pod, loaded: props.loaded, loadError: props.loadError }}
       />

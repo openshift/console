@@ -9,7 +9,7 @@ type GithubSectionProps = {
 };
 
 const GithubSection: FC<GithubSectionProps> = ({ pac }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const appLink = pac?.data?.['app-link'] ?? '';
   return (
     <Content component="p">

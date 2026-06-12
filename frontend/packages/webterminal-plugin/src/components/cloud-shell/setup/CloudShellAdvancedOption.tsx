@@ -8,7 +8,7 @@ import ImageSection from './ImageSection';
 import TimeoutSection from './TimeoutSection';
 
 const Footer = ({ children }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('webterminal-plugin');
   return (
     <Trans
       t={t}
@@ -20,7 +20,7 @@ const Footer = ({ children }) => {
 };
 
 const List: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('webterminal-plugin');
 
   const [visibleItems, setVisibleItems] = useState([]);
   const handleVisibleItemChange = (item: string) => {
@@ -33,10 +33,10 @@ const List: FC = () => {
       onVisibleItemChange={handleVisibleItemChange}
       Footer={Footer}
     >
-      <ProgressiveListItem name={t('webterminal-plugin~Timeout')}>
+      <ProgressiveListItem name={t('Timeout')}>
         <TimeoutSection />
       </ProgressiveListItem>
-      <ProgressiveListItem name={t('webterminal-plugin~Image')}>
+      <ProgressiveListItem name={t('Image')}>
         <ImageSection />
       </ProgressiveListItem>
     </ProgressiveList>

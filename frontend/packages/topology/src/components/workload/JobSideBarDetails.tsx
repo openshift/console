@@ -21,7 +21,7 @@ type JobSideBarDetailsProps = {
 const JobSideBarDetails: FC<JobSideBarDetailsProps> = ({ job }) => {
   const { namespace } = job.metadata;
   const { podData, loaded, loadError } = usePodsWatcher(job, 'Job', namespace);
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   return (
     <div className="overview__sidebar-pane-body resource-overview__body">
       <div className="resource-overview__pod-counts">
@@ -30,16 +30,16 @@ const JobSideBarDetails: FC<JobSideBarDetailsProps> = ({ job }) => {
         </StatusBox>
       </div>
       <ResourceSummary resource={job} showPodSelector>
-        <DetailsItem label={t('topology~Desired completions')} obj={job} path="spec.completions" />
-        <DetailsItem label={t('topology~Parallelism')} obj={job} path="spec.parallelism" />
+        <DetailsItem label={t('Desired completions')} obj={job} path="spec.completions" />
+        <DetailsItem label={t('Parallelism')} obj={job} path="spec.parallelism" />
         <DetailsItem
-          label={t('topology~Active deadline seconds')}
+          label={t('Active deadline seconds')}
           obj={job}
           path="spec.activeDeadlineSeconds"
         >
           {job.spec?.activeDeadlineSeconds
             ? pluralize(job.spec.activeDeadlineSeconds, 'second')
-            : t('topology~Not configured')}
+            : t('Not configured')}
         </DetailsItem>
       </ResourceSummary>
     </div>

@@ -30,18 +30,16 @@ interface GettingStartedExpandableGridProps {
 }
 
 const TitleContent = () => {
-  const { t } = useTranslation();
-  return <>{t('console-shared~Getting started resources')}</>;
+  const { t } = useTranslation('console-shared');
+  return <>{t('Getting started resources')}</>;
 };
 
 const TitlePopoverContent = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
 
   return (
     <span className="ocs-getting-started-expandable-grid__tooltip">
-      {t(
-        'console-shared~Use our collection of resources to help you get started with the Console.',
-      )}
+      {t('Use our collection of resources to help you get started with the Console.')}
     </span>
   );
 };
@@ -56,7 +54,7 @@ export const GettingStartedExpandableGrid: FC<GettingStartedExpandableGridProps>
   headerContent,
   footerContent,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
 
   const handleClose = () => {
     setShowState(GettingStartedShowState.HIDE);
@@ -76,7 +74,7 @@ export const GettingStartedExpandableGrid: FC<GettingStartedExpandableGridProps>
             actions: (
               <Button
                 variant="plain"
-                aria-label={t('console-shared~Close')}
+                aria-label={t('Close')}
                 icon={<RhUiCloseIcon />}
                 onClick={handleClose}
               />
@@ -85,7 +83,7 @@ export const GettingStartedExpandableGrid: FC<GettingStartedExpandableGridProps>
         }
         toggleButtonProps={{
           id: 'toggle-button1',
-          'aria-label': t('console-shared~Expandable details'),
+          'aria-label': t('Expandable details'),
           'aria-labelledby': 'expandable-card-title toggle-button1',
           'aria-expanded': isOpen,
         }}
@@ -94,7 +92,7 @@ export const GettingStartedExpandableGrid: FC<GettingStartedExpandableGridProps>
           {title}{' '}
           {titleTooltip && (
             <Popover bodyContent={titleTooltip} triggerAction="hover">
-              <span role="button" aria-label={t('console-shared~More info')}>
+              <span role="button" aria-label={t('More info')}>
                 <RhUiQuestionMarkCircleIcon />
               </span>
             </Popover>

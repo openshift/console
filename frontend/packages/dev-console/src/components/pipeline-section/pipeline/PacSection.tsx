@@ -18,7 +18,7 @@ enum PacConfigurationTypes {
 }
 
 const PacSection: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const formContextField = 'pac.repository';
   const [githubAppAvailable, setGithubAppAvailable] = useState(false);
   const { values, setFieldValue } = useFormikContext<FormikValues>();
@@ -49,10 +49,7 @@ const PacSection: FC = () => {
 
   return pac ? (
     <>
-      <ExpandCollapse
-        textCollapsed={t('devconsole~View details')}
-        textExpanded={t('devconsole~Hide details')}
-      >
+      <ExpandCollapse textCollapsed={t('View details')} textExpanded={t('Hide details')}>
         <InfoPanel />
       </ExpandCollapse>
 

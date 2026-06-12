@@ -9,7 +9,7 @@ import ConfigMapForm from './ConfigMapForm';
 import { ConfigMap } from './types';
 
 export const ConfigMapPage: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { ns: namespace, name } = useParams();
   const isCreateFlow: boolean = !name;
 
@@ -22,7 +22,7 @@ export const ConfigMapPage: FC = () => {
           namespace,
         },
   );
-  const title = isCreateFlow ? t('public~Create ConfigMap') : t('public~Edit ConfigMap');
+  const title = isCreateFlow ? t('Create ConfigMap') : t('Edit ConfigMap');
   const configMap: ConfigMap = isCreateFlow ? null : watchedConfigMap;
 
   const configMapForm = (

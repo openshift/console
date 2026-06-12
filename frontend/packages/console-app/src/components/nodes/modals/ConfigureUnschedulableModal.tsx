@@ -35,7 +35,7 @@ const ConfigureUnschedulableModal: FC<ConfigureUnschedulableModalProps> = ({
   cancel,
 }) => {
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
 
   // Support both single node (resource) and multiple nodes (nodes array)
   const targetNodes = useMemo(() => {
@@ -68,7 +68,7 @@ const ConfigureUnschedulableModal: FC<ConfigureUnschedulableModalProps> = ({
   return (
     <>
       <ModalHeader
-        title={t('console-app~Mark as unschedulable')}
+        title={t('Mark as unschedulable')}
         labelId="configure-unschedulable-modal-title"
       />
       <ModalBody>
@@ -82,10 +82,10 @@ const ConfigureUnschedulableModal: FC<ConfigureUnschedulableModalProps> = ({
         <Content component={ContentVariants.p}>
           {isBulk
             ? t(
-                "console-app~Unschedulable nodes won't accept new pods. By blocking new pod assignments, you can isolate nodes to perform maintenance or decommission them without disrupting new traffic.",
+                "Unschedulable nodes won't accept new pods. By blocking new pod assignments, you can isolate nodes to perform maintenance or decommission them without disrupting new traffic.",
               )
             : t(
-                "console-app~Unschedulable nodes won't accept new pods. By blocking new pod assignments, you can isolate a node to perform maintenance or decommission it without disrupting new traffic.",
+                "Unschedulable nodes won't accept new pods. By blocking new pod assignments, you can isolate a node to perform maintenance or decommission it without disrupting new traffic.",
               )}
         </Content>
       </ModalBody>
@@ -97,10 +97,10 @@ const ConfigureUnschedulableModal: FC<ConfigureUnschedulableModalProps> = ({
           isLoading={inProgress}
           isDisabled={inProgress}
         >
-          {t('console-app~Mark unschedulable')}
+          {t('Mark unschedulable')}
         </Button>
         <Button variant="link" onClick={cancel}>
-          {t('console-app~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </>

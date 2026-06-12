@@ -18,7 +18,7 @@ interface ApiServerSectionProps {
 }
 
 const ApiServerSection: FC<ApiServerSectionProps> = ({ title, fullWidth }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const { values, setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
   const defaultInitvalue = values?.formData?.data?.[EventSources.ApiServerSource] || {};
   const initVal = defaultInitvalue?.resources || [];
@@ -60,7 +60,7 @@ const ApiServerSection: FC<ApiServerSectionProps> = ({ title, fullWidth }) => {
   };
   return (
     <FormSection title={title} extraMargin fullWidth={fullWidth} dataTest={`${title} section`}>
-      <FormGroup fieldId={fieldId} label={t('knative-plugin~Resource')} isRequired>
+      <FormGroup fieldId={fieldId} label={t('Resource')} isRequired>
         <AsyncComponent
           loader={() =>
             import('@console/internal/components/utils/name-value-editor').then(
@@ -70,7 +70,7 @@ const ApiServerSection: FC<ApiServerSectionProps> = ({ title, fullWidth }) => {
           nameValuePairs={nameValue}
           valueString="kind"
           nameString="apiVersion"
-          addString={t('knative-plugin~Add resource')}
+          addString={t('Add resource')}
           readOnly={false}
           allowSorting={false}
           updateParentData={handleNameValuePairs}
@@ -78,16 +78,16 @@ const ApiServerSection: FC<ApiServerSectionProps> = ({ title, fullWidth }) => {
 
         <FormHelperText>
           <HelperText>
-            <HelperTextItem>{t('knative-plugin~The list of resources to watch.')}</HelperTextItem>
+            <HelperTextItem>{t('The list of resources to watch.')}</HelperTextItem>
           </HelperText>
         </FormHelperText>
       </FormGroup>
       <DropdownField
         name={`formData.data.${EventSources.ApiServerSource}.mode`}
-        label={t('knative-plugin~Mode')}
+        label={t('Mode')}
         items={modeItems}
         title={modeItems.Reference}
-        helpText={t('knative-plugin~The mode the receive adapter controller runs under')}
+        helpText={t('The mode the receive adapter controller runs under')}
         fullWidth
       />
       <ServiceAccountDropdown

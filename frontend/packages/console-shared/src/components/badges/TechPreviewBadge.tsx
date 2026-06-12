@@ -4,6 +4,6 @@ import './Badge.scss';
 import { useTranslation } from 'react-i18next';
 
 export const TechPreviewBadge: FC = () => {
-  const { t } = useTranslation();
-  return <Label className="ocs-preview-badge">{t('console-shared~Tech preview')}</Label>;
+  const { t } = useTranslation('console-shared');
+  return <Label className="ocs-preview-badge">{t('Tech preview')}</Label>;
 };

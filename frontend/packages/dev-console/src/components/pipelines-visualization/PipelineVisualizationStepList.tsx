@@ -53,16 +53,14 @@ export const PipelineVisualizationStepList: FC<PipelineVisualizationStepListProp
   isFinallyTask,
   hideHeader,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   return (
     <div className="odc-pipeline-visualization-step-list">
       {!hideHeader && (
         <div className="odc-pipeline-visualization-step-list__task-name">{taskName}</div>
       )}
       {isFinallyTask && (
-        <div className="odc-pipeline-visualization-step-list__task-type">
-          {t('devconsole~Finally task')}
-        </div>
+        <div className="odc-pipeline-visualization-step-list__task-type">{t('Finally task')}</div>
       )}
       {steps.map(({ duration, name, status }) => {
         return (

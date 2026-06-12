@@ -26,12 +26,12 @@ interface TriggerDetailsProps {
 }
 
 const TriggerDetails: FC<TriggerDetailsProps> = ({ obj: trigger }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const { filters: filterData } = getTriggerFilters(trigger);
   return (
     <>
       <PaneBody>
-        <SectionHeading text={t('knative-plugin~Trigger details')} />
+        <SectionHeading text={t('Trigger details')} />
         <Grid hasGutter>
           <GridItem sm={6}>
             <ResourceSummary resource={trigger} />
@@ -41,7 +41,7 @@ const TriggerDetails: FC<TriggerDetailsProps> = ({ obj: trigger }) => {
               <div className="kn-resource-link-list kn-resource-link-list--addSpaceBelow">
                 <DescriptionList>
                   <DescriptionListGroup>
-                    <DescriptionListTerm>{t('knative-plugin~Filter')}</DescriptionListTerm>
+                    <DescriptionListTerm>{t('Filter')}</DescriptionListTerm>
                     <DescriptionListDescription>
                       <FilterTable filters={filterData} />
                     </DescriptionListDescription>
@@ -51,7 +51,7 @@ const TriggerDetails: FC<TriggerDetailsProps> = ({ obj: trigger }) => {
             )}
             {trigger.spec?.broker && (
               <DynamicResourceLink
-                title={t('knative-plugin~Broker')}
+                title={t('Broker')}
                 name={trigger.spec.broker}
                 namespace={trigger.metadata.namespace}
                 kind={referenceForModel(EventingBrokerModel)}
@@ -59,7 +59,7 @@ const TriggerDetails: FC<TriggerDetailsProps> = ({ obj: trigger }) => {
             )}
             {trigger.spec?.subscriber?.ref && (
               <DynamicResourceLink
-                title={t('knative-plugin~Subscriber')}
+                title={t('Subscriber')}
                 name={trigger.spec.subscriber.ref.name}
                 namespace={trigger.metadata.namespace}
                 kind={referenceFor(trigger.spec.subscriber.ref)}
@@ -70,7 +70,7 @@ const TriggerDetails: FC<TriggerDetailsProps> = ({ obj: trigger }) => {
       </PaneBody>
       {_.isArray(trigger?.status?.conditions) && (
         <PaneBody>
-          <SectionHeading text={t('knative-plugin~Conditions')} />
+          <SectionHeading text={t('Conditions')} />
           <Conditions conditions={trigger.status.conditions} />
         </PaneBody>
       )}

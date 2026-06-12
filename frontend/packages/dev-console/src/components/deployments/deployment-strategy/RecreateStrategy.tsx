@@ -7,17 +7,15 @@ import AdvancedStrategyOptions from './advanced-options/AdvancedStrategyOptions'
 import type { StrategyFieldProps } from './utils/types';
 
 const RecreateStrategy: FC<StrategyFieldProps> = ({ resourceType, resourceObj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   return resourceType === Resources.OpenShift ? (
     <div data-test="recreateParams">
       <InputField
         name="formData.deploymentStrategy.recreateParams.timeoutSeconds"
         style={{ maxWidth: 'unset' }}
-        label={t('devconsole~Timeout')}
+        label={t('Timeout')}
         type={TextInputTypes.number}
-        helpText={t(
-          'devconsole~The number of seconds to wait for a pod to scale up before giving up',
-        )}
+        helpText={t('The number of seconds to wait for a pod to scale up before giving up')}
       />
       <AdvancedStrategyOptions dataAttribute="recreateParams" resourceObj={resourceObj} />
     </div>

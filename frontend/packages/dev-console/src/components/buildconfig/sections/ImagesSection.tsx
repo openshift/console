@@ -36,7 +36,7 @@ const ImageOption: FC<{
   dataTest: string;
   required?: boolean;
 }> = ({ fieldPrefix, label, fallbackTitle, items, dataTest, required }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const [{ value: type }] = useField<ImageOptionType>(`${fieldPrefix}.type`);
 
   return (
@@ -52,7 +52,7 @@ const ImageOption: FC<{
 
       {type === 'imageStreamTag' ? (
         <ImageStream
-          label={t('devconsole~Image stream tag')}
+          label={t('Image stream tag')}
           formContextField={`${fieldPrefix}.imageStreamTag`}
           dataTest={`${dataTest} image-stream-tag`}
           required
@@ -61,7 +61,7 @@ const ImageOption: FC<{
 
       {type === 'imageStreamImage' ? (
         <InputField
-          label={t('devconsole~Image stream image')}
+          label={t('Image stream image')}
           name={`${fieldPrefix}.imageStreamImage`}
           type={TextInputTypes.text}
           data-test={`${dataTest} image-stream-image`}
@@ -71,7 +71,7 @@ const ImageOption: FC<{
 
       {type === 'dockerImage' ? (
         <InputField
-          label={t('devconsole~Image registry')}
+          label={t('Image registry')}
           name={`${fieldPrefix}.dockerImage`}
           type={TextInputTypes.text}
           data-test={`${dataTest} docker-image`}
@@ -83,43 +83,43 @@ const ImageOption: FC<{
 };
 
 const ImagesSection: FC<{}> = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const [{ value: strategyType }] = useField<BuildStrategyType>('formData.images.strategyType');
 
   const buildFromItems: Record<string, string> =
     strategyType === BuildStrategyType.Docker
       ? {
-          none: t('devconsole~None'),
-          imageStreamTag: t('devconsole~Image Stream Tag'),
-          imageStreamImage: t('devconsole~Image Stream Image'),
-          dockerImage: t('devconsole~External container image'),
+          none: t('None'),
+          imageStreamTag: t('Image Stream Tag'),
+          imageStreamImage: t('Image Stream Image'),
+          dockerImage: t('External container image'),
         }
       : {
-          imageStreamTag: t('devconsole~Image Stream Tag'),
-          imageStreamImage: t('devconsole~Image Stream Image'),
-          dockerImage: t('devconsole~External container image'),
+          imageStreamTag: t('Image Stream Tag'),
+          imageStreamImage: t('Image Stream Image'),
+          dockerImage: t('External container image'),
         };
 
   const pushToItems = {
-    none: t('devconsole~None'),
-    imageStreamTag: t('devconsole~Image Stream Tag'),
-    dockerImage: t('devconsole~External container image'),
+    none: t('None'),
+    imageStreamTag: t('Image Stream Tag'),
+    dockerImage: t('External container image'),
   };
 
   return (
-    <FormSection title={t('devconsole~Images')} dataTest="section images">
+    <FormSection title={t('Images')} dataTest="section images">
       <ImageOption
         fieldPrefix="formData.images.buildFrom"
-        label={t('devconsole~Build from')}
-        fallbackTitle={t('devconsole~Please select')}
+        label={t('Build from')}
+        fallbackTitle={t('Please select')}
         items={buildFromItems}
         dataTest="build-from"
         required
       />
       <ImageOption
         fieldPrefix="formData.images.pushTo"
-        label={t('devconsole~Push to')}
-        fallbackTitle={t('devconsole~Please select')}
+        label={t('Push to')}
+        fallbackTitle={t('Please select')}
         items={pushToItems}
         dataTest="push-to"
       />

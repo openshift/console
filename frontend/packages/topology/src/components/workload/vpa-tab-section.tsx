@@ -17,10 +17,10 @@ type VPATabSectionProps = {
 };
 
 const VPATabSection: FC<VPATabSectionProps> = ({ vpas }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   return (
     <>
-      <SidebarSectionHeading text={t('topology~VerticalPodAutoscalers')} />
+      <SidebarSectionHeading text={t('VerticalPodAutoscalers')} />
       <List isPlain isBordered>
         {vpas.map((vpa: K8sResourceCommon) => (
           <ListItem key={vpa.metadata.name}>

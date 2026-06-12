@@ -25,7 +25,7 @@ const NameLabelFilterDropdown: FC<NameLabelFilterDropdownProps> = (props) => {
   const [isOpen, setOpen] = useState(false);
   const [selected, setSelected] = useState(NameLabelFilterValues.Name);
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
 
   const onToggle = (_event, open: boolean) => setOpen(open);
   const dropdownItems = [NameLabelFilterValues.Name, NameLabelFilterValues.Label];
@@ -79,7 +79,7 @@ const NameLabelFilterDropdown: FC<NameLabelFilterDropdownProps> = (props) => {
           showSuggestions
           textValue={labelFilterInput}
           setTextValue={handleInputValue}
-          placeholder={t('topology~Find by label...')}
+          placeholder={t('Find by label...')}
           data={data}
           color="purple"
           labelPath={'metadata.labels'}
@@ -87,7 +87,7 @@ const NameLabelFilterDropdown: FC<NameLabelFilterDropdownProps> = (props) => {
       ) : (
         <TextFilter
           onChange={(_event, value) => handleInputValue(value)}
-          placeholder={t('topology~Find by name...')}
+          placeholder={t('Find by name...')}
           value={nameFilterInput}
           aria-labelledby="toggle-id"
           isDisabled={isDisabled}

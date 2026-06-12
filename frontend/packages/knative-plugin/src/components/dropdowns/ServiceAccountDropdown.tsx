@@ -25,7 +25,7 @@ const ServiceAccountDropdown: FC<ServiceAccountDropdownProps & StateProps> = ({
   onLoad,
   namespace,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const autocompleteFilter = (strText, item): boolean => fuzzy(strText, item?.props?.name);
 
   const [saData, saLoaded, saLoadError] = useK8sWatchResource<K8sResourceKind[]>({
@@ -50,12 +50,12 @@ const ServiceAccountDropdown: FC<ServiceAccountDropdownProps & StateProps> = ({
   return (
     <ResourceDropdownField
       name={name}
-      label={t('knative-plugin~Service Account name')}
+      label={t('Service Account name')}
       resources={resources}
       dataSelector={['metadata', 'name']}
-      placeholder={t('knative-plugin~Select a Service Account name')}
+      placeholder={t('Select a Service Account name')}
       autocompleteFilter={autocompleteFilter}
-      helpText={t('knative-plugin~The name of Service Account use to run this')}
+      helpText={t('The name of Service Account use to run this')}
       fullWidth
       onLoad={onLoad}
       showBadge

@@ -50,7 +50,7 @@ export const getNamespaceDashboardConsoleLinks = (
 };
 
 export const ProjectDashboard = memo<ProjectDashboardProps>(({ obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const [perspective] = useActivePerspective();
   const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
     isList: true,
@@ -72,7 +72,7 @@ export const ProjectDashboard = memo<ProjectDashboardProps>(({ obj }) => {
 
   return (
     <>
-      {perspective === 'dev' && <DocumentTitle>{t('public~Project overview')}</DocumentTitle>}
+      {perspective === 'dev' && <DocumentTitle>{t('Project overview')}</DocumentTitle>}
       <ProjectDashboardContext.Provider value={context}>
         <Dashboard>
           <DevGettingStartedSection

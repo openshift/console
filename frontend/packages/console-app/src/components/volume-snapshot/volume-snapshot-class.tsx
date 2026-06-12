@@ -52,7 +52,7 @@ const getDataViewRowsCreator: (t: TFunction) => GetDataViewRows<VolumeSnapshotCl
           <ResourceLink name={name} kind={kind}>
             {isDefaultSnapshotClass(obj) && (
               <span className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle co-resource-item__help-text">
-                &ndash; {t('console-app~Default')}
+                &ndash; {t('Default')}
               </span>
             )}
           </ResourceLink>
@@ -87,7 +87,7 @@ const useVolumeSnapshotClassColumns = (): {
   columns: TableColumn<VolumeSnapshotClassKind>[];
   resetAllColumnWidths: () => void;
 } => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
     VolumeSnapshotClassModel,
   );
@@ -95,21 +95,21 @@ const useVolumeSnapshotClassColumns = (): {
   const columns: TableColumn<VolumeSnapshotClassKind>[] = useMemo(
     () => [
       {
-        title: t('console-app~Name'),
+        title: t('Name'),
         sort: 'metadata.name',
         id: tableColumnInfo[0].id,
         resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: { ...nameCellProps, modifier: 'nowrap' },
       },
       {
-        title: t('console-app~Driver'),
+        title: t('Driver'),
         sort: 'driver',
         id: tableColumnInfo[1].id,
         resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: { modifier: 'nowrap' },
       },
       {
-        title: t('console-app~Deletion policy'),
+        title: t('Deletion policy'),
         sort: 'deletionPolicy',
         id: tableColumnInfo[2].id,
         resizableProps: getResizableProps(tableColumnInfo[2].id),
@@ -132,7 +132,7 @@ const VolumeSnapshotClassTable: FC<VolumeSnapshotClassTableProps> = ({
   loaded,
   ...props
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const { columns, resetAllColumnWidths } = useVolumeSnapshotClassColumns();
   const getDataViewRows = useMemo(() => getDataViewRowsCreator(t), [t]);
 
@@ -159,7 +159,7 @@ export const VolumeSnapshotClassPage: FC<VolumeSnapshotClassPageProps> = ({
   namespace,
   selector,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
 
   const [resources, loaded, loadError] = useK8sWatchResource<VolumeSnapshotClassKind[]>({
     groupVersionKind: {
@@ -177,9 +177,7 @@ export const VolumeSnapshotClassPage: FC<VolumeSnapshotClassPageProps> = ({
     <>
       <ListPageHeader title={showTitle ? t(VolumeSnapshotClassModel.labelPluralKey || '') : ''}>
         {canCreate && (
-          <ListPageCreate groupVersionKind={kind}>
-            {t('console-app~Create VolumeSnapshotClass')}
-          </ListPageCreate>
+          <ListPageCreate groupVersionKind={kind}>{t('Create VolumeSnapshotClass')}</ListPageCreate>
         )}
       </ListPageHeader>
       <ListPageBody>

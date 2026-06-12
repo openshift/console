@@ -40,7 +40,7 @@ import { useStartNodeMaintenanceModalLauncher } from '../modals/StartNodeMainten
 import { useStopNodeMaintenanceModal } from '../modals/StopNodeMaintenanceModal';
 
 const useDeleteAction = (kindObj: K8sKind, host, status) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('metal3-plugin');
   const launchModal = useOverlay();
   const hidden = ![
     HOST_STATUS_UNKNOWN,
@@ -53,7 +53,7 @@ const useDeleteAction = (kindObj: K8sKind, host, status) => {
     () => ({
       delete: () => ({
         id: 'delete-host',
-        label: t('metal3-plugin~Delete Bare Metal Host'),
+        label: t('Delete Bare Metal Host'),
         cta: () =>
           launchModal(DeleteModalOverlay, {
             kind: kindObj,
@@ -69,12 +69,12 @@ const useDeleteAction = (kindObj: K8sKind, host, status) => {
 };
 
 const useEditAction = (kindObj: K8sKind, host: BareMetalHostKind) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('metal3-plugin');
   const factory = useMemo(
     () => ({
       edit: () => ({
         id: 'edit-host',
-        label: t('metal3-plugin~Edit Bare Metal Host'),
+        label: t('Edit Bare Metal Host'),
         cta: {
           href: `/k8s/ns/${getNamespace(host)}/${kindObj && referenceForModel(kindObj)}/${getName(
             host,
@@ -94,14 +94,14 @@ const useSetNodeMaintenanceAction = (
   nodeMaintenance,
   nodeName,
 ) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('metal3-plugin');
   const hidden = !nodeName || !hasNodeMaintenanceCapability || !!nodeMaintenance;
   const startNodeMaintenanceModalLauncher = useStartNodeMaintenanceModalLauncher({ nodeName });
   const factory = useMemo(
     () => ({
       setNodeMaintenance: () => ({
         id: 'set-node-maintenance',
-        label: t('metal3-plugin~Start Maintenance'),
+        label: t('Start Maintenance'),
         cta: startNodeMaintenanceModalLauncher,
         accessReview: host && asAccessReview(NodeMaintenanceModel, host, 'update'),
       }),
@@ -123,14 +123,14 @@ const useRemoveNodeMaintenanceAction = (
   nodeName,
   maintenanceModel,
 ) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('metal3-plugin');
   const hidden = !nodeName || !hasNodeMaintenanceCapability || !nodeMaintenance;
   const stopNodeMaintenanceModalLauncher = useStopNodeMaintenanceModal();
   const factory = useMemo(
     () => ({
       removeNodeMaintenance: () => ({
         id: 'remove-node-maintenance',
-        label: t('metal3-plugin~Stop Maintenance'),
+        label: t('Stop Maintenance'),
         cta: () => stopNodeMaintenanceModalLauncher(nodeMaintenance),
         accessReview: host && asAccessReview(maintenanceModel, host, 'delete'),
       }),
@@ -148,7 +148,7 @@ const useRemoveNodeMaintenanceAction = (
 };
 
 const usePowerOnAction = (host, bmoEnabled) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('metal3-plugin');
   const hidden =
     [HOST_POWER_STATUS_POWERED_ON, HOST_POWER_STATUS_POWERING_ON].includes(
       getHostPowerStatus(host),
@@ -160,7 +160,7 @@ const usePowerOnAction = (host, bmoEnabled) => {
     () => ({
       powerOn: () => ({
         id: 'power-on-host',
-        label: t('metal3-plugin~Power On'),
+        label: t('Power On'),
         cta: () => {
           const patches: Patch[] = [{ op: 'replace', path: '/spec/online', value: true }];
           const poweroffAnnotation = getPoweroffAnnotation(host);
@@ -182,7 +182,7 @@ const usePowerOnAction = (host, bmoEnabled) => {
 };
 
 const useRestartAction = (host, bmoEnabled) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('metal3-plugin');
   const hidden =
     [HOST_POWER_STATUS_POWERED_OFF, HOST_POWER_STATUS_POWERING_OFF].includes(
       getHostPowerStatus(host),
@@ -196,7 +196,7 @@ const useRestartAction = (host, bmoEnabled) => {
     () => ({
       restart: () => ({
         id: 'restart-host',
-        label: t('metal3-plugin~Restart'),
+        label: t('Restart'),
         cta: restartModalLauncher,
         accessReview: host && asAccessReview(BareMetalHostModel, host, 'update'),
       }),
@@ -209,7 +209,7 @@ const useRestartAction = (host, bmoEnabled) => {
 };
 
 const usePowerOffAction = (host, nodeName, status, bmoEnabled) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('metal3-plugin');
   const hidden =
     [HOST_POWER_STATUS_POWERED_OFF, HOST_POWER_STATUS_POWERING_OFF].includes(
       getHostPowerStatus(host),
@@ -222,7 +222,7 @@ const usePowerOffAction = (host, nodeName, status, bmoEnabled) => {
     () => ({
       powerOff: () => ({
         id: 'power-off-host',
-        label: t('metal3-plugin~Power Off'),
+        label: t('Power Off'),
         cta: powerOffModalLauncher,
         accessReview: host && asAccessReview(BareMetalHostModel, host, 'update'),
       }),
@@ -235,7 +235,7 @@ const usePowerOffAction = (host, nodeName, status, bmoEnabled) => {
 };
 
 const useDeprovisionAction = (host, machine, machineSet, bmoEnabled) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('metal3-plugin');
   const hidden =
     [HOST_POWER_STATUS_POWERED_OFF, HOST_POWER_STATUS_POWERING_OFF].includes(
       getHostPowerStatus(host),
@@ -247,18 +247,15 @@ const useDeprovisionAction = (host, machine, machineSet, bmoEnabled) => {
     !bmoEnabled ||
     isDetached(host);
   const deprovisionModalLauncher = useWarningModal({
-    title: t('metal3-plugin~Deprovision {{name}}', { name: getName(host) }),
+    title: t('Deprovision {{name}}', { name: getName(host) }),
     children: machineSet
-      ? t(
-          'metal3-plugin~Are you sure you want to delete {{name}} machine and scale down its machine set?',
-          {
-            name: getName(machine),
-          },
-        )
-      : t('metal3-plugin~Are you sure you want to delete {{name}} machine?', {
+      ? t('Are you sure you want to delete {{name}} machine and scale down its machine set?', {
+          name: getName(machine),
+        })
+      : t('Are you sure you want to delete {{name}} machine?', {
           name: getName(machine),
         }),
-    confirmButtonLabel: t('metal3-plugin~Deprovision'),
+    confirmButtonLabel: t('Deprovision'),
     onConfirm: () => deprovision(machine, machineSet),
   });
 
@@ -266,7 +263,7 @@ const useDeprovisionAction = (host, machine, machineSet, bmoEnabled) => {
     () => ({
       deprovision: () => ({
         id: 'deprovision-host',
-        label: t('metal3-plugin~Deprovision'),
+        label: t('Deprovision'),
         cta: deprovisionModalLauncher,
         accessReview: machineSet
           ? asAccessReview(MachineSetModel, machineSet, 'update')

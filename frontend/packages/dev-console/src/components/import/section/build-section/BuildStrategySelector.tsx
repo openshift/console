@@ -23,7 +23,7 @@ export const BuildStrategySelector: FC<BuildStrategySelectorProps> = ({
   formType,
   importStrategy,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const [strategy, strategyLoaded] = useClusterBuildStrategy();
   const { setFieldValue } = useFormikContext<FormikValues>();
 
@@ -66,13 +66,13 @@ export const BuildStrategySelector: FC<BuildStrategySelectorProps> = ({
     <SingleDropdownField
       data-test-id="cluster-build-strategy-field"
       name="build.clusterBuildStrategy"
-      label={t('devconsole~Cluster Build Strategy')}
+      label={t('Cluster Build Strategy')}
       onChange={onChange}
       isDisabled={formType === 'edit'}
-      ariaLabel={t('devconsole~Cluster Build Strategy')}
-      placeholderText={t('devconsole~Select Cluster Build Strategy')}
+      ariaLabel={t('Cluster Build Strategy')}
+      placeholderText={t('Select Cluster Build Strategy')}
       helpText={t(
-        'devconsole~Cluster Build Strategies define a shared group of steps, needed to fullfil the application build process.',
+        'Cluster Build Strategies define a shared group of steps, needed to fullfil the application build process.',
       )}
       getLabelFromValue={(value: string) => t(ReadableClusterBuildStrategies[value])}
       options={clusterBuildStrategyOptions}

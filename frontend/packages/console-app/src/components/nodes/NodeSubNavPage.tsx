@@ -29,7 +29,7 @@ type NodeSubNavPageProps = {
 };
 
 export const NodeSubNavPage: FC<NodeSubNavPageProps> = ({ obj, pageId, standardPages }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const queryParams = useQueryParams();
   const { setAllQueryArguments } = useQueryParamsMutator();
   const activeTabKey = queryParams.get('activeTab');

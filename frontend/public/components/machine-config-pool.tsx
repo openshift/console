@@ -87,18 +87,18 @@ const getMachineConfigPoolUpdateStatus = (mcp: MachineConfigPoolKind) => {
 const MachineConfigPoolCharacteristics: FC<MachineConfigPoolCharacteristicsProps> = ({ obj }) => {
   const configuration = _.get(obj, 'status.configuration');
   const maxUnavailable = _.get(obj, 'spec.maxUnavailable', 1);
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   return (
     <DescriptionList>
       <DescriptionListGroup>
-        <DescriptionListTerm>{t('public~Max unavailable machines')}</DescriptionListTerm>
+        <DescriptionListTerm>{t('Max unavailable machines')}</DescriptionListTerm>
         <DescriptionListDescription>{maxUnavailable}</DescriptionListDescription>
       </DescriptionListGroup>
       {configuration && (
         <>
           <DescriptionListGroup>
-            <DescriptionListTerm>{t('public~Current configuration')}</DescriptionListTerm>
+            <DescriptionListTerm>{t('Current configuration')}</DescriptionListTerm>
             <DescriptionListDescription>
               {configuration.name ? (
                 <ResourceLink
@@ -112,7 +112,7 @@ const MachineConfigPoolCharacteristics: FC<MachineConfigPoolCharacteristicsProps
             </DescriptionListDescription>
           </DescriptionListGroup>
           <DescriptionListGroup>
-            <DescriptionListTerm>{t('public~Current configuration source')}</DescriptionListTerm>
+            <DescriptionListTerm>{t('Current configuration source')}</DescriptionListTerm>
             <DescriptionListDescription>
               {configuration.source
                 ? _.map(configuration.source, ({ apiVersion, kind, name }) => (
@@ -126,8 +126,8 @@ const MachineConfigPoolCharacteristics: FC<MachineConfigPoolCharacteristicsProps
                 : '-'}
             </DescriptionListDescription>
           </DescriptionListGroup>
-          <DetailsItem label={t('public~Paused')} obj={obj} path={'spec.paused'}>
-            {obj.spec?.paused ? t('public~True') : t('public~False')}
+          <DetailsItem label={t('Paused')} obj={obj} path={'spec.paused'}>
+            {obj.spec?.paused ? t('True') : t('False')}
           </DetailsItem>
         </>
       )}
@@ -136,59 +136,58 @@ const MachineConfigPoolCharacteristics: FC<MachineConfigPoolCharacteristicsProps
 };
 
 const MachineConfigPoolCounts: FC<MachineConfigPoolCountsProps> = ({ obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   return (
     <PaneBodyGroup>
       <DescriptionList className="co-detail-table">
         <Card>
-          <DescriptionListTerm>{t('public~Total machine count')}</DescriptionListTerm>
+          <DescriptionListTerm>{t('Total machine count')}</DescriptionListTerm>
           <DescriptionListDescription>
-            <Tooltip content={t('public~Total number of machines in the machine pool.')}>
+            <Tooltip content={t('Total number of machines in the machine pool.')}>
               <span>
-                {obj?.status?.machineCount}{' '}
-                {t('public~machine', { count: obj?.status?.machineCount })}
+                {obj?.status?.machineCount} {t('machine', { count: obj?.status?.machineCount })}
               </span>
             </Tooltip>
           </DescriptionListDescription>
         </Card>
         <Card>
-          <DescriptionListTerm>{t('public~Ready machines')}</DescriptionListTerm>
+          <DescriptionListTerm>{t('Ready machines')}</DescriptionListTerm>
           <DescriptionListDescription>
-            <Tooltip content={t('public~Total number of ready machines targeted by the pool.')}>
+            <Tooltip content={t('Total number of ready machines targeted by the pool.')}>
               <span>
                 {obj?.status?.readyMachineCount}{' '}
-                {t('public~machine', { count: obj?.status?.readyMachineCount })}
+                {t('machine', { count: obj?.status?.readyMachineCount })}
               </span>
             </Tooltip>
           </DescriptionListDescription>
         </Card>
         <Card>
-          <DescriptionListTerm>{t('public~Updated count')}</DescriptionListTerm>
+          <DescriptionListTerm>{t('Updated count')}</DescriptionListTerm>
           <DescriptionListDescription>
             <Tooltip
               content={t(
-                'public~Total number of machines targeted by the pool that have the CurrentMachineConfig as their config.',
+                'Total number of machines targeted by the pool that have the CurrentMachineConfig as their config.',
               )}
             >
               <span>
                 {obj?.status?.updatedMachineCount}{' '}
-                {t('public~machine', { count: obj?.status?.updatedMachineCount })}
+                {t('machine', { count: obj?.status?.updatedMachineCount })}
               </span>
             </Tooltip>
           </DescriptionListDescription>
         </Card>
         <Card>
-          <DescriptionListTerm>{t('public~Unavailable count')}</DescriptionListTerm>
+          <DescriptionListTerm>{t('Unavailable count')}</DescriptionListTerm>
           <DescriptionListDescription>
             <Tooltip
               content={t(
-                'public~Total number of unavailable (non-ready) machines targeted by the pool. A node is marked unavailable if it is in updating state or NodeReady condition is false.',
+                'Total number of unavailable (non-ready) machines targeted by the pool. A node is marked unavailable if it is in updating state or NodeReady condition is false.',
               )}
             >
               <span>
                 {obj?.status?.unavailableMachineCount}{' '}
-                {t('public~machine', {
+                {t('machine', {
                   count: obj?.status?.unavailableMachineCount,
                 })}
               </span>
@@ -202,11 +201,11 @@ const MachineConfigPoolCounts: FC<MachineConfigPoolCountsProps> = ({ obj }) => {
 
 const MachineConfigPoolSummary: FC<MachineConfigPoolSummaryProps> = ({ obj }) => {
   const machineConfigSelector = _.get(obj, 'spec.machineConfigSelector');
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <ResourceSummary resource={obj} showNodeSelector nodeSelector="spec.nodeSelector">
       <DescriptionListGroup>
-        <DescriptionListTerm>{t('public~MachineConfig selector')}</DescriptionListTerm>
+        <DescriptionListTerm>{t('MachineConfig selector')}</DescriptionListTerm>
         <DescriptionListDescription>
           <Selector kind={machineConfigReference} selector={machineConfigSelector} />
         </DescriptionListDescription>
@@ -225,11 +224,11 @@ const MachineConfigList: FC<MachineConfigListProps> = ({ obj }) => (
 
 const MachineConfigPoolDetails: FC<MachineConfigPoolDetailsProps> = ({ obj }) => {
   const paused = _.get(obj, 'spec.paused');
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <>
       <PaneBody>
-        <SectionHeading text={t('public~MachineConfigPool details')} />
+        <SectionHeading text={t('MachineConfigPool details')} />
         {paused && <WorkloadPausedAlert model={MachineConfigPoolModel} obj={obj} />}
         <MachineConfigPoolCounts obj={obj} />
         <Grid hasGutter>
@@ -242,7 +241,7 @@ const MachineConfigPoolDetails: FC<MachineConfigPoolDetailsProps> = ({ obj }) =>
         </Grid>
       </PaneBody>
       <PaneBody>
-        <SectionHeading text={t('public~Conditions')} />
+        <SectionHeading text={t('Conditions')} />
         <Conditions conditions={_.get(obj, 'status.conditions')} />
       </PaneBody>
     </>
@@ -257,19 +256,19 @@ const pages = [
 ];
 
 const MachineConfigPoolUpdateStatus: FC<MachineConfigPoolUpdateStatusProps> = ({ obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   switch (getMachineConfigPoolUpdateStatus(obj)) {
     case MCPUpdateStatus.Paused:
       return (
         <>
-          <RhUiPauseCircleIcon /> {t('public~Paused')}
+          <RhUiPauseCircleIcon /> {t('Paused')}
         </>
       );
     case MCPUpdateStatus.Updating:
       return (
         <>
           <RhUiSyncIcon className="co-spin co-icon-space-r" />
-          {t('public~Updating')}
+          {t('Updating')}
         </>
       );
     case MCPUpdateStatus.Updated:
@@ -307,7 +306,7 @@ const useMachineConfigPoolColumns = (): {
   columns: TableColumn<MachineConfigPoolKind>[];
   resetAllColumnWidths: () => void;
 } => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
     MachineConfigPoolModel,
   );
@@ -315,7 +314,7 @@ const useMachineConfigPoolColumns = (): {
   const columns: TableColumn<MachineConfigPoolKind>[] = useMemo(() => {
     return [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         resizableProps: getResizableProps(tableColumnInfo[0].id),
@@ -325,7 +324,7 @@ const useMachineConfigPoolColumns = (): {
         },
       },
       {
-        title: t('public~Configuration'),
+        title: t('Configuration'),
         id: tableColumnInfo[1].id,
         sort: 'status.configuration.name',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
@@ -334,7 +333,7 @@ const useMachineConfigPoolColumns = (): {
         },
       },
       {
-        title: t('public~Degraded'),
+        title: t('Degraded'),
         id: tableColumnInfo[2].id,
         resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
@@ -342,7 +341,7 @@ const useMachineConfigPoolColumns = (): {
         },
       },
       {
-        title: t('public~Update status'),
+        title: t('Update status'),
         id: tableColumnInfo[3].id,
         resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {

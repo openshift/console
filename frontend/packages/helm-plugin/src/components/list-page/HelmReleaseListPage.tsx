@@ -4,10 +4,10 @@ import { PageHeading } from '@console/shared/src/components/heading/PageHeading'
 import HelmReleaseList from './HelmReleaseList';
 
 const HelmReleaseListPage: FC<{ mock?: boolean }> = ({ mock }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   return (
     <div>
-      <PageHeading title={t('helm-plugin~Helm Releases')} />
+      <PageHeading title={t('Helm Releases')} />
       <HelmReleaseList mock={mock} />
     </div>
   );

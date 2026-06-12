@@ -92,11 +92,11 @@ const getDataViewRows: GetDataViewRows<ClusterExtensionKind> = (data, columns) =
 };
 
 const useClusterExtensionColumns = (): TableColumn<ClusterExtensionKind>[] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm-v1');
   const columns = useMemo<TableColumn<ClusterExtensionKind>[]>(
     () => [
       {
-        title: t('olm-v1~Name'),
+        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         props: {
@@ -105,25 +105,25 @@ const useClusterExtensionColumns = (): TableColumn<ClusterExtensionKind>[] => {
         },
       },
       {
-        title: t('olm-v1~Status'),
+        title: t('Status'),
         id: tableColumnInfo[1].id,
         props: {
           modifier: 'nowrap',
         },
       },
       {
-        title: t('olm-v1~Version'),
+        title: t('Version'),
         id: tableColumnInfo[2].id,
         props: {
           modifier: 'nowrap',
         },
       },
       {
-        title: t('olm-v1~Channels'),
+        title: t('Channels'),
         id: tableColumnInfo[3].id,
       },
       {
-        title: t('olm-v1~Namespace'),
+        title: t('Namespace'),
         id: tableColumnInfo[4].id,
         sort: 'spec.namespace',
         props: {
@@ -131,7 +131,7 @@ const useClusterExtensionColumns = (): TableColumn<ClusterExtensionKind>[] => {
         },
       },
       {
-        title: t('olm-v1~Package'),
+        title: t('Package'),
         id: tableColumnInfo[5].id,
         props: {
           modifier: 'nowrap',
@@ -152,7 +152,7 @@ const useClusterExtensionColumns = (): TableColumn<ClusterExtensionKind>[] => {
 };
 
 const ClusterExtensionListPage: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm-v1');
   const [clusterExtensions, loaded, loadError] = useK8sWatchResource<ClusterExtensionKind[]>({
     kind: referenceForModel(ClusterExtensionModel),
     isList: true,
@@ -164,7 +164,7 @@ const ClusterExtensionListPage: FC = () => {
   return (
     <PaneBody>
       <ConsoleDataView<ClusterExtensionKind>
-        label={t('olm-v1~ClusterExtensions')}
+        label={t('ClusterExtensions')}
         data={clusterExtensions ?? []}
         loaded={loaded}
         loadError={loadError}

@@ -11,7 +11,7 @@ export const NumberSpinner: FC<NumberSpinnerProps> = ({
   'aria-label': ariaLabel,
   ...inputProps
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   return (
     <div className="co-m-number-spinner">
@@ -25,9 +25,9 @@ export const NumberSpinner: FC<NumberSpinnerProps> = ({
         inputAriaLabel={ariaLabel}
         inputProps={{ ...inputProps }}
         className={className}
-        minusBtnAriaLabel={t('public~Decrement')}
+        minusBtnAriaLabel={t('Decrement')}
         minusBtnProps={{ 'data-test-id': 'Decrement', 'data-test': 'Decrement' } as ButtonProps}
-        plusBtnAriaLabel={t('public~Increment')}
+        plusBtnAriaLabel={t('Increment')}
         plusBtnProps={{ 'data-test-id': 'Increment', 'data-test': 'Increment' } as ButtonProps}
         isDisabled={inputProps.disabled}
       />

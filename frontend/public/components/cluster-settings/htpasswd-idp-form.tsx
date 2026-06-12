@@ -27,7 +27,7 @@ export const AddHTPasswdPage = () => {
   const [name, setName] = useState('htpasswd');
   const [htpasswdFileContent, setHtpasswdFileContent] = useState('');
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const thenPromise = (res) => {
     setInProgress(false);
@@ -36,7 +36,7 @@ export const AddHTPasswdPage = () => {
   };
 
   const catchError = (error) => {
-    const err = error.message || t('public~An error occurred. Please try again.');
+    const err = error.message || t('An error occurred. Please try again.');
     setInProgress(false);
     setErrorMessage(err);
     return Promise.reject(err);
@@ -89,7 +89,7 @@ export const AddHTPasswdPage = () => {
   const submit = (e) => {
     e.preventDefault();
     if (!htpasswdFileContent) {
-      setErrorMessage(t('public~You must specify an HTPasswd file.'));
+      setErrorMessage(t('You must specify an HTPasswd file.'));
       return;
     }
 
@@ -110,7 +110,7 @@ export const AddHTPasswdPage = () => {
     });
   };
 
-  const title = t('public~Add Identity Provider: HTPasswd');
+  const title = t('Add Identity Provider: HTPasswd');
 
   return (
     <div className="co-m-pane__form">
@@ -118,7 +118,7 @@ export const AddHTPasswdPage = () => {
       <PageHeading
         title={title}
         helpText={t(
-          'public~HTPasswd validates usernames and passwords against a flat file generated using the htpasswd command.',
+          'HTPasswd validates usernames and passwords against a flat file generated using the htpasswd command.',
         )}
       />
       <PaneBody>
@@ -129,20 +129,18 @@ export const AddHTPasswdPage = () => {
               onChange={(c: string) => setHtpasswdFileContent(c)}
               inputFileData={htpasswdFileContent}
               id="htpasswd-file"
-              label={t('public~HTPasswd file')}
-              filenamePlaceholder={t(
-                'public~Upload an HTPasswd file created using the htpasswd command.',
-              )}
+              label={t('HTPasswd file')}
+              filenamePlaceholder={t('Upload an HTPasswd file created using the htpasswd command.')}
               isRequired
             />
           </div>
           <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
             <ActionGroup className="pf-v6-c-form">
               <Button type="submit" variant="primary">
-                {t('public~Add')}
+                {t('Add')}
               </Button>
               <Button type="button" variant="secondary" onClick={() => navigate(-1)}>
-                {t('public~Cancel')}
+                {t('Cancel')}
               </Button>
             </ActionGroup>
           </ButtonBar>

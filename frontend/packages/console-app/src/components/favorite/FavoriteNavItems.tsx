@@ -12,7 +12,7 @@ import { FavoriteNavItem } from './FavoriteNavItem';
 import './FavoriteNavItems.scss';
 
 export const FavoriteNavItems: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const triggerTelemetry = useTelemetry();
   const [activeGroup, setActiveGroup] = useState('');
   const [activeItem, setActiveItem] = useState('');
@@ -51,7 +51,7 @@ export const FavoriteNavItems: FC = () => {
     if (!favorites || favorites.length === 0) {
       return (
         <li className="co-no-favorites-message" data-test="no-favorites-message">
-          {t('console-app~No favorites added')}
+          {t('No favorites added')}
         </li>
       );
     }
@@ -95,7 +95,7 @@ export const FavoriteNavItems: FC = () => {
 
   return (
     <NavExpandable
-      title={t('console-app~Favorites')}
+      title={t('Favorites')}
       groupId="favorites-group"
       isActive={activeGroup === 'favorites-group'}
       isExpanded={activeGroup === 'favorites-group'}

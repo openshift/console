@@ -32,11 +32,11 @@ const OperatorBackedServiceNode: FC<OperatorBackedServiceNodeProps> = ({
   ...rest
 }) => {
   const ref = useRef();
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   return (
     <Tooltip
       triggerRef={ref}
-      content={t('topology~Create Service Binding')}
+      content={t('Create Service Binding')}
       trigger="manual"
       isVisible={dropTarget && canDrop}
       animationDuration={0}

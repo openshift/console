@@ -79,11 +79,11 @@ const getRelatedObjectsDataViewRows = (
 };
 
 const useRelatedObjectsColumns = (): TableColumn<ClusterOperatorObjectReference>[] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const columns = useMemo(() => {
     return [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: columnIds[0].id,
         sort: 'name',
         props: {
@@ -92,7 +92,7 @@ const useRelatedObjectsColumns = (): TableColumn<ClusterOperatorObjectReference>
         },
       },
       {
-        title: t('public~Resource'),
+        title: t('Resource'),
         id: columnIds[1].id,
         sort: 'resource',
         props: {
@@ -100,7 +100,7 @@ const useRelatedObjectsColumns = (): TableColumn<ClusterOperatorObjectReference>
         },
       },
       {
-        title: t('public~Group'),
+        title: t('Group'),
         id: columnIds[2].id,
         sort: 'group',
         props: {
@@ -108,7 +108,7 @@ const useRelatedObjectsColumns = (): TableColumn<ClusterOperatorObjectReference>
         },
       },
       {
-        title: t('public~Namespace'),
+        title: t('Namespace'),
         id: columnIds[3].id,
         sort: 'namespace',
         props: {
@@ -126,7 +126,7 @@ const getObjectMetadata = (object: ClusterOperatorObjectReference): ResourceMeta
 
 const RelatedObjects: FC<RelatedObjectsProps> = ({ data }) => {
   const { findModel } = useModelFinder();
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const columns = useRelatedObjectsColumns();
 
   const customRowData: RelatedObjectsRowData = {
@@ -136,7 +136,7 @@ const RelatedObjects: FC<RelatedObjectsProps> = ({ data }) => {
   return (
     <Suspense fallback={<div className="loading-skeleton--table" />}>
       <ConsoleDataView<ClusterOperatorObjectReference, RelatedObjectsRowData, RelatedObjectsFilters>
-        label={t('public~Related objects')}
+        label={t('Related objects')}
         data={data}
         loaded={true}
         columns={columns}

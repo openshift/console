@@ -26,7 +26,7 @@ const NamespaceSection: FC<NamespaceSectionProps> = ({ flags }) => {
   const canCreate = canCreateNs || canCreateProject;
   const [namespace] = useField('namespace');
   const { setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
-  const { t } = useTranslation();
+  const { t } = useTranslation('webterminal-plugin');
 
   useFormikValidationFix(namespace.value);
 
@@ -78,8 +78,8 @@ const NamespaceSection: FC<NamespaceSectionProps> = ({ flags }) => {
       <ResourceDropdownField
         name="namespace"
         dataTest="webterminal-namespace-dropdown"
-        label={t('webterminal-plugin~Project')}
-        placeholder={t('webterminal-plugin~Select Project')}
+        label={t('Project')}
+        placeholder={t('Select Project')}
         fullWidth
         required
         selectedKey={namespace.value}
@@ -90,16 +90,14 @@ const NamespaceSection: FC<NamespaceSectionProps> = ({ flags }) => {
           canCreate
             ? [
                 {
-                  actionTitle: t('webterminal-plugin~Create Project'),
+                  actionTitle: t('Create Project'),
                   actionKey: CREATE_NAMESPACE_KEY,
                 },
               ]
             : undefined
         }
         onLoad={handleOnLoad}
-        helpText={t(
-          'webterminal-plugin~This Project will be used to initialize your command line terminal',
-        )}
+        helpText={t('This Project will be used to initialize your command line terminal')}
       />
       {namespace.value === CREATE_NAMESPACE_KEY && (
         <div className="wt-project-name" data-test="input-field-newNamespace">
@@ -107,7 +105,7 @@ const NamespaceSection: FC<NamespaceSectionProps> = ({ flags }) => {
             type={TextInputTypes.text}
             required
             name="newNamespace"
-            label={t('webterminal-plugin~Project name')}
+            label={t('Project name')}
           />
         </div>
       )}

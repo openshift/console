@@ -6,11 +6,11 @@ import EventSourceHeaders from './EventSourceHeaders';
 import EventSourceRow from './EventSourceRow';
 
 const EventSourceList: FC<TableProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   return (
     <Table
       {...props}
-      aria-label={t('knative-plugin~Event Sources')}
+      aria-label={t('Event Sources')}
       Header={EventSourceHeaders(t)}
       Row={EventSourceRow}
       virtualize

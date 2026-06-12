@@ -91,7 +91,7 @@ const useConfigResources = () => {
 };
 
 export const GlobalConfigPage: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const [globalConfigs] = useResolvedExtensions<ClusterGlobalConfig>(isClusterGlobalConfig);
   const [configResources, clusterOperatorConfigResources] = useConfigResources();
   const [errors, setErrors] = useState([]);
@@ -100,15 +100,15 @@ export const GlobalConfigPage: FC = () => {
   const [textFilter, setTextFilter] = useState('');
 
   const oauthMenuItems = _.map(IDP_TYPES, (label: string, id: string) => ({
-    label: t('public~{{label}}', { label }),
+    label: t('{{label}}', { label }),
     href: `/settings/idp/${id}`,
   }));
   const editYAMLMenuItem = (name: string, resourceLink: string) => ({
-    label: t('public~Edit {{name}} resource', { name }),
+    label: t('Edit {{name}} resource', { name }),
     href: `${resourceLink}/yaml`,
   });
   const viewAPIExplorerMenuItem = (name: string, apiExplorerLink: string) => ({
-    label: t('public~Explore {{name}} API', { name }),
+    label: t('Explore {{name}} API', { name }),
     href: apiExplorerLink,
   });
 
@@ -169,11 +169,11 @@ export const GlobalConfigPage: FC = () => {
             path: '/settings/cluster/alertmanagerconfig',
             menuItems: [
               {
-                label: t('public~Create Receiver'),
+                label: t('Create Receiver'),
                 href: '/settings/cluster/alertmanagerconfig/receivers/~new',
               },
               {
-                label: t('public~Edit configuration YAML'),
+                label: t('Edit configuration YAML'),
                 href: `/settings/cluster/alertmanageryaml`,
               },
             ],
@@ -205,14 +205,14 @@ export const GlobalConfigPage: FC = () => {
       {!loading && (
         <>
           <Content component={ContentVariants.p} className="pf-v6-u-mb-xl">
-            {t('public~Edit the following resources to manage the configuration of your cluster.')}
+            {t('Edit the following resources to manage the configuration of your cluster.')}
           </Content>
           <Toolbar>
             <ToolbarContent>
               <ToolbarItem>
                 <TextFilter
                   value={textFilter}
-                  label={t('public~by name or description')}
+                  label={t('by name or description')}
                   onChange={(_event, val) => setTextFilter(val)}
                 />
               </ToolbarItem>
@@ -231,13 +231,13 @@ export const GlobalConfigPage: FC = () => {
       {loading && <LoadingBox />}
       {!loading &&
         (_.isEmpty(visibleItems) ? (
-          <EmptyBox label={t('public~Configuration resources')} />
+          <EmptyBox label={t('Configuration resources')} />
         ) : (
           <Table gridBreakPoint="">
             <Thead>
               <Tr>
-                <Th width={30}>{t('public~Configuration resource')}</Th>
-                <Th visibility={['hidden', 'visibleOnSm']}>{t('public~Description')}</Th>
+                <Th width={30}>{t('Configuration resource')}</Th>
+                <Th visibility={['hidden', 'visibleOnSm']}>{t('Description')}</Th>
               </Tr>
             </Thead>
             <Tbody>

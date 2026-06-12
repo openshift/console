@@ -15,17 +15,14 @@ export type EnvironmentVariablesSectionFormData = {
 };
 
 const EnvironmentVariablesSection: FC<{ namespace: string }> = ({ namespace }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const {
     values: {
       formData: { environmentVariables },
     },
   } = useFormikContext<EnvironmentVariablesSectionFormData>();
   return (
-    <FormSection
-      title={t('devconsole~Environment Variables')}
-      dataTest="section environment-variables"
-    >
+    <FormSection title={t('Environment Variables')} dataTest="section environment-variables">
       <EnvironmentField
         name="formData.environmentVariables"
         envs={environmentVariables}

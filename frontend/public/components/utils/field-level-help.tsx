@@ -6,19 +6,15 @@ import { useTranslation } from 'react-i18next';
 
 export const FieldLevelHelp = memo<FieldLevelHelpProps>(
   ({ children, popoverHasAutoWidth, testId }) => {
-    const { t } = useTranslation();
+    const { t } = useTranslation('public');
     if (Children.count(children) === 0) {
       return null;
     }
     return (
-      <Popover
-        aria-label={t('public~Help')}
-        bodyContent={children}
-        hasAutoWidth={popoverHasAutoWidth}
-      >
+      <Popover aria-label={t('Help')} bodyContent={children} hasAutoWidth={popoverHasAutoWidth}>
         <Button
           icon={<RhUiQuestionMarkCircleIcon className="co-field-level-help__icon" />}
-          aria-label={t('public~Help')}
+          aria-label={t('Help')}
           variant="link"
           isInline
           className="co-field-level-help"

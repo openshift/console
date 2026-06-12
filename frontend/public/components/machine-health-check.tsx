@@ -71,7 +71,7 @@ const useMachineHealthCheckColumns = (): {
   columns: TableColumn<MachineHealthCheckKind>[];
   resetAllColumnWidths: () => void;
 } => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
     MachineHealthCheckModel,
   );
@@ -79,7 +79,7 @@ const useMachineHealthCheckColumns = (): {
   const columns: TableColumn<MachineHealthCheckKind>[] = useMemo(() => {
     return [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         resizableProps: getResizableProps(tableColumnInfo[0].id),
@@ -89,7 +89,7 @@ const useMachineHealthCheckColumns = (): {
         },
       },
       {
-        title: t('public~Namespace'),
+        title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
@@ -98,7 +98,7 @@ const useMachineHealthCheckColumns = (): {
         },
       },
       {
-        title: t('public~Created'),
+        title: t('Created'),
         id: tableColumnInfo[2].id,
         sort: 'metadata.creationTimestamp',
         resizableProps: getResizableProps(tableColumnInfo[2].id),
@@ -146,16 +146,16 @@ const MachineHealthCheckList: FC<MachineHealthCheckListProps> = ({
 };
 
 const UnhealthyConditionsTable: FC<{ obj: K8sResourceKind }> = ({ obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return _.isEmpty(obj.spec.unhealthyConditions) ? (
-    <EmptyBox label={t('public~Unhealthy conditions')} />
+    <EmptyBox label={t('Unhealthy conditions')} />
   ) : (
     <Table variant="compact" borders={true}>
       <Thead>
         <Tr>
-          <Th>{t('public~Type')}</Th>
-          <Th>{t('public~Status')}</Th>
-          <Th>{t('public~Timeout')}</Th>
+          <Th>{t('Type')}</Th>
+          <Th>{t('Status')}</Th>
+          <Th>{t('Timeout')}</Th>
         </Tr>
       </Thead>
       <Tbody>
@@ -172,15 +172,15 @@ const UnhealthyConditionsTable: FC<{ obj: K8sResourceKind }> = ({ obj }) => {
 };
 
 const MachineHealthCheckDetails: FC<MachineHealthCheckDetailsProps> = ({ obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <>
       <PaneBody>
-        <SectionHeading text={t('public~MachineHealthCheck details')} />
+        <SectionHeading text={t('MachineHealthCheck details')} />
         <Grid hasGutter>
           <GridItem sm={6}>
             <ResourceSummary resource={obj}>
-              <DetailsItem label={t('public~Selector')} obj={obj} path="spec.selector">
+              <DetailsItem label={t('Selector')} obj={obj} path="spec.selector">
                 <Selector
                   kind={referenceForModel(MachineModel)}
                   selector={_.get(obj, 'spec.selector')}
@@ -191,23 +191,19 @@ const MachineHealthCheckDetails: FC<MachineHealthCheckDetailsProps> = ({ obj }) 
           </GridItem>
           <GridItem sm={6}>
             <DescriptionList>
-              <DetailsItem label={t('public~Max unhealthy')} obj={obj} path="spec.maxUnhealthy" />
+              <DetailsItem label={t('Max unhealthy')} obj={obj} path="spec.maxUnhealthy" />
               <DetailsItem
-                label={t('public~Expected machines')}
+                label={t('Expected machines')}
                 obj={obj}
                 path="status.expectedMachines"
               />
-              <DetailsItem
-                label={t('public~Current healthy')}
-                obj={obj}
-                path="status.currentHealthy"
-              />
+              <DetailsItem label={t('Current healthy')} obj={obj} path="status.currentHealthy" />
             </DescriptionList>
           </GridItem>
         </Grid>
       </PaneBody>
       <PaneBody>
-        <SectionHeading text={t('public~Unhealthy conditions')} />
+        <SectionHeading text={t('Unhealthy conditions')} />
         <UnhealthyConditionsTable obj={obj} />
       </PaneBody>
     </>

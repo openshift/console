@@ -15,7 +15,7 @@ const CloudShellSetupForm: FC<
     'errors' | 'handleSubmit' | 'handleReset' | 'status' | 'isSubmitting'
   > & { isAdmin?: boolean }
 > = ({ errors, handleSubmit, handleReset, status, isSubmitting, isAdmin = false }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('webterminal-plugin');
   return (
     <FlexForm onSubmit={handleSubmit}>
       <FormBody className="co-m-pane__form pf-v6-u-p-md">
@@ -26,9 +26,9 @@ const CloudShellSetupForm: FC<
         handleReset={handleReset}
         errorMessage={status && status.submitError}
         isSubmitting={isSubmitting}
-        submitLabel={t('webterminal-plugin~Start')}
+        submitLabel={t('Start')}
         disableSubmit={!_.isEmpty(errors) || isSubmitting}
-        resetLabel={t('webterminal-plugin~Cancel')}
+        resetLabel={t('Cancel')}
         sticky
       />
     </FlexForm>

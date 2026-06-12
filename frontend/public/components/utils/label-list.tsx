@@ -42,7 +42,7 @@ class TranslatedLabelList extends Component<LabelListProps> {
       <>
         {_.isEmpty(list) ? (
           <div className="pf-v6-u-text-color-subtle" key="0">
-            {t('public~No labels')}
+            {t('No labels')}
           </div>
         ) : (
           <PfLabelGroup

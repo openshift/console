@@ -71,7 +71,7 @@ const ListDropdown_: FC<ListDropdownInternalProps> = ({
   onChange,
   ...props
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const [items, setItems] = useState<{
     [key: string]: { kindLabel: string; name: string; resource: K8sResourceKind };
   }>({});
@@ -99,9 +99,7 @@ const ListDropdown_: FC<ListDropdownInternalProps> = ({
 
   useEffect(() => {
     if (loadError) {
-      setTitle(
-        <div className="cos-error-title">{t('public~Error loading {{desc}}', { desc })}</div>,
-      );
+      setTitle(<div className="cos-error-title">{t('Error loading {{desc}}', { desc })}</div>);
       return;
     }
 
@@ -191,7 +189,7 @@ const ListDropdown_: FC<ListDropdownInternalProps> = ({
           isInline
           className="co-alert pf-v6-c-alert--top-margin"
           variant="info"
-          title={t('public~No {{selection}} found', {
+          title={t('No {{selection}} found', {
             selection: desc || props.selectedKeyKind,
           })}
         />
@@ -257,7 +255,7 @@ export const useProjectOrNamespaceModel = (): [K8sModel, boolean] | [] => {
 };
 
 export const NsDropdown: FC<ListDropdownProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const createNamespaceModal = useCreateNamespaceModal();
   const createProjectModal = useCreateProjectModal();
   const [selectedKey, setSelectedKey] = useState(props.selectedKey);
@@ -267,7 +265,7 @@ export const NsDropdown: FC<ListDropdownProps> = (props) => {
     model && canCreate
       ? [
           {
-            actionTitle: t('public~Create {{resourceKindLabel}}', {
+            actionTitle: t('Create {{resourceKindLabel}}', {
               resourceKindLabel: model.labelKey ? t(model.labelKey) : model.label,
             }),
             actionKey: `Create_${model.label}`,
@@ -302,10 +300,10 @@ export const NsDropdown: FC<ListDropdownProps> = (props) => {
 
   const getPlaceholder = (placeholderModel) => {
     if (!placeholderModel.kind) {
-      return t('public~Select item');
+      return t('Select item');
     }
 
-    return t('public~Select {{kindLabel}}', {
+    return t('Select {{kindLabel}}', {
       kindLabel: placeholderModel.labelKey ? t(placeholderModel.labelKey) : placeholderModel.label,
     });
   };

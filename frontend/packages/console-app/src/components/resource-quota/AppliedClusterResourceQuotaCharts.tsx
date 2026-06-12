@@ -15,7 +15,7 @@ const AppliedClusterResourceQuotaCharts: FC<AppliedClusterResourceQuotaChartsPro
   appliedClusterResourceQuota,
   namespace,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const nsQuotas = appliedClusterResourceQuota.status?.namespaces?.find(
     (ns) => ns.namespace === namespace,
   );
@@ -65,7 +65,7 @@ const AppliedClusterResourceQuotaCharts: FC<AppliedClusterResourceQuotaChartsPro
 
   return (
     <div className="co-resource-quota-chart-row">
-      {charts.length ? charts : <>{t('console-app~No quota')}</>}
+      {charts.length ? charts : <>{t('No quota')}</>}
     </div>
   );
 };

@@ -11,7 +11,7 @@ import { MARKDOWN_COPY_BUTTON_ID, MARKDOWN_EXECUTE_BUTTON_ID, MARKDOWN_SNIPPET_I
 import './markdown-extension.scss';
 
 export const useInlineExecuteCommandExtension = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const showExecuteButton = useCloudShellAvailable();
   return useMemo(
     () => ({
@@ -30,7 +30,7 @@ export const useInlineExecuteCommandExtension = () => {
           <div class="pf-v6-c-code-block__actions">
             <div class="pf-v6-c-code-block__actions-item">
               <button class="pf-v6-c-button pf-m-plain" type="button" aria-label="${t(
-                'console-shared~Copy to clipboard',
+                'Copy to clipboard',
               )}" ${MARKDOWN_COPY_BUTTON_ID}="${groupType}">
                 ${getSvgFromPfIconConfig(RhUiCopyIconConfig)}
               </button>
@@ -39,7 +39,7 @@ export const useInlineExecuteCommandExtension = () => {
               showExecuteButton
                 ? `<div class="pf-v6-c-code-block__actions-item ocs-markdown-execute-snippet__action">
                 <button class="pf-v6-c-button pf-m-plain ocs-markdown-execute-snippet__button" type="button" aria-label="${t(
-                  'console-shared~Run in Web Terminal',
+                  'Run in Web Terminal',
                 )}" ${MARKDOWN_EXECUTE_BUTTON_ID}="${groupType}">
                   ${getSvgFromPfIconConfig(RhUiPlayIconConfig)}
                   ${getSvgFromPfIconConfig(RhUiCheckIconConfig)}

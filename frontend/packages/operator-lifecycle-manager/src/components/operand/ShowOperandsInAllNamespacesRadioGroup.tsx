@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useShowOperandsInAllNamespaces } from './useShowOperandsInAllNamespaces';
 
 export const ShowOperandsInAllNamespacesRadioGroup: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const [
     showOperandsInAllNamespaces,
     setShowOperandsInAllNamespaces,
@@ -14,7 +14,7 @@ export const ShowOperandsInAllNamespacesRadioGroup: FC = () => {
       <FormGroup
         role="radiogroup"
         fieldId="show-operands"
-        label={t('olm~Show operands in:')}
+        label={t('Show operands in:')}
         isInline
         hasNoPaddingTop
       >
@@ -22,7 +22,7 @@ export const ShowOperandsInAllNamespacesRadioGroup: FC = () => {
           id="all-namespaces"
           name="show-operands"
           value="true"
-          label={t('olm~All namespaces')}
+          label={t('All namespaces')}
           onChange={() => setShowOperandsInAllNamespaces(true)}
           isChecked={showOperandsInAllNamespaces}
           data-checked-state={showOperandsInAllNamespaces}
@@ -31,7 +31,7 @@ export const ShowOperandsInAllNamespacesRadioGroup: FC = () => {
           id="current-namespace-only"
           name="show-operands"
           value="false"
-          label={t('olm~Current namespace only')}
+          label={t('Current namespace only')}
           onChange={() => setShowOperandsInAllNamespaces(false)}
           isChecked={!showOperandsInAllNamespaces}
           data-checked-state={!showOperandsInAllNamespaces}

@@ -49,7 +49,7 @@ const Item: FC<ItemProps> = ({ name, clusterRole }) => (
 );
 
 const ProjectAccessRolesConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const fireTelemetryEvent = useTelemetry();
 
   // Available cluster roles
@@ -168,13 +168,10 @@ const ProjectAccessRolesConfiguration: FC<{ readonly: boolean }> = ({ readonly }
   };
 
   return (
-    <FormSection
-      title={t('devconsole~Project access')}
-      data-test="project-access-roles form-section"
-    >
+    <FormSection title={t('Project access')} data-test="project-access-roles form-section">
       <DualListSelector
-        availableOptionsTitle={t('devconsole~Available Cluster Roles')}
-        chosenOptionsTitle={t('devconsole~Chosen Cluster Roles')}
+        availableOptionsTitle={t('Available Cluster Roles')}
+        chosenOptionsTitle={t('Chosen Cluster Roles')}
         isSearchable
         availableOptions={availableOptions}
         chosenOptions={chosenOptions}

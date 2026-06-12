@@ -6,7 +6,7 @@ import { HelmChartRepositoryModel } from '../../models/helm';
 import ProjectHelmChartRepositoryList from './ProjectHelmChartRepositoryList';
 
 const HelmChartRepositoryListPage: FC<ComponentProps<typeof ListPage>> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   const createProps = {
     to: `/helm-repositories/ns/${props.namespace || 'default'}/~new/form?kind=${referenceForModel(
       HelmChartRepositoryModel,
@@ -15,7 +15,7 @@ const HelmChartRepositoryListPage: FC<ComponentProps<typeof ListPage>> = (props)
   return (
     <ListPage
       {...props}
-      aria-label={t('helm-plugin~HelmChartRepositories')}
+      aria-label={t('HelmChartRepositories')}
       canCreate
       createProps={createProps}
       kind={referenceForModel(HelmChartRepositoryModel)}

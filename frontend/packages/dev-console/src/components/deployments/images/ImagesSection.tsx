@@ -10,26 +10,26 @@ import AdvancedImageOptions from './AdvancedImageOptions';
 import ContainerImageField from './ContainerImageField';
 
 const ImagesSection: FC<{ resourceType: string }> = ({ resourceType }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const {
     values: {
       formData: { fromImageStreamTag },
     },
   } = useFormikContext<FormikValues>();
   return (
-    <FormSection title={t('devconsole~Images')} dataTest="images-section">
+    <FormSection title={t('Images')} dataTest="images-section">
       <ContainerField />
       <ContainerImageField />
       {fromImageStreamTag && (
         <CheckboxField
           name="formData.triggers.image"
-          label={t('devconsole~Auto deploy when new Image is available')}
+          label={t('Auto deploy when new Image is available')}
         />
       )}
       {resourceType === Resources.OpenShift && (
         <CheckboxField
           name="formData.triggers.config"
-          label={t('devconsole~Auto deploy when deployment configuration changes')}
+          label={t('Auto deploy when deployment configuration changes')}
         />
       )}
       <AdvancedImageOptions />

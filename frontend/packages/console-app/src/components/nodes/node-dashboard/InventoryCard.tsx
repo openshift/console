@@ -54,18 +54,18 @@ const NodeInventoryItem: FC<NodeInventoryItemProps> = ({ nodeName, model, mapper
 
 const InventoryCard: FC = () => {
   const { obj } = useContext(NodeDashboardContext);
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const nodeMgmtV1Enabled = useFlag(FLAG_NODE_MGMT_V1);
 
   return (
     <Card data-test-id="inventory-card">
       <CardHeader>
-        <CardTitle>{t('console-app~Inventory')}</CardTitle>
+        <CardTitle>{t('Inventory')}</CardTitle>
       </CardHeader>
       <CardBody>
         <DescriptionList>
           <DescriptionListGroup>
-            <DescriptionListTerm>{t('console-app~Pods')}</DescriptionListTerm>
+            <DescriptionListTerm>{t('Pods')}</DescriptionListTerm>
             <DescriptionListDescription>
               <NodeInventoryItem
                 nodeName={obj.metadata.name}
@@ -75,12 +75,12 @@ const InventoryCard: FC = () => {
             </DescriptionListDescription>
           </DescriptionListGroup>
           <DescriptionListGroup>
-            <DescriptionListTerm>{t('console-app~Images')}</DescriptionListTerm>
+            <DescriptionListTerm>{t('Images')}</DescriptionListTerm>
             <DescriptionListDescription>
               <InventoryItem
                 isLoading={!obj}
-                title={t('console-app~Image')}
-                titlePlural={t('console-app~Images')}
+                title={t('Image')}
+                titlePlural={t('Images')}
                 count={obj.status?.images?.length}
                 error={!obj.status?.images}
               />

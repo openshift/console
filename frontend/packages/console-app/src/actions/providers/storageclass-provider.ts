@@ -18,7 +18,7 @@ import { useCommonResourceActions } from '../hooks/useCommonResourceActions';
 export const useStorageClassActions = (
   storageClass: K8sResourceKind,
 ): [Action[], boolean, boolean] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const launchModal = useOverlay();
   const [storageClassModel, inFlight] = useK8sModel(referenceFor(storageClass));
   const commonActions = useCommonResourceActions(storageClassModel, storageClass);
@@ -41,9 +41,7 @@ export const useStorageClassActions = (
       {
         accessReview: asAccessReview(storageClassModel, storageClass, 'patch'),
         disabled: isDefaultStorageClass,
-        disabledTooltip: isDefaultStorageClass
-          ? t('console-app~Current default StorageClass')
-          : null,
+        disabledTooltip: isDefaultStorageClass ? t('Current default StorageClass') : null,
         cta: async () => {
           try {
             await k8sPatchResource({
@@ -84,7 +82,7 @@ export const useStorageClassActions = (
           }
         },
         id: 'make-default-storageclass',
-        label: t('console-app~Set as default'),
+        label: t('Set as default'),
         insertBefore: 'delete-resource',
       } as Action,
       ...commonActions,

@@ -7,7 +7,7 @@ import AdvancedStrategyOptions from './advanced-options/AdvancedStrategyOptions'
 import type { StrategyFieldProps } from './utils/types';
 
 const RollingStrategy: FC<StrategyFieldProps> = ({ resourceType, resourceObj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const dataAttribute = resourceType === Resources.OpenShift ? 'rollingParams' : 'rollingUpdate';
   return (
     <div data-test={dataAttribute}>
@@ -15,25 +15,23 @@ const RollingStrategy: FC<StrategyFieldProps> = ({ resourceType, resourceObj }) 
         <InputField
           name="formData.deploymentStrategy.rollingParams.timeoutSeconds"
           style={{ maxWidth: 'unset' }}
-          label={t('devconsole~Timeout')}
+          label={t('Timeout')}
           type={TextInputTypes.number}
-          helpText={t(
-            'devconsole~The number of seconds to wait for a pod to scale up before giving up',
-          )}
+          helpText={t('The number of seconds to wait for a pod to scale up before giving up')}
         />
       )}
       <InputField
         name={`formData.deploymentStrategy.${dataAttribute}.maxUnavailable`}
-        label={t('devconsole~Maximum number of unavailable Pods')}
+        label={t('Maximum number of unavailable Pods')}
         helpText={t(
-          'devconsole~The maximum number of pods that can be unavailable during the rolling deployment. This can be either a percentage (10%) or a whole number (1).',
+          'The maximum number of pods that can be unavailable during the rolling deployment. This can be either a percentage (10%) or a whole number (1).',
         )}
       />
       <InputField
         name={`formData.deploymentStrategy.${dataAttribute}.maxSurge`}
-        label={t('devconsole~Maximum number of surge Pods')}
+        label={t('Maximum number of surge Pods')}
         helpText={t(
-          'devconsole~The maximum number of pods that can be scheduled above the original number of pods while the rolling deployment is in progress. This can be either a percentage (10%) or a whole number (1).',
+          'The maximum number of pods that can be scheduled above the original number of pods while the rolling deployment is in progress. This can be either a percentage (10%) or a whole number (1).',
         )}
       />
       {resourceType === Resources.OpenShift && (

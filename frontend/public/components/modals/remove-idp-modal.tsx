@@ -14,7 +14,7 @@ const RemoveIdentityProviderModalContent: OverlayComponent<RemoveIdentityProvide
   type,
   closeOverlay,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
 
   const handleSubmit = (): void => {
@@ -36,7 +36,7 @@ const RemoveIdentityProviderModalContent: OverlayComponent<RemoveIdentityProvide
     <>
       <ModalHeader
         titleIconVariant="warning"
-        title={t('public~Remove identity provider from OAuth?')}
+        title={t('Remove identity provider from OAuth?')}
         labelId="remove-idp-modal-title"
         data-test-id="modal-title"
       />
@@ -55,7 +55,7 @@ const RemoveIdentityProviderModalContent: OverlayComponent<RemoveIdentityProvide
           data-test="confirm-action"
           id="confirm-action"
         >
-          {t('public~Remove')}
+          {t('Remove')}
         </Button>
         <Button
           type="button"
@@ -64,7 +64,7 @@ const RemoveIdentityProviderModalContent: OverlayComponent<RemoveIdentityProvide
           onClick={closeOverlay}
           data-test-id="modal-cancel-action"
         >
-          {t('public~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </>

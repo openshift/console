@@ -25,7 +25,7 @@ const ConsolePluginModal = (props: ConsolePluginModalProps) => {
   const { cancel, close, consoleOperatorConfig, csvPluginsCount, pluginName, trusted } = props;
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
   const previouslyEnabled = isPluginEnabled(consoleOperatorConfig, pluginName);
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const [enabled, setEnabled] = useState(previouslyEnabled);
   const submit = (event): void => {
     event.preventDefault();
@@ -41,8 +41,8 @@ const ConsolePluginModal = (props: ConsolePluginModalProps) => {
       <ModalHeader
         title={
           csvPluginsCount > 1
-            ? t('console-shared~Console plugin enablement - {{plugin}}', { plugin: pluginName })
-            : t('console-shared~Console plugin enablement')
+            ? t('Console plugin enablement - {{plugin}}', { plugin: pluginName })
+            : t('Console plugin enablement')
         }
         labelId="console-plugin-modal-title"
         data-test-id="modal-title"
@@ -51,10 +51,10 @@ const ConsolePluginModal = (props: ConsolePluginModalProps) => {
         <Content component={ContentVariants.p}>
           {csvPluginsCount
             ? t(
-                'console-shared~This operator includes a console plugin which provides a custom interface that can be included in the console. Updating the enablement of this console plugin will prompt for the console to be refreshed once it has been updated. Make sure you trust this console plugin before enabling.',
+                'This operator includes a console plugin which provides a custom interface that can be included in the console. Updating the enablement of this console plugin will prompt for the console to be refreshed once it has been updated. Make sure you trust this console plugin before enabling.',
               )
             : t(
-                'console-shared~This console plugin provides a custom interface that can be included in the console. Updating the enablement of this console plugin will prompt for the console to be refreshed once it has been updated. Make sure you trust this console plugin before enabling.',
+                'This console plugin provides a custom interface that can be included in the console. Updating the enablement of this console plugin will prompt for the console to be refreshed once it has been updated. Make sure you trust this console plugin before enabling.',
               )}
         </Content>
         <Form id="console-plugin-modal-form">
@@ -83,10 +83,10 @@ const ConsolePluginModal = (props: ConsolePluginModalProps) => {
           }
           data-test="confirm-action"
         >
-          {t('public~Save')}
+          {t('Save')}
         </Button>
         <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
-          {t('public~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </>

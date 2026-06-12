@@ -12,12 +12,12 @@ export const TableHeader: FC<TableHeaderProps> = ({
   onSelect,
   onSort,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const select = canSelectAll ? { select: { onSelect, isSelected: allRowsSelected } } : {};
   return (
     <Thead>
       <Tr>
-        {onSelect && <Th aria-label={t('public~Row select')} {...select} />}
+        {onSelect && <Th aria-label={t('Row select')} {...select} />}
         {columns.map(({ id, title, sort, sortField, sortFunc, props }, columnIndex) => {
           const sortable = sortField || sortFunc || sort;
           return (
@@ -25,7 +25,7 @@ export const TableHeader: FC<TableHeaderProps> = ({
               key={id || title || 'actions'}
               sort={sortable ? { sortBy, onSort, columnIndex } : null}
               data-label={title}
-              screenReaderText={!title && t('public~Actions')}
+              screenReaderText={!title && t('Actions')}
               {...(props ?? {})}
             >
               {title}

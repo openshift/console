@@ -16,7 +16,7 @@ export const OperatorChannelSelect: FC<OperatorChannelSelectProps> = ({
   setUpdateChannel,
   setUpdateVersion,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const { setQueryArgument } = useQueryParamsMutator();
   const channels = useMemo(() => packageManifest?.status.channels ?? [], [packageManifest]);
   const [isChannelSelectOpen, setIsChannelSelectOpen] = useState(false);
@@ -70,7 +70,7 @@ export const OperatorChannelSelect: FC<OperatorChannelSelectProps> = ({
             isExpanded={isChannelSelectOpen}
             isDisabled={!packageManifest}
             isFullWidth
-            aria-label={t('olm~Select a channel')}
+            aria-label={t('Select a channel')}
             className="co-operator-channel__select"
             data-test="operator-channel-select-toggle"
           >
@@ -107,7 +107,7 @@ export const OperatorVersionSelect: FC<OperatorVersionSelectProps> = ({
   setUpdateVersion,
   showVersionAlert = false,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const { setQueryArgument } = useQueryParamsMutator();
   const { setDeprecatedVersion } = useDeprecatedOperatorWarnings();
   const [isVersionSelectOpen, setIsVersionSelectOpen] = useState(false);
@@ -171,7 +171,7 @@ export const OperatorVersionSelect: FC<OperatorVersionSelectProps> = ({
             isExpanded={isVersionSelectOpen}
             isDisabled={!packageManifest}
             isFullWidth
-            aria-label={t('olm~Select a version')}
+            aria-label={t('Select a version')}
             className="co-operator-version__select"
             data-test="operator-version-select-toggle"
           >
@@ -197,7 +197,7 @@ export const OperatorVersionSelect: FC<OperatorVersionSelectProps> = ({
           isInline
           className="co-alert co-alert--margin-top co-alert__update-approval"
           title={t(
-            'olm~Manual update approval is required when not installing the latest version for the selected channel.',
+            'Manual update approval is required when not installing the latest version for the selected channel.',
           )}
         />
       )}

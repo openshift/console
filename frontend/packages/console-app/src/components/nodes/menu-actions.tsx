@@ -47,13 +47,13 @@ export const denyCSR = (csr: CertificateSigningRequestKind) => updateCSR(csr, 'D
 
 export const useNodeActions: ExtensionHook<Action[], NodeKind> = (obj) => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(obj));
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const launchModal = useOverlay();
   const deleteMessage = useMemo(
     () => (
       <p>
         {t(
-          'console-app~This action cannot be undone. Deleting a node will instruct Kubernetes that the node is down or unrecoverable and delete all pods scheduled to that node. If the node is still running but unresponsive and the node is deleted, stateful workloads and persistent volumes may suffer corruption or data loss. Only delete a node that you have confirmed is completely stopped and cannot be restored.',
+          'This action cannot be undone. Deleting a node will instruct Kubernetes that the node is down or unrecoverable and delete all pods scheduled to that node. If the node is still running but unresponsive and the node is deleted, stateful workloads and persistent volumes may suffer corruption or data loss. Only delete a node that you have confirmed is completely stopped and cannot be restored.',
         )}
       </p>
     ),
@@ -65,14 +65,14 @@ export const useNodeActions: ExtensionHook<Action[], NodeKind> = (obj) => {
     if (isNodeUnschedulable(obj)) {
       actions.push({
         id: 'mark-as-schedulable',
-        label: t('console-app~Mark as schedulable'),
+        label: t('Mark as schedulable'),
         cta: () => markNodesSchedulable(obj),
         accessReview: asAccessReview(kindObj, obj, 'patch'),
       });
     } else {
       actions.push({
         id: 'mark-as-unschedulable',
-        label: t('console-app~Mark as unschedulable'),
+        label: t('Mark as unschedulable'),
         cta: () => launchModal(LazyConfigureUnschedulableModalOverlay, { resource: obj }),
         accessReview: asAccessReview(kindObj, obj, 'patch'),
       });

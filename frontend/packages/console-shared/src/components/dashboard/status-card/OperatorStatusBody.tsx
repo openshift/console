@@ -25,7 +25,7 @@ export const OperatorsSection: FC<OperatorsSectionProps> = ({
   Component,
   isResolved,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const error = _.values(resources).some((r) => r.loadError);
   const operatorStatuses = getOperatorsWithStatuses(resources);
   const sortedOperatorStatuses = getMostImportantStatuses(operatorStatuses).sort((a, b) =>
@@ -44,16 +44,16 @@ export const OperatorsSection: FC<OperatorsSectionProps> = ({
           <span>{title}</span>
           <span className="pf-v6-u-text-color-subtle co-status__operator-detail">
             {' '}
-            {t('console-shared~({{operatorStatusLength}} installed)', {
+            {t('({{operatorStatusLength}} installed)', {
               operatorStatusLength: operatorStatuses.length,
             })}
           </span>
         </>
       }
-      secondColumn={t('console-shared~Status')}
+      secondColumn={t('Status')}
     >
       {error ? (
-        <div className="pf-v6-u-text-color-subtle">{t('console-shared~Not available')}</div>
+        <div className="pf-v6-u-text-color-subtle">{t('Not available')}</div>
       ) : (
         !operatorsHealthy &&
         sortedOperatorStatuses.map((operatorStatus) => (
@@ -67,12 +67,12 @@ export const OperatorsSection: FC<OperatorsSectionProps> = ({
         ))
       )}
       <StatusItem
-        value={t('console-shared~All {{status}}', {
+        value={t('All {{status}}', {
           status: operatorStatuses[0].status.title.toLowerCase(),
         })}
         icon={operatorStatuses[0].status.icon}
       >
-        <Link to={linkTo}>{t('console-shared~View all')}</Link>
+        <Link to={linkTo}>{t('View all')}</Link>
       </StatusItem>
     </StatusPopupSection>
   );

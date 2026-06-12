@@ -67,14 +67,14 @@ const ConfigureClusterUpstreamModal = (props: ConfigureClusterUpstreamModalProps
     },
     [customSelected, customURL, currentUpstream, cv, handlePromise, close],
   );
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const updateURL = getDocumentationURL(documentationURLs.updateService);
 
   return (
     <>
       <ModalHeader
-        title={t('public~Edit upstream configuration')}
+        title={t('Edit upstream configuration')}
         data-test-id="modal-title"
         data-test="modal-title"
         labelId="configure-cluster-upstream-modal-title"
@@ -82,20 +82,20 @@ const ConfigureClusterUpstreamModal = (props: ConfigureClusterUpstreamModalProps
       <ModalBody>
         <Content component={ContentVariants.p}>
           {t(
-            'public~Select a configuration to receive updates. Updates can be configured to receive information from Red Hat or a custom update service.',
+            'Select a configuration to receive updates. Updates can be configured to receive information from Red Hat or a custom update service.',
           )}
         </Content>
         {!isManaged() && !isUpstream() && (
           <Content component={ContentVariants.p}>
             <ExternalLink
               href={updateURL}
-              text={t('public~Learn more about OpenShift local update services.')}
+              text={t('Learn more about OpenShift local update services.')}
             />
           </Content>
         )}
         <Form id="configure-cluster-upstream-form" onSubmit={submit}>
           <FormGroup
-            label={t('public~Configuration')}
+            label={t('Configuration')}
             role="radiogroup"
             fieldId="co-add-secret-to-workload"
             isStack
@@ -107,7 +107,7 @@ const ConfigureClusterUpstreamModal = (props: ConfigureClusterUpstreamModalProps
                 setCustomSelected(false);
                 setInvalidCustomURL(false);
               }}
-              label={t('public~Default')}
+              label={t('Default')}
               isChecked={!customSelected}
               body={
                 !customSelected && (
@@ -122,7 +122,7 @@ const ConfigureClusterUpstreamModal = (props: ConfigureClusterUpstreamModalProps
                     <FormHelperText className="pf-v6-u-mt-sm">
                       <HelperText>
                         <HelperTextItem>
-                          {t('public~Receive update information from Red Hat.')}
+                          {t('Receive update information from Red Hat.')}
                         </HelperTextItem>
                       </HelperText>
                     </FormHelperText>
@@ -139,7 +139,7 @@ const ConfigureClusterUpstreamModal = (props: ConfigureClusterUpstreamModalProps
                   customURLInputRef.current?.focus();
                 }, 0);
               }}
-              label={t('public~Custom update service')}
+              label={t('Custom update service')}
               isChecked={customSelected}
               body={
                 customSelected && (
@@ -161,7 +161,7 @@ const ConfigureClusterUpstreamModal = (props: ConfigureClusterUpstreamModalProps
                       <FormHelperText className="pf-v6-u-mt-sm">
                         <HelperText>
                           <HelperTextItem icon={<RhUiErrorFillIcon />} variant="error">
-                            {t('public~Please enter a URL.')}
+                            {t('Please enter a URL.')}
                           </HelperTextItem>
                         </HelperText>
                       </FormHelperText>
@@ -182,7 +182,7 @@ const ConfigureClusterUpstreamModal = (props: ConfigureClusterUpstreamModalProps
           data-test="confirm-action"
           form="configure-cluster-upstream-form"
         >
-          {t('public~Save')}
+          {t('Save')}
         </Button>
         <Button
           variant="link"
@@ -190,7 +190,7 @@ const ConfigureClusterUpstreamModal = (props: ConfigureClusterUpstreamModalProps
           data-test-id="modal-cancel-action"
           data-test="modal-cancel-action"
         >
-          {t('public~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </>

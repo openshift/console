@@ -91,7 +91,7 @@ const useQueryParametersIfDefined = (handleSearch: (image: string) => void) => {
 };
 
 const ImageSearch: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const inputRef = useRef<HTMLInputElement>();
   const { values, setFieldValue, dirty, initialValues, touched } = useFormikContext<FormikValues>();
   const launchCreateSecretModal = useCreateSecretModal();
@@ -195,13 +195,13 @@ const ImageSearch: FC = () => {
 
   const helpText = useMemo(() => {
     if (values.isSearchingForImage) {
-      return `${t('devconsole~Validating')}...`;
+      return `${t('Validating')}...`;
     }
     if (!values.isSearchingForImage && validated === ValidatedOptions.success) {
-      return t('devconsole~Validated');
+      return t('Validated');
     }
     if (validated === ValidatedOptions.error) {
-      return values.searchTerm === '' ? t('devconsole~Required') : values.isi.status?.message;
+      return values.searchTerm === '' ? t('Required') : values.isi.status?.message;
     }
     return '';
   }, [t, validated, values.isSearchingForImage, values.searchTerm, values.isi.status?.message]);
@@ -255,9 +255,7 @@ const ImageSearch: FC = () => {
         ref={inputRef}
         type={TextInputTypes.text}
         name="searchTerm"
-        placeholder={t(
-          'devconsole~docker.io/openshift/hello-openshift or quay.io/<username>/<image-name>',
-        )}
+        placeholder={t('docker.io/openshift/hello-openshift or quay.io/<username>/<image-name>')}
         helpText={helpText}
         helpTextInvalid={helpText}
         validated={validated}
@@ -270,7 +268,7 @@ const ImageSearch: FC = () => {
           setValidated(ValidatedOptions.default);
           debouncedHandleSearch(value);
         }}
-        aria-label={t('devconsole~Image name')}
+        aria-label={t('Image name')}
         data-test-id="deploy-image-search-term"
         required
       />
@@ -298,14 +296,14 @@ const ImageSearch: FC = () => {
           isInline
           className="co-alert"
           variant="success"
-          title={t('devconsole~Secret "{{newImageSecret}}" was created.', { newImageSecret })}
+          title={t('Secret "{{newImageSecret}}" was created.', { newImageSecret })}
           actionClose={<AlertActionCloseButton onClose={() => shouldHideAlert(false)} />}
         />
       )}
       <div className="odc-image-search__advanced-options">
         <CheckboxField
           name="allowInsecureRegistry"
-          label={t('devconsole~Allow Images from insecure registries')}
+          label={t('Allow Images from insecure registries')}
           onChange={(val: boolean) => {
             values.searchTerm && handleSearch(values.searchTerm, val);
           }}

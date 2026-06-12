@@ -15,7 +15,7 @@ export type RestartHostModalProps = {
 } & ModalComponentProps;
 
 const RestartHostModal: OverlayComponent<RestartHostModalProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('metal3-plugin');
   const { host, closeOverlay } = props;
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
   const onSubmit = useCallback(
@@ -39,12 +39,12 @@ const RestartHostModal: OverlayComponent<RestartHostModalProps> = (props) => {
       aria-labelledby="restart-host-modal-title"
     >
       <ModalHeader
-        title={t('metal3-plugin~Restart Bare Metal Host')}
+        title={t('Restart Bare Metal Host')}
         data-test-id="modal-title"
         labelId="restart-host-modal-title"
       />
       <ModalBody>
-        <p>{t('metal3-plugin~The host will be powered off and on again.')}</p>
+        <p>{t('The host will be powered off and on again.')}</p>
         <PowerOffWarning restart />
       </ModalBody>
       <ModalFooterWithAlerts errorMessage={errorMessage}>
@@ -55,10 +55,10 @@ const RestartHostModal: OverlayComponent<RestartHostModalProps> = (props) => {
           data-test="confirm-action"
           id="confirm-action"
         >
-          {t('metal3-plugin~Restart')}
+          {t('Restart')}
         </Button>
         <Button variant="link" onClick={closeOverlay} data-test-id="modal-cancel-action">
-          {t('metal3-plugin~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </Modal>

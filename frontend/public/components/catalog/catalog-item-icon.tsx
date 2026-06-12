@@ -257,7 +257,7 @@ export const getTemplateIcon = (template: TemplateKind | PartialObjectMetadata):
 };
 
 export const ImageStreamIcon: FC<ImageStreamIconProps> = ({ tag, iconSize }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const iconClass = getImageStreamIcon(tag);
   const iconClassImg = getImageForIconClass(iconClass);
   return (
@@ -270,7 +270,7 @@ export const ImageStreamIcon: FC<ImageStreamIconProps> = ({ tag, iconSize }) => 
               iconSize && `co-catalog-item-icon__img--${iconSize}`,
             )}
             src={iconClassImg}
-            alt={t('public~Icon')}
+            alt={t('Icon')}
           />
         ) : (
           <span

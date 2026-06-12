@@ -4,9 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { useQueryParams } from '@console/shared/src/hooks/useQueryParams';
 
 export const ImportYamlPage = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const queryParams = useQueryParams();
-  const title = t('public~Import YAML');
+  const title = t('Import YAML');
 
   const isCodeImportRedirect = queryParams.get('ols') === 'true';
 

@@ -45,21 +45,21 @@ const RecentEvent: FC<RecentEventProps> = ({ node }) => {
 const ActivityCard: FC = () => {
   const { obj } = useContext(NodeDashboardContext);
   const eventsLink = `${resourcePathFromModel(NodeModel, obj.metadata.name)}/events`;
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   return (
     <Card data-test-id="activity-card">
       <CardHeader
         actions={{
           actions: (
             <>
-              <Link to={eventsLink}>{t('console-app~View events')}</Link>
+              <Link to={eventsLink}>{t('View events')}</Link>
             </>
           ),
           hasNoOffset: false,
           className: 'co-overview-card__actions',
         }}
       >
-        <CardTitle>{t('console-app~Activity')}</CardTitle>
+        <CardTitle>{t('Activity')}</CardTitle>
       </CardHeader>
       <ActivityBody className="co-project-dashboard__activity-body">
         <OngoingActivityBody loaded />

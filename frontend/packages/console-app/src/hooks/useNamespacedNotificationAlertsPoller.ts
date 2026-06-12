@@ -10,7 +10,7 @@ import {
 import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
 
 export const useNamespacedNotificationAlertsPoller = (namespace: string) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const [alerts, setAlerts] = useState<NotificationAlerts['data']>([]);
   const [loaded, setLoaded] = useState<NotificationAlerts['loaded']>(false);
   const [loadError, setLoadError] = useState<NotificationAlerts['loadError']>(null);
@@ -19,7 +19,7 @@ export const useNamespacedNotificationAlertsPoller = (namespace: string) => {
     const { prometheusTenancyBaseURL } = window.SERVER_FLAGS;
 
     if (!prometheusTenancyBaseURL) {
-      setLoadError(new Error(t('public~prometheusBaseURL not set')));
+      setLoadError(new Error(t('prometheusBaseURL not set')));
       return () => {};
     }
 

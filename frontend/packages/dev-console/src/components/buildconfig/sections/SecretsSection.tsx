@@ -22,7 +22,7 @@ export type SecretsSectionFormData = {
 };
 
 const SecretsSection: FC<{ namespace: string }> = ({ namespace }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
 
   const autocompleteFilter = (text: string, item: any): boolean => fuzzy(text, item?.props?.name);
 
@@ -50,21 +50,21 @@ const SecretsSection: FC<{ namespace: string }> = ({ namespace }) => {
     ],
   );
 
-  const mountPointLabel = t('devconsole~Mount point');
+  const mountPointLabel = t('Mount point');
 
   return (
-    <FormSection title={t('devconsole~Secrets')} dataTest="section secrets">
+    <FormSection title={t('Secrets')} dataTest="section secrets">
       <MultiColumnField
         name="formData.secrets"
-        addLabel={t('devconsole~Add secret')}
-        headers={[t('devconsole~Secret'), mountPointLabel]}
+        addLabel={t('Add secret')}
+        headers={[t('Secret'), mountPointLabel]}
         emptyValues={{}}
       >
         <ResourceDropdownField
           name="secret"
           resources={resources}
           dataSelector={['metadata', 'name']}
-          placeholder={t('devconsole~Select a secret')}
+          placeholder={t('Select a secret')}
           autocompleteFilter={autocompleteFilter}
           fullWidth
           showBadge

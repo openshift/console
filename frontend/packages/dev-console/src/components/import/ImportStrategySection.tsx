@@ -27,7 +27,7 @@ interface ImportStrategySectionProps {
 }
 
 const ImportStrategySection: FC<ImportStrategySectionProps> = ({ builderImages }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const { values, setFieldValue, setValues } = useFormikContext<FormikValues>();
   const {
     import: {
@@ -58,16 +58,14 @@ const ImportStrategySection: FC<ImportStrategySectionProps> = ({ builderImages }
 
   const recommendedStrategyDescriptions = useMemo(
     () => ({
-      [ImportStrategy.DEVFILE]: t('devconsole~The Devfile at {{filePath}} is recommended.', {
+      [ImportStrategy.DEVFILE]: t('The Devfile at {{filePath}} is recommended.', {
         filePath: devfile?.devfilePath,
       }),
-      [ImportStrategy.SERVERLESS_FUNCTION]: t(
-        'devconsole~The Serverless function strategy is recommended.',
-      ),
-      [ImportStrategy.DOCKERFILE]: t('devconsole~The Dockerfile at {{filePath}} is recommended.', {
+      [ImportStrategy.SERVERLESS_FUNCTION]: t('The Serverless function strategy is recommended.'),
+      [ImportStrategy.DOCKERFILE]: t('The Dockerfile at {{filePath}} is recommended.', {
         filePath: docker?.dockerfilePath,
       }),
-      [ImportStrategy.S2I]: t('devconsole~A Builder Image is recommended.'),
+      [ImportStrategy.S2I]: t('A Builder Image is recommended.'),
     }),
     [devfile, docker, t],
   );
@@ -80,13 +78,13 @@ const ImportStrategySection: FC<ImportStrategySectionProps> = ({ builderImages }
       variant = AlertVariant.success;
       if (recommendedStrategy && !strategyChanged) {
         if (importStrategies.length > 1) {
-          title = t('devconsole~Multiple import strategies detected');
+          title = t('Multiple import strategies detected');
         } else if (importStrategies.length === 1) {
-          title = t('devconsole~{{strategy}} detected.', { strategy: recommendedStrategy.name });
+          title = t('{{strategy}} detected.', { strategy: recommendedStrategy.name });
         }
         description = recommendedStrategyDescriptions[recommendedStrategy.type];
       } else if (strategyChanged) {
-        title = t('devconsole~Import strategy changed to {{strategy}}', {
+        title = t('Import strategy changed to {{strategy}}', {
           strategy: selectedStrategy.name,
         });
         description = '';
@@ -94,15 +92,15 @@ const ImportStrategySection: FC<ImportStrategySectionProps> = ({ builderImages }
       }
     } else {
       variant = AlertVariant.warning;
-      title = t('devconsole~Unable to detect import strategy');
+      title = t('Unable to detect import strategy');
       description = (
         <span>
           {loadError && (
             <>
-              <p>{t('devconsole~Error: {{loadError}}', { loadError })}</p> <br />
+              <p>{t('Error: {{loadError}}', { loadError })}</p> <br />
             </>
           )}
-          <p>{t('devconsole~Select from the options below.')}</p>
+          <p>{t('Select from the options below.')}</p>
         </span>
       );
     }
@@ -146,9 +144,7 @@ const ImportStrategySection: FC<ImportStrategySectionProps> = ({ builderImages }
                 iconPosition="end"
                 data-test="import-strategy-button"
               >
-                {!showEditImportStrategy
-                  ? t('devconsole~Edit Import Strategy')
-                  : t('devconsole~Revert to recommended')}
+                {!showEditImportStrategy ? t('Edit Import Strategy') : t('Revert to recommended')}
               </Button>
             </SplitItem>
           </Split>

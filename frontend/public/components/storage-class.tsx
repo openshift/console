@@ -83,12 +83,12 @@ const getDataViewRowsCreator: (
           <ResourceLink kind={kind} name={name}>
             {isDefaultClass(obj) && (
               <span className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle co-resource-item__help-text">
-                &ndash; {t('public~Default')}
+                &ndash; {t('Default')}
               </span>
             )}
             {isDefaultVirtClass(obj) && isKubevirtPluginActive && (
               <span className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle co-resource-item__help-text">
-                &ndash; {t('public~Default for VirtualMachines')}
+                &ndash; {t('Default for VirtualMachines')}
               </span>
             )}
           </ResourceLink>
@@ -123,27 +123,27 @@ const useStorageClassColumns = (): {
   columns: TableColumn<StorageClassResourceKind>[];
   resetAllColumnWidths: () => void;
 } => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(StorageClassModel);
 
   const columns: TableColumn<StorageClassResourceKind>[] = useMemo(
     () => [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         sort: 'metadata.name',
         id: tableColumnInfo[0].id,
         resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: { ...nameCellProps, modifier: 'nowrap' },
       },
       {
-        title: t('public~Provisioner'),
+        title: t('Provisioner'),
         sort: 'provisioner',
         id: tableColumnInfo[1].id,
         resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: { modifier: 'nowrap' },
       },
       {
-        title: t('public~Reclaim policy'),
+        title: t('Reclaim policy'),
         sort: 'reclaimPolicy',
         id: tableColumnInfo[2].id,
         resizableProps: getResizableProps(tableColumnInfo[2].id),
@@ -162,7 +162,7 @@ const useStorageClassColumns = (): {
 };
 
 const StorageClassList: FC<StorageClassListProps> = ({ data, loaded, ...props }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { columns, resetAllColumnWidths } = useStorageClassColumns();
   const isKubevirtPluginActive = useIsKubevirtPluginActive();
   const getDataViewRows = useMemo(() => getDataViewRowsCreator(t, isKubevirtPluginActive), [
@@ -188,31 +188,27 @@ const StorageClassList: FC<StorageClassListProps> = ({ data, loaded, ...props })
 };
 
 const StorageClassDetails: FC<StorageClassDetailsProps> = ({ obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   return (
     <PaneBody>
-      <SectionHeading text={t('public~StorageClass details')} />
+      <SectionHeading text={t('StorageClass details')} />
       <Grid hasGutter>
         <GridItem sm={6}>
           <ResourceSummary resource={obj}>
-            <DetailsItem label={t('public~Provisioner')} obj={obj} path="provisioner" />
+            <DetailsItem label={t('Provisioner')} obj={obj} path="provisioner" />
           </ResourceSummary>
         </GridItem>
         <GridItem sm={6}>
           <DescriptionList>
-            <DetailsItem label={t('public~Reclaim policy')} obj={obj} path="reclaimPolicy" />
+            <DetailsItem label={t('Reclaim policy')} obj={obj} path="reclaimPolicy" />
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('public~Default class')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Default class')}</DescriptionListTerm>
               <DescriptionListDescription>
-                {isDefaultClass(obj) ? t('public~True') : t('public~False')}
+                {isDefaultClass(obj) ? t('True') : t('False')}
               </DescriptionListDescription>
             </DescriptionListGroup>
-            <DetailsItem
-              label={t('public~Volume binding mode')}
-              obj={obj}
-              path="volumeBindingMode"
-            />
+            <DetailsItem label={t('Volume binding mode')} obj={obj} path="volumeBindingMode" />
           </DescriptionList>
         </GridItem>
       </Grid>
@@ -221,7 +217,7 @@ const StorageClassDetails: FC<StorageClassDetailsProps> = ({ obj }) => {
 };
 
 export const StorageClassPage: FC = ({ ...props }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const createProps = {
     to: '/k8s/cluster/storageclasses/~new/form',
@@ -230,13 +226,13 @@ export const StorageClassPage: FC = ({ ...props }) => {
   return (
     <ListPage
       {...props}
-      title={t('public~StorageClasses')}
+      title={t('StorageClasses')}
       kind={kind}
       ListComponent={StorageClassList}
       canCreate={true}
       omitFilterToolbar={true}
       createProps={createProps}
-      createButtonText={t('public~Create StorageClass')}
+      createButtonText={t('Create StorageClass')}
     />
   );
 };

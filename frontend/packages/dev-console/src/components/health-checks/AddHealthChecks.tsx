@@ -44,7 +44,7 @@ const AddHealthChecks: FC<FormikProps<FormikValues> & AddHealthChecksProps> = ({
   dirty,
 }) => {
   const viewOnly = useViewOnlyAccess(resource);
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const navigate = useNavigate();
   const [currentKey, setCurrentKey] = useState(currentContainer);
   const containers = resource?.spec?.template?.spec?.containers;
@@ -53,9 +53,7 @@ const AddHealthChecks: FC<FormikProps<FormikValues> & AddHealthChecksProps> = ({
     (container) => container.readinessProbe || container.livenessProbe || container.startupProbe,
   );
   const containersByKey = _.keyBy(containers, 'name');
-  const pageTitle = healthCheckAdded
-    ? t('devconsole~Edit health checks')
-    : t('devconsole~Add health checks');
+  const pageTitle = healthCheckAdded ? t('Edit health checks') : t('Add health checks');
   const {
     kind,
     metadata: { name, namespace },
@@ -89,7 +87,7 @@ const AddHealthChecks: FC<FormikProps<FormikValues> & AddHealthChecksProps> = ({
             {pageTitle}
             {!isManaged() && (
               <ExternalLinkButton href={healthURL} variant="link">
-                {t('devconsole~Learn more')}
+                {t('Learn more')}
               </ExternalLinkButton>
             )}
           </>
@@ -110,7 +108,7 @@ const AddHealthChecks: FC<FormikProps<FormikValues> & AddHealthChecksProps> = ({
             </Trans>
           </p>
           <p className="odc-add-health-checks__paragraph">
-            {t('devconsole~Container')} &nbsp;
+            {t('Container')} &nbsp;
             {_.size(containers) > 1 ? (
               <ContainerSelect
                 currentKey={currentKey}
@@ -133,9 +131,9 @@ const AddHealthChecks: FC<FormikProps<FormikValues> & AddHealthChecksProps> = ({
           handleReset={handleReset}
           errorMessage={status && status?.errors?.json?.message}
           isSubmitting={isSubmitting}
-          submitLabel={healthCheckAdded ? t('devconsole~Save') : t('devconsole~Add')}
+          submitLabel={healthCheckAdded ? t('Save') : t('Add')}
           disableSubmit={isFormClean || !dirty || !_.isEmpty(errors) || isSubmitting}
-          resetLabel={t('devconsole~Cancel')}
+          resetLabel={t('Cancel')}
           hideSubmit={viewOnly}
         />
       </Form>

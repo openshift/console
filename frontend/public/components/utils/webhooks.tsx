@@ -51,7 +51,7 @@ const getTableColumnClasses = (canGetSecret: boolean) => {
 };
 
 export const WebhookTriggers: FC<WebhookTriggersProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const launchModal = useOverlay();
   const { resource } = props;
   const { name, namespace } = resource.metadata;
@@ -159,7 +159,7 @@ export const WebhookTriggers: FC<WebhookTriggersProps> = (props) => {
     if (!_.has(webhookSecret, 'data.WebHookSecretKey')) {
       launchModal(ErrorModal, {
         error: t(
-          'public~Secret referenced in the {{triggerProperty}} webhook trigger does not contain "WebHookSecretKey" key. Webhook trigger won’t work due to the invalid secret reference',
+          'Secret referenced in the {{triggerProperty}} webhook trigger does not contain "WebHookSecretKey" key. Webhook trigger won’t work due to the invalid secret reference',
           { triggerProperty },
         ),
       });
@@ -185,7 +185,7 @@ export const WebhookTriggers: FC<WebhookTriggersProps> = (props) => {
         onClick={() => copyWebhookToClipboard(trigger)}
       >
         &nbsp;
-        {t('public~Copy URL with Secret')}
+        {t('Copy URL with Secret')}
       </Button>
     ) : null;
   };
@@ -202,14 +202,14 @@ export const WebhookTriggers: FC<WebhookTriggersProps> = (props) => {
           ))}
         />
       )}
-      <SectionHeading text={t('public~Webhooks')} />
+      <SectionHeading text={t('Webhooks')} />
       <div className="co-table-container">
         <table className="pf-v6-c-table pf-m-compact pf-m-border-rows">
           <thead className="pf-v6-c-table__thead">
             <tr className="pf-v6-c-table__tr">
-              <th className={tableColumnClasses[0]}>{t('public~Type')}</th>
-              <th className={tableColumnClasses[1]}>{t('public~Webhook URL')}</th>
-              <th className={tableColumnClasses[2]}>{t('public~Secret')}</th>
+              <th className={tableColumnClasses[0]}>{t('Type')}</th>
+              <th className={tableColumnClasses[1]}>{t('Webhook URL')}</th>
+              <th className={tableColumnClasses[2]}>{t('Secret')}</th>
               <th className={tableColumnClasses[3]} />
             </tr>
           </thead>

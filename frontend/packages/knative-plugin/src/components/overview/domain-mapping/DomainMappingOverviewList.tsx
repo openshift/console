@@ -19,7 +19,7 @@ const DomainMappingOverviewList: FC<DomainMappingOverviewListProps> = ({
   title,
   domainMappings,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   return (
     <>
       <SidebarSectionHeading text={title} />
@@ -38,7 +38,7 @@ const DomainMappingOverviewList: FC<DomainMappingOverviewListProps> = ({
               />
               {status?.url?.length > 0 && (
                 <>
-                  <span className="pf-v6-u-text-color-subtle">{t('knative-plugin~Location:')}</span>
+                  <span className="pf-v6-u-text-color-subtle">{t('Location:')}</span>
                   <ExternalLinkWithCopy href={status.url} text={status.url} displayBlock />
                 </>
               )}

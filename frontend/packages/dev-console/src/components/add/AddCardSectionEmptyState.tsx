@@ -8,16 +8,14 @@ type AddCardSectionEmptyStateProps = {
 };
 
 const AddCardSectionEmptyState: FC<AddCardSectionEmptyStateProps> = ({ accessCheckFailed }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const Icon: ComponentType<any> = accessCheckFailed
     ? RhStandardPadlockLockedIcon
     : RhStandardAlertIcon;
-  const title: string = accessCheckFailed
-    ? t('devconsole~Access permissions needed')
-    : t('devconsole~Unable to load');
+  const title: string = accessCheckFailed ? t('Access permissions needed') : t('Unable to load');
   const description: string = accessCheckFailed
-    ? t('devconsole~You do not have sufficient permissions to access these add options.')
-    : t('devconsole~Add options failed to load. Check your connection and reload the page.');
+    ? t('You do not have sufficient permissions to access these add options.')
+    : t('Add options failed to load. Check your connection and reload the page.');
   return (
     <EmptyState
       headingLevel="h2"

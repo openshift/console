@@ -41,7 +41,7 @@ export const ConfigureCountModal: OverlayComponent<ConfigureCountModalProps> = (
   } = props;
   const getPath = path ? path.substring(1).replace('/', '.') : '';
   const [value, setValue] = useState<number>(_.get(resource, getPath) ?? defaultValue);
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
   const isReplicaPath = path === '/spec/replicas';
   const { isNonScalable } = useNonScalableImageCheck(isReplicaPath ? resource : null);
@@ -102,11 +102,11 @@ export const ConfigureCountModal: OverlayComponent<ConfigureCountModalProps> = (
           <Alert
             variant="warning"
             isInline
-            title={t('public~Non-scalable image')}
+            title={t('Non-scalable image')}
             className="pf-v6-u-mb-md"
           >
             {t(
-              'public~This image is not intended to run with more than one replica. Running multiple instances is not supported and might cause issues.',
+              'This image is not intended to run with more than one replica. Running multiple instances is not supported and might cause issues.',
             )}
           </Alert>
         )}
@@ -134,7 +134,7 @@ export const ConfigureCountModal: OverlayComponent<ConfigureCountModalProps> = (
           {buttonTextKey ? t(buttonTextKey, buttonTextVariables) : buttonText}
         </Button>
         <Button variant="link" onClick={closeOverlay} type="button">
-          {t('public~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </Modal>

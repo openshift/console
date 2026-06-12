@@ -9,14 +9,14 @@ export const PVCDropdown: FC<PVCDropdownProps> = (props) => {
   const kind = PersistentVolumeClaimModel.kind;
   const { namespace, selectedKey, desc } = props;
   const resources = [{ kind, namespace }];
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <ListDropdown
       {...props}
       desc={desc}
       resources={resources}
       selectedKeyKind={kind}
-      placeholder={t('public~Select claim')}
+      placeholder={t('Select claim')}
       selectedKey={selectedKey}
     />
   );

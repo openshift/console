@@ -75,7 +75,7 @@ const NodeAffinityRule: FC<NodeAffinityRuleProps> = ({
   onChange = () => {},
   rule,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const { weight, selector } = rule;
   const onChangeMatchExpressions = (matchExpressions: MatchExpression[]): void =>
     onChange({
@@ -104,13 +104,13 @@ const NodeAffinityRule: FC<NodeAffinityRuleProps> = ({
           onClick={onClickRemove}
           variant="link"
         >
-          {t('olm~Remove {{item}}', { item: type })}
+          {t('Remove {{item}}', { item: type })}
         </Button>
       )}
       {type === AffinityRuleType.Preferred && (
         <div className="co-affinity-term__weight-input">
           <label className="co-required" htmlFor={`preference-${key}`}>
-            {t('olm~Weight')}
+            {t('Weight')}
           </label>
           <span className="pf-v6-c-form-control">
             <input type="number" value={weight} onChange={onChangeWeight} required />
@@ -128,7 +128,7 @@ const NodeAffinityRule: FC<NodeAffinityRuleProps> = ({
 };
 
 export const NodeAffinity: FC<NodeAffinityProps> = ({ affinity, onChange, uid = '' }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const requiredRules =
     affinity?.requiredDuringSchedulingIgnoredDuringExecution?.nodeSelectorTerms || [];
   const preferredRules = affinity?.preferredDuringSchedulingIgnoredDuringExecution || [];
@@ -189,11 +189,9 @@ export const NodeAffinity: FC<NodeAffinityProps> = ({ affinity, onChange, uid = 
   return (
     <DescriptionList>
       <DescriptionListGroup>
-        <Tooltip
-          content={t('olm~Required rules must be met before a pod can be scheduled on a node.')}
-        >
+        <Tooltip content={t('Required rules must be met before a pod can be scheduled on a node.')}>
           <DescriptionListTerm>
-            {t('olm~Required during scheduling, ignored during execution')}
+            {t('Required during scheduling, ignored during execution')}
           </DescriptionListTerm>
         </Tooltip>
         <DescriptionListDescription>
@@ -216,7 +214,7 @@ export const NodeAffinity: FC<NodeAffinityProps> = ({ affinity, onChange, uid = 
               onClick={addRequiredRule}
               variant="link"
             >
-              {t('olm~Add required')}
+              {t('Add required')}
             </Button>
           </div>
         </DescriptionListDescription>
@@ -224,11 +222,11 @@ export const NodeAffinity: FC<NodeAffinityProps> = ({ affinity, onChange, uid = 
       <DescriptionListGroup>
         <Tooltip
           content={t(
-            'olm~Preferred rules specify that, if the rule is met, the scheduler tries to enforce the rules, but does not guarantee enforcement.',
+            'Preferred rules specify that, if the rule is met, the scheduler tries to enforce the rules, but does not guarantee enforcement.',
           )}
         >
           <DescriptionListTerm>
-            {t('olm~Preferred during scheduling, ignored during execution')}
+            {t('Preferred during scheduling, ignored during execution')}
           </DescriptionListTerm>
         </Tooltip>
         <DescriptionListDescription>
@@ -251,7 +249,7 @@ export const NodeAffinity: FC<NodeAffinityProps> = ({ affinity, onChange, uid = 
               onClick={addPreferredRule}
               variant="link"
             >
-              {t('olm~Add preferred')}
+              {t('Add preferred')}
             </Button>
           </div>
         </DescriptionListDescription>
@@ -268,7 +266,7 @@ const PodAffinityRule: FC<PodAffinityRuleProps> = ({
   rule,
   type,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const { podAffinityTerm, weight } = rule;
   const selector = podAffinityTerm?.labelSelector || {};
   const topologyKey = podAffinityTerm?.topologyKey;
@@ -310,14 +308,14 @@ const PodAffinityRule: FC<PodAffinityRuleProps> = ({
           onClick={onClickRemove}
           variant="link"
         >
-          {t('olm~Remove {{item}}', { item: type })}
+          {t('Remove {{item}}', { item: type })}
         </Button>
       )}
       <div className="co-affinity-term__topology">
         {type === AffinityRuleType.Preferred && (
           <div className="co-affinity-term__weight-input">
             <label className="co-required" htmlFor={`preference-${key}`}>
-              {t('olm~Weight')}
+              {t('Weight')}
             </label>
             <span className="pf-v6-c-form-control">
               <input type="number" value={weight} onChange={onChangeWeight} required />
@@ -326,7 +324,7 @@ const PodAffinityRule: FC<PodAffinityRuleProps> = ({
         )}
         <div className="co-affinity-term__topology-input">
           <label className="co-required" htmlFor={`topology-${key}`}>
-            {t('olm~Topology key')}
+            {t('Topology key')}
           </label>
           <span className="pf-v6-c-form-control">
             <input
@@ -354,7 +352,7 @@ export const PodAffinity: FC<PodAffinityProps> = ({ affinity, onChange, uid = ''
     requiredDuringSchedulingIgnoredDuringExecution: requiredRules = [],
     preferredDuringSchedulingIgnoredDuringExecution: preferredRules = [],
   } = affinity || {};
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const addRequiredRule = () =>
     onChange?.({
       ...affinity,
@@ -411,11 +409,9 @@ export const PodAffinity: FC<PodAffinityProps> = ({ affinity, onChange, uid = ''
   return (
     <DescriptionList>
       <DescriptionListGroup>
-        <Tooltip
-          content={t('olm~Required rules must be met before a pod can be scheduled on a node.')}
-        >
+        <Tooltip content={t('Required rules must be met before a pod can be scheduled on a node.')}>
           <DescriptionListTerm>
-            {t('olm~Required during scheduling, ignored during execution')}
+            {t('Required during scheduling, ignored during execution')}
           </DescriptionListTerm>
         </Tooltip>
         <DescriptionListDescription>
@@ -438,7 +434,7 @@ export const PodAffinity: FC<PodAffinityProps> = ({ affinity, onChange, uid = ''
               onClick={addRequiredRule}
               variant="link"
             >
-              {t('olm~Add required')}
+              {t('Add required')}
             </Button>
           </div>
         </DescriptionListDescription>
@@ -446,11 +442,11 @@ export const PodAffinity: FC<PodAffinityProps> = ({ affinity, onChange, uid = ''
       <DescriptionListGroup>
         <Tooltip
           content={t(
-            'olm~Preferred rules specify that, if the rule is met, the scheduler tries to enforce the rules, but does not guarantee enforcement.',
+            'Preferred rules specify that, if the rule is met, the scheduler tries to enforce the rules, but does not guarantee enforcement.',
           )}
         >
           <DescriptionListTerm>
-            {t('olm~Preferred during scheduling, ignored during execution')}
+            {t('Preferred during scheduling, ignored during execution')}
           </DescriptionListTerm>
         </Tooltip>
         <DescriptionListDescription>
@@ -476,7 +472,7 @@ export const PodAffinity: FC<PodAffinityProps> = ({ affinity, onChange, uid = ''
               onClick={addPreferredRule}
               variant="link"
             >
-              {t('olm~Add preferred')}
+              {t('Add preferred')}
             </Button>
           </div>
         </DescriptionListDescription>

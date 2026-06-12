@@ -29,7 +29,7 @@ const LogsWrapperComponent: FC<LogsWrapperComponentProps> = ({
   downloadAllLabel = 'Download all',
   ...props
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('shipwright-plugin');
   const resourceRef = useRef(null);
   const [obj, loaded, error] = useK8sWatchResource<PodKind>(resource);
   const [fullscreenRef, fullscreenToggle, isFullscreen] = useFullscreen();
@@ -77,7 +77,7 @@ const LogsWrapperComponent: FC<LogsWrapperComponentProps> = ({
         <FlexItem className="odc-multi-stream-logs__button" align={{ default: 'alignRight' }}>
           <Button variant="link" onClick={downloadLogs} isInline>
             <RhUiDownloadIcon className="odc-multi-stream-logs__icon" />
-            {t('shipwright-plugin~Download')}
+            {t('Download')}
           </Button>
         </FlexItem>
         <FlexItem className="odc-multi-stream-logs__divider">|</FlexItem>
@@ -91,7 +91,7 @@ const LogsWrapperComponent: FC<LogsWrapperComponentProps> = ({
                 isInline
               >
                 <RhUiDownloadIcon className="odc-multi-stream-logs__icon" />
-                {downloadAllLabel || t('shipwright-plugin~Download all')}
+                {downloadAllLabel || t('Download all')}
                 {downloadAllStatus && <LoadingInline />}
               </Button>
             </FlexItem>
@@ -104,12 +104,12 @@ const LogsWrapperComponent: FC<LogsWrapperComponentProps> = ({
               {isFullscreen ? (
                 <>
                   <RhUiCompressIcon className="odc-multi-stream-logs__icon" />
-                  {t('shipwright-plugin~Collapse')}
+                  {t('Collapse')}
                 </>
               ) : (
                 <>
                   <RhUiExpandIcon className="odc-multi-stream-logs__icon" />
-                  {t('shipwright-plugin~Expand')}
+                  {t('Expand')}
                 </>
               )}
             </Button>

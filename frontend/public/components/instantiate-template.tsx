@@ -69,7 +69,7 @@ const TemplateResourceDetails: FC<TemplateResourceDetailsProps> = ({ template })
 TemplateResourceDetails.displayName = 'TemplateResourceDetails';
 
 const TemplateInfo: FC<TemplateInfoProps> = ({ template }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const annotations = template.metadata.annotations || {};
   const { description } = annotations;
   const displayName = annotations[ANNOTATIONS.displayName] || template.metadata.name;
@@ -119,12 +119,12 @@ const TemplateInfo: FC<TemplateInfoProps> = ({ template }) => {
             <ul className="list-inline">
               {documentationURL && (
                 <li className="co-break-word">
-                  <ExternalLink href={documentationURL} text={t('public~View documentation')} />
+                  <ExternalLink href={documentationURL} text={t('View documentation')} />
                 </li>
               )}
               {supportURL && (
                 <li className="co-break-word">
-                  <ExternalLink href={supportURL} text={t('public~Get support')} />
+                  <ExternalLink href={supportURL} text={t('Get support')} />
                 </li>
               )}
             </ul>
@@ -211,7 +211,7 @@ const TemplateForm: FC<TemplateFormProps> = (props) => {
   const [error, setError] = useState('');
   const isInitialLoad = useRef(true);
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -320,7 +320,7 @@ const TemplateForm: FC<TemplateFormProps> = (props) => {
   };
 
   if (obj.loadError) {
-    return <LoadError label={t('public~Template')}>{obj.loadError.message}</LoadError>;
+    return <LoadError label={t('Template')}>{obj.loadError.message}</LoadError>;
   }
 
   if (!obj.loaded) {
@@ -329,8 +329,8 @@ const TemplateForm: FC<TemplateFormProps> = (props) => {
 
   if (!obj.data) {
     return (
-      <LoadError label={t('public~Template')}>
-        {t('public~Template not found or invalid URL parameters.')}
+      <LoadError label={t('Template')}>
+        {t('Template not found or invalid URL parameters.')}
       </LoadError>
     );
   }
@@ -347,7 +347,7 @@ const TemplateForm: FC<TemplateFormProps> = (props) => {
         <form className="pf-v6-c-form co-instantiate-template-form" onSubmit={save}>
           <div className="form-group">
             <label className="co-required" htmlFor="namespace">
-              {t('public~Namespace')}
+              {t('Namespace')}
             </label>
             <NsDropdown selectedKey={namespace} onChange={(v) => setNamespace(v)} id="namespace" />
           </div>
@@ -361,7 +361,7 @@ const TemplateForm: FC<TemplateFormProps> = (props) => {
             }: TemplateParameter) => {
               const value = parameters[name] || '';
               const helpID = description ? `${name}-help` : '';
-              const placeholder = generate ? t('public~(generated if empty)') : '';
+              const placeholder = generate ? t('(generated if empty)') : '';
               // Only set required for parameters not generated.
               const requiredInput = requiredParam && !generate;
               return (
@@ -382,10 +382,10 @@ const TemplateForm: FC<TemplateFormProps> = (props) => {
           <ButtonBar className="co-instantiate-template-form__button-bar" errorMessage={error}>
             <ActionGroup className="pf-v6-c-form">
               <Button type="submit" variant="primary" isLoading={inProgress}>
-                {t('public~Create')}
+                {t('Create')}
               </Button>
               <Button type="button" variant="secondary" onClick={() => navigate(-1)}>
-                {t('public~Cancel')}
+                {t('Cancel')}
               </Button>
             </ActionGroup>
           </ButtonBar>

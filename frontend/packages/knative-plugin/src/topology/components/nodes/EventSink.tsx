@@ -65,7 +65,7 @@ const EventSink: FC<EventSinkProps> = ({
 }) => {
   useAnchor(EventSinkTargetAnchor, AnchorEnd.target, TYPE_EVENT_SINK_LINK);
   const ref = useRef();
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const [hover, hoverRef] = useHover();
   const groupRefs = useCombineRefs(dragNodeRef, dndDropRef);
   const { data, resources, resource } = element.getData();
@@ -127,7 +127,7 @@ const EventSink: FC<EventSinkProps> = ({
     <Tooltip
       content={
         edgeOperation === MOVE_EV_SRC_CONNECTOR_OPERATION
-          ? t('knative-plugin~Move sink to KafkaSink')
+          ? t('Move sink to KafkaSink')
           : tooltipLabel ?? ''
       }
       trigger="manual"

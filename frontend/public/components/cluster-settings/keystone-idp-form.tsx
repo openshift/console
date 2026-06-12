@@ -32,7 +32,7 @@ export const AddKeystonePage = () => {
   const [certFileContent, setCertFileContent] = useState('');
   const [keyFileContent, setKeyFileContent] = useState('');
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const thenPromise = (res) => {
     setInProgress(false);
@@ -41,7 +41,7 @@ export const AddKeystonePage = () => {
   };
 
   const catchError = (error) => {
-    const err = error.message || t('public~An error occurred. Please try again.');
+    const err = error.message || t('An error occurred. Please try again.');
     setInProgress(false);
     setErrorMessage(err);
     return Promise.reject(err);
@@ -139,7 +139,7 @@ export const AddKeystonePage = () => {
     e.preventDefault();
     if (_.isEmpty(keyFileContent) !== _.isEmpty(certFileContent)) {
       setErrorMessage(
-        t('public~Values for certificate and key should both be either excluded or provided.'),
+        t('Values for certificate and key should both be either excluded or provided.'),
       );
       return;
     }
@@ -168,7 +168,7 @@ export const AddKeystonePage = () => {
     });
   };
 
-  const title = t('public~Add Identity Provider: Keystone Authentication');
+  const title = t('Add Identity Provider: Keystone Authentication');
 
   return (
     <div className="co-m-pane__form">
@@ -176,7 +176,7 @@ export const AddKeystonePage = () => {
       <PageHeading
         title={title}
         helpText={t(
-          'public~Adding Keystone enables shared authentication with an OpenStack server configured to store users in an internal Keystone database.',
+          'Adding Keystone enables shared authentication with an OpenStack server configured to store users in an internal Keystone database.',
         )}
       />
       <PaneBody>
@@ -184,12 +184,12 @@ export const AddKeystonePage = () => {
           <IDPNameInput value={name} onChange={(e) => setName(e.currentTarget.value)} />
           <div className="form-group">
             <label className="co-required" htmlFor="domain-name">
-              {t('public~Domain name')}
+              {t('Domain name')}
             </label>
             <span className="pf-v6-c-form-control">
               <input
                 type="text"
-                aria-label={t('public~Domain name')}
+                aria-label={t('Domain name')}
                 onChange={(e) => setDomainName(e.currentTarget.value)}
                 value={domainName}
                 id="domain-name"
@@ -199,12 +199,12 @@ export const AddKeystonePage = () => {
           </div>
           <div className="form-group">
             <label className="co-required" htmlFor="url">
-              {t('public~URL')}
+              {t('URL')}
             </label>
             <span className="pf-v6-c-form-control">
               <input
                 type="url"
-                aria-label={t('public~URL')}
+                aria-label={t('URL')}
                 onChange={(e) => setUrl(e.currentTarget.value)}
                 value={url}
                 id="url"
@@ -213,7 +213,7 @@ export const AddKeystonePage = () => {
               />
             </span>
             <p className="help-block" id="idp-url-help">
-              {t('public~The remote URL to connect to.')}
+              {t('The remote URL to connect to.')}
             </p>
           </div>
           <IDPCAFileInput
@@ -226,30 +226,30 @@ export const AddKeystonePage = () => {
               onChange={(c: string) => setCertFileContent(c)}
               inputFileData={certFileContent}
               id="cert-file-input"
-              label={t('public~Certificate')}
-              filenamePlaceholder={t('public~PEM-encoded TLS client certificate file')}
+              label={t('Certificate')}
+              filenamePlaceholder={t('PEM-encoded TLS client certificate file')}
               textareaFieldHelpText={t(
-                'public~PEM-encoded TLS client certificate to present when connecting to the server.',
+                'PEM-encoded TLS client certificate to present when connecting to the server.',
               )}
             />
             <DroppableFileInput
               onChange={(c: string) => setKeyFileContent(c)}
               inputFileData={keyFileContent}
               id="key-file-input"
-              label={t('public~Key')}
-              filenamePlaceholder={t('public~PEM-encoded TLS private key file')}
+              label={t('Key')}
+              filenamePlaceholder={t('PEM-encoded TLS private key file')}
               textareaFieldHelpText={t(
-                'public~PEM-encoded TLS private key for the client certificate. Required if certificate is specified.',
+                'PEM-encoded TLS private key for the client certificate. Required if certificate is specified.',
               )}
             />
           </div>
           <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
             <ActionGroup className="pf-v6-c-form">
               <Button type="submit" variant="primary" data-test-id="add-idp" data-test="add-idp">
-                {t('public~Add')}
+                {t('Add')}
               </Button>
               <Button type="button" variant="secondary" onClick={() => navigate(-1)}>
-                {t('public~Cancel')}
+                {t('Cancel')}
               </Button>
             </ActionGroup>
           </ButtonBar>

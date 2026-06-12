@@ -36,13 +36,13 @@ type PageContentsProps = {
 };
 
 const PageContents: FC<PageContentsProps> = ({ viewType }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   const { name: namespace } = useParams();
 
   return namespace ? (
     <TopologyDataRenderer viewType={viewType} />
   ) : (
-    <CreateProjectListPage title={t('topology~Topology')}>
+    <CreateProjectListPage title={t('Topology')}>
       {(openProjectModal) => (
         <Trans t={t} ns="topology">
           Select a Project to view the topology

@@ -43,13 +43,13 @@ const useHelmReleasesColumns = (): {
   columns: TableColumn<HelmRelease>[];
   resetAllColumnWidths: () => void;
 } => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(HelmReleaseModel);
 
   const columns = useMemo(
     () => [
       {
-        title: t('helm-plugin~Name'),
+        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'name',
         resizableProps: getResizableProps(tableColumnInfo[0].id),
@@ -59,7 +59,7 @@ const useHelmReleasesColumns = (): {
         },
       },
       {
-        title: t('helm-plugin~Namespace'),
+        title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'namespace',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
@@ -68,7 +68,7 @@ const useHelmReleasesColumns = (): {
         },
       },
       {
-        title: t('helm-plugin~Revision'),
+        title: t('Revision'),
         id: tableColumnInfo[2].id,
         sort: 'version',
         resizableProps: getResizableProps(tableColumnInfo[2].id),
@@ -77,7 +77,7 @@ const useHelmReleasesColumns = (): {
         },
       },
       {
-        title: t('helm-plugin~Updated'),
+        title: t('Updated'),
         id: tableColumnInfo[3].id,
         sort: 'info.last_deployed',
         resizableProps: getResizableProps(tableColumnInfo[3].id),
@@ -86,7 +86,7 @@ const useHelmReleasesColumns = (): {
         },
       },
       {
-        title: t('helm-plugin~Status'),
+        title: t('Status'),
         id: tableColumnInfo[4].id,
         sort: 'info.status',
         resizableProps: getResizableProps(tableColumnInfo[4].id),
@@ -95,7 +95,7 @@ const useHelmReleasesColumns = (): {
         },
       },
       {
-        title: t('helm-plugin~Chart name'),
+        title: t('Chart name'),
         id: tableColumnInfo[5].id,
         sort: 'chart.metadata.name',
         resizableProps: getResizableProps(tableColumnInfo[5].id),
@@ -104,7 +104,7 @@ const useHelmReleasesColumns = (): {
         },
       },
       {
-        title: t('helm-plugin~Chart version'),
+        title: t('Chart version'),
         id: tableColumnInfo[6].id,
         sort: 'chart.metadata.version',
         resizableProps: getResizableProps(tableColumnInfo[6].id),
@@ -113,7 +113,7 @@ const useHelmReleasesColumns = (): {
         },
       },
       {
-        title: t('helm-plugin~App version'),
+        title: t('App version'),
         id: tableColumnInfo[7].id,
         sort: 'chart.metadata.appVersion',
         resizableProps: getResizableProps(tableColumnInfo[7].id),
@@ -140,7 +140,7 @@ const getObjectMetadata = (release: HelmRelease) => ({
 });
 
 const HelmReleaseList: FC<{ mock?: boolean }> = ({ mock }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   const params = useParams();
   const namespace = params.ns;
   const secretsCountRef = useRef<number>(0);
@@ -192,7 +192,7 @@ const HelmReleaseList: FC<{ mock?: boolean }> = ({ mock }) => {
           .catch((err) => {
             if (!destroyed) {
               setReleasesLoaded(true);
-              setLoadError(err.message || t('helm-plugin~Unable to load Helm Releases'));
+              setLoadError(err.message || t('Unable to load Helm Releases'));
             }
           });
       }
@@ -219,8 +219,8 @@ const HelmReleaseList: FC<{ mock?: boolean }> = ({ mock }) => {
       <DataViewCheckboxFilter
         key="status"
         filterId="status"
-        title={t('helm-plugin~Status')}
-        placeholder={t('helm-plugin~Filter by status')}
+        title={t('Status')}
+        placeholder={t('Filter by status')}
         options={helmReleaseStatusFilterOptions}
       />,
     ],
@@ -253,14 +253,14 @@ const HelmReleaseList: FC<{ mock?: boolean }> = ({ mock }) => {
       <EmptyState
         headingLevel="h3"
         icon={HelmCatalogIcon}
-        titleText={<>{t('helm-plugin~No Helm Releases found')}</>}
+        titleText={<>{t('No Helm Releases found')}</>}
         variant={EmptyStateVariant.full}
       >
         <EmptyStateFooter>
           {isHelmEnabled ? (
             <EmptyStateActions>
               <Link to={installURL}>
-                {t('helm-plugin~Browse the catalog to discover available Helm Charts')}
+                {t('Browse the catalog to discover available Helm Charts')}
               </Link>
             </EmptyStateActions>
           ) : null}
@@ -271,14 +271,14 @@ const HelmReleaseList: FC<{ mock?: boolean }> = ({ mock }) => {
 
   return (
     <>
-      <DocumentTitle>{t('helm-plugin~Helm Releases')}</DocumentTitle>
+      <DocumentTitle>{t('Helm Releases')}</DocumentTitle>
       <PaneBody>
         <Suspense fallback={<LoadingBox />}>
           {!mock && hasNoReleases ? (
             emptyState()
           ) : (
             <ConsoleDataView<HelmRelease, { obj: HelmRelease }, HelmReleaseFilters>
-              label={t('helm-plugin~Helm Releases')}
+              label={t('Helm Releases')}
               data={releases}
               loaded={isLoaded}
               loadError={secretsLoadError || loadError}

@@ -23,13 +23,13 @@ const normalizeDevfile = (devfileSamples: DevfileSample[], t: TFunction): Catalo
     searchParams.set('git.repository', gitRepositoryUrl);
 
     const href = `/import?${searchParams}`;
-    const createLabel = t('devconsole~Create');
+    const createLabel = t('Create');
     const type = 'Devfile';
 
     const detailsProperties: CatalogItemDetailsProperty[] = [];
     if (gitRepositoryUrl) {
       detailsProperties.push({
-        label: t('devconsole~Sample repository'),
+        label: t('Sample repository'),
         value: (
           <ExternalLink text={gitRepositoryUrl} href={gitRepositoryUrl} className="co-break-all" />
         ),
@@ -69,7 +69,7 @@ const normalizeDevfile = (devfileSamples: DevfileSample[], t: TFunction): Catalo
 const useDevfile: ExtensionHook<CatalogItem[]> = (): [CatalogItem[], boolean, any] => {
   const [devfileSamples, setDevfileSamples] = useState<DevfileSample[]>();
   const [loadedError, setLoadedError] = useState<APIError>();
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
 
   useEffect(() => {
     let mounted = true;

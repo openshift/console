@@ -40,7 +40,7 @@ const BuildConfigForm: FC<
   errors,
   values,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const [activeNamespace] = useActiveNamespace();
 
   const isNew = !watchedBuildConfig?.metadata?.name;
@@ -106,10 +106,10 @@ const BuildConfigForm: FC<
         errorMessage={status?.submitError}
         successMessage={status?.submitSuccess}
         showAlert={isStale}
-        infoTitle={t('devconsole~This object has been updated.')}
-        infoMessage={t('devconsole~Click reload to see the new version.')}
+        infoTitle={t('This object has been updated.')}
+        infoMessage={t('Click reload to see the new version.')}
         isSubmitting={isSubmitting}
-        submitLabel={isNew ? t('devconsole~Create') : t('devconsole~Save')}
+        submitLabel={isNew ? t('Create') : t('Save')}
         disableSubmit={
           (values.editorType === EditorType.YAML ? !dirty : !dirty || !_.isEmpty(errors)) ||
           isSubmitting

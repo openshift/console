@@ -16,13 +16,13 @@ type TopologyEmptyStateProps = {
 };
 
 const TopologyEmptyState: FC<TopologyEmptyStateProps> = ({ setIsQuickSearchOpen }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
 
   return (
     <EmptyState
       headingLevel="h3"
       icon={RhUiTopologyIcon}
-      titleText={<>{t('topology~No resources found')}</>}
+      titleText={<>{t('No resources found')}</>}
       className="odc-topology__empty-state"
       variant={EmptyStateVariant.full}
       data-test="no-resources-found"

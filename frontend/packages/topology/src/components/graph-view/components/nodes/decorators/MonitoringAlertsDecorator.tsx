@@ -40,7 +40,7 @@ const MonitoringAlertsDecoratorComponent: FC<MonitoringAlertsDecoratorType> = ({
   showMonitoringOverview,
 }) => {
   const ref = useRef();
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   const workloadData = element.getData().data;
   const { monitoringAlerts } = workloadData;
   const firingAlerts = getFiringAlerts(monitoringAlerts);
@@ -54,7 +54,7 @@ const MonitoringAlertsDecoratorComponent: FC<MonitoringAlertsDecoratorType> = ({
 
   if (shouldHideMonitoringAlertDecorator(severityAlertType)) return null;
 
-  const label = t('topology~Monitoring alert');
+  const label = t('Monitoring alert');
   return (
     <Tooltip triggerRef={ref} key="monitoringAlert" content={label} position={TooltipPosition.left}>
       <g ref={ref}>

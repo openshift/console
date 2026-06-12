@@ -25,7 +25,7 @@ export const ExpandableAlert: FC<CustomAlertProps> = ({ alerts, variant }) => {
     ) : (
       alerts
     );
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   return (
     <Alert
@@ -35,7 +35,7 @@ export const ExpandableAlert: FC<CustomAlertProps> = ({ alerts, variant }) => {
       title={
         <Flex justifyContent={{ default: 'justifyContentSpaceBetween' }}>
           <FlexItem>
-            {t('public~There is {{count}} {{variant}} alert', { count: alertCount, variant })}
+            {t('There is {{count}} {{variant}} alert', { count: alertCount, variant })}
           </FlexItem>
           <FlexItem>
             <Button
@@ -44,7 +44,7 @@ export const ExpandableAlert: FC<CustomAlertProps> = ({ alerts, variant }) => {
               variant="link"
               className="pf-v6-u-py-0"
             >
-              {expanded ? t('public~Hide details') : t('public~Show details')}
+              {expanded ? t('Hide details') : t('Show details')}
             </Button>
           </FlexItem>
         </Flex>

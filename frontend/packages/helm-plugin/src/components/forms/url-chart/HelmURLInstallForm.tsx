@@ -40,7 +40,7 @@ const HelmURLInstallForm: FC<FormikProps<HelmURLInstallFormData> & HelmURLInstal
   namespace,
   onBack,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   const { chartReadme, formData, formSchema } = values;
 
   const autocompleteFilter = (strText: string, item: string): boolean => fuzzy(strText, item);
@@ -70,7 +70,7 @@ const HelmURLInstallForm: FC<FormikProps<HelmURLInstallFormData> & HelmURLInstal
   const yamlEditor = chartHasValues && (
     <CodeEditorField
       name="yamlData"
-      label={t('helm-plugin~Helm release')}
+      label={t('Helm release')}
       schema={formSchema}
       showSamples={false}
       onSave={handleSubmit}
@@ -97,7 +97,7 @@ const HelmURLInstallForm: FC<FormikProps<HelmURLInstallFormData> & HelmURLInstal
       {chartHasValues && (
         <>
           {t(
-            'helm-plugin~Complete the form to create a Helm release. The Helm chart authors might have provided some default values.',
+            'Complete the form to create a Helm release. The Helm chart authors might have provided some default values.',
           )}{' '}
           &nbsp;
         </>
@@ -109,14 +109,10 @@ const HelmURLInstallForm: FC<FormikProps<HelmURLInstallFormData> & HelmURLInstal
   return (
     <FlexForm onSubmit={handleSubmit}>
       <FormBody flexLayout>
-        <FormHeader
-          title={t('helm-plugin~Configure Helm release')}
-          helpText={formHelpText}
-          marginBottom="lg"
-        />
+        <FormHeader title={t('Configure Helm release')} helpText={formHelpText} marginBottom="lg" />
         {chartError && (
-          <Alert variant="danger" isInline title={t('helm-plugin~Helm Chart cannot be installed')}>
-            {t('helm-plugin~The Helm Chart is currently unavailable. {{chartError}}', {
+          <Alert variant="danger" isInline title={t('Helm Chart cannot be installed')}>
+            {t('The Helm Chart is currently unavailable. {{chartError}}', {
               chartError: chartError.message,
             })}
           </Alert>
@@ -127,7 +123,7 @@ const HelmURLInstallForm: FC<FormikProps<HelmURLInstallFormData> & HelmURLInstal
               <InputField
                 type={TextInputTypes.text}
                 name="chartURL"
-                label={t('helm-plugin~Chart URL')}
+                label={t('Chart URL')}
                 isDisabled
                 data-test="chart-url"
               />
@@ -136,7 +132,7 @@ const HelmURLInstallForm: FC<FormikProps<HelmURLInstallFormData> & HelmURLInstal
               <InputField
                 type={TextInputTypes.text}
                 name="releaseName"
-                label={t('helm-plugin~Release name')}
+                label={t('Release name')}
                 isDisabled
                 data-test="release-name"
               />
@@ -145,7 +141,7 @@ const HelmURLInstallForm: FC<FormikProps<HelmURLInstallFormData> & HelmURLInstal
               <InputField
                 type={TextInputTypes.text}
                 name="chartVersion"
-                label={t('helm-plugin~Version')}
+                label={t('Version')}
                 isDisabled
                 data-test="chart-version"
               />
@@ -153,16 +149,16 @@ const HelmURLInstallForm: FC<FormikProps<HelmURLInstallFormData> & HelmURLInstal
             <GridItem xl={3} lg={3} md={12}>
               <ResourceDropdownField
                 name="basicAuthSecretName"
-                label={t('helm-plugin~Secret for Basic authentication')}
+                label={t('Secret for Basic authentication')}
                 resources={secretResources}
                 dataSelector={['metadata', 'name']}
                 fullWidth
-                placeholder={t('helm-plugin~None')}
+                placeholder={t('None')}
                 showBadge
                 autocompleteFilter={autocompleteFilter}
                 disabled
                 helpText={t(
-                  'helm-plugin~A secret with "username" and "password" keys for OCI/HTTP(S) authentication',
+                  'A secret with "username" and "password" keys for OCI/HTTP(S) authentication',
                 )}
               />
             </GridItem>
@@ -173,7 +169,7 @@ const HelmURLInstallForm: FC<FormikProps<HelmURLInstallFormData> & HelmURLInstal
             <Alert
               variant="info"
               title={t(
-                "helm-plugin~Helm release is not configurable since the Helm Chart doesn't define any values.",
+                "Helm release is not configurable since the Helm Chart doesn't define any values.",
               )}
               isInline
             />
@@ -192,9 +188,9 @@ const HelmURLInstallForm: FC<FormikProps<HelmURLInstallFormData> & HelmURLInstal
         handleReset={onBack}
         errorMessage={status?.submitError}
         isSubmitting={isSubmitting}
-        submitLabel={t('helm-plugin~Install')}
+        submitLabel={t('Install')}
         disableSubmit={isSubmitDisabled}
-        resetLabel={t('helm-plugin~Back')}
+        resetLabel={t('Back')}
         sticky
       />
     </FlexForm>

@@ -8,7 +8,7 @@ import { OpaqueSecretFormEntry } from './OpaqueSecretFormEntry';
 import { opaqueSecretObjectToArray, newOpaqueSecretEntry, opaqueEntriesToObject } from './utils';
 
 export const OpaqueSecretForm: FC<SecretSubFormProps> = ({ onChange, base64StringData }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const [opaqueDataEntries, setOpaqueDataEntries] = useState(
     opaqueSecretObjectToArray(base64StringData),
   );
@@ -58,7 +58,7 @@ export const OpaqueSecretForm: FC<SecretSubFormProps> = ({ onChange, base64Strin
           data-test="add-credentials-button"
           icon={<RhUiAddCircleFillIcon />}
         >
-          {t('public~Add key/value')}
+          {t('Add key/value')}
         </Button>
       </ActionGroup>
     </>

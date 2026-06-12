@@ -41,12 +41,12 @@ const EditApplicationForm: FC<FormikProps<FormikValues> & EditApplicationFormPro
   initialApplication,
   status,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   const dirty = values?.application?.selectedKey !== initialApplication;
   return (
     <>
       <ModalHeader
-        title={t('topology~Edit application grouping')}
+        title={t('Edit application grouping')}
         labelId="edit-application-modal-title"
         data-test-id="modal-title"
       />
@@ -71,10 +71,10 @@ const EditApplicationForm: FC<FormikProps<FormikValues> & EditApplicationFormPro
           data-test="confirm-action"
           id="confirm-action"
         >
-          {t('topology~Save')}
+          {t('Save')}
         </Button>
         <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
-          {t('topology~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </>

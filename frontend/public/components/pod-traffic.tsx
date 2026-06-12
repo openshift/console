@@ -15,7 +15,7 @@ export type PodTrafficProp = {
 };
 
 export const PodTraffic: FC<PodTrafficProp> = ({ podName, namespace, tooltipFlag }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const [data, loaded, loadError] = useK8sWatchResource<EndpointSliceKind[]>({
     groupVersionKind: {
       kind: EndPointSliceModel.kind,
@@ -29,7 +29,7 @@ export const PodTraffic: FC<PodTrafficProp> = ({ podName, namespace, tooltipFlag
   if (!loaded) {
     return <LoadingInline />;
   } else if (loaded && loadError) {
-    return <Status status="Error" title={t('public~Error')} />;
+    return <Status status="Error" title={t('Error')} />;
   }
   const allEndpoints = data?.reduce((prev, next) => prev.concat(next?.endpoints), []);
   const receivingTraffic = allEndpoints?.some((endPoint) => endPoint?.targetRef?.name === podName);
@@ -40,9 +40,7 @@ export const PodTraffic: FC<PodTrafficProp> = ({ podName, namespace, tooltipFlag
         <div data-test="pod-traffic-status">
           <Tooltip
             position="top"
-            content={
-              receivingTraffic ? t('public~Receiving traffic') : t('public~Not receiving traffic')
-            }
+            content={receivingTraffic ? t('Receiving traffic') : t('Not receiving traffic')}
           >
             {receivingTraffic ? <RhUiConnectedIcon /> : <RhUiDisconnectedIcon />}
           </Tooltip>

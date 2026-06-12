@@ -8,12 +8,12 @@ import {
 import { useTranslation } from 'react-i18next';
 
 const ServerlessFunctionType: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   return (
     <DescriptionList data-test="serverless-function-type">
       <DescriptionListGroup>
-        <DescriptionListTerm>{t('knative-plugin~Type')}</DescriptionListTerm>
-        <DescriptionListDescription>{t('knative-plugin~Function')}</DescriptionListDescription>
+        <DescriptionListTerm>{t('Type')}</DescriptionListTerm>
+        <DescriptionListDescription>{t('Function')}</DescriptionListDescription>
       </DescriptionListGroup>
     </DescriptionList>
   );

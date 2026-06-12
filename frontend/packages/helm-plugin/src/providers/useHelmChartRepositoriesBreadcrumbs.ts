@@ -10,7 +10,7 @@ export const getHelmChartRepositoriesModel = () => [
 ];
 
 export const useHelmChartRepositoriesBreadcrumbs = (kindObj: K8sKind) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   const params = useParams();
   const location = useLocation();
   return useTabbedTableBreadcrumbsFor(
@@ -19,7 +19,7 @@ export const useHelmChartRepositoriesBreadcrumbs = (kindObj: K8sKind) => {
     params,
     'helm',
     'repositories',
-    t('helm-plugin~Repositories'),
+    t('Repositories'),
     true,
   );
 };

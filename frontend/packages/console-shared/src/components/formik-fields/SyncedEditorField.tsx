@@ -46,7 +46,7 @@ export const SyncedEditorField: FC<SyncedEditorFieldProps> = ({
   noMargin = false,
   lastViewUserPreferenceKey,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const [field] = useField(name);
 
   const { values, setFieldValue, setStatus } = useFormikContext<FormikValues>();
@@ -152,16 +152,16 @@ export const SyncedEditorField: FC<SyncedEditorFieldProps> = ({
         data-test="synced-editor-field"
       >
         <RadioGroupField
-          label={t('console-shared~Configure via:')}
+          label={t('Configure via:')}
           name={name}
           options={[
             {
-              label: formContext.label || t('console-shared~Form view'),
+              label: formContext.label || t('Form view'),
               value: EditorType.Form,
               isDisabled: formContext.isDisabled,
             },
             {
-              label: yamlContext.label || t('console-shared~YAML view'),
+              label: yamlContext.label || t('YAML view'),
               value: EditorType.YAML,
               isDisabled: yamlContext.isDisabled,
             },
@@ -175,26 +175,24 @@ export const SyncedEditorField: FC<SyncedEditorFieldProps> = ({
           className="co-synced-editor__yaml-warning"
           variant="danger"
           isInline
-          title={t('console-shared~Invalid YAML cannot be persisted')}
+          title={t('Invalid YAML cannot be persisted')}
         >
           <p className="pf-v6-u-mb-sm">
-            {t('console-shared~Switching to form view will delete any invalid YAML.')}
+            {t('Switching to form view will delete any invalid YAML.')}
           </p>
           <Button variant="danger" onClick={onClickYAMLWarningConfirm}>
-            {t('console-shared~Switch and delete')}
+            {t('Switch and delete')}
           </Button>
           &nbsp;
           <Button variant="secondary" onClick={onClickYAMLWarningCancel}>
-            {t('console-shared~Cancel')}
+            {t('Cancel')}
           </Button>
         </Alert>
       )}
       {disabledFormAlert && (
         <Alert
           variant="custom"
-          title={t(
-            'console-shared~Form view is disabled for this chart because the schema is not available',
-          )}
+          title={t('Form view is disabled for this chart because the schema is not available')}
           actionClose={<AlertActionCloseButton onClose={() => setDisabledFormAlert(false)} />}
           isInline
         />

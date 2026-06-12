@@ -9,7 +9,7 @@ import { QuickStartGettingStartedCard } from './QuickStartGettingStartedCard';
 import { SampleGettingStartedCard } from './SamplesGettingStartedCard';
 
 export const GettingStartedSection: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
 
   const [isGettingStartedSectionOpen, setIsGettingStartedSectionOpen] = useUserPreference<boolean>(
     FUNCTIONS_GETTING_STARTED_SECTION_USER_PREFERENCE_KEY,
@@ -21,11 +21,11 @@ export const GettingStartedSection: FC = () => {
       <GettingStartedExpandableGrid
         setIsOpen={setIsGettingStartedSectionOpen}
         isOpen={isGettingStartedSectionOpen}
-        title={<>{t('knative-plugin~Get started with functions')}</>}
+        title={<>{t('Get started with functions')}</>}
         headerContent={
           <CardHeader>
             <Content component={ContentVariants.h4}>
-              {t('knative-plugin~Choose how to create a function from below methods')}
+              {t('Choose how to create a function from below methods')}
             </Content>
           </CardHeader>
         }
@@ -34,10 +34,8 @@ export const GettingStartedSection: FC = () => {
         <SampleGettingStartedCard />
         <QuickStartGettingStartedCard
           featured={['serverless-functions-using-cli', 'serverless-functions-using-ide']}
-          title={t('knative-plugin~Create function with guided documentation')}
-          description={t(
-            'knative-plugin~Follow guided documentation to create serverless functions.',
-          )}
+          title={t('Create function with guided documentation')}
+          description={t('Follow guided documentation to create serverless functions.')}
         />
         <FunctionsDocsGettingStartedCard />
       </GettingStartedExpandableGrid>

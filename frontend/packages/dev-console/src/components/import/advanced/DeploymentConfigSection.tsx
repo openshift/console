@@ -21,7 +21,7 @@ const DeploymentConfigSection: FC<DeploymentConfigSectionProps> = ({
   resource,
   showHeader,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const {
     values: {
       resources,
@@ -37,15 +37,15 @@ const DeploymentConfigSection: FC<DeploymentConfigSectionProps> = ({
   };
 
   return (
-    <FormSection title={showHeader && t('devconsole~Deployment')} fullWidth>
+    <FormSection title={showHeader && t('Deployment')} fullWidth>
       <CheckboxField
         name="deployment.triggers.image"
-        label={t('devconsole~Auto deploy when new Image is available')}
+        label={t('Auto deploy when new Image is available')}
       />
       {resources === Resources.OpenShift && (
         <CheckboxField
           name="deployment.triggers.config"
-          label={t('devconsole~Auto deploy when deployment configuration changes')}
+          label={t('Auto deploy when deployment configuration changes')}
         />
       )}
       {(
@@ -53,7 +53,7 @@ const DeploymentConfigSection: FC<DeploymentConfigSectionProps> = ({
       ) ? (
         <EnvironmentField
           name="deployment.env"
-          label={t('devconsole~Environment variables (runtime only)')}
+          label={t('Environment variables (runtime only)')}
           envs={env}
           obj={deploymentConfigObj}
         />

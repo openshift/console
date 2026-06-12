@@ -40,7 +40,7 @@ const orderCatalogItems = (allCatalogItems: CatalogItem[], featured: string[]): 
 };
 
 export const SampleGettingStartedCard: FC<SampleGettingStartedCardProps> = ({ featured = [] }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const [activeNamespace] = useActiveNamespace();
   const isSampleTypeEnabled = isCatalogTypeEnabled(SAMPLE_CATALOG_TYPE_ID);
 
@@ -51,7 +51,7 @@ export const SampleGettingStartedCard: FC<SampleGettingStartedCardProps> = ({ fe
 
   const moreLink: GettingStartedLink = {
     id: 'all-samples',
-    title: t('public~View all samples'),
+    title: t('View all samples'),
     href:
       activeNamespace && activeNamespace !== ALL_NAMESPACES_KEY
         ? `/samples/ns/${activeNamespace}`
@@ -90,11 +90,9 @@ export const SampleGettingStartedCard: FC<SampleGettingStartedCardProps> = ({ fe
             icon={
               <RhUiCatalogAltIcon color="var(--co-global--palette--blue-400)" aria-hidden="true" />
             }
-            title={t('public~Create applications using samples')}
+            title={t('Create applications using samples')}
             titleColor={'var(--co-global--palette--blue-400)'}
-            description={t(
-              'public~Choose a code sample to get started creating an application with.',
-            )}
+            description={t('Choose a code sample to get started creating an application with.')}
             links={links}
             moreLink={moreLink}
           />

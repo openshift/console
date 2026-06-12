@@ -26,7 +26,7 @@ import { useFormikValidationFix } from '@console/shared/src/hooks/useFormikValid
 import './ImportStrategySelector.scss';
 
 const ImportStrategySelector: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const {
     values: {
       import: { recommendedStrategy, selectedStrategy },
@@ -58,9 +58,7 @@ const ImportStrategySelector: FC = () => {
       icon: <RhUiFileCodeIcon />,
       isDisabled: type === GitProvider.UNSURE,
       disabledReason:
-        type === GitProvider.UNSURE
-          ? t('devconsole~Could not get Devfile for an unknown Git type')
-          : null,
+        type === GitProvider.UNSURE ? t('Could not get Devfile for an unknown Git type') : null,
     },
     {
       name: 'Dockerfile',
@@ -115,7 +113,7 @@ const ImportStrategySelector: FC = () => {
   useFormikValidationFix(strategy);
 
   return (
-    <FormGroup fieldId={fieldId} label={t('devconsole~Import Strategy')}>
+    <FormGroup fieldId={fieldId} label={t('Import Strategy')}>
       <Grid hasGutter>
         {itemList.map((item) =>
           item.disabledReason ? (

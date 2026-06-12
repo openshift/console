@@ -10,7 +10,7 @@ type DefaultChannelSectionProps = {
 };
 
 const DefaultChannelSection: FC<DefaultChannelSectionProps> = ({ namespace }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   return (
     <FormSection extraMargin>
       <ApplicationSelector namespace={namespace} subPath="formData" />
@@ -18,8 +18,8 @@ const DefaultChannelSection: FC<DefaultChannelSectionProps> = ({ namespace }) =>
         type={TextInputTypes.text}
         data-test-id="channel-name"
         name="formData.name"
-        label={t('knative-plugin~Name')}
-        helpText={t('knative-plugin~A unique name for the component/channel')}
+        label={t('Name')}
+        helpText={t('A unique name for the component/channel')}
         required
       />
     </FormSection>

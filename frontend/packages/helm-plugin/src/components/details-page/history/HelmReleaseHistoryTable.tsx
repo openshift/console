@@ -42,7 +42,7 @@ const HelmReleaseHistoryTable: FC<HelmReleaseHistoryTableProps> = ({
   customGetColumnIndexById,
   customSortFunctions,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Initialize pagination
@@ -148,9 +148,9 @@ const HelmReleaseHistoryTable: FC<HelmReleaseHistoryTableProps> = ({
                 onSetPage={pagination.onSetPage}
                 onPerPageSelect={pagination.onPerPageSelect}
                 titles={{
-                  ofWord: t('helm-plugin~of'),
-                  itemsPerPage: t('helm-plugin~Items per page'),
-                  perPageSuffix: t('helm-plugin~per page'),
+                  ofWord: t('of'),
+                  itemsPerPage: t('Items per page'),
+                  perPageSuffix: t('per page'),
                 }}
                 isCompact
               />

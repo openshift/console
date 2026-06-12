@@ -127,6 +127,15 @@ module.exports = {
     'prefer-regex-literals': 'off',
     'no-restricted-exports': 'off',
     'no-barrel-files/no-barrel-files': 'error',
+    'no-restricted-syntax': [
+      'warn',
+      {
+        selector:
+          "CallExpression[callee.name='useTranslation'][arguments.length=0]",
+        message:
+          'Pass the i18n namespace to useTranslation(). Example: useTranslation(\'public\') instead of useTranslation().',
+      },
+    ],
   },
   settings: {
     'import/extensions': ['.js', '.jsx'],

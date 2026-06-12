@@ -25,7 +25,7 @@ type CatalogDetailsModalProps = {
 };
 
 export const CatalogDetailsModal: FC<CatalogDetailsModalProps> = ({ item, onClose }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const [to, label] = useCtaLink(item?.cta);
 
   if (!item) {
@@ -35,7 +35,7 @@ export const CatalogDetailsModal: FC<CatalogDetailsModalProps> = ({ item, onClos
   const { name, title, badges } = item;
 
   const provider = item.provider
-    ? t('console-shared~Provided by {{provider}}', { provider: item.provider })
+    ? t('Provided by {{provider}}', { provider: item.provider })
     : null;
 
   const vendor = <div>{provider}</div>;

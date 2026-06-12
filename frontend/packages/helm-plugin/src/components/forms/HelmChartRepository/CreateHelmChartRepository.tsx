@@ -43,7 +43,7 @@ const CreateHelmChartRepository: FC<CreateHelmChartRepositoryProps> = ({
   const resourceKind: K8sResourceKindReference = queryParams.get('kind');
   const isEditForm = !!existingRepoName;
   const actionOrigin = queryParams.get('actionOrigin');
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   const [namespace] = useActiveNamespace();
   const fireTelemetryEvent = useTelemetry();
   const isHelmEnabled = isCatalogTypeEnabled(HELM_CHART_CATALOG_TYPE_ID);
@@ -102,7 +102,7 @@ const CreateHelmChartRepository: FC<CreateHelmChartRepositoryProps> = ({
       } catch (err) {
         actions.setStatus({
           submitSuccess: '',
-          submitError: t('helm-plugin~Invalid YAML - {{err}}', { err }),
+          submitError: t('Invalid YAML - {{err}}', { err }),
         });
         return null;
       }
@@ -144,7 +144,7 @@ const CreateHelmChartRepository: FC<CreateHelmChartRepositoryProps> = ({
         });
         actions.setStatus({
           submitError: '',
-          submitSuccess: t('helm-plugin~{{hcr}} has been created', {
+          submitSuccess: t('{{hcr}} has been created', {
             hcr: HelmChartRepositoryRes.kind,
           }),
         });
@@ -153,7 +153,7 @@ const CreateHelmChartRepository: FC<CreateHelmChartRepositoryProps> = ({
       .catch((err) => {
         actions.setStatus({
           submitSuccess: '',
-          submitError: err?.message || t('helm-plugin~Unknown error submitting'),
+          submitError: err?.message || t('Unknown error submitting'),
         });
       });
   };

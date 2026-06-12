@@ -29,14 +29,14 @@ const LifecycleHookForm: FC<LifecycleHookFormProps> = ({
   onSubmit,
   onClose,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const { errors } = useFormikContext<FormikValues>();
   return (
     <div className="odc-deployment-lifecycle-hook-form">
       <FormSection>
         <RadioGroupField
           name={`formData.deploymentStrategy.${dataAttribute}.${lifecycleHook}.action`}
-          label={t('devconsole~Lifecycle Action')}
+          label={t('Lifecycle Action')}
           required
           options={[
             {
@@ -59,10 +59,10 @@ const LifecycleHookForm: FC<LifecycleHookFormProps> = ({
         />
         <DropdownField
           name={`formData.deploymentStrategy.${dataAttribute}.${lifecycleHook}.lch.failurePolicy`}
-          label={t('devconsole~Failure Policy')}
-          title={t('devconsole~Select a Failure Policy')}
+          label={t('Failure Policy')}
+          title={t('Select a Failure Policy')}
           items={FailurePolicyOptions}
-          helpText={t('devconsole~Fail the deployment if the hook fails.')}
+          helpText={t('Fail the deployment if the hook fails.')}
           fullWidth
           required
         />

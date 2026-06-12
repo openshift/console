@@ -59,7 +59,7 @@ import { AccessModeSelector } from '../../access-modes/access-mode';
 
 const RestorePVCModal: FC<RestorePVCModalProps> = ({ close, cancel, resource }) => {
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler<PersistentVolumeClaimKind>();
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const navigate = useNavigate();
   const [restorePVCName, setPVCName] = useState(`${getName(resource) || 'pvc'}-restore`);
   const volumeSnapshotAnnotations = getAnnotations(resource);
@@ -139,7 +139,7 @@ const RestorePVCModal: FC<RestorePVCModalProps> = ({ close, cancel, resource }) 
   };
   return (
     <>
-      <ModalHeader title={t('console-app~Restore as new PVC')} labelId="restore-pvc-modal-title" />
+      <ModalHeader title={t('Restore as new PVC')} labelId="restore-pvc-modal-title" />
       <ModalBody>
         <Form id="restore-pvc-form" onSubmit={submit}>
           <FormGroup>
@@ -150,7 +150,7 @@ const RestorePVCModal: FC<RestorePVCModalProps> = ({ close, cancel, resource }) 
               </Trans>
             </p>
           </FormGroup>
-          <FormGroup label={t('console-app~Name')} isRequired fieldId="pvc-name">
+          <FormGroup label={t('Name')} isRequired fieldId="pvc-name">
             <TextInput
               isRequired
               type="text"
@@ -198,7 +198,7 @@ const RestorePVCModal: FC<RestorePVCModalProps> = ({ close, cancel, resource }) 
             loaded={pvcResourceLoaded}
             availableVolumeMode={volumeSnapshotAnnotations?.[snapshotPVCVolumeModeAnnotation]}
           />
-          <FormGroup label={t('console-app~Size')} isRequired fieldId="pvc-size">
+          <FormGroup label={t('Size')} isRequired fieldId="pvc-size">
             {formReady ? (
               <RequestSizeInput
                 name="requestSize"
@@ -220,9 +220,7 @@ const RestorePVCModal: FC<RestorePVCModalProps> = ({ close, cancel, resource }) 
               <FormHelperText>
                 <HelperText>
                   <HelperTextItem variant="error">
-                    {t(
-                      'console-app~Size should be equal or greater than the restore size of snapshot.',
-                    )}
+                    {t('Size should be equal or greater than the restore size of snapshot.')}
                   </HelperTextItem>
                 </HelperText>
               </FormHelperText>
@@ -230,37 +228,37 @@ const RestorePVCModal: FC<RestorePVCModalProps> = ({ close, cancel, resource }) 
           </FormGroup>
           <FormGroup>
             <p className="pf-v6-u-text-color-subtle pf-v6-u-mb-md">
-              {t('console-app~{{resourceKind}} details', {
+              {t('{{resourceKind}} details', {
                 resourceKind: VolumeSnapshotModel.label,
               })}
             </p>
             <Grid hasGutter>
               <GridItem span={6}>
                 <div className="pf-v6-u-mb-md">
-                  <strong>{t('console-app~Created at')}</strong>
+                  <strong>{t('Created at')}</strong>
                   <span>
                     <Timestamp timestamp={resource?.metadata?.creationTimestamp} />
                   </span>
                 </div>
                 <div className="pf-v6-u-mb-md">
-                  <strong>{t('console-app~Status')}</strong>
+                  <strong>{t('Status')}</strong>
                   <Status status={resource?.status?.readyToUse ? 'Ready' : 'Not Ready'} />
                 </div>
                 <div className="pf-v6-u-mb-md">
-                  <strong>{t('console-app~Size')}</strong>
+                  <strong>{t('Size')}</strong>
                   <p>{humanizeBinaryBytes(snapshotBaseSize).string}</p>
                 </div>
               </GridItem>
               <GridItem span={6}>
                 <div className="pf-v6-u-mb-md">
-                  <strong>{t('console-app~Namespace')}</strong>
+                  <strong>{t('Namespace')}</strong>
                   <div>
                     <ResourceIcon kind={NamespaceModel.kind} />
                     <span>{namespace}</span>
                   </div>
                 </div>
                 <div className="pf-v6-u-mb-md">
-                  <strong>{t('console-app~API version')}</strong>
+                  <strong>{t('API version')}</strong>
                   <p>{resource?.apiVersion}</p>
                 </div>
               </GridItem>
@@ -276,10 +274,10 @@ const RestorePVCModal: FC<RestorePVCModalProps> = ({ close, cancel, resource }) 
           isLoading={inProgress}
           isDisabled={!pvcSC || !validSize || inProgress}
         >
-          {t('console-app~Restore')}
+          {t('Restore')}
         </Button>
         <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
-          {t('console-app~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </>

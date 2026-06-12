@@ -22,7 +22,7 @@ import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 
 export const ResourceRequirements: FC<ResourceRequirementsProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const { cpu, memory, storage, onChangeCPU, onChangeMemory, onChangeStorage, path = '' } = props;
 
   return (
@@ -33,7 +33,7 @@ export const ResourceRequirements: FC<ResourceRequirementsProps> = (props) => {
           className="pf-v6-u-text-color-subtle"
           htmlFor={`${path}.cpu`}
         >
-          {t('olm~CPU cores')}
+          {t('CPU cores')}
         </label>
         <span className="pf-v6-c-form-control">
           <input
@@ -52,7 +52,7 @@ export const ResourceRequirements: FC<ResourceRequirementsProps> = (props) => {
           className="pf-v6-u-text-color-subtle"
           htmlFor={`${path}.memory`}
         >
-          {t('olm~Memory')}
+          {t('Memory')}
         </label>
         <span className="pf-v6-c-form-control">
           <input
@@ -71,7 +71,7 @@ export const ResourceRequirements: FC<ResourceRequirementsProps> = (props) => {
           className="pf-v6-u-text-color-subtle"
           htmlFor={`${path}.ephemeral-storage`}
         >
-          {t('olm~Storage')}
+          {t('Storage')}
         </label>
         <span className="pf-v6-c-form-control">
           <input
@@ -89,7 +89,7 @@ export const ResourceRequirements: FC<ResourceRequirementsProps> = (props) => {
 };
 
 export const ResourceRequirementsModal = (props: ResourceRequirementsModalProps) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
   const { obj, path, type, model, close, cancel } = props;
   const [cpu, setCPU] = useState<string>(_.get(obj.spec, `${path}.${type}.cpu`, ''));
@@ -142,7 +142,7 @@ export const ResourceRequirementsModal = (props: ResourceRequirementsModalProps)
           data-test="confirm-action"
           id="confirm-action"
         >
-          {t('public~Save')}
+          {t('Save')}
         </Button>
         <Button
           variant="link"
@@ -150,7 +150,7 @@ export const ResourceRequirementsModal = (props: ResourceRequirementsModalProps)
           isDisabled={inProgress}
           data-test-id="modal-cancel-action"
         >
-          {t('public~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </>
@@ -173,10 +173,10 @@ const ResourceRequirementsModalOverlay: OverlayComponent<ResourceRequirementsMod
 
 export const ResourceRequirementsModalLink: FC<ResourceRequirementsModalLinkProps> = (props) => {
   const { obj, type, path } = props;
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const launchModal = useOverlay();
   const [model, inFlight] = useK8sModel(referenceFor(obj));
-  const none = t('public~None');
+  const none = t('None');
   const { cpu, memory, 'ephemeral-storage': storage } = _.get(obj.spec, `${path}.${type}`, {});
 
   const onClick = () => {
@@ -184,11 +184,11 @@ export const ResourceRequirementsModalLink: FC<ResourceRequirementsModalLinkProp
       return;
     }
 
-    const description = t('olm~Define the resource {{type}} for this {{kind}} instance.', {
+    const description = t('Define the resource {{type}} for this {{kind}} instance.', {
       type,
       kind: obj.kind,
     });
-    const title = t('olm~{{kind}} Resource {{type}}', {
+    const title = t('{{kind}} Resource {{type}}', {
       kind: obj.kind,
       type: _.capitalize(type),
     });
@@ -214,7 +214,7 @@ export const ResourceRequirementsModalLink: FC<ResourceRequirementsModalLinkProp
       isDisabled={inFlight || !model}
       variant="link"
     >
-      {t('olm~CPU: {{cpu}}, Memory: {{memory}}, Storage: {{storage}}', {
+      {t('CPU: {{cpu}}, Memory: {{memory}}, Storage: {{storage}}', {
         cpu: cpu || none,
         memory: memory || none,
         storage: storage || none,

@@ -46,7 +46,7 @@ const splitEnv = (nameValue: string) => {
 };
 
 const SupportedPlatformsTable = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { submanifests, policy, heading } = props;
 
   if (!policy || submanifests.length === 0) {
@@ -62,9 +62,9 @@ const SupportedPlatformsTable = (props) => {
         <Table variant="compact" borders gridBreakPoint="">
           <Thead>
             <Tr>
-              <Th modifier="nowrap">{t('public~OS')}</Th>
-              <Th modifier="nowrap">{t('public~Architecture')}</Th>
-              <Th modifier="nowrap">{t('public~Identifier')}</Th>
+              <Th modifier="nowrap">{t('OS')}</Th>
+              <Th modifier="nowrap">{t('Architecture')}</Th>
+              <Th modifier="nowrap">{t('Identifier')}</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -108,30 +108,30 @@ const ImageStreamTagsDetails: FC<ImageStreamTagsDetailsProps> = ({
   const architecture = _.get(imageStreamTag, 'image.dockerImageMetadata.Architecture');
   const tagName = _.get(imageStreamTag, 'tag.name');
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   return (
     <PaneBody>
       <PaneBodyGroup>
         <Grid hasGutter>
           <GridItem md={6}>
-            <SectionHeading text={t('public~ImageStreamTag details')} />
+            <SectionHeading text={t('ImageStreamTag details')} />
             <ResourceSummary resource={imageStreamTag}>
               {labels.name && (
                 <DescriptionListGroup>
-                  <DescriptionListTerm>{t('public~Image name')}</DescriptionListTerm>
+                  <DescriptionListTerm>{t('Image name')}</DescriptionListTerm>
                   <DescriptionListDescription>{labels.name}</DescriptionListDescription>
                 </DescriptionListGroup>
               )}
               {labels.summary && (
                 <DescriptionListGroup>
-                  <DescriptionListTerm>{t('public~Summary')}</DescriptionListTerm>
+                  <DescriptionListTerm>{t('Summary')}</DescriptionListTerm>
                   <DescriptionListDescription>{labels.summary}</DescriptionListDescription>
                 </DescriptionListGroup>
               )}
               {humanizedSize && (
                 <DescriptionListGroup>
-                  <DescriptionListTerm>{t('public~Size')}</DescriptionListTerm>
+                  <DescriptionListTerm>{t('Size')}</DescriptionListTerm>
                   <DescriptionListDescription>{humanizedSize}</DescriptionListDescription>
                 </DescriptionListGroup>
               )}
@@ -139,11 +139,11 @@ const ImageStreamTagsDetails: FC<ImageStreamTagsDetailsProps> = ({
             <ExampleDockerCommandPopover imageStream={imageStream} tag={tagName} />
           </GridItem>
           <GridItem md={6}>
-            <SectionHeading text={t('public~Configuration')} />
+            <SectionHeading text={t('Configuration')} />
             <DescriptionList>
               {entrypoint && (
                 <DescriptionListGroup>
-                  <DescriptionListTerm>{t('public~Entrypoint')}</DescriptionListTerm>
+                  <DescriptionListTerm>{t('Entrypoint')}</DescriptionListTerm>
                   <DescriptionListDescription className="co-break-word">
                     {entrypoint}
                   </DescriptionListDescription>
@@ -151,7 +151,7 @@ const ImageStreamTagsDetails: FC<ImageStreamTagsDetailsProps> = ({
               )}
               {cmd && (
                 <DescriptionListGroup>
-                  <DescriptionListTerm>{t('public~Command')}</DescriptionListTerm>{' '}
+                  <DescriptionListTerm>{t('Command')}</DescriptionListTerm>{' '}
                   <DescriptionListDescription className="co-break-word">
                     {cmd}
                   </DescriptionListDescription>
@@ -159,7 +159,7 @@ const ImageStreamTagsDetails: FC<ImageStreamTagsDetailsProps> = ({
               )}
               {config.WorkingDir && (
                 <DescriptionListGroup>
-                  <DescriptionListTerm>{t('public~Working dir')}</DescriptionListTerm>{' '}
+                  <DescriptionListTerm>{t('Working dir')}</DescriptionListTerm>{' '}
                   <DescriptionListDescription className="co-break-all">
                     {config.WorkingDir}
                   </DescriptionListDescription>
@@ -167,7 +167,7 @@ const ImageStreamTagsDetails: FC<ImageStreamTagsDetailsProps> = ({
               )}
               {exposedPorts && (
                 <DescriptionListGroup>
-                  <DescriptionListTerm>{t('public~Exposed ports')}</DescriptionListTerm>
+                  <DescriptionListTerm>{t('Exposed ports')}</DescriptionListTerm>
                   <DescriptionListDescription className="co-break-word">
                     {exposedPorts}
                   </DescriptionListDescription>
@@ -175,13 +175,13 @@ const ImageStreamTagsDetails: FC<ImageStreamTagsDetailsProps> = ({
               )}
               {config.User && (
                 <DescriptionListGroup>
-                  <DescriptionListTerm>{t('public~User')}</DescriptionListTerm>ser &&{' '}
+                  <DescriptionListTerm>{t('User')}</DescriptionListTerm>ser &&{' '}
                   <DescriptionListDescription>{config.User}</DescriptionListDescription>
                 </DescriptionListGroup>
               )}
               {architecture && (
                 <DescriptionListGroup>
-                  <DescriptionListTerm>{t('public~Architecture')}</DescriptionListTerm>
+                  <DescriptionListTerm>{t('Architecture')}</DescriptionListTerm>
                   <DescriptionListDescription>{architecture}</DescriptionListDescription>
                 </DescriptionListGroup>
               )}
@@ -190,16 +190,16 @@ const ImageStreamTagsDetails: FC<ImageStreamTagsDetailsProps> = ({
         </Grid>
       </PaneBodyGroup>
       <PaneBodyGroup>
-        <SectionHeading text={t('public~Image labels')} />
+        <SectionHeading text={t('Image labels')} />
         {_.isEmpty(sortedLabels) ? (
-          <span className="pf-v6-u-text-color-subtle">{t('public~No labels')}</span>
+          <span className="pf-v6-u-text-color-subtle">{t('No labels')}</span>
         ) : (
           <div className="co-table-container">
             <Table variant="compact" borders gridBreakPoint="">
               <Thead>
                 <Tr>
-                  <Th>{t('public~Name')}</Th>
-                  <Th>{t('public~Value')}</Th>
+                  <Th>{t('Name')}</Th>
+                  <Th>{t('Value')}</Th>
                 </Tr>
               </Thead>
               <Tbody>
@@ -215,16 +215,16 @@ const ImageStreamTagsDetails: FC<ImageStreamTagsDetailsProps> = ({
         )}
       </PaneBodyGroup>
       <PaneBodyGroup>
-        <SectionHeading text={t('public~Environment variables')} />
+        <SectionHeading text={t('Environment variables')} />
         {_.isEmpty(config.Env) ? (
-          <span className="pf-v6-u-text-color-subtle">{t('public~No environment variables')}</span>
+          <span className="pf-v6-u-text-color-subtle">{t('No environment variables')}</span>
         ) : (
           <div className="co-table-container">
             <Table variant="compact" borders gridBreakPoint="">
               <Thead>
                 <Tr>
-                  <Th>{t('public~Name')}</Th>
-                  <Th>{t('public~Value')}</Th>
+                  <Th>{t('Name')}</Th>
+                  <Th>{t('Value')}</Th>
                 </Tr>
               </Thead>
               <Tbody>
@@ -245,7 +245,7 @@ const ImageStreamTagsDetails: FC<ImageStreamTagsDetailsProps> = ({
       <SupportedPlatformsTable
         submanifests={sortedSubmanifests}
         policy={importPolicyPreserveOriginal}
-        heading={t('public~Supported Platforms')}
+        heading={t('Supported Platforms')}
       />
     </PaneBody>
   );
@@ -283,7 +283,7 @@ const pages = [
   navFactory.history(ImageStreamTagHistory),
 ];
 export const ImageStreamTagsDetailsPage: FC<ImageStreamTagsDetailsPageProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const params = useParams();
   const location = useLocation();
   return (
@@ -293,7 +293,7 @@ export const ImageStreamTagsDetailsPage: FC<ImageStreamTagsDetailsPageProps> = (
         const { imageStreamName } = getImageStreamNameAndTag(obj);
         return [
           {
-            name: t('public~ImageStreams'),
+            name: t('ImageStreams'),
             path: getBreadcrumbPath(params, 'imagestreams'),
           },
           {
@@ -301,7 +301,7 @@ export const ImageStreamTagsDetailsPage: FC<ImageStreamTagsDetailsPageProps> = (
             path: resourcePath('ImageStream', imageStreamName, params.ns),
           },
           {
-            name: t('public~ImageStreamTag details'),
+            name: t('ImageStreamTag details'),
             path: location.pathname,
           },
         ];

@@ -100,13 +100,13 @@ const NamespaceSelector: FC<SpecCapabilityProps<{ matchNames: string[] }>> = ({
   fullPath,
   value,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   return (
     <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
       {value?.matchNames?.[0] ? (
         <ResourceLink kind="Namespace" name={value.matchNames[0]} title={value.matchNames[0]} />
       ) : (
-        <span className="pf-v6-u-text-color-subtle">{t('public~None')}</span>
+        <span className="pf-v6-u-text-color-subtle">{t('None')}</span>
       )}
     </DetailsItem>
   );
@@ -119,18 +119,18 @@ const ResourceRequirements: FC<SpecCapabilityProps> = ({
   obj,
   fullPath,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   return (
     <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
       <DescriptionList className="co-spec-descriptor--resource-requirements">
         <DescriptionListGroup>
-          <DescriptionListTerm>{t('olm~Resource limits')}</DescriptionListTerm>
+          <DescriptionListTerm>{t('Resource limits')}</DescriptionListTerm>
           <DescriptionListDescription>
             <ResourceRequirementsModalLink type="limits" obj={obj} path={descriptor.path} />
           </DescriptionListDescription>
         </DescriptionListGroup>
         <DescriptionListGroup>
-          <DescriptionListTerm>{t('olm~Resource requests')}</DescriptionListTerm>
+          <DescriptionListTerm>{t('Resource requests')}</DescriptionListTerm>
           <DescriptionListDescription>
             <ResourceRequirementsModalLink type="requests" obj={obj} path={descriptor.path} />
           </DescriptionListDescription>
@@ -166,7 +166,7 @@ const BooleanSwitch: FC<SpecCapabilityProps<boolean>> = ({
   fullPath,
   value,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const [checked, setChecked] = useState(Boolean(value));
   const [confirmed, setConfirmed] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
@@ -205,7 +205,7 @@ const BooleanSwitch: FC<SpecCapabilityProps<boolean>> = ({
             setConfirmed(false);
             setErrorMessage(null);
           }}
-          label={t('public~True')}
+          label={t('True')}
         />
         &nbsp;&nbsp;
         {checked !== Boolean(value) && confirmed && <LoadingInline />}
@@ -214,14 +214,14 @@ const BooleanSwitch: FC<SpecCapabilityProps<boolean>> = ({
             &nbsp;&nbsp;
             <Button className="pf-m-link--align-left" type="button" variant="link" onClick={update}>
               <YellowExclamationTriangleIcon className="co-icon-space-r" />
-              {t('olm~Confirm change')}
+              {t('Confirm change')}
             </Button>
           </>
         )}
       </div>
       {errorMessage && (
         <div className="cos-error-title co-break-word">
-          {errorMessage || t('olm~An error occurred')}
+          {errorMessage || t('An error occurred')}
         </div>
       )}
     </DetailsItem>
@@ -237,7 +237,7 @@ const CheckboxUIComponent: FC<SpecCapabilityProps<boolean>> = ({
   fullPath,
   value,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const [checked, setChecked] = useState(Boolean(value));
   const [confirmed, setConfirmed] = useState(false);
 
@@ -270,7 +270,7 @@ const CheckboxUIComponent: FC<SpecCapabilityProps<boolean>> = ({
             &nbsp;&nbsp;
             <Button className="pf-m-link--align-left" type="button" variant="link" onClick={update}>
               <YellowExclamationTriangleIcon className="co-icon-space-r" />
-              {t('olm~Confirm change')}
+              {t('Confirm change')}
             </Button>
           </>
         )}
@@ -289,7 +289,7 @@ const UpdateStrategy: FC<SpecCapabilityProps> = ({
   fullPath,
   value,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const launchUpdateStrategyModal = useConfigureUpdateStrategyModal({
     kindObj: model,
     resource: obj,
@@ -305,7 +305,7 @@ const UpdateStrategy: FC<SpecCapabilityProps> = ({
       onEdit={launchUpdateStrategyModal}
       path={fullPath}
     >
-      {value?.type ?? t('public~None')}
+      {value?.type ?? t('None')}
     </DetailsItem>
   );
 };

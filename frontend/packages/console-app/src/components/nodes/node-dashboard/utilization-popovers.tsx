@@ -46,11 +46,11 @@ export type PopoverProps = TopConsumerPopoverProps & {
 
 export const CPUPopover: FC<PopoverProps> = ({ current, position, title, ...rest }) => {
   const consumers = useConsumers(NodeQueries.PROJECTS_BY_CPU, NodeQueries.PODS_BY_CPU);
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   return (
     <ConsumerPopover
       current={current}
-      title={title || t('console-app~CPU')}
+      title={title || t('CPU')}
       consumers={consumers}
       humanize={humanizeCpuCores}
       position={position}
@@ -62,11 +62,11 @@ export const CPUPopover: FC<PopoverProps> = ({ current, position, title, ...rest
 
 export const MemoryPopover: FC<PopoverProps> = ({ current, position, title, ...rest }) => {
   const consumers = useConsumers(NodeQueries.PROJECTS_BY_MEMORY, NodeQueries.PODS_BY_MEMORY);
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   return (
     <ConsumerPopover
       current={current}
-      title={title || t('console-app~Memory')}
+      title={title || t('Memory')}
       consumers={consumers}
       humanize={humanizeBinaryBytes}
       position={position}
@@ -77,14 +77,14 @@ export const MemoryPopover: FC<PopoverProps> = ({ current, position, title, ...r
 };
 
 export const FilesystemPopover: FC<TopConsumerPopoverProps> = ({ current }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const consumers = useConsumers(
     NodeQueries.PROJECTS_BY_FILESYSTEM,
     NodeQueries.PODS_BY_FILESYSTEM,
   );
   return (
     <ConsumerPopover
-      title={t('console-app~Filesystem')}
+      title={t('Filesystem')}
       current={current}
       consumers={consumers}
       humanize={humanizeBinaryBytes}
@@ -93,14 +93,14 @@ export const FilesystemPopover: FC<TopConsumerPopoverProps> = ({ current }) => {
 };
 
 export const NetworkInPopover: FC<TopConsumerPopoverProps> = ({ current }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const consumers = useConsumers(
     NodeQueries.PROJECTS_BY_NETWORK_IN,
     NodeQueries.PODS_BY_NETWORK_IN,
   );
   return (
     <ConsumerPopover
-      title={t('console-app~Network in')}
+      title={t('Network in')}
       current={current}
       consumers={consumers}
       humanize={humanizeDecimalBytesPerSec}
@@ -109,14 +109,14 @@ export const NetworkInPopover: FC<TopConsumerPopoverProps> = ({ current }) => {
 };
 
 export const NetworkOutPopover: FC<TopConsumerPopoverProps> = ({ current }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const consumers = useConsumers(
     NodeQueries.PROJECTS_BY_NETWORK_OUT,
     NodeQueries.PODS_BY_NETWORK_OUT,
   );
   return (
     <ConsumerPopover
-      title={t('console-app~Network out')}
+      title={t('Network out')}
       current={current}
       consumers={consumers}
       humanize={humanizeDecimalBytesPerSec}

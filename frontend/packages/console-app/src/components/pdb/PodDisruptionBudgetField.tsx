@@ -11,7 +11,7 @@ import type { PodDisruptionBudgetKind } from './types';
 import { getPDBResource } from './utils/get-pdb-resources';
 
 export const PodDisruptionBudgetField: FC<PodDisruptionBudgetFieldProps> = ({ obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const [pdbResources] = useK8sWatchResource<PodDisruptionBudgetKind[]>({
     groupVersionKind: {
       group: PodDisruptionBudgetModel.apiGroup,
@@ -27,7 +27,7 @@ export const PodDisruptionBudgetField: FC<PodDisruptionBudgetFieldProps> = ({ ob
   const pdbDescription = getResourceDescription(PodDisruptionBudgetModel);
 
   return (
-    <DetailsItem label={t('console-app~PodDisruptionBudget')} description={pdbDescription}>
+    <DetailsItem label={t('PodDisruptionBudget')} description={pdbDescription}>
       {pdb ? (
         <>
           <ResourceLink
@@ -38,7 +38,7 @@ export const PodDisruptionBudgetField: FC<PodDisruptionBudgetFieldProps> = ({ ob
           {replicas && <AvailabilityRequirement pdb={pdb} replicas={replicas} />}
         </>
       ) : (
-        t('console-app~No PodDisruptionBudget')
+        t('No PodDisruptionBudget')
       )}
     </DetailsItem>
   );

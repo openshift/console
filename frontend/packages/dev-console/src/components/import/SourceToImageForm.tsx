@@ -28,7 +28,7 @@ export const SourceToImageForm: FC<
   dirty,
   projects,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const searchParams = new URLSearchParams(window.location.search);
   const imageStreamName = searchParams.get('imagestream');
   return (
@@ -52,9 +52,9 @@ export const SourceToImageForm: FC<
         handleReset={handleReset}
         errorMessage={status && status.submitError}
         isSubmitting={isSubmitting}
-        submitLabel={t('devconsole~Create')}
+        submitLabel={t('Create')}
         disableSubmit={!dirty || !_.isEmpty(errors) || isSubmitting}
-        resetLabel={t('devconsole~Cancel')}
+        resetLabel={t('Cancel')}
         sticky
       />
     </form>

@@ -23,7 +23,7 @@ const ResourceSidebarSample: FC<ResourceSidebarSampleProps> = ({
 }) => {
   const { highlightText, title, img, description, id, yaml, targetResource } = sample;
   const reference = referenceFor(targetResource);
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <ListItem data-test="resource-sidebar-item">
       <Title headingLevel="h3" className="pf-v6-u-mb-sm">
@@ -41,7 +41,7 @@ const ResourceSidebarSample: FC<ResourceSidebarSampleProps> = ({
             isInline
             onClick={() => loadSampleYaml(id, yaml, reference)}
           >
-            {t('public~Try it')}
+            {t('Try it')}
           </Button>
         </LevelItem>
         <LevelItem>
@@ -53,7 +53,7 @@ const ResourceSidebarSample: FC<ResourceSidebarSampleProps> = ({
             isInline
             onClick={() => downloadSampleYaml(id, yaml, reference)}
           >
-            {t('public~Download YAML')}
+            {t('Download YAML')}
           </Button>
         </LevelItem>
       </Level>
@@ -120,7 +120,7 @@ const ResourceSidebarSnippet: FC<ResourceSidebarSnippetProps> = ({
     }
   };
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   return (
     <ListItem data-test="resource-sidebar-item">
@@ -137,19 +137,19 @@ const ResourceSidebarSnippet: FC<ResourceSidebarSnippetProps> = ({
             isInline
             onClick={insertSnippet}
           >
-            {t('public~Insert snippet')}
+            {t('Insert snippet')}
           </Button>
         </LevelItem>
         <LevelItem>
           <Button type="button" variant="link" isInline onClick={toggleYamlPreview}>
             {yamlPreviewOpen ? (
               <>
-                {t('public~Hide YAML')}
+                {t('Hide YAML')}
                 <RhUiCaretDownIcon className="co-icon-space-l" />
               </>
             ) : (
               <>
-                {t('public~Show YAML')}
+                {t('Show YAML')}
                 <RhUiCaretRightIcon className="co-icon-space-l" />
               </>
             )}

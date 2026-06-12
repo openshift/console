@@ -5,7 +5,7 @@ import { MonitoringDashboardGraph } from '../dashboard/MonitoringDashboardGraph'
 import { topWorkloadMetricsQueries } from '../queries';
 
 const WorkloadGraphs = ({ resource }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const prometheusIsAvailable = usePrometheusGate();
   if (!prometheusIsAvailable) {
     return null;

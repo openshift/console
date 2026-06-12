@@ -15,12 +15,12 @@ const crdInstancesPath = (crd: CustomResourceDefinitionKind) =>
 
 const useViewInstancesCRDAction = (resource: CustomResourceDefinitionKind): Action[] => {
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const factory = useMemo(
     () => ({
       ViewInstances: (): Action => ({
         id: 'view-instances-crd',
-        label: t('console-app~View instances'),
+        label: t('View instances'),
         cta: () => navigate(crdInstancesPath(resource)),
       }),
     }),

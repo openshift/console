@@ -13,13 +13,13 @@ import { getHostNICs } from '../../selectors/baremetal-hosts';
 import type { BareMetalHostNIC, BareMetalHostKind } from '../../types/host';
 
 const NICsTableHeader = (t: TFunction) => () => [
-  { title: t('metal3-plugin~Name'), sortField: 'name', transforms: [sortable] },
-  { title: t('metal3-plugin~Model'), sortField: 'model', transforms: [sortable] },
-  { title: t('metal3-plugin~PXE'), sortField: 'pxe', transforms: [sortable] },
-  { title: t('metal3-plugin~IP'), sortField: 'ip', transforms: [sortable] },
-  { title: t('metal3-plugin~Speed'), sortField: 'speedGbps', transforms: [sortable] },
-  { title: t('metal3-plugin~MAC Address'), sortField: 'mac', transforms: [sortable] },
-  { title: t('metal3-plugin~VLAN ID'), sortField: 'vlanId', transforms: [sortable] },
+  { title: t('Name'), sortField: 'name', transforms: [sortable] },
+  { title: t('Model'), sortField: 'model', transforms: [sortable] },
+  { title: t('PXE'), sortField: 'pxe', transforms: [sortable] },
+  { title: t('IP'), sortField: 'ip', transforms: [sortable] },
+  { title: t('Speed'), sortField: 'speedGbps', transforms: [sortable] },
+  { title: t('MAC Address'), sortField: 'mac', transforms: [sortable] },
+  { title: t('VLAN ID'), sortField: 'vlanId', transforms: [sortable] },
 ];
 
 const getRowProps = (obj) => ({
@@ -50,22 +50,20 @@ type BareMetalHostNICsProps = {
 };
 
 const BareMetalHostNICs: FC<BareMetalHostNICsProps> = ({ obj: host, loadError, loaded }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('metal3-plugin');
   const nics = getHostNICs(host);
   return (
     <div className="co-m-list">
       <PaneBody>
         <Table
           data={nics}
-          aria-label={t('metal3-plugin~Bare Metal Host NICs')}
+          aria-label={t('Bare Metal Host NICs')}
           Header={NICsTableHeader(t)}
           Row={NICsTableRow}
           loaded={loaded}
           loadError={
             loadError ||
-            (loaded && !host
-              ? { message: t('metal3-plugin~Bare metal host is not available') }
-              : undefined)
+            (loaded && !host ? { message: t('Bare metal host is not available') } : undefined)
           }
           getRowProps={getRowProps}
         />

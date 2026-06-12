@@ -28,7 +28,7 @@ export const AddRequestHeaderPage = () => {
   const [emailHeaders, setEmailHeaders] = useState([]);
   const [caFileContent, setCaFileContent] = useState('');
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const thenPromise = (res) => {
     setInProgress(false);
@@ -37,7 +37,7 @@ export const AddRequestHeaderPage = () => {
   };
 
   const catchError = (error) => {
-    const err = error.message || t('public~An error occurred. Please try again.');
+    const err = error.message || t('An error occurred. Please try again.');
     setInProgress(false);
     setErrorMessage(err);
     return Promise.reject(err);
@@ -101,7 +101,7 @@ export const AddRequestHeaderPage = () => {
   const submit = (e) => {
     e.preventDefault();
     if (!caFileContent) {
-      setErrorMessage(t('public~You must specify a CA File.'));
+      setErrorMessage(t('You must specify a CA File.'));
       return;
     }
 
@@ -124,7 +124,7 @@ export const AddRequestHeaderPage = () => {
     });
   };
 
-  const title = t('public~Add Identity Provider: Request Header');
+  const title = t('Add Identity Provider: Request Header');
 
   return (
     <div className="co-m-pane__form">
@@ -132,7 +132,7 @@ export const AddRequestHeaderPage = () => {
       <PageHeading
         title={title}
         helpText={t(
-          'public~Use request header to identify users from request header values. It is typically used in combination with an authenticating proxy, which sets the request header value.',
+          'Use request header to identify users from request header values. It is typically used in combination with an authenticating proxy, which sets the request header value.',
         )}
       />
       <PaneBody>
@@ -140,15 +140,15 @@ export const AddRequestHeaderPage = () => {
           <IDPNameInput value={name} onChange={(e) => setName(e.currentTarget.value)} />
           <div className="co-form-section__separator" />
           <Title headingLevel="h3" className="pf-v6-u-mb-sm co-required">
-            {t('public~URLs')}
+            {t('URLs')}
           </Title>
-          <p className="co-m-pane__explanation">{t('public~At least one URL must be provided.')}</p>
+          <p className="co-m-pane__explanation">{t('At least one URL must be provided.')}</p>
           <div className="form-group">
-            <label htmlFor="challenge-url">{t('public~Challenge URL')}</label>
+            <label htmlFor="challenge-url">{t('Challenge URL')}</label>
             <span className="pf-v6-c-form-control">
               <input
                 type="url"
-                aria-label={t('public~Challenge URL')}
+                aria-label={t('Challenge URL')}
                 onChange={(e) => setChallengeURL(e.currentTarget.value)}
                 value={challengeURL}
                 id="challenge-url"
@@ -157,16 +157,16 @@ export const AddRequestHeaderPage = () => {
             </span>
             <div className="help-block" id="challenge-url-help">
               {t(
-                'public~The URL to redirect unauthenticated requests from OAuth clients which expect interactive logins.',
+                'The URL to redirect unauthenticated requests from OAuth clients which expect interactive logins.',
               )}
             </div>
           </div>
           <div className="form-group">
-            <label htmlFor="login-url">{t('public~Login URL')}</label>
+            <label htmlFor="login-url">{t('Login URL')}</label>
             <span className="pf-v6-c-form-control">
               <input
                 type="url"
-                aria-label={t('public~Login URL')}
+                aria-label={t('Login URL')}
                 onChange={(e) => setLoginURL(e.currentTarget.value)}
                 value={loginURL}
                 id="login-url"
@@ -175,13 +175,13 @@ export const AddRequestHeaderPage = () => {
             </span>
             <div className="help-block" id="login-url-help">
               {t(
-                'public~The URL to redirect unauthenticated requests from OAuth clients which expect WWW-Authenticate challenges.',
+                'The URL to redirect unauthenticated requests from OAuth clients which expect WWW-Authenticate challenges.',
               )}
             </div>
           </div>
           <div className="co-form-section__separator" />
           <Title headingLevel="h3" className="pf-v6-u-mb-sm">
-            {t('public~More options')}
+            {t('More options')}
           </Title>
           <IDPCAFileInput
             id="ca-file-input"
@@ -190,43 +190,43 @@ export const AddRequestHeaderPage = () => {
             isRequired
           />
           <ListInput
-            label={t('public~Client common names')}
+            label={t('Client common names')}
             id="request-header-client-common-names"
             onChange={(c: string[]) => setClientCommonNames(c)}
-            helpText={t('public~The set of common names to require a match from.')}
+            helpText={t('The set of common names to require a match from.')}
           />
           <ListInput
-            label={t('public~Headers')}
+            label={t('Headers')}
             id="request-header-headers"
             onChange={(c: string[]) => setHeaders(c)}
-            helpText={t('public~The set of headers to check for identity information.')}
+            helpText={t('The set of headers to check for identity information.')}
             required
           />
           <ListInput
-            label={t('public~Preferred username headers')}
+            label={t('Preferred username headers')}
             id="request-header-preferred-username-headers"
             onChange={(c: string[]) => setPreferredUsernameHeaders(c)}
-            helpText={t('public~The set of headers to check for the preferred username.')}
+            helpText={t('The set of headers to check for the preferred username.')}
           />
           <ListInput
-            label={t('public~Name headers')}
+            label={t('Name headers')}
             id="request-header-name-headers"
             onChange={(c: string[]) => setNameHeaders(c)}
-            helpText={t('public~The set of headers to check for the display name.')}
+            helpText={t('The set of headers to check for the display name.')}
           />
           <ListInput
-            label={t('public~Email headers')}
+            label={t('Email headers')}
             id="request-header-email-headers"
             onChange={(c: string[]) => setEmailHeaders(c)}
-            helpText={t('public~The set of headers to check for the email address.')}
+            helpText={t('The set of headers to check for the email address.')}
           />
           <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
             <ActionGroup className="pf-v6-c-form">
               <Button type="submit" variant="primary">
-                {t('public~Add')}
+                {t('Add')}
               </Button>
               <Button type="button" variant="secondary" onClick={() => navigate(-1)}>
-                {t('public~Cancel')}
+                {t('Cancel')}
               </Button>
             </ActionGroup>
           </ButtonBar>

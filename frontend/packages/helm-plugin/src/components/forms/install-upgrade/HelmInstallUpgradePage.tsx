@@ -53,7 +53,7 @@ const HelmInstallUpgradePage: FC = () => {
   const helmChartRepoName = searchParams.get('chartRepoName');
   const helmActionOrigin = searchParams.get('actionOrigin') as HelmActionOrigins;
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   const [chartData, setChartData] = useState<HelmChart>(null);
   const [chartName, setChartName] = useState<string>('');
   const [chartVersion, setChartVersion] = useState<string>('');
@@ -153,13 +153,13 @@ const HelmInstallUpgradePage: FC = () => {
           valuesObj = prunedFormData;
         } else {
           actions.setStatus({
-            submitError: t('helm-plugin~Errors in the form data.'),
+            submitError: t('Errors in the form data.'),
           });
           return Promise.resolve();
         }
       } catch (err) {
         actions.setStatus({
-          submitError: t('helm-plugin~Invalid Form Schema - {{errorText}}', {
+          submitError: t('Invalid Form Schema - {{errorText}}', {
             errorText: err.toString(),
           }),
         });
@@ -170,7 +170,7 @@ const HelmInstallUpgradePage: FC = () => {
         valuesObj = safeLoad(yamlData) as any;
       } catch (err) {
         actions.setStatus({
-          submitError: t('helm-plugin~Invalid YAML - {{errorText}}', { errorText: err.toString() }),
+          submitError: t('Invalid YAML - {{errorText}}', { errorText: err.toString() }),
         });
         return Promise.resolve();
       }
@@ -198,9 +198,7 @@ const HelmInstallUpgradePage: FC = () => {
         if (isGoingToTopology(resources)) {
           const secretId = res?.metadata?.uid;
           redirect = helmRelease?.info?.notes
-            ? `${config.redirectURL}?selectId=${secretId}&selectTab=${t(
-                'helm-plugin~Release notes',
-              )}`
+            ? `${config.redirectURL}?selectId=${secretId}&selectTab=${t('Release notes')}`
             : config.redirectURL;
         } else {
           redirect = `/helm-releases/ns/${namespace}/release/${releaseName}`;

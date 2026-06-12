@@ -31,13 +31,13 @@ const normalizeKamelets = (
       description: spec?.definition?.description || '',
       provider,
       creationTimestamp: creationTimestamp || undefined,
-      cta: { label: t('knative-plugin~Create Event Sink'), href },
+      cta: { label: t('Create Event Sink'), href },
       type: 'EventSink',
       icon: { url: typeof iconUrl === 'string' ? iconUrl : '' },
       details: {
         properties: [
           {
-            label: t('knative-plugin~Support'),
+            label: t('Support'),
             value: getEventSourceSupport(k),
           },
         ],
@@ -50,7 +50,7 @@ const normalizeKamelets = (
 const useKameletsSinkProvider: ExtensionHook<CatalogItem[]> = ({
   namespace,
 }): [CatalogItem[], boolean, any] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const canCreateKameletBinding = useAccessReview({
     group: CamelKameletBindingModel.apiGroup,
     resource: CamelKameletBindingModel.plural,

@@ -18,7 +18,7 @@ import CreateHelmChartRepository from './CreateHelmChartRepository';
 
 const CreateHelmChartRepositoryPage: FC = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   const params = useParams();
   const queryParams = useQueryParams();
   const [activePerspective] = useActivePerspective();
@@ -51,9 +51,7 @@ const CreateHelmChartRepositoryPage: FC = () => {
   const renderForm = () => (
     <>
       <DocumentTitle>
-        {isEditForm
-          ? t('helm-plugin~Edit Helm Chart Repository')
-          : t('helm-plugin~Create Helm Chart Repository')}
+        {isEditForm ? t('Edit Helm Chart Repository') : t('Create Helm Chart Repository')}
       </DocumentTitle>
       <CreateHelmChartRepository
         showScopeType={canCreateHCR && canCreatePHCR}

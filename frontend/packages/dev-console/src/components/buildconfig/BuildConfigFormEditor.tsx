@@ -19,7 +19,7 @@ type BuildConfigFormEditorProps = {
 };
 
 const Footer = ({ children }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   return (
     <Trans
       t={t}
@@ -31,7 +31,7 @@ const Footer = ({ children }) => {
 };
 
 const List: FC<BuildConfigFormEditorProps> = ({ namespace }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
 
   const [visibleItems, setVisibleItems] = useState<string[]>([]);
   const handleVisibleItemChange = (item: string) => {
@@ -44,16 +44,16 @@ const List: FC<BuildConfigFormEditorProps> = ({ namespace }) => {
       onVisibleItemChange={handleVisibleItemChange}
       Footer={Footer}
     >
-      <ProgressiveListItem name={t('devconsole~Triggers')}>
+      <ProgressiveListItem name={t('Triggers')}>
         <TriggersSection namespace={namespace} />
       </ProgressiveListItem>
-      <ProgressiveListItem name={t('devconsole~Secrets')}>
+      <ProgressiveListItem name={t('Secrets')}>
         <SecretsSection namespace={namespace} />
       </ProgressiveListItem>
-      <ProgressiveListItem name={t('devconsole~Run Policy')}>
+      <ProgressiveListItem name={t('Run Policy')}>
         <PolicySection />
       </ProgressiveListItem>
-      <ProgressiveListItem name={t('devconsole~Hooks')}>
+      <ProgressiveListItem name={t('Hooks')}>
         <HooksSection />
       </ProgressiveListItem>
     </ProgressiveList>
@@ -61,7 +61,7 @@ const List: FC<BuildConfigFormEditorProps> = ({ namespace }) => {
 };
 
 const BuildConfigFormEditor: FC<BuildConfigFormEditorProps> = ({ namespace }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const [showYAMLAlert, setShowYAMLAlert] = useState<boolean>(true);
 
   return (
@@ -73,11 +73,7 @@ const BuildConfigFormEditor: FC<BuildConfigFormEditorProps> = ({ namespace }) =>
       <ImagesSection />
       <EnvironmentVariablesSection namespace={namespace} />
 
-      <FormSection
-        title={t('devconsole~Advanced options')}
-        dataTest="section advanced-options"
-        fullWidth
-      >
+      <FormSection title={t('Advanced options')} dataTest="section advanced-options" fullWidth>
         <div>
           <List namespace={namespace} />
         </div>

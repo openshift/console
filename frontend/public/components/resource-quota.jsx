@@ -152,14 +152,14 @@ const appliedClusterResourceQuotaTableColumnInfo = [
 ];
 
 const QuotaStatus = ({ resourcesAtQuota }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return resourcesAtQuota > 0 ? (
     <>
       <YellowExclamationTriangleIcon />
-      {t('public~{{count}} resource reached quota', { count: resourcesAtQuota })}
+      {t('{{count}} resource reached quota', { count: resourcesAtQuota })}
     </>
   ) : (
-    t('public~none are at quota')
+    t('none are at quota')
   );
 };
 
@@ -215,26 +215,26 @@ export const QuotaScopesInline = ({ scopes }) => {
 };
 
 const QuotaScopesList = ({ scopes }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const quotaScopes = {
     Terminating: {
       description: t(
-        'public~Affects pods that have an active deadline. These pods usually include builds, deployers, and jobs.',
+        'Affects pods that have an active deadline. These pods usually include builds, deployers, and jobs.',
       ),
     },
     NotTerminating: {
       description: t(
-        'public~Affects pods that do not have an active deadline. These pods usually include your applications.',
+        'Affects pods that do not have an active deadline. These pods usually include your applications.',
       ),
     },
     BestEffort: {
       description: t(
-        'public~Affects pods that do not have resource limits set. These pods have a best effort quality of service.',
+        'Affects pods that do not have resource limits set. These pods have a best effort quality of service.',
       ),
     },
     NotBestEffort: {
       description: t(
-        'public~Affects pods that have at least one resource limit set. These pods do not have a best effort quality of service.',
+        'Affects pods that have at least one resource limit set. These pods do not have a best effort quality of service.',
       ),
     },
   };
@@ -254,7 +254,7 @@ const QuotaScopesList = ({ scopes }) => {
 };
 
 const Details = ({ obj: rq }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const params = useParams();
   const resourceTypes = getQuotaResourceTypes(rq);
   const scopes = rq.spec?.scopes ?? rq.spec?.quota?.scopes;
@@ -265,17 +265,17 @@ const Details = ({ obj: rq }) => {
   let charts;
   switch (reference) {
     case appliedClusterQuotaReference:
-      text = t('public~AppliedClusterResourceQuota details');
+      text = t('AppliedClusterResourceQuota details');
       charts = (
         <AppliedClusterResourceQuotaCharts appliedClusterResourceQuota={rq} namespace={namespace} />
       );
       break;
     case clusterQuotaReference:
-      text = t('public~ClusterResourceQuota details');
+      text = t('ClusterResourceQuota details');
       charts = <ClusterResourceQuotaCharts clusterResourceQuota={rq} />;
       break;
     default:
-      text = t('public~ResourceQuota details');
+      text = t('ResourceQuota details');
       charts = <ResourceQuotaCharts resourceQuota={rq} />;
   }
   const canListCRQ = useAccessReview({
@@ -293,16 +293,12 @@ const Details = ({ obj: rq }) => {
           <GridItem sm={6}>
             <ResourceSummary resource={rq}>
               {canListCRQ && (
-                <DetailsItem
-                  label={t('public~ClusterResourceQuota')}
-                  obj={rq}
-                  path="rq.metadata.name"
-                >
+                <DetailsItem label={t('ClusterResourceQuota')} obj={rq} path="rq.metadata.name">
                   <ResourceLink kind={clusterQuotaReference} name={rq.metadata.name} />
                 </DetailsItem>
               )}
               <DetailsItem
-                label={t('public~Label selector')}
+                label={t('Label selector')}
                 obj={rq}
                 path="spec.selector.labels.matchLabels"
               >
@@ -312,7 +308,7 @@ const Details = ({ obj: rq }) => {
                 />
               </DetailsItem>
               <DetailsItem
-                label={t('public~Project annotations')}
+                label={t('Project annotations')}
                 obj={rq}
                 path="spec.selector.annotations"
               >
@@ -324,7 +320,7 @@ const Details = ({ obj: rq }) => {
             <GridItem sm={6}>
               <DescriptionList>
                 <DescriptionListGroup>
-                  <DescriptionListTerm>{t('public~Scopes')}</DescriptionListTerm>
+                  <DescriptionListTerm>{t('Scopes')}</DescriptionListTerm>
                   <QuotaScopesList scopes={scopes} />
                 </DescriptionListGroup>
               </DescriptionList>
@@ -337,17 +333,17 @@ const Details = ({ obj: rq }) => {
           <FieldLevelHelp>
             <p>
               {t(
-                'public~Requests are the amount of resources you expect to use. These are used when establishing if the cluster can fulfill your Request.',
+                'Requests are the amount of resources you expect to use. These are used when establishing if the cluster can fulfill your Request.',
               )}
             </p>
             <p>
               {t(
-                'public~Limits are a maximum amount of a resource you can consume. Applications consuming more than the Limit may be terminated.',
+                'Limits are a maximum amount of a resource you can consume. Applications consuming more than the Limit may be terminated.',
               )}
             </p>
             <p>
               {t(
-                'public~A cluster administrator can establish limits on both the amount you can request and your limits with a ResourceQuota.',
+                'A cluster administrator can establish limits on both the amount you can request and your limits with a ResourceQuota.',
               )}
             </p>
           </FieldLevelHelp>
@@ -355,11 +351,11 @@ const Details = ({ obj: rq }) => {
         <PfTable gridBreakPoint="">
           <Thead>
             <Tr>
-              <Th>{t('public~Resource type')}</Th>
-              <Th visibility={['hidden', 'visibleOnMd']}>{t('public~Capacity')}</Th>
-              <Th>{t('public~Used')}</Th>
-              {isACRQ && <Th>{t('public~Total used')}</Th>}
-              <Th>{t('public~Max')}</Th>
+              <Th>{t('Resource type')}</Th>
+              <Th visibility={['hidden', 'visibleOnMd']}>{t('Capacity')}</Th>
+              <Th>{t('Used')}</Th>
+              {isACRQ && <Th>{t('Total used')}</Th>}
+              <Th>{t('Max')}</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -518,13 +514,13 @@ const getAppliedClusterResourceQuotaDataViewRows = (data, columns, namespace) =>
 };
 
 const useResourceQuotaColumns = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(ResourceQuotaModel);
 
   const columns = useMemo(
     () => [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: resourceQuotaTableColumnInfo[0].id,
         sort: 'metadata.name',
         resizableProps: getResizableProps(resourceQuotaTableColumnInfo[0].id),
@@ -534,7 +530,7 @@ const useResourceQuotaColumns = () => {
         },
       },
       {
-        title: t('public~Namespace'),
+        title: t('Namespace'),
         id: resourceQuotaTableColumnInfo[1].id,
         sort: 'metadata.namespace',
         resizableProps: getResizableProps(resourceQuotaTableColumnInfo[1].id),
@@ -543,7 +539,7 @@ const useResourceQuotaColumns = () => {
         },
       },
       {
-        title: t('public~Label selector'),
+        title: t('Label selector'),
         id: resourceQuotaTableColumnInfo[2].id,
         sort: 'spec.selector.labels.matchLabels',
         resizableProps: getResizableProps(resourceQuotaTableColumnInfo[2].id),
@@ -552,7 +548,7 @@ const useResourceQuotaColumns = () => {
         },
       },
       {
-        title: t('public~Project annotations'),
+        title: t('Project annotations'),
         id: resourceQuotaTableColumnInfo[3].id,
         sort: 'spec.selector.annotations',
         resizableProps: getResizableProps(resourceQuotaTableColumnInfo[3].id),
@@ -561,7 +557,7 @@ const useResourceQuotaColumns = () => {
         },
       },
       {
-        title: t('public~Status'),
+        title: t('Status'),
         id: resourceQuotaTableColumnInfo[4].id,
         resizableProps: getResizableProps(resourceQuotaTableColumnInfo[4].id),
         props: {
@@ -569,7 +565,7 @@ const useResourceQuotaColumns = () => {
         },
       },
       {
-        title: t('public~Created'),
+        title: t('Created'),
         id: resourceQuotaTableColumnInfo[5].id,
         sort: 'metadata.creationTimestamp',
         resizableProps: getResizableProps(resourceQuotaTableColumnInfo[5].id),
@@ -614,7 +610,7 @@ const ResourceQuotasList = (props) => {
 };
 
 const useAppliedClusterResourceQuotaColumns = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
     AppliedClusterResourceQuotaModel,
   );
@@ -622,7 +618,7 @@ const useAppliedClusterResourceQuotaColumns = () => {
   const columns = useMemo(
     () => [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: appliedClusterResourceQuotaTableColumnInfo[0].id,
         sort: 'metadata.name',
         resizableProps: getResizableProps(appliedClusterResourceQuotaTableColumnInfo[0].id),
@@ -632,7 +628,7 @@ const useAppliedClusterResourceQuotaColumns = () => {
         },
       },
       {
-        title: t('public~Label selector'),
+        title: t('Label selector'),
         id: appliedClusterResourceQuotaTableColumnInfo[1].id,
         sort: 'spec.selector.labels.matchLabels',
         resizableProps: getResizableProps(appliedClusterResourceQuotaTableColumnInfo[1].id),
@@ -641,7 +637,7 @@ const useAppliedClusterResourceQuotaColumns = () => {
         },
       },
       {
-        title: t('public~Project annotations'),
+        title: t('Project annotations'),
         id: appliedClusterResourceQuotaTableColumnInfo[2].id,
         sort: 'spec.selector.annotations',
         resizableProps: getResizableProps(appliedClusterResourceQuotaTableColumnInfo[2].id),
@@ -650,7 +646,7 @@ const useAppliedClusterResourceQuotaColumns = () => {
         },
       },
       {
-        title: t('public~Status'),
+        title: t('Status'),
         id: appliedClusterResourceQuotaTableColumnInfo[3].id,
         resizableProps: getResizableProps(appliedClusterResourceQuotaTableColumnInfo[3].id),
         props: {
@@ -658,7 +654,7 @@ const useAppliedClusterResourceQuotaColumns = () => {
         },
       },
       {
-        title: t('public~Created'),
+        title: t('Created'),
         id: appliedClusterResourceQuotaTableColumnInfo[4].id,
         sort: 'metadata.creationTimestamp',
         resizableProps: getResizableProps(appliedClusterResourceQuotaTableColumnInfo[4].id),
@@ -708,7 +704,7 @@ const flatten = (resources) => _.flatMap(resources, (resource) => _.compact(reso
 
 export const ResourceQuotasPage = connectToFlags(FLAGS.OPENSHIFT)(
   ({ namespace, flags, mock, showTitle }) => {
-    const { t } = useTranslation();
+    const { t } = useTranslation('public');
     const isKubevirtPluginActive = useIsKubevirtPluginActive();
     const quotasFeature = useFlag('KUBEVIRT_QUOTAS');
 
@@ -736,19 +732,19 @@ export const ResourceQuotasPage = connectToFlags(FLAGS.OPENSHIFT)(
 
       rowFilters = [
         {
-          filterGroupName: t('public~Role'),
+          filterGroupName: t('Role'),
           type: 'role-kind',
           reducer: quotaType,
           items: [
             {
               id: 'cluster',
-              title: t('public~Cluster-wide {{resource}}', {
+              title: t('Cluster-wide {{resource}}', {
                 resource: t(ResourceQuotaModel.labelPluralKey),
               }),
             },
             {
               id: 'namespace',
-              title: t('public~Namespace {{resource}}', {
+              title: t('Namespace {{resource}}', {
                 resource: t(ResourceQuotaModel.labelPluralKey),
               }),
             },
@@ -765,7 +761,7 @@ export const ResourceQuotasPage = connectToFlags(FLAGS.OPENSHIFT)(
       <MultiListPage
         canCreate={true}
         createAccessReview={accessReview}
-        createButtonText={t('public~Create ResourceQuota')}
+        createButtonText={t('Create ResourceQuota')}
         createProps={{ to: `/k8s/ns/${createNS}/resourcequotas/~new` }}
         ListComponent={ResourceQuotasList}
         resources={resources}
@@ -776,7 +772,7 @@ export const ResourceQuotasPage = connectToFlags(FLAGS.OPENSHIFT)(
         helpText={
           <div className="pf-v6-u-text-color-subtle pf-v6-u-mt-sm">
             {t(
-              'public~Manage project capacity by limiting the number of objects and total compute resources available.',
+              'Manage project capacity by limiting the number of objects and total compute resources available.',
             )}
             {isKubevirtPluginActive && (
               <Trans t={t} ns="public">
@@ -808,7 +804,7 @@ export const ResourceQuotasPage = connectToFlags(FLAGS.OPENSHIFT)(
 );
 
 export const AppliedClusterResourceQuotasPage = ({ namespace, mock, showTitle }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const resources = [
     {
       kind: referenceForModel(AppliedClusterResourceQuotaModel),

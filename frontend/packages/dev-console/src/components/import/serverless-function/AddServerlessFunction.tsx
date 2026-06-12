@@ -45,7 +45,7 @@ type AddServerlessFunctionProps = {
 const AddServerlessFunction: FC<AddServerlessFunctionProps> = ({ namespace, forApplication }) => {
   const navigate = useNavigate();
   const handleCancel = useCallback(() => navigate(-1), [navigate]);
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const postFormCallback = useResourceConnectionHandler();
   const [perspective] = useActivePerspective();
   const perspectiveExtensions = usePerspectives();

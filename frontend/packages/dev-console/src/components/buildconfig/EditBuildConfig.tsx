@@ -29,7 +29,7 @@ const EditBuildConfig: FC<EditBuildConfigProps> = ({
   name,
   buildConfig: watchedBuildConfig,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const navigate = useNavigate();
 
   const [initialValues] = useState<BuildConfigFormikValues>(() => {
@@ -54,7 +54,7 @@ const EditBuildConfig: FC<EditBuildConfigProps> = ({
     } catch (err) {
       helpers.setStatus({
         submitSuccess: '',
-        submitError: t('devconsole~Invalid YAML - {{err}}', { err }),
+        submitError: t('Invalid YAML - {{err}}', { err }),
       });
       return;
     }

@@ -7,10 +7,10 @@ import { ActivityProgress } from '@console/shared/src/components/dashboard/activ
 import { getNodeMaintenanceProgressPercent } from '../../selectors/node-maintenance';
 
 const MaintenanceActivity: FC<MaintenanceActivityProps> = ({ resource }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('metal3-plugin');
   return (
     <ActivityProgress
-      title={t('metal3-plugin~Starting maintenance')}
+      title={t('Starting maintenance')}
       progress={getNodeMaintenanceProgressPercent(resource)}
     >
       <ResourceLink kind={NodeModel.kind} name={resource.spec.nodeName} />

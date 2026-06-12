@@ -27,7 +27,7 @@ import useClusterConfigurationItems from './useClusterConfigurationItems';
 import './ClusterConfigurationPage.scss';
 
 const ClusterConfigurationPage: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const params = useParams();
   const navigate = useNavigate();
 
@@ -100,11 +100,11 @@ const ClusterConfigurationPage: FC = () => {
 
   return (
     <div className="co-cluster-configuration-page">
-      <DocumentTitle>{t('console-app~Cluster configuration')}</DocumentTitle>
+      <DocumentTitle>{t('Cluster configuration')}</DocumentTitle>
       <PageHeading
-        title={t('console-app~Cluster configuration')}
+        title={t('Cluster configuration')}
         helpText={t(
-          'console-app~Set cluster-wide configuration for the console experience. Your changes will be autosaved and will affect after a refresh.',
+          'Set cluster-wide configuration for the console experience. Your changes will be autosaved and will affect after a refresh.',
         )}
       />
       <PageSection>
@@ -114,12 +114,10 @@ const ClusterConfigurationPage: FC = () => {
           <EmptyState
             headingLevel="h1"
             icon={RhStandardPadlockLockedIcon}
-            titleText={<>{t('console-app~Insufficient permissions')}</>}
+            titleText={<>{t('Insufficient permissions')}</>}
           >
             <EmptyStateBody>
-              {t(
-                'console-app~You do not have sufficient permissions to read any cluster configuration.',
-              )}
+              {t('You do not have sufficient permissions to read any cluster configuration.')}
             </EmptyStateBody>
           </EmptyState>
         ) : (
@@ -145,7 +143,7 @@ const ClusterConfigurationPage: FC = () => {
                 <Status
                   status={IconStatus.warning}
                   icon={<RhUiWarningFillIcon />}
-                  label={t('console-app~{{section}} not found', { section: activeTabId })}
+                  label={t('{{section}} not found', { section: activeTabId })}
                 />
               </section>
             ) : null}

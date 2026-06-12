@@ -36,7 +36,7 @@ export const PubSubResourceOverviewList: FC<PubSubResourceOverviewListProps> = (
   items,
   title,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   return (
     <>
       <SidebarSectionHeading text={title} />
@@ -54,7 +54,7 @@ export const PubSubResourceOverviewList: FC<PubSubResourceOverviewListProps> = (
         </List>
       ) : (
         <span className="pf-v6-u-text-color-subtle">
-          {t('knative-plugin~No {{title}} found for this resource.', { title })}
+          {t('No {{title}} found for this resource.', { title })}
         </span>
       )}
     </>
@@ -62,7 +62,7 @@ export const PubSubResourceOverviewList: FC<PubSubResourceOverviewListProps> = (
 };
 
 const EventPubSubResources: FC<EventPubSubResourcesProps> = ({ item }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const {
     obj,
     subscriberRes = [],
@@ -79,54 +79,36 @@ const EventPubSubResources: FC<EventPubSubResourcesProps> = ({ item }) => {
     case EventingTriggerModel.kind:
       return (
         <>
-          <PubSubResourceOverviewList
-            items={eventSources}
-            title={t('knative-plugin~Event Sources')}
-          />
-          <PubSubResourceOverviewList items={brokers} title={t('knative-plugin~Broker')} />
-          <PubSubResourceOverviewList
-            items={subscriberRes}
-            title={t('knative-plugin~Subscriber')}
-          />
+          <PubSubResourceOverviewList items={eventSources} title={t('Event Sources')} />
+          <PubSubResourceOverviewList items={brokers} title={t('Broker')} />
+          <PubSubResourceOverviewList items={subscriberRes} title={t('Subscriber')} />
           <EventTriggerFilterList filters={filters} />
         </>
       );
     case EventingSubscriptionModel.kind:
       return (
         <>
-          <PubSubResourceOverviewList
-            items={eventSources}
-            title={t('knative-plugin~Event Sources')}
-          />
-          <PubSubResourceOverviewList items={channels} title={t('knative-plugin~Channel')} />
-          <PubSubResourceOverviewList
-            items={subscriberRes}
-            title={t('knative-plugin~Subscriber')}
-          />
+          <PubSubResourceOverviewList items={eventSources} title={t('Event Sources')} />
+          <PubSubResourceOverviewList items={channels} title={t('Channel')} />
+          <PubSubResourceOverviewList items={subscriberRes} title={t('Subscriber')} />
         </>
       );
     case EventingBrokerModel.kind:
       return (
         <>
-          <PubSubResourceOverviewList
-            items={eventSources}
-            title={t('knative-plugin~Event Sources')}
-          />
+          <PubSubResourceOverviewList items={eventSources} title={t('Event Sources')} />
           <PubSubSubscribers subscribers={subscribers} />
-          <PubSubResourceOverviewList items={pods} title={t('knative-plugin~Pods')} />
-          <PubSubResourceOverviewList items={deployments} title={t('knative-plugin~Deployments')} />
+          <PubSubResourceOverviewList items={pods} title={t('Pods')} />
+          <PubSubResourceOverviewList items={deployments} title={t('Deployments')} />
         </>
       );
     default:
       return (
         <>
-          <PubSubResourceOverviewList
-            items={eventSources}
-            title={t('knative-plugin~Event Sources')}
-          />
+          <PubSubResourceOverviewList items={eventSources} title={t('Event Sources')} />
           <PubSubSubscribers subscribers={subscribers} />
           {channels?.length > 0 && (
-            <PubSubResourceOverviewList items={channels} title={t('knative-plugin~Channel')} />
+            <PubSubResourceOverviewList items={channels} title={t('Channel')} />
           )}
         </>
       );

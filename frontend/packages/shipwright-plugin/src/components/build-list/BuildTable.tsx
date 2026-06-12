@@ -46,35 +46,35 @@ const BuildHeader = () => {
     },
     {
       id: 'namespace',
-      title: t('shipwright-plugin~Namespace'),
+      title: t('Namespace'),
       sortField: 'metadata.namespace',
       transforms: [sortable],
       props: { className: columnClassNames[1] },
     },
     {
-      title: t('shipwright-plugin~Output'),
+      title: t('Output'),
       props: { className: columnClassNames[2] },
     },
     {
-      title: t('shipwright-plugin~Last run'),
+      title: t('Last run'),
       transforms: [sortable],
       sortField: 'latestBuild.metadata.name',
       props: { className: columnClassNames[3] },
     },
     {
-      title: t('shipwright-plugin~Last run status'),
+      title: t('Last run status'),
       transforms: [sortable],
       sortFunc: 'latestBuildStatus',
       props: { className: columnClassNames[4] },
     },
     {
-      title: t('shipwright-plugin~Last run time'),
+      title: t('Last run time'),
       transforms: [sortable],
       sortField: 'latestBuild.status.completionTime',
       props: { className: columnClassNames[5] },
     },
     {
-      title: t('shipwright-plugin~Last run duration'),
+      title: t('Last run duration'),
       transforms: [sortable],
       sortFunc: 'latestRunDuration',
       props: { className: columnClassNames[6] },
@@ -152,7 +152,7 @@ type BuildTableProps = TableProps & {
 };
 
 export const BuildTable: FC<BuildTableProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('shipwright-plugin');
   const buildRunModel = useFlag('SHIPWRIGHT_BUILDRUN')
     ? referenceForModel(BuildRunModel)
     : referenceForModel(BuildRunModelV1Alpha1);
@@ -192,7 +192,7 @@ export const BuildTable: FC<BuildTableProps> = (props) => {
     <Table
       {...props}
       data={buildResource}
-      aria-label={t('shipwright-plugin~Builds')}
+      aria-label={t('Builds')}
       Header={BuildHeader}
       Row={BuildRow}
       defaultSortField="metadata.name"

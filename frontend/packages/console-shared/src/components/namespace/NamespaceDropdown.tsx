@@ -39,21 +39,15 @@ export const NoResults: FC<{
   isProjects: boolean;
   onClear: (event: ReactMouseEvent<HTMLButtonElement, MouseEvent>) => void;
 }> = ({ isProjects, onClear }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   return (
     <>
       <Divider />
       <EmptyState
         headingLevel="h4"
-        titleText={
-          <>
-            {isProjects
-              ? t('console-shared~No projects found')
-              : t('console-shared~No namespaces found')}
-          </>
-        }
+        titleText={<>{isProjects ? t('No projects found') : t('No namespaces found')}</>}
       >
-        <EmptyStateBody>{t('console-shared~No results match the filter criteria.')}</EmptyStateBody>
+        <EmptyStateBody>{t('No results match the filter criteria.')}</EmptyStateBody>
         <EmptyStateFooter>
           <EmptyStateActions>
             <Button
@@ -61,7 +55,7 @@ export const NoResults: FC<{
               onClick={onClear}
               className="co-namespace-selector__clear-filters"
             >
-              {t('console-shared~Clear filters')}
+              {t('Clear filters')}
             </Button>
           </EmptyStateActions>
         </EmptyStateFooter>
@@ -78,7 +72,7 @@ export const Filter: FC<{
   filterText: string;
   isProject: boolean;
 }> = ({ filterText, filterRef, onFilterChange, isProject }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   return (
     <MenuSearch>
       <MenuSearchInput>
@@ -86,17 +80,9 @@ export const Filter: FC<{
           data-test="dropdown-text-filter"
           autoFocus
           value={filterText}
-          aria-label={
-            isProject
-              ? t('console-shared~Select project...')
-              : t('console-shared~Select namespace...')
-          }
+          aria-label={isProject ? t('Select project...') : t('Select namespace...')}
           type="search"
-          placeholder={
-            isProject
-              ? t('console-shared~Select project...')
-              : t('console-shared~Select namespace...')
-          }
+          placeholder={isProject ? t('Select project...') : t('Select namespace...')}
           onChange={(_, value: string) => onFilterChange(value)}
           ref={filterRef}
         />
@@ -113,7 +99,7 @@ const SystemSwitch: FC<{
   isChecked: boolean;
   onChange: (isChecked: boolean) => void;
 }> = ({ hasSystemNamespaces, isProject, isChecked, onChange }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   return hasSystemNamespaces ? (
     <>
       <Divider />
@@ -122,11 +108,7 @@ const SystemSwitch: FC<{
           <Switch
             data-test="showSystemSwitch"
             data-checked-state={isChecked}
-            label={
-              isProject
-                ? t('console-shared~Show default projects')
-                : t('console-shared~Show default namespaces')
-            }
+            label={isProject ? t('Show default projects') : t('Show default namespaces')}
             isChecked={isChecked}
             onChange={(_, value) => onChange(value)}
             className="pf-v6-c-select__menu-item pf-m-action"
@@ -148,10 +130,10 @@ export const NamespaceGroup: FC<{
   favorites?: { [key: string]: boolean }[];
   canFavorite?: boolean;
 }> = ({ isProjects, isFavorites, options, selectedKey, favorites, canFavorite = true }) => {
-  const { t } = useTranslation();
-  let label = isProjects ? t('console-shared~Projects') : t('console-shared~Namespaces');
+  const { t } = useTranslation('console-shared');
+  let label = isProjects ? t('Projects') : t('Namespaces');
   if (isFavorites) {
-    label = t('console-shared~Favorites');
+    label = t('Favorites');
   }
 
   return options.length === 0 ? null : (
@@ -186,7 +168,7 @@ export const Footer: FC<{
   setOpen: (isOpen: boolean) => void;
   onCreateNew: () => void;
 }> = ({ canCreateNew, isProject, setOpen, onCreateNew }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   return (
     <>
       {canCreateNew ? (
@@ -200,9 +182,7 @@ export const Footer: FC<{
               }}
               data-test-dropdown-menu="#CREATE_RESOURCE_ACTION#"
             >
-              {isProject
-                ? t('console-shared~Create Project')
-                : t('console-shared~Create Namespace')}
+              {isProject ? t('Create Project') : t('Create Namespace')}
             </Button>
           }
         </MenuFooter>
@@ -388,12 +368,10 @@ export const NamespaceDropdown: FC<NamespaceDropdownProps> = ({
   onCreateNew,
   shortCut,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const menuRef = useRef(null);
   const [isOpen, setOpen] = useState(false);
-  const allNamespacesTitle = isProjects
-    ? t('console-shared~All Projects')
-    : t('console-shared~All Namespaces');
+  const allNamespacesTitle = isProjects ? t('All Projects') : t('All Namespaces');
 
   const title = selected === ALL_NAMESPACES_KEY ? allNamespacesTitle : selected;
 
@@ -415,9 +393,7 @@ export const NamespaceDropdown: FC<NamespaceDropdownProps> = ({
         menu={<NamespaceMenu {...menuProps} />}
         menuRef={menuRef}
         isOpen={isOpen}
-        title={`${
-          isProjects ? t('console-shared~Project') : t('console-shared~Namespace')
-        }: ${title}`}
+        title={`${isProjects ? t('Project') : t('Namespace')}: ${title}`}
         onToggle={(menuState) => {
           setOpen(menuState);
         }}

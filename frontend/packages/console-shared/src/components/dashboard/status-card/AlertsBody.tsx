@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import type { AlertsBodyProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 
 const AlertsBody: FC<AlertsBodyProps> = ({ error = false, children }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   return (
     (error || !!Children.toArray(children).length) && (
       <div className="co-status-card__alerts-body">
@@ -16,7 +16,7 @@ const AlertsBody: FC<AlertsBodyProps> = ({ error = false, children }) => {
             variant={EmptyStateVariant.full}
             className="co-status-card__alerts-msg"
           >
-            <EmptyStateBody>{t('console-shared~Alerts could not be loaded.')}</EmptyStateBody>
+            <EmptyStateBody>{t('Alerts could not be loaded.')}</EmptyStateBody>
           </EmptyState>
         ) : (
           children

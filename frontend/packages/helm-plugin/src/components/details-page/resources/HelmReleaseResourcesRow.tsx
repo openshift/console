@@ -17,12 +17,12 @@ type HelmReleaseResourceStatusProps = {
 };
 
 export const HelmReleaseResourceStatus: FC<HelmReleaseResourceStatusProps> = ({ resource }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   const kind = referenceFor(resource);
   return resource.status?.replicas ? (
     <Link
       to={`${resourcePath(kind, resource.metadata.name, resource.metadata.namespace)}/pods`}
-      title={t('helm-plugin~Pods')}
+      title={t('Pods')}
     >
       {resource.status.replicas || 0} of {resource.spec.replicas} pods
     </Link>

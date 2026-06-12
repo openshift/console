@@ -13,7 +13,7 @@ type KSRoutesOverviewListItemProps = {
 };
 
 const KSRoutesOverviewListItem: FC<KSRoutesOverviewListItemProps> = ({ ksroute }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const {
     metadata: { name, namespace },
     status,
@@ -29,7 +29,7 @@ const KSRoutesOverviewListItem: FC<KSRoutesOverviewListItemProps> = ({ ksroute }
           <ResourceLink kind={referenceForModel(RouteModel)} name={name} namespace={namespace} />
           {status?.url?.length > 0 && (
             <>
-              <span className="pf-v6-u-text-color-subtle">{t('knative-plugin~Location:')} </span>
+              <span className="pf-v6-u-text-color-subtle">{t('Location:')} </span>
               {isPrivateKSVC ? (
                 <ClipboardCopy isReadOnly hoverTip="Copy" clickTip="Copied">
                   {status.url}

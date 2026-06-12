@@ -39,7 +39,7 @@ const DeleteModal = (props: DeleteModalProps) => {
   const [owner, setOwner] = useState<OwnerReference>(undefined);
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const submit = useCallback(
     (event) => {
@@ -97,7 +97,7 @@ const DeleteModal = (props: DeleteModalProps) => {
         title={
           <>
             <YellowExclamationTriangleIcon className="co-icon-space-r" />{' '}
-            {t('public~Delete {{kind}}?', {
+            {t('Delete {{kind}}?', {
               kind: kind ? (kind.labelKey ? t(kind.labelKey) : kind.label) : '',
             })}
           </>
@@ -127,7 +127,7 @@ const DeleteModal = (props: DeleteModalProps) => {
             )}
             {_.has(kind, 'propagationPolicy') && (
               <Checkbox
-                label={t('public~Delete dependent objects of this resource')}
+                label={t('Delete dependent objects of this resource')}
                 onChange={(_event, checked) => setIsChecked(checked)}
                 isChecked={isChecked}
                 name="deleteDependentObjects"
@@ -136,7 +136,7 @@ const DeleteModal = (props: DeleteModalProps) => {
             )}
             {props.deleteAllResources && (
               <Checkbox
-                label={t('public~Delete other resources created by console')}
+                label={t('Delete other resources created by console')}
                 onChange={(_event, checked) => setIsDeleteOtherResourcesChecked(checked)}
                 isChecked={isDeleteOtherResourcesChecked}
                 name="deleteOtherResources"
@@ -148,7 +148,7 @@ const DeleteModal = (props: DeleteModalProps) => {
                 className="co-alert co-alert--margin-top"
                 isInline
                 variant="warning"
-                title={t('public~Managed resource')}
+                title={t('Managed resource')}
               >
                 <Trans t={t} ns="public">
                   This resource is managed by{' '}
@@ -179,10 +179,10 @@ const DeleteModal = (props: DeleteModalProps) => {
           data-test="confirm-action"
           id="confirm-action"
         >
-          {props.btnText || t('public~Delete')}
+          {props.btnText || t('Delete')}
         </Button>
         <Button variant="link" onClick={props.cancel} data-test-id="modal-cancel-action">
-          {t('public~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </>

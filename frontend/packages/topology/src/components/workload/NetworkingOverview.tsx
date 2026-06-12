@@ -10,17 +10,17 @@ import { useServicesWatcher } from '@console/shared/src/hooks/useServicesWatcher
 
 const ServicePortList: FC<ServicePortListProps> = ({ service }) => {
   const ports = service.spec?.ports ?? [];
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   return (
     <ul className="port-list">
       {ports.map(({ name, port, protocol, targetPort }) => (
         <li key={name || `${protocol}/${port}`}>
-          <span className="pf-v6-u-text-color-subtle">{t('topology~Service port:')}</span>{' '}
+          <span className="pf-v6-u-text-color-subtle">{t('Service port:')}</span>{' '}
           {name || `${protocol}/${port}`}
           &nbsp;
           <RhUiLongArrowRightIcon />
           &nbsp;
-          <span className="pf-v6-u-text-color-subtle">{t('topology~Pod port:')}</span> {targetPort}
+          <span className="pf-v6-u-text-color-subtle">{t('Pod port:')}</span> {targetPort}
         </li>
       ))}
     </ul>
@@ -47,11 +47,11 @@ const ServicesOverviewList: FC<ServiceOverviewListProps> = ({ services }) => (
 
 const RoutesOverviewListItem: FC<RoutesOverviewListItemProps> = ({ route }) => {
   const { name, namespace } = route.metadata;
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   return (
     <ListItem>
       <ResourceLink kind="Route" name={name} namespace={namespace} />
-      <span className="pf-v6-u-text-color-subtle">{t('topology~Location:')}</span>
+      <span className="pf-v6-u-text-color-subtle">{t('Location:')}</span>
       <RouteLocation obj={route} />
     </ListItem>
   );
@@ -66,7 +66,7 @@ const RoutesOverviewList: FC<RoutesOverviewListProps> = ({ routes }) => (
 );
 
 export const NetworkingOverview: FC<NetworkingOverviewProps> = ({ obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   const serviceResources = useServicesWatcher(obj);
   const services =
     serviceResources.loaded && !serviceResources.loadError ? serviceResources.services : [];
@@ -74,20 +74,18 @@ export const NetworkingOverview: FC<NetworkingOverviewProps> = ({ obj }) => {
   const routes = routeResources.loaded && !routeResources.loadError ? routeResources.routes : [];
   return (
     <>
-      <SidebarSectionHeading text={t('topology~Services')} />
+      <SidebarSectionHeading text={t('Services')} />
       {!(services?.length > 0) ? (
         <span className="pf-v6-u-text-color-subtle">
-          {t('topology~No Services found for this resource.')}
+          {t('No Services found for this resource.')}
         </span>
       ) : (
         <ServicesOverviewList services={services} />
       )}
 
-      <SidebarSectionHeading text={t('topology~Routes')} />
+      <SidebarSectionHeading text={t('Routes')} />
       {!(routes?.length > 0) ? (
-        <span className="pf-v6-u-text-color-subtle">
-          {t('topology~No Routes found for this resource.')}
-        </span>
+        <span className="pf-v6-u-text-color-subtle">{t('No Routes found for this resource.')}</span>
       ) : (
         <RoutesOverviewList routes={routes} />
       )}

@@ -17,7 +17,7 @@ import './VSphereStatus.css';
 // https://access.redhat.com/solutions/6677901
 
 const VSphereStatus: FC<PrometheusHealthPopupProps> = ({ hide, responses, k8sResult }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('vsphere-plugin');
   const health = getVSphereHealth(t, responses, k8sResult);
 
   if (
@@ -37,7 +37,7 @@ const VSphereStatus: FC<PrometheusHealthPopupProps> = ({ hide, responses, k8sRes
   if (health.state === HealthState.LOADING) {
     return (
       <Stack hasGutter>
-        <StackItem>{t('vsphere-plugin~Loading vSphere connection status')}</StackItem>
+        <StackItem>{t('Loading vSphere connection status')}</StackItem>
       </Stack>
     );
   }
@@ -45,7 +45,7 @@ const VSphereStatus: FC<PrometheusHealthPopupProps> = ({ hide, responses, k8sRes
   return (
     <div>
       <Stack hasGutter>
-        <StackItem>{t('vsphere-plugin~The vSphere Connection check is failing.')}</StackItem>
+        <StackItem>{t('The vSphere Connection check is failing.')}</StackItem>
         <StackItem>
           <VSphereOperatorStatuses />
         </StackItem>

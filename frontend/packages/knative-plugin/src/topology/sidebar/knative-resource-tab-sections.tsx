@@ -16,17 +16,17 @@ import { usePodsForRevisions } from '../../utils/usePodsForRevisions';
 import { NodeType } from '../topology-types';
 
 export const EventSinkSourceSection: FC<{ resource: K8sResourceKind }> = ({ resource }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const target = resource?.spec?.source?.ref;
   const reference = target && referenceFor(target);
   const sinkUri = resource?.spec?.source?.uri;
 
   return (
     <>
-      <SidebarSectionHeading text={t('knative-plugin~Source')} />
+      <SidebarSectionHeading text={t('Source')} />
       {!reference && !sinkUri ? (
         <span data-test="event-sink-text" className="pf-v6-u-text-color-subtle">
-          {t('knative-plugin~No Source found for this resource.')}
+          {t('No Source found for this resource.')}
         </span>
       ) : (
         <List isPlain isBordered>
@@ -41,7 +41,7 @@ export const EventSinkSourceSection: FC<{ resource: K8sResourceKind }> = ({ reso
             ) : (
               <>
                 <span data-test="event-sink-target-uri" className="pf-v6-u-text-color-subtle">
-                  {t('knative-plugin~Target URI:')}{' '}
+                  {t('Target URI:')}{' '}
                 </span>
                 <ExternalLink href={sinkUri} displayBlock text={sinkUri} />
               </>
@@ -69,7 +69,7 @@ export const useKnativeSidepanelEventSinkSection: DetailsTabSectionExtensionHook
 };
 
 const usePodsForEventSink = (resource: K8sResourceKind, data) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const { revisions, associatedDeployment } = data;
   const { pods, loaded, loadError } = usePodsForRevisions(
     revisions?.map((r) => r.metadata.uid) ?? '',
@@ -100,7 +100,7 @@ const usePodsForEventSink = (resource: K8sResourceKind, data) => {
         ],
         [],
       ),
-      emptyText: t('knative-plugin~All Revisions are autoscaled to 0.'),
+      emptyText: t('All Revisions are autoscaled to 0.'),
       loaded,
       loadError,
     };

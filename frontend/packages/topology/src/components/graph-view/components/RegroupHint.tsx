@@ -7,14 +7,14 @@ import { ShortcutTable } from '@console/shared/src/components/shortcuts/Shortcut
 import './RegroupHint.scss';
 
 const RegroupHint: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   return (
     <div className="odc-regroup-hint">
       <RhUiInformationFillIcon className="odc-regroup-hint__icon" />
       <span className="odc-regroup-hint__text">
         <ShortcutTable>
           <Shortcut shift drag>
-            {t('topology~Edit application grouping')}
+            {t('Edit application grouping')}
           </Shortcut>
         </ShortcutTable>
       </span>

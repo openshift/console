@@ -34,7 +34,7 @@ const normalizeBuilderImages = (
     const creationTimestamp = imageStream.metadata?.creationTimestamp;
     const namespacePath = activeNamespace ? `/ns/${activeNamespace}` : '';
     const href = `/samples${namespacePath}/${name}/${imageStreamNS}`;
-    const createLabel = t('devconsole~Create Builder Image Sample');
+    const createLabel = t('Create Builder Image Sample');
     const type = 'BuilderImage';
 
     const item: CatalogItem = {
@@ -61,7 +61,7 @@ const normalizeBuilderImages = (
 };
 
 const useBuilderImageSamples: ExtensionHook<CatalogItem[]> = ({ namespace }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const resourceSelector = {
     kind: 'ImageStream',
     namespace: 'openshift',

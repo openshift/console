@@ -73,11 +73,11 @@ export const BuildLogLink = ({ build }) => {
     metadata: { name, namespace },
   } = build;
   const isPipeline = _.get(build, 'spec.strategy.type') === BuildStrategyType.JenkinsPipeline;
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return isPipeline ? (
     <BuildPipelineLogLink obj={build} />
   ) : (
-    <Link to={`${resourcePath('Build', name, namespace)}/logs`}>{t('public~View logs')}</Link>
+    <Link to={`${resourcePath('Build', name, namespace)}/logs`}>{t('View logs')}</Link>
   );
 };
 
@@ -93,7 +93,7 @@ export const BuildNumberLink = ({ build }) => {
 
 // TODO update to use QueryBrowser for each graph
 const BuildMetrics = ({ obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const podName = obj.metadata.annotations?.['openshift.io/build.pod-name'];
   const endTime = obj.status.completionTimestamp
     ? new Date(obj.status.completionTimestamp).getTime()
@@ -122,7 +122,7 @@ const BuildMetrics = ({ obj }) => {
         <GridItem xl={6} lg={12}>
           <Card className="resource-metrics-dashboard__card">
             <CardHeader>
-              <CardTitle>{t('public~Memory usage')}</CardTitle>
+              <CardTitle>{t('Memory usage')}</CardTitle>
             </CardHeader>
             <CardBody className="resource-metrics-dashboard__card-body">
               <Area
@@ -137,7 +137,7 @@ const BuildMetrics = ({ obj }) => {
         <GridItem xl={6} lg={12}>
           <Card className="resource-metrics-dashboard__card">
             <CardHeader>
-              <CardTitle>{t('public~CPU usage')}</CardTitle>
+              <CardTitle>{t('CPU usage')}</CardTitle>
             </CardHeader>
             <CardBody className="resource-metrics-dashboard__card-body">
               <Area
@@ -151,7 +151,7 @@ const BuildMetrics = ({ obj }) => {
         <GridItem xl={6} lg={12}>
           <Card className="resource-metrics-dashboard__card">
             <CardHeader>
-              <CardTitle>{t('public~Filesystem')}</CardTitle>
+              <CardTitle>{t('Filesystem')}</CardTitle>
             </CardHeader>
             <CardBody className="resource-metrics-dashboard__card-body">
               <Area
@@ -170,8 +170,8 @@ const BuildMetrics = ({ obj }) => {
 };
 
 const OpenShiftPipelines: FC = () => {
-  const { t } = useTranslation();
-  const text = t('public~OpenShift Pipelines based on Tekton');
+  const { t } = useTranslation('public');
+  const text = t('OpenShift Pipelines based on Tekton');
   return isUpstream() || isManaged() ? (
     <>{text}</>
   ) : (
@@ -180,13 +180,13 @@ const OpenShiftPipelines: FC = () => {
 };
 
 export const PipelineBuildStrategyAlert: FC<BuildsDetailsProps> = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <Alert
       isInline
       className="co-alert"
       variant="info"
-      title={t('public~Pipeline build strategy deprecation')}
+      title={t('Pipeline build strategy deprecation')}
     >
       <Trans t={t} ns="public">
         With the release of <OpenShiftPipelines />, the pipelines build strategy has been
@@ -194,7 +194,7 @@ export const PipelineBuildStrategyAlert: FC<BuildsDetailsProps> = () => {
         CI/CD with Openshift Pipelines.{' '}
         <ExternalLink
           href="https://github.com/openshift/pipelines-tutorial/"
-          text={t('public~Try the OpenShift Pipelines tutorial')}
+          text={t('Try the OpenShift Pipelines tutorial')}
         />
       </Trans>
     </Alert>
@@ -205,7 +205,7 @@ const BuildsDetails: FC<BuildsDetailsProps> = ({ obj: build }) => {
   const { logSnippet, message, startTimestamp, completionTimestamp } = build.status;
   const triggeredBy = _.map(build.spec.triggeredBy, 'message').join(', ');
   const hasPipeline = build.spec.strategy.type === BuildStrategyType.JenkinsPipeline;
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const BUILDCONFIG_TO_BUILD_REFERENCE_LABEL = 'openshift.io/build-config.name';
   const buildConfigName =
     build.status.config?.name || build.metadata.labels?.[BUILDCONFIG_TO_BUILD_REFERENCE_LABEL];
@@ -213,7 +213,7 @@ const BuildsDetails: FC<BuildsDetailsProps> = ({ obj: build }) => {
     <>
       <PaneBody>
         {hasPipeline && <PipelineBuildStrategyAlert obj={build} />}
-        <SectionHeading text={t('public~Build details')} />
+        <SectionHeading text={t('Build details')} />
         <Grid hasGutter>
           {hasPipeline && (
             <GridItem>
@@ -222,24 +222,19 @@ const BuildsDetails: FC<BuildsDetailsProps> = ({ obj: build }) => {
           )}
           <GridItem sm={6}>
             <ResourceSummary resource={build}>
-              <DetailsItem
-                label={t('public~Triggered by')}
-                obj={build}
-                path="spec.triggeredBy"
-                hideEmpty
-              >
+              <DetailsItem label={t('Triggered by')} obj={build} path="spec.triggeredBy" hideEmpty>
                 {triggeredBy}
               </DetailsItem>
             </ResourceSummary>
           </GridItem>
           <GridItem sm={6}>
             <BuildStrategy resource={build}>
-              <DetailsItem label={t('public~Status')} obj={build} path="status.phase">
+              <DetailsItem label={t('Status')} obj={build} path="status.phase">
                 <Status status={build.status.phase} />
               </DetailsItem>
 
               {buildConfigName && (
-                <DetailsItem label={t('public~BuildConfig')} obj={build} path="status.config">
+                <DetailsItem label={t('BuildConfig')} obj={build} path="status.config">
                   <ResourceLink
                     groupVersionKind={getGroupVersionKindForModel(BuildConfigModel)}
                     namespace={build.metadata.namespace}
@@ -248,7 +243,7 @@ const BuildsDetails: FC<BuildsDetailsProps> = ({ obj: build }) => {
                 </DetailsItem>
               )}
               <DetailsItem
-                label={t('public~Start time')}
+                label={t('Start time')}
                 obj={build}
                 path="status.startTimestamp"
                 hideEmpty
@@ -256,28 +251,23 @@ const BuildsDetails: FC<BuildsDetailsProps> = ({ obj: build }) => {
                 <Timestamp timestamp={startTimestamp} />
               </DetailsItem>
               <DetailsItem
-                label={t('public~Completion time')}
+                label={t('Completion time')}
                 obj={build}
                 path="status.completionTimestamp"
                 hideEmpty
               >
                 <Timestamp timestamp={completionTimestamp} />
               </DetailsItem>
-              <DetailsItem label={t('public~Duration')} obj={build} path="status.duration">
+              <DetailsItem label={t('Duration')} obj={build} path="status.duration">
                 {displayDurationInWords(
                   build?.status?.startTimestamp,
                   build?.status?.completionTimestamp,
                 )}
               </DetailsItem>
-              <DetailsItem label={t('public~Message')} obj={build} path="status.message" hideEmpty>
+              <DetailsItem label={t('Message')} obj={build} path="status.message" hideEmpty>
                 {message}
               </DetailsItem>
-              <DetailsItem
-                label={t('public~Log snippet')}
-                obj={build}
-                path="status.logSnippet"
-                hideEmpty
-              >
+              <DetailsItem label={t('Log snippet')} obj={build} path="status.logSnippet" hideEmpty>
                 <pre className="co-pre">{logSnippet}</pre>
               </DetailsItem>
             </BuildStrategy>
@@ -305,7 +295,7 @@ export const BuildEnvironmentComponent = (props) => {
   const { obj } = props;
   const readOnly = obj.kind === 'Build';
   const envPath = getEnvPath(props);
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   if (envPath) {
     return (
       <EnvironmentPage
@@ -318,7 +308,7 @@ export const BuildEnvironmentComponent = (props) => {
   }
   return (
     <ConsoleEmptyState>
-      {t('public~The environment variable editor does not support build strategy: {{ type }}', {
+      {t('The environment variable editor does not support build strategy: {{ type }}', {
         type: obj.spec.strategy.type,
       })}
       .
@@ -404,13 +394,13 @@ const useBuildsColumns = (): {
   columns: TableColumn<K8sResourceKind>[];
   resetAllColumnWidths: () => void;
 } => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(BuildModel);
 
   const columns = useMemo(() => {
     return [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         resizableProps: getResizableProps(tableColumnInfo[0].id),
@@ -420,7 +410,7 @@ const useBuildsColumns = (): {
         },
       },
       {
-        title: t('public~Namespace'),
+        title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
@@ -429,7 +419,7 @@ const useBuildsColumns = (): {
         },
       },
       {
-        title: t('public~Status'),
+        title: t('Status'),
         id: tableColumnInfo[2].id,
         sort: 'status.phase',
         resizableProps: getResizableProps(tableColumnInfo[2].id),
@@ -438,7 +428,7 @@ const useBuildsColumns = (): {
         },
       },
       {
-        title: t('public~Start time'),
+        title: t('Start time'),
         id: tableColumnInfo[3].id,
         sort: 'status.startTimestamp',
         resizableProps: getResizableProps(tableColumnInfo[3].id),
@@ -447,7 +437,7 @@ const useBuildsColumns = (): {
         },
       },
       {
-        title: t('public~Duration'),
+        title: t('Duration'),
         id: tableColumnInfo[4].id,
         sort: 'status.duration',
         resizableProps: getResizableProps(tableColumnInfo[4].id),
@@ -495,17 +485,17 @@ const buildPhase = (build) => build.status.phase;
 const allPhases = ['New', 'Pending', 'Running', 'Complete', 'Failed', 'Error', 'Cancelled'];
 
 export const BuildsPage: FC<BuildsPageProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <ListPage
       {...props}
-      title={t('public~Builds')}
+      title={t('Builds')}
       kind={BuildsReference}
       ListComponent={BuildsList}
       canCreate={false}
       rowFilters={[
         {
-          filterGroupName: t('public~Status'),
+          filterGroupName: t('Status'),
           type: 'build-status',
           reducer: buildPhase,
           items: _.map(allPhases, (phase) => ({

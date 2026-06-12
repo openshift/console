@@ -51,12 +51,8 @@ export const FormField: FC<FormFieldProps> = ({
   schema,
   uiSchema,
 }) => {
-  const { t } = useTranslation();
-  const [showLabel, label] = useSchemaLabel(
-    schema,
-    uiSchema,
-    defaultLabel || t('console-shared~Value'),
-  );
+  const { t } = useTranslation('console-shared');
+  const [showLabel, label] = useSchemaLabel(schema, uiSchema, defaultLabel || t('Value'));
   return (
     <div id={`${id}_field`} className="form-group">
       {showLabel && label && (
@@ -115,10 +111,10 @@ export const ResourceRequirementsField: FC<FieldProps> = ({
   schema,
   uiSchema,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   return (
     <FieldSet
-      defaultLabel={name || t('console-shared~Resource requirements')}
+      defaultLabel={name || t('Resource requirements')}
       idSchema={idSchema}
       required={required}
       schema={schema}
@@ -126,7 +122,7 @@ export const ResourceRequirementsField: FC<FieldProps> = ({
     >
       <DescriptionList id={idSchema.$id}>
         <DescriptionListGroup>
-          <DescriptionListTerm>{t('console-shared~Limits')}</DescriptionListTerm>
+          <DescriptionListTerm>{t('Limits')}</DescriptionListTerm>
           <DescriptionListDescription>
             <ResourceRequirements
               cpu={formData?.limits?.cpu || ''}
@@ -142,7 +138,7 @@ export const ResourceRequirementsField: FC<FieldProps> = ({
           </DescriptionListDescription>
         </DescriptionListGroup>
         <DescriptionListGroup>
-          <DescriptionListTerm>{t('console-shared~Requests')}</DescriptionListTerm>
+          <DescriptionListTerm>{t('Requests')}</DescriptionListTerm>
           <DescriptionListDescription>
             <ResourceRequirements
               cpu={formData?.requests?.cpu || ''}
@@ -173,15 +169,15 @@ export const UpdateStrategyField: FC<FieldProps> = ({
   schema,
   uiSchema,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const description = useSchemaDescription(
     schema,
     uiSchema,
-    t('public~How should the pods be replaced when a new revision is created?'),
+    t('How should the pods be replaced when a new revision is created?'),
   );
   return (
     <FormField
-      defaultLabel={name || t('console-shared~Update strategy')}
+      defaultLabel={name || t('Update strategy')}
       id={idSchema.$id}
       required={required}
       schema={schema}
@@ -216,10 +212,10 @@ export const NodeAffinityField: FC<FieldProps> = ({
   schema,
   uiSchema,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   return (
     <FieldSet
-      defaultLabel={name || t('console-shared~Node affinity')}
+      defaultLabel={name || t('Node affinity')}
       idSchema={idSchema}
       required={required}
       schema={schema}
@@ -242,10 +238,10 @@ export const PodAffinityField: FC<FieldProps> = ({
   schema,
   uiSchema,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   return (
     <FieldSet
-      defaultLabel={name || t('console-shared~Pod affinity')}
+      defaultLabel={name || t('Pod affinity')}
       idSchema={idSchema}
       required={required}
       schema={schema}
@@ -269,10 +265,10 @@ const MatchExpressionsField: FC<FieldProps> = ({
   schema,
   uiSchema,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   return (
     <FieldSet
-      defaultLabel={name || t('console-shared~Expressions')}
+      defaultLabel={name || t('Expressions')}
       idSchema={idSchema}
       required={required}
       schema={schema}
@@ -319,7 +315,7 @@ const DropdownField: FC<FieldProps> = ({
   schema,
   uiSchema = {},
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const { items, title } = getUiOptions(uiSchema) as {
     items?: ConsoleSelectProps['items'];
     title?: string;
@@ -328,7 +324,7 @@ const DropdownField: FC<FieldProps> = ({
     <ConsoleSelect
       id={idSchema.$id}
       key={idSchema.$id}
-      title={t('console-shared~Select {{title}}', { title: title || schema?.title || name })}
+      title={t('Select {{title}}', { title: title || schema?.title || name })}
       selectedKey={formData}
       items={items ?? {}}
       onChange={(val) => onChange(val)}

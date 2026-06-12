@@ -15,7 +15,7 @@ export interface PDBAlertProps {
 }
 
 export const PDBAlert: FC<PDBAlertProps> = ({ namespace }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const fireTelemetryEvent = useTelemetry();
 
   const resource = useMemo(

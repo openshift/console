@@ -19,18 +19,18 @@ type BareMetalHostSecondaryStatusProps = {
 };
 
 const BareMetalHostSecondaryStatus: FC<BareMetalHostSecondaryStatusProps> = ({ host }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('metal3-plugin');
   const powerStatus = getHostPowerStatus(host);
   const provisioningState = getHostProvisioningState(host);
   const status = [];
 
   if (!isDetached(host)) {
     if (!hasPowerManagement(host)) {
-      status.push(t('metal3-plugin~No power management'));
+      status.push(t('No power management'));
       // don't show power status when host registration/inspection hasn't finished
     } else if (!HOST_REGISTERING_STATES.includes(provisioningState)) {
       if (isHostScheduledForRestart(host)) {
-        status.push(t('metal3-plugin~Restart pending'));
+        status.push(t('Restart pending'));
       }
 
       // don't show power status when host is powered on

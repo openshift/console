@@ -21,7 +21,7 @@ export interface TrafficSplittingType {
 }
 
 const TrafficSplitting: FC<TrafficSplittingProps> = ({ service, revisions, cancel, close }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const traffic: Traffic[] = service.spec?.traffic ?? [{ percent: 0, tag: '', revisionName: '' }];
   const latestCreatedRevName = service.status?.latestCreatedRevisionName;
   const revisionItems = getRevisionItems(revisions);
@@ -50,7 +50,7 @@ const TrafficSplitting: FC<TrafficSplittingProps> = ({ service, revisions, cance
         close();
       })
       .catch((err) => {
-        const errMessage = err.message || t('knative-plugin~An error occurred. Please try again');
+        const errMessage = err.message || t('An error occurred. Please try again');
         action.setStatus({ error: errMessage });
       });
   };

@@ -12,7 +12,7 @@ import { CodeBlock, CodeBlockCode, Stack, StackItem } from '@patternfly/react-co
 import { useFavoritesOptions } from './useFavoritesOptions';
 
 export const ErrorPage404: FC<PfErrorStateProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const location = useLocation();
 
   const [favorites, , loaded] = useFavoritesOptions();
@@ -26,27 +26,23 @@ export const ErrorPage404: FC<PfErrorStateProps> = (props) => {
 
   return (
     <>
-      <DocumentTitle>{t('public~Page Not Found (404)')}</DocumentTitle>
+      <DocumentTitle>{t('Page Not Found (404)')}</DocumentTitle>
       <PfErrorState
         status="none"
         icon={NotFoundIcon}
         headingLevel="h1"
-        titleText={t('public~404: Page Not Found')}
+        titleText={t('404: Page Not Found')}
         defaultBodyText={
           <>
-            {t("public~We couldn't find that page.")}
+            {t("We couldn't find that page.")}
             {isDeletedFavorite && (
-              <p>
-                {t(
-                  'public~If you would like to remove it from your favorites list, unfavorite it.',
-                )}
-              </p>
+              <p>{t('If you would like to remove it from your favorites list, unfavorite it.')}</p>
             )}
           </>
         }
         customFooter={
           <ButtonLink variant="link" href="/">
-            {t('public~Return to homepage')}
+            {t('Return to homepage')}
           </ButtonLink>
         }
         {...props}
@@ -64,16 +60,16 @@ const ErrorStateMessage = () => (
 );
 
 export const ErrorState: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   return (
     <PfErrorState
-      titleText={t('public~An error occured')}
+      titleText={t('An error occured')}
       headingLevel="h1"
       bodyText={
         <Stack>
           <StackItem>
-            {t('public~There was a problem processing the request. Please try again.')}
+            {t('There was a problem processing the request. Please try again.')}
           </StackItem>
           <StackItem>
             <ErrorStateMessage />
@@ -85,41 +81,35 @@ export const ErrorState: FC = () => {
 };
 
 const LoginErrorMessage: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const location = useLocation();
   const urlSearchParams = new URLSearchParams(location.search);
   const errorType = urlSearchParams.get('error_type');
   const error = urlSearchParams.get('error');
   switch (errorType) {
     case 'oauth_error':
-      return <>{t('public~There was an error generating OAuth client from OIDC client.')}</>;
+      return <>{t('There was an error generating OAuth client from OIDC client.')}</>;
     case 'login_state_error':
-      return <>{t('public~There was an error generating login state.')}</>;
+      return <>{t('There was an error generating login state.')}</>;
     case 'cookie_error':
-      return <>{t('public~There was an error setting login state cookie.')}</>;
+      return <>{t('There was an error setting login state cookie.')}</>;
     case 'logout_error':
-      return <>{t('public~There was an error logging you out. Please try again.')}</>;
+      return <>{t('There was an error logging you out. Please try again.')}</>;
     case 'auth':
       // When the error type is set as auth
       switch (error) {
         case 'missing_state':
-          return <>{t('public~There was an error parsing your state cookie.')}</>;
+          return <>{t('There was an error parsing your state cookie.')}</>;
         case 'invalid_state':
           return (
-            <>
-              {t('public~There was an error verifying your session. Please log out and try again.')}
-            </>
+            <>{t('There was an error verifying your session. Please log out and try again.')}</>
           );
         case 'missing_code':
-          return <>{t('public~Auth code is missing in query param.')}</>;
+          return <>{t('Auth code is missing in query param.')}</>;
         case 'invalid_code':
-          return (
-            <>{t('public~There was an error logging you in. Please log out and try again.')}</>
-          );
+          return <>{t('There was an error logging you in. Please log out and try again.')}</>;
         default:
-          return (
-            <>{t('public~There was an authentication error. Please log out and try again.')}</>
-          );
+          return <>{t('There was an authentication error. Please log out and try again.')}</>;
       }
     default:
       return (
@@ -134,8 +124,8 @@ const LoginErrorMessage: FC = () => {
 };
 
 export const AuthenticationErrorPage: FC = () => {
-  const { t } = useTranslation();
-  const title = t('public~Authentication error');
+  const { t } = useTranslation('public');
+  const title = t('Authentication error');
 
   return (
     <>
@@ -155,7 +145,7 @@ export const AuthenticationErrorPage: FC = () => {
         }
         customFooter={
           <ButtonLink variant="primary" href="/">
-            {t('public~Try again')}
+            {t('Try again')}
           </ButtonLink>
         }
       />

@@ -17,7 +17,7 @@ interface ExecNewPodFormProps {
 }
 
 const ExecNewPodForm: FC<ExecNewPodFormProps> = ({ resourceObj, lifecycleHook, dataAttribute }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const {
     values: {
       formData: { containers, deploymentStrategy },
@@ -28,19 +28,19 @@ const ExecNewPodForm: FC<ExecNewPodFormProps> = ({ resourceObj, lifecycleHook, d
     <FormSection>
       <DropdownField
         name={`formData.deploymentStrategy.${dataAttribute}.${lifecycleHook}.lch.execNewPod.containerName`}
-        label={t('devconsole~Container name')}
-        title={t('devconsole~Select container name')}
+        label={t('Container name')}
+        title={t('Select container name')}
         items={getContainerNames(containers)}
         fullWidth
         required
       />
       <TextColumnField
         name={`formData.deploymentStrategy.${dataAttribute}.${lifecycleHook}.lch.execNewPod.command`}
-        label={t('devconsole~Command')}
-        addLabel={t('devconsole~Add another argument')}
-        placeholder={t('devconsole~Add argument')}
+        label={t('Command')}
+        addLabel={t('Add another argument')}
+        placeholder={t('Add argument')}
         helpText={t(
-          'devconsole~Enter the command to run inside the container. The command is considered successful if its exit code is 0.',
+          'Enter the command to run inside the container. The command is considered successful if its exit code is 0.',
         )}
         required
         disableDeleteRow={
@@ -49,16 +49,14 @@ const ExecNewPodForm: FC<ExecNewPodFormProps> = ({ resourceObj, lifecycleHook, d
       />
       <EnvironmentField
         name={`formData.deploymentStrategy.${dataAttribute}.${lifecycleHook}.lch.execNewPod.env`}
-        label={t('devconsole~Environment variables (runtime only)')}
+        label={t('Environment variables (runtime only)')}
         envs={deploymentStrategy[dataAttribute][lifecycleHook].lch.execNewPod.env ?? []}
         obj={resourceObj}
       />
       <InputField
         name={`formData.deploymentStrategy.${dataAttribute}.${lifecycleHook}.lch.execNewPod.volumes`}
-        label={t('devconsole~Volumes')}
-        helpText={t(
-          'devconsole~List of comma (,) separated named volumes to copy to the hook pod.',
-        )}
+        label={t('Volumes')}
+        helpText={t('List of comma (,) separated named volumes to copy to the hook pod.')}
       />
     </FormSection>
   );

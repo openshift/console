@@ -31,7 +31,7 @@ type BuildSectionProps = {
 };
 
 export const BuildSection: FC<BuildSectionProps> = ({ values, appResources }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const {
     project: { name: namespace },
     build: { option: buildOption, env: buildEnv },
@@ -147,7 +147,7 @@ export const BuildSection: FC<BuildSectionProps> = ({ values, appResources }) =>
   }, [setFieldValue, values?.import?.selectedStrategy?.type, strategy, values?.formType]);
 
   return (
-    <FormSection title={t('devconsole~Build')}>
+    <FormSection title={t('Build')}>
       <BuildOption
         isDisabled={values?.formType === 'edit'}
         importStrategy={values?.import?.selectedStrategy?.type}
@@ -160,7 +160,7 @@ export const BuildSection: FC<BuildSectionProps> = ({ values, appResources }) =>
         />
       )}
       {values.isi || values.pipeline?.enabled ? null : (
-        <ExpandableSection toggleText={t('devconsole~Show advanced Build option')}>
+        <ExpandableSection toggleText={t('Show advanced Build option')}>
           {values.build?.option === BuildOptions.BUILDS && (
             <BuildConfigSection showHeader={false} />
           )}
@@ -171,7 +171,7 @@ export const BuildSection: FC<BuildSectionProps> = ({ values, appResources }) =>
           ) ? (
             <EnvironmentField
               name="build.env"
-              label={t('devconsole~Environment variables (build and runtime)')}
+              label={t('Environment variables (build and runtime)')}
               obj={{ metadata: { namespace } }}
               envs={envs}
             />

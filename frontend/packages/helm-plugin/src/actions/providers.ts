@@ -29,7 +29,7 @@ import {
 import type { HelmActionsScope } from './types';
 
 export const useHelmActionProvider = (scope: HelmActionsScope) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   const helmDeleteAction = useHelmDeleteAction(scope, t);
   const result = useMemo(() => {
     if (!scope) return [[], true, undefined];
@@ -101,7 +101,7 @@ export const useTopologyActionProvider = ({
 
 export const useHelmChartRepositoryActions = (resource: K8sResourceKind) => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource));
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   const commonActions = useCommonResourceActions(kindObj, resource);
   const actions = useMemo(() => {
     const index = commonActions.findIndex((action: Action) => action.id === 'edit-resource');

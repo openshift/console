@@ -34,7 +34,7 @@ export const PodRing: FC<PodRingProps> = ({
   enableScaling = true,
 }) => {
   const [clickCount, setClickCount] = useState(obj.spec.replicas);
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const isAccessScalingAllowed = usePodScalingAccessStatus(
     obj,
     resourceKind,
@@ -120,7 +120,7 @@ export const PodRing: FC<PodRingProps> = ({
             icon={<RhUiAutomationIcon />}
             onClick={() => handleClick(1)}
           >
-            {t('console-shared~Enable Autoscale')}
+            {t('Enable Autoscale')}
           </Button>
         </SplitItem>
       )}
@@ -134,8 +134,8 @@ export const PodRing: FC<PodRingProps> = ({
                     icon={<RhUiCaretUpIcon style={{ fontSize: '20' }} />}
                     type="button"
                     variant="plain"
-                    aria-label={t('console-shared~Increase the Pod count')}
-                    title={t('console-shared~Increase the Pod count')}
+                    aria-label={t('Increase the Pod count')}
+                    title={t('Increase the Pod count')}
                     onClick={() => handleClick(1)}
                     isBlock
                   />
@@ -145,7 +145,7 @@ export const PodRing: FC<PodRingProps> = ({
                 return isNonScalable && clickCount >= 1 ? (
                   <Tooltip
                     content={t(
-                      'console-shared~This image is not intended to run with more than one replica. Scaling up is not supported and might cause issues.',
+                      'This image is not intended to run with more than one replica. Scaling up is not supported and might cause issues.',
                     )}
                   >
                     {scaleUpButton}
@@ -158,8 +158,8 @@ export const PodRing: FC<PodRingProps> = ({
                 icon={<RhUiCaretDownIcon style={{ fontSize: '20' }} />}
                 type="button"
                 variant="plain"
-                aria-label={t('console-shared~Decrease the Pod count')}
-                title={t('console-shared~Decrease the Pod count')}
+                aria-label={t('Decrease the Pod count')}
+                title={t('Decrease the Pod count')}
                 onClick={() => handleClick(-1)}
                 isBlock
                 isDisabled={clickCount <= 0}

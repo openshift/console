@@ -27,7 +27,7 @@ const EditAlertmanagerYAML = (props) => (
 const AlertmanagerYAMLEditor: FC<AlertmanagerYAMLEditorProps> = ({ obj: secret }) => {
   const [errorMsg, setErrorMsg] = useState<string>();
   const [successMsg, setSuccessMsg] = useState<string>();
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const save = (yaml: string) => {
     if (_.isEmpty(yaml)) {
@@ -76,7 +76,7 @@ const AlertmanagerYAMLEditor: FC<AlertmanagerYAMLEditorProps> = ({ obj: secret }
       <PageSection hasBodyWrapper={false} className="pf-v6-u-pb-0">
         <Content component={ContentVariants.p}>
           {t(
-            'public~Update this YAML to configure Routes, Receivers, Groupings and other Alertmanager settings.',
+            'Update this YAML to configure Routes, Receivers, Groupings and other Alertmanager settings.',
           )}
         </Content>
       </PageSection>
@@ -107,10 +107,10 @@ const AlertmanagerYAMLEditor: FC<AlertmanagerYAMLEditorProps> = ({ obj: secret }
 
 const AlertmanagerYAMLEditorWrapper = memo<AlertmanagerYAMLEditorWrapperProps>(
   ({ obj, ...props }) => {
-    const { t } = useTranslation();
+    const { t } = useTranslation('public');
     return (
       <>
-        <DocumentTitle>{t('public~Alerting')}</DocumentTitle>
+        <DocumentTitle>{t('Alerting')}</DocumentTitle>
         <StatusBox {...obj}>
           <AlertmanagerYAMLEditor {...props} obj={obj.data} />
         </StatusBox>
@@ -120,7 +120,7 @@ const AlertmanagerYAMLEditorWrapper = memo<AlertmanagerYAMLEditorWrapperProps>(
 );
 
 export const AlertmanagerYAML: FC<{}> = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const configPath = 'alertmanagerconfig';
   const YAMLPath = 'alertmanageryaml';
@@ -136,15 +136,15 @@ export const AlertmanagerYAML: FC<{}> = () => {
 
   return (
     <>
-      <PageHeading breadcrumbs={breadcrumbs} title={t('public~Alertmanager')} />
+      <PageHeading breadcrumbs={breadcrumbs} title={t('Alertmanager')} />
       <NavBar
         pages={[
           {
-            name: t('public~Details'),
+            name: t('Details'),
             href: configPath,
           },
           {
-            name: t('public~YAML'),
+            name: t('YAML'),
             href: YAMLPath,
           },
         ]}

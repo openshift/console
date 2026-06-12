@@ -18,7 +18,7 @@ const PushSecretSelector: FC<{
 }> = ({ formContextField, namespace }) => {
   const fieldPrefix = formContextField ? `${formContextField}` : '';
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('shipwright-plugin');
   const launchCreateSecretModal = useCreateSecretModal();
   const { values, setFieldValue } = useFormikContext<FormikValues>();
   const secret: string = _.get(values, `${fieldPrefix}`);
@@ -44,10 +44,7 @@ const PushSecretSelector: FC<{
 
   return (
     <>
-      <FormGroup
-        fieldId={getFieldId('source-secret', 'dropdown')}
-        label={t('shipwright-plugin~Push Secret')}
-      >
+      <FormGroup fieldId={getFieldId('source-secret', 'dropdown')} label={t('Push Secret')}>
         <PushSecretDropdown
           name={`${fieldPrefix}`}
           isFullWidth
@@ -55,11 +52,11 @@ const PushSecretSelector: FC<{
           namespace={namespace}
           actionItems={[
             {
-              actionTitle: t('shipwright-plugin~Create new Secret'),
+              actionTitle: t('Create new Secret'),
               actionKey: CREATE_PULL_SECRET,
             },
             {
-              actionTitle: t('shipwright-plugin~No Secret'),
+              actionTitle: t('No Secret'),
               actionKey: CLEAR_PULL_SECRET,
             },
           ]}
@@ -70,9 +67,7 @@ const PushSecretSelector: FC<{
 
         <FormHelperText>
           <HelperText>
-            <HelperTextItem>
-              {t('shipwright-plugin~Secret with credentials for pushing build')}
-            </HelperTextItem>
+            <HelperTextItem>{t('Secret with credentials for pushing build')}</HelperTextItem>
           </HelperText>
         </FormHelperText>
       </FormGroup>

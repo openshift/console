@@ -16,15 +16,15 @@ export const BuildHooks: FC<BuildHooksProps> = ({ resource }) => {
   const postCommitArgs = _.get(resource, 'spec.postCommit.args');
   const postCommitCommand = _.get(resource, 'spec.postCommit.command');
   const postCommitScript = _.get(resource, 'spec.postCommit.script');
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   return !_.isEmpty(postCommitCommand) || !_.isEmpty(postCommitArgs) || postCommitScript ? (
     <PaneBody>
-      <SectionHeading text={t('public~Post-commit hooks')} />
+      <SectionHeading text={t('Post-commit hooks')} />
       <DescriptionList>
         {!_.isEmpty(postCommitCommand) && (
           <DescriptionListGroup>
-            <DescriptionListTerm>{t('public~Command')}</DescriptionListTerm>
+            <DescriptionListTerm>{t('Command')}</DescriptionListTerm>
             <DescriptionListDescription>
               <code className="co-code">{postCommitCommand.join(' ')}</code>
             </DescriptionListDescription>
@@ -32,7 +32,7 @@ export const BuildHooks: FC<BuildHooksProps> = ({ resource }) => {
         )}
         {postCommitScript && (
           <DescriptionListGroup>
-            <DescriptionListTerm>{t('public~Script')}</DescriptionListTerm>
+            <DescriptionListTerm>{t('Script')}</DescriptionListTerm>
             <DescriptionListDescription>
               <code className="co-code">{postCommitScript}</code>
             </DescriptionListDescription>
@@ -40,7 +40,7 @@ export const BuildHooks: FC<BuildHooksProps> = ({ resource }) => {
         )}
         {!_.isEmpty(postCommitArgs) && (
           <DescriptionListGroup>
-            <DescriptionListTerm>{t('public~Args')}</DescriptionListTerm>
+            <DescriptionListTerm>{t('Args')}</DescriptionListTerm>
             <DescriptionListDescription>
               <code className="co-code">{postCommitArgs.join(' ')}</code>
             </DescriptionListDescription>

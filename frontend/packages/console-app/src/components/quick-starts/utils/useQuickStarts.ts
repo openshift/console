@@ -93,7 +93,7 @@ export const getBestMatch = (quickStarts: QuickStart[], language: string): Quick
 };
 
 export const useQuickStarts = (filterDisabledQuickStarts = true): WatchK8sResult<QuickStart[]> => {
-  const preferredLanguage = useTranslation().i18n.language;
+  const preferredLanguage = useTranslation('console-app').i18n.language;
 
   const [quickStarts, quickStartsLoaded, quickStartsError] = useK8sWatchResource<QuickStart[]>({
     groupVersionKind: getGroupVersionKindForModel(QuickStartModel),

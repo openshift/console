@@ -70,9 +70,9 @@ export const ImageStreamTimeline: FC<ImageStreamTimelineProps> = ({
   imageStreamName,
   imageStreamNamespace,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   if (!_.some(imageStreamTags, 'items')) {
-    return <EmptyBox label={t('public~Images')} />;
+    return <EmptyBox label={t('Images')} />;
   }
   const tagsArray: TagMeta[] = _.flatten(
     _.map(imageStreamTags, ({ tag, items }) => {

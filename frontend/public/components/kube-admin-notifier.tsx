@@ -14,7 +14,7 @@ import { CoreState } from '@console/dynamic-plugin-sdk/src/app/redux-types';
 const oAuthResourcePath = resourcePathFromModel(OAuthModel, 'cluster');
 
 export const KubeAdminNotifier = connect(userStateToProps)(({ user }: CoreState) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const canUpgrade = useCanClusterUpgrade();
   const username = _.get(user, 'username');
   return KUBE_ADMIN_USERNAMES.includes(username) && canUpgrade ? (

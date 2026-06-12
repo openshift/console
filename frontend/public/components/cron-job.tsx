@@ -52,7 +52,7 @@ const kind = referenceForModel(CronJobModel);
 
 const getPodFilters = (t: TFunction): RowFilter<PodKind>[] => [
   {
-    filterGroupName: t('public~Status'),
+    filterGroupName: t('Status'),
     type: 'pod-status',
     filter: (phases, pod) => {
       if (!phases || !phases.selected || !phases.selected.length) {
@@ -63,16 +63,16 @@ const getPodFilters = (t: TFunction): RowFilter<PodKind>[] => [
     },
     reducer: podPhaseFilterReducer,
     items: [
-      { id: 'Running', title: t('public~Running') },
-      { id: 'Pending', title: t('public~Pending') },
-      { id: 'Terminating', title: t('public~Terminating') },
-      { id: 'CrashLoopBackOff', title: t('public~CrashLoopBackOff') },
-      { id: 'CreateContainerError', title: t('public~CreateContainerError') },
+      { id: 'Running', title: t('Running') },
+      { id: 'Pending', title: t('Pending') },
+      { id: 'Terminating', title: t('Terminating') },
+      { id: 'CrashLoopBackOff', title: t('CrashLoopBackOff') },
+      { id: 'CreateContainerError', title: t('CreateContainerError') },
       // Use title "Completed" to match what appears in the status column for the pod.
       // The pod phase is "Succeeded," but the container state is "Completed."
-      { id: 'Succeeded', title: t('public~Completed') },
-      { id: 'Failed', title: t('public~Failed') },
-      { id: 'Unknown', title: t('public~Unknown') },
+      { id: 'Succeeded', title: t('Completed') },
+      { id: 'Failed', title: t('Failed') },
+      { id: 'Unknown', title: t('Unknown') },
     ],
   },
 ];
@@ -88,8 +88,8 @@ const tableColumnInfo = [
 ];
 
 const BooleanDisplay: FC<{ value?: boolean }> = ({ value }) => {
-  const { t } = useTranslation();
-  return <>{value ? t('public~True') : t('public~False')}</>;
+  const { t } = useTranslation('public');
+  return <>{value ? t('True') : t('False')}</>;
 };
 
 const getDataViewRows: GetDataViewRows<CronJobKind> = (data, columns) => {
@@ -143,34 +143,34 @@ const getDataViewRows: GetDataViewRows<CronJobKind> = (data, columns) => {
 
 const CronJobDetails: FC<CronJobDetailsProps> = ({ obj: cronjob }) => {
   const job = cronjob.spec.jobTemplate;
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <>
       <PaneBody>
         <Grid hasGutter>
           <GridItem md={6}>
-            <SectionHeading text={t('public~CronJob details')} />
+            <SectionHeading text={t('CronJob details')} />
             <ResourceSummary resource={cronjob}>
-              <DetailsItem label={t('public~Schedule')} obj={cronjob} path="spec.schedule" />
-              <DetailsItem label={t('public~Suspend')} obj={cronjob} path="spec.suspend">
+              <DetailsItem label={t('Schedule')} obj={cronjob} path="spec.schedule" />
+              <DetailsItem label={t('Suspend')} obj={cronjob} path="spec.suspend">
                 <BooleanDisplay value={cronjob.spec?.suspend} />
               </DetailsItem>
               <DetailsItem
-                label={t('public~Concurrency policy')}
+                label={t('Concurrency policy')}
                 obj={cronjob}
                 path="spec.concurrencyPolicy"
               />
               <DetailsItem
-                label={t('public~Starting deadline seconds')}
+                label={t('Starting deadline seconds')}
                 obj={cronjob}
                 path="spec.startingDeadlineSeconds"
               >
                 {cronjob.spec.startingDeadlineSeconds
-                  ? t('public~{{count}} second', { count: cronjob.spec.startingDeadlineSeconds })
-                  : t('public~Not configured')}
+                  ? t('{{count}} second', { count: cronjob.spec.startingDeadlineSeconds })
+                  : t('Not configured')}
               </DetailsItem>
               <DetailsItem
-                label={t('public~Last schedule time')}
+                label={t('Last schedule time')}
                 obj={cronjob}
                 path="status.lastScheduleTime"
               >
@@ -179,26 +179,26 @@ const CronJobDetails: FC<CronJobDetailsProps> = ({ obj: cronjob }) => {
             </ResourceSummary>
           </GridItem>
           <GridItem md={6}>
-            <SectionHeading text={t('public~Job details')} />
+            <SectionHeading text={t('Job details')} />
             <DescriptionList>
               <DetailsItem
-                label={t('public~Desired completions')}
+                label={t('Desired completions')}
                 obj={cronjob}
                 path="spec.jobTemplate.spec.completions"
               />
               <DetailsItem
-                label={t('public~Parallelism')}
+                label={t('Parallelism')}
                 obj={cronjob}
                 path="spec.jobTemplate.spec.parallelism"
               />
               <DetailsItem
-                label={t('public~Active deadline seconds')}
+                label={t('Active deadline seconds')}
                 obj={cronjob}
                 path="spec.jobTemplate.spec.activeDeadlineSeconds"
               >
                 {job.spec.activeDeadlineSeconds
-                  ? t('public~{{count}} second', { count: job.spec.activeDeadlineSeconds })
-                  : t('public~Not configured')}
+                  ? t('{{count}} second', { count: job.spec.activeDeadlineSeconds })
+                  : t('Not configured')}
               </DetailsItem>
               <PodDisruptionBudgetField obj={cronjob} />
             </DescriptionList>
@@ -206,7 +206,7 @@ const CronJobDetails: FC<CronJobDetailsProps> = ({ obj: cronjob }) => {
         </Grid>
       </PaneBody>
       <PaneBody>
-        <SectionHeading text={t('public~Containers')} />
+        <SectionHeading text={t('Containers')} />
         <ContainerTable containers={job.spec.template.spec.containers} />
       </PaneBody>
     </>
@@ -218,7 +218,7 @@ type CronJobPodsComponentProps = {
 };
 
 const CronJobPodsComponent: FC<CronJobPodsComponentProps> = ({ obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const podFilters = useMemo(() => getPodFilters(t), [t]);
 
   const resources = useK8sWatchResources<{
@@ -323,13 +323,13 @@ const useCronJobsColumns = (): {
   columns: TableColumn<CronJobKind>[];
   resetAllColumnWidths: () => void;
 } => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(CronJobModel);
 
   const columns = useMemo(() => {
     return [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         resizableProps: getResizableProps(tableColumnInfo[0].id),
@@ -339,7 +339,7 @@ const useCronJobsColumns = (): {
         },
       },
       {
-        title: t('public~Namespace'),
+        title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
@@ -348,7 +348,7 @@ const useCronJobsColumns = (): {
         },
       },
       {
-        title: t('public~Schedule'),
+        title: t('Schedule'),
         id: tableColumnInfo[2].id,
         sort: 'spec.schedule',
         resizableProps: getResizableProps(tableColumnInfo[2].id),
@@ -357,7 +357,7 @@ const useCronJobsColumns = (): {
         },
       },
       {
-        title: t('public~Suspend'),
+        title: t('Suspend'),
         id: tableColumnInfo[3].id,
         sort: 'spec.suspend',
         resizableProps: getResizableProps(tableColumnInfo[3].id),
@@ -366,7 +366,7 @@ const useCronJobsColumns = (): {
         },
       },
       {
-        title: t('public~Concurrency policy'),
+        title: t('Concurrency policy'),
         id: tableColumnInfo[4].id,
         sort: 'spec.concurrencyPolicy',
         resizableProps: getResizableProps(tableColumnInfo[4].id),
@@ -375,7 +375,7 @@ const useCronJobsColumns = (): {
         },
       },
       {
-        title: t('public~Starting deadline seconds'),
+        title: t('Starting deadline seconds'),
         id: tableColumnInfo[5].id,
         sort: 'spec.startingDeadlineSeconds',
         resizableProps: getResizableProps(tableColumnInfo[5].id),

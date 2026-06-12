@@ -25,7 +25,7 @@ type EditBuildProps = {
 
 const EditBuild: FC<EditBuildProps> = ({ heading, build: watchedBuild, namespace, name }) => {
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t } = useTranslation('shipwright-plugin');
   const [initialValues] = useState<BuildFormikValues>(() => {
     const values = convertBuildToFormData(watchedBuild);
     values.yamlData = safeJSToYAML(watchedBuild, '', { skipInvalid: true });
@@ -48,7 +48,7 @@ const EditBuild: FC<EditBuildProps> = ({ heading, build: watchedBuild, namespace
     } catch (err) {
       helpers.setStatus({
         submitSuccess: '',
-        submitError: t('shipwright-plugin~Invalid YAML - {{err}}', { err }),
+        submitError: t('Invalid YAML - {{err}}', { err }),
       });
       return;
     }

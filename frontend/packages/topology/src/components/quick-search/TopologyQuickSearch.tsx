@@ -31,7 +31,7 @@ const Contents: FC<
   isOpen,
   setIsOpen,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
 
   const DEFAULT_LIMIT_ITEM_COUNT = 5;
   const quickStartItems = useTransformedQuickStarts(quickStarts);
@@ -68,7 +68,7 @@ const Contents: FC<
     <QuickSearchController
       quickSearchProviders={quickSearchProviders}
       allItemsLoaded={catalogService.loaded && quickStartsLoaded}
-      searchPlaceholder={`${t('topology~Add to Project')}...`}
+      searchPlaceholder={`${t('Add to Project')}...`}
       namespace={namespace}
       isOpen={isOpen}
       limitItemCount={DEFAULT_LIMIT_ITEM_COUNT}

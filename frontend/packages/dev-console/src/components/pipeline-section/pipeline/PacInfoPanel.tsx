@@ -10,7 +10,7 @@ import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace
 import './PacSection.scss';
 
 const InfoPanel: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const [namespace] = useActiveNamespace();
   const {
     values: { name, resources },
@@ -36,7 +36,7 @@ const InfoPanel: FC = () => {
           </li>
           <li className="odc-pipeline-section-pac__clipboard">
             <strong>
-              {t('devconsole~Internal image registry:')}
+              {t('Internal image registry:')}
               {'  '}
             </strong>
             <ClipboardCopy variant={ClipboardCopyVariant.inlineCompact}>

@@ -35,11 +35,11 @@ const useConsumers = (query: ProjectQueries) => {
 };
 
 export const CPUPopover: FC<TopConsumerPopoverProps> = ({ current }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const consumers = useConsumers(ProjectQueries.PODS_BY_CPU);
   return (
     <ConsumerPopover
-      title={t('public~CPU')}
+      title={t('CPU')}
       current={current}
       humanize={humanizeCpuCores}
       {...consumers}
@@ -48,11 +48,11 @@ export const CPUPopover: FC<TopConsumerPopoverProps> = ({ current }) => {
 };
 
 export const MemoryPopover: FC<TopConsumerPopoverProps> = ({ current }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const consumers = useConsumers(ProjectQueries.PODS_BY_MEMORY);
   return (
     <ConsumerPopover
-      title={t('public~Memory')}
+      title={t('Memory')}
       current={current}
       humanize={humanizeBinaryBytes}
       {...consumers}
@@ -61,11 +61,11 @@ export const MemoryPopover: FC<TopConsumerPopoverProps> = ({ current }) => {
 };
 
 export const FilesystemPopover: FC<TopConsumerPopoverProps> = ({ current }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const consumers = useConsumers(ProjectQueries.PODS_BY_FILESYSTEM);
   return (
     <ConsumerPopover
-      title={t('public~Filesystem')}
+      title={t('Filesystem')}
       current={current}
       humanize={humanizeBinaryBytes}
       {...consumers}
@@ -74,11 +74,11 @@ export const FilesystemPopover: FC<TopConsumerPopoverProps> = ({ current }) => {
 };
 
 export const NetworkInPopover: FC<TopConsumerPopoverProps> = ({ current }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const consumers = useConsumers(ProjectQueries.PODS_BY_NETWORK_IN);
   return (
     <ConsumerPopover
-      title={t('public~Network in')}
+      title={t('Network in')}
       current={current}
       humanize={humanizeDecimalBytesPerSec}
       {...consumers}
@@ -87,11 +87,11 @@ export const NetworkInPopover: FC<TopConsumerPopoverProps> = ({ current }) => {
 };
 
 export const NetworkOutPopover: FC<TopConsumerPopoverProps> = ({ current }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const consumers = useConsumers(ProjectQueries.PODS_BY_NETWORK_OUT);
   return (
     <ConsumerPopover
-      title={t('public~Network out')}
+      title={t('Network out')}
       current={current}
       humanize={humanizeDecimalBytesPerSec}
       {...consumers}

@@ -76,22 +76,22 @@ const SnapshotClassDropdown = (props: SnapshotClassDropdownProps) => {
   const { selectedKey, filter } = props;
   const kind = referenceForModel(VolumeSnapshotClassModel);
   const resources = [{ kind }];
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   return (
     <ListDropdown
       {...props}
-      desc={t('console-app~VolumeSnapshotClass with same provisioner as claim')}
+      desc={t('VolumeSnapshotClass with same provisioner as claim')}
       dataFilter={filter}
       resources={resources}
       selectedKeyKind={kind}
-      placeholder={t('console-app~Select volume snapshot class')}
+      placeholder={t('Select volume snapshot class')}
       selectedKey={selectedKey}
     />
   );
 };
 
 const PVCSummary: FC<PVCSummaryProps> = ({ persistentVolumeClaim }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const storageClass = persistentVolumeClaim?.spec?.storageClassName;
   const requestedCapacity = persistentVolumeClaim?.spec?.resources?.requests?.storage;
   const sizeBase = convertToBaseValue(requestedCapacity);
@@ -102,47 +102,45 @@ const PVCSummary: FC<PVCSummaryProps> = ({ persistentVolumeClaim }) => {
   const volumeMode = persistentVolumeClaim?.spec?.volumeMode;
   return (
     <>
-      <Content component={ContentVariants.h3}>
-        {t('console-app~PersistentVolumeClaim details')}
-      </Content>
+      <Content component={ContentVariants.h3}>{t('PersistentVolumeClaim details')}</Content>
       <DescriptionList>
         <DescriptionListGroup>
-          <DescriptionListTerm>{t('console-app~Name')}</DescriptionListTerm>
+          <DescriptionListTerm>{t('Name')}</DescriptionListTerm>
           <DescriptionListDescription>
             <ResourceIcon kind={PersistentVolumeClaimModel.kind} />
             {getName(persistentVolumeClaim)}
           </DescriptionListDescription>
         </DescriptionListGroup>
         <DescriptionListGroup>
-          <DescriptionListTerm>{t('console-app~Namespace')}</DescriptionListTerm>
+          <DescriptionListTerm>{t('Namespace')}</DescriptionListTerm>
           <DescriptionListDescription>
             <ResourceIcon kind={NamespaceModel.kind} />
             {getNamespace(persistentVolumeClaim)}
           </DescriptionListDescription>
         </DescriptionListGroup>
         <DescriptionListGroup>
-          <DescriptionListTerm>{t('console-app~Status')}</DescriptionListTerm>
+          <DescriptionListTerm>{t('Status')}</DescriptionListTerm>
           <DescriptionListDescription>
             <PVCStatusComponent pvc={persistentVolumeClaim} />
           </DescriptionListDescription>
         </DescriptionListGroup>
         <DescriptionListGroup>
-          <DescriptionListTerm>{t('console-app~StorageClass')}</DescriptionListTerm>
+          <DescriptionListTerm>{t('StorageClass')}</DescriptionListTerm>
           <DescriptionListDescription>
             <ResourceIcon kind={StorageClassModel.kind} />
             {storageClass}
           </DescriptionListDescription>
         </DescriptionListGroup>
         <DescriptionListGroup>
-          <DescriptionListTerm>{t('console-app~Requested capacity')}</DescriptionListTerm>
+          <DescriptionListTerm>{t('Requested capacity')}</DescriptionListTerm>
           <DescriptionListDescription>{sizeMetrics}</DescriptionListDescription>
         </DescriptionListGroup>
         <DescriptionListGroup>
-          <DescriptionListTerm>{t('console-app~Access mode')}</DescriptionListTerm>
+          <DescriptionListTerm>{t('Access mode')}</DescriptionListTerm>
           <DescriptionListDescription>{accessModes?.title}</DescriptionListDescription>
         </DescriptionListGroup>
         <DescriptionListGroup>
-          <DescriptionListTerm>{t('console-app~Volume mode')}</DescriptionListTerm>
+          <DescriptionListTerm>{t('Volume mode')}</DescriptionListTerm>
           <DescriptionListDescription>{volumeMode}</DescriptionListDescription>
         </DescriptionListGroup>
       </DescriptionList>
@@ -160,7 +158,7 @@ const CreateSnapshotForm = (props: SnapshotResourceProps) => {
   const { namespace, pvcName } = props;
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler<VolumeSnapshotKind>();
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const navigate = useNavigate();
   const handleCancel = useCallback(() => navigate(-1), [navigate]);
   const [selectedPVCName, setSelectedPVCName] = useState(pvcName);
@@ -171,7 +169,7 @@ const CreateSnapshotForm = (props: SnapshotResourceProps) => {
   const [scObjList, scObjListLoaded, scObjListErr] = useK8sGet<ListKind<StorageClassResourceKind>>(
     StorageClassModel,
   );
-  const title = t('console-app~Create VolumeSnapshot');
+  const title = t('Create VolumeSnapshot');
   const resourceWatch = useMemo(() => {
     return Object.assign(
       {
@@ -264,7 +262,7 @@ const CreateSnapshotForm = (props: SnapshotResourceProps) => {
             ),
             id: 'yaml-link',
             'data-test': 'yaml-link',
-            label: t('console-app~Edit YAML'),
+            label: t('Edit YAML'),
           }}
         />
         <PaneBody>
@@ -279,7 +277,7 @@ const CreateSnapshotForm = (props: SnapshotResourceProps) => {
               /* eslint-disable jsx-a11y/label-has-associated-control */
               <>
                 <label className="co-required" htmlFor="claimName">
-                  {t('console-app~PersistentVolumeClaim')}
+                  {t('PersistentVolumeClaim')}
                 </label>
                 <PVCDropdown
                   dataTest="pvc-dropdown"
@@ -287,7 +285,7 @@ const CreateSnapshotForm = (props: SnapshotResourceProps) => {
                   onChange={handlePVCName}
                   selectedKey={selectedPVCName || ''}
                   dataFilter={isBound}
-                  desc={t('console-app~PersistentVolumeClaim in {{namespace}} namespace', {
+                  desc={t('PersistentVolumeClaim in {{namespace}} namespace', {
                     namespace,
                   })}
                 />
@@ -295,7 +293,7 @@ const CreateSnapshotForm = (props: SnapshotResourceProps) => {
             )}
             <div className="form-group co-volume-snapshot__form">
               <label className="co-required" htmlFor="snapshot-name">
-                {t('console-app~Name')}
+                {t('Name')}
               </label>
               <span className="pf-v6-c-form-control">
                 <input
@@ -311,7 +309,7 @@ const CreateSnapshotForm = (props: SnapshotResourceProps) => {
             {pvcObj && (
               <div className="form-group co-volume-snapshot__form">
                 <label className="co-required" htmlFor="snapshot-class">
-                  {t('console-app~Snapshot Class')}
+                  {t('Snapshot Class')}
                 </label>
                 {vscErr || scObjListErr ? (
                   <Alert
@@ -338,10 +336,10 @@ const CreateSnapshotForm = (props: SnapshotResourceProps) => {
                   id="save-changes"
                   isDisabled={!snapshotClassName || !snapshotName || !selectedPVCName}
                 >
-                  {t('console-app~Create')}
+                  {t('Create')}
                 </Button>
                 <Button type="button" variant="secondary" onClick={handleCancel}>
-                  {t('console-app~Cancel')}
+                  {t('Cancel')}
                 </Button>
               </ActionGroup>
             </ButtonBar>

@@ -87,11 +87,11 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {
 };
 
 const usePrometheusColumns = (): TableColumn<K8sResourceKind>[] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return useMemo(
     () => [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         props: {
@@ -100,7 +100,7 @@ const usePrometheusColumns = (): TableColumn<K8sResourceKind>[] => {
         },
       },
       {
-        title: t('public~Namespace'),
+        title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
         props: {
@@ -108,7 +108,7 @@ const usePrometheusColumns = (): TableColumn<K8sResourceKind>[] => {
         },
       },
       {
-        title: t('public~Labels'),
+        title: t('Labels'),
         id: tableColumnInfo[2].id,
         sort: 'metadata.labels',
         props: {
@@ -117,7 +117,7 @@ const usePrometheusColumns = (): TableColumn<K8sResourceKind>[] => {
         },
       },
       {
-        title: t('public~Version'),
+        title: t('Version'),
         id: tableColumnInfo[3].id,
         sort: 'spec.version',
         props: {
@@ -125,7 +125,7 @@ const usePrometheusColumns = (): TableColumn<K8sResourceKind>[] => {
         },
       },
       {
-        title: t('public~Service monitor selector'),
+        title: t('Service monitor selector'),
         id: tableColumnInfo[4].id,
         sort: 'spec.serviceMonitorSelector',
         props: {

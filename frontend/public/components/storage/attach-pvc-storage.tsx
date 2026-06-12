@@ -42,7 +42,7 @@ const AttachStorageForm: FC<AttachStorageFormProps> = (props) => {
 
   const { kindObj, resourceName, namespace } = props;
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const navigate = useNavigate();
 
   const supportedKinds = [
@@ -142,7 +142,7 @@ const AttachStorageForm: FC<AttachStorageFormProps> = (props) => {
   const validateDevicePath = (path: string) => {
     const existingDevicePaths = getDevicePaths(obj.spec.template);
     if (existingDevicePaths.includes(path)) {
-      setError(t('public~Device path is already in use.'));
+      setError(t('Device path is already in use.'));
     }
   };
 
@@ -271,12 +271,12 @@ const AttachStorageForm: FC<AttachStorageFormProps> = (props) => {
 
   return (
     <form className="co-m-pane__body-group co-m-pane__form" onSubmit={save}>
-      <label className="co-required">{t('public~PersistentVolumeClaim')}</label>
+      <label className="co-required">{t('PersistentVolumeClaim')}</label>
       <div className="form-group">
         <Radio
           id="existing"
           name="showCreatePVC"
-          label={t('public~Use existing claim')}
+          label={t('Use existing claim')}
           value="existing"
           onChange={handleShowCreatePVCChange}
           isChecked={showCreatePVC === 'existing'}
@@ -300,7 +300,7 @@ const AttachStorageForm: FC<AttachStorageFormProps> = (props) => {
         <Radio
           id="new"
           name="showCreatePVC"
-          label={t('public~Create new claim')}
+          label={t('Create new claim')}
           value="new"
           onChange={handleShowCreatePVCChange}
           isChecked={showCreatePVC === 'new'}
@@ -318,7 +318,7 @@ const AttachStorageForm: FC<AttachStorageFormProps> = (props) => {
       {claimVolumeMode === 'Block' ? (
         <div className="form-group">
           <label className="co-required" htmlFor="device-path">
-            {t('public~Device path')}
+            {t('Device path')}
           </label>
           <div>
             <span className="pf-v6-c-form-control">
@@ -333,14 +333,14 @@ const AttachStorageForm: FC<AttachStorageFormProps> = (props) => {
               />
             </span>
             <p className="help-block" id="volume-device-help">
-              {t('public~Device path for the block volume inside the container.')}
+              {t('Device path for the block volume inside the container.')}
             </p>
           </div>
         </div>
       ) : (
         <div className="form-group">
           <label className="co-required" htmlFor="mount-path">
-            {t('public~Mount path')}
+            {t('Mount path')}
           </label>
           <div>
             <span className="pf-v6-c-form-control">
@@ -356,17 +356,17 @@ const AttachStorageForm: FC<AttachStorageFormProps> = (props) => {
               />
             </span>
             <p className="help-block" id="mount-path-help">
-              {t('public~Mount path for the volume inside the container.')}
+              {t('Mount path for the volume inside the container.')}
             </p>
           </div>
           <Checkbox
-            label={t('public~Mount as read-only')}
+            label={t('Mount as read-only')}
             onChange={onMountAsReadOnlyChanged}
             checked={mountAsReadOnly}
             name="mountAsReadOnly"
           />
           <div className="form-group">
-            <label htmlFor="subpath">{t('public~Subpath')}</label>
+            <label htmlFor="subpath">{t('Subpath')}</label>
             <div>
               <span className="pf-v6-c-form-control">
                 <input
@@ -380,7 +380,7 @@ const AttachStorageForm: FC<AttachStorageFormProps> = (props) => {
               </span>
               <p className="help-block" id="subpath-help">
                 {t(
-                  'public~Optional path within the volume from which it will be mounted into the container. Defaults to the root of the volume.',
+                  'Optional path within the volume from which it will be mounted into the container. Defaults to the root of the volume.',
                 )}
               </p>
             </div>
@@ -401,9 +401,9 @@ const AttachStorageForm: FC<AttachStorageFormProps> = (props) => {
       )}
       {useContainerSelector && (
         <div className="form-group co-break-word">
-          <label>{t('public~Containers')}</label>
+          <label>{t('Containers')}</label>
           <Button type="button" onClick={handleSelectContainers} variant="link">
-            {t('public~(use all containers)')}
+            {t('(use all containers)')}
           </Button>
           <ContainerSelector
             containers={obj.spec.template.spec.containers}
@@ -411,7 +411,7 @@ const AttachStorageForm: FC<AttachStorageFormProps> = (props) => {
             onChange={handleContainerSelectionChange}
           />
           <p className="help-block" id="subpath-help">
-            {t('public~Select which containers to mount volume into.')}
+            {t('Select which containers to mount volume into.')}
           </p>
         </div>
       )}
@@ -423,10 +423,10 @@ const AttachStorageForm: FC<AttachStorageFormProps> = (props) => {
             id="save-changes"
             isDisabled={showCreatePVC === 'existing' && !claimName}
           >
-            {t('public~Save')}
+            {t('Save')}
           </Button>
           <Button type="button" variant="secondary" onClick={() => navigate(-1)}>
-            {t('public~Cancel')}
+            {t('Cancel')}
           </Button>
         </ActionGroup>
       </ButtonBar>

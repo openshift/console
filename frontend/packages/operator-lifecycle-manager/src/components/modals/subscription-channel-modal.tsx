@@ -29,7 +29,7 @@ export const SubscriptionChannelModal: FC<SubscriptionChannelModalProps> = ({
   pkg,
   subscription,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const currentChannel = subscription?.spec?.channel;
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
   const [selectedChannel, setSelectedChannel] = useState(currentChannel);
@@ -55,14 +55,14 @@ export const SubscriptionChannelModal: FC<SubscriptionChannelModalProps> = ({
   return (
     <>
       <ModalHeader
-        title={t('olm~Change Subscription update channel')}
+        title={t('Change Subscription update channel')}
         data-test-id="modal-title"
         labelId="subscription-channel-modal-title"
       />
       <ModalBody>
         <Form id="subscription-channel-form" onSubmit={submit}>
           <FormGroup
-            label={t('olm~Which channel is used to receive updates?')}
+            label={t('Which channel is used to receive updates?')}
             fieldId="channel"
             role="radiogroup"
           >
@@ -108,10 +108,10 @@ export const SubscriptionChannelModal: FC<SubscriptionChannelModalProps> = ({
           data-test="confirm-action"
           id="confirm-action"
         >
-          {t('public~Save')}
+          {t('Save')}
         </Button>
         <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
-          {t('public~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </>

@@ -15,7 +15,7 @@ interface MonitoringOverviewEventsProps {
 }
 
 const MonitoringOverviewEvents: FC<MonitoringOverviewEventsProps> = ({ events }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   return (
     <div className="odc-monitoring-events">
       {!_.isEmpty(events) ? (
@@ -45,9 +45,7 @@ const MonitoringOverviewEvents: FC<MonitoringOverviewEventsProps> = ({ events })
           );
         })
       ) : (
-        <div className="pf-v6-u-text-color-subtle">
-          {t('devconsole~There are no recent events.')}
-        </div>
+        <div className="pf-v6-u-text-color-subtle">{t('There are no recent events.')}</div>
       )}
     </div>
   );

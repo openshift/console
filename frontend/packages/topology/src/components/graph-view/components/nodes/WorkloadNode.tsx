@@ -149,7 +149,7 @@ const WorkloadPodsNode: FC<WorkloadPodsNodeProps> = observer(function WorkloadPo
   contextMenuOpen,
   ...rest
 }) {
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   const dropTooltipTriggerRef = useRef<SVGGElement>(null);
   const { width, height } = element.getDimensions();
   const workloadData = element.getData().data;
@@ -161,7 +161,7 @@ const WorkloadPodsNode: FC<WorkloadPodsNodeProps> = observer(function WorkloadPo
   const { radius, decoratorRadius } = calculateRadius(size);
   const cx = width / 2;
   const cy = height / 2;
-  const tipContent = dropTooltip || t('topology~Create a visual connector');
+  const tipContent = dropTooltip || t('Create a visual connector');
   const showPodCountFilter = getFilterById(SHOW_POD_COUNT_FILTER_ID, filters);
   const showPodCount = showPodCountFilter?.value ?? false;
   const { decorators } = element.getGraph().getData();

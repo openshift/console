@@ -59,7 +59,7 @@ const levels = [
 ];
 
 export const CapabilityLevel: FC<CapabilityLevelProps> = ({ capability }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const capabilityLevelIndex = levels.indexOf(capability);
 
   return (
@@ -77,7 +77,7 @@ export const CapabilityLevel: FC<CapabilityLevelProps> = ({ capability }) => {
               <RhUiCheckCircleFillIcon
                 color="var(--pf-t--global--icon--color--brand--default)"
                 className="properties-side-panel-pf-property-value__capability-level-icon"
-                title={t('olm~Checked')}
+                title={t('Checked')}
               />
             )}
             {t(`olm~${level}`)}
@@ -97,7 +97,7 @@ const InstalledHint: FC<InstalledHintProps> = ({
   subscription,
   installedChannel,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const [installedCSV] = useK8sWatchResource<ClusterServiceVersionKind>({
     kind: referenceForModel(ClusterServiceVersionModel),
     name: subscription?.status?.installedCSV,
@@ -119,20 +119,20 @@ const InstalledHint: FC<InstalledHintProps> = ({
   const installedVersion = installedCSV?.spec?.version;
   return (
     <Hint>
-      <HintTitle>{t('olm~Installed Operator')}</HintTitle>
+      <HintTitle>{t('Installed Operator')}</HintTitle>
       <HintBody>
-        {t('olm~This Operator has been installed on the cluster.')}{' '}
-        <Link to={to}>{t('olm~View it here.')}</Link>
+        {t('This Operator has been installed on the cluster.')}{' '}
+        <Link to={to}>{t('View it here.')}</Link>
       </HintBody>
       {installedVersion !== latestVersion ? (
         <HintFooter>
           <DescriptionList columnModifier={{ default: '2Col' }}>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('olm~Installed Channel')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Installed Channel')}</DescriptionListTerm>
               <DescriptionListDescription>{installedChannel}</DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('olm~Installed Version')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Installed Version')}</DescriptionListTerm>
               <DescriptionListDescription>{installedVersion}</DescriptionListDescription>
             </DescriptionListGroup>
           </DescriptionList>
@@ -143,7 +143,7 @@ const InstalledHint: FC<InstalledHintProps> = ({
 };
 
 const InstallingHint: FC<InstallingHintProps> = ({ subscription }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const [installedCSV] = useK8sWatchResource<ClusterServiceVersionKind>(
     subscription?.status?.installedCSV
       ? {
@@ -168,17 +168,17 @@ const InstallingHint: FC<InstallingHintProps> = ({ subscription }) => {
       );
   return (
     <Hint>
-      <HintTitle>{t('olm~Installing Operator')}</HintTitle>
-      <HintBody>{t('olm~This Operator is being installed on the cluster.')}</HintBody>
+      <HintTitle>{t('Installing Operator')}</HintTitle>
+      <HintBody>{t('This Operator is being installed on the cluster.')}</HintBody>
       <HintFooter>
-        <Link to={to}>{t('olm~View it here.')}</Link>
+        <Link to={to}>{t('View it here.')}</Link>
       </HintFooter>
     </Hint>
   );
 };
 
 const OperatorHubItemDetailsHint: FC<OperatorHubItemDetailsHintProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const {
     installed,
     isInstalling,
@@ -211,16 +211,16 @@ const OperatorHubItemDetailsHint: FC<OperatorHubItemDetailsHintProps> = (props) 
     return (
       <StackItem>
         <Hint>
-          <HintTitle>{t('olm~Community Operator')}</HintTitle>
+          <HintTitle>{t('Community Operator')}</HintTitle>
           <HintBody>
             {t(
-              'olm~This is a community provided Operator. These are Operators which have not been vetted or verified by Red Hat. Community Operators should be used with caution because their stability is unknown. Red Hat provides no support for community Operators.',
+              'This is a community provided Operator. These are Operators which have not been vetted or verified by Red Hat. Community Operators should be used with caution because their stability is unknown. Red Hat provides no support for community Operators.',
             )}
           </HintBody>
           <HintFooter>
             <ExternalLink
               href={RH_OPERATOR_SUPPORT_POLICY_LINK}
-              text={t('olm~Learn more about Red Hat’s third party software support policy')}
+              text={t('Learn more about Red Hat’s third party software support policy')}
             />
           </HintFooter>
         </Hint>
@@ -243,7 +243,7 @@ export const OperatorDescription: FC<OperatorDescriptionProps> = ({
   longDescription,
   packageManifest,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const {
     deprecatedPackage,
     deprecatedChannel,
@@ -291,9 +291,9 @@ export const OperatorDescription: FC<OperatorDescriptionProps> = ({
     <Stack hasGutter>
       {clusterIsAWSSTS && isTokenAuth && (
         <StackItem>
-          <DismissableAlert title={t('olm~Cluster in STS Mode')} variant={AlertVariant.warning}>
+          <DismissableAlert title={t('Cluster in STS Mode')} variant={AlertVariant.warning}>
             {t(
-              'olm~This cluster is using AWS Security Token Service to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, you must provide a role ARN (with an attached policy) during installation. Please see the operator description for more details.',
+              'This cluster is using AWS Security Token Service to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, you must provide a role ARN (with an attached policy) during installation. Please see the operator description for more details.',
             )}
           </DismissableAlert>
         </StackItem>
@@ -301,11 +301,11 @@ export const OperatorDescription: FC<OperatorDescriptionProps> = ({
       {clusterIsAzureWIF && isTokenAuth && (
         <StackItem>
           <DismissableAlert
-            title={t('olm~Cluster in Azure Workload Identity / Federated Identity Mode')}
+            title={t('Cluster in Azure Workload Identity / Federated Identity Mode')}
             variant={AlertVariant.warning}
           >
             {t(
-              'olm~This cluster is using Azure Workload Identity / Federated Identity to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, provide the Client ID, Tenant ID, and Subscription ID during installation. See the operator description for more details.',
+              'This cluster is using Azure Workload Identity / Federated Identity to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, provide the Client ID, Tenant ID, and Subscription ID during installation. See the operator description for more details.',
             )}
           </DismissableAlert>
         </StackItem>
@@ -313,11 +313,11 @@ export const OperatorDescription: FC<OperatorDescriptionProps> = ({
       {clusterIsGCPWIF && isTokenAuthGCP && (
         <StackItem>
           <DismissableAlert
-            title={t('olm~Cluster in GCP Workload Identity / Federated Identity Mode')}
+            title={t('Cluster in GCP Workload Identity / Federated Identity Mode')}
             variant={AlertVariant.warning}
           >
             {t(
-              'olm~This cluster is using GCP Workload Identity / Federated Identity to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, provide the Pool ID, Provider ID, and Service Account Email during installation. See the operator description for more details.',
+              'This cluster is using GCP Workload Identity / Federated Identity to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, provide the Pool ID, Provider ID, and Service Account Email during installation. See the operator description for more details.',
             )}
           </DismissableAlert>
         </StackItem>
@@ -357,7 +357,7 @@ export const OperatorHubItemDetails: FC<OperatorHubItemDetailsProps> = ({
   updateVersion,
   setUpdateVersion,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const {
     catalogSource,
     source,
@@ -382,7 +382,7 @@ export const OperatorHubItemDetails: FC<OperatorHubItemDetailsProps> = ({
   const { containerImage, createdAt } = currentCSVDescription?.annotations ?? {};
   const capability = currentCSVDescription?.annotations?.capabilities ?? item.capabilityLevel;
 
-  const notAvailable = t('olm~N/A');
+  const notAvailable = t('N/A');
   const created = Date.parse(createdAt) ? <Timestamp timestamp={createdAt} /> : createdAt;
 
   const mappedData = (data) => data?.map?.((d) => <div key={d}>{d}</div>) ?? notAvailable;
@@ -431,7 +431,7 @@ export const OperatorHubItemDetails: FC<OperatorHubItemDetailsProps> = ({
       <CatalogPageOverlay>
         <PropertiesSidePanel>
           <PropertyItem
-            label={t('olm~Channel')}
+            label={t('Channel')}
             value={
               <OperatorChannelSelect
                 packageManifest={obj}
@@ -442,7 +442,7 @@ export const OperatorHubItemDetails: FC<OperatorHubItemDetailsProps> = ({
             }
           />
           <PropertyItem
-            label={t('olm~Version')}
+            label={t('Version')}
             value={
               <OperatorVersionSelect
                 packageManifest={obj}
@@ -453,23 +453,23 @@ export const OperatorHubItemDetails: FC<OperatorHubItemDetailsProps> = ({
             }
           />
           <PropertyItem
-            label={t('olm~Capability level')}
+            label={t('Capability level')}
             value={capability ? <CapabilityLevel capability={capability} /> : notAvailable}
           />
-          <PropertyItem label={t('olm~Source')} value={source || notAvailable} />
-          <PropertyItem label={t('olm~Provider')} value={provider || notAvailable} />
+          <PropertyItem label={t('Source')} value={source || notAvailable} />
+          <PropertyItem label={t('Provider')} value={provider || notAvailable} />
           {infraFeatures?.length > 0 && (
-            <PropertyItem label={t('olm~Infrastructure features')} value={mappedInfraFeatures} />
+            <PropertyItem label={t('Infrastructure features')} value={mappedInfraFeatures} />
           )}
           {validSubscription?.length > 0 && (
-            <PropertyItem label={t('olm~Valid Subscriptions')} value={mappedValidSubscription} />
+            <PropertyItem label={t('Valid Subscriptions')} value={mappedValidSubscription} />
           )}
           <PropertyItem
-            label={t('olm~Repository')}
+            label={t('Repository')}
             value={repository ? <ExternalLink href={repository} text={repository} /> : notAvailable}
           />
           <PropertyItem
-            label={t('olm~Container image')}
+            label={t('Container image')}
             value={
               containerImage ? (
                 <div className="co-break-all co-select-to-copy">{containerImage}</div>
@@ -478,12 +478,12 @@ export const OperatorHubItemDetails: FC<OperatorHubItemDetailsProps> = ({
               )
             }
           />
-          <PropertyItem label={t('olm~Created at')} value={created || notAvailable} />
+          <PropertyItem label={t('Created at')} value={created || notAvailable} />
           <PropertyItem
-            label={t('olm~Support')}
+            label={t('Support')}
             value={
               supportWorkflowUrl ? (
-                <ExternalLink href={supportWorkflowUrl} text={t('olm~Get support')} />
+                <ExternalLink href={supportWorkflowUrl} text={t('Get support')} />
               ) : (
                 support || notAvailable
               )

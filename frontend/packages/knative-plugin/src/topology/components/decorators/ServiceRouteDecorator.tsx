@@ -14,21 +14,13 @@ type ServiceRouteDecoratorProps = {
 
 const ServiceRouteDecorator: FC<ServiceRouteDecoratorProps> = ({ url, radius, x, y }) => {
   const ref = useRef();
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   return (
-    <Tooltip
-      triggerRef={ref}
-      key="route"
-      content={t('knative-plugin~Open URL')}
-      position={TooltipPosition.right}
-    >
+    <Tooltip triggerRef={ref} key="route" content={t('Open URL')} position={TooltipPosition.right}>
       <g ref={ref}>
         <Decorator x={x} y={y} radius={radius} href={url} external>
           <g transform="translate(-6.5, -6.5)">
-            <RhUiExternalLinkFillIcon
-              style={{ fontSize: radius }}
-              title={t('knative-plugin~Open URL')}
-            />
+            <RhUiExternalLinkFillIcon style={{ fontSize: radius }} title={t('Open URL')} />
           </g>
         </Decorator>
       </g>

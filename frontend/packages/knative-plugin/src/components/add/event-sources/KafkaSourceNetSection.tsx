@@ -8,7 +8,7 @@ import { EventSources } from '../import-types';
 import SecretKeySelector from '../SecretKeySelector';
 
 const KafkaSourceNetSection: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const {
     values: {
       formData: { data },
@@ -25,7 +25,7 @@ const KafkaSourceNetSection: FC = () => {
         data-test-id="kafkasource-sasl-field"
         name={`formData.data.${kafkaSource}.net.sasl.enable`}
         formLabel="SASL"
-        label={t('knative-plugin~Enable')}
+        label={t('Enable')}
       />
       {saslEnable && (
         <>
@@ -35,7 +35,7 @@ const KafkaSourceNetSection: FC = () => {
           />
           <SecretKeySelector
             name={`formData.data.${kafkaSource}.net.sasl.password.secretKeyRef`}
-            label={t('knative-plugin~Password')}
+            label={t('Password')}
           />
         </>
       )}
@@ -43,17 +43,17 @@ const KafkaSourceNetSection: FC = () => {
         data-test-id="kafkasource-tls-field"
         name={`formData.data.${kafkaSource}.net.tls.enable`}
         formLabel="TLS"
-        label={t('knative-plugin~Enable')}
+        label={t('Enable')}
       />
       {tlsEnable && (
         <>
           <SecretKeySelector
             name={`formData.data.${kafkaSource}.net.tls.caCert.secretKeyRef`}
-            label={t('knative-plugin~CA certificate')}
+            label={t('CA certificate')}
           />
           <SecretKeySelector
             name={`formData.data.${kafkaSource}.net.tls.cert.secretKeyRef`}
-            label={t('knative-plugin~Certificate')}
+            label={t('Certificate')}
           />
           <SecretKeySelector
             name={`formData.data.${kafkaSource}.net.tls.key.secretKeyRef`}

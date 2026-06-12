@@ -12,7 +12,7 @@ type AdvancedSectionProps = {
 };
 
 const Footer = ({ children }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   return (
     <Trans
       t={t}
@@ -24,7 +24,7 @@ const Footer = ({ children }) => {
 };
 
 const List: FC<AdvancedSectionProps> = ({ resourceType }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const [visibleItems, setVisibleItems] = useState<string[]>([]);
   const handleVisibleItemChange = (item: string) => {
     setVisibleItems([...visibleItems, item]);
@@ -36,10 +36,10 @@ const List: FC<AdvancedSectionProps> = ({ resourceType }) => {
       onVisibleItemChange={handleVisibleItemChange}
       Footer={Footer}
     >
-      <ProgressiveListItem name={t('devconsole~Pause rollouts')}>
+      <ProgressiveListItem name={t('Pause rollouts')}>
         <PauseRolloutsSection name="formData.paused" resourceType={resourceType} />
       </ProgressiveListItem>
-      <ProgressiveListItem name={t('devconsole~Scaling')}>
+      <ProgressiveListItem name={t('Scaling')}>
         <ScalingSection name="formData.replicas" />
       </ProgressiveListItem>
     </ProgressiveList>
@@ -47,14 +47,10 @@ const List: FC<AdvancedSectionProps> = ({ resourceType }) => {
 };
 
 const AdvancedSection: FC<AdvancedSectionProps> = ({ resourceType }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
 
   return (
-    <FormSection
-      title={t('devconsole~Advanced options')}
-      dataTest="advanced-options-section"
-      fullWidth
-    >
+    <FormSection title={t('Advanced options')} dataTest="advanced-options-section" fullWidth>
       <div data-test="deployment-form-testid">
         <List resourceType={resourceType} />
       </div>

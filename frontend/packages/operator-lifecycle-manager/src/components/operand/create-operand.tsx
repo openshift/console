@@ -44,7 +44,7 @@ export const CreateOperand: FC<CreateOperandProps> = ({
   loaded,
   loadError,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const params = useParams();
   const [model] = useK8sModel(params.plural);
   const [crd] = useK8sWatchResource<CustomResourceDefinitionKind>(
@@ -58,7 +58,7 @@ export const CreateOperand: FC<CreateOperandProps> = ({
   );
 
   const formHelpText = t(
-    'olm~Create by completing the form. Default values may be provided by the Operator authors.',
+    'Create by completing the form. Default values may be provided by the Operator authors.',
   );
 
   const [activePerspective] = useActivePerspective();
@@ -107,7 +107,7 @@ export const CreateOperand: FC<CreateOperandProps> = ({
         newMethod === EditorType.Form
           ? formHelpText
           : t(
-              'olm~Create by manually entering YAML or JSON definitions, or by dragging and dropping a file into the editor.',
+              'Create by manually entering YAML or JSON definitions, or by dragging and dropping a file into the editor.',
             ),
       );
     },
@@ -119,7 +119,7 @@ export const CreateOperand: FC<CreateOperandProps> = ({
   return (
     <StatusBox loaded={loaded} loadError={loadError} data={csv}>
       <PageHeading
-        title={t('olm~Create {{item}}', { item: model.label })}
+        title={t('Create {{item}}', { item: model.label })}
         badge={getBadgeFromType(model.badge)}
         helpText={helpText}
       />
@@ -143,7 +143,7 @@ export const CreateOperand: FC<CreateOperandProps> = ({
 type CreateOperandPageRouteParams = RouteParams<'csvName' | 'ns'>;
 
 const CreateOperandPage: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const params = useParams();
   const createResourceExtension = useCreateResourceExtension(params.plural);
   const { csvName, ns } = useParams<CreateOperandPageRouteParams>();
@@ -152,7 +152,7 @@ const CreateOperandPage: FC = () => {
   return (
     <>
       <DocumentTitle>
-        {t('olm~Create {{item}}', { item: kindForReference(params.plural) })}
+        {t('Create {{item}}', { item: kindForReference(params.plural) })}
       </DocumentTitle>
       <ModelStatusBox groupVersionKind={params.plural}>
         {createResourceExtension ? (

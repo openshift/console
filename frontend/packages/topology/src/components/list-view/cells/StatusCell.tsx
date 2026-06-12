@@ -24,11 +24,11 @@ const StatusCellResourceLink: FC<StatusCellResourceLinkProps> = ({
   ready = 0,
   resource,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   const href = `${resourceObjPath(resource, resource.kind)}/pods`;
   return (
     <Link to={href}>
-      {t('topology~{{ready, number}} of {{count, number}} Pod', { ready, count: desired })}
+      {t('{{ready, number}} of {{count, number}} Pod', { ready, count: desired })}
     </Link>
   );
 };
@@ -39,7 +39,7 @@ interface StatusCellResourceStatus {
 }
 
 const StatusCellResourceStatus: FC<StatusCellResourceStatus> = ({ obj, podData }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   if (obj.kind === DaemonSetModel.kind) {
     return (
       <StatusCellResourceLink
@@ -55,11 +55,11 @@ const StatusCellResourceStatus: FC<StatusCellResourceStatus> = ({ obj, podData }
     if (!filteredPods.length) {
       return null;
     }
-    return <Link to={href}>{t('topology~{{length}} Pods', { length: filteredPods.length })}</Link>;
+    return <Link to={href}>{t('{{length}} Pods', { length: filteredPods.length })}</Link>;
   }
 
   return podData.isRollingOut ? (
-    <span className="pf-v6-u-text-color-subtle">{t('topology~Rollout in progress...')}</span>
+    <span className="pf-v6-u-text-color-subtle">{t('Rollout in progress...')}</span>
   ) : (
     <StatusCellResourceLink
       desired={obj.spec.replicas}

@@ -9,10 +9,10 @@ type EventTriggerFilterListProps = {
 };
 
 const EventTriggerFilterList: FC<EventTriggerFilterListProps> = ({ filters }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   return filters.length > 0 ? (
     <>
-      <SidebarSectionHeading text={t('knative-plugin~Filter')} />
+      <SidebarSectionHeading text={t('Filter')} />
       <FilterTable filters={filters} />
     </>
   ) : null;

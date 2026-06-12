@@ -38,7 +38,7 @@ const TagsModal = (props: TagsModalProps) => {
     namespace: props.resource?.metadata?.namespace,
   });
   const [stale, setStale] = useState(false);
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   useEffect(() => {
     if (watchedResourceLoaded && !_.isEmpty(watchedResource)) {
@@ -54,7 +54,7 @@ const TagsModal = (props: TagsModalProps) => {
 
     const keys = usedTags.map((tag) => tag[NameValueEditorPair.Name]);
     if (_.uniq(keys).length !== keys.length) {
-      setLocalErrorMessage(t('public~Duplicate keys found.'));
+      setLocalErrorMessage(t('Duplicate keys found.'));
       return;
     }
     // Make sure to 'add' if the path does not already exist, otherwise the patch request will fail
@@ -70,7 +70,7 @@ const TagsModal = (props: TagsModalProps) => {
   return (
     <>
       <ModalHeader
-        title={t('public~Edit annotations')}
+        title={t('Edit annotations')}
         labelId="annotations-modal-title"
         data-test-id="modal-title"
       />
@@ -87,7 +87,7 @@ const TagsModal = (props: TagsModalProps) => {
         errorMessage={errorMessage || localErrorMessage}
         message={
           stale
-            ? t('public~Annotations have been updated. Click Cancel and reapply your changes.')
+            ? t('Annotations have been updated. Click Cancel and reapply your changes.')
             : undefined
         }
       >
@@ -100,7 +100,7 @@ const TagsModal = (props: TagsModalProps) => {
           data-test="confirm-action"
           id="confirm-action"
         >
-          {t('public~Save')}
+          {t('Save')}
         </Button>
         <Button
           type="button"
@@ -109,7 +109,7 @@ const TagsModal = (props: TagsModalProps) => {
           onClick={props.cancel}
           data-test-id="modal-cancel-action"
         >
-          {t('public~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </>

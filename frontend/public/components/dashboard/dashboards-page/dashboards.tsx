@@ -62,8 +62,8 @@ const getPluginTabPages = (
 };
 
 const DashboardsPage_: FC<DashboardsPageProps> = ({ kindsInFlight, k8sModelsLoaded }) => {
-  const { t } = useTranslation();
-  const title = t('public~Overview');
+  const { t } = useTranslation('public');
+  const title = t('Overview');
   const tabExtensions = useExtensions<DashboardsTab>(isDashboardsTab);
   const cardExtensions = useExtensions<DashboardsCard>(isDashboardsCard);
 

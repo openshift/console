@@ -12,7 +12,7 @@ import { EmptyBox } from '@console/internal/components/utils/status-box';
 import type { IdentityProvider, OAuthKind } from '@console/internal/module/k8s';
 
 export const IdentityProviders: FC<IdentityProvidersProps> = ({ identityProviders, obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const launchModal = useOverlay();
   const groupVersionKind = getGroupVersionKindForResource(obj);
   const [model] = useK8sModel(groupVersionKind);
@@ -32,15 +32,15 @@ export const IdentityProviders: FC<IdentityProvidersProps> = ({ identityProvider
   );
 
   return _.isEmpty(identityProviders) ? (
-    <EmptyBox label={t('console-app~Identity providers')} />
+    <EmptyBox label={t('Identity providers')} />
   ) : (
     <div className="co-table-container">
       <table className="pf-v6-c-table pf-m-compact pf-m-border-rows">
         <thead className="pf-v6-c-table__thead">
           <tr className="pf-v6-c-table__tr">
-            <th className="pf-v6-c-table__th">{t('console-app~Name')}</th>
-            <th className="pf-v6-c-table__th">{t('console-app~Type')}</th>
-            <th className="pf-v6-c-table__th">{t('console-app~Mapping method')}</th>
+            <th className="pf-v6-c-table__th">{t('Name')}</th>
+            <th className="pf-v6-c-table__th">{t('Type')}</th>
+            <th className="pf-v6-c-table__th">{t('Mapping method')}</th>
           </tr>
         </thead>
         <tbody className="pf-v6-c-table__tbody">
@@ -75,7 +75,7 @@ export const IdentityProviders: FC<IdentityProvidersProps> = ({ identityProvider
                 <Kebab
                   options={[
                     {
-                      label: t('console-app~Remove identity provider'),
+                      label: t('Remove identity provider'),
                       callback: () => openRemoveModal(index, idp.name, idp.type),
                     },
                   ]}

@@ -11,7 +11,7 @@ export interface TogglePlayProps {
 }
 
 export const TogglePlay: FC<TogglePlayProps> = ({ active, className, onClick }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   return (
     <Button
@@ -23,7 +23,7 @@ export const TogglePlay: FC<TogglePlayProps> = ({ active, className, onClick }) 
         className,
       )}
       onClick={onClick}
-      aria-label={active ? t('public~Pause event streaming') : t('public~Start streaming events')}
+      aria-label={active ? t('Pause event streaming') : t('Start streaming events')}
     />
   );
 };

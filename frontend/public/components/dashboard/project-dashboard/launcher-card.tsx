@@ -8,11 +8,11 @@ import { ProjectDashboardContext } from './project-dashboard-context';
 
 export const LauncherCard = memo(() => {
   const { namespaceLinks } = useContext(ProjectDashboardContext);
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <Card data-test-id="launcher-card">
       <CardHeader>
-        <CardTitle>{t('public~Launcher')}</CardTitle>
+        <CardTitle>{t('Launcher')}</CardTitle>
       </CardHeader>
       <CardBody>
         <LauncherBody>

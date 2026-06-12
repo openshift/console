@@ -11,8 +11,8 @@ type EventPubSubExpandButtonProps = {
 };
 
 const EventPubSubExpandButton: FC<EventPubSubExpandButtonProps> = ({ rowSelected, onClick }) => {
-  const { t } = useTranslation();
-  const title = rowSelected ? t('knative-plugin~Hide filters') : t('knative-plugin~Show filters');
+  const { t } = useTranslation('knative-plugin');
+  const title = rowSelected ? t('Hide filters') : t('Show filters');
   return (
     <Button
       icon={

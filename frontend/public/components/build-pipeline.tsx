@@ -55,18 +55,18 @@ const BuildSummaryStatusIcon: FC<BuildSummaryStatusIconProps> = ({ status }) => 
 };
 
 export const BuildPipelineLogLink: FC<BuildPipelineLogLinkProps> = ({ obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const link = getJenkinsLogURL(obj);
   return link ? (
-    <ExternalLink href={link} text={t('public~View logs')} className="build-pipeline__log-link" />
+    <ExternalLink href={link} text={t('View logs')} className="build-pipeline__log-link" />
   ) : null;
 };
 
 const StagesNotStarted: FC<{}> = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <div className="build-pipeline__stage build-pipeline__stage--none">
-      {t('public~No stages have started.')}
+      {t('No stages have started.')}
     </div>
   );
 };
@@ -81,13 +81,13 @@ const BuildPipelineSummary: FC<BuildPipelineSummaryProps> = ({ obj }) => {
   const { name, namespace } = obj.metadata;
   const buildNumber = getBuildNumber(obj);
   const path: string = resourcePath(obj.kind, name, namespace);
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <div className="build-pipeline__summary">
       <div className="build-pipeline__phase">
         <BuildSummaryStatusIcon status={obj.status.phase} />{' '}
         <Link to={path} title={name}>
-          {t('public~Build {{buildNumber}}', { buildNumber })}
+          {t('Build {{buildNumber}}', { buildNumber })}
         </Link>
       </div>
       <BuildSummaryTimestamp timestamp={obj.metadata.creationTimestamp} />
@@ -111,7 +111,7 @@ const BuildAnimation: FC<BuildAnimationProps> = ({ status }) => (
 
 const JenkinsInputUrl: FC<JenkinsInputUrlProps> = ({ obj, stage }) => {
   const pending = stage.status === 'PAUSED_PENDING_INPUT';
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   if (!pending) {
     return null;
@@ -120,7 +120,7 @@ const JenkinsInputUrl: FC<JenkinsInputUrlProps> = ({ obj, stage }) => {
   const buildUrl = getJenkinsBuildURL(obj);
   return (
     <div className="build-pipeline__stage-actions pf-v6-u-text-color-subtle">
-      <ExternalLink href={buildUrl} text={t('public~Input required')} />
+      <ExternalLink href={buildUrl} text={t('Input required')} />
     </div>
   );
 };

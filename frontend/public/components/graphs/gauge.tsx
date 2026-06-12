@@ -34,12 +34,12 @@ export const GaugeChart: FC<GaugeChartProps> = ({
   secondaryTitle,
   className,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const [ref, width] = useRefWidth();
   const ready = !error && !loading;
 
   const status = loading ? t('Loading') : error;
-  const usedLabelText = usedLabel || t('public~used');
+  const usedLabelText = usedLabel || t('used');
   const secondaryTitleText = secondaryTitle || usedLabelText;
   const labelText = label || (data ? humanize(data.y).string : undefined) || t('No data');
 

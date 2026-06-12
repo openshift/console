@@ -21,7 +21,7 @@ export type SourceSectionFormData = {
 };
 
 const SourceSection: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
 
   const [, meta] = useField<string>('formData.name');
   const isNew = !meta.initialValue;
@@ -29,22 +29,22 @@ const SourceSection: FC = () => {
   const [{ value: type }] = useField<Type>('formData.source.type');
 
   const typeItems: Record<string, string> = {
-    git: t('devconsole~Git'),
-    dockerfile: t('devconsole~Dockerfile'),
-    binary: t('devconsole~Binary'),
+    git: t('Git'),
+    dockerfile: t('Dockerfile'),
+    binary: t('Binary'),
   };
 
   const lineHeight = 18;
 
   return (
-    <FormSection title={t('devconsole~Source')} dataTest="section source">
+    <FormSection title={t('Source')} dataTest="section source">
       {isNew || (type !== 'git' && type !== 'dockerfile' && type !== 'binary') ? (
         <DropdownField
           name="formData.source.type"
-          label={t('devconsole~Source type')}
-          title={t('devconsole~Please select your source type')}
+          label={t('Source type')}
+          title={t('Please select your source type')}
           items={typeItems}
-          helpText={t('devconsole~Source could be a git repository or Dockerfile')}
+          helpText={t('Source could be a git repository or Dockerfile')}
           required
           fullWidth
         />
@@ -54,7 +54,7 @@ const SourceSection: FC = () => {
       {type === 'dockerfile' ? (
         <EditorField
           name="formData.source.dockerfile"
-          label={t('devconsole~Dockerfile')}
+          label={t('Dockerfile')}
           language={Language.dockerfile as Language}
           options={{
             lineHeight,
@@ -64,7 +64,7 @@ const SourceSection: FC = () => {
       ) : null}
 
       {type === 'binary' ? (
-        <div>{t('devconsole~There are no editable source types for this build config.')}</div>
+        <div>{t('There are no editable source types for this build config.')}</div>
       ) : null}
     </FormSection>
   );

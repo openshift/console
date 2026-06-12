@@ -22,7 +22,7 @@ export const useCustomNodeActions = ({
   selectedNodes,
   onComplete,
 }: UseCustomNodeActionsOptions) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const [handlePromise, inProgress] = usePromiseHandler();
   const launchModal = useOverlay();
 
@@ -59,11 +59,11 @@ export const useCustomNodeActions = ({
           isDisabled={inProgress}
           data-test="bulk-mark-schedulable"
           description={t(
-            'console-app~Applies to {{nodeCount}} selected nodes that are currently unschedulable.',
+            'Applies to {{nodeCount}} selected nodes that are currently unschedulable.',
             { nodeCount: unschedulableCount },
           )}
         >
-          {t('console-app~Mark schedulable')}
+          {t('Mark schedulable')}
         </DropdownItem>,
       );
     }
@@ -76,11 +76,11 @@ export const useCustomNodeActions = ({
           isDisabled={inProgress}
           data-test="bulk-mark-unschedulable"
           description={t(
-            'console-app~Applies to {{nodeCount}} selected nodes that are currently schedulable.',
+            'Applies to {{nodeCount}} selected nodes that are currently schedulable.',
             { nodeCount: schedulableCount },
           )}
         >
-          {t('console-app~Mark unschedulable')}
+          {t('Mark unschedulable')}
         </DropdownItem>,
       );
     }
@@ -90,7 +90,7 @@ export const useCustomNodeActions = ({
 
     return (
       <ResponsiveActionDropdown
-        label={t('console-app~Scheduling')}
+        label={t('Scheduling')}
         isDisabled={isDisabled}
         data-test="bulk-actions-dropdown"
       >

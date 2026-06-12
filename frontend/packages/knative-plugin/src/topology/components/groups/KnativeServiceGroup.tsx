@@ -84,7 +84,7 @@ const KnativeServiceGroup: FC<KnativeServiceGroupProps> = ({
   createConnectorDrag,
 }) => {
   const ref = useRef();
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const [hoverChange, setHoverChange] = useState<boolean>(false);
   const [hover, hoverRef] = useHover(200, 200, [hoverChange]);
   const [innerHover, innerHoverRef] = useHover(0, 200);
@@ -200,7 +200,7 @@ const KnativeServiceGroup: FC<KnativeServiceGroupProps> = ({
               />
               {!hasChildren && (
                 <text x={x + width / 2} y={y + height / 2} dy="0.35em" textAnchor="middle">
-                  {t('knative-plugin~No Revisions')}
+                  {t('No Revisions')}
                 </text>
               )}
             </g>

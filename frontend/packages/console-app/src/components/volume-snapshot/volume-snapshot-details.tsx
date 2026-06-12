@@ -35,7 +35,7 @@ import { snapshotSource, snapshotStatus } from '@console/shared/src/sorts/snapsh
 const { editYaml, events } = navFactory;
 
 const Details: FC<DetailsProps> = ({ obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const namespace = obj?.metadata?.namespace || '';
   const sourceModel = obj?.spec?.source?.persistentVolumeClaimName
     ? PersistentVolumeClaimModel
@@ -51,12 +51,12 @@ const Details: FC<DetailsProps> = ({ obj }) => {
 
   return (
     <PaneBody>
-      <SectionHeading text={t('console-app~VolumeSnapshot details')} />
+      <SectionHeading text={t('VolumeSnapshot details')} />
       <Grid hasGutter>
         <GridItem md={6}>
           <ResourceSummary resource={obj}>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('console-app~Status')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Status')}</DescriptionListTerm>
               <DescriptionListDescription>
                 <Status status={snapshotStatus(obj)} />
               </DescriptionListDescription>
@@ -66,11 +66,11 @@ const Details: FC<DetailsProps> = ({ obj }) => {
         <GridItem md={6}>
           <DescriptionList>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('console-app~Size')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Size')}</DescriptionListTerm>
               <DescriptionListDescription>{size ? sizeMetrics : '-'}</DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('console-app~Source')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Source')}</DescriptionListTerm>
               <DescriptionListDescription>
                 <ResourceLink
                   kind={referenceForModel(sourceModel)}
@@ -81,7 +81,7 @@ const Details: FC<DetailsProps> = ({ obj }) => {
             </DescriptionListGroup>
             {canListVSC && (
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('console-app~VolumeSnapshotContent')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('VolumeSnapshotContent')}</DescriptionListTerm>
                 <DescriptionListDescription data-test="details-item-value__VSC">
                   {snapshotContent ? (
                     <ResourceLink
@@ -95,7 +95,7 @@ const Details: FC<DetailsProps> = ({ obj }) => {
               </DescriptionListGroup>
             )}
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('console-app~VolumeSnapshotClass')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('VolumeSnapshotClass')}</DescriptionListTerm>
               <DescriptionListDescription data-test="details-item-value__SC">
                 {snapshotClass ? (
                   <ResourceLink

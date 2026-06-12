@@ -20,7 +20,7 @@ import { getPDBResource } from './utils/get-pdb-resources';
 const LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY = 'console.pdbForm.editor.lastView';
 
 export const PDBFormPage: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const params = useParams();
   const location = useLocation();
   const match = {
@@ -58,9 +58,9 @@ export const PDBFormPage: FC = () => {
 
   const existingResource = getPDBResource(pdbResources, resource);
 
-  const formHelpText = t('console-app~Create by completing the form.');
+  const formHelpText = t('Create by completing the form.');
   const yamlHelpText = t(
-    'console-app~Create by manually entering YAML or JSON definitions, or by dragging and dropping a file into the editor.',
+    'Create by manually entering YAML or JSON definitions, or by dragging and dropping a file into the editor.',
   );
   const initialPDB = {
     name: '',
@@ -87,8 +87,8 @@ export const PDBFormPage: FC = () => {
   };
 
   const title = !existingResource
-    ? t('console-app~Create {{label}}', { label: PodDisruptionBudgetModel.label })
-    : t('console-app~Edit {{label}}', { label: PodDisruptionBudgetModel.label });
+    ? t('Create {{label}}', { label: PodDisruptionBudgetModel.label })
+    : t('Edit {{label}}', { label: PodDisruptionBudgetModel.label });
   const stillLoading = !loadedResource || !loadedPDBResource;
 
   return (

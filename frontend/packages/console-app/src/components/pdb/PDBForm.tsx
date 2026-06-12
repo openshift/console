@@ -70,7 +70,7 @@ const PDBForm: FC<PodDisruptionBudgetFormProps> = ({
   existingResource,
   replicasCount,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const navigate = useNavigate();
   const handleCancel = useCallback(() => navigate(-1), [navigate]);
   const initialFormValues = initialValuesFromK8sResource(formData);
@@ -84,8 +84,8 @@ const PDBForm: FC<PodDisruptionBudgetFormProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const items: RequirementItems = useMemo(
     () => ({
-      maxUnavailable: t('console-app~maxUnavailable'),
-      minAvailable: t('console-app~minAvailable'),
+      maxUnavailable: t('maxUnavailable'),
+      minAvailable: t('minAvailable'),
     }),
     [t],
   );
@@ -169,7 +169,7 @@ const PDBForm: FC<PodDisruptionBudgetFormProps> = ({
       <Form onSubmit={handleSubmit}>
         <Stack hasGutter>
           <StackItem>
-            <FormGroup label={t('console-app~Name')} isRequired fieldId="pdb-name">
+            <FormGroup label={t('Name')} isRequired fieldId="pdb-name">
               <TextInput
                 isRequired
                 type="text"
@@ -185,14 +185,14 @@ const PDBForm: FC<PodDisruptionBudgetFormProps> = ({
           </StackItem>
           <StackItem>
             <FormGroup
-              label={t('console-app~Labels')}
+              label={t('Labels')}
               fieldId="pdb-labels"
               labelHelp={
                 <FieldLevelHelp>
-                  <Title headingLevel="h3">{t('console-app~Selector')}</Title>
+                  <Title headingLevel="h3">{t('Selector')}</Title>
                   <Content component="p" className="pdb-form-popover__description">
                     {t(
-                      'console-app~Label query over pods whose evictions are managed by the disruption budget. Anull selector will match no pods, while an empty ({}) selector will select all pods within the namespace.',
+                      'Label query over pods whose evictions are managed by the disruption budget. Anull selector will match no pods, while an empty ({}) selector will select all pods within the namespace.',
                     )}
                   </Content>
                 </FieldLevelHelp>
@@ -211,9 +211,7 @@ const PDBForm: FC<PodDisruptionBudgetFormProps> = ({
                   <FormHelperText>
                     <HelperText>
                       <HelperTextItem variant="warning">
-                        {t(
-                          'console-app~Resource is already covered by another PodDisruptionBudget',
-                        )}
+                        {t('Resource is already covered by another PodDisruptionBudget')}
                       </HelperTextItem>
                     </HelperText>
                   </FormHelperText>
@@ -224,7 +222,7 @@ const PDBForm: FC<PodDisruptionBudgetFormProps> = ({
           <StackItem>
             <FormGroup
               fieldId="pdb-requirement"
-              label={t('console-app~Availability requirement')}
+              label={t('Availability requirement')}
               labelHelp={<AvailabilityRequirementPopover />}
             />
             <Split hasGutter>
@@ -261,12 +259,12 @@ const PDBForm: FC<PodDisruptionBudgetFormProps> = ({
               <SplitItem isFilled>
                 <TextInput
                   type="text"
-                  aria-label={t('console-app~Availability requirement value')}
+                  aria-label={t('Availability requirement value')}
                   onChange={handleAvailabilityRequirementValueChange}
                   value={
                     formValues?.minAvailable?.toString() || formValues?.maxUnavailable?.toString()
                   }
-                  placeholder={t('console-app~Value (% or number)')}
+                  placeholder={t('Value (% or number)')}
                   name="availability requirement value"
                   isDisabled={isDisabled}
                   validated={
@@ -283,12 +281,12 @@ const PDBForm: FC<PodDisruptionBudgetFormProps> = ({
               <FormAlert>
                 <Alert
                   variant="warning"
-                  title={t('console-app~Availability requirement value warning')}
+                  title={t('Availability requirement value warning')}
                   aria-live="polite"
                   isInline
                 >
                   {t(
-                    'console-app~A maxUnavailable of 0% or 0 or a minAvailable of 100% or greater than or equal to the number of replicas is permitted but can block nodes from being drained.',
+                    'A maxUnavailable of 0% or 0 or a minAvailable of 100% or greater than or equal to the number of replicas is permitted but can block nodes from being drained.',
                   )}
                 </Alert>
               </FormAlert>
@@ -303,10 +301,10 @@ const PDBForm: FC<PodDisruptionBudgetFormProps> = ({
                   variant="primary"
                   isDisabled={!formValues.name}
                 >
-                  {existingResource ? t('console-app~Save') : t('console-app~Create')}
+                  {existingResource ? t('Save') : t('Create')}
                 </Button>
                 <Button onClick={handleCancel} id="cancel" variant="secondary">
-                  {t('console-app~Cancel')}
+                  {t('Cancel')}
                 </Button>
               </ActionGroup>
             </ButtonBar>

@@ -40,13 +40,9 @@ type PowerOffWarning = {
 };
 
 export const PowerOffWarning = ({ restart }: PowerOffWarning) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('metal3-plugin');
   return (
-    <Alert
-      variant="warning"
-      title={t('metal3-plugin~Applications may be temporarily disrupted.')}
-      isInline
-    >
+    <Alert variant="warning" title={t('Applications may be temporarily disrupted.')} isInline>
       {restart
         ? t(
             'metal3-plugin~Workloads currently running on this host will not be moved before restarting. This may cause service disruptions.',
@@ -62,7 +58,7 @@ const getPowerOffMessage = (t: TFunction, pods: PodKind[]) => {
   const staticPods = getStaticPods(pods);
   const daemonSets = getDaemonSetsOfPods(pods);
   if (!staticPods.length && !daemonSets.length) {
-    return t('metal3-plugin~all workloads have already been moved.');
+    return t('all workloads have already been moved.');
   }
   if (staticPods.length && !daemonSets.length) {
     return t(
@@ -104,7 +100,7 @@ const ForcePowerOffDialog: FC<ForcePowerOffDialogProps> = ({
   loadError,
   cancel,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('metal3-plugin');
   const startNodeMaintenanceModal = useStartNodeMaintenanceModalLauncher({ nodeName });
   const hasMaintenance = [
     NODE_STATUS_STARTING_MAINTENANCE,
@@ -113,7 +109,7 @@ const ForcePowerOffDialog: FC<ForcePowerOffDialogProps> = ({
   ].includes(status.status);
   let mainText: ReactNode;
   if (!nodeName) {
-    mainText = <p>{t('metal3-plugin~The host will be powered off gracefully.')}</p>;
+    mainText = <p>{t('The host will be powered off gracefully.')}</p>;
   } else if (!hasMaintenance) {
     mainText = (
       <p>
@@ -134,8 +130,8 @@ const ForcePowerOffDialog: FC<ForcePowerOffDialogProps> = ({
   }
 
   const helpText = nodeName
-    ? t('metal3-plugin~Workloads will not be moved before the host powers off.')
-    : t('metal3-plugin~The host will power off immediately as if it were unplugged.');
+    ? t('Workloads will not be moved before the host powers off.')
+    : t('The host will power off immediately as if it were unplugged.');
 
   return (
     <Stack hasGutter>
@@ -151,7 +147,7 @@ const ForcePowerOffDialog: FC<ForcePowerOffDialogProps> = ({
       <StackItem>
         <Checkbox
           id="host-force-off"
-          label={t('metal3-plugin~Power off immediately')}
+          label={t('Power off immediately')}
           onChange={(_event, value) => setForceOff(value)}
           isChecked={forceOff}
           data-checked-state={forceOff}
@@ -175,7 +171,7 @@ export type PowerOffHostModalProps = {
 } & ModalComponentProps;
 
 const PowerOffHostModal: OverlayComponent<PowerOffHostModalProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('metal3-plugin');
   const { host, nodeName, status, closeOverlay } = props;
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
   const [pods, loaded, loadError] = useK8sWatchResource<PodKind[]>({
@@ -209,7 +205,7 @@ const PowerOffHostModal: OverlayComponent<PowerOffHostModalProps> = (props) => {
       aria-labelledby="power-off-host-modal-title"
     >
       <ModalHeader
-        title={t('metal3-plugin~Power Off Host')}
+        title={t('Power Off Host')}
         data-test-id="modal-title"
         labelId="power-off-host-modal-title"
       />
@@ -223,7 +219,7 @@ const PowerOffHostModal: OverlayComponent<PowerOffHostModalProps> = (props) => {
               { message: getPowerOffMessage(t, pods) },
             )
           ) : (
-            t('metal3-plugin~Host is ready to be gracefully powered off.')
+            t('Host is ready to be gracefully powered off.')
           )
         ) : (
           <ForcePowerOffDialog
@@ -247,10 +243,10 @@ const PowerOffHostModal: OverlayComponent<PowerOffHostModalProps> = (props) => {
           data-test="confirm-action"
           id="confirm-action"
         >
-          {t('metal3-plugin~Power Off')}
+          {t('Power Off')}
         </Button>
         <Button variant="link" onClick={closeOverlay} data-test-id="modal-cancel-action">
-          {t('metal3-plugin~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </Modal>

@@ -23,7 +23,7 @@ export const AddGitLabPage = () => {
   const [url, setUrl] = useState('');
   const [caFileContent, setCaFileContent] = useState('');
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const thenPromise = (res) => {
     setInProgress(false);
@@ -32,7 +32,7 @@ export const AddGitLabPage = () => {
   };
 
   const catchError = (error) => {
-    const err = error.message || t('public~An error occurred. Please try again.');
+    const err = error.message || t('An error occurred. Please try again.');
     setInProgress(false);
     setErrorMessage(err);
     return Promise.reject(err);
@@ -141,7 +141,7 @@ export const AddGitLabPage = () => {
     });
   };
 
-  const title = t('public~Add Identity Provider: GitLab');
+  const title = t('Add Identity Provider: GitLab');
 
   return (
     <div className="co-m-pane__form">
@@ -149,7 +149,7 @@ export const AddGitLabPage = () => {
       <PageHeading
         title={title}
         helpText={t(
-          'public~You can use GitLab integration for users authenticating with GitLab credentials.',
+          'You can use GitLab integration for users authenticating with GitLab credentials.',
         )}
       />
       <PaneBody>
@@ -157,12 +157,12 @@ export const AddGitLabPage = () => {
           <IDPNameInput value={name} onChange={(e) => setName(e.currentTarget.value)} />
           <div className="form-group">
             <label className="co-required" htmlFor="url">
-              {t('public~URL')}
+              {t('URL')}
             </label>
             <span className="pf-v6-c-form-control">
               <input
                 type="url"
-                aria-label={t('public~URL')}
+                aria-label={t('URL')}
                 onChange={(e) => setUrl(e.currentTarget.value)}
                 value={url}
                 id="url"
@@ -171,17 +171,17 @@ export const AddGitLabPage = () => {
               />
             </span>
             <p className="help-block" id="idp-url-help">
-              {t('public~The OAuth server base URL.')}
+              {t('The OAuth server base URL.')}
             </p>
           </div>
           <div className="form-group">
             <label className="co-required" htmlFor="client-id">
-              {t('public~Client ID')}
+              {t('Client ID')}
             </label>
             <span className="pf-v6-c-form-control">
               <input
                 type="text"
-                aria-label={t('public~Client ID')}
+                aria-label={t('Client ID')}
                 onChange={(e) => setClientID(e.currentTarget.value)}
                 value={clientID}
                 id="client-id"
@@ -191,12 +191,12 @@ export const AddGitLabPage = () => {
           </div>
           <div className="form-group">
             <label className="co-required" htmlFor="client-secret">
-              {t('public~Client secret')}
+              {t('Client secret')}
             </label>
             <span className="pf-v6-c-form-control">
               <input
                 type="password"
-                aria-label={t('public~Client secret')}
+                aria-label={t('Client secret')}
                 onChange={(e) => setClientSecret(e.currentTarget.value)}
                 value={clientSecret}
                 id="client-secret"
@@ -212,10 +212,10 @@ export const AddGitLabPage = () => {
           <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
             <ActionGroup className="pf-v6-c-form">
               <Button type="submit" variant="primary" data-test-id="add-idp" data-test="add-idp">
-                {t('public~Add')}
+                {t('Add')}
               </Button>
               <Button type="button" variant="secondary" onClick={() => navigate(-1)}>
-                {t('public~Cancel')}
+                {t('Cancel')}
               </Button>
             </ActionGroup>
           </ButtonBar>

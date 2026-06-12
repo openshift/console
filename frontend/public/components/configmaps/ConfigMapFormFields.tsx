@@ -8,7 +8,7 @@ import KeyValueFileInputField from '@console/shared/src/components/formik-fields
 import { isBase64 } from './configmap-utils';
 
 const ConfigMapFormFields: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { values, setFieldValue } = useFormikContext<FormikValues>();
   const onChange = (value: string, keyIndex: string) => {
     setFieldValue(`${keyIndex}.isBase64`, isBase64(value));
@@ -21,23 +21,23 @@ const ConfigMapFormFields: FC = () => {
         required
         isDisabled={!values.isCreateFlow}
         name="formData.name"
-        label={t('public~Name')}
+        label={t('Name')}
         data-test="configmap-name"
-        helpText={t('public~A unique name for the ConfigMap within the project')}
+        helpText={t('A unique name for the ConfigMap within the project')}
       />
 
       <CheckboxField
         name="formData.immutable"
-        label={t('public~Immutable')}
+        label={t('Immutable')}
         data-test="configmap-immutable"
         helpText={t(
-          'public~Immutable, if set to true, ensures that data stored in the ConfigMap cannot be updated',
+          'Immutable, if set to true, ensures that data stored in the ConfigMap cannot be updated',
         )}
       />
 
       <KeyValueFileInputField
-        label={t('public~Data')}
-        helpText={t('public~Data contains the configuration data that is in UTF-8 range')}
+        label={t('Data')}
+        helpText={t('Data contains the configuration data that is in UTF-8 range')}
         name="formData.data"
         data-test="configmap-key-value-pair"
         entries={[{ key: '', value: '' }]}
@@ -45,8 +45,8 @@ const ConfigMapFormFields: FC = () => {
       />
 
       <KeyValueFileInputField
-        label={t('public~Binary Data')}
-        helpText={t('public~BinaryData contains the binary data that is not in UTF-8 range')}
+        label={t('Binary Data')}
+        helpText={t('BinaryData contains the binary data that is not in UTF-8 range')}
         name="formData.binaryData"
         data-test="configmap-key-value-pair"
         entries={[{ key: '', value: '' }]}

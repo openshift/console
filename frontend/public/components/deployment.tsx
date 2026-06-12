@@ -42,28 +42,28 @@ import { WorkloadTableHeader, getWorkloadDataViewRows, useWorkloadColumns } from
 const kind = referenceForModel(DeploymentModel);
 
 export const DeploymentDetailsList: FC<DeploymentDetailsListProps> = ({ deployment }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <DescriptionList>
-      <DetailsItem label={t('public~Update strategy')} obj={deployment} path="spec.strategy.type" />
+      <DetailsItem label={t('Update strategy')} obj={deployment} path="spec.strategy.type" />
       {deployment.spec.strategy.type === 'RollingUpdate' && (
         <>
           <DetailsItem
-            label={t('public~Max unavailable')}
+            label={t('Max unavailable')}
             obj={deployment}
             path="spec.strategy.rollingUpdate.maxUnavailable"
           >
-            {t('public~{{maxUnavailable}} of {{count}} pod', {
+            {t('{{maxUnavailable}} of {{count}} pod', {
               maxUnavailable: deployment.spec.strategy.rollingUpdate.maxUnavailable ?? 1,
               count: deployment.spec.replicas,
             })}
           </DetailsItem>
           <DetailsItem
-            label={t('public~Max surge')}
+            label={t('Max surge')}
             obj={deployment}
             path="spec.strategy.rollingUpdate.maxSurge"
           >
-            {t('public~{{maxSurge}} greater than {{count}} pod', {
+            {t('{{maxSurge}} greater than {{count}} pod', {
               maxSurge: deployment.spec.strategy.rollingUpdate.maxSurge ?? 1,
               count: deployment.spec.replicas,
             })}
@@ -71,22 +71,18 @@ export const DeploymentDetailsList: FC<DeploymentDetailsListProps> = ({ deployme
         </>
       )}
       <DetailsItem
-        label={t('public~Progress deadline seconds')}
+        label={t('Progress deadline seconds')}
         obj={deployment}
         path="spec.progressDeadlineSeconds"
       >
         {deployment.spec.progressDeadlineSeconds
-          ? t('public~{{count}} second', { count: deployment.spec.progressDeadlineSeconds })
-          : t('public~Not configured')}
+          ? t('{{count}} second', { count: deployment.spec.progressDeadlineSeconds })
+          : t('Not configured')}
       </DetailsItem>
-      <DetailsItem
-        label={t('public~Min ready seconds')}
-        obj={deployment}
-        path="spec.minReadySeconds"
-      >
+      <DetailsItem label={t('Min ready seconds')} obj={deployment} path="spec.minReadySeconds">
         {deployment.spec.minReadySeconds
-          ? t('public~{{count}} second', { count: deployment.spec.minReadySeconds })
-          : t('public~Not configured')}
+          ? t('{{count}} second', { count: deployment.spec.minReadySeconds })
+          : t('Not configured')}
       </DetailsItem>
       <RuntimeClass obj={deployment} />
       <PodDisruptionBudgetField obj={deployment} />
@@ -97,19 +93,19 @@ export const DeploymentDetailsList: FC<DeploymentDetailsListProps> = ({ deployme
 DeploymentDetailsList.displayName = 'DeploymentDetailsList';
 
 const DeploymentDetails: FC<DeploymentDetailsProps> = ({ obj: deployment }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   return (
     <>
       <PaneBody>
-        <SectionHeading text={t('public~Deployment details')} />
+        <SectionHeading text={t('Deployment details')} />
         {deployment.spec.paused && <WorkloadPausedAlert obj={deployment} model={DeploymentModel} />}
         <PodRingSet key={deployment.metadata.uid} obj={deployment} path="/spec/replicas" />
         <Grid hasGutter>
           <GridItem sm={6}>
             <ResourceSummary resource={deployment} showPodSelector showNodeSelector showTolerations>
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('public~Status')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('Status')}</DescriptionListTerm>
                 <DescriptionListDescription>
                   {deployment.status.availableReplicas === deployment.status.updatedReplicas &&
                   deployment.spec.replicas === deployment.status.availableReplicas ? (
@@ -127,14 +123,14 @@ const DeploymentDetails: FC<DeploymentDetailsProps> = ({ obj: deployment }) => {
         </Grid>
       </PaneBody>
       <PaneBody>
-        <SectionHeading text={t('public~Containers')} />
+        <SectionHeading text={t('Containers')} />
         <ContainerTable containers={deployment.spec.template.spec.containers} />
       </PaneBody>
       <PaneBody>
-        <VolumesTable resource={deployment} heading={t('public~Volumes')} />
+        <VolumesTable resource={deployment} heading={t('Volumes')} />
       </PaneBody>
       <PaneBody>
-        <SectionHeading text={t('public~Conditions')} />
+        <SectionHeading text={t('Conditions')} />
         <Conditions conditions={deployment.status.conditions} />
       </PaneBody>
     </>

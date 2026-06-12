@@ -27,7 +27,7 @@ const PubSubFilter: FC = () => {
   const [nameValue, setNameValue] = useState(
     filterPairs.length > 0 ? filterPairs : initialValueResources,
   );
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const handleNameValuePairs = useCallback(
     ({ nameValuePairs }) => {
       let updatedNameValuePairs = {};
@@ -44,15 +44,15 @@ const PubSubFilter: FC = () => {
     [setFieldValue],
   );
   return (
-    <FormGroup fieldId={getFieldId('pubsub', 'filter')} label={t('knative-plugin~Filter')} required>
+    <FormGroup fieldId={getFieldId('pubsub', 'filter')} label={t('Filter')} required>
       <NameValueEditor
         nameValuePairs={status.subscriberAvailable ? nameValue : []}
-        valueString={t('knative-plugin~Value')}
-        nameString={t('knative-plugin~Attribute')}
+        valueString={t('Value')}
+        nameString={t('Attribute')}
         readOnly={!status.subscriberAvailable}
         allowSorting={false}
         updateParentData={handleNameValuePairs}
-        addString={t('knative-plugin~Add more')}
+        addString={t('Add more')}
       />
     </FormGroup>
   );

@@ -16,13 +16,13 @@ import type { StepResource } from '../../types';
 import { referenceForStepResource } from '../index';
 
 const InstallPlanPreview: FC<InstallPlanPreviewModalProps> = ({ cancel, stepResource }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   return (
     <>
       <ModalHeader
         title={
           <>
-            {t('olm~InstallPlan Preview')}{' '}
+            {t('InstallPlan Preview')}{' '}
             <ResourceLink
               linkTo={false}
               name={stepResource.name}
@@ -38,7 +38,7 @@ const InstallPlanPreview: FC<InstallPlanPreviewModalProps> = ({ cancel, stepReso
       </ModalBody>
       <ModalFooter>
         <Button variant="primary" onClick={() => cancel()}>
-          {t('public~OK')}
+          {t('OK')}
         </Button>
       </ModalFooter>
     </>

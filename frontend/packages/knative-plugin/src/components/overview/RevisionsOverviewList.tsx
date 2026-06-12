@@ -25,7 +25,7 @@ const RevisionsOverviewList: FC<RevisionsOverviewListProps> = ({
   service,
   hideSectionHeading,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const trafficDistributionModalLauncher = useTrafficSplittingModalLauncher({ obj: service });
   const canSetTrafficDistribution = useAccessReview({
     group: ServiceModel.apiGroup,
@@ -62,13 +62,10 @@ const RevisionsOverviewList: FC<RevisionsOverviewListProps> = ({
   return (
     <>
       {!hideSectionHeading && (
-        <SidebarSectionHeading
-          text={t('knative-plugin~Revisions')}
-          className="revision-overview-list"
-        >
+        <SidebarSectionHeading text={t('Revisions')} className="revision-overview-list">
           {revisions?.length > MAX_REVISIONS && (
             <Link className="sidebar__section-view-all" to={getRevisionsLink()}>
-              {t('knative-plugin~View all ({{revLength}})', { revLength: revisions.length })}
+              {t('View all ({{revLength}})', { revLength: revisions.length })}
             </Link>
           )}
 
@@ -78,14 +75,14 @@ const RevisionsOverviewList: FC<RevisionsOverviewListProps> = ({
               onClick={trafficDistributionModalLauncher}
               isDisabled={!(revisions && revisions.length)}
             >
-              {t('knative-plugin~Set traffic distribution')}
+              {t('Set traffic distribution')}
             </Button>
           )}
         </SidebarSectionHeading>
       )}
       {_.isEmpty(revisions) ? (
         <span className="pf-v6-u-text-color-subtle">
-          {t('knative-plugin~No Revisions found for this resource.')}
+          {t('No Revisions found for this resource.')}
         </span>
       ) : (
         <List isPlain isBordered>

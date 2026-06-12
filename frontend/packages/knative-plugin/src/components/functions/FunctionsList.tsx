@@ -12,13 +12,13 @@ import FunctionRow from './FunctionRow';
 import './FunctionsPage.scss';
 
 const FunctionsList: FC<TableProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const { ns } = useParams();
   const EmptyMsg = () => (
     <EmptyState
       titleText={
         <Title data-test="empty-state-title" headingLevel="h3">
-          {t('knative-plugin~No functions found')}
+          {t('No functions found')}
         </Title>
       }
       icon={ServerlessFunctionIcon}
@@ -26,7 +26,7 @@ const FunctionsList: FC<TableProps> = (props) => {
     >
       <span>
         {t(
-          'knative-plugin~Serverless functions are single-purpose, programmatic functions that are hosted on managed infrastructure.',
+          'Serverless functions are single-purpose, programmatic functions that are hosted on managed infrastructure.',
         )}
       </span>
       <div className="odc-functions__empty-list__dropdown">
@@ -37,7 +37,7 @@ const FunctionsList: FC<TableProps> = (props) => {
   return (
     <Table
       {...props}
-      aria-label={t('knative-plugin~Functions')}
+      aria-label={t('Functions')}
       Header={ServiceHeader(t)}
       Row={FunctionRow}
       virtualize

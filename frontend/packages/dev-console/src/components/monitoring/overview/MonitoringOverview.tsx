@@ -38,7 +38,7 @@ type MonitoringOverviewProps = {
 };
 
 const MonitoringOverview: FC<MonitoringOverviewProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const { resource, pods, resourceEvents, monitoringAlerts } = props;
   const [perspective] = useActivePerspective();
   const firingAlerts = getFiringAlerts(monitoringAlerts);
@@ -110,7 +110,7 @@ const MonitoringOverview: FC<MonitoringOverviewProps> = (props) => {
               className="odc-monitoring-overview__alerts-toggle"
             >
               <Split>
-                <SplitItem>{t('devconsole~Alerts')}</SplitItem>
+                <SplitItem>{t('Alerts')}</SplitItem>
                 <SplitItem isFilled />
                 <SplitItem>
                   <Badge>{monitoringAlerts.length}</Badge>
@@ -133,24 +133,24 @@ const MonitoringOverview: FC<MonitoringOverviewProps> = (props) => {
             }}
             id="metrics"
           >
-            {t('devconsole~Metrics')}
+            {t('Metrics')}
           </AccordionToggle>
           <AccordionContent id="metrics-content">
             {resource.kind === DeploymentConfigModel.kind ? (
               <EmptyState
                 headingLevel="h2"
                 icon={RhStandardInfoIcon}
-                titleText={<>{t('devconsole~No metrics found')}</>}
+                titleText={<>{t('No metrics found')}</>}
               >
                 <EmptyStateBody>
-                  {t('devconsole~Deployment Configuration metrics are not yet supported.')}
+                  {t('Deployment Configuration metrics are not yet supported.')}
                 </EmptyStateBody>
               </EmptyState>
             ) : (
               <>
                 <div className="odc-monitoring-overview__view-monitoring-dashboards">
                   <Link to={resourceLink} data-test="observe-dashboards-link">
-                    {t('devconsole~View dashboards')}
+                    {t('View dashboards')}
                   </Link>
                 </div>
                 <WorkloadGraphs resource={resource} />
@@ -166,7 +166,7 @@ const MonitoringOverview: FC<MonitoringOverviewProps> = (props) => {
             }}
             id="all-events"
           >
-            {t('devconsole~All events')}
+            {t('All events')}
           </AccordionToggle>
           <AccordionContent id="all-events-content">
             <MonitoringOverviewEvents events={events} />
