@@ -65,6 +65,7 @@ type DownloadsServerConfig struct {
 const indexFileName = "index.html"
 const pathToOCLicense = "/usr/share/openshift/LICENSE"
 const ocLicenseFile = "oc-license"
+const defaultArtifactsDir = "/tmp/artifacts"
 
 // template used to generate the HTML file with links to artifacts
 const templateStringHTML = `<!DOCTYPE html>
@@ -114,11 +115,14 @@ func loadArtifactsSpec(path string) ([]ArtifactSpec, error) {
 
 // NewDownloadsServerConfig creates a new ArtifactsConfig object
 func NewDownloadsServerConfig(port int, specsFilePath string) (*DownloadsServerConfig, error) {
-	tempDir, err := os.MkdirTemp("", "artifacts")
-	if err != nil {
-		return nil, err
+	tempDir := defaultArtifactsDir
+	if err := os.RemoveAll(tempDir); err != nil {
+		return nil, fmt.Errorf("failed to clean up stale artifacts directory: %w", err)
 	}
-	klog.Info("Create temporary directory for artifacts")
+	if err := os.MkdirAll(tempDir, 0755); err != nil {
+		return nil, fmt.Errorf("failed to create artifacts directory: %w", err)
+	}
+	klog.Info("Created artifacts directory (cleaned up any stale data from previous run)")
 	specs, err := loadArtifactsSpec(specsFilePath)
 	if err != nil {
 		return nil, err
