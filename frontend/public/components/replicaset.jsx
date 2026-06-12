@@ -54,17 +54,17 @@ const Details = ({ obj: replicaSet }) => {
     'annotations',
     'deployment.kubernetes.io/revision',
   ]);
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <>
       <PaneBody>
-        <SectionHeading text={t('public~ReplicaSet details')} />
+        <SectionHeading text={t('ReplicaSet details')} />
         <Grid hasGutter>
           <GridItem md={6}>
             <ResourceSummary resource={replicaSet} showPodSelector showNodeSelector showTolerations>
               {revision && (
                 <DescriptionListGroup>
-                  <DescriptionListTerm>{t('public~Deployment revision')}</DescriptionListTerm>
+                  <DescriptionListTerm>{t('Deployment revision')}</DescriptionListTerm>
                   <DescriptionListDescription>{revision}</DescriptionListDescription>
                 </DescriptionListGroup>
               )}
@@ -80,11 +80,11 @@ const Details = ({ obj: replicaSet }) => {
         </Grid>
       </PaneBody>
       <PaneBody>
-        <SectionHeading text={t('public~Containers')} />
+        <SectionHeading text={t('Containers')} />
         <ContainerTable containers={replicaSet.spec.template.spec.containers} />
       </PaneBody>
       <PaneBody>
-        <VolumesTable resource={replicaSet} heading={t('public~Volumes')} />
+        <VolumesTable resource={replicaSet} heading={t('Volumes')} />
       </PaneBody>
     </>
   );
@@ -201,7 +201,7 @@ const getDataViewRows = (data, columns) => {
 };
 
 const useReplicaSetsColumns = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(
     ReplicaSetModel,
   );
@@ -209,7 +209,7 @@ const useReplicaSetsColumns = () => {
   const columns = useMemo(() => {
     return [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         resizableProps: getResizableProps(tableColumnInfo[0].id),
@@ -219,7 +219,7 @@ const useReplicaSetsColumns = () => {
         },
       },
       {
-        title: t('public~Namespace'),
+        title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
@@ -228,7 +228,7 @@ const useReplicaSetsColumns = () => {
         },
       },
       {
-        title: t('public~Status'),
+        title: t('Status'),
         id: tableColumnInfo[2].id,
         sort: (data, direction) => data.sort(sortResourceByValue(direction, sorts.numReplicas)),
         resizableProps: getResizableProps(tableColumnInfo[2].id),
@@ -237,7 +237,7 @@ const useReplicaSetsColumns = () => {
         },
       },
       {
-        title: t('public~Labels'),
+        title: t('Labels'),
         id: tableColumnInfo[3].id,
         sort: 'metadata.labels',
         resizableProps: getResizableProps(tableColumnInfo[3].id),
@@ -247,7 +247,7 @@ const useReplicaSetsColumns = () => {
         },
       },
       {
-        title: t('public~Owner'),
+        title: t('Owner'),
         id: tableColumnInfo[4].id,
         sort: 'metadata.ownerReferences[0].name',
         resizableProps: getResizableProps(tableColumnInfo[4].id),
@@ -256,7 +256,7 @@ const useReplicaSetsColumns = () => {
         },
       },
       {
-        title: t('public~Created'),
+        title: t('Created'),
         id: tableColumnInfo[5].id,
         sort: 'metadata.creationTimestamp',
         resizableProps: getResizableProps(tableColumnInfo[5].id),

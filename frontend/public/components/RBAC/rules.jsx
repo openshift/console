@@ -14,17 +14,17 @@ import { useTranslation } from 'react-i18next';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
 export const RulesList = ({ rules, name, namespace }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return _.isEmpty(rules) ? (
-    <EmptyBox label={t('public~Rules')} />
+    <EmptyBox label={t('Rules')} />
   ) : (
     <Table gridBreakPoint="">
       <Thead>
         <Tr>
-          <Th>{t('public~Verbs')}</Th>
-          <Th visibility={['hidden', 'visibleOnSm']}>{t('public~API groups')}</Th>
-          <Th>{t('public~Resources')}</Th>
-          <Th>{t('public~Resource names')}</Th>
+          <Th>{t('Verbs')}</Th>
+          <Th visibility={['hidden', 'visibleOnSm']}>{t('API groups')}</Th>
+          <Th>{t('Resources')}</Th>
+          <Th>{t('Resource names')}</Th>
         </Tr>
       </Thead>
       <Tbody>
@@ -149,13 +149,13 @@ const ResourceNames = ({ resourceNames }) => {
 // });
 
 const RuleKebab = ({ name, namespace, i }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const openDeleteRuleConfirm = useWarningModal({
-    title: t('public~Delete rule'),
-    children: t('public~Are you sure you want to delete rule #{{ruleNumber}}?', {
+    title: t('Delete rule'),
+    children: t('Are you sure you want to delete rule #{{ruleNumber}}?', {
       ruleNumber: i,
     }),
-    confirmButtonLabel: t('public~Delete rule'),
+    confirmButtonLabel: t('Delete rule'),
     confirmButtonVariant: ButtonVariant.danger,
     onConfirm: () => {
       const kind = namespace ? RoleModel : ClusterRoleModel;
@@ -172,7 +172,7 @@ const RuleKebab = ({ name, namespace, i }) => {
   const options = [
     // EditRule,
     () => ({
-      label: t('public~Delete rule'),
+      label: t('Delete rule'),
       callback: () => openDeleteRuleConfirm(),
     }),
   ].map((f) => f(name, namespace, i));

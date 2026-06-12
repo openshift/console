@@ -3,7 +3,7 @@ import { Button, Divider, Flex, FlexItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
 export const RowFilter = ({ allSelected, itemCount, selectedCount, onSelectAll, children }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <Flex
       className="co-row-filter pf-v6-u-mb-lg pf-v6-u-px-sm-on-md pf-v6-u-py-sm-on-md"
@@ -20,16 +20,16 @@ export const RowFilter = ({ allSelected, itemCount, selectedCount, onSelectAll, 
             variant="link"
             isInline
           >
-            {t('public~Select all filters')}
+            {t('Select all filters')}
           </Button>
         </FlexItem>
         <FlexItem align={{ default: 'alignRight' }} className="co-row-filter__items">
           {itemCount === selectedCount ? (
             itemCount
           ) : (
-            <>{t('public~{{selectedCount}} of {{itemCount}}', { selectedCount, itemCount })}</>
+            <>{t('{{selectedCount}} of {{itemCount}}', { selectedCount, itemCount })}</>
           )}{' '}
-          {t('public~Item', { count: itemCount })}
+          {t('Item', { count: itemCount })}
         </FlexItem>
       </Flex>
     </Flex>

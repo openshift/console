@@ -72,11 +72,11 @@ const getDataViewRows = (data, columns) => {
 };
 
 const Details = ({ obj: serviceaccount }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   return (
     <PaneBody>
-      <SectionHeading text={t('public~ServiceAccount details')} />
+      <SectionHeading text={t('ServiceAccount details')} />
       <Grid hasGutter>
         <GridItem md={6}>
           <ResourceSummary resource={serviceaccount} />
@@ -95,13 +95,13 @@ const ServiceAccountsDetailsPage = (props) => (
 );
 
 const useServiceAccountColumns = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(ServiceAccountModel);
 
   const columns = useMemo(
     () => [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         resizableProps: getResizableProps(tableColumnInfo[0].id),
@@ -111,7 +111,7 @@ const useServiceAccountColumns = () => {
         },
       },
       {
-        title: t('public~Namespace'),
+        title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
@@ -120,7 +120,7 @@ const useServiceAccountColumns = () => {
         },
       },
       {
-        title: t('public~Secrets'),
+        title: t('Secrets'),
         id: tableColumnInfo[2].id,
         sort: 'secrets.length',
         resizableProps: getResizableProps(tableColumnInfo[2].id),
@@ -129,7 +129,7 @@ const useServiceAccountColumns = () => {
         },
       },
       {
-        title: t('public~Created'),
+        title: t('Created'),
         id: tableColumnInfo[3].id,
         sort: 'metadata.creationTimestamp',
         resizableProps: getResizableProps(tableColumnInfo[3].id),
@@ -153,7 +153,7 @@ const useServiceAccountColumns = () => {
 
 const ServiceAccountsList = (props) => {
   const { data, loaded } = props;
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { columns, resetAllColumnWidths } = useServiceAccountColumns();
 
   return (
@@ -162,7 +162,7 @@ const ServiceAccountsList = (props) => {
         {...props}
         data={data || []}
         loaded={loaded}
-        label={t('public~ServiceAccounts')}
+        label={t('ServiceAccounts')}
         columns={columns}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}

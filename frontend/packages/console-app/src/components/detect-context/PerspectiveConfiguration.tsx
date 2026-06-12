@@ -73,20 +73,20 @@ const PerspectiveVisibilitySelect: FC<{
   value?: PerspectiveVisibility;
   onChange: (selectedOption: PerspectiveVisibilitySelectOptions) => void;
 }> = ({ toggleId, disabled, value, onChange }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
 
   const options: PerspectiveVisibilitySelectOptions[] = [
     {
       value: 'Enabled',
-      title: t('console-app~Enabled'),
-      description: t('console-app~Perspectives are enabled by default.'),
+      title: t('Enabled'),
+      description: t('Perspectives are enabled by default.'),
       visibility: { state: PerspectiveVisibilityState.Enabled },
       isSelected: !value || !value.state || value.state === PerspectiveVisibilityState.Enabled,
     },
     {
       value: 'RequiredNamespace',
-      title: t('console-app~Only visible for privileged users'),
-      description: t('console-app~Privileged users can list all namespaces.'),
+      title: t('Only visible for privileged users'),
+      description: t('Privileged users can list all namespaces.'),
       visibility: {
         state: PerspectiveVisibilityState.AccessReview,
         accessReview: {
@@ -108,8 +108,8 @@ const PerspectiveVisibilitySelect: FC<{
     },
     {
       value: 'MissingNamespace',
-      title: t('console-app~Only visible for unprivileged users'),
-      description: t('console-app~Unprivileged users cannot list all namespaces.'),
+      title: t('Only visible for unprivileged users'),
+      description: t('Unprivileged users cannot list all namespaces.'),
       visibility: {
         state: PerspectiveVisibilityState.AccessReview,
         accessReview: {
@@ -131,8 +131,8 @@ const PerspectiveVisibilitySelect: FC<{
     },
     {
       value: 'Disabled',
-      title: t('console-app~Disabled'),
-      description: t('console-app~Disable this perspectives for all users.'),
+      title: t('Disabled'),
+      description: t('Disable this perspectives for all users.'),
       visibility: { state: PerspectiveVisibilityState.Disabled },
       isSelected: value?.state === PerspectiveVisibilityState.Disabled,
     },
@@ -141,9 +141,9 @@ const PerspectiveVisibilitySelect: FC<{
   if (!options.some((option) => option.isSelected)) {
     options.push({
       value: 'Custom',
-      title: t('console-app~Custom'),
+      title: t('Custom'),
       description: t(
-        'console-app~This perspective is shown based on custom access review rules. Please open the console configuration resource to inspect or update this rules.',
+        'This perspective is shown based on custom access review rules. Please open the console configuration resource to inspect or update this rules.',
       ),
       isSelected: true,
     });
@@ -185,7 +185,7 @@ const PerspectiveVisibilitySelect: FC<{
         </SelectList>
       </Select>
       {selection === 'Custom' && value?.accessReview && (
-        <ExpandableSection toggleText={t('console-app~Access review rules')}>
+        <ExpandableSection toggleText={t('Access review rules')}>
           <CodeBlock>
             <CodeBlockCode>{safeDump(value.accessReview)}</CodeBlockCode>
           </CodeBlock>
@@ -196,7 +196,7 @@ const PerspectiveVisibilitySelect: FC<{
 };
 
 const PerspectiveConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const fireTelemetryEvent = useTelemetry();
 
   // All available perspectives
@@ -235,7 +235,7 @@ const PerspectiveConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
 
   return (
     <FormLayout isHorizontal>
-      <FormSection title={t('console-app~Perspectives')} data-test="perspectives form-section">
+      <FormSection title={t('Perspectives')} data-test="perspectives form-section">
         {perspectiveExtensions.map((perspectiveExtension) => {
           const fieldId = perspectiveExtension.uid;
           const perspectiveId = perspectiveExtension.properties.id;

@@ -108,17 +108,17 @@ class Details extends Component {
     return (
       <div>
         <PaneBody>
-          <SectionHeading text={t('public~Role details')} />
+          <SectionHeading text={t('Role details')} />
           <Grid hasGutter>
             <GridItem span={6}>
               <DescriptionList>
                 <DescriptionListGroup>
-                  <DescriptionListTerm>{t('public~Role name')}</DescriptionListTerm>
+                  <DescriptionListTerm>{t('Role name')}</DescriptionListTerm>
                   <DescriptionListDescription>{name}</DescriptionListDescription>
                 </DescriptionListGroup>
                 {namespace && (
                   <DescriptionListGroup>
-                    <DescriptionListTerm>{t('public~Namespace')}</DescriptionListTerm>
+                    <DescriptionListTerm>{t('Namespace')}</DescriptionListTerm>
                     <DescriptionListDescription>
                       <ResourceLink kind="Namespace" name={namespace} />
                     </DescriptionListDescription>
@@ -129,7 +129,7 @@ class Details extends Component {
             <GridItem span={6}>
               <DescriptionList>
                 <DescriptionListGroup>
-                  <DescriptionListTerm>{t('public~Created at')}</DescriptionListTerm>
+                  <DescriptionListTerm>{t('Created at')}</DescriptionListTerm>
                   <DescriptionListDescription>
                     <Timestamp timestamp={creationTimestamp} />
                   </DescriptionListDescription>
@@ -139,19 +139,16 @@ class Details extends Component {
           </Grid>
         </PaneBody>
         <PaneBody>
-          <SectionHeading text={t('public~Rules')} />
+          <SectionHeading text={t('Rules')} />
           <div>
             {/* This page is temporarily disabled until we update the safe resources list.
             <div>
               <Link to={addHref(name, namespace)}>
-                <Button variant="primary">{t('public~Add Rule')}</Button>
+                <Button variant="primary">{t('Add Rule')}</Button>
               </Link>
             </div>
             */}
-            <TextFilter
-              label={t('public~rules by action or resource')}
-              onChange={this.changeFilter}
-            />
+            <TextFilter label={t('rules by action or resource')} onChange={this.changeFilter} />
           </div>
           <RulesList rules={rules} name={name} namespace={namespace} />
         </PaneBody>
@@ -203,11 +200,11 @@ const getBindingsDataViewRows = (data, columns) => {
 };
 
 const useBindingsColumns = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return useMemo(
     () => [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: bindingsTableColumnInfo[0].id,
         sort: 'metadata.name',
         props: {
@@ -216,7 +213,7 @@ const useBindingsColumns = () => {
         },
       },
       {
-        title: t('public~Subject kind'),
+        title: t('Subject kind'),
         id: bindingsTableColumnInfo[1].id,
         sort: 'subject.kind',
         props: {
@@ -224,7 +221,7 @@ const useBindingsColumns = () => {
         },
       },
       {
-        title: t('public~Subject name'),
+        title: t('Subject name'),
         id: bindingsTableColumnInfo[2].id,
         sort: 'subject.name',
         props: {
@@ -232,7 +229,7 @@ const useBindingsColumns = () => {
         },
       },
       {
-        title: t('public~Namespace'),
+        title: t('Namespace'),
         id: bindingsTableColumnInfo[3].id,
         sort: 'metadata.namespace',
         props: {
@@ -245,7 +242,7 @@ const useBindingsColumns = () => {
 };
 
 const BindingsListComponent = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const columns = useBindingsColumns();
 
   const { data, loaded, staticFilters } = props;
@@ -280,7 +277,7 @@ const BindingsListComponent = (props) => {
         {...props}
         data={filteredData}
         loaded={loaded}
-        label={t('public~RoleBindings')}
+        label={t('RoleBindings')}
         columns={columns}
         getDataViewRows={getBindingsDataViewRows}
         hideColumnManagement={true}
@@ -299,11 +296,11 @@ const BindingsForRolePage = (props) => {
     resources.push({ kind: 'ClusterRoleBinding', namespaced: false, optional: true });
   }
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <MultiListPage
       canCreate={true}
-      createButtonText={t('public~Create binding')}
+      createButtonText={t('Create binding')}
       createProps={{
         to: `/k8s/${
           ns ? `ns/${ns}` : 'cluster'
@@ -390,13 +387,13 @@ export const ClusterRoleBindingsDetailsPage = (props) => {
 };
 
 const useRolesColumns = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(RoleModel);
 
   const columns = useMemo(
     () => [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         resizableProps: getResizableProps(tableColumnInfo[0].id),
@@ -406,7 +403,7 @@ const useRolesColumns = () => {
         },
       },
       {
-        title: t('public~Namespace'),
+        title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
@@ -429,27 +426,27 @@ const useRolesColumns = () => {
 };
 
 const useRoleFilterOptions = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return useMemo(() => {
     return [
       {
         value: 'cluster',
-        label: t('public~Cluster-wide Roles'),
+        label: t('Cluster-wide Roles'),
       },
       {
         value: 'namespace',
-        label: t('public~Namespace Roles'),
+        label: t('Namespace Roles'),
       },
       {
         value: 'system',
-        label: t('public~System Roles'),
+        label: t('System Roles'),
       },
     ];
   }, [t]);
 };
 
 const RolesList = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { data, loaded } = props;
   const { columns, resetAllColumnWidths } = useRolesColumns();
   const roleFilterOptions = useRoleFilterOptions();
@@ -461,8 +458,8 @@ const RolesList = (props) => {
       <DataViewCheckboxFilter
         key="role-kind"
         filterId="role-kind"
-        title={t('public~Role')}
-        placeholder={t('public~Filter by role')}
+        title={t('Role')}
+        placeholder={t('Filter by role')}
         options={roleFilterOptions}
       />,
     ],
@@ -481,7 +478,7 @@ const RolesList = (props) => {
         {...props}
         data={data}
         loaded={loaded}
-        label={t('public~Roles')}
+        label={t('Roles')}
         columns={columns}
         getDataViewRows={getDataViewRows}
         initialFilters={initialFilters}
@@ -496,7 +493,7 @@ const RolesList = (props) => {
 };
 
 export const RolesPage = ({ namespace, mock, showTitle }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const location = useLocation();
 
   // Track which filter is selected from URL params
@@ -554,11 +551,11 @@ export const RolesPage = ({ namespace, mock, showTitle }) => {
       showTitle={showTitle}
       namespace={namespace}
       createAccessReview={accessReview}
-      createButtonText={t('public~Create Role')}
+      createButtonText={t('Create Role')}
       createProps={{ to: `/k8s/ns/${createNS}/roles/~new` }}
       flatten={(resourcesData) => _.flatMap(resourcesData, 'data').filter((r) => !!r)}
       resources={resources}
-      title={t('public~Roles')}
+      title={t('Roles')}
       mock={mock}
       omitFilterToolbar={true}
     />
