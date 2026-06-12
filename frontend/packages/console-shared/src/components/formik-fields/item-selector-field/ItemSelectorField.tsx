@@ -61,7 +61,7 @@ export const ItemSelectorField: FC<ItemSelectorFieldProps> = ({
   showCount = false,
   emptyStateMessage,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const [selected, { error: selectedError, touched: selectedTouched }] = useField(name);
   const { setFieldValue, setFieldTouched, validateForm } = useFormikContext<FormikValues>();
   const [filteredList, setFilteredList] = useState(itemList);
@@ -147,12 +147,12 @@ export const ItemSelectorField: FC<ItemSelectorFieldProps> = ({
                 className="odc-item-selector-filter__input"
                 onChange={handleFilterChange}
                 value={filterText}
-                placeholder={t('console-shared~Filter by type...')}
-                aria-label={t('console-shared~Filter by type')}
+                placeholder={t('Filter by type...')}
+                aria-label={t('Filter by type')}
               />
               {showCount && (
                 <span className="odc-item-selector-filter__count">
-                  {t('console-shared~{{count}} item', { count: itemCount })}
+                  {t('{{count}} item', { count: itemCount })}
                 </span>
               )}
             </div>
@@ -160,13 +160,13 @@ export const ItemSelectorField: FC<ItemSelectorFieldProps> = ({
           {showFilter && itemCount === 0 ? (
             <EmptyState
               headingLevel="h2"
-              titleText={<>{t('console-shared~No results match the filter criteria')}</>}
+              titleText={<>{t('No results match the filter criteria')}</>}
             >
               <EmptyStateFooter>
                 {emptyStateMessage && <EmptyStateBody>{emptyStateMessage}</EmptyStateBody>}
                 <EmptyStateActions>
                   <Button variant="link" onClick={handleClearFilter}>
-                    {t('console-shared~Clear filter')}
+                    {t('Clear filter')}
                   </Button>
                 </EmptyStateActions>
               </EmptyStateFooter>

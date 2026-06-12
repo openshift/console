@@ -73,7 +73,7 @@ const PinnedResourcesConfiguration: FC<PinnedResourcesConfigurationProps> = ({
   allK8sModels,
   groupVersionMap,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const fireTelemetryEvent = useTelemetry();
   const perspectiveExtensions = usePerspectives();
   const [pinnedResources, setPinnedResources] = useState<PerspectivePinnedResource[]>();
@@ -134,7 +134,7 @@ const PinnedResourcesConfiguration: FC<PinnedResourcesConfigurationProps> = ({
           <span>
             {model.labelKey ? t(model.labelKey) : model.kind}
             {model.badge && model.badge === 'Tech Preview' && (
-              <span className="co-resource-item__tech-dev-preview">{t('public~Tech Preview')}</span>
+              <span className="co-resource-item__tech-dev-preview">{t('Tech Preview')}</span>
             )}
           </span>
           {isDup(model.kind) && (
@@ -150,7 +150,7 @@ const PinnedResourcesConfiguration: FC<PinnedResourcesConfigurationProps> = ({
   const InvalidItem = memo<ItemProps>(({ title }) => (
     <div style={{ display: 'flex', alignItems: 'center' }}>
       <span className="co-resource-icon--fixed-width">
-        <Tooltip position="top" content={t('devconsole~Resource not found')}>
+        <Tooltip position="top" content={t('Resource not found')}>
           <Icon size="md">
             <YellowExclamationTriangleIcon />
           </Icon>
@@ -308,18 +308,15 @@ const PinnedResourcesConfiguration: FC<PinnedResourcesConfigurationProps> = ({
   };
 
   return (
-    <FormSection
-      title={t('devconsole~Pre-pinned navigation items')}
-      data-test="pinned-resource form-section"
-    >
+    <FormSection title={t('Pre-pinned navigation items')} data-test="pinned-resource form-section">
       <FormHelperText>
         {t(
           'devconsole~As admin you can change the pinned resources that are shown to users by default. Users can still override this configuration and add or reorder their pinned resources. As soon as a user changes the default settings, new default settings are no longer applied.',
         )}
       </FormHelperText>
       <DualListSelector
-        availableOptionsTitle={t('devconsole~Available Resources')}
-        chosenOptionsTitle={t('devconsole~Pinned Resources')}
+        availableOptionsTitle={t('Available Resources')}
+        chosenOptionsTitle={t('Pinned Resources')}
         isSearchable
         availableOptions={availableResources}
         chosenOptions={prePinnedResources}

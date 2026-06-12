@@ -83,7 +83,7 @@ const RemoveVolumeModal: FC<RemoveVolumeModalProps> = (props) => {
       });
   };
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { kind, resource, volume } = props;
   const type: string = _.get(getVolumeType(volume.volumeDetail), 'id', '');
   const volumeName = volume.name;
@@ -92,7 +92,7 @@ const RemoveVolumeModal: FC<RemoveVolumeModalProps> = (props) => {
   return (
     <>
       <ModalHeader
-        title={t('public~Remove volume?')}
+        title={t('Remove volume?')}
         titleIconVariant="warning"
         labelId="remove-volume-modal-title"
       />
@@ -106,7 +106,7 @@ const RemoveVolumeModal: FC<RemoveVolumeModalProps> = (props) => {
         </Content>
         {type && (
           <Content component={ContentVariants.p}>
-            {t('public~Note: This will not remove the underlying {{type}}.', { type })}
+            {t('Note: This will not remove the underlying {{type}}.', { type })}
           </Content>
         )}
         <Form id="remove-volume-form" onSubmit={submit} />
@@ -120,10 +120,10 @@ const RemoveVolumeModal: FC<RemoveVolumeModalProps> = (props) => {
           data-test="confirm-action"
           form="remove-volume-form"
         >
-          {t('public~Remove volume')}
+          {t('Remove volume')}
         </Button>
         <Button variant="link" onClick={props.cancel} data-test-id="modal-cancel-action">
-          {t('public~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </>

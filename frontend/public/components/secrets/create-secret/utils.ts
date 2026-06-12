@@ -71,32 +71,32 @@ export const getPullSecretFileName = (secretType: SecretType): string => {
 };
 
 export const useSecretTitle = (isCreate: boolean, formType: SecretFormType): string => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   switch (formType) {
     case SecretFormType.generic:
-      return isCreate ? t('public~Create key/value secret') : t('public~Edit key/value secret');
+      return isCreate ? t('Create key/value secret') : t('Edit key/value secret');
     case SecretFormType.image:
-      return isCreate ? t('public~Create image pull secret') : t('public~Edit image pull secret');
+      return isCreate ? t('Create image pull secret') : t('Edit image pull secret');
     default:
       return isCreate
-        ? t('public~Create {{formType}} secret', { formType })
-        : t('public~Edit {{formType}} secret', { formType });
+        ? t('Create {{formType}} secret', { formType })
+        : t('Edit {{formType}} secret', { formType });
   }
 };
 
 export const useSecretDescription = (formType: SecretFormType): string => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   switch (formType) {
     case SecretFormType.generic:
       return t(
         'public~Key/value secrets let you inject sensitive data into your application as files or environment variables.',
       );
     case SecretFormType.source:
-      return t('public~Source secrets let you authenticate against a Git server.');
+      return t('Source secrets let you authenticate against a Git server.');
     case SecretFormType.image:
-      return t('public~Image pull secrets let you authenticate against a private image registry.');
+      return t('Image pull secrets let you authenticate against a private image registry.');
     case SecretFormType.webhook:
-      return t('public~Webhook secrets let you authenticate a webhook trigger.');
+      return t('Webhook secrets let you authenticate a webhook trigger.');
     default:
       return null;
   }

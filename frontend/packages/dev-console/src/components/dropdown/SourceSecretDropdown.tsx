@@ -13,7 +13,7 @@ interface SourceSecretDropdownProps
 }
 
 const SourceSecretDropdown: FC<SourceSecretDropdownProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const filterData = (item: SecretKind) => {
     return item.type === 'kubernetes.io/basic-auth' || item.type === 'kubernetes.io/ssh-auth';
   };
@@ -43,7 +43,7 @@ const SourceSecretDropdown: FC<SourceSecretDropdownProps> = (props) => {
       resources={resources}
       loaded={secretsLoaded}
       loadError={secretsLoadError}
-      placeholder={t('devconsole~Select Secret name')}
+      placeholder={t('Select Secret name')}
       resourceFilter={filterData}
       dataSelector={['metadata', 'name']}
     />

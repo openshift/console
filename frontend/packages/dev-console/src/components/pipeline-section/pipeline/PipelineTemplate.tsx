@@ -58,7 +58,7 @@ type PipelineTemplateProps = {
 };
 
 const PipelineTemplate: FC<PipelineTemplateProps> = ({ builderImages, existingPipeline }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const [noTemplateForRuntime, setNoTemplateForRuntime] = useState(false);
   const [isPacRepo, setIsPacRepo] = useState(false);
   const [isPipelineTypeChanged, setIsPipelineTypeChanged] = useState(false);
@@ -238,8 +238,7 @@ const PipelineTemplate: FC<PipelineTemplateProps> = ({ builderImages, existingPi
   }, [pipeline.templateSelected, pipelineTemplates]);
 
   if (noTemplateForRuntime) {
-    const builderImageTitle =
-      builderImages?.[image.selected]?.title || t('devconsole~this Builder Image');
+    const builderImageTitle = builderImages?.[image.selected]?.title || t('this Builder Image');
     const resourceName = t(ReadableResourcesNames[resources]);
     return (
       <Alert
@@ -263,14 +262,14 @@ const PipelineTemplate: FC<PipelineTemplateProps> = ({ builderImages, existingPi
     <>
       {buildOption !== BuildOptions.PIPELINES && (
         <CheckboxField
-          label={t('devconsole~Add pipeline')}
+          label={t('Add pipeline')}
           name="pipeline.enabled"
           isDisabled={isPipelineAttached}
         />
       )}
       {pipeline.enabled && isPacRepo && (
         <>
-          <span className="pf-c-form__label-text">{t('devconsole~Pipeline')}</span>
+          <span className="pf-c-form__label-text">{t('Pipeline')}</span>
           <RadioGroupField
             className="odc-pipeline-section-pac__radio-intent"
             name={'pipeline.type'}
@@ -280,7 +279,7 @@ const PipelineTemplate: FC<PipelineTemplateProps> = ({ builderImages, existingPi
                 value: PipelineType.PAC,
                 label: (
                   <>
-                    {t('devconsole~Build, deploy and configure a Pipeline Repository')}
+                    {t('Build, deploy and configure a Pipeline Repository')}
                     {'  '}
                     <Tooltip
                       position="right"
@@ -302,7 +301,7 @@ const PipelineTemplate: FC<PipelineTemplateProps> = ({ builderImages, existingPi
                 value: PipelineType.PIPELINE,
                 label: (
                   <>
-                    {t('devconsole~Use Pipeline from this cluster')}
+                    {t('Use Pipeline from this cluster')}
                     {'  '}
                     <Tooltip
                       position="right"
@@ -329,7 +328,7 @@ const PipelineTemplate: FC<PipelineTemplateProps> = ({ builderImages, existingPi
                     />
                     <br />
                     <ExpandableSection
-                      toggleText={`${isExpanded ? t('devconsole~Hide') : t('devconsole~Show')} ${t(
+                      toggleText={`${isExpanded ? t('Hide') : t('Show')} ${t(
                         'devconsole~pipeline visualization',
                       )}`}
                       isExpanded={isExpanded}
@@ -351,11 +350,11 @@ const PipelineTemplate: FC<PipelineTemplateProps> = ({ builderImages, existingPi
             title={pipelineTemplateItems[pipeline.templateSelected]}
             items={pipelineTemplateItems}
             disabled={isPipelineAttached}
-            label={t('devconsole~Pipeline')}
+            label={t('Pipeline')}
             fullWidth
           />
           <ExpandableSection
-            toggleText={`${isExpanded ? t('devconsole~Hide') : t('devconsole~Show')} ${t(
+            toggleText={`${isExpanded ? t('Hide') : t('Show')} ${t(
               'devconsole~pipeline visualization',
             )}`}
             isExpanded={isExpanded}

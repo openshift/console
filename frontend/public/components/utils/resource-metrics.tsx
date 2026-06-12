@@ -22,7 +22,7 @@ const ResourceMetricsDashboardCard: FC<ResourceMetricsDashboardCardProps> = (pro
 );
 
 export const ResourceMetricsDashboard: FC<ResourceMetricsDashboardProps> = ({ obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const queries = useResourceMetricsQueries(obj);
   return queries ? (
     <Dashboard className="resource-metrics-dashboard">
@@ -31,35 +31,35 @@ export const ResourceMetricsDashboard: FC<ResourceMetricsDashboardProps> = ({ ob
           <ResourceMetricsDashboardCard
             namespace={obj.metadata.namespace}
             queries={queries[ResourceUtilizationQuery.MEMORY]}
-            title={t('public~Memory usage')}
+            title={t('Memory usage')}
           />
         </GridItem>
         <GridItem xl={6} lg={12}>
           <ResourceMetricsDashboardCard
             namespace={obj.metadata.namespace}
             queries={queries[ResourceUtilizationQuery.CPU]}
-            title={t('public~CPU usage')}
+            title={t('CPU usage')}
           />
         </GridItem>
         <GridItem xl={6} lg={12}>
           <ResourceMetricsDashboardCard
             namespace={obj.metadata.namespace}
             queries={queries[ResourceUtilizationQuery.FILESYSTEM]}
-            title={t('public~Filesystem')}
+            title={t('Filesystem')}
           />
         </GridItem>
         <GridItem xl={6} lg={12}>
           <ResourceMetricsDashboardCard
             namespace={obj.metadata.namespace}
             queries={queries[ResourceUtilizationQuery.NETWORK_IN]}
-            title={t('public~Network in')}
+            title={t('Network in')}
           />
         </GridItem>
         <GridItem xl={6} lg={12}>
           <ResourceMetricsDashboardCard
             namespace={obj.metadata.namespace}
             queries={queries[ResourceUtilizationQuery.NETWORK_OUT]}
-            title={t('public~Network out')}
+            title={t('Network out')}
           />
         </GridItem>
       </Grid>

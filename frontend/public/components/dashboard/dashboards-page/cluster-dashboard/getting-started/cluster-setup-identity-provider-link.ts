@@ -7,7 +7,7 @@ import { resourcePathFromModel } from '@console/internal/components/utils/resour
 import { useCanEditIdentityProviders, useOAuthData } from '@console/shared/src/hooks/oauth';
 
 export const useIdentityProviderLink = (): GettingStartedLink | null => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const canEdit = useCanEditIdentityProviders();
   const [oauthData, oauthLoaded, oauthLoadError] = useOAuthData(canEdit);
 
@@ -22,7 +22,7 @@ export const useIdentityProviderLink = (): GettingStartedLink | null => {
 
   return {
     id: 'identity-providers',
-    title: t('public~Add identity providers'),
+    title: t('Add identity providers'),
     href: resourcePathFromModel(OAuthModel, 'cluster'),
   };
 };

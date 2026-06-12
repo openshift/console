@@ -28,7 +28,7 @@ import { detectGitType, validationSchema } from './import-validation-utils';
 import ImportSampleForm from './ImportSampleForm';
 
 const ImportSamplePage: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const navigate = useNavigate();
   const handleCancel = useCallback(() => navigate(-1), [navigate]);
   const { ns: namespace, is: imageStreamName, isNs: imageStreamNamespace } = useParams();
@@ -129,8 +129,8 @@ const ImportSamplePage: FC = () => {
 
   return (
     <NamespacedPage variant={NamespacedPageVariants.light} disabled hideApplications>
-      <DocumentTitle>{t('devconsole~Create Sample application')}</DocumentTitle>
-      <PageHeading title={t('devconsole~Create Sample application')} />
+      <DocumentTitle>{t('Create Sample application')}</DocumentTitle>
+      <PageHeading title={t('Create Sample application')} />
       <Formik
         initialValues={initialValues}
         onSubmit={handleSubmit}

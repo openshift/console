@@ -71,12 +71,12 @@ export const findBareMetalHostByNode = (
 export const useWatchBareMetalHost = (
   node: NodeKind,
 ): WatchK8sResult<K8sResourceKind | undefined> => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
 
   const isBareMetalPluginActive = useIsBareMetalPluginActive();
   const pluginError = !isBareMetalPluginActive
     ? {
-        message: t('console-app~Unable to load BareMetalHost'),
+        message: t('Unable to load BareMetalHost'),
       }
     : undefined;
 

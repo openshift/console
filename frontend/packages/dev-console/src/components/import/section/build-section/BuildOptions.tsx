@@ -24,7 +24,7 @@ type BuildOptionProps = {
 };
 
 export const BuildOption: FC<BuildOptionProps> = ({ isDisabled, importStrategy }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const { setFieldValue } = useFormikContext<FormikValues>();
   const isBuildV1Enabled = useFlag(FLAG_OPENSHIFT_BUILDCONFIG);
   const isShipwrightBuildsEnabled = useShipwrightBuilds();
@@ -90,7 +90,7 @@ export const BuildOption: FC<BuildOptionProps> = ({ isDisabled, importStrategy }
   return strategyLoaded ? (
     <SingleDropdownField
       name={fieldName}
-      label={t('devconsole~Build option')}
+      label={t('Build option')}
       options={selectInputOptions}
       onChange={onChange}
       isDisabled={isDisabled}

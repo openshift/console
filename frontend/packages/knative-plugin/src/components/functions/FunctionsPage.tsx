@@ -23,12 +23,12 @@ import { KnativeServiceTypeContext } from './ServiceTypeContext';
 import './FunctionsPage.scss';
 
 const FunctionList: FC<{ namespace: string }> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   return (
     <KnativeServiceTypeContext.Provider value={ServiceTypeValue.Function}>
-      <DocumentTitle>{t('knative-plugin~Functions')}</DocumentTitle>
+      <DocumentTitle>{t('Functions')}</DocumentTitle>
       <PageHeading
-        title={t('knative-plugin~Functions')}
+        title={t('Functions')}
         primaryAction={<CreateActionDropdown namespace={props.namespace} />}
       />
       <GettingStartedSection />
@@ -44,14 +44,14 @@ const FunctionList: FC<{ namespace: string }> = (props) => {
 };
 
 const FunctionsListPage: FC<ComponentProps<typeof ListPage>> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const { ns } = useParams();
   const [perspective] = useActivePerspective();
   return perspective === 'dev' ? (
     ns ? (
       <FunctionList namespace={ns} {...props} />
     ) : (
-      <CreateProjectListPage title={t('knative-plugin~Functions')}>
+      <CreateProjectListPage title={t('Functions')}>
         {(openProjectModal) => (
           <Trans t={t} ns="knative-plugin">
             Select a Project to view its details

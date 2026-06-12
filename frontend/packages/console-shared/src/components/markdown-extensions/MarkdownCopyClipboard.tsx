@@ -12,7 +12,7 @@ type CopyClipboardProps = {
 };
 
 const CopyClipboard: FC<CopyClipboardProps> = ({ element, rootSelector, docContext }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const [showSuccessContent, setShowSuccessContent] = useState<boolean>(false);
   const textToCopy = useMemo(() => {
     const copyTextId = element.getAttribute(MARKDOWN_COPY_BUTTON_ID);
@@ -37,11 +37,7 @@ const CopyClipboard: FC<CopyClipboardProps> = ({ element, rootSelector, docConte
   return (
     <Tooltip
       reference={() => element as HTMLElement}
-      content={
-        showSuccessContent
-          ? t('console-shared~Successfully copied to clipboard!')
-          : t('console-shared~Copy to clipboard')
-      }
+      content={showSuccessContent ? t('Successfully copied to clipboard!') : t('Copy to clipboard')}
       onHide={() => {
         setShowSuccessContent(false);
       }}

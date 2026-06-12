@@ -37,7 +37,7 @@ export const ConfigMapFormEditor: FC<FormikProps<any> & ConfigMapFormEditorProps
   setSubmitting,
   errors,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { setFieldValue } = useFormikContext<ConfigMapFormInitialValues>();
   const { editorType, formData, yamlData, formReloadCount, isCreateFlow, resourceVersion } = values;
 
@@ -115,10 +115,10 @@ export const ConfigMapFormEditor: FC<FormikProps<any> & ConfigMapFormEditorProps
         errorMessage={status?.submitError || (immutableCfg && immutableCfgError)}
         successMessage={status?.submitSuccess}
         showAlert={isStale}
-        infoTitle={t('public~This object has been updated.')}
-        infoMessage={t('public~Click reload to see the new version.')}
+        infoTitle={t('This object has been updated.')}
+        infoMessage={t('Click reload to see the new version.')}
         isSubmitting={isSubmitting}
-        submitLabel={isCreateFlow ? t('public~Create') : t('public~Save')}
+        submitLabel={isCreateFlow ? t('Create') : t('Save')}
         disableSubmit={disableSubmit}
         handleCancel={handleCancel}
         handleDownload={editorType === EditorType.YAML && (() => downloadYaml(yamlData))}

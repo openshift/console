@@ -18,11 +18,11 @@ import { K8sResourceKind } from '@console/dynamic-plugin-sdk/src/extensions/cons
 const PipelineLogMessage: FC<{
   build: K8sResourceKind;
 }> = ({ build }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const logURL = getJenkinsLogURL(build);
   const message = logURL
-    ? t('public~Pipeline build logs are available through Jenkins (linked below)')
-    : t('public~A link to the Jenkins pipeline build logs will appear below when the build starts');
+    ? t('Pipeline build logs are available through Jenkins (linked below)')
+    : t('A link to the Jenkins pipeline build logs will appear below when the build starts');
 
   const detail = (
     <>
@@ -31,7 +31,7 @@ const PipelineLogMessage: FC<{
     </>
   );
 
-  return <ConsoleEmptyState title={t('public~See Jenkins log')}>{detail}</ConsoleEmptyState>;
+  return <ConsoleEmptyState title={t('See Jenkins log')}>{detail}</ConsoleEmptyState>;
 };
 
 const buildPhaseToLogSourceStatus = (phase: BuildPhase) => {

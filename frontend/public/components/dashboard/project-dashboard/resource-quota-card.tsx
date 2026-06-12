@@ -34,12 +34,12 @@ export const ResourceQuotaCard = memo(() => {
     isList: true,
   });
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   return (
     <Card data-test-id="resource-quotas-card">
       <CardHeader>
-        <CardTitle>{t('public~ResourceQuotas')}</CardTitle>
+        <CardTitle>{t('ResourceQuotas')}</CardTitle>
       </CardHeader>
       <CardBody>
         <ResourceQuotaBody error={!!rqLoadError} isLoading={!rqLoaded}>
@@ -55,13 +55,13 @@ export const ResourceQuotaCard = memo(() => {
         </ResourceQuotaBody>
       </CardBody>
       <CardHeader>
-        <CardTitle>{t('public~AppliedClusterResourceQuotas')}</CardTitle>
+        <CardTitle>{t('AppliedClusterResourceQuotas')}</CardTitle>
       </CardHeader>
       <CardBody>
         <ResourceQuotaBody
           error={!!acrqLoadError}
           isLoading={!acrqLoaded}
-          noText={t('public~No AppliedClusterResourceQuotas')}
+          noText={t('No AppliedClusterResourceQuotas')}
         >
           {clusterQuotas.length ? (
             <Stack hasGutter>

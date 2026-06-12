@@ -19,13 +19,13 @@ const normalizeKafkaSink = (namespace: string, t: TFunction): CatalogItem[] => {
       name: label,
       description,
       provider,
-      cta: { label: t('knative-plugin~Create Event Sink'), href },
+      cta: { label: t('Create Event Sink'), href },
       type: 'EventSink',
       icon: { url: iconUrl },
       details: {
         properties: [
           {
-            label: t('knative-plugin~Support'),
+            label: t('Support'),
             value: support,
           },
         ],
@@ -38,7 +38,7 @@ const normalizeKafkaSink = (namespace: string, t: TFunction): CatalogItem[] => {
 const useKafkaSinkProvider: ExtensionHook<CatalogItem[]> = ({
   namespace,
 }): [CatalogItem[], boolean, any] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const [canCreateKameletSink] = useAccessReview({
     group: KafkaSinkModel.apiGroup,
     resource: KafkaSinkModel.plural,

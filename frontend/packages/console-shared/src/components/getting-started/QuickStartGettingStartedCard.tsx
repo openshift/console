@@ -68,7 +68,7 @@ export const QuickStartGettingStartedCard: FC<QuickStartGettingStartedCardProps>
   description,
   filter,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const { allQuickStartStates, setActiveQuickStart } = useQuickStartContext();
 
   return (
@@ -101,7 +101,7 @@ export const QuickStartGettingStartedCard: FC<QuickStartGettingStartedCardProps>
 
         const moreLink: GettingStartedLink = {
           id: 'all-quick-starts',
-          title: t('console-shared~View all quick starts'),
+          title: t('View all quick starts'),
           href: '/quickstart',
         };
 
@@ -111,7 +111,7 @@ export const QuickStartGettingStartedCard: FC<QuickStartGettingStartedCardProps>
             icon={
               <RhUiRouteIcon color="var(--co-global--palette--purple-600)" aria-hidden="true" />
             }
-            title={title || t('console-shared~Build with guided documentation')}
+            title={title || t('Build with guided documentation')}
             titleColor={'var(--co-global--palette--purple-600)'}
             description={
               description ||

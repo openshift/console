@@ -103,7 +103,7 @@ const PodOverviewItem: FC<PodOverviewItemProps> = ({ pod }) => {
   const {
     metadata: { name, namespace },
   } = pod;
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   return (
     <ListItem>
       <Grid hasGutter>
@@ -117,7 +117,7 @@ const PodOverviewItem: FC<PodOverviewItemProps> = ({ pod }) => {
           <PodTraffic podName={name} namespace={namespace} tooltipFlag />
         </GridItem>
         <GridItem span={3}>
-          <Link to={`${resourcePath(kind, name, namespace)}/logs`}>{t('public~View logs')}</Link>
+          <Link to={`${resourcePath(kind, name, namespace)}/logs`}>{t('View logs')}</Link>
         </GridItem>
       </Grid>
     </ListItem>
@@ -209,7 +209,7 @@ export const PodsOverviewContent: FC<PodsOverviewContentProps> = ({
   const {
     metadata: { name, namespace },
   } = obj;
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const [showWaitingPods, setShowWaitingPods] = useState(false);
   const shipwrightBuilds = useGetShipwrightBuilds(namespace, name);
 
@@ -233,21 +233,21 @@ export const PodsOverviewContent: FC<PodsOverviewContentProps> = ({
   const errorPodCount = _.size(_.filter(pods, (pod) => isPodError(pod)));
   const podsShown = Math.max(Math.min(errorPodCount, MAX_ERROR_PODS), MAX_PODS);
   const linkTo = allPodsLink || `${resourcePath(referenceFor(obj), name, namespace)}/pods`;
-  const emptyMessage = emptyText || t('console-shared~No Pods found for this resource.');
+  const emptyMessage = emptyText || t('No Pods found for this resource.');
 
   const podAlert = showWaitingForBuildAlert ? (
     <Alert
       isInline
       variant="info"
-      title={t('public~Waiting for the build')}
+      title={t('Waiting for the build')}
       actionLinks={
         <AlertActionLink
           onClick={() => setShowWaitingPods(!showWaitingPods)}
           data-test="waiting-pods"
         >
           {showWaitingPods
-            ? t('console-shared~Hide waiting pods with errors')
-            : t('console-shared~Show waiting pods with errors')}
+            ? t('Hide waiting pods with errors')
+            : t('Show waiting pods with errors')}
         </AlertActionLink>
       }
     >
@@ -259,10 +259,10 @@ export const PodsOverviewContent: FC<PodsOverviewContentProps> = ({
 
   return (
     <>
-      <SidebarSectionHeading text={t('public~Pods')}>
+      <SidebarSectionHeading text={t('Pods')}>
         {_.size(pods) > podsShown && (
           <Link className="sidebar__section-view-all" to={linkTo}>
-            {t('console-shared~View all {{podSize}}', { podSize: _.size(pods) })}
+            {t('View all {{podSize}}', { podSize: _.size(pods) })}
           </Link>
         )}
       </SidebarSectionHeading>

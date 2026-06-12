@@ -64,7 +64,7 @@ interface ConfigureNamespacePullSecretProps extends ModalComponentProps {
 
 const ConfigureNamespacePullSecret: FC<ConfigureNamespacePullSecretProps> = (props) => {
   const { namespace, cancel, close } = props;
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
 
   const [method, setMethod] = useState<'form' | 'upload'>('form');
@@ -155,7 +155,7 @@ const ConfigureNamespacePullSecret: FC<ConfigureNamespacePullSecretProps> = (pro
   return (
     <>
       <ModalHeader
-        title={t('public~Default pull Secret')}
+        title={t('Default pull Secret')}
         labelId="configure-ns-pull-secret-modal-title"
       />
       <ModalBody>
@@ -170,14 +170,14 @@ const ConfigureNamespacePullSecret: FC<ConfigureNamespacePullSecretProps> = (pro
             </GridItem>
 
             <GridItem span={3}>
-              <label>{t('public~Namespace')}</label>
+              <label>{t('Namespace')}</label>
             </GridItem>
             <GridItem span={9}>
               <ResourceIcon kind="Namespace" /> &nbsp;{namespace.metadata.name}
             </GridItem>
 
             <GridItem span={3}>
-              <label htmlFor="namespace-pull-secret-name">{t('public~Secret name')}</label>
+              <label htmlFor="namespace-pull-secret-name">{t('Secret name')}</label>
             </GridItem>
 
             <GridItem span={9}>
@@ -188,12 +188,12 @@ const ConfigureNamespacePullSecret: FC<ConfigureNamespacePullSecretProps> = (pro
                 isRequired
               />
               <Content component={ContentVariants.p} id="namespace-pull-secret-name-help">
-                {t('public~Friendly name to help you manage this in the future')}
+                {t('Friendly name to help you manage this in the future')}
               </Content>
             </GridItem>
 
             <GridItem span={3}>
-              <label>{t('public~Method')}</label>
+              <label>{t('Method')}</label>
             </GridItem>
             <GridItem span={9}>
               <div className="pf-v6-c-form">
@@ -201,7 +201,7 @@ const ConfigureNamespacePullSecret: FC<ConfigureNamespacePullSecretProps> = (pro
                   <Radio
                     id="namespace-pull-secret-method--form"
                     name="namespace-pull-secret-method"
-                    label={t('public~Enter username/password')}
+                    label={t('Enter username/password')}
                     value="form"
                     onChange={onMethodChange}
                     isChecked={method === 'form'}
@@ -210,7 +210,7 @@ const ConfigureNamespacePullSecret: FC<ConfigureNamespacePullSecretProps> = (pro
                   <Radio
                     id="namespace-pull-secret-method--upload"
                     name="namespace-pull-secret-method"
-                    label={t('public~Upload Docker config.json')}
+                    label={t('Upload Docker config.json')}
                     value="upload"
                     onChange={onMethodChange}
                     isChecked={method === 'upload'}
@@ -223,21 +223,19 @@ const ConfigureNamespacePullSecret: FC<ConfigureNamespacePullSecretProps> = (pro
             {method === 'form' && (
               <>
                 <GridItem span={3}>
-                  <label htmlFor="namespace-pull-secret-address">
-                    {t('public~Registry address')}
-                  </label>
+                  <label htmlFor="namespace-pull-secret-address">{t('Registry address')}</label>
                 </GridItem>
                 <GridItem span={9}>
                   <TextInput
                     type="text"
                     id="namespace-pull-secret-address"
-                    placeholder={t('public~quay.io')}
+                    placeholder={t('quay.io')}
                     isRequired
                   />
                 </GridItem>
 
                 <GridItem span={3}>
-                  <label htmlFor="namespace-pull-secret-email">{t('public~Email address')}</label>
+                  <label htmlFor="namespace-pull-secret-email">{t('Email address')}</label>
                 </GridItem>
                 <GridItem span={9}>
                   <TextInput
@@ -246,19 +244,19 @@ const ConfigureNamespacePullSecret: FC<ConfigureNamespacePullSecretProps> = (pro
                     aria-describedby="namespace-pull-secret-email-help"
                   />
                   <Content component={ContentVariants.p} id="namespace-pull-secret-email-help">
-                    {t('public~Optional, depending on registry provider')}
+                    {t('Optional, depending on registry provider')}
                   </Content>
                 </GridItem>
 
                 <GridItem span={3}>
-                  <label htmlFor="namespace-pull-secret-username">{t('public~Username')}</label>
+                  <label htmlFor="namespace-pull-secret-username">{t('Username')}</label>
                 </GridItem>
                 <GridItem span={9}>
                   <TextInput type="text" id="namespace-pull-secret-username" isRequired />
                 </GridItem>
 
                 <GridItem span={3}>
-                  <label htmlFor="namespace-pull-secret-password">{t('public~Password')}</label>
+                  <label htmlFor="namespace-pull-secret-password">{t('Password')}</label>
                 </GridItem>
                 <GridItem span={9}>
                   <TextInput type="password" id="namespace-pull-secret-password" isRequired />
@@ -269,7 +267,7 @@ const ConfigureNamespacePullSecret: FC<ConfigureNamespacePullSecretProps> = (pro
             {method === 'upload' && (
               <>
                 <GridItem span={3}>
-                  <label htmlFor="namespace-pull-secret-file">{t('public~File upload')}</label>
+                  <label htmlFor="namespace-pull-secret-file">{t('File upload')}</label>
                 </GridItem>
                 <GridItem span={9}>
                   <input
@@ -287,13 +285,8 @@ const ConfigureNamespacePullSecret: FC<ConfigureNamespacePullSecretProps> = (pro
 
                 {invalidJson && (
                   <GridItem span={9} smOffset={3}>
-                    <Alert
-                      isInline
-                      className="co-alert"
-                      variant="danger"
-                      title={t('public~Invalid JSON')}
-                    >
-                      {t('public~The uploaded file is not properly-formatted JSON.')}
+                    <Alert isInline className="co-alert" variant="danger" title={t('Invalid JSON')}>
+                      {t('The uploaded file is not properly-formatted JSON.')}
                     </Alert>
                   </GridItem>
                 )}
@@ -318,10 +311,10 @@ const ConfigureNamespacePullSecret: FC<ConfigureNamespacePullSecretProps> = (pro
           data-test="confirm-action"
           form="configure-ns-pull-secret-form"
         >
-          {t('public~Save')}
+          {t('Save')}
         </Button>
         <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
-          {t('public~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </>

@@ -62,7 +62,7 @@ const MoveConnectionForm: FC<FormikProps<FormikValues> & MoveConnectionModalProp
   availableTargets,
   status,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   const [isOpen, setOpen] = useState<boolean>(false);
   const isDirty = values.target.getId() !== edge.getTarget().getId();
 
@@ -81,7 +81,7 @@ const MoveConnectionForm: FC<FormikProps<FormikValues> & MoveConnectionModalProp
   const sourceLabel = edge.getSource().getLabel();
   return (
     <>
-      <ModalHeader title={t('topology~Move connector')} labelId="move-connection-modal-title" />
+      <ModalHeader title={t('Move connector')} labelId="move-connection-modal-title" />
       <ModalBody>
         <Form id="move-connection-form" onSubmit={handleSubmit} className="pf-v6-u-mr-md">
           <Title headingLevel="h2" size="md">
@@ -127,10 +127,10 @@ const MoveConnectionForm: FC<FormikProps<FormikValues> & MoveConnectionModalProp
           data-test="confirm-action"
           id="confirm-action"
         >
-          {t('topology~Move')}
+          {t('Move')}
         </Button>
         <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
-          {t('topology~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </>
@@ -139,7 +139,7 @@ const MoveConnectionForm: FC<FormikProps<FormikValues> & MoveConnectionModalProp
 
 const MoveConnectionModal: FC<MoveConnectionModalProps> = (props) => {
   const { edge, close } = props;
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   const [handlePromise] = usePromiseHandler();
 
   const onSubmit = useCallback(
@@ -154,7 +154,7 @@ const MoveConnectionModal: FC<MoveConnectionModalProps> = (props) => {
         default:
           return Promise.reject(
             new Error(
-              t('topology~Unable to move connector of type {{type}}.', {
+              t('Unable to move connector of type {{type}}.', {
                 type: edge.getType(),
               }),
             ),

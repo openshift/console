@@ -6,7 +6,7 @@ import getTriggerHeaders from './TriggerHeaders';
 import TriggerRow from './TriggerRow';
 
 const TriggerList: FC<TableProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const triggerData = props.customData?.broker
     ? props.data.filter((obj) => obj.spec.broker === props.customData.broker)
     : props.data;
@@ -14,7 +14,7 @@ const TriggerList: FC<TableProps> = (props) => {
   return (
     <Table
       {...props}
-      aria-label={t('knative-plugin~Triggers')}
+      aria-label={t('Triggers')}
       data={triggerData}
       Header={getTriggerHeaders(t, !props.customData?.broker)}
       Row={TriggerRow}

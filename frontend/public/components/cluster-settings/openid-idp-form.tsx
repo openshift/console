@@ -28,7 +28,7 @@ export const AddOpenIDIDPPage = () => {
   const [caFileContent, setCaFileContent] = useState('');
   const [extraScopes, setExtraScopes] = useState([]);
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const thenPromise = (res) => {
     setInProgress(false);
@@ -37,7 +37,7 @@ export const AddOpenIDIDPPage = () => {
   };
 
   const catchError = (error) => {
-    const err = error.message || t('public~An error occurred. Please try again.');
+    const err = error.message || t('An error occurred. Please try again.');
     setInProgress(false);
     setErrorMessage(err);
     return Promise.reject(err);
@@ -152,7 +152,7 @@ export const AddOpenIDIDPPage = () => {
     });
   };
 
-  const title = t('public~Add Identity Provider: OpenID Connect');
+  const title = t('Add Identity Provider: OpenID Connect');
 
   return (
     <div className="co-m-pane__form">
@@ -168,12 +168,12 @@ export const AddOpenIDIDPPage = () => {
           <IDPNameInput value={name} onChange={(e) => setName(e.currentTarget.value)} />
           <div className="form-group">
             <label className="co-required" htmlFor="client-id">
-              {t('public~Client ID')}
+              {t('Client ID')}
             </label>
             <span className="pf-v6-c-form-control">
               <input
                 type="text"
-                aria-label={t('public~Client ID')}
+                aria-label={t('Client ID')}
                 onChange={(e) => setClientID(e.currentTarget.value)}
                 value={clientID}
                 id="client-id"
@@ -183,12 +183,12 @@ export const AddOpenIDIDPPage = () => {
           </div>
           <div className="form-group">
             <label className="co-required" htmlFor="client-secret">
-              {t('public~Client secret')}
+              {t('Client secret')}
             </label>
             <span className="pf-v6-c-form-control">
               <input
                 type="password"
-                aria-label={t('public~Client secret')}
+                aria-label={t('Client secret')}
                 onChange={(e) => setClientSecret(e.currentTarget.value)}
                 value={clientSecret}
                 id="client-secret"
@@ -198,12 +198,12 @@ export const AddOpenIDIDPPage = () => {
           </div>
           <div className="form-group">
             <label className="co-required" htmlFor="issuer">
-              {t('public~Issuer URL')}
+              {t('Issuer URL')}
             </label>
             <span className="pf-v6-c-form-control">
               <input
                 type="url"
-                aria-label={t('public~Issuer URL')}
+                aria-label={t('Issuer URL')}
                 onChange={(e) => setIssuer(e.currentTarget.value)}
                 value={issuer}
                 id="issuer"
@@ -220,7 +220,7 @@ export const AddOpenIDIDPPage = () => {
           <div className="co-form-section__separator" />
           <div>
             <Title headingLevel="h3" className="pf-v6-u-mb-sm">
-              {t('public~Claims')}
+              {t('Claims')}
             </Title>
             <p>
               {t(
@@ -228,14 +228,14 @@ export const AddOpenIDIDPPage = () => {
               )}
             </p>
             <ListInput
-              label={t('public~Preferred username')}
+              label={t('Preferred username')}
               id="openid-claims-preferred-username"
               initialValues={claimPreferredUsernames}
               onChange={(c: string[]) => setClaimPreferredUsernames(c)}
-              helpText={t('public~Any scopes to request in addition to the standard openid scope.')}
+              helpText={t('Any scopes to request in addition to the standard openid scope.')}
             />
             <ListInput
-              label={t('public~Name')}
+              label={t('Name')}
               id="openid-claims-name"
               initialValues={claimNames}
               onChange={(c: string[]) => setClaimNames(c)}
@@ -244,7 +244,7 @@ export const AddOpenIDIDPPage = () => {
               )}
             />
             <ListInput
-              label={t('public~Email')}
+              label={t('Email')}
               id="openid-claims-email"
               initialValues={claimEmails}
               onChange={(c: string[]) => setClaimEmails(c)}
@@ -256,7 +256,7 @@ export const AddOpenIDIDPPage = () => {
           <div className="co-form-section__separator" />
           <div data-test="openid-more-options-list-input">
             <Title headingLevel="h3" className="pf-v6-u-mb-sm">
-              {t('public~More options')}
+              {t('More options')}
             </Title>
             <IDPCAFileInput
               id="ca-file-input"
@@ -264,19 +264,19 @@ export const AddOpenIDIDPPage = () => {
               onChange={(c: string) => setCaFileContent(c)}
             />
             <ListInput
-              label={t('public~Extra scopes')}
+              label={t('Extra scopes')}
               id="openid-more-options-extra-scopes"
               onChange={(c: string[]) => setExtraScopes(c)}
-              helpText={t('public~Any scopes to request in addition to the standard openid scope.')}
+              helpText={t('Any scopes to request in addition to the standard openid scope.')}
             />
           </div>
           <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
             <ActionGroup className="pf-v6-c-form">
               <Button type="submit" variant="primary" data-test-id="add-idp" data-test="add-idp">
-                {t('public~Add')}
+                {t('Add')}
               </Button>
               <Button type="button" variant="secondary" onClick={() => navigate(-1)}>
-                {t('public~Cancel')}
+                {t('Cancel')}
               </Button>
             </ActionGroup>
           </ButtonBar>

@@ -55,7 +55,7 @@ const EventSink: FC<EventSinkProps> = ({
   const handleCancel = useCallback(() => navigate(-1), [navigate]);
   const perpectiveExtension = usePerspectives();
   const [perspective] = useActivePerspective();
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const application = useConsoleSelector(getActiveApplication);
   const currentApp = selectedApplication || application;
 
@@ -136,10 +136,10 @@ const EventSink: FC<EventSinkProps> = ({
     }
     const errMessage =
       knEventSinkResource?.kind && knEventSinkResource?.apiVersion
-        ? t('knative-plugin~No model registered for {{referenceForKnEventSink}}', {
+        ? t('No model registered for {{referenceForKnEventSink}}', {
             referenceForKnEventSink: referenceFor(knEventSinkResource),
           })
-        : t('knative-plugin~Invalid YAML');
+        : t('Invalid YAML');
     return Promise.reject(new Error(errMessage));
   };
 

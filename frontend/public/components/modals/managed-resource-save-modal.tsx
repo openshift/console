@@ -25,11 +25,11 @@ const ManagedResourceSaveModal: FC<ManagedResourceSaveModalProps> = (props) => {
   };
 
   const { owner, resource } = props;
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <>
       <ModalHeader
-        title={t('public~Managed resource')}
+        title={t('Managed resource')}
         titleIconVariant="warning"
         labelId="managed-resource-save-modal-title"
       />
@@ -58,10 +58,10 @@ const ManagedResourceSaveModal: FC<ManagedResourceSaveModalProps> = (props) => {
           data-test="confirm-action"
           form="managed-resource-save-form"
         >
-          {t('public~Save')}
+          {t('Save')}
         </Button>
         <Button variant="link" onClick={props.close} data-test-id="modal-cancel-action">
-          {t('public~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </>

@@ -105,7 +105,7 @@ const useMachineAutoscalerColumns = (): {
   columns: TableColumn<K8sResourceKind>[];
   resetAllColumnWidths: () => void;
 } => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
     MachineAutoscalerModel,
   );
@@ -113,7 +113,7 @@ const useMachineAutoscalerColumns = (): {
   const columns: TableColumn<K8sResourceKind>[] = useMemo(() => {
     return [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         resizableProps: getResizableProps(tableColumnInfo[0].id),
@@ -123,7 +123,7 @@ const useMachineAutoscalerColumns = (): {
         },
       },
       {
-        title: t('public~Namespace'),
+        title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
@@ -132,7 +132,7 @@ const useMachineAutoscalerColumns = (): {
         },
       },
       {
-        title: t('public~Scale target'),
+        title: t('Scale target'),
         id: tableColumnInfo[2].id,
         sort: 'spec.scaleTargetRef.name',
         resizableProps: getResizableProps(tableColumnInfo[2].id),
@@ -141,7 +141,7 @@ const useMachineAutoscalerColumns = (): {
         },
       },
       {
-        title: t('public~Min'),
+        title: t('Min'),
         id: tableColumnInfo[3].id,
         sort: 'spec.minReplicas',
         resizableProps: getResizableProps(tableColumnInfo[3].id),
@@ -150,7 +150,7 @@ const useMachineAutoscalerColumns = (): {
         },
       },
       {
-        title: t('public~Max'),
+        title: t('Max'),
         id: tableColumnInfo[4].id,
         sort: 'spec.maxReplicas',
         resizableProps: getResizableProps(tableColumnInfo[4].id),
@@ -198,28 +198,28 @@ const MachineAutoscalerList: FC<MachineAutoscalerListProps> = ({
 };
 
 const MachineAutoscalerDetails: FC<MachineAutoscalerDetailsProps> = ({ obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <>
       <PaneBody>
-        <SectionHeading text={t('public~MachineAutoscaler details')} />
+        <SectionHeading text={t('MachineAutoscaler details')} />
         <Grid hasGutter>
           <GridItem md={6}>
             <ResourceSummary resource={obj}>
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('public~Scale target')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('Scale target')}</DescriptionListTerm>
                 <DescriptionListDescription>
                   <MachineAutoscalerTargetLink obj={obj} />
                 </DescriptionListDescription>
               </DescriptionListGroup>
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('public~Min replicas')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('Min replicas')}</DescriptionListTerm>
                 <DescriptionListDescription>
                   {_.get(obj, 'spec.minReplicas', DASH)}
                 </DescriptionListDescription>
               </DescriptionListGroup>
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('public~Max replicas')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('Max replicas')}</DescriptionListTerm>
                 <DescriptionListDescription>
                   {_.get(obj, 'spec.maxReplicas') || DASH}
                 </DescriptionListDescription>

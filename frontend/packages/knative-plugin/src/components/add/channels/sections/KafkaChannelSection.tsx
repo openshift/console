@@ -4,19 +4,19 @@ import FormSection from '@console/dev-console/src/components/import/section/Form
 import { NumberSpinnerField } from '@console/shared/src/components/formik-fields/NumberSpinnerField';
 
 const KafkaChannelSection: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   return (
     <FormSection extraMargin>
       <NumberSpinnerField
         name="formData.data.kafkachannel.numPartitions"
-        label={t('knative-plugin~Number of Partitions')}
+        label={t('Number of Partitions')}
         helpText={t(
           'knative-plugin~The number of partitions of a Kafka topic. By default is, set to 1.',
         )}
       />
       <NumberSpinnerField
         name="formData.data.kafkachannel.replicationFactor"
-        label={t('knative-plugin~Replication factor')}
+        label={t('Replication factor')}
         helpText={t(
           'knative-plugin~The Replication factor of a Kafka topic. By default is, set to 1.',
         )}

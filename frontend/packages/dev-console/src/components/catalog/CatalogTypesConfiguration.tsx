@@ -37,7 +37,7 @@ type ItemProps = { type: string; title: string };
 const Item: FC<ItemProps> = ({ title }) => <>{title}</>;
 
 const CatalogTypesConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const fireTelemetryEvent = useTelemetry();
 
   // Available catalog types
@@ -240,15 +240,15 @@ const CatalogTypesConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
   };
 
   return (
-    <FormSection title={t('devconsole~Software Catalog')} data-test="catalog-types form-section">
+    <FormSection title={t('Software Catalog')} data-test="catalog-types form-section">
       <FormHelperText>
         {t(
           'devconsole~Another option to customize and standardize your development process. As an admin, you can disable the complete Software Catalog, or individual sub-catalogs (available as Types in the Software Catalog). Also here the "Search" and "Topology" will still show such resources.',
         )}
       </FormHelperText>
       <DualListSelector
-        availableOptionsTitle={t('devconsole~Enabled types')}
-        chosenOptionsTitle={t('devconsole~Disabled types')}
+        availableOptionsTitle={t('Enabled types')}
+        chosenOptionsTitle={t('Disabled types')}
         isSearchable
         availableOptions={enabledOptions}
         chosenOptions={disabledOptions}

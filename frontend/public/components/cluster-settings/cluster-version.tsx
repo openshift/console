@@ -17,19 +17,19 @@ import { breadcrumbsForGlobalConfig } from './global-config';
 const clusterVersionReference: K8sResourceKindReference = referenceForModel(ClusterVersionModel);
 
 const ClusterVersionDetails: FC<ClusterVersionDetailsProps> = ({ obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const canUpgrade = useCanClusterUpgrade();
   const conditions = _.get(obj, 'status.conditions', []);
   return (
     <>
       <PaneBody>
-        <SectionHeading text={t('public~ClusterVersion details')} />
+        <SectionHeading text={t('ClusterVersion details')} />
         <ResourceSummary resource={obj} canUpdateResource={canUpgrade}>
           <UpstreamConfigDetailsItem resource={obj} />
         </ResourceSummary>
       </PaneBody>
       <PaneBody>
-        <SectionHeading text={t('public~Conditions')} id="conditions" />
+        <SectionHeading text={t('Conditions')} id="conditions" />
         <Conditions conditions={conditions} />
       </PaneBody>
     </>

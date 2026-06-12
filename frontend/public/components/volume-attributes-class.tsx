@@ -50,7 +50,7 @@ const useVolumeAttributesClassColumns = (): {
   columns: TableColumn<VolumeAttributesClassKind>[];
   resetAllColumnWidths: () => void;
 } => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
     VolumeAttributesClassModel,
   );
@@ -58,7 +58,7 @@ const useVolumeAttributesClassColumns = (): {
   const columns: TableColumn<VolumeAttributesClassKind>[] = useMemo(() => {
     return [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         resizableProps: getResizableProps(tableColumnInfo[0].id),
@@ -68,7 +68,7 @@ const useVolumeAttributesClassColumns = (): {
         },
       },
       {
-        title: t('public~Driver name'),
+        title: t('Driver name'),
         id: tableColumnInfo[1].id,
         sort: 'driverName',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
@@ -77,7 +77,7 @@ const useVolumeAttributesClassColumns = (): {
         },
       },
       {
-        title: t('public~Parameters'),
+        title: t('Parameters'),
         id: tableColumnInfo[2].id,
         resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
@@ -181,22 +181,22 @@ export const VolumeAttributesClassPage: FC<ListPageProps> = (props) => {
 };
 
 const VolumeAttributesClassDetails: FC<VolumeAttributesClassDetailsProps> = ({ obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const parameters = obj?.parameters ?? {};
 
   return (
     <PaneBody>
-      <SectionHeading text={t('public~VolumeAttributesClass details')} />
+      <SectionHeading text={t('VolumeAttributesClass details')} />
       <Grid hasGutter>
         <GridItem sm={6}>
           <ResourceSummary resource={obj}>
-            <DetailsItem label={t('public~Driver name')} obj={obj} path="driverName" />
+            <DetailsItem label={t('Driver name')} obj={obj} path="driverName" />
           </ResourceSummary>
         </GridItem>
         <GridItem sm={6}>
           <DescriptionList>
-            <DetailsItem label={t('public~Parameters')} obj={obj} path="parameters">
+            <DetailsItem label={t('Parameters')} obj={obj} path="parameters">
               {Object.keys(parameters).length > 0 ? (
                 <>
                   {Object.entries(parameters).map(([key, value]) => (
@@ -206,7 +206,7 @@ const VolumeAttributesClassDetails: FC<VolumeAttributesClassDetailsProps> = ({ o
                   ))}
                 </>
               ) : (
-                t('public~No parameters')
+                t('No parameters')
               )}
             </DetailsItem>
           </DescriptionList>

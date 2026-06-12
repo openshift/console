@@ -19,7 +19,7 @@ interface SinkBindingSectionProps {
 }
 
 const SinkBindingSection: FC<SinkBindingSectionProps> = ({ title, fullWidth }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const { values, setFieldValue } = useFormikContext<FormikValues>();
   const initVal =
     values?.formData?.data?.[EventSources.SinkBinding]?.subject?.selector?.matchLabels || {};
@@ -67,37 +67,35 @@ const SinkBindingSection: FC<SinkBindingSectionProps> = ({ title, fullWidth }) =
 
   return (
     <FormSection title={title} extraMargin fullWidth={fullWidth} dataTest={`${title} section`}>
-      <TertiaryHeading>{t('knative-plugin~Subject')}</TertiaryHeading>
+      <TertiaryHeading>{t('Subject')}</TertiaryHeading>
       <InputField
         data-test-id="sinkbinding-apiversion-field"
         type={TextInputTypes.text}
         name={`formData.data.${EventSources.SinkBinding}.subject.apiVersion`}
-        label={t('knative-plugin~apiVersion')}
+        label={t('apiVersion')}
         required
       />
       <InputField
         data-test-id="sinkbinding-kind-field"
         type={TextInputTypes.text}
         name={`formData.data.${EventSources.SinkBinding}.subject.kind`}
-        label={t('knative-plugin~Kind')}
+        label={t('Kind')}
         required
       />
-      <FormGroup fieldId={fieldId} label={t('knative-plugin~Match subject')}>
-        <div className="pf-v6-c-form__helper-text">
-          {t('knative-plugin~Match subject using name or labels.')}
-        </div>
+      <FormGroup fieldId={fieldId} label={t('Match subject')}>
+        <div className="pf-v6-c-form__helper-text">{t('Match subject using name or labels.')}</div>
         <div className="form-group">
           <DropdownField
             name="sinkBindingMatchType"
-            items={{ name: t('knative-plugin~Name'), labels: t('knative-plugin~Labels') }}
-            title={t('knative-plugin~Match type')}
+            items={{ name: t('Name'), labels: t('Labels') }}
+            title={t('Match type')}
           />
         </div>
         {matchType === 'name' ? (
           <InputField
             type={TextInputTypes.text}
             name={`formData.data.${EventSources.SinkBinding}.subject.name`}
-            label={t('knative-plugin~Subject Name')}
+            label={t('Subject Name')}
             required
           />
         ) : (
@@ -108,9 +106,9 @@ const SinkBindingSection: FC<SinkBindingSectionProps> = ({ title, fullWidth }) =
               )
             }
             nameValuePairs={nameValue}
-            valueString={t('knative-plugin~Value')}
-            nameString={t('knative-plugin~Name')}
-            addString={t('knative-plugin~Add values')}
+            valueString={t('Value')}
+            nameString={t('Name')}
+            addString={t('Add values')}
             readOnly={false}
             allowSorting={false}
             updateParentData={handleNameValuePairs}

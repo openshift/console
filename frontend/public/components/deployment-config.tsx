@@ -71,70 +71,66 @@ const getDeploymentConfigStatus = (dc: K8sResourceKind): string => {
 };
 
 export const DeploymentConfigDetailsList = ({ dc }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const timeout = _.get(dc, 'spec.strategy.rollingParams.timeoutSeconds');
   const updatePeriod = _.get(dc, 'spec.strategy.rollingParams.updatePeriodSeconds');
   const interval = _.get(dc, 'spec.strategy.rollingParams.intervalSeconds');
   const triggers = _.map(dc.spec.triggers, 'type').join(', ');
   return (
     <DescriptionList>
-      <DetailsItem label={t('public~Latest version')} obj={dc} path="status.latestVersion" />
-      <DetailsItem label={t('public~Message')} obj={dc} path="status.details.message" hideEmpty />
-      <DetailsItem label={t('public~Update strategy')} obj={dc} path="spec.strategy.type" />
+      <DetailsItem label={t('Latest version')} obj={dc} path="status.latestVersion" />
+      <DetailsItem label={t('Message')} obj={dc} path="status.details.message" hideEmpty />
+      <DetailsItem label={t('Update strategy')} obj={dc} path="spec.strategy.type" />
       {dc.spec.strategy.type === 'Rolling' && (
         <>
           <DetailsItem
-            label={t('public~Timeout')}
+            label={t('Timeout')}
             obj={dc}
             path="spec.strategy.rollingParams.timeoutSeconds"
             hideEmpty
           >
-            {t('public~{{count}} second', { count: timeout })}
+            {t('{{count}} second', { count: timeout })}
           </DetailsItem>
           <DetailsItem
-            label={t('public~Update period')}
+            label={t('Update period')}
             obj={dc}
             path="spec.strategy.rollingParams.updatePeriodSeconds"
             hideEmpty
           >
-            {t('public~{{count}} second', { count: updatePeriod })}
+            {t('{{count}} second', { count: updatePeriod })}
           </DetailsItem>
           <DetailsItem
-            label={t('public~Interval')}
+            label={t('Interval')}
             obj={dc}
             path="spec.strategy.rollingParams.intervalSeconds"
             hideEmpty
           >
-            {t('public~{{count}} second', { count: interval })}
+            {t('{{count}} second', { count: interval })}
           </DetailsItem>
           <DetailsItem
-            label={t('public~Max unavailable')}
+            label={t('Max unavailable')}
             obj={dc}
             path="spec.strategy.rollingParams.maxUnavailable"
           >
-            {t('public~{{maxUnavailable}} of {{count}} pod', {
+            {t('{{maxUnavailable}} of {{count}} pod', {
               maxUnavailable: dc.spec.strategy.rollingParams.maxUnavailable ?? 1,
               count: dc.spec.replicas,
             })}
           </DetailsItem>
-          <DetailsItem
-            label={t('public~Max surge')}
-            obj={dc}
-            path="spec.strategy.rollingParams.maxSurge"
-          >
-            {t('public~{{maxSurge}} greater than {{count}} pod', {
+          <DetailsItem label={t('Max surge')} obj={dc} path="spec.strategy.rollingParams.maxSurge">
+            {t('{{maxSurge}} greater than {{count}} pod', {
               maxSurge: dc.spec.strategy.rollingParams.maxSurge ?? 1,
               count: dc.spec.replicas,
             })}
           </DetailsItem>
         </>
       )}
-      <DetailsItem label={t('public~Min ready seconds')} obj={dc} path="spec.minReadySeconds">
+      <DetailsItem label={t('Min ready seconds')} obj={dc} path="spec.minReadySeconds">
         {dc.spec.minReadySeconds
-          ? t('public~{{count}} second', { count: dc.spec.minReadySeconds })
-          : t('public~Not configured')}
+          ? t('{{count}} second', { count: dc.spec.minReadySeconds })
+          : t('Not configured')}
       </DetailsItem>
-      <DetailsItem label={t('public~Triggers')} obj={dc} path="spec.triggers" hideEmpty>
+      <DetailsItem label={t('Triggers')} obj={dc} path="spec.triggers" hideEmpty>
         {triggers}
       </DetailsItem>
       <RuntimeClass obj={dc} />
@@ -144,12 +140,12 @@ export const DeploymentConfigDetailsList = ({ dc }) => {
 };
 
 export const DeploymentConfigDeprecationAlert: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <Alert
       isInline
       variant="info"
-      title={t('public~DeploymentConfig is being deprecated with OpenShift 4.14')}
+      title={t('DeploymentConfig is being deprecated with OpenShift 4.14')}
     >
       <p>
         {t(
@@ -164,7 +160,7 @@ export const DeploymentConfigDeprecationAlert: FC = () => {
       {!isManaged() && (
         <ExternalLink
           href={getDocumentationURL(documentationURLs.deprecatedDeploymentConfig)}
-          text={t('public~Learn more about Deployments')}
+          text={t('Learn more about Deployments')}
           className="pf-v6-u-mt-md"
         />
       )}
@@ -173,18 +169,18 @@ export const DeploymentConfigDeprecationAlert: FC = () => {
 };
 
 const DeploymentConfigsDetails: FC<{ obj: K8sResourceKind }> = ({ obj: dc }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <>
       <PaneBody>
-        <SectionHeading text={t('public~DeploymentConfig details')} />
+        <SectionHeading text={t('DeploymentConfig details')} />
         {dc.spec.paused && <WorkloadPausedAlert obj={dc} model={DeploymentConfigModel} />}
         <PodRingSet key={dc.metadata.uid} obj={dc} path="/spec/replicas" />
         <Grid hasGutter>
           <GridItem sm={6}>
             <ResourceSummary resource={dc} showPodSelector showNodeSelector showTolerations>
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('public~Status')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('Status')}</DescriptionListTerm>
                 <DescriptionListDescription>
                   <Status status={getDeploymentConfigStatus(dc)} />
                 </DescriptionListDescription>
@@ -197,14 +193,14 @@ const DeploymentConfigsDetails: FC<{ obj: K8sResourceKind }> = ({ obj: dc }) => 
         </Grid>
       </PaneBody>
       <PaneBody>
-        <SectionHeading text={t('public~Containers')} />
+        <SectionHeading text={t('Containers')} />
         <ContainerTable containers={dc.spec.template.spec.containers} />
       </PaneBody>
       <PaneBody>
-        <VolumesTable resource={dc} heading={t('public~Volumes')} />
+        <VolumesTable resource={dc} heading={t('Volumes')} />
       </PaneBody>
       <PaneBody>
-        <SectionHeading text={t('public~Conditions')} />
+        <SectionHeading text={t('Conditions')} />
         <Conditions conditions={dc.status.conditions} />
       </PaneBody>
     </>

@@ -31,14 +31,14 @@ const handleNamespaceChange = (newNamespace: string, navigate: NavigateFunction)
 };
 
 const ProjectDetails = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const { activeNamespace, pages } = props;
   return (
     <DetailsPage
       {...props}
       breadcrumbsFor={() => [
-        { name: t('devconsole~Projects'), path: '/project-details/all-namespaces' },
-        { name: t('devconsole~Project Details'), path: `/project-details/ns/${activeNamespace}` },
+        { name: t('Projects'), path: '/project-details/all-namespaces' },
+        { name: t('Project Details'), path: `/project-details/ns/${activeNamespace}` },
       ]}
       name={activeNamespace}
       kind={referenceForModel(ProjectModel)}
@@ -46,7 +46,7 @@ const ProjectDetails = (props) => {
         <LazyActionMenu
           context={{ [referenceForModel(ProjectModel)]: obj }}
           variant={ActionMenuVariant.DROPDOWN}
-          label={t('devconsole~Actions')}
+          label={t('Actions')}
         />
       )}
       kindObj={ProjectModel}
@@ -57,7 +57,7 @@ const ProjectDetails = (props) => {
 };
 
 export const PageContents: FC<MonitoringPageProps> = ({ noProjectsAvailable, ...props }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const params = useParams();
   const activeNamespace = params.ns;
 
@@ -101,7 +101,7 @@ export const PageContents: FC<MonitoringPageProps> = ({ noProjectsAvailable, ...
   return !noProjectsAvailable && activeNamespace ? (
     <ProjectDetails {...props} activeNamespace={activeNamespace} pages={pages} />
   ) : (
-    <CreateProjectListPage title={t('devconsole~Project Details')}>
+    <CreateProjectListPage title={t('Project Details')}>
       {(openProjectModal) => (
         <Trans t={t} ns="devconsole">
           Select a Project to view its details
@@ -115,11 +115,11 @@ export const PageContents: FC<MonitoringPageProps> = ({ noProjectsAvailable, ...
 const PageContentsWithStartGuide = withStartGuide<MonitoringPageProps>(PageContents);
 
 export const ProjectDetailsPage: FC<MonitoringPageProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const navigate = useNavigate();
   return (
     <>
-      <DocumentTitle>{t('devconsole~Project Details')}</DocumentTitle>
+      <DocumentTitle>{t('Project Details')}</DocumentTitle>
       <NamespacedPage
         hideApplications
         variant={NamespacedPageVariants.light}

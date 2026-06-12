@@ -41,7 +41,7 @@ export const lightspeedOperatorURL =
   '/catalog?catalogType=operator&keyword=lightspeed&selectedId=lightspeed-operator-redhat-operators-openshift-marketplace';
 
 const Lightspeed: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const navigate = useNavigate();
   const [hideLightspeed] = useHideLightspeed();
   const [isReady, setIsReady] = useState(false);
@@ -78,7 +78,7 @@ const Lightspeed: FC = () => {
     );
   };
 
-  const title = t('console-app~Red Hat OpenShift Lightspeed');
+  const title = t('Red Hat OpenShift Lightspeed');
   const button = (
     <Button
       variant="link"
@@ -99,7 +99,7 @@ const Lightspeed: FC = () => {
           <StackItem>
             <div className="lightspeed__welcome-logo" />
             <Title headingLevel="h1" className="pf-v6-u-mb-sm">
-              {t('console-app~Meet OpenShift Lightspeed')}
+              {t('Meet OpenShift Lightspeed')}
             </Title>
             <Content component="p" className="pf-v6-u-color-200 pf-v6-u-font-size-lg pf-v6-u-mb-md">
               {t(
@@ -109,11 +109,11 @@ const Lightspeed: FC = () => {
           </StackItem>
           <StackItem isFilled>
             <Title headingLevel="h2" className="pf-v6-u-mb-md">
-              {t('console-app~Benefits:')}
+              {t('Benefits:')}
             </Title>
             <List isPlain isBordered className="pf-v6-u-color-200 pf-v6-u-ml-sm">
               <ListItem>
-                {t('console-app~Get fast answers to questions you have related to OpenShift')}
+                {t('Get fast answers to questions you have related to OpenShift')}
               </ListItem>
               <ListItem>
                 {t(
@@ -126,23 +126,19 @@ const Lightspeed: FC = () => {
                 )}
               </ListItem>
               <ListItem>
-                {t('console-app~Free up your IT teams so that you can drive greater innovation')}
+                {t('Free up your IT teams so that you can drive greater innovation')}
               </ListItem>
             </List>
           </StackItem>
           {canInstallLightspeed ? (
             <StackItem className="pf-v6-u-text-align-center">
               <Button variant="primary" size="lg" onClick={onInstallClick}>
-                {t('console-app~Get started in Software Catalog')}
+                {t('Get started in Software Catalog')}
               </Button>
             </StackItem>
           ) : (
             <StackItem>
-              <Alert
-                variant="info"
-                isInline
-                title={t('console-app~Must have administrator access')}
-              >
+              <Alert variant="info" isInline title={t('Must have administrator access')}>
                 <Content component="p">
                   {t(
                     'console-app~Contact your administrator and ask them to install Red Hat OpenShift Lightspeed.',
@@ -153,7 +149,7 @@ const Lightspeed: FC = () => {
           )}
           <StackItem className="pf-v6-u-text-align-center">
             <Button variant="link" onClick={onDismissClick}>
-              {t('console-app~Edit user preferences to not show again')}
+              {t('Edit user preferences to not show again')}
             </Button>
           </StackItem>
         </Stack>

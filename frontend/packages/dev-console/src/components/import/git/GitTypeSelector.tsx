@@ -18,7 +18,7 @@ type GitTypeSelectorProps = {
 
 const GitTypeSelector: FC<GitTypeSelectorProps> = ({ fieldPrefix }) => {
   const { values, setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
 
   const handleGitTypeChange = (gitType: GitProvider) => {
     setFieldValue(`${fieldPrefix}git.type`, gitType, false);
@@ -28,7 +28,7 @@ const GitTypeSelector: FC<GitTypeSelectorProps> = ({ fieldPrefix }) => {
 
   return (
     <>
-      <FormGroup label={t('devconsole~Git type')} isRequired id="git-type">
+      <FormGroup label={t('Git type')} isRequired id="git-type">
         <Flex spaceItems={{ default: 'spaceItemsSm' }}>
           <FlexItem>
             <Tile

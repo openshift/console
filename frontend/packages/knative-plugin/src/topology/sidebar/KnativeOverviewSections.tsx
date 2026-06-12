@@ -27,43 +27,37 @@ type SubscriptionsOverviewList = {
 };
 
 export const EventSourcesOverviewList: FC<OverviewListProps> = ({ items }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   return items?.length > 0 ? (
     <TopologySideBarTabSection>
-      <PubSubResourceOverviewList items={items} title={t('knative-plugin~Event Sources')} />
+      <PubSubResourceOverviewList items={items} title={t('Event Sources')} />
     </TopologySideBarTabSection>
   ) : null;
 };
 
 export const SubscriptionsOverviewList: FC<SubscriptionsOverviewList> = ({ subscriptions }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   return subscriptions?.length > 0 ? (
     <TopologySideBarTabSection>
-      <EventPubSubSubscribers
-        subscribers={subscriptions}
-        title={t('knative-plugin~Subscriptions')}
-      />
+      <EventPubSubSubscribers subscribers={subscriptions} title={t('Subscriptions')} />
     </TopologySideBarTabSection>
   ) : null;
 };
 
 export const TriggersOverviewList: FC<SubscriptionsOverviewList> = ({ subscriptions }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   return subscriptions?.length > 0 ? (
     <TopologySideBarTabSection>
-      <EventPubSubSubscribers subscribers={subscriptions} title={t('knative-plugin~Triggers')} />
+      <EventPubSubSubscribers subscribers={subscriptions} title={t('Triggers')} />
     </TopologySideBarTabSection>
   ) : null;
 };
 
 export const DomainMappingsOverviewList: FC<OverviewListProps> = ({ items }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   return items?.length > 0 ? (
     <TopologySideBarTabSection>
-      <DomainMappingOverviewList
-        domainMappings={items}
-        title={t('knative-plugin~Domain mappings')}
-      />
+      <DomainMappingOverviewList domainMappings={items} title={t('Domain mappings')} />
     </TopologySideBarTabSection>
   ) : null;
 };

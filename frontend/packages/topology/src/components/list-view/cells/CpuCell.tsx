@@ -12,10 +12,10 @@ import MetricsTooltip from './MetricsTooltip';
 import './MetricsCell.scss';
 
 const CpuCellComponent = memo<CpuCellComponentProps>(({ cpuByPod, totalCores }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   return (
     <div className="odc-topology-list-view__metrics-cell__detail--cpu">
-      <MetricsTooltip metricLabel={t('topology~CPU')} byPod={cpuByPod}>
+      <MetricsTooltip metricLabel={t('CPU')} byPod={cpuByPod}>
         <span>
           <span className="odc-topology-list-view__metrics-cell__metric-value">
             {formatCores(totalCores)}

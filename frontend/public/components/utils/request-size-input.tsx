@@ -47,7 +47,7 @@ export const RequestSizeInput: FC<RequestSizeInputProps> = ({
     setValue(defaultValue);
   }, [defaultRequestSizeUnit, defaultValue]);
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const inputName = `${name}Value`;
   const dropdownName = `${name}Unit`;
   return (
@@ -77,7 +77,7 @@ export const RequestSizeInput: FC<RequestSizeInputProps> = ({
           onChange={onUnitChange}
           disabled={isInputDisabled}
           required={required}
-          ariaLabel={t('public~Number of {{sizeUnit}}', {
+          ariaLabel={t('Number of {{sizeUnit}}', {
             sizeUnit: dropdownUnits[unit],
           })}
         />

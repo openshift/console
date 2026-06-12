@@ -18,7 +18,7 @@ interface HelmChartSummaryProps {
 }
 
 const HelmChartSummary: FC<HelmChartSummaryProps> = ({ obj, helmRelease }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   if (!helmRelease) return null;
 
   const {
@@ -37,7 +37,7 @@ const HelmChartSummary: FC<HelmChartSummaryProps> = ({ obj, helmRelease }) => {
   return (
     <DescriptionList>
       <DescriptionListGroup>
-        <DescriptionListTerm>{t('helm-plugin~Status')}</DescriptionListTerm>
+        <DescriptionListTerm>{t('Status')}</DescriptionListTerm>
         <DescriptionListDescription data-test="helm-release-status-details">
           <Status
             status={releaseStatus(helmRelease?.info?.status)}
@@ -46,23 +46,23 @@ const HelmChartSummary: FC<HelmChartSummaryProps> = ({ obj, helmRelease }) => {
         </DescriptionListDescription>
       </DescriptionListGroup>
       <DescriptionListGroup>
-        <DescriptionListTerm>{t('helm-plugin~Chart name')}</DescriptionListTerm>
+        <DescriptionListTerm>{t('Chart name')}</DescriptionListTerm>
         <DescriptionListDescription>{chartName}</DescriptionListDescription>
       </DescriptionListGroup>
       <DescriptionListGroup>
-        <DescriptionListTerm>{t('helm-plugin~Chart version')}</DescriptionListTerm>
+        <DescriptionListTerm>{t('Chart version')}</DescriptionListTerm>
         <DescriptionListDescription>{chartVersion}</DescriptionListDescription>
       </DescriptionListGroup>
       <DescriptionListGroup>
-        <DescriptionListTerm>{t('helm-plugin~App version')}</DescriptionListTerm>
+        <DescriptionListTerm>{t('App version')}</DescriptionListTerm>
         <DescriptionListDescription>{appVersion || '-'}</DescriptionListDescription>
       </DescriptionListGroup>
       <DescriptionListGroup>
-        <DescriptionListTerm>{t('helm-plugin~Revision')}</DescriptionListTerm>
+        <DescriptionListTerm>{t('Revision')}</DescriptionListTerm>
         <DescriptionListDescription>{revision}</DescriptionListDescription>
       </DescriptionListGroup>
       <DescriptionListGroup>
-        <DescriptionListTerm>{t('helm-plugin~Updated')}</DescriptionListTerm>
+        <DescriptionListTerm>{t('Updated')}</DescriptionListTerm>
         <DescriptionListDescription>
           <Timestamp timestamp={updated} />
         </DescriptionListDescription>

@@ -13,20 +13,20 @@ const EventSourceAlert: FC<EventSourceAlertProps> = ({
   createSourceAccessLoading,
   createSourceAccess,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const showAlert = !isValidSource || (!createSourceAccessLoading && !createSourceAccess);
 
   return showAlert ? (
     <Alert
       variant={!isValidSource ? 'danger' : undefined}
-      title={t('knative-plugin~Event source cannot be created')}
+      title={t('Event source cannot be created')}
       isInline
     >
-      {!isValidSource && t('knative-plugin~Event source is not found on this Cluster.')}
+      {!isValidSource && t('Event source is not found on this Cluster.')}
       {!createSourceAccessLoading &&
         !createSourceAccess &&
         isValidSource &&
-        t('knative-plugin~You do not have create access for Event Source in this project.')}
+        t('You do not have create access for Event Source in this project.')}
     </Alert>
   ) : null;
 };

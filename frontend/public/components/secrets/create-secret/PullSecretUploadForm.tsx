@@ -13,7 +13,7 @@ export const PullSecretUploadForm: FC<PullSecretUploadFormProps> = ({
   secretType,
   onFormDisable,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const fileName = getPullSecretFileName(secretType);
   const configContent = stringData[fileName] ?? '';
   const [configFile, setConfigFile] = useState<string>(configContent);
@@ -56,15 +56,13 @@ export const PullSecretUploadForm: FC<PullSecretUploadFormProps> = ({
         onChange={onFileChange}
         inputFileData={configFile}
         id="docker-config"
-        label={t('public~Configuration file')}
-        filenamePlaceholder={t('public~Upload a .dockercfg or .docker/config.json file.')}
+        label={t('Configuration file')}
+        filenamePlaceholder={t('Upload a .dockercfg or .docker/config.json file.')}
         textareaFieldHelpText={t(
           'public~File with credentials and other configuration for connecting to a secured image registry.',
         )}
         isRequired={true}
-        errorMessage={
-          parseError ? t('public~Configuration file should be in JSON format.') : undefined
-        }
+        errorMessage={parseError ? t('Configuration file should be in JSON format.') : undefined}
       />
     </FormGroup>
   );

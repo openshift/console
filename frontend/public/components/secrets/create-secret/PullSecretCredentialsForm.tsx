@@ -18,7 +18,7 @@ export const PullSecretCredentialsForm: FC<PullSecretCredentialsFormProps> = ({
   onError,
   secretType,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const pullSecretFileName = getPullSecretFileName(secretType);
   const pullSecretJSON = stringData[pullSecretFileName];
   const [entries, setEntries] = useState(arrayifyPullSecret(pullSecretJSON, onError));
@@ -66,7 +66,7 @@ export const PullSecretCredentialsForm: FC<PullSecretCredentialsFormProps> = ({
           data-test="add-credentials-button"
           icon={<RhUiAddCircleFillIcon />}
         >
-          {t('public~Add credentials')}
+          {t('Add credentials')}
         </Button>
       </ActionGroup>
     </>

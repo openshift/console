@@ -24,7 +24,7 @@ type WatchResource = {
 };
 
 const EditApplicationPage: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const params = useParams();
   const location = useLocation();
   const namespace = params.ns;
@@ -119,7 +119,7 @@ const EditApplicationPage: FC = () => {
 
   return (
     <NamespacedPage disabled variant={NamespacedPageVariants.light}>
-      <DocumentTitle>{t('devconsole~Edit')}</DocumentTitle>
+      <DocumentTitle>{t('Edit')}</DocumentTitle>
       <StatusBox loaded={isResourcesLoaded} data={editResData}>
         <EditApplicationComponent
           namespace={namespace}

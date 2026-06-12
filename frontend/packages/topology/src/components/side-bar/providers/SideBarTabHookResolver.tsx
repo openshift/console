@@ -35,7 +35,7 @@ const TabBarTabHookResolver: FC<TabBarTabHookResolverProps> = ({
   tabSectionExtensions,
   tabExtensions,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
 
   // resolving hooks in loop since number of extensions will remain the same
   // TODO: Render each hook in its own child component...
@@ -101,12 +101,12 @@ const TabBarTabHookResolver: FC<TabBarTabHookResolverProps> = ({
     const resource = getResource(graphElement);
     resource &&
       tabs.push({
-        name: t('topology~Details'),
+        name: t('Details'),
         component: () => <DefaultResourceSideBar resource={resource} />,
       });
     isEdge(graphElement) &&
       tabs.push({
-        name: t('topology~Resources'),
+        name: t('Resources'),
         component: () => <TopologyEdgeResourcesPanel edge={graphElement} />,
       });
   }

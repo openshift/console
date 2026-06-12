@@ -133,19 +133,19 @@ export const getSupportPhase = (
 export const ClusterCompatibilityStatus: FC<{ compatible: CompatibilityResult }> = ({
   compatible,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
 
   if (compatible === 'compatible') {
     return (
       <Label status="success" variant="outline" data-test="cluster-compatibility-compatible">
-        {t('olm~Compatible')}
+        {t('Compatible')}
       </Label>
     );
   }
   if (compatible === 'incompatible') {
     return (
       <Label status="danger" variant="outline" data-test="cluster-compatibility-incompatible">
-        {t('olm~Incompatible')}
+        {t('Incompatible')}
       </Label>
     );
   }
@@ -173,12 +173,12 @@ export const SupportPhaseStatus: FC<{
   phase: SupportPhaseResult;
   currentDate?: Date;
 }> = ({ phase, currentDate = new Date() }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
 
   if (phase === 'self-support') {
     return (
       <Label status="danger" variant="outline" data-test="support-phase-self-support">
-        {t('olm~Self-support')}
+        {t('Self-support')}
       </Label>
     );
   }

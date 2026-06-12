@@ -57,7 +57,7 @@ const OperatorRow: FC<
 };
 
 const OperatorsPopup: FC<OperatorsPopupProps> = ({ resources, operatorSubsystems }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const sections = [
     ...operatorSubsystems.map((o, index) => {
       const operatorResources = o.resources.reduce((acc, r) => {
@@ -92,7 +92,7 @@ const OperatorsPopup: FC<OperatorsPopupProps> = ({ resources, operatorSubsystems
 };
 
 export const OperatorHealthItem: FC<OperatorHealthItemProps> = ({ operatorSubsystems }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { watchResource, stopWatchResource, results: resources } = useDynamicK8sWatchResources();
 
   useEffect(() => {
@@ -139,10 +139,10 @@ export const OperatorHealthItem: FC<OperatorHealthItemProps> = ({ operatorSubsys
 
   return (
     <HealthItem
-      title={t('public~Operators')}
+      title={t('Operators')}
       state={operatorsHealth.health}
       details={operatorsHealth.detailMessage}
-      popupTitle={t('public~Operator status')}
+      popupTitle={t('Operator status')}
     >
       <OperatorsPopup resources={resources} operatorSubsystems={operatorSubsystems} />
     </HealthItem>
@@ -150,7 +150,7 @@ export const OperatorHealthItem: FC<OperatorHealthItemProps> = ({ operatorSubsys
 };
 
 export const URLHealthItem: FC<URLHealthItemProps> = ({ subsystem, models }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const urls = useMemo(() => [{ url: subsystem.url, fetch: subsystem.fetch }], [
     subsystem.url,
@@ -196,7 +196,7 @@ export const URLHealthItem: FC<URLHealthItemProps> = ({ subsystem, models }) => 
 };
 
 export const PrometheusHealthItem: FC<PrometheusHealthItemProps> = ({ subsystem, models }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { infrastructure } = useContext(ClusterDashboardContext);
 
   const prometheusQueries = useMemo(() => subsystem.queries.map((query) => ({ query })), [
@@ -254,7 +254,7 @@ export const PrometheusHealthItem: FC<PrometheusHealthItemProps> = ({ subsystem,
 };
 
 export const ResourceHealthItem: FC<ResourceHealthItemProps> = ({ subsystem, namespace }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const { title, resources, healthHandler, popupComponent: PopupComponent, popupTitle } = subsystem;
 

@@ -30,7 +30,7 @@ const BuilderImageSelector: FC<BuilderImageSelectorProps> = ({
   builderImages,
   existingPipeline,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const {
     values: { pipeline, image },
     setFieldValue,
@@ -50,7 +50,7 @@ const BuilderImageSelector: FC<BuilderImageSelectorProps> = ({
   }, [selected, setFieldValue, setFieldTouched, builderImages, tag]);
 
   const fieldId = getFieldId('image.name', 'selector');
-  const imageName = builderImages?.[selected]?.title || t('devconsole~this Builder Image');
+  const imageName = builderImages?.[selected]?.title || t('this Builder Image');
 
   const changedPipelineWarning = pipeline.template
     ? pipeline.template.metadata?.labels[PIPELINE_RUNTIME_LABEL] !==
@@ -79,20 +79,16 @@ const BuilderImageSelector: FC<BuilderImageSelectorProps> = ({
   }
 
   return (
-    <FormGroup fieldId={fieldId} label={t('devconsole~Builder Image')}>
+    <FormGroup fieldId={fieldId} label={t('Builder Image')}>
       {isRecommending && !recommended && (
         <>
-          <LoadingInline /> {t('devconsole~Detecting recommended Builder Images...')}
+          <LoadingInline /> {t('Detecting recommended Builder Images...')}
         </>
       )}
       {(couldNotRecommend || (recommended && !builderImages.hasOwnProperty(recommended))) && (
         <>
-          <Alert
-            variant="warning"
-            title={t('devconsole~Unable to detect the Builder Image.')}
-            isInline
-          >
-            {t('devconsole~Select the most appropriate one from the list to continue.')}
+          <Alert variant="warning" title={t('Unable to detect the Builder Image.')} isInline>
+            {t('Select the most appropriate one from the list to continue.')}
           </Alert>
           <br />
         </>

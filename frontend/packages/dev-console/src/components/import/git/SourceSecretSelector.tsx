@@ -20,7 +20,7 @@ const SourceSecretSelector: FC<{
 }> = ({ formContextField }) => {
   const fieldPrefix = formContextField ? `${formContextField}.` : '';
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const { values, setFieldValue } = useFormikContext<FormikValues>();
   const launchCreateSecretModal = useCreateSecretModal();
   const namespace: string = _.get(values, `${fieldPrefix}project.name`);
@@ -66,21 +66,18 @@ const SourceSecretSelector: FC<{
   }, [loaded, loadError, secret, data, setFieldValue, fieldPrefix]);
 
   return (
-    <FormGroup
-      fieldId={getFieldId('source-secret', 'dropdown')}
-      label={t('devconsole~Source Secret')}
-    >
+    <FormGroup fieldId={getFieldId('source-secret', 'dropdown')} label={t('Source Secret')}>
       <SourceSecretDropdown
         isFullWidth
         menuClassName="dropdown-menu--text-wrap"
         namespace={namespace}
         actionItems={[
           {
-            actionTitle: t('devconsole~Create new Secret'),
+            actionTitle: t('Create new Secret'),
             actionKey: CREATE_SOURCE_SECRET,
           },
           {
-            actionTitle: t('devconsole~No Secret'),
+            actionTitle: t('No Secret'),
             actionKey: CLEAR_SOURCE_SECRET,
           },
         ]}
@@ -92,7 +89,7 @@ const SourceSecretSelector: FC<{
       <FormHelperText>
         <HelperText>
           <HelperTextItem>
-            {t('devconsole~Secret with credentials for pulling your source code.')}
+            {t('Secret with credentials for pulling your source code.')}
           </HelperTextItem>
         </HelperText>
       </FormHelperText>

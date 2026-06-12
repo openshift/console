@@ -9,7 +9,7 @@ import { useStartNodeMaintenanceModalLauncher } from '../modals/StartNodeMainten
 import { useStopNodeMaintenanceModal } from '../modals/StopNodeMaintenanceModal';
 
 export const useNodeMaintenanceActions: ExtensionHook<Action[], NodeKind> = (resource) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('metal3-plugin');
   const [maintenanceModel] = useMaintenanceCapability();
   const startNodeMaintenanceModal = useStartNodeMaintenanceModalLauncher({
     nodeName: resource.metadata.name,
@@ -31,7 +31,7 @@ export const useNodeMaintenanceActions: ExtensionHook<Action[], NodeKind> = (res
 
     let action: Action = {
       id: 'start-node-maintenance',
-      label: t('metal3-plugin~Start Maintenance'),
+      label: t('Start Maintenance'),
       cta: startNodeMaintenanceModal,
       insertBefore: 'edit-labels',
     };
@@ -39,7 +39,7 @@ export const useNodeMaintenanceActions: ExtensionHook<Action[], NodeKind> = (res
     if (nodeMaintenance) {
       action = {
         id: 'stop-node-maintenance',
-        label: t('metal3-plugin~Stop Maintenance'),
+        label: t('Stop Maintenance'),
         cta: () => stopNodeMaintenanceModalLauncher(nodeMaintenance),
         insertBefore: 'edit-labels',
       };

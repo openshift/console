@@ -48,7 +48,7 @@ const getHostEventsFilter = (
 ): ((event: EventKind) => boolean) => _.partial(hostEventsFilter, host, machine);
 
 const EventsCard: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('metal3-plugin');
   const { obj, machine } = useContext(BareMetalHostDashboardContext);
 
   const [eventsData, eventsLoaded, eventsLoadError] = useK8sWatchResource<EventKind[]>({
@@ -74,7 +74,7 @@ const EventsCard: FC = () => {
                   getNamespace(obj),
                 )}/events`}
               >
-                {t('metal3-plugin~View events')}
+                {t('View events')}
               </Link>
             </>
           ),
@@ -101,7 +101,7 @@ const EventsCard: FC = () => {
           ) : (
             <Activity>
               <div className="pf-v6-u-text-color-subtle">
-                {t('metal3-plugin~There are no ongoing activities.')}
+                {t('There are no ongoing activities.')}
               </div>
             </Activity>
           )}

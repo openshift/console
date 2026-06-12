@@ -28,7 +28,7 @@ export const SearchFilterDropdown: FC<SearchFilterDropdownProps> = ({
 }) => {
   const [isOpen, setOpen] = useState(false);
   const [selected, setSelected] = useState(searchFilterValues.Label);
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const onToggle = () => setOpen(!isOpen);
   const onSelect = (event: SyntheticEvent, value: string) => {

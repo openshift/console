@@ -24,7 +24,7 @@ const RepositoriesPage: FC<RepositoriesPageProps> = ({
   createButtonText,
   createProps,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   const { ns: namespace } = useParams();
   const [projectHelmChartListAccess] = useAccessReview({
     group: ProjectHelmChartRepositoryModel.apiGroup,
@@ -107,12 +107,12 @@ const RepositoriesPage: FC<RepositoriesPageProps> = ({
 
   return (
     <>
-      <DocumentTitle>{t('helm-plugin~Helm Repositories')}</DocumentTitle>
+      <DocumentTitle>{t('Helm Repositories')}</DocumentTitle>
       <MultiListPage
         namespace={namespace}
         flatten={flatten}
         resources={resources}
-        label={t('helm-plugin~Repositories')}
+        label={t('Repositories')}
         ListComponent={RepositoriesList}
         title={title}
         createProps={createProps}

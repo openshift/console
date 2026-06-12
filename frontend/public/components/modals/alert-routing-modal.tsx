@@ -38,7 +38,7 @@ const updateAlertRoutingProperty = (
 const AlertRoutingModal: FC<AlertRoutingModalProps> = ({ config, secret, cancel, close }) => {
   const [errorMessage, setErrorMessage] = useState();
   const [inProgress, setInProgress] = useState(false);
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const submit = (event): void => {
     event.preventDefault();
@@ -68,13 +68,10 @@ const AlertRoutingModal: FC<AlertRoutingModalProps> = ({ config, secret, cancel,
 
   return (
     <>
-      <ModalHeader
-        title={t('public~Edit routing configuration')}
-        labelId="alert-routing-modal-title"
-      />
+      <ModalHeader title={t('Edit routing configuration')} labelId="alert-routing-modal-title" />
       <ModalBody>
         <Form id="alert-routing-form" onSubmit={submit}>
-          <FormGroup label={t('public~Group by')} fieldId="group-by">
+          <FormGroup label={t('Group by')} fieldId="group-by">
             <TextInput
               id="group-by"
               name="input-group-by"
@@ -85,7 +82,7 @@ const AlertRoutingModal: FC<AlertRoutingModalProps> = ({ config, secret, cancel,
               data-test-id="input-group-by"
             />
           </FormGroup>
-          <FormGroup label={t('public~Group wait')} fieldId="group-wait">
+          <FormGroup label={t('Group wait')} fieldId="group-wait">
             <TextInput
               id="group-wait"
               name="input-group-wait"
@@ -96,7 +93,7 @@ const AlertRoutingModal: FC<AlertRoutingModalProps> = ({ config, secret, cancel,
               data-test-id="input-group-wait"
             />
           </FormGroup>
-          <FormGroup label={t('public~Group interval')} fieldId="group-interval">
+          <FormGroup label={t('Group interval')} fieldId="group-interval">
             <TextInput
               id="group-interval"
               name="input-group-interval"
@@ -107,7 +104,7 @@ const AlertRoutingModal: FC<AlertRoutingModalProps> = ({ config, secret, cancel,
               data-test-id="input-group-interval"
             />
           </FormGroup>
-          <FormGroup label={t('public~Repeat interval')} fieldId="repeat-interval">
+          <FormGroup label={t('Repeat interval')} fieldId="repeat-interval">
             <TextInput
               id="repeat-interval"
               name="input-repeat-interval"
@@ -129,10 +126,10 @@ const AlertRoutingModal: FC<AlertRoutingModalProps> = ({ config, secret, cancel,
           data-test="confirm-action"
           form="alert-routing-form"
         >
-          {t('public~Save')}
+          {t('Save')}
         </Button>
         <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
-          {t('public~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </>

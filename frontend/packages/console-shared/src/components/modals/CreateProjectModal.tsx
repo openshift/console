@@ -51,7 +51,7 @@ const DefaultCreateProjectModal: OverlayComponent<CreateProjectModalProps> = ({
     [dispatch],
   );
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
 
   const thenPromise = (res) => {
     setInProgress(false);
@@ -60,7 +60,7 @@ const DefaultCreateProjectModal: OverlayComponent<CreateProjectModalProps> = ({
   };
 
   const catchError = (error) => {
-    const err = error.message || t('console-shared~An error occurred. Please try again.');
+    const err = error.message || t('An error occurred. Please try again.');
     setInProgress(false);
     setErrorMessage(err);
     return Promise.reject(err);
@@ -117,10 +117,7 @@ const DefaultCreateProjectModal: OverlayComponent<CreateProjectModalProps> = ({
       onClose={closeOverlay}
       aria-labelledby="create-project-modal-title"
     >
-      <ModalHeader
-        title={t('console-shared~Create Project')}
-        labelId="create-project-modal-title"
-      />
+      <ModalHeader title={t('Create Project')} labelId="create-project-modal-title" />
       <ModalBody>
         <Content component={ContentVariants.p}>
           {t(
@@ -130,13 +127,13 @@ const DefaultCreateProjectModal: OverlayComponent<CreateProjectModalProps> = ({
         {!isManaged() && (
           <Content component={ContentVariants.p}>
             <ExternalLink href={projectsURL}>
-              {t('console-shared~Learn more about working with projects')}
+              {t('Learn more about working with projects')}
             </ExternalLink>
           </Content>
         )}
         <Form onSubmit={submit} id="create-project-form">
           <FormGroup
-            label={t('console-shared~Name')}
+            label={t('Name')}
             isRequired
             fieldId="input-name"
             labelHelp={
@@ -164,7 +161,7 @@ const DefaultCreateProjectModal: OverlayComponent<CreateProjectModalProps> = ({
               isRequired
             />
           </FormGroup>
-          <FormGroup label={t('console-shared~Display name')} fieldId="input-display-name">
+          <FormGroup label={t('Display name')} fieldId="input-display-name">
             <TextInput
               id="input-display-name"
               name="displayName"
@@ -173,7 +170,7 @@ const DefaultCreateProjectModal: OverlayComponent<CreateProjectModalProps> = ({
               value={displayName}
             />
           </FormGroup>
-          <FormGroup label={t('console-shared~Description')} fieldId="input-description">
+          <FormGroup label={t('Description')} fieldId="input-description">
             <TextArea
               id="input-description"
               name="description"
@@ -194,7 +191,7 @@ const DefaultCreateProjectModal: OverlayComponent<CreateProjectModalProps> = ({
           data-test="confirm-action"
           id="confirm-action"
         >
-          {t('console-shared~Create')}
+          {t('Create')}
         </Button>
         <Button
           type="button"
@@ -203,7 +200,7 @@ const DefaultCreateProjectModal: OverlayComponent<CreateProjectModalProps> = ({
           onClick={closeOverlay}
           data-test-id="modal-cancel-action"
         >
-          {t('console-shared~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </Modal>

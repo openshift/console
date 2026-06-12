@@ -11,7 +11,7 @@ import { ServiceTypeValue } from '../../types';
 import ServiceList from './ServiceList';
 
 const ServicesPage: FC<ComponentProps<typeof ListPage>> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
 
   const filterReducer = (service): ServiceTypeValue => {
     if (isServerlessFunction(service)) return ServiceTypeValue.Function;
@@ -21,10 +21,10 @@ const ServicesPage: FC<ComponentProps<typeof ListPage>> = (props) => {
   const filters: RowFilter<ServiceKind>[] = [
     {
       type: 'type',
-      filterGroupName: t('knative-plugin~Type'),
+      filterGroupName: t('Type'),
       items: [
-        { id: ServiceTypeValue.Function, title: t('knative-plugin~Functions') },
-        { id: ServiceTypeValue.Service, title: t('knative-plugin~Non-functions') },
+        { id: ServiceTypeValue.Function, title: t('Functions') },
+        { id: ServiceTypeValue.Service, title: t('Non-functions') },
       ],
       reducer: filterReducer,
       filter: (filterValue, service) => {
@@ -38,7 +38,7 @@ const ServicesPage: FC<ComponentProps<typeof ListPage>> = (props) => {
 
   return (
     <>
-      <DocumentTitle>{t('knative-plugin~Services')}</DocumentTitle>
+      <DocumentTitle>{t('Services')}</DocumentTitle>
       <ListPage
         canCreate
         {...props}

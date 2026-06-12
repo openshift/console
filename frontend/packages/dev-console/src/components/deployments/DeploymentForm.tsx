@@ -40,7 +40,7 @@ const EditDeploymentForm: FC<
   errors,
   values: { editorType, formData, yamlData, formReloadCount },
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const resourceType = getResourcesType(resource);
   const isNew = !resource.metadata.name;
 
@@ -108,10 +108,10 @@ const EditDeploymentForm: FC<
         errorMessage={status?.submitError}
         successMessage={status?.submitSuccess}
         showAlert={isStale}
-        infoTitle={t('devconsole~This object has been updated.')}
-        infoMessage={t('devconsole~Click reload to see the new version.')}
+        infoTitle={t('This object has been updated.')}
+        infoMessage={t('Click reload to see the new version.')}
         isSubmitting={isSubmitting}
-        submitLabel={isNew ? t('devconsole~Create') : t('devconsole~Save')}
+        submitLabel={isNew ? t('Create') : t('Save')}
         disableSubmit={
           (editorType === EditorType.YAML ? !dirty : !dirty || !_.isEmpty(errors)) || isSubmitting
         }

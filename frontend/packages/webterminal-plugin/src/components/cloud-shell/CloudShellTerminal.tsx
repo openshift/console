@@ -80,7 +80,7 @@ const CloudShellTerminal: FC<CloudShellTerminalInternalProps & WithUserPreferenc
 
   const username = user?.username;
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('webterminal-plugin');
 
   const unrecoverableErrorFound = !operatorNamespace && namespaceLoadError;
 
@@ -180,18 +180,14 @@ const CloudShellTerminal: FC<CloudShellTerminalInternalProps & WithUserPreferenc
       <StatusBox
         loaded={loaded}
         loadError={loadError}
-        label={t('webterminal-plugin~OpenShift command line terminal')}
+        label={t('OpenShift command line terminal')}
       />
     );
   }
 
   // failed to init the terminal
   if (initError) {
-    return (
-      <LoadError label={t('webterminal-plugin~OpenShift command line terminal')}>
-        {initError}
-      </LoadError>
-    );
+    return <LoadError label={t('OpenShift command line terminal')}>{initError}</LoadError>;
   }
 
   // loading the workspace resource

@@ -26,7 +26,7 @@ import './BuildOverview.scss';
 const MAX_VISIBLE = 3;
 
 const StatusTitle = ({ build }: { build: K8sResourceKind }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   switch (build.status.phase) {
     case BuildPhase.Cancelled:
       return (
@@ -136,7 +136,7 @@ const BuildOverviewList: FC<BuildOverviewListProps> = ({ buildConfig }) => {
     metadata: { name, namespace },
     builds,
   } = buildConfig;
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   const launchModal = useOverlay();
 
   const canStartBuild = useAccessReview({
@@ -166,7 +166,7 @@ const BuildOverviewList: FC<BuildOverviewListProps> = ({ buildConfig }) => {
                 className="sidebar__section-view-all"
                 to={`${resourcePath(referenceFor(buildConfig), name, namespace)}/builds`}
               >
-                {t('topology~View all {{buildsLength}}', {
+                {t('View all {{buildsLength}}', {
                   buildsLength: builds.length,
                 })}
               </Link>
@@ -175,7 +175,7 @@ const BuildOverviewList: FC<BuildOverviewListProps> = ({ buildConfig }) => {
           {canStartBuild && (
             <div>
               <Button variant="secondary" onClick={onClick} data-test-id="start-build-action">
-                {t('topology~Start Build')}
+                {t('Start Build')}
               </Button>
             </div>
           )}
@@ -184,7 +184,7 @@ const BuildOverviewList: FC<BuildOverviewListProps> = ({ buildConfig }) => {
       {!(builds?.length > 0) ? (
         <ListItem>
           <span className="pf-v6-u-text-color-subtle">
-            {t('topology~No Builds found for this Build Config.')}
+            {t('No Builds found for this Build Config.')}
           </span>
         </ListItem>
       ) : (
@@ -196,13 +196,13 @@ const BuildOverviewList: FC<BuildOverviewListProps> = ({ buildConfig }) => {
   );
 };
 export const BuildOverview: FC<BuildConfigsOverviewProps> = ({ buildConfigs }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   if (!(buildConfigs?.length > 0)) {
     return null;
   }
   return (
     <div className="build-overview">
-      <SidebarSectionHeading text={t('topology~Builds')} />
+      <SidebarSectionHeading text={t('Builds')} />
       {buildConfigs.map((buildConfig) => (
         <BuildOverviewList key={buildConfig.metadata.uid} buildConfig={buildConfig} />
       ))}

@@ -70,14 +70,14 @@ const GetVolumeTypeFields = (volumeType, namePrefix: string, namespace: string) 
 };
 
 const VolumeForm: FC<VolumeFormProps> = ({ namePrefix, onDelete, namespace }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('shipwright-plugin');
   const { values, setFieldValue } = useFormikContext<FormikValues>();
   const resourceType: string = _.get(values, `${namePrefix}.resourceType`);
   const volumeTypeOptions: { [type in VolumeTypes]: string } = {
-    [VolumeTypes.EmptyDirectory]: t('shipwright-plugin~EmptyDir'),
-    [VolumeTypes.ConfigMap]: t('shipwright-plugin~Config Map'),
-    [VolumeTypes.Secret]: t('shipwright-plugin~Secret'),
-    [VolumeTypes.PVC]: t('shipwright-plugin~PersistentVolumeClaim'),
+    [VolumeTypes.EmptyDirectory]: t('EmptyDir'),
+    [VolumeTypes.ConfigMap]: t('Config Map'),
+    [VolumeTypes.Secret]: t('Secret'),
+    [VolumeTypes.PVC]: t('PersistentVolumeClaim'),
   };
   return (
     <Grid hasGutter>
@@ -87,7 +87,7 @@ const VolumeForm: FC<VolumeFormProps> = ({ namePrefix, onDelete, namespace }) =>
           label="Name"
           name={`${namePrefix}.name`}
           type={TextInputTypes.text}
-          placeholder={t('shipwright-plugin~Enter volume name')}
+          placeholder={t('Enter volume name')}
           aria-label="name"
           isDisabled
         />
@@ -121,7 +121,7 @@ const VolumeForm: FC<VolumeFormProps> = ({ namePrefix, onDelete, namespace }) =>
 };
 
 const VolumeSection: FC<VolumeSectionProps> = ({ namespace }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('shipwright-plugin');
   const { values } = useFormikContext<FormikValues>();
   const { volumes } = values.formData;
   const overridableVolumes = volumes?.filter((volume) => volume.overridable);
@@ -137,7 +137,7 @@ const VolumeSection: FC<VolumeSectionProps> = ({ namespace }) => {
           const volumeOverridable = _.get(values, `${fieldName}.overridable`);
           return (
             volumeOverridable && (
-              <FormSection title={t('shipwright-plugin~Volumes')}>
+              <FormSection title={t('Volumes')}>
                 <VolumeForm namePrefix={fieldName} onDelete={onDelete} namespace={namespace} />
               </FormSection>
             )

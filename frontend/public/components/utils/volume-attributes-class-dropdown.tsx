@@ -60,11 +60,9 @@ const VolumeAttributesClassDropdownInner: FC<VolumeAttributesClassDropdownInnerP
   filter,
   noSelection = false,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const placeholderTitle = useMemo(
-    () => (
-      <span className="pf-v6-u-text-color-subtle">{t('public~Select VolumeAttributesClass')}</span>
-    ),
+    () => <span className="pf-v6-u-text-color-subtle">{t('Select VolumeAttributesClass')}</span>,
     [t],
   );
   const [state, setState] = useState<VolumeAttributesClassDropdownInnerState>({
@@ -165,8 +163,8 @@ const VolumeAttributesClassDropdownInner: FC<VolumeAttributesClassDropdownInnerP
   return (
     <>
       {loadError ? (
-        <Alert isInline variant="danger" title={t('public~Error loading VolumeAttributesClass')}>
-          {loadError.message || t('public~Unable to load VolumeAttributesClass resources')}
+        <Alert isInline variant="danger" title={t('Error loading VolumeAttributesClass')}>
+          {loadError.message || t('Unable to load VolumeAttributesClass resources')}
         </Alert>
       ) : loaded ? (
         <div>
@@ -175,15 +173,15 @@ const VolumeAttributesClassDropdownInner: FC<VolumeAttributesClassDropdownInnerP
               'co-required': required,
             })}
             htmlFor={id}
-            aria-label={hideClassName ? t('public~VolumeAttributesClass') : undefined}
+            aria-label={hideClassName ? t('VolumeAttributesClass') : undefined}
           >
-            {t('public~VolumeAttributesClass')}
+            {t('VolumeAttributesClass')}
           </label>
           <ConsoleSelect
             className="co-volume-attributes-class-dropdown"
             isFullWidth
             autocompleteFilter={autocompleteFilter}
-            autocompletePlaceholder={t('public~Select VolumeAttributesClass')}
+            autocompletePlaceholder={t('Select VolumeAttributesClass')}
             items={dropdownItems}
             selectedKey={selectedKey || ''}
             title={state.title}
@@ -195,7 +193,7 @@ const VolumeAttributesClassDropdownInner: FC<VolumeAttributesClassDropdownInnerP
           />
           {describedBy && (
             <p className="help-block" id={describedBy}>
-              {t('public~Defines mutable volume parameters like IOPS and throughput.')}
+              {t('Defines mutable volume parameters like IOPS and throughput.')}
             </p>
           )}
         </div>

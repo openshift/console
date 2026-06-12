@@ -14,7 +14,7 @@ export const useDevfileServer = (
   values: FormikValues,
   setFieldValue: (name: string, value: any, shouldValidate?: boolean) => any,
 ): [boolean, string] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const [devfileParseError, setDevfileParseError] = useState<string>(null);
   const [parsingDevfile, setParsingDevfile] = useState<boolean>(false);
 
@@ -65,7 +65,7 @@ export const useDevfileServer = (
       } catch (e) {
         // eslint-disable-next-line no-console
         console.warn('Could not fetch devfile resource:', e);
-        setError(e.message || t('devconsole~Could not fetch devfile resources.'));
+        setError(e.message || t('Could not fetch devfile resources.'));
         return;
       }
 
@@ -105,11 +105,11 @@ export const useDevfileServer = (
           }
 
           // Failed to parse response, error out
-          setError(t('devconsole~The Devfile in your Git repository is invalid.'));
+          setError(t('The Devfile in your Git repository is invalid.'));
         })
         .catch((e) => {
           setParsingDevfile(false);
-          setError(e.message || t('devconsole~The Devfile in your Git repository is invalid.'));
+          setError(e.message || t('The Devfile in your Git repository is invalid.'));
         });
     };
 

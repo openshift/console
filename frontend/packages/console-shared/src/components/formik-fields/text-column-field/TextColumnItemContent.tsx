@@ -50,7 +50,7 @@ const TextColumnItemContent: FC<TextColumnItemProps> = ({
   disableDeleteRow,
   tooltipDeleteRow,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
 
   const mergeNewValue: MergeNewValueUtil = (newValue) => {
     const values: string[] = [...rowValues];
@@ -69,10 +69,10 @@ const TextColumnItemContent: FC<TextColumnItemProps> = ({
       </FlexItem>
       {!isReadOnly && (
         <FlexItem>
-          <Tooltip content={tooltipDeleteRow || t('console-shared~Remove')}>
+          <Tooltip content={tooltipDeleteRow || t('Remove')}>
             <Button
               icon={<RhUiMinusCircleIcon />}
-              aria-label={tooltipDeleteRow || t('console-shared~Remove')}
+              aria-label={tooltipDeleteRow || t('Remove')}
               variant={ButtonVariant.plain}
               type={ButtonType.button}
               isInline

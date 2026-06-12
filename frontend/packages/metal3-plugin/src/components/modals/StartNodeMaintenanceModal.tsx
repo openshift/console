@@ -35,7 +35,7 @@ export type StartNodeMaintenanceModalProps = ModalComponentProps & {
 };
 
 const StartNodeMaintenanceModal: OverlayComponent<StartNodeMaintenanceModalProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('metal3-plugin');
   const { nodeName, closeOverlay } = props;
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
   const [model] = useMaintenanceCapability();
@@ -64,7 +64,7 @@ const StartNodeMaintenanceModal: OverlayComponent<StartNodeMaintenanceModalProps
       aria-labelledby="start-node-maintenance-modal-title"
     >
       <ModalHeader
-        title={t('metal3-plugin~Start Maintenance')}
+        title={t('Start Maintenance')}
         data-test-id="modal-title"
         labelId="start-node-maintenance-modal-title"
       />
@@ -95,7 +95,7 @@ const StartNodeMaintenanceModal: OverlayComponent<StartNodeMaintenanceModalProps
             <StackItem>
               <Alert
                 variant="warning"
-                title={t('metal3-plugin~The Ceph storage cluster is not in a healthy state.')}
+                title={t('The Ceph storage cluster is not in a healthy state.')}
                 isInline
               >
                 {t(
@@ -115,10 +115,10 @@ const StartNodeMaintenanceModal: OverlayComponent<StartNodeMaintenanceModalProps
           data-test="confirm-action"
           id="confirm-action"
         >
-          {t('metal3-plugin~Start Maintenance')}
+          {t('Start Maintenance')}
         </Button>
         <Button variant="link" onClick={closeOverlay} data-test-id="modal-cancel-action">
-          {t('metal3-plugin~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </Modal>

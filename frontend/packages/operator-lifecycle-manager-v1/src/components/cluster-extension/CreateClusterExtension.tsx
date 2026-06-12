@@ -13,7 +13,7 @@ import ClusterExtensionForm from './ClusterExtensionForm';
 import { ClusterExtensionYAMLEditor } from './ClusterExtensionYAMLEditor';
 
 const CreateClusterExtension: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm-v1');
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
 
@@ -62,9 +62,9 @@ const CreateClusterExtension: FC = () => {
 
   return (
     <>
-      <DocumentTitle>{t('olm-v1~Create ClusterExtension')}</DocumentTitle>
+      <DocumentTitle>{t('Create ClusterExtension')}</DocumentTitle>
       <PageHeading
-        title={t('olm-v1~Create ClusterExtension')}
+        title={t('Create ClusterExtension')}
         helpText={t(
           'olm-v1~Create a ClusterExtension to add functionality to your cluster. Operator Lifecycle Manager v1 manages ClusterExtensions.',
         )}

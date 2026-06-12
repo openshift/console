@@ -41,7 +41,7 @@ const UploadJar: FC<UploadJarProps> = ({
   const handleCancel = useCallback(() => navigate(-1), [navigate]);
   const postFormCallback = useResourceConnectionHandler();
   const toastCallback = useUploadJarFormToast();
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const [perspective] = useActivePerspective();
   const perspectiveExtensions = usePerspectives();
   const application = forApplication || '';

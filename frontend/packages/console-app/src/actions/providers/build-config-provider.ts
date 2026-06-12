@@ -14,14 +14,14 @@ import { BuildConfigActionCreator } from '../hooks/types';
 import { useCommonResourceActions } from '../hooks/useCommonResourceActions';
 
 const useStartBuildAction = (obj: BuildConfig): Action[] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const launchModal = useOverlay();
 
   const factory = useMemo(
     () => ({
       [BuildConfigActionCreator.StartBuild]: (buildConfig: BuildConfig): Action => ({
         id: 'start-build-config',
-        label: t('public~Start build'),
+        label: t('Start build'),
         cta: () =>
           startBuild(buildConfig)
             .then((build) => {
@@ -47,14 +47,14 @@ const useStartLastBuildAction = (
   buildConfig: BuildConfig,
   latestBuild: K8sResourceKind,
 ): Action[] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const launchModal = useOverlay();
 
   const factory = useMemo(
     () => ({
       [BuildConfigActionCreator.StartLastRun]: (): Action => ({
         id: 'start-build-config-last-run',
-        label: t('public~Start last run'),
+        label: t('Start last run'),
         cta: () =>
           cloneBuild(latestBuild)
             .then((clone) => {

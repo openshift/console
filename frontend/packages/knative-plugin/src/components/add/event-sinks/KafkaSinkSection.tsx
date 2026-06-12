@@ -21,7 +21,7 @@ interface KafkaSinkSectionProps {
 }
 
 const KafkaSinkSection: FC<KafkaSinkSectionProps> = ({ title, namespace, fullWidth }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const [bootstrapServers, bsPlaceholder] = useBootstrapServers(namespace);
 
   const autocompleteFilter = (text: string, item: any): boolean => fuzzy(text, item?.props?.name);
@@ -55,11 +55,11 @@ const KafkaSinkSection: FC<KafkaSinkSectionProps> = ({ title, namespace, fullWid
       <MultiTypeaheadField
         data-test="kafkasink-bootstrapservers-field"
         name={`formData.data.${EVENT_SINK_KAFKA_KIND}.bootstrapServers`}
-        label={t('knative-plugin~Bootstrap servers')}
-        ariaLabel={t('knative-plugin~Bootstrap servers')}
+        label={t('Bootstrap servers')}
+        ariaLabel={t('Bootstrap servers')}
         options={bootstrapServers}
         placeholderText={bsPlaceholder}
-        helpText={t('knative-plugin~The address of the Kafka broker')}
+        helpText={t('The address of the Kafka broker')}
         isCreatable
         required
       />
@@ -67,9 +67,9 @@ const KafkaSinkSection: FC<KafkaSinkSectionProps> = ({ title, namespace, fullWid
         data-test="kafkasink-topic-field"
         type={TextInputTypes.text}
         name={`formData.data.${EVENT_SINK_KAFKA_KIND}.topic`}
-        label={t('knative-plugin~Topic')}
-        helpText={t('knative-plugin~Topic name to send events')}
-        placeholder={t('knative-plugin~Enter the topic name')}
+        label={t('Topic')}
+        helpText={t('Topic name to send events')}
+        placeholder={t('Enter the topic name')}
         required
       />
 
@@ -78,11 +78,11 @@ const KafkaSinkSection: FC<KafkaSinkSectionProps> = ({ title, namespace, fullWid
         name={`formData.data.${EVENT_SINK_KAFKA_KIND}.auth.secret.ref.name`}
         resources={resources}
         dataSelector={['metadata', 'name']}
-        placeholder={t('knative-plugin~Select a secret')}
+        placeholder={t('Select a secret')}
         autocompleteFilter={autocompleteFilter}
         fullWidth
         showBadge
-        label={t('knative-plugin~Secret')}
+        label={t('Secret')}
       />
     </FormSection>
   );

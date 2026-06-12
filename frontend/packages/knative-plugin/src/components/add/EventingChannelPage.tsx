@@ -14,13 +14,13 @@ const EventingChannelPage: FC = () => {
   const { ns: namespace } = useParams();
   const location = useLocation();
   const channels = useChannelList(namespace);
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const searchParams = new URLSearchParams(location.search);
   return (
     <NamespacedPage disabled variant={NamespacedPageVariants.light}>
-      <DocumentTitle>{t('knative-plugin~Channel')}</DocumentTitle>
+      <DocumentTitle>{t('Channel')}</DocumentTitle>
       <PageHeading
-        title={t('knative-plugin~Channel')}
+        title={t('Channel')}
         helpText={t(
           'knative-plugin~Create a Knative Channel to create an event forwarding and persistence layer with in-memory and reliable implementations',
         )}

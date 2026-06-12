@@ -39,7 +39,7 @@ const ConnectedBuildRunDecorator: FC<BuildRunDecoratorProps & StateProps> = ({
   y,
 }) => {
   const ref = useRef();
-  const { t } = useTranslation();
+  const { t } = useTranslation('shipwright-plugin');
   const { latestBuildRun, status } = getLatestBuildRunStatusforDeployment(buildRuns, resource);
 
   const statusIcon = <Status status={status} iconOnly noTooltip />;
@@ -70,7 +70,7 @@ const ConnectedBuildRunDecorator: FC<BuildRunDecoratorProps & StateProps> = ({
       </Link>
     );
   } else {
-    tooltipContent = t('shipwright-plugin~Build not started');
+    tooltipContent = t('Build not started');
 
     decoratorContent = (
       <BuildDecoratorBubble x={x} y={y} radius={radius} ariaLabel={tooltipContent}>

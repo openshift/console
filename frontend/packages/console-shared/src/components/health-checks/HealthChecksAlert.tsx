@@ -41,7 +41,7 @@ export const HealthChecksAlert: FC<HealthChecksAlertProps> = ({ resource }) => {
     HEALTH_CHECK_USER_PREFERENCE_KEY,
     [],
   );
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const kindForCRDResource = referenceFor(resource);
   const resourceModel = modelFor(kindForCRDResource);
   const resourceKind = resourceModel.crd ? kindForCRDResource : kind;
@@ -92,12 +92,11 @@ export const HealthChecksAlert: FC<HealthChecksAlertProps> = ({ resource }) => {
         <div className="ocs-health-checks-alert">
           <Alert
             variant="custom"
-            title={t('console-shared~Health checks')}
+            title={t('Health checks')}
             actionClose={<AlertActionCloseButton onClose={handleAlertAction} />}
             isInline
           >
-            {alertMessage}{' '}
-            <Link to={addHealthChecksLink}>{t('console-shared~Add health checks')}</Link>
+            {alertMessage} <Link to={addHealthChecksLink}>{t('Add health checks')}</Link>
           </Alert>
         </div>
       ) : null}

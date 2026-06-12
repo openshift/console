@@ -24,7 +24,7 @@ const userWatchResource: WatchK8sResource = {
  * @returns Object containing user info, user resource, and loading states
  */
 export const useUser = () => {
-  const { t } = useTranslation('public');
+  const { t } = useTranslation('console-shared');
   const dispatch = useConsoleDispatch();
 
   // Get current user info from Redux (username, groups, etc.)

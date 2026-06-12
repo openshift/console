@@ -15,7 +15,7 @@ type LimitExceededStateProps = {
 };
 
 export const LimitExceededState: FC<LimitExceededStateProps> = ({ onShowTopologyAnyway }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   return (
     <EmptyState
       headingLevel="h4"
@@ -29,11 +29,11 @@ export const LimitExceededState: FC<LimitExceededStateProps> = ({ onShowTopology
       </EmptyStateBody>
       <EmptyStateFooter>
         <Button variant="primary" component={(props) => <Link {...props} to="/search-page" />}>
-          {t('topology~Go to Search')}
+          {t('Go to Search')}
         </Button>
         <EmptyStateActions>
           <Button variant="link" onClick={onShowTopologyAnyway}>
-            {t('topology~Continue')}
+            {t('Continue')}
           </Button>
         </EmptyStateActions>
       </EmptyStateFooter>

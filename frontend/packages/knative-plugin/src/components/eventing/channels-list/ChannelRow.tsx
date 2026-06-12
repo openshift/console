@@ -19,7 +19,7 @@ const ChannelRow: FC<RowFunctionArgs<EventChannelKind>> = ({ obj }) => {
   const {
     metadata: { name, namespace, creationTimestamp, uid },
   } = obj;
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const objReference = referenceFor(obj);
   const kind = getDynamicChannelModel(objReference);
   const context = { [objReference]: obj };

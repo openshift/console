@@ -32,7 +32,7 @@ export const useHealthChecksAlert = (element: GraphElement): DetailsResourceAler
   const kind = resource?.kind;
   const name = resource?.metadata?.name;
   const namespace = resource?.metadata?.namespace;
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   const kindForCRDResource = resource ? referenceFor(resource) : undefined;
   const resourceModel = kindForCRDResource ? modelFor(kindForCRDResource) : undefined;
   const resourceKind = resourceModel?.crd ? kindForCRDResource : kind;
@@ -71,11 +71,11 @@ export const useHealthChecksAlert = (element: GraphElement): DetailsResourceAler
 
   return showAlert
     ? {
-        title: t('topology~Health checks'),
+        title: t('Health checks'),
         dismissible: true,
         content: (
           <>
-            {alertMessage} <Link to={addHealthChecksLink}>{t('topology~Add health checks')}</Link>
+            {alertMessage} <Link to={addHealthChecksLink}>{t('Add health checks')}</Link>
           </>
         ),
         variant: 'custom',
@@ -84,7 +84,7 @@ export const useHealthChecksAlert = (element: GraphElement): DetailsResourceAler
 };
 
 export const useResourceQuotaAlert = (element: GraphElement): DetailsResourceAlertContent => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   const fireTelemetryEvent = useTelemetry();
   const resource = getResource(element);
   const [deploymentActions, deploymentActionsReady] = useDeploymentActions(
@@ -135,7 +135,7 @@ export const useResourceQuotaAlert = (element: GraphElement): DetailsResourceAle
 
   return replicaFailure
     ? {
-        title: t('topology~Resource Quotas'),
+        title: t('Resource Quotas'),
         dismissible: true,
         content: replicaFailureMsg,
         actionLinks: alertActionLink,

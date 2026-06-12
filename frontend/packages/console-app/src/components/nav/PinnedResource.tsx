@@ -22,7 +22,7 @@ interface RemoveButtonProps {
 }
 
 const RemoveButton: FC<RemoveButtonProps> = ({ resourceRef, navResources, onChange }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const confirmNavUnpinModal = useConfirmNavUnpinModal(navResources, onChange);
   const unPin = (e: MouseEvent<HTMLButtonElement>, navItem: string) => {
     e.preventDefault();
@@ -33,14 +33,14 @@ const RemoveButton: FC<RemoveButtonProps> = ({ resourceRef, navResources, onChan
     <Button
       icon={<RhUiMinusCircleIcon />}
       variant="link"
-      aria-label={t('console-app~Unpin')}
+      aria-label={t('Unpin')}
       onClick={(e) => unPin(e, resourceRef)}
     />
   );
 };
 
 const PinnedResource: FC<PinnedResourceProps> = ({ resourceRef, onChange, navResources }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
 
   const [model] = useK8sModel(resourceRef);
   if (!model) {

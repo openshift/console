@@ -77,7 +77,7 @@ export const ExternalLinkWithCopy: FC<ExternalLinkWithCopyProps> = ({
   ...props
 }) => {
   const [copied, setCopied] = useState(false);
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const clipboardCopyFunc = (event, txt) => {
     navigator.clipboard.writeText(txt.toString());
@@ -87,8 +87,8 @@ export const ExternalLinkWithCopy: FC<ExternalLinkWithCopyProps> = ({
     setCopied(true);
   };
 
-  const copyToClipboardText = t('public~Copy to clipboard');
-  const tooltipText = copied ? t('public~Copied') : copyToClipboardText;
+  const copyToClipboardText = t('Copy to clipboard');
+  const tooltipText = copied ? t('Copied') : copyToClipboardText;
   const tooltipContent = [
     <span className="co-nowrap" key="nowrap">
       {tooltipText}

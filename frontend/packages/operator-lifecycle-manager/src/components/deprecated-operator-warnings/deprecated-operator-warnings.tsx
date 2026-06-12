@@ -32,17 +32,17 @@ export const DeprecatedOperatorWarningBadge: FC<DeprecatedOperatorWarningBadge> 
   deprecation,
   className,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
 
   return (
-    <Tooltip content={t('olm~Deprecated: {{message}}', { message: deprecation?.message })}>
+    <Tooltip content={t('Deprecated: {{message}}', { message: deprecation?.message })}>
       <Label
         data-test="deprecated-operator-warning-badge"
         status="warning"
         variant="outline"
         className={className}
       >
-        {t('olm~Deprecated')}
+        {t('Deprecated')}
       </Label>
     </Tooltip>
   );
@@ -52,10 +52,10 @@ export const DeprecatedOperatorWarningIcon: FC<DeprecatedOperatorWarningIcon> = 
   deprecation,
   dataTest,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
 
   return (
-    <Tooltip content={t('olm~Deprecated: {{message}}', { message: deprecation?.message })}>
+    <Tooltip content={t('Deprecated: {{message}}', { message: deprecation?.message })}>
       <YellowExclamationTriangleIcon dataTest={dataTest} className="pf-v6-u-ml-xs" />
     </Tooltip>
   );
@@ -67,14 +67,14 @@ export const DeprecatedOperatorWarningAlert: FC<DeprecatedOperatorWarningProps> 
   deprecatedVersion,
   dismissible,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const [alertVisible, setAlertVisible] = useState<boolean>(true);
 
   return (
     alertVisible && (
       <Alert
         variant="warning"
-        title={t('olm~Deprecation warnings')}
+        title={t('Deprecation warnings')}
         aria-live="polite"
         isInline
         actionClose={

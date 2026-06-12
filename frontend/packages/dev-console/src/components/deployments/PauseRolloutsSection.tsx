@@ -8,13 +8,13 @@ const PauseRolloutsSection: FC<{ name: string; resourceType: string }> = ({
   name,
   resourceType,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const resourceLabel = resourceType === Resources.OpenShift ? 'deployment config' : 'deployment';
   return (
-    <FormSection title={t('devconsole~Pause rollouts')} dataTest="pause-rollouts">
+    <FormSection title={t('Pause rollouts')} dataTest="pause-rollouts">
       <CheckboxField
         name={name}
-        label={t('devconsole~Pause rollouts for this {{resourceLabel}}', { resourceLabel })}
+        label={t('Pause rollouts for this {{resourceLabel}}', { resourceLabel })}
         helpText={t(
           'devconsole~Pausing lets you make changes without triggering a rollout. You can resume rollouts at any time.',
         )}

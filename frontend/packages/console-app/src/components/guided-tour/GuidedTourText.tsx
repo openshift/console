@@ -7,7 +7,7 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 
 const HelpTourText: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   return (
     <>
       {t(
@@ -20,7 +20,7 @@ const HelpTourText: FC = () => {
 export const helpTourText = <HelpTourText />;
 
 const UserPrefrencesTourText: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   return (
     <>
       {t(
@@ -38,7 +38,7 @@ export const FinishTourText: FC = () => {
     kind: referenceForModel(ConsoleLinkModel),
     optional: true,
   });
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const openshiftBlogLink =
     consoleLinks.filter((link: K8sResourceKind) => link.metadata?.name === 'openshift-blog')[0]
       ?.spec?.href || 'https://developers.redhat.com/products/openshift/whats-new';

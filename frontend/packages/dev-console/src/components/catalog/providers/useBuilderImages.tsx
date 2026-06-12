@@ -39,7 +39,7 @@ const normalizeBuilderImages = (
     const iconClass = imgUrl ? null : icon;
     const description = tag?.annotations?.description ?? '';
     const tags = getAnnotationTags(tag);
-    const createLabel = t('devconsole~Create');
+    const createLabel = t('Create');
     const provider = annotations?.[ANNOTATIONS.providerDisplayName] ?? '';
     const href = `/catalog/source-to-image?imagestream=${name}&imagestream-ns=${namespace}&preselected-ns=${activeNamespace}`;
     const builderImageTag = _.head(imageStream.spec?.tags) as any;
@@ -49,14 +49,14 @@ const normalizeBuilderImages = (
     const detailsProperties: CatalogItemDetailsProperty[] = [];
     if (sampleRepo) {
       detailsProperties.push({
-        label: t('devconsole~Sample repository'),
+        label: t('Sample repository'),
         value: <ExternalLink href={sampleRepo} className="co-break-all" text={sampleRepo} />,
       });
     }
 
     const imageStreamText = (
       <>
-        <p>{t('devconsole~The following resources will be created:')}</p>
+        <p>{t('The following resources will be created:')}</p>
         <ul>
           <li>
             <Trans ns="devconsole" t={t}>
@@ -132,7 +132,7 @@ const normalizeBuilderImages = (
 const useBuilderImages: ExtensionHook<CatalogItem[]> = ({
   namespace,
 }): [CatalogItem[], boolean, any] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const resourceSelector = {
     isList: true,
     kind: 'ImageStream',

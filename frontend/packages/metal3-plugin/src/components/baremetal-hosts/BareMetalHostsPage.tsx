@@ -83,8 +83,8 @@ type BareMetalHostsPageProps = {
 
 const getCreateProps = ({ namespace, t }: { namespace: string; t: TFunction }) => {
   const items: any = {
-    dialog: t('metal3-plugin~New with Dialog'),
-    yaml: t('metal3-plugin~New from YAML'),
+    dialog: t('New with Dialog'),
+    yaml: t('New from YAML'),
   };
 
   return {
@@ -104,7 +104,7 @@ const getCreateProps = ({ namespace, t }: { namespace: string; t: TFunction }) =
 };
 
 const BareMetalHostsPage: FC<BareMetalHostsPageProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('metal3-plugin');
   const [model] = useMaintenanceCapability();
   const { namespace } = props;
   const resources: WatchK8sResourceWithProp[] = [
@@ -147,12 +147,12 @@ const BareMetalHostsPage: FC<BareMetalHostsPageProps> = (props) => {
       canCreate
       rowFilters={[hostStatusFilter(t)]}
       createProps={getCreateProps({ namespace, t })}
-      createButtonText={t('metal3-plugin~Add Host')}
+      createButtonText={t('Add Host')}
       namespace={namespace}
       resources={resources}
       flatten={flattenResources}
       ListComponent={BareMetalHostsTable}
-      title={t('metal3-plugin~Bare Metal Hosts')}
+      title={t('Bare Metal Hosts')}
     />
   );
 };

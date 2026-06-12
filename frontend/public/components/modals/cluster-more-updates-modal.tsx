@@ -28,12 +28,12 @@ const ClusterMoreUpdatesModal: FC<ClusterMoreUpdatesModalProps> = ({ cancel, cv 
   const releaseNotes = showReleaseNotes();
   const clusterUpgradeableFalseAndNotExternallyManaged =
     !!getConditionUpgradeableFalse(cv) && !isClusterExternallyManaged();
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   return (
     <>
       <ModalHeader
-        title={t('public~Other available paths')}
+        title={t('Other available paths')}
         data-test-id="modal-title"
         data-test="modal-title"
         labelId="cluster-more-updates-modal-title"
@@ -45,8 +45,8 @@ const ClusterMoreUpdatesModal: FC<ClusterMoreUpdatesModalProps> = ({ cancel, cv 
         <Table variant="compact" borders>
           <Thead>
             <Tr>
-              <Th>{t('public~Version')}</Th>
-              {releaseNotes && <Th>{t('public~Release notes')}</Th>}
+              <Th>{t('Version')}</Th>
+              {releaseNotes && <Th>{t('Release notes')}</Th>}
             </Tr>
           </Thead>
           <Tbody>
@@ -82,7 +82,7 @@ const ClusterMoreUpdatesModal: FC<ClusterMoreUpdatesModalProps> = ({ cancel, cv 
           onClick={cancel}
           data-test="more-updates-modal-close-button"
         >
-          {t('public~Close')}
+          {t('Close')}
         </Button>
       </ModalFooterWithAlerts>
     </>

@@ -22,7 +22,7 @@ type CreateAProjectButtonProps = {
 };
 
 export const CreateAProjectButton: FC<CreateAProjectButtonProps> = ({ openProjectModal }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const canCreateNs = useFlag(FLAGS.CAN_CREATE_NS);
   const canCreateProject = useFlag(FLAGS.CAN_CREATE_PROJECT);
   const isStartGuideEnabled = useFlag(FLAGS.SHOW_OPENSHIFT_START_GUIDE);

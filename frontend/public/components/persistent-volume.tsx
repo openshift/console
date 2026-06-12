@@ -83,7 +83,7 @@ const getDataViewRowsCreator: (t: TFunction) => GetDataViewRows<PersistentVolume
             title={obj.spec.claimRef.name}
           />
         ) : (
-          <div className="pf-v6-u-text-color-subtle">{t('public~No claim')}</div>
+          <div className="pf-v6-u-text-color-subtle">{t('No claim')}</div>
         ),
       },
       [tableColumnInfo[3].id]: {
@@ -117,7 +117,7 @@ const usePersistentVolumeColumns = (): {
   columns: TableColumn<PersistentVolumeKind>[];
   resetAllColumnWidths: () => void;
 } => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(
     PersistentVolumeModel,
   );
@@ -125,35 +125,35 @@ const usePersistentVolumeColumns = (): {
   const columns: TableColumn<PersistentVolumeKind>[] = useMemo(
     () => [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         sort: 'metadata.name',
         id: tableColumnInfo[0].id,
         resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: { ...nameCellProps, modifier: 'nowrap' },
       },
       {
-        title: t('public~Status'),
+        title: t('Status'),
         sort: 'status.phase',
         id: tableColumnInfo[1].id,
         resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: { modifier: 'nowrap' },
       },
       {
-        title: t('public~Claim'),
+        title: t('Claim'),
         sort: 'spec.claimRef.name',
         id: tableColumnInfo[2].id,
         resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: { modifier: 'nowrap' },
       },
       {
-        title: t('public~Capacity'),
+        title: t('Capacity'),
         sort: 'pvStorage',
         id: tableColumnInfo[3].id,
         resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: { modifier: 'nowrap' },
       },
       {
-        title: t('public~Labels'),
+        title: t('Labels'),
         sort: 'metadata.labels',
         id: tableColumnInfo[4].id,
         resizableProps: getResizableProps(tableColumnInfo[4].id),
@@ -163,7 +163,7 @@ const usePersistentVolumeColumns = (): {
         },
       },
       {
-        title: t('public~Created'),
+        title: t('Created'),
         sort: 'metadata.creationTimestamp',
         id: tableColumnInfo[5].id,
         resizableProps: getResizableProps(tableColumnInfo[5].id),
@@ -182,7 +182,7 @@ const usePersistentVolumeColumns = (): {
 };
 
 const PVDetails = ({ obj: pv }: { obj: PersistentVolumeKind }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const storageClassName = pv.spec?.storageClassName;
   const pvcName = pv.spec?.claimRef?.name;
   const namespace = pv.spec?.claimRef?.namespace;
@@ -194,12 +194,12 @@ const PVDetails = ({ obj: pv }: { obj: PersistentVolumeKind }) => {
 
   return (
     <PaneBody>
-      <SectionHeading text={t('public~PersistentVolume details')} />
+      <SectionHeading text={t('PersistentVolume details')} />
       <Grid hasGutter>
         <GridItem sm={6}>
           <ResourceSummary resource={pv}>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('public~Reclaim policy')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Reclaim policy')}</DescriptionListTerm>
               <DescriptionListDescription>{reclaimPolicy}</DescriptionListDescription>
             </DescriptionListGroup>
           </ResourceSummary>
@@ -207,42 +207,42 @@ const PVDetails = ({ obj: pv }: { obj: PersistentVolumeKind }) => {
         <GridItem sm={6}>
           <DescriptionList>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('public~Status')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Status')}</DescriptionListTerm>
               <DescriptionListDescription>
                 <PVStatus pv={pv} />
               </DescriptionListDescription>
             </DescriptionListGroup>
             {storage && (
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('public~Capacity')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('Capacity')}</DescriptionListTerm>
                 <DescriptionListDescription>{storage}</DescriptionListDescription>
               </DescriptionListGroup>
             )}
             {!_.isEmpty(accessModes) && (
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('public~Access modes')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('Access modes')}</DescriptionListTerm>
                 <DescriptionListDescription>{accessModes.join(', ')}</DescriptionListDescription>
               </DescriptionListGroup>
             )}
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('public~Volume mode')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Volume mode')}</DescriptionListTerm>
               <DescriptionListDescription>
-                {volumeMode || t('public~Filesystem')}
+                {volumeMode || t('Filesystem')}
               </DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('public~StorageClass')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('StorageClass')}</DescriptionListTerm>
               <DescriptionListDescription>
                 {storageClassName ? (
                   <ResourceLink kind="StorageClass" name={storageClassName} />
                 ) : (
-                  t('public~None')
+                  t('None')
                 )}
               </DescriptionListDescription>
             </DescriptionListGroup>
             {pvcName && (
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('public~PersistentVolumeClaim')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('PersistentVolumeClaim')}</DescriptionListTerm>
                 <DescriptionListDescription>
                   <ResourceLink kind="PersistentVolumeClaim" name={pvcName} namespace={namespace} />
                 </DescriptionListDescription>
@@ -250,7 +250,7 @@ const PVDetails = ({ obj: pv }: { obj: PersistentVolumeKind }) => {
             )}
             {nfsExport && (
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('public~NFS-export')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('NFS-export')}</DescriptionListTerm>
                 <DescriptionListDescription>{nfsExport}</DescriptionListDescription>
               </DescriptionListGroup>
             )}
@@ -262,7 +262,7 @@ const PVDetails = ({ obj: pv }: { obj: PersistentVolumeKind }) => {
 };
 
 const PersistentVolumeList: FC<PersistentVolumeListProps> = ({ data, loaded, ...props }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { columns, resetAllColumnWidths } = usePersistentVolumeColumns();
   const getDataViewRows = useMemo(() => getDataViewRowsCreator(t), [t]);
 
@@ -284,12 +284,12 @@ const PersistentVolumeList: FC<PersistentVolumeListProps> = ({ data, loaded, ...
 };
 
 export const PersistentVolumesPage = (props: ListPageProps) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   return (
     <ListPage
       {...props}
-      title={t('public~PersistentVolumes')}
+      title={t('PersistentVolumes')}
       kind={kind}
       ListComponent={PersistentVolumeList}
       canCreate={true}

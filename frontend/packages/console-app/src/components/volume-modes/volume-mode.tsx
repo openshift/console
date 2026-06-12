@@ -23,7 +23,7 @@ export const VolumeModeSelector: FC<VolumeModeSelectorProps> = (props) => {
     loaded,
   } = props;
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const pvcInitialVolumeMode: string = pvcResource
     ? pvcResource?.spec?.volumeMode || ''
     : availableVolumeMode || initialVolumeModes[0];
@@ -61,7 +61,7 @@ export const VolumeModeSelector: FC<VolumeModeSelectorProps> = (props) => {
       role="radiogroup"
       isInline
       fieldId="volume-mode"
-      label={t('console-app~Volume mode')}
+      label={t('Volume mode')}
       isRequired
       className={css(className, 'pf-v6-c-form__group-control--no-row-gap')}
     >

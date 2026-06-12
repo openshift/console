@@ -103,10 +103,10 @@ export const PackageManifestTableRow: FC<RowFunctionArgs<
 };
 
 const PackageManifestListEmptyMessage = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   return (
-    <ConsoleEmptyState title={t('olm~No PackageManifests Found')}>
-      {t('olm~The CatalogSource author has not added any packages.')}
+    <ConsoleEmptyState title={t('No PackageManifests Found')}>
+      {t('The CatalogSource author has not added any packages.')}
     </ConsoleEmptyState>
   );
 };

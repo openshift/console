@@ -18,7 +18,7 @@ const MultiColumnFieldFooter: FC<MultiColumnFieldFooterProps> = ({
   hideAddRow = false,
   onAdd,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const button = (
     <Button
       data-test={'add-action'}
@@ -28,7 +28,7 @@ const MultiColumnFieldFooter: FC<MultiColumnFieldFooterProps> = ({
       icon={<RhUiAddCircleFillIcon />}
       isInline
     >
-      {addLabel || t('console-shared~Add values')}
+      {addLabel || t('Add values')}
     </Button>
   );
   return (

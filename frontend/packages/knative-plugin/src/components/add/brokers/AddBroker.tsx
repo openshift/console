@@ -28,7 +28,7 @@ const AddBroker: FC<AddBrokerProps> = ({ namespace, selectedApplication }) => {
   const handleCancel = useCallback(() => navigate(-1), [navigate]);
   const perspectiveExtension = usePerspectives();
   const [perspective] = useActivePerspective();
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const initialValues: AddBrokerFormYamlValues = addBrokerInitialValues(
     namespace,
     selectedApplication,

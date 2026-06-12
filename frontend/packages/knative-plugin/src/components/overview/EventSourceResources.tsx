@@ -21,7 +21,7 @@ type OwnedEventSourcesProps = {
 };
 
 export const EventSourceTarget: FC<EventSourceTargetProps> = ({ obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const {
     metadata: { namespace },
     spec,
@@ -35,7 +35,7 @@ export const EventSourceTarget: FC<EventSourceTargetProps> = ({ obj }) => {
 
   return (
     <>
-      <SidebarSectionHeading text={t('knative-plugin~Target')} />
+      <SidebarSectionHeading text={t('Target')} />
       {isSinkReference || sinkUri ? (
         <List isPlain isBordered>
           <ListItem>
@@ -48,30 +48,26 @@ export const EventSourceTarget: FC<EventSourceTargetProps> = ({ obj }) => {
             )}
             {sinkUri && (
               <>
-                <span className="pf-v6-u-text-color-subtle">
-                  {t('knative-plugin~Target URI:')}{' '}
-                </span>
+                <span className="pf-v6-u-text-color-subtle">{t('Target URI:')} </span>
                 <ExternalLink href={sinkUri} displayBlock text={sinkUri} />
               </>
             )}
           </ListItem>
         </List>
       ) : (
-        <span className="pf-v6-u-text-color-subtle">
-          {t('knative-plugin~No sink found for this resource.')}
-        </span>
+        <span className="pf-v6-u-text-color-subtle">{t('No sink found for this resource.')}</span>
       )}
     </>
   );
 };
 
 export const EventSourceDeployments: FC<EventSourceDeploymentsProps> = ({ deploymentObj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   return (
     <>
       {!_.isEmpty(deploymentObj) ? (
         <>
-          <SidebarSectionHeading text={t('knative-plugin~Deployment')} />
+          <SidebarSectionHeading text={t('Deployment')} />
           <List isPlain isBordered>
             <ListItem>
               <ResourceLink

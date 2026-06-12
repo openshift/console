@@ -37,7 +37,7 @@ const EventSourceForm: FC<FormikProps<FormikValues> & OwnProps> = ({
   eventSourceMetaDescription,
   kameletSource,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY = 'knative.eventSourceForm.editor.lastView';
   const yamlEditor = <CodeEditorField name="yamlData" showSamples onSave={handleSubmit} />;
 
@@ -90,12 +90,12 @@ const EventSourceForm: FC<FormikProps<FormikValues> & OwnProps> = ({
         handleReset={handleReset}
         errorMessage={status && status.submitError}
         isSubmitting={isSubmitting}
-        submitLabel={t('knative-plugin~Create')}
+        submitLabel={t('Create')}
         disableSubmit={
           (values.editorType === EditorType.YAML ? !dirty : !dirty || !_.isEmpty(errors)) ||
           isSubmitting
         }
-        resetLabel={t('knative-plugin~Cancel')}
+        resetLabel={t('Cancel')}
         sticky
       />
     </FlexForm>

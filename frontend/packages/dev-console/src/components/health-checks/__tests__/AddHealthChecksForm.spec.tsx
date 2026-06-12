@@ -101,7 +101,7 @@ describe('AddHealthChecksForm', () => {
 
       renderWithProviders(<AddHealthChecksForm {...addHealthCheckWrapperProps} />);
 
-      expect(screen.getByText('devconsole~Container not found')).toBeInTheDocument();
+      expect(screen.getByText('Container not found')).toBeInTheDocument();
     });
 
     it('should show container not found error when container does not exist', () => {
@@ -110,7 +110,7 @@ describe('AddHealthChecksForm', () => {
 
       renderWithProviders(<AddHealthChecksForm {...addHealthCheckWrapperProps} />);
 
-      expect(screen.getByText('devconsole~Container not found')).toBeInTheDocument();
+      expect(screen.getByText('Container not found')).toBeInTheDocument();
     });
   });
 
@@ -144,7 +144,7 @@ describe('AddHealthChecksForm', () => {
 
       expect(screen.queryByText('Loading...')).not.toBeInTheDocument();
       expect(screen.queryByText('Error:')).not.toBeInTheDocument();
-      expect(screen.queryByText('devconsole~Container not found')).not.toBeInTheDocument();
+      expect(screen.queryByText('Container not found')).not.toBeInTheDocument();
     });
   });
 
@@ -175,7 +175,7 @@ describe('AddHealthChecksForm', () => {
 
       renderWithProviders(<AddHealthChecksForm {...addHealthCheckWrapperProps} />);
 
-      expect(screen.getByText('devconsole~Container not found')).toBeInTheDocument();
+      expect(screen.getByText('Container not found')).toBeInTheDocument();
     });
   });
 });

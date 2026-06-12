@@ -45,7 +45,7 @@ type MachineDetailProps = {
 };
 
 const MachineDetails: FC<MachineDetailProps> = ({ node }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const [machineName, machineNamespace] = getNodeMachineNameAndNamespace(node);
   const [machine, machineLoaded, machineLoadError] = useK8sWatchResource<MachineKind>(
     machineName && machineNamespace
@@ -67,61 +67,61 @@ const MachineDetails: FC<MachineDetailProps> = ({ node }) => {
 
   return (
     <PaneBody>
-      <SectionHeading text={t('console-app~Machine details')} />
+      <SectionHeading text={t('Machine details')} />
       {machineLoadError ? (
-        <Alert isInline variant="danger" title={t('console-app~Machine is not available')}>
-          {machineLoadError.message || t('console-app~Unable to load Machine resources')}
+        <Alert isInline variant="danger" title={t('Machine is not available')}>
+          {machineLoadError.message || t('Unable to load Machine resources')}
         </Alert>
       ) : !machineLoaded ? (
         <SkeletonDetails />
       ) : !machine ? (
-        <Content>{t('console-app~This node has no associated machine.')}</Content>
+        <Content>{t('This node has no associated machine.')}</Content>
       ) : (
         <DescriptionList>
-          <DetailsItem label={t('console-app~Name')} obj={machine}>
+          <DetailsItem label={t('Name')} obj={machine}>
             <ResourceLink
               groupVersionKind={getGroupVersionKindForResource(machine)}
               name={machine.metadata.name}
               namespace={machine.metadata.namespace}
             />
           </DetailsItem>
-          <DetailsItem label={t('console-app~Namespace')} obj={machine} path="metadata.namespace">
+          <DetailsItem label={t('Namespace')} obj={machine} path="metadata.namespace">
             <ResourceLink kind="Namespace" name={machine.metadata.namespace} namespace={null} />
           </DetailsItem>
-          <DetailsItem label={t('console-app~Phase')} obj={machine} path="status.phase">
+          <DetailsItem label={t('Phase')} obj={machine} path="status.phase">
             <Status status={getMachinePhase(machine)} />
           </DetailsItem>
           <DetailsItem
-            label={t('console-app~Provider state')}
+            label={t('Provider state')}
             obj={machine}
             path="status.providerStatus.instanceState"
           >
             {machine.status?.providerStatus?.instanceState}
           </DetailsItem>
           <DescriptionListGroup>
-            <DescriptionListTerm>{t('console-app~Machine role')}</DescriptionListTerm>
+            <DescriptionListTerm>{t('Machine role')}</DescriptionListTerm>
             <DescriptionListDescription>{getMachineRole(machine)}</DescriptionListDescription>
           </DescriptionListGroup>
           {instanceType && (
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('console-app~Instance type')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Instance type')}</DescriptionListTerm>
               <DescriptionListDescription>{instanceType}</DescriptionListDescription>
             </DescriptionListGroup>
           )}
           {region && (
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('console-app~Region')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Region')}</DescriptionListTerm>
               <DescriptionListDescription>{region}</DescriptionListDescription>
             </DescriptionListGroup>
           )}
           {zone && (
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('console-app~Availability zone')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Availability zone')}</DescriptionListTerm>
               <DescriptionListDescription>{zone}</DescriptionListDescription>
             </DescriptionListGroup>
           )}
           <DescriptionListGroup>
-            <DescriptionListTerm>{t('console-app~Machine addresses')}</DescriptionListTerm>
+            <DescriptionListTerm>{t('Machine addresses')}</DescriptionListTerm>
             <DescriptionListDescription>
               <NodeIPList ips={getMachineAddresses(machine)} expand />
             </DescriptionListDescription>

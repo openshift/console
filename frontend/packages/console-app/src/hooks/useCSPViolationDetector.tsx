@@ -83,7 +83,7 @@ const reportCSPViolationToCypress = (event: SecurityPolicyViolationEvent) => {
 };
 
 export const useCSPViolationDetector = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const toastContext = useToast();
   const fireTelemetryEvent = useTelemetry();
   const pluginStore = usePluginStore();
@@ -138,7 +138,7 @@ export const useCSPViolationDetector = () => {
         if (pluginIsLoaded && !IS_PRODUCTION && !cspViolations[pluginName]) {
           toastContext.addToast({
             variant: AlertVariant.warning,
-            title: t('public~Content Security Policy violation in Console plugin'),
+            title: t('Content Security Policy violation in Console plugin'),
             content: t(
               "public~{{pluginName}} might have violated the Console Content Security Policy. Refer to the browser's console logs for details.",
               {

@@ -111,12 +111,12 @@ interface StatusButtonProps {
 }
 
 const SystemStatusButton: FC<StatusButtonProps> = ({ statusPageData }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return !_.isEmpty(_.get(statusPageData, 'incidents')) ? (
     <ExternalLinkButton
       variant="plain"
       className="co-masthead-button"
-      aria-label={t('public~System status')}
+      aria-label={t('System status')}
       icon={<YellowExclamationTriangleIcon />}
       href={statusPageData.page.url}
     />
@@ -156,7 +156,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
   cv,
   isMastheadStacked,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const navigate = useNavigate();
   const fireTelemetryEvent = useTelemetry();
   const { tourDispatch, tour } = useContext(TourContext);
@@ -169,7 +169,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
   const [activePerspective] = useActivePerspective();
   const [requestTokenURL, externalLoginCommand] = useCopyLoginCommands();
   const launchCopyLoginCommandModal = useCopyCodeModal(
-    t('public~Login with this command'),
+    t('Login with this command'),
     externalLoginCommand,
   );
   const { clusterID, alertCount, canAccessNS, impersonate } = useConsoleSelector(
@@ -272,11 +272,11 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
       window.SERVER_FLAGS.branding !== 'azure'
     ) {
       sections.push({
-        name: t('public~Red Hat Applications'),
+        name: t('Red Hat Applications'),
         isSection: true,
         actions: [
           {
-            label: t('public~OpenShift Cluster Manager'),
+            label: t('OpenShift Cluster Manager'),
             externalLink: true,
             href: getOCMLink(clusterID),
             image: <img src={redhatLogoImg} alt="" />,
@@ -288,7 +288,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
             },
           },
           {
-            label: t('public~Red Hat Hybrid Cloud Console'),
+            label: t('Red Hat Hybrid Cloud Console'),
             externalLink: true,
             href: 'https://console.redhat.com',
             image: <img src={redhatLogoImg} alt="" />,
@@ -306,11 +306,11 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
     // This should be removed when the extension to add items to the masthead is implemented: https://issues.redhat.com/browse/OU-488
     if (isTroubleshootingPanelPluginActive && activePerspective === 'admin') {
       sections.push({
-        name: t('public~Troubleshooting'),
+        name: t('Troubleshooting'),
         isSection: true,
         actions: [
           {
-            label: t('public~Signal correlation'),
+            label: t('Signal correlation'),
             callback: (e) => {
               e.preventDefault();
               dispatch(reduxAction('openTroubleshootingPanel'));
@@ -363,7 +363,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
         ...(tour
           ? [
               {
-                label: t('public~Guided tour'),
+                label: t('Guided tour'),
                 callback: handleGuidedTourClick,
               },
             ]
@@ -371,14 +371,14 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
         ...(quickstartFlag
           ? [
               {
-                label: t('public~Quick starts'),
+                label: t('Quick starts'),
                 component: LinkTo('/quickstart'),
                 dataTest: 'masthead-quick-starts',
               },
             ]
           : []),
         {
-          label: t('public~Documentation'),
+          label: t('Documentation'),
           externalLink: true,
           href: openshiftHelpBase,
           callback: () => {
@@ -388,7 +388,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
         ...(consoleCLIDownloadFlag
           ? [
               {
-                label: t('public~Command line tools'),
+                label: t('Command line tools'),
                 callback: () => {
                   fireTelemetryEvent('CLI Clicked');
                 },
@@ -399,7 +399,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
         ...(reportBugLink
           ? [
               {
-                label: t('public~Share feedback'),
+                label: t('Share feedback'),
                 callback: (e) => {
                   e.preventDefault();
                   onFeedbackModal();
@@ -417,7 +417,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
         label: t(`public~${helpLink.label}`),
       })),
       {
-        label: t('public~About'),
+        label: t('About'),
         callback: onAboutModal,
       },
       ...additionalHelpActions.actions,
@@ -530,7 +530,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
     const actions = [];
     const userActions: MastheadAction[] = [
       {
-        label: t('public~User preferences'),
+        label: t('User preferences'),
         component: LinkTo('/user-preferences'),
       },
     ];
@@ -538,7 +538,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
     // Add impersonate option if user is currently impersonating
     if (impersonate) {
       userActions.unshift({
-        label: t('public~Stop impersonating'),
+        label: t('Stop impersonating'),
         callback: () => {
           dispatch(UIActions.stopImpersonate());
           // Use full page reload when stopping to ensure clean state
@@ -553,7 +553,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
     // Add impersonate option if not currently impersonating
     if (!impersonate) {
       userActions.unshift({
-        label: t('public~Impersonate user'),
+        label: t('Impersonate user'),
         callback: () => setIsImpersonateModalOpen(true),
         dataTest: 'impersonate-user',
       });
@@ -566,7 +566,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
       };
       if (requestTokenURL) {
         userActions.unshift({
-          label: t('public~Copy login command'),
+          label: t('Copy login command'),
           href: requestTokenURL,
           externalLink: true,
           dataTest: 'copy-login-command',
@@ -575,12 +575,12 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
         userActions.unshift({
           callback: launchCopyLoginCommandModal,
           dataTest: 'copy-login-command',
-          label: t('public~Copy login command'),
+          label: t('Copy login command'),
         });
       }
 
       userActions.push({
-        label: t('public~Log out'),
+        label: t('Log out'),
         callback: logout,
         dataTest: 'log-out',
       });
@@ -602,7 +602,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
         isSection: true,
         actions: [
           {
-            label: t('public~Import YAML'),
+            label: t('Import YAML'),
             component: LinkTo(getImportYAMLPath()),
           },
           {
@@ -639,7 +639,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
           onSelect={() => setIsKebabDropdownOpen(false)}
           toggle={(toggleRef) => (
             <MenuToggle
-              aria-label={t('public~Utility menu')}
+              aria-label={t('Utility menu')}
               ref={toggleRef}
               variant="plain"
               onClick={() => setIsKebabDropdownOpen(!isKebabDropdownOpen)}
@@ -659,7 +659,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
 
     const userToggle = (
       <span className="co-username" data-test="username">
-        {authEnabledFlag ? displayName : t('public~Auth disabled')}
+        {authEnabledFlag ? displayName : t('Auth disabled')}
       </span>
     );
 
@@ -671,7 +671,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
         onSelect={() => setIsUserDropdownOpen(false)}
         toggle={(toggleRef) => (
           <MenuToggle
-            aria-label={t('public~User menu')}
+            aria-label={t('User menu')}
             variant="plainText"
             ref={toggleRef}
             onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
@@ -760,7 +760,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
                   onOpenChangeKeys={['Escape']}
                   toggle={(toggleRef) => (
                     <MenuToggle
-                      aria-label={t('public~Application launcher')}
+                      aria-label={t('Application launcher')}
                       ref={toggleRef}
                       variant="plain"
                       onClick={() => setIsAppLauncherDropdownOpen(!isAppLauncherDropdownOpen)}
@@ -778,7 +778,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
               )}
               {alertAccess && (
                 <NotificationBadge
-                  aria-label={t('public~Notification drawer')}
+                  aria-label={t('Notification drawer')}
                   onClick={drawerToggle}
                   variant="plain"
                   count={alertCount || 0}
@@ -795,7 +795,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
                 onSelect={() => setIsHelpDropdownOpen(false)}
                 toggle={(toggleRef) => (
                   <MenuToggle
-                    aria-label={t('public~Help menu')}
+                    aria-label={t('Help menu')}
                     ref={toggleRef}
                     variant="plain"
                     onClick={() => setIsHelpDropdownOpen(!isHelpDropdownOpen)}
@@ -828,7 +828,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
             <SystemStatusButton statusPageData={statusPageData} />
             {alertAccess && alertCount > 0 && (
               <NotificationBadge
-                aria-label={t('public~Notification drawer')}
+                aria-label={t('Notification drawer')}
                 onClick={drawerToggle}
                 variant="plain"
                 count={alertCount}

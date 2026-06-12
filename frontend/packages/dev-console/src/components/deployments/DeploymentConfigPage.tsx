@@ -10,7 +10,7 @@ import EditDeployment from './EditDeployment';
 import { getDefaultDeploymentConfig } from './utils/deployment-utils';
 
 const DeploymentConfigPage: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const { ns: namespace, name } = useParams();
 
   const isNew = !name;
@@ -29,9 +29,7 @@ const DeploymentConfigPage: FC = () => {
     ? getDefaultDeploymentConfig(namespace)
     : watchedDeployment;
 
-  const title = isNew
-    ? t('devconsole~Create DeploymentConfig')
-    : t('devconsole~Edit DeploymentConfig');
+  const title = isNew ? t('Create DeploymentConfig') : t('Edit DeploymentConfig');
 
   return (
     <>

@@ -41,7 +41,7 @@ const BuildForm: FC<BuildFormProp> = ({
   isSubmitting,
   errors,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('shipwright-plugin');
   const { ns } = useParams();
   const isNew = !watchedBuild?.metadata?.name;
   const isStale = !isNew && watchedBuild?.metadata?.resourceVersion !== values.resourceVersion;
@@ -92,10 +92,10 @@ const BuildForm: FC<BuildFormProp> = ({
         errorMessage={status?.submitError}
         successMessage={status?.submitSuccess}
         showAlert={isStale}
-        infoTitle={t('shipwright-plugin~This object has been updated.')}
-        infoMessage={t('shipwright-plugin~Click reload to see the new version.')}
+        infoTitle={t('This object has been updated.')}
+        infoMessage={t('Click reload to see the new version.')}
         isSubmitting={isSubmitting}
-        submitLabel={isNew ? t('shipwright-plugin~Create') : t('shipwright-plugin~Save')}
+        submitLabel={isNew ? t('Create') : t('Save')}
         disableSubmit={
           (values.editorType === EditorType.YAML ? !dirty : !dirty || !_.isEmpty(errors)) ||
           isSubmitting

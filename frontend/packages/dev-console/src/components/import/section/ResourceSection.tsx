@@ -26,7 +26,7 @@ type ResourceSectionProps = {
 };
 
 const ResourceSection: FC<ResourceSectionProps> = ({ flags }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const [field] = useField<Resources[]>('resourceTypesNotValid');
   const fieldName = 'resources';
   const { values, setFieldValue } = useFormikContext<FormikValues>();
@@ -107,7 +107,7 @@ const ResourceSection: FC<ResourceSectionProps> = ({ flags }) => {
       <FormSection>
         <SingleDropdownField
           name={fieldName}
-          label={t('devconsole~Resource type')}
+          label={t('Resource type')}
           options={selectInputOptions}
           onChange={onChange}
           getLabelFromValue={(value: string) => t(ReadableResourcesNames[value])}

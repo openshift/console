@@ -13,13 +13,13 @@ import AddBroker from './brokers/AddBroker';
 const EventingBrokerPage: FC = () => {
   const { ns: namespace } = useParams();
   const location = useLocation();
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const searchParams = new URLSearchParams(location.search);
   return (
     <NamespacedPage disabled variant={NamespacedPageVariants.light}>
-      <DocumentTitle>{t('knative-plugin~Broker')}</DocumentTitle>
+      <DocumentTitle>{t('Broker')}</DocumentTitle>
       <PageHeading
-        title={t('knative-plugin~Broker')}
+        title={t('Broker')}
         helpText={t(
           'knative-plugin~Create a Broker to define an event mesh for collecting a pool of events and route those events based on attributes, through triggers',
         )}

@@ -12,7 +12,7 @@ import { useUninstallOperatorModal } from '../components/modals/uninstall-operat
 import { ClusterServiceVersionModel, SubscriptionModel } from '../models';
 
 const useOperatorActions = ({ resource, subscription }): [Action[], boolean, any] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const launchModal = useOverlay();
 
   const uninstallOperatorModal = useUninstallOperatorModal(subscription, resource);
@@ -26,7 +26,7 @@ const useOperatorActions = ({ resource, subscription }): [Action[], boolean, any
       return [
         {
           id: 'delete-csv',
-          label: t('public~Delete {{kind}}', { kind: ClusterServiceVersionModel.label }),
+          label: t('Delete {{kind}}', { kind: ClusterServiceVersionModel.label }),
           cta: () =>
             launchModal(DeleteModalOverlay, {
               kind: ClusterServiceVersionModel,
@@ -40,14 +40,14 @@ const useOperatorActions = ({ resource, subscription }): [Action[], boolean, any
     return [
       {
         id: 'edit-subscription',
-        label: t('olm~Edit Subscription'),
+        label: t('Edit Subscription'),
         cta: {
           href: `${resourceObjPath(subscription, referenceFor(subscription))}/yaml`,
         },
       },
       {
         id: 'uninstall-operator',
-        label: t('olm~Uninstall Operator'),
+        label: t('Uninstall Operator'),
         cta: () => uninstallOperatorModal(),
         accessReview: asAccessReview(SubscriptionModel, subscription, K8S_VERB_DELETE),
       },

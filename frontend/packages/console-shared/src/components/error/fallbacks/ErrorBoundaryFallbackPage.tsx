@@ -19,11 +19,11 @@ const reloadPage = () => {
  * Standard fallback catch -- expected to take up the whole page.
  */
 export const ErrorBoundaryFallbackPage: FC<ErrorBoundaryFallbackProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   return (
     <ErrorState
-      titleText={t('console-shared~Something wrong happened')}
-      defaultBodyText={t('console-shared~An error occurred. Please try again.')}
+      titleText={t('Something wrong happened')}
+      defaultBodyText={t('An error occurred. Please try again.')}
       bodyText={props.errorMessage}
       headingLevel="h1"
       customFooter={
@@ -31,7 +31,7 @@ export const ErrorBoundaryFallbackPage: FC<ErrorBoundaryFallbackProps> = (props)
           <ActionListGroup>
             <ActionListItem>
               <Button variant="primary" data-test="error-reload-page" onClick={reloadPage}>
-                {t('console-shared~Reload page')}
+                {t('Reload page')}
               </Button>
             </ActionListItem>
             <ActionListItem>

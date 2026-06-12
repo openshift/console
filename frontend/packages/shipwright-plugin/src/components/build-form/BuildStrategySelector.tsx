@@ -19,7 +19,7 @@ type BuildStrategySelectorProps = {
 };
 
 const BuildStrategySelector: FC<BuildStrategySelectorProps> = ({ namespace, formType }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('shipwright-plugin');
   const { setFieldValue } = useFormikContext<FormikValues>();
   const [error, setError] = useState('');
   const watchedResources = {
@@ -108,11 +108,11 @@ const BuildStrategySelector: FC<BuildStrategySelectorProps> = ({ namespace, form
       <SingleDropdownField
         data-test-id="build-strategy-field"
         name="formData.build.strategy"
-        label={t('shipwright-plugin~Build Strategy')}
+        label={t('Build Strategy')}
         onChange={onChange}
         isDisabled={formType === 'edit'}
-        ariaLabel={t('shipwright-plugin~Cluster Build Strategy')}
-        placeholderText={t('shipwright-plugin~Select Build Strategy')}
+        ariaLabel={t('Cluster Build Strategy')}
+        placeholderText={t('Select Build Strategy')}
         helpText={t(
           'shipwright-plugin~Cluster Build Strategies define a shared group of steps, needed to fullfil the application build process.',
         )}

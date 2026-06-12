@@ -63,7 +63,7 @@ const NodeGroupsEditorModal: OverlayComponent<NodeGroupsEditorModalProps> = ({
   node,
   closeOverlay,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const [groupSelections, setGroupSelections] = useState<GroupSelection[]>([]);
   const currentGroupSelections = useRef<GroupSelection[]>();
   const [newGroupName, setNewGroupName] = useState<string>('');
@@ -186,8 +186,8 @@ const NodeGroupsEditorModal: OverlayComponent<NodeGroupsEditorModalProps> = ({
   return (
     <Modal isOpen onClose={closeOverlay} variant="small" className="co-node-group-editor-modal">
       <ModalHeader
-        title={t('console-app~Edit groups')}
-        description={t('console-app~Groups help you organize and select resources.')}
+        title={t('Edit groups')}
+        description={t('Groups help you organize and select resources.')}
       />
       <ModalBody>
         {!nodesLoaded ? (
@@ -200,7 +200,7 @@ const NodeGroupsEditorModal: OverlayComponent<NodeGroupsEditorModalProps> = ({
               fieldId="groups"
               label={
                 <>
-                  <span className="pf-v6-u-mr-xs">{t('console-app~Groups for')}</span>
+                  <span className="pf-v6-u-mr-xs">{t('Groups for')}</span>
                   <ResourceIcon groupVersionKind={getGroupVersionKindForModel(NodeModel)} />
                   <span className="pf-v6-u-ml-xs">{node?.metadata?.name}</span>
                 </>
@@ -209,7 +209,7 @@ const NodeGroupsEditorModal: OverlayComponent<NodeGroupsEditorModalProps> = ({
               <div className="co-node-group-editor-modal__groups-list">
                 {!groupSelections.length ? (
                   <Content component={ContentVariants.small} className="pf-v6-u-m-md">
-                    {t('console-app~To get started, add a group')}
+                    {t('To get started, add a group')}
                   </Content>
                 ) : (
                   // Use the length as a key to force a reset on change
@@ -229,12 +229,12 @@ const NodeGroupsEditorModal: OverlayComponent<NodeGroupsEditorModalProps> = ({
                 )}
               </div>
             </FormGroup>
-            <FormGroup fieldId="new-group" label={t('console-app~Add new group')}>
+            <FormGroup fieldId="new-group" label={t('Add new group')}>
               <Flex spaceItems={{ default: 'spaceItemsSm' }} flexWrap={{ default: 'nowrap' }}>
                 <FlexItem flex={{ default: 'flex_1' }}>
                   <TextInput
-                    placeholder={t('console-app~Enter a group name')}
-                    aria-label={t('console-app~Enter a group name')}
+                    placeholder={t('Enter a group name')}
+                    aria-label={t('Enter a group name')}
                     value={newGroupName}
                     onChange={handleNameChange}
                     onKeyDown={handleNameKeyDown}
@@ -249,13 +249,13 @@ const NodeGroupsEditorModal: OverlayComponent<NodeGroupsEditorModalProps> = ({
                       !!groupSelections.find((group) => group.groupName === newGroupName.trim())
                     }
                   >
-                    {t('console-app~Add')}
+                    {t('Add')}
                   </Button>
                 </FlexItem>
               </Flex>
               <HelperText component="ul" className="pf-v6-u-mt-xs">
                 <HelperTextItem component="li">
-                  {t('console-app~Separate multiple group names with commas.')}
+                  {t('Separate multiple group names with commas.')}
                 </HelperTextItem>
               </HelperText>
             </FormGroup>
@@ -266,9 +266,9 @@ const NodeGroupsEditorModal: OverlayComponent<NodeGroupsEditorModalProps> = ({
             isInline
             className="pf-v6-u-mt-md"
             variant="info"
-            title={t('console-app~Groups have been updated.')}
+            title={t('Groups have been updated.')}
           >
-            {t('console-app~Click Reload to see the changes.')}
+            {t('Click Reload to see the changes.')}
           </Alert>
         )}
         {errorMessage && (
@@ -276,7 +276,7 @@ const NodeGroupsEditorModal: OverlayComponent<NodeGroupsEditorModalProps> = ({
             isInline
             className="pf-v6-u-mt-md"
             variant={AlertVariant.danger}
-            title={t('console-app~Error occurred')}
+            title={t('Error occurred')}
           >
             {errorMessage}
           </Alert>
@@ -289,13 +289,13 @@ const NodeGroupsEditorModal: OverlayComponent<NodeGroupsEditorModalProps> = ({
           onClick={onSubmit}
           isDisabled={backgroundChange || inProgress}
         >
-          {t('console-app~Save')}
+          {t('Save')}
         </Button>
         <Button variant="secondary" onClick={onReload} type="button">
-          {t('console-app~Reload')}
+          {t('Reload')}
         </Button>
         <Button variant="secondary" onClick={closeOverlay} type="button">
-          {t('console-app~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooter>
     </Modal>

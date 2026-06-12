@@ -44,7 +44,7 @@ export const TextInputModal: OverlayComponent<TextInputModalProps> = ({
   helpText,
   isRequired = false,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const [value, setValue] = useState(initialValue);
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -52,7 +52,7 @@ export const TextInputModal: OverlayComponent<TextInputModalProps> = ({
     (event: React.FormEvent | React.MouseEvent) => {
       event.preventDefault();
       if (isRequired && !value) {
-        setErrorMessage(t('console-shared~This field is required'));
+        setErrorMessage(t('This field is required'));
         return;
       }
       if (validator) {
@@ -108,7 +108,7 @@ export const TextInputModal: OverlayComponent<TextInputModalProps> = ({
           data-test="confirm-action"
           id="confirm-action"
         >
-          {submitButtonText || t('console-shared~Save')}
+          {submitButtonText || t('Save')}
         </Button>
         <Button
           key="cancel-action"
@@ -117,7 +117,7 @@ export const TextInputModal: OverlayComponent<TextInputModalProps> = ({
           onClick={closeOverlay}
           data-test-id="modal-cancel-action"
         >
-          {cancelButtonText || t('console-shared~Cancel')}
+          {cancelButtonText || t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </Modal>

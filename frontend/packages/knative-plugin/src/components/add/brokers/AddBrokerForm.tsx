@@ -28,7 +28,7 @@ interface AddBrokerFormProps {
 const AddBrokerForm: FC<FormikProps<AddBrokerFormYamlValues> & AddBrokerFormProps> = (
   formikProps,
 ) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const {
     values,
     errors,
@@ -136,8 +136,8 @@ const AddBrokerForm: FC<FormikProps<AddBrokerFormYamlValues> & AddBrokerFormProp
       lastViewUserPreferenceKey={LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY}
     />
   ) : (
-    <Alert variant="custom" title={t('knative-plugin~Broker cannot be created')} isInline>
-      {t('knative-plugin~You do not have write access in this project.')}
+    <Alert variant="custom" title={t('Broker cannot be created')} isInline>
+      {t('You do not have write access in this project.')}
     </Alert>
   );
 
@@ -151,13 +151,13 @@ const AddBrokerForm: FC<FormikProps<AddBrokerFormYamlValues> & AddBrokerFormProp
         handleReset={handleReset}
         errorMessage={status && status.submitError}
         isSubmitting={isSubmitting}
-        submitLabel={t('knative-plugin~Create')}
+        submitLabel={t('Create')}
         disableSubmit={
           !canCreateBroker ||
           (values.editorType === EditorType.YAML ? !dirty : !_.isEmpty(errors)) ||
           isSubmitting
         }
-        resetLabel={t('knative-plugin~Cancel')}
+        resetLabel={t('Cancel')}
         sticky
       />
     </FlexForm>

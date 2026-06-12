@@ -82,12 +82,12 @@ import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/us
 import { NotificationTypes } from './utils/types';
 
 const AlertErrorState: FC<AlertErrorProps> = ({ errorText }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <EmptyState
       headingLevel="h5"
       icon={RedExclamationCircleIcon}
-      titleText={<>{t('public~Alerts could not be loaded')}</>}
+      titleText={<>{t('Alerts could not be loaded')}</>}
       variant={EmptyStateVariant.full}
     >
       <EmptyStateFooter>
@@ -98,11 +98,11 @@ const AlertErrorState: FC<AlertErrorProps> = ({ errorText }) => {
 };
 
 const AlertEmptyState: FC<AlertEmptyProps> = ({ drawerToggle }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <EmptyState
       headingLevel="h5"
-      titleText={<>{t('public~No critical alerts')}</>}
+      titleText={<>{t('No critical alerts')}</>}
       variant={EmptyStateVariant.full}
       className="co-status-card__alerts-msg"
     >
@@ -114,7 +114,7 @@ const AlertEmptyState: FC<AlertEmptyProps> = ({ drawerToggle }) => {
       <EmptyStateFooter>
         <EmptyStateActions>
           <Link to="/monitoring/alerts" onClick={drawerToggle}>
-            {t('public~View all alerts')}
+            {t('View all alerts')}
           </Link>
         </EmptyStateActions>
       </EmptyStateFooter>
@@ -240,7 +240,7 @@ export const NotificationDrawer: FC<NotificationDrawerProps> = ({
   onDrawerChange,
   drawerRef,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const clusterID = getClusterID(useClusterVersion());
   const showServiceLevelNotification = useShowServiceLevelNotifications(clusterID);
   const pluginInfoEntries = usePluginInfo();
@@ -338,7 +338,7 @@ export const NotificationDrawer: FC<NotificationDrawerProps> = ({
     <NotificationDrawerGroup
       key="critical-alerts"
       isExpanded={isAlertExpanded}
-      title={t('public~Critical Alerts')}
+      title={t('Critical Alerts')}
       count={criticalAlerts.length}
       onExpand={() => {
         toggleAlertExpanded(!isAlertExpanded);
@@ -346,7 +346,7 @@ export const NotificationDrawer: FC<NotificationDrawerProps> = ({
     >
       <NotificationDrawerList
         isHidden={!isAlertExpanded}
-        aria-label={t('public~Notifications in the critical alerts group')}
+        aria-label={t('Notifications in the critical alerts group')}
       >
         {criticalAlerts.length > 0
           ? criticalAlerts.map((alert, i) => {
@@ -385,7 +385,7 @@ export const NotificationDrawer: FC<NotificationDrawerProps> = ({
       <NotificationDrawerGroup
         key="other-alerts"
         isExpanded={isNonCriticalAlertExpanded}
-        title={t('public~Other Alerts')}
+        title={t('Other Alerts')}
         count={nonCriticalAlerts.length}
         onExpand={() => {
           toggleNonCriticalAlertExpanded(!isNonCriticalAlertExpanded);
@@ -393,7 +393,7 @@ export const NotificationDrawer: FC<NotificationDrawerProps> = ({
       >
         <NotificationDrawerList
           isHidden={!isNonCriticalAlertExpanded}
-          aria-label={t('public~Notifications in the other alerts group')}
+          aria-label={t('Notifications in the other alerts group')}
         >
           {nonCriticalAlerts.map((alert, i) => {
             const alertVariant = NotificationTypes[getAlertSeverity(alert)];
@@ -435,7 +435,7 @@ export const NotificationDrawer: FC<NotificationDrawerProps> = ({
     <NotificationDrawerGroup
       key="recommendations"
       isExpanded={isClusterUpdateExpanded}
-      title={t('public~Recommendations')}
+      title={t('Recommendations')}
       count={updateList.length}
       onExpand={() => {
         toggleClusterUpdateExpanded(!isClusterUpdateExpanded);
@@ -443,7 +443,7 @@ export const NotificationDrawer: FC<NotificationDrawerProps> = ({
     >
       <NotificationDrawerList
         isHidden={!isClusterUpdateExpanded}
-        aria-label={t('public~Notifications in the recommendations group')}
+        aria-label={t('Notifications in the recommendations group')}
       >
         {updateList}
       </NotificationDrawerList>
@@ -452,10 +452,7 @@ export const NotificationDrawer: FC<NotificationDrawerProps> = ({
 
   return (
     <PfNotificationDrawer ref={drawerRef}>
-      <NotificationDrawerHeader
-        title={t('public~Notifications')}
-        onClose={toggleNotificationDrawer}
-      />
+      <NotificationDrawerHeader title={t('Notifications')} onClose={toggleNotificationDrawer} />
       <NotificationDrawerBody>
         <NotificationDrawerGroupList>
           {[criticalAlertCategory, nonCriticalAlertCategory, recommendationsCategory]}

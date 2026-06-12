@@ -27,16 +27,16 @@ import {
 } from './alert-utils';
 
 const CriticalIcon = () => {
-  const { t } = useTranslation();
-  return <RedExclamationCircleIcon title={t('public~Critical')} />;
+  const { t } = useTranslation('console-shared');
+  return <RedExclamationCircleIcon title={t('Critical')} />;
 };
 const InfoIcon = () => {
-  const { t } = useTranslation();
-  return <BlueInfoCircleIcon title={t('public~Info')} />;
+  const { t } = useTranslation('console-shared');
+  return <BlueInfoCircleIcon title={t('Info')} />;
 };
 const WarningIcon = () => {
-  const { t } = useTranslation();
-  return <YellowExclamationTriangleIcon title={t('public~Warning')} />;
+  const { t } = useTranslation('console-shared');
+  return <YellowExclamationTriangleIcon title={t('Warning')} />;
 };
 const getSeverityIcon = (severity: string) => {
   switch (severity) {
@@ -58,7 +58,7 @@ export const StatusItem: FC<StatusItemProps> = ({
   message,
   children,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   return (
     <div className="co-status-card__alert-item">
       <div className="co-status-card__alert-item-icon co-dashboard-icon">
@@ -80,7 +80,7 @@ export const StatusItem: FC<StatusItemProps> = ({
           </span>
           {documentationLink && (
             <ExternalLink className="co-status-card__alert-item-doc-link" href={documentationLink}>
-              {t('console-shared~Go to documentation')}
+              {t('Go to documentation')}
             </ExternalLink>
           )}
         </div>
@@ -91,7 +91,7 @@ export const StatusItem: FC<StatusItemProps> = ({
 };
 
 const AlertItem: FC<AlertItemProps> = ({ alert, documentationLink }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const launchModal = useOverlay();
   const [actionExtensions] = useResolvedExtensions<AlertAction>(
     useCallback(
@@ -116,7 +116,7 @@ const AlertItem: FC<AlertItemProps> = ({ alert, documentationLink }) => {
           {text}
         </Button>
       ) : (
-        <Link to={alertURL(alert, alert.rule.id)}>{t('console-shared~View details')}</Link>
+        <Link to={alertURL(alert, alert.rule.id)}>{t('View details')}</Link>
       )}
     </StatusItem>
   );

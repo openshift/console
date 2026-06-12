@@ -11,13 +11,13 @@ export const ConsolePluginFormGroup: FC<ConsolePluginFormGroupProps> = ({
   enabledPlugins,
   setPluginEnabled,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const csvPluginsCount = csvPlugins.length;
 
   return (
     <div className="form-group">
       <fieldset>
-        <label className="co-required">{t('olm~Console plugin', { count: csvPluginsCount })}</label>
+        <label className="co-required">{t('Console plugin', { count: csvPluginsCount })}</label>
         <FieldLevelHelp>
           {t(
             'olm~This operator includes a console plugin which provides a custom interface that can be included in the console. The console plugin will prompt for the console to be refreshed once it has been enabled. Make sure you trust this console plugin before enabling.',

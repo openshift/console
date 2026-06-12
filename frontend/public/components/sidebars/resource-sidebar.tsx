@@ -25,7 +25,7 @@ const ResourceSidebarWrapper: FC<{
   toggleSidebar: () => void;
   children?: ReactNode;
 }> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { label, children, toggleSidebar } = props;
 
   return (
@@ -40,7 +40,7 @@ const ResourceSidebarWrapper: FC<{
               {label}
             </Title>
           </FlexItem>
-          <CloseButton ariaLabel={t('public~Close')} onClick={toggleSidebar} />
+          <CloseButton ariaLabel={t('Close')} onClick={toggleSidebar} />
         </Flex>
         {children}
       </PaneBody>
@@ -84,7 +84,7 @@ export const ResourceSidebar: FC<{
   samples: Sample[];
   snippets: Sample[];
 }> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const {
     downloadSampleYaml,
     kindObj,
@@ -112,20 +112,20 @@ export const ResourceSidebar: FC<{
   let tabs: Tab[] = [];
   if (showSamples) {
     tabs.push({
-      name: t('public~Samples'),
+      name: t('Samples'),
       component: ResourceSamples,
     });
   }
   if (showSnippets) {
     tabs.push({
-      name: t('public~Snippets'),
+      name: t('Snippets'),
       component: ResourceSnippets,
     });
   }
   if (showSchema) {
     tabs = [
       {
-        name: t('public~Schema'),
+        name: t('Schema'),
         component: ResourceSchema,
       },
       ...tabs,

@@ -36,7 +36,7 @@ type WatchedResources = {
 };
 
 const CreateKnatifyPage: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const { ns: namespace } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
@@ -121,9 +121,9 @@ const CreateKnatifyPage: FC = () => {
 
   return (
     <NamespacedPage disabled variant={NamespacedPageVariants.light}>
-      <DocumentTitle>{t('knative-plugin~Make Serverless')}</DocumentTitle>
+      <DocumentTitle>{t('Make Serverless')}</DocumentTitle>
       <PageHeading
-        title={t('knative-plugin~Make Serverless')}
+        title={t('Make Serverless')}
         badge={getBadgeFromType(BadgeType.TECH)}
         helpText={t(
           'knative-plugin~This feature will create a new serverless deployment next to your existing deployment. Other configurations, including the traffic pattern, can be modified in the form.',

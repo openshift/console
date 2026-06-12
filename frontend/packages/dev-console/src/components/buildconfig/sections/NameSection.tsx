@@ -12,7 +12,7 @@ export type NameSectionFormData = {
 };
 
 const NameSection: FC<{}> = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
 
   const [, meta] = useField<string>('formData.name');
   const isNew = !meta.initialValue;
@@ -20,7 +20,7 @@ const NameSection: FC<{}> = () => {
   return (
     <FormSection dataTest="section name">
       <InputField
-        label={t('devconsole~Name')}
+        label={t('Name')}
         name="formData.name"
         type={TextInputTypes.text}
         isDisabled={!isNew}

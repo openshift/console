@@ -8,7 +8,7 @@ import BuilderImageTagSelector from '../builder/BuilderImageTagSelector';
 import FormSection from '../section/FormSection';
 
 const ServerlessFunctionStrategySection = ({ builderImages }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const { values } = useFormikContext<FormikValues>();
   const {
     git: { validated },
@@ -29,11 +29,11 @@ const ServerlessFunctionStrategySection = ({ builderImages }) => {
           <Alert
             variant="warning"
             isInline
-            title={t('devconsole~Builder Image {{image}} is not present.', {
+            title={t('Builder Image {{image}} is not present.', {
               image: values.image.selected,
             })}
           >
-            <p>{t('devconsole~Builder image is not present on cluster')}</p>
+            <p>{t('Builder image is not present on cluster')}</p>
           </Alert>
         )}
       {validated !== ValidatedOptions.warning &&
@@ -42,7 +42,7 @@ const ServerlessFunctionStrategySection = ({ builderImages }) => {
           <Alert
             variant="warning"
             isInline
-            title={t('devconsole~Support for Builder image {{image}} is not yet available.', {
+            title={t('Support for Builder image {{image}} is not yet available.', {
               image: values.image.selected,
             })}
           />

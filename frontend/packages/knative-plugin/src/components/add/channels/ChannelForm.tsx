@@ -51,7 +51,7 @@ const ChannelForm: FC<FormikProps<FormikValues> & OwnProps> = ({
     setErrors,
     setStatus,
   } = useFormikContext<FormikValues>();
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   useFormikValidationFix(values);
   const [defaultConfiguredChannel, defaultConfiguredChannelLoaded] = useDefaultChannelConfiguration(
     namespace,
@@ -150,8 +150,8 @@ const ChannelForm: FC<FormikProps<FormikValues> & OwnProps> = ({
             </>
           )}
         {channels && channels.loaded && _.isEmpty(channels.channelList) && (
-          <Alert variant="custom" title={t('knative-plugin~Channel cannot be created')} isInline>
-            {t('knative-plugin~You do not have write access in this project.')}
+          <Alert variant="custom" title={t('Channel cannot be created')} isInline>
+            {t('You do not have write access in this project.')}
           </Alert>
         )}
       </FormBody>
@@ -159,9 +159,9 @@ const ChannelForm: FC<FormikProps<FormikValues> & OwnProps> = ({
         handleReset={handleReset}
         errorMessage={status && status.submitError}
         isSubmitting={isSubmitting}
-        submitLabel={t('knative-plugin~Create')}
+        submitLabel={t('Create')}
         disableSubmit={!dirty || !_.isEmpty(errors) || isSubmitting}
-        resetLabel={t('knative-plugin~Cancel')}
+        resetLabel={t('Cancel')}
         sticky
       />
     </FlexForm>

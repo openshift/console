@@ -69,7 +69,7 @@ const HelmInstallUpgradeForm: FC<
   annotatedName,
   providerName,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   const { chartName, chartVersion, chartReadme, formData, formSchema, editorType } = values;
   const { type: helmAction, title, subTitle } = helmActionConfig;
   const helmReadmeModalLauncher = useHelmReadmeModalLauncher({ readme: chartReadme });
@@ -95,7 +95,7 @@ const HelmInstallUpgradeForm: FC<
   const yamlEditor = chartHasValues && (
     <CodeEditorField
       name="yamlData"
-      label={t('helm-plugin~Helm Release')}
+      label={t('Helm Release')}
       schema={formSchema}
       showSamples={false}
       onSave={handleSubmit}
@@ -131,8 +131,8 @@ const HelmInstallUpgradeForm: FC<
       <FormBody flexLayout>
         <FormHeader title={title} helpText={formHelpText} marginBottom="lg" />
         {chartError && (
-          <Alert variant="danger" isInline title={t('helm-plugin~Helm Chart cannot be installed')}>
-            {t('helm-plugin~The Helm Chart is currently unavailable. {{chartError}}', {
+          <Alert variant="danger" isInline title={t('Helm Chart cannot be installed')}>
+            {t('The Helm Chart is currently unavailable. {{chartError}}', {
               chartError,
             })}
           </Alert>
@@ -143,8 +143,8 @@ const HelmInstallUpgradeForm: FC<
               <InputField
                 type={TextInputTypes.text}
                 name="releaseName"
-                label={t('helm-plugin~Release name')}
-                helpText={t('helm-plugin~A unique name for the Helm Release.')}
+                label={t('Release name')}
+                helpText={t('A unique name for the Helm Release.')}
                 required
                 isDisabled={!!chartError || helmAction === HelmActionType.Upgrade}
                 data-test="release-name"
@@ -190,7 +190,7 @@ const HelmInstallUpgradeForm: FC<
         isSubmitting={isSubmitting}
         submitLabel={helmActionString(t)[helmAction]}
         disableSubmit={isSubmitDisabled}
-        resetLabel={t('helm-plugin~Cancel')}
+        resetLabel={t('Cancel')}
         sticky
       />
     </FlexForm>

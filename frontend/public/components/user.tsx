@@ -77,14 +77,14 @@ const getDataViewRows: GetDataViewRows<UserKind> = (data, columns) => {
 };
 
 const UsersHelpText = () => {
-  const { t } = useTranslation();
-  return <>{t('public~Users are automatically added the first time they log in.')}</>;
+  const { t } = useTranslation('public');
+  return <>{t('Users are automatically added the first time they log in.')}</>;
 };
 
 const oAuthResourcePath = resourcePathFromModel(OAuthModel, 'cluster');
 
 const NoDataEmptyMsgDetail = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const canEditIdentityProviders = useCanEditIdentityProviders();
   const [oauth, oauthLoaded] = useOAuthData(canEditIdentityProviders);
   return (
@@ -103,7 +103,7 @@ const NoDataEmptyMsgDetail = () => {
             </p>
             <p>
               <Link to={oAuthResourcePath}>
-                <Button variant="primary">{t('public~Add IDP')}</Button>
+                <Button variant="primary">{t('Add IDP')}</Button>
               </Link>
             </p>
           </>
@@ -118,9 +118,9 @@ const NoDataEmptyMsgDetail = () => {
 };
 
 const NoDataEmptyMsg = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
-    <ConsoleEmptyState title={t('public~No Users found')}>
+    <ConsoleEmptyState title={t('No Users found')}>
       <NoDataEmptyMsgDetail />
     </ConsoleEmptyState>
   );
@@ -130,13 +130,13 @@ const useUsersColumns = (): {
   columns: ConsoleDataViewColumn<UserKind>[];
   resetAllColumnWidths: () => void;
 } => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(UserModel);
 
   const columns: ConsoleDataViewColumn<UserKind>[] = useMemo(
     () => [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         resizableProps: getResizableProps(tableColumnInfo[0].id),
@@ -146,7 +146,7 @@ const useUsersColumns = (): {
         },
       },
       {
-        title: t('public~Full name'),
+        title: t('Full name'),
         id: tableColumnInfo[1].id,
         sort: 'fullName',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
@@ -155,7 +155,7 @@ const useUsersColumns = (): {
         },
       },
       {
-        title: t('public~Identities'),
+        title: t('Identities'),
         id: tableColumnInfo[2].id,
         sort: 'identities[0]',
         resizableProps: getResizableProps(tableColumnInfo[2].id),
@@ -178,7 +178,7 @@ const useUsersColumns = (): {
 };
 
 const UserList: FC<UserListProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { columns, resetAllColumnWidths } = useUsersColumns();
   const { data, loaded } = props;
 
@@ -193,7 +193,7 @@ const UserList: FC<UserListProps> = (props) => {
         {...props}
         data={data}
         loaded={loaded}
-        label={t('public~Users')}
+        label={t('Users')}
         columns={columns}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
@@ -205,11 +205,11 @@ const UserList: FC<UserListProps> = (props) => {
 };
 
 export const UserPage: FC<UserPageProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <ListPage
       {...props}
-      title={t('public~Users')}
+      title={t('Users')}
       helpText={<UsersHelpText />}
       kind={referenceForModel(UserModel)}
       ListComponent={UserList}
@@ -229,17 +229,17 @@ const RoleBindingsTab: FC<RoleBindingsTabProps> = ({ obj }) => (
 );
 
 const UserDetails: FC<UserDetailsProps> = ({ obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <PaneBody>
-      <SectionHeading text={t('public~User details')} />
+      <SectionHeading text={t('User details')} />
       <ResourceSummary resource={obj}>
         <DescriptionListGroup>
-          <DescriptionListTerm>{t('public~Full name')}</DescriptionListTerm>
+          <DescriptionListTerm>{t('Full name')}</DescriptionListTerm>
           <DescriptionListDescription>{obj.fullName || '-'}</DescriptionListDescription>
         </DescriptionListGroup>
         <DescriptionListGroup>
-          <DescriptionListTerm>{t('public~Identities')}</DescriptionListTerm>
+          <DescriptionListTerm>{t('Identities')}</DescriptionListTerm>
           <DescriptionListDescription>
             {_.map(obj.identities, (identity: string) => (
               <div key={identity}>{identity}</div>

@@ -12,7 +12,7 @@ type DevfileInfoProps = {
 };
 
 const DevfileInfo: FC<DevfileInfoProps> = ({ devfileSample }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const { icon, iconClass, displayName, description, git, tags } = devfileSample;
   const iconUrl = iconClass ? getImageForIconClass(iconClass) : icon || '';
   const sampleRepo = git?.remotes ? Object.values(git.remotes)[0] : '';
@@ -55,7 +55,7 @@ const DevfileInfo: FC<DevfileInfoProps> = ({ devfileSample }) => {
       {description && <p className="co-catalog-item-details__description">{description}</p>}
       {sampleRepo && (
         <p>
-          {t('devconsole~Sample repository:')} <ExternalLink href={sampleRepo} text={sampleRepo} />
+          {t('Sample repository:')} <ExternalLink href={sampleRepo} text={sampleRepo} />
         </p>
       )}
     </div>

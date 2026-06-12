@@ -18,7 +18,7 @@ interface HealthCheckProbeProps {
 }
 
 const HealthCheckProbe: FC<HealthCheckProbeProps> = ({ probeType }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const {
     values: { healthChecks },
     setFieldValue,
@@ -70,7 +70,7 @@ const HealthCheckProbe: FC<HealthCheckProbeProps> = ({ probeType }) => {
             icon={
               <span className="odc-heath-check-probe__successText">
                 <GreenCheckCircleIcon />{' '}
-                {t('devconsole~{{healthCheckProbeAdded}} added', {
+                {t('{{healthCheckProbeAdded}} added', {
                   healthCheckProbeAdded: getHealthChecksProbeConfig(probeType, t).formTitle,
                 })}
               </span>
@@ -81,7 +81,7 @@ const HealthCheckProbe: FC<HealthCheckProbeProps> = ({ probeType }) => {
             onClick={showProbe}
           />
           {!viewOnly && (
-            <Tooltip content={t('devconsole~Remove')} position="right">
+            <Tooltip content={t('Remove')} position="right">
               <Button
                 icon={<RhUiMinusCircleIcon />}
                 className="pf-m-plain--align-left"
@@ -94,7 +94,7 @@ const HealthCheckProbe: FC<HealthCheckProbeProps> = ({ probeType }) => {
       );
     }
     return viewOnly ? (
-      t('devconsole~No {{noHealthCheckProbe}}', {
+      t('No {{noHealthCheckProbe}}', {
         noHealthCheckProbe: getHealthChecksProbeConfig(probeType, t).formTitle,
       })
     ) : (
@@ -104,7 +104,7 @@ const HealthCheckProbe: FC<HealthCheckProbeProps> = ({ probeType }) => {
         onClick={handleAddProbe}
         icon={<RhUiAddCircleFillIcon />}
       >
-        {t('devconsole~Add {{addHealthCheckProbe}}', {
+        {t('Add {{addHealthCheckProbe}}', {
           addHealthCheckProbe: getHealthChecksProbeConfig(probeType, t).formTitle,
         })}
       </Button>
@@ -122,7 +122,7 @@ const HealthCheckProbe: FC<HealthCheckProbeProps> = ({ probeType }) => {
             onClick={showProbe}
           >
             &nbsp;&nbsp;
-            {`${viewOnly ? t('devconsole~View') : t('devconsole~Edit')} ${t('devconsole~Probe')}`}
+            {`${viewOnly ? t('View') : t('Edit')} ${t('Probe')}`}
           </Button>
         )}
       </TertiaryHeading>

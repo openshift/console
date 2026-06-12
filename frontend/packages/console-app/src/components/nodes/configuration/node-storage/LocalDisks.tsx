@@ -26,7 +26,7 @@ type LocalDiskRowProps = {
 };
 
 const LocalDiskRow: FC<LocalDiskRowProps> = ({ obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const { string: size } =
     obj.sizeBytes !== undefined ? humanizeDecimalBytes(obj.sizeBytes) : { string: DASH };
 
@@ -34,9 +34,7 @@ const LocalDiskRow: FC<LocalDiskRowProps> = ({ obj }) => {
     <tr className="pf-v6-c-table__tr">
       <td className="pf-v6-c-table__td">{obj.name}</td>
       <td className="pf-v6-c-table__td">{size}</td>
-      <td className="pf-v6-c-table__td">
-        {obj.rotational ? t('console-app~Rotational') : t('console-app~SSD')}
-      </td>
+      <td className="pf-v6-c-table__td">{obj.rotational ? t('Rotational') : t('SSD')}</td>
       <td className="pf-v6-c-table__td">{obj.model}</td>
       <td className="pf-v6-c-table__td">{obj.serialNumber ?? DASH}</td>
       <td className="pf-v6-c-table__td">{obj.vendor ?? DASH}</td>
@@ -46,7 +44,7 @@ const LocalDiskRow: FC<LocalDiskRowProps> = ({ obj }) => {
 };
 
 const LocalDisks: FC<LocalDisksProps> = ({ node }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const isBareMetalPluginActive = useIsBareMetalPluginActive();
   const [bareMetalHost, bareMetalHostLoaded, bareMetalHostLoadError] = useWatchBareMetalHost(node);
 
@@ -59,11 +57,11 @@ const LocalDisks: FC<LocalDisksProps> = ({ node }) => {
   return (
     <>
       <Title headingLevel="h3" className="co-section-heading">
-        <span>{t('console-app~Local disks')}</span>
+        <span>{t('Local disks')}</span>
       </Title>
       {!isBareMetalPluginActive ? (
-        <Alert variant="info" isInline title={t('console-app~Unable to load BMC configuration')}>
-          <p>{t('console-app~Bare Metal is not configured for this cluster.')}</p>
+        <Alert variant="info" isInline title={t('Unable to load BMC configuration')}>
+          <p>{t('Bare Metal is not configured for this cluster.')}</p>
         </Alert>
       ) : !bareMetalHostLoaded ? (
         <div
@@ -71,28 +69,28 @@ const LocalDisks: FC<LocalDisksProps> = ({ node }) => {
           data-test="local-disks-table-loading"
         />
       ) : bareMetalHostLoadError ? (
-        <Alert isInline variant="danger" title={t('console-app~Unable to load local disks')}>
-          {bareMetalHostLoadError.message || t('console-app~Unable to load BareMetalHost')}
+        <Alert isInline variant="danger" title={t('Unable to load local disks')}>
+          {bareMetalHostLoadError.message || t('Unable to load BareMetalHost')}
         </Alert>
       ) : (
         <div className="co-table-container">
           <table className="pf-v6-c-table pf-m-compact pf-m-border-rows">
             <thead className="pf-v6-c-table__thead">
               <tr className="pf-v6-c-table__tr">
-                <th className="pf-v6-c-table__th">{t('console-app~Name')}</th>
-                <th className="pf-v6-c-table__th">{t('console-app~Size')}</th>
-                <th className="pf-v6-c-table__th">{t('console-app~Type')}</th>
-                <th className="pf-v6-c-table__th">{t('console-app~Model')}</th>
-                <th className="pf-v6-c-table__th">{t('console-app~Serial number')}</th>
-                <th className="pf-v6-c-table__th">{t('console-app~Vendor')}</th>
-                <th className="pf-v6-c-table__th">{t('console-app~HCTL')}</th>
+                <th className="pf-v6-c-table__th">{t('Name')}</th>
+                <th className="pf-v6-c-table__th">{t('Size')}</th>
+                <th className="pf-v6-c-table__th">{t('Type')}</th>
+                <th className="pf-v6-c-table__th">{t('Model')}</th>
+                <th className="pf-v6-c-table__th">{t('Serial number')}</th>
+                <th className="pf-v6-c-table__th">{t('Vendor')}</th>
+                <th className="pf-v6-c-table__th">{t('HCTL')}</th>
               </tr>
             </thead>
             <tbody className="pf-v6-c-table__tbody">
               {disks.length === 0 ? (
                 <tr className="pf-v6-c-table__tr">
                   <td className="pf-v6-c-table__td" colSpan={7}>
-                    {t('console-app~No local disks found.')}
+                    {t('No local disks found.')}
                   </td>
                 </tr>
               ) : (

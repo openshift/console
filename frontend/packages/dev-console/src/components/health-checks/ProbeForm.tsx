@@ -39,23 +39,23 @@ interface ProbeFormProps {
 }
 
 const ProbeForm: FC<ProbeFormProps> = ({ onSubmit, onClose, probeType }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const {
     values: { healthChecks },
     errors,
   } = useFormikContext<FormikValues>();
   const { viewOnly } = useContext(HealthCheckContext);
   const RequestTypeOptions = {
-    httpGet: t('devconsole~HTTP GET'),
-    command: t('devconsole~Container command'),
-    tcpSocket: t('devconsole~TCP socket'),
+    httpGet: t('HTTP GET'),
+    command: t('Container command'),
+    tcpSocket: t('TCP socket'),
   };
   return (
     <div className="odc-heath-check-probe-form">
       <FormSection>
         <DropdownField
           name={`healthChecks.${probeType}.data.requestType`}
-          label={t('devconsole~Type')}
+          label={t('Type')}
           items={RequestTypeOptions}
           title={RequestType.HTTPGET}
           disabled={viewOnly}
@@ -65,7 +65,7 @@ const ProbeForm: FC<ProbeFormProps> = ({ onSubmit, onClose, probeType }) => {
         <InputField
           type={TextInputTypes.text}
           name={`healthChecks.${probeType}.data.failureThreshold`}
-          label={t('devconsole~Failure threshold')}
+          label={t('Failure threshold')}
           style={{ maxWidth: '100%' }}
           helpText={t(
             'devconsole~How many times the probe will try starting or restarting before giving up.',
@@ -75,7 +75,7 @@ const ProbeForm: FC<ProbeFormProps> = ({ onSubmit, onClose, probeType }) => {
         <InputField
           type={TextInputTypes.text}
           name={`healthChecks.${probeType}.data.successThreshold`}
-          label={t('devconsole~Success threshold')}
+          label={t('Success threshold')}
           style={{ maxWidth: '100%' }}
           helpText={t(
             'devconsole~How many consecutive successes for the probe to be considered successful after having failed.',
@@ -85,31 +85,31 @@ const ProbeForm: FC<ProbeFormProps> = ({ onSubmit, onClose, probeType }) => {
         <InputGroupField
           type={TextInputTypes.text}
           name={`healthChecks.${probeType}.data.initialDelaySeconds`}
-          label={t('devconsole~Initial delay')}
+          label={t('Initial delay')}
           helpText={t(
             'devconsole~How long to wait after the Container starts before checking its health.',
           )}
-          afterInput={<InputGroupText>{t('devconsole~seconds')}</InputGroupText>}
+          afterInput={<InputGroupText>{t('seconds')}</InputGroupText>}
           style={{ maxWidth: '100%' }}
           isDisabled={viewOnly}
         />
         <InputGroupField
           type={TextInputTypes.text}
           name={`healthChecks.${probeType}.data.periodSeconds`}
-          label={t('devconsole~Period')}
-          helpText={t('devconsole~How often to perform the probe.')}
-          afterInput={<InputGroupText>{t('devconsole~seconds')}</InputGroupText>}
+          label={t('Period')}
+          helpText={t('How often to perform the probe.')}
+          afterInput={<InputGroupText>{t('seconds')}</InputGroupText>}
           style={{ maxWidth: '100%' }}
           isDisabled={viewOnly}
         />
         <InputGroupField
           type={TextInputTypes.text}
           name={`healthChecks.${probeType}.data.timeoutSeconds`}
-          label={t('devconsole~Timeout')}
+          label={t('Timeout')}
           helpText={t(
             'devconsole~How long to wait for the probe to finish, if the time is exceeded, the probe is considered failed.',
           )}
-          afterInput={<InputGroupText>{t('devconsole~seconds')}</InputGroupText>}
+          afterInput={<InputGroupText>{t('seconds')}</InputGroupText>}
           style={{ maxWidth: '100%' }}
           isDisabled={viewOnly}
         />

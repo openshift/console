@@ -112,7 +112,7 @@ type NodeDetailsGpuMetricsProps = {
 };
 
 const NodeDetailsGpuMetrics: FC<NodeDetailsGpuMetricsProps> = ({ node }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const nodeName = node.metadata.name;
 
   const hasCapacity = nodeHasGpuCapacity(node.status?.capacity);
@@ -199,7 +199,7 @@ const NodeDetailsGpuMetrics: FC<NodeDetailsGpuMetricsProps> = ({ node }) => {
 
   return (
     <PaneBody>
-      <SectionHeading text={t('console-app~GPU metrics')} />
+      <SectionHeading text={t('GPU metrics')} />
 
       {(gpuCountStr || gpuCapacityStr || gpuAllocatableStr || gpuModelStr) && (
         <Grid hasGutter>
@@ -207,13 +207,13 @@ const NodeDetailsGpuMetrics: FC<NodeDetailsGpuMetricsProps> = ({ node }) => {
             <DescriptionList isHorizontal>
               {gpuCountStr && (
                 <DescriptionListGroup>
-                  <DescriptionListTerm>{t('console-app~GPU count')}</DescriptionListTerm>
+                  <DescriptionListTerm>{t('GPU count')}</DescriptionListTerm>
                   <DescriptionListDescription>{gpuCountStr}</DescriptionListDescription>
                 </DescriptionListGroup>
               )}
               {gpuModelStr && (
                 <DescriptionListGroup>
-                  <DescriptionListTerm>{t('console-app~GPU model')}</DescriptionListTerm>
+                  <DescriptionListTerm>{t('GPU model')}</DescriptionListTerm>
                   <DescriptionListDescription>{gpuModelStr}</DescriptionListDescription>
                 </DescriptionListGroup>
               )}
@@ -223,13 +223,13 @@ const NodeDetailsGpuMetrics: FC<NodeDetailsGpuMetricsProps> = ({ node }) => {
             <DescriptionList isHorizontal>
               {gpuCapacityStr && (
                 <DescriptionListGroup>
-                  <DescriptionListTerm>{t('console-app~GPU capacity')}</DescriptionListTerm>
+                  <DescriptionListTerm>{t('GPU capacity')}</DescriptionListTerm>
                   <DescriptionListDescription>{gpuCapacityStr}</DescriptionListDescription>
                 </DescriptionListGroup>
               )}
               {gpuAllocatableStr && (
                 <DescriptionListGroup>
-                  <DescriptionListTerm>{t('console-app~Allocatable GPUs')}</DescriptionListTerm>
+                  <DescriptionListTerm>{t('Allocatable GPUs')}</DescriptionListTerm>
                   <DescriptionListDescription>{gpuAllocatableStr}</DescriptionListDescription>
                 </DescriptionListGroup>
               )}
@@ -246,30 +246,26 @@ const NodeDetailsGpuMetrics: FC<NodeDetailsGpuMetricsProps> = ({ node }) => {
 
       {!isLoading && hasMetrics && (
         <div className="co-table-container pf-v6-u-mt-md">
-          <Table
-            variant="compact"
-            gridBreakPoint=""
-            aria-label={t('console-app~Per-device GPU metrics')}
-          >
+          <Table variant="compact" gridBreakPoint="" aria-label={t('Per-device GPU metrics')}>
             <Thead>
               <Tr>
-                <Th>{t('console-app~GPU device')}</Th>
-                <Th>{t('console-app~Utilization')}</Th>
-                <Th>{t('console-app~Temperature')}</Th>
-                <Th>{t('console-app~Power usage')}</Th>
-                <Th>{t('console-app~Framebuffer memory used')}</Th>
-                <Th>{t('console-app~Framebuffer memory free')}</Th>
+                <Th>{t('GPU device')}</Th>
+                <Th>{t('Utilization')}</Th>
+                <Th>{t('Temperature')}</Th>
+                <Th>{t('Power usage')}</Th>
+                <Th>{t('Framebuffer memory used')}</Th>
+                <Th>{t('Framebuffer memory free')}</Th>
               </Tr>
             </Thead>
             <Tbody>
               {rows.map((row) => (
                 <Tr key={row.id}>
-                  <Td dataLabel={t('console-app~GPU device')}>{row.label}</Td>
-                  <Td dataLabel={t('console-app~Utilization')}>{row.utilization}</Td>
-                  <Td dataLabel={t('console-app~Temperature')}>{row.temperature}</Td>
-                  <Td dataLabel={t('console-app~Power usage')}>{row.power}</Td>
-                  <Td dataLabel={t('console-app~Framebuffer memory used')}>{row.fbUsed}</Td>
-                  <Td dataLabel={t('console-app~Framebuffer memory free')}>{row.fbFree}</Td>
+                  <Td dataLabel={t('GPU device')}>{row.label}</Td>
+                  <Td dataLabel={t('Utilization')}>{row.utilization}</Td>
+                  <Td dataLabel={t('Temperature')}>{row.temperature}</Td>
+                  <Td dataLabel={t('Power usage')}>{row.power}</Td>
+                  <Td dataLabel={t('Framebuffer memory used')}>{row.fbUsed}</Td>
+                  <Td dataLabel={t('Framebuffer memory free')}>{row.fbFree}</Td>
                 </Tr>
               ))}
             </Tbody>

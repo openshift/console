@@ -15,10 +15,10 @@ import {
 import { AdvancedConfiguration } from './advanced-configuration';
 
 const Form: FC<FormProps> = ({ formValues, dispatchFormChange }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <>
-      <FormGroup label={t('public~URL')} fieldId="webhook-url" isRequired>
+      <FormGroup label={t('URL')} fieldId="webhook-url" isRequired>
         <TextInput
           id="webhook-url"
           data-test="webhook-url"
@@ -31,7 +31,7 @@ const Form: FC<FormProps> = ({ formValues, dispatchFormChange }) => {
         <FormHelperText>
           <HelperText>
             <HelperTextItem id="webhook-url-help">
-              {t('public~The endpoint to send HTTP POST requests to.')}
+              {t('The endpoint to send HTTP POST requests to.')}
             </HelperTextItem>
           </HelperText>
         </FormHelperText>

@@ -20,7 +20,7 @@ import HelmReleaseListPage from './HelmReleaseListPage';
 import RepositoriesPage from './RepositoriesListPage';
 
 const HelmPage: FC<{ mock?: boolean; namespace: string | undefined }> = ({ mock, namespace }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   const isHelmVisible = useFlag('HELM_CHARTS_CATALOG_TYPE');
   const [showTitle, canCreate] = [false, false];
   const [projectHelmChartCreateAccess, loadingCreatePHCR] = useAccessReview({
@@ -60,21 +60,16 @@ const HelmPage: FC<{ mock?: boolean; namespace: string | undefined }> = ({ mock,
 
   const menuActions: MenuActions = {
     helmRelease: {
-      label: isHelmVisible ? t('helm-plugin~Helm Release') : undefined,
+      label: isHelmVisible ? t('Helm Release') : undefined,
       onSelection: () => `/catalog/ns/${namespace || 'default'}?catalogType=HelmChart`,
     },
     projectHelmChartRepository: {
-      label:
-        projectHelmChartCreateAccess || helmChartCreateAccess
-          ? t('helm-plugin~Repository')
-          : undefined,
+      label: projectHelmChartCreateAccess || helmChartCreateAccess ? t('Repository') : undefined,
       onSelection: () => `/helm-repositories/ns/${namespace || 'default'}/~new/form`,
     },
     helmChartInstallation: {
       label:
-        projectHelmChartCreateAccess || helmChartCreateAccess
-          ? t('helm-plugin~Helm chart URL')
-          : undefined,
+        projectHelmChartCreateAccess || helmChartCreateAccess ? t('Helm chart URL') : undefined,
       onSelection: () => `/helm/ns/${namespace || 'default'}/url-chart`,
     },
   };
@@ -118,7 +113,7 @@ const HelmPage: FC<{ mock?: boolean; namespace: string | undefined }> = ({ mock,
     (helmChartListAccess && helmChartCreateAccess && helmChartEditAccess) ? (
     <MultiTabListPage
       pages={pages}
-      title={t('helm-plugin~Helm')}
+      title={t('Helm')}
       menuActions={menuActions}
       telemetryPrefix="Helm"
     />
@@ -128,14 +123,14 @@ const HelmPage: FC<{ mock?: boolean; namespace: string | undefined }> = ({ mock,
 };
 
 const PageContents: FC<{ noProjectsAvailable?: boolean }> = ({ noProjectsAvailable }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   const { ns: namespace } = useParams();
   const [activePerspective] = useActivePerspective();
 
   return activePerspective === 'admin' || namespace ? (
     <HelmPage namespace={namespace} mock={noProjectsAvailable} />
   ) : (
-    <CreateProjectListPage title={t('helm-plugin~Helm')}>
+    <CreateProjectListPage title={t('Helm')}>
       {(openProjectModal) => (
         <Trans t={t} ns="helm-plugin">
           Select a Project to view its details

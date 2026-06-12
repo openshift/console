@@ -35,7 +35,7 @@ import {
 const networkPopovers = [NetworkInPopover, NetworkOutPopover];
 
 const UtilizationCard: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const { obj, setCPULimit, setMemoryLimit } = useContext(NodeDashboardContext);
 
   const nodeName = obj.metadata.name;
@@ -63,12 +63,12 @@ const UtilizationCard: FC = () => {
           className: undefined,
         }}
       >
-        <CardTitle>{t('console-app~Utilization')}</CardTitle>
+        <CardTitle>{t('Utilization')}</CardTitle>
       </CardHeader>
       <UtilizationBody>
         <NodeUtilizationContext.Provider value={{ nodeIP, nodeName }}>
           <PrometheusUtilizationItem
-            title={t('console-app~CPU')}
+            title={t('CPU')}
             humanizeValue={humanizeCpuCores}
             utilizationQuery={queries[NodeQueries.CPU_USAGE]}
             totalQuery={queries[NodeQueries.CPU_TOTAL]}
@@ -78,7 +78,7 @@ const UtilizationCard: FC = () => {
             setLimitReqState={setCPULimit}
           />
           <PrometheusUtilizationItem
-            title={t('console-app~Memory')}
+            title={t('Memory')}
             humanizeValue={humanizeBinaryBytes}
             utilizationQuery={queries[NodeQueries.MEMORY_USAGE]}
             totalQuery={queries[NodeQueries.MEMORY_TOTAL]}
@@ -89,7 +89,7 @@ const UtilizationCard: FC = () => {
             setLimitReqState={setMemoryLimit}
           />
           <PrometheusUtilizationItem
-            title={t('console-app~Filesystem')}
+            title={t('Filesystem')}
             humanizeValue={humanizeBinaryBytes}
             utilizationQuery={queries[NodeQueries.FILESYSTEM_USAGE]}
             totalQuery={queries[NodeQueries.FILESYSTEM_TOTAL]}
@@ -97,13 +97,13 @@ const UtilizationCard: FC = () => {
             TopConsumerPopover={FilesystemPopover}
           />
           <PrometheusMultilineUtilizationItem
-            title={t('console-app~Network transfer')}
+            title={t('Network transfer')}
             humanizeValue={humanizeDecimalBytesPerSec}
             queries={multilineQueries[NodeQueries.NETWORK_UTILIZATION]}
             TopConsumerPopovers={networkPopovers}
           />
           <PrometheusUtilizationItem
-            title={t('console-app~Pod count')}
+            title={t('Pod count')}
             humanizeValue={humanizeNumber}
             utilizationQuery={queries[NodeQueries.POD_COUNT]}
           />

@@ -21,7 +21,7 @@ export const ImpersonateNotifier = connect(
     stopImpersonate: () => void;
     impersonate: ImpersonateKind;
   }) => {
-    const { t } = useTranslation();
+    const { t } = useTranslation('public');
 
     const handleStopImpersonate = useCallback(() => {
       stopImpersonate();
@@ -53,10 +53,10 @@ export const ImpersonateNotifier = connect(
 
     const groupsText = hasGroups
       ? remainingCount > 0
-        ? t('public~ with groups: {{visibleGroups}}, and', {
+        ? t(' with groups: {{visibleGroups}}, and', {
             visibleGroups: visibleGroups.join(', '),
           })
-        : t('public~ with groups: {{groups}}', { groups: visibleGroups.join(', ') })
+        : t(' with groups: {{groups}}', { groups: visibleGroups.join(', ') })
       : '';
 
     const groupsTooltip =
@@ -71,7 +71,7 @@ export const ImpersonateNotifier = connect(
           }
         >
           <span className="pf-v6-u-text-decoration-underline-dotted pf-v6-u-color-brand">
-            {t('public~{{count}} more', { count: remainingCount })}
+            {t('{{count}} more', { count: remainingCount })}
           </span>
         </Tooltip>
       ) : null;
@@ -84,15 +84,15 @@ export const ImpersonateNotifier = connect(
           gap={{ default: 'gapSm' }}
         >
           <div>
-            {t('public~You are impersonating {{kind}} ', { kind: displayKind })}
+            {t('You are impersonating {{kind}} ', { kind: displayKind })}
             <strong>{impersonateName}</strong>
             {groupsText}
             {groupsTooltip && <> {groupsTooltip}</>}
-            {t('public~. You are viewing all resources and roles this {{kind}} can access. ', {
+            {t('. You are viewing all resources and roles this {{kind}} can access. ', {
               kind: displayKindForAccess,
             })}
             <Button isInline type="button" variant="link" onClick={handleStopImpersonate}>
-              {t('public~Stop impersonating')}
+              {t('Stop impersonating')}
             </Button>
           </div>
         </Flex>

@@ -11,7 +11,7 @@ type ModelStatusBoxProps = {
 };
 
 const ModelStatusBox: FC<ModelStatusBoxProps> = ({ groupVersionKind, children }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const [model, inFlight] = useK8sModel(groupVersionKind);
 
   if (!model && inFlight) {

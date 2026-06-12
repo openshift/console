@@ -17,7 +17,7 @@ const WebhookToastContent: FC<WebhookToastContentProps> = ({
   git,
   projectName,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const translatedGitType = t(GitReadableTypes[git.detectedType]);
   return (
     <>

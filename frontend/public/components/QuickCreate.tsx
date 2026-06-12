@@ -67,7 +67,7 @@ const useCanCreateResource = () => {
 };
 
 const QuickCreate: FC<QuickCreateProps> = ({ namespace }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const navigate = useNavigate();
   const fireTelemetryEvent = useTelemetry();
   const opeshiftStartGuideEnable = useFlag(FLAGS.SHOW_OPENSHIFT_START_GUIDE);
@@ -89,10 +89,10 @@ const QuickCreate: FC<QuickCreateProps> = ({ namespace }) => {
       onSelect={onSelect}
       onOpenChange={(open: boolean) => setIsOpen(open)}
       toggle={(toggleRef: Ref<MenuToggleElement>) => (
-        <Tooltip content={t('public~Quick create')} position="bottom">
+        <Tooltip content={t('Quick create')} position="bottom">
           <MenuToggle
             ref={toggleRef}
-            aria-label={t('public~Quick create')}
+            aria-label={t('Quick create')}
             variant="plain"
             onClick={onToggleClick}
             isExpanded={isOpen}
@@ -119,12 +119,12 @@ const QuickCreate: FC<QuickCreateProps> = ({ namespace }) => {
             navigate(importYAMLURL);
           }}
           tooltipProps={{
-            content: t('public~Create resources from their YAML or JSON definitions'),
+            content: t('Create resources from their YAML or JSON definitions'),
             position: 'left',
           }}
           data-test="qc-import-yaml"
         >
-          {t('public~Import YAML')}
+          {t('Import YAML')}
         </DropdownItem>
         {canCreate && (
           <>
@@ -138,12 +138,12 @@ const QuickCreate: FC<QuickCreateProps> = ({ namespace }) => {
                 navigate(getImportFromGitURL(namespace));
               }}
               tooltipProps={{
-                content: t('public~Import code from your Git repository to be built and deployed'),
+                content: t('Import code from your Git repository to be built and deployed'),
                 position: 'left',
               }}
               data-test="qc-import-from-git"
             >
-              {t('public~Import from Git')}
+              {t('Import from Git')}
             </DropdownItem>
             <DropdownItem
               value={2}
@@ -162,7 +162,7 @@ const QuickCreate: FC<QuickCreateProps> = ({ namespace }) => {
               }}
               data-test="qc-container-images"
             >
-              {t('public~Container images')}
+              {t('Container images')}
             </DropdownItem>
           </>
         )}
@@ -174,7 +174,7 @@ const QuickCreate: FC<QuickCreateProps> = ({ namespace }) => {
 export default QuickCreate;
 
 export const QuickCreateImportFromGit = ({ namespace, className }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const navigate = useNavigate();
   const opeshiftStartGuideEnable = useFlag(FLAGS.SHOW_OPENSHIFT_START_GUIDE);
 
@@ -187,14 +187,14 @@ export const QuickCreateImportFromGit = ({ namespace, className }) => {
     canCreate &&
     !opeshiftStartGuideEnable && (
       <button type="button" onClick={handleClick} className={className}>
-        {t('public~Import from Git')}
+        {t('Import from Git')}
       </button>
     )
   );
 };
 
 export const QuickCreateContainerImages = ({ namespace, className }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const navigate = useNavigate();
   const opeshiftStartGuideEnable = useFlag(FLAGS.SHOW_OPENSHIFT_START_GUIDE);
 
@@ -207,7 +207,7 @@ export const QuickCreateContainerImages = ({ namespace, className }) => {
     canCreate &&
     !opeshiftStartGuideEnable && (
       <button type="button" onClick={handleClick} className={className}>
-        {t('public~Container images')}
+        {t('Container images')}
       </button>
     )
   );

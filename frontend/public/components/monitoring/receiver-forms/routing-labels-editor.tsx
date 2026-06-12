@@ -62,15 +62,15 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
     });
   };
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   return (
-    <FormSection title={t('public~Routing labels')}>
+    <FormSection title={t('Routing labels')}>
       <Content component={ContentVariants.p} className="pf-v6-u-mb-0">
         <Trans ns="public">
           Firing alerts with labels that match all of these{' '}
-          <ExternalLink href={DOC_URL_PROMETHEUS_MATCHERS} text={t('public~matchers')} /> will be
-          sent to this receiver.
+          <ExternalLink href={DOC_URL_PROMETHEUS_MATCHERS} text={t('matchers')} /> will be sent to
+          this receiver.
         </Trans>
       </Content>
       <FormGroup>
@@ -91,18 +91,18 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
                     type="text"
                     data-test={`label-${i}`}
                     onChange={onRoutingLabelChange(i)}
-                    placeholder={t('public~Matcher')}
+                    placeholder={t('Matcher')}
                     value={routeLabel}
                     aria-describedby="routing-labels-help"
                   />
                 </InputGroupItem>
                 <InputGroupItem>
-                  <Tooltip content={t('public~Remove')}>
+                  <Tooltip content={t('Remove')}>
                     <Button
                       icon={<RhUiMinusCircleIcon />}
                       type="button"
                       onClick={() => removeRoutingLabel(i)}
-                      aria-label={t('public~Remove')}
+                      aria-label={t('Remove')}
                       isDisabled={!isDefaultReceiver && formValues.routeLabels.length <= 1}
                       variant="plain"
                     />
@@ -123,7 +123,7 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
               aria-live="polite"
               aria-invalid={formValues.routeLabelDuplicateNamesError}
             >
-              {t('public~Routing label names must be unique.')}
+              {t('Routing label names must be unique.')}
             </HelperTextItem>
           </HelperText>
         </FormHelperText>
@@ -136,7 +136,7 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
           variant="link"
           isInline
         >
-          {t('public~Add label')}
+          {t('Add label')}
         </Button>
       )}
     </FormSection>

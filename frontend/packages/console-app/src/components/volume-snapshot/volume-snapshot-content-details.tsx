@@ -26,7 +26,7 @@ import { snapshotStatus } from '@console/shared/src/sorts/snapshot';
 const { editYaml, events } = navFactory;
 
 const Details: FC<DetailsProps> = ({ obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const deletionPolicy = obj?.spec?.deletionPolicy || '';
   const driver = obj?.spec?.driver || '';
   const { volumeHandle, snapshotHandle } = obj?.spec?.source || {};
@@ -36,12 +36,12 @@ const Details: FC<DetailsProps> = ({ obj }) => {
 
   return (
     <PaneBody>
-      <SectionHeading text={t('console-app~VolumeSnapshotContent details')} />
+      <SectionHeading text={t('VolumeSnapshotContent details')} />
       <Grid hasGutter>
         <GridItem md={6}>
           <ResourceSummary resource={obj}>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('console-app~Status')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Status')}</DescriptionListTerm>
               <DescriptionListDescription>
                 <Status status={snapshotStatus(obj)} />
               </DescriptionListDescription>
@@ -52,12 +52,12 @@ const Details: FC<DetailsProps> = ({ obj }) => {
           <DescriptionList>
             {size && (
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('console-app~Size')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('Size')}</DescriptionListTerm>
                 <DescriptionListDescription>{sizeMetrics}</DescriptionListDescription>
               </DescriptionListGroup>
             )}
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('console-app~VolumeSnapshot')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('VolumeSnapshot')}</DescriptionListTerm>
               <DescriptionListDescription>
                 <ResourceLink
                   kind={referenceForModel(VolumeSnapshotModel)}
@@ -67,7 +67,7 @@ const Details: FC<DetailsProps> = ({ obj }) => {
               </DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('console-app~VolumeSnapshotClass')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('VolumeSnapshotClass')}</DescriptionListTerm>
               <DescriptionListDescription>
                 <ResourceLink
                   kind={referenceForModel(VolumeSnapshotClassModel)}
@@ -76,22 +76,22 @@ const Details: FC<DetailsProps> = ({ obj }) => {
               </DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('console-app~Deletion policy')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Deletion policy')}</DescriptionListTerm>
               <DescriptionListDescription>{deletionPolicy}</DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('console-app~Driver')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Driver')}</DescriptionListTerm>
               <DescriptionListDescription>{driver}</DescriptionListDescription>
             </DescriptionListGroup>
             {volumeHandle && (
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('console-app~Volume handle')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('Volume handle')}</DescriptionListTerm>
                 <DescriptionListDescription>{volumeHandle}</DescriptionListDescription>
               </DescriptionListGroup>
             )}
             {snapshotHandle && (
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('console-app~Snapshot handle')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('Snapshot handle')}</DescriptionListTerm>
                 <DescriptionListDescription>{snapshotHandle}</DescriptionListDescription>
               </DescriptionListGroup>
             )}

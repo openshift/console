@@ -29,7 +29,7 @@ const HelmReleaseRollbackForm: FC<Props> = ({
   releaseName,
   helmActionConfig,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   const { type: helmAction, title } = helmActionConfig;
 
   const formHelpText = (
@@ -51,11 +51,7 @@ const HelmReleaseRollbackForm: FC<Props> = ({
     <Form onSubmit={handleSubmit} className="pf-v6-u-display-block">
       <FormBody>
         <FormHeader title={title} helpText={formHelpText} />
-        <FormGroup
-          fieldId="revision-list-field"
-          label={t('helm-plugin~Revision history')}
-          isRequired
-        >
+        <FormGroup fieldId="revision-list-field" label={t('Revision history')} isRequired>
           <HelmReleaseHistoryTable releaseHistory={releaseHistory} />
         </FormGroup>
       </FormBody>
@@ -65,7 +61,7 @@ const HelmReleaseRollbackForm: FC<Props> = ({
         isSubmitting={isSubmitting}
         submitLabel={helmActionString(t)[helmAction]}
         disableSubmit={isSubmitting || !dirty || !_.isEmpty(errors)}
-        resetLabel={t('helm-plugin~Cancel')}
+        resetLabel={t('Cancel')}
         sticky
       />
     </Form>

@@ -122,7 +122,7 @@ const NavHeader: FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
   ) : (
     <div data-test-id="perspective-switcher-toggle" id="core-platform-perspective">
       <Title headingLevel="h2" size="md">
-        <RhUiGearGroupFillIcon /> {t('console-app~Core platform')}
+        <RhUiGearGroupFillIcon /> {t('Core platform')}
       </Title>
     </div>
   );

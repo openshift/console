@@ -8,7 +8,7 @@ import { TextColumnField } from '@console/shared/src/components/formik-fields/te
 import type { StrategyFieldProps } from './utils/types';
 
 const CustomStrategy: FC<StrategyFieldProps> = ({ resourceObj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const {
     values: {
       formData: {
@@ -20,21 +20,21 @@ const CustomStrategy: FC<StrategyFieldProps> = ({ resourceObj }) => {
     <div data-test="customParams">
       <InputField
         name="formData.deploymentStrategy.customParams.image"
-        label={t('devconsole~Image name')}
-        helpText={t('devconsole~An image that can carry out the deployment.')}
+        label={t('Image name')}
+        helpText={t('An image that can carry out the deployment.')}
       />
       <TextColumnField
         name="formData.deploymentStrategy.customParams.command"
-        label={t('devconsole~Command')}
-        addLabel={t('devconsole~Add another argument')}
-        placeholder={t('devconsole~Add argument')}
+        label={t('Command')}
+        addLabel={t('Add another argument')}
+        placeholder={t('Add argument')}
         helpText={t(
           'devconsole~Enter the command to run inside the container. The command is considered successful if its exit code is 0.',
         )}
       />
       <EnvironmentField
         name="formData.deploymentStrategy.customParams.environment"
-        label={t('devconsole~Environment variables (runtime only)')}
+        label={t('Environment variables (runtime only)')}
         envs={customParams.environment ?? []}
         obj={resourceObj}
       />

@@ -3,11 +3,11 @@ import { RhUiLabIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 
 const SampleRepo = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   return (
     <FormHelperText>
       <Button icon={<RhUiLabIcon />} {...props} type="button" variant={ButtonVariant.link} isInline>
-        {t('devconsole~Try sample')}
+        {t('Try sample')}
       </Button>
     </FormHelperText>
   );

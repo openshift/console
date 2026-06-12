@@ -33,7 +33,7 @@ export const InstallPlanApprovalModal: FC<InstallPlanApprovalModalProps> = ({
   k8sUpdate,
   obj,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
   const [selectedApprovalStrategy, setSelectedApprovalStrategy] = useState(
     getApprovalStrategy(obj),
@@ -57,14 +57,14 @@ export const InstallPlanApprovalModal: FC<InstallPlanApprovalModalProps> = ({
   return (
     <>
       <ModalHeader
-        title={t('olm~Change update approval strategy')}
+        title={t('Change update approval strategy')}
         data-test-id="modal-title"
         labelId="installplan-approval-modal-title"
       />
       <ModalBody>
         <Form id="installplan-approval-form" onSubmit={submit}>
           <FormGroup
-            label={t('olm~What strategy is used for approving updates?')}
+            label={t('What strategy is used for approving updates?')}
             fieldId="approval-strategy"
             role="radiogroup"
           >
@@ -72,8 +72,8 @@ export const InstallPlanApprovalModal: FC<InstallPlanApprovalModalProps> = ({
               id="approval-strategy-automatic"
               name="approval-strategy"
               value={InstallPlanApproval.Automatic}
-              label={`${t(`olm~Automatic`)} (${t('public~default')})`}
-              description={t('olm~New updates will be installed as soon as they become available.')}
+              label={`${t(`olm~Automatic`)} (${t('default')})`}
+              description={t('New updates will be installed as soon as they become available.')}
               onChange={() => setSelectedApprovalStrategy(InstallPlanApproval.Automatic)}
               isChecked={selectedApprovalStrategy === InstallPlanApproval.Automatic}
               data-checked-state={selectedApprovalStrategy === InstallPlanApproval.Automatic}
@@ -82,7 +82,7 @@ export const InstallPlanApprovalModal: FC<InstallPlanApprovalModalProps> = ({
               id="approval-strategy-manual"
               name="approval-strategy"
               value={InstallPlanApproval.Manual}
-              label={t('olm~Manual')}
+              label={t('Manual')}
               description={t(
                 'olm~New updates need to be manually approved before installation begins.',
               )}
@@ -103,10 +103,10 @@ export const InstallPlanApprovalModal: FC<InstallPlanApprovalModalProps> = ({
           data-test="confirm-action"
           id="confirm-action"
         >
-          {t('public~Save')}
+          {t('Save')}
         </Button>
         <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
-          {t('public~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </>

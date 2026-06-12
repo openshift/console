@@ -26,9 +26,9 @@ const ActionMenuToggle: FC<ActionMenuToggleProps> = ({
   onToggleClick,
   onToggleHover,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const isKebabVariant = toggleVariant === ActionMenuVariant.KEBAB;
-  const toggleLabel = toggleTitle || t('console-shared~Actions');
+  const toggleLabel = toggleTitle || t('Actions');
 
   const handleMenuKeys = (event) => {
     if (!isOpen) {

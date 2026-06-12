@@ -28,14 +28,14 @@ export const DonutChart: FC<DonutChartProps> = ({
   secondaryTitle,
   className,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const [ref, width] = useRefWidth();
 
-  const usedLabelText = usedLabel || t('public~used');
+  const usedLabelText = usedLabel || t('used');
   const secondaryTitleText = secondaryTitle || usedLabelText;
   const labelText = label || t('No data');
 
-  const labels = ({ datum: { x, y } }) => t('public~{{x}}: {{y}}%', { x, y });
+  const labels = ({ datum: { x, y } }) => t('{{x}}: {{y}}%', { x, y });
 
   const namespaceData = data.filter((datum) => datum.x === 'Namespace');
 

@@ -21,14 +21,14 @@ import { NotificationTypes } from './types';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 
 const useServiceLevelText = (level: string): string => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const levels = {
-    Premium: t('public~Premium'),
-    Standard: t('public~Standard'),
-    'Self-Support': t('public~Self-support'),
-    Eval: t('public~Self-support, 60 day trial'),
-    None: t('public~None'), // Eval has ended
-    Unknown: t('public~Unknown'), // Not officially returned from the API, but is used when no results are returned from the API
+    Premium: t('Premium'),
+    Standard: t('Standard'),
+    'Self-Support': t('Self-support'),
+    Eval: t('Self-support, 60 day trial'),
+    None: t('None'), // Eval has ended
+    Unknown: t('Unknown'), // Not officially returned from the API, but is used when no results are returned from the API
   };
 
   if (!level) {
@@ -48,7 +48,7 @@ const TrialDaysLeft: FC<{
   trialDaysLeft: number | null;
   label?: boolean;
 }> = ({ level, trialDaysLeft, label }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   if ((level !== 'Eval' && level !== 'None') || (level === 'Eval' && trialDaysLeft === null)) {
     return null;
@@ -56,14 +56,14 @@ const TrialDaysLeft: FC<{
 
   let variant: 'warning' | 'danger' = 'warning';
 
-  let alertText = t('public~{{count}} day remaining', { count: trialDaysLeft });
+  let alertText = t('{{count}} day remaining', { count: trialDaysLeft });
   if (trialDaysLeft === 0) {
-    alertText = t('public~< 1 day remaining');
+    alertText = t('< 1 day remaining');
   }
 
   if (trialDaysLeft < 0 || level === 'None') {
     variant = 'danger';
-    alertText = t('public~Trial expired');
+    alertText = t('Trial expired');
   }
 
   if (label) {
@@ -202,8 +202,8 @@ const useGetServiceLevel = (
 };
 
 export const ServiceLevelLoading: FC = () => {
-  const { t } = useTranslation();
-  return <Skeleton screenreaderText={t('public~Loading')} />;
+  const { t } = useTranslation('public');
+  return <Skeleton screenreaderText={t('Loading')} />;
 };
 
 export const ServiceLevel: FC<{
@@ -231,7 +231,7 @@ type ServiceLevelTextProps = {
   inline?: boolean;
 };
 export const ServiceLevelText: FC<ServiceLevelTextProps> = ({ clusterID, inline }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { level, daysRemaining } = useGetServiceLevel(clusterID);
   const levelText = (
     <>
@@ -263,18 +263,15 @@ export const ServiceLevelText: FC<ServiceLevelTextProps> = ({ clusterID, inline 
       </div>
       {!inline ? (
         <div>
-          <ExternalLink
-            text={t('public~Manage subscription settings')}
-            href={getOCMLink(clusterID)}
-          />
+          <ExternalLink text={t('Manage subscription settings')} href={getOCMLink(clusterID)} />
         </div>
       ) : null}
     </div>
   );
 };
 export const useServiceLevelTitle = (): string => {
-  const { t } = useTranslation();
-  return t('public~Service Level Agreement (SLA)');
+  const { t } = useTranslation('public');
+  return t('Service Level Agreement (SLA)');
 };
 
 export const useShowServiceLevelNotifications = (clusterID: string): boolean => {
@@ -285,7 +282,7 @@ export const useShowServiceLevelNotifications = (clusterID: string): boolean => 
 export const ServiceLevelNotification: FC<{
   clusterID?: string;
 }> = ({ clusterID }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { level, daysRemaining, trialDateEnd } = useGetServiceLevel(clusterID);
   const showServiceLevelNotification = useShowServiceLevelNotifications(clusterID);
 
@@ -294,13 +291,13 @@ export const ServiceLevelNotification: FC<{
   }
   let notificationStart = '';
   if (level === 'None' || (level === 'Eval' && daysRemaining < 0)) {
-    notificationStart = t('public~Your 60-day self-support trial expired.');
+    notificationStart = t('Your 60-day self-support trial expired.');
   }
 
   notificationStart =
     daysRemaining === 0
-      ? t('public~Your 60-day self-support trial will end in < 1 day.')
-      : t('public~Your 60-day self-support trial will end in {{count}} day on {{date}}.', {
+      ? t('Your 60-day self-support trial will end in < 1 day.')
+      : t('Your 60-day self-support trial will end in {{count}} day on {{date}}.', {
           count: daysRemaining,
           date: trialDateEnd,
         });
@@ -309,14 +306,14 @@ export const ServiceLevelNotification: FC<{
     <NotificationDrawerListItem variant={NotificationTypes.warning} isHoverable={false}>
       <NotificationDrawerListItemHeader
         variant={NotificationTypes.warning}
-        title={t('public~This cluster is not supported.')}
+        title={t('This cluster is not supported.')}
       />
       <NotificationDrawerListItemBody>
         <>
           {`${notificationStart} ${t(
             'public~For continued support, upgrade your cluster or transfer cluster ownership to an account with an active subscription.',
           )}`}{' '}
-          <ExternalLink href={getOCMLink(clusterID)}>{t('public~Get support')}</ExternalLink>
+          <ExternalLink href={getOCMLink(clusterID)}>{t('Get support')}</ExternalLink>
         </>
       </NotificationDrawerListItemBody>
     </NotificationDrawerListItem>

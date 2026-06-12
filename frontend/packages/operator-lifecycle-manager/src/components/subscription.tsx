@@ -120,21 +120,21 @@ const installPlanForSubscription = (
   installPlans.find((ip) => ip?.metadata?.name === subscription?.status?.installPlanRef?.name);
 
 export const SourceMissingStatus: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   return (
     <>
-      <WarningStatus title={t('olm~Cannot update')} />
-      <span className="pf-v6-u-text-color-subtle">{t('olm~CatalogSource not found')}</span>
+      <WarningStatus title={t('Cannot update')} />
+      <span className="pf-v6-u-text-color-subtle">{t('CatalogSource not found')}</span>
     </>
   );
 };
 
 const SourceUnhealthyStatus: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   return (
     <>
-      <WarningStatus title={t('olm~Cannot update')} />
-      <span className="pf-v6-u-text-color-subtle">{t('olm~CatalogSource unhealthy')}</span>
+      <WarningStatus title={t('Cannot update')} />
+      <span className="pf-v6-u-text-color-subtle">{t('CatalogSource unhealthy')}</span>
     </>
   );
 };
@@ -149,7 +149,7 @@ const tableColumnClasses = [
 ];
 
 export const UpgradeApprovalLink: FC<{ subscription: SubscriptionKind }> = ({ subscription }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const to = resourcePathFromModel(
     InstallPlanModel,
     subscription.status.installPlanRef.name,
@@ -158,19 +158,19 @@ export const UpgradeApprovalLink: FC<{ subscription: SubscriptionKind }> = ({ su
   return (
     <span className="co-icon-and-text">
       <Link to={to}>
-        <BlueArrowCircleUpIcon /> {t('olm~Upgrade available')}
+        <BlueArrowCircleUpIcon /> {t('Upgrade available')}
       </Link>
     </span>
   );
 };
 
 export const SubscriptionStatus: FC<{ subscription: SubscriptionKind }> = ({ subscription }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   switch (subscription?.status?.state) {
     case SubscriptionState.SubscriptionStateUpgradeAvailable:
       return (
         <span>
-          <YellowExclamationTriangleIcon /> {t('olm~Upgrade available')}
+          <YellowExclamationTriangleIcon /> {t('Upgrade available')}
         </span>
       );
     case SubscriptionState.SubscriptionStateUpgradePending:
@@ -178,26 +178,26 @@ export const SubscriptionStatus: FC<{ subscription: SubscriptionKind }> = ({ sub
         <UpgradeApprovalLink subscription={subscription} />
       ) : (
         <span>
-          <RhUiInProgressIcon className="text-primary" /> {t('olm~Upgrading')}
+          <RhUiInProgressIcon className="text-primary" /> {t('Upgrading')}
         </span>
       );
     case SubscriptionState.SubscriptionStateAtLatest:
       return (
         <span>
-          <GreenCheckCircleIcon /> {t('olm~Up to date')}
+          <GreenCheckCircleIcon /> {t('Up to date')}
         </span>
       );
     default:
       return (
         <span className={!subscription?.status?.state ? 'pf-v6-u-text-color-subtle' : ''}>
-          {subscription?.status?.state || t('olm~Unknown failure')}
+          {subscription?.status?.state || t('Unknown failure')}
         </span>
       );
   }
 };
 
 export const SubscriptionTableRow: FC<RowFunctionArgs> = ({ obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
@@ -217,7 +217,7 @@ export const SubscriptionTableRow: FC<RowFunctionArgs> = ({ obj }) => {
         {obj.spec.channel || 'default'}
       </TableData>
       <TableData className={tableColumnClasses[4]}>
-        {obj.spec.installPlanApproval || t('olm~Automatic')}
+        {obj.spec.installPlanApproval || t('Automatic')}
       </TableData>
       <TableData className={tableColumnClasses[5]}>
         <LazyActionMenu
@@ -231,31 +231,31 @@ export const SubscriptionTableRow: FC<RowFunctionArgs> = ({ obj }) => {
 };
 
 export const SubscriptionsList = requireOperatorGroup((props: SubscriptionsListProps) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const SubscriptionTableHeader = () => {
     return [
       {
-        title: t('olm~Name'),
+        title: t('Name'),
         sortField: 'metadata.name',
         transforms: [sortable],
         props: { className: tableColumnClasses[0] },
       },
       {
-        title: t('olm~Namespace'),
+        title: t('Namespace'),
         sortField: 'metadata.namespace',
         transforms: [sortable],
         props: { className: tableColumnClasses[1] },
       },
       {
-        title: t('olm~Status'),
+        title: t('Status'),
         props: { className: tableColumnClasses[2] },
       },
       {
-        title: t('olm~Update channel'),
+        title: t('Update channel'),
         props: { className: tableColumnClasses[3] },
       },
       {
-        title: t('olm~Update approval'),
+        title: t('Update approval'),
         props: { className: tableColumnClasses[4] },
       },
       {
@@ -267,11 +267,11 @@ export const SubscriptionsList = requireOperatorGroup((props: SubscriptionsListP
   return (
     <Table
       {...props}
-      aria-label={t('olm~Operator Subscriptions')}
+      aria-label={t('Operator Subscriptions')}
       Header={SubscriptionTableHeader}
       Row={SubscriptionTableRow}
       EmptyMsg={() => (
-        <ConsoleEmptyState title={t('olm~No Subscriptions found')}>
+        <ConsoleEmptyState title={t('No Subscriptions found')}>
           {t(
             'olm~Each Namespace can subscribe to a single channel of a package for automatic updates.',
           )}
@@ -283,7 +283,7 @@ export const SubscriptionsList = requireOperatorGroup((props: SubscriptionsListP
 });
 
 export const SubscriptionsPage: FC<SubscriptionsPageProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   return (
     <MultiListPage
       {...props}
@@ -302,25 +302,25 @@ export const SubscriptionsPage: FC<SubscriptionsPageProps> = (props) => {
         },
       ]}
       flatten={(resources) => _.get(resources.subscription, 'data', [])}
-      title={t('olm~Subscriptions')}
+      title={t('Subscriptions')}
       canCreate
       createProps={{ to: '/catalog?catalogType=operator' }}
-      createButtonText={t('olm~Create Subscription')}
+      createButtonText={t('Create Subscription')}
       ListComponent={SubscriptionsList}
-      filterLabel={t('olm~Subscriptions by package')}
+      filterLabel={t('Subscriptions by package')}
     />
   );
 };
 
 const CatalogSourceHealthAlert = ({ health, source, sourceNamespace }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   if (!health) {
     return (
       <Alert
         isInline
         className="co-alert"
         variant="warning"
-        title={t('olm~CatalogSource health unknown')}
+        title={t('CatalogSource health unknown')}
       >
         {t(
           'olm~This operator cannot be updated. The health of CatalogSource "{{source}}" is unknown. It may have been disabled or removed from the cluster.',
@@ -328,7 +328,7 @@ const CatalogSourceHealthAlert = ({ health, source, sourceNamespace }) => {
         )}
         {source && sourceNamespace && (
           <ResourceLink
-            displayName={t('olm~View CatalogSource')}
+            displayName={t('View CatalogSource')}
             groupVersionKind={getGroupVersionKindForModel(CatalogSourceModel)}
             name={source}
             namespace={sourceNamespace}
@@ -339,12 +339,12 @@ const CatalogSourceHealthAlert = ({ health, source, sourceNamespace }) => {
     );
   }
   return health.healthy ? null : (
-    <Alert isInline className="co-alert" variant="warning" title={t('olm~CatalogSource unhealthy')}>
-      {t('olm~This operator cannot be updated. CatalogSource "{{source}}" is unhealthy.', {
+    <Alert isInline className="co-alert" variant="warning" title={t('CatalogSource unhealthy')}>
+      {t('This operator cannot be updated. CatalogSource "{{source}}" is unhealthy.', {
         source,
       })}
       <ResourceLink
-        displayName={t('olm~View CatalogSource')}
+        displayName={t('View CatalogSource')}
         groupVersionKind={getGroupVersionKindForModel(CatalogSourceModel)}
         name={source}
         namespace={sourceNamespace}
@@ -355,15 +355,13 @@ const CatalogSourceHealthAlert = ({ health, source, sourceNamespace }) => {
 };
 
 const InstallFailedAlert = ({ installPlan }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const installStatusPhase = installPlan?.status?.phase;
   const installFailedCondition = installPlan?.status?.conditions?.find(
     ({ type, status }) => type === 'Installed' && status === 'False',
   );
   const installFailedMessage =
-    installFailedCondition?.message ||
-    installFailedCondition?.reason ||
-    t('olm~InstallPlan failed');
+    installFailedCondition?.message || installFailedCondition?.reason || t('InstallPlan failed');
 
   return installStatusPhase === InstallPlanPhase.InstallPlanPhaseFailed ? (
     <Alert
@@ -378,18 +376,15 @@ const InstallFailedAlert = ({ installPlan }) => {
 };
 
 const CatalogSourceStatusIconAndText = ({ healthy }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   switch (healthy) {
     case true:
-      return <StatusIconAndText icon={<GreenCheckCircleIcon />} title={t('olm~Healthy')} />;
+      return <StatusIconAndText icon={<GreenCheckCircleIcon />} title={t('Healthy')} />;
     case false:
-      return <StatusIconAndText icon={<RedExclamationCircleIcon />} title={t('olm~Unhealthy')} />;
+      return <StatusIconAndText icon={<RedExclamationCircleIcon />} title={t('Unhealthy')} />;
     default:
       return (
-        <StatusIconAndText
-          icon={<YellowExclamationTriangleIcon />}
-          title={t('olm~Health unknown')}
-        />
+        <StatusIconAndText icon={<YellowExclamationTriangleIcon />} title={t('Health unknown')} />
       );
   }
 };
@@ -401,7 +396,7 @@ export const SubscriptionDetails: FC<SubscriptionDetailsProps> = ({
   packageManifests = [],
   subscriptions = [],
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const { getQueryArgument, removeQueryArgument } = useQueryParamsMutator();
   const { source, sourceNamespace } = obj?.spec ?? {};
   const catalogHealth = obj?.status?.catalogHealth?.find(
@@ -440,7 +435,7 @@ export const SubscriptionDetails: FC<SubscriptionDetailsProps> = ({
             dismissible
           />
         )}
-        <SectionHeading text={t('olm~Subscription details')} />
+        <SectionHeading text={t('Subscription details')} />
         <PaneBodyGroup>
           <SubscriptionUpdates
             catalogHealth={catalogHealth}
@@ -458,7 +453,7 @@ export const SubscriptionDetails: FC<SubscriptionDetailsProps> = ({
           <GridItem sm={6}>
             <DescriptionList>
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('olm~Installed version')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('Installed version')}</DescriptionListTerm>
                 <DescriptionListDescription>
                   {installedCSV ? (
                     <ResourceLink
@@ -468,18 +463,18 @@ export const SubscriptionDetails: FC<SubscriptionDetailsProps> = ({
                       title={getName(installedCSV)}
                     />
                   ) : (
-                    t('olm~None')
+                    t('None')
                   )}
                 </DescriptionListDescription>
               </DescriptionListGroup>
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('olm~Starting version')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('Starting version')}</DescriptionListTerm>
                 <DescriptionListDescription>
-                  {obj.spec.startingCSV || t('olm~None')}
+                  {obj.spec.startingCSV || t('None')}
                 </DescriptionListDescription>
               </DescriptionListGroup>
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('olm~CatalogSource')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('CatalogSource')}</DescriptionListTerm>
                 <DescriptionListDescription>
                   {source && sourceNamespace ? (
                     <ResourceLink
@@ -493,12 +488,12 @@ export const SubscriptionDetails: FC<SubscriptionDetailsProps> = ({
                       </ResourceStatus>
                     </ResourceLink>
                   ) : (
-                    t('olm~None')
+                    t('None')
                   )}
                 </DescriptionListDescription>
               </DescriptionListGroup>
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('olm~InstallPlan')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('InstallPlan')}</DescriptionListTerm>
                 <DescriptionListDescription>
                   {installPlan ? (
                     <ResourceLink
@@ -508,7 +503,7 @@ export const SubscriptionDetails: FC<SubscriptionDetailsProps> = ({
                       title={getName(installPlan)}
                     />
                   ) : (
-                    t('olm~None')
+                    t('None')
                   )}
                 </DescriptionListDescription>
               </DescriptionListGroup>
@@ -517,7 +512,7 @@ export const SubscriptionDetails: FC<SubscriptionDetailsProps> = ({
         </Grid>
       </PaneBody>
       <PaneBody>
-        <SectionHeading text={t('olm~Conditions')} />
+        <SectionHeading text={t('Conditions')} />
         <Conditions conditions={obj?.status?.conditions} />
       </PaneBody>
     </>
@@ -543,7 +538,7 @@ const SubscriptionUpdates: FC<SubscriptionUpdatesProps> = ({
   pkg,
   subscriptions,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const launchModal = useOverlay();
   const prevInstallPlanApproval = useRef(obj?.spec?.installPlanApproval);
   const prevChannel = useRef(obj?.spec?.channel);
@@ -586,13 +581,13 @@ const SubscriptionUpdates: FC<SubscriptionUpdatesProps> = ({
         case InstallPlanPhase.InstallPlanPhaseRequiresApproval:
           return (
             <span data-test="operator-subscription-requires-approval">
-              {t('olm~1 requires approval')}
+              {t('1 requires approval')}
             </span>
           );
         case InstallPlanPhase.InstallPlanPhaseFailed:
-          return t('olm~1 failed');
+          return t('1 failed');
         default:
-          return t('olm~1 installing');
+          return t('1 installing');
       }
     }
     return null;
@@ -607,8 +602,8 @@ const SubscriptionUpdates: FC<SubscriptionUpdatesProps> = ({
     <DescriptionList className="co-detail-table">
       <Card>
         <DescriptionListTermHelp
-          text={t('olm~Update channel')}
-          textHelp={t('olm~The channel to track and receive the updates from.')}
+          text={t('Update channel')}
+          textHelp={t('The channel to track and receive the updates from.')}
         />
         <DescriptionListDescription>
           {waitingForUpdate ? (
@@ -625,7 +620,7 @@ const SubscriptionUpdates: FC<SubscriptionUpdatesProps> = ({
                 icon={<RhUiEditIcon />}
                 iconPosition="end"
               >
-                {obj.spec.channel || t('olm~No channel')}
+                {obj.spec.channel || t('No channel')}
               </Button>
               {deprecatedChannel.deprecation && (
                 <DeprecatedOperatorWarningIcon
@@ -639,8 +634,8 @@ const SubscriptionUpdates: FC<SubscriptionUpdatesProps> = ({
       </Card>
       <Card>
         <DescriptionListTermHelp
-          text={t('olm~Update approval')}
-          textHelp={t('olm~The strategy to determine either manual or automatic updates.')}
+          text={t('Update approval')}
+          textHelp={t('The strategy to determine either manual or automatic updates.')}
         />
         <DescriptionListDescription>
           {waitingForUpdate ? (
@@ -663,7 +658,7 @@ const SubscriptionUpdates: FC<SubscriptionUpdatesProps> = ({
                 manualSubscriptionsInNamespace?.length > 0 && (
                   <div>
                     <Popover
-                      headerContent={<>{t('olm~Functioning as manual approval strategy')}</>}
+                      headerContent={<>{t('Functioning as manual approval strategy')}</>}
                       bodyContent={
                         <NamespaceIncludesManualApproval
                           subscriptions={manualSubscriptionsInNamespace}
@@ -673,7 +668,7 @@ const SubscriptionUpdates: FC<SubscriptionUpdatesProps> = ({
                     >
                       <Button type="button" isInline variant="link">
                         <BlueInfoCircleIcon className="co-icon-space-r" />
-                        {t('olm~Functioning as manual')}
+                        {t('Functioning as manual')}
                       </Button>
                     </Popover>
                   </div>
@@ -685,7 +680,7 @@ const SubscriptionUpdates: FC<SubscriptionUpdatesProps> = ({
       <Card>
         <Split>
           <SplitItem>
-            <DescriptionListTerm>{t('olm~Upgrade status')}</DescriptionListTerm>
+            <DescriptionListTerm>{t('Upgrade status')}</DescriptionListTerm>
             <DescriptionListDescription>
               <SubscriptionUpgradeStatus catalogHealth={catalogHealth} subscription={obj} />
             </DescriptionListDescription>
@@ -702,10 +697,10 @@ const SubscriptionUpdates: FC<SubscriptionUpdatesProps> = ({
                       ClusterServiceVersionModel,
                     )}/${obj.status.installedCSV}`}
                   >
-                    {t('olm~1 installed')}
+                    {t('1 installed')}
                   </Link>
                 ) : (
-                  <span>{t('olm~0 installed')}</span>
+                  <span>{t('0 installed')}</span>
                 )}
                 {obj?.status?.state === SubscriptionState.SubscriptionStateUpgradePending &&
                 obj?.status?.installPlanRef &&
@@ -718,7 +713,7 @@ const SubscriptionUpdates: FC<SubscriptionUpdatesProps> = ({
                     <span>{installPlanPhase}</span>
                   </Link>
                 ) : (
-                  <span>{t('olm~0 installing')}</span>
+                  <span>{t('0 installing')}</span>
                 )}
               </SplitItem>
             </>

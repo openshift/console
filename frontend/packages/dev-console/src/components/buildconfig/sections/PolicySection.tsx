@@ -14,13 +14,13 @@ export type PolicySectionFormData = {
 };
 
 const PolicySection: FC<{}> = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const [{ value: runPolicy }] = useField<BuildConfigRunPolicy>('formData.policy.runPolicy');
 
   const typeItems: Record<BuildConfigRunPolicy, string> = {
-    [BuildConfigRunPolicy.Serial]: t('devconsole~Serial'),
-    [BuildConfigRunPolicy.Parallel]: t('devconsole~Parallel'),
-    [BuildConfigRunPolicy.SerialLatestOnly]: t('devconsole~Serial latest only'),
+    [BuildConfigRunPolicy.Serial]: t('Serial'),
+    [BuildConfigRunPolicy.Parallel]: t('Parallel'),
+    [BuildConfigRunPolicy.SerialLatestOnly]: t('Serial latest only'),
   };
 
   const helpText: Record<BuildConfigRunPolicy, string> = {
@@ -37,7 +37,7 @@ const PolicySection: FC<{}> = () => {
 
   return (
     <FormSection
-      title={t('devconsole~Policy')}
+      title={t('Policy')}
       subTitle={t(
         'devconsole~The build run policy describes the order in which the builds created from the build configuration should run.',
       )}
@@ -45,7 +45,7 @@ const PolicySection: FC<{}> = () => {
     >
       <DropdownField
         name="formData.policy.runPolicy"
-        label={t('devconsole~Run policy')}
+        label={t('Run policy')}
         title={typeItems[runPolicy || BuildConfigRunPolicy.Serial]}
         items={typeItems}
         helpText={helpText[runPolicy || BuildConfigRunPolicy.Serial]}

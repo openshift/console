@@ -79,7 +79,7 @@ const usePDBColumns = (): {
   columns: TableColumn<PodDisruptionBudgetKind>[];
   resetAllColumnWidths: () => void;
 } => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
     PodDisruptionBudgetModel,
   );
@@ -87,7 +87,7 @@ const usePDBColumns = (): {
   const columns = useMemo(() => {
     return [
       {
-        title: t('console-app~Name'),
+        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         resizableProps: getResizableProps(tableColumnInfo[0].id),
@@ -97,7 +97,7 @@ const usePDBColumns = (): {
         },
       },
       {
-        title: t('console-app~Namespace'),
+        title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
@@ -106,7 +106,7 @@ const usePDBColumns = (): {
         },
       },
       {
-        title: t('console-app~Selector'),
+        title: t('Selector'),
         id: tableColumnInfo[2].id,
         sort: 'spec.selector',
         resizableProps: getResizableProps(tableColumnInfo[2].id),
@@ -115,7 +115,7 @@ const usePDBColumns = (): {
         },
       },
       {
-        title: t('console-app~Availability'),
+        title: t('Availability'),
         id: tableColumnInfo[3].id,
         sort: 'spec.minAvailable',
         resizableProps: getResizableProps(tableColumnInfo[3].id),
@@ -124,7 +124,7 @@ const usePDBColumns = (): {
         },
       },
       {
-        title: t('console-app~Allowed disruptions'),
+        title: t('Allowed disruptions'),
         id: tableColumnInfo[4].id,
         sort: 'status.disruptionsAllowed',
         resizableProps: getResizableProps(tableColumnInfo[4].id),
@@ -133,7 +133,7 @@ const usePDBColumns = (): {
         },
       },
       {
-        title: t('console-app~Created'),
+        title: t('Created'),
         id: tableColumnInfo[5].id,
         sort: 'metadata.creationTimestamp',
         resizableProps: getResizableProps(tableColumnInfo[5].id),

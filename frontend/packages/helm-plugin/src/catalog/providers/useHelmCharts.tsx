@@ -18,7 +18,7 @@ type WatchResource = {
 const useHelmCharts: ExtensionHook<CatalogItem[]> = ({
   namespace,
 }): [CatalogItem[], boolean, any] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   const [helmCharts, setHelmCharts] = useState<HelmChartEntries>();
   const [loadedError, setLoadedError] = useState<APIError>();
 

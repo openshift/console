@@ -26,7 +26,7 @@ import {
 } from './queries';
 
 const UtilizationCard: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('metal3-plugin');
   const { machine } = useContext(BareMetalHostDashboardContext);
   const nodeName = getMachineNodeName(machine);
 
@@ -47,7 +47,7 @@ const UtilizationCard: FC = () => {
       const topConsumerQueries = getTopConsumerQueries(nodeName);
       return (
         <ConsumerPopover
-          title={t('metal3-plugin~CPU')}
+          title={t('CPU')}
           current={current}
           humanize={humanizeCpuCores}
           consumers={[
@@ -73,7 +73,7 @@ const UtilizationCard: FC = () => {
       const topConsumerQueries = getTopConsumerQueries(nodeName);
       return (
         <ConsumerPopover
-          title={t('metal3-plugin~Memory')}
+          title={t('Memory')}
           current={current}
           humanize={humanizeBinaryBytes}
           consumers={[
@@ -99,7 +99,7 @@ const UtilizationCard: FC = () => {
       const topConsumerQueries = getTopConsumerQueries(nodeName);
       return (
         <ConsumerPopover
-          title={t('metal3-plugin~Disk Usage')}
+          title={t('Disk Usage')}
           current={current}
           humanize={humanizeBinaryBytes}
           consumers={[
@@ -133,17 +133,17 @@ const UtilizationCard: FC = () => {
           className: undefined,
         }}
       >
-        <CardTitle>{t('metal3-plugin~Utilization')}</CardTitle>
+        <CardTitle>{t('Utilization')}</CardTitle>
       </CardHeader>
       <UtilizationBody>
         <PrometheusUtilizationItem
-          title={t('metal3-plugin~CPU')}
+          title={t('CPU')}
           utilizationQuery={queries[HostQuery.CPU_UTILIZATION].utilization}
           humanizeValue={humanizeCpuCores}
           TopConsumerPopover={cpuPopover}
         />
         <PrometheusUtilizationItem
-          title={t('metal3-plugin~Memory')}
+          title={t('Memory')}
           utilizationQuery={queries[HostQuery.MEMORY_UTILIZATION].utilization}
           totalQuery={queries[HostQuery.MEMORY_UTILIZATION].total}
           humanizeValue={humanizeBinaryBytes}
@@ -151,7 +151,7 @@ const UtilizationCard: FC = () => {
           TopConsumerPopover={memPopover}
         />
         <PrometheusUtilizationItem
-          title={t('metal3-plugin~Filesystem')}
+          title={t('Filesystem')}
           utilizationQuery={queries[HostQuery.STORAGE_UTILIZATION].utilization}
           totalQuery={queries[HostQuery.STORAGE_UTILIZATION].total}
           humanizeValue={humanizeBinaryBytes}
@@ -159,12 +159,12 @@ const UtilizationCard: FC = () => {
           TopConsumerPopover={storagePopover}
         />
         <PrometheusMultilineUtilizationItem
-          title={t('metal3-plugin~Network Transfer')}
+          title={t('Network Transfer')}
           queries={multilineQueries[HostQuery.NETWORK_UTILIZATION]}
           humanizeValue={humanizeDecimalBytesPerSec}
         />
         <PrometheusUtilizationItem
-          title={t('metal3-plugin~Pod count')}
+          title={t('Pod count')}
           utilizationQuery={queries[HostQuery.NUMBER_OF_PODS].utilization}
           humanizeValue={humanizePods}
         />

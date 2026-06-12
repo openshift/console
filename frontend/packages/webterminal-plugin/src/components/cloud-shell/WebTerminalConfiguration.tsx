@@ -29,7 +29,7 @@ import { getCloudShellTimeout } from './setup/cloud-shell-setup-utils';
 import useCloudShellNamespace from './useCloudShellNamespace';
 
 const WebTerminalConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('webterminal-plugin');
   const fireTelemetryEvent = useTelemetry();
   const [operatorNamespace] = useCloudShellNamespace();
   const [unit, setUnit] = useState<string>('m');
@@ -120,10 +120,10 @@ const WebTerminalConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
   ]);
 
   const TimeoutUnits = {
-    s: t('webterminal-plugin~Seconds'),
-    m: t('webterminal-plugin~Minutes'),
-    h: t('webterminal-plugin~Hours'),
-    ms: t('webterminal-plugin~Milliseconds'),
+    s: t('Seconds'),
+    m: t('Minutes'),
+    h: t('Hours'),
+    ms: t('Milliseconds'),
   };
 
   const onValueChange: ReactEventHandler<HTMLInputElement> = (event) => {
@@ -188,10 +188,7 @@ const WebTerminalConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
     }
   };
   return (
-    <FormSection
-      title={t('webterminal-plugin~Web Terminal Configuration')}
-      data-test="web-terminal form-section"
-    >
+    <FormSection title={t('Web Terminal Configuration')} data-test="web-terminal form-section">
       <FormHelperText>
         <HelperText>
           <HelperTextItem>
@@ -201,7 +198,7 @@ const WebTerminalConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
           </HelperTextItem>
         </HelperText>
       </FormHelperText>
-      <FormGroup label={t('webterminal-plugin~Timeout')} fieldId="timeout-value">
+      <FormGroup label={t('Timeout')} fieldId="timeout-value">
         <div className="pf-v6-c-input-group">
           <NumberSpinner
             onChange={onValueChange}
@@ -221,7 +218,7 @@ const WebTerminalConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
             className="request-size-input__unit"
             items={TimeoutUnits}
             onChange={onUnitChange}
-            ariaLabel={t('webterminal-plugin~Number of {{sizeUnit}}', {
+            ariaLabel={t('Number of {{sizeUnit}}', {
               sizeUnit: TimeoutUnits[unit],
             })}
             disabled={readonly}
@@ -230,7 +227,7 @@ const WebTerminalConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
 
         <FormHelperText>
           <HelperText>
-            <HelperTextItem>{t('webterminal-plugin~Set timeout for the terminal.')}</HelperTextItem>
+            <HelperTextItem>{t('Set timeout for the terminal.')}</HelperTextItem>
           </HelperText>
         </FormHelperText>
       </FormGroup>
@@ -248,7 +245,7 @@ const WebTerminalConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
         />
       </FormGroup>
 
-      <FormGroup label={t('webterminal-plugin~Image')} fieldId="web-terminal-image">
+      <FormGroup label={t('Image')} fieldId="web-terminal-image">
         <TextInput
           value={image}
           onChange={onImageChange}
@@ -262,9 +259,7 @@ const WebTerminalConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
 
         <FormHelperText>
           <HelperText>
-            <HelperTextItem>
-              {t('webterminal-plugin~Set custom image for the terminal.')}
-            </HelperTextItem>
+            <HelperTextItem>{t('Set custom image for the terminal.')}</HelperTextItem>
           </HelperText>
         </FormHelperText>
       </FormGroup>
@@ -288,7 +283,7 @@ const WebTerminalConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
           data-test="save-button"
           isDisabled={readonly || loadError || webTerminalToolingloadError}
         >
-          {t('webterminal-plugin~Save')}
+          {t('Save')}
         </Button>
       </FormGroup>
       <LoadError error={loadError || webTerminalToolingloadError} />

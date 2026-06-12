@@ -29,19 +29,19 @@ const GLOBAL_FIELDS = [
 ];
 
 const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <>
       <FormGroup
         role="radiogroup"
         fieldId="integration-type"
-        label={t('public~Integration type')}
+        label={t('Integration type')}
         isInline
       >
         <Radio
           id="integration-type-events"
           name="pagerdutyIntegrationKeyType"
-          label={t('public~Events API v2')}
+          label={t('Events API v2')}
           value="events"
           onChange={(e) =>
             dispatchFormChange({
@@ -55,7 +55,7 @@ const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
         <Radio
           id="integration-type-prometheus"
           name="pagerdutyIntegrationKeyType"
-          label={t('public~Prometheus')}
+          label={t('Prometheus')}
           value="prometheus"
           onChange={(e) =>
             dispatchFormChange({
@@ -69,9 +69,7 @@ const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
       </FormGroup>
       <FormGroup
         label={
-          formValues.pagerdutyIntegrationKeyType === 'events'
-            ? t('public~Routing key')
-            : t('public~Service key')
+          formValues.pagerdutyIntegrationKeyType === 'events' ? t('Routing key') : t('Service key')
         }
         fieldId="integration-key"
         isRequired
@@ -92,14 +90,14 @@ const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
         <FormHelperText>
           <HelperText>
             <HelperTextItem id="integration-key-help">
-              {t('public~PagerDuty integration key.')}
+              {t('PagerDuty integration key.')}
             </HelperTextItem>
           </HelperText>
         </FormHelperText>
       </FormGroup>
       <Grid hasGutter>
         <GridItem span={7}>
-          <FormGroup label={t('public~PagerDuty URL')} fieldId="pagerduty-url" isRequired>
+          <FormGroup label={t('PagerDuty URL')} fieldId="pagerduty-url" isRequired>
             <TextInput
               type="text"
               id="pagerduty-url"
@@ -116,7 +114,7 @@ const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
             <FormHelperText>
               <HelperText>
                 <HelperTextItem id="pagerduty-url-help">
-                  {t('public~The URL of your PagerDuty installation.')}
+                  {t('The URL of your PagerDuty installation.')}
                 </HelperTextItem>
               </HelperText>
             </FormHelperText>
@@ -127,7 +125,7 @@ const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
           <SaveAsDefaultCheckbox
             formField="pagerdutySaveAsDefault"
             disabled={formValues.pagerduty_url === globals?.pagerduty_url}
-            label={t('public~Save as default PagerDuty URL')}
+            label={t('Save as default PagerDuty URL')}
             formValues={formValues}
             dispatchFormChange={dispatchFormChange}
             tooltip={t(
@@ -142,8 +140,8 @@ const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
           formValues={formValues}
           dispatchFormChange={dispatchFormChange}
         />
-        <FormSection title={t('public~Client details')}>
-          <FormGroup label={t('public~Client')}>
+        <FormSection title={t('Client details')}>
+          <FormGroup label={t('Client')}>
             <TextInput
               type="text"
               id="pagerduty-client"
@@ -160,12 +158,12 @@ const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
             <FormHelperText>
               <HelperText>
                 <HelperTextItem id="pagerduty-client-help">
-                  {t('public~The client identification of the Alertmanager.')}
+                  {t('The client identification of the Alertmanager.')}
                 </HelperTextItem>
               </HelperText>
             </FormHelperText>
           </FormGroup>
-          <FormGroup label={t('public~Client URL')}>
+          <FormGroup label={t('Client URL')}>
             <TextInput
               type="text"
               id="pagerduty-client-url"
@@ -182,14 +180,14 @@ const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
             <FormHelperText>
               <HelperText>
                 <HelperTextItem id="pagerduty-client-url-help">
-                  {t('public~A backlink to the sender of the notification.')}
+                  {t('A backlink to the sender of the notification.')}
                 </HelperTextItem>
               </HelperText>
             </FormHelperText>
           </FormGroup>
         </FormSection>
-        <FormSection title={t('public~Incident details')}>
-          <FormGroup label={t('public~Description')}>
+        <FormSection title={t('Incident details')}>
+          <FormGroup label={t('Description')}>
             <TextInput
               type="text"
               id="pagerduty-description"
@@ -206,12 +204,12 @@ const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
             <FormHelperText>
               <HelperText>
                 <HelperTextItem id="pagerduty-description-help">
-                  {t('public~Description of the incident.')}
+                  {t('Description of the incident.')}
                 </HelperTextItem>
               </HelperText>
             </FormHelperText>
           </FormGroup>
-          <FormGroup label={t('public~Severity')}>
+          <FormGroup label={t('Severity')}>
             <TextInput
               type="text"
               id="pagerduty-severity"
@@ -228,7 +226,7 @@ const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
             <FormHelperText>
               <HelperText>
                 <HelperTextItem id="pagerduty-severity-help">
-                  {t('public~Severity of the incident.')}
+                  {t('Severity of the incident.')}
                 </HelperTextItem>
               </HelperText>
             </FormHelperText>

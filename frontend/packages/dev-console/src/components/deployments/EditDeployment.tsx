@@ -25,7 +25,7 @@ interface EditDeploymentProps {
 }
 
 const EditDeployment: FC<EditDeploymentProps> = ({ heading, resource, namespace, name }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const navigate = useNavigate();
   const isNew = !name;
 
@@ -53,7 +53,7 @@ const EditDeployment: FC<EditDeploymentProps> = ({ heading, resource, namespace,
       } catch (err) {
         actions.setStatus({
           submitSuccess: '',
-          submitError: t('devconsole~Invalid YAML - {{err}}', { err }),
+          submitError: t('Invalid YAML - {{err}}', { err }),
         });
         return null;
       }
@@ -80,13 +80,13 @@ const EditDeployment: FC<EditDeploymentProps> = ({ heading, resource, namespace,
         if (isNew) {
           actions.setStatus({
             submitError: '',
-            submitSuccess: t('devconsole~{{resource}} has been created', { resource: res.kind }),
+            submitSuccess: t('{{resource}} has been created', { resource: res.kind }),
           });
         } else {
           const resVersion = res.metadata.resourceVersion;
           actions.setStatus({
             submitError: '',
-            submitSuccess: t('devconsole~{{name}} has been updated to version {{resVersion}}', {
+            submitSuccess: t('{{name}} has been updated to version {{resVersion}}', {
               name,
               resVersion,
             }),

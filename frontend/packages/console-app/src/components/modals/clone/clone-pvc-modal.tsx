@@ -58,7 +58,7 @@ import { isCephProvisioner } from '@console/shared/src/utils/storage-utils';
 import { getPVCAccessModes, AccessModeSelector } from '../../access-modes/access-mode';
 
 const ClonePVCModal = (props: ClonePVCModalProps) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const navigate = useNavigate();
   const { close, cancel, resource } = props;
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler<PersistentVolumeClaimKind>();
@@ -143,16 +143,16 @@ const ClonePVCModal = (props: ClonePVCModalProps) => {
 
   return (
     <>
-      <ModalHeader title={t('console-app~Clone')} labelId="clone-pvc-modal-title" />
+      <ModalHeader title={t('Clone')} labelId="clone-pvc-modal-title" />
       <ModalBody>
         <Form id="clone-pvc-form" onSubmit={submit}>
-          <FormGroup label={t('console-app~Name')} isRequired fieldId="clone-pvc-modal__name">
+          <FormGroup label={t('Name')} isRequired fieldId="clone-pvc-modal__name">
             <TextInput
               type="text"
               data-test="pvc-name"
               value={clonePVCName}
               onChange={(_event, value) => setClonePVCName(value)}
-              aria-label={t('console-app~Clone PVC')}
+              aria-label={t('Clone PVC')}
             />
           </FormGroup>
           <AccessModeSelector
@@ -163,7 +163,7 @@ const ClonePVCModal = (props: ClonePVCModalProps) => {
             loadError={scResourceLoadError}
             filterByVolumeMode
           />
-          <FormGroup label={t('console-app~Size')} isRequired fieldId="clone-pvc-modal__size">
+          <FormGroup label={t('Size')} isRequired fieldId="clone-pvc-modal__size">
             {scResourceLoaded ? (
               <RequestSizeInput
                 name="requestSize"
@@ -208,21 +208,19 @@ const ClonePVCModal = (props: ClonePVCModalProps) => {
             )}
           </FormGroup>
           <FormGroup>
-            <p className="pf-v6-u-text-color-subtle pf-v6-u-mb-md">
-              {t('console-app~PVC details')}
-            </p>
+            <p className="pf-v6-u-text-color-subtle pf-v6-u-mb-md">{t('PVC details')}</p>
             <Grid hasGutter md={4}>
               <GridItem>
                 <DescriptionList isCompact>
                   <DescriptionListGroup>
-                    <DescriptionListTerm>{t('console-app~Namespace')}</DescriptionListTerm>
+                    <DescriptionListTerm>{t('Namespace')}</DescriptionListTerm>
                     <DescriptionListDescription>
                       <ResourceIcon kind={NamespaceModel.kind} />
                       {resource.metadata.namespace}
                     </DescriptionListDescription>
                   </DescriptionListGroup>
                   <DescriptionListGroup>
-                    <DescriptionListTerm>{t('console-app~StorageClass')}</DescriptionListTerm>
+                    <DescriptionListTerm>{t('StorageClass')}</DescriptionListTerm>
                     <DescriptionListDescription>
                       <ResourceIcon kind={StorageClassModel.kind} />
                       {pvcSC || '-'}
@@ -233,11 +231,11 @@ const ClonePVCModal = (props: ClonePVCModalProps) => {
               <GridItem>
                 <DescriptionList isCompact>
                   <DescriptionListGroup>
-                    <DescriptionListTerm>{t('console-app~Requested capacity')}</DescriptionListTerm>
+                    <DescriptionListTerm>{t('Requested capacity')}</DescriptionListTerm>
                     <DescriptionListDescription>{pvcRequestedSize}</DescriptionListDescription>
                   </DescriptionListGroup>
                   <DescriptionListGroup>
-                    <DescriptionListTerm>{t('console-app~Used capacity')}</DescriptionListTerm>
+                    <DescriptionListTerm>{t('Used capacity')}</DescriptionListTerm>
                     <DescriptionListDescription>
                       {!loading && !error && pvcUsedCapacity}
                       {loading && <LoadingInline />}
@@ -249,13 +247,13 @@ const ClonePVCModal = (props: ClonePVCModalProps) => {
               <GridItem>
                 <DescriptionList isCompact>
                   <DescriptionListGroup>
-                    <DescriptionListTerm>{t('console-app~Access mode')}</DescriptionListTerm>
+                    <DescriptionListTerm>{t('Access mode')}</DescriptionListTerm>
                     <DescriptionListDescription>
                       {pvcAccessMode.join(', ') || '-'}
                     </DescriptionListDescription>
                   </DescriptionListGroup>
                   <DescriptionListGroup>
-                    <DescriptionListTerm>{t('console-app~Volume mode')}</DescriptionListTerm>
+                    <DescriptionListTerm>{t('Volume mode')}</DescriptionListTerm>
                     <DescriptionListDescription>
                       {resource.spec.volumeMode}
                     </DescriptionListDescription>
@@ -274,10 +272,10 @@ const ClonePVCModal = (props: ClonePVCModalProps) => {
           isLoading={inProgress}
           isDisabled={!validSize || !pvcSC || inProgress}
         >
-          {t('console-app~Clone')}
+          {t('Clone')}
         </Button>
         <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
-          {t('console-app~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </>

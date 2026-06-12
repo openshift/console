@@ -12,11 +12,11 @@ import RoutesPage from '../../routes/RoutesPage';
 import ServicesPage from '../../services/ServicesPage';
 
 const ServingListPage: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const { ns: namespace } = useParams();
   const [showTitle, canCreate] = [false, false];
   const menuActions: MenuActions = {
-    service: { label: t('knative-plugin~Service'), model: ServiceModel },
+    service: { label: t('Service'), model: ServiceModel },
   };
   const pages: Page[] = [
     {
@@ -62,7 +62,7 @@ const ServingListPage: FC = () => {
       <NamespaceBar />
       <MultiTabListPage
         pages={pages}
-        title={t('knative-plugin~Serving')}
+        title={t('Serving')}
         menuActions={menuActions}
         telemetryPrefix="Serving"
       />

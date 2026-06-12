@@ -12,7 +12,7 @@ import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { useCommonResourceActions } from '../hooks/useCommonResourceActions';
 
 const useImpersonateAction = (resource: UserKind): Action[] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const navigate = useNavigate();
   const dispatch = useConsoleDispatch();
 
@@ -20,7 +20,7 @@ const useImpersonateAction = (resource: UserKind): Action[] => {
     () => ({
       ImpersonateUser: () => ({
         id: 'impersonate-user',
-        label: t('public~Impersonate user {{name}}', { name: resource?.metadata?.name }),
+        label: t('Impersonate user {{name}}', { name: resource?.metadata?.name }),
         cta: () => {
           dispatch(UIActions.startImpersonate('User', resource?.metadata?.name));
           navigate(window.SERVER_FLAGS.basePath);

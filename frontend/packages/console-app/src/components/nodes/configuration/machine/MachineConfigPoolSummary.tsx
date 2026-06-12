@@ -25,46 +25,39 @@ type MachineConfigPoolSummaryProps = {
 };
 
 const MachineConfigPoolSummary: FC<MachineConfigPoolSummaryProps> = ({ obj, loadError }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const maxUnavailable = obj?.spec?.maxUnavailable ?? 1;
   const machineConfigSelector = obj?.spec?.machineConfigSelector;
 
   return (
     <>
-      <SectionHeading text={t('console-app~MachineConfigPool')} />
+      <SectionHeading text={t('MachineConfigPool')} />
       {loadError ? (
-        <Alert
-          isInline
-          variant="danger"
-          title={t('console-app~MachineConfigPools are not available')}
-        >
-          {loadError.message || t('console-app~Unable to load MachineConfigPool resources')}
+        <Alert isInline variant="danger" title={t('MachineConfigPools are not available')}>
+          {loadError.message || t('Unable to load MachineConfigPool resources')}
         </Alert>
       ) : !obj ? (
-        <Alert
-          variant="info"
-          title={t('console-app~This node has no associated MachineConfigPool.')}
-        />
+        <Alert variant="info" title={t('This node has no associated MachineConfigPool.')} />
       ) : (
         <DescriptionList>
-          <DetailsItem label={t('console-app~Name')} obj={obj}>
+          <DetailsItem label={t('Name')} obj={obj}>
             <ResourceLink
               groupVersionKind={getGroupVersionKindForResource(obj)}
               name={obj.metadata.name}
             />
           </DetailsItem>
           <DescriptionListGroup>
-            <DescriptionListTerm>{t('console-app~Max unavailable machines')}</DescriptionListTerm>
+            <DescriptionListTerm>{t('Max unavailable machines')}</DescriptionListTerm>
             <DescriptionListDescription>{maxUnavailable}</DescriptionListDescription>
           </DescriptionListGroup>
-          <DetailsItem label={t('console-app~Paused')} obj={obj} path={'spec.paused'}>
-            {obj?.spec?.paused ? t('console-app~True') : t('console-app~False')}
+          <DetailsItem label={t('Paused')} obj={obj} path={'spec.paused'}>
+            {obj?.spec?.paused ? t('True') : t('False')}
           </DetailsItem>
-          <DetailsItem label={t('console-app~Node selector')} obj={obj} path="spec.nodeSelector">
+          <DetailsItem label={t('Node selector')} obj={obj} path="spec.nodeSelector">
             <Selector kind={referenceForModel(NodeModel)} selector={obj?.spec?.nodeSelector} />
           </DetailsItem>
           <DescriptionListGroup>
-            <DescriptionListTerm>{t('console-app~MachineConfig selector')}</DescriptionListTerm>
+            <DescriptionListTerm>{t('MachineConfig selector')}</DescriptionListTerm>
             <DescriptionListDescription>
               <Selector kind={machineConfigReference} selector={machineConfigSelector} />
             </DescriptionListDescription>

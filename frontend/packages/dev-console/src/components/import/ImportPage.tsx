@@ -19,7 +19,7 @@ import ImportForm from './ImportForm';
 const ImportFlows = (t: TFunction): { [name: string]: ImportData } => ({
   git: {
     type: ImportTypes.git,
-    title: t('devconsole~Import from Git'),
+    title: t('Import from Git'),
     buildStrategy: 'Devfile',
     loader: () =>
       import('./GitImportForm' /* webpackChunkName: "git-import-form" */).then(
@@ -28,7 +28,7 @@ const ImportFlows = (t: TFunction): { [name: string]: ImportData } => ({
   },
   s2i: {
     type: ImportTypes.s2i,
-    title: t('devconsole~Create Source-to-Image application'),
+    title: t('Create Source-to-Image application'),
     buildStrategy: 'Source',
     loader: () =>
       import('./SourceToImageForm' /* webpackChunkName: "source-to-image-form" */).then(
@@ -38,7 +38,7 @@ const ImportFlows = (t: TFunction): { [name: string]: ImportData } => ({
 });
 
 const ImportPage: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const { ns: namespace } = useParams();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);

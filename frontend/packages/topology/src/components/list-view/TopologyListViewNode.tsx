@@ -52,7 +52,7 @@ const TopologyListViewNodeComponent: FC<TopologyListViewNodeProps & DispatchProp
   noPods = false,
   children,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   const [filtered] = useSearchFilter(item.getLabel(), getResource(item)?.metadata?.labels);
   if (!item.isVisible) {
     return null;
@@ -70,7 +70,7 @@ const TopologyListViewNodeComponent: FC<TopologyListViewNodeProps & DispatchProp
     alertIndicator = shouldHideMonitoringAlertDecorator(severityAlertType) ? null : (
       <Tooltip
         key="monitoringAlert"
-        content={t('topology~Monitoring alert')}
+        content={t('Monitoring alert')}
         position={TooltipPosition.right}
       >
         <Button
@@ -129,7 +129,7 @@ const TopologyListViewNodeComponent: FC<TopologyListViewNodeProps & DispatchProp
       {children ? (
         <DataListContent
           className="odc-topology-list-view__group-children"
-          aria-label={t('topology~{{kindLabel}} {{label}}', {
+          aria-label={t('{{kindLabel}} {{label}}', {
             label: item.getLabel(),
             kindLabel: modelFor(kind)?.label ?? kind,
           })}
@@ -137,7 +137,7 @@ const TopologyListViewNodeComponent: FC<TopologyListViewNodeProps & DispatchProp
           isHidden={false}
         >
           <DataList
-            aria-label={t('topology~{{label}} sub-resources', { label: item.getLabel() })}
+            aria-label={t('{{label}} sub-resources', { label: item.getLabel() })}
             selectedDataListItemId={selectedIds[0]}
             onSelectDataListItem={(_event, id) => onSelect(selectedIds[0] === id ? [] : [id])}
           >

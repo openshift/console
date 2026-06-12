@@ -27,7 +27,7 @@ export const CreateServiceAccountModal: OverlayComponent<CreateServiceAccountMod
   namespace,
   initialName = '',
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm-v1');
 
   const [inProgress, setInProgress] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -40,7 +40,7 @@ export const CreateServiceAccountModal: OverlayComponent<CreateServiceAccountMod
   };
 
   const catchError = (error) => {
-    const err = error.message || t('olm-v1~An error occurred. Please try again.');
+    const err = error.message || t('An error occurred. Please try again.');
     setInProgress(false);
     setErrorMessage(err);
     return Promise.reject(err);
@@ -84,10 +84,10 @@ export const CreateServiceAccountModal: OverlayComponent<CreateServiceAccountMod
 
   return (
     <Modal variant="small" isOpen onClose={closeOverlay}>
-      <ModalHeader title={t('olm-v1~Create ServiceAccount')} />
+      <ModalHeader title={t('Create ServiceAccount')} />
       <ModalBody>
         <Form onSubmit={submit}>
-          <FormGroup label={t('olm-v1~Name')} fieldId="input-name">
+          <FormGroup label={t('Name')} fieldId="input-name">
             <TextInput
               id="input-name"
               data-test="input-name"
@@ -97,7 +97,7 @@ export const CreateServiceAccountModal: OverlayComponent<CreateServiceAccountMod
               onChange={(e, value) => setName(value)}
             />
           </FormGroup>
-          <FormGroup label={t('olm-v1~Namespace')} fieldId="input-namespace">
+          <FormGroup label={t('Namespace')} fieldId="input-namespace">
             <TextInput
               readOnly
               id="input-namespace"
@@ -120,7 +120,7 @@ export const CreateServiceAccountModal: OverlayComponent<CreateServiceAccountMod
           data-test="confirm-action"
           id="confirm-action"
         >
-          {t('olm-v1~Create')}
+          {t('Create')}
         </Button>
         <Button
           key="cancel-action"
@@ -130,7 +130,7 @@ export const CreateServiceAccountModal: OverlayComponent<CreateServiceAccountMod
           onClick={closeOverlay}
           data-test-id="modal-cancel-action"
         >
-          {t('olm-v1~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </Modal>

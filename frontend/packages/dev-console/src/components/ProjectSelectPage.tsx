@@ -23,7 +23,7 @@ interface ProjectSelectPageProps {
 const allParams = (props, params) => Object.assign({}, params, props);
 
 const ProjectSelectPage: FC<ProjectSelectPageProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const params = useParams();
   const { kindObj, kindsInFlight, plural } = allParams(props, params);
 
@@ -32,7 +32,7 @@ const ProjectSelectPage: FC<ProjectSelectPageProps> = (props) => {
       return <LoadingBox />;
     }
     const missingType = isGroupVersionKind(plural)
-      ? t('devconsole~{{kindForRefPlural}} in {{apiVersionForRefPlural}}', {
+      ? t('{{kindForRefPlural}} in {{apiVersionForRefPlural}}', {
           kindForRefPlural: kindForReference(plural),
           apiVersionForRefPlural: apiVersionForReference(plural),
         })

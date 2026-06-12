@@ -59,11 +59,11 @@ import { iconFor, InstallPlanReview } from './index';
 import './operator-install-page.scss';
 
 const ViewInstalledOperatorsButton: FC<ViewOperatorButtonProps> = ({ namespace }) => {
-  const { t } = useTranslation();
-  const singleNamespaceText = t('olm~View installed Operators in Namespace {{namespace}}', {
+  const { t } = useTranslation('olm');
+  const singleNamespaceText = t('View installed Operators in Namespace {{namespace}}', {
     namespace,
   });
-  const allNamespacesText = t('olm~View installed Operators in all Namespaces');
+  const allNamespacesText = t('View installed Operators in all Namespaces');
   return (
     <div className="co-operator-install-page__link">
       <Link
@@ -77,26 +77,26 @@ const ViewInstalledOperatorsButton: FC<ViewOperatorButtonProps> = ({ namespace }
 };
 
 const InstallFailedMessage: FC<InstallFailedMessageProps> = ({ namespace, csvName, obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const hasInitializationResource =
     obj?.metadata?.annotations?.[OLMAnnotation.InitializationResource];
   return (
     <>
       <Title headingLevel="h2" className="co-clusterserviceversion-install__heading">
-        {t('olm~Operator installation failed')}
+        {t('Operator installation failed')}
       </Title>
       <p>
-        {t('olm~The operator did not install successfully.')}
+        {t('The operator did not install successfully.')}
         {hasInitializationResource && (
           <>
             &nbsp;
-            {t("olm~The required custom resource can be created in the Operator's details view.")}
+            {t("The required custom resource can be created in the Operator's details view.")}
           </>
         )}
       </p>
       <ActionGroup className="pf-v6-c-form pf-v6-c-form__group--no-top-margin">
         <Link to={resourcePathFromModel(ClusterServiceVersionModel, csvName, namespace)}>
-          <Button variant="primary">{t('olm~View error')}</Button>
+          <Button variant="primary">{t('View error')}</Button>
         </Link>
         <ViewInstalledOperatorsButton namespace={namespace} />
       </ActionGroup>
@@ -110,7 +110,7 @@ const InstallNeedsApprovalMessage: FC<InstallNeedsApprovalMessageProps> = ({
   installObj,
   approve,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
 
   const canPatchInstallPlans = useAccessReview({
     group: InstallPlanModel.apiGroup,
@@ -124,14 +124,14 @@ const InstallNeedsApprovalMessage: FC<InstallNeedsApprovalMessageProps> = ({
   return (
     <>
       <Title headingLevel="h2" className="co-clusterserviceversion-install__heading">
-        {t('olm~Manual approval required')}
+        {t('Manual approval required')}
       </Title>
       <ActionGroup className="pf-v6-c-form pf-v6-c-form__group--no-top-margin">
         <InstallPlanReview installPlan={installObj} />
         {((installObjIsInstallPlan && canPatchInstallPlans) || !installObjIsInstallPlan) && (
           <>
             <Button variant="primary" onClick={approve}>
-              {t('olm~Approve')}
+              {t('Approve')}
             </Button>
             <Link
               to={`${resourcePathFromModel(
@@ -141,7 +141,7 @@ const InstallNeedsApprovalMessage: FC<InstallNeedsApprovalMessageProps> = ({
               )}?showDelete=true`}
             >
               <Button className="co-clusterserviceversion__button" variant="secondary">
-                {t('olm~Deny')}
+                {t('Deny')}
               </Button>
             </Link>
           </>
@@ -160,7 +160,7 @@ export const CreateInitializationResourceButton: FC<InitializationResourceButton
   initializationResource,
   obj,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   if (!initializationResource) {
     return null;
   }
@@ -169,7 +169,7 @@ export const CreateInitializationResourceButton: FC<InitializationResourceButton
   const kind = initializationResource?.kind;
   const button = (
     <Button aria-disabled={disabled} isDisabled={disabled} variant="primary">
-      {t('olm~Create {{item}}', { item: kind })}
+      {t('Create {{item}}', { item: kind })}
     </Button>
   );
   return disabled ? (
@@ -191,7 +191,7 @@ const InitializationResourceRequiredMessage: FC<InitializationResourceRequiredMe
   initializationResource,
   obj,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   if (!initializationResource) {
     return null;
   }
@@ -208,7 +208,7 @@ const InitializationResourceRequiredMessage: FC<InitializationResourceRequiredMe
           namespace={initializationResourceNamespace}
         />
         <ResourceStatus badgeAlt>
-          <StatusIconAndText icon={<RedExclamationCircleIcon />} title={t('olm~Required')} />
+          <StatusIconAndText icon={<RedExclamationCircleIcon />} title={t('Required')} />
         </ResourceStatus>
       </span>
       <MarkdownView content={description} />
@@ -217,10 +217,10 @@ const InitializationResourceRequiredMessage: FC<InitializationResourceRequiredMe
 };
 
 const InitializationLinkButton: FC<{ disabled?: boolean }> = ({ disabled }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   return (
     <Button aria-disabled={disabled} isDisabled={disabled} variant="primary">
-      {t('olm~Configure Operator')}
+      {t('Configure Operator')}
     </Button>
   );
 };
@@ -241,7 +241,7 @@ const InitializationLink: FC<InitializationLinkProps> = ({ to, disabled }) => {
 };
 
 const InstallSucceededMessage: FC<InstallSuccededMessageProps> = ({ namespace, csvName, obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const launchModal = useOverlay();
   const annotationParserOptions = {
     onError: (error) => launchModal(ErrorModal, { error }),
@@ -254,17 +254,15 @@ const InstallSucceededMessage: FC<InstallSuccededMessageProps> = ({ namespace, c
   return (
     <>
       <Title headingLevel="h2" className="co-clusterserviceversion-install__heading">
-        {!initializationLink && !initializationResource && t('olm~Operator installed successfully')}
-        {initializationLink && t('olm~Configure Operator')}
-        {initializationResource && t('olm~ Create initialization resource')}
+        {!initializationLink && !initializationResource && t('Operator installed successfully')}
+        {initializationLink && t('Configure Operator')}
+        {initializationResource && t(' Create initialization resource')}
       </Title>
       <span>
-        {t('olm~The Operator has installed successfully.')}
-        {!initializationLink && !initializationResource && t('olm~ Ready for use.')}
-        {initializationLink &&
-          t('olm~ Complete the next configuration steps to prepare it for use.')}
-        {initializationResource &&
-          t('olm~ Create the required custom resource to prepare it for use.')}
+        {t('The Operator has installed successfully.')}
+        {!initializationLink && !initializationResource && t(' Ready for use.')}
+        {initializationLink && t(' Complete the next configuration steps to prepare it for use.')}
+        {initializationResource && t(' Create the required custom resource to prepare it for use.')}
         <InitializationResourceRequiredMessage
           initializationResource={initializationResource}
           obj={obj}
@@ -278,7 +276,7 @@ const InstallSucceededMessage: FC<InstallSuccededMessageProps> = ({ namespace, c
         />
         {!initializationLink && !initializationResource && (
           <Link to={resourcePathFromModel(ClusterServiceVersionModel, csvName, namespace)}>
-            <Button variant="primary">{t('olm~View Operator')}</Button>
+            <Button variant="primary">{t('View Operator')}</Button>
           </Link>
         )}
         <ViewInstalledOperatorsButton namespace={namespace} />
@@ -288,7 +286,7 @@ const InstallSucceededMessage: FC<InstallSuccededMessageProps> = ({ namespace, c
 };
 
 const InstallingMessage: FC<InstallingMessageProps> = ({ namespace, obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const launchModal = useOverlay();
   const reason = (obj as ClusterServiceVersionKind)?.status?.reason || '';
   const message = (obj as ClusterServiceVersionKind)?.status?.message || '';
@@ -302,7 +300,7 @@ const InstallingMessage: FC<InstallingMessageProps> = ({ namespace, obj }) => {
   return (
     <>
       <Title headingLevel="h2" className="co-clusterserviceversion-install__heading">
-        {t('olm~Installing Operator')}
+        {t('Installing Operator')}
       </Title>
       {reason && (
         <p className="pf-v6-u-text-color-subtle">
@@ -310,9 +308,9 @@ const InstallingMessage: FC<InstallingMessageProps> = ({ namespace, obj }) => {
         </p>
       )}
       <p>
-        {t('olm~The Operator is being installed. This may take a few minutes.')}
+        {t('The Operator is being installed. This may take a few minutes.')}
         {initializationLink &&
-          t('olm~ Once the Operator is installed additional configuration will be required.')}
+          t(' Once the Operator is installed additional configuration will be required.')}
         {initializationResource &&
           t(
             'olm~ Once the Operator is installed the required custom resource will be available for creation.',
@@ -336,8 +334,8 @@ type OperatorInstallStatusPageRouteParams = RouteParams<
 >;
 
 const OperatorInstallLogo = ({ subscription }) => {
-  const { t } = useTranslation();
-  const notFound = t('olm~Not found');
+  const { t } = useTranslation('olm');
+  const notFound = t('Not found');
   const { currentCSV, catalogNamespace, catalog, pkg } = useParams<
     OperatorInstallStatusPageRouteParams
   >();
@@ -365,7 +363,7 @@ const OperatorInstallLogo = ({ subscription }) => {
     return (
       <ClusterServiceVersionLogo
         icon={null}
-        displayName={loadError ? t('olm~Error: {{loadError}}', { loadError }) : notFound}
+        displayName={loadError ? t('Error: {{loadError}}', { loadError }) : notFound}
       />
     );
   }
@@ -386,7 +384,7 @@ const OperatorInstallLogo = ({ subscription }) => {
 };
 
 const OperatorInstallStatus: FC<OperatorInstallPageProps> = ({ resources }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const launchModal = useOverlay();
   const { currentCSV, targetNamespace } = useParams<OperatorInstallStatusPageRouteParams>();
 
@@ -460,7 +458,7 @@ const OperatorInstallStatus: FC<OperatorInstallPageProps> = ({ resources }) => {
       <Alert
         isInline
         variant="danger"
-        title={t('olm~Failed to load installation status')}
+        title={t('Failed to load installation status')}
         className="pf-v6-u-mt-md"
       >
         {loadError instanceof Error ? loadError.message : String(loadError)}
@@ -488,12 +486,12 @@ const OperatorInstallStatus: FC<OperatorInstallPageProps> = ({ resources }) => {
   return (
     <>
       <div className="co-operator-install-page__main">
-        <DocumentTitle>{t('olm~Installing Operator')}</DocumentTitle>
+        <DocumentTitle>{t('Installing Operator')}</DocumentTitle>
         <Bullseye>
           <div id="operator-install-page">
             {loading && (
               <div className="co-operator-install-page__indicator">
-                {t('olm~Installing...')} <Spinner size="lg" />
+                {t('Installing...')} <Spinner size="lg" />
               </div>
             )}
             {!loading && isStatusFailed && (

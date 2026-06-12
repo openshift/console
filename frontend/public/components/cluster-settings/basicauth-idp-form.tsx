@@ -32,7 +32,7 @@ export const AddBasicAuthPage: FC = () => {
   const [certFileContent, setCertFileContent] = useState('');
   const [keyFileContent, setKeyFileContent] = useState('');
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const thenPromise = (res) => {
     setInProgress(false);
@@ -41,7 +41,7 @@ export const AddBasicAuthPage: FC = () => {
   };
 
   const catchError = (error) => {
-    const err = error.message || t('public~An error occurred. Please try again.');
+    const err = error.message || t('An error occurred. Please try again.');
     setInProgress(false);
     setErrorMessage(err);
     return Promise.reject(err);
@@ -138,7 +138,7 @@ export const AddBasicAuthPage: FC = () => {
     e.preventDefault();
     if (_.isEmpty(keyFileContent) !== _.isEmpty(certFileContent)) {
       setErrorMessage(
-        t('public~Values for certificate and key should both be either excluded or provided.'),
+        t('Values for certificate and key should both be either excluded or provided.'),
       );
       return;
     }
@@ -167,7 +167,7 @@ export const AddBasicAuthPage: FC = () => {
     });
   };
 
-  const title = t('public~Add Identity Provider: Basic Authentication');
+  const title = t('Add Identity Provider: Basic Authentication');
 
   return (
     <div className="co-m-pane__form">
@@ -183,12 +183,12 @@ export const AddBasicAuthPage: FC = () => {
           <IDPNameInput value={name} onChange={(e) => setName(e.currentTarget.value)} />
           <div className="form-group">
             <label className="co-required" htmlFor="url">
-              {t('public~URL')}
+              {t('URL')}
             </label>
             <span className="pf-v6-c-form-control">
               <input
                 type="url"
-                aria-label={t('public~URL')}
+                aria-label={t('URL')}
                 onChange={(e) => setUrl(e.currentTarget.value)}
                 value={url}
                 id="url"
@@ -197,7 +197,7 @@ export const AddBasicAuthPage: FC = () => {
               />
             </span>
             <p className="help-block" id="idp-url-help">
-              {t('public~The remote URL to connect to.')}
+              {t('The remote URL to connect to.')}
             </p>
           </div>
           <IDPCAFileInput
@@ -210,8 +210,8 @@ export const AddBasicAuthPage: FC = () => {
               onChange={(c: string) => setCertFileContent(c)}
               inputFileData={certFileContent}
               id="cert-file-input"
-              label={t('public~Certificate')}
-              filenamePlaceholder={t('public~PEM-encoded TLS client certificate file')}
+              label={t('Certificate')}
+              filenamePlaceholder={t('PEM-encoded TLS client certificate file')}
               textareaFieldHelpText={t(
                 'public~PEM-encoded TLS client certificate to present when connecting to the server.',
               )}
@@ -220,8 +220,8 @@ export const AddBasicAuthPage: FC = () => {
               onChange={(c: string) => setKeyFileContent(c)}
               inputFileData={keyFileContent}
               id="key-file-input"
-              label={t('public~Key')}
-              filenamePlaceholder={t('public~PEM-encoded TLS private key file')}
+              label={t('Key')}
+              filenamePlaceholder={t('PEM-encoded TLS private key file')}
               textareaFieldHelpText={t(
                 'public~PEM-encoded TLS private key for the client certificate. Required if certificate is specified.',
               )}
@@ -230,10 +230,10 @@ export const AddBasicAuthPage: FC = () => {
           <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
             <ActionGroup className="pf-v6-c-form">
               <Button type="submit" variant="primary" data-test-id="add-idp" data-test="add-idp">
-                {t('public~Add')}
+                {t('Add')}
               </Button>
               <Button type="button" variant="secondary" onClick={() => navigate(-1)}>
-                {t('public~Cancel')}
+                {t('Cancel')}
               </Button>
             </ActionGroup>
           </ButtonBar>

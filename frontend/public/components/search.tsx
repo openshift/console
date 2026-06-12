@@ -103,7 +103,7 @@ const SearchPage_: FC<SearchProps> = (props) => {
   const [debouncedNameFilter, setDebouncedNameFilter] = useState('');
   const [pinnedResources, setPinnedResources, pinnedResourcesLoaded] = usePinnedResources();
   const { noProjectsAvailable } = props;
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const [namespace] = useActiveNamespace();
   const location = useLocation();
   const confirmNavUnpinModal = useConfirmNavUnpinModal(pinnedResources, setPinnedResources);
@@ -254,14 +254,14 @@ const SearchPage_: FC<SearchProps> = (props) => {
 
   return (
     <>
-      <DocumentTitle>{t('public~Search')}</DocumentTitle>
-      <PageHeading title={t('public~Search')} />
+      <DocumentTitle>{t('Search')}</DocumentTitle>
+      <PageHeading title={t('Search')} />
       <PageSection hasBodyWrapper={false}>
         <Toolbar
           id="search-toolbar"
           clearAllFilters={clearAll}
           collapseListedFiltersBreakpoint="xl"
-          clearFiltersButtonText={t('public~Clear all filters')}
+          clearFiltersButtonText={t('Clear all filters')}
         >
           <ToolbarContent>
             <ToolbarItem>
@@ -277,11 +277,11 @@ const SearchPage_: FC<SearchProps> = (props) => {
                   ),
                 }))}
                 deleteLabel={updateNewItems}
-                categoryName={t('public~Resource')}
-                labelGroupCollapsedText={t('public~{{numRemaining}} more', {
+                categoryName={t('Resource')}
+                labelGroupCollapsedText={t('{{numRemaining}} more', {
                   numRemaining: '${remaining}',
                 })}
-                labelGroupExpandedText={t('public~Show less')}
+                labelGroupExpandedText={t('Show less')}
               >
                 <ResourceListDropdown
                   selected={[...selectedItems]}
@@ -295,12 +295,12 @@ const SearchPage_: FC<SearchProps> = (props) => {
                 deleteLabelGroup={clearLabelFilter}
                 labels={[...labelFilter]}
                 deleteLabel={removeLabelFilter}
-                categoryName={t('public~Label')}
+                categoryName={t('Label')}
               >
                 <ToolbarFilter
                   labels={typeaheadNameFilter.length > 0 ? [typeaheadNameFilter] : []}
                   deleteLabel={clearNameFilter}
-                  categoryName={t('public~Name')}
+                  categoryName={t('Name')}
                 >
                   <SearchFilterDropdown
                     onChange={updateSearchFilter}
@@ -336,12 +336,12 @@ const SearchPage_: FC<SearchProps> = (props) => {
                       {pinnedResources.includes(resource) ? (
                         <>
                           <RhUiMinusCircleIcon className="co-search-group__pin-toggle__icon" />
-                          {t('public~Remove from navigation')}
+                          {t('Remove from navigation')}
                         </>
                       ) : (
                         <>
                           <RhUiAddCircleFillIcon className="co-search-group__pin-toggle__icon" />
-                          {t('public~Add to navigation')}
+                          {t('Add to navigation')}
                         </>
                       )}
                     </Button>
@@ -364,8 +364,8 @@ const SearchPage_: FC<SearchProps> = (props) => {
           })}
         </Accordion>
         {selectedItems.size === 0 && (
-          <ConsoleEmptyState title={t('public~No resources selected')}>
-            {<p>{t('public~Select one or more resources from the dropdown.')}</p>}
+          <ConsoleEmptyState title={t('No resources selected')}>
+            {<p>{t('Select one or more resources from the dropdown.')}</p>}
           </ConsoleEmptyState>
         )}
       </PageSection>

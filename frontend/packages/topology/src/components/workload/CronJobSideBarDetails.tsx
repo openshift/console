@@ -14,7 +14,7 @@ type CronJobSideBarDetailsProps = {
 };
 
 const CronJobSideBarDetails: FC<CronJobSideBarDetailsProps> = ({ cronjob }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
 
   return (
     <div className="overview__sidebar-pane-body resource-overview__body">
@@ -22,26 +22,18 @@ const CronJobSideBarDetails: FC<CronJobSideBarDetailsProps> = ({ cronjob }) => {
         <PodRingSet key={cronjob.metadata.uid} obj={cronjob} path="" />
       </div>
       <ResourceSummary resource={cronjob} showPodSelector>
-        <DetailsItem label={t('topology~Schedule')} obj={cronjob} path="spec.schedule" />
+        <DetailsItem label={t('Schedule')} obj={cronjob} path="spec.schedule" />
+        <DetailsItem label={t('Concurrency policy')} obj={cronjob} path="spec.concurrencyPolicy" />
         <DetailsItem
-          label={t('topology~Concurrency policy')}
-          obj={cronjob}
-          path="spec.concurrencyPolicy"
-        />
-        <DetailsItem
-          label={t('topology~Starting deadline seconds')}
+          label={t('Starting deadline seconds')}
           obj={cronjob}
           path="spec.startingDeadlineSeconds"
         >
           {cronjob.spec.startingDeadlineSeconds
-            ? t('topology~second', { count: cronjob.spec.startingDeadlineSeconds })
-            : t('topology~Not configured')}
+            ? t('second', { count: cronjob.spec.startingDeadlineSeconds })
+            : t('Not configured')}
         </DetailsItem>
-        <DetailsItem
-          label={t('topology~Last schedule time')}
-          obj={cronjob}
-          path="status.lastScheduleTime"
-        >
+        <DetailsItem label={t('Last schedule time')} obj={cronjob} path="status.lastScheduleTime">
           <Timestamp timestamp={cronjob.status.lastScheduleTime} />
         </DetailsItem>
       </ResourceSummary>

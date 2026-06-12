@@ -19,14 +19,14 @@ interface TrafficSplittingDeleteModalProps {
 type Props = FormikProps<FormikValues> & TrafficSplittingDeleteModalProps;
 
 const DeleteRevisionModal: FC<Props> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const { deleteRevision, handleSubmit, isSubmitting, status, showTraffic, cancel } = props;
   const serviceName = deleteRevision.metadata.labels[KNATIVE_SERVING_LABEL];
 
   return (
     <>
       <ModalHeader
-        title={t('knative-plugin~Delete {{revlabel}}?', { revlabel: RevisionModel.label })}
+        title={t('Delete {{revlabel}}?', { revlabel: RevisionModel.label })}
         titleIconVariant="warning"
         labelId="delete-revision-modal-title"
         data-test-id="modal-title"
@@ -34,11 +34,10 @@ const DeleteRevisionModal: FC<Props> = (props) => {
       <ModalBody>
         <Form id="delete-revision-form" onSubmit={handleSubmit} className="pf-v6-u-mr-md">
           <p>
-            {t('knative-plugin~Are you sure you want to delete ')}
-            <strong className="co-break-word">{deleteRevision.metadata.name}</strong>{' '}
-            {t('knative-plugin~from ')} <strong className="co-break-word">{serviceName}</strong>{' '}
-            {t('knative-plugin~in namespace ')} <strong>{deleteRevision.metadata.namespace}</strong>
-            ?
+            {t('Are you sure you want to delete ')}
+            <strong className="co-break-word">{deleteRevision.metadata.name}</strong> {t('from ')}{' '}
+            <strong className="co-break-word">{serviceName}</strong> {t('in namespace ')}{' '}
+            <strong>{deleteRevision.metadata.namespace}</strong>?
           </p>
           {showTraffic && (
             <>
@@ -63,10 +62,10 @@ const DeleteRevisionModal: FC<Props> = (props) => {
           isDisabled={isSubmitting}
           form="delete-revision-form"
         >
-          {t('knative-plugin~Delete')}
+          {t('Delete')}
         </Button>
         <Button variant="link" onClick={cancel} type="button" data-test-id="modal-cancel-action">
-          {t('knative-plugin~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </>

@@ -36,11 +36,11 @@ const normalizeEventSources = (
       icon: { url: getEventSourceIcon(referenceForModel(eventSource)) as string, class: null },
       type: 'EventSource',
       provider,
-      cta: { label: t('knative-plugin~Create Event Source'), href },
+      cta: { label: t('Create Event Source'), href },
       details: {
         properties: [
           {
-            label: t('knative-plugin~Support'),
+            label: t('Support'),
             value: support,
           },
         ],
@@ -53,7 +53,7 @@ const normalizeEventSources = (
 export const useEventSourceProvider: ExtensionHook<CatalogItem[]> = ({
   namespace,
 }): [CatalogItem[], boolean, any] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const { loaded, eventSourceModelsList: eventSourceModels } = useEventSourceModelsWithAccess(
     namespace,
   );

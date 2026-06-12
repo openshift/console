@@ -50,7 +50,7 @@ const getReadyReplicas = (resource: ControlPlaneMachineSetKind) => {
 };
 
 const ControlPlaneMachineSetCounts: FC<ControlPlaneMachineSetCountsProps> = ({ resource }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const desiredReplicas = getDesiredReplicas(resource);
   const replicas = resource?.status?.replicas || 0;
@@ -62,11 +62,11 @@ const ControlPlaneMachineSetCounts: FC<ControlPlaneMachineSetCountsProps> = ({ r
     <PaneBodyGroup>
       <DescriptionList className="co-detail-table">
         <Card>
-          <DescriptionListTerm>{t('public~Desired count')}</DescriptionListTerm>
+          <DescriptionListTerm>{t('Desired count')}</DescriptionListTerm>
           <DescriptionListDescription>
-            <Tooltip content={t('public~The desired number of replicas.')}>
+            <Tooltip content={t('The desired number of replicas.')}>
               <span>
-                {`${desiredReplicas}  ${t('public~machines', {
+                {`${desiredReplicas}  ${t('machines', {
                   count: desiredReplicas,
                 })}`}
               </span>
@@ -74,21 +74,19 @@ const ControlPlaneMachineSetCounts: FC<ControlPlaneMachineSetCountsProps> = ({ r
           </DescriptionListDescription>
         </Card>
         <Card>
-          <DescriptionListTerm>{t('public~Current count')}</DescriptionListTerm>
+          <DescriptionListTerm>{t('Current count')}</DescriptionListTerm>
           <DescriptionListDescription>
-            <Tooltip content={t('public~The most recently observed number of replicas.')}>
-              <span>{t('public~{{replicas}} machines', { replicas, count: replicas })}</span>
+            <Tooltip content={t('The most recently observed number of replicas.')}>
+              <span>{t('{{replicas}} machines', { replicas, count: replicas })}</span>
             </Tooltip>
           </DescriptionListDescription>
         </Card>
         <Card>
-          <DescriptionListTerm>{t('public~Ready count')}</DescriptionListTerm>
+          <DescriptionListTerm>{t('Ready count')}</DescriptionListTerm>
           <DescriptionListDescription>
-            <Tooltip
-              content={t('public~The number of ready replicas for this ControlPlaneMachineSet.')}
-            >
+            <Tooltip content={t('The number of ready replicas for this ControlPlaneMachineSet.')}>
               <span>
-                {t('public~{{readyReplicas}} machines', {
+                {t('{{readyReplicas}} machines', {
                   readyReplicas,
                   count: readyReplicas,
                 })}
@@ -97,13 +95,11 @@ const ControlPlaneMachineSetCounts: FC<ControlPlaneMachineSetCountsProps> = ({ r
           </DescriptionListDescription>
         </Card>
         <Card>
-          <DescriptionListTerm>{t('public~Updated count')}</DescriptionListTerm>
+          <DescriptionListTerm>{t('Updated count')}</DescriptionListTerm>
           <DescriptionListDescription>
-            <Tooltip
-              content={t('public~The number of updated replicas for this ControlPlaneMachineSet.')}
-            >
+            <Tooltip content={t('The number of updated replicas for this ControlPlaneMachineSet.')}>
               <span>
-                {t('public~{{updatedReplicas}} machines', {
+                {t('{{updatedReplicas}} machines', {
                   updatedReplicas,
                   count: updatedReplicas,
                 })}
@@ -112,7 +108,7 @@ const ControlPlaneMachineSetCounts: FC<ControlPlaneMachineSetCountsProps> = ({ r
           </DescriptionListDescription>
         </Card>
         <Card>
-          <DescriptionListTerm>{t('public~Unavailable count')}</DescriptionListTerm>
+          <DescriptionListTerm>{t('Unavailable count')}</DescriptionListTerm>
           <DescriptionListDescription>
             <Tooltip
               content={t(
@@ -121,7 +117,7 @@ const ControlPlaneMachineSetCounts: FC<ControlPlaneMachineSetCountsProps> = ({ r
             >
               {unavailableReplicas ? (
                 <span>
-                  {t('public~{{unavailableReplicas}} machines', {
+                  {t('{{unavailableReplicas}} machines', {
                     unavailableReplicas,
                     count: unavailableReplicas,
                   })}
@@ -138,17 +134,17 @@ const ControlPlaneMachineSetCounts: FC<ControlPlaneMachineSetCountsProps> = ({ r
 };
 
 const ControlPlaneMachineSetDetails: FC<ControlPlaneMachineSetDetailsProps> = ({ obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <>
       <PaneBody>
-        <SectionHeading text={t('public~ControlPlaneMachineSet details')} />
+        <SectionHeading text={t('ControlPlaneMachineSet details')} />
         <ControlPlaneMachineSetCounts resource={obj} />
         <Grid hasGutter>
           <GridItem md={6}>
             <ResourceSummary resource={obj}>
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('public~Selector')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('Selector')}</DescriptionListTerm>
                 <DescriptionListDescription>
                   <Selector
                     kind={machineReference}
@@ -158,13 +154,13 @@ const ControlPlaneMachineSetDetails: FC<ControlPlaneMachineSetDetailsProps> = ({
                 </DescriptionListDescription>
               </DescriptionListGroup>
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('public~Strategy')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('Strategy')}</DescriptionListTerm>
                 <DescriptionListDescription>
                   {obj.spec?.strategy?.type || DASH}
                 </DescriptionListDescription>
               </DescriptionListGroup>
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('public~State')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('State')}</DescriptionListTerm>
                 <DescriptionListDescription>{obj.spec?.state || DASH}</DescriptionListDescription>
               </DescriptionListGroup>
             </ResourceSummary>
@@ -172,7 +168,7 @@ const ControlPlaneMachineSetDetails: FC<ControlPlaneMachineSetDetailsProps> = ({
         </Grid>
       </PaneBody>
       <PaneBody>
-        <SectionHeading text={t('public~Conditions')} />
+        <SectionHeading text={t('Conditions')} />
         <Conditions conditions={_.get(obj, 'status.conditions')} />
       </PaneBody>
     </>
@@ -207,7 +203,7 @@ const useControlPlaneMachineSetColumns = (): {
   columns: TableColumn<ControlPlaneMachineSetKind>[];
   resetAllColumnWidths: () => void;
 } => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
     ControlPlaneMachineSetModel,
   );
@@ -215,7 +211,7 @@ const useControlPlaneMachineSetColumns = (): {
   const columns: TableColumn<ControlPlaneMachineSetKind>[] = useMemo(() => {
     return [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         resizableProps: getResizableProps(tableColumnInfo[0].id),
@@ -225,7 +221,7 @@ const useControlPlaneMachineSetColumns = (): {
         },
       },
       {
-        title: t('public~Namespace'),
+        title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
@@ -234,7 +230,7 @@ const useControlPlaneMachineSetColumns = (): {
         },
       },
       {
-        title: t('public~Machines'),
+        title: t('Machines'),
         id: tableColumnInfo[2].id,
         sort: 'status.readyReplicas',
         resizableProps: getResizableProps(tableColumnInfo[2].id),
@@ -243,7 +239,7 @@ const useControlPlaneMachineSetColumns = (): {
         },
       },
       {
-        title: t('public~Strategy'),
+        title: t('Strategy'),
         id: tableColumnInfo[3].id,
         sort: 'spec.strategy.type',
         resizableProps: getResizableProps(tableColumnInfo[3].id),
@@ -252,7 +248,7 @@ const useControlPlaneMachineSetColumns = (): {
         },
       },
       {
-        title: t('public~State'),
+        title: t('State'),
         id: tableColumnInfo[4].id,
         sort: 'spec.state',
         resizableProps: getResizableProps(tableColumnInfo[4].id),
@@ -274,10 +270,10 @@ const useControlPlaneMachineSetColumns = (): {
 };
 
 export const MachinesCell: FC<MachinesCellProps> = ({ desiredReplicas, readyReplicas, path }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <Link to={`${path}/machines`}>
-      {t('public~{{readyReplicas}} of {{count}} machine', {
+      {t('{{readyReplicas}} of {{count}} machine', {
         readyReplicas,
         count: desiredReplicas,
       })}

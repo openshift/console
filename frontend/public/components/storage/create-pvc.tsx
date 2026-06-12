@@ -119,7 +119,7 @@ export const CreatePVCForm: FC<CreatePVCFormProps> = (props) => {
     volumeMode,
   ]);
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const handleNameValuePairs = ({ nameValuePairs: updatedNameValuePairs }) => {
     setNameValuePairs(updatedNameValuePairs);
@@ -129,8 +129,8 @@ export const CreatePVCForm: FC<CreatePVCFormProps> = (props) => {
     const provisioner: string = updatedStorageClass?.provisioner || '';
     //setting message to display for various modes when a storage class of a know provisioner is selected
     const displayMessage = getProvisionerModeMapping(provisioner)
-      ? `${t('public~Access mode is set by StorageClass and cannot be changed')}`
-      : `${t('public~Permissions to the mounted drive')}`;
+      ? `${t('Access mode is set by StorageClass and cannot be changed')}`
+      : `${t('Permissions to the mounted drive')}`;
     setAccessModeHelp(displayMessage);
     //setting accessMode to default with the change to Storage Class selection
     setStorageClass(updatedStorageClass?.metadata?.name);
@@ -179,7 +179,7 @@ export const CreatePVCForm: FC<CreatePVCFormProps> = (props) => {
         />
       </div>
       <label className="co-required" htmlFor="pvc-name">
-        {t('public~PersistentVolumeClaim name')}
+        {t('PersistentVolumeClaim name')}
       </label>
       <div className="form-group">
         <span className="pf-v6-c-form-control">
@@ -196,7 +196,7 @@ export const CreatePVCForm: FC<CreatePVCFormProps> = (props) => {
           />
         </span>
         <p className="help-block" id="pvc-name-help">
-          {t('public~A unique name for the storage claim within the project')}
+          {t('A unique name for the storage claim within the project')}
         </p>
       </div>
       <div className="form-group pf-v6-c-form">
@@ -210,7 +210,7 @@ export const CreatePVCForm: FC<CreatePVCFormProps> = (props) => {
         />
       </div>
       <label className="co-required" htmlFor="request-size-input">
-        {t('public~Size')}
+        {t('Size')}
       </label>
       <RequestSizeInput
         name="requestSize"
@@ -224,10 +224,10 @@ export const CreatePVCForm: FC<CreatePVCFormProps> = (props) => {
         testID="pvc-size"
       />
       <p className="help-block" id="request-size-help">
-        {t('public~Desired storage capacity')}
+        {t('Desired storage capacity')}
       </p>
       <Checkbox
-        label={t('public~Use label selectors to request storage')}
+        label={t('Use label selectors to request storage')}
         onChange={handleUseSelector}
         checked={useSelector}
         name="showLabelSelector"
@@ -236,9 +236,9 @@ export const CreatePVCForm: FC<CreatePVCFormProps> = (props) => {
         {useSelector && (
           <NameValueEditorComponent
             nameValuePairs={nameValuePairs}
-            valueString={t('public~Selector')}
-            nameString={t('public~Label')}
-            addString={t('public~Add value')}
+            valueString={t('Selector')}
+            nameString={t('Label')}
+            addString={t('Add value')}
             readOnly={false}
             allowSorting={false}
             updateParentData={handleNameValuePairs}
@@ -264,13 +264,13 @@ export const CreatePVCForm: FC<CreatePVCFormProps> = (props) => {
 };
 
 const CreatePVCPage: FC<CreatePVCPageProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const navigate = useNavigate();
   const [error, setError] = useState('');
   const [inProgress, setInProgress] = useState(false);
   const [pvcObj, setPvcObj] = useState(null);
   const { namespace } = props;
-  const title = t('public~Create PersistentVolumeClaim');
+  const title = t('Create PersistentVolumeClaim');
 
   const save = (e: FormEvent<EventTarget>) => {
     e.preventDefault();
@@ -296,7 +296,7 @@ const CreatePVCPage: FC<CreatePVCPageProps> = (props) => {
           component: LinkTo(`/k8s/ns/${namespace}/persistentvolumeclaims/~new`, { replace: true }),
           id: 'yaml-link',
           'data-test': 'yaml-link',
-          label: t('public~Edit YAML'),
+          label: t('Edit YAML'),
         }}
       />
       <PaneBody>
@@ -306,14 +306,14 @@ const CreatePVCPage: FC<CreatePVCPageProps> = (props) => {
             <ButtonBar errorMessage={error} inProgress={inProgress}>
               <ActionGroup className="pf-v6-c-form">
                 <Button id="save-changes" data-test="create-pvc" type="submit" variant="primary">
-                  {t('public~Create')}
+                  {t('Create')}
                 </Button>
                 <Button
                   onClick={() => navigate(`/k8s/ns/${namespace}/persistentvolumeclaims/`)}
                   type="button"
                   variant="secondary"
                 >
-                  {t('public~Cancel')}
+                  {t('Cancel')}
                 </Button>
               </ActionGroup>
             </ButtonBar>

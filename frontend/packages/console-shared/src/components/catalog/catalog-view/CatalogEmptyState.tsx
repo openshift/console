@@ -15,12 +15,12 @@ type CatalogEmptyStateProps = {
 };
 
 export const CatalogEmptyState: FC<CatalogEmptyStateProps> = ({ onClear }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   return (
     <EmptyState
       headingLevel="h2"
       icon={RhStandardMagnifyingGlassIcon}
-      titleText={<>{t('console-shared~No results found')}</>}
+      titleText={<>{t('No results found')}</>}
       variant={EmptyStateVariant.full}
     >
       <EmptyStateBody>
@@ -31,7 +31,7 @@ export const CatalogEmptyState: FC<CatalogEmptyStateProps> = ({ onClear }) => {
       <EmptyStateFooter>
         <EmptyStateActions>
           <Button variant="link" onClick={onClear} data-test-id="catalog-clear-filters">
-            {t('console-shared~Clear all filters')}
+            {t('Clear all filters')}
           </Button>
         </EmptyStateActions>
       </EmptyStateFooter>

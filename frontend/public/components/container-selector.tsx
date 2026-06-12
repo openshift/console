@@ -9,13 +9,13 @@ export const ContainerSelector: FC<ContainerSelectorProps> = ({
   onChange,
   selected,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <div className="pf-v6-c-form__checkbox-row">
       {containers.map((container: ContainerSpec) => (
         <Checkbox
           key={container.name}
-          label={t('public~{{containerName}} from image {{containerImage}}', {
+          label={t('{{containerName}} from image {{containerImage}}', {
             containerName: container.name,
             containerImage: container.image,
           })}

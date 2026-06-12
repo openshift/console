@@ -53,7 +53,7 @@ export const QuickStartGettingStartedCard: FC<QuickStartGettingStartedCardProps>
   description,
   filter,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const { allQuickStartStates, setActiveQuickStart } = useQuickStartContext();
 
   return (
@@ -72,7 +72,7 @@ export const QuickStartGettingStartedCard: FC<QuickStartGettingStartedCardProps>
           links.push(
             {
               id: 'serverless-functions-using-cli-link',
-              title: t('knative-plugin~Create Serverless functions using CLI'),
+              title: t('Create Serverless functions using CLI'),
               href:
                 'https://access.redhat.com/documentation/en-us/red_hat_openshift_serverless/1.30/html/functions/index',
               external: true,
@@ -81,7 +81,7 @@ export const QuickStartGettingStartedCard: FC<QuickStartGettingStartedCardProps>
               id: 'serverless-functions-using-ide-link',
               href:
                 'https://github.com/redhat-developer/vscode-openshift-tools/blob/main/README.serverlessfn.md',
-              title: t('knative-plugin~Create Serverless functions using IDE'),
+              title: t('Create Serverless functions using IDE'),
               external: true,
             },
           );
@@ -105,7 +105,7 @@ export const QuickStartGettingStartedCard: FC<QuickStartGettingStartedCardProps>
             icon={
               <RhUiRouteIcon color="var(--co-global--palette--purple-600)" aria-hidden="true" />
             }
-            title={title || t('knative-plugin~Build with guided documentation')}
+            title={title || t('Build with guided documentation')}
             titleColor={'var(--co-global--palette--purple-600)'}
             description={
               description ||

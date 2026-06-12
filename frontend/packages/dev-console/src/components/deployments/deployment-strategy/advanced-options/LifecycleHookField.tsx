@@ -28,7 +28,7 @@ const LifecycleHookField: FC<LifecycleHookFieldProps> = ({
   lifecycleHookName,
   resourceObj,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const {
     setFieldValue,
     values: {
@@ -141,7 +141,7 @@ const LifecycleHookField: FC<LifecycleHookFieldProps> = ({
           }}
           icon={!lifecycleHookExist && <RhUiAddCircleFillIcon />}
         >
-          {`${lifecycleHookExist ? t('devconsole~Edit') : t('devconsole~Add')} ${t(
+          {`${lifecycleHookExist ? t('Edit') : t('Add')} ${t(
             'devconsole~{{lifecycleHookName}} lifecycle hook',
             {
               lifecycleHookName,
@@ -150,7 +150,7 @@ const LifecycleHookField: FC<LifecycleHookFieldProps> = ({
         </Button>
       )}
       {!showForm && lifecycleHookExist && (
-        <Tooltip content={t('devconsole~Remove')} position="right">
+        <Tooltip content={t('Remove')} position="right">
           <Button
             icon={<RhUiMinusCircleIcon />}
             className="pf-m-plain--align-left"

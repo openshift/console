@@ -10,7 +10,7 @@ import { useRepositoriesColumns } from './RepositoriesHeader';
 import { getDataViewRows } from './RepositoriesRow';
 
 const RepositoriesList: FC<TableProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   const { columns, resetAllColumnWidths } = useRepositoriesColumns(
     HelmRepositoriesCombinedListModel,
   );
@@ -21,7 +21,7 @@ const RepositoriesList: FC<TableProps> = (props) => {
         {...props}
         data={props.data}
         loaded={props.loaded}
-        label={t('helm-plugin~HelmChartRepositories')}
+        label={t('HelmChartRepositories')}
         columns={columns}
         getDataViewRows={getDataViewRows}
         hideColumnManagement

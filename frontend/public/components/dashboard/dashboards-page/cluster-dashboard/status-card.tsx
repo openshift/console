@@ -86,7 +86,7 @@ const cvResource: WatchK8sResource = {
 };
 
 export const DashboardAlerts: FC<DashboardAlertsProps> = ({ labelSelector }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const hasCVResource = useFlag(FLAGS.CLUSTER_VERSION);
   const [alerts, , loadError] = useNotificationAlerts(labelSelector);
   const [cv, cvLoaded] = useK8sWatchResource<ClusterVersionKind>(
@@ -102,9 +102,9 @@ export const DashboardAlerts: FC<DashboardAlertsProps> = ({ labelSelector }) => 
         <StatusItem
           key="clusterUpdate"
           Icon={() => <BlueArrowCircleUpIcon size="heading_2xl" />}
-          message={t('public~A cluster version update is available')}
+          message={t('A cluster version update is available')}
         >
-          <Link to="/settings/cluster?showVersions">{t('public~Update cluster')}</Link>
+          <Link to="/settings/cluster?showVersions">{t('Update cluster')}</Link>
         </StatusItem>
       )}
       {alerts.map((alert) => (
@@ -143,7 +143,7 @@ export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels
     () => subsystems.findIndex((e) => isResolvedDashboardsOverviewHealthOperator(e)),
     [subsystems],
   );
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const healthItems: { title: string; Component: ReactNode }[] = [];
   subsystems.forEach((subsystem) => {
     if (isResolvedDashboardsOverviewHealthURLSubsystem(subsystem)) {
@@ -200,7 +200,7 @@ export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels
                   setActiveNamespace(ALL_NAMESPACES_KEY);
                 }}
               >
-                {t('public~View alerts')}
+                {t('View alerts')}
               </Link>
             </>
           ),
@@ -208,7 +208,7 @@ export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels
           className: 'co-overview-card__actions',
         }}
       >
-        <CardTitle>{t('public~Status')}</CardTitle>
+        <CardTitle>{t('Status')}</CardTitle>
       </CardHeader>
       <HealthBody>
         <Gallery className="co-overview-status__health" hasGutter>

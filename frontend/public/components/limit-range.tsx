@@ -68,13 +68,13 @@ const useLimitRangeColumns = (): {
   columns: TableColumn<K8sResourceKind>[];
   resetAllColumnWidths: () => void;
 } => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(LimitRangeModel);
 
   const columns = useMemo(
     () => [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         resizableProps: getResizableProps(tableColumnInfo[0].id),
@@ -84,7 +84,7 @@ const useLimitRangeColumns = (): {
         },
       },
       {
-        title: t('public~Namespace'),
+        title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
@@ -93,7 +93,7 @@ const useLimitRangeColumns = (): {
         },
       },
       {
-        title: t('public~Created'),
+        title: t('Created'),
         id: tableColumnInfo[2].id,
         sort: 'metadata.creationTimestamp',
         resizableProps: getResizableProps(tableColumnInfo[2].id),
@@ -185,20 +185,20 @@ const LimitRangeDetailsRows: FC<LimitRangeDetailsRowsProps> = ({ limit }) => {
 };
 
 const LimitRangeDetailsList = (resource) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <PaneBody>
-      <SectionHeading text={t('public~Limits')} />
+      <SectionHeading text={t('Limits')} />
       <Table variant="compact" borders>
         <Thead>
           <Tr>
-            <Th>{t('public~Type')}</Th>
-            <Th>{t('public~Resource')}</Th>
-            <Th>{t('public~Min')}</Th>
-            <Th>{t('public~Max')}</Th>
-            <Th>{t('public~Default request')}</Th>
-            <Th>{t('public~Default limit')}</Th>
-            <Th>{t('public~Max limit/request ratio')}</Th>
+            <Th>{t('Type')}</Th>
+            <Th>{t('Resource')}</Th>
+            <Th>{t('Min')}</Th>
+            <Th>{t('Max')}</Th>
+            <Th>{t('Default request')}</Th>
+            <Th>{t('Default limit')}</Th>
+            <Th>{t('Max limit/request ratio')}</Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -212,11 +212,11 @@ const LimitRangeDetailsList = (resource) => {
 };
 
 export const LimitRangeDetailsPage = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const Details = ({ obj: rq }) => (
     <>
       <PaneBody>
-        <SectionHeading text={t('public~LimitRange details')} />
+        <SectionHeading text={t('LimitRange details')} />
         <Grid hasGutter>
           <GridItem md={6}>
             <ResourceSummary resource={rq} />

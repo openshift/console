@@ -389,7 +389,7 @@ export const ListPage = withFallback<ListPageProps>((props) => {
     omitFilterToolbar,
     flatten = (_resources) => (_resources[name || kind]?.data ?? []) as K8sResourceCommon[],
   } = props;
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const params = useParams();
   let { createProps } = props;
   const ko = kindObj(kind);
@@ -438,12 +438,10 @@ export const ListPage = withFallback<ListPageProps>((props) => {
       autoFocus={autoFocus}
       canCreate={canCreate}
       createAccessReview={createAccessReview}
-      createButtonText={
-        createButtonText || t('public~Create {{label}}', { label: t(labelKey) || label })
-      }
+      createButtonText={createButtonText || t('Create {{label}}', { label: t(labelKey) || label })}
       createProps={createProps}
       customData={customData}
-      filterLabel={filterLabel || t('public~by name')}
+      filterLabel={filterLabel || t('by name')}
       nameFilterPlaceholder={nameFilterPlaceholder}
       labelFilterPlaceholder={labelFilterPlaceholder}
       flatten={flatten}
@@ -545,7 +543,7 @@ export const MultiListPage: FC<MultiListPageProps> = (props) => {
     omitFilterToolbar,
   } = props;
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   // Build resources configuration for FireMan (needs prop for redux IDs)
   const k8sResources = useMemo(
@@ -626,9 +624,9 @@ export const MultiListPage: FC<MultiListPageProps> = (props) => {
       autoFocus={autoFocus}
       canCreate={canCreate}
       createAccessReview={createAccessReview}
-      createButtonText={createButtonText || t('public~Create')}
+      createButtonText={createButtonText || t('Create')}
       createProps={createProps}
-      filterLabel={filterLabel || t('public~by name')}
+      filterLabel={filterLabel || t('by name')}
       helpText={helpText}
       helpAlert={helpAlert}
       resources={mock ? [] : k8sResources}

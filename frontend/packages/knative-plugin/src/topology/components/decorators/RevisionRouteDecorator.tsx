@@ -17,7 +17,7 @@ interface RevisionRouteDecoratorProps {
 
 const RevisionRouteDecorator: FC<RevisionRouteDecoratorProps> = ({ element, radius, x, y }) => {
   const ref = useRef();
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const resourceObj = getResource(element);
   const url = useRoutesURL(resourceObj);
 
@@ -25,19 +25,11 @@ const RevisionRouteDecorator: FC<RevisionRouteDecoratorProps> = ({ element, radi
     return null;
   }
   return (
-    <Tooltip
-      triggerRef={ref}
-      key="route"
-      content={t('knative-plugin~Open URL')}
-      position={TooltipPosition.right}
-    >
+    <Tooltip triggerRef={ref} key="route" content={t('Open URL')} position={TooltipPosition.right}>
       <g ref={ref}>
         <Decorator x={x} y={y} radius={radius} href={url} external>
           <g transform={`translate(-${radius / 2}, -${radius / 2})`}>
-            <RhUiExternalLinkFillIcon
-              style={{ fontSize: radius }}
-              title={t('knative-plugin~Open URL')}
-            />
+            <RhUiExternalLinkFillIcon style={{ fontSize: radius }} title={t('Open URL')} />
           </g>
         </Decorator>
       </g>

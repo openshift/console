@@ -16,7 +16,7 @@ import { useResourceType } from '../section/useResourceType';
 import './ServerlessFunctionSection.scss';
 
 const ServerlessFunctionSection = ({ builderImages }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const { values, setFieldValue, setFieldError, errors } = useFormikContext<FormikValues>();
   const {
     git: { url, type, ref, dir, secretResource },
@@ -36,7 +36,7 @@ const ServerlessFunctionSection = ({ builderImages }) => {
           setRuntimeImage(getRuntimeImage(res.values.runtime as SupportedRuntime, builderImages));
           if (notSupportedRuntime.includes(res.values.runtime)) {
             setHelpText(
-              t('devconsole~Support for {{runtime}} is not yet available.', {
+              t('Support for {{runtime}} is not yet available.', {
                 runtime: res.values.runtime,
               }),
             );
@@ -95,7 +95,7 @@ const ServerlessFunctionSection = ({ builderImages }) => {
           className="odc-serverless-function-strategy-section__error-alert"
           isInline
           variant="danger"
-          title={t('devconsole~Import is not possible.')}
+          title={t('Import is not possible.')}
         >
           {helpText}
         </Alert>

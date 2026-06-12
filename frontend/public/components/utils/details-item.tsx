@@ -73,7 +73,7 @@ export const DetailsItem: FC<DetailsItemProps> = ({
   path,
   valueClassName,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const [model] = useK8sModel(obj ? referenceFor(obj) : '');
   const hide = hideEmpty && _.isEmpty(_.get(obj, path));
   const popoverContent: string = description ?? getPropertyDescription(model, path);
@@ -112,7 +112,7 @@ export const DetailsItem: FC<DetailsItemProps> = ({
           {editable && editAsGroup && (
             <SplitItem>
               <EditButton testId={label} onClick={onEdit}>
-                {t('public~Edit')}
+                {t('Edit')}
               </EditButton>
             </SplitItem>
           )}

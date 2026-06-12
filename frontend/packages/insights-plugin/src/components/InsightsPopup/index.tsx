@@ -68,7 +68,7 @@ export const InsightsPopup: FC<PrometheusHealthPopupProps> = ({ responses, k8sRe
     { response: operatorStatusResponse, error: operatorStatusError },
     { response: lastGatherResponse },
   ] = responses;
-  const { t } = useTranslation();
+  const { t } = useTranslation('insights-plugin');
   const metrics = mapMetrics(metricsResponse);
   const conditions = mapConditions(operatorStatusResponse);
   const clusterID = (k8sResult as K8sResourceKind)?.data?.spec?.clusterID || '';
@@ -101,7 +101,7 @@ export const InsightsPopup: FC<PrometheusHealthPopupProps> = ({ responses, k8sRe
   ) : (
     <Stack hasGutter>
       <StackItem>
-        {t('insights-plugin~Last refresh')}:{' '}
+        {t('Last refresh')}:{' '}
         <Timestamp timestamp={new Date(lastRefreshTime).toISOString()} simple />
       </StackItem>
       <StackItem className="pf-v6-u-text-color-subtle">
@@ -110,17 +110,11 @@ export const InsightsPopup: FC<PrometheusHealthPopupProps> = ({ responses, k8sRe
         )}
       </StackItem>
       {error ? (
-        <StackItem className="pf-v6-u-text-color-subtle">
-          {t('insights-plugin~Temporarily unavailable.')}
-        </StackItem>
+        <StackItem className="pf-v6-u-text-color-subtle">{t('Temporarily unavailable.')}</StackItem>
       ) : disabled ? (
-        <StackItem className="pf-v6-u-text-color-subtle">
-          {t('insights-plugin~Disabled.')}
-        </StackItem>
+        <StackItem className="pf-v6-u-text-color-subtle">{t('Disabled.')}</StackItem>
       ) : waiting ? (
-        <StackItem className="pf-v6-u-text-color-subtle">
-          {t('insights-plugin~Waiting for results.')}
-        </StackItem>
+        <StackItem className="pf-v6-u-text-color-subtle">{t('Waiting for results.')}</StackItem>
       ) : (
         <StackItem>
           <div>
@@ -134,7 +128,7 @@ export const InsightsPopup: FC<PrometheusHealthPopupProps> = ({ responses, k8sRe
               }))}
               title={`${numberOfIssues}`}
               titleComponent={<ChartLabel x={220} y={78} />}
-              subTitle={t('insights-plugin~Total issue', { count: numberOfIssues })}
+              subTitle={t('Total issue', { count: numberOfIssues })}
               legendOrientation="vertical"
               width={320}
               height={180}
@@ -144,7 +138,7 @@ export const InsightsPopup: FC<PrometheusHealthPopupProps> = ({ responses, k8sRe
               constrainToVisibleArea
               legendComponent={
                 <ChartLegend
-                  title={t('insights-plugin~Total risk')}
+                  title={t('Total risk')}
                   titleComponent={
                     <ChartLabel dx={13} dy={-10} style={{ fontWeight: 'bold', fontSize: '14px' }} />
                   }
@@ -170,11 +164,11 @@ export const InsightsPopup: FC<PrometheusHealthPopupProps> = ({ responses, k8sRe
           </div>
           {clusterID ? (
             <>
-              <Title headingLevel="h6">{t('insights-plugin~Fixable issues')}</Title>
+              <Title headingLevel="h6">{t('Fixable issues')}</Title>
               <div>
                 <ExternalLink
                   href={`https://console.redhat.com/openshift/insights/advisor/clusters/${clusterID}`}
-                  text={t('insights-plugin~View all recommendations in Red Hat Lightspeed Advisor')}
+                  text={t('View all recommendations in Red Hat Lightspeed Advisor')}
                 />
               </div>
             </>
@@ -182,14 +176,14 @@ export const InsightsPopup: FC<PrometheusHealthPopupProps> = ({ responses, k8sRe
             <div>
               <ExternalLink
                 href={`https://console.redhat.com/openshift/insights/advisor`}
-                text={t('insights-plugin~View more in Red Hat Lightspeed Advisor')}
+                text={t('View more in Red Hat Lightspeed Advisor')}
               />
             </div>
           )}
         </StackItem>
       )}
       {(waiting || disabled || error) && !isManaged() && (
-        <ExternalLink href={insightsURL} text={t('insights-plugin~More about Insights')} />
+        <ExternalLink href={insightsURL} text={t('More about Insights')} />
       )}
     </Stack>
   );

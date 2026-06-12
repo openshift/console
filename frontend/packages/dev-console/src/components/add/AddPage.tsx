@@ -11,13 +11,13 @@ import AddPageLayout from './AddPageLayout';
 
 // Exported for testing
 export const PageContents: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const { ns: namespace } = useParams();
   const isOpenShift = useFlag(FLAGS.OPENSHIFT);
 
   if (!namespace) {
     return (
-      <CreateProjectListPage title={t('devconsole~Add')}>
+      <CreateProjectListPage title={t('Add')}>
         {(openProjectModal) =>
           isOpenShift ? (
             <Trans t={t} ns="devconsole">
@@ -35,19 +35,19 @@ export const PageContents: FC = () => {
     );
   }
 
-  return <AddPageLayout title={t('devconsole~Add')} />;
+  return <AddPageLayout title={t('Add')} />;
 };
 
 const PageContentsWithStartGuide = withStartGuide(PageContents);
 
 const AddPage: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const { ns: namespace } = useParams();
   const nsVariant = namespace ? null : NamespacedPageVariants.light;
 
   return (
     <>
-      <DocumentTitle>{`+${t('devconsole~Add')}`}</DocumentTitle>
+      <DocumentTitle>{`+${t('Add')}`}</DocumentTitle>
       <NamespacedPage variant={nsVariant} hideApplications>
         <PageContentsWithStartGuide />
       </NamespacedPage>

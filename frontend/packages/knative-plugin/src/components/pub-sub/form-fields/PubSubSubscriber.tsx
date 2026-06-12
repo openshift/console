@@ -22,7 +22,7 @@ type PubSubSubscriberProps = {
 };
 
 const PubSubSubscriber: FC<PubSubSubscriberProps> = ({ autoSelect = true, cancel }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const { values, setFieldValue, setFieldTouched, validateForm, setStatus } = useFormikContext<
     FormikValues
   >();
@@ -133,14 +133,10 @@ const PubSubSubscriber: FC<PubSubSubscriberProps> = ({ autoSelect = true, cancel
   const resourceFilter = ({ metadata }: K8sResourceKind) => !metadata?.ownerReferences?.length;
 
   return (
-    <FormGroup
-      fieldId={getFieldId('pubsub', 'subscriber')}
-      label={t('knative-plugin~Subscriber')}
-      isRequired
-    >
+    <FormGroup fieldId={getFieldId('pubsub', 'subscriber')} label={t('Subscriber')} isRequired>
       {resourceAlert && (
         <>
-          <Alert variant="custom" title={t('knative-plugin~No Subscriber available')} isInline>
+          <Alert variant="custom" title={t('No Subscriber available')} isInline>
             <Trans t={t} ns="knative-plugin">
               {'To create a Subscriber, first create a Knative Service from the '}
               <Link
@@ -163,7 +159,7 @@ const PubSubSubscriber: FC<PubSubSubscriberProps> = ({ autoSelect = true, cancel
         dataSelector={['metadata', 'name']}
         fullWidth
         required
-        placeholder={t('knative-plugin~Select Subscriber')}
+        placeholder={t('Select Subscriber')}
         showBadge
         autocompleteFilter={autocompleteFilter}
         onChange={onSubscriberChange}

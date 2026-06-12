@@ -19,7 +19,7 @@ import { useNavExtensionsForSection } from './useNavExtensionsForSection';
 import { navItemHrefIsActive, navItemResourceIsActive } from './utils';
 
 export const NavSection: FC<NavSectionProps> = ({ id, name, dataAttributes }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const location = useLocation();
   const [k8sModels] = useK8sModels();
   const navExtensions = useNavExtensionsForSection(id);
@@ -104,12 +104,7 @@ export const NavSection: FC<NavSectionProps> = ({ id, name, dataAttributes }) =>
 
   if (!name) {
     return (
-      <NavGroup
-        title=""
-        className="no-title"
-        aria-label={t('console-app~Navigation')}
-        {...dataAttributes}
-      >
+      <NavGroup title="" className="no-title" aria-label={t('Navigation')} {...dataAttributes}>
         {children}
       </NavGroup>
     );

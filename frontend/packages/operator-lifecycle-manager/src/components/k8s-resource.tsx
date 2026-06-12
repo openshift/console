@@ -67,28 +67,28 @@ const ResourceTableRow: FC<RowFunctionArgs<
 );
 
 const ResourceTable: FC<ResourceTableProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const ResourceTableHeader = () => [
     {
-      title: t('olm~Name'),
+      title: t('Name'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: t('olm~Kind'),
+      title: t('Kind'),
       sortField: 'kind',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: t('olm~Status'),
+      title: t('Status'),
       sortField: 'status.phase',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: t('olm~Created'),
+      title: t('Created'),
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
@@ -98,12 +98,12 @@ const ResourceTable: FC<ResourceTableProps> = (props) => {
   return (
     <Table
       {...props}
-      aria-label={t('olm~Operand Resources')}
+      aria-label={t('Operand Resources')}
       Header={ResourceTableHeader}
       Row={ResourceTableRow}
       EmptyMsg={() => (
-        <ConsoleEmptyState title={t('olm~No resources found')}>
-          {t('olm~There are no Kubernetes resources used by this operand.')}
+        <ConsoleEmptyState title={t('No resources found')}>
+          {t('There are no Kubernetes resources used by this operand.')}
         </ConsoleEmptyState>
       )}
       virtualize
@@ -144,7 +144,7 @@ export const linkForCsvResource = (
 type ResourcesPageRouteParams = RouteParams<'plural'>;
 
 export const Resources: FC<ResourcesProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const { plural } = useParams<ResourcesPageRouteParams>();
   const providedAPI = providedAPIForReference(props.customData, plural);
 
@@ -171,12 +171,12 @@ export const Resources: FC<ResourcesProps> = (props) => {
 
   return (
     <MultiListPage
-      filterLabel={t('olm~Resources by name')}
+      filterLabel={t('Resources by name')}
       resources={watchResources}
       rowFilters={[
         {
           type: 'clusterserviceversion-resource-kind',
-          filterGroupName: t('olm~Kind'),
+          filterGroupName: t('Kind'),
           reducer: ({ kind }) => kindForReference(kind),
           items: watchResources.map(({ kind }) => ({
             id: kindForReference(kind),

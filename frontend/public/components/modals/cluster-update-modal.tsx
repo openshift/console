@@ -78,7 +78,7 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
   const [machineConfigPoolsToPause, setMachineConfigPoolsToPause] = useState<string[]>([]);
   const [upgradeType, setUpgradeType] = useState<upgradeTypes>(upgradeTypes.Full);
   const [includeNotRecommended, setIncludeNotRecommended] = useState(false);
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   useEffect(() => {
     const initialMCPPausedValues = machineConfigPools
       .filter((mcp) => !isMCPMaster(mcp) && isMCPPaused(mcp))
@@ -196,21 +196,21 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
     {
       items: recommendedOptions,
       key: 'recommended',
-      label: t('public~Recommended'),
+      label: t('Recommended'),
     },
   ];
   if (includeNotRecommended) {
     options.unshift({
       items: notRecommendedOptions,
       key: 'notRecommended',
-      label: t('public~Have known issues'),
+      label: t('Have known issues'),
     });
   }
 
   return (
     <>
       <ModalHeader
-        title={t('public~Update cluster')}
+        title={t('Update cluster')}
         data-test-id="modal-title"
         data-test="modal-title"
         labelId="cluster-update-modal-title"
@@ -218,10 +218,10 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
       <ModalBody>
         <Form id="cluster-update-form" onSubmit={submit}>
           {clusterUpgradeableFalse && <ClusterNotUpgradeableAlert onCancel={cancel} cv={cv} />}
-          <FormGroup label={t('public~Current version')} fieldId="current-version">
+          <FormGroup label={t('Current version')} fieldId="current-version">
             <p>{currentVersion}</p>
           </FormGroup>
-          <FormGroup label={t('public~Select new version')} fieldId="version-select">
+          <FormGroup label={t('Select new version')} fieldId="version-select">
             <DropdownWithSwitch
               isFullWidth
               onSelect={onSelectVersion}
@@ -231,7 +231,7 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
               switchIsDisabled={notRecommendedOptions.length === 0}
               switchLabel={
                 <>
-                  {t('public~Include versions with known issues')}
+                  {t('Include versions with known issues')}
                   <FieldLevelHelp>
                     {t(
                       'public~These versions are supported, but include known issues. Review the known issues before updating.',
@@ -272,7 +272,7 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
           <FormGroup
             label={
               <>
-                {t('public~Update options')}
+                {t('Update options')}
                 <FieldLevelHelp>
                   {t(
                     'public~Full cluster update allows you to update all your Nodes, but takes longer. Control plane only update allows you to pause worker and custom pool Nodes to accommodate your maintenance schedule.',
@@ -286,7 +286,7 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
               isChecked={upgradeType === upgradeTypes.Full}
               name={upgradeTypes.Full}
               onChange={() => handleUpgradeTypeChange(upgradeTypes.Full)}
-              label={t('public~Full cluster update')}
+              label={t('Full cluster update')}
               id={upgradeTypes.Full}
               value={upgradeTypes.Full}
               description={t(
@@ -320,7 +320,7 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
               isChecked={upgradeType === upgradeTypes.Partial}
               name={upgradeTypes.Partial}
               onChange={() => handleUpgradeTypeChange(upgradeTypes.Partial)}
-              label={t('public~Control plane only update')}
+              label={t('Control plane only update')}
               id={upgradeTypes.Partial}
               value={upgradeTypes.Partial}
               description={t(
@@ -355,7 +355,7 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
             (upgradeType === upgradeTypes.Partial && machineConfigPoolsToPause.length === 0)
           }
         >
-          {t('public~Update')}
+          {t('Update')}
         </Button>
         <Button
           variant="link"
@@ -364,7 +364,7 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
           data-test-id="modal-cancel-action"
           data-test="modal-cancel-action"
         >
-          {t('public~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </>

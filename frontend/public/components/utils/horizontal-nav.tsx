@@ -54,7 +54,7 @@ class PodsComponentWithTranslation extends PureComponent<PodsComponentProps & Wi
     } = this.props.obj;
     const { showNodes, t } = this.props;
     if (_.isEmpty(selector)) {
-      return <EmptyBox label={t('public~Pods')} />;
+      return <EmptyBox label={t('Pods')} />;
     }
 
     // Hide the create button to avoid confusion when showing pods for an object.
@@ -175,7 +175,7 @@ export const navFactory: NavFactory = {
 };
 
 export const NavBar: FC<NavBarProps> = ({ pages }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { telemetryPrefix, titlePrefix } = useContext(PageTitleContext);
   const location = useLocation();
   const navigate = useNavigate();

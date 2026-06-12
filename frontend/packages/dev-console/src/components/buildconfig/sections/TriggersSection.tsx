@@ -31,15 +31,15 @@ export type TriggersSectionFormData = {
 };
 
 const TriggersSection: FC<{ namespace: string }> = ({ namespace }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const [{ value: buildFromType }] = useField<ImageOptionType>('formData.images.buildFrom.type');
 
   // Keys must match the triggers type
   const typeItems: Record<string, string> = {
-    Generic: t('devconsole~Generic'),
-    GitHub: t('devconsole~GitHub'),
-    GitLab: t('devconsole~GitLab'),
-    Bitbucket: t('devconsole~BitBucket'),
+    Generic: t('Generic'),
+    GitHub: t('GitHub'),
+    GitLab: t('GitLab'),
+    Bitbucket: t('BitBucket'),
   };
 
   const autocompleteFilter = (text: string, item: any): boolean => fuzzy(text, item?.props?.name);
@@ -69,20 +69,20 @@ const TriggersSection: FC<{ namespace: string }> = ({ namespace }) => {
   );
 
   return (
-    <FormSection title={t('devconsole~Triggers')} dataTest="section triggers">
-      <FormGroup fieldId="configChange" label={t('devconsole~Config change')}>
+    <FormSection title={t('Triggers')} dataTest="section triggers">
+      <FormGroup fieldId="configChange" label={t('Config change')}>
         <CheckboxField
           name="formData.triggers.configChange"
-          label={t('devconsole~Automatically build a new image when config changes')}
+          label={t('Automatically build a new image when config changes')}
           data-test="config-change checkbox"
         />
       </FormGroup>
 
       {buildFromType !== 'none' ? (
-        <FormGroup fieldId="imageChange" label={t('devconsole~Image change')}>
+        <FormGroup fieldId="imageChange" label={t('Image change')}>
           <CheckboxField
             name="formData.triggers.imageChange"
-            label={t('devconsole~Automatically build a new image when image changes')}
+            label={t('Automatically build a new image when image changes')}
             data-test="image-change checkbox"
           />
         </FormGroup>
@@ -90,16 +90,16 @@ const TriggersSection: FC<{ namespace: string }> = ({ namespace }) => {
 
       <MultiColumnField
         name="formData.triggers.otherTriggers"
-        addLabel={t('devconsole~Add trigger')}
-        headers={[t('devconsole~Type'), t('devconsole~Secret')]}
+        addLabel={t('Add trigger')}
+        headers={[t('Type'), t('Secret')]}
         emptyValues={{ type: 'generic' }}
       >
-        <DropdownField name="type" title={t('devconsole~Select')} items={typeItems} fullWidth />
+        <DropdownField name="type" title={t('Select')} items={typeItems} fullWidth />
         <ResourceDropdownField
           name="secret"
           resources={resources}
           dataSelector={['metadata', 'name']}
-          placeholder={t('devconsole~Select a secret')}
+          placeholder={t('Select a secret')}
           autocompleteFilter={autocompleteFilter}
           fullWidth
           showBadge

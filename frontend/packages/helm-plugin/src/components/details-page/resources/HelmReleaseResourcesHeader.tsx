@@ -11,11 +11,11 @@ export const tableColumnInfo = [
 ];
 
 export const useHelmReleaseResourcesColumns = (): TableColumn<K8sResourceKind>[] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   return useMemo(
     () => [
       {
-        title: t('helm-plugin~Name'),
+        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         props: {
@@ -24,7 +24,7 @@ export const useHelmReleaseResourcesColumns = (): TableColumn<K8sResourceKind>[]
         },
       },
       {
-        title: t('helm-plugin~Type'),
+        title: t('Type'),
         id: tableColumnInfo[1].id,
         sort: 'kind',
         props: {
@@ -32,7 +32,7 @@ export const useHelmReleaseResourcesColumns = (): TableColumn<K8sResourceKind>[]
         },
       },
       {
-        title: t('helm-plugin~Status'),
+        title: t('Status'),
         id: tableColumnInfo[2].id,
         sort: 'status.phase',
         props: {
@@ -40,7 +40,7 @@ export const useHelmReleaseResourcesColumns = (): TableColumn<K8sResourceKind>[]
         },
       },
       {
-        title: t('helm-plugin~Created'),
+        title: t('Created'),
         id: tableColumnInfo[3].id,
         sort: 'metadata.creationTimestamp',
         props: {

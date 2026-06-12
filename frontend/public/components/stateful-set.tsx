@@ -26,11 +26,11 @@ import { StatefulSetModel } from '../models';
 import { useWorkloadColumns, getWorkloadDataViewRows } from './workload-table';
 
 const StatefulSetDetails: FC<StatefulSetDetailsProps> = ({ obj: ss }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <>
       <PaneBody>
-        <SectionHeading text={t('public~StatefulSet details')} />
+        <SectionHeading text={t('StatefulSet details')} />
         <PodRingSet key={ss.metadata.uid} obj={ss} path="/spec/replicas" />
         <Grid hasGutter>
           <GridItem md={6}>
@@ -46,11 +46,11 @@ const StatefulSetDetails: FC<StatefulSetDetailsProps> = ({ obj: ss }) => {
         </Grid>
       </PaneBody>
       <PaneBody>
-        <SectionHeading text={t('public~Containers')} />
+        <SectionHeading text={t('Containers')} />
         <ContainerTable containers={ss.spec.template.spec.containers} />
       </PaneBody>
       <PaneBody>
-        <VolumesTable resource={ss} heading={t('public~Volumes')} />
+        <VolumesTable resource={ss} heading={t('Volumes')} />
       </PaneBody>
     </>
   );

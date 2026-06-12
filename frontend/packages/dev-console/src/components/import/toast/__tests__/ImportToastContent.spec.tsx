@@ -10,7 +10,7 @@ jest.mock('react-i18next', () => ({
   __esModule: true,
   useTranslation: () => ({
     t: (key: string, options?: any) => {
-      if (key === 'devconsole~{{kind}} created successfully.') {
+      if (key === '{{kind}} created successfully.') {
         return `${options.kind} created successfully.`;
       }
       return key;

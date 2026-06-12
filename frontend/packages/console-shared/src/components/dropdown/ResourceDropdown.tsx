@@ -124,7 +124,7 @@ export const ResourceDropdown: FC<ResourceDropdownProps> = ({
   transformLabel,
   userPreferencePrefix,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const [selectedTitle, setSelectedTitle] = useState<ReactNode>(null);
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
@@ -293,7 +293,7 @@ export const ResourceDropdown: FC<ResourceDropdownProps> = ({
     if (loadError) {
       return (
         <span className="pf-v6-u-text-color-status-danger">
-          {t('console-shared~Error loading - {{placeholder}}', { placeholder })}
+          {t('Error loading - {{placeholder}}', { placeholder })}
         </span>
       );
     }

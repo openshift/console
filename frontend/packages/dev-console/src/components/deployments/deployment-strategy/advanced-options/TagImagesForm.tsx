@@ -8,7 +8,7 @@ import ImageStream from '../../../import/image-search/ImageStream';
 import { getContainerNames } from '../../utils/deployment-utils';
 
 const TagImagesForm: FC<{ lifecycleHook: string }> = ({ lifecycleHook }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const {
     values: {
       formData: { containers, deploymentStrategy },
@@ -19,14 +19,14 @@ const TagImagesForm: FC<{ lifecycleHook: string }> = ({ lifecycleHook }) => {
     <FormSection>
       <DropdownField
         name={`formData.deploymentStrategy.imageStreamData.${lifecycleHook}.containerName`}
-        label={t('devconsole~Container name')}
+        label={t('Container name')}
         items={dropdownItems}
         selectedKey={deploymentStrategy.imageStreamData[lifecycleHook].containerName}
         fullWidth
         required
       />
       <ImageStream
-        label={t('devconsole~Tag as')}
+        label={t('Tag as')}
         formContextField={`formData.deploymentStrategy.imageStreamData.${lifecycleHook}`}
         required
       />

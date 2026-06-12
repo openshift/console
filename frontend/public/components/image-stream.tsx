@@ -113,7 +113,7 @@ const ImageStreamTagsRow: FC<ImageStreamTagsRowProps> = ({ imageStream, specTag,
     'annotations',
     'openshift.io/image.dockerRepositoryCheck',
   ]);
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <Tr>
       <Td modifier="breakWord">
@@ -135,23 +135,23 @@ const ImageStreamTagsRow: FC<ImageStreamTagsRowProps> = ({ imageStream, specTag,
           />
         )}
         {from && !referencesTag && <>{from.name}</>}
-        {!from && <span className="pf-v6-u-text-color-subtle">{t('public~pushed image')}</span>}
+        {!from && <span className="pf-v6-u-text-color-subtle">{t('pushed image')}</span>}
       </Td>
       <Td modifier="breakWord" visibility={['hidden', 'visibleOnSm']}>
         {!imageStreamStatus && dockerRepositoryCheck && (
           <>
             <YellowExclamationTriangleIcon />
-            &nbsp;{t('public~Unable to resolve')}
+            &nbsp;{t('Unable to resolve')}
           </>
         )}
-        {!imageStreamStatus && !dockerRepositoryCheck && !from && <>{t('public~Not synced yet')}</>}
+        {!imageStreamStatus && !dockerRepositoryCheck && !from && <>{t('Not synced yet')}</>}
         {/* We have no idea why in this case  */}
-        {!imageStreamStatus && !dockerRepositoryCheck && from && <>{t('public~Unresolved')}</>}
+        {!imageStreamStatus && !dockerRepositoryCheck && from && <>{t('Unresolved')}</>}
         {imageStreamStatus && image && <>{image}</>}
         {imageStreamStatus && !image && (
           <>
             <YellowExclamationTriangleIcon />
-            &nbsp;{t('public~There is no image associated with this tag')}
+            &nbsp;{t('There is no image associated with this tag')}
           </>
         )}
       </Td>
@@ -168,7 +168,7 @@ export const ExampleDockerCommandPopover: FC<ImageStreamManipulationHelpProps> =
   tag,
 }) => {
   const publicImageRepository = _.get(imageStream, 'status.publicDockerImageRepository');
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   if (!publicImageRepository) {
     return null;
   }
@@ -178,7 +178,7 @@ export const ExampleDockerCommandPopover: FC<ImageStreamManipulationHelpProps> =
 
   return (
     <Popover
-      headerContent={<>{t('public~Image registry commands')}</>}
+      headerContent={<>{t('Image registry commands')}</>}
       className="co-example-docker-command__popover"
       minWidth="600px"
       bodyContent={
@@ -189,13 +189,13 @@ export const ExampleDockerCommandPopover: FC<ImageStreamManipulationHelpProps> =
             )}
           </p>
           <br />
-          <p>{t('public~Authenticate to the internal registry')}</p>
+          <p>{t('Authenticate to the internal registry')}</p>
           <CopyToClipboard value={loginCommand} />
           <br />
-          <p>{t('public~Push an image to this ImageStream')}</p>
+          <p>{t('Push an image to this ImageStream')}</p>
           <CopyToClipboard value={pushCommand} />
           <br />
-          <p>{t('public~Pull an image from this ImageStream')}</p>
+          <p>{t('Pull an image from this ImageStream')}</p>
           <CopyToClipboard value={pullCommand} />
           <br />
           <p>
@@ -203,7 +203,7 @@ export const ExampleDockerCommandPopover: FC<ImageStreamManipulationHelpProps> =
               Red Hat Enterprise Linux users may use the equivalent <strong>podman</strong>{' '}
               commands.{' '}
             </Trans>
-            <ExternalLink href={DOC_URL_PODMAN} text={t('public~Learn more.')} />
+            <ExternalLink href={DOC_URL_PODMAN} text={t('Learn more.')} />
           </p>
         </div>
       }
@@ -214,14 +214,14 @@ export const ExampleDockerCommandPopover: FC<ImageStreamManipulationHelpProps> =
         type="button"
         variant="link"
       >
-        {t('public~Do you need to work with this ImageStream outside of the web console?')}
+        {t('Do you need to work with this ImageStream outside of the web console?')}
       </Button>
     </Popover>
   );
 };
 
 const ImageStreamsDetails: FC<ImageStreamsDetailsProps> = ({ obj: imageStream }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const getImportErrors = (): string[] => {
     return _.transform(imageStream.status.tags, (acc, tag: any) => {
@@ -231,7 +231,7 @@ const ImageStreamsDetails: FC<ImageStreamsDetailsProps> = ({ obj: imageStream })
       );
       importErrorCondition &&
         acc.push(
-          t('public~Unable to sync image for tag {{tag}}. {{message}}', {
+          t('Unable to sync image for tag {{tag}}. {{message}}', {
             tag: `${imageStream.metadata.name}:${tag.tag}`,
             message: importErrorCondition.message,
           }),
@@ -256,24 +256,24 @@ const ImageStreamsDetails: FC<ImageStreamsDetailsProps> = ({ obj: imageStream })
             ))}
           />
         )}
-        <SectionHeading text={t('public~ImageStream details')} />
+        <SectionHeading text={t('ImageStream details')} />
         <Grid hasGutter>
           <GridItem md={6}>
             <ResourceSummary resource={imageStream}>
               {imageRepository && (
                 <DescriptionListGroup>
-                  <DescriptionListTerm>{t('public~Image repository')}</DescriptionListTerm>
+                  <DescriptionListTerm>{t('Image repository')}</DescriptionListTerm>
                   <DescriptionListDescription>{imageRepository}</DescriptionListDescription>
                 </DescriptionListGroup>
               )}
               {publicImageRepository && (
                 <DescriptionListGroup>
-                  <DescriptionListTerm>{t('public~Public image repository')}</DescriptionListTerm>
+                  <DescriptionListTerm>{t('Public image repository')}</DescriptionListTerm>
                   <DescriptionListDescription>{publicImageRepository}</DescriptionListDescription>
                 </DescriptionListGroup>
               )}
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('public~Image count')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('Image count')}</DescriptionListTerm>
                 <DescriptionListDescription>
                   {imageCount ? imageCount : 0}
                 </DescriptionListDescription>
@@ -284,17 +284,17 @@ const ImageStreamsDetails: FC<ImageStreamsDetailsProps> = ({ obj: imageStream })
         </Grid>
       </PaneBody>
       <PaneBody>
-        <SectionHeading text={t('public~Tags')} />
+        <SectionHeading text={t('Tags')} />
         {_.isEmpty(imageStream.status.tags) ? (
-          <span className="pf-v6-u-text-color-subtle">{t('public~No tags')}</span>
+          <span className="pf-v6-u-text-color-subtle">{t('No tags')}</span>
         ) : (
           <PfTable gridBreakPoint="">
             <Thead>
               <Tr>
-                <Th>{t('public~Name')}</Th>
-                <Th>{t('public~From')}</Th>
-                <Th visibility={['hidden', 'visibleOnSm']}>{t('public~Identifier')}</Th>
-                <Th visibility={['hidden', 'visibleOnMd']}>{t('public~Last updated')}</Th>
+                <Th>{t('Name')}</Th>
+                <Th>{t('From')}</Th>
+                <Th visibility={['hidden', 'visibleOnSm']}>{t('Identifier')}</Th>
+                <Th visibility={['hidden', 'visibleOnMd']}>{t('Last updated')}</Th>
               </Tr>
             </Thead>
             <Tbody>
@@ -383,7 +383,7 @@ const useImageStreamColumns = (): {
   columns: TableColumn<K8sResourceKind>[];
   resetAllColumnWidths: () => void;
 } => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(
     ImageStreamModel,
   );
@@ -392,7 +392,7 @@ const useImageStreamColumns = (): {
     const labelsColumnId = tableColumnInfo[2].id;
     return [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         resizableProps: getResizableProps(tableColumnInfo[0].id),
@@ -402,7 +402,7 @@ const useImageStreamColumns = (): {
         },
       },
       {
-        title: t('public~Namespace'),
+        title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
@@ -411,7 +411,7 @@ const useImageStreamColumns = (): {
         },
       },
       {
-        title: t('public~Labels'),
+        title: t('Labels'),
         id: labelsColumnId,
         sort: 'metadata.labels',
         resizableProps: getResizableProps(labelsColumnId),
@@ -421,7 +421,7 @@ const useImageStreamColumns = (): {
         },
       },
       {
-        title: t('public~Created'),
+        title: t('Created'),
         id: tableColumnInfo[3].id,
         sort: 'metadata.creationTimestamp',
         resizableProps: getResizableProps(tableColumnInfo[3].id),
@@ -465,11 +465,11 @@ const ImageStreamsList: FC<ImageStreamsListProps> = ({ data, loaded, ...props })
 ImageStreamsList.displayName = 'ImageStreamsList';
 
 export const ImageStreamsPage: FC<ImageStreamsPageProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <ListPage
       {...props}
-      title={t('public~ImageStreams')}
+      title={t('ImageStreams')}
       kind={kind}
       ListComponent={ImageStreamsList}
       canCreate={true}

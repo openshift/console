@@ -51,7 +51,7 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
   prefilledUsername = '',
   isUsernameReadonly = false,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const [username, setUsername] = useState(prefilledUsername);
   const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
   const [usernameError, setUsernameError] = useState('');
@@ -140,7 +140,7 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
 
   const validateForm = (): boolean => {
     if (!username.trim()) {
-      setUsernameError(t('public~Username is required'));
+      setUsernameError(t('Username is required'));
       return false;
     }
     return true;
@@ -204,7 +204,7 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
           }}
           autoComplete="off"
           innerRef={textInputGroupRef}
-          placeholder={t('public~Enter groups')}
+          placeholder={t('Enter groups')}
           role="combobox"
           isExpanded={isGroupSelectOpen}
           aria-controls="impersonate-groups-listbox"
@@ -229,7 +229,7 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
 
   return (
     <Modal variant={ModalVariant.small} isOpen={isOpen} onClose={handleClose}>
-      <ModalHeader title={t('public~Impersonate')} />
+      <ModalHeader title={t('Impersonate')} />
       <ModalBody>
         <Form>
           <Alert
@@ -241,7 +241,7 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
           />
 
           {groupsLoadError && (
-            <Alert variant={AlertVariant.danger} isInline title={t('public~Failed to load groups')}>
+            <Alert variant={AlertVariant.danger} isInline title={t('Failed to load groups')}>
               {groupsLoadError.message}
             </Alert>
           )}
@@ -249,8 +249,8 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
           <FormGroup
             label={
               <>
-                {t('public~Username')}
-                <FieldLevelHelp>{t('public~The name of the user to impersonate')}</FieldLevelHelp>
+                {t('Username')}
+                <FieldLevelHelp>{t('The name of the user to impersonate')}</FieldLevelHelp>
               </>
             }
             fieldId="impersonate-username"
@@ -262,10 +262,10 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
               value={username}
               onChange={(_event, value) => handleUsernameChange(value)}
               readOnly={isUsernameReadonly}
-              placeholder={t('public~Enter a username')}
+              placeholder={t('Enter a username')}
               data-test="username-input"
               validated={usernameError ? 'error' : 'default'}
-              aria-label={t('public~Username to impersonate')}
+              aria-label={t('Username to impersonate')}
               aria-describedby="username-help-text"
             />
             {usernameError && (
@@ -282,10 +282,8 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
           <FormGroup
             label={
               <>
-                {t('public~Groups')}
-                <FieldLevelHelp>
-                  {t('public~The groups to impersonate the user with')}
-                </FieldLevelHelp>
+                {t('Groups')}
+                <FieldLevelHelp>{t('The groups to impersonate the user with')}</FieldLevelHelp>
               </>
             }
             fieldId="impersonate-groups"
@@ -302,12 +300,12 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
                 enableFlip: false,
                 direction: 'down',
               }}
-              aria-label={t('public~Select groups to impersonate')}
+              aria-label={t('Select groups to impersonate')}
               aria-describedby="groups-help-text"
             >
               <SelectList id="impersonate-groups-listbox">
                 {filteredGroups.length === 0 ? (
-                  <SelectOption isDisabled>{t('public~No results found')}</SelectOption>
+                  <SelectOption isDisabled>{t('No results found')}</SelectOption>
                 ) : (
                   <>
                     <SelectOption
@@ -315,7 +313,7 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
                       value={SELECT_ALL_KEY}
                       isSelected={areAllFilteredGroupsSelected}
                     >
-                      {t('public~Select all')}
+                      {t('Select all')}
                     </SelectOption>
                     {filteredGroups.map((group) => (
                       <SelectOption
@@ -360,10 +358,10 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
           isDisabled={!username.trim()}
           data-test="impersonate-button"
         >
-          {t('public~Impersonate')}
+          {t('Impersonate')}
         </Button>
         <Button key="cancel" variant="link" onClick={handleClose} data-test="cancel-button">
-          {t('public~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooter>
     </Modal>

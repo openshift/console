@@ -35,7 +35,7 @@ const CreateHelmChartRepositoryForm: FC<
   values: { editorType, formData, yamlData },
   existingRepo,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
 
   const LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY =
     'helm-plugin.createHelmChartRepository.editor.lastView';
@@ -74,22 +74,22 @@ const CreateHelmChartRepositoryForm: FC<
   const formTitle =
     !showScopeType && formData.scope === ProjectHelmChartRepositoryModel.kind
       ? existingRepo
-        ? t('helm-plugin~Edit ProjectHelmChartRepository')
-        : t('helm-plugin~Create ProjectHelmChartRepository')
+        ? t('Edit ProjectHelmChartRepository')
+        : t('Create ProjectHelmChartRepository')
       : existingRepo
-      ? t('helm-plugin~Edit {{label}}', { label: existingRepo.kind })
-      : t('helm-plugin~Create Helm Chart Repository');
+      ? t('Edit {{label}}', { label: existingRepo.kind })
+      : t('Create Helm Chart Repository');
 
   const formDescription =
     !showScopeType && formData.scope === ProjectHelmChartRepositoryModel.kind
       ? existingRepo
-        ? t('helm-plugin~Update helm chart repository in the namespace.')
-        : t('helm-plugin~Add helm chart repository in the namespace.')
+        ? t('Update helm chart repository in the namespace.')
+        : t('Add helm chart repository in the namespace.')
       : existingRepo
       ? existingRepo.kind === ProjectHelmChartRepositoryModel.kind
-        ? t('helm-plugin~Update helm chart repository in the namespace.')
-        : t('helm-plugin~Update the helm chart repository.')
-      : t('helm-plugin~Add helm chart repository.');
+        ? t('Update helm chart repository in the namespace.')
+        : t('Update the helm chart repository.')
+      : t('Add helm chart repository.');
 
   return (
     <FlexForm onSubmit={handleSubmit}>
@@ -115,7 +115,7 @@ const CreateHelmChartRepositoryForm: FC<
         errorMessage={status?.submitError}
         successMessage={status?.submitSuccess}
         isSubmitting={isSubmitting}
-        submitLabel={existingRepo ? t('helm-plugin~Save') : t('helm-plugin~Create')}
+        submitLabel={existingRepo ? t('Save') : t('Create')}
         disableSubmit={
           (editorType === EditorType.YAML ? !dirty : !dirty || !_.isEmpty(errors)) || isSubmitting
         }

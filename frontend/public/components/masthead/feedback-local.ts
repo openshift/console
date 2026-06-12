@@ -2,14 +2,14 @@ import { useTranslation } from 'react-i18next';
 import { getReportBugLink } from '@console/internal/module/k8s/cluster-settings';
 
 export function useFeedbackLocal(reportBug: ReturnType<typeof getReportBugLink>) {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   return {
     getSupport: reportBug.description,
-    back: t('public~Back'),
-    bugReported: t('public~Bug Reported'),
-    cancel: t('public~Cancel'),
-    close: t('public~Close'),
+    back: t('Back'),
+    bugReported: t('Bug Reported'),
+    cancel: t('Cancel'),
+    close: t('Close'),
     describeBug: t(
       'public~Describe the bug you encountered. For urgent issues, open a support case instead.',
     ),
@@ -21,17 +21,17 @@ export function useFeedbackLocal(reportBug: ReturnType<typeof getReportBugLink>)
     ),
     directInfluence:
       'public~your feedback will directly influence the future of Red Hat’s products. Opt in below to hear about future research opportunities via email.',
-    email: t('public~Email'),
-    enterFeedback: t('public~Enter your feedback'),
-    feedback: t('public~Feedback'),
-    feedbackSent: t('public~Feedback Sent'),
-    helpUsImproveHCC: t('public~Help us improve Red Hat OpenShift.'),
-    howIsConsoleExperience: t('public~What has your experience been like so far?'),
-    joinMailingList: t('public~Join mailing list'),
+    email: t('Email'),
+    enterFeedback: t('Enter your feedback'),
+    feedback: t('Feedback'),
+    feedbackSent: t('Feedback Sent'),
+    helpUsImproveHCC: t('Help us improve Red Hat OpenShift.'),
+    howIsConsoleExperience: t('What has your experience been like so far?'),
+    joinMailingList: t('Join mailing list'),
     informDirectionDescription: t(
       'public~By participating in feedback sessions, usability tests, and interviews with our',
     ),
-    informDirection: t('public~Inform the direction of Red Hat'),
+    informDirection: t('Inform the direction of Red Hat'),
     learnAboutResearchOpportunities: t(
       'public~Learn about opportunities to share your feedback with our User Research Team.',
     ),
@@ -39,24 +39,24 @@ export function useFeedbackLocal(reportBug: ReturnType<typeof getReportBugLink>)
     problemProcessingRequest: t(
       'public~There was a problem processing the request. Try reloading the page. If the problem persists, contact',
     ),
-    support: t('public~Support'),
-    redHatSupport: t('public~Red Hat support'),
-    reportABug: t('public~Report a bug'),
-    responseSent: t('public~Response sent'),
-    researchOpportunities: t('public~Yes, I would like to hear about research opportunities'),
-    shareFeedback: t('public~Share feedback'),
-    shareYourFeedback: t('public~Share your feedback with us!'),
-    somethingWentWrong: t('public~Something went wrong'),
+    support: t('Support'),
+    redHatSupport: t('Red Hat support'),
+    reportABug: t('Report a bug'),
+    responseSent: t('Response sent'),
+    researchOpportunities: t('Yes, I would like to hear about research opportunities'),
+    shareFeedback: t('Share feedback'),
+    shareYourFeedback: t('Share your feedback with us!'),
+    somethingWentWrong: t('Something went wrong'),
     submitFeedback: t('"Submit feedback'),
     teamWillReviewBug: t(
       'public~We appreciate your feedback and our team will review your report shortly',
     ),
-    tellAboutExperience: t('public~Tell us about your experience'),
-    thankYouForFeedback: t('public~Thank you, we appreciate your feedback.'),
+    tellAboutExperience: t('Tell us about your experience'),
+    thankYouForFeedback: t('Thank you, we appreciate your feedback.'),
     thankYouForInterest: t(
       'public~Thank you for your interest in user research. You have been added to our mailing list.',
     ),
-    userResearchTeam: t('public~User Research Team'),
+    userResearchTeam: t('User Research Team'),
     weNeverSharePersonalInformation: t(
       'public~We never share your personal information, and you can opt out at any time.',
     ),

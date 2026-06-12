@@ -10,7 +10,7 @@ import HPAUtilizationField from './HPAUtilizationField';
 import type { HPAFormValues, SupportedMetricTypes } from './types';
 
 const HPADetailsForm: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const name = 'formData';
   const [field] = useField<HorizontalPodAutoscalerKind>(name);
   const {
@@ -95,28 +95,28 @@ const HPADetailsForm: FC = () => {
           <Flex direction={{ default: 'column' }}>
             <InputField
               isDisabled={nameDisabled}
-              label={t('devconsole~Name')}
+              label={t('Name')}
               name={`${name}.metadata.name`}
             />
             <NumberSpinnerField
-              label={t('devconsole~Minimum Pods')}
+              label={t('Minimum Pods')}
               name={`${name}.spec.minReplicas`}
               setOutputAsIntegerFlag
             />
             <NumberSpinnerField
-              label={t('devconsole~Maximum Pods')}
+              label={t('Maximum Pods')}
               name={`${name}.spec.maxReplicas`}
               setOutputAsIntegerFlag
             />
             <HPAUtilizationField
               hpa={field.value}
-              label={t('devconsole~CPU')}
+              label={t('CPU')}
               onUpdate={updateField('cpu')}
               type="cpu"
             />
             <HPAUtilizationField
               hpa={field.value}
-              label={t('devconsole~Memory')}
+              label={t('Memory')}
               onUpdate={updateField('memory')}
               type="memory"
             />

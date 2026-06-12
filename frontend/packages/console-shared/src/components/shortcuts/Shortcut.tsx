@@ -43,7 +43,7 @@ export const Shortcut: FC<ShortcutProps> = ({
   shift,
   dragNdrop,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   return (
     <tr>
       <td className="ocs-shortcut__cell">
@@ -59,7 +59,7 @@ export const Shortcut: FC<ShortcutProps> = ({
         {isMac && ctrlCmd && <ShortcutCommand data-test-id="cmd-button">⌘ Cmd</ShortcutCommand>}
         {hover && (
           <ShortcutCommand data-test-id="hover">
-            <MouseIcon /> {t('console-shared~Hover')}
+            <MouseIcon /> {t('Hover')}
           </ShortcutCommand>
         )}
         {keyName && (
@@ -69,22 +69,22 @@ export const Shortcut: FC<ShortcutProps> = ({
         )}
         {drag && (
           <ShortcutCommand data-test-id="drag">
-            <MouseIcon /> {t('console-shared~Drag')}
+            <MouseIcon /> {t('Drag')}
           </ShortcutCommand>
         )}
         {click && (
           <ShortcutCommand data-test-id="click">
-            <MouseIcon /> {t('console-shared~Click')}
+            <MouseIcon /> {t('Click')}
           </ShortcutCommand>
         )}
         {rightClick && (
           <ShortcutCommand data-test-id="right-click">
-            <MouseIcon /> {t('console-shared~Right click')}
+            <MouseIcon /> {t('Right click')}
           </ShortcutCommand>
         )}
         {dragNdrop && (
           <ShortcutCommand data-test-id="drag-and-drop">
-            <MouseIcon /> {t('console-shared~Drag + Drop')}
+            <MouseIcon /> {t('Drag + Drop')}
           </ShortcutCommand>
         )}
       </td>

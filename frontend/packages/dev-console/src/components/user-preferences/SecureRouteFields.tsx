@@ -25,7 +25,7 @@ import {
 } from './usePreferredRoutingOptions';
 
 const SecureRouteFields: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const fireTelemetryEvent = useTelemetry();
   const [
     preferredRoutingOptions,
@@ -39,9 +39,9 @@ const SecureRouteFields: FC = () => {
 
   const terminationOptions = useMemo(() => {
     return {
-      [TerminationType.EDGE]: t('devconsole~Edge'),
-      [TerminationType.PASSTHROUGH]: t('devconsole~Passthrough'),
-      [TerminationType.REENCRYPT]: t('devconsole~Re-encrypt'),
+      [TerminationType.EDGE]: t('Edge'),
+      [TerminationType.PASSTHROUGH]: t('Passthrough'),
+      [TerminationType.REENCRYPT]: t('Re-encrypt'),
     };
   }, [t]);
 
@@ -56,13 +56,13 @@ const SecureRouteFields: FC = () => {
   const insecureTrafficOptions = useMemo(() => {
     return tlsTermination === TerminationType.PASSTHROUGH
       ? {
-          [PassthroughInsecureTrafficType.None]: t('devconsole~None'),
-          [PassthroughInsecureTrafficType.Redirect]: t('devconsole~Redirect'),
+          [PassthroughInsecureTrafficType.None]: t('None'),
+          [PassthroughInsecureTrafficType.Redirect]: t('Redirect'),
         }
       : {
-          [InsecureTrafficType.None]: t('devconsole~None'),
-          [InsecureTrafficType.Allow]: t('devconsole~Allow'),
-          [InsecureTrafficType.Redirect]: t('devconsole~Redirect'),
+          [InsecureTrafficType.None]: t('None'),
+          [InsecureTrafficType.Allow]: t('Allow'),
+          [InsecureTrafficType.Redirect]: t('Redirect'),
         };
   }, [t, tlsTermination]);
 
@@ -138,7 +138,7 @@ const SecureRouteFields: FC = () => {
       onClick={onTLSTerminationToggle}
       isExpanded={isTLSTerminationOpen}
       isDisabled={!preferredRoutingOptionsLoaded}
-      aria-label={t('devconsole~Select termination type')}
+      aria-label={t('Select termination type')}
       style={
         {
           maxHeight: '300px',
@@ -157,7 +157,7 @@ const SecureRouteFields: FC = () => {
       onClick={onInsecureTrafficToggle}
       isExpanded={isInsecureTrafficOpen}
       isDisabled={!preferredRoutingOptionsLoaded}
-      aria-label={t('devconsole~Select insecure traffic type')}
+      aria-label={t('Select insecure traffic type')}
       style={
         {
           maxHeight: '300px',
@@ -178,11 +178,11 @@ const SecureRouteFields: FC = () => {
       <Checkbox
         id="secure-route-checkbox"
         data-test="secure-route-checkbox"
-        label={t('devconsole~Secure route')}
+        label={t('Secure route')}
         isChecked={secure}
         data-checked-state={secure}
         onChange={onSecureRouteChecked}
-        aria-label={t('devconsole~Secure route')}
+        aria-label={t('Secure route')}
         description={t(
           'devconsole~Routes can be secured using several TLS termination types for serving certificates.',
         )}
@@ -190,7 +190,7 @@ const SecureRouteFields: FC = () => {
         className="odc-secure-route-fields__secure-route"
       />
 
-      <FormGroup fieldId="tls-termination" label={t('devconsole~TLS termination')}>
+      <FormGroup fieldId="tls-termination" label={t('TLS termination')}>
         <Select
           id="tls-termination-select"
           isOpen={isTLSTerminationOpen}
@@ -203,7 +203,7 @@ const SecureRouteFields: FC = () => {
           <SelectList>{tlsTerminationSelectOptions}</SelectList>
         </Select>
       </FormGroup>
-      <FormGroup fieldId="insecure-traffic" label={t('devconsole~Insecure traffic')}>
+      <FormGroup fieldId="insecure-traffic" label={t('Insecure traffic')}>
         <Select
           id="insecure-traffic-select"
           isOpen={isInsecureTrafficOpen}
@@ -219,7 +219,7 @@ const SecureRouteFields: FC = () => {
         <FormHelperText>
           <HelperText>
             <HelperTextItem>
-              {t('devconsole~Policy for traffic on insecure schemes like HTTP.')}
+              {t('Policy for traffic on insecure schemes like HTTP.')}
             </HelperTextItem>
           </HelperText>
         </FormHelperText>

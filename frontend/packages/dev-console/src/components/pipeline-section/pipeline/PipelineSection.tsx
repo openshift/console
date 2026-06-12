@@ -46,7 +46,7 @@ const usePipelineAccessReview = (): boolean => {
 };
 
 const PipelineSection: FC<PipelineSectionProps> = ({ flags, builderImages, existingPipeline }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const { values, setFieldValue } = useFormikContext<FormikValues>();
 
   /* Set pipeline.enabled to true if the user has access to create pipelines and the Builds are not installed */

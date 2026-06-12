@@ -28,7 +28,7 @@ interface SourceResourcesProps {
 }
 
 const SourceResources: FC<SourceResourcesProps> = ({ namespace, isMoveSink }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const [resourceAlert, setResourceAlert] = useState(false);
   const { setFieldValue, setFieldTouched, validateForm, initialValues } = useFormikContext<
     FormikValues
@@ -134,8 +134,8 @@ const SourceResources: FC<SourceResourcesProps> = ({ namespace, isMoveSink }) =>
     <FormGroup fieldId={fieldId} isRequired>
       {resourceAlert && (
         <>
-          <Alert variant="custom" title={t('knative-plugin~No resources available')} isInline>
-            {t('knative-plugin~Exit this form and create a Broker, or Channel first.')}
+          <Alert variant="custom" title={t('No resources available')} isInline>
+            {t('Exit this form and create a Broker, or Channel first.')}
           </Alert>
           &nbsp;
         </>
@@ -148,7 +148,7 @@ const SourceResources: FC<SourceResourcesProps> = ({ namespace, isMoveSink }) =>
         resources={resourcesData}
         dataSelector={['metadata', 'name']}
         fullWidth
-        placeholder={t('knative-plugin~Select resource')}
+        placeholder={t('Select resource')}
         showBadge
         disabled={contextAvailable || resourceAlert}
         onChange={onChange}
@@ -163,7 +163,7 @@ const SourceResources: FC<SourceResourcesProps> = ({ namespace, isMoveSink }) =>
         <FormHelperText>
           <HelperText>
             <HelperTextItem>
-              {t('knative-plugin~This resource will be the source for the Event sink.')}
+              {t('This resource will be the source for the Event sink.')}
             </HelperTextItem>
           </HelperText>
         </FormHelperText>

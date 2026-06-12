@@ -118,7 +118,7 @@ export const StatusValidations: FC<StatusValidationProps> = ({
   loadError,
   onLinkClicked,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('metal3-plugin');
   const validations = [];
   const [daemonSets, staticPods] = useMemo(
     () => [getDaemonSetsOfPods(nodePods), getStaticPods(nodePods)],
@@ -127,15 +127,15 @@ export const StatusValidations: FC<StatusValidationProps> = ({
 
   if (loadError) {
     validations.push({
-      title: t('metal3-plugin~Failed to load data.'),
-      description: t('metal3-plugin~Failed to load subresources.'),
+      title: t('Failed to load data.'),
+      description: t('Failed to load subresources.'),
       level: 'danger',
     });
   }
 
   if ([HOST_STATUS_UNKNOWN, ...HOST_STATUS_ERROR].includes(status)) {
     validations.push({
-      title: t('metal3-plugin~The bare metal host is not healthy.'),
+      title: t('The bare metal host is not healthy.'),
       description: t(
         'metal3-plugin~The host cannot be powered off gracefully untils its health is restored.',
       ),
@@ -145,7 +145,7 @@ export const StatusValidations: FC<StatusValidationProps> = ({
 
   if (status === NODE_STATUS_STARTING_MAINTENANCE) {
     validations.push({
-      title: t('metal3-plugin~The node is starting maintenance.'),
+      title: t('The node is starting maintenance.'),
       description: t(
         'metal3-plugin~The node cannot be powered off gracefully until it finishes entering maintenance.',
       ),
@@ -155,7 +155,7 @@ export const StatusValidations: FC<StatusValidationProps> = ({
 
   if (status === NODE_STATUS_STOPPING_MAINTENANCE) {
     validations.push({
-      title: t('metal3-plugin~The node is stopping maintenance.'),
+      title: t('The node is stopping maintenance.'),
       description: t(
         'metal3-plugin~The node cannot be powered off gracefully while it is exiting maintenance.',
       ),
@@ -165,7 +165,7 @@ export const StatusValidations: FC<StatusValidationProps> = ({
 
   if (daemonSets.length > 0) {
     validations.push({
-      title: t('metal3-plugin~This node contains DaemonSet pods.'),
+      title: t('This node contains DaemonSet pods.'),
       description: t(
         'metal3-plugin~These DaemonSets will prevent some pods from being moved. This should not prevent the host from powering off gracefully.',
       ),
@@ -182,7 +182,7 @@ export const StatusValidations: FC<StatusValidationProps> = ({
 
   if (staticPods.length > 0) {
     validations.push({
-      title: t('metal3-plugin~This host contains unmanaged static pods.'),
+      title: t('This host contains unmanaged static pods.'),
       description: t(
         'metal3-plugin~These pods must be moved manually to continue running after the host powers off.',
       ),

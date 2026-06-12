@@ -17,7 +17,7 @@ const propsAreEqual = (prevProps: EventItemProps, nextProps: EventItemProps) =>
   prevProps.onToggle === nextProps.onToggle;
 
 const EventItem = memo<EventItemProps>(({ event, isExpanded, onToggle }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const { involvedObject, message, metadata } = event;
   const lastTime = getLastTime(event);
   const isWarning = typeFilter('warning', event);
@@ -43,7 +43,7 @@ const EventItem = memo<EventItemProps>(({ event, isExpanded, onToggle }) => {
             {isWarning && (
               <Icon iconSize="md" className="co-recent-item__icon">
                 <YellowExclamationTriangleIcon
-                  title={t('public~Warning')}
+                  title={t('Warning')}
                   className="co-recent-item__icon--warning"
                 />
               </Icon>

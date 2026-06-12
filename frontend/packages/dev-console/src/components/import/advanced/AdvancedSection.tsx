@@ -21,7 +21,7 @@ type AdvancedSectionProps = {
 };
 
 const Footer = ({ children }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   return (
     <Trans
       t={t}
@@ -33,7 +33,7 @@ const Footer = ({ children }) => {
 };
 
 const List: FC<AdvancedSectionProps> = ({ appResources, values }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
 
   const [visibleItems, setVisibleItems] = useState([]);
   const handleVisibleItemChange = (item: string) => {
@@ -46,11 +46,11 @@ const List: FC<AdvancedSectionProps> = ({ appResources, values }) => {
       onVisibleItemChange={handleVisibleItemChange}
       Footer={Footer}
     >
-      <ProgressiveListItem name={t('devconsole~Health checks')}>
-        <HealthChecks title={t('devconsole~Health checks')} resourceType={values.resources} />
+      <ProgressiveListItem name={t('Health checks')}>
+        <HealthChecks title={t('Health checks')} resourceType={values.resources} />
       </ProgressiveListItem>
       {values?.formType === 'edit' ? (
-        <ProgressiveListItem name={t('devconsole~Deployment')}>
+        <ProgressiveListItem name={t('Deployment')}>
           <DeploymentConfigSection
             namespace={values.project.name}
             resource={appResources?.editAppResource?.data}
@@ -58,17 +58,17 @@ const List: FC<AdvancedSectionProps> = ({ appResources, values }) => {
         </ProgressiveListItem>
       ) : null}
 
-      <ProgressiveListItem name={t('devconsole~Scaling')}>
+      <ProgressiveListItem name={t('Scaling')}>
         {values.resources === Resources.KnativeService ? (
           <ServerlessScalingSection />
         ) : (
           <ScalingSection name="deployment.replicas" />
         )}
       </ProgressiveListItem>
-      <ProgressiveListItem name={t('devconsole~Resource limits')}>
+      <ProgressiveListItem name={t('Resource limits')}>
         <ResourceLimitSection />
       </ProgressiveListItem>
-      <ProgressiveListItem name={t('devconsole~Labels')}>
+      <ProgressiveListItem name={t('Labels')}>
         <LabelSection />
       </ProgressiveListItem>
     </ProgressiveList>
@@ -76,9 +76,9 @@ const List: FC<AdvancedSectionProps> = ({ appResources, values }) => {
 };
 
 const AdvancedSection: FC<AdvancedSectionProps> = ({ values, appResources }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   return (
-    <FormSection title={t('devconsole~Advanced options')}>
+    <FormSection title={t('Advanced options')}>
       <RouteSection route={values.route} resources={values.resources} />
       <div>
         <List appResources={appResources} values={values} />

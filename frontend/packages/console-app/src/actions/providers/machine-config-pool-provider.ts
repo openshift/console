@@ -11,14 +11,14 @@ import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { useCommonResourceActions } from '../hooks/useCommonResourceActions';
 
 const usePauseAction = (obj: MachineConfigPoolKind): Action[] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const launchModal = useOverlay();
 
   const factory = useMemo(
     () => ({
       PauseUpdates: () => ({
         id: 'pause-updates',
-        label: obj.spec?.paused ? t('public~Resume updates') : t('public~Pause updates'),
+        label: obj.spec?.paused ? t('Resume updates') : t('Pause updates'),
         cta: () =>
           togglePaused(MachineConfigPoolModel, obj).catch((err) =>
             launchModal(ErrorModal, { error: err.message }),

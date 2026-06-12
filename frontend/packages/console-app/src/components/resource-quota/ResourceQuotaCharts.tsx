@@ -11,7 +11,7 @@ type ResourceQuotaChartsProps = {
 };
 
 const ResourceQuotaCharts: FC<ResourceQuotaChartsProps> = ({ resourceQuota }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const charts = Object.keys(resourceQuota.status?.hard ?? {}).map((resourceName) => {
     const hard = resourceQuota.status?.hard?.[resourceName];
     const used = resourceQuota.status?.used?.[resourceName];
@@ -42,7 +42,7 @@ const ResourceQuotaCharts: FC<ResourceQuotaChartsProps> = ({ resourceQuota }) =>
 
   return (
     <div className="co-resource-quota-chart-row">
-      {charts.length ? charts : <>{t('console-app~No quota')}</>}
+      {charts.length ? charts : <>{t('No quota')}</>}
     </div>
   );
 };

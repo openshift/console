@@ -13,7 +13,7 @@ import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { ResourceDropdownField } from '@console/shared/src/components/formik-fields/ResourceDropdownField';
 
 const AdvancedImageOptions: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const launchCreateSecretModal = useCreateSecretModal();
   const {
     setFieldValue,
@@ -52,16 +52,16 @@ const AdvancedImageOptions: FC = () => {
 
   return (
     <ExpandCollapse
-      textExpanded={t('devconsole~Hide advanced image options')}
-      textCollapsed={t('devconsole~Show advanced image options')}
+      textExpanded={t('Hide advanced image options')}
+      textCollapsed={t('Show advanced image options')}
     >
       <ResourceDropdownField
         name="formData.imagePullSecret"
-        label={t('devconsole~Pull Secret')}
+        label={t('Pull Secret')}
         helpText={t(
           'devconsole~Secret for authentication when pulling image from a secured registry.',
         )}
-        placeholder={t('devconsole~Select Secret name')}
+        placeholder={t('Select Secret name')}
         resources={resources}
         resourceFilter={filterData}
         dataSelector={['metadata', 'name']}
@@ -79,7 +79,7 @@ const AdvancedImageOptions: FC = () => {
           })
         }
       >
-        {t('devconsole~Create new Secret')}
+        {t('Create new Secret')}
       </Button>
     </ExpandCollapse>
   );

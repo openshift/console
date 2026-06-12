@@ -50,7 +50,7 @@ const QuickSearchList: FC<QuickSearchListProps> = ({
   limitItemCount,
   onListChange,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const navigate = useNavigate();
   const { removeQueryArgument } = useQueryParamsMutator();
   const fireTelemetryEvent = useTelemetry();
@@ -92,7 +92,7 @@ const QuickSearchList: FC<QuickSearchListProps> = ({
     <div className="ocs-quick-search-list">
       <DataList
         className="ocs-quick-search-list__list"
-        aria-label={t('console-shared~Quick search list')}
+        aria-label={t('Quick search list')}
         selectedDataListItemId={selectedItemId}
         onSelectDataListItem={onSelectListItem}
         isCompact

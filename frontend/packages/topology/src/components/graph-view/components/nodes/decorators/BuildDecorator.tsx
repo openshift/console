@@ -19,7 +19,7 @@ interface BuildDecoratorProps {
 
 export const BuildDecorator: FC<BuildDecoratorProps> = ({ element, radius, x, y }) => {
   const ref = useRef();
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   const resource = getResource(element);
   const { buildConfigs } = useBuildConfigsWatcher(resource);
   const build = buildConfigs?.[0]?.builds?.[0];
@@ -28,7 +28,7 @@ export const BuildDecorator: FC<BuildDecoratorProps> = ({ element, radius, x, y 
     return null;
   }
 
-  const label = t('topology~Build {{status}}', { status: build.status?.phase });
+  const label = t('Build {{status}}', { status: build.status?.phase });
 
   const link = `${resourcePathFromModel(
     BuildModel,

@@ -14,7 +14,7 @@ import { BuildRunModel } from '../models';
 import type { Build } from '../types';
 
 const useBuildActions = (build: Build) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('shipwright-plugin');
   const navigate = useNavigate();
   const launchModal = useOverlay();
   const [kindObj, inFlight] = useK8sModel(referenceFor(build));
@@ -31,7 +31,7 @@ const useBuildActions = (build: Build) => {
     const actions: Action[] = [];
     actions.push({
       id: 'shipwright-build-start',
-      label: t('shipwright-plugin~Start'),
+      label: t('Start'),
       cta: () => {
         startBuild(build)
           .then((newBuildRun) => {
@@ -52,7 +52,7 @@ const useBuildActions = (build: Build) => {
     if (build.latestBuild) {
       actions.push({
         id: 'shipwright-build-start-last-run',
-        label: t('shipwright-plugin~Start last run'),
+        label: t('Start last run'),
         disabled: !build.latestBuild,
         cta: () => {
           rerunBuildRun(build.latestBuild)
@@ -75,7 +75,7 @@ const useBuildActions = (build: Build) => {
     actions.push(...Object.values(commonActions));
     actions.push({
       id: 'shipwright-build-edit',
-      label: t('shipwright-plugin~Edit Build'),
+      label: t('Edit Build'),
       cta: {
         href: `${resourceObjPath(build, referenceFor(build))}/form`,
       },

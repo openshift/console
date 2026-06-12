@@ -9,7 +9,7 @@ import SubscriptionList from './SubscriptionList';
 const SubscriptionListPage: FC<ComponentProps<typeof ListPage>> = (props) => {
   return (
     <>
-      <DocumentTitle>{t('knative-plugin~Subscriptions')}</DocumentTitle>
+      <DocumentTitle>{t('Subscriptions')}</DocumentTitle>
       <ListPage
         canCreate={false}
         {...props}

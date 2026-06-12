@@ -9,13 +9,13 @@ import AddServerlessFunction from './AddServerlessFunction';
 
 const ServerlessFunctionPage: FC = () => {
   const { ns: namespace } = useParams();
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   return (
     <QueryFocusApplication>
       {(application) => (
         <NamespacedPage disabled variant={NamespacedPageVariants.light}>
-          <DocumentTitle>{t('devconsole~Create Serverless function')}</DocumentTitle>
-          <PageHeading title={t('devconsole~Create Serverless function')} />
+          <DocumentTitle>{t('Create Serverless function')}</DocumentTitle>
+          <PageHeading title={t('Create Serverless function')} />
           <AddServerlessFunction namespace={namespace} forApplication={application} />
         </NamespacedPage>
       )}

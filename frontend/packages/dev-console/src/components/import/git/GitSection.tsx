@@ -95,7 +95,7 @@ const GitSection: FC<GitSectionProps> = ({
   autoFocus = true,
   flowType,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const inputRef = useRef<HTMLInputElement>();
 
   const {
@@ -471,15 +471,15 @@ const GitSection: FC<GitSectionProps> = ({
 
   const helpText = useMemo(() => {
     if (values.git.isUrlValidating) {
-      return `${t('devconsole~Validating')}...`;
+      return `${t('Validating')}...`;
     }
     if (validated === ValidatedOptions.success) {
-      return t('devconsole~Validated');
+      return t('Validated');
     }
     if (validated === ValidatedOptions.warning) {
       switch (repoStatus) {
         case RepoStatus.RateLimitExceeded: {
-          return t('devconsole~Rate limit exceeded');
+          return t('Rate limit exceeded');
         }
         case RepoStatus.GitTypeNotDetected: {
           return t(
@@ -492,7 +492,7 @@ const GitSection: FC<GitSectionProps> = ({
           );
         }
         case RepoStatus.ResourceNotFound: {
-          return t('devconsole~Requested repository does not exist');
+          return t('Requested repository does not exist');
         }
         case RepoStatus.InvalidGitTypeSelected: {
           return t(
@@ -506,11 +506,11 @@ const GitSection: FC<GitSectionProps> = ({
           );
         }
         default: {
-          return t('devconsole~URL is valid but cannot be reached');
+          return t('URL is valid but cannot be reached');
         }
       }
     }
-    return t('devconsole~Repository URL to build and deploy your code from');
+    return t('Repository URL to build and deploy your code from');
   }, [t, values.git.isUrlValidating, validated, repoStatus]);
 
   const resetFields = useCallback(() => {
@@ -631,12 +631,12 @@ const GitSection: FC<GitSectionProps> = ({
   }, [canCreateKnativeServiceLoading]);
 
   return (
-    <FormSection title={title ?? t('devconsole~Git')}>
+    <FormSection title={title ?? t('Git')}>
       <InputField
         ref={inputRef}
         type={TextInputTypes.text}
         name={`${fieldPrefix}git.url`}
-        label={t('devconsole~Git Repo URL')}
+        label={t('Git Repo URL')}
         helpText={helpText}
         helpTextInvalid={helpText}
         validated={validated}
@@ -662,8 +662,8 @@ const GitSection: FC<GitSectionProps> = ({
         <>
           <GitTypeSelector fieldPrefix={fieldPrefix} />
           {values.git.type === GitProvider.UNSURE && (
-            <Alert isInline variant="info" title={t('devconsole~Defaulting Git type to other')}>
-              {t('devconsole~We failed to detect the Git type.')}
+            <Alert isInline variant="info" title={t('Defaulting Git type to other')}>
+              {t('We failed to detect the Git type.')}
             </Alert>
           )}
         </>

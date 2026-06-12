@@ -57,7 +57,7 @@ type AddBareMetalHostProps = {
 };
 
 const AddBareMetalHost: FC<AddBareMetalHostProps> = ({ namespace, name, enablePowerMgmt }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('metal3-plugin');
   const navigate = useNavigate();
   const bmhResource = useMemo<WatchK8sResource>(
     () =>
@@ -113,7 +113,7 @@ const AddBareMetalHost: FC<AddBareMetalHostProps> = ({ namespace, name, enablePo
   }
 
   if (hostError || secretError || hostsError) {
-    return <LoadError label={t('metal3-plugin~resources')} />;
+    return <LoadError label={t('resources')} />;
   }
 
   const hostNames = !name ? hosts.map(getName) : [];
@@ -131,27 +131,20 @@ const AddBareMetalHost: FC<AddBareMetalHostProps> = ({ namespace, name, enablePo
       name: Yup.string()
         .test(
           'unique-name',
-          t('metal3-plugin~Name "${value}" is already taken.'), // eslint-disable-line no-template-curly-in-string
+          t('Name "${value}" is already taken.'), // eslint-disable-line no-template-curly-in-string
           (value: string) => !hostNames.includes(value),
         )
         .concat(nameValidationSchema(t)),
       BMCAddress: enablePowerManagement
         ? Yup.string()
-            .matches(
-              BMC_ADDRESS_REGEX,
-              t('metal3-plugin~Value provided is not a valid BMC address'),
-            )
-            .required(t('metal3-plugin~Required.'))
+            .matches(BMC_ADDRESS_REGEX, t('Value provided is not a valid BMC address'))
+            .required(t('Required.'))
         : undefined,
-      username: enablePowerManagement
-        ? Yup.string().required(t('metal3-plugin~Required.'))
-        : undefined,
-      password: enablePowerManagement
-        ? Yup.string().required(t('metal3-plugin~Required.'))
-        : undefined,
+      username: enablePowerManagement ? Yup.string().required(t('Required.')) : undefined,
+      password: enablePowerManagement ? Yup.string().required(t('Required.')) : undefined,
       bootMACAddress: Yup.string()
-        .matches(MAC_REGEX, t('metal3-plugin~Value provided is not a valid MAC Address.'))
-        .required(t('metal3-plugin~Required.')),
+        .matches(MAC_REGEX, t('Value provided is not a valid MAC Address.'))
+        .required(t('Required.')),
     }),
   );
 

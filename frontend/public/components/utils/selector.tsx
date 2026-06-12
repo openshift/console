@@ -32,11 +32,11 @@ export const Selector: FC<SelectorProps> = ({
   selector = {},
   namespace = undefined,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <div className="co-m-selector">
       {_.isEmpty(selector) ? (
-        <p className="pf-v6-u-text-color-subtle">{t('public~No selector')}</p>
+        <p className="pf-v6-u-text-color-subtle">{t('No selector')}</p>
       ) : (
         <Requirement kind={kind} requirements={selector} namespace={namespace} />
       )}

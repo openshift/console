@@ -56,7 +56,7 @@ const TourStepComponent: FC<TourStepComponentProps> = ({
   onBack,
   onClose,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const { theme } = useTheme();
   const header = <StepHeader>{heading}</StepHeader>;
   const footer = (
@@ -106,7 +106,7 @@ const TourStepComponent: FC<TourStepComponentProps> = ({
       onClose={handleClose}
       id="guided-tour-modal"
       data-test="guided-tour-modal"
-      aria-label={t('console-app~guided tour {{step, number}}', { step })}
+      aria-label={t('guided tour {{step, number}}', { step })}
     >
       <ModalBody>
         <Grid hasGutter>

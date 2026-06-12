@@ -34,7 +34,7 @@ const DeleteResourceForm: FC<FormikProps<FormikValues> & DeleteResourceModalProp
   values,
   status,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const isValid = values.resourceName === resourceName;
   const submitLabel = actionLabel || t(actionLabelKey);
 
@@ -87,7 +87,7 @@ const DeleteResourceForm: FC<FormikProps<FormikValues> & DeleteResourceModalProp
           {submitLabel}
         </Button>
         <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
-          {t('console-shared~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </>

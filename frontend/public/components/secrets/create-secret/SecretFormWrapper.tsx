@@ -39,7 +39,7 @@ import { isBinary } from 'istextorbinary';
 
 export const SecretFormWrapper: FC<BaseEditSecretProps_> = (props) => {
   const { formType, isCreate, modal, onCancel } = props;
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const navigate = useNavigate();
   const params = useParams();
 
@@ -161,7 +161,7 @@ export const SecretFormWrapper: FC<BaseEditSecretProps_> = (props) => {
 
     return (
       <Form>
-        <FormGroup label={t('public~Secret name')} isRequired fieldId="secret-name">
+        <FormGroup label={t('Secret name')} isRequired fieldId="secret-name">
           <TextInput
             type="text"
             onChange={onNameChanged}
@@ -173,7 +173,7 @@ export const SecretFormWrapper: FC<BaseEditSecretProps_> = (props) => {
           />
           <FormHelperText>
             <HelperText>
-              <HelperTextItem>{t('public~Unique name of the new secret.')}</HelperTextItem>
+              <HelperTextItem>{t('Unique name of the new secret.')}</HelperTextItem>
             </HelperText>
           </FormHelperText>
         </FormGroup>
@@ -203,10 +203,10 @@ export const SecretFormWrapper: FC<BaseEditSecretProps_> = (props) => {
           isDisabled={disableForm}
           onClick={save}
         >
-          {t('public~Create')}
+          {t('Create')}
         </Button>
         <Button variant={ButtonVariant.link} onClick={onCancel || cancel} isDisabled={inProgress}>
-          {t('public~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </Modal>
@@ -226,10 +226,10 @@ export const SecretFormWrapper: FC<BaseEditSecretProps_> = (props) => {
                 variant="primary"
                 id="save-changes"
               >
-                {props.saveButtonText || t('public~Create')}
+                {props.saveButtonText || t('Create')}
               </Button>
               <Button type="button" variant="link" id="cancel" onClick={onCancel || cancel}>
-                {t('public~Cancel')}
+                {t('Cancel')}
               </Button>
             </ActionGroup>
           </ButtonBar>

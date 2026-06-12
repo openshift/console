@@ -364,7 +364,7 @@ export const EnvironmentPage: FC<EnvironmentPageProps> = (props) => {
     useLoadingInline,
   } = props;
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const model = useConsoleSelector(
     (state) =>
@@ -430,7 +430,7 @@ export const EnvironmentPage: FC<EnvironmentPageProps> = (props) => {
     Promise.all([
       k8sGet(ConfigMapModel, null, envNamespace).catch((err) => {
         if (err.response?.status !== 403) {
-          const errorMsg = err.message || t('public~Could not load ConfigMaps.');
+          const errorMsg = err.message || t('Could not load ConfigMaps.');
           setLocalErrorMessage(errorMsg);
         }
         return {
@@ -439,7 +439,7 @@ export const EnvironmentPage: FC<EnvironmentPageProps> = (props) => {
       }),
       k8sGet(SecretModel, null, envNamespace).catch((err) => {
         if (err.response?.status !== 403) {
-          const errorMsg = err.message || t('public~Could not load Secrets.');
+          const errorMsg = err.message || t('Could not load Secrets.');
           setLocalErrorMessage(errorMsg);
         }
         return {
@@ -508,7 +508,7 @@ export const EnvironmentPage: FC<EnvironmentPageProps> = (props) => {
       handlePromise(promise).then((res) => {
         setCurrentEnvVars(new CurrentEnvVars(res, currentEnvVars.isContainerArray, envPath));
         setLocalErrorMessage(null);
-        setSuccess(t('public~Successfully updated the environment variables.'));
+        setSuccess(t('Successfully updated the environment variables.'));
       });
     },
     [currentEnvVars, envPath, model, obj, handlePromise, t],
@@ -552,11 +552,11 @@ export const EnvironmentPage: FC<EnvironmentPageProps> = (props) => {
   const containerVars = (
     <>
       {isReadOnly && !_.isEmpty(owners) && (
-        <Alert isInline variant="info" title={t('public~Environment variables set from parent')}>
-          {t('public~View environment for resource')}{' '}
+        <Alert isInline variant="info" title={t('Environment variables set from parent')}>
+          {t('View environment for resource')}{' '}
           {owners.length > 1 ? (
             <>
-              {t('public~owners:')} {owners}
+              {t('owners:')} {owners}
             </>
           ) : (
             owners
@@ -566,14 +566,14 @@ export const EnvironmentPage: FC<EnvironmentPageProps> = (props) => {
       {currentEnvVars.isContainerArray && (
         <Flex>
           <FlexItem>
-            {containerType === 'containers' ? t('public~Container:') : t('public~Init container:')}
+            {containerType === 'containers' ? t('Container:') : t('Init container:')}
           </FlexItem>
           <FlexItem>{containerDropdown}</FlexItem>
         </Flex>
       )}
       {!currentEnvVars.isCreate && (
         <TertiaryHeading>
-          {t('public~Single values (env)')}
+          {t('Single values (env)')}
           {!isReadOnly && (
             <FieldLevelHelp>
               <Trans t={t} ns="public">
@@ -591,7 +591,7 @@ export const EnvironmentPage: FC<EnvironmentPageProps> = (props) => {
         nameValueId={containerIndex}
         nameValuePairs={envVar[EnvType.ENV]}
         updateParentData={updateEnvVars}
-        nameString={t('public~Name')}
+        nameString={t('Name')}
         readOnly={isReadOnly}
         allowSorting={true}
         configMaps={configMaps}
@@ -601,7 +601,7 @@ export const EnvironmentPage: FC<EnvironmentPageProps> = (props) => {
       {currentEnvVars.isContainerArray && (
         <div className="environment-buttons">
           <TertiaryHeading>
-            {t('public~All values from existing ConfigMaps or Secrets (envFrom)')}
+            {t('All values from existing ConfigMaps or Secrets (envFrom)')}
             {!isReadOnly && (
               <FieldLevelHelp>
                 <>
@@ -609,7 +609,7 @@ export const EnvironmentPage: FC<EnvironmentPageProps> = (props) => {
                     'public~Add new values by referencing an existing ConfigMap or Secret. Drag and drop environment variables within this section to change the order in which they are run.',
                   )}
                   <br />
-                  <strong>{t('public~Note:')}</strong>{' '}
+                  <strong>{t('Note:')}</strong>{' '}
                   {t(
                     'public~If identical values exist in both lists, the single value in the list above will take precedence.',
                   )}
@@ -656,10 +656,10 @@ export const EnvironmentPage: FC<EnvironmentPageProps> = (props) => {
                 onClick={saveChanges}
                 data-test="environment-save"
               >
-                {t('public~Save')}
+                {t('Save')}
               </Button>
               <Button isDisabled={inProgress} type="button" variant="secondary" onClick={reload}>
-                {t('public~Reload')}
+                {t('Reload')}
               </Button>
             </ActionGroup>
           )}

@@ -32,32 +32,32 @@ const BuildRunHeader = () => {
 
   return [
     {
-      title: t('shipwright-plugin~Name'),
+      title: t('Name'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: columnClassNames[0] },
     },
     {
       id: 'namespace',
-      title: t('shipwright-plugin~Namespace'),
+      title: t('Namespace'),
       sortField: 'metadata.namespace',
       transforms: [sortable],
       props: { className: columnClassNames[1] },
     },
     {
-      title: t('shipwright-plugin~Status'),
+      title: t('Status'),
       sortFunc: 'status',
       transforms: [sortable],
       props: { className: columnClassNames[2] },
     },
     {
-      title: t('shipwright-plugin~Started'),
+      title: t('Started'),
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: columnClassNames[3] },
     },
     {
-      title: t('shipwright-plugin~Duration'),
+      title: t('Duration'),
       sortFunc: 'duration',
       transforms: [sortable],
       props: { className: columnClassNames[4] },
@@ -102,12 +102,12 @@ const BuildRunRow: FC<RowFunctionArgs<BuildRun>> = ({ obj: buildRun }) => {
 };
 
 export const BuildRunTable: FC<TableProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('shipwright-plugin');
 
   return (
     <Table
       {...props}
-      aria-label={t('shipwright-plugin~BuildRuns')}
+      aria-label={t('BuildRuns')}
       Header={BuildRunHeader}
       Row={BuildRunRow}
       customSorts={{

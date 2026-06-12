@@ -164,41 +164,41 @@ const VolumesTableRows = ({ componentProps: { data } }) => {
 };
 
 export const VolumesTable = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { resource, ...tableProps } = props;
   const data: RowVolumeData[] = getRowVolumeData(resource);
   const pod: PodTemplate = getPodTemplate(resource);
   const VolumesTableHeader = () => [
     {
-      title: t('public~Name'),
+      title: t('Name'),
       sortField: 'name',
       transforms: [sortable],
       props: { className: volumeRowColumnClasses[0] },
     },
     {
-      title: t('public~Mount path'),
+      title: t('Mount path'),
       sortField: 'mountPath',
       transforms: [sortable],
       props: { className: volumeRowColumnClasses[1] },
     },
     {
-      title: t('public~SubPath'),
+      title: t('SubPath'),
       sortField: 'subPath',
       transforms: [sortable],
       props: { className: volumeRowColumnClasses[2] },
     },
     {
-      title: t('public~Type'),
+      title: t('Type'),
       props: { className: volumeRowColumnClasses[3] },
     },
     {
-      title: t('public~Permissions'),
+      title: t('Permissions'),
       sortField: 'readOnly',
       transforms: [sortable],
       props: { className: volumeRowColumnClasses[4] },
     },
     {
-      title: t('public~Utilized by'),
+      title: t('Utilized by'),
       sortField: 'container',
       transforms: [sortable],
       props: { className: volumeRowColumnClasses[5] },
@@ -213,11 +213,11 @@ export const VolumesTable = (props) => {
     <>
       {props.heading && <SectionHeading text={props.heading} />}
       {_.isEmpty(pod.spec.volumes) && !anyContainerWithVolumeMounts(pod.spec.containers) ? (
-        <EmptyBox label={t('public~Volumes')} />
+        <EmptyBox label={t('Volumes')} />
       ) : (
         <Table
           {...tableProps}
-          aria-label={t('public~Volumes')}
+          aria-label={t('Volumes')}
           loaded={true}
           label={props.heading}
           data={data}

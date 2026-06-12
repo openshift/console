@@ -13,7 +13,7 @@ type ClusterResourceQuotaChartsProps = {
 const ClusterResourceQuotaCharts: FC<ClusterResourceQuotaChartsProps> = ({
   clusterResourceQuota,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const charts = Object.keys(clusterResourceQuota.status?.total?.hard ?? {}).map((resourceName) => {
     const clusterHard = clusterResourceQuota.status?.total?.hard?.[resourceName];
     const clusterUsed = clusterResourceQuota.status?.total?.used?.[resourceName];
@@ -50,7 +50,7 @@ const ClusterResourceQuotaCharts: FC<ClusterResourceQuotaChartsProps> = ({
 
   return (
     <div className="co-resource-quota-chart-row">
-      {charts.length ? charts : <>{t('console-app~No quota')}</>}
+      {charts.length ? charts : <>{t('No quota')}</>}
     </div>
   );
 };

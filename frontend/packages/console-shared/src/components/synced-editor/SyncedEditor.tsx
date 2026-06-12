@@ -41,7 +41,7 @@ export const SyncedEditor: FC<SyncedEditorProps> = ({
   displayConversionError,
 }) => {
   const { formContext, yamlContext } = context;
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const [formData, setFormData] = useState<K8sResourceKind>(initialData);
   const [yaml, setYAML] = useState(
     safeJSToYAML(initialData, 'yamlData', {
@@ -118,18 +118,18 @@ export const SyncedEditor: FC<SyncedEditorProps> = ({
           className="co-synced-editor__yaml-warning"
           variant="danger"
           isInline
-          title={t('console-shared~Invalid YAML cannot be persisted')}
+          title={t('Invalid YAML cannot be persisted')}
         >
           {displayConversionError && <p>{switchError}</p>}
           <p className="pf-v6-u-mb-sm">
-            {t('console-shared~Switching to form view will delete any invalid YAML.')}
+            {t('Switching to form view will delete any invalid YAML.')}
           </p>
           <Button variant="danger" onClick={onClickYAMLWarningConfirm}>
-            {t('console-shared~Switch and delete')}
+            {t('Switch and delete')}
           </Button>
           &nbsp;
           <Button variant="secondary" onClick={onClickYAMLWarningCancel}>
-            {t('console-shared~Cancel')}
+            {t('Cancel')}
           </Button>
         </Alert>
       )}

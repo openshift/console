@@ -10,7 +10,7 @@ import { useTranslation } from 'react-i18next';
  * Renders inline for use in tabs or toolbars.
  */
 export const OLMv1TechPreviewBadge: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm-v1');
 
   const popoverContent = (
     <div>
@@ -23,12 +23,12 @@ export const OLMv1TechPreviewBadge: FC = () => {
   return (
     <>
       <Label color="yellow" isCompact variant="outline">
-        {t('olm-v1~Tech Preview')}
+        {t('Tech Preview')}
       </Label>{' '}
-      <Popover aria-label={t('olm-v1~OLMv1 information')} bodyContent={popoverContent}>
+      <Popover aria-label={t('OLMv1 information')} bodyContent={popoverContent}>
         <Button
           icon={<RhUiQuestionMarkCircleIcon aria-hidden="true" />}
-          aria-label={t('olm-v1~OLMv1 information')}
+          aria-label={t('OLMv1 information')}
           variant="link"
           isInline
         />

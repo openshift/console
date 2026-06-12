@@ -14,7 +14,7 @@ import type { GitImportFormData } from '../import-types';
 import FormSection from '../section/FormSection';
 
 const DockerSection: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const { values, setFieldValue, setFieldTouched } = useFormikContext<
     FormikValues & GitImportFormData
   >();
@@ -49,10 +49,10 @@ const DockerSection: FC = () => {
 
   const helpText = useMemo(() => {
     if (validated === ValidatedOptions.success) {
-      return t('devconsole~Validated');
+      return t('Validated');
     }
     if (validated === ValidatedOptions.error) {
-      return t('devconsole~Dockerfile not detected');
+      return t('Dockerfile not detected');
     }
     return t(
       'devconsole~Allows the builds to use a different path to locate your Dockerfile, relative to the Context Dir field.',
@@ -96,8 +96,8 @@ const DockerSection: FC = () => {
         <InputField
           type={TextInputTypes.text}
           name="docker.dockerfilePath"
-          label={t('devconsole~Dockerfile path')}
-          placeholder={t('devconsole~Enter Dockerfile path')}
+          label={t('Dockerfile path')}
+          placeholder={t('Enter Dockerfile path')}
           helpText={helpText}
           helpTextInvalid={helpText}
           validated={validated}
@@ -118,7 +118,7 @@ const DockerSection: FC = () => {
           &nbsp;
           <div>
             <SecondaryHeading className="co-catalog-item-details__name">
-              {t('devconsole~Dockerfile')}
+              {t('Dockerfile')}
             </SecondaryHeading>
           </div>
         </div>

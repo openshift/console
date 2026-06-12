@@ -25,7 +25,7 @@ const ImageStreamTagDropdown: FC<{
   formContextField?: string;
   reloadCount?: number;
 }> = ({ disabled = false, formContextField, reloadCount }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const unmounted = useRef(false);
   let imageStreamTagList = {};
   const { values, setFieldValue, initialValues, touched } = useFormikContext<FormikValues>();
@@ -165,15 +165,15 @@ const ImageStreamTagDropdown: FC<{
   return (
     <DropdownField
       name={`${fieldPrefix}imageStream.tag`}
-      label={t('devconsole~Tag')}
+      label={t('Tag')}
       items={imageStreamTagList}
       key={imageStream.image}
       autocompleteFilter={fuzzy}
       title={
         imageStream.tag ||
         (isNamespaceSelected && isImageStreamSelected && !isTagsAvailable
-          ? t('devconsole~No tag')
-          : t('devconsole~Select tag'))
+          ? t('No tag')
+          : t('Select tag'))
       }
       disabled={!isImageStreamSelected || !isTagsAvailable || disabled}
       fullWidth

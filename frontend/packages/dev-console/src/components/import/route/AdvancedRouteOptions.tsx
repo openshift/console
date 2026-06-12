@@ -15,11 +15,11 @@ type AdvancedRouteOptionsProps = {
 };
 
 const AdvancedRouteOptions: FC<AdvancedRouteOptionsProps> = ({ canCreateRoute, resources }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   return (
     <ExpandCollapse
-      textExpanded={t('devconsole~Hide advanced Routing options')}
-      textCollapsed={t('devconsole~Show advanced Routing options')}
+      textExpanded={t('Hide advanced Routing options')}
+      textCollapsed={t('Show advanced Routing options')}
     >
       <FormSection>
         {canCreateRoute ? (
@@ -31,7 +31,7 @@ const AdvancedRouteOptions: FC<AdvancedRouteOptionsProps> = ({ canCreateRoute, r
               <SecureRoute />
               <SelectorInputField
                 name="route.labels"
-                label={t('devconsole~Labels')}
+                label={t('Labels')}
                 helpText={t(
                   'devconsole~Additional labels which are only added to the Route resource.',
                 )}

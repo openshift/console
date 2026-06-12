@@ -32,7 +32,7 @@ const DEFAULT_ROW_RENDERER = ({
   tooltipDeleteRow,
   onDelete,
 }): ReactNode => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   return (
     <div className="odc-multi-column-field__row" data-test={`row ${fieldName}`}>
       <Grid>
@@ -52,11 +52,11 @@ const DEFAULT_ROW_RENDERER = ({
       </Grid>
       {!isReadOnly && (
         <div className={'odc-multi-column-field__col--button'}>
-          <Tooltip content={tooltipDeleteRow || t('console-shared~Remove')}>
+          <Tooltip content={tooltipDeleteRow || t('Remove')}>
             <Button
               icon={<RhUiMinusCircleIcon />}
               data-test="delete-row"
-              aria-label={tooltipDeleteRow || t('console-shared~Remove')}
+              aria-label={tooltipDeleteRow || t('Remove')}
               variant={ButtonVariant.plain}
               type={ButtonType.button}
               isInline

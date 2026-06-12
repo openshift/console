@@ -53,7 +53,7 @@ const BaseLabelsModal: FC<BaseLabelsModalProps> = ({
   const [stale, setStale] = useState(false);
   const [isInputValid, setIsInputValid] = useState(true);
   const createPath = !labels.length;
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   useEffect(() => {
     if (watchedResourceLoaded && !_.isEmpty(watchedResource)) {
@@ -97,10 +97,10 @@ const BaseLabelsModal: FC<BaseLabelsModalProps> = ({
       <ModalHeader
         title={
           descriptionKey
-            ? t('public~Edit {{description}}', {
+            ? t('Edit {{description}}', {
                 description: t(descriptionKey),
               })
-            : t('public~Edit labels')
+            : t('Edit labels')
         }
         data-test-id="modal-title"
         labelId="labels-modal-title"
@@ -119,7 +119,7 @@ const BaseLabelsModal: FC<BaseLabelsModalProps> = ({
               <>
                 {descriptionKey
                   ? t('{{description}} for', { description: t(descriptionKey) })
-                  : t('public~Labels for')}{' '}
+                  : t('Labels for')}{' '}
                 <ResourceIcon groupVersionKind={getGroupVersionKindForModel(kind)} />{' '}
                 {resource?.metadata?.name}
               </>
@@ -139,9 +139,7 @@ const BaseLabelsModal: FC<BaseLabelsModalProps> = ({
       <ModalFooterWithAlerts
         errorMessage={errorMessage}
         message={
-          stale
-            ? t('public~Labels have been updated. Click Cancel and reapply your changes.')
-            : undefined
+          stale ? t('Labels have been updated. Click Cancel and reapply your changes.') : undefined
         }
       >
         <Button
@@ -151,10 +149,10 @@ const BaseLabelsModal: FC<BaseLabelsModalProps> = ({
           data-test="confirm-action"
           form="labels-form"
         >
-          {t('public~Save')}
+          {t('Save')}
         </Button>
         <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
-          {t('public~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </>

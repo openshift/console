@@ -69,7 +69,7 @@ export const UninstallOperatorModal: FC<UninstallOperatorModalProps> = ({
   csv,
   subscription,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const navigate = useNavigate();
   const [
     handleOperatorUninstallPromise,
@@ -318,7 +318,7 @@ export const UninstallOperatorModal: FC<UninstallOperatorModalProps> = ({
       </p>
       {removePlugins && (
         <p>
-          {t('olm~The console plugin provided by this operator will be disabled and removed.', {
+          {t('The console plugin provided by this operator will be disabled and removed.', {
             count: enabledPlugins.length,
           })}
         </p>
@@ -333,7 +333,7 @@ export const UninstallOperatorModal: FC<UninstallOperatorModalProps> = ({
       <>
         <span className="co-operator-uninstall__operands-section">
           <Title headingLevel="h2" className="pf-v6-u-mb-sm">
-            {t('olm~Operand instances')}
+            {t('Operand instances')}
           </Title>
           <OperandsTable
             operands={operands}
@@ -347,7 +347,7 @@ export const UninstallOperatorModal: FC<UninstallOperatorModalProps> = ({
           data-test="delete-all-operands"
           onChange={(_event, isChecked) => setDeleteOperands(isChecked)}
           name="delete-all-operands"
-          label={t('olm~Delete all operand instances for this operator')}
+          label={t('Delete all operand instances for this operator')}
           isChecked={deleteOperands}
         />
       </>
@@ -362,7 +362,7 @@ export const UninstallOperatorModal: FC<UninstallOperatorModalProps> = ({
     />
   ) : operandDeletionVerificationError ? (
     <OperandsLoadedErrorAlert
-      operandsLoadedErrorMessage={t('olm~Error listing operand to verify deletion')}
+      operandsLoadedErrorMessage={t('Error listing operand to verify deletion')}
     />
   ) : (
     <OperandDeletionSuccessAlert name={name} namespace={namespace} />
@@ -375,7 +375,7 @@ export const UninstallOperatorModal: FC<UninstallOperatorModalProps> = ({
           clusterServiceVersionExistsError ||
           operatorUninstallErrorMessage ||
           (operandDeletionErrors.length
-            ? t('olm~Operator could not be uninstalled due to error deleting its Operands')
+            ? t('Operator could not be uninstalled due to error deleting its Operands')
             : '')
         }
         name={name}
@@ -393,7 +393,7 @@ export const UninstallOperatorModal: FC<UninstallOperatorModalProps> = ({
       aria-labelledby="uninstall-operator-modal-title"
     >
       <ModalHeader
-        title={t('olm~Uninstall Operator?')}
+        title={t('Uninstall Operator?')}
         titleIconVariant="warning"
         data-test-id="modal-title"
         labelId="uninstall-operator-modal-title"
@@ -412,7 +412,7 @@ export const UninstallOperatorModal: FC<UninstallOperatorModalProps> = ({
               {uninstallMessage && (
                 <>
                   <Title headingLevel="h2" className="pf-v6-u-mb-sm">
-                    {t('olm~Message from Operator developer')}
+                    {t('Message from Operator developer')}
                   </Title>
                   <p>
                     <LinkifyExternal>{uninstallMessage}</LinkifyExternal>
@@ -427,7 +427,7 @@ export const UninstallOperatorModal: FC<UninstallOperatorModalProps> = ({
           )}
           {operatorUninstallInProgress && (
             <div>
-              <p>{t('olm~Uninstalling the Operator...')}</p>
+              <p>{t('Uninstalling the Operator...')}</p>
             </div>
           )}
           {isSubmitFinished && results}
@@ -443,10 +443,10 @@ export const UninstallOperatorModal: FC<UninstallOperatorModalProps> = ({
           data-test="confirm-action"
           id="confirm-action"
         >
-          {isSubmitFinished ? t('olm~OK') : t('olm~Uninstall')}
+          {isSubmitFinished ? t('OK') : t('Uninstall')}
         </Button>
         <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
-          {t('public~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </Modal>
@@ -457,8 +457,8 @@ const OperandDeleteProgress: FC<{
   total: number;
   remaining: number;
 }> = ({ total, remaining }) => {
-  const { t } = useTranslation();
-  const progressLabel = t('olm~Remaining Operands: {{remaining}} of {{total}} ', {
+  const { t } = useTranslation('olm');
+  const progressLabel = t('Remaining Operands: {{remaining}} of {{total}} ', {
     remaining,
     total,
   });
@@ -469,7 +469,7 @@ const OperandDeleteProgress: FC<{
         max={total}
         valueText={progressLabel}
         label={progressLabel}
-        title={t('olm~Cleaning up operand instances...')}
+        title={t('Cleaning up operand instances...')}
         size={ProgressSize.lg}
       />
       <div className="co-alert--margin-top">
@@ -486,9 +486,9 @@ const OperandDeleteProgress: FC<{
 const OperandsLoadedErrorAlert: FC<{ operandsLoadedErrorMessage: string }> = ({
   operandsLoadedErrorMessage,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   return (
-    <Alert variant="warning" className="co-alert" title={t('olm~Cannot load Operands')} isInline>
+    <Alert variant="warning" className="co-alert" title={t('Cannot load Operands')} isInline>
       <p>
         {t(
           'olm~There was an error loading operands for this operator. Operands will need to be deleted manually.',
@@ -503,12 +503,12 @@ const OperatorUninstallSuccessAlert: FC<{ name: string; namespace: string }> = (
   name,
   namespace,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   return (
     <Alert
       variant="success"
       className="co-alert"
-      title={t('olm~Successfully uninstalled Operator')}
+      title={t('Successfully uninstalled Operator')}
       isInline
     >
       <p>
@@ -522,16 +522,11 @@ const OperatorUninstallSuccessAlert: FC<{ name: string; namespace: string }> = (
 };
 
 const OperatorUninstallErrorAlert: FC<{ errorMessage: string }> = ({ errorMessage }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   return (
-    <Alert
-      variant="danger"
-      className="co-alert"
-      title={t('olm~Error uninstalling Operator')}
-      isInline
-    >
+    <Alert variant="danger" className="co-alert" title={t('Error uninstalling Operator')} isInline>
       <p>
-        {t('olm~There was an error uninstalling the operator.')}
+        {t('There was an error uninstalling the operator.')}
         <br />
         {errorMessage}
       </p>
@@ -544,9 +539,9 @@ const OperandDeletionErrorAlert: FC<{
   csvName: string;
   cancel?: () => void;
 }> = ({ operandDeletionErrors, csvName, cancel }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   return (
-    <Alert variant="danger" className="co-alert" title={t('olm~Error deleting Operands')} isInline>
+    <Alert variant="danger" className="co-alert" title={t('Error deleting Operands')} isInline>
       <p>
         {t(
           'olm~There were errors deleting the following Operands, they will need to be deleted manually:',
@@ -565,12 +560,12 @@ const OperandDeletionSuccessAlert: FC<{ name: string; namespace: string }> = ({
   name,
   namespace,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   return (
     <Alert
       variant="success"
       className="co-alert"
-      title={t('olm~Successfully deleted all Operand Instances')}
+      title={t('Successfully deleted all Operand Instances')}
       isInline
     >
       <p>
@@ -595,7 +590,7 @@ const UninstallAlert: FC<{ errorMessage: string; name: string; namespace: string
   );
 
 const OperandsTable: FC<OperandsTableProps> = ({ operands, loaded, csvName, cancel }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   return (
     <StatusBox
       skeleton={<div className="loading-skeleton--table" />}
@@ -605,9 +600,9 @@ const OperandsTable: FC<OperandsTableProps> = ({ operands, loaded, csvName, canc
       <table className="pf-v6-c-table pf-m-compact pf-m-border-rows">
         <thead className="pf-v6-c-table__thead">
           <tr className="pf-v6-c-table__tr" key="operand-table-header-row">
-            <th className="pf-m-width-35 pf-v6-c-table__th">{t('olm~Name')}</th>
-            <th className="pf-v6-c-table__th">{t('olm~Kind')}</th>
-            <th className="pf-v6-c-table__th">{t('olm~Namespace')}</th>
+            <th className="pf-m-width-35 pf-v6-c-table__th">{t('Name')}</th>
+            <th className="pf-v6-c-table__th">{t('Kind')}</th>
+            <th className="pf-v6-c-table__th">{t('Namespace')}</th>
           </tr>
         </thead>
         <tbody>
@@ -644,7 +639,7 @@ const OperandsTable: FC<OperandsTableProps> = ({ operands, loaded, csvName, canc
 };
 
 const OperandErrorList: FC<OperandErrorListProps> = ({ operandErrors, csvName, cancel }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   return (
     <ul className="co-operator-uninstall-alert__list">
       {_.map(operandErrors, (operandError) => (
@@ -655,7 +650,7 @@ const OperandErrorList: FC<OperandErrorListProps> = ({ operandErrors, csvName, c
           <OperandLink obj={operandError.operand} csvName={csvName} onClick={cancel} />{' '}
           {operandError.operand.kind}
           {'  '}
-          {t('olm~Error: {{error}}', {
+          {t('Error: {{error}}', {
             error: operandError.errorMessage,
           })}
         </li>

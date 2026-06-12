@@ -45,23 +45,23 @@ export const CatalogToolbar = forwardRef<HTMLInputElement, CatalogToolbarProps>(
     },
     inputRef,
   ) => {
-    const { t } = useTranslation();
+    const { t } = useTranslation('console-shared');
     const techPreviewEnabled = useFlag(FLAG_TECH_PREVIEW);
 
     // TODO(CONSOLE-4823): Remove this hard-coded toggle when OLMv1 GAs
     const showOLMv1Toggle = techPreviewEnabled && catalogType === 'operator';
 
     const catalogSortItems = {
-      [CatalogSortOrder.RELEVANCE]: t('console-shared~Relevance'),
-      [CatalogSortOrder.ASC]: t('console-shared~A-Z'),
-      [CatalogSortOrder.DESC]: t('console-shared~Z-A'),
+      [CatalogSortOrder.RELEVANCE]: t('Relevance'),
+      [CatalogSortOrder.ASC]: t('A-Z'),
+      [CatalogSortOrder.DESC]: t('Z-A'),
     };
 
     const showGrouping = !_.isEmpty(groupings);
 
     const catalogGroupItems = {
       ...groupings,
-      [NO_GROUPING]: t('console-shared~None'),
+      [NO_GROUPING]: t('None'),
     };
 
     const debouncedOnSearchKeywordChange = useDebounceCallback(onSearchKeywordChange);
@@ -76,11 +76,11 @@ export const CatalogToolbar = forwardRef<HTMLInputElement, CatalogToolbarProps>(
                 ref={inputRef}
                 data-test="search-catalog"
                 type="text"
-                placeholder={t('console-shared~Filter by keyword...')}
+                placeholder={t('Filter by keyword...')}
                 value={searchKeyword}
                 onChange={(_event, text) => debouncedOnSearchKeywordChange(text)}
                 onClear={() => onSearchKeywordChange('')}
-                aria-label={t('console-shared~Filter by keyword...')}
+                aria-label={t('Filter by keyword...')}
               />
             </FlexItem>
             <FlexItem>
@@ -99,7 +99,7 @@ export const CatalogToolbar = forwardRef<HTMLInputElement, CatalogToolbarProps>(
                   menuClassName="dropdown-menu--text-wrap"
                   items={catalogGroupItems}
                   onChange={onGroupingChange}
-                  titlePrefix={t('console-shared~Group by')}
+                  titlePrefix={t('Group by')}
                   title={catalogGroupItems[activeGrouping]}
                   alwaysShowTitle
                 />
@@ -114,9 +114,7 @@ export const CatalogToolbar = forwardRef<HTMLInputElement, CatalogToolbarProps>(
               </FlexItem>
             )}
           </Flex>
-          <CatalogPageNumItems>
-            {t('console-shared~{{totalItems}} items', { totalItems })}
-          </CatalogPageNumItems>
+          <CatalogPageNumItems>{t('{{totalItems}} items', { totalItems })}</CatalogPageNumItems>
         </CatalogPageToolbar>
       </CatalogPageHeader>
     );

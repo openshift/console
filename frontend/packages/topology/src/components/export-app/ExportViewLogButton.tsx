@@ -18,7 +18,7 @@ interface ExportViewLogButtonProps {
 
 const ExportViewLogButton: FC<ExportViewLogButtonProps> = ({ name, namespace, onViewLog }) => {
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   const [job, jobLoaded] = useK8sWatchResource<JobKind>({
     kind: JobModel.kind,
     name: EXPORT_JOB_PREFIX + name,
@@ -64,13 +64,13 @@ const ExportViewLogButton: FC<ExportViewLogButtonProps> = ({ name, namespace, on
       href={path}
       onClick={viewLog}
     >
-      {t('topology~View Logs')}
+      {t('View Logs')}
     </Button>
   );
   const disabledButton = (
-    <Tooltip content={t('topology~Logs not available yet')}>
+    <Tooltip content={t('Logs not available yet')}>
       <Button component="a" variant="link" data-test="export-view-log-btn" isAriaDisabled>
-        {t('topology~View Logs')}
+        {t('View Logs')}
       </Button>
     </Tooltip>
   );

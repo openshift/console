@@ -28,7 +28,7 @@ const Logs: FC<LogsProps> = ({
   render,
   autoScroll = true,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('shipwright-plugin');
   const { name } = container;
   const { kind, metadata = {} } = resource;
   const { name: resName, namespace: resNamespace } = metadata;
@@ -135,7 +135,7 @@ const Logs: FC<LogsProps> = ({
         <Alert
           variant="danger"
           isInline
-          title={t('shipwright-plugin~An error occurred while retrieving the requested logs.')}
+          title={t('An error occurred while retrieving the requested logs.')}
         />
       )}
       <div>

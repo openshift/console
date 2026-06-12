@@ -17,7 +17,7 @@ type ExportApplicationProps = {
 };
 
 const ExportApplication: FC<ExportApplicationProps> = ({ namespace, isDisabled }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   const isMobile = useIsMobile();
   const toast = useToast();
   const launchModal = useOverlay();
@@ -41,11 +41,11 @@ const ExportApplication: FC<ExportApplicationProps> = ({ namespace, isDisabled }
       <Button
         variant="secondary"
         data-test="export-app-btn"
-        aria-label={t('topology~Export application')}
+        aria-label={t('Export application')}
         isDisabled={isDisabled}
         onClick={handleClick}
       >
-        {t('topology~Export application')}
+        {t('Export application')}
       </Button>
     </ToolbarItem>
   ) : null;

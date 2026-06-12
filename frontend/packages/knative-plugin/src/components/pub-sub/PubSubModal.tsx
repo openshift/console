@@ -27,7 +27,7 @@ const PubSubModal: FC<Props> = ({
   errors,
   values,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const dirty = values?.formData?.metadata?.name && values?.formData?.spec?.subscriber?.ref?.name;
   return (
     <>
@@ -38,7 +38,7 @@ const PubSubModal: FC<Props> = ({
             <InputField
               type={TextInputTypes.text}
               name="formData.metadata.name"
-              label={t('knative-plugin~Name')}
+              label={t('Name')}
               required
             />
             <PubSubSubscriber cancel={cancel} />
@@ -56,10 +56,10 @@ const PubSubModal: FC<Props> = ({
           data-test="confirm-action"
           id="confirm-action"
         >
-          {t('knative-plugin~Add')}
+          {t('Add')}
         </Button>
         <Button variant="link" onClick={cancel} type="button" data-test-id="modal-cancel-action">
-          {t('knative-plugin~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </>

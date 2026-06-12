@@ -21,7 +21,7 @@ export const useEventSourceStatus = (
   normalizedSource: KnEventCatalogMetaData;
   kamelet: K8sResourceKind;
 } => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const { eventSourceModels, loaded: eventSourceModelsLoaded } = useEventSourceModels();
   const [kameletNs, kameletNsLoaded] = useK8sGet<K8sResourceKind>(
     CamelKameletModel,

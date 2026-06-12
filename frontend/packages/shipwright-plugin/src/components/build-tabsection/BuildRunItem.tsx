@@ -17,7 +17,7 @@ type BuildRunItemProps = {
 };
 
 const BuildRunItem: FC<BuildRunItemProps> = ({ buildRun }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('shipwright-plugin');
   const {
     metadata: { name, namespace, creationTimestamp },
     status,
@@ -48,7 +48,7 @@ const BuildRunItem: FC<BuildRunItemProps> = ({ buildRun }) => {
           <BuildRunStatus buildRun={buildRun} />
         </GridItem>
         <GridItem span={3}>
-          <Link to={`${path}/logs`}>{t('shipwright-plugin~View logs')}</Link>
+          <Link to={`${path}/logs`}>{t('View logs')}</Link>
         </GridItem>
       </Grid>
     </ListItem>

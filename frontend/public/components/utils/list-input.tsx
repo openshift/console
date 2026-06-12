@@ -81,7 +81,7 @@ class ListInput_ extends Component<ListInputProps, ListInputState> {
               type="button"
               className="pairs-list__span-btns"
               onClick={() => this.removeValue(i)}
-              aria-label={t('public~Remove')}
+              aria-label={t('Remove')}
               variant="plain"
               disabled={isEmpty}
             />
@@ -99,7 +99,7 @@ class ListInput_ extends Component<ListInputProps, ListInputState> {
           type="button"
           variant="link"
         >
-          {t('public~Add more')}
+          {t('Add more')}
         </Button>
       </div>
     );

@@ -27,7 +27,7 @@ export const MultiTabListPage: FC<MultiTabListPageProps> = ({
   secondaryButtonAction,
   telemetryPrefix,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const navigate = useNavigate();
   const { ns } = useParams();
   const onSelectCreateAction = (actionName: string): void => {
@@ -93,7 +93,7 @@ export const MultiTabListPage: FC<MultiTabListPageProps> = ({
                     // @ts-expect-error non-prop attribute is used for cypress
                     'data-test': 'tab-list-page-create',
                   }}
-                  toggleContent={t('console-shared~Create')}
+                  toggleContent={t('Create')}
                   initialItems={Object.keys(items).map((item) => ({
                     value: item,
                     content: items[item],

@@ -9,10 +9,10 @@ import LocalDisks from './LocalDisks';
 import PersistentVolumes from './PersistentVolumes';
 
 const NodeStorage: ComponentType<PageComponentProps<NodeKind>> = ({ obj: node }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   return (
     <PaneBody>
-      <SectionHeading text={t('console-app~Storage')} />
+      <SectionHeading text={t('Storage')} />
       <Flex direction={{ default: 'column' }} spaceItems={{ default: 'spaceItemsXl' }}>
         <FlexItem>
           <LocalDisks node={node} />

@@ -28,7 +28,7 @@ const TopologyListViewKindGroupComponent: FC<TopologyListViewKindGroupProps> = (
   selectedIds,
   onSelect,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   const resourceLabel = getTitleForNodeKind(kind);
 
   const childNodes = childElements.filter((n) => isNode(n)) as Node[];
@@ -54,12 +54,12 @@ const TopologyListViewKindGroupComponent: FC<TopologyListViewKindGroupProps> = (
         />
       </DataListItemRow>
       <DataListContent
-        aria-label={t('topology~{{groupLabel}} {{resourceLabel}}', { groupLabel, resourceLabel })}
+        aria-label={t('{{groupLabel}} {{resourceLabel}}', { groupLabel, resourceLabel })}
         id={`${groupLabel}-${resourceLabel}`}
         isHidden={false}
       >
         <DataList
-          aria-label={t('topology~{{resourceLabel}} sub-resources', { resourceLabel })}
+          aria-label={t('{{resourceLabel}} sub-resources', { resourceLabel })}
           selectedDataListItemId={selectedIds[0]}
           onSelectDataListItem={(_event, id) => onSelect(selectedIds[0] === id ? [] : [id])}
         >

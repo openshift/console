@@ -25,7 +25,7 @@ const DeployImageForm: FC<FormikProps<FormikValues> & DeployImageFormProps> = ({
   dirty,
   projects,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   usePreventDataLossLock(isSubmitting);
 
   const isSample = hasSampleQueryParameter();
@@ -52,10 +52,10 @@ const DeployImageForm: FC<FormikProps<FormikValues> & DeployImageFormProps> = ({
         handleReset={handleReset}
         errorMessage={status && status.submitError}
         isSubmitting={isSubmitting}
-        submitLabel={t('devconsole~Create')}
+        submitLabel={t('Create')}
         sticky
         disableSubmit={!dirty || !_.isEmpty(errors) || isSubmitting}
-        resetLabel={t('devconsole~Cancel')}
+        resetLabel={t('Cancel')}
       />
     </FlexForm>
   );

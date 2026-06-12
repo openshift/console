@@ -45,7 +45,7 @@ const KeyValueFileInputField: FC<KeyValueEntryFormProps & FieldProps> = ({
   onChange,
 }) => {
   const [field] = useField<KeyValueEntry[]>(name);
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const { values } = useFormikContext<FormikValues>();
   const rowValues = field.value ?? entries;
   const fieldId = getFieldId(name, 'key-value--input');
@@ -79,7 +79,7 @@ const KeyValueFileInputField: FC<KeyValueEntryFormProps & FieldProps> = ({
                       }}
                       variant="link"
                     >
-                      {t('console-shared~Remove key/value')}
+                      {t('Remove key/value')}
                     </Button>
                   </FlexItem>
                 )}
@@ -89,7 +89,7 @@ const KeyValueFileInputField: FC<KeyValueEntryFormProps & FieldProps> = ({
                     data-test={`key-${idx.toString()}`}
                     type={TextInputTypes.text}
                     name={`${name}.${idx.toString()}.key`}
-                    label={t('console-shared~Key')}
+                    label={t('Key')}
                     required
                   />
                 </FlexItem>
@@ -97,7 +97,7 @@ const KeyValueFileInputField: FC<KeyValueEntryFormProps & FieldProps> = ({
                   <DroppableFileInputField
                     data-test={`value-${idx.toString()}`}
                     name={`${name}.${idx.toString()}.value`}
-                    label={t('console-shared~Value')}
+                    label={t('Value')}
                     helpText={t(
                       'console-shared~Drag and drop file with your value here or browse to upload it.',
                     )}
@@ -117,7 +117,7 @@ const KeyValueFileInputField: FC<KeyValueEntryFormProps & FieldProps> = ({
             data-test="add-key-value-button"
             variant="link"
           >
-            {t('console-shared~Add key/value')}
+            {t('Add key/value')}
           </Button>
 
           <FormHelperText>

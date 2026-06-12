@@ -40,7 +40,7 @@ export const ContainerSelect: FC<ContainerSelectProps> = ({
   const [selected, setSelected] = useState<string>(
     currentKey || Object.values(containers ?? {})?.[0]?.name,
   );
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   if (_.isEmpty(containers)) {
     return null;
@@ -76,13 +76,13 @@ export const ContainerSelect: FC<ContainerSelectProps> = ({
     >
       {!_.isEmpty(initContainers) ? (
         <>
-          <SelectGroup label={t('public~Containers')}>
+          <SelectGroup label={t('Containers')}>
             <SelectList>
               <ContainerSelectOptions containers={containers} />
             </SelectList>
           </SelectGroup>
           <Divider />
-          <SelectGroup label={t('public~Init containers')}>
+          <SelectGroup label={t('Init containers')}>
             <SelectList>
               <ContainerSelectOptions containers={initContainers} />
             </SelectList>

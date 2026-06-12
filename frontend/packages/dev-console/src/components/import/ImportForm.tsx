@@ -76,7 +76,7 @@ const ImportForm: FC<ImportFormProps & StateProps> = ({
   activeApplication,
   projects,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const navigate = useNavigate();
   const handleCancel = useCallback(() => navigate(-1), [navigate]);
   const fireTelemetryEvent = useTelemetry();
@@ -93,9 +93,7 @@ const ImportForm: FC<ImportFormProps & StateProps> = ({
     application: {
       ...initialBaseValues.application,
       selectedKey:
-        activeApplication === t('devconsole~No application group')
-          ? UNASSIGNED_KEY
-          : activeApplication,
+        activeApplication === t('No application group') ? UNASSIGNED_KEY : activeApplication,
       isInContext: !!sanitizeApplicationValue(activeApplication),
     },
     resourceTypesNotValid: contextualSource ? [Resources.KnativeService] : [],
@@ -194,8 +192,8 @@ const ImportForm: FC<ImportFormProps & StateProps> = ({
           toastContext.addToast({
             variant: isWebHookAttached ? AlertVariant.success : AlertVariant.danger,
             title: isWebHookAttached
-              ? t('devconsole~Webhook attached to the Git Repository')
-              : t('devconsole~Could not attach webhook to the Git Repository'),
+              ? t('Webhook attached to the Git Repository')
+              : t('Could not attach webhook to the Git Repository'),
             content: !isWebHookAttached ? (
               <WebhookToastContent
                 repositoryName={repository.name}
@@ -222,7 +220,7 @@ const ImportForm: FC<ImportFormProps & StateProps> = ({
           } catch (err) {
             toastContext.addToast({
               variant: AlertVariant.danger,
-              title: t('devconsole~Build failed'),
+              title: t('Build failed'),
               content: err.message,
               timeout: true,
               dismissible: true,
@@ -234,10 +232,7 @@ const ImportForm: FC<ImportFormProps & StateProps> = ({
         if (deployedResources.length > 0) {
           toastContext.addToast({
             variant: AlertVariant.info,
-            title:
-              deployedResources.length > 1
-                ? t('devconsole~Resources added')
-                : t('devconsole~Resource added'),
+            title: deployedResources.length > 1 ? t('Resources added') : t('Resource added'),
             content: <ImportToastContent deployedResources={deployedResources} route={route} />,
             timeout: true,
             dismissible: true,

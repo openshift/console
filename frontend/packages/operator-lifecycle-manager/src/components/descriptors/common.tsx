@@ -29,10 +29,10 @@ export const DefaultCapability: FC<CommonCapabilityProps<string | number | boole
   fullPath,
   value,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const detail = useMemo(() => {
     if (_.isEmpty(value) && !_.isFinite(value) && !_.isBoolean(value)) {
-      return <span className="pf-v6-u-text-color-subtle">{t('public~None')}</span>;
+      return <span className="pf-v6-u-text-color-subtle">{t('None')}</span>;
     }
     return _.toString(value);
   }, [t, value]);
@@ -53,10 +53,10 @@ export const K8sResourceLinkCapability: FC<CommonCapabilityProps<string>> = ({
   obj,
   value,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const detail = useMemo(() => {
     if (!value) {
-      return <span className="pf-v6-u-text-color-subtle">{t('public~None')}</span>;
+      return <span className="pf-v6-u-text-color-subtle">{t('None')}</span>;
     }
 
     const [, suffix] = capability.match(REGEXP_K8S_RESOURCE_SUFFIX) ?? [];
@@ -86,7 +86,7 @@ export const SecretCapability: FC<CommonCapabilityProps<string>> = ({
   fullPath,
   value,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const [reveal, setReveal] = useState(false);
 
   return (
@@ -102,12 +102,12 @@ export const SecretCapability: FC<CommonCapabilityProps<string>> = ({
           {reveal ? (
             <>
               <RhUiViewOffIcon className="co-icon-space-r" />
-              {t('olm~Hide values')}
+              {t('Hide values')}
             </>
           ) : (
             <>
               <RhUiViewIcon className="co-icon-space-r" />
-              {t('olm~Reveal values')}
+              {t('Reveal values')}
             </>
           )}
         </Button>

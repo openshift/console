@@ -35,31 +35,23 @@ const getDataViewRows: GetDataViewRows<DaemonSetKind> = (data, columns) => {
 };
 
 export const DaemonSetDetailsList: FC<DaemonSetDetailsListProps> = ({ ds }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <DescriptionList>
-      <DetailsItem
-        label={t('public~Current count')}
-        obj={ds}
-        path="status.currentNumberScheduled"
-      />
-      <DetailsItem
-        label={t('public~Desired count')}
-        obj={ds}
-        path="status.desiredNumberScheduled"
-      />
+      <DetailsItem label={t('Current count')} obj={ds} path="status.currentNumberScheduled" />
+      <DetailsItem label={t('Desired count')} obj={ds} path="status.desiredNumberScheduled" />
       <PodDisruptionBudgetField obj={ds} />
     </DescriptionList>
   );
 };
 
 const DaemonSetDetails: FC<DaemonSetDetailsProps> = ({ obj: daemonset }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { podData, loaded } = usePodsWatcher(daemonset);
   return (
     <>
       <PaneBody>
-        <SectionHeading text={t('public~DaemonSet details')} />
+        <SectionHeading text={t('DaemonSet details')} />
         {loaded ? (
           <PodRing
             key={daemonset.metadata.uid}
@@ -86,11 +78,11 @@ const DaemonSetDetails: FC<DaemonSetDetailsProps> = ({ obj: daemonset }) => {
         </Grid>
       </PaneBody>
       <PaneBody>
-        <SectionHeading text={t('public~Containers')} />
+        <SectionHeading text={t('Containers')} />
         <ContainerTable containers={daemonset.spec.template.spec.containers} />
       </PaneBody>
       <PaneBody>
-        <VolumesTable resource={daemonset} heading={t('public~Volumes')} />
+        <VolumesTable resource={daemonset} heading={t('Volumes')} />
       </PaneBody>
     </>
   );

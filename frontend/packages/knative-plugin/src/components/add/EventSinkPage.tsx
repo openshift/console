@@ -13,7 +13,7 @@ import EventSink from './EventSink';
 import EventSinkAlert from './EventSinkAlert';
 
 const EventSinkPage: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const { ns: namespace } = useParams();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -34,9 +34,9 @@ const EventSinkPage: FC = () => {
 
   return (
     <NamespacedPage disabled variant={NamespacedPageVariants.light}>
-      <DocumentTitle>{t('knative-plugin~Event Sink')}</DocumentTitle>
+      <DocumentTitle>{t('Event Sink')}</DocumentTitle>
       <PageHeading
-        title={t('knative-plugin~Create Event Sink')}
+        title={t('Create Event Sink')}
         helpText={t(
           'knative-plugin~Create an Event sink to receive incoming events from a particular source. Configure using YAML and form views.',
         )}

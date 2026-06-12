@@ -19,7 +19,7 @@ const RoutesOverviewListItem: FC<RoutesOverviewListItemProps> = ({
   totalPercent,
   uniqueRoutes,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   return (
     <ListItem>
       <Grid hasGutter>
@@ -32,10 +32,8 @@ const RoutesOverviewListItem: FC<RoutesOverviewListItemProps> = ({
           </GridItem>
         )}
       </Grid>
-      {url.length > 0 && <RoutesUrlLink urls={[url]} title={t('knative-plugin~Location')} />}
-      {uniqueRoutes?.length > 0 && (
-        <RoutesUrlLink urls={uniqueRoutes} title={t('knative-plugin~Unique Route')} />
-      )}
+      {url.length > 0 && <RoutesUrlLink urls={[url]} title={t('Location')} />}
+      {uniqueRoutes?.length > 0 && <RoutesUrlLink urls={uniqueRoutes} title={t('Unique Route')} />}
     </ListItem>
   );
 };

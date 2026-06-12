@@ -30,7 +30,7 @@ const HealthItem = memo<HealthItemProps>(
     icon,
     children,
   }) => {
-    const { t } = useTranslation();
+    const { t } = useTranslation('console-shared');
 
     const detailMessage = details || healthStateMessage(state, t);
 
@@ -42,7 +42,7 @@ const HealthItem = memo<HealthItemProps>(
         {state === HealthState.LOADING ? (
           <div className="skeleton-health">
             <span className="pf-v6-u-screen-reader">
-              {t('public~Loading {{title}} status', { title })}
+              {t('Loading {{title}} status', { title })}
             </span>
           </div>
         ) : (

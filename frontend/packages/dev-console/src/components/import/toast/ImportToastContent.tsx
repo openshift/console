@@ -9,14 +9,14 @@ interface ImportToastContentProps {
 }
 
 const ImportToastContent: FC<ImportToastContentProps> = ({ deployedResources = [], route }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   if (!deployedResources || deployedResources.length === 0) {
     return null;
   }
   return (
     <>
       {deployedResources.length &&
-        t('devconsole~{{kind}} created successfully.', { kind: deployedResources[0].kind })}
+        t('{{kind}} created successfully.', { kind: deployedResources[0].kind })}
       {route && (
         <p>
           <RouteLinkAndCopy route={route} />

@@ -55,7 +55,7 @@ const CustomTaskComponent: FC<CustomTaskProps> = ({
   height,
   customTask,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const showStatusState: boolean = !!pipelineRunName;
   const visualName = name || _.get(task, ['metadata', 'name'], '');
   const nameRef = useRef();
@@ -130,12 +130,7 @@ const CustomTaskComponent: FC<CustomTaskProps> = ({
 
   if (!disableVisualizationTooltip) {
     taskPill = (
-      <Tooltip
-        triggerRef={pillRef}
-        position="bottom"
-        enableFlip={false}
-        content={t('devconsole~Custom Task')}
-      >
+      <Tooltip triggerRef={pillRef} position="bottom" enableFlip={false} content={t('Custom Task')}>
         <g ref={pillRef}>{taskPill}</g>
       </Tooltip>
     );

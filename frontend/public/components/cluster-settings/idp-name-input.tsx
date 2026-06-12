@@ -2,11 +2,11 @@ import type { FC, ReactEventHandler } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export const IDPNameInput: FC<IDPNameInputProps> = ({ value, onChange }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <div className="form-group" data-test="idp-name-form">
       <label className="co-required" htmlFor="idp-name">
-        {t('public~Name')}
+        {t('Name')}
       </label>
       <span className="pf-v6-c-form-control">
         <input
@@ -14,13 +14,13 @@ export const IDPNameInput: FC<IDPNameInputProps> = ({ value, onChange }) => {
           onChange={onChange}
           value={value}
           aria-describedby="idp-name-help"
-          aria-label={t('public~Name')}
+          aria-label={t('Name')}
           id="idp-name"
           required
         />
       </span>
       <p className="help-block" id="idp-name-help">
-        {t('public~Unique name of the new identity provider. This cannot be changed later.')}
+        {t('Unique name of the new identity provider. This cannot be changed later.')}
       </p>
     </div>
   );

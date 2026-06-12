@@ -19,7 +19,7 @@ const EventPubSubSubscribers: FC<EventPubSubSubscribersProps> = ({
   subscribers,
   title = 'Subscribers',
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const [expanded, setExpanded] = useState('');
 
   return (
@@ -76,7 +76,7 @@ const EventPubSubSubscribers: FC<EventPubSubSubscribersProps> = ({
         </List>
       ) : (
         <span className="pf-v6-u-text-color-subtle">
-          {t('knative-plugin~No Subscribers found for this resource.')}
+          {t('No Subscribers found for this resource.')}
         </span>
       )}
     </>

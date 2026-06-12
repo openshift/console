@@ -14,13 +14,13 @@ type ResourceLimitSectionProps = {
 };
 
 const ResourceLimitSection: FC<ResourceLimitSectionProps> = ({ hideTitle }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const {
     values: { container },
   } = useFormikContext<FormikValues>();
   return (
     <FormSection
-      title={!hideTitle && t('devconsole~Resource limit')}
+      title={!hideTitle && t('Resource limit')}
       subTitle={t(
         'devconsole~Resource limits control how much CPU and memory a container will consume on a node.',
       )}
@@ -28,24 +28,24 @@ const ResourceLimitSection: FC<ResourceLimitSectionProps> = ({ hideTitle }) => {
     >
       {container && (
         <span data-test="ResourceLimitSection-container-heading">
-          {t('devconsole~Container')} &nbsp;
+          {t('Container')} &nbsp;
           <ResourceIcon kind={ContainerModel.kind} /> {container}
         </span>
       )}
-      <TertiaryHeading altSpacing="pf-v6-u-my-0">{t('devconsole~CPU')}</TertiaryHeading>
+      <TertiaryHeading altSpacing="pf-v6-u-my-0">{t('CPU')}</TertiaryHeading>
       <ResourceLimitField
         name="limits.cpu.request"
-        label={t('devconsole~Request')}
-        inputAriaLabel={t('devconsole~CPU request')}
+        label={t('Request')}
+        inputAriaLabel={t('CPU request')}
         unitName="limits.cpu.requestUnit"
         unitOptions={CPUUnits}
-        helpText={t('devconsole~The minimum amount of CPU the Container is guaranteed.')}
+        helpText={t('The minimum amount of CPU the Container is guaranteed.')}
       />
 
       <ResourceLimitField
         name="limits.cpu.limit"
-        label={t('devconsole~Limit')}
-        inputAriaLabel={t('devconsole~CPU limit')}
+        label={t('Limit')}
+        inputAriaLabel={t('CPU limit')}
         unitName="limits.cpu.limitUnit"
         unitOptions={CPUUnits}
         helpText={t(
@@ -53,20 +53,20 @@ const ResourceLimitSection: FC<ResourceLimitSectionProps> = ({ hideTitle }) => {
         )}
       />
 
-      <TertiaryHeading altSpacing="pf-v6-u-my-0">{t('devconsole~Memory')}</TertiaryHeading>
+      <TertiaryHeading altSpacing="pf-v6-u-my-0">{t('Memory')}</TertiaryHeading>
       <ResourceLimitField
         name="limits.memory.request"
-        label={t('devconsole~Request')}
-        inputAriaLabel={t('devconsole~Memory request')}
+        label={t('Request')}
+        inputAriaLabel={t('Memory request')}
         unitName="limits.memory.requestUnit"
         unitOptions={MemoryUnits}
-        helpText={t('devconsole~The minimum amount of Memory the Container is guaranteed.')}
+        helpText={t('The minimum amount of Memory the Container is guaranteed.')}
       />
 
       <ResourceLimitField
         name="limits.memory.limit"
-        label={t('devconsole~Limit')}
-        inputAriaLabel={t('devconsole~Memory limit')}
+        label={t('Limit')}
+        inputAriaLabel={t('Memory limit')}
         unitName="limits.memory.limitUnit"
         unitOptions={MemoryUnits}
         helpText={t(

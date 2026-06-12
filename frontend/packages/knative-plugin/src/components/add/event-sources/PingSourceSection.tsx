@@ -11,19 +11,19 @@ interface PingSourceSectionProps {
 }
 
 const PingSourceSection: FC<PingSourceSectionProps> = ({ title, fullWidth }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   return (
     <FormSection title={title} extraMargin fullWidth={fullWidth}>
       <InputField
         type={TextInputTypes.text}
         name={`formData.data.${EventSources.PingSource}.data`}
-        label={t('knative-plugin~Data')}
-        helpText={t('knative-plugin~The data posted to the target function')}
+        label={t('Data')}
+        helpText={t('The data posted to the target function')}
       />
       <InputField
         type={TextInputTypes.text}
         name={`formData.data.${EventSources.PingSource}.schedule`}
-        label={t('knative-plugin~Schedule')}
+        label={t('Schedule')}
         helpText={t(
           'knative-plugin~Schedule is described using the unix-cron string format (* * * * *)',
         )}

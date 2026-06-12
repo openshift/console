@@ -28,7 +28,7 @@ import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
  * @returns Nothing, its a side-effect-driven hook.
  */
 export const useNotificationPoller = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const dispatch = useConsoleDispatch();
 
   const [alerts, ,] = useNotificationAlerts();
@@ -85,9 +85,7 @@ export const useNotificationPoller = () => {
             : [],
       );
     } else {
-      dispatch(
-        alertingErrored('notificationAlerts', new Error(t('public~prometheusBaseURL not set'))),
-      );
+      dispatch(alertingErrored('notificationAlerts', new Error(t('prometheusBaseURL not set'))));
     }
 
     if (alertManagerBaseURL) {
@@ -107,7 +105,7 @@ export const useNotificationPoller = () => {
         return silences;
       });
     } else {
-      dispatch(alertingErrored('silences', new Error(t('public~alertManagerBaseURL not set'))));
+      dispatch(alertingErrored('silences', new Error(t('alertManagerBaseURL not set'))));
     }
 
     return () => {

@@ -19,18 +19,14 @@ const PipelineVisualization: FC<PipelineTopologyVisualizationProps> = ({
   pipelineRun,
   taskRuns,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   let content: ReactElement;
   const model = getGraphDataModel(pipeline, pipelineRun, taskRuns || []);
 
   if (!model || (model.nodes.length === 0 && model.edges.length === 0)) {
     // Nothing to render
     content = (
-      <Alert
-        variant="info"
-        isInline
-        title={t('devconsole~This Pipeline has no tasks to visualize.')}
-      />
+      <Alert variant="info" isInline title={t('This Pipeline has no tasks to visualize.')} />
     );
   } else {
     content = (

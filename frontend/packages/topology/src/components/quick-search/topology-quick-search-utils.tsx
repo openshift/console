@@ -7,7 +7,7 @@ import { useQuickStartContext } from '@console/shared/src/hooks/useQuickStartCon
 
 export const useTransformedQuickStarts = (quickStarts: QuickStart[]): CatalogItem[] => {
   const { setActiveQuickStart } = useQuickStartContext();
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   return useMemo(
     () =>
       quickStarts.map((qs: QuickStart) => {
@@ -18,7 +18,7 @@ export const useTransformedQuickStarts = (quickStarts: QuickStart[]): CatalogIte
             {prerequisites?.length > 0 && (
               <>
                 <Title headingLevel="h5" className="pf-v6-u-mb-sm">
-                  {t('topology~Prerequisites')}
+                  {t('Prerequisites')}
                 </Title>
                 <Content component="ul">
                   {prerequisites.map((prerequisite, index) => (
@@ -34,11 +34,11 @@ export const useTransformedQuickStarts = (quickStarts: QuickStart[]): CatalogIte
         );
         return {
           name: qs.spec.displayName,
-          type: t('topology~Quick starts'),
+          type: t('Quick starts'),
           uid: qs.metadata.uid,
           cta: {
             callback: () => setActiveQuickStart(qs.metadata.name, qs.spec.tasks?.length),
-            label: t('topology~Start'),
+            label: t('Start'),
           },
           icon: {
             url: qs.spec.icon as string,

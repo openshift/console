@@ -4,17 +4,15 @@ import { RhStandardInfoIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 
 const HelmReleaseNotesEmptyState: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   return (
     <EmptyState
       headingLevel="h2"
       icon={RhStandardInfoIcon}
-      titleText={<>{t('helm-plugin~No release notes available')}</>}
+      titleText={<>{t('No release notes available')}</>}
       variant={EmptyStateVariant.full}
     >
-      <EmptyStateBody>
-        {t('helm-plugin~Release notes are not available for this Helm Chart.')}
-      </EmptyStateBody>
+      <EmptyStateBody>{t('Release notes are not available for this Helm Chart.')}</EmptyStateBody>
     </EmptyState>
   );
 };

@@ -71,7 +71,7 @@ const DebugTerminalError: FC<DebugTerminalErrorProps> = ({ error, description })
 };
 
 const DebugTerminalInner: FC<DebugTerminalInnerProps> = ({ debugPod, initialContainer }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const infoMessage = (
     <Alert
       variant="info"
@@ -86,7 +86,7 @@ const DebugTerminalInner: FC<DebugTerminalInnerProps> = ({ debugPod, initialCont
     case 'Unknown':
       return (
         <DebugTerminalError
-          error={<>{t('public~The debug pod failed.')}</>}
+          error={<>{t('The debug pod failed.')}</>}
           description={
             debugPod.status.containerStatuses?.[0]?.state?.terminated?.message ||
             debugPod.status.message
@@ -111,7 +111,7 @@ const DebugTerminalInner: FC<DebugTerminalInnerProps> = ({ debugPod, initialCont
 const DebugTerminal: FC<DebugTerminalProps> = ({ podData, containerName }) => {
   const [errorMessage, setErrorMessage] = useState('');
   const [generatedDebugPodName, setGeneratedDebugPodName] = useState('');
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const podNamespace = podData?.metadata.namespace;
   const podContainerName = containerName || podData?.spec.containers[0].name;
   const debugPodName = `${podData?.metadata?.name?.replace(/\./g, '-')}-debug-`;
@@ -170,7 +170,7 @@ const DebugTerminal: FC<DebugTerminalProps> = ({ podData, containerName }) => {
 
   if (generatedDebugPodName) {
     if (err) {
-      return <DebugTerminalError error={err.message || t('public~The debug pod failed.')} />;
+      return <DebugTerminalError error={err.message || t('The debug pod failed.')} />;
     }
     if (loaded) {
       return <DebugTerminalInner initialContainer={containerName} debugPod={debugPod} />;
@@ -181,7 +181,7 @@ const DebugTerminal: FC<DebugTerminalProps> = ({ podData, containerName }) => {
 };
 
 export const DebugTerminalPage: FC<DebugTerminalPageProps> = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const params = useParams();
   const { podName, ns, name } = params;
   const { pathname: url } = useLocation();
@@ -195,22 +195,22 @@ export const DebugTerminalPage: FC<DebugTerminalPageProps> = () => {
 
   return (
     <div>
-      <DocumentTitle>{t('public~Debug {{name}}', { name })}</DocumentTitle>
+      <DocumentTitle>{t('Debug {{name}}', { name })}</DocumentTitle>
       <ConnectedPageHeading
-        title={t('public~Debug {{name}}', { name })}
+        title={t('Debug {{name}}', { name })}
         kind="Pod"
         obj={{ data: podData }}
         breadcrumbs={[
-          { name: t('public~Pods'), path: getBreadcrumbPath(params, 'pods') },
+          { name: t('Pods'), path: getBreadcrumbPath(params, 'pods') },
           {
             name: podName,
             path: resourcePath('Pod', podName, ns),
           },
           {
-            name: t('public~Container details'),
+            name: t('Container details'),
             path: `${resourcePath('Pod', podName, ns)}/containers/${name}`,
           },
-          { name: t('public~Debug container'), path: url },
+          { name: t('Debug container'), path: url },
         ]}
       />
       {loaded && !err && <DebugTerminal podData={podData} containerName={name} />}

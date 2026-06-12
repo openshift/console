@@ -19,7 +19,7 @@ interface CheckUpdatesApiResult {
 
 export const PollConsoleUpdates = memo(() => {
   const toastContext = useToast();
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const [isToastOpen, setToastOpen] = useState(false);
   const [pluginsChanged, setPluginsChanged] = useState(false);
@@ -161,7 +161,7 @@ export const PollConsoleUpdates = memo(() => {
 
   toastContext.addToast({
     variant: AlertVariant.warning,
-    title: t('public~Web console update is available'),
+    title: t('Web console update is available'),
     content: t(
       'public~There has been an update to the web console. Ensure any changes have been saved and refresh your browser to access the latest version.',
     ),
@@ -170,7 +170,7 @@ export const PollConsoleUpdates = memo(() => {
     actions: [
       {
         dismiss: true,
-        label: t('public~Refresh web console'),
+        label: t('Refresh web console'),
         callback: () => {
           if (window.location.pathname.includes('/operatorhub/subscribe')) {
             window.location.href = '/catalog?catalogType=operator';

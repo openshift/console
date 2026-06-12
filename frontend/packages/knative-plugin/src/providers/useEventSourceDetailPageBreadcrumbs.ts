@@ -8,7 +8,7 @@ import { getEventSourceModels } from '../utils/fetch-dynamic-eventsources-utils'
 import { serverlessTab } from '../utils/serverless-tab-utils';
 
 export const useEventSourceDetailPageBreadcrumbs = (kindObj: K8sKind) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const params = useParams();
   const location = useLocation();
   const isAdminPerspective = useActivePerspective()[0] === 'admin';
@@ -18,7 +18,7 @@ export const useEventSourceDetailPageBreadcrumbs = (kindObj: K8sKind) => {
     params,
     'eventing',
     serverlessTab('EventSource'),
-    isAdminPerspective ? t('knative-plugin~Event Sources') : undefined,
+    isAdminPerspective ? t('Event Sources') : undefined,
     isAdminPerspective,
   );
 };

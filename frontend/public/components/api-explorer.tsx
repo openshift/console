@@ -97,7 +97,7 @@ const APIResourceLink_: FC<APIResourceLinkStateProps & APIResourceLinkOwnProps> 
   activeNamespace,
   model,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const to = getAPIResourceLink(activeNamespace, model);
   return (
     <span className="co-resource-item">
@@ -130,14 +130,12 @@ const Group: FC<{ value: string }> = ({ value }) => {
   );
 };
 const BodyEmpty: FC<{ label: string; colSpan: number }> = ({ label, colSpan }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <Tbody>
       <Tr>
         <Td colSpan={colSpan}>
-          <Bullseye>
-            {label ? t('public~No {{label}} found', { label }) : t('public~None found')}
-          </Bullseye>
+          <Bullseye>{label ? t('No {{label}} found', { label }) : t('None found')}</Bullseye>
         </Td>
       </Tr>
     </Tbody>
@@ -163,7 +161,7 @@ const APIResourcesList: FC = () => {
   const versionFilter = search.get(VERSION_PARAM) || ALL;
   const textFilter = search.get(TEXT_FILTER_PARAM) || '';
   const scopeFilter = search.get(SCOPE_PARAM) || ALL;
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Pagination
@@ -217,7 +215,7 @@ const APIResourcesList: FC = () => {
       result[group] = <Group value={group} />;
       return result;
     },
-    { [ALL]: t('public~All groups'), '': t('public~No group') },
+    { [ALL]: t('All groups'), '': t('No group') },
   );
   const [isExactSearch] = useExactSearch();
   const matchFn: Function = isExactSearch ? exactMatch : fuzzyCaseInsensitive;
@@ -244,7 +242,7 @@ const APIResourcesList: FC = () => {
       result[version] = version;
       return result;
     },
-    { [ALL]: t('public~All versions') },
+    { [ALL]: t('All versions') },
   );
 
   const versionSpacer = new Set<string>();
@@ -253,9 +251,9 @@ const APIResourcesList: FC = () => {
   }
 
   const scopeOptions = {
-    [ALL]: t('public~All scopes'),
-    cluster: t('public~Cluster'),
-    namespace: t('public~Namespace'),
+    [ALL]: t('All scopes'),
+    cluster: t('Cluster'),
+    namespace: t('Namespace'),
   };
   const scopeSpacer = new Set<string>(['cluster']);
 
@@ -353,7 +351,7 @@ const APIResourcesList: FC = () => {
     setQueryArgument(ORDER_BY_PARAM, direction);
   };
 
-  const bodyEmpty = useMemo(() => <BodyEmpty label={t('public~API resources')} colSpan={5} />, [t]);
+  const bodyEmpty = useMemo(() => <BodyEmpty label={t('API resources')} colSpan={5} />, [t]);
 
   const updateURL = (k: string, v: string) => {
     if (v === ALL) {
@@ -423,7 +421,7 @@ const APIResourcesList: FC = () => {
           <ToolbarItem>
             <TextFilter
               value={textFilter}
-              label={t('public~by kind')}
+              label={t('by kind')}
               onChange={(_event, value) => setTextFilter(value)}
             />
           </ToolbarItem>
@@ -431,9 +429,9 @@ const APIResourcesList: FC = () => {
             <Pagination
               itemCount={sortedResources.length}
               titles={{
-                ofWord: t('public~of'),
-                itemsPerPage: t('public~Items per page'),
-                perPageSuffix: t('public~per page'),
+                ofWord: t('of'),
+                itemsPerPage: t('Items per page'),
+                perPageSuffix: t('per page'),
               }}
               {...pagination}
             />
@@ -445,10 +443,10 @@ const APIResourcesList: FC = () => {
       >
         <InnerScrollContainer>
           <DataViewTable
-            aria-label={t('public~API resources')}
+            aria-label={t('API resources')}
             columns={[
               {
-                cell: t('public~Kind'),
+                cell: t('Kind'),
                 props: {
                   modifier: 'nowrap',
                   width: 20,
@@ -460,7 +458,7 @@ const APIResourcesList: FC = () => {
                 },
               },
               {
-                cell: t('public~Group'),
+                cell: t('Group'),
                 props: {
                   modifier: 'nowrap',
                   width: 15,
@@ -472,7 +470,7 @@ const APIResourcesList: FC = () => {
                 },
               },
               {
-                cell: t('public~Version'),
+                cell: t('Version'),
                 props: {
                   modifier: 'nowrap',
                   sort: {
@@ -483,7 +481,7 @@ const APIResourcesList: FC = () => {
                 },
               },
               {
-                cell: t('public~Namespaced'),
+                cell: t('Namespaced'),
                 props: {
                   modifier: 'nowrap',
                   sort: {
@@ -493,7 +491,7 @@ const APIResourcesList: FC = () => {
                   },
                 },
               },
-              { cell: t('public~Description'), props: { modifier: 'nowrap' } },
+              { cell: t('Description'), props: { modifier: 'nowrap' } },
             ]}
             rows={paginatedResources.map((model: K8sKind) => [
               <APIResourceLink key={model.kind} model={model} />,
@@ -501,7 +499,7 @@ const APIResourcesList: FC = () => {
                 <Group value={model.apiGroup} />
               </span>,
               model.apiVersion,
-              model.namespaced ? t('public~true') : t('public~false'),
+              model.namespaced ? t('true') : t('false'),
               <div key="description" className="co-line-clamp">
                 {getResourceDescription(model)}
               </div>,
@@ -519,8 +517,8 @@ const APIResourcesList: FC = () => {
 APIResourcesList.displayName = 'APIResourcesList';
 
 export const APIExplorerPage: FC<{}> = () => {
-  const { t } = useTranslation();
-  const title = t('public~API Explorer');
+  const { t } = useTranslation('public');
+  const title = t('API Explorer');
   return (
     <>
       <DocumentTitle>{title}</DocumentTitle>
@@ -534,46 +532,46 @@ APIExplorerPage.displayName = 'APIExplorerPage';
 const APIResourceDetails: FC<APIResourceTabProps> = ({ customData: { kindObj } }) => {
   const { kind, apiGroup, apiVersion, namespaced, verbs, shortNames } = kindObj;
   const description = getResourceDescription(kindObj);
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <PaneBody>
       <DescriptionList>
         <DescriptionListGroup>
-          <DescriptionListTerm>{t('public~Kind')}</DescriptionListTerm>
+          <DescriptionListTerm>{t('Kind')}</DescriptionListTerm>
           <DescriptionListDescription>{kind}</DescriptionListDescription>
         </DescriptionListGroup>
         <DescriptionListGroup>
-          <DescriptionListTerm>{t('public~API group')}</DescriptionListTerm>
+          <DescriptionListTerm>{t('API group')}</DescriptionListTerm>
           <DescriptionListDescription className="co-select-to-copy">
             {apiGroup || '-'}
           </DescriptionListDescription>
         </DescriptionListGroup>
         <DescriptionListGroup>
-          <DescriptionListTerm>{t('public~API version')}</DescriptionListTerm>
+          <DescriptionListTerm>{t('API version')}</DescriptionListTerm>
           <DescriptionListDescription>{apiVersion}</DescriptionListDescription>
         </DescriptionListGroup>
         <DescriptionListGroup>
-          <DescriptionListTerm>{t('public~Namespaced')}</DescriptionListTerm>
+          <DescriptionListTerm>{t('Namespaced')}</DescriptionListTerm>
           <DescriptionListDescription>
-            {namespaced ? t('public~true') : t('public~false')}
+            {namespaced ? t('true') : t('false')}
           </DescriptionListDescription>
         </DescriptionListGroup>
         <DescriptionListGroup>
-          <DescriptionListTerm>{t('public~Verbs')}</DescriptionListTerm>
+          <DescriptionListTerm>{t('Verbs')}</DescriptionListTerm>
           <DescriptionListDescription>{verbs.join(', ')}</DescriptionListDescription>
         </DescriptionListGroup>
         {shortNames && (
           <DescriptionListGroup>
             <DescriptionListTermHelp
-              text={t('public~Short names')}
-              textHelp={t('public~Short names can be used to match this resource on the CLI.')}
+              text={t('Short names')}
+              textHelp={t('Short names can be used to match this resource on the CLI.')}
             />
             <DescriptionListDescription>{shortNames.join(', ')}</DescriptionListDescription>
           </DescriptionListGroup>
         )}
         {description && (
           <DescriptionListGroup>
-            <DescriptionListTerm>{t('public~Description')}</DescriptionListTerm>
+            <DescriptionListTerm>{t('Description')}</DescriptionListTerm>
             <DescriptionListDescription className="co-break-word co-pre-wrap">
               <LinkifyExternal>{description}</LinkifyExternal>
             </DescriptionListDescription>
@@ -651,7 +649,7 @@ const APIResourceAccessReview: FC<APIResourceTabProps> = ({
   const [showServiceAccounts, setShowServiceAccounts] = useState(false);
   const [accessResponse, setAccessResponse] = useState<ResourceAccessReviewResponse>();
   const [error, setError] = useState<APIError>();
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   // Pagination
   const pagination = useDataViewPagination({
@@ -783,10 +781,10 @@ const APIResourceAccessReview: FC<APIResourceTabProps> = ({
     });
   };
 
-  const bodyEmpty = useMemo(() => <BodyEmpty label={t('public~Subjects')} colSpan={2} />, [t]);
+  const bodyEmpty = useMemo(() => <BodyEmpty label={t('Subjects')} colSpan={2} />, [t]);
 
   if (error) {
-    return <LoadError label={t('public~Access review')}>{error.message}</LoadError>;
+    return <LoadError label={t('Access review')}>{error.message}</LoadError>;
   }
 
   if (!accessResponse) {
@@ -825,13 +823,13 @@ const APIResourceAccessReview: FC<APIResourceTabProps> = ({
               items={verbOptions}
               onChange={(v: K8sVerb) => setVerb(v)}
               selectedKey={verb}
-              titlePrefix={t('public~Verb')}
+              titlePrefix={t('Verb')}
             />
           </FlexItem>
           <FlexItem>
             <TextFilter
               defaultValue={filter}
-              label={t('public~by subject')}
+              label={t('by subject')}
               onChange={(_event, val) => setFilter(val)}
             />
           </FlexItem>
@@ -839,9 +837,9 @@ const APIResourceAccessReview: FC<APIResourceTabProps> = ({
             <Pagination
               itemCount={filteredData.length}
               titles={{
-                ofWord: t('public~of'),
-                itemsPerPage: t('public~Items per page'),
-                perPageSuffix: t('public~per page'),
+                ofWord: t('of'),
+                itemsPerPage: t('Items per page'),
+                perPageSuffix: t('per page'),
               }}
               {...pagination}
             />
@@ -857,7 +855,7 @@ const APIResourceAccessReview: FC<APIResourceTabProps> = ({
             <FlexItem>
               <Switch
                 id="user-switch"
-                label={t('public~{{count}} User', { count: users.length })}
+                label={t('{{count}} User', { count: users.length })}
                 isChecked={showUsers}
                 onChange={toggleShowUsers}
                 ouiaId="UserSwitch"
@@ -866,7 +864,7 @@ const APIResourceAccessReview: FC<APIResourceTabProps> = ({
             <FlexItem>
               <Switch
                 id="group-switch"
-                label={t('public~{{count}} Group', { count: groups.length })}
+                label={t('{{count}} Group', { count: groups.length })}
                 isChecked={showGroups}
                 onChange={toggleShowGroups}
                 ouiaId="GroupSwitch"
@@ -875,7 +873,7 @@ const APIResourceAccessReview: FC<APIResourceTabProps> = ({
             <FlexItem>
               <Switch
                 id="service-account-switch"
-                label={t('public~{{count}} ServiceAccount', { count: serviceAccounts.length })}
+                label={t('{{count}} ServiceAccount', { count: serviceAccounts.length })}
                 isChecked={showServiceAccounts}
                 onChange={toggleShowServiceAccounts}
                 ouiaId="ServiceAccountSwitch"
@@ -892,12 +890,12 @@ const APIResourceAccessReview: FC<APIResourceTabProps> = ({
             )}
           {namespaced &&
             !namespace &&
-            t('public~The following subjects can {{verb}} {{plural}} in all namespaces', {
+            t('The following subjects can {{verb}} {{plural}} in all namespaces', {
               verb,
               plural,
             })}
           {!namespaced &&
-            t('public~The following subjects can {{verb}} {{plural}} at the cluster scope', {
+            t('The following subjects can {{verb}} {{plural}} at the cluster scope', {
               verb,
               plural,
             })}
@@ -905,10 +903,10 @@ const APIResourceAccessReview: FC<APIResourceTabProps> = ({
         <DataView activeState={filteredData.length === 0 ? 'empty' : undefined}>
           <InnerScrollContainer>
             <DataViewTable
-              aria-label={t('public~API resources')}
+              aria-label={t('API resources')}
               columns={[
                 {
-                  cell: t('public~Subject'),
+                  cell: t('Subject'),
                   props: {
                     modifier: 'nowrap',
                     sort: {
@@ -919,7 +917,7 @@ const APIResourceAccessReview: FC<APIResourceTabProps> = ({
                   },
                 },
                 {
-                  cell: t('public~Type'),
+                  cell: t('Type'),
                   props: {
                     modifier: 'nowrap',
                     sort: {
@@ -955,7 +953,7 @@ const APIResourcePage_ = (props) => {
   const kindsInFlight = props.k8s.getIn(['RESOURCES', 'inFlight']);
 
   const namespace = kindObj?.namespaced ? params.ns : undefined;
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const canCreateResourceAccessReview = useAccessReview({
     group: namespace
@@ -974,11 +972,11 @@ const APIResourcePage_ = (props) => {
 
   const breadcrumbs = [
     {
-      name: t('public~Explore'),
+      name: t('Explore'),
       path: '/api-explorer',
     },
     {
-      name: t('public~Resource details'),
+      name: t('Resource details'),
       path: location.pathname,
     },
   ];

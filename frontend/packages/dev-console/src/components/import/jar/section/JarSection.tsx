@@ -13,7 +13,7 @@ import FormSection from '../../section/FormSection';
 import { getAppName } from '../../upload-jar-validation-utils';
 
 const JarSection: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const {
     values: {
       name,
@@ -67,16 +67,16 @@ const JarSection: FC = () => {
   };
 
   return (
-    <FormSection title={t('devconsole~JAR')}>
+    <FormSection title={t('JAR')}>
       <FileUpload
         id="upload-jar-field"
         name="fileUpload.name"
         value={fileValue}
         filename={fileName}
-        filenameAriaLabel={t('devconsole~JAR file')}
-        filenamePlaceholder={t('devconsole~Drag a file here or browse to upload')}
-        browseButtonText={t('devconsole~Browse...')}
-        clearButtonText={t('devconsole~Clear')}
+        filenameAriaLabel={t('JAR file')}
+        filenamePlaceholder={t('Drag a file here or browse to upload')}
+        browseButtonText={t('Browse...')}
+        clearButtonText={t('Clear')}
         onFileInputChange={updatedJarFile}
         hideDefaultPreview
         dropzoneProps={{
@@ -89,12 +89,12 @@ const JarSection: FC = () => {
       <InputField
         type={TextInputTypes.text}
         name="fileUpload.javaArgs"
-        label={t('devconsole~Optional Java arguments')}
+        label={t('Optional Java arguments')}
         helpText={t(
           'devconsole~Optional Java arguments are saved as JAVA_ARGS environment variable to customize your application.',
         )}
         data-test-id="upload-jar-form-java-args"
-        placeholder={t('devconsole~JAVA_ARGS')}
+        placeholder={t('JAVA_ARGS')}
       />
     </FormSection>
   );

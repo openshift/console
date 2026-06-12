@@ -140,12 +140,12 @@ export const InventoryCard = memo(() => {
     namespace: projectName,
     verb: 'list',
   });
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   return (
     <Card data-test-id="inventory-card">
       <CardHeader>
-        <CardTitle>{t('public~Inventory')}</CardTitle>
+        <CardTitle>{t('Inventory')}</CardTitle>
       </CardHeader>
       <CardBody>
         <Stack hasGutter>

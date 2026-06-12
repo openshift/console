@@ -57,7 +57,7 @@ const EnhancedProvider: FC<{
 const PF_BREAKPOINT_XL = 1200;
 
 const SlowLoadingMessage: FC<{ message: string }> = ({ message }) => {
-  const { t } = useTranslation('public');
+  const { t } = useTranslation('console-app');
   return (
     <Content className="co-page-skeleton__slow-msg pf-v6-u-text-align-center pf-v6-u-mt-lg">
       <Content component={ContentVariants.p}>{message}</Content>
@@ -78,7 +78,7 @@ const SlowLoadingMessage: FC<{ message: string }> = ({ message }) => {
  * only be rendered once at the start of page load
  */
 const PageSkeleton: FC<{ blame: string }> = ({ blame }) => {
-  const { t } = useTranslation('public');
+  const { t } = useTranslation('console-app');
 
   return (
     <>

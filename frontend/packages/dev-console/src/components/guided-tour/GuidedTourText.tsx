@@ -6,7 +6,7 @@ import { ExternalLink } from '@console/shared/src/components/links/ExternalLink'
 import { useOpenShiftVersion } from '@console/shared/src/hooks/useClusterVersion';
 
 const DevPerspectiveTourText: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const fullVersion = useOpenShiftVersion();
   const parsed = semver.parse(fullVersion);
   // Show only major and minor version.
@@ -24,10 +24,10 @@ const DevPerspectiveTourText: FC = () => {
 export const devPerspectiveTourText = <DevPerspectiveTourText />;
 
 const PerspectiveSwitcherTourText: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   return (
     <>
-      <p>{t('devconsole~Switch between the Developer and Core platform perspectives.')}</p>
+      <p>{t('Switch between the Developer and Core platform perspectives.')}</p>
       <p>
         {t(
           'devconsole~Use the Core platform perspective to manage workload storage, networking, cluster settings, and more. This may require additional user access.',
@@ -45,7 +45,7 @@ const PerspectiveSwitcherTourText: FC = () => {
 export const perspectiveSwitcherTourText = <PerspectiveSwitcherTourText />;
 
 const WebTerminalGuidedTourText: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   return (
     <>
       <p>
@@ -56,7 +56,7 @@ const WebTerminalGuidedTourText: FC = () => {
       <p>
         <ExternalLink
           href="https://developers.redhat.com/products/odo/overview"
-          text={t('devconsole~Access odo CLI')}
+          text={t('Access odo CLI')}
         />
       </p>
     </>
@@ -66,7 +66,7 @@ const WebTerminalGuidedTourText: FC = () => {
 export const webTerminalGuidedTourText = <WebTerminalGuidedTourText />;
 
 const SearchTourText: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   return (
     <>
       <p>
@@ -83,9 +83,9 @@ const SearchTourText: FC = () => {
             color: 'var(--pf-t--global--icon--color--brand--default)',
           }}
         >
-          <RhUiAddCircleFillIcon /> {t('devconsole~Add to navigation')}
+          <RhUiAddCircleFillIcon /> {t('Add to navigation')}
         </span>{' '}
-        {t('devconsole~link next to your search result.')}
+        {t('link next to your search result.')}
       </p>
     </>
   );

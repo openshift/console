@@ -27,7 +27,7 @@ const CreateHelmChartRepositoryFormEditor: FC<CreateHelmChartRepositoryFormEdito
   existingRepo,
   namespace,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   const {
     values: { formData },
   } = useFormikContext<FormikValues>();
@@ -94,16 +94,16 @@ const CreateHelmChartRepositoryFormEditor: FC<CreateHelmChartRepositoryFormEdito
       {showScopeType && !existingRepo && (
         <RadioGroupField
           name="formData.scope"
-          label={t('helm-plugin~Scope type')}
+          label={t('Scope type')}
           options={[
             {
-              label: t('helm-plugin~Namespaced scoped  (ProjectHelmChartRepository)'),
+              label: t('Namespaced scoped  (ProjectHelmChartRepository)'),
               value: 'ProjectHelmChartRepository',
-              children: t('helm-plugin~Add Helm Chart Repository in the selected namespace.'),
+              children: t('Add Helm Chart Repository in the selected namespace.'),
               isChecked: formData.scope === 'ProjectHelmChartRepository',
             },
             {
-              label: t('helm-plugin~Cluster scoped (HelmChartRepository)'),
+              label: t('Cluster scoped (HelmChartRepository)'),
               value: 'HelmChartRepository',
               children: t(
                 'helm-plugin~Add Helm Chart Repository at the cluster level and in all namespaces.',
@@ -116,39 +116,37 @@ const CreateHelmChartRepositoryFormEditor: FC<CreateHelmChartRepositoryFormEdito
       <InputField
         type={TextInputTypes.text}
         name="formData.repoName"
-        label={t('helm-plugin~Name')}
-        helpText={
-          !existingRepo ? t('helm-plugin~A unique name for the Helm Chart repository.') : null
-        }
+        label={t('Name')}
+        helpText={!existingRepo ? t('A unique name for the Helm Chart repository.') : null}
         isDisabled={!!existingRepo}
         required
       />
       <InputField
         type={TextInputTypes.text}
         name="formData.repoDisplayName"
-        label={t('helm-plugin~Display name')}
-        helpText={t('helm-plugin~A display name for the Helm Chart repository.')}
+        label={t('Display name')}
+        helpText={t('A display name for the Helm Chart repository.')}
       />
       <InputField
         type={TextInputTypes.text}
         name="formData.repoDescription"
-        label={t('helm-plugin~Description')}
-        helpText={t('helm-plugin~A description for the Helm Chart repository.')}
+        label={t('Description')}
+        helpText={t('A description for the Helm Chart repository.')}
       />
       <CheckboxField
         name="formData.disabled"
-        label={t('helm-plugin~Disable usage of the repo in the Software Catalog.')}
+        label={t('Disable usage of the repo in the Software Catalog.')}
       />
       <InputField
         type={TextInputTypes.text}
         name="formData.repoUrl"
-        label={t('helm-plugin~URL')}
-        helpText={t('helm-plugin~Helm Chart repository URL.')}
+        label={t('URL')}
+        helpText={t('Helm Chart repository URL.')}
         required
       />
       <ExpandCollapse
-        textExpanded={t('helm-plugin~Hide advanced options')}
-        textCollapsed={t('helm-plugin~Show advanced options')}
+        textExpanded={t('Hide advanced options')}
+        textCollapsed={t('Show advanced options')}
       >
         <FormSection>
           <p className="pf-v6-c-form__helper-text">
@@ -158,22 +156,22 @@ const CreateHelmChartRepositoryFormEditor: FC<CreateHelmChartRepositoryFormEdito
           </p>
           <ResourceDropdownField
             name="formData.ca"
-            label={t('helm-plugin~CA certificate')}
+            label={t('CA certificate')}
             resources={configMapResources}
             dataSelector={['metadata', 'name']}
             fullWidth
-            placeholder={t('helm-plugin~Select ConfigMap')}
+            placeholder={t('Select ConfigMap')}
             showBadge
             autocompleteFilter={autocompleteFilter}
           />
 
           <ResourceDropdownField
             name="formData.tlsClientConfig"
-            label={t('helm-plugin~TLS Client config')}
+            label={t('TLS Client config')}
             resources={secretResources}
             dataSelector={['metadata', 'name']}
             fullWidth
-            placeholder={t('helm-plugin~Select Secret')}
+            placeholder={t('Select Secret')}
             showBadge
             autocompleteFilter={autocompleteFilter}
           />
@@ -181,11 +179,11 @@ const CreateHelmChartRepositoryFormEditor: FC<CreateHelmChartRepositoryFormEdito
           {isProjectScoped && (
             <ResourceDropdownField
               name="formData.basicAuthConfig"
-              label={t('helm-plugin~Basic authentication')}
+              label={t('Basic authentication')}
               resources={secretResources}
               dataSelector={['metadata', 'name']}
               fullWidth
-              placeholder={t('helm-plugin~Select Secret')}
+              placeholder={t('Select Secret')}
               showBadge
               autocompleteFilter={autocompleteFilter}
             />

@@ -28,7 +28,7 @@ const QuickSearchDetails: FC<QuickSearchDetailsProps> = ({
   closeModal,
   detailsRenderer,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const navigate = useNavigate();
   const { removeQueryArgument } = useQueryParamsMutator();
   const fireTelemetryEvent = useTelemetry();
@@ -39,7 +39,7 @@ const QuickSearchDetails: FC<QuickSearchDetailsProps> = ({
         <Title headingLevel="h4">{selectedItem.name}</Title>
         {selectedItem.provider && (
           <span className="ocs-quick-search-details__provider">
-            {t('console-shared~Provided by {{provider}}', {
+            {t('Provided by {{provider}}', {
               provider: selectedItem.provider,
             })}
           </span>

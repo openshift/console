@@ -24,12 +24,12 @@ export const StatusCard = memo(() => {
     [subsystemExtensions],
   );
   const namespace = obj?.metadata?.name;
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   return (
     <Card data-test-id="status-card">
       <CardHeader>
-        <CardTitle>{t('public~Status')}</CardTitle>
+        <CardTitle>{t('Status')}</CardTitle>
       </CardHeader>
       {obj ? (
         <>

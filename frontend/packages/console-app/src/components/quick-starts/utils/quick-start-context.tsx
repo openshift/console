@@ -52,7 +52,7 @@ const useAllQuickStartStates = () =>
   useUserPreference(ALL_QUICK_START_STATE_KEY, getInitialState()?.allQuickStartStates ?? {});
 
 export const useValuesForQuickStartContext = (): QuickStartContextValues => {
-  const { i18n } = useTranslation();
+  const { i18n } = useTranslation('console-app');
   const [activeQuickStartID, setActiveQuickStartID] = useActiveQuickStartId();
   const [allQuickStartStates, setAllQuickStartStates] = useAllQuickStartStates();
   const fireTelemetryEvent = useTelemetry();

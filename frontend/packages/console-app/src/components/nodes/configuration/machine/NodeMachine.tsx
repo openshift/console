@@ -35,7 +35,7 @@ const SkeletonDetails: FC = () => (
 );
 
 const NodeMachine: ComponentType<PageComponentProps<NodeKind>> = ({ obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
 
   const [
     machineConfigPools,
@@ -68,7 +68,7 @@ const NodeMachine: ComponentType<PageComponentProps<NodeKind>> = ({ obj }) => {
   return (
     <>
       <PaneBody>
-        <SectionHeading text={t('console-app~Machine')} />
+        <SectionHeading text={t('Machine')} />
         <Content component="p">
           {t(
             'console-app~This section details the provisioning and configuration of the node, from the underlying machine, OS, and hardware specifications to the applied system-level configurations. Use this information to understand the origin of the node and how to configure it to run workloads.',

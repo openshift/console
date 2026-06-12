@@ -23,7 +23,7 @@ type DeploymentSideBarDetailsProps = {
 };
 
 const DeploymentSideBarDetails: FC<DeploymentSideBarDetailsProps> = ({ deployment: d }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   return (
     <div className="overview__sidebar-pane-body resource-overview__body">
       {d.spec.paused && <WorkloadPausedAlert obj={d} model={DeploymentModel} />}
@@ -33,16 +33,16 @@ const DeploymentSideBarDetails: FC<DeploymentSideBarDetailsProps> = ({ deploymen
       <div className="resource-overview__summary">
         <ResourceSummary resource={d} showPodSelector showNodeSelector showTolerations>
           <DescriptionListGroup>
-            <DescriptionListTerm>{t('topology~Status')}</DescriptionListTerm>
+            <DescriptionListTerm>{t('Status')}</DescriptionListTerm>
             <DescriptionListDescription>
               {d.status.availableReplicas === d.status.updatedReplicas ? (
-                t('topology~Active')
+                t('Active')
               ) : (
                 <div>
                   <span className="co-icon-space-r">
                     <LoadingInline />
                   </span>{' '}
-                  {t('topology~Updating')}
+                  {t('Updating')}
                 </div>
               )}
             </DescriptionListDescription>

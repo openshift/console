@@ -213,7 +213,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
   const editor = useRef();
   const buttons = useRef();
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const getEditor = (): editor.IStandaloneCodeEditor | undefined =>
     monacoRef?.current && 'editor' in monacoRef.current ? monacoRef.current.editor : undefined;
@@ -323,7 +323,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
             yaml = safeDump(obj, { lineWidth: -1 });
             checkEditAccess(obj);
           } catch (e) {
-            yaml = t('public~Error getting YAML: {{e}}', { e });
+            yaml = t('Error getting YAML: {{e}}', { e });
           }
         }
       }
@@ -502,7 +502,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
             // TODO: (ggreer). show message on new page. maybe delete old obj?
             return;
           }
-          const s = t('public~{{name}} has been updated to version {{version}}', {
+          const s = t('{{name}} has been updated to version {{version}}', {
             name: obj.metadata.name,
             version: o.metadata.resourceVersion,
           });
@@ -546,15 +546,15 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
   const validate = useCallback(
     (obj) => {
       if (!obj) {
-        return t('public~No YAML content found.');
+        return t('No YAML content found.');
       }
 
       if (!obj.apiVersion) {
-        return t('public~No "apiVersion" field found in YAML.');
+        return t('No "apiVersion" field found in YAML.');
       }
 
       if (!obj.kind) {
-        return t('public~No "kind" field found in YAML.');
+        return t('No "kind" field found in YAML.');
       }
 
       const objModel = getModel(obj);
@@ -566,7 +566,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
       }
 
       if (!obj.metadata) {
-        return t('public~No "metadata" field found in YAML.');
+        return t('No "metadata" field found in YAML.');
       }
 
       if (obj.metadata.namespace && !objModel.namespaced) {
@@ -576,7 +576,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
       // If this is a namespaced resource, default to the active namespace when none is specified in the YAML.
       if (!obj.metadata.namespace && objModel.namespaced) {
         if (props.activeNamespace === ALL_NAMESPACES_KEY) {
-          return t('public~No "metadata.namespace" field found in YAML.');
+          return t('No "metadata.namespace" field found in YAML.');
         }
         obj.metadata.namespace = props.activeNamespace;
       }
@@ -597,7 +597,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
     try {
       obj = safeLoad(editorMounted && getEditor()?.getValue()) as Record<string, any>;
     } catch (e) {
-      handleError(t('public~Error parsing YAML: {{e}}', { e }));
+      handleError(t('Error parsing YAML: {{e}}', { e }));
       return;
     }
 
@@ -614,7 +614,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
 
       if (name !== newName) {
         handleError(
-          t('public~Cannot change resource name (original: "{{name}}", updated: "{{newName}}").', {
+          t('Cannot change resource name (original: "{{name}}", updated: "{{newName}}").', {
             name,
             newName,
           }),
@@ -678,7 +678,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
     try {
       objs = safeLoadAll(editorMounted && getEditor()?.getValue()).filter((obj) => obj);
     } catch (e) {
-      handleError(t('public~Error parsing YAML: {{e}}', { e }));
+      handleError(t('Error parsing YAML: {{e}}', { e }));
       return;
     }
 
@@ -687,7 +687,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
         if (objs[0]?.items?.length > 0) {
           objs = objs[0].items;
         } else {
-          handleError(t('public~"items" list is empty'));
+          handleError(t('"items" list is empty'));
           return;
         }
       } else {
@@ -719,9 +719,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
         ].join('~'),
       );
       if (uniqueEntries.length !== filteredEntried.length) {
-        handleError(
-          t('public~Resources in the same namespace and API group must have unique names'),
-        );
+        handleError(t('Resources in the same namespace and API group must have unique names'));
         return;
       }
       setErrors(null);
@@ -759,10 +757,10 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
       return s;
     } catch (error) {
       launchModal(ErrorModal, {
-        title: t('public~Failed to parse YAML sample'),
+        title: t('Failed to parse YAML sample'),
         error: (
           <div className="co-pre-line">
-            {error.message || error.name || t('public~An error occurred.')}
+            {error.message || error.name || t('An error occurred.')}
           </div>
         ),
       });
@@ -830,8 +828,8 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
       key="edit-yaml-fullscreen-button"
       onClick={toggleFullscreen}
       isDisabled={!canUseFullScreen}
-      aria-label={t('public~Toggle fullscreen mode')}
-      tooltipProps={{ content: t('public~Toggle fullscreen mode') }}
+      aria-label={t('Toggle fullscreen mode')}
+      tooltipProps={{ content: t('Toggle fullscreen mode') }}
       icon={isFullscreen ? <RhUiCompressIcon /> : <RhUiExpandIcon />}
     />
   );
@@ -892,7 +890,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
                     isInline
                     className="co-alert co-alert--scrollable"
                     variant="danger"
-                    title={t('public~An error occurred')}
+                    title={t('An error occurred')}
                     data-test="yaml-error"
                   >
                     <div className="co-pre-line">
@@ -908,9 +906,9 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
                     isInline
                     className="co-alert"
                     variant="info"
-                    title={t('public~This object has been updated.')}
+                    title={t('This object has been updated.')}
                   >
-                    {t('public~Click reload to see the new version.')}
+                    {t('Click reload to see the new version.')}
                   </Alert>
                 )}
                 <ActionGroup className="pf-v6-c-form__group--no-top-margin">
@@ -925,7 +923,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
                         dispatch(closeOLS());
                       }}
                     >
-                      {t('public~Create')}
+                      {t('Create')}
                     </Button>
                   )}
                   {!create && !readOnly && (
@@ -936,7 +934,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
                       data-test="save-changes"
                       onClick={() => save()}
                     >
-                      {t('public~Save')}
+                      {t('Save')}
                     </Button>
                   )}
                   {!create && !genericYAML && (
@@ -947,7 +945,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
                       data-test="reload-object"
                       onClick={() => reload()}
                     >
-                      {t('public~Reload')}
+                      {t('Reload')}
                     </Button>
                   )}
                   <Button
@@ -959,7 +957,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
                       dispatch(closeOLS());
                     }}
                   >
-                    {t('public~Cancel')}
+                    {t('Cancel')}
                   </Button>
                   {canDownload && (
                     <Button
@@ -969,7 +967,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
                       className="pf-v6-c-button--align-right pf-v6-u-display-none pf-v6-u-display-flex-on-sm"
                       onClick={() => download()}
                     >
-                      {t('public~Download')}
+                      {t('Download')}
                     </Button>
                   )}
                 </ActionGroup>

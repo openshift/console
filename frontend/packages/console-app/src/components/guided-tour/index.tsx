@@ -9,7 +9,7 @@ import { finishTourText, helpTourText, userPreferencesTourText } from './GuidedT
 const getSelector = (id: string): string => `[data-tour-id="${id}"]`;
 
 const IntroductionText: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   return (
     <>
       <Content component={ContentVariants.p}>
@@ -17,9 +17,7 @@ const IntroductionText: FC = () => {
           'console-app~Introducing a fresh modern look to the console! With this update, we made changes to the user interface to enhance usability and streamline your workflow. This includes improved navigation and visual refinement to help manage your applications and infrastructure more easily.',
         )}
       </Content>
-      <Content component={ContentVariants.h6}>
-        {t('console-app~What do you want to do next?')}
-      </Content>
+      <Content component={ContentVariants.h6}>{t('What do you want to do next?')}</Content>
     </>
   );
 };

@@ -35,30 +35,30 @@ export const OAuthConfigDetails: FC<OAuthDetailsProps> = ({ obj }: { obj: OAuthK
   const navigate = useNavigate();
   const [isIDPOpen, setIDPOpen] = useState(false);
   const { identityProviders, tokenConfig } = obj.spec;
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const queryParams = useQueryParams();
   const idpAdded = queryParams.get('idpAdded');
 
   const getAddIDPItemLabels = (type: string) => {
     switch (type) {
       case 'Basic Authentication':
-        return t('console-app~Basic Authentication');
+        return t('Basic Authentication');
       case 'GitHub':
-        return t('console-app~GitHub');
+        return t('GitHub');
       case 'GitLab':
-        return t('console-app~GitLab');
+        return t('GitLab');
       case 'Google':
-        return t('console-app~Google');
+        return t('Google');
       case 'HTPasswd':
-        return t('console-app~HTPasswd');
+        return t('HTPasswd');
       case 'Keystone':
-        return t('console-app~Keystone');
+        return t('Keystone');
       case 'LDAP':
-        return t('console-app~LDAP');
+        return t('LDAP');
       case 'OpenID Connect':
-        return t('console-app~OpenID Connect');
+        return t('OpenID Connect');
       case 'Request Header':
-        return t('console-app~Request Header');
+        return t('Request Header');
       default:
         return type;
     }
@@ -84,13 +84,13 @@ export const OAuthConfigDetails: FC<OAuthDetailsProps> = ({ obj }: { obj: OAuthK
   return (
     <>
       <PaneBody>
-        <SectionHeading text={t('console-app~OAuth details')} />
+        <SectionHeading text={t('OAuth details')} />
         <Grid hasGutter>
           <GridItem md={6}>
             <ResourceSummary resource={obj}>
               {tokenConfig && (
                 <DescriptionListGroup>
-                  <DescriptionListTerm>{t('console-app~Access token max age')}</DescriptionListTerm>
+                  <DescriptionListTerm>{t('Access token max age')}</DescriptionListTerm>
                   <DescriptionListDescription>
                     {tokenDuration(tokenConfig.accessTokenMaxAgeSeconds)}
                   </DescriptionListDescription>
@@ -101,23 +101,23 @@ export const OAuthConfigDetails: FC<OAuthDetailsProps> = ({ obj }: { obj: OAuthK
         </Grid>
       </PaneBody>
       <PaneBody>
-        <SectionHeading text={t('console-app~Identity providers')} />
+        <SectionHeading text={t('Identity providers')} />
         <p className="co-m-pane__explanation co-m-pane__explanation--alt">
-          {t('console-app~Identity providers determine how users log into the cluster.')}
+          {t('Identity providers determine how users log into the cluster.')}
         </p>
         {idpAdded === 'true' && (
           <Alert
             isInline
             className="co-alert"
             variant="info"
-            title={t('console-app~New identity provider added.')}
+            title={t('New identity provider added.')}
           >
             <>
               {t(
                 'console-app~Authentication is being reconfigured. The new identity provider will be available after reconfiguration is complete.',
               )}{' '}
               <Link to={resourcePathFromModel(ClusterOperatorModel, 'authentication')}>
-                {t('console-app~View authentication conditions for reconfiguration status.')}
+                {t('View authentication conditions for reconfiguration status.')}
               </Link>
             </>
           </Alert>
@@ -136,7 +136,7 @@ export const OAuthConfigDetails: FC<OAuthDetailsProps> = ({ obj }: { obj: OAuthK
                 onClick={() => setIDPOpen(!isIDPOpen)}
                 isExpanded={isIDPOpen}
               >
-                {t('console-app~Add')}
+                {t('Add')}
               </MenuToggle>
             )}
             shouldFocusToggleOnSelect
