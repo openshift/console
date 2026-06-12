@@ -64,9 +64,7 @@ async function stubMachineConfigPoolWebSocket(page: import('@playwright/test').P
   });
 }
 
-// Skipped due to flakes: OCPBUGS-88451
-// eslint-disable-next-line playwright/no-skipped-test
-test.describe.skip('Cluster Settings cluster update modal', { tag: ['@admin'] }, () => {
+test.describe('Cluster Settings cluster update modal', { tag: ['@admin'] }, () => {
   test('changes based on the cluster', async ({ page }) => {
     const clusterSettings = new ClusterSettingsPage(page);
 

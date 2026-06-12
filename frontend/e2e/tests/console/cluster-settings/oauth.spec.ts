@@ -3,9 +3,7 @@ import { test } from '../../../fixtures';
 import { OAuthPage } from '../../../pages/oauth-page';
 import type KubernetesClient from '../../../clients/kubernetes-client';
 
-// Skipped due to flakes: OCPBUGS-88451
-// eslint-disable-next-line playwright/no-skipped-test
-test.describe.skip('OAuth', { tag: ['@admin'] }, () => {
+test.describe('OAuth', { tag: ['@admin'] }, () => {
   let client: KubernetesClient;
   let originalOAuthConfig: any;
   const testPrefix = `e2e-${Date.now()}`;
