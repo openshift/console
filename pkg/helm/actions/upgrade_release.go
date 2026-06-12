@@ -10,6 +10,7 @@ import (
 	"github.com/openshift/api/helm/v1beta1"
 	"github.com/openshift/console/pkg/helm/metrics"
 	"helm.sh/helm/v4/pkg/action"
+	helmchart "helm.sh/helm/v4/pkg/chart"
 	chart "helm.sh/helm/v4/pkg/chart/v2"
 	"helm.sh/helm/v4/pkg/chart/v2/loader"
 	release "helm.sh/helm/v4/pkg/release/v1"
@@ -99,10 +100,8 @@ func UpgradeRelease(
 		}
 	}
 
-	if req := ch.Metadata.Dependencies; req != nil {
-		if err := action.CheckDependencies(ch, req); err != nil {
-			return nil, err
-		}
+	if err := checkChartDependencies(ch); err != nil {
+		return nil, err
 	}
 
 	// Ensure chart URL is properly set in the upgrade chart
@@ -113,9 +112,13 @@ func UpgradeRelease(
 		ch.Metadata.Annotations["chart_url"] = chartUrl
 	}
 
-	rel, err = client.Run(releaseName, ch, vals)
+	result, err := client.Run(releaseName, ch, vals)
 	if err != nil {
 		return nil, err
+	}
+	rel, ok := result.(*release.Release)
+	if !ok {
+		return nil, fmt.Errorf("unexpected release type %T", result)
 	}
 
 	if ch.Metadata.Name != "" && ch.Metadata.Version != "" {
@@ -226,10 +229,8 @@ func UpgradeReleaseAsync(
 		}
 	}
 
-	if req := ch.Metadata.Dependencies; req != nil {
-		if err := action.CheckDependencies(ch, req); err != nil {
-			return nil, err
-		}
+	if err := checkChartDependencies(ch); err != nil {
+		return nil, err
 	}
 
 	// Ensure chart URL is properly set in the upgrade chart
@@ -269,4 +270,16 @@ func UpgradeReleaseAsync(
 		return nil, err
 	}
 	return &secret, nil
+}
+
+func checkChartDependencies(ch *chart.Chart) error {
+	deps := ch.Metadata.Dependencies
+	if len(deps) == 0 {
+		return nil
+	}
+	reqs := make([]helmchart.Dependency, len(deps))
+	for i, d := range deps {
+		reqs[i] = d
+	}
+	return action.CheckDependencies(ch, reqs)
 }

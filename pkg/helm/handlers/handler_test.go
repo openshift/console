@@ -8,8 +8,9 @@ import (
 	"strings"
 	"testing"
 
-	chart "helm.sh/helm/v4/pkg/chart/v2"
 	"helm.sh/helm/v4/pkg/action"
+	chart "helm.sh/helm/v4/pkg/chart/v2"
+	releasecommon "helm.sh/helm/v4/pkg/release"
 	release "helm.sh/helm/v4/pkg/release/v1"
 	repo "helm.sh/helm/v4/pkg/repo/v1"
 	kv1 "k8s.io/api/core/v1"
@@ -53,7 +54,7 @@ var fakeRelease = release.Release{
 	Name: "Test",
 }
 
-var fakeUninstallResponse = &release.UninstallReleaseResponse{
+var fakeUninstallResponse = &releasecommon.UninstallReleaseResponse{
 	Release: &fakeRelease,
 	Info:    "",
 }
@@ -114,8 +115,8 @@ func fakeGetReleaseHistory(name string, fakeHistory []*release.Release, t *testi
 	}
 }
 
-func fakeUninstallRelease(name string, t *testing.T, fakeResp *release.UninstallReleaseResponse, err error) func(name string, conf *action.Configuration) (*release.UninstallReleaseResponse, error) {
-	return func(n string, conf *action.Configuration) (*release.UninstallReleaseResponse, error) {
+func fakeUninstallRelease(name string, t *testing.T, fakeResp *releasecommon.UninstallReleaseResponse, err error) func(name string, conf *action.Configuration) (*releasecommon.UninstallReleaseResponse, error) {
+	return func(n string, conf *action.Configuration) (*releasecommon.UninstallReleaseResponse, error) {
 		if n != name {
 			t.Errorf("release name mismatch expected is %s, received %s", n, name)
 		}
@@ -500,7 +501,7 @@ func TestHelmHandlers_HandleHelmUninstallRelease(t *testing.T) {
 	tests := []struct {
 		name                string
 		expectedResponse    string
-		uninstallResponse   *release.UninstallReleaseResponse
+		uninstallResponse   *releasecommon.UninstallReleaseResponse
 		expectedContentType string
 		releaseName         string
 		releaseNamespace    string

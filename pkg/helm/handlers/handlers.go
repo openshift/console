@@ -8,6 +8,7 @@ import (
 
 	"helm.sh/helm/v4/pkg/action"
 	chart "helm.sh/helm/v4/pkg/chart/v2"
+	releasecommon "helm.sh/helm/v4/pkg/release"
 	release "helm.sh/helm/v4/pkg/release/v1"
 	kv1 "k8s.io/api/core/v1"
 	"k8s.io/client-go/dynamic"
@@ -68,7 +69,7 @@ type helmHandlers struct {
 	listReleases          func(*action.Configuration, bool) ([]*release.Release, error)
 	upgradeReleaseAsync   func(string, string, string, map[string]interface{}, *action.Configuration, dynamic.Interface, corev1client.CoreV1Interface, bool, string) (*kv1.Secret, error)
 	upgradeRelease        func(string, string, string, map[string]interface{}, *action.Configuration, dynamic.Interface, corev1client.CoreV1Interface, bool, string) (*release.Release, error)
-	uninstallRelease      func(string, *action.Configuration) (*release.UninstallReleaseResponse, error)
+	uninstallRelease      func(string, *action.Configuration) (*releasecommon.UninstallReleaseResponse, error)
 	uninstallReleaseAsync func(string, string, string, *action.Configuration, corev1client.CoreV1Interface) error
 	rollbackRelease       func(string, int, *action.Configuration) (*release.Release, error)
 	getRelease            func(string, *action.Configuration) (*release.Release, error)

@@ -162,9 +162,14 @@ func InstallChart(ns, name, url string, vals map[string]interface{}, conf *actio
 	ch.Metadata.Annotations["chart_url"] = url
 
 	cmd.Namespace = ns
-	release, err := cmd.Run(ch, vals)
+	result, err := cmd.Run(ch, vals)
 	if err != nil {
 		return nil, err
+	}
+
+	rel, ok := result.(*release.Release)
+	if !ok {
+		return nil, fmt.Errorf("unexpected release type %T", result)
 	}
 
 	if ch.Metadata.Name != "" && ch.Metadata.Version != "" {
@@ -179,7 +184,7 @@ func InstallChart(ns, name, url string, vals map[string]interface{}, conf *actio
 			os.Remove(f.Name())
 		}
 	}()
-	return release, nil
+	return rel, nil
 }
 
 func InstallChartAsync(ns, name, url string, vals map[string]interface{}, conf *action.Configuration, client dynamic.Interface, coreClient corev1client.CoreV1Interface, fileCleanUp bool, indexEntry string) (*kv1.Secret, error) {

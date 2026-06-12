@@ -11,7 +11,7 @@ import (
 	"testing"
 	"time"
 
-	helmrepo repo "helm.sh/helm/v4/pkg/repo/v1"
+	helmrepo "helm.sh/helm/v4/pkg/repo/v1"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"

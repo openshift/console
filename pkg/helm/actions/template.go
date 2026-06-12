@@ -12,6 +12,7 @@ import (
 	"helm.sh/helm/v4/pkg/action"
 	"helm.sh/helm/v4/pkg/chart/v2/loader"
 	"helm.sh/helm/v4/pkg/cli"
+	release "helm.sh/helm/v4/pkg/release/v1"
 	releaseutil "helm.sh/helm/v4/pkg/release/v1/util"
 	"k8s.io/client-go/dynamic"
 	corev1client "k8s.io/client-go/kubernetes/typed/core/v1"
@@ -25,11 +26,13 @@ func RenderManifests(name string, url string, vals map[string]interface{}, conf 
 	response := make(map[string]string)
 	validate := false
 	client := action.NewInstall(conf)
-	client.DryRun = true
+	client.DryRunStrategy = action.DryRunNone
 	includeCrds := true
+	client.SkipCRDs = !includeCrds
 	client.ReleaseName = "RELEASE-NAME"
 	client.Replace = true // Skip the releaseName check
-	client.ClientOnly = !validate
+	client.DependencyUpdate = !validate
+	client.SkipSchemaValidation = !validate
 	emptyResponse := ""
 	tlsFiles := []*os.File{}
 	if indexEntry == "" {
@@ -74,9 +77,13 @@ func RenderManifests(name string, url string, vals map[string]interface{}, conf 
 		return emptyResponse, err
 	}
 
-	rel, err := client.Run(ch, vals)
+	result, err := client.Run(ch, vals)
 	if err != nil {
-		return emptyResponse, err
+		return "", err
+	}
+	rel, ok := result.(*release.Release)
+	if !ok {
+		return "", fmt.Errorf("unexpected release type %T", result)
 	}
 
 	var manifests bytes.Buffer

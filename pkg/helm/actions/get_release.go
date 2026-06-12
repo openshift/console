@@ -12,5 +12,5 @@ func GetRelease(releaseName string, conf *action.Configuration) (*release.Releas
 	if err != nil {
 		return nil, err
 	}
-	return releases, nil
+	return releases.(*release.Release), nil
 }

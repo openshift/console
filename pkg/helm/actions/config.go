@@ -49,7 +49,7 @@ func GetActionConfigurations(host, ns, token string, transport *http.RoundTrippe
 		confFlags.CAFile = &inClusterCfg.CAFile
 	}
 	conf := new(action.Configuration)
-	conf.Init(confFlags, ns, "secrets", klog.Infof)
+	conf.Init(confFlags, ns, "secrets")
 	registryClient, err := GetDefaultOCIRegistry()
 	if err != nil {
 		klog.V(4).Infof("Failed to get default OCI registry: %v", err)

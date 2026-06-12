@@ -1,6 +1,8 @@
 package actions
 
 import (
+	"fmt"
+
 	"helm.sh/helm/v4/pkg/action"
 	chart "helm.sh/helm/v4/pkg/chart/v2"
 	release "helm.sh/helm/v4/pkg/release/v1"
@@ -9,18 +11,27 @@ import (
 func ListReleases(conf *action.Configuration, limitInfo bool) ([]*release.Release, error) {
 	cmd := action.NewList(conf)
 	cmd.StateMask = action.ListAll
-	releases, err := cmd.Run()
+	results, err := cmd.Run()
 	if err != nil {
 		return nil, err
 	}
-	if releases == nil {
-		rs := make([]*release.Release, 0)
-		return rs, nil
+	if results == nil {
+		return make([]*release.Release, 0), nil
 	}
-	limitedReleaseInformation := make([]*release.Release, 0)
-	if limitInfo != false {
+
+	releases := make([]*release.Release, 0, len(results))
+	for _, r := range results {
+		rel, ok := r.(*release.Release)
+		if !ok {
+			return nil, fmt.Errorf("unexpected release type %T", r)
+		}
+		releases = append(releases, rel)
+	}
+
+	if limitInfo {
+		limited := make([]*release.Release, 0, len(releases))
 		for _, rel := range releases {
-			releaseInformation := release.Release{
+			info := release.Release{
 				Name:      rel.Name,
 				Version:   rel.Version,
 				Namespace: rel.Namespace,
@@ -29,9 +40,9 @@ func ListReleases(conf *action.Configuration, limitInfo bool) ([]*release.Releas
 					Metadata: rel.Chart.Metadata,
 				},
 			}
-			limitedReleaseInformation = append(limitedReleaseInformation, &releaseInformation)
+			limited = append(limited, &info)
 		}
-		return limitedReleaseInformation, nil
+		return limited, nil
 	}
 	return releases, nil
 }
