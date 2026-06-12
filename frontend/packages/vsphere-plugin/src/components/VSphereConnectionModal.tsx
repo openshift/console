@@ -108,6 +108,7 @@ const validationSchema = Yup.lazy((values: ConnectionFormFormikValues) =>
     username: Yup.string().required('Username is required.'),
     password: Yup.string().required('Password is required.'),
     datacenter: Yup.string().required('Datacenter is required.'),
+    network: Yup.string(),
     defaultDatastore: Yup.string()
       .required('Default data store is required.')
       .test(
