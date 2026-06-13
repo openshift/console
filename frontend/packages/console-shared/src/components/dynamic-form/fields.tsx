@@ -1,5 +1,5 @@
 import type { FC, ReactNode } from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   AccordionContent,
   AccordionItem,
@@ -352,6 +352,17 @@ const SinglePropertyObjectField: FC<SchemaFieldProps> = (props) => {
   const [selectedKey, setSelectedKey] = useState<string>(initialKey);
 
   const dropdownItems = _.fromPairs(propertyNames.map((key) => [key, key]));
+
+  // On mount, if formData already contains more than one provider key (e.g. from alm-examples),
+  // immediately normalize it to only the initialKey so stale keys are stripped before the user
+  // even interacts with the form.
+  useEffect(() => {
+    if (_.keys(formData).filter((k) => propertyNames.includes(k)).length > 1) {
+      onChange({ [initialKey]: formData[initialKey] ?? {} });
+    }
+    // Run only on mount — initialKey and propertyNames are stable for a given schema
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleKeyChange = (newKey: string) => {
     setSelectedKey(newKey);
