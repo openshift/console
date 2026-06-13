@@ -236,4 +236,28 @@ describe('SinglePropertyObjectField (via CustomSchemaField)', () => {
     // The provider dropdown must NOT be rendered for ordinary objects
     expect(screen.queryByTestId('root_spec_provider_key')).toBeNull();
   });
+
+  it('calls onChange on mount to strip stale provider keys when formData has multiple providers', () => {
+    const onChange = jest.fn();
+    render(
+      <CustomSchemaField
+        {...makeProps(
+          MULTI_PROVIDER_SCHEMA,
+          {
+            azurekv: { vaultUrl: 'https://my-vault.vault.azure.net', tenantId: 'tenant-1' },
+            vault: { server: 'https://vault.example.com', path: 'secret' },
+            gcpsm: { projectID: 'my-project' },
+          },
+          onChange,
+        )}
+      />,
+    );
+
+    // On mount, onChange must be called to normalize to a single key (the first one found)
+    expect(onChange).toHaveBeenCalled();
+    const normalizedPayload = onChange.mock.calls[0][0];
+    expect(Object.keys(normalizedPayload)).toHaveLength(1);
+    // The key kept should be azurekv (first key present in formData)
+    expect(Object.keys(normalizedPayload)[0]).toBe('azurekv');
+  });
 });
