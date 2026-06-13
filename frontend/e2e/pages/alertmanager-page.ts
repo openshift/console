@@ -24,18 +24,17 @@ export class AlertmanagerPage extends BasePage {
 
   async navigateToAlertmanager(): Promise<void> {
     await this.goTo('/settings/cluster/alertmanagerconfig');
-    await this.createReceiverButton.waitFor({ state: 'visible' });
+    await expect(this.createReceiverButton).toBeVisible();
   }
 
   async navigateToYAMLPage(): Promise<void> {
     await this.goTo('/settings/cluster/alertmanageryaml');
-    // Wait for editor toolbar to load (indicates editor is ready)
-    await this.page.getByRole('button', { name: 'Copy code to clipboard' }).waitFor();
+    await expect(this.page.getByRole('button', { name: 'Copy code to clipboard' })).toBeVisible();
   }
 
   async navigateToEditReceiver(receiverName: string): Promise<void> {
     await this.goTo(`/settings/cluster/alertmanagerconfig/receivers/${receiverName}/edit`);
-    await this.saveChangesButton.waitFor({ state: 'visible' });
+    await expect(this.saveChangesButton).toBeVisible();
   }
 
   async createReceiver(receiverName: string, receiverTypeConfig: string): Promise<void> {
@@ -51,7 +50,7 @@ export class AlertmanagerPage extends BasePage {
   async save(): Promise<void> {
     await expect(this.saveChangesButton).toBeEnabled();
     await this.robustClick(this.saveChangesButton);
-    await this.createReceiverButton.waitFor({ state: 'visible', timeout: 60_000 });
+    await expect(this.createReceiverButton).toBeVisible({ timeout: 60_000 });
   }
 
   async showAdvancedConfiguration(): Promise<void> {
@@ -60,7 +59,7 @@ export class AlertmanagerPage extends BasePage {
 
     const button = this.advancedConfigButton.locator('button');
     await this.robustClick(button);
-    await sendResolved.waitFor({ state: 'visible', timeout: 15_000 });
+    await expect(sendResolved).toBeVisible({ timeout: 15_000 });
   }
 
   async getYAMLContent(): Promise<string> {

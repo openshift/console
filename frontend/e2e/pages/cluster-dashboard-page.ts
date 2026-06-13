@@ -1,4 +1,5 @@
 import type { Locator } from '@playwright/test';
+import { expect } from '@playwright/test';
 
 import BasePage from './base-page';
 
@@ -18,7 +19,8 @@ export class ClusterDashboardPage extends BasePage {
   }
 
   async waitForStatusCardLoaded(): Promise<void> {
-    await this.statusCard.waitFor({ state: 'visible', timeout: 30_000 });
+    await expect(this.statusCard).toBeVisible({ timeout: 30_000 });
+    // eslint-disable-next-line no-restricted-syntax
     await this.statusCard.locator('.skeleton-health').waitFor({ state: 'hidden', timeout: 30_000 }).catch(() => {
       // Skeletons may have already disappeared
     });
@@ -38,6 +40,6 @@ export class ClusterDashboardPage extends BasePage {
 
   async openInsightsPopup(): Promise<void> {
     await this.robustClick(this.insightsButton);
-    await this.popover.waitFor({ state: 'visible', timeout: 10_000 });
+    await expect(this.popover).toBeVisible({ timeout: 10_000 });
   }
 }

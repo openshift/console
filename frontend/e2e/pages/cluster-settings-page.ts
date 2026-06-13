@@ -1,4 +1,5 @@
 import type { Locator } from '@playwright/test';
+import { expect } from '@playwright/test';
 
 import BasePage from './base-page';
 
@@ -29,7 +30,7 @@ export class ClusterSettingsPage extends BasePage {
    */
   async navigateToDetails(): Promise<void> {
     await this.goTo('/settings/cluster');
-    await this.detailsTab.waitFor({ state: 'visible' });
+    await expect(this.detailsTab).toBeVisible();
   }
 
   /**
@@ -43,9 +44,8 @@ export class ClusterSettingsPage extends BasePage {
    * Click the current channel update link to open the modal
    */
   async openChannelModal(): Promise<void> {
-    await this.currentChannelUpdateLink.waitFor({ state: 'visible' });
     await this.currentChannelUpdateLink.click();
-    await this.modalTitle.waitFor({ state: 'visible', timeout: 30_000 });
+    await expect(this.modalTitle).toBeVisible({ timeout: 30_000 });
   }
 
   /**
@@ -59,7 +59,6 @@ export class ClusterSettingsPage extends BasePage {
    * Type a channel name into the input field (for "Input channel" modal)
    */
   async inputChannelName(channelName: string): Promise<void> {
-    await this.channelModalInput.waitFor({ state: 'visible' });
     await this.channelModalInput.clear();
     await this.channelModalInput.fill(channelName);
   }
@@ -81,6 +80,7 @@ export class ClusterSettingsPage extends BasePage {
   async confirmAction(): Promise<void> {
     await this.robustClick(this.confirmActionButton);
     // Wait for modal to close
+    // eslint-disable-next-line no-restricted-syntax
     await this.modalTitle.waitFor({ state: 'hidden', timeout: 10_000 }).catch(() => {
       // Modal may close quickly, ignore timeout
     });
@@ -91,11 +91,9 @@ export class ClusterSettingsPage extends BasePage {
    */
   async navigateToConfigurationTab(): Promise<void> {
     await this.navigateToTab(this.configurationTab);
-    // Wait for loading to complete
-    await this.page
-      .locator('.loading-box__loaded')
-      .first()
-      .waitFor({ state: 'visible', timeout: 30_000 });
+    await expect(this.page.locator('.loading-box__loaded').first()).toBeVisible({
+      timeout: 30_000,
+    });
   }
 
   /**
@@ -169,21 +167,11 @@ export class ClusterSettingsPage extends BasePage {
    */
   async openUpdateModal(): Promise<void> {
     const updateButton = this.page.getByTestId('cv-update-button');
-    await updateButton.waitFor({ state: 'visible' });
     await this.robustClick(updateButton);
 
     // Wait for modal to appear
-    await this.modalTitle.waitFor({ state: 'visible', timeout: 10_000 });
-    await this.page.waitForFunction(
-      () => {
-        const title = document.querySelector('[data-test="modal-title"]');
-        return title?.textContent?.includes('Update cluster');
-      },
-      { timeout: 10_000 },
-    );
-
-    const modal = this.page.getByTestId('update-cluster-modal');
-    await modal.waitFor({ state: 'visible' });
+    await expect(this.modalTitle).toContainText('Update cluster', { timeout: 10_000 });
+    await expect(this.page.getByTestId('update-cluster-modal')).toBeVisible();
   }
 
   /**
@@ -192,9 +180,6 @@ export class ClusterSettingsPage extends BasePage {
   async openUpdateDropdown(): Promise<void> {
     const modal = this.page.getByTestId('update-cluster-modal');
     const dropdownToggle = modal.getByTestId('dropdown-with-switch-toggle');
-
-    await dropdownToggle.waitFor({ state: 'visible' });
-    await dropdownToggle.waitFor({ state: 'attached' });
 
     await this.robustClick(dropdownToggle);
   }

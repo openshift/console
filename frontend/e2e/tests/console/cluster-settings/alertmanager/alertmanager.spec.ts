@@ -27,9 +27,7 @@ type AlertmanagerRoute = {
 
 test.describe.configure({ mode: 'serial' });
 
-// Skipped due to flakes: OCPBUGS-88451
-// eslint-disable-next-line playwright/no-skipped-test
-test.describe.skip('Alertmanager', { tag: ['@admin'] }, () => {
+test.describe('Alertmanager', { tag: ['@admin'] }, () => {
   let alertmanager: AlertmanagerPage;
   let k8sClient: KubernetesClient;
 

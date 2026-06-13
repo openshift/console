@@ -9,87 +9,41 @@ import {
   machineConfigPoolListWithPausedWorker,
   machineConfigPoolListWithUnpausedWorker,
 } from '../../../mocks/machine-config-pool';
+import { stubWebSocketWatches } from './cluster-settings-test-utils';
 
 const CLUSTER_VERSION_URL = '**/apis/config.openshift.io/v1/clusterversions/version';
 const MCP_LIST_URL = '**/apis/machineconfiguration.openshift.io/v1/machineconfigpools?*';
 
-/**
- * Stub MCP WebSocket to prevent watch from overwriting mocked GET responses
- * This only stubs MCP watch WebSockets - all other WebSockets work normally
- */
-async function stubMachineConfigPoolWebSocket(page: import('@playwright/test').Page) {
-  await page.addInitScript(() => {
-    const OriginalWebSocket = window.WebSocket;
-
-    // Override WebSocket constructor
-    (window as any).WebSocket = function (url: string | URL, protocols?: string | string[]) {
-      const urlString = typeof url === 'string' ? url : url.toString();
-
-      // Only stub MCP list watch WebSocket - let all others through
-      if (urlString.includes('machineconfiguration.openshift.io/v1/machineconfigpools')) {
-        // Return a fake closed WebSocket that does nothing
-        const stub = {
-          close: () => {},
-          send: () => {},
-          addEventListener: () => {},
-          removeEventListener: () => {},
-          dispatchEvent: () => true,
-          readyState: 3, // CLOSED
-          url: urlString,
-          protocol: '',
-          extensions: '',
-          bufferedAmount: 0,
-          binaryType: 'blob' as BinaryType,
-          onopen: null,
-          onerror: null,
-          onclose: null,
-          onmessage: null,
-          CONNECTING: 0,
-          OPEN: 1,
-          CLOSING: 2,
-          CLOSED: 3,
-        };
-        return stub;
-      }
-
-      // All other WebSockets use the original implementation
-      return new OriginalWebSocket(url, protocols);
-    };
-
-    // Copy static properties
-    (window as any).WebSocket.CONNECTING = OriginalWebSocket.CONNECTING;
-    (window as any).WebSocket.OPEN = OriginalWebSocket.OPEN;
-    (window as any).WebSocket.CLOSING = OriginalWebSocket.CLOSING;
-    (window as any).WebSocket.CLOSED = OriginalWebSocket.CLOSED;
-  });
-}
-
-// Skipped due to flakes: OCPBUGS-88451
-// eslint-disable-next-line playwright/no-skipped-test
-test.describe.skip('Cluster Settings cluster update modal', { tag: ['@admin'] }, () => {
+test.describe('Cluster Settings cluster update modal', { tag: ['@admin'] }, () => {
   test('changes based on the cluster', async ({ page }) => {
     const clusterSettings = new ClusterSettingsPage(page);
 
-    // addInitScript must be called before any navigation — it persists for the page lifetime
-    await stubMachineConfigPoolWebSocket(page);
+    await stubWebSocketWatches(page, [
+      'config.openshift.io/v1/clusterversions',
+      'machineconfiguration.openshift.io/v1/machineconfigpools',
+    ]);
+
+    // Use mutable references so the single route handler per URL can serve
+    // different mock data across steps without unroute/route gaps that let
+    // real API responses slip through.
+    let activeClusterVersion = clusterVersionWithAvailableUpdates;
+    let activeMCPList = machineConfigPoolListWithPausedWorker;
+    await page.route(CLUSTER_VERSION_URL, async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(activeClusterVersion),
+      });
+    });
+    await page.route(MCP_LIST_URL, async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(activeMCPList),
+      });
+    });
 
     await test.step('Scenario 1: With a paused Worker MCP', async () => {
-      // Setup mocks
-      await page.route(CLUSTER_VERSION_URL, async (route) => {
-        await route.fulfill({
-          status: 200,
-          contentType: 'application/json',
-          body: JSON.stringify(clusterVersionWithAvailableUpdates),
-        });
-      });
-      await page.route(MCP_LIST_URL, async (route) => {
-        await route.fulfill({
-          status: 200,
-          contentType: 'application/json',
-          body: JSON.stringify(machineConfigPoolListWithPausedWorker),
-        });
-      });
-
       await clusterSettings.navigateToDetails();
 
       // Open update modal and dropdown
@@ -131,27 +85,11 @@ test.describe.skip('Cluster Settings cluster update modal', { tag: ['@admin'] },
     });
 
     await test.step('Scenario 2: With available and conditional updates', async () => {
-      // Update mocks
-      await page.unroute(CLUSTER_VERSION_URL);
-      await page.unroute(MCP_LIST_URL);
-
-      await page.route(CLUSTER_VERSION_URL, async (route) => {
-        await route.fulfill({
-          status: 200,
-          contentType: 'application/json',
-          body: JSON.stringify(clusterVersionWithAvailableAndConditionalUpdates),
-        });
-      });
-      await page.route(MCP_LIST_URL, async (route) => {
-        await route.fulfill({
-          status: 200,
-          contentType: 'application/json',
-          body: JSON.stringify(machineConfigPoolListWithUnpausedWorker),
-        });
-      });
+      activeClusterVersion = clusterVersionWithAvailableAndConditionalUpdates;
+      activeMCPList = machineConfigPoolListWithUnpausedWorker;
 
       await page.reload();
-      await page.getByTestId('horizontal-link-Details').waitFor({ state: 'visible' });
+      await expect(page.getByTestId('horizontal-link-Details')).toBeVisible();
 
       // Open update modal and dropdown
       await clusterSettings.openUpdateModal();
@@ -174,19 +112,10 @@ test.describe.skip('Cluster Settings cluster update modal', { tag: ['@admin'] },
     });
 
     await test.step('Scenario 3: With conditional updates only', async () => {
-      // Update mocks
-      await page.unroute(CLUSTER_VERSION_URL);
-
-      await page.route(CLUSTER_VERSION_URL, async (route) => {
-        await route.fulfill({
-          status: 200,
-          contentType: 'application/json',
-          body: JSON.stringify(clusterVersionWithConditionalUpdates),
-        });
-      });
+      activeClusterVersion = clusterVersionWithConditionalUpdates;
 
       await page.reload();
-      await page.getByTestId('horizontal-link-Details').waitFor({ state: 'visible' });
+      await expect(page.getByTestId('horizontal-link-Details')).toBeVisible();
 
       // Verify not-recommended alert on main page
       const mainPageAlert = page.getByTestId('cv-not-recommended-alert');

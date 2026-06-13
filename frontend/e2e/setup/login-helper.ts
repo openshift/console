@@ -23,11 +23,9 @@ export async function performLogin(
     return;
   }
 
-  await page
-    .locator('[data-test-id="login"]')
-    .or(page.locator('#inputUsername'))
-    .first()
-    .waitFor({ state: 'visible', timeout: 30_000 });
+  await expect(
+    page.locator('[data-test-id="login"]').or(page.locator('#inputUsername')).first(),
+  ).toBeVisible({ timeout: 30_000 });
 
   if (idpName) {
     const providerButton = page.getByText(idpName, { exact: true });
