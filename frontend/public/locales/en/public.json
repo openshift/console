@@ -1158,7 +1158,7 @@
   "Reconnect": "Reconnect",
   "Connecting to": "Connecting to",
   "Maximum {{count}} detached sessions. Close an existing session to detach a new one._one": "Maximum {{count}} detached sessions. Close an existing session to detach a new one.",
-  "Maximum {{count}} detached sessions. Close an existing session to detach a new one._other": "Maximum {{count}} detached sessions. Close an existing session to detach a new one.s",
+  "Maximum {{count}} detached sessions. Close an existing session to detach a new one._other": "Maximum {{count}} detached sessions. Close an existing session to detach a new one.",
   "Detach this terminal to the Cloud Shell drawer so it persists across navigation": "Detach this terminal to the Cloud Shell drawer so it persists across navigation",
   "Detached": "Detached",
   "Detach to Cloud Shell": "Detach to Cloud Shell",

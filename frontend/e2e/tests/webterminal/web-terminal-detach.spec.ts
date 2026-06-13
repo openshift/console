@@ -1,19 +1,18 @@
+import * as k8s from '@kubernetes/client-node';
+
 import { test, expect } from '../../fixtures';
-import type KubernetesClient from '../../clients/kubernetes-client';
 import { WebTerminalPage } from '../../pages/web-terminal-page';
 import { ensureWebTerminalOperatorInstalled } from './utils/web-terminal-operator';
 
 const TEST_NAMESPACE = 'aut-terminal-detach';
 const POD_NAME = 'detach-test-pod';
 
-async function ensureTestPod(k8sClient: KubernetesClient): Promise<void> {
-  try {
-    await k8sClient.getResource('', 'v1', TEST_NAMESPACE, 'pods', POD_NAME);
+async function ensureTestPod(k8sClient: import('../../clients/kubernetes-client').default): Promise<void> {
+  const pods = await k8sClient.getPods(TEST_NAMESPACE);
+  if (pods.some((p) => p.metadata?.name === POD_NAME && p.status?.phase === 'Running')) {
     return;
-  } catch {
-    // Pod doesn't exist — create it
   }
-  await k8sClient.createResource('', 'v1', TEST_NAMESPACE, 'pods', {
+  const pod: k8s.V1Pod = {
     apiVersion: 'v1',
     kind: 'Pod',
     metadata: { name: POD_NAME, namespace: TEST_NAMESPACE },
@@ -21,37 +20,21 @@ async function ensureTestPod(k8sClient: KubernetesClient): Promise<void> {
       containers: [
         {
           name: 'main',
-          image: 'registry.access.redhat.com/ubi9/ubi-minimal:latest',
+          image: 'registry.access.redhat.com/ubi9/ubi-minimal:9.4',
           command: ['sleep', '3600'],
         },
       ],
     },
-  });
+  };
+  await k8sClient.createPod(pod);
   const deadline = Date.now() + 120_000;
   while (Date.now() < deadline) {
-    const pod = (await k8sClient.getResource(
-      '',
-      'v1',
-      TEST_NAMESPACE,
-      'pods',
-      POD_NAME,
-    )) as any;
-    if (pod?.status?.phase === 'Running') return;
+    const current = await k8sClient.getPods(TEST_NAMESPACE);
+    const found = current.find((p) => p.metadata?.name === POD_NAME);
+    if (found?.status?.phase === 'Running') return;
     await new Promise((resolve) => setTimeout(resolve, 3_000));
   }
   throw new Error(`Pod ${POD_NAME} did not reach Running state`);
-}
-
-async function ensureTestNamespace(k8sClient: KubernetesClient): Promise<void> {
-  try {
-    await k8sClient.getResource('', 'v1', '', 'namespaces', TEST_NAMESPACE);
-  } catch {
-    await k8sClient.createResource('', 'v1', '', 'namespaces', {
-      apiVersion: 'v1',
-      kind: 'Namespace',
-      metadata: { name: TEST_NAMESPACE },
-    });
-  }
 }
 
 test.describe('Persistent Terminal Sessions (Detach to Cloud Shell)', { tag: ['@regression'] }, () => {
@@ -59,7 +42,7 @@ test.describe('Persistent Terminal Sessions (Detach to Cloud Shell)', { tag: ['@
 
   test.beforeAll(async ({ k8sClient }) => {
     await ensureWebTerminalOperatorInstalled(k8sClient);
-    await ensureTestNamespace(k8sClient);
+    await k8sClient.createNamespace(TEST_NAMESPACE);
     await ensureTestPod(k8sClient);
   });
 
@@ -69,12 +52,12 @@ test.describe('Persistent Terminal Sessions (Detach to Cloud Shell)', { tag: ['@
 
   test.afterAll(async ({ k8sClient }) => {
     try {
-      await k8sClient.deleteResource('', 'v1', TEST_NAMESPACE, 'pods', POD_NAME);
+      await k8sClient.deletePod(POD_NAME, TEST_NAMESPACE);
     } catch {
       // Ignore cleanup errors
     }
     try {
-      await k8sClient.deleteResource('', 'v1', '', 'namespaces', TEST_NAMESPACE);
+      await k8sClient.deleteNamespace(TEST_NAMESPACE);
     } catch {
       // Ignore cleanup errors
     }
