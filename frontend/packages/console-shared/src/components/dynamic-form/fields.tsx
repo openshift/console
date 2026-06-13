@@ -28,7 +28,7 @@ import {
 } from '@console/operator-lifecycle-manager/src/components/descriptors/spec/affinity';
 import { MatchExpressions } from '@console/operator-lifecycle-manager/src/components/descriptors/spec/match-expressions';
 import { ResourceRequirements } from '@console/operator-lifecycle-manager/src/components/descriptors/spec/resource-requirements';
-import { hasNoFields, useSchemaDescription, useSchemaLabel } from './utils';
+import { hasNoFields, isSinglePropertyObject, useSchemaDescription, useSchemaLabel } from './utils';
 
 const Description = ({ id, description }) =>
   description ? (
@@ -336,6 +336,62 @@ const DropdownField: FC<FieldProps> = ({
   );
 };
 
+// Renders a selection UI for JSON Schema objects that use `maxProperties: 1` to express a
+// discriminated union (e.g. ClusterSecretStore spec.provider). A dropdown lets the user pick
+// exactly one active property; only that property's sub-form is shown, and onChange always emits
+// an object with only the selected key — preventing multiple providers from being injected.
+const SinglePropertyObjectField: FC<SchemaFieldProps> = (props) => {
+  const { t } = useTranslation();
+  const { schema, formData = {}, onChange, idSchema, uiSchema, name } = props;
+  const propertyNames = _.keys(schema.properties ?? {});
+
+  // Determine the initially active key: prefer a key already present in formData, otherwise
+  // fall back to the first defined property.
+  const initialKey =
+    propertyNames.find((key) => !_.isUndefined(formData[key])) ?? propertyNames[0];
+  const [selectedKey, setSelectedKey] = useState<string>(initialKey);
+
+  const dropdownItems = _.fromPairs(propertyNames.map((key) => [key, key]));
+
+  const handleKeyChange = (newKey: string) => {
+    setSelectedKey(newKey);
+    // Clear all providers and initialise the newly selected one with an empty object so that its
+    // sub-form renders with schema defaults rather than stale data from a previous selection.
+    onChange({ [newKey]: formData[newKey] ?? {} });
+  };
+
+  const handleSubFormChange = (newSubData: any) => {
+    onChange({ [selectedKey]: newSubData });
+  };
+
+  const selectedPropertySchema = (schema.properties?.[selectedKey] ?? {}) as JSONSchema7;
+  const subIdSchema = { $id: `${idSchema.$id}_${selectedKey}` };
+
+  return (
+    <FieldSet defaultLabel={name} idSchema={idSchema} schema={schema} uiSchema={uiSchema}>
+      <ConsoleSelect
+        id={`${idSchema.$id}_key`}
+        title={t('console-shared~Select {{name}}', { name: name || schema.title })}
+        selectedKey={selectedKey}
+        items={dropdownItems}
+        onChange={handleKeyChange}
+      />
+      {!_.isEmpty(selectedPropertySchema) && (
+        <SchemaField
+          {...props}
+          name={selectedKey}
+          idSchema={subIdSchema}
+          schema={selectedPropertySchema}
+          uiSchema={uiSchema?.[selectedKey] ?? {}}
+          formData={formData?.[selectedKey]}
+          onChange={handleSubFormChange}
+          required={false}
+        />
+      )}
+    </FieldSet>
+  );
+};
+
 const CustomSchemaField: FC<SchemaFieldProps> = (props) => {
   // If the provided schema will not generate any form field elements, return null.
   // To check that, it's required to resolving definition references ($ref) in the
@@ -358,6 +414,13 @@ const CustomSchemaField: FC<SchemaFieldProps> = (props) => {
 
   if (hasNoFields(resolvedSchema, uiSchema)) {
     return null;
+  }
+
+  // Intercept objects that use maxProperties: 1 to express a single-choice discriminated union
+  // (e.g. ClusterSecretStore spec.provider). Render a dedicated selection UI so that only the
+  // chosen property is included in the form data instead of all properties with their defaults.
+  if (isSinglePropertyObject(resolvedSchema)) {
+    return <SinglePropertyObjectField {...props} schema={resolvedSchema} />;
   }
 
   return <SchemaField {...props} />;
