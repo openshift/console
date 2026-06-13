@@ -280,3 +280,12 @@ const pruneRecursive = (current: any, sample: any): any => {
 // will not be pruned.
 // Based on https://stackoverflow.com/a/26202058/8895304
 export const prune = (obj: any, sample?: any): any => pruneRecursive(_.cloneDeep(obj), sample);
+
+// Returns true when a JSON schema object should present a single-choice selection UI:
+// the schema is an object type with maxProperties: 1 and more than one defined property.
+// This pattern is used by operators (e.g. External Secrets Operator ClusterSecretStore
+// spec.provider) to express discriminated union types without using oneOf.
+export const isSinglePropertyObject = (schema: JSONSchema7): boolean =>
+  schema?.type === 'object' &&
+  (schema?.maxProperties as number) === 1 &&
+  _.keys(schema?.properties ?? {}).length > 1;
