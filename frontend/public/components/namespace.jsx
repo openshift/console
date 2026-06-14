@@ -876,7 +876,6 @@ export const ProjectsPage = (props) => {
 export const PullSecret = (props) => {
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState([]);
-  const [hasImagePullSecretsField, setHasImagePullSecretsField] = useState(false);
   const [error, setError] = useState(false);
   const { t } = useTranslation('public');
   const { namespace, canViewSecrets } = props;
@@ -886,13 +885,11 @@ export const PullSecret = (props) => {
     k8sGet(ServiceAccountModel, 'default', namespace.metadata.name, {})
       .then((serviceAccount) => {
         setIsLoading(false);
-        setHasImagePullSecretsField(Array.isArray(serviceAccount.imagePullSecrets));
         setData(serviceAccount.imagePullSecrets ?? []);
         setError(false);
       })
       .catch((err) => {
         setIsLoading(false);
-        setHasImagePullSecretsField(false);
         setData([]);
         setError(true);
         // eslint-disable-next-line no-console
@@ -901,7 +898,6 @@ export const PullSecret = (props) => {
   }, [namespace.metadata.name]);
 
   const onPullSecretCreated = useCallback((pullSecretName) => {
-    setHasImagePullSecretsField(true);
     setData((currentData) =>
       currentData.some((secret) => secret.name === pullSecretName)
         ? currentData
@@ -913,7 +909,6 @@ export const PullSecret = (props) => {
     launchModal(LazyConfigureNamespacePullSecretModalOverlay, {
       namespace,
       pullSecret: undefined,
-      hasImagePullSecretsField,
       onSubmitSuccess: onPullSecretCreated,
     });
 

@@ -23,7 +23,7 @@ import type { FC, ChangeEvent, FormEvent } from 'react';
 import { CONST } from '@console/shared/src/constants/common';
 import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import { k8sPatchByName, k8sCreate, K8sResourceKind } from '../../module/k8s';
+import { k8sPatchByName, k8sCreate, k8sGet, K8sResourceKind } from '../../module/k8s';
 import { SecretModel, ServiceAccountModel } from '../../models';
 import { useState, useCallback } from 'react';
 import { ModalComponentProps } from '@console/shared/src/types/modal';
@@ -60,12 +60,18 @@ const generateSecretData = (formData: FormData): string => {
 interface ConfigureNamespacePullSecretProps extends ModalComponentProps {
   namespace: K8sResourceKind;
   pullSecret?: K8sResourceKind;
-  hasImagePullSecretsField: boolean;
   onSubmitSuccess?: (pullSecretName: string) => void;
 }
 
-const getDefaultServiceAccountPatch = (pullSecretName: string, hasImagePullSecretsField: boolean) =>
-  hasImagePullSecretsField
+type ServiceAccountKind = K8sResourceKind & {
+  imagePullSecrets?: { name: string }[];
+};
+
+const getDefaultServiceAccountPatch = (
+  pullSecretName: string,
+  defaultServiceAccount: ServiceAccountKind,
+) =>
+  Array.isArray(defaultServiceAccount.imagePullSecrets)
     ? [
       {
         op: 'add' as const,
@@ -82,7 +88,7 @@ const getDefaultServiceAccountPatch = (pullSecretName: string, hasImagePullSecre
     ];
 
 const ConfigureNamespacePullSecret: FC<ConfigureNamespacePullSecretProps> = (props) => {
-  const { namespace, cancel, close, hasImagePullSecretsField, onSubmitSuccess } = props;
+  const { namespace, cancel, close, onSubmitSuccess } = props;
   const { t } = useTranslation('public');
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
 
@@ -151,24 +157,22 @@ const ConfigureNamespacePullSecret: FC<ConfigureNamespacePullSecretProps> = (pro
         type: CONST.PULL_SECRET_TYPE,
       };
 
-      const defaultServiceAccountPatch = getDefaultServiceAccountPatch(
-        pullSecretName,
-        hasImagePullSecretsField,
-      );
-      const promise = k8sCreate(SecretModel, secret).then(() =>
-        k8sPatchByName(
-          ServiceAccountModel,
-          'default',
-          namespace.metadata.name,
-          defaultServiceAccountPatch,
-        ),
-      );
+      const promise = k8sCreate(SecretModel, secret)
+        .then(() => k8sGet(ServiceAccountModel, 'default', namespace.metadata.name, {}))
+        .then((defaultServiceAccount: ServiceAccountKind) =>
+          k8sPatchByName(
+            ServiceAccountModel,
+            'default',
+            namespace.metadata.name,
+            getDefaultServiceAccountPatch(pullSecretName, defaultServiceAccount),
+          ),
+        );
       handlePromise(promise).then(() => {
         onSubmitSuccess?.(pullSecretName);
         close();
       });
     },
-    [method, fileData, namespace, hasImagePullSecretsField, onSubmitSuccess, handlePromise, close],
+    [method, fileData, namespace, onSubmitSuccess, handlePromise, close],
   );
 
   return (

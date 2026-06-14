@@ -80,7 +80,6 @@ describe('PullSecret', () => {
     await waitFor(() => expect(launchModalMock).toHaveBeenCalled());
 
     const [, modalProps] = launchModalMock.mock.calls[0];
-    expect(modalProps.hasImagePullSecretsField).toBe(false);
 
     act(() => {
       modalProps.onSubmitSuccess('aaaa');
