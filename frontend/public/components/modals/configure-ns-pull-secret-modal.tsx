@@ -60,10 +60,29 @@ const generateSecretData = (formData: FormData): string => {
 interface ConfigureNamespacePullSecretProps extends ModalComponentProps {
   namespace: K8sResourceKind;
   pullSecret?: K8sResourceKind;
+  hasImagePullSecretsField: boolean;
+  onSubmitSuccess?: (pullSecretName: string) => void;
 }
 
+const getDefaultServiceAccountPatch = (pullSecretName: string, hasImagePullSecretsField: boolean) =>
+  hasImagePullSecretsField
+    ? [
+      {
+        op: 'add' as const,
+        path: '/imagePullSecrets/-',
+        value: { name: pullSecretName },
+      },
+    ]
+    : [
+      {
+        op: 'add' as const,
+        path: '/imagePullSecrets',
+        value: [{ name: pullSecretName }],
+      },
+    ];
+
 const ConfigureNamespacePullSecret: FC<ConfigureNamespacePullSecretProps> = (props) => {
-  const { namespace, cancel, close } = props;
+  const { namespace, cancel, close, hasImagePullSecretsField, onSubmitSuccess } = props;
   const { t } = useTranslation('public');
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
 
@@ -131,13 +150,11 @@ const ConfigureNamespacePullSecret: FC<ConfigureNamespacePullSecretProps> = (pro
         data,
         type: CONST.PULL_SECRET_TYPE,
       };
-      const defaultServiceAccountPatch = [
-        {
-          op: 'add' as const,
-          path: '/imagePullSecrets/-',
-          value: { name: pullSecretName },
-        },
-      ];
+
+      const defaultServiceAccountPatch = getDefaultServiceAccountPatch(
+        pullSecretName,
+        hasImagePullSecretsField,
+      );
       const promise = k8sCreate(SecretModel, secret).then(() =>
         k8sPatchByName(
           ServiceAccountModel,
@@ -146,10 +163,12 @@ const ConfigureNamespacePullSecret: FC<ConfigureNamespacePullSecretProps> = (pro
           defaultServiceAccountPatch,
         ),
       );
-
-      handlePromise(promise).then(close);
+      handlePromise(promise).then(() => {
+        onSubmitSuccess?.(pullSecretName);
+        close();
+      });
     },
-    [method, fileData, namespace, handlePromise, close],
+    [method, fileData, namespace, hasImagePullSecretsField, onSubmitSuccess, handlePromise, close],
   );
 
   return (
