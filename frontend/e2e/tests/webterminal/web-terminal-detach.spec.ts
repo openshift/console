@@ -22,6 +22,12 @@ async function ensureTestPod(k8sClient: import('../../clients/kubernetes-client'
           name: 'main',
           image: 'registry.access.redhat.com/ubi9/ubi-minimal:9.4',
           command: ['sleep', '3600'],
+          securityContext: {
+            allowPrivilegeEscalation: false,
+            runAsNonRoot: true,
+            capabilities: { drop: ['ALL'] },
+            seccompProfile: { type: 'RuntimeDefault' },
+          },
         },
       ],
     },
