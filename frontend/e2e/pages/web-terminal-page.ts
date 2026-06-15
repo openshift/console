@@ -164,6 +164,7 @@ export class WebTerminalPage extends BasePage {
 
   async navigateToPodTerminal(namespace: string, podName: string): Promise<void> {
     await this.goTo(`/k8s/ns/${namespace}/pods/${podName}/terminal`);
+    // eslint-disable-next-line no-restricted-syntax
     await this.page.locator('.co-terminal').waitFor({ state: 'visible', timeout: 30_000 });
   }
 

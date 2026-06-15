@@ -39,7 +39,7 @@ const DetachedPodExec: FC<DetachedPodExecProps> = ({
   const [reconnecting, setReconnecting] = useState(false);
   const ws = useRef<WSFactory>();
   const terminal = useRef<ImperativeTerminalType>();
-  const { t } = useTranslation();
+  const { t } = useTranslation('webterminal-plugin');
   const isOpenShift = useFlag(FLAGS.OPENSHIFT);
 
   const onData = useCallback((data: string): void => {
