@@ -223,7 +223,7 @@ const NodeTerminal: FC<NodeTerminalProps> = ({ obj: node }) => {
     const closeTab = (event) => {
       event.preventDefault();
       const detached = getDetachedSessions(store.getState());
-      if (!detached.some((s) => s.podName === name)) {
+      if (!detached.some((s) => s.podName === name) && namespace?.metadata?.name) {
         deleteNamespace(namespace.metadata.name);
       }
     };
@@ -264,7 +264,7 @@ const NodeTerminal: FC<NodeTerminalProps> = ({ obj: node }) => {
     return () => {
       const detached = getDetachedSessions(store.getState());
       const isDetached = detached.some((s) => s.podName === name);
-      if (!isDetached) {
+      if (!isDetached && namespace?.metadata?.name) {
         deleteNamespace(namespace.metadata.name);
       }
       window.removeEventListener('beforeunload', closeTab);
