@@ -142,40 +142,15 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
   for (const rolesOrBindings of ['Roles', 'RoleBindings'] as const) {
     const resource = rolesOrBindings.toLowerCase();
 
-    test(`${rolesOrBindings} detail breadcrumb to list restores All Projects`, async ({
-      page,
-    }) => {
-      if (rolesOrBindings === 'RoleBindings') {
-        test.fixme(true, 'RoleBindings breadcrumb does not restore All Projects dropdown');
-      }
-      const name = rolesOrBindings === 'Roles' ? roleName : roleBindingName;
-      const listPage = new ListPage(page);
-      const details = new DetailsPage(page);
-      const namespaceDropdown = page.getByTestId('namespace-bar-dropdown');
-
-      await page.goto(`/k8s/all-namespaces/${resource}`);
-      await listPage.filterByCheckbox(
-        rolesOrBindings === 'Roles' ? 'Role' : 'Kind',
-        'namespace',
-      );
-      await listPage.filterByName(name);
-      await listPage.clickRowByName(name);
-
-      await expect(namespaceDropdown).toContainText(namespace);
-
-      await details.getBreadcrumb(0).click();
-      await expect(namespaceDropdown).toContainText('All Projects');
-    });
-
-    test(`${rolesOrBindings} detail breadcrumb to list restores last selected project`, async ({
-      page,
-    }) => {
+    test(`${rolesOrBindings} detail breadcrumb navigates back to list`, async ({ page }) => {
       const name = rolesOrBindings === 'Roles' ? roleName : roleBindingName;
       const listPage = new ListPage(page);
       const details = new DetailsPage(page);
       const namespaceDropdown = page.getByTestId('namespace-bar-dropdown');
 
       await page.goto(`/k8s/ns/${namespace}/${resource}`);
+      await listPage.selectProject(namespace);
+      await expect(namespaceDropdown).toContainText(namespace);
       await listPage.filterByCheckbox(
         rolesOrBindings === 'Roles' ? 'Role' : 'Kind',
         'namespace',
@@ -187,6 +162,7 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
 
       await details.getBreadcrumb(0).click();
       await expect(namespaceDropdown).toContainText(namespace);
+      await expect(page.getByTestId('page-heading')).toContainText(rolesOrBindings);
     });
 
     test(`Cluster${rolesOrBindings} detail breadcrumb to list restores All Projects`, async ({
@@ -198,6 +174,8 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
       const namespaceDropdown = page.getByTestId('namespace-bar-dropdown');
 
       await page.goto(`/k8s/all-namespaces/${resource}`);
+      await listPage.selectAllProjects();
+      await expect(namespaceDropdown).toContainText('All Projects');
       await listPage.filterByCheckbox(
         rolesOrBindings === 'Roles' ? 'Role' : 'Kind',
         'cluster',
@@ -220,6 +198,8 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
       const namespaceDropdown = page.getByTestId('namespace-bar-dropdown');
 
       await page.goto(`/k8s/ns/${namespace}/${resource}`);
+      await listPage.selectProject(namespace);
+      await expect(namespaceDropdown).toContainText(namespace);
       await listPage.filterByCheckbox(
         rolesOrBindings === 'Roles' ? 'Role' : 'Kind',
         'cluster',
