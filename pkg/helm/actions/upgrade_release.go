@@ -205,13 +205,12 @@ func UpgradeReleaseAsync(
 			}
 		}
 		if auth_secret != "" {
-			klog.Infof("Found persisted auth secret %s for release %s/%s, applying credentials for upgrade", auth_secret, releaseNamespace, releaseName)
 			userCredentials, err := GetUserCredentials(coreClient, releaseNamespace, auth_secret)
 			if err != nil {
-				klog.Errorf("Failed to get user credentials for release upgrade %s/%s: %v", releaseNamespace, releaseName, err)
+				klog.Errorf("Failed to get user credentials Secret %s for release upgrade %s/%s: %v", auth_secret, releaseNamespace, releaseName, err)
 			} else {
 				if err := applyBasicAuthFromUserCredentials(&client.ChartPathOptions, client, userCredentials); err != nil {
-					klog.Errorf("Failed to apply auth from secret %s for release %s/%s: %v", auth_secret, releaseNamespace, releaseName, err)
+					klog.Errorf("Failed to apply auth from Secret %s for release upgrade %s/%s: %v", auth_secret, releaseNamespace, releaseName, err)
 				}
 			}
 		}
@@ -234,10 +233,13 @@ func UpgradeReleaseAsync(
 	}
 
 	// Ensure chart URL is properly set in the upgrade chart
+	if ch.Metadata == nil {
+		ch.Metadata = &chart.Metadata{}
+	}
+	if ch.Metadata.Annotations == nil {
+		ch.Metadata.Annotations = make(map[string]string)
+	}
 	if chartUrl != "" {
-		if ch.Metadata.Annotations == nil {
-			ch.Metadata.Annotations = make(map[string]string)
-		}
 		ch.Metadata.Annotations["chart_url"] = chartUrl
 		addAuthSecretAnnotation(ch, auth_secret)
 	}
