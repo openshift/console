@@ -175,7 +175,7 @@ __metadata:
     reselect: "npm:^5.1.1"
     typesafe-actions: "npm:^5.1.0"
   peerDependencies:
-    "@patternfly/react-topology": ~6.5.0
+    "@patternfly/react-topology": ~6.4.0
     react: ^18.3.1
     react-i18next: ~16.5.8
     react-redux: ~9.2.0
