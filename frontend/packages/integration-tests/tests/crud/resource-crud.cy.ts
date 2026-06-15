@@ -78,13 +78,18 @@ describe('Kubernetes resource CRUD operations', () => {
           kind: 'snapshot.storage.k8s.io~v1~VolumeSnapshotContent',
           namespaced: false,
         })
-        .set('storage.k8s.io~v1~VolumeAttributesClass', {
-          kind: 'storage.k8s.io~v1~VolumeAttributesClass',
-          namespaced: false,
-        })
     : OrderedMap<string, TestDefinition>();
 
-  const k8sObjsWithSnapshots = k8sObjs.merge(snapshotObjs);
+  // VolumeAttributesClass - E2E tests run on GCP with Hyperdisk CSI driver
+  const vacObjs = OrderedMap<string, TestDefinition>().set(
+    'storage.k8s.io~v1~VolumeAttributesClass',
+    {
+      kind: 'storage.k8s.io~v1~VolumeAttributesClass',
+      namespaced: false,
+    },
+  );
+
+  const k8sObjsWithSnapshots = k8sObjs.merge(snapshotObjs).merge(vacObjs);
 
   const openshiftObjs = OrderedMap<string, TestDefinition>()
     .set('deploymentconfigs', {
