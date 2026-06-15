@@ -9,6 +9,7 @@ import { INTERNAL_DO_NOT_USE_isGuidedTour as isGuidedTour } from '@console/dynam
 import { getFlagsObject } from '@console/internal/reducers/features';
 import type { RootState } from '@console/internal/redux';
 import { useTranslatedExtensions } from '@console/plugin-sdk/src/utils/useTranslatedExtensions';
+import { INTEGRATION_TEST_USER_AGENT } from '@console/shared/src/constants/common';
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { TourActions } from './const';
@@ -138,7 +139,7 @@ export const useTourValuesForContext = (): TourContextType => {
   const [tourCompletionState, setTourCompletionState, loaded] = useTourStateForPerspective(
     activePerspective,
   );
-  const isIntegrationTest = window.navigator.userAgent === 'ConsoleIntegrationTestEnvironment';
+  const isIntegrationTest = window.navigator.userAgent === INTEGRATION_TEST_USER_AGENT;
   const completed = tourCompletionState?.completed || isIntegrationTest;
   const onComplete = () => {
     if (completed === false) {
