@@ -4,10 +4,10 @@ import { testA11y } from '../../../utils/a11y';
 
 type RouteConfig = {
   path: string;
-  waitFor?: (page: Page) => Promise<void>;
+  assertLoaded?: (page: Page) => Promise<void>;
 };
 
-async function waitForListPage(page: Page): Promise<void> {
+async function assertLoadedListPage(page: Page): Promise<void> {
   await expect(
     page.getByTestId('data-view-table').or(page.getByTestId('page-heading')).first(),
   ).toBeVisible();
@@ -16,7 +16,7 @@ async function waitForListPage(page: Page): Promise<void> {
 const routes: RouteConfig[] = [
   {
     path: '/',
-    waitFor: async (page) => {
+    assertLoaded: async (page) => {
       await expect(page.getByTestId('page-heading').locator('h1')).toBeAttached();
       for (const skeleton of await page.getByTestId('skeleton-chart').all()) {
         await expect(skeleton).toBeHidden();
@@ -25,53 +25,53 @@ const routes: RouteConfig[] = [
   },
   {
     path: '/k8s/cluster/clusterroles/view',
-    waitFor: async (page) => {
+    assertLoaded: async (page) => {
       await expect(page.getByTestId('page-heading').locator('h1')).toBeAttached();
     },
   },
   {
     path: '/k8s/cluster/nodes',
-    waitFor: waitForListPage,
+    assertLoaded: assertLoadedListPage,
   },
   {
     path: '/k8s/all-namespaces/events',
-    waitFor: async (page) => {
+    assertLoaded: async (page) => {
       await expect(page.getByRole('row').first()).toBeVisible();
     },
   },
   {
     path: '/k8s/all-namespaces/import',
-    waitFor: async (page) => {
+    assertLoaded: async (page) => {
       await expect(page.getByRole('textbox')).toBeVisible();
     },
   },
   {
     path: '/api-explorer',
-    waitFor: async (page) => {
+    assertLoaded: async (page) => {
       await expect(page.getByTestId('data-view-table')).toBeVisible();
     },
   },
   {
     path: '/api-resource/ns/default/core~v1~Pod',
-    waitFor: async (page) => {
+    assertLoaded: async (page) => {
       await expect(page.getByTestId('page-heading')).toBeVisible();
     },
   },
   {
     path: '/api-resource/ns/default/core~v1~Pod/schema',
-    waitFor: async (page) => {
+    assertLoaded: async (page) => {
       await expect(page.getByTestId('resource-sidebar-item').first()).toBeAttached();
     },
   },
   {
     path: '/api-resource/ns/default/core~v1~Pod/instances',
-    waitFor: async (page) => {
+    assertLoaded: async (page) => {
       await expect(page.getByTestId('api-explorer-resource-title')).toContainText('Pod');
     },
   },
   {
     path: '/api-resource/ns/default/core~v1~Pod/access',
-    waitFor: async (page) => {
+    assertLoaded: async (page) => {
       await expect(
         page.locator('[data-ouia-component-type$="TableRow"]').first(),
       ).toBeVisible();
@@ -82,53 +82,53 @@ const routes: RouteConfig[] = [
   },
   {
     path: '/k8s/ns/openshift-machine-api/machine.openshift.io~v1beta1~Machine',
-    waitFor: waitForListPage,
+    assertLoaded: assertLoadedListPage,
   },
   {
     path: '/k8s/cluster/machine.openshift.io~v1~ControlPlaneMachineSet',
-    waitFor: waitForListPage,
+    assertLoaded: assertLoadedListPage,
   },
   {
     path: '/k8s/ns/openshift-machine-api/machine.openshift.io~v1beta1~MachineSet',
-    waitFor: waitForListPage,
+    assertLoaded: assertLoadedListPage,
   },
   {
     path: '/k8s/ns/openshift-machine-api/autoscaling.openshift.io~v1beta1~MachineAutoscaler',
-    waitFor: async (page) => {
+    assertLoaded: async (page) => {
       await expect(page.getByTestId('empty-box-body')).toBeVisible();
     },
   },
   {
     path: '/k8s/ns/openshift-machine-api/machine.openshift.io~v1beta1~MachineHealthCheck',
-    waitFor: waitForListPage,
+    assertLoaded: assertLoadedListPage,
   },
   {
     path: '/k8s/cluster/machineconfiguration.openshift.io~v1~MachineConfig',
-    waitFor: waitForListPage,
+    assertLoaded: assertLoadedListPage,
   },
   {
     path: '/k8s/cluster/machineconfiguration.openshift.io~v1~MachineConfigPool',
-    waitFor: waitForListPage,
+    assertLoaded: assertLoadedListPage,
   },
   {
     path: '/k8s/all-namespaces/monitoring.coreos.com~v1~Alertmanager',
-    waitFor: waitForListPage,
+    assertLoaded: assertLoadedListPage,
   },
   {
     path: '/k8s/ns/openshift-monitoring/monitoring.coreos.com~v1~Alertmanager/main',
-    waitFor: async (page) => {
+    assertLoaded: async (page) => {
       await expect(page.getByTestId('resource-title')).toBeVisible();
     },
   },
   {
     path: '/settings/cluster',
-    waitFor: async (page) => {
+    assertLoaded: async (page) => {
       await expect(page.getByTestId('cluster-version')).toBeAttached();
     },
   },
   {
     path: '/search/all-namespaces?kind=config.openshift.io~v1~Console',
-    waitFor: waitForListPage,
+    assertLoaded: assertLoadedListPage,
   },
 ];
 
@@ -142,8 +142,8 @@ test.describe('Visiting other routes', { tag: ['@admin', '@smoke'] }, () => {
       await expect(page.getByTestId('loading-indicator')).toHaveCount(0);
       await expect(page.getByTestId('error-page')).not.toBeAttached();
 
-      if (route.waitFor) {
-        await route.waitFor(page);
+      if (route.assertLoaded) {
+        await route.assertLoaded(page);
       }
 
       await testA11y(page, `route ${route.path.replace(/\//g, ' ')}`);
@@ -160,7 +160,7 @@ test.describe('Perspective query parameters', { tag: ['@admin'] }, () => {
       await page.goto('/k8s/cluster/projects');
 
       const toggle = page.getByTestId('perspective-switcher-toggle');
-      await toggle.waitFor({ state: 'visible' });
+      await expect(toggle).toBeVisible();
 
       const isSinglePerspective =
         (await toggle.getAttribute('id')) === 'core-platform-perspective';

@@ -43,9 +43,6 @@ export class RoleBindingPage extends BasePage {
 
   async save(): Promise<void> {
     await this.robustClick(this.saveChangesButton);
-    await this.page
-      .getByTestId('loading-indicator')
-      .waitFor({ state: 'detached', timeout: 5_000 })
-      .catch(() => {});
+    await this.waitForLoadingComplete();
   }
 }

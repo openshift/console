@@ -14,9 +14,8 @@ export class ListPage extends BasePage {
   private readonly createButton = this.page.getByTestId('item-create');
 
   async filterByName(name: string): Promise<void> {
-    await this.dataViewFilters.waitFor({ state: 'visible', timeout: 60_000 });
     const filterToggle = this.dataViewFilters.locator('.pf-v6-c-menu-toggle').first();
-    await this.robustClick(filterToggle);
+    await this.robustClick(filterToggle, { timeout: 60_000 });
     await this.page.locator('.pf-v6-c-menu__list-item', { hasText: 'Name' }).click();
     await this.nameFilterInput.fill(name);
   }
@@ -42,7 +41,6 @@ export class ListPage extends BasePage {
   getDataViewTable(): Locator {
     return this.dataViewTable;
   }
-
 
   getResourceRows(): Locator {
     return this.resourceRows;
