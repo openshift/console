@@ -36,17 +36,39 @@ describe('LabelComponent', () => {
     );
   });
 
-  it.each([
-    ['low', 1],
-    ['moderate', 2],
-    ['important', 3],
-    ['critical', 4],
-  ])('should compute totalRisk=%s as %i', (riskId, expectedTotalRisk) => {
-    render(<LabelComponent clusterID="cluster-1" datum={{ id: riskId }} />);
+  it('should compute totalRisk for low as 1', () => {
+    render(<LabelComponent clusterID="cluster-1" datum={{ id: 'low' }} />);
     const link = screen.getByRole('link');
     expect(link).toHaveAttribute(
       'href',
-      `https://console.redhat.com/openshift/insights/advisor/clusters/cluster-1?total_risk=${expectedTotalRisk}`,
+      'https://console.redhat.com/openshift/insights/advisor/clusters/cluster-1?total_risk=1',
+    );
+  });
+
+  it('should compute totalRisk for moderate as 2', () => {
+    render(<LabelComponent clusterID="cluster-1" datum={{ id: 'moderate' }} />);
+    const link = screen.getByRole('link');
+    expect(link).toHaveAttribute(
+      'href',
+      'https://console.redhat.com/openshift/insights/advisor/clusters/cluster-1?total_risk=2',
+    );
+  });
+
+  it('should compute totalRisk for important as 3', () => {
+    render(<LabelComponent clusterID="cluster-1" datum={{ id: 'important' }} />);
+    const link = screen.getByRole('link');
+    expect(link).toHaveAttribute(
+      'href',
+      'https://console.redhat.com/openshift/insights/advisor/clusters/cluster-1?total_risk=3',
+    );
+  });
+
+  it('should compute totalRisk for critical as 4', () => {
+    render(<LabelComponent clusterID="cluster-1" datum={{ id: 'critical' }} />);
+    const link = screen.getByRole('link');
+    expect(link).toHaveAttribute(
+      'href',
+      'https://console.redhat.com/openshift/insights/advisor/clusters/cluster-1?total_risk=4',
     );
   });
 
