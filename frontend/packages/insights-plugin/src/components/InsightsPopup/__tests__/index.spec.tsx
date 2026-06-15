@@ -36,17 +36,39 @@ describe('LabelComponent', () => {
     );
   });
 
-  it.each([
-    ['low', 1],
-    ['moderate', 2],
-    ['important', 3],
-    ['critical', 4],
-  ])('should compute totalRisk=%s as %i', (riskId, expectedTotalRisk) => {
-    render(<LabelComponent clusterID="cluster-1" datum={{ id: riskId }} />);
+  it('should compute totalRisk for low as 1', () => {
+    render(<LabelComponent clusterID="cluster-1" datum={{ id: 'low' }} />);
     const link = screen.getByRole('link');
     expect(link).toHaveAttribute(
       'href',
-      `https://console.redhat.com/openshift/insights/advisor/clusters/cluster-1?total_risk=${expectedTotalRisk}`,
+      'https://console.redhat.com/openshift/insights/advisor/clusters/cluster-1?total_risk=1',
+    );
+  });
+
+  it('should compute totalRisk for moderate as 2', () => {
+    render(<LabelComponent clusterID="cluster-1" datum={{ id: 'moderate' }} />);
+    const link = screen.getByRole('link');
+    expect(link).toHaveAttribute(
+      'href',
+      'https://console.redhat.com/openshift/insights/advisor/clusters/cluster-1?total_risk=2',
+    );
+  });
+
+  it('should compute totalRisk for important as 3', () => {
+    render(<LabelComponent clusterID="cluster-1" datum={{ id: 'important' }} />);
+    const link = screen.getByRole('link');
+    expect(link).toHaveAttribute(
+      'href',
+      'https://console.redhat.com/openshift/insights/advisor/clusters/cluster-1?total_risk=3',
+    );
+  });
+
+  it('should compute totalRisk for critical as 4', () => {
+    render(<LabelComponent clusterID="cluster-1" datum={{ id: 'critical' }} />);
+    const link = screen.getByRole('link');
+    expect(link).toHaveAttribute(
+      'href',
+      'https://console.redhat.com/openshift/insights/advisor/clusters/cluster-1?total_risk=4',
     );
   });
 
@@ -132,9 +154,7 @@ describe('InsightsPopup', () => {
       { response: lastGatherResponse, error: null },
     ];
 
-    renderWithProviders(
-      <InsightsPopup responses={responses} k8sResult={k8sCluster} hide={jest.fn()} />,
-    );
+    renderWithProviders(<InsightsPopup responses={responses} k8sResult={k8sCluster} />);
     expect(screen.getByText('ErrorState')).toBeInTheDocument();
   });
 
@@ -145,9 +165,7 @@ describe('InsightsPopup', () => {
       { response: lastGatherResponse, error: null },
     ];
 
-    renderWithProviders(
-      <InsightsPopup responses={responses} k8sResult={k8sCluster} hide={jest.fn()} />,
-    );
+    renderWithProviders(<InsightsPopup responses={responses} k8sResult={k8sCluster} />);
     expect(screen.getByText('Temporarily unavailable.')).toBeInTheDocument();
   });
 
@@ -161,9 +179,7 @@ describe('InsightsPopup', () => {
       { response: lastGatherResponse, error: null },
     ];
 
-    renderWithProviders(
-      <InsightsPopup responses={responses} k8sResult={k8sCluster} hide={jest.fn()} />,
-    );
+    renderWithProviders(<InsightsPopup responses={responses} k8sResult={k8sCluster} />);
     expect(screen.getByText('Disabled.')).toBeInTheDocument();
   });
 
@@ -174,16 +190,12 @@ describe('InsightsPopup', () => {
       { response: lastGatherResponse, error: null },
     ];
 
-    renderWithProviders(
-      <InsightsPopup responses={responses} k8sResult={k8sCluster} hide={jest.fn()} />,
-    );
+    renderWithProviders(<InsightsPopup responses={responses} k8sResult={k8sCluster} />);
     expect(screen.getByText('Waiting for results.')).toBeInTheDocument();
   });
 
   it('should render chart area when metrics are available', () => {
-    renderWithProviders(
-      <InsightsPopup responses={baseResponses} k8sResult={k8sCluster} hide={jest.fn()} />,
-    );
+    renderWithProviders(<InsightsPopup responses={baseResponses} k8sResult={k8sCluster} />);
     expect(screen.getByText('Fixable issues')).toBeInTheDocument();
     expect(
       screen.getByText('View all recommendations in Red Hat Lightspeed Advisor'),
@@ -195,7 +207,6 @@ describe('InsightsPopup', () => {
       <InsightsPopup
         responses={baseResponses}
         k8sResult={{ loaded: true, loadError: null } as any}
-        hide={jest.fn()}
       />,
     );
     expect(screen.getByText('View more in Red Hat Lightspeed Advisor')).toBeInTheDocument();
