@@ -337,8 +337,6 @@ export type ConsoleRemotePluginOptions = Partial<{
      * Import prefixes specified here will be added to the default skip list.
      *
      * If not specified, no additional import prefixes will be added to the default skip list.
-     *
-     * @see {@link getDynamicModuleImportSkipPrefixes}
      */
     skipImportPrefixes: string[];
   }>;

@@ -27,12 +27,13 @@ const isDynamicModuleMap = (obj: unknown): obj is DynamicModuleMap =>
   _.isPlainObject(obj) && Object.values(obj).every((value) => typeof value === 'string');
 
 const defaultDynamicModuleImportSkipPrefixes = [
-  // Imports for PatternFly deprecated APIs
+  // PatternFly deprecated APIs
   '@patternfly/react-core/deprecated',
-  // Imports for PatternFly internal APIs (not exposed via package index)
+  // PatternFly internal APIs
   '@patternfly/react-icons/dist/esm/createIcon',
   '@patternfly/react-core/dist/esm/components/Tooltip/',
   '@patternfly/react-core/dist/esm/components/Popover/',
+  // PatternFly public APIs which are not exported properly
   '@patternfly/react-core/dist/esm/components/OverflowMenu/OverflowMenuContext',
 ];
 
