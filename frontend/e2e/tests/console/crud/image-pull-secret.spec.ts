@@ -1,7 +1,6 @@
 import { test, expect } from '../../../fixtures';
 import { DetailsPage } from '../../../pages/details-page';
 import { ListPage } from '../../../pages/list-page';
-import { Navigation } from '../../../pages/navigation';
 
 test.describe('Image pull secret', { tag: ['@admin'] }, () => {
   let namespace: string;
@@ -22,12 +21,11 @@ test.describe('Image pull secret', { tag: ['@admin'] }, () => {
     const password = 'test1234';
     const email = 'testEmail@email.com';
 
-    const nav = new Navigation(page);
     const listPage = new ListPage(page);
 
     await test.step('Navigate to Secrets and open Create Image Pull Secret form', async () => {
-      await nav.navigateToWorkloads('Secrets');
-      await listPage.selectProject(namespace);
+      await page.goto(`/k8s/ns/${namespace}/secrets`);
+
       await listPage.clickCreateDropdownItem('Image pull secret');
 
       await expect(page.getByRole('heading', { level: 1 })).toContainText(

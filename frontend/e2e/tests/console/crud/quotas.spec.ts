@@ -4,7 +4,6 @@ import { test, expect } from '../../../fixtures';
 import { getEditorContent, setEditorContent } from '../../../pages/base-page';
 import { DetailsPage } from '../../../pages/details-page';
 import { ListPage } from '../../../pages/list-page';
-import { Navigation } from '../../../pages/navigation';
 
 const testId = Date.now();
 const quotaName = `test-resource-quota-${testId}`;
@@ -30,12 +29,10 @@ test.describe('Quotas', { tag: ['@admin'] }, () => {
   });
 
   test('create ResourceQuota and ClusterResourceQuota via YAML editor', async ({ page }) => {
-    const nav = new Navigation(page);
     const listPage = new ListPage(page);
 
     await test.step('Create ResourceQuota via YAML editor', async () => {
-      await nav.navigateToAdministration('ResourceQuotas');
-      await listPage.selectProject(namespace);
+      await page.goto(`/k8s/ns/${namespace}/resourcequotas`);
       await page.getByTestId('item-create').click();
 
       const content = await getEditorContent(page);
@@ -76,23 +73,19 @@ test.describe('Quotas', { tag: ['@admin'] }, () => {
   });
 
   test('All Projects shows ResourceQuotas', async ({ page }) => {
-    const nav = new Navigation(page);
     const listPage = new ListPage(page);
 
-    await nav.navigateToAdministration('ResourceQuotas');
-    await listPage.selectAllProjects();
+    await page.goto('/k8s/all-namespaces/resourcequotas');
 
     await listPage.filterByName(quotaName);
     await expect(listPage.getCell(quotaName)).toBeVisible();
   });
 
   test('All Projects shows ClusterResourceQuotas', async ({ page }) => {
-    const nav = new Navigation(page);
     const listPage = new ListPage(page);
     const details = new DetailsPage(page);
 
-    await nav.navigateToAdministration('ResourceQuotas');
-    await listPage.selectAllProjects();
+    await page.goto('/k8s/all-namespaces/resourcequotas');
 
     await listPage.filterByName(clusterQuotaName);
     await expect(listPage.getCell(clusterQuotaName)).toBeVisible();
@@ -105,23 +98,19 @@ test.describe('Quotas', { tag: ['@admin'] }, () => {
   });
 
   test('project namespace shows ResourceQuotas', async ({ page }) => {
-    const nav = new Navigation(page);
     const listPage = new ListPage(page);
 
-    await nav.navigateToAdministration('ResourceQuotas');
-    await listPage.selectProject(namespace);
+    await page.goto(`/k8s/ns/${namespace}/resourcequotas`);
 
     await listPage.filterByName(quotaName);
     await expect(listPage.getCell(quotaName)).toBeVisible();
   });
 
   test('project namespace shows AppliedClusterResourceQuotas', async ({ page }) => {
-    const nav = new Navigation(page);
     const listPage = new ListPage(page);
     const details = new DetailsPage(page);
 
-    await nav.navigateToAdministration('ResourceQuotas');
-    await listPage.selectProject(namespace);
+    await page.goto(`/k8s/ns/${namespace}/resourcequotas`);
 
     await listPage.filterByName(clusterQuotaName);
     await expect(listPage.getCell(clusterQuotaName)).toBeVisible();

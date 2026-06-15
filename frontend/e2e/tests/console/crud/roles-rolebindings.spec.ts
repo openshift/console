@@ -4,7 +4,6 @@ import { test, expect } from '../../../fixtures';
 import { getEditorContent, setEditorContent } from '../../../pages/base-page';
 import { DetailsPage } from '../../../pages/details-page';
 import { ListPage } from '../../../pages/list-page';
-import { Navigation } from '../../../pages/navigation';
 import { RoleBindingPage } from '../../../pages/role-binding-page';
 
 test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
@@ -45,12 +44,10 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
   });
 
   test('create Role and ClusterRole via YAML editor', async ({ page }) => {
-    const nav = new Navigation(page);
     const listPage = new ListPage(page);
 
     await test.step('Create Role via YAML editor', async () => {
-      await nav.navigateToUserManagement('Roles');
-      await listPage.selectProject(namespace);
+      await page.goto(`/k8s/ns/${namespace}/roles`);
       await page.getByTestId('item-create').click();
 
       const content = await getEditorContent(page);
@@ -82,10 +79,8 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
   });
 
   test('create RoleBinding and ClusterRoleBinding via form', async ({ page }) => {
-    const nav = new Navigation(page);
-
     await test.step('Create RoleBinding', async () => {
-      await nav.navigateToUserManagement('RoleBindings');
+      await page.goto('/k8s/all-namespaces/rolebindings');
       await page.getByTestId('item-create').click();
       await expect(page.getByTestId('title')).toHaveText('Create RoleBinding');
 
@@ -99,7 +94,7 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
     });
 
     await test.step('Create ClusterRoleBinding', async () => {
-      await nav.navigateToUserManagement('RoleBindings');
+      await page.goto('/k8s/all-namespaces/rolebindings');
       await page.getByTestId('item-create').click();
       await expect(page.getByTestId('title')).toHaveText('Create RoleBinding');
 
@@ -114,11 +109,9 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
   });
 
   test('displays Resource names and Verbs columns in Role rules table', async ({ page }) => {
-    const nav = new Navigation(page);
     const listPage = new ListPage(page);
 
-    await nav.navigateToUserManagement('Roles');
-    await listPage.selectProject(namespace);
+    await page.goto(`/k8s/ns/${namespace}/roles`);
     await listPage.filterByName(roleName);
     await listPage.clickRowByName(roleName);
 
@@ -130,11 +123,9 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
   test('displays Resource names and Verbs columns in ClusterRole rules table', async ({
     page,
   }) => {
-    const nav = new Navigation(page);
     const listPage = new ListPage(page);
 
-    await nav.navigateToUserManagement('Roles');
-    await listPage.selectAllProjects();
+    await page.goto('/k8s/all-namespaces/roles');
     await listPage.filterByCheckbox('Role', 'cluster');
     await listPage.filterByName(clusterRoleName);
     await listPage.clickRowByName(clusterRoleName);
@@ -145,6 +136,8 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
   });
 
   for (const rolesOrBindings of ['Roles', 'RoleBindings'] as const) {
+    const resource = rolesOrBindings.toLowerCase();
+
     test(`${rolesOrBindings} detail breadcrumb to list restores All Projects`, async ({
       page,
     }) => {
@@ -152,13 +145,11 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
         test.fixme(true, 'RoleBindings breadcrumb does not restore All Projects dropdown');
       }
       const name = rolesOrBindings === 'Roles' ? roleName : roleBindingName;
-      const nav = new Navigation(page);
       const listPage = new ListPage(page);
       const details = new DetailsPage(page);
       const namespaceDropdown = page.getByTestId('namespace-bar-dropdown');
 
-      await nav.navigateToUserManagement(rolesOrBindings);
-      await listPage.selectAllProjects();
+      await page.goto(`/k8s/all-namespaces/${resource}`);
       await listPage.filterByCheckbox(
         rolesOrBindings === 'Roles' ? 'Role' : 'Kind',
         'namespace',
@@ -176,13 +167,11 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
       page,
     }) => {
       const name = rolesOrBindings === 'Roles' ? roleName : roleBindingName;
-      const nav = new Navigation(page);
       const listPage = new ListPage(page);
       const details = new DetailsPage(page);
       const namespaceDropdown = page.getByTestId('namespace-bar-dropdown');
 
-      await nav.navigateToUserManagement(rolesOrBindings);
-      await listPage.selectProject(namespace);
+      await page.goto(`/k8s/ns/${namespace}/${resource}`);
       await listPage.filterByCheckbox(
         rolesOrBindings === 'Roles' ? 'Role' : 'Kind',
         'namespace',
@@ -200,13 +189,11 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
       page,
     }) => {
       const clusterName = rolesOrBindings === 'Roles' ? clusterRoleName : clusterRoleBindingName;
-      const nav = new Navigation(page);
       const listPage = new ListPage(page);
       const details = new DetailsPage(page);
       const namespaceDropdown = page.getByTestId('namespace-bar-dropdown');
 
-      await nav.navigateToUserManagement(rolesOrBindings);
-      await listPage.selectAllProjects();
+      await page.goto(`/k8s/all-namespaces/${resource}`);
       await listPage.filterByCheckbox(
         rolesOrBindings === 'Roles' ? 'Role' : 'Kind',
         'cluster',
@@ -224,13 +211,11 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
       page,
     }) => {
       const clusterName = rolesOrBindings === 'Roles' ? clusterRoleName : clusterRoleBindingName;
-      const nav = new Navigation(page);
       const listPage = new ListPage(page);
       const details = new DetailsPage(page);
       const namespaceDropdown = page.getByTestId('namespace-bar-dropdown');
 
-      await nav.navigateToUserManagement(rolesOrBindings);
-      await listPage.selectProject(namespace);
+      await page.goto(`/k8s/ns/${namespace}/${resource}`);
       await listPage.filterByCheckbox(
         rolesOrBindings === 'Roles' ? 'Role' : 'Kind',
         'cluster',
