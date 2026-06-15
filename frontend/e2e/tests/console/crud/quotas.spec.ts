@@ -1,7 +1,7 @@
 import yaml from 'js-yaml';
 
 import { test, expect } from '../../../fixtures';
-import { getEditorContent, setEditorContent } from '../../../pages/base-page';
+import { getEditorContent, setEditorContent, warmupSPA } from '../../../pages/base-page';
 import { DetailsPage } from '../../../pages/details-page';
 import { ListPage } from '../../../pages/list-page';
 
@@ -16,6 +16,10 @@ test.describe('Quotas', { tag: ['@admin'] }, () => {
   test.beforeAll(async ({ k8sClient }) => {
     namespace = `test-quotas-${Date.now()}`;
     await k8sClient.createNamespace(namespace);
+  });
+
+  test.beforeEach(async ({ page }) => {
+    await warmupSPA(page);
   });
 
   test.afterAll(async ({ k8sClient }) => {
@@ -76,7 +80,6 @@ test.describe('Quotas', { tag: ['@admin'] }, () => {
     const listPage = new ListPage(page);
 
     await page.goto('/k8s/all-namespaces/resourcequotas');
-
     await listPage.filterByName(quotaName);
     await expect(listPage.getCell(quotaName)).toBeVisible();
   });
@@ -86,7 +89,6 @@ test.describe('Quotas', { tag: ['@admin'] }, () => {
     const details = new DetailsPage(page);
 
     await page.goto('/k8s/all-namespaces/resourcequotas');
-
     await listPage.filterByName(clusterQuotaName);
     await expect(listPage.getCell(clusterQuotaName)).toBeVisible();
 
@@ -101,7 +103,6 @@ test.describe('Quotas', { tag: ['@admin'] }, () => {
     const listPage = new ListPage(page);
 
     await page.goto(`/k8s/ns/${namespace}/resourcequotas`);
-
     await listPage.filterByName(quotaName);
     await expect(listPage.getCell(quotaName)).toBeVisible();
   });
@@ -111,7 +112,6 @@ test.describe('Quotas', { tag: ['@admin'] }, () => {
     const details = new DetailsPage(page);
 
     await page.goto(`/k8s/ns/${namespace}/resourcequotas`);
-
     await listPage.filterByName(clusterQuotaName);
     await expect(listPage.getCell(clusterQuotaName)).toBeVisible();
 

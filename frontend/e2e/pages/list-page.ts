@@ -14,6 +14,7 @@ export class ListPage extends BasePage {
   private readonly createButton = this.page.getByTestId('item-create');
 
   async filterByName(name: string): Promise<void> {
+    await this.dataViewFilters.waitFor({ state: 'visible', timeout: 60_000 });
     const filterToggle = this.dataViewFilters.locator('.pf-v6-c-menu-toggle').first();
     await this.robustClick(filterToggle);
     await this.page.locator('.pf-v6-c-menu__list-item', { hasText: 'Name' }).click();
@@ -29,12 +30,9 @@ export class ListPage extends BasePage {
   }
 
   async clickRowByName(resourceName: string): Promise<void> {
-    const link = this.getCell(resourceName).locator('a').first();
-    await this.robustClick(link);
-  }
-
-  async clickRowByResourceName(resourceName: string): Promise<void> {
-    await this.robustClick(this.page.getByTestId(resourceName));
+    const dataViewLink = this.getCell(resourceName).locator('a').first();
+    const standardLink = this.page.getByTestId(resourceName);
+    await this.robustClick(dataViewLink.or(standardLink).first());
   }
 
   getNamespaceDropdown(): Locator {
@@ -44,6 +42,7 @@ export class ListPage extends BasePage {
   getDataViewTable(): Locator {
     return this.dataViewTable;
   }
+
 
   getResourceRows(): Locator {
     return this.resourceRows;
@@ -71,7 +70,9 @@ export class ListPage extends BasePage {
   }
 
   async clickKebabAction(resourceName: string, actionName: string): Promise<void> {
-    const cell = this.getCell(resourceName);
+    const dataViewCell = this.getCell(resourceName);
+    const standardCell = this.page.getByTestId(resourceName);
+    const cell = dataViewCell.or(standardCell).first();
     const row = cell.locator('xpath=ancestor::tr');
     const kebab = row.getByTestId('kebab-button');
     await this.robustClick(kebab);
@@ -79,18 +80,26 @@ export class ListPage extends BasePage {
   }
 
   async filterByCheckbox(filterName: string, checkboxLabel: string): Promise<void> {
-    const filterToggle = this.dataViewFilters.locator('.pf-v6-c-menu-toggle').first();
-    await this.robustClick(filterToggle);
-    await this.page.locator('.pf-v6-c-menu__list-item', { hasText: filterName }).click();
-    const checkboxFilter = this.page.locator(
-      '[data-ouia-component-id="DataViewCheckboxFilter"]',
-    );
-    await this.robustClick(checkboxFilter);
-    const filterItem = this.page.locator(
-      `[data-ouia-component-id="DataViewCheckboxFilter-filter-item-${checkboxLabel}"]`,
-    );
-    await this.robustClick(filterItem);
-    await this.robustClick(checkboxFilter);
+    const dataViewToggle = this.dataViewFilters.locator('.pf-v6-c-menu-toggle').first();
+    const standardToggle = this.page.getByTestId('filter-dropdown-toggle').locator('button');
+    const toggle = dataViewToggle.or(standardToggle).first();
+    await this.robustClick(toggle);
+
+    if (await this.dataViewFilters.isVisible()) {
+      await this.page.locator('.pf-v6-c-menu__list-item', { hasText: filterName }).click();
+      const checkboxFilter = this.page.locator(
+        '[data-ouia-component-id="DataViewCheckboxFilter"]',
+      );
+      await this.robustClick(checkboxFilter);
+      const filterItem = this.page.locator(
+        `[data-ouia-component-id="DataViewCheckboxFilter-filter-item-${checkboxLabel}"]`,
+      );
+      await this.robustClick(filterItem);
+      await this.robustClick(checkboxFilter);
+    } else {
+      const filterItem = this.page.locator(`[data-test-row-filter="${checkboxLabel}"]`);
+      await this.robustClick(filterItem);
+    }
   }
 
   async clickFirstLinkInFirstRow(): Promise<void> {

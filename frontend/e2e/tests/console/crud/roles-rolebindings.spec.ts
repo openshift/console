@@ -1,7 +1,7 @@
 import yaml from 'js-yaml';
 
 import { test, expect } from '../../../fixtures';
-import { getEditorContent, setEditorContent } from '../../../pages/base-page';
+import { getEditorContent, setEditorContent, warmupSPA } from '../../../pages/base-page';
 import { DetailsPage } from '../../../pages/details-page';
 import { ListPage } from '../../../pages/list-page';
 import { RoleBindingPage } from '../../../pages/role-binding-page';
@@ -22,6 +22,10 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
     roleBindingName = `test-rb-${suffix}`;
     clusterRoleBindingName = `test-crb-${suffix}`;
     await k8sClient.createNamespace(namespace);
+  });
+
+  test.beforeEach(async ({ page }) => {
+    await warmupSPA(page);
   });
 
   test.afterAll(async ({ k8sClient }) => {
