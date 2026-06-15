@@ -144,26 +144,26 @@ describe('MultiTabTerminal', () => {
 
     it('should render detached sessions as additional tabs', () => {
       mockUseDetachedSessions.mockReturnValue(detachedSessions);
-      const wrapper = renderWithProviders(<MultiTabbedTerminal />);
+      renderWithProviders(<MultiTabbedTerminal />);
 
-      expect(wrapper.getByText('Detached pod1-c1')).toBeTruthy();
-      expect(wrapper.getByText('Detached pod2-c2')).toBeTruthy();
+      expect(screen.getByText('Detached pod1-c1')).toBeTruthy();
+      expect(screen.getByText('Detached pod2-c2')).toBeTruthy();
     });
 
     it('should include detached sessions in total tab count', () => {
       mockUseDetachedSessions.mockReturnValue(detachedSessions);
-      const wrapper = renderWithProviders(<MultiTabbedTerminal />);
+      renderWithProviders(<MultiTabbedTerminal />);
 
       // 1 Cloud Shell tab + 2 detached = 3 total
-      const closeBtns = wrapper.getAllByLabelText('Close terminal tab');
+      const closeBtns = screen.getAllByLabelText('Close terminal tab');
       expect(closeBtns).toHaveLength(3);
     });
 
     it('should call cleanupDetachedResource when closing a detached tab with cleanup metadata', async () => {
       mockUseDetachedSessions.mockReturnValue(detachedSessions);
-      const wrapper = renderWithProviders(<MultiTabbedTerminal />);
+      renderWithProviders(<MultiTabbedTerminal />);
 
-      const closeBtns = wrapper.getAllByLabelText('Close terminal tab');
+      const closeBtns = screen.getAllByLabelText('Close terminal tab');
       // Index 0 = Cloud Shell tab, Index 1 = first detached, Index 2 = second detached
       await user.click(closeBtns[1]);
 

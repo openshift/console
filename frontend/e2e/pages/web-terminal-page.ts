@@ -172,6 +172,7 @@ export class WebTerminalPage extends BasePage {
   }
 
   async waitForDrawerOpen(timeoutMs = 10_000): Promise<void> {
+    // eslint-disable-next-line no-restricted-syntax
     await this.cloudShellDrawer.waitFor({ state: 'visible', timeout: timeoutMs });
   }
 
