@@ -24,10 +24,6 @@ export class WebTerminalPage extends BasePage {
   private readonly openInNewTabLink = this.page.locator("a[href='/terminal']");
   private readonly closeTerminalButton = this.page.getByLabel(/Close terminal/);
   private readonly inactivityMessageArea = this.page.locator('div.co-cloudshell-exec__error-msg');
-  private readonly detachButton = this.page.getByRole('button', { name: 'Detach to Cloud Shell' });
-  private readonly detachedButton = this.page.getByRole('button', { name: 'Detached' });
-  private readonly detachedTabs = this.page.getByTestId('detached-terminal-tab');
-  private readonly cloudShellDrawer = this.page.locator('.co-cloud-shell-drawer');
 
   async waitForTerminalIconVisible(maxRetries = 10): Promise<void> {
     await this.goTo('/');
@@ -162,40 +158,4 @@ export class WebTerminalPage extends BasePage {
     await this.waitForLoadingComplete(30_000);
   }
 
-  async navigateToPodTerminal(namespace: string, podName: string): Promise<void> {
-    await this.goTo(`/k8s/ns/${namespace}/pods/${podName}/terminal`);
-    // eslint-disable-next-line no-restricted-syntax
-    await this.page.locator('.co-terminal').waitFor({ state: 'visible', timeout: 30_000 });
-  }
-
-  async clickDetachButton(): Promise<void> {
-    await this.robustClick(this.detachButton);
-  }
-
-  async waitForDrawerOpen(timeoutMs = 10_000): Promise<void> {
-    // eslint-disable-next-line no-restricted-syntax
-    await this.cloudShellDrawer.waitFor({ state: 'visible', timeout: timeoutMs });
-  }
-
-  async getDetachedTabCount(): Promise<number> {
-    return this.detachedTabs.count();
-  }
-
-  getDetachedTabs(): Locator {
-    return this.detachedTabs;
-  }
-
-  getDetachButton(): Locator {
-    return this.detachButton;
-  }
-
-  getDetachedButton(): Locator {
-    return this.detachedButton;
-  }
-
-  async closeDetachedTab(index: number): Promise<void> {
-    const tab = this.detachedTabs.nth(index);
-    const closeBtn = tab.getByLabel('Close terminal tab');
-    await this.robustClick(closeBtn);
-  }
 }
