@@ -222,6 +222,7 @@
     "follow-redirects": "^1.16.0",
     "glob-parent": "^5.1.2",
     "hosted-git-info": "^3.0.8",
+    "ip-address": "^10.1.1",
     "protobufjs": "7.6.5"
   },
   "lint-staged": {
