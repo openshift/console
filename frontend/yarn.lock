@@ -6987,16 +6987,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^0.21.1":
-  version: 0.21.4
-  resolution: "axios@npm:0.21.4"
-  dependencies:
-    follow-redirects: "npm:^1.14.0"
-  checksum: 10c0/fbcff55ec68f71f02d3773d467db2fcecdf04e749826c82c2427a232f9eba63242150a05f15af9ef15818352b814257541155de0281f8fb2b7e8a5b79f7f2142
-  languageName: node
-  linkType: hard
-
-"axios@npm:^0.31.1":
+"axios@npm:0.31.1":
   version: 0.31.1
   resolution: "axios@npm:0.31.1"
   dependencies:
@@ -7004,6 +6995,17 @@ __metadata:
     form-data: "npm:^4.0.4"
     proxy-from-env: "npm:^1.1.0"
   checksum: 10c0/0193483f680a893955d203d26951fc427c407415d273bba5a2450e3d0ed7261a403eb5fe86f28a7e66c42d98597cbf8e17e3a6c324d294bd143a6a68bc10f8ef
+  languageName: node
+  linkType: hard
+
+"axios@patch:axios@npm%3A0.31.1#~/.yarn/patches/axios-npm-0.31.1-0574a0de7d.patch":
+  version: 0.31.1
+  resolution: "axios@patch:axios@npm%3A0.31.1#~/.yarn/patches/axios-npm-0.31.1-0574a0de7d.patch::version=0.31.1&hash=ba5704"
+  dependencies:
+    follow-redirects: "npm:^1.15.4"
+    form-data: "npm:^4.0.4"
+    proxy-from-env: "npm:^1.1.0"
+  checksum: 10c0/45b68cf08e087aa6f70ee8fe7f11af09db1a56b68ea23ea4fc8e0866c484bdbe18aad4707a2b9ba9941795a52b666a492eee54ed1b5f90d8a7f99e092cdef049
   languageName: node
   linkType: hard
 
@@ -13273,16 +13275,6 @@ __metadata:
   dependencies:
     debug: "npm:^3.2.6"
   checksum: 10c0/7b557ef5d7c7caacf925925f1ddbb92ddead0f08e5f8556abe67a286ef1dbf92d40d6ca80b7a240073c4c6a5c89e28496bd158f678030c909ebeba758c1f658b
-  languageName: node
-  linkType: hard
-
-"follow-redirects@npm:^1.14.0":
-  version: 1.14.3
-  resolution: "follow-redirects@npm:1.14.3"
-  peerDependenciesMeta:
-    debug:
-      optional: true
-  checksum: 10c0/02c94952aa0ce0b0d4fd45cb7af4cce5df37158a1757f9528f9488c3a2ed89b7d630764ba1e09918b98b5d9affbc3e06abc4fce90fb5608a79b10a9a81926e6c
   languageName: node
   linkType: hard
 
@@ -20251,7 +20243,7 @@ __metadata:
     apollo-client: "npm:^2.6.8"
     apollo-link-http: "npm:^1.0.20"
     apollo-link-ws: "npm:^1.0.20"
-    axios: "npm:^0.31.1"
+    axios: "patch:axios@npm%3A0.31.1#~/.yarn/patches/axios-npm-0.31.1-0574a0de7d.patch"
     babel-loader: "npm:^8.2.1"
     browser-env: "npm:3.x"
     cache-loader: "npm:^4.1.0"

@@ -1,0 +1,17 @@
+diff --git a/index.d.ts b/index.d.ts
+index 34bc02adf15581be666543f0d77fa845c04d25f9..b6899f821f2765e5e9e1ea766a8620175a3f117a 100644
+--- a/index.d.ts
++++ b/index.d.ts
+@@ -3,8 +3,11 @@ type HeaderValue = string | string[] | number | boolean;
+ 
+ type AxiosHeaders = Record<string, HeaderValue | Record<Method & CommonHeaders, HeaderValue>>;
+ 
++type LowercaseMethod =
++  | 'get' | 'delete' | 'head' | 'options' | 'post'
++  | 'put' | 'patch' | 'purge' | 'link' | 'unlink';
+ type MethodsHeaders = {
+-  [Key in Method as Lowercase<Key>]: AxiosHeaders;
++  [Key in LowercaseMethod]?: AxiosHeaders;
+ };
+ 
+ interface CommonHeaders  {
