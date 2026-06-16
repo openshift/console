@@ -14,6 +14,7 @@ import (
 	"helm.sh/helm/v4/pkg/action"
 	chart "helm.sh/helm/v4/pkg/chart/v2"
 	"helm.sh/helm/v4/pkg/chart/v2/loader"
+	"helm.sh/helm/v4/pkg/kube"
 	"helm.sh/helm/v4/pkg/registry"
 	releaseV1 "helm.sh/helm/v4/pkg/release/v1"
 	kv1 "k8s.io/api/core/v1"
@@ -109,6 +110,8 @@ func InstallChart(ns, name, url string, vals map[string]interface{}, conf *actio
 	var chartInfo *ChartInfo
 	var cp, chartLocation string
 	cmd := action.NewInstall(conf)
+	cmd.ServerSideApply = false
+	cmd.WaitStrategy = kube.LegacyStrategy
 	// tlsFiles contain references of files to be removed once the chart
 	// operation depending on those files is finished.
 	tlsFiles := []*os.File{}
@@ -192,6 +195,8 @@ func InstallChartAsync(ns, name, url string, vals map[string]interface{}, conf *
 	var chartInfo *ChartInfo
 	var cp, chartLocation string
 	cmd := action.NewInstall(conf)
+	cmd.ServerSideApply = false
+	cmd.WaitStrategy = kube.LegacyStrategy
 	// tlsFiles contain references of files to be removed once the chart
 	// operation depending on those files is finished.
 	tlsFiles := []*os.File{}
@@ -324,6 +329,8 @@ func InstallChartFromURL(ns, name, url string, vals map[string]interface{}, conf
 	}
 
 	cmd := action.NewInstall(conf)
+	cmd.ServerSideApply = false
+	cmd.WaitStrategy = kube.LegacyStrategy
 	cmd.ReleaseName = name
 	cmd.Namespace = ns
 

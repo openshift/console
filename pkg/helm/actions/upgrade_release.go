@@ -13,6 +13,7 @@ import (
 	helmchart "helm.sh/helm/v4/pkg/chart"
 	chart "helm.sh/helm/v4/pkg/chart/v2"
 	"helm.sh/helm/v4/pkg/chart/v2/loader"
+	"helm.sh/helm/v4/pkg/kube"
 	releaseV1 "helm.sh/helm/v4/pkg/release/v1"
 	kv1 "k8s.io/api/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -33,6 +34,7 @@ func UpgradeRelease(
 	indexEntry string,
 ) (*releaseV1.Release, error) {
 	client := action.NewUpgrade(conf)
+	client.ServerSideApply = "false"
 	client.Namespace = releaseNamespace
 	var ch *chart.Chart
 	var cp, chartLocation string
@@ -148,6 +150,8 @@ func UpgradeReleaseAsync(
 	indexEntry string,
 ) (*kv1.Secret, error) {
 	client := action.NewUpgrade(conf)
+	client.ServerSideApply = "false"
+	client.WaitStrategy = kube.LegacyStrategy
 	client.Namespace = releaseNamespace
 	var ch *chart.Chart
 	var cp, chartLocation string
