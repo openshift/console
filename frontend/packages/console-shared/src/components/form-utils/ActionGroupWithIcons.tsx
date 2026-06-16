@@ -17,6 +17,7 @@ export const ActionGroupWithIcons: FC<ActionGroupWithIconsProps> = ({
           type="submit"
           onClick={onSubmit}
           variant={ButtonVariant.plain}
+          data-test="check-icon"
           data-test-id="check-icon"
           style={{ padding: '0' }}
           isDisabled={isDisabled}

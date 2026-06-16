@@ -69,6 +69,7 @@ export const FormFooter: FC<FormFooterProps> = ({
           {handleReset && (
             <Button
               type="button"
+              data-test="reset-button"
               data-test-id="reset-button"
               variant={ButtonVariant.secondary}
               onClick={handleReset}
