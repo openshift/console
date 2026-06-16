@@ -11,6 +11,10 @@ async function ensureTestPod(k8sClient: import('../../clients/kubernetes-client'
   if (pods.some((p) => p.metadata?.name === POD_NAME && p.status?.phase === 'Running')) {
     return;
   }
+  if (pods.some((p) => p.metadata?.name === POD_NAME)) {
+    await k8sClient.deletePod(POD_NAME, TEST_NAMESPACE);
+    await new Promise((resolve) => setTimeout(resolve, 5_000));
+  }
   const pod: k8s.V1Pod = {
     apiVersion: 'v1',
     kind: 'Pod',
@@ -32,7 +36,7 @@ async function ensureTestPod(k8sClient: import('../../clients/kubernetes-client'
     },
   };
   await k8sClient.createPod(pod);
-  const deadline = Date.now() + 120_000;
+  const deadline = Date.now() + 180_000;
   while (Date.now() < deadline) {
     const current = await k8sClient.getPods(TEST_NAMESPACE);
     const found = current.find((p) => p.metadata?.name === POD_NAME);
@@ -46,25 +50,14 @@ test.describe('Persistent Terminal Sessions (Detach to Cloud Shell)', { tag: ['@
   let webTerminal: WebTerminalPage;
 
   test.beforeAll(async ({ k8sClient }) => {
+    test.setTimeout(300_000);
     await k8sClient.createNamespace(TEST_NAMESPACE);
+    await k8sClient.waitForNamespaceReady(TEST_NAMESPACE);
     await ensureTestPod(k8sClient);
   });
 
   test.beforeEach(async ({ page }) => {
     webTerminal = new WebTerminalPage(page);
-  });
-
-  test.afterAll(async ({ k8sClient }) => {
-    try {
-      await k8sClient.deletePod(POD_NAME, TEST_NAMESPACE);
-    } catch {
-      // Ignore cleanup errors
-    }
-    try {
-      await k8sClient.deleteNamespace(TEST_NAMESPACE);
-    } catch {
-      // Ignore cleanup errors
-    }
   });
 
   test('Detach pod terminal to Cloud Shell drawer', async () => {
