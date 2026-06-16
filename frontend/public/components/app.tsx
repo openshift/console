@@ -263,6 +263,7 @@ const App: FC = () => {
               id="content"
               // Need to pass mainTabIndex=null to enable keyboard scrolling as default tabIndex is set to -1 by patternfly
               mainTabIndex={null}
+              onPageResize={() => {}}
               masthead={
                 <Masthead
                   isNavOpen={isNavOpen}
