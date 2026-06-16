@@ -173,6 +173,14 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
       const details = new DetailsPage(page);
       const namespaceDropdown = page.getByTestId('namespace-bar-dropdown');
 
+      // warmupSPA (beforeEach) navigates to "/" which resolves the last
+      // namespace from user preferences — possibly a project set by a prior
+      // serial test — and writes it to sessionStorage. The RBAC breadcrumb
+      // reads sessionStorage directly (getLastNamespace) to build its URL,
+      // but navigating to an all-namespaces URL doesn't overwrite
+      // sessionStorage because Redux already starts with ALL_NAMESPACES_KEY.
+      await page.evaluate(() => sessionStorage.setItem('bridge/last-namespace-name', '#ALL_NS#'));
+
       await page.goto(`/k8s/all-namespaces/${resource}`);
       await listPage.selectAllProjects();
       await expect(namespaceDropdown).toContainText('All Projects');
