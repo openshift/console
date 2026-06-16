@@ -23,14 +23,8 @@ async function ensureTestPod(k8sClient: import('../../clients/kubernetes-client'
       containers: [
         {
           name: 'main',
-          image: 'registry.access.redhat.com/ubi9/ubi-minimal:9.4',
+          image: 'image-registry.openshift-image-registry.svc:5000/openshift/cli:latest',
           command: ['sleep', '3600'],
-          securityContext: {
-            allowPrivilegeEscalation: false,
-            runAsNonRoot: true,
-            capabilities: { drop: ['ALL'] },
-            seccompProfile: { type: 'RuntimeDefault' },
-          },
         },
       ],
     },
