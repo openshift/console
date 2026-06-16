@@ -146,8 +146,8 @@ describe('MultiTabTerminal', () => {
       mockUseDetachedSessions.mockReturnValue(detachedSessions);
       renderWithProviders(<MultiTabbedTerminal />);
 
-      expect(screen.getByText('pod1/c1')).toBeTruthy();
-      expect(screen.getByText('pod2/c2')).toBeTruthy();
+      expect(screen.getByText('my-pod/main')).toBeTruthy();
+      expect(screen.getByText('other-pod/sidecar')).toBeTruthy();
     });
 
     it('should include detached sessions in total tab count', () => {

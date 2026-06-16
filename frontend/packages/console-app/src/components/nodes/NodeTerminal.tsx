@@ -271,9 +271,15 @@ const NodeTerminal: FC<NodeTerminalProps> = ({ obj: node }) => {
     };
   }, [nodeName, isWindows]);
 
-  return errorMessage ? (
-    <NodeTerminalError error={errorMessage} />
-  ) : (
+  if (errorMessage) {
+    return <NodeTerminalError error={errorMessage} />;
+  }
+
+  if (!podName) {
+    return <LoadingBox />;
+  }
+
+  return (
     <NodeTerminalInner
       pod={pod}
       loaded={loaded}
