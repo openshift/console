@@ -33,53 +33,54 @@
 31.  [console.flag](#consoleflag)
 32.  [console.flag/hookProvider](#consoleflaghookProvider)
 33.  [console.flag/model](#consoleflagmodel)
-34.  [console.global-config](#consoleglobal-config)
-35.  [console.model-metadata](#consolemodel-metadata)
-36.  [console.navigation/href](#consolenavigationhref)
-37.  [console.navigation/resource-cluster](#consolenavigationresource-cluster)
-38.  [console.navigation/resource-ns](#consolenavigationresource-ns)
-39.  [console.navigation/section](#consolenavigationsection)
-40.  [console.navigation/separator](#consolenavigationseparator)
-41.  [console.node/status](#consolenodestatus)
-42.  [console.node/sub-nav-tab](#consolenodesub-nav-tab)
-43.  [console.page/resource/details](#consolepageresourcedetails)
-44.  [console.page/resource/list](#consolepageresourcelist)
-45.  [console.page/route](#consolepageroute)
-46.  [console.page/route/standalone](#consolepageroutestandalone)
-47.  [console.perspective](#consoleperspective)
-48.  [console.project-overview/inventory-item](#consoleproject-overviewinventory-item)
-49.  [console.project-overview/utilization-item](#consoleproject-overviewutilization-item)
-50.  [console.pvc/alert](#consolepvcalert)
-51.  [console.pvc/create-prop](#consolepvccreate-prop)
-52.  [console.pvc/delete](#consolepvcdelete)
-53.  [console.pvc/status](#consolepvcstatus)
-54.  [console.redux-reducer](#consoleredux-reducer)
-55.  [console.resource/create](#consoleresourcecreate)
-56.  [console.resource/details-item](#consoleresourcedetails-item)
-57.  [console.storage-class/provisioner](#consolestorage-classprovisioner)
-58.  [console.storage-provider](#consolestorage-provider)
-59.  [console.tab](#consoletab)
-60.  [console.tab/horizontalNav](#consoletabhorizontalNav)
-61.  [console.telemetry/listener](#consoletelemetrylistener)
-62.  [console.topology/adapter/build](#consoletopologyadapterbuild)
-63.  [console.topology/adapter/network](#consoletopologyadapternetwork)
-64.  [console.topology/adapter/pod](#consoletopologyadapterpod)
-65.  [console.topology/component/factory](#consoletopologycomponentfactory)
-66.  [console.topology/create/connector](#consoletopologycreateconnector)
-67.  [console.topology/data/factory](#consoletopologydatafactory)
-68.  [console.topology/decorator/provider](#consoletopologydecoratorprovider)
-69.  [console.topology/details/resource-alert](#consoletopologydetailsresource-alert)
-70.  [console.topology/details/resource-link](#consoletopologydetailsresource-link)
-71.  [console.topology/details/tab](#consoletopologydetailstab)
-72.  [console.topology/details/tab-section](#consoletopologydetailstab-section)
-73.  [console.topology/display/filters](#consoletopologydisplayfilters)
-74.  [console.topology/relationship/provider](#consoletopologyrelationshipprovider)
-75.  [console.user-preference/group](#consoleuser-preferencegroup)
-76.  [console.user-preference/item](#consoleuser-preferenceitem)
-77.  [console.yaml-template](#consoleyaml-template)
-78.  [dev-console.add/action](#dev-consoleaddaction)
-79.  [dev-console.add/action-group](#dev-consoleaddaction-group)
-80.  [dev-console.import/environment](#dev-consoleimportenvironment)
+34.  [console.force-perspective](#consoleforce-perspective)
+35.  [console.global-config](#consoleglobal-config)
+36.  [console.model-metadata](#consolemodel-metadata)
+37.  [console.navigation/href](#consolenavigationhref)
+38.  [console.navigation/resource-cluster](#consolenavigationresource-cluster)
+39.  [console.navigation/resource-ns](#consolenavigationresource-ns)
+40.  [console.navigation/section](#consolenavigationsection)
+41.  [console.navigation/separator](#consolenavigationseparator)
+42.  [console.node/status](#consolenodestatus)
+43.  [console.node/sub-nav-tab](#consolenodesub-nav-tab)
+44.  [console.page/resource/details](#consolepageresourcedetails)
+45.  [console.page/resource/list](#consolepageresourcelist)
+46.  [console.page/route](#consolepageroute)
+47.  [console.page/route/standalone](#consolepageroutestandalone)
+48.  [console.perspective](#consoleperspective)
+49.  [console.project-overview/inventory-item](#consoleproject-overviewinventory-item)
+50.  [console.project-overview/utilization-item](#consoleproject-overviewutilization-item)
+51.  [console.pvc/alert](#consolepvcalert)
+52.  [console.pvc/create-prop](#consolepvccreate-prop)
+53.  [console.pvc/delete](#consolepvcdelete)
+54.  [console.pvc/status](#consolepvcstatus)
+55.  [console.redux-reducer](#consoleredux-reducer)
+56.  [console.resource/create](#consoleresourcecreate)
+57.  [console.resource/details-item](#consoleresourcedetails-item)
+58.  [console.storage-class/provisioner](#consolestorage-classprovisioner)
+59.  [console.storage-provider](#consolestorage-provider)
+60.  [console.tab](#consoletab)
+61.  [console.tab/horizontalNav](#consoletabhorizontalNav)
+62.  [console.telemetry/listener](#consoletelemetrylistener)
+63.  [console.topology/adapter/build](#consoletopologyadapterbuild)
+64.  [console.topology/adapter/network](#consoletopologyadapternetwork)
+65.  [console.topology/adapter/pod](#consoletopologyadapterpod)
+66.  [console.topology/component/factory](#consoletopologycomponentfactory)
+67.  [console.topology/create/connector](#consoletopologycreateconnector)
+68.  [console.topology/data/factory](#consoletopologydatafactory)
+69.  [console.topology/decorator/provider](#consoletopologydecoratorprovider)
+70.  [console.topology/details/resource-alert](#consoletopologydetailsresource-alert)
+71.  [console.topology/details/resource-link](#consoletopologydetailsresource-link)
+72.  [console.topology/details/tab](#consoletopologydetailstab)
+73.  [console.topology/details/tab-section](#consoletopologydetailstab-section)
+74.  [console.topology/display/filters](#consoletopologydisplayfilters)
+75.  [console.topology/relationship/provider](#consoletopologyrelationshipprovider)
+76.  [console.user-preference/group](#consoleuser-preferencegroup)
+77.  [console.user-preference/item](#consoleuser-preferenceitem)
+78.  [console.yaml-template](#consoleyaml-template)
+79.  [dev-console.add/action](#dev-consoleaddaction)
+80.  [dev-console.add/action-group](#dev-consoleaddaction-group)
+81.  [dev-console.import/environment](#dev-consoleimportenvironment)
 
 ---
 
@@ -624,6 +625,21 @@ Adds new Console feature flag driven by the presence of a CRD on the cluster.
 | ---- | ---------- | -------- | ----------- |
 | `flag` | `string` | no | The name of the flag to set once the CRD is detected. |
 | `model` | `ExtensionK8sModel` | no | The model which refers to a `CustomResourceDefinition`. |
+
+---
+
+## `console.force-perspective`
+
+### Summary
+
+Forces a single perspective to be active and hides the perspective switcher dropdown.
+
+### Properties
+
+| Name | Value Type | Optional | Description |
+| ---- | ---------- | -------- | ----------- |
+| `perspectiveId` | `string` | no | The perspective identifier to force. |
+| `useForcePerspective` | `CodeRef<() => [boolean, boolean]>` | no | Hook that returns `[shouldForce, loading]`. |
 
 ---
 

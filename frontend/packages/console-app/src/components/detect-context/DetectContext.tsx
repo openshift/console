@@ -1,5 +1,5 @@
 import type { FC, Provider as ProviderComponent, ReactNode } from 'react';
-import { createContext, Suspense, useContext, useEffect } from 'react';
+import { createContext, Suspense, useContext, useEffect, useMemo } from 'react';
 import type { LoadedAndResolvedExtension } from '@openshift/dynamic-plugin-sdk';
 import {
   Button,
@@ -24,6 +24,8 @@ import {
 } from '@console/dynamic-plugin-sdk';
 import { applyReduxExtensions } from '@console/internal/redux';
 import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
+import { ForcedPerspectiveContext } from '@console/shared/src/hooks/forcedPerspectiveContext';
+import { useForcedPerspective } from '@console/shared/src/hooks/useForcedPerspective';
 import { usePerspectives } from '@console/shared/src/hooks/usePerspectives';
 import { useLanguage } from '../user-preferences/language/useLanguage';
 import { usePreferredLanguage } from '../user-preferences/language/usePreferredLanguage';
@@ -148,11 +150,12 @@ export const ContextProviderExtensionWrapper: FC<{ children: ReactNode }> = ({ c
  * NamespaceContext, and ContextProviderExtensionsContext.
  */
 export const DetectContext: FC<{ children: ReactNode }> = ({ children }) => {
+  const forcedPerspective = useForcedPerspective();
   const [
     activePerspective,
     setActivePerspective,
     perspectiveLoaded,
-  ] = useValuesForPerspectiveContext();
+  ] = useValuesForPerspectiveContext(forcedPerspective);
   const { namespace, setNamespace, loaded: namespaceLoaded } = useValuesForNamespaceContext();
 
   const [preferredLanguage, , preferredLanguageLoaded] = usePreferredLanguage();
@@ -170,10 +173,22 @@ export const DetectContext: FC<{ children: ReactNode }> = ({ children }) => {
   const location = useLocation();
 
   useEffect(() => {
+    if (forcedPerspective.perspectiveId) {
+      if (forcedPerspective.perspectiveId !== activePerspective) {
+        setActivePerspective(forcedPerspective.perspectiveId, createPath(location));
+      }
+      return;
+    }
     if (perspectiveParam && perspectiveParam !== activePerspective) {
       setActivePerspective(perspectiveParam, createPath(location));
     }
-  }, [perspectiveParam, activePerspective, setActivePerspective, location]);
+  }, [
+    forcedPerspective.perspectiveId,
+    perspectiveParam,
+    activePerspective,
+    setActivePerspective,
+    location,
+  ]);
 
   useEffect(() => {
     if (reducersResolved) {
@@ -181,7 +196,8 @@ export const DetectContext: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, [reducersResolved, reduxReducerExtensions]);
 
-  const needsPerspectiveDetection = perspectiveLoaded && !activePerspective;
+  const needsPerspectiveDetection =
+    perspectiveLoaded && !activePerspective && !forcedPerspective.perspectiveId;
   const ready =
     perspectiveLoaded &&
     !!activePerspective &&
@@ -189,6 +205,15 @@ export const DetectContext: FC<{ children: ReactNode }> = ({ children }) => {
     reducersResolved &&
     providersResolved &&
     preferredLanguageLoaded;
+
+  const perspectiveContextValue = useMemo(() => ({ activePerspective, setActivePerspective }), [
+    activePerspective,
+    setActivePerspective,
+  ]);
+  const namespaceContextValue = useMemo(() => ({ namespace, setNamespace }), [
+    namespace,
+    setNamespace,
+  ]);
 
   if (!ready) {
     const pending: string[] = [];
@@ -210,12 +235,14 @@ export const DetectContext: FC<{ children: ReactNode }> = ({ children }) => {
   }
 
   return (
-    <PerspectiveContext.Provider value={{ activePerspective, setActivePerspective }}>
-      <NamespaceContext.Provider value={{ namespace, setNamespace }}>
-        <ContextProviderExtensionsContext.Provider value={contextProviderExtensions}>
-          {children}
-        </ContextProviderExtensionsContext.Provider>
-      </NamespaceContext.Provider>
-    </PerspectiveContext.Provider>
+    <ForcedPerspectiveContext.Provider value={forcedPerspective}>
+      <PerspectiveContext.Provider value={perspectiveContextValue}>
+        <NamespaceContext.Provider value={namespaceContextValue}>
+          <ContextProviderExtensionsContext.Provider value={contextProviderExtensions}>
+            {children}
+          </ContextProviderExtensionsContext.Provider>
+        </NamespaceContext.Provider>
+      </PerspectiveContext.Provider>
+    </ForcedPerspectiveContext.Provider>
   );
 };

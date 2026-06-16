@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useCallback, useState, useEffect, useMemo } from 'react';
+import { memo, useCallback, useMemo } from 'react';
 import { NavList } from '@patternfly/react-core';
 import type { DragDropSortProps, DraggableObject } from '@patternfly/react-drag-drop';
 import { DragDropSort } from '@patternfly/react-drag-drop';
@@ -18,17 +18,14 @@ import { getSortedNavExtensions, isTopLevelNavItem } from './utils';
 
 import './PerspectiveNav.scss';
 
-const PerspectiveNav: FC<{}> = () => {
+const PerspectiveNav: FC = () => {
   const [activePerspective] = useActivePerspective();
   const allNavExtensions = useNavExtensionsForPerspective(activePerspective);
   const [pinnedResources, setPinnedResources, pinnedResourcesLoaded] = usePinnedResources();
-  const [validPinnedResources, setValidPinnedResources] = useState<string[]>([]);
+  const validPinnedResources = useMemo(() => pinnedResources.filter((res) => !!modelFor(res)), [
+    pinnedResources,
+  ]);
   const { t } = useTranslation('console-app');
-
-  useEffect(() => {
-    const validResources = pinnedResources.filter((res) => !!modelFor(res));
-    setValidPinnedResources(validResources);
-  }, [setValidPinnedResources, pinnedResources]);
 
   const orderedNavExtensions = useMemo(() => {
     const topLevelNavExtensions = allNavExtensions.filter(isTopLevelNavItem);
@@ -98,4 +95,4 @@ const PerspectiveNav: FC<{}> = () => {
   );
 };
 
-export default PerspectiveNav;
+export default memo(PerspectiveNav);

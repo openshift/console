@@ -6,17 +6,16 @@ import {
   usePerspectives,
 } from '@console/shared/src/hooks/usePerspectives';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
+import type { ForcedPerspectiveResult } from '@console/shared/src/utils/forcedPerspective';
 import { ACM_PERSPECTIVE_ID } from '../../consts';
 import { usePreferredPerspective } from '../user-preferences/perspective/usePreferredPerspective';
 import { useLastPerspective } from './useLastPerspective';
 
 type SetActivePerspective = ReturnType<UseActivePerspective>[1];
 
-export const useValuesForPerspectiveContext = (): [
-  PerspectiveType,
-  SetActivePerspective,
-  boolean,
-] => {
+export const useValuesForPerspectiveContext = (
+  forcedPerspective: ForcedPerspectiveResult,
+): [PerspectiveType, SetActivePerspective, boolean] => {
   const navigate = useNavigate();
   const fireTelemetryEvent = useTelemetry();
   const perspectiveExtensions = usePerspectives();
@@ -32,7 +31,13 @@ export const useValuesForPerspectiveContext = (): [
       ? ACM_PERSPECTIVE_ID
       : existingPerspective || '';
   const isValidPerspective =
-    loaded && perspectiveExtensions.some((p) => p.properties.id === perspective);
+    (loaded && perspectiveExtensions.some((p) => p.properties.id === perspective)) ||
+    !!forcedPerspective.perspectiveId;
+  const resolvedPerspective = forcedPerspective.perspectiveId
+    ? forcedPerspective.perspectiveId
+    : isValidPerspective
+    ? perspective
+    : '';
 
   const setPerspective = useCallback<SetActivePerspective>(
     (newPerspective, next) => {
@@ -45,5 +50,5 @@ export const useValuesForPerspectiveContext = (): [
     [setLastPerspective, setActivePerspective, navigate, fireTelemetryEvent],
   );
 
-  return [isValidPerspective ? perspective : '', setPerspective, loaded];
+  return [resolvedPerspective, setPerspective, loaded];
 };

@@ -1,12 +1,18 @@
 import type { FC, MouseEvent, Ref } from 'react';
 import { useMemo, useState, useCallback } from 'react';
 import type { MenuToggleElement } from '@patternfly/react-core';
-import { MenuToggle, Select, SelectList, SelectOption, Title } from '@patternfly/react-core';
-import { RhUiGearGroupFillIcon } from '@patternfly/react-icons';
-import { useTranslation } from 'react-i18next';
+import {
+  MenuToggle,
+  Select,
+  SelectList,
+  SelectOption,
+  Title,
+  Skeleton,
+} from '@patternfly/react-core';
 import type { Perspective } from '@console/dynamic-plugin-sdk';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { AsyncComponent } from '@console/internal/components/utils/async';
+import { useForcedPerspectiveContext } from '@console/shared/src/hooks/forcedPerspectiveContext';
 import { usePerspectives } from '@console/shared/src/hooks/usePerspectives';
 
 type NavHeaderProps = {
@@ -22,6 +28,18 @@ type PerspectiveDropdownItemProps = {
 
 const IconLoadingComponent: FC = () => <>&emsp;</>;
 
+const PerspectiveIcon: FC<{
+  icon?: Perspective['properties']['icon'];
+}> = ({ icon }) =>
+  icon ? (
+    <AsyncComponent
+      loader={() => icon().then((m) => m.default)}
+      LoadingComponent={IconLoadingComponent}
+    />
+  ) : (
+    <Skeleton />
+  );
+
 const PerspectiveDropdownItem: FC<PerspectiveDropdownItemProps> = ({ perspective, onClick }) => {
   return (
     <SelectOption
@@ -31,12 +49,7 @@ const PerspectiveDropdownItem: FC<PerspectiveDropdownItemProps> = ({ perspective
         e.preventDefault();
         onClick(perspective.properties.id);
       }}
-      icon={
-        <AsyncComponent
-          loader={() => perspective.properties.icon().then((m) => m.default)}
-          LoadingComponent={IconLoadingComponent}
-        />
-      }
+      icon={<PerspectiveIcon icon={perspective.properties.icon} />}
     >
       <Title headingLevel="h2" size="md">
         {perspective.properties.name}
@@ -49,7 +62,13 @@ const NavHeader: FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
   const [activePerspective, setActivePerspective] = useActivePerspective();
   const [isPerspectiveDropdownOpen, setPerspectiveDropdownOpen] = useState(false);
   const perspectiveExtensions = usePerspectives();
-  const { t } = useTranslation('console-app');
+  const forcedPerspective = useForcedPerspectiveContext();
+  const displayedPerspective = useMemo(() => {
+    const targetId = forcedPerspective.perspectiveId || activePerspective;
+    return (
+      perspectiveExtensions.find((p) => p?.properties?.id === targetId) ?? perspectiveExtensions[0]
+    );
+  }, [forcedPerspective.perspectiveId, activePerspective, perspectiveExtensions]);
 
   const togglePerspectiveOpen = useCallback(() => {
     setPerspectiveDropdownOpen((isOpen) => !isOpen);
@@ -80,7 +99,7 @@ const NavHeader: FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
     [activePerspective, perspectiveExtensions],
   );
 
-  return perspectiveDropdownItems.length > 1 ? (
+  return perspectiveDropdownItems.length > 1 && !forcedPerspective.perspectiveId ? (
     <div
       className="oc-nav-header"
       data-tour-id="tour-perspective-dropdown"
@@ -97,14 +116,7 @@ const NavHeader: FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
             isExpanded={isPerspectiveDropdownOpen}
             ref={toggleRef}
             onClick={() => togglePerspectiveOpen()}
-            icon={
-              icon && (
-                <AsyncComponent
-                  loader={() => icon().then((m) => m.default)}
-                  LoadingComponent={IconLoadingComponent}
-                />
-              )
-            }
+            icon={<PerspectiveIcon icon={icon ?? undefined} />}
           >
             {name && (
               <Title headingLevel="h2" size="md">
@@ -121,9 +133,17 @@ const NavHeader: FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
       </Select>
     </div>
   ) : (
-    <div data-test-id="perspective-switcher-toggle" id="core-platform-perspective">
+    <div
+      data-test-id="perspective-switcher-toggle"
+      id={
+        forcedPerspective.perspectiveId ||
+        displayedPerspective?.properties?.id ||
+        'core-platform-perspective'
+      }
+    >
       <Title headingLevel="h2" size="md">
-        <RhUiGearGroupFillIcon /> {t('Core platform')}
+        <PerspectiveIcon icon={displayedPerspective?.properties?.icon} />{' '}
+        {displayedPerspective?.properties?.name ?? <Skeleton />}
       </Title>
     </div>
   );

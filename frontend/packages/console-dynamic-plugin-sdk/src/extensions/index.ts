@@ -14,6 +14,7 @@ export * from './dashboard-types';
 export * from './dashboards';
 export * from './details-item';
 export * from './feature-flags';
+export * from './force-perspective';
 export * from './file-upload';
 export * from './horizontal-nav-tabs';
 export * from './import-environments';

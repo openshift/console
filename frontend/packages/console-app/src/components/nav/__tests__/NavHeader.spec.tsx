@@ -8,11 +8,16 @@ jest.mock('@console/internal/components/utils/async', () => ({
   AsyncComponent: () => null,
 }));
 
+jest.mock('@console/shared/src/hooks/forcedPerspectiveContext', () => ({
+  useForcedPerspectiveContext: jest.fn(() => ({ loaded: true, perspectiveId: null })),
+}));
+
 describe('NavHeader', () => {
   const mockOnPerspectiveSelected = jest.fn();
   let mockSetActivePerspective: jest.Mock;
 
   beforeEach(() => {
+    window.localStorage.clear();
     jest.clearAllMocks();
     mockSetActivePerspective = jest.fn();
   });

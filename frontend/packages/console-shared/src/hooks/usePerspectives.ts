@@ -8,6 +8,7 @@ import { isPerspective, checkAccess } from '@console/dynamic-plugin-sdk';
 import type { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import { USER_PREFERENCE_PREFIX } from '../constants/common';
+import { getForcedPerspectiveFromStorage } from '../utils/forcedPerspective';
 
 const PERSPECTIVE_VISITED_FEATURE_KEY = 'perspective.visited';
 
@@ -157,16 +158,28 @@ export const usePerspectives = (): LoadedExtension<PerspectiveExtension>[] => {
     }
   }, [perspectiveExtensions, handleResults]);
   const perspectives = useMemo(() => {
+    let availablePerspectives: LoadedExtension<PerspectiveExtension>[];
     if (!window.SERVER_FLAGS.perspectives) {
-      return perspectiveExtensions;
+      availablePerspectives = perspectiveExtensions;
+    } else {
+      const filteredExtensions = perspectiveExtensions.filter((e) => results[e.properties.id]);
+
+      availablePerspectives =
+        filteredExtensions.length === 0 &&
+        Object.keys(results).length === perspectiveExtensions.length
+          ? perspectiveExtensions.filter((p) => p.properties.id === 'admin')
+          : filteredExtensions;
     }
 
-    const filteredExtensions = perspectiveExtensions.filter((e) => results[e.properties.id]);
+    const forcedPerspectiveId = getForcedPerspectiveFromStorage()?.perspectiveId;
+    if (forcedPerspectiveId) {
+      const forcedOnly = availablePerspectives.filter(
+        (p) => p.properties.id === forcedPerspectiveId,
+      );
+      return forcedOnly.length > 0 ? forcedOnly : availablePerspectives;
+    }
 
-    return filteredExtensions.length === 0 &&
-      Object.keys(results).length === perspectiveExtensions.length
-      ? perspectiveExtensions.filter((p) => p.properties.id === 'admin')
-      : filteredExtensions;
+    return availablePerspectives;
   }, [perspectiveExtensions, results]);
   return perspectives;
 };
