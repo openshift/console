@@ -135,6 +135,7 @@ const KebabMenuItems: FC<KebabMenuItemsProps> = ({ options, onClick, focusItem }
         isKebabSubMenu(o) ? (
           <ContextSubMenuItem
             data-test-action={o.labelKey || o.label}
+            data-test={o.labelKey || o.label}
             label={o.labelKey ? t(o.labelKey) : o.label}
           >
             <KebabMenuItems options={o.children} onClick={onClick} focusItem={o.children[0]} />
