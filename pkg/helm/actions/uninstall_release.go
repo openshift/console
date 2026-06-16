@@ -8,7 +8,7 @@ import (
 	"github.com/openshift/console/pkg/helm/metrics"
 	"helm.sh/helm/v4/pkg/action"
 	releasecommon "helm.sh/helm/v4/pkg/release"
-	release "helm.sh/helm/v4/pkg/release/v1"
+	releaseV1 "helm.sh/helm/v4/pkg/release/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	corev1client "k8s.io/client-go/kubernetes/typed/core/v1"
 )
@@ -23,9 +23,11 @@ func UninstallRelease(name string, conf *action.Configuration) (*releasecommon.U
 		return nil, err
 	}
 
-	ch := resp.Release.(*release.Release).Chart
-	if ch != nil && ch.Metadata != nil && ch.Metadata.Name != "" && ch.Metadata.Version != "" {
-		metrics.HandleconsoleHelmUninstallsTotal(ch.Metadata.Name, ch.Metadata.Version)
+	if rel, ok := resp.Release.(*releaseV1.Release); ok && rel != nil {
+		ch := rel.Chart
+		if ch != nil && ch.Metadata != nil && ch.Metadata.Name != "" && ch.Metadata.Version != "" {
+			metrics.HandleconsoleHelmUninstallsTotal(ch.Metadata.Name, ch.Metadata.Version)
+		}
 	}
 
 	return resp, nil
@@ -38,10 +40,11 @@ func UninstallReleaseAsync(name string, ns string, version string, conf *action.
 		if err != nil || resp == nil {
 			return
 		}
-
-		ch := resp.Release.(*release.Release).Chart
-		if ch != nil && ch.Metadata != nil && ch.Metadata.Name != "" && ch.Metadata.Version != "" {
-			metrics.HandleconsoleHelmUninstallsTotal(ch.Metadata.Name, ch.Metadata.Version)
+		if rel, ok := resp.Release.(*releaseV1.Release); ok && rel != nil {
+			ch := rel.Chart
+			if ch != nil && ch.Metadata != nil && ch.Metadata.Name != "" && ch.Metadata.Version != "" {
+				metrics.HandleconsoleHelmUninstallsTotal(ch.Metadata.Name, ch.Metadata.Version)
+			}
 		}
 	}()
 	secretName := fmt.Sprintf("sh.helm.release.v1.%v.v%v", name, version)

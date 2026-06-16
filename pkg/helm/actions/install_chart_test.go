@@ -12,11 +12,12 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"helm.sh/helm/v4/pkg/action"
+	"helm.sh/helm/v4/pkg/chart/common"
 	chart "helm.sh/helm/v4/pkg/chart/v2"
-	chartutil "helm.sh/helm/v4/pkg/chart/v2/util"
 	kubefake "helm.sh/helm/v4/pkg/kube/fake"
 	"helm.sh/helm/v4/pkg/registry"
-	release "helm.sh/helm/v4/pkg/release/v1"
+	rcommon "helm.sh/helm/v4/pkg/release/common"
+	releaseV1 "helm.sh/helm/v4/pkg/release/v1"
 	"helm.sh/helm/v4/pkg/storage"
 	"helm.sh/helm/v4/pkg/storage/driver"
 	v1 "k8s.io/api/core/v1"
@@ -107,8 +108,7 @@ func TestInstallChart(t *testing.T) {
 				RESTClientGetter: FakeConfig{},
 				Releases:         store,
 				KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
-				Capabilities:     chartutil.DefaultCapabilities,
-				Log:              func(format string, v ...interface{}) {},
+				Capabilities:     common.DefaultCapabilities,
 			}
 			client := K8sDynamicClientFromCRs(tt.helmCRS...)
 			clientInterface := k8sfake.NewSimpleClientset()
@@ -118,7 +118,7 @@ func TestInstallChart(t *testing.T) {
 				require.NoError(t, err)
 				require.Equal(t, "test", rel.Name)
 				require.Equal(t, "test-namespace", rel.Namespace)
-				require.Equal(t, release.StatusDeployed, rel.Info.Status)
+				require.Equal(t, rcommon.StatusDeployed, rel.Info.Status)
 				require.Equal(t, tt.chartName, rel.Chart.Metadata.Name)
 				require.Equal(t, tt.chartVersion, rel.Chart.Metadata.Version)
 				require.Equal(t, tt.chartPath, rel.Chart.Metadata.Annotations["chart_url"])
@@ -186,8 +186,7 @@ func TestInstallChartWithTlsData(t *testing.T) {
 				RESTClientGetter: FakeConfig{},
 				Releases:         store,
 				KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
-				Capabilities:     chartutil.DefaultCapabilities,
-				Log:              func(format string, v ...interface{}) {},
+				Capabilities:     common.DefaultCapabilities,
 			}
 			// create a namespace if it is not same as openshift-config
 			if tt.createNamespace && tt.namespace != configNamespace {
@@ -283,8 +282,7 @@ func TestInstallChartBasicAuth(t *testing.T) {
 				RESTClientGetter: FakeConfig{},
 				Releases:         store,
 				KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
-				Capabilities:     chartutil.DefaultCapabilities,
-				Log:              func(format string, v ...interface{}) {},
+				Capabilities:     common.DefaultCapabilities,
 			}
 			// create a namespace if it is not same as openshift-config
 			if tt.createNamespace && tt.namespace != configNamespace {
@@ -370,8 +368,7 @@ func TestInstallChartAsync(t *testing.T) {
 				RESTClientGetter: FakeConfig{},
 				Releases:         store,
 				KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
-				Capabilities:     chartutil.DefaultCapabilities,
-				Log:              func(format string, v ...interface{}) {},
+				Capabilities:     common.DefaultCapabilities,
 			}
 			objs := []runtime.Object{}
 			client := K8sDynamicClientFromCRs(tt.helmCRS...)
@@ -390,10 +387,10 @@ func TestInstallChartAsync(t *testing.T) {
 			}()
 			if tt.requireError == false {
 				secretsDriver := driver.NewSecrets(coreClient.Secrets(tt.namespace))
-				r := release.Release{
+				r := releaseV1.Release{
 					Name:      tt.releaseName,
 					Namespace: tt.namespace,
-					Info: &release.Info{
+					Info: &releaseV1.Info{
 						FirstDeployed: helmTime.Time{},
 						Status:        "pending-install",
 					},
@@ -555,8 +552,7 @@ func TestInstallChartFromURL(t *testing.T) {
 				RESTClientGetter: FakeConfig{},
 				Releases:         store,
 				KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
-				Capabilities:     chartutil.DefaultCapabilities,
-				Log:              func(format string, v ...interface{}) {},
+				Capabilities:     common.DefaultCapabilities,
 			}
 			registryClient, err := GetOCIRegistry(tt.skipTLSVerify, tt.plainHTTP, nil)
 			require.NoError(t, err)
@@ -600,10 +596,10 @@ func TestInstallChartFromURL(t *testing.T) {
 			go func() {
 				time.Sleep(2 * time.Second)
 				secretsDriver := driver.NewSecrets(coreClient.Secrets("test-namespace"))
-				r := release.Release{
+				r := releaseV1.Release{
 					Name:      tt.releaseName,
 					Namespace: "test-namespace",
-					Info: &release.Info{
+					Info: &releaseV1.Info{
 						FirstDeployed: helmTime.Time{},
 						Status:        "pending-install",
 					},

@@ -7,7 +7,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"helm.sh/helm/v4/pkg/action"
-	chartutil "helm.sh/helm/v4/pkg/chart/v2/util"
+	"helm.sh/helm/v4/pkg/chart/common"
 	kubefake "helm.sh/helm/v4/pkg/kube/fake"
 	"helm.sh/helm/v4/pkg/storage"
 	"helm.sh/helm/v4/pkg/storage/driver"
@@ -29,8 +29,7 @@ func TestVerifyApi(t *testing.T) {
 		RESTClientGetter: FakeConfig{},
 		Releases:         store,
 		KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
-		Capabilities:     chartutil.DefaultCapabilities,
-		Log:              func(format string, v ...interface{}) {},
+		Capabilities:     common.DefaultCapabilities,
 	}
 	values := map[string]interface{}{
 		"provider": "developer-console",
@@ -46,8 +45,7 @@ func TestVerifyApiChartUrlNotPresent(t *testing.T) {
 		RESTClientGetter: FakeConfig{},
 		Releases:         store,
 		KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
-		Capabilities:     chartutil.DefaultCapabilities,
-		Log:              func(format string, v ...interface{}) {},
+		Capabilities:     common.DefaultCapabilities,
 	}
 	values := map[string]interface{}{
 		"provider": "developer-console",

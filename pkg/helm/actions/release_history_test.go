@@ -6,9 +6,10 @@ import (
 	"testing"
 
 	"helm.sh/helm/v4/pkg/action"
-	chartutil "helm.sh/helm/v4/pkg/chart/v2/util"
+	"helm.sh/helm/v4/pkg/chart/common"
 	kubefake "helm.sh/helm/v4/pkg/kube/fake"
-	release "helm.sh/helm/v4/pkg/release/v1"
+	rcommon "helm.sh/helm/v4/pkg/release/common"
+	releaseV1 "helm.sh/helm/v4/pkg/release/v1"
 	"helm.sh/helm/v4/pkg/storage"
 	"helm.sh/helm/v4/pkg/storage/driver"
 )
@@ -16,17 +17,17 @@ import (
 func TestGetReleaseHistory(t *testing.T) {
 	tests := []struct {
 		name     string
-		release  release.Release
+		release  releaseV1.Release
 		err      error
 		versions []int
 	}{
 		{
 			name: "existing release should return list of particular release history",
-			release: release.Release{
+			release: releaseV1.Release{
 				Version: 1,
 				Name:    "valid-release",
-				Info: &release.Info{
-					Status: release.StatusDeployed,
+				Info: &releaseV1.Info{
+					Status: rcommon.StatusDeployed,
 				},
 			},
 			err:      nil,
@@ -41,8 +42,7 @@ func TestGetReleaseHistory(t *testing.T) {
 			actionConfig := &action.Configuration{
 				Releases:     store,
 				KubeClient:   &kubefake.PrintingKubeClient{Out: io.Discard},
-				Capabilities: chartutil.DefaultCapabilities,
-				Log:          func(format string, v ...interface{}) {},
+				Capabilities: common.DefaultCapabilities,
 			}
 
 			err := store.Create(&tt.release)
@@ -50,10 +50,10 @@ func TestGetReleaseHistory(t *testing.T) {
 				t.Error(err)
 			}
 
-			tt.release.Version = 2
-			store.Create(&tt.release)
+		tt.release.Version = 2
+		store.Create(&tt.release)
 
-			resp, err := GetReleaseHistory(tt.release.Name, actionConfig)
+		resp, err := GetReleaseHistory(tt.release.Name, actionConfig)
 			if err != tt.err {
 				t.Error(err)
 			}
@@ -77,13 +77,13 @@ func TestGetReleaseHistory(t *testing.T) {
 func TestNonExistGetReleaseHistory(t *testing.T) {
 	tests := []struct {
 		name         string
-		release      release.Release
+		release      releaseV1.Release
 		err          error
 		noOfVersions int
 	}{
 		{
 			name: "non exist release history should throw an error",
-			release: release.Release{
+			release: releaseV1.Release{
 				Name: "invalid-release",
 			},
 			noOfVersions: 0,
@@ -97,8 +97,7 @@ func TestNonExistGetReleaseHistory(t *testing.T) {
 			actionConfig := &action.Configuration{
 				Releases:     store,
 				KubeClient:   &kubefake.PrintingKubeClient{Out: io.Discard},
-				Capabilities: chartutil.DefaultCapabilities,
-				Log:          func(format string, v ...interface{}) {},
+				Capabilities: common.DefaultCapabilities,
 			}
 
 			resp, err := GetReleaseHistory(tt.release.Name, actionConfig)

@@ -7,9 +7,10 @@ import (
 	"testing"
 
 	"helm.sh/helm/v4/pkg/action"
-	chartutil "helm.sh/helm/v4/pkg/chart/v2/util"
+	"helm.sh/helm/v4/pkg/chart/common"
 	kubefake "helm.sh/helm/v4/pkg/kube/fake"
-	release "helm.sh/helm/v4/pkg/release/v1"
+	rcommon "helm.sh/helm/v4/pkg/release/common"
+	releaseV1 "helm.sh/helm/v4/pkg/release/v1"
 	"helm.sh/helm/v4/pkg/storage"
 	"helm.sh/helm/v4/pkg/storage/driver"
 )
@@ -17,28 +18,28 @@ import (
 func TestRollbackRelease(t *testing.T) {
 	tests := []struct {
 		name       string
-		release    release.Release
+		release    releaseV1.Release
 		err        error
 		rollbackTo int
 	}{
 		{
 			name: "rolling back to existing previous release should rollback successfully",
-			release: release.Release{
+			release: releaseV1.Release{
 				Version: 1,
 				Name:    "valid-release",
-				Info: &release.Info{
-					Status: release.StatusDeployed,
+				Info: &releaseV1.Info{
+					Status: rcommon.StatusDeployed,
 				},
 			},
 			rollbackTo: 1,
 		},
 		{
 			name: "rolling back to invalid release no. should throw an error",
-			release: release.Release{
+			release: releaseV1.Release{
 				Version: 1,
 				Name:    "valid-release",
-				Info: &release.Info{
-					Status: release.StatusDeployed,
+				Info: &releaseV1.Info{
+					Status: rcommon.StatusDeployed,
 				},
 			},
 			err:        errors.New("Revision no. should be more than 0"),
@@ -53,8 +54,7 @@ func TestRollbackRelease(t *testing.T) {
 			actionConfig := &action.Configuration{
 				Releases:     store,
 				KubeClient:   &kubefake.PrintingKubeClient{Out: io.Discard},
-				Capabilities: chartutil.DefaultCapabilities,
-				Log:          func(format string, v ...interface{}) {},
+				Capabilities: common.DefaultCapabilities,
 			}
 
 			err := store.Create(&tt.release)
@@ -98,8 +98,7 @@ func TestRollbackNonExistRelease(t *testing.T) {
 			actionConfig := &action.Configuration{
 				Releases:     store,
 				KubeClient:   &kubefake.PrintingKubeClient{Out: io.Discard},
-				Capabilities: chartutil.DefaultCapabilities,
-				Log:          func(format string, v ...interface{}) {},
+				Capabilities: common.DefaultCapabilities,
 			}
 
 			_, err := RollbackRelease(tt.releaseName, tt.rollbackTo, actionConfig)

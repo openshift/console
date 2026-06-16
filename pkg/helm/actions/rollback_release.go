@@ -5,10 +5,10 @@ import (
 	"strings"
 
 	"helm.sh/helm/v4/pkg/action"
-	release "helm.sh/helm/v4/pkg/release/v1"
+	releaseV1 "helm.sh/helm/v4/pkg/release/v1"
 )
 
-func RollbackRelease(releaseName string, revision int, conf *action.Configuration) (*release.Release, error) {
+func RollbackRelease(releaseName string, revision int, conf *action.Configuration) (*releaseV1.Release, error) {
 	if revision <= 0 {
 		return nil, errors.New("Revision no. should be more than 0")
 	}

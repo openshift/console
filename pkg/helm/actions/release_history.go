@@ -4,10 +4,10 @@ import (
 	"fmt"
 
 	"helm.sh/helm/v4/pkg/action"
-	release "helm.sh/helm/v4/pkg/release/v1"
+	releaseV1 "helm.sh/helm/v4/pkg/release/v1"
 )
 
-func GetReleaseHistory(name string, conf *action.Configuration) ([]*release.Release, error) {
+func GetReleaseHistory(name string, conf *action.Configuration) ([]*releaseV1.Release, error) {
 	client := action.NewHistory(conf)
 
 	results, err := client.Run(name)
@@ -18,9 +18,9 @@ func GetReleaseHistory(name string, conf *action.Configuration) ([]*release.Rele
 		return nil, ErrReleaseNotFound
 	}
 
-	releases := make([]*release.Release, 0, len(results))
+	releases := make([]*releaseV1.Release, 0, len(results))
 	for _, r := range results {
-		rel, ok := r.(*release.Release)
+		rel, ok := r.(*releaseV1.Release)
 		if !ok {
 			return nil, fmt.Errorf("unexpected release type %T", r)
 		}

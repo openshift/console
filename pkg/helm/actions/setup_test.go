@@ -31,7 +31,7 @@ func helmVersionFromGoMod() string {
 		if err != nil {
 			continue
 		}
-		// Match line like " helm.sh/helm/v4 v4.1.1 " // indirect".
+		// Match a require line like "helm.sh/helm/v4 v4.1.4" or "helm.sh/helm/v4 v4.1.4 // indirect".
 		re := regexp.MustCompile(`(?m)^\s*` + regexp.QuoteMeta(helmModulePath) + `\s+(\S+)`)
 		if m := re.FindSubmatch(data); len(m) >= 2 {
 			return strings.TrimSpace(string(m[1]))

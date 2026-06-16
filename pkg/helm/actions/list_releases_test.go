@@ -5,10 +5,11 @@ import (
 	"testing"
 
 	"helm.sh/helm/v4/pkg/action"
+	"helm.sh/helm/v4/pkg/chart/common"
 	chart "helm.sh/helm/v4/pkg/chart/v2"
-	chartutil "helm.sh/helm/v4/pkg/chart/v2/util"
 	kubefake "helm.sh/helm/v4/pkg/kube/fake"
-	release "helm.sh/helm/v4/pkg/release/v1"
+	rcommon "helm.sh/helm/v4/pkg/release/common"
+	releaseV1 "helm.sh/helm/v4/pkg/release/v1"
 	"helm.sh/helm/v4/pkg/storage"
 	"helm.sh/helm/v4/pkg/storage/driver"
 	"time"
@@ -17,14 +18,14 @@ import (
 func TestListReleases(t *testing.T) {
 	tests := []struct {
 		name    string
-		release release.Release
+		release releaseV1.Release
 	}{
 		{
 			name: "list valid releases",
-			release: release.Release{
+			release: releaseV1.Release{
 				Name:      "test",
 				Namespace: "test-namespace",
-				Info: &release.Info{
+				Info: &releaseV1.Info{
 					FirstDeployed: time.Time{},
 					Status:        "deployed",
 				},
@@ -45,8 +46,7 @@ func TestListReleases(t *testing.T) {
 			actionConfig := &action.Configuration{
 				Releases:     store,
 				KubeClient:   &kubefake.PrintingKubeClient{Out: io.Discard},
-				Capabilities: chartutil.DefaultCapabilities,
-				Log:          func(format string, v ...interface{}) {},
+				Capabilities: common.DefaultCapabilities,
 			}
 			rels, err := ListReleases(actionConfig, true)
 			if err != nil {
@@ -61,7 +61,7 @@ func TestListReleases(t *testing.T) {
 			if rels[0].Namespace != "test-namespace" {
 				t.Error("Namespace isn't matching")
 			}
-			if rels[0].Info.Status != release.StatusDeployed {
+			if rels[0].Info.Status != rcommon.StatusDeployed {
 				t.Error("Chart status should be deployed")
 			}
 			if rels[0].Chart.Metadata.Name != "influxdb" {

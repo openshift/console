@@ -13,7 +13,7 @@ import (
 	helmchart "helm.sh/helm/v4/pkg/chart"
 	chart "helm.sh/helm/v4/pkg/chart/v2"
 	"helm.sh/helm/v4/pkg/chart/v2/loader"
-	release "helm.sh/helm/v4/pkg/release/v1"
+	releaseV1 "helm.sh/helm/v4/pkg/release/v1"
 	kv1 "k8s.io/api/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/dynamic"
@@ -31,7 +31,7 @@ func UpgradeRelease(
 	coreClient corev1client.CoreV1Interface,
 	fileCleanUp bool,
 	indexEntry string,
-) (*release.Release, error) {
+) (*releaseV1.Release, error) {
 	client := action.NewUpgrade(conf)
 	client.Namespace = releaseNamespace
 	var ch *chart.Chart
@@ -116,7 +116,7 @@ func UpgradeRelease(
 	if err != nil {
 		return nil, err
 	}
-	rel, ok := result.(*release.Release)
+	rel, ok := result.(*releaseV1.Release)
 	if !ok {
 		return nil, fmt.Errorf("unexpected release type %T", result)
 	}

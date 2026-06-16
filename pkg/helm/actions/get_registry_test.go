@@ -7,7 +7,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"helm.sh/helm/v4/pkg/action"
-	chartutil "helm.sh/helm/v4/pkg/chart/v2/util"
+	"helm.sh/helm/v4/pkg/chart/common"
 	kubefake "helm.sh/helm/v4/pkg/kube/fake"
 	"helm.sh/helm/v4/pkg/registry"
 	"helm.sh/helm/v4/pkg/storage"
@@ -20,7 +20,7 @@ func TestGetDefaultOCIRegistry_Success(t *testing.T) {
 		RESTClientGetter: FakeConfig{},
 		Releases:         store,
 		KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
-		Capabilities:     chartutil.DefaultCapabilities,
+		Capabilities:     common.DefaultCapabilities,
 	}
 	require.Nil(t, conf.RegistryClient, "Registry Client should be nil")
 

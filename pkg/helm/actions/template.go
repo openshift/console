@@ -12,7 +12,7 @@ import (
 	"helm.sh/helm/v4/pkg/action"
 	"helm.sh/helm/v4/pkg/chart/v2/loader"
 	"helm.sh/helm/v4/pkg/cli"
-	release "helm.sh/helm/v4/pkg/release/v1"
+	releaseV1 "helm.sh/helm/v4/pkg/release/v1"
 	releaseutil "helm.sh/helm/v4/pkg/release/v1/util"
 	"k8s.io/client-go/dynamic"
 	corev1client "k8s.io/client-go/kubernetes/typed/core/v1"
@@ -24,21 +24,19 @@ func RenderManifests(name string, url string, vals map[string]interface{}, conf 
 	var err error
 	var chartLocation string
 	response := make(map[string]string)
-	validate := false
 	client := action.NewInstall(conf)
-	client.DryRunStrategy = action.DryRunNone
-	includeCrds := true
-	client.SkipCRDs = !includeCrds
+	client.DryRunStrategy = action.DryRunClient
+	client.SkipCRDs = false
 	client.ReleaseName = "RELEASE-NAME"
 	client.Replace = true // Skip the releaseName check
-	client.DependencyUpdate = !validate
-	client.SkipSchemaValidation = !validate
+	client.DependencyUpdate = true
+	client.SkipSchemaValidation = true
 	emptyResponse := ""
 	tlsFiles := []*os.File{}
 	if indexEntry == "" {
 		chartInfo, err = getChartInfoFromChartUrl(url, ns, dynamicClient, coreClient)
 		if err != nil {
-			return "", err
+			return emptyResponse, err
 		}
 	} else {
 		chartInfo = getChartInfoFromIndexEntry(indexEntry, ns, url)
@@ -46,19 +44,19 @@ func RenderManifests(name string, url string, vals map[string]interface{}, conf 
 	client.ChartPathOptions.Version = chartInfo.Version
 	connectionConfig, isClusterScoped, err := getRepositoryConnectionConfig(chartInfo.RepositoryName, ns, dynamicClient)
 	if err != nil {
-		return "", err
+		return emptyResponse, err
 	}
 	if isClusterScoped {
 		clusterConnectionConfig := connectionConfig.(v1beta1.ConnectionConfig)
 		tlsFiles, err = setUpAuthentication(&client.ChartPathOptions, &clusterConnectionConfig, coreClient)
 		if err != nil {
-			return "", fmt.Errorf("error setting up authentication: %w", err)
+			return emptyResponse, fmt.Errorf("error setting up authentication: %w", err)
 		}
 	} else {
 		namespaceConnectionConfig := connectionConfig.(v1beta1.ConnectionConfigNamespaceScoped)
 		tlsFiles, err = setUpAuthenticationProject(&client.ChartPathOptions, &namespaceConnectionConfig, coreClient, ns)
 		if err != nil {
-			return "", fmt.Errorf("error setting up authentication: %w", err)
+			return emptyResponse, fmt.Errorf("error setting up authentication: %w", err)
 		}
 	}
 	client.ReleaseName = name
@@ -79,17 +77,17 @@ func RenderManifests(name string, url string, vals map[string]interface{}, conf 
 
 	result, err := client.Run(ch, vals)
 	if err != nil {
-		return "", err
+		return emptyResponse, err
 	}
-	rel, ok := result.(*release.Release)
+	rel, ok := result.(*releaseV1.Release)
 	if !ok {
-		return "", fmt.Errorf("unexpected release type %T", result)
+		return emptyResponse, fmt.Errorf("unexpected release type %T", result)
 	}
 
 	var manifests bytes.Buffer
 	var output bytes.Buffer
 
-	if includeCrds {
+	if !client.SkipCRDs {
 		for _, f := range rel.Chart.CRDs() {
 			fmt.Fprintf(&manifests, "---\n# Source: %s\n%s\n", f.Name, f.Data)
 		}

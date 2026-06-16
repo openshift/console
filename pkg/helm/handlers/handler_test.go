@@ -11,7 +11,8 @@ import (
 	"helm.sh/helm/v4/pkg/action"
 	chart "helm.sh/helm/v4/pkg/chart/v2"
 	releasecommon "helm.sh/helm/v4/pkg/release"
-	release "helm.sh/helm/v4/pkg/release/v1"
+	rcommon "helm.sh/helm/v4/pkg/release/common"
+	releaseV1 "helm.sh/helm/v4/pkg/release/v1"
 	repo "helm.sh/helm/v4/pkg/repo/v1"
 	kv1 "k8s.io/api/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -28,13 +29,13 @@ import (
 	"github.com/openshift/console/pkg/helm/chartproxy"
 )
 
-var fakeReleaseList = []*release.Release{
+var fakeReleaseList = []*releaseV1.Release{
 	{
 		Name: "Test",
 	},
 }
 
-var fakeReleaseHistory = []*release.Release{
+var fakeReleaseHistory = []*releaseV1.Release{
 	{
 		Name:    "test",
 		Version: 1,
@@ -50,7 +51,7 @@ var fakeSecret = kv1.Secret{
 		Name: "Test",
 	},
 }
-var fakeRelease = release.Release{
+var fakeRelease = releaseV1.Release{
 	Name: "Test",
 }
 
@@ -67,8 +68,8 @@ func fakeHelmHandler() helmHandlers {
 	}
 }
 
-func fakeInstallChart(mockedRelease *release.Release, err error) func(ns string, name string, url string, values map[string]interface{}, conf *action.Configuration, client dynamic.Interface, coreClient corev1client.CoreV1Interface, fileCleanup bool, indexEntry string) (*release.Release, error) {
-	return func(ns string, name string, url string, values map[string]interface{}, conf *action.Configuration, cliet dynamic.Interface, coreClient corev1client.CoreV1Interface, fileCleanup bool, indexEntry string) (r *release.Release, er error) {
+func fakeInstallChart(mockedRelease *releaseV1.Release, err error) func(ns string, name string, url string, values map[string]interface{}, conf *action.Configuration, client dynamic.Interface, coreClient corev1client.CoreV1Interface, fileCleanup bool, indexEntry string) (*releaseV1.Release, error) {
+	return func(ns string, name string, url string, values map[string]interface{}, conf *action.Configuration, cliet dynamic.Interface, coreClient corev1client.CoreV1Interface, fileCleanup bool, indexEntry string) (r *releaseV1.Release, er error) {
 		return mockedRelease, err
 	}
 }
@@ -79,8 +80,8 @@ func fakeInstallChartAsync(mockedSecret *kv1.Secret, err error) func(ns string, 
 	}
 }
 
-func fakeListReleases(mockedReleases []*release.Release, err error) func(conf *action.Configuration, isTopology bool) ([]*release.Release, error) {
-	return func(conf *action.Configuration, isTopology bool) (releases []*release.Release, er error) {
+func fakeListReleases(mockedReleases []*releaseV1.Release, err error) func(conf *action.Configuration, isTopology bool) ([]*releaseV1.Release, error) {
+	return func(conf *action.Configuration, isTopology bool) (releases []*releaseV1.Release, er error) {
 		return mockedReleases, err
 	}
 }
@@ -91,8 +92,8 @@ func fakeGetManifest(mockedManifest string, err error) func(name string, url str
 	}
 }
 
-func fakeGetRelease(name string, t *testing.T, mockedRelease *release.Release, err error) func(releaseName string, conf *action.Configuration) (*release.Release, error) {
-	return func(releaseName string, conf *action.Configuration) (r *release.Release, er error) {
+func fakeGetRelease(name string, t *testing.T, mockedRelease *releaseV1.Release, err error) func(releaseName string, conf *action.Configuration) (*releaseV1.Release, error) {
+	return func(releaseName string, conf *action.Configuration) (r *releaseV1.Release, er error) {
 		if name != releaseName {
 			t.Errorf("release name mismatch expected is %s, received %s", name, releaseName)
 		}
@@ -106,8 +107,8 @@ func mockedHelmGetChart(c *chart.Chart, e error) func(url string, conf *action.C
 	}
 }
 
-func fakeGetReleaseHistory(name string, fakeHistory []*release.Release, t *testing.T, err error) func(name string, conf *action.Configuration) ([]*release.Release, error) {
-	return func(n string, conf *action.Configuration) ([]*release.Release, error) {
+func fakeGetReleaseHistory(name string, fakeHistory []*releaseV1.Release, t *testing.T, err error) func(name string, conf *action.Configuration) ([]*releaseV1.Release, error) {
+	return func(n string, conf *action.Configuration) ([]*releaseV1.Release, error) {
 		if name != n {
 			t.Errorf("release name mismatch expected is %s, received %s", n, name)
 		}
@@ -124,8 +125,8 @@ func fakeUninstallRelease(name string, t *testing.T, fakeResp *releasecommon.Uni
 	}
 }
 
-func fakeUpgradeRelease(name, ns string, t *testing.T, fakeRelease *release.Release, err error) func(ns, name, url string, vals map[string]interface{}, conf *action.Configuration, client dynamic.Interface, coreClient corev1client.CoreV1Interface, fileCleanUp bool, indexEntry string) (*release.Release, error) {
-	return func(namespace, n, url string, vals map[string]interface{}, conf *action.Configuration, client dynamic.Interface, coreClient corev1client.CoreV1Interface, fileCleanUp bool, indexEntry string) (*release.Release, error) {
+func fakeUpgradeRelease(name, ns string, t *testing.T, fakeRelease *releaseV1.Release, err error) func(ns, name, url string, vals map[string]interface{}, conf *action.Configuration, client dynamic.Interface, coreClient corev1client.CoreV1Interface, fileCleanUp bool, indexEntry string) (*releaseV1.Release, error) {
+	return func(namespace, n, url string, vals map[string]interface{}, conf *action.Configuration, client dynamic.Interface, coreClient corev1client.CoreV1Interface, fileCleanUp bool, indexEntry string) (*releaseV1.Release, error) {
 		if namespace != ns {
 			t.Errorf("Namespace mismatch expected %s received %s", ns, namespace)
 		}
@@ -148,8 +149,8 @@ func fakeUpgradeReleaseAsync(name, ns string, t *testing.T, fakeSecret *kv1.Secr
 	}
 }
 
-func fakeRollbackRelease(name string, t *testing.T, rel *release.Release, err error) func(name string, revision int, conf *action.Configuration) (*release.Release, error) {
-	return func(n string, revision int, conf *action.Configuration) (*release.Release, error) {
+func fakeRollbackRelease(name string, t *testing.T, rel *releaseV1.Release, err error) func(name string, revision int, conf *action.Configuration) (*releaseV1.Release, error) {
+	return func(n string, revision int, conf *action.Configuration) (*releaseV1.Release, error) {
 		if name != n {
 			t.Errorf("Release name mismatch expected is %s and received %s", name, n)
 		}
@@ -212,7 +213,7 @@ func TestHelmHandlers_HandleHelmList(t *testing.T) {
 	tests := []struct {
 		name             string
 		expectedResponse string
-		releaseList      []*release.Release
+		releaseList      []*releaseV1.Release
 		error
 		httpStatusCode int
 	}{
@@ -256,7 +257,7 @@ func TestHelmHandlers_HandleHelmInstall(t *testing.T) {
 	tests := []struct {
 		name             string
 		expectedResponse string
-		installedRelease release.Release
+		installedRelease releaseV1.Release
 		error
 		httpStatusCode int
 	}{
@@ -347,7 +348,7 @@ func TestHelmHandlers_HandleGetRelease(t *testing.T) {
 	tests := []struct {
 		name             string
 		expectedResponse string
-		release          *release.Release
+		release          *releaseV1.Release
 		releaseName      string
 		error
 		httpStatusCode int
@@ -443,7 +444,7 @@ func TestHelmHandlers_HandleGetReleaseHistory(t *testing.T) {
 	tests := []struct {
 		name                string
 		expectedResponse    string
-		history             []*release.Release
+		history             []*releaseV1.Release
 		expectedContentType string
 		error
 		httpStatusCode int
@@ -563,7 +564,7 @@ func TestHelmHandlers_HandleHelmRollbackRelease(t *testing.T) {
 	tests := []struct {
 		name                string
 		expectedResponse    string
-		release             *release.Release
+		release             *releaseV1.Release
 		expectedContentType string
 		body                string
 		releaseName         string
@@ -585,10 +586,10 @@ func TestHelmHandlers_HandleHelmRollbackRelease(t *testing.T) {
 			name:             "Valid chart rollback release test",
 			expectedResponse: `{"name":"test-release","info":{"first_deployed":"","last_deployed":"","deleted":"","status":"deployed"},"version":1}`,
 			body:             `{"name": "test", "namespace":"test", "version":1}`,
-			release: &release.Release{
+			release: &releaseV1.Release{
 				Name: "test-release",
-				Info: &release.Info{
-					Status: release.StatusDeployed,
+				Info: &releaseV1.Info{
+					Status: rcommon.StatusDeployed,
 				},
 				Version: 1,
 			},
@@ -649,7 +650,7 @@ func TestHelmHandlers_HandleHelmUpgradeRelease(t *testing.T) {
 		name                string
 		expectedResponse    string
 		expectedContentType string
-		release             *release.Release
+		release             *releaseV1.Release
 		error
 		httpStatusCode  int
 		requestBody     string
