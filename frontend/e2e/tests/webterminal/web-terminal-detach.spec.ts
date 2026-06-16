@@ -2,7 +2,6 @@ import * as k8s from '@kubernetes/client-node';
 
 import { test, expect } from '../../fixtures';
 import { WebTerminalPage } from '../../pages/web-terminal-page';
-import { ensureWebTerminalOperatorInstalled } from './utils/web-terminal-operator';
 
 const TEST_NAMESPACE = 'aut-terminal-detach';
 const POD_NAME = 'detach-test-pod';
@@ -47,7 +46,6 @@ test.describe('Persistent Terminal Sessions (Detach to Cloud Shell)', { tag: ['@
   let webTerminal: WebTerminalPage;
 
   test.beforeAll(async ({ k8sClient }) => {
-    await ensureWebTerminalOperatorInstalled(k8sClient);
     await k8sClient.createNamespace(TEST_NAMESPACE);
     await ensureTestPod(k8sClient);
   });
