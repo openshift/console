@@ -26,7 +26,7 @@ describe('Insights Popup on Cluster Dashboard', () => {
   it('opens the Insights popup when clicking the health item', () => {
     cy.get(INSIGHTS_BUTTON).filter('button').click();
     cy.get('.pf-v6-c-popover').should('be.visible');
-    cy.get('.pf-v6-c-popover').should('contain.text', 'Red Hat Lightspeed Advisor status');
+    cy.get('.pf-v6-c-popover').should('contain.text', 'Insights Advisor status');
   });
 
   it('shows last refresh timestamp in the popup', () => {
@@ -39,7 +39,7 @@ describe('Insights Popup on Cluster Dashboard', () => {
   it('shows the advisor description text', () => {
     cy.get(INSIGHTS_BUTTON).filter('button').click();
     cy.get('.pf-v6-c-popover').within(() => {
-      cy.contains('Red Hat Lightspeed Advisor identifies and prioritizes').should('be.visible');
+      cy.contains('Insights Advisor identifies and prioritizes').should('be.visible');
     });
   });
 
@@ -73,10 +73,10 @@ describe('Insights Popup on Cluster Dashboard', () => {
         $popover.find('a[href*="console.redhat.com/openshift/insights/advisor/clusters/"]').length
       ) {
         cy.wrap($popover)
-          .contains('View all recommendations in Red Hat Lightspeed Advisor')
+          .contains('View all recommendations in Insights Advisor')
           .should('be.visible');
       } else {
-        cy.wrap($popover).contains('View more in Red Hat Lightspeed Advisor').should('be.visible');
+        cy.wrap($popover).contains('View more in Insights Advisor').should('be.visible');
       }
     });
   });

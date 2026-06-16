@@ -6,6 +6,7 @@ jest.mock('@patternfly/react-charts/victory', () => ({
   ChartDonut: jest.fn(() => null),
   ChartLegend: jest.fn(() => null),
   ChartLabel: jest.fn(() => null),
+  createContainer: jest.fn(() => 'div'),
 }));
 
 jest.mock('@console/internal/components/error', () => ({
@@ -188,7 +189,7 @@ describe('InsightsPopup', () => {
       { response: metricsResponse, error: null },
       { response: null, error: null },
       { response: lastGatherResponse, error: null },
-    ];
+    ] as any;
 
     renderWithProviders(<InsightsPopup responses={responses} k8sResult={k8sCluster} />);
     expect(screen.getByText('Waiting for results.')).toBeInTheDocument();
@@ -197,9 +198,7 @@ describe('InsightsPopup', () => {
   it('should render chart area when metrics are available', () => {
     renderWithProviders(<InsightsPopup responses={baseResponses} k8sResult={k8sCluster} />);
     expect(screen.getByText('Fixable issues')).toBeInTheDocument();
-    expect(
-      screen.getByText('View all recommendations in Red Hat Lightspeed Advisor'),
-    ).toBeInTheDocument();
+    expect(screen.getByText('View all recommendations in Insights Advisor')).toBeInTheDocument();
   });
 
   it('should render generic advisor link when clusterID is missing', () => {
@@ -209,6 +208,6 @@ describe('InsightsPopup', () => {
         k8sResult={{ loaded: true, loadError: null } as any}
       />,
     );
-    expect(screen.getByText('View more in Red Hat Lightspeed Advisor')).toBeInTheDocument();
+    expect(screen.getByText('View more in Insights Advisor')).toBeInTheDocument();
   });
 });
