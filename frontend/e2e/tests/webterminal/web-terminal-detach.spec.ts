@@ -1,53 +1,19 @@
-import * as k8s from '@kubernetes/client-node';
-
 import { test, expect } from '../../fixtures';
 import { WebTerminalPage } from '../../pages/web-terminal-page';
 
-const TEST_NAMESPACE = 'aut-terminal-detach';
-const POD_NAME = 'detach-test-pod';
-
-async function ensureTestPod(k8sClient: import('../../clients/kubernetes-client').default): Promise<void> {
-  const pods = await k8sClient.getPods(TEST_NAMESPACE);
-  if (pods.some((p) => p.metadata?.name === POD_NAME && p.status?.phase === 'Running')) {
-    return;
-  }
-  if (pods.some((p) => p.metadata?.name === POD_NAME)) {
-    await k8sClient.deletePod(POD_NAME, TEST_NAMESPACE);
-    await new Promise((resolve) => setTimeout(resolve, 5_000));
-  }
-  const pod: k8s.V1Pod = {
-    apiVersion: 'v1',
-    kind: 'Pod',
-    metadata: { name: POD_NAME, namespace: TEST_NAMESPACE },
-    spec: {
-      containers: [
-        {
-          name: 'main',
-          image: 'image-registry.openshift-image-registry.svc:5000/openshift/cli:latest',
-          command: ['sleep', '3600'],
-        },
-      ],
-    },
-  };
-  await k8sClient.createPod(pod);
-  const deadline = Date.now() + 180_000;
-  while (Date.now() < deadline) {
-    const current = await k8sClient.getPods(TEST_NAMESPACE);
-    const found = current.find((p) => p.metadata?.name === POD_NAME);
-    if (found?.status?.phase === 'Running') return;
-    await new Promise((resolve) => setTimeout(resolve, 3_000));
-  }
-  throw new Error(`Pod ${POD_NAME} did not reach Running state`);
-}
+const CONSOLE_NAMESPACE = 'openshift-console';
 
 test.describe('Persistent Terminal Sessions (Detach to Cloud Shell)', { tag: ['@regression'] }, () => {
   let webTerminal: WebTerminalPage;
+  let testPodName: string;
 
   test.beforeAll(async ({ k8sClient }) => {
-    test.setTimeout(300_000);
-    await k8sClient.createNamespace(TEST_NAMESPACE);
-    await k8sClient.waitForNamespaceReady(TEST_NAMESPACE);
-    await ensureTestPod(k8sClient);
+    const pods = await k8sClient.getPods(CONSOLE_NAMESPACE);
+    const runningPod = pods.find((p) => p.status?.phase === 'Running' && p.metadata?.name);
+    if (!runningPod) {
+      throw new Error(`No running pods found in ${CONSOLE_NAMESPACE}`);
+    }
+    testPodName = runningPod.metadata!.name!;
   });
 
   test.beforeEach(async ({ page }) => {
@@ -56,7 +22,7 @@ test.describe('Persistent Terminal Sessions (Detach to Cloud Shell)', { tag: ['@
 
   test('Detach pod terminal to Cloud Shell drawer', async () => {
     await test.step('Navigate to pod terminal', async () => {
-      await webTerminal.navigateToPodTerminal(TEST_NAMESPACE, POD_NAME);
+      await webTerminal.navigateToPodTerminal(CONSOLE_NAMESPACE, testPodName);
     });
 
     await test.step('Click Detach to Cloud Shell button', async () => {
@@ -72,7 +38,7 @@ test.describe('Persistent Terminal Sessions (Detach to Cloud Shell)', { tag: ['@
 
   test('Detached session persists across navigation', async () => {
     await test.step('Detach a pod terminal session', async () => {
-      await webTerminal.navigateToPodTerminal(TEST_NAMESPACE, POD_NAME);
+      await webTerminal.navigateToPodTerminal(CONSOLE_NAMESPACE, testPodName);
       await webTerminal.clickDetachButton();
       await webTerminal.waitForDrawerOpen();
       expect(await webTerminal.getDetachedTabCount()).toBe(1);
@@ -90,7 +56,7 @@ test.describe('Persistent Terminal Sessions (Detach to Cloud Shell)', { tag: ['@
 
   test('Close a detached session tab', async () => {
     await test.step('Detach a pod terminal session', async () => {
-      await webTerminal.navigateToPodTerminal(TEST_NAMESPACE, POD_NAME);
+      await webTerminal.navigateToPodTerminal(CONSOLE_NAMESPACE, testPodName);
       await webTerminal.clickDetachButton();
       await webTerminal.waitForDrawerOpen();
       expect(await webTerminal.getDetachedTabCount()).toBe(1);
@@ -108,7 +74,7 @@ test.describe('Persistent Terminal Sessions (Detach to Cloud Shell)', { tag: ['@
   test('Session limit prevents more than five detached sessions', async () => {
     await test.step('Detach five terminal sessions', async () => {
       for (let i = 0; i < 5; i++) {
-        await webTerminal.navigateToPodTerminal(TEST_NAMESPACE, POD_NAME);
+        await webTerminal.navigateToPodTerminal(CONSOLE_NAMESPACE, testPodName);
         await webTerminal.clickDetachButton();
         await webTerminal.waitForDrawerOpen();
       }
@@ -116,14 +82,14 @@ test.describe('Persistent Terminal Sessions (Detach to Cloud Shell)', { tag: ['@
     });
 
     await test.step('Verify Detach button is disabled', async () => {
-      await webTerminal.navigateToPodTerminal(TEST_NAMESPACE, POD_NAME);
+      await webTerminal.navigateToPodTerminal(CONSOLE_NAMESPACE, testPodName);
       await expect(webTerminal.getDetachButton()).toBeDisabled();
     });
   });
 
   test('Close drawer clears all detached sessions', async () => {
     await test.step('Detach a pod terminal session', async () => {
-      await webTerminal.navigateToPodTerminal(TEST_NAMESPACE, POD_NAME);
+      await webTerminal.navigateToPodTerminal(CONSOLE_NAMESPACE, testPodName);
       await webTerminal.clickDetachButton();
       await webTerminal.waitForDrawerOpen();
       expect(await webTerminal.getDetachedTabCount()).toBe(1);
