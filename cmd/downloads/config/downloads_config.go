@@ -111,13 +111,14 @@ func loadArtifactsSpec(path string) ([]ArtifactSpec, error) {
 // NewDownloadsServerConfig creates a new ArtifactsConfig object
 func NewDownloadsServerConfig(port int, specsFilePath string) (*DownloadsServerConfig, error) {
 	tempDir := defaultArtifactsDir
-	if err := os.RemoveAll(tempDir); err != nil {
-		return nil, fmt.Errorf("failed to clean up stale artifacts directory: %w", err)
+	matches, _ := filepath.Glob("/tmp/artifacts*")
+	for _, match := range matches {
+		os.RemoveAll(match)
 	}
 	if err := os.MkdirAll(tempDir, 0755); err != nil {
 		return nil, fmt.Errorf("failed to create artifacts directory: %w", err)
 	}
-	klog.Info("Created artifacts directory (cleaned up any stale data from previous run)")
+	klog.Info("Created artifacts directory (cleaned up any stale data from previous runs)")
 	specs, err := loadArtifactsSpec(specsFilePath)
 	if err != nil {
 		return nil, err
