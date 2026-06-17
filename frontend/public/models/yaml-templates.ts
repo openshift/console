@@ -196,7 +196,7 @@ spec:
   storageClassName: slow
   nfs:
     path: /tmp
-    server: 172.17.0.2
+    server: 192.0.2.1
 `,
   )
   .setIn(
