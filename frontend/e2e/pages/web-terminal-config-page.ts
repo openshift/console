@@ -16,6 +16,7 @@ export class WebTerminalConfigPage extends BasePage {
     await this.goTo('/k8s/cluster/operator.openshift.io~v1~Console/cluster');
     await this.waitForLoadingComplete(10_000);
     const customizeButton = this.page.getByRole('button', { name: 'Customize' });
+    // eslint-disable-next-line no-restricted-syntax
     await customizeButton
       .first()
       .waitFor({ state: 'visible', timeout: 30_000 })

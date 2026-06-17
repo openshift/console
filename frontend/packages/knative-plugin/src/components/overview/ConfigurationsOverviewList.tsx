@@ -11,13 +11,13 @@ type ConfigurationsOverviewListProps = {
 };
 
 const ConfigurationsOverviewList: FC<ConfigurationsOverviewListProps> = ({ configurations }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   return (
     <>
-      <SidebarSectionHeading text={t('knative-plugin~Configurations')} />
+      <SidebarSectionHeading text={t('Configurations')} />
       {_.isEmpty(configurations) ? (
         <span className="pf-v6-u-text-color-subtle">
-          {t('knative-plugin~No configurations found for this resource.')}
+          {t('No configurations found for this resource.')}
         </span>
       ) : (
         <List isPlain isBordered>

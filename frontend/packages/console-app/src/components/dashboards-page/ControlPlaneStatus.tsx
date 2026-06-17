@@ -13,26 +13,23 @@ import Status, {
 import { getControlPlaneComponentHealth } from './status';
 
 const ControlPlanePopup: FC<PrometheusHealthPopupProps> = ({ responses }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const titles = [
-    t('console-app~API Servers'),
-    t('console-app~Controller Managers'),
-    t('console-app~Schedulers'),
-    t('console-app~API Request Success Rate'),
+    t('API Servers'),
+    t('Controller Managers'),
+    t('Schedulers'),
+    t('API Request Success Rate'),
   ];
 
   return (
     <Stack hasGutter>
       <StackItem>
         {t(
-          'console-app~Components of the control plane are responsible for maintaining and reconciling the state of the cluster.',
+          'Components of the control plane are responsible for maintaining and reconciling the state of the cluster.',
         )}
       </StackItem>
       <StackItem>
-        <StatusPopupSection
-          firstColumn={t('console-app~Components')}
-          secondColumn={t('console-app~Response rate')}
-        >
+        <StatusPopupSection firstColumn={t('Components')} secondColumn={t('Response rate')}>
           {responses.map(({ response, error }, index) => {
             const health = getControlPlaneComponentHealth(response, error, t);
             const icon =

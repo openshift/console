@@ -23,26 +23,21 @@ export const BuildStrategy: FC<BuildStrategyProps> = ({ resource, children }) =>
   const pushSecret = _.get(resource, 'spec.output.pushSecret');
   const resourceLimits = _.get(resource, 'spec.resources.limits');
   const triggers = _.map(resource.spec.triggers, 'type').join(', ');
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   return (
     <DescriptionList>
       {children}
-      <DetailsItem label={t('public~Type')} obj={resource} path="spec.strategy.type" />
+      <DetailsItem label={t('Type')} obj={resource} path="spec.strategy.type" />
       <DetailsItem
-        label={t('public~Git repository')}
+        label={t('Git repository')}
         obj={resource}
         path="spec.source.git.uri"
         hideEmpty
       />
-      <DetailsItem
-        label={t('public~Git ref')}
-        obj={resource}
-        path="spec.source.git.ref"
-        hideEmpty
-      />
+      <DetailsItem label={t('Git ref')} obj={resource} path="spec.source.git.ref" hideEmpty />
       {commitMessage && (
-        <DetailsItem label={t('public~Git commit')} obj={resource} path="spec.revision.git.message">
+        <DetailsItem label={t('Git commit')} obj={resource} path="spec.revision.git.message">
           {commitMessage}
           <br />
           {commitHash && <code className="co-code">{commitHash.substring(0, 7)}</code>}{' '}
@@ -50,26 +45,26 @@ export const BuildStrategy: FC<BuildStrategyProps> = ({ resource, children }) =>
         </DetailsItem>
       )}
       <DetailsItem
-        label={t('public~Binary file')}
+        label={t('Binary file')}
         obj={resource}
         path="spec.source.binary.asFile"
         hideEmpty
       />
       <DetailsItem
-        label={t('public~Context dir')}
+        label={t('Context dir')}
         obj={resource}
         path="spec.source.contextDir"
         hideEmpty
       />
       {dockerfile && (
-        <DetailsItem label={t('public~Dockerfile')} obj={resource} path="spec.source.dockerfile">
+        <DetailsItem label={t('Dockerfile')} obj={resource} path="spec.source.dockerfile">
           <CodeBlock>
             <CodeBlockCode>{dockerfile}</CodeBlockCode>
           </CodeBlock>
         </DetailsItem>
       )}
       {devfile && (
-        <DetailsItem label={t('public~Devfile')} obj={resource} path="spec.source.devfile">
+        <DetailsItem label={t('Devfile')} obj={resource} path="spec.source.devfile">
           <CodeBlock>
             <CodeBlockCode>{devfile}</CodeBlockCode>
           </CodeBlock>
@@ -77,7 +72,7 @@ export const BuildStrategy: FC<BuildStrategyProps> = ({ resource, children }) =>
       )}
       {jenkinsfile && (
         <DetailsItem
-          label={t('public~Dockerfile')}
+          label={t('Dockerfile')}
           obj={resource}
           path="spec.strategy.jenkinsPipelineStrategy.jenkinsfile"
         >
@@ -87,13 +82,13 @@ export const BuildStrategy: FC<BuildStrategyProps> = ({ resource, children }) =>
         </DetailsItem>
       )}
       <DetailsItem
-        label={t('public~JenskinsFile path')}
+        label={t('JenskinsFile path')}
         obj={resource}
         path="spec.strategy.jenkinsPipelineStrategy.jenkinsfilePath"
         hideEmpty
       />
       {buildFrom && buildFrom.kind === 'ImageStreamTag' && (
-        <DetailsItem label={t('public~Build from')} obj={resource} path={buildFromPath}>
+        <DetailsItem label={t('Build from')} obj={resource} path={buildFromPath}>
           <ResourceLink
             kind={ImageStreamTagsReference}
             name={buildFrom.name}
@@ -103,12 +98,12 @@ export const BuildStrategy: FC<BuildStrategyProps> = ({ resource, children }) =>
         </DetailsItem>
       )}
       {buildFrom && buildFrom.kind === 'DockerImage' && (
-        <DetailsItem label={t('public~Build from')} obj={resource} path={buildFromPath}>
+        <DetailsItem label={t('Build from')} obj={resource} path={buildFromPath}>
           {buildFrom.name}
         </DetailsItem>
       )}
       {outputTo && outputTo.kind === 'ImageStreamTag' && (
-        <DetailsItem label={t('public~Output to')} obj={resource} path="spec.output.to">
+        <DetailsItem label={t('Output to')} obj={resource} path="spec.output.to">
           <ResourceLink
             kind={ImageStreamTagsReference}
             name={outputTo.name}
@@ -118,12 +113,12 @@ export const BuildStrategy: FC<BuildStrategyProps> = ({ resource, children }) =>
         </DetailsItem>
       )}
       {outputTo && outputTo.kind === 'DockerImage' && (
-        <DetailsItem label={t('public~Output to')} obj={resource} path="spec.output.to">
+        <DetailsItem label={t('Output to')} obj={resource} path="spec.output.to">
           {outputTo.name}
         </DetailsItem>
       )}
       {pushSecret && (
-        <DetailsItem label={t('public~Push secret')} obj={resource} path="spec.output.pushSecret">
+        <DetailsItem label={t('Push secret')} obj={resource} path="spec.output.pushSecret">
           <ResourceLink
             kind="Secret"
             name={pushSecret.name}
@@ -132,18 +127,14 @@ export const BuildStrategy: FC<BuildStrategyProps> = ({ resource, children }) =>
           />
         </DetailsItem>
       )}
-      <DetailsItem label={t('public~Run policy')} obj={resource} path="spec.runPolicy" hideEmpty />
+      <DetailsItem label={t('Run policy')} obj={resource} path="spec.runPolicy" hideEmpty />
       {resourceLimits && (
-        <DetailsItem
-          label={t('public~Resource limits')}
-          obj={resource}
-          path="spec.resources.limits"
-        >
+        <DetailsItem label={t('Resource limits')} obj={resource} path="spec.resources.limits">
           {_.map(resourceLimits, (v, k) => `${k}: ${v}`).join(', ')}
         </DetailsItem>
       )}
       {triggers && (
-        <DetailsItem label={t('public~Triggers')} obj={resource} path="spec.triggers">
+        <DetailsItem label={t('Triggers')} obj={resource} path="spec.triggers">
           {triggers}
         </DetailsItem>
       )}

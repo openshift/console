@@ -13,11 +13,11 @@ const UtilizationAxis: FC = () => {
   const [containerRef, width] = useRefWidth();
   const { startDate, endDate } = useUtilizationDuration();
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   return (
     <div ref={containerRef}>
       <ChartAxis
-        containerComponent={<ChartContainer title={t('console-shared~time axis')} />}
+        containerComponent={<ChartContainer title={t('time axis')} />}
         domain={{ x: [startDate, endDate] }}
         tickFormat={timeFormatter.format}
         orientation="top"
@@ -34,7 +34,7 @@ const UtilizationAxis: FC = () => {
 };
 
 export const UtilizationBody: FC<UtilizationBodyProps> = ({ children }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const axis = (
     <div className="co-utilization-card__item co-utilization-card__item-header">
       <Flex
@@ -42,10 +42,10 @@ export const UtilizationBody: FC<UtilizationBodyProps> = ({ children }) => {
         className="co-utilization-card__item-section co-u-hidden co-u-visible-on-xl"
       >
         <FlexItem className="co-utilization-card__item-text" data-test="utilization-card-item-text">
-          {t('console-shared~Resource')}
+          {t('Resource')}
         </FlexItem>
         <FlexItem className="co-utilization-card__item-text" data-test="utilization-card-item-text">
-          {t('console-shared~Usage')}
+          {t('Usage')}
         </FlexItem>
       </Flex>
       <div className="co-utilization-card__item-chart co-utilization-card__item-chart--times">

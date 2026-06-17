@@ -118,22 +118,22 @@ const MachineDetails: FC<MachineDetailsProps> = ({ obj }: { obj: MachineKind }) 
   const region = getMachineRegion(obj);
   const zone = getMachineZone(obj);
   const providerState = getMachineProviderState(obj);
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <>
       <PaneBody>
-        <SectionHeading text={t('public~Machine details')} />
+        <SectionHeading text={t('Machine details')} />
         <Grid hasGutter>
           <GridItem sm={6}>
             <ResourceSummary resource={obj} />
           </GridItem>
           <GridItem sm={6}>
             <DescriptionList>
-              <DetailsItem label={t('public~Phase')} obj={obj} path="status.phase">
+              <DetailsItem label={t('Phase')} obj={obj} path="status.phase">
                 <Status status={getMachinePhase(obj)} />
               </DetailsItem>
               <DetailsItem
-                label={t('public~Provider state')}
+                label={t('Provider state')}
                 obj={obj}
                 path="status.providerStatus.instanceState"
               >
@@ -141,7 +141,7 @@ const MachineDetails: FC<MachineDetailsProps> = ({ obj }: { obj: MachineKind }) 
               </DetailsItem>
               {nodeName && (
                 <DescriptionListGroup>
-                  <DescriptionListTerm>{t('public~Node')}</DescriptionListTerm>
+                  <DescriptionListTerm>{t('Node')}</DescriptionListTerm>
                   <DescriptionListDescription>
                     <NodeLink name={nodeName} />
                   </DescriptionListDescription>
@@ -149,30 +149,30 @@ const MachineDetails: FC<MachineDetailsProps> = ({ obj }: { obj: MachineKind }) 
               )}
               {machineRole && (
                 <DescriptionListGroup>
-                  <DescriptionListTerm>{t('public~Machine role')}</DescriptionListTerm>
+                  <DescriptionListTerm>{t('Machine role')}</DescriptionListTerm>
                   <DescriptionListDescription>{machineRole}</DescriptionListDescription>
                 </DescriptionListGroup>
               )}
               {instanceType && (
                 <DescriptionListGroup>
-                  <DescriptionListTerm>{t('public~Instance type')}</DescriptionListTerm>
+                  <DescriptionListTerm>{t('Instance type')}</DescriptionListTerm>
                   <DescriptionListDescription>{instanceType}</DescriptionListDescription>
                 </DescriptionListGroup>
               )}
               {region && (
                 <DescriptionListGroup>
-                  <DescriptionListTerm>{t('public~Region')}</DescriptionListTerm>
+                  <DescriptionListTerm>{t('Region')}</DescriptionListTerm>
                   <DescriptionListDescription>{region}</DescriptionListDescription>
                 </DescriptionListGroup>
               )}
               {zone && (
                 <DescriptionListGroup>
-                  <DescriptionListTerm>{t('public~Availability zone')}</DescriptionListTerm>
+                  <DescriptionListTerm>{t('Availability zone')}</DescriptionListTerm>
                   <DescriptionListDescription>{zone}</DescriptionListDescription>
                 </DescriptionListGroup>
               )}
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('public~Machine addresses')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('Machine addresses')}</DescriptionListTerm>
                 <DescriptionListDescription>
                   <NodeIPList ips={getMachineAddresses(obj)} expand />
                 </DescriptionListDescription>
@@ -182,7 +182,7 @@ const MachineDetails: FC<MachineDetailsProps> = ({ obj }: { obj: MachineKind }) 
         </Grid>
       </PaneBody>
       <PaneBody>
-        <SectionHeading text={t('public~Conditions')} />
+        <SectionHeading text={t('Conditions')} />
         <Conditions conditions={obj.status?.providerStatus?.conditions} />
       </PaneBody>
     </>
@@ -202,13 +202,13 @@ const useMachineColumns = (): {
   columns: TableColumn<MachineKind>[];
   resetAllColumnWidths: () => void;
 } => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(MachineModel);
 
   const columns: TableColumn<MachineKind>[] = useMemo(() => {
     return [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         resizableProps: getResizableProps(tableColumnInfo[0].id),
@@ -218,7 +218,7 @@ const useMachineColumns = (): {
         },
       },
       {
-        title: t('public~Namespace'),
+        title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
@@ -227,7 +227,7 @@ const useMachineColumns = (): {
         },
       },
       {
-        title: t('public~Node'),
+        title: t('Node'),
         id: tableColumnInfo[2].id,
         sort: 'status.nodeRef.name',
         resizableProps: getResizableProps(tableColumnInfo[2].id),
@@ -236,7 +236,7 @@ const useMachineColumns = (): {
         },
       },
       {
-        title: t('public~Phase'),
+        title: t('Phase'),
         id: tableColumnInfo[3].id,
         sort: (data, direction) => data.sort(sortResourceByValue(direction, getMachinePhase)),
         resizableProps: getResizableProps(tableColumnInfo[3].id),
@@ -245,7 +245,7 @@ const useMachineColumns = (): {
         },
       },
       {
-        title: t('public~Provider state'),
+        title: t('Provider state'),
         id: tableColumnInfo[4].id,
         sort: 'status.providerStatus.instanceState',
         resizableProps: getResizableProps(tableColumnInfo[4].id),
@@ -254,7 +254,7 @@ const useMachineColumns = (): {
         },
       },
       {
-        title: t('public~Region'),
+        title: t('Region'),
         id: tableColumnInfo[5].id,
         sort: "metadata.labels['machine.openshift.io/region']",
         resizableProps: getResizableProps(tableColumnInfo[5].id),
@@ -263,7 +263,7 @@ const useMachineColumns = (): {
         },
       },
       {
-        title: t('public~Availability zone'),
+        title: t('Availability zone'),
         id: tableColumnInfo[6].id,
         sort: "metadata.labels['machine.openshift.io/zone']",
         resizableProps: getResizableProps(tableColumnInfo[6].id),
@@ -324,7 +324,7 @@ export const MachinePage: FC<MachinePageProps> = ({
     namespace: namespace || 'default',
   };
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <>
       <ListPageHeader title={showTitle ? t(MachineModel.labelPluralKey) : undefined}>
@@ -332,7 +332,7 @@ export const MachinePage: FC<MachinePageProps> = ({
           createAccessReview={createAccessReview}
           groupVersionKind={referenceForModel(MachineModel)}
         >
-          {t('public~Create Machine')}
+          {t('Create Machine')}
         </ListPageCreate>
       </ListPageHeader>
       <ListPageBody>

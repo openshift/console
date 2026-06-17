@@ -21,14 +21,14 @@ const HelmReleaseStatusDecorator: FC<HelmReleaseStatusDecoratorProps> = ({
   y,
 }) => {
   const ref = useRef();
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   const { data } = element.getData();
 
   if (!data) {
     return null;
   }
   const status = releaseStatus(data.status);
-  const label = t('helm-plugin~Helm release is {{status}}', { status });
+  const label = t('Helm release is {{status}}', { status });
 
   return (
     <Tooltip triggerRef={ref} content={label} position={TooltipPosition.left}>

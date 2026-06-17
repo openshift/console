@@ -20,7 +20,7 @@ type WatchResource = {
 };
 
 const UploadJarPage: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const { ns: namespace } = useParams();
   const location = useLocation();
   const params = new URLSearchParams(location.search);
@@ -51,10 +51,10 @@ const UploadJarPage: FC = () => {
 
   return (
     <NamespacedPage disabled variant={NamespacedPageVariants.light}>
-      <DocumentTitle>{t('devconsole~Upload JAR file')}</DocumentTitle>
+      <DocumentTitle>{t('Upload JAR file')}</DocumentTitle>
       <PageHeading
-        title={t('devconsole~Upload JAR file')}
-        helpText={t('devconsole~Upload a JAR file from your local desktop to OpenShift')}
+        title={t('Upload JAR file')}
+        helpText={t('Upload a JAR file from your local desktop to OpenShift')}
       />
       <QueryFocusApplication>
         {(desiredApplication) => (

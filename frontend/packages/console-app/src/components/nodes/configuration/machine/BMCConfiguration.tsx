@@ -47,27 +47,24 @@ type HostAddressesProps = {
 };
 
 const HostAddresses: FC<HostAddressesProps> = ({ bareMetalHost, isLoading }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
 
   return (
     <DescriptionList>
       <DescriptionListGroup>
-        <DescriptionListTerm>{t('console-app~Host addresses')}</DescriptionListTerm>
+        <DescriptionListTerm>{t('Host addresses')}</DescriptionListTerm>
         <DescriptionListDescription>
           <DetailPropertyList>
-            <ConfigPropertyListItem title={t('console-app~Management')} isLoading={isLoading}>
+            <ConfigPropertyListItem title={t('Management')} isLoading={isLoading}>
               {bareMetalHost?.spec?.bmc?.address ?? DASH}
             </ConfigPropertyListItem>
-            <ConfigPropertyListItem title={t('console-app~NICs')} isLoading={isLoading}>
+            <ConfigPropertyListItem title={t('NICs')} isLoading={isLoading}>
               {
                 // Intentionally include blank nics
                 bareMetalHost?.status?.hardware?.nics?.map((nic) => nic.ip ?? '').join(', ') || DASH
               }
             </ConfigPropertyListItem>
-            <ConfigPropertyListItem
-              title={t('console-app~Boot interface MAC')}
-              isLoading={isLoading}
-            >
+            <ConfigPropertyListItem title={t('Boot interface MAC')} isLoading={isLoading}>
               {bareMetalHost?.spec?.bootMACAddress ?? DASH}
             </ConfigPropertyListItem>
           </DetailPropertyList>
@@ -79,24 +76,24 @@ const HostAddresses: FC<HostAddressesProps> = ({ bareMetalHost, isLoading }) => 
 
 const hostPowerStatus = (host: K8sResourceKind, t: TFunction) => {
   if (host.status?.operationalStatus === HOST_STATUS_DETACHED) {
-    return t('console-app~Detached');
+    return t('Detached');
   }
 
   if (host.status?.provisioning?.state === HOST_STATUS_UNMANAGED) {
-    return t('console-app~No power management');
+    return t('No power management');
   }
 
   if (isHostScheduledForRestart(host)) {
-    return t('console-app~Restart pending');
+    return t('Restart pending');
   }
 
   const isOnline = isHostOnline(host);
   const isPoweredOn = isHostPoweredOn(host);
   const rebootAnnotation = getRebootAnnotation(host);
-  if (isOnline && isPoweredOn && !rebootAnnotation) return t('console-app~On');
-  if ((!isOnline || rebootAnnotation) && isPoweredOn) return t('console-app~Powering off');
-  if (isOnline && !isPoweredOn && !rebootAnnotation) return t('console-app~Powering on');
-  return t('console-app~Off');
+  if (isOnline && isPoweredOn && !rebootAnnotation) return t('On');
+  if ((!isOnline || rebootAnnotation) && isPoweredOn) return t('Powering off');
+  if (isOnline && !isPoweredOn && !rebootAnnotation) return t('Powering on');
+  return t('Off');
 };
 
 type BMCDetailsProps = {
@@ -105,7 +102,7 @@ type BMCDetailsProps = {
 };
 
 const BMCConfigDetails: FC<BMCDetailsProps> = ({ bareMetalHost, isLoading }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
 
   const bmcAddress = bareMetalHost?.spec?.bmc?.address;
   const protocolRaw = bmcAddress?.includes('://')
@@ -129,26 +126,26 @@ const BMCConfigDetails: FC<BMCDetailsProps> = ({ bareMetalHost, isLoading }) => 
   return (
     <DescriptionList>
       <DescriptionListGroup>
-        <DescriptionListTerm>{t('console-app~Details')}</DescriptionListTerm>
+        <DescriptionListTerm>{t('Details')}</DescriptionListTerm>
         <DescriptionListDescription>
           <DetailPropertyList>
-            <ConfigPropertyListItem title={t('console-app~Type')} isLoading={isLoading}>
+            <ConfigPropertyListItem title={t('Type')} isLoading={isLoading}>
               {bmcType || DASH}
             </ConfigPropertyListItem>
-            <ConfigPropertyListItem title={t('console-app~Address')} isLoading={isLoading}>
+            <ConfigPropertyListItem title={t('Address')} isLoading={isLoading}>
               {bmcAddress ?? DASH}
             </ConfigPropertyListItem>
-            <ConfigPropertyListItem title={t('console-app~Firmware')} isLoading={isLoading}>
+            <ConfigPropertyListItem title={t('Firmware')} isLoading={isLoading}>
               {firmwareVersion ?? DASH}
             </ConfigPropertyListItem>
-            <ConfigPropertyListItem title={t('console-app~Power state')} isLoading={isLoading}>
+            <ConfigPropertyListItem title={t('Power state')} isLoading={isLoading}>
               {bareMetalHost ? hostPowerStatus(bareMetalHost, t) : DASH}
             </ConfigPropertyListItem>
-            <ConfigPropertyListItem title={t('console-app~Credentials')} isLoading={isLoading}>
+            <ConfigPropertyListItem title={t('Credentials')} isLoading={isLoading}>
               {bareMetalHost?.status?.goodCredentials?.credentials?.name
                 ? `${bareMetalHost.status.goodCredentials.credentials.name} ${
                     bareMetalHost.status.goodCredentials.credentials.namespace
-                      ? `(${t('console-app~namespace {{namespace}}', {
+                      ? `(${t('namespace {{namespace}}', {
                           namespace: bareMetalHost.status.goodCredentials.credentials.namespace,
                         })})`
                       : ''
@@ -167,7 +164,7 @@ type BMCConfigurationProps = {
 };
 
 const BMCConfiguration: FC<BMCConfigurationProps> = ({ node }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
 
   const showBareMetal = useIsBareMetalPluginActive();
 
@@ -175,19 +172,17 @@ const BMCConfiguration: FC<BMCConfigurationProps> = ({ node }) => {
 
   return (
     <PaneBody>
-      <SectionHeading text={t('console-app~BMC Configuration')} />
+      <SectionHeading text={t('BMC Configuration')} />
       {!showBareMetal ? (
-        <Alert variant="info" isInline title={t('console-app~Unable to load BMC configuration')}>
-          <p>{t('console-app~Bare Metal is not configured for this cluster.')}</p>
+        <Alert variant="info" isInline title={t('Unable to load BMC configuration')}>
+          <p>{t('Bare Metal is not configured for this cluster.')}</p>
         </Alert>
       ) : bareMetalHostLoadError ? (
-        <Alert variant="danger" isInline title={t('console-app~Unable to load BMC configuration')}>
+        <Alert variant="danger" isInline title={t('Unable to load BMC configuration')}>
           <p>{bareMetalHostLoadError.message ?? null}</p>
         </Alert>
       ) : !bareMetalHost && bareMetalHostLoaded ? (
-        <Content>
-          {t('console-app~This node does not have an associated BMC configuration.')}
-        </Content>
+        <Content>{t('This node does not have an associated BMC configuration.')}</Content>
       ) : (
         <Flex direction={{ default: 'column' }} spaceItems={{ default: 'spaceItemsMd' }}>
           <FlexItem>

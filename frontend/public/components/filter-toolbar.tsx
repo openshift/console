@@ -21,7 +21,7 @@ import {
   ToolbarToggleGroup,
   Tooltip,
 } from '@patternfly/react-core';
-import { FilterIcon, ColumnsIcon } from '@patternfly/react-icons';
+import { RhUiFilterIcon, RhUiColumnsIcon } from '@patternfly/react-icons';
 import {
   RowFilterItem,
   ColumnLayout,
@@ -89,9 +89,9 @@ export const FilterToolbar: FC<FilterToolbarProps> = ({
   const location = useLocation();
   const launchModal = useOverlay();
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
-  const translatedNameFilterTitle = nameFilterTitle ?? t('public~Name');
+  const translatedNameFilterTitle = nameFilterTitle ?? t('Name');
 
   const { searchFiltersObject, searchFiltersState, changeSearchFiltersState } = useSearchFilters(
     rowSearchFilters,
@@ -103,7 +103,7 @@ export const FilterToolbar: FC<FilterToolbarProps> = ({
       case 'Name':
         return translatedNameFilterTitle;
       case 'Label':
-        return t('public~Label');
+        return t('Label');
       default:
         return searchFiltersObject?.[value]?.filterGroupName || value;
     }
@@ -120,7 +120,7 @@ export const FilterToolbar: FC<FilterToolbarProps> = ({
   };
 
   if (!hideLabelFilter && !hideNameLabelFilters) {
-    filterDropdownItems.LABEL = t('public~Label');
+    filterDropdownItems.LABEL = t('Label');
   }
 
   if (!hideNameLabelFilters) {
@@ -359,11 +359,11 @@ export const FilterToolbar: FC<FilterToolbarProps> = ({
       data-test="filter-toolbar"
       id="filter-toolbar"
       clearAllFilters={clearAll}
-      clearFiltersButtonText={t('public~Clear all filters')}
+      clearFiltersButtonText={t('Clear all filters')}
     >
       <ToolbarContent>
         {(rowFilters?.length > 0 || !hideNameLabelFilters) && (
-          <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md">
+          <ToolbarToggleGroup toggleIcon={<RhUiFilterIcon />} breakpoint="md">
             {rowFilters?.length > 0 && (
               <ToolbarItem>
                 {_.reduce(
@@ -382,10 +382,10 @@ export const FilterToolbar: FC<FilterToolbarProps> = ({
                       }
                       categoryName={key}
                       deleteLabelGroup={() => clearAllRowFilter(key)}
-                      labelGroupCollapsedText={t('public~{{numRemaining}} more', {
+                      labelGroupCollapsedText={t('{{numRemaining}} more', {
                         numRemaining: '${remaining}',
                       })}
-                      labelGroupExpandedText={t('public~Show less')}
+                      labelGroupExpandedText={t('Show less')}
                     >
                       {acc}
                     </ToolbarFilter>
@@ -400,8 +400,8 @@ export const FilterToolbar: FC<FilterToolbarProps> = ({
                           isExpanded={isOpen}
                         >
                           <span>
-                            <FilterIcon className="span--icon__right-margin" />
-                            {t('public~Filter')}
+                            <RhUiFilterIcon className="span--icon__right-margin" />
+                            {t('Filter')}
                           </span>
                         </MenuToggle>
                       )}
@@ -433,7 +433,7 @@ export const FilterToolbar: FC<FilterToolbarProps> = ({
                     setLabelInputText('');
                     applyLabelFilters(_.difference(labelSelection, [chip]));
                   }}
-                  categoryName={t('public~Label')}
+                  categoryName={t('Label')}
                 >
                   <ToolbarFilter
                     labels={nameInputText ? [nameInputText] : []}
@@ -462,7 +462,7 @@ export const FilterToolbar: FC<FilterToolbarProps> = ({
                           showSuggestions
                           textValue={labelInputText}
                           setTextValue={setLabelInputText}
-                          placeholder={labelFilterPlaceholder ?? t('public~Search by label...')}
+                          placeholder={labelFilterPlaceholder ?? t('Search by label...')}
                           data={data}
                           labelPath={labelPath}
                         />
@@ -476,7 +476,7 @@ export const FilterToolbar: FC<FilterToolbarProps> = ({
                             setNameInputText(value);
                             debounceApplyNameFilter(value);
                           }}
-                          placeholder={nameFilterPlaceholder ?? t('public~Search by name...')}
+                          placeholder={nameFilterPlaceholder ?? t('Search by name...')}
                         />
                       )}
 
@@ -501,16 +501,16 @@ export const FilterToolbar: FC<FilterToolbarProps> = ({
         {columnLayout?.id && !hideColumnManagement && (
           <ToolbarGroup>
             <ToolbarItem>
-              <Tooltip content={t('public~Manage columns')} trigger="mouseenter">
+              <Tooltip content={t('Manage columns')} trigger="mouseenter">
                 <Button
-                  icon={<ColumnsIcon />}
+                  icon={<RhUiColumnsIcon />}
                   variant="plain"
                   onClick={() =>
                     launchModal(LazyColumnManagementModalOverlay, {
                       columnLayout,
                     })
                   }
-                  aria-label={t('public~Column management')}
+                  aria-label={t('Column management')}
                   data-test="manage-columns"
                 />
               </Tooltip>

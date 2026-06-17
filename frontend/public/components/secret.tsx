@@ -99,12 +99,12 @@ const getDataViewRows: GetDataViewRows<SecretKind> = (data, columns) => {
 };
 
 const SecretDetails: FC<{ obj: SecretKind }> = ({ obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { data, type } = obj;
   return (
     <>
       <PaneBody>
-        <SectionHeading text={t('public~Secret details')} />
+        <SectionHeading text={t('Secret details')} />
         <Grid hasGutter>
           <GridItem md={6}>
             <ResourceSummary resource={obj} />
@@ -112,7 +112,7 @@ const SecretDetails: FC<{ obj: SecretKind }> = ({ obj }) => {
           {type && (
             <GridItem md={6}>
               <DescriptionList data-test-id="resource-type">
-                <DetailsItem label={t('public~Type')} obj={obj} path="type" />
+                <DetailsItem label={t('Type')} obj={obj} path="type" />
               </DescriptionList>
             </GridItem>
           )}
@@ -129,13 +129,13 @@ const useSecretsColumns = (): {
   columns: TableColumn<SecretKind>[];
   resetAllColumnWidths: () => void;
 } => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(SecretModel);
 
   const columns = useMemo(() => {
     return [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         resizableProps: getResizableProps(tableColumnInfo[0].id),
@@ -145,7 +145,7 @@ const useSecretsColumns = (): {
         },
       },
       {
-        title: t('public~Namespace'),
+        title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
@@ -154,7 +154,7 @@ const useSecretsColumns = (): {
         },
       },
       {
-        title: t('public~Type'),
+        title: t('Type'),
         id: tableColumnInfo[2].id,
         sort: 'type',
         resizableProps: getResizableProps(tableColumnInfo[2].id),
@@ -163,7 +163,7 @@ const useSecretsColumns = (): {
         },
       },
       {
-        title: t('public~Size'),
+        title: t('Size'),
         id: tableColumnInfo[3].id,
         sort: (data, direction) => data.sort(sortResourceByValue(direction, sorts.dataSize)),
         resizableProps: getResizableProps(tableColumnInfo[3].id),
@@ -172,7 +172,7 @@ const useSecretsColumns = (): {
         },
       },
       {
-        title: t('public~Created'),
+        title: t('Created'),
         id: tableColumnInfo[4].id,
         sort: 'metadata.creationTimestamp',
         resizableProps: getResizableProps(tableColumnInfo[4].id),
@@ -215,13 +215,13 @@ const SecretsList: FC<SecretsListProps> = ({ data, loaded, ...props }) => {
 SecretsList.displayName = 'SecretsList';
 
 const SecretsPage: FC<SecretsPageProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const createItems = {
-    generic: t('public~Key/value secret'),
-    image: t('public~Image pull secret'),
-    source: t('public~Source secret'),
-    webhook: t('public~Webhook secret'),
-    yaml: t('public~From YAML'),
+    generic: t('Key/value secret'),
+    image: t('Image pull secret'),
+    source: t('Source secret'),
+    webhook: t('Webhook secret'),
+    yaml: t('From YAML'),
   };
 
   const createProps = {
@@ -233,29 +233,29 @@ const SecretsPage: FC<SecretsPageProps> = (props) => {
   const secretTypeFilterValues = [
     {
       id: SecretFilterValues.image,
-      title: t('public~Image'),
+      title: t('Image'),
     },
     {
       id: SecretFilterValues.source,
-      title: t('public~Source'),
+      title: t('Source'),
     },
     {
       id: SecretFilterValues.tls,
-      title: t('public~TLS'),
+      title: t('TLS'),
     },
     {
       id: SecretFilterValues.sa,
-      title: t('public~Service Account Token'),
+      title: t('Service Account Token'),
     },
     {
       id: SecretFilterValues.opaque,
-      title: t('public~Opaque'),
+      title: t('Opaque'),
     },
   ];
 
   const filters = [
     {
-      filterGroupName: t('public~Type'),
+      filterGroupName: t('Type'),
       type: 'secret-type',
       reducer: secretTypeFilterReducer,
       items: secretTypeFilterValues,
@@ -269,7 +269,7 @@ const SecretsPage: FC<SecretsPageProps> = (props) => {
       ListComponent={SecretsList}
       canCreate={true}
       rowFilters={filters}
-      createButtonText={t('public~Create')}
+      createButtonText={t('Create')}
       createProps={createProps}
       omitFilterToolbar={true}
     />
@@ -277,7 +277,7 @@ const SecretsPage: FC<SecretsPageProps> = (props) => {
 };
 
 const SecretsDetailsPage: FC<SecretDetailsPageProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { name: secretName, namespace, kindObj } = props;
 
   const addSecretToWorkloadLauncher = useAddSecretToWorkloadModalLauncher({
@@ -289,7 +289,7 @@ const SecretsDetailsPage: FC<SecretDetailsPageProps> = (props) => {
     () => [
       () => ({
         callback: () => addSecretToWorkloadLauncher(),
-        label: t('public~Add Secret to workload'),
+        label: t('Add Secret to workload'),
       }),
     ],
     [t, addSecretToWorkloadLauncher],

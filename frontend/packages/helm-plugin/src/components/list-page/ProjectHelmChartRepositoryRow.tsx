@@ -13,17 +13,17 @@ import { ProjectHelmChartRepositoryModel } from '../../models/helm';
 import { tableColumnInfo } from './RepositoriesHeader';
 
 const ProjectNamespaceCell: FC<{ kind: string; namespace: string }> = ({ kind, namespace }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   return kind === ProjectHelmChartRepositoryModel.kind ? (
     <ResourceLink kind="Namespace" name={namespace} />
   ) : (
-    <>{t('helm-plugin~All Namespaces')}</>
+    <>{t('All Namespaces')}</>
   );
 };
 
 const DisabledCell: FC<{ disabled?: boolean }> = ({ disabled }) => {
-  const { t } = useTranslation();
-  return <>{disabled ? t('helm-plugin~True') : t('helm-plugin~False')}</>;
+  const { t } = useTranslation('helm-plugin');
+  return <>{disabled ? t('True') : t('False')}</>;
 };
 
 export const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {

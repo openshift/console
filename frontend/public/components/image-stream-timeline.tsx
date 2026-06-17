@@ -1,5 +1,7 @@
 import type { FC } from 'react';
 import * as _ from 'lodash';
+// Icons are purely decorative. Probably want to replace these with CSS in the future.
+// eslint-disable-next-line no-restricted-imports
 import { CircleIcon, SquareIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 
@@ -68,9 +70,9 @@ export const ImageStreamTimeline: FC<ImageStreamTimelineProps> = ({
   imageStreamName,
   imageStreamNamespace,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   if (!_.some(imageStreamTags, 'items')) {
-    return <EmptyBox label={t('public~Images')} />;
+    return <EmptyBox label={t('Images')} />;
   }
   const tagsArray: TagMeta[] = _.flatten(
     _.map(imageStreamTags, ({ tag, items }) => {

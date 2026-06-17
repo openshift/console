@@ -1,4 +1,5 @@
 import type { Locator } from '@playwright/test';
+import { expect } from '@playwright/test';
 
 import BasePage from './base-page';
 
@@ -37,11 +38,11 @@ export class OAuthPage extends BasePage {
     await this.waitForLoadingComplete();
 
     // Verify no error alert
-    await this.errorAlert.waitFor({ state: 'detached', timeout: 5_000 });
+    await expect(this.errorAlert).not.toBeAttached({ timeout: 5_000 });
 
     // Verify the IDP appears in the list
     const idpNameCell = this.page.getByTestId(`idp-name-${idpName}`);
-    await idpNameCell.waitFor({ state: 'visible', timeout: 30_000 });
+    await expect(idpNameCell).toBeVisible({ timeout: 30_000 });
 
     // Verify content matches expected values
     await this.page.waitForFunction(
@@ -68,6 +69,7 @@ export class OAuthPage extends BasePage {
   async removeIDP(idpName: string): Promise<void> {
     // First verify the IDP exists
     const kebabCell = this.getIDPKebabMenu(idpName);
+    // eslint-disable-next-line no-restricted-syntax
     await kebabCell.waitFor({ state: 'visible', timeout: 5_000 }).catch(() => {
       throw new Error(`IDP "${idpName}" not found in the list - cannot remove`);
     });
@@ -78,19 +80,17 @@ export class OAuthPage extends BasePage {
 
     // Click the Remove action
     const removeAction = this.page.locator('[data-test-action="Remove identity provider"]');
-    await removeAction.waitFor({ state: 'visible', timeout: 10_000 });
     await this.robustClick(removeAction);
 
     // Confirm the removal
     const confirmButton = this.page.getByTestId('confirm-action');
-    await confirmButton.waitFor({ state: 'visible', timeout: 5_000 });
     await this.robustClick(confirmButton);
 
     // Wait for loading to complete after removal
     await this.waitForLoadingComplete();
 
     // Verify the IDP was removed (wait up to 30 seconds for OAuth operator to process)
-    await kebabCell.waitFor({ state: 'detached', timeout: 30_000 });
+    await expect(kebabCell).not.toBeAttached({ timeout: 30_000 });
   }
 
   /**
@@ -98,6 +98,6 @@ export class OAuthPage extends BasePage {
    */
   async verifyIDPNotExists(idpName: string): Promise<void> {
     const kebab = this.getIDPKebabMenu(idpName);
-    await kebab.waitFor({ state: 'detached', timeout: 5_000 });
+    await expect(kebab).not.toBeAttached({ timeout: 5_000 });
   }
 }

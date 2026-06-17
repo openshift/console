@@ -228,7 +228,7 @@ export const FetchProgressModal: FC<FetchProgressModalProps> = ({
           variant="link"
           onClick={endState ? handleClose : handleCancel}
         >
-          {endState ? t('console-shared~Close') : t('console-shared~Cancel')}
+          {endState ? t('Close') : t('Cancel')}
         </Button>
       </ModalFooter>
     </Modal>

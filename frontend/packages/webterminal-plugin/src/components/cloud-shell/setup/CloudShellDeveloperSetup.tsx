@@ -47,7 +47,7 @@ const CloudShellDeveloperSetup: FC<Props> = ({
       },
     },
   };
-  const { t } = useTranslation();
+  const { t } = useTranslation('webterminal-plugin');
 
   const handleSubmit = async (values: CloudShellSetupFormData, actions) => {
     const createNamespace = values.namespace === CREATE_NAMESPACE_KEY;
@@ -84,7 +84,7 @@ const CloudShellDeveloperSetup: FC<Props> = ({
   return (
     <div className="wt-cloud-shell-setup">
       <Title headingLevel="h2" className="wt-cloud-shell-setup--title">
-        {t('webterminal-plugin~Initialize terminal')}
+        {t('Initialize terminal')}
       </Title>
       <Formik
         initialValues={initialValues}

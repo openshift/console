@@ -140,8 +140,8 @@ const config: Configuration = {
   },
   performance: {
     // The maximum size in MiB of the entrypoint and generated files permitted by analyze.sh
-    maxEntrypointSize: 8.69 * 1048576,
-    maxAssetSize: 3.8 * 1048576, // the size of the monaco-editor chunk
+    maxEntrypointSize: 8.65 * 1048576,
+    maxAssetSize: 3.81 * 1048576, // the size of the monaco-editor chunk
   },
   devServer: {
     hot: HOT_RELOAD !== 'false',

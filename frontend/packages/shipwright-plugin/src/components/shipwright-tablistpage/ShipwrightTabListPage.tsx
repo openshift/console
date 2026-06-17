@@ -75,7 +75,7 @@ const clusterBuildStrategyTab = (model: K8sModel): Page => {
 };
 
 const ShipwrightTabListPage: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('shipwright-plugin');
   const { '*': currentTab } = useParams();
   const navigate = useNavigate();
 
@@ -92,7 +92,7 @@ const ShipwrightTabListPage: FC = () => {
     pages.push(buildListTab(buildModel));
     menuActions.build = {
       model: buildModel,
-      label: t('shipwright-plugin~Build'),
+      label: t('Build'),
       onSelection: (_key: string, _action: MenuAction, url: string) => `${url}/form`,
     };
   }
@@ -101,7 +101,7 @@ const ShipwrightTabListPage: FC = () => {
     pages.push(buildRunListTab(buildRunModel));
     menuActions.buildRun = {
       model: buildRunModel,
-      label: t('shipwright-plugin~BuildRun'),
+      label: t('BuildRun'),
     };
   }
 
@@ -109,7 +109,7 @@ const ShipwrightTabListPage: FC = () => {
     pages.push(buildStrategyTab(buildStrategyModel));
     menuActions.buildStrategy = {
       model: buildStrategyModel,
-      label: t('shipwright-plugin~BuildStrategy'),
+      label: t('BuildStrategy'),
     };
   }
 
@@ -117,7 +117,7 @@ const ShipwrightTabListPage: FC = () => {
     pages.push(clusterBuildStrategyTab(clusterBuildStrategyModel));
     menuActions.clusterBuildStrategy = {
       model: clusterBuildStrategyModel,
-      label: t('shipwright-plugin~ClusterBuildStrategy'),
+      label: t('ClusterBuildStrategy'),
     };
   }
 
@@ -147,7 +147,7 @@ const ShipwrightTabListPage: FC = () => {
 
   return (
     <MultiTabListPage
-      title={t('shipwright-plugin~Shipwright')}
+      title={t('Shipwright')}
       pages={pages}
       menuActions={menuActions}
       telemetryPrefix="Shipwright"

@@ -13,33 +13,27 @@ type NodeDetailsImagesProps = {
 
 const NodeDetailsImages: FC<NodeDetailsImagesProps> = ({ node }) => {
   const images = _.filter(node.status.images, 'names');
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   return (
     <PaneBody>
-      <SectionHeading text={t('console-app~Images')} />
+      <SectionHeading text={t('Images')} />
       <div className="co-table-container">
         <Table variant="compact" gridBreakPoint="">
           <Thead>
             <Tr>
-              <Th>{t('console-app~Name')}</Th>
-              <Th>{t('console-app~Size')}</Th>
+              <Th>{t('Name')}</Th>
+              <Th>{t('Size')}</Th>
             </Tr>
           </Thead>
           <Tbody>
             {_.map(images, (image, i) => (
               <Tr key={i}>
-                <Td
-                  dataLabel={t('console-app~Name')}
-                  modifier="breakWord"
-                  className="co-select-to-copy"
-                >
+                <Td dataLabel={t('Name')} modifier="breakWord" className="co-select-to-copy">
                   {image.names.find(
                     (name: string) => !name.includes('@') && !name.includes('<none>'),
                   ) || image.names[0]}
                 </Td>
-                <Td dataLabel={t('console-app~Size')}>
-                  {humanizeBinaryBytes(image.sizeBytes).string || '-'}
-                </Td>
+                <Td dataLabel={t('Size')}>{humanizeBinaryBytes(image.sizeBytes).string || '-'}</Td>
               </Tr>
             ))}
           </Tbody>

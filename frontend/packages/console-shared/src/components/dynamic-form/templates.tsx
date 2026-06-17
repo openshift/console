@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useState, useEffect } from 'react';
 import { Button, Alert, Divider, FormHelperText } from '@patternfly/react-core';
-import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { RhUiMinusCircleIcon, RhUiAddCircleFillIcon } from '@patternfly/react-icons';
 import type {
   ArrayFieldTemplateProps,
   FieldTemplateProps,
@@ -42,11 +42,11 @@ const AtomicFieldTemplate: FC<FieldTemplateProps> = ({
 };
 
 const AdvancedProperties: FC<Pick<ObjectFieldTemplateProps, 'properties'>> = ({ properties }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   return (
     <ExpandCollapse
-      textCollapsed={t('console-shared~Advanced configuration')}
-      textExpanded={t('console-shared~Advanced configuration')}
+      textCollapsed={t('Advanced configuration')}
+      textExpanded={t('Advanced configuration')}
     >
       {_.map(properties, (property) => property.content)}
     </ExpandCollapse>
@@ -114,7 +114,7 @@ export const ArrayFieldTemplate: FC<ArrayFieldTemplateProps> = ({
   title,
   uiSchema,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const [, label] = useSchemaLabel(schema, uiSchema, title ?? 'Items');
   return (
     <FieldSet
@@ -131,13 +131,13 @@ export const ArrayFieldTemplate: FC<ArrayFieldTemplateProps> = ({
             {item.hasRemove && (
               <div className="co-dynamic-form__array-field-group-remove">
                 <Button
-                  icon={<MinusCircleIcon className="co-icon-space-r" />}
+                  icon={<RhUiMinusCircleIcon className="co-icon-space-r" />}
                   id={`${item.key}_remove-btn`}
                   type="button"
                   onClick={item.onDropIndexClick(item.index)}
                   variant="link"
                 >
-                  {t('console-shared~Remove {{singularLabel}}', { singularLabel: label })}
+                  {t('Remove {{singularLabel}}', { singularLabel: label })}
                 </Button>
               </div>
             )}
@@ -147,13 +147,13 @@ export const ArrayFieldTemplate: FC<ArrayFieldTemplateProps> = ({
       })}
       <div>
         <Button
-          icon={<PlusCircleIcon className="co-icon-space-r" />}
+          icon={<RhUiAddCircleFillIcon className="co-icon-space-r" />}
           id={`${idSchema.$id}_add-btn`}
           type="button"
           onClick={onAddClick}
           variant="link"
         >
-          {t('console-shared~Add {{singularLabel}}', { singularLabel: label })}
+          {t('Add {{singularLabel}}', { singularLabel: label })}
         </Button>
       </div>
     </FieldSet>
@@ -161,15 +161,15 @@ export const ArrayFieldTemplate: FC<ArrayFieldTemplateProps> = ({
 };
 
 export const ErrorTemplate: FC<{ errors: string[] }> = ({ errors }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   return (
     <Alert
       isInline
       className="co-alert co-break-word co-alert--scrollable"
       variant="danger"
-      title={t('console-shared~Error')}
+      title={t('Error')}
     >
-      {t('console-shared~Fix the following errors:')}
+      {t('Fix the following errors:')}
       <ul>
         {_.map(errors, (error) => (
           <li key={error}>{error}</li>

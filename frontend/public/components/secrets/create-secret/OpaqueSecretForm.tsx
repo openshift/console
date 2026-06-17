@@ -2,13 +2,13 @@ import type { FC } from 'react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, ActionGroup } from '@patternfly/react-core';
-import { PlusCircleIcon } from '@patternfly/react-icons';
+import { RhUiAddCircleFillIcon } from '@patternfly/react-icons';
 import { SecretSubFormProps, OpaqueDataEntry } from './types';
 import { OpaqueSecretFormEntry } from './OpaqueSecretFormEntry';
 import { opaqueSecretObjectToArray, newOpaqueSecretEntry, opaqueEntriesToObject } from './utils';
 
 export const OpaqueSecretForm: FC<SecretSubFormProps> = ({ onChange, base64StringData }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const [opaqueDataEntries, setOpaqueDataEntries] = useState(
     opaqueSecretObjectToArray(base64StringData),
   );
@@ -56,9 +56,9 @@ export const OpaqueSecretForm: FC<SecretSubFormProps> = ({ onChange, base64Strin
           type="button"
           variant="link"
           data-test="add-credentials-button"
-          icon={<PlusCircleIcon />}
+          icon={<RhUiAddCircleFillIcon />}
         >
-          {t('public~Add key/value')}
+          {t('Add key/value')}
         </Button>
       </ActionGroup>
     </>

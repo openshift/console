@@ -45,7 +45,7 @@ const SubscribeForm: FC<Props> = ({
   errors,
   values,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const [showYAMLAlert, setShowYAMLAlert] = useState<boolean>(true);
   const { kind: sourceKind } = source;
   const dirty = values?.formData?.metadata?.name && values?.formData?.spec?.subscriber?.ref?.name;
@@ -69,7 +69,7 @@ const SubscribeForm: FC<Props> = ({
         <InputField
           type={TextInputTypes.text}
           name="formData.metadata.name"
-          label={t('knative-plugin~Name')}
+          label={t('Name')}
           required
         />
         <PubSubSubscriber autoSelect={false} />
@@ -103,8 +103,8 @@ const SubscribeForm: FC<Props> = ({
       </FormBody>
       <FormFooter
         isSubmitting={isSubmitting}
-        submitLabel={t('knative-plugin~Subscribe')}
-        cancelLabel={t('knative-plugin~Cancel')}
+        submitLabel={t('Subscribe')}
+        cancelLabel={t('Cancel')}
         disableSubmit={
           (values.editorType !== EditorType.YAML ? !dirty || !_.isEmpty(errors) : false) ||
           isSubmitting

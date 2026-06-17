@@ -14,7 +14,7 @@ export const PodDisruptionBudgetsPage: FC<PodDisruptionBudgetsPageProps> = ({
   namespace,
   showTitle = true,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const [resources, loaded, loadError] = useK8sWatchResource<PodDisruptionBudgetKind[]>(
     mock
       ? null
@@ -40,7 +40,7 @@ export const PodDisruptionBudgetsPage: FC<PodDisruptionBudgetsPageProps> = ({
       <ListPageHeader title={showTitle ? t(PodDisruptionBudgetModel.labelPluralKey) : undefined}>
         {!mock && (
           <ListPageCreate groupVersionKind={resourceKind} createAccessReview={accessReview}>
-            {t('console-app~Create PodDisruptionBudget')}
+            {t('Create PodDisruptionBudget')}
           </ListPageCreate>
         )}
       </ListPageHeader>

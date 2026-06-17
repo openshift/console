@@ -18,7 +18,7 @@ type HookFormData = {
 export type HooksSectionFormData = { formData: { hooks: HookFormData } };
 
 const HooksSection: FC<{}> = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
 
   const [
     {
@@ -27,26 +27,26 @@ const HooksSection: FC<{}> = () => {
   ] = useField<HookFormData>('formData.hooks');
 
   const hookTypeItems: Record<string, string> = {
-    command: t('devconsole~Command'),
-    shell: t('devconsole~Shell script'),
-    onlyArgs: t('devconsole~Arguments to default image entry point'),
+    command: t('Command'),
+    shell: t('Shell script'),
+    onlyArgs: t('Arguments to default image entry point'),
   };
 
   const lineHeight = 18;
   return (
-    <FormSection title={t('devconsole~Hooks')} dataTest="section hooks">
+    <FormSection title={t('Hooks')} dataTest="section hooks">
       <CheckboxField
         name="formData.hooks.enabled"
-        label={t('devconsole~Run build hooks after image is built')}
+        label={t('Run build hooks after image is built')}
         helpText={t(
-          'devconsole~Build hooks allow you to run commands at the end of the build to verify the image.',
+          'Build hooks allow you to run commands at the end of the build to verify the image.',
         )}
       />
 
       {enabled ? (
         <DropdownField
           name="formData.hooks.type"
-          label={t('devconsole~Hook type')}
+          label={t('Hook type')}
           items={hookTypeItems}
           fullWidth
           dataTest="type"
@@ -56,7 +56,7 @@ const HooksSection: FC<{}> = () => {
       {enabled && type === 'shell' ? (
         <EditorField
           name="formData.hooks.shell"
-          label={t('devconsole~Script')}
+          label={t('Script')}
           options={{
             lineHeight,
             scrollBeyondLastLine: false,
@@ -67,11 +67,11 @@ const HooksSection: FC<{}> = () => {
       {enabled && type === 'command' ? (
         <TextColumnField
           name="formData.hooks.commands"
-          label={t('devconsole~Command')}
-          addLabel={t('devconsole~Add command')}
-          placeholder={t('devconsole~Command')}
+          label={t('Command')}
+          addLabel={t('Add command')}
+          placeholder={t('Command')}
           helpText={t(
-            'devconsole~Enter the command to run inside the container. The command is considered successful if its exit code is 0.',
+            'Enter the command to run inside the container. The command is considered successful if its exit code is 0.',
           )}
           disableDeleteRow={commands?.length === 1}
         />
@@ -80,10 +80,10 @@ const HooksSection: FC<{}> = () => {
       {enabled && (type === 'shell' || type === 'command' || type === 'onlyArgs') ? (
         <TextColumnField
           name="formData.hooks.arguments"
-          label={t('devconsole~Arguments')}
-          addLabel={t('devconsole~Add argument')}
-          placeholder={t('devconsole~Argument')}
-          helpText={t('devconsole~Enter the arguments that will be appended to the command.')}
+          label={t('Arguments')}
+          addLabel={t('Add argument')}
+          placeholder={t('Argument')}
+          helpText={t('Enter the arguments that will be appended to the command.')}
         />
       ) : null}
     </FormSection>

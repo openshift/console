@@ -7,10 +7,10 @@ import { EventingTriggerModel } from '../../../models';
 import TriggerList from './TriggerList';
 
 const TriggerListPage: FC<ComponentProps<typeof ListPage>> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   return (
     <>
-      <DocumentTitle>{t('knative-plugin~Triggers')}</DocumentTitle>
+      <DocumentTitle>{t('Triggers')}</DocumentTitle>
       <ListPage
         canCreate={false}
         {...props}

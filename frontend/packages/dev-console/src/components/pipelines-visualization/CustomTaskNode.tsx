@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useRef, useMemo, memo } from 'react';
 import { Tooltip } from '@patternfly/react-core';
-import { QuestionCircleIcon } from '@patternfly/react-icons';
+import { RhUiQuestionMarkCircleFillIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import { t_color_gray_50 as customTaskColor } from '@patternfly/react-tokens';
 import type { Node, NodeModel } from '@patternfly/react-topology';
@@ -55,7 +55,7 @@ const CustomTaskComponent: FC<CustomTaskProps> = ({
   height,
   customTask,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const showStatusState: boolean = !!pipelineRunName;
   const visualName = name || _.get(task, ['metadata', 'name'], '');
   const nameRef = useRef();
@@ -121,7 +121,7 @@ const CustomTaskComponent: FC<CustomTaskProps> = ({
               color: customTaskColor.value,
             }}
           >
-            {<QuestionCircleIcon />}
+            {<RhUiQuestionMarkCircleFillIcon />}
           </svg>
         </>
       )}
@@ -130,12 +130,7 @@ const CustomTaskComponent: FC<CustomTaskProps> = ({
 
   if (!disableVisualizationTooltip) {
     taskPill = (
-      <Tooltip
-        triggerRef={pillRef}
-        position="bottom"
-        enableFlip={false}
-        content={t('devconsole~Custom Task')}
-      >
+      <Tooltip triggerRef={pillRef} position="bottom" enableFlip={false} content={t('Custom Task')}>
         <g ref={pillRef}>{taskPill}</g>
       </Tooltip>
     );

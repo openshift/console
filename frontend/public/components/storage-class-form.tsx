@@ -53,7 +53,7 @@ type StorageProvisionerMap = {
 };
 
 const StorageClassFormInner: FC<StorageClassFormProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const navigate = useNavigate();
 
   const [newStorageClass, setNewStorageClass] = useState<{
@@ -111,13 +111,13 @@ const StorageClassFormInner: FC<StorageClassFormProps> = (props) => {
   };
 
   const reclaimPolicies = {
-    Retain: t('public~Retain'),
-    Delete: t('public~Delete'),
+    Retain: t('Retain'),
+    Delete: t('Delete'),
   };
 
   const volumeBindingModes = {
-    Immediate: t('public~Immediate'),
-    WaitForFirstConsumer: t('public~WaitForFirstConsumer'),
+    Immediate: t('Immediate'),
+    WaitForFirstConsumer: t('WaitForFirstConsumer'),
   };
 
   // Accepts a list of CSI provisioners and it checks if the
@@ -154,12 +154,12 @@ const StorageClassFormInner: FC<StorageClassFormProps> = (props) => {
 
     if (nameUpdated) {
       if (updatedName.trim().length === 0) {
-        returnVal.error = t('public~Storage name is required');
+        returnVal.error = t('Storage name is required');
         returnVal.nameIsValid = false;
       } else if (resources.current) {
         _.each(resources.current.data, function (storageClass) {
           if (storageClass.metadata.name === updatedName.toLowerCase()) {
-            returnVal.error = t('public~Storage name must be unique');
+            returnVal.error = t('Storage name must be unique');
             returnVal.nameIsValid = false;
           }
         });
@@ -345,7 +345,7 @@ const StorageClassFormInner: FC<StorageClassFormProps> = (props) => {
     // Display error if duplicate keys are found
     const keys = c.map((v) => v[NameValueEditorPair.Name]);
     if (_.uniq(keys).length !== keys.length) {
-      setError(t('public~Duplicate keys found.'));
+      setError(t('Duplicate keys found.'));
       return;
     }
 
@@ -525,23 +525,20 @@ const StorageClassFormInner: FC<StorageClassFormProps> = (props) => {
         {!_.isEmpty(parameters) && dynamicContent}
 
         <div className="form-group">
-          <label>{t('public~Additional parameters')}</label>
+          <label>{t('Additional parameters')}</label>
           <p>
-            {t('public~Specific fields for the selected provisioner.')}
+            {t('Specific fields for the selected provisioner.')}
             &nbsp;
             {documentationLink && (
-              <ExternalLink
-                href={documentationLink()}
-                text={t('public~What should I enter here?')}
-              />
+              <ExternalLink href={documentationLink()} text={t('What should I enter here?')} />
             )}
           </p>
           <NameValueEditorComponent
             nameValuePairs={customParams}
-            nameString={t('public~Parameter')}
-            nameParameter={t('public~parameter')}
-            valueString={t('public~Value')}
-            addString={t('public~Add Parameter')}
+            nameString={t('Parameter')}
+            nameParameter={t('parameter')}
+            valueString={t('Value')}
+            addString={t('Add Parameter')}
             updateParentData={(c) => setCustomParams(c.nameValuePairs)}
           />
         </div>
@@ -566,19 +563,19 @@ const StorageClassFormInner: FC<StorageClassFormProps> = (props) => {
   return (
     <div className="co-m-pane__form">
       <PageHeading
-        title={t('public~StorageClass')}
+        title={t('StorageClass')}
         linkProps={{
           component: LinkTo(`/k8s/cluster/storageclasses/~new`, { replace: true }),
           id: 'yaml-link',
           'data-test': 'yaml-link',
-          label: t('public~Edit YAML'),
+          label: t('Edit YAML'),
         }}
       />
       <PaneBody>
         <form data-test-id="storage-class-form">
           <div className={css('form-group', { 'has-error': fieldErrors.nameValidationMsg })}>
             <label className="co-required" htmlFor="storage-class-name">
-              {t('public~Name')}
+              {t('Name')}
             </label>
             <span className="pf-v6-c-form-control">
               <input
@@ -596,7 +593,7 @@ const StorageClassFormInner: FC<StorageClassFormProps> = (props) => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="storage-class-description">{t('public~Description')}</label>
+            <label htmlFor="storage-class-description">{t('Description')}</label>
             <span className="pf-v6-c-form-control">
               <input
                 type="text"
@@ -610,10 +607,10 @@ const StorageClassFormInner: FC<StorageClassFormProps> = (props) => {
 
           <div className="form-group">
             <label className="co-required" htmlFor="storage-class-reclaim-policy">
-              {t('public~Reclaim policy')}
+              {t('Reclaim policy')}
             </label>
             <ConsoleSelect
-              title={t('public~Select reclaim policy')}
+              title={t('Select reclaim policy')}
               items={reclaimPolicies}
               isFullWidth
               selectedKey={reclaimPolicyKey}
@@ -622,17 +619,17 @@ const StorageClassFormInner: FC<StorageClassFormProps> = (props) => {
             />
             <span className="help-block">
               {t(
-                'public~Determines what happens to persistent volumes when the associated persistent volume claim is deleted. Defaults to "Delete"',
+                'Determines what happens to persistent volumes when the associated persistent volume claim is deleted. Defaults to "Delete"',
               )}
             </span>
           </div>
 
           <div className="form-group">
             <label className="co-required" htmlFor="storage-class-volume-binding-mode">
-              {t('public~Volume binding mode')}
+              {t('Volume binding mode')}
             </label>
             <ConsoleSelect
-              title={t('public~Select volume binding mode')}
+              title={t('Select volume binding mode')}
               items={volumeBindingModes}
               isFullWidth
               selectedKey={volumeBindingModeKey}
@@ -642,19 +639,19 @@ const StorageClassFormInner: FC<StorageClassFormProps> = (props) => {
             />
             <span className="help-block">
               {t(
-                'public~Determines when persistent volume claims will be provisioned and bound. Defaults to "WaitForFirstConsumer"',
+                'Determines when persistent volume claims will be provisioned and bound. Defaults to "WaitForFirstConsumer"',
               )}
             </span>
           </div>
 
           <div className="form-group">
             <label className="co-required" htmlFor="storage-class-provisioner">
-              {t('public~Provisioner')}
+              {t('Provisioner')}
             </label>
             <ConsoleSelect
-              title={t('public~Select Provisioner')}
+              title={t('Select Provisioner')}
               autocompleteFilter={autocompleteFilter}
-              autocompletePlaceholder={t('public~Select Provisioner')}
+              autocompletePlaceholder={t('Select Provisioner')}
               items={_.mapValues(storageTypes.current, 'provisioner')}
               isFullWidth
               menuClassName="dropdown-menu--text-wrap"
@@ -664,9 +661,7 @@ const StorageClassFormInner: FC<StorageClassFormProps> = (props) => {
               dataTest="storage-class-provisioner-dropdown"
             />
             <span className="help-block">
-              {t(
-                'public~Determines what volume plugin is used for provisioning PersistentVolumes.',
-              )}
+              {t('Determines what volume plugin is used for provisioning PersistentVolumes.')}
             </span>
           </div>
 
@@ -676,7 +671,7 @@ const StorageClassFormInner: FC<StorageClassFormProps> = (props) => {
 
           {expansionFlag && (
             <Checkbox
-              label={t('public~Allow PersistentVolumeClaims to be expanded')}
+              label={t('Allow PersistentVolumeClaims to be expanded')}
               onChange={(_event, checked) => setStorageHandler('expansion', checked)}
               isChecked={allowExpansion}
               name="expansion"
@@ -693,7 +688,7 @@ const StorageClassFormInner: FC<StorageClassFormProps> = (props) => {
                 type="submit"
                 variant="primary"
               >
-                {t('public~Create')}
+                {t('Create')}
               </Button>
               <Button
                 id="cancel"
@@ -701,7 +696,7 @@ const StorageClassFormInner: FC<StorageClassFormProps> = (props) => {
                 type="button"
                 variant="secondary"
               >
-                {t('public~Cancel')}
+                {t('Cancel')}
               </Button>
             </ActionGroup>
           </ButtonBar>

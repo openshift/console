@@ -37,7 +37,7 @@ export const Popover: FC<PopoverProps> = ({
   className,
   id,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   return (
     <>
       <Popper
@@ -53,7 +53,7 @@ export const Popover: FC<PopoverProps> = ({
           <div id={id} className={css(styles.popover, className)}>
             <PopoverArrow className="ocs-popover__arrow" />
             <PopoverContent>
-              <PopoverCloseButton onClose={onClose} aria-label={t('console-shared~Close')} />
+              <PopoverCloseButton onClose={onClose} aria-label={t('Close')} />
               {headerContent && (
                 <Title headingLevel="h6" size={TitleSizes.md} id={`popover-${uniqueId}-header`}>
                   {headerContent}

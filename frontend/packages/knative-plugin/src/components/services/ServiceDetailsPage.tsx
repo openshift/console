@@ -39,7 +39,7 @@ type FunctionsPodsProps = {
 };
 
 const ServiceDetails: FC<{ obj: ServiceKind }> = ({ obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const [revisions, revisionLoaded, revisionErrorLoad] = useK8sWatchResource<RevisionKind[]>({
     kind: referenceForModel(RevisionModel),
     namespace: obj.metadata.namespace,
@@ -50,7 +50,7 @@ const ServiceDetails: FC<{ obj: ServiceKind }> = ({ obj }) => {
   return (
     <>
       <PaneBody>
-        <SectionHeading text={t('knative-plugin~Details')} />
+        <SectionHeading text={t('Details')} />
         <Grid hasGutter>
           <GridItem md={6}>
             <ResourceSummary
@@ -62,17 +62,17 @@ const ServiceDetails: FC<{ obj: ServiceKind }> = ({ obj }) => {
           <GridItem md={6}>
             <DescriptionList>
               {isServerlessFunction(obj) && (
-                <DetailsItem label={t('knative-plugin~Type')} obj={obj}>
-                  {t('knative-plugin~Function')}
+                <DetailsItem label={t('Type')} obj={obj}>
+                  {t('Function')}
                 </DetailsItem>
               )}
               {obj?.status?.url && (
-                <DetailsItem label={t('knative-plugin~URL')} obj={obj} path="status.url">
+                <DetailsItem label={t('URL')} obj={obj} path="status.url">
                   <ExternalLink href={obj.status.url} displayBlock text={obj.status.url} />
                 </DetailsItem>
               )}
               {revisions && revisionLoaded && !revisionErrorLoad && (
-                <DetailsItem label={t('knative-plugin~Revisions')} obj={obj} path="status.traffic">
+                <DetailsItem label={t('Revisions')} obj={obj} path="status.traffic">
                   <RevisionsOverviewList revisions={revisions} service={obj} hideSectionHeading />
                 </DetailsItem>
               )}
@@ -81,12 +81,12 @@ const ServiceDetails: FC<{ obj: ServiceKind }> = ({ obj }) => {
         </Grid>
       </PaneBody>
       <PaneBody>
-        <SectionHeading text={t('knative-plugin~Containers')} />
+        <SectionHeading text={t('Containers')} />
         <ContainerTable containers={obj.spec.template.spec.containers} />
       </PaneBody>
       {_.isArray(obj?.status?.conditions) && (
         <PaneBody>
-          <SectionHeading text={t('knative-plugin~Conditions')} />
+          <SectionHeading text={t('Conditions')} />
           <Conditions conditions={obj.status.conditions} />
         </PaneBody>
       )}
@@ -105,7 +105,7 @@ const FunctionsPods: FC<FunctionsPodsProps> = ({ obj }) => (
 );
 
 const ServiceDetailsPage: FC<ComponentProps<typeof DetailsPage>> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const serviceTypeValue = useContext(KnativeServiceTypeContext);
   const { kindObj } = props;
   const params = useParams();
@@ -159,9 +159,9 @@ const ServiceDetailsPage: FC<ComponentProps<typeof DetailsPage>> = (props) => {
     params,
     serviceTypeValue === ServiceTypeValue.Function ? 'functions' : 'serving',
     serverlessTab(kindObj.kind),
-    serviceTypeValue === ServiceTypeValue.Function ? t('knative-plugin~Functions') : undefined,
+    serviceTypeValue === ServiceTypeValue.Function ? t('Functions') : undefined,
     serviceTypeValue === ServiceTypeValue.Function ? true : isAdminPerspective,
-    serviceTypeValue === ServiceTypeValue.Function ? t('knative-plugin~Function') : undefined,
+    serviceTypeValue === ServiceTypeValue.Function ? t('Function') : undefined,
   );
   return (
     <DetailsPage

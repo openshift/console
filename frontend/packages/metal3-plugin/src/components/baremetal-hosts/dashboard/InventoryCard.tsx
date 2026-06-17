@@ -54,7 +54,7 @@ const PodInventoryItem: FC = () => {
 };
 
 const InventoryCard: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('metal3-plugin');
   const { obj } = useContext(BareMetalHostDashboardContext);
 
   const namespace = getNamespace(obj);
@@ -81,7 +81,7 @@ const InventoryCard: FC = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{t('metal3-plugin~Inventory')}</CardTitle>
+        <CardTitle>{t('Inventory')}</CardTitle>
       </CardHeader>
       <CardBody>
         <Stack hasGutter>
@@ -90,7 +90,7 @@ const InventoryCard: FC = () => {
           </StackItem>
           <StackItem>
             <InventoryItem
-              title={t('metal3-plugin~Disk')}
+              title={t('Disk')}
               isLoading={!obj}
               count={getHostStorage(obj).length}
               TitleComponent={DiskTitleComponent}
@@ -98,18 +98,14 @@ const InventoryCard: FC = () => {
           </StackItem>
           <StackItem>
             <InventoryItem
-              title={t('metal3-plugin~NIC')}
+              title={t('NIC')}
               isLoading={!obj}
               count={getHostNICs(obj).length}
               TitleComponent={NICTitleComponent}
             />
           </StackItem>
           <StackItem>
-            <InventoryItem
-              title={t('metal3-plugin~CPU')}
-              isLoading={!obj}
-              count={getHostCPU(obj).count}
-            />
+            <InventoryItem title={t('CPU')} isLoading={!obj} count={getHostCPU(obj).count} />
           </StackItem>
         </Stack>
       </CardBody>

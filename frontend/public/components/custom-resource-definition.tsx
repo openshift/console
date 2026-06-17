@@ -11,7 +11,7 @@ import {
   Th,
   Tr,
 } from '@patternfly/react-table';
-import { BanIcon } from '@patternfly/react-icons';
+import { RhUiBanIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 
 import { DetailsPage } from './factory/details';
@@ -76,25 +76,25 @@ const namespaced = (crd: CustomResourceDefinitionKind) => crd.spec.scope === 'Na
 const kind = referenceForModel(CustomResourceDefinitionModel);
 
 const Established: FC<{ crd: CustomResourceDefinitionKind }> = ({ crd }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return crd.status && isEstablished(crd.status.conditions) ? (
     <span>
-      <GreenCheckCircleIcon title={t('public~true')} />
+      <GreenCheckCircleIcon title={t('true')} />
     </span>
   ) : (
     <span>
-      <BanIcon title={t('public~false')} />
+      <RhUiBanIcon title={t('false')} />
     </span>
   );
 };
 
 const EmptyVersionsMsg: FC<{}> = () => {
-  const { t } = useTranslation();
-  return <EmptyBox label={t('public~CRD versions')} />;
+  const { t } = useTranslation('public');
+  return <EmptyBox label={t('CRD versions')} />;
 };
 
 const CRDVersionTable: FC<CRDVersionProps> = ({ versions }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const [sortBy, setSortBy] = useState({ index: 0, direction: SortByDirection.asc });
   const onSort = useCallback((_event, index, direction) => setSortBy({ index, direction }), []);
   const compare = useCallback(
@@ -120,10 +120,10 @@ const CRDVersionTable: FC<CRDVersionProps> = ({ versions }) => {
     [versions, compare],
   );
 
-  const headers = useMemo(() => [t('public~Name'), t('public~Served'), t('public~Storage')], [t]);
+  const headers = useMemo(() => [t('Name'), t('Served'), t('Storage')], [t]);
 
   return versionRows.length > 0 ? (
-    <PfTable variant={TableVariant.compact} aria-label={t('public~CRD versions')}>
+    <PfTable variant={TableVariant.compact} aria-label={t('CRD versions')}>
       <Thead>
         <Tr>
           {headers.map((header, columnIndex) => (
@@ -149,11 +149,11 @@ const CRDVersionTable: FC<CRDVersionProps> = ({ versions }) => {
 };
 
 const Details: FC<{ obj: CustomResourceDefinitionKind }> = ({ obj: crd }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <>
       <PaneBody>
-        <SectionHeading text={t('public~CustomResourceDefinition details')} />
+        <SectionHeading text={t('CustomResourceDefinition details')} />
         <Grid hasGutter>
           <GridItem sm={6}>
             <ResourceSummary showPodSelector={false} showNodeSelector={false} resource={crd} />
@@ -161,29 +161,29 @@ const Details: FC<{ obj: CustomResourceDefinitionKind }> = ({ obj: crd }) => {
           <GridItem sm={6}>
             <DescriptionList>
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('public~Established')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('Established')}</DescriptionListTerm>
                 <DescriptionListDescription>
                   <Established crd={crd} />
                 </DescriptionListDescription>
               </DescriptionListGroup>
-              <DetailsItem label={t('public~Group')} obj={crd} path="spec.group" />
+              <DetailsItem label={t('Group')} obj={crd} path="spec.group" />
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('public~Latest version')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('Latest version')}</DescriptionListTerm>
                 <DescriptionListDescription>
                   {getLatestVersionForCRD(crd)}
                 </DescriptionListDescription>
               </DescriptionListGroup>
-              <DetailsItem label={t('public~Scope')} obj={crd} path="spec.scope" />
+              <DetailsItem label={t('Scope')} obj={crd} path="spec.scope" />
             </DescriptionList>
           </GridItem>
         </Grid>
       </PaneBody>
       <PaneBody>
-        <SectionHeading text={t('public~Conditions')} />
+        <SectionHeading text={t('Conditions')} />
         <Conditions conditions={crd.status.conditions} />
       </PaneBody>
       <PaneBody>
-        <SectionHeading text={t('public~Versions')} />
+        <SectionHeading text={t('Versions')} />
         <CRDVersionTable versions={crd.spec.versions} />
       </PaneBody>
     </>
@@ -220,7 +220,7 @@ const useCustomResourceDefinitionsColumns = (): {
   columns: TableColumn<CustomResourceDefinitionKind>[];
   resetAllColumnWidths: () => void;
 } => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
     CustomResourceDefinitionModel,
   );
@@ -228,7 +228,7 @@ const useCustomResourceDefinitionsColumns = (): {
   const columns: TableColumn<CustomResourceDefinitionKind>[] = useMemo(
     () => [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'spec.names.kind',
         resizableProps: getResizableProps(tableColumnInfo[0].id),
@@ -238,7 +238,7 @@ const useCustomResourceDefinitionsColumns = (): {
         },
       },
       {
-        title: t('public~Group'),
+        title: t('Group'),
         id: tableColumnInfo[1].id,
         sort: 'spec.group',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
@@ -247,7 +247,7 @@ const useCustomResourceDefinitionsColumns = (): {
         },
       },
       {
-        title: t('public~Latest version'),
+        title: t('Latest version'),
         id: tableColumnInfo[2].id,
         sort: (data, direction) =>
           data.sort(
@@ -259,7 +259,7 @@ const useCustomResourceDefinitionsColumns = (): {
         },
       },
       {
-        title: t('public~Namespaced'),
+        title: t('Namespaced'),
         id: tableColumnInfo[3].id,
         sort: 'spec.scope',
         resizableProps: getResizableProps(tableColumnInfo[3].id),
@@ -268,7 +268,7 @@ const useCustomResourceDefinitionsColumns = (): {
         },
       },
       {
-        title: t('public~Established'),
+        title: t('Established'),
         id: tableColumnInfo[4].id,
         resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
@@ -290,8 +290,8 @@ const useCustomResourceDefinitionsColumns = (): {
 };
 
 const IsNamespaced: FC<{ obj: CustomResourceDefinitionKind }> = ({ obj }) => {
-  const { t } = useTranslation();
-  return <>{namespaced(obj) ? t('public~Yes') : t('public~No')}</>;
+  const { t } = useTranslation('public');
+  return <>{namespaced(obj) ? t('Yes') : t('No')}</>;
 };
 
 const getDataViewRows: GetDataViewRows<CustomResourceDefinitionKind> = (data, columns) => {

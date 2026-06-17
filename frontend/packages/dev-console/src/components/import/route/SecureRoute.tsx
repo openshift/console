@@ -15,7 +15,7 @@ import {
 } from '../import-types';
 
 const SecureRoute: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const [preferredRoutingOptions, , preferredRoutingOptionsLoaded] = usePreferredRoutingOptions();
   const { secure: secureRoute, tlsTermination, insecureTraffic } =
     preferredRoutingOptionsLoaded && preferredRoutingOptions;
@@ -28,20 +28,20 @@ const SecureRoute: FC = () => {
   } = useFormikContext<FormikValues>();
 
   const terminationOptions = {
-    [TerminationType.EDGE]: t('devconsole~Edge'),
-    [TerminationType.PASSTHROUGH]: t('devconsole~Passthrough'),
-    [TerminationType.REENCRYPT]: t('devconsole~Re-encrypt'),
+    [TerminationType.EDGE]: t('Edge'),
+    [TerminationType.PASSTHROUGH]: t('Passthrough'),
+    [TerminationType.REENCRYPT]: t('Re-encrypt'),
   };
   const insecureTrafficOptions =
     tls.termination === TerminationType.PASSTHROUGH
       ? {
-          [PassthroughInsecureTrafficType.None]: t('devconsole~None'),
-          [PassthroughInsecureTrafficType.Redirect]: t('devconsole~Redirect'),
+          [PassthroughInsecureTrafficType.None]: t('None'),
+          [PassthroughInsecureTrafficType.Redirect]: t('Redirect'),
         }
       : {
-          [InsecureTrafficType.None]: t('devconsole~None'),
-          [InsecureTrafficType.Allow]: t('devconsole~Allow'),
-          [InsecureTrafficType.Redirect]: t('devconsole~Redirect'),
+          [InsecureTrafficType.None]: t('None'),
+          [InsecureTrafficType.Allow]: t('Allow'),
+          [InsecureTrafficType.Redirect]: t('Redirect'),
         };
 
   useEffect(() => {
@@ -62,66 +62,66 @@ const SecureRoute: FC = () => {
     <>
       <CheckboxField
         name="route.secure"
-        label={t('devconsole~Secure Route')}
-        formLabel={t('devconsole~Security')}
+        label={t('Secure Route')}
+        formLabel={t('Security')}
         helpText={t(
-          'devconsole~Routes can be secured using several TLS termination types for serving certificates.',
+          'Routes can be secured using several TLS termination types for serving certificates.',
         )}
       />
       {secure && (
         <>
           <DropdownField
             name="route.tls.termination"
-            label={t('devconsole~TLS termination')}
+            label={t('TLS termination')}
             items={terminationOptions}
-            title={t('devconsole~Select termination type')}
+            title={t('Select termination type')}
             fullWidth
           />
           <DropdownField
             name="route.tls.insecureEdgeTerminationPolicy"
-            label={t('devconsole~Insecure traffic')}
+            label={t('Insecure traffic')}
             items={insecureTrafficOptions}
-            title={t('devconsole~Select insecure traffic type')}
-            helpText={t('devconsole~Policy for traffic on insecure schemes like HTTP.')}
+            title={t('Select insecure traffic type')}
+            helpText={t('Policy for traffic on insecure schemes like HTTP.')}
             fullWidth
           />
           {tls.termination && tls.termination !== 'passthrough' && (
             <>
               <Title headingLevel="h3" className="pf-v6-u-mb-sm">
-                {t('devconsole~Certificates')}
+                {t('Certificates')}
               </Title>
               <FormHelperText>
                 {t(
-                  "devconsole~TLS certificates for edge and re-encrypt termination. If not specified, the router's default certificate is used.",
+                  "TLS certificates for edge and re-encrypt termination. If not specified, the router's default certificate is used.",
                 )}
               </FormHelperText>
               <DroppableFileInputField
                 name="route.tls.certificate"
-                label={t('devconsole~Certificate')}
+                label={t('Certificate')}
                 helpText={t(
-                  'devconsole~The PEM format certificate. Upload file by dragging & dropping, selecting it, or pasting from the clipboard.',
+                  'The PEM format certificate. Upload file by dragging & dropping, selecting it, or pasting from the clipboard.',
                 )}
               />
               <DroppableFileInputField
                 name="route.tls.key"
-                label={t('devconsole~Private Key')}
+                label={t('Private Key')}
                 helpText={t(
-                  'devconsole~The PEM format key. Upload file by dragging & dropping, selecting it, or pasting from the clipboard.',
+                  'The PEM format key. Upload file by dragging & dropping, selecting it, or pasting from the clipboard.',
                 )}
               />
               <DroppableFileInputField
                 name="route.tls.caCertificate"
-                label={t('devconsole~CA certificate')}
+                label={t('CA certificate')}
                 helpText={t(
-                  'devconsole~The PEM format CA certificate chain. Upload file by dragging & dropping, selecting it, or pasting from the clipboard.',
+                  'The PEM format CA certificate chain. Upload file by dragging & dropping, selecting it, or pasting from the clipboard.',
                 )}
               />
               {tls.termination === 'reencrypt' && (
                 <DroppableFileInputField
                   name="route.tls.destinationCaCertificate"
-                  label={t('devconsole~Destination CA Certificate')}
+                  label={t('Destination CA Certificate')}
                   helpText={t(
-                    'devconsole~The PEM format CA certificate chain to validate the endpoint certificate for re-encrypt termination. Upload file by dragging & dropping, selecting it, or pasting from the clipboard.',
+                    'The PEM format CA certificate chain to validate the endpoint certificate for re-encrypt termination. Upload file by dragging & dropping, selecting it, or pasting from the clipboard.',
                   )}
                 />
               )}

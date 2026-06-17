@@ -50,7 +50,7 @@ export const ManagedByOperatorResourceLink: FC<ManagerLinkProps> = ({
 };
 
 export const ManagedByOperatorLink: FC<ManagedByLinkProps> = ({ obj, className }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const [data, setData] = useState<ClusterServiceVersionKind[] | undefined>(undefined);
   const namespace = obj.metadata.namespace;
   useEffect(() => {
@@ -69,7 +69,7 @@ export const ManagedByOperatorLink: FC<ManagedByLinkProps> = ({ obj, className }
 
   return owner && csv ? (
     <div className={css('co-m-pane__heading-owner', className)}>
-      {t('public~Managed by')}{' '}
+      {t('Managed by')}{' '}
       <ManagedByOperatorResourceLink
         className="co-resource-item"
         namespace={namespace}

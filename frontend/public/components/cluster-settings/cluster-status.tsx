@@ -3,7 +3,7 @@ import type { FC, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { HashLink } from '@console/shared/src/components/links/HashLink';
 
-import { SyncAltIcon } from '@patternfly/react-icons';
+import { RhUiSyncIcon } from '@patternfly/react-icons';
 import {
   BlueArrowCircleUpIcon,
   BlueInfoCircleIcon,
@@ -27,13 +27,13 @@ import { truncateMiddle } from '../utils/truncate-middle';
 import { ErrorModal, ErrorModalProps } from '../modals/error-modal';
 
 export const ClusterVersionConditionsLink: FC<ClusterVersionConditionsLinkProps> = ({ cv }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <HashLink
       smooth
       to={`${resourcePathFromModel(ClusterVersionModel, cv.metadata.name)}#conditions`}
     >
-      {t('public~View conditions')}
+      {t('View conditions')}
     </HashLink>
   );
 };
@@ -61,19 +61,19 @@ const StatusMessagePopover: FC<CVStatusMessagePopoverProps> = ({ bodyContent, ch
 };
 
 const InvalidMessage: FC<CVStatusMessageProps> = ({ cv }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const launchModal = useOverlay();
   return (
     <div data-test="cv-update-status-invalid">
       <div>
-        <RedExclamationCircleIcon /> {t('public~Invalid cluster version')}
+        <RedExclamationCircleIcon /> {t('Invalid cluster version')}
       </div>
       <Button
         onClick={() => cancelUpdate(cv, launchModal)}
         variant="primary"
         className="pf-v6-u-mt-xs"
       >
-        {t('public~Cancel update')}
+        {t('Cancel update')}
       </Button>
     </div>
   );
@@ -85,12 +85,12 @@ const ReleaseNotAcceptedMessage: FC<CVStatusMessageProps> = ({ cv }) => {
     ClusterVersionConditionType.ReleaseAccepted,
     K8sResourceConditionStatus.False,
   );
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <>
       <div data-test="cv-update-status-release-accepted-false">
         <StatusMessagePopover bodyContent={releaseNotAcceptedCondition.message}>
-          <RedExclamationCircleIcon /> {t('public~Release not accepted')}
+          <RedExclamationCircleIcon /> {t('Release not accepted')}
         </StatusMessagePopover>
       </div>
       <ClusterVersionConditionsLink cv={cv} />
@@ -99,10 +99,10 @@ const ReleaseNotAcceptedMessage: FC<CVStatusMessageProps> = ({ cv }) => {
 };
 
 const UpdatesAvailableMessage: FC<CVStatusMessageProps> = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <div className="co-update-status" data-test="cv-update-status-available-updates">
-      <BlueArrowCircleUpIcon /> {t('public~Available updates')}
+      <BlueArrowCircleUpIcon /> {t('Available updates')}
     </div>
   );
 };
@@ -113,11 +113,11 @@ const FailingMessageText: FC<CVStatusMessageProps> = ({ cv }) => {
     ClusterVersionConditionType.Failing,
     K8sResourceConditionStatus.True,
   );
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <div data-test="cv-update-status-failing">
       <StatusMessagePopover bodyContent={failingCondition.message}>
-        <RedExclamationCircleIcon /> {t('public~Failing')}
+        <RedExclamationCircleIcon /> {t('Failing')}
       </StatusMessagePopover>
     </div>
   );
@@ -125,15 +125,15 @@ const FailingMessageText: FC<CVStatusMessageProps> = ({ cv }) => {
 
 export const UpdatingMessageText: FC<CVStatusMessageProps> = ({ cv }) => {
   const version = getDesiredClusterVersion(cv);
-  const { t } = useTranslation();
-  return <>{t('public~Update to {{version}} in progress', { version })}</>;
+  const { t } = useTranslation('public');
+  return <>{t('Update to {{version}} in progress', { version })}</>;
 };
 
 const UpdatingMessage: FC<CVStatusMessageProps> = ({ cv, isFailing }) => {
   return (
     <>
       <div data-test="cv-update-status-updating">
-        <SyncAltIcon className="co-spin co-icon-space-r" />
+        <RhUiSyncIcon className="co-spin co-icon-space-r" />
         <UpdatingMessageText cv={cv} />
       </div>
       {isFailing && <FailingMessageText cv={cv} />}
@@ -148,7 +148,7 @@ const ErrorRetrievingMessage: FC<CVStatusMessageProps> = ({ cv }) => {
     ClusterVersionConditionType.RetrievedUpdates,
     K8sResourceConditionStatus.False,
   );
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return retrievedUpdatesCondition.reason === 'NoChannel' ? (
     <div data-test="cv-update-status-no-channel">
       <BlueInfoCircleIcon /> {retrievedUpdatesCondition.message}
@@ -157,7 +157,7 @@ const ErrorRetrievingMessage: FC<CVStatusMessageProps> = ({ cv }) => {
     <>
       <div data-test="cv-update-status-no-updates">
         <StatusMessagePopover bodyContent={retrievedUpdatesCondition.message}>
-          <RedExclamationCircleIcon /> {t('public~Not retrieving updates')}
+          <RedExclamationCircleIcon /> {t('Not retrieving updates')}
         </StatusMessagePopover>
       </div>
       <ClusterVersionConditionsLink cv={cv} />
@@ -175,10 +175,10 @@ const FailingMessage: FC<CVStatusMessageProps> = ({ cv }) => {
 };
 
 export const UpToDateMessage: FC<{}> = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <span data-test="cv-update-status-up-to-date">
-      <GreenCheckCircleIcon /> {t('public~Up to date')}
+      <GreenCheckCircleIcon /> {t('Up to date')}
     </span>
   );
 };

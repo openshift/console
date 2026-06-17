@@ -323,6 +323,24 @@ export type ConsoleRemotePluginOptions = Partial<{
      *   _except_ for `@openshift-console/*` packages
      */
     moduleFilter: (moduleRequest: string) => boolean;
+
+    /**
+     * Skip transforming imports whose module specifier matches one of these prefixes.
+     *
+     * This option allows plugins to import parts of vendor packages that are not exposed directly
+     * via package index but have to be imported from a specific path, for example:
+     * ```ts
+     * // Cannot import Tile from '@patternfly/react-core' index
+     * import { Tile } from '@patternfly/react-core/deprecated';
+     * ```
+     *
+     * Import prefixes specified here will be added to the default skip list.
+     *
+     * If not specified, no additional import prefixes will be added to the default skip list.
+     *
+     * @see {@link getDynamicModuleImportSkipPrefixes}
+     */
+    skipImportPrefixes: string[];
   }>;
 }>;
 
@@ -458,6 +476,7 @@ export class ConsoleRemotePlugin implements WebpackPluginInstance {
     new DynamicModuleImportPlugin({
       dynamicModuleMaps: this.dynamicModuleMaps,
       moduleFilter: sharedDynamicModuleSettings.moduleFilter ?? dynamicModuleImportTransformFilter,
+      skipImportPrefixes: sharedDynamicModuleSettings.skipImportPrefixes,
     }).apply(compiler);
 
     // Post-build validations performed before emitting assets

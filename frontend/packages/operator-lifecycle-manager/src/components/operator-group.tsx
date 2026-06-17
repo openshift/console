@@ -20,19 +20,19 @@ export const operatorGroupFor = (obj: K8sResourceKind) =>
   obj?.metadata?.annotations?.['olm.operatorGroup']; // FIXME magic string
 
 const NoOperatorGroupMsg: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const actions = [
     <Link
       key="create-operator-group"
       to={`/ns/${getActiveNamespace()}/${referenceForModel(OperatorGroupModel)}/~new`}
     >
-      {t('olm~Create an OperatorGroup for this Namespace')}
+      {t('Create an OperatorGroup for this Namespace')}
     </Link>,
   ];
   return (
-    <ConsoleEmptyState title={t('olm~Namespace not enabled')} primaryActions={actions}>
+    <ConsoleEmptyState title={t('Namespace not enabled')} primaryActions={actions}>
       {t(
-        'olm~The Operator Lifecycle Manager will not watch this Namespace because it is not configured with an OperatorGroup.',
+        'The Operator Lifecycle Manager will not watch this Namespace because it is not configured with an OperatorGroup.',
       )}
     </ConsoleEmptyState>
   );

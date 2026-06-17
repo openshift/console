@@ -46,7 +46,7 @@ const useConsumers = (
 };
 
 export const CPUPopover: FC<TopConsumerPopoverProps> = ({ current }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const consumers = useConsumers(
     OverviewQuery.PROJECTS_BY_CPU,
     OverviewQuery.PODS_BY_CPU,
@@ -54,7 +54,7 @@ export const CPUPopover: FC<TopConsumerPopoverProps> = ({ current }) => {
   );
   return (
     <ConsumerPopover
-      title={t('public~CPU')}
+      title={t('CPU')}
       current={current}
       consumers={consumers}
       humanize={humanizeCpuCores}
@@ -63,7 +63,7 @@ export const CPUPopover: FC<TopConsumerPopoverProps> = ({ current }) => {
 };
 
 export const MemoryPopover: FC<TopConsumerPopoverProps> = ({ current }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const consumers = useConsumers(
     OverviewQuery.PROJECTS_BY_MEMORY,
     OverviewQuery.PODS_BY_MEMORY,
@@ -71,7 +71,7 @@ export const MemoryPopover: FC<TopConsumerPopoverProps> = ({ current }) => {
   );
   return (
     <ConsumerPopover
-      title={t('public~Memory')}
+      title={t('Memory')}
       current={current}
       consumers={consumers}
       humanize={humanizeBinaryBytes}
@@ -80,7 +80,7 @@ export const MemoryPopover: FC<TopConsumerPopoverProps> = ({ current }) => {
 };
 
 export const StoragePopover: FC<TopConsumerPopoverProps> = ({ current }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const consumers = useConsumers(
     OverviewQuery.PROJECTS_BY_STORAGE,
     OverviewQuery.PODS_BY_STORAGE,
@@ -88,7 +88,7 @@ export const StoragePopover: FC<TopConsumerPopoverProps> = ({ current }) => {
   );
   return (
     <ConsumerPopover
-      title={t('public~Filesystem')}
+      title={t('Filesystem')}
       current={current}
       consumers={consumers}
       humanize={humanizeBinaryBytes}
@@ -97,7 +97,7 @@ export const StoragePopover: FC<TopConsumerPopoverProps> = ({ current }) => {
 };
 
 export const PodPopover: FC<TopConsumerPopoverProps> = ({ current }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const nodeType = useContext(ClusterUtilizationContext);
   const consumers = useMemo(() => {
     const consumerQueries = getTop25ConsumerQueries(nodeType);
@@ -116,7 +116,7 @@ export const PodPopover: FC<TopConsumerPopoverProps> = ({ current }) => {
   }, [nodeType]);
   return (
     <ConsumerPopover
-      title={t('public~Pod count')}
+      title={t('Pod count')}
       current={current}
       consumers={consumers}
       humanize={humanizeNumber}
@@ -125,7 +125,7 @@ export const PodPopover: FC<TopConsumerPopoverProps> = ({ current }) => {
 };
 
 export const NetworkInPopover: FC<TopConsumerPopoverProps> = ({ current }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const consumers = useConsumers(
     OverviewQuery.PROJECTS_BY_NETWORK_IN,
     OverviewQuery.PODS_BY_NETWORK_IN,
@@ -133,7 +133,7 @@ export const NetworkInPopover: FC<TopConsumerPopoverProps> = ({ current }) => {
   );
   return (
     <ConsumerPopover
-      title={t('public~Network in')}
+      title={t('Network in')}
       current={current}
       consumers={consumers}
       humanize={humanizeDecimalBytesPerSec}
@@ -142,7 +142,7 @@ export const NetworkInPopover: FC<TopConsumerPopoverProps> = ({ current }) => {
 };
 
 export const NetworkOutPopover: FC<TopConsumerPopoverProps> = ({ current }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const consumers = useConsumers(
     OverviewQuery.PROJECTS_BY_NETWORK_OUT,
     OverviewQuery.PODS_BY_NETWORK_OUT,
@@ -150,7 +150,7 @@ export const NetworkOutPopover: FC<TopConsumerPopoverProps> = ({ current }) => {
   );
   return (
     <ConsumerPopover
-      title={t('public~Network out')}
+      title={t('Network out')}
       current={current}
       consumers={consumers}
       humanize={humanizeDecimalBytesPerSec}

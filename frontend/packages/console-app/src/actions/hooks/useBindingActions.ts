@@ -32,7 +32,7 @@ export const useBindingActions = (
   obj: RoleBindingKind | ClusterRoleBindingKind,
   filterActions?: BindingActionCreator[],
 ): Action[] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const [model] = useK8sModel(obj ? referenceFor(obj) : null);
   const dispatch = useConsoleDispatch();
   const startImpersonate = useCallback(
@@ -45,16 +45,16 @@ export const useBindingActions = (
   const { subjectIndex, subjects } = obj ?? {};
   const subject = subjects?.[subjectIndex];
   const deleteBindingSubject = useWarningModal({
-    title: t('public~Delete {{label}} subject?', {
+    title: t('Delete {{label}} subject?', {
       label: model?.kind,
     }),
-    children: t('public~Are you sure you want to delete subject {{name}} of type {{kind}}?', {
+    children: t('Are you sure you want to delete subject {{name}} of type {{kind}}?', {
       name: subject?.name,
       kind: subject?.kind,
     }),
     confirmButtonVariant: ButtonVariant.danger,
-    confirmButtonLabel: t('public~Delete'),
-    cancelButtonLabel: t('public~Cancel'),
+    confirmButtonLabel: t('Delete'),
+    cancelButtonLabel: t('Cancel'),
     onConfirm: () => {
       return k8sPatchResource({
         model,
@@ -76,7 +76,7 @@ export const useBindingActions = (
     () => ({
       [BindingActionCreator.ImpersonateBindingSubject]: () => ({
         id: 'impersonate-binding',
-        label: t('public~Impersonate {{kind}} "{{name}}"', {
+        label: t('Impersonate {{kind}} "{{name}}"', {
           kind: subject?.kind,
           name: subject?.name,
         }),
@@ -95,7 +95,7 @@ export const useBindingActions = (
       }),
       [BindingActionCreator.DuplicateBinding]: () => ({
         id: 'duplicate-binding',
-        label: t('public~Duplicate {{kindLabel}}', {
+        label: t('Duplicate {{kindLabel}}', {
           kindLabel: model?.kind,
         }),
         cta: {
@@ -109,7 +109,7 @@ export const useBindingActions = (
       }),
       [BindingActionCreator.EditBindingSubject]: () => ({
         id: 'edit-binding-subject',
-        label: t('public~Edit {{kindLabel}} subject', {
+        label: t('Edit {{kindLabel}} subject', {
           kindLabel: model?.kind,
         }),
         cta: {
@@ -121,7 +121,7 @@ export const useBindingActions = (
       }),
       [BindingActionCreator.DeleteBindingSubject]: () => ({
         id: 'delete-binding-subject',
-        label: t('public~Delete {{label}} subject', {
+        label: t('Delete {{label}} subject', {
           label: model?.kind,
         }),
         cta: () => deleteBindingSubject(),

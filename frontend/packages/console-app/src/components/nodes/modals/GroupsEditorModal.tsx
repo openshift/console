@@ -26,7 +26,7 @@ import {
   Spinner,
   TextInput,
 } from '@patternfly/react-core';
-import { OutlinedTrashAltIcon } from '@patternfly/react-icons';
+import { RhUiTrashIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
@@ -56,7 +56,7 @@ type PatchError = {
 };
 
 const GroupsEditorModal: OverlayComponent<ModalComponentProps> = ({ closeOverlay }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const [selectedGroup, setSelectedGroup] = useState<string | undefined>();
   const [groupsByName, setGroupsByName] = useState<GroupNameMap>({});
   const [nodeSelections, setNodeSelections] = useState<{ nodeName: string; selected: boolean }[]>(
@@ -207,7 +207,7 @@ const GroupsEditorModal: OverlayComponent<ModalComponentProps> = ({ closeOverlay
         })
         .catch((error) => {
           patchErrors.push({
-            title: t('console-app~Error updating {{nodeName}}', {
+            title: t('Error updating {{nodeName}}', {
               nodeName: node.metadata.name,
             }),
             message: error instanceof Error ? error.message : String(error),
@@ -245,7 +245,7 @@ const GroupsEditorModal: OverlayComponent<ModalComponentProps> = ({ closeOverlay
         const failures = results.filter((result) => result.status === 'rejected');
         failures.forEach((f) =>
           patchErrors.push({
-            title: t('console-app~Failure updating a node:'),
+            title: t('Failure updating a node:'),
             message: f.reason instanceof Error ? f.reason.message : String(f.reason),
           }),
         );
@@ -259,7 +259,7 @@ const GroupsEditorModal: OverlayComponent<ModalComponentProps> = ({ closeOverlay
       .catch((error) => {
         setErrors([
           {
-            title: t('console-app~Unable to update nodes'),
+            title: t('Unable to update nodes'),
             message: error.toString(),
           },
         ]);
@@ -270,8 +270,8 @@ const GroupsEditorModal: OverlayComponent<ModalComponentProps> = ({ closeOverlay
   return (
     <Modal isOpen onClose={closeOverlay} variant="small" className="co-node-group-editor-modal">
       <ModalHeader
-        title={t('console-app~Edit groups')}
-        description={t('console-app~Groups help you organize and select resources.')}
+        title={t('Edit groups')}
+        description={t('Groups help you organize and select resources.')}
       />
       <ModalBody>
         {!nodesLoaded ? (
@@ -281,20 +281,20 @@ const GroupsEditorModal: OverlayComponent<ModalComponentProps> = ({ closeOverlay
         ) : !nodes.length ? (
           <EmptyState
             headingLevel="h5"
-            titleText={<>{t('console-app~No existing nodes')}</>}
+            titleText={<>{t('No existing nodes')}</>}
             variant={EmptyStateVariant.full}
           >
             <EmptyStateBody>
-              {t('console-app~You can create groups only when there are existing nodes.')}
+              {t('You can create groups only when there are existing nodes.')}
             </EmptyStateBody>
           </EmptyState>
         ) : (
           <Form>
-            <FormGroup label={t('console-app~Groups')} fieldId="groups">
+            <FormGroup label={t('Groups')} fieldId="groups">
               <div className="co-node-group-editor-modal__groups-list">
                 {!Object.keys(groupsByName).length ? (
                   <Content component={ContentVariants.small} className="pf-v6-u-m-md">
-                    {t('console-app~To get started, add a group')}
+                    {t('To get started, add a group')}
                   </Content>
                 ) : (
                   <SimpleList key={selectedGroup}>
@@ -311,11 +311,11 @@ const GroupsEditorModal: OverlayComponent<ModalComponentProps> = ({ closeOverlay
                             <FlexItem>
                               <Button
                                 variant={ButtonVariant.plain}
-                                aria-label={t('console-app~Delete group {{groupName}}', {
+                                aria-label={t('Delete group {{groupName}}', {
                                   groupName,
                                 })}
                                 hasNoPadding
-                                icon={<OutlinedTrashAltIcon />}
+                                icon={<RhUiTrashIcon />}
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   removeGroup(groupName);
@@ -329,12 +329,12 @@ const GroupsEditorModal: OverlayComponent<ModalComponentProps> = ({ closeOverlay
                 )}
               </div>
             </FormGroup>
-            <FormGroup fieldId="new-group" label={t('console-app~Add new group')}>
+            <FormGroup fieldId="new-group" label={t('Add new group')}>
               <Flex spaceItems={{ default: 'spaceItemsSm' }} flexWrap={{ default: 'nowrap' }}>
                 <FlexItem flex={{ default: 'flex_1' }}>
                   <TextInput
-                    placeholder={t('console-app~Enter a group name')}
-                    aria-label={t('console-app~Enter a group name')}
+                    placeholder={t('Enter a group name')}
+                    aria-label={t('Enter a group name')}
                     value={newGroupName}
                     onChange={handleNameChange}
                     onKeyDown={handleNameKeyDown}
@@ -346,21 +346,19 @@ const GroupsEditorModal: OverlayComponent<ModalComponentProps> = ({ closeOverlay
                     onClick={() => addNewGroup()}
                     isDisabled={!newGroupName || groupsByName[newGroupName] !== undefined}
                   >
-                    {t('console-app~Add')}
+                    {t('Add')}
                   </Button>
                 </FlexItem>
               </Flex>
               <HelperText component="ul" className="pf-v6-u-mt-xs">
                 <HelperTextItem component="li">
-                  {t('console-app~Separate multiple group names with commas.')}
+                  {t('Separate multiple group names with commas.')}
                 </HelperTextItem>
               </HelperText>
             </FormGroup>
             <FormGroup fieldId="nodes">
               <label>
-                {selectedGroup
-                  ? `${t('console-app~Nodes for group')} ${selectedGroup}`
-                  : t('console-app~Select a group')}
+                {selectedGroup ? `${t('Nodes for group')} ${selectedGroup}` : t('Select a group')}
               </label>
 
               <div className="co-node-group-editor-modal__groups-list">
@@ -389,9 +387,9 @@ const GroupsEditorModal: OverlayComponent<ModalComponentProps> = ({ closeOverlay
             isInline
             className="pf-v6-u-mt-md"
             variant="info"
-            title={t('console-app~Groups have been updated.')}
+            title={t('Groups have been updated.')}
           >
-            {t('console-app~Click Reload to see the changes.')}
+            {t('Click Reload to see the changes.')}
           </Alert>
         )}
         {!inProgress && errors.length > 0 && (
@@ -416,13 +414,13 @@ const GroupsEditorModal: OverlayComponent<ModalComponentProps> = ({ closeOverlay
           onClick={onSubmit}
           isDisabled={backgroundChange || inProgress}
         >
-          {t('console-app~Save')}
+          {t('Save')}
         </Button>
         <Button variant="secondary" onClick={onReload} type="button">
-          {t('console-app~Reload')}
+          {t('Reload')}
         </Button>
         <Button variant="secondary" onClick={closeOverlay} type="button">
-          {t('console-app~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooter>
     </Modal>

@@ -10,7 +10,7 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
-import { PencilAltIcon } from '@patternfly/react-icons';
+import { RhUiEditIcon } from '@patternfly/react-icons';
 import { DASH } from '@console/shared/src/constants/ui';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { referenceForModel, K8sResourceKind, TableColumn } from '../module/k8s';
@@ -53,11 +53,11 @@ const Details: FC<DetailsProps> = (props) => {
     },
     [launchModal],
   );
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   return (
     <PaneBody>
-      <SectionHeading text={t('public~Alertmanager details')} />
+      <SectionHeading text={t('Alertmanager details')} />
       <Grid hasGutter>
         <GridItem sm={6}>
           <DescriptionList>
@@ -73,7 +73,7 @@ const Details: FC<DetailsProps> = (props) => {
             </DescriptionListGroup>
             {spec.nodeSelector && (
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('public~Alertmanager node selector')}</DescriptionListTerm>{' '}
+                <DescriptionListTerm>{t('Alertmanager node selector')}</DescriptionListTerm>{' '}
                 <DescriptionListDescription>
                   <Selector selector={spec.nodeSelector} kind="Node" />
                 </DescriptionListDescription>
@@ -91,7 +91,7 @@ const Details: FC<DetailsProps> = (props) => {
               <DescriptionListTerm>Replicas</DescriptionListTerm>
               <DescriptionListDescription>
                 <Button
-                  icon={<PencilAltIcon />}
+                  icon={<RhUiEditIcon />}
                   iconPosition="end"
                   variant="link"
                   type="button"
@@ -168,11 +168,11 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {
 };
 
 const useAlertManagerColumns = (): TableColumn<K8sResourceKind>[] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const columns = useMemo(() => {
     return [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         props: {
@@ -181,7 +181,7 @@ const useAlertManagerColumns = (): TableColumn<K8sResourceKind>[] => {
         },
       },
       {
-        title: t('public~Namespace'),
+        title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
         props: {
@@ -189,7 +189,7 @@ const useAlertManagerColumns = (): TableColumn<K8sResourceKind>[] => {
         },
       },
       {
-        title: t('public~Labels'),
+        title: t('Labels'),
         id: tableColumnInfo[2].id,
         sort: 'metadata.labels',
         props: {
@@ -198,7 +198,7 @@ const useAlertManagerColumns = (): TableColumn<K8sResourceKind>[] => {
         },
       },
       {
-        title: t('public~Version'),
+        title: t('Version'),
         id: tableColumnInfo[3].id,
         sort: 'spec.version',
         props: {
@@ -207,7 +207,7 @@ const useAlertManagerColumns = (): TableColumn<K8sResourceKind>[] => {
         },
       },
       {
-        title: t('public~Node selector'),
+        title: t('Node selector'),
         id: tableColumnInfo[4].id,
         sort: 'spec.nodeSelector',
         props: {

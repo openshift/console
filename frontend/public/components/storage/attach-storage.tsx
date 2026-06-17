@@ -34,12 +34,12 @@ const AttachStorageInner: FC<AttachStorageFormProps> = (props) => {
   const { kindObj, kindsInFlight } = props;
   const params = useParams();
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const storageProvidersMap: StorageProviderMap = useMemo(() => {
     const providers = {
       '0': {
-        name: t('public~PersistentVolumeClaim'),
+        name: t('PersistentVolumeClaim'),
         Component: () => import('./attach-pvc-storage').then((m) => m.AttachStorage),
       },
     };
@@ -61,11 +61,11 @@ const AttachStorageInner: FC<AttachStorageFormProps> = (props) => {
     <LoadingBox />
   ) : (
     <>
-      <DocumentTitle>{t('public~Add Storage')}</DocumentTitle>
+      <DocumentTitle>{t('Add Storage')}</DocumentTitle>
       <PageHeading
         title={
           <>
-            {t('public~Add Storage')}
+            {t('Add Storage')}
             <Trans t={t} ns="public">
               {' '}
               to{' '}
@@ -82,7 +82,7 @@ const AttachStorageInner: FC<AttachStorageFormProps> = (props) => {
           <>
             {Object.keys(storageProvidersMap).length > 1 && (
               <>
-                <label className="co-required">{t('public~Storage type')}</label>
+                <label className="co-required">{t('Storage type')}</label>
                 {Object.entries(storageProvidersMap).map(([k, v]) => (
                   <Radio
                     key={k}

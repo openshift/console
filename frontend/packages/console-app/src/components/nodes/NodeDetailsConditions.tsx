@@ -13,35 +13,35 @@ type NodeDetailsConditionsProps = {
 };
 
 const NodeDetailsConditions: FC<NodeDetailsConditionsProps> = ({ node }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   return (
     <PaneBody>
-      <SectionHeading text={t('console-app~Node conditions')} />
+      <SectionHeading text={t('Node conditions')} />
       <div className="co-table-container">
         <Table variant="compact" gridBreakPoint="">
           <Thead>
             <Tr>
-              <Th>{t('console-app~Type')}</Th>
-              <Th>{t('console-app~Status')}</Th>
-              <Th>{t('console-app~Reason')}</Th>
-              <Th>{t('console-app~Updated')}</Th>
-              <Th>{t('console-app~Changed')}</Th>
+              <Th>{t('Type')}</Th>
+              <Th>{t('Status')}</Th>
+              <Th>{t('Reason')}</Th>
+              <Th>{t('Updated')}</Th>
+              <Th>{t('Changed')}</Th>
             </Tr>
           </Thead>
           <Tbody>
             {_.map(node.status.conditions, (c, i) => (
               <Tr key={i}>
-                <Td dataLabel={t('console-app~Type')}>
+                <Td dataLabel={t('Type')}>
                   <CamelCaseWrap value={c.type} />
                 </Td>
-                <Td dataLabel={t('console-app~Status')}>{c.status || '-'}</Td>
-                <Td dataLabel={t('console-app~Reason')}>
+                <Td dataLabel={t('Status')}>{c.status || '-'}</Td>
+                <Td dataLabel={t('Reason')}>
                   <CamelCaseWrap value={c.reason} />
                 </Td>
-                <Td dataLabel={t('console-app~Updated')}>
+                <Td dataLabel={t('Updated')}>
                   <Timestamp timestamp={c.lastHeartbeatTime} />
                 </Td>
-                <Td dataLabel={t('console-app~Changed')}>
+                <Td dataLabel={t('Changed')}>
                   <Timestamp timestamp={c.lastTransitionTime} />
                 </Td>
               </Tr>

@@ -128,7 +128,7 @@ export const ConsoleSelect: FC<ConsoleSelectProps> = ({
   const [selectedKey, setSelectedKey] = useState<string>(props.selectedKey ?? '');
   const [autocompleteText, setAutocompleteText] = useState<string>('');
   const [items, setItems] = useState<Record<string, React.ReactNode>>(props.items);
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   /* Dropdown bookmark state and helpers */
   // Should be undefined so that we don't save undefined-xxx.
@@ -338,7 +338,7 @@ export const ConsoleSelect: FC<ConsoleSelectProps> = ({
         >
           {!bookmarkRows.length && !renderedActionItems && !rows.length && autocompleteText && (
             <SelectOption isDisabled data-test="console-select-no-results">
-              {t('public~No results found')}
+              {t('No results found')}
             </SelectOption>
           )}
 

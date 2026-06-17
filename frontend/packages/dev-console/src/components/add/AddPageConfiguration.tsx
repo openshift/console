@@ -49,7 +49,7 @@ const Item: FC<ItemProps> = ({ id, addAction }) => (
 );
 
 const AddPageConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const fireTelemetryEvent = useTelemetry();
 
   // Available add page items
@@ -146,15 +146,15 @@ const AddPageConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
   };
 
   return (
-    <FormSection title={t('devconsole~Add page')} data-test="add-page form-section">
+    <FormSection title={t('Add page')} data-test="add-page form-section">
       <FormHelperText>
         {t(
-          'devconsole~Option to disable individual actions from the "+Add" page to simplify and standardize your development processes. Users can still create resources from a cli or via YAML. The "Search" and "Topology" will still show such resources.',
+          'Option to disable individual actions from the "+Add" page to simplify and standardize your development processes. Users can still create resources from a cli or via YAML. The "Search" and "Topology" will still show such resources.',
         )}
       </FormHelperText>
       <DualListSelector
-        availableOptionsTitle={t('devconsole~Enabled actions')}
-        chosenOptionsTitle={t('devconsole~Disabled actions')}
+        availableOptionsTitle={t('Enabled actions')}
+        chosenOptionsTitle={t('Disabled actions')}
         isSearchable
         availableOptions={enabledOptions}
         chosenOptions={disabledOptions}

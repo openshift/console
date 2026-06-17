@@ -25,7 +25,7 @@ type AddPageLayoutProps = {
 };
 
 const AddPageLayout: FC<AddPageLayoutProps> = ({ title }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const [activeNamespace] = useActiveNamespace();
   const [isQuickSearchOpen, setIsQuickSearchOpen] = useState<boolean>(
     typeof getQueryArgument('catalogSearch') === 'string',
@@ -75,22 +75,15 @@ const AddPageLayout: FC<AddPageLayoutProps> = ({ title }) => {
         >
           {!allAddActionsDisabled &&
             (extensionsLoaded ? (
-              <Tooltip
-                content={t('devconsole~Show or hide details about each item')}
-                position="top"
-              >
+              <Tooltip content={t('Show or hide details about each item')} position="top">
                 <Switch
-                  aria-label={
-                    showDetails
-                      ? t('devconsole~Show add card details')
-                      : t('devconsole~Hide add card details')
-                  }
+                  aria-label={showDetails ? t('Show add card details') : t('Hide add card details')}
                   isChecked={showDetails}
                   onChange={(_event, checked) => {
                     setShowDetails(checked);
                   }}
                   data-test="switch"
-                  label={showDetails ? t('devconsole~Details on') : t('devconsole~Details off')}
+                  label={showDetails ? t('Details on') : t('Details off')}
                   className="odc-add-page-layout__hint-block__details-switch__text"
                 />
               </Tooltip>

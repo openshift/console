@@ -5,23 +5,19 @@ import { DASH } from '@console/shared/src/constants/ui';
 import type { PodDisruptionBudgetKind } from './types';
 
 const AvailabilityDisplay: FC<AvailabilityDisplayProps> = ({ pdb }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
 
   if (_.isNil(pdb.spec.maxUnavailable) && _.isNil(pdb.spec.minAvailable)) {
     return <>{DASH}</>;
   }
 
   if (_.isNil(pdb.spec.maxUnavailable)) {
-    return (
-      <>
-        {t('console-app~Min available {{minAvailable}}', { minAvailable: pdb.spec.minAvailable })}
-      </>
-    );
+    return <>{t('Min available {{minAvailable}}', { minAvailable: pdb.spec.minAvailable })}</>;
   }
 
   return (
     <>
-      {t('console-app~Max unavailable {{maxUnavailable}}', {
+      {t('Max unavailable {{maxUnavailable}}', {
         maxUnavailable: pdb.spec.maxUnavailable,
       })}
     </>

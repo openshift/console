@@ -15,7 +15,7 @@ import { NodeDashboardContext } from './NodeDashboardContext';
 
 const VirtualMachinesInventoryItems: FC = () => {
   const { obj } = useContext(NodeDashboardContext);
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const showVms = useIsKubevirtPluginActive();
 
   const [vms, vmsLoaded, vmsLoadError] = useWatchVirtualMachineInstances(obj.metadata.name);
@@ -27,9 +27,9 @@ const VirtualMachinesInventoryItems: FC = () => {
   return (
     <DescriptionListGroup>
       <DescriptionListTermHelp
-        text={t('console-app~Virtual machines')}
+        text={t('Virtual machines')}
         textHelp={t(
-          'console-app~The total shown is based on your access permissions and might not include all virtual machines.',
+          'The total shown is based on your access permissions and might not include all virtual machines.',
         )}
       />
       <DescriptionListDescription>
@@ -40,8 +40,8 @@ const VirtualMachinesInventoryItems: FC = () => {
         >
           <InventoryItem
             isLoading={!vmsLoaded}
-            title={t('console-app~Virtual machine')}
-            titlePlural={t('console-app~Virtual machines')}
+            title={t('Virtual machine')}
+            titlePlural={t('Virtual machines')}
             count={vms.length}
             error={!!vmsLoadError}
           />

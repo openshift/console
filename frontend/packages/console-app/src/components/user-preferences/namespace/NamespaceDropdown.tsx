@@ -10,7 +10,7 @@ import {
   MenuContent,
   MenuList,
 } from '@patternfly/react-core';
-import { ExclamationCircleIcon } from '@patternfly/react-icons';
+import { RhStandardAlertIcon } from '@patternfly/react-icons';
 import fuzzysearch from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -39,7 +39,7 @@ type OptionItem = {
 };
 
 const NamespaceDropdown: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const fireTelemetryEvent = useTelemetry();
   const createNamespaceOrProjectModal = useCreateNamespaceOrProjectModal();
   const [model, canCreate] = useProjectOrNamespaceModel() as [K8sKind, boolean];
@@ -82,7 +82,7 @@ const NamespaceDropdown: FC = () => {
   }, [optionItems, filterText]);
 
   const lastViewedOption: OptionItem = {
-    title: t('console-app~Last viewed'),
+    title: t('Last viewed'),
     key: '##lastViewed##',
   };
 
@@ -99,13 +99,13 @@ const NamespaceDropdown: FC = () => {
   }, [fireTelemetryEvent, setPreferredNamespace, createNamespaceOrProjectModal]);
 
   const loadErrorDescription: string = isProject
-    ? t('console-app~Projects failed to load. Check your connection and reload the page.')
-    : t('console-app~Namespaces failed to load. Check your connection and reload the page.');
+    ? t('Projects failed to load. Check your connection and reload the page.')
+    : t('Namespaces failed to load. Check your connection and reload the page.');
   const loadErrorState: JSX.Element | null = optionsLoadError ? (
     <EmptyState
       headingLevel="h4"
-      icon={ExclamationCircleIcon}
-      titleText={<>{t('console-app~Unable to load')}</>}
+      icon={RhStandardAlertIcon}
+      titleText={<>{t('Unable to load')}</>}
       data-test={'dropdown console.preferredNamespace error'}
     >
       <EmptyStateBody>{loadErrorDescription}</EmptyStateBody>

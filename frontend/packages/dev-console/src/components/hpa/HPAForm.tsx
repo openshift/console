@@ -32,7 +32,7 @@ const HPAForm: FC<FormikProps<HPAFormValues> & HPAFormProps> = ({
   validateForm,
   values,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY = 'devconsole.hpaForm.editor.lastView';
   const isForm = values.editorType === EditorType.Form;
   const formEditor = <HPADetailsForm />;
@@ -75,9 +75,9 @@ const HPAForm: FC<FormikProps<HPAFormValues> & HPAFormProps> = ({
         handleReset={handleReset}
         errorMessage={status?.submitError}
         isSubmitting={isSubmitting}
-        submitLabel={t('devconsole~Save')}
+        submitLabel={t('Save')}
         disableSubmit={(isForm && !isEmpty(errors)) || isSubmitting}
-        resetLabel={t('devconsole~Cancel')}
+        resetLabel={t('Cancel')}
         sticky
       />
     </FlexForm>

@@ -21,7 +21,7 @@ const handleNamespaceChange = (newNamespace: string, navigate: NavigateFunction)
 
 export const PageContents: FC = () => {
   const params = useParams();
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const activeNamespace = params.ns;
 
   const pages = [
@@ -34,18 +34,18 @@ export const PageContents: FC = () => {
   ];
   const titleProviderValues = {
     telemetryPrefix: 'Observe',
-    titlePrefix: t('devconsole~Observe'),
+    titlePrefix: t('Observe'),
   };
 
   return activeNamespace ? (
     <PageTitleContext.Provider value={titleProviderValues}>
       <div className="odc-monitoring-page">
-        <PageHeading title={t('devconsole~Observe')} />
+        <PageHeading title={t('Observe')} />
         <HorizontalNav contextId="dev-console-observe" pages={pages} noStatusBox />
       </div>
     </PageTitleContext.Provider>
   ) : (
-    <CreateProjectListPage title={t('devconsole~Observe')}>
+    <CreateProjectListPage title={t('Observe')}>
       {(openProjectModal) => (
         <Trans t={t} ns="devconsole">
           Select a Project to view monitoring metrics

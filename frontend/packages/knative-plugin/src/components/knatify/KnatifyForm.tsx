@@ -22,7 +22,7 @@ const KnatifyForm: FC<FormikProps<FormikValues> & DeployImageFormProps> = ({
   dirty,
   projects,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   usePreventDataLossLock(isSubmitting);
 
   return (
@@ -40,10 +40,10 @@ const KnatifyForm: FC<FormikProps<FormikValues> & DeployImageFormProps> = ({
         handleReset={handleReset}
         errorMessage={status && status.submitError}
         isSubmitting={isSubmitting}
-        submitLabel={t('knative-plugin~Create')}
+        submitLabel={t('Create')}
         sticky
         disableSubmit={!dirty || !_.isEmpty(errors) || isSubmitting}
-        resetLabel={t('knative-plugin~Cancel')}
+        resetLabel={t('Cancel')}
       />
     </FlexForm>
   );

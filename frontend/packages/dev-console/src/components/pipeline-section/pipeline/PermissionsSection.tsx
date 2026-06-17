@@ -11,7 +11,7 @@ type PermissionsSectionProps = {
 };
 
 const PermissionsSection: FC<PermissionsSectionProps> = ({ formContextField }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const { values } = useFormikContext<RepositoryFormValues>();
   const { gitProvider } = _.get(values, formContextField) || values;
 
@@ -20,28 +20,28 @@ const PermissionsSection: FC<PermissionsSectionProps> = ({ formContextField }) =
     case GitProvider.GITHUB:
       permission = (
         <List>
-          <ListItem>{t('devconsole~Commit comments')}</ListItem>
-          <ListItem>{t('devconsole~Issue comments')}</ListItem>
-          <ListItem>{t('devconsole~Pull request')}</ListItem>
-          <ListItem>{t('devconsole~Pushes')}</ListItem>
+          <ListItem>{t('Commit comments')}</ListItem>
+          <ListItem>{t('Issue comments')}</ListItem>
+          <ListItem>{t('Pull request')}</ListItem>
+          <ListItem>{t('Pushes')}</ListItem>
         </List>
       );
       break;
     case GitProvider.GITLAB:
       permission = (
         <List>
-          <ListItem>{t('devconsole~Merge request Events')}</ListItem>
-          <ListItem>{t('devconsole~Push Events')}</ListItem>
+          <ListItem>{t('Merge request Events')}</ListItem>
+          <ListItem>{t('Push Events')}</ListItem>
         </List>
       );
       break;
     case GitProvider.BITBUCKET:
       permission = (
         <List>
-          <ListItem>{t('devconsole~Repository: Push')}</ListItem>
-          <ListItem>{t('devconsole~Pull Request: Created')}</ListItem>
-          <ListItem>{t('devconsole~Pull Request: Updated')}</ListItem>
-          <ListItem>{t('devconsole~Pull Request: Comment Created')}</ListItem>
+          <ListItem>{t('Repository: Push')}</ListItem>
+          <ListItem>{t('Pull Request: Created')}</ListItem>
+          <ListItem>{t('Pull Request: Updated')}</ListItem>
+          <ListItem>{t('Pull Request: Comment Created')}</ListItem>
         </List>
       );
       break;

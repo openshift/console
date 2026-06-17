@@ -93,11 +93,7 @@ describe('guided-tour-context', () => {
     });
 
     it('should return context values from the hook', () => {
-      useSelectorMock
-        .mockReturnValueOnce({ A: true, B: false })
-        .mockReturnValueOnce(false)
-        .mockReturnValueOnce({ A: true, B: false })
-        .mockReturnValueOnce(false);
+      useSelectorMock.mockReturnValue({ A: true, B: false });
       useResolvedExtensionsMock.mockReturnValue(mockTourExtension);
       // Mock useUserPreference to return { completed: false } for the tour state
       useUserPreferenceMock.mockReturnValue([{ dev: { completed: false } }, () => null, true]);
@@ -116,11 +112,7 @@ describe('guided-tour-context', () => {
     });
 
     it('should return tour null from the hook', () => {
-      useSelectorMock
-        .mockReturnValueOnce({ A: true, B: false })
-        .mockReturnValueOnce(false)
-        .mockReturnValueOnce({ A: true, B: false })
-        .mockReturnValueOnce(false);
+      useSelectorMock.mockReturnValue({ A: true, B: false });
       useResolvedExtensionsMock.mockReturnValue([[]]);
       useUserPreferenceMock.mockReturnValue([{ dev: { completed: false } }, () => null, true]);
       const { result } = renderHook(() => useTourValuesForContext());
@@ -130,12 +122,25 @@ describe('guided-tour-context', () => {
       expect(totalSteps).toEqual(undefined);
     });
 
+    it('should not re-show tour when completed changes', () => {
+      useSelectorMock.mockReturnValue({ A: true, B: false });
+      useResolvedExtensionsMock.mockReturnValue(mockTourExtension);
+      // Step 1: Mount with loaded: true, completed: false
+      useUserPreferenceMock.mockReturnValue([{ dev: { completed: false } }, () => null, true]);
+      const { result, rerender } = renderHook(() => useTourValuesForContext());
+      expect(result.current.tourState.startTour).toBe(true);
+      expect(result.current.tourState.completedTour).toBe(false);
+
+      // Step 2: now completed becomes true, loaded stays true
+      useUserPreferenceMock.mockReturnValue([{ dev: { completed: true } }, () => null, true]);
+      rerender();
+
+      expect(result.current.tourState.startTour).toBe(false);
+      expect(result.current.tourState.completedTour).toBe(true);
+    });
+
     it('should return null from the hook if tour is available but data isnot loaded', () => {
-      useSelectorMock
-        .mockReturnValueOnce({ A: true, B: false })
-        .mockReturnValueOnce(false)
-        .mockReturnValueOnce({ A: true, B: false })
-        .mockReturnValueOnce(false);
+      useSelectorMock.mockReturnValue({ A: true, B: false });
       useResolvedExtensionsMock.mockReturnValue(mockTourExtension);
       // Mock useUserPreference with loaded: false
       useUserPreferenceMock.mockReturnValue([{ dev: { completed: false } }, () => null, false]);
@@ -144,6 +149,21 @@ describe('guided-tour-context', () => {
       expect(tourState).toEqual(undefined);
       expect(tour).toEqual(null);
       expect(totalSteps).toEqual(undefined);
+    });
+
+    it('should not flash startTour when loaded transitions to true with completed tour', () => {
+      useSelectorMock.mockReturnValue({ A: true, B: false });
+      useResolvedExtensionsMock.mockReturnValue(mockTourExtension);
+      // Start with loaded: false (async ConfigMap fetch in progress)
+      useUserPreferenceMock.mockReturnValue([{ dev: { completed: false } }, () => null, false]);
+      const { result, rerender } = renderHook(() => useTourValuesForContext());
+      expect(result.current.tour).toEqual(null);
+
+      // Simulate ConfigMap load completing with completed: true
+      useUserPreferenceMock.mockReturnValue([{ dev: { completed: true } }, () => null, true]);
+      rerender();
+      const { tourState } = result.current;
+      expect(tourState?.startTour).not.toBe(true);
     });
   });
 

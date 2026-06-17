@@ -21,7 +21,7 @@ const HPAPageHeader: FC<HPAPageHeaderProps> = ({
   limitWarning,
   validSupportedType,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   return (
     <PageHeading
       title={title}
@@ -29,15 +29,10 @@ const HPAPageHeader: FC<HPAPageHeaderProps> = ({
         validSupportedType ? (
           <>
             <div>
-              {t('devconsole~Resource')}{' '}
-              <ResourceLink inline linkTo={false} kind={kind} name={name} />
+              {t('Resource')} <ResourceLink inline linkTo={false} kind={kind} name={name} />
             </div>
             {loadError ? (
-              <Alert
-                isInline
-                variant="danger"
-                title={t('devconsole~This resource is not available')}
-              >
+              <Alert isInline variant="danger" title={t('This resource is not available')}>
                 {loadError}
               </Alert>
             ) : (
@@ -45,11 +40,7 @@ const HPAPageHeader: FC<HPAPageHeaderProps> = ({
             )}
           </>
         ) : (
-          <Alert
-            isInline
-            variant="danger"
-            title={t('devconsole~This is not a supported in-context type')}
-          />
+          <Alert isInline variant="danger" title={t('This is not a supported in-context type')} />
         )
       }
     />

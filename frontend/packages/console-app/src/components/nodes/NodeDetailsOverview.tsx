@@ -8,7 +8,7 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
-import { PencilAltIcon } from '@patternfly/react-icons';
+import { RhUiEditIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import {
@@ -50,7 +50,7 @@ const NodeDetailsOverview: FC<NodeDetailsOverviewProps> = ({ node }) => {
     name: node.metadata.name,
     namespace: node.metadata.namespace,
   });
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const [modifyTaints] = useCommonActions(NodeModel, node, [CommonActionCreator.ModifyTaints]);
   const [modifyAnnotations] = useCommonActions(NodeModel, node, [
     CommonActionCreator.ModifyAnnotations,
@@ -58,40 +58,40 @@ const NodeDetailsOverview: FC<NodeDetailsOverviewProps> = ({ node }) => {
 
   return (
     <PaneBody>
-      <SectionHeading text={t('console-app~Node details')} />
+      <SectionHeading text={t('Node details')} />
       <Grid hasGutter>
         <GridItem md={6}>
           <DescriptionList>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('console-app~Node name')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Node name')}</DescriptionListTerm>
               <DescriptionListDescription>{node.metadata.name || '-'}</DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('console-app~Status')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Status')}</DescriptionListTerm>
               <DescriptionListDescription>
                 <NodeStatus node={node} />
               </DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('console-app~External ID')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('External ID')}</DescriptionListTerm>
               <DescriptionListDescription>
                 {_.get(node, 'spec.externalID', '-')}
               </DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('console-app~Uptime')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Uptime')}</DescriptionListTerm>
               <DescriptionListDescription>
                 <NodeUptime obj={node} />
               </DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('console-app~Node addresses')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Node addresses')}</DescriptionListTerm>
               <DescriptionListDescription>
                 <NodeIPList ips={getNodeAddresses(node)} expand />
               </DescriptionListDescription>
             </DescriptionListGroup>
             <DetailsItem
-              label={t('console-app~Labels')}
+              label={t('Labels')}
               obj={node}
               path="metadata.labels"
               onEdit={launchLabelsModal}
@@ -101,11 +101,11 @@ const NodeDetailsOverview: FC<NodeDetailsOverviewProps> = ({ node }) => {
               <LabelList kind="Node" labels={node.metadata.labels} />
             </DetailsItem>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('console-app~Taints')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Taints')}</DescriptionListTerm>
               <DescriptionListDescription>
                 {canUpdate ? (
                   <Button
-                    icon={<PencilAltIcon />}
+                    icon={<RhUiEditIcon />}
                     iconPosition="end"
                     variant="link"
                     type="button"
@@ -117,23 +117,21 @@ const NodeDetailsOverview: FC<NodeDetailsOverviewProps> = ({ node }) => {
                       }
                     }}
                   >
-                    {_.size(node.spec.taints)}{' '}
-                    {t('console-app~Taint', { count: _.size(node.spec.taints) })}
+                    {_.size(node.spec.taints)} {t('Taint', { count: _.size(node.spec.taints) })}
                   </Button>
                 ) : (
                   <span>
-                    {_.size(node.spec.taints)}{' '}
-                    {t('console-app~Taint', { count: _.size(node.spec.taints) })}
+                    {_.size(node.spec.taints)} {t('Taint', { count: _.size(node.spec.taints) })}
                   </span>
                 )}
               </DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('console-app~Annotations')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Annotations')}</DescriptionListTerm>
               <DescriptionListDescription>
                 {canUpdate ? (
                   <Button
-                    icon={<PencilAltIcon />}
+                    icon={<RhUiEditIcon />}
                     iconPosition="end"
                     variant="link"
                     type="button"
@@ -146,19 +144,19 @@ const NodeDetailsOverview: FC<NodeDetailsOverviewProps> = ({ node }) => {
                     }}
                   >
                     {_.size(node.metadata.annotations)}{' '}
-                    {t('console-app~Annotation', { count: _.size(node.metadata.annotations) })}
+                    {t('Annotation', { count: _.size(node.metadata.annotations) })}
                   </Button>
                 ) : (
                   <span>
                     {_.size(node.metadata.annotations)}{' '}
-                    {t('console-app~Annotation', { count: _.size(node.metadata.annotations) })}
+                    {t('Annotation', { count: _.size(node.metadata.annotations) })}
                   </span>
                 )}
               </DescriptionListDescription>
             </DescriptionListGroup>
             {machineName && (
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('console-app~Machine')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('Machine')}</DescriptionListTerm>
                 <DescriptionListDescription>
                   <ResourceLink
                     kind={referenceForModel(MachineModel)}
@@ -169,21 +167,21 @@ const NodeDetailsOverview: FC<NodeDetailsOverviewProps> = ({ node }) => {
               </DescriptionListGroup>
             )}
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('console-app~Provider ID')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Provider ID')}</DescriptionListTerm>
               <DescriptionListDescription>
                 {cloudProviderNames([cloudProviderID(node)])}
               </DescriptionListDescription>
             </DescriptionListGroup>
             {_.has(node, 'spec.unschedulable') && (
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('console-app~Unschedulable')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('Unschedulable')}</DescriptionListTerm>
                 <DescriptionListDescription className="text-capitalize">
                   {_.get(node, 'spec.unschedulable', '-').toString()}
                 </DescriptionListDescription>
               </DescriptionListGroup>
             )}
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('console-app~Created')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Created')}</DescriptionListTerm>
               <DescriptionListDescription>
                 <Timestamp timestamp={node.metadata.creationTimestamp} />
               </DescriptionListDescription>
@@ -193,49 +191,49 @@ const NodeDetailsOverview: FC<NodeDetailsOverviewProps> = ({ node }) => {
         <GridItem md={6}>
           <DescriptionList>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('console-app~Operating system')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Operating system')}</DescriptionListTerm>
               <DescriptionListDescription className="text-capitalize">
                 {_.get(node, 'status.nodeInfo.operatingSystem', '-')}
               </DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('console-app~OS image')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('OS image')}</DescriptionListTerm>
               <DescriptionListDescription>
                 {_.get(node, 'status.nodeInfo.osImage', '-')}
               </DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('console-app~Architecture')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Architecture')}</DescriptionListTerm>
               <DescriptionListDescription>
                 {_.get(node, 'status.nodeInfo.architecture', '-')}
               </DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('console-app~Kernel version')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Kernel version')}</DescriptionListTerm>
               <DescriptionListDescription>
                 {_.get(node, 'status.nodeInfo.kernelVersion', '-')}
               </DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('console-app~Boot ID')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Boot ID')}</DescriptionListTerm>
               <DescriptionListDescription>
                 {_.get(node, 'status.nodeInfo.bootID', '-')}
               </DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('console-app~Container runtime')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Container runtime')}</DescriptionListTerm>
               <DescriptionListDescription>
                 {_.get(node, 'status.nodeInfo.containerRuntimeVersion', '-')}
               </DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('console-app~Kubelet version')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Kubelet version')}</DescriptionListTerm>
               <DescriptionListDescription>
                 {_.get(node, 'status.nodeInfo.kubeletVersion', '-')}
               </DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('console-app~Kube-Proxy version')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Kube-Proxy version')}</DescriptionListTerm>
               <DescriptionListDescription>
                 {_.get(node, 'status.nodeInfo.kubeProxyVersion', '-')}
               </DescriptionListDescription>

@@ -55,7 +55,7 @@ const DescriptorDetailsItemArrayGroup: FC<DescriptorDetailsItemGroupProps> = ({
   schema,
   type,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const { arrayGroupPath, elementDescriptor, descriptor, nested } = group;
   const arrayGroupSchema = getSchemaAtPath(schema, `${type}.${arrayGroupPath}`);
   const description = descriptor?.description || arrayGroupSchema?.description;
@@ -88,7 +88,7 @@ const DescriptorDetailsItemArrayGroup: FC<DescriptorDetailsItemGroupProps> = ({
             </DescriptionList>
           ))
         ) : (
-          <span className="pf-v6-u-text-color-subtle">{t('public~None')}</span>
+          <span className="pf-v6-u-text-color-subtle">{t('None')}</span>
         )}
       </DetailsItem>
     </div>

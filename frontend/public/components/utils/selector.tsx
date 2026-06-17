@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import type { FC } from 'react';
-import { SearchIcon } from '@patternfly/react-icons';
+import { RhUiSearchIcon } from '@patternfly/react-icons';
 import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 
@@ -19,7 +19,7 @@ const Requirement: FC<RequirementProps> = ({ kind, requirements, namespace = '' 
   return (
     <div className="co-m-requirement">
       <Link className={`co-m-requirement__link co-text-${kind.toLowerCase()}`} to={to}>
-        <SearchIcon className="co-m-requirement__icon co-icon-flex-child" />
+        <RhUiSearchIcon className="co-m-requirement__icon co-icon-flex-child" />
         <span className="co-m-requirement__label">{requirementAsString.replace(/,/g, ', ')}</span>
       </Link>
     </div>
@@ -32,11 +32,11 @@ export const Selector: FC<SelectorProps> = ({
   selector = {},
   namespace = undefined,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <div className="co-m-selector">
       {_.isEmpty(selector) ? (
-        <p className="pf-v6-u-text-color-subtle">{t('public~No selector')}</p>
+        <p className="pf-v6-u-text-color-subtle">{t('No selector')}</p>
       ) : (
         <Requirement kind={kind} requirements={selector} namespace={namespace} />
       )}

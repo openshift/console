@@ -88,12 +88,12 @@ const ResourceActionsMenu: FC<ResourceActionsMenuProps> = ({ resource, variant, 
 };
 
 const NamespaceCell: FC<NamespaceCellProps> = ({ namespace }) => {
-  const { t } = useTranslation();
-  return namespace ? <ResourceLink kind="Namespace" name={namespace} /> : <>{t('public~None')}</>;
+  const { t } = useTranslation('public');
+  return namespace ? <ResourceLink kind="Namespace" name={namespace} /> : <>{t('None')}</>;
 };
 
 export const DetailsForKind: FC<PageComponentProps<K8sResourceKind>> = ({ obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const groupVersionKind = getGroupVersionKindForResource(obj);
   const [model] = useK8sModel(groupVersionKind);
   const leftDetailsItemExtensions = useDetailsItemExtensionsForResource(obj, 'left');
@@ -122,7 +122,7 @@ export const DetailsForKind: FC<PageComponentProps<K8sResourceKind>> = ({ obj })
     <>
       <PaneBody>
         <SectionHeading
-          text={t('public~{{kind}} details', {
+          text={t('{{kind}} details', {
             kind: model?.labelKey ? t(model.labelKey) : model?.label,
           })}
         />
@@ -167,7 +167,7 @@ export const DetailsForKind: FC<PageComponentProps<K8sResourceKind>> = ({ obj })
       </PaneBody>
       {_.isArray(obj?.status?.conditions) && (
         <PaneBody>
-          <SectionHeading text={t('public~Conditions')} />
+          <SectionHeading text={t('Conditions')} />
           <Conditions conditions={obj.status.conditions} />
         </PaneBody>
       )}
@@ -250,7 +250,7 @@ const getDataViewRows = (
 const useDefaultResourceColumns = <T extends K8sResourceKind>(
   additionalPrinterColumns: CRDAdditionalPrinterColumn[],
 ): TableColumn<T>[] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const columns = useMemo(() => {
     const additionalPrinterColumnsHeaders = additionalPrinterColumns.map((col) => {
       const path = col.jsonPath;
@@ -269,7 +269,7 @@ const useDefaultResourceColumns = <T extends K8sResourceKind>(
 
     const baseColumns = [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         props: {
@@ -278,7 +278,7 @@ const useDefaultResourceColumns = <T extends K8sResourceKind>(
         },
       },
       {
-        title: t('public~Namespace'),
+        title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
         props: {
@@ -290,7 +290,7 @@ const useDefaultResourceColumns = <T extends K8sResourceKind>(
 
     if (!checkColumnsForCreationTimestamp(additionalPrinterColumns)) {
       baseColumns.push({
-        title: t('public~Created'),
+        title: t('Created'),
         id: tableColumnInfo[2].id,
         sort: 'metadata.creationTimestamp',
         props: {
@@ -317,7 +317,7 @@ const useDefaultResourceColumns = <T extends K8sResourceKind>(
 };
 
 export const DefaultList: FC<TableProps & { kinds: string[] }> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { kinds, data, loaded } = props;
   const [model] = useK8sModel(kinds[0]);
   const [additionalPrinterColumns, additionalPrinterColumnsLoaded] = useCRDAdditionalPrinterColumns(

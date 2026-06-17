@@ -6,11 +6,11 @@ import RevisionHeader from './RevisionHeader';
 import RevisionRow from './RevisionRow';
 
 const RevisionList: FC<TableProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   return (
     <Table
       {...props}
-      aria-label={t('knative-plugin~Revisions')}
+      aria-label={t('Revisions')}
       Header={RevisionHeader(t)}
       Row={RevisionRow}
       virtualize

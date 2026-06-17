@@ -3,13 +3,13 @@ import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
 const SwitchToYAMLAlert: FC<{ onClose?: () => void }> = ({ onClose }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   return (
     <Alert
       actionClose={onClose && <AlertActionCloseButton onClose={onClose} />}
       isInline
       title={t(
-        'console-shared~Some fields might not be displayed in this form. Select YAML view to edit all fields.',
+        'Some fields might not be displayed in this form. Select YAML view to edit all fields.',
       )}
       variant="info"
       data-test="info-alert"

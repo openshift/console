@@ -77,7 +77,7 @@ const CloudShellExec: FC<CloudShellExecProps> = ({
   const [customResource, setCustomResource] = useState<CloudShellResource>();
   const ws = useRef<WSFactory>();
   const terminal = useRef<ImperativeTerminalType>();
-  const { t } = useTranslation();
+  const { t } = useTranslation('webterminal-plugin');
 
   const onData = (data: string): void => {
     ws.current?.send(`0${Base64.encode(data)}`);
@@ -170,10 +170,9 @@ const CloudShellExec: FC<CloudShellExecProps> = ({
           .then((cr) => {
             const stopReason = cr.metadata.annotations[CLOUD_SHELL_STOPPED_BY_ANNOTATION];
             if (stopReason) {
-              stoppedByError = t(
-                'webterminal-plugin~The terminal connection has closed due to {{reason}}.',
-                { reason: stopReason },
-              );
+              stoppedByError = t('The terminal connection has closed due to {{reason}}.', {
+                reason: stopReason,
+              });
             }
             setCustomResource(cr);
           })
@@ -181,10 +180,7 @@ const CloudShellExec: FC<CloudShellExecProps> = ({
             stoppedByError = err;
           })
           .finally(() => {
-            const error =
-              evt.reason ||
-              stoppedByError ||
-              t('webterminal-plugin~The terminal connection has closed.');
+            const error = evt.reason || stoppedByError || t('The terminal connection has closed.');
             const currentTerminal = terminal.current;
             currentTerminal && currentTerminal.onConnectionClosed(error);
             websocket.destroy();
@@ -203,9 +199,7 @@ const CloudShellExec: FC<CloudShellExecProps> = ({
       ws.current = websocket;
       const currentTerminal = terminal.current;
       currentTerminal &&
-        currentTerminal.onConnectionClosed(
-          t('webterminal-plugin~connecting to {{container}}', { container }),
-        );
+        currentTerminal.onConnectionClosed(t('connecting to {{container}}', { container }));
     }
 
     setWsReopening(false);
@@ -249,8 +243,8 @@ const CloudShellExec: FC<CloudShellExecProps> = ({
               }}
             >
               {customResource.status.phase === 'Running'
-                ? t('webterminal-plugin~Reconnect to terminal')
-                : t('webterminal-plugin~Restart terminal')}
+                ? t('Reconnect to terminal')
+                : t('Restart terminal')}
             </Button>
           </EmptyStateFooter>
         </EmptyState>

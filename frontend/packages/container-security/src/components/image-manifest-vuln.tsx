@@ -8,7 +8,7 @@ import {
   GridItem,
   Tooltip,
 } from '@patternfly/react-core';
-import { ExclamationTriangleIcon } from '@patternfly/react-icons';
+import { RhUiWarningFillIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import { sortable, Table as PfTable, Thead, Th, Tbody, Td, Tr } from '@patternfly/react-table';
 import type { TFunction } from 'i18next';
@@ -64,12 +64,12 @@ const highestSeverityIndex = (obj: ImageManifestVuln) =>
   priorityFor(obj.status?.highestSeverity).index;
 
 const ImageManifestVulnDetails: FC<ImageManifestVulnDetailsProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('container-security');
   const queryURL = quayURLFor(props.obj);
   return (
     <>
       <PaneBody>
-        <SectionHeading text={t('container-security~Image Manifest Vulnerabilities details')} />
+        <SectionHeading text={t('Image Manifest Vulnerabilities details')} />
         <ImageVulnerabilityToggleGroup obj={props.obj} />
       </PaneBody>
       <PaneBody>
@@ -79,18 +79,10 @@ const ImageManifestVulnDetails: FC<ImageManifestVulnDetailsProps> = (props) => {
           </GridItem>
           <GridItem sm={6}>
             <DescriptionList>
-              <DetailsItem
-                label={t('container-security~Registry')}
-                obj={props.obj}
-                path="spec.image"
-              />
+              <DetailsItem label={t('Registry')} obj={props.obj} path="spec.image" />
 
               {queryURL && (
-                <DetailsItem
-                  label={t('container-security~Manifest')}
-                  obj={props.obj}
-                  path="obj.spec.manifest"
-                >
+                <DetailsItem label={t('Manifest')} obj={props.obj} path="obj.spec.manifest">
                   <ExternalLink text={shortenHash(props.obj.spec.manifest)} href={queryURL} />
                 </DetailsItem>
               )}
@@ -183,7 +175,7 @@ const ImageManifestVulnTableRow: FC<RowFunctionArgs<ImageManifestVuln>> = ({ obj
       <TableData className={tableColumnClasses[2]}>
         {obj.status?.highestSeverity ? (
           <>
-            <ExclamationTriangleIcon color={priorityFor(obj.status.highestSeverity).color.value} />
+            <RhUiWarningFillIcon color={priorityFor(obj.status.highestSeverity).color.value} />
             &nbsp;{obj.status.highestSeverity}
           </>
         ) : (
@@ -206,44 +198,44 @@ const ImageManifestVulnTableRow: FC<RowFunctionArgs<ImageManifestVuln>> = ({ obj
 
 const ImageManifestVulnTableHeader = (t: TFunction) => () => [
   {
-    title: t('container-security~Image name'),
+    title: t('Image name'),
     sortField: 'spec.image',
     transforms: [sortable],
     props: { className: tableColumnClasses[0] },
   },
   {
-    title: t('container-security~Namespace'),
+    title: t('Namespace'),
     sortField: 'metadata.namespace',
     transforms: [sortable],
     props: { className: tableColumnClasses[1] },
     id: 'namespace',
   },
   {
-    title: t('container-security~Highest severity'),
+    title: t('Highest severity'),
     sortFunc: 'highestSeverityOrder',
     transforms: [sortable],
     props: { className: tableColumnClasses[2] },
   },
   {
-    title: t('container-security~Affected Pods'),
+    title: t('Affected Pods'),
     props: { className: tableColumnClasses[3] },
     transforms: [sortable],
     sortFunc: 'affectedPodsOrder',
   },
   {
-    title: t('container-security~Fixable'),
+    title: t('Fixable'),
     sortField: 'status.fixableCount',
     transforms: [sortable],
     props: { className: tableColumnClasses[4] },
   },
   {
-    title: t('container-security~Total'),
+    title: t('Total'),
     sortFunc: 'totalOrder',
     transforms: [sortable],
     props: { className: tableColumnClasses[5] },
   },
   {
-    title: t('container-security~Manifest'),
+    title: t('Manifest'),
     props: { className: tableColumnClasses[6] },
     transforms: [sortable],
     sortField: 'spec.manifest',
@@ -251,14 +243,14 @@ const ImageManifestVulnTableHeader = (t: TFunction) => () => [
 ];
 
 const ImageManifestVulnList: FC<ImageManifestVulnListProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('container-security');
   const EmptyMsg = () => (
     <EmptyState
       headingLevel="h4"
       titleText={
         <>
           <EmptyStateResourceBadge model={ImageManifestVulnModel} />
-          {t('container-security~No Image vulnerabilities found')}
+          {t('No Image vulnerabilities found')}
         </>
       }
       variant={EmptyStateVariant.lg}
@@ -273,7 +265,7 @@ const ImageManifestVulnList: FC<ImageManifestVulnListProps> = (props) => {
         affectedPodsOrder: affectedPodsCount,
         highestSeverityOrder: highestSeverityIndex,
       }}
-      aria-label={t('container-security~Image Manifest Vulnerabilities')}
+      aria-label={t('Image Manifest Vulnerabilities')}
       Header={ImageManifestVulnTableHeader(t)}
       Row={ImageManifestVulnTableRow}
       EmptyMsg={EmptyMsg}
@@ -283,7 +275,7 @@ const ImageManifestVulnList: FC<ImageManifestVulnListProps> = (props) => {
 };
 
 export const ImageManifestVulnPage: FC<ImageManifestVulnPageProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('container-security');
   const params = useParams();
   const { showTitle = true, hideNameLabelFilters = true } = props;
   const namespace = props.namespace || params?.ns || params?.name;
@@ -300,11 +292,11 @@ export const ImageManifestVulnPage: FC<ImageManifestVulnPageProps> = (props) => 
         },
       ]}
       flatten={(resources) => _.get(resources.imageManifestVuln, 'data', [])}
-      title={t('container-security~Image Manifest Vulnerabilities')}
+      title={t('Image Manifest Vulnerabilities')}
       textFilter="image-name"
       canCreate={false}
       showTitle={showTitle}
-      nameFilterPlaceholder={t('container-security~Search by image name...')}
+      nameFilterPlaceholder={t('Search by image name...')}
       hideNameLabelFilters={hideNameLabelFilters}
       ListComponent={ImageManifestVulnList}
     />
@@ -318,7 +310,7 @@ export const ProjectImageManifestVulnListPage: FC<ImageManifestVulnPageProps> = 
 const podKey = (pod: PodKind) => [pod.metadata.namespace, pod.metadata.name].join('/');
 
 const ContainerVulnerabilities: FC<ContainerVulnerabilitiesProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('container-security');
   const { loaded, loadError } = props.imageManifestVuln;
 
   const vulnFor = (containerStatus: ContainerStatus) =>
@@ -338,11 +330,7 @@ const ContainerVulnerabilities: FC<ContainerVulnerabilitiesProps> = (props) => {
   if (loadError) {
     return (
       <PaneBody>
-        <Alert
-          isInline
-          variant="danger"
-          title={t('container-security~Unable to load vulnerability data')}
-        >
+        <Alert isInline variant="danger" title={t('Unable to load vulnerability data')}>
           {loadError instanceof Error ? loadError.message : String(loadError)}
         </Alert>
       </PaneBody>
@@ -362,11 +350,11 @@ const ContainerVulnerabilities: FC<ContainerVulnerabilitiesProps> = (props) => {
       <PfTable gridBreakPoint="">
         <Thead>
           <Tr>
-            <Th width={30}>{t('container-security~Container')}</Th>
-            <Th width={50}>{t('container-security~Image')}</Th>
+            <Th width={30}>{t('Container')}</Th>
+            <Th width={50}>{t('Image')}</Th>
             <Th width={20}>
               <Tooltip content="Results provided by Quay security scanner">
-                <span>{t('container-security~Security scan')}</span>
+                <span>{t('Security scan')}</span>
               </Tooltip>
             </Th>
           </Tr>
@@ -385,7 +373,7 @@ const ContainerVulnerabilities: FC<ContainerVulnerabilitiesProps> = (props) => {
                   vulnFor(status),
                   (vuln) => (
                     <span style={{ display: 'flex', alignItems: 'center' }}>
-                      <ExclamationTriangleIcon
+                      <RhUiWarningFillIcon
                         color={priorityFor(_.get(vuln.status, 'highestSeverity')).color.value}
                       />
                       &nbsp;
@@ -404,7 +392,7 @@ const ContainerVulnerabilities: FC<ContainerVulnerabilitiesProps> = (props) => {
                   ),
                   () => (
                     <span>
-                      <GreenCheckCircleIcon /> {t('container-security~No vulnerabilities found')}
+                      <GreenCheckCircleIcon /> {t('No vulnerabilities found')}
                     </span>
                   ),
                 )}

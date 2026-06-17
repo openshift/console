@@ -127,7 +127,7 @@ const NodeTerminalError: FC<NodeTerminalErrorProps> = ({ error }) => {
 };
 
 const NodeTerminalInner: FC<NodeTerminalInnerProps> = ({ pod, loaded, loadError }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const message = (
     <Trans t={t} ns="console-app">
       <p>
@@ -149,7 +149,7 @@ const NodeTerminalInner: FC<NodeTerminalInnerProps> = ({ pod, loaded, loadError 
   }
 
   if (!pod) {
-    return <NodeTerminalError error={t('console-app~Debug pod not found or was deleted.')} />;
+    return <NodeTerminalError error={t('Debug pod not found or was deleted.')} />;
   }
 
   switch (pod?.status?.phase) {
@@ -158,7 +158,7 @@ const NodeTerminalInner: FC<NodeTerminalInnerProps> = ({ pod, loaded, loadError 
         <NodeTerminalError
           error={
             <>
-              {t('console-app~The debug pod failed. ')}
+              {t('The debug pod failed. ')}
               {pod?.status?.containerStatuses?.[0]?.state?.terminated?.message ||
                 pod?.status?.message}
             </>

@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState, useMemo } from 'react';
 import * as _ from 'lodash';
 import { Base64 } from 'js-base64';
 import { useTranslation } from 'react-i18next';
-import { ExpandIcon } from '@patternfly/react-icons';
+import { RhUiExpandIcon } from '@patternfly/react-icons';
 import {
   Button,
   Alert,
@@ -233,7 +233,7 @@ export const PodConnect: FC<PodConnectProps> = ({
               <ToolbarGroup align={{ default: 'alignEnd' }}>
                 <ToolbarItem>
                   <Button
-                    icon={<ExpandIcon className="co-icon-space-r" />}
+                    icon={<RhUiExpandIcon className="co-icon-space-r" />}
                     variant="link"
                     className="pf-m-link--align-right"
                     onClick={toggleFullscreen}

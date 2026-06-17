@@ -97,7 +97,7 @@ export const CatalogSourceDetails: FC<CatalogSourceDetailsProps> = ({
   obj: catalogSource,
   packageManifests,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
 
   const operatorCount = getOperatorCount(catalogSource, packageManifests);
 
@@ -109,7 +109,7 @@ export const CatalogSourceDetails: FC<CatalogSourceDetailsProps> = ({
   return !_.isEmpty(catalogSource) ? (
     <PaneBody>
       <SectionHeading
-        text={t('olm~CatalogSource details', {
+        text={t('CatalogSource details', {
           resource: CatalogSourceModel.label,
         })}
       />
@@ -121,21 +121,17 @@ export const CatalogSourceDetails: FC<CatalogSourceDetailsProps> = ({
           <DescriptionList>
             <DetailsItem
               editAsGroup
-              label={t('public~Status')}
+              label={t('Status')}
               obj={catalogSource}
               path="status.connectionState.lastObservedState"
             />
+            <DetailsItem label={t('Display name')} obj={catalogSource} path="spec.displayName" />
+            <DetailsItem label={t('Publisher')} obj={catalogSource} path="spec.publisher" />
             <DetailsItem
-              label={t('public~Display name')}
-              obj={catalogSource}
-              path="spec.displayName"
-            />
-            <DetailsItem label={t('olm~Publisher')} obj={catalogSource} path="spec.publisher" />
-            <DetailsItem
-              label={t('olm~Availability')}
+              label={t('Availability')}
               obj={catalogSource}
               description={t(
-                'olm~Denotes whether this CatalogSource provides operators to a specific namespace, or the entire cluster.',
+                'Denotes whether this CatalogSource provides operators to a specific namespace, or the entire cluster.',
               )}
             >
               {catsrcNamespace}
@@ -143,17 +139,15 @@ export const CatalogSourceDetails: FC<CatalogSourceDetailsProps> = ({
             <DetailsItem
               label="Endpoint"
               obj={catalogSource}
-              description={t(
-                "olm~The ConfigMap, image, or address for this CatalogSource's registry.",
-              )}
+              description={t("The ConfigMap, image, or address for this CatalogSource's registry.")}
             >
               {getEndpoint(catalogSource)}
             </DetailsItem>
             <RegistryPollIntervalDetailItem catalogSource={catalogSource} />
             <DetailsItem
-              label={t('olm~Number of Operators')}
+              label={t('Number of Operators')}
               obj={catalogSource}
-              description={t('olm~The number of packages this CatalogSource provides.')}
+              description={t('The number of packages this CatalogSource provides.')}
             >
               {operatorCount}
             </DetailsItem>
@@ -171,7 +165,7 @@ const CatalogSourceOperatorsPage: FC<CatalogSourceOperatorsPageProps> = (props) 
 };
 
 export const CatalogSourceDetailsPage: FC = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const params = useParams();
 
   return (
@@ -185,7 +179,7 @@ export const CatalogSourceDetailsPage: FC = (props) => {
             [referenceForModel(CatalogSourceModel)]: obj,
           }}
           variant={ActionMenuVariant.DROPDOWN}
-          label={t('public~Actions')}
+          label={t('Actions')}
         />
       )}
       name={params.name}
@@ -216,7 +210,7 @@ export const CreateSubscriptionYAML: FC = () => {
     packageManifest: { loaded: boolean; data?: PackageManifestKind; loadError?: unknown };
     operatorGroup: { loaded: boolean; data?: OperatorGroupKind[]; loadError?: unknown };
   };
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const params = useParams();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -265,8 +259,8 @@ export const CreateSubscriptionYAML: FC = () => {
         return <LoadingBox />;
       },
       () => (
-        <ConsoleEmptyState title={t('olm~Package not found')}>
-          {t('olm~Cannot create a Subscription to a non-existent package.')}
+        <ConsoleEmptyState title={t('Package not found')}>
+          {t('Cannot create a Subscription to a non-existent package.')}
         </ConsoleEmptyState>
       ),
     ),
@@ -339,47 +333,47 @@ const CatalogSourceTableRow: FC<RowFunctionArgs<CatalogSourceTableRowObj>> = ({
 );
 
 const CatalogSourceList: FC<TableProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const CatalogSourceHeader = () => {
     return [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         sortField: 'name',
         transforms: [sortable],
         props: { className: tableColumnClasses[0] },
       },
       {
-        title: t('public~Status'),
+        title: t('Status'),
         sortField: 'status',
         transforms: [sortable],
         props: { className: tableColumnClasses[1] },
       },
       {
-        title: t('olm~Publisher'),
+        title: t('Publisher'),
         sortField: 'publisher',
         transforms: [sortable],
         props: { className: tableColumnClasses[2] },
       },
       {
-        title: t('olm~Availability'),
+        title: t('Availability'),
         sortField: 'availabilitySort',
         transforms: [sortable],
         props: { className: tableColumnClasses[3] },
       },
       {
-        title: t('olm~Endpoint'),
+        title: t('Endpoint'),
         sortField: 'endpoint',
         transforms: [sortable],
         props: { className: tableColumnClasses[4] },
       },
       {
-        title: t('olm~Registry poll interval'),
+        title: t('Registry poll interval'),
         sortField: 'registryPollInterval',
         transforms: [sortable],
         props: { className: tableColumnClasses[5] },
       },
       {
-        title: t('olm~# of Operators'),
+        title: t('# of Operators'),
         sortField: 'operatorCount',
         transforms: [sortable],
         props: { className: tableColumnClasses[6] },
@@ -410,21 +404,21 @@ const DisabledPopover: FC<DisabledPopoverProps> = ({ operatorHub, sourceName }) 
     () => enableSource(OperatorHubModel, operatorHub, sourceName).callback().then(close),
     [close, operatorHub, sourceName],
   );
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   return (
     <PopoverStatus
-      title={t('olm~Disabled')}
+      title={t('Disabled')}
       isVisible={visible}
       shouldClose={close}
-      statusBody={<StatusIconAndText title={t('olm~Disabled')} />}
+      statusBody={<StatusIconAndText title={t('Disabled')} />}
     >
       <p>
         {t(
-          'olm~Operators provided by this source will not appear in Software Catalog and any operators installed from this source will not receive updates until this source is re-enabled.',
+          'Operators provided by this source will not appear in Software Catalog and any operators installed from this source will not receive updates until this source is re-enabled.',
         )}
       </p>
       <Button isInline variant="link" onClick={onClickEnable}>
-        {t('olm~Enable source')}
+        {t('Enable source')}
       </Button>
     </PopoverStatus>
   );
@@ -495,13 +489,13 @@ const flatten = ({
 };
 
 export const CatalogSourceListPage: FC<CatalogSourceListPageProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   return (
     <MultiListPage
       {...props}
       canCreate
       createAccessReview={{ model: CatalogSourceModel }}
-      createButtonText={t('olm~Create CatalogSource')}
+      createButtonText={t('Create CatalogSource')}
       createProps={{ to: `/k8s/cluster/${referenceForModel(CatalogSourceModel)}/~new` }}
       flatten={(data) => flatten({ operatorHub: props.obj, ...data })}
       ListComponent={CatalogSourceList}

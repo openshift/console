@@ -10,11 +10,11 @@ export const MachineConfigPoolsSelector: FC<MachineConfigPoolsSelectorProps> = (
   onChange,
   selected,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <div className="form-group">
       <label id="version-label">
-        {t('public~Select {{resource}} to pause', { resource: NodeModel.labelPlural })}
+        {t('Select {{resource}} to pause', { resource: NodeModel.labelPlural })}
       </label>
       {machineConfigPools.map((mcp: MachineConfigPoolKind) => (
         <Checkbox

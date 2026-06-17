@@ -25,11 +25,11 @@ export const useRevisionListColumns = (
   sortBy: { index: number; direction: SortByDirection },
   onSort: (event: MouseEvent, columnId: string, direction: SortByDirection) => void,
 ): DataViewTh[] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   return useMemo(
     () => [
       {
-        cell: <span className="pf-v6-u-screen-reader">{t('helm-plugin~Select')}</span>,
+        cell: <span className="pf-v6-u-screen-reader">{t('Select')}</span>,
         props: {
           modifier: 'nowrap',
           isStickyColumn: true,
@@ -37,7 +37,7 @@ export const useRevisionListColumns = (
         } as ThProps,
       },
       {
-        cell: t('helm-plugin~Revision'),
+        cell: t('Revision'),
         props: {
           modifier: 'nowrap',
           sort: {
@@ -48,7 +48,7 @@ export const useRevisionListColumns = (
         } as ThProps,
       },
       {
-        cell: t('helm-plugin~Updated'),
+        cell: t('Updated'),
         props: {
           modifier: 'nowrap',
           sort: {
@@ -59,7 +59,7 @@ export const useRevisionListColumns = (
         } as ThProps,
       },
       {
-        cell: t('helm-plugin~Status'),
+        cell: t('Status'),
         props: {
           modifier: 'nowrap',
           sort: {
@@ -70,7 +70,7 @@ export const useRevisionListColumns = (
         } as ThProps,
       },
       {
-        cell: t('helm-plugin~Chart name'),
+        cell: t('Chart name'),
         props: {
           modifier: 'nowrap',
           sort: {
@@ -81,7 +81,7 @@ export const useRevisionListColumns = (
         } as ThProps,
       },
       {
-        cell: t('helm-plugin~Chart version'),
+        cell: t('Chart version'),
         props: {
           modifier: 'nowrap',
           sort: {
@@ -92,7 +92,7 @@ export const useRevisionListColumns = (
         } as ThProps,
       },
       {
-        cell: t('helm-plugin~App version'),
+        cell: t('App version'),
         props: {
           modifier: 'nowrap',
           sort: {
@@ -103,7 +103,7 @@ export const useRevisionListColumns = (
         } as ThProps,
       },
       {
-        cell: t('helm-plugin~Description'),
+        cell: t('Description'),
         props: {
           modifier: 'nowrap',
         } as ThProps,

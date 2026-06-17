@@ -31,7 +31,7 @@ const DeleteNamespaceModal: OverlayComponent<DeleteNamespaceModalProps> = ({
   closeOverlay,
 }) => {
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
   const [confirmed, setConfirmed] = useState(false);
 
@@ -73,7 +73,7 @@ const DeleteNamespaceModal: OverlayComponent<DeleteNamespaceModalProps> = ({
   return (
     <Modal isOpen onClose={closeOverlay} variant={ModalVariant.small}>
       <ModalHeader
-        title={t('public~Delete {{label}}?', { label: t(kind.labelKey) })}
+        title={t('Delete {{label}}?', { label: t(kind.labelKey) })}
         titleIconVariant="warning"
       />
       <ModalBody>
@@ -95,8 +95,8 @@ const DeleteNamespaceModal: OverlayComponent<DeleteNamespaceModalProps> = ({
             type="text"
             data-test="project-name-input"
             onKeyUp={onKeyUp}
-            placeholder={t('public~Enter name')}
-            aria-label={t('public~Enter the name of the {{label}} to delete', {
+            placeholder={t('Enter name')}
+            aria-label={t('Enter the name of the {{label}} to delete', {
               label: t(kind.labelKey),
             })}
             autoFocus={true}
@@ -112,10 +112,10 @@ const DeleteNamespaceModal: OverlayComponent<DeleteNamespaceModalProps> = ({
           isDisabled={!confirmed}
           data-test="confirm-action"
         >
-          {t('public~Delete')}
+          {t('Delete')}
         </Button>
         <Button variant="link" onClick={closeOverlay} data-test-id="modal-cancel-action">
-          {t('public~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </Modal>

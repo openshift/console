@@ -20,7 +20,7 @@ interface DefaultDecoratorProps {
 
 export const EditDecorator: FC<DefaultDecoratorProps> = ({ element, radius, x, y }) => {
   const ref = useRef();
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
     isList: true,
     kind: referenceForModel(ConsoleLinkModel),
@@ -36,7 +36,7 @@ export const EditDecorator: FC<DefaultDecoratorProps> = ({ element, radius, x, y
   if (!repoIcon) {
     return null;
   }
-  const label = t('topology~Edit source code');
+  const label = t('Edit source code');
   return (
     <Tooltip triggerRef={ref} content={label} position={TooltipPosition.right}>
       <g ref={ref}>

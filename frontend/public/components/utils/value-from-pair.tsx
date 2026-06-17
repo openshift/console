@@ -128,7 +128,7 @@ const NameKeyDropdownPair: FC<NameKeyDropdownPairProps> = ({
   placeholderString,
   isKeyRef = true,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const getHeaders = (
     configMap: string | Record<never, never>,
@@ -137,13 +137,13 @@ const NameKeyDropdownPair: FC<NameKeyDropdownPairProps> = ({
   ) => {
     const headers: Record<string, string> = {};
     if (configMap && !_.isEmpty(configMap)) {
-      headers[configMap as string] = t('public~ConfigMaps');
+      headers[configMap as string] = t('ConfigMaps');
     }
     if (secret && !_.isEmpty(secret)) {
-      headers[secret as string] = t('public~Secrets');
+      headers[secret as string] = t('Secrets');
     }
     if (serviceAccount && !_.isEmpty(serviceAccount)) {
-      headers[serviceAccount as string] = t('public~ServiceAccounts');
+      headers[serviceAccount as string] = t('ServiceAccounts');
     }
 
     return headers;
@@ -156,7 +156,7 @@ const NameKeyDropdownPair: FC<NameKeyDropdownPairProps> = ({
   const saItems: Record<string, ReactNode> = {};
   const nameAutocompleteFilter = (text: string, item: ReactElement) => fuzzy(text, item.props.name);
   const keyAutocompleteFilter = (text: string, item: string) => fuzzy(text, item);
-  const keyTitle = _.isEmpty(pairKey) ? t('public~Select a key') : pairKey;
+  const keyTitle = _.isEmpty(pairKey) ? t('Select a key') : pairKey;
   const cmRefProperty = isKeyRef ? 'configMapKeyRef' : 'configMapRef';
   const secretRefProperty = isKeyRef ? 'secretKeyRef' : 'secretRef';
   const serviceAccountRefProperty = isKeyRef ? 'serviceAccountKeyRef' : 'serviceAccountRef';
@@ -223,7 +223,7 @@ const NameKeyDropdownPair: FC<NameKeyDropdownPairProps> = ({
           menuClassName="value-from__menu dropdown-menu--text-wrap"
           className="value-from value-from--key"
           autocompleteFilter={keyAutocompleteFilter}
-          autocompletePlaceholder={t('public~Key')}
+          autocompletePlaceholder={t('Key')}
           items={itemKeys}
           selectedKey={pairKey}
           alwaysShowTitle
@@ -259,10 +259,10 @@ const ConfigMapSecretKeyRef: FC<ConfigMapSecretProps> = ({
   disabled,
   kind,
 }) => {
-  const { t } = useTranslation();
-  const placeholderString = t('public~ConfigMap or Secret');
+  const { t } = useTranslation('public');
+  const placeholderString = t('ConfigMap or Secret');
   const nameTitle = _.isEmpty(name) ? (
-    t('public~Select a resource')
+    t('Select a resource')
   ) : (
     <ResourceName kind={kind} name={name} />
   );
@@ -307,10 +307,10 @@ const ConfigMapSecretRef: FC<ConfigMapSecretProps> = ({
   disabled,
   kind,
 }) => {
-  const { t } = useTranslation();
-  const placeholderString = t('public~ConfigMap or Secret');
+  const { t } = useTranslation('public');
+  const placeholderString = t('ConfigMap or Secret');
   const nameTitle = _.isEmpty(name) ? (
-    t('public~Select a resource')
+    t('Select a resource')
   ) : (
     <ResourceName kind={kind} name={name} />
   );
@@ -321,12 +321,7 @@ const ConfigMapSecretRef: FC<ConfigMapSecretProps> = ({
     return (
       <div className="pairs-list__value-ro-field">
         <span className="pf-v6-c-form-control pf-m-disabled">
-          <input
-            type="text"
-            value={nameString}
-            disabled
-            placeholder={t('public~ConfigMap/Secret')}
-          />
+          <input type="text" value={nameString} disabled placeholder={t('ConfigMap/Secret')} />
         </span>
       </div>
     );

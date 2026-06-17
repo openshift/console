@@ -1,6 +1,7 @@
 import { test, expect } from '../../../fixtures';
 import { ClusterSettingsPage } from '../../../pages/cluster-settings-page';
 import { clusterVersionWithAvailableUpdates } from '../../../mocks/cluster-version';
+import { stubWebSocketWatches } from './cluster-settings-test-utils';
 
 const CLUSTER_VERSION_URL = '**/apis/config.openshift.io/v1/clusterversions/version';
 
@@ -32,6 +33,8 @@ test.describe(
       });
 
       try {
+        await stubWebSocketWatches(page, ['config.openshift.io/v1/clusterversions']);
+
         await test.step('Setup: Mock cluster version with available updates', async () => {
           await page.route(CLUSTER_VERSION_URL, async (route) => {
             await route.fulfill({

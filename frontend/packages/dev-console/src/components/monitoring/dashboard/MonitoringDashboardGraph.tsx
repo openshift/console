@@ -18,7 +18,7 @@ export enum GraphTypes {
 }
 
 const PrometheusGraphLink = ({ query, namespace, ariaChartLinkLabel }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const [perspective] = useActivePerspective();
   const queries = _.compact(_.castArray(query));
   if (!queries.length) {
@@ -35,7 +35,7 @@ const PrometheusGraphLink = ({ query, namespace, ariaChartLinkLabel }) => {
           : `/monitoring/query-browser?${params.toString()}`
       }
     >
-      {t('devconsole~Inspect')}
+      {t('Inspect')}
     </Link>
   );
 };
@@ -64,7 +64,7 @@ export const MonitoringDashboardGraph: FC<MonitoringDashboardGraphProps> = ({
   pollInterval,
   endTime,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const dispatch = useConsoleDispatch();
   const onZoom = useCallback(
     (from, to) => {
@@ -86,7 +86,7 @@ export const MonitoringDashboardGraph: FC<MonitoringDashboardGraphProps> = ({
             <PrometheusGraphLink
               namespace={namespace}
               query={query}
-              ariaChartLinkLabel={t('devconsole~View metrics for {{title}}', {
+              ariaChartLinkLabel={t('View metrics for {{title}}', {
                 title,
               })}
             />

@@ -56,7 +56,7 @@ export const CatalogController: FC<CatalogControllerProps> = ({
   categories,
 }) => {
   const { setQueryArgument, removeQueryArgument } = useQueryParamsMutator();
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const { pathname } = useLocation();
   const queryParams = useQueryParams();
   const [disabledSubCatalogs] = useGetAllDisabledSubCatalogs();
@@ -117,7 +117,7 @@ export const CatalogController: FC<CatalogControllerProps> = ({
     });
     const crumbs = [
       {
-        name: t('console-shared~Software Catalog'),
+        name: t('Software Catalog'),
         path: `${pathname}?${params.toString()}`,
       },
     ];
@@ -209,7 +209,7 @@ export const CatalogController: FC<CatalogControllerProps> = ({
           data={items}
           loaded={loaded}
           loadError={loadError}
-          label={t('console-shared~Catalog items')}
+          label={t('Catalog items')}
         >
           <CatalogView
             catalogType={type}

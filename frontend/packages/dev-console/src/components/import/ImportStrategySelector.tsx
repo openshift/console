@@ -2,7 +2,12 @@ import type { FC, ReactNode } from 'react';
 import { useCallback } from 'react';
 import { FormGroup, Grid, GridItem, Tooltip } from '@patternfly/react-core';
 import { Tile } from '@patternfly/react-core/deprecated';
-import { CubeIcon, GitAltIcon, LayerGroupIcon, StarIcon } from '@patternfly/react-icons';
+import {
+  RhUiContainerIcon,
+  GitAltIcon,
+  RhUiFileCodeIcon,
+  RhUiStarFillIcon,
+} from '@patternfly/react-icons';
 import type { FormikValues } from 'formik';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -21,7 +26,7 @@ import { useFormikValidationFix } from '@console/shared/src/hooks/useFormikValid
 import './ImportStrategySelector.scss';
 
 const ImportStrategySelector: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const {
     values: {
       import: { recommendedStrategy, selectedStrategy },
@@ -50,12 +55,10 @@ const ImportStrategySelector: FC = () => {
       build: BuildStrategyType.Devfile,
       priority: 2,
       detectedFiles: [],
-      icon: <LayerGroupIcon />,
+      icon: <RhUiFileCodeIcon />,
       isDisabled: type === GitProvider.UNSURE,
       disabledReason:
-        type === GitProvider.UNSURE
-          ? t('devconsole~Could not get Devfile for an unknown Git type')
-          : null,
+        type === GitProvider.UNSURE ? t('Could not get Devfile for an unknown Git type') : null,
     },
     {
       name: 'Dockerfile',
@@ -63,7 +66,7 @@ const ImportStrategySelector: FC = () => {
       build: BuildStrategyType.Docker,
       priority: 1,
       detectedFiles: [],
-      icon: <CubeIcon />,
+      icon: <RhUiContainerIcon />,
     },
     {
       name: 'Builder Image',
@@ -110,7 +113,7 @@ const ImportStrategySelector: FC = () => {
   useFormikValidationFix(strategy);
 
   return (
-    <FormGroup fieldId={fieldId} label={t('devconsole~Import Strategy')}>
+    <FormGroup fieldId={fieldId} label={t('Import Strategy')}>
       <Grid hasGutter>
         {itemList.map((item) =>
           item.disabledReason ? (
@@ -127,7 +130,7 @@ const ImportStrategySelector: FC = () => {
                 >
                   {recommendedStrategy?.type === item.type && (
                     <span className="odc-import-strategy-selector__recommended">
-                      <StarIcon />
+                      <RhUiStarFillIcon />
                     </span>
                   )}
                 </Tile>
@@ -146,7 +149,7 @@ const ImportStrategySelector: FC = () => {
               >
                 {recommendedStrategy?.type === item.type && (
                   <span className="odc-import-strategy-selector__recommended">
-                    <StarIcon />
+                    <RhUiStarFillIcon />
                   </span>
                 )}
               </Tile>

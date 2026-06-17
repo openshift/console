@@ -2,10 +2,10 @@ import type { FC } from 'react';
 import type { IconSize } from '@patternfly/react-core';
 import { Icon } from '@patternfly/react-core';
 import {
-  CheckCircleIcon,
-  ExclamationCircleIcon,
-  ExclamationTriangleIcon,
-  InfoCircleIcon,
+  RhUiCheckCircleFillIcon,
+  RhUiErrorFillIcon,
+  RhUiWarningFillIcon,
+  RhUiInformationFillIcon,
 } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 
@@ -30,7 +30,7 @@ export type ColoredIconProps = {
  */
 export const GreenCheckCircleIcon: FC<ColoredIconProps> = ({ className, title, size }) => {
   const icon = (
-    <CheckCircleIcon
+    <RhUiCheckCircleFillIcon
       data-test="success-icon"
       className={css('dps-icons__green-check-icon', className)}
       title={title}
@@ -54,7 +54,7 @@ export const GreenCheckCircleIcon: FC<ColoredIconProps> = ({ className, title, s
  */
 export const RedExclamationCircleIcon: FC<ColoredIconProps> = ({ className, title, size }) => {
   const icon = (
-    <ExclamationCircleIcon
+    <RhUiErrorFillIcon
       className={css('dps-icons__red-exclamation-icon', className)}
       title={title}
     />
@@ -84,7 +84,7 @@ export const YellowExclamationTriangleIcon: FC<ColoredIconProps> = ({
   dataTest,
 }) => {
   const icon = (
-    <ExclamationTriangleIcon
+    <RhUiWarningFillIcon
       className={css('dps-icons__yellow-exclamation-icon', className)}
       title={title}
       data-test={dataTest}
@@ -109,7 +109,10 @@ export const YellowExclamationTriangleIcon: FC<ColoredIconProps> = ({
  */
 export const BlueInfoCircleIcon: FC<ColoredIconProps> = ({ className, title, size }) => {
   const icon = (
-    <InfoCircleIcon className={css('dps-icons__blue-info-icon', className)} title={title} />
+    <RhUiInformationFillIcon
+      className={css('dps-icons__blue-info-icon', className)}
+      title={title}
+    />
   );
 
   if (size) {

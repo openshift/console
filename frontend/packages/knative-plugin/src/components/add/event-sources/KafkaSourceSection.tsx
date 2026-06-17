@@ -21,7 +21,7 @@ interface KafkaSourceSectionProps {
 }
 
 const KafkaSourceSection: FC<KafkaSourceSectionProps> = ({ title, namespace, fullWidth }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const [bootstrapServers, bsPlaceholder] = useBootstrapServers(namespace);
   const { kafkatopics } = useK8sWatchResources<{
     [key: string]: K8sResourceKind[];
@@ -38,17 +38,17 @@ const KafkaSourceSection: FC<KafkaSourceSectionProps> = ({ title, namespace, ful
           }))
         : [
             {
-              value: t('knative-plugin~No topics found'),
+              value: t('No topics found'),
               disabled: true,
             },
           ];
-      placeholder = t('knative-plugin~Add topics');
+      placeholder = t('Add topics');
     } else if (kafkatopics.loadError) {
-      placeholder = t('knative-plugin~{{kafkaTopicErrorMessage}}. Try adding topics manually.', {
+      placeholder = t('{{kafkaTopicErrorMessage}}. Try adding topics manually.', {
         kafkaTopicErrorMessage: kafkatopics.loadError.message,
       });
     } else {
-      topicsOptions = [{ value: t('knative-plugin~Loading topics...'), disabled: true }];
+      topicsOptions = [{ value: t('Loading topics...'), disabled: true }];
       placeholder = '...';
     }
     return [topicsOptions, placeholder];
@@ -59,22 +59,22 @@ const KafkaSourceSection: FC<KafkaSourceSectionProps> = ({ title, namespace, ful
       <MultiTypeaheadField
         data-test-id="kafkasource-bootstrapservers-field"
         name={`formData.data.${EventSources.KafkaSource}.bootstrapServers`}
-        label={t('knative-plugin~Bootstrap servers')}
-        ariaLabel={t('knative-plugin~Bootstrap servers')}
+        label={t('Bootstrap servers')}
+        ariaLabel={t('Bootstrap servers')}
         options={bootstrapServers}
         placeholderText={bsPlaceholder}
-        helpText={t('knative-plugin~The address of the Kafka broker')}
+        helpText={t('The address of the Kafka broker')}
         isCreatable
         required
       />
       <MultiTypeaheadField
         data-test-id="kafkasource-topics-field"
         name={`formData.data.${EventSources.KafkaSource}.topics`}
-        label={t('knative-plugin~Topics')}
-        ariaLabel={t('knative-plugin~Topics')}
+        label={t('Topics')}
+        ariaLabel={t('Topics')}
         options={kafkaTopics}
         placeholderText={ktPlaceholder}
-        helpText={t('knative-plugin~Virtual groups across Kafka brokers')}
+        helpText={t('Virtual groups across Kafka brokers')}
         isCreatable
         required
       />
@@ -82,8 +82,8 @@ const KafkaSourceSection: FC<KafkaSourceSectionProps> = ({ title, namespace, ful
         data-test-id="kafkasource-consumergroup-field"
         type={TextInputTypes.text}
         name={`formData.data.${EventSources.KafkaSource}.consumerGroup`}
-        label={t('knative-plugin~Consumer group')}
-        helpText={t('knative-plugin~A group that tracks maximum offset consumed')}
+        label={t('Consumer group')}
+        helpText={t('A group that tracks maximum offset consumed')}
         required
       />
       <KafkaSourceNetSection />

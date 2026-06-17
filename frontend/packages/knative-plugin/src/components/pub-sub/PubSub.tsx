@@ -23,7 +23,7 @@ const PubSub: FC<PubSubProps> = ({
   close,
   target = { metadata: { name: '' } },
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const {
     apiVersion: sourceApiVersion,
     kind: sourceKind,
@@ -77,7 +77,7 @@ const PubSub: FC<PubSubProps> = ({
         close();
       })
       .catch((err) => {
-        const errMessage = err.message || t('knative-plugin~An error occurred. Please try again');
+        const errMessage = err.message || t('An error occurred. Please try again');
         action.setStatus({
           subscriberAvailable: true,
           error: errMessage,
@@ -85,7 +85,7 @@ const PubSub: FC<PubSubProps> = ({
       });
   };
 
-  const labelTitle = t('knative-plugin~Add {{kind}}', {
+  const labelTitle = t('Add {{kind}}', {
     kind: t(labelKey) || kind,
   });
   return (

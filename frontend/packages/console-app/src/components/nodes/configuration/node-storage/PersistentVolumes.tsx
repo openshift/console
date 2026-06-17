@@ -39,7 +39,7 @@ type PersistentVolumeRowProps = {
 };
 
 const PersistentVolumeRow: FC<PersistentVolumeRowProps> = ({ persistentVolumeData, pods }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
 
   const pod = useMemo(() => {
     if (persistentVolumeData.vmi) {
@@ -84,7 +84,7 @@ const PersistentVolumeRow: FC<PersistentVolumeRowProps> = ({ persistentVolumeDat
             title={getUID(persistentVolumeData.persistentVolumeClaim)}
           />
         ) : (
-          <div className="pf-v6-u-text-color-subtle">{t('console-app~No claim')}</div>
+          <div className="pf-v6-u-text-color-subtle">{t('No claim')}</div>
         )}
       </td>
       <td className="pf-v6-c-table__td">
@@ -98,7 +98,7 @@ const PersistentVolumeRow: FC<PersistentVolumeRowProps> = ({ persistentVolumeDat
             name={persistentVolumeData.persistentVolume.spec?.storageClassName}
           />
         ) : (
-          t('console-app~None')
+          t('None')
         )}
       </td>
       <td className="pf-v6-c-table__td">
@@ -132,7 +132,7 @@ type PersistentVolumesProps = {
 };
 
 const PersistentVolumes: FC<PersistentVolumesProps> = ({ node }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const [vms, vmsLoaded, anyVmsLoadError] = useWatchVirtualMachineInstances(node.metadata.name);
   const vmsLoadError = !vms?.length && anyVmsLoadError;
   const [
@@ -283,7 +283,7 @@ const PersistentVolumes: FC<PersistentVolumesProps> = ({ node }) => {
   return (
     <>
       <Title headingLevel="h3" className="co-section-heading">
-        <span>{t('console-app~Mounted persistent volumes')}</span>
+        <span>{t('Mounted persistent volumes')}</span>
       </Title>
       {isLoading ? (
         <div
@@ -291,11 +291,11 @@ const PersistentVolumes: FC<PersistentVolumesProps> = ({ node }) => {
           data-test="persistent-volumes-table-loading"
         />
       ) : loadError ? (
-        <Alert isInline variant="danger" title={t('console-app~Unable to load persistent volumes')}>
+        <Alert isInline variant="danger" title={t('Unable to load persistent volumes')}>
           {loadError.message ?? null}
         </Alert>
       ) : nodePersistentVolumeData.length === 0 && vmDataLoadError ? (
-        <Alert isInline variant="danger" title={t('console-app~Unable to load persistent volumes')}>
+        <Alert isInline variant="danger" title={t('Unable to load persistent volumes')}>
           {vmDataLoadError.message ?? null}
         </Alert>
       ) : (
@@ -303,19 +303,19 @@ const PersistentVolumes: FC<PersistentVolumesProps> = ({ node }) => {
           <table className="pf-v6-c-table pf-m-compact pf-m-border-rows">
             <thead className="pf-v6-c-table__thead">
               <tr className="pf-v6-c-table__tr">
-                <th className="pf-v6-c-table__th">{t('console-app~Name')}</th>
-                <th className="pf-v6-c-table__th">{t('console-app~PVC')}</th>
-                <th className="pf-v6-c-table__th">{t('console-app~StorageClass')}</th>
-                <th className="pf-v6-c-table__th">{t('console-app~Capacity')}</th>
-                <th className="pf-v6-c-table__th">{t('console-app~Namespace')}</th>
-                <th className="pf-v6-c-table__th">{t('console-app~Pod')}</th>
+                <th className="pf-v6-c-table__th">{t('Name')}</th>
+                <th className="pf-v6-c-table__th">{t('PVC')}</th>
+                <th className="pf-v6-c-table__th">{t('StorageClass')}</th>
+                <th className="pf-v6-c-table__th">{t('Capacity')}</th>
+                <th className="pf-v6-c-table__th">{t('Namespace')}</th>
+                <th className="pf-v6-c-table__th">{t('Pod')}</th>
               </tr>
             </thead>
             <tbody className="pf-v6-c-table__tbody">
               {nodePersistentVolumeData.length === 0 ? (
                 <tr className="pf-v6-c-table__tr">
                   <td className="pf-v6-c-table__td" colSpan={6}>
-                    {t('console-app~No persistent volumes found')}
+                    {t('No persistent volumes found')}
                   </td>
                 </tr>
               ) : (

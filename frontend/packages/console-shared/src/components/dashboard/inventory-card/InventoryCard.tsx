@@ -23,14 +23,10 @@ export const InventoryItemTitle: FC<InventoryItemTitleProps> = ({ children }) =>
 );
 
 export const InventoryItemBody: FC<InventoryItemBodyProps> = ({ error, children }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   return (
     <div className="co-inventory-card__item-status">
-      {error ? (
-        <div className="pf-v6-u-text-color-subtle">{t('console-shared~Not available')}</div>
-      ) : (
-        children
-      )}
+      {error ? <div className="pf-v6-u-text-color-subtle">{t('Not available')}</div> : children}
     </div>
   );
 };

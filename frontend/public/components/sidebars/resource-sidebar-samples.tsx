@@ -5,10 +5,10 @@ import { Button, Level, LevelItem, List, ListItem, Title } from '@patternfly/rea
 import { Language } from '@patternfly/react-code-editor';
 import { BasicCodeEditor } from '@console/shared/src/components/editor/BasicCodeEditor';
 import {
-  ChevronDownIcon,
-  ChevronRightIcon,
-  DownloadIcon,
-  PasteIcon,
+  RhUiDownloadIcon,
+  RhUiClipboardIcon,
+  RhUiCaretDownIcon,
+  RhUiCaretRightIcon,
 } from '@patternfly/react-icons';
 import { Sample } from '@console/shared/src/hooks/useResourceSidebarSamples';
 import { useTranslation } from 'react-i18next';
@@ -23,7 +23,7 @@ const ResourceSidebarSample: FC<ResourceSidebarSampleProps> = ({
 }) => {
   const { highlightText, title, img, description, id, yaml, targetResource } = sample;
   const reference = referenceFor(targetResource);
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <ListItem data-test="resource-sidebar-item">
       <Title headingLevel="h3" className="pf-v6-u-mb-sm">
@@ -34,26 +34,26 @@ const ResourceSidebarSample: FC<ResourceSidebarSampleProps> = ({
       <Level>
         <LevelItem>
           <Button
-            icon={<PasteIcon className="co-icon-space-r" />}
+            icon={<RhUiClipboardIcon className="co-icon-space-r" />}
             type="button"
             variant="link"
             data-test="load-sample"
             isInline
             onClick={() => loadSampleYaml(id, yaml, reference)}
           >
-            {t('public~Try it')}
+            {t('Try it')}
           </Button>
         </LevelItem>
         <LevelItem>
           <Button
-            icon={<DownloadIcon className="co-icon-space-r" />}
+            icon={<RhUiDownloadIcon className="co-icon-space-r" />}
             type="button"
             variant="link"
             data-test="download-sample"
             isInline
             onClick={() => downloadSampleYaml(id, yaml, reference)}
           >
-            {t('public~Download YAML')}
+            {t('Download YAML')}
           </Button>
         </LevelItem>
       </Level>
@@ -120,7 +120,7 @@ const ResourceSidebarSnippet: FC<ResourceSidebarSnippetProps> = ({
     }
   };
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   return (
     <ListItem data-test="resource-sidebar-item">
@@ -131,26 +131,26 @@ const ResourceSidebarSnippet: FC<ResourceSidebarSnippetProps> = ({
       <Level>
         <LevelItem>
           <Button
-            icon={<PasteIcon className="co-icon-space-r" />}
+            icon={<RhUiClipboardIcon className="co-icon-space-r" />}
             type="button"
             variant="link"
             isInline
             onClick={insertSnippet}
           >
-            {t('public~Insert snippet')}
+            {t('Insert snippet')}
           </Button>
         </LevelItem>
         <LevelItem>
           <Button type="button" variant="link" isInline onClick={toggleYamlPreview}>
             {yamlPreviewOpen ? (
               <>
-                {t('public~Hide YAML')}
-                <ChevronDownIcon className="co-icon-space-l" />
+                {t('Hide YAML')}
+                <RhUiCaretDownIcon className="co-icon-space-l" />
               </>
             ) : (
               <>
-                {t('public~Show YAML')}
-                <ChevronRightIcon className="co-icon-space-l" />
+                {t('Show YAML')}
+                <RhUiCaretRightIcon className="co-icon-space-l" />
               </>
             )}
           </Button>

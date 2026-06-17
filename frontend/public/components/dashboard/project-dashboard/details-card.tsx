@@ -28,7 +28,7 @@ export const DetailsCard = memo(() => {
   const description = obj.metadata.annotations?.['openshift.io/description'];
   const detailsLink = `${resourcePathFromModel(ProjectModel, obj.metadata.name)}/details`;
   const serviceMeshEnabled = obj.metadata?.labels?.['maistra.io/member-of'];
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <Card data-test-id="details-card">
       <CardHeader
@@ -36,7 +36,7 @@ export const DetailsCard = memo(() => {
           actions: (
             <>
               <Link to={detailsLink} data-test="details-card-view-all">
-                {t('public~View all')}
+                {t('View all')}
               </Link>
             </>
           ),
@@ -44,41 +44,41 @@ export const DetailsCard = memo(() => {
           className: 'co-overview-card__actions',
         }}
       >
-        <CardTitle>{t('public~Details')}</CardTitle>
+        <CardTitle>{t('Details')}</CardTitle>
       </CardHeader>
       <CardBody>
         <DescriptionList>
-          <OverviewDetailItem isLoading={!obj} title={t('public~Name')}>
+          <OverviewDetailItem isLoading={!obj} title={t('Name')}>
             {getName(obj)}
           </OverviewDetailItem>
-          <OverviewDetailItem isLoading={!obj} title={t('public~Requester')}>
+          <OverviewDetailItem isLoading={!obj} title={t('Requester')}>
             {getRequester(obj) || (
-              <span className="pf-v6-u-text-color-subtle">{t('public~No requester')}</span>
+              <span className="pf-v6-u-text-color-subtle">{t('No requester')}</span>
             )}
           </OverviewDetailItem>
-          <OverviewDetailItem isLoading={!obj} title={t('public~Labels')}>
+          <OverviewDetailItem isLoading={!obj} title={t('Labels')}>
             <div className="co-project-dashboard__details-labels">
               <LabelList kind={ProjectModel.kind} labels={firstThreelabels} />
               {keys.length > 3 && (
                 <Button variant="link">
-                  <Link to={detailsLink}>{t('public~View all')}</Link>
+                  <Link to={detailsLink}>{t('View all')}</Link>
                 </Button>
               )}
             </div>
           </OverviewDetailItem>
-          <OverviewDetailItem isLoading={!obj} title={t('public~Description')}>
+          <OverviewDetailItem isLoading={!obj} title={t('Description')}>
             <span
               className={css({
                 'pf-v6-u-text-color-subtle': !description,
                 'co-project-dashboard-details-card__description': description,
               })}
             >
-              {description || t('public~No description')}
+              {description || t('No description')}
             </span>
           </OverviewDetailItem>
           {serviceMeshEnabled && (
-            <OverviewDetailItem isLoading={!obj} title={t('public~Service mesh')}>
-              <GreenCheckCircleIcon /> {t('public~Service mesh enabled')}
+            <OverviewDetailItem isLoading={!obj} title={t('Service mesh')}>
+              <GreenCheckCircleIcon /> {t('Service mesh enabled')}
             </OverviewDetailItem>
           )}
         </DescriptionList>

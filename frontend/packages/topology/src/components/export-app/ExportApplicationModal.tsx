@@ -41,7 +41,7 @@ export type ExportApplicationModalProps = ModalComponentProps & {
 };
 
 export const ExportApplicationModal: FC<ExportApplicationModalProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   const fireTelemetryEvent = useTelemetry();
   const { cancel, name, namespace, exportResource, toast } = props;
   const [startTime, setStartTime] = useState<string>(null);
@@ -74,7 +74,7 @@ export const ExportApplicationModal: FC<ExportApplicationModalProps> = (props) =
       };
       toast?.addToast({
         variant: AlertVariant.info,
-        title: t('topology~Export application'),
+        title: t('Export application'),
         content: (
           <>
             <Trans t={t} ns="topology">
@@ -90,7 +90,7 @@ export const ExportApplicationModal: FC<ExportApplicationModalProps> = (props) =
     } catch (error) {
       toast?.addToast({
         variant: AlertVariant.danger,
-        title: t('topology~Export application'),
+        title: t('Export application'),
         content: (
           <Trans t={t} ns="topology">
             Export of resources in <strong>{{ namespace }}</strong> has failed with error:{' '}
@@ -171,7 +171,7 @@ export const ExportApplicationModal: FC<ExportApplicationModalProps> = (props) =
   return (
     <>
       <ModalHeader
-        title={t('topology~Export Application')}
+        title={t('Export Application')}
         data-test-id="modal-title"
         labelId="export-application-modal-title"
       />
@@ -200,7 +200,7 @@ export const ExportApplicationModal: FC<ExportApplicationModalProps> = (props) =
           data-test={exportInProgress ? 'export-cancel-btn' : 'cancel-btn'}
           onClick={() => (exportInProgress ? handleCancel() : cancel())}
         >
-          {exportInProgress ? t('topology~Cancel Export') : t('topology~Cancel')}
+          {exportInProgress ? t('Cancel Export') : t('Cancel')}
         </Button>
         {exportInProgress && (
           <>
@@ -210,7 +210,7 @@ export const ExportApplicationModal: FC<ExportApplicationModalProps> = (props) =
               data-test="export-restart-btn"
               onClick={handleRestart}
             >
-              {t('topology~Restart Export')}
+              {t('Restart Export')}
             </Button>
             <ExportViewLogButton name={name} namespace={namespace} onViewLog={cancel} />
           </>
@@ -229,7 +229,7 @@ export const ExportApplicationModal: FC<ExportApplicationModalProps> = (props) =
               : handleStartExport()
           }
         >
-          {t('topology~OK')}
+          {t('OK')}
         </Button>
       </ModalFooterWithAlerts>
     </>

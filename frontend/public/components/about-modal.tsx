@@ -32,7 +32,7 @@ import redHatFedoraImg from '../imgs/red-hat-fedora.svg';
 import redHatFedoraWatermarkImg from '../imgs/red-hat-fedora-watermark.svg';
 
 const DynamicPlugins: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const pluginInfoEntries = usePluginInfo();
   const [items, setItems] = useState([]);
 
@@ -59,17 +59,17 @@ const DynamicPlugins: FC = () => {
       {items}
     </Content>
   ) : (
-    <>{t('public~None')}</>
+    <>{t('None')}</>
   );
 };
 
 const AboutModalItems: FC<AboutModalItemsProps> = ({ closeAboutModal }) => {
   const [kubernetesVersion, setKubernetesVersion] = useState('');
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   useEffect(() => {
     k8sVersion()
       .then((response) => setKubernetesVersion(getK8sGitVersion(response) || '-'))
-      .catch(() => setKubernetesVersion(t('public~unknown')));
+      .catch(() => setKubernetesVersion(t('unknown')));
   }, [t]);
   const clusterVersion = useClusterVersion();
   const canUpgrade = useCanClusterUpgrade();
@@ -99,20 +99,20 @@ const AboutModalItems: FC<AboutModalItemsProps> = ({ closeAboutModal }) => {
         <Content component="dl">
           {openshiftVersion && (
             <>
-              <Content component="dt">{t('public~OpenShift version')}</Content>
+              <Content component="dt">{t('OpenShift version')}</Content>
               <Content component="dd">
                 <div className="co-select-to-copy">{openshiftVersion}</div>
                 <ReleaseNotesLink version={getCurrentVersion(clusterVersion)} />
               </Content>
             </>
           )}
-          <Content component="dt">{t('public~Kubernetes version')}</Content>
+          <Content component="dt">{t('Kubernetes version')}</Content>
           <Content component="dd" className="co-select-to-copy">
             {kubernetesVersion}
           </Content>
           {channel && (
             <>
-              <Content component="dt">{t('public~Channel')}</Content>
+              <Content component="dt">{t('Channel')}</Content>
               <Content component="dd" className="co-select-to-copy">
                 {channel}
               </Content>
@@ -120,13 +120,13 @@ const AboutModalItems: FC<AboutModalItemsProps> = ({ closeAboutModal }) => {
           )}
           {clusterID && (
             <>
-              <Content component="dt">{t('public~Cluster ID')}</Content>
+              <Content component="dt">{t('Cluster ID')}</Content>
               <Content component="dd" className="co-select-to-copy">
                 {clusterID}
               </Content>
             </>
           )}
-          <Content component="dt">{t('public~API server')}</Content>
+          <Content component="dt">{t('API server')}</Content>
           <Content component="dd" className="co-select-to-copy">
             {window.SERVER_FLAGS.kubeAPIServerURL}
           </Content>
@@ -150,7 +150,7 @@ const AboutModalItems: FC<AboutModalItemsProps> = ({ closeAboutModal }) => {
             </>
           </ServiceLevel>
 
-          <Content component="dt">{t('public~Dynamic plugins')}</Content>
+          <Content component="dt">{t('Dynamic plugins')}</Content>
           <Content component="dd">
             <DynamicPlugins />
           </Content>
@@ -163,7 +163,7 @@ AboutModalItems.displayName = 'AboutModalItems';
 
 export const AboutModal: FC<AboutModalProps> = (props) => {
   const { isOpen, closeAboutModal } = props;
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { productName } = getBrandingDetails();
   const { logoUrl: customLogoUrl } = useCustomLogoURL(MASTHEAD_TYPE);
 
@@ -183,7 +183,7 @@ export const AboutModal: FC<AboutModalProps> = (props) => {
       {!customBranding && (
         <Content component={ContentVariants.p}>
           {t(
-            "public~OpenShift is Red Hat's container application platform that allows developers to quickly develop, host, and scale applications in a cloud environment.",
+            "OpenShift is Red Hat's container application platform that allows developers to quickly develop, host, and scale applications in a cloud environment.",
           )}
         </Content>
       )}

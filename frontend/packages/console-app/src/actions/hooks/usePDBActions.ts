@@ -43,7 +43,7 @@ export const usePDBActions = (
 ): [Action[], boolean] => {
   const namespace = resource?.metadata?.namespace;
   const memoizedFilterActions = useDeepCompareMemoize(filterActions);
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const launchModal = useOverlay();
   const watchedResource = useMemo(
     () => ({
@@ -75,7 +75,7 @@ export const usePDBActions = (
         href &&
         ({
           id: 'add-pdb',
-          label: t('console-app~Add PodDisruptionBudget'),
+          label: t('Add PodDisruptionBudget'),
           cta: { href },
           accessReview: asAccessReview(kindObj, resource, 'create'),
         } as Action | undefined),
@@ -83,13 +83,13 @@ export const usePDBActions = (
         href &&
         ({
           id: 'edit-pdb',
-          label: t('console-app~Edit PodDisruptionBudget'),
+          label: t('Edit PodDisruptionBudget'),
           cta: { href },
           accessReview: asAccessReview(kindObj, resource, 'patch'),
         } as Action | undefined),
       [PDBActionCreator.DeletePDB]: () => ({
         id: 'delete-pdb',
-        label: t('console-app~Remove PodDisruptionBudget'),
+        label: t('Remove PodDisruptionBudget'),
         insertBefore: 'edit-resource-limits',
         cta: () =>
           launchModal(LazyDeletePDBModalOverlay, {

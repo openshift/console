@@ -16,7 +16,7 @@ import {
 import * as _ from 'lodash';
 import { FC, Ref, useState, useMemo, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { TimesIcon } from '@patternfly/react-icons';
+import { RhUiCloseIcon } from '@patternfly/react-icons';
 
 export type SingleTypeaheadDropdownProps = {
   /** The items to display in the dropdown */
@@ -82,7 +82,7 @@ export const SingleTypeaheadDropdown: FC<SingleTypeaheadDropdownProps> = ({
   menuToggleProps = {},
   selectProps = {},
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const [isOpen, setIsOpen] = useState(false);
   const [selectOptions, setSelectOptions] = useState<SelectOptionProps[]>(items);
   const selectedValue = useMemo(() => selectOptions.find((i) => i.value === selectedKey), [
@@ -120,7 +120,7 @@ export const SingleTypeaheadDropdown: FC<SingleTypeaheadDropdownProps> = ({
         newSelectOptions = [
           ...newSelectOptions,
           {
-            children: t('public~Create new option "{{option}}"', { option: inputValue }),
+            children: t('Create new option "{{option}}"', { option: inputValue }),
             value: CREATE_NEW,
           },
         ];
@@ -315,7 +315,7 @@ export const SingleTypeaheadDropdown: FC<SingleTypeaheadDropdownProps> = ({
           id={`${ID_PREFIX}-input`}
           autoComplete="off"
           innerRef={textInputRef}
-          placeholder={placeholder ?? t('public~Filter options')}
+          placeholder={placeholder ?? t('Filter options')}
           {...(activeItemId && { 'aria-activedescendant': activeItemId })}
           role="combobox"
           isExpanded={isOpen}
@@ -332,10 +332,10 @@ export const SingleTypeaheadDropdown: FC<SingleTypeaheadDropdownProps> = ({
         {!hideClearButton && (
           <TextInputGroupUtilities {...(!inputValue ? { style: { display: 'none' } } : {})}>
             <Button
-              icon={<TimesIcon aria-hidden />}
+              icon={<RhUiCloseIcon aria-hidden />}
               variant="plain"
               onClick={onClearButtonClick}
-              aria-label={t('public~Clear input value')}
+              aria-label={t('Clear input value')}
             />
           </TextInputGroupUtilities>
         )}

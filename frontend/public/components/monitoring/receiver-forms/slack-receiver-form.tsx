@@ -33,12 +33,12 @@ const GLOBAL_FIELDS = [
 ];
 
 const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <>
       <Grid hasGutter>
         <GridItem span={7}>
-          <FormGroup label={t('public~Slack API URL')} fieldId="slack-api-url" isRequired>
+          <FormGroup label={t('Slack API URL')} fieldId="slack-api-url" isRequired>
             <TextInput
               id="slack-api-url"
               type="text"
@@ -55,7 +55,7 @@ const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
             <FormHelperText>
               <HelperText>
                 <HelperTextItem id="slack-api-url-help">
-                  {t('public~The URL of the Slack webhook.')}
+                  {t('The URL of the Slack webhook.')}
                 </HelperTextItem>
               </HelperText>
             </FormHelperText>
@@ -66,16 +66,16 @@ const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
           <SaveAsDefaultCheckbox
             formField="slackSaveAsDefault"
             disabled={formValues.slack_api_url === globals?.slack_api_url}
-            label={t('public~Save as default Slack API URL')}
+            label={t('Save as default Slack API URL')}
             formValues={formValues}
             dispatchFormChange={dispatchFormChange}
             tooltip={t(
-              'public~Checking this box will write the API URL to the global section of the configuration file where it will become the default API URL for future Slack receivers.',
+              'Checking this box will write the API URL to the global section of the configuration file where it will become the default API URL for future Slack receivers.',
             )}
           />
         </GridItem>
       </Grid>
-      <FormGroup label={t('public~Channel')} fieldId="slack-channel" isRequired>
+      <FormGroup label={t('Channel')} fieldId="slack-channel" isRequired>
         <TextInput
           id="slack-channel"
           type="text"
@@ -92,7 +92,7 @@ const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
         <FormHelperText>
           <HelperText>
             <HelperTextItem id="slack-channel-help">
-              {t('public~The Slack channel or user to send notifications to.')}
+              {t('The Slack channel or user to send notifications to.')}
             </HelperTextItem>
           </HelperText>
         </FormHelperText>
@@ -106,14 +106,14 @@ const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
         <FormGroup
           role="radiogroup"
           fieldId="slack-icon-type-group"
-          label={t('public~Icon')}
+          label={t('Icon')}
           isInline
           className="pf-v6-c-form__group-control--no-row-gap"
         >
           <Radio
             id="slack-icon-type"
             name="slackIconType"
-            label={t('public~URL')}
+            label={t('URL')}
             value="url"
             onChange={(e) =>
               dispatchFormChange({
@@ -128,7 +128,7 @@ const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
           <Radio
             id="slack-icon-type-emoji"
             name="slackIconType"
-            label={t('public~Emoji')}
+            label={t('Emoji')}
             value="emoji"
             onChange={(e) =>
               dispatchFormChange({
@@ -158,7 +158,7 @@ const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
               <FormHelperText>
                 <HelperText>
                   <HelperTextItem id="slack-icon-url-help">
-                    {t('public~The URL of the icon.')}
+                    {t('The URL of the icon.')}
                   </HelperTextItem>
                 </HelperText>
               </FormHelperText>
@@ -186,7 +186,7 @@ const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
                       An{' '}
                       <ExternalLink
                         href="https://www.webfx.com/tools/emoji-cheat-sheet/"
-                        text={t('public~emoji code')}
+                        text={t('emoji code')}
                       />{' '}
                       to use in place of the default icon.
                     </Trans>
@@ -196,7 +196,7 @@ const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
             </>
           )}
         </FormGroup>
-        <FormGroup label={t('public~Username')} fieldId="slack-username" isRequired>
+        <FormGroup label={t('Username')} fieldId="slack-username" isRequired>
           <TextInput
             id="slack-username"
             type="text"
@@ -210,14 +210,14 @@ const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
           <FormHelperText>
             <HelperText>
               <HelperTextItem id="slack-username-help">
-                {t('public~The displayed username.')}
+                {t('The displayed username.')}
               </HelperTextItem>
             </HelperText>
           </FormHelperText>
         </FormGroup>
         <FormGroup>
           <Checkbox
-            label={t('public~Link names')}
+            label={t('Link names')}
             onChange={(_event, checked) =>
               dispatchFormChange({
                 type: 'setFormValues',
@@ -232,12 +232,12 @@ const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
           <FormHelperText>
             <HelperText>
               <HelperTextItem id="slack-link-names-help">
-                {t('public~Find and link channel names and usernames.')}
+                {t('Find and link channel names and usernames.')}
               </HelperTextItem>
             </HelperText>
           </FormHelperText>
         </FormGroup>
-        <FormGroup label={t('public~Title')} fieldId="slack-title">
+        <FormGroup label={t('Title')} fieldId="slack-title">
           <TextArea
             id="slack-title"
             data-test="slack-title"
@@ -252,13 +252,11 @@ const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
           />
           <FormHelperText>
             <HelperText>
-              <HelperTextItem id="slack-title-help">
-                {t('public~Slack message title')}
-              </HelperTextItem>
+              <HelperTextItem id="slack-title-help">{t('Slack message title')}</HelperTextItem>
             </HelperText>
           </FormHelperText>
         </FormGroup>
-        <FormGroup label={t('public~Text')} fieldId="slack-text">
+        <FormGroup label={t('Text')} fieldId="slack-text">
           <TextArea
             id="slack-text"
             data-test="slack-text"
@@ -270,7 +268,7 @@ const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
           />
           <FormHelperText>
             <HelperText>
-              <HelperTextItem id="slack-text-help">{t('public~Slack message text')}</HelperTextItem>
+              <HelperTextItem id="slack-text-help">{t('Slack message text')}</HelperTextItem>
             </HelperText>
           </FormHelperText>
         </FormGroup>

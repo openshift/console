@@ -56,7 +56,7 @@ const BareMetalInventoryItem: FC<BareMetalInventoryItemsProps> = ({
 
 const BareMetalInventoryItems: FC = () => {
   const { obj } = useContext(NodeDashboardContext);
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
 
   const showBareMetal = useIsBareMetalPluginActive();
 
@@ -73,7 +73,7 @@ const BareMetalInventoryItems: FC = () => {
       <BareMetalInventoryItem
         loaded={bareMetalHostLoaded}
         loadError={bareMetalHostLoadError || !bareMetalHost}
-        title={t('console-app~Disk')}
+        title={t('Disk')}
         count={disks}
         linkTo={
           bareMetalHost
@@ -88,7 +88,7 @@ const BareMetalInventoryItems: FC = () => {
       <BareMetalInventoryItem
         loaded={bareMetalHostLoaded}
         loadError={bareMetalHostLoadError || !bareMetalHost}
-        title={t('console-app~Network interface')}
+        title={t('Network interface')}
         count={nics}
         linkTo={
           bareMetalHost
@@ -103,7 +103,7 @@ const BareMetalInventoryItems: FC = () => {
       <BareMetalInventoryItem
         loaded={bareMetalHostLoaded}
         loadError={bareMetalHostLoadError || !bareMetalHost}
-        title={t('console-app~CPU')}
+        title={t('CPU')}
         count={cpus}
       />
     </>

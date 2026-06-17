@@ -63,7 +63,7 @@ const OperatorBackedServiceGroup: FC<OperatorBackedServiceGroupProps> = ({
   contextMenuOpen,
 }) => {
   const ref = useRef();
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   const [hover, hoverRef] = useHover(0, 200);
   const [innerHover, innerHoverRef] = useHover(0, 200);
   const [labelHover, labelHoverRef] = useHover();
@@ -94,7 +94,7 @@ const OperatorBackedServiceGroup: FC<OperatorBackedServiceGroupProps> = ({
       <Layer id={dragging || labelDragging ? undefined : 'groups2'}>
         <Tooltip
           triggerRef={ref}
-          content={t('topology~Create Service Binding')}
+          content={t('Create Service Binding')}
           trigger="manual"
           isVisible={dropTarget && canDrop}
           animationDuration={0}

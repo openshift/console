@@ -20,7 +20,7 @@ const useAdmissionWebhookWarnings: UseAdmissionWebhookWarnings = () =>
   useConsoleSelector<ImmutableMap<string, AdmissionWebhookWarning>>(getAdmissionWebhookWarnings);
 
 export const AdmissionWebhookWarningNotifications = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const toastContext = useToast();
   const dispatch = useConsoleDispatch();
   const admissionWebhookWarnings = useAdmissionWebhookWarnings();
@@ -29,7 +29,7 @@ export const AdmissionWebhookWarningNotifications = () => {
     admissionWebhookWarnings.forEach((warning, id) => {
       toastContext.addToast({
         variant: AlertVariant.warning,
-        title: t('public~Admission Webhook Warning'),
+        title: t('Admission Webhook Warning'),
         content: t(`{{kind}} {{name}} violates policy {{warning}}`, {
           kind: warning?.kind ?? '',
           name: warning?.name ?? '',
@@ -38,7 +38,7 @@ export const AdmissionWebhookWarningNotifications = () => {
         actions: [
           {
             dismiss: true,
-            label: t('public~Learn more'),
+            label: t('Learn more'),
             callback: () => {
               window.open(docURL, '_blank');
             },

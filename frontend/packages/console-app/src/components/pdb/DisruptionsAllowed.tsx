@@ -6,14 +6,14 @@ import type { PodDisruptionBudgetKind } from './types';
 import { isDisruptionViolated } from './utils/get-pdb-resources';
 
 const DisruptionsAllowed: FC<DisruptionsAllowedProps> = ({ pdb }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const isPDBViolated = isDisruptionViolated(pdb);
 
   return (
     <>
       {pdb.status.disruptionsAllowed}{' '}
       {isPDBViolated && (
-        <Tooltip content={t('console-app~Disruption not allowed')}>
+        <Tooltip content={t('Disruption not allowed')}>
           <YellowExclamationTriangleIcon />
         </Tooltip>
       )}

@@ -43,7 +43,7 @@ type ExtraResources = {
 };
 
 const BareMetalHostDetailsPage: FC<BareMetalHostDetailsPageProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('metal3-plugin');
   const [maintenanceModel] = useMaintenanceCapability();
   const bmoEnabled = useFlag(BMO_ENABLED_FLAG);
   const resources: WatchK8sResourceWithProp[] = [

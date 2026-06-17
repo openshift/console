@@ -25,7 +25,7 @@ import {
   TextInputGroupUtilities,
   Tooltip,
 } from '@patternfly/react-core';
-import { TimesIcon } from '@patternfly/react-icons';
+import { RhUiCloseIcon } from '@patternfly/react-icons';
 
 const RECENT_SEARCH_ITEMS = 5;
 const MAX_VISIBLE_ITEMS = 250;
@@ -48,7 +48,7 @@ const isVisible = (m: K8sKind) =>
 
 export const ResourceListDropdown_: FC<ResourceListDropdownProps> = (props) => {
   const { selected, onChange, recentList, allModels, groupToVersionMap, className } = props;
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const [isOpen, setIsOpen] = useState(false);
   const [recentSelected, setRecentSelected] = useUserPreference<string>(
     'console.search.recentlySearched',
@@ -59,7 +59,7 @@ export const ResourceListDropdown_: FC<ResourceListDropdownProps> = (props) => {
   const [inputValue, setInputValue] = useState<string>('');
   const [focusedItemIndex, setFocusedItemIndex] = useState<number | null>(null);
   const [activeItemId, setActiveItemId] = useState<string | null>(null);
-  const placeholderTextDefault = t('public~Resources');
+  const placeholderTextDefault = t('Resources');
   const [placeholder, setPlaceholder] = useState(placeholderTextDefault);
   const textInputRef = useRef<HTMLInputElement>();
 
@@ -145,7 +145,7 @@ export const ResourceListDropdown_: FC<ResourceListDropdownProps> = (props) => {
   useEffect(() => {
     setPlaceholder(
       selectedOptions.length > 0
-        ? t('public~Resources ({{total}})', { total: selectedOptions.length })
+        ? t('Resources ({{total}})', { total: selectedOptions.length })
         : placeholderTextDefault,
     );
   }, [placeholderTextDefault, selectedOptions, t]);
@@ -188,9 +188,7 @@ export const ResourceListDropdown_: FC<ResourceListDropdownProps> = (props) => {
             <span>
               {model.labelKey ? t(model.labelKey) : model.kind}
               {model.badge && model.badge === 'Tech Preview' && (
-                <span className="co-resource-item__tech-dev-preview">
-                  {t('public~Tech Preview')}
-                </span>
+                <span className="co-resource-item__tech-dev-preview">{t('Tech Preview')}</span>
               )}
             </span>
             {isDup(model.kind) && (
@@ -227,7 +225,7 @@ export const ResourceListDropdown_: FC<ResourceListDropdownProps> = (props) => {
                     {model.labelKey ? t(model.labelKey) : model.kind}
                     {model.badge && model.badge === 'Tech Preview' && (
                       <span className="co-resource-item__tech-dev-preview">
-                        {t('public~Tech Preview')}
+                        {t('Tech Preview')}
                       </span>
                     )}
                   </span>
@@ -254,7 +252,7 @@ export const ResourceListDropdown_: FC<ResourceListDropdownProps> = (props) => {
     const options: JSX.Element[] = [];
     if (!_.isEmpty(recentSelectedList(recentSelected)) && !!recentList) {
       options.push(
-        <Tooltip position="right" content={t('public~Clear history')} key="clear-history">
+        <Tooltip position="right" content={t('Clear history')} key="clear-history">
           <CloseButton
             className="co-select-group-close-button"
             dataTestID="close-icon"
@@ -264,7 +262,7 @@ export const ResourceListDropdown_: FC<ResourceListDropdownProps> = (props) => {
       );
       options.push(
         <SelectGroup
-          label={t('public~Recently used')}
+          label={t('Recently used')}
           className="co-select-group-dismissible"
           key="recently-used-resources"
         >
@@ -284,7 +282,7 @@ export const ResourceListDropdown_: FC<ResourceListDropdownProps> = (props) => {
                 key="select-multi-typeahead-no-results"
                 isAriaDisabled={true}
               >
-                {t('public~No results found')}
+                {t('No results found')}
               </SelectOption>,
             ]}
         {selectOptions.length > MAX_VISIBLE_ITEMS && (
@@ -293,7 +291,7 @@ export const ResourceListDropdown_: FC<ResourceListDropdownProps> = (props) => {
             key="select-multi-typeahead-type-to-filter"
             isAriaDisabled={true}
           >
-            {t('public~Showing {{visible}} of {{total}} resources. Type to filter.', {
+            {t('Showing {{visible}} of {{total}} resources. Type to filter.', {
               visible: MAX_VISIBLE_ITEMS,
               total: selectOptions.length,
             })}
@@ -475,10 +473,10 @@ export const ResourceListDropdown_: FC<ResourceListDropdownProps> = (props) => {
               />
               <TextInputGroupUtilities {...(!inputValue ? { style: { display: 'none' } } : {})}>
                 <Button
-                  icon={<TimesIcon aria-hidden />}
+                  icon={<RhUiCloseIcon aria-hidden />}
                   variant="plain"
                   onClick={onClearButtonClick}
-                  aria-label={t('public~Clear input value')}
+                  aria-label={t('Clear input value')}
                 />
               </TextInputGroupUtilities>
             </TextInputGroup>

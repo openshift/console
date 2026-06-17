@@ -6,7 +6,7 @@ import {
   AccordionToggle,
   AccordionContent,
 } from '@patternfly/react-core';
-import { InProgressIcon, QuestionCircleIcon } from '@patternfly/react-icons';
+import { RhUiInProgressIcon, RhUiQuestionMarkCircleFillIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import type { DashboardsInventoryItemGroup } from '@console/dynamic-plugin-sdk';
@@ -29,10 +29,10 @@ const defaultStatusGroupIcons = {
   [InventoryStatusGroup.WARN]: <YellowExclamationTriangleIcon />,
   [InventoryStatusGroup.ERROR]: <RedExclamationCircleIcon />,
   [InventoryStatusGroup.PROGRESS]: (
-    <InProgressIcon className="co-inventory-card__status-icon--progress" />
+    <RhUiInProgressIcon className="co-inventory-card__status-icon--progress" />
   ),
   [InventoryStatusGroup.UNKNOWN]: (
-    <QuestionCircleIcon className="co-inventory-card__status-icon--question" />
+    <RhUiQuestionMarkCircleFillIcon className="co-inventory-card__status-icon--question" />
   ),
 };
 
@@ -78,7 +78,7 @@ export const InventoryItem = memo<InventoryItemProps>(
     ExpandedComponent,
     dataTest,
   }) => {
-    const { t } = useTranslation();
+    const { t } = useTranslation('console-shared');
     const [expanded, setExpanded] = useState(false);
     const onClick = useCallback(() => setExpanded(!expanded), [expanded]);
     const titleMessage = pluralize(count, title, titlePlural, !isLoading && !error);
@@ -105,9 +105,7 @@ export const InventoryItem = memo<InventoryItemProps>(
               {!expanded && (error || !isLoading) && (
                 <div className="co-inventory-card__item-status">
                   {error ? (
-                    <div className="pf-v6-u-text-color-subtle">
-                      {t('console-shared~Not available')}
-                    </div>
+                    <div className="pf-v6-u-text-color-subtle">{t('Not available')}</div>
                   ) : (
                     children
                   )}
@@ -216,7 +214,7 @@ export const ResourceInventoryItem: FC<ResourceInventoryItemProps> = ({
   basePath,
   dataTest,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   let Title: ComponentType = useCallback(
     (props) => (
       <ResourceTitleComponent

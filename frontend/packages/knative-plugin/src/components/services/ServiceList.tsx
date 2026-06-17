@@ -6,11 +6,11 @@ import ServiceHeader from './ServiceHeader';
 import ServiceRow from './ServiceRow';
 
 const ServiceList: FC<TableProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   return (
     <Table
       {...props}
-      aria-label={t('knative-plugin~Services')}
+      aria-label={t('Services')}
       Header={ServiceHeader(t)}
       Row={ServiceRow}
       virtualize

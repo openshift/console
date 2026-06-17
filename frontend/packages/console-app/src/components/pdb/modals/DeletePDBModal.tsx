@@ -13,7 +13,7 @@ import type { PodDisruptionBudgetKind } from '../types';
 
 const DeletePDBModal: FC<DeletePDBModalProps> = ({ close, pdb, workloadName }) => {
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const pdbName = pdb.metadata.name;
 
   const handleSubmit = () => {
@@ -24,7 +24,7 @@ const DeletePDBModal: FC<DeletePDBModalProps> = ({ close, pdb, workloadName }) =
       .catch((error) => {
         const message =
           error?.message ||
-          t('console-app~Unknown error removing PodDisruptionBudget {{pdbName}}.', {
+          t('Unknown error removing PodDisruptionBudget {{pdbName}}.', {
             pdbName,
           });
         return Promise.reject(new Error(message));
@@ -35,7 +35,7 @@ const DeletePDBModal: FC<DeletePDBModalProps> = ({ close, pdb, workloadName }) =
   return (
     <>
       <ModalHeader
-        title={t('console-app~Remove PodDisruptionBudget?')}
+        title={t('Remove PodDisruptionBudget?')}
         titleIconVariant="warning"
         labelId="delete-pdb-modal-title"
       />
@@ -55,7 +55,7 @@ const DeletePDBModal: FC<DeletePDBModalProps> = ({ close, pdb, workloadName }) =
                   <b>{{ workloadName }}</b>?
                 </Trans>
               </p>
-              <p>{t('console-app~The PodDisruptionBudget will be deleted.')}</p>
+              <p>{t('The PodDisruptionBudget will be deleted.')}</p>
             </>
           ) : (
             !errorMessage && <LoadingInline />
@@ -70,10 +70,10 @@ const DeletePDBModal: FC<DeletePDBModalProps> = ({ close, pdb, workloadName }) =
           isLoading={inProgress}
           isDisabled={inProgress}
         >
-          {t('console-app~Remove')}
+          {t('Remove')}
         </Button>
         <Button variant="link" onClick={close}>
-          {t('console-app~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </>

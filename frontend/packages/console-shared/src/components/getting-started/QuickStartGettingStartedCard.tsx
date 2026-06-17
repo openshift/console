@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import type { AllQuickStartStates, QuickStart } from '@patternfly/quickstarts';
 import { QuickStartStatus, getQuickStartStatus } from '@patternfly/quickstarts';
-import { RouteIcon } from '@patternfly/react-icons';
+import { RhUiRouteIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { QuickStartsLoader } from '@console/app/src/components/quick-starts/loader/QuickStartsLoader';
 import { useQuickStartContext } from '@console/shared/src/hooks/useQuickStartContext';
@@ -68,7 +68,7 @@ export const QuickStartGettingStartedCard: FC<QuickStartGettingStartedCardProps>
   description,
   filter,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const { allQuickStartStates, setActiveQuickStart } = useQuickStartContext();
 
   return (
@@ -101,20 +101,22 @@ export const QuickStartGettingStartedCard: FC<QuickStartGettingStartedCardProps>
 
         const moreLink: GettingStartedLink = {
           id: 'all-quick-starts',
-          title: t('console-shared~View all quick starts'),
+          title: t('View all quick starts'),
           href: '/quickstart',
         };
 
         return (
           <GettingStartedCard
             id="quick-start"
-            icon={<RouteIcon color="var(--co-global--palette--purple-600)" aria-hidden="true" />}
-            title={title || t('console-shared~Build with guided documentation')}
+            icon={
+              <RhUiRouteIcon color="var(--co-global--palette--purple-600)" aria-hidden="true" />
+            }
+            title={title || t('Build with guided documentation')}
             titleColor={'var(--co-global--palette--purple-600)'}
             description={
               description ||
               t(
-                'console-shared~Follow guided documentation to build applications and familiarize yourself with key features.',
+                'Follow guided documentation to build applications and familiarize yourself with key features.',
               )
             }
             links={links}

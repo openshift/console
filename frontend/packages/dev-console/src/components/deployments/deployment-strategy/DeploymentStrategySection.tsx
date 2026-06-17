@@ -27,7 +27,7 @@ const DeploymentStrategySection: FC<DeploymentStrategySectionProps> = ({
   resourceType,
   resourceObj,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const {
     values: {
       formData: {
@@ -66,10 +66,10 @@ const DeploymentStrategySection: FC<DeploymentStrategySectionProps> = ({
   );
 
   return (
-    <FormSection title={t('devconsole~Deployment strategy')} dataTest="deployment-strategy-section">
+    <FormSection title={t('Deployment strategy')} dataTest="deployment-strategy-section">
       <DropdownField
         name="formData.deploymentStrategy.type"
-        label={t('devconsole~Strategy type')}
+        label={t('Strategy type')}
         items={getDeploymentStrategyItems(resourceType, t)}
         helpText={getDeploymentStrategyHelpText(resourceType, deploymentStrategy.type, t)}
         onChange={onChange}

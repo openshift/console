@@ -9,7 +9,7 @@ import {
 } from '@patternfly/react-core';
 
 export const ReplaceCodeModal = ({ handleCodeReplace }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   return (
     <Modal

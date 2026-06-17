@@ -8,7 +8,7 @@ import {
   ButtonType,
   Tooltip,
 } from '@patternfly/react-core';
-import { MinusCircleIcon } from '@patternfly/react-icons';
+import { RhUiMinusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { InputField } from '../InputField';
 import type {
@@ -50,7 +50,7 @@ const TextColumnItemContent: FC<TextColumnItemProps> = ({
   disableDeleteRow,
   tooltipDeleteRow,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
 
   const mergeNewValue: MergeNewValueUtil = (newValue) => {
     const values: string[] = [...rowValues];
@@ -69,10 +69,10 @@ const TextColumnItemContent: FC<TextColumnItemProps> = ({
       </FlexItem>
       {!isReadOnly && (
         <FlexItem>
-          <Tooltip content={tooltipDeleteRow || t('console-shared~Remove')}>
+          <Tooltip content={tooltipDeleteRow || t('Remove')}>
             <Button
-              icon={<MinusCircleIcon />}
-              aria-label={tooltipDeleteRow || t('console-shared~Remove')}
+              icon={<RhUiMinusCircleIcon />}
+              aria-label={tooltipDeleteRow || t('Remove')}
               variant={ButtonVariant.plain}
               type={ButtonType.button}
               isInline

@@ -40,7 +40,7 @@ const getFullChartURL = (chartURL: string, chartVersion: string): string => {
 
 const HelmURLChartInstallPage: FunctionComponent = () => {
   const params = useParams();
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   const [activePerspective] = useActivePerspective();
   const navigate = useNavigate();
   const namespace = params.ns;
@@ -139,13 +139,13 @@ const HelmURLChartInstallPage: FunctionComponent = () => {
           valuesObj = prunedFormData;
         } else {
           actions.setStatus({
-            submitError: t('helm-plugin~Errors in the form data.'),
+            submitError: t('Errors in the form data.'),
           });
           return;
         }
       } catch (err) {
         actions.setStatus({
-          submitError: t('helm-plugin~Invalid Form Schema - {{errorText}}', {
+          submitError: t('Invalid Form Schema - {{errorText}}', {
             errorText: err.toString(),
           }),
         });
@@ -156,7 +156,7 @@ const HelmURLChartInstallPage: FunctionComponent = () => {
         valuesObj = safeLoad(yamlData) as Record<string, unknown>;
       } catch (err) {
         actions.setStatus({
-          submitError: t('helm-plugin~Invalid YAML - {{errorText}}', { errorText: err.toString() }),
+          submitError: t('Invalid YAML - {{errorText}}', { errorText: err.toString() }),
         });
         return;
       }
@@ -189,7 +189,7 @@ const HelmURLChartInstallPage: FunctionComponent = () => {
       if (helmRelease && isGoingToTopology(resources)) {
         const secretId = res?.metadata?.uid;
         redirect = helmRelease?.info?.notes
-          ? `${redirect}?selectId=${secretId}&selectTab=${t('helm-plugin~Release notes')}`
+          ? `${redirect}?selectId=${secretId}&selectTab=${t('Release notes')}`
           : redirect;
       } else {
         redirect = `/helm-releases/ns/${namespace}/release/${releaseName}`;
@@ -229,7 +229,7 @@ const HelmURLChartInstallPage: FunctionComponent = () => {
 
   const chartMetaDescription = chartData ? <HelmChartMetaDescription chart={chartData} /> : null;
 
-  const pageTitle = t('helm-plugin~Install Helm chart from Helm registry.');
+  const pageTitle = t('Install Helm chart from Helm registry.');
 
   return (
     <NamespacedPage

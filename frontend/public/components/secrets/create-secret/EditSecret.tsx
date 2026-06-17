@@ -24,14 +24,14 @@ export const EditSecret: FC<EditSecretProps> = ({ kind }) => {
 
   const formType = secretLoaded ? toSecretFormType(secret) : SecretFormType.generic;
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   return (
     <StatusBox loaded={secretLoaded} data={secret} loadError={secretError}>
       <SecretFormWrapper
         formType={formType}
         obj={secret}
-        saveButtonText={t('public~Save')}
+        saveButtonText={t('Save')}
         fixed={fixedData}
       />
     </StatusBox>

@@ -51,7 +51,7 @@ const normalizeTemplates = (
           url: imgURL,
         },
         cta: {
-          label: t('devconsole~Instantiate Template'),
+          label: t('Instantiate Template'),
           href: `/catalog/instantiate-template?template=${name}&template-ns=${namespace}&preselected-ns=${activeNamespace}`,
         },
         data: template,
@@ -70,7 +70,7 @@ const normalizeTemplates = (
 const useTemplates: ExtensionHook<CatalogItem<PartialObjectMetadata>[]> = ({
   namespace,
 }): [CatalogItem[], boolean, any] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const [templates, setTemplates] = useState<PartialObjectMetadata[]>([]);
   const [templatesLoaded, setTemplatesLoaded] = useState<boolean>(false);
   const [templatesError, setTemplatesError] = useState<APIError>();

@@ -7,7 +7,7 @@ import SinkResources from './SinkResources';
 import SinkUri from './SinkUri';
 
 const SinkUriResourcesGroup: FC<SinkResourcesProps> = ({ namespace, isMoveSink }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   return (
     <RadioGroupField
       name="formData.sinkType"

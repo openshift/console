@@ -28,7 +28,7 @@ export const useSubscriptionActions = (
   obj: SubscriptionKind,
   filterActions?: SubscriptionActionCreator[],
 ): Action[] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const [model] = useK8sModel(referenceFor(obj));
   const [commonActions] = useCommonActions(model, obj, [CommonActionCreator.Edit]);
 
@@ -41,14 +41,14 @@ export const useSubscriptionActions = (
     () => ({
       [SubscriptionActionCreator.RemoveSubscription]: () => ({
         id: 'remove-subscription',
-        label: t('olm~Remove Subscription'),
+        label: t('Remove Subscription'),
         cta: () => uninstallOperatorModal(),
         accessReview: asAccessReview(model, obj, 'delete'),
       }),
       [SubscriptionActionCreator.ViewClusterServiceVersion]: () => {
         return {
           id: 'view-cluster-service-version',
-          label: t('olm~View ClusterServiceVersion...'),
+          label: t('View ClusterServiceVersion...'),
           cta: {
             href: `/k8s/ns/${obj.metadata.namespace}/${ClusterServiceVersionModel.plural}/${installedCSV}`,
           },

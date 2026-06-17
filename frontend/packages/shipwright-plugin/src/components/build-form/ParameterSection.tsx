@@ -74,7 +74,7 @@ const ParameterFields: FC<ParameterFieldsProps> = ({ params }) => {
 };
 
 const ParameterSection: FC<ParametersSectionProps> = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('shipwright-plugin');
   const {
     values: { formData },
   } = useFormikContext<BuildFormikValues>();
@@ -84,20 +84,18 @@ const ParameterSection: FC<ParametersSectionProps> = () => {
 
   return (
     formData?.parameters.length > 0 && (
-      <FormSection title={t('shipwright-plugin~Parameters')}>
+      <FormSection title={t('Parameters')}>
         {requiredParams.length > 0 ? (
           <ParameterFields params={requiredParams} />
         ) : (
           <span className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle">
-            {t(
-              'shipwright-plugin~No required parameters are associated with the selected build strategy.',
-            )}
+            {t('No required parameters are associated with the selected build strategy.')}
           </span>
         )}
         {optionalParams.length > 0 && (
           <ExpandCollapse
-            textExpanded={t('shipwright-plugin~Hide optional parameters')}
-            textCollapsed={t('shipwright-plugin~Show optional parameters')}
+            textExpanded={t('Hide optional parameters')}
+            textCollapsed={t('Show optional parameters')}
             dataTest="parameters-options"
           >
             <ParameterFields params={optionalParams} />

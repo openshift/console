@@ -10,14 +10,14 @@ import { TYPE_HELM_RELEASE } from '../../components/const';
 import TopologyHelmReleaseNotesPanel from '../../TopologyHelmReleaseNotesPanel';
 
 const HelmReleasePanelDetailsTabSection: FC<{ element: GraphElement }> = ({ element }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   const secret = element.getData().resources.obj;
   return !secret ? (
     <>
       <StatusBox
         loaded
         loadError={{
-          message: t('helm-plugin~Unable to find resource for {{helmLabel}}', {
+          message: t('Unable to find resource for {{helmLabel}}', {
             helmLabel: element.getLabel(),
           }),
         }}

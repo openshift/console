@@ -31,18 +31,18 @@ const TelemetryAnalyticsSelect: FC<{
   value?: string;
   onChange: (selectedOption: TelemetryAnalyticsSelectOptions) => void;
 }> = ({ disabled, value, onChange }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-telemetry-plugin');
   const options: TelemetryAnalyticsSelectOptions[] = [
     {
       value: USER_TELEMETRY_ANALYTICS.ALLOW,
-      title: t('console-telemetry-plugin~Accept'),
-      description: t('console-telemetry-plugin~Send telemetry events.'),
+      title: t('Accept'),
+      description: t('Send telemetry events.'),
       isSelected: value === USER_TELEMETRY_ANALYTICS.ALLOW,
     },
     {
       value: USER_TELEMETRY_ANALYTICS.DENY,
-      title: t('console-telemetry-plugin~Deny'),
-      description: t('console-telemetry-plugin~Do not send telemetry events.'),
+      title: t('Deny'),
+      description: t('Do not send telemetry events.'),
       isSelected: value === USER_TELEMETRY_ANALYTICS.DENY,
     },
   ];
@@ -57,9 +57,7 @@ const TelemetryAnalyticsSelect: FC<{
       isFullWidth
       id="telemetry"
     >
-      {selection
-        ? options.find((option) => option.value === selection)?.title
-        : t('console-telemetry-plugin~Select option')}
+      {selection ? options.find((option) => option.value === selection)?.title : t('Select option')}
     </MenuToggle>
   );
 
@@ -73,7 +71,7 @@ const TelemetryAnalyticsSelect: FC<{
         }
         setIsOpen(false);
       }}
-      aria-label={t('console-telemetry-plugin~Select option')}
+      aria-label={t('Select option')}
       onOpenChange={(open) => setIsOpen(open)}
     >
       <SelectList>
@@ -93,7 +91,7 @@ const TelemetryAnalyticsSelect: FC<{
 };
 
 const TelemetryUserPreferenceDropdown: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-telemetry-plugin');
   const fireTelemetryEvent = useTelemetry();
 
   const [
@@ -115,7 +113,7 @@ const TelemetryUserPreferenceDropdown: FC = () => {
 
   return (
     <div className="pf-v6-c-form">
-      <FormGroup fieldId="telemetry" label={t('console-telemetry-plugin~Telemetry')}>
+      <FormGroup fieldId="telemetry" label={t('Telemetry')}>
         <TelemetryAnalyticsSelect
           disabled={!window.SERVER_FLAGS.telemetry?.STATE}
           value={currentUserPreferenceTelemetryValue}
@@ -124,9 +122,7 @@ const TelemetryUserPreferenceDropdown: FC = () => {
         <FormHelperText>
           <HelperText>
             <HelperTextItem>
-              {t(
-                'console-telemetry-plugin~Select a option whether to send telemetry events or not.',
-              )}
+              {t('Select a option whether to send telemetry events or not.')}
             </HelperTextItem>
           </HelperText>
         </FormHelperText>

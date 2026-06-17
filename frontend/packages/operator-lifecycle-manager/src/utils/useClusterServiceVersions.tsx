@@ -24,15 +24,15 @@ type ExpandCollapseDescriptionProps = {
 };
 
 const ExpandCollapseDescription: FC<ExpandCollapseDescriptionProps> = ({ children }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const [expanded, setExpanded] = useState<boolean>(false);
   const toggle = (isExpanded) => {
     setExpanded(isExpanded);
   };
   return (
     <ExpandCollapse
-      textExpanded={t('olm~Hide operator description')}
-      textCollapsed={t('olm~Show operator description')}
+      textExpanded={t('Hide operator description')}
+      textCollapsed={t('Show operator description')}
       onToggle={toggle}
     >
       {/** used an empty Fragment here because Expandable always expects a children, using null throws react warning */}
@@ -47,7 +47,7 @@ const normalizeClusterServiceVersions = (
   t: TFunction,
 ): CatalogItem[] => {
   const formatTileDescription = (csvDescription: string): string =>
-    `## ${t('olm~Operator description')}\n${csvDescription}`;
+    `## ${t('Operator description')}\n${csvDescription}`;
 
   const operatorProvidedAPIs: CatalogItem[] = _.flatten<
     ProvidedAPI & { csv: ClusterServiceVersionKind }
@@ -82,7 +82,7 @@ const normalizeClusterServiceVersions = (
 
       const detailsProperties: CatalogItemDetailsProperty[] = [
         {
-          label: t('olm~Capability level'),
+          label: t('Capability level'),
           value: capabilityLevel,
         },
       ];
@@ -124,7 +124,7 @@ const normalizeClusterServiceVersions = (
           url: getImageForCSVIcon(desc.csv.spec.icon?.[0]),
         },
         cta: {
-          label: t('public~Create'),
+          label: t('Create'),
           href: `/k8s/ns/${namespace}/clusterserviceversions/${
             desc.csv.metadata.name
           }/${referenceForProvidedAPI(desc)}/~new`,
@@ -143,7 +143,7 @@ const normalizeClusterServiceVersions = (
 const useClusterServiceVersions: ExtensionHook<CatalogItem[]> = ({
   namespace,
 }): [CatalogItem[], boolean, any] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const resourceSelector = useMemo(
     () => ({
       csvs: {

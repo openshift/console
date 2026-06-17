@@ -11,11 +11,11 @@ export const FormLayout: FC<FormLayoutProps> = ({
   isHorizontal = false,
   isWidthLimited = true,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   return (
     <div
       role="region"
-      aria-label={t('console-shared~Form layout')}
+      aria-label={t('Form layout')}
       className={css(
         formStyles.form,
         isHorizontal && formStyles.modifiers.horizontal,

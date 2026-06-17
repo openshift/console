@@ -19,7 +19,7 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
-import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { RhUiMinusCircleIcon, RhUiAddCircleFillIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import * as Immutable from 'immutable';
 import type { JSONSchema6, JSONSchema6TypeName } from 'json-schema';
@@ -513,7 +513,7 @@ export const DEPRECATED_CreateOperandForm: FC<OperandFormProps> = ({
   next,
 }) => {
   const postFormCallback = useResourceConnectionHandler();
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const params = useParams();
   const navigate = useNavigate();
   const immutableFormData = Immutable.fromJS(formData);
@@ -742,7 +742,7 @@ export const DEPRECATED_CreateOperandForm: FC<OperandFormProps> = ({
       return (
         <DescriptionList className="pf-v6-u-ml-md">
           <DescriptionListGroup>
-            <DescriptionListTerm>{t('olm~Limits')}</DescriptionListTerm>
+            <DescriptionListTerm>{t('Limits')}</DescriptionListTerm>
             <DescriptionListDescription>
               <ResourceRequirements
                 cpu={currentValue.getIn?.(_.toPath(cpuLimitsPath))}
@@ -760,7 +760,7 @@ export const DEPRECATED_CreateOperandForm: FC<OperandFormProps> = ({
             </DescriptionListDescription>
           </DescriptionListGroup>
           <DescriptionListGroup>
-            <DescriptionListTerm>{t('olm~Requests')}</DescriptionListTerm>
+            <DescriptionListTerm>{t('Requests')}</DescriptionListTerm>
             <DescriptionListDescription>
               <ResourceRequirements
                 cpu={currentValue.getIn?.(_.toPath(cpuRequestsPath))}
@@ -812,7 +812,7 @@ export const DEPRECATED_CreateOperandForm: FC<OperandFormProps> = ({
             },
           ]}
           desc={displayName}
-          placeholder={t('olm~Select {{item}}', { item: kindForReference(groupVersionKind) })}
+          placeholder={t('Select {{item}}', { item: kindForReference(groupVersionKind) })}
           onChange={(value) => handleFormDataUpdate(path, value)}
           selectedKey={currentValue ? `${currentValue}-${k8sModel?.kind}` : null}
         />
@@ -838,7 +838,7 @@ export const DEPRECATED_CreateOperandForm: FC<OperandFormProps> = ({
           id={id}
           isChecked={(_.isNil(currentValue) ? false : currentValue) as boolean}
           onChange={(_event, value) => handleFormDataUpdate(path, value)}
-          label={t('public~True')}
+          label={t('True')}
         />
       );
     }
@@ -932,7 +932,7 @@ export const DEPRECATED_CreateOperandForm: FC<OperandFormProps> = ({
         <div>
           <ConsoleSelect
             id={id}
-            title={t('olm~Select {{item}}', { item: displayName })}
+            title={t('Select {{item}}', { item: displayName })}
             selectedKey={currentValue}
             items={capabilities
               .filter((c) => c.startsWith(SpecCapability.select))
@@ -1025,13 +1025,13 @@ export const DEPRECATED_CreateOperandForm: FC<OperandFormProps> = ({
               {fieldLists.length > 1 && (
                 <div className="co-array-field-group__remove">
                   <Button
-                    icon={<MinusCircleIcon className="co-icon-space-r" />}
+                    icon={<RhUiMinusCircleIcon className="co-icon-space-r" />}
                     type="button"
                     className="co-array-field-group__remove-btn"
                     onClick={() => removeArrayFieldGroup(fieldLists, index)}
                     variant="link"
                   >
-                    {t('olm~Remove {{item}}', { item: singularGroupDisplayName })}
+                    {t('Remove {{item}}', { item: singularGroupDisplayName })}
                   </Button>
                 </div>
               )}
@@ -1042,12 +1042,12 @@ export const DEPRECATED_CreateOperandForm: FC<OperandFormProps> = ({
           ))}
           <div>
             <Button
-              icon={<PlusCircleIcon className="co-icon-space-r" />}
+              icon={<RhUiAddCircleFillIcon className="co-icon-space-r" />}
               type="button"
               onClick={() => addArrayFieldGroup(fieldLists)}
               variant="link"
             >
-              {t('olm~Add {{item}}', { item: singularGroupDisplayName })}
+              {t('Add {{item}}', { item: singularGroupDisplayName })}
             </Button>
           </div>
         </FieldGroup>
@@ -1082,8 +1082,8 @@ export const DEPRECATED_CreateOperandForm: FC<OperandFormProps> = ({
     advancedFields.length > 0 && (
       <div>
         <ExpandCollapse
-          textExpanded={t('olm~Advanced configuration')}
-          textCollapsed={t('olm~Advanced configuration')}
+          textExpanded={t('Advanced configuration')}
+          textCollapsed={t('Advanced configuration')}
         >
           {_.map(advancedFields, (field) => (
             <OperandFormInputGroup key={field.path} field={field} input={inputFor(field)} />
@@ -1114,7 +1114,7 @@ export const DEPRECATED_CreateOperandForm: FC<OperandFormProps> = ({
             className="co-alert co-break-word"
             variant="info"
             title={t(
-              'olm~Some fields might not be displayed in this form. Select "YAML view" to edit all fields.',
+              'Some fields might not be displayed in this form. Select "YAML view" to edit all fields.',
             )}
           />
           <form className="co-dynamic-form" onSubmit={submit}>
@@ -1125,7 +1125,7 @@ export const DEPRECATED_CreateOperandForm: FC<OperandFormProps> = ({
                 className="form-group"
               >
                 <label className="form-label co-required" htmlFor="DEPRECATED_root_metadata_name">
-                  {t('public~Name')}
+                  {t('Name')}
                 </label>
                 <span className="pf-v6-c-form-control">
                   <input
@@ -1145,7 +1145,7 @@ export const DEPRECATED_CreateOperandForm: FC<OperandFormProps> = ({
                 className="form-group"
               >
                 <label className="form-label" htmlFor="tags-input">
-                  {t('public~Labels')}
+                  {t('Labels')}
                 </label>
                 <SelectorInput
                   onChange={(value) =>
@@ -1175,10 +1175,10 @@ export const DEPRECATED_CreateOperandForm: FC<OperandFormProps> = ({
             <div style={{ paddingBottom: '30px' }}>
               <ActionGroup className="pf-v6-c-form">
                 <Button onClick={submit} type="submit" variant="primary">
-                  {t('public~Create')}
+                  {t('Create')}
                 </Button>
                 <Button onClick={() => navigate(-1)} variant="secondary">
-                  {t('public~Cancel')}
+                  {t('Cancel')}
                 </Button>
               </ActionGroup>
             </div>

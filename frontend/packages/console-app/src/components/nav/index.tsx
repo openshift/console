@@ -13,11 +13,11 @@ type NavigationProps = {
 
 export const Navigation = memo<NavigationProps>(
   ({ isNavOpen, onNavSelect, onPerspectiveSelected }) => {
-    const { t } = useTranslation();
+    const { t } = useTranslation('console-app');
     return (
       <PageSidebar isSidebarOpen={isNavOpen} data-test="navigation-page-sidebar">
         <PageSidebarBody>
-          <Nav aria-label={t('console-app~Nav')} onSelect={onNavSelect}>
+          <Nav aria-label={t('Nav')} onSelect={onNavSelect}>
             <NavHeader onPerspectiveSelected={onPerspectiveSelected} />
             <PerspectiveNav />
           </Nav>

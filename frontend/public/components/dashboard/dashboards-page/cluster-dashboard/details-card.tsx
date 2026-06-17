@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { useContext, useState, useEffect, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardBody, CardHeader, CardTitle, DescriptionList } from '@patternfly/react-core';
-import { InProgressIcon } from '@patternfly/react-icons';
+import { RhUiInProgressIcon } from '@patternfly/react-icons';
 import { BlueArrowCircleUpIcon } from '@console/shared/src/components/status/icons';
 import { FLAGS } from '@console/shared/src/constants/common';
 import {
@@ -48,7 +48,7 @@ import { useK8sWatchResource } from '../../../utils/k8s-watch-hook';
 import { ClusterDashboardContext } from './context';
 
 const ClusterVersion: FC<ClusterVersionProps> = ({ cv }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const desiredVersion = getDesiredClusterVersion(cv);
   const lastVersion = getLastCompletedUpdate(cv);
   const canUpgrade = useCanClusterUpgrade();
@@ -61,8 +61,8 @@ const ClusterVersion: FC<ClusterVersionProps> = ({ cv }) => {
           <span className="co-select-to-copy">{desiredVersion}</span>
           <div>
             <Link to="/settings/cluster/">
-              <InProgressIcon className="co-icon-and-text__icon" />
-              {t('public~Updating')}
+              <RhUiInProgressIcon className="co-icon-and-text__icon" />
+              {t('Updating')}
             </Link>
           </div>
         </>
@@ -75,7 +75,7 @@ const ClusterVersion: FC<ClusterVersionProps> = ({ cv }) => {
             <div>
               <Link to="/settings/cluster?showVersions" className="co-icon-space-l">
                 <BlueArrowCircleUpIcon className="co-icon-space-r" />
-                {t('public~Update cluster')}
+                {t('Update cluster')}
               </Link>
             </div>
           )}
@@ -85,7 +85,7 @@ const ClusterVersion: FC<ClusterVersionProps> = ({ cv }) => {
       return lastVersion ? (
         <span className="co-select-to-copy">{lastVersion}</span>
       ) : (
-        <span className="pf-v6-u-text-color-subtle">{t('public~Not available')}</span>
+        <span className="pf-v6-u-text-color-subtle">{t('Not available')}</span>
       );
   }
 };
@@ -98,7 +98,7 @@ const clusterVersionResource: WatchK8sResource = {
 };
 
 export const DetailsCard = memo(() => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const openshiftFlag = useFlag(FLAGS.OPENSHIFT);
   const { infrastructure, infrastructureLoaded, infrastructureError } = useContext(
     ClusterDashboardContext,
@@ -145,7 +145,7 @@ export const DetailsCard = memo(() => {
           actions: (
             <>
               <Link to="/settings/cluster/" data-test="details-card-view-settings">
-                {t('public~View settings')}
+                {t('View settings')}
               </Link>
             </>
           ),
@@ -153,7 +153,7 @@ export const DetailsCard = memo(() => {
           className: 'co-overview-card__actions',
         }}
       >
-        <CardTitle>{t('public~Details')}</CardTitle>
+        <CardTitle>{t('Details')}</CardTitle>
       </CardHeader>
       <CardBody>
         {flagPending(openshiftFlag) ? (
@@ -163,11 +163,11 @@ export const DetailsCard = memo(() => {
             {openshiftFlag ? (
               <>
                 <OverviewDetailItem
-                  title={t('public~Cluster API address')}
+                  title={t('Cluster API address')}
                   isLoading={!infrastructureLoaded}
                   error={
                     !!infrastructureError || (infrastructure && !infrastuctureApiUrl)
-                      ? t('public~Not available')
+                      ? t('Not available')
                       : undefined
                   }
                   valueClassName="co-select-to-copy"
@@ -175,10 +175,10 @@ export const DetailsCard = memo(() => {
                   {infrastuctureApiUrl}
                 </OverviewDetailItem>
                 <OverviewDetailItem
-                  title={t('public~Cluster ID')}
+                  title={t('Cluster ID')}
                   error={
                     !!clusterVersionError || (clusterVersionLoaded && !clusterID)
-                      ? t('public~Not available')
+                      ? t('Not available')
                       : undefined
                   }
                   isLoading={!clusterVersionLoaded}
@@ -187,16 +187,16 @@ export const DetailsCard = memo(() => {
                   {window.SERVER_FLAGS.branding !== 'okd' &&
                     window.SERVER_FLAGS.branding !== 'azure' && (
                       <ExternalLink
-                        text={t('public~OpenShift Cluster Manager')}
+                        text={t('OpenShift Cluster Manager')}
                         href={getOCMLink(clusterID)}
                       />
                     )}
                 </OverviewDetailItem>
                 <OverviewDetailItem
-                  title={t('public~Infrastructure provider')}
+                  title={t('Infrastructure provider')}
                   error={
                     !!infrastructureError || (infrastructure && !infrastructurePlatform)
-                      ? t('public~Not available')
+                      ? t('Not available')
                       : undefined
                   }
                   isLoading={!infrastructureLoaded}
@@ -205,10 +205,10 @@ export const DetailsCard = memo(() => {
                   {infrastructurePlatform}
                 </OverviewDetailItem>
                 <OverviewDetailItem
-                  title={t('public~OpenShift version')}
+                  title={t('OpenShift version')}
                   error={
                     !!clusterVersionError || (clusterVersionLoaded && !openShiftVersion)
-                      ? t('public~Not available')
+                      ? t('Not available')
                       : undefined
                   }
                   isLoading={!clusterVersionLoaded}
@@ -231,11 +231,11 @@ export const DetailsCard = memo(() => {
                 </ServiceLevel>
 
                 <OverviewDetailItem
-                  title={t('public~Update channel')}
+                  title={t('Update channel')}
                   isLoading={!clusterVersionLoaded && !clusterVersionError}
                   error={
                     !!clusterVersionError || (clusterVersionLoaded && !cvChannel)
-                      ? t('public~Not available')
+                      ? t('Not available')
                       : undefined
                   }
                   valueClassName="co-select-to-copy"
@@ -244,11 +244,11 @@ export const DetailsCard = memo(() => {
                 </OverviewDetailItem>
                 {isSingleNode(infrastructure) && (
                   <OverviewDetailItem
-                    title={t('public~Control plane high availability')}
+                    title={t('Control plane high availability')}
                     isLoading={false}
                     valueClassName="co-select-to-copy"
                   >
-                    {t('public~No (single control plane node)')}
+                    {t('No (single control plane node)')}
                   </OverviewDetailItem>
                 )}
                 {customDetailItemsExtensions.map((e) => {
@@ -270,10 +270,10 @@ export const DetailsCard = memo(() => {
             ) : (
               <OverviewDetailItem
                 key="kubernetes"
-                title={t('public~Kubernetes version')}
+                title={t('Kubernetes version')}
                 error={
                   !!k8sVersionError || (k8sVersion && !k8sGitVersion)
-                    ? t('public~Not available')
+                    ? t('Not available')
                     : undefined
                 }
                 isLoading={!k8sVersion}

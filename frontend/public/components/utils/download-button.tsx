@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { useState } from 'react';
 import { saveAs } from 'file-saver';
 import { Alert, Button } from '@patternfly/react-core';
-import { DownloadIcon } from '@patternfly/react-icons';
+import { RhUiDownloadIcon } from '@patternfly/react-icons';
 import { coFetch } from '@console/shared/src/utils/console-fetch';
 
 export const DownloadButton: FC<DownloadButtonProps> = (props) => {
@@ -26,7 +26,7 @@ export const DownloadButton: FC<DownloadButtonProps> = (props) => {
   return (
     <>
       <Button
-        icon={<DownloadIcon />}
+        icon={<RhUiDownloadIcon />}
         variant="primary"
         style={{ marginBottom: 10 }}
         isDisabled={inFlight}

@@ -26,7 +26,7 @@ const BuilderImageTagSelector: FC<BuilderImageTagSelectorProps> = ({
   selectedImageTag,
   showImageInfo = true,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const {
     values: {
       import: { showEditImportStrategy, selectedStrategy },
@@ -81,7 +81,7 @@ const BuilderImageTagSelector: FC<BuilderImageTagSelectorProps> = ({
       >
         <DropdownField
           name="image.tag"
-          label={t('devconsole~Builder Image version')}
+          label={t('Builder Image version')}
           items={tagItems}
           title={tagItems[selectedImageTag]}
           fullWidth

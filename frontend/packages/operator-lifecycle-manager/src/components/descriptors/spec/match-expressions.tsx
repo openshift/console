@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { Button } from '@patternfly/react-core';
-import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { RhUiMinusCircleIcon, RhUiAddCircleFillIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import { Table, Thead, Tr, Th, Td, Tbody } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
@@ -24,11 +24,11 @@ const MatchExpression: FC<MatchExpressionProps> = ({
   onClickRemove = () => {},
 }) => {
   const { key, operator, values } = expression;
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const valuesDisabled = UNARY_OPERATORS.includes(operator as Operator);
   return (
     <Tr>
-      <Td dataLabel={t('olm~Key')}>
+      <Td dataLabel={t('Key')}>
         <span className="pf-v6-c-form-control">
           <input
             type="text"
@@ -37,7 +37,7 @@ const MatchExpression: FC<MatchExpressionProps> = ({
           />
         </span>
       </Td>
-      <Td dataLabel={t('olm~Operator')}>
+      <Td dataLabel={t('Operator')}>
         <ConsoleSelect
           isFullWidth
           items={allowedOperators.reduce((acc, o) => ({ ...acc, [o]: o }), {})}
@@ -46,7 +46,7 @@ const MatchExpression: FC<MatchExpressionProps> = ({
           title={expression.operator}
         />
       </Td>
-      <Td dataLabel={t('olm~Values')}>
+      <Td dataLabel={t('Values')}>
         <span
           className={css('pf-v6-c-form-control', {
             'pf-m-disabled': valuesDisabled,
@@ -68,7 +68,7 @@ const MatchExpression: FC<MatchExpressionProps> = ({
       </Td>
       <Td isActionCell>
         <Button
-          icon={<MinusCircleIcon />}
+          icon={<RhUiMinusCircleIcon />}
           type="button"
           onClick={onClickRemove}
           aria-label="Delete"
@@ -85,7 +85,7 @@ export const MatchExpressions: FC<MatchExpressionsProps> = ({
   allowedOperators = ALL_OPERATORS,
   uid = '',
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
 
   const updateExpression = (index: number, newExpression: MatchExpression): void =>
     onChange(matchExpressions.map((exp, i) => (i === index ? newExpression : exp)));
@@ -97,12 +97,12 @@ export const MatchExpressions: FC<MatchExpressionsProps> = ({
     onChange([...matchExpressions, { key: '', operator: Operator.Exists, values: [] }]);
 
   return (
-    <Table aria-label={t('olm~Match expressions')} variant="compact" borders={false}>
+    <Table aria-label={t('Match expressions')} variant="compact" borders={false}>
       <Thead>
         <Tr>
-          <Th>{t('olm~Key')}</Th>
-          <Th>{t('olm~Operator')}</Th>
-          <Th>{t('olm~Values')}</Th>
+          <Th>{t('Key')}</Th>
+          <Th>{t('Operator')}</Th>
+          <Th>{t('Values')}</Th>
           <Th />
         </Tr>
       </Thead>
@@ -121,12 +121,12 @@ export const MatchExpressions: FC<MatchExpressionsProps> = ({
         <Tr>
           <Td>
             <Button
-              icon={<PlusCircleIcon className="co-icon-space-r" />}
+              icon={<RhUiAddCircleFillIcon className="co-icon-space-r" />}
               type="button"
               onClick={addExpression}
               variant="link"
             >
-              {t('olm~Add expression')}
+              {t('Add expression')}
             </Button>
           </Td>
         </Tr>

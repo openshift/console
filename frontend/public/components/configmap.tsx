@@ -83,13 +83,13 @@ const useConfigMapsColumns = (): {
   columns: TableColumn<ConfigMapKind>[];
   resetAllColumnWidths: () => void;
 } => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(ConfigMapModel);
 
   const columns = useMemo(
     () => [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         resizableProps: getResizableProps(tableColumnInfo[0].id),
@@ -99,7 +99,7 @@ const useConfigMapsColumns = (): {
         },
       },
       {
-        title: t('public~Namespace'),
+        title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
@@ -108,7 +108,7 @@ const useConfigMapsColumns = (): {
         },
       },
       {
-        title: t('public~Size'),
+        title: t('Size'),
         id: tableColumnInfo[2].id,
         sort: (data, direction) => data.sort(sortResourceByValue(direction, sorts.dataSize)),
         resizableProps: getResizableProps(tableColumnInfo[2].id),
@@ -117,7 +117,7 @@ const useConfigMapsColumns = (): {
         },
       },
       {
-        title: t('public~Created'),
+        title: t('Created'),
         id: tableColumnInfo[3].id,
         sort: 'metadata.creationTimestamp',
         resizableProps: getResizableProps(tableColumnInfo[3].id),
@@ -176,12 +176,12 @@ export const ConfigMapsPage: FC<ConfigMapsPageProps> = (props) => {
 };
 
 export const ConfigMapsDetailsPage: FC = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const ConfigMapDetails = ({ obj: configMap }: { obj: ConfigMapKind }) => {
     return (
       <>
         <PaneBody>
-          <SectionHeading text={t('public~ConfigMap details')} />
+          <SectionHeading text={t('ConfigMap details')} />
           <Grid hasGutter>
             <GridItem md={6}>
               <ResourceSummary resource={configMap} />
@@ -189,11 +189,11 @@ export const ConfigMapsDetailsPage: FC = (props) => {
           </Grid>
         </PaneBody>
         <PaneBody>
-          <SectionHeading text={t('public~Data')} />
-          <ConfigMapData data={configMap.data} label={t('public~Data')} />
+          <SectionHeading text={t('Data')} />
+          <ConfigMapData data={configMap.data} label={t('Data')} />
         </PaneBody>
         <PaneBody>
-          <SectionHeading text={t('public~Binary data')} />
+          <SectionHeading text={t('Binary data')} />
           <ConfigMapBinaryData data={configMap.binaryData} />
         </PaneBody>
       </>

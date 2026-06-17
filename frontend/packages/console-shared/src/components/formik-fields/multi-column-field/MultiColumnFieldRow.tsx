@@ -2,7 +2,7 @@ import type { ReactNode, ReactElement, FC } from 'react';
 import { Children, cloneElement } from 'react';
 import type { gridItemSpanValueShape } from '@patternfly/react-core';
 import { Tooltip, Button, ButtonVariant, ButtonType, GridItem, Grid } from '@patternfly/react-core';
-import { MinusCircleIcon } from '@patternfly/react-icons';
+import { RhUiMinusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import './MultiColumnField.scss';
 
@@ -32,7 +32,7 @@ const DEFAULT_ROW_RENDERER = ({
   tooltipDeleteRow,
   onDelete,
 }): ReactNode => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   return (
     <div className="odc-multi-column-field__row" data-test={`row ${fieldName}`}>
       <Grid>
@@ -52,11 +52,11 @@ const DEFAULT_ROW_RENDERER = ({
       </Grid>
       {!isReadOnly && (
         <div className={'odc-multi-column-field__col--button'}>
-          <Tooltip content={tooltipDeleteRow || t('console-shared~Remove')}>
+          <Tooltip content={tooltipDeleteRow || t('Remove')}>
             <Button
-              icon={<MinusCircleIcon />}
+              icon={<RhUiMinusCircleIcon />}
               data-test="delete-row"
-              aria-label={tooltipDeleteRow || t('console-shared~Remove')}
+              aria-label={tooltipDeleteRow || t('Remove')}
               variant={ButtonVariant.plain}
               type={ButtonType.button}
               isInline

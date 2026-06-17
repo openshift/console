@@ -23,7 +23,7 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
-import { PencilAltIcon } from '@patternfly/react-icons';
+import { RhUiEditIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 
@@ -64,23 +64,23 @@ import { MachinesCell } from './control-plane-machine-set';
 const CapacityResolverContext = createContext<CapacityResolverContextType | null>(null);
 
 const CPUCell: FC<{ obj: MachineSetKind }> = ({ obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const context = useContext(CapacityResolverContext);
   if (!context) {
     return <span>{DASH}</span>;
   }
   const { cpu } = context.capacityResolver(obj);
-  return <span>{t('public~{{count}} core', { count: cpu })}</span>;
+  return <span>{t('{{count}} core', { count: cpu })}</span>;
 };
 
 const MemoryCell: FC<{ obj: MachineSetKind }> = ({ obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const context = useContext(CapacityResolverContext);
   if (!context) {
     return <span>{DASH}</span>;
   }
   const { memory } = context.capacityResolver(obj);
-  return <span>{t('public~{{memory}} GiB', { memory })}</span>;
+  return <span>{t('{{memory}} GiB', { memory })}</span>;
 };
 
 const MachinesResource = {
@@ -148,8 +148,8 @@ const MachineCounts: FC<MachineCountsProps> = ({ resourceKind, resource }) => {
     name: resource.metadata.name,
     namespace: resource.metadata.namespace,
   });
-  const { t } = useTranslation();
-  const desiredReplicasText = `${desiredReplicas}  ${t('public~machine', {
+  const { t } = useTranslation('public');
+  const desiredReplicasText = `${desiredReplicas}  ${t('machine', {
     count: desiredReplicas,
   })}`;
 
@@ -157,11 +157,11 @@ const MachineCounts: FC<MachineCountsProps> = ({ resourceKind, resource }) => {
     <PaneBodyGroup>
       <DescriptionList className="co-detail-table">
         <Card>
-          <DescriptionListTerm>{t('public~Desired count')}</DescriptionListTerm>
+          <DescriptionListTerm>{t('Desired count')}</DescriptionListTerm>
           <DescriptionListDescription>
             {canUpdate ? (
               <Button
-                icon={<PencilAltIcon />}
+                icon={<RhUiEditIcon />}
                 iconPosition="end"
                 variant="link"
                 type="button"
@@ -176,23 +176,23 @@ const MachineCounts: FC<MachineCountsProps> = ({ resourceKind, resource }) => {
           </DescriptionListDescription>
         </Card>
         <Card>
-          <DescriptionListTerm>{t('public~Current count')}</DescriptionListTerm>
+          <DescriptionListTerm>{t('Current count')}</DescriptionListTerm>
           <DescriptionListDescription>
-            <Tooltip content={t('public~The most recently observed number of replicas.')}>
-              <span>{t('public~{{replicas}} machine', { replicas, count: replicas })}</span>
+            <Tooltip content={t('The most recently observed number of replicas.')}>
+              <span>{t('{{replicas}} machine', { replicas, count: replicas })}</span>
             </Tooltip>
           </DescriptionListDescription>
         </Card>
         <Card>
-          <DescriptionListTerm>{t('public~Ready count')}</DescriptionListTerm>
+          <DescriptionListTerm>{t('Ready count')}</DescriptionListTerm>
           <DescriptionListDescription>
             <Tooltip
               content={t(
-                'public~The number of ready replicas for this MachineSet. A machine is considered ready when the node has been created and is ready.',
+                'The number of ready replicas for this MachineSet. A machine is considered ready when the node has been created and is ready.',
               )}
             >
               <span>
-                {t('public~{{readyReplicas}} machine', {
+                {t('{{readyReplicas}} machine', {
                   readyReplicas,
                   count: readyReplicas,
                 })}
@@ -201,15 +201,15 @@ const MachineCounts: FC<MachineCountsProps> = ({ resourceKind, resource }) => {
           </DescriptionListDescription>
         </Card>
         <Card>
-          <DescriptionListTerm>{t('public~Available count')}</DescriptionListTerm>
+          <DescriptionListTerm>{t('Available count')}</DescriptionListTerm>
           <DescriptionListDescription>
             <Tooltip
               content={t(
-                'public~The number of available replicas (ready for at least minReadySeconds) for this MachineSet.',
+                'The number of available replicas (ready for at least minReadySeconds) for this MachineSet.',
               )}
             >
               <span>
-                {t('public~{{availableReplicas}} machine', {
+                {t('{{availableReplicas}} machine', {
                   availableReplicas,
                   count: availableReplicas,
                 })}
@@ -230,16 +230,16 @@ const MachineSetDetails: FC<MachineSetDetailsProps> = ({ obj }) => {
   const machineRole = getMachineRole(obj);
   const { availabilityZone, region } = getMachineAWSPlacement(obj);
   const instanceType = getMachineSetInstanceType(obj);
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <PaneBody>
-      <SectionHeading text={t('public~MachineSet details')} />
+      <SectionHeading text={t('MachineSet details')} />
       <MachineCounts resourceKind={MachineSetModel} resource={obj} />
       <Grid hasGutter>
         <GridItem md={6}>
           <ResourceSummary resource={obj}>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('public~Selector')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Selector')}</DescriptionListTerm>
               <DescriptionListDescription>
                 <Selector
                   kind={machineReference}
@@ -249,24 +249,24 @@ const MachineSetDetails: FC<MachineSetDetailsProps> = ({ obj }) => {
               </DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('public~Instance type')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Instance type')}</DescriptionListTerm>
               <DescriptionListDescription>{instanceType || '-'}</DescriptionListDescription>
             </DescriptionListGroup>
             {machineRole && (
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('public~Machine role')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('Machine role')}</DescriptionListTerm>
                 <DescriptionListDescription>{machineRole}</DescriptionListDescription>
               </DescriptionListGroup>
             )}
             {region && (
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('public~Region')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('Region')}</DescriptionListTerm>
                 <DescriptionListDescription>{region}</DescriptionListDescription>
               </DescriptionListGroup>
             )}
             {availabilityZone && (
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('public~Availability zone')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('Availability zone')}</DescriptionListTerm>
                 <DescriptionListDescription>{availabilityZone}</DescriptionListDescription>
               </DescriptionListGroup>
             )}
@@ -281,14 +281,14 @@ const useMachineSetColumns = (): {
   columns: TableColumn<MachineSetKind>[];
   resetAllColumnWidths: () => void;
 } => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const context = useContext(CapacityResolverContext);
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(MachineSetModel);
 
   const columns: TableColumn<MachineSetKind>[] = useMemo(() => {
     return [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         resizableProps: getResizableProps(tableColumnInfo[0].id),
@@ -298,7 +298,7 @@ const useMachineSetColumns = (): {
         },
       },
       {
-        title: t('public~Namespace'),
+        title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
@@ -307,7 +307,7 @@ const useMachineSetColumns = (): {
         },
       },
       {
-        title: t('public~Machines'),
+        title: t('Machines'),
         id: tableColumnInfo[2].id,
         sort: 'status.readyReplicas',
         resizableProps: getResizableProps(tableColumnInfo[2].id),
@@ -316,7 +316,7 @@ const useMachineSetColumns = (): {
         },
       },
       {
-        title: t('public~Instance type'),
+        title: t('Instance type'),
         id: tableColumnInfo[3].id,
         sort: (data, direction) =>
           data.sort(sortResourceByValue(direction, getMachineSetInstanceType)),
@@ -326,7 +326,7 @@ const useMachineSetColumns = (): {
         },
       },
       {
-        title: t('public~CPU'),
+        title: t('CPU'),
         id: tableColumnInfo[4].id,
         sort: context
           ? (data, direction) =>
@@ -338,7 +338,7 @@ const useMachineSetColumns = (): {
         },
       },
       {
-        title: t('public~Memory'),
+        title: t('Memory'),
         id: tableColumnInfo[5].id,
         sort: context
           ? (data, direction) =>
@@ -487,15 +487,15 @@ export const MachineSetPage: FC<MachineSetPageProps> = ({
     namespace: namespace || 'default',
   };
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <>
-      <ListPageHeader title={showTitle ? t('public~MachineSets') : undefined}>
+      <ListPageHeader title={showTitle ? t('MachineSets') : undefined}>
         <ListPageCreate
           createAccessReview={createAccessReview}
           groupVersionKind={referenceForModel(MachineSetModel)}
         >
-          {t('public~Create MachineSet')}
+          {t('Create MachineSet')}
         </ListPageCreate>
       </ListPageHeader>
       <ListPageBody>

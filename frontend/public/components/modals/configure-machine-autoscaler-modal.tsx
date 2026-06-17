@@ -97,18 +97,18 @@ export const ConfigureMachineAutoscalerModal: OverlayComponent<ConfigureMachineA
   const {
     metadata: { name },
   } = machineSet;
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   return (
     <Modal isOpen onClose={closeOverlay} variant="small">
       <ModalHeader
-        title={t('public~Create MachineAutoscaler')}
+        title={t('Create MachineAutoscaler')}
         labelId="configure-machine-autoscaler-modal-title"
-        description={t('public~This will automatically scale machine set {{ name }}.', { name })}
+        description={t('This will automatically scale machine set {{ name }}.', { name })}
       />
       <ModalBody>
         <Form id="configure-machine-autoscaler-form">
-          <FormGroup label={t('public~Minimum replicas:')} fieldId="min-replicas" isRequired>
+          <FormGroup label={t('Minimum replicas:')} fieldId="min-replicas" isRequired>
             <NumberSpinner
               value={minReplicas}
               onChange={changeMinReplicas}
@@ -117,7 +117,7 @@ export const ConfigureMachineAutoscalerModal: OverlayComponent<ConfigureMachineA
               required
             />
           </FormGroup>
-          <FormGroup label={t('public~Maximum replicas:')} fieldId="max-replicas" isRequired>
+          <FormGroup label={t('Maximum replicas:')} fieldId="max-replicas" isRequired>
             <NumberSpinner
               value={maxReplicas}
               onChange={changeMaxReplicas}
@@ -135,10 +135,10 @@ export const ConfigureMachineAutoscalerModal: OverlayComponent<ConfigureMachineA
           onClick={submit}
           form="configure-machine-autoscaler-form"
         >
-          {t('public~Create')}
+          {t('Create')}
         </Button>
         <Button variant="link" onClick={closeOverlay || cancelProp} type="button">
-          {t('public~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </Modal>

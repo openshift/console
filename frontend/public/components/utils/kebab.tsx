@@ -12,7 +12,7 @@ import {
   MenuToggleElement,
   Tooltip,
 } from '@patternfly/react-core';
-import { EllipsisVIcon } from '@patternfly/react-icons';
+import { RhUiEllipsisVerticalIcon } from '@patternfly/react-icons';
 import { useNavigate } from 'react-router';
 import { impersonateStateToProps, ImpersonateKind } from '@console/dynamic-plugin-sdk';
 import { AccessReviewResourceAttributes, K8sKind, K8sResourceKind } from '../../module/k8s';
@@ -63,7 +63,7 @@ const KebabItem_: FC<KebabItemProps & { isAllowed: boolean }> = ({
   isAllowed,
   Component = DropdownItem,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const isDisabled = !isAllowed || option.isDisabled || (!option.href && !option.callback);
   return (
     <Component
@@ -120,7 +120,7 @@ type KebabMenuItemsProps = {
 };
 
 const KebabMenuItems: FC<KebabMenuItemsProps> = ({ options, onClick, focusItem }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   return (
     <DropdownList>
@@ -152,7 +152,7 @@ export const KebabItems: FC<KebabItemsProps> = ({ options, ...props }) => {
 };
 
 export const Kebab: KebabComponent = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const navigate = useNavigate();
   const { options, isDisabled, terminatingTooltip } = props;
   const [active, setActive] = useState(false);
@@ -214,9 +214,9 @@ export const Kebab: KebabComponent = (props) => {
             onFocus={onHover}
             onMouseEnter={onHover}
             isDisabled={isDisabled}
-            aria-label={t('public~Actions')}
+            aria-label={t('Actions')}
             variant="plain"
-            icon={<EllipsisVIcon />}
+            icon={<RhUiEllipsisVerticalIcon />}
           />
         )}
         shouldFocusToggleOnSelect

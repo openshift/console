@@ -19,7 +19,7 @@ import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 
-import { PencilAltIcon } from '@patternfly/react-icons';
+import { RhUiEditIcon } from '@patternfly/react-icons';
 import { Link } from 'react-router';
 
 import { Status } from '@console/shared/src/components/status/Status';
@@ -177,7 +177,7 @@ const namespaceColumnInfo = [
 ];
 
 const useNamespacesColumns = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(
     NamespaceModel,
   );
@@ -185,7 +185,7 @@ const useNamespacesColumns = () => {
   const columns = useMemo(
     () => [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: namespaceColumnInfo[0].id,
         sort: 'metadata.name',
         resizableProps: getResizableProps(namespaceColumnInfo[0].id),
@@ -195,7 +195,7 @@ const useNamespacesColumns = () => {
         },
       },
       {
-        title: t('public~Display name'),
+        title: t('Display name'),
         id: namespaceColumnInfo[1].id,
         sort: 'metadata.annotations["openshift.io/display-name"]',
         resizableProps: getResizableProps(namespaceColumnInfo[1].id),
@@ -204,7 +204,7 @@ const useNamespacesColumns = () => {
         },
       },
       {
-        title: t('public~Status'),
+        title: t('Status'),
         id: namespaceColumnInfo[2].id,
         sort: 'status.phase',
         resizableProps: getResizableProps(namespaceColumnInfo[2].id),
@@ -213,7 +213,7 @@ const useNamespacesColumns = () => {
         },
       },
       {
-        title: t('public~Requester'),
+        title: t('Requester'),
         id: namespaceColumnInfo[3].id,
         sort: "metadata.annotations.['openshift.io/requester']",
         resizableProps: getResizableProps(namespaceColumnInfo[3].id),
@@ -222,7 +222,7 @@ const useNamespacesColumns = () => {
         },
       },
       {
-        title: t('public~Memory'),
+        title: t('Memory'),
         id: namespaceColumnInfo[4].id,
         sort: (data, direction) => data.sort(sortResourceByValue(direction, sorts.namespaceMemory)),
         resizableProps: getResizableProps(namespaceColumnInfo[4].id),
@@ -231,7 +231,7 @@ const useNamespacesColumns = () => {
         },
       },
       {
-        title: t('public~CPU'),
+        title: t('CPU'),
         id: namespaceColumnInfo[5].id,
         sort: (data, direction) => data.sort(sortResourceByValue(direction, sorts.namespaceCPU)),
         resizableProps: getResizableProps(namespaceColumnInfo[5].id),
@@ -240,7 +240,7 @@ const useNamespacesColumns = () => {
         },
       },
       {
-        title: t('public~Created'),
+        title: t('Created'),
         id: namespaceColumnInfo[6].id,
         sort: 'metadata.creationTimestamp',
         resizableProps: getResizableProps(namespaceColumnInfo[6].id),
@@ -249,7 +249,7 @@ const useNamespacesColumns = () => {
         },
       },
       {
-        title: t('public~Description'),
+        title: t('Description'),
         id: namespaceColumnInfo[7].id,
         sort: "metadata.annotations.['openshift.io/description']",
         resizableProps: getResizableProps(namespaceColumnInfo[7].id),
@@ -259,7 +259,7 @@ const useNamespacesColumns = () => {
         additional: true,
       },
       {
-        title: t('public~Labels'),
+        title: t('Labels'),
         id: namespaceColumnInfo[8].id,
         sort: 'metadata.labels',
         resizableProps: getResizableProps(namespaceColumnInfo[8].id),
@@ -309,7 +309,7 @@ const getNamespaceDataViewRows = (rowData, tableColumns, namespaceMetrics, t) =>
         cell: (
           <>
             {getDisplayName(ns) || (
-              <span className="pf-v6-u-text-color-subtle">{t('public~No display name')}</span>
+              <span className="pf-v6-u-text-color-subtle">{t('No display name')}</span>
             )}
           </>
         ),
@@ -318,15 +318,13 @@ const getNamespaceDataViewRows = (rowData, tableColumns, namespaceMetrics, t) =>
         cell: <Status status={ns.status?.phase} />,
       },
       [namespaceColumnInfo[3].id]: {
-        cell: requester || (
-          <span className="pf-v6-u-text-color-subtle">{t('public~No requester')}</span>
-        ),
+        cell: requester || <span className="pf-v6-u-text-color-subtle">{t('No requester')}</span>,
       },
       [namespaceColumnInfo[4].id]: {
         cell: bytes ? `${formatBytesAsMiB(bytes)} MiB` : DASH,
       },
       [namespaceColumnInfo[5].id]: {
-        cell: cores ? t('public~{{cores}} cores', { cores: formatCores(cores) }) : DASH,
+        cell: cores ? t('{{cores}} cores', { cores: formatCores(cores) }) : DASH,
       },
       [namespaceColumnInfo[6].id]: {
         cell: <Timestamp timestamp={ns.metadata.creationTimestamp} />,
@@ -335,7 +333,7 @@ const getNamespaceDataViewRows = (rowData, tableColumns, namespaceMetrics, t) =>
         cell: (
           <>
             {description || (
-              <span className="pf-v6-u-text-color-subtle">{t('public~No description')}</span>
+              <span className="pf-v6-u-text-color-subtle">{t('No description')}</span>
             )}
           </>
         ),
@@ -361,7 +359,7 @@ const getNamespaceDataViewRows = (rowData, tableColumns, namespaceMetrics, t) =>
 };
 
 const NamespacesList = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const dispatch = useConsoleDispatch();
   const { columns, resetAllColumnWidths } = useNamespacesColumns();
   const [selectedColumns, , columnPreferenceLoaded] = useUserPreference(
@@ -383,7 +381,7 @@ const NamespacesList = (props) => {
   const columnLayout = useMemo(
     () => ({
       id: NamespacesColumnManagementID,
-      type: t('public~Namespace'),
+      type: t('Namespace'),
       columns: columns.map((col) => ({
         id: col.id,
         title: col.title,
@@ -399,9 +397,9 @@ const NamespacesList = (props) => {
 
   const requesterFilterOptions = useMemo(
     () => [
-      { value: REQUESTER_FILTER.ME, label: t('public~Me') },
-      { value: REQUESTER_FILTER.USER, label: t('public~User') },
-      { value: REQUESTER_FILTER.SYSTEM, label: t('public~System') },
+      { value: REQUESTER_FILTER.ME, label: t('Me') },
+      { value: REQUESTER_FILTER.USER, label: t('User') },
+      { value: REQUESTER_FILTER.SYSTEM, label: t('System') },
     ],
     [t],
   );
@@ -413,8 +411,8 @@ const NamespacesList = (props) => {
       <DataViewCheckboxFilter
         key="requester"
         filterId="requester"
-        title={t('public~Requester')}
-        placeholder={t('public~Filter by requester')}
+        title={t('Requester')}
+        placeholder={t('Filter by requester')}
         options={requesterFilterOptions}
       />,
     ],
@@ -483,7 +481,7 @@ const projectColumnManagementID = referenceForModel(ProjectModel);
 const projectColumnInfo = namespaceColumnInfo;
 
 const useProjectsColumns = ({ showMetrics, showActions }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(
     ProjectModel,
   );
@@ -491,7 +489,7 @@ const useProjectsColumns = ({ showMetrics, showActions }) => {
   const columns = useMemo(() => {
     const cols = [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: projectColumnInfo[0].id,
         sort: 'metadata.name',
         resizableProps: getResizableProps(projectColumnInfo[0].id),
@@ -501,7 +499,7 @@ const useProjectsColumns = ({ showMetrics, showActions }) => {
         },
       },
       {
-        title: t('public~Display name'),
+        title: t('Display name'),
         id: projectColumnInfo[1].id,
         sort: 'metadata.annotations["openshift.io/display-name"]',
         resizableProps: getResizableProps(projectColumnInfo[1].id),
@@ -510,7 +508,7 @@ const useProjectsColumns = ({ showMetrics, showActions }) => {
         },
       },
       {
-        title: t('public~Status'),
+        title: t('Status'),
         id: projectColumnInfo[2].id,
         sort: 'status.phase',
         resizableProps: getResizableProps(projectColumnInfo[2].id),
@@ -519,7 +517,7 @@ const useProjectsColumns = ({ showMetrics, showActions }) => {
         },
       },
       {
-        title: t('public~Requester'),
+        title: t('Requester'),
         id: projectColumnInfo[3].id,
         sort: "metadata.annotations.['openshift.io/requester']",
         resizableProps: getResizableProps(projectColumnInfo[3].id),
@@ -532,7 +530,7 @@ const useProjectsColumns = ({ showMetrics, showActions }) => {
     if (showMetrics) {
       cols.push(
         {
-          title: t('public~Memory'),
+          title: t('Memory'),
           id: projectColumnInfo[4].id,
           sort: (data, direction) =>
             data.sort(sortResourceByValue(direction, sorts.namespaceMemory)),
@@ -542,7 +540,7 @@ const useProjectsColumns = ({ showMetrics, showActions }) => {
           },
         },
         {
-          title: t('public~CPU'),
+          title: t('CPU'),
           id: projectColumnInfo[5].id,
           sort: (data, direction) => data.sort(sortResourceByValue(direction, sorts.namespaceCPU)),
           resizableProps: getResizableProps(projectColumnInfo[5].id),
@@ -555,7 +553,7 @@ const useProjectsColumns = ({ showMetrics, showActions }) => {
 
     cols.push(
       {
-        title: t('public~Created'),
+        title: t('Created'),
         id: projectColumnInfo[6].id,
         sort: 'metadata.creationTimestamp',
         resizableProps: getResizableProps(projectColumnInfo[6].id),
@@ -564,7 +562,7 @@ const useProjectsColumns = ({ showMetrics, showActions }) => {
         },
       },
       {
-        title: t('public~Description'),
+        title: t('Description'),
         id: projectColumnInfo[7].id,
         sort: "metadata.annotations.['openshift.io/description']",
         resizableProps: getResizableProps(projectColumnInfo[7].id),
@@ -574,7 +572,7 @@ const useProjectsColumns = ({ showMetrics, showActions }) => {
         additional: true,
       },
       {
-        title: t('public~Labels'),
+        title: t('Labels'),
         id: projectColumnInfo[8].id,
         sort: 'metadata.labels',
         resizableProps: getResizableProps(projectColumnInfo[8].id),
@@ -633,7 +631,7 @@ const getProjectDataViewRows = (
         cell: (
           <span className="co-break-word co-line-clamp">
             {getDisplayName(project) || (
-              <span className="pf-v6-u-text-color-subtle">{t('public~No display name')}</span>
+              <span className="pf-v6-u-text-color-subtle">{t('No display name')}</span>
             )}
           </span>
         ),
@@ -642,9 +640,7 @@ const getProjectDataViewRows = (
         cell: <Status status={project.status?.phase} />,
       },
       [projectColumnInfo[3].id]: {
-        cell: requester || (
-          <span className="pf-v6-u-text-color-subtle">{t('public~No requester')}</span>
-        ),
+        cell: requester || <span className="pf-v6-u-text-color-subtle">{t('No requester')}</span>,
       },
       [projectColumnInfo[4].id]: {
         cell: showMetrics ? (bytes ? `${formatBytesAsMiB(bytes)} MiB` : DASH) : null,
@@ -652,7 +648,7 @@ const getProjectDataViewRows = (
       [projectColumnInfo[5].id]: {
         cell: showMetrics
           ? cores
-            ? t('public~{{cores}} cores', { cores: formatCores(cores) })
+            ? t('{{cores}} cores', { cores: formatCores(cores) })
             : DASH
           : null,
       },
@@ -663,7 +659,7 @@ const getProjectDataViewRows = (
         cell: (
           <span className="co-break-word co-line-clamp">
             {description || (
-              <span className="pf-v6-u-text-color-subtle">{t('public~No description')}</span>
+              <span className="pf-v6-u-text-color-subtle">{t('No description')}</span>
             )}
           </span>
         ),
@@ -724,7 +720,7 @@ export const ProjectLink = ({ project }) => {
 };
 
 export const ProjectsTable = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { columns } = useProjectsColumns({ showMetrics: false, showActions: false });
 
   return (
@@ -743,7 +739,7 @@ export const ProjectsTable = (props) => {
 };
 
 const ProjectList = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const dispatch = useConsoleDispatch();
   const canGetNS = useFlag(FLAGS.CAN_GET_NS);
   const [selectedColumns, , columnPreferenceLoaded] = useUserPreference(
@@ -771,7 +767,7 @@ const ProjectList = (props) => {
   const columnLayout = useMemo(
     () => ({
       id: projectColumnManagementID,
-      type: t('public~Project'),
+      type: t('Project'),
       columns: columns.map((col) => ({
         id: col.id,
         title: col.title,
@@ -787,9 +783,9 @@ const ProjectList = (props) => {
 
   const requesterFilterOptions = useMemo(
     () => [
-      { value: REQUESTER_FILTER.ME, label: t('public~Me') },
-      { value: REQUESTER_FILTER.USER, label: t('public~User') },
-      { value: REQUESTER_FILTER.SYSTEM, label: t('public~System') },
+      { value: REQUESTER_FILTER.ME, label: t('Me') },
+      { value: REQUESTER_FILTER.USER, label: t('User') },
+      { value: REQUESTER_FILTER.SYSTEM, label: t('System') },
     ],
     [t],
   );
@@ -801,8 +797,8 @@ const ProjectList = (props) => {
       <DataViewCheckboxFilter
         key="requester"
         filterId="requester"
-        title={t('public~Requester')}
-        placeholder={t('public~Filter by requester')}
+        title={t('Requester')}
+        placeholder={t('Filter by requester')}
         options={requesterFilterOptions}
       />,
     ],
@@ -855,7 +851,7 @@ const ProjectList = (props) => {
 };
 
 export const ProjectsPage = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const createProjectModal = useCreateProjectModal();
   // Skip self-subject access review for projects since they use a special project request API.
   // `FLAGS.CAN_CREATE_PROJECT` determines if the user can create projects.
@@ -867,7 +863,7 @@ export const ProjectsPage = (props) => {
       ListComponent={ProjectList}
       canCreate={canCreateProject}
       createHandler={() => createProjectModal()}
-      filterLabel={t('public~by name or display name')}
+      filterLabel={t('by name or display name')}
       skipAccessReview
       textFilter="project-name"
       kind="Project"
@@ -881,7 +877,7 @@ export const PullSecret = (props) => {
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState([]);
   const [error, setError] = useState(false);
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { namespace, canViewSecrets } = props;
   const launchModal = useOverlay();
 
@@ -924,23 +920,21 @@ export const PullSecret = (props) => {
       ))
     ) : (
       <Button
-        icon={<PencilAltIcon />}
+        icon={<RhUiEditIcon />}
         iconPosition="end"
         variant="link"
         type="button"
         isInline
         onClick={modal}
       >
-        {t('public~Not configured')}
+        {t('Not configured')}
       </Button>
     );
   };
 
   return (
     <DescriptionListGroup>
-      <DescriptionListTerm>
-        {t('public~Default pull Secret', { count: data.length })}
-      </DescriptionListTerm>
+      <DescriptionListTerm>{t('Default pull Secret', { count: data.length })}</DescriptionListTerm>
       <DescriptionListDescription>
         {isLoading ? <LoadingInline /> : secrets()}
       </DescriptionListDescription>
@@ -949,12 +943,12 @@ export const PullSecret = (props) => {
 };
 
 const NamespaceLineCharts = ({ ns }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <Grid hasGutter>
       <GridItem md={6}>
         <Area
-          title={t('public~CPU usage')}
+          title={t('CPU usage')}
           humanize={humanizeCpuCores}
           namespace={ns.metadata.name}
           query={`namespace:container_cpu_usage:sum{namespace='${ns.metadata.name}'}`}
@@ -962,7 +956,7 @@ const NamespaceLineCharts = ({ ns }) => {
       </GridItem>
       <GridItem md={6}>
         <Area
-          title={t('public~Memory usage')}
+          title={t('Memory usage')}
           humanize={humanizeBinaryBytes}
           byteDataType={ByteDataTypes.BinaryBytes}
           namespace={ns.metadata.name}
@@ -974,10 +968,10 @@ const NamespaceLineCharts = ({ ns }) => {
 };
 
 const TopPodsBarChart = ({ ns }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <Bar
-      title={t('public~Memory usage by pod (top 10)')}
+      title={t('Memory usage by pod (top 10)')}
       namespace={ns.metadata.name}
       query={`sort_desc(topk(10, sum by (pod)(container_memory_working_set_bytes{container="",pod!="",namespace="${ns.metadata.name}"})))`}
       humanize={humanizeBinaryBytes}
@@ -987,11 +981,11 @@ const TopPodsBarChart = ({ ns }) => {
 };
 
 const ResourceUsage = ({ ns }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const isPrometheusAvailable = usePrometheusGate();
   return isPrometheusAvailable ? (
     <PaneBody>
-      <SectionHeading text={t('public~Resource usage')} />
+      <SectionHeading text={t('Resource usage')} />
       <NamespaceLineCharts ns={ns} />
       <TopPodsBarChart ns={ns} />
     </PaneBody>
@@ -999,7 +993,7 @@ const ResourceUsage = ({ ns }) => {
 };
 
 const NamespaceSummary = ({ ns }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const displayName = getDisplayName(ns);
   const description = getDescription(ns);
   const requester = getRequester(ns);
@@ -1017,17 +1011,17 @@ const NamespaceSummary = ({ ns }) => {
         {/* Labels aren't editable on kind Project, only Namespace. */}
         <ResourceSummary resource={ns} showLabelEditor={ns.kind === 'Namespace'}>
           <DescriptionListGroup>
-            <DescriptionListTerm>{t('public~Display name')}</DescriptionListTerm>
+            <DescriptionListTerm>{t('Display name')}</DescriptionListTerm>
             <DescriptionListDescription
               className={css({
                 'text-muted': !displayName,
               })}
             >
-              {displayName || t('public~No display name')}
+              {displayName || t('No display name')}
             </DescriptionListDescription>
           </DescriptionListGroup>
           <DescriptionListGroup>
-            <DescriptionListTerm>{t('public~Description')}</DescriptionListTerm>
+            <DescriptionListTerm>{t('Description')}</DescriptionListTerm>
             <DescriptionListDescription>
               <p
                 className={css({
@@ -1036,7 +1030,7 @@ const NamespaceSummary = ({ ns }) => {
                   'co-namespace-summary__description': description,
                 })}
               >
-                {description || t('public~No description')}
+                {description || t('No description')}
               </p>
             </DescriptionListDescription>
           </DescriptionListGroup>
@@ -1050,23 +1044,21 @@ const NamespaceSummary = ({ ns }) => {
       </GridItem>
       <GridItem sm={6}>
         <DescriptionList>
-          <DetailsItem label={t('public~Status')} obj={ns} path="status.phase">
+          <DetailsItem label={t('Status')} obj={ns} path="status.phase">
             <Status status={ns.status?.phase} />
           </DetailsItem>
           <PullSecret namespace={ns} canViewSecrets={canListSecrets} />
           <DescriptionListGroup>
-            <DescriptionListTerm>{t('public~NetworkPolicies')}</DescriptionListTerm>
+            <DescriptionListTerm>{t('NetworkPolicies')}</DescriptionListTerm>
             <DescriptionListDescription>
-              <Link to={`/k8s/ns/${ns.metadata.name}/networkpolicies`}>
-                {t('public~NetworkPolicies')}
-              </Link>
+              <Link to={`/k8s/ns/${ns.metadata.name}/networkpolicies`}>{t('NetworkPolicies')}</Link>
             </DescriptionListDescription>
           </DescriptionListGroup>
           {serviceMeshEnabled && (
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('public~Service mesh')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Service mesh')}</DescriptionListTerm>
               <DescriptionListDescription>
-                <GreenCheckCircleIcon /> {t('public~Service mesh enabled')}
+                <GreenCheckCircleIcon /> {t('Service mesh enabled')}
               </DescriptionListDescription>
             </DescriptionListGroup>
           )}
@@ -1077,7 +1069,7 @@ const NamespaceSummary = ({ ns }) => {
 };
 
 export const NamespaceDetails = ({ obj: ns, customData }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const [perspective] = useActivePerspective();
   const [consoleLinks] = useK8sWatchResource({
     isList: true,
@@ -1087,17 +1079,17 @@ export const NamespaceDetails = ({ obj: ns, customData }) => {
   const links = getNamespaceDashboardConsoleLinks(ns, consoleLinks);
   return (
     <div>
-      {perspective === 'dev' && <DocumentTitle>{t('public~Project details')}</DocumentTitle>}
+      {perspective === 'dev' && <DocumentTitle>{t('Project details')}</DocumentTitle>}
       <PaneBody>
         {!customData?.hideHeading && (
-          <SectionHeading text={t('public~{{kind}} details', { kind: ns.kind })} />
+          <SectionHeading text={t('{{kind}} details', { kind: ns.kind })} />
         )}
         <NamespaceSummary ns={ns} />
       </PaneBody>
       {ns.kind === 'Namespace' && <ResourceUsage ns={ns} />}
       {!_.isEmpty(links) && (
         <PaneBody>
-          <SectionHeading text={t('public~Launcher')} />
+          <SectionHeading text={t('Launcher')} />
           <ul className="pf-v6-c-list pf-m-plain">
             {_.map(_.sortBy(links, 'spec.text'), (link) => {
               return (

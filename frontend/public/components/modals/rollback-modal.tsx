@@ -37,7 +37,7 @@ const ANNOTATIONS_TO_SKIP = [
 
 const BaseRollbackModal: FC<RollbackModalProps> = (props) => {
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const isDCRollback = props.resource.kind === ReplicationControllerModel.kind;
   const dName = getOwnerNameByKind(
     props.resource,
@@ -138,7 +138,7 @@ const BaseRollbackModal: FC<RollbackModalProps> = (props) => {
     if (loaded && !loadError && deployment) {
       if (deployment.spec.paused) {
         setDeploymentError(
-          t('public~You cannot rollback a paused {{ deployType }}. You must resume it first.', {
+          t('You cannot rollback a paused {{ deployType }}. You must resume it first.', {
             deployType: isDCRollback ? DeploymentConfigModel.label : DeploymentModel.label,
           }),
         );
@@ -160,21 +160,21 @@ const BaseRollbackModal: FC<RollbackModalProps> = (props) => {
             </Trans>
           </p>
           <Checkbox
-            label={t('public~Replica count and selector')}
+            label={t('Replica count and selector')}
             onChange={(_event, checked) => setChangeScaleSettings(checked)}
             isChecked={changeScaleSettings}
             name="changeScaleSettings"
             id="changeScaleSettings"
           />
           <Checkbox
-            label={t('public~Deployment strategy')}
+            label={t('Deployment strategy')}
             onChange={(_event, checked) => setChangeStrategy(checked)}
             isChecked={changeStrategy}
             name="changeStrategy"
             id="changeStrategy"
           />
           <Checkbox
-            label={t('public~Deployment trigger')}
+            label={t('Deployment trigger')}
             onChange={(_event, checked) => setChangeTriggers(checked)}
             isChecked={changeTriggers}
             name="changeTriggers"
@@ -200,7 +200,7 @@ const BaseRollbackModal: FC<RollbackModalProps> = (props) => {
   return (
     <>
       <ModalHeader
-        title={t('public~Rollback')}
+        title={t('Rollback')}
         data-test-id="modal-title"
         labelId="rollback-modal-title"
       />
@@ -210,7 +210,7 @@ const BaseRollbackModal: FC<RollbackModalProps> = (props) => {
             !loadError && !deploymentError ? (
               renderRollbackBody()
             ) : (
-              <Alert isInline variant="danger" title={t('public~Unable to Rollback')}>
+              <Alert isInline variant="danger" title={t('Unable to Rollback')}>
                 <div className="co-pre-line">{loadError?.message || deploymentError}</div>
               </Alert>
             )
@@ -229,7 +229,7 @@ const BaseRollbackModal: FC<RollbackModalProps> = (props) => {
           id="confirm-action"
           isDisabled={!!(loadError || deploymentError)}
         >
-          {t('public~Rollback')}
+          {t('Rollback')}
         </Button>
         <Button
           variant="link"
@@ -237,7 +237,7 @@ const BaseRollbackModal: FC<RollbackModalProps> = (props) => {
           type="button"
           data-test-id="modal-cancel-action"
         >
-          {t('public~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </>

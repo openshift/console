@@ -30,7 +30,7 @@ const AddBareMetalHostForm: FC<AddBareMetalHostFormProps> = ({
   values,
 }) => {
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t } = useTranslation('metal3-plugin');
   const handleCancel = useCallback(() => navigate(-1), [navigate]);
   return (
     <Form onSubmit={handleSubmit}>
@@ -38,21 +38,21 @@ const AddBareMetalHostForm: FC<AddBareMetalHostFormProps> = ({
         type={TextInputTypes.text}
         data-test-id="add-baremetal-host-form-name-input"
         name="name"
-        label={t('metal3-plugin~Name')}
+        label={t('Name')}
         placeholder="openshift-worker"
-        helpText={t('metal3-plugin~Provide a unique name for the new Bare Metal Host.')}
+        helpText={t('Provide a unique name for the new Bare Metal Host.')}
         required
         isDisabled={isEditing}
       />
       <TextAreaField
         data-test-id="add-baremetal-host-form-description-input"
         name="description"
-        label={t('metal3-plugin~Description')}
+        label={t('Description')}
       />
       <FormSelectField
         data-test-id="add-baremetal-host-form-bootmode-input"
         name="bootMode"
-        label={t('metal3-plugin~Boot mode')}
+        label={t('Boot mode')}
         options={[
           {
             value: 'UEFI',
@@ -72,18 +72,18 @@ const AddBareMetalHostForm: FC<AddBareMetalHostFormProps> = ({
         type={TextInputTypes.text}
         data-test-id="add-baremetal-host-form-boot-mac-address-input"
         name="bootMACAddress"
-        label={t('metal3-plugin~Boot MAC Address')}
+        label={t('Boot MAC Address')}
         helpText={t(
-          'metal3-plugin~The MAC address of the NIC connected to the network that will be used to provision the host.',
+          'The MAC address of the NIC connected to the network that will be used to provision the host.',
         )}
         required
       />
       <CheckboxField
         data-test-id="add-baremetal-host-form-enable-power-mgmt-input"
         name="enablePowerManagement"
-        label={t('metal3-plugin~Enable power management')}
+        label={t('Enable power management')}
         helpText={t(
-          'metal3-plugin~Provide credentials for the hosts baseboard management controller (BMC) device to enable OpenShift to control its power state. This is required for automatic machine health check remediation.',
+          'Provide credentials for the hosts baseboard management controller (BMC) device to enable OpenShift to control its power state. This is required for automatic machine health check remediation.',
         )}
       />
       {values.enablePowerManagement && (
@@ -92,39 +92,39 @@ const AddBareMetalHostForm: FC<AddBareMetalHostFormProps> = ({
             type={TextInputTypes.text}
             data-test-id="add-baremetal-host-form-bmc-address-input"
             name="BMCAddress"
-            label={t('metal3-plugin~Baseboard Management Console (BMC) Address')}
+            label={t('Baseboard Management Console (BMC) Address')}
             helpText={t(
-              'metal3-plugin~The URL for communicating with the hosts baseboard management controller device.',
+              'The URL for communicating with the hosts baseboard management controller device.',
             )}
             required
           />
           <CheckboxField
             data-test-id="add-baremetal-host-form-disable-certificate-verification-input"
             name="disableCertificateVerification"
-            label={t('metal3-plugin~Disable Certificate Verification')}
+            label={t('Disable Certificate Verification')}
             helpText={t(
-              'metal3-plugin~Disable verification of server certificates when using HTTPS to connect to the BMC. This is required when the server certificate is self-signed, but is insecure because it allows a man-in-the-middle to intercept the connection.',
+              'Disable verification of server certificates when using HTTPS to connect to the BMC. This is required when the server certificate is self-signed, but is insecure because it allows a man-in-the-middle to intercept the connection.',
             )}
           />
           <InputField
             type={TextInputTypes.text}
             data-test-id="add-baremetal-host-form-username-input"
             name="username"
-            label={t('metal3-plugin~BMC Username')}
+            label={t('BMC Username')}
             required
           />
           <InputField
             type={TextInputTypes.password}
             data-test-id="add-baremetal-host-form-password-input"
             name="password"
-            label={t('metal3-plugin~BMC Password')}
+            label={t('BMC Password')}
             required
           />
           {!isEditing && (
             <SwitchField
               name="online"
               data-test-id="add-baremetal-host-form-online-switch"
-              label={t('metal3-plugin~Power host on after creation')}
+              label={t('Power host on after creation')}
             />
           )}
         </>
@@ -133,11 +133,11 @@ const AddBareMetalHostForm: FC<AddBareMetalHostFormProps> = ({
         isSubmitting={isSubmitting}
         handleReset={showUpdated && handleReset}
         handleCancel={handleCancel}
-        submitLabel={isEditing ? t('metal3-plugin~Save') : t('metal3-plugin~Create')}
+        submitLabel={isEditing ? t('Save') : t('Create')}
         errorMessage={status && status.submitError}
         disableSubmit={isSubmitting || !dirty || !_.isEmpty(errors)}
-        infoTitle={t('metal3-plugin~Bare Metal Host has been updated')}
-        infoMessage={t('metal3-plugin~Click reload to see the recent changes')}
+        infoTitle={t('Bare Metal Host has been updated')}
+        infoMessage={t('Click reload to see the recent changes')}
         showAlert={showUpdated}
       />
     </Form>

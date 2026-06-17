@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { Icon } from '@patternfly/react-core';
-import { LayerGroupIcon } from '@patternfly/react-icons';
+import { RhUiFileCodeIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
@@ -12,7 +12,7 @@ type DevfileInfoProps = {
 };
 
 const DevfileInfo: FC<DevfileInfoProps> = ({ devfileSample }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const { icon, iconClass, displayName, description, git, tags } = devfileSample;
   const iconUrl = iconClass ? getImageForIconClass(iconClass) : icon || '';
   const sampleRepo = git?.remotes ? Object.values(git.remotes)[0] : '';
@@ -33,7 +33,7 @@ const DevfileInfo: FC<DevfileInfoProps> = ({ devfileSample }) => {
           </div>
         ) : (
           <Icon size="xl">
-            <LayerGroupIcon />
+            <RhUiFileCodeIcon />
           </Icon>
         )}
         &nbsp;
@@ -55,7 +55,7 @@ const DevfileInfo: FC<DevfileInfoProps> = ({ devfileSample }) => {
       {description && <p className="co-catalog-item-details__description">{description}</p>}
       {sampleRepo && (
         <p>
-          {t('devconsole~Sample repository:')} <ExternalLink href={sampleRepo} text={sampleRepo} />
+          {t('Sample repository:')} <ExternalLink href={sampleRepo} text={sampleRepo} />
         </p>
       )}
     </div>

@@ -49,7 +49,7 @@ const EventingPubSubNode: FC<EventingPubSubNodeProps> = ({
   useAnchor(EventSinkSourceAnchor, AnchorEnd.source, TYPE_EVENT_SINK_LINK);
 
   const ref = useRef();
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const { data } = element.getData();
   const { width } = element.getBounds();
 
@@ -58,7 +58,7 @@ const EventingPubSubNode: FC<EventingPubSubNodeProps> = ({
   return (
     <Tooltip
       triggerRef={ref}
-      content={t('knative-plugin~Move sink to {{resourceObjKind}}', {
+      content={t('Move sink to {{resourceObjKind}}', {
         resourceObjKind: resourceObj.kind,
       })}
       trigger="manual"

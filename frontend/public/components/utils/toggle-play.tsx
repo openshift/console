@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { Button, ButtonProps } from '@patternfly/react-core';
-import { PauseIcon, PlayIcon } from '@patternfly/react-icons';
+import { RhUiPauseFillIcon, RhUiPlayFillIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 
@@ -11,11 +11,11 @@ export interface TogglePlayProps {
 }
 
 export const TogglePlay: FC<TogglePlayProps> = ({ active, className, onClick }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   return (
     <Button
-      icon={active ? <PauseIcon /> : <PlayIcon />}
+      icon={active ? <RhUiPauseFillIcon /> : <RhUiPlayFillIcon />}
       variant="plain"
       className={css(
         'co-toggle-play',
@@ -23,7 +23,7 @@ export const TogglePlay: FC<TogglePlayProps> = ({ active, className, onClick }) 
         className,
       )}
       onClick={onClick}
-      aria-label={active ? t('public~Pause event streaming') : t('public~Start streaming events')}
+      aria-label={active ? t('Pause event streaming') : t('Start streaming events')}
     />
   );
 };

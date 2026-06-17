@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, ActionGroup } from '@patternfly/react-core';
-import { PlusCircleIcon } from '@patternfly/react-icons';
+import { RhUiAddCircleFillIcon } from '@patternfly/react-icons';
 import { PullSecretCredentialEntry } from './PullSecretCredentialEntry';
 import { SecretStringData, SecretType, OnSecretChange } from './types';
 import {
@@ -18,7 +18,7 @@ export const PullSecretCredentialsForm: FC<PullSecretCredentialsFormProps> = ({
   onError,
   secretType,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const pullSecretFileName = getPullSecretFileName(secretType);
   const pullSecretJSON = stringData[pullSecretFileName];
   const [entries, setEntries] = useState(arrayifyPullSecret(pullSecretJSON, onError));
@@ -64,9 +64,9 @@ export const PullSecretCredentialsForm: FC<PullSecretCredentialsFormProps> = ({
           type="button"
           variant="link"
           data-test="add-credentials-button"
-          icon={<PlusCircleIcon />}
+          icon={<RhUiAddCircleFillIcon />}
         >
-          {t('public~Add credentials')}
+          {t('Add credentials')}
         </Button>
       </ActionGroup>
     </>

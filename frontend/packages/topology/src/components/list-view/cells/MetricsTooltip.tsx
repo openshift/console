@@ -12,7 +12,7 @@ const MetricsTooltip: FC<MetricsTooltipProps & { children?: ReactNode }> = ({
   byPod,
   children,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   const isMobile = useIsMobile();
 
   // Disable the tooltip on mobile since a touch also opens the sidebar, which
@@ -25,12 +25,12 @@ const MetricsTooltip: FC<MetricsTooltipProps & { children?: ReactNode }> = ({
   const content: any[] = _.isEmpty(sortedMetrics)
     ? [
         <Fragment key="no-metrics">
-          {t('topology~No {{metricLabel}} metrics available.', { metricLabel })}
+          {t('No {{metricLabel}} metrics available.', { metricLabel })}
         </Fragment>,
       ]
     : _.concat(
         <div className="odc-topology-list-view__metrics-cell__tooltip-title" key="#title">
-          {t('topology~{{metricLabel}} usage by Pod', { metricLabel })}
+          {t('{{metricLabel}} usage by Pod', { metricLabel })}
         </div>,
         sortedMetrics.map(({ name, formattedValue }) => (
           <div key={name} className="odc-topology-list-view__metrics-cell__metric-tooltip">

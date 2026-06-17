@@ -173,7 +173,7 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
     name: CONSOLE_OPERATOR_CONFIG_NAME,
   });
   const [enabledPlugins, setEnabledPlugins] = useState<string[]>([]);
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
 
   const {
     deprecatedPackage,
@@ -347,12 +347,12 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
   if (!supportsSingle && !supportsGlobal) {
     return (
       <ConsoleEmptyState
-        title={t("olm~{{item}} can't be installed", {
+        title={t("{{item}} can't be installed", {
           item: channels?.[0]?.currentCSVDesc?.displayName,
         })}
       >
         {t(
-          'olm~The Operator does not support to be made available in a single namespace (OwnNamespace installMode) or global installation (AllNamespaces installMode).  Use the CLI to install this Operator instead.',
+          'The Operator does not support to be made available in a single namespace (OwnNamespace installMode) or global installation (AllNamespaces installMode).  Use the CLI to install this Operator instead.',
         )}
       </ConsoleEmptyState>
     );
@@ -360,12 +360,12 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
 
   const descFor = (mode: InstallModeType) => {
     if (mode === InstallModeType.InstallModeTypeAllNamespaces && supportsGlobal) {
-      return t('olm~Operator will be available in all Namespaces.');
+      return t('Operator will be available in all Namespaces.');
     }
     if (mode === InstallModeType.InstallModeTypeOwnNamespace && supportsSingle) {
-      return t('olm~Operator will be available in a single Namespace only.');
+      return t('Operator will be available in a single Namespace only.');
     }
-    return t('olm~This mode is not supported by this Operator');
+    return t('This mode is not supported by this Operator');
   };
   const subscriptionExists = (ns: string) =>
     installedFor(props.subscription.data)(props.operatorGroup.data)(props.packageManifest.data[0])(
@@ -578,7 +578,7 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
       }
       navigateToInstallPage(currentCSVName);
     } catch (err) {
-      setError(err.message || t('olm~Could not create Operator Subscription.'));
+      setError(err.message || t('Could not create Operator Subscription.'));
     }
   };
 
@@ -605,7 +605,7 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
           isInline
           className="co-alert co-alert--scrollable"
           variant="danger"
-          title={t('olm~An error occurred')}
+          title={t('An error occurred')}
         >
           <div className="co-pre-line">{error}</div>
         </Alert>
@@ -615,20 +615,20 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
           isInline
           className="co-alert"
           variant="danger"
-          title={t('olm~Namespace does not support installation mode')}
+          title={t('Namespace does not support installation mode')}
         >
           {selectedInstallMode === InstallModeType.InstallModeTypeOwnNamespace &&
           selectedTargetNamespace === globalNS ? (
             <>
               {t(
-                'olm~The {{namespace}} Namespace is reserved for global Operators that watch all Namespaces. To install an Operator in a single Namespace, select a different Namespace where the operand should run.',
+                'The {{namespace}} Namespace is reserved for global Operators that watch all Namespaces. To install an Operator in a single Namespace, select a different Namespace where the operand should run.',
                 { namespace: selectedTargetNamespace },
               )}
             </>
           ) : (
             <>
               {t(
-                'olm~The OperatorGroup in the {{namespace}} Namespace does not support the {{mode}} installation mode. Select a different installation Namespace that supports this mode.',
+                'The OperatorGroup in the {{namespace}} Namespace does not support the {{mode}} installation mode. Select a different installation Namespace that supports this mode.',
                 {
                   namespace: selectedTargetNamespace,
                   mode:
@@ -646,12 +646,9 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
           isInline
           className="co-alert"
           variant="danger"
-          title={t(
-            'olm~A Subscription for this Operator already exists in Namespace "{{namespace}}"',
-            {
-              namespace: selectedTargetNamespace,
-            },
-          )}
+          title={t('A Subscription for this Operator already exists in Namespace "{{namespace}}"', {
+            namespace: selectedTargetNamespace,
+          })}
         >
           <p>
             <Trans t={t} ns="olm">
@@ -669,14 +666,9 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
         </Alert>
       )) ||
       (!_.isEmpty(conflictingProvidedAPIs(selectedTargetNamespace)) && (
-        <Alert
-          isInline
-          className="co-alert"
-          variant="danger"
-          title={t('olm~Operator conflicts exist')}
-        >
+        <Alert isInline className="co-alert" variant="danger" title={t('Operator conflicts exist')}>
           {t(
-            'olm~Installing this Operator in the selected Namespace would cause conflicts with another Operator providing these APIs:',
+            'Installing this Operator in the selected Namespace would cause conflicts with another Operator providing these APIs:',
           )}
           <ul>
             {conflictingProvidedAPIs(selectedTargetNamespace).map((gvk) => (
@@ -692,7 +684,7 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
           isInline
           className="co-alert"
           variant="danger"
-          title={t('olm~Operator not available for selected Namespaces')}
+          title={t('Operator not available for selected Namespaces')}
         />
       ))
     );
@@ -709,9 +701,7 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
         isInline
         className="co-alert co-alert--scrollable"
         variant={suggestedNamespaceExists ? 'warning' : 'info'}
-        title={
-          suggestedNamespaceExists ? t('olm~Namespace already exists') : t('olm~Namespace creation')
-        }
+        title={suggestedNamespaceExists ? t('Namespace already exists') : t('Namespace creation')}
       >
         {suggestedNamespaceExists ? (
           <Trans ns="olm">
@@ -729,7 +719,7 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
           <Checkbox
             id="enable-monitoring-checkbox"
             data-test="enable-monitoring"
-            label={t('olm~Enable Operator recommended cluster monitoring on this Namespace')}
+            label={t('Enable Operator recommended cluster monitoring on this Namespace')}
             onChange={(_event, value) => setEnableMonitoring(value)}
             isChecked={enableMonitoring}
             data-checked-state={enableMonitoring}
@@ -739,11 +729,11 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
               isInline
               className="co-alert pf-v6-c-alert--top-margin"
               variant="warning"
-              title={t('olm~Namespace monitoring')}
+              title={t('Namespace monitoring')}
             >
               <>
                 {t(
-                  'olm~Please note that installing non-Red Hat operators into OpenShift namespaces and enabling monitoring voids user support. Enabling cluster monitoring for non-Red Hat operators can lead to malicious metrics data overriding existing cluster metrics.',
+                  'Please note that installing non-Red Hat operators into OpenShift namespaces and enabling monitoring voids user support. Enabling cluster monitoring for non-Red Hat operators can lead to malicious metrics data overriding existing cluster metrics.',
                 )}
                 {!isManaged() && (
                   <Trans ns="olm">
@@ -772,7 +762,7 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
           value={operatorSuggestedNamespace}
           label={
             <>
-              {t('olm~Operator recommended Namespace:')} <ResourceIcon kind="Project" />
+              {t('Operator recommended Namespace:')} <ResourceIcon kind="Project" />
               <b>{operatorSuggestedNamespace}</b>
             </>
           }
@@ -787,7 +777,7 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
           id="operator-namespace-select"
           name="operator-namespace"
           value={operatorSuggestedNamespace}
-          label={t('olm~Select a Namespace')}
+          label={t('Select a Namespace')}
           onChange={() => {
             setUseSuggestedNSForSingleInstallMode(false);
             setTargetNamespace(null);
@@ -807,7 +797,7 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
               isInline
               variant="warning"
               title={t(
-                'olm~Not installing the Operator into the recommended namespace can cause unexpected behavior.',
+                'Not installing the Operator into the recommended namespace can cause unexpected behavior.',
               )}
             />
           </>
@@ -856,49 +846,49 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
     <>
       <DocumentTitle>Operator Installation</DocumentTitle>
       <PageHeading
-        title={t('olm~Install Operator')}
+        title={t('Install Operator')}
         breadcrumbs={[
           {
-            name: t('olm~Software Catalog'),
+            name: t('Software Catalog'),
             path: `/catalog/ns/${activeNamespace}?catalogType=operator&${search.toString()}`,
           },
-          { name: t('olm~Operator Installation'), path: url },
+          { name: t('Operator Installation'), path: url },
         ]}
         helpText={t(
-          'olm~Install your Operator by subscribing to one of the update channels to keep the Operator up to date. The strategy determines either manual or automatic updates.',
+          'Install your Operator by subscribing to one of the update channels to keep the Operator up to date. The strategy determines either manual or automatic updates.',
         )}
       />
       <PaneBody>
         {tokenizedAuth === 'AWS' && (
           <DismissableAlert
             className="pf-v6-u-mb-md"
-            title={t('olm~Cluster in STS Mode')}
+            title={t('Cluster in STS Mode')}
             variant={AlertVariant.warning}
           >
             {t(
-              'olm~This cluster is using AWS Security Token Service to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, you will need to provide a role ARN (with an attached policy) during installation. Manual subscriptions are highly recommended as steps should be taken prior to upgrade to ensure that the permissions required by the next version are properly accounted for in the role. Please see the operator description for more details.',
+              'This cluster is using AWS Security Token Service to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, you will need to provide a role ARN (with an attached policy) during installation. Manual subscriptions are highly recommended as steps should be taken prior to upgrade to ensure that the permissions required by the next version are properly accounted for in the role. Please see the operator description for more details.',
             )}
           </DismissableAlert>
         )}
         {tokenizedAuth === 'Azure' && (
           <DismissableAlert
             className="pf-v6-u-mb-md"
-            title={t('olm~Cluster in Azure Workload Identity / Federated Identity Mode')}
+            title={t('Cluster in Azure Workload Identity / Federated Identity Mode')}
             variant={AlertVariant.warning}
           >
             {t(
-              'olm~This cluster is using Azure Workload Identity / Federated Identity to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, provide the Client ID, Tenant ID, and Subscription ID during installation. Manual subscriptions are highly recommended as steps should be taken before upgrade to ensure that the permissions required by the next version are properly accounted for in the role. See the operator description for more details.',
+              'This cluster is using Azure Workload Identity / Federated Identity to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, provide the Client ID, Tenant ID, and Subscription ID during installation. Manual subscriptions are highly recommended as steps should be taken before upgrade to ensure that the permissions required by the next version are properly accounted for in the role. See the operator description for more details.',
             )}
           </DismissableAlert>
         )}
         {tokenizedAuth === 'GCP' && (
           <DismissableAlert
-            title={t('olm~Cluster in GCP Workload Identity / Federated Identity Mode')}
+            title={t('Cluster in GCP Workload Identity / Federated Identity Mode')}
             variant={AlertVariant.warning}
             className="pf-v6-u-mb-md"
           >
             {t(
-              'olm~This cluster is using GCP Workload Identity / Federated Identity to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, provide the Pool ID, Provider ID, and Service Account Email during installation. Manual subscriptions are highly recommended as steps should be taken before upgrade to ensure that the permissions required by the next version are properly accounted for in the role. See the operator description for more details.',
+              'This cluster is using GCP Workload Identity / Federated Identity to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, provide the Pool ID, Provider ID, and Service Account Email during installation. Manual subscriptions are highly recommended as steps should be taken before upgrade to ensure that the permissions required by the next version are properly accounted for in the role. See the operator description for more details.',
             )}
           </DismissableAlert>
         )}
@@ -908,12 +898,10 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
               {tokenizedAuth === 'AWS' && (
                 <div className="form-group">
                   <InputField
-                    label={t('olm~role ARN')}
-                    helpText={t(
-                      'olm~The role ARN required for the operator to access the cloud API.',
-                    )}
-                    placeholder={t('olm~role ARN')}
-                    ariaLabel={t('olm~role ARN')}
+                    label={t('role ARN')}
+                    helpText={t('The role ARN required for the operator to access the cloud API.')}
+                    placeholder={t('role ARN')}
+                    ariaLabel={t('role ARN')}
                     value={roleARNText}
                     setValue={setRoleARNText}
                   />
@@ -922,43 +910,43 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
               {tokenizedAuth === 'Azure' && (
                 <div className="form-group">
                   <InputField
-                    label={t('olm~Azure Client ID')}
+                    label={t('Azure Client ID')}
                     helpText={t(
-                      'olm~The Azure Client ID required for the operator to access the cloud API.',
+                      'The Azure Client ID required for the operator to access the cloud API.',
                     )}
-                    placeholder={t('olm~Azure Client ID')}
-                    ariaLabel={t('olm~Azure Client ID')}
+                    placeholder={t('Azure Client ID')}
+                    ariaLabel={t('Azure Client ID')}
                     value={azureClientId}
                     setValue={setAzureClientId}
                   />
                   <InputField
-                    label={t('olm~Azure Tenant ID')}
+                    label={t('Azure Tenant ID')}
                     helpText={t(
-                      'olm~The Azure Tenant ID required for the operator to access the cloud API.',
+                      'The Azure Tenant ID required for the operator to access the cloud API.',
                     )}
-                    placeholder={t('olm~Azure Tenant ID')}
-                    ariaLabel={t('olm~Azure Tenant ID')}
+                    placeholder={t('Azure Tenant ID')}
+                    ariaLabel={t('Azure Tenant ID')}
                     value={azureTenantId}
                     setValue={setAzureTenantId}
                   />
 
                   <InputField
-                    label={t('olm~Azure Subscription ID')}
+                    label={t('Azure Subscription ID')}
                     helpText={t(
-                      'olm~The Azure Subscription ID required for the operator to access the cloud API.',
+                      'The Azure Subscription ID required for the operator to access the cloud API.',
                     )}
-                    placeholder={t('olm~Azure Subscription ID')}
-                    ariaLabel={t('olm~Azure Subscription ID')}
+                    placeholder={t('Azure Subscription ID')}
+                    ariaLabel={t('Azure Subscription ID')}
                     value={azureSubscriptionId}
                     setValue={setAzureSubscriptionId}
                   />
                   <InputField
-                    label={t('olm~Azure Resource Group')}
+                    label={t('Azure Resource Group')}
                     helpText={t(
-                      'olm~The Azure Resource Group required for the operator to access cloud resources.',
+                      'The Azure Resource Group required for the operator to access cloud resources.',
                     )}
-                    placeholder={t('olm~Azure Resource Group')}
-                    ariaLabel={t('olm~Azure Resource Group')}
+                    placeholder={t('Azure Resource Group')}
+                    ariaLabel={t('Azure Resource Group')}
                     value={azureResourceGroup}
                     setValue={setAzureResourceGroup}
                   />
@@ -967,42 +955,42 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
               {tokenizedAuth === 'GCP' && (
                 <div className="form-group">
                   <InputField
-                    label={t('olm~GCP Project Number')}
+                    label={t('GCP Project Number')}
                     helpText={t(
-                      'olm~The GCP Project Number required for the operator to access the cloud API.',
+                      'The GCP Project Number required for the operator to access the cloud API.',
                     )}
-                    placeholder={t('olm~GCP Project Number')}
-                    ariaLabel={t('olm~GCP Project Number')}
+                    placeholder={t('GCP Project Number')}
+                    ariaLabel={t('GCP Project Number')}
                     value={gcpProjectNumber}
                     setValue={setGcpProjectNumber}
                   />
                   <InputField
-                    label={t('olm~GCP Pool ID')}
+                    label={t('GCP Pool ID')}
                     helpText={t(
-                      'olm~The GCP Pool ID required for the operator to access the cloud API.',
+                      'The GCP Pool ID required for the operator to access the cloud API.',
                     )}
-                    placeholder={t('olm~GCP Pool ID')}
-                    ariaLabel={t('olm~GCP Pool ID')}
+                    placeholder={t('GCP Pool ID')}
+                    ariaLabel={t('GCP Pool ID')}
                     value={gcpPoolId}
                     setValue={setGcpPoolId}
                   />
                   <InputField
-                    label={t('olm~GCP Provider ID')}
+                    label={t('GCP Provider ID')}
                     helpText={t(
-                      'olm~The GCP Provider ID required for the operator to access the cloud API.',
+                      'The GCP Provider ID required for the operator to access the cloud API.',
                     )}
-                    placeholder={t('olm~GCP Provider ID')}
-                    ariaLabel={t('olm~GCP Provider ID')}
+                    placeholder={t('GCP Provider ID')}
+                    ariaLabel={t('GCP Provider ID')}
                     value={gcpProviderId}
                     setValue={setGcpProviderId}
                   />
                   <InputField
-                    label={t('olm~Service Account Email')}
+                    label={t('Service Account Email')}
                     helpText={t(
-                      'olm~The GCP Service Account Email required for the operator to access the cloud API.',
+                      'The GCP Service Account Email required for the operator to access the cloud API.',
                     )}
-                    placeholder={t('olm~GCP Service Account Email')}
-                    ariaLabel={t('olm~GCP Service Account Email')}
+                    placeholder={t('GCP Service Account Email')}
+                    ariaLabel={t('GCP Service Account Email')}
                     value={gcpServiceAcctEmail}
                     setValue={setGcpServiceAcctEmail}
                   />
@@ -1010,9 +998,9 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
               )}
               <div className="form-group">
                 <fieldset>
-                  <label className="co-required">{t('olm~Update channel')}</label>
+                  <label className="co-required">{t('Update channel')}</label>
                   <FieldLevelHelp>
-                    {t('olm~The channel to track and receive the updates from.')}
+                    {t('The channel to track and receive the updates from.')}
                   </FieldLevelHelp>
                   <OperatorChannelSelect
                     packageManifest={props.packageManifest.data[0]}
@@ -1024,7 +1012,7 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
               </div>
               <div className="form-group">
                 <fieldset>
-                  <label className="co-required">{t('olm~Version')}</label>
+                  <label className="co-required">{t('Version')}</label>
                   <OperatorVersionSelect
                     packageManifest={props.packageManifest.data[0]}
                     selectedUpdateChannel={updateChannelName}
@@ -1036,7 +1024,7 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
               </div>
               <div className="pf-v6-c-form">
                 <fieldset>
-                  <label className="co-required">{t('olm~Installation mode')}</label>
+                  <label className="co-required">{t('Installation mode')}</label>
                   <FormGroup
                     role="radiogroup"
                     fieldId="operator-install-mode"
@@ -1047,7 +1035,7 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
                       id="operator-install-mode-all-namespaces"
                       name="operator-install-mode"
                       value={InstallModeType.InstallModeTypeAllNamespaces}
-                      label={`${t('olm~All namespaces on the cluster')} ${t('olm~(default)')}`}
+                      label={`${t('All namespaces on the cluster')} ${t('(default)')}`}
                       description={descFor(InstallModeType.InstallModeTypeAllNamespaces)}
                       onChange={(e) => {
                         setInstallMode((e.target as HTMLInputElement).value);
@@ -1067,7 +1055,7 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
                       id="operator-install-mode-own-namespace"
                       name="operator-install-mode"
                       value={InstallModeType.InstallModeTypeOwnNamespace}
-                      label={t('olm~A specific namespace on the cluster')}
+                      label={t('A specific namespace on the cluster')}
                       description={descFor(InstallModeType.InstallModeTypeOwnNamespace)}
                       onChange={(e) => {
                         setInstallMode((e.target as HTMLInputElement).value);
@@ -1090,7 +1078,7 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
               </div>
               <div className="form-group">
                 <label className="co-required" htmlFor="dropdown-selectbox">
-                  {t('olm~Installed Namespace')}
+                  {t('Installed Namespace')}
                 </label>
                 {selectedInstallMode === InstallModeType.InstallModeTypeAllNamespaces &&
                   globalNamespaceInstallMode}
@@ -1104,9 +1092,9 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
                 className="form-group"
               >
                 <fieldset>
-                  <label className="co-required">{t('olm~Update approval')}</label>
+                  <label className="co-required">{t('Update approval')}</label>
                   <FieldLevelHelp>
-                    {t('olm~The strategy to determine either manual or automatic updates.')}
+                    {t('The strategy to determine either manual or automatic updates.')}
                   </FieldLevelHelp>
                   <RadioGroup
                     currentValue={approval}
@@ -1114,13 +1102,13 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
                       {
                         name: 'operator-approval-strategy',
                         value: InstallPlanApproval.Automatic,
-                        label: t('olm~Automatic'),
+                        label: t('Automatic'),
                         disabled: isApprovalItemDisabled,
                       },
                       {
                         name: 'operator-approval-strategy',
                         value: InstallPlanApproval.Manual,
-                        label: t('olm~Manual'),
+                        label: t('Manual'),
                       },
                     ]}
                     onChange={(e) => {
@@ -1137,7 +1125,7 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
                         isInline
                         className="co-alert co-alert--margin-top"
                         variant="info"
-                        title={t('olm~Will function as manual approval strategy')}
+                        title={t('Will function as manual approval strategy')}
                       >
                         <NamespaceIncludesManualApproval
                           subscriptions={manualSubscriptionsInNamespace}
@@ -1150,7 +1138,7 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
                       isInline
                       className="co-alert co-alert--margin-top"
                       variant="info"
-                      title={t('olm~Manual approval applies to all operators in a namespace')}
+                      title={t('Manual approval applies to all operators in a namespace')}
                     >
                       <Trans ns="olm">
                         Installing an operator with manual approval causes all operators installed
@@ -1191,10 +1179,10 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
                 isDisabled={formValid()}
                 variant="primary"
               >
-                {t('olm~Install')}
+                {t('Install')}
               </Button>
               <Button variant="secondary" onClick={handleCancel}>
-                {t('public~Cancel')}
+                {t('Cancel')}
               </Button>
             </ActionGroup>
           </GridItem>
@@ -1208,12 +1196,12 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
               deprecation={packageManifest?.status?.deprecation}
             />
             <Title headingLevel="h4" className="pf-v6-u-mb-sm">
-              {t('olm~Provided APIs')}
+              {t('Provided APIs')}
             </Title>
             <Flex className="pf-v6-u-mb-md" gap={{ default: 'gapXl' }}>
               {!providedAPIs.length ? (
                 <span className="pf-v6-u-text-color-subtle">
-                  {t('olm~No Kubernetes APIs are provided by this Operator.')}
+                  {t('No Kubernetes APIs are provided by this Operator.')}
                 </span>
               ) : (
                 providedAPIs.map((api) => (

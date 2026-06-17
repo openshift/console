@@ -1,7 +1,7 @@
 import type { FC, ReactElement } from 'react';
 import { useMemo, useState } from 'react';
 import { Button, Split, SplitItem, Tooltip } from '@patternfly/react-core';
-import { UploadIcon } from '@patternfly/react-icons';
+import { RhUiUploadIcon } from '@patternfly/react-icons';
 import * as fuzzy from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
 import { getIcon, getIcons } from '@console/internal/components/catalog/catalog-item-icon';
@@ -91,7 +91,7 @@ const IconDropdown: FC<IconDropdownProps> = ({
               aria-label={t('Add custom icon')}
               data-test="add-custom-icon"
               className="pf-v6-u-align-items-center pf-v6-u-h-100"
-              icon={<UploadIcon />}
+              icon={<RhUiUploadIcon />}
               onClick={() => setCustomIconModalOpen(true)}
               variant="control"
             />

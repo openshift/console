@@ -10,7 +10,7 @@ export const CreateConnector: FC<CreateConnectorProps> = ({
   hover,
   hints,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   return (
     <DefaultCreateConnector
       startPoint={startPoint}
@@ -18,7 +18,7 @@ export const CreateConnector: FC<CreateConnectorProps> = ({
       dragging={dragging}
       hints={hints}
       hover={hover}
-      tipContents={hover && dragging ? t('topology~Add resources') : null}
+      tipContents={hover && dragging ? t('Add resources') : null}
     />
   );
 };

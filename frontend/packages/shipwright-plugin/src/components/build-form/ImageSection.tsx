@@ -6,17 +6,17 @@ import { InputField } from '@console/shared/src/components/formik-fields/InputFi
 import PushSecretSelector from './PushSecretSelector';
 
 const ImageSection: FC<{ namespace: string }> = ({ namespace }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('shipwright-plugin');
   return (
-    <FormSection title={t('shipwright-plugin~Image')}>
+    <FormSection title={t('Image')}>
       <InputField
         name="formData.outputImage.image"
         type={TextInputTypes.text}
-        label={t('shipwright-plugin~Output image')}
+        label={t('Output image')}
         required
         autoComplete="off"
         helpText={t(
-          'shipwright-plugin~Example for OpenShift internal registry: image-registry.openshift-image-registry.svc:5000/<image-namespace>/<image-name>:latest',
+          'Example for OpenShift internal registry: image-registry.openshift-image-registry.svc:5000/<image-namespace>/<image-name>:latest',
         )}
       />
       <PushSecretSelector formContextField="formData.outputImage.secret" namespace={namespace} />

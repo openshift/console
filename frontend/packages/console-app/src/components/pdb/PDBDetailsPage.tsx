@@ -15,10 +15,10 @@ import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import type { PodDisruptionBudgetKind } from './types';
 
 const PodDisruptionBudgetDetails: FC<PodDisruptionBudgetDetailsProps> = ({ obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   return (
     <PaneBody>
-      <SectionHeading text={t('console-app~PodDisruptionBudget details')} />
+      <SectionHeading text={t('PodDisruptionBudget details')} />
       <Grid hasGutter>
         <GridItem sm={6}>
           <ResourceSummary resource={obj} showPodSelector />
@@ -26,21 +26,13 @@ const PodDisruptionBudgetDetails: FC<PodDisruptionBudgetDetailsProps> = ({ obj }
         <GridItem sm={6}>
           <DescriptionList>
             <DetailsItem
-              label={
-                !_.isNil(obj.spec.minAvailable)
-                  ? t('console-app~Min available')
-                  : t('console-app~Max unavailable')
-              }
+              label={!_.isNil(obj.spec.minAvailable) ? t('Min available') : t('Max unavailable')}
               obj={obj}
               path={!_.isNil(obj.spec.minAvailable) ? 'spec.minAvailable' : 'spec.maxUnavailable'}
             >
               {!_.isNil(obj.spec.minAvailable) ? obj.spec.minAvailable : obj.spec.maxUnavailable}
             </DetailsItem>
-            <DetailsItem
-              label={t('console-app~Allowed disruption')}
-              obj={obj}
-              path="status.disruptionsAllowed"
-            >
+            <DetailsItem label={t('Allowed disruption')} obj={obj} path="status.disruptionsAllowed">
               {obj.status.disruptionsAllowed}
             </DetailsItem>
           </DescriptionList>

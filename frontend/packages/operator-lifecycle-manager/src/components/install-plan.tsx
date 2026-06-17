@@ -94,7 +94,7 @@ const InstallPlanHint: FC<InstallPlanHintProps> = ({ title, body, footer }) => {
 };
 
 export const InstallPlanTableRow: FC<RowFunctionArgs> = ({ obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const phaseFor = (phase: InstallPlanKind['status']['phase']) => <Status status={phase} />;
   return (
     <>
@@ -155,7 +155,7 @@ export const InstallPlanTableRow: FC<RowFunctionArgs> = ({ obj }) => {
                 />
               </li>
             </ul>
-          )) || <span className="pf-v6-u-text-color-subtle">{t('olm~None')}</span>}
+          )) || <span className="pf-v6-u-text-color-subtle">{t('None')}</span>}
       </TableData>
 
       {/* Kebab */}
@@ -167,42 +167,42 @@ export const InstallPlanTableRow: FC<RowFunctionArgs> = ({ obj }) => {
 };
 
 const EmptyMsg: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   return (
-    <ConsoleEmptyState title={t('olm~No InstallPlans found')}>
-      {t('olm~InstallPlans are created automatically by subscriptions or manually using the CLI.')}
+    <ConsoleEmptyState title={t('No InstallPlans found')}>
+      {t('InstallPlans are created automatically by subscriptions or manually using the CLI.')}
     </ConsoleEmptyState>
   );
 };
 
 export const InstallPlansList = requireOperatorGroup((props: InstallPlansListProps) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const InstallPlanTableHeader = () => {
     return [
       {
-        title: t('olm~Name'),
+        title: t('Name'),
         sortField: 'metadata.name',
         transforms: [sortable],
         props: { className: tableColumnClasses[0] },
       },
       {
-        title: t('olm~Namespace'),
+        title: t('Namespace'),
         sortField: 'metadata.namespace',
         transforms: [sortable],
         props: { className: tableColumnClasses[1] },
       },
       {
-        title: t('olm~Status'),
+        title: t('Status'),
         sortField: 'status.phase',
         transforms: [sortable],
         props: { className: tableColumnClasses[2] },
       },
       {
-        title: t('olm~Components'),
+        title: t('Components'),
         props: { className: tableColumnClasses[3] },
       },
       {
-        title: t('olm~Subscriptions'),
+        title: t('Subscriptions'),
         props: { className: tableColumnClasses[4] },
       },
       {
@@ -215,7 +215,7 @@ export const InstallPlansList = requireOperatorGroup((props: InstallPlansListPro
   return (
     <Table
       {...props}
-      aria-label={t('olm~InstallPlans')}
+      aria-label={t('InstallPlans')}
       Header={InstallPlanTableHeader}
       Row={InstallPlanTableRow}
       EmptyMsg={EmptyMsg}
@@ -234,7 +234,7 @@ const getCatalogSources = (
   ).toJS();
 
 export const InstallPlansPage: FC<InstallPlansPageProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const params = useParams();
   const namespace = props.namespace || params?.ns;
   return (
@@ -256,7 +256,7 @@ export const InstallPlansPage: FC<InstallPlansPageProps> = (props) => {
         },
       ]}
       flatten={(resources) => _.get(resources.installPlan, 'data', [])}
-      title={t('olm~InstallPlans')}
+      title={t('InstallPlans')}
       showTitle={false}
       ListComponent={InstallPlansList}
     />
@@ -282,7 +282,7 @@ export const NeedInstallPlanPermissions: FC<NeedInstallPlanPermissionsProps> = (
     setUsername(updateUser(isOpenShift, user));
   }, [isOpenShift, user]);
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
 
   const apiGroup = apiGroupForReference(referenceFor(installPlan));
 
@@ -290,15 +290,15 @@ export const NeedInstallPlanPermissions: FC<NeedInstallPlanPermissionsProps> = (
     <Alert
       variant="info"
       isInline
-      title={t('olm~Missing sufficient privileges for manual InstallPlan approval')}
+      title={t('Missing sufficient privileges for manual InstallPlan approval')}
     >
       {username
         ? t(
-            'olm~User "{{user}}" does not have permissions to patch resource InstallPlans in API group "{{apiGroup}}" in the namespace "{{namespace}}."',
+            'User "{{user}}" does not have permissions to patch resource InstallPlans in API group "{{apiGroup}}" in the namespace "{{namespace}}."',
             { user: username, apiGroup, namespace: installPlan.metadata.namespace },
           )
         : t(
-            'olm~User does not have permissions to patch resource InstallPlans in API group "{{apiGroup}}" in the namespace "{{namespace}}."',
+            'User does not have permissions to patch resource InstallPlans in API group "{{apiGroup}}" in the namespace "{{namespace}}."',
             { apiGroup, namespace: installPlan.metadata.namespace },
           )}
     </Alert>
@@ -306,7 +306,7 @@ export const NeedInstallPlanPermissions: FC<NeedInstallPlanPermissionsProps> = (
 };
 
 export const InstallPlanDetails: FC<InstallPlanDetailsProps> = ({ obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const needsApproval =
     obj.spec.approval === InstallPlanApproval.Manual && obj.spec.approved === false;
 
@@ -322,9 +322,9 @@ export const InstallPlanDetails: FC<InstallPlanDetailsProps> = ({ obj }) => {
       {needsApproval && canPatchInstallPlans && (
         <PaneBody>
           <InstallPlanHint
-            title={t('olm~Review manual InstallPlan')}
+            title={t('Review manual InstallPlan')}
             body={t(
-              'olm~Inspect the requirements for the components specified in this InstallPlan before approving.',
+              'Inspect the requirements for the components specified in this InstallPlan before approving.',
             )}
             footer={
               <Link
@@ -332,7 +332,7 @@ export const InstallPlanDetails: FC<InstallPlanDetailsProps> = ({ obj }) => {
                   obj.metadata.name
                 }/components`}
               >
-                <Button variant="primary">{t('olm~Preview InstallPlan')}</Button>
+                <Button variant="primary">{t('Preview InstallPlan')}</Button>
               </Link>
             }
           />
@@ -344,7 +344,7 @@ export const InstallPlanDetails: FC<InstallPlanDetailsProps> = ({ obj }) => {
         </PaneBody>
       )}
       <PaneBody>
-        <SectionHeading text={t('olm~InstallPlan details')} />
+        <SectionHeading text={t('InstallPlan details')} />
         <Grid hasGutter>
           <GridItem sm={6}>
             <ResourceSummary resource={obj} showAnnotations={false} />
@@ -352,13 +352,13 @@ export const InstallPlanDetails: FC<InstallPlanDetailsProps> = ({ obj }) => {
           <GridItem sm={6}>
             <DescriptionList>
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('olm~Status')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('Status')}</DescriptionListTerm>
                 <DescriptionListDescription>
-                  <Status status={obj.status?.phase ?? t('olm~Unknown')} />
+                  <Status status={obj.status?.phase ?? t('Unknown')} />
                 </DescriptionListDescription>
               </DescriptionListGroup>
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('olm~Components')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('Components')}</DescriptionListTerm>
                 {(obj.spec.clusterServiceVersionNames || []).map((csvName) => (
                   <DescriptionListDescription key={csvName}>
                     {obj.status.phase === 'Complete' ? (
@@ -378,7 +378,7 @@ export const InstallPlanDetails: FC<InstallPlanDetailsProps> = ({ obj }) => {
                 ))}
               </DescriptionListGroup>
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('olm~CatalogSources')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('CatalogSources')}</DescriptionListTerm>
                 {getCatalogSources(obj).map(({ sourceName, sourceNamespace }) => (
                   <DescriptionListDescription key={`${sourceNamespace}-${sourceName}`}>
                     <ResourceLink
@@ -395,7 +395,7 @@ export const InstallPlanDetails: FC<InstallPlanDetailsProps> = ({ obj }) => {
         </Grid>
       </PaneBody>
       <PaneBody>
-        <SectionHeading text={t('olm~Conditions')} />
+        <SectionHeading text={t('Conditions')} />
         <Conditions conditions={obj.status?.conditions} />
       </PaneBody>
     </>
@@ -403,7 +403,7 @@ export const InstallPlanDetails: FC<InstallPlanDetailsProps> = ({ obj }) => {
 };
 
 export const InstallPlanPreview: FC<InstallPlanPreviewProps> = ({ obj, hideApprovalBlock }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const navigate = useNavigate();
   const launchModal = useOverlay();
   const [needsApproval, setNeedsApproval] = useState(
@@ -457,13 +457,13 @@ export const InstallPlanPreview: FC<InstallPlanPreviewProps> = ({ obj, hideAppro
       {needsApproval && !hideApprovalBlock && canPatchInstallPlans && (
         <PaneBody>
           <InstallPlanHint
-            title={t('olm~Review manual InstallPlan')}
+            title={t('Review manual InstallPlan')}
             body={<InstallPlanReview installPlan={obj} />}
             footer={
               <div className="pf-v6-c-form">
                 <div className="pf-v6-c-form__actions">
                   <Button variant="primary" isDisabled={!needsApproval} onClick={() => approve()}>
-                    {needsApproval ? t('olm~Approve') : t('olm~Approved')}
+                    {needsApproval ? t('Approve') : t('Approved')}
                   </Button>
                   <Button
                     variant="secondary"
@@ -476,7 +476,7 @@ export const InstallPlanPreview: FC<InstallPlanPreviewProps> = ({ obj, hideAppro
                       )
                     }
                   >
-                    {t('olm~Deny')}
+                    {t('Deny')}
                   </Button>
                 </div>
               </div>
@@ -490,10 +490,10 @@ export const InstallPlanPreview: FC<InstallPlanPreviewProps> = ({ obj, hideAppro
           <PFTable variant="compact" borders>
             <Thead>
               <Tr>
-                <Th className={componentsTableColumnClasses[0]}>{t('olm~Name')}</Th>
-                <Th className={componentsTableColumnClasses[1]}>{t('olm~Kind')}</Th>
-                <Th className={componentsTableColumnClasses[2]}>{t('olm~Status')}</Th>
-                <Th className={componentsTableColumnClasses[3]}>{t('olm~API version')}</Th>
+                <Th className={componentsTableColumnClasses[0]}>{t('Name')}</Th>
+                <Th className={componentsTableColumnClasses[1]}>{t('Kind')}</Th>
+                <Th className={componentsTableColumnClasses[2]}>{t('Status')}</Th>
+                <Th className={componentsTableColumnClasses[3]}>{t('API version')}</Th>
               </Tr>
             </Thead>
             <Tbody>
@@ -534,8 +534,8 @@ export const InstallPlanPreview: FC<InstallPlanPreviewProps> = ({ obj, hideAppro
     </>
   ) : (
     <PaneBody>
-      <ConsoleEmptyState title={t('olm~No components resolved')}>
-        {t('olm~This InstallPlan has not been fully resolved yet.')}
+      <ConsoleEmptyState title={t('No components resolved')}>
+        {t('This InstallPlan has not been fully resolved yet.')}
       </ConsoleEmptyState>
     </PaneBody>
   );

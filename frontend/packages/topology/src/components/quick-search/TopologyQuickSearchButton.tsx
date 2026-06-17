@@ -12,10 +12,10 @@ const TopologyQuickSearchButton: FC<QuickSearchButtonProps> = ({
   onClick,
   tooltipPosition = 'bottom',
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
 
   return (
-    <Tooltip position={tooltipPosition} content={t('topology~Add to Project')}>
+    <Tooltip position={tooltipPosition} content={t('Add to Project')}>
       <Button
         icon={<QuickSearchIcon height="2rem" width="2rem" />}
         className="co-xl-icon-button"
@@ -25,7 +25,7 @@ const TopologyQuickSearchButton: FC<QuickSearchButtonProps> = ({
           e.stopPropagation();
           onClick();
         }}
-        aria-label={t('topology~Quick search button')}
+        aria-label={t('Quick search button')}
       />
     </Tooltip>
   );

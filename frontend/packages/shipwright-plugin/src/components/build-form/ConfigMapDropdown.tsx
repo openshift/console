@@ -23,7 +23,7 @@ type ConfigMapDropdownProps = Omit<
 };
 
 const ConfigMapDropdown: FC<ConfigMapDropdownProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('shipwright-plugin');
   const autocompleteFilter = (strText, item): boolean => fuzzy(strText, item?.props?.name);
   const resources = {
     configmap: {
@@ -38,7 +38,7 @@ const ConfigMapDropdown: FC<ConfigMapDropdownProps> = (props) => {
     <ResourceDropdown
       {...props}
       dataSelector={['metadata', 'name']}
-      placeholder={t('shipwright-plugin~Select a ConfigMap')}
+      placeholder={t('Select a ConfigMap')}
       autocompleteFilter={autocompleteFilter}
       showBadge
       resources={[

@@ -98,8 +98,8 @@ export const CheckboxWidget: FC<WidgetProps> = ({ value = false, id, label, onCh
 };
 
 export const SwitchWidget: FC<WidgetProps> = ({ value, id, label, onChange, options }) => {
-  const { t } = useTranslation();
-  const { labelOn = t('console-shared~true') } = options;
+  const { t } = useTranslation('console-shared');
+  const { labelOn = t('true') } = options;
   return (
     <Switch
       id={id || label}
@@ -132,7 +132,7 @@ const K8sResourceWidget: FC<K8sResourceWidgetProps> = ({
   formContext,
   onChange,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const { model, groupVersionKind, selector } = options;
   const { namespace } = formContext;
   const selectedKey = value ? `${value}-${groupVersionKind}` : null;
@@ -161,13 +161,13 @@ const K8sResourceWidget: FC<K8sResourceWidgetProps> = ({
             },
           ]}
           desc={label}
-          placeholder={t('console-shared~Select {{label}}', { label: model.label })}
+          placeholder={t('Select {{label}}', { label: model.label })}
           onChange={(next) => onChange(next)}
           selectedKey={selectedKey}
         />
       ) : (
         <span>
-          {t('console-shared~Cluster does not have resource {{groupVersionKind}}', {
+          {t('Cluster does not have resource {{groupVersionKind}}', {
             groupVersionKind,
           })}
         </span>
@@ -192,7 +192,7 @@ export const ImagePullPolicyWidget: FC<WidgetProps> = ({ id, value, onChange }) 
 };
 
 export const SelectWidget: FC<WidgetProps> = ({ id, label, onChange, options, schema, value }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const { enumOptions = [], title } = options;
   const items = _.reduce(
     enumOptions as DynamicFormFieldOptionsList,
@@ -208,7 +208,7 @@ export const SelectWidget: FC<WidgetProps> = ({ id, label, onChange, options, sc
     <ConsoleSelect
       id={id}
       key={id}
-      title={t('console-shared~Select {{title}}', { title: title || schema?.title || label })}
+      title={t('Select {{title}}', { title: title || schema?.title || label })}
       selectedKey={value}
       items={items}
       onChange={(val) => onChange(val)}

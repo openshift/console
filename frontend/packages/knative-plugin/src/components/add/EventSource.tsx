@@ -70,7 +70,7 @@ export const EventSource: FC<Props> = ({
   const handleCancel = useCallback(() => navigate(-1), [navigate]);
   const perpectiveExtension = usePerspectives();
   const [perspective] = useActivePerspective();
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   let sourceData = {};
   let selApiVersion = '';
   let selSourceName = '';
@@ -148,10 +148,10 @@ export const EventSource: FC<Props> = ({
     }
     const errMessage =
       knEventSourceResource?.kind && knEventSourceResource?.apiVersion
-        ? t('knative-plugin~No model registered for {{referenceForKnEventSource}}', {
+        ? t('No model registered for {{referenceForKnEventSource}}', {
             referenceForKnEventSource: referenceFor(knEventSourceResource),
           })
-        : t('knative-plugin~Invalid YAML');
+        : t('Invalid YAML');
     return Promise.reject(new Error(errMessage));
   };
 

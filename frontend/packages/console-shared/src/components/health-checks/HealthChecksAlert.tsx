@@ -41,7 +41,7 @@ export const HealthChecksAlert: FC<HealthChecksAlertProps> = ({ resource }) => {
     HEALTH_CHECK_USER_PREFERENCE_KEY,
     [],
   );
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const kindForCRDResource = referenceFor(resource);
   const resourceModel = modelFor(kindForCRDResource);
   const resourceKind = resourceModel.crd ? kindForCRDResource : kind;
@@ -78,11 +78,9 @@ export const HealthChecksAlert: FC<HealthChecksAlertProps> = ({ resource }) => {
 
   const alertMessage =
     _.size(containersName) > 1
-      ? t(
-          'console-shared~Not all Containers have health checks to ensure your Application is running correctly.',
-        )
+      ? t('Not all Containers have health checks to ensure your Application is running correctly.')
       : t(
-          'console-shared~Container {{containersName}} does not have health checks to ensure your Application is running correctly.',
+          'Container {{containersName}} does not have health checks to ensure your Application is running correctly.',
           { containersName: _.map(containersName) },
         );
 
@@ -92,12 +90,11 @@ export const HealthChecksAlert: FC<HealthChecksAlertProps> = ({ resource }) => {
         <div className="ocs-health-checks-alert">
           <Alert
             variant="custom"
-            title={t('console-shared~Health checks')}
+            title={t('Health checks')}
             actionClose={<AlertActionCloseButton onClose={handleAlertAction} />}
             isInline
           >
-            {alertMessage}{' '}
-            <Link to={addHealthChecksLink}>{t('console-shared~Add health checks')}</Link>
+            {alertMessage} <Link to={addHealthChecksLink}>{t('Add health checks')}</Link>
           </Alert>
         </div>
       ) : null}

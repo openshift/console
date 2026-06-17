@@ -39,7 +39,7 @@ import { getUserPreferenceGroups } from './utils/getUserPreferenceGroups';
 
 const UserPreferencePage: FC = () => {
   // resources and calls to hooks
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const navigate = useNavigate();
 
   const userPreferenceGroupExtensions = useExtensions<UserPreferenceGroup>(isUserPreferenceGroup);
@@ -129,14 +129,12 @@ const UserPreferencePage: FC = () => {
   return (
     <>
       <DocumentTitle>
-        {activeTab
-          ? t('console-app~User preferences {{activeTab}}', { activeTab })
-          : t('console-app~User preferences')}
+        {activeTab ? t('User preferences {{activeTab}}', { activeTab }) : t('User preferences')}
       </DocumentTitle>
       <PageHeading
-        title={t('console-app~User preferences')}
+        title={t('User preferences')}
         helpText={t(
-          'console-app~Set your individual preferences for the console experience. Any changes will be autosaved.',
+          'Set your individual preferences for the console experience. Any changes will be autosaved.',
         )}
       />
       <PageSection>

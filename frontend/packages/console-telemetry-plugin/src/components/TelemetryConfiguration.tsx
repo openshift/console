@@ -41,30 +41,30 @@ const TelemetryAnalyticsSelect: FC<{
   value?: CLUSTER_TELEMETRY_ANALYTICS;
   onChange: (selectedOption: TelemetryAnalyticsSelectOptions) => void;
 }> = ({ disabled, value, onChange }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-telemetry-plugin');
   const options: TelemetryAnalyticsSelectOptions[] = [
     {
       value: CLUSTER_TELEMETRY_ANALYTICS.OPTIN,
-      title: t('console-telemetry-plugin~Opt-in'),
-      description: t('console-telemetry-plugin~Opt-in to send telemetry events.'),
+      title: t('Opt-in'),
+      description: t('Opt-in to send telemetry events.'),
       isSelected: value === CLUSTER_TELEMETRY_ANALYTICS.OPTIN,
     },
     {
       value: CLUSTER_TELEMETRY_ANALYTICS.OPTOUT,
-      title: t('console-telemetry-plugin~Opt-out'),
-      description: t('console-telemetry-plugin~Opt-out to send telemetry events.'),
+      title: t('Opt-out'),
+      description: t('Opt-out to send telemetry events.'),
       isSelected: value === CLUSTER_TELEMETRY_ANALYTICS.OPTOUT,
     },
     {
       value: CLUSTER_TELEMETRY_ANALYTICS.ENFORCE,
-      title: t('console-telemetry-plugin~Enforce'),
-      description: t('console-telemetry-plugin~Always send telemetry events.'),
+      title: t('Enforce'),
+      description: t('Always send telemetry events.'),
       isSelected: value === CLUSTER_TELEMETRY_ANALYTICS.ENFORCE,
     },
     {
       value: CLUSTER_TELEMETRY_ANALYTICS.DISABLED,
-      title: t('console-telemetry-plugin~Disabled'),
-      description: t('console-telemetry-plugin~Disable the telemetry in the cluster.'),
+      title: t('Disabled'),
+      description: t('Disable the telemetry in the cluster.'),
       isSelected: value === CLUSTER_TELEMETRY_ANALYTICS.DISABLED,
     },
   ];
@@ -80,8 +80,7 @@ const TelemetryAnalyticsSelect: FC<{
       isDisabled={disabled}
       isFullWidth
     >
-      {options.find((option) => option.value === selection)?.title ||
-        t('console-telemetry-plugin~Select option')}
+      {options.find((option) => option.value === selection)?.title || t('Select option')}
     </MenuToggle>
   );
 
@@ -117,7 +116,7 @@ const TelemetryAnalyticsSelect: FC<{
 };
 
 const TelemetryConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-telemetry-plugin');
   const fireTelemetryEvent = useTelemetry();
 
   // Current configuration
@@ -165,13 +164,10 @@ const TelemetryConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
 
   return (
     <FormLayout isHorizontal>
-      <FormSection
-        title={t('console-telemetry-plugin~Analytics')}
-        data-test="telemetry form-section"
-      >
+      <FormSection title={t('Analytics')} data-test="telemetry form-section">
         <FormHelperText>
           {t(
-            'console-telemetry-plugin~As admin you can decide sending telemetry events to a pre-configured Red Hat proxy that can be forwarded to third-party services for analysis.',
+            'As admin you can decide sending telemetry events to a pre-configured Red Hat proxy that can be forwarded to third-party services for analysis.',
           )}
         </FormHelperText>
         <TelemetryAnalyticsSelect

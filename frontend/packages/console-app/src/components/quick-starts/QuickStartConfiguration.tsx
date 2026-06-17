@@ -49,7 +49,7 @@ const Item: FC<ItemProps> = ({ id, quickStart }) => (
 );
 
 const QuickStartConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const fireTelemetryEvent = useTelemetry();
 
   // All available quick starts
@@ -152,13 +152,13 @@ const QuickStartConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
 
   return (
     <FormSection
-      title={t('console-app~Quick starts')}
+      title={t('Quick starts')}
       data-test="quickstarts form-section"
       id="quick-starts-configuration"
     >
       <DualListSelector
-        availableOptionsTitle={t('console-app~Enabled')}
-        chosenOptionsTitle={t('console-app~Disabled')}
+        availableOptionsTitle={t('Enabled')}
+        chosenOptionsTitle={t('Disabled')}
         isSearchable
         availableOptions={enabledOptions}
         chosenOptions={disabledOptions}

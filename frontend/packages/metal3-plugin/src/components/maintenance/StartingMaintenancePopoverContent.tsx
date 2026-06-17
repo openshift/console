@@ -30,7 +30,7 @@ type StartingMaintenancePopoverContentProps = {
 const StartingMaintenancePopoverContent: FC<StartingMaintenancePopoverContentProps> = ({
   nodeMaintenance,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('metal3-plugin');
   const stopNodeMaintenanceModalLauncher = useStopNodeMaintenanceModal();
   const reason = getNodeMaintenanceReason(nodeMaintenance);
   const creationTimestamp = getNodeMaintenanceCreationTimestamp(nodeMaintenance);
@@ -41,16 +41,16 @@ const StartingMaintenancePopoverContent: FC<StartingMaintenancePopoverContentPro
     <>
       <p>
         {t(
-          "metal3-plugin~Node is entering maintenance. The cluster will automatically rebuild node's data 30 minutes after entering maintenance.",
+          "Node is entering maintenance. The cluster will automatically rebuild node's data 30 minutes after entering maintenance.",
         )}
       </p>
       <DescriptionList>
         <DescriptionListGroup>
-          <DescriptionListTerm>{t('metal3-plugin~Maintenance reason:')}</DescriptionListTerm>
+          <DescriptionListTerm>{t('Maintenance reason:')}</DescriptionListTerm>
           <DescriptionListDescription>{reason}</DescriptionListDescription>
         </DescriptionListGroup>
         <DescriptionListGroup>
-          <DescriptionListTerm>{t('metal3-plugin~Requested:')}</DescriptionListTerm>
+          <DescriptionListTerm>{t('Requested:')}</DescriptionListTerm>
           <DescriptionListDescription>
             <Timestamp timestamp={creationTimestamp} />
           </DescriptionListDescription>
@@ -59,7 +59,7 @@ const StartingMaintenancePopoverContent: FC<StartingMaintenancePopoverContentPro
       <br />
       {lastError && (
         <>
-          <Alert variant="warning" title={t('metal3-plugin~Workloads failing to move')} isInline>
+          <Alert variant="warning" title={t('Workloads failing to move')} isInline>
             {lastError}
           </Alert>
           <br />
@@ -67,12 +67,12 @@ const StartingMaintenancePopoverContent: FC<StartingMaintenancePopoverContentPro
       )}
       <Progress
         value={getNodeMaintenanceProgressPercent(nodeMaintenance)}
-        title={t('metal3-plugin~Moving workloads')}
+        title={t('Moving workloads')}
         size={ProgressSize.sm}
       />
       <br />
       <ExpandableSection
-        toggleText={t('metal3-plugin~Show remaining workloads ({{listLength}})', {
+        toggleText={t('Show remaining workloads ({{listLength}})', {
           listLength: pendingPods.length,
         })}
       >
@@ -84,7 +84,7 @@ const StartingMaintenancePopoverContent: FC<StartingMaintenancePopoverContentPro
         onClick={() => stopNodeMaintenanceModalLauncher(nodeMaintenance)}
         isInline
       >
-        {t('metal3-plugin~Stop maintenance')}
+        {t('Stop maintenance')}
       </Button>
     </>
   );

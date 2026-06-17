@@ -1,7 +1,7 @@
 import type { FC, ReactNode } from 'react';
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { Accordion, Button } from '@patternfly/react-core';
-import { PauseIcon, PlayIcon } from '@patternfly/react-icons';
+import { RhUiPauseIcon, RhUiPlayIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 import type {
@@ -18,12 +18,12 @@ import EventItem from './EventItem';
 import './activity-card.scss';
 
 export const Activity: FC<ActivityProps> = ({ timestamp, children }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   return (
     <div className="co-activity-item__ongoing" data-test="activity">
       {timestamp && (
         <span className="pf-v6-u-text-color-subtle">
-          {t('console-shared~Started')}{' '}
+          {t('Started')}{' '}
           <span data-test="timestamp">
             <Timestamp simple timestamp={timestamp.toString()} />
           </span>
@@ -42,7 +42,7 @@ const RecentEventsBodyContent: FC<RecentEventsBodyContentProps> = ({
   paused,
   setPaused,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const ref = useRef<EventKind[]>([]);
   useEffect(() => {
     if (paused && eventsData) {
@@ -94,9 +94,7 @@ const RecentEventsBodyContent: FC<RecentEventsBodyContentProps> = ({
   if (sortedEvents.length === 0) {
     return (
       <Activity>
-        <div className="pf-v6-u-text-color-subtle">
-          {t('console-shared~There are no recent events.')}
-        </div>
+        <div className="pf-v6-u-text-color-subtle">{t('There are no recent events.')}</div>
       </Activity>
     );
   }
@@ -116,30 +114,30 @@ const RecentEventsBodyContent: FC<RecentEventsBodyContentProps> = ({
 };
 
 const PauseButton: FC<PauseButtonProps> = ({ paused, togglePause }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   return (
     <Button
       variant="link"
       isInline
       onClick={togglePause}
       className="co-activity-card__recent-actions"
-      icon={paused ? <PlayIcon /> : <PauseIcon />}
+      icon={paused ? <RhUiPlayIcon /> : <RhUiPauseIcon />}
       data-test-id="events-pause-button"
       data-test="events-pause-button"
     >
-      {paused ? t('console-shared~Resume') : t('console-shared~Pause')}
+      {paused ? t('Resume') : t('Pause')}
     </Button>
   );
 };
 
 export const RecentEventsBody: FC<RecentEventsBodyProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const [paused, setPaused] = useState(false);
   const togglePause = useCallback(() => setPaused(!paused), [paused]);
   return (
     <>
       <div className="co-activity-card__recent-title" data-test="activity-recent-title">
-        {t('console-shared~Recent events')}
+        {t('Recent events')}
         <PauseButton paused={paused} togglePause={togglePause} />
       </div>
       <RecentEventsBodyContent {...props} paused={paused} setPaused={setPaused} />
@@ -152,7 +150,7 @@ export const OngoingActivityBody: FC<OngoingActivityBodyProps> = ({
   resourceActivities = [],
   prometheusActivities = [],
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const activitiesLoaded =
     loaded || resourceActivities.length > 0 || prometheusActivities.length > 0;
   let body: ReactNode;
@@ -186,16 +184,14 @@ export const OngoingActivityBody: FC<OngoingActivityBodyProps> = ({
       allActivities
     ) : (
       <Activity>
-        <div className="pf-v6-u-text-color-subtle">
-          {t('console-shared~There are no ongoing activities.')}
-        </div>
+        <div className="pf-v6-u-text-color-subtle">{t('There are no ongoing activities.')}</div>
       </Activity>
     );
   }
   return (
     <>
       <div className="co-activity-card__ongoing-title" data-test="ongoing-title">
-        {t('console-shared~Ongoing')}
+        {t('Ongoing')}
       </div>
       <div className="co-activity-card__ongoing-body">{body}</div>
     </>

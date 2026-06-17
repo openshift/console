@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import type { SecretKind } from '@openshift/api-types/dist/kubernetes/latest';
 import { useTranslation } from 'react-i18next';
 import type { K8sModel } from '@console/dynamic-plugin-sdk/src/api/core-api';
 import { k8sGet } from '@console/dynamic-plugin-sdk/src/api/core-api';
@@ -6,7 +7,6 @@ import type { ConnectionFormFormikValues } from '../components/types';
 import { decodeBase64, getErrorMessage } from '../components/utils';
 import { VSPHERE_CREDS_SECRET_NAME, VSPHERE_CREDS_SECRET_NAMESPACE } from '../constants';
 import type { Infrastructure } from '../resources/infrastructure';
-import type { Secret } from '../resources/secret';
 import { useConnectionModels } from './use-connection-models';
 
 class LoadError extends Error {
@@ -61,7 +61,7 @@ const initialLoad = async (
   let username = '';
   let password = '';
   try {
-    const secret = await k8sGet<Secret>({
+    const secret = await k8sGet<SecretKind>({
       model: secretModel,
       name: VSPHERE_CREDS_SECRET_NAME,
       ns: VSPHERE_CREDS_SECRET_NAMESPACE,

@@ -19,14 +19,14 @@ export const Conditions: FC<ConditionsProps> = ({
   conditions,
   type = ConditionTypes.K8sResource,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const getStatusLabel = (status: string) => {
     switch (status) {
       case 'True':
-        return t('public~True');
+        return t('True');
       case 'False':
-        return t('public~False');
+        return t('False');
       default:
         return status;
     }
@@ -75,22 +75,22 @@ export const Conditions: FC<ConditionsProps> = ({
           <Thead>
             <Tr>
               {type === ConditionTypes.ClusterServiceVersion ? (
-                <Th>{t('public~Phase')}</Th>
+                <Th>{t('Phase')}</Th>
               ) : (
                 <>
-                  <Th>{t('public~Type')}</Th>
-                  <Th>{t('public~Status')}</Th>
+                  <Th>{t('Type')}</Th>
+                  <Th>{t('Status')}</Th>
                 </>
               )}
-              <Th visibility={['hidden', 'visibleOnLg']}>{t('public~Updated')}</Th>
-              <Th>{t('public~Reason')}</Th>
-              <Th visibility={['hidden', 'visibleOnSm']}>{t('public~Message')}</Th>
+              <Th visibility={['hidden', 'visibleOnLg']}>{t('Updated')}</Th>
+              <Th>{t('Reason')}</Th>
+              <Th visibility={['hidden', 'visibleOnSm']}>{t('Message')}</Th>
             </Tr>
           </Thead>
           <Tbody>{rows}</Tbody>
         </Table>
       ) : (
-        <ConsoleEmptyState>{t('public~No conditions found')}</ConsoleEmptyState>
+        <ConsoleEmptyState>{t('No conditions found')}</ConsoleEmptyState>
       )}
     </>
   );

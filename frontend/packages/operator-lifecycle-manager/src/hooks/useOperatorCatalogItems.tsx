@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Spinner } from '@patternfly/react-core';
-import { CheckCircleIcon, ExclamationCircleIcon } from '@patternfly/react-icons';
+import { RhUiCheckCircleFillIcon, RhUiErrorFillIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import type {
@@ -267,7 +267,7 @@ const useOperatorCatalogItems: ExtensionHook<CatalogItem[], CatalogExtensionHook
                   text: t('Installed'),
                   color: 'green',
                   variant: 'outline',
-                  icon: <CheckCircleIcon />,
+                  icon: <RhUiCheckCircleFillIcon />,
                 } as CatalogItemBadge,
               ]
             : []),
@@ -288,7 +288,7 @@ const useOperatorCatalogItems: ExtensionHook<CatalogItem[], CatalogExtensionHook
                   color: 'orange',
                   tooltip: pkg.status.deprecation.message,
                   variant: 'outline',
-                  icon: <ExclamationCircleIcon />,
+                  icon: <RhUiErrorFillIcon />,
                 } as CatalogItemBadge,
               ]
             : []),

@@ -14,7 +14,7 @@ interface HelmReleaseResourcesProps {
 }
 
 const HelmReleaseResources: FC<HelmReleaseResourcesProps> = ({ customData }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   const params = useParams();
   const namespace = params.ns;
   const helmManifestResources = loadHelmManifestResources(customData);
@@ -36,7 +36,7 @@ const HelmReleaseResources: FC<HelmReleaseResourcesProps> = ({ customData }) => 
     <MultiListPage
       resources={watchResources}
       flatten={flattenReleaseResources}
-      label={t('helm-plugin~Resources')}
+      label={t('Resources')}
       ListComponent={HelmReleaseResourcesList}
       omitFilterToolbar
     />

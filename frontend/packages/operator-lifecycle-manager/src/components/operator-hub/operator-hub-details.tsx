@@ -19,7 +19,7 @@ import { LazyEditDefaultSourcesModalOverlay } from '../modals';
 import type { OperatorHubKind } from '.';
 
 const OperatorHubDetails: FC<OperatorHubDetailsProps> = ({ obj: operatorHub }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const launchModal = useOverlay();
 
   const canEditDefaultSources = useAccessReview({
@@ -30,7 +30,7 @@ const OperatorHubDetails: FC<OperatorHubDetailsProps> = ({ obj: operatorHub }) =
 
   return (
     <PaneBody>
-      <SectionHeading text={t('olm~OperatorHub details')} />
+      <SectionHeading text={t('OperatorHub details')} />
       <Grid hasGutter>
         <GridItem sm={6}>
           <ResourceSummary
@@ -42,7 +42,7 @@ const OperatorHubDetails: FC<OperatorHubDetailsProps> = ({ obj: operatorHub }) =
         <GridItem sm={6}>
           <DescriptionList>
             <DetailsItem
-              label={t('olm~Default sources')}
+              label={t('Default sources')}
               obj={operatorHub}
               path="status.sources"
               canEdit={canEditDefaultSources}
@@ -61,7 +61,7 @@ const OperatorHubDetails: FC<OperatorHubDetailsProps> = ({ obj: operatorHub }) =
                         path={`status.sources[${idx}]`}
                       >
                         <p data-test={`status_${source.name}`}>
-                          {source.disabled ? t('public~Disabled') : t('public~Enabled')}
+                          {source.disabled ? t('Disabled') : t('Enabled')}
                         </p>
                       </DetailsItem>
                     </DescriptionList>

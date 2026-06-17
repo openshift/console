@@ -2,10 +2,10 @@ import type { ReactNode, FC } from 'react';
 import { useState } from 'react';
 import { ExpandableSection } from '@patternfly/react-core';
 import {
-  CheckCircleIcon,
-  ExclamationCircleIcon,
-  InProgressIcon,
-  UnknownIcon,
+  RhUiCheckCircleFillIcon,
+  RhUiErrorFillIcon,
+  RhUiInProgressIcon,
+  RhUiUnknownIcon,
 } from '@patternfly/react-icons';
 import {
   t_color_green_50 as okColor,
@@ -61,8 +61,8 @@ const useOperatorHealth = (t: ConsoleTFunction, name: string): OperatorHealthTyp
 
   if (!isLoaded) {
     return {
-      message: t('vsphere-plugin~Pending'),
-      icon: <InProgressIcon />,
+      message: t('Pending'),
+      icon: <RhUiInProgressIcon />,
       level: OperatorHealthLevel.Unknown,
     };
   }
@@ -71,8 +71,8 @@ const useOperatorHealth = (t: ConsoleTFunction, name: string): OperatorHealthTyp
     // eslint-disable-next-line no-console
     console.error(`Failed to load operator "${name}": `, error);
     return {
-      message: t('vsphere-plugin~Error'),
-      icon: <ExclamationCircleIcon color={errorColor.value} />,
+      message: t('Error'),
+      icon: <RhUiErrorFillIcon color={errorColor.value} />,
       level: OperatorHealthLevel.Error,
     };
   }
@@ -89,37 +89,37 @@ const useOperatorHealth = (t: ConsoleTFunction, name: string): OperatorHealthTyp
 
   if (progressing === 'True') {
     return {
-      message: t('vsphere-plugin~Progressing'),
-      icon: <InProgressIcon />,
+      message: t('Progressing'),
+      icon: <RhUiInProgressIcon />,
       level: OperatorHealthLevel.Progressing,
     };
   }
 
   if (degraded === 'True') {
     return {
-      message: t('vsphere-plugin~Degraded'),
-      icon: <ExclamationCircleIcon color={errorColor.value} />,
+      message: t('Degraded'),
+      icon: <RhUiErrorFillIcon color={errorColor.value} />,
       level: OperatorHealthLevel.Degraded,
     };
   }
 
   if (available === 'True') {
     return {
-      message: t('vsphere-plugin~Healthy'),
-      icon: <CheckCircleIcon color={okColor.value} />,
+      message: t('Healthy'),
+      icon: <RhUiCheckCircleFillIcon color={okColor.value} />,
       level: OperatorHealthLevel.Healthy,
     };
   }
 
   return {
-    message: t('vsphere-plugin~Unknown'),
-    icon: <UnknownIcon />,
+    message: t('Unknown'),
+    icon: <RhUiUnknownIcon />,
     level: OperatorHealthLevel.Unknown,
   };
 };
 
 export const VSphereOperatorStatuses: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('vsphere-plugin');
   const [isExpanded, setIsExpanded] = useState(false);
 
   const kubeControllerManager = useOperatorHealth(t, 'kube-controller-manager');
@@ -136,32 +136,27 @@ export const VSphereOperatorStatuses: FC = () => {
     <ExpandableSection
       toggleContent={
         <span>
-          {t('vsphere-plugin~Monitored operators')} {isExpanded ? null : worstIconState}
+          {t('Monitored operators')} {isExpanded ? null : worstIconState}
         </span>
       }
       onToggle={onToggle}
       isExpanded={isExpanded}
     >
-      <StatusPopupSection
-        firstColumn={t('vsphere-plugin~Operator')}
-        secondColumn={t('vsphere-plugin~Status')}
-      >
+      <StatusPopupSection firstColumn={t('Operator')} secondColumn={t('Status')}>
         <StatusPopupItem value={kubeApiServer.message} icon={kubeApiServer.icon}>
           <Link to={`${CONSOLE_PREFIX_CLUSTER_OPERATOR}/kube-apiserver`}>
-            {t('vsphere-plugin~Kube API Server')}
+            {t('Kube API Server')}
           </Link>
         </StatusPopupItem>
 
         <StatusPopupItem value={kubeControllerManager.message} icon={kubeControllerManager.icon}>
           <Link to={`${CONSOLE_PREFIX_CLUSTER_OPERATOR}/kube-controller-manager`}>
-            {t('vsphere-plugin~Kube Controller Manager')}
+            {t('Kube Controller Manager')}
           </Link>
         </StatusPopupItem>
 
         <StatusPopupItem value={storage.message} icon={storage.icon}>
-          <Link to={`${CONSOLE_PREFIX_CLUSTER_OPERATOR}/storage`}>
-            {t('vsphere-plugin~Storage')}
-          </Link>
+          <Link to={`${CONSOLE_PREFIX_CLUSTER_OPERATOR}/storage`}>{t('Storage')}</Link>
         </StatusPopupItem>
       </StatusPopupSection>
     </ExpandableSection>

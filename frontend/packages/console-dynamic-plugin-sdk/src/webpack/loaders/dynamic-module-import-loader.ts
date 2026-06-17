@@ -4,7 +4,7 @@ import type { DynamicModuleMap } from '../../utils/dynamic-module-parser';
 
 export type DynamicModuleImportLoaderOptions = {
   dynamicModuleMaps: Record<string, DynamicModuleMap>;
-  resourceMetadata: { jsx: boolean };
+  resourceMetadata?: { jsx: boolean };
   skipTypeOnlyImports?: boolean;
   skipImportPrefixes?: string[];
 };
@@ -48,7 +48,7 @@ const getImportInfo = (importDeclaration: ts.ImportDeclaration) => {
 const dynamicModuleImportLoader: DynamicModuleImportLoader = function (source) {
   const {
     dynamicModuleMaps,
-    resourceMetadata,
+    resourceMetadata = { jsx: /\.(jsx|tsx)$/.test(this.resourcePath) },
     skipTypeOnlyImports = true,
     skipImportPrefixes = [],
   } = this.getOptions();

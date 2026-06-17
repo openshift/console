@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@patternfly/react-core';
-import { RebootingIcon } from '@patternfly/react-icons';
+import { RhUiRefreshIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
@@ -68,24 +68,19 @@ const PowerStatus = ({ obj }: { obj: BareMetalHostKind }) => {
   const hasPowerMgmt = hasPowerManagement(obj);
   const powerStatus = getHostPowerStatus(obj);
   const restartScheduled = isHostScheduledForRestart(obj);
-  const { t } = useTranslation();
+  const { t } = useTranslation('metal3-plugin');
   if (isDetached(obj)) {
-    return <HealthItem title={t('metal3-plugin~Detached')} state={HealthState.UNKNOWN} />;
+    return <HealthItem title={t('Detached')} state={HealthState.UNKNOWN} />;
   }
   if (!hasPowerMgmt) {
-    return (
-      <HealthItem
-        title={t('metal3-plugin~No power management')}
-        state={HealthState.NOT_AVAILABLE}
-      />
-    );
+    return <HealthItem title={t('No power management')} state={HealthState.NOT_AVAILABLE} />;
   }
   return (
     <StatusIconAndText
-      title={restartScheduled ? t('metal3-plugin~Restart pending') : powerStatus}
+      title={restartScheduled ? t('Restart pending') : powerStatus}
       icon={
         restartScheduled ? (
-          <RebootingIcon />
+          <RhUiRefreshIcon />
         ) : (
           <BareMetalHostPowerStatusIcon powerStatus={powerStatus} />
         )
@@ -96,7 +91,7 @@ const PowerStatus = ({ obj }: { obj: BareMetalHostKind }) => {
 };
 
 const HealthCard: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('metal3-plugin');
   const { obj, machine, node, nodeMaintenance } = useContext(BareMetalHostDashboardContext);
 
   const [data, loaded, loadError] = useNotificationAlerts();
@@ -128,7 +123,7 @@ const HealthCard: FC = () => {
             </GalleryItem>
             <GalleryItem>
               <HealthItem
-                title={t('metal3-plugin~Hardware')}
+                title={t('Hardware')}
                 state={hwHealth.state}
                 details={t(hwHealth.titleKey)}
               />

@@ -24,15 +24,15 @@ const ContainerRow: FC<ContainerRowProps> = ({ container }) => {
 };
 
 export const ContainerTable: FC<ContainerTableProps> = ({ containers }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <Table gridBreakPoint="">
       <Thead>
         <Tr>
-          <Th>{t('public~Name')}</Th>
-          <Th>{t('public~Image')}</Th>
-          <Th visibility={['hidden', 'visibleOnSm']}>{t('public~Resource limits')}</Th>
-          <Th visibility={['hidden', 'visibleOnMd']}>{t('public~Ports')}</Th>
+          <Th>{t('Name')}</Th>
+          <Th>{t('Image')}</Th>
+          <Th visibility={['hidden', 'visibleOnSm']}>{t('Resource limits')}</Th>
+          <Th visibility={['hidden', 'visibleOnMd']}>{t('Ports')}</Th>
         </Tr>
       </Thead>
       <Tbody>

@@ -29,7 +29,7 @@ export const AddLDAPPage = () => {
   const [attributesEmail, setAttributesEmail] = useState([]);
   const [caFileContent, setCaFileContent] = useState('');
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const thenPromise = (res) => {
     setInProgress(false);
@@ -38,7 +38,7 @@ export const AddLDAPPage = () => {
   };
 
   const catchError = (error) => {
-    const err = error.message || t('public~An error occurred. Please try again.');
+    const err = error.message || t('An error occurred. Please try again.');
     setInProgress(false);
     setErrorMessage(err);
     return Promise.reject(err);
@@ -165,23 +165,23 @@ export const AddLDAPPage = () => {
     });
   };
 
-  const title = t('public~Add Identity Provider: LDAP');
+  const title = t('Add Identity Provider: LDAP');
 
   return (
     <div className="co-m-pane__form">
       <DocumentTitle>{title}</DocumentTitle>
-      <PageHeading title={title} helpText={t('public~Integrate with an LDAP identity provider.')} />
+      <PageHeading title={title} helpText={t('Integrate with an LDAP identity provider.')} />
       <PaneBody>
         <form onSubmit={submit} name="form">
           <IDPNameInput value={name} onChange={(e) => setName(e.currentTarget.value)} />
           <div className="form-group">
             <label className="co-required" htmlFor="url">
-              {t('public~URL')}
+              {t('URL')}
             </label>
             <span className="pf-v6-c-form-control">
               <input
                 type="url"
-                aria-label={t('public~URL')}
+                aria-label={t('URL')}
                 onChange={(e) => setUrl(e.currentTarget.value)}
                 value={url}
                 id="url"
@@ -190,15 +190,15 @@ export const AddLDAPPage = () => {
               />
             </span>
             <div className="help-block" id="url-help">
-              {t('public~An RFC 2255 URL which specifies the LDAP search parameters to use.')}
+              {t('An RFC 2255 URL which specifies the LDAP search parameters to use.')}
             </div>
           </div>
           <div className="form-group">
-            <label htmlFor="bind-dn">{t('public~Bind DN')}</label>
+            <label htmlFor="bind-dn">{t('Bind DN')}</label>
             <span className="pf-v6-c-form-control">
               <input
                 type="text"
-                aria-label={t('public~Bind DN')}
+                aria-label={t('Bind DN')}
                 onChange={(e) => setBindDN(e.currentTarget.value)}
                 value={bindDN}
                 id="bind-dn"
@@ -206,15 +206,15 @@ export const AddLDAPPage = () => {
               />
             </span>
             <div className="help-block" id="bind-dn-help">
-              {t('public~DN to bind with during the search phase.')}
+              {t('DN to bind with during the search phase.')}
             </div>
           </div>
           <div className="form-group">
-            <label htmlFor="bind-password">{t('public~Bind password')}</label>
+            <label htmlFor="bind-password">{t('Bind password')}</label>
             <span className="pf-v6-c-form-control">
               <input
                 type="password"
-                aria-label={t('public~Bind password')}
+                aria-label={t('Bind password')}
                 onChange={(e) => setBindPassword(e.currentTarget.value)}
                 value={bindPassword}
                 id="bind-password"
@@ -222,54 +222,52 @@ export const AddLDAPPage = () => {
               />
             </span>
             <div className="help-block" id="bind-password-help">
-              {t('public~Password to bind with during the search phase.')}
+              {t('Password to bind with during the search phase.')}
             </div>
           </div>
           <div className="co-form-section__separator" />
           <div>
             <Title headingLevel="h3" className="pf-v6-u-mb-sm">
-              {t('public~Attributes')}
+              {t('Attributes')}
             </Title>
-            <p>{t('public~Attributes map LDAP attributes to identities.')}</p>
+            <p>{t('Attributes map LDAP attributes to identities.')}</p>
             <ListInput
-              label={t('public~ID')}
+              label={t('ID')}
               id="ldap-attribute-id"
               required
               initialValues={attributesID}
               onChange={(c: string[]) => setAttributesID(c)}
-              helpText={t(
-                'public~The list of attributes whose values should be used as the user ID.',
-              )}
+              helpText={t('The list of attributes whose values should be used as the user ID.')}
             />
             <ListInput
-              label={t('public~Preferred username')}
+              label={t('Preferred username')}
               id="ldap-attribute-preferred-username"
               initialValues={attributesPreferredUsername}
               onChange={(c: string[]) => setAttributesPreferredUsername(c)}
               helpText={t(
-                'public~The list of attributes whose values should be used as the preferred username.',
+                'The list of attributes whose values should be used as the preferred username.',
               )}
             />
             <ListInput
-              label={t('public~Name')}
+              label={t('Name')}
               id="ldap-attribute-name"
               initialValues={attributesName}
               onChange={(c: string[]) => setAttributesName(c)}
               helpText={t(
-                'public~The list of attributes whose values should be used as the display name.',
+                'The list of attributes whose values should be used as the display name.',
               )}
             />
             <ListInput
-              label={t('public~Email')}
+              label={t('Email')}
               id="ldap-attribute-email"
               onChange={(c: string[]) => setAttributesEmail(c)}
               helpText={t(
-                'public~The list of attributes whose values should be used as the email address.',
+                'The list of attributes whose values should be used as the email address.',
               )}
             />
             <div className="co-form-section__separator" />
             <Title headingLevel="h3" className="pf-v6-u-mb-sm">
-              {t('public~More options')}
+              {t('More options')}
             </Title>
             <IDPCAFileInput
               id="ca-file-input"
@@ -280,10 +278,10 @@ export const AddLDAPPage = () => {
           <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
             <ActionGroup className="pf-v6-c-form">
               <Button type="submit" variant="primary" data-test-id="add-idp" data-test="add-idp">
-                {t('public~Add')}
+                {t('Add')}
               </Button>
               <Button type="button" variant="secondary" onClick={() => navigate(-1)}>
-                {t('public~Cancel')}
+                {t('Cancel')}
               </Button>
             </ActionGroup>
           </ButtonBar>

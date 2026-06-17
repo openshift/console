@@ -35,37 +35,37 @@ const tableColumnClasses = {
 
 const HostsTableHeader = (t: TFunction) => () => [
   {
-    title: t('metal3-plugin~Name'),
+    title: t('Name'),
     sortField: 'host.metadata.name',
     transforms: [sortable],
     props: { className: tableColumnClasses.name },
   },
   {
-    title: t('metal3-plugin~Status'),
+    title: t('Status'),
     sortField: 'status.status',
     transforms: [sortable],
     props: { className: tableColumnClasses.status },
   },
   {
-    title: t('metal3-plugin~Node'),
+    title: t('Node'),
     sortField: 'node.metadata.name',
     transforms: [sortable],
     props: { className: tableColumnClasses.node },
   },
   {
-    title: t('metal3-plugin~Role'),
+    title: t('Role'),
     sortField: 'machine.metadata.labels["machine.openshift.io/cluster-api-machine-role"]',
     transforms: [sortable],
     props: { className: tableColumnClasses.role },
   },
   {
-    title: t('metal3-plugin~Management Address'),
+    title: t('Management Address'),
     sortField: 'host.spec.bmc.address',
     transforms: [sortable],
     props: { className: tableColumnClasses.address },
   },
   {
-    title: t('metal3-plugin~Serial Number'),
+    title: t('Serial Number'),
     sortField: 'host.status.hardware.systemVendor.serialNumber',
     transforms: [sortable],
     props: { className: tableColumnClasses.serialNumber },
@@ -133,12 +133,12 @@ type BareMetalHostsTableProps = ComponentProps<typeof Table> & {
 };
 
 const BareMetalHostsTable: FC<BareMetalHostsTableProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('metal3-plugin');
   return (
     <Table
       {...props}
       defaultSortField="host.metadata.name"
-      aria-label={t('metal3-plugin~Bare Metal Hosts')}
+      aria-label={t('Bare Metal Hosts')}
       Header={HostsTableHeader(t)}
       Row={HostsTableRow}
       virtualize

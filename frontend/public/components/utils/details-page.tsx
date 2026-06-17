@@ -2,7 +2,7 @@ import type { ComponentType, FC, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import { Button, DescriptionList } from '@patternfly/react-core';
-import { PencilAltIcon } from '@patternfly/react-icons';
+import { RhUiEditIcon } from '@patternfly/react-icons';
 import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpgrade';
 import { useAnnotationsModal } from '@console/shared/src/hooks/useAnnotationsModal';
 import { useLabelsModal } from '@console/shared/src/hooks/useLabelsModal';
@@ -59,7 +59,7 @@ export const ResourceSummary: FC<ResourceSummaryProps> = ({
   podSelector = 'spec.selector',
   nodeSelector = 'spec.template.spec.nodeSelector',
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { metadata } = resource;
   const reference = referenceFor(resource);
   const model = modelFor(reference);
@@ -81,13 +81,9 @@ export const ResourceSummary: FC<ResourceSummaryProps> = ({
 
   return (
     <DescriptionList data-test-id="resource-summary">
-      <DetailsItem
-        label={t('public~Name')}
-        obj={resource}
-        path={customPathName || 'metadata.name'}
-      />
+      <DetailsItem label={t('Name')} obj={resource} path={customPathName || 'metadata.name'} />
       {metadata.namespace && (
-        <DetailsItem label={t('public~Namespace')} obj={resource} path="metadata.namespace">
+        <DetailsItem label={t('Namespace')} obj={resource} path="metadata.namespace">
           <ResourceLink
             kind="Namespace"
             name={metadata.namespace}
@@ -97,7 +93,7 @@ export const ResourceSummary: FC<ResourceSummaryProps> = ({
         </DetailsItem>
       )}
       <DetailsItem
-        label={t('public~Labels')}
+        label={t('Labels')}
         obj={resource}
         path="metadata.labels"
         onEdit={labelsModalLauncher}
@@ -107,7 +103,7 @@ export const ResourceSummary: FC<ResourceSummaryProps> = ({
         <LabelList kind={reference} labels={metadata.labels} />
       </DetailsItem>
       {showPodSelector && (
-        <DetailsItem label={t('public~Pod selector')} obj={resource} path={podSelector}>
+        <DetailsItem label={t('Pod selector')} obj={resource} path={podSelector}>
           <Selector
             selector={_.get(resource, podSelector)}
             namespace={_.get(resource, 'metadata.namespace')}
@@ -115,15 +111,15 @@ export const ResourceSummary: FC<ResourceSummaryProps> = ({
         </DetailsItem>
       )}
       {showNodeSelector && (
-        <DetailsItem label={t('public~Node selector')} obj={resource} path={nodeSelector}>
-          <Selector kind={t('public~Node')} selector={_.get(resource, nodeSelector)} />
+        <DetailsItem label={t('Node selector')} obj={resource} path={nodeSelector}>
+          <Selector kind={t('Node')} selector={_.get(resource, nodeSelector)} />
         </DetailsItem>
       )}
       {showTolerations && (
-        <DetailsItem label={t('public~Tolerations')} obj={resource} path={tolerationsPath}>
+        <DetailsItem label={t('Tolerations')} obj={resource} path={tolerationsPath}>
           {canUpdate ? (
             <Button
-              icon={<PencilAltIcon />}
+              icon={<RhUiEditIcon />}
               iconPosition="end"
               type="button"
               isInline
@@ -135,18 +131,18 @@ export const ResourceSummary: FC<ResourceSummaryProps> = ({
               }}
               variant="link"
             >
-              {t('public~{{count}} toleration', { count: _.size(tolerations) })}
+              {t('{{count}} toleration', { count: _.size(tolerations) })}
             </Button>
           ) : (
-            t('public~{{count}} toleration', { count: _.size(tolerations) })
+            t('{{count}} toleration', { count: _.size(tolerations) })
           )}
         </DetailsItem>
       )}
       {showAnnotations && (
-        <DetailsItem label={t('public~Annotations')} obj={resource} path="metadata.annotations">
+        <DetailsItem label={t('Annotations')} obj={resource} path="metadata.annotations">
           {canUpdate ? (
             <Button
-              icon={<PencilAltIcon />}
+              icon={<RhUiEditIcon />}
               iconPosition="end"
               data-test="edit-annotations"
               type="button"
@@ -154,18 +150,18 @@ export const ResourceSummary: FC<ResourceSummaryProps> = ({
               onClick={annotationsModalLauncher}
               variant="link"
             >
-              {t('public~{{count}} annotation', { count: _.size(metadata.annotations) })}
+              {t('{{count}} annotation', { count: _.size(metadata.annotations) })}
             </Button>
           ) : (
-            t('public~{{count}} annotation', { count: _.size(metadata.annotations) })
+            t('{{count}} annotation', { count: _.size(metadata.annotations) })
           )}
         </DetailsItem>
       )}
       {children}
-      <DetailsItem label={t('public~Created at')} obj={resource} path="metadata.creationTimestamp">
+      <DetailsItem label={t('Created at')} obj={resource} path="metadata.creationTimestamp">
         <Timestamp timestamp={metadata.creationTimestamp} />
       </DetailsItem>
-      <DetailsItem label={t('public~Owner')} obj={resource} path="metadata.ownerReferences">
+      <DetailsItem label={t('Owner')} obj={resource} path="metadata.ownerReferences">
         <OwnerReferences resource={resource} />
       </DetailsItem>
     </DescriptionList>
@@ -173,17 +169,17 @@ export const ResourceSummary: FC<ResourceSummaryProps> = ({
 };
 
 export const ResourcePodCount: FC<ResourcePodCountProps> = ({ resource }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <>
       <DetailsItem
-        label={t('public~Current count')}
+        label={t('Current count')}
         obj={resource}
         path="status.replicas"
         defaultValue="0"
       />
       <DetailsItem
-        label={t('public~Desired count')}
+        label={t('Desired count')}
         obj={resource}
         path="spec.replicas"
         defaultValue="0"
@@ -193,10 +189,10 @@ export const ResourcePodCount: FC<ResourcePodCountProps> = ({ resource }) => {
 };
 
 export const RuntimeClass: FC<RuntimeClassProps> = ({ obj, path }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <DetailsItem
-      label={t('public~Runtime class')}
+      label={t('Runtime class')}
       obj={obj}
       path={path || 'spec.template.spec.runtimeClassName'}
       hideEmpty
@@ -205,11 +201,11 @@ export const RuntimeClass: FC<RuntimeClassProps> = ({ obj, path }) => {
 };
 
 export const UpstreamConfigDetailsItem: FC<UpstreamConfigDetailsItemProps> = ({ resource }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const canUpgrade = useCanClusterUpgrade();
   const launchModal = useOverlay();
   return (
-    <DetailsItem label={t('public~Upstream configuration')} obj={resource} path="spec.upstream">
+    <DetailsItem label={t('Upstream configuration')} obj={resource} path="spec.upstream">
       <div>
         <Button
           type="button"
@@ -223,10 +219,10 @@ export const UpstreamConfigDetailsItem: FC<UpstreamConfigDetailsItemProps> = ({ 
           }}
           variant="link"
           isDisabled={!canUpgrade}
-          icon={<PencilAltIcon />}
+          icon={<RhUiEditIcon />}
           iconPosition="end"
         >
-          {resource?.spec?.upstream || t('public~Default update server')}
+          {resource?.spec?.upstream || t('Default update server')}
         </Button>
       </div>
     </DetailsItem>

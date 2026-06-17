@@ -14,18 +14,18 @@ type ListPageProps = ComponentProps<typeof ListPage>;
 type BuildRunListPageProps = Omit<ListPageProps, 'title' | 'kind' | 'ListComponent' | 'rowFilters'>;
 
 const BuildRunListPage: FC<BuildRunListPageProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('shipwright-plugin');
 
   const filters: RowFilter<BuildRun>[] = [
     {
       type: 'status',
-      filterGroupName: t('shipwright-plugin~Status'),
+      filterGroupName: t('Status'),
       items: [
-        { id: ComputedBuildRunStatus.PENDING, title: t('shipwright-plugin~Pending') },
-        { id: ComputedBuildRunStatus.RUNNING, title: t('shipwright-plugin~Running') },
-        { id: ComputedBuildRunStatus.SUCCEEDED, title: t('shipwright-plugin~Succeeded') },
-        { id: ComputedBuildRunStatus.FAILED, title: t('shipwright-plugin~Failed') },
-        { id: ComputedBuildRunStatus.UNKNOWN, title: t('shipwright-plugin~Unknown') },
+        { id: ComputedBuildRunStatus.PENDING, title: t('Pending') },
+        { id: ComputedBuildRunStatus.RUNNING, title: t('Running') },
+        { id: ComputedBuildRunStatus.SUCCEEDED, title: t('Succeeded') },
+        { id: ComputedBuildRunStatus.FAILED, title: t('Failed') },
+        { id: ComputedBuildRunStatus.UNKNOWN, title: t('Unknown') },
       ],
       reducer: getBuildRunStatus,
       filter: (filterValue, buildRun: BuildRun): boolean => {
@@ -39,7 +39,7 @@ const BuildRunListPage: FC<BuildRunListPageProps> = (props) => {
 
   return (
     <ListPage
-      title={t('shipwright-plugin~BuildRuns')}
+      title={t('BuildRuns')}
       kind={referenceForModel(buildRunModel)}
       ListComponent={BuildRunTable}
       rowFilters={filters}

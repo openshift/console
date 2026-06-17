@@ -98,11 +98,11 @@ const getServiceMonitorDataViewRows = (data, columns) => {
 };
 
 const useServiceMonitorColumns = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return useMemo(
     () => [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: serviceMonitorTableColumnInfo[0].id,
         sort: 'metadata.name',
         props: {
@@ -111,7 +111,7 @@ const useServiceMonitorColumns = () => {
         },
       },
       {
-        title: t('public~Namespace'),
+        title: t('Namespace'),
         id: serviceMonitorTableColumnInfo[1].id,
         sort: 'metadata.namespace',
         props: {
@@ -119,7 +119,7 @@ const useServiceMonitorColumns = () => {
         },
       },
       {
-        title: t('public~Service Selector'),
+        title: t('Service Selector'),
         id: serviceMonitorTableColumnInfo[2].id,
         sort: 'spec.selector',
         props: {
@@ -128,7 +128,7 @@ const useServiceMonitorColumns = () => {
         },
       },
       {
-        title: t('public~Monitoring Namespace'),
+        title: t('Monitoring Namespace'),
         id: serviceMonitorTableColumnInfo[3].id,
         sort: 'spec.namespaceSelector',
         props: {

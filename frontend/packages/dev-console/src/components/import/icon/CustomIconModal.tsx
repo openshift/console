@@ -21,7 +21,7 @@ import {
   Tooltip,
   ValidatedOptions,
 } from '@patternfly/react-core';
-import { ExclamationCircleIcon, TimesIcon, UploadIcon } from '@patternfly/react-icons';
+import { RhUiErrorFillIcon, RhUiCloseIcon, RhUiUploadIcon } from '@patternfly/react-icons';
 import { t_global_font_line_height_body as pfLineHeight } from '@patternfly/react-tokens/dist/esm/t_global_font_line_height_body';
 import { t_global_font_size_body_default as pfFontSize } from '@patternfly/react-tokens/dist/esm/t_global_font_size_body_default';
 import { useTranslation } from 'react-i18next';
@@ -147,7 +147,7 @@ export const CustomIconModal: FC<CustomIconModalProps> = ({
             }}
           >
             <MultipleFileUploadMain
-              titleIcon={<UploadIcon />}
+              titleIcon={<RhUiUploadIcon />}
               titleText={t('Drag and drop an icon here')}
               titleTextSeparator={t('or')}
               browseButtonText={t('Upload')}
@@ -183,7 +183,7 @@ export const CustomIconModal: FC<CustomIconModalProps> = ({
                     }}
                     isDisabled={!url}
                   >
-                    <TimesIcon />
+                    <RhUiCloseIcon />
                   </Button>
                 </Tooltip>
               </InputGroupItem>
@@ -197,7 +197,7 @@ export const CustomIconModal: FC<CustomIconModalProps> = ({
             >
               {(uploadError || !validUrl) && (
                 <HelperText>
-                  <HelperTextItem variant={ValidatedOptions.error} icon={<ExclamationCircleIcon />}>
+                  <HelperTextItem variant={ValidatedOptions.error} icon={<RhUiErrorFillIcon />}>
                     {validUrl && uploadError && getDraggedErrorMessage(uploadError)}
                     {!validUrl &&
                       t(

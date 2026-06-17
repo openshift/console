@@ -6,7 +6,7 @@ import { LAST_LANGUAGE_LOCAL_STORAGE_KEY } from './const';
 import { getLastLanguage } from './getLastLanguage';
 
 export const useLanguage = (preferredLanguage: string, preferredLanguageLoaded: boolean) => {
-  const { i18n } = useTranslation();
+  const { i18n } = useTranslation('console-app');
   const { setResourceBundle } = useQuickStartContext();
 
   useEffect(() => {

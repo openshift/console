@@ -70,7 +70,7 @@ export const CatalogView: FC<CatalogViewProps> = ({
   hideSidebar,
   sortFilterGroups,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const navigate = useNavigate();
   const queryParams = useQueryParams();
   const activeCategoryId = queryParams.get(CatalogQueryParams.CATEGORY) ?? ALL_CATEGORY;
@@ -159,8 +159,8 @@ export const CatalogView: FC<CatalogViewProps> = ({
   }, []);
 
   const catalogCategories = useMemo<CatalogCategory[]>(() => {
-    const allCategory = { id: ALL_CATEGORY, label: t('console-shared~All items') };
-    const otherCategory = { id: OTHER_CATEGORY, label: t('console-shared~Other') };
+    const allCategory = { id: ALL_CATEGORY, label: t('All items') };
+    const otherCategory = { id: OTHER_CATEGORY, label: t('Other') };
     const sortedCategories = (categories ?? [])
       .filter((cat) => cat && cat.id !== ALL_CATEGORY && cat.id !== OTHER_CATEGORY)
       .sort((a, b) => (a.label ?? '').localeCompare(b.label ?? '') ?? 0);

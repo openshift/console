@@ -9,17 +9,14 @@ type ClusterConfigurationFormProps = {
 };
 
 const ClusterConfigurationForm: FC<ClusterConfigurationFormProps> = ({ items }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
 
   if (!items?.length) {
     return null;
   }
 
   return (
-    <Form
-      aria-label={t('console-app~Cluster configuration')}
-      onSubmit={(event) => event.preventDefault()}
-    >
+    <Form aria-label={t('Cluster configuration')} onSubmit={(event) => event.preventDefault()}>
       {items.map((item) => (
         <ClusterConfigurationField key={item.id} item={item} />
       ))}

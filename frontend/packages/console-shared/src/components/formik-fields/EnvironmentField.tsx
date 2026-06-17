@@ -26,7 +26,7 @@ export const EnvironmentField: FC<EnvironmentFieldProps> = ({
     },
   } = props;
   const { setFieldValue, values } = useFormikContext<FormikValues>();
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const launchModal = useOverlay();
   const fieldId = getFieldId(props.name, 'env-input');
   const environmentVariables = useMemo(() => {
@@ -82,9 +82,9 @@ export const EnvironmentField: FC<EnvironmentFieldProps> = ({
     <FormGroup fieldId={fieldId} label={label} isRequired={required}>
       <NameValueEditor
         nameValuePairs={nameValue}
-        valueString={t('console-shared~Value')}
-        nameString={t('console-shared~Name')}
-        addString={t('console-shared~Add value')}
+        valueString={t('Value')}
+        nameString={t('Name')}
+        addString={t('Add value')}
         readOnly={false}
         allowSorting={false}
         updateParentData={handleNameValuePairs}

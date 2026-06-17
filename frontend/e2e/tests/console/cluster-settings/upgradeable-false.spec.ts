@@ -1,6 +1,7 @@
 import { test, expect } from '../../../fixtures';
 import { ClusterSettingsPage } from '../../../pages/cluster-settings-page';
 import { clusterVersionWithUpgradeableFalse } from '../../../mocks/cluster-version';
+import { stubWebSocketWatches } from './cluster-settings-test-utils';
 
 const CLUSTER_VERSION_URL = '**/apis/config.openshift.io/v1/clusterversions/version';
 
@@ -8,13 +9,13 @@ test.describe('Cluster Settings when ClusterVersion Upgradeable=False', { tag: [
   test('displays alerts and badges for blocked updates', async ({ page }) => {
     const clusterSettings = new ClusterSettingsPage(page);
 
-    await test.step('Setup: Mock cluster version with Upgradeable=False', async () => {
-      await page.route(CLUSTER_VERSION_URL, async (route) => {
-        await route.fulfill({
-          status: 200,
-          contentType: 'application/json',
-          body: JSON.stringify(clusterVersionWithUpgradeableFalse),
-        });
+    await stubWebSocketWatches(page, ['config.openshift.io/v1/clusterversions']);
+
+    await page.route(CLUSTER_VERSION_URL, async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(clusterVersionWithUpgradeableFalse),
       });
     });
 

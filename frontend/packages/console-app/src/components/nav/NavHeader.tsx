@@ -2,8 +2,8 @@ import type { FC, MouseEvent, Ref } from 'react';
 import { useMemo, useState, useCallback } from 'react';
 import type { MenuToggleElement } from '@patternfly/react-core';
 import { MenuToggle, Select, SelectList, SelectOption, Title } from '@patternfly/react-core';
-import { CogsIcon } from '@patternfly/react-icons';
-import { t } from 'i18next';
+import { RhUiGearGroupFillIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
 import type { Perspective } from '@console/dynamic-plugin-sdk';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { AsyncComponent } from '@console/internal/components/utils/async';
@@ -49,6 +49,7 @@ const NavHeader: FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
   const [activePerspective, setActivePerspective] = useActivePerspective();
   const [isPerspectiveDropdownOpen, setPerspectiveDropdownOpen] = useState(false);
   const perspectiveExtensions = usePerspectives();
+  const { t } = useTranslation('console-app');
 
   const togglePerspectiveOpen = useCallback(() => {
     setPerspectiveDropdownOpen((isOpen) => !isOpen);
@@ -122,7 +123,7 @@ const NavHeader: FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
   ) : (
     <div data-test-id="perspective-switcher-toggle" id="core-platform-perspective">
       <Title headingLevel="h2" size="md">
-        <CogsIcon /> {t('console-app~Core platform')}
+        <RhUiGearGroupFillIcon /> {t('Core platform')}
       </Title>
     </div>
   );

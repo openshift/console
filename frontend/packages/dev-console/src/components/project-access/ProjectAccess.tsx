@@ -44,7 +44,7 @@ const ProjectAccess: FC<ProjectAccessProps> = ({
   roles,
   fullFormView,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const navigate = useNavigate();
 
   const userRoleBindings: UserRoleBinding[] = useMemo(
@@ -115,7 +115,7 @@ const ProjectAccess: FC<ProjectAccessProps> = ({
           values: {
             projectAccess: values.projectAccess,
           },
-          status: { success: t('devconsole~Successfully updated the project access.') },
+          status: { success: t('Successfully updated the project access.') },
         });
       })
       .catch((err) => {
@@ -131,7 +131,7 @@ const ProjectAccess: FC<ProjectAccessProps> = ({
   const projectAccessForm = (
     <>
       <PageHeading
-        title={fullFormView ? t('devconsole~Project access') : null}
+        title={fullFormView ? t('Project access') : null}
         data-test="project-access-page"
         helpText={
           <>
@@ -181,7 +181,7 @@ const ProjectAccess: FC<ProjectAccessProps> = ({
 
   return fullFormView ? (
     <NamespacedPage hideApplications variant={NamespacedPageVariants.light} disabled>
-      <DocumentTitle>{t('devconsole~Project access')}</DocumentTitle>
+      <DocumentTitle>{t('Project access')}</DocumentTitle>
       {projectAccessForm}
     </NamespacedPage>
   ) : (

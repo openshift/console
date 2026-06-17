@@ -14,11 +14,11 @@ import { ProjectModel } from '../models';
 import { K8sResourceKind } from '../module/k8s/types';
 import { useCreateNamespaceOrProjectModal } from '@console/shared/src/hooks/useCreateNamespaceOrProjectModal';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
-import { ClusterIcon } from '@patternfly/react-icons';
+import { RhStandardHandWavingIcon } from '@patternfly/react-icons';
 import { ExternalLinkButton } from '@console/shared/src/components/links/ExternalLinkButton';
 
 export const OpenShiftGettingStarted: FC<OpenShiftGettingStartedProps> = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const [, setActiveNamespace] = useActiveNamespace();
   const [perspective] = useActivePerspective();
   const canCreateNamespace = useFlag(FLAGS.CAN_CREATE_NS);
@@ -39,7 +39,7 @@ export const OpenShiftGettingStarted: FC<OpenShiftGettingStartedProps> = () => {
   const primaryActions = canCreate
     ? [
         <Button key="create-project-action" variant={ButtonVariant.primary} onClick={onClickCreate}>
-          {t('public~Create a new project')}
+          {t('Create a new project')}
         </Button>,
       ]
     : [];
@@ -51,29 +51,28 @@ export const OpenShiftGettingStarted: FC<OpenShiftGettingStartedProps> = () => {
       component="a"
       href="/command-line-tools"
     >
-      {t('public~Download command-line tools')}
+      {t('Download command-line tools')}
     </Button>,
     <ExternalLinkButton key="visit-docs" variant={ButtonVariant.link} href={openshiftHelpBase}>
-      {t('public~View documentation')}
+      {t('View documentation')}
     </ExternalLinkButton>,
   ];
   return (
     <ConsoleEmptyState
       variant={EmptyStateVariant.sm}
-      icon={ClusterIcon}
-      title={t('public~Hello, world')}
+      icon={RhStandardHandWavingIcon}
+      title={t('Hello, world')}
       primaryActions={primaryActions}
       secondaryActions={secondaryActions}
     >
       {canCreate ? (
-        <p>{t('public~To get started, create a project for your application.')}</p>
+        <p>{t('To get started, create a project for your application.')}</p>
       ) : (
         <p>
           {t(
-            "public~To get started, you'll need a project. Currently, you can't create or access any projects.",
+            "To get started, you'll need a project. Currently, you can't create or access any projects.",
           )}
-          {!createProjectMessage &&
-            t("public~ You'll need to contact a cluster administrator for help.")}
+          {!createProjectMessage && t(" You'll need to contact a cluster administrator for help.")}
         </p>
       )}
       {createProjectMessage && (

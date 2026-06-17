@@ -28,7 +28,7 @@ const RecentEvent: FC<{ projectName: string; viewEvents: string }> = ({
   projectName,
   viewEvents,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const [eventsData, eventsLoaded, eventsLoadError] = useK8sWatchResource<EventKind[]>(
     projectName
@@ -55,7 +55,7 @@ const RecentEvent: FC<{ projectName: string; viewEvents: string }> = ({
           <Divider />
           <CardFooter>
             <Link to={viewEvents} data-test="events-view-all-link">
-              {t('public~View all events')}
+              {t('View all events')}
             </Link>
           </CardFooter>
         </>
@@ -146,12 +146,12 @@ export const ActivityCard = memo(() => {
   const { obj } = useContext(ProjectDashboardContext);
   const projectName = getName(obj);
   const viewEvents = `/k8s/ns/${projectName}/events`;
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <>
       <Card data-test-id="activity-card">
         <CardHeader>
-          <CardTitle>{t('public~Activity')}</CardTitle>
+          <CardTitle>{t('Activity')}</CardTitle>
         </CardHeader>
         <ActivityBody className="co-project-dashboard__activity-body">
           <OngoingActivity projectName={projectName} />

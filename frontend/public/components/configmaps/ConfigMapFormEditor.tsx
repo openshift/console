@@ -37,16 +37,14 @@ export const ConfigMapFormEditor: FC<FormikProps<any> & ConfigMapFormEditorProps
   setSubmitting,
   errors,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { setFieldValue } = useFormikContext<ConfigMapFormInitialValues>();
   const { editorType, formData, yamlData, formReloadCount, isCreateFlow, resourceVersion } = values;
 
   const LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY = 'console.configMapForm.editor.lastView';
   const isStale = !!configMap && configMap?.metadata?.resourceVersion !== resourceVersion;
   const immutableCfg = !!configMap && configMap.immutable;
-  const immutableCfgError = t(
-    'public~Cannot update the object when immutable field is set to true',
-  );
+  const immutableCfgError = t('Cannot update the object when immutable field is set to true');
   const disableSubmit =
     immutableCfg ||
     (editorType === EditorType.YAML ? !dirty : !dirty || !_.isEmpty(errors)) ||
@@ -89,7 +87,7 @@ export const ConfigMapFormEditor: FC<FormikProps<any> & ConfigMapFormEditorProps
         <FormHeader
           title={title}
           helpText={t(
-            'public~Config maps hold key-value pairs that can be used in pods to read application configuration.',
+            'Config maps hold key-value pairs that can be used in pods to read application configuration.',
           )}
         />
         <SyncedEditorField
@@ -115,10 +113,10 @@ export const ConfigMapFormEditor: FC<FormikProps<any> & ConfigMapFormEditorProps
         errorMessage={status?.submitError || (immutableCfg && immutableCfgError)}
         successMessage={status?.submitSuccess}
         showAlert={isStale}
-        infoTitle={t('public~This object has been updated.')}
-        infoMessage={t('public~Click reload to see the new version.')}
+        infoTitle={t('This object has been updated.')}
+        infoMessage={t('Click reload to see the new version.')}
         isSubmitting={isSubmitting}
-        submitLabel={isCreateFlow ? t('public~Create') : t('public~Save')}
+        submitLabel={isCreateFlow ? t('Create') : t('Save')}
         disableSubmit={disableSubmit}
         handleCancel={handleCancel}
         handleDownload={editorType === EditorType.YAML && (() => downloadYaml(yamlData))}

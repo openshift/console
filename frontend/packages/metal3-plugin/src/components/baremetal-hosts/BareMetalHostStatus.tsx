@@ -42,7 +42,7 @@ const hostStatusActions = (t: TFunction) => ({
           host.metadata.namespace,
         )}/edit?powerMgmt`}
       >
-        {t('metal3-plugin~Add credentials')}
+        {t('Add credentials')}
       </Link>
     </div>
   ),
@@ -56,7 +56,7 @@ const BareMetalHostStatus: FC<BareMetalHostStatusProps> = ({
   nodeMaintenance,
   className,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('metal3-plugin');
   const statusTitle = t(titleKey) || status;
   const action = hostStatusActions(t)[status]?.(host);
   switch (true) {

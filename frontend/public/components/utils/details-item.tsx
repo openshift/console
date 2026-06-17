@@ -1,7 +1,7 @@
 import type { FC, ReactNode, MouseEvent } from 'react';
 import * as _ from 'lodash';
 import { css } from '@patternfly/react-styles';
-import { PencilAltIcon } from '@patternfly/react-icons';
+import { RhUiEditIcon } from '@patternfly/react-icons';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -40,7 +40,7 @@ const PropertyPath: FC<{ kind: string; path: string | string[] }> = ({ kind, pat
 const EditButton: FC<EditButtonProps> = (props) => {
   return (
     <Button
-      icon={<PencilAltIcon />}
+      icon={<RhUiEditIcon />}
       iconPosition="end"
       type="button"
       variant="link"
@@ -73,7 +73,7 @@ export const DetailsItem: FC<DetailsItemProps> = ({
   path,
   valueClassName,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const [model] = useK8sModel(obj ? referenceFor(obj) : '');
   const hide = hideEmpty && _.isEmpty(_.get(obj, path));
   const popoverContent: string = description ?? getPropertyDescription(model, path);
@@ -112,7 +112,7 @@ export const DetailsItem: FC<DetailsItemProps> = ({
           {editable && editAsGroup && (
             <SplitItem>
               <EditButton testId={label} onClick={onEdit}>
-                {t('public~Edit')}
+                {t('Edit')}
               </EditButton>
             </SplitItem>
           )}

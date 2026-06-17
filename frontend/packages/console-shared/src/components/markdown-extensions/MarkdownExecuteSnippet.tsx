@@ -14,7 +14,7 @@ type ExecuteSnippetProps = {
 };
 
 const ExecuteSnippet: FC<ExecuteSnippetProps> = ({ element, rootSelector, docContext }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const setCloudShellCommand = useCloudShellCommandDispatch();
   const [showRunning, setShowRunning] = useState<boolean>(false);
   const textToExecute = useMemo(() => {
@@ -37,11 +37,7 @@ const ExecuteSnippet: FC<ExecuteSnippetProps> = ({ element, rootSelector, docCon
   return (
     <Tooltip
       reference={() => element}
-      content={
-        showRunning
-          ? t('console-shared~Running in Web Terminal')
-          : t('console-shared~Run in Web Terminal')
-      }
+      content={showRunning ? t('Running in Web Terminal') : t('Run in Web Terminal')}
       onShow={() => {
         element.removeAttribute('data-executed');
       }}

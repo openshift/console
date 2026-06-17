@@ -11,7 +11,7 @@ type QuotaSummaryProps = {
 };
 
 const QuotaSummary: FC<QuotaSummaryProps> = ({ hard, used }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const resourcesAtQuota = Object.keys(hard || {}).reduce(
     (acc, resource) => (getUsedPercentage(hard[resource], used?.[resource]) >= 100 ? acc + 1 : acc),
     0,
@@ -19,15 +19,15 @@ const QuotaSummary: FC<QuotaSummaryProps> = ({ hard, used }) => {
 
   return (
     <div className="co-resource-quota__summary">
-      {t('console-shared~{{count}} resource', { count: Object.keys(hard || {}).length })}
+      {t('{{count}} resource', { count: Object.keys(hard || {}).length })}
       {', '}
       {resourcesAtQuota > 0 ? (
         <>
           <YellowExclamationTriangleIcon />{' '}
-          {t('console-shared~{{count}} resource reached quota', { count: resourcesAtQuota })}
+          {t('{{count}} resource reached quota', { count: resourcesAtQuota })}
         </>
       ) : (
-        t('console-shared~none are at quota')
+        t('none are at quota')
       )}
     </div>
   );

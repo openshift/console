@@ -11,7 +11,7 @@ import {
 } from '../../../utils/samples';
 
 export const normalizeConsoleSamples = (activeNamespace: string, t: ConsoleTFunction) => {
-  const createLabel = t('devconsole~Create');
+  const createLabel = t('Create');
 
   return (sample: ConsoleSample): CatalogItem<ConsoleSample> | null => {
     const href = createSampleLink(sample, activeNamespace);
@@ -48,7 +48,7 @@ export const normalizeConsoleSamples = (activeNamespace: string, t: ConsoleTFunc
 };
 
 export const useConsoleSamplesCatalogProvider = ({ namespace }): [CatalogItem[], boolean, any] => {
-  const { i18n, t } = useTranslation();
+  const { i18n, t } = useTranslation('devconsole');
   const preferredLanguage = i18n.language;
   const [allSamples, loaded, loadedError] = useSamples();
 

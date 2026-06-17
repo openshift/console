@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { InProgressIcon } from '@patternfly/react-icons';
+import { RhUiInProgressIcon } from '@patternfly/react-icons';
 import type { StatusComponentProps } from '../../../extensions/console-types';
 import GenericStatus from './GenericStatus';
 import { RedExclamationCircleIcon, GreenCheckCircleIcon, BlueInfoCircleIcon } from './icons';
@@ -52,7 +52,7 @@ InfoStatus.displayName = 'InfoStatus';
  * ```
  */
 export const ProgressStatus: FC<StatusComponentProps> = (props) => (
-  <GenericStatus {...props} Icon={InProgressIcon} />
+  <GenericStatus {...props} Icon={RhUiInProgressIcon} />
 );
 ProgressStatus.displayName = 'ProgressStatus';
 

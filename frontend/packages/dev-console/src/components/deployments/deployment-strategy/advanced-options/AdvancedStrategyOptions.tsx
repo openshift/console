@@ -13,7 +13,7 @@ const AdvancedStrategyOptions: FC<{
   dataAttribute: string;
   resourceObj: K8sResourceKind;
 }> = ({ dataAttribute, resourceObj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const {
     values: {
       formData: {
@@ -23,8 +23,8 @@ const AdvancedStrategyOptions: FC<{
   } = useFormikContext<FormikValues>();
   return (
     <ExpandCollapse
-      textExpanded={t('devconsole~Hide additional parameters and lifecycle hooks')}
-      textCollapsed={t('devconsole~Show additional parameters and lifecycle hooks')}
+      textExpanded={t('Hide additional parameters and lifecycle hooks')}
+      textCollapsed={t('Show additional parameters and lifecycle hooks')}
     >
       <FormSection>
         {type === DeploymentStrategyType.rollingParams && (
@@ -32,29 +32,29 @@ const AdvancedStrategyOptions: FC<{
             <InputField
               name="formData.deploymentStrategy.rollingParams.updatePeriodSeconds"
               style={{ maxWidth: 'unset' }}
-              label={t('devconsole~Update Period')}
+              label={t('Update Period')}
               type={TextInputTypes.number}
             />
             <InputField
               name="formData.deploymentStrategy.rollingParams.intervalSeconds"
               style={{ maxWidth: 'unset' }}
-              label={t('devconsole~Interval')}
+              label={t('Interval')}
               type={TextInputTypes.number}
             />
           </>
         )}
         <LifecycleHookField
-          title={t('devconsole~Pre Lifecycle Hook')}
-          subTitle={t('devconsole~Pre hooks execute before the deployment begins.')}
+          title={t('Pre Lifecycle Hook')}
+          subTitle={t('Pre hooks execute before the deployment begins.')}
           dataAttribute={dataAttribute}
           resourceObj={resourceObj}
           lifecycleHookName="pre"
         />
         {type === DeploymentStrategyType.recreateParams && (
           <LifecycleHookField
-            title={t('devconsole~Mid Lifecycle Hook')}
+            title={t('Mid Lifecycle Hook')}
             subTitle={t(
-              'devconsole~Mid hooks execute after the previous deployment is scaled down to zero and before the first pod of the new deployment is created.',
+              'Mid hooks execute after the previous deployment is scaled down to zero and before the first pod of the new deployment is created.',
             )}
             dataAttribute={dataAttribute}
             resourceObj={resourceObj}
@@ -62,8 +62,8 @@ const AdvancedStrategyOptions: FC<{
           />
         )}
         <LifecycleHookField
-          title={t('devconsole~Post Lifecycle Hook')}
-          subTitle={t('devconsole~Post hooks execute after the deployment strategy completes.')}
+          title={t('Post Lifecycle Hook')}
+          subTitle={t('Post hooks execute after the deployment strategy completes.')}
           dataAttribute={dataAttribute}
           resourceObj={resourceObj}
           lifecycleHookName="post"

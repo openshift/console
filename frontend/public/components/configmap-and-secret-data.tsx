@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { useState, useMemo } from 'react';
 import { Base64 } from 'js-base64';
 import { saveAs } from 'file-saver';
-import { EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';
+import { RhUiViewIcon, RhUiViewOffIcon } from '@patternfly/react-icons';
 import {
   Button,
   DescriptionList,
@@ -17,10 +17,10 @@ import { SectionHeading } from './utils/headings';
 import * as ITOB from 'istextorbinary';
 
 const MaskedData: FC<{}> = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <>
-      <span className="pf-v6-u-screen-reader">{t('public~Value hidden')}</span>
+      <span className="pf-v6-u-screen-reader">{t('Value hidden')}</span>
       <span aria-hidden="true">&bull;&bull;&bull;&bull;&bull;</span>
     </>
   );
@@ -38,7 +38,7 @@ const downloadBinary = (key, value) => {
 };
 
 const DownloadBinaryButton: FC<DownloadBinaryButtonProps> = ({ label, value }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <Button
       className="pf-m-link--align-left"
@@ -46,7 +46,7 @@ const DownloadBinaryButton: FC<DownloadBinaryButtonProps> = ({ label, value }) =
       onClick={() => downloadBinary(label, value)}
       variant="link"
     >
-      {t('public~Save file')}
+      {t('Save file')}
     </Button>
   );
 };
@@ -54,7 +54,7 @@ DownloadBinaryButton.displayName = 'DownloadBinaryButton';
 
 export const ConfigMapBinaryData: FC<DownloadValueProps> = ({ data }) => {
   const dl = [];
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   Object.keys(data || {})
     .sort()
     .forEach((k) => {
@@ -73,7 +73,7 @@ export const ConfigMapBinaryData: FC<DownloadValueProps> = ({ data }) => {
   return dl.length ? (
     <DescriptionList>{dl}</DescriptionList>
   ) : (
-    <EmptyBox label={t('public~binary data')} />
+    <EmptyBox label={t('binary data')} />
   );
 };
 ConfigMapBinaryData.displayName = 'ConfigMapBinaryData';
@@ -100,9 +100,9 @@ export const ConfigMapData: FC<ConfigMapDataProps> = ({ data, label }) => {
 ConfigMapData.displayName = 'ConfigMapData';
 
 export const SecretValue: FC<SecretValueProps> = ({ value, reveal, encoded = true, id }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   if (!value) {
-    return <span className="pf-v6-u-text-color-subtle">{t('public~No value')}</span>;
+    return <span className="pf-v6-u-text-color-subtle">{t('No value')}</span>;
   }
 
   const decodedValue = encoded ? Base64.decode(value) : value;
@@ -112,7 +112,7 @@ export const SecretValue: FC<SecretValueProps> = ({ value, reveal, encoded = tru
 SecretValue.displayName = 'SecretValue';
 
 const SecretDataRevealButton: FC<SecretDataRevealButtonProps> = ({ reveal, onClick }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <Button
       type="button"
@@ -123,13 +123,13 @@ const SecretDataRevealButton: FC<SecretDataRevealButtonProps> = ({ reveal, onCli
     >
       {reveal ? (
         <>
-          <EyeSlashIcon className="co-icon-space-r" />
-          {t('public~Hide values')}
+          <RhUiViewOffIcon className="co-icon-space-r" />
+          {t('Hide values')}
         </>
       ) : (
         <>
-          <EyeIcon className="co-icon-space-r" />
-          {t('public~Reveal values')}
+          <RhUiViewIcon className="co-icon-space-r" />
+          {t('Reveal values')}
         </>
       )}
     </Button>
@@ -138,7 +138,7 @@ const SecretDataRevealButton: FC<SecretDataRevealButtonProps> = ({ reveal, onCli
 
 export const SecretData: FC<SecretDataProps> = ({ data }) => {
   const [reveal, setReveal] = useState(false);
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const hasRevealableContent = useMemo(
     () =>
@@ -177,7 +177,7 @@ export const SecretData: FC<SecretDataProps> = ({ data }) => {
 
   return (
     <>
-      <SectionHeading text={t('public~Data')}>
+      <SectionHeading text={t('Data')}>
         {dataDescriptionList.length && hasRevealableContent ? (
           <SecretDataRevealButton reveal={reveal} onClick={() => setReveal(!reveal)} />
         ) : null}
@@ -185,7 +185,7 @@ export const SecretData: FC<SecretDataProps> = ({ data }) => {
       {dataDescriptionList.length ? (
         <DescriptionList data-test="secret-data">{dataDescriptionList}</DescriptionList>
       ) : (
-        <EmptyBox label={t('public~Data')} />
+        <EmptyBox label={t('Data')} />
       )}
     </>
   );

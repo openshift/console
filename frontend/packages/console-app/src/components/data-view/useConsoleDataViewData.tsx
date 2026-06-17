@@ -53,7 +53,7 @@ export const useConsoleDataViewData = <
     getItemId: (item: TData) => string;
   };
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const [searchParams, setSearchParams] = useSearchParams();
   const prevFiltersRef = useRef(filters);
   const [activeNamespace] = useActiveNamespace();
@@ -141,7 +141,7 @@ export const useConsoleDataViewData = <
         cell: title ? (
           <span>{title}</span>
         ) : (
-          <span className="pf-v6-u-screen-reader">{t('public~Actions')}</span>
+          <span className="pf-v6-u-screen-reader">{t('Actions')}</span>
         ),
       };
     });

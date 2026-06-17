@@ -22,10 +22,10 @@ import CreateProjectListPage, { CreateAProjectButton } from '../projects/CreateP
  * are available and load their (dynamic) resource list page.
  */
 const BuildsTabListPage: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const { ns: namespace, '*': currentTab } = useParams();
   const navigate = useNavigate();
-  const title = t('devconsole~Builds');
+  const title = t('Builds');
   const menuActions: MenuActions = {};
   const pages: Page[] = [];
   const [preferredTab, setPreferredTab, preferredTabLoaded] = useUserPreference<string>(
@@ -52,7 +52,7 @@ const BuildsTabListPage: FC = () => {
   );
   if (namespace) {
     menuActions.buildConfig = {
-      label: t('devconsole~BuildConfig'),
+      label: t('BuildConfig'),
       onSelection: () => `/k8s/ns/${namespace}/buildconfigs/~new/form`,
     };
   }
@@ -112,7 +112,7 @@ const BuildsTabListPage: FC = () => {
   }, [shipwrightBuildEnabled, shipwrightBuildLoader, shipwrightBuildModel.badge]);
   if (namespace && shipwrightBuildComponent) {
     menuActions.shipwrightBuild = {
-      label: t('devconsole~Shipwright Build'),
+      label: t('Shipwright Build'),
       onSelection: () => `/k8s/ns/${namespace}/${shipwrightKind}/~new/form`,
     };
     pages.push({

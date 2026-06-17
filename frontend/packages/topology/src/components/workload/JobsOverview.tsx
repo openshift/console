@@ -65,16 +65,16 @@ export const JobsOverview: FC<JobsOverviewProps> = ({ jobs, obj, allJobsLink, em
   const {
     metadata: { name, namespace },
   } = obj;
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   const linkTo = allJobsLink || `${resourcePath(referenceFor(obj), name, namespace)}/jobs`;
-  const emptyMessage = emptyText || t('topology~No Jobs found for this resource.');
+  const emptyMessage = emptyText || t('No Jobs found for this resource.');
 
   return (
     <>
       <SidebarSectionHeading text="Jobs">
         {jobs?.length > MAX_JOBS && (
           <Link className="sidebar__section-view-all" to={linkTo}>
-            {t('topology~View all ({{jobCount}})', { jobCount: jobs.length })}
+            {t('View all ({{jobCount}})', { jobCount: jobs.length })}
           </Link>
         )}
       </SidebarSectionHeading>

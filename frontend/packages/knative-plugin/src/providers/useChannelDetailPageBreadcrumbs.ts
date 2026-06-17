@@ -6,7 +6,7 @@ import { useTabbedTableBreadcrumbsFor } from '@console/shared/src/hooks/useTabbe
 import { serverlessTab } from '../utils/serverless-tab-utils';
 
 export const useChannelDetailPageBreadcrumbs = (kindObj: K8sKind) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const params = useParams();
   const location = useLocation();
   const isAdminPerspective = useActivePerspective()[0] === 'admin';
@@ -16,7 +16,7 @@ export const useChannelDetailPageBreadcrumbs = (kindObj: K8sKind) => {
     params,
     'eventing',
     serverlessTab('Channel'),
-    isAdminPerspective ? t('knative-plugin~Channels') : undefined,
+    isAdminPerspective ? t('Channels') : undefined,
     isAdminPerspective,
   );
 };

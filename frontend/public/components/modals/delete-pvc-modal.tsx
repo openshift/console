@@ -25,7 +25,7 @@ const DeletePVCModal = (props: DeletePVCModalProps) => {
   const { pvc, close, cancel } = props;
   const [pvcDeleteExtensions] = useResolvedExtensions<PVCDelete>(isPVCDelete);
   const pvcName = getName(pvc);
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const pvcMetadata = { metadata: { ...pvc?.metadata } };
   const navigate = useNavigate();
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
@@ -57,7 +57,7 @@ const DeletePVCModal = (props: DeletePVCModalProps) => {
   return (
     <>
       <ModalHeader
-        title={t('public~Delete PersistentVolumeClaim')}
+        title={t('Delete PersistentVolumeClaim')}
         titleIconVariant="warning"
         data-test-id="modal-title"
         labelId="delete-pvc-modal-title"
@@ -85,10 +85,10 @@ const DeletePVCModal = (props: DeletePVCModalProps) => {
           data-test="confirm-action"
           id="confirm-action"
         >
-          {t('public~Delete')}
+          {t('Delete')}
         </Button>
         <Button variant="link" onClick={cancel} type="button" data-test-id="modal-cancel-action">
-          {t('public~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </>

@@ -18,7 +18,7 @@ const ImageStreamNsDropdown: FC<{
   formContextField?: string;
   className?: string;
 }> = ({ disabled = false, formContextField, className }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const { values, setFieldValue, initialValues } = useFormikContext<FormikValues>();
   const { imageStream } = _.get(values, formContextField) || values;
   const { isi: initialIsi } = _.get(initialValues, formContextField) || initialValues;
@@ -66,8 +66,8 @@ const ImageStreamNsDropdown: FC<{
   return (
     <ResourceDropdownField
       name={`${fieldPrefix}imageStream.namespace`}
-      label={t('devconsole~Project')}
-      title={imageStream.namespace || t('devconsole~Select Project')}
+      label={t('Project')}
+      title={imageStream.namespace || t('Select Project')}
       fullWidth
       required
       resources={resources}

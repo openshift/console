@@ -156,7 +156,7 @@ export const getManualSubscriptionsInNamespace = (
 export const OperatorsWithManualApproval: FC<OperatorsWithManualApprovalProps> = ({
   subscriptions,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const subs = subscriptions
     ?.map((subscription) => (
       <strong key={subscription.metadata.uid}>{subscription.metadata.name}</strong>
@@ -164,7 +164,7 @@ export const OperatorsWithManualApproval: FC<OperatorsWithManualApprovalProps> =
     .map((sub, i) => (i > 0 ? [', ', sub] : sub));
   return (
     <>
-      {t('olm~operator', { count: subscriptions?.length })} {subs}
+      {t('operator', { count: subscriptions?.length })} {subs}
     </>
   );
 };

@@ -14,7 +14,7 @@ interface SecretDropdownProps {
 }
 
 const SecretDropdown: FC<SecretDropdownProps> = ({ name, namespace }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('shipwright-plugin');
   const autocompleteFilter = (strText, item): boolean => fuzzy(strText, item?.props?.name);
 
   const watchedResources = useK8sWatchResources<{ secrets: SecretKind[] }>({
@@ -47,7 +47,7 @@ const SecretDropdown: FC<SecretDropdownProps> = ({ name, namespace }) => {
       name={name}
       resources={resources}
       dataSelector={['metadata', 'name']}
-      placeholder={t('shipwright-plugin~Select a Secret')}
+      placeholder={t('Select a Secret')}
       autocompleteFilter={autocompleteFilter}
       fullWidth
       showBadge

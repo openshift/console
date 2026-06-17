@@ -11,7 +11,7 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
-import { SyncAltIcon, UnknownIcon } from '@patternfly/react-icons';
+import { RhUiSyncIcon, RhUiUnknownIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 
@@ -68,11 +68,11 @@ const clusterOperatorReference: K8sResourceKindReference = referenceForModel(Clu
 const getIcon = (status: OperatorStatus) => {
   return {
     [OperatorStatus.Available]: <GreenCheckCircleIcon />,
-    [OperatorStatus.Progressing]: <SyncAltIcon />,
+    [OperatorStatus.Progressing]: <RhUiSyncIcon />,
     [OperatorStatus.Degraded]: <YellowExclamationTriangleIcon />,
     [OperatorStatus.CannotUpdate]: <YellowExclamationTriangleIcon />,
     [OperatorStatus.Unavailable]: <RedExclamationCircleIcon />,
-    [OperatorStatus.Unknown]: <UnknownIcon />,
+    [OperatorStatus.Unknown]: <RhUiUnknownIcon />,
   }[status];
 };
 
@@ -128,11 +128,11 @@ const getClusterOperatorDataViewRows = (
 };
 
 const useClusterOperatorColumns = (): TableColumn<ClusterOperator>[] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const columns = useMemo(() => {
     return [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         props: {
@@ -142,7 +142,7 @@ const useClusterOperatorColumns = (): TableColumn<ClusterOperator>[] => {
         },
       },
       {
-        title: t('public~Status'),
+        title: t('Status'),
         id: tableColumnInfo[1].id,
         sort: (data, direction) =>
           data.sort(
@@ -154,7 +154,7 @@ const useClusterOperatorColumns = (): TableColumn<ClusterOperator>[] => {
         },
       },
       {
-        title: t('public~Version'),
+        title: t('Version'),
         id: tableColumnInfo[2].id,
         sort: (data, direction) =>
           data.sort(
@@ -165,7 +165,7 @@ const useClusterOperatorColumns = (): TableColumn<ClusterOperator>[] => {
         },
       },
       {
-        title: t('public~Message'),
+        title: t('Message'),
         id: tableColumnInfo[3].id,
         props: {
           modifier: 'nowrap',
@@ -177,34 +177,34 @@ const useClusterOperatorColumns = (): TableColumn<ClusterOperator>[] => {
 };
 
 const ClusterOperatorList: FC<ClusterOperatorListProps> = ({ data, loaded, ...props }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const columns = useClusterOperatorColumns();
 
   const clusterOperatorStatusFilterOptions = useMemo<DataViewFilterOption[]>(() => {
     return [
       {
         value: 'Available',
-        label: t('public~Available'),
+        label: t('Available'),
       },
       {
         value: 'Progressing',
-        label: t('public~Progressing'),
+        label: t('Progressing'),
       },
       {
         value: 'Degraded',
-        label: t('public~Degraded'),
+        label: t('Degraded'),
       },
       {
         value: 'Cannot update',
-        label: t('public~Cannot update'),
+        label: t('Cannot update'),
       },
       {
         value: 'Unavailable',
-        label: t('public~Unavailable'),
+        label: t('Unavailable'),
       },
       {
         value: 'Unknown',
-        label: t('public~Unknown'),
+        label: t('Unknown'),
       },
     ];
   }, [t]);
@@ -216,8 +216,8 @@ const ClusterOperatorList: FC<ClusterOperatorListProps> = ({ data, loaded, ...pr
       <DataViewCheckboxFilter
         key="status"
         filterId="status"
-        title={t('public~Status')}
-        placeholder={t('public~Filter by status')}
+        title={t('Status')}
+        placeholder={t('Filter by status')}
         options={clusterOperatorStatusFilterOptions}
       />,
     ],
@@ -289,16 +289,16 @@ export const ClusterOperatorPage: FC<ClusterOperatorPageProps> = (props) => {
 };
 
 const OperandVersions: FC<OperandVersionsProps> = ({ versions }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return _.isEmpty(versions) ? (
-    <EmptyBox label={t('public~versions')} />
+    <EmptyBox label={t('versions')} />
   ) : (
     <div className="co-table-container">
       <table className="pf-v6-c-table pf-m-compact pf-m-border-rows">
         <thead className="pf-v6-c-table__thead">
           <tr className="pf-v6-c-table__tr">
-            <th className="pf-v6-c-table__th">{t('public~Name')}</th>
-            <th className="pf-v6-c-table__th">{t('public~Version')}</th>
+            <th className="pf-v6-c-table__th">{t('Name')}</th>
+            <th className="pf-v6-c-table__th">{t('Version')}</th>
           </tr>
         </thead>
         <tbody className="pf-v6-c-table__tbody">
@@ -321,11 +321,11 @@ const ClusterOperatorDetails: FC<ClusterOperatorDetailsProps> = ({ obj }) => {
   // Show the operator version in the details if it's the only version.
   const operatorVersion =
     versions.length === 1 && versions[0].name === 'operator' ? versions[0].version : null;
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <>
       <PaneBody>
-        <SectionHeading text={t('public~ClusterOperator details')} />
+        <SectionHeading text={t('ClusterOperator details')} />
         <Grid hasGutter>
           <GridItem sm={6}>
             <ResourceSummary resource={obj} />
@@ -334,18 +334,18 @@ const ClusterOperatorDetails: FC<ClusterOperatorDetailsProps> = ({ obj }) => {
             <DescriptionList>
               {operatorVersion && (
                 <DescriptionListGroup>
-                  <DescriptionListTerm>{t('public~Version')}</DescriptionListTerm>
+                  <DescriptionListTerm>{t('Version')}</DescriptionListTerm>
                   <DescriptionListDescription>{operatorVersion}</DescriptionListDescription>
                 </DescriptionListGroup>
               )}
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('public~Status')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('Status')}</DescriptionListTerm>
                 <DescriptionListDescription>
                   <OperatorStatusIconAndLabel status={status} />
                 </DescriptionListDescription>
               </DescriptionListGroup>
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('public~Message')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('Message')}</DescriptionListTerm>
                 <DescriptionListDescription className="co-pre-line">
                   <LinkifyExternal>{message || '-'}</LinkifyExternal>
                 </DescriptionListDescription>
@@ -355,11 +355,11 @@ const ClusterOperatorDetails: FC<ClusterOperatorDetailsProps> = ({ obj }) => {
         </Grid>
       </PaneBody>
       <PaneBody>
-        <SectionHeading text={t('public~Conditions')} />
+        <SectionHeading text={t('Conditions')} />
         <Conditions conditions={conditions} />
       </PaneBody>
       <PaneBody>
-        <SectionHeading text={t('public~Operand versions')} />
+        <SectionHeading text={t('Operand versions')} />
         <OperandVersions versions={versions} />
       </PaneBody>
     </>
@@ -367,7 +367,7 @@ const ClusterOperatorDetails: FC<ClusterOperatorDetailsProps> = ({ obj }) => {
 };
 
 export const ClusterOperatorDetailsPage: FC = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const location = useLocation();
   return (
     <DetailsPage
@@ -389,7 +389,7 @@ export const ClusterOperatorDetailsPage: FC = (props) => {
           path: '/settings/cluster/clusteroperators',
         },
         {
-          name: t('public~ClusterOperator details'),
+          name: t('ClusterOperator details'),
           path: location.pathname,
         },
       ]}

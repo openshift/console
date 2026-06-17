@@ -12,7 +12,7 @@ import { csvNameFromWindow } from '../components/operand/operand-link';
 import { ClusterServiceVersionModel } from '../models';
 
 const useDefaultOperandActions = ({ csvName, resource }): [Action[], boolean, any] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const [k8sModel, inFlight] = useK8sModel(referenceFor(resource));
   const launchModal = useOverlay();
   const actions = useMemo(
@@ -21,7 +21,7 @@ const useDefaultOperandActions = ({ csvName, resource }): [Action[], boolean, an
         ? [
             {
               id: 'edit-operand',
-              label: t('olm~Edit {{item}}', { item: k8sModel.label }),
+              label: t('Edit {{item}}', { item: k8sModel.label }),
               cta: {
                 href: k8sModel.namespaced
                   ? `/k8s/ns/${resource.metadata.namespace}/${ClusterServiceVersionModel.plural}/${
@@ -33,7 +33,7 @@ const useDefaultOperandActions = ({ csvName, resource }): [Action[], boolean, an
             },
             {
               id: 'delete-operand',
-              label: t('olm~Delete {{item}}', { item: k8sModel.label }),
+              label: t('Delete {{item}}', { item: k8sModel.label }),
               cta: () =>
                 launchModal<DeleteModalProps>(DeleteModalOverlay, {
                   kind: k8sModel,

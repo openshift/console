@@ -36,7 +36,7 @@ const UploadJarForm: FC<FormikProps<FormikValues> & UploadJarFormProps> = ({
   projects,
   builderImage,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   usePreventDataLossLock(isSubmitting);
   const {
     image: { tag: selectedImagetag },
@@ -56,12 +56,8 @@ const UploadJarForm: FC<FormikProps<FormikValues> & UploadJarFormProps> = ({
               showImageInfo={false}
             />
           ) : (
-            <Alert
-              variant="warning"
-              title={t('devconsole~Unable to detect the Builder Image.')}
-              isInline
-            >
-              {t('devconsole~No associated Builder Image is found for Java.')}
+            <Alert variant="warning" title={t('Unable to detect the Builder Image.')} isInline>
+              {t('No associated Builder Image is found for Java.')}
             </Alert>
           )}
         </FormSection>
@@ -76,10 +72,10 @@ const UploadJarForm: FC<FormikProps<FormikValues> & UploadJarFormProps> = ({
         handleReset={handleReset}
         errorMessage={status && status.submitError}
         isSubmitting={isSubmitting}
-        submitLabel={t('devconsole~Create')}
+        submitLabel={t('Create')}
         sticky
         disableSubmit={!dirty || !_.isEmpty(errors) || isSubmitting}
-        resetLabel={t('devconsole~Cancel')}
+        resetLabel={t('Cancel')}
       />
     </FlexForm>
   );

@@ -19,7 +19,7 @@ interface SinkPubsubProps {
 }
 
 const SinkPubsub: FC<SinkPubsubProps> = ({ source, resourceType, cancel, close }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const {
     metadata: { namespace, name },
     spec,
@@ -120,7 +120,7 @@ const SinkPubsub: FC<SinkPubsubProps> = ({ source, resourceType, cancel, close }
         close();
       })
       .catch((err) => {
-        const errMessage = err.message || t('knative-plugin~An error occurred. Please try again');
+        const errMessage = err.message || t('An error occurred. Please try again');
         action.setStatus({ error: errMessage });
       });
   };
@@ -137,7 +137,7 @@ const SinkPubsub: FC<SinkPubsubProps> = ({ source, resourceType, cancel, close }
           {...formikProps}
           resourceName={name}
           resourceDropdown={resourceDropdown}
-          labelTitle={t('knative-plugin~Move {{kind}}', { kind: resourceType })}
+          labelTitle={t('Move {{kind}}', { kind: resourceType })}
           cancel={cancel}
         />
       )}

@@ -43,7 +43,7 @@ export const CreateNamespaceModal: OverlayComponent<CreateProjectModalProps> = (
   closeOverlay,
   onSubmit,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const navigate = useNavigate();
 
   const [inProgress, setInProgress] = useState(false);
@@ -59,7 +59,7 @@ export const CreateNamespaceModal: OverlayComponent<CreateProjectModalProps> = (
   };
 
   const catchError = (error) => {
-    const err = error.message || t('console-shared~An error occurred. Please try again.');
+    const err = error.message || t('An error occurred. Please try again.');
     setInProgress(false);
     setErrorMessage(err);
     return Promise.reject(err);
@@ -115,11 +115,11 @@ export const CreateNamespaceModal: OverlayComponent<CreateProjectModalProps> = (
   const defaultNetworkPolicies = [
     {
       key: 'allow',
-      value: t('console-shared~No restrictions'),
+      value: t('No restrictions'),
     },
     {
       key: 'deny',
-      value: t('console-shared~Deny all inbound traffic'),
+      value: t('Deny all inbound traffic'),
     },
   ];
 
@@ -160,26 +160,23 @@ export const CreateNamespaceModal: OverlayComponent<CreateProjectModalProps> = (
       onClose={closeOverlay}
       aria-labelledby="create-namespace-modal-title"
     >
-      <ModalHeader
-        title={t('console-shared~Create Namespace')}
-        labelId="create-namespace-modal-title"
-      />
+      <ModalHeader title={t('Create Namespace')} labelId="create-namespace-modal-title" />
       <ModalBody>
         <Form onSubmit={submit} id="create-namespace-form">
           <FormGroup
-            label={t('console-shared~Name')}
+            label={t('Name')}
             isRequired
             fieldId="input-name"
             labelHelp={
               <FieldLevelHelp>
                 <Content component={ContentVariants.p}>
                   {t(
-                    "console-shared~A Namespace name must consist of lower case alphanumeric characters or '-', and must start and end with an alphanumeric character (e.g. 'my-name' or '123-abc').",
+                    "A Namespace name must consist of lower case alphanumeric characters or '-', and must start and end with an alphanumeric character (e.g. 'my-name' or '123-abc').",
                   )}
                 </Content>
                 <Content component={ContentVariants.p}>
                   {t(
-                    "console-shared~You must create a Namespace to be able to create projects that begin with 'openshift-', 'kubernetes-', or 'kube-'.",
+                    "You must create a Namespace to be able to create projects that begin with 'openshift-', 'kubernetes-', or 'kube-'.",
                   )}
                 </Content>
               </FieldLevelHelp>
@@ -195,17 +192,14 @@ export const CreateNamespaceModal: OverlayComponent<CreateProjectModalProps> = (
               isRequired
             />
           </FormGroup>
-          <FormGroup label={t('console-shared~Labels')}>
+          <FormGroup label={t('Labels')}>
             <SelectorInput
               labelClassName="co-m-namespace"
               onChange={(value) => setLabels(value)}
               tags={labels}
             />
           </FormGroup>
-          <FormGroup
-            label={t('console-shared~Default network policy')}
-            fieldId="network-policy-select"
-          >
+          <FormGroup label={t('Default network policy')} fieldId="network-policy-select">
             <Select
               id="network-policy-select"
               isOpen={isOpen}
@@ -230,7 +224,7 @@ export const CreateNamespaceModal: OverlayComponent<CreateProjectModalProps> = (
           data-test="confirm-action"
           id="confirm-action"
         >
-          {t('console-shared~Create')}
+          {t('Create')}
         </Button>
         <Button
           type="button"
@@ -239,7 +233,7 @@ export const CreateNamespaceModal: OverlayComponent<CreateProjectModalProps> = (
           onClick={closeOverlay}
           data-test-id="modal-cancel-action"
         >
-          {t('console-shared~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </Modal>

@@ -1,19 +1,13 @@
 import { FormHelperText, Button, ButtonVariant } from '@patternfly/react-core';
-import { LevelUpAltIcon } from '@patternfly/react-icons';
+import { RhUiLabIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 
 const SampleRepo = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   return (
     <FormHelperText>
-      <Button
-        icon={<LevelUpAltIcon />}
-        {...props}
-        type="button"
-        variant={ButtonVariant.link}
-        isInline
-      >
-        {t('devconsole~Try sample')}
+      <Button icon={<RhUiLabIcon />} {...props} type="button" variant={ButtonVariant.link} isInline>
+        {t('Try sample')}
       </Button>
     </FormHelperText>
   );

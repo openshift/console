@@ -36,11 +36,11 @@ const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
   const disableSaveAsDefault = SMTP_GLOBAL_FIELDS.every(
     (propName) => formValues[propName] === globals[propName],
   );
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   return (
     <>
-      <FormGroup label={t('public~To address')} fieldId="email-to" isRequired>
+      <FormGroup label={t('To address')} fieldId="email-to" isRequired>
         <TextInput
           type="text"
           id="email-to"
@@ -57,23 +57,23 @@ const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
         <FormHelperText>
           <HelperText>
             <HelperTextItem id="email-to-help">
-              {t('public~The email address to send notifications to.')}
+              {t('The email address to send notifications to.')}
             </HelperTextItem>
           </HelperText>
         </FormHelperText>
       </FormGroup>
-      <FormSection title={t('public~SMTP configuration')}>
+      <FormSection title={t('SMTP configuration')}>
         <SaveAsDefaultCheckbox
           formField="emailSaveAsDefault"
           disabled={disableSaveAsDefault}
-          label={t('public~Save as default SMTP configuration')}
+          label={t('Save as default SMTP configuration')}
           formValues={formValues}
           dispatchFormChange={dispatchFormChange}
           tooltip={t(
-            'public~Checking this box will write these values to the global section of the configuration file where they will become defaults for future email receivers.',
+            'Checking this box will write these values to the global section of the configuration file where they will become defaults for future email receivers.',
           )}
         />
-        <FormGroup label={t('public~From address')} fieldId="email-from" isRequired>
+        <FormGroup label={t('From address')} fieldId="email-from" isRequired>
           <TextInput
             type="text"
             id="email-from"
@@ -90,14 +90,14 @@ const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
           <FormHelperText>
             <HelperText>
               <HelperTextItem id="email-from-help">
-                {t('public~The email address to send notifications from.')}
+                {t('The email address to send notifications from.')}
               </HelperTextItem>
             </HelperText>
           </FormHelperText>
         </FormGroup>
         <Grid hasGutter>
           <GridItem sm={6}>
-            <FormGroup label={t('public~SMTP smarthost')} fieldId="email-smarthost" isRequired>
+            <FormGroup label={t('SMTP smarthost')} fieldId="email-smarthost" isRequired>
               <TextInput
                 type="text"
                 id="email-smarthost"
@@ -114,14 +114,14 @@ const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
               <FormHelperText>
                 <HelperText>
                   <HelperTextItem id="email-smarthost-help">
-                    {t('public~Smarthost used for sending emails, including port number.')}
+                    {t('Smarthost used for sending emails, including port number.')}
                   </HelperTextItem>
                 </HelperText>
               </FormHelperText>
             </FormGroup>
           </GridItem>
           <GridItem sm={6}>
-            <FormGroup label={t('public~SMTP hello')} fieldId="email-hello" isRequired>
+            <FormGroup label={t('SMTP hello')} fieldId="email-hello" isRequired>
               <TextInput
                 type="text"
                 id="email-hello"
@@ -138,7 +138,7 @@ const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
               <FormHelperText>
                 <HelperText>
                   <HelperTextItem id="email-hello-help">
-                    {t('public~The hostname to identify to the SMTP server.')}
+                    {t('The hostname to identify to the SMTP server.')}
                   </HelperTextItem>
                 </HelperText>
               </FormHelperText>
@@ -147,7 +147,7 @@ const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
         </Grid>
         <Grid hasGutter>
           <GridItem sm={6}>
-            <FormGroup label={t('public~Auth username')} fieldId="email-auth-username">
+            <FormGroup label={t('Auth username')} fieldId="email-auth-username">
               <TextInput
                 type="text"
                 id="email-auth-username"
@@ -164,7 +164,7 @@ const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
           </GridItem>
           <GridItem sm={6}>
             <FormGroup
-              label={t('public~Auth password (using LOGIN and PLAIN)')}
+              label={t('Auth password (using LOGIN and PLAIN)')}
               fieldId="email-auth-password"
             >
               <TextInput
@@ -184,10 +184,7 @@ const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
         </Grid>
         <Grid hasGutter>
           <GridItem sm={6}>
-            <FormGroup
-              label={t('public~Auth identity (using PLAIN)')}
-              fieldId="email-auth-identity"
-            >
+            <FormGroup label={t('Auth identity (using PLAIN)')} fieldId="email-auth-identity">
               <TextInput
                 type="text"
                 id="email-auth-identity"
@@ -203,7 +200,7 @@ const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
             </FormGroup>
           </GridItem>
           <GridItem sm={6}>
-            <FormGroup label={t('public~Auth secret (CRAM-MDS)')} fieldId="email-auth-secret">
+            <FormGroup label={t('Auth secret (CRAM-MDS)')} fieldId="email-auth-secret">
               <TextInput
                 type="password"
                 id="email-auth-secret"
@@ -221,7 +218,7 @@ const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
         </Grid>
         <FormGroup>
           <Checkbox
-            label={t('public~Require TLS')}
+            label={t('Require TLS')}
             onChange={(_event, checked) =>
               dispatchFormChange({
                 type: 'setFormValues',
@@ -240,7 +237,7 @@ const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
           formValues={formValues}
           dispatchFormChange={dispatchFormChange}
         />
-        <FormGroup label={t('public~Body of email notifications (HTML)')} fieldId="email-html">
+        <FormGroup label={t('Body of email notifications (HTML)')} fieldId="email-html">
           <TextInput
             type="text"
             id="email-html"

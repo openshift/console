@@ -21,7 +21,7 @@ import {
   DataViewTable,
   DataViewToolbar,
 } from '@patternfly/react-data-view';
-import { ColumnsIcon, UndoIcon } from '@patternfly/react-icons';
+import { RhUiColumnsIcon, RhUiUndoIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import { InnerScrollContainer, Tbody, Td, Tr } from '@patternfly/react-table';
 import { Trans, useTranslation } from 'react-i18next';
@@ -45,14 +45,12 @@ const BodyLoading: FC<{ columns: number }> = ({ columns }) => {
 };
 
 const BodyEmpty: FC<{ label: string; colSpan: number }> = ({ label, colSpan }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   return (
     <Tbody>
       <Tr>
         <Td colSpan={colSpan}>
-          <Bullseye>
-            {label ? t('public~No {{label}} found', { label }) : t('public~None found')}
-          </Bullseye>
+          <Bullseye>{label ? t('No {{label}} found', { label }) : t('None found')}</Bullseye>
         </Td>
       </Tr>
     </Tbody>
@@ -92,7 +90,7 @@ export const ConsoleDataView = <
   selection,
   actionsBreakpoint = 'md',
 }: ConsoleDataViewProps<TData, TCustomRowData, TFilters>) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const launchModal = useOverlay();
   const [tableKey, setTableKey] = useState(0);
 
@@ -164,13 +162,13 @@ export const ConsoleDataView = <
 
   const paginationTitles = useMemo(
     () => ({
-      paginationAriaLabel: t('public~Pagination'),
-      ofWord: t('public~of'),
-      itemsPerPage: t('public~Items per page'),
-      perPageSuffix: t('public~per page'),
-      optionsToggleAriaLabel: t('public~Items per page'),
-      toPreviousPageAriaLabel: t('public~Go to previous page'),
-      toNextPageAriaLabel: t('public~Go to next page'),
+      paginationAriaLabel: t('Pagination'),
+      ofWord: t('of'),
+      itemsPerPage: t('Items per page'),
+      perPageSuffix: t('per page'),
+      optionsToggleAriaLabel: t('Items per page'),
+      toPreviousPageAriaLabel: t('Go to previous page'),
+      toNextPageAriaLabel: t('Go to next page'),
     }),
     [t],
   );
@@ -218,15 +216,15 @@ export const ConsoleDataView = <
         <DataViewTextFilter
           key="name"
           filterId="name"
-          title={t('public~Name')}
-          placeholder={t('public~Filter by name')}
+          title={t('Name')}
+          placeholder={t('Filter by name')}
         />,
       );
     }
 
     if (!hideNameLabelFilters && !hideLabelFilter && loaded) {
       basicFilters.push(
-        <DataViewLabelFilter key="label" filterId="label" title={t('public~Label')} data={data} />,
+        <DataViewLabelFilter key="label" filterId="label" title={t('Label')} data={data} />,
       );
     }
 
@@ -274,11 +272,11 @@ export const ConsoleDataView = <
                         noLimit: true,
                       })
                     }
-                    aria-label={t('public~Column management')}
+                    aria-label={t('Column management')}
                     data-test="manage-columns"
                   >
-                    <Tooltip content={t('public~Manage columns')} trigger="mouseenter">
-                      <ColumnsIcon />
+                    <Tooltip content={t('Manage columns')} trigger="mouseenter">
+                      <RhUiColumnsIcon />
                     </Tooltip>
                   </ResponsiveAction>
                 )}
@@ -287,11 +285,11 @@ export const ConsoleDataView = <
                     isPersistent
                     variant="plain"
                     onClick={handleResetColumnWidths}
-                    aria-label={t('public~Reset column widths')}
+                    aria-label={t('Reset column widths')}
                     data-test="reset-column-widths"
                   >
-                    <Tooltip content={t('public~Reset column widths')} trigger="mouseenter">
-                      <UndoIcon />
+                    <Tooltip content={t('Reset column widths')} trigger="mouseenter">
+                      <RhUiUndoIcon />
                     </Tooltip>
                   </ResponsiveAction>
                 )}
@@ -315,34 +313,34 @@ export const ConsoleDataView = <
             className="pf-v6-u-mb-md"
             screenReaderText={
               bannerState.allSelected
-                ? t('public~You selected all {{count}} {{label}}.', {
+                ? t('You selected all {{count}} {{label}}.', {
                     count: filteredData.length,
-                    label: label || t('public~items'),
+                    label: label || t('items'),
                   })
-                : t('public~You selected all {{label}} on this page.', {
-                    label: label || t('public~items'),
+                : t('You selected all {{label}} on this page.', {
+                    label: label || t('items'),
                   })
             }
           >
             {bannerState.allSelected ? (
               <>
-                <Trans ns="public" i18nKey="You selected all <1>{{count}}</1> {{label}}.">
+                <Trans ns="console-app" i18nKey="You selected all <1>{{count}}</1> {{label}}.">
                   You selected all <strong>{{ count: filteredData.length }}</strong>{' '}
-                  {{ label: label || t('public~items') }}.
+                  {{ label: label || t('items') }}.
                 </Trans>{' '}
                 <Button variant="link" isInline onClick={handleUnselectAll}>
-                  {t('public~Clear all.')}
+                  {t('Clear all.')}
                 </Button>
               </>
             ) : (
               <>
-                <Trans ns="public" i18nKey="You selected all {{label}} on this page.">
-                  You selected all {{ label: label || t('public~items') }} on this page.
+                <Trans ns="console-app" i18nKey="You selected all {{label}} on this page.">
+                  You selected all {{ label: label || t('items') }} on this page.
                 </Trans>{' '}
                 <Button variant="link" isInline onClick={handleSelectAllMatching}>
-                  <Trans ns="public" i18nKey="Select all <1>{{count}}</1> {{label}}.">
+                  <Trans ns="console-app" i18nKey="Select all <1>{{count}}</1> {{label}}.">
                     Select all <strong>{{ count: filteredData.length }}</strong>{' '}
-                    {{ label: label || t('public~items') }}.
+                    {{ label: label || t('items') }}.
                   </Trans>
                 </Button>
               </>

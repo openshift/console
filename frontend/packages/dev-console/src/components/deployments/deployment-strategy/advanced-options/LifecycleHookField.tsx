@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useState, useCallback } from 'react';
 import { ButtonVariant, Button, Tooltip } from '@patternfly/react-core';
-import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { RhUiMinusCircleIcon, RhUiAddCircleFillIcon } from '@patternfly/react-icons';
 import type { FormikValues } from 'formik';
 import { useField, useFormikContext } from 'formik';
 import { cloneDeep } from 'lodash';
@@ -28,7 +28,7 @@ const LifecycleHookField: FC<LifecycleHookFieldProps> = ({
   lifecycleHookName,
   resourceObj,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const {
     setFieldValue,
     values: {
@@ -139,10 +139,10 @@ const LifecycleHookField: FC<LifecycleHookFieldProps> = ({
               true,
             );
           }}
-          icon={!lifecycleHookExist && <PlusCircleIcon />}
+          icon={!lifecycleHookExist && <RhUiAddCircleFillIcon />}
         >
-          {`${lifecycleHookExist ? t('devconsole~Edit') : t('devconsole~Add')} ${t(
-            'devconsole~{{lifecycleHookName}} lifecycle hook',
+          {`${lifecycleHookExist ? t('Edit') : t('Add')} ${t(
+            '{{lifecycleHookName}} lifecycle hook',
             {
               lifecycleHookName,
             },
@@ -150,9 +150,9 @@ const LifecycleHookField: FC<LifecycleHookFieldProps> = ({
         </Button>
       )}
       {!showForm && lifecycleHookExist && (
-        <Tooltip content={t('devconsole~Remove')} position="right">
+        <Tooltip content={t('Remove')} position="right">
           <Button
-            icon={<MinusCircleIcon />}
+            icon={<RhUiMinusCircleIcon />}
             className="pf-m-plain--align-left"
             variant={ButtonVariant.plain}
             onClick={onRemove}

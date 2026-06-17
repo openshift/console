@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useRef } from 'react';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
-import { ExternalLinkAltIcon, LinkIcon } from '@patternfly/react-icons';
+import { RhUiExternalLinkFillIcon, RhUiLinkIcon } from '@patternfly/react-icons';
 import type {
   Node,
   WithDragNodeProps,
@@ -43,7 +43,7 @@ const SinkUriNode: FC<SinkUriNodeProps> = ({
 }) => {
   const ref = useRef();
   const sinkRef = useRef();
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const { width, height } = element.getDimensions();
   const [hover, hoverRef] = useHover();
   const sinkData = element.getData().data;
@@ -60,7 +60,7 @@ const SinkUriNode: FC<SinkUriNodeProps> = ({
       ? [
           <Tooltip
             key="URI"
-            content={t('knative-plugin~Open URI')}
+            content={t('Open URI')}
             position={TooltipPosition.right}
             triggerRef={sinkRef}
           >
@@ -73,7 +73,10 @@ const SinkUriNode: FC<SinkUriNodeProps> = ({
                 external
               >
                 <g transform={`translate(-${DECORATOR_RADIUS / 2}, -${DECORATOR_RADIUS / 2})`}>
-                  <ExternalLinkAltIcon style={{ fontSize: DECORATOR_RADIUS }} title="Open URL" />
+                  <RhUiExternalLinkFillIcon
+                    style={{ fontSize: DECORATOR_RADIUS }}
+                    title="Open URL"
+                  />
                 </g>
               </Decorator>
             </g>
@@ -84,7 +87,7 @@ const SinkUriNode: FC<SinkUriNodeProps> = ({
   return (
     <Tooltip
       triggerRef={ref}
-      content={t('knative-plugin~Move sink to URI')}
+      content={t('Move sink to URI')}
       trigger="manual"
       isVisible={dropTarget && canDrop}
       animationDuration={0}
@@ -102,7 +105,7 @@ const SinkUriNode: FC<SinkUriNodeProps> = ({
           {...rest}
         >
           <g transform={`translate(${cx / 2}, ${cy / 2})`}>
-            <LinkIcon style={{ fontSize: radius }} />
+            <RhUiLinkIcon style={{ fontSize: radius }} />
           </g>
         </BaseNode>
       </g>

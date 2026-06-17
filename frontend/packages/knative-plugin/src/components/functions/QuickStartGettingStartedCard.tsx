@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import type { AllQuickStartStates, QuickStart } from '@patternfly/quickstarts';
 import { QuickStartStatus, getQuickStartStatus } from '@patternfly/quickstarts';
-import { RouteIcon } from '@patternfly/react-icons';
+import { RhUiRouteIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { QuickStartsLoader } from '@console/app/src/components/quick-starts/loader/QuickStartsLoader';
 import type { GettingStartedLink } from '@console/shared/src/components/getting-started/GettingStartedCard';
@@ -53,7 +53,7 @@ export const QuickStartGettingStartedCard: FC<QuickStartGettingStartedCardProps>
   description,
   filter,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const { allQuickStartStates, setActiveQuickStart } = useQuickStartContext();
 
   return (
@@ -72,7 +72,7 @@ export const QuickStartGettingStartedCard: FC<QuickStartGettingStartedCardProps>
           links.push(
             {
               id: 'serverless-functions-using-cli-link',
-              title: t('knative-plugin~Create Serverless functions using CLI'),
+              title: t('Create Serverless functions using CLI'),
               href:
                 'https://access.redhat.com/documentation/en-us/red_hat_openshift_serverless/1.30/html/functions/index',
               external: true,
@@ -81,7 +81,7 @@ export const QuickStartGettingStartedCard: FC<QuickStartGettingStartedCardProps>
               id: 'serverless-functions-using-ide-link',
               href:
                 'https://github.com/redhat-developer/vscode-openshift-tools/blob/main/README.serverlessfn.md',
-              title: t('knative-plugin~Create Serverless functions using IDE'),
+              title: t('Create Serverless functions using IDE'),
               external: true,
             },
           );
@@ -102,13 +102,15 @@ export const QuickStartGettingStartedCard: FC<QuickStartGettingStartedCardProps>
         return (
           <GettingStartedCard
             id="quick-start"
-            icon={<RouteIcon color="var(--co-global--palette--purple-600)" aria-hidden="true" />}
-            title={title || t('knative-plugin~Build with guided documentation')}
+            icon={
+              <RhUiRouteIcon color="var(--co-global--palette--purple-600)" aria-hidden="true" />
+            }
+            title={title || t('Build with guided documentation')}
             titleColor={'var(--co-global--palette--purple-600)'}
             description={
               description ||
               t(
-                'knative-plugin~Follow guided documentation to build applications and familiarize yourself with key features.',
+                'Follow guided documentation to build applications and familiarize yourself with key features.',
               )
             }
             links={links}

@@ -37,7 +37,7 @@ import {
 const networkPopovers = [NetworkInPopover, NetworkOutPopover];
 
 export const UtilizationCard = memo(() => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { obj } = useContext(ProjectDashboardContext);
   const projectName = obj?.metadata?.name;
   const [queries, multilineQueries] = useMemo(
@@ -62,12 +62,12 @@ export const UtilizationCard = memo(() => {
           className: undefined,
         }}
       >
-        <CardTitle>{t('public~Utilization')}</CardTitle>
+        <CardTitle>{t('Utilization')}</CardTitle>
       </CardHeader>
       <UtilizationBody>
         <ProjectUtilizationContext.Provider value={projectName}>
           <PrometheusUtilizationItem
-            title={t('public~CPU')}
+            title={t('CPU')}
             humanizeValue={humanizeCpuCores}
             utilizationQuery={queries[ProjectQueries.CPU_USAGE]}
             requestQuery={queries[ProjectQueries.CPU_REQUESTS]}
@@ -75,7 +75,7 @@ export const UtilizationCard = memo(() => {
             namespace={projectName}
           />
           <PrometheusUtilizationItem
-            title={t('public~Memory')}
+            title={t('Memory')}
             humanizeValue={humanizeBinaryBytes}
             utilizationQuery={queries[ProjectQueries.MEMORY_USAGE]}
             requestQuery={queries[ProjectQueries.MEMORY_REQUESTS]}
@@ -84,7 +84,7 @@ export const UtilizationCard = memo(() => {
             namespace={projectName}
           />
           <PrometheusUtilizationItem
-            title={t('public~Filesystem')}
+            title={t('Filesystem')}
             humanizeValue={humanizeBinaryBytes}
             utilizationQuery={queries[ProjectQueries.FILESYSTEM_USAGE]}
             byteDataType={ByteDataTypes.BinaryBytes}
@@ -92,14 +92,14 @@ export const UtilizationCard = memo(() => {
             namespace={projectName}
           />
           <PrometheusMultilineUtilizationItem
-            title={t('public~Network transfer')}
+            title={t('Network transfer')}
             humanizeValue={humanizeDecimalBytesPerSec}
             queries={multilineQueries[ProjectQueries.NETWORK_UTILIZATION]}
             TopConsumerPopovers={networkPopovers}
             namespace={projectName}
           />
           <PrometheusUtilizationItem
-            title={t('public~Pod count')}
+            title={t('Pod count')}
             humanizeValue={humanizeNumber}
             utilizationQuery={queries[ProjectQueries.POD_COUNT]}
             namespace={projectName}

@@ -1,7 +1,11 @@
 import type { FC } from 'react';
 import { useContext } from 'react';
 import { Tooltip, Popover, Button, Icon } from '@patternfly/react-core';
-import { ListIcon, QuestionCircleIcon, TopologyIcon } from '@patternfly/react-icons';
+import {
+  RhUiListIcon,
+  RhUiQuestionMarkCircleFillIcon,
+  RhUiTopologyIcon,
+} from '@patternfly/react-icons';
 import { observer } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import type { FileUploadContextType } from '@console/app/src/components/file-upload/file-upload-context';
@@ -23,7 +27,7 @@ const TopologyPageToolbar: FC<TopologyPageToolbarProps> = observer(function Topo
   viewType,
   onViewChange,
 }) {
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   const isMobile = useIsMobile();
   const { extensions } = useContext<FileUploadContextType>(FileUploadContext);
   const showGraphView = viewType === TopologyViewType.graph;
@@ -31,9 +35,7 @@ const TopologyPageToolbar: FC<TopologyPageToolbarProps> = observer(function Topo
   const { namespace, isEmptyModel } = dataModelContext;
   const createResourceAccess: string[] = useAddToProjectAccess(namespace);
   const allImportAccess = createResourceAccess.includes(allImportResourceAccess);
-  const viewChangeTooltipContent = showGraphView
-    ? t('topology~List view')
-    : t('topology~Graph view');
+  const viewChangeTooltipContent = showGraphView ? t('List view') : t('Graph view');
 
   if (!namespace) {
     return null;
@@ -43,7 +45,7 @@ const TopologyPageToolbar: FC<TopologyPageToolbarProps> = observer(function Topo
     <>
       {!isMobile ? (
         <Popover
-          aria-label={t('topology~Shortcuts')}
+          aria-label={t('Shortcuts')}
           bodyContent={getTopologyShortcuts(t, {
             supportedFileTypes: extensions,
             isEmptyModel,
@@ -57,16 +59,16 @@ const TopologyPageToolbar: FC<TopologyPageToolbarProps> = observer(function Topo
             type="button"
             variant="link"
             className="odc-topology__shortcuts-button"
-            icon={<QuestionCircleIcon />}
+            icon={<RhUiQuestionMarkCircleFillIcon />}
             data-test-id="topology-view-shortcuts"
           >
-            {t('topology~View shortcuts')}
+            {t('View shortcuts')}
           </Button>
         </Popover>
       ) : null}
       <Tooltip position="left" content={viewChangeTooltipContent}>
         <Button
-          icon={<Icon size="md">{showGraphView ? <ListIcon /> : <TopologyIcon />}</Icon>}
+          icon={<Icon size="md">{showGraphView ? <RhUiListIcon /> : <RhUiTopologyIcon />}</Icon>}
           variant="link"
           aria-label={viewChangeTooltipContent}
           className="pf-m-plain odc-topology__view-switcher"

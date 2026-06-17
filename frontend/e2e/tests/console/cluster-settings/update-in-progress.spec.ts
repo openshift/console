@@ -1,6 +1,7 @@
 import { test, expect } from '../../../fixtures';
 import { ClusterSettingsPage } from '../../../pages/cluster-settings-page';
 import { clusterVersionWithProgressing } from '../../../mocks/cluster-version';
+import { stubWebSocketWatches } from './cluster-settings-test-utils';
 
 const CLUSTER_VERSION_URL = '**/apis/config.openshift.io/v1/clusterversions/version';
 
@@ -8,14 +9,13 @@ test.describe('Cluster Settings while an update is in progress', { tag: ['@admin
   test('displays information about the update', async ({ page }) => {
     const clusterSettings = new ClusterSettingsPage(page);
 
-    await test.step('Setup: Mock cluster version with update in progress', async () => {
-      // Mock the API response to return progressing cluster version
-      await page.route(CLUSTER_VERSION_URL, async (route) => {
-        await route.fulfill({
-          status: 200,
-          contentType: 'application/json',
-          body: JSON.stringify(clusterVersionWithProgressing),
-        });
+    await stubWebSocketWatches(page, ['config.openshift.io/v1/clusterversions']);
+
+    await page.route(CLUSTER_VERSION_URL, async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(clusterVersionWithProgressing),
       });
     });
 

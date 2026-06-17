@@ -95,7 +95,7 @@ const GitSection: FC<GitSectionProps> = ({
   autoFocus = true,
   flowType,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const inputRef = useRef<HTMLInputElement>();
 
   const {
@@ -471,46 +471,46 @@ const GitSection: FC<GitSectionProps> = ({
 
   const helpText = useMemo(() => {
     if (values.git.isUrlValidating) {
-      return `${t('devconsole~Validating')}...`;
+      return `${t('Validating')}...`;
     }
     if (validated === ValidatedOptions.success) {
-      return t('devconsole~Validated');
+      return t('Validated');
     }
     if (validated === ValidatedOptions.warning) {
       switch (repoStatus) {
         case RepoStatus.RateLimitExceeded: {
-          return t('devconsole~Rate limit exceeded');
+          return t('Rate limit exceeded');
         }
         case RepoStatus.GitTypeNotDetected: {
           return t(
-            'devconsole~URL is valid but a git type could not be identified. Please select a git type from the options below',
+            'URL is valid but a git type could not be identified. Please select a git type from the options below',
           );
         }
         case RepoStatus.PrivateRepo: {
           return t(
-            'devconsole~If this is a private repository, enter a source Secret in advanced Git options',
+            'If this is a private repository, enter a source Secret in advanced Git options',
           );
         }
         case RepoStatus.ResourceNotFound: {
-          return t('devconsole~Requested repository does not exist');
+          return t('Requested repository does not exist');
         }
         case RepoStatus.InvalidGitTypeSelected: {
           return t(
-            'devconsole~The selected git type might not be valid or the repository is private. Please try selecting another git type or enter a source Secret in advanced Git options',
+            'The selected git type might not be valid or the repository is private. Please try selecting another git type or enter a source Secret in advanced Git options',
           );
         }
         /* Special case for Gitea as it throws 404 for all kinds of negatives */
         case RepoStatus.GiteaRepoUnreachable: {
           return t(
-            'devconsole~The Gitea repository is unreachable. The repository might be private or does not exist',
+            'The Gitea repository is unreachable. The repository might be private or does not exist',
           );
         }
         default: {
-          return t('devconsole~URL is valid but cannot be reached');
+          return t('URL is valid but cannot be reached');
         }
       }
     }
-    return t('devconsole~Repository URL to build and deploy your code from');
+    return t('Repository URL to build and deploy your code from');
   }, [t, values.git.isUrlValidating, validated, repoStatus]);
 
   const resetFields = useCallback(() => {
@@ -631,12 +631,12 @@ const GitSection: FC<GitSectionProps> = ({
   }, [canCreateKnativeServiceLoading]);
 
   return (
-    <FormSection title={title ?? t('devconsole~Git')}>
+    <FormSection title={title ?? t('Git')}>
       <InputField
         ref={inputRef}
         type={TextInputTypes.text}
         name={`${fieldPrefix}git.url`}
-        label={t('devconsole~Git Repo URL')}
+        label={t('Git Repo URL')}
         helpText={helpText}
         helpTextInvalid={helpText}
         validated={validated}
@@ -662,8 +662,8 @@ const GitSection: FC<GitSectionProps> = ({
         <>
           <GitTypeSelector fieldPrefix={fieldPrefix} />
           {values.git.type === GitProvider.UNSURE && (
-            <Alert isInline variant="info" title={t('devconsole~Defaulting Git type to other')}>
-              {t('devconsole~We failed to detect the Git type.')}
+            <Alert isInline variant="info" title={t('Defaulting Git type to other')}>
+              {t('We failed to detect the Git type.')}
             </Alert>
           )}
         </>

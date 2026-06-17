@@ -14,7 +14,7 @@ const normalizeDevfileSamples = (
   const normalizedDevfileSamples = devfileSamples.map((sample) => {
     const { name: uid, displayName, description, tags, git, icon, provider } = sample;
     const gitRepositoryUrl = Object.values(git.remotes)[0];
-    const label = t('devconsole~Create Devfile Sample');
+    const label = t('Create Devfile Sample');
 
     const searchParams = new URLSearchParams();
     searchParams.set('formType', 'sample');
@@ -50,7 +50,7 @@ const normalizeDevfileSamples = (
 const useDevfileSamples: ExtensionHook<CatalogItem[]> = ({
   namespace,
 }): [CatalogItem[], boolean, any] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const [devfileSamples, setDevfileSamples] = useState<DevfileSample[]>();
   const [loadedError, setLoadedError] = useState<APIError>();
 

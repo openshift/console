@@ -15,7 +15,7 @@ import {
 import Subscribe from './Subscribe';
 
 const SubscribePage: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const { ns: namespace } = useParams();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -34,13 +34,12 @@ const SubscribePage: FC = () => {
 
   return (
     <NamespacedPage disabled variant={NamespacedPageVariants.light}>
-      <DocumentTitle>{t('knative-plugin~Subscribe')}</DocumentTitle>
+      <DocumentTitle>{t('Subscribe')}</DocumentTitle>
       <PageHeading
-        title={t('knative-plugin~Subscribe')}
+        title={t('Subscribe')}
         helpText={
           <>
-            {t('knative-plugin~Subscribe to')} {subscribeApiVersion} {subscribeKind} {namespace}/
-            {subscribeName}
+            {t('Subscribe to')} {subscribeApiVersion} {subscribeKind} {namespace}/{subscribeName}
           </>
         }
       />

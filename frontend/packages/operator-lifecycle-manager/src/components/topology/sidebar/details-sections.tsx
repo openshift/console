@@ -7,10 +7,10 @@ import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { TYPE_OPERATOR_BACKED_SERVICE } from '@console/topology/src/operators/components/const';
 
 const DetailsSection: FC<{ resource: K8sResourceKind }> = ({ resource }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   return (
     <div className="overview__sidebar-pane-body">
-      <SectionHeading text={t('olm~Operator details')} />
+      <SectionHeading text={t('Operator details')} />
       <ResourceSummary resource={resource} />
     </div>
   );

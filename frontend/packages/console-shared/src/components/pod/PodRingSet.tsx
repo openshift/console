@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useMemo } from 'react';
 import { Split, SplitItem, Bullseye, Icon } from '@patternfly/react-core';
-import { LongArrowAltRightIcon } from '@patternfly/react-icons';
+import { RhUiLongArrowRightIcon } from '@patternfly/react-icons';
 import { t_color_gray_50 as color200 } from '@patternfly/react-tokens';
 import type { PodRingSetProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { LoadingInline } from '@console/internal/components/utils/status-box';
@@ -44,7 +44,7 @@ const PodRingSet: FC<PodRingSetProps> = ({ obj, path }) => {
           <SplitItem>
             <Bullseye>
               <Icon size="xl">
-                <LongArrowAltRightIcon color={color200.value} />
+                <RhUiLongArrowRightIcon color={color200.value} />
               </Icon>
             </Bullseye>
           </SplitItem>

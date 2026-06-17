@@ -26,7 +26,7 @@ const SinkSourceModal: FC<Props> = ({
   values,
   initialValues,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const dirty =
     values?.formData?.sink?.key !== initialValues.formData.sink.key ||
     values?.formData?.sink?.uri !== initialValues.formData.sink.uri;
@@ -34,7 +34,7 @@ const SinkSourceModal: FC<Props> = ({
   return (
     <>
       <ModalHeader
-        title={t('knative-plugin~Move sink')}
+        title={t('Move sink')}
         labelId="sink-source-modal-title"
         data-test-id="modal-title"
       />
@@ -62,10 +62,10 @@ const SinkSourceModal: FC<Props> = ({
           isDisabled={!dirty || !_.isEmpty(errors)}
           form="sink-source-form"
         >
-          {t('knative-plugin~Save')}
+          {t('Save')}
         </Button>
         <Button variant="link" onClick={cancel} type="button" data-test-id="modal-cancel-action">
-          {t('knative-plugin~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </>

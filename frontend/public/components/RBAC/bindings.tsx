@@ -101,13 +101,13 @@ const useRoleBindingsColumns = (): {
   columns: TableColumn<BindingKind>[];
   resetAllColumnWidths: () => void;
 } => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(RoleBindingModel);
 
   const columns: TableColumn<BindingKind>[] = useMemo(
     () => [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         resizableProps: getResizableProps(tableColumnInfo[0].id),
@@ -117,7 +117,7 @@ const useRoleBindingsColumns = (): {
         },
       },
       {
-        title: t('public~Role ref'),
+        title: t('Role ref'),
         id: tableColumnInfo[1].id,
         sort: 'roleRef.name',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
@@ -126,7 +126,7 @@ const useRoleBindingsColumns = (): {
         },
       },
       {
-        title: t('public~Subject kind'),
+        title: t('Subject kind'),
         id: tableColumnInfo[2].id,
         sort: 'subject.kind',
         resizableProps: getResizableProps(tableColumnInfo[2].id),
@@ -135,7 +135,7 @@ const useRoleBindingsColumns = (): {
         },
       },
       {
-        title: t('public~Subject name'),
+        title: t('Subject name'),
         id: tableColumnInfo[3].id,
         sort: 'subject.name',
         resizableProps: getResizableProps(tableColumnInfo[3].id),
@@ -144,7 +144,7 @@ const useRoleBindingsColumns = (): {
         },
       },
       {
-        title: t('public~Namespace'),
+        title: t('Namespace'),
         id: tableColumnInfo[4].id,
         sort: 'metadata.namespace',
         resizableProps: getResizableProps(tableColumnInfo[4].id),
@@ -246,7 +246,7 @@ const getDataViewRows: GetDataViewRows<BindingKind> = (data, columns) => {
 };
 
 const BindingsList: FC<BindingsListTableProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { columns, resetAllColumnWidths } = useRoleBindingsColumns();
 
   const hasCRBindings = props.data.some((binding) => !binding.metadata.namespace);
@@ -256,25 +256,25 @@ const BindingsList: FC<BindingsListTableProps> = (props) => {
       ? [
           {
             value: 'cluster',
-            label: t('public~Cluster-wide RoleBindings'),
+            label: t('Cluster-wide RoleBindings'),
           },
           {
             value: 'namespace',
-            label: t('public~Namespace RoleBindings'),
+            label: t('Namespace RoleBindings'),
           },
           {
             value: 'system',
-            label: t('public~System RoleBindings'),
+            label: t('System RoleBindings'),
           },
         ]
       : [
           {
             value: 'namespace',
-            label: t('public~Namespace RoleBindings'),
+            label: t('Namespace RoleBindings'),
           },
           {
             value: 'system',
-            label: t('public~System RoleBindings'),
+            label: t('System RoleBindings'),
           },
         ];
     return options;
@@ -287,8 +287,8 @@ const BindingsList: FC<BindingsListTableProps> = (props) => {
       <DataViewCheckboxFilter
         key="role-kind"
         filterId="role-kind"
-        title={t('public~Kind')}
-        placeholder={t('public~Filter by kind')}
+        title={t('Kind')}
+        placeholder={t('Filter by kind')}
         options={kindFilterOptions}
       />,
     ],
@@ -335,7 +335,7 @@ const BindingsList: FC<BindingsListTableProps> = (props) => {
         {...props}
         data={filteredData}
         loaded={loaded}
-        label={t('public~RoleBindings')}
+        label={t('RoleBindings')}
         columns={columns}
         initialFilters={initialFilters}
         additionalFilterNodes={additionalFilterNodes}
@@ -360,7 +360,7 @@ export const RoleBindingsPage: FC<RoleBindingsPageProps> = ({
     name && kind ? `?subjectName=${encodeURIComponent(name)}&subjectKind=${kind}` : ''
   }`,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const watchResources = useMemo(
     () =>
       mock
@@ -403,10 +403,8 @@ export const RoleBindingsPage: FC<RoleBindingsPageProps> = ({
 
   return (
     <>
-      <ListPageHeader title={showTitle ? t('public~RoleBindings') : undefined}>
-        {!mock && (
-          <ListPageCreateLink to={createPath}>{t('public~Create binding')}</ListPageCreateLink>
-        )}
+      <ListPageHeader title={showTitle ? t('RoleBindings') : undefined}>
+        {!mock && <ListPageCreateLink to={createPath}>{t('Create binding')}</ListPageCreateLink>}
       </ListPageHeader>
       <ListPageBody>
         <BindingsList
@@ -423,7 +421,7 @@ export const RoleBindingsPage: FC<RoleBindingsPageProps> = ({
 
 const NsRoleDropdown: FC<RoleDropdownProps> = (props) => {
   const openshiftFlag = useFlag(FLAGS.OPENSHIFT);
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   if (flagPending(openshiftFlag)) {
     return null;
@@ -443,27 +441,27 @@ const NsRoleDropdown: FC<RoleDropdownProps> = (props) => {
   return (
     <ListDropdown
       {...props}
-      desc={t('public~Namespace roles (Role)')}
+      desc={t('Namespace roles (Role)')}
       resources={resources}
-      placeholder={t('public~Select role name')}
+      placeholder={t('Select role name')}
     />
   );
 };
 
 const ClusterRoleDropdown: FC<RoleDropdownProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <ListDropdown
       {...props}
-      desc={t('public~Cluster-wide roles (ClusterRole)')}
+      desc={t('Cluster-wide roles (ClusterRole)')}
       resources={[{ kind: 'ClusterRole' }]}
-      placeholder={t('public~Select role name')}
+      placeholder={t('Select role name')}
     />
   );
 };
 
 const BaseEditRoleBinding: FC<BaseEditRoleBindingProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const navigate = useNavigate();
 
   const { fixed, saveButtonText } = props;
@@ -577,7 +575,7 @@ const BaseEditRoleBinding: FC<BaseEditRoleBindingProps> = (props) => {
       (kind === 'RoleBinding' && !metadata.namespace) ||
       (subject.kind === 'ServiceAccount' && !subject.namespace)
     ) {
-      setError(t('public~Please complete all fields.'));
+      setError(t('Please complete all fields.'));
       return;
     }
 
@@ -619,28 +617,28 @@ const BaseEditRoleBinding: FC<BaseEditRoleBindingProps> = (props) => {
     {
       name: 'binding-type',
       value: 'RoleBinding',
-      label: t('public~Namespace role binding (RoleBinding)'),
+      label: t('Namespace role binding (RoleBinding)'),
       description: t(
-        'public~Grant the permissions to a user or set of users within the selected namespace.',
+        'Grant the permissions to a user or set of users within the selected namespace.',
       ),
     },
     {
       name: 'binding-type',
       value: 'ClusterRoleBinding',
-      label: t('public~Cluster-wide role binding (ClusterRoleBinding)'),
+      label: t('Cluster-wide role binding (ClusterRoleBinding)'),
       description: t(
-        'public~Grant the permissions to a user or set of users at the cluster level and in all namespaces.',
+        'Grant the permissions to a user or set of users at the cluster level and in all namespaces.',
       ),
     },
   ];
 
   const subjectKinds = [
-    { name: 'subject-kind', value: 'User', label: t('public~User') },
-    { name: 'subject-kind', value: 'Group', label: t('public~Group') },
+    { name: 'subject-kind', value: 'User', label: t('User') },
+    { name: 'subject-kind', value: 'Group', label: t('Group') },
     {
       name: 'subject-kind',
       value: 'ServiceAccount',
-      label: t('public~ServiceAccount'),
+      label: t('ServiceAccount'),
     },
   ];
 
@@ -650,13 +648,13 @@ const BaseEditRoleBinding: FC<BaseEditRoleBindingProps> = (props) => {
       <PageHeading
         title={<div data-test="title">{title}</div>}
         helpText={t(
-          'public~Associate a user/group to the selected role to define the type of access and resources that are allowed.',
+          'Associate a user/group to the selected role to define the type of access and resources that are allowed.',
         )}
       />
       <PaneBody>
         <Form onSubmit={save} isWidthLimited>
           {!_.get(fixed, 'kind') && (
-            <FormSection title={t('public~Binding type')} titleElement="h2">
+            <FormSection title={t('Binding type')} titleElement="h2">
               <FormGroup role="radiogroup" fieldId="binding-type-radio-group" isStack>
                 {bindingKinds.map(({ label, value, name, description }) => {
                   const checked = value === data?.kind;
@@ -679,8 +677,8 @@ const BaseEditRoleBinding: FC<BaseEditRoleBindingProps> = (props) => {
             </FormSection>
           )}
 
-          <FormSection title={t('public~RoleBinding')} titleElement="h2">
-            <FormGroup label={t('public~Name')} isRequired>
+          <FormSection title={t('RoleBinding')} titleElement="h2">
+            <FormGroup label={t('Name')} isRequired>
               {_.get(fixed, 'metadata.name') ? (
                 <ResourceName kind={data?.kind} name={data?.metadata?.name} />
               ) : (
@@ -691,13 +689,13 @@ const BaseEditRoleBinding: FC<BaseEditRoleBindingProps> = (props) => {
                   name="role-binding-name"
                   value={data?.metadata?.name ?? ''}
                   onChange={changeName}
-                  placeholder={t('public~RoleBinding name')}
+                  placeholder={t('RoleBinding name')}
                   data-test="role-binding-name"
                 />
               )}
             </FormGroup>
             {data?.kind === 'RoleBinding' && (
-              <FormGroup label={t('public~Namespace')} isRequired data-test="namespace-dropdown">
+              <FormGroup label={t('Namespace')} isRequired data-test="namespace-dropdown">
                 <NsDropdown
                   fixed={!!_.get(fixed, 'metadata.namespace')}
                   selectedKey={data?.metadata?.namespace}
@@ -708,8 +706,8 @@ const BaseEditRoleBinding: FC<BaseEditRoleBindingProps> = (props) => {
             )}
           </FormSection>
 
-          <FormSection title={t('public~Role')} titleElement="h2">
-            <FormGroup label={t('public~Role name')} isRequired data-test="role-dropdown">
+          <FormSection title={t('Role')} titleElement="h2">
+            <FormGroup label={t('Role name')} isRequired data-test="role-dropdown">
               <RoleDropdown
                 fixed={!!_.get(fixed, 'roleRef.name')}
                 namespace={data?.metadata?.namespace}
@@ -721,7 +719,7 @@ const BaseEditRoleBinding: FC<BaseEditRoleBindingProps> = (props) => {
             </FormGroup>
           </FormSection>
 
-          <FormSection title={t('public~Subject')} titleElement="h2">
+          <FormSection title={t('Subject')} titleElement="h2">
             <FormGroup role="radiogroup" fieldId="subject-radio-group" isStack>
               {subjectKinds.map(({ label, value, name }) => {
                 const checked = value === subject?.kind;
@@ -742,7 +740,7 @@ const BaseEditRoleBinding: FC<BaseEditRoleBindingProps> = (props) => {
               })}
             </FormGroup>
             {subject?.kind === 'ServiceAccount' && (
-              <FormGroup label={t('public~Subject namespace')} isRequired>
+              <FormGroup label={t('Subject namespace')} isRequired>
                 <NsDropdown
                   id="subject-namespace"
                   selectedKey={subject?.namespace}
@@ -750,7 +748,7 @@ const BaseEditRoleBinding: FC<BaseEditRoleBindingProps> = (props) => {
                 />
               </FormGroup>
             )}
-            <FormGroup label={t('public~Subject name')} isRequired>
+            <FormGroup label={t('Subject name')} isRequired>
               <TextInput
                 isRequired
                 type="text"
@@ -758,7 +756,7 @@ const BaseEditRoleBinding: FC<BaseEditRoleBindingProps> = (props) => {
                 name="subject-name"
                 value={subject?.name ?? ''}
                 onChange={changeSubjectName}
-                placeholder={t('public~Subject name')}
+                placeholder={t('Subject name')}
                 isDisabled={isSubjectDisabled}
                 data-test="subject-name"
               />
@@ -768,10 +766,10 @@ const BaseEditRoleBinding: FC<BaseEditRoleBindingProps> = (props) => {
           <ButtonBar errorMessage={error} inProgress={inProgress}>
             <ActionGroup className="pf-v6-c-form">
               <Button type="submit" id="save-changes" variant="primary" data-test="save-changes">
-                {saveButtonText || t('public~Create')}
+                {saveButtonText || t('Create')}
               </Button>
               <Button onClick={() => navigate(-1)} id="cancel" variant="secondary">
-                {t('public~Cancel')}
+                {t('Cancel')}
               </Button>
             </ActionGroup>
           </ButtonBar>
@@ -802,14 +800,14 @@ export const CreateRoleBinding: FC = () => {
     roleRef: { kind: roleKind, name: roleName },
     subjectRef: { subjectName, subjectKind },
   };
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <BaseEditRoleBinding
       setActiveNamespace={setActiveNamespace}
       metadata={metadata}
       fixed={fixed}
       isCreate={true}
-      titleVerbAndKind={t('public~Create RoleBinding')}
+      titleVerbAndKind={t('Create RoleBinding')}
     />
   );
 };
@@ -849,7 +847,7 @@ const BindingLoadingWrapper: FC<BindingLoadingWrapperProps> = (props) => {
 };
 
 export const EditRoleBinding: FC<EditRoleBindingProps> = ({ kind }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const params = useParams();
 
   const [obj, loaded, loadError] = useK8sWatchResource<RoleBindingKind | ClusterRoleBindingKind>({
@@ -866,14 +864,14 @@ export const EditRoleBinding: FC<EditRoleBindingProps> = ({ kind }) => {
       loadError={loadError}
       fixedKeys={['kind', 'metadata', 'roleRef']}
       subjectIndex={getSubjectIndex()}
-      titleVerbAndKind={t('public~Edit RoleBinding')}
-      saveButtonText={t('public~Save')}
+      titleVerbAndKind={t('Edit RoleBinding')}
+      saveButtonText={t('Save')}
     />
   );
 };
 
 export const CopyRoleBinding: FC<EditRoleBindingProps> = ({ kind }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const params = useParams();
 
   const [obj, loaded, loadError] = useK8sWatchResource<RoleBindingKind | ClusterRoleBindingKind>({
@@ -891,7 +889,7 @@ export const CopyRoleBinding: FC<EditRoleBindingProps> = ({ kind }) => {
       fixedKeys={['kind']}
       subjectIndex={getSubjectIndex()}
       isCreate={true}
-      titleVerbAndKind={t('public~Duplicate RoleBinding')}
+      titleVerbAndKind={t('Duplicate RoleBinding')}
     />
   );
 };

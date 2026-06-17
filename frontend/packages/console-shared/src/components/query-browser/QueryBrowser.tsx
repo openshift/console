@@ -26,7 +26,7 @@ import {
   TextInput,
   InputGroupItem,
 } from '@patternfly/react-core';
-import { ChartLineIcon } from '@patternfly/react-icons';
+import { RhUiMonitoringIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -93,7 +93,7 @@ const GraphEmptyState: FC<GraphEmptyStateProps> = ({ children, title }) => (
   <div className="query-browser__wrapper graph-empty-state">
     <EmptyState
       headingLevel="h2"
-      icon={ChartLineIcon}
+      icon={RhUiMonitoringIcon}
       titleText={<>{title}</>}
       variant={EmptyStateVariant.full}
     >
@@ -107,7 +107,7 @@ const SpanControls = memo<SpanControlsProps>(
     const [isValid, setIsValid] = useState(true);
     const [text, setText] = useState(formatPrometheusDuration(span));
 
-    const { t } = useTranslation();
+    const { t } = useTranslation('console-shared');
 
     const [isOpen, setIsOpen, , setClosed] = useBoolean(false);
 
@@ -144,7 +144,7 @@ const SpanControls = memo<SpanControlsProps>(
         <InputGroup className="query-browser__span">
           <InputGroupItem isFill>
             <TextInput
-              aria-label={t('public~graph timespan')}
+              aria-label={t('graph timespan')}
               className="query-browser__span-text"
               validated={isValid ? 'default' : 'error'}
               onChange={(_event, v) => setSpan(v, true)}
@@ -161,7 +161,7 @@ const SpanControls = memo<SpanControlsProps>(
                   ref={toggleRef}
                   onClick={setIsOpen}
                   isExpanded={isOpen}
-                  aria-label={t('public~graph timespan')}
+                  aria-label={t('graph timespan')}
                 />
               )}
               popperProps={{ position: 'right' }}
@@ -176,14 +176,14 @@ const SpanControls = memo<SpanControlsProps>(
           type="button"
           variant="tertiary"
         >
-          {t('public~Reset zoom')}
+          {t('Reset zoom')}
         </Button>
         {hasReducedResolution && (
           <Alert
             isInline
             isPlain
             className="query-browser__reduced-resolution"
-            title={t('public~Displaying with reduced resolution due to large dataset.')}
+            title={t('Displaying with reduced resolution due to large dataset.')}
             variant="info"
             truncateTitle={1}
           />
@@ -364,7 +364,7 @@ const Graph = memo<GraphProps>(
     const tooltipSeriesNames: string[] = [];
     const tooltipSeriesLabels: PrometheusLabels[] = [];
     const legendData: { name: string }[] = [];
-    const { t } = useTranslation();
+    const { t } = useTranslation('console-shared');
 
     const [xDomain, setXDomain] = useState(fixedXDomain || getXDomain(Date.now(), span));
 
@@ -446,7 +446,7 @@ const Graph = memo<GraphProps>(
     return (
       <Chart
         containerComponent={graphContainer}
-        ariaTitle={t('public~query browser chart')}
+        ariaTitle={t('query browser chart')}
         domain={domain}
         domainPadding={{ y: 1 }}
         height={200}
@@ -686,7 +686,7 @@ const QueryBrowserWrapped: FC<QueryBrowserProps> = ({
   timespan,
   units,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const hideGraphs = useConsoleSelector<boolean>(({ observe }) => !!observe.get('hideGraphs'));
   const tickInterval = useConsoleSelector<number>(
     ({ observe }) => pollInterval ?? observe.getIn(['queryBrowser', 'pollInterval']),
@@ -902,9 +902,9 @@ const QueryBrowserWrapped: FC<QueryBrowserProps> = ({
 
   if (isRangeVector) {
     return (
-      <GraphEmptyState title={t('public~Ungraphable results')}>
+      <GraphEmptyState title={t('Ungraphable results')}>
         {t(
-          'public~Query results include range vectors, which cannot be graphed. Try adding a function to transform the data.',
+          'Query results include range vectors, which cannot be graphed. Try adding a function to transform the data.',
         )}
       </GraphEmptyState>
     );
@@ -912,16 +912,16 @@ const QueryBrowserWrapped: FC<QueryBrowserProps> = ({
 
   if (error?.json?.error?.match(/invalid expression type "string"/)) {
     return (
-      <GraphEmptyState title={t('public~Ungraphable results')}>
-        {t('public~Query result is a string, which cannot be graphed.')}
+      <GraphEmptyState title={t('Ungraphable results')}>
+        {t('Query result is a string, which cannot be graphed.')}
       </GraphEmptyState>
     );
   }
 
   if (isDatasetTooBig) {
     return (
-      <GraphEmptyState title={t('public~Ungraphable results')}>
-        {t('public~The resulting dataset is too large to graph.')}
+      <GraphEmptyState title={t('Ungraphable results')}>
+        {t('The resulting dataset is too large to graph.')}
       </GraphEmptyState>
     );
   }
@@ -964,7 +964,7 @@ const QueryBrowserWrapped: FC<QueryBrowserProps> = ({
                 id="stacked"
                 isChecked={isStacked}
                 data-checked-state={isStacked}
-                label={t('public~Stacked')}
+                label={t('Stacked')}
                 onChange={(_event, v) => setIsStacked(v)}
               />
             )}

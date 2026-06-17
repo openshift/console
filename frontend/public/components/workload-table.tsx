@@ -89,7 +89,7 @@ const tableColumnInfo = [
 ];
 
 export const ReplicasCount: FC<ReplicasCountProps> = ({ obj, kind }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   // DaemonSets use different status fields than Deployments
   const isDaemonSet = kind?.includes('DaemonSet');
@@ -102,7 +102,7 @@ export const ReplicasCount: FC<ReplicasCountProps> = ({ obj, kind }) => {
 
   return (
     <Link to={`${resourcePath(kind, obj.metadata.name, obj.metadata.namespace)}/pods`} title="pods">
-      {t('public~{{statusReplicas}} of {{specReplicas}} pods', {
+      {t('{{statusReplicas}} of {{specReplicas}} pods', {
         statusReplicas,
         specReplicas,
       })}
@@ -165,13 +165,13 @@ export const getWorkloadDataViewRows = <T extends K8sResourceKind>(
 export const useWorkloadColumns = <T extends K8sResourceKind>(
   model: K8sModel,
 ): { columns: TableColumn<T>[]; resetAllColumnWidths: () => void } => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(model);
 
   const columns = useMemo(() => {
     return [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         resizableProps: getResizableProps(tableColumnInfo[0].id),
@@ -181,7 +181,7 @@ export const useWorkloadColumns = <T extends K8sResourceKind>(
         },
       },
       {
-        title: t('public~Namespace'),
+        title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
@@ -190,7 +190,7 @@ export const useWorkloadColumns = <T extends K8sResourceKind>(
         },
       },
       {
-        title: t('public~Status'),
+        title: t('Status'),
         id: tableColumnInfo[2].id,
         sort: 'status.replicas',
         resizableProps: getResizableProps(tableColumnInfo[2].id),
@@ -199,7 +199,7 @@ export const useWorkloadColumns = <T extends K8sResourceKind>(
         },
       },
       {
-        title: t('public~Labels'),
+        title: t('Labels'),
         id: tableColumnInfo[3].id,
         sort: 'metadata.labels',
         resizableProps: getResizableProps(tableColumnInfo[3].id),
@@ -209,7 +209,7 @@ export const useWorkloadColumns = <T extends K8sResourceKind>(
         },
       },
       {
-        title: t('public~Pod selector'),
+        title: t('Pod selector'),
         id: tableColumnInfo[4].id,
         sort: 'spec.selector',
         resizableProps: getResizableProps(tableColumnInfo[4].id),

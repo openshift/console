@@ -97,9 +97,11 @@ When migrating a Cypress test that uses `cy.get('[data-test-id="x"]')` or `cy.by
 
 | Cypress                                                  | Playwright                                                                                                                                                |
 | -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `cy.wait(3000)`                                          | **AVOID.** Use `await expect(locator).toBeVisible()` or condition-based waits. Only use `page.waitForTimeout()` as absolute last resort during debugging. |
-| `cy.get(s, { timeout: 60000 })`                          | `await this.page.locator(s).waitFor({ state: 'visible', timeout: 60000 })`                                                                                |
-| `cy.contains(text, { timeout })`                         | `await this.page.getByText(text).waitFor({ state: 'visible', timeout })`                                                                                  |
+| `cy.wait(3000)`                                          |  Use web assertions e.g. `await expect(locator).toBeVisible()` or condition-based waits. Only use `page.waitForTimeout()` as absolute last resort during debugging. |
+| `cy.get(s, { timeout }).click()`                         | `await locator.click({ timeout })` — pass timeout to the action, not a separate `waitFor()`. All Playwright actions accept a `timeout` option             |
+| `cy.get(s, { timeout }).should('be.visible')`            | `await expect(locator).toBeVisible({ timeout })` — pass timeout to the assertion                                                                          |
+| `cy.get(s, { timeout })` (no action, just waiting)       | `await locator.waitFor({ state: 'visible', timeout })` — only when no action or assertion follows                                                         |
+| `cy.contains(text, { timeout })`                         | `await expect(page.getByText(text)).toBeVisible({ timeout })` or `await page.getByText(text).click({ timeout })` depending on what follows                |
 | `cy.intercept('GET', url).as('req')` + `cy.wait('@req')` | `await this.page.waitForResponse(url)` or `page.waitForResponse(resp => resp.url().includes(url))`                                                        |
 
 ### Resource Lifecycle
@@ -439,11 +441,96 @@ The MCP's tracked page stays on `about:blank` — use the `p` reference from the
 
 ---
 
+## Playwright Auto-Awaiting
+
+Playwright action methods (`fill()`, `click()`, `check()`, `uncheck()`, `selectOption()`, `type()`, `press()`) **auto-wait for the element to be actionable** (visible, enabled, stable). You do NOT need an explicit `waitFor()` before calling these actions. This includes `robustClick()` in page objects — it also auto-waits.
+
+> **ESLint enforcement:** The `no-restricted-syntax` rule in `e2e/.eslintrc.cjs` warns on all `.waitFor()` calls. Legitimate uses must have `// eslint-disable-next-line no-restricted-syntax`. This catches redundant `waitFor()` at lint time — `yarn eslint` will flag new violations.
+
+```typescript
+// WRONG — redundant waitFor before an action
+await input.waitFor({ state: 'visible' });
+await input.fill('text');
+
+// WRONG — redundant waitFor before robustClick
+await action.waitFor({ state: 'visible', timeout: 10_000 });
+await this.robustClick(action);
+
+// RIGHT — actions auto-wait for actionability
+await input.fill('text');
+await this.robustClick(action);
+
+// RIGHT — if you need a custom timeout, pass it to the action
+await input.fill('text', { timeout: 10_000 });
+await action.click({ timeout: 10_000 });
+```
+
+Only use explicit `waitFor()` when you need to wait for an element **without acting on it** — e.g., confirming navigation completed, or waiting for loading indicators to disappear:
+
+```typescript
+// OK — waiting for a state transition, not an action
+await page.getByTestId('loading-indicator').waitFor({ state: 'detached' });
+
+// OK — confirming the editor loaded before reading its content (not an action on the element)
+await page.getByTestId('code-editor').waitFor({ state: 'visible' });
+```
+
+Similarly, `waitForLoadingComplete()` should not be called at the end of page object methods like `selectProject()`. The caller's next action will auto-wait for whatever element it needs.
+
+---
+
+## Adding `data-test` Attributes
+
+When migrating selectors, **always check the React source** for existing `data-test` attributes before creating locators:
+
+1. **If `data-test` already exists** on the element → use `getByTestId('value')` directly.
+2. **If only a legacy attribute exists** (`data-test-id`, `data-test-rows`, `data-test-dropdown-menu`, `data-test-action`, etc.) → add `data-test="value"` to the React component source alongside the existing legacy attribute, then use `getByTestId('value')`.
+3. **Never use legacy attribute selectors** like `page.locator('[data-test-rows="..."]')` or `page.locator('[data-test-dropdown-menu="..."]')` when `data-test` exists or can be added.
+
+```typescript
+// WRONG — using legacy selector directly
+private readonly resourceRows = this.page.locator('[data-test-rows="resource-row"]');
+
+// RIGHT — data-test="resource-row" already exists on the same element
+private readonly resourceRows = this.page.getByTestId('resource-row');
+```
+
+---
+
+## k8sClient Cleanup
+
+`KubernetesClient.deleteNamespace()` and `KubernetesClient.deleteCustomResource()` catch errors and call `isNotFound(err)` to silently swallow 404 "not found" responses. Do NOT wrap these cleanup calls in try/catch blocks. Note: `deleteClusterCustomResource` is not implemented in `KubernetesClient` — do not reference it.
+
+```typescript
+// WRONG — unnecessary error handling
+test.afterAll(async ({ k8sClient }) => {
+  try { await k8sClient.deleteNamespace(namespace); } catch { /* may already be deleted */ }
+});
+
+// RIGHT — k8sClient handles 404 silently
+test.afterAll(async ({ k8sClient }) => {
+  await k8sClient.deleteNamespace(namespace);
+});
+```
+
+---
+
+## Page Object Naming
+
+- Do NOT prefix methods or locators with `legacy`. If a locator targets an older DOM structure that will be replaced, name it for what it does, not its age (e.g., `filterByNameInput` not `legacyFilterByName`).
+- Common actions (navigate to form, click create dropdown item, filter + select) should be page object methods, not inline locator chains in spec files.
+
+---
+
 ## Things to NEVER Do
 
 - **Never import `test` or `expect` from `@playwright/test`** — import from `e2e/fixtures`
 - **Never transliterate** — `cy.get(x).click()` → `page.locator(x).click()` is not a migration. Understand intent, use idiomatic Playwright APIs
 - **Never use `page.waitForTimeout()`** as a replacement for `cy.wait()`. Find the condition to wait for
+- **Never add `waitFor()` before an action** — `fill()`, `click()`, `check()`, etc. already auto-wait for actionability
+- **Never use legacy test attribute selectors** (`[data-test-rows="..."]`, `[data-test-id="..."]`, `[data-test-dropdown-menu="..."]`) — add `data-test` to the React source and use `getByTestId()`
+- **Never wrap k8sClient cleanup in try/catch** — `deleteNamespace` and `deleteCustomResource` already swallow 404s
+- **Never prefix methods with `legacy`** — name for what it does, not its age
 - **Never put locators in spec files** when a page object exists or should exist
 - **Never rely on test order** — each `test()` must work independently.
 - **Never skip cleanup** — every created resource must be tracked with `cleanup.track*()`

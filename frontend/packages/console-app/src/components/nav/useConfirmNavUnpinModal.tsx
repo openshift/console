@@ -5,12 +5,12 @@ import { modelFor } from '@console/internal/module/k8s';
 import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
 
 const useConfirmNavUnpinModal = (pinnedResources: string[], updatePinsFn) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
 
   const confirmModalLauncher = useWarningModal({
-    title: t('console-app~Remove from navigation?'),
-    cancelButtonLabel: t('console-app~Cancel'),
-    confirmButtonLabel: t('console-app~Remove'),
+    title: t('Remove from navigation?'),
+    cancelButtonLabel: t('Cancel'),
+    confirmButtonLabel: t('Remove'),
     confirmButtonVariant: ButtonVariant.danger,
     ouiaId: 'NavigationUnpinConfirmation',
   });
@@ -26,7 +26,7 @@ const useConfirmNavUnpinModal = (pinnedResources: string[], updatePinsFn) => {
       const label = modelFor(resource)?.labelPlural;
       const message = (
         <span>
-          <Trans ns="public">
+          <Trans ns="console-app">
             Are you sure you want to remove <strong>{{ label }}</strong> from navigation?
           </Trans>
         </span>

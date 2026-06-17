@@ -52,12 +52,12 @@ export const filterVirtualMachineInstancesByNode = (vmis: K8sResourceKind[], nod
 export const useWatchVirtualMachineInstances = (
   nodeName?: string,
 ): WatchK8sResult<K8sResourceKind[]> => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
 
   const isKubevirtPluginActive = useIsKubevirtPluginActive();
   const pluginError = !isKubevirtPluginActive
     ? {
-        message: t('console-app~Unable to load VirtualMachines'),
+        message: t('Unable to load VirtualMachines'),
       }
     : undefined;
 

@@ -80,7 +80,7 @@ export const ConnectedPageHeading = connectToModel(
     titleFunc,
     ...props
   }: ConnectedPageHeadingProps) => {
-    const { t } = useTranslation();
+    const { t } = useTranslation('public');
 
     const data = _.get(obj, 'data');
     const hasData = !_.isEmpty(data);
@@ -119,7 +119,7 @@ export const ConnectedPageHeading = connectToModel(
         <LazyActionMenu
           context={{ [kind]: data }}
           variant={ActionMenuVariant.DROPDOWN}
-          label={t('public~Actions')}
+          label={t('Actions')}
         />
       ) : (
         <>

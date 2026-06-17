@@ -1,4 +1,4 @@
-import { LongArrowAltRightIcon } from '@patternfly/react-icons';
+import { RhUiLongArrowRightIcon } from '@patternfly/react-icons';
 import { DeploymentConfigModel } from '@console/internal/models';
 import type { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import * as usePodsWatcherModule from '../../../hooks/usePodsWatcher';
@@ -14,7 +14,7 @@ jest.mock('../PodRing', () => ({
 
 jest.mock('@patternfly/react-icons', () => ({
   ...jest.requireActual('@patternfly/react-icons'),
-  LongArrowAltRightIcon: jest.fn(() => null),
+  RhUiLongArrowRightIcon: jest.fn(() => null),
 }));
 
 jest.mock('../../../hooks/usePodsWatcher', () => ({
@@ -22,7 +22,7 @@ jest.mock('../../../hooks/usePodsWatcher', () => ({
 }));
 
 const mockPodRing = (PodRing as unknown) as jest.Mock;
-const mockLongArrowAltRightIcon = (LongArrowAltRightIcon as unknown) as jest.Mock;
+const mockRhUiLongArrowRightIcon = (RhUiLongArrowRightIcon as unknown) as jest.Mock;
 
 describe('PodRingSet', () => {
   const usePodsWatcherMock = usePodsWatcherModule.usePodsWatcher as jest.Mock;
@@ -51,7 +51,7 @@ describe('PodRingSet', () => {
     // Assert that only one PodRing is rendered.
     expect(mockPodRing).toHaveBeenCalledTimes(1);
     expect(mockPodRing.mock.calls[0][0]).toMatchObject({ pods: [samplePods.data[0]] });
-    expect(mockLongArrowAltRightIcon).not.toHaveBeenCalled();
+    expect(mockRhUiLongArrowRightIcon).not.toHaveBeenCalled();
   });
 
   it('should render two PodRings and an arrow during a rolling deployment', () => {
@@ -70,7 +70,7 @@ describe('PodRingSet', () => {
 
     // Assert that two PodRings are rendered.
     expect(mockPodRing).toHaveBeenCalledTimes(2);
-    expect(mockLongArrowAltRightIcon).toHaveBeenCalledTimes(1);
+    expect(mockRhUiLongArrowRightIcon).toHaveBeenCalledTimes(1);
 
     const { calls } = mockPodRing.mock;
     expect(calls[0][0]).toMatchObject({ pods: [] });
@@ -86,6 +86,6 @@ describe('PodRingSet', () => {
     expect(mockPodRing).toHaveBeenCalledTimes(1);
     expect(mockPodRing.mock.calls[0][0]).toMatchObject({ pods: [] });
 
-    expect(mockLongArrowAltRightIcon).not.toHaveBeenCalled();
+    expect(mockRhUiLongArrowRightIcon).not.toHaveBeenCalled();
   });
 });

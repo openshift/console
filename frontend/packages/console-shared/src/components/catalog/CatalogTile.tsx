@@ -24,10 +24,10 @@ type CatalogTileProps = {
 };
 
 export const CatalogTile: FC<CatalogTileProps> = ({ item, catalogTypes, onClick, href }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const navigate = useNavigate();
   const { uid, name, title, provider, description, type, typeLabel, badges } = item;
-  const vendor = provider ? t('console-shared~Provided by {{provider}}', { provider }) : null;
+  const vendor = provider ? t('Provided by {{provider}}', { provider }) : null;
   const catalogType = _.find(catalogTypes, ['value', type]);
 
   const typeBadges = [

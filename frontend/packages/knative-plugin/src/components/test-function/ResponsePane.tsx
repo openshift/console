@@ -20,41 +20,29 @@ type ResponsePaneFormikValues = {
 };
 
 const ResponsePane: FC<FormikProps<FormikValues & ResponsePaneFormikValues>> = ({ values }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const { statusCode, header } = values.response;
 
   return (
     <>
       <div className="kn-test-sf-modal-response__notification">
         {statusCode === null ? (
-          <Alert
-            variant="info"
-            title={t('knative-plugin~Waiting for response')}
-            data-test="alert-wait"
-          />
+          <Alert variant="info" title={t('Waiting for response')} data-test="alert-wait" />
         ) : statusCode === 200 ? (
-          <Alert
-            variant="success"
-            title={t('knative-plugin~The Test was Successful')}
-            data-test="alert-success"
-          >
+          <Alert variant="success" title={t('The Test was Successful')} data-test="alert-success">
             <div>
               {' '}
-              <strong>{t('knative-plugin~Response Status Code: ')}</strong>
+              <strong>{t('Response Status Code: ')}</strong>
               <Label color="green">
                 <strong>{statusCode}</strong>
               </Label>
             </div>
           </Alert>
         ) : (
-          <Alert
-            variant="danger"
-            title={t('knative-plugin~An error occurred')}
-            data-test="alert-danger"
-          >
+          <Alert variant="danger" title={t('An error occurred')} data-test="alert-danger">
             <div>
               {' '}
-              <strong>{t('knative-plugin~Response Status Code: ')}</strong>
+              <strong>{t('Response Status Code: ')}</strong>
               <Label color="red">
                 <strong>{statusCode}</strong>
               </Label>
@@ -66,8 +54,8 @@ const ResponsePane: FC<FormikProps<FormikValues & ResponsePaneFormikValues>> = (
       {Object.keys(header).length > 0 && (
         <div className="kn-test-sf-modal-response__headers">
           <ExpandCollapse
-            textCollapsed={t('knative-plugin~Show Response Headers')}
-            textExpanded={t('knative-plugin~Hide Response Headers')}
+            textCollapsed={t('Show Response Headers')}
+            textExpanded={t('Hide Response Headers')}
           >
             <div className="header-section">
               {Object.entries(header).map(([headerName, headerValues]) =>

@@ -37,7 +37,7 @@ const ClusterChannelModal = (props: ClusterChannelModalProps) => {
   const { cancel, close, cv } = props;
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
   const [channel, setChannel] = useState(cv.spec.channel);
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const availableChannels = getAvailableClusterChannels(cv).reduce((o, val) => {
     o[val] = val;
     return o;
@@ -57,7 +57,7 @@ const ClusterChannelModal = (props: ClusterChannelModalProps) => {
   return (
     <>
       <ModalHeader
-        title={channelsExist ? t('public~Select channel') : t('public~Input channel')}
+        title={channelsExist ? t('Select channel') : t('Input channel')}
         data-test-id="modal-title"
         data-test="modal-title"
         labelId="cluster-channel-modal-title"
@@ -68,10 +68,10 @@ const ClusterChannelModal = (props: ClusterChannelModalProps) => {
             <Content component={ContentVariants.p}>
               {channelsExist
                 ? t(
-                    'public~The current version is available in the channels listed in the dropdown below. Select a channel that reflects the desired version. Critical security updates will be delivered to any vulnerable channels.',
+                    'The current version is available in the channels listed in the dropdown below. Select a channel that reflects the desired version. Critical security updates will be delivered to any vulnerable channels.',
                   )
                 : t(
-                    'public~Input a channel that reflects the desired version. To verify if the version exists in a channel, save and check the update status. Critical security updates will be delivered to any vulnerable channels.',
+                    'Input a channel that reflects the desired version. To verify if the version exists in a channel, save and check the update status. Critical security updates will be delivered to any vulnerable channels.',
                   )}
             </Content>
             {!isManaged() && (
@@ -80,7 +80,7 @@ const ClusterChannelModal = (props: ClusterChannelModalProps) => {
               </Content>
             )}
           </Content>
-          <FormGroup label={t('public~Channel')} fieldId="channel">
+          <FormGroup label={t('Channel')} fieldId="channel">
             {channelsExist ? (
               <ConsoleSelect
                 className="cluster-channel-modal__dropdown"
@@ -88,7 +88,7 @@ const ClusterChannelModal = (props: ClusterChannelModalProps) => {
                 items={availableChannels}
                 onChange={(newChannel: string) => setChannel(newChannel)}
                 selectedKey={channel}
-                title={t('public~Channel')}
+                title={t('Channel')}
               />
             ) : (
               <>
@@ -126,10 +126,10 @@ const ClusterChannelModal = (props: ClusterChannelModalProps) => {
           data-test="confirm-action"
           id="confirm-action"
         >
-          {t('public~Save')}
+          {t('Save')}
         </Button>
         <Button variant="link" onClick={cancel} type="button" data-test-id="modal-cancel-action">
-          {t('public~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </>

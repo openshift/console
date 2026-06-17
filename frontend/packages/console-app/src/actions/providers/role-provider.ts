@@ -12,12 +12,12 @@ const roleKind = (role: K8sResourceKind) => (role.metadata.namespace ? 'Role' : 
 
 const useAddRoleBindingAction = (role: K8sResourceKind): Action[] => {
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const factory = useMemo(
     () => ({
       AddRoleBinding: () => ({
         id: 'add-role-binding',
-        label: t('public~Add RoleBinding'),
+        label: t('Add RoleBinding'),
         cta: () =>
           navigate(
             `/k8s/${

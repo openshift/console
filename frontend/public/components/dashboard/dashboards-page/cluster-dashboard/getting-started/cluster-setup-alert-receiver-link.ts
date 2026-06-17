@@ -33,7 +33,7 @@ const useAlertManagerConfigSecret = (watch: boolean) =>
   );
 
 export const useAlertReceiverLink = (): GettingStartedLink | null => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const canEdit = useCanEditAlertManagerConfigSecret();
   const [secret] = useAlertManagerConfigSecret(canEdit);
 
@@ -45,7 +45,7 @@ export const useAlertReceiverLink = (): GettingStartedLink | null => {
   if (canEdit && hasIncompleteReceivers) {
     return {
       id: 'alert-receivers',
-      title: t('public~Configure alert receivers'),
+      title: t('Configure alert receivers'),
       href: '/settings/cluster/alertmanagerconfig',
     };
   }

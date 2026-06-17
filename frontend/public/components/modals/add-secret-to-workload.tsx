@@ -36,7 +36,7 @@ const getContainers = (workload: K8sResourceKind) =>
 
 const AddSecretToWorkloadModal: FC<AddSecretToWorkloadModalProps> = (props) => {
   const { namespace, secretName } = props;
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const navigate = useNavigate();
 
   const [inProgress, setInProgress] = useState(false);
@@ -177,12 +177,12 @@ const AddSecretToWorkloadModal: FC<AddSecretToWorkloadModalProps> = (props) => {
 
   const addAsEnvironment = addAs === 'environment';
   const addAsVolume = addAs === 'volume';
-  const selectWorkloadPlaceholder = t('public~Select a workload');
+  const selectWorkloadPlaceholder = t('Select a workload');
 
   return (
     <>
       <ModalHeader
-        title={t('public~Add secret to workload')}
+        title={t('Add secret to workload')}
         data-test-id="modal-title"
         labelId="add-secret-to-workload-modal-title"
       />
@@ -195,7 +195,7 @@ const AddSecretToWorkloadModal: FC<AddSecretToWorkloadModalProps> = (props) => {
         </Content>
         <Form id="co-add-secret-to-workload" onSubmit={submit}>
           <FormGroup
-            label={t('public~Add this secret to workload')}
+            label={t('Add this secret to workload')}
             isRequired
             fieldId="co-add-secret-to-workload__workload"
           >
@@ -211,7 +211,7 @@ const AddSecretToWorkloadModal: FC<AddSecretToWorkloadModalProps> = (props) => {
             />
           </FormGroup>
           <FormGroup
-            label={t('public~Add secret as')}
+            label={t('Add secret as')}
             isRequired
             role="radiogroup"
             fieldId="co-add-secret-to-workload"
@@ -220,7 +220,7 @@ const AddSecretToWorkloadModal: FC<AddSecretToWorkloadModalProps> = (props) => {
             <Radio
               id="co-add-secret-to-workload__envvars"
               name="co-add-secret-to-workload__add-as"
-              label={t('public~Environment variables')}
+              label={t('Environment variables')}
               value="environment"
               onChange={onAddAsChange}
               isChecked={addAsEnvironment}
@@ -228,7 +228,7 @@ const AddSecretToWorkloadModal: FC<AddSecretToWorkloadModalProps> = (props) => {
               data-checked-state={addAsEnvironment}
               body={
                 addAsEnvironment && (
-                  <FormGroup label={t('public~Prefix')} fieldId="co-add-secret-to-workload__prefix">
+                  <FormGroup label={t('Prefix')} fieldId="co-add-secret-to-workload__prefix">
                     <TextInput
                       name="prefix"
                       id="co-add-secret-to-workload__prefix"
@@ -245,7 +245,7 @@ const AddSecretToWorkloadModal: FC<AddSecretToWorkloadModalProps> = (props) => {
             <Radio
               id="co-add-secret-to-workload__volume"
               name="co-add-secret-to-workload__add-as"
-              label={t('public~Volume')}
+              label={t('Volume')}
               value="volume"
               onChange={onAddAsChange}
               isChecked={addAsVolume}
@@ -254,7 +254,7 @@ const AddSecretToWorkloadModal: FC<AddSecretToWorkloadModalProps> = (props) => {
               body={
                 addAsVolume && (
                   <FormGroup
-                    label={t('public~Mount path')}
+                    label={t('Mount path')}
                     isRequired
                     fieldId="co-add-secret-to-workload__mountpath"
                   >
@@ -285,10 +285,10 @@ const AddSecretToWorkloadModal: FC<AddSecretToWorkloadModalProps> = (props) => {
           id="confirm-action"
           form="co-add-secret-to-workload"
         >
-          {t('public~Save')}
+          {t('Save')}
         </Button>
         <Button variant="link" onClick={props.cancel} data-test-id="modal-cancel-action">
-          {t('public~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </>

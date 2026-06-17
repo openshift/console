@@ -11,7 +11,7 @@ interface RouteSectionProps {
 }
 
 const RouteSection: FC<RouteSectionProps> = ({ route, resources }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const { defaultUnknownPort, disable, create } = route;
 
   return (
@@ -19,8 +19,8 @@ const RouteSection: FC<RouteSectionProps> = ({ route, resources }) => {
       <PortInputField defaultPort={defaultUnknownPort} />
       <CheckboxField
         name="route.create"
-        label={t('devconsole~Create a route')}
-        helpText={t('devconsole~Exposes your component at a public URL')}
+        label={t('Create a route')}
+        helpText={t('Exposes your component at a public URL')}
         isDisabled={disable}
       />
       <AdvancedRouteOptions canCreateRoute={create} resources={resources} />

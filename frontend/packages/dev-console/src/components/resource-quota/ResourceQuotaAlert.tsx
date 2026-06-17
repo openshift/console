@@ -18,7 +18,7 @@ export interface ResourceQuotaAlertProps {
 }
 
 export const ResourceQuotaAlert: FC<ResourceQuotaAlertProps> = ({ namespace }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const fireTelemetryEvent = useTelemetry();
   const [warningMessageFlag, setWarningMessageFlag] = useState<boolean>();
   const [resourceQuotaName, setResourceQuotaName] = useState(null);
@@ -115,7 +115,7 @@ export const ResourceQuotaAlert: FC<ResourceQuotaAlertProps> = ({ namespace }) =
             data-test="resource-quota-warning"
             onClick={onResourceQuotaLinkClick}
           >
-            {t('devconsole~{{count}} resource reached quota', {
+            {t('{{count}} resource reached quota', {
               count: totalResourcesAtQuota.reduce((a, b) => a + b, 0),
             })}
           </Link>

@@ -22,7 +22,7 @@ type ActionsMenuDropdownProps = {
 };
 
 const ActionsMenuDropdown: FC<ActionsMenuDropdownProps> = ({ actions, title, active }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const navigate = useNavigate();
   const [isActive, setIsActive] = useState(!!active);
 
@@ -65,7 +65,7 @@ const ActionsMenuDropdown: FC<ActionsMenuDropdownProps> = ({ actions, title, act
           isExpanded={active}
           data-test-id="actions-menu-button"
         >
-          {title || t('public~Actions')}
+          {title || t('Actions')}
         </MenuToggle>
       )}
     >

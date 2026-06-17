@@ -68,7 +68,7 @@ const ImageStream: FC<ImageStreamProps> = ({
   dataTest,
   reloadCount,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const { values } = useFormikContext<FormikValues>();
   const [validated, setValidated] = useState<ValidatedOptions>(ValidatedOptions.default);
   const [state, dispatch] = useReducer(ImageStreamReducer, initialState);
@@ -139,8 +139,8 @@ const ImageStream: FC<ImageStreamProps> = ({
         </FormGroup>
         {isNamespaceSelected && isImageStreamSelected && !isTagsAvailable && (
           <div className="odc-imagestream-alert">
-            <Alert variant="warning" title={t('devconsole~No Image streams tags found')} isInline>
-              {t('devconsole~No tags are available in Image Stream {{image}}', {
+            <Alert variant="warning" title={t('No Image streams tags found')} isInline>
+              {t('No tags are available in Image Stream {{image}}', {
                 image: imageStream.image,
               })}
             </Alert>
@@ -148,8 +148,8 @@ const ImageStream: FC<ImageStreamProps> = ({
         )}
         {isNamespaceSelected && !loading && !isStreamsAvailable && (
           <div className="odc-imagestream-alert">
-            <Alert variant="warning" title={t('devconsole~No Image streams found')} isInline>
-              {t('devconsole~No Image streams are available in Project {{namespace}}', {
+            <Alert variant="warning" title={t('No Image streams found')} isInline>
+              {t('No Image streams are available in Project {{namespace}}', {
                 namespace: imageStream.namespace,
               })}
             </Alert>
@@ -161,11 +161,11 @@ const ImageStream: FC<ImageStreamProps> = ({
               variant="warning"
               isInline
               title={t(
-                'devconsole~Service account default will need pull authority to deploy Images from {{namespace}}',
+                'Service account default will need pull authority to deploy Images from {{namespace}}',
                 { namespace: imageStream.namespace },
               )}
             >
-              {t('devconsole~You can grant authority with the command')}{' '}
+              {t('You can grant authority with the command')}{' '}
               <ClipboardCopy
                 className="odc-imagestream-clipboard"
                 variant={ClipboardCopyVariant.expansion}

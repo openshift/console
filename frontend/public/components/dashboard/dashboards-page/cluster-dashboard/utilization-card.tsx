@@ -200,7 +200,7 @@ const UtilizationCardNodeFilter: FC<UtilizationCardNodeFilterProps> = ({
   onNodeSelect,
   selectedNodes,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const sortedMCPs = machineConfigPools.sort((a, b) => {
     const order = ['worker', 'master'];
@@ -234,7 +234,7 @@ const UtilizationCardNodeFilter: FC<UtilizationCardNodeFilterProps> = ({
 
   const toggle = (toggleRef: Ref<MenuToggleElement>) => (
     <MenuToggle ref={toggleRef} onClick={(open) => setIsOpen(open)} variant="plainText">
-      {t('public~Filter by Node type')}
+      {t('Filter by Node type')}
       {selectedNodes.length > 0 && (
         <Badge className="pf-v6-u-ml-sm" isRead>
           {selectedNodes.length}
@@ -246,7 +246,7 @@ const UtilizationCardNodeFilter: FC<UtilizationCardNodeFilterProps> = ({
   return (
     <Select
       role="menu"
-      aria-label={t('public~Filter by Node type')}
+      aria-label={t('Filter by Node type')}
       onSelect={onNodeSelect}
       isOpen={isOpen}
       selected={selectedNodes}
@@ -259,7 +259,7 @@ const UtilizationCardNodeFilter: FC<UtilizationCardNodeFilterProps> = ({
 };
 
 export const UtilizationCard = memo(() => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const [machineConfigPools, machineConfigPoolsLoaded] = useK8sWatchResource<
     MachineConfigPoolKind[]
   >({
@@ -318,14 +318,12 @@ export const UtilizationCard = memo(() => {
             className: undefined,
           }}
         >
-          <CardTitle data-test="utilization-card__title">
-            {t('public~Cluster utilization')}
-          </CardTitle>
+          <CardTitle data-test="utilization-card__title">{t('Cluster utilization')}</CardTitle>
         </CardHeader>
         <UtilizationBody>
           <ClusterUtilizationContext.Provider value={nodeType}>
             <PrometheusUtilizationItem
-              title={t('public~CPU')}
+              title={t('CPU')}
               utilizationQuery={utilizationQueries[OverviewQuery.CPU_UTILIZATION].utilization}
               totalQuery={utilizationQueries[OverviewQuery.CPU_UTILIZATION].total}
               requestQuery={utilizationQueries[OverviewQuery.CPU_UTILIZATION].requests}
@@ -333,7 +331,7 @@ export const UtilizationCard = memo(() => {
               humanizeValue={humanizeCpuCores}
             />
             <PrometheusUtilizationItem
-              title={t('public~Memory')}
+              title={t('Memory')}
               utilizationQuery={utilizationQueries[OverviewQuery.MEMORY_UTILIZATION].utilization}
               totalQuery={utilizationQueries[OverviewQuery.MEMORY_UTILIZATION].total}
               requestQuery={utilizationQueries[OverviewQuery.MEMORY_UTILIZATION].requests}
@@ -342,7 +340,7 @@ export const UtilizationCard = memo(() => {
               byteDataType={ByteDataTypes.BinaryBytes}
             />
             <PrometheusUtilizationItem
-              title={t('public~Filesystem')}
+              title={t('Filesystem')}
               utilizationQuery={utilizationQueries[OverviewQuery.STORAGE_UTILIZATION].utilization}
               totalQuery={utilizationQueries[OverviewQuery.STORAGE_UTILIZATION].total}
               TopConsumerPopover={StoragePopover}
@@ -350,13 +348,13 @@ export const UtilizationCard = memo(() => {
               byteDataType={ByteDataTypes.BinaryBytes}
             />
             <PrometheusMultilineUtilizationItem
-              title={t('public~Network transfer')}
+              title={t('Network transfer')}
               queries={multilineQueries[OverviewQuery.NETWORK_UTILIZATION]}
               humanizeValue={humanizeDecimalBytesPerSec}
               TopConsumerPopovers={networkPopovers}
             />
             <PrometheusUtilizationItem
-              title={t('public~Pod count')}
+              title={t('Pod count')}
               utilizationQuery={utilizationQueries[OverviewQuery.POD_UTILIZATION].utilization}
               TopConsumerPopover={PodPopover}
               humanizeValue={humanizeNumber}

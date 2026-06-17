@@ -21,13 +21,13 @@ export const useRepositoriesColumns = (
   columns: TableColumn<K8sResourceKind>[];
   resetAllColumnWidths: () => void;
 } => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(model);
 
   const columns = useMemo(
     () => [
       {
-        title: t('helm-plugin~Name'),
+        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         resizableProps: getResizableProps(tableColumnInfo[0].id),
@@ -37,7 +37,7 @@ export const useRepositoriesColumns = (
         },
       },
       {
-        title: t('helm-plugin~Display Name'),
+        title: t('Display Name'),
         id: tableColumnInfo[1].id,
         sort: 'spec.name',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
@@ -46,7 +46,7 @@ export const useRepositoriesColumns = (
         },
       },
       {
-        title: t('helm-plugin~Namespace'),
+        title: t('Namespace'),
         id: tableColumnInfo[2].id,
         sort: 'metadata.namespace',
         resizableProps: getResizableProps(tableColumnInfo[2].id),
@@ -55,7 +55,7 @@ export const useRepositoriesColumns = (
         },
       },
       {
-        title: t('helm-plugin~Disabled'),
+        title: t('Disabled'),
         id: tableColumnInfo[3].id,
         sort: 'spec.disabled',
         resizableProps: getResizableProps(tableColumnInfo[3].id),
@@ -64,7 +64,7 @@ export const useRepositoriesColumns = (
         },
       },
       {
-        title: t('helm-plugin~Repo URL'),
+        title: t('Repo URL'),
         id: tableColumnInfo[4].id,
         sort: 'spec.connectionConfig.url',
         resizableProps: getResizableProps(tableColumnInfo[4].id),
@@ -73,7 +73,7 @@ export const useRepositoriesColumns = (
         },
       },
       {
-        title: t('helm-plugin~Created'),
+        title: t('Created'),
         id: tableColumnInfo[5].id,
         sort: 'metadata.creationTimestamp',
         resizableProps: getResizableProps(tableColumnInfo[5].id),

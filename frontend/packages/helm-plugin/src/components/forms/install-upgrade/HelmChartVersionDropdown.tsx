@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useState, useEffect } from 'react';
 import { GridItem } from '@patternfly/react-core';
-import { InfoCircleIcon } from '@patternfly/react-icons';
+import { RhUiInformationFillIcon } from '@patternfly/react-icons';
 import type { FormikValues } from 'formik';
 import { useFormikContext } from 'formik';
 import { safeDump, safeLoad } from 'js-yaml';
@@ -51,7 +51,7 @@ const HelmChartVersionDropdown: FC<HelmChartVersionDropdownProps> = ({
   annotatedName,
   providerName,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   const {
     setFieldValue,
     values: { chartRepoName, yamlData, formData, appVersion, editorType },
@@ -69,7 +69,7 @@ const HelmChartVersionDropdown: FC<HelmChartVersionDropdownProps> = ({
   const [chartRepositories] = useK8sWatchResource<K8sResourceKind[]>(resourceSelector);
 
   const warningModalLauncher = useWarningModal({
-    title: t('helm-plugin~Change chart version?'),
+    title: t('Change chart version?'),
   });
 
   const warnOnChartVersionChange = (
@@ -86,7 +86,7 @@ const HelmChartVersionDropdown: FC<HelmChartVersionDropdownProps> = ({
           </Trans>
         </p>
         <p>
-          <InfoCircleIcon color="var(--pf-t--global--icon--color--status--info--default)" />{' '}
+          <RhUiInformationFillIcon color="var(--pf-t--global--icon--color--status--info--default)" />{' '}
           <Trans t={t} ns="helm-plugin">
             Values from your current release are merged with the new chart{"'"}s defaults. Review
             the YAML or form before upgrading.
@@ -97,8 +97,8 @@ const HelmChartVersionDropdown: FC<HelmChartVersionDropdownProps> = ({
 
     warningModalLauncher({
       children: message,
-      confirmButtonLabel: t('helm-plugin~Proceed'),
-      cancelButtonLabel: t('helm-plugin~Cancel'),
+      confirmButtonLabel: t('Proceed'),
+      cancelButtonLabel: t('Cancel'),
       onConfirm: () => {
         onAccept();
         return Promise.resolve();
@@ -231,12 +231,11 @@ const HelmChartVersionDropdown: FC<HelmChartVersionDropdownProps> = ({
 
   const isDisabled = _.isEmpty(helmChartVersions) || _.keys(helmChartVersions).length === 1;
 
-  const helpText =
-    helmAction === HelmActionType.Upgrade && t('helm-plugin~Select the version to upgrade to.');
+  const helpText = helmAction === HelmActionType.Upgrade && t('Select the version to upgrade to.');
 
   const title =
     _.isEmpty(helmChartVersions) && !chartVersion
-      ? t('helm-plugin~No versions available')
+      ? t('No versions available')
       : helmChartVersions[`${chartVersion}`] ||
         concatVersions(
           chartVersion,
@@ -249,7 +248,7 @@ const HelmChartVersionDropdown: FC<HelmChartVersionDropdownProps> = ({
     <GridItem span={6}>
       <DropdownField
         name="chartVersion"
-        label={t('helm-plugin~Chart version')}
+        label={t('Chart version')}
         items={helmChartVersions}
         helpText={!isDisabled ? helpText : ''}
         disabled={isDisabled}

@@ -97,11 +97,11 @@ const getTemplateInstanceDataViewRows = (
 };
 
 const useTemplateInstanceColumns = (): TableColumn<TemplateInstanceKind>[] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const columns = useMemo(() => {
     return [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         props: {
@@ -110,7 +110,7 @@ const useTemplateInstanceColumns = (): TableColumn<TemplateInstanceKind>[] => {
         },
       },
       {
-        title: t('public~Namespace'),
+        title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
         props: {
@@ -118,7 +118,7 @@ const useTemplateInstanceColumns = (): TableColumn<TemplateInstanceKind>[] => {
         },
       },
       {
-        title: t('public~Status'),
+        title: t('Status'),
         id: tableColumnInfo[2].id,
         sort: (data, direction) =>
           data.sort(
@@ -141,22 +141,22 @@ const useTemplateInstanceColumns = (): TableColumn<TemplateInstanceKind>[] => {
 };
 
 const TemplateInstanceList: FC<TemplateInstanceListProps> = ({ data, loaded, ...props }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const columns = useTemplateInstanceColumns();
 
   const templateInstanceStatusFilterOptions = useMemo<DataViewFilterOption[]>(() => {
     return [
       {
         value: 'Ready',
-        label: t('public~Ready'),
+        label: t('Ready'),
       },
       {
         value: 'Not ready',
-        label: t('public~Not ready'),
+        label: t('Not ready'),
       },
       {
         value: 'Failed',
-        label: t('public~Failed'),
+        label: t('Failed'),
       },
     ];
   }, [t]);
@@ -168,8 +168,8 @@ const TemplateInstanceList: FC<TemplateInstanceListProps> = ({ data, loaded, ...
       <DataViewCheckboxFilter
         key="status"
         filterId="status"
-        title={t('public~Status')}
-        placeholder={t('public~Filter by status')}
+        title={t('Status')}
+        placeholder={t('Filter by status')}
         options={templateInstanceStatusFilterOptions}
       />,
     ],
@@ -201,12 +201,12 @@ const TemplateInstanceList: FC<TemplateInstanceListProps> = ({ data, loaded, ...
 };
 
 export const TemplateInstancePage: FC<TemplateInstancePageProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   return (
     <ListPage
       {...props}
-      title={t('public~TemplateInstances')}
+      title={t('TemplateInstances')}
       kind="TemplateInstance"
       ListComponent={TemplateInstanceList}
       canCreate={false}
@@ -216,7 +216,7 @@ export const TemplateInstancePage: FC<TemplateInstancePageProps> = (props) => {
 };
 
 const TemplateInstanceDetails: FC<TemplateInstanceDetailsProps> = ({ obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const status = getTemplateInstanceStatus(obj);
   const secretName = _.get(obj, 'spec.secret.name');
   const requester = _.get(obj, 'spec.requester.username');
@@ -225,7 +225,7 @@ const TemplateInstanceDetails: FC<TemplateInstanceDetailsProps> = ({ obj }) => {
   return (
     <>
       <PaneBody>
-        <SectionHeading text={t('public~TemplateInstance details')} />
+        <SectionHeading text={t('TemplateInstance details')} />
         <Grid hasGutter>
           <GridItem sm={6}>
             <ResourceSummary resource={obj} />
@@ -233,14 +233,14 @@ const TemplateInstanceDetails: FC<TemplateInstanceDetailsProps> = ({ obj }) => {
           <GridItem sm={6}>
             <DescriptionList>
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('public~Status')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('Status')}</DescriptionListTerm>
                 <DescriptionListDescription>
                   <Status status={status} />
                 </DescriptionListDescription>
               </DescriptionListGroup>
               {secretName && (
                 <DescriptionListGroup>
-                  <DescriptionListTerm>{t('public~Parameters')}</DescriptionListTerm>
+                  <DescriptionListTerm>{t('Parameters')}</DescriptionListTerm>
                   <DescriptionListDescription>
                     <ResourceLink
                       kind="Secret"
@@ -251,7 +251,7 @@ const TemplateInstanceDetails: FC<TemplateInstanceDetailsProps> = ({ obj }) => {
                 </DescriptionListGroup>
               )}
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('public~Requester')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('Requester')}</DescriptionListTerm>
                 <DescriptionListDescription>{requester || '-'}</DescriptionListDescription>
               </DescriptionListGroup>
             </DescriptionList>
@@ -259,15 +259,15 @@ const TemplateInstanceDetails: FC<TemplateInstanceDetailsProps> = ({ obj }) => {
         </Grid>
       </PaneBody>
       <PaneBody>
-        <SectionHeading text={t('public~Objects')} />
+        <SectionHeading text={t('Objects')} />
         {_.isEmpty(objects) ? (
-          <EmptyBox label={t('public~Objects')} />
+          <EmptyBox label={t('Objects')} />
         ) : (
           <PfTable gridBreakPoint="">
             <Thead>
               <Tr>
-                <Th>{t('public~Name')}</Th>
-                <Th>{t('public~Namespace')}</Th>
+                <Th>{t('Name')}</Th>
+                <Th>{t('Namespace')}</Th>
               </Tr>
             </Thead>
             <Tbody>
@@ -290,7 +290,7 @@ const TemplateInstanceDetails: FC<TemplateInstanceDetailsProps> = ({ obj }) => {
         )}
       </PaneBody>
       <PaneBody>
-        <SectionHeading text={t('public~Conditions')} />
+        <SectionHeading text={t('Conditions')} />
         <Conditions conditions={conditions} />
       </PaneBody>
     </>

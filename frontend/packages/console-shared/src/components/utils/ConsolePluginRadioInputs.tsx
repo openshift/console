@@ -8,7 +8,7 @@ export const ConsolePluginRadioInputs: FC<ConsolePluginRadioInputsProps> = ({
   onChange: setEnabled,
   name,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const onChange = (e: ChangeEvent<HTMLInputElement>) =>
     setEnabled(e.currentTarget.value === 'enabled');
   return (
@@ -17,7 +17,7 @@ export const ConsolePluginRadioInputs: FC<ConsolePluginRadioInputsProps> = ({
         id={`${name}-enabled`}
         name={name}
         value="enabled"
-        label={t('console-shared~Enable')}
+        label={t('Enable')}
         onChange={onChange}
         isChecked={enabled}
         data-checked-state={enabled}
@@ -28,7 +28,7 @@ export const ConsolePluginRadioInputs: FC<ConsolePluginRadioInputsProps> = ({
         id={`${name}-disabled`}
         name={name}
         value="disabled"
-        label={t('console-shared~Disable')}
+        label={t('Disable')}
         onChange={onChange}
         isChecked={!enabled}
         data-checked-state={!enabled}

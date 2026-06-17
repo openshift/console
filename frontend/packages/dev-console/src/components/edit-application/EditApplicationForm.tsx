@@ -43,7 +43,7 @@ const EditApplicationForm: FC<
   isSubmitting,
   appResources,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   return (
     <>
       <PageHeading title={t(getFlowTypePageTitle(flowType))} />
@@ -89,9 +89,9 @@ const EditApplicationForm: FC<
           handleReset={handleReset}
           errorMessage={status && status.submitError}
           isSubmitting={isSubmitting}
-          submitLabel={t('devconsole~Save')}
+          submitLabel={t('Save')}
           disableSubmit={!dirty || !_.isEmpty(errors) || isSubmitting}
-          resetLabel={t('devconsole~Cancel')}
+          resetLabel={t('Cancel')}
           sticky
         />
       </FlexForm>

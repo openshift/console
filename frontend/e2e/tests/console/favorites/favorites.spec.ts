@@ -5,7 +5,6 @@ test.describe('Favorites', { tag: ['@admin'] }, () => {
     const sidebar = page.locator('#page-sidebar');
 
     await page.goto('/');
-    await page.getByTestId('favorite-button').first().waitFor({ state: 'visible' });
 
     await test.step('Verify no favorites message when none are added', async () => {
       await sidebar.getByRole('button', { name: 'Favorites' }).click();
@@ -30,15 +29,11 @@ test.describe('Favorites', { tag: ['@admin'] }, () => {
 
     await test.step('Remove a favorite by clicking the favorite button again', async () => {
       await page.getByTestId('favorite-button').click();
-
-      await sidebar.getByRole('button', { name: 'Favorites' }).click();
       await expect(page.getByTestId('no-favorites-message')).toBeVisible();
     });
 
     await test.step('Remove a favorite from the left navigation menu', async () => {
       await page.goto('/');
-      await page.getByTestId('favorite-button').first().waitFor({ state: 'visible' });
-
       await page.getByTestId('favorite-button').click();
       const dialog = page.getByRole('dialog');
       await expect(dialog).toContainText('Add to favorites');
@@ -47,8 +42,6 @@ test.describe('Favorites', { tag: ['@admin'] }, () => {
       await expect(sidebar).toContainText('Overview');
 
       await page.getByTestId('remove-favorite-button').click();
-
-      await sidebar.getByRole('button', { name: 'Favorites' }).click();
       await expect(page.getByTestId('no-favorites-message')).toBeVisible();
     });
 
@@ -68,7 +61,6 @@ test.describe('Favorites', { tag: ['@admin'] }, () => {
 
       for (let i = 0; i < pages.length; i++) {
         await page.goto(pages[i]);
-        await page.getByTestId('favorite-button').first().waitFor({ state: 'visible' });
         await page.getByTestId('favorite-button').first().click();
         const dialog = page.getByRole('dialog');
         await expect(dialog).toContainText('Add to favorites');
@@ -80,8 +72,8 @@ test.describe('Favorites', { tag: ['@admin'] }, () => {
       }
 
       await page.goto('/k8s/all-namespaces/apps~v1~DaemonSet');
-      await page.getByTestId('favorite-button').first().waitFor({ state: 'visible' });
       await expect(page.getByTestId('favorite-button').first()).toBeDisabled();
     });
+
   });
 });

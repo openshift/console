@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { FlagIcon } from '@patternfly/react-icons';
+import { RhUiFlagIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import * as semver from 'semver';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
@@ -11,7 +11,7 @@ import { GettingStartedCard } from '@console/shared/src/components/getting-start
 import { getDisabledAddActions } from '@console/dev-console/src/utils/useAddActionExtensions';
 
 export const DeveloperFeaturesGettingStartedCard: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const [activeNamespace] = useActiveNamespace();
   const isHelmEnabled = useFlag('OPENSHIFT_HELM');
   const isHelmVisible = useFlag('HELM_CHARTS_CATALOG_TYPE');
@@ -25,7 +25,7 @@ export const DeveloperFeaturesGettingStartedCard: FC = () => {
   if (isHelmEnabled && isHelmVisible && !disabledAddActions?.includes('helm')) {
     links.push({
       id: 'helm-charts',
-      title: t('public~Try the sample AI Chatbot Helm chart'),
+      title: t('Try the sample AI Chatbot Helm chart'),
       href:
         activeNamespace && activeNamespace !== ALL_NAMESPACES_KEY
           ? `/catalog/ns/${activeNamespace}?catalogType=HelmChart&keyword=chatbot+AI+sample`
@@ -35,7 +35,7 @@ export const DeveloperFeaturesGettingStartedCard: FC = () => {
 
   links.push({
     id: 'topology',
-    title: t('public~Start building your application quickly in topology'),
+    title: t('Start building your application quickly in topology'),
     href:
       activeNamespace && activeNamespace !== ALL_NAMESPACES_KEY
         ? `/topology/ns/${activeNamespace}?catalogSearch=`
@@ -44,7 +44,7 @@ export const DeveloperFeaturesGettingStartedCard: FC = () => {
 
   const moreLink: GettingStartedLink = {
     id: 'whats-new',
-    title: t("public~What's new in OpenShift {{version}}", { version }),
+    title: t("What's new in OpenShift {{version}}", { version }),
     href: 'https://developers.redhat.com/products/openshift/whats-new',
     external: true,
   };
@@ -52,10 +52,10 @@ export const DeveloperFeaturesGettingStartedCard: FC = () => {
   return (
     <GettingStartedCard
       id="developer-features"
-      icon={<FlagIcon color="var(--co-global--palette--orange-400)" aria-hidden="true" />}
-      title={t('public~Explore new developer features')}
+      icon={<RhUiFlagIcon color="var(--co-global--palette--orange-400)" aria-hidden="true" />}
+      title={t('Explore new developer features')}
       titleColor={'var(--co-global--palette--orange-400)'}
-      description={t('public~Explore new features and resources within the developer perspective.')}
+      description={t('Explore new features and resources within the developer perspective.')}
       links={links}
       moreLink={moreLink}
     />

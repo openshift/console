@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useMemo, useState } from 'react';
 import { Button } from '@patternfly/react-core';
-import { EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';
+import { RhUiViewIcon, RhUiViewOffIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { SecretValue } from '@console/internal/components/configmap-and-secret-data';
@@ -29,10 +29,10 @@ export const DefaultCapability: FC<CommonCapabilityProps<string | number | boole
   fullPath,
   value,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const detail = useMemo(() => {
     if (_.isEmpty(value) && !_.isFinite(value) && !_.isBoolean(value)) {
-      return <span className="pf-v6-u-text-color-subtle">{t('public~None')}</span>;
+      return <span className="pf-v6-u-text-color-subtle">{t('None')}</span>;
     }
     return _.toString(value);
   }, [t, value]);
@@ -53,10 +53,10 @@ export const K8sResourceLinkCapability: FC<CommonCapabilityProps<string>> = ({
   obj,
   value,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const detail = useMemo(() => {
     if (!value) {
-      return <span className="pf-v6-u-text-color-subtle">{t('public~None')}</span>;
+      return <span className="pf-v6-u-text-color-subtle">{t('None')}</span>;
     }
 
     const [, suffix] = capability.match(REGEXP_K8S_RESOURCE_SUFFIX) ?? [];
@@ -86,7 +86,7 @@ export const SecretCapability: FC<CommonCapabilityProps<string>> = ({
   fullPath,
   value,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const [reveal, setReveal] = useState(false);
 
   return (
@@ -101,13 +101,13 @@ export const SecretCapability: FC<CommonCapabilityProps<string>> = ({
         >
           {reveal ? (
             <>
-              <EyeSlashIcon className="co-icon-space-r" />
-              {t('olm~Hide values')}
+              <RhUiViewOffIcon className="co-icon-space-r" />
+              {t('Hide values')}
             </>
           ) : (
             <>
-              <EyeIcon className="co-icon-space-r" />
-              {t('olm~Reveal values')}
+              <RhUiViewIcon className="co-icon-space-r" />
+              {t('Reveal values')}
             </>
           )}
         </Button>

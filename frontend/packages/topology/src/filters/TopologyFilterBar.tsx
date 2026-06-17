@@ -10,7 +10,7 @@ import {
   Button,
   ToolbarFilter,
 } from '@patternfly/react-core';
-import { InfoCircleIcon } from '@patternfly/react-icons';
+import { RhUiInformationFillIcon } from '@patternfly/react-icons';
 import type { Visualization } from '@patternfly/react-topology';
 import { isNode } from '@patternfly/react-topology';
 import { Trans, useTranslation } from 'react-i18next';
@@ -71,7 +71,7 @@ const TopologyFilterBar: FC<TopologyFilterBarProps> = ({
   setIsQuickSearchOpen,
 }) => {
   const { setQueryArgument, removeQueryArgument, removeQueryArguments } = useQueryParamsMutator();
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   const { filters, setTopologyFilters: onFiltersChange } = useContext(FilterContext);
   const [labelFilterInput, setLabelFilterInput] = useState('');
   const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
@@ -165,12 +165,12 @@ const TopologyFilterBar: FC<TopologyFilterBarProps> = ({
               deleteLabelGroup={clearLabelFilter}
               labels={[...labelsQuery]}
               deleteLabel={removeLabelFilter}
-              categoryName={t('topology~Label')}
+              categoryName={t('Label')}
             >
               <ToolbarFilter
                 labels={searchQuery.length > 0 ? [searchQuery] : []}
                 deleteLabel={clearNameFilter}
-                categoryName={t('topology~Name')}
+                categoryName={t('Name')}
               >
                 <NameLabelFilterDropdown
                   onChange={updateSearchFilter}
@@ -185,7 +185,7 @@ const TopologyFilterBar: FC<TopologyFilterBarProps> = ({
           {viewType === TopologyViewType.graph ? (
             <ToolbarItem>
               <Popover
-                aria-label={t('topology~Find by name')}
+                aria-label={t('Find by name')}
                 position="left"
                 bodyContent={
                   <Trans ns="topology">
@@ -202,10 +202,10 @@ const TopologyFilterBar: FC<TopologyFilterBarProps> = ({
                 }
               >
                 <Button
-                  icon={<InfoCircleIcon />}
+                  icon={<RhUiInformationFillIcon />}
                   variant="link"
                   className="odc-topology-filter-bar__info-icon"
-                  aria-label={t('topology~Find by name')}
+                  aria-label={t('Find by name')}
                   isDisabled={isDisabled}
                 />
               </Popover>
@@ -227,7 +227,7 @@ const TopologyFilterBar: FC<TopologyFilterBarProps> = ({
           </ToolbarItem>
           {kialiLink && (
             <ToolbarItem className="odc-topology-filter-bar__kiali-link1">
-              <ExternalLink href={kialiLink} text={t('topology~Kiali')} />
+              <ExternalLink href={kialiLink} text={t('Kiali')} />
             </ToolbarItem>
           )}
           <ExportApplication namespace={namespace} isDisabled={isDisabled} />

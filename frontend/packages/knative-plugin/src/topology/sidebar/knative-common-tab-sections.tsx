@@ -27,7 +27,7 @@ import {
 } from './KnativeOverviewSections';
 
 const usePodsAdapterForKnative = (resource: K8sResourceCommon): PodsAdapterDataType => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const [rev, revisionLoaded, revisionErrorLoad] = useK8sWatchResource<RevisionKind[]>({
     kind: referenceForModel(RevisionModel),
     namespace: resource.metadata.namespace,
@@ -68,7 +68,7 @@ const usePodsAdapterForKnative = (resource: K8sResourceCommon): PodsAdapterDataT
       pods: servicePods,
       loaded: revisionLoaded,
       loadError: revisionErrorLoad,
-      emptyText: t('knative-plugin~All Revisions are autoscaled to 0.'),
+      emptyText: t('All Revisions are autoscaled to 0.'),
       allPodsLink: linkUrl,
     }),
     [servicePods, revisionLoaded, revisionErrorLoad, t, linkUrl],

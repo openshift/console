@@ -9,7 +9,6 @@ import {
   HelperText,
   HelperTextItem,
 } from '@patternfly/react-core';
-import { PercentIcon } from '@patternfly/react-icons';
 import type { FormikErrors } from 'formik';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -37,12 +36,9 @@ const HPAUtilizationField: FC<HPAUtilizationFieldProps> = ({
   const value: number = metric?.resource?.target?.averageUtilization;
   const thisErrorMetric = errors.formData?.spec?.metrics?.[index] as FormikErrors<HPAMetric>;
   const error: string = thisErrorMetric?.resource?.target?.averageUtilization;
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   return (
-    <FormGroup
-      fieldId={`${type}-utilization`}
-      label={t('devconsole~{{label}} Utilization', { label })}
-    >
+    <FormGroup fieldId={`${type}-utilization`} label={t('{{label}} Utilization', { label })}>
       <InputGroup>
         <InputGroupItem isFill>
           <TextInput
@@ -54,8 +50,8 @@ const HPAUtilizationField: FC<HPAUtilizationFieldProps> = ({
             aria-describedby={`${type}-utilization-unit`}
           />
         </InputGroupItem>
-        <InputGroupText id={`${type}-utilization-unit`}>
-          <PercentIcon />
+        <InputGroupText isPlain id={`${type}-utilization-unit`}>
+          %
         </InputGroupText>
       </InputGroup>
 
@@ -66,7 +62,7 @@ const HPAUtilizationField: FC<HPAUtilizationFieldProps> = ({
           ) : (
             <HelperTextItem>
               {t(
-                'devconsole~{{label}} request and limit must be set before {{label}} utilization can be set.',
+                '{{label}} request and limit must be set before {{label}} utilization can be set.',
                 { label },
               )}
             </HelperTextItem>

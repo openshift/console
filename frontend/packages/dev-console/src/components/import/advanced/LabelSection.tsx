@@ -4,12 +4,12 @@ import { SelectorInputField } from '@console/shared/src/components/formik-fields
 import FormSection from '../section/FormSection';
 
 const LabelSection: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
 
   return (
     <FormSection
-      title={t('devconsole~Labels')}
-      subTitle={t('devconsole~Each label is applied to each created resource.')}
+      title={t('Labels')}
+      subTitle={t('Each label is applied to each created resource.')}
     >
       <SelectorInputField name="labels" placeholder="app.io/type=frontend" dataTest="labels" />
     </FormSection>

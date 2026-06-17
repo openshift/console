@@ -48,7 +48,7 @@ export const NodeStatusWithExtensions: FC<NodeStatusWithExtensionsProps> = ({
   className,
   statusExtensions,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
 
   const { popoverContent, secondaryStatuses } = useMemo(() => statusExtensions(node), [
     statusExtensions,
@@ -60,7 +60,7 @@ export const NodeStatusWithExtensions: FC<NodeStatusWithExtensionsProps> = ({
   return (
     <>
       {popoverContent.length ? (
-        <PopoverStatus title={t('console-app~Node status')} statusBody={mainStatus}>
+        <PopoverStatus title={t('Node status')} statusBody={mainStatus}>
           <Stack>
             {popoverContent.map(({ content, uid }) => (
               <ErrorBoundary key={uid}>
@@ -80,10 +80,9 @@ export const NodeStatusWithExtensions: FC<NodeStatusWithExtensionsProps> = ({
             current={_.startCase(item)}
             consumers={PressureQueries[item](node.metadata.name)}
             humanize={humanizeMap[item]}
-            description={t(
-              "console-app~This node's {{conditionDescription}}. Performance may be degraded.",
-              { conditionDescription: conditionDescriptionMap[item] },
-            )}
+            description={t("This node's {{conditionDescription}}. Performance may be degraded.", {
+              conditionDescription: conditionDescriptionMap[item],
+            })}
           />
         </div>
       ))}

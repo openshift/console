@@ -39,7 +39,7 @@ type Props = DeployImageProps & StateProps;
 
 const DeployImage: FC<Props> = ({ namespace, projects, activeApplication, contextualSource }) => {
   const postFormCallback = useResourceConnectionHandler();
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const navigate = useNavigate();
   const handleCancel = useCallback(() => navigate(-1), [navigate]);
   const initialValues: DeployImageFormData = {

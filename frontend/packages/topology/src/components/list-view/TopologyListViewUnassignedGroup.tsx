@@ -25,7 +25,7 @@ const TopologyListViewUnassignedGroupComponent: FC<TopologyListViewUnassignedGro
   selectedIds,
   onSelect,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   if (!items?.length) {
     return null;
   }
@@ -36,7 +36,7 @@ const TopologyListViewUnassignedGroupComponent: FC<TopologyListViewUnassignedGro
     <DataList aria-label="unassigned items" id="unassigned-items">
       {kindKeys.map((key) => (
         <TopologyListViewKindGroup
-          groupLabel={t('topology~unassigned')}
+          groupLabel={t('unassigned')}
           key={key}
           kind={key}
           childElements={kindsMap[key]}
@@ -58,7 +58,7 @@ const TopologyListViewUnassignedGroupComponent: FC<TopologyListViewUnassignedGro
       className="odc-topology-list-view__unassigned-label"
       id="unassigned_label"
     >
-      {t('topology~No application group')}
+      {t('No application group')}
     </DataListCell>,
   );
 

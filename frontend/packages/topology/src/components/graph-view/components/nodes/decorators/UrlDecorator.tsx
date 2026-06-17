@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useRef } from 'react';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { RhUiExternalLinkFillIcon } from '@patternfly/react-icons';
 import type { Node } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { useRoutesURL } from '../../../../../data-transforms/useRoutesURL';
@@ -17,19 +17,19 @@ interface DefaultDecoratorProps {
 
 export const UrlDecorator: FC<DefaultDecoratorProps> = ({ element, radius, x, y }) => {
   const ref = useRef();
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   const resourceObj = getResource(element);
   const url = useRoutesURL(resourceObj);
   if (!url) {
     return null;
   }
-  const label = t('topology~Open URL');
+  const label = t('Open URL');
   return (
     <Tooltip triggerRef={ref} key="route" content={label} position={TooltipPosition.right}>
       <g ref={ref}>
         <Decorator x={x} y={y} radius={radius} href={url} external ariaLabel={label}>
           <g transform={`translate(-${radius / 2}, -${radius / 2})`}>
-            <ExternalLinkAltIcon style={{ fontSize: radius }} title={label} />
+            <RhUiExternalLinkFillIcon style={{ fontSize: radius }} title={label} />
           </g>
         </Decorator>
       </g>

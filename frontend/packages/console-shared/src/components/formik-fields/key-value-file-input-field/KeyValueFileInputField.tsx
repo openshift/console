@@ -10,7 +10,7 @@ import {
   HelperText,
   HelperTextItem,
 } from '@patternfly/react-core';
-import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { RhUiMinusCircleIcon, RhUiAddCircleFillIcon } from '@patternfly/react-icons';
 import type { FormikValues } from 'formik';
 import { FieldArray, useField, useFormikContext } from 'formik';
 import { get, uniqueId } from 'lodash';
@@ -45,7 +45,7 @@ const KeyValueFileInputField: FC<KeyValueEntryFormProps & FieldProps> = ({
   onChange,
 }) => {
   const [field] = useField<KeyValueEntry[]>(name);
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const { values } = useFormikContext<FormikValues>();
   const rowValues = field.value ?? entries;
   const fieldId = getFieldId(name, 'key-value--input');
@@ -70,7 +70,7 @@ const KeyValueFileInputField: FC<KeyValueEntryFormProps & FieldProps> = ({
                 {!disableRemoveAction && (
                   <FlexItem className="key-value--remove-button">
                     <Button
-                      icon={<MinusCircleIcon className="co-icon-space-r" />}
+                      icon={<RhUiMinusCircleIcon className="co-icon-space-r" />}
                       type="button"
                       data-test="remove-key-value-button"
                       onClick={() => {
@@ -79,7 +79,7 @@ const KeyValueFileInputField: FC<KeyValueEntryFormProps & FieldProps> = ({
                       }}
                       variant="link"
                     >
-                      {t('console-shared~Remove key/value')}
+                      {t('Remove key/value')}
                     </Button>
                   </FlexItem>
                 )}
@@ -89,7 +89,7 @@ const KeyValueFileInputField: FC<KeyValueEntryFormProps & FieldProps> = ({
                     data-test={`key-${idx.toString()}`}
                     type={TextInputTypes.text}
                     name={`${name}.${idx.toString()}.key`}
-                    label={t('console-shared~Key')}
+                    label={t('Key')}
                     required
                   />
                 </FlexItem>
@@ -97,10 +97,8 @@ const KeyValueFileInputField: FC<KeyValueEntryFormProps & FieldProps> = ({
                   <DroppableFileInputField
                     data-test={`value-${idx.toString()}`}
                     name={`${name}.${idx.toString()}.value`}
-                    label={t('console-shared~Value')}
-                    helpText={t(
-                      'console-shared~Drag and drop file with your value here or browse to upload it.',
-                    )}
+                    label={t('Value')}
+                    helpText={t('Drag and drop file with your value here or browse to upload it.')}
                     onChange={(fileData: string) => {
                       onChange && onChange(fileData, `${name}.${idx.toString()}`);
                     }}
@@ -110,14 +108,14 @@ const KeyValueFileInputField: FC<KeyValueEntryFormProps & FieldProps> = ({
             );
           })}
           <Button
-            icon={<PlusCircleIcon className="co-icon-space-r" />}
+            icon={<RhUiAddCircleFillIcon className="co-icon-space-r" />}
             className="pf-m-link--align-left"
             onClick={() => arrayHelpers.push({ key: '', value: '' })}
             type="button"
             data-test="add-key-value-button"
             variant="link"
           >
-            {t('console-shared~Add key/value')}
+            {t('Add key/value')}
           </Button>
 
           <FormHelperText>

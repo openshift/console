@@ -34,7 +34,7 @@ export const GitImportForm: FC<
   dirty,
   projects,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const searchParams = new URLSearchParams(window.location.search);
   const gitRepositoryUrl = searchParams.get('git.repository');
   const gitRevision = searchParams.get('git.revision');
@@ -111,10 +111,10 @@ export const GitImportForm: FC<
         handleReset={handleReset}
         errorMessage={status && status.submitError}
         isSubmitting={isSubmitting}
-        submitLabel={t('devconsole~Create')}
+        submitLabel={t('Create')}
         sticky
         disableSubmit={!dirty || !_.isEmpty(errors) || isSubmitting}
-        resetLabel={t('devconsole~Cancel')}
+        resetLabel={t('Cancel')}
       />
     </FlexForm>
   );

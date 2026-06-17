@@ -75,12 +75,12 @@ const getResourceUtilization = (currentMetric, type) => {
 };
 
 const MetricsTable: FC<MetricsTableProps> = ({ obj: hpa }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const resourceRowFn = (metric, current, key, metricType) => {
     const metricObj = metric[metricType];
     const targetUtilization = metricObj.target.averageUtilization;
-    const resourceLabel = t('public~{{type}} {{name}}', {
+    const resourceLabel = t('{{type}} {{name}}', {
       type: metric.type,
       name: metricObj.name,
     });
@@ -88,7 +88,7 @@ const MetricsTable: FC<MetricsTableProps> = ({ obj: hpa }) => {
       <>
         {resourceLabel}&nbsp;
         <span className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle">
-          {t('public~(as a percentage of request)')}
+          {t('(as a percentage of request)')}
         </span>
       </>
     ) : (
@@ -112,7 +112,7 @@ const MetricsTable: FC<MetricsTableProps> = ({ obj: hpa }) => {
 
   const podRow = (metric, current, key) => {
     const { pods } = metric;
-    const type = t('public~{{name}} on pods', { name: pods.metric.name });
+    const type = t('{{name}} on pods', { name: pods.metric.name });
     const currentValue = current?.pods?.current.averageValue;
     const targetValue = pods.target.averageValue;
 
@@ -141,13 +141,13 @@ const MetricsTable: FC<MetricsTableProps> = ({ obj: hpa }) => {
 
   return (
     <>
-      <SectionHeading text={t('public~Metrics')} />
+      <SectionHeading text={t('Metrics')} />
       <PfTable gridBreakPoint="">
         <Thead>
           <Tr>
-            <Th width={50}>{t('public~Type')}</Th>
-            <Th width={25}>{t('public~Current')}</Th>
-            <Th width={25}>{t('public~Target')}</Th>
+            <Th width={50}>{t('Type')}</Th>
+            <Th width={25}>{t('Current')}</Th>
+            <Th width={25}>{t('Target')}</Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -177,7 +177,7 @@ const MetricsTable: FC<MetricsTableProps> = ({ obj: hpa }) => {
                     <Td width={50}>
                       {metric.type}{' '}
                       <span className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle">
-                        {t('public~(unrecognized type)')}
+                        {t('(unrecognized type)')}
                       </span>
                     </Td>
                   </Tr>
@@ -193,18 +193,18 @@ const MetricsTable: FC<MetricsTableProps> = ({ obj: hpa }) => {
 const HorizontalPodAutoscalersDetails: FC<HorizontalPodAutoscalersDetailsProps> = ({
   obj: hpa,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <>
       <PaneBody>
-        <SectionHeading text={t('public~HorizontalPodAutoscaler details')} />
+        <SectionHeading text={t('HorizontalPodAutoscaler details')} />
         <Grid hasGutter>
           <GridItem sm={6}>
             <ResourceSummary resource={hpa} />
           </GridItem>
           <GridItem sm={6}>
             <DescriptionList>
-              <DetailsItem label={t('public~Scale target')} obj={hpa} path="spec.scaleTargetRef">
+              <DetailsItem label={t('Scale target')} obj={hpa} path="spec.scaleTargetRef">
                 <ResourceLink
                   kind={hpa.spec.scaleTargetRef.kind}
                   name={hpa.spec.scaleTargetRef.name}
@@ -212,25 +212,13 @@ const HorizontalPodAutoscalersDetails: FC<HorizontalPodAutoscalersDetailsProps> 
                   title={hpa.spec.scaleTargetRef.name}
                 />
               </DetailsItem>
-              <DetailsItem label={t('public~Min replicas')} obj={hpa} path="spec.minReplicas" />
-              <DetailsItem label={t('public~Max replicas')} obj={hpa} path="spec.maxReplicas" />
-              <DetailsItem
-                label={t('public~Last scale time')}
-                obj={hpa}
-                path="status.lastScaleTime"
-              >
+              <DetailsItem label={t('Min replicas')} obj={hpa} path="spec.minReplicas" />
+              <DetailsItem label={t('Max replicas')} obj={hpa} path="spec.maxReplicas" />
+              <DetailsItem label={t('Last scale time')} obj={hpa} path="status.lastScaleTime">
                 <Timestamp timestamp={hpa.status.lastScaleTime} />
               </DetailsItem>
-              <DetailsItem
-                label={t('public~Current replicas')}
-                obj={hpa}
-                path="status.currentReplicas"
-              />
-              <DetailsItem
-                label={t('public~Desired replicas')}
-                obj={hpa}
-                path="status.desiredReplicas"
-              />
+              <DetailsItem label={t('Current replicas')} obj={hpa} path="status.currentReplicas" />
+              <DetailsItem label={t('Desired replicas')} obj={hpa} path="status.desiredReplicas" />
             </DescriptionList>
           </GridItem>
         </Grid>
@@ -239,7 +227,7 @@ const HorizontalPodAutoscalersDetails: FC<HorizontalPodAutoscalersDetailsProps> 
         <MetricsTable obj={hpa} />
       </PaneBody>
       <PaneBody>
-        <SectionHeading text={t('public~Conditions')} />
+        <SectionHeading text={t('Conditions')} />
         <Conditions conditions={hpa.status.conditions} />
       </PaneBody>
     </>
@@ -326,7 +314,7 @@ const useHorizontalPodAutoscalersColumns = (): {
   columns: TableColumn<HorizontalPodAutoscalerKind>[];
   resetAllColumnWidths: () => void;
 } => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(
     HorizontalPodAutoscalerModel,
   );
@@ -334,7 +322,7 @@ const useHorizontalPodAutoscalersColumns = (): {
   const columns: TableColumn<HorizontalPodAutoscalerKind>[] = useMemo(() => {
     return [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         resizableProps: getResizableProps(tableColumnInfo[0].id),
@@ -344,7 +332,7 @@ const useHorizontalPodAutoscalersColumns = (): {
         },
       },
       {
-        title: t('public~Namespace'),
+        title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
@@ -353,7 +341,7 @@ const useHorizontalPodAutoscalersColumns = (): {
         },
       },
       {
-        title: t('public~Labels'),
+        title: t('Labels'),
         id: tableColumnInfo[2].id,
         sort: 'metadata.labels',
         resizableProps: getResizableProps(tableColumnInfo[2].id),
@@ -363,7 +351,7 @@ const useHorizontalPodAutoscalersColumns = (): {
         },
       },
       {
-        title: t('public~Scale target'),
+        title: t('Scale target'),
         id: tableColumnInfo[3].id,
         sort: 'spec.scaleTargetRef.name',
         resizableProps: getResizableProps(tableColumnInfo[3].id),
@@ -372,7 +360,7 @@ const useHorizontalPodAutoscalersColumns = (): {
         },
       },
       {
-        title: t('public~Min pods'),
+        title: t('Min pods'),
         id: tableColumnInfo[4].id,
         sort: 'spec.minReplicas',
         resizableProps: getResizableProps(tableColumnInfo[4].id),
@@ -381,7 +369,7 @@ const useHorizontalPodAutoscalersColumns = (): {
         },
       },
       {
-        title: t('public~Max pods'),
+        title: t('Max pods'),
         id: tableColumnInfo[5].id,
         sort: 'spec.maxReplicas',
         resizableProps: getResizableProps(tableColumnInfo[5].id),

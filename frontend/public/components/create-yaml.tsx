@@ -32,7 +32,7 @@ export const CreateYAMLInner: FC<CreateYAMLProps> = ({
   isCreate = true,
   template,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const namespace = params.ns || 'default';
   const [templateExtensions, resolvedTemplates] = useResolvedExtensions<YAMLTemplate>(
     useCallback(
@@ -87,10 +87,10 @@ export const CreateYAMLInner: FC<CreateYAMLProps> = ({
     return <ErrorPage404 />;
   }
   const header = isCreate
-    ? t('public~Create {{objLabel}}', {
+    ? t('Create {{objLabel}}', {
         objLabel: kindObj.labelKey ? t(kindObj.labelKey) : kindObj.label,
       })
-    : t('public~Edit {{objLabel}}', {
+    : t('Edit {{objLabel}}', {
         objLabel: kindObj.labelKey ? t(kindObj.labelKey) : kindObj.label,
       });
 

@@ -59,7 +59,7 @@ const useReplicationController = (resource: DeploymentConfigKind) => {
 };
 
 export const useRetryRolloutAction = (resource: DeploymentConfigKind): Action => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const launchModal = useOverlay();
   const [dcModel] = useK8sModel(referenceFor(resource));
   const [rcModel] = useK8sModel('ReplicationController');
@@ -73,14 +73,14 @@ export const useRetryRolloutAction = (resource: DeploymentConfigKind): Action =>
   return useMemo<Action>(
     () => ({
       id: 'retry-rollout',
-      label: t('console-app~Retry rollout'),
+      label: t('Retry rollout'),
       cta: () =>
         retryRollout(rcModel, rc).catch((err) => launchModal(ErrorModal, { error: err.message })),
       insertAfter: 'start-rollout',
       disabled: !canRetry,
       disabledTooltip: !canRetry
         ? t(
-            'console-app~This action is only enabled when the latest revision of the ReplicationController resource is in a failed state.',
+            'This action is only enabled when the latest revision of the ReplicationController resource is in a failed state.',
           )
         : undefined,
       accessReview: {
