@@ -159,8 +159,34 @@ describe('ColumnManagementModal component', () => {
       expect(screen.getByText('Selected columns will appear in the table.')).toBeVisible();
     });
 
-    it('renders max row info alert', () => {
+    it('renders max row info alert without namespace help text when showNamespaceOverride is true', () => {
       expect(screen.getByText('You can select up to {{MAX_VIEW_COLS}} columns')).toBeVisible();
+      expect(
+        screen.queryByText('The namespace column is only shown when in "All projects"'),
+      ).not.toBeInTheDocument();
+    });
+
+    it('renders namespace help text when showNamespaceOverride is false', () => {
+      renderWithProviders(
+        <ColumnManagementModal
+          columnLayout={{
+            columns: columnLayout,
+            id: columnManagementID,
+            selectedColumns: new Set(
+              columnLayout.reduce((acc, column) => {
+                if (column.id && !column.additional) {
+                  acc.push(column.id);
+                }
+                return acc;
+              }, []),
+            ),
+            type: columnManagementType,
+            showNamespaceOverride: false,
+          }}
+          userSettingState={null}
+          setUserSettingState={jest.fn()}
+        />,
+      );
       expect(
         screen.getByText('The namespace column is only shown when in "All projects"'),
       ).toBeVisible();
