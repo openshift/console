@@ -12,11 +12,11 @@ table in [Console dynamic plugins README](./README.md).
 
 ## 4.23.0-prerelease.3 - TBD
 
-- Added `@openshift/api-types` as a dependency and replaced `K8sResourceCommon` and depdendent types with imports from that package ([CONSOLE-5355], [#16585])
+- Add `@openshift/api-types` as a dependency and replace `K8sResourceCommon` and related types with imports from that package ([CONSOLE-5355], [#16585])
 
 ## 4.23.0-prerelease.2 - 2026-05-27
 
-- Updated `@patternfly/react-topology` peer dependency semver range to `~6.5.0` ([OCPBUGS-86488], [#16491])
+- Update `@patternfly/react-topology` peer dependency semver range to `~6.5.0` ([OCPBUGS-86488], [#16491])
 
 ## 4.23.0-prerelease.1 - 2026-05-19
 

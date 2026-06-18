@@ -12,7 +12,11 @@ table in [Console dynamic plugins README](./README.md).
 
 ## 4.23.0-prerelease.3 - TBD
 
-- `DynamicModuleImportLoaderOptions` allows extending `skipImportPrefixes`, which suppresses build warnings ([OCPBUGS-88319], [#16585])
+- `ConsoleRemotePlugin` shared dynamic module option `skipImportPrefixes` allows extending the default PatternFly module skip list to suppress build warnings ([OCPBUGS-88319], [#16585])
+
+## 4.23.0-prerelease.2 - N/A
+
+> Skip this version to align releases of core and webpack plugin SDK packages.
 
 ## 4.23.0-prerelease.1 - 2026-05-19
 
