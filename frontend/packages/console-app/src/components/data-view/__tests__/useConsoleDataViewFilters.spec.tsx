@@ -40,6 +40,30 @@ const mockData: K8sResourceCommon[] = [
 
 const initialFilters: ResourceFilters = { name: '', label: '' };
 
+const projectMockData: K8sResourceCommon[] = [
+  {
+    metadata: {
+      name: 'test-proj',
+      annotations: { 'openshift.io/display-name': 'My Test Project' },
+    },
+    kind: 'Project',
+    apiVersion: 'v1',
+  },
+  {
+    metadata: {
+      name: 'other-proj',
+      annotations: { 'openshift.io/display-name': 'Other Project' },
+    },
+    kind: 'Project',
+    apiVersion: 'v1',
+  },
+  {
+    metadata: { name: 'no-display-name' },
+    kind: 'Project',
+    apiVersion: 'v1',
+  },
+];
+
 const createWrapper = (initialEntries: string[] = ['/']): FC<{ children: ReactNode }> => {
   const Wrapper: FC<{ children: ReactNode }> = ({ children }) => (
     <MemoryRouter initialEntries={initialEntries}>{children}</MemoryRouter>
@@ -98,6 +122,75 @@ describe('useConsoleDataViewFilters', () => {
 
     expect(result.current.filteredData).toHaveLength(1);
     expect(result.current.filteredData[0].metadata.name).toBe('web-frontend');
+  });
+
+  it('should filter by openshift.io/display-name using fuzzy matching', () => {
+    const { result } = renderHook(
+      () => useConsoleDataViewFilters({ data: projectMockData, initialFilters }),
+      { wrapper: createWrapper(['/?name=My%20Test']) },
+    );
+
+    expect(result.current.filteredData).toHaveLength(1);
+    expect(result.current.filteredData[0].metadata.name).toBe('test-proj');
+  });
+
+  it('should filter by metadata.name when display name differs', () => {
+    const { result } = renderHook(
+      () => useConsoleDataViewFilters({ data: projectMockData, initialFilters }),
+      { wrapper: createWrapper(['/?name=test-proj']) },
+    );
+
+    expect(result.current.filteredData).toHaveLength(1);
+    expect(result.current.filteredData[0].metadata.name).toBe('test-proj');
+  });
+
+  it('should match project by display name case-insensitively in fuzzy mode', () => {
+    // Default fuzzy mode - no mock override
+    const { result } = renderHook(
+      () => useConsoleDataViewFilters({ data: projectMockData, initialFilters }),
+      { wrapper: createWrapper(['/?name=other%20project']) }, // lowercase search
+    );
+
+    // Matches "Other Project" even though we searched "other project"
+    expect(result.current.filteredData).toHaveLength(1);
+    expect(result.current.filteredData[0].metadata.name).toBe('other-proj');
+  });
+
+  it('should not match resources without display-name annotation when searching by display name', () => {
+    const { result } = renderHook(
+      () => useConsoleDataViewFilters({ data: projectMockData, initialFilters }),
+      { wrapper: createWrapper(['/?name=Project']) },
+    );
+
+    // "Project" appears in display names of test-proj and other-proj, but not in "no-display-name"
+    expect(result.current.filteredData).toHaveLength(2);
+    expect(result.current.filteredData.map((d) => d.metadata.name)).toEqual([
+      'test-proj',
+      'other-proj',
+    ]);
+  });
+
+  it('should filter by openshift.io/display-name using exact matching when exact search is enabled', () => {
+    useExactSearch.mockReturnValue([true, true]);
+
+    const { result } = renderHook(
+      () => useConsoleDataViewFilters({ data: projectMockData, initialFilters }),
+      { wrapper: createWrapper(['/?name=My%20Test%20Project']) },
+    );
+
+    expect(result.current.filteredData).toHaveLength(1);
+    expect(result.current.filteredData[0].metadata.name).toBe('test-proj');
+  });
+
+  it('should require case-sensitive match for display-name in exact search mode', () => {
+    useExactSearch.mockReturnValue([true, true]);
+
+    const { result } = renderHook(
+      () => useConsoleDataViewFilters({ data: projectMockData, initialFilters }),
+      { wrapper: createWrapper(['/?name=my%20test']) },
+    );
+
+    expect(result.current.filteredData).toHaveLength(0);
   });
 
   it('should filter by name using exact matching when exact search is enabled', () => {
