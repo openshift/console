@@ -183,11 +183,13 @@ const LifecycleDatesFooter: FC = () => {
     <>
       <hr className="pf-v6-u-mb-sm pf-v6-u-mt-0" />
       <span className="pf-v6-u-color-200">
-        {t('May not reflect your actual SKU. Check your actual SKU for extended support.')}
+        {t(
+          'This might not reflect your actual SKU. Check your subscription for extended support options.',
+        )}
       </span>
       <div className="pf-v6-u-mt-sm">
         <ExternalLink href="https://access.redhat.com/support/policy/updates/openshift_operators/lifecycle">
-          {t('OpenShift Operator life cycle')}
+          {t('OpenShift Operator lifecycle')}
         </ExternalLink>
       </div>
       {clusterMinor && (
@@ -198,13 +200,13 @@ const LifecycleDatesFooter: FC = () => {
               '',
             )}`}
           >
-            {t('OpenShift life cycle ({{version}})', { version: clusterMinor })}
+            {t('OpenShift lifecycle ({{version}})', { version: clusterMinor })}
           </ExternalLink>
         </div>
       )}
       <div>
         <ExternalLink href="https://access.redhat.com/product-life-cycles">
-          {t('Red Hat product life cycles')}
+          {t('Red Hat product lifecycles')}
         </ExternalLink>
       </div>
     </>
