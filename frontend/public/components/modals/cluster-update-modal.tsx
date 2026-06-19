@@ -15,8 +15,10 @@ import {
   ModalVariant,
   Radio,
 } from '@patternfly/react-core';
+import { RhUiAiInfoIcon } from '@patternfly/react-icons';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { DropdownWithSwitch } from '@console/shared/src/components/dropdown/dropdown-with-switch/DropdownWithSwitch';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 
 import { ClusterVersionModel, MachineConfigPoolModel, NodeModel } from '../../models';
 import { FieldLevelHelp } from '../utils/field-level-help';
@@ -47,6 +49,7 @@ import {
 } from '../cluster-settings/cluster-settings';
 import { MachineConfigPoolsSelector } from '../machine-config-pools-selector';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import { UpdateWorkflowOLSButton } from '@console/shared/src/components/cluster-updates/explain-button';
 
 enum upgradeTypes {
   Full = 'Full',
@@ -79,6 +82,8 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
   const [upgradeType, setUpgradeType] = useState<upgradeTypes>(upgradeTypes.Full);
   const [includeNotRecommended, setIncludeNotRecommended] = useState(false);
   const { t } = useTranslation('public');
+  const isLightspeedAvailable = useFlag('LIGHTSPEED_PLUGIN');
+
   useEffect(() => {
     const initialMCPPausedValues = machineConfigPools
       .filter((mcp) => !isMCPMaster(mcp) && isMCPPaused(mcp))
@@ -210,7 +215,7 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
   return (
     <>
       <ModalHeader
-        title={t('Update cluster')}
+        title={t('Select a version')}
         data-test-id="modal-title"
         data-test="modal-title"
         labelId="cluster-update-modal-title"
@@ -219,9 +224,9 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
         <Form id="cluster-update-form" onSubmit={submit}>
           {clusterUpgradeableFalse && <ClusterNotUpgradeableAlert onCancel={cancel} cv={cv} />}
           <FormGroup label={t('Current version')} fieldId="current-version">
-            <p>{currentVersion}</p>
+            <Content component={ContentVariants.p}>{currentVersion}</Content>
           </FormGroup>
-          <FormGroup label={t('Select new version')} fieldId="version-select">
+          <FormGroup label={t('Select a version')} fieldId="version-select">
             <DropdownWithSwitch
               isFullWidth
               onSelect={onSelectVersion}
@@ -340,6 +345,41 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
               data-test="update-cluster-modal-partial-update-radio"
             />
           </FormGroup>
+          {/* OLS Update Precheck Section */}
+          {isLightspeedAvailable && desiredVersion && (
+            <Alert
+              variant="info"
+              customIcon={
+                <RhUiAiInfoIcon style={{ color: 'var(--pf-t--global--color--purple--300)' }} />
+              }
+              isInline
+              title={
+                <>
+                  <Content component={ContentVariants.p}>{t('Update Prerequisites')}</Content>
+                  <Content component={ContentVariants.small}>
+                    {t('Updating from {{currentVersion}} to {{desiredVersion}}', {
+                      currentVersion,
+                      desiredVersion,
+                    })}
+                  </Content>
+                </>
+              }
+              actionLinks={
+                <UpdateWorkflowOLSButton
+                  phase="pre-check"
+                  cv={cv}
+                  targetVersion={desiredVersion}
+                  variant="secondary"
+                  data-test="ols-update-modal-precheck"
+                  onClick={() => {
+                    // Close modal when OLS opens
+                    close();
+                  }}
+                />
+              }
+              data-test="update-cluster-modal-ols-precheck"
+            />
+          )}
         </Form>
       </ModalBody>
       <ModalFooterWithAlerts errorMessage={errorMessage || error}>
@@ -355,7 +395,7 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
             (upgradeType === upgradeTypes.Partial && machineConfigPoolsToPause.length === 0)
           }
         >
-          {t('Update')}
+          {t('Update cluster')}
         </Button>
         <Button
           variant="link"

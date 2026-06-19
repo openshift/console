@@ -170,7 +170,19 @@ export class ClusterSettingsPage extends BasePage {
     await this.robustClick(updateButton);
 
     // Wait for modal to appear
-    await expect(this.modalTitle).toContainText('Update cluster', { timeout: 10_000 });
+    // eslint-disable-next-line no-restricted-syntax
+    await this.modalTitle.waitFor({ state: 'visible', timeout: 10_000 });
+    await this.page.waitForFunction(
+      () => {
+        const title = document.querySelector('[data-test="modal-title"]');
+        return title?.textContent?.trim() === 'Select a version';
+      },
+      { timeout: 10_000 },
+    );
+
+    const modal = this.page.getByTestId('update-cluster-modal');
+    // eslint-disable-next-line no-restricted-syntax
+    await modal.waitFor({ state: 'visible' });
     await expect(this.page.getByTestId('update-cluster-modal')).toBeVisible();
   }
 
