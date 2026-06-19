@@ -585,7 +585,31 @@ const getNodeDataViewRows = (
   });
 };
 
-const fetchNodeMetrics = (): Promise<NodeMetrics> => {
+export const buildIPToHostnameMap = (nodes: NodeKind[]): Map<string, string> => {
+  const ipToHostname = new Map<string, string>();
+  nodes.forEach((node) => {
+    const internalIP = node.status?.addresses?.find((a) => a.type === 'InternalIP')?.address;
+    if (internalIP && node.metadata?.name) {
+      ipToHostname.set(internalIP, node.metadata.name);
+    }
+  });
+  return ipToHostname;
+};
+
+export const resolveInstanceLabel = (
+  instance: string | undefined,
+  ipToHostname: Map<string, string>,
+): string | undefined => {
+  if (instance?.includes(':')) {
+    const ip = instance.split(':')[0];
+    return ipToHostname.get(ip) || instance;
+  }
+  return instance;
+};
+
+const fetchNodeMetrics = (nodes: NodeKind[]): Promise<NodeMetrics> => {
+  const ipToHostname = buildIPToHostnameMap(nodes);
+
   const metrics = [
     {
       key: 'usedMemory',
@@ -609,11 +633,15 @@ const fetchNodeMetrics = (): Promise<NodeMetrics> => {
     },
     {
       key: 'cpu',
-      query: 'sum by(instance) (instance:node_cpu:rate:sum)',
+      query:
+        'sum by(instance) (instance:node_cpu:rate:sum) or ' +
+        'sum by(instance) (rate(windows_cpu_time_total{mode!="idle"}[3m]))',
     },
     {
       key: 'totalCPU',
-      query: 'sum by(instance) (instance:node_num_cpu:sum)',
+      query:
+        'sum by(instance) (instance:node_num_cpu:sum) or ' +
+        'count by(instance) (windows_cpu_time_total{mode="idle"})',
     },
     {
       key: 'pods',
@@ -625,7 +653,11 @@ const fetchNodeMetrics = (): Promise<NodeMetrics> => {
     return coFetchJSON(url).then(({ data: { result } }) => {
       return result.reduce((acc, data) => {
         const value = Number(data.value[1]);
-        return _.set(acc, [key, data.metric.instance || data.metric.node], value);
+        const instance = resolveInstanceLabel(
+          data.metric.instance || data.metric.node,
+          ipToHostname,
+        );
+        return _.set(acc, [key, instance], value);
       }, {});
     });
   });
@@ -1042,7 +1074,7 @@ export const NodesPage: FC<NodesPageProps> = ({ selector }) => {
   useEffect(() => {
     const updateMetrics = async () => {
       try {
-        const metrics = await fetchNodeMetrics();
+        const metrics = await fetchNodeMetrics(nodes);
         dispatch(setNodeMetrics(metrics));
       } catch (e) {
         // eslint-disable-next-line no-console
@@ -1055,7 +1087,7 @@ export const NodesPage: FC<NodesPageProps> = ({ selector }) => {
       return () => clearInterval(id);
     }
     return () => {};
-  }, [dispatch]);
+  }, [dispatch, nodes]);
 
   const data = useMemo(() => {
     const csrBundle = getNodeClientCSRs(csrs).filter(
