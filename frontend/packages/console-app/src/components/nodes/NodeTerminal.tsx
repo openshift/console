@@ -1,5 +1,5 @@
 import type { ReactNode, FC } from 'react';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { Alert } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
 import { PodConnectLoader } from '@console/internal/components/pod';
@@ -8,8 +8,8 @@ import { LoadingBox } from '@console/internal/components/utils/status-box';
 import { ImageStreamTagModel, NamespaceModel, PodModel } from '@console/internal/models';
 import type { NodeKind, PodKind } from '@console/internal/module/k8s';
 import { k8sCreate, k8sGet, k8sKillByName } from '@console/internal/module/k8s';
-import store from '@console/internal/redux';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { getDetachedSessions } from '@console/webterminal-plugin/src/redux/reducers/cloud-shell-selectors';
 
 type NodeTerminalErrorProps = {
@@ -193,6 +193,9 @@ const NodeTerminal: FC<NodeTerminalProps> = ({ obj: node }) => {
   const [errorMessage, setErrorMessage] = useState('');
   const nodeName = node.metadata.name;
   const isWindows = node.status?.nodeInfo?.operatingSystem === 'windows';
+  const detachedSessions = useConsoleSelector(getDetachedSessions);
+  const detachedSessionsRef = useRef(detachedSessions);
+  detachedSessionsRef.current = detachedSessions;
 
   const watchResource = useMemo(
     () =>
@@ -222,8 +225,10 @@ const NodeTerminal: FC<NodeTerminalProps> = ({ obj: node }) => {
     };
     const closeTab = (event) => {
       event.preventDefault();
-      const detached = getDetachedSessions(store.getState());
-      if (!detached.some((s) => s.podName === name) && namespace?.metadata?.name) {
+      if (
+        !detachedSessionsRef.current.some((s) => s.podName === name) &&
+        namespace?.metadata?.name
+      ) {
         deleteNamespace(namespace.metadata.name);
       }
     };
@@ -262,8 +267,7 @@ const NodeTerminal: FC<NodeTerminalProps> = ({ obj: node }) => {
     createDebugPod();
     window.addEventListener('beforeunload', closeTab);
     return () => {
-      const detached = getDetachedSessions(store.getState());
-      const isDetached = detached.some((s) => s.podName === name);
+      const isDetached = detachedSessionsRef.current.some((s) => s.podName === name);
       if (!isDetached && namespace?.metadata?.name) {
         deleteNamespace(namespace.metadata.name);
       }
