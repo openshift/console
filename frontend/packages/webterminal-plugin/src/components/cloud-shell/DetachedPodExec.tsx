@@ -8,8 +8,8 @@ import { PodModel } from '@console/internal/models';
 import { takeDetachedWebSocket } from '@console/internal/module/detached-ws-registry';
 import { resourceURL } from '@console/internal/module/k8s';
 import { WSFactory } from '@console/internal/module/ws-factory';
-import store from '@console/internal/redux';
 import { FLAGS } from '@console/shared/src/constants/common';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 import type { ImperativeTerminalType } from './Terminal';
 import Terminal from './Terminal';
@@ -41,6 +41,9 @@ const DetachedPodExec: FC<DetachedPodExecProps> = ({
   const terminal = useRef<ImperativeTerminalType>();
   const { t } = useTranslation('webterminal-plugin');
   const isOpenShift = useFlag(FLAGS.OPENSHIFT);
+  const impersonate = useConsoleSelector(getImpersonate);
+  const impersonateRef = useRef(impersonate);
+  impersonateRef.current = impersonate;
 
   const onData = useCallback((data: string): void => {
     ws.current?.send(`0${Base64.encode(data)}`);
@@ -90,8 +93,8 @@ const DetachedPodExec: FC<DetachedPodExecProps> = ({
         }, 200);
       }
     } else {
-      const impersonate = getImpersonate(store.getState()) || { subprotocols: [] };
-      const subprotocols = (impersonate.subprotocols || []).concat('base64.channel.k8s.io');
+      const impersonateData = impersonateRef.current || { subprotocols: [] };
+      const subprotocols = (impersonateData.subprotocols || []).concat('base64.channel.k8s.io');
 
       const urlOpts = {
         ns: namespace,
