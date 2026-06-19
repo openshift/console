@@ -136,7 +136,7 @@ import {
 import { CreateInitializationResourceButton } from './operator-install-page';
 import {
   ClusterCompatibilityStatus,
-  SupportPhaseStatus,
+  SupportPhaseBadge,
   getClusterCompatibility,
   getSupportPhase,
 } from './operator-lifecycle-status';
@@ -167,7 +167,7 @@ const statusColumnClass = css('pf-m-hidden', 'pf-m-visible-on-lg');
 const lastUpdatedColumnClass = css('pf-m-hidden', 'pf-m-visible-on-2xl');
 const providedAPIsColumnClass = css('pf-m-hidden', 'pf-m-visible-on-xl');
 const clusterCompatibilityColumnClass = css('pf-m-hidden', 'pf-m-visible-on-xl');
-const supportColumnClass = css('pf-m-hidden', 'pf-m-visible-on-xl');
+const supportPhaseColumnClass = css('pf-m-hidden', 'pf-m-visible-on-xl');
 
 const SubscriptionStatus: FC<{ muted?: boolean; subscription: SubscriptionKind }> = ({
   muted = false,
@@ -435,11 +435,6 @@ export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionT
           )}
         </TableData>
 
-        {/* Last Updated */}
-        <TableData className={lastUpdatedColumnClass}>
-          {obj.status == null ? '-' : <Timestamp timestamp={obj.status.lastUpdateTime} />}
-        </TableData>
-
         {/* Provided APIs */}
         <TableData className={providedAPIsColumnClass}>
           {!_.isEmpty(providedAPIs)
@@ -468,12 +463,17 @@ export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionT
           </TableData>
         ) : null}
 
-        {/* Support */}
+        {/* Support Phase */}
         {lifecycleEnabled ? (
-          <TableData className={supportColumnClass}>
-            <SupportPhaseStatus phase={supportPhase} />
+          <TableData className={supportPhaseColumnClass}>
+            <SupportPhaseBadge phase={supportPhase} />
           </TableData>
         ) : null}
+
+        {/* Last Updated */}
+        <TableData className={lastUpdatedColumnClass}>
+          {obj.status == null ? '-' : <Timestamp timestamp={obj.status.lastUpdateTime} />}
+        </TableData>
 
         {/* Kebab */}
         <TableData className={KEBAB_COLUMN_CLASS}>
@@ -529,11 +529,6 @@ const SubscriptionTableRow: FC<SubscriptionTableRowProps> = ({
         {catalogSourceMissing ? <SourceMissingStatus /> : <SubscriptionStatus subscription={obj} />}
       </TableData>
 
-      {/* Last Updated */}
-      <TableData className={lastUpdatedColumnClass}>
-        {obj.status == null ? '-' : <Timestamp timestamp={obj.status.lastUpdated} />}
-      </TableData>
-
       {/* Provided APIs */}
       <TableData className={providedAPIsColumnClass}>
         <span className="pf-v6-u-text-color-subtle">{t('None')}</span>
@@ -544,8 +539,13 @@ const SubscriptionTableRow: FC<SubscriptionTableRowProps> = ({
         <TableData className={clusterCompatibilityColumnClass}>-</TableData>
       ) : null}
 
-      {/* Support */}
-      {lifecycleEnabled ? <TableData className={supportColumnClass}>-</TableData> : null}
+      {/* Support Phase */}
+      {lifecycleEnabled ? <TableData className={supportPhaseColumnClass}>-</TableData> : null}
+
+      {/* Last Updated */}
+      <TableData className={lastUpdatedColumnClass}>
+        {obj.status == null ? '-' : <Timestamp timestamp={obj.status.lastUpdated} />}
+      </TableData>
 
       {/* Kebab */}
       <TableData className={KEBAB_COLUMN_CLASS}>
@@ -692,14 +692,14 @@ const ClusterServiceVersionList: FC<ClusterServiceVersionListProps> = ({
 
   const clusterCompatibilityHeader: Header = {
     id: 'clusterCompatibility',
-    title: t('Cluster Compatibility'),
+    title: t('Cluster compatibility'),
     props: { className: clusterCompatibilityColumnClass },
   };
 
-  const supportHeader: Header = {
-    id: 'support',
-    title: t('Support'),
-    props: { className: supportColumnClass },
+  const supportPhaseHeader: Header = {
+    id: 'supportPhase',
+    title: t('Support phase'),
+    props: { className: supportPhaseColumnClass },
   };
 
   const kebabHeader: Header = {
@@ -707,16 +707,16 @@ const ClusterServiceVersionList: FC<ClusterServiceVersionListProps> = ({
     props: { className: KEBAB_COLUMN_CLASS },
   };
 
-  const lifecycleHeaders = lifecycleEnabled ? [clusterCompatibilityHeader, supportHeader] : [];
+  const lifecycleHeaders = lifecycleEnabled ? [clusterCompatibilityHeader, supportPhaseHeader] : [];
 
   const AllProjectsTableHeader = (): Header[] => [
     nameHeader,
     namespaceHeader,
     managedNamespacesHeader,
     statusHeader,
-    lastUpdatedHeader,
     providedAPIsHeader,
     ...lifecycleHeaders,
+    lastUpdatedHeader,
     kebabHeader,
   ];
 
@@ -724,9 +724,9 @@ const ClusterServiceVersionList: FC<ClusterServiceVersionListProps> = ({
     nameHeader,
     managedNamespacesHeader,
     statusHeader,
-    lastUpdatedHeader,
     providedAPIsHeader,
     ...lifecycleHeaders,
+    lastUpdatedHeader,
     kebabHeader,
   ];
 
@@ -855,14 +855,14 @@ export const ClusterServiceVersionsPage: FC<ClusterServiceVersionsPageProps> = (
       { id: 'namespace', title: t('Namespace') },
       { id: 'managedNamespaces', title: t('Managed Namespaces') },
       { id: 'status', title: t('Status') },
-      { id: 'lastUpdated', title: t('Last updated') },
       { id: 'providedAPIs', title: t('Provided APIs') },
       ...(lifecycleEnabled
         ? [
-            { id: 'clusterCompatibility', title: t('Cluster Compatibility') },
-            { id: 'support', title: t('Support') },
+            { id: 'clusterCompatibility', title: t('Cluster compatibility') },
+            { id: 'supportPhase', title: t('Support phase') },
           ]
         : []),
+      { id: 'lastUpdated', title: t('Last updated') },
     ];
     return {
       id: csvColumnManagementID,
