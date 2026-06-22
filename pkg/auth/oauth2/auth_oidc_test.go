@@ -579,33 +579,27 @@ func Test_oidcAuth_logout(t *testing.T) {
 		name                   string
 		logoutRedirectOverride string
 		initSession            bool
-		wantStatus             int
 		wantIDTokenHint        bool
-		wantJSON               bool
+		wantLogoutURL          bool
 	}{
 		{
 			name:                   "with session and logout redirect, returns JSON with id_token_hint",
 			logoutRedirectOverride: "https://keycloak.example.com/logout?client_id=console",
 			initSession:            true,
-			wantStatus:             http.StatusOK,
 			wantIDTokenHint:        true,
-			wantJSON:               true,
+			wantLogoutURL:          true,
 		},
 		{
-			name:                   "no logout redirect configured, returns 204",
+			name:                   "no logout redirect configured, returns empty logoutRedirectURL",
 			logoutRedirectOverride: "",
 			initSession:            true,
-			wantStatus:             http.StatusNoContent,
-			wantIDTokenHint:        false,
-			wantJSON:               false,
+			wantLogoutURL:          false,
 		},
 		{
-			name:                   "no session, returns 204",
+			name:                   "no session, returns empty logoutRedirectURL",
 			logoutRedirectOverride: "https://keycloak.example.com/logout?client_id=console",
 			initSession:            false,
-			wantStatus:             http.StatusNoContent,
-			wantIDTokenHint:        false,
-			wantJSON:               false,
+			wantLogoutURL:          false,
 		},
 	}
 
@@ -654,16 +648,18 @@ func Test_oidcAuth_logout(t *testing.T) {
 			writer := httptest.NewRecorder()
 			o.logout(writer, req)
 
-			require.Equal(t, tt.wantStatus, writer.Code)
+			require.Equal(t, http.StatusOK, writer.Code)
+			require.Equal(t, "application/json", writer.Header().Get("Content-Type"))
 
-			if tt.wantJSON {
-				require.Equal(t, "application/json", writer.Header().Get("Content-Type"))
+			var resp map[string]string
+			err = json.NewDecoder(writer.Body).Decode(&resp)
+			require.NoError(t, err)
 
-				var resp map[string]string
-				err := json.NewDecoder(writer.Body).Decode(&resp)
-				require.NoError(t, err)
+			logoutURL := resp["logoutRedirectURL"]
 
-				logoutURL := resp["logoutRedirectURL"]
+			if !tt.wantLogoutURL {
+				require.Empty(t, logoutURL)
+			} else {
 				require.NotEmpty(t, logoutURL)
 
 				parsed, err := url.Parse(logoutURL)

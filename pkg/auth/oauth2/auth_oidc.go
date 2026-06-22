@@ -132,25 +132,18 @@ func (o *oidcAuth) logout(w http.ResponseWriter, r *http.Request) {
 	logoutURL := o.logoutRedirectURLWithIDTokenHint(w, r)
 	o.DeleteSession(w, r)
 
-	if logoutURL != "" {
-		w.Header().Set("Content-Type", "application/json")
-		if err := json.NewEncoder(w).Encode(map[string]string{
-			"logoutRedirectURL": logoutURL,
-		}); err != nil {
-			klog.Errorf("failed to write logout redirect response: %v", err)
-		}
-		return
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(map[string]string{
+		"logoutRedirectURL": logoutURL,
+	}); err != nil {
+		klog.Errorf("failed to write logout redirect response: %v", err)
 	}
-
-	w.WriteHeader(http.StatusNoContent)
 }
 
 // logoutRedirectURLWithIDTokenHint builds the logout redirect URL with the
 // id_token_hint query parameter appended, per the OIDC RP-Initiated Logout spec.
-// Returns empty when the session or id_token is unavailable — the caller should
-// fall back to 204 so the frontend uses the static logout redirect instead of
-// navigating to the IdP logout endpoint without a hint (which would cause a
-// redirect loop via post_logout_redirect_uri).
+// Returns empty when the session or id_token is unavailable — the frontend
+// uses the static logout redirect when the returned URL is empty.
 func (o *oidcAuth) logoutRedirectURLWithIDTokenHint(w http.ResponseWriter, r *http.Request) string {
 	baseURL := o.LogoutRedirectURL()
 	if baseURL == "" {
