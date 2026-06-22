@@ -31,6 +31,7 @@ declare interface Window {
     GOOS: string;
     graphqlBaseURL: string;
     developerCatalogCategories: string;
+    /** JSON encoded configuration for the console's perspectives override */
     perspectives: string;
     developerCatalogTypes: string;
     userSettingsLocation: string;

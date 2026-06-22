@@ -1,8 +1,19 @@
 import { screen, waitForElementToBeRemoved } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
+import type { Perspective } from '@console/shared/src/utils/override-perspectives';
+import { PerspectiveVisibilityState } from '@console/shared/src/utils/override-perspectives';
 import NavHeader from '../NavHeader';
 import { renderWithPerspective } from './navTestUtils';
+
+let mockOverridePerspectives: Perspective[];
+
+jest.mock('@console/shared/src/utils/override-perspectives', () => ({
+  ...jest.requireActual('@console/shared/src/utils/override-perspectives'),
+  get overridePerspectives() {
+    return mockOverridePerspectives;
+  },
+}));
 
 jest.mock('@console/internal/components/utils/async', () => ({
   AsyncComponent: () => null,
@@ -89,14 +100,14 @@ describe('NavHeader', () => {
 
   describe('when only one perspective is available', () => {
     beforeEach(() => {
-      window.SERVER_FLAGS.perspectives = JSON.stringify([
-        { id: 'admin', visibility: { state: 'Enabled' } },
-        { id: 'dev', visibility: { state: 'Disabled' } },
-      ]);
+      mockOverridePerspectives = [
+        { id: 'admin', visibility: { state: PerspectiveVisibilityState.Enabled } },
+        { id: 'dev', visibility: { state: PerspectiveVisibilityState.Disabled } },
+      ];
     });
 
     afterEach(() => {
-      delete window.SERVER_FLAGS.perspectives;
+      mockOverridePerspectives = undefined;
     });
 
     it('should render static label instead of dropdown', () => {
@@ -109,14 +120,14 @@ describe('NavHeader', () => {
 
   describe('when all perspectives are disabled', () => {
     beforeEach(() => {
-      window.SERVER_FLAGS.perspectives = JSON.stringify([
-        { id: 'admin', visibility: { state: 'Disabled' } },
-        { id: 'dev', visibility: { state: 'Disabled' } },
-      ]);
+      mockOverridePerspectives = [
+        { id: 'admin', visibility: { state: PerspectiveVisibilityState.Disabled } },
+        { id: 'dev', visibility: { state: PerspectiveVisibilityState.Disabled } },
+      ];
     });
 
     afterEach(() => {
-      delete window.SERVER_FLAGS.perspectives;
+      mockOverridePerspectives = undefined;
     });
 
     it('should fall back to static label for admin perspective', () => {
