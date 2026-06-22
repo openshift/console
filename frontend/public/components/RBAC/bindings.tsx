@@ -361,6 +361,11 @@ export const RoleBindingsPage: FC<RoleBindingsPageProps> = ({
   }`,
 }) => {
   const { t } = useTranslation();
+  const canListClusterRoleBindings = useAccessReview({
+    group: ClusterRoleBindingModel.apiGroup,
+    resource: ClusterRoleBindingModel.plural,
+    verb: 'list',
+  });
   const watchResources = useMemo(
     () =>
       mock
@@ -372,13 +377,15 @@ export const RoleBindingsPage: FC<RoleBindingsPageProps> = ({
               namespace,
               isList: true,
             },
-            ClusterRoleBinding: {
-              kind: 'ClusterRoleBinding',
-              namespaced: false,
-              isList: true,
-            },
+            ...(canListClusterRoleBindings && {
+              ClusterRoleBinding: {
+                kind: 'ClusterRoleBinding',
+                namespaced: false,
+                isList: true,
+              },
+            }),
           },
-    [mock, namespace],
+    [canListClusterRoleBindings, mock, namespace],
   );
   const resources = useK8sWatchResources(watchResources);
 
