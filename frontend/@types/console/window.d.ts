@@ -30,6 +30,7 @@ declare interface Window {
     GOARCH: string;
     GOOS: string;
     developerCatalogCategories: string;
+    /** JSON encoded configuration for the console's perspectives override */
     perspectives: string;
     developerCatalogTypes: string;
     userSettingsLocation: string;

@@ -74,11 +74,23 @@ const NavHeader: FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
     />
   ));
 
-  const { icon, name } = useMemo(
+  const { icon, name } = useMemo<{
+    icon: Perspective['properties']['icon'];
+    name: Perspective['properties']['name'];
+  }>(
     () =>
       perspectiveExtensions.find((p) => p?.properties?.id === activePerspective)?.properties ??
-      perspectiveExtensions[0]?.properties ?? { icon: null, name: null },
-    [activePerspective, perspectiveExtensions],
+      perspectiveExtensions[0]?.properties ?? { icon: null, name: t('Core platform') },
+    [activePerspective, perspectiveExtensions, t],
+  );
+
+  const ActivePerspectiveIcon = icon ? (
+    <AsyncComponent
+      loader={() => icon().then((m) => m.default)}
+      LoadingComponent={IconLoadingComponent}
+    />
+  ) : (
+    <RhUiGearGroupFillIcon />
   );
 
   return perspectiveDropdownItems.length > 1 ? (
@@ -99,20 +111,11 @@ const NavHeader: FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
             isExpanded={isPerspectiveDropdownOpen}
             ref={toggleRef}
             onClick={() => togglePerspectiveOpen()}
-            icon={
-              icon && (
-                <AsyncComponent
-                  loader={() => icon().then((m) => m.default)}
-                  LoadingComponent={IconLoadingComponent}
-                />
-              )
-            }
+            icon={ActivePerspectiveIcon}
           >
-            {name && (
-              <Title headingLevel="h2" size="md">
-                {name}
-              </Title>
-            )}
+            <Title headingLevel="h2" size="md">
+              {name}
+            </Title>
           </MenuToggle>
         )}
         popperProps={{
@@ -123,13 +126,9 @@ const NavHeader: FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
       </Select>
     </div>
   ) : (
-    <div
-      data-test="perspective-switcher-toggle"
-      data-test-id="perspective-switcher-toggle"
-      id="core-platform-perspective"
-    >
+    <div data-test="perspective-switcher-toggle" data-test-id="perspective-switcher-toggle">
       <Title headingLevel="h2" size="md">
-        <RhUiGearGroupFillIcon /> {t('Core platform')}
+        {ActivePerspectiveIcon} {name}
       </Title>
     </div>
   );
