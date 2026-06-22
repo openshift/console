@@ -4,8 +4,13 @@ import { expect } from '@playwright/test';
 import BasePage from './base-page';
 
 export class ModalPage extends BasePage {
+  private readonly modalTitle = this.page.getByTestId('modal-title');
   private readonly cancelButton = this.page.getByTestId('modal-cancel-action');
   private readonly submitButton = this.page.getByTestId('confirm-action');
+
+  getModalTitle(): Locator {
+    return this.modalTitle;
+  }
 
   getCancelButton(): Locator {
     return this.cancelButton;

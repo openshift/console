@@ -286,8 +286,12 @@ export default class KubernetesClient {
 
   async createNamespace(name: string, labels?: Record<string, string>): Promise<void> {
     try {
-      await this.k8sApi.readNamespace({ name });
-      return; // already exists
+      const { status } = await this.k8sApi.readNamespace({ name });
+      if (status?.phase === 'Terminating') {
+        await this.waitForNamespaceDeleted(name);
+      } else {
+        return; // already exists and is active
+      }
     } catch (err) {
       if (!isNotFound(err)) {
         throw err;
@@ -607,6 +611,33 @@ export default class KubernetesClient {
     });
   }
 
+
+  async waitForDeploymentReady(
+    name: string,
+    namespace: string,
+    timeoutMs = 120_000,
+  ): Promise<boolean> {
+    return pollUntil(
+      async () => {
+        try {
+          const deployment = await this.appsApi.readNamespacedDeployment({ name, namespace });
+          const status = deployment.status;
+          const desired = deployment.spec?.replicas ?? 1;
+          return (
+            status?.availableReplicas === desired &&
+            status?.updatedReplicas === desired &&
+            (status?.conditions ?? []).some(
+              (c) => c.type === 'Available' && c.status === 'True',
+            )
+          );
+        } catch {
+          return false;
+        }
+      },
+      timeoutMs,
+      2_000,
+    );
+  }
 
   async deletePod(name: string, namespace: string): Promise<void> {
     try {
