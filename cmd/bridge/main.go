@@ -178,6 +178,7 @@ func main() {
 	fNodeOperatingSystems := fs.String("node-operating-systems", "", "List of node operating systems. Example --node-operating-system=linux,windows")
 	fCopiedCSVsDisabled := fs.Bool("copied-csvs-disabled", false, "Flag to indicate if OLM copied CSVs are disabled.")
 	fTechPreview := fs.Bool("tech-preview", false, "Enable console Technology Preview features.")
+	fOLMLifecycle := fs.Bool("olm-lifecycle", false, "Enable OLM operator lifecycle and compatibility features.")
 
 	cfg, err := serverconfig.Parse(fs, os.Args[1:], "BRIDGE")
 	if err != nil {
@@ -357,6 +358,7 @@ func main() {
 		K8sMode:                      *fK8sMode,
 		CopiedCSVsDisabled:           *fCopiedCSVsDisabled,
 		TechPreview:                  *fTechPreview,
+		OLMLifecycle:                 *fOLMLifecycle,
 		Capabilities:                 capabilities,
 	}
 

@@ -142,6 +142,7 @@ type jsGlobals struct {
 	Telemetry                       serverconfig.MultiKeyValue `json:"telemetry"`
 	ThanosPublicURL                 string                     `json:"thanosPublicURL"`
 	TechPreview                     bool                       `json:"techPreview"`
+	OLMLifecycle                    bool                       `json:"olmLifecycle"`
 	UserSettingsLocation            string                     `json:"userSettingsLocation"`
 	DevConsoleProxyAvailable        bool                       `json:"devConsoleProxyAvailable"`
 }
@@ -172,6 +173,7 @@ type Server struct {
 	CSRFVerifier                        *csrfverifier.CSRFVerifier
 	CustomLogoFiles                     serverconfig.LogosKeyValue
 	TechPreview                         bool
+	OLMLifecycle                        bool
 	CustomFaviconFiles                  serverconfig.LogosKeyValue
 	CustomProductName                   string
 	DevCatalogCategories                string
@@ -790,6 +792,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		Telemetry:                 s.Telemetry,
 		ThanosPublicURL:           s.ThanosPublicURL.String(),
 		TechPreview:               s.TechPreview,
+		OLMLifecycle:              s.OLMLifecycle,
 		UserSettingsLocation:      s.UserSettingsLocation,
 		DevConsoleProxyAvailable:  true,
 	}
