@@ -1,5 +1,12 @@
 {
   "Operators": "Operators",
+  "Browse for Operators provided by Operator Lifecycle Manager.": "Browse for Operators provided by Operator Lifecycle Manager.",
+  "**Operators** are software extensions to OpenShift that make use of custom resources to manage applications and their components. They are managed by Operator Lifecycle Manager.": "**Operators** are software extensions to OpenShift that make use of custom resources to manage applications and their components. They are managed by Operator Lifecycle Manager.",
+  "Source": "Source",
+  "Provider": "Provider",
+  "Capability level": "Capability level",
+  "Infrastructure features": "Infrastructure features",
+  "Valid subscription": "Valid subscription",
   "OLMv1 Catalog": "OLMv1 Catalog",
   "Enable the OLMv1 catalog experience. OLMv1 is a technology preview feature that provides an updated operator catalog interface.": "Enable the OLMv1 catalog experience. OLMv1 is a technology preview feature that provides an updated operator catalog interface.",
   "Enable OLMv1 catalog": "Enable OLMv1 catalog",
