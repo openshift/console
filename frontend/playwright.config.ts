@@ -4,9 +4,10 @@ import * as dotenv from 'dotenv';
 dotenv.config({ path: path.resolve(__dirname, 'e2e', '.env'), quiet: true });
 
 import { defineConfig, devices } from '@playwright/test';
+import { INTEGRATION_TEST_USER_AGENT } from './packages/console-shared/src/constants/common';
 
 const isCI = !!process.env.OPENSHIFT_CI || !!process.env.CI;
-const chrome = { ...devices['Desktop Chrome'], userAgent: 'ConsoleIntegrationTestEnvironment' };
+const chrome = { ...devices['Desktop Chrome'], userAgent: INTEGRATION_TEST_USER_AGENT };
 const isDebug = process.env.DEBUG === '1' || process.env.DEBUG === 'true';
 const baseURL = process.env.WEB_CONSOLE_URL || 'http://localhost:9000';
 

@@ -12,6 +12,15 @@ export class DetailsPage extends BasePage {
     return this.pageHeading;
   }
 
+  async clickPageAction(actionName: string): Promise<void> {
+    await this.robustClick(this.page.getByTestId('actions-menu-button'));
+    await this.robustClick(this.page.getByTestId(actionName));
+  }
+
+  getBreadcrumb(index: number): Locator {
+    return this.page.getByTestId(`breadcrumb-link-${index}`);
+  }
+
   /**
    * Select a specific tab by name
    */
@@ -25,8 +34,7 @@ export class DetailsPage extends BasePage {
    * Click a kebab menu action (assumes menu is already open)
    */
   async clickKebabAction(actionId: string): Promise<void> {
-    const action = this.page.locator(`[data-test-action="${actionId}"]`);
-    await this.robustClick(action);
+    await this.robustClick(this.page.getByTestId(actionId));
   }
 
   /**

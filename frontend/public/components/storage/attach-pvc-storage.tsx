@@ -421,6 +421,7 @@ const AttachStorageForm: FC<AttachStorageFormProps> = (props) => {
             type="submit"
             variant="primary"
             id="save-changes"
+            data-test="save-changes"
             isDisabled={showCreatePVC === 'existing' && !claimName}
           >
             {t('Save')}

@@ -109,6 +109,7 @@ const VolumesTableRows = ({ componentProps: { data } }) => {
         title: name,
         props: {
           className: volumeRowColumnClasses[0],
+          'data-test': `volume-name-${name}`,
           'data-test-volume-name-for': name,
         },
       },
@@ -116,6 +117,7 @@ const VolumesTableRows = ({ componentProps: { data } }) => {
         title: mountPath,
         props: {
           className: volumeRowColumnClasses[1],
+          'data-test': `mount-path-${name}`,
           'data-test-mount-path-for': name,
         },
       },

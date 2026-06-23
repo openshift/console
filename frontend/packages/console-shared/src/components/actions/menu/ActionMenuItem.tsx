@@ -65,6 +65,7 @@ const ActionItem: FC<ActionMenuItemProps & { isAllowed: boolean }> = ({
     isDisabled,
     className: classes,
     onClick: handleClick,
+    'data-test': label,
     'data-test-action': label,
     translate: 'no' as 'no',
   };

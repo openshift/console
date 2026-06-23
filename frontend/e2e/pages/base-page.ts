@@ -1,4 +1,31 @@
-import type { Locator, Page } from '@playwright/test';
+import { type Locator, type Page, expect } from '@playwright/test';
+
+export async function getEditorContent(page: Page): Promise<string> {
+  await page.waitForFunction(
+    () => {
+      const value = (window as any).monaco?.editor?.getModels()?.[0]?.getValue?.();
+      return typeof value === 'string' && value.trim().length > 0;
+    },
+    { timeout: 30_000 },
+  );
+  return page.evaluate(() => {
+    return (window as any).monaco.editor.getModels()[0].getValue();
+  });
+}
+
+export async function setEditorContent(page: Page, content: string): Promise<void> {
+  await page.waitForFunction(() => (window as any).monaco?.editor?.getModels()?.[0], {
+    timeout: 10_000,
+  });
+  await page.evaluate((text) => {
+    (window as any).monaco.editor.getModels()[0].setValue(text);
+  }, content);
+}
+
+export async function warmupSPA(page: Page): Promise<void> {
+  await page.goto('/');
+  await expect(page.getByTestId('page-heading')).toBeVisible();
+}
 
 export default abstract class BasePage {
   constructor(public readonly page: Page) {}
@@ -97,6 +124,14 @@ export default abstract class BasePage {
   async clickButtonByText(buttonText: string): Promise<void> {
     const button = this.page.getByRole('button', { name: buttonText });
     await this.robustClick(button);
+  }
+
+  async getEditorContent(): Promise<string> {
+    return getEditorContent(this.page);
+  }
+
+  async setEditorContent(content: string): Promise<void> {
+    await setEditorContent(this.page, content);
   }
 
   async switchPerspective(target: 'Developer' | 'Administrator'): Promise<void> {

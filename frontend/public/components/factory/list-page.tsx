@@ -294,6 +294,7 @@ export const FireMan: FC<FireManProps & { filterList?: typeof filterList }> = (p
           initialItems={Object.keys(createProps.items).map((item) => ({
             value: item,
             content: createProps.items[item],
+            'data-test': `dropdown-menu-${item}`,
             'data-test-dropdown-menu': item,
           }))}
           onSelect={(_e, value: string) => runOrNavigate(value)}

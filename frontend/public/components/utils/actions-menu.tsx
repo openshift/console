@@ -63,6 +63,7 @@ const ActionsMenuDropdown: FC<ActionsMenuDropdownProps> = ({ actions, title, act
           ref={toggleRef}
           onClick={() => setIsActive(!active)}
           isExpanded={active}
+          data-test="actions-menu-button"
           data-test-id="actions-menu-button"
         >
           {title || t('Actions')}

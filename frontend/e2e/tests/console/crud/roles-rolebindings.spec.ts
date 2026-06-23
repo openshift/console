@@ -1,0 +1,224 @@
+import yaml from 'js-yaml';
+
+import { test, expect } from '../../../fixtures';
+import { getEditorContent, setEditorContent, warmupSPA } from '../../../pages/base-page';
+import { DetailsPage } from '../../../pages/details-page';
+import { ListPage } from '../../../pages/list-page';
+import { RoleBindingPage } from '../../../pages/role-binding-page';
+
+test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
+  test.describe.configure({ mode: 'serial' });
+  let namespace: string;
+  let roleName: string;
+  let clusterRoleName: string;
+  let roleBindingName: string;
+  let clusterRoleBindingName: string;
+
+  test.beforeAll(async ({ k8sClient }) => {
+    const suffix = Date.now();
+    namespace = `test-roles-${suffix}`;
+    roleName = `test-role-${suffix}`;
+    clusterRoleName = `test-clusterrole-${suffix}`;
+    roleBindingName = `test-rb-${suffix}`;
+    clusterRoleBindingName = `test-crb-${suffix}`;
+    await k8sClient.createNamespace(namespace);
+  });
+
+  test.beforeEach(async ({ page }) => {
+    await warmupSPA(page);
+  });
+
+  test.afterAll(async ({ k8sClient }) => {
+    const deletions = [
+      k8sClient.deleteClusterCustomResource(
+        'rbac.authorization.k8s.io',
+        'v1',
+        'clusterroles',
+        clusterRoleName,
+      ),
+      k8sClient.deleteClusterCustomResource(
+        'rbac.authorization.k8s.io',
+        'v1',
+        'clusterrolebindings',
+        clusterRoleBindingName,
+      ),
+      k8sClient.deleteNamespace(namespace),
+    ];
+    await Promise.all(deletions);
+  });
+
+  test('create Role and ClusterRole via YAML editor', async ({ page }) => {
+    const listPage = new ListPage(page);
+
+    await test.step('Create Role via YAML editor', async () => {
+      await page.goto(`/k8s/ns/${namespace}/roles`);
+      await page.getByTestId('item-create').click();
+
+      const content = await getEditorContent(page);
+      const parsed = yaml.load(content) as Record<string, any>;
+      parsed.metadata.name = roleName;
+      await setEditorContent(page, yaml.dump(parsed));
+
+      await page.getByTestId('save-changes').click();
+      await expect(page.getByTestId('yaml-error')).not.toBeAttached();
+    });
+
+    await test.step('Navigate back to Roles list', async () => {
+      const details = new DetailsPage(page);
+      await details.getBreadcrumb(0).click();
+    });
+
+    await test.step('Create ClusterRole via YAML editor', async () => {
+      await page.getByTestId('item-create').click();
+
+      const content = await getEditorContent(page);
+      const parsed = yaml.load(content) as Record<string, any>;
+      parsed.kind = 'ClusterRole';
+      parsed.metadata = { name: clusterRoleName };
+      await setEditorContent(page, yaml.dump(parsed));
+
+      await page.getByTestId('save-changes').click();
+      await expect(page.getByTestId('yaml-error')).not.toBeAttached();
+    });
+  });
+
+  test('create RoleBinding and ClusterRoleBinding via form', async ({ page }) => {
+    await test.step('Create RoleBinding', async () => {
+      await page.goto('/k8s/all-namespaces/rolebindings');
+      await page.getByTestId('item-create').click();
+      await expect(page.getByTestId('title')).toHaveText('Create RoleBinding');
+
+      const rbPage = new RoleBindingPage(page);
+      await rbPage.fillName(roleBindingName);
+      await rbPage.selectNamespace(namespace);
+      await rbPage.selectRole('cluster-admin');
+      await rbPage.fillSubjectName('subject-name');
+      await rbPage.save();
+      await expect(page.getByTestId('yaml-error')).not.toBeAttached();
+    });
+
+    await test.step('Create ClusterRoleBinding', async () => {
+      await page.goto('/k8s/all-namespaces/rolebindings');
+      await page.getByTestId('item-create').click();
+      await expect(page.getByTestId('title')).toHaveText('Create RoleBinding');
+
+      const rbPage = new RoleBindingPage(page);
+      await rbPage.selectClusterRoleBinding();
+      await rbPage.fillName(clusterRoleBindingName);
+      await rbPage.selectRole('cluster-admin');
+      await rbPage.fillSubjectName('subject-name');
+      await rbPage.save();
+      await expect(page.getByTestId('yaml-error')).not.toBeAttached();
+    });
+  });
+
+  test('displays Resource names and Verbs columns in Role rules table', async ({ page }) => {
+    const listPage = new ListPage(page);
+
+    await page.goto(`/k8s/ns/${namespace}/roles`);
+    await listPage.filterByName(roleName);
+    await listPage.clickRowByName(roleName);
+
+    await expect(page.locator('th', { hasText: 'Resource names' })).toBeVisible();
+    await expect(page.locator('th', { hasText: 'Verbs' })).toBeVisible();
+    await expect(page.locator('th', { hasText: 'Actions' })).not.toBeAttached();
+  });
+
+  test('displays Resource names and Verbs columns in ClusterRole rules table', async ({
+    page,
+  }) => {
+    const listPage = new ListPage(page);
+
+    await page.goto('/k8s/all-namespaces/roles');
+    await listPage.filterByCheckbox('Role', 'cluster');
+    await listPage.filterByName(clusterRoleName);
+    await listPage.clickRowByName(clusterRoleName);
+
+    await expect(page.locator('th', { hasText: 'Resource names' })).toBeVisible();
+    await expect(page.locator('th', { hasText: 'Verbs' })).toBeVisible();
+    await expect(page.locator('th', { hasText: 'Actions' })).not.toBeAttached();
+  });
+
+  for (const rolesOrBindings of ['Roles', 'RoleBindings'] as const) {
+    const resource = rolesOrBindings.toLowerCase();
+
+    test(`${rolesOrBindings} detail breadcrumb navigates back to list`, async ({ page }) => {
+      const name = rolesOrBindings === 'Roles' ? roleName : roleBindingName;
+      const listPage = new ListPage(page);
+      const details = new DetailsPage(page);
+      const namespaceDropdown = page.getByTestId('namespace-bar-dropdown');
+
+      await page.goto(`/k8s/ns/${namespace}/${resource}`);
+      await listPage.selectProject(namespace);
+      await expect(namespaceDropdown).toContainText(namespace);
+      await listPage.filterByCheckbox(
+        rolesOrBindings === 'Roles' ? 'Role' : 'Kind',
+        'namespace',
+      );
+      await listPage.filterByName(name);
+      await listPage.clickRowByName(name);
+
+      await expect(namespaceDropdown).toContainText(namespace);
+
+      await details.getBreadcrumb(0).click();
+      await expect(namespaceDropdown).toContainText(namespace);
+      await expect(page.getByTestId('page-heading')).toContainText(rolesOrBindings);
+    });
+
+    test(`Cluster${rolesOrBindings} detail breadcrumb to list restores All Projects`, async ({
+      page,
+    }) => {
+      const clusterName = rolesOrBindings === 'Roles' ? clusterRoleName : clusterRoleBindingName;
+      const listPage = new ListPage(page);
+      const details = new DetailsPage(page);
+      const namespaceDropdown = page.getByTestId('namespace-bar-dropdown');
+
+      // warmupSPA (beforeEach) navigates to "/" which resolves the last
+      // namespace from user preferences — possibly a project set by a prior
+      // serial test — and writes it to sessionStorage. The RBAC breadcrumb
+      // reads sessionStorage directly (getLastNamespace) to build its URL,
+      // but navigating to an all-namespaces URL doesn't overwrite
+      // sessionStorage because Redux already starts with ALL_NAMESPACES_KEY.
+      await page.evaluate(() => sessionStorage.setItem('bridge/last-namespace-name', '#ALL_NS#'));
+
+      await page.goto(`/k8s/all-namespaces/${resource}`);
+      await listPage.selectAllProjects();
+      await expect(namespaceDropdown).toContainText('All Projects');
+      await listPage.filterByCheckbox(
+        rolesOrBindings === 'Roles' ? 'Role' : 'Kind',
+        'cluster',
+      );
+      await listPage.filterByName(clusterName);
+      await listPage.clickRowByName(clusterName);
+
+      await expect(namespaceDropdown).not.toBeAttached();
+
+      await details.getBreadcrumb(0).click();
+      await expect(namespaceDropdown).toContainText('All Projects');
+    });
+
+    test(`Cluster${rolesOrBindings} detail breadcrumb to list restores last selected project`, async ({
+      page,
+    }) => {
+      const clusterName = rolesOrBindings === 'Roles' ? clusterRoleName : clusterRoleBindingName;
+      const listPage = new ListPage(page);
+      const details = new DetailsPage(page);
+      const namespaceDropdown = page.getByTestId('namespace-bar-dropdown');
+
+      await page.goto(`/k8s/ns/${namespace}/${resource}`);
+      await listPage.selectProject(namespace);
+      await expect(namespaceDropdown).toContainText(namespace);
+      await listPage.filterByCheckbox(
+        rolesOrBindings === 'Roles' ? 'Role' : 'Kind',
+        'cluster',
+      );
+      await listPage.filterByName(clusterName);
+      await listPage.clickRowByName(clusterName);
+
+      await expect(namespaceDropdown).not.toBeAttached();
+
+      await details.getBreadcrumb(0).click();
+      await expect(namespaceDropdown).toContainText(namespace);
+    });
+  }
+});
