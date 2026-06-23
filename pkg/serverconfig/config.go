@@ -292,8 +292,8 @@ func addClusterInfo(fs *flag.FlagSet, clusterInfo *ClusterInfo) {
 		fs.Set("tech-preview", "true")
 	}
 
-	if clusterInfo.OLMLifecycleEnabled {
-		fs.Set("olm-lifecycle", "true")
+	if clusterInfo.OLMLifecycleMetadataEnabled {
+		fs.Set("olm-lifecycle-metadata", "true")
 	}
 }
 
