@@ -10,7 +10,7 @@ export const LauncherCard = memo(() => {
   const { namespaceLinks } = useContext(ProjectDashboardContext);
   const { t } = useTranslation('public');
   return (
-    <Card data-test-id="launcher-card">
+    <Card data-test="launcher-card" data-test-id="launcher-card">
       <CardHeader>
         <CardTitle>{t('Launcher')}</CardTitle>
       </CardHeader>

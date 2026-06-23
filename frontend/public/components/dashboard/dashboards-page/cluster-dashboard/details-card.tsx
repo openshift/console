@@ -139,7 +139,7 @@ export const DetailsCard = memo(() => {
   const k8sGitVersion = getK8sGitVersion(k8sVersion);
 
   return (
-    <Card data-test-id="details-card">
+    <Card data-test="details-card" data-test-id="details-card">
       <CardHeader
         actions={{
           actions: (

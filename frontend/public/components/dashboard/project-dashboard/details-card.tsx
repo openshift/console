@@ -30,7 +30,7 @@ export const DetailsCard = memo(() => {
   const serviceMeshEnabled = obj.metadata?.labels?.['maistra.io/member-of'];
   const { t } = useTranslation('public');
   return (
-    <Card data-test-id="details-card">
+    <Card data-test="details-card" data-test-id="details-card">
       <CardHeader
         actions={{
           actions: (

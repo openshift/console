@@ -143,7 +143,7 @@ export const InventoryCard = memo(() => {
   const { t } = useTranslation('public');
 
   return (
-    <Card data-test-id="inventory-card">
+    <Card data-test="inventory-card" data-test-id="inventory-card">
       <CardHeader>
         <CardTitle>{t('Inventory')}</CardTitle>
       </CardHeader>

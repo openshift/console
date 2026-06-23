@@ -187,7 +187,7 @@ export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels
   }
 
   return (
-    <Card data-test-id="status-card">
+    <Card data-test="status-card" data-test-id="status-card">
       <CardHeader
         actions={{
           actions: (

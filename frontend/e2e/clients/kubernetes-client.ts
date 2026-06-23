@@ -664,4 +664,28 @@ export default class KubernetesClient {
       2_000,
     );
   }
+
+  async createResourceQuota(
+    name: string,
+    namespace: string,
+    spec: k8s.V1ResourceQuotaSpec,
+  ): Promise<void> {
+    await this.k8sApi.createNamespacedResourceQuota({
+      namespace,
+      body: {
+        metadata: { name, namespace },
+        spec,
+      },
+    });
+  }
+
+  async deleteResourceQuota(name: string, namespace: string): Promise<void> {
+    try {
+      await this.k8sApi.deleteNamespacedResourceQuota({ name, namespace });
+    } catch (err) {
+      if (!isNotFound(err)) {
+        throw err;
+      }
+    }
+  }
 }
