@@ -61,12 +61,12 @@ export const getStatusGroups = (resources, mapping, mapper, filterType) => {
 };
 
 export const getPodStatusGroups: StatusGroupMapper = (resources) =>
-  getStatusGroups(resources, POD_PHASE_GROUP_MAPPING, podPhaseFilterReducer, 'pod-status');
+  getStatusGroups(resources, POD_PHASE_GROUP_MAPPING, podPhaseFilterReducer, 'status');
 export const getNodeStatusGroups: StatusGroupMapper = (resources) =>
-  getStatusGroups(resources, NODE_STATUS_GROUP_MAPPING, nodeStatus, 'node-status');
+  getStatusGroups(resources, NODE_STATUS_GROUP_MAPPING, nodeStatus, 'status');
 export const getPVCStatusGroups: StatusGroupMapper = (resources) =>
-  getStatusGroups(resources, PVC_STATUS_GROUP_MAPPING, (pvc) => pvc.status.phase, 'pvc-status');
+  getStatusGroups(resources, PVC_STATUS_GROUP_MAPPING, (pvc) => pvc.status.phase, 'status');
 export const getPVStatusGroups: StatusGroupMapper = (resources) =>
-  getStatusGroups(resources, PV_STATUS_GROUP_MAPPING, (pv) => pv.status.phase, 'pv-status');
+  getStatusGroups(resources, PV_STATUS_GROUP_MAPPING, (pv) => pv.status.phase, 'status');
 export const getVSStatusGroups: StatusGroupMapper = (resources) =>
   getStatusGroups(resources, VS_STATUS_GROUP_MAPPING, snapshotStatus, 'status');

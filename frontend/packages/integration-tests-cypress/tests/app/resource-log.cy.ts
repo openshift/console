@@ -19,7 +19,7 @@ describe('Pod log viewer tab', () => {
 
   it('Open logs from pod details page tab and verify the log buffer sizes', () => {
     cy.visit(
-      `/k8s/ns/openshift-kube-apiserver/core~v1~Pod?name=kube-apiserver-ip-&rowFilter-pod-status=Running&orderBy=asc&sortBy=Owner`,
+      `/k8s/ns/openshift-kube-apiserver/core~v1~Pod?name=kube-apiserver-ip-&status=Running&orderBy=asc&sortBy=Owner`,
     );
     listPage.dvRows.clickFirstLinkInFirstRow();
     detailsPage.isLoaded();

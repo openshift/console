@@ -513,7 +513,7 @@ export const PodList: FC<PodListProps> = ({
     () => [
       <DataViewCheckboxFilter
         key="status"
-        filterId="status" // is `rowFilter-pod-status`in <FilterToolbar> as a single param, not multiple
+        filterId="status"
         title={t('public~Status')}
         placeholder={t('public~Filter by status')}
         options={podStatusFilterOptions}

@@ -183,8 +183,7 @@ const StatusLink: React.FC<StatusLinkProps> = ({
   const groupIcon = statusGroupIcons[groupID] || statusGroupIcons[InventoryStatusGroup.NOT_MAPPED];
   const statusItems = encodeURIComponent(statusIDs.join(','));
   const path = basePath || resourcePathFromModel(kind, null, namespace);
-  const to =
-    filterType && statusItems.length > 0 ? `${path}?rowFilter-${filterType}=${statusItems}` : path;
+  const to = filterType && statusItems.length > 0 ? `${path}?${filterType}=${statusItems}` : path;
 
   return <InventoryItemStatus count={count} icon={groupIcon} linkTo={to} />;
 };
