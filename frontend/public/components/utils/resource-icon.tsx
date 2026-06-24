@@ -49,7 +49,7 @@ export type ResourceNameProps = {
 export const ResourceName: FC<ResourceNameProps> = (props) => (
   <span className="co-resource-item">
     <ResourceIcon kind={props.kind} />{' '}
-    <span className="co-resource-item__resource-name" data-test="resource-name">
+    <span className="co-resource-item__resource-name" data-test={`resource-name-${props.name}`}>
       {props.name}
     </span>
   </span>

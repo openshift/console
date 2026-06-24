@@ -15,10 +15,8 @@ export class YamlEditorPage extends BasePage {
   }
 
   async waitForSidebarLoaded(): Promise<void> {
-    try {
+    if ((await this.resourceSidebar.count()) > 0) {
       await expect(this.resourceSidebar).toBeAttached({ timeout: 30_000 });
-    } catch {
-      // Sidebar may not render for all resource types
     }
   }
 
