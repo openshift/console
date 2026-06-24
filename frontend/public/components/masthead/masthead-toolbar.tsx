@@ -32,6 +32,8 @@ import { useCopyLoginCommands } from '@console/shared/src/hooks/useCopyLoginComm
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { useUser } from '@console/shared/src/hooks/useUser';
+import { useNotificationHistory } from '@console/shared/src/components/toast/useNotificationHistory';
+import { getNotificationsVariant } from '@console/shared/src/components/toast/toastNotificationUtils';
 import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils/namespace';
 import { ExternalLinkButton } from '@console/shared/src/components/links/ExternalLinkButton';
@@ -184,6 +186,12 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
 
   // Use centralized user hook for user data
   const { displayName, username } = useUser();
+  const { unreadCount: toastUnreadCount, hasUnreadDangerNotifications } = useNotificationHistory();
+  const notificationCount = (alertCount || 0) + toastUnreadCount;
+  const notificationBadgeVariant = getNotificationsVariant(
+    toastUnreadCount,
+    hasUnreadDangerNotifications,
+  );
   const [isAppLauncherDropdownOpen, setIsAppLauncherDropdownOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const [isKebabDropdownOpen, setIsKebabDropdownOpen] = useState(false);
@@ -740,6 +748,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
 
   const launchActions = getLaunchActions();
   const alertAccess = canAccessNS && !!window.SERVER_FLAGS.prometheusBaseURL;
+  const showNotificationBadge = alertAccess || toastUnreadCount > 0;
   return (
     <>
       <Toolbar isFullHeight isStatic>
@@ -776,12 +785,12 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
                   {renderApplicationItems(launchActions)}
                 </Dropdown>
               )}
-              {alertAccess && (
+              {showNotificationBadge && (
                 <NotificationBadge
                   aria-label={t('Notification drawer')}
                   onClick={drawerToggle}
-                  variant="plain"
-                  count={alertCount || 0}
+                  variant={notificationBadgeVariant}
+                  count={notificationCount || 0}
                   data-quickstart-id="qs-masthead-notifications"
                   className="co-masthead-button"
                 />
@@ -826,12 +835,12 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
             visibility={{ default: isMastheadStacked ? 'visible' : 'hidden' }}
           >
             <SystemStatusButton statusPageData={statusPageData} />
-            {alertAccess && alertCount > 0 && (
+            {showNotificationBadge && notificationCount > 0 && (
               <NotificationBadge
                 aria-label={t('Notification drawer')}
                 onClick={drawerToggle}
-                variant="plain"
-                count={alertCount}
+                variant={notificationBadgeVariant}
+                count={notificationCount}
                 data-quickstart-id="qs-masthead-notifications"
               >
                 <RhUiNotificationIcon />

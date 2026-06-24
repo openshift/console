@@ -11,6 +11,8 @@ import { getUser } from '@console/dynamic-plugin-sdk';
 
 export type UIState = ImmutableMap<string, any>;
 
+const NOTIFICATION_DRAWER_EXPANDED_PATH = ['notifications', 'isExpanded'];
+
 export default (state: UIState, action: UIAction): UIState => {
   if (!state) {
     const { pathname } = window.location;
@@ -96,8 +98,8 @@ export default (state: UIState, action: UIAction): UIState => {
 
     case ActionType.NotificationDrawerToggleExpanded:
       return state.setIn(
-        ['notifications', 'isExpanded'],
-        !state.getIn(['notifications', 'isExpanded']),
+        NOTIFICATION_DRAWER_EXPANDED_PATH,
+        !state.getIn(NOTIFICATION_DRAWER_EXPANDED_PATH),
       );
 
     case ActionType.SelectOverviewItem:
@@ -171,3 +173,6 @@ export const userStateToProps = (state: RootState) => {
 export const getActiveNamespace = ({ UI }: RootState): string => UI.get('activeNamespace');
 
 export const getActiveApplication = ({ UI }: RootState): string => UI.get('activeApplication');
+
+export const isNotificationDrawerExpanded = ({ UI }: RootState): boolean =>
+  !!UI.getIn(NOTIFICATION_DRAWER_EXPANDED_PATH);

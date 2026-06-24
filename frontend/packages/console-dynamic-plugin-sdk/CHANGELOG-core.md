@@ -13,6 +13,7 @@ table in [Console dynamic plugins README](./README.md).
 ## 4.23.0-prerelease.3 - TBD
 
 - Add `@openshift/api-types` as a dependency and replace `K8sResourceCommon` and related types with imports from that package ([CONSOLE-5355], [#16585])
+- Add optional `drawerGroup`, `skipOverflow`, and `persistInDrawer` fields to `ToastOptions` ([CONSOLE-5361], [#16636])
 
 ## 4.23.0-prerelease.2 - 2026-05-27
 
@@ -231,6 +232,7 @@ table in [Console dynamic plugins README](./README.md).
 [CONSOLE-5108]: https://issues.redhat.com/browse/CONSOLE-5108
 [CONSOLE-5273]: https://issues.redhat.com/browse/CONSOLE-5273
 [CONSOLE-5355]: https://issues.redhat.com/browse/CONSOLE-5355
+[CONSOLE-5361]: https://issues.redhat.com/browse/CONSOLE-5361
 [OCPBUGS-19048]: https://issues.redhat.com/browse/OCPBUGS-19048
 [OCPBUGS-30077]: https://issues.redhat.com/browse/OCPBUGS-30077
 [OCPBUGS-31355]: https://issues.redhat.com/browse/OCPBUGS-31355
@@ -316,3 +318,4 @@ table in [Console dynamic plugins README](./README.md).
 [#16400]: https://github.com/openshift/console/pull/16400
 [#16491]: https://github.com/openshift/console/pull/16491
 [#16585]: https://github.com/openshift/console/pull/16585
+[#16636]: https://github.com/openshift/console/pull/16636

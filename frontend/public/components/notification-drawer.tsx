@@ -41,11 +41,16 @@ import {
 } from '@console/shared/src/components/dashboard/status-card/alert-utils';
 import {
   Button,
+  Dropdown,
+  DropdownItem,
+  DropdownList,
   EmptyState,
   EmptyStateActions,
   EmptyStateBody,
   EmptyStateFooter,
   EmptyStateVariant,
+  MenuToggle,
+  MenuToggleElement,
   NotificationDrawer as PfNotificationDrawer,
   NotificationDrawerBody,
   NotificationDrawerGroup,
@@ -79,7 +84,17 @@ import { LinkifyExternal } from './utils/link';
 import { LabelSelector } from '@console/internal/module/k8s/label-selector';
 import { useNotificationAlerts } from '@console/shared/src/hooks/useNotificationAlerts';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
+import { DEFAULT_TOAST_DRAWER_GROUP } from '@console/shared/src/components/toast/types';
+import { useNotificationHistory } from '@console/shared/src/components/toast/useNotificationHistory';
+import {
+  getCustomToastDrawerGroups,
+  getToastDrawerGroupTitle,
+  getToastNotificationsForGroup,
+  groupToastNotifications,
+} from '@console/shared/src/components/toast/toastNotificationUtils';
+import { ToastNotificationDrawerItems } from './ToastNotificationDrawerItems';
 import { NotificationTypes } from './utils/types';
+import { RhUiEllipsisVerticalIcon } from '@patternfly/react-icons';
 
 const AlertErrorState: FC<AlertErrorProps> = ({ errorText }) => {
   const { t } = useTranslation('public');
@@ -255,6 +270,24 @@ export const NotificationDrawer: FC<NotificationDrawerProps> = ({
       [alertIds],
     ),
   );
+  const {
+    notifications: toastNotifications,
+    unreadCount: toastUnreadCount,
+    markNotificationRead,
+    markNotificationUnread,
+    clearNotification,
+    clearAllNotifications,
+    markAllNotificationsRead,
+  } = useNotificationHistory();
+  const groupedToastNotifications = useMemo(() => groupToastNotifications(toastNotifications), [
+    toastNotifications,
+  ]);
+  const otherAlertsToastNotifications = getToastNotificationsForGroup(
+    groupedToastNotifications,
+    DEFAULT_TOAST_DRAWER_GROUP,
+  );
+  const customToastDrawerGroups = getCustomToastDrawerGroups(groupedToastNotifications);
+  const [isHeaderActionsOpen, setIsHeaderActionsOpen] = useState(false);
 
   const toggleNotificationDrawer = () => {
     dispatch(UIActions.notificationDrawerToggleExpanded());
@@ -292,9 +325,11 @@ export const NotificationDrawer: FC<NotificationDrawerProps> = ({
 
   const hasCriticalAlerts = criticalAlerts.length > 0;
   const hasNonCriticalAlerts = nonCriticalAlerts.length > 0;
+  const hasOtherAlertsToastNotifications = otherAlertsToastNotifications.length > 0;
   const [isAlertExpanded, toggleAlertExpanded] = useState(hasCriticalAlerts);
   const [isNonCriticalAlertExpanded, toggleNonCriticalAlertExpanded] = useState(true);
   const [isClusterUpdateExpanded, toggleClusterUpdateExpanded] = useState(true);
+  const [expandedToastGroups, setExpandedToastGroups] = useState<Record<string, boolean>>({});
   useEffect(() => {
     if (hasCriticalAlerts && isDrawerExpanded) {
       toggleAlertExpanded(true);
@@ -381,12 +416,12 @@ export const NotificationDrawer: FC<NotificationDrawerProps> = ({
     </NotificationDrawerGroup>
   );
   const nonCriticalAlertCategory: ReactElement =
-    nonCriticalAlerts.length > 0 ? (
+    hasNonCriticalAlerts || hasOtherAlertsToastNotifications ? (
       <NotificationDrawerGroup
         key="other-alerts"
         isExpanded={isNonCriticalAlertExpanded}
         title={t('Other Alerts')}
-        count={nonCriticalAlerts.length}
+        count={nonCriticalAlerts.length + otherAlertsToastNotifications.length}
         onExpand={() => {
           toggleNonCriticalAlertExpanded(!isNonCriticalAlertExpanded);
         }}
@@ -395,6 +430,12 @@ export const NotificationDrawer: FC<NotificationDrawerProps> = ({
           isHidden={!isNonCriticalAlertExpanded}
           aria-label={t('Notifications in the other alerts group')}
         >
+          <ToastNotificationDrawerItems
+            notifications={otherAlertsToastNotifications}
+            onClear={clearNotification}
+            onMarkRead={markNotificationRead}
+            onMarkUnread={markNotificationUnread}
+          />
           {nonCriticalAlerts.map((alert, i) => {
             const alertVariant = NotificationTypes[getAlertSeverity(alert)];
             const alertTime = getAlertTime(alert);
@@ -426,6 +467,39 @@ export const NotificationDrawer: FC<NotificationDrawerProps> = ({
       </NotificationDrawerGroup>
     ) : null;
 
+  const toastNotificationCategories: ReactElement[] = customToastDrawerGroups.map((groupName) => {
+    const groupNotifications = getToastNotificationsForGroup(groupedToastNotifications, groupName);
+    const groupTitle = getToastDrawerGroupTitle(groupName, t);
+    const isExpanded = expandedToastGroups[groupName] ?? true;
+
+    return (
+      <NotificationDrawerGroup
+        key={`toast-group-${groupName}`}
+        isExpanded={isExpanded}
+        title={groupTitle}
+        count={groupNotifications.length}
+        onExpand={() => {
+          setExpandedToastGroups((state) => ({
+            ...state,
+            [groupName]: !isExpanded,
+          }));
+        }}
+      >
+        <NotificationDrawerList
+          isHidden={!isExpanded}
+          aria-label={t('Notifications in the {{groupName}} group', { groupName: groupTitle })}
+        >
+          <ToastNotificationDrawerItems
+            notifications={groupNotifications}
+            onClear={clearNotification}
+            onMarkRead={markNotificationRead}
+            onMarkUnread={markNotificationUnread}
+          />
+        </NotificationDrawerList>
+      </NotificationDrawerGroup>
+    );
+  });
+
   if (showServiceLevelNotification) {
     updateList.push(
       <ServiceLevelNotification key="service-level-notification" clusterID={clusterID} />,
@@ -452,10 +526,44 @@ export const NotificationDrawer: FC<NotificationDrawerProps> = ({
 
   return (
     <PfNotificationDrawer ref={drawerRef}>
-      <NotificationDrawerHeader title={t('Notifications')} onClose={toggleNotificationDrawer} />
+      <NotificationDrawerHeader
+        title={t('Notifications')}
+        count={toastUnreadCount || undefined}
+        unreadText={toastUnreadCount ? t('unread') : undefined}
+        onClose={toggleNotificationDrawer}
+      >
+        {toastNotifications.length > 0 && (
+          <Dropdown
+            isOpen={isHeaderActionsOpen}
+            onOpenChange={(open) => setIsHeaderActionsOpen(open)}
+            onSelect={() => setIsHeaderActionsOpen(false)}
+            popperProps={{ position: 'right' }}
+            toggle={(toggleRef: Ref<MenuToggleElement>) => (
+              <MenuToggle
+                ref={toggleRef}
+                isExpanded={isHeaderActionsOpen}
+                variant="plain"
+                onClick={() => setIsHeaderActionsOpen(!isHeaderActionsOpen)}
+                aria-label={t('Notification drawer actions')}
+                icon={<RhUiEllipsisVerticalIcon />}
+              />
+            )}
+          >
+            <DropdownList>
+              <DropdownItem onClick={markAllNotificationsRead}>{t('Mark all read')}</DropdownItem>
+              <DropdownItem onClick={clearAllNotifications}>{t('Clear all')}</DropdownItem>
+            </DropdownList>
+          </Dropdown>
+        )}
+      </NotificationDrawerHeader>
       <NotificationDrawerBody>
         <NotificationDrawerGroupList>
-          {[criticalAlertCategory, nonCriticalAlertCategory, recommendationsCategory]}
+          {[
+            criticalAlertCategory,
+            nonCriticalAlertCategory,
+            ...toastNotificationCategories,
+            recommendationsCategory,
+          ]}
         </NotificationDrawerGroupList>
       </NotificationDrawerBody>
     </PfNotificationDrawer>
