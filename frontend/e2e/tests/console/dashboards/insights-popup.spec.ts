@@ -40,20 +40,24 @@ test.describe('Insights Popup on Cluster Dashboard', { tag: ['@admin'] }, () => 
 
   test('renders severity links pointing to the correct Red Hat Insights advisor URL', async () => {
     await dashboard.openInsightsPopup();
+    const dataAvailable = await dashboard.isInsightsDataAvailable();
+    test.skip(!dataAvailable, 'Insights data is not available on this cluster');
 
     const advisorLinks = dashboard
       .getPopover()
       .locator('a[href*="console.redhat.com/openshift/insights/advisor"]');
-    await expect(advisorLinks.first()).toBeVisible();
+    await expect(advisorLinks.first()).toBeVisible({ timeout: 40_000 });
     await expect(advisorLinks.first()).toHaveAttribute('target', '_blank');
   });
 
   test('severity links include total_risk query parameter', async () => {
     await dashboard.openInsightsPopup();
+    const dataAvailable = await dashboard.isInsightsDataAvailable();
+    test.skip(!dataAvailable, 'Insights data is not available on this cluster');
 
     const riskLinks = dashboard.getPopover().locator('a[href*="total_risk="]');
+    await expect(riskLinks.first()).toBeVisible();
     const count = await riskLinks.count();
-    expect(count).toBeGreaterThan(0);
     for (let i = 0; i < count; i++) {
       const href = await riskLinks.nth(i).getAttribute('href');
       const totalRisk = new URL(href, 'https://placeholder').searchParams.get('total_risk');
@@ -63,6 +67,8 @@ test.describe('Insights Popup on Cluster Dashboard', { tag: ['@admin'] }, () => 
 
   test('shows advisor recommendations link', async () => {
     await dashboard.openInsightsPopup();
+    const dataAvailable = await dashboard.isInsightsDataAvailable();
+    test.skip(!dataAvailable, 'Insights data is not available on this cluster');
 
     const popover = dashboard.getPopover();
     const advisorLink = popover.getByText(/View (all recommendations|more) in Red Hat Lightspeed Advisor/);

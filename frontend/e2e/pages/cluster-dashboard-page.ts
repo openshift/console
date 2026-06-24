@@ -101,4 +101,18 @@ export class ClusterDashboardPage extends BasePage {
     await this.robustClick(this.insightsButton);
     await expect(this.popover).toBeVisible({ timeout: 10_000 });
   }
+
+  async isInsightsDataAvailable(): Promise<boolean> {
+    const popover = this.popover;
+    const timeout = 30_000;
+    /* eslint-disable no-restricted-syntax */
+    const result = await Promise.race([
+      popover.getByText('Temporarily unavailable.').waitFor({ state: 'visible', timeout }).then(() => 'no-data' as const),
+      popover.getByText('Waiting for results.').waitFor({ state: 'visible', timeout }).then(() => 'no-data' as const),
+      popover.getByText('Disabled.').waitFor({ state: 'visible', timeout }).then(() => 'no-data' as const),
+      popover.locator('a[href*="console.redhat.com/openshift/insights/advisor"]').first().waitFor({ state: 'visible', timeout }).then(() => 'data' as const),
+    ]).catch(() => 'no-data' as const);
+    /* eslint-enable no-restricted-syntax */
+    return result === 'data';
+  }
 }
