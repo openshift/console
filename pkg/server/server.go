@@ -159,6 +159,7 @@ type Server struct {
 	Authenticator                       auth.Authenticator
 	AuthMetrics                         *auth.Metrics
 	BaseURL                             *url.URL
+	AdditionalBaseURLs                  []*url.URL
 	Branding                            string
 	Capabilities                        []operatorv1.Capability
 	CatalogdProxyConfig                 *proxy.Config
@@ -774,9 +775,9 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		KubeAdminLogoutURL:        s.Authenticator.GetSpecialURLs().KubeAdminLogout,
 		KubeAPIServerURL:          s.KubeAPIServerURL,
 		LoadTestFactor:            s.LoadTestFactor,
-		LoginErrorURL:             proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginErrorEndpoint),
-		LoginSuccessURL:           proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginSuccessEndpoint),
-		LoginURL:                  proxy.SingleJoiningSlash(s.BaseURL.String(), authLoginEndpoint),
+		LoginErrorURL:             proxy.SingleJoiningSlash(s.BaseURL.Path, AuthLoginErrorEndpoint),
+		LoginSuccessURL:           proxy.SingleJoiningSlash(s.BaseURL.Path, AuthLoginSuccessEndpoint),
+		LoginURL:                  proxy.SingleJoiningSlash(s.BaseURL.Path, authLoginEndpoint),
 		LogoutRedirect:            s.Authenticator.LogoutRedirectURL(),
 		LogoutURL:                 authLogoutEndpoint,
 		NodeArchitectures:         s.NodeArchitectures,

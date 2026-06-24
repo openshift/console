@@ -292,6 +292,25 @@ func TestSetFlagsFromConfig(t *testing.T) {
 			expectedError: nil,
 		},
 		{
+			name: "Should apply additional console base addresses",
+			config: Config{
+				APIVersion: "console.openshift.io/v1",
+				Kind:       "ConsoleConfig",
+				ClusterInfo: ClusterInfo{
+					ConsoleBaseAddress: "https://console.example.com",
+					AdditionalConsoleBaseAddresses: []string{
+						"https://console-alt.example.com",
+						"https://console.internal.example.com:8443",
+					},
+				},
+			},
+			expectedFlagValues: map[string]string{
+				"base-address":              "https://console.example.com",
+				"additional-base-addresses": "https://console-alt.example.com,https://console.internal.example.com:8443",
+			},
+			expectedError: nil,
+		},
+		{
 			name: "Should apply CSP configuration",
 			config: Config{
 				APIVersion: "console.openshift.io/v1",
@@ -311,6 +330,8 @@ func TestSetFlagsFromConfig(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			fs := &flag.FlagSet{}
 			fs.String("config", "", "")
+			fs.String("base-address", "", "")
+			fs.String("additional-base-addresses", "", "")
 			fs.Var(&MultiKeyValue{}, "plugins", "")
 			fs.Var(&MultiKeyValue{}, "telemetry", "")
 			fs.Var(&MultiKeyValue{}, "content-security-policy", "")
