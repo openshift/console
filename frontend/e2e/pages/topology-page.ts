@@ -104,7 +104,7 @@ export class TopologyPage extends BasePage {
   async rightClickOnNode(nodeName: string): Promise<void> {
     const node = this.getNode(nodeName);
     await expect(node.first()).toBeVisible({ timeout: 30_000 });
-    await node.first().click({ button: 'right', force: true });
+    await node.first().click({ button: 'right' });
   }
 
   async selectContextMenuAction(action: string): Promise<void> {

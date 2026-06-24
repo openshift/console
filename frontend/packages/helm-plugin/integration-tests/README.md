@@ -38,13 +38,13 @@ frontend/packages/helm-plugin/integration-tests/
 |   |   |   └──index.ts    <-- It consists of relative paths of the files
 |   ├── step-definitions    <--- cucumber step implementations
 │   |   ├── helm          <--- helm step definitions
-|   |   |   └──actions-on-helm-release.ts
+|   |   |   └──actions-on-helm-release-after-upgrade.ts
 |   |   |   └──helm-compatibility.ts
-|   |   |   └──helm-feature-flag.ts
 |   |   |   └──helm-installation-view.ts
 |   |   |   └──helm-navigation.ts
-|   |   |   └──install-helm-chart.ts
-|   |   |   └──topology-helm-release.ts
+|   |   |   └──helm-release.ts
+|   |   |   └──helm.ts
+|   |   |   └──install-url-chart.ts
 │   |   ├── common          <--- Re-usable step definitions
 |   |       └──common.ts
 ├── cypress.json            <--- cypress configuration file
