@@ -84,10 +84,16 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
     >(PersistentVolumeClaimModel, resource?.spec?.source?.persistentVolumeClaimName, namespace);
 
     const pvcStorageClassName = pvcResource?.spec?.storageClassName;
+    const pvcNotFound = pvcResourceLoaded && !pvcResource;
     const [scResource, scResourceLoaded, scResourceLoadError] = useK8sGet<StorageClassResourceKind>(
       StorageClassModel,
       pvcStorageClassName,
     );
+
+    // Form is ready when either:
+    // - PVC was found and its StorageClass has loaded
+    // - PVC was not found (deleted) — annotations and snapshot status provide sufficient data
+    const formReady = pvcNotFound || (!!pvcStorageClassName && scResourceLoaded);
 
     const [volumeMode, setVolumeMode] = React.useState('');
     const requestedSizeInputChange = ({ value, unit }) => {
@@ -167,13 +173,16 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
             />
           </FormGroup>
           <FormGroup fieldId="restore-storage-class" className="co-restore-pvc-modal__input">
-            {!pvcStorageClassName || !scResourceLoaded ? (
+            {!formReady ? (
               <div className="skeleton-text" />
             ) : (
               <StorageClassDropdown
                 onChange={handleStorageClass}
-                filter={(scObj: StorageClassResourceKind) =>
-                  onlyPvcSCs(scObj, scResourceLoadError, scResource)
+                filter={
+                  pvcNotFound
+                    ? undefined
+                    : (scObj: StorageClassResourceKind) =>
+                        onlyPvcSCs(scObj, scResourceLoadError, scResource)
                 }
                 id="restore-storage-class"
                 required
@@ -208,14 +217,17 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
             fieldId="pvc-size"
             className="co-restore-pvc-modal__input co-restore-pvc-modal__ocs-size"
           >
-            {!!pvcStorageClassName && scResourceLoaded ? (
+            {formReady ? (
               <RequestSizeInput
                 name="requestSize"
                 onChange={requestedSizeInputChange}
                 defaultRequestSizeUnit={requestedUnit}
                 defaultRequestSizeValue={requestedSize}
                 dropdownUnits={dropdownUnits}
-                isInputDisabled={scResourceLoadError || isCephProvisioner(scResource?.provisioner)}
+                isInputDisabled={
+                  !pvcNotFound &&
+                  (scResourceLoadError || isCephProvisioner(scResource?.provisioner))
+                }
                 required
               />
             ) : (
