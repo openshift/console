@@ -3,12 +3,16 @@ package config
 import (
 	"archive/tar"
 	"archive/zip"
+	"compress/gzip"
+	"context"
+	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 	"testing"
 	"text/template"
 	"time"
@@ -72,7 +76,6 @@ func newTestConfig(t *testing.T, specs []ArtifactSpec) *DownloadsServerConfig {
 	}
 
 	return &DownloadsServerConfig{
-		Port:         "0",
 		Spec:         specs,
 		TempDir:      tempDir,
 		TemplateHTML: tmpl,
@@ -110,16 +113,16 @@ func TestGenerateDirFileContents_RelativeURLs(t *testing.T) {
 	if linux.URL != "amd64/linux/oc" {
 		t.Errorf("expected URL %q, got %q", "amd64/linux/oc", linux.URL)
 	}
-	if linux.TarURL != "amd64/linux/oc.tar" {
-		t.Errorf("expected TarURL %q, got %q", "amd64/linux/oc.tar", linux.TarURL)
+	if linux.TarURL != "amd64/linux/oc.tar.gz" {
+		t.Errorf("expected TarURL %q, got %q", "amd64/linux/oc.tar.gz", linux.TarURL)
 	}
 
 	win := content[2]
 	if win.URL != "amd64/windows/oc.exe" {
 		t.Errorf("expected URL %q, got %q", "amd64/windows/oc.exe", win.URL)
 	}
-	if win.TarURL != "amd64/windows/oc.tar" {
-		t.Errorf("expected TarURL %q, got %q", "amd64/windows/oc.tar", win.TarURL)
+	if win.TarURL != "amd64/windows/oc.tar.gz" {
+		t.Errorf("expected TarURL %q, got %q", "amd64/windows/oc.tar.gz", win.TarURL)
 	}
 	if win.ZipURL != "amd64/windows/oc.zip" {
 		t.Errorf("expected ZipURL %q, got %q", "amd64/windows/oc.zip", win.ZipURL)
@@ -150,20 +153,7 @@ func TestCreateArchivesInBackground(t *testing.T) {
 		basename := filepath.Base(spec.Path)
 		base := filepath.Join(cfg.TempDir, spec.Arch, spec.OperatingSystem, basename)
 
-		tarPath := base + ".tar"
-		if _, err := os.Stat(tarPath); err != nil {
-			t.Errorf("tar archive not found at %s: %v", tarPath, err)
-			continue
-		}
-		f, _ := os.Open(tarPath)
-		tr := tar.NewReader(f)
-		hdr, err := tr.Next()
-		f.Close()
-		if err != nil {
-			t.Errorf("failed to read tar %s: %v", tarPath, err)
-		} else if hdr.Name != basename {
-			t.Errorf("tar entry name = %q, want %q", hdr.Name, basename)
-		}
+		checkTarFile(t, base, basename)
 
 		zipPath := base + ".zip"
 		if _, err := os.Stat(zipPath); err != nil {
@@ -182,6 +172,34 @@ func TestCreateArchivesInBackground(t *testing.T) {
 	}
 }
 
+func checkTarFile(t *testing.T, base, basename string) {
+	tarPath := base + ".tar.gz"
+	if _, err := os.Stat(tarPath); err != nil {
+		t.Errorf("tar archive not found at %s: %v", tarPath, err)
+		return
+	}
+	f, err := os.Open(tarPath)
+	if err != nil {
+		t.Fatalf("failed to open archive at %s: %v", tarPath, err)
+	}
+	defer f.Close()
+
+	gzw, err := gzip.NewReader(f)
+	if err != nil {
+		t.Fatalf("failed to open archive at %s: %v", tarPath, err)
+	}
+	defer gzw.Close()
+
+	tr := tar.NewReader(gzw)
+	hdr, err := tr.Next()
+	if err != nil {
+		t.Errorf("failed to read tar %s: %v", tarPath, err)
+	} else if hdr.Name != basename {
+		t.Errorf("tar entry name = %q, want %q", hdr.Name, basename)
+	}
+
+}
+
 func TestHandler_BlocksUntilArchivesReady(t *testing.T) {
 	tmpDir := t.TempDir()
 	if err := os.WriteFile(filepath.Join(tmpDir, "index.html"), []byte("<html>ok</html>"), 0644); err != nil {
@@ -190,7 +208,7 @@ func TestHandler_BlocksUntilArchivesReady(t *testing.T) {
 	if err := os.MkdirAll(filepath.Join(tmpDir, "amd64", "linux"), 0755); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile(filepath.Join(tmpDir, "amd64", "linux", "oc.tar"), []byte("archive"), 0644); err != nil {
+	if err := os.WriteFile(filepath.Join(tmpDir, "amd64", "linux", "oc.tar.gz"), []byte("archive"), 0644); err != nil {
 		t.Fatal(err)
 	}
 
@@ -213,7 +231,7 @@ func TestHandler_BlocksUntilArchivesReady(t *testing.T) {
 	t.Run("archive request blocks then succeeds", func(t *testing.T) {
 		done := make(chan int, 1)
 		go func() {
-			req := httptest.NewRequest(http.MethodGet, "/amd64/linux/oc.tar", nil)
+			req := httptest.NewRequest(http.MethodGet, "/amd64/linux/oc.tar.gz", nil)
 			rec := httptest.NewRecorder()
 			handler.ServeHTTP(rec, req)
 			done <- rec.Code
@@ -238,14 +256,14 @@ func TestHandler_BlocksUntilArchivesReady(t *testing.T) {
 	})
 }
 
-func writeTestSpecsFile(t *testing.T, binaryPath string) string {
+func writeTestSpecsFile(t *testing.T, binaryPath string) []byte {
 	t.Helper()
-	specContent := []byte("defaultArtifactsConfig:\n  - arch: amd64\n    operatingSystem: linux\n    path: " + binaryPath + "\n")
-	specFile := filepath.Join(t.TempDir(), "config.yaml")
-	if err := os.WriteFile(specFile, specContent, 0644); err != nil {
-		t.Fatalf("failed to write spec file: %v", err)
-	}
-	return specFile
+	return fmt.Appendf(nil, `defaultArtifactsConfig:
+- arch: amd64
+  operatingSystem: linux
+  path: %s
+`,
+		binaryPath)
 }
 
 func TestNewDownloadsServerConfig_CreatesDirectory(t *testing.T) {
@@ -258,7 +276,7 @@ func TestNewDownloadsServerConfig_CreatesDirectory(t *testing.T) {
 		t.Fatalf("failed to write fake binary: %v", err)
 	}
 
-	cfg, err := NewDownloadsServerConfig(0, writeTestSpecsFile(t, binaryPath))
+	cfg, err := NewDownloadsServerConfig(writeTestSpecsFile(t, binaryPath))
 	if err != nil {
 		t.Fatalf("NewDownloadsServerConfig() error: %v", err)
 	}
@@ -292,7 +310,7 @@ func TestNewDownloadsServerConfig_CleansStaleData(t *testing.T) {
 		t.Fatalf("failed to write fake binary: %v", err)
 	}
 
-	_, err := NewDownloadsServerConfig(0, writeTestSpecsFile(t, binaryPath))
+	_, err := NewDownloadsServerConfig(writeTestSpecsFile(t, binaryPath))
 	if err != nil {
 		t.Fatalf("NewDownloadsServerConfig() error: %v", err)
 	}
@@ -329,7 +347,7 @@ func TestNewDownloadsServerConfig_CleansOldRandomTempDirs(t *testing.T) {
 		t.Fatalf("failed to write fake binary: %v", err)
 	}
 
-	_, err := NewDownloadsServerConfig(0, writeTestSpecsFile(t, binaryPath))
+	_, err := NewDownloadsServerConfig(writeTestSpecsFile(t, binaryPath))
 	if err != nil {
 		t.Fatalf("NewDownloadsServerConfig() error: %v", err)
 	}
@@ -342,31 +360,110 @@ func TestNewDownloadsServerConfig_CleansOldRandomTempDirs(t *testing.T) {
 }
 
 func TestHandler_ServesArchiveImmediatelyWhenReady(t *testing.T) {
+	for _, tc := range []struct {
+		name              string
+		fileName          string
+		requestedFileName string
+	}{
+		{
+			name:              "check download tar.gz",
+			fileName:          "oc.tar.gz",
+			requestedFileName: "oc.tar.gz",
+		},
+		{
+			name:              "check download tar, get tar.gz",
+			fileName:          "oc.tar.gz",
+			requestedFileName: "oc.tar",
+		},
+		{
+			name:              "check download tar.zip",
+			fileName:          "oc.zip",
+			requestedFileName: "oc.zip",
+		},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			tmpDir := t.TempDir()
+			dir := filepath.Join(tmpDir, "amd64", "linux")
+			if err := os.MkdirAll(dir, 0755); err != nil {
+				t.Fatal(err)
+			}
+			defer os.RemoveAll(dir)
+
+			archiveContent := []byte("archive-data")
+			if err := os.WriteFile(filepath.Join(dir, tc.fileName), archiveContent, 0644); err != nil {
+				t.Fatal(err)
+			}
+
+			ready := make(chan struct{})
+			close(ready)
+			cfg := &DownloadsServerConfig{
+				TempDir:       tmpDir,
+				archivesReady: ready,
+			}
+
+			req := httptest.NewRequest(http.MethodGet, "/amd64/linux/"+tc.requestedFileName, nil)
+			rec := httptest.NewRecorder()
+			cfg.Handler().ServeHTTP(rec, req)
+
+			if rec.Code != http.StatusOK {
+				t.Errorf("expected 200, got %d", rec.Code)
+			}
+			body, _ := io.ReadAll(rec.Result().Body)
+			if string(body) != string(archiveContent) {
+				t.Errorf("expected body %q, got %q", archiveContent, body)
+			}
+		})
+	}
+}
+
+func TestHandler_ServesArchiveTimeout(t *testing.T) {
 	tmpDir := t.TempDir()
-	if err := os.MkdirAll(filepath.Join(tmpDir, "amd64", "linux"), 0755); err != nil {
+	dir := filepath.Join(tmpDir, "amd64", "linux")
+	if err := os.MkdirAll(dir, 0755); err != nil {
 		t.Fatal(err)
 	}
+	defer os.RemoveAll(dir)
+
 	archiveContent := []byte("archive-data")
-	if err := os.WriteFile(filepath.Join(tmpDir, "amd64", "linux", "oc.tar"), archiveContent, 0644); err != nil {
+	if err := os.WriteFile(filepath.Join(dir, "oc.tar.gz"), archiveContent, 0644); err != nil {
 		t.Fatal(err)
 	}
 
 	ready := make(chan struct{})
-	close(ready)
+	once := &sync.Once{}
+	closeFunc := func() {
+		once.Do(func() {
+			close(ready)
+		})
+	}
+	defer closeFunc() // for error case
+
 	cfg := &DownloadsServerConfig{
 		TempDir:       tmpDir,
 		archivesReady: ready,
 	}
 
-	req := httptest.NewRequest(http.MethodGet, "/amd64/linux/oc.tar", nil)
+	ctxBefore, cancelBefore := context.WithTimeout(t.Context(), time.Millisecond*100)
+	defer cancelBefore()
+
+	req := httptest.NewRequestWithContext(ctxBefore, http.MethodGet, "/amd64/linux/oc.tar.gz", nil)
 	rec := httptest.NewRecorder()
+	cfg.Handler().ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusServiceUnavailable {
+		t.Errorf("expected 503, got %d", rec.Code)
+	}
+
+	closeFunc() // make the server ready
+
+	ctxAfter, cancelAfter := context.WithTimeout(t.Context(), time.Millisecond*100)
+	defer cancelAfter()
+
+	req = httptest.NewRequestWithContext(ctxAfter, http.MethodGet, "/amd64/linux/oc.tar.gz", nil)
+	rec = httptest.NewRecorder()
 	cfg.Handler().ServeHTTP(rec, req)
 
 	if rec.Code != http.StatusOK {
 		t.Errorf("expected 200, got %d", rec.Code)
-	}
-	body, _ := io.ReadAll(rec.Result().Body)
-	if string(body) != string(archiveContent) {
-		t.Errorf("expected body %q, got %q", archiveContent, body)
 	}
 }
