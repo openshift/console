@@ -72,8 +72,9 @@ type MonitoringInfo struct {
 
 // ClusterInfo holds information the about the cluster such as master public URL and console public URL.
 type ClusterInfo struct {
-	ConsoleBaseAddress   string                `yaml:"consoleBaseAddress,omitempty"`
-	ConsoleBasePath      string                `yaml:"consoleBasePath,omitempty"`
+	ConsoleBaseAddress             string                `yaml:"consoleBaseAddress,omitempty"`
+	AdditionalConsoleBaseAddresses []string              `yaml:"additionalConsoleBaseAddresses,omitempty"`
+	ConsoleBasePath                string                `yaml:"consoleBasePath,omitempty"`
 	MasterPublicURL      string                `yaml:"masterPublicURL,omitempty"`
 	ControlPlaneTopology configv1.TopologyMode `yaml:"controlPlaneTopology,omitempty"`
 	ReleaseVersion       string                `yaml:"releaseVersion,omitempty"`
