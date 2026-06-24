@@ -244,7 +244,13 @@ const TolerationsModal = (props: TolerationsModalProps) => {
         >
           {t('Save')}
         </Button>
-        <Button type="button" variant="link" onClick={cancel} data-test-id="modal-cancel-action">
+        <Button
+          type="button"
+          variant="link"
+          onClick={cancel}
+          data-test="modal-cancel-action"
+          data-test-id="modal-cancel-action"
+        >
           {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>

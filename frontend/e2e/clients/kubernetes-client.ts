@@ -607,6 +607,35 @@ export default class KubernetesClient {
     });
   }
 
+  async createDeployment(
+    name: string,
+    namespace: string,
+    labels?: Record<string, string>,
+  ): Promise<void> {
+    await this.appsApi.createNamespacedDeployment({
+      namespace,
+      body: {
+        metadata: { name, namespace, labels },
+        spec: {
+          replicas: 1,
+          selector: { matchLabels: { app: name } },
+          template: {
+            metadata: { labels: { app: name } },
+            spec: {
+              containers: [
+                {
+                  name: 'container',
+                  image: 'registry.access.redhat.com/ubi9/ubi-minimal:latest',
+                  command: ['sleep', 'infinity'],
+                },
+              ],
+            },
+          },
+        },
+      },
+    });
+  }
+
   async deletePod(name: string, namespace: string): Promise<void> {
     try {
       await this.k8sApi.deleteNamespacedPod({ name, namespace });

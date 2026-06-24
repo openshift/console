@@ -32,7 +32,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@axe-core/playwright@npm:^4.10.2":
+"@axe-core/playwright@npm:^4.11.3":
   version: 4.11.3
   resolution: "@axe-core/playwright@npm:4.11.3"
   dependencies:
@@ -18114,7 +18114,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "openshift-console@workspace:."
   dependencies:
-    "@axe-core/playwright": "npm:^4.10.2"
+    "@axe-core/playwright": "npm:^4.11.3"
     "@babel/core": "npm:^7.28.5"
     "@cypress/webpack-preprocessor": "npm:^7.0.2"
     "@graphql-codegen/cli": "npm:^1.15.1"

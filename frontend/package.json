@@ -231,7 +231,7 @@
     "yup": "^1.7.1"
   },
   "devDependencies": {
-    "@axe-core/playwright": "^4.10.2",
+    "@axe-core/playwright": "^4.11.3",
     "@babel/core": "^7.28.5",
     "@cypress/webpack-preprocessor": "^7.0.2",
     "@graphql-codegen/cli": "^1.15.1",

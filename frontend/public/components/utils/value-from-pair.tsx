@@ -201,6 +201,7 @@ const NameKeyDropdownPair: FC<NameKeyDropdownPairProps> = ({
       <ConsoleSelect
         menuClassName="value-from__menu dropdown-menu--text-wrap"
         className="value-from"
+        dataTest="value-from-select"
         autocompleteFilter={nameAutocompleteFilter}
         autocompletePlaceholder={placeholderString}
         items={items}

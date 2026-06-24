@@ -114,7 +114,12 @@ const DeleteNamespaceModal: OverlayComponent<DeleteNamespaceModalProps> = ({
         >
           {t('Delete')}
         </Button>
-        <Button variant="link" onClick={closeOverlay} data-test-id="modal-cancel-action">
+        <Button
+          variant="link"
+          onClick={closeOverlay}
+          data-test="modal-cancel-action"
+          data-test-id="modal-cancel-action"
+        >
           {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>

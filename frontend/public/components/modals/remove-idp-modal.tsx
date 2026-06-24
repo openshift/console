@@ -62,6 +62,7 @@ const RemoveIdentityProviderModalContent: OverlayComponent<RemoveIdentityProvide
           variant="link"
           isDisabled={inProgress}
           onClick={closeOverlay}
+          data-test="modal-cancel-action"
           data-test-id="modal-cancel-action"
         >
           {t('Cancel')}
