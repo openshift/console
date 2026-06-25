@@ -313,14 +313,16 @@ func TestNewDownloadsServerConfig_CleansOldRandomTempDirs(t *testing.T) {
 	})
 
 	oldDirs := []string{
+		defaultArtifactsDir,
 		"/tmp/artifacts1234test",
 		"/tmp/artifacts5678test",
 	}
+	leftover := "leftover"
 	for _, d := range oldDirs {
 		if err := os.MkdirAll(d, 0755); err != nil {
 			t.Fatalf("failed to create old temp dir %s: %v", d, err)
 		}
-		os.WriteFile(filepath.Join(d, "leftover"), []byte("data"), 0644)
+		os.WriteFile(filepath.Join(d, leftover), []byte("data"), 0644)
 	}
 
 	srcDir := t.TempDir()
@@ -335,6 +337,16 @@ func TestNewDownloadsServerConfig_CleansOldRandomTempDirs(t *testing.T) {
 	}
 
 	for _, d := range oldDirs {
+		if d == defaultArtifactsDir {
+			if _, err := os.Stat(d); err != nil {
+				t.Errorf("failed to stat artifacts dir: %v", err)
+			}
+			f := filepath.Join(d, leftover)
+			if _, err := os.Stat(f); !os.IsNotExist(err) {
+				t.Errorf("leftover %s should have been cleaned up, but still exists", f)
+			}
+			continue
+		}
 		if _, err := os.Stat(d); !os.IsNotExist(err) {
 			t.Errorf("old temp dir %s should have been cleaned up, but still exists", d)
 		}
