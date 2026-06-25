@@ -69,7 +69,7 @@ import type {
 import { referenceForModel, referenceFor, LabelSelector } from '@console/internal/module/k8s';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { COLUMN_MANAGEMENT_USER_PREFERENCE_KEY } from '@console/shared/src/constants/common';
+import { COLUMN_MANAGEMENT_USER_PREFERENCE_KEY, FLAGS } from '@console/shared/src/constants/common';
 import { DASH } from '@console/shared/src/constants/ui';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
@@ -182,6 +182,7 @@ const useNodesColumns = (
 ): { columns: TableColumn<NodeRowItem>[]; resetAllColumnWidths: () => void } => {
   const { t } = useTranslation('console-app');
   const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(NodeModel);
+  const isAdmin = useFlag(FLAGS.CAN_LIST_NS);
 
   const columns = useMemo(() => {
     return [
@@ -234,17 +235,19 @@ const useNodesColumns = (
               id: nodeColumnInfo.vms.id,
               sort: 'virtualMachines',
               resizableProps: getResizableProps(nodeColumnInfo.vms.id),
-              props: {
-                modifier: 'nowrap',
-                info: {
-                  tooltip: t(
-                    'This count is based on your access permissions and might not include all virtual machines.',
-                  ),
-                  tooltipProps: {
-                    isContentLeftAligned: true,
+              props: isAdmin
+                ? undefined
+                : {
+                    modifier: 'nowrap',
+                    info: {
+                      tooltip: t(
+                        'This count is based on your access permissions and might not include all virtual machines. Contact your administrator for full access.',
+                      ),
+                      tooltipProps: {
+                        isContentLeftAligned: true,
+                      },
+                    },
                   },
-                },
-              },
             },
           ]
         : []),
@@ -384,7 +387,7 @@ const useNodesColumns = (
         },
       },
     ];
-  }, [t, vmsEnabled, nodeMgmtV1Enabled, getWidth, getResizableProps]);
+  }, [t, getResizableProps, nodeMgmtV1Enabled, vmsEnabled, isAdmin, getWidth]);
 
   return { columns, resetAllColumnWidths };
 };

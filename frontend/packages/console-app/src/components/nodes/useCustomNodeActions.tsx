@@ -75,10 +75,9 @@ export const useCustomNodeActions = ({
           onClick={handleMarkUnschedulable}
           isDisabled={inProgress}
           data-test="bulk-mark-unschedulable"
-          description={t(
-            'Applies to {{nodeCount}} selected nodes that are currently schedulable.',
-            { nodeCount: schedulableCount },
-          )}
+          description={t('Applies to {{nodeCount}} selected nodes that are schedulable.', {
+            nodeCount: schedulableCount,
+          })}
         >
           {t('Mark unschedulable')}
         </DropdownItem>,

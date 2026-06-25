@@ -790,14 +790,14 @@ Use this extension to add additional states to a Node resource.
 
 ### Summary 
 
-Use this extension to add custom sub-tabs to the Node details page.<br/><br/>Notes:<br/>- The `tabId` must be unique across all tabs for the parent tab. If multiple plugins register the same `tabId`, only the first one loaded displays.<br/>  the same `tabId`, only the first one loaded will be displayed.<br/>- The `name` property supports i18n translation keys in the format `%namespace~key%`.<br/>- The UI sorts tabs by priority in descending order (highest priority first). If two tabs have the same priority, it sorts them alphabetically by name.<br/>- The component receives the Node resource as the `obj` prop using `SubPageComponentProps`.
+Use this extension to add custom sub-tabs to the Node details page.<br/><br/>Notes:<br/>- The `tabId` must be unique across all tabs for the parent tab. If multiple plugins register the same `tabId`, the UI displays only the first one loaded.<br/>- The `name` property supports i18n translation keys in the format `%namespace~key%`.<br/>- The UI sorts tabs by priority in descending order with highest priority first. If two tabs have the same priority, the UI sorts them alphabetically by name.<br/>- The component receives the Node resource as the `obj` prop using `SubPageComponentProps`.
 
 ### Properties
 
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
 | `parentTab` | `'configuration'` | no | Which detail tab to add the sub-tab to. Only the 'configuration' tab supports adding sub-tabs at this time. |
-| `page` | `{ tabId: string; name: string; priority: number; }` | no | The page to be shown in node sub tabs. It takes tab name as name and priority of the tab.<br/><br/>Notes:<br/>The UI displays tabs in priority order from highest to lowest. Default built-in tab priorities include:<br/>- **configuration:**<br/>  - storage/70<br/>  - machine/50 |
+| `page` | `{ tabId: string; name: string; priority: number; }` | no | The page that displays as a subtab. It takes tab name as name and priority of the tab.<br/><br/>Notes:<br/>The UI displays tabs in priority order from highest to lowest. Default built-in tab priorities include:<br/>- **configuration:**<br/>  - storage/70<br/>  - machine/50<br/>  - high-availability/30 |
 | `component` | `CodeRef<ComponentType<SubPageComponentProps<NodeKind>>>` | no | The component that renders the sub-tab contents. It receives the Node resource as the obj prop. |
 
 ---
