@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { createPath, useNavigate } from 'react-router';
 import type { PerspectiveType, UseActivePerspective } from '@console/dynamic-plugin-sdk';
 import {
   usePerspectiveExtension,
@@ -38,8 +38,10 @@ export const useValuesForPerspectiveContext = (): [
     (newPerspective, next) => {
       setLastPerspective(newPerspective);
       setActivePerspective(newPerspective);
-      // Navigate to next or root and let the default page determine where to go to next
-      navigate(next || '/');
+      // Only navigate if a path is provided to avoid unnecessary navigation
+      if (next && next !== createPath(window.location)) {
+        navigate(next);
+      }
       fireTelemetryEvent('Perspective Changed', { perspective: newPerspective });
     },
     [setLastPerspective, setActivePerspective, navigate, fireTelemetryEvent],
