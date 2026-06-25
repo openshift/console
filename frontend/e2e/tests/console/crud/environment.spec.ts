@@ -84,7 +84,7 @@ test.describe('Interacting with the environment variable editor', { tag: ['@admi
     });
 
     await test.step('Verify config map variable exists', async () => {
-      await expect(page.getByTestId('resource-name').last()).toHaveText(resourceName);
+      await expect(page.getByTestId(`resource-name-${resourceName}`)).toBeVisible();
       await expect(page.getByTestId('env-prefix')).toHaveValue(prefix);
     });
 
@@ -95,7 +95,8 @@ test.describe('Interacting with the environment variable editor', { tag: ['@admi
     });
 
     await test.step('Verify config map variable removed', async () => {
-      await expect(page.getByTestId('resource-name').last()).toHaveText('container');
+      await expect(page.getByTestId(`resource-name-${resourceName}`)).not.toBeAttached();
+      await expect(page.getByTestId('resource-name-container')).toBeVisible();
       await expect(page.getByTestId('env-prefix')).toHaveValue('');
     });
   });
@@ -115,7 +116,7 @@ test.describe('Interacting with the environment variable editor', { tag: ['@admi
     });
 
     await test.step('Verify secret variable exists', async () => {
-      await expect(page.getByTestId('resource-name').last()).toHaveText(resourceName);
+      await expect(page.getByTestId(`resource-name-${resourceName}`)).toBeVisible();
       await expect(page.getByTestId('env-prefix')).toHaveValue(prefix);
     });
 
@@ -126,7 +127,8 @@ test.describe('Interacting with the environment variable editor', { tag: ['@admi
     });
 
     await test.step('Verify secret variable removed', async () => {
-      await expect(page.getByTestId('resource-name').last()).toHaveText('container');
+      await expect(page.getByTestId(`resource-name-${resourceName}`)).not.toBeAttached();
+      await expect(page.getByTestId('resource-name-container')).toBeVisible();
       await expect(page.getByTestId('env-prefix')).toHaveValue('');
     });
   });
