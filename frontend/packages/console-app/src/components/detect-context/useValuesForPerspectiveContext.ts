@@ -36,15 +36,19 @@ export const useValuesForPerspectiveContext = (): [
 
   const setPerspective = useCallback<SetActivePerspective>(
     (newPerspective, next) => {
+      const perspectiveChanged = newPerspective !== perspective;
       setLastPerspective(newPerspective);
       setActivePerspective(newPerspective);
-      // Only navigate if a path is provided to avoid unnecessary navigation
-      if (next && next !== createPath(window.location)) {
-        navigate(next);
+      // Only navigate if perspective changed
+      if (perspectiveChanged) {
+        const targetPath = next || '/';
+        if (targetPath !== createPath(window.location)) {
+          navigate(targetPath);
+        }
       }
       fireTelemetryEvent('Perspective Changed', { perspective: newPerspective });
     },
-    [setLastPerspective, setActivePerspective, navigate, fireTelemetryEvent],
+    [setLastPerspective, setActivePerspective, navigate, fireTelemetryEvent, perspective],
   );
 
   return [isValidPerspective ? perspective : '', setPerspective, loaded];
