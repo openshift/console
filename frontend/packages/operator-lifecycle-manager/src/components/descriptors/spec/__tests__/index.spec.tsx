@@ -1,4 +1,5 @@
 import { screen } from '@testing-library/react';
+import { useAccessReview } from '@console/dynamic-plugin-sdk';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import type { DescriptorDetailsItemProps } from '../..';
 import { DescriptorDetailsItem } from '../..';
@@ -9,6 +10,16 @@ import { SpecCapability, DescriptorType } from '../../types';
 // Mock modal hooks used by PodCount component
 jest.mock('../configure-size', () => ({
   useConfigureSizeModal: jest.fn(() => jest.fn()),
+}));
+
+jest.mock('../configure-update-strategy', () => ({
+  useConfigureUpdateStrategyModal: jest.fn(() => jest.fn()),
+}));
+
+// Mock access review hook
+jest.mock('@console/dynamic-plugin-sdk', () => ({
+  ...jest.requireActual('@console/dynamic-plugin-sdk'),
+  useAccessReview: jest.fn(() => [true, false]),
 }));
 
 const OBJ = {
@@ -164,6 +175,78 @@ describe('Spec descriptors', () => {
       renderDescriptor();
 
       expect(screen.getByText(descriptor.displayName)).toBeVisible();
+    });
+  });
+
+  describe('when handling permissions', () => {
+    it('should not render pod count edit button when user lacks update permission', () => {
+      (useAccessReview as jest.Mock).mockReturnValue([false, false]);
+      descriptor = {
+        ...descriptor,
+        path: 'pods',
+        'x-descriptors': [SpecCapability.podCount],
+      };
+      renderDescriptor();
+
+      expect(screen.getByTestId('details-item-value__Some Spec Control')).toBeVisible();
+      expect(screen.getByTestId('details-item-value__Some Spec Control')).toHaveTextContent(
+        `${OBJ.spec.pods} pods`,
+      );
+      expect(
+        screen.queryByTestId('Some Spec Control-details-item__edit-button'),
+      ).not.toBeInTheDocument();
+    });
+
+    it('should disable boolean switch when user lacks update permission', () => {
+      (useAccessReview as jest.Mock).mockReturnValue([false, false]);
+      descriptor = {
+        ...descriptor,
+        path: 'boolValue',
+        'x-descriptors': [SpecCapability.booleanSwitch],
+      };
+      const objWithBool = {
+        ...OBJ,
+        spec: { ...OBJ.spec, boolValue: true },
+      };
+      renderDescriptor({ obj: objWithBool });
+
+      const switchElement = screen.getByRole('switch', { name: 'True' });
+      expect(switchElement).toBeDisabled();
+    });
+
+    it('should disable checkbox when user lacks update permission', () => {
+      (useAccessReview as jest.Mock).mockReturnValue([false, false]);
+      descriptor = {
+        ...descriptor,
+        path: 'checkboxValue',
+        displayName: 'Checkbox Test',
+        'x-descriptors': [SpecCapability.checkbox],
+      };
+      const objWithCheckbox = {
+        ...OBJ,
+        spec: { ...OBJ.spec, checkboxValue: true },
+      };
+      renderDescriptor({ obj: objWithCheckbox });
+
+      const checkboxElement = screen.getByRole('checkbox', { name: 'Checkbox Test' });
+      expect(checkboxElement).toBeDisabled();
+    });
+
+    it('should disable update strategy edit button when user lacks update permission', () => {
+      (useAccessReview as jest.Mock).mockReturnValue([false, false]);
+      descriptor = {
+        ...descriptor,
+        path: 'updateStrategy',
+        'x-descriptors': [SpecCapability.updateStrategy],
+      };
+      const objWithStrategy = {
+        ...OBJ,
+        spec: { ...OBJ.spec, updateStrategy: { type: 'RollingUpdate' } },
+      };
+      renderDescriptor({ obj: objWithStrategy });
+
+      expect(screen.getByText('RollingUpdate')).toBeVisible();
+      expect(screen.queryByRole('button', { name: /edit/i })).not.toBeInTheDocument();
     });
   });
 });

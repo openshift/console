@@ -123,6 +123,7 @@ export const DetailsItem: FC<DetailsItemProps> = ({
           'co-editable-label-group': editable && editAsGroup,
         })}
         data-test-selector={`details-item-value__${label}`}
+        data-test={`details-item-value__${label}`}
       >
         {editable && !editAsGroup ? (
           <EditButton testId={label} onClick={onEdit}>
