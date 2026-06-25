@@ -184,7 +184,7 @@ const LifecycleDatesFooter: FC = () => {
       <hr className="pf-v6-u-mb-sm pf-v6-u-mt-0" />
       <span className="pf-v6-u-color-200">
         {t(
-          'This might not reflect your actual SKU. Check your subscription for extended support options.',
+          'This might not reflect your actual SKU. Check your account subscription details or contact your administrator for extended support options.',
         )}
       </span>
       <div className="pf-v6-u-mt-sm">

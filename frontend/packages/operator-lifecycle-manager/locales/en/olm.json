@@ -384,7 +384,7 @@
   "Compatible": "Compatible",
   "Incompatible": "Incompatible",
   "No data available": "No data available",
-  "This might not reflect your actual SKU. Check your subscription for extended support options.": "This might not reflect your actual SKU. Check your subscription for extended support options.",
+  "This might not reflect your actual SKU. Check your account subscription details or contact your administrator for extended support options.": "This might not reflect your actual SKU. Check your account subscription details or contact your administrator for extended support options.",
   "OpenShift Operator lifecycle": "OpenShift Operator lifecycle",
   "OpenShift lifecycle ({{version}})": "OpenShift lifecycle ({{version}})",
   "Red Hat product lifecycles": "Red Hat product lifecycles",
