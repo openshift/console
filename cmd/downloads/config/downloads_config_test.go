@@ -322,7 +322,9 @@ func TestNewDownloadsServerConfig_CleansOldRandomTempDirs(t *testing.T) {
 		if err := os.MkdirAll(d, 0755); err != nil {
 			t.Fatalf("failed to create old temp dir %s: %v", d, err)
 		}
-		os.WriteFile(filepath.Join(d, leftover), []byte("data"), 0644)
+		if err := os.WriteFile(filepath.Join(d, leftover), []byte("data"), 0644); err != nil {
+			t.Fatalf("failed to write leftover file in %s: %v", d, err)
+		}
 	}
 
 	srcDir := t.TempDir()
