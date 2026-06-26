@@ -90,8 +90,8 @@ export type SubPageComponentProps<R extends K8sResourceCommon = NodeKind> = {
 export type NodeSubNavTab = Extension<
   'console.node/sub-nav-tab',
   {
-    /** Which detail tab to add the sub-tab to. Only the 'configuration' tab supports adding sub-tabs at this time. */
-    parentTab: 'configuration';
+    /** Which detail tab to add the sub-tab to. Supported values are 'configuration' and 'health'. */
+    parentTab: 'configuration' | 'health';
     /**
      * The page that displays as a subtab. It takes tab name as name and priority of the tab.
      *
@@ -101,6 +101,9 @@ export type NodeSubNavTab = Extension<
      *   - storage/70
      *   - machine/50
      *   - high-availability/30
+     * - **health:**
+     *   - performance/70
+     *   - logs/30
      */
     page: {
       /**
