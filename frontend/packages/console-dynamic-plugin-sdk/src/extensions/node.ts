@@ -33,6 +33,37 @@ export type NodeStatus<T extends ResourcesObject = ResourcesObject> = Extension<
   }
 >;
 
+export type InventoryItemComponentProps = {
+  obj: NodeKind;
+};
+
+/**
+ * Use this extension to add inventory items to the Node inventory card.
+ *
+ * Example implementation:
+ * ```tsx
+ * const MyInventoryItem: React.FC<InventoryItemComponentProps> = ({ obj }) => {
+ *   const count = calculateCount(obj);
+ *   return <InventoryItem title="My Resource" count={count} />;
+ * };
+ * ```
+ */
+export type NodeInventoryExtensionItem = Extension<
+  'console.node/inventory-item',
+  {
+    /**
+     * The inventory item that displays in the node inventory card. The UI uses the priority value to order this item relative to other inventory items. For example, Images: 70.
+     *
+     * Note: Inventory items are shown in priority order from highest to lowest. Current node inventory item priorities are:
+     *   Pods: 90
+     *   Images: 70
+     */
+    priority: number;
+    /** The React component that renders in the inventory card. */
+    component: CodeRef<ComponentType<InventoryItemComponentProps>>;
+  }
+>;
+
 /**
  * Props passed to components rendered in Node detail sub-tabs.
  *
@@ -96,3 +127,6 @@ export const isNodeStatus = (e: Extension): e is NodeStatus => e.type === 'conso
 
 export const isNodeSubNavTab = (e: Extension): e is NodeSubNavTab =>
   e.type === 'console.node/sub-nav-tab';
+
+export const isNodeInventoryItem = (e: Extension): e is NodeInventoryExtensionItem =>
+  e.type === 'console.node/inventory-item';

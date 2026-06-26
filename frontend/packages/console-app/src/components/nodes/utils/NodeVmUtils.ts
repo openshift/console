@@ -11,19 +11,6 @@ import type {
 import type { PodKind } from '@console/internal/module/k8s';
 import { useAccessibleResources } from '../../../hooks/useAccessibleResources';
 
-export const VirtualMachineModel: K8sModel = {
-  label: 'VirtualMachine',
-  labelPlural: 'VirtualMachines',
-  apiVersion: 'v1',
-  apiGroup: 'kubevirt.io',
-  plural: 'virtualmachines',
-  abbr: 'VM',
-  namespaced: true,
-  kind: 'VirtualMachine',
-  id: 'virtualmachine',
-  crd: true,
-};
-
 export const DataVolumeModel: K8sModel = {
   abbr: 'DV',
   apiGroup: 'cdi.kubevirt.io',
