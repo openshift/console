@@ -607,34 +607,6 @@ export default class KubernetesClient {
     });
   }
 
-  async createDeployment(
-    name: string,
-    namespace: string,
-    labels?: Record<string, string>,
-  ): Promise<void> {
-    await this.appsApi.createNamespacedDeployment({
-      namespace,
-      body: {
-        metadata: { name, namespace, labels },
-        spec: {
-          replicas: 1,
-          selector: { matchLabels: { app: name } },
-          template: {
-            metadata: { labels: { app: name } },
-            spec: {
-              containers: [
-                {
-                  name: 'container',
-                  image: 'registry.access.redhat.com/ubi9/ubi-minimal:latest',
-                  command: ['sleep', 'infinity'],
-                },
-              ],
-            },
-          },
-        },
-      },
-    });
-  }
 
   async deletePod(name: string, namespace: string): Promise<void> {
     try {
@@ -644,5 +616,52 @@ export default class KubernetesClient {
         throw err;
       }
     }
+  }
+
+  async waitForPodReady(name: string, namespace: string, timeoutMs = 120_000): Promise<boolean> {
+    return pollUntil(
+      async () => {
+        try {
+          const pod = await this.k8sApi.readNamespacedPod({ name, namespace });
+          if (pod?.status?.phase !== 'Running') {
+            return false;
+          }
+          const containers = pod?.status?.containerStatuses;
+          if (!containers || containers.length === 0) {
+            return false;
+          }
+          return containers.every((c) => c.ready === true);
+        } catch {
+          return false;
+        }
+      },
+      timeoutMs,
+      2_000,
+    );
+  }
+
+  async createDeployment(namespace: string, body: Partial<k8s.V1Deployment>): Promise<void> {
+    await this.appsApi.createNamespacedDeployment({ namespace, body: body as k8s.V1Deployment });
+  }
+
+  async waitForDeploymentReady(
+    name: string,
+    namespace: string,
+    timeoutMs = 120_000,
+  ): Promise<boolean> {
+    return pollUntil(
+      async () => {
+        try {
+          const dep = await this.appsApi.readNamespacedDeployment({ name, namespace });
+          const ready = dep?.status?.readyReplicas ?? 0;
+          const desired = dep?.spec?.replicas ?? 1;
+          return ready >= desired;
+        } catch {
+          return false;
+        }
+      },
+      timeoutMs,
+      2_000,
+    );
   }
 }

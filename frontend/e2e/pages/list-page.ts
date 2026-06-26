@@ -1,17 +1,55 @@
-import type { Locator } from '@playwright/test';
+import { type Locator, expect } from '@playwright/test';
 
 import BasePage from './base-page';
 
 export class ListPage extends BasePage {
-  private readonly dataViewTable = this.page.getByTestId('data-view-table');
+  private readonly pageHeading: Locator = this.page.getByTestId('page-heading').locator('h1');
+  private readonly dataViewTable: Locator = this.page.getByTestId('data-view-table');
+  private readonly dataViewCells: Locator = this.page.locator('[data-test^="data-view-cell-"]');
   private readonly nameFilterInput = this.page.getByRole('textbox', { name: 'Filter by name' });
   private readonly dataViewFilters = this.page.locator(
     '[data-ouia-component-id="DataViewFilters"]',
+  );
+  private readonly singleFilterGroup: Locator = this.page.locator(
+    '.co-console-data-view-single-filter .pf-v6-c-toolbar__group.pf-m-filter-group',
   );
   private readonly namespaceDropdown = this.page.getByTestId('namespace-bar-dropdown');
   private readonly resourceRows = this.page.getByTestId('resource-row');
   private readonly nameFilter = this.page.getByTestId('name-filter-input');
   private readonly createButton = this.page.getByTestId('item-create');
+
+  get heading(): Locator {
+    return this.pageHeading;
+  }
+
+  get table(): Locator {
+    return this.dataViewTable;
+  }
+
+  get cells(): Locator {
+    return this.dataViewCells;
+  }
+
+  get filterGroupToggles(): Locator {
+    return this.singleFilterGroup.locator('.pf-v6-c-menu-toggle');
+  }
+
+  cell(resourceName: string, cellName = 'name'): Locator {
+    return this.page.getByTestId(`data-view-cell-${resourceName}-${cellName}`);
+  }
+
+  resourceLink(name: string): Locator {
+    return this.page.getByTestId(name);
+  }
+
+  async waitForRows(): Promise<void> {
+    try {
+      await expect(this.dataViewTable).toBeVisible({ timeout: 15_000 });
+    } catch {
+      await this.retryOnError();
+      await expect(this.dataViewTable).toBeVisible({ timeout: 30_000 });
+    }
+  }
 
   async filterByName(name: string): Promise<void> {
     const filterToggle = this.dataViewFilters.locator('.pf-v6-c-menu-toggle').first();
@@ -109,9 +147,24 @@ export class ListPage extends BasePage {
     }
   }
 
-  async clickFirstLinkInFirstRow(): Promise<void> {
-    const link = this.page.locator('[data-test^="data-view-cell-"]').first().locator('a').first();
-    await this.robustClick(link);
+  async clickFirstRowLink(): Promise<void> {
+    const firstLink = this.dataViewCells.first().locator('a').first();
+    await this.robustClick(firstLink);
+  }
+
+  async clickFirstRowLinkMatching(pattern: RegExp): Promise<void> {
+    const safeFlags = pattern.flags.replace(/[gy]/g, '');
+    const safePattern = new RegExp(pattern.source, safeFlags);
+    const links = this.dataViewCells.locator('a');
+    const count = await links.count();
+    for (let i = 0; i < count; i++) {
+      const text = await links.nth(i).textContent();
+      if (text && safePattern.test(text)) {
+        await this.robustClick(links.nth(i));
+        return;
+      }
+    }
+    throw new Error(`No row link matching ${pattern} found`);
   }
 
   async getFirstCellText(): Promise<string> {

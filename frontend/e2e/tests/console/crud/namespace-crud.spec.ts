@@ -84,7 +84,7 @@ test.describe('Namespace', { tag: ['@admin'] }, () => {
     });
 
     await test.step('Breadcrumb back to list preserves namespace', async () => {
-      await listPage.clickFirstLinkInFirstRow();
+      await listPage.clickFirstRowLink();
       await detailsPage.getBreadcrumb(0).click();
       await expect(listPage.getNamespaceDropdown()).toContainText(podNamespace);
     });
@@ -105,7 +105,7 @@ test.describe('Namespace', { tag: ['@admin'] }, () => {
     });
 
     await test.step('Details page preserves project selection', async () => {
-      await listPage.clickFirstLinkInFirstRow();
+      await listPage.clickFirstRowLink();
       await expect(listPage.getNamespaceDropdown()).toContainText(projectName);
     });
 
@@ -115,7 +115,7 @@ test.describe('Namespace', { tag: ['@admin'] }, () => {
     });
 
     await test.step('Second details visit preserves project', async () => {
-      await listPage.clickFirstLinkInFirstRow();
+      await listPage.clickFirstRowLink();
       await expect(listPage.getNamespaceDropdown()).toContainText(projectName);
     });
 

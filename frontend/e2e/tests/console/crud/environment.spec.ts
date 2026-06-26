@@ -12,7 +12,25 @@ test.describe('Interacting with the environment variable editor', { tag: ['@admi
     namespace = `${testName}-env`;
     await k8sClient.createNamespace(namespace);
     await k8sClient.waitForNamespaceReady(namespace);
-    await k8sClient.createDeployment(workloadName, namespace, { 'lbl-env': namespace });
+    await k8sClient.createDeployment(namespace, {
+      metadata: { name: workloadName, labels: { 'lbl-env': namespace } },
+      spec: {
+        replicas: 1,
+        selector: { matchLabels: { app: workloadName } },
+        template: {
+          metadata: { labels: { app: workloadName } },
+          spec: {
+            containers: [
+              {
+                name: 'container',
+                image: 'registry.access.redhat.com/ubi9/ubi-minimal:latest',
+                command: ['sleep', 'infinity'],
+              },
+            ],
+          },
+        },
+      },
+    });
     await k8sClient.createConfigMap('my-config', namespace, {
       cmk1: 'config1',
       cmk2: 'config2',
