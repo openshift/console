@@ -13,7 +13,7 @@ table in [Console dynamic plugins README](./README.md).
 ## 4.23.0-prerelease.3 - TBD
 
 - Add `@openshift/api-types` as a dependency and replace `K8sResourceCommon` and related types with imports from that package ([CONSOLE-5355], [#16585])
-- Add optional `drawerGroup`, `skipOverflow`, and `persistInDrawer` fields to `ToastOptions` ([CONSOLE-5361], [#16636])
+- Improve control over toast notifications with new optional `ToastOptions` fields: `drawerGroup`, `skipOverflow` and `persistInDrawer` ([CONSOLE-5361], [#16636])
 
 ## 4.23.0-prerelease.2 - 2026-05-27
 

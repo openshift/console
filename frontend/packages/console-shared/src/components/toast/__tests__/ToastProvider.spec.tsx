@@ -8,6 +8,7 @@ import { NotificationHistoryContext } from '../NotificationHistoryContext';
 import { ToastContext } from '../ToastContext';
 import { ToastProvider } from '../ToastProvider';
 import type { NotificationHistoryContextValues } from '../types';
+import { DEFAULT_MAX_DISPLAYED_TOASTS } from '../types';
 
 describe('ToastProvider', () => {
   let toastContext: ToastContextValues;
@@ -356,13 +357,13 @@ describe('ToastProvider', () => {
 
   it('should force skipOverflow when persistInDrawer is false', async () => {
     renderWithProviders(
-      <ToastProvider maxDisplayed={3}>
+      <ToastProvider maxDisplayed={DEFAULT_MAX_DISPLAYED_TOASTS}>
         <TestComponent />
       </ToastProvider>,
     );
 
     act(() => {
-      for (let index = 1; index <= 4; index += 1) {
+      for (let index = 1; index <= DEFAULT_MAX_DISPLAYED_TOASTS + 1; index += 1) {
         toastContext.addToast({
           id: `ephemeral-${index}`,
           title: `ephemeral toast ${index}`,
@@ -375,10 +376,9 @@ describe('ToastProvider', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText('ephemeral toast 1')).toBeVisible();
-      expect(screen.getByText('ephemeral toast 2')).toBeVisible();
-      expect(screen.getByText('ephemeral toast 3')).toBeVisible();
-      expect(screen.getByText('ephemeral toast 4')).toBeVisible();
+      for (let index = 1; index <= DEFAULT_MAX_DISPLAYED_TOASTS + 1; index += 1) {
+        expect(screen.getByText(`ephemeral toast ${index}`)).toBeVisible();
+      }
       expect(screen.queryByText(/View .* more notification/)).not.toBeInTheDocument();
       expect(notificationHistoryContext.notifications).toHaveLength(0);
     });
@@ -386,13 +386,13 @@ describe('ToastProvider', () => {
 
   it('should show all ephemeral toasts without overflow link', async () => {
     renderWithProviders(
-      <ToastProvider maxDisplayed={3}>
+      <ToastProvider maxDisplayed={DEFAULT_MAX_DISPLAYED_TOASTS}>
         <TestComponent />
       </ToastProvider>,
     );
 
     act(() => {
-      for (let index = 1; index <= 4; index += 1) {
+      for (let index = 1; index <= DEFAULT_MAX_DISPLAYED_TOASTS + 1; index += 1) {
         toastContext.addToast({
           id: `ephemeral-${index}`,
           title: `ephemeral toast ${index}`,
@@ -405,10 +405,9 @@ describe('ToastProvider', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText('ephemeral toast 1')).toBeVisible();
-      expect(screen.getByText('ephemeral toast 2')).toBeVisible();
-      expect(screen.getByText('ephemeral toast 3')).toBeVisible();
-      expect(screen.getByText('ephemeral toast 4')).toBeVisible();
+      for (let index = 1; index <= DEFAULT_MAX_DISPLAYED_TOASTS + 1; index += 1) {
+        expect(screen.getByText(`ephemeral toast ${index}`)).toBeVisible();
+      }
       expect(screen.queryByText(/View .* more notification/)).not.toBeInTheDocument();
     });
   });

@@ -92,7 +92,7 @@ import {
   getToastNotificationsForGroup,
   groupToastNotifications,
 } from '@console/shared/src/components/toast/toastNotificationUtils';
-import { ToastNotificationDrawerItems } from './ToastNotificationDrawerItems';
+import { ToastNotificationDrawerItems } from './notification-drawer-items';
 import { NotificationTypes } from './utils/types';
 import { RhUiEllipsisVerticalIcon } from '@patternfly/react-icons';
 

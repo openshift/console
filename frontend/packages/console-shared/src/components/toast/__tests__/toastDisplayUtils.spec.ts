@@ -1,15 +1,16 @@
 import { AlertVariant } from '@patternfly/react-core';
 import type { ToastOptions } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { getOverflowCount, getVisibleToasts, normalizeToastOptions } from '../toastDisplayUtils';
+import type { ToastRenderOptions } from '../types';
+import { DEFAULT_MAX_DISPLAYED_TOASTS } from '../types';
 
-const toast = (id: string, options: Partial<ToastOptions> = {}) =>
-  ({
-    id,
-    title: id,
-    variant: AlertVariant.info,
-    content: id,
-    ...options,
-  } as ToastOptions & { id: string });
+const toast = (id: string, options: Partial<ToastOptions> = {}): ToastRenderOptions => ({
+  id,
+  title: id,
+  variant: AlertVariant.info,
+  content: id,
+  ...options,
+});
 
 describe('toastDisplayUtils', () => {
   it('should cap only toasts that participate in overflow', () => {
@@ -65,7 +66,7 @@ describe('toastDisplayUtils', () => {
       normalizeToastOptions(toast('ephemeral-4', { persistInDrawer: false, skipOverflow: false })),
     ];
 
-    expect(getVisibleToasts(toasts, 3)).toHaveLength(4);
-    expect(getOverflowCount(toasts, 3)).toBe(0);
+    expect(getVisibleToasts(toasts, DEFAULT_MAX_DISPLAYED_TOASTS)).toHaveLength(4);
+    expect(getOverflowCount(toasts, DEFAULT_MAX_DISPLAYED_TOASTS)).toBe(0);
   });
 });

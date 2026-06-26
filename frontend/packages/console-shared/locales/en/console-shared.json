@@ -271,6 +271,8 @@
   "Information": "Information",
   "In progress": "In progress",
   "Healthy": "Healthy",
+  "View {{count}} more notification_one": "View {{count}} more notification",
+  "View {{count}} more notification_other": "View {{count}} more notifications",
   "Enable": "Enable",
   "Disable": "Disable",
   "Enabling console plugin": "Enabling console plugin",

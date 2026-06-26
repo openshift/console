@@ -15,7 +15,7 @@ import type {
 import { NotificationHistoryContext } from './NotificationHistoryContext';
 import { ToastContext } from './ToastContext';
 import { getOverflowCount, getVisibleToasts, normalizeToastOptions } from './toastDisplayUtils';
-import type { ToastNotification } from './types';
+import type { ToastNotification, ToastRenderOptions } from './types';
 import {
   DEFAULT_MAX_DISPLAYED_TOASTS,
   DEFAULT_MAX_NOTIFICATION_HISTORY,
@@ -32,11 +32,11 @@ interface ToastProviderProps {
 /** Stable reference to append toast alerts to the document body */
 const appendTo = () => document.body;
 
-const toToastNotification = (toast: ToastOptions & { id: string }): ToastNotification => ({
+const toToastNotification = (toast: ToastRenderOptions): ToastNotification => ({
   ...toast,
   timestamp: Date.now(),
   isRead: false,
-  drawerGroup: toast.drawerGroup || DEFAULT_TOAST_DRAWER_GROUP,
+  drawerGroup: toast.drawerGroup ?? DEFAULT_TOAST_DRAWER_GROUP,
 });
 
 export const ToastProvider: FC<ToastProviderProps> = ({
@@ -45,8 +45,8 @@ export const ToastProvider: FC<ToastProviderProps> = ({
   maxDisplayed = DEFAULT_MAX_DISPLAYED_TOASTS,
   onNotificationDrawerOpen,
 }) => {
-  const { t } = useTranslation();
-  const [toasts, setToasts] = useState<(ToastOptions & { id: string })[]>([]);
+  const { t } = useTranslation('console-shared');
+  const [toasts, setToasts] = useState<ToastRenderOptions[]>([]);
   const [notifications, setNotifications] = useState<ToastNotification[]>([]);
   const toastIdCounterRef = useRef(0);
 
@@ -71,7 +71,7 @@ export const ToastProvider: FC<ToastProviderProps> = ({
 
   const addToast = useCallback(
     (toast: ToastOptions) => {
-      const clone: ToastOptions & { id: string } = normalizeToastOptions({
+      const clone: ToastRenderOptions = normalizeToastOptions({
         id: toast.id || `toast-${++toastIdCounterRef.current}`,
         ...toast,
       });
@@ -206,7 +206,7 @@ export const ToastProvider: FC<ToastProviderProps> = ({
     <ToastContext.Provider value={toastController}>
       <NotificationHistoryContext.Provider value={notificationHistoryController}>
         {children}
-        {!isNotificationDrawerExpanded && toasts.length ? (
+        {!isNotificationDrawerExpanded && toasts.length > 0 ? (
           <AlertGroup
             appendTo={appendTo}
             isToast

@@ -5,8 +5,9 @@ export const DEFAULT_TOAST_DRAWER_GROUP = 'default';
 export const DEFAULT_MAX_DISPLAYED_TOASTS = 3;
 export const DEFAULT_MAX_NOTIFICATION_HISTORY = 100;
 
-export type ToastNotification = ToastOptions & {
-  id: string;
+export type ToastRenderOptions = ToastOptions & { id: string };
+
+export type ToastNotification = ToastRenderOptions & {
   timestamp: number;
   isRead: boolean;
   drawerGroup: string;
