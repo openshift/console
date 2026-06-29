@@ -656,15 +656,16 @@ export type ToastOptions = {
   drawerGroup?: string;
   /**
    * When `true`, the toast is excluded from the visible toast cap and overflow link.
-   * Defaults to `false`.
-   * When `persistInDrawer` is `false`, this is always treated as `true`.
+   * Defaults to `true`.
+   * When `persistInDrawer` is `true` and `skipOverflow` is not explicitly set, defaults to `false`.
+   * Set `persistInDrawer: true` with `skipOverflow: true` for always-visible drawer-persisted toasts.
    */
   skipOverflow?: boolean;
   /**
-   * When `false`, the toast is shown on screen only and is not persisted in the notification drawer.
-   * Implies `skipOverflow: true` — ephemeral toasts must remain visible because they are not
-   * recoverable from the drawer when hidden by overflow.
-   * Defaults to `true`.
+   * When `true`, the toast is persisted in the notification drawer with read/unread state.
+   * Defaults `skipOverflow` to `false` so drawer-persisted toasts participate in the overflow cap,
+   * but an explicit `skipOverflow: true` is respected for always-visible toasts.
+   * Defaults to `false`.
    */
   persistInDrawer?: boolean;
 };

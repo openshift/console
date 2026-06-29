@@ -50,11 +50,13 @@ describe('ToastProvider', () => {
         title: 'test success',
         variant: AlertVariant.success,
         content: 'description 1',
+        persistInDrawer: true,
       });
       id2 = toastContext.addToast({
         title: 'test danger',
         variant: AlertVariant.danger,
         content: 'description 2',
+        persistInDrawer: true,
       });
     });
 
@@ -92,16 +94,19 @@ describe('ToastProvider', () => {
         title: 'toast 1',
         variant: AlertVariant.info,
         content: 'description 1',
+        persistInDrawer: true,
       });
       toastContext.addToast({
         title: 'toast 2',
         variant: AlertVariant.info,
         content: 'description 2',
+        persistInDrawer: true,
       });
       toastContext.addToast({
         title: 'toast 3',
         variant: AlertVariant.info,
         content: 'description 3',
+        persistInDrawer: true,
       });
     });
 
@@ -129,11 +134,13 @@ describe('ToastProvider', () => {
         title: 'toast 1',
         variant: AlertVariant.info,
         content: 'description 1',
+        persistInDrawer: true,
       });
       toastContext.addToast({
         title: 'toast 2',
         variant: AlertVariant.info,
         content: 'description 2',
+        persistInDrawer: true,
       });
     });
 
@@ -153,6 +160,7 @@ describe('ToastProvider', () => {
         title: 'toast 3',
         variant: AlertVariant.warning,
         content: 'description 3',
+        persistInDrawer: true,
       });
     });
 
@@ -187,6 +195,7 @@ describe('ToastProvider', () => {
         variant: AlertVariant.success,
         content: 'history description',
         onClose,
+        persistInDrawer: true,
       });
     });
 
@@ -220,6 +229,7 @@ describe('ToastProvider', () => {
         title: 'toast one',
         variant: AlertVariant.info,
         content: 'description 1',
+        persistInDrawer: true,
       });
       toastContext.addToast({
         id: 'toast-two',
@@ -227,6 +237,7 @@ describe('ToastProvider', () => {
         title: 'toast two',
         variant: AlertVariant.info,
         content: 'description 2',
+        persistInDrawer: true,
       });
     });
 
@@ -258,6 +269,7 @@ describe('ToastProvider', () => {
         title: 'Uploading',
         variant: AlertVariant.info,
         content: 'in progress',
+        persistInDrawer: true,
       });
     });
 
@@ -272,6 +284,7 @@ describe('ToastProvider', () => {
         title: 'Upload complete',
         variant: AlertVariant.success,
         content: 'done',
+        persistInDrawer: true,
       });
     });
 
@@ -293,6 +306,7 @@ describe('ToastProvider', () => {
         title: 'drawer toast',
         variant: AlertVariant.info,
         content: 'drawer description',
+        persistInDrawer: true,
       });
     });
 
@@ -314,6 +328,7 @@ describe('ToastProvider', () => {
         title: 'visible toast',
         variant: AlertVariant.info,
         content: 'visible description',
+        persistInDrawer: true,
       });
     });
 
@@ -333,7 +348,7 @@ describe('ToastProvider', () => {
     });
   });
 
-  it('should not persist toast in drawer when persistInDrawer is false', async () => {
+  it('should not persist default toasts in the drawer', async () => {
     renderWithProviders(
       <ToastProvider>
         <TestComponent />
@@ -342,20 +357,71 @@ describe('ToastProvider', () => {
 
     act(() => {
       toastContext.addToast({
-        title: 'ephemeral toast',
+        title: 'default toast',
         variant: AlertVariant.success,
         content: 'toast only',
-        persistInDrawer: false,
       });
     });
 
     await waitFor(() => {
-      expect(screen.getByText('ephemeral toast')).toBeVisible();
+      expect(screen.getByText('default toast')).toBeVisible();
       expect(notificationHistoryContext.notifications).toHaveLength(0);
     });
   });
 
-  it('should force skipOverflow when persistInDrawer is false', async () => {
+  it('should persist toast in drawer when persistInDrawer is true', async () => {
+    renderWithProviders(
+      <ToastProvider>
+        <TestComponent />
+      </ToastProvider>,
+    );
+
+    act(() => {
+      toastContext.addToast({
+        title: 'drawer toast',
+        variant: AlertVariant.success,
+        content: 'persisted in drawer',
+        persistInDrawer: true,
+      });
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText('drawer toast')).toBeVisible();
+      expect(notificationHistoryContext.notifications).toHaveLength(1);
+    });
+  });
+
+  it('should default skipOverflow to false when persistInDrawer is true', async () => {
+    const totalToasts = DEFAULT_MAX_DISPLAYED_TOASTS + 1;
+    renderWithProviders(
+      <ToastProvider maxDisplayed={DEFAULT_MAX_DISPLAYED_TOASTS}>
+        <TestComponent />
+      </ToastProvider>,
+    );
+
+    act(() => {
+      for (let index = 1; index <= totalToasts; index += 1) {
+        toastContext.addToast({
+          id: `drawer-${index}`,
+          title: `drawer toast ${index}`,
+          variant: AlertVariant.info,
+          content: `description ${index}`,
+          persistInDrawer: true,
+        });
+      }
+    });
+
+    await waitFor(() => {
+      for (let index = 2; index <= totalToasts; index += 1) {
+        expect(screen.getByText(`drawer toast ${index}`)).toBeVisible();
+      }
+      expect(screen.queryByText('drawer toast 1')).not.toBeInTheDocument();
+      expect(screen.getByText('View 1 more notification')).toBeVisible();
+      expect(notificationHistoryContext.notifications).toHaveLength(totalToasts);
+    });
+  });
+
+  it('should show all default toasts without overflow link', async () => {
     renderWithProviders(
       <ToastProvider maxDisplayed={DEFAULT_MAX_DISPLAYED_TOASTS}>
         <TestComponent />
@@ -365,48 +431,17 @@ describe('ToastProvider', () => {
     act(() => {
       for (let index = 1; index <= DEFAULT_MAX_DISPLAYED_TOASTS + 1; index += 1) {
         toastContext.addToast({
-          id: `ephemeral-${index}`,
-          title: `ephemeral toast ${index}`,
+          id: `default-${index}`,
+          title: `default toast ${index}`,
           variant: AlertVariant.info,
           content: `description ${index}`,
-          persistInDrawer: false,
-          skipOverflow: false,
         });
       }
     });
 
     await waitFor(() => {
       for (let index = 1; index <= DEFAULT_MAX_DISPLAYED_TOASTS + 1; index += 1) {
-        expect(screen.getByText(`ephemeral toast ${index}`)).toBeVisible();
-      }
-      expect(screen.queryByText(/View .* more notification/)).not.toBeInTheDocument();
-      expect(notificationHistoryContext.notifications).toHaveLength(0);
-    });
-  });
-
-  it('should show all ephemeral toasts without overflow link', async () => {
-    renderWithProviders(
-      <ToastProvider maxDisplayed={DEFAULT_MAX_DISPLAYED_TOASTS}>
-        <TestComponent />
-      </ToastProvider>,
-    );
-
-    act(() => {
-      for (let index = 1; index <= DEFAULT_MAX_DISPLAYED_TOASTS + 1; index += 1) {
-        toastContext.addToast({
-          id: `ephemeral-${index}`,
-          title: `ephemeral toast ${index}`,
-          variant: AlertVariant.info,
-          content: `description ${index}`,
-          persistInDrawer: false,
-          skipOverflow: true,
-        });
-      }
-    });
-
-    await waitFor(() => {
-      for (let index = 1; index <= DEFAULT_MAX_DISPLAYED_TOASTS + 1; index += 1) {
-        expect(screen.getByText(`ephemeral toast ${index}`)).toBeVisible();
+        expect(screen.getByText(`default toast ${index}`)).toBeVisible();
       }
       expect(screen.queryByText(/View .* more notification/)).not.toBeInTheDocument();
     });
@@ -431,11 +466,13 @@ describe('ToastProvider', () => {
         title: 'capped toast 1',
         variant: AlertVariant.info,
         content: 'capped 1',
+        persistInDrawer: true,
       });
       toastContext.addToast({
         title: 'capped toast 2',
         variant: AlertVariant.info,
         content: 'capped 2',
+        persistInDrawer: true,
       });
     });
 

@@ -77,7 +77,7 @@ export const ToastProvider: FC<ToastProviderProps> = ({
       });
 
       setNotifications((state) => {
-        if (clone.persistInDrawer === false) {
+        if (clone.persistInDrawer !== true) {
           return state;
         }
         const notification = toToastNotification(clone);

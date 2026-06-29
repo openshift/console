@@ -2,17 +2,17 @@ import type { ToastOptions } from '@console/dynamic-plugin-sdk/src/extensions/co
 import type { ToastRenderOptions } from './types';
 
 /**
- * Enforces toast option constraints. Ephemeral toasts (`persistInDrawer: false`) must
- * bypass the overflow cap; otherwise they could be hidden with no drawer entry.
+ * Applies default constraints. Drawer-persisted toasts default to `skipOverflow: false`
+ * so they participate in the overflow cap, but an explicit `skipOverflow: true` is respected.
  */
 export const normalizeToastOptions = <T extends ToastOptions>(toast: T): T => {
-  if (toast.persistInDrawer === false) {
-    return { ...toast, skipOverflow: true };
+  if (toast.persistInDrawer === true && toast.skipOverflow !== true) {
+    return { ...toast, skipOverflow: false };
   }
   return toast;
 };
 
-const participatesInOverflowCap = (toast: ToastOptions): boolean => toast.skipOverflow !== true;
+const participatesInOverflowCap = (toast: ToastOptions): boolean => toast.skipOverflow === false;
 
 const getCappedToasts = (toasts: ToastRenderOptions[]) =>
   toasts.filter((toast) => participatesInOverflowCap(toast));
