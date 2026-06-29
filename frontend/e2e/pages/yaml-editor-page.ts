@@ -9,10 +9,6 @@ export class YamlEditorPage extends BasePage {
     });
   }
 
-  async setEditorContent(text: string): Promise<void> {
-    await super.setEditorContent(text);
-  }
-
   async clickSaveCreateButton(): Promise<void> {
     await this.page.getByTestId('save-changes').click();
   }

@@ -1,5 +1,4 @@
 import { test, expect } from '../../../fixtures';
-import { DetailsPage } from '../../../pages/details-page';
 import { MachineConfigPage } from '../../../pages/machine-config-page';
 
 interface MachineConfigFile {
@@ -26,12 +25,11 @@ const MC_SECTION_HEADING = 'Configuration files';
 
 test.describe('MachineConfig resource details page', { tag: ['@admin'] }, () => {
   test(`${MC_WITH_CONFIG_FILES} displays configuration files`, async ({ page, k8sClient }) => {
-    const detailsPage = new DetailsPage(page);
     const mcPage = new MachineConfigPage(page);
 
     await page.goto(`${MC_DETAILS_PAGE_URL}${MC_WITH_CONFIG_FILES}`);
-    await detailsPage.isLoaded();
-    await detailsPage.titleShouldContain(MC_WITH_CONFIG_FILES);
+    await mcPage.isLoaded();
+    await mcPage.titleShouldContain(MC_WITH_CONFIG_FILES);
 
     await expect(mcPage.sectionHeading(MC_SECTION_HEADING)).toBeVisible();
     await expect(mcPage.configFilePath).toBeVisible();
@@ -56,12 +54,11 @@ test.describe('MachineConfig resource details page', { tag: ['@admin'] }, () => 
   });
 
   test(`${MC_WITHOUT_CONFIG_FILES} does not display configuration files`, async ({ page }) => {
-    const detailsPage = new DetailsPage(page);
     const mcPage = new MachineConfigPage(page);
 
     await page.goto(`${MC_DETAILS_PAGE_URL}${MC_WITHOUT_CONFIG_FILES}`);
-    await detailsPage.isLoaded();
-    await detailsPage.titleShouldContain(MC_WITHOUT_CONFIG_FILES);
+    await mcPage.isLoaded();
+    await mcPage.titleShouldContain(MC_WITHOUT_CONFIG_FILES);
 
     await expect(mcPage.sectionHeading(MC_SECTION_HEADING)).toBeHidden();
     await expect(mcPage.configFilePath).toBeHidden();

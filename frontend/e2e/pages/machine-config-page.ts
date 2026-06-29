@@ -1,15 +1,11 @@
 import { expect } from '@playwright/test';
 import type { Locator } from '@playwright/test';
 
-import BasePage from './base-page';
+import { DetailsPage } from './details-page';
 
-export class MachineConfigPage extends BasePage {
+export class MachineConfigPage extends DetailsPage {
   readonly configFilePath = this.page.getByTestId('config-file-path-0');
   readonly copyToClipboard = this.page.locator('.co-copy-to-clipboard__text');
-
-  sectionHeading(heading: string): Locator {
-    return this.page.locator(`[data-test-section-heading="${heading}"]`);
-  }
 
   errorHeading(text: string): Locator {
     return this.page.getByText(text);

@@ -30,10 +30,12 @@ export class DetailsPage extends BasePage {
     await expect(this.pageHeading).toContainText(title, { timeout: 30_000 });
   }
 
+  sectionHeading(heading: string): Locator {
+    return this.page.locator(`[data-test-section-heading="${heading}"]`);
+  }
+
   async sectionHeaderShouldExist(sectionHeading: string): Promise<void> {
-    await expect(
-      this.page.locator(`[data-test-section-heading="${sectionHeading}"]`),
-    ).toBeVisible();
+    await expect(this.sectionHeading(sectionHeading)).toBeVisible();
   }
 
   async isLoaded(): Promise<void> {
