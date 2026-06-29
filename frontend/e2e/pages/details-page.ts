@@ -26,7 +26,7 @@ export class DetailsPage extends BasePage {
   }
 
   async titleShouldContain(title: string): Promise<void> {
-    await this.pageHeading.waitFor({ state: 'visible', timeout: 30_000 });
+    await expect(this.pageHeading).toBeVisible({ timeout: 30_000 });
     await expect(this.pageHeading).toContainText(title, { timeout: 30_000 });
   }
 
@@ -41,7 +41,7 @@ export class DetailsPage extends BasePage {
   async isLoaded(): Promise<void> {
     await expect(this.skeletonView).toBeHidden({ timeout: 30_000 });
     await this.reloadIfModelNotFound();
-    await this.resourceTitle.waitFor({ state: 'visible', timeout: 30_000 });
+    await expect(this.resourceTitle).toBeVisible({ timeout: 30_000 });
     await expect(this.resourceTitle).not.toBeEmpty();
   }
 
