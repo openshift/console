@@ -74,6 +74,15 @@ test.describe(
           );
         }
 
+        const deploymentContainers = (
+          ((deployment.spec as Record<string, unknown>).template as Record<string, unknown>)
+            .spec as Record<string, unknown>
+        ).containers as Array<Record<string, unknown>>;
+        // eslint-disable-next-line no-console
+        console.log(
+          `Deploying ${PLUGIN_NAME} with image: ${deploymentContainers[0]?.image ?? 'unknown'}`,
+        );
+
         await k8sClient.createNamespace(PLUGIN_NAME);
 
         await k8sClient.appsV1Api.createNamespacedDeployment({
@@ -94,6 +103,21 @@ test.describe(
           'consoleplugins',
           consolePlugin as unknown as Record<string, unknown>,
         );
+
+        // Log ConsolePlugin resource status for CI debugging
+        try {
+          const cp = (await k8sClient.customObjectsApi.getClusterCustomObject({
+            group: 'console.openshift.io',
+            version: 'v1',
+            plural: 'consoleplugins',
+            name: PLUGIN_NAME,
+          })) as Record<string, unknown>;
+          // eslint-disable-next-line no-console
+          console.log(`ConsolePlugin ${PLUGIN_NAME}:`, JSON.stringify(cp.status ?? {}, null, 2));
+        } catch (err) {
+          // eslint-disable-next-line no-console
+          console.log(`Could not read ConsolePlugin status: ${err}`);
+        }
       }
     });
 

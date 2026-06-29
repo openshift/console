@@ -616,8 +616,8 @@ export default class KubernetesClient {
     name: string,
     namespace: string,
     timeoutMs = 120_000,
-  ): Promise<boolean> {
-    return pollUntil(
+  ): Promise<void> {
+    const ready = await pollUntil(
       async () => {
         try {
           const deployment = await this.appsApi.readNamespacedDeployment({ name, namespace });
@@ -637,6 +637,68 @@ export default class KubernetesClient {
       timeoutMs,
       2_000,
     );
+    if (!ready) {
+      const diag = await this.getDeploymentDiagnostics(name, namespace);
+      throw new Error(
+        `Deployment ${namespace}/${name} not ready after ${timeoutMs / 1000}s.\n${diag}`,
+      );
+    }
+  }
+
+  private async getDeploymentDiagnostics(name: string, namespace: string): Promise<string> {
+    const lines: string[] = [];
+    try {
+      const deployment = await this.appsApi.readNamespacedDeployment({ name, namespace });
+      const conditions = deployment.status?.conditions ?? [];
+      lines.push(
+        `Deployment status: replicas=${deployment.status?.replicas ?? 0}, ` +
+          `ready=${deployment.status?.readyReplicas ?? 0}, ` +
+          `available=${deployment.status?.availableReplicas ?? 0}, ` +
+          `updated=${deployment.status?.updatedReplicas ?? 0}`,
+      );
+      for (const c of conditions) {
+        lines.push(`  condition ${c.type}=${c.status}: ${c.message ?? ''}`);
+      }
+    } catch (err) {
+      lines.push(`Could not read deployment: ${err}`);
+    }
+    try {
+      const pods = await this.k8sApi.listNamespacedPod({ namespace, labelSelector: `app=${name}` });
+      for (const pod of pods.items) {
+        const podName = pod.metadata?.name ?? 'unknown';
+        const phase = pod.status?.phase ?? 'Unknown';
+        lines.push(`Pod ${podName}: phase=${phase}`);
+        for (const cs of pod.status?.containerStatuses ?? []) {
+          const state = cs.state?.waiting
+            ? `Waiting: ${cs.state.waiting.reason} - ${cs.state.waiting.message ?? ''}`
+            : cs.state?.terminated
+            ? `Terminated: ${cs.state.terminated.reason}`
+            : 'Running';
+          lines.push(`  container ${cs.name}: ready=${cs.ready}, restarts=${cs.restartCount}, ${state}`);
+        }
+        try {
+          const events = await this.k8sApi.listNamespacedEvent({
+            namespace,
+            fieldSelector: `involvedObject.name=${podName}`,
+          });
+          const recent = events.items
+            .sort(
+              (a, b) =>
+                new Date(b.lastTimestamp ?? 0).getTime() -
+                new Date(a.lastTimestamp ?? 0).getTime(),
+            )
+            .slice(0, 10);
+          for (const ev of recent) {
+            lines.push(`  event: ${ev.reason} - ${ev.message} (count=${ev.count ?? 1})`);
+          }
+        } catch {
+          lines.push(`  Could not fetch events for pod ${podName}`);
+        }
+      }
+    } catch (err) {
+      lines.push(`Could not list pods: ${err}`);
+    }
+    return lines.join('\n');
   }
 
   async deletePod(name: string, namespace: string): Promise<void> {
