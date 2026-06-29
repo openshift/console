@@ -20,6 +20,7 @@ import NodeDashboard from './node-dashboard/NodeDashboard';
 import NodeDetails from './NodeDetails';
 import NodeLogs from './NodeLogs';
 import NodeTerminal from './NodeTerminal';
+import { NodeWorkload } from './NodeWorkload';
 
 const NodePodsPage: FC<PageComponentProps<NodeKind>> = ({ obj }) => (
   <PodsPage
@@ -57,6 +58,13 @@ const healthTab = {
   component: NodeHealth,
 };
 
+const workloadTab = {
+  href: 'workload',
+  // t('console-app~Workload')
+  nameKey: 'console-app~Workload',
+  component: NodeWorkload,
+};
+
 const yamlTab = navFactory.editYaml();
 const podsTab = navFactory.pods(NodePodsPage);
 const logsTab = navFactory.logs(NodeLogs);
@@ -69,7 +77,7 @@ export const NodeDetailsPage: FC<ComponentProps<typeof DetailsPage>> = (props) =
   const pagesFor = useCallback(
     (node: NodeKind) => {
       const tabs = nodeMgmtV1Enabled
-        ? [overviewTab, detailsTab, configurationTab, healthTab, yamlTab, podsTab]
+        ? [overviewTab, detailsTab, configurationTab, healthTab, workloadTab, yamlTab]
         : [overviewTab, detailsTab, yamlTab, podsTab, logsTab, eventsTab];
       if (!isWindowsNode(node)) {
         tabs.push(terminalTab);

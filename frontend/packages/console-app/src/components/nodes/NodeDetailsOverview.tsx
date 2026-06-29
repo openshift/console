@@ -233,7 +233,7 @@ const NodeDetailsOverview: FC<NodeDetailsOverviewProps> = ({ node }) => {
               </DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('Kube-Proxy version')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Kube-proxy version')}</DescriptionListTerm>
               <DescriptionListDescription>
                 {_.get(node, 'status.nodeInfo.kubeProxyVersion', '-')}
               </DescriptionListDescription>

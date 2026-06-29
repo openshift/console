@@ -617,6 +617,7 @@ export const PodsPage: FC<PodPageProps> = ({
   hideLabelFilter,
   hideColumnManagement,
   showNamespaceOverride,
+  hideFavoriteButton,
 }) => {
   const { t } = useTranslation('public');
   const dispatch = useConsoleDispatch();
@@ -671,7 +672,7 @@ export const PodsPage: FC<PodPageProps> = ({
 
   return (
     <>
-      <ListPageHeader title={showTitle ? t('Pods') : ''}>
+      <ListPageHeader title={showTitle ? t('Pods') : ''} hideFavoriteButton={hideFavoriteButton}>
         {canCreate && !mock && (
           <ListPageCreate groupVersionKind={resourceKind} createAccessReview={accessReview}>
             {t('Create Pod')}
@@ -743,4 +744,5 @@ type PodPageProps = {
   hideNameLabelFilters?: boolean;
   hideColumnManagement?: boolean;
   showNamespaceOverride?: boolean;
+  hideFavoriteButton?: boolean;
 };
