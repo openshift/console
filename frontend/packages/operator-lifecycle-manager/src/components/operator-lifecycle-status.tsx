@@ -189,7 +189,7 @@ const LifecycleDatesFooter: FC = () => {
       </span>
       <div className="pf-v6-u-mt-sm">
         <ExternalLink href="https://access.redhat.com/support/policy/updates/openshift_operators/lifecycle">
-          {t('OpenShift Operator lifecycle')}
+          {t('OpenShift Operator life cycle')}
         </ExternalLink>
       </div>
       {clusterMinor && (
@@ -200,13 +200,13 @@ const LifecycleDatesFooter: FC = () => {
               '',
             )}`}
           >
-            {t('OpenShift lifecycle ({{version}})', { version: clusterMinor })}
+            {t('OpenShift life cycle ({{version}})', { version: clusterMinor })}
           </ExternalLink>
         </div>
       )}
       <div>
         <ExternalLink href="https://access.redhat.com/product-life-cycles">
-          {t('Red Hat product lifecycles')}
+          {t('Red Hat product life cycles')}
         </ExternalLink>
       </div>
     </>
@@ -224,7 +224,7 @@ const LifecycleDatesPopover: FC<{
 
   return (
     <Popover
-      headerContent={t('Lifecycle dates')}
+      headerContent={t('Life cycle dates')}
       appendTo="inline"
       position="left"
       onHide={() => (document.activeElement as HTMLElement)?.blur()}
