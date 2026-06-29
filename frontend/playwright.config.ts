@@ -22,7 +22,6 @@ const packages = [
   'helm',
   'knative',
   'olm',
-  'telemetry',
   'topology',
   'webterminal',
 ];
