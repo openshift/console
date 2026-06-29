@@ -27,7 +27,8 @@ export const SearchFilterDropdown: FC<SearchFilterDropdownProps> = ({
   onChange,
 }) => {
   const [isOpen, setOpen] = useState(false);
-  const [selected, setSelected] = useState(searchFilterValues.Label);
+  // Default to filtering by Name to stay consistent with the other resource lists in the console.
+  const [selected, setSelected] = useState(searchFilterValues.Name);
   const { t } = useTranslation('public');
 
   const onToggle = () => setOpen(!isOpen);
