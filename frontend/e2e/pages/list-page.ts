@@ -59,6 +59,8 @@ export class ListPage extends BasePage {
         await this.robustClick(filterDropdownToggle);
         await this.page.locator(`[id="${status}"]`).click();
         await this.robustClick(filterDropdownToggle);
+      } else {
+        await this.dvFilterBy('Status', status);
       }
     }
   }
@@ -107,7 +109,9 @@ export class ListPage extends BasePage {
 
   async dvRowsShouldNotExist(resourceName: string): Promise<void> {
     const cell = this.dvCell(resourceName);
+    const row = this.dvRow(resourceName);
     await expect(cell).toBeHidden({ timeout: 90_000 });
+    await expect(row).toBeHidden({ timeout: 10_000 });
   }
 
   async dvRowsCountShouldBe(count: number): Promise<void> {
