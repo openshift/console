@@ -5,7 +5,7 @@ import { YamlEditorPage } from '../../../pages/yaml-editor-page';
 
 const CRONJOB_NAME = 'cronjob1';
 
-test.describe.serial('Start a Job from a CronJob', () => {
+test.describe.serial('Start a Job from a CronJob', { tag: ['@admin'] }, () => {
   const testNs = `e2e-cronjob-${Date.now()}`;
 
   const cronJobPayload = `apiVersion: batch/v1
@@ -37,6 +37,7 @@ spec:
     await k8sClient.deleteNamespace(testNs);
   });
 
+  // eslint-disable-next-line playwright/expect-expect
   test('verify "Start Job" on the CronJob details page', async ({ page }) => {
     const yamlEditor = new YamlEditorPage(page);
     const detailsPage = new DetailsPage(page);
@@ -74,6 +75,7 @@ spec:
       await kebab.hover();
       await kebab.click();
       try {
+        // eslint-disable-next-line no-restricted-syntax
         await action.waitFor({ state: 'visible', timeout: 5_000 });
         found = true;
         break;
@@ -89,6 +91,7 @@ spec:
     await detailsPage.titleShouldContain(CRONJOB_NAME);
   });
 
+  // eslint-disable-next-line playwright/expect-expect
   test('verify the number of Jobs in CronJob > Jobs tab list page', async ({ page }) => {
     const listPage = new ListPage(page);
 

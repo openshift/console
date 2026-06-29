@@ -10,7 +10,7 @@ const WARNING_BAR = '299 - "[deployment-must-have-label-bar] you must provide la
 const LEARN_MORE_ID = 'admission-webhook-warning-learn-more';
 const WARNING_ID = 'admission-webhook-warning';
 
-test.describe('Admission Webhook warning notification', () => {
+test.describe('Admission Webhook warning notification', { tag: ['@admin'] }, () => {
   const testNs = `e2e-admission-${Date.now()}`;
 
   const pod1ReqObj = `apiVersion: v1

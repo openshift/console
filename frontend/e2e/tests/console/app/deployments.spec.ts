@@ -1,7 +1,7 @@
 import { test, expect } from '../../../fixtures';
 import { DetailsPage } from '../../../pages/details-page';
 
-test.describe.serial('Deployment resource details page', () => {
+test.describe.serial('Deployment resource details page', { tag: ['@admin'] }, () => {
   const testNs = `e2e-deployments-${Date.now()}`;
   const workloadName = `deployment-e2e`;
 

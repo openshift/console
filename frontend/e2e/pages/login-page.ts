@@ -1,7 +1,9 @@
+import { expect } from '@playwright/test';
+
 import BasePage from './base-page';
 
 export class LoginPage extends BasePage {
-  private readonly loginButton = this.page.locator('[data-test-id="login"]');
+  private readonly loginButton = this.page.getByTestId('login');
   private readonly usernameInput = this.page.locator('#inputUsername');
   private readonly passwordInput = this.page.locator('#inputPassword');
   private readonly submitButton = this.page.locator('button[type="submit"]');
@@ -24,21 +26,19 @@ export class LoginPage extends BasePage {
     }
 
     const providerBtn = this.providerButton(provider);
-    await this.loginButton
-      .or(this.usernameInput)
-      .or(providerBtn)
-      .first()
-      .waitFor({ state: 'visible', timeout: 30_000 });
+    await expect(
+      this.loginButton.or(this.usernameInput).or(providerBtn).first(),
+    ).toBeVisible({ timeout: 30_000 });
 
     if ((await providerBtn.count()) > 0 && (await providerBtn.isVisible())) {
       await providerBtn.click();
-      await this.usernameInput.waitFor({ state: 'visible', timeout: 30_000 });
+      await expect(this.usernameInput).toBeVisible({ timeout: 30_000 });
     }
 
     await this.usernameInput.fill(username);
     await this.passwordInput.fill(password);
     await this.submitButton.click();
-    await this.userDropdownToggle.waitFor({ state: 'visible', timeout: 60_000 });
+    await expect(this.userDropdownToggle).toBeVisible({ timeout: 60_000 });
     return true;
   }
 }

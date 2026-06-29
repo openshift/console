@@ -70,7 +70,7 @@ async function pollForPodCrashState(
   return { ready: false, reason: lastReason };
 }
 
-test.describe.serial('Debug pod', () => {
+test.describe.serial('Debug pod', { tag: ['@admin'] }, () => {
   const testNs = `e2e-debug-pod-${Date.now()}`;
 
   test.beforeAll(async ({ k8sClient }) => {
@@ -114,7 +114,6 @@ test.describe.serial('Debug pod', () => {
     await detailsPage.isLoaded();
     await detailsPage.selectTab('Logs');
     await detailsPage.isLoaded();
-    await detailsPage.debugContainerLink().waitFor({ state: 'visible', timeout: 30_000 });
     await detailsPage.clickDebugContainerLink();
     await listPage.titleShouldHaveText(`Debug ${CONTAINER_NAME}`);
     await expect(detailsPage.xtermViewport).toBeAttached({ timeout: 30_000 });

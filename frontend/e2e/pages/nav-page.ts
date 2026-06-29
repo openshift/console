@@ -33,7 +33,7 @@ export class NavPage extends BasePage {
     await this.page.waitForLoadState('domcontentloaded');
     const toggle = this.perspectiveSwitcherToggle;
     await toggle.scrollIntoViewIfNeeded();
-    await toggle.waitFor({ state: 'visible' });
+    await expect(toggle).toBeVisible();
 
     const isSinglePerspective = (await toggle.getAttribute('id')) === 'core-platform-perspective';
     if (isSinglePerspective) {

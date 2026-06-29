@@ -124,6 +124,7 @@ export default abstract class BasePage {
   protected async reloadIfModelNotFound(maxRetries = 3): Promise<void> {
     for (let attempt = 0; attempt < maxRetries; attempt++) {
       try {
+        // eslint-disable-next-line no-restricted-syntax
         await this.page
           .getByText('Model does not exist')
           .waitFor({ state: 'visible', timeout: 5_000 });

@@ -6,9 +6,10 @@ import { NavPage } from '../../../pages/nav-page';
 const KUBEADMIN_IDP = 'kube:admin';
 const KUBEADMIN_USERNAME = 'kubeadmin';
 
-test.describe('Auth test', () => {
+test.describe('Auth test', { tag: ['@admin'] }, () => {
   test.use({ storageState: { cookies: [], origins: [] } });
 
+  // eslint-disable-next-line playwright/expect-expect
   test("logs in as 'test' user via htpasswd identity provider", async ({ page }) => {
     const kubeadminPassword = process.env.BRIDGE_KUBEADMIN_PASSWORD;
     const htpasswdPassword = process.env.BRIDGE_HTPASSWD_PASSWORD;
