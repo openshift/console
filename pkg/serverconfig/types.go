@@ -75,13 +75,13 @@ type ClusterInfo struct {
 	ConsoleBaseAddress             string                `yaml:"consoleBaseAddress,omitempty"`
 	AdditionalConsoleBaseAddresses []string              `yaml:"additionalConsoleBaseAddresses,omitempty"`
 	ConsoleBasePath                string                `yaml:"consoleBasePath,omitempty"`
-	MasterPublicURL      string                `yaml:"masterPublicURL,omitempty"`
-	ControlPlaneTopology configv1.TopologyMode `yaml:"controlPlaneTopology,omitempty"`
-	ReleaseVersion       string                `yaml:"releaseVersion,omitempty"`
-	NodeArchitectures    []string              `yaml:"nodeArchitectures,omitempty"`
-	NodeOperatingSystems []string              `yaml:"nodeOperatingSystems,omitempty"`
-	CopiedCSVsDisabled   bool                  `yaml:"copiedCSVsDisabled,omitempty"`
-	TechPreviewEnabled   bool                  `yaml:"techPreviewEnabled,omitempty"`
+	MasterPublicURL                string                `yaml:"masterPublicURL,omitempty"`
+	ControlPlaneTopology           configv1.TopologyMode `yaml:"controlPlaneTopology,omitempty"`
+	ReleaseVersion                 string                `yaml:"releaseVersion,omitempty"`
+	NodeArchitectures              []string              `yaml:"nodeArchitectures,omitempty"`
+	NodeOperatingSystems           []string              `yaml:"nodeOperatingSystems,omitempty"`
+	CopiedCSVsDisabled             bool                  `yaml:"copiedCSVsDisabled,omitempty"`
+	TechPreviewEnabled             bool                  `yaml:"techPreviewEnabled,omitempty"`
 }
 
 // Auth holds configuration for authenticating with OpenShift. The auth method is assumed to be "openshift".

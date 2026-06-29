@@ -303,8 +303,6 @@ func (c *completedOptions) getAuthenticator(
 
 	}
 
-	oidcClientSecret = c.ClientSecret
-
 	// Config for logging into console.
 	oidcClientConfig := &oauth2.Config{
 		AuthSource:     authSource,
