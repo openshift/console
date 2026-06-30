@@ -29,7 +29,7 @@ export const UtilizationDurationDropdown: FC<UtilizationDurationDropdownProps> =
   );
 
   return (
-    <div data-test-id="duration-select">
+    <div data-test="duration-select" data-test-id="duration-select">
       <Select
         toggle={(toggleRef: Ref<MenuToggleElement>) => (
           <MenuToggle

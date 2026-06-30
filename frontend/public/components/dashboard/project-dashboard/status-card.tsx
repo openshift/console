@@ -27,7 +27,7 @@ export const StatusCard = memo(() => {
   const { t } = useTranslation('public');
 
   return (
-    <Card data-test-id="status-card">
+    <Card data-test="status-card" data-test-id="status-card">
       <CardHeader>
         <CardTitle>{t('Status')}</CardTitle>
       </CardHeader>

@@ -151,6 +151,9 @@ export function createCleanupFixture(testName: string): CleanupFixture {
               case 'Secret':
                 await client.deleteSecret(resource.name, resource.namespace);
                 break;
+              case 'ResourceQuota':
+                await client.deleteResourceQuota(resource.name, resource.namespace);
+                break;
               default:
                 console.warn(
                   `[Cleanup] Unhandled core resource type ${resource.type} "${resource.name}" — skipping`,

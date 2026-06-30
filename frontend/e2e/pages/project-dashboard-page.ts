@@ -1,40 +1,28 @@
 import type { Locator } from '@playwright/test';
-import { expect } from '@playwright/test';
 
 import BasePage from './base-page';
 
-export class ClusterDashboardPage extends BasePage {
+export class ProjectDashboardPage extends BasePage {
   private readonly detailsCard = this.page.getByTestId('details-card');
   private readonly statusCard = this.page.getByTestId('status-card');
   private readonly inventoryCard = this.page.getByTestId('inventory-card');
   private readonly utilizationCard = this.page.getByTestId('utilization-card');
+  private readonly launcherCard = this.page.getByTestId('launcher-card');
+  private readonly resourceQuotasCard = this.page.getByTestId('resource-quotas-card');
   private readonly detailItemTitle = this.page.getByTestId('detail-item-title');
   private readonly detailItemValue = this.page.getByTestId('detail-item-value');
-  private readonly viewSettingsLink = this.page.getByTestId('details-card-view-settings');
-  private readonly viewAlertsLink = this.page.getByTestId('status-card-view-alerts');
+  private readonly viewAllLink = this.page.getByTestId('details-card-view-all');
+  private readonly projectStatus = this.page.getByTestId('project-status');
   private readonly resourceInventoryItem = this.page.getByTestId('resource-inventory-item');
   private readonly utilizationItem = this.page.getByTestId('utilization-item');
   private readonly utilizationItemTitle = this.page.getByTestId('utilization-item-title');
   private readonly durationSelect = this.page.getByTestId('duration-select');
-  private readonly insightsHealthItem = this.page.locator(
-    '[data-item-id="Insights-health-item"]',
-  );
-  private readonly insightsButton = this.page
-    .getByTestId('Insights')
-    .locator('button');
-  private readonly popover = this.page.locator('.pf-v6-c-popover');
+  private readonly launcherItem = this.page.getByTestId('launcher-item');
+  private readonly resourceQuotaLink = this.page.getByTestId('resource-quota-link');
+  private readonly resourceQuotaGaugeChart = this.page.getByTestId('resource-quota-gauge-chart');
 
-  async navigateToDashboard(): Promise<void> {
-    await this.goTo('/dashboards');
-    await this.waitForLoadingComplete();
-  }
-
-  async waitForStatusCardLoaded(): Promise<void> {
-    await expect(this.statusCard).toBeVisible({ timeout: 30_000 });
-    // eslint-disable-next-line no-restricted-syntax
-    await this.statusCard.locator('.skeleton-health').waitFor({ state: 'hidden', timeout: 30_000 }).catch(() => {
-      // Skeletons may have already disappeared
-    });
+  async navigateToProject(projectName: string): Promise<void> {
+    await this.goTo(`/k8s/cluster/projects/${projectName}`);
   }
 
   getDetailsCard(): Locator {
@@ -53,6 +41,14 @@ export class ClusterDashboardPage extends BasePage {
     return this.utilizationCard;
   }
 
+  getLauncherCard(): Locator {
+    return this.launcherCard;
+  }
+
+  getResourceQuotasCard(): Locator {
+    return this.resourceQuotasCard;
+  }
+
   getDetailItemTitle(): Locator {
     return this.detailItemTitle;
   }
@@ -61,12 +57,12 @@ export class ClusterDashboardPage extends BasePage {
     return this.detailItemValue;
   }
 
-  getViewSettingsLink(): Locator {
-    return this.viewSettingsLink;
+  getViewAllLink(): Locator {
+    return this.viewAllLink;
   }
 
-  getViewAlertsLink(): Locator {
-    return this.viewAlertsLink;
+  getProjectStatus(): Locator {
+    return this.projectStatus;
   }
 
   getResourceInventoryItem(): Locator {
@@ -85,20 +81,15 @@ export class ClusterDashboardPage extends BasePage {
     return this.durationSelect;
   }
 
-  getInsightsHealthItem(): Locator {
-    return this.insightsHealthItem;
+  getLauncherItem(): Locator {
+    return this.launcherItem;
   }
 
-  getInsightsButton(): Locator {
-    return this.insightsButton;
+  getResourceQuotaLink(): Locator {
+    return this.resourceQuotaLink;
   }
 
-  getPopover(): Locator {
-    return this.popover;
-  }
-
-  async openInsightsPopup(): Promise<void> {
-    await this.robustClick(this.insightsButton);
-    await expect(this.popover).toBeVisible({ timeout: 10_000 });
+  getResourceQuotaGaugeChart(): Locator {
+    return this.resourceQuotaGaugeChart;
   }
 }

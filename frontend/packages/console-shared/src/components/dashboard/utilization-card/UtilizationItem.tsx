@@ -121,7 +121,11 @@ export const MultilineUtilizationItem = memo<MultilineUtilizationItemProps>(
     });
 
     return (
-      <div className="co-utilization-card__item" data-test-id="utilization-item">
+      <div
+        className="co-utilization-card__item"
+        data-test="utilization-item"
+        data-test-id="utilization-item"
+      >
         <div className="co-utilization-card__item-description">
           <div className="co-utilization-card__item-section-multiline">
             <Title headingLevel="h4" data-test="utilization-item-title">
@@ -259,7 +263,11 @@ export const UtilizationItem = memo<UtilizationItemProps>(
     const currentHumanized = !_.isNil(current) ? humanizeValue(current).string : null;
 
     return (
-      <div className="co-utilization-card__item" data-test-id="utilization-item">
+      <div
+        className="co-utilization-card__item"
+        data-test="utilization-item"
+        data-test-id="utilization-item"
+      >
         <div className="co-utilization-card__item-description">
           <Flex
             justifyContent={{ default: 'justifyContentSpaceBetween' }}
