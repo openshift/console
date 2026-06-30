@@ -1,6 +1,5 @@
 import type { FC } from 'react';
 import { useMemo, useCallback, useEffect, useState, Suspense } from 'react';
-import { Button, ButtonVariant } from '@patternfly/react-core';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 import type { DataViewFilterOption } from '@patternfly/react-data-view/dist/esm/DataViewFilters';
 import * as _ from 'lodash';
@@ -24,13 +23,13 @@ import type {
 } from '@console/app/src/components/data-view/types';
 import { useDataViewSelection } from '@console/app/src/components/data-view/useDataViewSelection';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+import NodeGroupEditButton from '@console/app/src/components/nodes/NodeGroupEditButton';
 import { FLAG_NODE_MGMT_V1 } from '@console/app/src/consts';
 import type { K8sModel } from '@console/dynamic-plugin-sdk/src/api/core-api';
 import {
   getGroupVersionKindForResource,
   ListPageBody,
   useAccessReview,
-  useOverlay,
 } from '@console/dynamic-plugin-sdk/src/api/core-api';
 import type {
   K8sResourceCommon,
@@ -100,7 +99,6 @@ import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
 import { nodeStatus } from '../../status/node';
 import { useIsKubevirtPluginActive } from '../../utils/kubevirt';
 import { getNodeClientCSRs, isCSRResource } from './csr';
-import GroupsEditorModal from './modals/GroupsEditorModal';
 import NodeUptime from './node-dashboard/NodeUptime';
 import NodeRoles from './NodeRoles';
 import { NodeStatusWithExtensions } from './NodeStatus';
@@ -108,7 +106,7 @@ import ClientCSRStatus from './status/CSRStatus';
 import { useCustomNodeActions } from './useCustomNodeActions';
 import type { GetNodeStatusExtensions } from './useNodeStatusExtensions';
 import { useNodeStatusExtensions } from './useNodeStatusExtensions';
-import { getNodeGroups } from './utils/NodeGroupUtils';
+import { getExistingGroups, getNodeGroups } from './utils/NodeGroupUtils';
 import {
   filterVirtualMachineInstancesByNode,
   useWatchVirtualMachineInstances,
@@ -801,6 +799,15 @@ const NodeList: FC<NodeListProps> = ({
     [],
   );
 
+  const groupNames = getExistingGroups(data as NodeKind[]);
+
+  const nodeGroupFilterOptions = useMemo<DataViewFilterOption[]>(() => {
+    return groupNames.map((groupName) => ({
+      value: groupName,
+      label: groupName,
+    }));
+  }, [groupNames]);
+
   const machineSetFilterOptions = useMemo<DataViewFilterOption[]>(
     () =>
       [
@@ -832,6 +839,7 @@ const NodeList: FC<NodeListProps> = ({
       ...initialFiltersDefault,
       status: [],
       roles: [],
+      groups: [],
       architecture: [],
       machineOwners: [],
       machineConfigPools: [],
@@ -856,6 +864,17 @@ const NodeList: FC<NodeListProps> = ({
         placeholder={t('Filter by roles')}
         options={nodeRoleFilterOptions}
       />,
+      ...(nodeMgmtV1Enabled
+        ? [
+            <DataViewCheckboxFilter
+              key="groups"
+              filterId="groups"
+              title={t('Groups')}
+              placeholder={t('Filter by groups')}
+              options={nodeGroupFilterOptions}
+            />,
+          ]
+        : []),
       <DataViewCheckboxFilter
         key="architecture"
         filterId="architecture"
@@ -882,9 +901,11 @@ const NodeList: FC<NodeListProps> = ({
       t,
       nodeStatusFilterOptions,
       nodeRoleFilterOptions,
+      nodeGroupFilterOptions,
       nodeArchitectureFilterOptions,
       machineSetFilterOptions,
       machineConfigPoolFilterOptions,
+      nodeMgmtV1Enabled,
     ],
   );
 
@@ -906,6 +927,17 @@ const NodeList: FC<NodeListProps> = ({
       }
       const nodeRoles = getNodeRoles(resource as NodeKind);
       if (!filters.roles.some((r) => nodeRoles.includes(r))) {
+        return false;
+      }
+    }
+
+    // Groups filter
+    if (filters.groups.length > 0) {
+      if (isCSR) {
+        return false;
+      }
+      const nodeGroups = getNodeGroups(resource as NodeKind);
+      if (!filters.groups.some((r) => nodeGroups.includes(r))) {
         return false;
       }
     }
@@ -981,6 +1013,7 @@ type NodeRowItem = (NodeKind | NodeCertificateSigningRequestKind) & {
 type NodeFilters = ResourceFilters & {
   status: string[];
   roles: string[];
+  groups: string[];
   architecture: string[];
   machineOwners: string[];
   machineConfigPools: string[];
@@ -1009,7 +1042,6 @@ const useWatchResourcesIfAllowed = <R extends K8sResourceCommon[]>(
 export const NodesPage: FC<NodesPageProps> = ({ selector }) => {
   const dispatch = useConsoleDispatch();
   const { t } = useTranslation('console-app');
-  const launchOverlay = useOverlay();
   const nodeMgmtV1Enabled = useFlag(FLAG_NODE_MGMT_V1);
 
   const [selectedColumns, , columnPreferenceLoaded] = useUserPreference<TableColumnsType>(
@@ -1017,12 +1049,6 @@ export const NodesPage: FC<NodesPageProps> = ({ selector }) => {
     undefined,
     true,
   );
-
-  const [canEdit, isEditLoading] = useAccessReview({
-    group: NodeModel.apiGroup || '',
-    resource: NodeModel.plural,
-    verb: 'patch',
-  });
 
   const [nodes, nodesLoaded, nodesLoadError] = useK8sWatchResource<NodeKind[]>({
     groupVersionKind: {
@@ -1147,14 +1173,7 @@ export const NodesPage: FC<NodesPageProps> = ({ selector }) => {
   return (
     <>
       <ListPageHeader title={t('Nodes')}>
-        {nodeMgmtV1Enabled && !isEditLoading && canEdit ? (
-          <Button
-            variant={ButtonVariant.secondary}
-            onClick={() => launchOverlay(GroupsEditorModal, {})}
-          >
-            {t('Edit groups')}
-          </Button>
-        ) : null}
+        <NodeGroupEditButton />
       </ListPageHeader>
       <ListPageBody>
         <NodeList
