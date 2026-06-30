@@ -1,5 +1,5 @@
 import type { Locator } from '@playwright/test';
-import { expect } from '@playwright/test';
+import { expect } from '../fixtures';
 
 import BasePage from './base-page';
 
@@ -17,6 +17,18 @@ export class TopologyPage extends BasePage {
   private readonly confirmAction = this.page.getByTestId('confirm-action');
   private readonly highlightedNode = this.page.locator('.is-filtered');
   private readonly expandToggle = this.page.getByLabel('Collapse groups');
+
+  // Form interaction locators
+  private readonly gitRepoUrlField = this.page.getByLabel('Git Repo URL');
+  private readonly gitUrlHelper = this.page.locator('#form-input-git-url-field-helper');
+  private readonly applicationNameField = this.page.locator('#form-input-application-name-field');
+  private readonly workloadNameField = this.page.locator('#form-input-name-field');
+  private readonly resourceTypeField = this.page.locator('#form-select-input-resources-field');
+  private readonly saveChangesButton = this.page.getByTestId('save-changes');
+  private readonly applicationDropdown = this.page.locator('[id$="application-name-field"]');
+  private readonly applicationFormInput = this.page.getByTestId('application-form-app-input');
+  private readonly sidebarCloseButton = this.page.getByTestId('sidebar-close-button');
+  private readonly baseNodeHandler = this.page.getByTestId('base-node-handler');
 
   async navigateToTopology(namespace?: string): Promise<void> {
     const url = namespace ? `/topology/ns/${namespace}` : '/topology';
@@ -69,6 +81,7 @@ export class TopologyPage extends BasePage {
   }
 
   async clickDisplayOptions(): Promise<void> {
+    await this.ensureGraphView();
     await this.robustClick(this.displayOptionsButton);
   }
 
@@ -78,11 +91,13 @@ export class TopologyPage extends BasePage {
   }
 
   async verifyWorkloadVisible(workloadName: string, timeout = 30_000): Promise<void> {
+    await this.ensureGraphView();
     await this.search(workloadName);
     await expect(this.highlightedNode.first()).toBeAttached({ timeout });
   }
 
   async verifyGroupLabel(workloadName: string, groupName: string, timeout = 5_000): Promise<void> {
+    await this.ensureGraphView();
     await this.search(workloadName);
     const label = this.page.locator('g[class$="topology__group__label"]');
     const textContent = label.locator('> text');
@@ -95,13 +110,30 @@ export class TopologyPage extends BasePage {
       .filter({ hasText: nodeName });
   }
 
+  async ensureGraphView(): Promise<void> {
+    const currentLabel = await this.switcher.getAttribute('aria-label');
+    if (currentLabel === 'Graph view') {
+      // Currently in List view, need to switch to Graph view
+      await this.robustClick(this.switcher);
+    }
+  }
+
   async clickOnNode(nodeName: string): Promise<void> {
+    await this.ensureGraphView();
     await this.search(nodeName);
-    const node = this.page.getByTestId('base-node-handler');
-    await this.robustClick(node.first());
+    // Wait for search to filter and highlight the node
+    await expect(this.highlightedNode.first()).toBeVisible({ timeout: 30_000 });
+
+    await expect(this.baseNodeHandler.first()).toBeVisible({ timeout: 30_000 });
+    await this.robustClick(this.baseNodeHandler.first());
   }
 
   async rightClickOnNode(nodeName: string): Promise<void> {
+    await this.ensureGraphView();
+    await this.search(nodeName);
+    // Wait for search to filter and highlight the node
+    await expect(this.highlightedNode.first()).toBeVisible({ timeout: 30_000 });
+
     const node = this.getNode(nodeName);
     await expect(node.first()).toBeVisible({ timeout: 30_000 });
     await node.first().click({ button: 'right' });
@@ -128,4 +160,76 @@ export class TopologyPage extends BasePage {
   async typeInQuickSearch(text: string): Promise<void> {
     await this.page.getByLabel('Quick search bar').fill(text);
   }
+
+  // Import form interaction methods
+  async fillGitRepoUrl(url: string): Promise<void> {
+    await this.gitRepoUrlField.clear();
+    await this.gitRepoUrlField.fill(url);
+  }
+
+  async waitForGitUrlValidation(timeout = 120_000): Promise<void> {
+    await expect(this.gitUrlHelper).toContainText('Validated', { timeout });
+  }
+
+  async fillApplicationName(name: string): Promise<void> {
+    await this.applicationNameField.fill(name);
+  }
+
+  async fillWorkloadName(name: string): Promise<void> {
+    await this.workloadNameField.fill(name);
+  }
+
+  async selectResourceType(resourceType: 'kubernetes' | 'knative'): Promise<void> {
+    await this.resourceTypeField.scrollIntoViewIfNeeded();
+    await this.resourceTypeField.click();
+    await this.page.locator(`#select-option-resources-${resourceType}`).click();
+  }
+
+  async clickSaveChanges(): Promise<void> {
+    await this.robustClick(this.saveChangesButton);
+  }
+
+  async clickApplicationDropdown(): Promise<void> {
+    await expect(this.applicationDropdown).toBeVisible({ timeout: 30_000 });
+    await this.applicationDropdown.click();
+  }
+
+  async selectFirstApplicationOption(): Promise<void> {
+    await this.page.getByTestId('console-select-item').first().click();
+  }
+
+  async fillApplicationInput(appName: string): Promise<void> {
+    await expect(this.applicationFormInput).toBeVisible();
+    await this.applicationFormInput.fill(appName);
+    await expect(this.applicationFormInput).toHaveValue(appName);
+  }
+
+  async closeSidebarIfOpen(): Promise<void> {
+    if (await this.sidebarCloseButton.isVisible({ timeout: 1000 }).catch(() => false)) {
+      await this.sidebarCloseButton.click();
+    }
+  }
+
+  // Catalog/quick search methods
+  async clickBuilderImageItem(imageName: string): Promise<void> {
+    await this.page.getByTestId(`item-name-${imageName}`).first().click();
+  }
+
+  async selectBuilderImageFromList(pattern: RegExp): Promise<void> {
+    await expect(this.page.getByRole('progressbar')).not.toBeAttached({ timeout: 60_000 });
+    await this.page
+      .getByRole('listitem')
+      .filter({ hasText: pattern })
+      .first()
+      .click();
+  }
+
+  async clickCreateButton(): Promise<void> {
+    await this.page.getByRole('button', { name: 'Create' }).click();
+  }
+
+  getApplicationFormInput(): Locator {
+    return this.applicationFormInput;
+  }
+
 }

@@ -41,13 +41,8 @@
     "test-playwright-headed": "playwright test --headed",
     "test-playwright-debug": "playwright test --debug",
     "test-playwright-ui": "playwright test --ui",
-<<<<<<< HEAD
     "test-playwright-admin": "playwright test --project=smoke --project=console --project=dev-console --project=helm --project=knative --project=olm --project=topology --project=webterminal",
     "test-playwright-developer": "playwright test --project=dev-console-developer --project=topology-developer --project=smoke-developer",
-=======
-    "test-playwright-admin": "playwright test --project=smoke --project=console --project=dev-console --project=helm --project=knative --project=olm --project=telemetry --project=webterminal",
-    "test-playwright-developer": "playwright test --project=dev-console-developer --project=smoke-developer",
->>>>>>> 74310dcb74 (CONSOLE-5243: Remove topology Cypress integration tests)
     "test-puppeteer-csp": "yarn ts-node ./test-puppeteer-csp.ts",
     "cypress-merge": "mochawesome-merge ./gui_test_screenshots/cypress_report*.json > ./gui_test_screenshots/cypress.json",
     "cypress-generate": "marge -o ./gui_test_screenshots/ -f cypress-report -t 'OpenShift Console Cypress Test Results' -p 'OpenShift Cypress Test Results' --showPassed false --assetsDir ./gui_test_screenshots/cypress/assets ./gui_test_screenshots/cypress.json",
