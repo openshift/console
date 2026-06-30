@@ -20,7 +20,7 @@ Feature: Helm Chart Installation View
 
         @manual
         Scenario: Switch from YAML to Form view: HR-04-TC02
-            Given user is at the Create Helm Release page
+            Given user is at the Create Helm release page
              When user selects the YAML view
               And user does some changes in the yaml for helm chart
               And user selects the Form view
@@ -41,7 +41,7 @@ Feature: Helm Chart Installation View
              Then user will see Release Name, Replica count as "nodejs-release-3", "3" respectively
 
         @regression
-        Scenario: When Helm Release is not configurable: HR-04-TC04
+        Scenario: When Helm release is not configurable: HR-04-TC04
             Given user is at Add page
              When user selects "Helm Chart" card from add page
               And user searches and selects "Httpd Imagestreams" card from catalog page

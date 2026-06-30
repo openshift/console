@@ -502,7 +502,7 @@ func TestUpgradeReleaseWithoutDependenciesAsync(t *testing.T) {
 			var rel *v1.Secret
 			var err error
 			go func() {
-				rel, err = UpgradeReleaseAsync(tt.namespace, tt.releaseName, tt.chartPath, nil, actionConfig, client, coreClient, false, tt.indexEntry)
+				rel, err = UpgradeReleaseAsync(tt.namespace, tt.releaseName, tt.chartPath, nil, actionConfig, client, coreClient, false, tt.indexEntry, "")
 				if tt.requireErr {
 					fmt.Println("Error", err)
 					require.Error(t, err)
@@ -597,7 +597,7 @@ func TestUpgradeReleaseWithDependenciesAsync(t *testing.T) {
 			store.Create(&r)
 
 			go func() {
-				rel, err = UpgradeReleaseAsync(tt.releaseNamespace, tt.releaseName, tt.chartPath, tt.values, actionConfig, client, coreClient, true, tt.indexEntry)
+				rel, err = UpgradeReleaseAsync(tt.releaseNamespace, tt.releaseName, tt.chartPath, tt.values, actionConfig, client, coreClient, true, tt.indexEntry, "")
 				require.NoError(t, err)
 				require.Equal(t, fmt.Sprintf("sh.helm.release.v1.%v.v2", tt.releaseName), rel.ObjectMeta.Name)
 			}()
@@ -688,7 +688,7 @@ func TestUpgradeReleaseWithCustomValuesAsync(t *testing.T) {
 			var rel *v1.Secret
 			var err error
 			go func() {
-				rel, err = UpgradeReleaseAsync(tt.releaseNamespace, tt.releaseName, tt.chartPath, tt.values, actionConfig, client, coreClient, true, tt.indexEntry)
+				rel, err = UpgradeReleaseAsync(tt.releaseNamespace, tt.releaseName, tt.chartPath, tt.values, actionConfig, client, coreClient, true, tt.indexEntry, "")
 				require.NoError(t, err)
 				require.Equal(t, fmt.Sprintf("sh.helm.release.v1.%v.v2", tt.releaseName), rel.ObjectMeta.Name)
 			}()

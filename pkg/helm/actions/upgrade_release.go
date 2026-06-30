@@ -149,6 +149,7 @@ func UpgradeReleaseAsync(
 	coreClient corev1client.CoreV1Interface,
 	fileCleanUp bool,
 	indexEntry string,
+	basicAuthSecretName string,
 ) (*kv1.Secret, error) {
 	client := action.NewUpgrade(conf)
 	client.ServerSideApply = "false"
@@ -173,7 +174,9 @@ func UpgradeReleaseAsync(
 		if chart_url, ok := rel.Chart.Metadata.Annotations["chart_url"]; chartUrl == "" && ok {
 			chartUrl = chart_url
 		}
-		if authSecret, ok := rel.Chart.Metadata.Annotations[helmAuthSecretAnnotation]; ok {
+		if basicAuthSecretName != "" {
+			auth_secret = basicAuthSecretName
+		} else if authSecret, ok := rel.Chart.Metadata.Annotations[helmAuthSecretAnnotation]; ok {
 			auth_secret = authSecret
 		}
 	}
@@ -226,6 +229,9 @@ func UpgradeReleaseAsync(
 		client.ChartPathOptions.Version = chartInfo.Version
 		cp, err = client.ChartPathOptions.LocateChart(chartLocation, settings)
 		if err != nil {
+			if auth_secret == "" && (strings.Contains(err.Error(), "401") || strings.Contains(err.Error(), "unauthorized")) {
+				return nil, fmt.Errorf("failed to upgrade helm release: %w; registry requires authentication - select a Secret with \"username\" and \"password\" keys for basic authentication", err)
+			}
 			return nil, err
 		}
 		ch, err = loader.Load(cp)

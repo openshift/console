@@ -1787,5 +1787,14 @@
   "{{count}} hour_one": "{{count}} hour",
   "{{count}} hour_other": "{{count}} hours",
   "{{count}} minute_one": "{{count}} minute",
-  "{{count}} minute_other": "{{count}} minutes"
+  "{{count}} minute_other": "{{count}} minutes",
+  "Helm release": "Helm release",
+  "Helm Chart cannot be installed": "Helm Chart cannot be installed",
+  "The Helm Chart is currently unavailable. {{chartError}}": "The Helm Chart is currently unavailable. {{chartError}}",
+  "Release name": "Release name",
+  "A unique name for the Helm release.": "A unique name for the Helm release.",
+  "Helm release is not configurable since the Helm Chart doesn't define any values.": "Helm release is not configurable since the Helm Chart doesn't define any values.",
+  "Unique name of the Secret.": "Unique name of the Secret.",
+  "Secret username": "Secret username",
+  "Secret password or token": "Secret password or token"
 }

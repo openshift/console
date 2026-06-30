@@ -7,7 +7,7 @@ const HelmReleaseListPage: FC<{ mock?: boolean }> = ({ mock }) => {
   const { t } = useTranslation('helm-plugin');
   return (
     <div>
-      <PageHeading title={t('Helm Releases')} />
+      <PageHeading title={t('Helm releases')} />
       <HelmReleaseList mock={mock} />
     </div>
   );

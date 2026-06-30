@@ -64,7 +64,7 @@ When('user searches and selects {string} card from catalog page', (cardName: str
   catalogPage.selectHelmChartCard(cardName);
 });
 
-Then('Create Helm Release page is displayed', () => {
+Then('Create Helm release page is displayed', () => {
   cy.get('[data-test="form-title"]').should('have.text', pageTitle.CreateHelmRelease);
 });
 
@@ -72,7 +72,7 @@ Then('release name displays as {string}', (name: string) => {
   cy.get(catalogPO.installHelmChart.releaseName).should('have.value', name);
 });
 
-Given('user is at Create Helm Release page', () => {
+Given('user is at Create Helm release page', () => {
   navigateTo(devNavigationMenu.Add);
   addPage.selectCardFromOptions(addOptions.HelmChart);
   catalogPage.search('Nodejs');
@@ -99,12 +99,12 @@ Given('user is at the Helm page', () => {
   cy.clickNavLink(navPaths.helm);
 });
 
-Given('user is at the Helm Release tab in admin perspective', () => {
+Given('user is at the Helm release tab in admin perspective', () => {
   cy.clickNavLink(navPaths.helm);
-  cy.byLegacyTestID('horizontal-link-Helm Releases').should('exist').click({ force: true });
+  cy.byLegacyTestID('horizontal-link-Helm releases').should('exist').click({ force: true });
 });
 
-When('user selects checkbox for the Deployed Helm charts', (workloadName: string) => {
+When('user selects checkbox for the Deployed Helm Charts', (workloadName: string) => {
   topologyPage.verifyWorkloadInTopologyPage(workloadName);
 });
 
@@ -138,7 +138,7 @@ Then('user will see the Release Notes tab', () => {
 });
 
 Then(
-  'user will see the Actions drop down menu with options Upgrade, Rollback, and Delete Helm Release',
+  'user will see the Actions drop down menu with options Upgrade, Rollback, and Delete Helm release',
   () => {
     helmDetailsPage.verifyActionsDropdown();
     helmDetailsPage.clickActionMenu();
@@ -155,11 +155,11 @@ When('user clicks on the filter drop down', () => {
   cy.get(helmPO.filterDropdown).click();
 });
 
-When('user selects checkbox for the {string} Helm charts', (status: string) => {
+When('user selects checkbox for the {string} Helm Charts', (status: string) => {
   helmPage.selectHelmFilter(status);
 });
 
-When('the checkbox for the {string} Helm chart is checked', (status: string) => {
+When('the checkbox for the {string} Helm Chart is checked', (status: string) => {
   helmPage.verifyHelmFilterSelected(status);
 });
 
@@ -213,8 +213,8 @@ Then('user is redirected to Repositories tab', () => {
   helmDetailsPage.selectedHelmTab('Repositories');
 });
 
-Then('user is able to see Helm Releases and Repositories Tabs', () => {
-  helmDetailsPage.checkHelmTab('Helm Releases');
+Then('user is able to see Helm releases and Repositories Tabs', () => {
+  helmDetailsPage.checkHelmTab('Helm releases');
   helmDetailsPage.checkHelmTab('Repositories');
 });
 
@@ -223,7 +223,7 @@ When('user clicks on Repositories tab', () => {
 });
 
 Then(
-  'user is able to see the Create drop down menu with Helm Release and Repository options',
+  'user is able to see the Create drop down menu with Helm release and Repository options',
   () => {
     helmDetailsPage.verifyHelmActionsDropdown();
     helmDetailsPage.clickHelmActionButton();

@@ -65,6 +65,7 @@ const HelmInstallUpgradePage: FC = () => {
   const [initialYamlData, setInitialYamlData] = useState<string>('');
   const [initialFormData, setInitialFormData] = useState<object>();
   const [initialFormSchema, setInitialFormSchema] = useState<JSONSchema7>();
+  const [initialBasicAuthSecretName, setInitialBasicAuthSecretName] = useState<string>('');
   const helmAction: HelmActionType = initialChartURL
     ? HelmActionType.Create
     : HelmActionType.Upgrade;
@@ -101,6 +102,9 @@ const HelmInstallUpgradePage: FC = () => {
       const valuesYAML = releaseValues || chartValues;
       const valuesJSON = (res?.config || chart?.values) ?? {};
       const valuesSchema = chart?.schema && JSON.parse(atob(chart?.schema));
+      const basicAuthSecretName =
+        chart?.metadata?.annotations?.['helm.openshift.io/auth-secret'] ?? '';
+      setInitialBasicAuthSecretName(basicAuthSecretName);
       setInitialYamlData(valuesYAML);
       setInitialFormData(valuesJSON);
       setInitialFormSchema(valuesSchema);
@@ -133,6 +137,7 @@ const HelmInstallUpgradePage: FC = () => {
     formData: initialFormData,
     formSchema: initialFormSchema,
     editorType: initialFormSchema ? EditorType.Form : EditorType.YAML,
+    basicAuthSecretName: initialBasicAuthSecretName,
   };
 
   const handleSubmit = (values, actions) => {
@@ -143,6 +148,7 @@ const HelmInstallUpgradePage: FC = () => {
       yamlData,
       formData,
       editorType,
+      basicAuthSecretName,
     }: HelmInstallUpgradeFormData = values;
     let valuesObj;
 
@@ -182,6 +188,7 @@ const HelmInstallUpgradePage: FC = () => {
       ...(chartURL ? { chart_url: chartURL } : {}), // eslint-disable-line @typescript-eslint/naming-convention
       ...(indexEntry ? { indexEntry } : { indexEntry: chartIndexEntry }),
       ...(valuesObj ? { values: valuesObj } : {}),
+      ...(basicAuthSecretName ? { basic_auth_secret_name: basicAuthSecretName } : {}), // eslint-disable-line @typescript-eslint/naming-convention
     };
 
     return config
