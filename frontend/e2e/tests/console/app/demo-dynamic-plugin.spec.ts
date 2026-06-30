@@ -168,6 +168,15 @@ test.describe(
         await expect(enabledCell).toContainText('Enabled');
       });
 
+      await test.step('Wait for plugin proxy to be reachable', async () => {
+        await expect(async () => {
+          const resp = await page.request.get(
+            `/api/plugins/${PLUGIN_NAME}/plugin-manifest.json`,
+          );
+          expect(resp.status()).toBe(200);
+        }).toPass({ timeout: 300_000, intervals: [15_000] });
+      });
+
       await test.step('Verify plugin status is Loaded', async () => {
         // After enablement the console auto-reloads before the server has
         // reconciled the plugin config, so the plugin is not loaded in that
