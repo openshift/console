@@ -3,6 +3,7 @@ package actions
 import (
 	"fmt"
 	"io"
+	"net"
 	"os"
 	"os/exec"
 	"regexp"
@@ -129,7 +130,12 @@ func setupTestWithTls() error {
 	if err := ExecuteScript("./testdata/downloadHelm.sh", true); err != nil {
 		return err
 	}
-	time.Sleep(5 * time.Second)
+	if err := waitForTCP("localhost:9443", 30*time.Second); err != nil {
+		return fmt.Errorf("chartmuseum not ready: %w", err)
+	}
+	if err := waitForTCP("localhost:5443", 30*time.Second); err != nil {
+		return fmt.Errorf("zot (TLS) not ready: %w", err)
+	}
 	if err := ExecuteScript("./testdata/cacertCreate.sh", true); err != nil {
 		return err
 	}
@@ -149,7 +155,12 @@ func setupTestWithoutTls() error {
 	if err := ExecuteScript("./testdata/zotWithoutTls.sh", false); err != nil {
 		return err
 	}
-	time.Sleep(5 * time.Second)
+	if err := waitForTCP("localhost:9181", 30*time.Second); err != nil {
+		return fmt.Errorf("chartmuseum (no TLS) not ready: %w", err)
+	}
+	if err := waitForTCP("localhost:5000", 30*time.Second); err != nil {
+		return fmt.Errorf("zot (no TLS) not ready: %w", err)
+	}
 	if err := ExecuteScript("./testdata/uploadChartsWithoutTls.sh", true); err != nil {
 		return err
 	}
@@ -164,7 +175,9 @@ func setupTestBasicAuth() error {
 	if err := ExecuteScript("./testdata/chartmuseumWithBasicAuth.sh", false); err != nil {
 		return err
 	}
-	time.Sleep(5 * time.Second)
+	if err := waitForTCP("localhost:8181", 30*time.Second); err != nil {
+		return fmt.Errorf("chartmuseum (basic auth) not ready: %w", err)
+	}
 	if err := ExecuteScript("./testdata/uploadChartsWithBasicAuth.sh", true); err != nil {
 		return err
 	}
@@ -175,11 +188,26 @@ func setupTestOCIBasicAuth() error {
 	if err := ExecuteScript("./testdata/zotWithBasicAuth.sh", false); err != nil {
 		return err
 	}
-	time.Sleep(5 * time.Second)
+	if err := waitForTCP("localhost:5001", 30*time.Second); err != nil {
+		return fmt.Errorf("zot (basic auth) not ready: %w", err)
+	}
 	if err := ExecuteScript("./testdata/uploadOciCharts.sh", true, "--basic-auth"); err != nil {
 		return err
 	}
 	return nil
+}
+
+func waitForTCP(addr string, timeout time.Duration) error {
+	deadline := time.Now().Add(timeout)
+	for time.Now().Before(deadline) {
+		conn, err := net.DialTimeout("tcp", addr, time.Second)
+		if err == nil {
+			conn.Close()
+			return nil
+		}
+		time.Sleep(time.Second)
+	}
+	return fmt.Errorf("timed out waiting for %s after %s", addr, timeout)
 }
 
 func ExecuteScript(filepath string, waitForCompletion bool, args ...string) error {
