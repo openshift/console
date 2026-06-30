@@ -2,6 +2,7 @@ import { test, expect } from '../../../fixtures';
 import { DetailsPage } from '../../../pages/details-page';
 import { ListPage } from '../../../pages/list-page';
 import { YamlEditorPage } from '../../../pages/yaml-editor-page';
+import { retryOnModelNotFound } from '../../../utils/retry-model-error';
 
 const POD_NAME = 'pod1';
 const CONTAINER_NAME = 'container1';
@@ -89,14 +90,13 @@ test.describe.serial('Debug pod', { tag: ['@admin'] }, () => {
   test('Create pod that has crashbackloop error', async ({ page, k8sClient }) => {
     test.setTimeout(300_000);
     const yamlEditor = new YamlEditorPage(page);
-    const detailsPage = new DetailsPage(page);
 
     await page.goto(`/k8s/ns/${testNs}/import`);
-    await yamlEditor.isImportLoaded();
+    await yamlEditor.waitForEditorReady();
     await yamlEditor.setEditorContent(podToDebug);
-    await yamlEditor.clickSaveCreateButton();
-    await expect(page.getByTestId('yaml-error')).toBeHidden();
-    await detailsPage.sectionHeaderShouldExist('Pod details');
+    await yamlEditor.clickSave();
+    await expect(yamlEditor.getYamlError()).toBeHidden();
+    await expect(page.locator('[data-test-section-heading="Pod details"]')).toBeVisible();
 
     // Wait for pod to enter CrashLoopBackOff so debug links appear in subsequent tests
     const podState = await pollForPodCrashState(k8sClient, testNs, POD_NAME, 120_000);
@@ -109,16 +109,19 @@ test.describe.serial('Debug pod', { tag: ['@admin'] }, () => {
     const detailsPage = new DetailsPage(page);
 
     await page.goto(`/k8s/ns/${testNs}/pods`);
-    await listPage.dvRowsShouldExist(POD_NAME);
+    await listPage.waitForRows();
+    await expect(listPage.cell(POD_NAME)).toBeVisible({ timeout: 60_000 });
     await page.goto(`/k8s/ns/${testNs}/pods/${POD_NAME}`);
-    await detailsPage.isLoaded();
+    await detailsPage.waitForPageLoad();
+    await retryOnModelNotFound(page);
     await detailsPage.selectTab('Logs');
-    await detailsPage.isLoaded();
-    await detailsPage.clickDebugContainerLink();
-    await listPage.titleShouldHaveText(`Debug ${CONTAINER_NAME}`);
+    await detailsPage.waitForPageLoad();
+    await page.getByTestId('debug-container-link').click();
+    await expect(listPage.heading).toContainText(`Debug ${CONTAINER_NAME}`);
     await expect(detailsPage.xtermViewport).toBeAttached({ timeout: 30_000 });
-    await detailsPage.clickBreadcrumb();
-    await listPage.dvRowsShouldExist(POD_NAME);
+    await detailsPage.getBreadcrumb(0).click();
+    await listPage.waitForRows();
+    await expect(listPage.cell(POD_NAME)).toBeVisible({ timeout: 60_000 });
   });
 
   test('Opens debug terminal page from Pod Details - Status tool tip', async ({ page }) => {
@@ -127,17 +130,19 @@ test.describe.serial('Debug pod', { tag: ['@admin'] }, () => {
     const detailsPage = new DetailsPage(page);
 
     await page.goto(`/k8s/ns/${testNs}/pods/${POD_NAME}`);
-    await detailsPage.isLoaded();
-    await detailsPage.clickStatusPopover();
+    await detailsPage.waitForPageLoad();
+    await retryOnModelNotFound(page);
+    await page.getByTestId('popover-status-button').click({ timeout: 60_000 });
     // Regression test for OCPBUGS-83813: Wait for popover content to be stable before clicking
     // https://issues.redhat.com/browse/OCPBUGS-83813
-    const debugLink = detailsPage.debugContainerLink(CONTAINER_NAME);
+    const debugLink = page.getByTestId(`popup-debug-container-link-${CONTAINER_NAME}`);
     await expect(debugLink).toBeVisible({ timeout: 30_000 });
-    await detailsPage.clickDebugContainerLink(CONTAINER_NAME);
-    await listPage.titleShouldHaveText(`Debug ${CONTAINER_NAME}`);
+    await debugLink.click();
+    await expect(listPage.heading).toContainText(`Debug ${CONTAINER_NAME}`);
     await expect(detailsPage.xtermViewport).toBeAttached({ timeout: 30_000 });
-    await detailsPage.clickBreadcrumb();
-    await listPage.dvRowsShouldExist(POD_NAME);
+    await detailsPage.getBreadcrumb(0).click();
+    await listPage.waitForRows();
+    await expect(listPage.cell(POD_NAME)).toBeVisible({ timeout: 60_000 });
   });
 
   test('Opens debug terminal page from Pods Page - Status tool tip', async ({
@@ -149,14 +154,16 @@ test.describe.serial('Debug pod', { tag: ['@admin'] }, () => {
     const detailsPage = new DetailsPage(page);
 
     await page.goto(`/k8s/ns/${testNs}/pods`);
-    await listPage.dvRowsShouldExist(POD_NAME);
-    await listPage.dvRowsClickStatusButton(POD_NAME);
+    await listPage.waitForRows();
+    await expect(listPage.cell(POD_NAME)).toBeVisible({ timeout: 60_000 });
+    const row = listPage.cell(POD_NAME).locator('xpath=ancestor::tr');
+    await row.getByTestId('popover-status-button').click({ timeout: 60_000 });
     // Regression test for OCPBUGS-83813: Wait for popover content to be stable before clicking
     // https://issues.redhat.com/browse/OCPBUGS-83813
-    const debugLink = detailsPage.debugContainerLink(CONTAINER_NAME);
+    const debugLink = page.getByTestId(`popup-debug-container-link-${CONTAINER_NAME}`);
     await expect(debugLink).toBeVisible({ timeout: 30_000 });
     await debugLink.click();
-    await listPage.titleShouldHaveText(`Debug ${CONTAINER_NAME}`);
+    await expect(listPage.heading).toContainText(`Debug ${CONTAINER_NAME}`);
     await expect(detailsPage.xtermViewport).toBeAttached({ timeout: 30_000 });
 
     // Debug pod should not copy main pod network info
@@ -168,8 +175,9 @@ test.describe.serial('Debug pod', { tag: ['@admin'] }, () => {
     expect(debugPod?.status?.podIP).toBeTruthy();
     expect(mainPod?.status?.podIP).not.toEqual(debugPod?.status?.podIP);
 
-    await detailsPage.clickBreadcrumb();
-    await listPage.dvRowsShouldExist(POD_NAME);
+    await detailsPage.getBreadcrumb(0).click();
+    await listPage.waitForRows();
+    await expect(listPage.cell(POD_NAME)).toBeVisible({ timeout: 60_000 });
   });
 
   test('Debug pod should be terminated after leaving debug container page', async ({
@@ -179,8 +187,9 @@ test.describe.serial('Debug pod', { tag: ['@admin'] }, () => {
     const listPage = new ListPage(page);
 
     await page.goto(`/k8s/ns/${testNs}/pods`);
-    await listPage.dvRowsShouldExist(POD_NAME);
-    await listPage.filterByStatus('Running');
+    await listPage.waitForRows();
+    await expect(listPage.cell(POD_NAME)).toBeVisible({ timeout: 60_000 });
+    await listPage.filterByCheckbox('Status', 'Running');
 
     await expect
       .poll(

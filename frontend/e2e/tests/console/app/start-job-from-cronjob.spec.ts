@@ -2,6 +2,7 @@ import { test, expect } from '../../../fixtures';
 import { DetailsPage } from '../../../pages/details-page';
 import { ListPage } from '../../../pages/list-page';
 import { YamlEditorPage } from '../../../pages/yaml-editor-page';
+import { retryOnModelNotFound } from '../../../utils/retry-model-error';
 
 const CRONJOB_NAME = 'cronjob1';
 
@@ -43,15 +44,16 @@ spec:
     const detailsPage = new DetailsPage(page);
 
     await page.goto(`/k8s/ns/${testNs}/import`);
-    await yamlEditor.isImportLoaded();
+    await yamlEditor.waitForEditorReady();
     await yamlEditor.setEditorContent(cronJobPayload);
-    await yamlEditor.clickSaveCreateButton();
-    await detailsPage.sectionHeaderShouldExist('CronJob details');
+    await yamlEditor.clickSave();
+    await expect(page.locator('[data-test-section-heading="CronJob details"]')).toBeVisible();
 
-    await detailsPage.clickPageActionFromDropdown('Start Job');
-    await detailsPage.isLoaded();
-    await detailsPage.sectionHeaderShouldExist('Job details');
-    await detailsPage.titleShouldContain(CRONJOB_NAME);
+    await detailsPage.clickPageAction('Start Job');
+    await detailsPage.waitForPageLoad();
+    await retryOnModelNotFound(page);
+    await expect(page.locator('[data-test-section-heading="Job details"]')).toBeVisible();
+    await expect(detailsPage.getPageHeading()).toContainText(CRONJOB_NAME);
   });
 
   test('verify "Start Job" on the CronJob list page', async ({ page }) => {
@@ -59,14 +61,13 @@ spec:
     const detailsPage = new DetailsPage(page);
 
     await page.goto(`/k8s/ns/${testNs}/cronjobs`);
-    await listPage.dvRowsShouldExist(CRONJOB_NAME);
+    await listPage.waitForRows();
+    await expect(listPage.cell(CRONJOB_NAME)).toBeVisible({ timeout: 60_000 });
 
     // LazyActionMenu loads actions lazily and WebSocket updates can re-render the
     // table (resetting menu state), so retry opening the kebab if the action disappears.
-    const row = page.locator('table tbody tr').filter({
-      has: page.getByRole('link', { name: CRONJOB_NAME, exact: true }),
-    });
-    const kebab = row.locator('[data-test-id="kebab-button"]');
+    const row = listPage.cell(CRONJOB_NAME).locator('xpath=ancestor::tr');
+    const kebab = row.getByTestId('kebab-button');
     const action = page.locator('[data-test-action="Start Job"]:not([disabled])');
 
     const deadline = Date.now() + 30_000;
@@ -86,9 +87,10 @@ spec:
     expect(found, 'Kebab action "Start Job" was not visible after retries').toBeTruthy();
     await action.click();
 
-    await detailsPage.isLoaded();
-    await detailsPage.sectionHeaderShouldExist('Job details');
-    await detailsPage.titleShouldContain(CRONJOB_NAME);
+    await detailsPage.waitForPageLoad();
+    await retryOnModelNotFound(page);
+    await expect(page.locator('[data-test-section-heading="Job details"]')).toBeVisible();
+    await expect(detailsPage.getPageHeading()).toContainText(CRONJOB_NAME);
   });
 
   // eslint-disable-next-line playwright/expect-expect
@@ -96,17 +98,21 @@ spec:
     const listPage = new ListPage(page);
 
     await page.goto(`/k8s/ns/${testNs}/cronjobs`);
-    await listPage.dvRowsShouldExist(CRONJOB_NAME);
+    await listPage.waitForRows();
+    await expect(listPage.cell(CRONJOB_NAME)).toBeVisible({ timeout: 60_000 });
     await page.goto(`/k8s/ns/${testNs}/cronjobs/${CRONJOB_NAME}/jobs`);
-    await listPage.dvRowsShouldBeLoaded();
-    await listPage.dvRowsCountShouldBe(2);
+    await listPage.waitForRows();
+    await expect(listPage.cells).toHaveCount(2);
   });
 
   test('verify the number of events in CronJob > Events tab list page', async ({ page }) => {
     const detailsPage = new DetailsPage(page);
 
     await page.goto(`/k8s/ns/${testNs}/cronjobs/${CRONJOB_NAME}/events`);
-    await detailsPage.isLoaded();
-    await expect(detailsPage.eventTotals).toHaveText('Showing 2 events', { timeout: 10_000 });
+    await detailsPage.waitForPageLoad();
+    await retryOnModelNotFound(page);
+    await expect(page.getByTestId('event-totals')).toHaveText('Showing 2 events', {
+      timeout: 10_000,
+    });
   });
 });

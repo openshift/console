@@ -121,22 +121,6 @@ export default abstract class BasePage {
     throw new Error(`robustClick failed after ${retries} attempts: ${lastError?.message}`);
   }
 
-  protected async reloadIfModelNotFound(maxRetries = 3): Promise<void> {
-    for (let attempt = 0; attempt < maxRetries; attempt++) {
-      try {
-        // eslint-disable-next-line no-restricted-syntax
-        await this.page
-          .getByText('Model does not exist')
-          .waitFor({ state: 'visible', timeout: 5_000 });
-      } catch {
-        return;
-      }
-      await this.page.evaluate(() => window.location.reload());
-      await this.page.waitForLoadState('load', { timeout: 30_000 });
-      await this.waitForLoadingComplete(10_000);
-    }
-  }
-
   async navigateToTab(locator: Locator, timeoutMs = 60_000): Promise<void> {
     await this.robustClick(locator, { timeout: timeoutMs });
     await this.waitForLoadingComplete();

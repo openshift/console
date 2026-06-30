@@ -1,5 +1,4 @@
 import { test, expect } from '../../../fixtures';
-import { DetailsPage } from '../../../pages/details-page';
 import { YamlEditorPage } from '../../../pages/yaml-editor-page';
 
 const POD_NAME = 'pod1';
@@ -105,10 +104,9 @@ spec:
 
   test('Create a pod and display Admission Webhook warning notification', async ({ page }) => {
     const yamlEditor = new YamlEditorPage(page);
-    const detailsPage = new DetailsPage(page);
 
     await page.goto(`/k8s/ns/${testNs}/import`);
-    await yamlEditor.isImportLoaded();
+    await yamlEditor.waitForEditorReady();
     await yamlEditor.setEditorContent(pod1ReqObj);
 
     await page.route(`**/api/kubernetes/api/v1/namespaces/${testNs}/pods`, async (route) => {
@@ -126,14 +124,14 @@ spec:
       });
     });
 
-    await yamlEditor.clickSaveCreateButton();
-    await detailsPage.sectionHeaderShouldExist('Pod details');
+    await yamlEditor.clickSave();
+    await expect(page.locator('[data-test-section-heading="Pod details"]')).toBeVisible();
 
-    const warning = detailsPage.admissionWarning(WARNING_ID);
+    const warning = page.getByTestId(WARNING_ID);
     await expect(warning).toContainText('Admission Webhook Warning');
     await expect(warning).toContainText(`Pod ${POD_NAME}-a violates policy ${WARNING_FOO}`);
 
-    const learnMore = detailsPage.admissionWarning(LEARN_MORE_ID);
+    const learnMore = page.getByTestId(LEARN_MORE_ID);
     await expect(learnMore).toContainText('Learn more');
     await learnMore.click();
   });
@@ -142,10 +140,9 @@ spec:
     page,
   }) => {
     const yamlEditor = new YamlEditorPage(page);
-    const detailsPage = new DetailsPage(page);
 
     await page.goto(`/k8s/ns/${testNs}/import`);
-    await yamlEditor.isImportLoaded();
+    await yamlEditor.waitForEditorReady();
     await yamlEditor.setEditorContent(bulkResourcesReqObj);
 
     await page.route(`**/api/kubernetes/api/v1/namespaces/${testNs}/pods`, async (route) => {
@@ -181,13 +178,13 @@ spec:
       },
     );
 
-    await yamlEditor.clickSaveCreateButton();
+    await yamlEditor.clickSave();
 
-    await expect(detailsPage.resourcesSuccessMessage).toContainText(
+    await expect(page.getByTestId('resources-successfully-created')).toContainText(
       'Resources successfully created',
     );
 
-    const warning = detailsPage.admissionWarning(WARNING_ID);
+    const warning = page.getByTestId(WARNING_ID);
     await expect(warning).toHaveCount(2);
     await expect(warning.first()).toContainText('Admission Webhook Warning');
     await expect(
@@ -197,7 +194,7 @@ spec:
       warning.filter({ hasText: `Deployment ${DEPLOY_NAME} violates policy ${WARNING_BAR}` }),
     ).toBeVisible();
 
-    const learnMore = detailsPage.admissionWarning(LEARN_MORE_ID);
+    const learnMore = page.getByTestId(LEARN_MORE_ID);
     await expect(learnMore.first()).toContainText('Learn more');
     await learnMore.first().click();
   });

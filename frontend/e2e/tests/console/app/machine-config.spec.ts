@@ -1,5 +1,6 @@
 import { test, expect } from '../../../fixtures';
 import { MachineConfigPage } from '../../../pages/machine-config-page';
+import { retryOnModelNotFound } from '../../../utils/retry-model-error';
 
 interface MachineConfigFile {
   path: string;
@@ -28,8 +29,9 @@ test.describe('MachineConfig resource details page', { tag: ['@admin'] }, () => 
     const mcPage = new MachineConfigPage(page);
 
     await page.goto(`${MC_DETAILS_PAGE_URL}${MC_WITH_CONFIG_FILES}`);
-    await mcPage.isLoaded();
-    await mcPage.titleShouldContain(MC_WITH_CONFIG_FILES);
+    await mcPage.waitForPageLoad();
+    await retryOnModelNotFound(page);
+    await expect(mcPage.getPageHeading()).toContainText(MC_WITH_CONFIG_FILES);
 
     await expect(mcPage.sectionHeading(MC_SECTION_HEADING)).toBeVisible();
     await expect(mcPage.configFilePath).toBeVisible();
@@ -57,8 +59,9 @@ test.describe('MachineConfig resource details page', { tag: ['@admin'] }, () => 
     const mcPage = new MachineConfigPage(page);
 
     await page.goto(`${MC_DETAILS_PAGE_URL}${MC_WITHOUT_CONFIG_FILES}`);
-    await mcPage.isLoaded();
-    await mcPage.titleShouldContain(MC_WITHOUT_CONFIG_FILES);
+    await mcPage.waitForPageLoad();
+    await retryOnModelNotFound(page);
+    await expect(mcPage.getPageHeading()).toContainText(MC_WITHOUT_CONFIG_FILES);
 
     await expect(mcPage.sectionHeading(MC_SECTION_HEADING)).toBeHidden();
     await expect(mcPage.configFilePath).toBeHidden();

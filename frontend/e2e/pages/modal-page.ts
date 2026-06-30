@@ -1,38 +1,33 @@
+import type { Locator } from '@playwright/test';
 import { expect } from '@playwright/test';
 
 import BasePage from './base-page';
 
 export class ModalPage extends BasePage {
-  private get cancelButton() {
-    return this.page.locator('[data-test-id="modal-cancel-action"]');
+  private readonly cancelButton = this.page.getByTestId('modal-cancel-action');
+  private readonly submitButton = this.page.getByTestId('confirm-action');
+
+  getCancelButton(): Locator {
+    return this.cancelButton;
   }
 
-  private get submitButton() {
-    return this.page.locator('button[type=submit]');
+  getSubmitButton(): Locator {
+    return this.submitButton;
   }
 
-  async shouldBeOpened(): Promise<void> {
-    await this.cancelButton.scrollIntoViewIfNeeded();
+  async waitForOpen(): Promise<void> {
     await expect(this.cancelButton).toBeVisible({ timeout: 20_000 });
   }
 
-  async shouldBeClosed(): Promise<void> {
-    await expect(this.cancelButton).toBeHidden();
+  async waitForClosed(): Promise<void> {
+    await expect(this.cancelButton).not.toBeAttached({ timeout: 30_000 });
   }
 
   async submit(): Promise<void> {
-    await this.submitButton.click();
+    await this.robustClick(this.submitButton);
   }
 
   async cancel(): Promise<void> {
-    await this.cancelButton.click();
-  }
-
-  async submitShouldBeDisabled(): Promise<void> {
-    await expect(this.submitButton).toBeDisabled();
-  }
-
-  async submitShouldBeEnabled(): Promise<void> {
-    await expect(this.submitButton).toBeEnabled();
+    await this.robustClick(this.cancelButton);
   }
 }

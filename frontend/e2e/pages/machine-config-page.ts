@@ -7,8 +7,8 @@ export class MachineConfigPage extends DetailsPage {
   readonly configFilePath = this.page.getByTestId('config-file-path-0');
   readonly copyToClipboard = this.page.locator('.co-copy-to-clipboard__text');
 
-  errorHeading(text: string): Locator {
-    return this.page.getByText(text);
+  sectionHeading(heading: string): Locator {
+    return this.page.locator(`[data-test-section-heading="${heading}"]`);
   }
 
   async checkConfigFileDetails(mode: number, overwrite: boolean, content: string): Promise<void> {

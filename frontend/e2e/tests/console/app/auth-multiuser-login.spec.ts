@@ -1,6 +1,5 @@
 import { test, expect } from '../../../fixtures';
 import { LoginPage } from '../../../pages/login-page';
-import { MastheadPage } from '../../../pages/masthead-page';
 import { NavPage } from '../../../pages/nav-page';
 
 const KUBEADMIN_IDP = 'kube:admin';
@@ -24,7 +23,6 @@ test.describe('Auth test', { tag: ['@admin'] }, () => {
     const passwd = htpasswdPassword || 'test';
 
     const loginPage = new LoginPage(page);
-    const masthead = new MastheadPage(page);
     const nav = new NavPage(page);
 
     await test.step('Login as test user', async () => {
@@ -35,7 +33,7 @@ test.describe('Auth test', { tag: ['@admin'] }, () => {
     });
 
     await test.step('Verify user logged in', async () => {
-      await masthead.usernameShouldHaveText(username);
+      await expect(page.getByTestId('user-dropdown-toggle')).toHaveText(username);
     });
 
     await test.step('Switch to Core platform perspective', async () => {
@@ -63,7 +61,6 @@ test.describe('Auth test', { tag: ['@admin'] }, () => {
     }
 
     const loginPage = new LoginPage(page);
-    const masthead = new MastheadPage(page);
     const nav = new NavPage(page);
 
     await test.step('Login as kubeadmin', async () => {
@@ -78,9 +75,9 @@ test.describe('Auth test', { tag: ['@admin'] }, () => {
     });
 
     await test.step('Verify kubeadmin logged in', async () => {
-      await expect(masthead.loadingIndicator).toBeHidden();
-      await masthead.usernameShouldHaveText(KUBEADMIN_IDP);
-      await expect(masthead.globalNotifications).toContainText(
+      await expect(page.getByTestId('loading-indicator')).toBeHidden();
+      await expect(page.getByTestId('user-dropdown-toggle')).toHaveText(KUBEADMIN_IDP);
+      await expect(page.getByTestId('global-notifications')).toContainText(
         'You are logged in as a temporary administrative user.',
       );
     });

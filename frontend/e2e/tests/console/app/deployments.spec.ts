@@ -1,5 +1,6 @@
 import { test, expect } from '../../../fixtures';
 import { DetailsPage } from '../../../pages/details-page';
+import { retryOnModelNotFound } from '../../../utils/retry-model-error';
 
 test.describe.serial('Deployment resource details page', { tag: ['@admin'] }, () => {
   const testNs = `e2e-deployments-${Date.now()}`;
@@ -52,16 +53,19 @@ test.describe.serial('Deployment resource details page', { tag: ['@admin'] }, ()
     const detailsPage = new DetailsPage(page);
 
     await page.goto(`/k8s/ns/${testNs}/deployments/${workloadName}`);
-    await detailsPage.isLoaded();
-    await expect(detailsPage.enableAutoscaleButton).toBeVisible();
-    await detailsPage.enableAutoscaleButton.click();
+    await detailsPage.waitForPageLoad();
+    await retryOnModelNotFound(page);
+    const autoscaleButton = page.getByTestId('enable-autoscale');
+    await expect(autoscaleButton).toBeVisible();
+    await autoscaleButton.click();
   });
 
   test('Enable deployment autoscale button should not exist', async ({ page }) => {
     const detailsPage = new DetailsPage(page);
 
     await page.goto(`/k8s/ns/${testNs}/deployments/${workloadName}`);
-    await detailsPage.isLoaded();
-    await expect(detailsPage.enableAutoscaleButton).toBeHidden({ timeout: 10_000 });
+    await detailsPage.waitForPageLoad();
+    await retryOnModelNotFound(page);
+    await expect(page.getByTestId('enable-autoscale')).toBeHidden({ timeout: 10_000 });
   });
 });

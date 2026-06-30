@@ -1,70 +1,75 @@
-import { expect } from '@playwright/test';
-import type { Locator } from '@playwright/test';
+import { type Locator, expect } from '@playwright/test';
 
 import BasePage from './base-page';
 
 export class DetailsPage extends BasePage {
-  private readonly pageHeading = this.page.locator('[data-test="page-heading"]');
-  private readonly resourceTitle = this.page.locator('[data-test-id="resource-title"]');
-  private readonly skeletonView = this.page.getByTestId('skeleton-detail-view');
-  private readonly actionsMenuButton = this.page.locator('[data-test-id="actions-menu-button"]');
-  readonly breadcrumbLink0 = this.page.locator('[data-test-id="breadcrumb-link-0"]');
-  readonly statusPopoverButton = this.page.getByTestId('popover-status-button');
-  readonly enableAutoscaleButton = this.page.getByTestId('enable-autoscale');
-  readonly xtermViewport = this.page.locator('.xterm-viewport');
-  readonly resourcesSuccessMessage = this.page.getByTestId('resources-successfully-created');
-  readonly eventTotals = this.page.getByTestId('event-totals');
-  admissionWarning(testId: string): Locator {
-    return this.page.getByTestId(testId);
+  private readonly pageHeading = this.page.getByTestId('page-heading');
+  private readonly resourceTitle = this.page.getByTestId('resource-title');
+  private readonly skeletonLoader = this.page.getByTestId('skeleton-detail-view');
+  readonly nodeTerminalError: Locator = this.page.getByTestId('node-terminal-error');
+  readonly xtermViewport: Locator = this.page.locator('.xterm-viewport');
+
+  get title(): Locator {
+    return this.resourceTitle;
   }
 
-  debugContainerLink(containerName?: string): Locator {
-    const testId = containerName
-      ? `popup-debug-container-link-${containerName}`
-      : 'debug-container-link';
-    return this.page.getByTestId(testId);
+  getPageHeading(): Locator {
+    return this.pageHeading;
   }
 
-  async titleShouldContain(title: string): Promise<void> {
-    await expect(this.pageHeading).toBeVisible({ timeout: 30_000 });
-    await expect(this.pageHeading).toContainText(title, { timeout: 30_000 });
+  async waitForPageLoad(): Promise<void> {
+    try {
+      // eslint-disable-next-line no-restricted-syntax
+      await this.skeletonLoader.waitFor({ state: 'detached', timeout: 30_000 });
+    } catch {
+      // Skeleton may have already disappeared
+    }
+    await expect(this.resourceTitle.or(this.pageHeading).first()).toBeVisible({
+      timeout: 30_000,
+    });
   }
 
-  sectionHeading(heading: string): Locator {
-    return this.page.locator(`[data-test-section-heading="${heading}"]`);
+  tab(name: string): Locator {
+    return this.page.getByTestId(`horizontal-link-${name}`);
   }
 
-  async sectionHeaderShouldExist(sectionHeading: string): Promise<void> {
-    await expect(this.sectionHeading(sectionHeading)).toBeVisible();
+  async clickPageAction(actionName: string): Promise<void> {
+    await this.robustClick(this.page.getByTestId('actions-menu-button'));
+    await this.robustClick(this.page.getByTestId(actionName));
   }
 
-  async isLoaded(): Promise<void> {
-    await expect(this.skeletonView).toBeHidden({ timeout: 30_000 });
-    await this.reloadIfModelNotFound();
-    await expect(this.resourceTitle).toBeVisible({ timeout: 30_000 });
-    await expect(this.resourceTitle).not.toBeEmpty();
+  getBreadcrumb(index: number): Locator {
+    return this.page.getByTestId(`breadcrumb-link-${index}`);
   }
 
   async selectTab(name: string): Promise<void> {
-    const tab = this.page.locator(`[data-test-id="horizontal-link-${name}"]`);
-    await this.robustClick(tab);
+    await this.navigateToTab(this.tab(name));
   }
 
-  async clickPageActionFromDropdown(actionID: string): Promise<void> {
-    await this.robustClick(this.actionsMenuButton);
-    const action = this.page.locator(`[data-test-action="${actionID}"]:not([disabled])`);
-    await this.robustClick(action);
+  async clickKebabAction(actionId: string): Promise<void> {
+    await this.robustClick(this.page.getByTestId(actionId));
   }
 
-  async clickBreadcrumb(): Promise<void> {
-    await this.robustClick(this.breadcrumbLink0);
+  getResourceRow(resourceId: string): Locator {
+    const link = this.page.locator(`a[data-test="${resourceId}"]`);
+    const fallback = this.page.locator(
+      `[data-test="${resourceId}"], [data-test-action="${resourceId}"]`,
+    );
+    return link.or(fallback).first();
   }
 
-  async clickStatusPopover(): Promise<void> {
-    await this.robustClick(this.statusPopoverButton, { timeout: 60_000 });
+  async clickResourceRow(resourceId: string): Promise<void> {
+    const row = this.getResourceRow(resourceId);
+    await this.robustClick(row);
   }
 
-  async clickDebugContainerLink(containerName?: string): Promise<void> {
-    await this.robustClick(this.debugContainerLink(containerName));
+  getResourceByAction(actionName: string): Locator {
+    return this.page.locator(`[data-test-action="${actionName}"]`);
+  }
+
+  async openResourceKebabMenu(actionName: string): Promise<void> {
+    const resourceRow = this.getResourceByAction(actionName);
+    const kebabButton = resourceRow.getByTestId('kebab-button');
+    await this.robustClick(kebabButton);
   }
 }
