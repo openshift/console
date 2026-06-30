@@ -28,7 +28,9 @@ jest.mock('@console/internal/components/utils/async', () => ({
 // Minimal PluginStore test impl. containing Console perspective extensions.
 // TODO: replace with `new TestPluginStore(actualPluginStore)` once supported
 const createPluginStoreWithPerspectiveExtensions = () => {
-  const pluginStore = new TestPluginStore();
+  const pluginStore = new TestPluginStore({
+    loaderOptions: { entryCallbackSettings: { registerCallback: false } },
+  });
 
   addLoadedPluginFromManifest(pluginStore, createLocalPluginManifest('@console/app'), [
     {
