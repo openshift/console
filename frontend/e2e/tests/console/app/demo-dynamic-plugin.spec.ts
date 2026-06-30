@@ -176,9 +176,9 @@ test.describe(
         await consolePluginPage.navigateToConsolePlugins();
         await expect(page.getByTestId(`${PLUGIN_NAME}-name`)).toBeVisible();
         await expect(async () => {
-          await page.reload({ waitUntil: 'domcontentloaded' });
+          await page.reload({ waitUntil: 'load' });
           await expect(page.getByTestId(`${PLUGIN_NAME}-status`)).toContainText('Loaded');
-        }).toPass({ timeout: 120_000 });
+        }).toPass({ timeout: 120_000, intervals: [15_000] });
       });
     });
 
