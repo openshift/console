@@ -1537,12 +1537,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@console-telemetry-plugin/integration-tests@workspace:packages/console-telemetry-plugin/integration-tests":
-  version: 0.0.0-use.local
-  resolution: "@console-telemetry-plugin/integration-tests@workspace:packages/console-telemetry-plugin/integration-tests"
-  languageName: unknown
-  linkType: soft
-
 "@console/app@workspace:packages/console-app":
   version: 0.0.0-use.local
   resolution: "@console/app@workspace:packages/console-app"
