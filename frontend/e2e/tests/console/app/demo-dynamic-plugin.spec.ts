@@ -86,17 +86,20 @@ test.describe(
 
         await k8sClient.createNamespace(PLUGIN_NAME);
 
+        // Create the Service first so that the serving-cert-secret-name
+        // annotation triggers creation of the TLS secret before the
+        // Deployment pod tries to mount it.
+        await k8sClient.coreV1Api.createNamespacedService({
+          namespace: PLUGIN_NAME,
+          body: service as unknown as Record<string, unknown>,
+        });
+
         await k8sClient.appsV1Api.createNamespacedDeployment({
           namespace: PLUGIN_NAME,
           body: deployment as unknown as Record<string, unknown>,
         });
 
         await k8sClient.waitForDeploymentReady(PLUGIN_NAME, PLUGIN_NAME);
-
-        await k8sClient.coreV1Api.createNamespacedService({
-          namespace: PLUGIN_NAME,
-          body: service as unknown as Record<string, unknown>,
-        });
 
         await k8sClient.createClusterCustomResource(
           'console.openshift.io',
