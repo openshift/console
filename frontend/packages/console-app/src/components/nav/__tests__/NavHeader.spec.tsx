@@ -1,8 +1,14 @@
+import { TestPluginStore } from '@openshift/dynamic-plugin-sdk';
 import { screen, waitForElementToBeRemoved } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import type { Perspective } from '@console/shared/src/utils/override-perspectives';
 import { PerspectiveVisibilityState } from '@console/shared/src/utils/override-perspectives';
+import {
+  createLocalPluginManifest,
+  createRemotePluginManifest,
+  addLoadedPluginFromManifest,
+} from '../../console-operator/__tests__/pluginTestUtils';
 import NavHeader from '../NavHeader';
 import { renderWithPerspective } from './navTestUtils';
 
@@ -19,20 +25,44 @@ jest.mock('@console/internal/components/utils/async', () => ({
   AsyncComponent: () => null,
 }));
 
+// Minimal PluginStore test impl. containing Console perspective extensions.
+// TODO: replace with `new TestPluginStore(actualPluginStore)` once supported
+const createPluginStoreWithPerspectiveExtensions = () => {
+  const pluginStore = new TestPluginStore();
+
+  addLoadedPluginFromManifest(pluginStore, createLocalPluginManifest('@console/app'), [
+    {
+      type: 'console.perspective',
+      properties: { id: 'admin', default: true, name: 'Core platform' },
+    },
+  ]);
+
+  addLoadedPluginFromManifest(pluginStore, createLocalPluginManifest('@console/dev-console'), [
+    {
+      type: 'console.perspective',
+      properties: { id: 'dev', name: 'Developer' },
+    },
+  ]);
+
+  return pluginStore;
+};
+
 describe('NavHeader', () => {
   const mockOnPerspectiveSelected = jest.fn();
   let mockSetActivePerspective: jest.Mock;
+  let pluginStore: TestPluginStore;
 
   beforeEach(() => {
     jest.clearAllMocks();
     mockSetActivePerspective = jest.fn();
+    pluginStore = createPluginStoreWithPerspectiveExtensions();
   });
 
-  // Uses real perspectives from static plugin data loaded via renderWithProviders
-  // Static plugins provide admin and dev perspectives by default
   describe('when multiple perspectives are available', () => {
     it('should render perspective switcher dropdown with toggle button', () => {
-      renderWithProviders(<NavHeader onPerspectiveSelected={mockOnPerspectiveSelected} />);
+      renderWithProviders(<NavHeader onPerspectiveSelected={mockOnPerspectiveSelected} />, {
+        pluginStore,
+      });
 
       const toggle = screen.getByRole('button', { expanded: false });
       expect(toggle).toBeVisible();
@@ -41,7 +71,9 @@ describe('NavHeader', () => {
 
     it('should open dropdown menu when toggle is clicked', async () => {
       const user = userEvent.setup();
-      renderWithProviders(<NavHeader onPerspectiveSelected={mockOnPerspectiveSelected} />);
+      renderWithProviders(<NavHeader onPerspectiveSelected={mockOnPerspectiveSelected} />, {
+        pluginStore,
+      });
 
       const toggle = screen.getByRole('button', { expanded: false });
       await user.click(toggle);
@@ -51,7 +83,9 @@ describe('NavHeader', () => {
 
     it('should display all perspective options in dropdown menu', async () => {
       const user = userEvent.setup();
-      renderWithProviders(<NavHeader onPerspectiveSelected={mockOnPerspectiveSelected} />);
+      renderWithProviders(<NavHeader onPerspectiveSelected={mockOnPerspectiveSelected} />, {
+        pluginStore,
+      });
 
       await user.click(screen.getByRole('button'));
 
@@ -65,6 +99,7 @@ describe('NavHeader', () => {
         <NavHeader onPerspectiveSelected={mockOnPerspectiveSelected} />,
         'admin',
         mockSetActivePerspective,
+        { pluginStore },
       );
 
       await user.click(screen.getByRole('button'));
@@ -84,6 +119,7 @@ describe('NavHeader', () => {
         <NavHeader onPerspectiveSelected={mockOnPerspectiveSelected} />,
         'admin',
         mockSetActivePerspective,
+        { pluginStore },
       );
 
       await user.click(screen.getByRole('button'));
@@ -98,7 +134,7 @@ describe('NavHeader', () => {
     });
   });
 
-  describe('when only one perspective is available', () => {
+  describe('when only admin perspective is available', () => {
     beforeEach(() => {
       mockOverridePerspectives = [
         { id: 'admin', visibility: { state: PerspectiveVisibilityState.Enabled } },
@@ -110,15 +146,17 @@ describe('NavHeader', () => {
       mockOverridePerspectives = undefined;
     });
 
-    it('should render static label instead of dropdown', () => {
-      renderWithProviders(<NavHeader onPerspectiveSelected={mockOnPerspectiveSelected} />);
+    it('should render static label instead of a dropdown', () => {
+      renderWithProviders(<NavHeader onPerspectiveSelected={mockOnPerspectiveSelected} />, {
+        pluginStore,
+      });
 
       expect(screen.getByRole('heading', { name: 'Core platform' })).toBeVisible();
       expect(screen.queryByRole('button')).not.toBeInTheDocument();
     });
   });
 
-  describe('when all perspectives are disabled', () => {
+  describe('when both admin and dev perspectives are unavailable', () => {
     beforeEach(() => {
       mockOverridePerspectives = [
         { id: 'admin', visibility: { state: PerspectiveVisibilityState.Disabled } },
@@ -130,11 +168,100 @@ describe('NavHeader', () => {
       mockOverridePerspectives = undefined;
     });
 
-    it('should fall back to static label for admin perspective', () => {
-      renderWithProviders(<NavHeader onPerspectiveSelected={mockOnPerspectiveSelected} />);
+    it('active perspective "admin", no remote plugins: render admin perspective label', () => {
+      renderWithPerspective(
+        <NavHeader onPerspectiveSelected={mockOnPerspectiveSelected} />,
+        'admin',
+        mockSetActivePerspective,
+        { pluginStore },
+      );
 
       expect(screen.getByRole('heading', { name: 'Core platform' })).toBeVisible();
       expect(screen.queryByRole('button')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('perspective-progress-icon')).not.toBeInTheDocument();
+    });
+
+    it('active perspective "admin", remote plugins pending: render in-progress icon', () => {
+      pluginStore.addPendingPlugin(createRemotePluginManifest('test-plugin'));
+
+      renderWithPerspective(
+        <NavHeader onPerspectiveSelected={mockOnPerspectiveSelected} />,
+        'admin',
+        mockSetActivePerspective,
+        { pluginStore },
+      );
+
+      expect(screen.queryByRole('heading', { name: 'Core platform' })).not.toBeInTheDocument();
+      expect(screen.queryByRole('button')).not.toBeInTheDocument();
+      expect(screen.getByTestId('perspective-progress-icon')).toBeVisible();
+    });
+
+    it('active perspective "admin", remote plugins loaded: render test perspective label', () => {
+      addLoadedPluginFromManifest(pluginStore, createRemotePluginManifest('test-plugin'), [
+        {
+          type: 'console.perspective',
+          properties: { id: 'test', name: 'Test perspective name' },
+        },
+      ]);
+
+      renderWithPerspective(
+        <NavHeader onPerspectiveSelected={mockOnPerspectiveSelected} />,
+        'admin',
+        mockSetActivePerspective,
+        { pluginStore },
+      );
+
+      expect(screen.getByRole('heading', { name: 'Test perspective name' })).toBeVisible();
+      expect(screen.queryByRole('button')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('perspective-progress-icon')).not.toBeInTheDocument();
+    });
+
+    it('active perspective "test", no remote plugins: render admin perspective label', () => {
+      renderWithPerspective(
+        <NavHeader onPerspectiveSelected={mockOnPerspectiveSelected} />,
+        'test',
+        mockSetActivePerspective,
+        { pluginStore },
+      );
+
+      expect(screen.getByRole('heading', { name: 'Core platform' })).toBeVisible();
+      expect(screen.queryByRole('button')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('perspective-progress-icon')).not.toBeInTheDocument();
+    });
+
+    it('active perspective "test", remote plugins pending: render admin perspective label', () => {
+      pluginStore.addPendingPlugin(createRemotePluginManifest('test-plugin'));
+
+      renderWithPerspective(
+        <NavHeader onPerspectiveSelected={mockOnPerspectiveSelected} />,
+        'test',
+        mockSetActivePerspective,
+        { pluginStore },
+      );
+
+      expect(screen.getByRole('heading', { name: 'Core platform' })).toBeVisible();
+      expect(screen.queryByRole('button')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('perspective-progress-icon')).not.toBeInTheDocument();
+    });
+
+    it('active perspective "test", remote plugins loaded: render test perspective label', () => {
+      addLoadedPluginFromManifest(pluginStore, createRemotePluginManifest('test-plugin'), [
+        {
+          type: 'console.perspective',
+          properties: { id: 'test', name: 'Test perspective name' },
+        },
+      ]);
+
+      renderWithPerspective(
+        <NavHeader onPerspectiveSelected={mockOnPerspectiveSelected} />,
+        'test',
+        mockSetActivePerspective,
+        { pluginStore },
+      );
+
+      expect(screen.getByRole('heading', { name: 'Test perspective name' })).toBeVisible();
+      expect(screen.queryByRole('button')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('perspective-progress-icon')).not.toBeInTheDocument();
     });
   });
 });
