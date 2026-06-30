@@ -14,8 +14,7 @@ export class LoginPage extends BasePage {
   }
 
   async loginAs(provider: string, username: string, password: string): Promise<boolean> {
-    const baseURL = process.env.WEB_CONSOLE_URL || 'http://localhost:9000';
-    await this.page.goto(baseURL, { timeout: 90_000, waitUntil: 'domcontentloaded' });
+    await this.page.goto('./', { timeout: 90_000, waitUntil: 'domcontentloaded' });
 
     const authDisabled = await this.page
       .evaluate(() => (window as any).SERVER_FLAGS?.authDisabled)
@@ -30,7 +29,7 @@ export class LoginPage extends BasePage {
       this.loginButton.or(this.usernameInput).or(providerBtn).first(),
     ).toBeVisible({ timeout: 30_000 });
 
-    if ((await providerBtn.count()) > 0 && (await providerBtn.isVisible())) {
+    if (await providerBtn.isVisible()) {
       await providerBtn.click();
       await expect(this.usernameInput).toBeVisible({ timeout: 30_000 });
     }

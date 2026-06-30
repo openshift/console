@@ -19,4 +19,9 @@ export async function retryOnModelNotFound(page: Page, maxRetries = 3): Promise<
     // eslint-disable-next-line playwright/no-wait-for-timeout
     await page.waitForTimeout(3_000);
   }
+
+  // eslint-disable-next-line no-restricted-syntax
+  if (await errorLocator.isVisible().catch(() => false)) {
+    throw new Error(`"Model does not exist" persisted after ${maxRetries} reload attempts`);
+  }
 }

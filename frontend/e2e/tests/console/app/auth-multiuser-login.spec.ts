@@ -10,17 +10,16 @@ test.describe('Auth test', { tag: ['@admin'] }, () => {
 
   // eslint-disable-next-line playwright/expect-expect
   test("logs in as 'test' user via htpasswd identity provider", async ({ page }) => {
-    const kubeadminPassword = process.env.BRIDGE_KUBEADMIN_PASSWORD;
     const htpasswdPassword = process.env.BRIDGE_HTPASSWD_PASSWORD;
 
-    if (!kubeadminPassword || !htpasswdPassword) {
+    if (!htpasswdPassword) {
       test.skip();
       return;
     }
 
     const idp = process.env.BRIDGE_HTPASSWD_IDP || 'test';
     const username = process.env.BRIDGE_HTPASSWD_USERNAME || 'test';
-    const passwd = htpasswdPassword || 'test';
+    const passwd = htpasswdPassword;
 
     const loginPage = new LoginPage(page);
     const nav = new NavPage(page);
