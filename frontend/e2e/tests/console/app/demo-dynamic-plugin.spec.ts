@@ -46,6 +46,7 @@ test.describe(
     let modalPage: ModalPage;
 
     test.beforeAll(async ({ k8sClient }) => {
+      test.setTimeout(180_000);
       if (SHOULD_DEPLOY_PLUGIN) {
         const manifestPath = path.resolve(
           import.meta.dirname,
