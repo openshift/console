@@ -33,7 +33,7 @@ export type Perspective = {
  *
  * Otherwise, return `undefined` (no perspective overrides specified).
  */
-const getOverridePerspectives = (): Perspective[] => {
+const getOverridePerspectives = (): Perspective[] | undefined => {
   if (window.SERVER_FLAGS.perspectives) {
     try {
       const value = JSON.parse(window.SERVER_FLAGS.perspectives);
