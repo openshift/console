@@ -212,6 +212,26 @@ func waitForTCP(addr string, timeout time.Duration, logFiles ...string) error {
 			fmt.Fprintf(os.Stderr, "=== %s ===\n%s\n", f, string(data))
 		}
 	}
+	// Dump listening ports and process state for debugging
+	if ssCmd := exec.Command("ss", "-tlnp"); ssCmd != nil {
+		if out, err := ssCmd.CombinedOutput(); err == nil {
+			fmt.Fprintf(os.Stderr, "=== ss -tlnp ===\n%s\n", string(out))
+		}
+	}
+	// Check if any chartmuseum PID files exist and if processes are alive
+	for _, pidFile := range []string{"./chartmuseum-tls.pid"} {
+		if data, err := os.ReadFile(pidFile); err == nil {
+			fmt.Fprintf(os.Stderr, "=== %s: %s ===\n", pidFile, strings.TrimSpace(string(data)))
+			pidStr := strings.TrimSpace(string(data))
+			if checkCmd := exec.Command("ls", "-la", fmt.Sprintf("/proc/%s/exe", pidStr)); checkCmd != nil {
+				if out, err := checkCmd.CombinedOutput(); err == nil {
+					fmt.Fprintf(os.Stderr, "/proc/%s/exe -> %s\n", pidStr, string(out))
+				} else {
+					fmt.Fprintf(os.Stderr, "/proc/%s: process dead (%v)\n", pidStr, err)
+				}
+			}
+		}
+	}
 	return fmt.Errorf("timed out waiting for %s after %s", addr, timeout)
 }
 
