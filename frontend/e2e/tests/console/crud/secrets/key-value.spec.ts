@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 import { test, expect } from '../../../../fixtures';
+import { warmupSPA } from '../../../../pages/base-page';
 import { SecretPage } from '../../../../pages/secret-page';
 
 const fixturesDir = path.resolve(import.meta.dirname, '..', '..', '..', '..', 'fixtures', 'secrets');
@@ -22,11 +23,11 @@ test.describe('Key/value secrets', { tag: ['@admin', '@crud'] }, () => {
     await test.step('Create binary file secret', async () => {
       await page.goto(`/k8s/ns/${ns}/secrets`);
       await secretPage.clickCreateSecretDropdownButton('generic');
-      await expect(page.getByTestId('page-heading')).toContainText('Create key/value secret');
+      await expect(secretPage.getPageHeading()).toContainText('Create key/value secret');
       await secretPage.fillName(secretName);
-      await page.getByTestId('secret-key').fill(secretKey);
+      await secretPage.fillSecretKey(secretKey);
       await secretPage.uploadFile(path.join(fixturesDir, 'binarysecret.bin'));
-      await expect(page.getByTestId('file-input-binary-alert')).toBeVisible();
+      await expect(secretPage.getBinaryAlert()).toBeVisible();
       await secretPage.save();
     });
 
@@ -39,10 +40,10 @@ test.describe('Key/value secrets', { tag: ['@admin', '@crud'] }, () => {
 
     await test.step('Edit secret key and verify data preserved', async () => {
       await secretPage.editSecret();
-      await expect(page.getByTestId('page-heading')).toContainText('Edit key/value secret');
-      await page.getByTestId('secret-key').clear();
-      await page.getByTestId('secret-key').fill(modifiedKey);
-      await expect(page.getByTestId('file-input-binary-alert')).toBeVisible();
+      await expect(secretPage.getPageHeading()).toContainText('Edit key/value secret');
+      await secretPage.getSecretKeyInput().clear();
+      await secretPage.fillSecretKey(modifiedKey);
+      await expect(secretPage.getBinaryAlert()).toBeVisible();
       await secretPage.save();
       await secretPage.detailsPageIsLoaded(secretName);
       const secret = await k8sClient.getSecret(secretName, ns);
@@ -67,10 +68,10 @@ test.describe('Key/value secrets', { tag: ['@admin', '@crud'] }, () => {
       await page.goto(`/k8s/ns/${ns}/secrets`);
       await secretPage.clickCreateSecretDropdownButton('generic');
       await secretPage.fillName(secretName);
-      await page.getByTestId('secret-key').fill(secretKey);
+      await secretPage.fillSecretKey(secretKey);
       await secretPage.uploadFile(path.join(fixturesDir, 'asciisecret.txt'));
-      await expect(page.locator('[data-test-id="file-input-textarea"]')).toContainText(asciiContent);
-      await expect(page.getByTestId('file-input-binary-alert')).toBeHidden();
+      await expect(secretPage.getFileInputTextarea()).toContainText(asciiContent);
+      await expect(secretPage.getBinaryAlert()).toBeHidden();
       await secretPage.save();
     });
 
@@ -98,10 +99,10 @@ test.describe('Key/value secrets', { tag: ['@admin', '@crud'] }, () => {
       await page.goto(`/k8s/ns/${ns}/secrets`);
       await secretPage.clickCreateSecretDropdownButton('generic');
       await secretPage.fillName(secretName);
-      await page.getByTestId('secret-key').fill(secretKey);
+      await secretPage.fillSecretKey(secretKey);
       await secretPage.uploadFile(path.join(fixturesDir, 'unicodesecret.utf8'));
-      await expect(page.locator('[data-test-id="file-input-textarea"]')).toContainText(unicodeContent);
-      await expect(page.getByTestId('file-input-binary-alert')).toBeHidden();
+      await expect(secretPage.getFileInputTextarea()).toContainText(unicodeContent);
+      await expect(secretPage.getBinaryAlert()).toBeHidden();
       await secretPage.save();
     });
 
@@ -144,6 +145,56 @@ test.describe('Key/value secrets', { tag: ['@admin', '@crud'] }, () => {
       await secretPage.checkKeyValueExist('keyfortest', 'valuefortest');
       const secret = await k8sClient.getSecret(secretName, ns);
       expect((secret as any).data).toBeDefined();
+    });
+  });
+
+  test('editing text field does not corrupt binary data (OCPBUGS-70273)', async ({
+    page,
+    k8sClient,
+    cleanup,
+  }) => {
+    const ns = `test-secret-kv-mixed-${Date.now()}`;
+    const secretName = 'mixed-secret';
+    const textKey = 'textfield';
+    const textValue = 'original-password';
+    const updatedTextValue = 'updated-password';
+    const binaryKey = 'binaryfield';
+    const binaryBase64 = fs.readFileSync(path.join(fixturesDir, 'binarysecret.bin')).toString('base64');
+    const secretPage = new SecretPage(page);
+
+    await test.step('Set up namespace and mixed secret', async () => {
+      await k8sClient.createNamespace(ns);
+      cleanup.trackNamespace(ns);
+      await k8sClient.createSecret(ns, {
+        apiVersion: 'v1',
+        kind: 'Secret',
+        metadata: { name: secretName, namespace: ns },
+        data: {
+          [textKey]: Buffer.from(textValue).toString('base64'),
+          [binaryKey]: binaryBase64,
+        },
+      } as any);
+    });
+
+    await test.step('Edit only the text field', async () => {
+      await warmupSPA(page);
+      await page.goto(`/k8s/ns/${ns}/secrets/${secretName}`);
+      await secretPage.detailsPageIsLoaded(secretName);
+      await secretPage.editSecret();
+      await expect(secretPage.getPageHeading()).toContainText('Edit key/value secret');
+      await expect(secretPage.getBinaryAlert()).toBeVisible();
+      const textArea = secretPage.getFileInputTextarea().first();
+      await textArea.clear();
+      await textArea.fill(updatedTextValue);
+      await secretPage.save();
+    });
+
+    await test.step('Verify text updated and binary preserved', async () => {
+      await secretPage.detailsPageIsLoaded(secretName);
+      await secretPage.revealValues();
+      await expect(secretPage.getClipboards().first()).toContainText(updatedTextValue);
+      const secret = await k8sClient.getSecret(secretName, ns);
+      expect((secret as any).data[binaryKey]).toBe(binaryBase64);
     });
   });
 });

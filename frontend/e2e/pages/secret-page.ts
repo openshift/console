@@ -1,6 +1,8 @@
+import type { Locator } from '@playwright/test';
 import { expect } from '@playwright/test';
 
 import BasePage from './base-page';
+import { ModalPage } from './modal-page';
 
 export class SecretPage extends BasePage {
   private readonly secretNameInput = this.page.getByTestId('secret-name');
@@ -14,48 +16,104 @@ export class SecretPage extends BasePage {
   );
   private readonly webhookGenerateButton = this.page.getByTestId('webhook-generate-button');
   private readonly secretKeyInput = this.page.getByTestId('secret-key');
-  private readonly fileInputTextarea = this.page.locator('[data-test-id="file-input-textarea"]');
+  private readonly fileInputTextarea = this.page.getByRole('textbox', {
+    name: 'Value',
+    exact: true,
+  });
+  private readonly binaryAlert = this.page.getByTestId('file-input-binary-alert');
   private readonly pageHeading = this.page.getByTestId('page-heading');
   private readonly createDropdown = this.page.getByTestId('item-create');
+  private readonly actionsButton = this.page.getByTestId('actions-menu-button');
+  private readonly secretDataTerms = this.page.getByTestId('secret-data-term');
+  private readonly clipboards = this.page.getByTestId('copy-to-clipboard');
+  private readonly imagePullForm = this.page.getByTestId('create-image-secret-form');
+  private readonly usernameInput = this.page.getByTestId('secret-username');
+  private readonly passwordInput = this.page.getByTestId('secret-password');
+  private readonly sshKeyTextarea = this.page.getByTestId('ssh-privatekey-textarea');
+  private readonly dockerConfigTextarea = this.page.getByTestId('docker-config-textarea');
+  private readonly imagePasswordInput = this.page.getByTestId('image-secret-password');
+  private readonly cancelButton = this.page.getByRole('button', { name: 'Cancel' });
+  private readonly modal = new ModalPage(this.page);
+
+  getPageHeading(): Locator {
+    return this.pageHeading;
+  }
+
+  getBinaryAlert(): Locator {
+    return this.binaryAlert;
+  }
+
+  getClipboards(): Locator {
+    return this.clipboards;
+  }
+
+  getImagePullForms(): Locator {
+    return this.imagePullForm;
+  }
+
+  getUsernameInput(): Locator {
+    return this.usernameInput;
+  }
+
+  getPasswordInput(): Locator {
+    return this.passwordInput;
+  }
+
+  getSshKeyTextarea(): Locator {
+    return this.sshKeyTextarea;
+  }
+
+  getDockerConfigTextarea(): Locator {
+    return this.dockerConfigTextarea;
+  }
+
+  getImagePasswordInput(): Locator {
+    return this.imagePasswordInput;
+  }
+
+  getFileInputTextarea(): Locator {
+    return this.fileInputTextarea;
+  }
+
+  getSecretKeyInput(): Locator {
+    return this.secretKeyInput;
+  }
 
   async clickCreateSecretDropdownButton(secretType: string): Promise<void> {
     await this.robustClick(this.createDropdown);
-    const menuItem = this.page.locator(
-      `[data-test-dropdown-menu="${secretType}"] [role="menuitem"]`,
-    );
+    const menuItem = this.page.getByTestId(`dropdown-menu-${secretType}`).getByRole('menuitem');
     await this.robustClick(menuItem);
     await this.waitForLoadingComplete();
-    await this.secretNameInput.waitFor({ state: 'visible', timeout: 30_000 });
   }
 
   async fillName(name: string): Promise<void> {
-    await this.secretNameInput.waitFor({ state: 'visible', timeout: 10_000 });
     await this.secretNameInput.fill(name);
   }
 
+  async fillSecretKey(key: string): Promise<void> {
+    await this.secretKeyInput.fill(key);
+  }
+
   async save(): Promise<void> {
-    await this.saveButton.waitFor({ state: 'visible', timeout: 10_000 });
     await expect(this.saveButton).toBeEnabled();
     await this.robustClick(this.saveButton);
+    // eslint-disable-next-line no-restricted-syntax
     await this.saveButton.waitFor({ state: 'detached', timeout: 30_000 });
   }
 
   async revealValues(): Promise<void> {
     await this.waitForLoadingComplete();
-    await this.revealValuesButton.waitFor({ state: 'visible', timeout: 30_000 });
-    await this.robustClick(this.revealValuesButton);
-    await this.secretDataContainer.waitFor({ state: 'visible', timeout: 10_000 });
+    await this.robustClick(this.revealValuesButton, { timeout: 30_000 });
+    await expect(this.secretDataContainer).toBeVisible();
   }
 
   async verifySecretData(expected: Record<string, unknown>, json = false): Promise<void> {
     await this.revealValues();
-    const terms = this.page.getByTestId('secret-data-term');
-    const clipboards = this.page.getByTestId('copy-to-clipboard');
-    const count = await terms.count();
+    const count = await this.secretDataTerms.count();
     const rendered: Record<string, unknown> = {};
     for (let i = 0; i < count; i++) {
-      const key = (await terms.nth(i).textContent()) ?? '';
-      const value = (await clipboards.nth(i).textContent()) ?? '';
+      const key = (await this.secretDataTerms.nth(i).textContent()) ?? '';
+      const value = (await this.clipboards.nth(i).textContent()) ?? '';
       rendered[key] = json ? JSON.parse(value) : value;
     }
     expect(rendered).toEqual(expected);
@@ -63,13 +121,11 @@ export class SecretPage extends BasePage {
 
   async checkKeyValueExist(key: string, value: string): Promise<void> {
     await this.revealValues();
-    const terms = this.page.getByTestId('secret-data-term');
-    const clipboards = this.page.getByTestId('copy-to-clipboard');
-    const count = await terms.count();
+    const count = await this.secretDataTerms.count();
     for (let i = 0; i < count; i++) {
-      const termText = (await terms.nth(i).textContent()) ?? '';
+      const termText = (await this.secretDataTerms.nth(i).textContent()) ?? '';
       if (termText === key) {
-        await expect(clipboards.nth(i)).toContainText(value);
+        await expect(this.clipboards.nth(i)).toContainText(value);
         return;
       }
     }
@@ -85,33 +141,47 @@ export class SecretPage extends BasePage {
   }
 
   async fillBasicAuth(username: string, password: string): Promise<void> {
-    await this.page.getByTestId('secret-username').fill(username);
-    await this.page.getByTestId('secret-password').fill(password);
+    await this.usernameInput.fill(username);
+    await this.passwordInput.fill(password);
+  }
+
+  async fillSshKey(key: string): Promise<void> {
+    await this.sshKeyTextarea.fill(key);
+  }
+
+  async fillDockerConfig(config: string): Promise<void> {
+    await this.dockerConfigTextarea.fill(config);
   }
 
   async fillImagePullCredential(
     index: number,
     cred: { address: string; username: string; password: string; email: string },
   ): Promise<void> {
-    const form = this.page.locator('[data-test-id="create-image-secret-form"]').nth(index);
-    await form.locator('[data-test="image-secret-address"]').fill(cred.address);
-    await form.locator('[data-test="image-secret-username"]').fill(cred.username);
-    await form.locator('[data-test="image-secret-password"]').fill(cred.password);
-    await form.locator('[data-test="image-secret-email"]').fill(cred.email);
+    const form = this.imagePullForm.nth(index);
+    await form.getByTestId('image-secret-address').fill(cred.address);
+    await form.getByTestId('image-secret-username').fill(cred.username);
+    await form.getByTestId('image-secret-password').fill(cred.password);
+    await form.getByTestId('image-secret-email').fill(cred.email);
+  }
+
+  async addCredentialEntry(): Promise<void> {
+    await this.robustClick(this.addCredentialsButton);
   }
 
   async removeEntry(index = 0): Promise<void> {
     await this.robustClick(this.removeEntryButton.nth(index));
   }
 
+  async cancel(): Promise<void> {
+    await this.robustClick(this.cancelButton);
+  }
+
   async selectAuthType(type: string): Promise<void> {
-    const option = this.page.locator(`[data-test-dropdown-menu="${type}"] [role="option"]`);
+    const option = this.page.getByTestId(type).getByRole('option');
     for (let attempt = 0; attempt < 3; attempt++) {
-      await this.authTypeToggle.click();
+      await this.robustClick(this.authTypeToggle);
       try {
-        await option.waitFor({ state: 'visible', timeout: 5_000 });
-        await option.click();
-        await this.authTypeToggle.waitFor({ state: 'visible', timeout: 5_000 });
+        await option.click({ timeout: 5_000 });
         return;
       } catch {
         // Dropdown may have closed — retry
@@ -121,15 +191,14 @@ export class SecretPage extends BasePage {
   }
 
   async generateWebhookKey(): Promise<void> {
-    await this.webhookGenerateButton.waitFor({ state: 'visible' });
     await this.robustClick(this.webhookGenerateButton);
   }
 
   async detailsPageIsLoaded(secretName: string): Promise<void> {
     await this.waitForLoadingComplete();
     await expect(this.pageHeading).toContainText(secretName, { timeout: 30_000 });
-    const dataOrEmpty = this.page.locator(
-      '[data-test="secret-data"], .pf-v6-c-empty-state',
+    const dataOrEmpty = this.secretDataContainer.or(
+      this.page.locator('.pf-v6-c-empty-state'),
     );
     const tryAgain = this.page.getByRole('button', { name: 'Try again' });
     for (let attempt = 0; attempt < 5; attempt++) {
@@ -140,17 +209,15 @@ export class SecretPage extends BasePage {
       }
       break;
     }
-    await dataOrEmpty.first().waitFor({ state: 'visible', timeout: 30_000 });
+    await expect(dataOrEmpty.first()).toBeVisible({ timeout: 30_000 });
   }
 
   private async clickAction(actionName: string): Promise<void> {
-    const actionsButton = this.page.locator('[data-test-id="actions-menu-button"]');
-    const action = this.page.locator(`[data-test-action="${actionName}"]`);
+    const action = this.page.getByTestId(actionName);
     for (let attempt = 0; attempt < 3; attempt++) {
-      await this.robustClick(actionsButton);
+      await this.robustClick(this.actionsButton);
       try {
-        await action.waitFor({ state: 'visible', timeout: 5_000 });
-        await action.click();
+        await action.click({ timeout: 5_000 });
         return;
       } catch {
         // Menu may have closed or items not loaded yet — retry
@@ -165,10 +232,9 @@ export class SecretPage extends BasePage {
 
   async deleteSecret(_secretName: string): Promise<void> {
     await this.clickAction('Delete Secret');
-    const submitButton = this.page.locator('button[type=submit]');
-    await submitButton.waitFor({ state: 'visible', timeout: 10_000 });
-    await submitButton.click();
-    await submitButton.waitFor({ state: 'detached', timeout: 30_000 });
+    await this.modal.waitForOpen();
+    await this.modal.submit();
+    await this.modal.waitForClosed();
   }
 
   async addToWorkload(
@@ -176,11 +242,10 @@ export class SecretPage extends BasePage {
     asType: 'environment' | 'volume',
     options?: { prefix?: string; mountPath?: string },
   ): Promise<void> {
-    await this.page.getByTestId('Add Secret to workload').click();
-    const cancelButton = this.page.locator('[data-test-id="modal-cancel-action"]');
-    await cancelButton.waitFor({ state: 'visible', timeout: 20_000 });
+    await this.clickAction('Add Secret to workload');
+    await this.modal.waitForOpen();
 
-    await this.page.locator('#co-add-secret-to-workload__workload').click();
+    await this.robustClick(this.page.getByTestId('add-secret-to-workload-button'));
     await this.page.getByTestId('console-select-search-input').locator('input').fill(workloadName);
     await this.page.getByTestId('console-select-item').click();
 
@@ -196,10 +261,9 @@ export class SecretPage extends BasePage {
       }
     }
 
-    const confirmButton = this.page.locator('[data-test="confirm-action"]');
-    await expect(confirmButton).toBeEnabled();
-    await confirmButton.click();
-    await cancelButton.waitFor({ state: 'detached', timeout: 30_000 });
+    await expect(this.modal.getSubmitButton()).toBeEnabled();
+    await this.modal.submit();
+    await this.modal.waitForClosed();
   }
 
   async uploadFile(filePath: string): Promise<void> {

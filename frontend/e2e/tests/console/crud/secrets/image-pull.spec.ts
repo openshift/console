@@ -17,18 +17,18 @@ test.describe('Image pull secrets', { tag: ['@admin', '@crud'] }, () => {
     await test.step('Create image secret with two credential entries', async () => {
       await page.goto(`/k8s/ns/${ns}/secrets`);
       await secretPage.clickCreateSecretDropdownButton('image');
-      await expect(page.getByTestId('page-heading')).toContainText('Create image pull secret');
+      await expect(secretPage.getPageHeading()).toContainText('Create image pull secret');
       await secretPage.fillName(secretName);
-      await page.getByTestId('add-credentials-button').click();
+      await secretPage.addCredentialEntry();
 
-      const forms = page.locator('[data-test-id="create-image-secret-form"]');
-      const count = await forms.count();
+      const count = await secretPage.getImagePullForms().count();
       for (let i = 0; i < count; i++) {
-        const form = forms.nth(i);
-        await form.locator('[data-test="image-secret-address"]').fill(`${address}${i}`);
-        await form.locator('[data-test="image-secret-username"]').fill(`username${i}`);
-        await form.locator('[data-test="image-secret-password"]').fill(`password${i}`);
-        await form.locator('[data-test="image-secret-email"]').fill(`test@secret.com${i}`);
+        await secretPage.fillImagePullCredential(i, {
+          address: `${address}${i}`,
+          username: `username${i}`,
+          password: `password${i}`,
+          email: `test@secret.com${i}`,
+        });
       }
       await secretPage.save();
     });
@@ -48,17 +48,15 @@ test.describe('Image pull secrets', { tag: ['@admin', '@crud'] }, () => {
 
     await test.step('Edit secret: remove entry, update with whitespace', async () => {
       await secretPage.editSecret();
-      await expect(page.getByTestId('page-heading')).toContainText('Edit image pull secret');
-      await expect(page.locator('[data-test-id="create-image-secret-form"]')).toHaveCount(2);
+      await expect(secretPage.getPageHeading()).toContainText('Edit image pull secret');
+      await expect(secretPage.getImagePullForms()).toHaveCount(2);
       await secretPage.removeEntry(0);
-      await page.getByTestId('image-secret-address').clear();
-      await page.getByTestId('image-secret-address').fill(`  ${addressUpdated}  `);
-      await page.getByTestId('image-secret-username').clear();
-      await page.getByTestId('image-secret-username').fill('  usernameUpdated  ');
-      await page.getByTestId('image-secret-password').clear();
-      await page.getByTestId('image-secret-password').fill('  passwordUpdated  ');
-      await page.getByTestId('image-secret-email').clear();
-      await page.getByTestId('image-secret-email').fill('  testUpdated@secret.com  ');
+      await secretPage.fillImagePullCredential(0, {
+        address: `  ${addressUpdated}  `,
+        username: '  usernameUpdated  ',
+        password: '  passwordUpdated  ',
+        email: '  testUpdated@secret.com  ',
+      });
       await secretPage.save();
     });
 
@@ -104,13 +102,11 @@ test.describe('Image pull secrets', { tag: ['@admin', '@crud'] }, () => {
     await test.step('Create config file secret', async () => {
       await page.goto(`/k8s/ns/${ns}/secrets`);
       await secretPage.clickCreateSecretDropdownButton('image');
-      await expect(page.getByTestId('page-heading')).toContainText('Create image pull secret');
+      await expect(secretPage.getPageHeading()).toContainText('Create image pull secret');
       await secretPage.fillName(secretName);
       await secretPage.selectAuthType('config-file');
 
-      const textarea = page.locator('[data-test-id="file-input-textarea"]');
-      await textarea.clear();
-      await textarea.fill(JSON.stringify(configFile));
+      await secretPage.fillDockerConfig(JSON.stringify(configFile));
       await secretPage.save();
     });
 
@@ -137,15 +133,15 @@ test.describe('Image pull secrets', { tag: ['@admin', '@crud'] }, () => {
       await page.goto(`/k8s/ns/${ns}/secrets`);
       await secretPage.clickCreateSecretDropdownButton('image');
       await expect(
-        page.locator('input[data-test="image-secret-password"]'),
+        secretPage.getImagePasswordInput(),
       ).toHaveAttribute('type', 'password');
-      await page.locator('button#cancel').click();
+      await secretPage.cancel();
     });
 
     await test.step('Verify source secret password is obfuscated', async () => {
       await secretPage.clickCreateSecretDropdownButton('source');
       await expect(
-        page.locator('input[data-test="secret-password"]'),
+        secretPage.getPasswordInput(),
       ).toHaveAttribute('type', 'password');
     });
   });

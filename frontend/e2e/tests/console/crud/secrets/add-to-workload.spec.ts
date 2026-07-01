@@ -1,4 +1,5 @@
 import { test, expect } from '../../../../fixtures';
+import { warmupSPA } from '../../../../pages/base-page';
 import { SecretPage } from '../../../../pages/secret-page';
 
 test.describe('Add Secret to Workloads', { tag: ['@admin', '@crud'] }, () => {
@@ -44,8 +45,7 @@ test.describe('Add Secret to Workloads', { tag: ['@admin', '@crud'] }, () => {
     });
 
     await test.step('Add secret as env vars', async () => {
-      await page.goto(`/k8s/ns/${ns}/secrets`);
-      await page.getByTestId('page-heading').waitFor({ state: 'visible', timeout: 30_000 });
+      await warmupSPA(page);
       await page.goto(`/k8s/ns/${ns}/secrets/${secretName}`);
       await secretPage.detailsPageIsLoaded(secretName);
       await secretPage.addToWorkload(deployName, 'environment', { prefix: envPrefix });
@@ -99,8 +99,7 @@ test.describe('Add Secret to Workloads', { tag: ['@admin', '@crud'] }, () => {
     });
 
     await test.step('Add secret as volume', async () => {
-      await page.goto(`/k8s/ns/${ns}/secrets`);
-      await page.getByTestId('page-heading').waitFor({ state: 'visible', timeout: 30_000 });
+      await warmupSPA(page);
       await page.goto(`/k8s/ns/${ns}/secrets/${secretName}`);
       await secretPage.detailsPageIsLoaded(secretName);
       await secretPage.addToWorkload(deployName, 'volume', { mountPath });

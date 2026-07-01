@@ -19,7 +19,7 @@ test.describe('Source secrets', { tag: ['@admin', '@crud'] }, () => {
     await test.step('Create basic source secret', async () => {
       await page.goto(`/k8s/ns/${ns}/secrets`);
       await secretPage.clickCreateSecretDropdownButton('source');
-      await expect(page.getByTestId('page-heading')).toContainText('Create source secret');
+      await expect(secretPage.getPageHeading()).toContainText('Create source secret');
       await secretPage.fillName(secretName);
       await secretPage.fillBasicAuth('username', 'password');
       await secretPage.save();
@@ -35,13 +35,13 @@ test.describe('Source secrets', { tag: ['@admin', '@crud'] }, () => {
 
     await test.step('Edit secret', async () => {
       await secretPage.editSecret();
-      await expect(page.getByTestId('page-heading')).toContainText('Edit source secret');
-      await expect(page.getByTestId('secret-username')).toHaveValue('username');
-      await expect(page.getByTestId('secret-password')).toHaveValue('password');
-      await page.getByTestId('secret-username').clear();
-      await page.getByTestId('secret-username').fill('usernameUpdated');
-      await page.getByTestId('secret-password').clear();
-      await page.getByTestId('secret-password').fill('passwordUpdated');
+      await expect(secretPage.getPageHeading()).toContainText('Edit source secret');
+      await expect(secretPage.getUsernameInput()).toHaveValue('username');
+      await expect(secretPage.getPasswordInput()).toHaveValue('password');
+      await secretPage.getUsernameInput().clear();
+      await secretPage.getUsernameInput().fill('usernameUpdated');
+      await secretPage.getPasswordInput().clear();
+      await secretPage.getPasswordInput().fill('passwordUpdated');
       await secretPage.save();
     });
 
@@ -77,10 +77,10 @@ test.describe('Source secrets', { tag: ['@admin', '@crud'] }, () => {
     await test.step('Create SSH source secret', async () => {
       await page.goto(`/k8s/ns/${ns}/secrets`);
       await secretPage.clickCreateSecretDropdownButton('source');
-      await expect(page.getByTestId('page-heading')).toContainText('Create source secret');
+      await expect(secretPage.getPageHeading()).toContainText('Create source secret');
       await secretPage.fillName(secretName);
       await secretPage.selectAuthType('kubernetes.io/ssh-auth');
-      await page.locator('[data-test-id="file-input-textarea"]').fill(sshKey);
+      await secretPage.fillSshKey(sshKey);
       await secretPage.save();
     });
 
@@ -93,11 +93,10 @@ test.describe('Source secrets', { tag: ['@admin', '@crud'] }, () => {
 
     await test.step('Edit secret', async () => {
       await secretPage.editSecret();
-      await expect(page.getByTestId('page-heading')).toContainText('Edit source secret');
-      const textarea = page.locator('[data-test-id="file-input-textarea"]');
-      await expect(textarea).toContainText(sshKey);
-      await textarea.clear();
-      await textarea.fill(sshKeyUpdated);
+      await expect(secretPage.getPageHeading()).toContainText('Edit source secret');
+      await expect(secretPage.getSshKeyTextarea()).toContainText(sshKey);
+      await secretPage.getSshKeyTextarea().clear();
+      await secretPage.fillSshKey(sshKeyUpdated);
       await secretPage.save();
     });
 

@@ -207,7 +207,7 @@ const AddSecretToWorkloadModal: FC<AddSecretToWorkloadModalProps> = (props) => {
               autocompleteFilter={autocompleteFilter}
               autocompletePlaceholder={selectWorkloadPlaceholder}
               id="co-add-secret-to-workload__workload"
-              data-test="add-secret-to-workload-button"
+              dataTest="add-secret-to-workload-button"
             />
           </FormGroup>
           <FormGroup
