@@ -130,7 +130,7 @@ func setupTestWithTls() error {
 	if err := ExecuteScript("./testdata/downloadHelm.sh", true); err != nil {
 		return err
 	}
-	if err := waitForTCP("localhost:9443", 30*time.Second); err != nil {
+	if err := waitForTCP("localhost:9443", 30*time.Second, "./chartmuseum-9443.log"); err != nil {
 		return fmt.Errorf("chartmuseum not ready: %w", err)
 	}
 	if err := waitForTCP("localhost:5443", 30*time.Second); err != nil {
@@ -197,7 +197,7 @@ func setupTestOCIBasicAuth() error {
 	return nil
 }
 
-func waitForTCP(addr string, timeout time.Duration) error {
+func waitForTCP(addr string, timeout time.Duration, logFiles ...string) error {
 	deadline := time.Now().Add(timeout)
 	for time.Now().Before(deadline) {
 		conn, err := net.DialTimeout("tcp", addr, time.Second)
@@ -206,6 +206,11 @@ func waitForTCP(addr string, timeout time.Duration) error {
 			return nil
 		}
 		time.Sleep(time.Second)
+	}
+	for _, f := range logFiles {
+		if data, err := os.ReadFile(f); err == nil && len(data) > 0 {
+			fmt.Fprintf(os.Stderr, "=== %s ===\n%s\n", f, string(data))
+		}
 	}
 	return fmt.Errorf("timed out waiting for %s after %s", addr, timeout)
 }
