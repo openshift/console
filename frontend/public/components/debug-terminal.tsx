@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import type { FC, ReactNode } from 'react';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useParams, useLocation } from 'react-router';
 import { Alert } from '@patternfly/react-core';
@@ -10,6 +10,8 @@ import { ConnectedPageHeading } from '@console/internal/components/utils/heading
 import { ObjectMetadata, PodKind, k8sCreate, k8sKillByName } from '@console/internal/module/k8s';
 import { PodConnectLoader } from '@console/internal/components/pod';
 import { PodModel } from '@console/internal/models';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
+import { getDetachedSessions } from '@console/webterminal-plugin/src/redux/reducers/cloud-shell-selectors';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 
@@ -70,7 +72,12 @@ const DebugTerminalError: FC<DebugTerminalErrorProps> = ({ error, description })
   );
 };
 
-const DebugTerminalInner: FC<DebugTerminalInnerProps> = ({ debugPod, initialContainer }) => {
+const DebugTerminalInner: FC<DebugTerminalInnerProps> = ({
+  debugPod,
+  initialContainer,
+  debugPodName,
+  debugPodNamespace,
+}) => {
   const { t } = useTranslation('public');
   const infoMessage = (
     <Alert
@@ -99,6 +106,11 @@ const DebugTerminalInner: FC<DebugTerminalInnerProps> = ({ debugPod, initialCont
           obj={debugPod}
           initialContainer={initialContainer}
           infoMessage={infoMessage}
+          cleanupOnDetach={
+            debugPodName && debugPodNamespace
+              ? { type: 'pod', name: debugPodName, namespace: debugPodNamespace }
+              : undefined
+          }
         />
       );
     case 'Pending':
@@ -112,6 +124,9 @@ const DebugTerminal: FC<DebugTerminalProps> = ({ podData, containerName }) => {
   const [errorMessage, setErrorMessage] = useState('');
   const [generatedDebugPodName, setGeneratedDebugPodName] = useState('');
   const { t } = useTranslation('public');
+  const detachedSessions = useConsoleSelector(getDetachedSessions);
+  const detachedSessionsRef = useRef(detachedSessions);
+  detachedSessionsRef.current = detachedSessions;
   const podNamespace = podData?.metadata.namespace;
   const podContainerName = containerName || podData?.spec.containers[0].name;
   const debugPodName = `${podData?.metadata?.name?.replace(/\./g, '-')}-debug-`;
@@ -147,7 +162,12 @@ const DebugTerminal: FC<DebugTerminalProps> = ({ podData, containerName }) => {
     window.addEventListener('beforeunload', closeTab);
     return () => {
       if (newDebugPod) {
-        deleteDebugPod(newDebugPod.metadata.name);
+        const isDetached = detachedSessionsRef.current.some(
+          (s) => s.podName === newDebugPod.metadata.name,
+        );
+        if (!isDetached) {
+          deleteDebugPod(newDebugPod.metadata.name);
+        }
       }
       window.removeEventListener('beforeunload', closeTab);
     };
@@ -173,7 +193,14 @@ const DebugTerminal: FC<DebugTerminalProps> = ({ podData, containerName }) => {
       return <DebugTerminalError error={err.message || t('The debug pod failed.')} />;
     }
     if (loaded) {
-      return <DebugTerminalInner initialContainer={containerName} debugPod={debugPod} />;
+      return (
+        <DebugTerminalInner
+          initialContainer={containerName}
+          debugPod={debugPod}
+          debugPodName={generatedDebugPodName}
+          debugPodNamespace={podNamespace}
+        />
+      );
     }
   }
 
@@ -230,6 +257,8 @@ type DebugTerminalErrorProps = {
 type DebugTerminalInnerProps = {
   debugPod: PodKind;
   initialContainer?: string;
+  debugPodName?: string;
+  debugPodNamespace?: string;
 };
 
 type DebugTerminalProps = {

@@ -18,6 +18,14 @@ jest.mock('@console/internal/module/k8s', () => ({
   k8sKillByName: jest.fn(),
 }));
 
+jest.mock('@console/shared/src/hooks/useConsoleSelector', () => ({
+  useConsoleSelector: jest.fn(() => []),
+}));
+
+jest.mock('@console/webterminal-plugin/src/redux/reducers/cloud-shell-selectors', () => ({
+  getDetachedSessions: jest.fn(() => []),
+}));
+
 const mockNode = {
   apiVersion: 'v1',
   kind: 'Node',

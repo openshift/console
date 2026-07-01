@@ -1,5 +1,5 @@
 import type { ReactNode, FC } from 'react';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { Alert } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
 import { PodConnectLoader } from '@console/internal/components/pod';
@@ -9,6 +9,8 @@ import { ImageStreamTagModel, NamespaceModel, PodModel } from '@console/internal
 import type { NodeKind, PodKind } from '@console/internal/module/k8s';
 import { k8sCreate, k8sGet, k8sKillByName } from '@console/internal/module/k8s';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
+import { getDetachedSessions } from '@console/webterminal-plugin/src/redux/reducers/cloud-shell-selectors';
 
 type NodeTerminalErrorProps = {
   error: ReactNode;
@@ -18,6 +20,7 @@ type NodeTerminalInnerProps = {
   pod?: PodKind;
   loaded: boolean;
   loadError?: unknown;
+  debugNamespace?: string;
 };
 
 type NodeTerminalProps = {
@@ -77,7 +80,7 @@ const getDebugPod = async (
             runAsUser: 0,
           },
           stdin: true,
-          stdinOnce: true,
+          stdinOnce: false,
           tty: true,
           volumeMounts: [
             {
@@ -126,7 +129,12 @@ const NodeTerminalError: FC<NodeTerminalErrorProps> = ({ error }) => {
   );
 };
 
-const NodeTerminalInner: FC<NodeTerminalInnerProps> = ({ pod, loaded, loadError }) => {
+const NodeTerminalInner: FC<NodeTerminalInnerProps> = ({
+  pod,
+  loaded,
+  loadError,
+  debugNamespace,
+}) => {
   const { t } = useTranslation('console-app');
   const message = (
     <Trans t={t} ns="console-app">
@@ -166,7 +174,14 @@ const NodeTerminalInner: FC<NodeTerminalInnerProps> = ({ pod, loaded, loadError 
         />
       );
     case 'Running':
-      return <PodConnectLoader obj={pod} message={message} attach />;
+      return (
+        <PodConnectLoader
+          obj={pod}
+          message={message}
+          attach
+          cleanupOnDetach={debugNamespace ? { type: 'namespace', name: debugNamespace } : undefined}
+        />
+      );
     default:
       return <LoadingBox />;
   }
@@ -178,6 +193,9 @@ const NodeTerminal: FC<NodeTerminalProps> = ({ obj: node }) => {
   const [errorMessage, setErrorMessage] = useState('');
   const nodeName = node.metadata.name;
   const isWindows = node.status?.nodeInfo?.operatingSystem === 'windows';
+  const detachedSessions = useConsoleSelector(getDetachedSessions);
+  const detachedSessionsRef = useRef(detachedSessions);
+  detachedSessionsRef.current = detachedSessions;
 
   const watchResource = useMemo(
     () =>
@@ -207,7 +225,12 @@ const NodeTerminal: FC<NodeTerminalProps> = ({ obj: node }) => {
     };
     const closeTab = (event) => {
       event.preventDefault();
-      deleteNamespace(namespace.metadata.name);
+      if (
+        !detachedSessionsRef.current.some((s) => s.podName === name) &&
+        namespace?.metadata?.name
+      ) {
+        deleteNamespace(namespace.metadata.name);
+      }
     };
     const createDebugPod = async () => {
       try {
@@ -244,7 +267,8 @@ const NodeTerminal: FC<NodeTerminalProps> = ({ obj: node }) => {
     createDebugPod();
     window.addEventListener('beforeunload', closeTab);
     return () => {
-      if (namespace) {
+      const isDetached = detachedSessionsRef.current.some((s) => s.podName === name);
+      if (!isDetached && namespace?.metadata?.name) {
         deleteNamespace(namespace.metadata.name);
       }
       window.removeEventListener('beforeunload', closeTab);
@@ -259,7 +283,14 @@ const NodeTerminal: FC<NodeTerminalProps> = ({ obj: node }) => {
     return <LoadingBox />;
   }
 
-  return <NodeTerminalInner pod={pod} loaded={loaded} loadError={loadError} />;
+  return (
+    <NodeTerminalInner
+      pod={pod}
+      loaded={loaded}
+      loadError={loadError}
+      debugNamespace={podNamespace}
+    />
+  );
 };
 
 export default NodeTerminal;
