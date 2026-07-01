@@ -132,7 +132,7 @@ test.describe('YAML Editor Settings', { tag: ['@admin', '@yaml-editor'] }, () =>
     await test.step('Navigate to a pod YAML page', async () => {
       await page.goto('/k8s/ns/openshift-console/pods');
       await expect(listPage.getDataViewTable()).toBeVisible({ timeout: 60_000 });
-      await listPage.clickFirstLinkInFirstRow();
+      await listPage.clickFirstRowLink();
       await detailsPage.selectTab('YAML');
       await expect(yamlEditorPage.getMonacoEditor()).toBeVisible({ timeout: 30_000 });
     });

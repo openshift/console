@@ -149,6 +149,7 @@ test.describe(
     });
 
     test('enables the demo plugin and verifies it loads', async ({ page }) => {
+      test.setTimeout(600_000);
       test.skip(IS_LOCAL_DEV, 'Plugin enablement is only tested on CI');
 
       await test.step('Navigate to console plugins tab', async () => {
@@ -171,26 +172,18 @@ test.describe(
         await expect(enabledCell).toContainText('Enabled');
       });
 
-      await test.step('Wait for plugin proxy to be reachable', async () => {
-        await expect(async () => {
-          const resp = await page.request.get(
-            `/api/plugins/${PLUGIN_NAME}/plugin-manifest.json`,
-          );
-          expect(resp.status()).toBe(200);
-        }).toPass({ timeout: 300_000, intervals: [15_000] });
-      });
-
       await test.step('Verify plugin status is Loaded', async () => {
-        // After enablement the console auto-reloads before the server has
-        // reconciled the plugin config, so the plugin is not loaded in that
-        // session. Navigate to the plugins page and reload until the console
-        // server picks up the updated config and reports the plugin as Loaded.
-        await consolePluginPage.navigateToConsolePlugins();
-        await expect(page.getByTestId(`${PLUGIN_NAME}-name`)).toBeVisible();
+        // After enablement the console-operator reconciles the ConsolePlugin
+        // and restarts the console-server pods. The restart invalidates the
+        // session (CSRF cookie), so we must navigate (not just API-call) to
+        // get fresh cookies from the new pod. Reload the console plugins page
+        // until the server has picked up the updated config and reports the
+        // plugin as Loaded.
         await expect(async () => {
-          await page.reload({ waitUntil: 'load' });
+          await consolePluginPage.navigateToConsolePlugins();
+          await expect(page.getByTestId(`${PLUGIN_NAME}-name`)).toBeVisible();
           await expect(page.getByTestId(`${PLUGIN_NAME}-status`)).toContainText('Loaded');
-        }).toPass({ timeout: 120_000, intervals: [15_000] });
+        }).toPass({ timeout: 300_000, intervals: [15_000] });
       });
     });
 
