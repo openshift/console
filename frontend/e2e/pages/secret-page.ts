@@ -197,9 +197,7 @@ export class SecretPage extends BasePage {
   async detailsPageIsLoaded(secretName: string): Promise<void> {
     await this.waitForLoadingComplete();
     await expect(this.pageHeading).toContainText(secretName, { timeout: 30_000 });
-    const dataOrEmpty = this.secretDataContainer.or(
-      this.page.locator('.pf-v6-c-empty-state'),
-    );
+    const dataOrEmpty = this.secretDataContainer.or(this.page.getByTestId('empty-box'));
     const tryAgain = this.page.getByRole('button', { name: 'Try again' });
     for (let attempt = 0; attempt < 5; attempt++) {
       if (await tryAgain.isVisible({ timeout: 2_000 }).catch(() => false)) {
@@ -230,7 +228,7 @@ export class SecretPage extends BasePage {
     await this.clickAction('Edit Secret');
   }
 
-  async deleteSecret(_secretName: string): Promise<void> {
+  async deleteSecret(): Promise<void> {
     await this.clickAction('Delete Secret');
     await this.modal.waitForOpen();
     await this.modal.submit();

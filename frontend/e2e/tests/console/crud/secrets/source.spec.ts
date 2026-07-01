@@ -54,7 +54,7 @@ test.describe('Source secrets', { tag: ['@admin', '@crud'] }, () => {
     });
 
     await test.step('Delete secret', async () => {
-      await secretPage.deleteSecret(secretName);
+      await secretPage.deleteSecret();
     });
   });
 
@@ -108,7 +108,7 @@ test.describe('Source secrets', { tag: ['@admin', '@crud'] }, () => {
     });
 
     await test.step('Delete secret', async () => {
-      await secretPage.deleteSecret(secretName);
+      await secretPage.deleteSecret();
     });
   });
 });

@@ -47,7 +47,7 @@ test.describe('Webhook secret', { tag: ['@admin', '@crud'] }, () => {
     });
 
     await test.step('Delete secret', async () => {
-      await secretPage.deleteSecret(secretName);
+      await secretPage.deleteSecret();
     });
   });
 });
