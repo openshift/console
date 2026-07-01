@@ -101,42 +101,6 @@ test.describe(
 
         await k8sClient.waitForDeploymentReady(PLUGIN_NAME, PLUGIN_NAME);
 
-        // Log pod status and container logs for CI debugging
-        try {
-          const pods = await k8sClient.coreV1Api.listNamespacedPod({
-            namespace: PLUGIN_NAME,
-            labelSelector: `app=${PLUGIN_NAME}`,
-          });
-          for (const pod of pods.items) {
-            const podName = pod.metadata?.name ?? 'unknown';
-            const phase = pod.status?.phase ?? 'Unknown';
-            // eslint-disable-next-line no-console
-            console.log(`Pod ${podName}: phase=${phase}`);
-            for (const cs of pod.status?.containerStatuses ?? []) {
-              // eslint-disable-next-line no-console
-              console.log(
-                `  container ${cs.name}: ready=${cs.ready}, restarts=${cs.restartCount}`,
-              );
-            }
-            try {
-              const log = await k8sClient.coreV1Api.readNamespacedPodLog({
-                name: podName,
-                namespace: PLUGIN_NAME,
-                container: PLUGIN_NAME,
-                tailLines: 50,
-              });
-              // eslint-disable-next-line no-console
-              console.log(`Pod ${podName} logs (last 50 lines):\n${log}`);
-            } catch (logErr) {
-              // eslint-disable-next-line no-console
-              console.log(`Could not read pod logs: ${logErr}`);
-            }
-          }
-        } catch (podErr) {
-          // eslint-disable-next-line no-console
-          console.log(`Could not list pods: ${podErr}`);
-        }
-
         await k8sClient.createClusterCustomResource(
           'console.openshift.io',
           'v1',

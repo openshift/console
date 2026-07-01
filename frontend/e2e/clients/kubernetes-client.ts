@@ -737,27 +737,6 @@ export default class KubernetesClient {
     await this.appsApi.createNamespacedDeployment({ namespace, body: body as k8s.V1Deployment });
   }
 
-  async waitForDeploymentReady(
-    name: string,
-    namespace: string,
-    timeoutMs = 120_000,
-  ): Promise<boolean> {
-    return pollUntil(
-      async () => {
-        try {
-          const dep = await this.appsApi.readNamespacedDeployment({ name, namespace });
-          const ready = dep?.status?.readyReplicas ?? 0;
-          const desired = dep?.spec?.replicas ?? 1;
-          return ready >= desired;
-        } catch {
-          return false;
-        }
-      },
-      timeoutMs,
-      2_000,
-    );
-  }
-
   async createResourceQuota(
     name: string,
     namespace: string,
