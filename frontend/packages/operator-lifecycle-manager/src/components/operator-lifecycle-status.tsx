@@ -54,10 +54,11 @@ const findVersionEntry = (
   if (!operatorVersion) {
     return versions[0];
   }
-  return (
-    versions.find((v) => v.name === operatorVersion) ??
-    versions.find((v) => parseMinorVersion(v.name) === parseMinorVersion(operatorVersion))
-  );
+  const minor = parseMinorVersion(operatorVersion);
+  if (minor === undefined) {
+    return undefined;
+  }
+  return versions.find((v) => parseMinorVersion(v.name) === minor);
 };
 
 export type CompatibilityResult = 'compatible' | 'incompatible' | 'no-data';
