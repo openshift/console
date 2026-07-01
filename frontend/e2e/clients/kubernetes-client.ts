@@ -573,30 +573,6 @@ export default class KubernetesClient {
     return response;
   }
 
-  async createClusterCustomResource(
-    group: string,
-    version: string,
-    plural: string,
-    body: Record<string, unknown>,
-  ): Promise<unknown> {
-    return this.coApi.createClusterCustomObject({ body, group, plural, version });
-  }
-
-  async deleteClusterCustomResource(
-    group: string,
-    version: string,
-    plural: string,
-    name: string,
-  ): Promise<void> {
-    try {
-      await this.coApi.deleteClusterCustomObject({ group, name, plural, version });
-    } catch (err) {
-      if (!isNotFound(err)) {
-        throw err;
-      }
-    }
-  }
-
   async getClusterCustomResource(
     group: string,
     version: string,
@@ -639,10 +615,6 @@ export default class KubernetesClient {
 
   async getPVC(name: string, namespace: string): Promise<k8s.V1PersistentVolumeClaim> {
     return this.k8sApi.readNamespacedPersistentVolumeClaim({ name, namespace });
-  }
-
-  async createDeployment(namespace: string, body: k8s.V1Deployment): Promise<unknown> {
-    return this.appsApi.createNamespacedDeployment({ namespace, body });
   }
 
   async deleteDeployment(name: string, namespace: string): Promise<void> {

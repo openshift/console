@@ -12,6 +12,10 @@ export const testerDeployment = {
     template: {
       metadata: { labels: { app: 'busybox' } },
       spec: {
+        securityContext: {
+          runAsNonRoot: true,
+          seccompProfile: { type: 'RuntimeDefault' },
+        },
         volumes: [
           {
             name: 'testpvc',
@@ -23,6 +27,10 @@ export const testerDeployment = {
             name: 'busybox',
             image: 'busybox',
             imagePullPolicy: 'IfNotPresent',
+            securityContext: {
+              allowPrivilegeEscalation: false,
+              capabilities: { drop: ['ALL'] },
+            },
             volumeDevices: [{ name: 'testpvc', devicePath: '/data' }],
             command: ['sh', '-c', 'echo Container 1 is Running ; sleep 3600'],
           },
@@ -207,10 +215,18 @@ export const getVACFixtures = (suffix: string) => {
         template: {
           metadata: { labels: { app: 'test-app' } },
           spec: {
+            securityContext: {
+              runAsNonRoot: true,
+              seccompProfile: { type: 'RuntimeDefault' },
+            },
             containers: [
               {
                 name: 'container',
                 image: 'image-registry.openshift-image-registry.svc:5000/openshift/httpd:latest',
+                securityContext: {
+                  allowPrivilegeEscalation: false,
+                  capabilities: { drop: ['ALL'] },
+                },
                 volumeMounts: [{ name: 'storage', mountPath: '/data' }],
               },
             ],
@@ -221,3 +237,15 @@ export const getVACFixtures = (suffix: string) => {
     }),
   };
 };
+
+export async function isAwsPlatform(
+  k8sClient: import('../clients/kubernetes-client').default,
+): Promise<boolean> {
+  const infra = (await k8sClient.getClusterCustomResource(
+    'config.openshift.io',
+    'v1',
+    'infrastructures',
+    'cluster',
+  )) as any;
+  return infra?.status?.platformStatus?.type === 'AWS';
+}

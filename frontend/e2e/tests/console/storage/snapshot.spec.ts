@@ -1,15 +1,17 @@
 import { test, expect } from '../../../fixtures';
 import { ListPage } from '../../../pages/list-page';
 import { ModalPage } from '../../../pages/modal-page';
-import { PVC, testerDeployment, SnapshotClass, patchForVolume } from '../../../mocks/storage';
-
-const isAws = String(process.env.BRIDGE_AWS).toLowerCase() === 'true';
-const dropdownFirstOption = '[role="option"]';
+import {
+  PVC,
+  testerDeployment,
+  SnapshotClass,
+  patchForVolume,
+  isAwsPlatform,
+} from '../../../mocks/storage';
 
 test.describe('Snapshot Tests', { tag: ['@admin', '@storage'] }, () => {
-  test.skip(!isAws, 'No CSI based storage classes are available on this platform');
-
   test('creates, lists, and deletes a VolumeSnapshot', async ({ page, k8sClient, cleanup }) => {
+    test.skip(!(await isAwsPlatform(k8sClient)), 'No CSI based storage classes are available on this platform');
     const ns = `test-snap-${Date.now()}`;
     const pvcName = PVC.metadata.name;
     const snapshotName = `${pvcName}-snapshot`;
@@ -38,9 +40,10 @@ test.describe('Snapshot Tests', { tag: ['@admin', '@storage'] }, () => {
 
     await test.step('Wait for PVC to be Bound', async () => {
       await page.goto(`/k8s/ns/${ns}/persistentvolumeclaims`);
+      await listPage.waitForRows();
       await listPage.filterByName(pvcName);
-      const pvcCell = listPage.getCell(pvcName);
-      await expect(pvcCell.locator('xpath=ancestor::tr').locator('[data-test="status-text"]')).toContainText('Bound', {
+      const pvcRow = listPage.getCell(pvcName).locator('xpath=ancestor::tr');
+      await expect(pvcRow.locator('[data-test="status-text"]')).toContainText('Bound', {
         timeout: 120_000,
       });
     });
@@ -49,19 +52,19 @@ test.describe('Snapshot Tests', { tag: ['@admin', '@storage'] }, () => {
       await page.goto(`/k8s/ns/${ns}/snapshot.storage.k8s.io~v1~VolumeSnapshot`);
       await listPage.clickCreateButton();
       await page.getByTestId('pvc-dropdown').click();
-      await page.locator(dropdownFirstOption).first().click();
+      await page.getByRole('option').first().click();
       await page.getByTestId('snapshot-dropdown').click();
-      await page.locator(dropdownFirstOption).first().click();
-      await modal.submit();
+      await page.getByRole('option').first().click();
+      await page.locator('#save-changes').click();
     });
 
     await test.step('Verify snapshot details', async () => {
       await expect(page).toHaveURL(
         new RegExp(`snapshot.storage.k8s.io~v1~VolumeSnapshot/${snapshotName}`),
       );
-      await expect(page.locator('[data-test="page-heading"]')).toContainText(pvcName);
+      await expect(page.getByTestId('page-heading')).toContainText(snapshotName);
       await expect(
-        page.locator('[data-test-id="resource-summary"] [data-test="status-text"]'),
+        page.getByTestId('resource-summary').locator('[data-test="status-text"]'),
       ).toContainText('Ready', {
         timeout: 120_000,
       });
@@ -78,10 +81,10 @@ test.describe('Snapshot Tests', { tag: ['@admin', '@storage'] }, () => {
       expect(vs.metadata.namespace).toBe(ns);
       expect(vs.spec.source.persistentVolumeClaimName).toBe(pvcName);
 
-      await expect(page.locator('[data-test="details-item-value__VSC"] a')).toContainText(
+      await expect(page.getByTestId('details-item-value__VSC').locator('a')).toContainText(
         vs.status.boundVolumeSnapshotContentName,
       );
-      await expect(page.locator('[data-test="details-item-value__SC"] a')).toContainText(
+      await expect(page.getByTestId('details-item-value__SC').locator('a')).toContainText(
         vs.spec.volumeSnapshotClassName,
       );
     });
@@ -112,6 +115,7 @@ test.describe('Snapshot Tests', { tag: ['@admin', '@storage'] }, () => {
   });
 
   test('restores a snapshot to create a new PVC', async ({ page, k8sClient, cleanup }) => {
+    test.skip(!(await isAwsPlatform(k8sClient)), 'No CSI based storage classes are available on this platform');
     const ns = `test-snap-restore-${Date.now()}`;
     const pvcName = PVC.metadata.name;
     const snapshotName = `${pvcName}-snapshot`;
@@ -141,9 +145,10 @@ test.describe('Snapshot Tests', { tag: ['@admin', '@storage'] }, () => {
 
     await test.step('Wait for PVC to be Bound', async () => {
       await page.goto(`/k8s/ns/${ns}/persistentvolumeclaims`);
+      await listPage.waitForRows();
       await listPage.filterByName(pvcName);
-      const pvcCell = listPage.getCell(pvcName);
-      await expect(pvcCell.locator('xpath=ancestor::tr').locator('[data-test="status-text"]')).toContainText('Bound', {
+      const pvcRow = listPage.getCell(pvcName).locator('xpath=ancestor::tr');
+      await expect(pvcRow.locator('[data-test="status-text"]')).toContainText('Bound', {
         timeout: 120_000,
       });
     });
@@ -152,12 +157,12 @@ test.describe('Snapshot Tests', { tag: ['@admin', '@storage'] }, () => {
       await page.goto(`/k8s/ns/${ns}/snapshot.storage.k8s.io~v1~VolumeSnapshot`);
       await listPage.clickCreateButton();
       await page.getByTestId('pvc-dropdown').click();
-      await page.locator(dropdownFirstOption).first().click();
+      await page.getByRole('option').first().click();
       await page.getByTestId('snapshot-dropdown').click();
-      await page.locator(dropdownFirstOption).first().click();
-      await modal.submit();
+      await page.getByRole('option').first().click();
+      await page.locator('#save-changes').click();
       await expect(
-        page.locator('[data-test-id="resource-summary"] [data-test="status-text"]'),
+        page.getByTestId('resource-summary').locator('[data-test="status-text"]'),
       ).toContainText('Ready', {
         timeout: 120_000,
       });
@@ -170,7 +175,7 @@ test.describe('Snapshot Tests', { tag: ['@admin', '@storage'] }, () => {
       await modal.waitForOpen();
       await expect(page.getByTestId('pvc-name')).toHaveValue(restoreName);
       await page.locator('#restore-storage-class').click();
-      await page.locator(dropdownFirstOption).nth(1).click();
+      await page.getByRole('option').nth(1).click();
       await modal.submit();
       await modal.waitForClosed();
     });
@@ -179,7 +184,7 @@ test.describe('Snapshot Tests', { tag: ['@admin', '@storage'] }, () => {
       await k8sClient.patchDeployment(testerDeployment.metadata.name, ns, [patchForVolume]);
       await page.goto(`/k8s/ns/${ns}/persistentvolumeclaims/${restoreName}`);
       await expect(
-        page.locator('[data-test-id="pvc-status"] [data-test="status-text"]'),
+        page.getByTestId('pvc-status').locator('[data-test="status-text"]'),
       ).toContainText('Bound', {
         timeout: 120_000,
       });

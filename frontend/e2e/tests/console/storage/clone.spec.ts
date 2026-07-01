@@ -1,15 +1,13 @@
 import { test, expect } from '../../../fixtures';
 import { ListPage } from '../../../pages/list-page';
 import { ModalPage } from '../../../pages/modal-page';
-import { PVC, PVCGP3, testerDeployment } from '../../../mocks/storage';
+import { PVC, PVCGP3, testerDeployment, isAwsPlatform } from '../../../mocks/storage';
 
-const isAws = String(process.env.BRIDGE_AWS).toLowerCase() === 'true';
 const cloneSize = '2';
 
 test.describe('Clone Tests', { tag: ['@admin', '@storage'] }, () => {
-  test.skip(!isAws, 'No CSI based storage classes are available on this platform');
-
   test('creates and deletes a PVC clone', async ({ page, k8sClient, cleanup }) => {
+    test.skip(!(await isAwsPlatform(k8sClient)), 'No CSI based storage classes are available on this platform');
     const ns = `test-clone-${Date.now()}`;
     const pvcName = PVC.metadata.name;
     const cloneName = `${pvcName}-clone`;
@@ -32,9 +30,10 @@ test.describe('Clone Tests', { tag: ['@admin', '@storage'] }, () => {
 
     await test.step('Wait for PVC to be Bound', async () => {
       await page.goto(`/k8s/ns/${ns}/persistentvolumeclaims`);
+      await listPage.waitForRows();
       await listPage.filterByName(pvcName);
-      const pvcCell = listPage.getCell(pvcName);
-      await expect(pvcCell.locator('xpath=ancestor::tr').locator('[data-test="status-text"]')).toContainText('Bound', {
+      const pvcRow = listPage.getCell(pvcName).locator('xpath=ancestor::tr');
+      await expect(pvcRow.locator('[data-test="status-text"]')).toContainText('Bound', {
         timeout: 120_000,
       });
     });
@@ -50,7 +49,7 @@ test.describe('Clone Tests', { tag: ['@admin', '@storage'] }, () => {
 
     await test.step('Verify clone details', async () => {
       await expect(page).toHaveURL(new RegExp(`persistentvolumeclaims/${cloneName}`));
-      await expect(page.locator('[data-test="page-heading"]')).toContainText(cloneName);
+      await expect(page.getByTestId('page-heading')).toContainText(cloneName);
       const pvc = await k8sClient.getPVC(cloneName, ns);
       expect((pvc as any).metadata.name).toBe(cloneName);
       expect((pvc as any).metadata.namespace).toBe(ns);
@@ -79,6 +78,7 @@ test.describe('Clone Tests', { tag: ['@admin', '@storage'] }, () => {
     k8sClient,
     cleanup,
   }) => {
+    test.skip(!(await isAwsPlatform(k8sClient)), 'No CSI based storage classes are available on this platform');
     const ns = `test-clone-sc-${Date.now()}`;
     const pvcName = PVC.metadata.name;
     const cloneName = `${pvcName}-clone`;
@@ -101,9 +101,10 @@ test.describe('Clone Tests', { tag: ['@admin', '@storage'] }, () => {
 
     await test.step('Wait for PVC to be Bound', async () => {
       await page.goto(`/k8s/ns/${ns}/persistentvolumeclaims`);
+      await listPage.waitForRows();
       await listPage.filterByName(pvcName);
-      const pvcCell = listPage.getCell(pvcName);
-      await expect(pvcCell.locator('xpath=ancestor::tr').locator('[data-test="status-text"]')).toContainText('Bound', {
+      const pvcRow = listPage.getCell(pvcName).locator('xpath=ancestor::tr');
+      await expect(pvcRow.locator('[data-test="status-text"]')).toContainText('Bound', {
         timeout: 120_000,
       });
     });
@@ -121,7 +122,7 @@ test.describe('Clone Tests', { tag: ['@admin', '@storage'] }, () => {
 
     await test.step('Verify clone details', async () => {
       await expect(page).toHaveURL(new RegExp(`persistentvolumeclaims/${cloneName}`));
-      await expect(page.locator('[data-test="page-heading"]')).toContainText(cloneName);
+      await expect(page.getByTestId('page-heading')).toContainText(cloneName);
       const pvc = await k8sClient.getPVC(cloneName, ns);
       expect((pvc as any).metadata.name).toBe(cloneName);
       expect((pvc as any).metadata.namespace).toBe(ns);

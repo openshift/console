@@ -57,15 +57,15 @@ test.describe(
 
         await test.step('Create storage class and verify details page', async () => {
           await page.locator('#save-changes').click();
-          await expect(page.locator('[data-test-id="resource-title"]')).toBeVisible({
+          await expect(page.getByTestId('resource-title')).toBeVisible({
             timeout: 30_000,
           });
-          await expect(page.locator('[data-test-id="resource-title"]')).not.toBeEmpty();
+          await expect(page.getByTestId('resource-title')).not.toBeEmpty();
         });
 
         await test.step('Delete storage class via UI', async () => {
-          await page.locator('[data-test-id="actions-menu-button"]').click();
-          await page.locator('[data-test-action="Delete StorageClass"]').click();
+          await page.getByTestId('actions-menu-button').click();
+          await page.getByTestId('Delete StorageClass').click();
           await modal.waitForOpen();
           await modal.submit();
           await modal.waitForClosed();

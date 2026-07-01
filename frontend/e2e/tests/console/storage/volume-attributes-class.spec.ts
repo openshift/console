@@ -1,17 +1,14 @@
 import { test, expect } from '../../../fixtures';
 import { ModalPage } from '../../../pages/modal-page';
-import { getVACFixtures } from '../../../mocks/storage';
-
-const isAws = String(process.env.BRIDGE_AWS).toLowerCase() === 'true';
+import { getVACFixtures, isAwsPlatform } from '../../../mocks/storage';
 
 test.describe('VolumeAttributesClass E2E tests', { tag: ['@admin', '@storage'] }, () => {
-  test.skip(!isAws, 'Requires AWS platform with EBS CSI driver');
-
   test('creates PVC with VAC, modifies VAC, and handles invalid VAC', async ({
     page,
     k8sClient,
     cleanup,
   }) => {
+    test.skip(!(await isAwsPlatform(k8sClient)), 'Requires AWS platform with EBS CSI driver');
     const ns = `test-vac-${Date.now()}`;
     const fixtures = getVACFixtures(ns);
     const {
@@ -73,23 +70,25 @@ test.describe('VolumeAttributesClass E2E tests', { tag: ['@admin', '@storage'] }
     });
 
     await test.step('Verify PVC details with requested VAC', async () => {
-      await expect(page.locator('[data-test="page-heading"]')).toContainText(TEST_PVC);
-      await expect(page.locator('[data-test-id="pvc-requested-vac"]')).toContainText(
+      await expect(page.getByTestId('page-heading')).toContainText(TEST_PVC);
+      await expect(page.getByTestId('pvc-requested-vac')).toContainText(
         TEST_VAC_LOW_IOPS,
         { timeout: 30_000 },
       );
-      await expect(page.locator('[data-test="status-text"]')).toContainText('Bound', {
+      await expect(
+        page.getByTestId('pvc-status').locator('[data-test="status-text"]'),
+      ).toContainText('Bound', {
         timeout: 120_000,
       });
-      await expect(page.locator('[data-test-id="pvc-current-vac"]')).toContainText(
+      await expect(page.getByTestId('pvc-current-vac')).toContainText(
         TEST_VAC_LOW_IOPS,
         { timeout: 30_000 },
       );
     });
 
     await test.step('Modify VolumeAttributesClass to high IOPS', async () => {
-      await page.locator('[data-test-id="actions-menu-button"]').click();
-      await page.locator('[data-test-action="Modify VolumeAttributesClass"]').click();
+      await page.getByTestId('actions-menu-button').click();
+      await page.getByTestId('Modify VolumeAttributesClass').click();
       await modal.waitForOpen();
 
       await page.getByTestId('modify-vac-dropdown').click();
@@ -97,19 +96,19 @@ test.describe('VolumeAttributesClass E2E tests', { tag: ['@admin', '@storage'] }
       await modal.submit();
       await modal.waitForClosed();
 
-      await expect(page.locator('[data-test-id="pvc-requested-vac"]')).toContainText(
+      await expect(page.getByTestId('pvc-requested-vac')).toContainText(
         TEST_VAC_HIGH_IOPS,
         { timeout: 30_000 },
       );
-      await expect(page.locator('[data-test-id="pvc-current-vac"]')).toContainText(
+      await expect(page.getByTestId('pvc-current-vac')).toContainText(
         TEST_VAC_HIGH_IOPS,
         { timeout: 30_000 },
       );
     });
 
     await test.step('Attempt invalid VAC modification and verify error', async () => {
-      await page.locator('[data-test-id="actions-menu-button"]').click();
-      await page.locator('[data-test-action="Modify VolumeAttributesClass"]').click();
+      await page.getByTestId('actions-menu-button').click();
+      await page.getByTestId('Modify VolumeAttributesClass').click();
       await modal.waitForOpen();
 
       await page.getByTestId('modify-vac-dropdown').click();
@@ -117,19 +116,19 @@ test.describe('VolumeAttributesClass E2E tests', { tag: ['@admin', '@storage'] }
       await modal.submit();
       await modal.waitForClosed();
 
-      await expect(page.locator('[data-test-id="pvc-requested-vac"]')).toContainText(
+      await expect(page.getByTestId('pvc-requested-vac')).toContainText(
         TEST_VAC_INVALID,
         { timeout: 30_000 },
       );
-      await expect(page.locator('[data-test-id="pvc-current-vac"]')).toContainText(
+      await expect(page.getByTestId('pvc-current-vac')).toContainText(
         TEST_VAC_HIGH_IOPS,
         { timeout: 30_000 },
       );
 
-      await expect(page.locator('[data-test-id="vac-error-alert"]')).toBeVisible({
+      await expect(page.getByTestId('vac-error-alert')).toBeVisible({
         timeout: 60_000,
       });
-      await expect(page.locator('[data-test-id="vac-error-alert"]')).toContainText(
+      await expect(page.getByTestId('vac-error-alert')).toContainText(
         'VolumeAttributesClass modification failed',
       );
     });
