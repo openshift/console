@@ -34,19 +34,6 @@ test.describe(
           { encoding: 'utf-8', timeout: 10_000 },
         );
       } catch { /* ignore on OCP 4 */ }
-      // OCP 5.0: knative queue-proxy sidecar lacks seccompProfile, so relax
-      // PodSecurity enforcement on the test namespace to allow revision pods.
-      try {
-        execSync(
-          `oc label namespace ${namespace} ` +
-          'pod-security.kubernetes.io/enforce=privileged ' +
-          'pod-security.kubernetes.io/warn=privileged ' +
-          'pod-security.kubernetes.io/audit=privileged ' +
-          'security.openshift.io/scc.podSecurityLabelSync=false ' +
-          '--overwrite',
-          { encoding: 'utf-8', timeout: 10_000 },
-        );
-      } catch { /* ignore on OCP 4 */ }
     });
 
     test.afterAll(async () => {
@@ -315,6 +302,7 @@ test.describe(
     });
 
     test('Create Revision for existing knative Service', async ({ page }) => {
+      test.setTimeout(300_000);
       const topologyPage = new TopologyKnativePage(page);
 
       await test.step('Create second revision via API', async () => {
@@ -339,6 +327,20 @@ test.describe(
           name: SERVICE_NAME,
           body,
         });
+      });
+
+      await test.step('Wait for service to reconcile after revision creation', async () => {
+        await expect(async () => {
+          const svc = (await k8sClient.customObjectsApi.getNamespacedCustomObject({
+            group: 'serving.knative.dev',
+            version: 'v1',
+            namespace,
+            plural: 'services',
+            name: SERVICE_NAME,
+          })) as { status?: { conditions?: Array<{ type: string; status: string }> } };
+          const ready = svc.status?.conditions?.find((c) => c.type === 'Ready');
+          expect(ready?.status).toBe('True');
+        }).toPass({ timeout: 120_000, intervals: [5_000] });
       });
 
       await test.step('Verify multiple revisions in sidebar', async () => {

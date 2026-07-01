@@ -47,24 +47,33 @@ export class TopologyKnativePage extends BasePage {
   }
 
   async rightClickOnKnativeService(serviceName: string): Promise<void> {
-    await this.switchToGraphView();
-    await this.fitScreen();
     const serviceLabel = this.page
       .locator('.odc-knative-service__label')
       .filter({ hasText: serviceName })
       .first();
+    await expect(async () => {
+      await this.page.reload({ waitUntil: 'load' });
+      await this.waitForLoadingComplete();
+      await this.switchToGraphView();
+      await this.fitScreen();
+      await expect(serviceLabel).toBeVisible();
+    }).toPass({ timeout: 120_000, intervals: [10_000] });
     // eslint-disable-next-line playwright/no-force-option
     await serviceLabel.click({ button: 'right', force: true, timeout: 30_000 });
   }
 
   async rightClickOnKnativeRevision(serviceName: string): Promise<void> {
-    await this.switchToGraphView();
-    await this.fitScreen();
-    // Target the revision node — revision labels are stable (no controller reconciliation conflict)
     const revisionNode = this.page
       .locator('[data-type="knative-revision"]')
       .filter({ hasText: serviceName })
       .first();
+    await expect(async () => {
+      await this.page.reload({ waitUntil: 'load' });
+      await this.waitForLoadingComplete();
+      await this.switchToGraphView();
+      await this.fitScreen();
+      await expect(revisionNode).toBeVisible();
+    }).toPass({ timeout: 120_000, intervals: [10_000] });
     // eslint-disable-next-line playwright/no-force-option
     await revisionNode.click({ button: 'right', force: true, timeout: 30_000 });
   }
@@ -87,11 +96,16 @@ export class TopologyKnativePage extends BasePage {
   }
 
   async clickOnKnativeService(serviceName: string): Promise<void> {
-    await this.switchToGraphView();
-    await this.fitScreen();
     const serviceLabel = this.knativeServiceNode
       .locator('.odc-base-node__label')
       .filter({ hasText: serviceName });
+    await expect(async () => {
+      await this.page.reload({ waitUntil: 'load' });
+      await this.waitForLoadingComplete();
+      await this.switchToGraphView();
+      await this.fitScreen();
+      await expect(serviceLabel).toBeVisible();
+    }).toPass({ timeout: 120_000, intervals: [10_000] });
     // eslint-disable-next-line playwright/no-force-option
     await serviceLabel.click({ force: true, timeout: 30_000 });
   }
@@ -169,10 +183,10 @@ export class TopologyKnativePage extends BasePage {
     const actionsButton = this.sidePane.locator(
       '[data-test="actions-menu-button"], [data-test-id="actions-menu-button"]',
     );
-    await actionsButton.first().click({ timeout: 10_000 });
+    await this.robustClick(actionsButton.first(), { timeout: 10_000 });
     const actionItem = this.page.locator(
       `[data-test="${actionName}"], [data-test-action="${actionName}"]`,
     );
-    await actionItem.first().click({ timeout: 10_000 });
+    await this.robustClick(actionItem.first(), { timeout: 10_000 });
   }
 }
