@@ -4,7 +4,7 @@ import { PodsPage } from '@console/internal/components/pod-list';
 import type { PageComponentProps } from '@console/internal/components/utils';
 import { NodeSubNavPage } from './NodeSubNavPage';
 
-const WORKLOAD_PAGE_ID = 'workload';
+export const WORKLOAD_PAGE_ID = 'workload';
 
 const NodePodsPage: FC<PageComponentProps<NodeKind>> = ({ obj }) => (
   <PodsPage

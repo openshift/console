@@ -23,7 +23,6 @@ import type {
 } from '@console/app/src/components/data-view/types';
 import { useDataViewSelection } from '@console/app/src/components/data-view/useDataViewSelection';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import NodeGroupEditButton from '@console/app/src/components/nodes/NodeGroupEditButton';
 import { FLAG_NODE_MGMT_V1 } from '@console/app/src/consts';
 import type { K8sModel } from '@console/dynamic-plugin-sdk/src/api/core-api';
 import {
@@ -100,6 +99,7 @@ import { nodeStatus } from '../../status/node';
 import { useIsKubevirtPluginActive } from '../../utils/kubevirt';
 import { getNodeClientCSRs, isCSRResource } from './csr';
 import NodeUptime from './node-dashboard/NodeUptime';
+import NodeGroupEditButton from './NodeGroupEditButton';
 import NodeRoles from './NodeRoles';
 import { NodeStatusWithExtensions } from './NodeStatus';
 import ClientCSRStatus from './status/CSRStatus';
