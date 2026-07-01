@@ -329,7 +329,10 @@
     "minimatch@^10.1.2": "^10.2.1",
     "fast-uri": "3.1.2",
     "shell-quote": "1.8.4",
-    "protobufjs": "7.5.8"
+    "protobufjs": "7.5.8",
+    "ws@^5.2.0": "^5.2.5",
+    "ws@^7.3.1": "^7.5.11",
+    "ws@^8.18.0": "^8.21.0"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,json,gql,graphql}": "eslint --color --fix"
