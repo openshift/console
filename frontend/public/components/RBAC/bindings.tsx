@@ -345,6 +345,11 @@ export const RoleBindingsPage: React.FCC<RoleBindingsPageProps> = ({
   }`,
 }) => {
   const { t } = useTranslation();
+  const canListClusterRoleBindings = useAccessReview({
+    group: ClusterRoleBindingModel.apiGroup,
+    resource: ClusterRoleBindingModel.plural,
+    verb: 'list',
+  });
   const watchResources = React.useMemo(
     () =>
       mock
@@ -356,13 +361,15 @@ export const RoleBindingsPage: React.FCC<RoleBindingsPageProps> = ({
               namespace,
               isList: true,
             },
-            ClusterRoleBinding: {
-              kind: 'ClusterRoleBinding',
-              namespaced: false,
-              isList: true,
-            },
+            ...(canListClusterRoleBindings && {
+              ClusterRoleBinding: {
+                kind: 'ClusterRoleBinding',
+                namespaced: false,
+                isList: true,
+              },
+            }),
           },
-    [mock, namespace],
+    [canListClusterRoleBindings, mock, namespace],
   );
   const resources = useK8sWatchResources(watchResources);
 
