@@ -31,8 +31,6 @@
     "test-cypress-dev-console": "cd packages/dev-console/integration-tests && yarn run test-cypress",
     "test-cypress-dev-console-headless": "cd packages/dev-console/integration-tests && yarn run test-cypress-headless",
     "test-cypress-dev-console-nightly": "cd packages/dev-console/integration-tests && yarn run test-cypress-nightly",
-    "test-cypress-knative": "cd packages/knative-plugin/integration-tests && yarn run test-cypress",
-    "test-cypress-knative-nightly": "cd packages/knative-plugin/integration-tests && yarn run test-cypress-headless-all",
     "test-cypress-helm": "cd packages/helm-plugin/integration-tests && yarn run test-cypress",
     "test-cypress-helm-headless": "cd packages/helm-plugin/integration-tests && yarn run test-cypress-headless",
     "test-cypress-helm-nightly": "cd packages/helm-plugin/integration-tests && yarn run test-cypress-headless-all",

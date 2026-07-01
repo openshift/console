@@ -1,5 +1,0 @@
-apiVersion: rhoas.redhat.com/v1alpha1
-kind: KafkaConnection
-metadata:
-  name: kafka-instance
-spec: {}
