@@ -652,6 +652,22 @@ export type ToastOptions = {
   onRemove?: (id: string) => void;
   /** Callback to run when toast is dismissed with close button */
   onClose?: () => void;
+  /** Optional group name for the notification drawer section. Omit to use the built-in default group (displayed as "Other Alerts"). Custom values are shown as-is and are not translated by Console. */
+  drawerGroup?: string;
+  /**
+   * When `true`, the toast is excluded from the visible toast cap and overflow link.
+   * Defaults to `true`.
+   * When `persistInDrawer` is `true` and `skipOverflow` is not explicitly set, defaults to `false`.
+   * Set `persistInDrawer: true` with `skipOverflow: true` for always-visible drawer-persisted toasts.
+   */
+  skipOverflow?: boolean;
+  /**
+   * When `true`, the toast is persisted in the notification drawer with read/unread state.
+   * Defaults `skipOverflow` to `false` so drawer-persisted toasts participate in the overflow cap,
+   * but an explicit `skipOverflow: true` is respected for always-visible toasts.
+   * Defaults to `false`.
+   */
+  persistInDrawer?: boolean;
 };
 
 export type ToastContextValues = {

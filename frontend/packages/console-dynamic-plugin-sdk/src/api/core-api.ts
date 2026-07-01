@@ -994,7 +994,8 @@ export const useActivePerspective: UseActivePerspective = require('@console/dyna
  *      addToast({
  *        title: 'Success',
  *        variant: 'success',
- *        content: 'Operation completed successfully.'
+ *        content: 'Operation completed successfully.',
+ *        drawerGroup: 'Operations',
  *      });
  *    };
  *    return <button onClick={handleClick}>Show Toast</button>;

@@ -1127,6 +1127,7 @@
   "Recommendations": "권장 사항",
   "Notifications in the recommendations group": "권장 사항 그룹의 알림",
   "Notifications": "알림",
+  "Clear all": "모두 지우기",
   "No PersistentVolume": "영구 볼륨 없음",
   "PersistentVolume": "PersistentVolume",
   "Capacity": "용량",
