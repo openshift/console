@@ -21,7 +21,7 @@ import { SecretModel } from '@console/internal/models';
 import { k8sCreate } from '@console/internal/module/k8s';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 
-export interface HelmCreateBasicAuthSecretModalProps {
+interface HelmCreateBasicAuthSecretModalProps {
   namespace: string;
   save?: (name: string) => void;
   onClose?: () => void;
@@ -33,7 +33,7 @@ const HelmCreateBasicAuthSecretModal: OverlayComponent<HelmCreateBasicAuthSecret
   save,
   onClose,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   const [secretName, setSecretName] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');

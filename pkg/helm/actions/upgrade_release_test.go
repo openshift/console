@@ -775,7 +775,7 @@ func TestUpgradeAfterURLInstallWithSecrets(t *testing.T) {
 			// Upgrade — chartUrl is recovered from the annotation, auth credentials are applied
 			secretsDriver := driver.NewSecrets(coreClient.Secrets(tt.releaseNamespace))
 			go func() {
-				upgradeResult, upgradeErr := UpgradeReleaseAsync(tt.releaseNamespace, tt.releaseName, "", nil, actionConfig, dynamicClient, coreClient, true, "")
+				upgradeResult, upgradeErr := UpgradeReleaseAsync(tt.releaseNamespace, tt.releaseName, "", nil, actionConfig, dynamicClient, coreClient, true, "", "")
 				require.NoError(t, upgradeErr)
 				require.Equal(t, fmt.Sprintf("sh.helm.release.v1.%v.v2", tt.releaseName), upgradeResult.ObjectMeta.Name)
 			}()

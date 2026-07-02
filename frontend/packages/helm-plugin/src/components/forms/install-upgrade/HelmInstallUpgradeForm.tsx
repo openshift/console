@@ -40,6 +40,7 @@ export type HelmInstallUpgradeFormData = {
   formSchema: JSONSchema7;
   editorType: EditorType;
   basicAuthSecretName?: string;
+  isURLInstall?: boolean;
 };
 
 interface HelmInstallUpgradeFormProps {
@@ -75,7 +76,7 @@ const HelmInstallUpgradeForm: FC<
   providerName,
   setFieldValue,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   const launchHelmCreateBasicAuthSecretModal = useHelmCreateBasicAuthSecretModal();
   const [isCreateSecretModalOpen, setIsCreateSecretModalOpen] = useState(false);
 
@@ -115,7 +116,7 @@ const HelmInstallUpgradeForm: FC<
   } = values;
   const { type: helmAction, title, subTitle } = helmActionConfig;
   const helmReadmeModalLauncher = useHelmReadmeModalLauncher({ readme: chartReadme });
-  const showAuthSecret = helmAction === HelmActionType.Upgrade && !!basicAuthSecretName;
+  const showAuthSecret = values.isURLInstall || !!values.chartURL;
   const secretResources = useSecretResources(namespace);
   const autocompleteFilter = (strText: string, item: any): boolean =>
     fuzzy(strText, item?.props?.name);

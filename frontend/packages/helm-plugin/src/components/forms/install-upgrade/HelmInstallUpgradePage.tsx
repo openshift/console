@@ -124,6 +124,9 @@ const HelmInstallUpgradePage: FC = () => {
     };
   }, [config.helmReleaseApi, helmAction]);
 
+  const isURLInstall =
+    !!initialChartURL || chartData?.metadata?.annotations?.installation === 'url_install';
+
   const initialValues: HelmInstallUpgradeFormData = {
     releaseName: initialReleaseName || helmChartName || '',
     chartURL: initialChartURL,
@@ -138,6 +141,7 @@ const HelmInstallUpgradePage: FC = () => {
     formSchema: initialFormSchema,
     editorType: initialFormSchema ? EditorType.Form : EditorType.YAML,
     basicAuthSecretName: initialBasicAuthSecretName,
+    isURLInstall,
   };
 
   const handleSubmit = (values, actions) => {
