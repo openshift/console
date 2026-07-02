@@ -30,7 +30,12 @@ export const CatalogEmptyState: FC<CatalogEmptyStateProps> = ({ onClear }) => {
       </EmptyStateBody>
       <EmptyStateFooter>
         <EmptyStateActions>
-          <Button variant="link" onClick={onClear} data-test-id="catalog-clear-filters">
+          <Button
+            variant="link"
+            onClick={onClear}
+            data-test="catalog-clear-filters"
+            data-test-id="catalog-clear-filters"
+          >
             {t('Clear all filters')}
           </Button>
         </EmptyStateActions>

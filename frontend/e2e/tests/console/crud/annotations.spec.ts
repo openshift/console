@@ -151,7 +151,7 @@ test.describe('Annotations', { tag: ['@admin'] }, () => {
 
     await test.step('Delete all annotations', async () => {
       await page.getByTestId('delete-button').first().click();
-      await page.getByTestId('delete-button').click();
+      await page.getByTestId('delete-button').first().click();
       await modal.submit();
       await modal.waitForClosed();
       await expect(page.getByTestId('edit-annotations')).toContainText('0 annotations');
