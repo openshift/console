@@ -545,6 +545,18 @@ func TestInstallChartFromURL(t *testing.T) {
 			expectedErrMsg:      "failed to find \"password\" key in secret",
 		},
 	}
+
+	// In Helm v4, ORAS v2 strictly enforces HTTPS when plainHTTP=false.
+	// The production code in applyBasicAuthFromUserCredentials hardcodes
+	// plainHTTP=false for security. Override the registry client factory
+	// so test registries (which use plain HTTP) work correctly.
+	originalNewRegistryClient := newRegistryClient
+	defer func() { newRegistryClient = originalNewRegistryClient }()
+	newRegistryClient = func(options ...registry.ClientOption) (*registry.Client, error) {
+		options = append(options, registry.ClientOptPlainHTTP())
+		return originalNewRegistryClient(options...)
+	}
+
 	for _, tt := range tests {
 		t.Run(tt.testName, func(t *testing.T) {
 			store := storage.Init(driver.NewMemory())

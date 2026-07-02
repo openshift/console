@@ -50,10 +50,10 @@ func TestGetReleaseHistory(t *testing.T) {
 				t.Error(err)
 			}
 
-		tt.release.Version = 2
-		store.Create(&tt.release)
+			tt.release.Version = 2
+			store.Create(&tt.release)
 
-		resp, err := GetReleaseHistory(tt.release.Name, actionConfig)
+			resp, err := GetReleaseHistory(tt.release.Name, actionConfig)
 			if err != tt.err {
 				t.Error(err)
 			}

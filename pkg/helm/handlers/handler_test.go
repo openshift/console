@@ -407,7 +407,7 @@ func TestHelmHandlers_HandleGetChart(t *testing.T) {
 		},
 		{
 			name:             "Return chart info in json format",
-			expectedResponse: `{"metadata":{"name":"foo"},"lock":null,"templates":null,"values":null,"schema":null,"files":null}`,
+			expectedResponse: `{"metadata":{"name":"foo"},"lock":null,"templates":null,"values":null,"schema":null,"schemamodtime":"0001-01-01T00:00:00Z","files":null}`,
 			expectedChart: chart.Chart{
 				Metadata: &chart.Metadata{
 					Name: "foo",
@@ -584,7 +584,7 @@ func TestHelmHandlers_HandleHelmRollbackRelease(t *testing.T) {
 		},
 		{
 			name:             "Valid chart rollback release test",
-			expectedResponse: `{"name":"test-release","info":{"first_deployed":"","last_deployed":"","deleted":"","status":"deployed"},"version":1}`,
+			expectedResponse: `{"name":"test-release","info":{"status":"deployed"},"version":1}`,
 			body:             `{"name": "test", "namespace":"test", "version":1}`,
 			release: &releaseV1.Release{
 				Name: "test-release",

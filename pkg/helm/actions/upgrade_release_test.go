@@ -729,8 +729,7 @@ func TestUpgradeAfterURLInstallWithSecrets(t *testing.T) {
 				RESTClientGetter: FakeConfig{},
 				Releases:         store,
 				KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
-				Capabilities:     chartutil.DefaultCapabilities,
-				Log:              func(format string, v ...interface{}) {},
+				Capabilities:     common.DefaultCapabilities,
 			}
 			authSecret := &v1.Secret{
 				ObjectMeta: metav1.ObjectMeta{
@@ -747,10 +746,10 @@ func TestUpgradeAfterURLInstallWithSecrets(t *testing.T) {
 			dynamicClient := K8sDynamicClientFromCRs()
 
 			// Simulate a URL install by creating the release with auth annotation
-			installRelease := release.Release{
+			installRelease := releaseV1.Release{
 				Name:      tt.releaseName,
 				Namespace: tt.releaseNamespace,
-				Info: &release.Info{
+				Info: &releaseV1.Info{
 					FirstDeployed: helmTime.Time{},
 					Status:        "deployed",
 				},
