@@ -7031,9 +7031,9 @@ __metadata:
   linkType: hard
 
 "async-limiter@npm:~1.0.0":
-  version: 1.0.0
-  resolution: "async-limiter@npm:1.0.0"
-  checksum: 10c0/786467041c3be8655e40d7c8a5fca691898cf04f32d4f006dc6f20caeb0c9e98b2bc2751aab0434bf8981074a848d4b89b026327be29a7ffa805ce1181908e30
+  version: 1.0.1
+  resolution: "async-limiter@npm:1.0.1"
+  checksum: 10c0/0693d378cfe86842a70d4c849595a0bb50dc44c11649640ca982fa90cbfc74e3cc4753b5a0847e51933f2e9c65ce8e05576e75e5e1fd963a086e673735b35969
   languageName: node
   linkType: hard
 
@@ -24952,33 +24952,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ws@npm:^5.2.0":
-  version: 5.2.2
-  resolution: "ws@npm:5.2.2"
-  dependencies:
-    async-limiter: "npm:~1.0.0"
-  checksum: 10c0/23c75681caa438c8b9e21f8cc30feb9fd4e8dfd2ed986ee9f130eaca0494b79ab9fd4441ddfc3faadf7f6a206dc095fdde961106a0616eeca66b17f22efb0033
-  languageName: node
-  linkType: hard
-
-"ws@npm:^7.3.1":
-  version: 7.5.10
-  resolution: "ws@npm:7.5.10"
-  peerDependencies:
-    bufferutil: ^4.0.1
-    utf-8-validate: ^5.0.2
-  peerDependenciesMeta:
-    bufferutil:
-      optional: true
-    utf-8-validate:
-      optional: true
-  checksum: 10c0/bd7d5f4aaf04fae7960c23dcb6c6375d525e00f795dd20b9385902bd008c40a94d3db3ce97d878acc7573df852056ca546328b27b39f47609f80fb22a0a9b61d
-  languageName: node
-  linkType: hard
-
-"ws@npm:^8.18.0, ws@npm:^8.18.2":
-  version: 8.20.0
-  resolution: "ws@npm:8.20.0"
+"ws@npm:8.20.1":
+  version: 8.20.1
+  resolution: "ws@npm:8.20.1"
   peerDependencies:
     bufferutil: ^4.0.1
     utf-8-validate: ">=5.0.2"
@@ -24987,7 +24963,31 @@ __metadata:
       optional: true
     utf-8-validate:
       optional: true
-  checksum: 10c0/956ac5f11738c914089b65878b9223692ace77337ba55379ae68e1ecbeae9b47a0c6eb9403688f609999a58c80d83d99865fe0029b229d308b08c1ef93d4ea14
+  checksum: 10c0/ce162433218399cdedeb76fd33363d4d86a7d910058d4e3c679dce08cea65d6da6b39f11baa4d7808d024cf46ed88f6a05c17611621aaad8fc5e62edacc30c5d
+  languageName: node
+  linkType: hard
+
+"ws@npm:^5.2.0":
+  version: 5.2.5
+  resolution: "ws@npm:5.2.5"
+  dependencies:
+    async-limiter: "npm:~1.0.0"
+  checksum: 10c0/829b2e57028c65765a01bd240fb05c736050cc1e6836f5d6df04ebc4e78c2950c7d437bbfd01a79345050813e9da2162171be8c5b5301cc4307804932908d9de
+  languageName: node
+  linkType: hard
+
+"ws@npm:^7.3.1":
+  version: 7.5.11
+  resolution: "ws@npm:7.5.11"
+  peerDependencies:
+    bufferutil: ^4.0.1
+    utf-8-validate: ^5.0.2
+  peerDependenciesMeta:
+    bufferutil:
+      optional: true
+    utf-8-validate:
+      optional: true
+  checksum: 10c0/7972670b676fb1ccba73b0899ca3c2e04e8c2075629c2614cced7f556536f96a672bbf4619fc5a06c8b8720bb839a47ca88c69c95dc14c9c61a99fbecba1c866
   languageName: node
   linkType: hard
 
