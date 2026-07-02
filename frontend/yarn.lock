@@ -9994,10 +9994,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dayjs@npm:^1.10.4":
-  version: 1.10.7
-  resolution: "dayjs@npm:1.10.7"
-  checksum: 10c0/2ce908776ea5b383dba2c01c72290ff12ad97cafa81b9c72a9cc4f801d736d592f20bd992ea1dff083ab80e807080b5af21f634bb09e67f89f66582a9059053a
+"dayjs@npm:^1.10.4, dayjs@npm:^1.11.7":
+  version: 1.11.21
+  resolution: "dayjs@npm:1.11.21"
+  checksum: 10c0/bd97dfdc4bfea3c66268635690313828b386faa040fbc1f829ff42a2bd748b72c9d9b3c8f9616ce9e61fcb78923f1461a462c969c54b1084458ae1b715898fb0
   languageName: node
   linkType: hard
 
@@ -10561,7 +10561,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"domutils@npm:^3.0.1, domutils@npm:^3.1.0":
+"domutils@npm:^3.0.1, domutils@npm:^3.1.0, domutils@npm:^3.2.2":
   version: 3.2.2
   resolution: "domutils@npm:3.2.2"
   dependencies:
@@ -10822,6 +10822,13 @@ __metadata:
   version: 6.0.1
   resolution: "entities@npm:6.0.1"
   checksum: 10c0/ed836ddac5acb34341094eb495185d527bd70e8632b6c0d59548cbfa23defdbae70b96f9a405c82904efa421230b5b3fd2283752447d737beffd3f3e6ee74414
+  languageName: node
+  linkType: hard
+
+"entities@npm:^7.0.1":
+  version: 7.0.1
+  resolution: "entities@npm:7.0.1"
+  checksum: 10c0/b4fb9937bb47ecb00aaaceb9db9cdd1cc0b0fb649c0e843d05cf5dbbd2e9d2df8f98721d8b1b286445689c72af7b54a7242fc2d63ef7c9739037a8c73363e7ca
   languageName: node
   linkType: hard
 
@@ -13665,7 +13672,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"htmlparser2@npm:^6.0.0, htmlparser2@npm:^6.1.0":
+"htmlparser2@npm:^10.1.0":
+  version: 10.1.0
+  resolution: "htmlparser2@npm:10.1.0"
+  dependencies:
+    domelementtype: "npm:^2.3.0"
+    domhandler: "npm:^5.0.3"
+    domutils: "npm:^3.2.2"
+    entities: "npm:^7.0.1"
+  checksum: 10c0/36394e29b80cfcc5e78e0fa4d3aa21fdaac3e6778d23e5c933e625c290987cd9a724a2eb0753ab60ed0c69dfaba0ab115f0ee50fb112fd8f0c4d522e7e0089a2
+  languageName: node
+  linkType: hard
+
+"htmlparser2@npm:^6.1.0":
   version: 6.1.0
   resolution: "htmlparser2@npm:6.1.0"
   dependencies:
@@ -16247,7 +16266,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"klona@npm:^2.0.3, klona@npm:^2.0.4":
+"klona@npm:^2.0.4":
   version: 2.0.4
   resolution: "klona@npm:2.0.4"
   checksum: 10c0/3292a3393ed47603b67b54b61d29d1e64677c3436d12e8b14cd8762183f409dc3422dde06734cc23731c38bbb9feae03ffc23b38d399eeeebd6dbd467f58a034
@@ -16340,6 +16359,15 @@ __metadata:
     picocolors: "npm:^1.0.0"
     shell-quote: "npm:^1.8.1"
   checksum: 10c0/e18fcda6617a995306602871c7a71ddcfdd82d88a57508ae970be86bfb6685f131cf9ddb8896df4e8e4cde6d0e2d14318d2b41314eaae6abf03ca205948daa27
+  languageName: node
+  linkType: hard
+
+"launder@npm:^1.7.1":
+  version: 1.7.1
+  resolution: "launder@npm:1.7.1"
+  dependencies:
+    dayjs: "npm:^1.11.7"
+  checksum: 10c0/c4884c08cc5a1a19cbec840aac7fa97db4928c25fc99ea2981a0482df3ebdbf1cf6605226a3c968e3281025126ff10055686e81f428ecc0e8f8666ca05bae8cc
   languageName: node
   linkType: hard
 
@@ -18418,7 +18446,7 @@ __metadata:
     redux-thunk: "npm:~3.1.0"
     reselect: "npm:^5.1.1"
     resolve-url-loader: "npm:^5.0.0"
-    sanitize-html: "npm:^2.3.2"
+    sanitize-html: "npm:^2.17.4"
     sass: "npm:^1.42.1"
     sass-loader: "npm:^10.1.1"
     semver: "npm:6.x"
@@ -20873,18 +20901,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sanitize-html@npm:^2.3.2":
-  version: 2.3.2
-  resolution: "sanitize-html@npm:2.3.2"
+"sanitize-html@npm:^2.17.4":
+  version: 2.17.5
+  resolution: "sanitize-html@npm:2.17.5"
   dependencies:
     deepmerge: "npm:^4.2.2"
     escape-string-regexp: "npm:^4.0.0"
-    htmlparser2: "npm:^6.0.0"
+    htmlparser2: "npm:^10.1.0"
     is-plain-object: "npm:^5.0.0"
-    klona: "npm:^2.0.3"
+    launder: "npm:^1.7.1"
     parse-srcset: "npm:^1.0.2"
-    postcss: "npm:^8.0.2"
-  checksum: 10c0/b1a19a3059e60a8112e86c3c1bb8ebaa5bf1329abffd48d45754cb435b8e1ef3ed592bb9412f3747c030429fafcf4b6475c6afe842c6dc053081e79760941844
+    postcss: "npm:^8.3.11"
+  checksum: 10c0/b3e1c0f42a87dece0a02c1ee4aee663be69d33661b94f7dbc006f341a34577b3ddb9ace5ff415ddd62efbc4e944845265ef2fe2702ad0ede8d3575bf7a36b9df
   languageName: node
   linkType: hard
 
