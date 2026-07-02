@@ -17,9 +17,6 @@ export class HelmPage extends BasePage {
   private readonly nameFilterInput = this.page.getByRole('textbox', { name: 'Filter by name' });
   private readonly statusIcon = this.page.getByTestId('success-icon');
   private readonly statusText = this.page.getByTestId('status-text');
-  private readonly helmReleasesTab = this.page.locator(
-    '[data-test-id="horizontal-link-Helm Releases"]',
-  );
   private readonly catalogSearch = this.page.getByPlaceholder('Filter by keyword...');
   private readonly catalogSidePane = this.page.locator('[role="dialog"]');
   private readonly releaseNameInput = this.page.locator('#form-input-releaseName-field');
@@ -31,7 +28,6 @@ export class HelmPage extends BasePage {
 
   async navigateToHelmReleases(namespace: string): Promise<void> {
     await this.goTo(`/helm/ns/${namespace}`);
-    await this.waitForLoadingComplete();
   }
 
   async searchByName(name: string): Promise<void> {
@@ -58,7 +54,11 @@ export class HelmPage extends BasePage {
   }
 
   async clickKebabMenu(): Promise<void> {
-    await this.robustClick(this.page.locator('[data-test-id="kebab-button"]').first());
+    const kebabButton = this.page.locator('[data-test-id="kebab-button"]').first();
+    await this.robustClick(kebabButton);
+    // Wait for the dropdown menu to appear after clicking
+    // eslint-disable-next-line no-restricted-syntax
+    await this.page.locator('[data-test-action]').first().waitFor({ state: 'visible', timeout: 10_000 });
   }
 
   async selectAction(actionName: string): Promise<void> {
@@ -102,8 +102,12 @@ export class HelmPage extends BasePage {
       await items.first().click();
     }
     const confirmButton = this.page.getByRole('button', { name: 'Proceed' });
-    if (await confirmButton.isVisible({ timeout: 3_000 }).catch(() => false)) {
+    try {
+      // eslint-disable-next-line no-restricted-syntax
+      await confirmButton.waitFor({ state: 'visible', timeout: 3_000 });
       await this.robustClick(confirmButton);
+    } catch {
+      // Confirmation not required for this chart version
     }
   }
 
@@ -119,7 +123,9 @@ export class HelmPage extends BasePage {
 
   async clickRollbackButton(): Promise<void> {
     await this.robustClick(this.submitButton);
-    await this.waitForLoadingComplete(40_000);
+    // eslint-disable-next-line no-restricted-syntax
+    await this.page.locator('.pf-v6-c-button__progress').waitFor({ state: 'detached', timeout: 60_000 }).catch(() => {});
+    await this.waitForLoadingComplete(60_000);
   }
 
   async selectProject(namespace: string): Promise<void> {

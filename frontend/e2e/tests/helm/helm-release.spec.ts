@@ -17,7 +17,9 @@ test.describe('Helm Release', { tag: ['@helm', '@smoke'] }, () => {
     const helmPage = new HelmPage(page);
     await helmPage.navigateToHelmReleases(ns);
 
-    await expect(helmPage.getEmptyMessage()).toContainText('No Helm Releases found');
+    await expect(helmPage.getEmptyMessage()).toContainText('No Helm Releases found', {
+      timeout: 60_000,
+    });
     await expect(helmPage.getInstallLink()).toBeVisible();
   });
 
@@ -142,6 +144,8 @@ test.describe('Helm Release', { tag: ['@helm', '@smoke'] }, () => {
       await helmPage.navigateToHelmReleases(ns);
       await helmPage.searchByName(releaseName);
       await expect(helmPage.getTable()).toBeVisible({ timeout: 30_000 });
+      // Wait for upgrade to complete before checking menu items
+      await expect(helmPage.getStatusText().first()).toContainText('Deployed', { timeout: 60_000 });
     });
 
     await test.step('Verify kebab menu actions after upgrade (HR-08-TC01)', async () => {
@@ -170,6 +174,7 @@ test.describe('Helm Release', { tag: ['@helm', '@smoke'] }, () => {
       await helmDetailsPage.getActionMenuItem('Rollback').click();
       await helmPage.selectRevision();
       await helmPage.clickRollbackButton();
+      await expect(helmDetailsPage.getSectionHeading()).toBeVisible({ timeout: 30_000 });
     });
 
     await test.step('Delete helm release (HR-01-TC03)', async () => {
