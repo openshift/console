@@ -308,6 +308,7 @@ test.describe(
     test('console plugin proxy copies plugin service response status code', async ({ page }) => {
       test.skip(IS_LOCAL_DEV, 'Proxy test is only run on CI');
 
+      await consolePluginPage.navigateToPluginDetails(PLUGIN_NAME);
       const pluginResponse = await page.request.get(
         `/api/plugins/${PLUGIN_NAME}/plugin-manifest.json`,
       );
