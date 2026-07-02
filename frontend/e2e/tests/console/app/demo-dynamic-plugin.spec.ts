@@ -333,6 +333,7 @@ test.describe(
     });
 
     test('disables the demo plugin and deletes it', async ({ page }) => {
+      test.setTimeout(600_000);
       test.skip(IS_LOCAL_DEV, 'Plugin disablement is only tested on CI');
 
       await test.step('Navigate to console plugins tab', async () => {
@@ -349,11 +350,18 @@ test.describe(
       });
 
       await test.step('Verify plugin is disabled', async () => {
-        const row = consolePluginPage.getPluginNameCell(PLUGIN_NAME).locator('xpath=ancestor::tr');
-        await expect(row.getByTestId('edit-console-plugin')).toContainText('Disabled');
-        await expect(
-          consolePluginPage.getPluginStatusCell(PLUGIN_NAME),
-        ).toContainText('-');
+        // Disabling a plugin triggers a console-operator reconciliation that
+        // restarts console-server pods, similar to enablement. Navigate on
+        // each retry to get fresh cookies from the new pod.
+        await expect(async () => {
+          await consolePluginPage.navigateToConsolePlugins();
+          await expect(page.getByTestId(`${PLUGIN_NAME}-name`)).toBeVisible();
+          const row = consolePluginPage.getPluginNameCell(PLUGIN_NAME).locator('xpath=ancestor::tr');
+          await expect(row.getByTestId('edit-console-plugin')).toContainText('Disabled');
+          await expect(
+            consolePluginPage.getPluginStatusCell(PLUGIN_NAME),
+          ).toContainText('-');
+        }).toPass({ timeout: 300_000, intervals: [15_000] });
       });
 
       await test.step('Delete the ConsolePlugin', async () => {
