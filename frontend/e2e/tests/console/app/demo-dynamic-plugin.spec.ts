@@ -278,7 +278,7 @@ test.describe(
 
       await expect(
         page.getByTestId('horizontal-link-Plugin manifest'),
-      ).toHaveClass(/pf-m-current/);
+      ).toHaveAttribute('aria-selected', 'true');
 
       const codeEditor = consolePluginPage.getCodeEditor();
       const emptyBox = consolePluginPage.getEmptyBox();
