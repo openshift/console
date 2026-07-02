@@ -253,7 +253,6 @@ github.com/emirpasic/gods/trees/binaryheap
 github.com/emirpasic/gods/utils
 # github.com/evanphx/json-patch v5.9.11+incompatible
 ## explicit
-github.com/evanphx/json-patch
 # github.com/evanphx/json-patch/v5 v5.9.11
 ## explicit; go 1.18
 github.com/evanphx/json-patch/v5
@@ -413,7 +412,7 @@ github.com/go-openapi/swag/typeutils
 # github.com/go-openapi/swag/yamlutils v0.25.4
 ## explicit; go 1.24.0
 github.com/go-openapi/swag/yamlutils
-# github.com/go-viper/mapstructure/v2 v2.2.1
+# github.com/go-viper/mapstructure/v2 v2.4.0
 ## explicit; go 1.18
 github.com/go-viper/mapstructure/v2
 github.com/go-viper/mapstructure/v2/internal/errors
@@ -654,8 +653,8 @@ github.com/munnerz/goautoneg
 ## explicit; go 1.24.0
 github.com/onsi/gomega/gstruct/errors
 github.com/onsi/gomega/types
-# github.com/opdev/getocprange v0.0.0-20250225145951-42123ecb365d
-## explicit; go 1.20
+# github.com/opdev/getocprange v0.0.0-20260608195748-56b0b7806c21
+## explicit; go 1.24
 github.com/opdev/getocprange
 # github.com/opencontainers/go-digest v1.0.0
 ## explicit; go 1.13
@@ -716,7 +715,7 @@ github.com/operator-framework/operator-registry/pkg/registry
 # github.com/patrickmn/go-cache v2.1.0+incompatible
 ## explicit
 github.com/patrickmn/go-cache
-# github.com/pelletier/go-toml/v2 v2.2.3
+# github.com/pelletier/go-toml/v2 v2.2.4
 ## explicit; go 1.21.0
 github.com/pelletier/go-toml/v2
 github.com/pelletier/go-toml/v2/internal/characters
@@ -766,8 +765,8 @@ github.com/prometheus/procfs/internal/util
 ## explicit
 github.com/rawagner/graphql-transport-ws/graphqlws
 github.com/rawagner/graphql-transport-ws/graphqlws/internal/connection
-# github.com/redhat-certification/chart-verifier v0.0.0-20250415162918-111669f9d053
-## explicit; go 1.23.5
+# github.com/redhat-certification/chart-verifier v0.0.0-20260617140039-1bf8aaca404e
+## explicit; go 1.25.0
 github.com/redhat-certification/chart-verifier/internal/chartverifier
 github.com/redhat-certification/chart-verifier/internal/chartverifier/api
 github.com/redhat-certification/chart-verifier/internal/chartverifier/checks
@@ -789,8 +788,8 @@ github.com/rubenv/sql-migrate/sqlparse
 # github.com/russross/blackfriday/v2 v2.1.0
 ## explicit
 github.com/russross/blackfriday/v2
-# github.com/sagikazarmark/locafero v0.7.0
-## explicit; go 1.21
+# github.com/sagikazarmark/locafero v0.11.0
+## explicit; go 1.23.0
 github.com/sagikazarmark/locafero
 # github.com/santhosh-tekuri/jsonschema/v6 v6.0.2
 ## explicit; go 1.21
@@ -808,28 +807,28 @@ github.com/sirupsen/logrus
 # github.com/skeema/knownhosts v1.3.1
 ## explicit; go 1.22
 github.com/skeema/knownhosts
-# github.com/sourcegraph/conc v0.3.0
-## explicit; go 1.19
+# github.com/sourcegraph/conc v0.3.1-0.20240121214520-5f936abd7ae8
+## explicit; go 1.20
 github.com/sourcegraph/conc
-github.com/sourcegraph/conc/internal/multierror
-github.com/sourcegraph/conc/iter
 github.com/sourcegraph/conc/panics
-# github.com/spf13/afero v1.12.0
-## explicit; go 1.21
+github.com/sourcegraph/conc/pool
+# github.com/spf13/afero v1.15.0
+## explicit; go 1.23.0
 github.com/spf13/afero
 github.com/spf13/afero/internal/common
 github.com/spf13/afero/mem
-# github.com/spf13/cast v1.7.1
-## explicit; go 1.19
+# github.com/spf13/cast v1.10.0
+## explicit; go 1.21.0
 github.com/spf13/cast
+github.com/spf13/cast/internal
 # github.com/spf13/cobra v1.10.2
 ## explicit; go 1.15
 github.com/spf13/cobra
 # github.com/spf13/pflag v1.0.10
 ## explicit; go 1.12
 github.com/spf13/pflag
-# github.com/spf13/viper v1.20.1
-## explicit; go 1.21.0
+# github.com/spf13/viper v1.21.0
+## explicit; go 1.23.0
 github.com/spf13/viper
 github.com/spf13/viper/internal/encoding/dotenv
 github.com/spf13/viper/internal/encoding/json
@@ -987,13 +986,6 @@ golang.org/x/crypto/ed25519
 golang.org/x/crypto/hkdf
 golang.org/x/crypto/internal/alias
 golang.org/x/crypto/internal/poly1305
-golang.org/x/crypto/openpgp
-golang.org/x/crypto/openpgp/armor
-golang.org/x/crypto/openpgp/clearsign
-golang.org/x/crypto/openpgp/elgamal
-golang.org/x/crypto/openpgp/errors
-golang.org/x/crypto/openpgp/packet
-golang.org/x/crypto/openpgp/s2k
 golang.org/x/crypto/pbkdf2
 golang.org/x/crypto/scrypt
 golang.org/x/crypto/sha3
@@ -1205,47 +1197,6 @@ gopkg.in/yaml.v2
 # gopkg.in/yaml.v3 v3.0.1
 ## explicit
 gopkg.in/yaml.v3
-# helm.sh/helm/v3 v3.17.1
-## explicit; go 1.23.0
-helm.sh/helm/v3/internal/fileutil
-helm.sh/helm/v3/internal/resolver
-helm.sh/helm/v3/internal/sympath
-helm.sh/helm/v3/internal/third_party/dep/fs
-helm.sh/helm/v3/internal/third_party/k8s.io/kubernetes/deployment/util
-helm.sh/helm/v3/internal/tlsutil
-helm.sh/helm/v3/internal/urlutil
-helm.sh/helm/v3/internal/version
-helm.sh/helm/v3/pkg/action
-helm.sh/helm/v3/pkg/chart
-helm.sh/helm/v3/pkg/chart/loader
-helm.sh/helm/v3/pkg/chartutil
-helm.sh/helm/v3/pkg/cli
-helm.sh/helm/v3/pkg/cli/values
-helm.sh/helm/v3/pkg/downloader
-helm.sh/helm/v3/pkg/engine
-helm.sh/helm/v3/pkg/getter
-helm.sh/helm/v3/pkg/helmpath
-helm.sh/helm/v3/pkg/helmpath/xdg
-helm.sh/helm/v3/pkg/ignore
-helm.sh/helm/v3/pkg/kube
-helm.sh/helm/v3/pkg/kube/fake
-helm.sh/helm/v3/pkg/lint
-helm.sh/helm/v3/pkg/lint/rules
-helm.sh/helm/v3/pkg/lint/support
-helm.sh/helm/v3/pkg/plugin
-helm.sh/helm/v3/pkg/postrender
-helm.sh/helm/v3/pkg/provenance
-helm.sh/helm/v3/pkg/pusher
-helm.sh/helm/v3/pkg/registry
-helm.sh/helm/v3/pkg/release
-helm.sh/helm/v3/pkg/releaseutil
-helm.sh/helm/v3/pkg/repo
-helm.sh/helm/v3/pkg/storage
-helm.sh/helm/v3/pkg/storage/driver
-helm.sh/helm/v3/pkg/strvals
-helm.sh/helm/v3/pkg/time
-helm.sh/helm/v3/pkg/time/ctime
-helm.sh/helm/v3/pkg/uploader
 # helm.sh/helm/v4 v4.1.4
 ## explicit; go 1.25.0
 helm.sh/helm/v4/internal/chart/v3
@@ -1276,6 +1227,7 @@ helm.sh/helm/v4/pkg/chart/v2/lint/support
 helm.sh/helm/v4/pkg/chart/v2/loader
 helm.sh/helm/v4/pkg/chart/v2/util
 helm.sh/helm/v4/pkg/cli
+helm.sh/helm/v4/pkg/cli/values
 helm.sh/helm/v4/pkg/downloader
 helm.sh/helm/v4/pkg/engine
 helm.sh/helm/v4/pkg/getter
@@ -1295,6 +1247,7 @@ helm.sh/helm/v4/pkg/release/v1/util
 helm.sh/helm/v4/pkg/repo/v1
 helm.sh/helm/v4/pkg/storage
 helm.sh/helm/v4/pkg/storage/driver
+helm.sh/helm/v4/pkg/strvals
 helm.sh/helm/v4/pkg/uploader
 # k8s.io/api v0.35.4
 ## explicit; go 1.25.0
@@ -1856,11 +1809,6 @@ oras.land/oras-go/pkg/auth/docker
 oras.land/oras-go/pkg/content
 oras.land/oras-go/pkg/context
 oras.land/oras-go/pkg/oras
-oras.land/oras-go/pkg/registry
-oras.land/oras-go/pkg/registry/remote
-oras.land/oras-go/pkg/registry/remote/auth
-oras.land/oras-go/pkg/registry/remote/internal/errutil
-oras.land/oras-go/pkg/registry/remote/internal/syncutil
 oras.land/oras-go/pkg/target
 # oras.land/oras-go/v2 v2.6.0
 ## explicit; go 1.23.0

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"maps"
 	"strings"
 
 	"golang.org/x/mod/semver"
@@ -37,7 +38,7 @@ const (
 	SkipDigestCheck BooleanKey = "skipDigestCheck"
 )
 
-//nolint:deadcode,unused // Note(komish) need to ensure this isn't used, and research
+//nolint:unused // Note(komish) need to ensure this isn't used, and research
 var setBooleanKeys = [...]BooleanKey{SkipDigestCheck}
 
 type APIReportSummary interface {
@@ -66,9 +67,7 @@ func (r *ReportSummary) SetReport(report *report.Report) APIReportSummary {
 }
 
 func (r *ReportSummary) SetValues(values map[string]interface{}) APIReportSummary {
-	for key, element := range values {
-		r.options.values[key] = element
-	}
+	maps.Copy(r.options.values, values)
 	return r
 }
 
@@ -246,7 +245,7 @@ func (r *ReportSummary) addResults() {
 		if profileCheck.Type == checks.MandatoryCheckType {
 			found := false
 			for _, reportCheck := range r.options.report.Results {
-				if strings.Compare(profileCheck.Name, string(reportCheck.Check)) == 0 {
+				if profileCheck.Name == string(reportCheck.Check) {
 					found = true
 					if reportCheck.Outcome == report.PassOutcomeType || reportCheck.Outcome == report.SkippedOutcomeType {
 						passed++

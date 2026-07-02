@@ -19,6 +19,7 @@ package verifier
 import (
 	"errors"
 	"fmt"
+	"slices"
 	"strings"
 	"time"
 
@@ -32,9 +33,9 @@ import (
 
 	"github.com/spf13/viper"
 
-	"helm.sh/helm/v3/pkg/cli"
-	"helm.sh/helm/v3/pkg/cli/values"
-	"helm.sh/helm/v3/pkg/getter"
+	"helm.sh/helm/v4/pkg/cli"
+	"helm.sh/helm/v4/pkg/cli/values"
+	"helm.sh/helm/v4/pkg/getter"
 )
 
 // to do: move report structiure, logs structure,  and check names to api directory
@@ -119,13 +120,7 @@ type APIVerifier interface {
 func validateBooleanKeys(v Verifier) error {
 	var err error
 	for key := range v.Inputs.Flags.BooleanFlags {
-		foundElement := false
-		for _, sliceElement := range setBooleanKeys {
-			if sliceElement == key {
-				foundElement = true
-				continue
-			}
-		}
+		foundElement := slices.Contains(setBooleanKeys[:], key)
 		if !foundElement {
 			err = fmt.Errorf("invalid boolean key name: %s", key)
 		}
@@ -153,13 +148,7 @@ func (v *Verifier) SetDuration(key DurationKey, duration time.Duration) APIVerif
 func validateDurationKeys(v Verifier) error {
 	var err error
 	for key := range v.Inputs.Flags.DurationFlags {
-		foundElement := false
-		for _, sliceElement := range setDurationKeys {
-			if sliceElement == key {
-				foundElement = true
-				break
-			}
-		}
+		foundElement := slices.Contains(setDurationKeys[:], key)
 		if !foundElement {
 			err = fmt.Errorf("invalid duration key name: %s", key)
 		}
@@ -178,13 +167,7 @@ func (v *Verifier) SetString(key StringKey, value []string) APIVerifier {
 func validateStringKeys(v Verifier) error {
 	var err error
 	for key := range v.Inputs.Flags.StringFlags {
-		foundElement := false
-		for _, sliceElement := range setStringKeys {
-			if sliceElement == key {
-				foundElement = true
-				break
-			}
-		}
+		foundElement := slices.Contains(setStringKeys[:], key)
 		if !foundElement {
 			err = fmt.Errorf("invalid string key name: %s", key)
 		}
@@ -209,13 +192,7 @@ func (v *Verifier) SetValues(valuesFlagName ValuesKey, values map[string]interfa
 func validateValuesKeys(v Verifier) error {
 	var err error
 	for key := range v.Inputs.Flags.ValuesFlags {
-		foundElement := false
-		for _, sliceElement := range setValuesKeys {
-			if sliceElement == key {
-				foundElement = true
-				break
-			}
-		}
+		foundElement := slices.Contains(setValuesKeys[:], key)
 		if !foundElement {
 			err = fmt.Errorf("invalid values key name: %s", key)
 		}
@@ -261,13 +238,7 @@ func (v *Verifier) UnEnableChecks(checkNames []checks.CheckName) APIVerifier {
 func validateChecks(v Verifier) error {
 	var err error
 	for checkName := range v.Inputs.Flags.Checks {
-		isValidCheckName := false
-		for _, validCheckName := range checks.GetChecks() {
-			if checkName == validCheckName {
-				isValidCheckName = true
-				break
-			}
-		}
+		isValidCheckName := slices.Contains(checks.GetChecks(), checkName)
 		if !isValidCheckName {
 			err = fmt.Errorf("invalid check name : %s", checkName)
 			return err

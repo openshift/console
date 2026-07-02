@@ -52,6 +52,8 @@ func InitLog(cobraCmd *cobra.Command, stdFilename string, suppressErrorLog bool)
 	} else {
 		stderrFileName = fmt.Sprintf("verifier-%s.log", verifierlog.Time)
 	}
+
+	initSlogHandler(suppressErrorLog)
 }
 
 func LogWarning(message string) {
