@@ -126,34 +126,36 @@ const SecretDataRevealButton: React.FC<SecretDataRevealButtonProps> = ({ reveal,
 
 export const SecretData: React.FC<SecretDataProps> = ({ data }) => {
   const [reveal, setReveal] = React.useState(false);
-  const [hasRevealableContent, setHasRevealableContent] = React.useState(false);
   const { t } = useTranslation();
 
-  const dataDescriptionList = React.useMemo(() => {
-    return data
-      ? Object.keys(data)
-          .sort()
-          .map((k) => {
-            const isBinary = ITOB.isBinary(k, Buffer.from(data[k], 'base64'));
-            if (!isBinary && data[k]) {
-              setHasRevealableContent(hasRevealableContent || !isBinary);
-            }
-            return (
-              <React.Fragment key={k}>
-                <dt i18n-not-translated="true" data-test="secret-data-term">
-                  {k}
-                </dt>
-                <dd>
-                  {isBinary ? (
-                    <DownloadBinaryButton label={k} value={data[k]} />
-                  ) : (
-                    <SecretValue value={data[k]} reveal={reveal} id={k} />
-                  )}
-                </dd>
-              </React.Fragment>
-            );
-          })
-      : [];
+  const { items: dataDescriptionList, hasRevealableContent } = React.useMemo(() => {
+    if (!data) {
+      return { items: [], hasRevealableContent: false };
+    }
+    let revealable = false;
+    const items = Object.keys(data)
+      .sort()
+      .map((k) => {
+        const isBinary = ITOB.isBinary(k, Buffer.from(data[k], 'base64'));
+        if (!isBinary && data[k]) {
+          revealable = true;
+        }
+        return (
+          <React.Fragment key={k}>
+            <dt i18n-not-translated="true" data-test="secret-data-term">
+              {k}
+            </dt>
+            <dd>
+              {isBinary ? (
+                <DownloadBinaryButton label={k} value={data[k]} />
+              ) : (
+                <SecretValue value={data[k]} reveal={reveal} id={k} />
+              )}
+            </dd>
+          </React.Fragment>
+        );
+      });
+    return { items, hasRevealableContent: revealable };
   }, [data, reveal]);
 
   return (

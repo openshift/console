@@ -63,9 +63,7 @@ describe('Create key/value secrets', () => {
     cy.byLegacyTestID('file-input-textarea').should('not.exist');
     cy.byTestID('alert-info').should('exist');
     secrets.save();
-    cy.byTestID('loading-indicator').should('not.exist');
-    detailsPage.isLoaded();
-    detailsPage.titleShouldContain(binarySecretName);
+    secrets.detailsPageIsLoaded(binarySecretName);
     cy.exec(
       `oc get secret -n ${testName} ${binarySecretName} --template '{{.data.${secretKey}}}' | base64 -d`,
       {
@@ -78,9 +76,7 @@ describe('Create key/value secrets', () => {
     });
     modifySecretForm(modifiedSecretKey);
     secrets.save();
-    cy.byTestID('loading-indicator').should('not.exist');
-    detailsPage.isLoaded();
-    detailsPage.titleShouldContain(binarySecretName);
+    secrets.detailsPageIsLoaded(binarySecretName);
     cy.exec(
       `oc get secret -n ${testName} ${binarySecretName} --template '{{.data.${modifiedSecretKey}}}' | base64 -d`,
       {
@@ -99,9 +95,7 @@ describe('Create key/value secrets', () => {
       cy.byLegacyTestID('file-input-textarea').should('contain.text', asciiSecret);
       cy.byTestID('alert-info').should('not.exist');
       secrets.save();
-      cy.byTestID('loading-indicator').should('not.exist');
-      detailsPage.isLoaded();
-      detailsPage.titleShouldContain(asciiSecretName);
+      secrets.detailsPageIsLoaded(asciiSecretName);
       cy.exec(
         `oc get secret -n ${testName} ${asciiSecretName} --template '{{.data.${secretKey}}}' | base64 -d`,
         {
@@ -119,9 +113,7 @@ describe('Create key/value secrets', () => {
       cy.byLegacyTestID('file-input-textarea').should('contain.text', unicodeSecret);
       cy.byTestID('alert-info').should('not.exist');
       secrets.save();
-      cy.byTestID('loading-indicator').should('not.exist');
-      detailsPage.isLoaded();
-      detailsPage.titleShouldContain(unicodeSecretName);
+      secrets.detailsPageIsLoaded(unicodeSecretName);
       cy.exec(
         `oc get secret -n ${testName} ${unicodeSecretName} --template '{{.data.${secretKey}}}' | base64 -d`,
         {

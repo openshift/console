@@ -56,6 +56,7 @@ export const secrets = {
     cy.byTestID('loading-indicator').should('not.exist');
     detailsPage.isLoaded();
     detailsPage.titleShouldContain(secretName);
+    cy.byTestID('secret-data').should('exist');
   },
   encode: (username, password) => Base64.encode(`${username}:${password}`),
   enterSecretName: (secretName: string) => cy.byTestID('secret-name').type(secretName),

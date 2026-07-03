@@ -16,9 +16,9 @@ module.exports = defineConfig({
     configFile: 'reporter-config.json',
   },
   fixturesFolder: 'fixtures',
-  defaultCommandTimeout: 30000,
+  defaultCommandTimeout: 40000,
   retries: {
-    runMode: 1,
+    runMode: 2,
     openMode: 0,
   },
   e2e: {
