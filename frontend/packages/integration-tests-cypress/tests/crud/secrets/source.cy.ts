@@ -1,5 +1,6 @@
 import { checkErrors, testName } from '../../../support';
 import { detailsPage } from '../../../views/details-page';
+import { guidedTour } from '../../../views/guided-tour';
 import { secrets } from '../../../views/secret';
 
 describe('Source secrets', () => {
@@ -14,15 +15,21 @@ describe('Source secrets', () => {
 
   before(() => {
     cy.login();
+    guidedTour.close();
     cy.createProjectWithCLI(testName);
   });
 
   beforeEach(() => {
+    // ensure the test project is selected to avoid flakes
+    cy.visit(`/k8s/cluster/projects/${testName}`);
     cy.visit(`/k8s/ns/${testName}/secrets/`);
     secrets.clickCreateSecretDropdownButton('source');
   });
 
   afterEach(() => {
+    cy.exec(`oc delete secret -n ${testName} ${basicSourceSecretName} ${sshSourceSecretName}`, {
+      failOnNonZeroExit: false,
+    });
     checkErrors();
   });
 

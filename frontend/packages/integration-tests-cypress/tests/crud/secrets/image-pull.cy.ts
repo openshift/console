@@ -1,5 +1,6 @@
 import { checkErrors, testName } from '../../../support';
 import { detailsPage } from '../../../views/details-page';
+import { guidedTour } from '../../../views/guided-tour';
 import { secrets } from '../../../views/secret';
 
 const heading = 'Create image pull secret';
@@ -7,6 +8,7 @@ const heading = 'Create image pull secret';
 describe('Image pull secrets', () => {
   before(() => {
     cy.login();
+    guidedTour.close();
     cy.createProjectWithCLI(testName);
   });
 
