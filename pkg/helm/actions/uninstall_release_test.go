@@ -48,6 +48,9 @@ func TestUninstallRelease(t *testing.T) {
 				t.Error(err)
 			}
 			resp, err := UninstallRelease(tt.release.Name, actionConfig)
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
 			if resp != nil {
 				if rel, ok := resp.Release.(*releaseV1.Release); ok && rel.Info.Status != rcommon.StatusUninstalled {
 					t.Error(errors.New("Release status is not uninstalled"))
@@ -81,8 +84,11 @@ func TestUninstallInvalidRelease(t *testing.T) {
 				Capabilities: common.DefaultCapabilities,
 			}
 			resp, err := UninstallRelease(tt.release.Name, actionConfig)
-			if err != nil && err.Error() != tt.err.Error() {
-				t.Error(err)
+			if err == nil {
+				t.Fatal("expected error but got nil")
+			}
+			if err.Error() != tt.err.Error() {
+				t.Errorf("expected error %q, got %q", tt.err, err)
 			}
 			if resp != nil {
 				if rel, ok := resp.Release.(*releaseV1.Release); ok && rel.Info.Status != rcommon.StatusUninstalled {

@@ -35,6 +35,7 @@ func UpgradeRelease(
 ) (*releaseV1.Release, error) {
 	client := action.NewUpgrade(conf)
 	client.ServerSideApply = "false"
+	client.WaitStrategy = kube.HookOnlyStrategy
 	client.Namespace = releaseNamespace
 	var ch *chart.Chart
 	var cp, chartLocation string
@@ -151,7 +152,7 @@ func UpgradeReleaseAsync(
 ) (*kv1.Secret, error) {
 	client := action.NewUpgrade(conf)
 	client.ServerSideApply = "false"
-	client.WaitStrategy = kube.LegacyStrategy
+	client.WaitStrategy = kube.HookOnlyStrategy
 	client.Namespace = releaseNamespace
 	var ch *chart.Chart
 	var cp, chartLocation string

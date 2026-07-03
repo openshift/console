@@ -111,7 +111,7 @@ func InstallChart(ns, name, url string, vals map[string]interface{}, conf *actio
 	var cp, chartLocation string
 	cmd := action.NewInstall(conf)
 	cmd.ServerSideApply = false
-	cmd.WaitStrategy = kube.LegacyStrategy
+	cmd.WaitStrategy = kube.HookOnlyStrategy
 	// tlsFiles contain references of files to be removed once the chart
 	// operation depending on those files is finished.
 	tlsFiles := []*os.File{}
@@ -196,7 +196,7 @@ func InstallChartAsync(ns, name, url string, vals map[string]interface{}, conf *
 	var cp, chartLocation string
 	cmd := action.NewInstall(conf)
 	cmd.ServerSideApply = false
-	cmd.WaitStrategy = kube.LegacyStrategy
+	cmd.WaitStrategy = kube.HookOnlyStrategy
 	// tlsFiles contain references of files to be removed once the chart
 	// operation depending on those files is finished.
 	tlsFiles := []*os.File{}
@@ -330,7 +330,7 @@ func InstallChartFromURL(ns, name, url string, vals map[string]interface{}, conf
 
 	cmd := action.NewInstall(conf)
 	cmd.ServerSideApply = false
-	cmd.WaitStrategy = kube.LegacyStrategy
+	cmd.WaitStrategy = kube.HookOnlyStrategy
 	cmd.ReleaseName = name
 	cmd.Namespace = ns
 

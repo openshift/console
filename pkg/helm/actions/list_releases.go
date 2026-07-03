@@ -36,9 +36,11 @@ func ListReleases(conf *action.Configuration, limitInfo bool) ([]*releaseV1.Rele
 				Version:   rel.Version,
 				Namespace: rel.Namespace,
 				Info:      rel.Info,
-				Chart: &chart.Chart{
+			}
+			if rel.Chart != nil {
+				info.Chart = &chart.Chart{
 					Metadata: rel.Chart.Metadata,
-				},
+				}
 			}
 			limited = append(limited, &info)
 		}
