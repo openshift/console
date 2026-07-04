@@ -20,6 +20,7 @@ type configFlagsWithTransport struct {
 func initSettings() *cli.EnvSettings {
 	conf := cli.New()
 	conf.RepositoryCache = "/tmp"
+	conf.ContentCache = "/tmp/helm-content-cache"
 	return conf
 }
 

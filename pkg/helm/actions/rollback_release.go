@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"helm.sh/helm/v4/pkg/action"
+	"helm.sh/helm/v4/pkg/kube"
 	releaseV1 "helm.sh/helm/v4/pkg/release/v1"
 )
 
@@ -14,6 +15,7 @@ func RollbackRelease(releaseName string, revision int, conf *action.Configuratio
 	}
 	client := action.NewRollback(conf)
 	client.Version = revision
+	client.WaitStrategy = kube.HookOnlyStrategy
 	err := client.Run(releaseName)
 	if err != nil {
 		// if there is no release exist then return generic error
