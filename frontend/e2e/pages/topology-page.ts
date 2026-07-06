@@ -15,20 +15,18 @@ export class TopologyPage extends BasePage {
     .filter({ hasText: 'Display options' });
   private readonly graphSurface = this.page.locator('[data-surface="true"]');
   private readonly confirmAction = this.page.getByTestId('confirm-action');
-  private readonly highlightedNode = this.page.locator('.is-filtered');
+  private readonly highlightedNode = this.page.getByTestId('filtered-node');
   private readonly expandToggle = this.page.getByLabel('Collapse groups');
 
   // Form interaction locators
   private readonly gitRepoUrlField = this.page.getByLabel('Git Repo URL');
-  private readonly gitUrlHelper = this.page.locator('#form-input-git-url-field-helper');
-  private readonly applicationNameField = this.page.locator('#form-input-application-name-field');
-  private readonly workloadNameField = this.page.locator('#form-input-name-field');
-  private readonly resourceTypeField = this.page.locator('#form-select-input-resources-field');
+  private readonly gitUrlHelper = this.page.getByTestId('form-input-git-url-field-helper');
+  private readonly applicationNameField = this.page.getByTestId('form-input-application-name-field');
+  private readonly workloadNameField = this.page.getByTestId('form-input-name-field');
+  private readonly resourceTypeField = this.page.getByTestId('form-select-input-resources-field');
   private readonly saveChangesButton = this.page.getByTestId('save-changes');
-  private readonly applicationDropdown = this.page.locator('[id$="application-name-field"]');
-  private readonly applicationFormInput = this.page.getByTestId('application-form-app-input');
+  private readonly applicationDropdown = this.page.getByTestId('form-dropdown-application-name-field');
   private readonly sidebarCloseButton = this.page.getByTestId('sidebar-close-button');
-  private readonly baseNodeHandler = this.page.getByTestId('base-node-handler');
 
   async navigateToTopology(namespace?: string): Promise<void> {
     const url = namespace ? `/topology/ns/${namespace}` : '/topology';
@@ -96,14 +94,16 @@ export class TopologyPage extends BasePage {
     await expect(this.highlightedNode.first()).toBeAttached({ timeout });
   }
 
-  async verifyGroupLabel(workloadName: string, groupName: string, timeout = 5_000): Promise<void> {
+  // PF Topology internal class — no data-test available; may break on PF upgrades
+  async verifyGroupLabel(workloadName: string, groupName: string, timeout = 15_000): Promise<void> {
     await this.ensureGraphView();
     await this.search(workloadName);
     const label = this.page.locator('g[class$="topology__group__label"]');
     const textContent = label.locator('> text');
-    await expect(textContent).toHaveText(groupName);
+    await expect(textContent).toHaveText(groupName, { timeout });
   }
 
+  // PF Topology internal class — no data-test available; may break on PF upgrades
   getNode(nodeName: string): Locator {
     return this.page
       .locator('g[class$="topology__node__label"]')
@@ -121,11 +121,10 @@ export class TopologyPage extends BasePage {
   async clickOnNode(nodeName: string): Promise<void> {
     await this.ensureGraphView();
     await this.search(nodeName);
-    // Wait for search to filter and highlight the node
     await expect(this.highlightedNode.first()).toBeVisible({ timeout: 30_000 });
-
-    await expect(this.baseNodeHandler.first()).toBeVisible({ timeout: 30_000 });
-    await this.robustClick(this.baseNodeHandler.first());
+    const handler = this.highlightedNode.getByTestId('base-node-handler').first();
+    await expect(handler).toBeVisible({ timeout: 30_000 });
+    await this.robustClick(handler);
   }
 
   async rightClickOnNode(nodeName: string): Promise<void> {
@@ -154,7 +153,7 @@ export class TopologyPage extends BasePage {
   }
 
   getDisplayOptionCheckbox(label: string): Locator {
-    return this.page.getByRole('menuitem', {name: label}).getByRole('checkbox');
+    return this.page.getByRole('menuitem', { name: label }).getByRole('checkbox');
   }
 
   async typeInQuickSearch(text: string): Promise<void> {
@@ -169,10 +168,6 @@ export class TopologyPage extends BasePage {
 
   async waitForGitUrlValidation(timeout = 120_000): Promise<void> {
     await expect(this.gitUrlHelper).toContainText('Validated', { timeout });
-  }
-
-  async fillApplicationName(name: string): Promise<void> {
-    await this.applicationNameField.fill(name);
   }
 
   async fillWorkloadName(name: string): Promise<void> {
@@ -198,10 +193,10 @@ export class TopologyPage extends BasePage {
     await this.page.getByTestId('console-select-item').first().click();
   }
 
-  async fillApplicationInput(appName: string): Promise<void> {
-    await expect(this.applicationFormInput).toBeVisible();
-    await this.applicationFormInput.fill(appName);
-    await expect(this.applicationFormInput).toHaveValue(appName);
+  async fillApplicationName(appName: string): Promise<void> {
+    await expect(this.applicationNameField).toBeVisible();
+    await this.applicationNameField.fill(appName);
+    await expect(this.applicationNameField).toHaveValue(appName);
   }
 
   async closeSidebarIfOpen(): Promise<void> {
@@ -229,7 +224,7 @@ export class TopologyPage extends BasePage {
   }
 
   getApplicationFormInput(): Locator {
-    return this.applicationFormInput;
+    return this.applicationNameField;
   }
 
 }

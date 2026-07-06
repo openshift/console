@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url';
 import { test, expect } from '../../fixtures';
 import { TopologyPage } from '../../pages/topology-page';
 import { TopologySidebarPage } from '../../pages/topology-sidebar-page';
-import { Page } from '@playwright/test'
+import type { Page } from '@playwright/test';
 
 const NS = `aut-topology-ci-${Date.now()}`;
 
@@ -165,7 +165,7 @@ test.describe('Perform actions on topology', { tag: ['@smoke'] }, () => {
     await test.step('Change application groupings to "app"', async () => {
       await topology.clickApplicationDropdown();
       await topology.selectFirstApplicationOption();
-      await topology.fillApplicationInput('app');
+      await topology.fillApplicationName('app');
       await topology.clickSaveChanges();
     });
     

@@ -77,7 +77,11 @@ const BaseNodeComponent: FC<BaseNodeProps> = ({
   }, [createConnectorDrag]);
   return (
     <Layer id={isHovering ? TOP_LAYER : DEFAULT_LAYER}>
-      <g ref={nodeHoverRefs} data-test-id={element.getLabel()}>
+      <g
+        ref={nodeHoverRefs}
+        data-test-id={element.getLabel()}
+        data-test={filtered ? 'filtered-node' : undefined}
+      >
         <DefaultNode
           className={css('odc-base-node', className, alertVariant && StatusModifier[alertVariant], {
             'is-filtered': filtered,
