@@ -37,4 +37,36 @@ export class AdminEventingPage extends BasePage {
     await this.robustClick(tabMap[tab]);
     await this.waitForLoadingComplete();
   }
+
+  async selectCreateOption(option: string): Promise<void> {
+    await this.robustClick(this.createButton);
+    const menuItem = this.page.locator(
+      `[data-test="${option}"], [data-test-dropdown-menu="${option}"]`,
+    );
+    await this.robustClick(menuItem.first());
+  }
+
+  async fillPingSourceForm(data: string, schedule: string, sinkUri: string): Promise<void> {
+    await this.page.locator('#form-input-formData-data-PingSource-data-field').fill(data);
+    await this.page.locator('#form-input-formData-data-PingSource-schedule-field').fill(schedule);
+    await this.page.getByRole('radio', { name: 'URI' }).click();
+    await this.page.locator('#form-input-formData-sink-uri-field').fill(sinkUri);
+  }
+
+  async createChannel(type: string): Promise<void> {
+    const typeDropdown = this.page.locator('#form-dropdown-formData-type-field');
+    await typeDropdown.click();
+    await this.page.getByTestId('console-select-item').filter({ hasText: type }).click();
+    await this.robustClick(this.page.getByTestId('save-changes'));
+  }
+
+  async createBroker(name: string): Promise<void> {
+    await this.page.locator('#form-radiobutton-editorType-form-field').click();
+    const nameField = this.page.locator(
+      '[data-test="application-form-app-name"], [data-test-id="application-form-app-name"]',
+    ).first();
+    await nameField.clear();
+    await nameField.fill(name);
+    await this.robustClick(this.page.getByTestId('save-changes'));
+  }
 }
