@@ -126,7 +126,7 @@
   "Must be a valid OCI URL or a valid HTTP/HTTPS tar file; for example - oci://registry.example.com/chart, https://example.com/chart-1.0.0.tgz.": "Must be a valid OCI URL or a valid HTTP/HTTPS tar file; for example - oci://registry.example.com/chart, https://example.com/chart-1.0.0.tgz.",
   "Failed to create Secret.": "Failed to create Secret.",
   "Create authentication Secret": "Create authentication Secret",
-  "Optional username for OCI/HTTP(S) authentication.": "Optional username for OCI/HTTP(S) authentication.",
+  "Username for OCI/HTTP(S) authentication.": "Username for OCI/HTTP(S) authentication.",
   "Password or token for OCI/HTTP(S) authentication.": "Password or token for OCI/HTTP(S) authentication.",
   "Invalid chart URL format.": "Invalid chart URL format.",
   "Install Helm Chart from URL": "Install Helm Chart from URL",

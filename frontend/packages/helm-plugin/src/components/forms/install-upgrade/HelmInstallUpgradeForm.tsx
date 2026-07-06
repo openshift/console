@@ -220,22 +220,22 @@ const HelmInstallUpgradeForm: FC<
               <GridItem xl={5} lg={4} md={12}>
                 <ResourceDropdownField
                   name="basicAuthSecretName"
-                  label={t('helm-plugin~Secret for basic authentication')}
+                  label={t('Secret for basic authentication')}
                   resources={secretResources}
                   dataSelector={['metadata', 'name']}
                   fullWidth
-                  placeholder={t('helm-plugin~Select a secret')}
+                  placeholder={t('Select a secret')}
                   showBadge
                   autocompleteFilter={autocompleteFilter}
                   actionItems={[
                     {
-                      actionTitle: t('helm-plugin~Create Secret'),
+                      actionTitle: t('Create Secret'),
                       actionKey: CREATE_SECRET_KEY,
                     },
                   ]}
                   onChange={handleSecretChange}
                   helpText={t(
-                    'helm-plugin~Secret with "username" and "password" keys for OCI/HTTP(S) authentication.',
+                    'Secret with "username" and "password" keys for OCI/HTTP(S) authentication.',
                   )}
                 />
                 {basicAuthSecretName && secretMissing && (
@@ -244,7 +244,7 @@ const HelmInstallUpgradeForm: FC<
                     isInline
                     isPlain
                     title={t(
-                      'helm-plugin~Secret "{{secretName}}" was not found in this namespace. Select an existing secret or create a new one.',
+                      'Secret "{{secretName}}" was not found in this namespace. Select an existing secret or create a new one.',
                       { secretName: basicAuthSecretName },
                     )}
                   />

@@ -40,10 +40,10 @@ const HelmCreateBasicAuthSecretModal: OverlayComponent<HelmCreateBasicAuthSecret
   const [inProgress, setInProgress] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>();
 
-  const isCreateDisabled = !secretName.trim() || !password;
+  const isCreateDisabled = !secretName.trim() || !username.trim() || !password;
 
-  const closeModal = () => {
-    if (inProgress) {
+  const closeModal = (force = false) => {
+    if (inProgress && !force) {
       return;
     }
     if (document.activeElement instanceof HTMLElement) {
@@ -76,12 +76,11 @@ const HelmCreateBasicAuthSecretModal: OverlayComponent<HelmCreateBasicAuthSecret
         },
       });
       const createdSecretName = secretName.trim();
-      closeModal();
+      closeModal(true);
       // Keep form update separate so a parent callback failure cannot block modal close.
       save?.(createdSecretName);
     } catch (err) {
-      const message =
-        err instanceof Error ? err.message : t('helm-plugin~Failed to create Secret.');
+      const message = err instanceof Error ? err.message : t('Failed to create Secret.');
       setErrorMessage(message);
     } finally {
       setInProgress(false);
@@ -96,11 +95,11 @@ const HelmCreateBasicAuthSecretModal: OverlayComponent<HelmCreateBasicAuthSecret
   return (
     <Modal
       isOpen
-      onClose={closeModal}
-      title={t('helm-plugin~Create authentication Secret')}
+      onClose={() => closeModal(true)}
+      title={t('Create authentication Secret')}
       variant={ModalVariant.medium}
     >
-      <ModalHeader title={t('helm-plugin~Create authentication Secret')} />
+      <ModalHeader title={t('Create authentication Secret')} />
       <ModalBody>
         <Form onSubmit={onSubmit}>
           <FormGroup label={t('public~Secret name')} isRequired fieldId="helm-secret-name">
@@ -119,7 +118,7 @@ const HelmCreateBasicAuthSecretModal: OverlayComponent<HelmCreateBasicAuthSecret
             </FormHelperText>
           </FormGroup>
 
-          <FormGroup label={t('public~Secret username')} fieldId="helm-secret-username">
+          <FormGroup label={t('public~Secret username')} isRequired fieldId="helm-secret-username">
             <TextInput
               id="helm-secret-username"
               data-test="helm-secret-username"
@@ -129,9 +128,7 @@ const HelmCreateBasicAuthSecretModal: OverlayComponent<HelmCreateBasicAuthSecret
             />
             <FormHelperText>
               <HelperText>
-                <HelperTextItem>
-                  {t('helm-plugin~Optional username for OCI/HTTP(S) authentication.')}
-                </HelperTextItem>
+                <HelperTextItem>{t('Username for OCI/HTTP(S) authentication.')}</HelperTextItem>
               </HelperText>
             </FormHelperText>
           </FormGroup>
@@ -152,7 +149,7 @@ const HelmCreateBasicAuthSecretModal: OverlayComponent<HelmCreateBasicAuthSecret
             <FormHelperText>
               <HelperText>
                 <HelperTextItem>
-                  {t('helm-plugin~Password or token for OCI/HTTP(S) authentication.')}
+                  {t('Password or token for OCI/HTTP(S) authentication.')}
                 </HelperTextItem>
               </HelperText>
             </FormHelperText>
@@ -169,7 +166,11 @@ const HelmCreateBasicAuthSecretModal: OverlayComponent<HelmCreateBasicAuthSecret
         >
           {t('public~Create')}
         </Button>
-        <Button variant={ButtonVariant.link} onClick={closeModal} isDisabled={inProgress}>
+        <Button
+          variant={ButtonVariant.link}
+          onClick={() => closeModal(true)}
+          isDisabled={inProgress}
+        >
           {t('public~Cancel')}
         </Button>
       </ModalFooterWithAlerts>
