@@ -85,7 +85,7 @@ const RevisionsOverviewList: FC<RevisionsOverviewListProps> = ({
           {t('No Revisions found for this resource.')}
         </span>
       ) : (
-        <List isPlain isBordered>
+        <List isPlain isBordered data-test="revision-list">
           {_.map(filteredRevisions, (revision) => (
             <RevisionsOverviewListItem
               key={revision.metadata.uid}

@@ -47,7 +47,7 @@ export class TopologyKnativePage extends BasePage {
   }
 
   async rightClickOnKnativeService(serviceName: string): Promise<void> {
-    const serviceLabel = this.page
+    const serviceLabel = this.knativeServiceNode
       .locator('.odc-knative-service__label')
       .filter({ hasText: serviceName })
       .first();
@@ -159,6 +159,7 @@ export class TopologyKnativePage extends BasePage {
       .locator('g[class$="topology__node__label"] text')
       .filter({ hasText: nodeName })
       .first();
+    await expect(nodeLabel).toBeVisible({ timeout: 60_000 });
     // eslint-disable-next-line playwright/no-force-option
     await nodeLabel.click({ force: true, timeout: 30_000 });
   }
@@ -170,6 +171,7 @@ export class TopologyKnativePage extends BasePage {
       .locator('g[class$="topology__node__label"] text')
       .filter({ hasText: nodeName })
       .first();
+    await expect(nodeLabel).toBeVisible({ timeout: 60_000 });
     // eslint-disable-next-line playwright/no-force-option
     await nodeLabel.click({ button: 'right', force: true, timeout: 30_000 });
   }
@@ -188,5 +190,43 @@ export class TopologyKnativePage extends BasePage {
       `[data-test="${actionName}"], [data-test-action="${actionName}"]`,
     );
     await this.robustClick(actionItem.first(), { timeout: 10_000 });
+  }
+
+  async verifyKnativeRevisionVisible(timeout = 60_000): Promise<void> {
+    await expect(this.page.locator('[data-type="knative-revision"]').first()).toBeAttached({ timeout });
+  }
+
+  async getRevisionCount(): Promise<number> {
+    return this.page.getByTestId('revision-list').locator('li').count();
+  }
+
+  async verifyRevisionCount(expected: number, timeout = 60_000): Promise<void> {
+    await expect(
+      this.page.getByTestId('revision-list').locator('li'),
+    ).toHaveCount(expected, { timeout });
+  }
+
+  async openServiceAction(namespace: string, serviceName: string, action: string): Promise<void> {
+    await this.goTo(`/k8s/ns/${namespace}/serving.knative.dev~v1~Service/${serviceName}`);
+    const actionsButton = this.page.locator(
+      '[data-test="actions-menu-button"], [data-test-id="actions-menu-button"]',
+    ).first();
+    await this.robustClick(actionsButton, { timeout: 30_000 });
+    const actionItem = this.page.locator(
+      `[data-test="${action}"], [data-test-action="${action}"]`,
+    ).first();
+    await this.robustClick(actionItem, { timeout: 10_000 });
+  }
+
+  async verifyTrafficDistributionError(expectedText: string): Promise<void> {
+    await expect(this.page.locator('div.co-alert div.co-pre-line')).toContainText(expectedText);
+  }
+
+  async verifyResourceRemoved(resourceName: string, timeout = 10_000): Promise<void> {
+    await this.page.reload();
+    await this.page.waitForLoadState('load');
+    await this.waitForLoadingComplete();
+    await this.search(resourceName);
+    await expect(this.highlightedNode).not.toBeAttached({ timeout });
   }
 }

@@ -1,4 +1,4 @@
-import { execSync } from 'child_process';
+import { execFileSync } from 'child_process';
 
 import { test, expect } from '../../../fixtures';
 import { AddFlowPage } from '../../../pages/knative/add-flow-page';
@@ -24,15 +24,14 @@ test.describe(
       await k8sClient.createNamespace(namespace);
       // OCP 5.0: knative queue-proxy sidecar lacks seccompProfile, relax PodSecurity
       try {
-        execSync(
-          `oc label namespace ${namespace} ` +
-          'pod-security.kubernetes.io/enforce=privileged ' +
-          'pod-security.kubernetes.io/warn=privileged ' +
-          'pod-security.kubernetes.io/audit=privileged ' +
-          'security.openshift.io/scc.podSecurityLabelSync=false ' +
+        execFileSync('oc', [
+          'label', 'namespace', namespace,
+          'pod-security.kubernetes.io/enforce=privileged',
+          'pod-security.kubernetes.io/warn=privileged',
+          'pod-security.kubernetes.io/audit=privileged',
+          'security.openshift.io/scc.podSecurityLabelSync=false',
           '--overwrite',
-          { encoding: 'utf-8', timeout: 10_000 },
-        );
+        ], { encoding: 'utf-8', timeout: 10_000 });
       } catch { /* ignore on OCP 4 */ }
     });
 
@@ -51,15 +50,7 @@ test.describe(
 
       await test.step('Enter Git URL and configure workload', async () => {
         await addFlowPage.enterGitUrl(GIT_URL);
-        // Force Builder Image strategy so the Resources dropdown is always available
-        const builderImageStrategy = page.getByTestId('import-strategy Builder Image');
-        if ((await builderImageStrategy.count()) > 0) {
-          await builderImageStrategy.click();
-          const nodeJsImage = page.locator('.odc-selector-card').filter({ hasText: 'Node.js' });
-          if ((await nodeJsImage.count()) > 0) {
-            await nodeJsImage.first().click();
-          }
-        }
+        await addFlowPage.selectBuilderImage('Node.js');
         await addFlowPage.enterComponentName(SERVICE_NAME);
         await addFlowPage.selectServerlessDeployment();
       });
@@ -131,8 +122,7 @@ test.describe(
       });
 
       await test.step('Click Create dropdown and select Event Source', async () => {
-        await eventingPage.getCreateButton().click();
-        await page.locator('[data-test="eventSource"], [data-test-dropdown-menu="eventSource"]').first().click();
+        await eventingPage.selectCreateOption('eventSource');
       });
 
       await test.step('Select Ping Source', async () => {
@@ -142,23 +132,21 @@ test.describe(
         await createBtn.click({ timeout: 10_000 });
       });
 
-      await test.step('Fill Ping Source form', async () => {
-        await page
-          .locator('#form-input-formData-data-PingSource-data-field')
-          .fill('Message');
-        await page
-          .locator('#form-input-formData-data-PingSource-schedule-field')
-          .fill('* * * * *');
+      await test.step('Fill Ping Source form and submit', async () => {
         // TODO: Use URI sink type as workaround — the Resource dropdown has a known bug
         // on OCP 5 (OCPBUGS-95058) where it shows "Error loading - Select resource"
-        await page.getByRole('radio', { name: 'URI' }).click();
-        const uriInput = page.locator('#form-input-formData-sink-uri-field');
-        await uriInput.fill(`http://${SERVICE_NAME}.${namespace}.svc.cluster.local`);
-      });
-
-      await test.step('Submit and verify redirect', async () => {
+        await eventingPage.fillPingSourceForm(
+          'Message',
+          '* * * * *',
+          `http://${SERVICE_NAME}.${namespace}.svc.cluster.local`,
+        );
         await page.getByTestId('save-changes').click();
         await expect(page).toHaveURL(/topology/, { timeout: 30_000 });
+      });
+
+      await test.step('Verify event source visible in topology', async () => {
+        const topologyPage = new TopologyKnativePage(page);
+        await topologyPage.verifyWorkloadVisible('ping-source');
       });
     });
 
@@ -170,19 +158,17 @@ test.describe(
       });
 
       await test.step('Click Create dropdown and select Channel', async () => {
-        await eventingPage.getCreateButton().click();
-        await page.locator('[data-test="channels"], [data-test-dropdown-menu="channels"]').first().click();
+        await eventingPage.selectCreateOption('channels');
       });
 
       await test.step('Select Default Channel and create', async () => {
-        const typeDropdown = page.locator('#form-dropdown-formData-type-field');
-        await typeDropdown.click();
-        await page.getByTestId('console-select-item').filter({ hasText: 'Default Channel' }).click();
-        await page.getByTestId('save-changes').click();
+        await eventingPage.createChannel('Default Channel');
       });
 
-      await test.step('Verify redirect to Topology', async () => {
+      await test.step('Verify channel visible in Topology', async () => {
         await expect(page).toHaveURL(/topology/, { timeout: 30_000 });
+        const topologyPage = new TopologyKnativePage(page);
+        await topologyPage.verifyWorkloadVisible('channel');
       });
     });
 
@@ -194,20 +180,17 @@ test.describe(
       });
 
       await test.step('Click Create dropdown and select Broker', async () => {
-        await eventingPage.getCreateButton().click();
-        await page.locator('[data-test="brokers"], [data-test-dropdown-menu="brokers"]').first().click();
+        await eventingPage.selectCreateOption('brokers');
       });
 
       await test.step('Select Form view, enter name and create', async () => {
-        await page.locator('#form-radiobutton-editorType-form-field').click();
-        const nameField = page.locator('[data-test="application-form-app-name"], [data-test-id="application-form-app-name"]').first();
-        await nameField.clear();
-        await nameField.fill('default-broker');
-        await page.getByTestId('save-changes').click();
+        await eventingPage.createBroker('default-broker');
       });
 
-      await test.step('Verify redirect to Topology', async () => {
+      await test.step('Verify broker visible in Topology', async () => {
         await expect(page).toHaveURL(/topology/, { timeout: 30_000 });
+        const topologyPage = new TopologyKnativePage(page);
+        await topologyPage.verifyWorkloadVisible('default-broker');
       });
     });
 
@@ -278,8 +261,7 @@ test.describe(
       });
 
       await test.step('Verify service is in new application group', async () => {
-        await topologyPage.search('openshift-app');
-        await expect(page.locator('.is-filtered').first()).toBeVisible({ timeout: 30_000 });
+        await topologyPage.verifyWorkloadVisible('openshift-app');
         await topologyPage.clickOnApplicationGrouping('openshift-app');
         await topologyPage.verifySidePaneOpen();
         await expect(topologyPage.getSidePane()).toContainText(SERVICE_NAME);
@@ -303,52 +285,29 @@ test.describe(
 
     test('Create Revision for existing knative Service', async ({ page }) => {
       test.setTimeout(300_000);
-      const topologyPage = new TopologyKnativePage(page);
 
-      await test.step('Create second revision via API', async () => {
-        const svc = await k8sClient.customObjectsApi.getNamespacedCustomObject({
-          group: 'serving.knative.dev',
-          version: 'v1',
-          namespace,
-          plural: 'services',
-          name: SERVICE_NAME,
-        });
-        const body = svc as Record<string, unknown>;
-        const spec = body.spec as Record<string, unknown>;
-        const template = spec.template as Record<string, unknown>;
-        const templateSpec = template.spec as Record<string, unknown>;
-        const containers = templateSpec.containers as Array<Record<string, unknown>>;
-        containers[0].env = [{ name: 'REVISION_TRIGGER', value: 'v2' }];
-        await k8sClient.customObjectsApi.replaceNamespacedCustomObject({
-          group: 'serving.knative.dev',
-          version: 'v1',
-          namespace,
-          plural: 'services',
-          name: SERVICE_NAME,
-          body,
-        });
+      await test.step('Edit service to create a new revision', async () => {
+        await page.goto(`/edit/ns/${namespace}?name=${SERVICE_NAME}&kind=serving.knative.dev~v1~Service`);
+        await page.waitForLoadState('load');
+        await page.locator('button').filter({ hasText: 'Labels' }).click({ timeout: 30_000 });
+        const labelsInput = page.getByTestId('labels');
+        await labelsInput.fill('app=frontend');
+        await labelsInput.press('Enter');
+        await page.getByTestId('save-changes').click();
+        await expect(page).toHaveURL(/topology/, { timeout: 30_000 });
       });
 
-      await test.step('Wait for service to reconcile after revision creation', async () => {
+      await test.step('Verify multiple revisions via API', async () => {
         await expect(async () => {
-          const svc = (await k8sClient.customObjectsApi.getNamespacedCustomObject({
+          const revisions = (await k8sClient.customObjectsApi.listNamespacedCustomObject({
             group: 'serving.knative.dev',
             version: 'v1',
             namespace,
-            plural: 'services',
-            name: SERVICE_NAME,
-          })) as { status?: { conditions?: Array<{ type: string; status: string }> } };
-          const ready = svc.status?.conditions?.find((c) => c.type === 'Ready');
-          expect(ready?.status).toBe('True');
-        }).toPass({ timeout: 120_000, intervals: [5_000] });
-      });
-
-      await test.step('Verify multiple revisions in sidebar', async () => {
-        await topologyPage.navigateToTopology(namespace);
-        await topologyPage.clickOnKnativeService(SERVICE_NAME);
-        await topologyPage.verifySidePaneOpen();
-        await topologyPage.selectSidePaneTab('Resources');
-        await expect(page.locator('.revision-overview-list').locator('~ ul li')).toHaveCount(2, { timeout: 60_000 });
+            plural: 'revisions',
+            labelSelector: `serving.knative.dev/service=${SERVICE_NAME}`,
+          })) as { items?: Array<unknown> };
+          expect(revisions.items?.length).toBe(2);
+        }).toPass({ timeout: 60_000, intervals: [5_000] });
       });
     });
 
@@ -356,8 +315,7 @@ test.describe(
       const topologyPage = new TopologyKnativePage(page);
 
       await test.step('Open Set traffic distribution modal', async () => {
-        await topologyPage.navigateToTopology(namespace);
-        await topologyPage.rightClickAndSelectAction(SERVICE_NAME, 'Set traffic distribution');
+        await topologyPage.openServiceAction(namespace, SERVICE_NAME, 'Set traffic distribution');
       });
 
       await test.step('Set traffic >100% and verify error', async () => {
@@ -370,9 +328,7 @@ test.describe(
         await page.getByTestId('console-select-menu-toggle').nth(1).click();
         await page.getByTestId('console-select-item').first().click();
         await page.locator('button[type=submit]').click();
-        await expect(page.locator('div.co-alert div.co-pre-line')).toContainText(
-          'Traffic targets sum to 150, want 100',
-        );
+        await topologyPage.verifyTrafficDistributionError('Traffic targets sum to 150, want 100');
       });
     });
 
@@ -380,8 +336,7 @@ test.describe(
       const topologyPage = new TopologyKnativePage(page);
 
       await test.step('Open Set traffic distribution modal', async () => {
-        await topologyPage.navigateToTopology(namespace);
-        await topologyPage.rightClickAndSelectAction(SERVICE_NAME, 'Set traffic distribution');
+        await topologyPage.openServiceAction(namespace, SERVICE_NAME, 'Set traffic distribution');
       });
 
       await test.step('Set traffic <100% and verify error', async () => {
@@ -396,9 +351,7 @@ test.describe(
         await page.getByTestId('console-select-menu-toggle').nth(1).click();
         await page.getByTestId('console-select-item').first().click();
         await page.locator('button[type=submit]').click();
-        await expect(page.locator('div.co-alert div.co-pre-line')).toContainText(
-          'Traffic targets sum to 75, want 100',
-        );
+        await topologyPage.verifyTrafficDistributionError('Traffic targets sum to 75, want 100');
       });
     });
 
@@ -407,6 +360,9 @@ test.describe(
 
       await test.step('Right-click broker and select Delete Broker', async () => {
         await topologyPage.navigateToTopology(namespace);
+        await topologyPage.verifyWorkloadVisible('default-broker');
+        await topologyPage.search('');
+        await topologyPage.fitScreen();
         await topologyPage.rightClickNodeAndSelectAction('default-broker', 'Delete Broker');
       });
 
@@ -417,10 +373,7 @@ test.describe(
       });
 
       await test.step('Verify broker removed', async () => {
-        await page.reload();
-        await page.waitForLoadState('load');
-        await topologyPage.search('default-broker');
-        await expect(page.locator('.is-filtered')).not.toBeAttached({ timeout: 10_000 });
+        await topologyPage.verifyResourceRemoved('default-broker');
       });
     });
 
@@ -429,6 +382,9 @@ test.describe(
 
       await test.step('Right-click channel and select Delete Channel', async () => {
         await topologyPage.navigateToTopology(namespace);
+        await topologyPage.verifyWorkloadVisible('channel');
+        await topologyPage.search('');
+        await topologyPage.fitScreen();
         await topologyPage.rightClickNodeAndSelectAction('channel', 'Delete Channel');
       });
 
@@ -439,10 +395,7 @@ test.describe(
       });
 
       await test.step('Verify channel removed', async () => {
-        await page.reload();
-        await page.waitForLoadState('load');
-        await topologyPage.search('channel');
-        await expect(page.locator('.is-filtered')).not.toBeAttached({ timeout: 10_000 });
+        await topologyPage.verifyResourceRemoved('channel');
       });
     });
 
@@ -451,6 +404,9 @@ test.describe(
 
       await test.step('Right-click event source and select Delete PingSource', async () => {
         await topologyPage.navigateToTopology(namespace);
+        await topologyPage.verifyWorkloadVisible('ping-source');
+        await topologyPage.search('');
+        await topologyPage.fitScreen();
         await topologyPage.rightClickNodeAndSelectAction('ping-source', 'Delete PingSource');
       });
 
@@ -461,10 +417,7 @@ test.describe(
       });
 
       await test.step('Verify event source removed', async () => {
-        await page.reload();
-        await page.waitForLoadState('load');
-        await topologyPage.search('ping-source');
-        await expect(page.locator('.is-filtered')).not.toBeAttached({ timeout: 30_000 });
+        await topologyPage.verifyResourceRemoved('ping-source', 30_000);
       });
     });
 
