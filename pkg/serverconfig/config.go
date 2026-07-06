@@ -291,6 +291,10 @@ func addClusterInfo(fs *flag.FlagSet, clusterInfo *ClusterInfo) {
 	if clusterInfo.TechPreviewEnabled {
 		fs.Set("tech-preview", "true")
 	}
+
+	if clusterInfo.OLMLifecycleMetadataEnabled {
+		fs.Set("olm-lifecycle-metadata", "true")
+	}
 }
 
 func addProviders(fs *flag.FlagSet, providers *Providers) {
