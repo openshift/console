@@ -1,61 +1,115 @@
-import type { FC } from 'react';
+import type { ComponentType, FC } from 'react';
 import { useMemo, useContext } from 'react';
-import {
-  Card,
-  CardBody,
-  CardHeader,
-  CardTitle,
-  DescriptionList,
-  DescriptionListDescription,
-  DescriptionListGroup,
-  DescriptionListTerm,
-} from '@patternfly/react-core';
+import { useResolvedExtensions } from '@openshift/dynamic-plugin-sdk';
+import { Card, CardBody, CardHeader, CardTitle, Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import BareMetalInventoryItems from '@console/app/src/components/nodes/node-dashboard/BareMetalInventoryItems';
-import VirtualMachinesInventoryItems from '@console/app/src/components/nodes/node-dashboard/VirtualMachinesInventoryItems';
-import { FLAG_NODE_MGMT_V1 } from '@console/app/src/consts';
+import type { NodeInventoryExtensionItem } from '@console/dynamic-plugin-sdk/src/extensions/node';
+import { isNodeInventoryItem } from '@console/dynamic-plugin-sdk/src/extensions/node';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
 import { PodModel, NodeModel } from '@console/internal/models';
-import type { K8sResourceCommon, K8sKind } from '@console/internal/module/k8s';
-import { referenceForModel } from '@console/internal/module/k8s';
-import type { StatusGroupMapper } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
+import type { NodeKind, PodKind } from '@console/internal/module/k8s';
 import {
   InventoryItem,
   ResourceInventoryItem,
 } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
 import { getPodStatusGroups } from '@console/shared/src/components/dashboard/inventory-card/utils';
-import { useFlag } from '@console/shared/src/hooks/useFlag';
+import { getName } from '@console/shared/src/selectors/common';
 import { NodeDashboardContext } from './NodeDashboardContext';
 
-const NodeInventoryItem: FC<NodeInventoryItemProps> = ({ nodeName, model, mapper }) => {
-  const resource = useMemo(
-    () => ({
-      kind: model.crd ? referenceForModel(model) : model.kind,
-      fieldSelector: `spec.nodeName=${nodeName}`,
-      isList: true,
-    }),
-    [nodeName, model],
+const NodePodInventoryItem: ComponentType<{ obj: NodeKind }> = ({ obj }) => {
+  const nodeName = getName(obj);
+
+  const podResource = useMemo(
+    () =>
+      nodeName
+        ? {
+            isList: true,
+            kind: PodModel.kind,
+            fieldSelector: `spec.nodeName=${nodeName}`,
+          }
+        : null,
+    [nodeName],
   );
-  const [data, loaded, loadError] = useK8sWatchResource<K8sResourceCommon[]>(resource);
+
+  const [pods, podsLoaded, podsError] = useK8sWatchResource<PodKind[]>(podResource);
+
+  if (!nodeName || !podsLoaded) {
+    return <InventoryItem title={PodModel.label} count={0} isLoading={!podsLoaded} />;
+  }
+
   const basePath = `${resourcePathFromModel(NodeModel, nodeName)}/pods`;
 
   return (
-    <ResourceInventoryItem
-      kind={model}
-      isLoading={!loaded}
-      error={!!loadError}
-      resources={data}
-      mapper={mapper}
-      basePath={basePath}
-    />
+    <StackItem>
+      <ResourceInventoryItem
+        resources={pods}
+        basePath={basePath}
+        mapper={getPodStatusGroups}
+        kind={PodModel}
+        isLoading={!podsLoaded}
+        error={!!podsError}
+      />
+    </StackItem>
   );
 };
+
+const NodeImagesInventoryItem: ComponentType<{ obj: NodeKind }> = ({ obj }) => {
+  const { t } = useTranslation('console-app');
+
+  return (
+    <StackItem>
+      <InventoryItem
+        isLoading={!obj}
+        title={t('Image')}
+        titlePlural={t('Images')}
+        count={obj.status?.images?.length}
+        error={!obj.status?.images}
+      />
+    </StackItem>
+  );
+};
+
+type InventoryItemType = {
+  id: string;
+  component: ComponentType<{ obj: NodeKind }>;
+  priority: number;
+};
+
+const StandardInventoryItems: InventoryItemType[] = [
+  {
+    id: 'pods',
+    component: NodePodInventoryItem,
+    priority: 90,
+  },
+  {
+    id: 'images',
+    component: NodeImagesInventoryItem,
+    priority: 70,
+  },
+];
 
 const InventoryCard: FC = () => {
   const { obj } = useContext(NodeDashboardContext);
   const { t } = useTranslation('console-app');
-  const nodeMgmtV1Enabled = useFlag(FLAG_NODE_MGMT_V1);
+
+  const [inventoryItemExtensions, inventoryItemExtensionsResolved] = useResolvedExtensions<
+    NodeInventoryExtensionItem
+  >(isNodeInventoryItem);
+
+  const inventoryItems = useMemo(() => {
+    if (!inventoryItemExtensionsResolved) {
+      return StandardInventoryItems;
+    }
+
+    return [
+      ...StandardInventoryItems,
+      ...inventoryItemExtensions.map((ext, index) => ({
+        ...ext.properties,
+        id: ext.uid ?? `extension-${ext.properties.priority}-${index}`,
+      })),
+    ].sort((a, b) => b.priority - a.priority);
+  }, [inventoryItemExtensions, inventoryItemExtensionsResolved]);
 
   return (
     <Card data-test-id="inventory-card">
@@ -63,45 +117,14 @@ const InventoryCard: FC = () => {
         <CardTitle>{t('Inventory')}</CardTitle>
       </CardHeader>
       <CardBody>
-        <DescriptionList>
-          <DescriptionListGroup>
-            <DescriptionListTerm>{t('Pods')}</DescriptionListTerm>
-            <DescriptionListDescription>
-              <NodeInventoryItem
-                nodeName={obj.metadata.name}
-                model={PodModel}
-                mapper={getPodStatusGroups}
-              />
-            </DescriptionListDescription>
-          </DescriptionListGroup>
-          <DescriptionListGroup>
-            <DescriptionListTerm>{t('Images')}</DescriptionListTerm>
-            <DescriptionListDescription>
-              <InventoryItem
-                isLoading={!obj}
-                title={t('Image')}
-                titlePlural={t('Images')}
-                count={obj.status?.images?.length}
-                error={!obj.status?.images}
-              />
-            </DescriptionListDescription>
-          </DescriptionListGroup>
-          {nodeMgmtV1Enabled && (
-            <>
-              <BareMetalInventoryItems />
-              <VirtualMachinesInventoryItems />
-            </>
-          )}
-        </DescriptionList>
+        <Stack hasGutter>
+          {inventoryItems.map((inventoryItem) => (
+            <inventoryItem.component key={inventoryItem.id} obj={obj} />
+          ))}
+        </Stack>
       </CardBody>
     </Card>
   );
-};
-
-type NodeInventoryItemProps = {
-  nodeName: string;
-  model: K8sKind;
-  mapper?: StatusGroupMapper;
 };
 
 export default InventoryCard;

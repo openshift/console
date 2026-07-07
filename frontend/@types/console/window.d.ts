@@ -64,6 +64,7 @@ declare interface Window {
     hubConsoleURL: string;
     k8sMode: string;
     techPreview: boolean;
+    olmLifecycleMetadata: boolean;
     capabilities: {
       name: string;
       visibility: { state: 'Enabled' | 'Disabled' };

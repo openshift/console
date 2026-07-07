@@ -286,8 +286,12 @@ export default class KubernetesClient {
 
   async createNamespace(name: string, labels?: Record<string, string>): Promise<void> {
     try {
-      await this.k8sApi.readNamespace({ name });
-      return; // already exists
+      const { status } = await this.k8sApi.readNamespace({ name });
+      if (status?.phase === 'Terminating') {
+        await this.waitForNamespaceDeleted(name);
+      } else {
+        return; // already exists and is active
+      }
     } catch (err) {
       if (!isNotFound(err)) {
         throw err;
@@ -607,9 +611,149 @@ export default class KubernetesClient {
     });
   }
 
+
+  async waitForDeploymentReady(
+    name: string,
+    namespace: string,
+    timeoutMs = 120_000,
+  ): Promise<void> {
+    const ready = await pollUntil(
+      async () => {
+        try {
+          const deployment = await this.appsApi.readNamespacedDeployment({ name, namespace });
+          const status = deployment.status;
+          const desired = deployment.spec?.replicas ?? 1;
+          return (
+            status?.availableReplicas === desired &&
+            status?.updatedReplicas === desired &&
+            (status?.conditions ?? []).some(
+              (c) => c.type === 'Available' && c.status === 'True',
+            )
+          );
+        } catch {
+          return false;
+        }
+      },
+      timeoutMs,
+      2_000,
+    );
+    if (!ready) {
+      const diag = await this.getDeploymentDiagnostics(name, namespace);
+      throw new Error(
+        `Deployment ${namespace}/${name} not ready after ${timeoutMs / 1000}s.\n${diag}`,
+      );
+    }
+  }
+
+  private async getDeploymentDiagnostics(name: string, namespace: string): Promise<string> {
+    const lines: string[] = [];
+    try {
+      const deployment = await this.appsApi.readNamespacedDeployment({ name, namespace });
+      const conditions = deployment.status?.conditions ?? [];
+      lines.push(
+        `Deployment status: replicas=${deployment.status?.replicas ?? 0}, ` +
+          `ready=${deployment.status?.readyReplicas ?? 0}, ` +
+          `available=${deployment.status?.availableReplicas ?? 0}, ` +
+          `updated=${deployment.status?.updatedReplicas ?? 0}`,
+      );
+      for (const c of conditions) {
+        lines.push(`  condition ${c.type}=${c.status}: ${c.message ?? ''}`);
+      }
+    } catch (err) {
+      lines.push(`Could not read deployment: ${err}`);
+    }
+    try {
+      const pods = await this.k8sApi.listNamespacedPod({ namespace, labelSelector: `app=${name}` });
+      for (const pod of pods.items) {
+        const podName = pod.metadata?.name ?? 'unknown';
+        const phase = pod.status?.phase ?? 'Unknown';
+        lines.push(`Pod ${podName}: phase=${phase}`);
+        for (const cs of pod.status?.containerStatuses ?? []) {
+          const state = cs.state?.waiting
+            ? `Waiting: ${cs.state.waiting.reason} - ${cs.state.waiting.message ?? ''}`
+            : cs.state?.terminated
+            ? `Terminated: ${cs.state.terminated.reason}`
+            : 'Running';
+          lines.push(`  container ${cs.name}: ready=${cs.ready}, restarts=${cs.restartCount}, ${state}`);
+        }
+        try {
+          const events = await this.k8sApi.listNamespacedEvent({
+            namespace,
+            fieldSelector: `involvedObject.name=${podName}`,
+          });
+          const recent = events.items
+            .sort(
+              (a, b) =>
+                new Date(b.lastTimestamp ?? 0).getTime() -
+                new Date(a.lastTimestamp ?? 0).getTime(),
+            )
+            .slice(0, 10);
+          for (const ev of recent) {
+            lines.push(`  event: ${ev.reason} - ${ev.message} (count=${ev.count ?? 1})`);
+          }
+        } catch {
+          lines.push(`  Could not fetch events for pod ${podName}`);
+        }
+      }
+    } catch (err) {
+      lines.push(`Could not list pods: ${err}`);
+    }
+    return lines.join('\n');
+  }
+
   async deletePod(name: string, namespace: string): Promise<void> {
     try {
       await this.k8sApi.deleteNamespacedPod({ name, namespace });
+    } catch (err) {
+      if (!isNotFound(err)) {
+        throw err;
+      }
+    }
+  }
+
+  async waitForPodReady(name: string, namespace: string, timeoutMs = 120_000): Promise<boolean> {
+    return pollUntil(
+      async () => {
+        try {
+          const pod = await this.k8sApi.readNamespacedPod({ name, namespace });
+          if (pod?.status?.phase !== 'Running') {
+            return false;
+          }
+          const containers = pod?.status?.containerStatuses;
+          if (!containers || containers.length === 0) {
+            return false;
+          }
+          return containers.every((c) => c.ready === true);
+        } catch {
+          return false;
+        }
+      },
+      timeoutMs,
+      2_000,
+    );
+  }
+
+  async createDeployment(namespace: string, body: Partial<k8s.V1Deployment>): Promise<void> {
+    await this.appsApi.createNamespacedDeployment({ namespace, body: body as k8s.V1Deployment });
+  }
+
+  async createResourceQuota(
+    name: string,
+    namespace: string,
+    spec: k8s.V1ResourceQuotaSpec,
+  ): Promise<void> {
+    await this.k8sApi.createNamespacedResourceQuota({
+      namespace,
+      body: {
+        metadata: { name, namespace },
+        spec,
+      },
+    });
+  }
+
+  async deleteResourceQuota(name: string, namespace: string): Promise<void> {
+    try {
+      await this.k8sApi.deleteNamespacedResourceQuota({ name, namespace });
     } catch (err) {
       if (!isNotFound(err)) {
         throw err;

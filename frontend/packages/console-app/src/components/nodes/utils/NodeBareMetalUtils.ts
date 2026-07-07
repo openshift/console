@@ -8,7 +8,7 @@ import type {
 import type { NodeKind } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { useFlag } from '@console/dynamic-plugin-sdk/src/utils/flags';
 import { MachineModel } from '@console/internal/models';
-import type { K8sKind, MachineKind } from '@console/internal/module/k8s';
+import type { MachineKind } from '@console/internal/module/k8s';
 import { getName } from '@console/shared/src/selectors/common';
 import { getNodeMachineNameAndNamespace } from '@console/shared/src/selectors/node';
 
@@ -16,19 +16,6 @@ export const BAREMETAL_FLAG = 'BAREMETAL';
 
 export const HOST_STATUS_UNMANAGED = 'unmanaged';
 export const HOST_STATUS_DETACHED = 'detached';
-
-export const BareMetalHostModel: K8sKind = {
-  label: 'Bare Metal Host',
-  labelPlural: 'Bare Metal Hosts',
-  apiVersion: 'v1alpha1',
-  apiGroup: 'metal3.io',
-  plural: 'baremetalhosts',
-  abbr: 'BMH',
-  namespaced: true,
-  kind: 'BareMetalHost',
-  id: 'baremetalhost',
-  crd: true,
-};
 
 export const BareMetalHostGroupVersionKind: K8sGroupVersionKind = {
   group: 'metal3.io',

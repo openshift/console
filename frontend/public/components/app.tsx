@@ -33,6 +33,7 @@ import { Navigation } from '@console/app/src/components/nav';
 import { AsyncComponent } from './utils/async';
 import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
 import * as UIActions from '../actions/ui';
+import { isNotificationDrawerExpanded } from '../reducers/ui';
 import { fetchSwagger, getCachedResources } from '../module/k8s';
 import { receivedResources, startAPIDiscovery } from '../actions/k8s';
 import { pluginStore } from '../plugins';
@@ -49,7 +50,7 @@ import { GuidedTour } from '@console/app/src/components/tour';
 import { QuickStartDrawer } from '@console/app/src/components/quick-starts/QuickStartDrawer';
 import { ModalProvider } from '@console/dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
 import { OverlayProvider } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import { ToastProvider } from '@console/shared/src/components/toast/ToastProvider';
+import { ConnectedToastProvider } from './toast/ConnectedToastProvider';
 import { SyncModalLaunchers } from '@console/shared/src/utils/error-modal-handler';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';
@@ -234,9 +235,7 @@ const App: FC = () => {
     }
   };
 
-  const isNotificationDrawerExpanded = useConsoleSelector(
-    ({ UI }) => !!UI.getIn(['notifications', 'isExpanded']),
-  );
+  const isDrawerExpanded = useConsoleSelector(isNotificationDrawerExpanded);
 
   const drawerRef = useRef<HTMLElement | null>(null);
 
@@ -286,12 +285,12 @@ const App: FC = () => {
               notificationDrawer={
                 <NotificationDrawer
                   onDrawerChange={onNotificationDrawerToggle}
-                  isDrawerExpanded={isNotificationDrawerExpanded}
+                  isDrawerExpanded={isDrawerExpanded}
                   drawerRef={drawerRef}
                 />
               }
               onNotificationDrawerExpand={() => focusDrawer()}
-              isNotificationDrawerExpanded={isNotificationDrawerExpanded}
+              isNotificationDrawerExpanded={isDrawerExpanded}
               style={{ flex: '1', height: '0' }}
             >
               <AppContents />
@@ -499,11 +498,11 @@ graphQLReady.onReady(() => {
           <ThemeProvider>
             <HelmetProvider>
               <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
-              <ToastProvider>
+              <ConnectedToastProvider>
                 <PollConsoleUpdates />
                 <AdmissionWebhookWarningNotifications />
                 <AppRouter />
-              </ToastProvider>
+              </ConnectedToastProvider>
             </HelmetProvider>
           </ThemeProvider>
         </PluginStoreProvider>

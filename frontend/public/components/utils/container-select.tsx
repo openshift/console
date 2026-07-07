@@ -23,7 +23,7 @@ export const ContainerLabel: FC<ContainerLabelProps> = ({ name }) => (
 const ContainerSelectOptions: FC<ContainerSelectOptionsProps> = ({ containers }) => (
   <>
     {Object.values(containers ?? {}).map(({ name }) => (
-      <SelectOption key={name} value={name} data-test-dropdown-menu={name}>
+      <SelectOption key={name} value={name} data-test-dropdown-menu={name} data-test={name}>
         <ContainerLabel name={name} />
       </SelectOption>
     ))}

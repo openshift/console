@@ -77,7 +77,7 @@ func GetChartFromURL(url string, conf *action.Configuration, namespace string, c
 		if err != nil {
 			return nil, err
 		}
-		if err := applyBasicAuthFromUserCredentials(cmd, userCredentials); err != nil {
+		if err := applyBasicAuthFromUserCredentials(&cmd.ChartPathOptions, cmd, userCredentials); err != nil {
 			return nil, err
 		}
 	}

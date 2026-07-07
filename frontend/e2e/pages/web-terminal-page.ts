@@ -160,4 +160,5 @@ export class WebTerminalPage extends BasePage {
     await this.goTo(`/k8s/ns/${namespace}/workspace.devfile.io~v1alpha2~DevWorkspace/${name}/yaml`);
     await this.waitForLoadingComplete(30_000);
   }
+
 }

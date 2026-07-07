@@ -102,6 +102,7 @@ const DeleteModal = (props: DeleteModalProps) => {
             })}
           </>
         }
+        data-test="modal-title"
         data-test-id="modal-title"
       />
       <ModalBody>
@@ -181,7 +182,12 @@ const DeleteModal = (props: DeleteModalProps) => {
         >
           {props.btnText || t('Delete')}
         </Button>
-        <Button variant="link" onClick={props.cancel} data-test-id="modal-cancel-action">
+        <Button
+          variant="link"
+          onClick={props.cancel}
+          data-test="modal-cancel-action"
+          data-test-id="modal-cancel-action"
+        >
           {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>

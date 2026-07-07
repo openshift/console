@@ -705,3 +705,96 @@ func TestUpgradeReleaseWithCustomValuesAsync(t *testing.T) {
 		})
 	}
 }
+
+func TestUpgradeAfterURLInstallWithSecrets(t *testing.T) {
+	tests := []struct {
+		testName         string
+		chartPath        string
+		chartName        string
+		chartVersion     string
+		releaseName      string
+		releaseNamespace string
+		secretName       string
+		secretData       map[string][]byte
+	}{
+		{
+			testName:         "upgrade valid release with custom values should return successful response",
+			chartPath:        "http://localhost:8181/charts/mychart-0.1.0.tgz",
+			chartName:        "mychart",
+			chartVersion:     "0.1.0",
+			releaseName:      "auth-persist-test",
+			releaseNamespace: "test-namespace",
+			secretName:       "test-secret",
+			secretData:       map[string][]byte{username: []byte("AzureDiamond"), password: []byte("hunter2")},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.testName, func(t *testing.T) {
+			store := storage.Init(driver.NewMemory())
+			actionConfig := &action.Configuration{
+				RESTClientGetter: FakeConfig{},
+				Releases:         store,
+				KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
+				Capabilities:     chartutil.DefaultCapabilities,
+				Log:              func(format string, v ...interface{}) {},
+			}
+			authSecret := &v1.Secret{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      tt.secretName,
+					Namespace: tt.releaseNamespace,
+				},
+				Data: tt.secretData,
+			}
+			clientInterface := k8sfake.NewSimpleClientset(authSecret)
+			coreClient := clientInterface.CoreV1()
+			registryClient, err := GetDefaultOCIRegistry()
+			require.NoError(t, err)
+			actionConfig.RegistryClient = registryClient
+			dynamicClient := K8sDynamicClientFromCRs()
+
+			// Simulate a URL install by creating the release with auth annotation
+			installRelease := release.Release{
+				Name:      tt.releaseName,
+				Namespace: tt.releaseNamespace,
+				Info: &release.Info{
+					FirstDeployed: helmTime.Time{},
+					Status:        "deployed",
+				},
+				Version: 1,
+				Chart: &chart.Chart{
+					Metadata: &chart.Metadata{
+						Name:    tt.chartName,
+						Version: tt.chartVersion,
+						Annotations: map[string]string{
+							"chart_url":              tt.chartPath,
+							helmAuthSecretAnnotation: tt.secretName,
+						},
+					},
+				},
+			}
+			store.Create(&installRelease)
+
+			// Verify the installed release has the auth annotation
+			rel, err := GetRelease(tt.releaseName, actionConfig)
+			require.NoError(t, err)
+			require.Equal(t, tt.secretName, rel.Chart.Metadata.Annotations[helmAuthSecretAnnotation])
+
+			// Upgrade — chartUrl is recovered from the annotation, auth credentials are applied
+			secretsDriver := driver.NewSecrets(coreClient.Secrets(tt.releaseNamespace))
+			go func() {
+				upgradeResult, upgradeErr := UpgradeReleaseAsync(tt.releaseNamespace, tt.releaseName, "", nil, actionConfig, dynamicClient, coreClient, true, "")
+				require.NoError(t, upgradeErr)
+				require.Equal(t, fmt.Sprintf("sh.helm.release.v1.%v.v2", tt.releaseName), upgradeResult.ObjectMeta.Name)
+			}()
+			time.Sleep(10 * time.Second)
+			installRelease.Version = 2
+			err = secretsDriver.Create(fmt.Sprintf("sh.helm.release.v1.%v.v2", tt.releaseName), &installRelease)
+			require.NoError(t, err)
+
+			// Verify the upgraded release preserved the auth annotation
+			rel, err = GetRelease(tt.releaseName, actionConfig)
+			require.NoError(t, err)
+			require.Equal(t, tt.secretName, rel.Chart.Metadata.Annotations[helmAuthSecretAnnotation])
+		})
+	}
+}

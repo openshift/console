@@ -10,9 +10,12 @@ For current development version of Console, use `4.x.0-prerelease.n` packages.
 For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility
 table in [Console dynamic plugins README](./README.md).
 
-## 4.23.0-prerelease.3 - TBD
+## 4.23.0-prerelease.3 - 2026-07-07
 
 - Add `@openshift/api-types` as a dependency and replace `K8sResourceCommon` and related types with imports from that package ([CONSOLE-5355], [#16585])
+- Improve control over toast notifications with new optional `ToastOptions` fields: `drawerGroup`, `skipOverflow` and `persistInDrawer` ([CONSOLE-5361], [#16636])
+- Add new extension type `console.node/inventory-item` to add inventory items to the Node inventory card ([CONSOLE-5315], [#16582])
+- Update `console.node/sub-nav-tab` extension to allow extending Health and Workloads details pages ([CONSOLE-4951], [CONSOLE-4954], [#16581], [#16574])
 
 ## 4.23.0-prerelease.2 - 2026-05-27
 
@@ -21,7 +24,7 @@ table in [Console dynamic plugins README](./README.md).
 ## 4.23.0-prerelease.1 - 2026-05-19
 
 - Add `useToast` hook for showing toast notifications ([CONSOLE-5273], [#16400])
-- Add new extension type `console.node/sub-nav-tab` to allow plugins to add custom sub-tabs to Node details page ([CONSOLE-4946], [#16124])
+- Add new extension type `console.node/sub-nav-tab` to add custom sub-tabs to Node details page ([CONSOLE-4946], [#16124])
 - Add exported type `NodeStatus` for existing extension type `console.node/status` ([CONSOLE-3899], [#13493])
 
 ## 4.22.0 - 2026-06-09
@@ -212,8 +215,8 @@ table in [Console dynamic plugins README](./README.md).
 [CONSOLE-4402]: https://issues.redhat.com/browse/CONSOLE-4402
 [CONSOLE-4407]: https://issues.redhat.com/browse/CONSOLE-4407
 [CONSOLE-4447]: https://issues.redhat.com/browse/CONSOLE-4447
-[CONSOLE-4541]: https://issues.redhat.com/browse/CONSOLE-4541
 [CONSOLE-4499]: https://issues.redhat.com/browse/CONSOLE-4499
+[CONSOLE-4541]: https://issues.redhat.com/browse/CONSOLE-4541
 [CONSOLE-4576]: https://issues.redhat.com/browse/CONSOLE-4576
 [CONSOLE-4630]: https://issues.redhat.com/browse/CONSOLE-4630
 [CONSOLE-4654]: https://issues.redhat.com/browse/CONSOLE-4654
@@ -223,6 +226,8 @@ table in [Console dynamic plugins README](./README.md).
 [CONSOLE-4806]: https://issues.redhat.com/browse/CONSOLE-4806
 [CONSOLE-4840]: https://issues.redhat.com/browse/CONSOLE-4840
 [CONSOLE-4946]: https://issues.redhat.com/browse/CONSOLE-4946
+[CONSOLE-4951]: https://issues.redhat.com/browse/CONSOLE-4951
+[CONSOLE-4954]: https://issues.redhat.com/browse/CONSOLE-4954
 [CONSOLE-4990]: https://issues.redhat.com/browse/CONSOLE-4990
 [CONSOLE-5039]: https://issues.redhat.com/browse/CONSOLE-5039
 [CONSOLE-5050]: https://issues.redhat.com/browse/CONSOLE-5050
@@ -230,7 +235,9 @@ table in [Console dynamic plugins README](./README.md).
 [CONSOLE-5093]: https://issues.redhat.com/browse/CONSOLE-5093
 [CONSOLE-5108]: https://issues.redhat.com/browse/CONSOLE-5108
 [CONSOLE-5273]: https://issues.redhat.com/browse/CONSOLE-5273
+[CONSOLE-5315]: https://issues.redhat.com/browse/CONSOLE-5315
 [CONSOLE-5355]: https://issues.redhat.com/browse/CONSOLE-5355
+[CONSOLE-5361]: https://issues.redhat.com/browse/CONSOLE-5361
 [OCPBUGS-19048]: https://issues.redhat.com/browse/OCPBUGS-19048
 [OCPBUGS-30077]: https://issues.redhat.com/browse/OCPBUGS-30077
 [OCPBUGS-31355]: https://issues.redhat.com/browse/OCPBUGS-31355
@@ -254,8 +261,8 @@ table in [Console dynamic plugins README](./README.md).
 [OCPBUGS-58258]: https://issues.redhat.com/browse/OCPBUGS-58258
 [OCPBUGS-62126]: https://issues.redhat.com/browse/OCPBUGS-62126
 [OCPBUGS-81319]: https://issues.redhat.com/browse/OCPBUGS-81319
-[OCPBUGS-86488]: https://issues.redhat.com/browse/OCPBUGS-86488
 [OCPBUGS-84216]: https://issues.redhat.com/browse/OCPBUGS-84216
+[OCPBUGS-86488]: https://issues.redhat.com/browse/OCPBUGS-86488
 [ODC-7425]: https://issues.redhat.com/browse/ODC-7425
 [#12983]: https://github.com/openshift/console/pull/12983
 [#13233]: https://github.com/openshift/console/pull/13233
@@ -283,10 +290,10 @@ table in [Console dynamic plugins README](./README.md).
 [#14620]: https://github.com/openshift/console/pull/14620
 [#14663]: https://github.com/openshift/console/pull/14663
 [#14863]: https://github.com/openshift/console/pull/14863
-[#14967]: https://github.com/openshift/console/pull/14967
 [#14864]: https://github.com/openshift/console/pull/14864
 [#14869]: https://github.com/openshift/console/pull/14869
 [#14876]: https://github.com/openshift/console/pull/14876
+[#14967]: https://github.com/openshift/console/pull/14967
 [#15017]: https://github.com/openshift/console/pull/15017
 [#15139]: https://github.com/openshift/console/pull/15139
 [#15167]: https://github.com/openshift/console/pull/15167
@@ -315,4 +322,8 @@ table in [Console dynamic plugins README](./README.md).
 [#16241]: https://github.com/openshift/console/pull/16241
 [#16400]: https://github.com/openshift/console/pull/16400
 [#16491]: https://github.com/openshift/console/pull/16491
+[#16574]: https://github.com/openshift/console/pull/16574
+[#16581]: https://github.com/openshift/console/pull/16581
+[#16582]: https://github.com/openshift/console/pull/16582
 [#16585]: https://github.com/openshift/console/pull/16585
+[#16636]: https://github.com/openshift/console/pull/16636

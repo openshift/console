@@ -178,17 +178,18 @@ test.describe('Perspective query parameters', { tag: ['@admin'] }, () => {
             },
           ],
         });
-        await page.reload();
-        await page.waitForLoadState('domcontentloaded');
       }
+      await expect(async () => {
+        await page.reload();
+        await expect(toggle).not.toHaveAttribute('id', 'core-platform-perspective');
+      }).toPass({ timeout: 60_000 });
     });
 
     await test.step('Navigate with perspective=dev and verify', async () => {
       await page.goto('/topology/all-namespaces?view=graph&perspective=dev');
-      const toggleText = page
-        .getByTestId('perspective-switcher-toggle')
-        .locator('.pf-v6-c-menu-toggle__text');
-      await expect(toggleText).toContainText('Developer');
+      await expect(page.getByTestId('perspective-switcher-toggle')).toContainText('Developer', {
+        timeout: 30_000,
+      });
     });
   });
 
@@ -206,18 +207,14 @@ test.describe('Perspective query parameters', { tag: ['@admin'] }, () => {
         .filter({ hasText: 'Developer' });
       await devOption.click();
 
-      const toggleText = page
-        .getByTestId('perspective-switcher-toggle')
-        .locator('.pf-v6-c-menu-toggle__text');
-      await expect(toggleText).toContainText('Developer');
+      await expect(toggle).toContainText('Developer');
     });
 
     await test.step('Navigate with perspective=admin and verify', async () => {
       await page.goto('/dashboards?perspective=admin');
-      const toggleText = page
-        .getByTestId('perspective-switcher-toggle')
-        .locator('.pf-v6-c-menu-toggle__text');
-      await expect(toggleText).toContainText('Core platform');
+      await expect(page.getByTestId('perspective-switcher-toggle')).toContainText('Core platform', {
+        timeout: 30_000,
+      });
     });
   });
 });

@@ -1,15 +1,36 @@
-import type { Locator } from '@playwright/test';
+import { type Locator, expect } from '@playwright/test';
 
 import BasePage from './base-page';
 
 export class DetailsPage extends BasePage {
   private readonly pageHeading = this.page.getByTestId('page-heading');
+  private readonly resourceTitle = this.page.getByTestId('resource-title');
+  private readonly skeletonLoader = this.page.getByTestId('skeleton-detail-view');
+  readonly nodeTerminalError: Locator = this.page.getByTestId('node-terminal-error');
+  readonly xtermViewport: Locator = this.page.locator('.xterm-viewport');
 
-  /**
-   * Get the page heading locator
-   */
+  get title(): Locator {
+    return this.resourceTitle;
+  }
+
   getPageHeading(): Locator {
     return this.pageHeading;
+  }
+
+  async waitForPageLoad(): Promise<void> {
+    try {
+      // eslint-disable-next-line no-restricted-syntax
+      await this.skeletonLoader.waitFor({ state: 'detached', timeout: 30_000 });
+    } catch {
+      // Skeleton may have already disappeared
+    }
+    await expect(this.resourceTitle.or(this.pageHeading).first()).toBeVisible({
+      timeout: 30_000,
+    });
+  }
+
+  tab(name: string): Locator {
+    return this.page.getByTestId(`horizontal-link-${name}`);
   }
 
   async clickPageAction(actionName: string): Promise<void> {
@@ -21,56 +42,31 @@ export class DetailsPage extends BasePage {
     return this.page.getByTestId(`breadcrumb-link-${index}`);
   }
 
-  /**
-   * Select a specific tab by name
-   */
-  async selectTab(tabName: string): Promise<void> {
-    const tab = this.page.getByTestId(`horizontal-link-${tabName}`);
-    await this.robustClick(tab);
-    await this.waitForLoadingComplete();
+  async selectTab(name: string): Promise<void> {
+    await this.navigateToTab(this.tab(name));
   }
 
-  /**
-   * Click a kebab menu action (assumes menu is already open)
-   */
   async clickKebabAction(actionId: string): Promise<void> {
     await this.robustClick(this.page.getByTestId(actionId));
   }
 
-  /**
-   * Get a resource row link by test ID (e.g., for ClusterOperators or Configuration resources)
-   * Uses data-test attribute (modern selector convention)
-   */
   getResourceRow(resourceId: string): Locator {
-    // Prefer the link with data-test (for Configuration resources)
-    // Fall back to any element with data-test or data-test-action
     const link = this.page.locator(`a[data-test="${resourceId}"]`);
     const fallback = this.page.locator(
       `[data-test="${resourceId}"], [data-test-action="${resourceId}"]`,
     );
-
-    // Return link if it exists, otherwise fallback
     return link.or(fallback).first();
   }
 
-  /**
-   * Click a resource row to navigate to its details
-   */
   async clickResourceRow(resourceId: string): Promise<void> {
     const row = this.getResourceRow(resourceId);
     await this.robustClick(row);
   }
 
-  /**
-   * Get a resource row by test-action attribute (for Configuration resources)
-   */
   getResourceByAction(actionName: string): Locator {
     return this.page.locator(`[data-test-action="${actionName}"]`);
   }
 
-  /**
-   * Click a resource in Configuration tab and open its kebab menu
-   */
   async openResourceKebabMenu(actionName: string): Promise<void> {
     const resourceRow = this.getResourceByAction(actionName);
     const kebabButton = resourceRow.getByTestId('kebab-button');

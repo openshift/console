@@ -107,6 +107,7 @@ const TagsModal = (props: TagsModalProps) => {
           variant="link"
           isDisabled={inProgress}
           onClick={props.cancel}
+          data-test="modal-cancel-action"
           data-test-id="modal-cancel-action"
         >
           {t('Cancel')}

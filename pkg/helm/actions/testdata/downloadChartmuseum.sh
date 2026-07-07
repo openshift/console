@@ -7,8 +7,9 @@ CHARTMUSEUM_VERSION=${CHARTMUSEUM_VERSION:-0.14.0}
 CHARTMUSEUM_ARTIFACT_URL=https://get.helm.sh/chartmuseum-v${CHARTMUSEUM_VERSION}-$GOOS-$GOARCH.tar.gz
 
 if [ ! -f "$GOOS-$GOARCH/chartmuseum" ]; then
-curl -o chartmuseum.tar.gz -O $CHARTMUSEUM_ARTIFACT_URL
+curl -fL -o chartmuseum.tar.gz $CHARTMUSEUM_ARTIFACT_URL
 tar xf chartmuseum.tar.gz
+chmod +x "$GOOS-$GOARCH/chartmuseum"
 fi
 
 exit 0

@@ -311,6 +311,20 @@ func TestSetFlagsFromConfig(t *testing.T) {
 			expectedError: nil,
 		},
 		{
+			name: "Applies OLM lifecycle metadata when enabled",
+			config: Config{
+				APIVersion: "console.openshift.io/v1",
+				Kind:       "ConsoleConfig",
+				ClusterInfo: ClusterInfo{
+					OLMLifecycleMetadataEnabled: true,
+				},
+			},
+			expectedFlagValues: map[string]string{
+				"olm-lifecycle-metadata": "true",
+			},
+			expectedError: nil,
+		},
+		{
 			name: "Should apply CSP configuration",
 			config: Config{
 				APIVersion: "console.openshift.io/v1",
@@ -335,6 +349,7 @@ func TestSetFlagsFromConfig(t *testing.T) {
 			fs.Var(&MultiKeyValue{}, "plugins", "")
 			fs.Var(&MultiKeyValue{}, "telemetry", "")
 			fs.Var(&MultiKeyValue{}, "content-security-policy", "")
+			fs.Bool("olm-lifecycle-metadata", false, "")
 
 			actualError := SetFlagsFromConfig(fs, &test.config)
 			actual := make(map[string]string)

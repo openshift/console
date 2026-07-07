@@ -63,7 +63,7 @@ func (o *OLMHandler) lifecycleHandler(w http.ResponseWriter, r *http.Request) {
 	conn, err := grpc.NewClient(target, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		klog.Errorf("[lifecycle] Failed to create gRPC client for %s: %v", target, err)
-		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: "Failed to connect to the catalog source."})
+		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: "Could not connect to the catalog source."})
 		return
 	}
 	defer conn.Close()
@@ -127,7 +127,7 @@ func handleGRPCError(w http.ResponseWriter, catalogName, packageName string, err
 	switch st.Code() {
 	case codes.Unimplemented:
 		klog.Infof("[lifecycle] ExperimentalListPackageCustomSchemas not supported by catalog %s", catalogName)
-		serverutils.SendResponse(w, http.StatusServiceUnavailable, serverutils.ApiError{Err: "Lifecycle metadata is not available for this catalog."})
+		serverutils.SendResponse(w, http.StatusServiceUnavailable, serverutils.ApiError{Err: "The lifecycle metadata is unavailable for this catalog."})
 	case codes.Unavailable:
 		klog.Infof("[lifecycle] CatalogSource %s gRPC unavailable: %v", catalogName, st.Message())
 		serverutils.SendResponse(w, http.StatusServiceUnavailable, serverutils.ApiError{Err: "The catalog source is unavailable. Try again later."})

@@ -84,6 +84,22 @@ export function createCleanupFixture(testName: string): CleanupFixture {
       });
     },
 
+    trackClusterCustomResource(
+      name: string,
+      apiGroup: string,
+      apiVersion: string,
+      plural: string,
+      type?: string,
+    ) {
+      resources.push({
+        name,
+        apiGroup,
+        apiVersion,
+        plural,
+        type: type || plural,
+      });
+    },
+
     trackCustomResource(
       name: string,
       namespace: string,
@@ -95,22 +111,6 @@ export function createCleanupFixture(testName: string): CleanupFixture {
       resources.push({
         name,
         namespace,
-        apiGroup,
-        apiVersion,
-        plural,
-        type: type || plural,
-      });
-    },
-
-    trackClusterCustomResource(
-      name: string,
-      apiGroup: string,
-      apiVersion: string,
-      plural: string,
-      type?: string,
-    ) {
-      resources.push({
-        name,
         apiGroup,
         apiVersion,
         plural,
@@ -150,6 +150,9 @@ export function createCleanupFixture(testName: string): CleanupFixture {
                 break;
               case 'Secret':
                 await client.deleteSecret(resource.name, resource.namespace);
+                break;
+              case 'ResourceQuota':
+                await client.deleteResourceQuota(resource.name, resource.namespace);
                 break;
               default:
                 console.warn(

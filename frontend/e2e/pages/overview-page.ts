@@ -1,39 +1,68 @@
-import type { Locator } from '@playwright/test';
+import { type Locator, expect } from '@playwright/test';
 
 import BasePage from './base-page';
 
 export class OverviewPage extends BasePage {
   private readonly controlPlaneSection = this.page.getByTestId('Control Plane');
+  private readonly listView: Locator = this.page.locator('.odc-topology-list-view');
+  private readonly itemRows: Locator = this.page.locator('.odc-topology-list-view__item-row');
+  private readonly kindLabels: Locator = this.page.locator('.odc-topology-list-view__kind-label');
+  private readonly labelCells: Locator = this.page.locator('.odc-topology-list-view__label-cell');
+  private readonly sidebar: Locator = this.page.locator('.resource-overview');
+  private readonly sidebarHeading: Locator = this.page.locator('.resource-overview__heading h1');
 
-  /**
-   * Navigate to the Overview page
-   */
   async navigateToOverview(): Promise<void> {
     await this.goTo('/overview');
     await this.waitForLoadingComplete();
   }
 
-  /**
-   * Get the Control Plane section locator
-   */
   getControlPlaneSection(): Locator {
     return this.controlPlaneSection;
   }
 
-  /**
-   * Navigate to Overview via sidebar navigation
-   */
   async navigateViaNav(): Promise<void> {
     await this.waitForLoadingComplete();
-
-    // Click Home in sidebar
     const homeButton = this.page.getByRole('button', { name: 'Home' });
     await this.robustClick(homeButton);
-
-    // Click Overview in the expanded section
     const overviewLink = this.page.getByRole('link', { name: 'Overview' });
     await this.robustClick(overviewLink);
-
     await this.waitForLoadingComplete();
+  }
+
+  get listViewLocator(): Locator {
+    return this.listView;
+  }
+
+  get itemRowsLocator(): Locator {
+    return this.itemRows;
+  }
+
+  get sidebarLocator(): Locator {
+    return this.sidebar;
+  }
+
+  get sidebarHeadingLocator(): Locator {
+    return this.sidebarHeading;
+  }
+
+  kindLabel(label: string): Locator {
+    return this.kindLabels.filter({ hasText: label });
+  }
+
+  labelCell(name: string): Locator {
+    return this.labelCells.filter({ hasText: name });
+  }
+
+  async navigateToWorkloads(projectName: string): Promise<void> {
+    await this.goTo(`/k8s/cluster/projects/${projectName}/workloads?view=list`);
+    try {
+      await expect(this.listView).toBeVisible({ timeout: 15_000 });
+    } catch {
+      await this.retryOnError();
+    }
+  }
+
+  async clickListItem(name: string): Promise<void> {
+    await this.labelCell(name).click();
   }
 }

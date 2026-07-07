@@ -14,6 +14,7 @@ import (
 	"helm.sh/helm/v3/pkg/action"
 	"helm.sh/helm/v3/pkg/chart"
 	"helm.sh/helm/v3/pkg/chart/loader"
+	"helm.sh/helm/v3/pkg/registry"
 	"helm.sh/helm/v3/pkg/release"
 	kv1 "k8s.io/api/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -47,6 +48,14 @@ var (
 	ociURLRe  = regexp.MustCompile(`(?i)^oci://` + hostPort)
 	httpURLRe = regexp.MustCompile(`(?i)^https?://` + hostPort + `/.+\.(?:tar\.gz|tgz)$`)
 )
+
+const (
+	helmAuthSecretAnnotation = "helm.openshift.io/auth-secret"
+)
+
+type RegistryClientSetter interface {
+	SetRegistryClient(rc *registry.Client)
+}
 
 // isValidChartURL validates chart URLs using RFC-compliant hostname labels.
 // Accepts oci://<registry>/<path> and http(s)://<host>/<path>.tgz|tar.gz URLs.
@@ -281,15 +290,23 @@ func GetUserCredentials(coreClient corev1client.CoreV1Interface, ns, secretName 
 }
 
 // applyBasicAuthFromSecret sets cmd.Username and cmd.Password from a userCredentials and sets the registry client
-func applyBasicAuthFromUserCredentials(cmd *action.Install, userCredentials *UserCredentials) error {
+func applyBasicAuthFromUserCredentials(cmd *action.ChartPathOptions, setter RegistryClientSetter, userCredentials *UserCredentials) error {
 	cmd.Username = userCredentials.Username
 	cmd.Password = userCredentials.Password
 	rc, err := GetOCIRegistry(false, false, userCredentials)
 	if err != nil {
 		return fmt.Errorf("failed to configure OCI registry client: %w", err)
 	}
-	cmd.SetRegistryClient(rc)
+	setter.SetRegistryClient(rc)
 	return nil
+}
+
+// addAuthSecretAnnotation adds the auth secret reference to the release annotations via chart metadata.
+func addAuthSecretAnnotation(ch *chart.Chart, secretName string) {
+	if secretName == "" {
+		return
+	}
+	ch.Metadata.Annotations[helmAuthSecretAnnotation] = secretName
 }
 
 // InstallChartFromURL installs a chart from an OCI or direct HTTP(S) chart URL.
@@ -312,7 +329,7 @@ func InstallChartFromURL(ns, name, url string, vals map[string]interface{}, conf
 		if err != nil {
 			return nil, err
 		}
-		if err := applyBasicAuthFromUserCredentials(cmd, userCredentials); err != nil {
+		if err := applyBasicAuthFromUserCredentials(&cmd.ChartPathOptions, cmd, userCredentials); err != nil {
 			return nil, err
 		}
 	}
@@ -345,6 +362,7 @@ func InstallChartFromURL(ns, name, url string, vals map[string]interface{}, conf
 	}
 	ch.Metadata.Annotations["chart_url"] = url
 	ch.Metadata.Annotations["installation"] = "url_install"
+	addAuthSecretAnnotation(ch, basicAuthSecretName)
 	go func() {
 		_, err := cmd.Run(ch, vals)
 		if err == nil {

@@ -37,7 +37,7 @@ export const ResourceQuotaCard = memo(() => {
   const { t } = useTranslation('public');
 
   return (
-    <Card data-test-id="resource-quotas-card">
+    <Card data-test="resource-quotas-card" data-test-id="resource-quotas-card">
       <CardHeader>
         <CardTitle>{t('ResourceQuotas')}</CardTitle>
       </CardHeader>

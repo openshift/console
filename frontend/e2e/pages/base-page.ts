@@ -61,6 +61,11 @@ export default abstract class BasePage {
     await this.waitForLoadingComplete();
   }
 
+  protected async retryOnError(): Promise<void> {
+    await this.page.reload({ waitUntil: 'domcontentloaded' });
+    await this.waitForLoadingComplete();
+  }
+
   protected locator(
     selector: string,
     options?: {
@@ -124,6 +129,13 @@ export default abstract class BasePage {
   async clickButtonByText(buttonText: string): Promise<void> {
     const button = this.page.getByRole('button', { name: buttonText });
     await this.robustClick(button);
+  }
+
+  async waitForEditorReady(): Promise<void> {
+    await this.page.waitForFunction(
+      () => !!(window as any).monaco?.editor?.getModels()?.[0],
+      { timeout: 30_000 },
+    );
   }
 
   async getEditorContent(): Promise<string> {

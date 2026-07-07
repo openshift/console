@@ -17,6 +17,7 @@ import (
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/dynamic"
 	corev1client "k8s.io/client-go/kubernetes/typed/core/v1"
+	"k8s.io/klog/v2"
 )
 
 func UpgradeRelease(
@@ -158,10 +159,14 @@ func UpgradeReleaseAsync(
 		return nil, err
 	}
 
+	auth_secret := ""
 	// Before proceeding, check if chart URL is present as an annotation
 	if rel.Chart.Metadata.Annotations != nil {
 		if chart_url, ok := rel.Chart.Metadata.Annotations["chart_url"]; chartUrl == "" && ok {
 			chartUrl = chart_url
+		}
+		if authSecret, ok := rel.Chart.Metadata.Annotations[helmAuthSecretAnnotation]; ok {
+			auth_secret = authSecret
 		}
 	}
 
@@ -199,6 +204,16 @@ func UpgradeReleaseAsync(
 				}
 			}
 		}
+		if auth_secret != "" {
+			userCredentials, err := GetUserCredentials(coreClient, releaseNamespace, auth_secret)
+			if err != nil {
+				klog.Errorf("Failed to get user credentials Secret %s for release upgrade %s/%s: %v", auth_secret, releaseNamespace, releaseName, err)
+			} else {
+				if err := applyBasicAuthFromUserCredentials(&client.ChartPathOptions, client, userCredentials); err != nil {
+					klog.Errorf("Failed to apply auth from Secret %s for release upgrade %s/%s: %v", auth_secret, releaseNamespace, releaseName, err)
+				}
+			}
+		}
 		chartLocation = chartUrl
 		client.ChartPathOptions.Version = chartInfo.Version
 		cp, err = client.ChartPathOptions.LocateChart(chartLocation, settings)
@@ -218,11 +233,15 @@ func UpgradeReleaseAsync(
 	}
 
 	// Ensure chart URL is properly set in the upgrade chart
+	if ch.Metadata == nil {
+		ch.Metadata = &chart.Metadata{}
+	}
+	if ch.Metadata.Annotations == nil {
+		ch.Metadata.Annotations = make(map[string]string)
+	}
 	if chartUrl != "" {
-		if ch.Metadata.Annotations == nil {
-			ch.Metadata.Annotations = make(map[string]string)
-		}
 		ch.Metadata.Annotations["chart_url"] = chartUrl
+		addAuthSecretAnnotation(ch, auth_secret)
 	}
 	go func() {
 		_, err := client.Run(releaseName, ch, vals)

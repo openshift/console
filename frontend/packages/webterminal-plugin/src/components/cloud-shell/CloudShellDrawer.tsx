@@ -16,9 +16,13 @@ import { css } from '@patternfly/react-styles';
 import { c_drawer_m_inline_m_panel_bottom__splitter_Height as pfSplitterHeight } from '@patternfly/react-tokens/dist/esm/c_drawer_m_inline_m_panel_bottom__splitter_Height';
 import { useTranslation } from 'react-i18next';
 import { ExternalLinkButton } from '@console/shared/src/components/links/ExternalLinkButton';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { MinimizeRestoreButton } from '@console/webterminal-plugin/src/components/cloud-shell/MinimizeRestoreButton';
 import { MultiTabbedTerminal } from '@console/webterminal-plugin/src/components/cloud-shell/MultiTabbedTerminal';
+import { FLAG_DEVWORKSPACE } from '../../const';
+import { MAX_DETACHED_SESSIONS } from '../../redux/reducers/cloud-shell-reducer';
+import { useDetachedSessions } from '../../redux/reducers/cloud-shell-selectors';
 
 import './CloudShellDrawer.scss';
 
@@ -46,6 +50,9 @@ export const CloudShellDrawer: FC<CloudShellDrawerProps> = ({
   const [height, setHeight] = useState<number>(385);
   const { t } = useTranslation('webterminal-plugin');
   const fireTelemetryEvent = useTelemetry();
+  const devWorkspaceAvailable = useFlag(FLAG_DEVWORKSPACE);
+  const detachedSessions = useDetachedSessions();
+  const detachedCount = detachedSessions.length;
 
   const onMRButtonClick = (expandedState: boolean) => {
     setExpanded(!expandedState);
@@ -70,17 +77,26 @@ export const CloudShellDrawer: FC<CloudShellDrawerProps> = ({
     >
       <DrawerHead className="co-cloud-shell-drawer__header pf-v6-u-p-0">
         <Flex grow={{ default: 'grow' }} data-test="cloudshell-drawer-header">
-          <FlexItem className="pf-v6-u-px-sm">{t('OpenShift command line terminal')}</FlexItem>
+          <FlexItem className="pf-v6-u-px-sm">
+            {t('OpenShift command line terminal')}
+            {detachedCount > 0 && (
+              <span className="pf-v6-u-ml-sm pf-v6-u-font-size-sm pf-v6-u-color-200">
+                ({detachedCount}/{MAX_DETACHED_SESSIONS} {t('detached')})
+              </span>
+            )}
+          </FlexItem>
           <FlexItem align={{ default: 'alignRight' }}>
             <DrawerActions className="pf-v6-u-m-0">
-              <Tooltip content={t('Open terminal in new tab')}>
-                <ExternalLinkButton
-                  variant="plain"
-                  href="/terminal"
-                  aria-label={t('Open terminal in new tab')}
-                  iconProps={{ title: undefined }} // aria-label is sufficient
-                />
-              </Tooltip>
+              {devWorkspaceAvailable && (
+                <Tooltip content={t('Open terminal in new tab')}>
+                  <ExternalLinkButton
+                    variant="plain"
+                    href="/terminal"
+                    aria-label={t('Open terminal in new tab')}
+                    iconProps={{ title: undefined }} // aria-label is sufficient
+                  />
+                </Tooltip>
+              )}
               <MinimizeRestoreButton
                 minimize={expanded}
                 minimizeText={t('Minimize terminal')}
