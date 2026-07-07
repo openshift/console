@@ -3,27 +3,19 @@ import type { Locator } from '@playwright/test';
 import BasePage from './base-page';
 
 export class HelmDetailsPage extends BasePage {
-  private readonly sectionHeading = this.page.locator(
-    '[data-test-section-heading="Helm Release details"]',
+  private readonly sectionHeading = this.page.getByTestId('details-page-section-heading');
+  private readonly resourcesTab = this.page.getByTestId('horizontal-link-Resources');
+  private readonly revisionHistoryTab = this.page.getByTestId('horizontal-link-Revision history',
   );
-  private readonly resourcesTab = this.page.locator(
-    '[data-test-id="horizontal-link-Resources"]',
+  private readonly releaseNotesTab = this.page.getByTestId('horizontal-link-Release notes');
+  private readonly actionsMenuButton = this.page.getByTestId('actions-menu-button',
   );
-  private readonly revisionHistoryTab = this.page.locator(
-    '[data-test-id="horizontal-link-Revision history"]',
-  );
-  private readonly releaseNotesTab = this.page.locator(
-    '[data-test-id="horizontal-link-Release notes"]',
-  );
-  private readonly actionsMenuButton = this.page.locator(
-    '[data-test-id="actions-menu-button"]',
-  );
-  private readonly actionItems = this.page.locator('[data-test-id="action-items"]');
+  private readonly actionItems = this.page.getByTestId('action-items');
   private readonly pageHeading = this.page.getByTestId('page-heading').locator('h1');
   private readonly statusIcon = this.page.getByTestId('success-icon');
   private readonly statusText = this.page.getByTestId('status-text');
   private readonly statusDetails = this.page.getByTestId('helm-release-status-details');
-  private readonly deleteModalTitle = this.page.locator('[data-test-id="modal-title"]');
+  private readonly deleteModalTitle = this.page.getByTestId('modal-title');
   private readonly resourceNameText = this.page.getByTestId('resource-name');
   private readonly releaseNameInput = this.page.locator('#form-input-resourceName-field');
   private readonly confirmActionButton = this.page.getByTestId('confirm-action');
@@ -66,14 +58,6 @@ export class HelmDetailsPage extends BasePage {
 
   async clickActionsMenu(): Promise<void> {
     await this.robustClick(this.actionsMenuButton);
-  }
-
-  async verifyActionsInMenu(): Promise<void> {
-    const actions = ['Upgrade', 'Rollback', 'Delete Helm Release'];
-    for (const action of actions) {
-      const item = this.actionItems.locator('li', { hasText: action });
-      await item.scrollIntoViewIfNeeded();
-    }
   }
 
   getActionMenuItem(actionName: string): Locator {

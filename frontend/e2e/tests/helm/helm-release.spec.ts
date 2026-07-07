@@ -48,11 +48,11 @@ test.describe('Helm Release', { tag: ['@helm', '@smoke'] }, () => {
     });
 
     await test.step('Verify Create Helm Release page', async () => {
-      await expect(page.locator('[data-test="form-title"]')).toHaveText('Create Helm Release');
+      await expect(helmPage.getFormTitle()).toHaveText('Create Helm Release');
       await expect(helmPage.getReleaseNameInput()).toHaveValue('nodejs');
       await expect(helmPage.getFormViewRadio()).toBeChecked();
       await expect(helmPage.getYamlViewRadio()).not.toBeChecked();
-      await expect(page.locator('#root_field-group').first()).toBeVisible();
+      await expect(helmPage.getFormSections().first()).toBeVisible();
     });
 
     await test.step('Cancel creation', async () => {
@@ -99,7 +99,7 @@ test.describe('Helm Release', { tag: ['@helm', '@smoke'] }, () => {
       await expect(
         helmPage
           .getTable()
-          .locator('[data-test="data-view-cell-helm-release-name"]')
+          .getByTestId('data-view-cell-helm-release-name')
           .first(),
       ).toBeVisible();
     });
@@ -124,7 +124,7 @@ test.describe('Helm Release', { tag: ['@helm', '@smoke'] }, () => {
       await expect(helmDetailsPage.getPageHeading()).toContainText(releaseName);
       await expect(helmDetailsPage.getStatusIcon().first()).toBeVisible();
       await expect(
-        helmDetailsPage.getStatusDetails().locator('[data-test="status-text"]'),
+        helmDetailsPage.getStatusDetails().getByTestId('status-text'),
       ).toBeVisible();
     });
 
@@ -149,11 +149,14 @@ test.describe('Helm Release', { tag: ['@helm', '@smoke'] }, () => {
     });
 
     await test.step('Verify kebab menu actions after upgrade (HR-08-TC01)', async () => {
+      // Ensure upgrade is fully completed before checking menu
+      await expect(helmPage.getStatusText().first()).toContainText('Deployed', { timeout: 60_000 });
       await helmPage.clickKebabMenu();
-      const upgradeAction = page.locator('[data-test-action="Upgrade"]');
+      // const upgradeAction = page.locator('[data-test-action="Upgrade"]');
+      const upgradeAction = helmDetailsPage.getActionMenuItem('Upgrade');
       await expect(upgradeAction).toBeVisible({ timeout: 15_000 });
-      await expect(page.locator('[data-test-action="Rollback"]')).toBeVisible();
-      await expect(page.locator('[data-test-action="Delete Helm Release"]')).toBeVisible();
+      await expect(helmDetailsPage.getActionMenuItem('Rollback')).toBeVisible();
+      await expect(helmDetailsPage.getActionMenuItem('Delete Helm Release')).toBeVisible();
       await page.keyboard.press('Escape');
     });
 

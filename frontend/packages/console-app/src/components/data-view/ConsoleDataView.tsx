@@ -253,7 +253,11 @@ export const ConsoleDataView = <
         <DataViewToolbar
           filters={
             dataViewFilterNodes.length > 0 && (
-              <DataViewFilters values={filters} onChange={(_e, values) => onSetFilters(values)}>
+              <DataViewFilters
+                data-test="data-view-filters"
+                values={filters}
+                onChange={(_e, values) => onSetFilters(values)}
+              >
                 {dataViewFilterNodes}
               </DataViewFilters>
             )
