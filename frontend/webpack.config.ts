@@ -99,6 +99,10 @@ const config: Configuration = {
   },
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx'],
+    alias: {
+      // Force CJS entry for htmlparser2 — Webpack 4 picks the ESM "module" field by default
+      htmlparser2: path.resolve(__dirname, 'node_modules/htmlparser2/lib/index.js'),
+    },
   },
   node: {
     fs: 'empty',
