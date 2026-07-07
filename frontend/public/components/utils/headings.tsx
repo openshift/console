@@ -205,6 +205,7 @@ export const SectionHeading: FC<SectionHeadingProps> = ({
       className={css({
         'co-required': required,
       })}
+      data-test="details-page-section-heading"
     >
       {text}
     </span>
