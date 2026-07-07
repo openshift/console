@@ -214,7 +214,7 @@
     "redux": "4.0.1",
     "redux-thunk": "2.4.0",
     "reselect": "4.x",
-    "sanitize-html": "^2.3.2",
+    "sanitize-html": "^2.17.4",
     "screenfull": "4.x",
     "semver": "6.x",
     "showdown": "1.8.6",
