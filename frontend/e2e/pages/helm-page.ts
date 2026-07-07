@@ -8,9 +8,7 @@ export class HelmPage extends BasePage {
     name: /browse the catalog/i,
   });
   private readonly dataViewTable = this.page.locator('[role="grid"]');
-  private readonly dataViewFilters = this.page.locator(
-    '[data-ouia-component-id="DataViewFilters"]',
-  );
+  private readonly dataViewFilters = this.page.getByTestId('data-view-filters');
   private readonly filterDropdown = this.page.locator(
     '[data-ouia-component-id="DataViewCheckboxFilter"]',
   );
@@ -20,8 +18,10 @@ export class HelmPage extends BasePage {
   private readonly catalogSearch = this.page.getByPlaceholder('Filter by keyword...');
   private readonly catalogSidePane = this.page.locator('[role="dialog"]');
   private readonly releaseNameInput = this.page.locator('#form-input-releaseName-field');
-  private readonly submitButton = this.page.locator('[data-test-id="submit-button"]');
-  private readonly cancelButton = this.page.locator('[data-test-id="reset-button"]');
+  private readonly submitButton = this.page.getByTestId('save-changes');
+  private readonly cancelButton = this.page.getByTestId('reset-button');
+  private readonly formTitle = this.page.getByTestId('form-title');
+  private readonly formSection = this.page.locator('#root_field-group')
   private readonly formViewRadio = this.page.locator('#form-radiobutton-editorType-form-field');
   private readonly yamlViewRadio = this.page.locator('#form-radiobutton-editorType-yaml-field');
   private readonly chartVersionDropdown = this.page.locator('#form-dropdown-chartVersion-field');
@@ -31,16 +31,16 @@ export class HelmPage extends BasePage {
   }
 
   async searchByName(name: string): Promise<void> {
-    const filterToggle = this.dataViewFilters.locator('.pf-v6-c-menu-toggle').first();
+    const filterToggle = this.dataViewFilters.getByRole('button');
     await this.robustClick(filterToggle, { timeout: 60_000 });
-    await this.page.locator('.pf-v6-c-menu__list-item', { hasText: 'Name' }).click();
+    await this.page.getByRole('menuitem', { name: 'Name' }).click();
     await this.nameFilterInput.fill(name);
   }
 
   async filterByStatus(status: string): Promise<void> {
-    const filterToggle = this.dataViewFilters.locator('.pf-v6-c-menu-toggle').first();
+    const filterToggle = this.dataViewFilters.getByRole('button');
     await this.robustClick(filterToggle);
-    await this.page.locator('.pf-v6-c-menu__list-item', { hasText: 'Status' }).click();
+    await this.page.getByRole('menuitem', { name: 'Status' }).click();
     await this.robustClick(this.filterDropdown);
     const filterItem = this.page.locator(
       `[data-ouia-component-id="DataViewCheckboxFilter-filter-item-${status.toLowerCase()}"]`,
@@ -54,7 +54,7 @@ export class HelmPage extends BasePage {
   }
 
   async clickKebabMenu(): Promise<void> {
-    const kebabButton = this.page.locator('[data-test-id="kebab-button"]').first();
+    const kebabButton = this.page.getByTestId('kebab-button').first();
     await this.robustClick(kebabButton);
     // Wait for the dropdown menu to appear after clicking
     // eslint-disable-next-line no-restricted-syntax
@@ -90,7 +90,7 @@ export class HelmPage extends BasePage {
   async clickInstallButton(): Promise<void> {
     await this.robustClick(this.submitButton);
     // eslint-disable-next-line no-restricted-syntax
-    await this.page.locator('.pf-v6-c-button__progress').waitFor({ state: 'detached', timeout: 60_000 }).catch(() => {});
+    await this.submitButton.waitFor({ state: "visible" });
     await this.waitForLoadingComplete(40_000);
   }
 
@@ -104,7 +104,7 @@ export class HelmPage extends BasePage {
     const confirmButton = this.page.getByRole('button', { name: 'Proceed' });
     try {
       // eslint-disable-next-line no-restricted-syntax
-      await confirmButton.waitFor({ state: 'visible', timeout: 3_000 });
+      await confirmButton.waitFor({ state: 'visible', timeout: 2_000 });
       await this.robustClick(confirmButton);
     } catch {
       // Confirmation not required for this chart version
@@ -114,7 +114,8 @@ export class HelmPage extends BasePage {
   async clickUpgradeButton(): Promise<void> {
     await this.robustClick(this.submitButton);
     // eslint-disable-next-line no-restricted-syntax
-    await this.page.locator('.pf-v6-c-button__progress').waitFor({ state: 'detached', timeout: 60_000 }).catch(() => {});
+    await this.submitButton.waitFor({ state: "visible", timeout: 1_000 });
+    await this.waitForLoadingComplete(60_000);
   }
 
   async selectRevision(): Promise<void> {
@@ -124,27 +125,8 @@ export class HelmPage extends BasePage {
   async clickRollbackButton(): Promise<void> {
     await this.robustClick(this.submitButton);
     // eslint-disable-next-line no-restricted-syntax
-    await this.page.locator('.pf-v6-c-button__progress').waitFor({ state: 'detached', timeout: 60_000 }).catch(() => {});
+    await this.submitButton.waitFor({ state: "visible", timeout: 2_000 });
     await this.waitForLoadingComplete(60_000);
-  }
-
-  async selectProject(namespace: string): Promise<void> {
-    const namespaceDropdown = this.page.getByTestId('namespace-bar-dropdown');
-    const dropdownButton = namespaceDropdown.getByRole('button');
-    await this.robustClick(dropdownButton);
-
-    const searchInput = this.page.getByRole('searchbox', { name: 'Select project...' });
-    // eslint-disable-next-line no-restricted-syntax
-    await searchInput.waitFor({ state: 'visible' });
-
-    const systemSwitch = this.page.getByTestId('showSystemSwitch');
-    if ((await systemSwitch.count()) > 0 && !(await systemSwitch.isChecked())) {
-      await systemSwitch.check();
-    }
-
-    await searchInput.fill(namespace);
-    const item = this.page.getByRole('menuitem', { name: namespace, exact: true });
-    await this.robustClick(item);
   }
 
   getEmptyMessage(): Locator {
@@ -181,6 +163,14 @@ export class HelmPage extends BasePage {
 
   getCancelButton(): Locator {
     return this.cancelButton;
+  }
+
+  getFormTitle(): Locator {
+    return this.formTitle;
+  }
+
+  getFormSections(): Locator {
+    return this.formSection;
   }
 
   getFilterDropdownItem(status: string): Locator {
