@@ -10,7 +10,7 @@ For current development version of Console, use `4.x.0-prerelease.n` packages.
 For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility
 table in [Console dynamic plugins README](./README.md).
 
-## 4.23.0-prerelease.3 - TBD
+## 4.23.0-prerelease.3 - 2026-07-07
 
 - `ConsoleRemotePlugin` shared dynamic module option `skipImportPrefixes` allows extending the default PatternFly module skip list to suppress build warnings ([OCPBUGS-88319], [#16585])
 
