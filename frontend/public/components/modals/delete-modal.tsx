@@ -102,6 +102,7 @@ const DeleteModal = (props: DeleteModalProps) => {
             })}
           </>
         }
+        data-test="modal-title"
         data-test-id="modal-title"
       />
       <ModalBody>

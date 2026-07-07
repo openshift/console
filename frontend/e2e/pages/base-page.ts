@@ -131,6 +131,13 @@ export default abstract class BasePage {
     await this.robustClick(button);
   }
 
+  async waitForEditorReady(): Promise<void> {
+    await this.page.waitForFunction(
+      () => !!(window as any).monaco?.editor?.getModels()?.[0],
+      { timeout: 30_000 },
+    );
+  }
+
   async getEditorContent(): Promise<string> {
     return getEditorContent(this.page);
   }

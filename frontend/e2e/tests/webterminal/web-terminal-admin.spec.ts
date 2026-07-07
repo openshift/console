@@ -2,6 +2,7 @@ import type { Page } from '@playwright/test';
 
 import { test, expect } from '../../fixtures';
 import type KubernetesClient from '../../clients/kubernetes-client';
+import { getEditorContent } from '../../pages/base-page';
 import { WebTerminalPage } from '../../pages/web-terminal-page';
 import {
   ensureWebTerminalOperatorInstalled,
@@ -37,7 +38,8 @@ async function verifyDevWorkspaceUid(
   expect(uid).toBeTruthy();
 
   await webTerminal.navigateToDevWorkspaceYaml(namespace, devWsName);
-  await expect(webTerminal.getMonacoEditor()).toContainText(uid, { timeout: 30_000 });
+  const content = await getEditorContent(page);
+  expect(content).toContain(uid);
 }
 
 test.describe('Web Terminal for Admin user', () => {
