@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "lodash-es": "^4.18.1",
-    "sanitize-html": "^2.3.2",
+    "sanitize-html": "^2.17.4",
     "showdown": "1.8.6"
   },
   "devDependencies": {
