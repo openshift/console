@@ -114,8 +114,15 @@ copy_playwright_artifacts_to_dir() {
       echo "Warning: failed to copy test-results to ${dest}" >&2
     fi
     if [ -f test-results/junit-results.xml ]; then
+      cp -a test-results/junit-results.xml "${ARTIFACT_DIR}/junit-playwright-standard.xml" && \
+        echo "Copied standard JUnit report to ${ARTIFACT_DIR}/junit-playwright-standard.xml"
+    fi
+    if [ -f test-results/prow-junit-results.xml ]; then
+      cp -a test-results/prow-junit-results.xml "${ARTIFACT_DIR}/junit-playwright.xml" && \
+        echo "Copied Prow JUnit report to ${ARTIFACT_DIR}/junit-playwright.xml"
+    elif [ -f test-results/junit-results.xml ]; then
       cp -a test-results/junit-results.xml "${ARTIFACT_DIR}/junit-playwright.xml" && \
-        echo "Copied JUnit report to ${ARTIFACT_DIR}/junit-playwright.xml"
+        echo "Copied JUnit report to ${ARTIFACT_DIR}/junit-playwright.xml (Prow report not available)"
     fi
   fi
 

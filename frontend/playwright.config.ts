@@ -53,9 +53,21 @@ export default defineConfig({
   timeout: 120_000,
   reporter: isCI
     ? [
-        ['dot'],
-        ['junit', { outputFile: path.resolve(__dirname, 'test-results', 'junit-results.xml') }],
+        ['line'],
+        [
+          'junit',
+          {
+            outputFile: path.resolve(__dirname, 'test-results', 'junit-results.xml'),
+            includeRetries: true,
+          },
+        ],
         ['html', { outputFolder: path.resolve(__dirname, 'playwright-report'), open: 'never' }],
+        [
+          './e2e/reporters/prow-junit-reporter.ts',
+          {
+            outputFile: path.resolve(__dirname, 'test-results', 'prow-junit-results.xml'),
+          },
+        ],
       ]
     : [['list']],
 
