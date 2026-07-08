@@ -146,6 +146,20 @@ export default abstract class BasePage {
     await setEditorContent(this.page, content);
   }
 
+  async ensureFormView(formFieldLocator?: Locator): Promise<void> {
+    const syncedEditor = this.page.getByTestId('synced-editor-field');
+    // eslint-disable-next-line no-restricted-syntax
+    await syncedEditor.waitFor({ state: 'visible', timeout: 60_000 });
+    const formRadio = syncedEditor.getByRole('radio', { name: 'Form view' });
+    if (!(await formRadio.isChecked())) {
+      await formRadio.click();
+    }
+    if (formFieldLocator) {
+      // eslint-disable-next-line no-restricted-syntax
+      await formFieldLocator.waitFor({ state: 'visible', timeout: 30_000 });
+    }
+  }
+
   async switchPerspective(target: 'Developer' | 'Administrator'): Promise<void> {
     const labelMap: Record<string, string[]> = {
       Administrator: ['Administrator', 'Core platform'],
