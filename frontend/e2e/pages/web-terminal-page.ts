@@ -1,7 +1,7 @@
 import type { Locator } from '@playwright/test';
 import { expect } from '@playwright/test';
 
-import BasePage from './base-page';
+import BasePage, { warmupSPA } from './base-page';
 
 export class WebTerminalPage extends BasePage {
   private readonly terminalIcon = this.page.locator(
@@ -27,7 +27,7 @@ export class WebTerminalPage extends BasePage {
   private readonly inactivityMessageArea = this.page.locator('div.co-cloudshell-exec__error-msg');
 
   async waitForTerminalIconVisible(maxRetries = 10): Promise<void> {
-    await this.goTo('/');
+    await warmupSPA(this.page);
     try {
       // eslint-disable-next-line no-restricted-syntax
       await this.terminalIcon.waitFor({ state: 'visible', timeout: 30_000 });
