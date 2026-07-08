@@ -935,7 +935,24 @@ export type UseDeleteModal = (
   deleteAllResources?: () => Promise<K8sResourceKind[]>,
 ) => () => void;
 
-export type UseLabelsModal = (resource: K8sResourceCommon) => () => void;
+/**
+ * Callback for custom label submission in the labels modal.
+ *
+ * **Contract:**
+ * - Must return a `Promise` that resolves with the updated resource on success.
+ * - Must return a rejected `Promise` on failure so the modal can display the error.
+ * - Must not throw synchronously; all errors should be expressed as rejected promises.
+ * - Receives the current resource and the full set of edited labels (not a diff).
+ */
+export type LabelsModalOnSubmit = (
+  resource: K8sResourceCommon,
+  labels: { [key: string]: string },
+) => Promise<K8sResourceCommon>;
+
+export type UseLabelsModal = (
+  resource: K8sResourceCommon,
+  onSubmit?: LabelsModalOnSubmit,
+) => () => void;
 
 export type UseValuesForNamespaceContext = () => {
   namespace: string;
