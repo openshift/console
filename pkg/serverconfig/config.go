@@ -260,6 +260,10 @@ func addClusterInfo(fs *flag.FlagSet, clusterInfo *ClusterInfo) {
 		fs.Set("base-address", clusterInfo.ConsoleBaseAddress)
 	}
 
+	if len(clusterInfo.AdditionalConsoleBaseAddresses) > 0 {
+		fs.Set("additional-base-addresses", strings.Join(clusterInfo.AdditionalConsoleBaseAddresses, ","))
+	}
+
 	if clusterInfo.ConsoleBasePath != "" {
 		fs.Set("base-path", clusterInfo.ConsoleBasePath)
 	}
