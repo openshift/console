@@ -140,17 +140,9 @@ describe('getSupportPhase', () => {
     expect(result).toEqual({ status: SupportPhaseStatus.SelfSupport, allPhases });
   });
 
-  it('returns first phase when date is before all phases', () => {
+  it('returns self-support if the date is before all phases', () => {
     const result = getSupportPhase(lifecycle, '1.0', new Date('2023-06-01'));
-    expect(result).toEqual({
-      status: SupportPhaseStatus.Active,
-      currentPhase: {
-        name: 'Maintenance support',
-        startDate: '2024-01-01',
-        endDate: '2024-06-30',
-      },
-      allPhases,
-    });
+    expect(result).toEqual({ status: SupportPhaseStatus.SelfSupport, allPhases });
   });
 
   it('returns no-data when lifecycle data is undefined', () => {

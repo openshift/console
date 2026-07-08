@@ -138,12 +138,7 @@ export const getSupportPhase = (
     }
   }
 
-  const lastPhase = allPhases[allPhases.length - 1];
-  if (now > parseLocalEndOfDay(lastPhase.endDate)) {
-    return { status: SupportPhaseStatus.SelfSupport, allPhases };
-  }
-
-  return { status: SupportPhaseStatus.Active, currentPhase: allPhases[0], allPhases };
+  return { status: SupportPhaseStatus.SelfSupport, allPhases };
 };
 
 export const ClusterCompatibilityStatus: FC<{ compatible: CompatibilityResult }> = ({
