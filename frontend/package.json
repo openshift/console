@@ -355,7 +355,8 @@
     "@types/jest": "21.x",
     "glob-parent": "^5.1.2",
     "postcss": "^8.2.13",
-    "immutable": "3.8.3"
+    "immutable": "3.8.3",
+    "decode-uri-component": "0.5.0"
   },
   "husky": {
     "hooks": {
