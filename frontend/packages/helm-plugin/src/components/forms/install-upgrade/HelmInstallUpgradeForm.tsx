@@ -81,12 +81,17 @@ const HelmInstallUpgradeForm: FC<
   const [isCreateSecretModalOpen, setIsCreateSecretModalOpen] = useState(false);
 
   const CREATE_SECRET_KEY = 'create-secret';
+  const NONE_SECRET_KEY = 'none';
 
   const handleSecretSave = (name: string) => {
     setFieldValue('basicAuthSecretName', name);
   };
 
   const handleSecretChange = (key: string) => {
+    if (key === NONE_SECRET_KEY) {
+      window.setTimeout(() => setFieldValue('basicAuthSecretName', ''), 0);
+      return;
+    }
     if (key === CREATE_SECRET_KEY && !isCreateSecretModalOpen) {
       // ResourceDropdownField writes the selected key to form state after this callback.
       // Defer restoring the previous secret so "create-secret" is not persisted.
@@ -222,6 +227,10 @@ const HelmInstallUpgradeForm: FC<
                   showBadge
                   autocompleteFilter={autocompleteFilter}
                   actionItems={[
+                    {
+                      actionTitle: t('None'),
+                      actionKey: NONE_SECRET_KEY,
+                    },
                     {
                       actionTitle: t('Create Secret'),
                       actionKey: CREATE_SECRET_KEY,
