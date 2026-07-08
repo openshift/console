@@ -18636,7 +18636,7 @@ __metadata:
     react-linkify: "npm:^0.2.2"
     react-redux: "npm:~9.2.0"
     react-refresh: "npm:^0.10.0"
-    react-router: "npm:~7.13.1"
+    react-router: "npm:~7.15.0"
     react-svg: "npm:^16.2.0"
     react-tagsinput: "npm:3.20.x"
     react-virtualized: "npm:9.x"
@@ -20205,9 +20205,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-router@npm:~7.13.1":
-  version: 7.13.1
-  resolution: "react-router@npm:7.13.1"
+"react-router@npm:~7.15.0":
+  version: 7.15.1
+  resolution: "react-router@npm:7.15.1"
   dependencies:
     cookie: "npm:^1.0.1"
     set-cookie-parser: "npm:^2.6.0"
@@ -20217,7 +20217,7 @@ __metadata:
   peerDependenciesMeta:
     react-dom:
       optional: true
-  checksum: 10c0/a64c645cede74251f21483fbfad740b36dc5133522d6f53f12317a873a22865fce659d4c2377d5e19c912f85c7b12b88224a2c70d8f70c082496b569cc4abc31
+  checksum: 10c0/3daff5404c7de1429447e735f1ee7e070d4f11632f589cec70c5171f2357be9cada2162f780bc9061eb153646109ad6e80c2d10a6b27256593f28a66945f4c76
   languageName: node
   linkType: hard
 
