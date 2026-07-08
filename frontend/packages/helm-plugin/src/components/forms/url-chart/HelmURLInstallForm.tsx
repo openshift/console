@@ -97,7 +97,7 @@ const HelmURLInstallForm: FC<FormikProps<HelmURLInstallFormData> & HelmURLInstal
       {chartHasValues && (
         <>
           {t(
-            'Complete the form to create a Helm release. The Helm Chart authors might have provided some default values.',
+            'Complete the form to create a Helm release. Default values might already be set by the chart.',
           )}{' '}
           &nbsp;
         </>

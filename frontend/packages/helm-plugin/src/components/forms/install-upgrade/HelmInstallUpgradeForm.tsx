@@ -105,28 +105,20 @@ const HelmInstallUpgradeForm: FC<
       });
     }
   };
-  const {
-    chartName,
-    chartVersion,
-    chartReadme,
-    formData,
-    formSchema,
-    editorType,
-    basicAuthSecretName,
-  } = values;
+  const { chartName, chartVersion, chartReadme, formData, formSchema, editorType } = values;
   const { type: helmAction, title, subTitle } = helmActionConfig;
   const helmReadmeModalLauncher = useHelmReadmeModalLauncher({ readme: chartReadme });
-  const showAuthSecret = values.isURLInstall || !!values.chartURL;
+  const showAuthSecret = values.isURLInstall;
   const secretResources = useSecretResources(namespace);
   const autocompleteFilter = (strText: string, item: any): boolean =>
     fuzzy(strText, item?.props?.name);
   const secretMissing = useMemo(() => {
-    if (!showAuthSecret || !secretResources[0]?.loaded) {
+    if (!showAuthSecret || !values.basicAuthSecretName || !secretResources[0]?.loaded) {
       return false;
     }
     const secrets = secretResources[0]?.data ?? [];
-    return !secrets.some((s) => s?.metadata?.name === basicAuthSecretName);
-  }, [showAuthSecret, secretResources, basicAuthSecretName]);
+    return !secrets.some((s) => s?.metadata?.name === values.basicAuthSecretName);
+  }, [showAuthSecret, secretResources, values.basicAuthSecretName]);
   const isSubmitDisabled =
     (helmAction === HelmActionType.Upgrade && !dirty) ||
     isSubmitting ||
@@ -224,7 +216,9 @@ const HelmInstallUpgradeForm: FC<
                   resources={secretResources}
                   dataSelector={['metadata', 'name']}
                   fullWidth
-                  placeholder={t('Select a secret')}
+                  placeholder={
+                    helmAction === HelmActionType.Upgrade ? t('None') : t('Select a secret')
+                  }
                   showBadge
                   autocompleteFilter={autocompleteFilter}
                   actionItems={[
@@ -238,14 +232,14 @@ const HelmInstallUpgradeForm: FC<
                     'Secret with "username" and "password" keys for OCI/HTTP(S) authentication.',
                   )}
                 />
-                {basicAuthSecretName && secretMissing && (
+                {secretMissing && (
                   <Alert
                     variant="warning"
                     isInline
                     isPlain
                     title={t(
                       'Secret "{{secretName}}" was not found in this namespace. Select an existing secret or create a new one.',
-                      { secretName: basicAuthSecretName },
+                      { secretName: values.basicAuthSecretName },
                     )}
                   />
                 )}
