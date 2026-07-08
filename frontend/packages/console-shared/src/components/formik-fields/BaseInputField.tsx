@@ -34,21 +34,17 @@ const BaseInputField: FC<
   const errorMessage = !isValid ? error : '';
   useFormikValidationFix(field.value);
 
-  // Use custom data-test attribute if provided, otherwise generate default
-  const dataTestAttr = props['data-test'] || `form-input-${name.replace(/\./g, '-')}-field`;
-
   return (
     <FormGroup fieldId={fieldId} label={label} isRequired={required}>
       {children({
         ...field,
+        ...props,
         ...(isReadOnly !== undefined && { readOnly: isReadOnly }),
         value: field.value || '',
         id: fieldId,
         label,
         validated: !isValid ? ValidatedOptions.error : validated,
         'aria-describedby': helpText ? `${fieldId}-helper` : undefined,
-        'data-test': dataTestAttr,
-        ...props,
         onChange: (event) => {
           field.onChange(event);
           onChange && onChange(event);

@@ -21,8 +21,8 @@ export class TopologyPage extends BasePage {
   // Form interaction locators
   private readonly gitRepoUrlField = this.page.getByLabel('Git Repo URL');
   private readonly gitUrlHelper = this.page.getByTestId('form-input-git-url-field-helper');
-  private readonly applicationNameField = this.page.getByTestId('form-input-application-name-field');
-  private readonly workloadNameField = this.page.getByTestId('form-input-name-field');
+  private readonly applicationNameField = this.page.getByTestId('application-form-app-input');
+  private readonly workloadNameField = this.page.getByTestId('application-form-app-name');
   private readonly resourceTypeField = this.page.getByTestId('form-select-input-resources-field');
   private readonly saveChangesButton = this.page.getByTestId('save-changes');
   private readonly applicationDropdown = this.page.getByTestId('form-dropdown-application-name-field');
