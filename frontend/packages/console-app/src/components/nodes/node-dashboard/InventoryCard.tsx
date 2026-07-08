@@ -3,8 +3,10 @@ import { useMemo, useContext } from 'react';
 import { useResolvedExtensions } from '@openshift/dynamic-plugin-sdk';
 import { Card, CardBody, CardHeader, CardTitle, Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { FLAG_NODE_MGMT_V1 } from '@console/app/src/consts';
 import type { NodeInventoryExtensionItem } from '@console/dynamic-plugin-sdk/src/extensions/node';
 import { isNodeInventoryItem } from '@console/dynamic-plugin-sdk/src/extensions/node';
+import { useFlag } from '@console/dynamic-plugin-sdk/src/utils/flags';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
 import { PodModel, NodeModel } from '@console/internal/models';
@@ -15,10 +17,12 @@ import {
 } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
 import { getPodStatusGroups } from '@console/shared/src/components/dashboard/inventory-card/utils';
 import { getName } from '@console/shared/src/selectors/common';
+import { WORKLOAD_PAGE_ID } from '../NodeWorkload';
 import { NodeDashboardContext } from './NodeDashboardContext';
 
 const NodePodInventoryItem: ComponentType<{ obj: NodeKind }> = ({ obj }) => {
   const nodeName = getName(obj);
+  const nodeMgmtV1Enabled = useFlag(FLAG_NODE_MGMT_V1);
 
   const podResource = useMemo(
     () =>
@@ -38,7 +42,9 @@ const NodePodInventoryItem: ComponentType<{ obj: NodeKind }> = ({ obj }) => {
     return <InventoryItem title={PodModel.label} count={0} isLoading={!podsLoaded} />;
   }
 
-  const basePath = `${resourcePathFromModel(NodeModel, nodeName)}/pods`;
+  const basePath = nodeMgmtV1Enabled
+    ? `${resourcePathFromModel(NodeModel, nodeName)}/${WORKLOAD_PAGE_ID}/pods`
+    : `${resourcePathFromModel(NodeModel, nodeName)}/pods`;
 
   return (
     <StackItem>
