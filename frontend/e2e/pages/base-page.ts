@@ -1,4 +1,6 @@
-import { type Locator, type Page, expect } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
+
+import { expect } from '../fixtures';
 
 export async function getEditorContent(page: Page): Promise<string> {
   await page.waitForFunction(
@@ -24,7 +26,9 @@ export async function setEditorContent(page: Page, content: string): Promise<voi
 
 export async function warmupSPA(page: Page): Promise<void> {
   await page.goto('/');
-  await expect(page.getByTestId('page-heading')).toBeVisible();
+  await expect(
+    page.getByTestId('perspective-switcher-toggle'),
+  ).toBeVisible({ timeout: 30_000 });
 }
 
 export default abstract class BasePage {
@@ -151,14 +155,14 @@ export default abstract class BasePage {
       Administrator: ['Administrator', 'Core platform'],
       Developer: ['Developer'],
     };
-    const toggle = this.page.locator('[data-test-id="perspective-switcher-toggle"]');
+    const toggle = this.page.getByTestId('perspective-switcher-toggle');
     const labels = labelMap[target] || [target];
     const currentText = (await toggle.textContent()) || '';
     if (labels.some((label) => currentText.includes(label))) {
       return;
     }
     await this.robustClick(toggle);
-    const menuOption = this.page.locator('[data-test-id="perspective-switcher-menu-option"]');
+    const menuOption = this.page.getByTestId('perspective-switcher-menu-option');
     for (const label of labels) {
       const option = menuOption.filter({ hasText: label });
       if ((await option.count()) > 0) {
