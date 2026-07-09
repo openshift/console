@@ -221,12 +221,11 @@ class ProwJUnitReporter implements Reporter {
       );
       const html = [
         '<html>',
-        '<head><title>Playwright Report</title></head>',
-        '<body>',
-        `<a target="_blank" href="${reportURL}">Playwright HTML Report</a>`,
+        '<head><title>Playwright Report</title><link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"></head>',
+        '<body style="font-family: Helvetica, Arial, sans-serif; margin: 0;">',
+        `<div style="font-size: 14px; padding: 8px 24px;"><a target="_blank" href="${reportURL}" style="color: #ff9999">Playwright HTML Report<i class="material-icons" style="font-size: 14px; vertical-align: middle; padding-left: 3px;">open_in_new</i></a></div>`,
         '</body>',
         '</html>',
-        '',
       ].join('\n');
       await fs.promises.writeFile(linkFile, html);
     }
