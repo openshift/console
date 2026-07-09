@@ -258,7 +258,7 @@ export const SupportPhaseBadge: FC<{ phase: SupportPhaseResult }> = ({ phase }) 
           isInline
         >
           <Label variant="outline" icon={<BlueInfoCircleIcon />} textMaxWidth="100%">
-            {t('Self-support')}
+            {t('Unsupported')}
           </Label>
         </Button>
       </LifecycleDatesPopover>
@@ -277,7 +277,7 @@ export const SupportPhaseBadge: FC<{ phase: SupportPhaseResult }> = ({ phase }) 
     const endDate = formatDate(new Date(parseLocalEndOfDay(phase.currentPhase.endDate)));
 
     return (
-      <span data-test="support-phase-badge">
+      <div data-test="support-phase-badge">
         <LifecycleDatesPopover phases={phase.allPhases}>
           <Button
             variant="link"
@@ -290,9 +290,9 @@ export const SupportPhaseBadge: FC<{ phase: SupportPhaseResult }> = ({ phase }) 
               {phase.currentPhase.name}
             </Label>
           </Button>
-        </LifecycleDatesPopover>{' '}
-        {endDate}
-      </span>
+        </LifecycleDatesPopover>
+        <div>{endDate}</div>
+      </div>
     );
   }
 

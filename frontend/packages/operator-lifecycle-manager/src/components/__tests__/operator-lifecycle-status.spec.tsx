@@ -284,11 +284,11 @@ describe('SupportPhaseBadge', () => {
     expect(screen.getByTestId('support-phase-badge')).toBeInTheDocument();
   });
 
-  it('renders Self-support when phase is self-support', () => {
+  it('renders Unsupported when phase is self-support', () => {
     render(
       <SupportPhaseBadge phase={{ status: SupportPhaseStatus.SelfSupport, allPhases: phases }} />,
     );
-    expect(screen.getByText('Self-support')).toBeInTheDocument();
+    expect(screen.getByText('Unsupported')).toBeInTheDocument();
     expect(screen.getByTestId('support-phase-self-support')).toBeInTheDocument();
   });
 
