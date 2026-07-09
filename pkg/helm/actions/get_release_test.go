@@ -10,7 +10,7 @@ import (
 	"helm.sh/helm/v4/pkg/action"
 	"helm.sh/helm/v4/pkg/chart/common"
 	kubefake "helm.sh/helm/v4/pkg/kube/fake"
-	rcommon "helm.sh/helm/v4/pkg/release/common"
+	releasecommon "helm.sh/helm/v4/pkg/release/common"
 	"helm.sh/helm/v4/pkg/storage"
 	"helm.sh/helm/v4/pkg/storage/driver"
 	v1 "k8s.io/api/core/v1"
@@ -84,7 +84,7 @@ func TestGetRelease(t *testing.T) {
 				rel, err := GetRelease(tt.releaseName, actionConfig)
 				require.NoError(t, err)
 				require.Equal(t, tt.releaseName, rel.Name)
-				require.Equal(t, rcommon.StatusDeployed, rel.Info.Status)
+				require.Equal(t, releasecommon.StatusDeployed, rel.Info.Status)
 				require.Equal(t, tt.manifestValue, rel.Manifest)
 			} else if tt.testName == "invalid chart path" {
 				require.Error(t, err)

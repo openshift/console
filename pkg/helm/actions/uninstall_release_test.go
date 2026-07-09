@@ -11,8 +11,8 @@ import (
 	"helm.sh/helm/v4/pkg/action"
 	"helm.sh/helm/v4/pkg/chart/common"
 	kubefake "helm.sh/helm/v4/pkg/kube/fake"
-	rcommon "helm.sh/helm/v4/pkg/release/common"
-	releaseV1 "helm.sh/helm/v4/pkg/release/v1"
+	releasecommon "helm.sh/helm/v4/pkg/release/common"
+	releasev1 "helm.sh/helm/v4/pkg/release/v1"
 	"helm.sh/helm/v4/pkg/storage"
 	"helm.sh/helm/v4/pkg/storage/driver"
 	k8sfake "k8s.io/client-go/kubernetes/fake"
@@ -21,14 +21,14 @@ import (
 func TestUninstallRelease(t *testing.T) {
 	tests := []struct {
 		name    string
-		release *releaseV1.Release
+		release *releasev1.Release
 	}{
 		{
 			name: "successful release uninstall should remove release installed",
-			release: &releaseV1.Release{
+			release: &releasev1.Release{
 				Name: "test-release",
-				Info: &releaseV1.Info{
-					Status: rcommon.StatusDeployed,
+				Info: &releasev1.Info{
+					Status: releasecommon.StatusDeployed,
 				},
 			},
 		},
@@ -52,7 +52,7 @@ func TestUninstallRelease(t *testing.T) {
 				t.Fatalf("unexpected error: %v", err)
 			}
 			if resp != nil {
-				if rel, ok := resp.Release.(*releaseV1.Release); ok && rel.Info.Status != rcommon.StatusUninstalled {
+				if rel, ok := resp.Release.(*releasev1.Release); ok && rel.Info.Status != releasecommon.StatusUninstalled {
 					t.Error(errors.New("Release status is not uninstalled"))
 				}
 			}
@@ -63,12 +63,12 @@ func TestUninstallRelease(t *testing.T) {
 func TestUninstallInvalidRelease(t *testing.T) {
 	tests := []struct {
 		name    string
-		release *releaseV1.Release
+		release *releasev1.Release
 		err     error
 	}{
 		{
 			name: "non exist release uninstall should error out with no release found",
-			release: &releaseV1.Release{
+			release: &releasev1.Release{
 				Name: "invalid-release",
 			},
 			err: ErrReleaseNotFound,
@@ -91,7 +91,7 @@ func TestUninstallInvalidRelease(t *testing.T) {
 				t.Errorf("expected error %q, got %q", tt.err, err)
 			}
 			if resp != nil {
-				if rel, ok := resp.Release.(*releaseV1.Release); ok && rel.Info.Status != rcommon.StatusUninstalled {
+				if rel, ok := resp.Release.(*releasev1.Release); ok && rel.Info.Status != releasecommon.StatusUninstalled {
 					t.Error(errors.New("Release status is not uninstalled"))
 				}
 			}
@@ -107,7 +107,7 @@ func TestUninstallReleaseAsync(t *testing.T) {
 		namespace    string
 		requireError bool
 		releaseName  string
-		release      *releaseV1.Release
+		release      *releasev1.Release
 	}{
 		{
 			name:         "successful release uninstall should remove release installed",
@@ -116,10 +116,10 @@ func TestUninstallReleaseAsync(t *testing.T) {
 			releaseName:  "test-release",
 			namespace:    "default",
 			version:      "1",
-			release: &releaseV1.Release{
+			release: &releasev1.Release{
 				Name: "test-release",
-				Info: &releaseV1.Info{
-					Status: rcommon.StatusDeployed,
+				Info: &releasev1.Info{
+					Status: releasecommon.StatusDeployed,
 				},
 			},
 		},
@@ -156,7 +156,7 @@ func TestUninstallReleaseAsync(t *testing.T) {
 func TestUninstallInvalidReleaseAsync(t *testing.T) {
 	tests := []struct {
 		name        string
-		release     *releaseV1.Release
+		release     *releasev1.Release
 		version     string
 		namespace   string
 		releaseName string
@@ -164,7 +164,7 @@ func TestUninstallInvalidReleaseAsync(t *testing.T) {
 	}{
 		{
 			name: "non exist release uninstall should error out with no release found",
-			release: &releaseV1.Release{
+			release: &releasev1.Release{
 				Name: "invalid-release",
 			},
 			namespace:   "default",

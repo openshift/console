@@ -16,8 +16,8 @@ import (
 	chart "helm.sh/helm/v4/pkg/chart/v2"
 	kubefake "helm.sh/helm/v4/pkg/kube/fake"
 	"helm.sh/helm/v4/pkg/registry"
-	rcommon "helm.sh/helm/v4/pkg/release/common"
-	releaseV1 "helm.sh/helm/v4/pkg/release/v1"
+	releasecommon "helm.sh/helm/v4/pkg/release/common"
+	releasev1 "helm.sh/helm/v4/pkg/release/v1"
 	"helm.sh/helm/v4/pkg/storage"
 	"helm.sh/helm/v4/pkg/storage/driver"
 	v1 "k8s.io/api/core/v1"
@@ -118,7 +118,7 @@ func TestInstallChart(t *testing.T) {
 				require.NoError(t, err)
 				require.Equal(t, "test", rel.Name)
 				require.Equal(t, "test-namespace", rel.Namespace)
-				require.Equal(t, rcommon.StatusDeployed, rel.Info.Status)
+				require.Equal(t, releasecommon.StatusDeployed, rel.Info.Status)
 				require.Equal(t, tt.chartName, rel.Chart.Metadata.Name)
 				require.Equal(t, tt.chartVersion, rel.Chart.Metadata.Version)
 				require.Equal(t, tt.chartPath, rel.Chart.Metadata.Annotations["chart_url"])
@@ -387,10 +387,10 @@ func TestInstallChartAsync(t *testing.T) {
 			}()
 			if tt.requireError == false {
 				secretsDriver := driver.NewSecrets(coreClient.Secrets(tt.namespace))
-				r := releaseV1.Release{
+				r := releasev1.Release{
 					Name:      tt.releaseName,
 					Namespace: tt.namespace,
-					Info: &releaseV1.Info{
+					Info: &releasev1.Info{
 						FirstDeployed: helmTime.Time{},
 						Status:        "pending-install",
 					},
@@ -608,10 +608,10 @@ func TestInstallChartFromURL(t *testing.T) {
 			go func() {
 				time.Sleep(2 * time.Second)
 				secretsDriver := driver.NewSecrets(coreClient.Secrets("test-namespace"))
-				r := releaseV1.Release{
+				r := releasev1.Release{
 					Name:      tt.releaseName,
 					Namespace: "test-namespace",
-					Info: &releaseV1.Info{
+					Info: &releasev1.Info{
 						FirstDeployed: helmTime.Time{},
 						Status:        "pending-install",
 					},

@@ -9,8 +9,8 @@ import (
 	"helm.sh/helm/v4/pkg/action"
 	"helm.sh/helm/v4/pkg/chart/common"
 	kubefake "helm.sh/helm/v4/pkg/kube/fake"
-	rcommon "helm.sh/helm/v4/pkg/release/common"
-	releaseV1 "helm.sh/helm/v4/pkg/release/v1"
+	releasecommon "helm.sh/helm/v4/pkg/release/common"
+	releasev1 "helm.sh/helm/v4/pkg/release/v1"
 	"helm.sh/helm/v4/pkg/storage"
 	"helm.sh/helm/v4/pkg/storage/driver"
 )
@@ -18,28 +18,28 @@ import (
 func TestRollbackRelease(t *testing.T) {
 	tests := []struct {
 		name       string
-		release    releaseV1.Release
+		release    releasev1.Release
 		err        error
 		rollbackTo int
 	}{
 		{
 			name: "rolling back to existing previous release should rollback successfully",
-			release: releaseV1.Release{
+			release: releasev1.Release{
 				Version: 1,
 				Name:    "valid-release",
-				Info: &releaseV1.Info{
-					Status: rcommon.StatusDeployed,
+				Info: &releasev1.Info{
+					Status: releasecommon.StatusDeployed,
 				},
 			},
 			rollbackTo: 1,
 		},
 		{
 			name: "rolling back to invalid release no. should throw an error",
-			release: releaseV1.Release{
+			release: releasev1.Release{
 				Version: 1,
 				Name:    "valid-release",
-				Info: &releaseV1.Info{
-					Status: rcommon.StatusDeployed,
+				Info: &releasev1.Info{
+					Status: releasecommon.StatusDeployed,
 				},
 			},
 			err:        errors.New("Revision no. should be more than 0"),

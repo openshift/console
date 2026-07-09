@@ -16,7 +16,7 @@ import (
 	"helm.sh/helm/v4/pkg/chart/v2/loader"
 	"helm.sh/helm/v4/pkg/kube"
 	"helm.sh/helm/v4/pkg/registry"
-	releaseV1 "helm.sh/helm/v4/pkg/release/v1"
+	releasev1 "helm.sh/helm/v4/pkg/release/v1"
 	kv1 "k8s.io/api/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -105,7 +105,7 @@ func chartVersionFromURL(raw string) string {
 	return ""
 }
 
-func InstallChart(ns, name, url string, vals map[string]interface{}, conf *action.Configuration, client dynamic.Interface, coreClient corev1client.CoreV1Interface, fileCleanUp bool, indexEntry string) (*releaseV1.Release, error) {
+func InstallChart(ns, name, url string, vals map[string]interface{}, conf *action.Configuration, client dynamic.Interface, coreClient corev1client.CoreV1Interface, fileCleanUp bool, indexEntry string) (*releasev1.Release, error) {
 	var err error
 	var chartInfo *ChartInfo
 	var cp, chartLocation string
@@ -170,7 +170,7 @@ func InstallChart(ns, name, url string, vals map[string]interface{}, conf *actio
 		return nil, err
 	}
 
-	rel, ok := result.(*releaseV1.Release)
+	rel, ok := result.(*releasev1.Release)
 	if !ok {
 		return nil, fmt.Errorf("unexpected release type %T", result)
 	}

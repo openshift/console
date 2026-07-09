@@ -12,7 +12,7 @@ import (
 	"helm.sh/helm/v4/pkg/action"
 	"helm.sh/helm/v4/pkg/chart/v2/loader"
 	"helm.sh/helm/v4/pkg/cli"
-	releaseV1 "helm.sh/helm/v4/pkg/release/v1"
+	releasev1 "helm.sh/helm/v4/pkg/release/v1"
 	releaseutil "helm.sh/helm/v4/pkg/release/v1/util"
 	"k8s.io/client-go/dynamic"
 	corev1client "k8s.io/client-go/kubernetes/typed/core/v1"
@@ -79,7 +79,7 @@ func RenderManifests(name string, url string, vals map[string]interface{}, conf 
 	if err != nil {
 		return emptyResponse, err
 	}
-	rel, ok := result.(*releaseV1.Release)
+	rel, ok := result.(*releasev1.Release)
 	if !ok {
 		return emptyResponse, fmt.Errorf("unexpected release type %T", result)
 	}

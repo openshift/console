@@ -14,7 +14,7 @@ import (
 	chart "helm.sh/helm/v4/pkg/chart/v2"
 	"helm.sh/helm/v4/pkg/chart/v2/loader"
 	"helm.sh/helm/v4/pkg/kube"
-	releaseV1 "helm.sh/helm/v4/pkg/release/v1"
+	releasev1 "helm.sh/helm/v4/pkg/release/v1"
 	kv1 "k8s.io/api/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/dynamic"
@@ -32,7 +32,7 @@ func UpgradeRelease(
 	coreClient corev1client.CoreV1Interface,
 	fileCleanUp bool,
 	indexEntry string,
-) (*releaseV1.Release, error) {
+) (*releasev1.Release, error) {
 	client := action.NewUpgrade(conf)
 	client.ServerSideApply = "false"
 	client.WaitStrategy = kube.HookOnlyStrategy
@@ -119,7 +119,7 @@ func UpgradeRelease(
 	if err != nil {
 		return nil, err
 	}
-	rel, ok := result.(*releaseV1.Release)
+	rel, ok := result.(*releasev1.Release)
 	if !ok {
 		return nil, fmt.Errorf("unexpected release type %T", result)
 	}

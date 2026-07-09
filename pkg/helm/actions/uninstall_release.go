@@ -9,7 +9,7 @@ import (
 	"helm.sh/helm/v4/pkg/action"
 	"helm.sh/helm/v4/pkg/kube"
 	releasecommon "helm.sh/helm/v4/pkg/release"
-	releaseV1 "helm.sh/helm/v4/pkg/release/v1"
+	releasev1 "helm.sh/helm/v4/pkg/release/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	corev1client "k8s.io/client-go/kubernetes/typed/core/v1"
 	"k8s.io/klog/v2"
@@ -26,7 +26,7 @@ func UninstallRelease(name string, conf *action.Configuration) (*releasecommon.U
 		return nil, err
 	}
 
-	if rel, ok := resp.Release.(*releaseV1.Release); ok && rel != nil {
+	if rel, ok := resp.Release.(*releasev1.Release); ok && rel != nil {
 		ch := rel.Chart
 		if ch != nil && ch.Metadata != nil && ch.Metadata.Name != "" && ch.Metadata.Version != "" {
 			metrics.HandleconsoleHelmUninstallsTotal(ch.Metadata.Name, ch.Metadata.Version)
@@ -48,7 +48,7 @@ func UninstallReleaseAsync(name string, ns string, version string, conf *action.
 		if resp == nil {
 			return
 		}
-		if rel, ok := resp.Release.(*releaseV1.Release); ok && rel != nil {
+		if rel, ok := resp.Release.(*releasev1.Release); ok && rel != nil {
 			ch := rel.Chart
 			if ch != nil && ch.Metadata != nil && ch.Metadata.Name != "" && ch.Metadata.Version != "" {
 				metrics.HandleconsoleHelmUninstallsTotal(ch.Metadata.Name, ch.Metadata.Version)

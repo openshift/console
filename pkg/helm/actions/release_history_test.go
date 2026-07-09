@@ -8,8 +8,8 @@ import (
 	"helm.sh/helm/v4/pkg/action"
 	"helm.sh/helm/v4/pkg/chart/common"
 	kubefake "helm.sh/helm/v4/pkg/kube/fake"
-	rcommon "helm.sh/helm/v4/pkg/release/common"
-	releaseV1 "helm.sh/helm/v4/pkg/release/v1"
+	releasecommon "helm.sh/helm/v4/pkg/release/common"
+	releasev1 "helm.sh/helm/v4/pkg/release/v1"
 	"helm.sh/helm/v4/pkg/storage"
 	"helm.sh/helm/v4/pkg/storage/driver"
 )
@@ -17,17 +17,17 @@ import (
 func TestGetReleaseHistory(t *testing.T) {
 	tests := []struct {
 		name     string
-		release  releaseV1.Release
+		release  releasev1.Release
 		err      error
 		versions []int
 	}{
 		{
 			name: "existing release should return list of particular release history",
-			release: releaseV1.Release{
+			release: releasev1.Release{
 				Version: 1,
 				Name:    "valid-release",
-				Info: &releaseV1.Info{
-					Status: rcommon.StatusDeployed,
+				Info: &releasev1.Info{
+					Status: releasecommon.StatusDeployed,
 				},
 			},
 			err:      nil,
@@ -77,13 +77,13 @@ func TestGetReleaseHistory(t *testing.T) {
 func TestNonExistGetReleaseHistory(t *testing.T) {
 	tests := []struct {
 		name         string
-		release      releaseV1.Release
+		release      releasev1.Release
 		err          error
 		noOfVersions int
 	}{
 		{
 			name: "non exist release history should throw an error",
-			release: releaseV1.Release{
+			release: releasev1.Release{
 				Name: "invalid-release",
 			},
 			noOfVersions: 0,

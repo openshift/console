@@ -8,8 +8,8 @@ import (
 	"helm.sh/helm/v4/pkg/chart/common"
 	chart "helm.sh/helm/v4/pkg/chart/v2"
 	kubefake "helm.sh/helm/v4/pkg/kube/fake"
-	rcommon "helm.sh/helm/v4/pkg/release/common"
-	releaseV1 "helm.sh/helm/v4/pkg/release/v1"
+	releasecommon "helm.sh/helm/v4/pkg/release/common"
+	releasev1 "helm.sh/helm/v4/pkg/release/v1"
 	"helm.sh/helm/v4/pkg/storage"
 	"helm.sh/helm/v4/pkg/storage/driver"
 	"time"
@@ -18,14 +18,14 @@ import (
 func TestListReleases(t *testing.T) {
 	tests := []struct {
 		name    string
-		release releaseV1.Release
+		release releasev1.Release
 	}{
 		{
 			name: "list valid releases",
-			release: releaseV1.Release{
+			release: releasev1.Release{
 				Name:      "test",
 				Namespace: "test-namespace",
-				Info: &releaseV1.Info{
+				Info: &releasev1.Info{
 					FirstDeployed: time.Time{},
 					Status:        "deployed",
 				},
@@ -61,7 +61,7 @@ func TestListReleases(t *testing.T) {
 			if rels[0].Namespace != "test-namespace" {
 				t.Error("Namespace isn't matching")
 			}
-			if rels[0].Info.Status != rcommon.StatusDeployed {
+			if rels[0].Info.Status != releasecommon.StatusDeployed {
 				t.Error("Chart status should be deployed")
 			}
 			if rels[0].Chart.Metadata.Name != "influxdb" {
