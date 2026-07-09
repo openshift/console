@@ -8,7 +8,9 @@ test.describe('Configure perspectives', { tag: ['@dev-console', '@regression'] }
     await expect(toggle).toBeVisible();
     await toggle.click();
     await expect(
-      page.getByTestId('perspective-switcher-menu-option').filter({ hasText: 'Developer' }),
+      page
+        .getByTestId('perspective-switcher-menu-option')
+        .filter({ hasText: 'Developer' }),
     ).toBeVisible();
   });
 });

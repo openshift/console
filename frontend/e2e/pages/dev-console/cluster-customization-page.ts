@@ -16,6 +16,10 @@ export class ClusterCustomizationPage extends BasePage {
     return this.page.getByTestId('perspectives form-section');
   }
 
+  getPerspectiveSectionItem(name: string): Locator {
+    return this.getPerspectivesSection().getByText(name);
+  }
+
   getTab(name: string): Locator {
     return this.page.getByRole('tab', { name });
   }

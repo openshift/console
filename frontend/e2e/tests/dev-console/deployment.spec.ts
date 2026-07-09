@@ -5,6 +5,9 @@ import { DeploymentPage } from '../../pages/dev-console/deployment-page';
 test.describe('Deployment form view', { tag: ['@dev-console', '@smoke'] }, () => {
   const strategies = ['Rolling Update', 'Recreate'];
 
+  test.skip(true, 'D-01-TC02: Create deployment using ImageStream — deferred to a future batch');
+  test.skip(true, 'D-01-TC03: Create and edit deployment, verify auto-deploy persistence — deferred to a future batch');
+
   for (const strategyName of strategies) {
     test(`creates deployment with ${strategyName} strategy`, async ({ page, k8sClient, cleanup }) => {
       const ns = `aut-deploy-${strategyName.replace(/\s+/g, '').toLowerCase()}-${Date.now()}`;

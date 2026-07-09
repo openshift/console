@@ -72,4 +72,19 @@ export class DetailsPage extends BasePage {
     const kebabButton = resourceRow.getByTestId('kebab-button');
     await this.robustClick(kebabButton);
   }
+
+  getHeadingByName(name: string): Locator {
+    return this.page.locator('h1', { hasText: name });
+  }
+
+  async clickActionsMenuAction(actionName: string): Promise<void> {
+    await this.robustClick(this.page.getByRole('button', { name: 'Actions' }));
+    await this.robustClick(this.page.getByRole('menuitem', { name: actionName }));
+  }
+
+  async confirmDelete(): Promise<void> {
+    await this.robustClick(
+      this.page.getByRole('button', { name: 'Delete', exact: true }),
+    );
+  }
 }

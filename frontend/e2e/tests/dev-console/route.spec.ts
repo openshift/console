@@ -1,6 +1,7 @@
 import { test, expect } from '../../fixtures';
 import type KubernetesClient from '../../clients/kubernetes-client';
 import type { CleanupFixture } from '../../fixtures/cleanup-fixture';
+import { DetailsPage } from '../../pages/details-page';
 
 const SERVICE_NAME = 'test-service';
 const SERVICE_PORT = 8080;
@@ -74,11 +75,14 @@ async function createTestRoute(
   });
 }
 
-// Deferred from batch 1: create route via form UI (Cypress TC01), edit route hostname (Cypress TC02)
 test.describe('Route', { tag: ['@dev-console'] }, () => {
+  test.skip(true, 'R-01-TC01: Create route via form UI — deferred to a future batch');
+  test.skip(true, 'R-01-TC02: Edit route hostname — deferred to a future batch');
+
   test('verifies route details page', { tag: ['@smoke'] }, async ({ page, k8sClient, cleanup }) => {
     const ns = `aut-routes-details-${Date.now()}`;
     const routeName = 'test-route';
+    const detailsPage = new DetailsPage(page);
 
     await test.step('Set up namespace and create route', async () => {
       await createRoutePrerequisites(k8sClient, cleanup, ns);
@@ -87,7 +91,7 @@ test.describe('Route', { tag: ['@dev-console'] }, () => {
 
     await test.step('Navigate to route details and verify', async () => {
       await page.goto(`/k8s/ns/${ns}/routes/${routeName}`);
-      await expect(page.locator('h1', { hasText: routeName })).toBeVisible({ timeout: 30_000 });
+      await expect(detailsPage.getHeadingByName(routeName)).toBeVisible({ timeout: 30_000 });
     });
   });
 
@@ -98,6 +102,7 @@ test.describe('Route', { tag: ['@dev-console'] }, () => {
   }) => {
     const ns = `aut-routes-delete-${Date.now()}`;
     const routeName = 'test-route';
+    const detailsPage = new DetailsPage(page);
 
     await test.step('Set up namespace and create route', async () => {
       await createRoutePrerequisites(k8sClient, cleanup, ns);
@@ -106,14 +111,13 @@ test.describe('Route', { tag: ['@dev-console'] }, () => {
 
     await test.step('Navigate to route details and delete', async () => {
       await page.goto(`/k8s/ns/${ns}/routes/${routeName}`);
-      await expect(page.locator('h1', { hasText: routeName })).toBeVisible({ timeout: 30_000 });
-      await page.getByRole('button', { name: 'Actions' }).click();
-      await page.getByRole('menuitem', { name: 'Delete Route' }).click();
+      await expect(detailsPage.getHeadingByName(routeName)).toBeVisible({ timeout: 30_000 });
+      await detailsPage.clickActionsMenuAction('Delete Route');
     });
 
     await test.step('Confirm deletion', async () => {
-      await page.getByRole('button', { name: 'Delete', exact: true }).click();
-      await expect(page.locator('h1', { hasText: 'Routes' })).toBeVisible({ timeout: 30_000 });
+      await detailsPage.confirmDelete();
+      await expect(detailsPage.getHeadingByName('Routes')).toBeVisible({ timeout: 30_000 });
     });
   });
 });

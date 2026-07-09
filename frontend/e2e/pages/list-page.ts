@@ -196,4 +196,13 @@ export class ListPage extends BasePage {
     const item = this.page.getByRole('menuitem', { name: 'All Projects', exact: true });
     await this.robustClick(item);
   }
+
+  async createProject(projectName: string): Promise<void> {
+    await this.robustClick(this.page.getByRole('button', { name: 'Create Project' }));
+    await expect(this.page.locator('h1', { hasText: 'Create Project' })).toBeVisible({
+      timeout: 20_000,
+    });
+    await this.page.getByTestId('input-name').fill(projectName);
+    await this.robustClick(this.page.getByRole('button', { name: 'Create', exact: true }));
+  }
 }

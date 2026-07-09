@@ -14,12 +14,7 @@ test.describe('Project creation', { tag: ['@dev-console', '@smoke'] }, () => {
     });
 
     await test.step('Create project', async () => {
-      await page.getByRole('button', { name: 'Create Project' }).click();
-      await expect(page.locator('h1', { hasText: 'Create Project' })).toBeVisible({
-        timeout: 20_000,
-      });
-      await page.getByTestId('input-name').fill(projectName);
-      await page.getByRole('button', { name: 'Create', exact: true }).click();
+      await listPage.createProject(projectName);
     });
 
     await test.step('Verify project created', async () => {
