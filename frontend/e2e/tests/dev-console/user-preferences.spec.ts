@@ -15,12 +15,12 @@ test.describe('User Preferences', { tag: ['@dev-console'] }, () => {
       await userPrefs.navigateToPreferences();
       await userPrefs.selectPreferenceOption('console.preferredPerspective', 'Last viewed');
       await userPrefs.selectPreferenceOption('console.preferredCreateEditMethod', 'Last viewed');
-      await userPrefs.selectPreferenceOption('console.topology.preferredView', 'Last viewed');
+      await userPrefs.selectPreferenceOption('topology.preferredView', 'Last viewed');
 
       const applicationsTab = userPrefs.getTab('Applications');
       if ((await applicationsTab.count()) > 0) {
         await applicationsTab.click();
-        await userPrefs.selectPreferenceOption('devconsole.preferredResourceType', 'Deployment');
+        await userPrefs.selectPreferenceOption('devconsole.preferredResource', 'Deployment');
       }
     } catch {
       // Best-effort reset — don't mask the original test failure
@@ -83,7 +83,7 @@ test.describe('User Preferences', { tag: ['@dev-console'] }, () => {
 
       await test.step('Set topology view preference to Graph', async () => {
         await userPrefs.navigateToPreferences();
-        await userPrefs.selectPreferenceOption('console.topology.preferredView', 'Graph');
+        await userPrefs.selectPreferenceOption('topology.preferredView', 'Graph');
       });
 
       await test.step('Navigate to topology page', async () => {
@@ -92,7 +92,7 @@ test.describe('User Preferences', { tag: ['@dev-console'] }, () => {
       });
 
       await test.step('Verify graph view is active', async () => {
-        const graphView = page.getByTestId('topology');
+        const graphView = page.locator('[data-test-id="topology"]');
         await expect(graphView).toBeVisible({ timeout: 30_000 });
       });
 
@@ -120,7 +120,7 @@ test.describe('User Preferences', { tag: ['@dev-console'] }, () => {
       });
 
       await test.step('Navigate to a create form and verify YAML view', async () => {
-        await page.goto(`/k8s/ns/${ns}/configmaps/~new`);
+        await page.goto(`/k8s/ns/${ns}/buildconfigs/~new/form`);
         await page.waitForLoadState('domcontentloaded');
         const syncedEditor = page.getByTestId('synced-editor-field');
         await expect(syncedEditor).toBeVisible({ timeout: 30_000 });
@@ -143,13 +143,13 @@ test.describe('User Preferences', { tag: ['@dev-console'] }, () => {
 
       await test.step('Set resource type to DeploymentConfig', async () => {
         await userPrefs.selectPreferenceOption(
-          'devconsole.preferredResourceType',
+          'devconsole.preferredResource',
           'DeploymentConfig',
         );
       });
 
       await test.step('Verify DeploymentConfig is selected', async () => {
-        const dropdown = userPrefs.getPreferenceDropdown('devconsole.preferredResourceType');
+        const dropdown = userPrefs.getPreferenceDropdown('devconsole.preferredResource');
         await expect(dropdown).toContainText('DeploymentConfig');
       });
 

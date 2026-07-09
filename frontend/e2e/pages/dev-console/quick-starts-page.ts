@@ -18,7 +18,7 @@ export class QuickStartsPage extends BasePage {
   }
 
   getStatusFilterToggle(): Locator {
-    return this.page.getByRole('button', { name: /status/i });
+    return this.page.getByRole('button', { name: 'Status', exact: true });
   }
 
   getQuickStartCard(name: string): Locator {
@@ -46,6 +46,6 @@ export class QuickStartsPage extends BasePage {
   }
 
   getStatusOption(status: string): Locator {
-    return this.page.getByRole('option', { name: status });
+    return this.page.getByRole('menuitem', { name: new RegExp(status) });
   }
 }

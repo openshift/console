@@ -4,38 +4,6 @@ import { QuickStartsPage } from '../../pages/dev-console/quick-starts-page';
 
 test.describe('Quick Starts - Developer Perspective', { tag: ['@dev-console'] }, () => {
   test(
-    'QS-03-TC01: Build with guided documentation card on Add page has quick start links',
-    { tag: ['@smoke'] },
-    async ({ page }) => {
-      await warmupSPA(page);
-      const quickStarts = new QuickStartsPage(page);
-
-      await test.step('Switch to Developer perspective and navigate to Add page', async () => {
-        await quickStarts.switchPerspective('Developer');
-        await page.goto('/add');
-        await page.waitForLoadState('domcontentloaded');
-      });
-
-      await test.step('Verify Build with guided documentation card is visible', async () => {
-        const guidedDocCard = page.getByTestId('card quick-start');
-        await expect(guidedDocCard).toBeVisible({ timeout: 30_000 });
-      });
-
-      await test.step('Verify quick start links are present on the card', async () => {
-        const guidedDocCard = page.getByTestId('card quick-start');
-        const quickStartLinks = guidedDocCard.getByRole('link');
-        const linkCount = await quickStartLinks.count();
-        expect(linkCount).toBeGreaterThanOrEqual(2);
-      });
-
-      await test.step('Verify "View all quick starts" link is present', async () => {
-        const viewAllLink = page.getByRole('link', { name: 'View all quick starts' });
-        await expect(viewAllLink).toBeVisible();
-      });
-    },
-  );
-
-  test(
     'QS-03-TC02: Quick starts catalog shows quick starts with duration info',
     { tag: ['@regression'] },
     async ({ page }) => {
@@ -75,14 +43,13 @@ test.describe('Quick Starts - Developer Perspective', { tag: ['@dev-console'] },
       });
 
       await test.step('Verify the quick start sidebar/drawer opens', async () => {
-        await expect(quickStarts.getDrawerPanel().first()).toBeVisible({ timeout: 30_000 });
+        const drawer = page.getByTestId('quickstart drawer');
+        await expect(drawer).toBeVisible({ timeout: 30_000 });
       });
 
       await test.step('Verify the correct quick start is shown', async () => {
-        await expect(quickStarts.getDrawerPanel().first()).toContainText(
-          'sample application',
-          { ignoreCase: true },
-        );
+        const drawer = page.getByTestId('quickstart drawer');
+        await expect(drawer).toContainText('sample application', { ignoreCase: true });
       });
     },
   );

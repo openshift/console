@@ -18,7 +18,7 @@ export class UserPreferencesPage extends BasePage {
   }
 
   getPreferenceDropdown(id: string): Locator {
-    return this.page.getByTestId(id);
+    return this.page.getByTestId(`${id} field`).locator('button').first();
   }
 
   async selectPreferenceOption(id: string, optionName: string): Promise<void> {

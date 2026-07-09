@@ -76,13 +76,11 @@ test.describe('Edit Build Config', { tag: ['@dev-console'] }, () => {
       });
 
       await test.step('Verify Git repository URL section is visible', async () => {
-        await expect(
-          page.getByText('Git repository URL', { exact: false }),
-        ).toBeVisible();
+        await expect(page.getByText('Git Repo URL')).toBeVisible();
       });
 
-      await test.step('Verify Image Configuration section is visible', async () => {
-        await expect(buildConfigPage.getSection('Image Configuration')).toBeVisible();
+      await test.step('Verify Images section is visible', async () => {
+        await expect(buildConfigPage.getSection('Images')).toBeVisible();
       });
 
       await test.step('Verify Environment Variables section is visible', async () => {

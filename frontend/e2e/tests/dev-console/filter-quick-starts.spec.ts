@@ -34,11 +34,9 @@ test.describe(
       'QS-01-TC02: Filter by keyword shows matching quick start',
       { tag: ['@regression'] },
       async () => {
-        await quickStartsPage.filterByKeyword('Pipelines');
+        await quickStartsPage.filterByKeyword('sample');
         await expect(
-          quickStartsPage.getQuickStartCard(
-            'install-app-and-associate-pipeline',
-          ),
+          quickStartsPage.getQuickStartCard('sample-application'),
         ).toBeVisible({ timeout: 10_000 });
       },
     );
