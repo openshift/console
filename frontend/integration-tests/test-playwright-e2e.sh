@@ -124,6 +124,10 @@ copy_playwright_artifacts_to_dir() {
       cp -a test-results/junit-results.xml "${ARTIFACT_DIR}/junit-playwright.xml" && \
         echo "Copied JUnit report to ${ARTIFACT_DIR}/junit-playwright.xml (Prow report not available)"
     fi
+    if [ -f test-results/custom-link-playwright-report.html ]; then
+      cp -a test-results/custom-link-playwright-report.html "${ARTIFACT_DIR}/custom-link-playwright-report.html" && \
+        echo "Copied Playwright report Spyglass link to ${ARTIFACT_DIR}/custom-link-playwright-report.html"
+    fi
   fi
 
   if [ -d playwright-report ]; then

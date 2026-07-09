@@ -96,6 +96,24 @@ function getTestName(test: TestCase): string {
   return test.titlePath().slice(3).join(' › ');
 }
 
+function deriveStepName(): string | null {
+  const jobName = process.env.JOB_NAME;
+  const repoOwner = process.env.REPO_OWNER;
+  const repoName = process.env.REPO_NAME;
+  const branch = process.env.PULL_BASE_REF;
+
+  if (!jobName || !repoOwner || !repoName || !branch) return null;
+
+  const prefixes = [`pull-ci-`, `periodic-ci-`, `branch-ci-`];
+  for (const prefix of prefixes) {
+    const full = `${prefix}${repoOwner}-${repoName}-${branch}-`;
+    if (jobName.startsWith(full)) {
+      return jobName.slice(full.length);
+    }
+  }
+  return null;
+}
+
 function buildHTMLReportURL(): string | null {
   const buildId = process.env.BUILD_ID;
   const jobName = process.env.JOB_NAME;
@@ -106,12 +124,19 @@ function buildHTMLReportURL(): string | null {
   if (!buildId || !jobName) return null;
 
   const baseURL = 'https://gcsweb-ci.apps.ci.l2s4.p1.openshiftapps.com/gcs/test-platform-results';
+  let jobPath: string;
 
   if (pullNumber && repoOwner && repoName) {
-    return `${baseURL}/pr-logs/pull/${repoOwner}_${repoName}/${pullNumber}/${jobName}/${buildId}`;
+    jobPath = `${baseURL}/pr-logs/pull/${repoOwner}_${repoName}/${pullNumber}/${jobName}/${buildId}`;
+  } else {
+    jobPath = `${baseURL}/logs/${jobName}/${buildId}`;
   }
 
-  return `${baseURL}/logs/${jobName}/${buildId}`;
+  const stepName = deriveStepName();
+  if (stepName) {
+    return `${jobPath}/artifacts/${stepName}/test/artifacts/playwright-report/index.html`;
+  }
+  return `${jobPath}/artifacts/`;
 }
 
 /**
@@ -187,6 +212,24 @@ class ProwJUnitReporter implements Reporter {
 
     await fs.promises.mkdir(path.dirname(this.outputFile), { recursive: true });
     await fs.promises.writeFile(this.outputFile, xmlContent);
+
+    const reportURL = buildHTMLReportURL();
+    if (reportURL) {
+      const linkFile = path.resolve(
+        path.dirname(this.outputFile),
+        'custom-link-playwright-report.html',
+      );
+      const html = [
+        '<html>',
+        '<head><title>Playwright Report</title></head>',
+        '<body>',
+        `<a target="_blank" href="${reportURL}">Playwright HTML Report</a>`,
+        '</body>',
+        '</html>',
+        '',
+      ].join('\n');
+      await fs.promises.writeFile(linkFile, html);
+    }
 
     this._printSummary(totalTests, failedTests.length, totalSkipped, flakyTests, failedTests, result);
   }
@@ -288,9 +331,13 @@ class ProwJUnitReporter implements Reporter {
 
   private _buildFailedEntry(testName: string, className: string, result: TestResult): XMLEntry {
     const errorInfo = classifyError(result);
-    const stack = stripAnsi(
-      result.error?.stack || result.error?.message || (result.error as { value?: string })?.value || '',
-    );
+    const stack =
+      stripAnsi(
+        result.error?.stack ||
+          result.error?.message ||
+          (result.error as { value?: string })?.value ||
+          '',
+      ) || 'No error details available';
 
     const children: XMLEntry[] = [];
     children.push({
@@ -371,8 +418,7 @@ class ProwJUnitReporter implements Reporter {
     const reportURL = buildHTMLReportURL();
     if (reportURL) {
       console.log(`\nPlaywright HTML Report:`);
-      console.log(`  ${reportURL}/artifacts/*/test/artifacts/playwright-report/index.html`);
-      console.log(`  (Browse to the playwright-report directory in the Artifacts tab if the link doesn't resolve)`);
+      console.log(`  ${reportURL}`);
     }
 
     console.log('='.repeat(70) + '\n');
