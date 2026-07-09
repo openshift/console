@@ -4057,19 +4057,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:>=13.7.0, @types/node@npm:>=6":
-  version: 26.1.0
-  resolution: "@types/node@npm:26.1.0"
-  dependencies:
-    undici-types: "npm:~8.3.0"
-  checksum: 10c0/61c22ad1ef215e24138cb8b7368fb68bab9de4c123b3f23d411749b015ba1b7d22f878ad54add26a0b69068d7e07c04af665069d8571b6c6c3b9b2fb73b7bd91
-  languageName: node
-  linkType: hard
-
-"@types/node@npm:10.x":
-  version: 10.17.60
-  resolution: "@types/node@npm:10.17.60"
-  checksum: 10c0/0742294912a6e79786cdee9ed77cff6ee8ff007b55d8e21170fc3e5994ad3a8101fea741898091876f8dc32b0a5ae3d64537b7176799e92da56346028d2cbcd2
+"@types/node@npm:16.18.108":
+  version: 16.18.108
+  resolution: "@types/node@npm:16.18.108"
+  checksum: 10c0/4aa0d90124c45cc49d73657a76053a9e0f9e3a35aea4dd45d9da27e81111f1dec98ac92c0d07586cdca3bd682796ef5b4dc886afd9b78d95cd2adf0ad9331592
   languageName: node
   linkType: hard
 
@@ -23873,13 +23864,6 @@ __metadata:
     sprintf-js: "npm:^1.0.3"
     util-deprecate: "npm:^1.0.2"
   checksum: 10c0/e5aa82ddcdc0adc4d78e8177a1be536c7dd5684c7321ea9e6bd51736b8f316af6f192a9eec75dcc49c1b318b426685a21b3afe1bda990074d19120655d153c7a
-  languageName: node
-  linkType: hard
-
-"undici-types@npm:~8.3.0":
-  version: 8.3.0
-  resolution: "undici-types@npm:8.3.0"
-  checksum: 10c0/c8aa7e2fbebfce519654dafadc0ece59be888d2ccaf180fb4495da875e7b536d2456345c384069c7e6f3e9c9ab7435f074957da306f142343eee86ff8048855a
   languageName: node
   linkType: hard
 
