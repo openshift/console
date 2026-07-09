@@ -171,12 +171,17 @@ func UpgradeReleaseAsync(
 	}
 
 	auth_secret := basicAuthSecretName
+	// "__none__" is a sentinel from the frontend meaning the user explicitly cleared the secret.
+	explicitlyClearedSecret := auth_secret == "__none__"
+	if explicitlyClearedSecret {
+		auth_secret = ""
+	}
 	// Before proceeding, check if chart URL is present as an annotation
 	if rel.Chart.Metadata != nil && rel.Chart.Metadata.Annotations != nil {
 		if chart_url, ok := rel.Chart.Metadata.Annotations["chart_url"]; chartUrl == "" && ok {
 			chartUrl = chart_url
 		}
-		if auth_secret == "" {
+		if auth_secret == "" && !explicitlyClearedSecret {
 			if authSecret, ok := rel.Chart.Metadata.Annotations[helmAuthSecretAnnotation]; ok {
 				auth_secret = authSecret
 			}

@@ -81,7 +81,7 @@ const HelmInstallUpgradeForm: FC<
   const [isCreateSecretModalOpen, setIsCreateSecretModalOpen] = useState(false);
 
   const CREATE_SECRET_KEY = 'create-secret';
-  const NONE_SECRET_KEY = 'none';
+  const NONE_SECRET_KEY = '__none__';
 
   const handleSecretSave = (name: string) => {
     setFieldValue('basicAuthSecretName', name);
@@ -89,7 +89,7 @@ const HelmInstallUpgradeForm: FC<
 
   const handleSecretChange = (key: string) => {
     if (key === NONE_SECRET_KEY) {
-      window.setTimeout(() => setFieldValue('basicAuthSecretName', ''), 0);
+      window.setTimeout(() => setFieldValue('basicAuthSecretName', NONE_SECRET_KEY), 0);
       return;
     }
     if (key === CREATE_SECRET_KEY && !isCreateSecretModalOpen) {
@@ -118,7 +118,12 @@ const HelmInstallUpgradeForm: FC<
   const autocompleteFilter = (strText: string, item: any): boolean =>
     fuzzy(strText, item?.props?.name);
   const secretMissing = useMemo(() => {
-    if (!showAuthSecret || !values.basicAuthSecretName || !secretResources[0]?.loaded) {
+    if (
+      !showAuthSecret ||
+      !values.basicAuthSecretName ||
+      values.basicAuthSecretName === NONE_SECRET_KEY ||
+      !secretResources[0]?.loaded
+    ) {
       return false;
     }
     const secrets = secretResources[0]?.data ?? [];

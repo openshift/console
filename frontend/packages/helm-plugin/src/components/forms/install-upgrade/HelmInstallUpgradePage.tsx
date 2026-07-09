@@ -191,7 +191,7 @@ const HelmInstallUpgradePage: FC = () => {
       ...(chartURL ? { chart_url: chartURL } : {}), // eslint-disable-line @typescript-eslint/naming-convention
       ...(indexEntry ? { indexEntry } : { indexEntry: chartIndexEntry }),
       ...(valuesObj ? { values: valuesObj } : {}),
-      ...(basicAuthSecretName ? { basic_auth_secret_name: basicAuthSecretName } : {}), // eslint-disable-line @typescript-eslint/naming-convention
+      ...(values.isURLInstall ? { basic_auth_secret_name: basicAuthSecretName } : {}), // eslint-disable-line @typescript-eslint/naming-convention
     };
 
     return config
