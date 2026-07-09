@@ -22,6 +22,7 @@ export class QuickStartsPage extends BasePage {
   }
 
   getQuickStartCard(name: string): Locator {
+    // HTML id from @patternfly/quickstarts QuickStartTile — no data-test available
     return this.page.locator(`#${name}-catalog-tile`);
   }
 

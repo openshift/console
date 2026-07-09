@@ -12,8 +12,7 @@ export class BuildConfigPage extends BasePage {
   }
 
   getNameField(): Locator {
-    // TODO: use getByTestId('form-name-input') after CONSOLE-5299 merges
-    return this.page.locator('#form-input-formData-name-field');
+    return this.page.getByRole('textbox', { name: 'Name' });
   }
 
   getSection(sectionName: string): Locator {
