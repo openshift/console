@@ -62,7 +62,7 @@ test.describe('User Preferences', { tag: ['@dev-console'] }, () => {
       });
 
       await test.step('Verify Developer perspective is active', async () => {
-        const perspectiveToggle = page.getByTestId('perspective-switcher-toggle');
+        const perspectiveToggle = userPrefs.getPerspectiveSwitcherToggle();
         await expect(perspectiveToggle).toContainText('Developer', { timeout: 30_000 });
       });
 
@@ -92,7 +92,7 @@ test.describe('User Preferences', { tag: ['@dev-console'] }, () => {
       });
 
       await test.step('Verify graph view is active', async () => {
-        const graphView = page.locator('[data-test-id="topology"]');
+        const graphView = userPrefs.getTopologyCanvas();
         await expect(graphView).toBeVisible({ timeout: 30_000 });
       });
 
@@ -122,9 +122,9 @@ test.describe('User Preferences', { tag: ['@dev-console'] }, () => {
       await test.step('Navigate to a create form and verify YAML view', async () => {
         await page.goto(`/k8s/ns/${ns}/buildconfigs/~new/form`);
         await page.waitForLoadState('domcontentloaded');
-        const syncedEditor = page.getByTestId('synced-editor-field');
+        const syncedEditor = userPrefs.getSyncedEditor();
         await expect(syncedEditor).toBeVisible({ timeout: 30_000 });
-        const yamlRadio = syncedEditor.getByRole('radio', { name: 'YAML view' });
+        const yamlRadio = userPrefs.getEditorRadio('YAML view');
         await expect(yamlRadio).toBeChecked();
       });
 

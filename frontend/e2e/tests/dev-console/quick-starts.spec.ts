@@ -43,12 +43,12 @@ test.describe('Quick Starts - Developer Perspective', { tag: ['@dev-console'] },
       });
 
       await test.step('Verify the quick start sidebar/drawer opens', async () => {
-        const drawer = page.getByTestId('quickstart drawer');
+        const drawer = quickStarts.getDrawer();
         await expect(drawer).toBeVisible({ timeout: 30_000 });
       });
 
       await test.step('Verify the correct quick start is shown', async () => {
-        const drawer = page.getByTestId('quickstart drawer');
+        const drawer = quickStarts.getDrawer();
         await expect(drawer).toContainText('sample application', { ignoreCase: true });
       });
     },

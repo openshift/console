@@ -17,14 +17,14 @@ test.describe(
         await helper.switchPerspective('Developer');
 
         await test.step('Verify Secrets is pinned in navigation', async () => {
-          const pinnedItems = page.getByTestId('draggable-pinned-resource-item');
+          const pinnedItems = helper.getPinnedResourceItems();
           await expect(pinnedItems.filter({ hasText: 'Secrets' })).toBeVisible({
             timeout: 30_000,
           });
         });
 
         await test.step('Verify ConfigMaps is pinned in navigation', async () => {
-          const pinnedItems = page.getByTestId('draggable-pinned-resource-item');
+          const pinnedItems = helper.getPinnedResourceItems();
           await expect(pinnedItems.filter({ hasText: 'ConfigMaps' })).toBeVisible();
         });
       },

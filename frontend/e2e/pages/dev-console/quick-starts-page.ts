@@ -37,6 +37,10 @@ export class QuickStartsPage extends BasePage {
     return this.page.getByRole('button', { name: 'Clear all filters' });
   }
 
+  getDrawer(): Locator {
+    return this.page.getByTestId('quickstart drawer');
+  }
+
   getDrawerPanel(): Locator {
     return this.page.getByRole('region');
   }

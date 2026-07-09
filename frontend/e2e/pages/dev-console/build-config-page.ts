@@ -12,11 +12,16 @@ export class BuildConfigPage extends BasePage {
   }
 
   getNameField(): Locator {
+    // TODO: use getByTestId('form-name-input') after CONSOLE-5299 merges
     return this.page.locator('#form-input-formData-name-field');
   }
 
   getSection(sectionName: string): Locator {
     return this.page.getByRole('heading', { name: sectionName, exact: true });
+  }
+
+  getGitRepoUrlLabel(): Locator {
+    return this.page.getByText('Git Repo URL');
   }
 
   async expandAdvancedOption(optionName: string): Promise<void> {
@@ -25,10 +30,10 @@ export class BuildConfigPage extends BasePage {
   }
 
   async ensureFormView(): Promise<void> {
-    const syncedEditor = this.page.getByTestId('synced-editor-field');
+    const syncedEditor = this.getSyncedEditor();
     // eslint-disable-next-line no-restricted-syntax
     await syncedEditor.waitFor({ state: 'visible', timeout: 30_000 });
-    const formRadio = syncedEditor.getByRole('radio', { name: 'Form view' });
+    const formRadio = this.getEditorRadio('Form view');
     if (!(await formRadio.isChecked())) {
       await formRadio.click();
       await this.waitForLoadingComplete();

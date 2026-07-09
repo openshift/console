@@ -76,7 +76,7 @@ test.describe('Edit Build Config', { tag: ['@dev-console'] }, () => {
       });
 
       await test.step('Verify Git repository URL section is visible', async () => {
-        await expect(page.getByText('Git Repo URL')).toBeVisible();
+        await expect(buildConfigPage.getGitRepoUrlLabel()).toBeVisible();
       });
 
       await test.step('Verify Images section is visible', async () => {

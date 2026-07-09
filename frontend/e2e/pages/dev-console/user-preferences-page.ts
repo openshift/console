@@ -27,4 +27,9 @@ export class UserPreferencesPage extends BasePage {
     const option = this.page.getByRole('option', { name: optionName });
     await this.robustClick(option);
   }
+
+  getTopologyCanvas(): Locator {
+    // data-test-id from @patternfly/react-topology VisualizationSurface
+    return this.page.locator('[data-test-id="topology"]');
+  }
 }
