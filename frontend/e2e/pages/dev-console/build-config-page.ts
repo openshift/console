@@ -12,7 +12,7 @@ export class BuildConfigPage extends BasePage {
   }
 
   getNameField(): Locator {
-    return this.page.getByRole('textbox', { name: 'Name' });
+    return this.page.getByTestId('section name').getByRole('textbox', { name: 'Name' });
   }
 
   getSection(sectionName: string): Locator {
