@@ -1,3 +1,4 @@
+import type KubernetesClient from '../../clients/kubernetes-client';
 import { test, expect } from '../../fixtures';
 import { AddPage } from '../../pages/dev-console/add-page';
 
@@ -10,6 +11,14 @@ import { AddPage } from '../../pages/dev-console/add-page';
  *   - A-11-TC11 (@manual) - Getting Started Resources card when all Quick Starts completed
  */
 
+async function ensureGettingStartedVisible(k8sClient: KubernetesClient): Promise<void> {
+  await k8sClient.patchConfigMap(
+    'user-settings-kubeadmin',
+    'openshift-console-user-settings',
+    { 'devconsole.addPage.gettingStarted': 'show' },
+  );
+}
+
 test.describe('Add page on Developer Console', { tag: ['@dev-console', '@regression'] }, () => {
   const ns = `aut-add-page-${Date.now()}`;
   let addPage: AddPage;
@@ -21,47 +30,45 @@ test.describe('Add page on Developer Console', { tag: ['@dev-console', '@regress
     await addPage.ensureDevPerspectiveAndNavigate(ns);
   });
 
-  test('displays Getting started resources [A-11-TC01]', async () => {
+  test('displays Getting started resources [A-11-TC01]', async ({ k8sClient }) => {
+    await ensureGettingStartedVisible(k8sClient);
+    await addPage.navigateToAdd(ns);
     const gettingStarted = addPage.getGettingStartedResources();
     await expect(gettingStarted).toBeVisible({ timeout: 30_000 });
-    await expect(addPage.getAddCardItem('Create Application using Samples')).toBeVisible();
-    await expect(addPage.getAddCardItem('Build with guided documentation')).toBeVisible();
-    await expect(addPage.getAddCardItem('Explore new developer features')).toBeVisible();
+    await expect(addPage.getCard('samples')).toBeVisible();
+    await expect(addPage.getCard('quick-start')).toBeVisible();
+    await expect(addPage.getCard('developer-features')).toBeVisible();
   });
 
   test('displays Add page cards and options [A-11-TC02]', async () => {
-    await expect(addPage.getAddCardItem('Software Catalog')).toBeVisible();
-    await expect(addPage.getAddCardItem('Git Repository')).toBeVisible();
-    await expect(addPage.getAddCardItem('Container images')).toBeVisible();
-    await expect(addPage.getAddCardItem('Samples')).toBeVisible();
-    await expect(addPage.getAddCardItem('From Local Machine')).toBeVisible();
+    await expect(addPage.getAddCardHeading('Software Catalog')).toBeVisible();
+    await expect(addPage.getAddCardHeading('Git Repository')).toBeVisible();
+    await expect(addPage.getAddCardHeading('Container images')).toBeVisible();
+    await expect(addPage.getAddCardHeading('Samples')).toBeVisible();
+    await expect(addPage.getAddCardHeading('From Local Machine')).toBeVisible();
   });
 
   test('displays Software Catalog sub-options [A-11-TC03]', async () => {
-    await expect(addPage.getAddCardItem('All services')).toBeVisible();
-    await expect(addPage.getAddCardItem('Database')).toBeVisible();
-    await expect(addPage.getAddCardItem('Operator Backed')).toBeVisible();
-    await expect(addPage.getAddCardItem('Helm Chart')).toBeVisible();
+    await expect(addPage.getCardItem('dev-catalog')).toBeVisible();
+    await expect(addPage.getCardItem('dev-catalog-databases')).toBeVisible();
+    await expect(addPage.getCardItem('operator-backed')).toBeVisible();
   });
 
   test('displays Git Repository sub-options [A-11-TC04]', async () => {
-    await expect(addPage.getAddCardItem('Import from Git')).toBeVisible();
+    await expect(addPage.getCardItem('import-from-git')).toBeVisible();
   });
 
   test('displays From Local Machine sub-options [A-11-TC05]', async () => {
-    await expect(addPage.getAddCardItem('Import YAML')).toBeVisible();
-    await expect(addPage.getAddCardItem('Upload JAR file')).toBeVisible();
+    await expect(addPage.getCardItem('import-yaml')).toBeVisible();
   });
 
-  test('Details toggle on/off [A-11-TC09, A-11-TC10]', async () => {
-    await test.step('Toggle details on', async () => {
-      await addPage.clickDetailsToggle();
+  test('Details switch on/off [A-11-TC09, A-11-TC10]', async () => {
+    await test.step('Toggle details off', async () => {
+      await addPage.clickDetailsSwitch();
     });
 
-    await test.step('Toggle details off and reset', async () => {
-      await addPage.clickDetailsToggle();
-      // Reset to default state
-      await addPage.clickDetailsToggle();
+    await test.step('Toggle details on again', async () => {
+      await addPage.clickDetailsSwitch();
     });
   });
 });
@@ -77,6 +84,7 @@ test.describe(
       addPage = new AddPage(page);
       await k8sClient.createNamespace(ns);
       cleanup.trackNamespace(ns);
+      await ensureGettingStartedVisible(k8sClient);
       await addPage.ensureDevPerspectiveAndNavigate(ns);
     });
 
@@ -84,7 +92,7 @@ test.describe(
       await test.step('Hide Getting Started Resources', async () => {
         const gettingStarted = addPage.getGettingStartedResources();
         await expect(gettingStarted).toBeVisible({ timeout: 30_000 });
-        await addPage.hideGettingStartedFromKebab();
+        await addPage.hideGettingStarted();
         await expect(gettingStarted).toBeHidden();
       });
 

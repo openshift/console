@@ -1,15 +1,12 @@
 import type { Locator, Page } from '@playwright/test';
-import { expect } from '@playwright/test';
 
+import { expect } from '../../fixtures';
 import BasePage, { warmupSPA } from '../base-page';
 
 export class AddPage extends BasePage {
   private readonly pageHeading: Locator = this.page.getByTestId('page-heading');
-  private readonly gettingStartedResources: Locator = this.page.getByTestId(
-    'getting-started-section',
-  );
-  private readonly detailsToggle: Locator = this.page.getByTestId('details-toggle');
-  private readonly addToProjectButton: Locator = this.page.getByTestId('add-to-project-button');
+  private readonly gettingStartedResources: Locator = this.page.getByTestId('getting-started');
+  private readonly detailsSwitch: Locator = this.page.getByTestId('details-switch');
 
   async navigateToAdd(namespace: string): Promise<void> {
     await this.goTo(`/add/ns/${namespace}`);
@@ -27,24 +24,24 @@ export class AddPage extends BasePage {
     await this.navigateToAdd(namespace);
   }
 
-  getCard(cardText: string): Locator {
-    return this.page.getByTestId('card').filter({ hasText: cardText });
+  getCard(cardId: string): Locator {
+    return this.page.getByTestId(`card ${cardId}`);
   }
 
-  getOption(optionText: string): Locator {
-    return this.page.getByTestId('item').filter({ hasText: optionText });
+  getCardItem(itemId: string): Locator {
+    return this.page.getByTestId(`item ${itemId}`);
   }
 
   getGettingStartedResources(): Locator {
     return this.gettingStartedResources;
   }
 
-  getDetailsToggle(): Locator {
-    return this.detailsToggle;
+  getDetailsSwitch(): Locator {
+    return this.detailsSwitch;
   }
 
-  async clickDetailsToggle(): Promise<void> {
-    await this.robustClick(this.detailsToggle);
+  async clickDetailsSwitch(): Promise<void> {
+    await this.robustClick(this.detailsSwitch.locator('input'));
   }
 
   async clickShowGettingStartedResources(): Promise<void> {
@@ -52,49 +49,37 @@ export class AddPage extends BasePage {
     await this.robustClick(link);
   }
 
-  async hideGettingStartedFromKebab(): Promise<void> {
-    const kebab = this.gettingStartedResources.getByTestId('kebab-button');
-    await this.robustClick(kebab);
-    const hideOption = this.page.getByRole('menuitem', { name: /hide from view/i });
-    await this.robustClick(hideOption);
-  }
-
-  async clickAddToProject(): Promise<void> {
-    await this.robustClick(this.addToProjectButton);
+  async hideGettingStarted(): Promise<void> {
+    const closeButton = this.gettingStartedResources.getByRole('button', { name: 'Close' });
+    await this.robustClick(closeButton);
   }
 
   getQuickSearchInput(): Locator {
-    return this.page.getByTestId('quick-search-bar');
+    return this.page.getByRole('textbox', { name: 'Quick search bar' });
   }
 
-  async clickDatabaseCard(): Promise<void> {
-    const databaseOption = this.getOption('Database');
-    await this.robustClick(databaseOption);
+  async clickAddToProject(): Promise<void> {
+    await this.robustClick(this.page.getByTestId('quick-search'));
   }
 
   async clickImportFromGit(): Promise<void> {
-    const gitOption = this.getOption('Import from Git');
-    await this.robustClick(gitOption);
+    await this.robustClick(this.getCardItem('import-from-git'));
   }
 
   async clickContainerImage(): Promise<void> {
-    const option = this.getOption('Container images');
-    await this.robustClick(option);
+    await this.robustClick(this.getCardItem('deploy-image'));
+  }
+
+  async clickDatabaseCard(): Promise<void> {
+    await this.robustClick(this.getCardItem('dev-catalog-databases'));
   }
 
   async clickImportYAML(): Promise<void> {
-    const yamlOption = this.getOption('Import YAML');
-    await this.robustClick(yamlOption);
+    await this.robustClick(this.getCardItem('import-yaml'));
   }
 
   async clickSamples(): Promise<void> {
-    const samplesOption = this.getOption('Samples');
-    await this.robustClick(samplesOption);
-  }
-
-  async clickUploadJARFile(): Promise<void> {
-    const jarOption = this.getOption('Upload JAR file');
-    await this.robustClick(jarOption);
+    await this.robustClick(this.getCardItem('import-from-samples'));
   }
 
   async clickViewAllSamples(): Promise<void> {
@@ -114,8 +99,8 @@ export class AddPage extends BasePage {
     return this.pageHeading;
   }
 
-  getAddCardItem(name: string): Locator {
-    return this.page.getByText(name);
+  getAddCardHeading(name: string): Locator {
+    return this.page.getByTestId('add-cards').getByRole('heading', { name, exact: true });
   }
 
   getViewAllLink(): Locator {
@@ -126,13 +111,14 @@ export class AddPage extends BasePage {
     return this.page.getByText('No results');
   }
 }
-
 export class ImportFromGitPage extends BasePage {
-  private readonly gitRepoUrlInput: Locator = this.page.getByTestId('git-form-input-url');
+  private readonly gitRepoUrlInput: Locator = this.page.getByRole('textbox', {
+    name: 'Git Repo URL',
+  });
   private readonly appNameInput: Locator = this.page.getByTestId('application-form-app-input');
   private readonly nameInput: Locator = this.page.getByTestId('application-form-app-name');
-  private readonly createButton: Locator = this.page.getByTestId('submit-button');
-  private readonly cancelButton: Locator = this.page.getByTestId('reset-button');
+  private readonly createButton: Locator = this.page.getByRole('button', { name: 'Create', exact: true });
+  private readonly cancelButton: Locator = this.page.getByRole('button', { name: 'Cancel', exact: true });
 
   async navigateToImportFromGit(namespace: string): Promise<void> {
     await this.goTo(`/import/ns/${namespace}`);
@@ -165,16 +151,7 @@ export class ImportFromGitPage extends BasePage {
   }
 
   async selectResourceType(type: string): Promise<void> {
-    const normalizedType = type.toLowerCase().replace(/\s+/g, '');
-    let testId: string;
-    if (normalizedType === 'deployment' || normalizedType === 'deploy') {
-      testId = 'deployment-radio-input';
-    } else if (normalizedType === 'deploymentconfig' || normalizedType === 'deploy-config') {
-      testId = 'deployment-config-radio-input';
-    } else {
-      testId = `${normalizedType}-radio-input`;
-    }
-    const radio = this.page.getByTestId(testId);
+    const radio = this.page.getByRole('radio', { name: new RegExp(type, 'i') });
     await this.robustClick(radio);
   }
 
@@ -187,7 +164,7 @@ export class ImportFromGitPage extends BasePage {
   }
 
   async uncheckCreateRoute(): Promise<void> {
-    const routeCheckbox = this.page.getByTestId('route-checkbox');
+    const routeCheckbox = this.page.getByRole('checkbox', { name: /create a route/i });
     if (await routeCheckbox.isChecked()) {
       await routeCheckbox.uncheck();
     }
@@ -234,7 +211,7 @@ export class ImportFromGitPage extends BasePage {
   }
 
   async enterDevfilePath(path: string): Promise<void> {
-    const input = this.page.getByTestId('devfile-path-input');
+    const input = this.page.getByTestId('git-form-devfile-path-input');
     await input.clear();
     await input.fill(path);
   }
@@ -260,16 +237,16 @@ export class ImportFromGitPage extends BasePage {
 }
 
 export class DeployImagePage extends BasePage {
-  private readonly imageNameInput: Locator = this.page.getByTestId('deploy-image-search-term');
+  private readonly imageNameInput: Locator = this.page.getByRole('textbox', { name: 'Image name' });
   private readonly nameInput: Locator = this.page.getByTestId('application-form-app-name');
   private readonly appNameInput: Locator = this.page.getByTestId('application-form-app-input');
-  private readonly createButton: Locator = this.page.getByTestId('submit-button');
-  private readonly cancelButton: Locator = this.page.getByTestId('reset-button');
-  private readonly saveButton: Locator = this.page.getByTestId('submit-button');
+  private readonly createButton: Locator = this.page.getByRole('button', { name: 'Create', exact: true });
+  private readonly cancelButton: Locator = this.page.getByRole('button', { name: 'Cancel', exact: true });
+  private readonly saveButton: Locator = this.page.getByRole('button', { name: 'Create', exact: true });
 
   async navigateToDeployImage(namespace: string): Promise<void> {
     await this.goTo(`/deploy-image/ns/${namespace}`);
-    await expect(this.imageNameInput.or(this.page.getByTestId('image-stream-tag-radio'))).toBeVisible({ timeout: 60_000 });
+    await expect(this.imageNameInput.or(this.page.getByTestId('internal-view-input'))).toBeVisible({ timeout: 60_000 });
   }
 
   async enterExternalRegistryImage(imageName: string): Promise<void> {
@@ -283,33 +260,36 @@ export class DeployImagePage extends BasePage {
   }
 
   async selectImageStreamTag(): Promise<void> {
-    const radio = this.page.getByTestId('image-stream-tag-radio');
+    const radio = this.page.getByTestId('internal-view-input');
     await this.robustClick(radio);
   }
 
+  // Image stream dropdowns all share data-test="console-select-menu-toggle"
+  // so Formik-generated IDs are the only way to distinguish them
   async selectProject(projectName: string): Promise<void> {
-    const dropdown = this.page.getByTestId('image-stream-project-dropdown');
+    const dropdown = this.page.locator('#form-ns-dropdown-imageStream-namespace-field');
     await this.robustClick(dropdown);
     const option = this.page.getByRole('option', { name: projectName, exact: true });
     await this.robustClick(option);
   }
 
   async selectImageStream(streamName: string): Promise<void> {
-    const dropdown = this.page.getByTestId('image-stream-dropdown');
+    const dropdown = this.page.locator('#form-ns-dropdown-imageStream-image-field');
     await this.robustClick(dropdown);
     const option = this.page.getByRole('option', { name: streamName, exact: true });
     await this.robustClick(option);
   }
 
   async selectTag(tag: string): Promise<void> {
-    const dropdown = this.page.getByTestId('image-stream-tag-dropdown');
+    const dropdown = this.page.locator('#form-dropdown-imageStream-tag-field');
     await this.robustClick(dropdown);
     const option = this.page.getByRole('option', { name: tag });
     await this.robustClick(option);
   }
 
   async selectRuntimeIcon(iconName: string): Promise<void> {
-    const dropdown = this.page.getByTestId('runtime-icon-dropdown');
+    // HTML id from Formik — label for="runtimeIcon", no data-test available
+    const dropdown = this.page.locator('#runtimeIcon');
     await this.robustClick(dropdown);
     const option = this.page.getByRole('option', { name: iconName });
     await this.robustClick(option);
@@ -333,14 +313,7 @@ export class DeployImagePage extends BasePage {
   }
 
   async selectResourceType(type: string): Promise<void> {
-    const normalizedType = type.toLowerCase().replace(/\s+/g, '');
-    let testId: string;
-    if (normalizedType === 'deployment' || normalizedType === 'deploy') {
-      testId = 'deployment-radio-input';
-    } else {
-      testId = 'deployment-config-radio-input';
-    }
-    const radio = this.page.getByTestId(testId);
+    const radio = this.page.getByRole('radio', { name: new RegExp(type, 'i') });
     await this.robustClick(radio);
   }
 
@@ -427,13 +400,8 @@ export class SoftwareCatalogPage extends BasePage {
   }
 
   async clickInstantiateTemplate(): Promise<void> {
-    const button = this.page.getByRole('link', { name: /instantiate template/i });
-    if ((await button.count()) > 0) {
-      await this.robustClick(button);
-      return;
-    }
-    const fallbackBtn = this.page.getByTestId('instantiate-template-btn');
-    await this.robustClick(fallbackBtn);
+    const button = this.page.getByTestId('catalog-details-modal-cta');
+    await this.robustClick(button);
   }
 
   async clickCreateApplicationButton(): Promise<void> {
@@ -463,7 +431,7 @@ export class SoftwareCatalogPage extends BasePage {
   }
 
   getFormSubmitButton(): Locator {
-    return this.page.getByTestId('submit-button');
+    return this.page.getByRole('button', { name: 'Create', exact: true });
   }
 
   getProjectSelectionMessage(): Locator {
@@ -472,8 +440,8 @@ export class SoftwareCatalogPage extends BasePage {
 }
 
 export class ImportYAMLPage extends BasePage {
-  private readonly submitButton: Locator = this.page.getByTestId('submit-button');
-  private readonly cancelButton: Locator = this.page.getByTestId('reset-button');
+  private readonly submitButton: Locator = this.page.getByRole('button', { name: 'Create', exact: true });
+  private readonly cancelButton: Locator = this.page.getByRole('button', { name: 'Cancel', exact: true });
 
   getSubmitButton(): Locator {
     return this.submitButton;
