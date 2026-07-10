@@ -11,15 +11,11 @@ import { ALL_NAMESPACES_KEY, FLAGS } from '@console/shared/src/constants/common'
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils/namespace';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
-import { getInfrastructureName } from '@console/shared/src/selectors/infrastructure';
 import type { FC, Ref } from 'react';
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccessReview } from '@console/dynamic-plugin-sdk/src';
 import { useNavigate } from 'react-router';
-import { useK8sGet } from './utils/k8s-get-hook';
-import { InfrastructureModel } from '../models';
-import type { K8sResourceKind } from '../module/k8s';
 
 type QuickCreateProps = {
   namespace?: string;
@@ -75,15 +71,6 @@ const QuickCreate: FC<QuickCreateProps> = ({ namespace }) => {
   const navigate = useNavigate();
   const fireTelemetryEvent = useTelemetry();
   const opeshiftStartGuideEnable = useFlag(FLAGS.SHOW_OPENSHIFT_START_GUIDE);
-  const [infrastructure] = useK8sGet<K8sResourceKind>(InfrastructureModel, 'cluster');
-  const infrastructureName = getInfrastructureName(infrastructure);
-  const quickCreateLabel = useMemo(
-    () =>
-      infrastructureName
-        ? t('Quick create in {{clusterName}}', { clusterName: infrastructureName })
-        : t('Quick create in cluster'),
-    [infrastructureName, t],
-  );
 
   const canCreate = useCanCreateResource();
   const [isOpen, setIsOpen] = useState(false);
@@ -102,10 +89,10 @@ const QuickCreate: FC<QuickCreateProps> = ({ namespace }) => {
       onSelect={onSelect}
       onOpenChange={(open: boolean) => setIsOpen(open)}
       toggle={(toggleRef: Ref<MenuToggleElement>) => (
-        <Tooltip content={quickCreateLabel} position="bottom">
+        <Tooltip content={t('Quick create in cluster')} position="bottom">
           <MenuToggle
             ref={toggleRef}
-            aria-label={quickCreateLabel}
+            aria-label={t('Quick create in cluster')}
             variant="plain"
             onClick={onToggleClick}
             isExpanded={isOpen}
