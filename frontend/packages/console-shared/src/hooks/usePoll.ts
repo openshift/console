@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 // https://overreacted.io/making-setinterval-declarative-with-react-hooks/
 export const usePoll = (callback, delay, ...dependencies) => {
   const savedCallback = useRef(null);
+  const jitterRef = useRef(delay ? Math.floor(Math.random() * delay * 0.2) : 0);
 
   // Remember the latest callback.
   useEffect(() => {
@@ -17,8 +18,7 @@ export const usePoll = (callback, delay, ...dependencies) => {
     tick(); // Run first tick immediately.
 
     if (delay) {
-      // Only start interval if a delay is provided.
-      const id = setInterval(tick, delay);
+      const id = setInterval(tick, delay + jitterRef.current);
       return () => clearInterval(id);
     }
     return () => {};

@@ -3,6 +3,7 @@ import { useCallback, useState } from 'react';
 import { UseURLPoll } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { usePoll } from '@console/shared/src/hooks/usePoll';
 import { useSafeFetch } from './safe-fetch-hook';
+import { dedupedFetch } from './url-fetch-cache';
 
 export const URL_POLL_DEFAULT_DELAY = 15000; // 15 seconds
 
@@ -17,7 +18,7 @@ export const useURLPoll: UseURLPoll = <R>(
   const safeFetch = useSafeFetch();
   const tick = useCallback(() => {
     if (url) {
-      safeFetch(url)
+      dedupedFetch(url, safeFetch)
         .then((data) => {
           setResponse(data);
           setError(null);
