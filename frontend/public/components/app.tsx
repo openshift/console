@@ -438,9 +438,6 @@ graphQLReady.onReady(() => {
 
   initApiDiscovery(store);
 
-  // Global timer to ensure all <Timestamp> components update in sync
-  setInterval(() => store.dispatch(UIActions.updateTimestamps(Date.now())), 10000);
-
   // Used by GUI tests to check for unhandled exceptions
   window.onerror = (message, source, lineno, colno, error) => {
     // ResizeObserver loop errors are non-actionable and can be ignored
