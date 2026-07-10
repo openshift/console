@@ -1,0 +1,114 @@
+[
+  {
+    "name": ".editorconfig",
+    "path": ".editorconfig",
+    "sha": "5c42a0efa9df05e7a29076469bd8727d9dbeb43a",
+    "size": 328,
+    "url": "https://api.github.com/repos/redhat-developer/s2i-dotnetcore-ex/contents/.editorconfig?ref=dotnet-6.0",
+    "html_url": "https://github.com/redhat-developer/s2i-dotnetcore-ex/blob/dotnet-6.0/.editorconfig",
+    "git_url": "https://api.github.com/repos/redhat-developer/s2i-dotnetcore-ex/git/blobs/5c42a0efa9df05e7a29076469bd8727d9dbeb43a",
+    "download_url": "https://raw.githubusercontent.com/redhat-developer/s2i-dotnetcore-ex/dotnet-6.0/.editorconfig",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/redhat-developer/s2i-dotnetcore-ex/contents/.editorconfig?ref=dotnet-6.0",
+      "git": "https://api.github.com/repos/redhat-developer/s2i-dotnetcore-ex/git/blobs/5c42a0efa9df05e7a29076469bd8727d9dbeb43a",
+      "html": "https://github.com/redhat-developer/s2i-dotnetcore-ex/blob/dotnet-6.0/.editorconfig"
+    }
+  },
+  {
+    "name": ".gitattributes",
+    "path": ".gitattributes",
+    "sha": "1aa4c530809986e2160bea60c32f9d7e6de9f497",
+    "size": 102,
+    "url": "https://api.github.com/repos/redhat-developer/s2i-dotnetcore-ex/contents/.gitattributes?ref=dotnet-6.0",
+    "html_url": "https://github.com/redhat-developer/s2i-dotnetcore-ex/blob/dotnet-6.0/.gitattributes",
+    "git_url": "https://api.github.com/repos/redhat-developer/s2i-dotnetcore-ex/git/blobs/1aa4c530809986e2160bea60c32f9d7e6de9f497",
+    "download_url": "https://raw.githubusercontent.com/redhat-developer/s2i-dotnetcore-ex/dotnet-6.0/.gitattributes",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/redhat-developer/s2i-dotnetcore-ex/contents/.gitattributes?ref=dotnet-6.0",
+      "git": "https://api.github.com/repos/redhat-developer/s2i-dotnetcore-ex/git/blobs/1aa4c530809986e2160bea60c32f9d7e6de9f497",
+      "html": "https://github.com/redhat-developer/s2i-dotnetcore-ex/blob/dotnet-6.0/.gitattributes"
+    }
+  },
+  {
+    "name": ".mailmap",
+    "path": ".mailmap",
+    "sha": "1ecc13b5b900441aa199929ca7230cd55e475e47",
+    "size": 83,
+    "url": "https://api.github.com/repos/redhat-developer/s2i-dotnetcore-ex/contents/.mailmap?ref=dotnet-6.0",
+    "html_url": "https://github.com/redhat-developer/s2i-dotnetcore-ex/blob/dotnet-6.0/.mailmap",
+    "git_url": "https://api.github.com/repos/redhat-developer/s2i-dotnetcore-ex/git/blobs/1ecc13b5b900441aa199929ca7230cd55e475e47",
+    "download_url": "https://raw.githubusercontent.com/redhat-developer/s2i-dotnetcore-ex/dotnet-6.0/.mailmap",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/redhat-developer/s2i-dotnetcore-ex/contents/.mailmap?ref=dotnet-6.0",
+      "git": "https://api.github.com/repos/redhat-developer/s2i-dotnetcore-ex/git/blobs/1ecc13b5b900441aa199929ca7230cd55e475e47",
+      "html": "https://github.com/redhat-developer/s2i-dotnetcore-ex/blob/dotnet-6.0/.mailmap"
+    }
+  },
+  {
+    "name": "Contributing.adoc",
+    "path": "Contributing.adoc",
+    "sha": "7e22870af24c6d3f4f462abf1379353ab0c3e21a",
+    "size": 2568,
+    "url": "https://api.github.com/repos/redhat-developer/s2i-dotnetcore-ex/contents/Contributing.adoc?ref=dotnet-6.0",
+    "html_url": "https://github.com/redhat-developer/s2i-dotnetcore-ex/blob/dotnet-6.0/Contributing.adoc",
+    "git_url": "https://api.github.com/repos/redhat-developer/s2i-dotnetcore-ex/git/blobs/7e22870af24c6d3f4f462abf1379353ab0c3e21a",
+    "download_url": "https://raw.githubusercontent.com/redhat-developer/s2i-dotnetcore-ex/dotnet-6.0/Contributing.adoc",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/redhat-developer/s2i-dotnetcore-ex/contents/Contributing.adoc?ref=dotnet-6.0",
+      "git": "https://api.github.com/repos/redhat-developer/s2i-dotnetcore-ex/git/blobs/7e22870af24c6d3f4f462abf1379353ab0c3e21a",
+      "html": "https://github.com/redhat-developer/s2i-dotnetcore-ex/blob/dotnet-6.0/Contributing.adoc"
+    }
+  },
+  {
+    "name": "LICENSE",
+    "path": "LICENSE",
+    "sha": "7a4a3ea2424c09fbe48d455aed1eaa94d9124835",
+    "size": 11357,
+    "url": "https://api.github.com/repos/redhat-developer/s2i-dotnetcore-ex/contents/LICENSE?ref=dotnet-6.0",
+    "html_url": "https://github.com/redhat-developer/s2i-dotnetcore-ex/blob/dotnet-6.0/LICENSE",
+    "git_url": "https://api.github.com/repos/redhat-developer/s2i-dotnetcore-ex/git/blobs/7a4a3ea2424c09fbe48d455aed1eaa94d9124835",
+    "download_url": "https://raw.githubusercontent.com/redhat-developer/s2i-dotnetcore-ex/dotnet-6.0/LICENSE",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/redhat-developer/s2i-dotnetcore-ex/contents/LICENSE?ref=dotnet-6.0",
+      "git": "https://api.github.com/repos/redhat-developer/s2i-dotnetcore-ex/git/blobs/7a4a3ea2424c09fbe48d455aed1eaa94d9124835",
+      "html": "https://github.com/redhat-developer/s2i-dotnetcore-ex/blob/dotnet-6.0/LICENSE"
+    }
+  },
+  {
+    "name": "README.adoc",
+    "path": "README.adoc",
+    "sha": "15ad6621a53394c2269843c794352073f987e5fd",
+    "size": 1717,
+    "url": "https://api.github.com/repos/redhat-developer/s2i-dotnetcore-ex/contents/README.adoc?ref=dotnet-6.0",
+    "html_url": "https://github.com/redhat-developer/s2i-dotnetcore-ex/blob/dotnet-6.0/README.adoc",
+    "git_url": "https://api.github.com/repos/redhat-developer/s2i-dotnetcore-ex/git/blobs/15ad6621a53394c2269843c794352073f987e5fd",
+    "download_url": "https://raw.githubusercontent.com/redhat-developer/s2i-dotnetcore-ex/dotnet-6.0/README.adoc",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/redhat-developer/s2i-dotnetcore-ex/contents/README.adoc?ref=dotnet-6.0",
+      "git": "https://api.github.com/repos/redhat-developer/s2i-dotnetcore-ex/git/blobs/15ad6621a53394c2269843c794352073f987e5fd",
+      "html": "https://github.com/redhat-developer/s2i-dotnetcore-ex/blob/dotnet-6.0/README.adoc"
+    }
+  },
+  {
+    "name": "app",
+    "path": "app",
+    "sha": "1380bc4df945c0e1eafe0f0ec3dff301cf1eb01b",
+    "size": 0,
+    "url": "https://api.github.com/repos/redhat-developer/s2i-dotnetcore-ex/contents/app?ref=dotnet-6.0",
+    "html_url": "https://github.com/redhat-developer/s2i-dotnetcore-ex/tree/dotnet-6.0/app",
+    "git_url": "https://api.github.com/repos/redhat-developer/s2i-dotnetcore-ex/git/trees/1380bc4df945c0e1eafe0f0ec3dff301cf1eb01b",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/redhat-developer/s2i-dotnetcore-ex/contents/app?ref=dotnet-6.0",
+      "git": "https://api.github.com/repos/redhat-developer/s2i-dotnetcore-ex/git/trees/1380bc4df945c0e1eafe0f0ec3dff301cf1eb01b",
+      "html": "https://github.com/redhat-developer/s2i-dotnetcore-ex/tree/dotnet-6.0/app"
+    }
+  }
+]

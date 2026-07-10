@@ -37,6 +37,7 @@ const ApplicationDropdown: FC<ApplicationDropdownProps> = ({ namespace, ...props
   return (
     <ResourceDropdown
       {...props}
+      dataTest={props.id}
       resources={resources}
       loaded={loaded}
       loadError={loadError}

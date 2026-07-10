@@ -10,6 +10,10 @@ For current development version of Console, use `4.x.0-prerelease.n` packages.
 For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility
 table in [Console dynamic plugins README](./README.md).
 
+## 4.23.0-prerelease.4 - TBD
+
+- Add optional `onSubmit` parameter to `useLabelsModal` hook for customizing label submission behavior ([CONSOLE-5356], [#16560])
+
 ## 4.23.0-prerelease.3 - 2026-07-07
 
 - Add `@openshift/api-types` as a dependency and replace `K8sResourceCommon` and related types with imports from that package ([CONSOLE-5355], [#16585])
@@ -237,6 +241,7 @@ table in [Console dynamic plugins README](./README.md).
 [CONSOLE-5273]: https://issues.redhat.com/browse/CONSOLE-5273
 [CONSOLE-5315]: https://issues.redhat.com/browse/CONSOLE-5315
 [CONSOLE-5355]: https://issues.redhat.com/browse/CONSOLE-5355
+[CONSOLE-5356]: https://issues.redhat.com/browse/CONSOLE-5356
 [CONSOLE-5361]: https://issues.redhat.com/browse/CONSOLE-5361
 [OCPBUGS-19048]: https://issues.redhat.com/browse/OCPBUGS-19048
 [OCPBUGS-30077]: https://issues.redhat.com/browse/OCPBUGS-30077
@@ -322,6 +327,7 @@ table in [Console dynamic plugins README](./README.md).
 [#16241]: https://github.com/openshift/console/pull/16241
 [#16400]: https://github.com/openshift/console/pull/16400
 [#16491]: https://github.com/openshift/console/pull/16491
+[#16560]: https://github.com/openshift/console/pull/16560
 [#16574]: https://github.com/openshift/console/pull/16574
 [#16581]: https://github.com/openshift/console/pull/16581
 [#16582]: https://github.com/openshift/console/pull/16582

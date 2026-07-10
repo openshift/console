@@ -57,7 +57,10 @@ const BaseInputField: FC<
         },
       })}
 
-      <FormHelperText id={`${fieldId}-helper`}>
+      <FormHelperText
+        id={`${fieldId}-helper`}
+        data-test={`form-input-${name.replace(/\./g, '-')}-field-helper`}
+      >
         <HelperText>
           {!isValid ? (
             <HelperTextItem variant="error">{errorMessage || helpTextInvalid}</HelperTextItem>
