@@ -15,6 +15,7 @@ import { AsyncComponent } from './utils/async';
 import { ResourceLink } from './utils/resource-link';
 import { LabelList } from './utils/label-list';
 import { OwnerReferences } from './utils/owner-references';
+import { Selector } from './utils/selector';
 import { LoadingBox } from './utils/status-box';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ResourceEventStream } from './events';
@@ -145,6 +146,7 @@ const tableColumnInfo = [
   { id: 'namespace' },
   { id: 'status' },
   { id: 'labels' },
+  { id: 'selector' },
   { id: 'owner' },
   { id: 'created' },
   { id: '' },
@@ -178,12 +180,15 @@ const getDataViewRows = (data, columns) => {
         cell: <LabelList kind={kind} labels={obj.metadata.labels} />,
       },
       [tableColumnInfo[4].id]: {
-        cell: <OwnerReferences resource={obj} />,
+        cell: <Selector selector={obj.spec.selector} namespace={namespace} />,
       },
       [tableColumnInfo[5].id]: {
-        cell: <Timestamp timestamp={obj.metadata.creationTimestamp} />,
+        cell: <OwnerReferences resource={obj} />,
       },
       [tableColumnInfo[6].id]: {
+        cell: <Timestamp timestamp={obj.metadata.creationTimestamp} />,
+      },
+      [tableColumnInfo[7].id]: {
         cell: <LazyActionMenu context={context} />,
         props: actionsCellProps,
       },
@@ -247,26 +252,35 @@ const useReplicaSetsColumns = () => {
         },
       },
       {
-        title: t('Owner'),
+        title: t('Pod selector'),
         id: tableColumnInfo[4].id,
-        sort: 'metadata.ownerReferences[0].name',
+        sort: 'spec.selector',
         resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
           modifier: 'nowrap',
         },
       },
       {
-        title: t('Created'),
+        title: t('Owner'),
         id: tableColumnInfo[5].id,
-        sort: 'metadata.creationTimestamp',
+        sort: 'metadata.ownerReferences[0].name',
         resizableProps: getResizableProps(tableColumnInfo[5].id),
         props: {
           modifier: 'nowrap',
         },
       },
       {
-        title: '',
+        title: t('Created'),
         id: tableColumnInfo[6].id,
+        sort: 'metadata.creationTimestamp',
+        resizableProps: getResizableProps(tableColumnInfo[6].id),
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: '',
+        id: tableColumnInfo[7].id,
         props: {
           ...actionsCellProps,
         },
