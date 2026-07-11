@@ -19,6 +19,7 @@ import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { selectorToString } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
@@ -44,6 +45,7 @@ import { SectionHeading } from './utils/headings';
 import { PodsComponent, navFactory } from './utils/horizontal-nav';
 import { LabelList } from './utils/label-list';
 import { ResourceLink } from './utils/resource-link';
+import { Selector } from './utils/selector';
 import { LoadingBox } from './utils/status-box';
 
 const kind = referenceForModel(JobModel);
@@ -52,6 +54,7 @@ const tableColumnInfo = [
   { id: 'name' },
   { id: 'namespace' },
   { id: 'labels' },
+  { id: 'selector' },
   { id: 'completions' },
   { id: 'type' },
   { id: 'created' },
@@ -93,15 +96,18 @@ const getDataViewRows: GetDataViewRows<JobKind> = (data, columns) =>
         cell: <LabelList kind={kind} labels={obj.metadata.labels} />,
       },
       [tableColumnInfo[3].id]: {
-        cell: <Completions obj={obj} completions={completions} />,
+        cell: <Selector selector={obj.spec.selector} namespace={namespace} />,
       },
       [tableColumnInfo[4].id]: {
-        cell: type,
+        cell: <Completions obj={obj} completions={completions} />,
       },
       [tableColumnInfo[5].id]: {
-        cell: <Timestamp timestamp={obj.metadata.creationTimestamp} />,
+        cell: type,
       },
       [tableColumnInfo[6].id]: {
+        cell: <Timestamp timestamp={obj.metadata.creationTimestamp} />,
+      },
+      [tableColumnInfo[7].id]: {
         cell: <LazyActionMenu context={context} />,
       },
     };
@@ -245,8 +251,19 @@ const useJobsColumns = (): {
         },
       },
       {
-        title: t('Completions'),
+        title: t('Pod selector'),
         id: tableColumnInfo[3].id,
+        sort: (data, direction) =>
+          data.sort(
+            sortResourceByValue(direction, (obj) => selectorToString(obj.spec?.selector ?? {})),
+          ),
+        props: {
+          modifier: 'nowrap' as const,
+        },
+      },
+      {
+        title: t('Completions'),
+        id: tableColumnInfo[4].id,
         sort: (data, direction) =>
           data.sort(sortResourceByValue<JobKind>(direction, sorts.jobCompletionsSucceeded)),
         props: {
@@ -255,7 +272,7 @@ const useJobsColumns = (): {
       },
       {
         title: t('Type'),
-        id: tableColumnInfo[4].id,
+        id: tableColumnInfo[5].id,
         sort: (data, direction) =>
           data.sort(sortResourceByValue<JobKind>(direction, sorts.jobType)),
         props: {
@@ -264,13 +281,13 @@ const useJobsColumns = (): {
       },
       {
         title: t('Created'),
-        id: tableColumnInfo[5].id,
+        id: tableColumnInfo[6].id,
         sort: 'metadata.creationTimestamp',
         props: {
           modifier: 'nowrap' as const,
         },
       },
-      { type: 'actions' as const, id: tableColumnInfo[6].id },
+      { type: 'actions' as const, id: tableColumnInfo[7].id },
     ],
     [t],
   );
