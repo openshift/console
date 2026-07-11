@@ -21,11 +21,11 @@ describe('usePoll', () => {
     renderHook(() => usePoll(callback, 5000));
 
     act(() => {
-      jest.advanceTimersByTime(20000);
+      jest.advanceTimersByTime(15000);
     });
 
-    // 1 immediate + ticks at varying intervals due to jitter (5000-6000ms range)
-    expect(callback.mock.calls.length).toBeGreaterThanOrEqual(4);
+    // 1 immediate + 3 interval ticks at 5000ms
+    expect(callback).toHaveBeenCalledTimes(4);
   });
 
   it('should not start interval when delay is 0', () => {
