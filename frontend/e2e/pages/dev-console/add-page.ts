@@ -45,7 +45,9 @@ export class AddPage extends BasePage {
   }
 
   async clickShowGettingStartedResources(): Promise<void> {
-    const link = this.page.getByRole('button', { name: /show getting started resources/i });
+    const link = this.page.getByTestId('restore-getting-started');
+    // eslint-disable-next-line no-restricted-syntax
+    await link.waitFor({ state: 'visible', timeout: 30_000 });
     await this.robustClick(link);
   }
 
@@ -115,8 +117,8 @@ export class ImportFromGitPage extends BasePage {
   private readonly gitRepoUrlInput: Locator = this.page.getByRole('textbox', {
     name: 'Git Repo URL',
   });
-  private readonly appNameInput: Locator = this.page.getByTestId('application-form-app-input');
-  private readonly nameInput: Locator = this.page.getByTestId('application-form-app-name');
+  private readonly appNameInput: Locator = this.page.locator('[data-test-id="application-form-app-input"]');
+  private readonly nameInput: Locator = this.page.locator('[data-test-id="application-form-app-name"]');
   private readonly createButton: Locator = this.page.getByRole('button', { name: 'Create', exact: true });
   private readonly cancelButton: Locator = this.page.getByRole('button', { name: 'Cancel', exact: true });
 
@@ -151,8 +153,13 @@ export class ImportFromGitPage extends BasePage {
   }
 
   async selectResourceType(type: string): Promise<void> {
-    const radio = this.page.getByRole('radio', { name: new RegExp(type, 'i') });
-    await this.robustClick(radio);
+    // Resource type changed from radio buttons to SingleDropdownField in OCP 5.0
+    const toggle = this.page.locator('#form-select-input-resources-field');
+    // eslint-disable-next-line no-restricted-syntax
+    await toggle.waitFor({ state: 'visible', timeout: 30_000 });
+    await this.robustClick(toggle);
+    const option = this.page.getByRole('option', { name: type, exact: true });
+    await option.click();
   }
 
   async clickCreate(): Promise<void> {
@@ -238,8 +245,8 @@ export class ImportFromGitPage extends BasePage {
 
 export class DeployImagePage extends BasePage {
   private readonly imageNameInput: Locator = this.page.getByRole('textbox', { name: 'Image name' });
-  private readonly nameInput: Locator = this.page.getByTestId('application-form-app-name');
-  private readonly appNameInput: Locator = this.page.getByTestId('application-form-app-input');
+  private readonly nameInput: Locator = this.page.locator('[data-test-id="application-form-app-name"]');
+  private readonly appNameInput: Locator = this.page.locator('[data-test-id="application-form-app-input"]');
   private readonly createButton: Locator = this.page.getByRole('button', { name: 'Create', exact: true });
   private readonly cancelButton: Locator = this.page.getByRole('button', { name: 'Cancel', exact: true });
   private readonly saveButton: Locator = this.page.getByRole('button', { name: 'Create', exact: true });
@@ -313,8 +320,13 @@ export class DeployImagePage extends BasePage {
   }
 
   async selectResourceType(type: string): Promise<void> {
-    const radio = this.page.getByRole('radio', { name: new RegExp(type, 'i') });
-    await this.robustClick(radio);
+    // Resource type changed from radio buttons to SingleDropdownField in OCP 5.0
+    const toggle = this.page.locator('#form-select-input-resources-field');
+    // eslint-disable-next-line no-restricted-syntax
+    await toggle.waitFor({ state: 'visible', timeout: 30_000 });
+    await this.robustClick(toggle);
+    const option = this.page.getByRole('option', { name: type, exact: true });
+    await option.click();
   }
 
   async clickCreate(): Promise<void> {

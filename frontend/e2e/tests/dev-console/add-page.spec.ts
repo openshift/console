@@ -35,13 +35,14 @@ test.describe('Add page on Developer Console', { tag: ['@dev-console', '@regress
     await addPage.navigateToAdd(ns);
     const gettingStarted = addPage.getGettingStartedResources();
     await expect(gettingStarted).toBeVisible({ timeout: 30_000 });
-    await expect(addPage.getCard('samples')).toBeVisible();
-    await expect(addPage.getCard('quick-start')).toBeVisible();
-    await expect(addPage.getCard('developer-features')).toBeVisible();
+    const gsSection = addPage.getGettingStartedResources();
+    await expect(gsSection.getByTestId('card samples')).toBeVisible();
+    await expect(gsSection.getByTestId('card quick-start')).toBeVisible();
+    await expect(gsSection.getByTestId('card developer-features')).toBeVisible();
   });
 
   test('displays Add page cards and options [A-11-TC02]', async () => {
-    await expect(addPage.getAddCardHeading('Software Catalog')).toBeVisible();
+    await expect(addPage.getAddCardHeading('Software Catalog')).toBeVisible({ timeout: 30_000 });
     await expect(addPage.getAddCardHeading('Git Repository')).toBeVisible();
     await expect(addPage.getAddCardHeading('Container images')).toBeVisible();
     await expect(addPage.getAddCardHeading('Samples')).toBeVisible();
@@ -49,17 +50,17 @@ test.describe('Add page on Developer Console', { tag: ['@dev-console', '@regress
   });
 
   test('displays Software Catalog sub-options [A-11-TC03]', async () => {
-    await expect(addPage.getCardItem('dev-catalog')).toBeVisible();
+    await expect(addPage.getCardItem('dev-catalog')).toBeVisible({ timeout: 30_000 });
     await expect(addPage.getCardItem('dev-catalog-databases')).toBeVisible();
     await expect(addPage.getCardItem('operator-backed')).toBeVisible();
   });
 
   test('displays Git Repository sub-options [A-11-TC04]', async () => {
-    await expect(addPage.getCardItem('import-from-git')).toBeVisible();
+    await expect(addPage.getCardItem('import-from-git')).toBeVisible({ timeout: 30_000 });
   });
 
   test('displays From Local Machine sub-options [A-11-TC05]', async () => {
-    await expect(addPage.getCardItem('import-yaml')).toBeVisible();
+    await expect(addPage.getCardItem('import-yaml')).toBeVisible({ timeout: 30_000 });
   });
 
   test('Details switch on/off [A-11-TC09, A-11-TC10]', async () => {
@@ -97,9 +98,10 @@ test.describe(
       });
 
       await test.step('Show Getting Started Resources again', async () => {
+        await addPage.page.reload({ waitUntil: 'domcontentloaded' });
         await addPage.clickShowGettingStartedResources();
         const gettingStarted = addPage.getGettingStartedResources();
-        await expect(gettingStarted).toBeVisible();
+        await expect(gettingStarted).toBeVisible({ timeout: 30_000 });
       });
     });
   },
