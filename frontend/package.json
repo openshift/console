@@ -183,7 +183,7 @@
     "immutable": "^3.8.3",
     "istextorbinary": "^9.5.0",
     "js-base64": "^2.5.1",
-    "js-yaml": "^3.13.1",
+    "js-yaml": "^3.15.0",
     "json-schema": "^0.3.0",
     "lodash-es": "^4.17.23",
     "monaco-languageclient": "^0.13.0",
@@ -360,7 +360,8 @@
     "glob-parent": "^5.1.2",
     "postcss": "^8.2.13",
     "axios": "^0.31.1",
-    "immutable": "3.8.3"
+    "immutable": "3.8.3",
+    "js-yaml": "^3.15.0"
   },
   "husky": {
     "hooks": {
