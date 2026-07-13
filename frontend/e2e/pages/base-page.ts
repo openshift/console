@@ -23,8 +23,8 @@ export async function setEditorContent(page: Page, content: string): Promise<voi
 }
 
 export async function warmupSPA(page: Page): Promise<void> {
-  await page.goto('/');
-  await expect(page.getByTestId('page-heading')).toBeVisible();
+  await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 60_000 });
+  await expect(page.getByTestId('page-heading')).toBeVisible({ timeout: 30_000 });
 }
 
 export default abstract class BasePage {
