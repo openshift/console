@@ -209,8 +209,13 @@ export const getWebpackPackage: GetPackageDefinition = (
       ...parseDepsAs(rootPackage, { 'lodash-es': 'lodash' }, missingDepCallback),
     },
     peerDependencies: {
+      '@rspack/core': `>=${getMinDepVersion(rootPackage, '@rspack/core', missingDepCallback)}`,
       typescript: `>=${getMinDepVersion(rootPackage, 'typescript', missingDepCallback)}`,
       webpack: `>=${getMinDepVersion(rootPackage, 'webpack', missingDepCallback)}`,
+    },
+    peerDependenciesMeta: {
+      '@rspack/core': { optional: true },
+      webpack: { optional: true },
     },
   },
   filesToCopy: {

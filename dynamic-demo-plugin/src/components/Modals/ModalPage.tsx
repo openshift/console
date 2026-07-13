@@ -18,8 +18,9 @@ import {
   useModal,
   useOverlay,
 } from '@openshift-console/dynamic-plugin-sdk';
-import './modal.scss';
 import { useTranslation } from 'react-i18next';
+
+import './modal.css';
 
 export const scResource = {
   kind: 'StorageClass',
