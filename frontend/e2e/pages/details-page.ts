@@ -33,6 +33,10 @@ export class DetailsPage extends BasePage {
     return this.page.getByTestId(`horizontal-link-${name}`);
   }
 
+  async navigateToDetailsPage(url: string): Promise<void> {
+    await this.goTo(url);
+  }
+
   async clickPageAction(actionName: string): Promise<void> {
     await this.robustClick(this.page.getByTestId('actions-menu-button'));
     await this.robustClick(this.page.getByTestId(actionName));

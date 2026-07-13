@@ -12,6 +12,10 @@ export class SearchPage extends BasePage {
     await this.goTo(`/search/ns/${namespace}`);
   }
 
+  async navigateToTopology(namespace: string): Promise<void> {
+    await this.goTo(`/topology/ns/${namespace}`);
+  }
+
   async searchAndSelectResource(resourceName: string): Promise<void> {
     await this.resourceFilterInput.click();
     await this.resourceFilterInput.fill(resourceName);

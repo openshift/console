@@ -97,7 +97,7 @@ test.describe('Route', { tag: ['@dev-console'] }, () => {
     });
 
     await test.step('Navigate to route details and verify', async () => {
-      await detailsPage.goTo(`/k8s/ns/${ns}/routes/${routeName}`);
+      await detailsPage.navigateToDetailsPage(`/k8s/ns/${ns}/routes/${routeName}`);
       await expect(detailsPage.getHeadingByName(routeName)).toBeVisible({ timeout: 30_000 });
     });
   });
@@ -117,7 +117,7 @@ test.describe('Route', { tag: ['@dev-console'] }, () => {
     });
 
     await test.step('Navigate to route details and delete', async () => {
-      await detailsPage.goTo(`/k8s/ns/${ns}/routes/${routeName}`);
+      await detailsPage.navigateToDetailsPage(`/k8s/ns/${ns}/routes/${routeName}`);
       await expect(detailsPage.getHeadingByName(routeName)).toBeVisible({ timeout: 30_000 });
       await detailsPage.clickActionsMenuAction('Delete Route');
     });

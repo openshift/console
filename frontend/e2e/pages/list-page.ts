@@ -34,6 +34,10 @@ export class ListPage extends BasePage {
     return this.singleFilterGroup.locator('.pf-v6-c-menu-toggle');
   }
 
+  async navigateToListPage(url: string): Promise<void> {
+    await this.goTo(url);
+  }
+
   cell(resourceName: string, cellName = 'name'): Locator {
     return this.page.getByTestId(`data-view-cell-${resourceName}-${cellName}`);
   }
