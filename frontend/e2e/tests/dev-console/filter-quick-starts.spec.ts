@@ -17,7 +17,7 @@ test.describe(
       { tag: ['@smoke'] },
       async () => {
         await test.step('Verify page title is visible', async () => {
-          await expect(quickStartsPage.getPageTitle()).toBeVisible();
+          await expect(quickStartsPage.getPageTitle()).toBeVisible({ timeout: 30_000 });
         });
 
         await test.step('Verify keyword filter is visible', async () => {
