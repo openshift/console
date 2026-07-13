@@ -6,7 +6,7 @@ export class SearchPage extends BasePage {
   private readonly resourceFilterInput = this.page.getByRole('combobox', {
     name: 'Type to filter',
   });
-  private readonly resourceDropdownList = this.page.locator('[id="resource-dropdown-listbox"]');
+  private readonly resourceDropdownList = this.page.locator('#resource-dropdown-listbox');
 
   async navigateToSearch(namespace: string): Promise<void> {
     await this.goTo(`/search/ns/${namespace}`);

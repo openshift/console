@@ -8,7 +8,7 @@ test.describe('Project creation', { tag: ['@dev-console', '@smoke'] }, () => {
     cleanup.trackNamespace(projectName);
 
     await test.step('Navigate to pods list and open dropdown', async () => {
-      await page.goto('/k8s/all-namespaces/pods');
+      await listPage.navigateToPodsList();
       await expect(listPage.getNamespaceDropdown()).toBeVisible({ timeout: 30_000 });
       await listPage.getNamespaceDropdown().getByRole('button').click();
     });

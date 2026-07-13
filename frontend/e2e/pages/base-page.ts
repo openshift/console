@@ -155,6 +155,7 @@ export default abstract class BasePage {
       await formRadio.click();
     }
     if (formFieldLocator) {
+      // Wait for form to render after switching to form view (not acting on it, just ensuring visibility)
       // eslint-disable-next-line no-restricted-syntax
       await formFieldLocator.waitFor({ state: 'visible', timeout: 30_000 });
     }

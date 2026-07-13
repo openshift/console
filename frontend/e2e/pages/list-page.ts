@@ -197,6 +197,10 @@ export class ListPage extends BasePage {
     await this.robustClick(item);
   }
 
+  async navigateToPodsList(): Promise<void> {
+    await this.goTo('/k8s/all-namespaces/pods');
+  }
+
   async createProject(projectName: string): Promise<void> {
     await this.robustClick(this.page.getByRole('button', { name: 'Create Project' }));
     await expect(this.page.locator('h1', { hasText: 'Create Project' })).toBeVisible({

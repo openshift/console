@@ -74,7 +74,7 @@ export class DetailsPage extends BasePage {
   }
 
   getHeadingByName(name: string): Locator {
-    return this.page.locator('h1', { hasText: name });
+    return this.page.getByRole('heading', { name, level: 1 });
   }
 
   async clickActionsMenuAction(actionName: string): Promise<void> {

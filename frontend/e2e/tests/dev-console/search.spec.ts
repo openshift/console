@@ -17,7 +17,7 @@ test.describe('Search page - Recently used', { tag: ['@dev-console', '@smoke'] }
       await searchPage.switchPerspective('Developer');
       await searchPage.navigateToSearch(ns);
       await searchPage.searchAndSelectResource('AlertingRule');
-      await page.goto(`/topology/ns/${ns}`);
+      await searchPage.goTo(`/topology/ns/${ns}`);
     });
 
     await test.step('Verify AlertingRule in recently used', async () => {
@@ -49,7 +49,7 @@ test.describe('Search page - Recently used', { tag: ['@dev-console', '@smoke'] }
       for (const resource of resources) {
         await searchPage.navigateToSearch(ns);
         await searchPage.searchAndSelectResource(resource);
-        await page.goto(`/topology/ns/${ns}`);
+        await searchPage.goTo(`/topology/ns/${ns}`);
       }
     });
 
@@ -76,7 +76,7 @@ test.describe('Search page - Recently used', { tag: ['@dev-console', '@smoke'] }
       await searchPage.switchPerspective('Developer');
       await searchPage.navigateToSearch(ns);
       await searchPage.searchAndSelectResource('AlertingRule');
-      await page.goto(`/topology/ns/${ns}`);
+      await searchPage.goTo(`/topology/ns/${ns}`);
       await searchPage.navigateToSearch(ns);
       await searchPage.openResourcesFilter();
       await searchPage.clearHistory();

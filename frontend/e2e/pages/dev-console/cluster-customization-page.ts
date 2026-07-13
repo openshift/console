@@ -23,4 +23,16 @@ export class ClusterCustomizationPage extends BasePage {
   getTab(name: string): Locator {
     return this.page.getByRole('tab', { name });
   }
+
+  getPrePinnedSection(): Locator {
+    return this.page.getByText('Pre-pinned navigation items');
+  }
+
+  getAvailableResources(): Locator {
+    return this.page.getByText('Available Resources');
+  }
+
+  getPinnedResources(): Locator {
+    return this.page.getByText('Pinned Resources', { exact: true });
+  }
 }

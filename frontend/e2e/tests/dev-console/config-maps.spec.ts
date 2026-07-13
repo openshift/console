@@ -27,7 +27,7 @@ test.describe('ConfigMap form view', { tag: ['@dev-console', '@smoke'] }, () => 
     });
   });
 
-  test('edits a ConfigMap using form view', async ({ page, k8sClient, cleanup }) => {
+  test('edits a ConfigMap using form view', async ({ k8sClient, cleanup }) => {
     const ns = `aut-configmap-edit-${Date.now()}`;
     const configMapName = 'test-config-map';
     const configMapPage = new ConfigMapPage(page);
@@ -41,7 +41,7 @@ test.describe('ConfigMap form view', { tag: ['@dev-console', '@smoke'] }, () => 
 
     await test.step('Navigate to edit form', async () => {
       await configMapPage.navigateToEditForm(ns, configMapName);
-      await expect(page.getByRole('heading', { name: 'Edit ConfigMap' })).toBeVisible({
+      await expect(configMapPage.getEditHeading()).toBeVisible({
         timeout: 30_000,
       });
     });
@@ -57,7 +57,7 @@ test.describe('ConfigMap form view', { tag: ['@dev-console', '@smoke'] }, () => 
     await test.step('Verify details page shows new key', async () => {
       await detailsPage.waitForPageLoad();
       await expect(detailsPage.title).toContainText(configMapName);
-      await expect(page.getByText('key-test1')).toBeVisible();
+      await expect(configMapPage.getKeyText('key-test1')).toBeVisible();
     });
   });
 });

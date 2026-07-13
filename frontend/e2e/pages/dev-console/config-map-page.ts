@@ -43,4 +43,12 @@ export class ConfigMapPage extends BasePage {
     await expect(this.saveButton).toBeEnabled();
     await this.robustClick(this.saveButton);
   }
+
+  getEditHeading(): Locator {
+    return this.page.getByRole('heading', { name: 'Edit ConfigMap' });
+  }
+
+  getKeyText(key: string): Locator {
+    return this.page.getByText(key);
+  }
 }

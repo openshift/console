@@ -76,8 +76,15 @@ async function createTestRoute(
 }
 
 test.describe('Route', { tag: ['@dev-console'] }, () => {
-  test.skip(true, 'R-01-TC01: Create route via form UI — deferred to a future batch');
-  test.skip(true, 'R-01-TC02: Edit route hostname — deferred to a future batch');
+  // eslint-disable-next-line playwright/expect-expect
+  test('R-01-TC01: Create route via form UI', async () => {
+    test.skip(true, 'Deferred to a future batch');
+  });
+
+  // eslint-disable-next-line playwright/expect-expect
+  test('R-01-TC02: Edit route hostname', async () => {
+    test.skip(true, 'Deferred to a future batch');
+  });
 
   test('verifies route details page', { tag: ['@smoke'] }, async ({ page, k8sClient, cleanup }) => {
     const ns = `aut-routes-details-${Date.now()}`;
@@ -90,7 +97,7 @@ test.describe('Route', { tag: ['@dev-console'] }, () => {
     });
 
     await test.step('Navigate to route details and verify', async () => {
-      await page.goto(`/k8s/ns/${ns}/routes/${routeName}`);
+      await detailsPage.goTo(`/k8s/ns/${ns}/routes/${routeName}`);
       await expect(detailsPage.getHeadingByName(routeName)).toBeVisible({ timeout: 30_000 });
     });
   });
@@ -110,7 +117,7 @@ test.describe('Route', { tag: ['@dev-console'] }, () => {
     });
 
     await test.step('Navigate to route details and delete', async () => {
-      await page.goto(`/k8s/ns/${ns}/routes/${routeName}`);
+      await detailsPage.goTo(`/k8s/ns/${ns}/routes/${routeName}`);
       await expect(detailsPage.getHeadingByName(routeName)).toBeVisible({ timeout: 30_000 });
       await detailsPage.clickActionsMenuAction('Delete Route');
     });
