@@ -80,7 +80,7 @@ test.describe(
         await addPage.clickImportFromGit();
       });
 
-      await test.step('Fill form with Dockerfile and target port', async () => {
+      await test.step('Fill form with Dockerfile (port 5000 auto-detected from EXPOSE)', async () => {
         await gitPage.enterGitRepoURL(
           'https://github.com/rohitkrai03/flask-dockerfile-example',
         );
