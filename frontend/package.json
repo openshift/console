@@ -351,6 +351,7 @@
     "node": ">=18.x"
   },
   "resolutions": {
+    "follow-redirects": "^1.16.0",
     "@types/react-router": "^5.1.20",
     "@types/react-router-dom": "5.3.x",
     "@types/lodash": "4.14.106",
