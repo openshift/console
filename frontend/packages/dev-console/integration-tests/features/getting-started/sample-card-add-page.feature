@@ -27,7 +27,7 @@ Feature: Create Sample Application
         Examples:
                   | card_name | form_header               | workload_name |
                   | Httpd     | Create Sample application | httpd-sample  |
-                  # | Basic Go  | Import from Git           | go-basic      | - OCPBUGS-77952 - flaky test
+                  | Basic Go  | Import from Git           | go-basic      |
 
         @regression
         Scenario: Review Sample Appliation form: GS-03-TC02
