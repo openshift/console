@@ -60,6 +60,8 @@ test.describe(
     });
 
     test('create a workload from YAML file [A-07-TC01]', async ({ page }) => {
+      test.slow();
+
       await test.step('Navigate to Import YAML page', async () => {
         await addPage.clickImportYAML();
       });

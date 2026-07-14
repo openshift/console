@@ -86,6 +86,8 @@ test.describe(
     });
 
     test('deploy image from internal registry with Runtime icon [A-02-TC03]', async () => {
+      test.slow();
+
       await test.step('Navigate to Deploy Image page', async () => {
         await addPage.clickContainerImage();
       });

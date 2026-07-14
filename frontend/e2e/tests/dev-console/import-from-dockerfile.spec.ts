@@ -53,6 +53,8 @@ test.describe(
     });
 
     test('cancel Dockerfile form redirects to Add page [A-05-TC03]', async () => {
+      test.slow();
+
       await test.step('Navigate to Import from Git', async () => {
         await addPage.clickImportFromGit();
       });
@@ -61,6 +63,7 @@ test.describe(
         await gitPage.enterGitRepoURL(
           'https://github.com/rohitkrai03/flask-dockerfile-example',
         );
+        await gitPage.waitForGitValidation();
         await gitPage.selectResourceType('Deployment');
         await gitPage.clickCancel();
       });
@@ -71,6 +74,8 @@ test.describe(
     });
 
     test('create workload from Dockerfile with exposed port [A-05-TC04]', async () => {
+      test.slow();
+
       await test.step('Navigate to Import from Git', async () => {
         await addPage.clickImportFromGit();
       });

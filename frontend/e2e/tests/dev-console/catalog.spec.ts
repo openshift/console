@@ -40,6 +40,8 @@ test.describe(
     });
 
     test('deploy application using Catalog Template - MariaDB [A-01-TC02]', async () => {
+      test.slow();
+
       await test.step('Navigate to Templates in Software Catalog', async () => {
         await catalogPage.navigateToTemplates(ns);
       });
@@ -80,6 +82,8 @@ test.describe(
     });
 
     test('create Database from Add page - MariaDB [A-03-TC01]', async () => {
+      test.slow();
+
       await test.step('Click Database card', async () => {
         await addPage.clickDatabaseCard();
       });

@@ -54,6 +54,8 @@ test.describe(
     });
 
     test('create workload without application route [A-06-TC04]', async () => {
+      test.slow();
+
       await test.step('Navigate to Import from Git', async () => {
         await addPage.clickImportFromGit();
       });

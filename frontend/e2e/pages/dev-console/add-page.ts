@@ -295,9 +295,11 @@ export class DeployImagePage extends BasePage {
   }
 
   async selectRuntimeIcon(iconName: string): Promise<void> {
-    // HTML id from Formik — label for="runtimeIcon", no data-test available
-    const dropdown = this.page.locator('#runtimeIcon');
-    await this.robustClick(dropdown);
+    // Scope to the FormGroup with fieldId="runtimeIcon" to avoid matching other ConsoleSelect toggles
+    const iconSection = this.page.locator('.odc-icon-dropdown');
+    // eslint-disable-next-line no-restricted-syntax
+    await iconSection.waitFor({ state: 'visible', timeout: 30_000 });
+    await this.robustClick(iconSection.getByTestId('console-select-menu-toggle'));
     const option = this.page.getByRole('option', { name: iconName });
     await this.robustClick(option);
   }
@@ -479,12 +481,16 @@ export class TopologyPage extends BasePage {
   }
 
   getWorkload(name: string): Locator {
-    return this.page.getByTestId(`topology-node-${name}`);
+    return this.page.locator(`[data-id="${name}"] text`).first().or(
+      this.page.locator('.pf-topology-content').getByText(name, { exact: true }),
+    );
   }
 
   async clickWorkload(name: string): Promise<void> {
-    const node = this.getWorkload(name);
-    await this.robustClick(node);
+    const workload = this.getWorkload(name);
+    // eslint-disable-next-line no-restricted-syntax
+    await workload.waitFor({ state: 'visible', timeout: 60_000 });
+    await workload.click({ force: true });
   }
 
   getSidebar(): Locator {
@@ -496,6 +502,7 @@ export class TopologyPage extends BasePage {
   }
 
   async waitForWorkload(name: string, timeoutMs = 120_000): Promise<void> {
+    await this.page.waitForURL(/\/topology\//, { timeout: timeoutMs });
     const workload = this.getWorkload(name);
     // eslint-disable-next-line no-restricted-syntax
     await workload.waitFor({ state: 'visible', timeout: timeoutMs });

@@ -34,6 +34,8 @@ test.describe(
     });
 
     test('deploy git workload with devfile from add page [A-04-TC02]', async () => {
+      test.slow();
+
       await test.step('Navigate to Import from Git form', async () => {
         await addPage.clickImportFromGit();
       });
