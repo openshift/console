@@ -64,12 +64,16 @@ test.describe('Add page on Developer Console', { tag: ['@dev-console', '@regress
   });
 
   test('Details switch on/off [A-11-TC09, A-11-TC10]', async () => {
+    const switchInput = addPage.getDetailsSwitch().locator('input');
+
     await test.step('Toggle details off', async () => {
       await addPage.clickDetailsSwitch();
+      await expect(switchInput).not.toBeChecked();
     });
 
     await test.step('Toggle details on again', async () => {
       await addPage.clickDetailsSwitch();
+      await expect(switchInput).toBeChecked();
     });
   });
 });

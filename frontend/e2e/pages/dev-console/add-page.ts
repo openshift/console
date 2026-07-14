@@ -159,7 +159,7 @@ export class ImportFromGitPage extends BasePage {
     await toggle.waitFor({ state: 'visible', timeout: 30_000 });
     await this.robustClick(toggle);
     const option = this.page.getByRole('option', { name: type, exact: true });
-    await option.click();
+    await this.robustClick(option);
   }
 
   async clickCreate(): Promise<void> {
@@ -328,7 +328,7 @@ export class DeployImagePage extends BasePage {
     await toggle.waitFor({ state: 'visible', timeout: 30_000 });
     await this.robustClick(toggle);
     const option = this.page.getByRole('option', { name: type, exact: true });
-    await option.click();
+    await this.robustClick(option);
   }
 
   async clickCreate(): Promise<void> {
@@ -490,7 +490,9 @@ export class TopologyPage extends BasePage {
     const workload = this.getWorkload(name);
     // eslint-disable-next-line no-restricted-syntax
     await workload.waitFor({ state: 'visible', timeout: 60_000 });
-    await workload.click({ force: true });
+    // Dismiss any open sidebar that may intercept clicks on topology nodes
+    await this.page.keyboard.press('Escape');
+    await this.robustClick(workload);
   }
 
   getSidebar(): Locator {
