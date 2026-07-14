@@ -40,8 +40,12 @@ var (
 const (
 	configNamespace = "openshift-config"
 	warning         = "console-warning"
-	ErrorMessage    = "The following repositories seem to be invalid or unreachable: "
 )
+
+type InvalidRepo struct {
+	Name  string `json:"name"`
+	Error string `json:"error"`
+}
 
 type helmRepo struct {
 	Name       string
@@ -113,7 +117,7 @@ func (hr helmRepo) IndexFile() (*repo.IndexFile, error) {
 }
 
 type HelmRepoGetter interface {
-	List(namespace string) ([]*helmRepo, error)
+	List(namespace string) ([]*helmRepo, []InvalidRepo, error)
 }
 
 type helmRepoGetter struct {
@@ -257,18 +261,21 @@ func (b helmRepoGetter) unmarshallConfig(repo unstructured.Unstructured, namespa
 	return h, nil
 }
 
-func (b *helmRepoGetter) List(namespace string) ([]*helmRepo, error) {
+func (b *helmRepoGetter) List(namespace string) ([]*helmRepo, []InvalidRepo, error) {
 	var helmRepos []*helmRepo
+	var configErrors []InvalidRepo
 
 	clusterRepos, err := b.Client.Resource(helmChartRepositoryClusterGVK).List(context.TODO(), v1.ListOptions{})
 	if err != nil {
 		klog.Errorf("Error listing cluster helm chart repositories: %v \nempty repository list will be used", err)
-		return helmRepos, nil
+		return helmRepos, configErrors, nil
 	}
 	for _, item := range clusterRepos.Items {
 		helmConfig, err := b.unmarshallConfig(item, "", true)
 		if err != nil {
+			repoName, _, _ := unstructured.NestedString(item.Object, "metadata", "name")
 			klog.Errorf("Error unmarshalling repo %v: %v", item, err)
+			configErrors = append(configErrors, InvalidRepo{Name: repoName, Error: err.Error()})
 			continue
 		}
 		helmRepos = append(helmRepos, helmConfig)
@@ -278,19 +285,21 @@ func (b *helmRepoGetter) List(namespace string) ([]*helmRepo, error) {
 		namespaceRepos, err := b.Client.Resource(helmChartRepositoryNamespaceGVK).Namespace(namespace).List(context.TODO(), v1.ListOptions{})
 		if err != nil {
 			klog.Errorf("Error listing namespace helm chart repositories: %v \nempty repository list will be used", err)
-			return helmRepos, nil
+			return helmRepos, configErrors, nil
 		}
 		for _, item := range namespaceRepos.Items {
 			helmConfig, err := b.unmarshallConfig(item, namespace, false)
 			if err != nil {
+				repoName, _, _ := unstructured.NestedString(item.Object, "metadata", "name")
 				klog.Errorf("Error unmarshalling repo %v: %v", item, err)
+				configErrors = append(configErrors, InvalidRepo{Name: repoName, Error: err.Error()})
 				continue
 			}
 			helmRepos = append(helmRepos, helmConfig)
 		}
 	}
 
-	return helmRepos, nil
+	return helmRepos, configErrors, nil
 }
 
 func NewRepoGetter(client dynamic.Interface, corev1Client corev1.CoreV1Interface) HelmRepoGetter {

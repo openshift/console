@@ -61,16 +61,26 @@ const useHelmCharts: ExtensionHook<CatalogItem[]> = ({
             annotations?: Record<string, string>;
           };
           setHelmCharts(json.entries);
-          const warning = json.annotations?.['console-warning'];
-          if (warning && warning !== shownWarningRef.current) {
-            shownWarningRef.current = warning;
-            toast.addToast({
-              variant: AlertVariant.warning,
-              title: t('Helm Chart repository error'),
-              content: warning,
-              dismissible: true,
-              timeout: true,
-            });
+          const warningData = json.annotations?.['console-warning'];
+          if (warningData && warningData !== shownWarningRef.current) {
+            shownWarningRef.current = warningData;
+            try {
+              const repos: { name: string; error: string }[] = JSON.parse(warningData);
+              const repoList = repos
+                .map((r) => t('{{name}}: {{error}}', { name: r.name, error: r.error }))
+                .join(', ');
+              toast.addToast({
+                variant: AlertVariant.danger,
+                title: t('Helm Chart repository error'),
+                content: t('The following repositories are unreachable: {{repoList}}', {
+                  repoList,
+                }),
+                dismissible: true,
+                timeout: true,
+              });
+            } catch {
+              // ignore malformed annotation
+            }
           }
         }
       })
