@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/tls"
 	"crypto/x509"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -84,8 +83,12 @@ func (hr helmRepo) IndexFile() (*repo.IndexFile, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
+	if resp.StatusCode == 401 || resp.StatusCode == 403 {
+		return nil, fmt.Errorf("authentication failed (HTTP %d)", resp.StatusCode)
+	}
 	if resp.StatusCode != 200 {
-		return nil, errors.New(fmt.Sprintf("Response for %v returned %v with status code %v", indexURL, resp, resp.StatusCode))
+		return nil, fmt.Errorf("failed to fetch index (HTTP %d)", resp.StatusCode)
 	}
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {

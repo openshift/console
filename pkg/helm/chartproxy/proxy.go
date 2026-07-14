@@ -88,7 +88,7 @@ func (p *proxy) IndexFile(onlyCompatible bool, namespace string) (*repo.IndexFil
 		if !helmRepo.Disabled {
 			idxFile, err := helmRepo.IndexFile()
 			if err != nil {
-				invalidRepos = append(invalidRepos, helmRepo.Name)
+				invalidRepos = append(invalidRepos, helmRepo.Name+" ("+err.Error()+")")
 				klog.Errorf("Error retrieving index file for %v: %v", helmRepo, err)
 				continue
 			}

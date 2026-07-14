@@ -1,10 +1,12 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
+import { AlertVariant } from '@patternfly/react-core';
 import { safeLoad } from 'js-yaml';
 import { useTranslation } from 'react-i18next';
 import type { ExtensionHook, CatalogItem, WatchK8sResults } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { useToast } from '@console/shared/src/components/toast/useToast';
 import type { APIError } from '@console/shared/src/types/resource';
 import { coFetch } from '@console/shared/src/utils/console-fetch';
 import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../models/helm';
@@ -19,8 +21,10 @@ const useHelmCharts: ExtensionHook<CatalogItem[]> = ({
   namespace,
 }): [CatalogItem[], boolean, any] => {
   const { t } = useTranslation('helm-plugin');
+  const toast = useToast();
   const [helmCharts, setHelmCharts] = useState<HelmChartEntries>();
   const [loadedError, setLoadedError] = useState<APIError>();
+  const shownWarningRef = useRef<string>();
 
   const resourceSelector = useMemo(
     () => ({
@@ -52,8 +56,22 @@ const useHelmCharts: ExtensionHook<CatalogItem[]> = ({
       .then(async (res) => {
         if (mounted) {
           const yaml = await res.text();
-          const json = safeLoad(yaml) as { entries: HelmChartEntries };
+          const json = safeLoad(yaml) as {
+            entries: HelmChartEntries;
+            annotations?: Record<string, string>;
+          };
           setHelmCharts(json.entries);
+          const warning = json.annotations?.['console-warning'];
+          if (warning && warning !== shownWarningRef.current) {
+            shownWarningRef.current = warning;
+            toast.addToast({
+              variant: AlertVariant.warning,
+              title: t('Helm Chart repository error'),
+              content: warning,
+              dismissible: true,
+              timeout: true,
+            });
+          }
         }
       })
       .catch((err) => {
@@ -65,7 +83,7 @@ const useHelmCharts: ExtensionHook<CatalogItem[]> = ({
     return () => {
       mounted = false;
     };
-  }, [namespaceParam]);
+  }, [namespaceParam, toast, t]);
 
   const normalizedHelmCharts: CatalogItem[] = useMemo(
     () =>
