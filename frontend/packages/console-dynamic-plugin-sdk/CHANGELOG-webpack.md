@@ -10,6 +10,10 @@ For current development version of Console, use `4.x.0-prerelease.n` packages.
 For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility
 table in [Console dynamic plugins README](./README.md).
 
+## 4.23.0-prerelease.4 - 2026-07-14
+
+- Add support for building with `rspack`. Both `webpack` and `rspack` are optional peer dependencies, but one of them must be installed ([CONSOLE-5423], [#16752])
+
 ## 4.23.0-prerelease.3 - 2026-07-07
 
 - `ConsoleRemotePlugin` shared dynamic module option `skipImportPrefixes` allows extending the default PatternFly module skip list to suppress build warnings ([OCPBUGS-88319], [#16585])
@@ -139,6 +143,7 @@ table in [Console dynamic plugins README](./README.md).
 [CONSOLE-5050]: https://issues.redhat.com/browse/CONSOLE-5050
 [CONSOLE-5065]: https://issues.redhat.com/browse/CONSOLE-5065
 [CONSOLE-5135]: https://issues.redhat.com/browse/CONSOLE-5135
+[CONSOLE-5423]: https://issues.redhat.com/browse/CONSOLE-5423
 [OCPBUGS-30762]: https://issues.redhat.com/browse/OCPBUGS-30762
 [OCPBUGS-30824]: https://issues.redhat.com/browse/OCPBUGS-30824
 [OCPBUGS-31901]: https://issues.redhat.com/browse/OCPBUGS-31901
@@ -182,3 +187,4 @@ table in [Console dynamic plugins README](./README.md).
 [#16340]: https://github.com/openshift/console/pull/16340
 [#16376]: https://github.com/openshift/console/pull/16376
 [#16585]: https://github.com/openshift/console/pull/16585
+[#16752]: https://github.com/openshift/console/pull/16752
