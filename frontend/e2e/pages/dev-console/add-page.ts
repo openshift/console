@@ -178,7 +178,7 @@ export class ImportFromGitPage extends BasePage {
   }
 
   async clickAdvancedOption(optionText: string): Promise<void> {
-    const link = this.page.getByRole('button', { name: new RegExp(optionText, 'i') });
+    const link = this.page.getByRole('button', { name: optionText });
     await this.robustClick(link);
   }
 
@@ -253,7 +253,7 @@ export class DeployImagePage extends BasePage {
 
   async navigateToDeployImage(namespace: string): Promise<void> {
     await this.goTo(`/deploy-image/ns/${namespace}`);
-    await expect(this.imageNameInput.or(this.page.getByTestId('internal-view-input'))).toBeVisible({ timeout: 60_000 });
+    await expect(this.imageNameInput.or(this.page.getByTestId('internal-view-input')).first()).toBeVisible({ timeout: 60_000 });
   }
 
   async enterExternalRegistryImage(imageName: string): Promise<void> {
