@@ -60,6 +60,17 @@ export class AdminEventingPage extends BasePage {
     await this.robustClick(this.page.getByTestId('save-changes'));
   }
 
+  async selectPingSourceAndCreate(): Promise<void> {
+    const pingSourceCard = this.page.getByTestId('EventSource-PingSource');
+    await pingSourceCard.click({ timeout: 30_000 });
+    const createBtn = this.page.locator('a[role="button"]').filter({ hasText: /Create/i });
+    await createBtn.click({ timeout: 10_000 });
+  }
+
+  async submitForm(): Promise<void> {
+    await this.robustClick(this.page.getByTestId('save-changes'));
+  }
+
   async createBroker(name: string): Promise<void> {
     await this.page.locator('#form-radiobutton-editorType-form-field').click();
     const nameField = this.page.locator(

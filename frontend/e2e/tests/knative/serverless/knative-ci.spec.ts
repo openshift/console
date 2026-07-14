@@ -75,7 +75,7 @@ test.describe(
 
       await test.step('Verify modal with save and cancel buttons', async () => {
         await expect(topologyPage.getModalTitle()).toContainText('Edit labels');
-        await expect(page.locator('[data-test="confirm-action"]')).toBeVisible();
+        await topologyPage.verifyConfirmActionVisible();
         await expect(topologyPage.getModalCancel()).toBeVisible();
         await topologyPage.getModalCancel().click();
       });
@@ -91,12 +91,10 @@ test.describe(
 
       await test.step('Verify modal content', async () => {
         await expect(topologyPage.getModalTitle()).toContainText('Edit annotations');
-        const nameFields = page.getByTestId('pairs-list-name');
-        const valueFields = page.getByTestId('pairs-list-value');
-        await expect(nameFields.first()).toBeVisible();
-        await expect(valueFields.first()).toBeVisible();
+        await expect(page.getByTestId('pairs-list-name').first()).toBeVisible();
+        await expect(page.getByTestId('pairs-list-value').first()).toBeVisible();
         await expect(page.getByTestId('add-button')).toBeVisible();
-        await expect(page.locator('[data-test="confirm-action"]')).toBeVisible();
+        await topologyPage.verifyConfirmActionVisible();
         await expect(topologyPage.getModalCancel()).toBeVisible();
         await topologyPage.getModalCancel().click();
       });
@@ -126,10 +124,7 @@ test.describe(
       });
 
       await test.step('Select Ping Source', async () => {
-        const pingSourceCard = page.getByTestId('EventSource-PingSource');
-        await pingSourceCard.click({ timeout: 30_000 });
-        const createBtn = page.locator('a[role="button"]').filter({ hasText: /Create/i });
-        await createBtn.click({ timeout: 10_000 });
+        await eventingPage.selectPingSourceAndCreate();
       });
 
       await test.step('Fill Ping Source form and submit', async () => {
@@ -140,7 +135,7 @@ test.describe(
           '* * * * *',
           `http://${SERVICE_NAME}.${namespace}.svc.cluster.local`,
         );
-        await page.getByTestId('save-changes').click();
+        await eventingPage.submitForm();
         await expect(page).toHaveURL(/topology/, { timeout: 30_000 });
       });
 
@@ -246,18 +241,7 @@ test.describe(
       });
 
       await test.step('Create new application group', async () => {
-        await expect(topologyPage.getModalTitle()).toContainText('Edit application grouping');
-        // If service has no app group, modal shows a text input directly (no dropdown)
-        const appDropdown = page.locator('#form-dropdown-application-name-field');
-        const appInput = page.getByTestId('application-form-app-input');
-        if ((await appDropdown.count()) > 0) {
-          await appDropdown.click();
-          await page.locator('[data-test="#CREATE_APPLICATION_KEY#"], [data-test-dropdown-menu="#CREATE_APPLICATION_KEY#"]').first().click();
-        }
-        await appInput.clear();
-        await appInput.fill('openshift-app');
-        await page.locator('button[type=submit]').click();
-        await expect(topologyPage.getModalCancel()).not.toBeAttached({ timeout: 10_000 });
+        await topologyPage.editApplicationGrouping('openshift-app');
       });
 
       await test.step('Verify service is in new application group', async () => {
@@ -322,12 +306,10 @@ test.describe(
         await expect(
           page.getByText('Set traffic distribution', { exact: true }),
         ).toBeVisible({ timeout: 30_000 });
-        await page.getByTestId('add-action').click();
-        await page.locator('[id$="percent-field"]').last().clear();
-        await page.locator('[id$="percent-field"]').last().fill('50');
-        await page.getByTestId('console-select-menu-toggle').nth(1).click();
-        await page.getByTestId('console-select-item').first().click();
-        await page.locator('button[type=submit]').click();
+        await topologyPage.addTrafficTarget();
+        await topologyPage.setTrafficPercent('last', '50');
+        await topologyPage.selectTrafficTargetRevision(1);
+        await topologyPage.submitTrafficDistribution();
         await topologyPage.verifyTrafficDistributionError('Traffic targets sum to 150, want 100');
       });
     });
@@ -343,14 +325,11 @@ test.describe(
         await expect(
           page.getByText('Set traffic distribution', { exact: true }),
         ).toBeVisible({ timeout: 30_000 });
-        await page.locator('[id$="percent-field"]').first().clear();
-        await page.locator('[id$="percent-field"]').first().fill('25');
-        await page.getByTestId('add-action').click();
-        await page.locator('[id$="percent-field"]').last().clear();
-        await page.locator('[id$="percent-field"]').last().fill('50');
-        await page.getByTestId('console-select-menu-toggle').nth(1).click();
-        await page.getByTestId('console-select-item').first().click();
-        await page.locator('button[type=submit]').click();
+        await topologyPage.setTrafficPercent('first', '25');
+        await topologyPage.addTrafficTarget();
+        await topologyPage.setTrafficPercent('last', '50');
+        await topologyPage.selectTrafficTargetRevision(1);
+        await topologyPage.submitTrafficDistribution();
         await topologyPage.verifyTrafficDistributionError('Traffic targets sum to 75, want 100');
       });
     });
@@ -368,8 +347,7 @@ test.describe(
 
       await test.step('Confirm deletion', async () => {
         await expect(topologyPage.getModalTitle()).toContainText('Delete');
-        await page.locator('button[type=submit]').click();
-        await expect(topologyPage.getModalCancel()).not.toBeAttached({ timeout: 10_000 });
+        await topologyPage.confirmModalSubmit();
       });
 
       await test.step('Verify broker removed', async () => {
@@ -390,8 +368,7 @@ test.describe(
 
       await test.step('Confirm deletion', async () => {
         await expect(topologyPage.getModalTitle()).toContainText('Delete');
-        await page.locator('button[type=submit]').click();
-        await expect(topologyPage.getModalCancel()).not.toBeAttached({ timeout: 10_000 });
+        await topologyPage.confirmModalSubmit();
       });
 
       await test.step('Verify channel removed', async () => {
@@ -412,8 +389,7 @@ test.describe(
 
       await test.step('Confirm deletion', async () => {
         await expect(topologyPage.getModalTitle()).toContainText('Delete');
-        await page.locator('button[type=submit]').click();
-        await expect(topologyPage.getModalCancel()).not.toBeAttached({ timeout: 10_000 });
+        await topologyPage.confirmModalSubmit();
       });
 
       await test.step('Verify event source removed', async () => {
@@ -431,8 +407,7 @@ test.describe(
 
       await test.step('Confirm deletion', async () => {
         await expect(topologyPage.getModalTitle()).toContainText('Delete Service?');
-        await page.locator('button[type=submit]').click();
-        await expect(topologyPage.getModalCancel()).not.toBeAttached();
+        await topologyPage.confirmModalSubmit();
       });
 
       await test.step('Verify service removed', async () => {
