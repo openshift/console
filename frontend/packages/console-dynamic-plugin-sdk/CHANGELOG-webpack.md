@@ -10,7 +10,7 @@ For current development version of Console, use `4.x.0-prerelease.n` packages.
 For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility
 table in [Console dynamic plugins README](./README.md).
 
-## 4.23.0-prerelease.4 - TBD
+## 4.23.0-prerelease.4 - 2026-07-14
 
 - Add support for building with `rspack`. Both `webpack` and `rspack` are optional peer dependencies, but one of them must be installed ([CONSOLE-5423], [#16752])
 
