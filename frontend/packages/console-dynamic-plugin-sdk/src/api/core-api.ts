@@ -998,7 +998,9 @@ export const useActivePerspective: UseActivePerspective = require('@console/dyna
 
 /**
  * Hook that provides toast functionality for displaying alerts.
- * @returns A toast context object with an `addToast` function for adding a toast to the screen and a `removeToast` function for removing a toast from the screen.
+ * @returns A toast context object with an `addToast` function for adding a toast to the screen, a
+ * `removeToast` function for removing a toast from the screen, and a `minimizeToast` function for
+ * hiding a drawer-persisted toast from the screen while keeping it unread in the notification drawer.
  * @example
  * ```tsx
  * const Component: React.FC = (props) => {

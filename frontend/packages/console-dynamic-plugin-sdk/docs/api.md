@@ -3210,7 +3210,7 @@ const Component: React.FC = (props) => {
 
 ### Returns
 
-A toast context object with an `addToast` function for adding a toast to the screen and a `removeToast` function for removing a toast from the screen.
+A toast context object with an `addToast` function for adding a toast to the screen, a<br/>`removeToast` function for removing a toast from the screen, and a `minimizeToast` function for<br/>hiding a drawer-persisted toast from the screen while keeping it unread in the notification drawer.
 
 
 ### Source
