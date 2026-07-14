@@ -28,6 +28,7 @@ export class BuildConfigPage extends BasePage {
     await this.robustClick(toggle);
   }
 
+  // May be removed once batch 1 (CONSOLE-5299) merges — BasePage adds ensureFormView()
   async ensureFormView(): Promise<void> {
     const syncedEditor = this.getSyncedEditor();
     // eslint-disable-next-line no-restricted-syntax

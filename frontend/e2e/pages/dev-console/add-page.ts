@@ -57,4 +57,7 @@ export class AddPage extends BasePage {
     await this.robustClick(this.getSampleCard(name));
   }
 
+  getPinnedResource(name: string): Locator {
+    return this.getPinnedResourceItems().getByRole('link', { name, exact: true });
+  }
 }

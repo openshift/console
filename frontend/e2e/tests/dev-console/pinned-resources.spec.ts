@@ -1,7 +1,6 @@
 import { test, expect } from '../../fixtures';
-import BasePage, { warmupSPA } from '../../pages/base-page';
-
-class PerspectiveHelper extends BasePage {}
+import { warmupSPA } from '../../pages/base-page';
+import { AddPage } from '../../pages/dev-console/add-page';
 
 test.describe(
   'Configure pinned resources',
@@ -13,19 +12,17 @@ test.describe(
       async ({ page }) => {
         await warmupSPA(page);
 
-        const helper = new PerspectiveHelper(page);
-        await helper.switchPerspective('Developer');
+        const addPage = new AddPage(page);
+        await addPage.switchPerspective('Developer');
 
         await test.step('Verify Secrets is pinned in navigation', async () => {
-          const pinnedItems = helper.getPinnedResourceItems();
-          await expect(pinnedItems.filter({ hasText: 'Secrets' })).toBeVisible({
+          await expect(addPage.getPinnedResource('Secrets')).toBeVisible({
             timeout: 30_000,
           });
         });
 
         await test.step('Verify ConfigMaps is pinned in navigation', async () => {
-          const pinnedItems = helper.getPinnedResourceItems();
-          await expect(pinnedItems.filter({ hasText: 'ConfigMaps' })).toBeVisible();
+          await expect(addPage.getPinnedResource('ConfigMaps')).toBeVisible();
         });
       },
     );

@@ -57,8 +57,7 @@ test.describe('User Preferences', { tag: ['@dev-console'] }, () => {
       });
 
       await test.step('Reload the console without perspective in URL', async () => {
-        await page.goto('/');
-        await page.waitForLoadState('domcontentloaded');
+        await warmupSPA(page);
       });
 
       await test.step('Verify Developer perspective is active', async () => {
@@ -87,8 +86,7 @@ test.describe('User Preferences', { tag: ['@dev-console'] }, () => {
       });
 
       await test.step('Navigate to topology page', async () => {
-        await page.goto(`/topology/ns/${ns}`);
-        await page.waitForLoadState('domcontentloaded');
+        await userPrefs.navigateToTopology(ns);
       });
 
       await test.step('Verify graph view is active', async () => {
@@ -120,8 +118,7 @@ test.describe('User Preferences', { tag: ['@dev-console'] }, () => {
       });
 
       await test.step('Navigate to a create form and verify YAML view', async () => {
-        await page.goto(`/k8s/ns/${ns}/buildconfigs/~new/form`);
-        await page.waitForLoadState('domcontentloaded');
+        await userPrefs.navigateToBuildConfigForm(ns);
         const syncedEditor = userPrefs.getSyncedEditor();
         await expect(syncedEditor).toBeVisible({ timeout: 30_000 });
         const yamlRadio = userPrefs.getEditorRadio('YAML view');
@@ -153,6 +150,8 @@ test.describe('User Preferences', { tag: ['@dev-console'] }, () => {
         await expect(dropdown).toContainText('DeploymentConfig');
       });
 
+      // Note: This test does not verify the preference takes effect in a create form.
+      // Full verification is deferred to a future batch for feature parity.
     },
   );
 });

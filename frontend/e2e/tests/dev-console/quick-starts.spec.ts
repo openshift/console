@@ -38,8 +38,7 @@ test.describe('Quick Starts - Developer Perspective', { tag: ['@dev-console'] },
       const quickStarts = new QuickStartsPage(page);
 
       await test.step('Navigate to quick starts catalog with quickstart query parameter', async () => {
-        await page.goto('/quickstart?quickstart=sample-application');
-        await page.waitForLoadState('domcontentloaded');
+        await quickStarts.navigateToQuickStart('sample-application');
       });
 
       await test.step('Verify the quick start sidebar/drawer opens', async () => {

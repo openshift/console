@@ -137,4 +137,31 @@ test.describe('Edit Build Config', { tag: ['@dev-console'] }, () => {
       });
     },
   );
+
+  // eslint-disable-next-line playwright/no-skipped-test, playwright/expect-expect
+  test.skip(
+    'EBC-01-TC04: Edit Env variables — placeholder',
+    { tag: ['@regression'] },
+    async () => {
+      // Deferred to a future batch
+    },
+  );
+
+  // eslint-disable-next-line playwright/no-skipped-test, playwright/expect-expect
+  test.skip(
+    'EBC-01-TC05: Edit git source — placeholder',
+    { tag: ['@regression'] },
+    async () => {
+      // Deferred to a future batch
+    },
+  );
+
+  // eslint-disable-next-line playwright/no-skipped-test, playwright/expect-expect
+  test.skip(
+    'EBC-01-TC06: Edit images — placeholder',
+    { tag: ['@regression'] },
+    async () => {
+      // Deferred to a future batch
+    },
+  );
 });

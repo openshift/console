@@ -29,7 +29,27 @@ export class UserPreferencesPage extends BasePage {
   }
 
   getTopologyCanvas(): Locator {
-    // data-test-id from @patternfly/react-topology VisualizationSurface
+    // Legacy data-test-id selector: PatternFly VisualizationSurface renders data-test-id, no data-test available
     return this.page.locator('[data-test-id="topology"]');
+  }
+
+  async navigateToTopology(namespace: string): Promise<void> {
+    await this.goTo(`/topology/ns/${namespace}`);
+  }
+
+  async navigateToBuildConfigForm(namespace: string): Promise<void> {
+    await this.goTo(`/k8s/ns/${namespace}/buildconfigs/~new/form`);
+  }
+
+  getPerspectiveSwitcherToggle(): Locator {
+    return this.page.getByTestId('perspective-switcher-toggle');
+  }
+
+  getSyncedEditor(): Locator {
+    return this.page.getByTestId('synced-editor-field');
+  }
+
+  getEditorRadio(name: string): Locator {
+    return this.getSyncedEditor().getByRole('radio', { name });
   }
 }

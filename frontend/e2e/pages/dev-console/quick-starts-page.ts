@@ -9,6 +9,10 @@ export class QuickStartsPage extends BasePage {
     await this.goTo('/quickstart');
   }
 
+  async navigateToQuickStart(name: string): Promise<void> {
+    await this.goTo(`/quickstart?quickstart=${name}`);
+  }
+
   async filterByKeyword(keyword: string): Promise<void> {
     await this.filterInput.fill(keyword);
   }

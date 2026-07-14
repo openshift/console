@@ -121,6 +121,27 @@ test.describe('Sample Application from Add page', { tag: ['@dev-console', '@gett
         const latestOption = addPage.getBuilderImageVersionItem('latest');
         await expect(latestOption).toBeVisible();
       });
+
+      // Note: This test does not submit the form or verify the application appears in topology.
+      // Full E2E flow verification is deferred to a future batch.
+    },
+  );
+
+  // eslint-disable-next-line playwright/no-skipped-test, playwright/expect-expect
+  test.skip(
+    'GS-03-TC04: Submit sample application form — placeholder',
+    { tag: ['@regression'] },
+    async () => {
+      // Deferred to a future batch
+    },
+  );
+
+  // eslint-disable-next-line playwright/no-skipped-test, playwright/expect-expect
+  test.skip(
+    'GS-03-TC05: Verify application in topology — placeholder',
+    { tag: ['@regression'] },
+    async () => {
+      // Deferred to a future batch
     },
   );
 });
