@@ -41,9 +41,8 @@ test.describe('ConfigMap form view', { tag: ['@dev-console', '@smoke'] }, () => 
       await k8sClient.createConfigMap(configMapName, ns, { 'test-key': 'test-value' });
     });
 
-    await test.step('Navigate via kebab menu to edit form', async () => {
-      await listPage.navigateToListPage(`/k8s/ns/${ns}/configmaps`);
-      await listPage.clickKebabAction(configMapName, 'Edit ConfigMap');
+    await test.step('Navigate to edit form', async () => {
+      await configMapPage.navigateToEditForm(ns, configMapName);
       await expect(configMapPage.getEditHeading()).toBeVisible({
         timeout: 30_000,
       });
