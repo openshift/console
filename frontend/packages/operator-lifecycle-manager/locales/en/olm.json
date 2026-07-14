@@ -389,7 +389,7 @@
   "OpenShift lifecycle ({{version}})": "OpenShift lifecycle ({{version}})",
   "Red Hat product lifecycles": "Red Hat product lifecycles",
   "Lifecycle dates": "Lifecycle dates",
-  "Self-support": "Self-support",
+  "Unsupported": "Unsupported",
   "No PackageManifests Found": "No PackageManifests Found",
   "The CatalogSource author has not added any packages.": "The CatalogSource author has not added any packages.",
   "Catalogs are groups of Operators you can make available on the cluster. Use the <2>Software Catalog</2> to subscribe and grant namespaces access to use installed Operators.": "Catalogs are groups of Operators you can make available on the cluster. Use the <2>Software Catalog</2> to subscribe and grant namespaces access to use installed Operators.",
