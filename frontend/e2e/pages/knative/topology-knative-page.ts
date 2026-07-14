@@ -218,6 +218,50 @@ export class TopologyKnativePage extends BasePage {
     await this.robustClick(actionItem, { timeout: 10_000 });
   }
 
+  async confirmModalSubmit(): Promise<void> {
+    await this.page.locator('button[type=submit]').click();
+    await expect(this.modalCancel).not.toBeAttached({ timeout: 10_000 });
+  }
+
+  async verifyConfirmActionVisible(): Promise<void> {
+    await expect(this.page.locator('[data-test="confirm-action"]')).toBeVisible();
+  }
+
+  async editApplicationGrouping(appName: string): Promise<void> {
+    await expect(this.modalTitle).toContainText('Edit application grouping');
+    const appDropdown = this.page.locator('#form-dropdown-application-name-field');
+    const appInput = this.page.getByTestId('application-form-app-input');
+    if ((await appDropdown.count()) > 0) {
+      await appDropdown.click();
+      await this.page.locator(
+        '[data-test="#CREATE_APPLICATION_KEY#"], [data-test-dropdown-menu="#CREATE_APPLICATION_KEY#"]',
+      ).first().click();
+    }
+    await appInput.clear();
+    await appInput.fill(appName);
+    await this.page.locator('button[type=submit]').click();
+    await expect(this.modalCancel).not.toBeAttached({ timeout: 10_000 });
+  }
+
+  async addTrafficTarget(): Promise<void> {
+    await this.page.getByTestId('add-action').click();
+  }
+
+  async setTrafficPercent(index: 'first' | 'last', value: string): Promise<void> {
+    const field = this.page.locator('[id$="percent-field"]')[index]();
+    await field.clear();
+    await field.fill(value);
+  }
+
+  async selectTrafficTargetRevision(targetIndex: number): Promise<void> {
+    await this.page.getByTestId('console-select-menu-toggle').nth(targetIndex).click();
+    await this.page.getByTestId('console-select-item').first().click();
+  }
+
+  async submitTrafficDistribution(): Promise<void> {
+    await this.page.locator('button[type=submit]').click();
+  }
+
   async verifyTrafficDistributionError(expectedText: string): Promise<void> {
     await expect(this.page.locator('div.co-alert div.co-pre-line')).toContainText(expectedText);
   }
