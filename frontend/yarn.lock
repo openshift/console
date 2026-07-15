@@ -3867,18 +3867,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@napi-rs/wasm-runtime@npm:^0.2.11":
-  version: 0.2.12
-  resolution: "@napi-rs/wasm-runtime@npm:0.2.12"
-  dependencies:
-    "@emnapi/core": "npm:^1.4.3"
-    "@emnapi/runtime": "npm:^1.4.3"
-    "@tybys/wasm-util": "npm:^0.10.0"
-  checksum: 10c0/6d07922c0613aab30c6a497f4df297ca7c54e5b480e00035e0209b872d5c6aab7162fc49477267556109c2c7ed1eb9c65a174e27e9b87568106a87b0a6e3ca7d
-  languageName: node
-  linkType: hard
-
-"@napi-rs/wasm-runtime@npm:^1.1.5":
+"@napi-rs/wasm-runtime@npm:1.1.6, @napi-rs/wasm-runtime@npm:^1.1.5":
   version: 1.1.6
   resolution: "@napi-rs/wasm-runtime@npm:1.1.6"
   dependencies:
@@ -3887,6 +3876,17 @@ __metadata:
     "@emnapi/core": ^1.7.1
     "@emnapi/runtime": ^1.7.1
   checksum: 10c0/344518bf3ef65051dda4c00969f293aa4a21ab7dc7822b3f48519b17cd5eaa3f0bc34898d115d50ba59b1817a0cb905d46f7a7223c8249239cd14c28db388e10
+  languageName: node
+  linkType: hard
+
+"@napi-rs/wasm-runtime@npm:^0.2.11":
+  version: 0.2.12
+  resolution: "@napi-rs/wasm-runtime@npm:0.2.12"
+  dependencies:
+    "@emnapi/core": "npm:^1.4.3"
+    "@emnapi/runtime": "npm:^1.4.3"
+    "@tybys/wasm-util": "npm:^0.10.0"
+  checksum: 10c0/6d07922c0613aab30c6a497f4df297ca7c54e5b480e00035e0209b872d5c6aab7162fc49477267556109c2c7ed1eb9c65a174e27e9b87568106a87b0a6e3ca7d
   languageName: node
   linkType: hard
 
@@ -4015,16 +4015,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@openshift/dynamic-plugin-sdk-webpack@npm:^5.1.1":
-  version: 5.1.1
-  resolution: "@openshift/dynamic-plugin-sdk-webpack@npm:5.1.1"
+"@openshift/dynamic-plugin-sdk-webpack@npm:^5.2.0":
+  version: 5.2.0
+  resolution: "@openshift/dynamic-plugin-sdk-webpack@npm:5.2.0"
   dependencies:
     lodash: "npm:^4.17.23"
     semver: "npm:^7.7.3"
     yup: "npm:^1.7.1"
   peerDependencies:
+    "@rspack/core": ^2.0.8
     webpack: ^5.100.0
-  checksum: 10c0/365b36ac1081e5f633b41b312b63951325153f4223ee4dc7afc53b7312bc9cf60e36f6cc3a8196f63b44677dc5f7dec3c0409ef2cbd240133a1ecbbf46aeca72
+  peerDependenciesMeta:
+    "@rspack/core":
+      optional: true
+    webpack:
+      optional: true
+  checksum: 10c0/8ccd43d74c4de9c76b0583ee35b919be4327ffe8101343b88e5245ffb287d71a7a17d0c264dfd9bfe88b6361147d3c0e7641aeea97990ee26b7e06dc0640493b
   languageName: node
   linkType: hard
 
@@ -4994,6 +5000,156 @@ __metadata:
   peerDependencies:
     react: ">=16 || >=17"
   checksum: 10c0/4cbec29a16771b8d6cb8519930edd29e32d74ae232e5757bac4ec32ed4b56f9402bbcbe8cd61423dae9de3e6078fad07b6c06b4591045e90f7a7924fbbb30a45
+  languageName: node
+  linkType: hard
+
+"@rspack/binding-darwin-arm64@npm:2.1.3":
+  version: 2.1.3
+  resolution: "@rspack/binding-darwin-arm64@npm:2.1.3"
+  conditions: os=darwin & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@rspack/binding-darwin-x64@npm:2.1.3":
+  version: 2.1.3
+  resolution: "@rspack/binding-darwin-x64@npm:2.1.3"
+  conditions: os=darwin & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@rspack/binding-linux-arm64-gnu@npm:2.1.3":
+  version: 2.1.3
+  resolution: "@rspack/binding-linux-arm64-gnu@npm:2.1.3"
+  conditions: os=linux & cpu=arm64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@rspack/binding-linux-arm64-musl@npm:2.1.3":
+  version: 2.1.3
+  resolution: "@rspack/binding-linux-arm64-musl@npm:2.1.3"
+  conditions: os=linux & cpu=arm64 & libc=musl
+  languageName: node
+  linkType: hard
+
+"@rspack/binding-linux-riscv64-gnu@npm:2.1.3":
+  version: 2.1.3
+  resolution: "@rspack/binding-linux-riscv64-gnu@npm:2.1.3"
+  conditions: os=linux & cpu=riscv64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@rspack/binding-linux-riscv64-musl@npm:2.1.3":
+  version: 2.1.3
+  resolution: "@rspack/binding-linux-riscv64-musl@npm:2.1.3"
+  conditions: os=linux & cpu=riscv64 & libc=musl
+  languageName: node
+  linkType: hard
+
+"@rspack/binding-linux-x64-gnu@npm:2.1.3":
+  version: 2.1.3
+  resolution: "@rspack/binding-linux-x64-gnu@npm:2.1.3"
+  conditions: os=linux & cpu=x64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@rspack/binding-linux-x64-musl@npm:2.1.3":
+  version: 2.1.3
+  resolution: "@rspack/binding-linux-x64-musl@npm:2.1.3"
+  conditions: os=linux & cpu=x64 & libc=musl
+  languageName: node
+  linkType: hard
+
+"@rspack/binding-wasm32-wasi@npm:2.1.3":
+  version: 2.1.3
+  resolution: "@rspack/binding-wasm32-wasi@npm:2.1.3"
+  dependencies:
+    "@emnapi/core": "npm:1.11.1"
+    "@emnapi/runtime": "npm:1.11.1"
+    "@napi-rs/wasm-runtime": "npm:1.1.6"
+  conditions: cpu=wasm32
+  languageName: node
+  linkType: hard
+
+"@rspack/binding-win32-arm64-msvc@npm:2.1.3":
+  version: 2.1.3
+  resolution: "@rspack/binding-win32-arm64-msvc@npm:2.1.3"
+  conditions: os=win32 & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@rspack/binding-win32-ia32-msvc@npm:2.1.3":
+  version: 2.1.3
+  resolution: "@rspack/binding-win32-ia32-msvc@npm:2.1.3"
+  conditions: os=win32 & cpu=ia32
+  languageName: node
+  linkType: hard
+
+"@rspack/binding-win32-x64-msvc@npm:2.1.3":
+  version: 2.1.3
+  resolution: "@rspack/binding-win32-x64-msvc@npm:2.1.3"
+  conditions: os=win32 & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@rspack/binding@npm:2.1.3":
+  version: 2.1.3
+  resolution: "@rspack/binding@npm:2.1.3"
+  dependencies:
+    "@rspack/binding-darwin-arm64": "npm:2.1.3"
+    "@rspack/binding-darwin-x64": "npm:2.1.3"
+    "@rspack/binding-linux-arm64-gnu": "npm:2.1.3"
+    "@rspack/binding-linux-arm64-musl": "npm:2.1.3"
+    "@rspack/binding-linux-riscv64-gnu": "npm:2.1.3"
+    "@rspack/binding-linux-riscv64-musl": "npm:2.1.3"
+    "@rspack/binding-linux-x64-gnu": "npm:2.1.3"
+    "@rspack/binding-linux-x64-musl": "npm:2.1.3"
+    "@rspack/binding-wasm32-wasi": "npm:2.1.3"
+    "@rspack/binding-win32-arm64-msvc": "npm:2.1.3"
+    "@rspack/binding-win32-ia32-msvc": "npm:2.1.3"
+    "@rspack/binding-win32-x64-msvc": "npm:2.1.3"
+  dependenciesMeta:
+    "@rspack/binding-darwin-arm64":
+      optional: true
+    "@rspack/binding-darwin-x64":
+      optional: true
+    "@rspack/binding-linux-arm64-gnu":
+      optional: true
+    "@rspack/binding-linux-arm64-musl":
+      optional: true
+    "@rspack/binding-linux-riscv64-gnu":
+      optional: true
+    "@rspack/binding-linux-riscv64-musl":
+      optional: true
+    "@rspack/binding-linux-x64-gnu":
+      optional: true
+    "@rspack/binding-linux-x64-musl":
+      optional: true
+    "@rspack/binding-wasm32-wasi":
+      optional: true
+    "@rspack/binding-win32-arm64-msvc":
+      optional: true
+    "@rspack/binding-win32-ia32-msvc":
+      optional: true
+    "@rspack/binding-win32-x64-msvc":
+      optional: true
+  checksum: 10c0/b3e34d5cb373b6cfe4bd845231df6c50083f167177053f9819751d126eeab3a1296e85024a0c5c2fbf102e277d9c0a9eac376dfa8a608f1667547f644e43d2c7
+  languageName: node
+  linkType: hard
+
+"@rspack/core@npm:^2.1.3":
+  version: 2.1.3
+  resolution: "@rspack/core@npm:2.1.3"
+  dependencies:
+    "@rspack/binding": "npm:2.1.3"
+  peerDependencies:
+    "@module-federation/runtime-tools": ^0.24.1 || ^2.0.0
+    "@swc/helpers": ^0.5.23
+  peerDependenciesMeta:
+    "@module-federation/runtime-tools":
+      optional: true
+    "@swc/helpers":
+      optional: true
+  checksum: 10c0/5da890b28cc1ef4d3ee5be5e2132ee4896c0e724b820d5b90882aec4b14a547bb98edd7603c43de5abaec5f4d7b4ffdda20e2aced3e8ada3f16036c02cdf4b6f
   languageName: node
   linkType: hard
 
@@ -18501,7 +18657,7 @@ __metadata:
     "@monaco-editor/react": "npm:^4.7.0"
     "@openshift/api-types": "npm:^1.0.0"
     "@openshift/dynamic-plugin-sdk": "npm:^8.0.0"
-    "@openshift/dynamic-plugin-sdk-webpack": "npm:^5.1.1"
+    "@openshift/dynamic-plugin-sdk-webpack": "npm:^5.2.0"
     "@patternfly/patternfly": "npm:~6.6.0"
     "@patternfly/quickstarts": "npm:~6.6.0"
     "@patternfly/react-catalog-view-extension": "npm:~6.5.0"
@@ -18523,6 +18679,7 @@ __metadata:
     "@playwright/test": "npm:^1.59.1"
     "@pmmmwh/react-refresh-webpack-plugin": "npm:^0.6.2"
     "@rjsf/core": "npm:^4.2.3"
+    "@rspack/core": "npm:^2.1.3"
     "@swc/core": "npm:^1.15.18"
     "@swc/jest": "npm:^0.2.39"
     "@testing-library/dom": "npm:^10.4.1"
