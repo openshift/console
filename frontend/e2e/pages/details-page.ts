@@ -33,6 +33,10 @@ export class DetailsPage extends BasePage {
     return this.page.getByTestId(`horizontal-link-${name}`);
   }
 
+  async navigateToDetailsPage(url: string): Promise<void> {
+    await this.goTo(url);
+  }
+
   async clickPageAction(actionName: string): Promise<void> {
     await this.robustClick(this.page.getByTestId('actions-menu-button'));
     await this.robustClick(this.page.getByTestId(actionName));
@@ -71,5 +75,20 @@ export class DetailsPage extends BasePage {
     const resourceRow = this.getResourceByAction(actionName);
     const kebabButton = resourceRow.getByTestId('kebab-button');
     await this.robustClick(kebabButton);
+  }
+
+  getHeadingByName(name: string): Locator {
+    return this.page.getByRole('heading', { name, level: 1 });
+  }
+
+  async clickActionsMenuAction(actionName: string): Promise<void> {
+    await this.robustClick(this.page.getByRole('button', { name: 'Actions' }));
+    await this.robustClick(this.page.getByRole('menuitem', { name: actionName }));
+  }
+
+  async confirmDelete(): Promise<void> {
+    await this.robustClick(
+      this.page.getByRole('button', { name: 'Delete', exact: true }),
+    );
   }
 }

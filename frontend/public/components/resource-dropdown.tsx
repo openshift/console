@@ -256,6 +256,7 @@ export const ResourceListDropdown_: FC<ResourceListDropdownProps> = (props) => {
           <CloseButton
             className="co-select-group-close-button"
             dataTestID="close-icon"
+            data-test="clear-history"
             onClick={onClear}
           />
         </Tooltip>,
