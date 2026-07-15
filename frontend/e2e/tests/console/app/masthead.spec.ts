@@ -1,10 +1,14 @@
 import { test, expect } from '../../../fixtures';
+import { warmupSPA } from '../../../pages/base-page';
 import { MastheadPage } from '../../../pages/masthead-page';
 
 test.describe('Masthead', { tag: ['@admin'] }, () => {
+  test.beforeEach(async ({ page }) => {
+    await warmupSPA(page);
+  });
+
   test('logo should be restricted to a max-height of 60px', async ({ page }) => {
     const masthead = new MastheadPage(page);
-    await page.goto('/');
 
     await expect(masthead.logoLocator).toBeVisible();
     await expect(masthead.logoLocator).toHaveCSS('max-height', '60px');
@@ -24,7 +28,6 @@ test.describe('Masthead', { tag: ['@admin'] }, () => {
   for (const { testId, heading } of quickCreateItems) {
     test(`quick create should open ${heading}`, async ({ page }) => {
       const masthead = new MastheadPage(page);
-      await page.goto('/');
 
       await test.step('Open quick create and click item', async () => {
         await masthead.openQuickCreate();
@@ -39,7 +42,6 @@ test.describe('Masthead', { tag: ['@admin'] }, () => {
 
   test('should render the correct copy login command link', async ({ page }) => {
     const masthead = new MastheadPage(page);
-    await page.goto('/');
 
     const authDisabled = await masthead.isAuthDisabled();
     test.skip(authDisabled, 'Auth is disabled — skipping copy login command test');
@@ -57,7 +59,6 @@ test.describe('Masthead', { tag: ['@admin'] }, () => {
 
   test('should log the user out', async ({ page }) => {
     const masthead = new MastheadPage(page);
-    await page.goto('/');
 
     const authDisabled = await masthead.isAuthDisabled();
     test.skip(authDisabled, 'Auth is disabled — skipping logout test');

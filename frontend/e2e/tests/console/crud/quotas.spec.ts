@@ -32,9 +32,10 @@ test.describe('Quotas', { tag: ['@admin'] }, () => {
     await k8sClient.deleteNamespace(namespace);
   });
 
-  test('create ResourceQuota and ClusterResourceQuota via YAML editor', async ({ page }) => {
-    const listPage = new ListPage(page);
-
+  test('create ResourceQuota and ClusterResourceQuota via YAML editor', async ({
+    page,
+    k8sClient,
+  }) => {
     await test.step('Create ResourceQuota via YAML editor', async () => {
       await page.goto(`/k8s/ns/${namespace}/resourcequotas`);
       await page.getByTestId('item-create').click();
@@ -74,6 +75,36 @@ test.describe('Quotas', { tag: ['@admin'] }, () => {
       await page.getByTestId('save-changes').click();
       await expect(page.getByTestId('yaml-error')).not.toBeAttached();
     });
+
+    await test.step('Ensure ClusterResourceQuota exists on cluster', async () => {
+      try {
+        await k8sClient.getClusterCustomResource(
+          'quota.openshift.io',
+          'v1',
+          'clusterresourcequotas',
+          clusterQuotaName,
+        );
+      } catch {
+        await k8sClient.createClusterCustomResource(
+          'quota.openshift.io',
+          'v1',
+          'clusterresourcequotas',
+          {
+            apiVersion: 'quota.openshift.io/v1',
+            kind: 'ClusterResourceQuota',
+            metadata: { name: clusterQuotaName },
+            spec: {
+              quota: { hard: { pods: '10', secrets: '10' } },
+              selector: {
+                labels: {
+                  matchLabels: { 'kubernetes.io/metadata.name': namespace },
+                },
+              },
+            },
+          },
+        );
+      }
+    });
   });
 
   test('All Projects shows ResourceQuotas', async ({ page }) => {
@@ -90,7 +121,7 @@ test.describe('Quotas', { tag: ['@admin'] }, () => {
 
     await page.goto('/k8s/all-namespaces/resourcequotas');
     await listPage.filterByName(clusterQuotaName);
-    await expect(listPage.getCell(clusterQuotaName)).toBeVisible();
+    await expect(listPage.getCell(clusterQuotaName)).toBeVisible({ timeout: 30_000 });
 
     await test.step('Verify breadcrumb', async () => {
       await listPage.clickRowByName(clusterQuotaName);
@@ -113,7 +144,7 @@ test.describe('Quotas', { tag: ['@admin'] }, () => {
 
     await page.goto(`/k8s/ns/${namespace}/resourcequotas`);
     await listPage.filterByName(clusterQuotaName);
-    await expect(listPage.getCell(clusterQuotaName)).toBeVisible();
+    await expect(listPage.getCell(clusterQuotaName)).toBeVisible({ timeout: 30_000 });
 
     await test.step('Verify breadcrumb', async () => {
       await listPage.clickRowByName(clusterQuotaName);

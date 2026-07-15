@@ -34,6 +34,10 @@ export class ListPage extends BasePage {
     return this.singleFilterGroup.locator('.pf-v6-c-menu-toggle');
   }
 
+  async navigateToListPage(url: string): Promise<void> {
+    await this.goTo(url);
+  }
+
   cell(resourceName: string, cellName = 'name'): Locator {
     return this.page.getByTestId(`data-view-cell-${resourceName}-${cellName}`);
   }
@@ -195,5 +199,18 @@ export class ListPage extends BasePage {
     await this.robustClick(dropdownButton);
     const item = this.page.getByRole('menuitem', { name: 'All Projects', exact: true });
     await this.robustClick(item);
+  }
+
+  async navigateToPodsList(): Promise<void> {
+    await this.goTo('/k8s/all-namespaces/pods');
+  }
+
+  async createProject(projectName: string): Promise<void> {
+    await this.robustClick(this.page.getByRole('button', { name: 'Create Project' }));
+    await expect(this.page.locator('h1', { hasText: 'Create Project' })).toBeVisible({
+      timeout: 20_000,
+    });
+    await this.page.getByTestId('input-name').fill(projectName);
+    await this.robustClick(this.page.getByRole('button', { name: 'Create', exact: true }));
   }
 }

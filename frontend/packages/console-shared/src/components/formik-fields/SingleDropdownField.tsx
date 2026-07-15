@@ -56,6 +56,7 @@ export const SingleDropdownField: FC<SingleDropdownFieldProps> = ({
   const toggle = (toggleRef: Ref<MenuToggleElement>) => (
     <MenuToggle
       aria-label={ariaLabel}
+      data-test={`form-select-input-${name.replace(/\./g, '-')}-field`}
       id={fieldId}
       isDisabled={isDisabled}
       isExpanded={isOpen}

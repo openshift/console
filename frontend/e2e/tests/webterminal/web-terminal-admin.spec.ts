@@ -2,7 +2,7 @@ import type { Page } from '@playwright/test';
 
 import { test, expect } from '../../fixtures';
 import type KubernetesClient from '../../clients/kubernetes-client';
-import { getEditorContent } from '../../pages/base-page';
+import { getEditorContent, warmupSPA } from '../../pages/base-page';
 import { WebTerminalPage } from '../../pages/web-terminal-page';
 import {
   ensureWebTerminalOperatorInstalled,

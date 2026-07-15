@@ -25,10 +25,8 @@ export async function setEditorContent(page: Page, content: string): Promise<voi
 }
 
 export async function warmupSPA(page: Page): Promise<void> {
-  await page.goto('/');
-  await expect(
-    page.getByTestId('perspective-switcher-toggle'),
-  ).toBeVisible({ timeout: 30_000 });
+  await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 60_000 });
+  await expect(page.getByTestId('page-heading')).toBeVisible({ timeout: 30_000 });
 }
 
 export default abstract class BasePage {
@@ -148,6 +146,21 @@ export default abstract class BasePage {
 
   async setEditorContent(content: string): Promise<void> {
     await setEditorContent(this.page, content);
+  }
+
+  async ensureFormView(formFieldLocator?: Locator): Promise<void> {
+    const syncedEditor = this.page.getByTestId('synced-editor-field');
+    // eslint-disable-next-line no-restricted-syntax
+    await syncedEditor.waitFor({ state: 'visible', timeout: 60_000 });
+    const formRadio = syncedEditor.getByRole('radio', { name: 'Form view' });
+    if (!(await formRadio.isChecked())) {
+      await formRadio.click();
+    }
+    if (formFieldLocator) {
+      // Wait for form to render after switching to form view (not acting on it, just ensuring visibility)
+      // eslint-disable-next-line no-restricted-syntax
+      await formFieldLocator.waitFor({ state: 'visible', timeout: 30_000 });
+    }
   }
 
   async switchPerspective(target: 'Developer' | 'Administrator'): Promise<void> {

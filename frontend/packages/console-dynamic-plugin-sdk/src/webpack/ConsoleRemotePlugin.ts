@@ -27,9 +27,12 @@ import { DynamicModuleImportPlugin, resolveDynamicModuleMaps } from './DynamicMo
 
 const loadPluginPackageJSON = () => readPkg.sync({ normalize: false }) as ConsolePluginPackageJSON;
 
+// Resolve from cwd, not this file's real path, so symlinked SDK installations work
 const loadVendorPackageJSON = (moduleName: string) =>
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  require(`${moduleName}/package.json`) as readPkg.PackageJson;
+  require(require.resolve(`${moduleName}/package.json`, {
+    paths: [process.cwd()],
+  })) as readPkg.PackageJson;
 
 const getVendorPackageVersion = (moduleName: string) => {
   try {

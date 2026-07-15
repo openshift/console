@@ -545,6 +545,16 @@ export default class KubernetesClient {
     return response;
   }
 
+  async getClusterCustomResource(
+    group: string,
+    version: string,
+    plural: string,
+    name: string,
+  ): Promise<unknown> {
+    const response = await this.coApi.getClusterCustomObject({ group, name, plural, version });
+    return response;
+  }
+
   async deleteClusterCustomResource(
     group: string,
     version: string,

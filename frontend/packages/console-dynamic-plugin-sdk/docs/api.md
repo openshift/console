@@ -2983,9 +2983,21 @@ A hook that provides a callback to launch a modal for editing Kubernetes resourc
 ### Example
 
 ```tsx
+// Basic usage – default k8sPatchResource behavior
 const PodLabelsButton = ({ pod }) => {
   const { t } = useTranslation();
   const launchLabelsModal = useLabelsModal(pod);
+  return <button onClick={launchLabelsModal}>{t('Edit Pod Labels')}</button>
+}
+
+// Custom onSubmit – receives the resource and edited labels, returns a Promise
+const CustomLabelsButton = ({ pod }) => {
+  const { t } = useTranslation();
+  const onSubmit = React.useCallback(
+    (resource, labels) => updateLabelsOnServer(resource, labels),
+    [],
+  );
+  const launchLabelsModal = useLabelsModal(pod, onSubmit);
   return <button onClick={launchLabelsModal}>{t('Edit Pod Labels')}</button>
 }
 ```
@@ -2997,6 +3009,7 @@ const PodLabelsButton = ({ pod }) => {
 | Parameter Name | Description |
 | -------------- | ----------- |
 | `resource` | The resource to edit labels for, an object of K8sResourceCommon type. |
+| `onSubmit` | Optional callback that completely replaces the default `k8sPatchResource` patch (including pod-selector template-label synchronization). Receives the resource and the full edited labels object. Must return a Promise resolving with the updated resource on success or rejecting on failure. The callback should be wrapped in `useCallback` to avoid unnecessary re-renders. |
 
 
 
