@@ -12,7 +12,6 @@ import {
   Stack,
   StackItem,
 } from '@patternfly/react-core';
-import axios from 'axios';
 import cx from 'classnames';
 import { TFunction } from 'i18next';
 import { Helmet } from 'react-helmet';
@@ -46,6 +45,7 @@ import {
   StorageClassResourceKind,
   TemplateKind,
 } from '@console/internal/module/k8s';
+import axios from 'axios';
 import {
   TEMPLATE_TYPE_BASE,
   TEMPLATE_TYPE_LABEL,
