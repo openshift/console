@@ -1,7 +1,21 @@
 import { checkErrors } from '@console/cypress-integration-tests/support';
 import { installKnativeOperatorUsingCLI } from '@console/dev-console/integration-tests/support/pages';
 
-before(() => {
+before(function () {
+  // Skip all knative tests on techPreview clusters: the Developer perspective is
+  // disabled by default and the htpasswd IDP doesn't exist, so create-user.sh would
+  // need to create it before login can succeed. Knative topology tests also depend
+  // on the Developer perspective being active.
+  // cy.exec() returns a Cypress Chainable, not a true Promise — it has no .catch() method.
+  // Cypress's command queue manages error handling; this disable is required.
+  // eslint-disable-next-line promise/catch-or-return
+  cy.exec('oc get featuregate cluster -o jsonpath={.spec.featureSet}', {
+    failOnNonZeroExit: false,
+  }).then((result) => {
+    if (result.stdout.trim() === 'TechPreviewNoUpgrade') {
+      this.skip();
+    }
+  });
   cy.exec('../../../../contrib/create-user.sh');
   const bridgePasswordIDP: string = Cypress.expose('BRIDGE_HTPASSWD_IDP') || 'test';
   const bridgePasswordUsername: string = Cypress.expose('BRIDGE_HTPASSWD_USERNAME') || 'test';
