@@ -7,7 +7,7 @@ spec:
   selector:
     matchLabels:
       app: quarkus
-  replicas: 3
+  replicas: 1
   template:
     metadata:
       labels:
@@ -17,5 +17,14 @@ spec:
         - name: quarkus
           image: >-
             quay.io/redhat-appstudio-qe/quarkus:7dd062e2e8cb4ba599185e48d628b65a
+          command: ["sleep", "infinity"]
           ports:
             - containerPort: 8080
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop:
+                - ALL
