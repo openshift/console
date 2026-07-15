@@ -206,8 +206,13 @@ export class TopologyKnativePage extends BasePage {
     ).toHaveCount(expected, { timeout });
   }
 
-  async openServiceAction(namespace: string, serviceName: string, action: string): Promise<void> {
-    await this.goTo(`/k8s/ns/${namespace}/serving.knative.dev~v1~Service/${serviceName}`);
+  async openServiceAction(
+    namespace: string,
+    resourceName: string,
+    action: string,
+    kind = 'serving.knative.dev~v1~Service',
+  ): Promise<void> {
+    await this.goTo(`/k8s/ns/${namespace}/${kind}/${resourceName}`);
     const actionsButton = this.page.locator(
       '[data-test="actions-menu-button"], [data-test-id="actions-menu-button"]',
     ).first();

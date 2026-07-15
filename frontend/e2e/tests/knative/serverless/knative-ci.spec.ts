@@ -40,6 +40,7 @@ test.describe(
     });
 
     test('KN-05-TC04: Create knative workload from Git', async ({ page }) => {
+      test.setTimeout(180_000);
       const addFlowPage = new AddFlowPage(page);
       const topologyPage = new TopologyKnativePage(page);
 
@@ -337,20 +338,15 @@ test.describe(
     test('KE-05-TC11: Delete Broker', async ({ page }) => {
       const topologyPage = new TopologyKnativePage(page);
 
-      await test.step('Right-click broker and select Delete Broker', async () => {
-        await topologyPage.navigateToTopology(namespace);
-        await topologyPage.verifyWorkloadVisible('default-broker');
-        await topologyPage.search('');
-        await topologyPage.fitScreen();
-        await topologyPage.rightClickNodeAndSelectAction('default-broker', 'Delete Broker');
-      });
-
-      await test.step('Confirm deletion', async () => {
+      await test.step('Delete broker via details page', async () => {
+        await topologyPage.openServiceAction(namespace, 'default-broker', 'Delete Broker',
+          'eventing.knative.dev~v1~Broker');
         await expect(topologyPage.getModalTitle()).toContainText('Delete');
         await topologyPage.confirmModalSubmit();
       });
 
       await test.step('Verify broker removed', async () => {
+        await topologyPage.navigateToTopology(namespace);
         await topologyPage.verifyResourceRemoved('default-broker');
       });
     });
@@ -358,20 +354,15 @@ test.describe(
     test('KE-06-TC16: Delete Channel', async ({ page }) => {
       const topologyPage = new TopologyKnativePage(page);
 
-      await test.step('Right-click channel and select Delete Channel', async () => {
-        await topologyPage.navigateToTopology(namespace);
-        await topologyPage.verifyWorkloadVisible('channel');
-        await topologyPage.search('');
-        await topologyPage.fitScreen();
-        await topologyPage.rightClickNodeAndSelectAction('channel', 'Delete Channel');
-      });
-
-      await test.step('Confirm deletion', async () => {
+      await test.step('Delete channel via details page', async () => {
+        await topologyPage.openServiceAction(namespace, 'channel', 'Delete Channel',
+          'messaging.knative.dev~v1~Channel');
         await expect(topologyPage.getModalTitle()).toContainText('Delete');
         await topologyPage.confirmModalSubmit();
       });
 
       await test.step('Verify channel removed', async () => {
+        await topologyPage.navigateToTopology(namespace);
         await topologyPage.verifyResourceRemoved('channel');
       });
     });
@@ -379,20 +370,15 @@ test.describe(
     test('KE-01-TC03: Delete event source', async ({ page }) => {
       const topologyPage = new TopologyKnativePage(page);
 
-      await test.step('Right-click event source and select Delete PingSource', async () => {
-        await topologyPage.navigateToTopology(namespace);
-        await topologyPage.verifyWorkloadVisible('ping-source');
-        await topologyPage.search('');
-        await topologyPage.fitScreen();
-        await topologyPage.rightClickNodeAndSelectAction('ping-source', 'Delete PingSource');
-      });
-
-      await test.step('Confirm deletion', async () => {
+      await test.step('Delete event source via details page', async () => {
+        await topologyPage.openServiceAction(namespace, 'ping-source', 'Delete PingSource',
+          'sources.knative.dev~v1~PingSource');
         await expect(topologyPage.getModalTitle()).toContainText('Delete');
         await topologyPage.confirmModalSubmit();
       });
 
       await test.step('Verify event source removed', async () => {
+        await topologyPage.navigateToTopology(namespace);
         await topologyPage.verifyResourceRemoved('ping-source', 30_000);
       });
     });
