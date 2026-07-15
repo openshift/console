@@ -2,6 +2,9 @@
   "compilerOptions": {
     "skipLibCheck": true,
     "baseUrl": ".",
+    "paths": {
+      "axios": ["@types/axios"]
+    },
     "module": "esnext",
     "moduleResolution": "node",
     "outDir": "./public/dist/build/",
