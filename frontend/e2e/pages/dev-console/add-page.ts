@@ -58,6 +58,6 @@ export class AddPage extends BasePage {
   }
 
   getPinnedResource(name: string): Locator {
-    return this.getPinnedResourceItems().getByRole('link', { name, exact: true });
+    return this.getPinnedResourceItems().getByRole('link', { name });
   }
 }
