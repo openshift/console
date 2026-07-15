@@ -81,6 +81,10 @@ describe('getClusterCompatibility', () => {
     expect(getClusterCompatibility(lifecycle, '2.0.1', '4.17.0')).toBe('compatible');
     expect(getClusterCompatibility(lifecycle, '2.0.1', '4.14.0')).toBe('incompatible');
   });
+
+  it('returns no data for an invalid operator version', () => {
+    expect(getClusterCompatibility(lifecycle, 'latest', '4.15.0')).toBe('no-data');
+  });
 });
 
 describe('getSupportPhase', () => {
@@ -173,6 +177,12 @@ describe('getSupportPhase', () => {
       versions: [{ name: '1.0' }],
     };
     expect(getSupportPhase(noPhases, '1.0')).toEqual({ status: SupportPhaseStatus.NoData });
+  });
+
+  it('returns no data for an invalid operator version', () => {
+    expect(getSupportPhase(lifecycle, 'latest', new Date('2024-03-15'))).toEqual({
+      status: SupportPhaseStatus.NoData,
+    });
   });
 
   it('matches operator version by minor version when exact match fails', () => {
