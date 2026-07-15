@@ -62,4 +62,9 @@ test.describe('ConfigMap form view', { tag: ['@dev-console', '@smoke'] }, () => 
       await expect(configMapPage.getKeyText('key-test1')).toBeVisible();
     });
   });
+
+  // eslint-disable-next-line playwright/expect-expect
+  test('CFM-01-TC02: Edit ConfigMap via kebab menu', async () => {
+    test.skip(true, 'Deferred — kebab Edit action opens YAML editor, not form editor');
+  });
 });
