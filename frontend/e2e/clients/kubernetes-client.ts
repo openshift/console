@@ -347,6 +347,21 @@ export default class KubernetesClient {
     );
   }
 
+  async clearConsoleFavorites(username = 'kubeadmin'): Promise<void> {
+    const namespace = 'openshift-console-user-settings';
+    const configMapName = `user-settings-${username}`;
+    try {
+      await this.k8sApi.patchNamespacedConfigMap({
+        name: configMapName,
+        namespace,
+        body: { data: { 'console.favorites': null } },
+        contentType: k8s.PatchStrategy.MergePatch,
+      } as any);
+    } catch {
+      // ConfigMap may not exist yet — nothing to clear
+    }
+  }
+
   async setupConsoleUserSettings(username = 'kubeadmin', defaultNamespace?: string): Promise<void> {
     const namespace = 'openshift-console-user-settings';
     const configMapName = `user-settings-${username}`;

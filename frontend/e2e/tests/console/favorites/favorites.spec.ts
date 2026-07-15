@@ -2,6 +2,14 @@ import { test, expect } from '../../../fixtures';
 import { warmupSPA } from '../../../pages/base-page';
 
 test.describe('Favorites', { tag: ['@admin'] }, () => {
+  test.beforeEach(async ({ k8sClient }) => {
+    await k8sClient.clearConsoleFavorites();
+  });
+
+  test.afterEach(async ({ k8sClient }) => {
+    await k8sClient.clearConsoleFavorites();
+  });
+
   test('adds, displays, removes, and limits favorites', async ({ page }) => {
     const sidebar = page.locator('#page-sidebar');
 
