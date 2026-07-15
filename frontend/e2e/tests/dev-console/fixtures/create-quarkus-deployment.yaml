@@ -13,6 +13,7 @@ spec:
       labels:
         app: quarkus
     spec:
+      automountServiceAccountToken: false
       containers:
         - name: quarkus
           image: >-
@@ -20,8 +21,24 @@ spec:
           command: ["sleep", "infinity"]
           ports:
             - containerPort: 8080
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              cpu: 100m
+              memory: 128Mi
+          livenessProbe:
+            exec:
+              command: ["true"]
+            periodSeconds: 30
+          readinessProbe:
+            exec:
+              command: ["true"]
+            periodSeconds: 10
           securityContext:
             allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
             runAsNonRoot: true
             seccompProfile:
               type: RuntimeDefault

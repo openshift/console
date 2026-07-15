@@ -23,8 +23,12 @@ export async function hasOperatorSubscription(
       subscriptionName,
     );
     return true;
-  } catch {
-    return false;
+  } catch (err) {
+    const code = (err as any).statusCode ?? (err as any).response?.statusCode;
+    if (code === 404) {
+      return false;
+    }
+    throw err;
   }
 }
 
