@@ -47,7 +47,7 @@ export class QuickStartsPage extends BasePage {
   }
 
   getDrawerPanel(): Locator {
-    return this.page.getByRole('region');
+    return this.getDrawer().getByRole('region');
   }
 
   async openStatusFilter(): Promise<void> {

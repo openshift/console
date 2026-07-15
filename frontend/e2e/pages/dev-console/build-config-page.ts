@@ -7,6 +7,10 @@ export class BuildConfigPage extends BasePage {
     await this.goTo(`/k8s/ns/${namespace}/buildconfigs`);
   }
 
+  async navigateToCreateForm(namespace: string): Promise<void> {
+    await this.goTo(`/k8s/ns/${namespace}/buildconfigs/~new/form`);
+  }
+
   async navigateToEditForm(namespace: string, name: string): Promise<void> {
     await this.goTo(`/k8s/ns/${namespace}/buildconfigs/${name}/form`);
   }
@@ -26,17 +30,5 @@ export class BuildConfigPage extends BasePage {
   async expandAdvancedOption(optionName: string): Promise<void> {
     const toggle = this.page.getByRole('button', { name: optionName });
     await this.robustClick(toggle);
-  }
-
-  // May be removed once batch 1 (CONSOLE-5299) merges — BasePage adds ensureFormView()
-  async ensureFormView(): Promise<void> {
-    const syncedEditor = this.getSyncedEditor();
-    // eslint-disable-next-line no-restricted-syntax
-    await syncedEditor.waitFor({ state: 'visible', timeout: 30_000 });
-    const formRadio = this.getEditorRadio('Form view');
-    if (!(await formRadio.isChecked())) {
-      await formRadio.click();
-      await this.waitForLoadingComplete();
-    }
   }
 }

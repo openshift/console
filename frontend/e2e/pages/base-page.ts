@@ -26,9 +26,7 @@ export async function setEditorContent(page: Page, content: string): Promise<voi
 
 export async function warmupSPA(page: Page): Promise<void> {
   await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 60_000 });
-  await expect(
-    page.getByTestId('perspective-switcher-toggle'),
-  ).toBeVisible({ timeout: 30_000 });
+  await expect(page.getByTestId('page-heading')).toBeVisible({ timeout: 30_000 });
 }
 
 export default abstract class BasePage {
@@ -164,6 +162,20 @@ export default abstract class BasePage {
 
   getEditorRadio(name: string): Locator {
     return this.getSyncedEditor().getByRole('radio', { name });
+  }
+
+  async ensureFormView(formFieldLocator?: Locator): Promise<void> {
+    const syncedEditor = this.getSyncedEditor();
+    // eslint-disable-next-line no-restricted-syntax
+    await syncedEditor.waitFor({ state: 'visible', timeout: 60_000 });
+    const formRadio = this.getEditorRadio('Form view');
+    if (!(await formRadio.isChecked())) {
+      await formRadio.click();
+    }
+    if (formFieldLocator) {
+      // eslint-disable-next-line no-restricted-syntax
+      await formFieldLocator.waitFor({ state: 'visible', timeout: 30_000 });
+    }
   }
 
   async switchPerspective(target: 'Developer' | 'Administrator'): Promise<void> {

@@ -55,7 +55,6 @@ test.describe('Edit Build Config', { tag: ['@dev-console'] }, () => {
 
       await test.step('Create namespace and BuildConfig', async () => {
         await k8sClient.createNamespace(ns);
-        await k8sClient.waitForNamespaceReady(ns);
         cleanup.trackNamespace(ns);
         await k8sClient.createCustomResource(
           'build.openshift.io',
@@ -97,7 +96,6 @@ test.describe('Edit Build Config', { tag: ['@dev-console'] }, () => {
 
       await test.step('Create namespace and BuildConfig', async () => {
         await k8sClient.createNamespace(ns);
-        await k8sClient.waitForNamespaceReady(ns);
         cleanup.trackNamespace(ns);
         await k8sClient.createCustomResource(
           'build.openshift.io',
@@ -138,30 +136,23 @@ test.describe('Edit Build Config', { tag: ['@dev-console'] }, () => {
     },
   );
 
-  // eslint-disable-next-line playwright/no-skipped-test, playwright/expect-expect
-  test.skip(
-    'EBC-01-TC04: Edit Env variables — placeholder',
-    { tag: ['@regression'] },
-    async () => {
-      // Deferred to a future batch
-    },
-  );
+  // eslint-disable-next-line playwright/expect-expect
+  test('EBC-01-TC03: Edit BuildConfig via kebab menu', async () => {
+    test.skip(true, 'Deferred — kebab Edit action opens YAML editor, not form editor');
+  });
 
-  // eslint-disable-next-line playwright/no-skipped-test, playwright/expect-expect
-  test.skip(
-    'EBC-01-TC05: Edit git source — placeholder',
-    { tag: ['@regression'] },
-    async () => {
-      // Deferred to a future batch
-    },
-  );
+  // eslint-disable-next-line playwright/expect-expect
+  test('EBC-01-TC04: Edit Env variables — placeholder', async () => {
+    test.skip(true, 'Deferred to a future batch');
+  });
 
-  // eslint-disable-next-line playwright/no-skipped-test, playwright/expect-expect
-  test.skip(
-    'EBC-01-TC06: Edit images — placeholder',
-    { tag: ['@regression'] },
-    async () => {
-      // Deferred to a future batch
-    },
-  );
+  // eslint-disable-next-line playwright/expect-expect
+  test('EBC-01-TC05: Edit git source — placeholder', async () => {
+    test.skip(true, 'Deferred to a future batch');
+  });
+
+  // eslint-disable-next-line playwright/expect-expect
+  test('EBC-01-TC06: Edit images — placeholder', async () => {
+    test.skip(true, 'Deferred to a future batch');
+  });
 });

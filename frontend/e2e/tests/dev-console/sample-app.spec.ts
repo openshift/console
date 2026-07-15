@@ -13,9 +13,14 @@ async function createTestNamespace(
 ): Promise<string> {
   const ns = `${NS_PREFIX}-${suffix}-${Date.now()}`;
   await k8sClient.createNamespace(ns);
-  await k8sClient.waitForNamespaceReady(ns);
   cleanup.trackNamespace(ns);
   return ns;
+}
+
+async function navigateToSamplesPage(addPage: AddPage, ns: string): Promise<void> {
+  await addPage.switchPerspective('Developer');
+  await addPage.navigateToAdd(ns);
+  await addPage.clickViewAllSamples();
 }
 
 test.describe('Sample Application from Add page', { tag: ['@dev-console', '@getting-started'] }, () => {
@@ -25,9 +30,9 @@ test.describe('Sample Application from Add page', { tag: ['@dev-console', '@gett
     async ({ page, k8sClient, cleanup }) => {
       const ns = await createTestNamespace(k8sClient, cleanup, 'tc01');
       const addPage = new AddPage(page);
+      await warmupSPA(page);
 
       await test.step('Navigate to Add page and verify samples link', async () => {
-        await warmupSPA(page);
         await addPage.switchPerspective('Developer');
         await addPage.navigateToAdd(ns);
         await expect(addPage.getViewAllSamples()).toBeVisible({ timeout: 30_000 });
@@ -50,12 +55,10 @@ test.describe('Sample Application from Add page', { tag: ['@dev-console', '@gett
     async ({ page, k8sClient, cleanup }) => {
       const ns = await createTestNamespace(k8sClient, cleanup, 'tc02');
       const addPage = new AddPage(page);
+      await warmupSPA(page);
 
       await test.step('Navigate to Samples page', async () => {
-        await warmupSPA(page);
-        await addPage.switchPerspective('Developer');
-        await addPage.navigateToAdd(ns);
-        await addPage.clickViewAllSamples();
+        await navigateToSamplesPage(addPage, ns);
         await expect(addPage.getPageHeading()).toContainText('Samples', { timeout: 30_000 });
       });
 
@@ -94,11 +97,10 @@ test.describe('Sample Application from Add page', { tag: ['@dev-console', '@gett
       const ns = await createTestNamespace(k8sClient, cleanup, 'tc03');
       const addPage = new AddPage(page);
 
+      await warmupSPA(page);
+
       await test.step('Navigate to Samples page and select Go', async () => {
-        await warmupSPA(page);
-        await addPage.switchPerspective('Developer');
-        await addPage.navigateToAdd(ns);
-        await addPage.clickViewAllSamples();
+        await navigateToSamplesPage(addPage, ns);
         await expect(addPage.getPageHeading()).toContainText('Samples', { timeout: 30_000 });
         await addPage.clickSampleCard('Go');
         await expect(addPage.getPageHeading()).toContainText('Create Sample application', {
@@ -127,21 +129,13 @@ test.describe('Sample Application from Add page', { tag: ['@dev-console', '@gett
     },
   );
 
-  // eslint-disable-next-line playwright/no-skipped-test, playwright/expect-expect
-  test.skip(
-    'GS-03-TC04: Submit sample application form — placeholder',
-    { tag: ['@regression'] },
-    async () => {
-      // Deferred to a future batch
-    },
-  );
+  // eslint-disable-next-line playwright/expect-expect
+  test('GS-03-TC04: Submit sample application form — placeholder', async () => {
+    test.skip(true, 'Deferred to a future batch');
+  });
 
-  // eslint-disable-next-line playwright/no-skipped-test, playwright/expect-expect
-  test.skip(
-    'GS-03-TC05: Verify application in topology — placeholder',
-    { tag: ['@regression'] },
-    async () => {
-      // Deferred to a future batch
-    },
-  );
+  // eslint-disable-next-line playwright/expect-expect
+  test('GS-03-TC05: Verify application in topology — placeholder', async () => {
+    test.skip(true, 'Deferred to a future batch');
+  });
 });

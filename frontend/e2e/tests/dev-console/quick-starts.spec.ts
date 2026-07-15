@@ -30,6 +30,31 @@ test.describe('Quick Starts - Developer Perspective', { tag: ['@dev-console'] },
     },
   );
 
+  // eslint-disable-next-line playwright/expect-expect
+  test('QS-03-TC01: Build with guided documentation card on Add page', async () => {
+    test.skip(true, 'Original Cypress file tagged @broken-test — deferred');
+  });
+
+  // eslint-disable-next-line playwright/expect-expect
+  test('QS-03-TC03: Quick start completed state shows Complete label', async () => {
+    test.skip(true, 'Original Cypress file tagged @broken-test — deferred');
+  });
+
+  // eslint-disable-next-line playwright/expect-expect
+  test('QS-03-TC04: Quick start in-progress state shows In Progress label', async () => {
+    test.skip(true, 'Original Cypress file tagged @broken-test — deferred');
+  });
+
+  // eslint-disable-next-line playwright/expect-expect
+  test('QS-03-TC05: Build with guided documentation card links with in-progress status', async () => {
+    test.skip(true, 'Original Cypress file tagged @broken-test — deferred');
+  });
+
+  // eslint-disable-next-line playwright/expect-expect
+  test('QS-03-TC07: Restart action on Quick Start card', async () => {
+    test.skip(true, 'Original Cypress file tagged @broken-test — deferred');
+  });
+
   test(
     'QS-03-TC10: Quick start sidebar opens via URL with quickstart parameter',
     { tag: ['@regression'] },

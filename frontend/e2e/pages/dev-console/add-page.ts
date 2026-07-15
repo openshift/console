@@ -18,6 +18,7 @@ export class AddPage extends BasePage {
   }
 
   getSampleCards(): Locator {
+    // Prefix match required — each card has a unique data-test like "BuilderImage-Go" or "Devfile-nodejs"
     return this.page.locator('[data-test^="BuilderImage-"], [data-test^="Devfile-"]');
   }
 

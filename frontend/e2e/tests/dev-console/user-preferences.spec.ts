@@ -1,6 +1,8 @@
 import { test, expect } from '../../fixtures';
 import { warmupSPA } from '../../pages/base-page';
+import { BuildConfigPage } from '../../pages/dev-console/build-config-page';
 import { UserPreferencesPage } from '../../pages/dev-console/user-preferences-page';
+import { TopologyPage } from '../../pages/topology-page';
 
 test.describe('User Preferences', { tag: ['@dev-console'] }, () => {
   let userPrefs: UserPreferencesPage;
@@ -10,18 +12,18 @@ test.describe('User Preferences', { tag: ['@dev-console'] }, () => {
     userPrefs = new UserPreferencesPage(page);
   });
 
-  test.afterEach(async () => {
+  test.afterEach(async ({ k8sClient }) => {
     try {
-      await userPrefs.navigateToPreferences();
-      await userPrefs.selectPreferenceOption('console.preferredPerspective', 'Last viewed');
-      await userPrefs.selectPreferenceOption('console.preferredCreateEditMethod', 'Last viewed');
-      await userPrefs.selectPreferenceOption('topology.preferredView', 'Last viewed');
-
-      const applicationsTab = userPrefs.getTab('Applications');
-      if ((await applicationsTab.count()) > 0) {
-        await applicationsTab.click();
-        await userPrefs.selectPreferenceOption('devconsole.preferredResource', 'Deployment');
-      }
+      await k8sClient.patchConfigMap(
+        'user-settings-kubeadmin',
+        'openshift-console-user-settings',
+        {
+          'console.preferredPerspective': '',
+          'console.preferredCreateEditMethod': '',
+          'topology.preferredView': '',
+          'devconsole.preferredResource': '',
+        },
+      );
     } catch {
       // Best-effort reset — don't mask the original test failure
     }
@@ -76,7 +78,6 @@ test.describe('User Preferences', { tag: ['@dev-console'] }, () => {
 
       await test.step('Create test namespace', async () => {
         await k8sClient.createNamespace(ns);
-        await k8sClient.waitForNamespaceReady(ns);
         cleanup.trackNamespace(ns);
       });
 
@@ -86,12 +87,12 @@ test.describe('User Preferences', { tag: ['@dev-console'] }, () => {
       });
 
       await test.step('Navigate to topology page', async () => {
-        await userPrefs.navigateToTopology(ns);
+        const topologyPage = new TopologyPage(page);
+        await topologyPage.navigateToTopology(ns);
       });
 
       await test.step('Verify graph view is active', async () => {
-        const graphView = userPrefs.getTopologyCanvas();
-        await expect(graphView).toBeVisible({ timeout: 30_000 });
+        await expect(userPrefs.getTopologyCanvas()).toBeVisible({ timeout: 30_000 });
       });
 
     },
@@ -105,7 +106,6 @@ test.describe('User Preferences', { tag: ['@dev-console'] }, () => {
 
       await test.step('Create test namespace', async () => {
         await k8sClient.createNamespace(ns);
-        await k8sClient.waitForNamespaceReady(ns);
         cleanup.trackNamespace(ns);
       });
 
@@ -118,7 +118,8 @@ test.describe('User Preferences', { tag: ['@dev-console'] }, () => {
       });
 
       await test.step('Navigate to a create form and verify YAML view', async () => {
-        await userPrefs.navigateToBuildConfigForm(ns);
+        const buildConfigPage = new BuildConfigPage(page);
+        await buildConfigPage.navigateToCreateForm(ns);
         const syncedEditor = userPrefs.getSyncedEditor();
         await expect(syncedEditor).toBeVisible({ timeout: 30_000 });
         const yamlRadio = userPrefs.getEditorRadio('YAML view');
