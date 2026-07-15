@@ -119,18 +119,19 @@ export const ToastProvider: FC<ToastProviderProps> = ({
   }, []);
 
   const minimizeToast = useCallback((id: string) => {
+    let canMinimize = false;
     setToasts((state) => {
       const toast = state.find((item) => item.id === id);
-      if (!toast || toast.persistInDrawer !== true) {
-        return state;
-      }
-      return state.filter((item) => item.id !== id);
+      canMinimize = toast?.persistInDrawer === true;
+      return canMinimize ? state.filter((item) => item.id !== id) : state;
     });
-    setNotifications((state) =>
-      state.map((notification) =>
-        notification.id === id ? { ...notification, isRead: false } : notification,
-      ),
-    );
+    if (canMinimize) {
+      setNotifications((state) =>
+        state.map((notification) =>
+          notification.id === id ? { ...notification, isRead: false } : notification,
+        ),
+      );
+    }
   }, []);
 
   const clearNotification = useCallback(
@@ -281,7 +282,7 @@ export const ToastProvider: FC<ToastProviderProps> = ({
                             component={action.component}
                             data-test={
                               action.dataTest ||
-                              (action.minimize ? 'toast-minimize-action' : 'toast-action')
+                              (action.minimize ? 'toast-minimize-action-link' : 'toast-action')
                             }
                           >
                             {action.label}

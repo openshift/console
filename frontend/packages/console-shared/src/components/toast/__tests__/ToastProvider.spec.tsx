@@ -706,9 +706,8 @@ describe('ToastProvider', () => {
       expect(screen.getByText('dismissible minimizable toast')).toBeVisible();
     });
 
-    // Dismissible toasts already occupy the actionClose slot with a close button,
-    // so an explicit minimize action renders as a text action link there instead of
-    // an icon button.
+    // This toast never sets `minimizable`, so Minimize only comes from the
+    // explicit `actions[].minimize` entry, rendered as a text link.
     expect(
       screen.queryByRole('button', { name: 'Minimize alert: dismissible minimizable toast' }),
     ).not.toBeInTheDocument();
@@ -856,6 +855,59 @@ describe('ToastProvider', () => {
       expect(screen.getByText('ephemeral toast')).toBeVisible();
     });
     expect(notificationHistoryContext.notifications).toHaveLength(0);
+  });
+
+  it('should not reset a notification to unread when its toast was already cleared from the visible stack', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(
+      <ToastProvider maxDisplayed={1}>
+        <TestComponent />
+      </ToastProvider>,
+    );
+
+    act(() => {
+      toastContext.addToast({
+        id: 'stale-notification',
+        title: 'stale notification toast',
+        variant: AlertVariant.info,
+        content: 'description',
+        persistInDrawer: true,
+      });
+    });
+
+    act(() => {
+      notificationHistoryContext.markNotificationRead('stale-notification');
+    });
+
+    act(() => {
+      toastContext.addToast({
+        title: 'overflow toast',
+        variant: AlertVariant.info,
+        content: 'description',
+        persistInDrawer: true,
+      });
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText('View 1 more notification')).toBeVisible();
+    });
+
+    // Clears the visible toast stack (e.g. via the overflow link) while notification
+    // history, including the already-read entry below, is left untouched.
+    await user.click(screen.getByText('View 1 more notification'));
+
+    await waitFor(() => {
+      expect(screen.queryByText('stale notification toast')).not.toBeInTheDocument();
+    });
+
+    act(() => {
+      toastContext.minimizeToast('stale-notification');
+    });
+
+    expect(notificationHistoryContext.notifications).toHaveLength(2);
+    expect(
+      notificationHistoryContext.notifications.find((n) => n.id === 'stale-notification').isRead,
+    ).toBe(true);
   });
 
   it('should not render an automatic Minimize icon button when minimizable or persistInDrawer is missing, or no actions are given', async () => {
