@@ -35,7 +35,7 @@ describe('Timestamp', () => {
     const formattedDate = dateTimeFormatter().format(new Date(timestamp));
     expect(screen.getByText(formattedDate)).toBeDefined();
   });
-  it('should show dash for null timestamp', () => {
+  it('should show dash when timestamp is undefined', () => {
     renderWithProviders(<Timestamp timestamp={undefined} />);
     expect(screen.getByText('-')).toBeDefined();
   });
