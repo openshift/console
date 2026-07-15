@@ -205,6 +205,7 @@
   "Cluster health": "Cluster health",
   "Cluster status": "Cluster status",
   "AI Assessment": "AI Assessment",
+  "Cluster updates are irreversible. Once an update begins, it cannot be rolled back to the previous version.": "Cluster updates are irreversible. Once an update begins, it cannot be rolled back to the previous version.",
   "Control plane is hosted.": "Control plane is hosted.",
   "Update status": "Update status",
   "Click \"Select a version\" to view versions with known issues.": "Click \"Select a version\" to view versions with known issues.",

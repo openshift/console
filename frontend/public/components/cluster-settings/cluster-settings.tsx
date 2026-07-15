@@ -1547,6 +1547,16 @@ const UpdateAssessmentCard: FC<{
               t={t}
             />
           </Alert>
+          <Alert
+            variant="warning"
+            isInline
+            isPlain
+            title={t(
+              'public~Cluster updates are irreversible. Once an update begins, it cannot be rolled back to the previous version.',
+            )}
+            className="pf-v6-u-mt-sm"
+            data-test="update-assessment-irreversibility-notice"
+          />
         </CardBody>
       </CardExpandableContent>
     </Card>

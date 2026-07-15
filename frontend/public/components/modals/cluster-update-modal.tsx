@@ -380,6 +380,15 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
               data-test="update-cluster-modal-ols-precheck"
             />
           )}
+          <Alert
+            variant="warning"
+            isInline
+            isPlain
+            title={t(
+              'Cluster updates are irreversible. Once an update begins, it cannot be rolled back to the previous version.',
+            )}
+            data-test="update-cluster-modal-irreversibility-notice"
+          />
         </Form>
       </ModalBody>
       <ModalFooterWithAlerts errorMessage={errorMessage || error}>
