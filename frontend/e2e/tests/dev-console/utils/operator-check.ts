@@ -26,10 +26,6 @@ export async function hasOperatorSubscription(
     if (code === 404) {
       return false;
     }
-    const msg = err instanceof Error ? err.message : String(err);
-    if (msg.includes('404') || msg.includes('not found') || msg.includes('Not Found')) {
-      return false;
-    }
     throw err;
   }
 }
