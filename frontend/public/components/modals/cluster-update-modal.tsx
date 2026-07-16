@@ -253,7 +253,7 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
                 className="pf-v6-u-mt-sm"
                 isInline
                 title={t(
-                  'Updating this cluster to {{desiredVersion}} is supported, but includes known issues.  Review the known issues before updating.',
+                  'Updating your cluster to {{desiredVersion}} is supported, but it includes known issues. Review the known issues before you update.',
                   { desiredVersion: desiredNotRecommendedUpdate.release.version },
                 )}
                 variant="info"
@@ -312,7 +312,7 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
                     isInline
                     isPlain
                     title={t(
-                      'Paused {{worker}} or custom pool {{resource}} updates will be resumed. If you want to update only the control plane, select "Control plane only update" below.',
+                      'The system will resume paused {{worker}} or custom pool {{resource}} updates. To update only the control plane, select "Control plane only update" below.',
                       { worker: NodeTypeNames.Worker, resource: NodeModel.label },
                     )}
                     data-test="update-cluster-modal-paused-nodes-warning"

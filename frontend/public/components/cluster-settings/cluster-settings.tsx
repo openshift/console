@@ -895,7 +895,7 @@ const parseUpdateFailureMessage = (
       return {
         title: t('public~Cluster has issues preventing updates'),
         message: t(
-          'public~The cluster is not ready to update. Check the cluster operator status and resolve any issues before attempting to update.',
+          'public~The cluster is not ready to update. Check your cluster operator status and resolve any issues before you try to update.',
         ),
       };
     }
@@ -929,7 +929,7 @@ const parseUpdateFailureMessage = (
     return {
       title: t('public~Update blocked by cluster version overrides'),
       message: t(
-        'public~The cluster has version overrides configured that prevent automatic updates. Remove the overrides from the ClusterVersion object to continue with the update.',
+        'public~Your cluster has version overrides configured that prevent automatic updates. To continue, remove the overrides from your ClusterVersion object.',
       ),
     };
   }
@@ -942,7 +942,7 @@ const parseUpdateFailureMessage = (
     return {
       title: t('public~Update blocked by degraded cluster operators'),
       message: t(
-        'public~Some cluster operators are in a degraded or unavailable state. Fix the operator issues before attempting to update the cluster.',
+        'public~Some cluster operators are in a degraded or unavailable state. Fix the operator issues before you try to update the cluster.',
       ),
     };
   }
@@ -952,7 +952,7 @@ const parseUpdateFailureMessage = (
     return {
       title: t('public~Update validation failed'),
       message: t(
-        'public~The update payload failed validation checks. This may indicate issues with the update manifest or cluster configuration.',
+        'public~The update payload failed validation checks. This might indicate issues with the update manifest or cluster configuration.',
       ),
     };
   }
@@ -966,7 +966,7 @@ const parseUpdateFailureMessage = (
     return {
       title: t('public~Update failed due to connectivity issues'),
       message: t(
-        'public~Unable to download or validate the update payload. Check network connectivity and registry access.',
+        'public~Your system cannot download or validate the update payload. Check your network connectivity and registry access.',
       ),
     };
   }
@@ -976,7 +976,7 @@ const parseUpdateFailureMessage = (
     return {
       title: t('public~Update failed due to insufficient resources'),
       message: t(
-        'public~The cluster does not have enough resources to complete the update. Ensure adequate disk space and memory are available.',
+        'public~The cluster does not have enough resources to complete the update. Make sure you have enough disk space and memory available.',
       ),
     };
   }
@@ -986,7 +986,7 @@ const parseUpdateFailureMessage = (
     return {
       title: t('public~Update blocked by cluster policy'),
       message: t(
-        'public~The update is blocked by cluster policies or governance rules. Contact your cluster administrator for assistance.',
+        'public~Cluster policies or governance rules are blocking the update. Contact your cluster administrator for help resolving this issue.',
       ),
     };
   }
@@ -1002,7 +1002,7 @@ const parseUpdateFailureMessage = (
       message:
         advice ||
         t(
-          'public~The cluster does not meet the required conditions for updating. Check the cluster status and resolve any blocking issues.',
+          'public~The cluster does not meet the required conditions for updating. Check your cluster status and resolve any blocking issues.',
         ),
     };
   }
@@ -1012,7 +1012,7 @@ const parseUpdateFailureMessage = (
     return {
       title: t('public~Update signature verification failed'),
       message: t(
-        'public~The update payload could not be verified. This may indicate issues with release signatures or registry certificates.',
+        'public~The update payload could not be verified. This might indicate issues with release signatures or registry certificates.',
       ),
     };
   }
@@ -1065,7 +1065,7 @@ const parseUpdateFailureMessage = (
       return {
         title: t('public~Cluster update conditions need attention'),
         message: t(
-          'public~The cluster has conditions that prevent updates. Check the cluster status and resolve any issues before attempting to update.',
+          'public~The cluster has conditions that prevent updates. Check your cluster status and resolve any issues before you try to update.',
         ),
       };
     }
@@ -1099,7 +1099,7 @@ const parseUpdateFailureMessage = (
 
   return {
     title: t('public~Update failed'),
-    message: cleanMessage || t('public~An error occurred during the update process.'),
+    message: cleanMessage || t('public~The cluster update could not be completed.'),
   };
 };
 
@@ -1132,10 +1132,10 @@ export const ClusterNotUpgradeableAlert: FC<ClusterNotUpgradeableAlertProps> = (
       title={
         currentVersionParsed && newerUpdateParsed
           ? t(
-              'This cluster should not be updated to {{nextMajorMinorVersion}}. You can continue to update to patch releases in {{currentMajorMinorVersion}}.',
+              'Your cluster cannot be updated to {{nextMajorMinorVersion}}. You can continue to install patch releases in {{currentMajorMinorVersion}}.',
               { nextMajorMinorVersion, currentMajorMinorVersion },
             )
-          : t('This cluster should not be updated to the next minor version.')
+          : t('Your cluster cannot be updated to the next minor version.')
       }
       className="co-alert"
       actionLinks={
@@ -1361,8 +1361,8 @@ const UpdateAlertContent: FC<AlertContentProps> = ({
         <FlexItem>
           <div className="pf-v6-u-color-200 pf-v6-u-font-size-sm">
             {hasUpdates
-              ? t('public~Check cluster health and update prerequisites.')
-              : t('public~Verify cluster health and operational status.')}
+              ? t('public~Check cluster health and update prerequisites')
+              : t('public~Verify cluster health and operational status')}
           </div>
         </FlexItem>
       </Flex>
@@ -1378,7 +1378,7 @@ const UpdateAlertContent: FC<AlertContentProps> = ({
       </FlexItem>
       <FlexItem>
         <div className="pf-v6-u-color-200 pf-v6-u-font-size-sm">
-          {t('public~Review cluster status.')}
+          {t('public~Review cluster status')}
         </div>
       </FlexItem>
     </Flex>

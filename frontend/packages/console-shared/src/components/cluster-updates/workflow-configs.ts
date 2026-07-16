@@ -136,7 +136,7 @@ const createStatusWorkflow = (): UpdateWorkflowConfig => ({
  * - No service issues (RetrievedUpdates working, ReleaseAccepted working)
  */
 const createPreCheckWorkflow = (): UpdateWorkflowConfig => ({
-  buttonText: (t) => t('public~Pre-check with AI'),
+  buttonText: (t) => t('public~Precheck your cluster with AI'),
 
   prompt: ({ cv }: UpdateWorkflowContext) => {
     const currentVersion = getCurrentVersion(cv);

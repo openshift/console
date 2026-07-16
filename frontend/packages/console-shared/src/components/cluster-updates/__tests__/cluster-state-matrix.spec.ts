@@ -14,7 +14,7 @@
  * - 'status': Shows "Update status" button
  *   - Uses createProgressPrompt when Progressing=True and no failures
  *   - Uses createTroubleshootPrompt when failures detected
- * - 'pre-check': Shows "Pre-check with AI" button
+ * - 'pre-check': Shows "Precheck your cluster with AI" button
  *   - Uses createPreCheckPrompt when updates available
  *   - Uses createPreCheckSpecificVersionPrompt when specific version selected
  *   - Uses createPreCheckNoUpdatesPrompt when no updates available
