@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useCallback } from 'react';
 import { Button } from '@patternfly/react-core';
-import { RhUiAiInfoIcon } from '@patternfly/react-icons';
+import { LightbulbIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk';
 import type { Alert } from '@console/dynamic-plugin-sdk';
@@ -142,7 +142,7 @@ const OLSButtonInner: FC<UpdateWorkflowOLSButtonProps & OLSButtonInnerProps> = (
       variant={variant}
       size={size}
       onClick={handleClick}
-      icon={<RhUiAiInfoIcon />}
+      icon={<LightbulbIcon />}
       iconPosition="start"
       className={className}
       data-test={dataTest || `ols-update-${phase}`}

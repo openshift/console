@@ -33,10 +33,10 @@ import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 
 import {
-  RhUiAddCircleIcon,
-  RhUiPauseCircleIcon,
-  RhUiEditIcon,
-  RhUiInProgressIcon,
+  AddCircleOIcon,
+  PauseCircleIcon,
+  PencilAltIcon,
+  InProgressIcon,
 } from '@patternfly/react-icons';
 
 import { UpdateWorkflowOLSButton } from '@console/shared/src/components/cluster-updates/explain-button';
@@ -189,7 +189,7 @@ const CurrentChannel: FC<CurrentChannelProps> = ({ cv, canUpgrade }) => {
   const label = cv.spec.channel || t('public~Not configured');
   return canUpgrade ? (
     <Button
-      icon={<RhUiEditIcon />}
+      icon={<PencilAltIcon />}
       iconPosition="end"
       type="button"
       isInline
@@ -1188,7 +1188,7 @@ export const MachineConfigPoolsArePausedAlert: FC<MachineConfigPoolsArePausedAle
       title={t('public~{{resource}} updates are paused.', {
         resource: NodeModel.label,
       })}
-      customIcon={<RhUiPauseCircleIcon />}
+      customIcon={<PauseCircleIcon />}
       actionLinks={
         workerMachineConfigPoolIsEditable && (
           <AlertActionLink
@@ -1302,7 +1302,7 @@ const UpdateAlertContent: FC<AlertContentProps> = ({
             alignItems={{ default: 'alignItemsCenter' }}
           >
             <FlexItem>
-              <Label color="blue" isCompact icon={<RhUiInProgressIcon />}>
+              <Label color="blue" isCompact icon={<InProgressIcon />}>
                 {t('public~Updating')}
               </Label>
             </FlexItem>
@@ -1496,7 +1496,7 @@ const UpdateAssessmentCard: FC<{
         <CardBody>
           <Alert
             variant="info"
-            customIcon={<RhUiInProgressIcon />}
+            customIcon={<InProgressIcon />}
             isInline
             title={alertTitle}
             actionLinks={
@@ -1793,7 +1793,7 @@ export const ClusterVersionDetailsTable: FC<ClusterVersionDetailsTableProps> = (
               <DescriptionListDescription>
                 {_.isEmpty(autoscalers) ? (
                   <Link to={`${resourcePathFromModel(ClusterAutoscalerModel)}/~new`}>
-                    <RhUiAddCircleIcon className="co-icon-space-r" />
+                    <AddCircleOIcon className="co-icon-space-r" />
                     {t('public~Create autoscaler')}
                   </Link>
                 ) : (

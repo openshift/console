@@ -15,7 +15,7 @@ import {
   ModalVariant,
   Radio,
 } from '@patternfly/react-core';
-import { RhUiAiInfoIcon } from '@patternfly/react-icons';
+import { LightbulbIcon } from '@patternfly/react-icons';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { DropdownWithSwitch } from '@console/shared/src/components/dropdown/dropdown-with-switch/DropdownWithSwitch';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
@@ -349,7 +349,7 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
             <Alert
               variant="info"
               customIcon={
-                <RhUiAiInfoIcon style={{ color: 'var(--pf-t--global--color--purple--300)' }} />
+                <LightbulbIcon style={{ color: 'var(--pf-t--global--color--purple--300)' }} />
               }
               isInline
               title={

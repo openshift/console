@@ -1,9 +1,9 @@
 import type { TFunction } from 'i18next';
 import type { Alert } from '@console/dynamic-plugin-sdk';
 import type {
-  K8sResourceCommon,
   ClusterVersionKind,
   ClusterOperator,
+  MachineConfigPoolKind,
 } from '@console/internal/module/k8s';
 
 /**
@@ -12,35 +12,9 @@ import type {
 
 /**
  * Machine Config Pool resource type
- * Subset of MachineConfigPoolKind with fields used by cluster update workflows
- * Extends K8sResourceCommon to inherit standard metadata, apiVersion, and kind fields
+ * Re-export of MachineConfigPoolKind from internal module for consistency
  */
-export type MachineConfigPool = K8sResourceCommon & {
-  spec?: {
-    configuration?: {
-      name?: string;
-    };
-    nodeSelector?: {
-      matchLabels?: Record<string, string>;
-    };
-    paused?: boolean;
-  };
-  status?: {
-    conditions?: {
-      type: string;
-      status: string;
-      reason?: string;
-      message?: string;
-      lastTransitionTime?: string;
-    }[];
-    machineCount?: number;
-    readyMachineCount?: number;
-    updatedMachineCount?: number;
-    degradedMachineCount?: number;
-    unavailableMachineCount?: number;
-    observedGeneration?: number;
-  };
-};
+export type MachineConfigPool = MachineConfigPoolKind;
 
 // OLS workflow context - specific to cluster update workflows
 interface OLSWorkflowContext<T = ClusterVersionKind> {
