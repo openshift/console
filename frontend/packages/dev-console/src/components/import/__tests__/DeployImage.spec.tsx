@@ -87,7 +87,6 @@ describe('DeployImage Page Test', () => {
       state: null,
       hash: null,
       key: 'test',
-      unstable_mask: undefined,
     });
   });
 
