@@ -201,7 +201,7 @@ go 1.25+, nodejs/yarn, kubectl
 
 ### Frontend Development
 
-All frontend code lives in the `frontend/` directory. The frontend uses node, yarn, and webpack to compile dependencies into self contained bundles which are loaded dynamically at run time in the browser. These bundles are not committed to git. Tasks are defined in `package.json` in the `scripts` section and are aliased to `yarn run <cmd>` (in the frontend directory).
+All frontend code lives in the `frontend/` directory. The frontend uses node, yarn, and rspack to compile dependencies into self-contained bundles which are loaded dynamically at run time in the browser. These bundles are not committed to git. Tasks are defined in `package.json` in the `scripts` section and are aliased to `yarn run <cmd>` (in the frontend directory).
 
 #### Install Dependencies
 

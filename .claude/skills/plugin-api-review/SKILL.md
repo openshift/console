@@ -17,7 +17,7 @@ allowed-tools: Bash(git diff *), GitHub API, Web search, Read, Grep, Glob
   as well as any files which affect consumers of the SDK. This includes SDK
   functions, React components, React hooks, TypeScript types and interfaces (such
   as extension points, utility types, and other SDK exported types), and shared
-  modules provided to plugins by the console using webpack module federation.
+  modules provided to plugins by the console using Module Federation v1.
   The files which affect consumers of the SDK are labelled with `plugin-api-changed`
   in the OWNERS file of that directory.
 - Changes to JavaScript files which are not part of the plugin API should be

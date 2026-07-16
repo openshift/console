@@ -48,7 +48,7 @@ For each path:
 
 Report any import paths that don't resolve to real files.
 
-**Note on `@console/internal`**: Some subpaths resolve through webpack aliases rather than direct filesystem paths. If a path under `@console/internal` does not resolve directly under `frontend/public/`, also check `frontend/public/module/` and `frontend/public/components/` as common alias targets. When a path cannot be verified through either method, report it as a **warning** rather than an error — it may be alias-resolved at build time.
+**Note on `@console/internal`**: Some subpaths resolve through bundler import aliases rather than direct filesystem paths. If a path under `@console/internal` does not resolve directly under `frontend/public/`, also check `frontend/public/module/` and `frontend/public/components/` as common alias targets. When a path cannot be verified through either method, report it as a **warning** rather than an error — it may be alias-resolved at build time.
 
 **Skip**: Relative imports (`../`, `./`) — these are example-specific and not verifiable without context.
 

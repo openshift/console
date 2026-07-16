@@ -20,7 +20,7 @@ const getDistFiles = (root: string, extensions: string[]): string[] => {
 };
 
 // Matches ES import/export statements with a @console/* module specifier.
-// Does NOT match require() calls -- those are resolved dynamically at runtime via webpack
+// Does NOT match require() calls -- those are resolved dynamically at runtime via
 // module federation and are expected in the dist output.
 const importFromConsoleRe = /\b(?:import|export)\s+(?:[\s\S]*?\s+)?from\s+['"](@console\/[^'"]*)['"]/g;
 
