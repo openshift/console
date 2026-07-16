@@ -1,7 +1,7 @@
 package reportsummary
 
 import (
-	helmchart "helm.sh/helm/v3/pkg/chart"
+	chartv2 "helm.sh/helm/v4/pkg/chart/v2"
 
 	"github.com/redhat-certification/chart-verifier/internal/chartverifier/profiles"
 	apireport "github.com/redhat-certification/chart-verifier/pkg/chartverifier/report"
@@ -38,8 +38,8 @@ type MetadataReport struct {
 	WebCatalogOnly    bool                `json:"webCatalogOnly" yaml:"webCatalogOnly,omitempty"`
 	//nolint:stylecheck // complains Uri should be URI - leaving as is for now
 	//because this produces an outputted file.
-	ChartUri string              `json:"chart-uri" yaml:"chart-uri"`
-	Chart    *helmchart.Metadata `json:"chart" yaml:"chart"`
+	ChartUri string            `json:"chart-uri" yaml:"chart-uri"`
+	Chart    *chartv2.Metadata `json:"chart" yaml:"chart"`
 }
 
 type ResultsReport struct {

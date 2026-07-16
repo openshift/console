@@ -81,6 +81,10 @@ describe('getClusterCompatibility', () => {
     expect(getClusterCompatibility(lifecycle, '2.0.1', '4.17.0')).toBe('compatible');
     expect(getClusterCompatibility(lifecycle, '2.0.1', '4.14.0')).toBe('incompatible');
   });
+
+  it('returns no data for an invalid operator version', () => {
+    expect(getClusterCompatibility(lifecycle, 'latest', '4.15.0')).toBe('no-data');
+  });
 });
 
 describe('getSupportPhase', () => {
@@ -140,17 +144,9 @@ describe('getSupportPhase', () => {
     expect(result).toEqual({ status: SupportPhaseStatus.SelfSupport, allPhases });
   });
 
-  it('returns first phase when date is before all phases', () => {
+  it('returns self-support if the date is before all phases', () => {
     const result = getSupportPhase(lifecycle, '1.0', new Date('2023-06-01'));
-    expect(result).toEqual({
-      status: SupportPhaseStatus.Active,
-      currentPhase: {
-        name: 'Maintenance support',
-        startDate: '2024-01-01',
-        endDate: '2024-06-30',
-      },
-      allPhases,
-    });
+    expect(result).toEqual({ status: SupportPhaseStatus.SelfSupport, allPhases });
   });
 
   it('returns no-data when lifecycle data is undefined', () => {
@@ -181,6 +177,12 @@ describe('getSupportPhase', () => {
       versions: [{ name: '1.0' }],
     };
     expect(getSupportPhase(noPhases, '1.0')).toEqual({ status: SupportPhaseStatus.NoData });
+  });
+
+  it('returns no data for an invalid operator version', () => {
+    expect(getSupportPhase(lifecycle, 'latest', new Date('2024-03-15'))).toEqual({
+      status: SupportPhaseStatus.NoData,
+    });
   });
 
   it('matches operator version by minor version when exact match fails', () => {
@@ -292,11 +294,11 @@ describe('SupportPhaseBadge', () => {
     expect(screen.getByTestId('support-phase-badge')).toBeInTheDocument();
   });
 
-  it('renders Self-support when phase is self-support', () => {
+  it('renders Unsupported when phase is self-support', () => {
     render(
       <SupportPhaseBadge phase={{ status: SupportPhaseStatus.SelfSupport, allPhases: phases }} />,
     );
-    expect(screen.getByText('Self-support')).toBeInTheDocument();
+    expect(screen.getByText('Unsupported')).toBeInTheDocument();
     expect(screen.getByTestId('support-phase-self-support')).toBeInTheDocument();
   });
 

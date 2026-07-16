@@ -54,10 +54,11 @@ const findVersionEntry = (
   if (!operatorVersion) {
     return versions[0];
   }
-  return (
-    versions.find((v) => v.name === operatorVersion) ??
-    versions.find((v) => parseMinorVersion(v.name) === parseMinorVersion(operatorVersion))
-  );
+  const minor = parseMinorVersion(operatorVersion);
+  if (minor === undefined) {
+    return undefined;
+  }
+  return versions.find((v) => parseMinorVersion(v.name) === minor);
 };
 
 export type CompatibilityResult = 'compatible' | 'incompatible' | 'no-data';
@@ -138,12 +139,7 @@ export const getSupportPhase = (
     }
   }
 
-  const lastPhase = allPhases[allPhases.length - 1];
-  if (now > parseLocalEndOfDay(lastPhase.endDate)) {
-    return { status: SupportPhaseStatus.SelfSupport, allPhases };
-  }
-
-  return { status: SupportPhaseStatus.Active, currentPhase: allPhases[0], allPhases };
+  return { status: SupportPhaseStatus.SelfSupport, allPhases };
 };
 
 export const ClusterCompatibilityStatus: FC<{ compatible: CompatibilityResult }> = ({
@@ -263,7 +259,7 @@ export const SupportPhaseBadge: FC<{ phase: SupportPhaseResult }> = ({ phase }) 
           isInline
         >
           <Label variant="outline" icon={<BlueInfoCircleIcon />} textMaxWidth="100%">
-            {t('Self-support')}
+            {t('Unsupported')}
           </Label>
         </Button>
       </LifecycleDatesPopover>
@@ -282,7 +278,7 @@ export const SupportPhaseBadge: FC<{ phase: SupportPhaseResult }> = ({ phase }) 
     const endDate = formatDate(new Date(parseLocalEndOfDay(phase.currentPhase.endDate)));
 
     return (
-      <span data-test="support-phase-badge">
+      <div data-test="support-phase-badge">
         <LifecycleDatesPopover phases={phase.allPhases}>
           <Button
             variant="link"
@@ -295,9 +291,9 @@ export const SupportPhaseBadge: FC<{ phase: SupportPhaseResult }> = ({ phase }) 
               {phase.currentPhase.name}
             </Label>
           </Button>
-        </LifecycleDatesPopover>{' '}
-        {endDate}
-      </span>
+        </LifecycleDatesPopover>
+        <div>{endDate}</div>
+      </div>
     );
   }
 

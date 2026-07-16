@@ -3,7 +3,7 @@ package report
 import (
 	"net/url"
 
-	helmchart "helm.sh/helm/v3/pkg/chart"
+	chartv2 "helm.sh/helm/v4/pkg/chart/v2"
 
 	apichecks "github.com/redhat-certification/chart-verifier/pkg/chartverifier/checks"
 )
@@ -24,9 +24,9 @@ type Report struct {
 }
 
 type ReportMetadata struct {
-	ToolMetadata ToolMetadata        `json:"tool" yaml:"tool"`
-	ChartData    *helmchart.Metadata `json:"chart" yaml:"chart"`
-	Overrides    string              `json:"chart-overrides" yaml:"chart-overrides"`
+	ToolMetadata ToolMetadata      `json:"tool" yaml:"tool"`
+	ChartData    *chartv2.Metadata `json:"chart" yaml:"chart"`
+	Overrides    string            `json:"chart-overrides" yaml:"chart-overrides"`
 }
 
 type ToolMetadata struct {

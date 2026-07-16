@@ -1,10 +1,11 @@
 import { test, expect } from '../../../fixtures';
+import { warmupSPA } from '../../../pages/base-page';
 
 test.describe('Favorites', { tag: ['@admin'] }, () => {
   test('adds, displays, removes, and limits favorites', async ({ page }) => {
     const sidebar = page.locator('#page-sidebar');
 
-    await page.goto('/');
+    await warmupSPA(page);
 
     await test.step('Verify no favorites message when none are added', async () => {
       await sidebar.getByRole('button', { name: 'Favorites' }).click();

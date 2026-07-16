@@ -12,10 +12,10 @@ import (
 	"testing"
 	"time"
 
-	"helm.sh/helm/v3/pkg/cli"
+	"helm.sh/helm/v4/pkg/cli"
 )
 
-const helmModulePath = "helm.sh/helm/v3"
+const helmModulePath = "helm.sh/helm/v4"
 
 func setSettings(settings *cli.EnvSettings) {
 	settings.RepositoryCache = os.TempDir()
@@ -31,7 +31,7 @@ func helmVersionFromGoMod() string {
 		if err != nil {
 			continue
 		}
-		// Match line like "	helm.sh/helm/v3 v3.18.5" or "	helm.sh/helm/v3 v3.18.5 // indirect".
+		// Match a require line like "helm.sh/helm/v4 v4.1.4" or "helm.sh/helm/v4 v4.1.4 // indirect".
 		re := regexp.MustCompile(`(?m)^\s*` + regexp.QuoteMeta(helmModulePath) + `\s+(\S+)`)
 		if m := re.FindSubmatch(data); len(m) >= 2 {
 			return strings.TrimSpace(string(m[1]))
@@ -40,7 +40,7 @@ func helmVersionFromGoMod() string {
 	return ""
 }
 
-// setHelmVersionFromBuildInfo sets HELM_VERSION from the Go module's helm.sh/helm/v3
+// setHelmVersionFromBuildInfo sets HELM_VERSION from the Go module's helm.sh/helm/v4
 // dependency. Prefers debug.ReadBuildInfo(); when that is empty for test binaries (Go #33976),
 // falls back to parsing go.mod.
 func setHelmVersionFromBuildInfo() error {

@@ -8,7 +8,8 @@
     "skipLibCheck": true,
     "noEmit": true,
     "noUnusedLocals": true,
-    "types": ["node"]
+    "typeRoots": ["../@types", "../node_modules/@types"],
+    "types": ["node", "console"]
   },
   "include": ["**/*.ts"],
   "exclude": ["node_modules"]

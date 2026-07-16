@@ -6,6 +6,7 @@ module.exports = {
     tsconfigRootDir: __dirname,
   },
   extends: ['plugin:console/playwright'],
+  ignorePatterns: ['**/testData/**/*.json'],
   rules: {
     'no-console': 'off',
     'no-empty-pattern': 'off',

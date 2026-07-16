@@ -6,13 +6,15 @@ import { getGroupVersionKindForResource } from '@console/dynamic-plugin-sdk/src/
 import { LazyLabelsModalOverlay } from '@console/internal/components/modals';
 import type { LabelsModalProps } from '@console/internal/components/modals/labels-modal';
 
-export const useLabelsModal: UseLabelsModal = (resource) => {
+export const useLabelsModal: UseLabelsModal = (resource, onSubmit) => {
   const launchModal = useOverlay();
   const groupVersionKind = getGroupVersionKindForResource(resource);
   const [kind] = useK8sModel(groupVersionKind);
   return useCallback(
     () =>
-      resource && kind && launchModal<LabelsModalProps>(LazyLabelsModalOverlay, { kind, resource }),
-    [launchModal, kind, resource],
+      resource &&
+      kind &&
+      launchModal<LabelsModalProps>(LazyLabelsModalOverlay, { kind, resource, onSubmit }),
+    [launchModal, kind, resource, onSubmit],
   );
 };

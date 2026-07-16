@@ -16,7 +16,10 @@ import {
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
-import { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import {
+  K8sResourceCommon,
+  LabelsModalOnSubmit,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { K8sResourceKind } from '../../module/k8s';
 import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
@@ -38,6 +41,7 @@ const BaseLabelsModal: FC<BaseLabelsModalProps> = ({
   labelClassName,
   messageKey,
   messageVariables,
+  onSubmit,
   path,
   resource,
 }) => {
@@ -64,32 +68,42 @@ const BaseLabelsModal: FC<BaseLabelsModalProps> = ({
   const submit = useCallback(
     (e): void => {
       e.preventDefault();
-      const data = [
-        {
-          op: createPath ? 'add' : 'replace',
-          path,
-          value: SelectorInput.objectify(labels),
-        },
-      ];
+      const rawValues = SelectorInput.objectify(labels);
+      const labelValues: { [key: string]: string } = Object.fromEntries(
+        Object.entries(rawValues).map(([k, v]) => [k, v ?? '']),
+      );
 
-      // https://kubernetes.io/docs/user-guide/deployments/#selector
-      //   .spec.selector must match .spec.template.metadata.labels, or it will be rejected by the API
-      const updateTemplate =
-        isPodSelector && !_.isEmpty(_.get(resource, TEMPLATE_SELECTOR_PATH.split('/').slice(1)));
+      const promise = onSubmit
+        ? onSubmit(resource, labelValues)
+        : (() => {
+            const data = [
+              {
+                op: createPath ? 'add' : 'replace',
+                path,
+                value: labelValues,
+              },
+            ];
 
-      if (updateTemplate) {
-        data.push({
-          path: TEMPLATE_SELECTOR_PATH,
-          op: 'replace',
-          value: SelectorInput.objectify(labels),
-        });
-      }
-      const promise = k8sPatchResource({ model: kind, resource, data });
+            // https://kubernetes.io/docs/user-guide/deployments/#selector
+            //   .spec.selector must match .spec.template.metadata.labels, or it will be rejected by the API
+            const updateTemplate =
+              isPodSelector &&
+              !_.isEmpty(_.get(resource, TEMPLATE_SELECTOR_PATH.split('/').slice(1)));
+
+            if (updateTemplate) {
+              data.push({
+                path: TEMPLATE_SELECTOR_PATH,
+                op: 'replace',
+                value: labelValues,
+              });
+            }
+            return k8sPatchResource({ model: kind, resource, data });
+          })();
       handlePromise(promise)
         .then(close)
         .catch(() => {});
     },
-    [createPath, path, labels, isPodSelector, resource, kind, handlePromise, close],
+    [createPath, path, labels, isPodSelector, resource, kind, handlePromise, close, onSubmit],
   );
 
   return (
@@ -194,6 +208,7 @@ type BaseLabelsModalProps = {
   labelClassName?: string;
   messageKey?: string;
   messageVariables?: { [key: string]: string };
+  onSubmit?: LabelsModalOnSubmit;
   path: string;
   resource: K8sResourceKind;
 } & ModalComponentProps;

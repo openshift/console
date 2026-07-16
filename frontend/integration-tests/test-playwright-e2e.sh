@@ -109,13 +109,16 @@ copy_playwright_artifacts_to_dir() {
     mkdir -p "$dest"
     if cp -a test-results/. "$dest/"; then
       copied=true
+      # Remove JUnit XML files from the bulk copy so Prow Spyglass doesn't
+      # parse them as duplicates of the top-level junit-playwright.xml.
+      rm -f "$dest"/*.xml
       echo "Copied Playwright test-results (traces, screenshots, videos) to ${dest}"
     else
       echo "Warning: failed to copy test-results to ${dest}" >&2
     fi
     if [ -f test-results/junit-results.xml ]; then
-      cp -a test-results/junit-results.xml "${ARTIFACT_DIR}/junit-playwright-standard.xml" && \
-        echo "Copied standard JUnit report to ${ARTIFACT_DIR}/junit-playwright-standard.xml"
+      cp -a test-results/junit-results.xml "${ARTIFACT_DIR}/playwright-standard-junit.xml" && \
+        echo "Copied standard JUnit report to ${ARTIFACT_DIR}/playwright-standard-junit.xml"
     fi
     if [ -f test-results/prow-junit-results.xml ]; then
       cp -a test-results/prow-junit-results.xml "${ARTIFACT_DIR}/junit-playwright.xml" && \

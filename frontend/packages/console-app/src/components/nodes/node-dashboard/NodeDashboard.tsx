@@ -1,6 +1,8 @@
 import type { FC } from 'react';
-import { useReducer, useCallback, useEffect } from 'react';
+import { useMemo, useReducer, useCallback, useEffect } from 'react';
 import * as _ from 'lodash';
+import { FLAG_NODE_MGMT_V1 } from '@console/app/src/consts';
+import { useFlag } from '@console/dynamic-plugin-sdk/src/utils/flags';
 import type { NodeKind } from '@console/internal/module/k8s';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
@@ -75,6 +77,7 @@ const reducer = (state: NodeDashboardState, action: NodeDashboardAction) => {
 };
 
 const NodeDashboard: FC<NodeDashboardProps> = ({ obj }) => {
+  const nodeMgmtV1Enabled = useFlag(FLAG_NODE_MGMT_V1);
   const [state, dispatch] = useReducer(reducer, initialState(obj));
 
   useEffect(() => {
@@ -94,20 +97,35 @@ const NodeDashboard: FC<NodeDashboardProps> = ({ obj }) => {
     [],
   );
 
-  const context = {
-    obj,
-    cpuLimit: state.cpuLimit,
-    memoryLimit: state.memoryLimit,
-    healthCheck: state.healthCheck,
-    setCPULimit,
-    setMemoryLimit,
-    setHealthCheck,
-  };
+  const context = useMemo(
+    () => ({
+      obj,
+      cpuLimit: state.cpuLimit,
+      memoryLimit: state.memoryLimit,
+      healthCheck: state.healthCheck,
+      setCPULimit,
+      setMemoryLimit,
+      setHealthCheck,
+    }),
+    [
+      obj,
+      setCPULimit,
+      setHealthCheck,
+      setMemoryLimit,
+      state.cpuLimit,
+      state.healthCheck,
+      state.memoryLimit,
+    ],
+  );
 
   return (
     <NodeDashboardContext.Provider value={context}>
       <Dashboard>
-        <DashboardGrid mainCards={mainCards} leftCards={leftCards} rightCards={rightCards} />
+        <DashboardGrid
+          mainCards={mainCards}
+          leftCards={leftCards}
+          rightCards={nodeMgmtV1Enabled ? undefined : rightCards}
+        />
       </Dashboard>
     </NodeDashboardContext.Provider>
   );

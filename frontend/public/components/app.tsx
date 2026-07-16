@@ -339,7 +339,7 @@ const AppRouter: FC = () => {
   );
 
   return (
-    <BrowserRouter unstable_useTransitions={false} basename={window.SERVER_FLAGS.basePath}>
+    <BrowserRouter useTransitions={false} basename={window.SERVER_FLAGS.basePath}>
       <Routes>
         {/*
           Treat the authentication error page as a standalone route.
