@@ -1,4 +1,4 @@
-import * as SemVer from 'semver';
+import * as semver from 'semver';
 
 /**
  * A null safe wrapper for String.localeCompare. Sorts strings alphabetically in ascending order,
@@ -12,17 +12,22 @@ export const localeComparator: Comparator<string> = (a, b) => (a || '').localeCo
 export const boolComparator: Comparator<boolean> = (a, b) => (a ? 0 : 1) - (b ? 0 : 1);
 
 /**
- * Wrapper for SemVer.compare function. Sorts semver strings in ascending order. Invalid semver
- * strings will be sorted last.
+ * Compares two semantic version strings. Sorts in ascending order.
+ * Returns -1 if a < b, 0 if a === b, 1 if a > b.
+ * Falls back to string comparison if semver parsing fails.
  */
-export const semVerComparator: Comparator<string | SemVer.SemVer> = (a, b) => SemVer.compare(a, b);
+export const semVerComparator: Comparator<string> = (a, b) => {
+  const aVersion = semver.parse(a);
+  const bVersion = semver.parse(b);
 
-/**
- * Same as semVerCompare, but is more forgiving for not-quite-valid semver strings. Sorts strings in
- * ascending order based on the loosely interpreted semver value.
- */
-export const looseSemVerComparator: Comparator<string | SemVer.SemVer> = (a, b) =>
-  SemVer.compare(a, b, true);
+  if (!aVersion && !bVersion) {
+    return (a || '').localeCompare(b || '');
+  }
+  if (!aVersion) return 1;
+  if (!bVersion) return -1;
+
+  return semver.compare(aVersion, bVersion);
+};
 
 /**
  * A null safe function that can be passed directly to Array.prototype.sort.

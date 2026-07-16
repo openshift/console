@@ -896,6 +896,18 @@ type ClusterVersionStatus = {
   conditions?: ClusterVersionCondition[];
   availableUpdates?: VersionUpdate[];
   conditionalUpdates?: ConditionalUpdate[];
+  capabilities?: {
+    enabledCapabilities: string[];
+    knownCapabilities: string[];
+  };
+};
+
+type ClusterVersionSpecOverride = {
+  group?: string;
+  kind: string;
+  name: string;
+  namespace?: string;
+  unmanaged?: boolean;
 };
 
 type ClusterVersionSpec = {
@@ -903,6 +915,11 @@ type ClusterVersionSpec = {
   clusterID: string;
   desiredUpdate?: Release;
   upstream?: string;
+  capabilities?: {
+    additionalEnabledCapabilities?: string[];
+    baselineCapabilitySet?: string;
+  };
+  overrides?: ClusterVersionSpecOverride[];
 };
 
 export type ClusterVersionKind = {
