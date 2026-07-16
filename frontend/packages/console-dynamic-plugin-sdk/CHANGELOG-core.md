@@ -10,12 +10,15 @@ For current development version of Console, use `4.x.0-prerelease.n` packages.
 For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility
 table in [Console dynamic plugins README](./README.md).
 
+## 4.23.0-prerelease.5 - TBD
+
+- Add minimize action for toast notifications via new `ToastOptions.minimizable`, `ToastOptions.actions[].minimize`, and `ToastContextValues.minimizeToast` ([CONSOLE-5424], [#16762])
+
 ## 4.23.0-prerelease.4 - 2026-07-14
 
 - Add optional `onSubmit` parameter to `useLabelsModal` hook for customizing label submission behavior ([CONSOLE-5356], [#16560])
 - Update `@patternfly/react-topology` peer dependency semver range to `~6.6.0` ([OCPBUGS-86587], [#16750])
 - Update `react-router` peer dependency semver range to `~7.18.1` ([CONSOLE-5415], [#16726])
-- Add minimize action for toast notifications via new `ToastOptions.minimizable`, `ToastOptions.actions[].minimize`, and `ToastContextValues.minimizeToast` ([CONSOLE-5424], [#16762])
 
 ## 4.23.0-prerelease.3 - 2026-07-07
 
