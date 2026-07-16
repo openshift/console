@@ -102,7 +102,8 @@ func newTestHandler(t *testing.T, backend *httptest.Server) http.HandlerFunc {
 	if err != nil {
 		t.Fatalf("failed to parse backend URL: %v", err)
 	}
-	return apiDiscoveryHandler(&proxy.Config{Endpoint: endpoint})
+	k8sProxy := proxy.NewProxy(&proxy.Config{Endpoint: endpoint})
+	return apiDiscoveryHandler(k8sProxy)
 }
 
 func TestApiDiscoveryHandler(t *testing.T) {

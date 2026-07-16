@@ -358,7 +358,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 		authHandler(k8sProxy.ServeHTTP),
 	))
 
-	handle(apiDiscoveryEndpoint, middleware.WithGZIPEncoding(authHandler(apiDiscoveryHandler(s.K8sProxyConfig))))
+	handle(apiDiscoveryEndpoint, middleware.WithGZIPEncoding(authHandler(apiDiscoveryHandler(k8sProxy))))
 
 	handleFunc(devfileEndpoint, devfile.DevfileHandler)
 	handleFunc(devfileSamplesEndpoint, devfile.DevfileSamplesHandler)
