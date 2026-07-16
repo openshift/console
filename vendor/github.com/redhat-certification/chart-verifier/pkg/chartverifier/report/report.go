@@ -132,6 +132,7 @@ func loadReportFromRemote(url *url.URL) (string, error) {
 	if getErr != nil {
 		return "", fmt.Errorf("report uri %s: error reading from url  %v", url, getErr)
 	}
+	defer resp.Body.Close()
 
 	if resp.StatusCode == http.StatusNotFound {
 		return "", fmt.Errorf("report uri %s: bad response reading from url  %d", url, resp.StatusCode)

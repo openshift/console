@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	"helm.sh/helm/v3/pkg/cli"
+	"helm.sh/helm/v4/pkg/cli"
 	v1 "k8s.io/api/apps/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"

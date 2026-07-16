@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"helm.sh/helm/v3/pkg/registry"
+	"helm.sh/helm/v4/pkg/registry"
 )
 
 // newRegistryClient is a package-level variable to allow mocking in tests
