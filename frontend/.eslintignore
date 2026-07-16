@@ -14,3 +14,4 @@ dynamic-demo-plugin
 tsconfig.json
 e2e/tsconfig.json
 e2e/package.json
+integration-tests/tsconfig.json
