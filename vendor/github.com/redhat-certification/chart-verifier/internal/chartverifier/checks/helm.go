@@ -19,30 +19,32 @@ package checks
 import (
 	"fmt"
 	"io"
+	"maps"
 	"net/http"
 	"net/url"
 	"os"
 	"path"
 	"path/filepath"
 	"regexp"
+	"slices"
 	"strings"
 
-	"helm.sh/helm/v3/pkg/chartutil"
+	"helm.sh/helm/v4/pkg/chart/common"
+	chartv2 "helm.sh/helm/v4/pkg/chart/v2"
+	loaderv2 "helm.sh/helm/v4/pkg/chart/v2/loader"
+	utilv2 "helm.sh/helm/v4/pkg/chart/v2/util"
 
-	"helm.sh/helm/v3/pkg/chart"
-	"helm.sh/helm/v3/pkg/chart/loader"
-
-	"helm.sh/helm/v3/pkg/action"
-	kubefake "helm.sh/helm/v3/pkg/kube/fake"
-	"helm.sh/helm/v3/pkg/storage"
-	"helm.sh/helm/v3/pkg/storage/driver"
+	"helm.sh/helm/v4/pkg/action"
+	kubefake "helm.sh/helm/v4/pkg/kube/fake"
+	"helm.sh/helm/v4/pkg/storage"
+	"helm.sh/helm/v4/pkg/storage/driver"
 
 	"github.com/redhat-certification/chart-verifier/internal/helm/actions"
 )
 
 // loadChartFromRemote attempts to retrieve a Helm chart from the given remote url. Returns an error if the given url
 // doesn't contain the 'http' or 'https' schema, or any other error related to retrieving the contents of the chart.
-func loadChartFromRemote(url *url.URL) (*chart.Chart, error) {
+func loadChartFromRemote(url *url.URL) (*chartv2.Chart, error) {
 	if url.Scheme != "http" && url.Scheme != "https" {
 		return nil, fmt.Errorf("only 'http' and 'https' schemes are supported, but got %q", url.Scheme)
 	}
@@ -51,17 +53,18 @@ func loadChartFromRemote(url *url.URL) (*chart.Chart, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
 	if resp.StatusCode == http.StatusNotFound {
 		return nil, ChartNotFoundErr(url.String())
 	}
 
-	return loader.LoadArchive(resp.Body)
+	return loaderv2.LoadArchive(resp.Body)
 }
 
 // loadChartFromAbsPath attempts to retrieve a local Helm chart by resolving the maybe relative path into an absolute
 // path from the current working directory.
-func loadChartFromAbsPath(path string) (*chart.Chart, error) {
+func loadChartFromAbsPath(path string) (*chartv2.Chart, error) {
 	// although filepath.Abs() can return an error according to its signature, this won't happen (as of go 1.15)
 	// because the only invalid value it would accept is an empty string, which is internally converted into "."
 	// regardless, the error is still being caught and propagated to avoid being bitten by internal changes in the
@@ -71,7 +74,7 @@ func loadChartFromAbsPath(path string) (*chart.Chart, error) {
 		return nil, err
 	}
 
-	c, err := loader.Load(chartPath)
+	c, err := loaderv2.Load(chartPath)
 	if err != nil {
 		if os.IsNotExist(err) {
 			return nil, ChartNotFoundErr(path)
@@ -84,12 +87,12 @@ func loadChartFromAbsPath(path string) (*chart.Chart, error) {
 
 type ChartCache interface {
 	MakeKey(uri string) string
-	Add(uri string, chrt *chart.Chart) (ChartCacheItem, error)
+	Add(uri string, chrt *chartv2.Chart) (ChartCacheItem, error)
 	Get(uri string) (ChartCacheItem, bool, error)
 }
 
 type ChartCacheItem struct {
-	Chart *chart.Chart
+	Chart *chartv2.Chart
 	Path  string
 }
 
@@ -115,7 +118,7 @@ func (c *chartCache) Get(uri string) (ChartCacheItem, bool, error) {
 	}
 }
 
-func (c *chartCache) Add(opts *CheckOptions, chrt *chart.Chart) (ChartCacheItem, error) {
+func (c *chartCache) Add(opts *CheckOptions, chrt *chartv2.Chart) (ChartCacheItem, error) {
 	var (
 		err          error
 		userCacheDir string
@@ -128,7 +131,7 @@ func (c *chartCache) Add(opts *CheckOptions, chrt *chart.Chart) (ChartCacheItem,
 	key := c.MakeKey(opts.URI)
 	chartCacheDir := path.Join(userCacheDir, key)
 	cacheItem := ChartCacheItem{Chart: chrt, Path: path.Join(chartCacheDir, chrt.Name())}
-	if err = chartutil.SaveDir(chrt, chartCacheDir); err != nil {
+	if err = utilv2.SaveDir(chrt, chartCacheDir); err != nil {
 		return ChartCacheItem{}, err
 	}
 	c.chartMap[key] = cacheItem
@@ -143,9 +146,11 @@ func init() {
 
 // LoadChartFromURI attempts to retrieve a chart from the given uri string. It accepts "http", "https", "file" schemes,
 // and defaults to "file" if there isn't one.
-func LoadChartFromURI(opts *CheckOptions) (*chart.Chart, string, error) {
+//
+// TODO(komish): Identify path to support OCI distribution
+func LoadChartFromURI(opts *CheckOptions) (*chartv2.Chart, string, error) {
 	var (
-		chrt *chart.Chart
+		chrt *chartv2.Chart
 		err  error
 	)
 
@@ -201,9 +206,9 @@ func getImageReferences(chartURI string, vals map[string]interface{}, serverKube
 	// We'll start with DefaultCapabilities, but we'll really only use the
 	// kubeVersion of this when rendering manifests because Helm replaces the
 	// action config's capabilities for client-only execution.
-	caps := chartutil.DefaultCapabilities.Copy()
+	caps := common.DefaultCapabilities.Copy()
 
-	kubeVersion, err := chartutil.ParseKubeVersion(serverKubeVersionString)
+	kubeVersion, err := common.ParseKubeVersion(serverKubeVersionString)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", "unable to render manifests and extract images due to invalid kubeVersion in server capabilities", err)
 	}
@@ -214,7 +219,6 @@ func getImageReferences(chartURI string, vals map[string]interface{}, serverKube
 		Releases:     nil,
 		KubeClient:   &kubefake.PrintingKubeClient{Out: io.Discard},
 		Capabilities: caps,
-		Log:          func(format string, v ...interface{}) {},
 	}
 
 	mem := driver.NewMemory()
@@ -232,7 +236,7 @@ func getImageReferences(chartURI string, vals map[string]interface{}, serverKube
 // getImagesFromContent evaluates generated templates from
 // helm and extracts images which are returned in a slice
 func getImagesFromContent(content string) ([]string, error) {
-	re, err := regexp.Compile(`\s+image\:\s+(?P<image>.*)\n`)
+	re, err := regexp.Compile(`(?m)\s+image\:[ \t]+(?P<image>\S.*)\s*$`)
 	if err != nil {
 		return nil, fmt.Errorf("error getting images; %v", err)
 	}
@@ -245,11 +249,7 @@ func getImagesFromContent(content string) ([]string, error) {
 		imageMap[image] = struct{}{}
 	}
 
-	var images []string
-	for k := range imageMap {
-		images = append(images, k)
-	}
-
+	images := slices.Collect(maps.Keys(imageMap))
 	return images, nil
 }
 

@@ -3,8 +3,8 @@ package actions
 import (
 	"net/http"
 
-	"helm.sh/helm/v3/pkg/action"
-	"helm.sh/helm/v3/pkg/cli"
+	"helm.sh/helm/v4/pkg/action"
+	"helm.sh/helm/v4/pkg/cli"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"k8s.io/client-go/rest"
 	"k8s.io/klog/v2"
@@ -20,6 +20,7 @@ type configFlagsWithTransport struct {
 func initSettings() *cli.EnvSettings {
 	conf := cli.New()
 	conf.RepositoryCache = "/tmp"
+	conf.ContentCache = "/tmp/helm-content-cache"
 	return conf
 }
 
@@ -49,7 +50,7 @@ func GetActionConfigurations(host, ns, token string, transport *http.RoundTrippe
 		confFlags.CAFile = &inClusterCfg.CAFile
 	}
 	conf := new(action.Configuration)
-	conf.Init(confFlags, ns, "secrets", klog.Infof)
+	conf.Init(confFlags, ns, "secrets")
 	registryClient, err := GetDefaultOCIRegistry()
 	if err != nil {
 		klog.V(4).Infof("Failed to get default OCI registry: %v", err)

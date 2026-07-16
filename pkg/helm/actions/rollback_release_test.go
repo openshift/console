@@ -6,39 +6,40 @@ import (
 	"io"
 	"testing"
 
-	"helm.sh/helm/v3/pkg/action"
-	"helm.sh/helm/v3/pkg/chartutil"
-	kubefake "helm.sh/helm/v3/pkg/kube/fake"
-	"helm.sh/helm/v3/pkg/release"
-	"helm.sh/helm/v3/pkg/storage"
-	"helm.sh/helm/v3/pkg/storage/driver"
+	"helm.sh/helm/v4/pkg/action"
+	"helm.sh/helm/v4/pkg/chart/common"
+	kubefake "helm.sh/helm/v4/pkg/kube/fake"
+	releasecommon "helm.sh/helm/v4/pkg/release/common"
+	releasev1 "helm.sh/helm/v4/pkg/release/v1"
+	"helm.sh/helm/v4/pkg/storage"
+	"helm.sh/helm/v4/pkg/storage/driver"
 )
 
 func TestRollbackRelease(t *testing.T) {
 	tests := []struct {
 		name       string
-		release    release.Release
+		release    releasev1.Release
 		err        error
 		rollbackTo int
 	}{
 		{
 			name: "rolling back to existing previous release should rollback successfully",
-			release: release.Release{
+			release: releasev1.Release{
 				Version: 1,
 				Name:    "valid-release",
-				Info: &release.Info{
-					Status: release.StatusDeployed,
+				Info: &releasev1.Info{
+					Status: releasecommon.StatusDeployed,
 				},
 			},
 			rollbackTo: 1,
 		},
 		{
 			name: "rolling back to invalid release no. should throw an error",
-			release: release.Release{
+			release: releasev1.Release{
 				Version: 1,
 				Name:    "valid-release",
-				Info: &release.Info{
-					Status: release.StatusDeployed,
+				Info: &releasev1.Info{
+					Status: releasecommon.StatusDeployed,
 				},
 			},
 			err:        errors.New("Revision no. should be more than 0"),
@@ -53,8 +54,7 @@ func TestRollbackRelease(t *testing.T) {
 			actionConfig := &action.Configuration{
 				Releases:     store,
 				KubeClient:   &kubefake.PrintingKubeClient{Out: io.Discard},
-				Capabilities: chartutil.DefaultCapabilities,
-				Log:          func(format string, v ...interface{}) {},
+				Capabilities: common.DefaultCapabilities,
 			}
 
 			err := store.Create(&tt.release)
@@ -98,8 +98,7 @@ func TestRollbackNonExistRelease(t *testing.T) {
 			actionConfig := &action.Configuration{
 				Releases:     store,
 				KubeClient:   &kubefake.PrintingKubeClient{Out: io.Discard},
-				Capabilities: chartutil.DefaultCapabilities,
-				Log:          func(format string, v ...interface{}) {},
+				Capabilities: common.DefaultCapabilities,
 			}
 
 			_, err := RollbackRelease(tt.releaseName, tt.rollbackTo, actionConfig)

@@ -14,6 +14,7 @@ table in [Console dynamic plugins README](./README.md).
 
 - Add optional `onSubmit` parameter to `useLabelsModal` hook for customizing label submission behavior ([CONSOLE-5356], [#16560])
 - Update `@patternfly/react-topology` peer dependency semver range to `~6.6.0` ([OCPBUGS-86587], [#16750])
+- Update `react-router` peer dependency semver range to `~7.18.1` ([CONSOLE-5415], [#16726])
 
 ## 4.23.0-prerelease.3 - 2026-07-07
 
@@ -244,6 +245,7 @@ table in [Console dynamic plugins README](./README.md).
 [CONSOLE-5355]: https://issues.redhat.com/browse/CONSOLE-5355
 [CONSOLE-5356]: https://issues.redhat.com/browse/CONSOLE-5356
 [CONSOLE-5361]: https://issues.redhat.com/browse/CONSOLE-5361
+[CONSOLE-5415]: https://issues.redhat.com/browse/CONSOLE-5415
 [OCPBUGS-19048]: https://issues.redhat.com/browse/OCPBUGS-19048
 [OCPBUGS-30077]: https://issues.redhat.com/browse/OCPBUGS-30077
 [OCPBUGS-31355]: https://issues.redhat.com/browse/OCPBUGS-31355
@@ -335,4 +337,5 @@ table in [Console dynamic plugins README](./README.md).
 [#16582]: https://github.com/openshift/console/pull/16582
 [#16585]: https://github.com/openshift/console/pull/16585
 [#16636]: https://github.com/openshift/console/pull/16636
+[#16726]: https://github.com/openshift/console/pull/16726
 [#16750]: https://github.com/openshift/console/pull/16750
