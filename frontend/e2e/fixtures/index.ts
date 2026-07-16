@@ -60,8 +60,22 @@ export const test = base.extend<TestFixtures, WorkerFixtures>({
     { scope: 'worker' },
   ],
 
-  techPreviewOnly: async ({ page }, use) => {
-    const isTechPreview = await page.evaluate(() => window.SERVER_FLAGS.techPreview);
+  techPreviewOnly: async ({ k8sClient }, use) => {
+    let isTechPreview = false;
+    try {
+      const fg = await k8sClient.getClusterCustomResource(
+        'config.openshift.io',
+        'v1',
+        'featuregates',
+        'cluster',
+      );
+      isTechPreview = (fg as any)?.spec?.featureSet === 'TechPreviewNoUpgrade';
+    } catch {
+      // If the CR can't be read, don't skip — surface the infrastructure error
+      throw new Error(
+        `techPreviewOnly: could not read FeatureGate CR 'cluster': check cluster connectivity`,
+      );
+    }
     test.skip(!isTechPreview, 'This test requires a TechPreviewNoUpgrade cluster');
     await use();
   },
@@ -80,8 +94,10 @@ export const test = base.extend<TestFixtures, WorkerFixtures>({
         const sections: any[] = (fg as any)?.status?.featureGates ?? [];
         const section = sections.find((s: any) => s.featureSet === featureSet);
         enabled = (section?.enabled ?? []).map((g: any) => String(g.name));
-      } catch {
-        // If the CR can't be read, skip rather than fail
+      } catch (err) {
+        throw new Error(
+          `requireFeatureGate('${gateName}'): could not read FeatureGate CR 'cluster': ${err}`,
+        );
       }
       test.skip(
         !enabled.includes(gateName),
