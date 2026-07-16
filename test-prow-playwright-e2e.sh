@@ -59,8 +59,12 @@ if [ "$SCENARIO" == "e2e" ] || [ "$SCENARIO" == "release" ]; then
 elif [ "$SCENARIO" == "smoke" ]; then
   # End of script flags before Playwright's --project (test-playwright-e2e.sh only parses -c).
   ./integration-tests/test-playwright-e2e.sh -- --project=smoke "$@"
+elif [ "$SCENARIO" == "feature-gate" ]; then
+  # Run only tests tagged @feature-gate; the requireFeatureGate fixture skips any
+  # test whose gate is not enabled on this cluster.
+  ./integration-tests/test-playwright-e2e.sh -- --grep @feature-gate "$@"
 else
-  echo "error: unknown scenario '$SCENARIO' (use: e2e, release, or smoke)" >&2
+  echo "error: unknown scenario '$SCENARIO' (use: e2e, release, smoke, or feature-gate)" >&2
   exit 1
 fi
 
