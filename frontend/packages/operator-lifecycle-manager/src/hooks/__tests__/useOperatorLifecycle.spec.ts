@@ -76,6 +76,48 @@ describe('useOperatorLifecycle', () => {
     expect(loading).toBe(false);
   });
 
+  it('retries with a fresh request when the cached in-flight promise was aborted by another caller', async () => {
+    // Fix B scenario: two hook instances share the same cache key.
+    // Hook A starts the fetch (P1 enters cache). Hook B arrives and gets P1 from cache.
+    // Hook A is then aborted — P1 rejects with AbortError.
+    // Fix B detects that B's signal is still live and retries with B's signal.
+    const retryData = { lifecycleSchema: 'retry', properties: '{}' };
+    let rejectP1: (err: Error) => void;
+
+    // Hook A's fetch hangs until we manually reject it
+    mockCoFetchJSON.mockImplementationOnce(
+      () =>
+        new Promise((_resolve, reject) => {
+          rejectP1 = reject;
+        }),
+    );
+    // Hook B's retry fetch resolves immediately
+    mockCoFetchJSON.mockResolvedValueOnce(retryData);
+
+    const PKG = 'pkg-cached-shared';
+
+    // Hook A: effect runs → P1 created and stored in cache
+    const { unmount: unmountA } = renderHook(() => useOperatorLifecycle(PKG, CATALOG, NS));
+
+    // Hook B: same key → effect finds P1 in cache → Fix B wraps P1 with B's signal
+    const { result: resultB } = renderHook(() => useOperatorLifecycle(PKG, CATALOG, NS));
+
+    await act(async () => {
+      unmountA(); // aborts A's controller (signal_A); our mock doesn't react to signals
+      // Manually reject P1 to simulate what signal_A abort does to the real fetch
+      rejectP1(new DOMException('The operation was aborted.', 'AbortError'));
+      await Promise.resolve();
+      await Promise.resolve();
+      await Promise.resolve(); // allow retry to complete
+    });
+
+    const [data, loading, error] = resultB.current;
+    expect(error).toBeNull();
+    expect(data).toEqual(retryData); // retry produced real data
+    expect(loading).toBe(false);
+    expect(mockCoFetchJSON).toHaveBeenCalledTimes(2); // P1 (aborted) + P2 (retry)
+  });
+
   it('skips fetch when packageName is missing', () => {
     renderHook(() => useOperatorLifecycle(undefined, CATALOG, NS));
 

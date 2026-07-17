@@ -103,6 +103,32 @@ describe('consoleFetch', () => {
     ).rejects.not.toBeInstanceOf(RetryError);
   });
 
+  it('does not console.warn when fetch is aborted via AbortController', async () => {
+    const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    const controller = new AbortController();
+    window.fetch = jest.fn(() =>
+      Promise.reject(new DOMException('The operation was aborted.', 'AbortError')),
+    );
+
+    await expect(
+      coFetch('/api/lifecycle/test', { signal: controller.signal }),
+    ).rejects.toMatchObject({ name: 'AbortError' });
+    expect(consoleSpy).not.toHaveBeenCalled();
+    consoleSpy.mockRestore();
+  });
+
+  it('does console.warn when fetch fails with a real network error', async () => {
+    const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    window.fetch = jest.fn(() => Promise.reject(new TypeError('Network failure')));
+
+    await expect(coFetch('/api/lifecycle/test')).rejects.toThrow('Network failure');
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.stringContaining('/api/lifecycle/test'),
+      expect.any(TypeError),
+    );
+    consoleSpy.mockRestore();
+  });
+
   it('should retry up to 3 times when RetryError is thrown', async () => {
     window.fetch = jest.fn(() =>
       Promise.resolve({ status: 404, headers: emptyHeaders } as Response),

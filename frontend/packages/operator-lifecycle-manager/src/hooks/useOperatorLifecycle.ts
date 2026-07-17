@@ -48,7 +48,16 @@ const fetchLifecycleData = (
 ): Promise<LifecycleData> => {
   const existing = lifecycleCache.get(cacheKey);
   if (existing?.promise) {
-    return existing.promise;
+    // The cached promise is tied to the ORIGINAL caller's signal, not ours.
+    // If the original was aborted by someone else while our signal is still live,
+    // issue a fresh retry rather than surfacing a spurious AbortError.
+    return existing.promise.catch((err: Error) => {
+      if (err.name === 'AbortError' && !signal.aborted) {
+        lifecycleCache.delete(cacheKey);
+        return fetchLifecycleData(cacheKey, url, signal);
+      }
+      throw err;
+    });
   }
 
   const promise = coFetchJSON(url, 'GET', { signal }).then(
