@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
 import type { LifecycleData } from '../components/operator-lifecycle-status';
 import { DEFAULT_SOURCE_NAMESPACE } from '../const';
@@ -41,62 +41,28 @@ const extractPackageName = (olmProperties: string): string | undefined => {
   }
 };
 
-const fetchLifecycleData = (
-  cacheKey: string,
-  url: string,
-  signal: AbortSignal,
-): Promise<LifecycleData> => {
+// Fetch lifecycle data and deduplicate concurrent requests via a module-level cache.
+// Requests are intentionally not cancelled on component unmount: the response
+// populates the cache so any later render of the same operator avoids a re-fetch,
+// and React silently ignores state updates after unmount.
+const fetchLifecycleData = (cacheKey: string, url: string): Promise<LifecycleData> => {
   const existing = lifecycleCache.get(cacheKey);
   if (existing?.promise) {
-    // The cached promise is tied to the ORIGINAL caller's signal, not ours.
-    // If the original was aborted by someone else while our signal is still live,
-    // issue a fresh retry rather than surfacing a spurious AbortError.
-    // Capture a reference so multiple concurrent callers agree on which promise
-    // they are watching: only the first one to run this .catch() will find the
-    // cache still pointing at existingPromise and start a single retry; all
-    // later callers will see a newer promise in the cache and reuse it.
-    const existingPromise = existing.promise;
-    return existingPromise.catch((err: Error) => {
-      if (err.name === 'AbortError' && !signal.aborted) {
-        if (lifecycleCache.get(cacheKey)?.promise === existingPromise) {
-          lifecycleCache.delete(cacheKey);
-        }
-        return fetchLifecycleData(cacheKey, url, signal);
-      }
-      throw err;
-    });
+    return existing.promise; // deduplicate: all callers share the one in-flight request
   }
 
-  const promise = coFetchJSON(url, 'GET', { signal }).then(
+  const promise = coFetchJSON(url, 'GET', {}).then(
     (result: LifecycleData) => {
-      lifecycleCache.set(cacheKey, {
-        data: result,
-        error: null,
-        timestamp: Date.now(),
-      });
+      lifecycleCache.set(cacheKey, { data: result, error: null, timestamp: Date.now() });
       return result;
     },
     (err: Error) => {
-      if (err.name === 'AbortError') {
-        lifecycleCache.delete(cacheKey);
-      } else {
-        lifecycleCache.set(cacheKey, {
-          data: null,
-          error: err,
-          timestamp: Date.now(),
-        });
-      }
+      lifecycleCache.set(cacheKey, { data: null, error: err, timestamp: Date.now() });
       throw err;
     },
   );
 
-  lifecycleCache.set(cacheKey, {
-    data: null,
-    error: null,
-    timestamp: Date.now(),
-    promise,
-  });
-
+  lifecycleCache.set(cacheKey, { data: null, error: null, timestamp: Date.now(), promise });
   return promise;
 };
 
@@ -108,7 +74,6 @@ export const useOperatorLifecycle = (
   const [data, setData] = useState<LifecycleData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  const abortRef = useRef<AbortController>();
 
   useEffect(() => {
     if (!packageName || !catalogName || !catalogNamespace) {
@@ -126,37 +91,25 @@ export const useOperatorLifecycle = (
       return undefined;
     }
 
-    abortRef.current?.abort();
-    const controller = new AbortController();
-    abortRef.current = controller;
-
     setLoading(true);
 
     const url = `/api/olm/lifecycle/${encodeURIComponent(catalogNamespace)}/${encodeURIComponent(
       catalogName,
     )}/${encodeURIComponent(packageName)}`;
 
-    fetchLifecycleData(cacheKey, url, controller.signal)
+    fetchLifecycleData(cacheKey, url)
       .then((result) => {
-        if (!controller.signal.aborted) {
-          setData(result);
-          setError(null);
-          setLoading(false);
-        }
+        setData(result);
+        setError(null);
+        setLoading(false);
       })
       .catch((err: Error) => {
-        if (!controller.signal.aborted) {
-          setLoading(false);
-          if (err.name !== 'AbortError') {
-            setData(null);
-            setError(err);
-          }
-        }
+        setData(null);
+        setError(err);
+        setLoading(false);
       });
 
-    return () => {
-      controller.abort();
-    };
+    return undefined; // no cleanup: requests complete naturally
   }, [packageName, catalogName, catalogNamespace]);
 
   return [data, loading, error];
