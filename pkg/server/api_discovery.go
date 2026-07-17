@@ -102,7 +102,7 @@ func apiDiscoveryHandler(k8sProxy *proxy.Proxy) http.HandlerFunc {
 }
 
 // k8sViaProxy makes an in-process GET request through the k8s proxy.
-func k8sViaProxy(k8sProxy *proxy.Proxy, path string, originalReq *http.Request) ([]byte, error) {
+func k8sViaProxy(handler http.Handler, path string, originalReq *http.Request) (body []byte, err error) {
 	req, err := http.NewRequestWithContext(originalReq.Context(), "GET", path, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create request for %s", path)
@@ -111,7 +111,18 @@ func k8sViaProxy(k8sProxy *proxy.Proxy, path string, originalReq *http.Request) 
 	req.Header = originalReq.Header.Clone()
 
 	rec := httptest.NewRecorder()
-	k8sProxy.ServeHTTP(rec, req)
+
+	defer func() {
+		if p := recover(); p != nil {
+			if p == http.ErrAbortHandler {
+				err = fmt.Errorf("request aborted for %s", path)
+			} else {
+				panic(p)
+			}
+		}
+	}()
+
+	handler.ServeHTTP(rec, req)
 
 	if rec.Code != http.StatusOK {
 		return nil, fmt.Errorf("unexpected status %d for %s", rec.Code, path)
