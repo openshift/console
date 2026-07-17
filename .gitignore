@@ -42,3 +42,4 @@ cypress-a11y-report.json
 **/chartstore-*/
 .artifacts/
 .playwright-mcp/
+.worktrees/
