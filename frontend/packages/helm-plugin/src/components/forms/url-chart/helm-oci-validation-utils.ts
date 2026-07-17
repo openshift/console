@@ -11,7 +11,7 @@ export function getHelmChartURLValidationSchema(t: TFunction) {
       .test(
         'is-valid-chart-url',
         t(
-          'helm-plugin~Must be a valid OCI URL or a valid HTTP/HTTPS tar file; for example - oci://registry.example.com/chart, https://example.com/chart-1.0.0.tgz.',
+          'helm-plugin~Must be a valid OCI URL or a valid HTTP/HTTPS .tar file; for example, oci://registry.example.com/chart, https://example.com/chart-1.0.0.tgz.',
         ),
         (() => {
           const label = /[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/.source;

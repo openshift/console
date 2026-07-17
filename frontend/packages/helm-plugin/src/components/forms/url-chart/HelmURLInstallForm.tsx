@@ -97,7 +97,7 @@ const HelmURLInstallForm: FC<FormikProps<HelmURLInstallFormData> & HelmURLInstal
       {chartHasValues && (
         <>
           {t(
-            'Complete the form to create a Helm release. Default values might already be set by the chart.',
+            'Complete the form to create a Helm release. The chart might already have set default values.',
           )}{' '}
           &nbsp;
         </>
@@ -111,7 +111,7 @@ const HelmURLInstallForm: FC<FormikProps<HelmURLInstallFormData> & HelmURLInstal
       <FormBody flexLayout>
         <FormHeader title={t('Configure Helm release')} helpText={formHelpText} marginBottom="lg" />
         {chartError && (
-          <Alert variant="danger" isInline title={t('Helm Chart cannot be installed')}>
+          <Alert variant="danger" isInline title={t('You cannot install the Helm Chart.')}>
             {t('The Helm Chart is currently unavailable. {{chartError}}', {
               chartError: chartError.message,
             })}
@@ -158,7 +158,7 @@ const HelmURLInstallForm: FC<FormikProps<HelmURLInstallFormData> & HelmURLInstal
                 autocompleteFilter={autocompleteFilter}
                 disabled
                 helpText={t(
-                  'Secret with "username" and "password" keys for OCI/HTTP(S) authentication.',
+                  'A secret with "username" and "password" keys for OCI/HTTP(S) authentication.',
                 )}
               />
             </GridItem>
