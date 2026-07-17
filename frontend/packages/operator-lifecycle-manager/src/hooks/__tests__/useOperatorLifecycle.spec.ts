@@ -6,7 +6,7 @@ jest.mock('@console/shared/src/utils/console-fetch', () => ({
   coFetchJSON: jest.fn(),
 }));
 
-const mockCoFetchJSON = coFetchJSON as jest.Mock;
+const mockCoFetchJSON = (coFetchJSON as unknown) as jest.Mock;
 
 // Each test uses a unique packageName to avoid sharing module-level cache entries.
 const CATALOG = 'redhat-operators';
