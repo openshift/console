@@ -80,6 +80,7 @@ test.describe(
       await test.step('Verify workload in topology', async () => {
         await topologyPage.navigateToTopology(ns);
         await topologyPage.waitForWorkload('shell-app');
+        await expect(topologyPage.getWorkload('shell-app')).toBeVisible();
       });
     });
 

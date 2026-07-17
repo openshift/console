@@ -73,14 +73,14 @@ test.describe(
       });
     });
 
-    test('create workload from Dockerfile with exposed port [A-05-TC04]', async () => {
+    test('create workload from Dockerfile [A-05-TC04]', async () => {
       test.slow();
 
       await test.step('Navigate to Import from Git', async () => {
         await addPage.clickImportFromGit();
       });
 
-      await test.step('Fill form with Dockerfile (port 5000 auto-detected from EXPOSE)', async () => {
+      await test.step('Fill form with Dockerfile repo and create', async () => {
         await gitPage.enterGitRepoURL(
           'https://github.com/rohitkrai03/flask-dockerfile-example',
         );
@@ -92,6 +92,7 @@ test.describe(
 
       await test.step('Verify workload in topology', async () => {
         await topologyPage.waitForWorkload('dockerfile-5000');
+        await expect(topologyPage.getWorkload('dockerfile-5000')).toBeVisible();
       });
     });
   },

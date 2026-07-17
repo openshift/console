@@ -58,6 +58,7 @@ test.describe(
 
       await test.step('Verify workload in topology', async () => {
         await topologyPage.waitForWorkload('mariadb');
+        await expect(topologyPage.getWorkload('mariadb')).toBeVisible();
       });
     });
   },
@@ -96,6 +97,7 @@ test.describe(
 
       await test.step('Verify workload in topology', async () => {
         await topologyPage.waitForWorkload('mariadb');
+        await expect(topologyPage.getWorkload('mariadb')).toBeVisible();
       });
     });
   },

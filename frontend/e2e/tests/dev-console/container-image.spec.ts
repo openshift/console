@@ -108,6 +108,7 @@ test.describe(
 
       await test.step('Verify workload in topology', async () => {
         await topologyPage.waitForWorkload('hello-internal');
+        await expect(topologyPage.getWorkload('hello-internal')).toBeVisible();
       });
     });
   },
