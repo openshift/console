@@ -96,10 +96,10 @@ const HelmCreateBasicAuthSecretModal: OverlayComponent<HelmCreateBasicAuthSecret
     <Modal
       isOpen
       onClose={() => closeModal(true)}
-      title={t('Create authentication Secret')}
+      title={t('Create authentication secret')}
       variant={ModalVariant.medium}
     >
-      <ModalHeader title={t('Create authentication Secret')} />
+      <ModalHeader title={t('Create authentication secret')} />
       <ModalBody>
         <Form onSubmit={onSubmit}>
           <FormGroup label={t('Secret name')} isRequired fieldId="helm-secret-name">

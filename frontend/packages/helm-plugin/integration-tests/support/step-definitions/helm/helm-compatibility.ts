@@ -13,7 +13,7 @@ When('user clicks on the Helm Chart card on the Add page', () => {
   addPage.selectCardFromOptions(addOptions.HelmChart);
 });
 
-When('user redirects to Helm Chart(s) page', () => {
+When('user redirects to Helm Charts page', () => {
   detailsPage.titleShouldContain(pageTitle.HelmCharts);
 });
 

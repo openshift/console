@@ -7,7 +7,7 @@ export const helmPage = {
   verifyInstallHelmLink: () =>
     cy
       .get('a')
-      .contains('Browse the catalog to discover available Helm Chart(s)')
+      .contains('Browse the catalog to discover available Helm Charts')
       .should('be.visible'),
   search: (name: string) => {
     cy.get(helmPO.filters).within(() => cy.get('.pf-v6-c-menu-toggle').first().click());

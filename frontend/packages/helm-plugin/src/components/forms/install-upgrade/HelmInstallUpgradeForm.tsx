@@ -126,8 +126,8 @@ const HelmInstallUpgradeForm: FC<
     ) {
       return false;
     }
-    const secrets = secretResources[0]?.data ?? [];
-    return !secrets.some((s) => s?.metadata?.name === values.basicAuthSecretName);
+    const secrets = secretResources[0].data ?? [];
+    return !secrets.some((s) => s.metadata.name === values.basicAuthSecretName);
   }, [showAuthSecret, secretResources, values.basicAuthSecretName]);
   const isSubmitDisabled =
     (helmAction === HelmActionType.Upgrade && !dirty) ||
@@ -187,7 +187,7 @@ const HelmInstallUpgradeForm: FC<
       <FormBody flexLayout>
         <FormHeader title={title} helpText={formHelpText} marginBottom="lg" />
         {chartError && (
-          <Alert variant="danger" isInline title={t('Helm Chart cannot be installed')}>
+          <Alert variant="danger" isInline title={t('You cannot install the Helm Chart.')}>
             {t('The Helm Chart is currently unavailable. {{chartError}}', {
               chartError,
             })}
@@ -222,7 +222,7 @@ const HelmInstallUpgradeForm: FC<
               <GridItem xl={5} lg={4} md={12}>
                 <ResourceDropdownField
                   name="basicAuthSecretName"
-                  label={t('Secret for basic authentication')}
+                  label={t('Secret for Basic authentication')}
                   resources={secretResources}
                   dataSelector={['metadata', 'name']}
                   fullWidth
@@ -237,13 +237,13 @@ const HelmInstallUpgradeForm: FC<
                       actionKey: NONE_SECRET_KEY,
                     },
                     {
-                      actionTitle: t('Create Secret'),
+                      actionTitle: t('Create authentication secret'),
                       actionKey: CREATE_SECRET_KEY,
                     },
                   ]}
                   onChange={handleSecretChange}
                   helpText={t(
-                    'Secret with "username" and "password" keys for OCI/HTTP(S) authentication.',
+                    'A secret with "username" and "password" keys for OCI/HTTP(S) authentication.',
                   )}
                 />
                 {secretMissing && (

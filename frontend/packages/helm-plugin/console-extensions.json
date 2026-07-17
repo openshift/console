@@ -166,7 +166,7 @@
       "groupId": "developer-catalog",
       "href": "/catalog/ns/:namespace?catalogType=HelmChart",
       "label": "%helm-plugin~Helm Chart%",
-      "description": "%helm-plugin~Browse the catalog to discover and install Helm Chart(s)%",
+      "description": "%helm-plugin~Browse the catalog to discover and install Helm Charts%",
       "icon": { "$codeRef": "helmIcons.helmCatalogIconSVG" }
     },
     "flags": {
@@ -194,9 +194,9 @@
     "type": "console.catalog/item-type",
     "properties": {
       "type": "HelmChart",
-      "title": "%helm-plugin~Helm Chart(s)%",
+      "title": "%helm-plugin~Helm Charts%",
       "catalogDescription": { "$codeRef": "getHelmCatalogTypeDescription" },
-      "typeDescription": "%helm-plugin~**Helm Chart(s)** are packages for deploying an Application or components of a larger Application.%",
+      "typeDescription": "%helm-plugin~**Helm Charts** are packages for deploying an Application or components of a larger Application.%",
       "filters": [
         {
           "label": "%helm-plugin~Chart Repositories%",
@@ -217,7 +217,7 @@
     "properties": {
       "catalogId": "dev-catalog",
       "type": "HelmChart",
-      "title": "%helm-plugin~Helm Chart(s)%",
+      "title": "%helm-plugin~Helm Charts%",
       "provider": { "$codeRef": "helmChartProvider" }
     },
     "flags": {
