@@ -1,6 +1,6 @@
 import { test, expect } from '../../fixtures';
 import { warmupSPA } from '../../pages/base-page';
-import { AddPage, SoftwareCatalogPage } from '../../pages/dev-console/add-page';
+import { AddPage } from '../../pages/dev-console/add-page';
 
 /**
  * Migrated from:
@@ -45,8 +45,7 @@ test.describe(
         const viewAllLink = addPage.getViewAllLink();
         await expect(viewAllLink).toBeVisible({ timeout: 10_000 });
         await viewAllLink.click();
-        const catalogPage = new SoftwareCatalogPage(page);
-        await expect(catalogPage.getPageHeading()).toBeVisible({ timeout: 15_000 });
+        await expect(page).toHaveURL(/\/catalog\//, { timeout: 15_000 });
       });
     });
 

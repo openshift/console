@@ -45,6 +45,7 @@ test.describe(
           'https://github.com/nodeshift-starters/devfile-sample',
         );
         await gitPage.waitForGitValidation();
+        await expect(gitPage.getDevfileStrategySelected()).toBeVisible({ timeout: 30_000 });
         await gitPage.enterWorkloadName('node-example');
         await gitPage.clickCreate();
       });

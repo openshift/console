@@ -1,4 +1,4 @@
-import type { Locator, Page } from '@playwright/test';
+import type { Locator } from '@playwright/test';
 
 import { expect } from '../../fixtures';
 import BasePage, { warmupSPA } from '../base-page';
@@ -200,6 +200,12 @@ export class ImportFromGitPage extends BasePage {
     return this.page
       .getByTestId('import-strategy-Devfile')
       .and(this.page.locator('[aria-disabled="true"]'));
+  }
+
+  getDevfileStrategySelected(): Locator {
+    return this.page
+      .getByTestId('import-strategy-Devfile')
+      .and(this.page.locator('[class*="selected"], [aria-pressed="true"], .pf-m-selected'));
   }
 
   async clickEditImportStrategy(): Promise<void> {
