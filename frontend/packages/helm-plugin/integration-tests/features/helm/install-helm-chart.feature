@@ -15,13 +15,13 @@ Feature: Install the Helm release
 
 
         @smoke @manual
-        Scenario: Software Catalog Page when Helm Chart(s) checkbox is selected: HR-06-TC02
+        Scenario: Software Catalog Page when Helm Charts checkbox is selected: HR-06-TC02
             Given user is at Add page
               And user has added multiple helm charts repositories
              When user selects "Helm Chart" card from add page
-             Then user will get redirected to Helm Chart(s) page
+             Then user will get redirected to Helm Charts page
               And user will see the list of Chart Repositories
-              And user will see the cards of Helm Chart(s)
+              And user will see the cards of Helm Charts
               And user will see Filter by Keyword field
               And user will see A-Z, Z-A sort by dropdown
 

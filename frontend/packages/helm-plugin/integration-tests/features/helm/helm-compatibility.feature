@@ -11,7 +11,7 @@ Feature: Helm Chart
         Scenario: Compatible helm charts: HR-02-TC01
             Given user is at Add page
              When user clicks on the Helm Chart card on the Add page
-             Then user redirects to Helm Chart(s) page
+             Then user redirects to Helm Charts page
               And user is able to see helm charts
 
 

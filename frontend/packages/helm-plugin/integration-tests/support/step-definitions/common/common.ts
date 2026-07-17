@@ -92,7 +92,7 @@ Given('user is at Software Catalog page', () => {
   catalogPage.verifyTitle();
 });
 
-When(/^user selects Helm Chart\(s\) type from Software Catalog page$/, () => {
+When('user selects Helm Charts type from Software Catalog page', () => {
   catalogPage.selectCatalogType(catalogTypes.HelmCharts);
   catalogPage.isCardsDisplayed();
 });

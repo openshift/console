@@ -169,13 +169,13 @@ const HelmURLChartForm: FC<FormikProps<HelmURLChartFormData> & HelmURLChartFormP
                 autocompleteFilter={autocompleteFilter}
                 actionItems={[
                   {
-                    actionTitle: t('Create Secret'),
+                    actionTitle: t('Create authentication secret'),
                     actionKey: CREATE_SECRET_KEY,
                   },
                 ]}
                 onChange={handleSecretChange}
                 helpText={t(
-                  'Secret with "username" and "password" keys for OCI/HTTP(S) authentication.',
+                  'A secret with "username" and "password" keys for OCI/HTTP(S) authentication.',
                 )}
               />
             </GridItem>

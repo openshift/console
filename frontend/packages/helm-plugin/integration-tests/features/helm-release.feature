@@ -18,7 +18,7 @@ Feature: Helm release
 
         Scenario: Create Helm release page details: HR-05-TC02
             Given user is at Software Catalog page
-             When user selects Helm Chart(s) type from Software Catalog page
+             When user selects Helm Charts type from Software Catalog page
               And user searches and selects "Nodejs" card from catalog page
               And user clicks on the Create button on side bar
              Then Create Helm release page is displayed
@@ -30,7 +30,7 @@ Feature: Helm release
 
         Scenario: Install Helm Chart from +Add Page using Form View: HR-06-TC04
             Given user is at Software Catalog page
-             When user selects Helm Chart(s) type from Software Catalog page
+             When user selects Helm Charts type from Software Catalog page
               And user searches and selects "Nodejs" card from catalog page
               And user clicks on the Create button on side bar
               And user enters Release Name as "nodejs-release"
@@ -61,7 +61,7 @@ Feature: Helm release
              Then user will see the helm charts listed
 
 
-        Scenario: Filter out deployed Helm Chart(s): HR-05-TC06
+        Scenario: Filter out deployed Helm Charts: HR-05-TC06
             Given user is at the Helm release tab in admin perspective
              When user clicks on the filter drop down
               And user selects checkbox for the "Deployed" Helm Charts

@@ -96,13 +96,13 @@ const HelmCreateBasicAuthSecretModal: OverlayComponent<HelmCreateBasicAuthSecret
     <Modal
       isOpen
       onClose={() => closeModal(true)}
-      title={t('Create authentication Secret')}
+      title={t('Create authentication secret')}
       variant={ModalVariant.medium}
     >
-      <ModalHeader title={t('Create authentication Secret')} />
+      <ModalHeader title={t('Create authentication secret')} />
       <ModalBody>
         <Form onSubmit={onSubmit}>
-          <FormGroup label={t('public~Secret name')} isRequired fieldId="helm-secret-name">
+          <FormGroup label={t('Secret name')} isRequired fieldId="helm-secret-name">
             <TextInput
               id="helm-secret-name"
               data-test="helm-secret-name"
@@ -113,12 +113,12 @@ const HelmCreateBasicAuthSecretModal: OverlayComponent<HelmCreateBasicAuthSecret
             />
             <FormHelperText>
               <HelperText>
-                <HelperTextItem>{t('public~Unique name of the Secret.')}</HelperTextItem>
+                <HelperTextItem>{t('Unique name of the Secret.')}</HelperTextItem>
               </HelperText>
             </FormHelperText>
           </FormGroup>
 
-          <FormGroup label={t('public~Secret username')} isRequired fieldId="helm-secret-username">
+          <FormGroup label={t('Secret username')} isRequired fieldId="helm-secret-username">
             <TextInput
               id="helm-secret-username"
               data-test="helm-secret-username"
@@ -134,7 +134,7 @@ const HelmCreateBasicAuthSecretModal: OverlayComponent<HelmCreateBasicAuthSecret
           </FormGroup>
 
           <FormGroup
-            label={t('public~Secret password or token')}
+            label={t('Secret password or token')}
             isRequired
             fieldId="helm-secret-password"
           >
@@ -164,14 +164,14 @@ const HelmCreateBasicAuthSecretModal: OverlayComponent<HelmCreateBasicAuthSecret
           isDisabled={isCreateDisabled}
           onClick={handleCreate}
         >
-          {t('public~Create')}
+          {t('Create')}
         </Button>
         <Button
           variant={ButtonVariant.link}
           onClick={() => closeModal(true)}
           isDisabled={inProgress}
         >
-          {t('public~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </Modal>
