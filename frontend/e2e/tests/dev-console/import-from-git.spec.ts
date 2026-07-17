@@ -38,7 +38,7 @@ test.describe(
       await addPage.ensureDevPerspectiveAndNavigate(ns);
     });
 
-    test('cancel git workload creation [A-06-TC03]', async () => {
+    test('cancel git workload creation [A-06-TC03]', async ({ page }) => {
       await test.step('Navigate to Import from Git', async () => {
         await addPage.clickImportFromGit();
       });
@@ -49,11 +49,12 @@ test.describe(
       });
 
       await test.step('Verify redirect to Add page', async () => {
+        await expect(page).toHaveURL(new RegExp(`/add/ns/${ns}`), { timeout: 15_000 });
         await expect(addPage.getPageHeading()).toBeVisible();
       });
     });
 
-    test('create workload without application route [A-06-TC04]', async () => {
+    test('create workload without application route [A-06-TC04]', async ({ k8sClient }) => {
       test.slow();
 
       await test.step('Navigate to Import from Git', async () => {
@@ -73,6 +74,19 @@ test.describe(
         await topologyPage.waitForWorkload('name-no-route');
         await topologyPage.clickWorkload('name-no-route');
         await expect(topologyPage.getSidebarTitle()).toContainText('name-no-route');
+      });
+
+      await test.step('Verify no Route was created', async () => {
+        const routes = await k8sClient.listCustomResources(
+          'route.openshift.io',
+          'v1',
+          ns,
+          'routes',
+        );
+        const matching = (routes as any[]).filter(
+          (r) => r.metadata?.name === 'name-no-route',
+        );
+        expect(matching).toHaveLength(0);
       });
     });
 
