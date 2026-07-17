@@ -132,4 +132,6 @@ export const featureFlagMiddleware: Middleware<{}, RootState> = (s) => {
   };
 };
 
-initConsolePlugins(pluginStore, localPlugins);
+localPlugins.forEach((plugin) => pluginStore.loadPlugin(plugin));
+
+initConsolePlugins(pluginStore);

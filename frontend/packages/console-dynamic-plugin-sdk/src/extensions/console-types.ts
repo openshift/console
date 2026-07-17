@@ -263,7 +263,7 @@ export type UseK8sWatchResources = <R extends ResourcesObject>(
 ) => WatchK8sResults<R>;
 
 export type UseResolvedExtensions = <E extends Extension>(
-  predicate: ExtensionPredicate<E>,
+  ...predicates: ExtensionPredicate<E>[]
 ) => [ResolvedExtension<E>[], boolean, any[]];
 
 export type GetSegmentAnalytics = () => {

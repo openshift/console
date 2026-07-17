@@ -9,7 +9,13 @@ const hookOptions: UseResolvedExtensionsOptionsSDK = {
 };
 
 export const useResolvedExtensions: UseResolvedExtensions = <E extends Extension>(
-  predicate: ExtensionPredicate<E>,
+  ...predicates: ExtensionPredicate<E>[]
 ): [ResolvedExtension<E>[], boolean, any[]] => {
+  const predicate =
+    predicates.length === 1
+      ? predicates[0]
+      : predicates.length > 1
+      ? (extension: Extension): extension is E => predicates.some((guard) => guard(extension))
+      : undefined;
   return useResolvedExtensionsSDK(predicate, hookOptions);
 };

@@ -1,4 +1,4 @@
-import type { PluginStore, LocalPluginManifest } from '@openshift/dynamic-plugin-sdk';
+import type { PluginStore } from '@openshift/dynamic-plugin-sdk';
 import { consoleLogger } from '@openshift/dynamic-plugin-sdk';
 import * as _ from 'lodash';
 import {
@@ -98,42 +98,35 @@ const registerLegacyPluginEntryCallback = () => {
  *
  * Precondition: {@link PluginStore} must be initialized.
  */
-export const initConsolePlugins = _.once(
-  (pluginStore: PluginStore, localPlugins: LocalPluginManifest[]) => {
-    // Polyfill the legacy plugin entry callback function
-    registerLegacyPluginEntryCallback();
+export const initConsolePlugins = _.once((pluginStore: PluginStore) => {
+  // Polyfill the legacy plugin entry callback function
+  registerLegacyPluginEntryCallback();
 
-    // Initialize webpack share scope object and start loading plugins
-    initSharedScope()
-      .then(() => {
-        const scope = getSharedScope();
+  // Initialize webpack share scope object and start loading dynamic plugins
+  initSharedScope()
+    .then(() => {
+      const scope = getSharedScope();
 
-        // Patch webpack share scope object for backwards compatibility
-        monkeyPatchSharedScope(scope);
+      // Patch webpack share scope object for backwards compatibility
+      monkeyPatchSharedScope(scope);
 
-        if (process.env.NODE_ENV !== 'production') {
-          // Expose webpack share scope object for debugging
-          window.webpackSharedScope = scope;
-        }
-      })
-      .then(() => {
-        // Load all static (local) plugins
-        // TODO: consider awaiting load completion for local plugins before loading remote plugins
-        localPlugins.forEach((plugin) => pluginStore.loadPlugin(plugin));
-      })
-      .then(() => {
-        // Load all dynamic (remote) plugins
-        dynamicPluginNames.forEach((pluginName) => {
-          loadAndEnablePlugin(pluginName, pluginStore, (errorMessage, errorCause) => {
-            // eslint-disable-next-line no-console
-            console.error(..._.compact([errorMessage, errorCause]));
-            addTestError(`${errorMessage}: ${String(errorCause)}`);
-          });
+      if (process.env.NODE_ENV !== 'production') {
+        // Expose webpack share scope object for debugging
+        window.webpackSharedScope = scope;
+      }
+    })
+    .then(() => {
+      // Load all dynamic (remote) plugins
+      dynamicPluginNames.forEach((pluginName) => {
+        loadAndEnablePlugin(pluginName, pluginStore, (errorMessage, errorCause) => {
+          // eslint-disable-next-line no-console
+          console.error(..._.compact([errorMessage, errorCause]));
+          addTestError(`${errorMessage}: ${String(errorCause)}`);
         });
-      })
-      .catch((err) => {
-        // eslint-disable-next-line no-console
-        console.error('Error while loading Console plugins', err);
       });
-  },
-);
+    })
+    .catch((err) => {
+      // eslint-disable-next-line no-console
+      console.error('Error while loading Console plugins', err);
+    });
+});
