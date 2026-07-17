@@ -130,9 +130,6 @@ export default (state: UIState, action: UIAction): UIState => {
     case ActionType.UpdateOverviewFilterValue: {
       return state.setIn(['overview', 'filterValue'], action.payload.value);
     }
-    case ActionType.UpdateTimestamps:
-      return state.set('lastTick', action.payload.lastTick);
-
     case ActionType.SetPodMetrics:
       return state.setIn(['metrics', 'pod'], action.payload.podMetrics);
 

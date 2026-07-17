@@ -255,8 +255,6 @@ export const updateOverviewMetrics = (metrics: any) =>
   action(ActionType.UpdateOverviewMetrics, { metrics });
 const updateOverviewResources = (resources: OverviewItem[]) =>
   action(ActionType.UpdateOverviewResources, { resources });
-export const updateTimestamps = (lastTick: number) =>
-  action(ActionType.UpdateTimestamps, { lastTick });
 const dismissOverviewDetails = () => action(ActionType.DismissOverviewDetails);
 const updateOverviewSelectedGroup = (group: OverviewSpecialGroup | string) =>
   action(ActionType.UpdateOverviewSelectedGroup, { group });
@@ -312,7 +310,6 @@ const uiActions = {
   setServiceLevel,
   updateOverviewMetrics,
   updateOverviewResources,
-  updateTimestamps,
   dismissOverviewDetails,
   updateOverviewSelectedGroup,
   updateOverviewLabels,
