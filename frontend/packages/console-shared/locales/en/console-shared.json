@@ -268,6 +268,7 @@
   "Healthy": "Healthy",
   "View {{count}} more notification_one": "View {{count}} more notification",
   "View {{count}} more notification_other": "View {{count}} more notifications",
+  "Minimize alert: {{title}}": "Minimize alert: {{title}}",
   "Enable": "Enable",
   "Disable": "Disable",
   "Enabling console plugin": "Enabling console plugin",

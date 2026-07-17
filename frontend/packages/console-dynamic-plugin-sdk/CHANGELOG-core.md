@@ -10,6 +10,10 @@ For current development version of Console, use `4.x.0-prerelease.n` packages.
 For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility
 table in [Console dynamic plugins README](./README.md).
 
+## 4.23.0-prerelease.5 - TBD
+
+- Add minimize action for toast notifications via new `ToastOptions.minimizable`, `ToastOptions.actions[].minimize`, and `ToastContextValues.minimizeToast` ([CONSOLE-5424], [#16762])
+
 ## 4.23.0-prerelease.4 - 2026-07-14
 
 - Add optional `onSubmit` parameter to `useLabelsModal` hook for customizing label submission behavior ([CONSOLE-5356], [#16560])
@@ -246,6 +250,7 @@ table in [Console dynamic plugins README](./README.md).
 [CONSOLE-5356]: https://issues.redhat.com/browse/CONSOLE-5356
 [CONSOLE-5361]: https://issues.redhat.com/browse/CONSOLE-5361
 [CONSOLE-5415]: https://issues.redhat.com/browse/CONSOLE-5415
+[CONSOLE-5424]: https://issues.redhat.com/browse/CONSOLE-5424
 [OCPBUGS-19048]: https://issues.redhat.com/browse/OCPBUGS-19048
 [OCPBUGS-30077]: https://issues.redhat.com/browse/OCPBUGS-30077
 [OCPBUGS-31355]: https://issues.redhat.com/browse/OCPBUGS-31355
@@ -339,3 +344,4 @@ table in [Console dynamic plugins README](./README.md).
 [#16636]: https://github.com/openshift/console/pull/16636
 [#16726]: https://github.com/openshift/console/pull/16726
 [#16750]: https://github.com/openshift/console/pull/16750
+[#16762]: https://github.com/openshift/console/pull/16762

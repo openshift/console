@@ -624,4 +624,422 @@ describe('ToastProvider', () => {
       expect(toastClose).toHaveBeenCalled();
     });
   });
+
+  it('should minimize a non-dismissible drawer-persisted toast as an icon button without invoking onClose and keep it unread in history', async () => {
+    const user = userEvent.setup();
+    const onClose = jest.fn();
+    renderWithProviders(
+      <ToastProvider>
+        <TestComponent />
+      </ToastProvider>,
+    );
+
+    act(() => {
+      toastContext.addToast({
+        id: 'upload-progress',
+        title: 'Uploading disk.img',
+        variant: AlertVariant.info,
+        content: 'in progress',
+        dismissible: false,
+        timeout: false,
+        persistInDrawer: true,
+        skipOverflow: true,
+        minimizable: true,
+        onClose,
+      });
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText('Uploading disk.img')).toBeVisible();
+      expect(notificationHistoryContext.notifications).toHaveLength(1);
+      expect(notificationHistoryContext.notifications[0].isRead).toBe(false);
+    });
+
+    act(() => {
+      notificationHistoryContext.markNotificationRead('upload-progress');
+    });
+
+    await waitFor(() => {
+      expect(notificationHistoryContext.notifications[0].isRead).toBe(true);
+    });
+
+    // Non-dismissible toasts have no close button, so Minimize renders as an icon
+    // button in that slot instead of a text action link.
+    expect(screen.queryByRole('button', { name: 'Minimize' })).not.toBeInTheDocument();
+    const minimizeButton = screen.getByRole('button', {
+      name: 'Minimize alert: Uploading disk.img',
+    });
+    await user.click(minimizeButton);
+
+    await waitFor(() => {
+      expect(screen.queryByText('Uploading disk.img')).not.toBeInTheDocument();
+    });
+
+    expect(onClose).not.toHaveBeenCalled();
+    expect(notificationHistoryContext.notifications).toHaveLength(1);
+    expect(notificationHistoryContext.notifications[0].isRead).toBe(false);
+  });
+
+  it('should minimize a dismissible drawer-persisted toast via an explicit minimize action, alongside the close button', async () => {
+    const user = userEvent.setup();
+    const onClose = jest.fn();
+    renderWithProviders(
+      <ToastProvider>
+        <TestComponent />
+      </ToastProvider>,
+    );
+
+    act(() => {
+      toastContext.addToast({
+        id: 'dismissible-minimizable',
+        title: 'dismissible minimizable toast',
+        variant: AlertVariant.info,
+        content: 'description',
+        dismissible: true,
+        persistInDrawer: true,
+        actions: [{ label: 'Minimize', minimize: true, callback: jest.fn() }],
+        onClose,
+      });
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText('dismissible minimizable toast')).toBeVisible();
+    });
+
+    // This toast never sets `minimizable`, so Minimize only comes from the
+    // explicit `actions[].minimize` entry, rendered as a text link.
+    expect(
+      screen.queryByRole('button', { name: 'Minimize alert: dismissible minimizable toast' }),
+    ).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /close/i })).toBeInTheDocument();
+
+    const minimizeLink = screen.getByRole('button', { name: 'Minimize' });
+    await user.click(minimizeLink);
+
+    await waitFor(() => {
+      expect(screen.queryByText('dismissible minimizable toast')).not.toBeInTheDocument();
+    });
+
+    expect(onClose).not.toHaveBeenCalled();
+    expect(notificationHistoryContext.notifications).toHaveLength(1);
+    expect(notificationHistoryContext.notifications[0].isRead).toBe(false);
+  });
+
+  it('should render the minimize action at the position specified in the actions array', async () => {
+    renderWithProviders(
+      <ToastProvider>
+        <TestComponent />
+      </ToastProvider>,
+    );
+
+    act(() => {
+      toastContext.addToast({
+        id: 'ordered-actions',
+        title: 'ordered actions toast',
+        variant: AlertVariant.info,
+        content: 'description',
+        persistInDrawer: true,
+        actions: [
+          { label: 'View details', callback: jest.fn() },
+          { label: 'Minimize', minimize: true, callback: jest.fn() },
+          { label: 'Retry', callback: jest.fn() },
+        ],
+      });
+    });
+
+    let buttons: HTMLElement[];
+    await waitFor(() => {
+      buttons = screen.getAllByRole('button', {
+        name: /^(View details|Minimize|Retry)$/,
+      });
+      expect(buttons).toHaveLength(3);
+    });
+
+    expect(buttons.map((button) => button.textContent)).toEqual([
+      'View details',
+      'Minimize',
+      'Retry',
+    ]);
+  });
+
+  it('should still invoke a minimize action callback in addition to minimizing', async () => {
+    const user = userEvent.setup();
+    const minimizeCallback = jest.fn();
+    renderWithProviders(
+      <ToastProvider>
+        <TestComponent />
+      </ToastProvider>,
+    );
+
+    act(() => {
+      toastContext.addToast({
+        id: 'minimize-with-callback',
+        title: 'minimize with callback toast',
+        variant: AlertVariant.info,
+        content: 'description',
+        persistInDrawer: true,
+        actions: [{ label: 'Minimize', minimize: true, callback: minimizeCallback }],
+      });
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText('minimize with callback toast')).toBeVisible();
+    });
+
+    const minimizeLink = screen.getByRole('button', { name: 'Minimize' });
+    await user.click(minimizeLink);
+
+    await waitFor(() => {
+      expect(screen.queryByText('minimize with callback toast')).not.toBeInTheDocument();
+    });
+    expect(minimizeCallback).toHaveBeenCalledTimes(1);
+    expect(notificationHistoryContext.notifications).toHaveLength(1);
+  });
+
+  it('should render an explicit minimize action even without persistInDrawer, but clicking it has no effect', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(
+      <ToastProvider>
+        <TestComponent />
+      </ToastProvider>,
+    );
+
+    act(() => {
+      toastContext.addToast({
+        id: 'no-drawer-minimize-action',
+        title: 'no drawer minimize action toast',
+        variant: AlertVariant.info,
+        content: 'description',
+        actions: [{ label: 'Minimize', minimize: true, callback: jest.fn() }],
+      });
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText('no drawer minimize action toast')).toBeVisible();
+    });
+
+    const minimizeLink = screen.getByRole('button', { name: 'Minimize' });
+    await user.click(minimizeLink);
+
+    await waitFor(() => {
+      // No-op: `minimizeToast` only takes effect for `persistInDrawer: true` toasts.
+      expect(screen.getByText('no drawer minimize action toast')).toBeVisible();
+    });
+  });
+
+  it('should not minimize a toast that is not persisted in the drawer', async () => {
+    renderWithProviders(
+      <ToastProvider>
+        <TestComponent />
+      </ToastProvider>,
+    );
+
+    act(() => {
+      toastContext.addToast({
+        id: 'ephemeral-toast',
+        title: 'ephemeral toast',
+        variant: AlertVariant.info,
+        content: 'on screen only',
+      });
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText('ephemeral toast')).toBeVisible();
+    });
+
+    act(() => {
+      toastContext.minimizeToast('ephemeral-toast');
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText('ephemeral toast')).toBeVisible();
+    });
+    expect(notificationHistoryContext.notifications).toHaveLength(0);
+  });
+
+  it('should not reset a notification to unread when its toast was already cleared from the visible stack', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(
+      <ToastProvider maxDisplayed={1}>
+        <TestComponent />
+      </ToastProvider>,
+    );
+
+    act(() => {
+      toastContext.addToast({
+        id: 'stale-notification',
+        title: 'stale notification toast',
+        variant: AlertVariant.info,
+        content: 'description',
+        persistInDrawer: true,
+      });
+    });
+
+    act(() => {
+      notificationHistoryContext.markNotificationRead('stale-notification');
+    });
+
+    act(() => {
+      toastContext.addToast({
+        title: 'overflow toast',
+        variant: AlertVariant.info,
+        content: 'description',
+        persistInDrawer: true,
+      });
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText('View 1 more notification')).toBeVisible();
+    });
+
+    // Clears the visible toast stack (e.g. via the overflow link) while notification
+    // history, including the already-read entry below, is left untouched.
+    await user.click(screen.getByText('View 1 more notification'));
+
+    await waitFor(() => {
+      expect(screen.queryByText('stale notification toast')).not.toBeInTheDocument();
+    });
+
+    act(() => {
+      toastContext.minimizeToast('stale-notification');
+    });
+
+    expect(notificationHistoryContext.notifications).toHaveLength(2);
+    expect(
+      notificationHistoryContext.notifications.find((n) => n.id === 'stale-notification').isRead,
+    ).toBe(true);
+  });
+
+  it('should not render an automatic Minimize icon button when minimizable or persistInDrawer is missing, or no actions are given', async () => {
+    renderWithProviders(
+      <ToastProvider>
+        <TestComponent />
+      </ToastProvider>,
+    );
+
+    act(() => {
+      toastContext.addToast({
+        id: 'minimizable-no-drawer',
+        title: 'minimizable without drawer',
+        variant: AlertVariant.info,
+        content: 'description',
+        minimizable: true,
+      });
+      toastContext.addToast({
+        id: 'drawer-not-minimizable',
+        title: 'drawer toast not minimizable',
+        variant: AlertVariant.info,
+        content: 'description',
+        persistInDrawer: true,
+      });
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText('minimizable without drawer')).toBeVisible();
+      expect(screen.getByText('drawer toast not minimizable')).toBeVisible();
+    });
+
+    expect(screen.queryByRole('button', { name: 'Minimize' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /^Minimize alert:/ })).not.toBeInTheDocument();
+  });
+
+  it('should render both the icon button and an explicit minimize action when both are configured', async () => {
+    renderWithProviders(
+      <ToastProvider>
+        <TestComponent />
+      </ToastProvider>,
+    );
+
+    act(() => {
+      toastContext.addToast({
+        id: 'both-minimize-controls',
+        title: 'explicit action toast',
+        variant: AlertVariant.info,
+        content: 'description',
+        dismissible: false,
+        persistInDrawer: true,
+        minimizable: true,
+        actions: [{ label: 'Custom minimize', minimize: true, callback: jest.fn() }],
+      });
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText('explicit action toast')).toBeVisible();
+    });
+
+    // Each mechanism is controlled independently: `minimizable` alone gates the icon
+    // button, so consumers who only want the action link simply omit `minimizable`.
+    expect(
+      screen.getByRole('button', { name: 'Minimize alert: explicit action toast' }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Custom minimize' })).toBeInTheDocument();
+  });
+
+  it('should not render the icon button when minimizable is not set, even with an explicit minimize action', async () => {
+    renderWithProviders(
+      <ToastProvider>
+        <TestComponent />
+      </ToastProvider>,
+    );
+
+    act(() => {
+      toastContext.addToast({
+        id: 'action-only-minimize',
+        title: 'action only toast',
+        variant: AlertVariant.info,
+        content: 'description',
+        dismissible: false,
+        persistInDrawer: true,
+        actions: [{ label: 'Custom minimize', minimize: true, callback: jest.fn() }],
+      });
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText('action only toast')).toBeVisible();
+    });
+
+    expect(
+      screen.queryByRole('button', { name: 'Minimize alert: action only toast' }),
+    ).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Custom minimize' })).toBeInTheDocument();
+  });
+
+  it('should minimize a toast via an action with a custom label, without invoking onClose and keeping it unread', async () => {
+    const user = userEvent.setup();
+    const onClose = jest.fn();
+    renderWithProviders(
+      <ToastProvider>
+        <TestComponent />
+      </ToastProvider>,
+    );
+
+    act(() => {
+      toastContext.addToast({
+        id: 'custom-label-minimize',
+        title: 'custom label minimize toast',
+        variant: AlertVariant.info,
+        content: 'description',
+        persistInDrawer: true,
+        actions: [{ label: 'Hide for now', minimize: true, callback: jest.fn() }],
+        onClose,
+      });
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText('custom label minimize toast')).toBeVisible();
+      expect(notificationHistoryContext.notifications).toHaveLength(1);
+      expect(notificationHistoryContext.notifications[0].isRead).toBe(false);
+    });
+
+    const minimizeLink = screen.getByRole('button', { name: 'Hide for now' });
+    await user.click(minimizeLink);
+
+    await waitFor(() => {
+      expect(screen.queryByText('custom label minimize toast')).not.toBeInTheDocument();
+    });
+
+    expect(onClose).not.toHaveBeenCalled();
+    expect(notificationHistoryContext.notifications).toHaveLength(1);
+    expect(notificationHistoryContext.notifications[0].isRead).toBe(false);
+  });
 });
