@@ -130,9 +130,11 @@ export const useOperatorLifecycle = (
       })
       .catch((err: Error) => {
         if (!controller.signal.aborted) {
-          setData(null);
-          setError(err);
           setLoading(false);
+          if (err.name !== 'AbortError') {
+            setData(null);
+            setError(err);
+          }
         }
       });
 
