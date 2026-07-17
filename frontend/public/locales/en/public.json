@@ -1203,7 +1203,7 @@
   "There has been an update to the web console. Ensure any changes have been saved and refresh your browser to access the latest version.": "There has been an update to the web console. Ensure any changes have been saved and refresh your browser to access the latest version.",
   "Refresh web console": "Refresh web console",
   "Service monitor selector": "Service monitor selector",
-  "Quick create in cluster": "Quick create in cluster",
+  "Create resources": "Create resources",
   "Create resources from their YAML or JSON definitions": "Create resources from their YAML or JSON definitions",
   "Import code from your Git repository to be built and deployed": "Import code from your Git repository to be built and deployed",
   "Create from Git": "Create from Git",

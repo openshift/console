@@ -89,10 +89,10 @@ const QuickCreate: FC<QuickCreateProps> = ({ namespace }) => {
       onSelect={onSelect}
       onOpenChange={(open: boolean) => setIsOpen(open)}
       toggle={(toggleRef: Ref<MenuToggleElement>) => (
-        <Tooltip content={t('Quick create in cluster')} position="bottom">
+        <Tooltip content={t('Create resources')} position="bottom">
           <MenuToggle
             ref={toggleRef}
-            aria-label={t('Quick create in cluster')}
+            aria-label={t('Create resources')}
             variant="plain"
             onClick={onToggleClick}
             isExpanded={isOpen}
