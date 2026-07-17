@@ -51,9 +51,16 @@ const fetchLifecycleData = (
     // The cached promise is tied to the ORIGINAL caller's signal, not ours.
     // If the original was aborted by someone else while our signal is still live,
     // issue a fresh retry rather than surfacing a spurious AbortError.
-    return existing.promise.catch((err: Error) => {
+    // Capture a reference so multiple concurrent callers agree on which promise
+    // they are watching: only the first one to run this .catch() will find the
+    // cache still pointing at existingPromise and start a single retry; all
+    // later callers will see a newer promise in the cache and reuse it.
+    const existingPromise = existing.promise;
+    return existingPromise.catch((err: Error) => {
       if (err.name === 'AbortError' && !signal.aborted) {
-        lifecycleCache.delete(cacheKey);
+        if (lifecycleCache.get(cacheKey)?.promise === existingPromise) {
+          lifecycleCache.delete(cacheKey);
+        }
         return fetchLifecycleData(cacheKey, url, signal);
       }
       throw err;

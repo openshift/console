@@ -118,6 +118,49 @@ describe('useOperatorLifecycle', () => {
     expect(mockCoFetchJSON).toHaveBeenCalledTimes(2); // P1 (aborted) + P2 (retry)
   });
 
+  it('issues only one retry when three callers share the same aborted cached promise', async () => {
+    // Regression for: multiple callers each unconditionally deleting the cache and
+    // starting their own retry, causing N redundant fetches.
+    // Only the first caller to detect the abort should start a retry; the others
+    // should reuse the retry promise already stored by the first.
+    const retryData = { lifecycleSchema: 'three-caller', properties: '{}' };
+    let rejectP1: (err: Error) => void;
+
+    // P1: hangs until manually rejected
+    mockCoFetchJSON.mockImplementationOnce(
+      () =>
+        new Promise((_resolve, reject) => {
+          rejectP1 = reject;
+        }),
+    );
+    // P2: the single retry (only one should be started)
+    mockCoFetchJSON.mockResolvedValueOnce(retryData);
+
+    const PKG = 'pkg-three-callers';
+
+    // Mount A, B, C — all share the same cache key; B and C get P1 from cache
+    const { unmount: unmountA } = renderHook(() => useOperatorLifecycle(PKG, CATALOG, NS));
+    const { result: resultB } = renderHook(() => useOperatorLifecycle(PKG, CATALOG, NS));
+    const { result: resultC } = renderHook(() => useOperatorLifecycle(PKG, CATALOG, NS));
+
+    await act(async () => {
+      unmountA();
+      rejectP1(new DOMException('The operation was aborted.', 'AbortError'));
+      await Promise.resolve();
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    // Both B and C should see the retry data — not an error, not null
+    expect(resultB.current[2]).toBeNull();
+    expect(resultB.current[0]).toEqual(retryData);
+    expect(resultC.current[2]).toBeNull();
+    expect(resultC.current[0]).toEqual(retryData);
+
+    // Only two coFetchJSON calls total: P1 (aborted) + P2 (single retry)
+    expect(mockCoFetchJSON).toHaveBeenCalledTimes(2);
+  });
+
   it('skips fetch when packageName is missing', () => {
     renderHook(() => useOperatorLifecycle(undefined, CATALOG, NS));
 
