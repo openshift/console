@@ -1,3 +1,1 @@
-#!/usr/bin/env bash
-
-set -exuo pipefail
+test-prow-e2e.sh
