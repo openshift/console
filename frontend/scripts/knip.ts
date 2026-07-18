@@ -3,10 +3,7 @@ import * as path from 'path';
 import type { KnipConfig } from 'knip';
 import { resolvePluginPackages } from '@console/plugin-sdk/src/codegen/plugin-resolver';
 import { extensionsFile } from '@console/dynamic-plugin-sdk/src/constants';
-import {
-  isEncodedCodeRef,
-  parseEncodedCodeRefValue,
-} from '@console/dynamic-plugin-sdk/src/coderefs/coderef-resolver';
+import { isEncodedCodeRef } from '@openshift/dynamic-plugin-sdk';
 import { parseJSONC } from '@console/dynamic-plugin-sdk/src/utils/jsonc';
 import type { ConsoleExtensionsJSON } from '@console/dynamic-plugin-sdk/src/schema/console-extensions';
 import { traverse, types as t, parseAsync } from '@babel/core';
@@ -19,6 +16,16 @@ const makeImport = (modulePath: string, exportName: string, id: number) =>
 
 /** Plugin packages indexed by path, resolved once when knip loads the config */
 const pluginPackagesByPath = new Map(resolvePluginPackages().map((pkg) => [pkg._path, pkg]));
+
+/**
+ * Parse the `EncodedCodeRef` value into `[moduleName, exportName]` tuple.
+ *
+ * Returns an empty array if the value doesn't match the expected format.
+ */
+const parseEncodedCodeRefValue = (value: string): [string, string] | [] => {
+  const match = value.match(/^([^.]+)(?:\.(.+)){0,1}$/);
+  return match ? [match[1], match[2] || 'default'] : [];
+};
 
 /**
  * JSON compiler for console-extensions.json files.

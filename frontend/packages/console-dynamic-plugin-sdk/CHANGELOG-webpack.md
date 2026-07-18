@@ -10,6 +10,10 @@ For current development version of Console, use `4.x.0-prerelease.n` packages.
 For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility
 table in [Console dynamic plugins README](./README.md).
 
+## 4.23.0-prerelease.5 - TBD
+
+- Dependency bumps for `semver` and `glob` ([CONSOLE-5065], [#16115])
+
 ## 4.23.0-prerelease.4 - 2026-07-14
 
 - Add support for building with `rspack`. Both `webpack` and `rspack` are optional peer dependencies, but one of them must be installed ([CONSOLE-5423], [#16752])
@@ -188,3 +192,4 @@ table in [Console dynamic plugins README](./README.md).
 [#16376]: https://github.com/openshift/console/pull/16376
 [#16585]: https://github.com/openshift/console/pull/16585
 [#16752]: https://github.com/openshift/console/pull/16752
+[#16115]: https://github.com/openshift/console/pull/16115

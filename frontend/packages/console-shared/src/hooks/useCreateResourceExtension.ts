@@ -8,11 +8,11 @@ import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 export const useCreateResourceExtension = (
   modelReference: GroupVersionKind,
 ): LoadedExtension<CreateResource> => {
-  const createResourceTypeGuard = useCallback(
+  const createResourcePredicate = useCallback(
     (e: Extension): e is CreateResource =>
       isCreateResource(e) && referenceForExtensionModel(e.properties.model) === modelReference,
     [modelReference],
   );
-  const [extensionPage] = useExtensions<CreateResource>(createResourceTypeGuard);
+  const [extensionPage] = useExtensions<CreateResource>(createResourcePredicate);
   return extensionPage;
 };

@@ -58,7 +58,11 @@ export const getSharedScope = () => {
  * - add `react-router-dom-v5-compat` module aliased to `react-router`
  * - add `react-router-dom` module aliased to `react-router`
  */
-export const monkeyPatchSharedScope = (scope = getSharedScope()) => {
+export const monkeyPatchSharedScope = (scope: ReturnType<typeof getSharedScope>) => {
+  if (!Object.keys(scope).includes('react-router')) {
+    throw new Error('Share scope object is not initialized');
+  }
+
   scope['react-router-dom'] = scope['react-router'];
   scope['react-router-dom-v5-compat'] = scope['react-router'];
 };
