@@ -166,8 +166,8 @@ const managedNamespacesColumnClass = css('pf-m-hidden', 'pf-m-visible-on-sm');
 const statusColumnClass = css('pf-m-hidden', 'pf-m-visible-on-lg');
 const lastUpdatedColumnClass = css('pf-m-hidden', 'pf-m-visible-on-2xl');
 const providedAPIsColumnClass = css('pf-m-hidden', 'pf-m-visible-on-xl');
-const clusterCompatibilityColumnClass = css('pf-m-hidden', 'pf-m-visible-on-xl');
-const supportPhaseColumnClass = css('pf-m-hidden', 'pf-m-visible-on-xl');
+const clusterCompatibilityColumnClass = css('pf-m-hidden', 'pf-m-visible-on-xl', 'pf-m-width-15');
+const supportPhaseColumnClass = css('pf-m-hidden', 'pf-m-visible-on-xl', 'pf-m-width-15');
 
 const SubscriptionStatus: FC<{ muted?: boolean; subscription: SubscriptionKind }> = ({
   muted = false,
