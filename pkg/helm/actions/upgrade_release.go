@@ -19,7 +19,6 @@ import (
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/dynamic"
 	corev1client "k8s.io/client-go/kubernetes/typed/core/v1"
-	"k8s.io/klog/v2"
 )
 
 func UpgradeRelease(
@@ -107,12 +106,15 @@ func UpgradeRelease(
 		return nil, err
 	}
 
-	// Ensure chart URL is properly set in the upgrade chart
+	// Ensure chart URL and installation method are properly set in the upgrade chart
 	if chartUrl != "" {
 		if ch.Metadata.Annotations == nil {
 			ch.Metadata.Annotations = make(map[string]string)
 		}
 		ch.Metadata.Annotations["chart_url"] = chartUrl
+		if inst, ok := rel.Chart.Metadata.Annotations["installation"]; ok {
+			ch.Metadata.Annotations["installation"] = inst
+		}
 	}
 
 	result, err := client.Run(releaseName, ch, vals)
@@ -149,6 +151,7 @@ func UpgradeReleaseAsync(
 	coreClient corev1client.CoreV1Interface,
 	fileCleanUp bool,
 	indexEntry string,
+	basicAuthSecretName string,
 ) (*kv1.Secret, error) {
 	client := action.NewUpgrade(conf)
 	client.ServerSideApply = "false"
@@ -167,14 +170,21 @@ func UpgradeReleaseAsync(
 		return nil, err
 	}
 
-	auth_secret := ""
+	auth_secret := basicAuthSecretName
+	// "__none__" is a sentinel from the frontend meaning the user explicitly cleared the secret.
+	explicitlyClearedSecret := auth_secret == "__none__"
+	if explicitlyClearedSecret {
+		auth_secret = ""
+	}
 	// Before proceeding, check if chart URL is present as an annotation
-	if rel.Chart.Metadata.Annotations != nil {
+	if rel.Chart.Metadata != nil && rel.Chart.Metadata.Annotations != nil {
 		if chart_url, ok := rel.Chart.Metadata.Annotations["chart_url"]; chartUrl == "" && ok {
 			chartUrl = chart_url
 		}
-		if authSecret, ok := rel.Chart.Metadata.Annotations[helmAuthSecretAnnotation]; ok {
-			auth_secret = authSecret
+		if auth_secret == "" && !explicitlyClearedSecret {
+			if authSecret, ok := rel.Chart.Metadata.Annotations[helmAuthSecretAnnotation]; ok {
+				auth_secret = authSecret
+			}
 		}
 	}
 
@@ -215,10 +225,10 @@ func UpgradeReleaseAsync(
 		if auth_secret != "" {
 			userCredentials, err := GetUserCredentials(coreClient, releaseNamespace, auth_secret)
 			if err != nil {
-				klog.Errorf("Failed to get user credentials Secret %s for release upgrade %s/%s: %v", auth_secret, releaseNamespace, releaseName, err)
+				return nil, fmt.Errorf("failed to get user credentials Secret %s for release upgrade %s/%s: %v", auth_secret, releaseNamespace, releaseName, err)
 			} else {
 				if err := applyBasicAuthFromUserCredentials(&client.ChartPathOptions, client, userCredentials); err != nil {
-					klog.Errorf("Failed to apply auth from Secret %s for release upgrade %s/%s: %v", auth_secret, releaseNamespace, releaseName, err)
+					return nil, fmt.Errorf("failed to apply auth from Secret %s for release upgrade %s/%s: %v", auth_secret, releaseNamespace, releaseName, err)
 				}
 			}
 		}
@@ -226,6 +236,9 @@ func UpgradeReleaseAsync(
 		client.ChartPathOptions.Version = chartInfo.Version
 		cp, err = client.ChartPathOptions.LocateChart(chartLocation, settings)
 		if err != nil {
+			if auth_secret == "" && (strings.Contains(err.Error(), "401") || strings.Contains(err.Error(), "unauthorized")) {
+				return nil, fmt.Errorf("failed to upgrade helm release: %w; registry requires authentication - select a Secret with \"username\" and \"password\" keys for basic authentication", err)
+			}
 			return nil, err
 		}
 		ch, err = loader.Load(cp)
@@ -247,6 +260,9 @@ func UpgradeReleaseAsync(
 	}
 	if chartUrl != "" {
 		ch.Metadata.Annotations["chart_url"] = chartUrl
+		if inst, ok := rel.Chart.Metadata.Annotations["installation"]; ok {
+			ch.Metadata.Annotations["installation"] = inst
+		}
 		addAuthSecretAnnotation(ch, auth_secret)
 	}
 	go func() {

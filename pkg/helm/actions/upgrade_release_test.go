@@ -502,7 +502,7 @@ func TestUpgradeReleaseWithoutDependenciesAsync(t *testing.T) {
 			var rel *v1.Secret
 			var err error
 			go func() {
-				rel, err = UpgradeReleaseAsync(tt.namespace, tt.releaseName, tt.chartPath, nil, actionConfig, client, coreClient, false, tt.indexEntry)
+				rel, err = UpgradeReleaseAsync(tt.namespace, tt.releaseName, tt.chartPath, nil, actionConfig, client, coreClient, false, tt.indexEntry, "")
 				if tt.requireErr {
 					fmt.Println("Error", err)
 					require.Error(t, err)
@@ -597,7 +597,7 @@ func TestUpgradeReleaseWithDependenciesAsync(t *testing.T) {
 			store.Create(&r)
 
 			go func() {
-				rel, err = UpgradeReleaseAsync(tt.releaseNamespace, tt.releaseName, tt.chartPath, tt.values, actionConfig, client, coreClient, true, tt.indexEntry)
+				rel, err = UpgradeReleaseAsync(tt.releaseNamespace, tt.releaseName, tt.chartPath, tt.values, actionConfig, client, coreClient, true, tt.indexEntry, "")
 				require.NoError(t, err)
 				require.Equal(t, fmt.Sprintf("sh.helm.release.v1.%v.v2", tt.releaseName), rel.ObjectMeta.Name)
 			}()
@@ -688,7 +688,7 @@ func TestUpgradeReleaseWithCustomValuesAsync(t *testing.T) {
 			var rel *v1.Secret
 			var err error
 			go func() {
-				rel, err = UpgradeReleaseAsync(tt.releaseNamespace, tt.releaseName, tt.chartPath, tt.values, actionConfig, client, coreClient, true, tt.indexEntry)
+				rel, err = UpgradeReleaseAsync(tt.releaseNamespace, tt.releaseName, tt.chartPath, tt.values, actionConfig, client, coreClient, true, tt.indexEntry, "")
 				require.NoError(t, err)
 				require.Equal(t, fmt.Sprintf("sh.helm.release.v1.%v.v2", tt.releaseName), rel.ObjectMeta.Name)
 			}()
@@ -775,7 +775,7 @@ func TestUpgradeAfterURLInstallWithSecrets(t *testing.T) {
 			// Upgrade — chartUrl is recovered from the annotation, auth credentials are applied
 			secretsDriver := driver.NewSecrets(coreClient.Secrets(tt.releaseNamespace))
 			go func() {
-				upgradeResult, upgradeErr := UpgradeReleaseAsync(tt.releaseNamespace, tt.releaseName, "", nil, actionConfig, dynamicClient, coreClient, true, "")
+				upgradeResult, upgradeErr := UpgradeReleaseAsync(tt.releaseNamespace, tt.releaseName, "", nil, actionConfig, dynamicClient, coreClient, true, "", "")
 				require.NoError(t, upgradeErr)
 				require.Equal(t, fmt.Sprintf("sh.helm.release.v1.%v.v2", tt.releaseName), upgradeResult.ObjectMeta.Name)
 			}()
