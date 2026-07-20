@@ -1,6 +1,6 @@
 @helm
 Feature: Navigations on Helm Chart
-              As a user, I want to navigate to different pages related to Helm Charts
+              As a user, I want to navigate to different pages related to Helm Chart(s)
 
         Background:
             Given user has created or selected namespace "aut-helm"
@@ -11,17 +11,17 @@ Feature: Navigations on Helm Chart
         Scenario: Open the Helm tab on the navigation bar when helm charts are absent: HR-05-TC01
              When user clicks on the Helm tab in dev perspective
              Then user will be redirected to Helm releases page
-              And user is able to see the message "No Helm Releases found"
+              And user is able to see the message "No Helm releases found"
               And user will get the link to install helm charts from software catalog
 
 
         @smoke
-        Scenario: Create Helm Release page details: HR-05-TC02
+        Scenario: Create Helm release page details: HR-05-TC02
             Given user is at Add page
              When user selects "Helm Chart" card from add page
               And user searches and selects "Nodejs" card from catalog page
               And user clicks on the Create button on side bar
-             Then Create Helm Release page is displayed
+             Then Create Helm release page is displayed
               And release name displays as "nodejs"
               And form view radio button is selected by default
               And yaml view radio button is enabled
@@ -30,7 +30,7 @@ Feature: Navigations on Helm Chart
 
         @smoke
         Scenario: Yaml view editor for Install Helm Chart page: HR-05-TC03
-            Given user is at Create Helm Release page
+            Given user is at Create Helm release page
              When user selects YAML view
              Then user is able to see YAML editor
 
@@ -55,29 +55,29 @@ Feature: Navigations on Helm Chart
 
 
         @regression
-        Scenario: Filter out deployed Helm Charts: HR-05-TC06
+        Scenario: Filter out deployed Helm Chart(s): HR-05-TC06
             Given user is at the Helm page
              When user clicks on the filter drop down
-              And user selects checkbox for the "Deployed" Helm charts
-             Then the checkbox for the "Deployed" Helm chart is checked
+              And user selects checkbox for the "Deployed" Helm Charts
+             Then the checkbox for the "Deployed" Helm Chart is checked
               And helm charts with status "Deployed" are listed
 
 
         @regression @manual
-        Scenario: Filter out failed Helm Charts: HR-05-TC07
+        Scenario: Filter out failed Helm Chart(s): HR-05-TC07
             Given user is at the Helm page
              When user clicks on the filter drop down
-              And user selects checkbox for the "Failed" Helm charts
-             Then the checkbox for the "Failed" Helm chart is checked
+              And user selects checkbox for the "Failed" Helm Charts
+             Then the checkbox for the "Failed" Helm Chart is checked
               And helm charts with status "Failed" are listed
 
 
         @regression @manual
-        Scenario: Filter out other Helm charts: HR-05-TC08
+        Scenario: Filter out other Helm Charts: HR-05-TC08
             Given user is at the Helm page
              When user clicks on the filter drop down
-              And user selects checkbox for the "Other" Helm charts
-             Then the checkbox for the "Other" Helm chart is checked
+              And user selects checkbox for the "Other" Helm Charts
+             Then the checkbox for the "Other" Helm Chart is checked
               And helm charts with status "Other" are listed
 
 
@@ -85,15 +85,15 @@ Feature: Navigations on Helm Chart
         Scenario: Select all filters: HR-05-TC09
             Given user is at the Helm page
              When user clicks on the filter drop down
-              And user selects checkbox for the "All" Helm charts
-             Then the checkbox for the "All" Helm chart is checked
+              And user selects checkbox for the "All" Helm Charts
+             Then the checkbox for the "All" Helm Chart is checked
 
 
         @regression
         Scenario: Clear all filters: HR-05-TC10
             Given user is at the Helm page
              When user clicks on the filter drop down
-              And user selects checkbox for the "All" Helm charts
+              And user selects checkbox for the "All" Helm Charts
               And user clicks on the clear all filters button
              Then "All" filters selected will get removed
 
@@ -113,4 +113,4 @@ Feature: Navigations on Helm Chart
               And user will see the Resources tab
               And user will see the Revision History tab
               And user will see the Release Notes tab
-              And user will see the Actions drop down menu with options Upgrade, Rollback, and Delete Helm Release
+              And user will see the Actions drop down menu with options Upgrade, Rollback, and Delete Helm release
