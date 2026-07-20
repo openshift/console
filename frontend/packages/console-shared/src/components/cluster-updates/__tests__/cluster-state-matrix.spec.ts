@@ -14,7 +14,7 @@
  * - 'status': Shows "Update status" button
  *   - Uses createProgressPrompt when Progressing=True and no failures
  *   - Uses createTroubleshootPrompt when failures detected
- * - 'pre-check': Shows "Pre-check with AI" button
+ * - 'pre-check': Shows "Precheck your cluster with AI" button
  *   - Uses createPreCheckPrompt when updates available
  *   - Uses createPreCheckSpecificVersionPrompt when specific version selected
  *   - Uses createPreCheckNoUpdatesPrompt when no updates available
@@ -738,6 +738,164 @@ describe('OLS Cluster State Matrix - Complete Scenarios', () => {
         const buttons = determineWorkflowButtons(cv, ops);
         expect(buttons.showPreCheck).toBe(expectedButtons.showPreCheck);
         expect(buttons.showStatus).toBe(expectedButtons.showStatus);
+      });
+    });
+  });
+
+  /**
+   * Prompt Content Validation for Cluster Scenarios
+   *
+   * Tests that generated prompts contain the correct analysis sections,
+   * security controls, confidence qualifiers, and version interpolation
+   * for representative cluster states.
+   */
+  describe('Prompt Content Validation for Cluster Scenarios', () => {
+    describe('Scenario A: Healthy cluster ready to upgrade', () => {
+      it('should generate pre-check prompt with readiness sections and hardening controls', () => {
+        const cv = createClusterVersion({
+          failing: false,
+          progressing: false,
+          available: true,
+          retrievedUpdates: true,
+          availableUpdates: 5,
+        });
+
+        const operators = [
+          createOperator('console', { available: true, degraded: false }),
+          createOperator('authentication', { available: true, degraded: false }),
+          createOperator('ingress', { available: true, degraded: false }),
+        ];
+
+        const phase = determineWorkflowPhase(cv, operators);
+        expect(phase).toBe('pre-check');
+
+        const prompt = generateUpdatePrompt(phase, cv, mockT, operators);
+
+        expect(prompt).toContain('Pre-Check Analysis');
+        expect(prompt).toContain('Available Updates');
+        expect(prompt).toContain('Upgrade Readiness');
+        expect(prompt).toContain('scope_definition');
+
+        expect(prompt).toContain('<security>');
+        expect(prompt).toContain('<confidence_qualifiers>');
+        expect(prompt).toContain('Data Completeness');
+
+        expect(prompt).toContain('4.14.10');
+      });
+    });
+
+    describe('Scenario B: Cluster with degraded operator', () => {
+      it('should route to troubleshoot prompt with operator failure analysis sections', () => {
+        const cv = createClusterVersion({
+          failing: false,
+          progressing: false,
+          available: true,
+          availableUpdates: 3,
+        });
+
+        const operators = [
+          createOperator('console', { available: true, degraded: false }),
+          createOperator('authentication', { available: true, degraded: true }),
+        ];
+
+        const phase = determineWorkflowPhase(cv, operators);
+        expect(phase).toBe('status');
+
+        const prompt = generateUpdatePrompt(phase, cv, mockT, operators);
+
+        expect(prompt).toContain('Troubleshoot Analysis');
+        expect(prompt).toContain('Degraded');
+        expect(prompt).toContain('Failed ClusterOperators');
+        expect(prompt).toContain('Root Cause');
+        expect(prompt).toContain('Investigation Steps');
+        expect(prompt).toContain('Recovery Actions');
+
+        expect(prompt).toContain('<security>');
+        expect(prompt).toContain('<confidence_qualifiers>');
+        expect(prompt).toContain('Data Completeness');
+      });
+    });
+
+    describe('Scenario C: Cluster with conditional update risk', () => {
+      it('should generate pre-check prompt that surfaces conditional update risks', () => {
+        const cv = createClusterVersion({
+          failing: false,
+          progressing: false,
+          available: true,
+          retrievedUpdates: true,
+          availableUpdates: 3,
+          conditionalUpdates: 2,
+        });
+
+        const operators = [
+          createOperator('console', { available: true, degraded: false }),
+          createOperator('authentication', { available: true, degraded: false }),
+        ];
+
+        const phase = determineWorkflowPhase(cv, operators);
+        expect(phase).toBe('pre-check');
+
+        const prompt = generateUpdatePrompt(phase, cv, mockT, operators);
+
+        expect(prompt).toContain('Pre-Check Analysis');
+        expect(prompt).toContain('Conditional Updates');
+        expect(prompt).toContain('conditionalUpdates');
+        expect(prompt).toContain('Risk Analysis');
+
+        expect(prompt).toContain('<security>');
+        expect(prompt).toContain('<confidence_qualifiers>');
+        expect(prompt).toContain('Data Completeness');
+      });
+    });
+
+    describe('Scenario D: Cluster mid-upgrade', () => {
+      it('should generate progress prompt with interpolated operator counts and ETA sections', () => {
+        const cv = createClusterVersion({
+          failing: false,
+          progressing: true,
+          available: true,
+          historyState: 'Partial',
+        });
+
+        const baseOperators = [
+          createOperator('console', { available: true, degraded: false, progressing: false }),
+          createOperator('authentication', {
+            available: true,
+            degraded: false,
+            progressing: false,
+          }),
+          createOperator('ingress', { available: true, degraded: false, progressing: false }),
+          createOperator('network', { available: true, degraded: false, progressing: true }),
+          createOperator('dns', { available: true, degraded: false, progressing: false }),
+        ];
+
+        // 3 operators at target version, 1 updating (progressing), 1 pending
+        const operators = baseOperators.map((op, i) => ({
+          ...op,
+          status: {
+            ...op.status,
+            versions: [{ name: 'operator', version: i < 3 ? '4.14.10' : '4.14.9' }],
+          },
+        })) as typeof baseOperators;
+
+        const phase = determineWorkflowPhase(cv, operators);
+        expect(phase).toBe('status');
+
+        const prompt = generateUpdatePrompt(phase, cv, mockT, operators);
+
+        expect(prompt).toContain('Progress Monitor');
+
+        expect(prompt).toContain('3 of 5');
+        expect(prompt).toContain('1 of 5');
+        expect(prompt).toContain('0 of 5');
+
+        expect(prompt).toContain('Estimated completion');
+        expect(prompt).toContain('Current progress');
+        expect(prompt).toContain('4.14.10');
+
+        expect(prompt).toContain('<security>');
+        expect(prompt).toContain('<confidence_qualifiers>');
+        expect(prompt).toContain('Data Completeness');
       });
     });
   });

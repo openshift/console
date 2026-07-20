@@ -69,7 +69,7 @@ export const getUpdateButtonTranslationKey = (phase: UpdateWorkflowPhase): strin
   // Translation keys that match the keys used in workflow-configs.ts buttonText functions
   const keys: Record<UpdateWorkflowPhase, string> = {
     status: 'public~Update status',
-    'pre-check': 'public~Pre-check with AI',
+    'pre-check': 'public~Precheck your cluster with AI',
   };
   return keys[phase];
 };

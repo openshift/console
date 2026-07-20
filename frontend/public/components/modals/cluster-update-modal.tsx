@@ -253,7 +253,7 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
                 className="pf-v6-u-mt-sm"
                 isInline
                 title={t(
-                  'Updating this cluster to {{desiredVersion}} is supported, but includes known issues.  Review the known issues before updating.',
+                  'Updating your cluster to {{desiredVersion}} is supported, but it includes known issues. Review the known issues before you update.',
                   { desiredVersion: desiredNotRecommendedUpdate.release.version },
                 )}
                 variant="info"
@@ -312,7 +312,7 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
                     isInline
                     isPlain
                     title={t(
-                      'Paused {{worker}} or custom pool {{resource}} updates will be resumed. If you want to update only the control plane, select "Control plane only update" below.',
+                      'The cluster will resume paused {{worker}} or custom pool {{resource}} updates. To update only the control plane, select "Control plane only update" below.',
                       { worker: NodeTypeNames.Worker, resource: NodeModel.label },
                     )}
                     data-test="update-cluster-modal-paused-nodes-warning"
@@ -380,6 +380,15 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
               data-test="update-cluster-modal-ols-precheck"
             />
           )}
+          <Alert
+            variant="warning"
+            isInline
+            isPlain
+            title={t(
+              'Cluster updates are irreversible. After an update begins, it cannot be rolled back to the previous version. Verify your cluster is ready before you proceed.',
+            )}
+            data-test="update-cluster-modal-irreversibility-notice"
+          />
         </Form>
       </ModalBody>
       <ModalFooterWithAlerts errorMessage={errorMessage || error}>

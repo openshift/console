@@ -1,4 +1,5 @@
 import { getLanguageConstraint } from './shared/language-utils';
+import { securityConstraint, getConfidenceQualifiers } from './shared/security-utils';
 
 /**
  * Pre-check prompt for clusters with no available updates
@@ -9,6 +10,11 @@ import { getLanguageConstraint } from './shared/language-utils';
  */
 export const createPreCheckNoUpdatesPrompt = (currentVersion: string) => {
   const languageConstraint = getLanguageConstraint();
+  const confidenceQualifiers = getConfidenceQualifiers({
+    highConfidenceData: 'ClusterVersion + ClusterOperators',
+    highConfidenceQuality: 'conditions are unambiguous',
+    moderateConfidenceMissing: 'events, MCPs, nodes, alerts',
+  });
 
   return `# OpenShift Cluster Health Assessment
 
@@ -20,7 +26,15 @@ export const createPreCheckNoUpdatesPrompt = (currentVersion: string) => {
 - Assess ONLY the actual cluster state from tool call data
 - Distinguish between system health and user workload issues
 - Provide actionable recommendations for administrators
+<scope_definition>
+This assessment is scoped to upgrade readiness and update-service health ONLY.
+**IN SCOPE**: ClusterVersion conditions, ClusterOperator health affecting future upgrades, update service connectivity, cluster capabilities, version history, and Upgradeable/Failing conditions.
+**OUT OF SCOPE**: General application performance, user workload errors unrelated to upgrades, cosmetic issues, and operational recommendations that do not affect the cluster's ability to upgrade.
+Do not report issues that cannot be tied to a specific upgrade-blocking or upgrade-disrupting mechanism.
+</scope_definition>
 - ONLY OUTPUT the Summary and TL;DR sections
+${securityConstraint}
+${confidenceQualifiers}
 ${languageConstraint}
 </constraints>
 
@@ -102,10 +116,9 @@ Conditions have TWO important fields you MUST check:
  - User workload PDB analysis for potential upgrade blockers
 
 7. **Operational Health and Recommendations**:
- - Identify issues that affect user applications
- - Focus on problems that cluster administrators can/should address
- - Provide specific, actionable guidance for maintaining cluster health
- - Distinguish from normal system maintenance activities
+ - Focus on issues that would block or disrupt a future cluster upgrade
+ - Provide specific, actionable guidance for maintaining upgrade readiness
+ - Do not flag general application issues unrelated to upgrades
  - Avoid recommendations for normal system behavior
 
 </health_assessment_requirements>
@@ -134,6 +147,7 @@ Conditions have TWO important fields you MUST check:
 - **User Impact**: [Any operator issues affecting workloads]
 - **Action Items**: [Count of items needing administrator attention]
 - **Update Readiness**: [Ready | Operator issues need resolution]
+- **Data Completeness**: [Full | Partial — list missing sources | Limited — list missing essential sources] → [High | Moderate | Limited] confidence
 - **Next Review**: [Recommended reassessment timeframe]
 </output_format>`;
 };
