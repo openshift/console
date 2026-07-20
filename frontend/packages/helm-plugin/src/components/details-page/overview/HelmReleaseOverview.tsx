@@ -17,7 +17,7 @@ const HelmReleaseOverview: FC<HelmReleaseOverviewProps> = ({ obj, customData }) 
   const { t } = useTranslation('helm-plugin');
   return (
     <PaneBody>
-      <SectionHeading text={t('Helm Release details')} />
+      <SectionHeading text={t('Helm release details')} />
       <Grid hasGutter>
         <GridItem sm={6}>
           <ResourceSummary resource={obj} customPathName={'metadata.labels.name'} />

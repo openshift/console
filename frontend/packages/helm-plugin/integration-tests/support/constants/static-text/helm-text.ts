@@ -1,3 +1,3 @@
 export const messages = {
-  noHelmReleasesFound: 'No Helm Releases found',
+  noHelmReleasesFound: 'No Helm releases found',
 };
