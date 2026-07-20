@@ -313,6 +313,44 @@ func TestApiDiscoveryHandler_AllResourceListsFail(t *testing.T) {
 	}
 }
 
+func TestK8sViaProxy_RecoversAbortPanic(t *testing.T) {
+	t.Run("ErrAbortHandler is recovered", func(t *testing.T) {
+		panicHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			panic(http.ErrAbortHandler)
+		})
+
+		req := httptest.NewRequest(http.MethodGet, "/apis/test/v1", nil)
+		_, err := k8sViaProxy(panicHandler, "/apis/test/v1", req)
+
+		if err == nil {
+			t.Fatal("expected error from aborted request, got nil")
+		}
+		if !strings.Contains(err.Error(), "request aborted") {
+			t.Errorf("expected 'request aborted' error, got: %v", err)
+		}
+	})
+
+	t.Run("unexpected panic is not swallowed", func(t *testing.T) {
+		sentinel := "unexpected failure"
+		panicHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			panic(sentinel)
+		})
+
+		defer func() {
+			p := recover()
+			if p == nil {
+				t.Fatal("expected panic to propagate, but it was swallowed")
+			}
+			if p != sentinel {
+				t.Fatalf("expected panic value %q, got %v", sentinel, p)
+			}
+		}()
+
+		req := httptest.NewRequest(http.MethodGet, "/apis/test/v1", nil)
+		k8sViaProxy(panicHandler, "/apis/test/v1", req)
+	})
+}
+
 func TestApiDiscoveryHandler_PartialFailure(t *testing.T) {
 	backend := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
