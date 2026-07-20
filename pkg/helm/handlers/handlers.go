@@ -67,7 +67,7 @@ type helmHandlers struct {
 	installChart          func(string, string, string, map[string]interface{}, *action.Configuration, dynamic.Interface, corev1client.CoreV1Interface, bool, string) (*releasev1.Release, error)
 	installChartFromURL   func(string, string, string, map[string]interface{}, *action.Configuration, corev1client.CoreV1Interface, string, string) (*kv1.Secret, error)
 	listReleases          func(*action.Configuration, bool) ([]*releasev1.Release, error)
-	upgradeReleaseAsync   func(string, string, string, map[string]interface{}, *action.Configuration, dynamic.Interface, corev1client.CoreV1Interface, bool, string) (*kv1.Secret, error)
+	upgradeReleaseAsync   func(string, string, string, map[string]interface{}, *action.Configuration, dynamic.Interface, corev1client.CoreV1Interface, bool, string, string) (*kv1.Secret, error)
 	upgradeRelease        func(string, string, string, map[string]interface{}, *action.Configuration, dynamic.Interface, corev1client.CoreV1Interface, bool, string) (*releasev1.Release, error)
 	uninstallRelease      func(string, *action.Configuration) (*releasecommon.UninstallReleaseResponse, error)
 	uninstallReleaseAsync func(string, string, string, *action.Configuration, corev1client.CoreV1Interface) error
@@ -309,7 +309,7 @@ func (h *helmHandlers) HandleUpgradeReleaseAsync(user *auth.User, w http.Respons
 		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: err.Error()})
 		return
 	}
-	resp, err := h.upgradeReleaseAsync(req.Namespace, req.Name, req.ChartUrl, req.Values, conf, handlerClients.DynamicClient, handlerClients.CoreClient, false, req.IndexEntry)
+	resp, err := h.upgradeReleaseAsync(req.Namespace, req.Name, req.ChartUrl, req.Values, conf, handlerClients.DynamicClient, handlerClients.CoreClient, false, req.IndexEntry, req.BasicAuthSecretName)
 	if err != nil {
 		if err.Error() == actions.ErrReleaseRevisionNotFound.Error() {
 			serverutils.SendResponse(w, http.StatusNotFound, serverutils.ApiError{Err: fmt.Sprintf("Failed to rollback helm releases: %v", err)})

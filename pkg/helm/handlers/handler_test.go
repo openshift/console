@@ -137,8 +137,8 @@ func fakeUpgradeRelease(name, ns string, t *testing.T, fakeRelease *releasev1.Re
 	}
 }
 
-func fakeUpgradeReleaseAsync(name, ns string, t *testing.T, fakeSecret *kv1.Secret, err error) func(ns, name, url string, vals map[string]interface{}, conf *action.Configuration, client dynamic.Interface, coreClient corev1client.CoreV1Interface, fileCleanUp bool, indexEntry string) (*kv1.Secret, error) {
-	return func(namespace, n, url string, vals map[string]interface{}, conf *action.Configuration, client dynamic.Interface, coreClient corev1client.CoreV1Interface, fileCleanUp bool, indexEntry string) (*kv1.Secret, error) {
+func fakeUpgradeReleaseAsync(name, ns string, t *testing.T, fakeSecret *kv1.Secret, err error) func(ns, name, url string, vals map[string]interface{}, conf *action.Configuration, client dynamic.Interface, coreClient corev1client.CoreV1Interface, fileCleanUp bool, indexEntry string, basicAuthSecretName string) (*kv1.Secret, error) {
+	return func(namespace, n, url string, vals map[string]interface{}, conf *action.Configuration, client dynamic.Interface, coreClient corev1client.CoreV1Interface, fileCleanUp bool, indexEntry string, basicAuthSecretName string) (*kv1.Secret, error) {
 		if namespace != ns {
 			t.Errorf("Namespace mismatch expected %s received %s", ns, namespace)
 		}
