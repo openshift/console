@@ -5,7 +5,7 @@ import { pageTitle } from '@console/dev-console/integration-tests/support/consta
 import { catalogPO } from '@console/dev-console/integration-tests/support/pageObjects';
 import { addPage } from '@console/dev-console/integration-tests/support/pages/add-flow/add-page';
 
-Given('user is at the Create Helm Release page', () => {
+Given('user is at the Create Helm release page', () => {
   addPage.selectCardFromOptions(addOptions.HelmChart);
 });
 
@@ -13,7 +13,7 @@ When('user clicks on the Helm Chart card on the Add page', () => {
   addPage.selectCardFromOptions(addOptions.HelmChart);
 });
 
-When('user redirects to Helm Charts page', () => {
+When('user redirects to Helm Chart(s) page', () => {
   detailsPage.titleShouldContain(pageTitle.HelmCharts);
 });
 

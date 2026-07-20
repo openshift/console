@@ -95,7 +95,7 @@ const HelmInstallUpgradeForm: FC<
   const yamlEditor = chartHasValues && (
     <CodeEditorField
       name="yamlData"
-      label={t('Helm Release')}
+      label={t('Helm release')}
       schema={formSchema}
       showSamples={false}
       onSave={handleSubmit}
@@ -144,7 +144,7 @@ const HelmInstallUpgradeForm: FC<
                 type={TextInputTypes.text}
                 name="releaseName"
                 label={t('Release name')}
-                helpText={t('A unique name for the Helm Release.')}
+                helpText={t('A unique name for the Helm release.')}
                 required
                 isDisabled={!!chartError || helmAction === HelmActionType.Upgrade}
                 data-test="release-name"

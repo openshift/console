@@ -7,7 +7,7 @@ export const helmPage = {
   verifyInstallHelmLink: () =>
     cy
       .get('a')
-      .contains('Browse the catalog to discover available Helm Charts')
+      .contains('Browse the catalog to discover available Helm Chart(s)')
       .should('be.visible'),
   search: (name: string) => {
     cy.get(helmPO.filters).within(() => cy.get('.pf-v6-c-menu-toggle').first().click());
@@ -163,7 +163,7 @@ export const helmPage = {
       case helmActions.rollback:
         cy.get(helmPO.helmActions.rollBack).click();
         break;
-      case 'Delete Helm Release':
+      case 'Delete Helm release':
       case helmActions.deleteHelmRelease:
         cy.get(helmPO.helmActions.deleteHelmRelease).click();
         break;

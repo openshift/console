@@ -24,11 +24,11 @@ export const useHelmDeleteAction = (scope: HelmActionsScope, t: TFunction): Acti
 
     return {
       id: 'delete-helm',
-      label: t('helm-plugin~Delete Helm Release'),
+      label: t('helm-plugin~Delete Helm release'),
       cta: () => {
         launchModal(LazyDeleteResourceModalOverlay, {
           resourceName: releaseName,
-          resourceType: 'Helm Release',
+          resourceType: 'Helm release',
           actionLabel: t('helm-plugin~Delete'),
           redirect,
           onSubmit: () => {
