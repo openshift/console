@@ -41,7 +41,7 @@ const LazyMenuRenderer: FC<LazyMenuRendererProps> = ({
 
   const menu = (
     <Menu ref={menuRef} containsFlyout onSelect={restProps.onClick}>
-      <MenuContent data-test-id="action-items">
+      <MenuContent data-test-id="action-items" data-test="action-items">
         <MenuList>
           <ActionMenuContent {...restProps} />
         </MenuList>

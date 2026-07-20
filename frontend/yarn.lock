@@ -2158,12 +2158,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@helm-plugin/integration-tests@workspace:packages/helm-plugin/integration-tests":
-  version: 0.0.0-use.local
-  resolution: "@helm-plugin/integration-tests@workspace:packages/helm-plugin/integration-tests"
-  languageName: unknown
-  linkType: soft
-
 "@humanwhocodes/config-array@npm:^0.13.0":
   version: 0.13.0
   resolution: "@humanwhocodes/config-array@npm:0.13.0"
