@@ -47,6 +47,8 @@ export BRIDGE_BASE_ADDRESS="$(oc get consoles.config.openshift.io cluster -o jso
 
 ./contrib/create-user.sh
 
+export WORKERS="${WORKERS:-2}"
+
 pushd frontend
 
 SCENARIO="${1:-e2e}"
