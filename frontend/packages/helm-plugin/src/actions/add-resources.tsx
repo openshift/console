@@ -8,7 +8,7 @@ export const AddHelmChartAction = (
   accessReviewDisabled?: boolean,
 ): Action => ({
   id: 'helm',
-  label: i18next.t('helm-plugin~Helm Charts'),
+  label: i18next.t('helm-plugin~Helm Chart(s)'),
   icon: helmCatalogIconSVG,
   cta: {
     href: `/catalog/ns/${namespace}?catalogType=HelmChart`,

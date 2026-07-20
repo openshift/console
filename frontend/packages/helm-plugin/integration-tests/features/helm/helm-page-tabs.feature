@@ -12,10 +12,10 @@ Feature: Add repositories tab in Helm navigation item
         Scenario: Helm Page on developer perspective: HR-09-TC01
             Given user is at developer perspective
              When user clicks on the Helm tab in dev perspective
-             Then user is able to see Helm Releases and Repositories Tabs
-              And user is able to see the message "No Helm Releases found"
-              And user is able to see the link "Browse the catalog to discover available Helm Charts"
-              And user is able to see the Create drop down menu with Helm Release and Repository options
+             Then user is able to see Helm releases and Repositories Tabs
+              And user is able to see the message "No Helm releases found"
+              And user is able to see the link "Browse the catalog to discover available Helm Chart(s)"
+              And user is able to see the Create drop down menu with Helm release and Repository options
 
 
         @regression
@@ -29,7 +29,7 @@ Feature: Add repositories tab in Helm navigation item
 
 
         @regression
-        Scenario: Click on Create Helm Release: HR-09-TC03
+        Scenario: Click on Create Helm release: HR-09-TC03
             Given user is at the Helm page
              When user clicks on Helm release in create action menu
               And user searches and selects "Nodejs" card from catalog page

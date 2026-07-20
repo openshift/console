@@ -2,7 +2,7 @@ import { warningModal } from '@console/cypress-integration-tests/views/warning-m
 import { helmPO } from '@console/dev-console/integration-tests/support/pageObjects/helm-po';
 
 export const upgradeHelmRelease = {
-  verifyTitle: () => cy.get('h1').contains('Upgrade Helm Release').should('be.visible'),
+  verifyTitle: () => cy.get('h1').contains('Upgrade Helm release').should('be.visible'),
   updateReplicaCount: (replicaCount: string = '2') =>
     cy.get(helmPO.upgradeHelmRelease.replicaCount).clear().type(replicaCount),
   upgradeChartVersion: () => {

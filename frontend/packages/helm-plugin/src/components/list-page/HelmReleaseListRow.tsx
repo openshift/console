@@ -39,7 +39,7 @@ export const getDataViewRows: GetDataViewRows<HelmRelease, { obj: HelmRelease }>
       [tableColumnInfo[0].id]: {
         cell: (
           <>
-            <ResourceIcon kind="Helm Release" />
+            <ResourceIcon kind="Helm release" />
             <Link
               to={`/helm-releases/ns/${release.namespace}/release/${release.name}`}
               title={release.name}

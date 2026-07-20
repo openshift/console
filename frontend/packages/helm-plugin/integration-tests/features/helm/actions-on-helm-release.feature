@@ -1,5 +1,5 @@
 @helm @smoke
-Feature: Perform Actions on Helm Releases
+Feature: Perform Actions on Helm releases
               As a user, I want to perform the actions on the helm releases in topology page
 
         Background:
@@ -21,19 +21,19 @@ Feature: Perform Actions on Helm Releases
         Scenario: Context menu options of helm release: HR-01-TC01
             Given user is at the Topology page
              When user right clicks on the helm release "nodejs-release-2" to open the context menu
-             Then user is able to see the context menu with actions Upgrade and Delete Helm Release
+             Then user is able to see the context menu with actions Upgrade and Delete Helm release
 
 
         Scenario: Actions menu on Helm page: HR-01-TC02
             Given user is on the Helm page with helm release "nodejs-release-2"
              When user clicks on the Kebab menu
-             Then user is able to see kebab menu with actions Upgrade, Rollback and Delete Helm Release
+             Then user is able to see kebab menu with actions Upgrade, Rollback and Delete Helm release
 
 
-        Scenario: Delete Helm Release through Context Menu: HR-01-TC03
+        Scenario: Delete Helm release through Context Menu: HR-01-TC03
             Given user is at the Topology page
              When user right clicks on the helm release "nodejs-release-2" to open the context menu
-              And user clicks on the "Delete Helm Release" action
+              And user clicks on the "Delete Helm release" action
               And user enters the release name "nodejs-release-2"
               And user clicks on the Delete button
              Then user will be redirected to Topology page
