@@ -312,7 +312,7 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
                     isInline
                     isPlain
                     title={t(
-                      'The system will resume paused {{worker}} or custom pool {{resource}} updates. To update only the control plane, select "Control plane only update" below.',
+                      'The cluster will resume paused {{worker}} or custom pool {{resource}} updates. To update only the control plane, select "Control plane only update" below.',
                       { worker: NodeTypeNames.Worker, resource: NodeModel.label },
                     )}
                     data-test="update-cluster-modal-paused-nodes-warning"
@@ -385,7 +385,7 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
             isInline
             isPlain
             title={t(
-              'Cluster updates are irreversible. Once an update begins, it cannot be rolled back to the previous version.',
+              'Cluster updates are irreversible. After an update begins, it cannot be rolled back to the previous version. Verify your cluster is ready before you proceed.',
             )}
             data-test="update-cluster-modal-irreversibility-notice"
           />
