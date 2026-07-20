@@ -7083,25 +7083,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:0.31.1":
-  version: 0.31.1
-  resolution: "axios@npm:0.31.1"
+"axios@npm:0.33.0":
+  version: 0.33.0
+  resolution: "axios@npm:0.33.0"
   dependencies:
     follow-redirects: "npm:^1.15.4"
     form-data: "npm:^4.0.4"
     proxy-from-env: "npm:^1.1.0"
-  checksum: 10c0/0193483f680a893955d203d26951fc427c407415d273bba5a2450e3d0ed7261a403eb5fe86f28a7e66c42d98597cbf8e17e3a6c324d294bd143a6a68bc10f8ef
+  checksum: 10c0/9e8ae9d26768a9884c121c33286f6b85fe915cf1bb1c0ac7adff2def81e18b4b7c5bb9630dec3900ec88c037822d602439f2bff23d15c41c2216b89b27fbe524
   languageName: node
   linkType: hard
 
-"axios@patch:axios@npm%3A0.31.1#~/.yarn/patches/axios-npm-0.31.1-0574a0de7d.patch":
-  version: 0.31.1
-  resolution: "axios@patch:axios@npm%3A0.31.1#~/.yarn/patches/axios-npm-0.31.1-0574a0de7d.patch::version=0.31.1&hash=21a978"
+"axios@patch:axios@npm%3A0.33.0#~/.yarn/patches/axios-npm-0.33.0-023deda7e4.patch":
+  version: 0.33.0
+  resolution: "axios@patch:axios@npm%3A0.33.0#~/.yarn/patches/axios-npm-0.33.0-023deda7e4.patch::version=0.33.0&hash=83fa2f"
   dependencies:
     follow-redirects: "npm:^1.15.4"
     form-data: "npm:^4.0.4"
     proxy-from-env: "npm:^1.1.0"
-  checksum: 10c0/b148742c668c3cbc44c7a65e6aa5214efac23bff529f2f54d4c6c4fa917ea2fbed37ed915165fa3e1d011d94ebe6c1b7263610c28bb1af0de51ce8ad5188dd61
+  checksum: 10c0/73acccbe5896c85fb7aeee2d714e9f54e283f4797c3dac588a7503a00cdeb86b9edc6784b7803cb0269859683dff1ac242cce3a88e15ce995b729d306bbc5e00
   languageName: node
   linkType: hard
 
@@ -20559,7 +20559,7 @@ __metadata:
     apollo-client: "npm:^2.6.8"
     apollo-link-http: "npm:^1.0.20"
     apollo-link-ws: "npm:^1.0.20"
-    axios: "patch:axios@npm%3A0.31.1#~/.yarn/patches/axios-npm-0.31.1-0574a0de7d.patch"
+    axios: "patch:axios@npm%3A0.33.0#~/.yarn/patches/axios-npm-0.33.0-023deda7e4.patch"
     babel-loader: "npm:^8.2.1"
     browser-env: "npm:3.x"
     cache-loader: "npm:^4.1.0"
