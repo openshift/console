@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { TextInputTypes, Grid, GridItem } from '@patternfly/react-core';
 import type { FormikProps } from 'formik';
 import * as fuzzy from 'fuzzysearch';
@@ -11,6 +11,7 @@ import { FormFooter } from '@console/shared/src/components/form-utils/FormFooter
 import { FormHeader } from '@console/shared/src/components/form-utils/FormHeader';
 import { InputField } from '@console/shared/src/components/formik-fields/InputField';
 import { ResourceDropdownField } from '@console/shared/src/components/formik-fields/ResourceDropdownField';
+import { useHelmCreateBasicAuthSecretModal } from './HelmCreateBasicAuthSecretModal';
 import type { HelmURLChartFormData } from './types';
 import { useSecretResources } from './useSecretResources';
 
@@ -32,6 +33,34 @@ const HelmURLChartForm: FC<FormikProps<HelmURLChartFormData> & HelmURLChartFormP
   setFieldError,
 }) => {
   const { t } = useTranslation('helm-plugin');
+  const launchHelmCreateBasicAuthSecretModal = useHelmCreateBasicAuthSecretModal();
+  const [isCreateSecretModalOpen, setIsCreateSecretModalOpen] = useState(false);
+
+  const CREATE_SECRET_KEY = 'create-secret';
+
+  const handleSecretSave = (name: string) => {
+    setFieldValue('basicAuthSecretName', name);
+  };
+
+  const handleSecretChange = (key: string) => {
+    if (key === CREATE_SECRET_KEY && !isCreateSecretModalOpen) {
+      // ResourceDropdownField writes the selected key to form state after this callback.
+      // Defer restoring the previous secret so "create-secret" is not persisted.
+      window.setTimeout(
+        () => setFieldValue('basicAuthSecretName', values.basicAuthSecretName || ''),
+        0,
+      );
+      setIsCreateSecretModalOpen(true);
+      launchHelmCreateBasicAuthSecretModal({
+        namespace,
+        save: (name) => {
+          handleSecretSave(name);
+          setIsCreateSecretModalOpen(false);
+        },
+        onClose: () => setIsCreateSecretModalOpen(false),
+      });
+    }
+  };
 
   const autocompleteFilter = (strText: string, item: any): boolean =>
     fuzzy(strText, item?.props?.name);
@@ -138,8 +167,15 @@ const HelmURLChartForm: FC<FormikProps<HelmURLChartFormData> & HelmURLChartFormP
                 placeholder={t('Select a secret')}
                 showBadge
                 autocompleteFilter={autocompleteFilter}
+                actionItems={[
+                  {
+                    actionTitle: t('Create Secret'),
+                    actionKey: CREATE_SECRET_KEY,
+                  },
+                ]}
+                onChange={handleSecretChange}
                 helpText={t(
-                  'A secret with "username" and "password" keys for OCI/HTTP(S) authentication',
+                  'Secret with "username" and "password" keys for OCI/HTTP(S) authentication.',
                 )}
               />
             </GridItem>
