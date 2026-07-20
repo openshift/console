@@ -60,7 +60,7 @@ Then('user has added multiple helm charts repositories', () => {
   navigateTo(devNavigationMenu.Add);
 });
 
-Then('user will get redirected to Helm Charts page', () => {
+Then('user will get redirected to Helm Chart(s) page', () => {
   detailsPage.titleShouldContain(pageTitle.HelmCharts);
 });
 
@@ -68,7 +68,7 @@ Then('user will see the list of Chart Repositories', () => {
   catalogPage.verifyChartListAvailable();
 });
 
-Then('user will see the cards of Helm Charts', () => {
+Then('user will see the cards of Helm Chart(s)', () => {
   catalogPage.verifyHelmChartCardsAvailable();
 });
 

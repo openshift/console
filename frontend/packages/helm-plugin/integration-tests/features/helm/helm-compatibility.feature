@@ -11,7 +11,7 @@ Feature: Helm Chart
         Scenario: Compatible helm charts: HR-02-TC01
             Given user is at Add page
              When user clicks on the Helm Chart card on the Add page
-             Then user redirects to Helm Charts page
+             Then user redirects to Helm Chart(s) page
               And user is able to see helm charts
 
 
@@ -26,6 +26,6 @@ Feature: Helm Chart
 
         @regression @manual
         Scenario: Check the chart versions in the chart version dropdown if they are compatible with the cluster: HR-02-TC03
-            Given user is at the Create Helm Release page
+            Given user is at the Create Helm release page
              When user clicks on the Chart Version dropdown menu
              Then user will see the chart versions which are compatible with the kubeversion of the cluster
