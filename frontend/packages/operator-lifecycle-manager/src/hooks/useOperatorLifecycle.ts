@@ -91,6 +91,7 @@ export const useOperatorLifecycle = (
       return undefined;
     }
 
+    let active = true;
     setLoading(true);
 
     const url = `/api/olm/lifecycle/${encodeURIComponent(catalogNamespace)}/${encodeURIComponent(
@@ -99,17 +100,23 @@ export const useOperatorLifecycle = (
 
     fetchLifecycleData(cacheKey, url)
       .then((result) => {
-        setData(result);
-        setError(null);
-        setLoading(false);
+        if (active) {
+          setData(result);
+          setError(null);
+          setLoading(false);
+        }
       })
       .catch((err: Error) => {
-        setData(null);
-        setError(err);
-        setLoading(false);
+        if (active) {
+          setData(null);
+          setError(err);
+          setLoading(false);
+        }
       });
 
-    return undefined; // no cleanup: requests complete naturally
+    return () => {
+      active = false;
+    };
   }, [packageName, catalogName, catalogNamespace]);
 
   return [data, loading, error];

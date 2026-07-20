@@ -244,33 +244,49 @@ const LifecycleDatesPopover: FC<{
   );
 };
 
+// Invisible spacer that reserves the same vertical space as a text line.
+// Every state of SupportPhaseBadge must render the same number of lines so
+// CellMeasurerCache never sees a height change when lifecycle data arrives,
+// which would cause the virtualized table to transiently mis-position rows.
+const DateLineSpacer: FC = () => (
+  <div aria-hidden="true" style={{ visibility: 'hidden' }}>
+    {' '}
+  </div>
+);
+
 export const SupportPhaseBadge: FC<{ phase: SupportPhaseResult }> = ({ phase }) => {
   const { t } = useTranslation('olm');
 
   if (phase.status === SupportPhaseStatus.SelfSupport && phase.allPhases) {
     return (
-      <LifecycleDatesPopover phases={phase.allPhases}>
-        <Button
-          variant="link"
-          type="button"
-          data-test="support-phase-self-support"
-          onClick={(e) => e.preventDefault()}
-          aria-haspopup="dialog"
-          isInline
-        >
-          <Label variant="outline" icon={<BlueInfoCircleIcon />} textMaxWidth="100%">
-            {t('Unsupported')}
-          </Label>
-        </Button>
-      </LifecycleDatesPopover>
+      <div>
+        <LifecycleDatesPopover phases={phase.allPhases}>
+          <Button
+            variant="link"
+            type="button"
+            data-test="support-phase-self-support"
+            onClick={(e) => e.preventDefault()}
+            aria-haspopup="dialog"
+            isInline
+          >
+            <Label variant="outline" icon={<BlueInfoCircleIcon />} textMaxWidth="100%">
+              {t('Unsupported')}
+            </Label>
+          </Button>
+        </LifecycleDatesPopover>
+        <DateLineSpacer />
+      </div>
     );
   }
 
   if (phase.status === SupportPhaseStatus.NoData) {
     return (
-      <span data-test="support-phase-no-data" aria-label={t('No data available')}>
-        -
-      </span>
+      <div>
+        <span data-test="support-phase-no-data" aria-label={t('No data available')}>
+          -
+        </span>
+        <DateLineSpacer />
+      </div>
     );
   }
 
@@ -298,8 +314,11 @@ export const SupportPhaseBadge: FC<{ phase: SupportPhaseResult }> = ({ phase }) 
   }
 
   return (
-    <span data-test="support-phase-no-data" aria-label={t('No data available')}>
-      -
-    </span>
+    <div>
+      <span data-test="support-phase-no-data" aria-label={t('No data available')}>
+        -
+      </span>
+      <DateLineSpacer />
+    </div>
   );
 };

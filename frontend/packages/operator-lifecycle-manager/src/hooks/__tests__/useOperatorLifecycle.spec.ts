@@ -88,6 +88,52 @@ describe('useOperatorLifecycle', () => {
     expect(mockCoFetchJSON).toHaveBeenCalledTimes(1);
   });
 
+  it('does not apply stale result from superseded request when prop changes A→B and B resolves first', async () => {
+    const dataA = { lifecycleSchema: 'A', properties: '{}' };
+    const dataB = { lifecycleSchema: 'B', properties: '{}' };
+    let resolveA: (v: typeof dataA) => void;
+    let resolveB: (v: typeof dataB) => void;
+
+    mockCoFetchJSON.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveA = resolve;
+        }),
+    );
+    mockCoFetchJSON.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveB = resolve;
+        }),
+    );
+
+    const { result, rerender } = renderHook(
+      ({ pkg }: { pkg: string }) => useOperatorLifecycle(pkg, CATALOG, NS),
+      { initialProps: { pkg: 'pkg-stale-a' } },
+    );
+
+    // Switch to B while A is still in-flight; A's effect cleanup sets active=false
+    rerender({ pkg: 'pkg-stale-b' });
+
+    await act(async () => {
+      resolveB(dataB);
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(result.current[0]).toEqual(dataB);
+
+    await act(async () => {
+      resolveA(dataA); // arrives late — must be ignored
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(result.current[0]).toEqual(dataB); // B must still be shown
+    expect(result.current[1]).toBe(false);
+    expect(result.current[2]).toBeNull();
+  });
+
   it('a component mounting after the cache is populated serves data immediately without fetching', async () => {
     const cachedData = { lifecycleSchema: 'cached', properties: '{}' };
     mockCoFetchJSON.mockResolvedValueOnce(cachedData);
