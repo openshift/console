@@ -94,10 +94,15 @@ export const ConfigureMachineAutoscalerModal: OverlayComponent<ConfigureMachineA
     [createAutoscaler, handlePromise, navigate, closeOverlay, close],
   );
 
+  const { t } = useTranslation('public');
+
+  if (!machineSet?.metadata) {
+    return null;
+  }
+
   const {
     metadata: { name },
   } = machineSet;
-  const { t } = useTranslation('public');
 
   return (
     <Modal isOpen onClose={closeOverlay} variant="small">
