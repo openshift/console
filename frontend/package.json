@@ -14,9 +14,9 @@
   "scripts": {
     "postinstall": "yarn ts-node ./scripts/check-patternfly-modules.ts && yarn prepare-husky",
     "clean": "rm -rf ./public/dist",
-    "dev": "yarn clean && yarn build-plugin-sdk && REACT_REFRESH=true NODE_OPTIONS=--max-old-space-size=4096 yarn ts-node ./node_modules/.bin/webpack serve --mode=development --progress",
-    "dev-once": "yarn clean && yarn build-plugin-sdk && NODE_OPTIONS=--max-old-space-size=4096 yarn ts-node ./node_modules/.bin/webpack --mode=development",
-    "build": "yarn clean && yarn build-plugin-sdk && NODE_ENV=production NODE_OPTIONS=--max-old-space-size=4096 yarn ts-node ./node_modules/.bin/webpack --mode=production",
+    "dev": "yarn clean && yarn build-plugin-sdk && REACT_REFRESH=true NODE_OPTIONS=--max-old-space-size=4096 yarn ts-node ./node_modules/.bin/rspack serve --mode=development",
+    "dev-once": "yarn clean && yarn build-plugin-sdk && NODE_OPTIONS=--max-old-space-size=4096 yarn ts-node ./node_modules/.bin/rspack --mode=development",
+    "build": "yarn clean && yarn build-plugin-sdk && NODE_ENV=production NODE_OPTIONS=--max-old-space-size=4096 yarn ts-node ./node_modules/.bin/rspack --mode=production",
     "check-cycles": "CHECK_CYCLES=true yarn dev-once",
     "coverage": "jest --coverage .",
     "eslint": "node ./node_modules/.bin/eslint --max-warnings 0 --ext .js,.jsx,.ts,.tsx,.json --color",
@@ -48,7 +48,7 @@
     "cypress-generate": "marge -o ./gui_test_screenshots/ -f cypress-report -t 'OpenShift Console Cypress Test Results' -p 'OpenShift Cypress Test Results' --showPassed false --assetsDir ./gui_test_screenshots/cypress/assets ./gui_test_screenshots/cypress.json",
     "cypress-a11y-report": "echo '\nA11y Test Results:' && mv packages/integration-tests/cypress-a11y-report.json ./gui_test_screenshots/ && node -e \"console.table(JSON.parse(require('fs').readFileSync(process.argv[1])));\" ./gui_test_screenshots/cypress-a11y-report.json",
     "cypress-postreport": "yarn cypress-merge && yarn cypress-generate",
-    "analyze": "ANALYZE_BUNDLE=true NODE_ENV=production NODE_OPTIONS=--max-old-space-size=8192 yarn ts-node ./node_modules/.bin/webpack --mode=production",
+    "analyze": "ANALYZE_BUNDLE=true NODE_ENV=production NODE_OPTIONS=--max-old-space-size=8192 yarn ts-node ./node_modules/.bin/rspack --mode=production",
     "knip": "knip --config scripts/knip.ts",
     "prettier-all": "prettier --write '**/*.{js,jsx,ts,tsx,json}'",
     "ts-node": "ts-node -O '{\"module\":\"commonjs\"}'",
@@ -80,11 +80,22 @@
       "^.+\\.(ts|tsx|js|jsx|mjs)$": [
         "@swc/jest",
         {
+          "jsc": {
+            "parser": {
+              "syntax": "typescript",
+              "jsx": true,
+              "tsx": true
+            },
+            "transform": {
+              "react": {
+                "runtime": "automatic"
+              }
+            }
+          },
           "module": {
             "type": "commonjs",
             "noInterop": true
-          },
-          "minify": false
+          }
         }
       ]
     },
@@ -116,7 +127,7 @@
       "./__mocks__/resizeObserver.js",
       "./__mocks__/serverFlags.js",
       "./__mocks__/textEncoderDecoder.ts",
-      "./__mocks__/webpack.ts"
+      "./__mocks__/sharedScope.ts"
     ],
     "setupFilesAfterEnv": [
       "<rootDir>/setup-tests.js"
@@ -220,7 +231,11 @@
     "@playwright/test": "^1.59.1",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.6.2",
     "@puppeteer/browsers": "^2.6.1",
+    "@rsdoctor/rspack-plugin": "^1.6.0",
+    "@rspack/cli": "^2.1.3",
     "@rspack/core": "^2.1.3",
+    "@rspack/dev-server": "^2.1.0",
+    "@rspack/plugin-react-refresh": "^2.0.2",
     "@swc/core": "^1.15.43",
     "@swc/jest": "^0.2.39",
     "@testing-library/dom": "^10.4.1",
@@ -239,11 +254,8 @@
     "@types/semver": "~7.7.1",
     "@yarnpkg/parsers": "^3.0.2",
     "axe-core": "^4.10.2",
-    "babel-loader": "^9.2.1",
     "chalk": "2.4.x",
-    "circular-dependency-plugin": "^5.2.2",
     "comment-json": "4.x",
-    "copy-webpack-plugin": "^13.0.1",
     "css-loader": "^5.2.7",
     "cypress": "^15.13.0",
     "cypress-axe": "^1.7.0",
@@ -252,12 +264,9 @@
     "cypress-multi-reporters": "^2.0.5",
     "dotenv": "^17.4.2",
     "esbuild-loader": "^4.4.2",
-    "file-loader": "6.2.0",
     "find-up": "4.x",
-    "fork-ts-checker-webpack-plugin": "9.1.0",
     "glob": "^13.0.6",
     "html-webpack-plugin": "^5.6.7",
-    "html-webpack-skip-assets-plugin": "^1.0.4",
     "husky": "^8.0.3",
     "i18next-parser": "^9.4.0",
     "i18next-pseudo": "^2.2.1",
@@ -268,7 +277,6 @@
     "jest-resolve": "^30.4.1",
     "knip": "^6.27.0",
     "lint-staged": "^10.2.2",
-    "mini-css-extract-plugin": "^2.9.4",
     "minimist": "^1.2.8",
     "mocha-junit-reporter": "^1.23.3",
     "mochawesome": "^6.1.1",
@@ -279,20 +287,17 @@
     "node-polyfill-webpack-plugin": "~4.0.0",
     "prettier": "2.0.5",
     "puppeteer-core": "^23.9.0",
-    "react-refresh": "^0.10.0",
+    "react-refresh": "^0.18.0",
     "read-pkg": "5.x",
     "resolve-url-loader": "^5.0.0",
     "sass": "^1.42.1",
     "sass-loader": "^10.1.1",
     "style-loader": "^4.0.0",
-    "thread-loader": "^4.0.4",
+    "ts-checker-rspack-plugin": "^1.5.2",
     "ts-node": "10.9.2",
     "typescript": "5.9.3",
     "val-loader": "^6.0.0",
-    "webpack": "^5.100.0",
-    "webpack-bundle-analyzer": "^5.1.1",
-    "webpack-cli": "^6.0.1",
-    "webpack-dev-server": "5.2.5"
+    "webpack": "^5.100.0"
   },
   "engines": {
     "node": ">=22.x"

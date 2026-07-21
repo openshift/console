@@ -217,11 +217,11 @@ const config: KnipConfig = {
 
   workspaces: {
     // Disable auto-detected plugins that don't work at the moment
-    '.': { project: [], webpack: false, jest: false },
+    '.': { project: [], jest: false },
 
     // public/ is the @console/internal workspace (has its own package.json)
     public: {
-      entry: ['components/app.tsx', 'load-test.sw.js'],
+      entry: ['load-test.sw.js'],
       project: ['**/*.{ts,tsx,js,jsx}'],
     },
 

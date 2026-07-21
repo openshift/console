@@ -1,58 +1,51 @@
-/* eslint-env node */
-import * as ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
-import * as HtmlWebpackPlugin from 'html-webpack-plugin';
+import { WebpackSharedConfig, WebpackSharedObject } from '@openshift/dynamic-plugin-sdk-webpack';
+import {
+  CopyRspackPlugin,
+  CssExtractRspackPlugin,
+  LightningCssMinimizerRspackPlugin,
+  SwcJsMinimizerRspackPlugin,
+  NormalModuleReplacementPlugin,
+  Configuration,
+  NormalModule,
+  ProgressPlugin,
+  sharing,
+} from '@rspack/core';
+import { RsdoctorRspackPlugin } from '@rsdoctor/rspack-plugin';
+import { TsCheckerRspackPlugin } from 'ts-checker-rspack-plugin';
+import { ReactRefreshRspackPlugin } from '@rspack/plugin-react-refresh';
 import * as _ from 'lodash';
-import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
-import * as CopyWebpackPlugin from 'copy-webpack-plugin';
 import * as path from 'path';
 import * as semver from 'semver';
-import * as webpack from 'webpack';
-import { WebpackSharedObject, WebpackSharedConfig } from '@openshift/dynamic-plugin-sdk-webpack';
 
 import {
-  sharedPluginModules,
   getSharedModuleMetadata,
+  sharedPluginModules,
 } from '@console/dynamic-plugin-sdk/src/shared-modules/shared-modules-meta';
-import { ExtensionValidatorPlugin } from '@console/dynamic-plugin-sdk/src/webpack/ExtensionValidatorPlugin';
 import {
-  dynamicModulePackageSpecs,
   dynamicModuleImportTransformFilter,
+  dynamicModulePackageSpecs,
 } from '@console/dynamic-plugin-sdk/src/webpack/ConsoleRemotePlugin';
 import {
   DynamicModuleImportPlugin,
   resolveDynamicModuleMaps,
 } from '@console/dynamic-plugin-sdk/src/webpack/DynamicModuleImportPlugin';
+import { ExtensionValidatorPlugin } from '@console/dynamic-plugin-sdk/src/webpack/ExtensionValidatorPlugin';
 import { resolvePluginPackages } from '@console/plugin-sdk/src/codegen/plugin-resolver';
-import { HtmlWebpackSkipAssetsPlugin } from 'html-webpack-skip-assets-plugin';
-import { Configuration as WebpackDevServerConfiguration } from 'webpack-dev-server';
 import { CircularDependencyPreset } from './webpack.circular-deps';
 
-interface Configuration extends webpack.Configuration {
-  devServer?: WebpackDevServerConfiguration;
-}
-
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
-const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const HOT_RELOAD = process.env.HOT_RELOAD || 'true';
 const CHECK_CYCLES = process.env.CHECK_CYCLES || 'false';
 const ANALYZE_BUNDLE = process.env.ANALYZE_BUNDLE || 'false';
-const REACT_REFRESH = process.env.REACT_REFRESH;
-const OPENSHIFT_CI = process.env.OPENSHIFT_CI;
+const REACT_REFRESH = process.env.REACT_REFRESH === 'true';
 const WDS_PORT = 8080;
 
 /* Helpers */
 const pluginPackages = resolvePluginPackages();
-
-const extractCSS = new MiniCssExtractPlugin({
-  filename: 'app-bundle.[name].[contenthash].css',
-  // We follow BEM naming to scope CSS.
-  // See https://github.com/webpack-contrib/mini-css-extract-plugin/issues/250
-  ignoreOrder: true,
-});
 
 const getVendorModuleRegExp = (vendorModules: string[]) =>
   new RegExp(`node_modules\\/(${vendorModules.map(_.escapeRegExp).join('|')})\\/`);
@@ -129,9 +122,6 @@ const config: Configuration = {
   entry: {
     main: ['./public/components/app.tsx'],
   },
-  cache: {
-    type: 'filesystem',
-  },
   output: {
     path: path.resolve(__dirname, 'public/dist'),
     publicPath: 'static/',
@@ -140,12 +130,12 @@ const config: Configuration = {
   },
   performance: {
     // The maximum size in MiB of the entrypoint and generated files permitted by analyze.sh
-    maxEntrypointSize: 8.65 * 1048576,
-    maxAssetSize: 3.81 * 1048576, // the size of the monaco-editor chunk
+    maxEntrypointSize: 8.6 * 1048576,
+    maxAssetSize: 3.8 * 1048576, // the size of the monaco-editor chunk
   },
   devServer: {
     hot: HOT_RELOAD !== 'false',
-    webSocketServer: 'sockjs',
+    webSocketServer: 'ws',
     port: WDS_PORT,
     static: false,
     devMiddleware: {
@@ -153,14 +143,14 @@ const config: Configuration = {
     },
   },
   watchOptions: {
-    // needed to prevent ENOSPC: System limit for number of file watchers reached error
-    ignored: /node_modules/,
+    ignored: /node_modules/, // needed to prevent ENOSPC: System limit for number of file watchers reached error
   },
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx'],
     alias: {
       prettier: false,
       'prettier/parser-yaml': false,
+      '@patternfly/react-styles/css/': false, // vendor.scss already imports all PatternFly styles via SCSS
     },
   },
   node: {
@@ -181,45 +171,41 @@ const config: Configuration = {
       {
         test: /(\.jsx?)|(\.tsx?)$/,
         exclude: /node_modules\/(?!(bitbucket|ky|ini|@patternfly(-\S+)?)\/)/,
-        use: [
-          // Disable thread-loader in CI
-          ...(!OPENSHIFT_CI
-            ? [
-                {
-                  loader: 'thread-loader',
-                },
-              ]
-            : []),
-          ...(REACT_REFRESH
-            ? [
-                {
-                  loader: 'babel-loader',
-                  options: {
-                    plugins: ['react-refresh/babel'],
-                  },
-                },
-              ]
-            : []),
-          {
-            loader: 'esbuild-loader',
-            options: {
-              // Always use the root tsconfig.json. Packages might have a separate tsconfig.json for storybook.
-              tsconfig: path.resolve(__dirname, 'tsconfig.json'),
+        type: 'javascript/auto',
+        use: {
+          loader: 'builtin:swc-loader',
+          options: {
+            detectSyntax: 'auto',
+            jsc: {
+              parser: {
+                syntax: 'typescript',
+                tsx: true,
+                jsx: true
+              },
+              transform: {
+                react: {
+                  runtime: 'automatic',
+                  development: REACT_REFRESH,
+                  refresh: REACT_REFRESH,
+                }
+              },
+              target: 'es2021',
             },
+            sourceMaps: true,
+            minify: false,
           },
-        ],
+        },
       },
       {
         test: /\.s?css$/,
         exclude: /node_modules\/(?!(@patternfly(-\S+)?)\/).*/,
         use: [
           {
-            loader: MiniCssExtractPlugin.loader,
+            loader: CssExtractRspackPlugin.loader,
             options: {
               publicPath: './',
             },
           },
-          ...(!OPENSHIFT_CI ? [{ loader: 'thread-loader' }] : []),
           {
             loader: 'css-loader',
             options: {
@@ -237,9 +223,6 @@ const config: Configuration = {
             loader: 'sass-loader',
             options: {
               sourceMap: true,
-              sassOptions: {
-                outputStyle: 'compressed',
-              },
             },
           },
         ],
@@ -271,7 +254,7 @@ const config: Configuration = {
           filename: 'vendors~[name]-chunk-[contenthash].min.js',
         },
         'vendor-plugins-shared': {
-          test(module: webpack.NormalModule) {
+          test(module: NormalModule) {
             return (
               module.resource &&
               sharedPluginModulesTest.test(module.resource) &&
@@ -282,6 +265,14 @@ const config: Configuration = {
       },
     },
     runtimeChunk: 'single',
+    minimizer: [
+      new SwcJsMinimizerRspackPlugin(),
+      new LightningCssMinimizerRspackPlugin({
+        minimizerOptions: {
+          targets: 'last 10 versions, not dead',
+        },
+      }),
+    ],
   },
   plugins: [
     new ExtensionValidatorPlugin({ pluginPackages }),
@@ -291,11 +282,12 @@ const config: Configuration = {
       dynamicModuleMaps,
       moduleFilter: dynamicModuleImportTransformFilter,
     }),
-    new webpack.container.ModuleFederationPlugin({
+    new sharing.SharePlugin({
       shared: getWebpackSharedModules(),
+      enhanced: false // retains webpack 5 SharePlugin behavior as opposed to MF 2.0
     }),
-    new webpack.NormalModuleReplacementPlugin(/^lodash$/, 'lodash-es'),
-    new ForkTsCheckerWebpackPlugin({
+    new NormalModuleReplacementPlugin(/^lodash$/, 'lodash-es'),
+    new TsCheckerRspackPlugin({
       typescript: {
         configFile: path.resolve(__dirname, 'tsconfig.json'),
         diagnosticOptions: { syntactic: true, semantic: true },
@@ -314,7 +306,6 @@ const config: Configuration = {
       production: NODE_ENV === 'production',
       chunksSortMode: 'auto',
     }),
-    new HtmlWebpackSkipAssetsPlugin(),
     new MonacoWebpackPlugin({
       languages: ['yaml', 'dockerfile', 'json', 'plaintext'],
       globalAPI: true,
@@ -332,26 +323,40 @@ const config: Configuration = {
     new NodePolyfillPlugin({
       additionalAliases: ['process'],
     }),
-    new CopyWebpackPlugin({
+    new CopyRspackPlugin({
       patterns: [
         { from: path.resolve(__dirname, './public/robots.txt'), to: 'robots.txt' },
         {
-          from: './{packages/*,public}/locales',
-          // Flat locales directory structure: /static/locales/{en,fr,...}/{namespace}.json
+          from: 'packages/*/locales/**/*.json',
           to: ({ absoluteFilename }) => {
             const segments = absoluteFilename.split(path.sep);
             return segments.slice(segments.lastIndexOf('locales')).join(path.sep);
           },
           context: path.resolve(__dirname),
-          filter: (p) => path.extname(p) === '.json',
         },
+        {
+          from: 'public/locales/**/*.json',
+          to: ({ absoluteFilename }) => {
+            const segments = absoluteFilename.split(path.sep);
+            return segments.slice(segments.lastIndexOf('locales')).join(path.sep);
+          },
+          context: path.resolve(__dirname),
+        },
+        { from: 'public/imgs', to: 'imgs' },
+        { from: 'public/load-test.sw.js', to: 'load-test.sw.js' },
       ],
     }),
-    extractCSS,
-    ...(REACT_REFRESH ? [new ReactRefreshWebpackPlugin()] : [new webpack.ProgressPlugin()]),
+    new CssExtractRspackPlugin({
+      filename: 'app-bundle.[name].[contenthash].css',
+      // We follow BEM naming to scope CSS.
+      // See https://github.com/webpack-contrib/mini-css-extract-plugin/issues/250
+      ignoreOrder: true,
+    }),
+    ...(REACT_REFRESH ? [new ReactRefreshRspackPlugin()] : [new ProgressPlugin()]),
   ],
   devtool: 'cheap-module-source-map',
   stats: 'minimal',
+  lazyCompilation: false, // ExtensionValidatorPlugin does not work with this setting enabled
 };
 
 if (CHECK_CYCLES === 'true') {
@@ -363,11 +368,22 @@ if (CHECK_CYCLES === 'true') {
 
 if (ANALYZE_BUNDLE === 'true') {
   config.plugins.push(
-    new BundleAnalyzerPlugin({
-      analyzerMode: 'static',
-      reportFilename: 'report.html',
+    new RsdoctorRspackPlugin({
+      features: {
+        loader: false // doesn't work: "Load data failed, please try again"
+      },
+      output: {
+        mode: 'brief',
+        options: {
+          type: ['html'],
+          htmlOptions: {
+            writeDataJson: false,
+            reportHtmlName: 'report.html',
+          },
+        },
+      },
       // Don't open report in default browser automatically
-      openAnalyzer: false,
+      disableClientServer: true,
     }),
   );
 

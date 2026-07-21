@@ -62,10 +62,9 @@ import { Selector } from './utils/selector';
 import { humanizeBinaryBytes, convertToBaseValue } from './utils/units';
 import { ResourceEventStream } from './events';
 import { PVCMetrics, setPVCMetrics } from '@console/internal/actions/ui';
-import { PersistentVolumeClaimModel } from '@console/internal/models';
+import { PersistentVolumeClaimModel, VolumeAttributesClassModel } from '@console/internal/models';
 import { PrometheusEndpoint } from './graphs/helpers';
 import { usePrometheusPoll } from './graphs/prometheus-poll-hook';
-import { VolumeAttributesClassModel } from '../models';
 
 const { kind } = PersistentVolumeClaimModel;
 
