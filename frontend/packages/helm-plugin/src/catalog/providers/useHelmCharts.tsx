@@ -66,9 +66,7 @@ const useHelmCharts: ExtensionHook<CatalogItem[]> = ({
             shownWarningRef.current = warningData;
             try {
               const repos: { name: string; error: string }[] = JSON.parse(warningData);
-              const repoList = repos
-                .map((r) => t('{{name}}: {{error}}', { name: r.name, error: r.error }))
-                .join(', ');
+              const repoList = repos.map((r) => `${r.name}: ${r.error}`).join(', ');
               toast.addToast({
                 variant: AlertVariant.danger,
                 title: t('Helm Chart repository error'),

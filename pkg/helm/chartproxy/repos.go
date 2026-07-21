@@ -261,6 +261,25 @@ func (b helmRepoGetter) unmarshallConfig(repo unstructured.Unstructured, namespa
 	return h, nil
 }
 
+func (b *helmRepoGetter) processRepoItems(items []unstructured.Unstructured, namespace string, isClusterScoped bool) ([]*helmRepo, []InvalidRepo) {
+	var repos []*helmRepo
+	var configErrors []InvalidRepo
+	for _, item := range items {
+		helmConfig, err := b.unmarshallConfig(item, namespace, isClusterScoped)
+		if err != nil {
+			repoName, found, nameErr := unstructured.NestedString(item.Object, "metadata", "name")
+			if nameErr != nil || !found {
+				repoName = "<unknown>"
+			}
+			klog.Errorf("Error unmarshalling repo %v: %v", item, err)
+			configErrors = append(configErrors, InvalidRepo{Name: repoName, Error: err.Error()})
+			continue
+		}
+		repos = append(repos, helmConfig)
+	}
+	return repos, configErrors
+}
+
 func (b *helmRepoGetter) List(namespace string) ([]*helmRepo, []InvalidRepo, error) {
 	var helmRepos []*helmRepo
 	var configErrors []InvalidRepo
@@ -270,19 +289,9 @@ func (b *helmRepoGetter) List(namespace string) ([]*helmRepo, []InvalidRepo, err
 		klog.Errorf("Error listing cluster helm chart repositories: %v \nempty repository list will be used", err)
 		return helmRepos, configErrors, nil
 	}
-	for _, item := range clusterRepos.Items {
-		helmConfig, err := b.unmarshallConfig(item, "", true)
-		if err != nil {
-			repoName, _, _ := unstructured.NestedString(item.Object, "metadata", "name")
-			if repoName == "" {
-				repoName = "<unknown>"
-			}
-			klog.Errorf("Error unmarshalling repo %v: %v", item, err)
-			configErrors = append(configErrors, InvalidRepo{Name: repoName, Error: err.Error()})
-			continue
-		}
-		helmRepos = append(helmRepos, helmConfig)
-	}
+	repos, errs := b.processRepoItems(clusterRepos.Items, "", true)
+	helmRepos = append(helmRepos, repos...)
+	configErrors = append(configErrors, errs...)
 
 	if namespace != "" {
 		namespaceRepos, err := b.Client.Resource(helmChartRepositoryNamespaceGVK).Namespace(namespace).List(context.TODO(), v1.ListOptions{})
@@ -290,19 +299,9 @@ func (b *helmRepoGetter) List(namespace string) ([]*helmRepo, []InvalidRepo, err
 			klog.Errorf("Error listing namespace helm chart repositories: %v \nempty repository list will be used", err)
 			return helmRepos, configErrors, nil
 		}
-		for _, item := range namespaceRepos.Items {
-			helmConfig, err := b.unmarshallConfig(item, namespace, false)
-			if err != nil {
-				repoName, _, _ := unstructured.NestedString(item.Object, "metadata", "name")
-				if repoName == "" {
-					repoName = "<unknown>"
-				}
-				klog.Errorf("Error unmarshalling repo %v: %v", item, err)
-				configErrors = append(configErrors, InvalidRepo{Name: repoName, Error: err.Error()})
-				continue
-			}
-			helmRepos = append(helmRepos, helmConfig)
-		}
+		repos, errs := b.processRepoItems(namespaceRepos.Items, namespace, false)
+		helmRepos = append(helmRepos, repos...)
+		configErrors = append(configErrors, errs...)
 	}
 
 	return helmRepos, configErrors, nil

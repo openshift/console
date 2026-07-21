@@ -2,6 +2,7 @@ package chartproxy
 
 import (
 	"encoding/json"
+	"slices"
 	"sort"
 
 	chartutil "helm.sh/helm/v4/pkg/chart/v2/util"
@@ -80,7 +81,7 @@ func (p *proxy) IndexFile(onlyCompatible bool, namespace string) (*repo.IndexFil
 		return nil, err
 	}
 	annotations := make(map[string]string)
-	invalidRepos := append([]InvalidRepo{}, configErrors...)
+	invalidRepos := slices.Clone(configErrors)
 	indexFile := repo.NewIndexFile()
 	var delKeys []string = make([]string, 0, 20)
 	for _, helmRepo := range helmRepos {
@@ -127,7 +128,9 @@ func (p *proxy) IndexFile(onlyCompatible bool, namespace string) (*repo.IndexFil
 	}
 	if len(invalidRepos) > 0 {
 		data, err := json.Marshal(invalidRepos)
-		if err == nil {
+		if err != nil {
+			klog.Errorf("Error marshalling invalid repos annotation: %v", err)
+		} else {
 			annotations[warning] = string(data)
 			indexFile.Annotations = annotations
 		}
