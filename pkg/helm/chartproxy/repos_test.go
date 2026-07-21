@@ -301,7 +301,7 @@ func TestHelmRepoGetter_ListErrors(t *testing.T) {
 				}
 			}
 			if len(configErrors) != len(tt.expectedConfigErrorRepo) {
-				t.Errorf("Expected %v config errors, but got %v", len(tt.expectedConfigErrorRepo), len(configErrors))
+				t.Fatalf("Expected %v config errors, but got %v", len(tt.expectedConfigErrorRepo), len(configErrors))
 			}
 			for i, expectedName := range tt.expectedConfigErrorRepo {
 				if configErrors[i].Name != expectedName {
