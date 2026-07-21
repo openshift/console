@@ -729,7 +729,6 @@
   "Create by completing the form.": "Create by completing the form.",
   "Create by manually entering YAML or JSON definitions, or by dragging and dropping a file into the editor.": "Create by manually entering YAML or JSON definitions, or by dragging and dropping a file into the editor.",
   "Edit {{label}}": "Edit {{label}}",
-  "{{helpText}}": "{{helpText}}",
   "Availability": "Availability",
   "Allowed disruptions": "Allowed disruptions",
   "Create PodDisruptionBudget": "Create PodDisruptionBudget",

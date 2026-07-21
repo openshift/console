@@ -608,7 +608,7 @@
   "Auth code is missing in query param.": "Auth code is missing in query param.",
   "There was an error logging you in. Please log out and try again.": "There was an error logging you in. Please log out and try again.",
   "There was an authentication error. Please log out and try again.": "There was an authentication error. Please log out and try again.",
-  "There was an authentication error with the system:<1><0>{{error}}</0></1>": "There was an authentication error with the system:<1><0>{{error}}</0></1>",
+  "There was an authentication error with the system:": "There was an authentication error with the system:",
   "Authentication error": "Authentication error",
   "Try again": "Try again",
   "Generated from {{ sourceComponent }}": "Generated from {{ sourceComponent }}",
