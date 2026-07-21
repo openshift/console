@@ -639,7 +639,7 @@
   "A GitHub App is already set up for this cluster. To use it, install the GitHub app on your personal account or GitHub organization.": "A GitHub App is already set up for this cluster. To use it, install the GitHub app on your personal account or GitHub organization.",
   "Use GitHub App": "Use GitHub App",
   "Setup a webhook": "Setup a webhook",
-  "Use <1>{appLink}</1> link to install the GitHub Application to your repositories in your organisation/account.": "Use <1>{appLink}</1> link to install the GitHub Application to your repositories in your organisation/account.",
+  "Use <1>{{appLink}}</1> link to install the GitHub Application to your repositories in your organisation/account.": "Use <1>{{appLink}}</1> link to install the GitHub Application to your repositories in your organisation/account.",
   "Once your Pipeline Repository is configured, in order to update your {{translatedResourceName}} <4>{{name}}</4> automatically, update the following in your <6>.tekton</6> PipelineRun:": "Once your Pipeline Repository is configured, in order to update your {{translatedResourceName}} <4>{{name}}</4> automatically, update the following in your <6>.tekton</6> PipelineRun:",
   "Internal image registry:": "Internal image registry:",
   "View details": "View details",
