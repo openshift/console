@@ -16,7 +16,7 @@ func TestNewUserSettingsMeta(t *testing.T) {
 		expectedData  *UserSettingMeta
 	}{
 		{
-			testcase: "returns -kubeadmin for kube:admin",
+			testcase: "returns kubeadmin for kube:admin without uid",
 			userInfo: authenticationv1.UserInfo{
 				Username: "kube:admin",
 				UID:      "",
@@ -30,7 +30,7 @@ func TestNewUserSettingsMeta(t *testing.T) {
 			},
 		},
 		{
-			testcase: "returns -kubeadmin for fake kube:admin with uid",
+			testcase: "returns SHA256 hash for kube:admin with uid (fake kubeadmin)",
 			userInfo: authenticationv1.UserInfo{
 				Username: "kube:admin",
 				UID:      "1234",
@@ -39,7 +39,7 @@ func TestNewUserSettingsMeta(t *testing.T) {
 			expectedData: &UserSettingMeta{
 				Username:           "kube:admin",
 				UID:                "1234",
-				ResourceIdentifier: "1234",
+				ResourceIdentifier: "547a4b6a78942df67733f5a36aaf80a9f81605e51928d23108ee623042b2a065",
 				OwnerReferences: []meta.OwnerReference{
 					{
 						APIVersion: "user.openshift.io/v1",
@@ -51,7 +51,7 @@ func TestNewUserSettingsMeta(t *testing.T) {
 			},
 		},
 		{
-			testcase: "returns uid for non kube:admin users",
+			testcase: "returns SHA256 hash of username for non kube:admin users",
 			userInfo: authenticationv1.UserInfo{
 				Username: "developer",
 				UID:      "1234",
@@ -60,7 +60,7 @@ func TestNewUserSettingsMeta(t *testing.T) {
 			expectedData: &UserSettingMeta{
 				Username:           "developer",
 				UID:                "1234",
-				ResourceIdentifier: "1234",
+				ResourceIdentifier: "88fa0d759f845b47c044c2cd44e29082cf6fea665c30c146374ec7c8f3d699e3",
 				OwnerReferences: []meta.OwnerReference{
 					{
 						APIVersion: "user.openshift.io/v1",
@@ -69,6 +69,62 @@ func TestNewUserSettingsMeta(t *testing.T) {
 						UID:        "1234",
 					},
 				},
+			},
+		},
+		{
+			testcase: "same username with different UIDs produces same ResourceIdentifier",
+			userInfo: authenticationv1.UserInfo{
+				Username: "developer",
+				UID:      "different-uid-5678",
+			},
+			expectedError: nil,
+			expectedData: &UserSettingMeta{
+				Username:           "developer",
+				UID:                "different-uid-5678",
+				ResourceIdentifier: "88fa0d759f845b47c044c2cd44e29082cf6fea665c30c146374ec7c8f3d699e3",
+				OwnerReferences: []meta.OwnerReference{
+					{
+						APIVersion: "user.openshift.io/v1",
+						Kind:       "User",
+						Name:       "developer",
+						UID:        "different-uid-5678",
+					},
+				},
+			},
+		},
+		{
+			testcase: "username with special characters produces valid hash",
+			userInfo: authenticationv1.UserInfo{
+				Username: "user@example.com",
+				UID:      "uid-99",
+			},
+			expectedError: nil,
+			expectedData: &UserSettingMeta{
+				Username:           "user@example.com",
+				UID:                "uid-99",
+				ResourceIdentifier: "b4c9a289323b21a01c3e940f150eb9b8c542587f1abfd8f0e1cc1ffc5e475514",
+				OwnerReferences: []meta.OwnerReference{
+					{
+						APIVersion: "user.openshift.io/v1",
+						Kind:       "User",
+						Name:       "user@example.com",
+						UID:        "uid-99",
+					},
+				},
+			},
+		},
+		{
+			testcase: "user without uid gets empty OwnerReferences",
+			userInfo: authenticationv1.UserInfo{
+				Username: "developer",
+				UID:      "",
+			},
+			expectedError: nil,
+			expectedData: &UserSettingMeta{
+				Username:           "developer",
+				UID:                "",
+				ResourceIdentifier: "88fa0d759f845b47c044c2cd44e29082cf6fea665c30c146374ec7c8f3d699e3",
+				OwnerReferences:    []meta.OwnerReference{},
 			},
 		},
 	}
@@ -95,7 +151,7 @@ func TestCreateUserSettingsResources(t *testing.T) {
 		expectedConfigMapName   string
 	}{
 		{
-			testcase: "for kubeadmin",
+			testcase: "for kubeadmin without uid",
 			userInfo: authenticationv1.UserInfo{
 				Username: "kube:admin",
 				UID:      "",
@@ -105,24 +161,24 @@ func TestCreateUserSettingsResources(t *testing.T) {
 			expectedRoleBindingName: "user-settings-kubeadmin-rolebinding",
 		},
 		{
-			testcase: "for fake kubeadmin we use uid",
+			testcase: "for fake kubeadmin we use SHA256 hash",
 			userInfo: authenticationv1.UserInfo{
 				Username: "kube:admin",
 				UID:      "1234",
 			},
-			expectedConfigMapName:   "user-settings-1234",
-			expectedRoleName:        "user-settings-1234-role",
-			expectedRoleBindingName: "user-settings-1234-rolebinding",
+			expectedConfigMapName:   "user-settings-547a4b6a78942df67733f5a36aaf80a9f81605e51928d23108ee623042b2a065",
+			expectedRoleName:        "user-settings-547a4b6a78942df67733f5a36aaf80a9f81605e51928d23108ee623042b2a065-role",
+			expectedRoleBindingName: "user-settings-547a4b6a78942df67733f5a36aaf80a9f81605e51928d23108ee623042b2a065-rolebinding",
 		},
 		{
-			testcase: "for non kubeadmin",
+			testcase: "for non kubeadmin we use SHA256 hash",
 			userInfo: authenticationv1.UserInfo{
 				Username: "developer",
 				UID:      "1234",
 			},
-			expectedConfigMapName:   "user-settings-1234",
-			expectedRoleName:        "user-settings-1234-role",
-			expectedRoleBindingName: "user-settings-1234-rolebinding",
+			expectedConfigMapName:   "user-settings-88fa0d759f845b47c044c2cd44e29082cf6fea665c30c146374ec7c8f3d699e3",
+			expectedRoleName:        "user-settings-88fa0d759f845b47c044c2cd44e29082cf6fea665c30c146374ec7c8f3d699e3-role",
+			expectedRoleBindingName: "user-settings-88fa0d759f845b47c044c2cd44e29082cf6fea665c30c146374ec7c8f3d699e3-rolebinding",
 		},
 	}
 

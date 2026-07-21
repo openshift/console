@@ -45,21 +45,20 @@ describe('useGetUserSettingConfigMap', () => {
 
   describe('user identification scenarios', () => {
     it('should use impersonated user name when present', () => {
-      const impersonateUserInfo = {
-        impersonateName: 'impersonate-user',
-        uid: 'test-uid',
-        username: 'test-username',
-      };
-
-      useSelectorMock.mockReturnValue(impersonateUserInfo);
+      useSelectorMock.mockImplementation((selector) =>
+        selector({
+          sdkCore: {
+            user: { uid: 'test-uid', username: 'test-username' },
+            impersonate: { name: 'impersonate-user' },
+          },
+        }),
+      );
       useK8sWatchResourceMock.mockReturnValue([mockConfigMapData, true, null]);
 
       const { result } = renderHook(() => useGetUserSettingConfigMap());
 
-      // Should use impersonate name directly and return config map data
       expect(result.current).toEqual([mockConfigMapData, true, null]);
 
-      // Verify the correct resource spec was passed to useK8sWatchResource
       expect(useK8sWatchResourceMock).toHaveBeenCalledWith({
         kind: ConfigMapModel.kind,
         namespace: USER_SETTING_CONFIGMAP_NAMESPACE,
@@ -68,73 +67,76 @@ describe('useGetUserSettingConfigMap', () => {
       });
     });
 
-    it('should use uid when no impersonation and uid is available', () => {
-      const userInfoWithUid = {
-        impersonateName: null,
-        uid: 'test-uid-123',
-        username: 'test-username',
-      };
-
-      useSelectorMock.mockReturnValue(userInfoWithUid);
+    it('should use hashed username when no impersonation and uid is available', () => {
+      useSelectorMock.mockImplementation((selector) =>
+        selector({
+          sdkCore: {
+            user: { uid: 'test-uid-123', username: 'test-username' },
+          },
+        }),
+      );
       useK8sWatchResourceMock.mockReturnValue([mockConfigMapData, true, null]);
 
       const { result } = renderHook(() => useGetUserSettingConfigMap());
 
-      // Should use uid directly and return config map data
       expect(result.current).toEqual([mockConfigMapData, true, null]);
 
-      // Verify the correct resource spec was passed
+      // SHA256("test-username")
       expect(useK8sWatchResourceMock).toHaveBeenCalledWith({
         kind: ConfigMapModel.kind,
         namespace: USER_SETTING_CONFIGMAP_NAMESPACE,
         isList: false,
-        name: 'user-settings-test-uid-123',
+        name: 'user-settings-70609918baaace3eb22057bbae6dfbd7d0d2c34eaeecd5968ef455a64caee242',
       });
     });
 
     it('should handle empty user info gracefully', () => {
-      const emptyUserInfo = {
-        impersonateName: null,
-        uid: null,
-        username: null,
-      };
-
-      useSelectorMock.mockReturnValue(emptyUserInfo);
+      useSelectorMock.mockImplementation((selector) =>
+        selector({
+          sdkCore: {
+            user: {},
+          },
+        }),
+      );
 
       const { result } = renderHook(() => useGetUserSettingConfigMap());
 
-      // Should return null config map resource when no user identifier
       expect(result.current).toEqual([null, true, null]);
-
-      // Verify null resource was passed to useK8sWatchResource
       expect(useK8sWatchResourceMock).toHaveBeenCalledWith(null);
     });
 
     it('should handle username-only scenario', () => {
-      const userInfoWithUsername = {
-        impersonateName: null,
-        uid: null,
-        username: 'test-username',
-      };
-
-      useSelectorMock.mockReturnValue(userInfoWithUsername);
+      useSelectorMock.mockImplementation((selector) =>
+        selector({
+          sdkCore: {
+            user: { username: 'test-username' },
+          },
+        }),
+      );
+      useK8sWatchResourceMock.mockReturnValue([mockConfigMapData, true, null]);
 
       const { result } = renderHook(() => useGetUserSettingConfigMap());
 
-      // Initially, should return null since hashing is async
-      expect(result.current[0]).toBeNull();
+      // SHA256("test-username") - sync, no longer async
+      expect(result.current).toEqual([mockConfigMapData, true, null]);
+      expect(useK8sWatchResourceMock).toHaveBeenCalledWith({
+        kind: ConfigMapModel.kind,
+        namespace: USER_SETTING_CONFIGMAP_NAMESPACE,
+        isList: false,
+        name: 'user-settings-70609918baaace3eb22057bbae6dfbd7d0d2c34eaeecd5968ef455a64caee242',
+      });
     });
   });
 
   describe('integration with useK8sWatchResource', () => {
     it('should pass through loading state', () => {
-      const userInfoWithUid = {
-        impersonateName: null,
-        uid: 'test-uid',
-        username: 'test-username',
-      };
-
-      useSelectorMock.mockReturnValue(userInfoWithUid);
+      useSelectorMock.mockImplementation((selector) =>
+        selector({
+          sdkCore: {
+            user: { uid: 'test-uid', username: 'test-username' },
+          },
+        }),
+      );
       useK8sWatchResourceMock.mockReturnValue([null, false, null]);
 
       const { result } = renderHook(() => useGetUserSettingConfigMap());
@@ -143,14 +145,15 @@ describe('useGetUserSettingConfigMap', () => {
     });
 
     it('should pass through error state', () => {
-      const userInfoWithUid = {
-        impersonateName: null,
-        uid: 'test-uid',
-        username: 'test-username',
-      };
+      useSelectorMock.mockImplementation((selector) =>
+        selector({
+          sdkCore: {
+            user: { uid: 'test-uid', username: 'test-username' },
+          },
+        }),
+      );
 
       const error = new Error('K8s API error');
-      useSelectorMock.mockReturnValue(userInfoWithUid);
       useK8sWatchResourceMock.mockReturnValue([null, false, error]);
 
       const { result } = renderHook(() => useGetUserSettingConfigMap());
@@ -159,13 +162,13 @@ describe('useGetUserSettingConfigMap', () => {
     });
 
     it('should pass through successful data', () => {
-      const userInfoWithUid = {
-        impersonateName: null,
-        uid: 'test-uid',
-        username: 'test-username',
-      };
-
-      useSelectorMock.mockReturnValue(userInfoWithUid);
+      useSelectorMock.mockImplementation((selector) =>
+        selector({
+          sdkCore: {
+            user: { uid: 'test-uid', username: 'test-username' },
+          },
+        }),
+      );
       useK8sWatchResourceMock.mockReturnValue([mockConfigMapData, true, null]);
 
       const { result } = renderHook(() => useGetUserSettingConfigMap());
@@ -174,39 +177,38 @@ describe('useGetUserSettingConfigMap', () => {
     });
 
     it('should create ConfigMap resource with correct parameters', () => {
-      const userInfo = {
-        impersonateName: null,
-        uid: 'test-uid-456',
-        username: 'test-user',
-      };
-
-      useSelectorMock.mockReturnValue(userInfo);
+      useSelectorMock.mockImplementation((selector) =>
+        selector({
+          sdkCore: {
+            user: { uid: 'test-uid-456', username: 'test-user' },
+          },
+        }),
+      );
       useK8sWatchResourceMock.mockReturnValue([mockConfigMapData, true, null]);
 
       renderHook(() => useGetUserSettingConfigMap());
 
-      // Verify useK8sWatchResource was called with correct resource spec
+      // SHA256("test-user")
       expect(useK8sWatchResourceMock).toHaveBeenCalledWith({
         kind: ConfigMapModel.kind,
         namespace: USER_SETTING_CONFIGMAP_NAMESPACE,
         isList: false,
-        name: 'user-settings-test-uid-456',
+        name: 'user-settings-f85ac825d102b9f2d546aa1679ea991ae845994c1343730d564f3fcd0a2168c3',
       });
     });
 
     it('should use null resource when no user identifier is available', () => {
-      const emptyUserInfo = {
-        impersonateName: null,
-        uid: null,
-        username: '',
-      };
-
-      useSelectorMock.mockReturnValue(emptyUserInfo);
+      useSelectorMock.mockImplementation((selector) =>
+        selector({
+          sdkCore: {
+            user: {},
+          },
+        }),
+      );
       useK8sWatchResourceMock.mockReturnValue([null, true, null]);
 
       const { result } = renderHook(() => useGetUserSettingConfigMap());
 
-      // Should call useK8sWatchResource with null
       expect(useK8sWatchResourceMock).toHaveBeenCalledWith(null);
       expect(result.current).toEqual([null, true, null]);
     });
