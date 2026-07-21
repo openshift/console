@@ -219,7 +219,7 @@ func TestInstallChartWithTlsData(t *testing.T) {
 			client := K8sDynamicClientFromCRs(tt.helmCRS...)
 			clientInterface := k8sfake.NewSimpleClientset(objs...)
 			coreClient := clientInterface.CoreV1()
-			rel, err := InstallChart(tt.namespace, tt.releaseName, tt.chartPath, nil, actionConfig, client, coreClient, false, "")
+			rel, err := InstallChart(tt.namespace, tt.releaseName, tt.chartPath, nil, actionConfig, client, coreClient, false, tt.indexEntry)
 			require.NoError(t, err)
 			require.Equal(t, tt.releaseName, rel.Name)
 			require.Equal(t, tt.chartVersion, rel.Chart.Metadata.Version)
