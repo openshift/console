@@ -87,11 +87,7 @@ func (hr helmRepo) IndexFile() (*repo.IndexFile, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer func() {
-		if err := resp.Body.Close(); err != nil {
-			klog.Errorf("Error closing response body for %v: %v", indexURL, err)
-		}
-	}()
+	defer resp.Body.Close()
 	if resp.StatusCode == 401 || resp.StatusCode == 403 {
 		return nil, fmt.Errorf("authentication failed (HTTP %d)", resp.StatusCode)
 	}
