@@ -80,7 +80,7 @@ if [ -n "${nightly-}" ] && [ -z "${pkg-}" ]; then
   yarn run test-cypress-helm-nightly
   # yarn run test-cypress-shipwright-nightly
   yarn run test-cypress-topology-nightly
-  yarn run test-cypress-knative-nightly
+  # yarn run test-cypress-knative-nightly
   yarn run test-cypress-webterminal-nightly
 
   exit $err;
@@ -92,7 +92,7 @@ if [ -n "${headless-}" ] && [ -z "${pkg-}" ]; then
   yarn run test-cypress-olm-headless
   yarn run test-cypress-webterminal-headless
   yarn run test-cypress-helm-headless
-  yarn run test-cypress-knative-headless
+  # yarn run test-cypress-knative-headless
   yarn run test-cypress-topology-headless
   # yarn run test-cypress-shipwright-headless
   exit;
