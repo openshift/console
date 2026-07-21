@@ -13,7 +13,7 @@ const Footer = ({ children }) => {
     <Trans
       t={t}
       ns="webterminal-plugin"
-      defaults="Click on the names to access advanced options for <0></0>."
+      i18nKey="Click on the names to access advanced options for <0></0>."
       components={[children]}
     />
   );

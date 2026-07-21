@@ -35,37 +35,37 @@ const tableColumnClasses = {
 
 const HostsTableHeader = (t: TFunction) => () => [
   {
-    title: t('Name'),
+    title: t('metal3-plugin~Name'),
     sortField: 'host.metadata.name',
     transforms: [sortable],
     props: { className: tableColumnClasses.name },
   },
   {
-    title: t('Status'),
+    title: t('metal3-plugin~Status'),
     sortField: 'status.status',
     transforms: [sortable],
     props: { className: tableColumnClasses.status },
   },
   {
-    title: t('Node'),
+    title: t('metal3-plugin~Node'),
     sortField: 'node.metadata.name',
     transforms: [sortable],
     props: { className: tableColumnClasses.node },
   },
   {
-    title: t('Role'),
+    title: t('metal3-plugin~Role'),
     sortField: 'machine.metadata.labels["machine.openshift.io/cluster-api-machine-role"]',
     transforms: [sortable],
     props: { className: tableColumnClasses.role },
   },
   {
-    title: t('Management Address'),
+    title: t('metal3-plugin~Management Address'),
     sortField: 'host.spec.bmc.address',
     transforms: [sortable],
     props: { className: tableColumnClasses.address },
   },
   {
-    title: t('Serial Number'),
+    title: t('metal3-plugin~Serial Number'),
     sortField: 'host.status.hardware.systemVendor.serialNumber',
     transforms: [sortable],
     props: { className: tableColumnClasses.serialNumber },

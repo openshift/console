@@ -13,7 +13,6 @@ import {
 } from '@patternfly/react-tokens';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
-import type { ConsoleTFunction } from '@console/dynamic-plugin-sdk';
 import {
   StatusPopupItem,
   StatusPopupSection,
@@ -51,13 +50,14 @@ const getWorstIconState = (states: OperatorHealthType[]): OperatorHealthType['ic
   return worst.icon;
 };
 
-const useOperatorHealth = (t: ConsoleTFunction, name: string): OperatorHealthType => {
+const useOperatorHealth = (name: string): OperatorHealthType => {
   const [operator, isLoaded, error] = useK8sWatchResource<ClusterOperator>({
     groupVersionKind: { group: 'config.openshift.io', version: 'v1', kind: 'ClusterOperator' },
     name,
     isList: false,
     namespaced: false,
   });
+  const { t } = useTranslation('vsphere-plugin');
 
   if (!isLoaded) {
     return {
@@ -122,9 +122,9 @@ export const VSphereOperatorStatuses: FC = () => {
   const { t } = useTranslation('vsphere-plugin');
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const kubeControllerManager = useOperatorHealth(t, 'kube-controller-manager');
-  const kubeApiServer = useOperatorHealth(t, 'kube-apiserver');
-  const storage = useOperatorHealth(t, 'storage');
+  const kubeControllerManager = useOperatorHealth('kube-controller-manager');
+  const kubeApiServer = useOperatorHealth('kube-apiserver');
+  const storage = useOperatorHealth('storage');
 
   const onToggle = (_event, value: boolean) => {
     setIsExpanded(value);

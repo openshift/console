@@ -23,13 +23,13 @@ const normalizeDevfile = (devfileSamples: DevfileSample[], t: TFunction): Catalo
     searchParams.set('git.repository', gitRepositoryUrl);
 
     const href = `/import?${searchParams}`;
-    const createLabel = t('Create');
+    const createLabel = t('devconsole~Create');
     const type = 'Devfile';
 
     const detailsProperties: CatalogItemDetailsProperty[] = [];
     if (gitRepositoryUrl) {
       detailsProperties.push({
-        label: t('Sample repository'),
+        label: t('devconsole~Sample repository'),
         value: (
           <ExternalLink text={gitRepositoryUrl} href={gitRepositoryUrl} className="co-break-all" />
         ),

@@ -36,11 +36,11 @@ const normalizeEventSources = (
       icon: { url: getEventSourceIcon(referenceForModel(eventSource)) as string, class: null },
       type: 'EventSource',
       provider,
-      cta: { label: t('Create Event Source'), href },
+      cta: { label: t('knative-plugin~Create Event Source'), href },
       details: {
         properties: [
           {
-            label: t('Support'),
+            label: t('knative-plugin~Support'),
             value: support,
           },
         ],
