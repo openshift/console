@@ -1,11 +1,13 @@
 package devconsole
 
 import (
+	"errors"
 	"net/http"
 	"strings"
 
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/devconsole/artifacthub"
+	"github.com/openshift/console/pkg/devconsole/common"
 	tektonresults "github.com/openshift/console/pkg/devconsole/tekton-results"
 	"github.com/openshift/console/pkg/devconsole/webhooks"
 	"github.com/openshift/console/pkg/serverutils"
@@ -17,6 +19,11 @@ type handlerFunc func(r *http.Request, user *auth.User, dynamicClient *dynamic.D
 func handleRequest(w http.ResponseWriter, r *http.Request, user *auth.User, dynamicClient *dynamic.DynamicClient, k8sMode string, proxyHeaderDenyList []string, handler handlerFunc) {
 	response, err := handler(r, user, dynamicClient, k8sMode, proxyHeaderDenyList)
 	if err != nil {
+		var validationErr *common.ValidationError
+		if errors.As(err, &validationErr) {
+			serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: err.Error()})
+			return
+		}
 		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: err.Error()})
 		return
 	}

@@ -7,18 +7,17 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
 	"slices"
 
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/devconsole/common"
 )
 
-var client *http.Client = &http.Client{
-	Transport: &http.Transport{
-		Proxy: http.ProxyFromEnvironment,
-	},
-}
+const maxResponseBodySize = 10 * 1024 * 1024 // 10 MB
+
+var webhookHeaderDenyList = []string{"Host", "Authorization"}
+
+var client = newSafeHTTPClient()
 
 func makeHTTPRequest(ctx context.Context, url string, headers http.Header, body []byte, proxyHeaderDenyList []string) (common.DevConsoleCommonResponse, error) {
 	serviceRequest, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(body))
@@ -27,7 +26,15 @@ func makeHTTPRequest(ctx context.Context, url string, headers http.Header, body 
 	}
 
 	for key, values := range headers {
-		if slices.Contains(proxyHeaderDenyList, key) {
+		canonicalKey := http.CanonicalHeaderKey(key)
+		if slices.ContainsFunc(proxyHeaderDenyList, func(deny string) bool {
+			return http.CanonicalHeaderKey(deny) == canonicalKey
+		}) {
+			continue
+		}
+		if slices.ContainsFunc(webhookHeaderDenyList, func(deny string) bool {
+			return http.CanonicalHeaderKey(deny) == canonicalKey
+		}) {
 			continue
 		}
 		for _, value := range values {
@@ -40,9 +47,14 @@ func makeHTTPRequest(ctx context.Context, url string, headers http.Header, body 
 		return common.DevConsoleCommonResponse{}, fmt.Errorf("failed to send request: %v", err)
 	}
 	defer serviceResponse.Body.Close()
-	serviceResponseBody, err := io.ReadAll(serviceResponse.Body)
+
+	limitedReader := io.LimitReader(serviceResponse.Body, maxResponseBodySize+1)
+	serviceResponseBody, err := io.ReadAll(limitedReader)
 	if err != nil {
 		return common.DevConsoleCommonResponse{}, fmt.Errorf("failed to read response body: %v", err)
+	}
+	if len(serviceResponseBody) > maxResponseBodySize {
+		return common.DevConsoleCommonResponse{}, fmt.Errorf("response body exceeds maximum allowed size of %d bytes", maxResponseBodySize)
 	}
 
 	return common.DevConsoleCommonResponse{
@@ -53,7 +65,6 @@ func makeHTTPRequest(ctx context.Context, url string, headers http.Header, body 
 }
 
 func CreateGithubWebhook(r *http.Request, user *auth.User, proxyHeaderDenyList []string) (common.DevConsoleCommonResponse, error) {
-	// POST /api/dev-console/webhooks/github
 	var request GithubWebhookRequest
 	err := json.NewDecoder(r.Body).Decode(&request)
 	if err != nil {
@@ -65,19 +76,16 @@ func CreateGithubWebhook(r *http.Request, user *auth.User, proxyHeaderDenyList [
 		return common.DevConsoleCommonResponse{}, fmt.Errorf("failed to marshal request body: %v", err)
 	}
 
-	GH_WEBHOOK_URL := fmt.Sprintf("%s/repos/%s/%s/hooks",
-		request.HostName,
-		url.PathEscape(request.Owner),
-		url.PathEscape(request.RepoName),
-	)
+	baseURL, err := validateHostURL(request.HostName)
+	if err != nil {
+		return common.DevConsoleCommonResponse{}, &common.ValidationError{Err: fmt.Errorf("invalid hostName: %v", err)}
+	}
+	webhookURL := baseURL.JoinPath("repos", request.Owner, request.RepoName, "hooks")
 
-	return makeHTTPRequest(r.Context(), GH_WEBHOOK_URL, request.Headers, bodyBytes, proxyHeaderDenyList)
-
+	return makeHTTPRequest(r.Context(), webhookURL.String(), request.Headers, bodyBytes, proxyHeaderDenyList)
 }
 
 func CreateGitlabWebhook(r *http.Request, user *auth.User, proxyHeaderDenyList []string) (common.DevConsoleCommonResponse, error) {
-	// POST /api/dev-console/webhooks/gitlab
-
 	var request GitlabWebhookRequest
 	err := json.NewDecoder(r.Body).Decode(&request)
 	if err != nil {
@@ -89,17 +97,16 @@ func CreateGitlabWebhook(r *http.Request, user *auth.User, proxyHeaderDenyList [
 		return common.DevConsoleCommonResponse{}, fmt.Errorf("failed to marshal request body: %v", err)
 	}
 
-	GL_WEBHOOK_URL := fmt.Sprintf("%s/api/v4/projects/%s/hooks",
-		request.HostName,
-		url.PathEscape(request.ProjectID),
-	)
+	baseURL, err := validateHostURL(request.HostName)
+	if err != nil {
+		return common.DevConsoleCommonResponse{}, &common.ValidationError{Err: fmt.Errorf("invalid hostName: %v", err)}
+	}
+	webhookURL := baseURL.JoinPath("api", "v4", "projects", request.ProjectID, "hooks")
 
-	return makeHTTPRequest(r.Context(), GL_WEBHOOK_URL, request.Headers, bodyBytes, proxyHeaderDenyList)
+	return makeHTTPRequest(r.Context(), webhookURL.String(), request.Headers, bodyBytes, proxyHeaderDenyList)
 }
 
 func CreateBitbucketWebhook(r *http.Request, user *auth.User, proxyHeaderDenyList []string) (common.DevConsoleCommonResponse, error) {
-	// POST /api/dev-console/webhooks/bitbucket
-
 	var request BitbucketWebhookRequest
 	err := json.NewDecoder(r.Body).Decode(&request)
 	if err != nil {
@@ -111,20 +118,17 @@ func CreateBitbucketWebhook(r *http.Request, user *auth.User, proxyHeaderDenyLis
 		return common.DevConsoleCommonResponse{}, fmt.Errorf("failed to marshal request body: %v", err)
 	}
 
-	var BB_WEBHOOK_URL string
-	if request.IsServer {
-		BB_WEBHOOK_URL = fmt.Sprintf("%s/projects/%s/repos/%s/hooks",
-			request.BaseURL,
-			url.PathEscape(request.Owner),
-			url.PathEscape(request.RepoName),
-		)
-	} else {
-		BB_WEBHOOK_URL = fmt.Sprintf("%s/repositories/%s/%s/hooks",
-			request.BaseURL,
-			url.PathEscape(request.Owner),
-			url.PathEscape(request.RepoName),
-		)
+	baseURL, err := validateHostURL(request.BaseURL)
+	if err != nil {
+		return common.DevConsoleCommonResponse{}, &common.ValidationError{Err: fmt.Errorf("invalid baseURL: %v", err)}
 	}
 
-	return makeHTTPRequest(r.Context(), BB_WEBHOOK_URL, request.Headers, bodyBytes, proxyHeaderDenyList)
+	var webhookURL string
+	if request.IsServer {
+		webhookURL = baseURL.JoinPath("projects", request.Owner, "repos", request.RepoName, "hooks").String()
+	} else {
+		webhookURL = baseURL.JoinPath("repositories", request.Owner, request.RepoName, "hooks").String()
+	}
+
+	return makeHTTPRequest(r.Context(), webhookURL, request.Headers, bodyBytes, proxyHeaderDenyList)
 }
