@@ -15,7 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import NodeGroupEditButton from '@console/app/src/components/nodes/NodeGroupEditButton';
 import { getNodeGroups } from '@console/app/src/components/nodes/utils/NodeGroupUtils';
-import { FLAG_NODE_MGMT_V1 } from '@console/app/src/consts';
+import { FLAG_OPENSHIFT_5 } from '@console/app/src/consts';
 import { OverviewDetailItem } from '@console/internal/components/overview/OverviewDetailItem';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
 import { NodeModel } from '@console/internal/models';
@@ -33,7 +33,7 @@ const DetailsCard: FC = () => {
   const instanceType = obj.metadata.labels?.['beta.kubernetes.io/instance-type'];
   const zone = obj.metadata.labels?.['topology.kubernetes.io/zone'];
   const { t } = useTranslation('console-app');
-  const nodeMgmtV1Enabled = useFlag(FLAG_NODE_MGMT_V1);
+  const isOpenShift5 = useFlag(FLAG_OPENSHIFT_5);
 
   const nodeGroups = useMemo(() => getNodeGroups(obj).sort().join(', ') || DASH, [obj]);
 
@@ -80,7 +80,7 @@ const DetailsCard: FC = () => {
           <OverviewDetailItem isLoading={!obj} title={t('Uptime')}>
             <NodeUptime obj={obj} />
           </OverviewDetailItem>
-          {nodeMgmtV1Enabled ? (
+          {isOpenShift5 ? (
             <>
               <Divider component={DividerVariant.div} className="pf-v6-u-w-75" />
               <Flex justifyContent={{ default: 'justifyContentSpaceBetween' }}>

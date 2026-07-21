@@ -1,6 +1,6 @@
 import type { FC, ComponentProps } from 'react';
 import { useCallback } from 'react';
-import { FLAG_NODE_MGMT_V1 } from '@console/app/src/consts';
+import { FLAG_OPENSHIFT_5 } from '@console/app/src/consts';
 import { ResourceEventStream } from '@console/internal/components/events';
 import { DetailsPage } from '@console/internal/components/factory';
 import { PodsPage } from '@console/internal/components/pod-list';
@@ -72,11 +72,11 @@ const eventsTab = navFactory.events(ResourceEventStream);
 const terminalTab = navFactory.terminal(NodeTerminal);
 
 export const NodeDetailsPage: FC<ComponentProps<typeof DetailsPage>> = (props) => {
-  const nodeMgmtV1Enabled = useFlag(FLAG_NODE_MGMT_V1);
+  const isOpenShift5 = useFlag(FLAG_OPENSHIFT_5);
 
   const pagesFor = useCallback(
     (node: NodeKind) => {
-      const tabs = nodeMgmtV1Enabled
+      const tabs = isOpenShift5
         ? [overviewTab, detailsTab, configurationTab, healthTab, workloadTab, yamlTab]
         : [overviewTab, detailsTab, yamlTab, podsTab, logsTab, eventsTab];
       if (!isWindowsNode(node)) {
@@ -84,7 +84,7 @@ export const NodeDetailsPage: FC<ComponentProps<typeof DetailsPage>> = (props) =
       }
       return tabs;
     },
-    [nodeMgmtV1Enabled],
+    [isOpenShift5],
   );
 
   const customActionMenu = (kindObj: K8sModel, obj: NodeKind) => {

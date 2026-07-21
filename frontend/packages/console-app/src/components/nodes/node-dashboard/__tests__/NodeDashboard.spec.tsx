@@ -69,7 +69,7 @@ describe('NodeDashboard', () => {
     });
   });
 
-  describe('when NODE_MGMT_V1 flag is disabled', () => {
+  describe('when FLAG_OPENSHIFT_5 flag is disabled', () => {
     it('should pass rightCards, mainCards, and leftCards to DashboardGrid', () => {
       jest.spyOn(flagsModule, 'useFlag').mockReturnValue(false);
 
@@ -90,7 +90,7 @@ describe('NodeDashboard', () => {
     });
   });
 
-  describe('when NODE_MGMT_V1 flag is enabled', () => {
+  describe('when FLAG_OPENSHIFT_5 flag is enabled', () => {
     it('should not pass rightCards to DashboardGrid', () => {
       jest.spyOn(flagsModule, 'useFlag').mockReturnValue(true);
 
