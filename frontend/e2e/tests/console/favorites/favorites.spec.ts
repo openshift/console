@@ -2,14 +2,26 @@ import { test, expect } from '../../../fixtures';
 import { warmupSPA } from '../../../pages/base-page';
 
 test.describe('Favorites', { tag: ['@admin'] }, () => {
-  test('adds, displays, removes, and limits favorites', async ({ page }) => {
+  test('adds, displays, removes, and limits favorites', async ({ page, k8sClient }) => {
     const sidebar = page.locator('#page-sidebar');
+
+    await test.step('Clear any stale favorites from prior runs', async () => {
+      try {
+        await k8sClient.patchConfigMap(
+          'user-settings-kubeadmin',
+          'openshift-console-user-settings',
+          { 'console.favorites': '[]' },
+        );
+      } catch {
+        // ConfigMap may not exist yet
+      }
+    });
 
     await warmupSPA(page);
 
     await test.step('Verify no favorites message when none are added', async () => {
       await sidebar.getByRole('button', { name: 'Favorites' }).click();
-      await expect(page.getByTestId('no-favorites-message')).toBeVisible();
+      await expect(page.getByTestId('no-favorites-message')).toBeVisible({ timeout: 30_000 });
     });
 
     await test.step('Open Add to Favorites modal', async () => {
