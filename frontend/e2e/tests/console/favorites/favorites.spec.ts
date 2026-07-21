@@ -19,6 +19,12 @@ test.describe('Favorites', { tag: ['@admin'] }, () => {
 
     await warmupSPA(page);
 
+    // Ensure we are on the Overview page with a clean favorite state.
+    await page.goto('/');
+    await expect(page.getByTestId('page-heading').locator('h1')).toContainText('Overview', {
+      timeout: 30_000,
+    });
+
     await test.step('Verify no favorites message when none are added', async () => {
       await sidebar.getByRole('button', { name: 'Favorites' }).click();
       await expect(page.getByTestId('no-favorites-message')).toBeVisible({ timeout: 30_000 });
@@ -27,7 +33,7 @@ test.describe('Favorites', { tag: ['@admin'] }, () => {
     await test.step('Open Add to Favorites modal', async () => {
       await page.getByTestId('favorite-button').click();
       const dialog = page.getByRole('dialog');
-      await expect(dialog).toContainText('Add to favorites');
+      await expect(dialog).toContainText('Add to favorites', { timeout: 10_000 });
     });
 
     await test.step('Save a favorite with custom name', async () => {
