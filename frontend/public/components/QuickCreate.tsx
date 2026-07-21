@@ -89,10 +89,10 @@ const QuickCreate: FC<QuickCreateProps> = ({ namespace }) => {
       onSelect={onSelect}
       onOpenChange={(open: boolean) => setIsOpen(open)}
       toggle={(toggleRef: Ref<MenuToggleElement>) => (
-        <Tooltip content={t('Quick create')} position="bottom">
+        <Tooltip content={t('Create resources')} position="bottom">
           <MenuToggle
             ref={toggleRef}
-            aria-label={t('Quick create')}
+            aria-label={t('Create resources')}
             variant="plain"
             onClick={onToggleClick}
             isExpanded={isOpen}
@@ -111,7 +111,7 @@ const QuickCreate: FC<QuickCreateProps> = ({ namespace }) => {
       <DropdownList>
         <DropdownItem
           value={0}
-          key="Import YAML"
+          key="Create from YAML"
           to={importYAMLURL}
           onClick={(ev: any) => {
             ev.preventDefault();
@@ -124,13 +124,13 @@ const QuickCreate: FC<QuickCreateProps> = ({ namespace }) => {
           }}
           data-test="qc-import-yaml"
         >
-          {t('Import YAML')}
+          {t('Create from YAML')}
         </DropdownItem>
         {canCreate && (
           <>
             <DropdownItem
               value={1}
-              key="Import from Git"
+              key="Create from Git"
               to={getImportFromGitURL(namespace)}
               onClick={(ev: any) => {
                 ev.preventDefault();
@@ -143,11 +143,11 @@ const QuickCreate: FC<QuickCreateProps> = ({ namespace }) => {
               }}
               data-test="qc-import-from-git"
             >
-              {t('Import from Git')}
+              {t('Create from Git')}
             </DropdownItem>
             <DropdownItem
               value={2}
-              key="Container images"
+              key="Create from container image"
               to={getContainerImageURL(namespace)}
               onClick={(ev: any) => {
                 ev.preventDefault();
@@ -160,7 +160,7 @@ const QuickCreate: FC<QuickCreateProps> = ({ namespace }) => {
               }}
               data-test="qc-container-images"
             >
-              {t('Container images')}
+              {t('Create from container image')}
             </DropdownItem>
           </>
         )}
@@ -185,7 +185,7 @@ export const QuickCreateImportFromGit = ({ namespace, className }) => {
     canCreate &&
     !opeshiftStartGuideEnable && (
       <button type="button" onClick={handleClick} className={className}>
-        {t('Import from Git')}
+        {t('Create from Git')}
       </button>
     )
   );
@@ -205,7 +205,7 @@ export const QuickCreateContainerImages = ({ namespace, className }) => {
     canCreate &&
     !opeshiftStartGuideEnable && (
       <button type="button" onClick={handleClick} className={className}>
-        {t('Container images')}
+        {t('Create from container image')}
       </button>
     )
   );
