@@ -23,7 +23,7 @@ import type { FC, ChangeEvent, FormEvent } from 'react';
 import { CONST } from '@console/shared/src/constants/common';
 import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import { k8sPatchByName, k8sCreate, K8sResourceKind } from '../../module/k8s';
+import { k8sPatchByName, k8sCreate, k8sGet, K8sResourceKind } from '../../module/k8s';
 import { SecretModel, ServiceAccountModel } from '../../models';
 import { useState, useCallback } from 'react';
 import { ModalComponentProps } from '@console/shared/src/types/modal';
@@ -61,6 +61,26 @@ interface ConfigureNamespacePullSecretProps extends ModalComponentProps {
   namespace: K8sResourceKind;
   pullSecret?: K8sResourceKind;
 }
+
+export const getDefaultServiceAccountPatch = (
+  hasImagePullSecretsField: boolean,
+  pullSecretName: string,
+) =>
+  hasImagePullSecretsField
+    ? [
+        {
+          op: 'add',
+          path: '/imagePullSecrets/-',
+          value: { name: pullSecretName },
+        },
+      ]
+    : [
+        {
+          op: 'add',
+          path: '/imagePullSecrets',
+          value: [{ name: pullSecretName }],
+        },
+      ];
 
 const ConfigureNamespacePullSecret: FC<ConfigureNamespacePullSecretProps> = (props) => {
   const { namespace, cancel, close } = props;
@@ -131,21 +151,21 @@ const ConfigureNamespacePullSecret: FC<ConfigureNamespacePullSecretProps> = (pro
         data,
         type: CONST.PULL_SECRET_TYPE,
       };
-      const defaultServiceAccountPatch = [
-        {
-          op: 'add' as const,
-          path: '/imagePullSecrets/-',
-          value: { name: pullSecretName },
-        },
-      ];
-      const promise = k8sCreate(SecretModel, secret).then(() =>
-        k8sPatchByName(
-          ServiceAccountModel,
-          'default',
-          namespace.metadata.name,
-          defaultServiceAccountPatch,
-        ),
-      );
+      const promise = k8sCreate(SecretModel, secret)
+        .then(() => k8sGet(ServiceAccountModel, 'default', namespace.metadata.name, {}))
+        .then((serviceAccount) => {
+          const defaultServiceAccountPatch = getDefaultServiceAccountPatch(
+            _.has(serviceAccount, 'imagePullSecrets'),
+            pullSecretName,
+          );
+
+          return k8sPatchByName(
+            ServiceAccountModel,
+            'default',
+            namespace.metadata.name,
+            defaultServiceAccountPatch,
+          );
+        });
 
       handlePromise(promise).then(close);
     },
