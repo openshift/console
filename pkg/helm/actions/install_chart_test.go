@@ -663,9 +663,9 @@ func TestIsValidChartURL(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := isValidChartURL(tt.url)
+			got := IsValidChartURL(tt.url)
 			if got != tt.valid {
-				t.Errorf("isValidChartURL(%q) = %v, want %v", tt.url, got, tt.valid)
+				t.Errorf("IsValidChartURL(%q) = %v, want %v", tt.url, got, tt.valid)
 			}
 		})
 	}
