@@ -222,7 +222,7 @@ const HelmInstallUpgradeForm: FC<
               <GridItem xl={5} lg={4} md={12}>
                 <ResourceDropdownField
                   name="basicAuthSecretName"
-                  label={t('Secret for basic authentication')}
+                  label={t('Secret for Basic authentication')}
                   resources={secretResources}
                   dataSelector={['metadata', 'name']}
                   fullWidth

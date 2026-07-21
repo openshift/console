@@ -61,12 +61,14 @@ const HelmCreateBasicAuthSecretModal: OverlayComponent<HelmCreateBasicAuthSecret
     setInProgress(true);
     setErrorMessage(undefined);
 
+    const trimmedSecretName = secretName.trim();
+
     try {
       await k8sCreate(SecretModel, {
         apiVersion: 'v1',
         kind: 'Secret',
         metadata: {
-          name: secretName.trim(),
+          name: trimmedSecretName,
           namespace,
         },
         type: 'kubernetes.io/basic-auth',
@@ -75,10 +77,9 @@ const HelmCreateBasicAuthSecretModal: OverlayComponent<HelmCreateBasicAuthSecret
           password,
         },
       });
-      const createdSecretName = secretName.trim();
       closeModal(true);
       // Keep form update separate so a parent callback failure cannot block modal close.
-      save?.(createdSecretName);
+      save?.(trimmedSecretName);
     } catch (err) {
       const message = err instanceof Error ? err.message : t('Failed to create Secret.');
       setErrorMessage(message);

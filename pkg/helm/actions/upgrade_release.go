@@ -236,7 +236,7 @@ func UpgradeReleaseAsync(
 		client.ChartPathOptions.Version = chartInfo.Version
 		cp, err = client.ChartPathOptions.LocateChart(chartLocation, settings)
 		if err != nil {
-			if auth_secret == "" && (strings.Contains(err.Error(), "401") || strings.Contains(err.Error(), "unauthorized")) {
+			if auth_secret == "" && (strings.Contains(err.Error(), "401") || strings.Contains(strings.ToLower(err.Error()), "unauthorized")) {
 				return nil, fmt.Errorf("failed to upgrade helm release: %w; registry requires authentication - select a Secret with \"username\" and \"password\" keys for basic authentication", err)
 			}
 			return nil, err
