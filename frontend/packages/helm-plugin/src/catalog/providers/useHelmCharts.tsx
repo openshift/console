@@ -62,8 +62,18 @@ const useHelmCharts: ExtensionHook<CatalogItem[]> = ({
           };
           setHelmCharts(json.entries);
           const warningData = json.annotations?.['console-warning'];
-          if (warningData && warningData !== shownWarningRef.current) {
+          const sessionKey = 'helm-repo-warning-shown';
+          if (
+            warningData &&
+            warningData !== shownWarningRef.current &&
+            warningData !== sessionStorage.getItem(sessionKey)
+          ) {
             shownWarningRef.current = warningData;
+            try {
+              sessionStorage.setItem(sessionKey, warningData);
+            } catch {
+              // sessionStorage may be unavailable
+            }
             try {
               const repos: { name: string; error: string }[] = JSON.parse(warningData);
               const repoList = repos.map((r) => `${r.name}: ${r.error}`).join(', ');
