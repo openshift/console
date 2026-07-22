@@ -5,12 +5,12 @@ test.describe('Favorites', { tag: ['@admin'] }, () => {
   test('adds, displays, removes, and limits favorites', async ({ page, k8sClient }) => {
     const sidebar = page.locator('#page-sidebar');
 
-    await test.step('Clear any stale favorites from prior runs', async () => {
+    await test.step('Clear any stale favorites and lastNamespace from prior runs', async () => {
       try {
         await k8sClient.patchConfigMap(
           'user-settings-kubeadmin',
           'openshift-console-user-settings',
-          { 'console.favorites': '[]' },
+          { 'console.favorites': '[]', 'console.lastNamespace': '' },
         );
       } catch {
         // ConfigMap may not exist yet
@@ -57,9 +57,15 @@ test.describe('Favorites', { tag: ['@admin'] }, () => {
 
     await test.step('Remove a favorite from the left navigation menu', async () => {
       await page.goto('/dashboards');
-      await page.getByTestId('favorite-button').click();
+      await expect(page.getByTestId('page-heading').locator('h1')).toContainText('Overview', {
+        timeout: 30_000,
+      });
+      const addFavBtn = page.getByTestId('favorite-button');
+      await expect(addFavBtn).toBeVisible({ timeout: 30_000 });
+      await expect(addFavBtn).not.toHaveAttribute('aria-pressed', 'true', { timeout: 10_000 });
+      await addFavBtn.click();
       const dialog = page.getByRole('dialog');
-      await expect(dialog).toContainText('Add to favorites');
+      await expect(dialog).toContainText('Add to favorites', { timeout: 10_000 });
       await page.getByRole('button', { name: 'Save' }).click();
 
       await expect(sidebar).toContainText('Overview');
@@ -84,9 +90,12 @@ test.describe('Favorites', { tag: ['@admin'] }, () => {
 
       for (let i = 0; i < pages.length; i++) {
         await page.goto(pages[i]);
-        await page.getByTestId('favorite-button').first().click();
+        const btn = page.getByTestId('favorite-button').first();
+        await expect(btn).toBeVisible({ timeout: 30_000 });
+        await expect(btn).not.toHaveAttribute('aria-pressed', 'true', { timeout: 10_000 });
+        await btn.click();
         const dialog = page.getByRole('dialog');
-        await expect(dialog).toContainText('Add to favorites');
+        await expect(dialog).toContainText('Add to favorites', { timeout: 10_000 });
         const nameInput = page.getByTestId('input-name');
         await nameInput.clear();
         await nameInput.fill(`test-favorite-${i}`);
