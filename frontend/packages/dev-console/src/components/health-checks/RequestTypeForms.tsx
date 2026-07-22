@@ -29,7 +29,7 @@ const renderPortField = (
       <InputField
         type={TextInputTypes.text}
         name="knative-port"
-        label={t('Port')}
+        label={t('devconsole~Port')}
         placeholder="0"
         isDisabled
       />
@@ -39,7 +39,7 @@ const renderPortField = (
     <InputField
       type={TextInputTypes.text}
       name={fieldName}
-      label={t('Port')}
+      label={t('devconsole~Port')}
       isDisabled={viewOnly}
       required
     />

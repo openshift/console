@@ -114,12 +114,12 @@ const LoginErrorMessage: FC = () => {
       }
     default:
       return (
-        <Trans ns="public">
-          There was an authentication error with the system:
+        <>
+          {t('There was an authentication error with the system:')}
           <CodeBlock>
             <CodeBlockCode>{error}</CodeBlockCode>
           </CodeBlock>
-        </Trans>
+        </>
       );
   }
 };

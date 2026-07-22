@@ -32,32 +32,32 @@ const BuildRunHeader = () => {
 
   return [
     {
-      title: t('Name'),
+      title: t('shipwright-plugin~Name'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: columnClassNames[0] },
     },
     {
       id: 'namespace',
-      title: t('Namespace'),
+      title: t('shipwright-plugin~Namespace'),
       sortField: 'metadata.namespace',
       transforms: [sortable],
       props: { className: columnClassNames[1] },
     },
     {
-      title: t('Status'),
+      title: t('shipwright-plugin~Status'),
       sortFunc: 'status',
       transforms: [sortable],
       props: { className: columnClassNames[2] },
     },
     {
-      title: t('Started'),
+      title: t('shipwright-plugin~Started'),
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: columnClassNames[3] },
     },
     {
-      title: t('Duration'),
+      title: t('shipwright-plugin~Duration'),
       sortFunc: 'duration',
       transforms: [sortable],
       props: { className: columnClassNames[4] },

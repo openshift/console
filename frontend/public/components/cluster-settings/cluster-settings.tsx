@@ -1262,14 +1262,12 @@ const UpdateAlertContent: FC<AlertContentProps> = ({
 
     if (availableUpdates.length === 1) {
       return t('public~Update Available: {{updateVersion}}', {
-        currentVersion,
         updateVersion: availableUpdates[0]?.version,
       });
     }
 
     if (availableUpdates.length > 1) {
       return t('public~Available Updates (latest: {{latestVersion}})', {
-        currentVersion,
         latestVersion: availableUpdates[0]?.version,
       });
     }

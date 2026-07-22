@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { useState } from 'react';
-import { useTranslation, Trans } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router';
 import { CreateYAML } from '@console/internal/components/create-yaml';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -97,14 +97,7 @@ export const PDBFormPage: FC = () => {
         <LoadingBox />
       ) : (
         <>
-          <PageHeading
-            title={title}
-            helpText={
-              <Trans t={t} ns="console-app">
-                {helpText}
-              </Trans>
-            }
-          />
+          <PageHeading title={title} helpText={helpText} />
 
           <SyncedEditor
             context={{

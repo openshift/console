@@ -49,6 +49,7 @@ import {
 import { k8sCreateResource, k8sUpdateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 
 const TemplateResourceDetails: FC<TemplateResourceDetailsProps> = ({ template }) => {
+  const { t } = useTranslation('public');
   const resources = _.uniq(_.compact(_.map(template.objects, 'kind'))).sort();
   if (_.isEmpty(resources)) {
     return null;
@@ -57,7 +58,7 @@ const TemplateResourceDetails: FC<TemplateResourceDetailsProps> = ({ template })
   return (
     <>
       <Divider className="co-divider" />
-      <p>The following resources will be created:</p>
+      <p>{t('The following resources will be created:')}</p>
       <ul>
         {resources.map((kind: string) => (
           <li key={kind}>{kind}</li>

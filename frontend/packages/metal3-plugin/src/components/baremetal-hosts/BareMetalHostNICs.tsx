@@ -14,12 +14,12 @@ import type { BareMetalHostNIC, BareMetalHostKind } from '../../types/host';
 
 const NICsTableHeader = (t: TFunction) => () => [
   { title: t('Name'), sortField: 'name', transforms: [sortable] },
-  { title: t('Model'), sortField: 'model', transforms: [sortable] },
-  { title: t('PXE'), sortField: 'pxe', transforms: [sortable] },
-  { title: t('IP'), sortField: 'ip', transforms: [sortable] },
-  { title: t('Speed'), sortField: 'speedGbps', transforms: [sortable] },
-  { title: t('MAC Address'), sortField: 'mac', transforms: [sortable] },
-  { title: t('VLAN ID'), sortField: 'vlanId', transforms: [sortable] },
+  { title: t('metal3-plugin~Model'), sortField: 'model', transforms: [sortable] },
+  { title: t('metal3-plugin~PXE'), sortField: 'pxe', transforms: [sortable] },
+  { title: t('metal3-plugin~IP'), sortField: 'ip', transforms: [sortable] },
+  { title: t('metal3-plugin~Speed'), sortField: 'speedGbps', transforms: [sortable] },
+  { title: t('metal3-plugin~MAC Address'), sortField: 'mac', transforms: [sortable] },
+  { title: t('metal3-plugin~VLAN ID'), sortField: 'vlanId', transforms: [sortable] },
 ];
 
 const getRowProps = (obj) => ({

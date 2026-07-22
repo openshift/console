@@ -10,13 +10,13 @@ import { getHostStorage } from '../../selectors/baremetal-hosts';
 import type { BareMetalHostDisk, BareMetalHostKind } from '../../types/host';
 
 const DisksTableHeader = (t: TFunction) => () => [
-  { title: t('Name'), sortField: 'name', transforms: [sortable] },
-  { title: t('Size'), sortField: 'sizeBytes', transforms: [sortable] },
-  { title: t('Type'), sortField: 'rotational', transforms: [sortable] },
-  { title: t('Model'), sortField: 'model', transforms: [sortable] },
-  { title: t('Serial Number'), sortField: 'serialNumber', transforms: [sortable] },
-  { title: t('Vendor'), sortField: 'vendor', transforms: [sortable] },
-  { title: t('HCTL'), sortField: 'hctl', transforms: [sortable] },
+  { title: t('metal3-plugin~Name'), sortField: 'name', transforms: [sortable] },
+  { title: t('metal3-plugin~Size'), sortField: 'sizeBytes', transforms: [sortable] },
+  { title: t('metal3-plugin~Type'), sortField: 'rotational', transforms: [sortable] },
+  { title: t('metal3-plugin~Model'), sortField: 'model', transforms: [sortable] },
+  { title: t('metal3-plugin~Serial Number'), sortField: 'serialNumber', transforms: [sortable] },
+  { title: t('metal3-plugin~Vendor'), sortField: 'vendor', transforms: [sortable] },
+  { title: t('metal3-plugin~HCTL'), sortField: 'hctl', transforms: [sortable] },
 ];
 
 const getRowProps = (obj) => ({
