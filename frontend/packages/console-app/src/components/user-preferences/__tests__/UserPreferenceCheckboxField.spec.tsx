@@ -2,14 +2,19 @@ import * as React from 'react';
 import { Checkbox, Skeleton } from '@patternfly/react-core';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { UserPreferenceFieldType } from '@console/dynamic-plugin-sdk/src/extensions/user-preferences';
-import { useUserSettings } from '@console/shared';
+import { useUserSettings, useTelemetry } from '@console/shared';
 import UserPreferenceCheckboxField from '../UserPreferenceCheckboxField';
 
 jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
   useUserSettings: jest.fn(),
 }));
 
+jest.mock('@console/shared/src/hooks/useTelemetry', () => ({
+  useTelemetry: jest.fn(),
+}));
+
 const mockUserSettings = useUserSettings as jest.Mock;
+const mockUseTelemetry = useTelemetry as jest.Mock;
 
 describe('UserPreferenceCheckboxField', () => {
   type UserPreferenceCheckboxFieldProps = React.ComponentProps<typeof UserPreferenceCheckboxField>;
@@ -22,6 +27,10 @@ describe('UserPreferenceCheckboxField', () => {
     falseValue: 'falseValue',
   };
   let wrapper: ShallowWrapper<UserPreferenceCheckboxFieldProps>;
+
+  beforeEach(() => {
+    mockUseTelemetry.mockReturnValue(jest.fn());
+  });
 
   afterEach(() => {
     jest.resetAllMocks();

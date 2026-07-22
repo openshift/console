@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import { act } from 'react-dom/test-utils';
 import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import * as useToastModule from '@console/shared/src/components/toast/useToast';
+import * as useUserModule from '@console/shared/src/hooks/useUser';
 import * as useUserSettingsModule from '@console/shared/src/hooks/useUserSettings';
 import { getExportAppData } from '@console/topology/src/utils/export-app-utils';
 import { ExportModel } from '../../../models';
@@ -11,13 +12,25 @@ import { ExportApplicationModal } from '../ExportApplicationModal';
 import ExportViewLogButton from '../ExportViewLogButton';
 import { mockExportData } from './export-data';
 
+const mockUseUserData = {
+  user: {},
+  userResource: {},
+  userResourceLoaded: true,
+  userResourceError: null,
+  username: 'testuser',
+  fullName: 'Test User',
+  displayName: 'Test User',
+};
+
 describe('ExportApplicationModal', () => {
   const spyUseToast = jest.spyOn(useToastModule, 'default');
   const spyUseUserSettings = jest.spyOn(useUserSettingsModule, 'useUserSettings');
+  const spyUseUser = jest.spyOn(useUserModule, 'useUser');
 
   beforeEach(() => {
     spyUseToast.mockReturnValue({ addToast: (v) => ({ v }) });
     spyUseUserSettings.mockReturnValue([{}, jest.fn(), false]);
+    ((spyUseUser as unknown) as jest.Mock).mockReturnValue(mockUseUserData);
   });
 
   afterEach(() => {
