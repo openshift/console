@@ -69,7 +69,7 @@ export default defineConfig({
       );
     },
 
-    sort: false,
+    sort: true,
     keySeparator: false,
     nsSeparator: '~',
     defaultNS: 'public',
