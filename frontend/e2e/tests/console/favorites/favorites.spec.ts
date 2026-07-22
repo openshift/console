@@ -19,11 +19,15 @@ test.describe('Favorites', { tag: ['@admin'] }, () => {
 
     await warmupSPA(page);
 
-    // Ensure we are on the Overview page with a clean favorite state.
-    await page.goto('/');
+    // Navigate to the Overview page directly — "/" can redirect based on lastNamespace.
+    await page.goto('/dashboards');
     await expect(page.getByTestId('page-heading').locator('h1')).toContainText('Overview', {
       timeout: 30_000,
     });
+    // Wait for the favorite button to reflect the cleared state.
+    const favButton = page.getByTestId('favorite-button');
+    await expect(favButton).toBeVisible({ timeout: 30_000 });
+    await expect(favButton).not.toHaveAttribute('aria-pressed', 'true', { timeout: 10_000 });
 
     await test.step('Verify no favorites message when none are added', async () => {
       await sidebar.getByRole('button', { name: 'Favorites' }).click();
@@ -52,7 +56,7 @@ test.describe('Favorites', { tag: ['@admin'] }, () => {
     });
 
     await test.step('Remove a favorite from the left navigation menu', async () => {
-      await page.goto('/');
+      await page.goto('/dashboards');
       await page.getByTestId('favorite-button').click();
       const dialog = page.getByRole('dialog');
       await expect(dialog).toContainText('Add to favorites');
@@ -66,7 +70,7 @@ test.describe('Favorites', { tag: ['@admin'] }, () => {
 
     await test.step('Disable add to favorite button when limit reached', async () => {
       const pages = [
-        '/',
+        '/dashboards',
         '/k8s/all-namespaces/core~v1~Pod',
         '/k8s/all-namespaces/apps~v1~Deployment',
         '/k8s/all-namespaces/core~v1~Secret',
