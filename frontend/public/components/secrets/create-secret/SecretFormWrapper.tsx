@@ -50,6 +50,17 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
       return acc;
     }, {}),
   );
+  // Store binary data separately to preserve it during edits
+  const binaryData = React.useMemo(
+    () =>
+      Object.entries(props.obj?.data ?? {}).reduce<Record<string, string>>((acc, [key, value]) => {
+        if (isBinary(null, Buffer.from(value, 'base64'))) {
+          acc[key] = value;
+        }
+        return acc;
+      }, {}),
+    [props.obj?.data],
+  );
   const [base64StringData, setBase64StringData] = React.useState(props?.obj?.data ?? {});
   const [disableForm, setDisableForm] = React.useState(false);
   const title = useSecretTitle(isCreate, secretTypeAbstraction);
@@ -58,7 +69,20 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
 
   const onDataChanged = (secretsData) => {
     setStringData({ ...secretsData?.stringData });
-    setBase64StringData({ ...secretsData?.base64StringData });
+    // Preserve binary values by merging them with form data
+    // Only backfill missing keys from binaryData, don't overwrite edited entries
+    const mergedData = Object.entries(binaryData).reduce(
+      (acc, [key, value]) => {
+        // Only add binary entry if it's missing from form data
+        if (acc[key] === undefined) {
+          acc[key] = value;
+        }
+        // Otherwise keep the existing value from form data
+        return acc;
+      },
+      { ...secretsData?.base64StringData },
+    );
+    setBase64StringData(mergedData);
   };
 
   const onError = (err) => {
