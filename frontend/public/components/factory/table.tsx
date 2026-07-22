@@ -22,7 +22,12 @@ import { useNavigate } from 'react-router-dom-v5-compat';
 import { getMachinePhase } from '@console/shared/src/selectors/machine';
 import { getMachineSetInstanceType } from '@console/shared/src/selectors/machineSet';
 import { pvcUsed } from '@console/shared/src/sorts/pvc';
-import { snapshotSize, snapshotSource } from '@console/shared/src/sorts/snapshot';
+import {
+  snapshotContentSize,
+  snapshotSize,
+  snapshotSource,
+  snapshotStatus,
+} from '@console/shared/src/sorts/snapshot';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import { getName } from '@console/shared/src/selectors/common';
 import { useDeepCompareMemoize } from '@console/shared/src/hooks/deep-compare-memoize';
@@ -49,11 +54,12 @@ import {
   podRestarts,
   MachineKind,
   VolumeSnapshotKind,
+  VolumeSnapshotContentKind,
   ClusterOperator,
 } from '../../module/k8s';
 import { useTableData } from './table-data-hook';
 
-const sorts = {
+export const sorts = {
   alertingRuleStateOrder,
   alertSeverityOrder,
   crdLatestVersion: (crd: CustomResourceDefinitionKind): string => getLatestVersionForCRD(crd),
@@ -81,7 +87,11 @@ const sorts = {
   getTemplateInstanceStatus,
   machinePhase: (machine: MachineKind): string => getMachinePhase(machine),
   pvcUsed: (pvc: K8sResourceKind): number => pvcUsed(pvc),
+  volumeSnapshotStatus: (snapshot: VolumeSnapshotKind | VolumeSnapshotContentKind): string =>
+    snapshotStatus(snapshot),
   volumeSnapshotSize: (snapshot: VolumeSnapshotKind): number => snapshotSize(snapshot),
+  volumeSnapshotContentSize: (snapshot: VolumeSnapshotContentKind): number =>
+    snapshotContentSize(snapshot),
   volumeSnapshotSource: (snapshot: VolumeSnapshotKind): string => snapshotSource(snapshot),
   snapshotLastRestore: (snapshot: K8sResourceKind, { restores }) =>
     restores[getName(snapshot)]?.status?.restoreTime,

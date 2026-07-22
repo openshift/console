@@ -1,19 +1,13 @@
-import { TFunction } from 'i18next';
-import { RowFilter } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { VolumeSnapshotStatus } from '@console/internal/module/k8s';
-
-export const volumeSnapshotStatus = ({ status }: { status?: VolumeSnapshotStatus }) => {
-  const readyToUse = status?.readyToUse;
-  const isError = !!status?.error?.message;
-  return readyToUse ? 'Ready' : isError ? 'Error' : 'Pending';
-};
+import type { TFunction } from 'i18next';
+import type { RowFilter } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { snapshotStatus } from '@console/shared/src/sorts/snapshot';
 
 export const snapshotStatusFilters = (t: TFunction): RowFilter[] => {
   return [
     {
       filterGroupName: t('console-app~Status'),
       type: 'snapshot-status',
-      reducer: volumeSnapshotStatus,
+      reducer: snapshotStatus,
       filter: () => null,
       items: [
         { id: 'Ready', title: 'Ready' },
