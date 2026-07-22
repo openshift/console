@@ -56,7 +56,7 @@
     "build-plugin-sdk": "yarn --cwd packages/console-dynamic-plugin-sdk build",
     "i18n-to-po": "node ./i18n-scripts/i18n-to-po.js",
     "po-to-i18n": "node ./i18n-scripts/po-to-i18n.js",
-    "i18n": "i18next-cli extract",
+    "i18n": "i18next-cli lint && i18next-cli extract",
     "export-pos": "./i18n-scripts/export-pos.sh",
     "memsource-upload": "./i18n-scripts/memsource-upload.sh",
     "memsource-download": "./i18n-scripts/memsource-download.sh",

@@ -22,6 +22,7 @@ const ImageStreamTimelineItem: FC<ImageStreamTimelineItemProps> = ({
   linkToTag,
 }) => {
   const referenceAndSHA = _.split(tag.dockerImageReference, '@');
+  const { t } = useTranslation('public');
   return (
     <>
       <li>
@@ -44,7 +45,9 @@ const ImageStreamTimelineItem: FC<ImageStreamTimelineItemProps> = ({
               title={tag.tag}
               linkTo={linkToTag}
             />
-            <div className="co-break-all">from {referenceAndSHA[0]}</div>
+            <div className="co-break-all">
+              {t('from {{reference}}', { reference: referenceAndSHA[0] })}
+            </div>
             <div className="co-break-all">{referenceAndSHA[1]}</div>
           </div>
         </div>

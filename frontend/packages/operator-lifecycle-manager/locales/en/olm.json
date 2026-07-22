@@ -115,6 +115,7 @@
   "default": "default",
   "Default sources": "Default sources",
   "Define the resource {{type}} for this {{kind}} instance.": "Define the resource {{type}} for this {{kind}} instance.",
+  "Delete": "Delete",
   "Delete {{item}}": "Delete {{item}}",
   "Delete {{kind}}": "Delete {{kind}}",
   "Delete all operand instances for this operator": "Delete all operand instances for this operator",

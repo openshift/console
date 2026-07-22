@@ -22,7 +22,7 @@ const HelmReleasePanelDetailsTabSection: FC<{ element: GraphElement }> = ({ elem
           }),
         }}
       />
-      <p>Status Box</p>
+      <p>{t('Status Box')}</p>
     </>
   ) : (
     <HelmReleaseOverview obj={secret} customData={undefined} />

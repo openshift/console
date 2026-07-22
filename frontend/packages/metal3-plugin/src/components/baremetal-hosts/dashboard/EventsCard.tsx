@@ -85,7 +85,7 @@ const EventsCard: FC = () => {
         <CardTitle>Activity</CardTitle>
       </CardHeader>
       <ActivityBody>
-        <div className="co-activity-card__ongoing-title">Ongoing</div>
+        <div className="co-activity-card__ongoing-title">{t('Ongoing')}</div>
         <div className="co-activity-card__ongoing-body">
           {inProgress ? (
             <Activity timestamp={null}>
