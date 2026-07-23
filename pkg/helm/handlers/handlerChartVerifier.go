@@ -55,6 +55,10 @@ func (h *verifierHandlers) HandleChartVerifier(user *auth.User, w http.ResponseW
 		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: fmt.Sprintf("Failed to parse request: %v", err)})
 		return
 	}
+	if !actions.IsValidChartURL(req.ChartUrl) {
+		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: "invalid chart URL: must be oci:// or http(s)://*.tgz"})
+		return
+	}
 	conf := h.getActionConfigurations(h.ApiServerHost, "default", user.Token, &h.Transport)
 	resp, err := h.chartVerifier(req.ChartUrl, req.Values, conf)
 	if err != nil {
