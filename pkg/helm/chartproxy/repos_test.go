@@ -111,7 +111,7 @@ func TestHelmRepoGetter_List(t *testing.T) {
 				})
 			}
 			repoGetter := NewRepoGetter(client, nil)
-			repos, err := repoGetter.List(tt.namespace)
+			repos, _, err := repoGetter.List(tt.namespace)
 			if err != nil {
 				t.Error(err)
 			}
@@ -136,11 +136,12 @@ func TestHelmRepoGetter_List(t *testing.T) {
 
 func TestHelmRepoGetter_ListErrors(t *testing.T) {
 	tests := []struct {
-		name             string
-		helmCRS          []*unstructured.Unstructured
-		expectedRepoName []string
-		apiErrors        []apiError
-		namespace        string
+		name                    string
+		helmCRS                 []*unstructured.Unstructured
+		expectedRepoName        []string
+		expectedConfigErrorRepo []string
+		apiErrors               []apiError
+		namespace               string
 	}{
 		{
 			name: "skip repo that refer non-existent config map",
@@ -179,7 +180,8 @@ func TestHelmRepoGetter_ListErrors(t *testing.T) {
 					},
 				},
 			},
-			expectedRepoName: []string{"repo2"},
+			expectedRepoName:        []string{"repo2"},
+			expectedConfigErrorRepo: []string{"repo1"},
 		},
 		{
 			name: "skip repo that refer config map that cannot be accessed",
@@ -225,7 +227,8 @@ func TestHelmRepoGetter_ListErrors(t *testing.T) {
 					msg:      "foo",
 				},
 			},
-			expectedRepoName: []string{"repo2"},
+			expectedRepoName:        []string{"repo2"},
+			expectedConfigErrorRepo: []string{"repo1"},
 		},
 		{
 			name: "skip repo that refer secret that cannot be accessed",
@@ -271,7 +274,8 @@ func TestHelmRepoGetter_ListErrors(t *testing.T) {
 					msg:      "foo",
 				},
 			},
-			expectedRepoName: []string{"repo2"},
+			expectedRepoName:        []string{"repo2"},
+			expectedConfigErrorRepo: []string{"repo1"},
 		},
 	}
 	for _, tt := range tests {
@@ -284,7 +288,7 @@ func TestHelmRepoGetter_ListErrors(t *testing.T) {
 				})
 			}
 			repoGetter := NewRepoGetter(client, coreClient.CoreV1())
-			repos, err := repoGetter.List(tt.namespace)
+			repos, configErrors, err := repoGetter.List(tt.namespace)
 			if err != nil {
 				t.Error(err)
 			}
@@ -294,6 +298,17 @@ func TestHelmRepoGetter_ListErrors(t *testing.T) {
 			for i, repoName := range tt.expectedRepoName {
 				if repoName != repos[i].Name {
 					t.Errorf("Expected %v but got %v", repoName, repos[i].Name)
+				}
+			}
+			if len(configErrors) != len(tt.expectedConfigErrorRepo) {
+				t.Fatalf("Expected %v config errors, but got %v", len(tt.expectedConfigErrorRepo), len(configErrors))
+			}
+			for i, expectedName := range tt.expectedConfigErrorRepo {
+				if configErrors[i].Name != expectedName {
+					t.Errorf("Expected config error repo %v but got %v", expectedName, configErrors[i].Name)
+				}
+				if configErrors[i].Error == "" {
+					t.Errorf("Expected non-empty error message for repo %v", expectedName)
 				}
 			}
 		})
@@ -499,7 +514,7 @@ func TestHelmRepoGetter_SkipDisabled(t *testing.T) {
 			client := fake.K8sDynamicClientFromCRs(tt.helmCRS...)
 			coreClient := k8sfake.NewSimpleClientset()
 			repoGetter := NewRepoGetter(client, coreClient.CoreV1())
-			repos, err := repoGetter.List(tt.namespace)
+			repos, _, err := repoGetter.List(tt.namespace)
 			if err != nil {
 				t.Error(err)
 			}
