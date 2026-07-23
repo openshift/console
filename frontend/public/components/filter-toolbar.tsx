@@ -216,6 +216,7 @@ export const FilterToolbar: FC<FilterToolbarProps> = ({
           <Fragment key={item.id} />
         ) : (
           <SelectOption
+            data-test={`row-filter-${item.id}`}
             data-test-row-filter={item.id}
             key={item.id}
             id={item.id}
@@ -390,7 +391,7 @@ export const FilterToolbar: FC<FilterToolbarProps> = ({
                       {acc}
                     </ToolbarFilter>
                   ),
-                  <div data-test-id="filter-dropdown-toggle">
+                  <div data-test="filter-dropdown-toggle" data-test-id="filter-dropdown-toggle">
                     <Select
                       role="menu"
                       toggle={(toggleRef: Ref<MenuToggleElement>) => (
