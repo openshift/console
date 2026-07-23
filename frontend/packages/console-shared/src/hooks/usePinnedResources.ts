@@ -3,7 +3,8 @@ import * as _ from 'lodash';
 import type { ExtensionK8sModel, K8sModel } from '@console/dynamic-plugin-sdk';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { referenceForExtensionModel, useModelFinder } from '@console/internal/module/k8s';
-import type { Perspective } from './usePerspectives';
+import type { Perspective } from '../utils/override-perspectives';
+import { overridePerspectives } from '../utils/override-perspectives';
 import { usePerspectives } from './usePerspectives';
 import { useTelemetry } from './useTelemetry';
 import { useUserPreference } from './useUserPreference';
@@ -23,9 +24,8 @@ export const usePinnedResources = (): [string[], (pinnedResources: string[]) => 
   const getPins = useCallback(
     (id: string, defaultPins: ExtensionK8sModel[]): ExtensionK8sModel[] => {
       let customizedPins: ExtensionK8sModel[] = null;
-      if (window.SERVER_FLAGS.perspectives) {
-        const perspectives: Perspective[] = JSON.parse(window.SERVER_FLAGS.perspectives);
-        const perspective = perspectives.find((p: Perspective) => p.id === id);
+      if (overridePerspectives) {
+        const perspective = overridePerspectives.find((p: Perspective) => p.id === id);
         customizedPins = perspective?.pinnedResources?.map((pr) => {
           const model: K8sModel = findModel(pr.group, pr.resource);
           return (

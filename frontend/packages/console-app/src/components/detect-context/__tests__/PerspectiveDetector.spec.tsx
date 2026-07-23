@@ -2,12 +2,19 @@ import { render, waitFor } from '@testing-library/react';
 import { useLocation } from 'react-router';
 import type { Perspective } from '@console/dynamic-plugin-sdk';
 import type { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
-import {
-  usePerspectives,
-  PerspectiveVisibilityState,
-} from '@console/shared/src/hooks/usePerspectives';
-import type { Perspective as PerspectiveType } from '@console/shared/src/hooks/usePerspectives';
+import { usePerspectives } from '@console/shared/src/hooks/usePerspectives';
+import type { Perspective as PerspectiveType } from '@console/shared/src/utils/override-perspectives';
+import { PerspectiveVisibilityState } from '@console/shared/src/utils/override-perspectives';
 import PerspectiveDetector from '../PerspectiveDetector';
+
+let mockOverridePerspectives: PerspectiveType[] | undefined;
+
+jest.mock('@console/shared/src/utils/override-perspectives', () => ({
+  ...jest.requireActual('@console/shared/src/utils/override-perspectives'),
+  get overridePerspectives() {
+    return mockOverridePerspectives;
+  },
+}));
 
 jest.mock('@console/shared/src/hooks/usePerspectives', () => ({
   ...jest.requireActual('@console/shared/src/hooks/usePerspectives'),
@@ -94,7 +101,7 @@ describe('PerspectiveDetector', () => {
   });
 
   it('should set admin as default perspective when all perspectives are disabled', async () => {
-    const perspectives: PerspectiveType[] = [
+    mockOverridePerspectives = [
       {
         id: 'dev',
         visibility: {
@@ -122,7 +129,6 @@ describe('PerspectiveDetector', () => {
         },
       },
     ];
-    window.SERVER_FLAGS.perspectives = JSON.stringify(perspectives);
 
     let promiseResolver: (value: () => [boolean, boolean]) => void;
     const testPromise = new Promise<() => [boolean, boolean]>(

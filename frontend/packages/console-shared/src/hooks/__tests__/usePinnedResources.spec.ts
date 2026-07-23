@@ -4,6 +4,8 @@ import { DeploymentModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/__moc
 import { ConfigMapModel } from '@console/internal/models';
 import { useModelFinder } from '@console/internal/module/k8s/k8s-models';
 import { usePerspectives } from '@console/shared/src/hooks/usePerspectives';
+import type { Perspective } from '../../utils/override-perspectives';
+import { PerspectiveVisibilityState } from '../../utils/override-perspectives';
 import { usePinnedResources } from '../usePinnedResources';
 import { useUserPreference } from '../useUserPreference';
 
@@ -12,6 +14,15 @@ const usePerspectivesMock = usePerspectives as jest.Mock;
 const useUserPreferenceMock = useUserPreference as jest.Mock;
 const useModelFinderMock = useModelFinder as jest.Mock;
 const setPinnedResourcesMock = jest.fn();
+
+let mockOverridePerspectives: Perspective[];
+
+jest.mock('@console/shared/src/utils/override-perspectives', () => ({
+  ...jest.requireActual('@console/shared/src/utils/override-perspectives'),
+  get overridePerspectives() {
+    return mockOverridePerspectives;
+  },
+}));
 
 jest.mock('@console/shared/src/hooks/usePerspectives', () => ({ usePerspectives: jest.fn() }));
 jest.mock('@console/dynamic-plugin-sdk/src/perspective/useActivePerspective', () => ({
@@ -63,7 +74,7 @@ describe('usePinnedResources', () => {
   });
 
   it('should return default pins from extension if perspectives are not configured', async () => {
-    window.SERVER_FLAGS.perspectives = '';
+    mockOverridePerspectives = undefined;
     useActivePerspectiveMock.mockReturnValue(['dev']);
     useUserPreferenceMock.mockImplementation((configKey, defaultPins) => [
       defaultPins,
@@ -85,8 +96,14 @@ describe('usePinnedResources', () => {
   });
 
   it('should return an empty array if user settings are not loaded yet', async () => {
-    window.SERVER_FLAGS.perspectives =
-      '[{ "id" : "dev", "visibility": {"state" : "Enabled" }, "pinnedResources" : [{"version" : "v1", "resource" : "deployments"}]}]';
+    mockOverridePerspectives = [
+      {
+        id: 'dev',
+        visibility: { state: PerspectiveVisibilityState.Enabled },
+        pinnedResources: [{ version: 'v1', resource: 'deployments' }],
+      },
+    ];
+
     // Mock user preference data
     useUserPreferenceMock.mockReturnValue([null, setPinnedResourcesMock, false]);
 
@@ -100,7 +117,10 @@ describe('usePinnedResources', () => {
   });
 
   it('should not return any pins if no pins are configured and no extension could be found', async () => {
-    window.SERVER_FLAGS.perspectives = '[{ "id" : "dev", "visibility": {"state" : "Enabled" }}]';
+    mockOverridePerspectives = [
+      { id: 'dev', visibility: { state: PerspectiveVisibilityState.Enabled } },
+    ];
+
     // Mock empty old data
     useUserPreferenceMock.mockReturnValue([{}, setPinnedResourcesMock, true]);
     usePerspectivesMock.mockClear();
@@ -115,8 +135,11 @@ describe('usePinnedResources', () => {
     expect(setPinnedResourcesMock).toHaveBeenCalledTimes(0);
   });
 
-  it('should not return any pins if no pins are configured and extension donot have default pins', async () => {
-    window.SERVER_FLAGS.perspectives = '[{ "id" : "dev", "visibility": {"state" : "Enabled" }}]';
+  it('should not return any pins if no pins are configured and extension do not have default pins', async () => {
+    mockOverridePerspectives = [
+      { id: 'dev', visibility: { state: PerspectiveVisibilityState.Enabled } },
+    ];
+
     // Mock empty old data
     useUserPreferenceMock.mockReturnValue([{}, setPinnedResourcesMock, true]);
     usePerspectivesMock.mockClear();
@@ -140,8 +163,10 @@ describe('usePinnedResources', () => {
   });
 
   it('should not return any pins if pins configured is an empty array and the extension has default pins', async () => {
-    window.SERVER_FLAGS.perspectives =
-      '[{ "id" : "dev", "visibility": {"state" : "Enabled" }, "pinnedResources": []}]';
+    mockOverridePerspectives = [
+      { id: 'dev', visibility: { state: PerspectiveVisibilityState.Enabled }, pinnedResources: [] },
+    ];
+
     // Mock empty old data
     useActivePerspectiveMock.mockReturnValue(['dev']);
     useUserPreferenceMock.mockImplementation((configKey, defaultPins) => [
@@ -160,8 +185,14 @@ describe('usePinnedResources', () => {
   });
 
   it('should return default pins if pins configured is null and the extension has default pins', async () => {
-    window.SERVER_FLAGS.perspectives =
-      '[{ "id" : "dev", "visibility": {"state" : "Enabled" }, "pinnedResources": null}]';
+    mockOverridePerspectives = [
+      {
+        id: 'dev',
+        visibility: { state: PerspectiveVisibilityState.Enabled },
+        pinnedResources: null,
+      },
+    ];
+
     // Mock empty old data
     useActivePerspectiveMock.mockReturnValue(['dev']);
     useUserPreferenceMock.mockImplementation((configKey, storageKey, defaultPins) => [
@@ -184,7 +215,10 @@ describe('usePinnedResources', () => {
   });
 
   it('should return default pins from extension if there are no pinned resources configured by and the extension has default pins', async () => {
-    window.SERVER_FLAGS.perspectives = '[{ "id" : "dev", "visibility": {"state" : "Enabled" }}]';
+    mockOverridePerspectives = [
+      { id: 'dev', visibility: { state: PerspectiveVisibilityState.Enabled } },
+    ];
+
     // Mock empty old data
     useActivePerspectiveMock.mockReturnValue(['dev']);
     useUserPreferenceMock.mockImplementation((configKey, storageKey, defaultPins) => [
@@ -207,8 +241,14 @@ describe('usePinnedResources', () => {
   });
 
   it('should return customized pins if the pins are not customized by the user and the extension has default pins', async () => {
-    window.SERVER_FLAGS.perspectives =
-      '[{ "id" : "dev", "visibility": {"state" : "Enabled" }, "pinnedResources" : [{"version" : "v1", "resource" : "deployments", "group": "apps"}]}]';
+    mockOverridePerspectives = [
+      {
+        id: 'dev',
+        visibility: { state: PerspectiveVisibilityState.Enabled },
+        pinnedResources: [{ version: 'v1', resource: 'deployments', group: 'apps' }],
+      },
+    ];
+
     // Mock empty old data
     useActivePerspectiveMock.mockReturnValue(['dev']);
     useUserPreferenceMock.mockImplementation((configKey, storageKey, defaultPins) => [
@@ -227,8 +267,14 @@ describe('usePinnedResources', () => {
   });
 
   it('should return an array of pins saved in user settings for the current perspective', async () => {
-    window.SERVER_FLAGS.perspectives =
-      '[{ "id" : "dev", "visibility": {"state" : "Enabled" }, "pinnedResources" : [{"version" : "v1", "resource" : "deployments"}]}]';
+    mockOverridePerspectives = [
+      {
+        id: 'dev',
+        visibility: { state: PerspectiveVisibilityState.Enabled },
+        pinnedResources: [{ version: 'v1', resource: 'deployments' }],
+      },
+    ];
+
     // Mock user settings data
     useActivePerspectiveMock.mockReturnValue(['dev']);
     useUserPreferenceMock.mockReturnValue([
@@ -250,9 +296,18 @@ describe('usePinnedResources', () => {
     expect(setPinnedResourcesMock).toHaveBeenCalledTimes(0);
   });
 
-  it('should return configured pins and filter out pins with resources that donot exist', async () => {
-    window.SERVER_FLAGS.perspectives =
-      '[{ "id" : "dev", "visibility": {"state" : "Enabled" }, "pinnedResources" : [{"version" : "v1", "resource" : "deploymentss", "group" : "apps" },{"version" : "v1", "resource" : "configmaps", "group" : "" } ]}]';
+  it('should return configured pins and filter out pins with resources that do not exist', async () => {
+    mockOverridePerspectives = [
+      {
+        id: 'dev',
+        visibility: { state: PerspectiveVisibilityState.Enabled },
+        pinnedResources: [
+          { version: 'v1', resource: 'deploymentss', group: 'apps' },
+          { version: 'v1', resource: 'configmaps', group: '' },
+        ],
+      },
+    ];
+
     // Mock user settings data
     useActivePerspectiveMock.mockReturnValue(['dev']);
     useUserPreferenceMock.mockReturnValue([{}, setPinnedResourcesMock, true]);

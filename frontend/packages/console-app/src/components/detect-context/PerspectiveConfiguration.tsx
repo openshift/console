@@ -14,10 +14,7 @@ import {
 } from '@patternfly/react-core';
 import { safeDump } from 'js-yaml';
 import { useTranslation } from 'react-i18next';
-import type {
-  Perspective as PerspectiveExtension,
-  AccessReviewResourceAttributes,
-} from '@console/dynamic-plugin-sdk/src';
+import type { Perspective as PerspectiveExtension } from '@console/dynamic-plugin-sdk/src';
 import { isPerspective } from '@console/dynamic-plugin-sdk/src';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
@@ -29,27 +26,11 @@ import { SaveStatus } from '@console/shared/src/components/cluster-configuration
 import { useConsoleOperatorConfig } from '@console/shared/src/components/cluster-configuration/useConsoleOperatorConfig';
 import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
-
-enum PerspectiveVisibilityState {
-  Enabled = 'Enabled',
-  Disabled = 'Disabled',
-  AccessReview = 'AccessReview',
-}
-
-type PerspectiveAccessReview = {
-  required?: AccessReviewResourceAttributes[];
-  missing?: AccessReviewResourceAttributes[];
-};
-
-type PerspectiveVisibility = {
-  state: PerspectiveVisibilityState;
-  accessReview?: PerspectiveAccessReview;
-};
-
-type Perspective = {
-  id: string;
-  visibility: PerspectiveVisibility;
-};
+import type {
+  PerspectiveVisibility,
+  Perspective,
+} from '@console/shared/src/utils/override-perspectives';
+import { PerspectiveVisibilityState } from '@console/shared/src/utils/override-perspectives';
 
 type PerspectivesConsoleConfig = K8sResourceKind & {
   spec: {

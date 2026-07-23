@@ -595,10 +595,20 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 			Perspectives: []serverconfig.Perspective{},
 		},
 	}
+
 	if len(s.Perspectives) > 0 {
 		err := json.Unmarshal([]byte(s.Perspectives), &config.Customization.Perspectives)
 		if err != nil {
-			klog.Errorf("Unable to parse perspective JSON: %v", err)
+			klog.Errorf("Unable to parse perspectives JSON: %v", err)
+		} else if len(config.Customization.Perspectives) > 0 {
+			klog.Infoln("Using console perspective overrides:")
+			grouped := make(map[string][]string)
+			for _, perspective := range config.Customization.Perspectives {
+				grouped[string(perspective.Visibility.State)] = append(grouped[string(perspective.Visibility.State)], perspective.ID)
+			}
+			for visibility, ids := range grouped {
+				klog.Infof(" - [%s]: %s\n", visibility, strings.Join(ids, ", "))
+			}
 		}
 	}
 
