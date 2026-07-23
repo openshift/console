@@ -8,6 +8,11 @@ import type {
   ElementType,
 } from 'react';
 import type { K8sResourceCommon, ObjectMetadata } from '@openshift/api-types';
+import type {
+  Extension,
+  ExtensionPredicate,
+  LoadedAndResolvedExtension,
+} from '@openshift/dynamic-plugin-sdk';
 import type { QuickStartContextValues } from '@patternfly/quickstarts';
 import type { CodeEditorProps as PfCodeEditorProps } from '@patternfly/react-code-editor';
 import type { AlertVariant, ButtonProps } from '@patternfly/react-core';
@@ -28,10 +33,8 @@ import type {
   PrometheusEndpoint,
   PrometheusLabels,
   PrometheusValue,
-  ResolvedExtension,
   Selector,
 } from '../api/common-types';
-import type { Extension, ExtensionPredicate } from '../types';
 import type { CustomDataSource } from './dashboard-data-source';
 
 /* eslint-disable no-barrel-files/no-barrel-files */
@@ -263,8 +266,8 @@ export type UseK8sWatchResources = <R extends ResourcesObject>(
 ) => WatchK8sResults<R>;
 
 export type UseResolvedExtensions = <E extends Extension>(
-  ...predicates: ExtensionPredicate<E>[]
-) => [ResolvedExtension<E>[], boolean, any[]];
+  predicate: ExtensionPredicate<E>,
+) => [LoadedAndResolvedExtension<E>[], boolean, any[]];
 
 export type GetSegmentAnalytics = () => {
   // TODO: use proper Segment Analytics API type

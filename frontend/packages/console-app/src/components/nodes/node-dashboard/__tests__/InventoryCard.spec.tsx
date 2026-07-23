@@ -1,13 +1,13 @@
-import { useResolvedExtensions } from '@openshift/dynamic-plugin-sdk';
 import { render, screen } from '@testing-library/react';
+import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import { useFlag } from '@console/dynamic-plugin-sdk/src/utils/flags';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import type { NodeKind } from '@console/internal/module/k8s';
 import InventoryCard from '../InventoryCard';
 import { NodeDashboardContext } from '../NodeDashboardContext';
 
-jest.mock('@openshift/dynamic-plugin-sdk', () => ({
-  ...jest.requireActual('@openshift/dynamic-plugin-sdk'),
+jest.mock('@console/dynamic-plugin-sdk/src/api/useResolvedExtensions', () => ({
+  ...jest.requireActual('@console/dynamic-plugin-sdk/src/api/useResolvedExtensions'),
   useResolvedExtensions: jest.fn(),
 }));
 
