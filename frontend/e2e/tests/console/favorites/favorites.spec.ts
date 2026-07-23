@@ -63,9 +63,14 @@ test.describe('Favorites', { tag: ['@admin'] }, () => {
       const addFavBtn = page.getByTestId('favorite-button');
       await expect(addFavBtn).toBeVisible({ timeout: 30_000 });
       await expect(addFavBtn).not.toHaveAttribute('aria-pressed', 'true', { timeout: 10_000 });
-      await addFavBtn.click();
-      const dialog = page.getByRole('dialog');
-      await expect(dialog).toContainText('Add to favorites', { timeout: 10_000 });
+
+      await expect(async () => {
+        await addFavBtn.click();
+        await expect(page.getByRole('dialog')).toContainText('Add to favorites', {
+          timeout: 5_000,
+        });
+      }).toPass({ timeout: 30_000, intervals: [1_000, 2_000, 5_000] });
+
       await page.getByRole('button', { name: 'Save' }).click();
 
       await expect(sidebar).toContainText('Overview');
@@ -93,14 +98,22 @@ test.describe('Favorites', { tag: ['@admin'] }, () => {
         const btn = page.getByTestId('favorite-button').first();
         await expect(btn).toBeVisible({ timeout: 30_000 });
         await expect(btn).not.toHaveAttribute('aria-pressed', 'true', { timeout: 10_000 });
-        await btn.click();
-        const dialog = page.getByRole('dialog');
-        await expect(dialog).toContainText('Add to favorites', { timeout: 10_000 });
+
+        // Wrap click-and-dialog in a retry loop — the button can render before
+        // user preferences finish loading, so the first click may not open the
+        // dialog if the component is still hydrating.
+        await expect(async () => {
+          await btn.click();
+          await expect(page.getByRole('dialog')).toContainText('Add to favorites', {
+            timeout: 5_000,
+          });
+        }).toPass({ timeout: 30_000, intervals: [1_000, 2_000, 5_000] });
+
         const nameInput = page.getByTestId('input-name');
         await nameInput.clear();
         await nameInput.fill(`test-favorite-${i}`);
         await nameInput.press('Enter');
-        await expect(dialog).toBeHidden();
+        await expect(page.getByRole('dialog')).toBeHidden();
       }
 
       await page.goto('/k8s/all-namespaces/apps~v1~DaemonSet');

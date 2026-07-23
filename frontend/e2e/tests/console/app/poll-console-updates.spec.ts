@@ -19,21 +19,24 @@ const PLUGIN_MANIFEST_DEFAULT = { name: PLUGIN_NAME, version: '0.0.0' };
 const PLUGIN_MANIFEST_DEFAULT2 = { name: PLUGIN_NAME2, version: '0.0.0' };
 const PLUGIN_MANIFEST_NEW_VERSION = { name: PLUGIN_NAME, version: '1.0.0' };
 
-// Wait for the route mock to serve two check-updates responses. The component uses
-// a prev/current ref pattern and needs two poll cycles before it can detect changes.
-async function waitForBaseline(page: import('@playwright/test').Page): Promise<void> {
+// The component uses a prev/current ref pattern that needs two poll cycles to
+// initialize before it can detect changes. Start listening for two mocked
+// check-updates responses BEFORE navigating to avoid race conditions.
+function waitForBaseline(page: import('@playwright/test').Page): Promise<void> {
   let count = 0;
-  await new Promise<void>((resolve) => {
-    page.on('response', (resp) => {
-      if (
-        resp.url().includes('/api/check-updates') &&
-        resp.status() === 200 &&
-        resp.headers()['x-mock'] === '1'
-      ) {
+  return new Promise<void>((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error('waitForBaseline timed out')), 90_000);
+    const handler = (resp: import('@playwright/test').Response) => {
+      if (resp.url().includes('/api/check-updates') && resp.status() === 200) {
         count++;
-        if (count >= 2) resolve();
+        if (count >= 2) {
+          clearTimeout(timer);
+          page.off('response', handler);
+          resolve();
+        }
       }
-    });
+    };
+    page.on('response', handler);
   });
 }
 
@@ -42,7 +45,7 @@ test.describe('PollConsoleUpdates', { tag: ['@admin'] }, () => {
     let payload = UPDATES_DEFAULT;
 
     await page.route(CHECK_UPDATES_URL, (route) =>
-      route.fulfill({ json: payload, headers: { 'x-mock': '1' } }),
+      route.fulfill({ json: payload }),
     );
 
     const baseline = waitForBaseline(page);
@@ -59,7 +62,7 @@ test.describe('PollConsoleUpdates', { tag: ['@admin'] }, () => {
     let manifestAbort = true;
 
     await page.route(CHECK_UPDATES_URL, (route) =>
-      route.fulfill({ json: updatesPayload, headers: { 'x-mock': '1' } }),
+      route.fulfill({ json: updatesPayload }),
     );
     await page.route(PLUGIN_MANIFEST_URL, (route) => {
       if (manifestAbort) {
@@ -91,7 +94,7 @@ test.describe('PollConsoleUpdates', { tag: ['@admin'] }, () => {
     let manifest2Abort = true;
 
     await page.route(CHECK_UPDATES_URL, (route) =>
-      route.fulfill({ json: updatesPayload, headers: { 'x-mock': '1' } }),
+      route.fulfill({ json: updatesPayload }),
     );
     await page.route(PLUGIN_MANIFEST_URL, (route) => {
       if (manifest1Abort) {
@@ -131,7 +134,7 @@ test.describe('PollConsoleUpdates', { tag: ['@admin'] }, () => {
     let updatesPayload = UPDATES_NEW_PLUGIN;
 
     await page.route(CHECK_UPDATES_URL, (route) =>
-      route.fulfill({ json: updatesPayload, headers: { 'x-mock': '1' } }),
+      route.fulfill({ json: updatesPayload }),
     );
     await page.route(PLUGIN_MANIFEST_URL, (route) =>
       route.fulfill({ json: PLUGIN_MANIFEST_DEFAULT }),
@@ -149,7 +152,7 @@ test.describe('PollConsoleUpdates', { tag: ['@admin'] }, () => {
   test('triggers the console update toast when a plugin version changes', async ({ page }) => {
     let serveNewVersion = false;
     await page.route(CHECK_UPDATES_URL, (route) =>
-      route.fulfill({ json: UPDATES_NEW_PLUGIN, headers: { 'x-mock': '1' } }),
+      route.fulfill({ json: UPDATES_NEW_PLUGIN }),
     );
     await page.route(PLUGIN_MANIFEST_URL, (route) => {
       if (serveNewVersion) {
