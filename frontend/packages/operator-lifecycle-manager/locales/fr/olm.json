@@ -1,6 +1,6 @@
 {
   "OperatorSource": "Source de l’opérateur",
-  "CatalogSource": "Source du catalogue",
+  "CatalogSource": "CatalogSource",
   "CatalogSources": "CatalogSources",
   "PackageManifest": "Manifeste de package",
   "PackageManifests": "Manifestes de packages",
@@ -10,8 +10,8 @@
   "InstallPlans": "Plans d’installation",
   "Subscription": "Abonnement",
   "Subscriptions": "Abonnements",
-  "OperatorGroup": "Groupe d’opérateurs",
-  "OperatorGroups": "Groupes d’opérateurs",
+  "OperatorGroup": "OperatorGroup",
+  "OperatorGroups": "OperatorGroups",
   "OperatorHub": "OperatorHub",
   "OperatorHubs": "Hub d’opérateurs",
   "Operator Backed": "Soutenu par un opérateur",
