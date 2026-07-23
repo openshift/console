@@ -94,7 +94,7 @@ const registerLegacyPluginEntryCallback = () => {
 };
 
 /**
- * Loads and enables all Console plugins.
+ * Loads and enables all Console dynamic plugins.
  *
  * Precondition: {@link PluginStore} must be initialized.
  */
@@ -112,7 +112,7 @@ export const initConsolePlugins = _.once((pluginStore: PluginStore) => {
 
       if (process.env.NODE_ENV !== 'production') {
         // Expose webpack share scope object for debugging
-        window.webpackSharedScope = scope;
+        window.pluginSharedScope = scope;
       }
     })
     .then(() => {
