@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from 'react';
+import type { LoadedAndResolvedExtension, ExtensionPredicate } from '@openshift/dynamic-plugin-sdk';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import type { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import type {
@@ -6,7 +7,6 @@ import type {
   DetailsItemColumn,
 } from '@console/dynamic-plugin-sdk/src/extensions/details-item';
 import { isDetailsItem } from '@console/dynamic-plugin-sdk/src/extensions/details-item';
-import type { ResolvedExtension, ExtensionPredicate } from '@console/dynamic-plugin-sdk/src/types';
 import { referenceFor, referenceForExtensionModel } from '@console/internal/module/k8s/k8s';
 
 /**
@@ -52,4 +52,4 @@ export const useDetailsItemExtensionsForResource: UseDetailsItemExtensionsForRes
 type UseDetailsItemExtensionsForResource = (
   obj: K8sResourceCommon,
   column: DetailsItemColumn,
-) => ResolvedExtension<DetailsItem>[];
+) => LoadedAndResolvedExtension<DetailsItem>[];

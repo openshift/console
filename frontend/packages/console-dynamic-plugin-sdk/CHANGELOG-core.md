@@ -12,7 +12,12 @@ table in [Console dynamic plugins README](./README.md).
 
 ## 4.23.0-prerelease.5 - TBD
 
-- **Type breaking**: Renamed `ExtensionTypeGuard` type to `ExtensionPredicate` ([#16115], [CONSOLE-5065])
+> This release removes support for passing multiple predicates to `useResolvedExtensions` hook.
+> Consumers should call this hook once per each distinct extension type to avoid complexity associated
+> with unions of distinct extension objects.
+
+- **Type breaking**: Replace `ExtensionTypeGuard` with `ExtensionPredicate` from `@openshift/dynamic-plugin-sdk` ([#16115], [CONSOLE-5065])
+- **Breaking**: `useResolvedExtensions` hook now accepts a single predicate parameter (TODO)
 
 ## 4.23.0-prerelease.4 - 2026-07-14
 
