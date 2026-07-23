@@ -160,8 +160,8 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
     [activeQuickStartID, setAllQuickStartStates, fireTelemetryEvent],
   );
 
-  const language = getLastLanguage() || 'en';
-  const resourceBundle = i18n.getResourceBundle(language, 'console-app');
+  const language = i18n.resolvedLanguage || 'en';
+  const resourceBundle = i18n.getResourceBundle(language, 'console-app') ?? {};
   const processedResourceBundle = getProcessedResourceBundle(resourceBundle, language);
 
   // https://github.com/i18next/i18next-parser#caveats
