@@ -1,5 +1,5 @@
 import type { ReactNode, FC } from 'react';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { TextInputTypes, Grid, GridItem, Button, Alert } from '@patternfly/react-core';
 import type { FormikProps } from 'formik';
 import * as fuzzy from 'fuzzysearch';
@@ -21,7 +21,11 @@ import type { EditorType } from '@console/shared/src/components/synced-editor/ed
 import type { HelmChart, HelmActionConfigType } from '../../../types/helm-types';
 import { HelmActionType } from '../../../types/helm-types';
 import { helmActionString } from '../../../utils/helm-utils';
-import { useHelmCreateBasicAuthSecretModal } from '../url-chart/HelmCreateBasicAuthSecretModal';
+import {
+  useBasicAuthSecretDropdown,
+  CREATE_SECRET_KEY,
+  NONE_SECRET_KEY,
+} from '../url-chart/useBasicAuthSecretDropdown';
 import { useSecretResources } from '../url-chart/useSecretResources';
 import HelmChartVersionDropdown from './HelmChartVersionDropdown';
 import { useHelmReadmeModalLauncher } from './HelmReadmeModal';
@@ -77,39 +81,12 @@ const HelmInstallUpgradeForm: FC<
   setFieldValue,
 }) => {
   const { t } = useTranslation('helm-plugin');
-  const launchHelmCreateBasicAuthSecretModal = useHelmCreateBasicAuthSecretModal();
-  const [isCreateSecretModalOpen, setIsCreateSecretModalOpen] = useState(false);
-
-  const CREATE_SECRET_KEY = 'create-secret';
-  const NONE_SECRET_KEY = '__none__';
-
-  const handleSecretSave = (name: string) => {
-    setFieldValue('basicAuthSecretName', name);
-  };
-
-  const handleSecretChange = (key: string) => {
-    if (key === NONE_SECRET_KEY) {
-      window.setTimeout(() => setFieldValue('basicAuthSecretName', NONE_SECRET_KEY), 0);
-      return;
-    }
-    if (key === CREATE_SECRET_KEY && !isCreateSecretModalOpen) {
-      // ResourceDropdownField writes the selected key to form state after this callback.
-      // Defer restoring the previous secret so "create-secret" is not persisted.
-      window.setTimeout(
-        () => setFieldValue('basicAuthSecretName', values.basicAuthSecretName || ''),
-        0,
-      );
-      setIsCreateSecretModalOpen(true);
-      launchHelmCreateBasicAuthSecretModal({
-        namespace,
-        save: (name) => {
-          handleSecretSave(name);
-          setIsCreateSecretModalOpen(false);
-        },
-        onClose: () => setIsCreateSecretModalOpen(false),
-      });
-    }
-  };
+  const { handleSecretChange } = useBasicAuthSecretDropdown({
+    namespace,
+    currentSecretName: values.basicAuthSecretName,
+    setFieldValue,
+    supportNone: true,
+  });
   const { chartName, chartVersion, chartReadme, formData, formSchema, editorType } = values;
   const { type: helmAction, title, subTitle } = helmActionConfig;
   const helmReadmeModalLauncher = useHelmReadmeModalLauncher({ readme: chartReadme });

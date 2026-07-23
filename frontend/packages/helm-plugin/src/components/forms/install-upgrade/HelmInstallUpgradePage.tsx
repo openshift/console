@@ -33,6 +33,7 @@ import {
   isGoingToTopology,
 } from '../../../utils/helm-utils';
 import { getHelmActionValidationSchema } from '../../../utils/helm-validation-utils';
+import { NONE_SECRET_KEY } from '../url-chart/useBasicAuthSecretDropdown';
 import HelmChartMetaDescription from './HelmChartMetaDescription';
 import type { HelmInstallUpgradeFormData } from './HelmInstallUpgradeForm';
 import HelmInstallUpgradeForm from './HelmInstallUpgradeForm';
@@ -191,7 +192,14 @@ const HelmInstallUpgradePage: FC = () => {
       ...(chartURL ? { chart_url: chartURL } : {}), // eslint-disable-line @typescript-eslint/naming-convention
       ...(indexEntry ? { indexEntry } : { indexEntry: chartIndexEntry }),
       ...(valuesObj ? { values: valuesObj } : {}),
-      ...(values.isURLInstall ? { basic_auth_secret_name: basicAuthSecretName } : {}), // eslint-disable-line @typescript-eslint/naming-convention
+      ...(values.isURLInstall
+        ? {
+            basic_auth_secret_name:
+              helmAction === HelmActionType.Create && basicAuthSecretName === NONE_SECRET_KEY
+                ? ''
+                : basicAuthSecretName,
+          }
+        : {}), // eslint-disable-line @typescript-eslint/naming-convention
     };
 
     return config

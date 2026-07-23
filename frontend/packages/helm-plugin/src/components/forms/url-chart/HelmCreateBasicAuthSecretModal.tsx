@@ -27,7 +27,7 @@ interface HelmCreateBasicAuthSecretModalProps {
   onClose?: () => void;
 }
 
-const HelmCreateBasicAuthSecretModal: OverlayComponent<HelmCreateBasicAuthSecretModalProps> = ({
+export const HelmCreateBasicAuthSecretModal: OverlayComponent<HelmCreateBasicAuthSecretModalProps> = ({
   closeOverlay,
   namespace,
   save,
@@ -97,10 +97,13 @@ const HelmCreateBasicAuthSecretModal: OverlayComponent<HelmCreateBasicAuthSecret
     <Modal
       isOpen
       onClose={() => closeModal(true)}
-      title={t('Create authentication Secret')}
       variant={ModalVariant.medium}
+      aria-labelledby="helm-create-auth-secret-modal-title"
     >
-      <ModalHeader title={t('Create authentication Secret')} />
+      <ModalHeader
+        title={t('Create authentication Secret')}
+        labelId="helm-create-auth-secret-modal-title"
+      />
       <ModalBody>
         <Form onSubmit={onSubmit}>
           <FormGroup label={t('Secret name')} isRequired fieldId="helm-secret-name">
@@ -126,6 +129,7 @@ const HelmCreateBasicAuthSecretModal: OverlayComponent<HelmCreateBasicAuthSecret
               type="text"
               value={username}
               onChange={(_event, value) => setUsername(value)}
+              isRequired
             />
             <FormHelperText>
               <HelperText>
