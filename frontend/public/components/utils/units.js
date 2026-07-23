@@ -20,7 +20,7 @@ const TYPES = {
     divisor: 1000,
   },
   binaryBytes: {
-    units: ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB'],
+    units: ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB'],
     space: true,
     divisor: 1024,
   },
@@ -103,7 +103,8 @@ const convertValueWithUnitsToBaseValue = (value, unitArray, divisor) => {
     }
     return false;
   });
-  if (startingUnitIndex <= 0) {
+
+  if (startingUnitIndex < 0) {
     // can't parse
     return defaultReturn;
   }
@@ -302,7 +303,7 @@ validate.CPU = (value = '') => {
   return validateNumber(number) || validateCPUUnit(unit);
 };
 
-const validMemUnits = new Set(['E', 'P', 'T', 'G', 'M', 'k', 'Pi', 'Ti', 'Gi', 'Mi', 'Ki']);
+const validMemUnits = new Set(['E', 'P', 'T', 'G', 'M', 'k', 'Ei', 'Pi', 'Ti', 'Gi', 'Mi', 'Ki']);
 const validateMemUnit = (value = '') => {
   if (validMemUnits.has(value)) {
     return;
