@@ -791,6 +791,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
                   onClick={drawerToggle}
                   variant={notificationBadgeVariant}
                   count={notificationCount || 0}
+                  icon={<RhUiNotificationIcon />}
                   data-quickstart-id="qs-masthead-notifications"
                   className="co-masthead-button"
                 />
@@ -841,10 +842,9 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
                 onClick={drawerToggle}
                 variant={notificationBadgeVariant}
                 count={notificationCount}
+                icon={<RhUiNotificationIcon />}
                 data-quickstart-id="qs-masthead-notifications"
-              >
-                <RhUiNotificationIcon />
-              </NotificationBadge>
+              />
             )}
             <ToolbarItem>{renderMenu(true)}</ToolbarItem>
           </ToolbarGroup>
