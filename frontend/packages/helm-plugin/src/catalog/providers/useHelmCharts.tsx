@@ -84,7 +84,7 @@ const useHelmCharts: ExtensionHook<CatalogItem[]> = ({
                   repoList,
                 }),
                 dismissible: true,
-                timeout: true,
+                timeout: false,
               });
             } catch {
               // ignore malformed annotation
