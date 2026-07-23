@@ -361,7 +361,14 @@ const ConsolePluginStatus: FC<ConsolePluginStatusProps> = ({ csv, csvPlugins }) 
 };
 
 export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionTableRowProps>(
-  ({ activeNamespace, obj, subscription, catalogSourceMissing, lifecycleEnabled }) => {
+  ({
+    activeNamespace,
+    obj,
+    subscription,
+    catalogSourceMissing,
+    lifecycleEnabled,
+    activeColumnIDs,
+  }) => {
     const { displayName, provider, version } = obj.spec ?? {};
     const { t } = useTranslation('olm');
     const olmOperatorNamespace = operatorNamespaceFor(obj) ?? '';
@@ -386,7 +393,7 @@ export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionT
     return (
       <>
         {/* Name */}
-        <TableData className={nameColumnClass}>
+        <TableData columnID="name" columns={activeColumnIDs} className={nameColumnClass}>
           <Link
             to={route}
             className="co-clusterserviceversion-link"
@@ -403,7 +410,11 @@ export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionT
 
         {/* Operator Namespace */}
         {activeNamespace === ALL_NAMESPACES_KEY ? (
-          <TableData className={namespaceColumnClass}>
+          <TableData
+            columnID="namespace"
+            columns={activeColumnIDs}
+            className={namespaceColumnClass}
+          >
             <ResourceLink
               kind="Namespace"
               title={olmOperatorNamespace}
@@ -413,12 +424,16 @@ export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionT
         ) : null}
 
         {/* Managed Namespaces */}
-        <TableData className={managedNamespacesColumnClass}>
+        <TableData
+          columnID="managedNamespaces"
+          columns={activeColumnIDs}
+          className={managedNamespacesColumnClass}
+        >
           <ManagedNamespaces obj={obj} />
         </TableData>
 
         {/* Status */}
-        <TableData className={statusColumnClass}>
+        <TableData columnID="status" columns={activeColumnIDs} className={statusColumnClass}>
           <div className="co-clusterserviceversion-row__status">
             {catalogSourceMissing ? (
               <SourceMissingStatus />
@@ -436,7 +451,11 @@ export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionT
         </TableData>
 
         {/* Provided APIs */}
-        <TableData className={providedAPIsColumnClass}>
+        <TableData
+          columnID="providedAPIs"
+          columns={activeColumnIDs}
+          className={providedAPIsColumnClass}
+        >
           {!_.isEmpty(providedAPIs)
             ? _.take(providedAPIs, 4).map((desc) => (
                 <div key={referenceForProvidedAPI(desc)}>
@@ -458,20 +477,32 @@ export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionT
 
         {/* Cluster Compatibility */}
         {lifecycleEnabled ? (
-          <TableData className={clusterCompatibilityColumnClass}>
+          <TableData
+            columnID="clusterCompatibility"
+            columns={activeColumnIDs}
+            className={clusterCompatibilityColumnClass}
+          >
             <ClusterCompatibilityStatus compatible={compatible} />
           </TableData>
         ) : null}
 
         {/* Support Phase */}
         {lifecycleEnabled ? (
-          <TableData className={supportPhaseColumnClass}>
+          <TableData
+            columnID="supportPhase"
+            columns={activeColumnIDs}
+            className={supportPhaseColumnClass}
+          >
             <SupportPhaseBadge phase={supportPhase} />
           </TableData>
         ) : null}
 
         {/* Last Updated */}
-        <TableData className={lastUpdatedColumnClass}>
+        <TableData
+          columnID="lastUpdated"
+          columns={activeColumnIDs}
+          className={lastUpdatedColumnClass}
+        >
           {obj.status == null ? '-' : <Timestamp timestamp={obj.status.lastUpdateTime} />}
         </TableData>
 
@@ -492,6 +523,7 @@ const SubscriptionTableRow: FC<SubscriptionTableRowProps> = ({
   catalogSourceMissing,
   obj,
   lifecycleEnabled,
+  activeColumnIDs,
 }) => {
   const { t } = useTranslation('olm');
   const csvName = obj?.spec?.name;
@@ -501,7 +533,7 @@ const SubscriptionTableRow: FC<SubscriptionTableRowProps> = ({
   return (
     <>
       {/* Name */}
-      <TableData className={nameColumnClass}>
+      <TableData columnID="name" columns={activeColumnIDs} className={nameColumnClass}>
         <Link to={route}>
           <ClusterServiceVersionLogo
             icon={null}
@@ -514,36 +546,62 @@ const SubscriptionTableRow: FC<SubscriptionTableRowProps> = ({
 
       {/* Operator Namespace */}
       {activeNamespace === ALL_NAMESPACES_KEY ? (
-        <TableData className={namespaceColumnClass}>
+        <TableData columnID="namespace" columns={activeColumnIDs} className={namespaceColumnClass}>
           <ResourceLink kind="Namespace" title={namespace} name={namespace} />
         </TableData>
       ) : null}
 
       {/* Managed Namespaces */}
-      <TableData className={managedNamespacesColumnClass}>
+      <TableData
+        columnID="managedNamespaces"
+        columns={activeColumnIDs}
+        className={managedNamespacesColumnClass}
+      >
         <span className="pf-v6-u-text-color-subtle">{t('None')}</span>
       </TableData>
 
       {/* Status */}
-      <TableData className={statusColumnClass}>
+      <TableData columnID="status" columns={activeColumnIDs} className={statusColumnClass}>
         {catalogSourceMissing ? <SourceMissingStatus /> : <SubscriptionStatus subscription={obj} />}
       </TableData>
 
       {/* Provided APIs */}
-      <TableData className={providedAPIsColumnClass}>
+      <TableData
+        columnID="providedAPIs"
+        columns={activeColumnIDs}
+        className={providedAPIsColumnClass}
+      >
         <span className="pf-v6-u-text-color-subtle">{t('None')}</span>
       </TableData>
 
       {/* Cluster Compatibility */}
       {lifecycleEnabled ? (
-        <TableData className={clusterCompatibilityColumnClass}>-</TableData>
+        <TableData
+          columnID="clusterCompatibility"
+          columns={activeColumnIDs}
+          className={clusterCompatibilityColumnClass}
+        >
+          -
+        </TableData>
       ) : null}
 
       {/* Support Phase */}
-      {lifecycleEnabled ? <TableData className={supportPhaseColumnClass}>-</TableData> : null}
+      {lifecycleEnabled ? (
+        <TableData
+          columnID="supportPhase"
+          columns={activeColumnIDs}
+          className={supportPhaseColumnClass}
+        >
+          -
+        </TableData>
+      ) : null}
 
       {/* Last Updated */}
-      <TableData className={lastUpdatedColumnClass}>
+      <TableData
+        columnID="lastUpdated"
+        columns={activeColumnIDs}
+        className={lastUpdatedColumnClass}
+      >
         {obj.status == null ? '-' : <Timestamp timestamp={obj.status.lastUpdated} />}
       </TableData>
 
@@ -558,7 +616,11 @@ const SubscriptionTableRow: FC<SubscriptionTableRowProps> = ({
   );
 };
 
-const InstalledOperatorTableRow: FC<InstalledOperatorTableRowProps> = ({ obj, customData }) => {
+const InstalledOperatorTableRow: FC<InstalledOperatorTableRowProps> = ({
+  obj,
+  columns,
+  customData,
+}) => {
   const { catalogSources, subscriptions, activeNamespace, lifecycleEnabled } = customData;
   const subscription = isCSV(obj)
     ? subscriptionForCSV(subscriptions, obj as ClusterServiceVersionKind)
@@ -571,6 +633,8 @@ const InstalledOperatorTableRow: FC<InstalledOperatorTableRowProps> = ({ obj, cu
     !catalogSourceForSubscription(catalogSources, subscription) &&
     !isPackageServer(obj);
 
+  const activeColumnIDs = useMemo(() => new Set(columns?.map((c) => c.id)), [columns]);
+
   return isCSV(obj) ? (
     <ClusterServiceVersionTableRow
       activeNamespace={activeNamespace}
@@ -578,6 +642,7 @@ const InstalledOperatorTableRow: FC<InstalledOperatorTableRowProps> = ({ obj, cu
       obj={obj as ClusterServiceVersionKind}
       subscription={subscription}
       lifecycleEnabled={lifecycleEnabled}
+      activeColumnIDs={activeColumnIDs}
     />
   ) : (
     <SubscriptionTableRow
@@ -585,6 +650,7 @@ const InstalledOperatorTableRow: FC<InstalledOperatorTableRowProps> = ({ obj, cu
       catalogSourceMissing={catalogSourceMissing}
       obj={subscription as SubscriptionKind}
       lifecycleEnabled={lifecycleEnabled}
+      activeColumnIDs={activeColumnIDs}
     />
   );
 };
@@ -1549,6 +1615,7 @@ export type ClusterServiceVersionTableRowProps = {
   subscription: SubscriptionKind;
   activeNamespace?: string;
   lifecycleEnabled?: boolean;
+  activeColumnIDs?: Set<string>;
 };
 
 type SubscriptionTableRowProps = {
@@ -1556,6 +1623,7 @@ type SubscriptionTableRowProps = {
   catalogSourceMissing: boolean;
   activeNamespace?: string;
   lifecycleEnabled?: boolean;
+  activeColumnIDs?: Set<string>;
 };
 
 type ManagedNamespacesProps = {
