@@ -262,6 +262,12 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
   ) {
     selectedTargetNamespace = targetNamespace || '';
   }
+  const canCreateSubscription = useAccessReview({
+    group: SubscriptionModel.apiGroup,
+    resource: SubscriptionModel.plural,
+    verb: 'create',
+    namespace: selectedTargetNamespace,
+  });
 
   const isSuggestedNamespaceSelected =
     operatorSuggestedNamespace && operatorSuggestedNamespace === selectedTargetNamespace;
@@ -1176,7 +1182,7 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
               <Button
                 data-test="install-operator"
                 onClick={() => submit()}
-                isDisabled={formValid()}
+                isDisabled={formValid() || !canCreateSubscription}
                 variant="primary"
               >
                 {t('Install')}

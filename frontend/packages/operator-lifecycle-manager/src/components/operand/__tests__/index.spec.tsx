@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { screen } from '@testing-library/react';
 import * as _ from 'lodash';
 import * as ReactRouter from 'react-router';
+import { useAccessReviewAllowed } from '@console/dynamic-plugin-sdk';
 import { DetailsPage } from '@console/internal/components/factory';
 import type {
   CustomResourceDefinitionKind,
@@ -22,6 +23,11 @@ import {
 } from '../index';
 
 jest.mock('@patternfly/react-topology', () => ({}));
+
+jest.mock('@console/dynamic-plugin-sdk', () => ({
+  ...jest.requireActual('@console/dynamic-plugin-sdk'),
+  useAccessReviewAllowed: jest.fn(() => true),
+}));
 
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => {
   const actual = jest.requireActual('@console/internal/components/utils/k8s-watch-hook');
@@ -431,5 +437,13 @@ describe('ProvidedAPIPage', () => {
     renderWithProviders(<ProvidedAPIPage kind="TestResource" csv={testClusterServiceVersion} />);
 
     expect(screen.getByText('Create Test Resource')).toBeVisible();
+  });
+
+  it('hides create button when user lacks create permission on the operand resource', () => {
+    (useAccessReviewAllowed as jest.Mock).mockReturnValue(false);
+
+    renderWithProviders(<ProvidedAPIPage kind="TestResource" csv={testClusterServiceVersion} />);
+
+    expect(screen.queryByText('Create Test Resource')).not.toBeInTheDocument();
   });
 });
