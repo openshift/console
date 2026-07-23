@@ -125,11 +125,18 @@ export default defineConfig({
       testMatch: 'teardown.setup.ts',
     },
 
+    {
+      name: 'knative-setup',
+      testDir: path.resolve(__dirname, 'e2e', 'setup'),
+      testMatch: 'knative.setup.ts',
+      dependencies: ['cluster-setup'],
+    },
+
     ...packages.map((pkg) => ({
       name: pkg,
       testDir: path.resolve(__dirname, 'e2e', 'tests', pkg),
       testIgnore: '**/developer/**',
-      dependencies: ['admin-auth'],
+      dependencies: pkg === 'knative' ? ['admin-auth', 'knative-setup'] : ['admin-auth'],
       use: {
         ...chrome,
         storageState: adminStorageState,

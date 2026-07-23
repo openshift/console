@@ -72,6 +72,7 @@ const TagsModal = (props: TagsModalProps) => {
       <ModalHeader
         title={t('Edit annotations')}
         labelId="annotations-modal-title"
+        data-test="modal-title"
         data-test-id="modal-title"
       />
       <ModalBody>

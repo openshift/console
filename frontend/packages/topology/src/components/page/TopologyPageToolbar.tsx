@@ -72,8 +72,8 @@ const TopologyPageToolbar: FC<TopologyPageToolbarProps> = observer(function Topo
           variant="link"
           aria-label={viewChangeTooltipContent}
           className="pf-m-plain odc-topology__view-switcher"
-          data-test-id="topology-switcher-view"
           data-test="topology-switcher-view"
+          data-test-id="topology-switcher-view"
           isDisabled={isEmptyModel}
           onClick={() =>
             onViewChange(showGraphView ? TopologyViewType.list : TopologyViewType.graph)

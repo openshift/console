@@ -41,6 +41,7 @@ const ImportSampleForm: FC<Props> = ({
               'A unique name given to the component that will be used to name associated resources.',
             )}
             data-test-id="application-form-app-name"
+            data-test="application-form-app-name"
             required
           />
           <BuilderImageTagSelector

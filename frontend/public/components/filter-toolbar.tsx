@@ -390,7 +390,7 @@ export const FilterToolbar: FC<FilterToolbarProps> = ({
                       {acc}
                     </ToolbarFilter>
                   ),
-                  <div data-test-id="filter-dropdown-toggle">
+                  <div data-test="filter-dropdown-toggle" data-test-id="filter-dropdown-toggle">
                     <Select
                       role="menu"
                       toggle={(toggleRef: Ref<MenuToggleElement>) => (

@@ -651,6 +651,7 @@ const GitSection: FC<GitSectionProps> = ({
           resetFields();
           debouncedHandleGitUrlChange(e.target.value.trim(), values.git.ref, values.git.dir);
         }}
+        data-test="git-form-input-url"
         data-test-id="git-form-input-url"
         required
         isDisabled={formType === 'sample' && imageStreamTagSampleRepo}
