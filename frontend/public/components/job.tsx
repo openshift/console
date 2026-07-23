@@ -27,6 +27,7 @@ import { LoadingBox } from './utils/status-box';
 import { PodsComponent, navFactory } from './utils/horizontal-nav';
 import { ResourceLink } from './utils/resource-link';
 import { ResourceSummary } from './utils/details-page';
+import { Selector } from './utils/selector';
 import { SectionHeading } from './utils/headings';
 
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
@@ -60,6 +61,7 @@ const tableColumnInfo = [
   { id: 'name' },
   { id: 'namespace' },
   { id: 'labels' },
+  { id: 'selector' },
   { id: 'completions' },
   { id: 'type' },
   { id: 'created' },
@@ -102,15 +104,18 @@ const getDataViewRows: GetDataViewRows<JobKind> = (data, columns) => {
         cell: <LabelList kind={kind} labels={obj.metadata.labels} />,
       },
       [tableColumnInfo[3].id]: {
-        cell: <Completions obj={obj} completions={completions} />,
+        cell: <Selector selector={obj.spec.selector} namespace={namespace} />,
       },
       [tableColumnInfo[4].id]: {
-        cell: type,
+        cell: <Completions obj={obj} completions={completions} />,
       },
       [tableColumnInfo[5].id]: {
-        cell: <Timestamp timestamp={obj.metadata.creationTimestamp} />,
+        cell: type,
       },
       [tableColumnInfo[6].id]: {
+        cell: <Timestamp timestamp={obj.metadata.creationTimestamp} />,
+      },
+      [tableColumnInfo[7].id]: {
         cell: <LazyActionMenu context={context} />,
         props: actionsCellProps,
       },
@@ -271,37 +276,46 @@ const useJobsColumns = (): {
         },
       },
       {
-        title: t('Completions'),
+        title: t('Pod selector'),
         id: tableColumnInfo[3].id,
-        sort: (data, direction) =>
-          data.sort(sortResourceByValue<JobKind>(direction, sorts.jobCompletionsSucceeded)),
+        sort: 'spec.selector',
         resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
           modifier: 'nowrap',
         },
       },
       {
-        title: t('Type'),
+        title: t('Completions'),
         id: tableColumnInfo[4].id,
         sort: (data, direction) =>
-          data.sort(sortResourceByValue<JobKind>(direction, sorts.jobType)),
+          data.sort(sortResourceByValue<JobKind>(direction, sorts.jobCompletionsSucceeded)),
         resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
           modifier: 'nowrap',
         },
       },
       {
-        title: t('Created'),
+        title: t('Type'),
         id: tableColumnInfo[5].id,
-        sort: 'metadata.creationTimestamp',
+        sort: (data, direction) =>
+          data.sort(sortResourceByValue<JobKind>(direction, sorts.jobType)),
         resizableProps: getResizableProps(tableColumnInfo[5].id),
         props: {
           modifier: 'nowrap',
         },
       },
       {
-        title: '',
+        title: t('Created'),
         id: tableColumnInfo[6].id,
+        sort: 'metadata.creationTimestamp',
+        resizableProps: getResizableProps(tableColumnInfo[6].id),
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: '',
+        id: tableColumnInfo[7].id,
         props: {
           ...actionsCellProps,
         },
