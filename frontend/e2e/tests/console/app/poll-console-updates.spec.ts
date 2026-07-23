@@ -19,128 +19,154 @@ const PLUGIN_MANIFEST_DEFAULT = { name: PLUGIN_NAME, version: '0.0.0' };
 const PLUGIN_MANIFEST_DEFAULT2 = { name: PLUGIN_NAME2, version: '0.0.0' };
 const PLUGIN_MANIFEST_NEW_VERSION = { name: PLUGIN_NAME, version: '1.0.0' };
 
+// The component uses a prev/current ref pattern that needs two poll cycles to
+// initialize before it can detect changes. Start listening for two mocked
+// check-updates responses BEFORE navigating to avoid race conditions.
+function waitForBaseline(page: import('@playwright/test').Page): Promise<void> {
+  let count = 0;
+  return new Promise<void>((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error('waitForBaseline timed out')), 90_000);
+    const handler = (resp: import('@playwright/test').Response) => {
+      if (resp.url().includes('/api/check-updates') && resp.status() === 200) {
+        count++;
+        if (count >= 2) {
+          clearTimeout(timer);
+          page.off('response', handler);
+          resolve();
+        }
+      }
+    };
+    page.on('response', handler);
+  });
+}
+
 test.describe('PollConsoleUpdates', { tag: ['@admin'] }, () => {
   test('triggers the console update toast when consoleCommit changes', async ({ page }) => {
-    let resolveFirst: () => void;
-    const firstIntercepted = new Promise<void>((r) => {
-      resolveFirst = r;
-    });
-
-    await page.route(CHECK_UPDATES_URL, async (route) => {
-      await route.fulfill({ json: UPDATES_DEFAULT });
-      resolveFirst();
-    });
-    await page.goto('/');
-    await firstIntercepted;
+    let payload = UPDATES_DEFAULT;
 
     await page.route(CHECK_UPDATES_URL, (route) =>
-      route.fulfill({ json: UPDATES_NEW_COMMIT }),
+      route.fulfill({ json: payload }),
     );
 
-    await expect(page.getByTestId('refresh-web-console')).toBeVisible({ timeout: 300_000 });
+    const baseline = waitForBaseline(page);
+    await page.goto('/');
+    await baseline;
+
+    payload = UPDATES_NEW_COMMIT;
+
+    await expect(page.getByTestId('refresh-web-console')).toBeVisible({ timeout: 60_000 });
   });
 
   test('triggers the console update toast when a plugin is added', async ({ page }) => {
-    let resolveDefault: () => void;
-    const defaultIntercepted = new Promise<void>((r) => {
-      resolveDefault = r;
-    });
+    let updatesPayload = UPDATES_DEFAULT;
+    let manifestAbort = true;
 
-    await page.route(CHECK_UPDATES_URL, async (route) => {
-      await route.fulfill({ json: UPDATES_DEFAULT });
-      resolveDefault();
-    });
-    await page.goto('/');
-    await defaultIntercepted;
-
-    await page.route(PLUGIN_MANIFEST_URL, (route) => route.abort());
     await page.route(CHECK_UPDATES_URL, (route) =>
-      route.fulfill({ json: UPDATES_NEW_PLUGIN }),
+      route.fulfill({ json: updatesPayload }),
     );
+    await page.route(PLUGIN_MANIFEST_URL, (route) => {
+      if (manifestAbort) {
+        return route.abort();
+      }
+      return route.fulfill({ json: PLUGIN_MANIFEST_DEFAULT });
+    });
+
+    const baseline = waitForBaseline(page);
+    await page.goto('/');
+    await baseline;
+
+    updatesPayload = UPDATES_NEW_PLUGIN;
 
     await expect(page.getByTestId('refresh-web-console')).not.toBeAttached({
       timeout: 10_000,
     });
 
-    await page.route(PLUGIN_MANIFEST_URL, (route) =>
-      route.fulfill({ json: PLUGIN_MANIFEST_DEFAULT }),
-    );
+    manifestAbort = false;
 
-    await expect(page.getByTestId('refresh-web-console')).toBeVisible({ timeout: 300_000 });
+    await expect(page.getByTestId('refresh-web-console')).toBeVisible({ timeout: 120_000 });
   });
 
   test('triggers the console update toast when a plugin is added and a different plugin endpoint is erroring', async ({
     page,
   }) => {
-    await page.route(PLUGIN_MANIFEST_URL, (route) => route.abort());
+    let updatesPayload = UPDATES_NEW_PLUGIN;
+    let manifest1Abort = true;
+    let manifest2Abort = true;
+
     await page.route(CHECK_UPDATES_URL, (route) =>
-      route.fulfill({ json: UPDATES_NEW_PLUGIN }),
+      route.fulfill({ json: updatesPayload }),
     );
+    await page.route(PLUGIN_MANIFEST_URL, (route) => {
+      if (manifest1Abort) {
+        return route.abort();
+      }
+      return route.fulfill({ json: PLUGIN_MANIFEST_DEFAULT });
+    });
+    await page.route(PLUGIN_MANIFEST_URL2, (route) => {
+      if (manifest2Abort) {
+        return route.abort();
+      }
+      return route.fulfill({ json: PLUGIN_MANIFEST_DEFAULT2 });
+    });
+
+    const baseline = waitForBaseline(page);
     await page.goto('/');
+    await baseline;
 
-    // Wait for the first check-updates poll to establish baseline state
+    await expect(page.getByTestId('refresh-web-console')).not.toBeAttached({
+      timeout: 10_000,
+    });
+
+    updatesPayload = UPDATES_NEW_PLUGIN2;
+
     await page.waitForResponse((resp) => resp.url().includes('/api/check-updates'));
 
     await expect(page.getByTestId('refresh-web-console')).not.toBeAttached({
       timeout: 10_000,
     });
 
-    // Now introduce a second plugin — plugin1 manifest still errors, plugin2 manifest also errors
-    await page.route(PLUGIN_MANIFEST_URL2, (route) => route.abort());
-    await page.route(CHECK_UPDATES_URL, (route) =>
-      route.fulfill({ json: UPDATES_NEW_PLUGIN2 }),
-    );
+    manifest2Abort = false;
 
-    // Wait for the app to poll and see the new plugin list
-    await page.waitForResponse((resp) => resp.url().includes('/api/check-updates'));
-
-    await expect(page.getByTestId('refresh-web-console')).not.toBeAttached({
-      timeout: 10_000,
-    });
-
-    // Make plugin2 manifest succeed — toast should appear
-    await page.route(PLUGIN_MANIFEST_URL2, (route) =>
-      route.fulfill({ json: PLUGIN_MANIFEST_DEFAULT2 }),
-    );
-
-    await expect(page.getByTestId('refresh-web-console')).toBeVisible({ timeout: 300_000 });
+    await expect(page.getByTestId('refresh-web-console')).toBeVisible({ timeout: 120_000 });
   });
 
   test('triggers the console update toast when a plugin is removed', async ({ page }) => {
+    let updatesPayload = UPDATES_NEW_PLUGIN;
+
     await page.route(CHECK_UPDATES_URL, (route) =>
-      route.fulfill({ json: UPDATES_NEW_PLUGIN }),
+      route.fulfill({ json: updatesPayload }),
     );
     await page.route(PLUGIN_MANIFEST_URL, (route) =>
       route.fulfill({ json: PLUGIN_MANIFEST_DEFAULT }),
     );
+
+    const baseline = waitForBaseline(page);
     await page.goto('/');
+    await baseline;
 
-    await page.waitForResponse((resp) => resp.url().includes('/api/check-updates'));
+    updatesPayload = UPDATES_DEFAULT;
 
-    await page.route(CHECK_UPDATES_URL, (route) =>
-      route.fulfill({ json: UPDATES_DEFAULT }),
-    );
-
-    await expect(page.getByTestId('refresh-web-console')).toBeVisible({ timeout: 300_000 });
+    await expect(page.getByTestId('refresh-web-console')).toBeVisible({ timeout: 60_000 });
   });
 
   test('triggers the console update toast when a plugin version changes', async ({ page }) => {
-    // Serve the old version for the first 2 manifest fetches, then switch to the new version.
-    // The component needs at least one render cycle with the old version recorded as
-    // prevPluginManifestsData before it can detect the version change.
-    let manifestFetchCount = 0;
+    let serveNewVersion = false;
     await page.route(CHECK_UPDATES_URL, (route) =>
       route.fulfill({ json: UPDATES_NEW_PLUGIN }),
     );
     await page.route(PLUGIN_MANIFEST_URL, (route) => {
-      manifestFetchCount++;
-      if (manifestFetchCount <= 2) {
-        return route.fulfill({ json: PLUGIN_MANIFEST_DEFAULT });
+      if (serveNewVersion) {
+        return route.fulfill({ json: PLUGIN_MANIFEST_NEW_VERSION });
       }
-      return route.fulfill({ json: PLUGIN_MANIFEST_NEW_VERSION });
+      return route.fulfill({ json: PLUGIN_MANIFEST_DEFAULT });
     });
-    await page.goto('/');
 
-    await expect(page.getByTestId('refresh-web-console')).toBeVisible({ timeout: 300_000 });
+    const baseline = waitForBaseline(page);
+    await page.goto('/');
+    await baseline;
+
+    serveNewVersion = true;
+
+    await expect(page.getByTestId('refresh-web-console')).toBeVisible({ timeout: 120_000 });
   });
 });

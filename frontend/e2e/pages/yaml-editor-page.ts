@@ -17,7 +17,9 @@ export class YamlEditorPage extends BasePage {
   }
 
   async waitForEditorReady(): Promise<void> {
-    await expect(this.codeEditor).toBeVisible({ timeout: 30_000 });
+    const mounting = this.page.getByTestId('code-editor-mounting');
+    await expect(mounting.or(this.codeEditor)).toBeVisible({ timeout: 60_000 });
+    await expect(this.codeEditor).toBeVisible({ timeout: 60_000 });
   }
 
   async waitForSidebarLoaded(): Promise<void> {
