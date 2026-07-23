@@ -2,6 +2,7 @@ import type { ReactNode, FC } from 'react';
 import { useMemo } from 'react';
 import { TextInputTypes, Grid, GridItem, Button, Alert } from '@patternfly/react-core';
 import type { FormikProps } from 'formik';
+import * as fuzzy from 'fuzzysearch';
 import type { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
@@ -14,11 +15,18 @@ import { FormHeader } from '@console/shared/src/components/form-utils/FormHeader
 import { CodeEditorField } from '@console/shared/src/components/formik-fields/CodeEditorField';
 import { DynamicFormField } from '@console/shared/src/components/formik-fields/DynamicFormField';
 import { InputField } from '@console/shared/src/components/formik-fields/InputField';
+import { ResourceDropdownField } from '@console/shared/src/components/formik-fields/ResourceDropdownField';
 import { SyncedEditorField } from '@console/shared/src/components/formik-fields/SyncedEditorField';
 import type { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import type { HelmChart, HelmActionConfigType } from '../../../types/helm-types';
 import { HelmActionType } from '../../../types/helm-types';
 import { helmActionString } from '../../../utils/helm-utils';
+import {
+  useBasicAuthSecretDropdown,
+  CREATE_SECRET_KEY,
+  NONE_SECRET_KEY,
+} from '../url-chart/useBasicAuthSecretDropdown';
+import { useSecretResources } from '../url-chart/useSecretResources';
 import HelmChartVersionDropdown from './HelmChartVersionDropdown';
 import { useHelmReadmeModalLauncher } from './HelmReadmeModal';
 
@@ -35,6 +43,8 @@ export type HelmInstallUpgradeFormData = {
   formData: any;
   formSchema: JSONSchema7;
   editorType: EditorType;
+  basicAuthSecretName?: string;
+  isURLInstall?: boolean;
 };
 
 interface HelmInstallUpgradeFormProps {
@@ -68,11 +78,34 @@ const HelmInstallUpgradeForm: FC<
   chartIndexEntry,
   annotatedName,
   providerName,
+  setFieldValue,
 }) => {
   const { t } = useTranslation('helm-plugin');
+  const { handleSecretChange } = useBasicAuthSecretDropdown({
+    namespace,
+    currentSecretName: values.basicAuthSecretName,
+    setFieldValue,
+    supportNone: true,
+  });
   const { chartName, chartVersion, chartReadme, formData, formSchema, editorType } = values;
   const { type: helmAction, title, subTitle } = helmActionConfig;
   const helmReadmeModalLauncher = useHelmReadmeModalLauncher({ readme: chartReadme });
+  const showAuthSecret = values.isURLInstall;
+  const secretResources = useSecretResources(namespace);
+  const autocompleteFilter = (strText: string, item: any): boolean =>
+    fuzzy(strText, item?.props?.name);
+  const secretMissing = useMemo(() => {
+    if (
+      !showAuthSecret ||
+      !values.basicAuthSecretName ||
+      values.basicAuthSecretName === NONE_SECRET_KEY ||
+      !secretResources[0]?.loaded
+    ) {
+      return false;
+    }
+    const secrets = secretResources[0]?.data ?? [];
+    return !secrets.some((s) => s?.metadata?.name === values.basicAuthSecretName);
+  }, [showAuthSecret, secretResources, values.basicAuthSecretName]);
   const isSubmitDisabled =
     (helmAction === HelmActionType.Upgrade && !dirty) ||
     isSubmitting ||
@@ -162,6 +195,47 @@ const HelmInstallUpgradeForm: FC<
                 providerName={providerName}
               />
             </GridItem>
+            {showAuthSecret && (
+              <GridItem xl={5} lg={4} md={12}>
+                <ResourceDropdownField
+                  name="basicAuthSecretName"
+                  label={t('Secret for Basic authentication')}
+                  resources={secretResources}
+                  dataSelector={['metadata', 'name']}
+                  fullWidth
+                  placeholder={
+                    helmAction === HelmActionType.Upgrade ? t('None') : t('Select a secret')
+                  }
+                  showBadge
+                  autocompleteFilter={autocompleteFilter}
+                  actionItems={[
+                    {
+                      actionTitle: t('None'),
+                      actionKey: NONE_SECRET_KEY,
+                    },
+                    {
+                      actionTitle: t('Create Secret'),
+                      actionKey: CREATE_SECRET_KEY,
+                    },
+                  ]}
+                  onChange={handleSecretChange}
+                  helpText={t(
+                    'Secret with "username" and "password" keys for OCI/HTTP(S) authentication.',
+                  )}
+                />
+                {secretMissing && (
+                  <Alert
+                    variant="warning"
+                    isInline
+                    isPlain
+                    title={t(
+                      'Secret "{{secretName}}" was not found in this namespace. Select an existing secret or create a new one.',
+                      { secretName: values.basicAuthSecretName },
+                    )}
+                  />
+                )}
+              </GridItem>
+            )}
           </Grid>
         </FormSection>
         {!chartError &&
