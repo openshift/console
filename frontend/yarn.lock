@@ -3139,13 +3139,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@openshift/dynamic-plugin-sdk-webpack@npm:^5.2.0":
-  version: 5.2.0
-  resolution: "@openshift/dynamic-plugin-sdk-webpack@npm:5.2.0"
+"@openshift/dynamic-plugin-sdk-webpack@npm:^5.3.0":
+  version: 5.3.0
+  resolution: "@openshift/dynamic-plugin-sdk-webpack@npm:5.3.0"
   dependencies:
     lodash: "npm:^4.17.23"
     semver: "npm:^7.7.3"
-    yup: "npm:^1.7.1"
+    zod: "npm:^3.25.67"
   peerDependencies:
     "@rspack/core": ^2.0.8
     webpack: ^5.100.0
@@ -3154,21 +3154,21 @@ __metadata:
       optional: true
     webpack:
       optional: true
-  checksum: 10c0/8ccd43d74c4de9c76b0583ee35b919be4327ffe8101343b88e5245ffb287d71a7a17d0c264dfd9bfe88b6361147d3c0e7641aeea97990ee26b7e06dc0640493b
+  checksum: 10c0/7294d01156d86eab453a88fe663145c8c769e1886e0e517159fe7b008827274ab53fe70788c343bbe93cf2e0c20098fb9b59313409e72c9a7060a2c1288ada30
   languageName: node
   linkType: hard
 
-"@openshift/dynamic-plugin-sdk@npm:^8.2.0":
-  version: 8.2.0
-  resolution: "@openshift/dynamic-plugin-sdk@npm:8.2.0"
+"@openshift/dynamic-plugin-sdk@npm:^9.0.0":
+  version: 9.0.0
+  resolution: "@openshift/dynamic-plugin-sdk@npm:9.0.0"
   dependencies:
     lodash: "npm:^4.17.23"
     semver: "npm:^7.7.3"
     uuid: "npm:^8.3.2"
-    yup: "npm:^1.7.1"
+    zod: "npm:^3.25.67"
   peerDependencies:
     react: ^18 || ^19
-  checksum: 10c0/a9e3e1a145014a13310acd4630c7a2b7a7545b6c089e1d41e99ceaec061c1a270051d44bd26ddd09ec61bb02533ecfab55663cedb41a20d63acf824067eb63ab
+  checksum: 10c0/29de4ecd6811d621d0b83c55aec3e04371f94f26f33b1544bedcf20c9c4e6ed825d1cf3d6190c7292f840c35490f2c84450220874b43c01a29edf03d500b17cd
   languageName: node
   linkType: hard
 
@@ -16290,8 +16290,8 @@ __metadata:
     "@kubernetes/client-node": "npm:^1.4.0"
     "@monaco-editor/react": "npm:^4.7.0"
     "@openshift/api-types": "npm:^1.0.0"
-    "@openshift/dynamic-plugin-sdk": "npm:^8.2.0"
-    "@openshift/dynamic-plugin-sdk-webpack": "npm:^5.2.0"
+    "@openshift/dynamic-plugin-sdk": "npm:^9.0.0"
+    "@openshift/dynamic-plugin-sdk-webpack": "npm:^5.3.0"
     "@patternfly/patternfly": "npm:~6.6.0"
     "@patternfly/quickstarts": "npm:~6.6.0"
     "@patternfly/react-catalog-view-extension": "npm:~6.5.0"
@@ -22219,6 +22219,13 @@ __metadata:
   version: 3.23.8
   resolution: "zod@npm:3.23.8"
   checksum: 10c0/8f14c87d6b1b53c944c25ce7a28616896319d95bc46a9660fe441adc0ed0a81253b02b5abdaeffedbeb23bdd25a0bf1c29d2c12dd919aef6447652dd295e3e69
+  languageName: node
+  linkType: hard
+
+"zod@npm:^3.25.67":
+  version: 3.25.76
+  resolution: "zod@npm:3.25.76"
+  checksum: 10c0/5718ec35e3c40b600316c5b4c5e4976f7fee68151bc8f8d90ec18a469be9571f072e1bbaace10f1e85cf8892ea12d90821b200e980ab46916a6166a4260a983c
   languageName: node
   linkType: hard
 

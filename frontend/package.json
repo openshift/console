@@ -65,8 +65,8 @@
   "dependencies": {
     "@monaco-editor/react": "^4.7.0",
     "@openshift/api-types": "^1.0.0",
-    "@openshift/dynamic-plugin-sdk": "^8.2.0",
-    "@openshift/dynamic-plugin-sdk-webpack": "^5.2.0",
+    "@openshift/dynamic-plugin-sdk": "^9.0.0",
+    "@openshift/dynamic-plugin-sdk-webpack": "^5.3.0",
     "@patternfly/patternfly": "~6.6.0",
     "@patternfly/quickstarts": "~6.6.0",
     "@patternfly/react-catalog-view-extension": "~6.5.0",

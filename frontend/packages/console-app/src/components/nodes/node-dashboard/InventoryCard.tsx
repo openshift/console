@@ -1,9 +1,9 @@
 import type { ComponentType, FC } from 'react';
 import { useMemo, useContext } from 'react';
-import { useResolvedExtensions } from '@openshift/dynamic-plugin-sdk';
 import { Card, CardBody, CardHeader, CardTitle, Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { FLAG_NODE_MGMT_V1 } from '@console/app/src/consts';
+import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import type { NodeInventoryExtensionItem } from '@console/dynamic-plugin-sdk/src/extensions/node';
 import { isNodeInventoryItem } from '@console/dynamic-plugin-sdk/src/extensions/node';
 import { useFlag } from '@console/dynamic-plugin-sdk/src/utils/flags';
