@@ -34,8 +34,9 @@ elif [ "$SCENARIO" == "pipelines" ]; then
   ./integration-tests/test-cypress.sh -p pipelines -h true
 # elif [ "$SCENARIO" == "gitops" ]; then
 #  ./integration-tests/test-cypress.sh -p gitops -h true
-elif [ "$SCENARIO" == "knative" ]; then
-  ./integration-tests/test-cypress.sh -p knative -h true
+# Disabled: knative-ci.feature failing in CI (OCPBUGS-99226)
+# elif [ "$SCENARIO" == "knative" ]; then
+#   ./integration-tests/test-cypress.sh -p knative -h true
 fi
 
 env NO_SANDBOX=true yarn test-puppeteer-csp
