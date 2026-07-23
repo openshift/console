@@ -765,7 +765,7 @@ func main() {
 		klog.Info("HTTP/2 enabled")
 	}
 
-	listener, err := listen(listenURL.Scheme, listenURL.Host, *fTLSCertFile, *fTLSKeyFile)
+	listener, err := listen(listenURL.Scheme, listenURL.Host, *fTLSCertFile, *fTLSKeyFile, cfg.ServingInfo.MinTLSVersion, cfg.ServingInfo.CipherSuites)
 	if err != nil {
 		klog.Fatalf("error getting listener, %v", err)
 	}
@@ -804,7 +804,7 @@ func main() {
 	httpsrv.Serve(listener)
 }
 
-func listen(scheme, host, certFile, keyFile string) (net.Listener, error) {
+func listen(scheme, host, certFile, keyFile, minTLSVersion string, cipherSuites []string) (net.Listener, error) {
 	klog.Infof("Binding to %s...", host)
 	if scheme == "http" {
 		klog.Info("Not using TLS")
@@ -822,5 +822,26 @@ func listen(scheme, host, certFile, keyFile string) (net.Listener, error) {
 			return &cert, nil
 		},
 	}
+
+	if minTLSVersion != "" {
+		minVersion, err := oscrypto.TLSVersion(minTLSVersion)
+		if err != nil {
+			return nil, fmt.Errorf("invalid minTLSVersion %q: %w", minTLSVersion, err)
+		}
+		tlsConfig.MinVersion = minVersion
+	}
+
+	if len(cipherSuites) > 0 {
+		ciphers := make([]uint16, 0, len(cipherSuites))
+		for _, cipherName := range cipherSuites {
+			cipher, err := oscrypto.CipherSuite(cipherName)
+			if err != nil {
+				return nil, fmt.Errorf("invalid cipher suite %q: %w", cipherName, err)
+			}
+			ciphers = append(ciphers, cipher)
+		}
+		tlsConfig.CipherSuites = ciphers
+	}
+
 	return tls.Listen("tcp", host, tlsConfig)
 }
