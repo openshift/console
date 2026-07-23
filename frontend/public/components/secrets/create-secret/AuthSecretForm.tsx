@@ -73,11 +73,16 @@ export const AuthSecretForm: FC<SecretSubFormProps> = ({
             <SelectList>
               <SelectOption
                 value={SecretType.basicAuth}
+                data-test={SecretType.basicAuth}
                 data-test-dropdown-menu={SecretType.basicAuth}
               >
                 {t('Basic authentication')}
               </SelectOption>
-              <SelectOption value={SecretType.sshAuth} data-test-dropdown-menu={SecretType.sshAuth}>
+              <SelectOption
+                value={SecretType.sshAuth}
+                data-test={SecretType.sshAuth}
+                data-test-dropdown-menu={SecretType.sshAuth}
+              >
                 {t('SSH key')}
               </SelectOption>
             </SelectList>

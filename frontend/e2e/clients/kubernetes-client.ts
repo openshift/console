@@ -393,15 +393,29 @@ export default class KubernetesClient {
     });
   }
 
+  async createSecret(namespace: string, body: k8s.V1Secret): Promise<void>;
+  async createSecret(name: string, namespace: string, data?: Record<string, string>): Promise<void>;
   async createSecret(
-    name: string,
-    namespace: string,
-    data: Record<string, string> = {},
+    nameOrNamespace: string,
+    namespaceOrBody: string | k8s.V1Secret,
+    data?: Record<string, string>,
   ): Promise<void> {
-    await this.k8sApi.createNamespacedSecret({
-      namespace,
-      body: { apiVersion: 'v1', kind: 'Secret', metadata: { name, namespace }, data },
-    });
+    if (typeof namespaceOrBody === 'object') {
+      await this.k8sApi.createNamespacedSecret({
+        namespace: nameOrNamespace,
+        body: namespaceOrBody,
+      });
+    } else {
+      await this.k8sApi.createNamespacedSecret({
+        namespace: namespaceOrBody,
+        body: {
+          apiVersion: 'v1',
+          kind: 'Secret',
+          metadata: { name: nameOrNamespace, namespace: namespaceOrBody },
+          data: data ?? {},
+        },
+      });
+    }
   }
 
   async mergePatchResource(apiPath: string, patch: object): Promise<void> {
@@ -481,6 +495,10 @@ export default class KubernetesClient {
         throw err;
       }
     }
+  }
+
+  async getSecret(name: string, namespace: string): Promise<k8s.V1Secret> {
+    return this.k8sApi.readNamespacedSecret({ name, namespace });
   }
 
   async patchSecret(name: string, namespace: string, patch: object[]): Promise<void> {
@@ -585,6 +603,20 @@ export default class KubernetesClient {
       version,
     });
     return response;
+  }
+
+  async getDeployment(name: string, namespace: string): Promise<k8s.V1Deployment> {
+    return this.appsApi.readNamespacedDeployment({ name, namespace });
+  }
+
+  async deleteDeployment(name: string, namespace: string): Promise<void> {
+    try {
+      await this.appsApi.deleteNamespacedDeployment({ name, namespace });
+    } catch (err) {
+      if (!isNotFound(err)) {
+        throw err;
+      }
+    }
   }
 
   async listCustomResources(
