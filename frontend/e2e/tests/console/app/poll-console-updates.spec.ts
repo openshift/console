@@ -158,7 +158,10 @@ test.describe('PollConsoleUpdates', { tag: ['@admin'] }, () => {
       }
       return route.fulfill({ json: PLUGIN_MANIFEST_NEW_VERSION });
     });
+
+    const baseline = waitForBaseline(page);
     await page.goto('/');
+    await baseline;
 
     await expect(page.getByTestId('refresh-web-console')).toBeVisible({ timeout: 60_000 });
   });
