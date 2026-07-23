@@ -112,8 +112,10 @@ func UpgradeRelease(
 			ch.Metadata.Annotations = make(map[string]string)
 		}
 		ch.Metadata.Annotations["chart_url"] = chartUrl
-		if inst, ok := rel.Chart.Metadata.Annotations["installation"]; ok {
-			ch.Metadata.Annotations["installation"] = inst
+		if rel.Chart.Metadata != nil && rel.Chart.Metadata.Annotations != nil {
+			if inst, ok := rel.Chart.Metadata.Annotations["installation"]; ok {
+				ch.Metadata.Annotations["installation"] = inst
+			}
 		}
 	}
 
@@ -260,8 +262,10 @@ func UpgradeReleaseAsync(
 	}
 	if chartUrl != "" {
 		ch.Metadata.Annotations["chart_url"] = chartUrl
-		if inst, ok := rel.Chart.Metadata.Annotations["installation"]; ok {
-			ch.Metadata.Annotations["installation"] = inst
+		if rel.Chart.Metadata != nil && rel.Chart.Metadata.Annotations != nil {
+			if inst, ok := rel.Chart.Metadata.Annotations["installation"]; ok {
+				ch.Metadata.Annotations["installation"] = inst
+			}
 		}
 		addAuthSecretAnnotation(ch, auth_secret)
 	}
