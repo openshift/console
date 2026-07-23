@@ -818,20 +818,42 @@ export const ResourceLog: FC<ResourceLogProps> = ({
 
   // Workaround for upstream PF LogViewer bug: scrollIntoView({ inline: 'center' }) propagates
   // to all scrollable ancestors, shifting the page layout when searching with wrap lines disabled.
-  // Reset scrollLeft on .pf-v6-c-drawer__main to prevent the page shift.
+  // Reset scrollLeft on all scrollable ancestor containers to prevent the page shift.
   // https://github.com/patternfly/react-log-viewer/issues/106
   useEffect(() => {
-    const drawerMain = fullscreenRef.current?.closest('.pf-v6-c-drawer__main');
-    if (!drawerMain) {
+    if (!fullscreenRef.current) {
       return;
     }
-    const resetScroll = () => {
-      if (drawerMain.scrollLeft !== 0) {
-        drawerMain.scrollLeft = 0;
+
+    const scrollableAncestors: HTMLElement[] = [];
+    let element = fullscreenRef.current.parentElement;
+
+    while (element) {
+      const { overflowX } = window.getComputedStyle(element);
+      // Per CSS spec, scroll containers are elements with overflow set to auto, scroll, or hidden.
+      // These are the elements that scrollIntoView propagates to.
+      if (overflowX !== 'visible' && overflowX !== 'clip') {
+        scrollableAncestors.push(element);
+      }
+      element = element.parentElement;
+    }
+
+    const resetScroll = (e: Event) => {
+      const target = e.currentTarget as HTMLElement;
+      if (target.scrollLeft !== 0) {
+        target.scrollLeft = 0;
       }
     };
-    drawerMain.addEventListener('scroll', resetScroll);
-    return () => drawerMain.removeEventListener('scroll', resetScroll);
+
+    scrollableAncestors.forEach((container) => {
+      container.addEventListener('scroll', resetScroll);
+    });
+
+    return () => {
+      scrollableAncestors.forEach((container) => {
+        container.removeEventListener('scroll', resetScroll);
+      });
+    };
   }, [fullscreenRef]);
 
   return (
