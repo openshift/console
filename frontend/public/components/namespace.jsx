@@ -897,10 +897,19 @@ export const PullSecret = (props) => {
       });
   }, [namespace.metadata.name]);
 
+  const onPullSecretCreated = useCallback((pullSecretName) => {
+    setData((currentData) =>
+      currentData.some((secret) => secret.name === pullSecretName)
+        ? currentData
+        : [...currentData, { name: pullSecretName }],
+    );
+  }, []);
+
   const modal = () =>
     launchModal(LazyConfigureNamespacePullSecretModalOverlay, {
       namespace,
       pullSecret: undefined,
+      onSubmitSuccess: onPullSecretCreated,
     });
 
   const secrets = () => {
