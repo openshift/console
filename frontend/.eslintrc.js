@@ -63,7 +63,7 @@ module.exports = {
         paths: [
           {
             name: 'lodash-es',
-            message: 'Use lodash instead. webpack is configured to use lodash-es automatically.',
+            message: 'Use lodash instead. Bundler is configured to use lodash-es automatically.',
           },
           {
             name: 'react',
