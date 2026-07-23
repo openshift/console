@@ -1,6 +1,7 @@
 import { forwardRef, useRef, useEffect, useImperativeHandle, useCallback, useState } from 'react';
 import { Terminal as XTerminal, ITerminalOptions, ITerminalAddon } from '@xterm/xterm';
 import { FitAddon } from '@xterm/addon-fit';
+import { getResizeObserver } from '@patternfly/react-core';
 import { useIsFullscreen } from '@console/shared/src/hooks/useFullscreen';
 
 const defaultOptions: ITerminalOptions = {
@@ -56,30 +57,13 @@ export const Terminal = forwardRef<ImperativeTerminalType, TerminalProps>(
         return;
       }
 
-      // This assumes we want to fill everything below and to the right.  In full-screen, fill entire viewport
       const height = Math.floor(pageRect.bottom - (isFullscreen ? 0 : nodeRect.top) - padding);
       const width = Math.floor(
         bodyRect.width - (isFullscreen ? 0 : nodeRect.left) - (isFullscreen ? 10 : padding),
       );
 
       setDimensions({ width: `${width}px`, height: `${height}px` });
-
-      // rerender with correct dimensions
-      setTimeout(() => {
-        if (!terminal.current) {
-          return;
-        }
-        // tell the terminal to resize itself
-        fitAddon.current?.fit();
-        // update the pty
-        onResize(terminal.current.rows, terminal.current.cols);
-        // @ts-expect-error The internal xterm textarea was not repositioned when the window was resized.
-        // This workaround triggers a textarea position update to fix this.
-        // See https://bugzilla.redhat.com/show_bug.cgi?id=1983220
-        // and https://github.com/xtermjs/xterm.js/issues/3390
-        terminal.current._core?._syncTextArea?.();
-      }, 0);
-    }, [isFullscreen, onResize, padding]);
+    }, [isFullscreen, padding]);
 
     useEffect(() => {
       const term = new XTerminal({ ...options });
@@ -93,18 +77,35 @@ export const Terminal = forwardRef<ImperativeTerminalType, TerminalProps>(
 
       term.loadAddon(fit);
 
+      let unobserveResize: () => void;
+
       if (terminalRef.current) {
         term.open(terminalRef.current);
         term.focus();
+        unobserveResize = getResizeObserver(
+          terminalRef.current,
+          () => {
+            if (!terminal.current) {
+              return;
+            }
+            fit.fit();
+            onResize(terminal.current.rows, terminal.current.cols);
+            // @ts-expect-error The internal xterm textarea was not repositioned when the window was resized.
+            // See https://bugzilla.redhat.com/show_bug.cgi?id=1983220
+            // and https://github.com/xtermjs/xterm.js/issues/3390
+            terminal.current._core?._syncTextArea?.();
+          },
+          true,
+        );
         handleResize();
       }
 
-      // Window resize fallback
       window.addEventListener('resize', handleResize);
       window.addEventListener('sidebar_toggle', handleResize);
 
       return () => {
         term.dispose();
+        unobserveResize?.();
         window.removeEventListener('resize', handleResize);
         window.removeEventListener('sidebar_toggle', handleResize);
       };
