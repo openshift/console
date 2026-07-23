@@ -377,9 +377,8 @@ export default class KubernetesClient {
     await this.k8sApi.patchNamespacedConfigMap({
       name,
       namespace,
-      body: { data: mergedData },
-      contentType: k8s.PatchStrategy.MergePatch,
-    } as any);
+      body: [{ op: 'replace', path: '/data', value: mergedData }],
+    });
   }
 
   async createConfigMap(
