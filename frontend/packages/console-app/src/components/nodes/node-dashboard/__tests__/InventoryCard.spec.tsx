@@ -138,7 +138,7 @@ describe('InventoryCard', () => {
     expect(screen.getByText('Extension Inventory Item')).toBeVisible();
   });
 
-  it('should use legacy pods path when FLAG_NODE_MGMT_V1 is disabled', () => {
+  it('should use legacy pods path when FLAG_OPENSHIFT_5 is disabled', () => {
     useFlagMock.mockReturnValue(false);
 
     renderWithContext();
@@ -150,7 +150,7 @@ describe('InventoryCard', () => {
     );
   });
 
-  it('should use workload pods path when FLAG_NODE_MGMT_V1 is enabled', () => {
+  it('should use workload pods path when FLAG_OPENSHIFT_5 is enabled', () => {
     useFlagMock.mockReturnValue(true);
 
     renderWithContext();

@@ -94,7 +94,7 @@ describe('NodeDetailsPage', () => {
     jest.clearAllMocks();
   });
 
-  it('should include health tab when FLAG_NODE_MGMT_V1 is enabled', () => {
+  it('should include health tab when FLAG_OPENSHIFT_5 is enabled', () => {
     useFlag.mockReturnValue(true);
     isWindowsNode.mockReturnValue(false);
 
@@ -108,7 +108,7 @@ describe('NodeDetailsPage', () => {
     expect(healthTab.nameKey).toBe('console-app~Health');
   });
 
-  it('should not include health tab when FLAG_NODE_MGMT_V1 is disabled', () => {
+  it('should not include health tab when FLAG_OPENSHIFT_5 is disabled', () => {
     useFlag.mockReturnValue(false);
     isWindowsNode.mockReturnValue(false);
 
@@ -147,7 +147,7 @@ describe('NodeDetailsPage', () => {
     expect(terminalTab).toBeUndefined();
   });
 
-  it('should include configuration and workload tabs when FLAG_NODE_MGMT_V1 enabled', () => {
+  it('should include configuration and workload tabs when FLAG_OPENSHIFT_5 enabled', () => {
     useFlag.mockReturnValue(true);
     isWindowsNode.mockReturnValue(false);
 
@@ -168,7 +168,7 @@ describe('NodeDetailsPage', () => {
     expect(logsTab).toBeUndefined();
   });
 
-  it('should include events and logs tabs when FLAG_NODE_MGMT_V1 disabled', () => {
+  it('should include events and logs tabs when FLAG_OPENSHIFT_5 disabled', () => {
     useFlag.mockReturnValue(false);
     isWindowsNode.mockReturnValue(false);
 
