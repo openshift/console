@@ -35,7 +35,7 @@ export default defineConfig({
     ],
   },
   transformIgnorePatterns: [
-    '<rootDir>/node_modules/(?!(@patternfly(-\\S+)?|d3(-\\S+)?|delaunator|robust-predicates|internmap|lodash-es|istextorbinary|@console|@novnc|@spice-project|@popperjs|i18next(-\\S+)?|@babel/runtime|jsonpath-plus|nanoid|@rjsf|git-url-parse|git-up|parse-url|protocols|sanitize-html|fuzzysearch)/.*)',
+    '<rootDir>/node_modules/(?!(@patternfly(-\\S+)?|d3(-\\S+)?|delaunator|robust-predicates|internmap|lodash-es|istextorbinary|@console|@novnc|@spice-project|@popperjs|i18next(-\\S+)?|@babel/runtime|jsonpath-plus|nanoid|@rjsf|git-url-parse|git-up|parse-url|protocols|sanitize-html|linkify-react|fuzzysearch)/.*)',
   ],
   testPathIgnorePatterns: [
     '<rootDir>/node_modules/',

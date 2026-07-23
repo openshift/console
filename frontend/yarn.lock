@@ -14919,12 +14919,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"linkify-it@npm:^2.0.3":
-  version: 2.1.0
-  resolution: "linkify-it@npm:2.1.0"
-  dependencies:
-    uc.micro: "npm:^1.0.1"
-  checksum: 10c0/2fc45f06740a3c58c3393eecb634f91b62afc8b571ec82dd4fb250acded2d15ab1c83730c0fc0c353b8577d594384c7ca9e7f075be4342e9238d41089d0001bf
+"linkify-react@npm:^4.2.0":
+  version: 4.3.3
+  resolution: "linkify-react@npm:4.3.3"
+  peerDependencies:
+    linkifyjs: "*"
+    react: ">= 15.0.0"
+  checksum: 10c0/67885ea9466003cdd1c7c8bbecbc9fb5f903bde93bb3333bab1e61f12b76af93ba0bc40c7d9f0be3751e48d1dd1a10e3b0499691bfc8a249ef3267e62b03770e
+  languageName: node
+  linkType: hard
+
+"linkifyjs@npm:^4.2.0":
+  version: 4.3.3
+  resolution: "linkifyjs@npm:4.3.3"
+  checksum: 10c0/0eac293927f1465d13625c8c67c83c50d7fda9137c255a4a2ff5970ea4e9ba57de4846b170326e54b9e4e82be24f3705572bc50773737be9b13af5f1e4577798
   languageName: node
   linkType: hard
 
@@ -16546,6 +16554,8 @@ __metadata:
     json-schema: "npm:^0.4.0"
     jsonpath-plus: "npm:^10.4.0"
     knip: "npm:^6.27.0"
+    linkify-react: "npm:^4.2.0"
+    linkifyjs: "npm:^4.2.0"
     lint-staged: "npm:^10.2.2"
     lodash-es: "npm:^4.18.1"
     marked: "npm:^15.0.6"
@@ -16572,7 +16582,6 @@ __metadata:
     react-dom: "npm:^18.3.1"
     react-helmet-async: "npm:^2.0.5"
     react-i18next: "npm:~16.5.8"
-    react-linkify: "npm:^0.2.2"
     react-redux: "npm:~9.2.0"
     react-refresh: "npm:^0.18.0"
     react-router: "npm:~7.18.1"
@@ -17929,17 +17938,6 @@ __metadata:
   version: 3.0.4
   resolution: "react-lifecycles-compat@npm:3.0.4"
   checksum: 10c0/1d0df3c85af79df720524780f00c064d53a9dd1899d785eddb7264b378026979acbddb58a4b7e06e7d0d12aa1494fd5754562ee55d32907b15601068dae82c27
-  languageName: node
-  linkType: hard
-
-"react-linkify@npm:^0.2.2":
-  version: 0.2.2
-  resolution: "react-linkify@npm:0.2.2"
-  dependencies:
-    linkify-it: "npm:^2.0.3"
-    prop-types: "npm:^15.5.8"
-    tlds: "npm:^1.57.0"
-  checksum: 10c0/d288311b7f82baa81b9e90d52699c8b1ffbc7a45ebc05a8dd9a935d7662999c9a70818de67803e18c501ae0ff58185d50954101692a2af6bbc76285450a7c8b6
   languageName: node
   linkType: hard
 
@@ -20166,15 +20164,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tlds@npm:^1.57.0":
-  version: 1.203.1
-  resolution: "tlds@npm:1.203.1"
-  bin:
-    tlds: bin.js
-  checksum: 10c0/58f630ec673add064b0cdd3ba675ac23eabe33523a2629cfae6ea31de109503e1c3889bc128625b810855149945ccbdf4b904c38839780c3afab71e604523204
-  languageName: node
-  linkType: hard
-
 "tldts-core@npm:^6.1.85":
   version: 6.1.85
   resolution: "tldts-core@npm:6.1.85"
@@ -20633,13 +20622,6 @@ __metadata:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: 10c0/ad09fdf7a756814dce65bc60c1657b40d44451346858eea230e10f2e95a289d9183b6e32e5c11e95acc0ccc214b4f36289dcad4bf1886b0adb84d711d336a430
-  languageName: node
-  linkType: hard
-
-"uc.micro@npm:^1.0.1":
-  version: 1.0.6
-  resolution: "uc.micro@npm:1.0.6"
-  checksum: 10c0/9bde2afc6f2e24b899db6caea47dae778b88862ca76688d844ef6e6121dec0679c152893a74a6cfbd2e6fde34654e6bd8424fee8e0166cdfa6c9ae5d42b8a17b
   languageName: node
   linkType: hard
 
