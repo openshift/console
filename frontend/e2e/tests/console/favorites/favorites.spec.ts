@@ -1,5 +1,4 @@
 import { test, expect } from '../../../fixtures';
-import { warmupSPA } from '../../../pages/base-page';
 
 test.describe('Favorites', { tag: ['@admin'] }, () => {
   test('adds, displays, removes, and limits favorites', async ({ page, k8sClient }) => {
@@ -17,17 +16,18 @@ test.describe('Favorites', { tag: ['@admin'] }, () => {
       }
     });
 
-    await warmupSPA(page);
-
-    // Navigate to the Overview page directly — "/" can redirect based on lastNamespace.
-    await page.goto('/dashboards');
-    await expect(page.getByTestId('page-heading').locator('h1')).toContainText('Overview', {
-      timeout: 30_000,
-    });
-    // Wait for the favorite button to reflect the cleared state.
-    const favButton = page.getByTestId('favorite-button');
-    await expect(favButton).toBeVisible({ timeout: 30_000 });
-    await expect(favButton).not.toHaveAttribute('aria-pressed', 'true', { timeout: 10_000 });
+    // Navigate directly to /dashboards — do NOT use warmupSPA (which navigates to "/",
+    // poisoning sessionStorage with lastNamespace and causing SPA redirects).
+    // Use expect.toPass to retry the navigation until the cleared favorites propagate.
+    await expect(async () => {
+      await page.goto('/dashboards', { waitUntil: 'domcontentloaded', timeout: 60_000 });
+      await expect(page.getByTestId('page-heading').locator('h1')).toContainText('Overview', {
+        timeout: 10_000,
+      });
+      const favButton = page.getByTestId('favorite-button');
+      await expect(favButton).toBeVisible({ timeout: 10_000 });
+      await expect(favButton).not.toHaveAttribute('aria-pressed', 'true', { timeout: 5_000 });
+    }).toPass({ timeout: 60_000, intervals: [2_000, 5_000, 10_000] });
 
     await test.step('Verify no favorites message when none are added', async () => {
       await sidebar.getByRole('button', { name: 'Favorites' }).click();
