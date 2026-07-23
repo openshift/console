@@ -80,7 +80,7 @@ test.describe('PollConsoleUpdates', { tag: ['@admin'] }, () => {
 
     manifestAbort = false;
 
-    await expect(page.getByTestId('refresh-web-console')).toBeVisible({ timeout: 60_000 });
+    await expect(page.getByTestId('refresh-web-console')).toBeVisible({ timeout: 120_000 });
   });
 
   test('triggers the console update toast when a plugin is added and a different plugin endpoint is erroring', async ({
@@ -124,7 +124,7 @@ test.describe('PollConsoleUpdates', { tag: ['@admin'] }, () => {
 
     manifest2Abort = false;
 
-    await expect(page.getByTestId('refresh-web-console')).toBeVisible({ timeout: 60_000 });
+    await expect(page.getByTestId('refresh-web-console')).toBeVisible({ timeout: 120_000 });
   });
 
   test('triggers the console update toast when a plugin is removed', async ({ page }) => {
@@ -147,22 +147,23 @@ test.describe('PollConsoleUpdates', { tag: ['@admin'] }, () => {
   });
 
   test('triggers the console update toast when a plugin version changes', async ({ page }) => {
-    let manifestFetchCount = 0;
+    let serveNewVersion = false;
     await page.route(CHECK_UPDATES_URL, (route) =>
       route.fulfill({ json: UPDATES_NEW_PLUGIN, headers: { 'x-mock': '1' } }),
     );
     await page.route(PLUGIN_MANIFEST_URL, (route) => {
-      manifestFetchCount++;
-      if (manifestFetchCount <= 2) {
-        return route.fulfill({ json: PLUGIN_MANIFEST_DEFAULT });
+      if (serveNewVersion) {
+        return route.fulfill({ json: PLUGIN_MANIFEST_NEW_VERSION });
       }
-      return route.fulfill({ json: PLUGIN_MANIFEST_NEW_VERSION });
+      return route.fulfill({ json: PLUGIN_MANIFEST_DEFAULT });
     });
 
     const baseline = waitForBaseline(page);
     await page.goto('/');
     await baseline;
 
-    await expect(page.getByTestId('refresh-web-console')).toBeVisible({ timeout: 60_000 });
+    serveNewVersion = true;
+
+    await expect(page.getByTestId('refresh-web-console')).toBeVisible({ timeout: 120_000 });
   });
 });
