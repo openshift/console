@@ -1,7 +1,8 @@
 import type { ReactNode, ComponentProps, FC } from 'react';
 import { useState } from 'react';
 import * as _ from 'lodash';
-import Linkify from 'react-linkify';
+import Linkify from 'linkify-react';
+import type { IntermediateRepresentation, Opts } from 'linkifyjs';
 import { useTranslation } from 'react-i18next';
 import { ClipboardCopyButton } from '@patternfly/react-core';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
@@ -132,9 +133,23 @@ export const ExternalLinkWithCopy: FC<ExternalLinkWithCopyProps> = ({
   );
 };
 
+const linkifyOptions: Opts = {
+  render: ({ attributes, content }: IntermediateRepresentation) => {
+    const { href, ...props } = attributes;
+    return (
+      <ExternalLink href={href} {...props}>
+        {content}
+      </ExternalLink>
+    );
+  },
+  validate: {
+    url: (value: string) => /^https?:\/\//.test(value),
+  },
+};
+
 // Open links in a new window and set noopener/noreferrer.
 export const LinkifyExternal = ({ children }: { children: ReactNode }) => (
-  <Linkify component={ExternalLink}>{children}</Linkify>
+  <Linkify options={linkifyOptions}>{children}</Linkify>
 );
 LinkifyExternal.displayName = 'LinkifyExternal';
 
