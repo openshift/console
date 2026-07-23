@@ -80,7 +80,7 @@ export const ResourceSummary: FC<ResourceSummaryProps> = ({
   ]);
 
   return (
-    <DescriptionList data-test-id="resource-summary">
+    <DescriptionList data-test="resource-summary" data-test-id="resource-summary">
       <DetailsItem label={t('Name')} obj={resource} path={customPathName || 'metadata.name'} />
       {metadata.namespace && (
         <DetailsItem label={t('Namespace')} obj={resource} path="metadata.namespace">
