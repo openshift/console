@@ -28,11 +28,6 @@ export type Perspective = {
   pinnedResources?: PerspectivePinnedResource[];
 };
 
-/**
- * If {@link window.SERVER_FLAGS.perspectives} is defined, return the parsed array.
- *
- * Otherwise, return `undefined` (no perspective overrides specified).
- */
 const getOverridePerspectives = (): Perspective[] | undefined => {
   if (window.SERVER_FLAGS.perspectives) {
     try {
@@ -52,5 +47,9 @@ const getOverridePerspectives = (): Perspective[] | undefined => {
   return undefined;
 };
 
-// Evaluate once at runtime
+/**
+ * The value of {@link window.SERVER_FLAGS.perspectives} if defined.
+ *
+ * Otherwise, the value is `undefined` (no perspective overrides specified).
+ */
 export const overridePerspectives = getOverridePerspectives();
