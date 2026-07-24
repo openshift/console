@@ -91,8 +91,8 @@ const HelmInstallUpgradeForm: FC<
   const helmReadmeModalLauncher = useHelmReadmeModalLauncher({ readme: chartReadme });
   const showAuthSecret = values.isURLInstall;
   const secretResources = useSecretResources(namespace);
-  const autocompleteFilter = (strText: string, item: any): boolean =>
-    fuzzy(strText, item?.props?.name);
+  const autocompleteFilter = (strText: string, item: any, key?: string): boolean =>
+    fuzzy(strText, item?.props?.name || (typeof item === 'string' ? item : key) || '');
   const secretMissing = useMemo(() => {
     if (
       !showAuthSecret ||

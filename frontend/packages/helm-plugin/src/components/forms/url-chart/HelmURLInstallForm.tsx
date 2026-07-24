@@ -158,7 +158,8 @@ const HelmURLInstallForm: FC<FormikProps<HelmURLInstallFormData> & HelmURLInstal
                 autocompleteFilter={autocompleteFilter}
                 disabled
                 helpText={t(
-                  'A secret with "username" and "password" keys for OCI/HTTP(S) authentication',
+                  'Secret with "{{username}}" and "{{password}}" keys for OCI/HTTP(S) authentication.',
+                  { username: 'username', password: 'password' },
                 )}
               />
             </GridItem>

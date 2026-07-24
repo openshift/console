@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { useHelmCreateBasicAuthSecretModal } from './HelmCreateBasicAuthSecretModal';
 
-const CREATE_SECRET_KEY = 'create-secret';
+const CREATE_SECRET_KEY = '__create_secret__';
 const NONE_SECRET_KEY = '__none__';
 
 export { CREATE_SECRET_KEY, NONE_SECRET_KEY };

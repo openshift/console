@@ -39,8 +39,8 @@ const HelmURLChartForm: FC<FormikProps<HelmURLChartFormData> & HelmURLChartFormP
     setFieldValue,
   });
 
-  const autocompleteFilter = (strText: string, item: any): boolean =>
-    fuzzy(strText, item?.props?.name);
+  const autocompleteFilter = (strText: string, item: any, key?: string): boolean =>
+    fuzzy(strText, item?.props?.name || (typeof item === 'string' ? item : key) || '');
 
   const secretResources = useSecretResources(namespace);
   const isNextDisabled = !isValid || !dirty || isSubmitting;
