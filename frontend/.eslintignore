@@ -12,5 +12,6 @@ Godeps
 dynamic-demo-plugin
 .eslintrc.js
 tsconfig.json
+e2e/.eslintrc.json
 e2e/tsconfig.json
 e2e/package.json
