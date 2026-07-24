@@ -1,12 +1,12 @@
 import type { ReactNode } from 'react';
-import type { ModalVariant } from '@patternfly/react-core';
+import type { ModalVariant, PopoverPosition } from '@patternfly/react-core';
 
 export type StepContentType = ReactNode | string;
 
 export type Step = {
   access?: () => boolean;
   flags?: string[];
-  placement?: string;
+  placement?: PopoverPosition;
   heading: string;
   content: StepContentType;
   selector?: string;

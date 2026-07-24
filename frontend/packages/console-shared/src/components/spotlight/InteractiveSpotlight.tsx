@@ -1,7 +1,6 @@
 import type { FC, CSSProperties } from 'react';
-import { useState, useEffect } from 'react';
-import type { PopperOptions } from 'popper.js';
-import { Popper } from '../popper/Popper';
+import { useState, useEffect, useCallback } from 'react';
+import * as ReactDOM from 'react-dom';
 import './spotlight.scss';
 
 type InteractiveSpotlightProps = {
@@ -18,46 +17,47 @@ const isInViewport = (elementToCheck: Element) => {
   );
 };
 
-const popperOptions: PopperOptions = {
-  modifiers: {
-    preventOverflow: {
-      enabled: false,
-    },
-    flip: {
-      enabled: false,
-    },
-  },
-};
-
 const InteractiveSpotlight: FC<InteractiveSpotlightProps> = ({ element }) => {
-  const { height, width } = element.getBoundingClientRect();
-  const style: CSSProperties = {
-    height,
-    width,
-  };
-
+  const [rect, setRect] = useState(() => element.getBoundingClientRect());
   const [clicked, setClicked] = useState(false);
 
+  const updateRect = useCallback(() => {
+    setRect(element.getBoundingClientRect());
+  }, [element]);
+
   useEffect(() => {
-    if (!clicked) {
-      if (!isInViewport(element)) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
-      }
-      const handleClick = () => setClicked(true);
-      document.addEventListener('click', handleClick);
-      return () => {
-        document.removeEventListener('click', handleClick);
-      };
+    if (clicked) return undefined;
+
+    if (!isInViewport(element)) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
     }
-    return () => {};
-  }, [element, clicked]);
+
+    const handleClick = () => setClicked(true);
+    document.addEventListener('click', handleClick);
+    window.addEventListener('scroll', updateRect, true);
+    window.addEventListener('resize', updateRect);
+    return () => {
+      document.removeEventListener('click', handleClick);
+      window.removeEventListener('scroll', updateRect, true);
+      window.removeEventListener('resize', updateRect);
+    };
+  }, [element, clicked, updateRect]);
 
   if (clicked) return null;
 
-  return (
-    <Popper reference={element} placement="top-start" popperOptions={popperOptions}>
-      <div className="ocs-spotlight ocs-spotlight__element-highlight-animate" style={style} />
-    </Popper>
+  const style: CSSProperties = {
+    position: 'fixed',
+    top: rect.top,
+    left: rect.left,
+    height: rect.height,
+    width: rect.width,
+    zIndex: 9999,
+    pointerEvents: 'none',
+  };
+
+  return ReactDOM.createPortal(
+    <div className="ocs-spotlight ocs-spotlight__element-highlight-animate" style={style} />,
+    document.body,
   );
 };
 
