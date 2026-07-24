@@ -9,7 +9,7 @@ export const checkDeveloperPerspective = () => {
       // that PF appends inside the toggle element via popperProps.appendTo.
       const $label = $toggle.find('.pf-v6-c-menu-toggle__text');
       const currentText = ($label.length ? $label.text() : $toggle.text()).trim();
-      const isSinglePerspective = $toggle.attr('id') === 'core-platform-perspective';
+      const isSinglePerspective = $toggle.attr('id') === 'only-one-perspective';
 
       cy.log(`Current perspective: "${currentText}"`);
 

@@ -122,7 +122,11 @@ const NavHeader: FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
       </Select>
     </div>
   ) : (
-    <div data-test="perspective-switcher-toggle" data-test-id="perspective-switcher-toggle">
+    <div
+      data-test="perspective-switcher-toggle"
+      data-test-id="perspective-switcher-toggle"
+      id="only-one-perspective"
+    >
       <Title headingLevel="h2" size="md">
         {ActivePerspectiveIcon} {name}
       </Title>
