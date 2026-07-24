@@ -330,7 +330,8 @@
     "fast-uri": "3.1.2",
     "shell-quote": "1.8.4",
     "protobufjs": "7.5.8",
-    "follow-redirects": "^1.16.0"
+    "follow-redirects": "^1.16.0",
+    "dompurify": "^3.4.11"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,json,gql,graphql}": "eslint --color --fix"
