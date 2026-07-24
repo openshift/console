@@ -343,7 +343,7 @@
     "node": ">=14.x"
   },
   "resolutions": {
-    "dompurify": "3.2.7",
+    "dompurify": "^3.4.11",
     "fsevents": "2.3.3",
     "hosted-git-info": "^3.0.8",
     "jquery": "3.5.1",
