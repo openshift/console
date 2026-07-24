@@ -2,7 +2,6 @@ import type { FC, MouseEvent, Ref } from 'react';
 import { useMemo, useState, useCallback } from 'react';
 import type { MenuToggleElement } from '@patternfly/react-core';
 import { MenuToggle, Select, SelectList, SelectOption, Title } from '@patternfly/react-core';
-import { useTranslation } from 'react-i18next';
 import type { Perspective } from '@console/dynamic-plugin-sdk';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { AsyncComponent } from '@console/internal/components/utils/async';
@@ -49,7 +48,6 @@ const NavHeader: FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
   const [activePerspective, setActivePerspective] = useActivePerspective();
   const [isPerspectiveDropdownOpen, setPerspectiveDropdownOpen] = useState(false);
   const perspectiveExtensions = usePerspectives();
-  const { t } = useTranslation('console-app');
 
   const togglePerspectiveOpen = useCallback(() => {
     setPerspectiveDropdownOpen((isOpen) => !isOpen);
@@ -79,8 +77,8 @@ const NavHeader: FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
   }>(
     () =>
       perspectiveExtensions.find((p) => p?.properties?.id === activePerspective)?.properties ??
-      perspectiveExtensions[0]?.properties ?? { icon: null, name: t('Core platform') },
-    [activePerspective, perspectiveExtensions, t],
+      perspectiveExtensions[0]?.properties ?? { icon: null, name: '' },
+    [activePerspective, perspectiveExtensions],
   );
 
   const ActivePerspectiveIcon = icon ? (
