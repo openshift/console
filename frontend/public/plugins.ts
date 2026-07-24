@@ -51,7 +51,6 @@ export const pluginStore = new PluginStore({
     // Explicitly define the default entry callback name
     entryCallbackSettings: {
       name: REMOTE_ENTRY_CALLBACK,
-      registerCallback: true,
     },
 
     // Use coFetch for plugin resource fetching
@@ -132,6 +131,7 @@ export const featureFlagMiddleware: Middleware<{}, RootState> = (s) => {
   };
 };
 
-localPlugins.forEach((plugin) => pluginStore.loadPlugin(plugin));
-
-initConsolePlugins(pluginStore);
+// Ensure all static plugins are loaded before proceeding to load dynamic plugins
+Promise.allSettled(localPlugins.map((plugin) => pluginStore.loadPlugin(plugin))).then(() => {
+  initConsolePlugins(pluginStore);
+});

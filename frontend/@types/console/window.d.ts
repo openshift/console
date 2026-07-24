@@ -76,14 +76,14 @@ declare interface Window {
   i18n?: {};
   /** Redux store, only available in development builds for debugging */
   store?: {};
-  /** Console plugin store, only available in development builds for debugging */
+  /** Shared scope object used by Console and its plugins (development builds only) */
+  pluginSharedScope?: {};
+  /** Console plugin store only available in development builds for debugging */
   pluginStore?: {};
   /** Console legacy plugin entry callback, used to load dynamic plugins */
   loadPluginEntry?: Function;
   /** Console plugin entry callback, used to load dynamic plugins */
   __load_plugin_entry__?: Function;
-  /** webpack shared scope object */
-  webpackSharedScope?: {};
   /** The global monaco object, exposed when the Monaco Editor is loaded */
   monaco?: {};
 }
