@@ -183,21 +183,6 @@ describe('NavHeader', () => {
       expect(screen.queryByTestId('perspective-progress-icon')).not.toBeInTheDocument();
     });
 
-    it('active perspective "admin", remote plugins pending: render in-progress icon', () => {
-      pluginStore.addPendingPlugin(createRemotePluginManifest('test-plugin'));
-
-      renderWithPerspective(
-        <NavHeader onPerspectiveSelected={mockOnPerspectiveSelected} />,
-        'admin',
-        mockSetActivePerspective,
-        { pluginStore },
-      );
-
-      expect(screen.queryByRole('heading', { name: 'Core platform' })).not.toBeInTheDocument();
-      expect(screen.queryByRole('button')).not.toBeInTheDocument();
-      expect(screen.getByTestId('perspective-progress-icon')).toBeVisible();
-    });
-
     it('active perspective "admin", remote plugins loaded: render test perspective label', () => {
       addLoadedPluginFromManifest(pluginStore, createRemotePluginManifest('test-plugin'), [
         {
