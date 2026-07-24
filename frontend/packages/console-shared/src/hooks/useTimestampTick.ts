@@ -6,7 +6,7 @@ let tick = Date.now();
 let intervalId: ReturnType<typeof setInterval> | null = null;
 const listeners = new Set<() => void>();
 
-function subscribe(callback: () => void): () => void {
+const subscribe = (callback: () => void): (() => void) => {
   listeners.add(callback);
   if (listeners.size === 1) {
     tick = Date.now();
@@ -24,12 +24,13 @@ function subscribe(callback: () => void): () => void {
       }
     }
   };
-}
+};
 
-function getSnapshot(): number {
-  return tick;
-}
+const getSnapshot = (): number => tick;
 
-export function useTimestampTick(): number {
-  return useSyncExternalStore(subscribe, getSnapshot);
-}
+/**
+ * Returns the current epoch timestamp (ms) that updates every 10 seconds.
+ * Uses a single shared interval across all consumers — the interval starts on
+ * first mount and stops when the last consumer unmounts.
+ */
+export const useTimestampTick = (): number => useSyncExternalStore(subscribe, getSnapshot);
