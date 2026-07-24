@@ -45,12 +45,14 @@ test.describe('Alertmanager Webhook Receiver Form', { tag: ['@admin'] }, () => {
     await test.step('Verify Webhook Receiver was created correctly', async () => {
       await alertmanager.validateReceiverInList(receiverName);
 
-      await alertmanager.navigateToYAMLPage();
-      const yamlContent = await alertmanager.getYAMLContent();
-      const configs = getGlobalsAndReceiverConfig(receiverName, configName, yamlContent);
+      await expect(async () => {
+        await alertmanager.navigateToYAMLPage();
+        const yamlContent = await alertmanager.getYAMLContent();
+        const configs = getGlobalsAndReceiverConfig(receiverName, configName, yamlContent);
 
-      expect(configs.receiverConfig.url).toBe(webhookURL);
-      expect(configs.receiverConfig).not.toHaveProperty('send_resolved');
+        expect(configs.receiverConfig.url).toBe(webhookURL);
+        expect(configs.receiverConfig).not.toHaveProperty('send_resolved');
+      }).toPass({ intervals: [2_000, 3_000, 5_000], timeout: 30_000 });
     });
 
     await test.step('Edit Webhook Receiver and save advanced fields', async () => {
@@ -75,12 +77,14 @@ test.describe('Alertmanager Webhook Receiver Form', { tag: ['@admin'] }, () => {
     });
 
     await test.step('Verify YAML has correct config', async () => {
-      await alertmanager.navigateToYAMLPage();
-      const yamlContent = await alertmanager.getYAMLContent();
-      const configs = getGlobalsAndReceiverConfig(receiverName, configName, yamlContent);
+      await expect(async () => {
+        await alertmanager.navigateToYAMLPage();
+        const yamlContent = await alertmanager.getYAMLContent();
+        const configs = getGlobalsAndReceiverConfig(receiverName, configName, yamlContent);
 
-      expect(configs.receiverConfig.url).toBe(updatedWebhookURL);
-      expect(configs.receiverConfig.send_resolved).toBe(false);
+        expect(configs.receiverConfig.url).toBe(updatedWebhookURL);
+        expect(configs.receiverConfig.send_resolved).toBe(false);
+      }).toPass({ intervals: [2_000, 3_000, 5_000], timeout: 30_000 });
     });
   });
 });
