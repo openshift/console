@@ -349,7 +349,7 @@
   "resolutions": {
     "@types/react-router": "^5.1.20",
     "@types/react-router-dom": "5.3.x",
-    "dompurify": "3.2.7",
+    "dompurify": "^3.4.11",
     "fsevents": "2.3.3",
     "hosted-git-info": "^3.0.8",
     "jquery": "3.5.1",
