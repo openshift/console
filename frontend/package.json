@@ -355,7 +355,7 @@
     "@types/react-router-dom": "5.3.x",
     "@types/lodash": "4.14.106",
     "@types/jest": "21.x",
-    "dompurify": "3.2.7",
+    "dompurify": "^3.4.11",
     "hosted-git-info": "^3.0.8",
     "jquery": "3.5.1",
     "lodash-es": "^4.17.23",
