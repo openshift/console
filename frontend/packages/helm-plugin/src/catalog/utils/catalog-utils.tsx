@@ -90,7 +90,7 @@ export const normalizeHelmCharts = (
 
         const detailsProperties: CatalogItemDetailsProperty[] = [
           {
-            label: t('helm-plugin~Latest Chart version'),
+            label: t('helm-plugin~Latest chart version'),
             value: version,
           },
           {
@@ -170,7 +170,7 @@ export const normalizeHelmCharts = (
           supportUrl,
         };
 
-        // group Helm chart with same name and different version together
+        // group Helm Chart with same name and different version together
         const existingChartIndex = normalizedCharts.findIndex((currentChart) => {
           return (
             (currentChart.attributes?.name === name &&

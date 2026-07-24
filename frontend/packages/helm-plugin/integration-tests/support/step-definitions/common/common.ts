@@ -94,7 +94,6 @@ Given('user is at Software Catalog page', () => {
 
 When('user selects Helm Charts type from Software Catalog page', () => {
   catalogPage.selectCatalogType(catalogTypes.HelmCharts);
-  // Wait for catalog cards to be filtered and displayed
   catalogPage.isCardsDisplayed();
 });
 

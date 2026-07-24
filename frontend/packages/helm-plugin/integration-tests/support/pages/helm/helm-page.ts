@@ -163,7 +163,7 @@ export const helmPage = {
       case helmActions.rollback:
         cy.get(helmPO.helmActions.rollBack).click();
         break;
-      case 'Delete Helm Release':
+      case 'Delete Helm release':
       case helmActions.deleteHelmRelease:
         cy.get(helmPO.helmActions.deleteHelmRelease).click();
         break;
