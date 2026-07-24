@@ -83,6 +83,7 @@ const NavHeader: FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
 
   const ActivePerspectiveIcon = icon ? (
     <AsyncComponent
+      key={activePerspective}
       loader={() => icon().then((m) => m.default)}
       LoadingComponent={IconLoadingComponent}
     />
