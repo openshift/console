@@ -63,6 +63,13 @@ export const HelmCreateBasicAuthSecretModal: OverlayComponent<HelmCreateBasicAut
 
     const trimmedSecretName = secretName.trim();
 
+    // "__none__" is a sentinel used by the upgrade path to clear auth; reject it as a secret name.
+    if (trimmedSecretName === '__none__') {
+      setErrorMessage(t('This name is reserved. Choose a different name.'));
+      setInProgress(false);
+      return;
+    }
+
     try {
       await k8sCreate(SecretModel, {
         apiVersion: 'v1',
@@ -117,7 +124,7 @@ export const HelmCreateBasicAuthSecretModal: OverlayComponent<HelmCreateBasicAut
             />
             <FormHelperText>
               <HelperText>
-                <HelperTextItem>{t('Unique name of the Secret.')}</HelperTextItem>
+                <HelperTextItem>{t('Unique name of the Secret')}</HelperTextItem>
               </HelperText>
             </FormHelperText>
           </FormGroup>

@@ -10,21 +10,19 @@ interface UseBasicAuthSecretDropdownOptions {
   namespace: string;
   currentSecretName: string;
   setFieldValue: (field: string, value: string) => void;
-  supportNone?: boolean;
 }
 
 export const useBasicAuthSecretDropdown = ({
   namespace,
   currentSecretName,
   setFieldValue,
-  supportNone = false,
 }: UseBasicAuthSecretDropdownOptions) => {
   const launchModal = useHelmCreateBasicAuthSecretModal();
   const [isCreateSecretModalOpen, setIsCreateSecretModalOpen] = useState(false);
 
   const handleSecretChange = useCallback(
     (key: string) => {
-      if (supportNone && key === NONE_SECRET_KEY) {
+      if (key === NONE_SECRET_KEY) {
         window.setTimeout(() => setFieldValue('basicAuthSecretName', NONE_SECRET_KEY), 0);
         return;
       }
@@ -41,14 +39,7 @@ export const useBasicAuthSecretDropdown = ({
         });
       }
     },
-    [
-      supportNone,
-      isCreateSecretModalOpen,
-      launchModal,
-      namespace,
-      currentSecretName,
-      setFieldValue,
-    ],
+    [isCreateSecretModalOpen, launchModal, namespace, currentSecretName, setFieldValue],
   );
 
   return { handleSecretChange };

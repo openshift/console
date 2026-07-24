@@ -85,7 +85,6 @@ const HelmInstallUpgradeForm: FC<
     namespace,
     currentSecretName: values.basicAuthSecretName,
     setFieldValue,
-    supportNone: true,
   });
   const { chartName, chartVersion, chartReadme, formData, formSchema, editorType } = values;
   const { type: helmAction, title, subTitle } = helmActionConfig;
@@ -220,7 +219,8 @@ const HelmInstallUpgradeForm: FC<
                   ]}
                   onChange={handleSecretChange}
                   helpText={t(
-                    'Secret with "username" and "password" keys for OCI/HTTP(S) authentication.',
+                    'Secret with "{{username}}" and "{{password}}" keys for OCI/HTTP(S) authentication.',
+                    { username: 'username', password: 'password' },
                   )}
                 />
                 {secretMissing && (

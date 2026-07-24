@@ -152,7 +152,8 @@ const HelmURLChartForm: FC<FormikProps<HelmURLChartFormData> & HelmURLChartFormP
                 ]}
                 onChange={handleSecretChange}
                 helpText={t(
-                  'Secret with "username" and "password" keys for OCI/HTTP(S) authentication.',
+                  'Secret with "{{username}}" and "{{password}}" keys for OCI/HTTP(S) authentication.',
+                  { username: 'username', password: 'password' },
                 )}
               />
             </GridItem>
