@@ -163,7 +163,7 @@ test.describe('Perspective query parameters', { tag: ['@admin'] }, () => {
       await expect(toggle).toBeVisible();
 
       const isSinglePerspective =
-        (await toggle.getAttribute('id')) === 'core-platform-perspective';
+        (await toggle.getAttribute('id')) === 'only-one-perspective';
       if (isSinglePerspective) {
         await k8sClient.customObjectsApi.patchClusterCustomObject({
           group: 'operator.openshift.io',
@@ -181,7 +181,7 @@ test.describe('Perspective query parameters', { tag: ['@admin'] }, () => {
       }
       await expect(async () => {
         await page.reload();
-        await expect(toggle).not.toHaveAttribute('id', 'core-platform-perspective');
+        await expect(toggle).not.toHaveAttribute('id', 'only-one-perspective');
       }).toPass({ timeout: 60_000 });
     });
 

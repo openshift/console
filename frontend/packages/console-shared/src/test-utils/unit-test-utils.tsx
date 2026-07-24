@@ -15,7 +15,7 @@ import { pluginStore as defaultPluginStore } from '@console/internal/plugins';
 import type { RootState } from '@console/internal/redux';
 import { baseReducers } from '@console/internal/redux';
 
-interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
+export interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
   initialState?: Partial<RootState>;
   store?: ReturnType<typeof setupStore>;
   pluginStore?: PluginStore;

@@ -30,6 +30,7 @@ declare interface Window {
     GOARCH: string;
     GOOS: string;
     developerCatalogCategories: string;
+    /** JSON encoded configuration for the console's perspectives override */
     perspectives: string;
     developerCatalogTypes: string;
     userSettingsLocation: string;
@@ -80,9 +81,9 @@ declare interface Window {
   pluginSharedScope?: {};
   /** Console plugin store only available in development builds for debugging */
   pluginStore?: {};
-  /** Console legacy plugin entry callback, used to load dynamic plugins */
+  /** Console legacy plugin entry callback for loading dynamic plugins (4.21 and older) */
   loadPluginEntry?: Function;
-  /** Console plugin entry callback, used to load dynamic plugins */
+  /** Console plugin entry callback for loading dynamic plugins (4.22 and newer) */
   __load_plugin_entry__?: Function;
   /** The global monaco object, exposed when the Monaco Editor is loaded */
   monaco?: {};
