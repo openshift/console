@@ -2,17 +2,11 @@ import type { FC, MouseEvent, Ref } from 'react';
 import { useMemo, useState, useCallback } from 'react';
 import type { MenuToggleElement } from '@patternfly/react-core';
 import { MenuToggle, Select, SelectList, SelectOption, Title } from '@patternfly/react-core';
-import { RhUiGearGroupFillIcon, RhUiInProgressIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import type { Perspective } from '@console/dynamic-plugin-sdk';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { AsyncComponent } from '@console/internal/components/utils/async';
-import { usePluginInfo } from '@console/plugin-sdk/src/api/usePluginInfo';
 import { usePerspectives } from '@console/shared/src/hooks/usePerspectives';
-import {
-  PerspectiveVisibilityState,
-  overridePerspectives,
-} from '@console/shared/src/utils/override-perspectives';
 
 type NavHeaderProps = {
   onPerspectiveSelected: () => void;
@@ -55,7 +49,6 @@ const NavHeader: FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
   const [activePerspective, setActivePerspective] = useActivePerspective();
   const [isPerspectiveDropdownOpen, setPerspectiveDropdownOpen] = useState(false);
   const perspectiveExtensions = usePerspectives();
-  const pluginInfoEntries = usePluginInfo();
   const { t } = useTranslation('console-app');
 
   const togglePerspectiveOpen = useCallback(() => {
@@ -95,21 +88,7 @@ const NavHeader: FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
       loader={() => icon().then((m) => m.default)}
       LoadingComponent={IconLoadingComponent}
     />
-  ) : (
-    <RhUiGearGroupFillIcon /> // Default icon for admin perspective
-  );
-
-  const allPluginsProcessed = useMemo(
-    () => pluginInfoEntries.every((i) => i.status !== 'pending'),
-    [pluginInfoEntries],
-  );
-
-  const activePerspectiveDisabled = useMemo(
-    () =>
-      overridePerspectives?.find((p) => p.id === activePerspective)?.visibility?.state ===
-      PerspectiveVisibilityState.Disabled,
-    [activePerspective],
-  );
+  ) : null;
 
   return perspectiveDropdownItems.length > 1 ? (
     <div
@@ -146,13 +125,7 @@ const NavHeader: FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
   ) : (
     <div data-test="perspective-switcher-toggle" data-test-id="perspective-switcher-toggle">
       <Title headingLevel="h2" size="md">
-        {!allPluginsProcessed && activePerspective === 'admin' && activePerspectiveDisabled ? (
-          <RhUiInProgressIcon data-test="perspective-progress-icon" />
-        ) : (
-          <>
-            {ActivePerspectiveIcon} {name}
-          </>
-        )}
+        {ActivePerspectiveIcon} {name}
       </Title>
     </div>
   );
