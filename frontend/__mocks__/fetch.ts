@@ -1,4 +1,3 @@
-/* eslint-env node */
 import fetch from 'node-fetch';
 
 // Polyfill window.fetch with node-fetch for nock v11 compatibility.

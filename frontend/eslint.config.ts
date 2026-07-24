@@ -1,16 +1,13 @@
-const { FlatCompat } = require('@eslint/eslintrc');
-const js = require('@eslint/js');
-const globals = require('globals');
-const path = require('path');
-const tsParser = require('@typescript-eslint/parser');
-const tsPlugin = require('@typescript-eslint/eslint-plugin');
-const cypressPlugin = require('eslint-plugin-cypress');
-const promisePlugin = require('eslint-plugin-promise');
-const nPlugin = require('eslint-plugin-n');
-const playwrightPlugin = require('eslint-plugin-playwright');
+import path from 'path';
+import { defineConfig, globalIgnores } from 'eslint/config';
+import { FlatCompat } from '@eslint/eslintrc';
+import js from '@eslint/js';
+import globals from 'globals';
+import tsParser from '@typescript-eslint/parser';
+import type { Linter } from 'eslint';
 
 const compat = new FlatCompat({
-  baseDirectory: __dirname,
+  baseDirectory: import.meta.dirname,
   recommendedConfig: js.configs.recommended,
   allConfig: js.configs.all,
 });
@@ -20,29 +17,32 @@ const SDK_NODE_DIRS = [
   'packages/console-plugin-sdk/src/webpack',
   'packages/console-dynamic-plugin-sdk/scripts',
   'packages/console-dynamic-plugin-sdk/src/webpack',
-];
+] as const;
 
 const PACKAGES_EXCLUDE = [
   'packages/eslint-plugin-console/**',
   ...SDK_NODE_DIRS.map((d) => `${d}/**`),
 ];
 
+const CYPRESS_INTEGRATION_DIRS = [
+  'packages/integration-tests',
+  'packages/dev-console/integration-tests',
+  'packages/knative-plugin/integration-tests',
+  'packages/helm-plugin/integration-tests',
+];
+
+const CYPRESS_FILES = CYPRESS_INTEGRATION_DIRS.map((d) => `${d}/**/*.{js,jsx,ts,tsx}`);
+
 /**
- * ESLint 8 flat config validates plugins per config object — a rule like
- * `prettier/prettier` fails if that config object doesn't carry the `prettier`
- * plugin, even when another config in the array defines it.
- *
- * FlatCompat override configs often omit the plugin.  Additionally,
  * `eslint-config-prettier` disables rules from ~20 plugins (babel, vue,
- * flowtype …) that may not be loaded — those are harmless `off` entries in
- * eslintrc but fail flat config validation.
- *
- * This function:
- *  1. Propagates loaded plugins to config objects that reference their rules.
- *  2. Strips rules whose plugin is not available in any config in the group.
+ * flowtype …) that may not be loaded.  FlatCompat converts these into config
+ * objects with rules like `babel/quotes: 0`, which fail flat config validation
+ * because the plugin isn't registered.  Strip any rule whose plugin prefix
+ * doesn't appear in any config in the group.  Also strips options from the
+ * `json/*` catch-all rule, whose schema rejects options under ESLint 9.
  */
-function propagatePlugins(flatConfigs) {
-  const allPlugins = {};
+function stripOrphanedPluginRules(flatConfigs: Linter.Config[]): Linter.Config[] {
+  const allPlugins: Record<string, unknown> = {};
   for (const config of flatConfigs) {
     if (config.plugins) {
       Object.assign(allPlugins, config.plugins);
@@ -53,41 +53,26 @@ function propagatePlugins(flatConfigs) {
     if (!config.rules) {
       return config;
     }
-
-    const addPlugins = {};
-    const dropRules = [];
-
+    const dropRules: string[] = [];
+    const fixRules: Linter.RulesRecord = {};
     for (const rule of Object.keys(config.rules)) {
       const sep = rule.indexOf('/');
-      if (sep <= 0) {
-        continue;
+      if (sep > 0) {
+        const prefix = rule.slice(0, sep);
+        if (!allPlugins[prefix]) {
+          dropRules.push(rule);
+        }
       }
-      const prefix = rule.slice(0, sep);
-      const alreadyDefined = config.plugins && config.plugins[prefix];
-      if (alreadyDefined) {
-        continue;
-      }
-      if (allPlugins[prefix]) {
-        addPlugins[prefix] = allPlugins[prefix];
-      } else {
-        dropRules.push(rule);
+      if (rule === 'json/*' && Array.isArray(config.rules[rule])) {
+        fixRules[rule] = (config.rules[rule] as Linter.RuleEntry[])[0];
       }
     }
-
-    const needsChange = Object.keys(addPlugins).length > 0 || dropRules.length > 0;
-    if (!needsChange) {
+    if (dropRules.length === 0 && Object.keys(fixRules).length === 0) {
       return config;
     }
-
-    const result = { ...config };
-    if (Object.keys(addPlugins).length > 0) {
-      result.plugins = { ...(config.plugins || {}), ...addPlugins };
-    }
-    if (dropRules.length > 0) {
-      result.rules = { ...config.rules };
-      for (const rule of dropRules) {
-        delete result.rules[rule];
-      }
+    const result: Linter.Config = { ...config, rules: { ...config.rules, ...fixRules } };
+    for (const rule of dropRules) {
+      delete result.rules![rule];
     }
     return result;
   });
@@ -96,29 +81,34 @@ function propagatePlugins(flatConfigs) {
 /**
  * Restrict FlatCompat config objects to a directory scope.
  *
- * - Base configs (no `files`) get `files: ['{scopeDir}/**']`.
+ * - Base configs (no `files`) get `files: ['{scopeDir}/**\/*.{js,jsx,ts,tsx,json}']`.
  * - Override configs with function matchers get the function wrapped to also
  *   require the file to be inside `scopeDir`.
  * - Override configs with glob strings get prefixed with `scopeDir/`.
  *
- * Also propagates plugins so every config that references a plugin rule
- * carries that plugin (required by ESLint 8 flat config).
+ * Also strips rules from unloaded plugins (see `stripOrphanedPluginRules`).
  */
-function scopeTo(flatConfigs, scopeDir, extraIgnores) {
-  const absScope = path.resolve(__dirname, scopeDir) + '/';
-  const scoped = flatConfigs.map((config) => {
-    const result = { ...config };
+function scopeTo(
+  flatConfigs: Linter.Config[],
+  scopeDir: string,
+  extraIgnores?: string[],
+): Linter.Config[] {
+  const absScope = path.resolve(import.meta.dirname, scopeDir) + '/';
+  const scoped = flatConfigs.map((config): Linter.Config => {
+    const result: Linter.Config = { ...config };
 
     if (!config.files) {
       const base = scopeDir === '.' ? '**' : `${scopeDir}/**`;
       result.files = [`${base}/*.{js,jsx,ts,tsx,json}`];
     } else {
-      result.files = config.files.map((entry) => {
-        if (typeof entry === 'function') {
-          return (filePath) => filePath.startsWith(absScope) && entry(filePath);
-        }
-        return scopeDir === '.' ? entry : `${scopeDir}/${entry}`;
-      });
+      result.files = (config.files as Array<string | ((filePath: string) => boolean)>).map(
+        (entry) => {
+          if (typeof entry === 'function') {
+            return (filePath: string) => filePath.startsWith(absScope) && entry(filePath);
+          }
+          return scopeDir === '.' ? entry : `${scopeDir}/${entry}`;
+        },
+      );
     }
 
     if (extraIgnores && extraIgnores.length > 0) {
@@ -128,42 +118,42 @@ function scopeTo(flatConfigs, scopeDir, extraIgnores) {
     return result;
   });
 
-  return propagatePlugins(scoped);
+  return stripOrphanedPluginRules(scoped);
 }
 
-module.exports = [
-  // ────────────────────────────────────────────────
-  // Global ignores (replaces .eslintignore)
-  // ────────────────────────────────────────────────
+export default defineConfig([
+  globalIgnores([
+    '.puppeteer/**',
+    '.yarn/**',
+    '__coverage__/**',
+    '**/node_modules/**',
+    '**/dist/**',
+    '**/generated/**',
+    '**/*.min.js',
+    'gui_test_screenshots/**',
+    'public/lib/**',
+    'Godeps/**',
+    '@types/**',
+    'dynamic-demo-plugin/**',
+    'eslint.config.ts',
+    '**/tsconfig.json',
+    'e2e/package.json',
+    'test-results/**',
+    'yarn.lock',
+    '.vscode/**',
+    '**/.*',
+    'e2e/**/testData/**',
+  ]),
+
   {
-    ignores: [
-      '.puppeteer/**',
-      '.yarn/**',
-      '__coverage__/**',
-      '**/node_modules/**',
-      '**/dist/**',
-      '**/generated/**',
-      '**/*.min.js',
-      'gui_test_screenshots/**',
-      'public/lib/**',
-      'Godeps/**',
-      '@types/**',
-      'dynamic-demo-plugin/**',
-      'eslint.config.js',
-      '**/tsconfig.json',
-      'e2e/package.json',
-      'test-results/**',
-      'yarn.lock',
-      '.vscode/**',
-      '**/.*',
-      'e2e/**/testData/**',
-    ],
+    linterOptions: {
+      reportUnusedDisableDirectives: 'off',
+    },
   },
 
-  // ────────────────────────────────────────────────
+  // ------------------------------------------------
   // Scope: Root frontend (non-packages, non-i18n-scripts, non-e2e)
-  // Replaces: frontend/.eslintrc.js
-  // ────────────────────────────────────────────────
+  // ------------------------------------------------
   ...scopeTo(
     compat.config({
       extends: [
@@ -187,14 +177,11 @@ module.exports = [
         ecmaFeatures: { jsx: true },
         ecmaVersion: 2018,
         extraFileExtensions: ['.json'],
-        tsconfigRootDir: __dirname,
+        tsconfigRootDir: import.meta.dirname,
       },
       plugins: ['react', 'react-hooks', '@typescript-eslint', 'eslint-plugin-tsdoc', 'no-barrel-files'],
       rules: {
-        camelcase: [
-          'error',
-          { allow: ['UNSAFE_componentWillReceiveProps', 'UNSAFE_componentWillMount'] },
-        ],
+        camelcase: 'error',
         'consistent-return': 'off',
         'consistent-this': ['warn', 'that'],
         curly: ['error', 'all'],
@@ -309,40 +296,24 @@ module.exports = [
     ['packages/**', 'i18n-scripts/**', 'e2e/**'],
   ),
 
-  // ────────────────────────────────────────────────
+  // ------------------------------------------------
   // Scope: packages/ (react-typescript-prettier)
-  // Replaces: frontend/packages/.eslintrc.js
-  // ────────────────────────────────────────────────
+  // ------------------------------------------------
   ...scopeTo(
     compat.extends('plugin:console/react-typescript-prettier'),
     'packages',
     PACKAGES_EXCLUDE,
   ),
 
-  // ────────────────────────────────────────────────
+  // ------------------------------------------------
   // Scope: Cypress integration tests (overlay on packages config)
-  // Replaces: 4x integration-tests/.eslintrc files
-  // ────────────────────────────────────────────────
+  // ------------------------------------------------
   ...compat.extends('plugin:cypress/recommended').map((c) => ({
     ...c,
-    files: c.files || [
-      'packages/integration-tests/**/*.{js,jsx,ts,tsx}',
-      'packages/dev-console/integration-tests/**/*.{js,jsx,ts,tsx}',
-      'packages/knative-plugin/integration-tests/**/*.{js,jsx,ts,tsx}',
-      'packages/helm-plugin/integration-tests/**/*.{js,jsx,ts,tsx}',
-    ],
+    files: c.files || CYPRESS_FILES,
   })),
   {
-    files: [
-      'packages/integration-tests/**/*.{js,jsx,ts,tsx}',
-      'packages/dev-console/integration-tests/**/*.{js,jsx,ts,tsx}',
-      'packages/knative-plugin/integration-tests/**/*.{js,jsx,ts,tsx}',
-      'packages/helm-plugin/integration-tests/**/*.{js,jsx,ts,tsx}',
-    ],
-    plugins: {
-      promise: promisePlugin,
-      cypress: cypressPlugin,
-    },
+    files: CYPRESS_FILES,
     languageOptions: {
       globals: {
         ...globals.node,
@@ -362,10 +333,6 @@ module.exports = [
       'packages/dev-console/integration-tests/**/*.{js,jsx,ts,tsx}',
       'packages/helm-plugin/integration-tests/**/*.{js,jsx,ts,tsx}',
     ],
-    plugins: {
-      '@typescript-eslint': tsPlugin,
-      cypress: cypressPlugin,
-    },
     rules: {
       '@typescript-eslint/ban-ts-comment': 'off',
       'cypress/no-unnecessary-waiting': 'off',
@@ -380,10 +347,9 @@ module.exports = [
     },
   },
 
-  // ────────────────────────────────────────────────
+  // ------------------------------------------------
   // Scope: SDK Node.js directories (node-typescript-prettier)
-  // Replaces: 4x .eslintrc.js in codegen/webpack/scripts dirs
-  // ────────────────────────────────────────────────
+  // ------------------------------------------------
   ...SDK_NODE_DIRS.flatMap((dir) =>
     scopeTo(compat.extends('plugin:console/node-typescript-prettier'), dir),
   ),
@@ -399,10 +365,9 @@ module.exports = [
     rules: { 'no-console': 'off' },
   },
 
-  // ────────────────────────────────────────────────
+  // ------------------------------------------------
   // Scope: eslint-plugin-console (base + node + json + prettier)
-  // Replaces: packages/eslint-plugin-console/.eslintrc
-  // ────────────────────────────────────────────────
+  // ------------------------------------------------
   ...scopeTo(
     compat.extends(
       'plugin:console/base',
@@ -413,24 +378,21 @@ module.exports = [
     'packages/eslint-plugin-console',
   ),
 
-  // ────────────────────────────────────────────────
+  // ------------------------------------------------
   // Scope: i18n-scripts (node-typescript-prettier)
-  // Replaces: frontend/i18n-scripts/.eslintrc.js
-  // ────────────────────────────────────────────────
+  // ------------------------------------------------
   ...scopeTo(compat.extends('plugin:console/node-typescript-prettier'), 'i18n-scripts'),
   {
     files: ['i18n-scripts/**/*.{js,ts}'],
-    plugins: { n: nPlugin },
     rules: {
       'no-console': 'off',
       'n/no-unsupported-features/node-builtins': 'off',
     },
   },
 
-  // ────────────────────────────────────────────────
+  // ------------------------------------------------
   // Scope: e2e (Playwright)
-  // Replaces: e2e/.eslintrc.cjs
-  // ────────────────────────────────────────────────
+  // ------------------------------------------------
   ...scopeTo(compat.extends('plugin:console/playwright'), 'e2e'),
   {
     files: ['e2e/**/*.{js,ts}'],
@@ -439,10 +401,9 @@ module.exports = [
       parser: tsParser,
       parserOptions: {
         project: './tsconfig.json',
-        tsconfigRootDir: path.join(__dirname, 'e2e'),
+        tsconfigRootDir: path.join(import.meta.dirname, 'e2e'),
       },
     },
-    plugins: { playwright: playwrightPlugin },
     rules: {
       'no-console': 'off',
       'no-empty-pattern': 'off',
@@ -463,9 +424,8 @@ module.exports = [
   },
   {
     files: ['e2e/setup/**/*.ts'],
-    plugins: { playwright: playwrightPlugin },
     rules: {
       'playwright/expect-expect': 'off',
     },
   },
-];
+]);
