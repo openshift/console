@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import Linkify from 'react-linkify';
+import Linkify from 'linkify-react/dist/linkify-react.mjs';
+import type { IntermediateRepresentation, Opts } from 'linkifyjs';
 import { useTranslation } from 'react-i18next';
 import { ClipboardCopyButton } from '@patternfly/react-core';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
