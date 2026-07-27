@@ -16,6 +16,9 @@ Cypress.Commands.add('initAdmin', () => {
   cy.visit('/');
   cy.byTestID('loading-indicator').should('not.exist');
   cy.document().its('readyState').should('eq', 'complete');
+  // Wait for perspective switcher to be rendered - this requires React to finish
+  // loading the NavHeader component and the perspective extensions
+  cy.byLegacyTestID('perspective-switcher-toggle', { timeout: 60000 }).should('be.visible');
   cy.log('ensure perspective switcher is set to Core platform');
   nav.sidenav.switcher.changePerspectiveTo('Core platform');
   nav.sidenav.switcher.shouldHaveText('Core platform');
@@ -26,6 +29,9 @@ Cypress.Commands.add('initDeveloper', () => {
   cy.visit('/add');
   cy.byTestID('loading-indicator').should('not.exist');
   cy.document().its('readyState').should('eq', 'complete');
+  // Wait for perspective switcher to be rendered - this requires React to finish
+  // loading the NavHeader component and the perspective extensions
+  cy.byLegacyTestID('perspective-switcher-toggle', { timeout: 60000 }).should('be.visible');
   cy.log('ensure perspective switcher is set to Developer');
   nav.sidenav.switcher.changePerspectiveTo('Developer');
   cy.log('switched perspective to Developer');
