@@ -37,31 +37,46 @@ function createMutableHandler(initial: RouteHandler) {
 }
 
 /**
- * Wait for N successful check-updates responses (status 200).
- * Must be called BEFORE page.goto so the listener catches the first response.
+ * Navigate to `/` and wait for the PollConsoleUpdates component to initialize.
+ *
+ * The component uses a prev/current ref pattern: it needs at least 2 poll
+ * cycles (~15s apart) before `stateInitialized` becomes true. In CI, OAuth
+ * redirects can cause multiple navigations (and component remounts) even
+ * after the dashboard appears. Each navigation resets the counter because
+ * a remount means the component starts fresh.
  */
-function waitForResponses(
-  page: import('@playwright/test').Page,
-  n: number,
-): Promise<void> {
+async function navigateAndWaitForInit(page: import('@playwright/test').Page) {
+  await page.goto('/');
+  await expect(page.locator('[data-test-id="dashboard"]').first()).toBeVisible({ timeout: 60_000 });
+
   let count = 0;
-  return new Promise<void>((resolve, reject) => {
-    const timer = setTimeout(
-      () => reject(new Error(`waitForResponses: only saw ${count}/${n} responses`)),
-      90_000,
-    );
-    const handler = (resp: import('@playwright/test').Response) => {
-      if (resp.url().includes('/api/check-updates') && resp.status() === 200) {
-        count++;
-        if (count >= n) {
-          clearTimeout(timer);
-          page.off('response', handler);
-          resolve();
+
+  const resetOnNav = () => {
+    count = 0;
+  };
+  page.on('framenavigated', resetOnNav);
+
+  try {
+    await new Promise<void>((resolve, reject) => {
+      const timer = setTimeout(
+        () => reject(new Error(`navigateAndWaitForInit: only saw ${count}/2 responses`)),
+        90_000,
+      );
+      const handler = (resp: import('@playwright/test').Response) => {
+        if (resp.url().includes('/api/check-updates') && resp.status() === 200) {
+          count++;
+          if (count >= 2) {
+            clearTimeout(timer);
+            page.off('response', handler);
+            resolve();
+          }
         }
-      }
-    };
-    page.on('response', handler);
-  });
+      };
+      page.on('response', handler);
+    });
+  } finally {
+    page.off('framenavigated', resetOnNav);
+  }
 }
 
 test.describe('PollConsoleUpdates', { tag: ['@admin'] }, () => {
@@ -71,9 +86,7 @@ test.describe('PollConsoleUpdates', { tag: ['@admin'] }, () => {
     );
     await page.route(CHECK_UPDATES_URL, updates.handler);
 
-    const ready = waitForResponses(page, 2);
-    await page.goto('/');
-    await ready;
+    await navigateAndWaitForInit(page);
 
     updates.setHandler((route) => route.fulfill({ json: UPDATES_NEW_COMMIT }));
 
@@ -88,18 +101,14 @@ test.describe('PollConsoleUpdates', { tag: ['@admin'] }, () => {
     await page.route(CHECK_UPDATES_URL, updates.handler);
     await page.route(PLUGIN_MANIFEST_URL, manifest.handler);
 
-    const ready = waitForResponses(page, 2);
-    await page.goto('/');
-    await ready;
+    await navigateAndWaitForInit(page);
 
-    // Announce the plugin but keep its manifest endpoint down.
     updates.setHandler((route) => route.fulfill({ json: UPDATES_NEW_PLUGIN }));
 
     await expect(page.getByTestId('refresh-web-console')).not.toBeAttached({
       timeout: 30_000,
     });
 
-    // Make the manifest endpoint available — toast should appear.
     manifest.setHandler((route) => route.fulfill({ json: PLUGIN_MANIFEST_DEFAULT }));
 
     await expect(page.getByTestId('refresh-web-console')).toBeVisible({ timeout: 120_000 });
@@ -117,15 +126,12 @@ test.describe('PollConsoleUpdates', { tag: ['@admin'] }, () => {
     await page.route(CHECK_UPDATES_URL, updates.handler);
     await page.route(PLUGIN_MANIFEST_URL2, manifest2.handler);
 
-    const ready = waitForResponses(page, 2);
-    await page.goto('/');
-    await ready;
+    await navigateAndWaitForInit(page);
 
     await expect(page.getByTestId('refresh-web-console')).not.toBeAttached({
       timeout: 30_000,
     });
 
-    // Add a second plugin — both manifests still down.
     updates.setHandler((route) => route.fulfill({ json: UPDATES_NEW_PLUGIN2 }));
 
     await page.waitForResponse((resp) => resp.url().includes('/api/check-updates'));
@@ -134,7 +140,6 @@ test.describe('PollConsoleUpdates', { tag: ['@admin'] }, () => {
       timeout: 30_000,
     });
 
-    // Make plugin2 manifest reachable — toast should appear.
     manifest2.setHandler((route) => route.fulfill({ json: PLUGIN_MANIFEST_DEFAULT2 }));
 
     await expect(page.getByTestId('refresh-web-console')).toBeVisible({ timeout: 120_000 });
@@ -149,9 +154,7 @@ test.describe('PollConsoleUpdates', { tag: ['@admin'] }, () => {
       route.fulfill({ json: PLUGIN_MANIFEST_DEFAULT }),
     );
 
-    const ready = waitForResponses(page, 2);
-    await page.goto('/');
-    await ready;
+    await navigateAndWaitForInit(page);
 
     updates.setHandler((route) => route.fulfill({ json: UPDATES_DEFAULT }));
 
@@ -167,9 +170,7 @@ test.describe('PollConsoleUpdates', { tag: ['@admin'] }, () => {
     );
     await page.route(PLUGIN_MANIFEST_URL, manifest.handler);
 
-    const ready = waitForResponses(page, 2);
-    await page.goto('/');
-    await ready;
+    await navigateAndWaitForInit(page);
 
     manifest.setHandler((route) => route.fulfill({ json: PLUGIN_MANIFEST_NEW_VERSION }));
 
