@@ -729,19 +729,28 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
         resetInactivityTimeout();
       }
     };
+
+    const onConsoleActivity = () => {
+      resetInactivityTimeout();
+    };
+
     // Ignore inactivity-timeout if set to less then 300 seconds
     const inactivityTimeoutEnabled = window.SERVER_FLAGS.inactivityTimeout >= 300;
+    const throttledClick = _.throttle(resetInactivityTimeout, 500);
+    const throttledKeydown = _.throttle(resetInactivityTimeout, 500);
     if (inactivityTimeoutEnabled) {
       setLastConsoleActivityTimestamp();
       window.addEventListener('storage', onStorageChange);
-      window.addEventListener('click', _.throttle(resetInactivityTimeout, 500));
-      window.addEventListener('keydown', _.throttle(resetInactivityTimeout, 500));
+      window.addEventListener('console-activity', onConsoleActivity);
+      window.addEventListener('click', throttledClick);
+      window.addEventListener('keydown', throttledKeydown);
       resetInactivityTimeout();
     }
     return () => {
       window.removeEventListener('storage', onStorageChange);
-      window.removeEventListener('click', resetInactivityTimeout);
-      window.removeEventListener('keydown', resetInactivityTimeout);
+      window.removeEventListener('console-activity', onConsoleActivity);
+      window.removeEventListener('click', throttledClick);
+      window.removeEventListener('keydown', throttledKeydown);
       clearTimeout(userInactivityTimeout.current);
     };
   }, [resetInactivityTimeout]);
