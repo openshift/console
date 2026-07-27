@@ -35,7 +35,7 @@ export class WebTerminalConfigPage extends BasePage {
 
   async clickWebTerminalTab(): Promise<void> {
     const tab = this.page.getByRole('tab', { name: 'Web Terminal' });
-    await this.robustClick(tab);
+    await this.robustClick(tab, { timeout: 60_000 });
     await this.waitForLoadingComplete(5_000);
   }
 

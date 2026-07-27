@@ -1,3 +1,4 @@
+import type { Frame, Page, Response, Route } from '@playwright/test';
 import { test, expect } from '../../../fixtures';
 
 const CHECK_UPDATES_URL = '**/api/check-updates';
@@ -19,14 +20,9 @@ const PLUGIN_MANIFEST_DEFAULT = { name: PLUGIN_NAME, version: '0.0.0' };
 const PLUGIN_MANIFEST_DEFAULT2 = { name: PLUGIN_NAME2, version: '0.0.0' };
 const PLUGIN_MANIFEST_NEW_VERSION = { name: PLUGIN_NAME, version: '1.0.0' };
 
-type RouteHandler = (route: import('@playwright/test').Route) => void;
+type RouteHandler = (route: Route) => void;
 
-/**
- * Creates a mutable route handler whose behavior can be swapped at runtime.
- * This avoids Playwright's handler stacking issues (where calling page.route()
- * multiple times on the same URL adds stacked handlers). Instead, we register
- * ONE handler that delegates to a mutable reference.
- */
+// Single handler avoids Playwright's handler stacking when re-routing the same URL.
 function createMutableHandler(initial: RouteHandler) {
   let current = initial;
   const handler: RouteHandler = (route) => current(route);
@@ -36,46 +32,48 @@ function createMutableHandler(initial: RouteHandler) {
   return { handler, setHandler };
 }
 
-/**
- * Navigate to `/` and wait for the PollConsoleUpdates component to initialize.
- *
- * The component uses a prev/current ref pattern: it needs at least 2 poll
- * cycles (~15s apart) before `stateInitialized` becomes true. In CI, OAuth
- * redirects can cause multiple navigations (and component remounts) even
- * after the dashboard appears. Each navigation resets the counter because
- * a remount means the component starts fresh.
- */
-async function navigateAndWaitForInit(page: import('@playwright/test').Page) {
-  await page.goto('/');
-  await expect(page.locator('[data-test-id="dashboard"]').first()).toBeVisible({ timeout: 60_000 });
-
+// PollConsoleUpdates needs 2 poll cycles to initialize; main-frame navs reset the counter.
+async function navigateAndWaitForInit(page: Page) {
   let count = 0;
+  let initResolve: () => void;
+  let initReject: (err: Error) => void;
+  const initPromise = new Promise<void>((resolve, reject) => {
+    initResolve = resolve;
+    initReject = reject;
+  });
 
-  const resetOnNav = () => {
-    count = 0;
+  const resetOnNav = (frame: Frame) => {
+    if (frame === page.mainFrame()) count = 0;
   };
+  const onResponse = (resp: Response) => {
+    if (resp.url().includes('/api/check-updates') && resp.status() === 200) {
+      count++;
+      if (count >= 2) {
+        page.off('response', onResponse);
+        initResolve();
+      }
+    }
+  };
+
   page.on('framenavigated', resetOnNav);
+  page.on('response', onResponse);
+
+  const timer = setTimeout(() => {
+    page.off('response', onResponse);
+    initReject(new Error(`navigateAndWaitForInit: only saw ${count}/2 responses`));
+  }, 90_000);
 
   try {
-    await new Promise<void>((resolve, reject) => {
-      const timer = setTimeout(
-        () => reject(new Error(`navigateAndWaitForInit: only saw ${count}/2 responses`)),
-        90_000,
-      );
-      const handler = (resp: import('@playwright/test').Response) => {
-        if (resp.url().includes('/api/check-updates') && resp.status() === 200) {
-          count++;
-          if (count >= 2) {
-            clearTimeout(timer);
-            page.off('response', handler);
-            resolve();
-          }
-        }
-      };
-      page.on('response', handler);
+    await page.goto('/');
+    await expect(page.locator('[data-test-id="dashboard"]').first()).toBeVisible({
+      timeout: 60_000,
     });
+    await initPromise;
   } finally {
+    clearTimeout(timer);
     page.off('framenavigated', resetOnNav);
+    page.off('response', onResponse);
+    initPromise.catch(() => {});
   }
 }
 

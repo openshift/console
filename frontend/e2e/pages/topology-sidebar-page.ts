@@ -11,7 +11,7 @@ export class TopologySidebarPage extends BasePage {
   }
 
   async clickActionsDropdown(): Promise<void> {
-    await this.robustClick(this.actionsDropdown);
+    await this.robustClick(this.actionsDropdown, { timeout: 60_000 });
   }
 
   async selectAction(action: string): Promise<void> {

@@ -48,6 +48,7 @@ export BRIDGE_BASE_ADDRESS="$(oc get consoles.config.openshift.io cluster -o jso
 ./contrib/create-user.sh
 
 export WORKERS="${WORKERS:-2}"
+export GLOBAL_TIMEOUT_MS="${GLOBAL_TIMEOUT_MS:-6600000}"
 
 pushd frontend
 

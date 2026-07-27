@@ -50,7 +50,7 @@ export default defineConfig({
   testDir: './e2e/tests',
   testMatch: '**/*.spec.ts',
   forbidOnly: isCI,
-  globalTimeout: parseInt(process.env.GLOBAL_TIMEOUT_MS || '0', 10) || (isCI ? 110 * 60 * 1000 : 0),
+  globalTimeout: Number(process.env.GLOBAL_TIMEOUT_MS) || 0,
   retries: isCI ? 1 : 0,
   timeout: 120_000,
   reporter: isCI
@@ -86,7 +86,7 @@ export default defineConfig({
     },
   },
 
-  workers: process.env.WORKERS ? parseInt(process.env.WORKERS, 10) : undefined,
+  workers: process.env.WORKERS ? Number(process.env.WORKERS) || undefined : undefined,
 
   projects: [
     {
