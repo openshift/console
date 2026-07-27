@@ -4,6 +4,7 @@ import {
   PROMPT_TIMEOUT_MAX_EXECUTION,
 } from './shared/constants';
 import { getLanguageConstraint } from './shared/language-utils';
+import { securityConstraint, getConfidenceQualifiers } from './shared/security-utils';
 
 /**
  * Pre-check prompt for a specific target version
@@ -18,6 +19,15 @@ export const createPreCheckSpecificVersionPrompt = (
   targetVersion: string,
 ) => {
   const languageConstraint = getLanguageConstraint();
+  const confidenceQualifiers = getConfidenceQualifiers({
+    highConfidenceData: 'ClusterVersion + ClusterOperators',
+    highConfidenceQuality: 'conditions are unambiguous',
+    moderateConfidenceMissing: 'events, MCPs, nodes, alerts',
+    additionalGuidance: `Apply confidence to specific claims:
+- When determining if a conditional update risk applies to this cluster, state your confidence and the evidence (e.g., "High confidence: cluster uses OVN-Kubernetes (verified from network operator status)").
+- When estimating upgrade path risk, qualify as approximate if intermediate version data is incomplete.
+- When a conclusion depends on data that could not be retrieved, say so explicitly rather than presenting it as definitive.`,
+  });
 
   return `# OpenShift Cluster Upgrade Pre-Check Analysis
 
@@ -68,9 +78,12 @@ ${languageConstraint}
 - ONLY report issues that are actually present in the data
 - ONLY OUTPUT the Summary and TL;DR sections
 - Be specific about the source of any issues identified
+${securityConstraint}
+${confidenceQualifiers}
 - CRITICAL: When counting available updates, count ALL array elements in status.availableUpdates
 - CRITICAL: Check status.conditionalUpdates for ALL versions from ${currentVersion} to ${targetVersion} (inclusive)
 - CRITICAL: Analyze the COMPLETE upgrade path, not just the target version - intermediate versions matter!
+- ONLY report issues that directly affect the upgrade path from ${currentVersion} to ${targetVersion}. Do not flag issues unrelated to upgrade readiness.
 </constraints>
 
 <context>
@@ -325,6 +338,7 @@ If ${targetVersion} is not available, recommend the closest available version an
 - **Resource Pressure**: [nodes with >90% CPU or memory usage]
 - **Recent Events**: [count of error/warning events in last 30 min, user-friendly summary]
 - **Active Alerts**: [count of critical/warning alerts, skip if tool unavailable]
+- **Data Completeness**: [Full | Partial — list missing sources | Limited — list missing essential sources] → [High | Moderate | Limited] confidence
 - **Recommendation**: [Proceed with upgrade to ${targetVersion} | Address risks/warnings first | Blocked - resolve issues | Target not available - use X.X.X instead]
 </output_format>`;
 };

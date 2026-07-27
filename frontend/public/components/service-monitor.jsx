@@ -35,7 +35,7 @@ const namespaceSelectorLinks = ({ spec }) => {
       </span>
     ));
   }
-  return <span className="pf-v6-u-text-color-subtle">--</span>;
+  return <span className="pf-v6-u-text-color-subtle">{DASH}</span>;
 };
 
 const serviceSelectorLinks = ({ spec }) => {

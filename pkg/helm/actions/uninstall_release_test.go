@@ -8,26 +8,27 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/require"
-	"helm.sh/helm/v3/pkg/action"
-	"helm.sh/helm/v3/pkg/chartutil"
-	kubefake "helm.sh/helm/v3/pkg/kube/fake"
-	"helm.sh/helm/v3/pkg/release"
-	"helm.sh/helm/v3/pkg/storage"
-	"helm.sh/helm/v3/pkg/storage/driver"
+	"helm.sh/helm/v4/pkg/action"
+	"helm.sh/helm/v4/pkg/chart/common"
+	kubefake "helm.sh/helm/v4/pkg/kube/fake"
+	releasecommon "helm.sh/helm/v4/pkg/release/common"
+	releasev1 "helm.sh/helm/v4/pkg/release/v1"
+	"helm.sh/helm/v4/pkg/storage"
+	"helm.sh/helm/v4/pkg/storage/driver"
 	k8sfake "k8s.io/client-go/kubernetes/fake"
 )
 
 func TestUninstallRelease(t *testing.T) {
 	tests := []struct {
 		name    string
-		release *release.Release
+		release *releasev1.Release
 	}{
 		{
 			name: "successful release uninstall should remove release installed",
-			release: &release.Release{
+			release: &releasev1.Release{
 				Name: "test-release",
-				Info: &release.Info{
-					Status: release.StatusDeployed,
+				Info: &releasev1.Info{
+					Status: releasecommon.StatusDeployed,
 				},
 			},
 		},
@@ -39,8 +40,7 @@ func TestUninstallRelease(t *testing.T) {
 			actionConfig := &action.Configuration{
 				Releases:     store,
 				KubeClient:   &kubefake.PrintingKubeClient{Out: io.Discard},
-				Capabilities: chartutil.DefaultCapabilities,
-				Log:          func(format string, v ...interface{}) {},
+				Capabilities: common.DefaultCapabilities,
 			}
 			// create fake release
 			err := store.Create(tt.release)
@@ -48,8 +48,13 @@ func TestUninstallRelease(t *testing.T) {
 				t.Error(err)
 			}
 			resp, err := UninstallRelease(tt.release.Name, actionConfig)
-			if resp != nil && resp.Release.Info.Status != release.StatusUninstalled {
-				t.Error(errors.New("Release status is not uninstalled"))
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
+			if resp != nil {
+				if rel, ok := resp.Release.(*releasev1.Release); ok && rel.Info.Status != releasecommon.StatusUninstalled {
+					t.Error(errors.New("Release status is not uninstalled"))
+				}
 			}
 		})
 	}
@@ -58,12 +63,12 @@ func TestUninstallRelease(t *testing.T) {
 func TestUninstallInvalidRelease(t *testing.T) {
 	tests := []struct {
 		name    string
-		release *release.Release
+		release *releasev1.Release
 		err     error
 	}{
 		{
 			name: "non exist release uninstall should error out with no release found",
-			release: &release.Release{
+			release: &releasev1.Release{
 				Name: "invalid-release",
 			},
 			err: ErrReleaseNotFound,
@@ -76,15 +81,19 @@ func TestUninstallInvalidRelease(t *testing.T) {
 			actionConfig := &action.Configuration{
 				Releases:     store,
 				KubeClient:   &kubefake.PrintingKubeClient{Out: io.Discard},
-				Capabilities: chartutil.DefaultCapabilities,
-				Log:          func(format string, v ...interface{}) {},
+				Capabilities: common.DefaultCapabilities,
 			}
 			resp, err := UninstallRelease(tt.release.Name, actionConfig)
-			if err != nil && err.Error() != tt.err.Error() {
-				t.Error(err)
+			if err == nil {
+				t.Fatal("expected error but got nil")
 			}
-			if resp != nil && resp.Release.Info.Status != release.StatusUninstalled {
-				t.Error(errors.New("Release status is not uninstalled"))
+			if err.Error() != tt.err.Error() {
+				t.Errorf("expected error %q, got %q", tt.err, err)
+			}
+			if resp != nil {
+				if rel, ok := resp.Release.(*releasev1.Release); ok && rel.Info.Status != releasecommon.StatusUninstalled {
+					t.Error(errors.New("Release status is not uninstalled"))
+				}
 			}
 		})
 	}
@@ -98,7 +107,7 @@ func TestUninstallReleaseAsync(t *testing.T) {
 		namespace    string
 		requireError bool
 		releaseName  string
-		release      *release.Release
+		release      *releasev1.Release
 	}{
 		{
 			name:         "successful release uninstall should remove release installed",
@@ -107,10 +116,10 @@ func TestUninstallReleaseAsync(t *testing.T) {
 			releaseName:  "test-release",
 			namespace:    "default",
 			version:      "1",
-			release: &release.Release{
+			release: &releasev1.Release{
 				Name: "test-release",
-				Info: &release.Info{
-					Status: release.StatusDeployed,
+				Info: &releasev1.Info{
+					Status: releasecommon.StatusDeployed,
 				},
 			},
 		},
@@ -122,8 +131,7 @@ func TestUninstallReleaseAsync(t *testing.T) {
 			actionConfig := &action.Configuration{
 				Releases:     store,
 				KubeClient:   &kubefake.PrintingKubeClient{Out: io.Discard},
-				Capabilities: chartutil.DefaultCapabilities,
-				Log:          func(format string, v ...interface{}) {},
+				Capabilities: common.DefaultCapabilities,
 			}
 			// create fake release
 			err := store.Create(tt.release)
@@ -148,7 +156,7 @@ func TestUninstallReleaseAsync(t *testing.T) {
 func TestUninstallInvalidReleaseAsync(t *testing.T) {
 	tests := []struct {
 		name        string
-		release     *release.Release
+		release     *releasev1.Release
 		version     string
 		namespace   string
 		releaseName string
@@ -156,7 +164,7 @@ func TestUninstallInvalidReleaseAsync(t *testing.T) {
 	}{
 		{
 			name: "non exist release uninstall should error out with no release found",
-			release: &release.Release{
+			release: &releasev1.Release{
 				Name: "invalid-release",
 			},
 			namespace:   "default",
@@ -172,8 +180,7 @@ func TestUninstallInvalidReleaseAsync(t *testing.T) {
 			actionConfig := &action.Configuration{
 				Releases:     store,
 				KubeClient:   &kubefake.PrintingKubeClient{Out: io.Discard},
-				Capabilities: chartutil.DefaultCapabilities,
-				Log:          func(format string, v ...interface{}) {},
+				Capabilities: common.DefaultCapabilities,
 			}
 			clientInterface := k8sfake.NewSimpleClientset()
 			coreClient := clientInterface.CoreV1()

@@ -11,11 +11,12 @@ import (
 
 	"github.com/openshift/api/helm/v1beta1"
 	"github.com/openshift/console/pkg/helm/metrics"
-	"helm.sh/helm/v3/pkg/action"
-	"helm.sh/helm/v3/pkg/chart"
-	"helm.sh/helm/v3/pkg/chart/loader"
-	"helm.sh/helm/v3/pkg/registry"
-	"helm.sh/helm/v3/pkg/release"
+	"helm.sh/helm/v4/pkg/action"
+	chart "helm.sh/helm/v4/pkg/chart/v2"
+	"helm.sh/helm/v4/pkg/chart/v2/loader"
+	"helm.sh/helm/v4/pkg/kube"
+	"helm.sh/helm/v4/pkg/registry"
+	releasev1 "helm.sh/helm/v4/pkg/release/v1"
 	kv1 "k8s.io/api/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -104,11 +105,13 @@ func chartVersionFromURL(raw string) string {
 	return ""
 }
 
-func InstallChart(ns, name, url string, vals map[string]interface{}, conf *action.Configuration, client dynamic.Interface, coreClient corev1client.CoreV1Interface, fileCleanUp bool, indexEntry string) (*release.Release, error) {
+func InstallChart(ns, name, url string, vals map[string]interface{}, conf *action.Configuration, client dynamic.Interface, coreClient corev1client.CoreV1Interface, fileCleanUp bool, indexEntry string) (*releasev1.Release, error) {
 	var err error
 	var chartInfo *ChartInfo
 	var cp, chartLocation string
 	cmd := action.NewInstall(conf)
+	cmd.ServerSideApply = false
+	cmd.WaitStrategy = kube.HookOnlyStrategy
 	// tlsFiles contain references of files to be removed once the chart
 	// operation depending on those files is finished.
 	tlsFiles := []*os.File{}
@@ -162,9 +165,14 @@ func InstallChart(ns, name, url string, vals map[string]interface{}, conf *actio
 	ch.Metadata.Annotations["chart_url"] = url
 
 	cmd.Namespace = ns
-	release, err := cmd.Run(ch, vals)
+	result, err := cmd.Run(ch, vals)
 	if err != nil {
 		return nil, err
+	}
+
+	rel, ok := result.(*releasev1.Release)
+	if !ok {
+		return nil, fmt.Errorf("unexpected release type %T", result)
 	}
 
 	if ch.Metadata.Name != "" && ch.Metadata.Version != "" {
@@ -179,7 +187,7 @@ func InstallChart(ns, name, url string, vals map[string]interface{}, conf *actio
 			os.Remove(f.Name())
 		}
 	}()
-	return release, nil
+	return rel, nil
 }
 
 func InstallChartAsync(ns, name, url string, vals map[string]interface{}, conf *action.Configuration, client dynamic.Interface, coreClient corev1client.CoreV1Interface, fileCleanUp bool, indexEntry string) (*kv1.Secret, error) {
@@ -187,6 +195,8 @@ func InstallChartAsync(ns, name, url string, vals map[string]interface{}, conf *
 	var chartInfo *ChartInfo
 	var cp, chartLocation string
 	cmd := action.NewInstall(conf)
+	cmd.ServerSideApply = false
+	cmd.WaitStrategy = kube.HookOnlyStrategy
 	// tlsFiles contain references of files to be removed once the chart
 	// operation depending on those files is finished.
 	tlsFiles := []*os.File{}
@@ -319,6 +329,8 @@ func InstallChartFromURL(ns, name, url string, vals map[string]interface{}, conf
 	}
 
 	cmd := action.NewInstall(conf)
+	cmd.ServerSideApply = false
+	cmd.WaitStrategy = kube.HookOnlyStrategy
 	cmd.ReleaseName = name
 	cmd.Namespace = ns
 

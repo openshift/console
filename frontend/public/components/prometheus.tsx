@@ -9,7 +9,7 @@ import { ResourceLink } from './utils/resource-link';
 import { Selector } from './utils/selector';
 import { LoadingBox } from './utils/status-box';
 import { PrometheusModel } from '../models';
-import { referenceForModel, referenceFor, K8sResourceKind } from '../module/k8s';
+import { referenceForModel, referenceFor, K8sResourceKind, TableColumn } from '../module/k8s';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import {
   ConsoleDataView,
@@ -17,7 +17,6 @@ import {
   actionsCellProps,
   cellIsStickyProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import { TableColumn } from '@console/internal/module/k8s';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { DASH } from '@console/shared/src/constants/ui';
 

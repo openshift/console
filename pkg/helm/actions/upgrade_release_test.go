@@ -9,19 +9,20 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/require"
-	"helm.sh/helm/v3/pkg/action"
-	"helm.sh/helm/v3/pkg/chart"
-	"helm.sh/helm/v3/pkg/chartutil"
-	kubefake "helm.sh/helm/v3/pkg/kube/fake"
-	"helm.sh/helm/v3/pkg/release"
-	"helm.sh/helm/v3/pkg/storage"
-	"helm.sh/helm/v3/pkg/storage/driver"
-	helmTime "helm.sh/helm/v3/pkg/time"
+	"helm.sh/helm/v4/pkg/action"
+	"helm.sh/helm/v4/pkg/chart/common"
+	chart "helm.sh/helm/v4/pkg/chart/v2"
+	kubefake "helm.sh/helm/v4/pkg/kube/fake"
+	releasecommon "helm.sh/helm/v4/pkg/release/common"
+	releasev1 "helm.sh/helm/v4/pkg/release/v1"
+	"helm.sh/helm/v4/pkg/storage"
+	"helm.sh/helm/v4/pkg/storage/driver"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
 	k8sfake "k8s.io/client-go/kubernetes/fake"
+	helmTime "time"
 )
 
 func TestUpgradeReleaseWithoutDependencies(t *testing.T) {
@@ -105,8 +106,7 @@ func TestUpgradeReleaseWithoutDependencies(t *testing.T) {
 				RESTClientGetter: FakeConfig{},
 				Releases:         store,
 				KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
-				Capabilities:     chartutil.DefaultCapabilities,
-				Log:              func(format string, v ...interface{}) {},
+				Capabilities:     common.DefaultCapabilities,
 			}
 
 			if tt.createNamespace && tt.namespace != configNamespace {
@@ -114,10 +114,10 @@ func TestUpgradeReleaseWithoutDependencies(t *testing.T) {
 				objs = append(objs, nsSpec)
 			}
 
-			r := release.Release{
+			r := releasev1.Release{
 				Name:      "test",
 				Namespace: tt.namespace,
-				Info: &release.Info{
+				Info: &releasev1.Info{
 					FirstDeployed: helmTime.Time{},
 					Status:        "deployed",
 				},
@@ -160,7 +160,7 @@ func TestUpgradeReleaseWithoutDependencies(t *testing.T) {
 				require.NoError(t, err)
 				require.Equal(t, r.Name, rel.Name)
 				require.Equal(t, r.Namespace, rel.Namespace)
-				require.Equal(t, release.StatusDeployed, rel.Info.Status)
+				require.Equal(t, releasecommon.StatusDeployed, rel.Info.Status)
 				require.Equal(t, tt.chartVersion, rel.Chart.Metadata.Version)
 				require.Equal(t, 2, rel.Version)
 				require.Equal(t, r.Chart.Metadata.Annotations["chart_url"], rel.Chart.Metadata.Annotations["chart_url"])
@@ -212,16 +212,15 @@ func TestUpgradeReleaseWithDependencies(t *testing.T) {
 				RESTClientGetter: FakeConfig{},
 				Releases:         store,
 				KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
-				Capabilities:     chartutil.DefaultCapabilities,
-				Log:              func(format string, v ...interface{}) {},
+				Capabilities:     common.DefaultCapabilities,
 			}
 			client := K8sDynamicClientFromCRs(tt.helmCRS...)
 			clientInterface := k8sfake.NewSimpleClientset()
 			coreClient := clientInterface.CoreV1()
-			r := release.Release{
+			r := releasev1.Release{
 				Name:      "test",
 				Namespace: "test-namespace",
-				Info: &release.Info{
+				Info: &releasev1.Info{
 					FirstDeployed: helmTime.Time{},
 					Status:        "deployed",
 				},
@@ -244,7 +243,7 @@ func TestUpgradeReleaseWithDependencies(t *testing.T) {
 				require.NoError(t, err)
 				require.Equal(t, r.Name, rel.Name)
 				require.Equal(t, r.Namespace, rel.Namespace)
-				require.Equal(t, release.StatusDeployed, rel.Info.Status)
+				require.Equal(t, releasecommon.StatusDeployed, rel.Info.Status)
 				require.Equal(t, tt.chartVersion, rel.Chart.Metadata.Version)
 				require.Equal(t, 2, rel.Version)
 				require.Equal(t, r.Chart.Metadata.Annotations["chart_url"], rel.Chart.Metadata.Annotations["chart_url"])
@@ -280,8 +279,7 @@ func TestUpgradeNonExistRelease(t *testing.T) {
 				RESTClientGetter: FakeConfig{},
 				Releases:         store,
 				KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
-				Capabilities:     chartutil.DefaultCapabilities,
-				Log:              func(format string, v ...interface{}) {},
+				Capabilities:     common.DefaultCapabilities,
 			}
 			client := K8sDynamicClientFromCRs()
 			clientInterface := k8sfake.NewSimpleClientset()
@@ -342,16 +340,15 @@ func TestUpgradeReleaseWithCustomValues(t *testing.T) {
 				RESTClientGetter: FakeConfig{},
 				Releases:         store,
 				KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
-				Capabilities:     chartutil.DefaultCapabilities,
-				Log:              func(format string, v ...interface{}) {},
+				Capabilities:     common.DefaultCapabilities,
 			}
 			client := K8sDynamicClientFromCRs(tt.helmCRS...)
 			clientInterface := k8sfake.NewSimpleClientset()
 			coreClient := clientInterface.CoreV1()
-			r := release.Release{
+			r := releasev1.Release{
 				Name:      "test",
 				Namespace: "test-namespace",
-				Info: &release.Info{
+				Info: &releasev1.Info{
 					FirstDeployed: helmTime.Time{},
 					Status:        "deployed",
 				},
@@ -374,7 +371,7 @@ func TestUpgradeReleaseWithCustomValues(t *testing.T) {
 				require.NoError(t, err)
 				require.Equal(t, r.Name, rel.Name)
 				require.Equal(t, r.Namespace, rel.Namespace)
-				require.Equal(t, release.StatusDeployed, rel.Info.Status)
+				require.Equal(t, releasecommon.StatusDeployed, rel.Info.Status)
 				require.Equal(t, tt.chartVersion, rel.Chart.Metadata.Version)
 				require.Equal(t, 2, rel.Version)
 				require.Equal(t, r.Chart.Metadata.Annotations["chart_url"], rel.Chart.Metadata.Annotations["chart_url"])
@@ -454,8 +451,7 @@ func TestUpgradeReleaseWithoutDependenciesAsync(t *testing.T) {
 				RESTClientGetter: FakeConfig{},
 				Releases:         store,
 				KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
-				Capabilities:     chartutil.DefaultCapabilities,
-				Log:              func(format string, v ...interface{}) {},
+				Capabilities:     common.DefaultCapabilities,
 			}
 
 			if tt.createNamespace && tt.namespace != configNamespace {
@@ -463,10 +459,10 @@ func TestUpgradeReleaseWithoutDependenciesAsync(t *testing.T) {
 				objs = append(objs, nsSpec)
 			}
 
-			r := release.Release{
+			r := releasev1.Release{
 				Name:      tt.releaseName,
 				Namespace: tt.namespace,
-				Info: &release.Info{
+				Info: &releasev1.Info{
 					FirstDeployed: helmTime.Time{},
 					Status:        "deployed",
 				},
@@ -573,8 +569,7 @@ func TestUpgradeReleaseWithDependenciesAsync(t *testing.T) {
 				RESTClientGetter: FakeConfig{},
 				Releases:         store,
 				KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
-				Capabilities:     chartutil.DefaultCapabilities,
-				Log:              func(format string, v ...interface{}) {},
+				Capabilities:     common.DefaultCapabilities,
 			}
 			client := K8sDynamicClientFromCRs(tt.helmCRS...)
 			clientInterface := k8sfake.NewSimpleClientset()
@@ -582,10 +577,10 @@ func TestUpgradeReleaseWithDependenciesAsync(t *testing.T) {
 			secretsDriver := driver.NewSecrets(coreClient.Secrets(tt.releaseNamespace))
 			var rel *v1.Secret
 			var err error
-			r := release.Release{
+			r := releasev1.Release{
 				Name:      tt.releaseName,
 				Namespace: tt.releaseNamespace,
-				Info: &release.Info{
+				Info: &releasev1.Info{
 					FirstDeployed: helmTime.Time{},
 					Status:        "deployed",
 				},
@@ -665,14 +660,13 @@ func TestUpgradeReleaseWithCustomValuesAsync(t *testing.T) {
 				RESTClientGetter: FakeConfig{},
 				Releases:         store,
 				KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
-				Capabilities:     chartutil.DefaultCapabilities,
-				Log:              func(format string, v ...interface{}) {},
+				Capabilities:     common.DefaultCapabilities,
 			}
 
-			r := release.Release{
+			r := releasev1.Release{
 				Name:      tt.releaseName,
 				Namespace: tt.releaseNamespace,
-				Info: &release.Info{
+				Info: &releasev1.Info{
 					FirstDeployed: helmTime.Time{},
 					Status:        "deployed",
 				},
@@ -735,8 +729,7 @@ func TestUpgradeAfterURLInstallWithSecrets(t *testing.T) {
 				RESTClientGetter: FakeConfig{},
 				Releases:         store,
 				KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
-				Capabilities:     chartutil.DefaultCapabilities,
-				Log:              func(format string, v ...interface{}) {},
+				Capabilities:     common.DefaultCapabilities,
 			}
 			authSecret := &v1.Secret{
 				ObjectMeta: metav1.ObjectMeta{
@@ -753,10 +746,10 @@ func TestUpgradeAfterURLInstallWithSecrets(t *testing.T) {
 			dynamicClient := K8sDynamicClientFromCRs()
 
 			// Simulate a URL install by creating the release with auth annotation
-			installRelease := release.Release{
+			installRelease := releasev1.Release{
 				Name:      tt.releaseName,
 				Namespace: tt.releaseNamespace,
-				Info: &release.Info{
+				Info: &releasev1.Info{
 					FirstDeployed: helmTime.Time{},
 					Status:        "deployed",
 				},

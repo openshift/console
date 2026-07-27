@@ -217,7 +217,7 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
                 setGroupSearchFilter('');
                 textInputGroupRef?.current?.focus();
               }}
-              aria-label="Clear input"
+              aria-label={t('Clear input')}
             >
               <RhUiCloseIcon aria-hidden />
             </Button>

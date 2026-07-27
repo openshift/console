@@ -1,7 +1,7 @@
 {
   "OperatorSource": "OperatorSource",
   "CatalogSource": "CatalogSource",
-  "CatalogSources": "CatalogSource",
+  "CatalogSources": "CatalogSources",
   "PackageManifest": "PackageManifest",
   "PackageManifests": "PackageManifests",
   "ClusterServiceVersion": "ClusterServiceVersion",
@@ -11,7 +11,7 @@
   "Subscription": "订阅",
   "Subscriptions": "订阅",
   "OperatorGroup": "OperatorGroup",
-  "OperatorGroups": "OperatorGroup",
+  "OperatorGroups": "OperatorGroups",
   "OperatorHub": "OperatorHub",
   "OperatorHubs": "OperatorHubs",
   "Operator Backed": "Operator 支持的",

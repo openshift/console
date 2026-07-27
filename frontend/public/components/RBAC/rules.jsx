@@ -39,10 +39,11 @@ export const RulesList = ({ rules, name, namespace }) => {
 };
 
 const Actions = ({ verbs }) => {
+  const { t } = useTranslation('public');
   let actions = [];
   _.each(verbs, (a) => {
     if (a === '*') {
-      actions = <div className="rbac-rule-row">All</div>;
+      actions = <div className="rbac-rule-row">{t('All')}</div>;
       return false;
     }
     actions.push(
@@ -55,13 +56,15 @@ const Actions = ({ verbs }) => {
 };
 
 const Groups = ({ apiGroups }) => {
+  const { t } = useTranslation('public');
+
   // defaults to [""]
   let groups = [];
   _.each(apiGroups, (g) => {
     if (g === '*') {
       groups = (
         <div className="rbac-rule-row">
-          * <i>All</i>
+          * <i>{t('All')}</i>
         </div>
       );
       return false;
@@ -77,6 +80,8 @@ const Groups = ({ apiGroups }) => {
 
 const Resources = connect(({ k8s }) => ({ allModels: k8s.getIn(['RESOURCES', 'models']) }))(
   ({ resources, nonResourceURLs, allModels }) => {
+    const { t } = useTranslation('public');
+
     let allResources = [];
     resources &&
       _.each([...new Set(resources)].sort(), (r) => {
@@ -86,7 +91,7 @@ const Resources = connect(({ k8s }) => ({ allModels: k8s.getIn(['RESOURCES', 'mo
         if (r === '*') {
           allResources = [
             <span key={r} className="rbac-rule-resource rbac-rule-row">
-              All Resources
+              {t('All Resources')}
             </span>,
           ];
           return false;
@@ -111,7 +116,7 @@ const Resources = connect(({ k8s }) => ({ allModels: k8s.getIn(['RESOURCES', 'mo
         if (r === '*') {
           URLs = [
             <div className="rbac-rule-row" key={r}>
-              All Non-resource URLs
+              {t('All Non-resource URLs')}
             </div>,
           ];
           return false;

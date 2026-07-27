@@ -1,10 +1,10 @@
 /* eslint-env node */
 /* eslint-disable no-console */
 
-import type { Configuration, Compiler } from 'webpack';
+import type { Configuration, Compiler } from '@rspack/core';
+import { CircularCheckRspackPlugin } from '@rspack/core';
 import * as path from 'path';
 import * as fs from 'fs';
-import * as CircularDependencyPlugin from 'circular-dependency-plugin';
 import chalk from 'chalk';
 
 const HandleCyclesPluginName = 'HandleCyclesPlugin';
@@ -17,7 +17,7 @@ type PresetOptions = {
 };
 
 type DetectedCycle = {
-  // webpack module record that caused the cycle
+  // rspack module record that caused the cycle
   causedBy: string;
   // relative module paths that make up the cycle
   modulePaths: string[];
@@ -37,7 +37,7 @@ const getCycleStats = (cycles: DetectedCycle[]): string => {
 
   const cycleCountByDir = cycles
     .map((c) => {
-      const startPath = c.modulePaths[0];
+      const startPath = c.modulePaths[0].replace(/^\.\//, '');
       const elements = startPath.split('/');
       return startPath.startsWith('packages') ? elements.slice(0, 2).join('/') : elements[0];
     })
@@ -80,22 +80,25 @@ export class CircularDependencyPreset {
     const cycles: DetectedCycle[] = [];
 
     plugins.push(
-      new CircularDependencyPlugin({
+      new CircularCheckRspackPlugin({
         exclude: this.options.exclude,
-        onDetected: ({ module: { resource }, paths: modulePaths }) => {
-          cycles.push({ causedBy: resource, modulePaths });
+        onDetected: ({ module, paths: modulePaths }) => {
+          cycles.push({ causedBy: module.readableIdentifier(), modulePaths });
         },
       }),
       {
         // Ad-hoc plugin to handle detected module cycle information
         apply: (compiler: Compiler) => {
+          compiler.hooks.thisCompilation.tap(HandleCyclesPluginName, () => {
+            cycles.length = 0;
+          });
           compiler.hooks.emit.tap(HandleCyclesPluginName, (compilation) => {
             if (cycles.length === 0) {
               return;
             }
 
             // write report
-            const header = `webpack compilation ${compilation.getStats().hash}\n`;
+            const header = `rspack compilation ${compilation.getStats().hash}\n`;
 
             const reportPath = path.resolve(__dirname, this.options.reportFile);
             fs.writeFileSync(
@@ -110,7 +113,7 @@ export class CircularDependencyPreset {
             const minLengthCycles = minLengthCycleCount(cycles);
 
             compilation.errors.push(
-              new compiler.webpack.WebpackError(
+              new compiler.rspack.WebpackError(
                 `${HandleCyclesPluginName}: ${cycles.length} total cycles detected, ${minLengthCycles} of which are min-length :-(`,
               ),
             );

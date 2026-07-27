@@ -83,8 +83,8 @@ type BareMetalHostsPageProps = {
 
 const getCreateProps = ({ namespace, t }: { namespace: string; t: TFunction }) => {
   const items: any = {
-    dialog: t('New with Dialog'),
-    yaml: t('New from YAML'),
+    dialog: t('metal3-plugin~New with Dialog'),
+    yaml: t('metal3-plugin~New from YAML'),
   };
 
   return {

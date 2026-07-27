@@ -1,10 +1,10 @@
 import type { FC } from 'react';
 import { useState, useMemo, useCallback } from 'react';
+import { Tooltip } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useCloudShellAvailable } from '@console/webterminal-plugin/src/components/cloud-shell/useCloudShellAvailable';
 import { useCloudShellCommandDispatch } from '@console/webterminal-plugin/src/redux/actions/cloud-shell-dispatchers';
 import { useEventListener } from '../../hooks/useEventListener';
-import { Tooltip } from '../Tooltip/Tooltip';
 import { MARKDOWN_EXECUTE_BUTTON_ID, MARKDOWN_SNIPPET_ID } from './const';
 
 type ExecuteSnippetProps = {
@@ -34,14 +34,18 @@ const ExecuteSnippet: FC<ExecuteSnippetProps> = ({ element, rootSelector, docCon
     }, [textToExecute, element, setCloudShellCommand]),
   );
 
+  const clearExecuted = useCallback(() => {
+    element.removeAttribute('data-executed');
+  }, [element]);
+
+  useEventListener(element, 'mouseenter', clearExecuted);
+  useEventListener(element, 'focus', clearExecuted);
+
   return (
     <Tooltip
-      reference={() => element}
+      triggerRef={() => element}
       content={showRunning ? t('Running in Web Terminal') : t('Run in Web Terminal')}
-      onShow={() => {
-        element.removeAttribute('data-executed');
-      }}
-      onHide={() => {
+      onTooltipHidden={() => {
         setShowRunning(false);
       }}
     />

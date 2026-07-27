@@ -537,6 +537,38 @@ export const RoleModel: K8sKind = {
   labelPluralKey: 'public~Roles',
 };
 
+export const SelfSubjectAccessReviewModel: K8sKind = {
+  label: 'SelfSubjectAccessReview',
+  // t('public~SelfSubjectAccessReview')
+  labelKey: 'public~SelfSubjectAccessReview',
+  apiGroup: 'authorization.k8s.io',
+  apiVersion: 'v1',
+  plural: 'selfsubjectaccessreviews',
+  abbr: 'SSAR',
+  namespaced: false,
+  kind: 'SelfSubjectAccessReview',
+  id: 'selfsubjectaccessreview',
+  labelPlural: 'SelfSubjectAccessReviews',
+  // t('public~SelfSubjectAccessReviews')
+  labelPluralKey: 'public~SelfSubjectAccessReviews',
+};
+
+export const SelfSubjectReviewModel: K8sKind = {
+  label: 'SelfSubjectReview',
+  // t('public~SelfSubjectReview')
+  labelKey: 'public~SelfSubjectReview',
+  apiGroup: 'authentication.k8s.io',
+  apiVersion: 'v1',
+  plural: 'selfsubjectreviews',
+  abbr: 'SSR',
+  namespaced: false,
+  kind: 'SelfSubjectReview',
+  id: 'selfsubjectreview',
+  labelPlural: 'SelfSubjectReviews',
+  // t('public~SelfSubjectReviews')
+  labelPluralKey: 'public~SelfSubjectReviews',
+};
+
 export const ResourceAccessReviewsModel: K8sKind = {
   label: 'ResourceAccessReview',
   // t('public~ResourceAccessReview')

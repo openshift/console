@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { GroupModel, UserModel } from '../models';
-import { referenceForModel, GroupKind } from '../module/k8s';
+import { referenceForModel, GroupKind, TableColumn, K8sResourceKind } from '../module/k8s';
 import { DetailsPage } from './factory/details';
 import { ListPage } from './factory/list-page';
 import { RoleBindingsPage } from './RBAC';
@@ -28,7 +28,6 @@ import {
   actionsCellProps,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import { TableColumn, K8sResourceKind } from '@console/internal/module/k8s';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { DASH } from '@console/shared/src/constants/ui';

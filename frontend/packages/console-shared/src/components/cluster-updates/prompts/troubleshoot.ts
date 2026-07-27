@@ -8,6 +8,7 @@ import {
   PROMPT_TIMEOUT_LOG_TAIL_LINES_FULL,
 } from './shared/constants';
 import { getLanguageConstraint } from './shared/language-utils';
+import { securityConstraint, getConfidenceQualifiers } from './shared/security-utils';
 
 /**
  * Troubleshoot prompt for failing or stalled cluster updates
@@ -19,6 +20,15 @@ import { getLanguageConstraint } from './shared/language-utils';
  */
 export const createTroubleshootPrompt = (currentVersion: string, desiredVersion: string) => {
   const languageConstraint = getLanguageConstraint();
+  const confidenceQualifiers = getConfidenceQualifiers({
+    highConfidenceData: 'ClusterVersion + ClusterOperators + pod logs',
+    highConfidenceQuality: 'root cause is clear',
+    moderateConfidenceMissing: 'pod logs, events, nodes, alerts',
+    limitedDataSuffix: 'the diagnosis may be incomplete',
+    additionalGuidance: `Apply confidence to root cause claims:
+- When identifying a root cause, state your confidence and the evidence (e.g., "High confidence: pod logs confirm certificate expiry as root cause").
+- When the root cause is inferred from conditions alone without log confirmation, qualify as moderate confidence.`,
+  });
 
   return `# OpenShift Cluster Upgrade Troubleshoot Analysis
 
@@ -69,6 +79,8 @@ export const createTroubleshootPrompt = (currentVersion: string, desiredVersion:
 - Provide conservative, investigation-focused remediation
 - Focus on root cause identification using real error messages, not aggressive fixes
 - ONLY OUTPUT the Summary and TL;DR sections
+${securityConstraint}
+${confidenceQualifiers}
 ${languageConstraint}
 </constraints>
 
@@ -261,6 +273,7 @@ Based on the ClusterVersion data:
 - **MCP Issues**: [Count of degraded MachineConfigPools if any]
 - **Next Steps**: [Conservative investigation approach based on actual errors found]
 - **Escalation**: [When to contact Red Hat support]
+- **Data Completeness**: [Full | Partial — list missing sources | Limited — list missing essential sources] → [High | Moderate | Limited] confidence
 - **Recovery Time**: [Realistic estimate based on failure type]
 </output_format>`;
 };

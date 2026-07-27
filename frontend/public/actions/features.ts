@@ -4,22 +4,18 @@ import * as _ from 'lodash';
 import { FLAGS } from '@console/shared/src/constants/common';
 import { UserInfo } from '@console/internal/module/k8s';
 import { setUser } from '@console/dynamic-plugin-sdk/src/app/core/actions/core';
-import { ClusterVersionKind } from '../module/k8s/types';
 import { setClusterID, setCreateProjectMessage } from './common';
-import client, { fetchURL } from '../graphql/client';
-import { SSARQuery, SSRQuery } from './features.gql';
-import {
-  SSARQueryType,
-  SSARQueryVariables,
-  SSRQueryType,
-} from '../../@types/console/generated/graphql-schema';
+import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
+import { SelfSubjectAccessReviewModel, SelfSubjectReviewModel } from '../models';
+import { resourceURL } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-utils';
+import { k8sBasePath } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s';
 
 import { handleError, retryFlagDetection, setFlag, ssarChecks } from './flags';
 
 // This config API contains the OpenShift Project, and other mandatory resources
-const openshiftPath = '/apis/config.openshift.io/v1';
+const openshiftPath = `${k8sBasePath}/apis/config.openshift.io/v1`;
 const detectOpenShift = (dispatch) =>
-  fetchURL(openshiftPath).then(
+  coFetchJSON(openshiftPath).then(
     (res) => dispatch(setFlag(FLAGS.OPENSHIFT, _.size(res.resources) > 0)),
     (err) =>
       err?.response?.status === 404
@@ -27,9 +23,9 @@ const detectOpenShift = (dispatch) =>
         : handleError(err, FLAGS.OPENSHIFT, dispatch, detectOpenShift),
   );
 
-const clusterVersionPath = '/apis/config.openshift.io/v1/clusterversions/version';
+const clusterVersionPath = `${k8sBasePath}/apis/config.openshift.io/v1/clusterversions/version`;
 const detectClusterVersion = (dispatch) =>
-  fetchURL<ClusterVersionKind>(clusterVersionPath).then(
+  coFetchJSON(clusterVersionPath).then(
     (clusterVersion) => {
       const hasClusterVersion = !_.isEmpty(clusterVersion);
       dispatch(setFlag(FLAGS.CLUSTER_VERSION, hasClusterVersion));
@@ -44,9 +40,9 @@ const detectClusterVersion = (dispatch) =>
     },
   );
 
-const projectRequestPath = '/apis/project.openshift.io/v1/projectrequests';
+const projectRequestPath = `${k8sBasePath}/apis/project.openshift.io/v1/projectrequests`;
 const detectCanCreateProject = (dispatch) =>
-  fetchURL(projectRequestPath).then(
+  coFetchJSON(projectRequestPath).then(
     (res) => dispatch(setFlag(FLAGS.CAN_CREATE_PROJECT, res.status === 'Success')),
     (err) => {
       const status = err?.response?.status;
@@ -59,18 +55,21 @@ const detectCanCreateProject = (dispatch) =>
     },
   );
 
+const ssrURL = resourceURL(SelfSubjectReviewModel, {});
 const detectUser = (dispatch: Dispatch) =>
-  client
-    .query<SSRQueryType>({
-      query: SSRQuery,
+  coFetchJSON
+    .post(ssrURL, {
+      apiVersion: `${SelfSubjectReviewModel.apiGroup}/${SelfSubjectReviewModel.apiVersion}`,
+      kind: SelfSubjectReviewModel.kind,
     })
     .then(
       (res) => {
-        const userInfo = res.data.selfSubjectReview.status.userInfo;
+        const userInfo = res.status.userInfo;
         const newUserInfo: UserInfo = {};
         if (userInfo.extra) {
           try {
-            newUserInfo.extra = JSON.parse(userInfo.extra);
+            newUserInfo.extra =
+              typeof userInfo.extra === 'string' ? JSON.parse(userInfo.extra) : userInfo.extra;
           } catch (error) {
             // eslint-disable-next-line no-console
             console.error('Error parsing UserInfo JSON:', error);
@@ -90,24 +89,24 @@ const detectUser = (dispatch: Dispatch) =>
       },
     );
 
+const ssarURL = resourceURL(SelfSubjectAccessReviewModel, {});
 const ssarCheckActions = ssarChecks.map(({ flag, resourceAttributes, after }) => {
   const fn = (dispatch: Dispatch) =>
-    client
-      .query<SSARQueryType, SSARQueryVariables>({
-        query: SSARQuery,
-        variables: resourceAttributes,
+    coFetchJSON
+      .post(ssarURL, {
+        apiVersion: `${SelfSubjectAccessReviewModel.apiGroup}/${SelfSubjectAccessReviewModel.apiVersion}`,
+        kind: SelfSubjectAccessReviewModel.kind,
+        spec: { resourceAttributes },
       })
       .then(
         (res) => {
-          const allowed: boolean = res.data.selfSubjectAccessReview.status.allowed;
+          const allowed: boolean = res.status.allowed;
           dispatch(setFlag(flag, allowed));
           if (after) {
             after(dispatch, allowed);
           }
         },
-        (err) => {
-          handleError({ response: err.graphQLErrors[0]?.extensions }, flag, dispatch, fn);
-        },
+        (err) => handleError(err, flag, dispatch, fn),
       );
   return fn;
 });

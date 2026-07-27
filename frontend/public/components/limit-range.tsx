@@ -3,7 +3,12 @@ import { useMemo, Suspense } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { K8sResourceKindReference, K8sResourceKind, referenceForModel } from '../module/k8s';
+import {
+  K8sResourceKindReference,
+  K8sResourceKind,
+  referenceForModel,
+  TableColumn,
+} from '../module/k8s';
 import { LimitRangeModel } from '../models';
 import { DetailsPage } from './factory/details';
 import { ListPage } from './factory/list-page';
@@ -21,7 +26,6 @@ import {
   actionsCellProps,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import { TableColumn } from '@console/internal/module/k8s';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { DASH } from '@console/shared/src/constants/ui';

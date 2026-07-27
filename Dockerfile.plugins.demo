@@ -9,7 +9,7 @@ RUN mkdir -p /src/console
 COPY . /src/console
 
 WORKDIR /src/console/frontend
-RUN yarn install && yarn generate
+RUN yarn install && yarn build-plugin-sdk
 
 WORKDIR /src/console/dynamic-demo-plugin
 RUN yarn install && yarn build

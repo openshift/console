@@ -11,7 +11,7 @@ pushd frontend
 # Dynamic plugin SDK docs are generated as part of the build, check for changes
 GIT_STATUS="$(git status --short --untracked-files -- packages/console-dynamic-plugin-sdk/docs)"
 if [ -n "$GIT_STATUS" ]; then
-  echo "dynamic plugin sdk docs are not up to date. Run 'yarn generate-plugin-sdk-docs' then commit changes."
+  echo "dynamic plugin sdk docs are not up to date. Run 'yarn build-plugin-sdk' then commit changes."
   git --no-pager diff
   exit 1
 fi

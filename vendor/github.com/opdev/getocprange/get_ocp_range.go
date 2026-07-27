@@ -75,7 +75,7 @@ func init() {
 func GetOCPRange(kubeVersionRange string) (string, error) {
 	// Return an error if the provided range of Kubernetes versions contains unsupported operators.
 	if strings.Contains(kubeVersionRange, "||") {
-		return "", fmt.Errorf("Range %s contains unsupported operator ||", kubeVersionRange)
+		return "", fmt.Errorf("range %s contains unsupported operator ||", kubeVersionRange)
 	}
 
 	minOCPRange, _ := semver.NewVersion("9.9")
@@ -84,21 +84,21 @@ func GetOCPRange(kubeVersionRange string) (string, error) {
 	// Ensure that the provided range of Kubernetes versions is a valid SemVer constraint.
 	kubeVersionRangeConstraint, err := semver.NewConstraint(kubeVersionRange)
 	if err != nil {
-		return "", fmt.Errorf("Error converting %s to Constraint: %v", kubeVersionRange, err)
+		return "", fmt.Errorf("error converting %s to Constraint: %v", kubeVersionRange, err)
 	}
 
 	for kubeVersionString, OCPVersionString := range kubeOpenShiftVersionMap {
 		// Check which of the known Kubernetes versions validate the Constraint.
 		kubeVersionObj, err := semver.NewVersion(kubeVersionString)
 		if err != nil {
-			return "", fmt.Errorf("Error converting %s to Version: %v", kubeVersionString, err)
+			return "", fmt.Errorf("error converting %s to Version: %v", kubeVersionString, err)
 		}
 		isInRange, _ := kubeVersionRangeConstraint.Validate(kubeVersionObj)
 		if isInRange {
 			// Register the corresponding minimum and maximum OCP versions.
 			OCPVersionObj, err := semver.NewVersion(OCPVersionString)
 			if err != nil {
-				return "", fmt.Errorf("Error converting %s to Version: %v", OCPVersionString, err)
+				return "", fmt.Errorf("error converting %s to Version: %v", OCPVersionString, err)
 			}
 			if OCPVersionObj.LessThan(minOCPRange) {
 				minOCPRange = OCPVersionObj
@@ -112,7 +112,7 @@ func GetOCPRange(kubeVersionRange string) (string, error) {
 	// Build the resulting range of OCP versions.
 	if minOCPRange.Original() == "9.9" {
 		// If the minimum was never set, it means we didn't match any known Kubernetes version.
-		return "", fmt.Errorf("Failed to match any known Kubernetes version to the provided range %s", kubeVersionRange)
+		return "", fmt.Errorf("failed to match any known Kubernetes version to the provided range %s", kubeVersionRange)
 	}
 	if isRangeOpenEnded(kubeVersionRangeConstraint) {
 		// If the provided range is open-ended, the result range should also be open-ended.

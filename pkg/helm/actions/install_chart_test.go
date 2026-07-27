@@ -8,16 +8,18 @@ import (
 	"testing"
 	"time"
 
+	helmTime "time"
+
 	"github.com/stretchr/testify/require"
-	"helm.sh/helm/v3/pkg/action"
-	"helm.sh/helm/v3/pkg/chart"
-	"helm.sh/helm/v3/pkg/chartutil"
-	kubefake "helm.sh/helm/v3/pkg/kube/fake"
-	"helm.sh/helm/v3/pkg/registry"
-	"helm.sh/helm/v3/pkg/release"
-	"helm.sh/helm/v3/pkg/storage"
-	"helm.sh/helm/v3/pkg/storage/driver"
-	helmTime "helm.sh/helm/v3/pkg/time"
+	"helm.sh/helm/v4/pkg/action"
+	"helm.sh/helm/v4/pkg/chart/common"
+	chart "helm.sh/helm/v4/pkg/chart/v2"
+	kubefake "helm.sh/helm/v4/pkg/kube/fake"
+	"helm.sh/helm/v4/pkg/registry"
+	releasecommon "helm.sh/helm/v4/pkg/release/common"
+	releasev1 "helm.sh/helm/v4/pkg/release/v1"
+	"helm.sh/helm/v4/pkg/storage"
+	"helm.sh/helm/v4/pkg/storage/driver"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
@@ -106,8 +108,7 @@ func TestInstallChart(t *testing.T) {
 				RESTClientGetter: FakeConfig{},
 				Releases:         store,
 				KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
-				Capabilities:     chartutil.DefaultCapabilities,
-				Log:              func(format string, v ...interface{}) {},
+				Capabilities:     common.DefaultCapabilities,
 			}
 			client := K8sDynamicClientFromCRs(tt.helmCRS...)
 			clientInterface := k8sfake.NewSimpleClientset()
@@ -117,7 +118,7 @@ func TestInstallChart(t *testing.T) {
 				require.NoError(t, err)
 				require.Equal(t, "test", rel.Name)
 				require.Equal(t, "test-namespace", rel.Namespace)
-				require.Equal(t, release.StatusDeployed, rel.Info.Status)
+				require.Equal(t, releasecommon.StatusDeployed, rel.Info.Status)
 				require.Equal(t, tt.chartName, rel.Chart.Metadata.Name)
 				require.Equal(t, tt.chartVersion, rel.Chart.Metadata.Version)
 				require.Equal(t, tt.chartPath, rel.Chart.Metadata.Annotations["chart_url"])
@@ -185,8 +186,7 @@ func TestInstallChartWithTlsData(t *testing.T) {
 				RESTClientGetter: FakeConfig{},
 				Releases:         store,
 				KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
-				Capabilities:     chartutil.DefaultCapabilities,
-				Log:              func(format string, v ...interface{}) {},
+				Capabilities:     common.DefaultCapabilities,
 			}
 			// create a namespace if it is not same as openshift-config
 			if tt.createNamespace && tt.namespace != configNamespace {
@@ -282,8 +282,7 @@ func TestInstallChartBasicAuth(t *testing.T) {
 				RESTClientGetter: FakeConfig{},
 				Releases:         store,
 				KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
-				Capabilities:     chartutil.DefaultCapabilities,
-				Log:              func(format string, v ...interface{}) {},
+				Capabilities:     common.DefaultCapabilities,
 			}
 			// create a namespace if it is not same as openshift-config
 			if tt.createNamespace && tt.namespace != configNamespace {
@@ -369,8 +368,7 @@ func TestInstallChartAsync(t *testing.T) {
 				RESTClientGetter: FakeConfig{},
 				Releases:         store,
 				KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
-				Capabilities:     chartutil.DefaultCapabilities,
-				Log:              func(format string, v ...interface{}) {},
+				Capabilities:     common.DefaultCapabilities,
 			}
 			objs := []runtime.Object{}
 			client := K8sDynamicClientFromCRs(tt.helmCRS...)
@@ -389,10 +387,10 @@ func TestInstallChartAsync(t *testing.T) {
 			}()
 			if tt.requireError == false {
 				secretsDriver := driver.NewSecrets(coreClient.Secrets(tt.namespace))
-				r := release.Release{
+				r := releasev1.Release{
 					Name:      tt.releaseName,
 					Namespace: tt.namespace,
-					Info: &release.Info{
+					Info: &releasev1.Info{
 						FirstDeployed: helmTime.Time{},
 						Status:        "pending-install",
 					},
@@ -547,6 +545,18 @@ func TestInstallChartFromURL(t *testing.T) {
 			expectedErrMsg:      "failed to find \"password\" key in secret",
 		},
 	}
+
+	// In Helm v4, ORAS v2 strictly enforces HTTPS when plainHTTP=false.
+	// The production code in applyBasicAuthFromUserCredentials hardcodes
+	// plainHTTP=false for security. Override the registry client factory
+	// so test registries (which use plain HTTP) work correctly.
+	originalNewRegistryClient := newRegistryClient
+	defer func() { newRegistryClient = originalNewRegistryClient }()
+	newRegistryClient = func(options ...registry.ClientOption) (*registry.Client, error) {
+		options = append(options, registry.ClientOptPlainHTTP())
+		return originalNewRegistryClient(options...)
+	}
+
 	for _, tt := range tests {
 		t.Run(tt.testName, func(t *testing.T) {
 			store := storage.Init(driver.NewMemory())
@@ -554,8 +564,7 @@ func TestInstallChartFromURL(t *testing.T) {
 				RESTClientGetter: FakeConfig{},
 				Releases:         store,
 				KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
-				Capabilities:     chartutil.DefaultCapabilities,
-				Log:              func(format string, v ...interface{}) {},
+				Capabilities:     common.DefaultCapabilities,
 			}
 			registryClient, err := GetOCIRegistry(tt.skipTLSVerify, tt.plainHTTP, nil)
 			require.NoError(t, err)
@@ -599,10 +608,10 @@ func TestInstallChartFromURL(t *testing.T) {
 			go func() {
 				time.Sleep(2 * time.Second)
 				secretsDriver := driver.NewSecrets(coreClient.Secrets("test-namespace"))
-				r := release.Release{
+				r := releasev1.Release{
 					Name:      tt.releaseName,
 					Namespace: "test-namespace",
-					Info: &release.Info{
+					Info: &releasev1.Info{
 						FirstDeployed: helmTime.Time{},
 						Status:        "pending-install",
 					},

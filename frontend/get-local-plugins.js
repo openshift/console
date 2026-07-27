@@ -5,11 +5,11 @@ const { getLocalPluginsModuleData } = require('@console/plugin-sdk/src/codegen/l
 /**
  * Get the current Console local plugins virtual module information.
  *
- * This module is used by webpack `val-loader` which uses the resulting `code` as actual module source.
+ * This module is used by `val-loader` which uses the resulting `code` as actual module source.
  *
  * @param {object} options
  * @param {import('@console/plugin-sdk/src/codegen/plugin-resolver').PluginPackage[]} options.pluginPackages
- * @param {import('webpack').LoaderContext<any>} loaderContext
+ * @param {import('@rspack/core').LoaderContext} loaderContext
  *
  * @returns {{code: string}} Generated module source code.
  */

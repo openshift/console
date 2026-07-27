@@ -1,15 +1,9 @@
 import { basename, resolve, sep } from 'path';
 import { readFileSync } from 'fs';
 import { sync as glob } from 'glob';
+import { NAMESPACE_EXCEPTIONS } from '../i18n-scripts/namespace-map';
 
 const FRONTEND_DIR = resolve(__dirname, '..');
-
-/** Packages where the i18n namespace differs from the package directory name */
-const NAMESPACE_EXCEPTIONS: Record<string, string> = {
-  'dev-console': 'devconsole',
-  'operator-lifecycle-manager': 'olm',
-  'operator-lifecycle-manager-v1': 'olm-v1',
-};
 
 /** Returns the expected i18n namespace for a file path relative to the frontend directory. */
 const expectedNamespace = (file: string): string => {

@@ -71,7 +71,6 @@ describe('EventSinkPage', () => {
       state: null,
       hash: '',
       key: 'default',
-      unstable_mask: undefined,
     });
   });
 
@@ -131,7 +130,6 @@ describe('EventSinkPage', () => {
       state: null,
       hash: '',
       key: 'default',
-      unstable_mask: undefined,
     });
     render(<EventSinkPage />);
     expect(screen.getByText('mock-EventSink')).toBeVisible();

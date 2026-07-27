@@ -4,6 +4,7 @@ import {
   PROMPT_TIMEOUT_MAX_EXECUTION,
 } from './shared/constants';
 import { getLanguageConstraint } from './shared/language-utils';
+import { securityConstraint, getConfidenceQualifiers } from './shared/security-utils';
 
 export interface OperatorStatusCounts {
   total: number;
@@ -18,6 +19,13 @@ export const createProgressPrompt = (
   operatorCounts: OperatorStatusCounts,
 ) => {
   const languageConstraint = getLanguageConstraint();
+  const confidenceQualifiers = getConfidenceQualifiers({
+    highConfidenceData: 'ClusterVersion + ClusterOperators',
+    highConfidenceQuality: 'progress metrics are unambiguous',
+    moderateConfidenceMissing: 'events, MCPs, nodes, alerts',
+    additionalGuidance: `Apply confidence to ETA predictions:
+- When estimating completion time, qualify as approximate and state the basis for the estimate (e.g., "ETA based on linear extrapolation from 40% completion over 45 minutes").`,
+  });
 
   return `# OpenShift Cluster Upgrade Progress Monitor
 
@@ -63,6 +71,8 @@ export const createProgressPrompt = (
 - Use specific operator counts in all sections, not generic descriptions
 - Identify potential issues early with conservative recommendations
 - ONLY OUTPUT the Summary and TL;DR sections exactly as specified in the output format
+${securityConstraint}
+${confidenceQualifiers}
 ${languageConstraint}
 </constraints>
 
@@ -211,6 +221,7 @@ Conditions have TWO important fields you MUST check:
 - **Recent Events**: [Count of warning events in last 30 min, user-friendly summary]
 - **Alerts**: [Warning/critical alerts during upgrade, if available]
 - **ETA**: [Estimated time remaining based on current progress rate]
+- **Data Completeness**: [Full | Partial — list missing sources | Limited — list missing essential sources] → [High | Moderate | Limited] confidence
 - **Action Required**: [Continue monitoring | Investigate delays | Address operator issues]
 </output_format>`;
 };

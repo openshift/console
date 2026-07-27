@@ -71,7 +71,7 @@ const MatchExpression: FC<MatchExpressionProps> = ({
           icon={<RhUiMinusCircleIcon />}
           type="button"
           onClick={onClickRemove}
-          aria-label="Delete"
+          aria-label={t('Delete')}
           variant="plain"
         />
       </Td>

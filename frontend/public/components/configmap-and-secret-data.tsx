@@ -10,6 +10,7 @@ import {
   DescriptionListGroup,
   DescriptionListTerm,
 } from '@patternfly/react-core';
+import { DASH } from '@console/shared/src/constants/ui';
 import { useTranslation } from 'react-i18next';
 import { CopyToClipboard } from './utils/copy-to-clipboard';
 import { EmptyBox } from './utils/status-box';
@@ -21,7 +22,7 @@ const MaskedData: FC<{}> = () => {
   return (
     <>
       <span className="pf-v6-u-screen-reader">{t('Value hidden')}</span>
-      <span aria-hidden="true">&bull;&bull;&bull;&bull;&bull;</span>
+      <span aria-hidden="true">{DASH}</span>
     </>
   );
 };

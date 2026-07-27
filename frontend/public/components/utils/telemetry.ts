@@ -18,8 +18,6 @@ export const withoutSensitiveInformations = (location: Location): Location => {
     state: location.state,
     hash: location.hash,
     key: location.key,
-    // eslint-disable-next-line camelcase
-    unstable_mask: undefined,
   };
 };
 

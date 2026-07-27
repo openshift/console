@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { getImpersonate } from '@console/dynamic-plugin-sdk';
-import * as UIActions from '../actions/ui';
+import { detectFeatures } from '../actions/features';
 
 /**
  * Hook that monitors impersonation state changes and refreshes feature flags when
@@ -31,7 +31,7 @@ export const useImpersonateRefreshFeatures = () => {
       // Impersonation changed - refresh feature flags in the background
       // We don't clear flags (no PENDING state), just re-detect them
       // This prevents loading spinners while allowing permissions to update
-      dispatch(UIActions.refreshFeaturesAfterImpersonation());
+      dispatch(detectFeatures());
       prevImpersonate.current = current;
     }
   }, [impersonate, dispatch]);

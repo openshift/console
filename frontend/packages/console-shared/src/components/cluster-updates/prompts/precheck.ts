@@ -4,6 +4,7 @@ import {
   PROMPT_TIMEOUT_MAX_EXECUTION,
 } from './shared/constants';
 import { getLanguageConstraint } from './shared/language-utils';
+import { securityConstraint, getConfidenceQualifiers } from './shared/security-utils';
 
 /**
  * Pre-check prompt for clusters with available updates
@@ -14,6 +15,14 @@ import { getLanguageConstraint } from './shared/language-utils';
  */
 export const createPreCheckPrompt = (currentVersion: string) => {
   const languageConstraint = getLanguageConstraint();
+  const confidenceQualifiers = getConfidenceQualifiers({
+    highConfidenceData: 'ClusterVersion + ClusterOperators',
+    highConfidenceQuality: 'conditions are unambiguous',
+    moderateConfidenceMissing: 'events, MCPs, nodes, alerts',
+    additionalGuidance: `Apply confidence to specific claims:
+- When determining if a conditional update risk applies to this cluster, state your confidence and the evidence (e.g., "High confidence: cluster uses OVN-Kubernetes (verified from network operator status)").
+- When a conclusion depends on data that could not be retrieved, say so explicitly rather than presenting it as definitive.`,
+  });
 
   return `# OpenShift Cluster Upgrade Pre-Check Analysis
 
@@ -27,6 +36,8 @@ ${languageConstraint}
 - ONLY OUTPUT the Summary and TL;DR sections.
 - Be specific about the source of any issues identified.
 - CRITICAL: When counting available updates, count ALL array elements in status.availableUpdates AND status.conditionalUpdates separately.
+${securityConstraint}
+${confidenceQualifiers}
 
 <scope_definition>
 **IN SCOPE - Issues that affect OCP cluster updates:**
@@ -478,6 +489,7 @@ A "hard blocker" means at least one of:
 - **Recent Events**: [count of upgrade-relevant errors/warnings in last 30 min]
 - **Active Alerts**: [count of critical/warning, skip if unavailable]
 - **Configuration Issues**: [overrides or capability concerns]
+- **Data Completeness**: [Full | Partial — list missing sources | Limited — list missing essential sources] → [High | Moderate | Limited] confidence
 - **Recommendation**: [Proceed with upgrade | Address warnings first | Blocked — resolve listed issues]
 </output_format>`;
 };

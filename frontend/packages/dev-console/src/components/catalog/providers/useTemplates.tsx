@@ -51,7 +51,7 @@ const normalizeTemplates = (
           url: imgURL,
         },
         cta: {
-          label: t('Instantiate Template'),
+          label: t('devconsole~Instantiate Template'),
           href: `/catalog/instantiate-template?template=${name}&template-ns=${namespace}&preselected-ns=${activeNamespace}`,
         },
         data: template,

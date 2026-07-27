@@ -31,6 +31,7 @@ import {
   referenceFor,
   RoleBindingKind,
   Subject,
+  TableColumn,
 } from '../../module/k8s';
 import type { MultiListPageProps } from '../factory/list-page';
 import ListPageHeader from '../factory/ListPage/ListPageHeader';
@@ -43,7 +44,6 @@ import {
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
-import { TableColumn } from '@console/internal/module/k8s';
 import { GetDataViewRows, ResourceFilters } from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { tableFilters } from '../factory/table-filters';

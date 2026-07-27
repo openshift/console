@@ -13,7 +13,6 @@ import {
 import type { FC } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
-import { linkify } from 'react-linkify';
 import { Provider } from 'react-redux';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
@@ -73,7 +72,6 @@ const PF_BREAKPOINT_XL = 1200;
 const NOTIFICATION_DRAWER_BREAKPOINT = 1800;
 import { PollConsoleUpdates } from './poll-console-updates';
 import { withoutSensitiveInformations, getTelemetryTitle } from './utils/telemetry';
-import { graphQLReady } from '../graphql/client';
 import { AdmissionWebhookWarningNotifications } from '@console/app/src/components/admission-webhook-warnings/AdmissionWebhookWarningNotifications';
 import { usePackageManifestCheck } from '@console/shared/src/hooks/usePackageManifestCheck';
 import { useCSPViolationDetector } from '@console/app/src/hooks/useCSPViolationDetector';
@@ -96,10 +94,6 @@ coFetch(`${window.SERVER_FLAGS.basePath}api/kubernetes/api`, {
 delete process.title;
 
 initI18n();
-
-// Disable linkify 'fuzzy links' across the app.
-// Only linkify url strings beginning with a proper protocol scheme.
-linkify.set({ fuzzyLink: false });
 
 const App: FC = () => {
   const { t } = useTranslation('public');
@@ -339,7 +333,7 @@ const AppRouter: FC = () => {
   );
 
   return (
-    <BrowserRouter unstable_useTransitions={false} basename={window.SERVER_FLAGS.basePath}>
+    <BrowserRouter useTransitions={false} basename={window.SERVER_FLAGS.basePath}>
       <Routes>
         {/*
           Treat the authentication error page as a standalone route.
@@ -432,81 +426,74 @@ const initApiDiscovery = (storeInstance) => {
   updateSwaggerDefinitionContinual();
 };
 
-graphQLReady.onReady(() => {
-  const { productName } = getBrandingDetails();
-  store.dispatch<any>(detectFeatures());
+const { productName } = getBrandingDetails();
+store.dispatch<any>(detectFeatures());
 
-  initApiDiscovery(store);
+initApiDiscovery(store);
 
-  // Global timer to ensure all <Timestamp> components update in sync
-  setInterval(() => store.dispatch(UIActions.updateTimestamps(Date.now())), 10000);
-
-  // Used by GUI tests to check for unhandled exceptions
-  window.onerror = (message, source, lineno, colno, error) => {
-    // ResizeObserver loop errors are non-actionable and can be ignored
-    if (typeof message === 'string' && message.includes('ResizeObserver loop')) {
-      return undefined;
-    }
-
-    const formattedStack = error?.stack?.replace(/\\n/g, '\n');
-    const formattedMessage = `unhandled error: ${message} ${formattedStack || ''}`;
-    addTestError(formattedMessage);
-    // eslint-disable-next-line no-console
-    console.error(formattedMessage, error || message);
-  };
-  window.onunhandledrejection = (promiseRejectionEvent) => {
-    const { reason } = promiseRejectionEvent;
-    const formattedMessage = `unhandled promise rejection: ${reason}`;
-    addTestError(formattedMessage);
-    // eslint-disable-next-line no-console
-    console.error(formattedMessage, reason);
-  };
-
-  if ('serviceWorker' in navigator) {
-    if (window.SERVER_FLAGS.loadTestFactor > 1) {
-      // @ts-expect-error file-loader is not a module but it does resolve
-      // eslint-disable-next-line import/no-unresolved
-      import('file-loader?name=load-test.sw.js!../load-test.sw.js')
-        .then(() => navigator.serviceWorker.register('/load-test.sw.js'))
-        .then(
-          () =>
-            new Promise<void>((r) =>
-              navigator.serviceWorker.controller
-                ? r()
-                : navigator.serviceWorker.addEventListener('controllerchange', () => r()),
-            ),
-        )
-        .then(() =>
-          navigator.serviceWorker.controller.postMessage({
-            topic: 'setFactor',
-            value: window.SERVER_FLAGS.loadTestFactor,
-          }),
-        );
-    } else {
-      navigator.serviceWorker
-        .getRegistrations()
-        .then((registrations) => registrations.forEach((reg) => reg.unregister()))
-        // eslint-disable-next-line no-console
-        .catch((e) => console.warn('Error unregistering service workers', e));
-    }
+// Used by GUI tests to check for unhandled exceptions
+window.onerror = (message, source, lineno, colno, error) => {
+  // ResizeObserver loop errors are non-actionable and can be ignored
+  if (typeof message === 'string' && message.includes('ResizeObserver loop')) {
+    return undefined;
   }
 
-  root.render(
-    <Suspense fallback={<LoadingBox blame="Root suspense" />}>
-      <Provider store={store}>
-        <PluginStoreProvider store={pluginStore}>
-          <ThemeProvider>
-            <HelmetProvider>
-              <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
-              <ConnectedToastProvider>
-                <PollConsoleUpdates />
-                <AdmissionWebhookWarningNotifications />
-                <AppRouter />
-              </ConnectedToastProvider>
-            </HelmetProvider>
-          </ThemeProvider>
-        </PluginStoreProvider>
-      </Provider>
-    </Suspense>,
-  );
-});
+  const formattedStack = error?.stack?.replace(/\\n/g, '\n');
+  const formattedMessage = `unhandled error: ${message} ${formattedStack || ''}`;
+  addTestError(formattedMessage);
+  // eslint-disable-next-line no-console
+  console.error(formattedMessage, error || message);
+};
+window.onunhandledrejection = (promiseRejectionEvent) => {
+  const { reason } = promiseRejectionEvent;
+  const formattedMessage = `unhandled promise rejection: ${reason}`;
+  addTestError(formattedMessage);
+  // eslint-disable-next-line no-console
+  console.error(formattedMessage, reason);
+};
+
+if ('serviceWorker' in navigator) {
+  if (window.SERVER_FLAGS.loadTestFactor > 1) {
+    navigator.serviceWorker
+      .register(`${window.SERVER_FLAGS.basePath}load-test.sw.js`)
+      .then(
+        () =>
+          new Promise<void>((r) =>
+            navigator.serviceWorker.controller
+              ? r()
+              : navigator.serviceWorker.addEventListener('controllerchange', () => r()),
+          ),
+      )
+      .then(() =>
+        navigator.serviceWorker.controller.postMessage({
+          topic: 'setFactor',
+          value: window.SERVER_FLAGS.loadTestFactor,
+        }),
+      );
+  } else {
+    navigator.serviceWorker
+      .getRegistrations()
+      .then((registrations) => registrations.forEach((reg) => reg.unregister()))
+      // eslint-disable-next-line no-console
+      .catch((e) => console.warn('Error unregistering service workers', e));
+  }
+}
+
+root.render(
+  <Suspense fallback={<LoadingBox blame="Root suspense" />}>
+    <Provider store={store}>
+      <PluginStoreProvider store={pluginStore}>
+        <ThemeProvider>
+          <HelmetProvider>
+            <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
+            <ConnectedToastProvider>
+              <PollConsoleUpdates />
+              <AdmissionWebhookWarningNotifications />
+              <AppRouter />
+            </ConnectedToastProvider>
+          </HelmetProvider>
+        </ThemeProvider>
+      </PluginStoreProvider>
+    </Provider>
+  </Suspense>,
+);

@@ -127,7 +127,7 @@ export const WebhookTriggers: FC<WebhookTriggersProps> = (props) => {
     const triggerProperty = getTriggerProperty(trigger);
     const secretName = _.get(trigger, [triggerProperty, 'secretReference', 'name']);
     if (!secretName) {
-      return <span className="pf-v6-u-text-color-subtle">No secret</span>;
+      return <span className="pf-v6-u-text-color-subtle">{t('No secret')}</span>;
     }
     const webhookSecret: K8sResourceKind = webhookSecrets.find(
       (secret: K8sResourceKind) => secret.metadata.name === secretName,

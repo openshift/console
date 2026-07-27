@@ -6,7 +6,7 @@ import { ResourceIcon } from '@console/internal/components/utils';
 import { ContainerModel } from '@console/internal/models';
 import { ResourceLimitField } from '@console/shared/src/components/formik-fields/ResourceLimitField';
 import TertiaryHeading from '@console/shared/src/components/heading/TertiaryHeading';
-import { MemoryUnits, CPUUnits } from '../import-types';
+import { MemoryUnits, getCPUUnits } from '../import-types';
 import FormSection from '../section/FormSection';
 
 type ResourceLimitSectionProps = {
@@ -15,6 +15,7 @@ type ResourceLimitSectionProps = {
 
 const ResourceLimitSection: FC<ResourceLimitSectionProps> = ({ hideTitle }) => {
   const { t } = useTranslation('devconsole');
+  const cpuUnits = getCPUUnits(t);
   const {
     values: { container },
   } = useFormikContext<FormikValues>();
@@ -38,7 +39,7 @@ const ResourceLimitSection: FC<ResourceLimitSectionProps> = ({ hideTitle }) => {
         label={t('Request')}
         inputAriaLabel={t('CPU request')}
         unitName="limits.cpu.requestUnit"
-        unitOptions={CPUUnits}
+        unitOptions={cpuUnits}
         helpText={t('The minimum amount of CPU the Container is guaranteed.')}
       />
 
@@ -47,7 +48,7 @@ const ResourceLimitSection: FC<ResourceLimitSectionProps> = ({ hideTitle }) => {
         label={t('Limit')}
         inputAriaLabel={t('CPU limit')}
         unitName="limits.cpu.limitUnit"
-        unitOptions={CPUUnits}
+        unitOptions={cpuUnits}
         helpText={t('The maximum amount of CPU the Container is allowed to use when running.')}
       />
 
