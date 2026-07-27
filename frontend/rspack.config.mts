@@ -277,8 +277,9 @@ const config: Configuration = {
   plugins: [
     new ExtensionValidatorPlugin({ pluginPackages }),
     new DynamicModuleImportPlugin({
-      loader:
-        '@console/dynamic-plugin-sdk/dist/webpack/lib/webpack/loaders/dynamic-module-import-loader',
+      loader: require.resolve(
+        '@console/dynamic-plugin-sdk/src/webpack/loaders/dynamic-module-import-loader',
+      ),
       dynamicModuleMaps,
       moduleFilter: dynamicModuleImportTransformFilter,
     }),
