@@ -1,2 +1,11 @@
-export const DummyResourceListPage = () => <h1>Example Resource List Page</h1>;
-export const DummyResourceDetailsPage = () => <h1>Example Resource Details Page</h1>;
+import { useTranslation } from 'react-i18next';
+
+export const DummyResourceListPage = () => {
+  const { t } = useTranslation('plugin__console-demo-plugin');
+  return <h1>{t('Example Resource List Page')}</h1>;
+};
+
+export const DummyResourceDetailsPage = () => {
+  const { t } = useTranslation('plugin__console-demo-plugin');
+  return <h1>{t('Example Resource Details Page')}</h1>;
+};
