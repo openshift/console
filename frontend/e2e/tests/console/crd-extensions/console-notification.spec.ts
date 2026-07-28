@@ -84,7 +84,7 @@ test.describe(`${crd} CRD`, { tag: ['@admin'] }, () => {
       });
 
       await test.step('Verify notification banner appears', async () => {
-        const notification = page.locator(`[data-test="${name}-${location}"]`);
+        const notification = page.getByTestId(`${name}-${location}`);
         await expect(notification).toBeVisible();
         await expect(notification).toContainText(text);
       });
@@ -100,7 +100,7 @@ test.describe(`${crd} CRD`, { tag: ['@admin'] }, () => {
       });
 
       await test.step('Verify modified notification banner appears', async () => {
-        const altNotification = page.locator(`[data-test="${name}-${altLocation}"]`);
+        const altNotification = page.getByTestId(`${name}-${altLocation}`);
         await expect(altNotification).toBeVisible();
         await expect(altNotification).toContainText(altText);
       });
