@@ -358,6 +358,9 @@ func InstallChartFromURL(ns, name, url string, vals map[string]interface{}, conf
 
 	cp, err := cmd.ChartPathOptions.LocateChart(url, settings)
 	if err != nil {
+		if basicAuthSecretName == "" && (strings.Contains(err.Error(), "401") || strings.Contains(strings.ToLower(err.Error()), "unauthorized")) {
+			return nil, fmt.Errorf("error locating chart: %w; registry requires authentication - select a Secret with \"username\" and \"password\" keys for basic authentication", err)
+		}
 		return nil, fmt.Errorf("error locating chart: %v", err)
 	}
 	ch, err := loader.Load(cp)
