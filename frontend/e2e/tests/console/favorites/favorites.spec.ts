@@ -1,3 +1,4 @@
+import { isNotFound } from '../../../clients/kubernetes-client';
 import { test, expect } from '../../../fixtures';
 
 test.describe('Favorites', { tag: ['@admin'] }, () => {
@@ -11,8 +12,8 @@ test.describe('Favorites', { tag: ['@admin'] }, () => {
           'openshift-console-user-settings',
           { 'console.favorites': '[]', 'console.lastNamespace': '' },
         );
-      } catch {
-        // ConfigMap may not exist yet
+      } catch (e) {
+        if (!isNotFound(e)) throw e;
       }
     });
 
@@ -120,5 +121,16 @@ test.describe('Favorites', { tag: ['@admin'] }, () => {
       await expect(page.getByTestId('favorite-button').first()).toBeDisabled();
     });
 
+    await test.step('Remove all favorites to clean up for future runs', async () => {
+      try {
+        await k8sClient.patchConfigMap(
+          'user-settings-kubeadmin',
+          'openshift-console-user-settings',
+          { 'console.favorites': '[]' },
+        );
+      } catch (e) {
+        if (!isNotFound(e)) throw e;
+      }
+    });
   });
 });

@@ -13,7 +13,7 @@ export interface ClusterAuthConfig {
   token?: string;
 }
 
-function isNotFound(err: unknown): boolean {
+export function isNotFound(err: unknown): boolean {
   if (typeof err === 'object' && err !== null) {
     const statusCode = (err as any).statusCode ?? (err as any).response?.statusCode;
     if (statusCode === 404) {
@@ -374,12 +374,10 @@ export default class KubernetesClient {
     const existing = await this.k8sApi.readNamespacedConfigMap({ name, namespace });
     const existingData = (existing as any)?.data || {};
     const mergedData = { ...existingData, ...patchData };
-    await this.k8sApi.patchNamespacedConfigMap({
-      name,
-      namespace,
-      body: { data: mergedData },
-      contentType: k8s.PatchStrategy.MergePatch,
-    } as any);
+    await this.mergePatchResource(
+      `/api/v1/namespaces/${namespace}/configmaps/${name}`,
+      { data: mergedData },
+    );
   }
 
   async createConfigMap(
