@@ -4,7 +4,6 @@ import { FlatCompat } from '@eslint/eslintrc';
 import js from '@eslint/js';
 import globals from 'globals';
 import tsParser from '@typescript-eslint/parser';
-import type { Linter } from 'eslint';
 
 const compat = new FlatCompat({
   baseDirectory: import.meta.dirname,
@@ -32,94 +31,6 @@ const CYPRESS_INTEGRATION_DIRS = [
 ];
 
 const CYPRESS_FILES = CYPRESS_INTEGRATION_DIRS.map((d) => `${d}/**/*.{js,jsx,ts,tsx}`);
-
-/**
- * `eslint-config-prettier` disables rules from ~20 plugins (babel, vue,
- * flowtype …) that may not be loaded.  FlatCompat converts these into config
- * objects with rules like `babel/quotes: 0`, which fail flat config validation
- * because the plugin isn't registered.  Strip any rule whose plugin prefix
- * doesn't appear in any config in the group.  Also strips options from the
- * `json/*` catch-all rule, whose schema rejects options under ESLint 9.
- */
-function stripOrphanedPluginRules(flatConfigs: Linter.Config[]): Linter.Config[] {
-  const allPlugins: Record<string, unknown> = {};
-  for (const config of flatConfigs) {
-    if (config.plugins) {
-      Object.assign(allPlugins, config.plugins);
-    }
-  }
-
-  return flatConfigs.map((config) => {
-    if (!config.rules) {
-      return config;
-    }
-    const dropRules: string[] = [];
-    const fixRules: Linter.RulesRecord = {};
-    for (const rule of Object.keys(config.rules)) {
-      const sep = rule.indexOf('/');
-      if (sep > 0) {
-        const prefix = rule.slice(0, sep);
-        if (!allPlugins[prefix]) {
-          dropRules.push(rule);
-        }
-      }
-      if (rule === 'json/*' && Array.isArray(config.rules[rule])) {
-        fixRules[rule] = (config.rules[rule] as Linter.RuleEntry[])[0];
-      }
-    }
-    if (dropRules.length === 0 && Object.keys(fixRules).length === 0) {
-      return config;
-    }
-    const result: Linter.Config = { ...config, rules: { ...config.rules, ...fixRules } };
-    for (const rule of dropRules) {
-      delete result.rules![rule];
-    }
-    return result;
-  });
-}
-
-/**
- * Restrict FlatCompat config objects to a directory scope.
- *
- * - Base configs (no `files`) get `files: ['{scopeDir}/**\/*.{js,jsx,ts,tsx,json}']`.
- * - Override configs with function matchers get the function wrapped to also
- *   require the file to be inside `scopeDir`.
- * - Override configs with glob strings get prefixed with `scopeDir/`.
- *
- * Also strips rules from unloaded plugins (see `stripOrphanedPluginRules`).
- */
-function scopeTo(
-  flatConfigs: Linter.Config[],
-  scopeDir: string,
-  extraIgnores?: string[],
-): Linter.Config[] {
-  const absScope = path.resolve(import.meta.dirname, scopeDir) + '/';
-  const scoped = flatConfigs.map((config): Linter.Config => {
-    const result: Linter.Config = { ...config };
-
-    if (!config.files) {
-      const base = scopeDir === '.' ? '**' : `${scopeDir}/**`;
-      result.files = [`${base}/*.{js,jsx,ts,tsx,json}`];
-    } else {
-      result.files = (config.files as Array<string | ((filePath: string) => boolean)>).map(
-        (entry) => {
-          if (typeof entry === 'function') {
-            return (filePath: string) => filePath.startsWith(absScope) && entry(filePath);
-          }
-          return scopeDir === '.' ? entry : `${scopeDir}/${entry}`;
-        },
-      );
-    }
-
-    if (extraIgnores && extraIgnores.length > 0) {
-      result.ignores = [...(config.ignores || []), ...extraIgnores];
-    }
-
-    return result;
-  });
-
-  return stripOrphanedPluginRules(scoped);
-}
 
 export default defineConfig([
   globalIgnores([
@@ -154,8 +65,10 @@ export default defineConfig([
   // ------------------------------------------------
   // Scope: Root frontend (non-packages, non-i18n-scripts, non-e2e)
   // ------------------------------------------------
-  ...scopeTo(
-    compat.config({
+  {
+    files: ['**/*.{js,jsx,ts,tsx,json}'],
+    ignores: ['packages/**', 'i18n-scripts/**', 'e2e/**'],
+    extends: compat.config({
       extends: [
         'eslint:recommended',
         'plugin:import/errors',
@@ -292,28 +205,23 @@ export default defineConfig([
         RequestInit: 'readonly',
       },
     }),
-    '.',
-    ['packages/**', 'i18n-scripts/**', 'e2e/**'],
-  ),
+  },
 
   // ------------------------------------------------
   // Scope: packages/ (react-typescript-prettier)
   // ------------------------------------------------
-  ...scopeTo(
-    compat.extends('plugin:console/react-typescript-prettier'),
-    'packages',
-    PACKAGES_EXCLUDE,
-  ),
+  {
+    files: ['packages/**/*.{js,jsx,ts,tsx,json}'],
+    ignores: PACKAGES_EXCLUDE,
+    extends: compat.extends('plugin:console/react-typescript-prettier'),
+  },
 
   // ------------------------------------------------
   // Scope: Cypress integration tests (overlay on packages config)
   // ------------------------------------------------
-  ...compat.extends('plugin:cypress/recommended').map((c) => ({
-    ...c,
-    files: c.files || CYPRESS_FILES,
-  })),
   {
     files: CYPRESS_FILES,
+    extends: compat.extends('plugin:cypress/recommended'),
     languageOptions: {
       globals: {
         ...globals.node,
@@ -350,9 +258,10 @@ export default defineConfig([
   // ------------------------------------------------
   // Scope: SDK Node.js directories (node-typescript-prettier)
   // ------------------------------------------------
-  ...SDK_NODE_DIRS.flatMap((dir) =>
-    scopeTo(compat.extends('plugin:console/node-typescript-prettier'), dir),
-  ),
+  {
+    files: SDK_NODE_DIRS.map((dir) => `${dir}/**/*.{js,jsx,ts,tsx,json}`),
+    extends: compat.extends('plugin:console/node-typescript-prettier'),
+  },
   {
     files: [
       'packages/console-plugin-sdk/src/codegen/**/*.{js,ts}',
@@ -368,20 +277,23 @@ export default defineConfig([
   // ------------------------------------------------
   // Scope: eslint-plugin-console (base + node + json + prettier)
   // ------------------------------------------------
-  ...scopeTo(
-    compat.extends(
+  {
+    files: ['packages/eslint-plugin-console/**/*.{js,jsx,ts,tsx,json}'],
+    extends: compat.extends(
       'plugin:console/base',
       'plugin:console/node',
       'plugin:console/json',
       'plugin:console/prettier',
     ),
-    'packages/eslint-plugin-console',
-  ),
+  },
 
   // ------------------------------------------------
   // Scope: i18n-scripts (node-typescript-prettier)
   // ------------------------------------------------
-  ...scopeTo(compat.extends('plugin:console/node-typescript-prettier'), 'i18n-scripts'),
+  {
+    files: ['i18n-scripts/**/*.{js,jsx,ts,tsx,json}'],
+    extends: compat.extends('plugin:console/node-typescript-prettier'),
+  },
   {
     files: ['i18n-scripts/**/*.{js,ts}'],
     rules: {
@@ -393,7 +305,10 @@ export default defineConfig([
   // ------------------------------------------------
   // Scope: e2e (Playwright)
   // ------------------------------------------------
-  ...scopeTo(compat.extends('plugin:console/playwright'), 'e2e'),
+  {
+    files: ['e2e/**/*.{js,jsx,ts,tsx,json}'],
+    extends: compat.extends('plugin:console/playwright'),
+  },
   {
     files: ['e2e/**/*.{js,ts}'],
     ignores: ['e2e/**/testData/**'],
