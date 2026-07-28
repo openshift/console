@@ -37,7 +37,9 @@ export const CommandLineTools: FC<CommandLineToolsProps> = ({ obj }) => {
     return (
       <Fragment key={tool.metadata.uid}>
         {index > 0 && <Divider className="co-divider" />}
-        <SecondaryHeading data-test-id={displayName}>{displayName}</SecondaryHeading>
+        <SecondaryHeading data-test={displayName} data-test-id={displayName}>
+          {displayName}
+        </SecondaryHeading>
         <MarkdownView content={tool.spec.description} exactHeight />
         {sortedLinks.length === 1 && (
           <p>
