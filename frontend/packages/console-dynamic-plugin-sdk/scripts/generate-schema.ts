@@ -22,10 +22,6 @@ const typeConfigs: SchemaTypeConfig[] = [
     typeName: 'ConsoleExtensionsJSON',
     handleConsoleExtensions: true,
   },
-  {
-    srcFile: 'src/schema/plugin-manifest.ts',
-    typeName: 'ConsolePluginManifestJSON',
-  },
 ];
 
 const generateSchema = ({ srcFile, typeName, handleConsoleExtensions }: SchemaTypeConfig) => {
