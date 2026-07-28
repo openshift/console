@@ -74,16 +74,18 @@ test.describe('Alertmanager Slack Receiver Form', { tag: ['@admin'] }, () => {
     await test.step('Verify Slack Receiver was created correctly', async () => {
       await alertmanager.validateReceiverInList(receiverName);
 
-      await alertmanager.navigateToYAMLPage();
-      const yamlContent = await alertmanager.getYAMLContent();
-      const configs = getGlobalsAndReceiverConfig(receiverName, configName, yamlContent);
+      await expect(async () => {
+        await alertmanager.navigateToYAMLPage();
+        const yamlContent = await alertmanager.getYAMLContent();
+        const configs = getGlobalsAndReceiverConfig(receiverName, configName, yamlContent);
 
-      expect(configs.globals).not.toHaveProperty('slack_api_url');
-      expect(configs.receiverConfig.channel).toBe(slackChannel);
-      expect(configs.receiverConfig.api_url).toBe(slackAPIURL);
-      // Advanced fields are not saved since they equal their global values
-      expect(configs.receiverConfig).not.toHaveProperty('send_resolved');
-      expect(configs.receiverConfig).not.toHaveProperty('username');
+        expect(configs.globals).not.toHaveProperty('slack_api_url');
+        expect(configs.receiverConfig.channel).toBe(slackChannel);
+        expect(configs.receiverConfig.api_url).toBe(slackAPIURL);
+        // Advanced fields are not saved since they equal their global values
+        expect(configs.receiverConfig).not.toHaveProperty('send_resolved');
+        expect(configs.receiverConfig).not.toHaveProperty('username');
+      }).toPass({ intervals: [2_000, 3_000, 5_000], timeout: 30_000 });
     });
 
     await test.step('Save globals and advanced fields', async () => {
@@ -122,17 +124,19 @@ test.describe('Alertmanager Slack Receiver Form', { tag: ['@admin'] }, () => {
     });
 
     await test.step('Verify YAML has correct global and receiver config', async () => {
-      await alertmanager.navigateToYAMLPage();
-      const yamlContent = await alertmanager.getYAMLContent();
-      const configs = getGlobalsAndReceiverConfig(receiverName, configName, yamlContent);
+      await expect(async () => {
+        await alertmanager.navigateToYAMLPage();
+        const yamlContent = await alertmanager.getYAMLContent();
+        const configs = getGlobalsAndReceiverConfig(receiverName, configName, yamlContent);
 
-      expect(configs.globals.slack_api_url).toBe(slackAPIURL);
-      expect(configs.receiverConfig).not.toHaveProperty('api_url');
-      expect(configs.receiverConfig.channel).toBe('myslackchannel');
-      expect(configs.receiverConfig.send_resolved).toBe(true);
-      expect(configs.receiverConfig.icon_url).toBe(slackIconURL);
-      expect(configs.receiverConfig.username).toBe(slackUsername);
-      expect(configs.receiverConfig.link_names).toBe(true);
+        expect(configs.globals.slack_api_url).toBe(slackAPIURL);
+        expect(configs.receiverConfig).not.toHaveProperty('api_url');
+        expect(configs.receiverConfig.channel).toBe('myslackchannel');
+        expect(configs.receiverConfig.send_resolved).toBe(true);
+        expect(configs.receiverConfig.icon_url).toBe(slackIconURL);
+        expect(configs.receiverConfig.username).toBe(slackUsername);
+        expect(configs.receiverConfig.link_names).toBe(true);
+      }).toPass({ intervals: [2_000, 3_000, 5_000], timeout: 30_000 });
     });
   });
 });

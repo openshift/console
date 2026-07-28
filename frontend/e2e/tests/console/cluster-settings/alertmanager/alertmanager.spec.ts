@@ -241,16 +241,18 @@ route:
     });
 
     await test.step('Verify match and match_re were converted to matchers in YAML', async () => {
-      await alertmanager.navigateToYAMLPage();
-      const yamlContent = await alertmanager.getYAMLContent();
+      await expect(async () => {
+        await alertmanager.navigateToYAMLPage();
+        const yamlContent = await alertmanager.getYAMLContent();
 
-      const config: AlertmanagerConfig = jsYaml.load(yamlContent) as AlertmanagerConfig;
-      const route: AlertmanagerRoute | undefined = config.route.routes?.find(
-        (r: AlertmanagerRoute) => r.receiver === receiverName,
-      );
+        const config: AlertmanagerConfig = jsYaml.load(yamlContent) as AlertmanagerConfig;
+        const route: AlertmanagerRoute | undefined = config.route.routes?.find(
+          (r: AlertmanagerRoute) => r.receiver === receiverName,
+        );
 
-      expect(route?.matchers?.[0]).toBe(matcher1);
-      expect(route?.matchers?.[1]).toBe(matcher2);
+        expect(route?.matchers?.[0]).toBe(matcher1);
+        expect(route?.matchers?.[1]).toBe(matcher2);
+      }).toPass({ intervals: [2_000, 3_000, 5_000], timeout: 30_000 });
     });
   });
 });

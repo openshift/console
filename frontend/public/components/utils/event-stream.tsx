@@ -56,7 +56,6 @@ class SysEvent extends Component<SysEventProps> {
           className,
         )}
         style={style}
-        role="row"
       >
         <EventComponent event={event} list={list} cache={measurementCache} index={index} />
       </div>

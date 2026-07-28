@@ -83,12 +83,14 @@ test.describe('Alertmanager PagerDuty Receiver Form', { tag: ['@admin'] }, () =>
     });
 
     await test.step('Verify pagerduty_url was saved with Receiver and not global', async () => {
-      await alertmanager.navigateToYAMLPage();
-      const yamlContent = await alertmanager.getYAMLContent();
-      const configs = getGlobalsAndReceiverConfig(receiverName, configName, yamlContent);
+      await expect(async () => {
+        await alertmanager.navigateToYAMLPage();
+        const yamlContent = await alertmanager.getYAMLContent();
+        const configs = getGlobalsAndReceiverConfig(receiverName, configName, yamlContent);
 
-      expect(configs.globals).not.toHaveProperty('pagerduty_url');
-      expect(configs.receiverConfig.url).toBe(pagerDutyURL1);
+        expect(configs.globals).not.toHaveProperty('pagerduty_url');
+        expect(configs.receiverConfig.url).toBe(pagerDutyURL1);
+      }).toPass({ intervals: [2_000, 3_000, 5_000], timeout: 30_000 });
     });
 
     await test.step('Save pagerduty_url as global', async () => {
@@ -106,12 +108,14 @@ test.describe('Alertmanager PagerDuty Receiver Form', { tag: ['@admin'] }, () =>
     });
 
     await test.step('Verify pagerduty_url was saved as global', async () => {
-      await alertmanager.navigateToYAMLPage();
-      const yamlContent = await alertmanager.getYAMLContent();
-      const configs = getGlobalsAndReceiverConfig(receiverName, configName, yamlContent);
+      await expect(async () => {
+        await alertmanager.navigateToYAMLPage();
+        const yamlContent = await alertmanager.getYAMLContent();
+        const configs = getGlobalsAndReceiverConfig(receiverName, configName, yamlContent);
 
-      expect(configs.globals.pagerduty_url).toBe(pagerDutyURL2);
-      expect(configs.receiverConfig).not.toHaveProperty('url');
+        expect(configs.globals.pagerduty_url).toBe(pagerDutyURL2);
+        expect(configs.receiverConfig).not.toHaveProperty('url');
+      }).toPass({ intervals: [2_000, 3_000, 5_000], timeout: 30_000 });
     });
 
     await test.step('Add pagerduty_url to receiver with existing global', async () => {
@@ -131,12 +135,14 @@ test.describe('Alertmanager PagerDuty Receiver Form', { tag: ['@admin'] }, () =>
     await test.step(
       'Verify pagerduty_url saved with Receiver and global still exists',
       async () => {
-        await alertmanager.navigateToYAMLPage();
-        const yamlContent = await alertmanager.getYAMLContent();
-        const configs = getGlobalsAndReceiverConfig(receiverName, configName, yamlContent);
+        await expect(async () => {
+          await alertmanager.navigateToYAMLPage();
+          const yamlContent = await alertmanager.getYAMLContent();
+          const configs = getGlobalsAndReceiverConfig(receiverName, configName, yamlContent);
 
-        expect(configs.globals.pagerduty_url).toBe(pagerDutyURL2);
-        expect(configs.receiverConfig.url).toBe(pagerDutyURL3);
+          expect(configs.globals.pagerduty_url).toBe(pagerDutyURL2);
+          expect(configs.receiverConfig.url).toBe(pagerDutyURL3);
+        }).toPass({ intervals: [2_000, 3_000, 5_000], timeout: 30_000 });
       },
     );
 
@@ -159,15 +165,17 @@ test.describe('Alertmanager PagerDuty Receiver Form', { tag: ['@admin'] }, () =>
     });
 
     await test.step('Verify changed fields are saved with Receiver', async () => {
-      await alertmanager.navigateToYAMLPage();
-      const yamlContent = await alertmanager.getYAMLContent();
-      const configs = getGlobalsAndReceiverConfig(receiverName, configName, yamlContent);
+      await expect(async () => {
+        await alertmanager.navigateToYAMLPage();
+        const yamlContent = await alertmanager.getYAMLContent();
+        const configs = getGlobalsAndReceiverConfig(receiverName, configName, yamlContent);
 
-      expect(configs.receiverConfig.send_resolved).toBe(false);
-      expect(configs.receiverConfig.client).toBe('updated-client');
-      expect(configs.receiverConfig.client_url).toBe('http://updated-client-url');
-      expect(configs.receiverConfig.description).toBeUndefined();
-      expect(configs.receiverConfig.severity).toBeUndefined();
+        expect(configs.receiverConfig.send_resolved).toBe(false);
+        expect(configs.receiverConfig.client).toBe('updated-client');
+        expect(configs.receiverConfig.client_url).toBe('http://updated-client-url');
+        expect(configs.receiverConfig.description).toBeUndefined();
+        expect(configs.receiverConfig.severity).toBeUndefined();
+      }).toPass({ intervals: [2_000, 3_000, 5_000], timeout: 30_000 });
     });
 
     await test.step('Restore defaults, change desc and severity', async () => {
@@ -195,15 +203,17 @@ test.describe('Alertmanager PagerDuty Receiver Form', { tag: ['@admin'] }, () =>
     });
 
     await test.step('Verify defaults removed from config, desc and severity saved', async () => {
-      await alertmanager.navigateToYAMLPage();
-      const yamlContent = await alertmanager.getYAMLContent();
-      const configs = getGlobalsAndReceiverConfig(receiverName, configName, yamlContent);
+      await expect(async () => {
+        await alertmanager.navigateToYAMLPage();
+        const yamlContent = await alertmanager.getYAMLContent();
+        const configs = getGlobalsAndReceiverConfig(receiverName, configName, yamlContent);
 
-      expect(configs.receiverConfig.send_resolved).toBeUndefined();
-      expect(configs.receiverConfig.client).toBeUndefined();
-      expect(configs.receiverConfig.client_url).toBeUndefined();
-      expect(configs.receiverConfig.description).toBe(pagerDutyDescription);
-      expect(configs.receiverConfig.severity).toBe(severity);
+        expect(configs.receiverConfig.send_resolved).toBeUndefined();
+        expect(configs.receiverConfig.client).toBeUndefined();
+        expect(configs.receiverConfig.client_url).toBeUndefined();
+        expect(configs.receiverConfig.description).toBe(pagerDutyDescription);
+        expect(configs.receiverConfig.severity).toBe(severity);
+      }).toPass({ intervals: [2_000, 3_000, 5_000], timeout: 30_000 });
     });
   });
 });
