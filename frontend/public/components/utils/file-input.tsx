@@ -1,287 +1,202 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
-import { NativeTypes } from 'react-dnd-html5-backend';
-import { DropTarget } from 'react-dnd';
-import { ConnectDropTarget, DropTargetMonitor } from 'react-dnd/lib/interfaces';
-import { Alert } from '@patternfly/react-core';
-/* eslint-disable-next-line */
-import { withTranslation, WithTranslation } from 'react-i18next';
-import { isBinary } from 'istextorbinary/edition-es2017/index';
+import { useCallback, useState } from 'react';
+import {
+  Alert,
+  FileUpload,
+  FileUploadProps,
+  TextArea,
+  FormHelperText,
+  HelperText,
+  HelperTextItem,
+  Spinner,
+  spinnerSize,
+  FormGroup,
+} from '@patternfly/react-core';
+import { isBinary } from 'istextorbinary';
+import { useTranslation } from 'react-i18next';
+import { units } from './units';
+import styles from '@patternfly/react-styles/css/components/FileUpload/file-upload';
 
-import withDragDropContext from './drag-drop-context';
+/** Maximal file size, in bytes, that user can upload */
+const MAX_UPLOAD_SIZE = 4000000;
 
-// Maximal file size, in bytes, that user can upload
-const maxFileUploadSize = 4000000;
-
-class FileInputWithTranslation extends React.Component<FileInputProps, FileInputState> {
-  constructor(props) {
-    super(props);
-    this.onDataChange = this.onDataChange.bind(this);
-    this.onFileUpload = this.onFileUpload.bind(this);
-  }
-  onDataChange(event) {
-    this.props.onChange({
-      fileData: event.target.value,
-    });
-  }
-  readFile(file) {
-    const { t } = this.props;
-    if (!file) {
-      return;
-    }
-    if (file.size > maxFileUploadSize) {
-      this.props.onChange({
-        errorMessage: t('public~Maximum file size exceeded. File limit is 4MB.'),
-      });
-      return;
-    }
-    let fileIsBinary = false;
-    const reader = new FileReader();
-    reader.onload = () => {
-      const input = fileIsBinary
-        ? (reader.result as string).split(',')[1]
-        : (reader.result as string);
-      // OnLoad, if inputFileIsBinary we have read as a binary string, skip next block
-      if (isBinary(null, input) && !fileIsBinary) {
-        fileIsBinary = true;
-        reader.readAsDataURL(file);
-      } else {
-        this.props.onChange({
-          fileData: input,
-          fileIsBinary,
-          fileName: file.name,
-        });
-      }
-    };
-    reader.readAsText(file, 'UTF-8');
-  }
-  onFileUpload(event) {
-    this.readFile(event.target.files[0]);
-  }
-  render() {
-    const {
-      connectDropTarget,
-      errorMessage,
-      fileIsBinary,
-      hideContents,
-      isOver,
-      canDrop,
-      id,
-      isRequired,
-      t,
-    } = this.props;
-    const klass = classNames('co-file-dropzone-container', {
-      'co-file-dropzone--drop-over': isOver,
-    });
-    return connectDropTarget(
-      <div className="co-file-dropzone">
-        {canDrop && (
-          <div className={klass}>
-            <p className="co-file-dropzone__drop-text">{t('public~Drop file here')}</p>
-          </div>
-        )}
-
-        <div className="form-group">
-          <label
-            className={classNames('control-label', { 'co-required': isRequired })}
-            htmlFor={id}
-          >
-            {this.props.label}
-          </label>
-          <div className="modal-body__field">
-            <div className="pf-v5-c-input-group">
-              <input
-                type="text"
-                className="pf-v5-c-form-control"
-                aria-label={t('public~Filename')}
-                value={this.props.inputFileName}
-                aria-describedby={this.props.inputFieldHelpText ? `${id}-help` : undefined}
-                readOnly
-                disabled
-              />
-              <span className="pf-v5-c-button pf-m-tertiary co-btn-file">
-                <input id={id} type="file" onChange={this.onFileUpload} data-test="file-input" />
-                {t('public~Browse...')}
-              </span>
-            </div>
-            {this.props.inputFieldHelpText ? (
-              <p className="help-block" id={`${id}-help`}>
-                {this.props.inputFieldHelpText}
-              </p>
-            ) : null}
-            {!hideContents && (
-              <textarea
-                data-test-id={
-                  this.props['data-test-id'] ? this.props['data-test-id'] : 'file-input-textarea'
-                }
-                className="pf-v5-c-form-control pf-m-resize-both co-file-dropzone__textarea"
-                onChange={this.onDataChange}
-                value={this.props.inputFileData}
-                aria-label={this.props.label}
-                aria-describedby={
-                  this.props.textareaFieldHelpText ? `${id}-textarea-help` : undefined
-                }
-                required={isRequired}
-              />
-            )}
-            {this.props.textareaFieldHelpText ? (
-              <p className="help-block" id={`${id}-textarea-help`}>
-                {this.props.textareaFieldHelpText}
-              </p>
-            ) : null}
-            {errorMessage && <div className="text-danger">{errorMessage}</div>}
-            {fileIsBinary && (
-              <Alert
-                isInline
-                className="co-alert"
-                variant="info"
-                title={t('public~Non-printable file detected.')}
-                data-test="alert-info"
-              >
-                {t('public~File contains non-printable characters. Preview is not available.')}
-              </Alert>
-            )}
-          </div>
-        </div>
-      </div>,
-    );
-  }
+export interface DroppableFileInputProps {
+  /** The content of the input file, either as a UTF-8 string or a base64-encoded string if the file is binary */
+  inputFileData: string;
+  /** Whether inputFileData is base64-encoded (true) or UTF-8 text (false) */
+  isBase64Input?: boolean;
+  /** Callback function invoked when the file content changes */
+  onChange: (inputFileData: string, inputFileIsBinary: boolean) => void;
+  /** Label for the file input field */
+  label: string;
+  /** Unique id for the file input field */
+  id: string;
+  /** Placeholder text for the filename field */
+  filenamePlaceholder: string;
+  /** Help text for the textarea field */
+  textareaFieldHelpText?: React.ReactNode;
+  /** Whether the field is required */
+  isRequired?: boolean;
+  /** Error message to display below the preview */
+  errorMessage?: string;
 }
 
-const boxTarget = {
-  drop(props: FileInputProps, monitor: DropTargetMonitor) {
-    if (props.onDrop && monitor.isOver()) {
-      props.onDrop(props, monitor);
-    }
-  },
-};
-export const FileInput = withTranslation()(FileInputWithTranslation);
-const FileInputComponent = DropTarget(NativeTypes.FILE, boxTarget, (connect, monitor) => ({
-  connectDropTarget: connect.dropTarget(),
-  isOver: monitor.isOver(),
-  canDrop: monitor.canDrop(),
-}))(FileInput);
+export const DroppableFileInput: React.FC<DroppableFileInputProps> = ({
+  inputFileData,
+  isBase64Input = false,
+  onChange,
+  label,
+  id,
+  filenamePlaceholder,
+  textareaFieldHelpText,
+  isRequired,
+  errorMessage,
+}) => {
+  const [filename, setFilename] = useState<string>('');
+  const [uploadErrorMessage, setUploadErrorMessage] = useState<string>('');
+  const [inputFileIsBinary, setInputFileIsBinary] = useState<boolean>(
+    isBinary(
+      filename,
+      isBase64Input ? Buffer.from(inputFileData, 'base64') : Buffer.from(inputFileData),
+    ),
+  );
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-const DroppableFileInputWithTranslation = withDragDropContext(
-  class DroppableFileInput extends React.Component<
-    DroppableFileInputProps,
-    DroppableFileInputState
-  > {
-    constructor(props) {
-      super(props);
-      this.state = {
-        inputFileName: '',
-        inputFileData: this.props.inputFileData || '',
-        inputFileIsBinary: this.props.inputFileIsBinary || isBinary(null, this.props.inputFileData),
-      };
-      this.handleFileDrop = this.handleFileDrop.bind(this);
-      this.onDataChange = this.onDataChange.bind(this);
-    }
-    handleFileDrop(item: any, monitor: DropTargetMonitor) {
-      const { t } = this.props;
-      if (!monitor) {
-        return;
-      }
-      const file = monitor.getItem().files[0];
-      if (file.size > maxFileUploadSize) {
-        this.setState({
-          errorMessage: t('public~Maximum file size exceeded. File limit is 4MB.'),
-          inputFileName: '',
-          inputFileData: '',
-        });
-        return;
-      }
-      let inputFileIsBinary = false;
+  const hasError = !!errorMessage || !!uploadErrorMessage;
+
+  const { t } = useTranslation('public');
+
+  const handleFileInputChange = useCallback<FileUploadProps['onFileInputChange']>(
+    (_, file: File) => {
+      setIsLoading(true);
+      setUploadErrorMessage('');
+      setFilename(file.name);
+
       const reader = new FileReader();
       reader.onload = () => {
-        const input = reader.result as string; // Note(Yaacov): we use reader.readAsText
-        // OnLoad, if inputFileIsBinary we have read as a binary string, skip next block
-        if (isBinary(null, input) && !inputFileIsBinary) {
-          inputFileIsBinary = true;
-          reader.readAsBinaryString(file);
-        } else {
-          this.setState(
-            {
-              inputFileName: file.name,
-              inputFileData: input,
-              inputFileIsBinary,
-              errorMessage: '',
-            },
-            () => this.props.onChange(input, inputFileIsBinary),
-          );
-        }
+        const buffer = Buffer.from(reader.result as ArrayBuffer);
+        const fileIsBinary = isBinary(file.name, buffer);
+        setInputFileIsBinary(fileIsBinary);
+        onChange(buffer.toString(fileIsBinary ? 'base64' : 'utf-8'), fileIsBinary);
+        setIsLoading(false);
       };
-      reader.readAsText(file, 'UTF-8');
-    }
-    onDataChange(data) {
-      const { fileData, fileIsBinary, fileName, errorMessage } = data;
-      this.setState(
-        {
-          inputFileData: fileData || '',
-          inputFileIsBinary: fileIsBinary,
-          inputFileName: fileName || '',
-          errorMessage: errorMessage || '',
-        },
-        () => this.props.onChange(this.state.inputFileData, fileIsBinary),
-      );
-    }
-    render() {
-      return (
-        <FileInputComponent
-          {...this.props}
-          errorMessage={this.state.errorMessage}
-          onDrop={this.handleFileDrop}
-          onChange={this.onDataChange}
-          inputFileData={this.state.inputFileData}
-          inputFileName={this.state.inputFileName}
-          fileIsBinary={this.state.inputFileIsBinary}
-          hideContents={this.state.inputFileIsBinary}
-        />
-      );
-    }
-  },
-);
+      reader.onerror = () => {
+        setUploadErrorMessage(t('An error occurred while reading the file.'));
+        setIsLoading(false);
+      };
+      reader.readAsArrayBuffer(file);
+    },
+    [onChange, t],
+  );
 
-export const DroppableFileInput = withTranslation()(DroppableFileInputWithTranslation);
+  const handleFileRejected = useCallback<FileUploadProps['dropzoneProps']['onDropRejected']>(
+    (rejections) => {
+      const code = rejections[0].errors[0].code;
 
-export type DroppableFileInputProps = WithTranslation & {
-  inputFileData: string;
-  onChange: Function;
-  label: string;
-  id: string;
-  inputFieldHelpText: string;
-  textareaFieldHelpText: string;
-  isRequired: boolean;
-  hideContents?: boolean;
-  inputFileIsBinary?: boolean;
-};
+      switch (code) {
+        case 'file-too-large':
+          setUploadErrorMessage(
+            t('File is too large. Maximum file size is {{ size }}.', {
+              size: units.humanize(MAX_UPLOAD_SIZE, 'binaryBytes', true).string,
+            }),
+          );
+          break;
+        case 'too-many-files':
+          setUploadErrorMessage(t('Too many files. Maximum one file can be uploaded.'));
+          break;
+        default:
+          setUploadErrorMessage(t('An error occurred while uploading the file.'));
+      }
 
-export type DroppableFileInputState = {
-  inputFileData: string;
-  inputFileIsBinary?: boolean;
-  inputFileName: string;
-  errorMessage?: any;
-};
+      setFilename('');
+      onChange('', false);
+    },
+    [onChange, t],
+  );
 
-export type FileInputState = {
-  inputFileData: string;
-  inputFileName: string;
-};
+  const handleClear = useCallback<FileUploadProps['onClearClick']>(() => {
+    setFilename('');
+    setInputFileIsBinary(false);
+    onChange('', false);
+    setUploadErrorMessage('');
+  }, [onChange]);
 
-export type FileInputProps = WithTranslation & {
-  errorMessage: string;
-  connectDropTarget?: ConnectDropTarget;
-  isOver?: boolean;
-  canDrop?: boolean;
-  onDrop: (props: FileInputProps, monitor: DropTargetMonitor) => void;
-  inputFileData: string;
-  inputFileName: string;
-  onChange: Function;
-  label: string;
-  id: string;
-  inputFieldHelpText: string;
-  textareaFieldHelpText: string;
-  isRequired: boolean;
-  hideContents?: boolean;
-  fileIsBinary?: boolean;
+  return (
+    <FormGroup label={label} isRequired={isRequired} fieldId={id}>
+      <FileUpload
+        className="co-file-input pf-v6-u-mb-md"
+        data-test={id}
+        id={id}
+        type="text"
+        value={inputFileData}
+        filename={filename}
+        filenamePlaceholder={filenamePlaceholder}
+        filenameAriaLabel={t('{{label}} filename', { label })} // Make the 'aria-label' unique since 'input' and 'textarea' fields share the same 'id'.
+        onFileInputChange={handleFileInputChange}
+        onClearClick={handleClear}
+        isRequired={isRequired}
+        hideDefaultPreview
+        browseButtonText={t('Browse...')}
+        clearButtonText={t('Clear')}
+        dropzoneProps={{
+          maxSize: MAX_UPLOAD_SIZE,
+          onDropRejected: handleFileRejected,
+        }}
+        validated={uploadErrorMessage ? 'error' : 'default'}
+      >
+        {!isLoading && inputFileIsBinary && (
+          <Alert
+            isInline
+            className="co-alert"
+            variant="info"
+            title={t('Non-printable file detected.')}
+            data-test="file-input-binary-alert"
+          >
+            {t('File contains non-printable characters. Preview is not available.')}
+          </Alert>
+        )}
+
+        {!inputFileIsBinary && (
+          <div className={styles.fileUploadFileDetails}>
+            <TextArea
+              data-test-id="file-input-textarea"
+              className="co-file-dropzone__textarea"
+              readOnly={isLoading}
+              resizeOrientation="vertical"
+              data-test={`${id}-textarea`}
+              onChange={(e) => {
+                const fileContent = e.target.value;
+                onChange(fileContent, false);
+              }}
+              value={inputFileData}
+              aria-label={t('{{label}}', { label })}
+              aria-describedby={textareaFieldHelpText ? `${id}-textarea-help` : undefined}
+              required={isRequired}
+              validated={hasError ? 'error' : 'default'}
+            />
+            {isLoading && (
+              <div className={styles.fileUploadFileDetailsSpinner}>
+                <Spinner size={spinnerSize.lg} />
+              </div>
+            )}
+          </div>
+        )}
+        {textareaFieldHelpText || hasError ? (
+          <FormHelperText id={`${id}-textarea-help`}>
+            <HelperText>
+              {textareaFieldHelpText ? (
+                <HelperTextItem id={`${id}-help`}>{textareaFieldHelpText}</HelperTextItem>
+              ) : null}
+              {errorMessage ? (
+                <HelperTextItem variant="error">{errorMessage}</HelperTextItem>
+              ) : null}
+              {uploadErrorMessage ? (
+                <HelperTextItem variant="error">{uploadErrorMessage}</HelperTextItem>
+              ) : null}
+            </HelperText>
+          </FormHelperText>
+        ) : null}
+      </FileUpload>
+    </FormGroup>
+  );
 };

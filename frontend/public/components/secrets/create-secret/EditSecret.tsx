@@ -17,19 +17,13 @@ export const SecretLoadingWrapper = withTranslation()(
     readonly state: SecretLoadingWrapperState = {
       secretTypeAbstraction: SecretTypeAbstraction.generic,
     };
-    componentDidUpdate() {
-      if (!_.isEmpty(this.props.obj.data)) {
-        const secretTypeAbstraction = toTypeAbstraction(this.props.obj.data);
-        if (this.state.secretTypeAbstraction !== secretTypeAbstraction) {
-          this.setState({
-            secretTypeAbstraction,
-          });
-        }
-      }
-    }
     render() {
       const { obj, fixedKeys } = this.props;
-      const { secretTypeAbstraction } = this.state;
+      // Compute secretTypeAbstraction from loaded data, not from state
+      const secretTypeAbstraction = !_.isEmpty(obj.data)
+        ? toTypeAbstraction(obj.data)
+        : SecretTypeAbstraction.generic;
+
       if (!secretTypeAbstraction) {
         return <LoadingBox />;
       }

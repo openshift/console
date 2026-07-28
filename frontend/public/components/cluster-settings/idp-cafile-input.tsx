@@ -23,7 +23,6 @@ export const IDPCAFileInput: React.FC<IDPCAFileInputProps> = ({
         id="idp-file-input"
         label={t('public~CA file')}
         isRequired={isRequired}
-        hideContents
       />
     </div>
   );
