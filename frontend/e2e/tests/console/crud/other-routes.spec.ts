@@ -36,7 +36,7 @@ const routes: RouteConfig[] = [
   {
     path: '/k8s/all-namespaces/events',
     assertLoaded: async (page) => {
-      await expect(page.getByRole('row').first()).toBeVisible();
+      await expect(page.getByTestId('event-totals')).toBeVisible();
     },
   },
   {
