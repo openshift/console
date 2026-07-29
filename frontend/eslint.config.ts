@@ -26,15 +26,6 @@ const PACKAGES_EXCLUDE = [
   ...SDK_NODE_DIRS.map((d) => `${d}/**`),
 ];
 
-const CYPRESS_INTEGRATION_DIRS = [
-  'packages/integration-tests',
-  'packages/dev-console/integration-tests',
-  'packages/knative-plugin/integration-tests',
-  'packages/helm-plugin/integration-tests',
-];
-
-const CYPRESS_FILES = CYPRESS_INTEGRATION_DIRS.map((d) => `${d}/**/*.{js,jsx,ts,tsx}`);
-
 const config = defineConfig([
   globalIgnores([
     '.puppeteer/**',
@@ -126,36 +117,6 @@ const config = defineConfig([
     rules: {
       'react/prop-types': 'off',
       'import/no-unresolved': 'off',
-    },
-  },
-
-  // ------------------------------------------------
-  // Scope: Cypress integration tests (overlay on packages config)
-  // ------------------------------------------------
-  {
-    files: CYPRESS_FILES,
-    extends: compat.extends('plugin:cypress/recommended'),
-    languageOptions: {
-      globals: {
-        ...globals.node,
-      },
-    },
-    rules: {
-      '@typescript-eslint/no-namespace': 'off',
-      'no-redeclare': 'off',
-      'promise/catch-or-return': 'off',
-      'promise/no-nesting': 'off',
-      'cypress/unsafe-to-chain-command': 'off',
-      'max-nested-callbacks': 'off',
-      'cypress/no-unnecessary-waiting': 'off',
-    },
-    settings: {
-      'import/resolver': {
-        node: {
-          extensions: ['.js', '.jsx', '.ts', '.tsx'],
-          moduleDirectory: ['node_modules', 'integration-tests/'],
-        },
-      },
     },
   },
 
