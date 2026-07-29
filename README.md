@@ -283,7 +283,7 @@ The end-to-end tests run against pull requests using [ci-operator](https://githu
 The tests are defined in the [ci-operator config](https://github.com/openshift/release/blob/main/ci-operator/config/openshift/console/openshift-console-main.yaml)
 in the [openshift/release](https://github.com/openshift/release) repo.
 
-CI runs the [test-prow-playwright-e2e.sh](test-prow-playwright-e2e.sh) script, which runs [frontend/integration-tests/test-playwright-e2e.sh](frontend/integration-tests/test-playwright-e2e.sh).
+CI runs the [test-prow-e2e.sh](test-prow-e2e.sh) script, which runs [frontend/integration-tests/test-playwright-e2e.sh](frontend/integration-tests/test-playwright-e2e.sh).
 
 ### Internationalization
 

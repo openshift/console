@@ -7,7 +7,7 @@
 # Run from the openshift/console repository root.
 #
 # Usage:
-#   ./test-prow-playwright-e2e.sh [e2e|release|smoke] [arguments passed to: playwright test ...]
+#   ./test-prow-e2e.sh [e2e|release|smoke] [arguments passed to: playwright test ...]
 #
 # Scenarios (first argument; default: e2e):
 #   e2e, release  — full Playwright suite (default project / config)
