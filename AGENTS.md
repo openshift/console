@@ -125,6 +125,10 @@ These files are the single source of truth for architecture, coding standards, a
 - [CONTRIBUTING.md](CONTRIBUTING.md) - contribution workflow and commit message conventions.
 - [README.md](README.md) - project setup, build instructions, and architecture overview.
 
+## Playwright migration
+
+We are migrating Cypress e2e tests to Playwright. Use `/migrate-cypress` to convert test files and `/debug-test` to fix failing tests. Shared migration context (translation tables, structural rules, checklist) is in `.claude/migration-context.md`.
+
 ### Dynamic plugin SDK
 
 - [Dynamic Plugin SDK documentation](frontend/packages/console-dynamic-plugin-sdk/README.md) - architecture, design principles, and development guidelines. Consult before modifying SDK code.
