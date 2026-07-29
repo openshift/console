@@ -1,4 +1,4 @@
-/* eslint-disable camelcase */
+/* eslint-disable camelcase, tsdoc/syntax */
 import * as _ from 'lodash';
 import { FC, memo, useEffect, useReducer, useState, Ref } from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';

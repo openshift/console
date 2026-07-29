@@ -1,4 +1,4 @@
-/* eslint-disable camelcase */
+/* eslint-disable camelcase, tsdoc/syntax */
 import type { FC } from 'react';
 
 import { useMemo, memo, Suspense } from 'react';

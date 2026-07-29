@@ -1,4 +1,45 @@
 module.exports = {
+  // Require i18n namespace argument for useTranslation()
+  'no-restricted-syntax': [
+    'warn',
+    {
+      selector: "CallExpression[callee.name='useTranslation'][arguments.length=0]",
+      message:
+        "Pass the i18n namespace to useTranslation(). Example: useTranslation('public') instead of useTranslation().",
+    },
+  ],
+
+  // Restrict certain imports (lodash-es, React default/act, Font Awesome PF icons)
+  'no-restricted-imports': [
+    'error',
+    {
+      paths: [
+        {
+          name: 'lodash-es',
+          message: 'Use lodash instead. The bundler is configured to use lodash-es automatically.',
+        },
+        {
+          name: 'react',
+          importNames: ['default', '*'],
+          message: 'Use named imports instead.',
+        },
+        {
+          name: 'react',
+          importNames: ['act'],
+          message: "For consistency, import { act } from '@testing-library/react'",
+        },
+      ],
+      patterns: [
+        {
+          group: ['@patternfly/react-icons'],
+          importNamePattern:
+            '^(?!Rh|createIcon|GitAltIcon|TerminalIcon|GithubIcon|GitlabIcon|BitbucketIcon)',
+          message: 'Use RhMicron, RhUi, or RhStandard icon variants instead of Font Awesome icons.',
+        },
+      ],
+    },
+  ],
+
   // Forbid foreign propTypes; forbids using another component's prop types unless they are explicitly imported/exported
   'react/forbid-foreign-prop-types': 'error',
 
@@ -50,6 +91,15 @@ module.exports = {
   'react/forbid-prop-types': 'off',
 
   /* ---- Rules new/changed in eslint-config-airbnb v19 / eslint-plugin-react v7.37 ---- */
+
+  // Disallow usage of string refs
+  'react/no-string-refs': 'warn',
+
+  // Enforce self-closing for components but not HTML elements
+  'react/self-closing-comp': ['error', { component: true, html: false }],
+
+  // Disallow unescaped entities in JSX
+  'react/no-unescaped-entities': 'off',
 
   // Enforce function component definition style (new in airbnb v19)
   'react/function-component-definition': 'off',
