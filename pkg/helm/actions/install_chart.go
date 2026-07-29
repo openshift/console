@@ -58,9 +58,9 @@ type RegistryClientSetter interface {
 	SetRegistryClient(rc *registry.Client)
 }
 
-// isValidChartURL validates chart URLs using RFC-compliant hostname labels.
+// IsValidChartURL validates chart URLs using RFC-compliant hostname labels.
 // Accepts oci://<registry>/<path> and http(s)://<host>/<path>.tgz|tar.gz URLs.
-func isValidChartURL(raw string) bool {
+func IsValidChartURL(raw string) bool {
 	return ociURLRe.MatchString(raw) || httpURLRe.MatchString(raw)
 }
 
@@ -324,7 +324,7 @@ func addAuthSecretAnnotation(ch *chart.Chart, secretName string) {
 // basicAuthSecretName names a Secret in ns containing username and password keys for registry auth.
 func InstallChartFromURL(ns, name, url string, vals map[string]interface{}, conf *action.Configuration, coreClient corev1client.CoreV1Interface, version, basicAuthSecretName string) (*kv1.Secret, error) {
 
-	if !isValidChartURL(url) {
+	if !IsValidChartURL(url) {
 		return nil, fmt.Errorf("invalid chart URL: %s, must be oci:// URL or http(s)://*.tgz", url)
 	}
 
