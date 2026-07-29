@@ -83,7 +83,7 @@ export const DroppableEditYAML = withDragDropContext<DroppableEditYAMLProps>(
       if (file.size <= maxFileUploadSize) {
         const reader = new FileReader();
         reader.onload = () => {
-          const buffer = Buffer.from(reader.result);
+          const buffer = Buffer.from(reader.result as ArrayBuffer);
           if (ITOB.isBinary(null, buffer)) {
             this.setState((previousState) => ({
               errors: [...previousState.errors, `Ignoring ${file.name}: ${fileTypeErrorMsg}`],
