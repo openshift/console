@@ -1,8 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { UseURLPoll } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { usePoll } from '@console/shared/src/hooks/usePoll';
 import { useSafeFetch } from './safe-fetch-hook';
+import { dedupedFetch } from './url-fetch-cache';
 
 export const URL_POLL_DEFAULT_DELAY = 15000; // 15 seconds
 
@@ -15,9 +16,10 @@ export const useURLPoll: UseURLPoll = <R>(
   const [response, setResponse] = useState<R>();
   const [loading, setLoading] = useState(true);
   const safeFetch = useSafeFetch();
+  const jitterRef = useRef(delay ? Math.floor(Math.random() * delay * 0.2) : 0);
   const tick = useCallback(() => {
     if (url) {
-      safeFetch(url)
+      dedupedFetch(url, safeFetch)
         .then((data) => {
           setResponse(data);
           setError(null);
@@ -36,7 +38,7 @@ export const useURLPoll: UseURLPoll = <R>(
     }
   }, [url]);
 
-  usePoll(tick, delay, ...dependencies);
+  usePoll(tick, delay + jitterRef.current, ...dependencies);
 
   return [response, error, loading];
 };
