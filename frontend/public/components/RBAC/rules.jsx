@@ -1,17 +1,15 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import * as _ from 'lodash';
-import { connect } from 'react-redux';
-
 import { Divider, ButtonVariant } from '@patternfly/react-core';
-import { k8sPatch } from '../../module/k8s';
-import { RoleModel, ClusterRoleModel } from '../../models';
-import { Kebab } from '../utils/kebab';
-import { EmptyBox } from '../utils/status-box';
-import { ResourceIcon } from '../utils/resource-icon';
-
-import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
-import { useTranslation } from 'react-i18next';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
+import { RoleModel, ClusterRoleModel } from '../../models';
+import { k8sPatch } from '../../module/k8s';
+import { Kebab } from '../utils/kebab';
+import { ResourceIcon } from '../utils/resource-icon';
+import { EmptyBox } from '../utils/status-box';
 
 export const RulesList = ({ rules, name, namespace }) => {
   const { t } = useTranslation('public');

@@ -1,7 +1,8 @@
 import type { FC } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { K8sResourceKind, OwnerReference, referenceForOwnerRef } from '../../module/k8s';
+import type { K8sResourceKind, OwnerReference } from '../../module/k8s';
+import { referenceForOwnerRef } from '../../module/k8s';
 import { ResourceLink } from './resource-link';
 
 export const OwnerReferences: FC<OwnerReferencesProps> = ({ resource }) => {

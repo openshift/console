@@ -1,8 +1,5 @@
 import type { FC, ReactEventHandler, FormEvent } from 'react';
 import { useState, useEffect, useCallback } from 'react';
-import * as _ from 'lodash';
-import * as fuzzy from 'fuzzysearch';
-import { useNavigate } from 'react-router';
 import {
   Button,
   Content,
@@ -16,19 +13,22 @@ import {
   Radio,
   TextInput,
 } from '@patternfly/react-core';
-
-import { K8sKind, k8sList, k8sPatch, K8sResourceKind } from '../../module/k8s';
-import { DeploymentModel, DeploymentConfigModel, StatefulSetModel } from '../../models';
+import * as fuzzy from 'fuzzysearch';
+import * as _ from 'lodash';
+import { Trans, useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
+import { DeploymentModel, DeploymentConfigModel, StatefulSetModel } from '../../models';
+import type { K8sKind, K8sResourceKind } from '../../module/k8s';
+import { k8sList, k8sPatch } from '../../module/k8s';
 import { ResourceIcon, ResourceName } from '../utils/resource-icon';
 import { resourcePathFromModel } from '../utils/resource-link';
 /* eslint-disable import/named */
-import { Trans, useTranslation } from 'react-i18next';
-import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
-import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import { ModalCallback } from './types';
-import type { ModalComponentProps } from '@console/shared/src/types/modal';
-import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import type { ModalCallback } from './types';
 
 const workloadResourceModels = [DeploymentModel, DeploymentConfigModel, StatefulSetModel];
 const getContainers = (workload: K8sResourceKind) =>

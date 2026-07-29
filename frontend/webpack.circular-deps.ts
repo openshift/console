@@ -1,4 +1,3 @@
-/* eslint-env node */
 /* eslint-disable no-console */
 
 import type { Configuration, Compiler } from '@rspack/core';

@@ -1,5 +1,6 @@
-import { useState, useEffect, useMemo, useCallback, useRef, FC, Ref, MouseEvent } from 'react';
-import { useTranslation } from 'react-i18next';
+import type { FC, Ref, MouseEvent } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import type { MenuToggleElement } from '@patternfly/react-core';
 import {
   Button,
   Form,
@@ -11,7 +12,6 @@ import {
   SelectList,
   SelectOption,
   MenuToggle,
-  MenuToggleElement,
   Label,
   TextInputGroup,
   TextInputGroupMain,
@@ -28,10 +28,11 @@ import {
   FlexItem,
 } from '@patternfly/react-core';
 import { RhUiCloseIcon, RhUiErrorFillIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
+import { GroupModel } from '../../models';
+import type { GroupKind } from '../../module/k8s';
 import { FieldLevelHelp } from '../utils/field-level-help';
 import { useK8sWatchResource } from '../utils/k8s-watch-hook';
-import { GroupModel } from '../../models';
-import { GroupKind } from '../../module/k8s';
 
 const SELECT_ALL_KEY = '__select_all__';
 const MAX_VISIBLE_CHIPS = 5;

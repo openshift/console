@@ -1,13 +1,14 @@
 import type { FC } from 'react';
 import { Component } from 'react';
+import { Label as PfLabel, LabelGroup as PfLabelGroup } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
-import { Label as PfLabel, LabelGroup as PfLabelGroup } from '@patternfly/react-core';
-
 /* eslint-disable import/named */
-import { withTranslation, WithTranslation } from 'react-i18next';
+import type { WithTranslation } from 'react-i18next';
+import { withTranslation } from 'react-i18next';
 /* eslint-enable import/named */
-import { K8sResourceKindReference, kindForReference } from '../../module/k8s';
+import type { K8sResourceKindReference } from '../../module/k8s';
+import { kindForReference } from '../../module/k8s';
 
 const Label: FC<LabelProps> = ({ kind, name, value, expand }) => {
   const href = `/search?kind=${kind}&q=${value ? encodeURIComponent(`${name}=${value}`) : name}`;
@@ -47,7 +48,7 @@ class TranslatedLabelList extends Component<LabelListProps> {
         ) : (
           <PfLabelGroup
             className="co-label-group"
-            defaultIsOpen={true}
+            defaultIsOpen
             numLabels={20}
             data-test="label-list"
           >

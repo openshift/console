@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { createContext, useContext, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { TopConsumerPopoverProps } from '@console/dynamic-plugin-sdk';
+import type { TopConsumerPopoverProps } from '@console/dynamic-plugin-sdk';
 import ConsumerPopover from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
 import {
   ProjectQueries,

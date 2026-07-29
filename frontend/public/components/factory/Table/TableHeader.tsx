@@ -1,8 +1,9 @@
 import type { FC } from 'react';
+import type { ISortBy, OnSelect, OnSort } from '@patternfly/react-table';
+import { Th, Thead, Tr } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
-import { ISortBy, OnSelect, OnSort, Th, Thead, Tr } from '@patternfly/react-table';
-import { TableColumn as InternalTableColumn } from '../table';
-import { TableColumn as SDKTableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { TableColumn as SDKTableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { TableColumn as InternalTableColumn } from '../table';
 
 export const TableHeader: FC<TableHeaderProps> = ({
   allRowsSelected,

@@ -1,15 +1,20 @@
 import type { FC, ReactNode } from 'react';
 import { useMemo } from 'react';
+import { Gallery, GalleryItem, Card, CardHeader, CardTitle } from '@patternfly/react-core';
+import type { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash';
-import { connect } from 'react-redux';
-import { Map as ImmutableMap } from 'immutable';
-import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import {
+import { connect } from 'react-redux';
+import { Link } from 'react-router';
+import type {
   DashboardsOverviewHealthSubsystem,
   DashboardsOverviewHealthPrometheusSubsystem,
   DashboardsOverviewHealthURLSubsystem,
   DashboardsOverviewHealthOperator,
+  ResolvedExtension,
+  WatchK8sResource,
+} from '@console/dynamic-plugin-sdk';
+import {
   isDashboardsOverviewHealthSubsystem,
   isDashboardsOverviewHealthURLSubsystem,
   isDashboardsOverviewHealthPrometheusSubsystem,
@@ -17,43 +22,34 @@ import {
   isResolvedDashboardsOverviewHealthPrometheusSubsystem,
   isResolvedDashboardsOverviewHealthResourceSubsystem,
   isResolvedDashboardsOverviewHealthOperator,
-  ResolvedExtension,
   useResolvedExtensions,
-  WatchK8sResource,
 } from '@console/dynamic-plugin-sdk';
-import { Gallery, GalleryItem, Card, CardHeader, CardTitle } from '@patternfly/react-core';
-import { BlueArrowCircleUpIcon } from '@console/shared/src/components/status/icons';
-import { ALL_NAMESPACES_KEY, FLAGS } from '@console/shared/src/constants/common';
-import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpgrade';
-
-import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
-import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
 import AlertItem, {
   StatusItem,
 } from '@console/shared/src/components/dashboard/status-card/AlertItem';
-import { alertURL } from '../../../monitoring/utils';
+import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
+import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
+import { BlueArrowCircleUpIcon } from '@console/shared/src/components/status/icons';
+import { ALL_NAMESPACES_KEY, FLAGS } from '@console/shared/src/constants/common';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
+import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpgrade';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import {
-  ClusterVersionKind,
-  referenceForModel,
-  hasAvailableUpdates,
-  K8sKind,
-  ObjectMetadata,
-} from '../../../../module/k8s';
+  useNamespacedNotificationAlerts,
+  useNotificationAlerts,
+} from '@console/shared/src/hooks/useNotificationAlerts';
 import { ClusterVersionModel } from '../../../../models';
-import { RootState } from '../../../../redux';
+import type { ClusterVersionKind, K8sKind, ObjectMetadata } from '../../../../module/k8s';
+import { referenceForModel, hasAvailableUpdates } from '../../../../module/k8s';
+import type { RootState } from '../../../../redux';
+import { alertURL } from '../../../monitoring/utils';
+import { useK8sWatchResource } from '../../../utils/k8s-watch-hook';
 import {
   OperatorHealthItem,
   PrometheusHealthItem,
   URLHealthItem,
   ResourceHealthItem,
 } from './health-item';
-import { useK8sWatchResource } from '../../../utils/k8s-watch-hook';
-import { useFlag } from '@console/shared/src/hooks/useFlag';
-import {
-  useNamespacedNotificationAlerts,
-  useNotificationAlerts,
-} from '@console/shared/src/hooks/useNotificationAlerts';
-import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 
 const filterSubsystems = (
   subsystems: (

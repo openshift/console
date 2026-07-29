@@ -1,22 +1,25 @@
+import type { FC, Ref } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
+import type {
+  MenuToggleProps,
+  MenuToggleElement,
+  SelectProps,
+  SelectOptionProps,
+  TextInputGroupMainProps,
+} from '@patternfly/react-core';
 import {
   Button,
   MenuToggle,
-  MenuToggleProps,
-  MenuToggleElement,
   Select,
-  SelectProps,
   SelectList,
   SelectOption,
-  SelectOptionProps,
   TextInputGroup,
   TextInputGroupMain,
   TextInputGroupUtilities,
-  TextInputGroupMainProps,
 } from '@patternfly/react-core';
-import * as _ from 'lodash';
-import { FC, Ref, useState, useMemo, useEffect, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
 import { RhUiCloseIcon } from '@patternfly/react-icons';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 
 export type SingleTypeaheadDropdownProps = {
   /** The items to display in the dropdown */
@@ -363,6 +366,7 @@ export const SingleTypeaheadDropdown: FC<SingleTypeaheadDropdownProps> = ({
 
           return (
             <SelectOptionComponent
+              // eslint-disable-next-line react/no-array-index-key
               key={k}
               isSelected={selectedKey === v.value}
               isFocused={focusedItemIndex === k}
@@ -375,7 +379,7 @@ export const SingleTypeaheadDropdown: FC<SingleTypeaheadDropdownProps> = ({
           );
         })}
         {_.isEmpty(filteredSelectOptions) && filterValue && !enableCreateNew && (
-          <SelectOption isDisabled={true} isAriaDisabled={true} value={NO_RESULTS}>
+          <SelectOption isDisabled isAriaDisabled value={NO_RESULTS}>
             {t(`public~No results found`)}
           </SelectOption>
         )}

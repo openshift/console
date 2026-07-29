@@ -1,26 +1,20 @@
-import * as _ from 'lodash';
 import type { FC, ReactEventHandler, FormEvent } from 'react';
 import { useState, useEffect } from 'react';
 import { ActionGroup, Button, Radio } from '@patternfly/react-core';
+import * as _ from 'lodash';
 import { useTranslation, Trans } from 'react-i18next';
 import { useParams, useNavigate } from 'react-router';
-import {
-  ContainerSpec,
-  k8sCreate,
-  k8sGet,
-  K8sKind,
-  k8sPatch,
-  referenceFor,
-} from '../../module/k8s';
-import { ButtonBar } from '../utils/button-bar';
-import { LoadingBox } from '../utils/status-box';
-import { resourceObjPath } from '../utils/resource-link';
-import { Checkbox } from '../checkbox';
-import { CreatePVCForm } from './create-pvc';
 import { PersistentVolumeClaimModel } from '../../models';
+import type { ContainerSpec, K8sKind } from '../../module/k8s';
+import { k8sCreate, k8sGet, k8sPatch, referenceFor } from '../../module/k8s';
+import type { PodTemplate, PersistentVolumeClaimKind, Patch } from '../../module/k8s/types';
+import { Checkbox } from '../checkbox';
 import { ContainerSelector } from '../container-selector';
+import { ButtonBar } from '../utils/button-bar';
 import { PVCDropdown } from '../utils/pvc-dropdown';
-import { PodTemplate, PersistentVolumeClaimKind, Patch } from '../../module/k8s/types';
+import { resourceObjPath } from '../utils/resource-link';
+import { LoadingBox } from '../utils/status-box';
+import { CreatePVCForm } from './create-pvc';
 
 const AttachStorageForm: FC<AttachStorageFormProps> = (props) => {
   const [obj, setObj] = useState(null);

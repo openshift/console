@@ -1,6 +1,28 @@
 import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  Grid,
+  GridItem,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import {
+  actionsCellProps,
+  getNameCellProps,
+  ConsoleDataView,
+  nameCellProps,
+} from '@console/app/src/components/data-view/ConsoleDataView';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+import NodeIPList from '@console/app/src/components/nodes/NodeIPList';
+import type { TableColumn } from '@console/dynamic-plugin-sdk';
+import { ListPageBody } from '@console/dynamic-plugin-sdk';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { Status } from '@console/shared/src/components/status/Status';
+import { DASH } from '@console/shared/src/constants/ui';
 import {
   getMachineAddresses,
   getMachineInstanceType,
@@ -10,42 +32,22 @@ import {
   getMachineZone,
   getMachinePhase,
 } from '@console/shared/src/selectors/machine';
-import { Status } from '@console/shared/src/components/status/Status';
-import { DASH } from '@console/shared/src/constants/ui';
-import { ListPageBody, TableColumn } from '@console/dynamic-plugin-sdk';
 import { MachineModel } from '../models';
-import { MachineKind, referenceForModel, Selector } from '../module/k8s';
+import type { MachineKind, Selector } from '../module/k8s';
+import { referenceForModel } from '../module/k8s';
 import { Conditions } from './conditions';
-import NodeIPList from '@console/app/src/components/nodes/NodeIPList';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { ResourceEventStream } from './events';
 import { DetailsPage } from './factory/details';
-import ListPageHeader from './factory/ListPage/ListPageHeader';
 import ListPageCreate from './factory/ListPage/ListPageCreate';
+import ListPageHeader from './factory/ListPage/ListPageHeader';
+import { sortResourceByValue } from './factory/Table/sort';
 import { DetailsItem } from './utils/details-item';
-import { NodeLink, ResourceLink } from './utils/resource-link';
 import { ResourceSummary } from './utils/details-page';
 import { SectionHeading } from './utils/headings';
 import { navFactory } from './utils/horizontal-nav';
-import { LoadingBox } from './utils/status-box';
-import { ResourceEventStream } from './events';
 import { useK8sWatchResource } from './utils/k8s-watch-hook';
-import { sortResourceByValue } from './factory/Table/sort';
-import {
-  actionsCellProps,
-  getNameCellProps,
-  ConsoleDataView,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import {
-  DescriptionList,
-  DescriptionListDescription,
-  DescriptionListGroup,
-  DescriptionListTerm,
-  Grid,
-  GridItem,
-} from '@patternfly/react-core';
-import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { NodeLink, ResourceLink } from './utils/resource-link';
+import { LoadingBox } from './utils/status-box';
 
 export const machineReference = referenceForModel(MachineModel);
 
@@ -297,7 +299,7 @@ const MachineList: FC<MachineListProps> = ({ data, loaded, loadError, ...props }
         loadError={loadError}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
+        hideColumnManagement
         isResizable
         resetAllColumnWidths={resetAllColumnWidths}
       />

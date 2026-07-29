@@ -1,9 +1,9 @@
 import { screen } from '@testing-library/react';
+import type { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { DetailsPage } from '@console/internal/components/factory/details';
+import * as k8sWatchHook from '@console/internal/components/utils/k8s-watch-hook';
 import { PodModel } from '@console/internal/models';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
-import { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
-import * as k8sWatchHook from '@console/internal/components/utils/k8s-watch-hook';
 
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResources: jest.fn(() => ({})),

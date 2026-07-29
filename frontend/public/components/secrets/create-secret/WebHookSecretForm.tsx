@@ -1,6 +1,4 @@
-import type { FC } from 'react';
-import { FormEvent } from 'react';
-import { useTranslation } from 'react-i18next';
+import type { FC, FormEvent } from 'react';
 import {
   FormGroup,
   TextInput,
@@ -11,7 +9,8 @@ import {
   HelperText,
   HelperTextItem,
 } from '@patternfly/react-core';
-import { SecretSubFormProps } from './types';
+import { useTranslation } from 'react-i18next';
+import type { SecretSubFormProps } from './types';
 
 export const WebHookSecretForm: FC<SecretSubFormProps> = ({ onChange, stringData }) => {
   const { t } = useTranslation('public');

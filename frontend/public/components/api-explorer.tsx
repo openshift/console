@@ -1,11 +1,5 @@
-import { FC, MouseEvent, useEffect, useMemo, useRef, FormEvent, useState } from 'react';
-import { useLocation, useParams, Link, useSearchParams, useNavigate } from 'react-router';
-import { connect } from 'react-redux';
-import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
-import * as _ from 'lodash';
-import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import { Map as ImmutableMap } from 'immutable';
-import * as fuzzy from 'fuzzysearch';
+import type { FC, MouseEvent, FormEvent } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Toolbar,
   ToolbarContent,
@@ -21,57 +15,63 @@ import {
   Pagination,
   Bullseye,
 } from '@patternfly/react-core';
+import { DataView, DataViewTable, useDataViewPagination } from '@patternfly/react-data-view';
 import { RhUiFilterIcon } from '@patternfly/react-icons';
-import { useTranslation } from 'react-i18next';
+import { InnerScrollContainer, Tbody, Tr, Td } from '@patternfly/react-table';
+import * as fuzzy from 'fuzzysearch';
 import i18next from 'i18next';
-
-import { ALL_NAMESPACES_KEY, FLAGS } from '@console/shared/src/constants/common';
-import { APIError } from '@console/shared/src/types/resource';
-import { getTitleForNodeKind } from '@console/shared/src/utils/utils';
+import type { Map as ImmutableMap } from 'immutable';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+import { useLocation, useParams, Link, useSearchParams, useNavigate } from 'react-router';
 import { useExactSearch } from '@console/app/src/components/user-preferences/search/useExactSearch';
-import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
-import { Page, HorizontalNav } from '@console/internal/components/utils/horizontal-nav';
+import type { ResourceListPage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
+import { isResourceListPage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
+import { getK8sModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sModel';
+import { ConsoleSelect } from '@console/internal/components/utils/console-select';
+import type { Page } from '@console/internal/components/utils/horizontal-nav';
+import { HorizontalNav } from '@console/internal/components/utils/horizontal-nav';
 import { useAccessReview } from '@console/internal/components/utils/rbac';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
+import { DescriptionListTermHelp } from '@console/shared/src/components/description-list/DescriptionListTermHelp';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { DataView, DataViewTable, useDataViewPagination } from '@patternfly/react-data-view';
-import { InnerScrollContainer, Tbody, Tr, Td } from '@patternfly/react-table';
-
+import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
+import { ALL_NAMESPACES_KEY, FLAGS } from '@console/shared/src/constants/common';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
+import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
+import type { APIError } from '@console/shared/src/types/resource';
+import { getTitleForNodeKind } from '@console/shared/src/utils/utils';
 import { LocalResourceAccessReviewsModel, ResourceAccessReviewsModel } from '../models';
-import {
-  apiVersionForModel,
-  k8sCreate,
+import type {
   K8sKind,
   K8sResourceKindReference,
   K8sVerb,
-  getResourceDescription,
-  referenceForModel,
   ResourceAccessReviewRequest,
   ResourceAccessReviewResponse,
 } from '../module/k8s';
+import {
+  apiVersionForModel,
+  k8sCreate,
+  getResourceDescription,
+  referenceForModel,
+} from '../module/k8s';
 import { connectToFlags } from '../reducers/connectToFlags';
 import type { RootState } from '../redux';
-import { RowFilter } from './row-filter';
 import { DefaultPage } from './default-resource';
-import { TextFilter } from './factory/text-filter';
+import { ErrorPage404 } from './error';
 import { exactMatch, fuzzyCaseInsensitive } from './factory/table-filters';
+import { TextFilter } from './factory/text-filter';
 import { getResourceListPages } from './resource-pages';
+import { RowFilter } from './row-filter';
 import { ExploreType } from './sidebars/explore-type-sidebar';
-import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { AsyncComponent } from './utils/async';
-import { LoadError, LoadingBox } from './utils/status-box';
 import { LinkifyExternal } from './utils/link';
-import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import { ResourceIcon } from './utils/resource-icon';
 import { ScrollToTopOnMount } from './utils/scroll-to-top-on-mount';
-import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
-import {
-  ResourceListPage,
-  isResourceListPage,
-} from '@console/dynamic-plugin-sdk/src/extensions/pages';
-import { getK8sModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sModel';
-import { ErrorPage404 } from './error';
-import { DescriptionListTermHelp } from '@console/shared/src/components/description-list/DescriptionListTermHelp';
+import { LoadError, LoadingBox } from './utils/status-box';
 
 const mapStateToProps = (state: RootState): APIResourceLinkStateProps => {
   return {

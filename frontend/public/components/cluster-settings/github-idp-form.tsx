@@ -1,18 +1,18 @@
 import { useState } from 'react';
-import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { ActionGroup, Button, Title } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
 import { useNavigate } from 'react-router';
-import { ActionGroup, Button, Title } from '@patternfly/react-core';
-
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { SecretModel, ConfigMapModel } from '../../models';
-import { IdentityProvider, k8sCreate, OAuthKind } from '../../module/k8s';
+import type { IdentityProvider, OAuthKind } from '../../module/k8s';
+import { k8sCreate } from '../../module/k8s';
 import { ButtonBar } from '../utils/button-bar';
 import { ListInput } from '../utils/list-input';
-import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
-import { addIDP, getOAuthResource as getOAuth, redirectToOAuthPage, mockNames } from './';
-import { IDPNameInput } from './idp-name-input';
 import { IDPCAFileInput } from './idp-cafile-input';
+import { IDPNameInput } from './idp-name-input';
+import { addIDP, getOAuthResource as getOAuth, redirectToOAuthPage, mockNames } from '.';
 
 export const AddGitHubPage = () => {
   const navigate = useNavigate();

@@ -79,7 +79,7 @@ const convertBaseValueToUnits = (value, unitArray, divisor, initialUnit, preferr
 
   let unit = units_.shift();
   while (value >= divisor && units_.length > 0) {
-    value = value / divisor;
+    value /= divisor;
     unit = units_.shift();
   }
   return { value, unit };
@@ -116,7 +116,7 @@ const convertValueWithUnitsToBaseValue = (value, unitArray, divisor) => {
 
   let unit = units_.shift();
   while (units_.length > 0) {
-    value = value * divisor;
+    value *= divisor;
     unit = units_.shift();
   }
 
@@ -150,7 +150,7 @@ const round = (units.round = (value, fractionDigits) => {
   if (!isFinite(value)) {
     return 0;
   }
-  const multiplier = Math.pow(10, fractionDigits || getDefaultFractionDigits(value));
+  const multiplier = 10 ** (fractionDigits || getDefaultFractionDigits(value));
   return Math.round(value * multiplier) / multiplier;
 });
 
@@ -250,7 +250,8 @@ units.dehumanize = (value, typeName) => {
 
 validate.split = (value) => {
   const index = value.search(/([a-zA-Z]+)/g);
-  let number, unit;
+  let number;
+  let unit;
   if (index === -1) {
     number = value;
   } else {

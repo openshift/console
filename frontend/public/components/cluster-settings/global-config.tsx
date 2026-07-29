@@ -1,8 +1,5 @@
 import type { FC } from 'react';
 import { useState, useEffect } from 'react';
-import * as _ from 'lodash';
-import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
-import { Link } from 'react-router';
 import {
   AlertVariant,
   Content,
@@ -12,31 +9,32 @@ import {
   ToolbarItem,
 } from '@patternfly/react-core';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
+import i18next from 'i18next';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
+import type { ClusterGlobalConfig } from '@console/dynamic-plugin-sdk/src/extensions/cluster-settings';
+import { isClusterGlobalConfig } from '@console/dynamic-plugin-sdk/src/extensions/cluster-settings';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { IDP_TYPES } from '@console/shared/src/constants/auth';
+import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpgrade';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
+import type { K8sKind } from '../../module/k8s';
 import {
-  K8sKind,
   k8sList,
   referenceForModel,
   getResourceDescription,
   modelFor,
   referenceForGroupVersionKind,
 } from '../../module/k8s';
-import { EmptyBox, LoadingBox } from '../utils/status-box';
+import { fuzzyCaseInsensitive } from '../factory/table-filters';
+import { TextFilter } from '../factory/text-filter';
 import { ExpandableAlert } from '../utils/alerts';
 import { Kebab } from '../utils/kebab';
 import { resourcePathFromModel } from '../utils/resource-link';
-import { TextFilter } from '../factory/text-filter';
-import { fuzzyCaseInsensitive } from '../factory/table-filters';
-import i18next from 'i18next';
-import {
-  ClusterGlobalConfig,
-  isClusterGlobalConfig,
-} from '@console/dynamic-plugin-sdk/src/extensions/cluster-settings';
-import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpgrade';
+import { EmptyBox, LoadingBox } from '../utils/status-box';
 import filterNonUpgradableResources from './filterNonUpgradableResources';
-import { IDP_TYPES } from '@console/shared/src/constants/auth';
 
 type ConfigDataType = { model: K8sKind; id: string; name: string; namespace: string };
 

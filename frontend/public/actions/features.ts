@@ -1,15 +1,13 @@
-import { Dispatch } from 'redux';
 import * as _ from 'lodash';
-
-import { FLAGS } from '@console/shared/src/constants/common';
-import { UserInfo } from '@console/internal/module/k8s';
+import type { Dispatch } from 'redux';
 import { setUser } from '@console/dynamic-plugin-sdk/src/app/core/actions/core';
-import { setClusterID, setCreateProjectMessage } from './common';
+import { k8sBasePath } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s';
+import { resourceURL } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-utils';
+import type { UserInfo } from '@console/internal/module/k8s';
+import { FLAGS } from '@console/shared/src/constants/common';
 import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
 import { SelfSubjectAccessReviewModel, SelfSubjectReviewModel } from '../models';
-import { resourceURL } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-utils';
-import { k8sBasePath } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s';
-
+import { setClusterID, setCreateProjectMessage } from './common';
 import { handleError, retryFlagDetection, setFlag, ssarChecks } from './flags';
 
 // This config API contains the OpenShift Project, and other mandatory resources
@@ -64,7 +62,7 @@ const detectUser = (dispatch: Dispatch) =>
     })
     .then(
       (res) => {
-        const userInfo = res.status.userInfo;
+        const { userInfo } = res.status;
         const newUserInfo: UserInfo = {};
         if (userInfo.extra) {
           try {
@@ -100,7 +98,7 @@ const ssarCheckActions = ssarChecks.map(({ flag, resourceAttributes, after }) =>
       })
       .then(
         (res) => {
-          const allowed: boolean = res.status.allowed;
+          const { allowed } = res.status;
           dispatch(setFlag(flag, allowed));
           if (after) {
             after(dispatch, allowed);

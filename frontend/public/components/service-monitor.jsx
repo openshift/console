@@ -1,13 +1,5 @@
 import { useMemo, Suspense } from 'react';
 import * as _ from 'lodash';
-import { DASH } from '@console/shared/src/constants/ui';
-
-import { ListPage } from './factory';
-import { ResourceLink } from './utils/resource-link';
-import { Selector } from './utils/selector';
-import { LoadingBox } from './utils/status-box';
-import { ServiceMonitorModel } from '../models';
-import { referenceForModel } from '../module/k8s';
 import { useTranslation } from 'react-i18next';
 import {
   ConsoleDataView,
@@ -16,6 +8,13 @@ import {
   cellIsStickyProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { DASH } from '@console/shared/src/constants/ui';
+import { ServiceMonitorModel } from '../models';
+import { referenceForModel } from '../module/k8s';
+import { ListPage } from './factory';
+import { ResourceLink } from './utils/resource-link';
+import { Selector } from './utils/selector';
+import { LoadingBox } from './utils/status-box';
 
 const serviceMonitorTableColumnInfo = [
   { id: 'name' },
@@ -160,7 +159,7 @@ const ServiceMonitorsList = (props) => {
         label={ServiceMonitorModel.labelPlural}
         columns={columns}
         getDataViewRows={getServiceMonitorDataViewRows}
-        hideColumnManagement={true}
+        hideColumnManagement
       />
     </Suspense>
   );
@@ -169,9 +168,9 @@ const ServiceMonitorsList = (props) => {
 export const ServiceMonitorsPage = (props) => (
   <ListPage
     {...props}
-    canCreate={true}
+    canCreate
     kind={referenceForModel(ServiceMonitorModel)}
     ListComponent={ServiceMonitorsList}
-    omitFilterToolbar={true}
+    omitFilterToolbar
   />
 );

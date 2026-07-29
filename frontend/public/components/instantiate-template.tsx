@@ -1,9 +1,5 @@
 import type { FC, ReactEventHandler, FormEvent } from 'react';
 import { useState, useRef, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router';
-import * as _ from 'lodash';
-import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import { css } from '@patternfly/react-styles';
 import {
   ActionGroup,
   Button,
@@ -20,33 +16,37 @@ import {
   GridItem,
 } from '@patternfly/react-core';
 import { RhUiCompressIcon, RhUiExpandIcon } from '@patternfly/react-icons';
-/* eslint-disable import/named */
+import { css } from '@patternfly/react-styles';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-
-import { ANNOTATIONS } from '@console/shared/src/constants/common';
+import { useLocation, useNavigate } from 'react-router';
+import type { Perspective } from '@console/dynamic-plugin-sdk';
+import { isPerspective, useActivePerspective } from '@console/dynamic-plugin-sdk';
+import { k8sCreateResource, k8sUpdateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+/* eslint-disable import/named */
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
-import { Perspective, isPerspective, useActivePerspective } from '@console/dynamic-plugin-sdk';
-import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
-import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
+import { ANNOTATIONS } from '@console/shared/src/constants/common';
+import { SecretModel, TemplateInstanceModel } from '../models';
+import type {
+  K8sResourceKind,
+  TemplateKind,
+  TemplateInstanceKind,
+  TemplateParameter,
+} from '../module/k8s';
 import {
   getTemplateIcon,
   getTemplateIconClass,
   normalizeIconClass,
 } from './catalog/catalog-item-icon';
 import { ButtonBar } from './utils/button-bar';
-import { LoadError, LoadingBox } from './utils/status-box';
-import { NsDropdown } from './utils/list-dropdown';
 import { useK8sWatchResource } from './utils/k8s-watch-hook';
-import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
-import { SecretModel, TemplateInstanceModel } from '../models';
-import {
-  K8sResourceKind,
-  TemplateKind,
-  TemplateInstanceKind,
-  TemplateParameter,
-} from '../module/k8s';
-import { k8sCreateResource, k8sUpdateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
+import { NsDropdown } from './utils/list-dropdown';
+import { LoadError, LoadingBox } from './utils/status-box';
 
 const TemplateResourceDetails: FC<TemplateResourceDetailsProps> = ({ template }) => {
   const { t } = useTranslation('public');

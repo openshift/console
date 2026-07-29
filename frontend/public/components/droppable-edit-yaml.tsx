@@ -1,16 +1,12 @@
 import type { FC } from 'react';
 import { useState, useCallback } from 'react';
-import { ResourceYAMLEditorProps } from '@console/dynamic-plugin-sdk';
+import type { DropEvent, DropzoneErrorCode, MultipleFileUploadProps } from '@patternfly/react-core';
+import { MultipleFileUpload } from '@patternfly/react-core';
 import { isText } from 'istextorbinary';
-
-import { EditYAML, EditYAMLProps } from './edit-yaml';
-import {
-  DropEvent,
-  DropzoneErrorCode,
-  MultipleFileUpload,
-  MultipleFileUploadProps,
-} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import type { ResourceYAMLEditorProps } from '@console/dynamic-plugin-sdk';
+import type { EditYAMLProps } from './edit-yaml';
+import { EditYAML } from './edit-yaml';
 import { units } from './utils/units';
 
 // Maximal file size, in bytes, that user can upload

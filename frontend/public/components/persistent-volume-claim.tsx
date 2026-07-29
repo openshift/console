@@ -1,10 +1,6 @@
 import type { FC } from 'react';
 import { useMemo, useCallback, Suspense, useState, useEffect } from 'react';
-import * as _ from 'lodash';
-import i18next, { TFunction } from 'i18next';
-import { useTranslation } from 'react-i18next';
-import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
-import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
+import { ChartDonut } from '@patternfly/react-charts/victory';
 import {
   Alert,
   AlertActionCloseButton,
@@ -17,7 +13,10 @@ import {
 } from '@patternfly/react-core';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 import type { DataViewFilterOption } from '@patternfly/react-data-view/dist/esm/DataViewFilters';
-import { ChartDonut } from '@patternfly/react-charts/victory';
+import type { TFunction } from 'i18next';
+import i18next from 'i18next';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import {
   actionsCellProps,
   getNameCellProps,
@@ -25,46 +24,50 @@ import {
   ConsoleDataView,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import { ResourceFilters, GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type { ResourceFilters, GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import { TableColumn } from '@console/dynamic-plugin-sdk/src/lib-core';
-import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
+import { useResolvedExtensions } from '@console/dynamic-plugin-sdk';
+import type { PVCStatus, PVCAlert } from '@console/dynamic-plugin-sdk/src/extensions/pvc';
 import {
   isPVCAlert,
   isPVCCreateProp,
   isPVCStatus,
-  PVCStatus,
-  PVCAlert,
 } from '@console/dynamic-plugin-sdk/src/extensions/pvc';
-import { useResolvedExtensions } from '@console/dynamic-plugin-sdk';
-import { PersistentVolumeClaimKind, referenceFor } from '@console/internal/module/k8s';
+import type { TableColumn } from '@console/dynamic-plugin-sdk/src/lib-core';
+import type { PVCMetrics } from '@console/internal/actions/ui';
+import { setPVCMetrics } from '@console/internal/actions/ui';
+import { PersistentVolumeClaimModel, VolumeAttributesClassModel } from '@console/internal/models';
+import type { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
+import { referenceFor } from '@console/internal/module/k8s';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
 import { Status } from '@console/shared/src/components/status/Status';
 import { FLAGS } from '@console/shared/src/constants/common';
-import { calculateRadius } from '@console/shared/src/utils/pod-utils';
+import { DASH } from '@console/shared/src/constants/ui';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { getNamespace, getName } from '@console/shared/src/selectors/common';
 import { getRequestedPVCSize } from '@console/shared/src/selectors/storage';
-import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
-import { useFlag } from '@console/shared/src/hooks/useFlag';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { DASH } from '@console/shared/src/constants/ui';
+import { calculateRadius } from '@console/shared/src/utils/pod-utils';
 import { Conditions } from './conditions';
-import { DetailsPage, DetailsPageProps } from './factory/details';
-import { ListPage } from './factory/list-page';
-import { navFactory } from './utils/horizontal-nav';
-import { SectionHeading } from './utils/headings';
-import { ResourceLink } from './utils/resource-link';
-import { ResourceSummary } from './utils/details-page';
-import { Selector } from './utils/selector';
-import { humanizeBinaryBytes, convertToBaseValue } from './utils/units';
 import { ResourceEventStream } from './events';
-import { PVCMetrics, setPVCMetrics } from '@console/internal/actions/ui';
-import { PersistentVolumeClaimModel, VolumeAttributesClassModel } from '@console/internal/models';
+import type { DetailsPageProps } from './factory/details';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
 import { PrometheusEndpoint } from './graphs/helpers';
 import { usePrometheusPoll } from './graphs/prometheus-poll-hook';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { ResourceLink } from './utils/resource-link';
+import { Selector } from './utils/selector';
+import { humanizeBinaryBytes, convertToBaseValue } from './utils/units';
 
 const { kind } = PersistentVolumeClaimModel;
 
@@ -398,7 +401,7 @@ const PVCDetails: FC<PVCDetailsProps> = ({ obj: pvc }) => {
               labels={({ datum }) => `${datum.y} ${totalCapacity.unit} ${datum.x}`}
               subTitle={availableMetrics ? t('Available') : t('Total')}
               title={availableMetrics ? availableCapacityString : totalCapacityString}
-              constrainToVisibleArea={true}
+              constrainToVisibleArea
             />
           </div>
         )}
@@ -654,8 +657,8 @@ export const PersistentVolumeClaimsPage: FC<PersistentVolumeClaimsPageProps> = (
       title={t('PersistentVolumeClaims')}
       kind={kind}
       ListComponent={PersistentVolumeClaimList}
-      canCreate={true}
-      omitFilterToolbar={true}
+      canCreate
+      omitFilterToolbar
       createProps={createProps}
       customData={pvcMetrics}
     />

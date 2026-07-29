@@ -1,28 +1,21 @@
 import type { FC } from 'react';
 import { useMemo } from 'react';
-import { useLocation } from 'react-router';
-import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-
-import { ClusterDashboard } from './cluster-dashboard/cluster-dashboard';
-import { HorizontalNav } from '../../utils/horizontal-nav';
-import { LoadingBox } from '../../utils/status-box';
-import type { Page } from '../../utils/horizontal-nav';
-import { AsyncComponent } from '../../utils/async';
-import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import { connect } from 'react-redux';
+import { useLocation } from 'react-router';
+import type { DashboardsCard, DashboardsTab, OverviewGridCard } from '@console/dynamic-plugin-sdk';
+import { isDashboardsCard, isDashboardsTab, GridPosition } from '@console/dynamic-plugin-sdk';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
-import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
-import {
-  DashboardsCard,
-  DashboardsTab,
-  isDashboardsCard,
-  isDashboardsTab,
-  GridPosition,
-  OverviewGridCard,
-} from '@console/dynamic-plugin-sdk';
-import { RootState } from '../../../redux';
+import type { RootState } from '../../../redux';
+import { AsyncComponent } from '../../utils/async';
+import { HorizontalNav } from '../../utils/horizontal-nav';
+import type { Page } from '../../utils/horizontal-nav';
+import { LoadingBox } from '../../utils/status-box';
+import { ClusterDashboard } from './cluster-dashboard/cluster-dashboard';
 
 const getCardsOnPosition = (
   cards: DashboardsCard[],

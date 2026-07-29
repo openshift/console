@@ -1,7 +1,6 @@
-import * as _ from 'lodash';
 import i18next from 'i18next';
-
-import {
+import * as _ from 'lodash';
+import type {
   ContainerLifecycle,
   ContainerLifecycleStage,
   ContainerProbe,
@@ -10,7 +9,7 @@ import {
   Handler,
   HTTPGetProbe,
   TCPSocketProbe,
-} from './';
+} from '.';
 
 const parsers = {
   exec: function (str: string) {
@@ -24,7 +23,11 @@ const parsers = {
       return null;
     }
     // XXX: Kubernetes allows for named ports, but the URL spec says ports must be digits.
-    let scheme: string, port: string, host: string, hostname: string, rest: string[];
+    let scheme: string;
+    let port: string;
+    let host: string;
+    let hostname: string;
+    let rest: string[];
     [scheme, ...rest] = str.split('://');
     if (!scheme) {
       return null;

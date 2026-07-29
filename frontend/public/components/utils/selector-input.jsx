@@ -1,39 +1,17 @@
-import * as _ from 'lodash';
 import { Component } from 'react';
-import { css } from '@patternfly/react-styles';
-import * as TagsInput from 'react-tagsinput';
 import { Label as PfLabel } from '@patternfly/react-core';
-
+import { css } from '@patternfly/react-styles';
+import * as _ from 'lodash';
+import * as TagsInput from 'react-tagsinput';
+import { selectorToString } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { split, selectorFromString } from '../../module/k8s/selector';
 import * as k8sSelectorRequirement from '../../module/k8s/selector-requirement';
-import { selectorToString } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 
 // Helpers for cleaning up tags by running them through the selector parser
 const cleanSelectorStr = (tag) => selectorToString(selectorFromString(tag));
 const cleanTags = (tags) => split(cleanSelectorStr(tags.join(',')));
 
 export class SelectorInput extends Component {
-  constructor(props) {
-    super(props);
-    this.isBasic = !!_.get(this.props.options, 'basic');
-    this.setRef = (ref) => (this.ref_ = ref);
-    this.state = {
-      inputValue: '',
-      isInputValid: true,
-      tags: this.props.tags,
-    };
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (!_.isEqual(prevProps.tags, this.props.tags)) {
-      this.setState({ tags: this.props.tags });
-    }
-
-    // Call onValidationChange callback when isInputValid changes
-    if (prevState.isInputValid !== this.state.isInputValid && this.props.onValidationChange) {
-      this.notifyValidationChange(this.state.isInputValid);
-    }
-  }
   static arrayify(obj) {
     return _.map(obj, (v, k) => (v ? `${k}=${v}` : k));
   }
@@ -66,6 +44,35 @@ export class SelectorInput extends Component {
     }
     return result;
   }
+
+  notifyValidationChange = (isValid) => {
+    if (this.props.onValidationChange) {
+      this.props.onValidationChange(isValid);
+    }
+  };
+
+  constructor(props) {
+    super(props);
+    this.isBasic = !!_.get(this.props.options, 'basic');
+    this.setRef = (ref) => (this.ref_ = ref);
+    this.state = {
+      inputValue: '',
+      isInputValid: true,
+      tags: this.props.tags,
+    };
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (!_.isEqual(prevProps.tags, this.props.tags)) {
+      this.setState({ tags: this.props.tags });
+    }
+
+    // Call onValidationChange callback when isInputValid changes
+    if (prevState.isInputValid !== this.state.isInputValid && this.props.onValidationChange) {
+      this.notifyValidationChange(this.state.isInputValid);
+    }
+  }
+
   focus() {
     this.ref_ && this.ref_.focus();
   }
@@ -74,12 +81,6 @@ export class SelectorInput extends Component {
     const requirement = k8sSelectorRequirement.requirementFromString(tag);
     return !!(requirement && (!this.isBasic || requirement.operator === 'Equals'));
   }
-
-  notifyValidationChange = (isValid) => {
-    if (this.props.onValidationChange) {
-      this.props.onValidationChange(isValid);
-    }
-  };
 
   handleInputChange(e) {
     // We track the input field value in state so we can retain the input value when an invalid tag is entered.
@@ -138,7 +139,7 @@ export class SelectorInput extends Component {
       spellCheck: 'false',
       value: inputValue,
       id: 'tags-input',
-      ['data-test']: 'tags-input',
+      'data-test': 'tags-input',
       ...(this.props.inputProps || {}),
     };
 

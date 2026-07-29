@@ -1,17 +1,16 @@
 import type { FC, SyntheticEvent, KeyboardEvent, Ref } from 'react';
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import type { MenuToggleElement } from '@patternfly/react-core';
 import {
   InputGroup,
   InputGroupItem,
   MenuToggle,
-  MenuToggleElement,
   Select,
   SelectList,
   SelectOption,
 } from '@patternfly/react-core';
-
 import { RhUiFilterIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
 import { TextFilter } from './factory/text-filter';
 
 export enum searchFilterValues {

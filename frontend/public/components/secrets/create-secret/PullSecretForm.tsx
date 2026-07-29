@@ -1,17 +1,12 @@
-import type { FC } from 'react';
-import { useState, MouseEvent as ReactMouseEvent } from 'react';
+import type { FC, MouseEvent as ReactMouseEvent } from 'react';
+import { useState } from 'react';
+import type { MenuToggleElement } from '@patternfly/react-core';
+import { Select, SelectOption, SelectList, MenuToggle, FormGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { PullSecretCredentialsForm } from './PullSecretCredentialsForm';
 import { PullSecretUploadForm } from './PullSecretUploadForm';
-import { SecretSubFormProps, PullSecretAuthenticationType } from './types';
-import {
-  Select,
-  SelectOption,
-  SelectList,
-  MenuToggle,
-  MenuToggleElement,
-  FormGroup,
-} from '@patternfly/react-core';
+import type { SecretSubFormProps } from './types';
+import { PullSecretAuthenticationType } from './types';
 
 export const PullSecretForm: FC<SecretSubFormProps> = ({
   onChange,

@@ -1,4 +1,4 @@
-import { K8sGroupVersionKind, K8sModel } from '@console/dynamic-plugin-sdk';
+import type { K8sGroupVersionKind, K8sModel } from '@console/dynamic-plugin-sdk';
 
 const resourcesToOmit: K8sGroupVersionKind[] = [
   {

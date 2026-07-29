@@ -1,8 +1,8 @@
-import { useTranslation, Trans } from 'react-i18next';
 import { Button, Modal, ModalBody, ModalHeader, ModalVariant } from '@patternfly/react-core';
-import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
+import { useTranslation, Trans } from 'react-i18next';
 import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import { K8sModel, OAuthKind } from '@console/internal/module/k8s';
+import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
+import type { K8sModel, OAuthKind } from '@console/internal/module/k8s';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 

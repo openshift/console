@@ -1,11 +1,11 @@
 /* eslint-disable camelcase */
-import * as _ from 'lodash';
 import { Base64 } from 'js-base64';
 import { safeLoad, safeDump } from 'js-yaml';
-
+import * as _ from 'lodash';
 import { SecretModel } from '../../../models';
-import { k8sPatch, K8sResourceKind } from '../../../module/k8s';
-import { AlertmanagerConfig } from './alertmanager-config';
+import type { K8sResourceKind } from '../../../module/k8s';
+import { k8sPatch } from '../../../module/k8s';
+import type { AlertmanagerConfig } from './alertmanager-config';
 
 // t('public~PagerDuty')
 // t('public~Webhook')

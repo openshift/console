@@ -1,16 +1,16 @@
-import * as _ from 'lodash';
 import type { FC, ReactNode } from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import * as fuzzy from 'fuzzysearch';
-import { useTranslation } from 'react-i18next';
 import { css } from '@patternfly/react-styles';
+import * as fuzzy from 'fuzzysearch';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
-import { LoadingInline } from './status-box';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { ResourceName, ResourceIcon } from './resource-icon';
-import { isDefaultClass } from '../storage-class';
-import { StorageClassResourceKind } from '@console/internal/module/k8s';
 import { StorageClassModel } from '@console/internal/models';
+import type { StorageClassResourceKind } from '@console/internal/module/k8s';
+import { isDefaultClass } from '../storage-class';
+import { ResourceName, ResourceIcon } from './resource-icon';
+import { LoadingInline } from './status-box';
 
 export type StorageClassDropdownProps = {
   id?: string;

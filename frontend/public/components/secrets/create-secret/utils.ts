@@ -1,17 +1,15 @@
+import { isBinary } from 'istextorbinary';
+import { Base64 } from 'js-base64';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { WebHookSecretKey } from './const';
-import {
-  SecretFormType,
-  SecretFilterValues,
-  SecretType,
+import type {
   PullSecretCredential,
   Base64StringData,
   OpaqueDataEntry,
   SecretChangeData,
 } from './types';
-import { isBinary } from 'istextorbinary';
-import { Base64 } from 'js-base64';
+import { SecretFormType, SecretFilterValues, SecretType } from './types';
 
 export const toDefaultSecretType = (formType: SecretFormType): SecretType => {
   switch (formType) {
@@ -45,15 +43,20 @@ export const determineSecretType = (stringData): SecretType => {
   const dataKeys = _.keys(stringData).sort();
   if (_.isEqual(dataKeys, ['tls.crt', 'tls.key'])) {
     return SecretType.tls;
-  } else if (_.isEqual(dataKeys, ['ca.crt', 'namespace', 'service-ca.crt', 'token'])) {
+  }
+  if (_.isEqual(dataKeys, ['ca.crt', 'namespace', 'service-ca.crt', 'token'])) {
     return SecretType.serviceAccountToken;
-  } else if (_.isEqual(dataKeys, ['.dockercfg'])) {
+  }
+  if (_.isEqual(dataKeys, ['.dockercfg'])) {
     return SecretType.dockercfg;
-  } else if (_.isEqual(dataKeys, ['.dockerconfigjson'])) {
+  }
+  if (_.isEqual(dataKeys, ['.dockerconfigjson'])) {
     return SecretType.dockerconfigjson;
-  } else if (dataKeys.includes('password')) {
+  }
+  if (dataKeys.includes('password')) {
     return SecretType.basicAuth;
-  } else if (_.isEqual(dataKeys, ['ssh-privatekey'])) {
+  }
+  if (_.isEqual(dataKeys, ['ssh-privatekey'])) {
     return SecretType.sshAuth;
   }
   return SecretType.opaque;

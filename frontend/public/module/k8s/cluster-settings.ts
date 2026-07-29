@@ -1,23 +1,20 @@
+import i18next from 'i18next';
 import * as _ from 'lodash';
 import * as semver from 'semver';
-import i18next from 'i18next';
-
+import type { K8sResourceCondition } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { K8sResourceConditionStatus } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { k8sPatch } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { ClusterVersionModel, MachineConfigPoolModel } from '../../models';
 import { referenceForModel } from './k8s-ref';
-import {
+import type {
   ClusterVersionCondition,
-  ClusterVersionConditionType,
   ClusterVersionKind,
   ConditionalUpdate,
   UpdateHistory,
   VersionUpdate,
   MachineConfigPoolKind,
 } from './types';
-import { k8sPatch } from '@console/dynamic-plugin-sdk/src/utils/k8s';
-import {
-  K8sResourceCondition,
-  K8sResourceConditionStatus,
-} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { ClusterVersionConditionType } from './types';
 
 export enum ClusterUpdateStatus {
   UpToDate = 'Up to Date',

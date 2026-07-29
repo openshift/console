@@ -1,7 +1,5 @@
 import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
-import * as _ from 'lodash';
-import { TFunction } from 'i18next';
 import {
   DescriptionList,
   DescriptionListDescription,
@@ -10,38 +8,37 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
+import type { TFunction } from 'i18next';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import {
   actionsCellProps,
   getNameCellProps,
   ConsoleDataView,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import { TableColumn } from '@console/dynamic-plugin-sdk/src/lib-core';
-import { useTranslation } from 'react-i18next';
+import { useIsKubevirtPluginActive } from '@console/app/src/utils/kubevirt';
+import type { TableColumn } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { StorageClassModel } from '@console/internal/models';
-import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
-import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
 import { DASH } from '@console/shared/src/constants/ui';
-import { DetailsPage, DetailsPageProps } from './factory/details';
+import type { StorageClassResourceKind, K8sResourceKind } from '../module/k8s';
+import { referenceFor, referenceForModel } from '../module/k8s';
+import type { DetailsPageProps } from './factory/details';
+import { DetailsPage } from './factory/details';
 import { ListPage } from './factory/list-page';
 import { DetailsItem } from './utils/details-item';
-import { ResourceLink } from './utils/resource-link';
 import { ResourceSummary, detailsPage } from './utils/details-page';
 import { SectionHeading } from './utils/headings';
 import { navFactory } from './utils/horizontal-nav';
-import {
-  StorageClassResourceKind,
-  K8sResourceKind,
-  referenceFor,
-  referenceForModel,
-} from '../module/k8s';
-import { useIsKubevirtPluginActive } from '@console/app/src/utils/kubevirt';
+import { ResourceLink } from './utils/resource-link';
 
 const { kind } = StorageClassModel;
 
@@ -229,8 +226,8 @@ export const StorageClassPage: FC = ({ ...props }) => {
       title={t('StorageClasses')}
       kind={kind}
       ListComponent={StorageClassList}
-      canCreate={true}
-      omitFilterToolbar={true}
+      canCreate
+      omitFilterToolbar
       createProps={createProps}
       createButtonText={t('Create StorageClass')}
     />

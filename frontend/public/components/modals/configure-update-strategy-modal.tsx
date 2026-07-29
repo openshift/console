@@ -1,4 +1,3 @@
-import * as _ from 'lodash';
 import { useCallback, useState } from 'react';
 import type { FC } from 'react';
 import {
@@ -20,13 +19,15 @@ import {
   TextInput,
   Tooltip,
 } from '@patternfly/react-core';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import { k8sPatch, Patch, DeploymentUpdateStrategy, K8sResourceKind } from '../../module/k8s';
-import { DeploymentModel } from '../../models';
-import { ModalComponentProps } from '@console/shared/src/types/modal';
-import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
+import { DeploymentModel } from '../../models';
+import type { Patch, DeploymentUpdateStrategy, K8sResourceKind } from '../../module/k8s';
+import { k8sPatch } from '../../module/k8s';
 
 export const getNumberOrPercent = (value) => {
   if (typeof value === 'undefined') {
@@ -194,7 +195,9 @@ const ConfigureUpdateStrategyModal: FC<ConfigureUpdateStrategyModalProps> = ({
         patch,
         { path: '/spec/strategy/type', value: strategyType, op: 'replace' },
       ]);
-      handlePromise(promise).then(() => close());
+      handlePromise(promise)
+        .then(() => close())
+        .catch(() => {});
     },
     [strategyType, maxUnavailable, maxSurge, deployment, close, handlePromise],
   );

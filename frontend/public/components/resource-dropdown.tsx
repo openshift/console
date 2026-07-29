@@ -1,31 +1,32 @@
 import type { FC, FormEvent, KeyboardEvent, Ref } from 'react';
 import { useState, useRef, useEffect, useMemo, Fragment } from 'react';
-import * as _ from 'lodash';
-import { connect } from 'react-redux';
-import { Map as ImmutableMap, Set as ImmutableSet } from 'immutable';
-import { css } from '@patternfly/react-styles';
 import { CloseButton } from '@patternfly/react-component-groups';
-import { useTranslation } from 'react-i18next';
-import { ResourceIcon } from './utils/resource-icon';
-import { K8sKind, K8sResourceKindReference, referenceForModel } from '../module/k8s';
-import { DiscoveryResources } from '@console/dynamic-plugin-sdk/src/api/common-types';
-import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
+import type { MenuToggleElement, SelectOptionProps } from '@patternfly/react-core';
 import {
   Button,
   Divider,
   MenuToggle,
-  MenuToggleElement,
   Select,
   SelectGroup,
   SelectList,
   SelectOption,
-  SelectOptionProps,
   TextInputGroup,
   TextInputGroupMain,
   TextInputGroupUtilities,
   Tooltip,
 } from '@patternfly/react-core';
 import { RhUiCloseIcon } from '@patternfly/react-icons';
+import { css } from '@patternfly/react-styles';
+import type { Map as ImmutableMap } from 'immutable';
+import { Set as ImmutableSet } from 'immutable';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+import type { DiscoveryResources } from '@console/dynamic-plugin-sdk/src/api/common-types';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
+import type { K8sKind, K8sResourceKindReference } from '../module/k8s';
+import { referenceForModel } from '../module/k8s';
+import { ResourceIcon } from './utils/resource-icon';
 
 const RECENT_SEARCH_ITEMS = 5;
 const MAX_VISIBLE_ITEMS = 250;
@@ -281,7 +282,7 @@ export const ResourceListDropdown_: FC<ResourceListDropdownProps> = (props) => {
               <SelectOption
                 value={NO_RESULTS}
                 key="select-multi-typeahead-no-results"
-                isAriaDisabled={true}
+                isAriaDisabled
               >
                 {t('No results found')}
               </SelectOption>,
@@ -290,7 +291,7 @@ export const ResourceListDropdown_: FC<ResourceListDropdownProps> = (props) => {
           <SelectOption
             value="type-to-filter"
             key="select-multi-typeahead-type-to-filter"
-            isAriaDisabled={true}
+            isAriaDisabled
           >
             {t('Showing {{visible}} of {{total}} resources. Type to filter.', {
               visible: MAX_VISIBLE_ITEMS,

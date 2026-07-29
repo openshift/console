@@ -1,13 +1,15 @@
-import type { FC } from 'react';
-import { ImpersonateKind, impersonateStateToProps } from '@console/dynamic-plugin-sdk';
-import { Button, Dropdown, MenuToggle, MenuToggleElement } from '@patternfly/react-core';
+import type { FC, ReactNode, RefObject } from 'react';
+import { useEffect, useState } from 'react';
+import type { MenuToggleElement } from '@patternfly/react-core';
+import { Button, Dropdown, MenuToggle } from '@patternfly/react-core';
 import { some } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { useNavigate } from 'react-router';
-
-import { ReactNode, RefObject, useEffect, useState } from 'react';
-import { KebabItem, KebabItems, KebabOption } from './kebab';
+import { impersonateStateToProps } from '@console/dynamic-plugin-sdk';
+import type { ImpersonateKind } from '@console/dynamic-plugin-sdk';
+import type { KebabOption } from './kebab';
+import { KebabItem, KebabItems } from './kebab';
 import { checkAccess } from './rbac';
 
 type ActionsMenuProps = {

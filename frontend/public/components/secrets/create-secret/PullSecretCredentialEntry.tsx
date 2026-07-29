@@ -1,7 +1,5 @@
 import type { FC } from 'react';
 import { useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Base64 } from 'js-base64';
 import {
   FormGroup,
   TextInput,
@@ -13,6 +11,8 @@ import {
   ActionGroup,
 } from '@patternfly/react-core';
 import { RhUiMinusCircleIcon } from '@patternfly/react-icons';
+import { Base64 } from 'js-base64';
+import { useTranslation } from 'react-i18next';
 
 export const PullSecretCredentialEntry: FC<PullSecretCredentialEntryProps> = ({
   id,

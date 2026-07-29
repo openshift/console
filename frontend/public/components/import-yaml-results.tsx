@@ -1,17 +1,16 @@
 import type { FC, ReactNode } from 'react';
 import { useState, useEffect } from 'react';
-import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import { useTranslation } from 'react-i18next';
 import { Bullseye, Button, Icon, Spinner, Title } from '@patternfly/react-core';
+import { Table, TableGridBreakpoint, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
+import { useTranslation } from 'react-i18next';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import {
   GreenCheckCircleIcon,
   RedExclamationCircleIcon,
   YellowExclamationTriangleIcon,
 } from '@console/shared/src/components/status/icons';
-import { Table, TableGridBreakpoint, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
-
-import { ResourceLink } from './utils/resource-link';
 import { referenceFor } from '../module/k8s';
+import { ResourceLink } from './utils/resource-link';
 
 /**
  * Without this prop our current TS types fail to match and require a `translate` prop to be added. PF suggests we

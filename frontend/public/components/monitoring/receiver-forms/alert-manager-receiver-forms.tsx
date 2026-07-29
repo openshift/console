@@ -1,9 +1,7 @@
 /* eslint-disable camelcase, tsdoc/syntax */
-import * as _ from 'lodash';
-import { FC, memo, useEffect, useReducer, useState, Ref } from 'react';
-import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import { useTranslation } from 'react-i18next';
-import { useParams, useNavigate } from 'react-router';
+import type { FC, Ref } from 'react';
+import { memo, useEffect, useReducer, useState } from 'react';
+import type { MenuToggleElement, SelectProps } from '@patternfly/react-core';
 import {
   ActionGroup,
   Alert,
@@ -14,39 +12,40 @@ import {
   HelperText,
   HelperTextItem,
   MenuToggle,
-  MenuToggleElement,
   Select,
   SelectOption,
-  SelectProps,
   TextInput,
 } from '@patternfly/react-core';
 import { RhUiErrorFillIcon } from '@patternfly/react-icons';
 import { safeLoad } from 'js-yaml';
-
-import { APIError } from '@console/shared/src/types/resource';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { useParams, useNavigate } from 'react-router';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import type { APIError } from '@console/shared/src/types/resource';
+import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
+import type { K8sResourceKind } from '../../../module/k8s';
 import { ButtonBar } from '../../utils/button-bar';
-import { StatusBox } from '../../utils/status-box';
 import { useK8sWatchResource } from '../../utils/k8s-watch-hook';
+import { StatusBox } from '../../utils/status-box';
+import type {
+  AlertmanagerConfig,
+  AlertmanagerReceiver,
+  AlertmanagerRoute,
+} from '../alertmanager/alertmanager-config';
+import { InitialReceivers } from '../alertmanager/alertmanager-config';
 import {
   getAlertmanagerConfig,
   patchAlertmanagerConfig,
   receiverTypes,
 } from '../alertmanager/alertmanager-utils';
-import { K8sResourceKind } from '../../../module/k8s';
-import {
-  AlertmanagerConfig,
-  AlertmanagerReceiver,
-  AlertmanagerRoute,
-  InitialReceivers,
-} from '../alertmanager/alertmanager-config';
-import { RoutingLabelEditor } from './routing-labels-editor';
-import { PagerDutyForm } from './pagerduty-receiver-form';
-import { WebhookForm } from './webhook-receiver-form';
 import { EmailForm } from './email-receiver-form';
+import { PagerDutyForm } from './pagerduty-receiver-form';
+import { RoutingLabelEditor } from './routing-labels-editor';
 import { SlackForm } from './slack-receiver-form';
-import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
-import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import { WebhookForm } from './webhook-receiver-form';
 
 /**
  * Converts deprecated route match and match_re:
@@ -229,21 +228,21 @@ const ReceiverBaseForm: FC<ReceiverBaseFormProps> = ({
 
   // there is no api to get default values for these adv. config props
   const advancedConfigGlobals = {
-    ['pagerduty_send_resolved']: true,
-    ['pagerduty_client']: '{{ template "pagerduty.default.client" . }}',
-    ['pagerduty_client_url']: '{{ template "pagerduty.default.clientURL" . }}',
-    ['pagerduty_description']: '{{ template "pagerduty.default.description" .}}',
-    ['pagerduty_severity']: 'error',
-    ['email_send_resolved']: false,
-    ['email_html']: '{{ template "email.default.html" . }}',
-    ['slack_send_resolved']: false,
-    ['slack_username']: '{{ template "slack.default.username" . }}',
-    ['slack_icon_emoji']: '{{ template "slack.default.iconemoji" .}}',
-    ['slack_icon_url']: '{{ template "slack.default.iconurl" .}}',
-    ['slack_link_names']: false,
-    ['slack_title']: '{{ template "slack.default.title" .}}',
-    ['slack_text']: '{{ template "slack.default.text" .}}',
-    ['webhook_send_resolved']: true,
+    pagerduty_send_resolved: true,
+    pagerduty_client: '{{ template "pagerduty.default.client" . }}',
+    pagerduty_client_url: '{{ template "pagerduty.default.clientURL" . }}',
+    pagerduty_description: '{{ template "pagerduty.default.description" .}}',
+    pagerduty_severity: 'error',
+    email_send_resolved: false,
+    email_html: '{{ template "email.default.html" . }}',
+    slack_send_resolved: false,
+    slack_username: '{{ template "slack.default.username" . }}',
+    slack_icon_emoji: '{{ template "slack.default.iconemoji" .}}',
+    slack_icon_url: '{{ template "slack.default.iconurl" .}}',
+    slack_link_names: false,
+    slack_title: '{{ template "slack.default.title" .}}',
+    slack_text: '{{ template "slack.default.text" .}}',
+    webhook_send_resolved: true,
   };
 
   // default globals to config.global props first, then alertmanagerGlobals

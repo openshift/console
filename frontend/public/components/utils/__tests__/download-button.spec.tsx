@@ -1,9 +1,8 @@
 import { render, screen, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as fileSaver from 'file-saver';
-
-import { DownloadButton } from '../../../components/utils/download-button';
 import * as coFetchModule from '@console/shared/src/utils/console-fetch';
+import { DownloadButton } from '../download-button';
 
 // Mock file-saver
 jest.mock('file-saver', () => ({
@@ -70,6 +69,7 @@ describe('DownloadButton', () => {
 
     // Resolve the promise to complete the download
     await act(async () => {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       resolvePromise!(new Blob(['test content']));
     });
   });

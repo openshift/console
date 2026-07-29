@@ -1,10 +1,9 @@
-import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { screen } from '@testing-library/react';
 import { safeDump } from 'js-yaml';
-
-import { CreateYAMLInner } from '../create-yaml';
-import { PodModel, ConfigMapModel } from '../../models';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
+import { PodModel, ConfigMapModel } from '../../models';
+import { CreateYAMLInner } from '../create-yaml';
 
 jest.mock('../utils/async', () => ({
   AsyncComponent: ({ initialResource, header, create }) =>
@@ -37,9 +36,7 @@ describe('CreateYAMLInner', () => {
 
   describe('Loading States', () => {
     it('verifies the loading box when kindsInFlight is true', async () => {
-      renderWithProviders(
-        <CreateYAMLInner params={defaultParams} kindsInFlight={true} kindObj={null} />,
-      );
+      renderWithProviders(<CreateYAMLInner params={defaultParams} kindsInFlight kindObj={null} />);
 
       expect(screen.getByText('Loading...')).toBeVisible();
       expect(screen.queryByText('YAML Editor:')).not.toBeInTheDocument();

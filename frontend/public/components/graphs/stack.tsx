@@ -9,19 +9,22 @@ import {
   ChartThemeColor,
   getCustomTheme,
 } from '@patternfly/react-charts/victory';
-import { processFrame, ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
+import type { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
+import { processFrame } from '@console/shared/src/graph-helper/data-utils';
 import { timeFormatter } from '../utils/datetime';
-import { humanizeNumber } from '../utils/units';
 import { useRefWidth } from '../utils/ref-width-hook';
+import { humanizeNumber } from '../utils/units';
+import type { AreaChartProps } from './area';
+import { AreaChart } from './area';
+import { GraphEmpty } from './graph-empty';
 import { PrometheusEndpoint } from './helpers';
 import { PrometheusGraph, PrometheusGraphLink } from './prometheus-graph';
 import { usePrometheusPoll } from './prometheus-poll-hook';
-import { DataPoint, CursorVoronoiContainer, PrometheusResult } from './';
-import { getRangeVectorStats } from './utils';
-import { GraphEmpty } from './graph-empty';
-import { ChartLegendTooltip } from './tooltip';
 import { areaTheme } from './themes';
-import { AreaChart, AreaChartProps } from './area';
+import { ChartLegendTooltip } from './tooltip';
+import { getRangeVectorStats } from './utils';
+import { CursorVoronoiContainer } from '.';
+import type { DataPoint, PrometheusResult } from '.';
 
 const DEFAULT_HEIGHT = 180;
 const DEFAULT_SAMPLES = 60;
@@ -133,6 +136,7 @@ const StackChart: FC<AreaChartProps> = ({
                 <ChartArea
                   height={height}
                   width={width}
+                  // eslint-disable-next-line react/no-array-index-key
                   key={index}
                   data={datum}
                   style={chartStyle && chartStyle[index]}

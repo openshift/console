@@ -1,10 +1,3 @@
-import * as _ from 'lodash';
-import { Trans, useTranslation } from 'react-i18next';
-import {
-  RhUiMinusCircleIcon,
-  RhUiAddCircleFillIcon,
-  RhUiErrorFillIcon,
-} from '@patternfly/react-icons';
 import {
   Button,
   Content,
@@ -20,6 +13,13 @@ import {
   TextInput,
   Tooltip,
 } from '@patternfly/react-core';
+import {
+  RhUiMinusCircleIcon,
+  RhUiAddCircleFillIcon,
+  RhUiErrorFillIcon,
+} from '@patternfly/react-icons';
+import * as _ from 'lodash';
+import { Trans, useTranslation } from 'react-i18next';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { DOC_URL_PROMETHEUS_MATCHERS } from '../../utils/documentation';
 

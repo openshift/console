@@ -1,16 +1,15 @@
-import { css } from '@patternfly/react-styles';
-import * as _ from 'lodash';
 import type { FC, ComponentType, ReactNode, Ref } from 'react';
 import { forwardRef } from 'react';
+import { Title } from '@patternfly/react-core';
+import { css } from '@patternfly/react-styles';
+import * as _ from 'lodash';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
-import { Title } from '@patternfly/react-core';
-
+import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { FLAGS } from '@console/shared/src/constants/common';
 import { featureReducerName } from '../../reducers/features';
 import { getActiveNamespace } from '../../reducers/ui';
-import { RootState } from '../../redux';
-import { useActivePerspective } from '@console/dynamic-plugin-sdk';
+import type { RootState } from '../../redux';
 
 const mapStateToProps = (state: RootState) => ({
   canAccessMonitoring:

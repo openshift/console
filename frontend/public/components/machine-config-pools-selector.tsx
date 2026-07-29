@@ -1,9 +1,9 @@
 import type { FC, FormEvent } from 'react';
 import { Checkbox } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-
-import { isMCPWorker, MachineConfigPoolKind, NodeTypeNames } from '../module/k8s';
 import { NodeModel } from '../models';
+import type { MachineConfigPoolKind } from '../module/k8s';
+import { isMCPWorker, NodeTypeNames } from '../module/k8s';
 
 export const MachineConfigPoolsSelector: FC<MachineConfigPoolsSelectorProps> = ({
   machineConfigPools,

@@ -1,8 +1,8 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { ImpersonateUserModal } from '../impersonate-user-modal';
+import type { GroupKind } from '../../../module/k8s';
 import { useK8sWatchResource } from '../../utils/k8s-watch-hook';
-import { GroupKind } from '../../../module/k8s';
+import { ImpersonateUserModal } from '../impersonate-user-modal';
 
 // Mock the k8s watch hook
 jest.mock('../../utils/k8s-watch-hook', () => ({
@@ -55,11 +55,7 @@ describe('ImpersonateUserModal', () => {
   describe('Basic Rendering', () => {
     it('should render modal when open', () => {
       render(
-        <ImpersonateUserModal
-          isOpen={true}
-          onClose={mockOnClose}
-          onImpersonate={mockOnImpersonate}
-        />,
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
       );
 
       // Modal renders in a portal, so use screen queries
@@ -83,11 +79,7 @@ describe('ImpersonateUserModal', () => {
 
     it('should render username input field', () => {
       render(
-        <ImpersonateUserModal
-          isOpen={true}
-          onClose={mockOnClose}
-          onImpersonate={mockOnImpersonate}
-        />,
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
       );
 
       const usernameInput = screen.getByTestId('username-input');
@@ -97,11 +89,7 @@ describe('ImpersonateUserModal', () => {
 
     it('should render groups multi-select field', () => {
       render(
-        <ImpersonateUserModal
-          isOpen={true}
-          onClose={mockOnClose}
-          onImpersonate={mockOnImpersonate}
-        />,
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
       );
 
       expect(screen.getByPlaceholderText('Enter groups')).toBeInTheDocument();
@@ -112,11 +100,7 @@ describe('ImpersonateUserModal', () => {
     it('should allow typing username', async () => {
       const user = userEvent.setup();
       render(
-        <ImpersonateUserModal
-          isOpen={true}
-          onClose={mockOnClose}
-          onImpersonate={mockOnImpersonate}
-        />,
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
       );
 
       const usernameInput = screen.getByTestId('username-input') as HTMLInputElement;
@@ -129,7 +113,7 @@ describe('ImpersonateUserModal', () => {
     it('should pre-fill username when provided', () => {
       render(
         <ImpersonateUserModal
-          isOpen={true}
+          isOpen
           onClose={mockOnClose}
           onImpersonate={mockOnImpersonate}
           prefilledUsername="prefilleduser"
@@ -143,11 +127,11 @@ describe('ImpersonateUserModal', () => {
     it('should make username readonly when specified', () => {
       render(
         <ImpersonateUserModal
-          isOpen={true}
+          isOpen
           onClose={mockOnClose}
           onImpersonate={mockOnImpersonate}
           prefilledUsername="readonly-user"
-          isUsernameReadonly={true}
+          isUsernameReadonly
         />,
       );
 
@@ -157,11 +141,7 @@ describe('ImpersonateUserModal', () => {
 
     it('should show error when username is empty on submit', async () => {
       render(
-        <ImpersonateUserModal
-          isOpen={true}
-          onClose={mockOnClose}
-          onImpersonate={mockOnImpersonate}
-        />,
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
       );
 
       const submitButton = screen.getByTestId('impersonate-button');
@@ -176,11 +156,7 @@ describe('ImpersonateUserModal', () => {
       (useK8sWatchResource as jest.Mock).mockReturnValue([[], false, null]);
 
       render(
-        <ImpersonateUserModal
-          isOpen={true}
-          onClose={mockOnClose}
-          onImpersonate={mockOnImpersonate}
-        />,
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
       );
 
       // Groups should not be available yet
@@ -192,11 +168,7 @@ describe('ImpersonateUserModal', () => {
       (useK8sWatchResource as jest.Mock).mockReturnValue([[], false, error]);
 
       render(
-        <ImpersonateUserModal
-          isOpen={true}
-          onClose={mockOnClose}
-          onImpersonate={mockOnImpersonate}
-        />,
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
       );
 
       // Check for alert with danger variant
@@ -209,11 +181,7 @@ describe('ImpersonateUserModal', () => {
     it('should call onImpersonate with username only when no groups selected', async () => {
       const user = userEvent.setup();
       render(
-        <ImpersonateUserModal
-          isOpen={true}
-          onClose={mockOnClose}
-          onImpersonate={mockOnImpersonate}
-        />,
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
       );
 
       const usernameInput = screen.getByTestId('username-input');
@@ -231,11 +199,7 @@ describe('ImpersonateUserModal', () => {
     it('should trim whitespace from username', async () => {
       const user = userEvent.setup();
       render(
-        <ImpersonateUserModal
-          isOpen={true}
-          onClose={mockOnClose}
-          onImpersonate={mockOnImpersonate}
-        />,
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
       );
 
       const usernameInput = screen.getByTestId('username-input');
@@ -253,11 +217,7 @@ describe('ImpersonateUserModal', () => {
     it('should close modal after successful submission', async () => {
       const user = userEvent.setup();
       render(
-        <ImpersonateUserModal
-          isOpen={true}
-          onClose={mockOnClose}
-          onImpersonate={mockOnImpersonate}
-        />,
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
       );
 
       const usernameInput = screen.getByTestId('username-input');
@@ -277,11 +237,7 @@ describe('ImpersonateUserModal', () => {
     it('should call onClose when cancel button is clicked', async () => {
       const user = userEvent.setup();
       render(
-        <ImpersonateUserModal
-          isOpen={true}
-          onClose={mockOnClose}
-          onImpersonate={mockOnImpersonate}
-        />,
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
       );
 
       const cancelButton = screen.getByTestId('cancel-button');
@@ -293,11 +249,7 @@ describe('ImpersonateUserModal', () => {
     it('should reset form when modal is closed and reopened', async () => {
       const user = userEvent.setup();
       const { rerender } = render(
-        <ImpersonateUserModal
-          isOpen={true}
-          onClose={mockOnClose}
-          onImpersonate={mockOnImpersonate}
-        />,
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
       );
 
       // Enter username
@@ -316,11 +268,7 @@ describe('ImpersonateUserModal', () => {
 
       // Reopen modal
       rerender(
-        <ImpersonateUserModal
-          isOpen={true}
-          onClose={mockOnClose}
-          onImpersonate={mockOnImpersonate}
-        />,
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
       );
 
       // Username should be reset
@@ -334,7 +282,7 @@ describe('ImpersonateUserModal', () => {
       const longUsername = 'a'.repeat(100);
       render(
         <ImpersonateUserModal
-          isOpen={true}
+          isOpen
           onClose={mockOnClose}
           onImpersonate={mockOnImpersonate}
           prefilledUsername={longUsername}
@@ -348,7 +296,7 @@ describe('ImpersonateUserModal', () => {
     it('should handle special characters in username', () => {
       render(
         <ImpersonateUserModal
-          isOpen={true}
+          isOpen
           onClose={mockOnClose}
           onImpersonate={mockOnImpersonate}
           prefilledUsername="user@domain.com"
@@ -376,11 +324,7 @@ describe('ImpersonateUserModal', () => {
       ]);
 
       render(
-        <ImpersonateUserModal
-          isOpen={true}
-          onClose={mockOnClose}
-          onImpersonate={mockOnImpersonate}
-        />,
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
       );
 
       // Open dropdown and select all 5 groups
@@ -422,11 +366,7 @@ describe('ImpersonateUserModal', () => {
       ]);
 
       render(
-        <ImpersonateUserModal
-          isOpen={true}
-          onClose={mockOnClose}
-          onImpersonate={mockOnImpersonate}
-        />,
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
       );
 
       // Open dropdown and select all 8 groups
@@ -478,11 +418,7 @@ describe('ImpersonateUserModal', () => {
       ]);
 
       render(
-        <ImpersonateUserModal
-          isOpen={true}
-          onClose={mockOnClose}
-          onImpersonate={mockOnImpersonate}
-        />,
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
       );
 
       // Open dropdown and select all 7 groups
@@ -530,11 +466,7 @@ describe('ImpersonateUserModal', () => {
       ]);
 
       render(
-        <ImpersonateUserModal
-          isOpen={true}
-          onClose={mockOnClose}
-          onImpersonate={mockOnImpersonate}
-        />,
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
       );
 
       // Select all 6 groups

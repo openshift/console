@@ -1,36 +1,4 @@
-import * as _ from 'lodash';
 import { Component, useState, useMemo, useEffect, useCallback, Suspense } from 'react';
-import * as fuzzy from 'fuzzysearch';
-import { useLocation, useParams } from 'react-router';
-import { RoleModel, RoleBindingModel } from '../../models';
-import { useTranslation, withTranslation } from 'react-i18next';
-import i18next from 'i18next';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { BindingName, flatten as bindingsFlatten } from './bindings';
-import { RulesList } from './rules';
-import { DetailsPage } from '../factory/details';
-import { MultiListPage } from '../factory/list-page';
-import { TextFilter } from '../factory/text-filter';
-import {
-  ConsoleDataView,
-  getNameCellProps,
-  actionsCellProps,
-  nameCellProps,
-  initialFiltersDefault,
-} from '@console/app/src/components/data-view/ConsoleDataView';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
-import { tableFilters } from '../factory/table-filters';
-import { SectionHeading } from '../utils/headings';
-import { navFactory } from '../utils/horizontal-nav';
-import { ResourceLink, resourceListPathFromModel } from '../utils/resource-link';
-import { LoadingBox } from '../utils/status-box';
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { DetailsForKind } from '../default-resource';
-import { getLastNamespace } from '../utils/breadcrumbs';
-import { roleKind, roleType } from './role-type';
-import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
-import { DASH } from '@console/shared/src/constants/ui';
 import {
   DescriptionList,
   DescriptionListDescription,
@@ -39,9 +7,41 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
+import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
+import * as fuzzy from 'fuzzysearch';
+import i18next from 'i18next';
+import * as _ from 'lodash';
+import { useTranslation, withTranslation } from 'react-i18next';
+import { useLocation, useParams } from 'react-router';
+import {
+  ConsoleDataView,
+  getNameCellProps,
+  actionsCellProps,
+  nameCellProps,
+  initialFiltersDefault,
+} from '@console/app/src/components/data-view/ConsoleDataView';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
+import { DASH } from '@console/shared/src/constants/ui';
+import { RoleModel, RoleBindingModel } from '../../models';
 import { referenceForModel, referenceFor } from '../../module/k8s';
+import { DetailsForKind } from '../default-resource';
+import { DetailsPage } from '../factory/details';
+import { MultiListPage } from '../factory/list-page';
+import { tableFilters } from '../factory/table-filters';
+import { TextFilter } from '../factory/text-filter';
+import { getLastNamespace } from '../utils/breadcrumbs';
+import { SectionHeading } from '../utils/headings';
+import { navFactory } from '../utils/horizontal-nav';
+import { ResourceLink, resourceListPathFromModel } from '../utils/resource-link';
+import { LoadingBox } from '../utils/status-box';
+import { BindingName, flatten as bindingsFlatten } from './bindings';
+import { roleKind, roleType } from './role-type';
+import { RulesList } from './rules';
 
 const tableColumnInfo = [{ id: 'name' }, { id: 'namespace-always-show' }, { id: 'actions' }];
 
@@ -95,7 +95,7 @@ class Details extends Component {
     const { creationTimestamp, name, namespace } = ruleObj.metadata;
     const { ruleFilter } = this.state;
 
-    let rules = ruleObj.rules;
+    let { rules } = ruleObj;
     if (ruleFilter) {
       const fuzzyCaseInsensitive = (a, b) => fuzzy(_.toLower(a), _.toLower(b));
       const searchKeys = ['nonResourceURLs', 'resources', 'verbs', 'resourceNames'];
@@ -267,6 +267,7 @@ const BindingsListComponent = (props) => {
         if (filtersMap[filterKey]) {
           return filtersMap[filterKey](filterValue, binding);
         }
+        return true;
       });
     });
   }, [data, staticFilters]);
@@ -280,7 +281,7 @@ const BindingsListComponent = (props) => {
         label={t('RoleBindings')}
         columns={columns}
         getDataViewRows={getBindingsDataViewRows}
-        hideColumnManagement={true}
+        hideColumnManagement
       />
     </Suspense>
   );
@@ -299,7 +300,7 @@ const BindingsForRolePage = (props) => {
   const { t } = useTranslation('public');
   return (
     <MultiListPage
-      canCreate={true}
+      canCreate
       createButtonText={t('Create binding')}
       createProps={{
         to: `/k8s/${
@@ -315,7 +316,7 @@ const BindingsForRolePage = (props) => {
       resources={resources}
       namespace={ns}
       flatten={bindingsFlatten}
-      omitFilterToolbar={true}
+      omitFilterToolbar
     />
   );
 };
@@ -484,7 +485,7 @@ const RolesList = (props) => {
         initialFilters={initialFilters}
         additionalFilterNodes={additionalFilterNodes}
         matchesAdditionalFilters={matchesAdditionalFilters}
-        hideColumnManagement={true}
+        hideColumnManagement
         isResizable
         resetAllColumnWidths={resetAllColumnWidths}
       />
@@ -547,7 +548,7 @@ export const RolesPage = ({ namespace, mock, showTitle }) => {
   return (
     <MultiListPage
       ListComponent={RolesList}
-      canCreate={true}
+      canCreate
       showTitle={showTitle}
       namespace={namespace}
       createAccessReview={accessReview}
@@ -557,7 +558,7 @@ export const RolesPage = ({ namespace, mock, showTitle }) => {
       resources={resources}
       title={t('Roles')}
       mock={mock}
-      omitFilterToolbar={true}
+      omitFilterToolbar
     />
   );
 };

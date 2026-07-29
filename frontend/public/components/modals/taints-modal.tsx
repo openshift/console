@@ -1,4 +1,3 @@
-import * as _ from 'lodash';
 import type { FormEvent } from 'react';
 import { useState } from 'react';
 import {
@@ -11,17 +10,18 @@ import {
   TextInput,
   Tooltip,
 } from '@patternfly/react-core';
-import { Table, Thead, Tr, Th, Td, Tbody } from '@patternfly/react-table';
 import { RhUiMinusCircleIcon, RhUiAddCircleFillIcon } from '@patternfly/react-icons';
+import { Table, Thead, Tr, Th, Td, Tbody } from '@patternfly/react-table';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
-import { EmptyBox } from '../utils/status-box';
-import { K8sKind, NodeKind, k8sPatch, Taint } from '../../module/k8s';
-import { ModalComponentProps } from '@console/shared/src/types/modal';
-import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
-import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
+import type { K8sKind, NodeKind, Taint } from '../../module/k8s';
+import { k8sPatch } from '../../module/k8s';
+import { EmptyBox } from '../utils/status-box';
 
 const TaintsModal = (props: TaintsModalProps) => {
   const [taints, setTaints] = useState(props.resource.spec.taints || []);

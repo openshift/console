@@ -1,8 +1,8 @@
+import type { PrometheusResponse } from '@console/internal/components/graphs';
 import {
   getRangeVectorStats,
   getInstantVectorStats,
 } from '@console/internal/components/graphs/utils';
-import { PrometheusResponse } from '@console/internal/components/graphs';
 import type { Humanize } from '@console/internal/components/utils/types';
 
 const RANGE_VECTOR_RESPONSE: PrometheusResponse = {

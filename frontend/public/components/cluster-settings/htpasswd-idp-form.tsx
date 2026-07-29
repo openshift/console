@@ -1,17 +1,17 @@
 import { useState } from 'react';
-import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { ActionGroup, Button } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
-import { ActionGroup, Button } from '@patternfly/react-core';
-
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { SecretModel } from '../../models';
-import { IdentityProvider, k8sCreate, K8sResourceKind, OAuthKind } from '../../module/k8s';
+import type { IdentityProvider, K8sResourceKind, OAuthKind } from '../../module/k8s';
+import { k8sCreate } from '../../module/k8s';
 import { AsyncComponent } from '../utils/async';
 import { ButtonBar } from '../utils/button-bar';
-import { addIDP, getOAuthResource as getOAuth, redirectToOAuthPage, mockNames } from './';
 import { IDPNameInput } from './idp-name-input';
+import { addIDP, getOAuthResource as getOAuth, redirectToOAuthPage, mockNames } from '.';
 
 const DroppableFileInput = (props: any) => (
   <AsyncComponent

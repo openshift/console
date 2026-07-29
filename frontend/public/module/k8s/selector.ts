@@ -1,5 +1,5 @@
 import { requirementFromString } from './selector-requirement';
-import { MatchExpression } from './index';
+import type { MatchExpression } from './index';
 
 type Options = { undefinedWhenEmpty?: boolean; basic?: boolean };
 

@@ -1,21 +1,15 @@
-import {
-  Dropdown,
-  DropdownItem,
-  DropdownList,
-  MenuToggle,
-  MenuToggleElement,
-  Tooltip,
-} from '@patternfly/react-core';
-import { RhUiAddCircleIcon } from '@patternfly/react-icons';
-import { ALL_NAMESPACES_KEY, FLAGS } from '@console/shared/src/constants/common';
-import { formatNamespacedRouteForResource } from '@console/shared/src/utils/namespace';
-import { useFlag } from '@console/shared/src/hooks/useFlag';
-import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import type { FC, Ref } from 'react';
 import { useState, useCallback } from 'react';
+import type { MenuToggleElement } from '@patternfly/react-core';
+import { Dropdown, DropdownItem, DropdownList, MenuToggle, Tooltip } from '@patternfly/react-core';
+import { RhUiAddCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { useAccessReview } from '@console/dynamic-plugin-sdk/src';
 import { useNavigate } from 'react-router';
+import { useAccessReview } from '@console/dynamic-plugin-sdk/src';
+import { ALL_NAMESPACES_KEY, FLAGS } from '@console/shared/src/constants/common';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
+import { formatNamespacedRouteForResource } from '@console/shared/src/utils/namespace';
 
 type QuickCreateProps = {
   namespace?: string;

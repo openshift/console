@@ -1,12 +1,11 @@
 import type { ComponentProps, FC, SetStateAction, Dispatch, FormEvent } from 'react';
 import { useState, useEffect } from 'react';
+import { Label, SelectList } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import { useDocumentListener, KeyEventModes } from '@console/shared/src/hooks/useDocumentListener';
 import { getLabelsAsString } from '@console/shared/src/utils/label-filter';
-
 import { fuzzyCaseInsensitive } from './factory/table-filters';
 import { TextFilter } from './factory/text-filter';
-import { Label, SelectList } from '@patternfly/react-core';
 
 const MAX_SUGGESTIONS = 5;
 

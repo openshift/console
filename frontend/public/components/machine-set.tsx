@@ -1,17 +1,5 @@
 import type { FC } from 'react';
 import { createContext, useContext, useMemo, Suspense, useCallback } from 'react';
-import { getMachineAWSPlacement, getMachineRole } from '@console/shared/src/selectors/machine';
-import { getMachineSetInstanceType } from '@console/shared/src/selectors/machineSet';
-import { DASH } from '@console/shared/src/constants/ui';
-import { ListPageBody, TableColumn } from '@console/dynamic-plugin-sdk';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import {
-  actionsCellProps,
-  getNameCellProps,
-  nameCellProps,
-  ConsoleDataView,
-} from '@console/app/src/components/data-view/ConsoleDataView';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import {
   Tooltip,
   Button,
@@ -25,41 +13,50 @@ import {
 } from '@patternfly/react-core';
 import { RhUiEditIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
+import {
+  actionsCellProps,
+  getNameCellProps,
+  nameCellProps,
+  ConsoleDataView,
+} from '@console/app/src/components/data-view/ConsoleDataView';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+import type { TableColumn } from '@console/dynamic-plugin-sdk';
+import { ListPageBody } from '@console/dynamic-plugin-sdk';
+import type { ConfigureCountModalProps } from '@console/internal/components/modals/configure-count-modal';
+import { useConfigureCountModal } from '@console/internal/components/modals/configure-count-modal';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
-
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
+import { DASH } from '@console/shared/src/constants/ui';
+import { getMachineAWSPlacement, getMachineRole } from '@console/shared/src/selectors/machine';
+import { getMachineSetInstanceType } from '@console/shared/src/selectors/machineSet';
 import { MachineModel, MachineSetModel, NodeModel } from '../models';
-import {
+import type {
   K8sKind,
   K8sResourceKind,
   MachineDeploymentKind,
   MachineSetKind,
   MachineKind,
   NodeKind,
-  referenceForModel,
   Selector as SelectorType,
-  LabelSelector,
 } from '../module/k8s';
-import { MachinePage } from './machine';
-import {
-  useConfigureCountModal,
-  ConfigureCountModalProps,
-} from '@console/internal/components/modals/configure-count-modal';
+import { referenceForModel, LabelSelector } from '../module/k8s';
+import { MachinesCell } from './control-plane-machine-set';
+import { ResourceEventStream } from './events';
 import { DetailsPage } from './factory/details';
-import { sortResourceByValue } from './factory/Table/sort';
-import ListPageHeader from './factory/ListPage/ListPageHeader';
 import ListPageCreate from './factory/ListPage/ListPageCreate';
-import { LoadingBox } from './utils/status-box';
-import { ResourceLink, resourcePath } from './utils/resource-link';
+import ListPageHeader from './factory/ListPage/ListPageHeader';
+import { sortResourceByValue } from './factory/Table/sort';
+import { MachinePage } from './machine';
 import { ResourceSummary } from './utils/details-page';
 import { SectionHeading } from './utils/headings';
-import { Selector } from './utils/selector';
 import { navFactory } from './utils/horizontal-nav';
 import { useAccessReview } from './utils/rbac';
+import { ResourceLink, resourcePath } from './utils/resource-link';
+import { Selector } from './utils/selector';
+import { LoadingBox } from './utils/status-box';
 import { convertToBaseValue, formatBytesAsGiB } from './utils/units';
-import { ResourceEventStream } from './events';
-import { MachinesCell } from './control-plane-machine-set';
 
 const CapacityResolverContext = createContext<CapacityResolverContextType | null>(null);
 
@@ -430,7 +427,7 @@ const MachineSetListContent: FC<MachineSetListProps> = ({ data, loaded, loadErro
         loadError={loadError}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
+        hideColumnManagement
         isResizable
         resetAllColumnWidths={resetAllColumnWidths}
       />

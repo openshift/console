@@ -1,31 +1,26 @@
-import * as _ from 'lodash';
 import type { FC, ReactEventHandler, FormEvent } from 'react';
 import { useState, useEffect, useCallback } from 'react';
-import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import { useParams, useNavigate } from 'react-router';
-
-import { useTranslation } from 'react-i18next';
 import { ActionGroup, Button } from '@patternfly/react-core';
-import { isObjectSC } from '@console/shared/src/utils/storage-utils';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { useParams, useNavigate } from 'react-router';
 import { AccessModeSelector } from '@console/app/src/components/access-modes/access-mode';
 import { VolumeModeSelector } from '@console/app/src/components/volume-modes/volume-mode';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { LinkTo } from '@console/shared/src/components/links/LinkTo';
-import {
-  k8sCreate,
-  K8sResourceKind,
-  referenceFor,
-  StorageClassResourceKind,
-} from '../../module/k8s';
-import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import { isObjectSC } from '@console/shared/src/utils/storage-utils';
+import { PersistentVolumeClaimModel } from '../../models';
+import type { K8sResourceKind, StorageClassResourceKind } from '../../module/k8s';
+import { k8sCreate, referenceFor } from '../../module/k8s';
+import { Checkbox } from '../checkbox';
 import { AsyncComponent } from '../utils/async';
 import { ButtonBar } from '../utils/button-bar';
 import { RequestSizeInput } from '../utils/request-size-input';
 import { resourceObjPath } from '../utils/resource-link';
 import { StorageClassDropdown } from '../utils/storage-class-dropdown';
 import { VolumeAttributesClassDropdown } from '../utils/volume-attributes-class-dropdown';
-import { Checkbox } from '../checkbox';
-import { PersistentVolumeClaimModel } from '../../models';
 import { getProvisionerModeMapping, initialAccessModes, dropdownUnits } from './shared';
 
 const NameValueEditorComponent = (props) => (
@@ -127,12 +122,12 @@ export const CreatePVCForm: FC<CreatePVCFormProps> = (props) => {
 
   const handleStorageClass = (updatedStorageClass) => {
     const provisioner: string = updatedStorageClass?.provisioner || '';
-    //setting message to display for various modes when a storage class of a know provisioner is selected
+    // setting message to display for various modes when a storage class of a know provisioner is selected
     const displayMessage = getProvisionerModeMapping(provisioner)
       ? `${t('Access mode is set by StorageClass and cannot be changed')}`
       : `${t('Permissions to the mounted drive')}`;
     setAccessModeHelp(displayMessage);
-    //setting accessMode to default with the change to Storage Class selection
+    // setting accessMode to default with the change to Storage Class selection
     setStorageClass(updatedStorageClass?.metadata?.name);
     setStorageProvisioner(provisioner);
   };

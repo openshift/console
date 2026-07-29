@@ -1,7 +1,4 @@
 import type { FC } from 'react';
-import * as _ from 'lodash';
-import { useTranslation } from 'react-i18next';
-import { useParams, useLocation } from 'react-router';
 import {
   DescriptionList,
   DescriptionListDescription,
@@ -11,19 +8,21 @@ import {
   GridItem,
 } from '@patternfly/react-core';
 import { Table, Thead, Tr, Th, Tbody, Td } from '@patternfly/react-table';
-
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { useParams, useLocation } from 'react-router';
+import { getBreadcrumbPath } from '@console/internal/components/utils/breadcrumbs';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
-import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
+import type { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { DetailsPage } from './factory/details';
-import { SectionHeading } from './utils/headings';
-import { navFactory } from './utils/horizontal-nav';
-import { ResourceSummary } from './utils/details-page';
-import { humanizeBinaryBytes } from './utils/units';
-import { resourcePath } from './utils/resource-link';
 import { ExampleDockerCommandPopover } from './image-stream';
 import { ImageStreamTimeline } from './image-stream-timeline';
-import { getBreadcrumbPath } from '@console/internal/components/utils/breadcrumbs';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { resourcePath } from './utils/resource-link';
+import { humanizeBinaryBytes } from './utils/units';
 
 const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';
 const ImageStreamsReference: K8sResourceKindReference = 'ImageStream';
@@ -68,8 +67,8 @@ const SupportedPlatformsTable = (props) => {
             </Tr>
           </Thead>
           <Tbody>
-            {submanifests.map((submanifest, index) => (
-              <Tr key={index}>
+            {submanifests.map((submanifest) => (
+              <Tr key={submanifest.digest}>
                 <Td>{submanifest.os}</Td>
                 <Td>{submanifest.architecture}</Td>
                 <Td>{submanifest.digest}</Td>

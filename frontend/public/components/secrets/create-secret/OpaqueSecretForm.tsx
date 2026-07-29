@@ -1,10 +1,10 @@
 import type { FC } from 'react';
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Button, ActionGroup } from '@patternfly/react-core';
 import { RhUiAddCircleFillIcon } from '@patternfly/react-icons';
-import { SecretSubFormProps, OpaqueDataEntry } from './types';
+import { useTranslation } from 'react-i18next';
 import { OpaqueSecretFormEntry } from './OpaqueSecretFormEntry';
+import type { SecretSubFormProps, OpaqueDataEntry } from './types';
 import { opaqueSecretObjectToArray, newOpaqueSecretEntry, opaqueEntriesToObject } from './utils';
 
 export const OpaqueSecretForm: FC<SecretSubFormProps> = ({ onChange, base64StringData }) => {

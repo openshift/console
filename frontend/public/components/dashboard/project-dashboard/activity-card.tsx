@@ -1,28 +1,28 @@
 import type { FC } from 'react';
 import { useEffect, useMemo, useContext, memo } from 'react';
-import * as _ from 'lodash';
-import { Map as ImmutableMap } from 'immutable';
-import { connect } from 'react-redux';
 import { Card, CardFooter, CardHeader, CardTitle, Divider } from '@patternfly/react-core';
+import type { Map as ImmutableMap } from 'immutable';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+import { Link } from 'react-router';
+import type { DashboardsOverviewResourceActivity } from '@console/dynamic-plugin-sdk';
+import {
+  useResolvedExtensions,
+  isDashboardsOverviewResourceActivity,
+} from '@console/dynamic-plugin-sdk';
 import ActivityBody, {
   RecentEventsBody,
   OngoingActivityBody,
 } from '@console/shared/src/components/dashboard/activity-card/ActivityBody';
 import { useDynamicK8sWatchResources } from '@console/shared/src/hooks/useDynamicK8sWatchResources';
-import { useK8sWatchResource } from '../../utils/k8s-watch-hook';
-import { EventModel } from '../../../models';
-import { EventKind, K8sKind, K8sResourceCommon } from '../../../module/k8s';
-import {
-  useResolvedExtensions,
-  DashboardsOverviewResourceActivity,
-  isDashboardsOverviewResourceActivity,
-} from '@console/dynamic-plugin-sdk';
-import { uniqueResource } from '../dashboards-page/cluster-dashboard/utils';
-import { RootState } from '../../../redux';
-import { ProjectDashboardContext } from './project-dashboard-context';
 import { getName } from '@console/shared/src/selectors/common';
-import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router';
+import { EventModel } from '../../../models';
+import type { EventKind, K8sKind, K8sResourceCommon } from '../../../module/k8s';
+import type { RootState } from '../../../redux';
+import { useK8sWatchResource } from '../../utils/k8s-watch-hook';
+import { uniqueResource } from '../dashboards-page/cluster-dashboard/utils';
+import { ProjectDashboardContext } from './project-dashboard-context';
 
 const RecentEvent: FC<{ projectName: string; viewEvents: string }> = ({
   projectName,

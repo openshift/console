@@ -1,10 +1,6 @@
-import * as _ from 'lodash';
 import type { FC, MouseEvent } from 'react';
 import { useState, useEffect, useMemo, memo } from 'react';
-import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';
-import { useTranslation } from 'react-i18next';
-import { useLocation, useParams } from 'react-router';
+import type { ToolbarLabel } from '@patternfly/react-core';
 import {
   Accordion,
   AccordionContent,
@@ -14,42 +10,40 @@ import {
   ButtonVariant,
   PageSection,
   Toolbar,
-  ToolbarLabel,
   ToolbarContent,
   ToolbarFilter,
   ToolbarItem,
 } from '@patternfly/react-core';
 import { RhUiAddCircleFillIcon, RhUiMinusCircleIcon } from '@patternfly/react-icons';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { useLocation, useParams } from 'react-router';
+import useConfirmNavUnpinModal from '@console/app/src/components/nav/useConfirmNavUnpinModal';
+import type { ResourceListPage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
+import { isResourceListPage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
+import { useActiveNamespace, useK8sModel } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { useActivePerspective } from '@console/dynamic-plugin-sdk/src/perspective';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import { getBadgeFromType } from '@console/shared/src/components/badges/badge-factory';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
+import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';
 import { usePinnedResources } from '@console/shared/src/hooks/usePinnedResources';
+import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
-import { DefaultPage } from './default-resource';
+import type { K8sResourceKindReference } from '../module/k8s';
+import { kindForReference, modelFor, referenceForModel } from '../module/k8s';
+import { split, selectorFromString } from '../module/k8s/selector';
 import { requirementFromString } from '../module/k8s/selector-requirement';
+import { DefaultPage } from './default-resource';
 import { ResourceListDropdown } from './resource-dropdown';
 import { getResourceListPages } from './resource-pages';
-import { withStartGuide } from './start-guide';
-import { split, selectorFromString } from '../module/k8s/selector';
-import {
-  kindForReference,
-  modelFor,
-  referenceForModel,
-  K8sResourceKindReference,
-} from '../module/k8s';
-import { LoadingBox, ConsoleEmptyState } from './utils/status-box';
-import { ResourceIcon } from './utils/resource-icon';
-import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
-import { AsyncComponent } from './utils/async';
-import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
-import useConfirmNavUnpinModal from '@console/app/src/components/nav/useConfirmNavUnpinModal';
 import { SearchFilterDropdown, searchFilterValues } from './search-filter-dropdown';
-import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
-import {
-  ResourceListPage,
-  isResourceListPage,
-} from '@console/dynamic-plugin-sdk/src/extensions/pages';
-import { useActivePerspective } from '@console/dynamic-plugin-sdk/src/perspective';
-import { useActiveNamespace, useK8sModel } from '@console/dynamic-plugin-sdk/src/lib-core';
-import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
+import { withStartGuide } from './start-guide';
+import { AsyncComponent } from './utils/async';
+import { ResourceIcon } from './utils/resource-icon';
+import { LoadingBox, ConsoleEmptyState } from './utils/status-box';
 
 interface ResourceListProps {
   kind: string;
@@ -109,7 +103,9 @@ const SearchPage_: FC<SearchProps> = (props) => {
   const confirmNavUnpinModal = useConfirmNavUnpinModal(pinnedResources, setPinnedResources);
   // Set state variables from the URL
   useEffect(() => {
-    let kind: string, q: string, name: string;
+    let kind: string;
+    let q: string;
+    let name: string;
 
     if (location.search) {
       const sp = new URLSearchParams(location.search);
@@ -286,7 +282,7 @@ const SearchPage_: FC<SearchProps> = (props) => {
                 <ResourceListDropdown
                   selected={[...selectedItems]}
                   onChange={updateSelectedItems}
-                  recentList={true}
+                  recentList
                 />
               </ToolbarFilter>
             </ToolbarItem>

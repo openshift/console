@@ -1,15 +1,13 @@
 import type { FC } from 'react';
-
-import { FLAGS } from '@console/shared/src/constants/common';
-import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
-import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { GettingStartedExpandableGrid } from '@console/shared/src/components/getting-started/GettingStartedExpandableGrid';
 import { QuickStartGettingStartedCard } from '@console/shared/src/components/getting-started/QuickStartGettingStartedCard';
 import {
   GettingStartedShowState,
   useGettingStartedShowState,
 } from '@console/shared/src/components/getting-started/useGettingStartedShowState';
-
+import { FLAGS } from '@console/shared/src/constants/common';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { ClusterSetupGettingStartedCard } from './cluster-setup-getting-started-card';
 import { ExploreAdminFeaturesGettingStartedCard } from './explore-admin-features-getting-started-card';
 

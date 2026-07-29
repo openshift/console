@@ -1,26 +1,22 @@
 import { PluginStore } from '@openshift/dynamic-plugin-sdk';
-import { getSharedScope } from '@console/dynamic-plugin-sdk/src/runtime/plugin-shared-modules';
 import type { LocalPluginManifest } from '@openshift/dynamic-plugin-sdk';
 import type { Middleware } from 'redux';
-import { dynamicPluginNames } from '@console/plugin-sdk/src/utils/allowed-plugins';
-import type { RootState } from './redux';
 import { valid as semver } from 'semver';
-import { coFetch } from '@console/shared/src/utils/console-fetch';
-import { ValidationResult } from '@console/dynamic-plugin-sdk/src/validation/ValidationResult';
 import { REMOTE_ENTRY_CALLBACK } from '@console/dynamic-plugin-sdk/src/constants';
 import { initConsolePlugins } from '@console/dynamic-plugin-sdk/src/runtime/plugin-init';
+import { getSharedScope } from '@console/dynamic-plugin-sdk/src/runtime/plugin-shared-modules';
+import { ValidationResult } from '@console/dynamic-plugin-sdk/src/validation/ValidationResult';
+import { dynamicPluginNames } from '@console/plugin-sdk/src/utils/allowed-plugins';
+import { coFetch } from '@console/shared/src/utils/console-fetch';
+import type { RootState } from './redux';
+// eslint-disable-next-line @typescript-eslint/no-require-imports -- This module has its source generated during val-loader
+const localPlugins: LocalPluginManifest[] = require('../get-local-plugins').default;
 
 /**
  * Set by `console-operator` or `./bin/bridge -release-version`. If this is
  * `unknown`, we will not check this value when loading plugins.
  */
 const CURRENT_OPENSHIFT_VERSION = semver(window.SERVER_FLAGS.releaseVersion) ?? 'unknown';
-
-/**
- * Console local plugins module has its source generated during webpack build,
- * so we use dynamic require() instead of the usual static import statement.
- */
-const localPlugins: LocalPluginManifest[] = require('../get-local-plugins').default;
 
 const localPluginNames = localPlugins.map((p) => p.name);
 
@@ -132,6 +128,11 @@ export const featureFlagMiddleware: Middleware<{}, RootState> = (s) => {
 };
 
 // Ensure all static plugins are loaded before proceeding to load dynamic plugins
-Promise.allSettled(localPlugins.map((plugin) => pluginStore.loadPlugin(plugin))).then(() => {
-  initConsolePlugins(pluginStore);
-});
+Promise.allSettled(localPlugins.map((plugin) => pluginStore.loadPlugin(plugin)))
+  .then(() => {
+    initConsolePlugins(pluginStore);
+  })
+  .catch((err) => {
+    // eslint-disable-next-line no-console
+    console.error('Failed to load Console plugins', err);
+  });

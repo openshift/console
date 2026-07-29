@@ -2,30 +2,31 @@ import type { ReactNode, FC } from 'react';
 import { useState, useEffect } from 'react';
 import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
-import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
-import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
-import { NamespaceBarProps, useActivePerspective } from '@console/dynamic-plugin-sdk';
+import type { NamespaceBarProps } from '@console/dynamic-plugin-sdk';
+import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { ALL_NAMESPACES_KEY } from '@console/dynamic-plugin-sdk/src/constants';
+import type {
+  WatchK8sResultsObject,
+  K8sResourceCommon,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { useFlag } from '@console/dynamic-plugin-sdk/src/utils/flags';
+import { k8sGet } from '@console/internal/module/k8s';
+import { NamespaceDropdown } from '@console/shared/src/components/namespace/NamespaceDropdown';
 import {
   ALL_APPLICATIONS_KEY,
   FLAGS,
   KEYBOARD_SHORTCUTS,
 } from '@console/shared/src/constants/common';
-import { NamespaceDropdown } from '@console/shared/src/components/namespace/NamespaceDropdown';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
-import { useFlag } from '@console/dynamic-plugin-sdk/src/utils/flags';
-import { k8sGet } from '@console/internal/module/k8s';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
+import { useCreateNamespaceOrProjectModal } from '@console/shared/src/hooks/useCreateNamespaceOrProjectModal';
+import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import { setFlag } from '../actions/flags';
+import { setActiveApplication } from '../actions/ui';
 import { NamespaceModel, ProjectModel } from '../models';
 import { flagPending } from '../reducers/features';
-import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import { useK8sWatchResource } from './utils/k8s-watch-hook';
-import type {
-  WatchK8sResultsObject,
-  K8sResourceCommon,
-} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { useCreateNamespaceOrProjectModal } from '@console/shared/src/hooks/useCreateNamespaceOrProjectModal';
-import { setActiveApplication } from '../actions/ui';
 
 type NamespaceBarDropdownsProps = {
   children: ReactNode;

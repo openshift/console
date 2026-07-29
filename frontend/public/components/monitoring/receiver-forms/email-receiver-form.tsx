@@ -1,11 +1,5 @@
 /* eslint-disable camelcase */
-import * as _ from 'lodash';
 import type { FC } from 'react';
-import { useTranslation } from 'react-i18next';
-
-import { SendResolvedAlertsCheckbox } from './send-resolved-alerts-checkbox';
-import { SaveAsDefaultCheckbox } from './save-as-default-checkbox';
-import type { FormProps, SubFormModule } from './receiver-form-props';
 import {
   Checkbox,
   FormGroup,
@@ -17,7 +11,12 @@ import {
   HelperTextItem,
   TextInput,
 } from '@patternfly/react-core';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { AdvancedConfiguration } from './advanced-configuration';
+import type { FormProps, SubFormModule } from './receiver-form-props';
+import { SaveAsDefaultCheckbox } from './save-as-default-checkbox';
+import { SendResolvedAlertsCheckbox } from './send-resolved-alerts-checkbox';
 
 const SMTP_GLOBAL_FIELDS = [
   'smtp_from',
@@ -256,7 +255,7 @@ const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
   );
 };
 
-const getConfigFieldName = (fld) => fld.substring(fld.indexOf('_') + 1); //strip off leading 'email_' or 'smtp_' prefix
+const getConfigFieldName = (fld) => fld.substring(fld.indexOf('_') + 1); // strip off leading 'email_' or 'smtp_' prefix
 
 const getInitialValues = (globals, receiverConfig) => {
   const initValues: any = {

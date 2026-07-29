@@ -12,7 +12,15 @@ module.exports = {
   '@typescript-eslint/await-thenable': 'error',
 
   // Disallow `@ts-<directive>` comments or require descriptions after directives
-  '@typescript-eslint/ban-ts-comment': 'error',
+  '@typescript-eslint/ban-ts-comment': [
+    'error',
+    {
+      'ts-expect-error': 'allow-with-description',
+      'ts-ignore': true,
+      'ts-nocheck': true,
+      'ts-check': false,
+    },
+  ],
 
   // In @typescript-eslint v6, ban-types was split into:
   //   no-restricted-types (custom bans, no defaults)
@@ -213,23 +221,4 @@ module.exports = {
   // The spread operator/rest parameters should be preferred in Typescript.
   'prefer-rest-params': 'error',
   'prefer-spread': 'error',
-
-  // Prevent imports from @patternfly CJS distributions (dist/js or dist/cjs).
-  'import/no-restricted-paths': [
-    'error',
-    {
-      zones: [
-        {
-          target: './',
-          from: 'node_modules/@patternfly/*/dist/js/**',
-          message: 'Import from the package index instead of the CJS dist/js path.',
-        },
-        {
-          target: './',
-          from: 'node_modules/@patternfly/*/dist/cjs/**',
-          message: 'Import from the package index instead of the CJS dist/cjs path.',
-        },
-      ],
-    },
-  ],
 };

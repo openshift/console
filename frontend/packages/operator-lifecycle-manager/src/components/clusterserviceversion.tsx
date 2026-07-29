@@ -390,6 +390,7 @@ export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionT
           <Link
             to={route}
             className="co-clusterserviceversion-link"
+            data-test={`operator-row-${displayName}`}
             data-test-operator-row={displayName}
           >
             <ClusterServiceVersionLogo

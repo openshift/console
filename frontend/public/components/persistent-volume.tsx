@@ -1,8 +1,5 @@
 import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
-import * as _ from 'lodash';
-import { TFunction } from 'i18next';
-import { useTranslation } from 'react-i18next';
 import {
   DescriptionList,
   DescriptionListDescription,
@@ -11,6 +8,9 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
+import type { TFunction } from 'i18next';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import {
   actionsCellProps,
   getNameCellProps,
@@ -18,26 +18,27 @@ import {
   nameCellProps,
   getLabelsColumnWidthStyleProp,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import { TableColumn } from '@console/dynamic-plugin-sdk/src/lib-core';
+import type { TableColumn } from '@console/dynamic-plugin-sdk/src/lib-core';
+import type { PersistentVolumeKind } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
 import { Status } from '@console/shared/src/components/status/Status';
 import { DASH } from '@console/shared/src/constants/ui';
-import { DetailsPage } from './factory/details';
-import { ListPage } from './factory/list-page';
-import type { DetailsPageProps } from './factory/details';
-import type { ListPageProps } from './factory/list-page';
-import { LabelList } from './utils/label-list';
-import { navFactory } from './utils/horizontal-nav';
-import { SectionHeading } from './utils/headings';
-import { ResourceLink } from './utils/resource-link';
-import { ResourceSummary } from './utils/details-page';
 import { PersistentVolumeModel } from '../models';
-import { PersistentVolumeKind, referenceForModel } from '@console/internal/module/k8s';
-import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { DetailsPage } from './factory/details';
+import type { DetailsPageProps } from './factory/details';
+import { ListPage } from './factory/list-page';
+import type { ListPageProps } from './factory/list-page';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { LabelList } from './utils/label-list';
+import { ResourceLink } from './utils/resource-link';
 
 const { kind } = PersistentVolumeModel;
 const persistentVolumeReference = referenceForModel(PersistentVolumeModel);
@@ -292,8 +293,8 @@ export const PersistentVolumesPage = (props: ListPageProps) => {
       title={t('PersistentVolumes')}
       kind={kind}
       ListComponent={PersistentVolumeList}
-      canCreate={true}
-      omitFilterToolbar={true}
+      canCreate
+      omitFilterToolbar
     />
   );
 };

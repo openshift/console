@@ -1,9 +1,8 @@
-import * as _ from 'lodash';
 import { Component } from 'react';
-
+import * as _ from 'lodash';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { ContainerSelect } from './utils/container-select';
 import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
+import { ContainerSelect } from './utils/container-select';
 import {
   LOG_SOURCE_RESTARTING,
   LOG_SOURCE_RUNNING,
@@ -54,19 +53,6 @@ const containerToLogSourceStatus = (container) => {
 };
 
 class PodLogsInner extends Component {
-  constructor(props) {
-    super(props);
-    this._selectContainer = this._selectContainer.bind(this);
-    this.state = {
-      containers: {},
-      currentKey:
-        props.getQueryArgument('container') ||
-        props.obj.metadata?.annotations?.['kubectl.kubernetes.io/default-container'] ||
-        '',
-      initContainers: {},
-    };
-  }
-
   static getDerivedStateFromProps({ obj: build }, { currentKey }) {
     const newState = {};
     const containers = _.get(build, 'spec.containers', []);
@@ -80,10 +66,17 @@ class PodLogsInner extends Component {
     return newState;
   }
 
-  _selectContainer(name) {
-    this.setState({ currentKey: name }, () => {
-      this.props.setQueryArgument('container', this.state.currentKey);
-    });
+  constructor(props) {
+    super(props);
+    this._selectContainer = this._selectContainer.bind(this);
+    this.state = {
+      containers: {},
+      currentKey:
+        props.getQueryArgument('container') ||
+        props.obj.metadata?.annotations?.['kubectl.kubernetes.io/default-container'] ||
+        '',
+      initContainers: {},
+    };
   }
 
   render() {
@@ -109,6 +102,12 @@ class PodLogsInner extends Component {
         />
       </PaneBody>
     );
+  }
+
+  _selectContainer(name) {
+    this.setState({ currentKey: name }, () => {
+      this.props.setQueryArgument('container', this.state.currentKey);
+    });
   }
 }
 

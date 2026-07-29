@@ -1,13 +1,13 @@
-import { useTranslation, Trans } from 'react-i18next';
 import { Banner, Button, Flex, PageSection } from '@patternfly/react-core';
-
+import { useTranslation, Trans } from 'react-i18next';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import {
   CLUSTER_TELEMETRY_ANALYTICS,
   PREFERRED_TELEMETRY_USER_PREFERENCE_KEY,
   USER_TELEMETRY_ANALYTICS,
 } from '@console/shared/src/constants/common';
-import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
+
 export const TelemetryNotifier = () => {
   const { t } = useTranslation('public');
 

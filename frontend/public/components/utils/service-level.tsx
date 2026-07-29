@@ -1,4 +1,5 @@
-import { FC, ReactNode, useEffect, useState } from 'react';
+import type { FC, ReactNode } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Alert,
   Label,
@@ -7,18 +8,18 @@ import {
   NotificationDrawerListItemHeader,
   Skeleton,
 } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+import { k8sGet } from '@console/dynamic-plugin-sdk/src/api/core-api';
+import * as UIActions from '@console/internal/actions/ui';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
-import { useTranslation } from 'react-i18next';
-import * as UIActions from '@console/internal/actions/ui';
 import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
-import { getDuration, dateFormatter } from './datetime';
-import { getOCMLink } from '../../module/k8s';
-import { k8sGet } from '@console/dynamic-plugin-sdk/src/api/core-api';
 import { SecretModel } from '../../models';
+import { getOCMLink } from '../../module/k8s';
+import { getDuration, dateFormatter } from './datetime';
 import { FieldLevelHelp } from './field-level-help';
 import { NotificationTypes } from './types';
-import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 
 const useServiceLevelText = (level: string): string => {
   const { t } = useTranslation('public');
@@ -103,7 +104,7 @@ const useLoadServiceLevel = (): [boolean, boolean, (clusterID: string) => void] 
     setLoadingSecret(true);
     k8sGet({ model: SecretModel, name: 'pull-secret', ns: 'openshift-config' })
       .then((response) => {
-        // @ts-ignore  Data is not recognized as part of response.
+        // @ts-expect-error Data is not recognized as part of response.
         const secret = JSON.parse(atob(response.data['.dockerconfigjson']));
         const token = secret.auths['cloud.openshift.com'].auth;
         const headers = {

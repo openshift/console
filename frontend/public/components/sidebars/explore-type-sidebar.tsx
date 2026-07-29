@@ -1,6 +1,5 @@
 import type { FC, MouseEvent } from 'react';
 import { useState, useEffect } from 'react';
-import * as _ from 'lodash';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -11,18 +10,13 @@ import {
   ListItem,
   Title,
 } from '@patternfly/react-core';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { CamelCaseWrap } from '@console/dynamic-plugin-sdk';
-import {
-  getDefinitionKey,
-  getSwaggerPath,
-  K8sKind,
-  SwaggerDefinition,
-  SwaggerDefinitions,
-  fetchSwagger,
-} from '../../module/k8s';
-import { EmptyBox } from '../utils/status-box';
+import type { K8sKind, SwaggerDefinition, SwaggerDefinitions } from '../../module/k8s';
+import { getDefinitionKey, getSwaggerPath, fetchSwagger } from '../../module/k8s';
 import { LinkifyExternal } from '../utils/link';
+import { EmptyBox } from '../utils/status-box';
 
 const getRef = (definition: SwaggerDefinition): string => {
   const ref = definition.$ref || _.get(definition, 'items.$ref');
@@ -129,6 +123,7 @@ export const ExploreType: FC<ExploreTypeProps> = (props) => {
             const isLast = i === breadcrumbs.length - 1;
             return (
               <BreadcrumbItem
+                // eslint-disable-next-line react/no-array-index-key
                 key={i}
                 isActive={isLast}
                 onClick={!isLast ? (e) => breadcrumbClicked(e, i) : undefined}

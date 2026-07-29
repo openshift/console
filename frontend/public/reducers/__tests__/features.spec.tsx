@@ -1,19 +1,13 @@
 import { Component } from 'react';
 import * as Immutable from 'immutable';
 import * as _ from 'lodash';
-
 import { setFlag } from '@console/internal/actions/flags';
-import { receivedResources } from '../../actions/k8s';
 import { FLAGS } from '@console/shared/src/constants/common';
-import {
-  featureReducer,
-  featureReducerName,
-  defaults,
-  getFlagsObject,
-  FeatureState,
-} from '../features';
+import { receivedResources } from '../../actions/k8s';
+import type { RootState } from '../../redux';
 import { connectToFlags, stateToFlagsObject } from '../connectToFlags';
-import { RootState } from '../../redux';
+import type { FeatureState } from '../features';
+import { featureReducer, featureReducerName, defaults, getFlagsObject } from '../features';
 
 describe('featureReducer', () => {
   it('returns default values if state is uninitialized', () => {

@@ -91,5 +91,5 @@ export const requirementFromString = (string) => {
     };
   }
 
-  return; // falsy means parsing failure
+  // falsy means parsing failure
 };

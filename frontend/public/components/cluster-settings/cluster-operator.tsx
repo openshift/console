@@ -1,7 +1,5 @@
 import type { FC } from 'react';
 import { useMemo, useCallback, Suspense } from 'react';
-import * as _ from 'lodash';
-import { useLocation } from 'react-router';
 import {
   Alert,
   DescriptionList,
@@ -11,57 +9,63 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
-import { RhUiSyncIcon, RhUiUnknownIcon } from '@patternfly/react-icons';
-import { useTranslation } from 'react-i18next';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
-
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { ClusterOperatorModel } from '../../models';
-import { DetailsPage, ListPage } from '../factory';
-import { Conditions } from '../conditions';
-import {
-  getClusterOperatorStatus,
-  getClusterOperatorVersion,
-  getClusterVersionCondition,
-  getStatusAndMessage,
-  ClusterOperator,
-  ClusterVersionConditionType,
-  ClusterVersionKind,
-  K8sResourceConditionStatus,
-  K8sResourceKindReference,
-  OperandVersion,
-  OperatorStatus,
-  referenceForModel,
-} from '../../module/k8s';
-import { navFactory } from '../utils/horizontal-nav';
-import { EmptyBox, LoadingBox } from '../utils/status-box';
-import { LinkifyExternal } from '../utils/link';
-import { ResourceLink } from '../utils/resource-link';
-import { ResourceSummary } from '../utils/details-page';
-import { SectionHeading } from '../utils/headings';
-import {
-  GreenCheckCircleIcon,
-  RedExclamationCircleIcon,
-  YellowExclamationTriangleIcon,
-} from '@console/shared/src/components/status/icons';
-import { DASH } from '@console/shared/src/constants/ui';
-import RelatedObjectsPage from './related-objects';
-import { ClusterVersionConditionsLink, UpdatingMessageText } from './cluster-status';
+import type { DataViewFilterOption } from '@patternfly/react-data-view/dist/esm/DataViewFilters';
+import { RhUiSyncIcon, RhUiUnknownIcon } from '@patternfly/react-icons';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router';
 import {
   cellIsStickyProps,
   getNameCellProps,
   initialFiltersDefault,
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import {
+import type {
   ResourceFilters,
   ConsoleDataViewColumn,
   ConsoleDataViewRow,
 } from '@console/app/src/components/data-view/types';
-import type { DataViewFilterOption } from '@patternfly/react-data-view/dist/esm/DataViewFilters';
-import { RowProps, TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { sortResourceByValue } from '../factory/Table/sort';
+import type {
+  RowProps,
+  TableColumn,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import {
+  GreenCheckCircleIcon,
+  RedExclamationCircleIcon,
+  YellowExclamationTriangleIcon,
+} from '@console/shared/src/components/status/icons';
+import { DASH } from '@console/shared/src/constants/ui';
+import { ClusterOperatorModel } from '../../models';
+import type {
+  ClusterOperator,
+  ClusterVersionKind,
+  K8sResourceKindReference,
+  OperandVersion,
+} from '../../module/k8s';
+import {
+  getClusterOperatorStatus,
+  getClusterOperatorVersion,
+  getClusterVersionCondition,
+  getStatusAndMessage,
+  ClusterVersionConditionType,
+  K8sResourceConditionStatus,
+  OperatorStatus,
+  referenceForModel,
+} from '../../module/k8s';
+import { Conditions } from '../conditions';
+import { DetailsPage, ListPage } from '../factory';
 import { sorts } from '../factory/table';
+import { sortResourceByValue } from '../factory/Table/sort';
+import { ResourceSummary } from '../utils/details-page';
+import { SectionHeading } from '../utils/headings';
+import { navFactory } from '../utils/horizontal-nav';
+import { LinkifyExternal } from '../utils/link';
+import { ResourceLink } from '../utils/resource-link';
+import { EmptyBox, LoadingBox } from '../utils/status-box';
+import { ClusterVersionConditionsLink, UpdatingMessageText } from './cluster-status';
+import RelatedObjectsPage from './related-objects';
 
 const clusterOperatorReference: K8sResourceKindReference = referenceForModel(ClusterOperatorModel);
 
@@ -242,7 +246,7 @@ const ClusterOperatorList: FC<ClusterOperatorListProps> = ({ data, loaded, ...pr
         additionalFilterNodes={additionalFilterNodes}
         matchesAdditionalFilters={matchesAdditionalFilters}
         getDataViewRows={getClusterOperatorDataViewRows}
-        hideColumnManagement={true}
+        hideColumnManagement
       />
     </Suspense>
   );
@@ -282,7 +286,7 @@ export const ClusterOperatorPage: FC<ClusterOperatorPageProps> = (props) => {
         kind={clusterOperatorReference}
         ListComponent={ClusterOperatorList}
         canCreate={false}
-        omitFilterToolbar={true}
+        omitFilterToolbar
       />
     </>
   );

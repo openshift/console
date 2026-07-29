@@ -1,8 +1,8 @@
-import * as _ from 'lodash';
 import { useEffect, useRef } from 'react';
+import * as _ from 'lodash';
+import { getImpersonate } from '@console/dynamic-plugin-sdk';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
-import { getImpersonate } from '@console/dynamic-plugin-sdk';
 import { detectFeatures } from '../actions/features';
 
 /**
