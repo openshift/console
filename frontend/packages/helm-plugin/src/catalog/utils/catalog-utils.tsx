@@ -62,7 +62,7 @@ export const normalizeHelmCharts = (
               <span style={{ verticalAlign: 'middle' }}>{displayName}</span>{' '}
               <Tooltip
                 content={t(
-                  'helm-plugin~This Helm Chart is provided by a trusted partner and has been verified for ease of integration.',
+                  'helm-plugin~A trusted partner provides this Helm Chart and has verified it for ease of integration.',
                 )}
               >
                 <img src={certifiedIcon} alt={t('helm-plugin~Certified')} />
