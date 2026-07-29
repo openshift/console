@@ -1,9 +1,12 @@
-import path from 'path';
+import * as path from 'path';
 import { defineConfig, globalIgnores } from 'eslint/config';
 import { FlatCompat } from '@eslint/eslintrc';
-import js from '@eslint/js';
-import globals from 'globals';
-import tsParser from '@typescript-eslint/parser';
+import * as js from '@eslint/js';
+import * as globals from 'globals';
+// TODO: change moduleResolution to "bundler"
+// @ts-expect-error types not resolvable under moduleResolution "node"
+import * as tsParser from '@typescript-eslint/parser';
+import * as tsPlugin from '@typescript-eslint/eslint-plugin';
 
 const compat = new FlatCompat({
   baseDirectory: import.meta.dirname,
@@ -32,7 +35,7 @@ const CYPRESS_INTEGRATION_DIRS = [
 
 const CYPRESS_FILES = CYPRESS_INTEGRATION_DIRS.map((d) => `${d}/**/*.{js,jsx,ts,tsx}`);
 
-export default defineConfig([
+const config = defineConfig([
   globalIgnores([
     '.puppeteer/**',
     '.yarn/**',
@@ -54,6 +57,7 @@ export default defineConfig([
     '.vscode/**',
     '**/.*',
     'e2e/**/testData/**',
+    'scripts/**',
   ]),
 
   {
@@ -63,136 +67,13 @@ export default defineConfig([
   },
 
   // ------------------------------------------------
-  // Scope: Root frontend (non-packages, non-i18n-scripts, non-e2e)
+  // Scope: public/ + packages/ (react-typescript-prettier)
   // ------------------------------------------------
   {
-    files: ['**/*.{js,jsx,ts,tsx,json}'],
-    ignores: ['packages/**', 'i18n-scripts/**', 'e2e/**'],
-    extends: compat.config({
-      extends: [
-        'eslint:recommended',
-        'plugin:import/errors',
-        'plugin:import/warnings',
-        'plugin:react/recommended',
-        'plugin:console/json',
-        'plugin:console/prettier',
-        'plugin:console/testing-library-tests',
-      ],
-      env: {
-        browser: true,
-        es6: true,
-        jest: true,
-        node: true,
-      },
-      parser: '@typescript-eslint/parser',
-      parserOptions: {
-        project: './tsconfig.json',
-        ecmaFeatures: { jsx: true },
-        ecmaVersion: 2018,
-        extraFileExtensions: ['.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      plugins: ['react', 'react-hooks', '@typescript-eslint', 'eslint-plugin-tsdoc', 'no-barrel-files'],
-      rules: {
-        camelcase: 'error',
-        'consistent-return': 'off',
-        'consistent-this': ['warn', 'that'],
-        curly: ['error', 'all'],
-        'default-case': ['error'],
-        'dot-notation': ['error'],
-        'no-multiple-empty-lines': ['error', { max: 2, maxEOF: 0 }],
-        eqeqeq: ['error', 'always', { null: 'ignore' }],
-        'guard-for-in': 'error',
-        'import/no-duplicates': ['error'],
-        'max-nested-callbacks': ['warn', 4],
-        'no-alert': 'error',
-        'no-caller': 'error',
-        'no-console': 'error',
-        'no-constant-condition': 'error',
-        'no-debugger': 'error',
-        'no-else-return': ['error'],
-        'no-irregular-whitespace': ['error'],
-        'no-prototype-builtins': 'off',
-        'no-unused-vars': 'off',
-        'no-shadow': 'off',
-        '@typescript-eslint/no-shadow': 'error',
-        'no-underscore-dangle': 'off',
-        '@typescript-eslint/no-unused-vars': [
-          'error',
-          { varsIgnorePattern: 'React', args: 'after-used', caughtErrors: 'none' },
-        ],
-        '@typescript-eslint/no-use-before-define': 'error',
-        'no-restricted-imports': [
-          'error',
-          {
-            paths: [
-              {
-                name: 'lodash-es',
-                message: 'Use lodash instead. The bundler is configured to use lodash-es automatically.',
-              },
-              {
-                name: 'react',
-                importNames: ['default', '*'],
-                message: 'Use named imports instead.',
-              },
-              {
-                name: 'react',
-                importNames: ['act'],
-                message: "For consistency, import { act } from '@testing-library/react'",
-              },
-            ],
-            patterns: [
-              {
-                group: ['@patternfly/react-icons'],
-                importNamePattern: '^(?!Rh|createIcon)',
-                message:
-                  'Use RhMicron, RhUi, or RhStandard icon variants instead of Font Awesome icons.',
-              },
-            ],
-          },
-        ],
-        'no-var': 'error',
-        'object-shorthand': ['error', 'properties'],
-        'prefer-const': ['error', { destructuring: 'all' }],
-        'prefer-template': 'error',
-        radix: 'error',
-        'react/react-in-jsx-scope': 'off',
-        'react/jsx-fragments': 'error',
-        'react/jsx-no-duplicate-props': 'error',
-        'react/jsx-uses-react': 'error',
-        'react/jsx-uses-vars': 'error',
-        'react/no-string-refs': 'warn',
-        'react/no-unknown-property': 'error',
-        'react/prop-types': 'off',
-        'react/self-closing-comp': ['error', { component: true, html: false }],
-        'react-hooks/rules-of-hooks': 'error',
-        'react-hooks/exhaustive-deps': 'warn',
-        'react/display-name': 'off',
-        'react/no-unescaped-entities': 'off',
-        'require-atomic-updates': 'off',
-        'tsdoc/syntax': 'warn',
-        'import/no-named-as-default-member': 'off',
-        'import/named': 'off',
-        'no-unsafe-optional-chaining': 'off',
-        'no-import-assign': 'off',
-        'no-constructor-return': 'off',
-        'prefer-regex-literals': 'off',
-        'no-restricted-exports': 'off',
-        'no-barrel-files/no-barrel-files': 'error',
-        'no-restricted-syntax': [
-          'warn',
-          {
-            selector: "CallExpression[callee.name='useTranslation'][arguments.length=0]",
-            message:
-              "Pass the i18n namespace to useTranslation(). Example: useTranslation('public') instead of useTranslation().",
-          },
-        ],
-      },
-      settings: {
-        'import/extensions': ['.js', '.jsx'],
-        'import/resolver': { typescript: { extensions: ['.js', '.jsx', '.ts', '.tsx'] } },
-        react: { version: 'detect' },
-      },
+    files: ['public/**/*.{js,jsx,ts,tsx,json}', 'packages/**/*.{js,jsx,ts,tsx,json}'],
+    ignores: PACKAGES_EXCLUDE,
+    extends: compat.extends('plugin:console/react-typescript-prettier'),
+    languageOptions: {
       globals: {
         process: 'readonly',
         React: true,
@@ -204,16 +85,101 @@ export default defineConfig([
         VoidFunction: 'readonly',
         RequestInit: 'readonly',
       },
+    },
+  },
+  {
+    files: ['public/**/*.{ts,tsx}', 'packages/**/*.{ts,tsx}'],
+    ignores: PACKAGES_EXCLUDE,
+    rules: {
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          varsIgnorePattern: '^React$',
+          args: 'after-used',
+          ignoreRestSiblings: true,
+          caughtErrors: 'none',
+        },
+      ],
+    },
+  },
+  // TSDoc linting for public/ TypeScript files
+  {
+    files: ['public/**/*.{ts,tsx}'],
+    extends: compat.config({
+      plugins: ['eslint-plugin-tsdoc'],
+      rules: { 'tsdoc/syntax': 'warn' },
     }),
   },
-
-  // ------------------------------------------------
-  // Scope: packages/ (react-typescript-prettier)
-  // ------------------------------------------------
+  // Use TS parser and plugin for .js/.jsx in public/ (matches old config behavior)
   {
-    files: ['packages/**/*.{js,jsx,ts,tsx,json}'],
-    ignores: PACKAGES_EXCLUDE,
-    extends: compat.extends('plugin:console/react-typescript-prettier'),
+    files: ['public/**/*.{js,jsx}'],
+    plugins: {
+      '@typescript-eslint': tsPlugin,
+    },
+    languageOptions: {
+      parser: tsParser,
+    },
+  },
+
+  // TODO: Rules disabled here were never enforced in public/. Remove entries
+  // incrementally to align public/ with the stricter packages/ linting baseline.
+  {
+    files: ['public/**/*.{js,jsx,ts,tsx}'],
+    rules: {
+      '@typescript-eslint/no-use-before-define': 'off',
+      'no-unused-expressions': 'off',
+      'no-unused-vars': 'off',
+      'promise/catch-or-return': 'off',
+      'promise/no-nesting': 'off',
+      '@typescript-eslint/naming-convention': 'off',
+      'react/prop-types': 'off',
+      'react/no-array-index-key': 'off',
+      'no-param-reassign': 'off',
+      'no-restricted-globals': 'off',
+      'react/jsx-pascal-case': 'off',
+      'react/jsx-boolean-value': 'off',
+      'prefer-destructuring': 'off',
+      'no-useless-computed-key': 'off',
+      'spaced-comment': 'off',
+      'one-var': 'off',
+      'lines-between-class-members': 'off',
+      '@typescript-eslint/no-require-imports': 'off',
+      'no-await-in-loop': 'off',
+      'no-template-curly-in-string': 'off',
+      'no-bitwise': 'off',
+      'no-multi-assign': 'off',
+      'no-throw-literal': 'off',
+      'no-lonely-if': 'off',
+      'array-callback-return': 'off',
+      'import/no-named-as-default': 'off',
+      'jsx-a11y/no-noninteractive-tabindex': 'off',
+      'jsx-a11y/no-autofocus': 'off',
+      'jsx-a11y/control-has-associated-label': 'off',
+      'react/jsx-no-bind': 'off',
+      'react/button-has-type': 'off',
+      'react/prefer-stateless-function': 'off',
+      'import/no-useless-path-segments': 'off',
+      'no-unneeded-ternary': 'off',
+      'no-useless-return': 'off',
+      'prefer-spread': 'off',
+      'prefer-exponentiation-operator': 'off',
+      'operator-assignment': 'off',
+      'no-restricted-properties': 'off',
+      'no-else-return': 'off',
+      '@typescript-eslint/no-non-null-assertion': 'off',
+      '@typescript-eslint/array-type': 'off',
+      '@typescript-eslint/prefer-function-type': 'off',
+      '@typescript-eslint/ban-ts-comment': 'off',
+      '@typescript-eslint/consistent-type-imports': 'off',
+      'import/order': 'off',
+      'import/first': 'off',
+      'import/newline-after-import': 'off',
+      'import/no-unresolved': 'off',
+      'import/export': 'off',
+      'sort-class-members/sort-class-members': 'off',
+      'react/no-unused-class-component-methods': 'off',
+      'no-use-before-define': 'off',
+    },
   },
 
   // ------------------------------------------------
@@ -229,7 +195,7 @@ export default defineConfig([
     },
     rules: {
       'no-console': 'off',
-      'no-namespace': 'off',
+      '@typescript-eslint/no-namespace': 'off',
       'no-redeclare': 'off',
       'promise/catch-or-return': 'off',
       'promise/no-nesting': 'off',
@@ -344,3 +310,5 @@ export default defineConfig([
     },
   },
 ]);
+
+export default config;

@@ -1,4 +1,4 @@
-/* eslint-disable guard-for-in, default-case, no-case-declarations, tsdoc/syntax */
+/* eslint-disable guard-for-in, default-case, no-case-declarations */
 
 /**
  * Converted from Angular based  "kubernetes-label-selector"

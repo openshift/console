@@ -39,9 +39,61 @@ module.exports = {
         'plugin:console/testing-library-tests',
         'plugin:console/prettier',
       ],
+
       rules: {
         // TODO fix for monorepo support
         'import/no-extraneous-dependencies': 'off',
+
+        'consistent-return': 'off',
+        'consistent-this': ['warn', 'that'],
+        'max-nested-callbacks': ['warn', 4],
+        'no-alert': 'error',
+        'no-constant-condition': 'error',
+        'no-underscore-dangle': 'off',
+        'no-restricted-imports': [
+          'error',
+          {
+            paths: [
+              {
+                name: 'lodash-es',
+                message:
+                  'Use lodash instead. The bundler is configured to use lodash-es automatically.',
+              },
+              {
+                name: 'react',
+                importNames: ['default', '*'],
+                message: 'Use named imports instead.',
+              },
+              {
+                name: 'react',
+                importNames: ['act'],
+                message: "For consistency, import { act } from '@testing-library/react'",
+              },
+            ],
+            patterns: [
+              {
+                group: ['@patternfly/react-icons'],
+                importNamePattern: '^(?!Rh|createIcon)',
+                message:
+                  'Use RhMicron, RhUi, or RhStandard icon variants instead of Font Awesome icons.',
+              },
+            ],
+          },
+        ],
+        'object-shorthand': ['error', 'properties'],
+        'prefer-const': ['error', { destructuring: 'all' }],
+        'react/no-string-refs': 'warn',
+        'react/self-closing-comp': ['error', { component: true, html: false }],
+        'react-hooks/exhaustive-deps': 'warn',
+        'react/no-unescaped-entities': 'off',
+        'no-restricted-syntax': [
+          'warn',
+          {
+            selector: "CallExpression[callee.name='useTranslation'][arguments.length=0]",
+            message:
+              "Pass the i18n namespace to useTranslation(). Example: useTranslation('public') instead of useTranslation().",
+          },
+        ],
       },
     },
 
