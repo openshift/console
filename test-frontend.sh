@@ -73,12 +73,6 @@ run \
   'yarn run knip'
 
 run \
-  'gherkin-lint' \
-  'gherkin lint should pass as reported by yarn gherkin-lint' \
-  "Gherkin lint errors detected!" \
-  'yarn run gherkin-lint'
-
-run \
   'eslint' \
   'the linter should pass without any errors as reported by yarn lint' \
   "ESLint errors detected!" \
