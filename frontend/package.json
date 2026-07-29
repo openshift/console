@@ -19,7 +19,7 @@
     "build": "yarn clean && yarn build-plugin-sdk && NODE_ENV=production NODE_OPTIONS=--max-old-space-size=4096 yarn ts-node ./node_modules/.bin/rspack --mode=production",
     "check-cycles": "CHECK_CYCLES=true yarn dev-once",
     "coverage": "jest --coverage .",
-    "eslint": "node ./node_modules/.bin/eslint --max-warnings 0 --ext .js,.jsx,.ts,.tsx,.json --color",
+    "eslint": "node ./node_modules/.bin/eslint --max-warnings 0 --color",
     "lint": "NODE_OPTIONS=--max-old-space-size=4096 yarn eslint .",
     "gherkin-lint": "./node_modules/.bin/gherkin-lint -c ./packages/dev-console/integration-tests/.gherkin-lintrc ./packages/*/integration-tests/features",
     "test": "LANG=en_US.UTF-8 jest",

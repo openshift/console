@@ -1,4 +1,3 @@
-/* eslint-disable tsdoc/syntax */ // This file is written in JavaScript, so we use JSDoc here. TSDoc rules don't apply
 // @ts-check
 const { getLocalPluginsModuleData } = require('@console/plugin-sdk/src/codegen/local-plugins');
 

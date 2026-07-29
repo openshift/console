@@ -1,5 +1,5 @@
 module.exports = {
-  extends: ['plugin:json/recommended'],
+  extends: ['plugin:json/recommended-legacy'],
 
   plugins: ['json'],
 
