@@ -27,7 +27,7 @@ const createHelmChartRepositoryValidationSchema = (t: TFunction) =>
       .matches(urlRegex, {
         message: t('helm-plugin~Invalid Repo URL.'),
       })
-      .max(2048, t('helm-plugin~Please enter a URL that is less then 2048 characters.'))
+      .max(2048, t('helm-plugin~Enter a URL that is less than 2048 characters.'))
       .required(t('helm-plugin~Required'))
       .test(
         'https-with-basic-auth',
