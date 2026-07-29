@@ -8,7 +8,7 @@ Before generating or modifying code, always consult the relevant file(s) to ensu
 
 - **Monorepo:** `frontend/` (React + TypeScript, yarn workspaces), `pkg/` - Go backend code, `cmd/` - Go CLI commands
 - **Key packages:** `@console/dynamic-plugin-sdk` (public API), `@console/shared` (utils), `@console/internal` (`public` folder - core UI/k8s)
-- **Testing:** Jest (unit), Cypress (E2E), Go tests (backend). Read [TESTING.md](TESTING.md) for patterns and best practices. Use the `gen-rtl-test` skill for React Testing Library test generation.
+- **Testing:** Jest (unit), Playwright (E2E), Go tests (backend). Read [TESTING.md](TESTING.md) for patterns and best practices. Use the `gen-rtl-test` skill for React Testing Library test generation.
 
 ## Static plugins
 
@@ -131,6 +131,6 @@ These files are the single source of truth for architecture, coding standards, a
 - [Extension Types Reference](frontend/packages/console-dynamic-plugin-sdk/docs/console-extensions.md) - complete extension type definitions, naming conventions (`console.*`), and deprecation notices.
 - [Console API Documentation](frontend/packages/console-dynamic-plugin-sdk/docs/api.md) - React components, hooks, utilities, and TypeScript types exported by the SDK.
 
-## Playwright migration
+## Playwright E2E tests
 
-We are migrating Cypress e2e tests to Playwright. Use `/migrate-cypress` to convert test files and `/debug-test` to fix failing tests. Shared migration context (translation tables, structural rules, checklist) is in `.claude/migration-context.md`.
+E2E tests use Playwright. Tests live under `frontend/e2e/tests/` and are configured via `frontend/playwright.config.ts`. Use `/debug-test` to fix failing tests.

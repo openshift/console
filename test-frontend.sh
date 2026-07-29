@@ -39,8 +39,6 @@ fi
 
 yarn run knip
 
-yarn run gherkin-lint
-
 yarn run lint
 
 if [ "$OPENSHIFT_CI" = true ]; then
