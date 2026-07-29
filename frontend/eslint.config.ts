@@ -200,14 +200,7 @@ const config = defineConfig([
       'promise/catch-or-return': 'off',
       'promise/no-nesting': 'off',
       'cypress/unsafe-to-chain-command': 'off',
-    },
-  },
-  {
-    files: [
-      'packages/dev-console/integration-tests/**/*.{js,jsx,ts,tsx}',
-      'packages/helm-plugin/integration-tests/**/*.{js,jsx,ts,tsx}',
-    ],
-    rules: {
+      'max-nested-callbacks': 'off',
       '@typescript-eslint/ban-ts-comment': 'off',
       'cypress/no-unnecessary-waiting': 'off',
     },
