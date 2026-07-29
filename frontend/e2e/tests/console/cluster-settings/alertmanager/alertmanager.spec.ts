@@ -53,14 +53,13 @@ test.describe('Alertmanager', { tag: ['@admin'] }, () => {
 
     await page.getByTestId('edit-alert-routing-btn').click();
 
-    // Edit routing values (using legacy test IDs)
-    await page.locator('[data-test-id="input-group-by"]').fill(', cluster');
-    await page.locator('[data-test-id="input-group-wait"]').clear();
-    await page.locator('[data-test-id="input-group-wait"]').fill('60s');
-    await page.locator('[data-test-id="input-group-interval"]').clear();
-    await page.locator('[data-test-id="input-group-interval"]').fill('10m');
-    await page.locator('[data-test-id="input-repeat-interval"]').clear();
-    await page.locator('[data-test-id="input-repeat-interval"]').fill('24h');
+    await page.getByTestId('input-group-by').fill(', cluster');
+    await page.getByTestId('input-group-wait').clear();
+    await page.getByTestId('input-group-wait').fill('60s');
+    await page.getByTestId('input-group-interval').clear();
+    await page.getByTestId('input-group-interval').fill('10m');
+    await page.getByTestId('input-repeat-interval').clear();
+    await page.getByTestId('input-repeat-interval').fill('24h');
 
     await page.getByTestId('confirm-action').click();
 

@@ -38,7 +38,7 @@ const DetailsCard: FC = () => {
   const nodeGroups = useMemo(() => getNodeGroups(obj).sort().join(', ') || DASH, [obj]);
 
   return (
-    <Card data-test-id="details-card">
+    <Card data-test="details-card" data-test-id="details-card">
       <CardHeader
         actions={{
           actions: (

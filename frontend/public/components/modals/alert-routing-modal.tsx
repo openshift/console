@@ -79,6 +79,7 @@ const AlertRoutingModal: FC<AlertRoutingModalProps> = ({ config, secret, cancel,
               defaultValue={_.get(config, ['route', 'group_by'], []).join(', ')}
               placeholder="cluster, alertname"
               aria-describedby="input-group-by-help"
+              data-test="input-group-by"
               data-test-id="input-group-by"
             />
           </FormGroup>
@@ -90,6 +91,7 @@ const AlertRoutingModal: FC<AlertRoutingModalProps> = ({ config, secret, cancel,
               defaultValue={_.get(config, ['route', 'group_wait'], '')}
               placeholder="30s"
               aria-describedby="input-group-wait-help"
+              data-test="input-group-wait"
               data-test-id="input-group-wait"
             />
           </FormGroup>
@@ -101,6 +103,7 @@ const AlertRoutingModal: FC<AlertRoutingModalProps> = ({ config, secret, cancel,
               defaultValue={_.get(config, ['route', 'group_interval'], '')}
               placeholder="5m"
               aria-describedby="input-group-interval-help"
+              data-test="input-group-interval"
               data-test-id="input-group-interval"
             />
           </FormGroup>
@@ -112,6 +115,7 @@ const AlertRoutingModal: FC<AlertRoutingModalProps> = ({ config, secret, cancel,
               defaultValue={_.get(config, ['route', 'repeat_interval'], '')}
               placeholder="3h"
               aria-describedby="input-repeat-interval-help"
+              data-test="input-repeat-interval"
               data-test-id="input-repeat-interval"
             />
           </FormGroup>

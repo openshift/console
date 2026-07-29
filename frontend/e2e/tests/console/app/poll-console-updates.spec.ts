@@ -65,7 +65,7 @@ async function navigateAndWaitForInit(page: Page) {
 
   try {
     await page.goto('/');
-    await expect(page.locator('[data-test-id="dashboard"]').first()).toBeVisible({
+    await expect(page.getByTestId('dashboard').first()).toBeVisible({
       timeout: 60_000,
     });
     await initPromise;

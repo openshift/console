@@ -82,6 +82,7 @@ export const DetailsItem: FC<DetailsItemProps> = ({
   return hide ? null : (
     <DescriptionListGroup>
       <DescriptionListTermHelpText
+        data-test={`details-item-label__${label}`}
         data-test-selector={`details-item-label__${label}`}
         className={labelClassName}
       >
