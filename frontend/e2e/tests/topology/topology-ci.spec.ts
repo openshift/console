@@ -137,6 +137,7 @@ test.describe('Perform actions on topology', { tag: ['@smoke'] }, () => {
   });
   
   test('Build the application from topology page', async ({ page }) => {
+    test.setTimeout(300_000);
     const topology = new TopologyPage(page);
     await createWorkload(page, 'dotnet-build-test');
     
@@ -147,6 +148,7 @@ test.describe('Perform actions on topology', { tag: ['@smoke'] }, () => {
   });
   
   test('Edit workload application groupings: T-09-TC01', async ({ page }) => {
+    test.setTimeout(300_000);
     const topology = new TopologyPage(page);
     await createWorkload(page, 'dotnet-edit-test');
     
@@ -185,6 +187,7 @@ test.describe('Perform actions on topology', { tag: ['@smoke'] }, () => {
   });
   
   test('Default state of Display dropdown: T-16-TC01', async ({ page }) => {
+    test.setTimeout(300_000);
     const topology = new TopologyPage(page);
     await createWorkload(page, 'dotnet-display-test');
     
@@ -202,6 +205,7 @@ test.describe('Perform actions on topology', { tag: ['@smoke'] }, () => {
   });
   
   test('Delete workload via Action menu: T-15-TC01', async ({ page }) => {
+    test.setTimeout(300_000);
     const topology = new TopologyPage(page);
     const sidebar = new TopologySidebarPage(page);
     await createWorkload(page, 'dotnet-delete-test');

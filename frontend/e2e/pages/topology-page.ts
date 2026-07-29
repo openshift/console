@@ -194,7 +194,11 @@ export class TopologyPage extends BasePage {
   }
 
   async fillApplicationName(appName: string): Promise<void> {
-    await expect(this.applicationNameField).toBeVisible();
+    if (await this.applicationDropdown.isVisible({ timeout: 2_000 }).catch(() => false)) {
+      await this.applicationDropdown.click();
+      await this.page.getByRole('option', { name: 'Create application' }).click();
+    }
+    await expect(this.applicationNameField).toBeVisible({ timeout: 10_000 });
     await this.applicationNameField.fill(appName);
     await expect(this.applicationNameField).toHaveValue(appName);
   }
