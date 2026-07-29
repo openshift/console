@@ -14,7 +14,7 @@ Feature: Add repositories tab in Helm navigation item
              When user clicks on the Helm tab in dev perspective
              Then user is able to see Helm releases and Repositories Tabs
               And user is able to see the message "No Helm releases found"
-              And user is able to see the link "Browse the catalog to discover available Helm Chart(s)"
+              And user is able to see the link "Browse the catalog to discover available Helm Charts"
               And user is able to see the Create drop down menu with Helm release and Repository options
 
 
