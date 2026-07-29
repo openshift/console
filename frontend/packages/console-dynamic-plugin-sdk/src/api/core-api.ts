@@ -63,7 +63,9 @@ export * from './utils';
  * The hook's result is guaranteed to be referentially stable across re-renders, assuming referential
  * stability of the `predicate` parameter.
  *
- * @param predicate Predicate (type guard) to filter extensions of a specific type.
+ * @param predicates Predicates (type guards) to filter extensions of a specific type. Using more than
+ * one predicate is not recommended due to added complexity when handling unions of distinct extension
+ * objects.
  * @returns Tuple `[resolvedExtensions, resolved, errors]` containing a list of matching extensions,
  * a boolean flag indicating whether the resolution is complete, and a list of errors detected during
  * the resolution.

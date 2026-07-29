@@ -3167,7 +3167,8 @@ const Example = () => {
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `predicate` | Predicate (type guard) to filter extensions of a specific type. |
+| `predicates` | Predicates (type guards) to filter extensions of a specific type. Using more thanone predicate is not recommended due to added complexity when handling unions of distinct extension
+objects. |
 
 
 
