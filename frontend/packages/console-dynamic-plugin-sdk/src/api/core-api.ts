@@ -676,6 +676,7 @@ export const CodeEditor: ForwardRefExoticComponent<
  * @param {ResourceYAMLEditorProps['initialResource']} initialResource - YAML/Object representing a resource to be shown by the editor. This prop is used only during the inital render.
  * @param {ResourceYAMLEditorProps['header']} header - Add a header on top of the YAML editor.
  * @param {ResourceYAMLEditorProps['onSave']} onSave - Callback for the Save button. Passing it will override the default update performed on the resource by the editor.
+ * @param {ResourceYAMLEditorProps['onCancel']} onCancel - Callback function to be called on cancel. Passing it will override the default behavior of the cancel button.
  * @param {ResourceYAMLEditorProps['readOnly']} readOnly - Sets the YAML editor to read-only mode.
  * @param {ResourceYAMLEditorProps['create']} create - Editor will be on creation mode. Create button will replace the Save and Cancel buttons. If no onSave method defined, the 'Create' button will trigger the creation of the defined resource. Default: false
  * @param {ResourceYAMLEditorProps['onChange']} onChange - Callback triggered at any editor change.

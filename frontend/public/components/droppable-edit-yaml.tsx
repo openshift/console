@@ -162,6 +162,7 @@ export const ResourceYAMLEditor: FC<ResourceYAMLEditorProps> = ({
   initialResource,
   header,
   onSave,
+  onCancel,
   readOnly,
   create,
   onChange,
@@ -171,6 +172,7 @@ export const ResourceYAMLEditor: FC<ResourceYAMLEditorProps> = ({
     initialResource={initialResource}
     header={header}
     onSave={onSave}
+    onCancel={onCancel}
     readOnly={readOnly}
     create={create}
     onChange={onChange}
