@@ -194,7 +194,9 @@ export class TopologyPage extends BasePage {
   }
 
   async fillApplicationName(appName: string): Promise<void> {
-    if (await this.applicationDropdown.isVisible({ timeout: 2_000 }).catch(() => false)) {
+    // eslint-disable-next-line no-restricted-syntax
+    const hasDropdown = await this.applicationDropdown.waitFor({ state: 'visible', timeout: 2_000 }).then(() => true).catch(() => false);
+    if (hasDropdown) {
       await this.applicationDropdown.click();
       await this.page.getByRole('option', { name: 'Create application' }).click();
     }
