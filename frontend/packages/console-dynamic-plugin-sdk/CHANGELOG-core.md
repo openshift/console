@@ -12,6 +12,7 @@ table in [Console dynamic plugins README](./README.md).
 
 ## 4.23.0-prerelease.5 - TBD
 
+- **Deprecated**: The use of multiple predicates in the `useResolvedExtensions` hook is deprecated ([#16115], [CONSOLE-5065])
 - **Type breaking**: Replace `ExtensionTypeGuard` with `ExtensionPredicate` from `@openshift/dynamic-plugin-sdk` ([#16115], [CONSOLE-5065])
 
 ## 4.23.0-prerelease.4 - 2026-07-14
