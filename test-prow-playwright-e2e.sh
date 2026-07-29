@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 #
 # Prow / CI entrypoint for Playwright E2E against a live OpenShift cluster console.
-# Mirrors test-prow-e2e.sh: kubeadmin password, BRIDGE_BASE_ADDRESS from the cluster,
-# contrib/create-user.sh, then tests under frontend/, and the same CSP check as Cypress Prow.
+# Sets up kubeadmin password, BRIDGE_BASE_ADDRESS from the cluster,
+# contrib/create-user.sh, then tests under frontend/, and the CSP check.
 #
-# Run from the openshift/console repository root (same as test-prow-e2e.sh).
+# Run from the openshift/console repository root.
 #
 # Usage:
 #   ./test-prow-playwright-e2e.sh [e2e|release|smoke] [arguments passed to: playwright test ...]
@@ -14,7 +14,7 @@
 #   smoke         — Playwright smoke project (--project=smoke)
 #
 # Environment (typical Prow / installer):
-#   ARTIFACT_DIR, INSTALLER_DIR, KUBEADMIN_PASSWORD_FILE   same as test-prow-e2e.sh
+#   ARTIFACT_DIR, INSTALLER_DIR, KUBEADMIN_PASSWORD_FILE
 #
 
 set -exuo pipefail
