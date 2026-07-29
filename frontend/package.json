@@ -7,9 +7,7 @@
   "private": true,
   "workspaces": [
     "packages/*",
-    "packages/*/integration-tests",
-    "public",
-    "integration-tests"
+    "public"
   ],
   "scripts": {
     "postinstall": "yarn ts-node ./scripts/check-patternfly-modules.ts && yarn prepare-husky",
@@ -19,6 +17,7 @@
     "build": "yarn clean && yarn generate && NODE_ENV=production NODE_OPTIONS=--max-old-space-size=4096 yarn ts-node ./node_modules/.bin/rspack --mode=production",
     "check-cycles": "CHECK_CYCLES=true yarn dev-once",
     "coverage": "jest --coverage .",
+<<<<<<< HEAD
     "eslint": "node ./node_modules/.bin/eslint --max-warnings ${MAX_WARNINGS:-0} --color",
     "lint": "NODE_OPTIONS=--max-old-space-size=4096 MAX_WARNINGS=338 yarn eslint --format ./scripts/eslint-exact-warnings.js .",
     "gherkin-lint": "./node_modules/.bin/gherkin-lint -c ./packages/dev-console/integration-tests/.gherkin-lintrc ./packages/*/integration-tests/features",
@@ -32,6 +31,12 @@
     "test-cypress-helm": "cd packages/helm-plugin/integration-tests && yarn run test-cypress",
     "test-cypress-helm-headless": "cd packages/helm-plugin/integration-tests && yarn run test-cypress-headless",
     "test-cypress-helm-nightly": "cd packages/helm-plugin/integration-tests && yarn run test-cypress-headless-all",
+=======
+    "eslint": "node ./node_modules/.bin/eslint --max-warnings 0 --color",
+    "lint": "NODE_OPTIONS=--max-old-space-size=4096 yarn eslint .",
+    "test": "LANG=en_US.UTF-8 jest",
+    "debug-test": "node --inspect-brk node_modules/.bin/jest --runInBand",
+>>>>>>> a1d263a4f7 (CONSOLE-5232: Remove all Cypress references from the codebase)
     "test-playwright": "playwright test",
     "test-playwright-headed": "playwright test --headed",
     "test-playwright-debug": "playwright test --debug",
@@ -39,9 +44,12 @@
     "test-playwright-admin": "playwright test --project=smoke --project=console --project=dev-console --project=helm --project=knative --project=olm --project=topology --project=webterminal",
     "test-playwright-developer": "playwright test --project=dev-console-developer --project=topology-developer --project=smoke-developer",
     "test-puppeteer-csp": "yarn ts-node ./test-puppeteer-csp.ts",
+<<<<<<< HEAD
     "cypress-merge": "mochawesome-merge ./gui_test_screenshots/cypress_report*.json > ./gui_test_screenshots/cypress.json",
     "cypress-generate": "marge -o ./gui_test_screenshots/ -f cypress-report -t 'OpenShift Console Cypress Test Results' -p 'OpenShift Cypress Test Results' --showPassed false --assetsDir ./gui_test_screenshots/cypress/assets ./gui_test_screenshots/cypress.json",
     "cypress-postreport": "yarn cypress-merge && yarn cypress-generate",
+=======
+>>>>>>> a1d263a4f7 (CONSOLE-5232: Remove all Cypress references from the codebase)
     "analyze": "ANALYZE_BUNDLE=true NODE_ENV=production NODE_OPTIONS=--max-old-space-size=8192 yarn ts-node ./node_modules/.bin/rspack --mode=production",
     "knip": "knip --config scripts/knip.ts",
     "prettier-all": "prettier --write '**/*.{js,jsx,ts,tsx,json}'",
@@ -60,9 +68,15 @@
   "dependencies": {
     "@monaco-editor/react": "^4.7.0",
     "@openshift/api-types": "^1.0.0",
+<<<<<<< HEAD
     "@openshift/dynamic-plugin-sdk": "^9.1.0",
     "@openshift/dynamic-plugin-sdk-webpack": "^5.3.0",
     "@patternfly/patternfly": "~6.6.1",
+=======
+    "@openshift/dynamic-plugin-sdk": "^8.2.0",
+    "@openshift/dynamic-plugin-sdk-webpack": "^5.2.0",
+    "@patternfly/patternfly": "~6.6.0",
+>>>>>>> a1d263a4f7 (CONSOLE-5232: Remove all Cypress references from the codebase)
     "@patternfly/quickstarts": "~6.6.0",
     "@patternfly/react-catalog-view-extension": "~6.5.0",
     "@patternfly/react-charts": "~8.6.1",
@@ -90,7 +104,6 @@
     "file-saver": "^2.0.5",
     "formik": "^2.1.5",
     "fuzzysearch": "^1.0.3",
-    "gherkin-lint": "^4.2.4",
     "git-url-parse": "^11.4.0",
     "i18next": "^25.8.18",
     "i18next-browser-languagedetector": "^8.2.1",
@@ -137,7 +150,6 @@
   "devDependencies": {
     "@axe-core/playwright": "^4.11.3",
     "@babel/core": "^7.29.7",
-    "@cypress/webpack-preprocessor": "^7.0.2",
     "@kubernetes/client-node": "^1.4.0",
     "@playwright/test": "^1.59.1",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.6.2",
@@ -168,11 +180,6 @@
     "chalk": "2.4.x",
     "comment-json": "4.x",
     "css-loader": "^5.2.7",
-    "cypress": "^15.13.0",
-    "cypress-axe": "^1.7.0",
-    "cypress-cucumber-preprocessor": "^4.3.1",
-    "cypress-jest-adapter": "^0.1.1",
-    "cypress-multi-reporters": "^2.0.5",
     "dotenv": "^17.4.2",
     "esbuild-loader": "^4.5.0",
     "find-up": "4.x",
@@ -189,10 +196,6 @@
     "knip": "^6.32.2",
     "lint-staged": "^10.2.2",
     "minimist": "^1.2.8",
-    "mocha-junit-reporter": "^1.23.3",
-    "mochawesome": "^6.1.1",
-    "mochawesome-merge": "^4.1.0",
-    "mochawesome-report-generator": "^5.1.0",
     "monaco-editor-webpack-plugin": "^7.1.1",
     "node-fetch": "^2.3.0",
     "node-polyfill-webpack-plugin": "~4.0.0",
@@ -223,11 +226,6 @@
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,json}": "eslint --color --fix"
-  },
-  "dependenciesMeta": {
-    "cypress": {
-      "built": true
-    }
   },
   "packageManager": "yarn@4.14.1"
 }
