@@ -141,7 +141,7 @@ const HelmURLChartForm: FC<FormikProps<HelmURLChartFormData> & HelmURLChartFormP
                 resources={secretResources}
                 dataSelector={['metadata', 'name']}
                 fullWidth
-                placeholder={t('Select a secret')}
+                placeholder={t('Select Secret')}
                 showBadge
                 autocompleteFilter={autocompleteFilter}
                 actionItems={[

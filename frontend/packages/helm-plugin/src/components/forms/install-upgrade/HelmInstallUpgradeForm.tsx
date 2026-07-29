@@ -203,7 +203,7 @@ const HelmInstallUpgradeForm: FC<
                   dataSelector={['metadata', 'name']}
                   fullWidth
                   placeholder={
-                    helmAction === HelmActionType.Upgrade ? t('None') : t('Select a secret')
+                    helmAction === HelmActionType.Upgrade ? t('None') : t('Select Secret')
                   }
                   showBadge
                   autocompleteFilter={autocompleteFilter}
@@ -229,7 +229,7 @@ const HelmInstallUpgradeForm: FC<
                     isInline
                     isPlain
                     title={t(
-                      'Secret "{{secretName}}" was not found in this namespace. Select an existing secret or create a new one.',
+                      'Secret "{{secretName}}" was not found in this namespace. Select an existing Secret or create one.',
                       { secretName: values.basicAuthSecretName },
                     )}
                   />
