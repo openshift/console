@@ -228,10 +228,10 @@ export const getHelmActionConfig = (
         title: t('helm-plugin~Create Helm release'),
         subTitle: {
           form: t(
-            'helm-plugin~The Helm release can be created by completing the form. Default values may be provided by the Helm Chart authors.',
+            'helm-plugin~You can create a Helm release by completing the form. The Helm Chart authors might have provided default values.',
           ),
           yaml: t(
-            'helm-plugin~The Helm release can be created by manually entering YAML or JSON definitions.',
+            'helm-plugin~You can create a Helm release by manually entering YAML or JSON definitions.',
           ),
         },
         helmReleaseApi: `/api/helm/chart?url=${encodeURIComponent(

@@ -90,7 +90,7 @@ export const normalizeHelmCharts = (
 
         const detailsProperties: CatalogItemDetailsProperty[] = [
           {
-            label: t('helm-plugin~Latest Chart version'),
+            label: t('helm-plugin~Latest chart version'),
             value: version,
           },
           {

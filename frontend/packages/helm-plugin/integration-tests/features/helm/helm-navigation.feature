@@ -1,6 +1,6 @@
 @helm
 Feature: Navigations on Helm Chart
-              As a user, I want to navigate to different pages related to Helm Chart(s)
+              As a user, I want to navigate to different pages related to Helm Charts
 
         Background:
             Given user has created or selected namespace "aut-helm"
@@ -55,7 +55,7 @@ Feature: Navigations on Helm Chart
 
 
         @regression
-        Scenario: Filter out deployed Helm Chart(s): HR-05-TC06
+        Scenario: Filter out deployed Helm Charts: HR-05-TC06
             Given user is at the Helm page
              When user clicks on the filter drop down
               And user selects checkbox for the "Deployed" Helm Charts
@@ -64,7 +64,7 @@ Feature: Navigations on Helm Chart
 
 
         @regression @manual
-        Scenario: Filter out failed Helm Chart(s): HR-05-TC07
+        Scenario: Filter out failed Helm Charts: HR-05-TC07
             Given user is at the Helm page
              When user clicks on the filter drop down
               And user selects checkbox for the "Failed" Helm Charts

@@ -260,7 +260,7 @@ const HelmReleaseList: FC<{ mock?: boolean }> = ({ mock }) => {
           {isHelmEnabled ? (
             <EmptyStateActions>
               <Link to={installURL}>
-                {t('Browse the catalog to discover available Helm Chart(s)')}
+                {t('Browse the catalog to discover available Helm Charts')}
               </Link>
             </EmptyStateActions>
           ) : null}
