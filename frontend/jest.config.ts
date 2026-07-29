@@ -40,12 +40,10 @@ export default defineConfig({
   testPathIgnorePatterns: [
     '<rootDir>/node_modules/',
     '<rootDir>/public/dist',
-    '<rootDir>/.*/integration-tests',
     '<rootDir>/e2e',
   ],
   modulePathIgnorePatterns: [
     '<rootDir>/public/dist',
-    '<rootDir>/.*/integration-tests',
     '<rootDir>/e2e',
   ],
   testRegex: '.*\\.spec\\.(ts|tsx|js|jsx)$',
