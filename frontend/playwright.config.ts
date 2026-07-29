@@ -29,6 +29,13 @@ const packages = [
 // Packages that also have developer-persona tests
 const devPackages = ['smoke', 'dev-console', 'topology', 'webterminal'];
 
+const setupDir = path.resolve(__dirname, 'e2e', 'setup');
+const chromeAuth = {
+  ...devices['Desktop Chrome'],
+  userAgent: INTEGRATION_TEST_USER_AGENT,
+  ignoreHTTPSErrors: true,
+};
+
 const chromeArgs = [
   '--ignore-certificate-errors',
   '--window-size=1920,1080',
@@ -127,16 +134,31 @@ export default defineConfig({
       testMatch: 'teardown.setup.ts',
     },
 
-    ...packages.map((pkg) => ({
-      name: pkg,
-      testDir: path.resolve(__dirname, 'e2e', 'tests', pkg),
-      testIgnore: '**/developer/**',
-      dependencies: ['admin-auth'],
-      use: {
-        ...chrome,
-        storageState: adminStorageState,
-      },
-    })),
+    ...packages.flatMap((pkg, i) => {
+      const prevDep = i === 0 ? 'admin-auth' : packages[i - 1];
+      const refreshProject =
+        i > 0
+          ? [
+              {
+                name: `admin-auth-refresh-${i}`,
+                testDir: setupDir,
+                testMatch: 'admin-auth.setup.ts',
+                dependencies: [prevDep],
+                use: { ...chromeAuth, launchOptions: { args: chromeArgs } },
+              },
+            ]
+          : [];
+      return [
+        ...refreshProject,
+        {
+          name: pkg,
+          testDir: path.resolve(__dirname, 'e2e', 'tests', pkg),
+          testIgnore: '**/developer/**',
+          dependencies: [i > 0 ? `admin-auth-refresh-${i}` : 'admin-auth'],
+          use: { ...chrome, storageState: adminStorageState },
+        },
+      ];
+    }),
     ...(hasDeveloper
       ? devPackages.map((pkg) => ({
           name: `${pkg}-developer`,
