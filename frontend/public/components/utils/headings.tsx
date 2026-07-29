@@ -196,7 +196,12 @@ export const SectionHeading: FC<SectionHeadingProps> = ({
   required,
   id,
 }) => (
-  <SecondaryHeading style={style} data-test-section-heading={text} id={id}>
+  <SecondaryHeading
+    style={style}
+    data-test={`section-heading-${text}`}
+    data-test-section-heading={text}
+    id={id}
+  >
     <span
       className={css({
         'co-required': required,

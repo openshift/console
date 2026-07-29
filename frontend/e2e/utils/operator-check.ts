@@ -1,4 +1,4 @@
-import KubernetesClient from '../clients/kubernetes-client';
+import type KubernetesClient from '../clients/kubernetes-client';
 
 const SUBSCRIPTION_GROUP = 'operators.coreos.com';
 const SUBSCRIPTION_VERSION = 'v1alpha1';
