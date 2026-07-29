@@ -87,6 +87,9 @@ test.describe('PollConsoleUpdates', { tag: ['@admin'] }, () => {
     await navigateAndWaitForInit(page);
 
     updates.setHandler((route) => route.fulfill({ json: UPDATES_NEW_COMMIT }));
+    await page.waitForResponse((resp) => resp.url().includes('/api/check-updates'), {
+      timeout: 30_000,
+    });
 
     await expect(page.getByTestId('refresh-web-console')).toBeVisible({ timeout: 60_000 });
   });
@@ -102,6 +105,9 @@ test.describe('PollConsoleUpdates', { tag: ['@admin'] }, () => {
     await navigateAndWaitForInit(page);
 
     updates.setHandler((route) => route.fulfill({ json: UPDATES_NEW_PLUGIN }));
+    await page.waitForResponse((resp) => resp.url().includes('/api/check-updates'), {
+      timeout: 30_000,
+    });
 
     await expect(page.getByTestId('refresh-web-console')).not.toBeAttached({
       timeout: 30_000,
