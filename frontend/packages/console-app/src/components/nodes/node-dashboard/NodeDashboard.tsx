@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useMemo, useReducer, useCallback, useEffect } from 'react';
 import * as _ from 'lodash';
-import { FLAG_NODE_MGMT_V1 } from '@console/app/src/consts';
+import { FLAG_OPENSHIFT_5 } from '@console/app/src/consts';
 import { useFlag } from '@console/dynamic-plugin-sdk/src/utils/flags';
 import type { NodeKind } from '@console/internal/module/k8s';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
@@ -77,7 +77,7 @@ const reducer = (state: NodeDashboardState, action: NodeDashboardAction) => {
 };
 
 const NodeDashboard: FC<NodeDashboardProps> = ({ obj }) => {
-  const nodeMgmtV1Enabled = useFlag(FLAG_NODE_MGMT_V1);
+  const isOpenShift5 = useFlag(FLAG_OPENSHIFT_5);
   const [state, dispatch] = useReducer(reducer, initialState(obj));
 
   useEffect(() => {
@@ -124,7 +124,7 @@ const NodeDashboard: FC<NodeDashboardProps> = ({ obj }) => {
         <DashboardGrid
           mainCards={mainCards}
           leftCards={leftCards}
-          rightCards={nodeMgmtV1Enabled ? undefined : rightCards}
+          rightCards={isOpenShift5 ? undefined : rightCards}
         />
       </Dashboard>
     </NodeDashboardContext.Provider>

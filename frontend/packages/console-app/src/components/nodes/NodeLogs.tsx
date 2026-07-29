@@ -19,7 +19,7 @@ import {
 import { LogViewer, LogViewerSearch } from '@patternfly/react-log-viewer';
 import { css } from '@patternfly/react-styles';
 import { Trans, useTranslation } from 'react-i18next';
-import { FLAG_NODE_MGMT_V1 } from '@console/app/src/consts';
+import { FLAG_OPENSHIFT_5 } from '@console/app/src/consts';
 import { useFlag } from '@console/dynamic-plugin-sdk/src/utils/flags';
 import { useTheme } from '@console/internal/components/ThemeProvider';
 import { SectionHeading } from '@console/internal/components/utils';
@@ -179,7 +179,7 @@ const HeaderBanner: FC<{ lineCount: number }> = ({ lineCount }) => {
 
 const NodeLogs: FC<NodeLogsProps> = ({ obj: node }) => {
   const { getQueryArgument, setQueryArgument, removeQueryArgument } = useQueryParamsMutator();
-  const nodeMgmtV1Enabled = useFlag(FLAG_NODE_MGMT_V1);
+  const isOpenShift5 = useFlag(FLAG_OPENSHIFT_5);
 
   const {
     kind,
@@ -373,7 +373,7 @@ const NodeLogs: FC<NodeLogsProps> = ({ obj: node }) => {
 
   return (
     <PaneBody fullHeight>
-      {nodeMgmtV1Enabled ? <SectionHeading text={t('Logs')} /> : null}
+      {isOpenShift5 ? <SectionHeading text={t('Logs')} /> : null}
       <div className="log-window-wrapper">
         {(isLoadingLog || errorExists) && logControls}
         {(lineCount >= MAX_LINE_COUNT || trimmedContent?.length > 0) && !isLoadingLog && (

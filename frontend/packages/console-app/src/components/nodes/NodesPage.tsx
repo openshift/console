@@ -23,7 +23,7 @@ import type {
 } from '@console/app/src/components/data-view/types';
 import { useDataViewSelection } from '@console/app/src/components/data-view/useDataViewSelection';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import { FLAG_NODE_MGMT_V1 } from '@console/app/src/consts';
+import { FLAG_OPENSHIFT_5 } from '@console/app/src/consts';
 import type { K8sModel } from '@console/dynamic-plugin-sdk/src/api/core-api';
 import {
   getGroupVersionKindForResource,
@@ -176,7 +176,7 @@ const kind = 'Node';
 
 const useNodesColumns = (
   vmsEnabled: boolean,
-  nodeMgmtV1Enabled: boolean,
+  isOpenShift5: boolean,
 ): { columns: TableColumn<NodeRowItem>[]; resetAllColumnWidths: () => void } => {
   const { t } = useTranslation('console-app');
   const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(NodeModel);
@@ -204,7 +204,7 @@ const useNodesColumns = (
           modifier: 'nowrap',
         },
       },
-      ...(nodeMgmtV1Enabled
+      ...(isOpenShift5
         ? [
             {
               title: t('Groups'),
@@ -385,7 +385,7 @@ const useNodesColumns = (
         },
       },
     ];
-  }, [t, getResizableProps, nodeMgmtV1Enabled, vmsEnabled, isAdmin, getWidth]);
+  }, [t, getResizableProps, isOpenShift5, vmsEnabled, isAdmin, getWidth]);
 
   return { columns, resetAllColumnWidths };
 };
@@ -679,7 +679,7 @@ type NodeListProps = {
   hideLabelFilter?: boolean;
   hideColumnManagement?: boolean;
   selectedColumns?: TableColumnsType;
-  nodeMgmtV1Enabled?: boolean;
+  isOpenShift5?: boolean;
 };
 
 const NodeList: FC<NodeListProps> = ({
@@ -694,10 +694,10 @@ const NodeList: FC<NodeListProps> = ({
   hideLabelFilter,
   hideColumnManagement,
   selectedColumns,
-  nodeMgmtV1Enabled = false,
+  isOpenShift5 = false,
 }) => {
   const { t } = useTranslation('console-app');
-  const { columns, resetAllColumnWidths } = useNodesColumns(vmsEnabled, nodeMgmtV1Enabled);
+  const { columns, resetAllColumnWidths } = useNodesColumns(vmsEnabled, isOpenShift5);
   const nodeMetrics = useConsoleSelector<NodeMetrics>(({ UI }) => UI.getIn(['metrics', 'node']));
   const columnManagementID = referenceForModel(NodeModel);
   const statusExtensions = useNodeStatusExtensions();
@@ -864,7 +864,7 @@ const NodeList: FC<NodeListProps> = ({
         placeholder={t('Filter by roles')}
         options={nodeRoleFilterOptions}
       />,
-      ...(nodeMgmtV1Enabled
+      ...(isOpenShift5
         ? [
             <DataViewCheckboxFilter
               key="groups"
@@ -905,7 +905,7 @@ const NodeList: FC<NodeListProps> = ({
       nodeArchitectureFilterOptions,
       machineSetFilterOptions,
       machineConfigPoolFilterOptions,
-      nodeMgmtV1Enabled,
+      isOpenShift5,
     ],
   );
 
@@ -1042,7 +1042,7 @@ const useWatchResourcesIfAllowed = <R extends K8sResourceCommon[]>(
 export const NodesPage: FC<NodesPageProps> = ({ selector }) => {
   const dispatch = useConsoleDispatch();
   const { t } = useTranslation('console-app');
-  const nodeMgmtV1Enabled = useFlag(FLAG_NODE_MGMT_V1);
+  const isOpenShift5 = useFlag(FLAG_OPENSHIFT_5);
 
   const [selectedColumns, , columnPreferenceLoaded] = useUserPreference<TableColumnsType>(
     COLUMN_MANAGEMENT_USER_PREFERENCE_KEY,
@@ -1185,7 +1185,7 @@ export const NodesPage: FC<NodesPageProps> = ({ selector }) => {
           machineConfigPools={machineConfigPools}
           vmsEnabled={isKubevirtPluginActive}
           selectedColumns={selectedColumns}
-          nodeMgmtV1Enabled={nodeMgmtV1Enabled}
+          isOpenShift5={isOpenShift5}
         />
       </ListPageBody>
     </>
