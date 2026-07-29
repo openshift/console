@@ -82,24 +82,20 @@ export const AddGooglePage = () => {
     return handlePromise(addIDP(oauth, idp, dryRun));
   };
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault();
 
     // Clear any previous errors.
     setErrorMessage('');
-    getOAuthResource().then((oauth: OAuthKind) => {
-      addGoogleIDP(oauth, mockNames.secret, true)
-        .then(() => {
-          return createClientSecret()
-            .then((secret: K8sResourceKind) => addGoogleIDP(oauth, secret.metadata.name))
-            .then(() => {
-              redirectToOAuthPage(navigate);
-            });
-        })
-        .catch((err) => {
-          setErrorMessage(err);
-        });
-    });
+    try {
+      const oauth: OAuthKind = await getOAuthResource();
+      await addGoogleIDP(oauth, mockNames.secret, true);
+      const secret: K8sResourceKind = await createClientSecret();
+      await addGoogleIDP(oauth, secret.metadata.name);
+      redirectToOAuthPage(navigate);
+    } catch (err) {
+      setErrorMessage(err);
+    }
   };
 
   const title = t('Add Identity Provider: Google');

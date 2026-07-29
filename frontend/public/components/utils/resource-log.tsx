@@ -676,10 +676,10 @@ export const ResourceLog: FC<ResourceLogProps> = ({
         k8sList(ConsoleExternalLogLinkModel),
         k8sGet(ProjectModel, resource.metadata.namespace),
       ])
-        .then(([podLogLinks_, project]) => {
+        .then(([fetchedPodLogLinks, project]) => {
           // Project UID and namespace UID are the same value. Use the projects
           // API since normal OpenShift users can list projects.
-          setPodLogLinks(podLogLinks_);
+          setPodLogLinks(fetchedPodLogLinks);
           setNamespaceUID(project.metadata.uid);
         })
         .catch((e) => setError(e));

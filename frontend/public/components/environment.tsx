@@ -446,10 +446,12 @@ export const EnvironmentPage: FC<EnvironmentPageProps> = (props) => {
           secrets: {},
         };
       }),
-    ]).then(([cmaps, secs]) => {
-      setConfigMaps(cmaps);
-      setSecrets(secs);
-    });
+    ])
+      .then(([cmaps, secs]) => {
+        setConfigMaps(cmaps);
+        setSecrets(secs);
+      })
+      .catch(() => {});
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   /**
@@ -505,11 +507,13 @@ export const EnvironmentPage: FC<EnvironmentPageProps> = (props) => {
 
       const patches = currentEnvVars.getPatches(envPath);
       const promise = k8sPatch(model, obj, patches);
-      handlePromise(promise).then((res) => {
-        setCurrentEnvVars(new CurrentEnvVars(res, currentEnvVars.isContainerArray, envPath));
-        setLocalErrorMessage(null);
-        setSuccess(t('Successfully updated the environment variables.'));
-      });
+      handlePromise(promise)
+        .then((res) => {
+          setCurrentEnvVars(new CurrentEnvVars(res, currentEnvVars.isContainerArray, envPath));
+          setLocalErrorMessage(null);
+          setSuccess(t('Successfully updated the environment variables.'));
+        })
+        .catch(() => {});
     },
     [currentEnvVars, envPath, model, obj, handlePromise, t],
   );
@@ -539,6 +543,7 @@ export const EnvironmentPage: FC<EnvironmentPageProps> = (props) => {
     />
   ) : null;
 
+  /* eslint-disable react/no-array-index-key */
   const owners = (obj?.metadata?.ownerReferences || []).map((o, i) => (
     <ResourceLink
       key={i}
@@ -549,6 +554,7 @@ export const EnvironmentPage: FC<EnvironmentPageProps> = (props) => {
       inline
     />
   ));
+  /* eslint-enable react/no-array-index-key */
   const containerVars = (
     <>
       {isReadOnly && !_.isEmpty(owners) && (

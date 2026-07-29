@@ -322,6 +322,7 @@ const BindingsList: FC<BindingsListTableProps> = (props) => {
         if (filtersMap[filterKey]) {
           return filtersMap[filterKey](filterValue, binding);
         }
+        return true;
       });
     });
   }, [data, staticFilters]);
@@ -595,19 +596,21 @@ const BaseEditRoleBinding: FC<BaseEditRoleBindingProps> = (props) => {
             value: subject,
           },
         ])
-    ).then(
-      (obj) => {
-        setInProgress(false);
-        if (metadata.namespace) {
-          props.setActiveNamespace(metadata.namespace);
-        }
-        navigate(resourceObjPath(obj, referenceFor(obj)));
-      },
-      (err) => {
-        setError(err.message);
-        setInProgress(false);
-      },
-    );
+    )
+      .then(
+        (obj) => {
+          setInProgress(false);
+          if (metadata.namespace) {
+            props.setActiveNamespace(metadata.namespace);
+          }
+          navigate(resourceObjPath(obj, referenceFor(obj)));
+        },
+        (err) => {
+          setError(err.message);
+          setInProgress(false);
+        },
+      )
+      .catch(() => {});
   };
 
   const RoleDropdown: FC<RoleDropdownProps> =

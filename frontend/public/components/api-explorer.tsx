@@ -92,7 +92,7 @@ const getAPIResourceLink = (activeNamespace: string, model: K8sKind) => {
   return `/api-resource/ns/${activeNamespace}/${ref}`;
 };
 
-const APIResourceLink_: FC<APIResourceLinkStateProps & APIResourceLinkOwnProps> = ({
+const InnerAPIResourceLink: FC<APIResourceLinkStateProps & APIResourceLinkOwnProps> = ({
   activeNamespace,
   model,
 }) => {
@@ -111,7 +111,7 @@ const APIResourceLink_: FC<APIResourceLinkStateProps & APIResourceLinkOwnProps> 
 };
 const APIResourceLink = connect<APIResourceLinkStateProps, {}, APIResourceLinkOwnProps>(
   mapStateToProps,
-)(APIResourceLink_);
+)(InnerAPIResourceLink);
 
 const Group: FC<{ value: string }> = ({ value }) => {
   if (!value) {
@@ -944,7 +944,7 @@ const APIResourceAccessReview: FC<APIResourceTabProps> = ({
   );
 };
 
-const APIResourcePage_ = (props) => {
+const InnerAPIResourcePage = (props) => {
   const params = useParams();
   const location = useLocation();
 
@@ -1042,7 +1042,7 @@ const k8StateToProps = ({ k8s }) => ({
 });
 
 export const APIResourcePage = connect(k8StateToProps)(
-  connectToFlags(FLAGS.OPENSHIFT)(APIResourcePage_),
+  connectToFlags(FLAGS.OPENSHIFT)(InnerAPIResourcePage),
 );
 
 type APIResourceLinkStateProps = {

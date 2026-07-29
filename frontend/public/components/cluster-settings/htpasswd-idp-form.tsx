@@ -86,7 +86,7 @@ export const AddHTPasswdPage = () => {
     return handlePromise(addIDP(oauth, idp, dryRun));
   };
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault();
     if (!htpasswdFileContent) {
       setErrorMessage(t('You must specify an HTPasswd file.'));
@@ -95,19 +95,15 @@ export const AddHTPasswdPage = () => {
 
     // Clear any previous errors.
     setErrorMessage('');
-    getOAuthResource().then((oauth: OAuthKind) => {
-      addHTPasswdIDP(oauth, mockNames.secret, true)
-        .then(() => {
-          return createHTPasswdSecret()
-            .then((secret: K8sResourceKind) => addHTPasswdIDP(oauth, secret.metadata.name))
-            .then(() => {
-              redirectToOAuthPage(navigate);
-            });
-        })
-        .catch((err) => {
-          setErrorMessage(err);
-        });
-    });
+    try {
+      const oauth: OAuthKind = await getOAuthResource();
+      await addHTPasswdIDP(oauth, mockNames.secret, true);
+      const secret: K8sResourceKind = await createHTPasswdSecret();
+      await addHTPasswdIDP(oauth, secret.metadata.name);
+      redirectToOAuthPage(navigate);
+    } catch (err) {
+      setErrorMessage(err);
+    }
   };
 
   const title = t('Add Identity Provider: HTPasswd');

@@ -27,7 +27,9 @@ export const RulesList = ({ rules, name, namespace }) => {
       </Thead>
       <Tbody>
         {rules.map((rule, i) => (
+          // eslint-disable-next-line react/no-array-index-key
           <Tr key={i}>
+            {/* eslint-disable-next-line no-use-before-define */}
             <Rule {...rule} name={name} namespace={namespace} i={i} />
           </Tr>
         ))}
@@ -81,7 +83,7 @@ const Resources = connect(({ k8s }) => ({ allModels: k8s.getIn(['RESOURCES', 'mo
     const { t } = useTranslation('public');
 
     let allResources = [];
-    resources &&
+    if (resources) {
       _.each([...new Set(resources)].sort(), (r) => {
         if (r === '') {
           return false;
@@ -104,6 +106,7 @@ const Resources = connect(({ k8s }) => ({ allModels: k8s.getIn(['RESOURCES', 'mo
           </span>,
         );
       });
+    }
 
     if (nonResourceURLs && nonResourceURLs.length) {
       if (allResources.length) {
@@ -125,7 +128,7 @@ const Resources = connect(({ k8s }) => ({ allModels: k8s.getIn(['RESOURCES', 'mo
           </div>,
         );
       });
-      allResources.push.apply(allResources, URLs);
+      allResources.push(...URLs);
     }
     return <div className="rbac-rule-resources">{allResources}</div>;
   },

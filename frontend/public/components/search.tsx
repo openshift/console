@@ -39,7 +39,7 @@ import { requirementFromString } from '../module/k8s/selector-requirement';
 import { DefaultPage } from './default-resource';
 import { ResourceListDropdown } from './resource-dropdown';
 import { getResourceListPages } from './resource-pages';
-import { SearchFilterDropdown, searchFilterValues } from './search-filter-dropdown';
+import { SearchFilterDropdown, SearchFilterValues } from './search-filter-dropdown';
 import { withStartGuide } from './start-guide';
 import { AsyncComponent } from './utils/async';
 import { ResourceIcon } from './utils/resource-icon';
@@ -85,7 +85,7 @@ const ResourceList = memo<ResourceListProps>(({ kind, mock, namespace, selector,
   );
 });
 
-const SearchPage_: FC<SearchProps> = (props) => {
+const InnerSearchPage: FC<SearchProps> = (props) => {
   const { setQueryArgument, removeQueryArguments } = useQueryParamsMutator();
   const [perspective] = useActivePerspective();
   const fireTelemetryEvent = useTelemetry();
@@ -209,7 +209,7 @@ const SearchPage_: FC<SearchProps> = (props) => {
   };
 
   const updateSearchFilter = (type: string, value: string, endOfString: boolean) => {
-    type === searchFilterValues.Label
+    type === SearchFilterValues.Label
       ? updateLabelFilter(value, endOfString)
       : updateNameFilter(value);
   };
@@ -275,6 +275,7 @@ const SearchPage_: FC<SearchProps> = (props) => {
                 deleteLabel={updateNewItems}
                 categoryName={t('Resource')}
                 labelGroupCollapsedText={t('{{numRemaining}} more', {
+                  // eslint-disable-next-line no-template-curly-in-string
                   numRemaining: '${remaining}',
                 })}
                 labelGroupExpandedText={t('Show less')}
@@ -369,7 +370,7 @@ const SearchPage_: FC<SearchProps> = (props) => {
   );
 };
 
-export const SearchPage = withStartGuide(SearchPage_);
+export const SearchPage = withStartGuide(InnerSearchPage);
 
 export type SearchProps = {
   namespace?: string;

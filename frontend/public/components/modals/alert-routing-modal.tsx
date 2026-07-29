@@ -59,10 +59,12 @@ const AlertRoutingModal: FC<AlertRoutingModalProps> = ({ config, secret, cancel,
     updateAlertRoutingProperty(config, 'repeat_interval', repeatIntervalNew, repeatIntervalOld);
 
     setInProgress(true);
-    patchAlertmanagerConfig(secret, config).then(close, (err) => {
-      setErrorMessage(err.message);
-      setInProgress(false);
-    });
+    patchAlertmanagerConfig(secret, config)
+      .then(close, (err) => {
+        setErrorMessage(err.message);
+        setInProgress(false);
+      })
+      .catch(() => {});
   };
 
   return (

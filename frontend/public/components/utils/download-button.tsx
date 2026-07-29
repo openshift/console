@@ -23,7 +23,8 @@ export const DownloadButton: FC<DownloadButtonProps> = (props) => {
         () => setError(null),
         (e) => setError(e),
       )
-      .then(() => setInFlight(false));
+      .then(() => setInFlight(false))
+      .catch(() => {});
   };
 
   return (

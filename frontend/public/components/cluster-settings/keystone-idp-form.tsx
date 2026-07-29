@@ -136,7 +136,7 @@ export const AddKeystonePage = () => {
     return handlePromise(addIDP(oauth, idp, dryRun));
   };
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault();
     if (_.isEmpty(keyFileContent) !== _.isEmpty(certFileContent)) {
       setErrorMessage(
@@ -146,27 +146,19 @@ export const AddKeystonePage = () => {
     }
     // Clear any previous errors.
     setErrorMessage('');
-    getOAuthResource().then((oauth: OAuthKind) => {
+    try {
+      const oauth: OAuthKind = await getOAuthResource();
       const mockSecret = certFileContent ? mockNames.secret : '';
       const mockCA = caFileContent ? mockNames.ca : '';
-      addKeystoneIDP(oauth, mockSecret, mockCA, true)
-        .then(() => {
-          const promises = [createTLSSecret(), createCAConfigMap()];
-
-          Promise.all(promises)
-            .then(([tlsSecret, configMap]) => {
-              const caName = configMap ? configMap.metadata.name : '';
-              const secretName = tlsSecret ? tlsSecret.metadata.name : '';
-              return addKeystoneIDP(oauth, secretName, caName);
-            })
-            .then(() => {
-              redirectToOAuthPage(navigate);
-            });
-        })
-        .catch((err) => {
-          setErrorMessage(err);
-        });
-    });
+      await addKeystoneIDP(oauth, mockSecret, mockCA, true);
+      const [tlsSecret, configMap] = await Promise.all([createTLSSecret(), createCAConfigMap()]);
+      const caName = configMap ? configMap.metadata.name : '';
+      const secretName = tlsSecret ? tlsSecret.metadata.name : '';
+      await addKeystoneIDP(oauth, secretName, caName);
+      redirectToOAuthPage(navigate);
+    } catch (err) {
+      setErrorMessage(err);
+    }
   };
 
   const title = t('Add Identity Provider: Keystone Authentication');

@@ -49,9 +49,14 @@ export const PollConsoleUpdates = memo(() => {
           fetchPluginManifest(pluginName),
         ) as Promise<RemotePluginManifest>[];
         if (pluginManifests) {
-          settleAllPromises(pluginManifests).then(([fulfilledValues]) => {
-            setPluginManifestsData(fulfilledValues);
-          });
+          return settleAllPromises(pluginManifests);
+        }
+        return undefined;
+      })
+      .then((result) => {
+        if (result) {
+          const [fulfilledValues] = result;
+          setPluginManifestsData(fulfilledValues);
         }
       })
       .catch(setUpdateError);
@@ -87,16 +92,18 @@ export const PollConsoleUpdates = memo(() => {
     const pluginEndpointsReady =
       newPlugins?.map((pluginName) => fetchPluginManifest(pluginName)) ?? [];
     if (!_.isEmpty(pluginEndpointsReady)) {
-      settleAllPromises(pluginEndpointsReady).then(([, rejectedReasons]) => {
-        if (!_.isEmpty(rejectedReasons)) {
-          setAllPluginEndpointsReady(false);
-          setTimeout(() => setIsFetchingPluginEndpoints(false), URL_POLL_DEFAULT_DELAY);
-          return;
-        }
-        setAllPluginEndpointsReady(true);
-        setIsFetchingPluginEndpoints(false);
-        setNewPlugins(null);
-      });
+      settleAllPromises(pluginEndpointsReady)
+        .then(([, rejectedReasons]) => {
+          if (!_.isEmpty(rejectedReasons)) {
+            setAllPluginEndpointsReady(false);
+            setTimeout(() => setIsFetchingPluginEndpoints(false), URL_POLL_DEFAULT_DELAY);
+            return;
+          }
+          setAllPluginEndpointsReady(true);
+          setIsFetchingPluginEndpoints(false);
+          setNewPlugins(null);
+        })
+        .catch(() => {});
       setIsFetchingPluginEndpoints(true);
     } else {
       setAllPluginEndpointsReady(true);

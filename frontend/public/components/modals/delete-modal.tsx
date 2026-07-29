@@ -45,22 +45,24 @@ const DeleteModal = (props: DeleteModalProps) => {
         ? { kind: 'DeleteOptions', apiVersion: 'v1', propagationPolicy }
         : undefined;
 
-      handlePromise(k8sKill(kind, resource, {}, {}, json)).then(() => {
-        props?.close && props.close();
+      handlePromise(k8sKill(kind, resource, {}, {}, json))
+        .then(() => {
+          props?.close && props.close();
 
-        if (deleteAllResources && isDeleteOtherResourcesChecked) {
-          deleteAllResources();
-        }
+          if (deleteAllResources && isDeleteOtherResourcesChecked) {
+            deleteAllResources();
+          }
 
-        // If we are currently on the deleted resource's page, redirect to the resource list page
-        const re = new RegExp(`/${resource?.metadata?.name}(/|$)`);
-        if (re.test(window.location.pathname)) {
-          const listPath = props.redirectTo
-            ? props.redirectTo
-            : resourceListPathFromModel(kind, _.get(resource, 'metadata.namespace'));
-          navigate(listPath);
-        }
-      });
+          // If we are currently on the deleted resource's page, redirect to the resource list page
+          const re = new RegExp(`/${resource?.metadata?.name}(/|$)`);
+          if (re.test(window.location.pathname)) {
+            const listPath = props.redirectTo
+              ? props.redirectTo
+              : resourceListPathFromModel(kind, _.get(resource, 'metadata.namespace'));
+            navigate(listPath);
+          }
+        })
+        .catch(() => {});
     },
     [isChecked, isDeleteOtherResourcesChecked, props, handlePromise, navigate],
   );

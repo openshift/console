@@ -55,6 +55,7 @@ export class SelectorInput extends Component {
     super(props);
     this.isBasic = !!_.get(this.props.options, 'basic');
     this.setRef = (ref) => (this.ref_ = ref);
+    this.handleChange = this.handleChange.bind(this);
     this.state = {
       inputValue: '',
       isInputValid: true,
@@ -73,8 +74,11 @@ export class SelectorInput extends Component {
     }
   }
 
+  // eslint-disable-next-line react/no-unused-class-component-methods
   focus() {
-    this.ref_ && this.ref_.focus();
+    if (this.ref_) {
+      this.ref_.focus();
+    }
   }
 
   isTagValid(tag) {
@@ -167,7 +171,7 @@ export class SelectorInput extends Component {
             removeKeys={removeKeys}
             inputProps={inputProps}
             renderTag={renderTag}
-            onChange={this.handleChange.bind(this)}
+            onChange={this.handleChange}
             addOnBlur
           />
         </tags-input>

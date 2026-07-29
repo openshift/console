@@ -282,7 +282,8 @@ const Inner: FC<InnerProps> = ({ event, list, cache, index }) => {
             </div>
           </div>
         </div>
-        <div className="co-sysevent__message" tabIndex={0}>
+        {/* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex */}
+        <div className="co-sysevent__message" role="group" tabIndex={0}>
           {message}
         </div>
       </div>
@@ -555,6 +556,7 @@ export const EventsList: FC<EventsListProps> = (props) => {
                 categoryName={t('Resource')}
                 defaultIsOpen={false}
                 collapsedText={t('{{numRemaining}} more', {
+                  // eslint-disable-next-line no-template-curly-in-string
                   numRemaining: '${remaining}',
                 })}
                 expandedText={t('Show less')}
@@ -605,7 +607,7 @@ export const EventStreamPage = withStartGuide(
   },
 );
 
-const ResourceEventStream_: FC<InternalResourceEventStreamProps> = ({
+const InnerResourceEventStream: FC<InternalResourceEventStreamProps> = ({
   obj: {
     kind,
     metadata: { name, namespace, uid },
@@ -618,7 +620,7 @@ const ResourceEventStream_: FC<InternalResourceEventStreamProps> = ({
   />
 );
 
-export { ResourceEventStream_ as ResourceEventStream };
+export { InnerResourceEventStream as ResourceEventStream };
 
 export const ResourcesEventStream: FC<InternalResourcesEventStreamProps> = ({
   filters,
@@ -626,5 +628,5 @@ export const ResourcesEventStream: FC<InternalResourcesEventStreamProps> = ({
 }) => <EventStream filter={filters} resourceEventStream namespace={namespace} />;
 
 export const WrappedResourceEventStream: FC<ResourceEventStreamProps> = ({ resource }) => (
-  <ResourceEventStream_ obj={resource} />
+  <InnerResourceEventStream obj={resource} />
 );

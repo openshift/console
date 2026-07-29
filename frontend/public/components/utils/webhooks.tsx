@@ -105,11 +105,13 @@ export const WebhookTriggers: FC<WebhookTriggersProps> = (props) => {
           );
         },
       ),
-    ).then((secrets) => {
-      setSecretErrors(errors);
-      setWebhookSecrets(_.compact(secrets));
-      setLoaded(true);
-    });
+    )
+      .then((secrets) => {
+        setSecretErrors(errors);
+        setWebhookSecrets(_.compact(secrets));
+        setLoaded(true);
+      })
+      .catch(() => {});
   }, [secretNames, isLoaded, canGetSecret, namespace, launchModal]);
 
   if (_.isEmpty(webhookTriggers)) {
@@ -210,6 +212,7 @@ export const WebhookTriggers: FC<WebhookTriggersProps> = (props) => {
               <th className={tableColumnClasses[0]}>{t('Type')}</th>
               <th className={tableColumnClasses[1]}>{t('Webhook URL')}</th>
               <th className={tableColumnClasses[2]}>{t('Secret')}</th>
+              {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
               <th className={tableColumnClasses[3]} />
             </tr>
           </thead>

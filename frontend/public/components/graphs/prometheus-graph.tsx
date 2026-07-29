@@ -17,7 +17,7 @@ const mapStateToProps = (state: RootState) => ({
   namespace: getActiveNamespace(state),
 });
 
-const PrometheusGraphLink_: FC<PrometheusGraphLinkProps> = ({
+const InnerPrometheusGraphLink: FC<PrometheusGraphLinkProps> = ({
   canAccessMonitoring,
   children,
   query,
@@ -54,9 +54,9 @@ const PrometheusGraphLink_: FC<PrometheusGraphLinkProps> = ({
     </Link>
   );
 };
-export const PrometheusGraphLink = connect(mapStateToProps)(PrometheusGraphLink_) as ComponentType<
-  Omit<PrometheusGraphLinkProps, 'namespace' | 'canAccessMonitoring'>
->;
+export const PrometheusGraphLink = connect(mapStateToProps)(
+  InnerPrometheusGraphLink,
+) as ComponentType<Omit<PrometheusGraphLinkProps, 'namespace' | 'canAccessMonitoring'>>;
 
 export const PrometheusGraph = forwardRef<HTMLDivElement, PrometheusGraphProps>(
   ({ children, className, title }, ref) => (

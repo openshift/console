@@ -81,7 +81,7 @@ type DefaultPageProps = {
 };
 
 // The default page component lets us connect to flags without connecting the entire App.
-const DefaultPage_: FC<DefaultPageProps> = ({ flags }) => {
+const InnerDefaultPage: FC<DefaultPageProps> = ({ flags }) => {
   const [activePerspective] = useActivePerspective();
   const perspectiveExtensions = usePerspectives();
   const [visited, setVisited, visitedLoaded] = useUserPreference<boolean>(
@@ -122,7 +122,7 @@ const DefaultPage = connectToFlags(
   FLAGS.OPENSHIFT,
   FLAGS.CAN_LIST_NS,
   FLAGS.MONITORING,
-)(DefaultPage_);
+)(InnerDefaultPage);
 
 // REDIRECT ROUTES FOR REACT-ROUTER-V6
 const StatusProjectsRedirect = () => {

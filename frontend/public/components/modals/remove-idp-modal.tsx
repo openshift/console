@@ -29,7 +29,9 @@ const RemoveIdentityProviderModalContent: OverlayComponent<RemoveIdentityProvide
           },
         ],
       }),
-    ).then(() => closeOverlay());
+    )
+      .then(() => closeOverlay())
+      .catch(() => {});
   };
 
   return (

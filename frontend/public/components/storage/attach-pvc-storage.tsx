@@ -50,7 +50,9 @@ const AttachStorageForm: FC<AttachStorageFormProps> = (props) => {
 
   useEffect(() => {
     // Get the current resource so we can add to its definition
-    k8sGet(kindObj, resourceName, namespace).then(setObj);
+    k8sGet(kindObj, resourceName, namespace)
+      .then(setObj)
+      .catch(() => {});
   }, [kindObj, resourceName, namespace]);
 
   useEffect(() => {
@@ -249,18 +251,18 @@ const AttachStorageForm: FC<AttachStorageFormProps> = (props) => {
       return;
     }
     setInProgress(true);
-    createPVCIfNecessary().then(
-      (pvcName: string) => {
-        return k8sPatch(kindObj, obj, getVolumePatches(pvcName)).then((resource) => {
-          setInProgress(false);
-          navigate(resourceObjPath(resource, referenceFor(resource)));
-        });
-      },
-      (err) => {
+    createPVCIfNecessary()
+      .then((pvcName: string) => {
+        return k8sPatch(kindObj, obj, getVolumePatches(pvcName));
+      })
+      .then((resource) => {
+        setInProgress(false);
+        navigate(resourceObjPath(resource, referenceFor(resource)));
+      })
+      .catch((err) => {
         setError(err.message);
         setInProgress(false);
-      },
-    );
+      });
   };
 
   return (

@@ -120,7 +120,7 @@ export const AddGitHubPage = () => {
     return handlePromise(addIDP(oauth, idp, dryRun));
   };
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault();
     if (organizations.length > 0 && teams.length > 0) {
       setErrorMessage(t('Specify either organizations or teams, but not both.'));
@@ -129,25 +129,17 @@ export const AddGitHubPage = () => {
 
     // Clear any previous errors.
     setErrorMessage('');
-    getOAuthResource().then((oauth: OAuthKind) => {
+    try {
+      const oauth: OAuthKind = await getOAuthResource();
       const mockCA = caFileContent ? mockNames.ca : '';
-      addGitHubIDP(oauth, mockNames.secret, mockCA, true)
-        .then(() => {
-          const promises = [createClientSecret(), createCAConfigMap()];
-
-          Promise.all(promises)
-            .then(([secret, configMap]) => {
-              const caName = configMap ? configMap.metadata.name : '';
-              return addGitHubIDP(oauth, secret.metadata.name, caName);
-            })
-            .then(() => {
-              redirectToOAuthPage(navigate);
-            });
-        })
-        .catch((err) => {
-          setErrorMessage(err);
-        });
-    });
+      await addGitHubIDP(oauth, mockNames.secret, mockCA, true);
+      const [secret, configMap] = await Promise.all([createClientSecret(), createCAConfigMap()]);
+      const caName = configMap ? configMap.metadata.name : '';
+      await addGitHubIDP(oauth, secret.metadata.name, caName);
+      redirectToOAuthPage(navigate);
+    } catch (err) {
+      setErrorMessage(err);
+    }
   };
 
   const title = t('Add Identity Provider: GitHub');

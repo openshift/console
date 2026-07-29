@@ -125,7 +125,7 @@ export const ResourceLink: FC<ResourceLinkProps> = ({
   );
 };
 
-const NodeLink_: FC<NodeLinkProps> = (props) => {
+const InnerNodeLink: FC<NodeLinkProps> = (props) => {
   const { name, flags } = props;
   if (!name) {
     return <>-</>;
@@ -137,7 +137,7 @@ const NodeLink_: FC<NodeLinkProps> = (props) => {
   );
 };
 
-export const NodeLink = connectToFlags<NodeLinkProps>(FLAGS.CAN_LIST_NODE)(NodeLink_);
+export const NodeLink = connectToFlags<NodeLinkProps>(FLAGS.CAN_LIST_NODE)(InnerNodeLink);
 
 type NodeLinkProps = {
   name: string;

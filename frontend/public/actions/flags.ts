@@ -50,18 +50,20 @@ const detectShowOpenShiftStartGuide = (dispatch, canListNS: boolean = false) => 
     return;
   }
 
-  coFetchJSON(projectListPath).then(
-    (res) => dispatch(setFlag(FLAGS.SHOW_OPENSHIFT_START_GUIDE, _.isEmpty(res.items))),
-    (err) =>
-      err?.response?.status === 404
-        ? dispatch(setFlag(FLAGS.SHOW_OPENSHIFT_START_GUIDE, false))
-        : handleError(
-            err,
-            FLAGS.SHOW_OPENSHIFT_START_GUIDE,
-            dispatch,
-            detectShowOpenShiftStartGuide,
-          ),
-  );
+  coFetchJSON(projectListPath)
+    .then(
+      (res) => dispatch(setFlag(FLAGS.SHOW_OPENSHIFT_START_GUIDE, _.isEmpty(res.items))),
+      (err) =>
+        err?.response?.status === 404
+          ? dispatch(setFlag(FLAGS.SHOW_OPENSHIFT_START_GUIDE, false))
+          : handleError(
+              err,
+              FLAGS.SHOW_OPENSHIFT_START_GUIDE,
+              dispatch,
+              detectShowOpenShiftStartGuide,
+            ),
+    )
+    .catch(() => {});
 };
 
 // Check the user's access to some resources.

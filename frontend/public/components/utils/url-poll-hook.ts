@@ -17,7 +17,7 @@ export const useURLPoll: UseURLPoll = <R>(
   const safeFetch = useSafeFetch();
   const tick = useCallback(() => {
     if (url) {
-      safeFetch(url)
+      return safeFetch(url)
         .then((data) => {
           setResponse(data);
           setError(null);
@@ -31,9 +31,8 @@ export const useURLPoll: UseURLPoll = <R>(
           }
         })
         .finally(() => setLoading(false));
-    } else {
-      setLoading(false);
     }
+    setLoading(false);
   }, [url]);
 
   usePoll(tick, delay, ...dependencies);

@@ -237,7 +237,13 @@ const RoutingLabels: FC<RoutingLabelsProps> = ({ data }) => {
   const values = [...lbls, ...(matchers ?? [])];
   return values.length > 0 ? (
     <PfLabelGroup>
-      {values.map((value, i) => (value ? <PfLabel key={`label-${i}`}>{value}</PfLabel> : DASH))}
+      {values.map((value, i) =>
+        value ? ( // eslint-disable-next-line react/no-array-index-key
+          <PfLabel key={`label-${i}`}>{value}</PfLabel>
+        ) : (
+          DASH
+        ),
+      )}
     </PfLabelGroup>
   ) : null;
 };

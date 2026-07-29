@@ -160,18 +160,18 @@ export const setActiveApplication = (application: string) => {
 };
 
 export const setActiveNamespace = (namespace: string = '') => {
-  namespace = namespace.trim();
+  const trimmedNamespace = namespace.trim();
   // make it noop when new active namespace is the same
   // otherwise users will get page refresh and cry about
   // broken direct links and bookmarks
-  if (namespace !== getActiveNamespace()) {
+  if (trimmedNamespace !== getActiveNamespace()) {
     // save last namespace in session storage (persisted only for current browser tab). Used to remember/restore if
     // "All Projects" was selected when returning to the list view (typically from details view) via breadcrumb or
     // sidebar navigation
-    sessionStorage.setItem(LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY, namespace);
+    sessionStorage.setItem(LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY, trimmedNamespace);
   }
 
-  return action(ActionType.SetActiveNamespace, { namespace });
+  return action(ActionType.SetActiveNamespace, { namespace: trimmedNamespace });
 };
 
 /**
@@ -180,7 +180,7 @@ export const setActiveNamespace = (namespace: string = '') => {
  * and "/" aren't allowed, so we base64 encode and replace illegal chars.
  */
 const encodeImpersonationValue = (value: string, textEncoder: TextEncoder): string => {
-  return Base64.encode(String.fromCharCode.apply(String, textEncoder.encode(value)))
+  return Base64.encode(String.fromCharCode(...textEncoder.encode(value)))
     .replace(/=/g, '_')
     .replace(/\//g, '-');
 };

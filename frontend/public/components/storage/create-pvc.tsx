@@ -270,16 +270,18 @@ const CreatePVCPage: FC<CreatePVCPageProps> = (props) => {
   const save = (e: FormEvent<EventTarget>) => {
     e.preventDefault();
     setInProgress(true);
-    k8sCreate(PersistentVolumeClaimModel, pvcObj).then(
-      (resource) => {
-        setInProgress(false);
-        navigate(resourceObjPath(resource, referenceFor(resource)));
-      },
-      ({ message }: { message: string }) => {
-        setError(message || 'Could not create persistent volume claim.');
-        setInProgress(false);
-      },
-    );
+    k8sCreate(PersistentVolumeClaimModel, pvcObj)
+      .then(
+        (resource) => {
+          setInProgress(false);
+          navigate(resourceObjPath(resource, referenceFor(resource)));
+        },
+        ({ message }: { message: string }) => {
+          setError(message || 'Could not create persistent volume claim.');
+          setInProgress(false);
+        },
+      )
+      .catch(() => {});
   };
 
   return (

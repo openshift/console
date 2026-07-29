@@ -38,8 +38,8 @@ export const namespacedPrefixes = [
 export const stripBasePath = (path: string): string => path.replace(basePathPattern, '/');
 
 export const getNamespace = (path: string): string => {
-  path = stripBasePath(path);
-  const split = path.split('/').filter((x) => x);
+  const strippedPath = stripBasePath(path);
+  const split = strippedPath.split('/').filter((x) => x);
 
   if (split[1] === 'all-namespaces') {
     return ALL_NAMESPACES_KEY;
@@ -47,8 +47,10 @@ export const getNamespace = (path: string): string => {
 
   let ns: string;
   if (split[1] === 'cluster' && ['namespaces', 'projects'].includes(split[2]) && split[3]) {
+    // eslint-disable-next-line prefer-destructuring
     ns = split[3];
   } else if (split[1] === 'ns' && split[2]) {
+    // eslint-disable-next-line prefer-destructuring
     ns = split[2];
   } else {
     return;

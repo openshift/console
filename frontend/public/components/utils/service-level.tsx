@@ -102,6 +102,7 @@ const useLoadServiceLevel = (): [boolean, boolean, (clusterID: string) => void] 
       return;
     }
     setLoadingSecret(true);
+    // eslint-disable-next-line promise/catch-or-return
     k8sGet({ model: SecretModel, name: 'pull-secret', ns: 'openshift-config' })
       .then((response) => {
         // @ts-expect-error Data is not recognized as part of response.
@@ -118,48 +119,47 @@ const useLoadServiceLevel = (): [boolean, boolean, (clusterID: string) => void] 
         setLoadingServiceLevel(true);
         hasSecretAccess = true;
 
-        coFetchJSON(apiUrl, 'GET', {
+        return coFetchJSON(apiUrl, 'GET', {
           headers,
-        })
-          .then((ocmResponse) => {
-            if (!ocmResponse.items || ocmResponse.items?.length === 0) {
-              throw new Error('Cluster ID used to get support level was not recognized');
-            }
-
-            const levelSetting = ocmResponse.items[0].support_level;
-            const expirationDate = ocmResponse.items[0].eval_expiration_date;
-
-            const trialEnd = expirationDate ? new Date(expirationDate) : null;
-            const now = new Date();
-            let daysLeft = trialEnd ? getDuration(trialEnd.getTime() - now.getTime()).days : null;
-
-            daysLeft = trialEnd.getTime() < now.getTime() ? -1 : daysLeft;
-
-            const trialDateEnd = trialEnd ? dateFormatter.format(trialEnd) : null;
-            dispatch(
-              UIActions.setServiceLevel(
-                levelSetting,
-                daysLeft,
-                clusterID,
-                trialDateEnd,
-                hasSecretAccess,
-              ),
-            );
-          })
-          .catch((err) => {
-            dispatch(UIActions.setServiceLevel(null, null, clusterID, null, hasSecretAccess));
-            // eslint-disable-next-line no-console
-            console.error('API call to get support level has failed', err);
-          })
-          .finally(() => {
-            // done trying to get service level
-            setLoadingServiceLevel(false);
-          });
+        });
       })
-      .catch(() => {
-        // Error getting pull secret (this is expected if the user doesn't have access)
-        setLoadingSecret(false);
+      .then((ocmResponse) => {
+        if (!ocmResponse.items || ocmResponse.items?.length === 0) {
+          throw new Error('Cluster ID used to get support level was not recognized');
+        }
+
+        const levelSetting = ocmResponse.items[0].support_level;
+        const expirationDate = ocmResponse.items[0].eval_expiration_date;
+
+        const trialEnd = expirationDate ? new Date(expirationDate) : null;
+        const now = new Date();
+        let daysLeft = trialEnd ? getDuration(trialEnd.getTime() - now.getTime()).days : null;
+
+        daysLeft = trialEnd.getTime() < now.getTime() ? -1 : daysLeft;
+
+        const trialDateEnd = trialEnd ? dateFormatter.format(trialEnd) : null;
+        dispatch(
+          UIActions.setServiceLevel(
+            levelSetting,
+            daysLeft,
+            clusterID,
+            trialDateEnd,
+            hasSecretAccess,
+          ),
+        );
+      })
+      .catch((err) => {
+        if (!hasSecretAccess) {
+          // Error getting pull secret (this is expected if the user doesn't have access)
+          setLoadingSecret(false);
+        } else {
+          // eslint-disable-next-line no-console
+          console.error('API call to get support level has failed', err);
+        }
         dispatch(UIActions.setServiceLevel(null, null, clusterID, null, hasSecretAccess));
+      })
+      .finally(() => {
+        setLoadingServiceLevel(false);
       });
   };
 

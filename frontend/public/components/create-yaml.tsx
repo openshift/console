@@ -103,11 +103,11 @@ export const CreateYAMLInner: FC<CreateYAMLProps> = ({
   );
 };
 
-const CreateYAML_ = connectToPlural(CreateYAMLInner);
+const ConnectedCreateYAML = connectToPlural(CreateYAMLInner);
 
 export const CreateYAML = (props) => {
   const params = useParams();
-  return <CreateYAML_ {...props} params={params} />;
+  return <ConnectedCreateYAML {...props} params={params} />;
 };
 
 export const EditYAMLPage: FC<EditYAMLPageProps> = (props) => {

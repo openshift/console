@@ -41,18 +41,20 @@ const AlertmanagerYAMLEditor: FC<AlertmanagerYAMLEditorProps> = ({ obj: secret }
       setSuccessMsg('');
       return;
     }
-    patchAlertmanagerConfig(secret, yaml).then(
-      (newSecret) => {
-        setSuccessMsg(
-          `${newSecret.metadata.name} has been updated to version ${newSecret.metadata.resourceVersion}`,
-        );
-        setErrorMsg('');
-      },
-      (err) => {
-        setErrorMsg(err.message);
-        setSuccessMsg('');
-      },
-    );
+    patchAlertmanagerConfig(secret, yaml)
+      .then(
+        (newSecret) => {
+          setSuccessMsg(
+            `${newSecret.metadata.name} has been updated to version ${newSecret.metadata.resourceVersion}`,
+          );
+          setErrorMsg('');
+        },
+        (err) => {
+          setErrorMsg(err.message);
+          setSuccessMsg('');
+        },
+      )
+      .catch(() => {});
   };
 
   const { yaml: alertmanagerYAML, errorMessage: loadErrorMsg } = getAlertmanagerYAML(secret);

@@ -123,66 +123,68 @@ export const GlobalConfigPage: FC = () => {
           })
           .then((resources) => resources.map((i: K8sKind) => ({ ...i, model })));
       }),
-    ).then((responses) => {
-      const flattenedResponses = _.flatten(responses);
-      const winnowedResponses: ConfigDataType[] = flattenedResponses.map((item) => ({
-        model: item.model,
-        id: item.metadata.uid,
-        name: item.metadata.name,
-        namespace: item.metadata.namespace,
-      }));
-      const usableConfigs: ConfigDataType[] = globalConfigs.map(({ properties }) => {
-        const { group, version, kind } = properties.model;
-        return {
-          ...properties,
-          model: modelFor(referenceForGroupVersionKind(group)(version)(kind)),
-        };
-      });
-      const allItems = [...winnowedResponses, ...usableConfigs]
-        .flatMap((item) => {
-          if (item.model) {
-            const apiExplorerLink = `/api-resource/cluster/${referenceForModel(item.model)}`;
-            const resourceLink = resourcePathFromModel(item.model, item.name, item.namespace);
-            return {
-              label: item.model.kind,
-              apiGroup: item.model.apiGroup,
-              id: item.id,
-              description: getResourceDescription(item.model),
-              path: resourceLink,
+    )
+      .then((responses) => {
+        const flattenedResponses = _.flatten(responses);
+        const winnowedResponses: ConfigDataType[] = flattenedResponses.map((item) => ({
+          model: item.model,
+          id: item.metadata.uid,
+          name: item.metadata.name,
+          namespace: item.metadata.namespace,
+        }));
+        const usableConfigs: ConfigDataType[] = globalConfigs.map(({ properties }) => {
+          const { group, version, kind } = properties.model;
+          return {
+            ...properties,
+            model: modelFor(referenceForGroupVersionKind(group)(version)(kind)),
+          };
+        });
+        const allItems = [...winnowedResponses, ...usableConfigs]
+          .flatMap((item) => {
+            if (item.model) {
+              const apiExplorerLink = `/api-resource/cluster/${referenceForModel(item.model)}`;
+              const resourceLink = resourcePathFromModel(item.model, item.name, item.namespace);
+              return {
+                label: item.model.kind,
+                apiGroup: item.model.apiGroup,
+                id: item.id,
+                description: getResourceDescription(item.model),
+                path: resourceLink,
+                menuItems: [
+                  editYAMLMenuItem(item.model.kind, resourceLink),
+                  viewAPIExplorerMenuItem(item.model.kind, apiExplorerLink),
+                  ...(item.model.kind === 'OAuth' ? oauthMenuItems : []),
+                ],
+              };
+            }
+            return [];
+          })
+          .concat([
+            {
+              label: 'Alertmanager',
+              apiGroup: 'monitoring.coreos.com',
+              id: 'alertmanager',
+              description: 'Configure grouping and routing of alerts',
+              path: '/settings/cluster/alertmanagerconfig',
               menuItems: [
-                editYAMLMenuItem(item.model.kind, resourceLink),
-                viewAPIExplorerMenuItem(item.model.kind, apiExplorerLink),
-                ...(item.model.kind === 'OAuth' ? oauthMenuItems : []),
+                {
+                  label: t('Create Receiver'),
+                  href: '/settings/cluster/alertmanagerconfig/receivers/~new',
+                },
+                {
+                  label: t('Edit configuration YAML'),
+                  href: `/settings/cluster/alertmanageryaml`,
+                },
               ],
-            };
-          }
-          return [];
-        })
-        .concat([
-          {
-            label: 'Alertmanager',
-            apiGroup: 'monitoring.coreos.com',
-            id: 'alertmanager',
-            description: 'Configure grouping and routing of alerts',
-            path: '/settings/cluster/alertmanagerconfig',
-            menuItems: [
-              {
-                label: t('Create Receiver'),
-                href: '/settings/cluster/alertmanagerconfig/receivers/~new',
-              },
-              {
-                label: t('Edit configuration YAML'),
-                href: `/settings/cluster/alertmanageryaml`,
-              },
-            ],
-          },
-        ]);
-      const sortedItems = _.sortBy(_.flatten(allItems), 'label', 'asc');
-      if (isSubscribed) {
-        setItems(sortedItems);
-        setLoading(false);
-      }
-    });
+            },
+          ]);
+        const sortedItems = _.sortBy(_.flatten(allItems), 'label', 'asc');
+        if (isSubscribed) {
+          setItems(sortedItems);
+          setLoading(false);
+        }
+      })
+      .catch(() => {});
     return () => {
       isSubscribed = false;
     };
@@ -222,6 +224,7 @@ export const GlobalConfigPage: FC = () => {
         <ExpandableAlert
           variant={AlertVariant.danger}
           alerts={errors.map((error, i) => (
+            // eslint-disable-next-line react/no-array-index-key
             <div key={i}>{error}</div>
           ))}
         />

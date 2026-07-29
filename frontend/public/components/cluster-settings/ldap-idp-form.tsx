@@ -138,31 +138,26 @@ export const AddLDAPPage = () => {
     return handlePromise(addIDP(oauth, idp, dryRun));
   };
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault();
     // Clear any previous errors.
     setErrorMessage('');
-    getOAuthResource().then((oauth: OAuthKind) => {
+    try {
+      const oauth: OAuthKind = await getOAuthResource();
       const mockSecret = bindPassword ? mockNames.secret : '';
       const mockCA = caFileContent ? mockNames.ca : '';
-      addLDAPIDP(oauth, mockSecret, mockCA, true)
-        .then(() => {
-          const promises = [createBindPasswordSecret(), createCAConfigMap()];
-
-          Promise.all(promises)
-            .then(([bindPasswordSecret, caConfigMap]) => {
-              const bindPasswordSecretName = _.get(bindPasswordSecret, 'metadata.name');
-              const caConfigMapName = _.get(caConfigMap, 'metadata.name');
-              return addLDAPIDP(oauth, bindPasswordSecretName, caConfigMapName);
-            })
-            .then(() => {
-              redirectToOAuthPage(navigate);
-            });
-        })
-        .catch((err) => {
-          setErrorMessage(err);
-        });
-    });
+      await addLDAPIDP(oauth, mockSecret, mockCA, true);
+      const [bindPasswordSecret, caConfigMap] = await Promise.all([
+        createBindPasswordSecret(),
+        createCAConfigMap(),
+      ]);
+      const bindPasswordSecretName = _.get(bindPasswordSecret, 'metadata.name');
+      const caConfigMapName = _.get(caConfigMap, 'metadata.name');
+      await addLDAPIDP(oauth, bindPasswordSecretName, caConfigMapName);
+      redirectToOAuthPage(navigate);
+    } catch (err) {
+      setErrorMessage(err);
+    }
   };
 
   const title = t('Add Identity Provider: LDAP');

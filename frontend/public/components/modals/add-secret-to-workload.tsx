@@ -60,23 +60,29 @@ const AddSecretToWorkloadModal: FC<AddSecretToWorkloadModalProps> = (props) => {
           })
           .then((res: K8sResourceKind[]): WorkloadItem[] => res.map((obj) => ({ model, obj })));
       }),
-    ).then((responses) => {
-      // TODO: Group by kind.
-      const allItems: WorkloadItem[] = _.flatten(responses);
-      const workloadsByUid = _.keyBy(allItems, 'obj.metadata.uid');
-      const sortedItems = _.orderBy(allItems, ['obj.metadata.name', 'model.kind'], ['asc', 'asc']);
-      const options = _.reduce(
-        sortedItems,
-        (list, item) => {
-          const { name, uid } = item.obj.metadata;
-          list[uid] = <ResourceName kind={item.model.kind} name={name} />;
-          return list;
-        },
-        {},
-      );
-      setWorkloadOptions(options);
-      setWorkloadsByUID(workloadsByUid);
-    });
+    )
+      .then((responses) => {
+        // TODO: Group by kind.
+        const allItems: WorkloadItem[] = _.flatten(responses);
+        const workloadsByUid = _.keyBy(allItems, 'obj.metadata.uid');
+        const sortedItems = _.orderBy(
+          allItems,
+          ['obj.metadata.name', 'model.kind'],
+          ['asc', 'asc'],
+        );
+        const options = _.reduce(
+          sortedItems,
+          (list, item) => {
+            const { name, uid } = item.obj.metadata;
+            list[uid] = <ResourceName kind={item.model.kind} name={name} />;
+            return list;
+          },
+          {},
+        );
+        setWorkloadOptions(options);
+        setWorkloadsByUID(workloadsByUid);
+      })
+      .catch(() => {});
   }, [namespace]);
 
   const autocompleteFilter = (text, item) => {

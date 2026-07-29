@@ -47,7 +47,7 @@ const isVisible = (m: K8sKind) =>
   !blocklistResources.has(`${m.apiGroup}/${m.apiVersion}.${m.kind}`) &&
   (_.isEmpty(m.verbs) || _.includes(m.verbs, 'list'));
 
-export const ResourceListDropdown_: FC<ResourceListDropdownProps> = (props) => {
+export const InnerResourceListDropdown: FC<ResourceListDropdownProps> = (props) => {
   const { selected, onChange, recentList, allModels, groupToVersionMap, className } = props;
   const { t } = useTranslation('public');
   const [isOpen, setIsOpen] = useState(false);
@@ -520,7 +520,7 @@ const resourceListDropdownStateToProps = ({ k8s }) => ({
 
 export const ResourceListDropdown = connect<ResourceListDropdownStateToProps>(
   resourceListDropdownStateToProps,
-)(ResourceListDropdown_);
+)(InnerResourceListDropdown);
 
 export type ResourceListDropdownProps = ResourceListDropdownStateToProps & {
   selected: K8sResourceKindReference[];

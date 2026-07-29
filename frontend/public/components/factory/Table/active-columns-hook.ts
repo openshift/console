@@ -32,6 +32,7 @@ export const useActiveColumns = <D = any>({
               if (col.id && !col.additional) {
                 return col.id;
               }
+              return undefined;
             }),
           );
 

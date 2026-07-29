@@ -98,7 +98,7 @@ export const AddRequestHeaderPage = () => {
     return handlePromise(addIDP(oauth, idp, dryRun));
   };
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault();
     if (!caFileContent) {
       setErrorMessage(t('You must specify a CA File.'));
@@ -107,21 +107,15 @@ export const AddRequestHeaderPage = () => {
 
     // Clear any previous errors.
     setErrorMessage('');
-    getOAuthResource().then((oauth: OAuthKind) => {
-      addRequestHeaderIDP(oauth, mockNames.ca, true)
-        .then(() => {
-          return createCAConfigMap()
-            .then((configMap: K8sResourceKind) =>
-              addRequestHeaderIDP(oauth, configMap.metadata.name),
-            )
-            .then(() => {
-              redirectToOAuthPage(navigate);
-            });
-        })
-        .catch((err) => {
-          setErrorMessage(err);
-        });
-    });
+    try {
+      const oauth: OAuthKind = await getOAuthResource();
+      await addRequestHeaderIDP(oauth, mockNames.ca, true);
+      const configMap: K8sResourceKind = await createCAConfigMap();
+      await addRequestHeaderIDP(oauth, configMap.metadata.name);
+      redirectToOAuthPage(navigate);
+    } catch (err) {
+      setErrorMessage(err);
+    }
   };
 
   const title = t('Add Identity Provider: Request Header');

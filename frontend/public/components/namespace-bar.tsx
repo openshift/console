@@ -60,31 +60,32 @@ const NamespaceBarDropdowns: FC<NamespaceBarDropdownsProps> = ({
 
   /* Check if the activeNamespace is present in the cluster */
   useEffect(() => {
-    if (activePerspective === 'dev' && activeNamespace !== ALL_NAMESPACES_KEY) {
-      k8sGet(useProjects ? ProjectModel : NamespaceModel, activeNamespace)
-        .then(() => {
+    const checkNamespace = async () => {
+      if (activePerspective === 'dev' && activeNamespace !== ALL_NAMESPACES_KEY) {
+        try {
+          await k8sGet(useProjects ? ProjectModel : NamespaceModel, activeNamespace);
           setActiveNamespace(activeNamespace);
           setActiveNamespaceError(false);
-        })
-        .catch((err) => {
+        } catch (err) {
           if (err?.response?.status === 403 && useProjects) {
-            k8sGet(NamespaceModel, activeNamespace)
-              .then(() => {
-                setActiveNamespace(activeNamespace);
-                setActiveNamespaceError(false);
-              })
-              .catch(() => {
-                /* This would redirect to "/all-namespaces" to show the Project List */
-                setActiveNamespace(ALL_NAMESPACES_KEY);
-                setActiveNamespaceError(true);
-              });
+            try {
+              await k8sGet(NamespaceModel, activeNamespace);
+              setActiveNamespace(activeNamespace);
+              setActiveNamespaceError(false);
+            } catch {
+              /* This would redirect to "/all-namespaces" to show the Project List */
+              setActiveNamespace(ALL_NAMESPACES_KEY);
+              setActiveNamespaceError(true);
+            }
           } else if (err?.response?.status === 404) {
             /* This would redirect to "/all-namespaces" to show the Project List */
             setActiveNamespace(ALL_NAMESPACES_KEY);
             setActiveNamespaceError(true);
           }
-        });
-    }
+        }
+      }
+    };
+    checkNamespace();
   }, [activeNamespace, activePerspective, setActiveNamespace, activeNamespaceError, useProjects]);
 
   if (flagPending(canListNS)) {

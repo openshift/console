@@ -51,10 +51,12 @@ const ExpandPVCModal: FC<ExpandPVCModalProps> = ({ resource, kind, close, cancel
         },
       ];
 
-      handlePromise(k8sPatch(kind, resource, patch)).then((res) => {
-        close();
-        navigate(resourceObjPath(res, referenceFor(res)));
-      });
+      handlePromise(k8sPatch(kind, resource, patch))
+        .then((res) => {
+          close();
+          navigate(resourceObjPath(res, referenceFor(res)));
+        })
+        .catch(() => {});
     },
     [requestSizeValue, requestSizeUnit, kind, resource, close, handlePromise, navigate],
   );

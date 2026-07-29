@@ -327,23 +327,25 @@ const getActiveColumns = (
   showNamespaceOverride: boolean,
 ): TableColumn[] => {
   let columns = Header(componentProps);
-  if (_.isEmpty(activeColumns)) {
-    activeColumns = new Set(
+  let resolvedActiveColumns = activeColumns;
+  if (_.isEmpty(resolvedActiveColumns)) {
+    resolvedActiveColumns = new Set(
       columns.map((col) => {
         if (col.id && !col.additional) {
           return col.id;
         }
+        return undefined;
       }),
     );
   }
   if (columnManagementID) {
     columns = columns?.filter(
       (col) =>
-        isColumnVisible(windowWidth, col.id, activeColumns, showNamespaceOverride) ||
+        isColumnVisible(windowWidth, col.id, resolvedActiveColumns, showNamespaceOverride) ||
         col.title === '',
     );
   } else {
-    columns = columns?.filter((col) => activeColumns.has(col.id) || col.title === '');
+    columns = columns?.filter((col) => resolvedActiveColumns.has(col.id) || col.title === '');
   }
 
   const showNamespace =
@@ -437,6 +439,7 @@ const StandardTable: FC<StandardTableProps> = ({
       <Tbody>
         {rows.map((row, rowIndex) => {
           return (
+            // eslint-disable-next-line react/no-array-index-key
             <Tr key={`row-${rowIndex}`}>
               {onSelect && (
                 <Td
@@ -449,6 +452,7 @@ const StandardTable: FC<StandardTableProps> = ({
                 />
               )}
               {(Array.isArray(row) ? row : row.cells).map(({ props, title }, colIndex) => (
+                // eslint-disable-next-line react/no-array-index-key
                 <Td key={`col-${colIndex}`} {...(props ?? {})}>
                   {title}
                 </Td>

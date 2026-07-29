@@ -114,23 +114,26 @@ export const ImportYAMLResults: FC<ImportYAMLResultsProps> = ({
   const errors = importStatus.some((s) => s.error);
 
   useEffect(() => {
-    createResources(importResources).then((results) => {
-      setImportStatus(
-        results.map((result) => {
-          if (result.status === 'fulfilled') {
-            return { creating: false, result: result.result, message: t('Created') };
-          }
-          if (result.status === 'rejected') {
-            return {
-              creating: false,
-              error: true,
-              message: t('Error: {{error}}', { error: result?.reason?.substring(11) }),
-            };
-          }
-        }),
-      );
-      setInFlight(false);
-    });
+    createResources(importResources)
+      .then((results) => {
+        setImportStatus(
+          results.map((result) => {
+            if (result.status === 'fulfilled') {
+              return { creating: false, result: result.result, message: t('Created') };
+            }
+            if (result.status === 'rejected') {
+              return {
+                creating: false,
+                error: true,
+                message: t('Error: {{error}}', { error: result?.reason?.substring(11) }),
+              };
+            }
+            return { creating: false, message: t('Unknown status') };
+          }),
+        );
+        setInFlight(false);
+      })
+      .catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -172,6 +175,7 @@ export const ImportYAMLResults: FC<ImportYAMLResultsProps> = ({
                     ? `${resource.metadata.generateName}...`
                     : resource.metadata.name;
                 return (
+                  // eslint-disable-next-line react/no-array-index-key
                   <Tr key={index} {...reactPropFix}>
                     <Td {...reactPropFix}>
                       <ResourceLink

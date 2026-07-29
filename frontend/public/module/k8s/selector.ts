@@ -4,18 +4,19 @@ import type { MatchExpression } from './index';
 type Options = { undefinedWhenEmpty?: boolean; basic?: boolean };
 
 export const fromRequirements = (requirements: MatchExpression[], options = {} as Options) => {
-  options = options || {};
+  const opts = options || {};
   const selector = {
     matchLabels: {},
     matchExpressions: [],
   };
 
-  if (options.undefinedWhenEmpty && requirements.length === 0) {
+  if (opts.undefinedWhenEmpty && requirements.length === 0) {
     return;
   }
 
   requirements.forEach((r) => {
     if (r.operator === 'Equals') {
+      // eslint-disable-next-line prefer-destructuring
       selector.matchLabels[r.key] = r.values[0];
     } else {
       selector.matchExpressions.push(r);
@@ -23,7 +24,7 @@ export const fromRequirements = (requirements: MatchExpression[], options = {} a
   });
 
   // old selector format?
-  if (options.basic) {
+  if (opts.basic) {
     return selector.matchLabels;
   }
 

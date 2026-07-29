@@ -41,10 +41,12 @@ const DeletePVCModal = (props: DeletePVCModalProps) => {
         predicate(pvcMetadata) && onPVCKill(pvcMetadata),
     );
 
-    handlePromise(Promise.all([promise, ...extensionPromises])).then(() => {
-      close();
-      navigate(resourceListPathFromModel(PersistentVolumeClaimModel, pvc.metadata.namespace));
-    });
+    handlePromise(Promise.all([promise, ...extensionPromises]))
+      .then(() => {
+        close();
+        navigate(resourceListPathFromModel(PersistentVolumeClaimModel, pvc.metadata.namespace));
+      })
+      .catch(() => {});
   };
 
   const alertComponents = pvcDeleteExtensions.map(

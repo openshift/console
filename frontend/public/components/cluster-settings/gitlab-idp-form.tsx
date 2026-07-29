@@ -115,30 +115,22 @@ export const AddGitLabPage = () => {
     return handlePromise(addIDP(oauth, idp, dryRun));
   };
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault();
 
     // Clear any previous errors.
     setErrorMessage('');
-    getOAuthResource().then((oauth: OAuthKind) => {
+    try {
+      const oauth: OAuthKind = await getOAuthResource();
       const mockCA = caFileContent ? mockNames.ca : '';
-      addGitLabIDP(oauth, mockNames.secret, mockCA, true)
-        .then(() => {
-          const promises = [createClientSecret(), createCAConfigMap()];
-
-          Promise.all(promises)
-            .then(([secret, configMap]) => {
-              const caName = configMap ? configMap.metadata.name : '';
-              return addGitLabIDP(oauth, secret.metadata.name, caName);
-            })
-            .then(() => {
-              redirectToOAuthPage(navigate);
-            });
-        })
-        .catch((err) => {
-          setErrorMessage(err);
-        });
-    });
+      await addGitLabIDP(oauth, mockNames.secret, mockCA, true);
+      const [secret, configMap] = await Promise.all([createClientSecret(), createCAConfigMap()]);
+      const caName = configMap ? configMap.metadata.name : '';
+      await addGitLabIDP(oauth, secret.metadata.name, caName);
+      redirectToOAuthPage(navigate);
+    } catch (err) {
+      setErrorMessage(err);
+    }
   };
 
   const title = t('Add Identity Provider: GitLab');

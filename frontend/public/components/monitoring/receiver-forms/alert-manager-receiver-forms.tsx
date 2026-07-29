@@ -395,17 +395,19 @@ const ReceiverBaseForm: FC<ReceiverBaseFormProps> = ({
 
     // Update 'alertmanager-main' Secret with new alertmanager.yaml configuration
     setInProgress(true);
-    patchAlertmanagerConfig(secret, updateConfig).then(
-      () => {
-        setSaveErrorMsg('');
-        setInProgress(false);
-        navigate('/settings/cluster/alertmanagerconfig');
-      },
-      (err) => {
-        setSaveErrorMsg(err.message);
-        setInProgress(false);
-      },
-    );
+    patchAlertmanagerConfig(secret, updateConfig)
+      .then(
+        () => {
+          setSaveErrorMsg('');
+          setInProgress(false);
+          navigate('/settings/cluster/alertmanagerconfig');
+        },
+        (err) => {
+          setSaveErrorMsg(err.message);
+          setInProgress(false);
+        },
+      )
+      .catch(() => {});
   };
   const receiverTypeLabel = formValues.receiverType
     ? t('{{receiverTypeLabel}}', {

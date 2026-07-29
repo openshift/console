@@ -35,8 +35,8 @@ const getPluginTabPages = (
   navSection: string,
   firstTabId: string,
 ): Page[] => {
-  tabs = tabs.filter((t) => t.properties.navSection === navSection);
-  return tabs.map((tab) => {
+  const filteredTabs = tabs.filter((t) => t.properties.navSection === navSection);
+  return filteredTabs.map((tab) => {
     const tabCards = cards.filter((c) => c.properties.tab === tab.properties.id);
     return {
       href: tab.properties.id === firstTabId ? '' : tab.properties.id,
@@ -54,7 +54,7 @@ const getPluginTabPages = (
   });
 };
 
-const DashboardsPage_: FC<DashboardsPageProps> = ({ kindsInFlight, k8sModelsLoaded }) => {
+const InnerDashboardsPage: FC<DashboardsPageProps> = ({ kindsInFlight, k8sModelsLoaded }) => {
   const { t } = useTranslation('public');
   const title = t('Overview');
   const tabExtensions = useExtensions<DashboardsTab>(isDashboardsTab);
@@ -106,7 +106,7 @@ const mapStateToProps = (state: RootState) => ({
   k8sModelsLoaded: state.k8s.getIn(['RESOURCES', 'loaded']),
 });
 
-export const DashboardsPage = connect(mapStateToProps)(DashboardsPage_);
+export const DashboardsPage = connect(mapStateToProps)(InnerDashboardsPage);
 
 export type DashboardsPageProps = {
   kindsInFlight: boolean;

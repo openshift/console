@@ -38,7 +38,7 @@ import {
   useSecretDescription,
 } from './utils';
 
-export const SecretFormWrapper: FC<BaseEditSecretProps_> = (props) => {
+export const SecretFormWrapper: FC<BaseEditSecretProps> = (props) => {
   const { formType, isCreate, modal, onCancel } = props;
   const { t } = useTranslation('public');
   const navigate = useNavigate();
@@ -140,21 +140,23 @@ export const SecretFormWrapper: FC<BaseEditSecretProps_> = (props) => {
     (isCreate
       ? k8sCreate(SecretModel, newSecret)
       : k8sUpdate(SecretModel, newSecret, metadata.namespace, newSecret.metadata.name)
-    ).then(
-      (s) => {
-        setInProgress(false);
-        if (props.onSave) {
-          props.onSave(s.metadata.name);
-        }
-        if (!props.modal) {
-          navigate(resourceObjPath(s, referenceFor(s)));
-        }
-      },
-      (err) => {
-        setError(err.message);
-        setInProgress(false);
-      },
-    );
+    )
+      .then(
+        (s) => {
+          setInProgress(false);
+          if (props.onSave) {
+            props.onSave(s.metadata.name);
+          }
+          if (!props.modal) {
+            navigate(resourceObjPath(s, referenceFor(s)));
+          }
+        },
+        (err) => {
+          setError(err.message);
+          setInProgress(false);
+        },
+      )
+      .catch(() => {});
   };
 
   const renderBody = () => {
@@ -240,7 +242,7 @@ export const SecretFormWrapper: FC<BaseEditSecretProps_> = (props) => {
   );
 };
 
-type BaseEditSecretProps_ = {
+type BaseEditSecretProps = {
   obj?: K8sResourceKind;
   fixed: any;
   kind?: string;
