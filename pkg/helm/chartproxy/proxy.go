@@ -1,8 +1,9 @@
 package chartproxy
 
 import (
+	"encoding/json"
+	"slices"
 	"sort"
-	"strings"
 
 	chartutil "helm.sh/helm/v4/pkg/chart/v2/util"
 	repo "helm.sh/helm/v4/pkg/repo/v1"
@@ -75,12 +76,12 @@ func New(k8sConfig RestConfigProvider, kubeVersionGetter version.KubeVersionGett
 }
 
 func (p *proxy) IndexFile(onlyCompatible bool, namespace string) (*repo.IndexFile, error) {
-	helmRepos, err := p.helmRepoGetter.List(namespace)
+	helmRepos, configErrors, err := p.helmRepoGetter.List(namespace)
 	if err != nil {
 		return nil, err
 	}
 	annotations := make(map[string]string)
-	var invalidRepos []string
+	invalidRepos := slices.Clone(configErrors)
 	indexFile := repo.NewIndexFile()
 	var delKeys []string = make([]string, 0, 20)
 	for _, helmRepo := range helmRepos {
@@ -88,7 +89,7 @@ func (p *proxy) IndexFile(onlyCompatible bool, namespace string) (*repo.IndexFil
 		if !helmRepo.Disabled {
 			idxFile, err := helmRepo.IndexFile()
 			if err != nil {
-				invalidRepos = append(invalidRepos, helmRepo.Name)
+				invalidRepos = append(invalidRepos, InvalidRepo{Name: helmRepo.Name, Error: err.Error()})
 				klog.Errorf("Error retrieving index file for %v: %v", helmRepo, err)
 				continue
 			}
@@ -125,9 +126,14 @@ func (p *proxy) IndexFile(onlyCompatible bool, namespace string) (*repo.IndexFil
 			}
 		}
 	}
-	if invalidRepos != nil {
-		annotations[warning] = ErrorMessage + strings.Join(invalidRepos, ", ")
-		indexFile.Annotations = annotations
+	if len(invalidRepos) > 0 {
+		data, err := json.Marshal(invalidRepos)
+		if err != nil {
+			klog.Errorf("Error marshalling invalid repos annotation: %v", err)
+		} else {
+			annotations[warning] = string(data)
+			indexFile.Annotations = annotations
+		}
 	}
 
 	for _, delKey := range delKeys {
