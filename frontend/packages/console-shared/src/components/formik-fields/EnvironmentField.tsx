@@ -13,7 +13,7 @@ import { k8sGet } from '@console/internal/module/k8s';
 import type { EnvironmentFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
-const EnvironmentField: FC<EnvironmentFieldProps> = ({
+export const EnvironmentField: FC<EnvironmentFieldProps> = ({
   label,
   helpText,
   required,
@@ -26,7 +26,7 @@ const EnvironmentField: FC<EnvironmentFieldProps> = ({
     },
   } = props;
   const { setFieldValue, values } = useFormikContext<FormikValues>();
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const launchModal = useOverlay();
   const fieldId = getFieldId(props.name, 'env-input');
   const environmentVariables = useMemo(() => {
@@ -82,9 +82,9 @@ const EnvironmentField: FC<EnvironmentFieldProps> = ({
     <FormGroup fieldId={fieldId} label={label} isRequired={required}>
       <NameValueEditor
         nameValuePairs={nameValue}
-        valueString={t('console-shared~Value')}
-        nameString={t('console-shared~Name')}
-        addString={t('console-shared~Add value')}
+        valueString={t('Value')}
+        nameString={t('Name')}
+        addString={t('Add value')}
         readOnly={false}
         allowSorting={false}
         updateParentData={handleNameValuePairs}
@@ -101,5 +101,3 @@ const EnvironmentField: FC<EnvironmentFieldProps> = ({
     </FormGroup>
   );
 };
-
-export default EnvironmentField;

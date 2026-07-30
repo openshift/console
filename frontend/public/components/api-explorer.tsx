@@ -1,11 +1,5 @@
-import { FC, MouseEvent, useEffect, useMemo, useRef, FormEvent, useState } from 'react';
-import { useLocation, useParams, Link, useSearchParams, useNavigate } from 'react-router';
-import { connect } from 'react-redux';
-import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
-import * as _ from 'lodash';
-import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import { Map as ImmutableMap } from 'immutable';
-import * as fuzzy from 'fuzzysearch';
+import type { FC, MouseEvent, FormEvent } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Toolbar,
   ToolbarContent,
@@ -21,58 +15,63 @@ import {
   Pagination,
   Bullseye,
 } from '@patternfly/react-core';
-import { FilterIcon } from '@patternfly/react-icons';
-import { useTranslation } from 'react-i18next';
+import { DataView, DataViewTable, useDataViewPagination } from '@patternfly/react-data-view';
+import { RhUiFilterIcon } from '@patternfly/react-icons';
+import { InnerScrollContainer, Tbody, Tr, Td } from '@patternfly/react-table';
+import * as fuzzy from 'fuzzysearch';
 import i18next from 'i18next';
-
-import { ALL_NAMESPACES_KEY, FLAGS } from '@console/shared/src/constants/common';
-import { APIError } from '@console/shared/src/types/resource';
-import { getTitleForNodeKind } from '@console/shared/src/utils/utils';
+import type { Map as ImmutableMap } from 'immutable';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+import { useLocation, useParams, Link, useSearchParams, useNavigate } from 'react-router';
 import { useExactSearch } from '@console/app/src/components/user-preferences/search/useExactSearch';
-import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
-import { Page } from '@console/internal/components/utils/horizontal-nav';
+import type { ResourceListPage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
+import { isResourceListPage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
+import { getK8sModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sModel';
+import { ConsoleSelect } from '@console/internal/components/utils/console-select';
+import type { Page } from '@console/internal/components/utils/horizontal-nav';
+import { HorizontalNav } from '@console/internal/components/utils/horizontal-nav';
 import { useAccessReview } from '@console/internal/components/utils/rbac';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
+import { DescriptionListTermHelp } from '@console/shared/src/components/description-list/DescriptionListTermHelp';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { DataView, DataViewTable, useDataViewPagination } from '@patternfly/react-data-view';
-import { InnerScrollContainer, Tbody, Tr, Td } from '@patternfly/react-table';
-
+import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
+import { ALL_NAMESPACES_KEY, FLAGS } from '@console/shared/src/constants/common';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
+import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
+import type { APIError } from '@console/shared/src/types/resource';
+import { getTitleForNodeKind } from '@console/shared/src/utils/utils';
 import { LocalResourceAccessReviewsModel, ResourceAccessReviewsModel } from '../models';
-import {
-  apiVersionForModel,
-  k8sCreate,
+import type {
   K8sKind,
   K8sResourceKindReference,
   K8sVerb,
-  getResourceDescription,
-  referenceForModel,
   ResourceAccessReviewRequest,
   ResourceAccessReviewResponse,
 } from '../module/k8s';
+import {
+  apiVersionForModel,
+  k8sCreate,
+  getResourceDescription,
+  referenceForModel,
+} from '../module/k8s';
 import { connectToFlags } from '../reducers/connectToFlags';
 import type { RootState } from '../redux';
-import { RowFilter } from './row-filter';
 import { DefaultPage } from './default-resource';
-import { TextFilter } from './factory/text-filter';
+import { ErrorPage404 } from './error';
 import { exactMatch, fuzzyCaseInsensitive } from './factory/table-filters';
+import { TextFilter } from './factory/text-filter';
 import { getResourceListPages } from './resource-pages';
+import { RowFilter } from './row-filter';
 import { ExploreType } from './sidebars/explore-type-sidebar';
-import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { AsyncComponent } from './utils/async';
-import { LoadError, LoadingBox } from './utils/status-box';
-import { HorizontalNav } from './utils/horizontal-nav';
 import { LinkifyExternal } from './utils/link';
-import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import { ResourceIcon } from './utils/resource-icon';
 import { ScrollToTopOnMount } from './utils/scroll-to-top-on-mount';
-import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
-import {
-  ResourceListPage,
-  isResourceListPage,
-} from '@console/dynamic-plugin-sdk/src/extensions/pages';
-import { getK8sModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sModel';
-import { ErrorPage404 } from './error';
-import { DescriptionListTermHelp } from '@console/shared/src/components/description-list/DescriptionListTermHelp';
+import { LoadError, LoadingBox } from './utils/status-box';
 
 const mapStateToProps = (state: RootState): APIResourceLinkStateProps => {
   return {
@@ -93,11 +92,11 @@ const getAPIResourceLink = (activeNamespace: string, model: K8sKind) => {
   return `/api-resource/ns/${activeNamespace}/${ref}`;
 };
 
-const APIResourceLink_: FC<APIResourceLinkStateProps & APIResourceLinkOwnProps> = ({
+const InnerAPIResourceLink: FC<APIResourceLinkStateProps & APIResourceLinkOwnProps> = ({
   activeNamespace,
   model,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const to = getAPIResourceLink(activeNamespace, model);
   return (
     <span className="co-resource-item">
@@ -112,7 +111,7 @@ const APIResourceLink_: FC<APIResourceLinkStateProps & APIResourceLinkOwnProps> 
 };
 const APIResourceLink = connect<APIResourceLinkStateProps, {}, APIResourceLinkOwnProps>(
   mapStateToProps,
-)(APIResourceLink_);
+)(InnerAPIResourceLink);
 
 const Group: FC<{ value: string }> = ({ value }) => {
   if (!value) {
@@ -130,14 +129,12 @@ const Group: FC<{ value: string }> = ({ value }) => {
   );
 };
 const BodyEmpty: FC<{ label: string; colSpan: number }> = ({ label, colSpan }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <Tbody>
       <Tr>
         <Td colSpan={colSpan}>
-          <Bullseye>
-            {label ? t('public~No {{label}} found', { label }) : t('public~None found')}
-          </Bullseye>
+          <Bullseye>{label ? t('No {{label}} found', { label }) : t('None found')}</Bullseye>
         </Td>
       </Tr>
     </Tbody>
@@ -163,7 +160,7 @@ const APIResourcesList: FC = () => {
   const versionFilter = search.get(VERSION_PARAM) || ALL;
   const textFilter = search.get(TEXT_FILTER_PARAM) || '';
   const scopeFilter = search.get(SCOPE_PARAM) || ALL;
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Pagination
@@ -217,7 +214,7 @@ const APIResourcesList: FC = () => {
       result[group] = <Group value={group} />;
       return result;
     },
-    { [ALL]: t('public~All groups'), '': t('public~No group') },
+    { [ALL]: t('All groups'), '': t('No group') },
   );
   const [isExactSearch] = useExactSearch();
   const matchFn: Function = isExactSearch ? exactMatch : fuzzyCaseInsensitive;
@@ -244,7 +241,7 @@ const APIResourcesList: FC = () => {
       result[version] = version;
       return result;
     },
-    { [ALL]: t('public~All versions') },
+    { [ALL]: t('All versions') },
   );
 
   const versionSpacer = new Set<string>();
@@ -253,9 +250,9 @@ const APIResourcesList: FC = () => {
   }
 
   const scopeOptions = {
-    [ALL]: t('public~All scopes'),
-    cluster: t('public~Cluster'),
-    namespace: t('public~Namespace'),
+    [ALL]: t('All scopes'),
+    cluster: t('Cluster'),
+    namespace: t('Namespace'),
   };
   const scopeSpacer = new Set<string>(['cluster']);
 
@@ -353,7 +350,7 @@ const APIResourcesList: FC = () => {
     setQueryArgument(ORDER_BY_PARAM, direction);
   };
 
-  const bodyEmpty = useMemo(() => <BodyEmpty label={t('public~API resources')} colSpan={5} />, [t]);
+  const bodyEmpty = useMemo(() => <BodyEmpty label={t('API resources')} colSpan={5} />, [t]);
 
   const updateURL = (k: string, v: string) => {
     if (v === ALL) {
@@ -384,7 +381,7 @@ const APIResourcesList: FC = () => {
     <PaneBody>
       <Toolbar className="pf-m-toggle-group-container">
         <ToolbarContent>
-          <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md">
+          <ToolbarToggleGroup toggleIcon={<RhUiFilterIcon />} breakpoint="md">
             <ToolbarItem>
               <ConsoleSelect
                 autocompleteFilter={autocompleteGroups}
@@ -423,7 +420,7 @@ const APIResourcesList: FC = () => {
           <ToolbarItem>
             <TextFilter
               value={textFilter}
-              label={t('public~by kind')}
+              label={t('by kind')}
               onChange={(_event, value) => setTextFilter(value)}
             />
           </ToolbarItem>
@@ -431,9 +428,9 @@ const APIResourcesList: FC = () => {
             <Pagination
               itemCount={sortedResources.length}
               titles={{
-                ofWord: t('public~of'),
-                itemsPerPage: t('public~Items per page'),
-                perPageSuffix: t('public~per page'),
+                ofWord: t('of'),
+                itemsPerPage: t('Items per page'),
+                perPageSuffix: t('per page'),
               }}
               {...pagination}
             />
@@ -445,10 +442,10 @@ const APIResourcesList: FC = () => {
       >
         <InnerScrollContainer>
           <DataViewTable
-            aria-label={t('public~API resources')}
+            aria-label={t('API resources')}
             columns={[
               {
-                cell: t('public~Kind'),
+                cell: t('Kind'),
                 props: {
                   modifier: 'nowrap',
                   width: 20,
@@ -460,7 +457,7 @@ const APIResourcesList: FC = () => {
                 },
               },
               {
-                cell: t('public~Group'),
+                cell: t('Group'),
                 props: {
                   modifier: 'nowrap',
                   width: 15,
@@ -472,7 +469,7 @@ const APIResourcesList: FC = () => {
                 },
               },
               {
-                cell: t('public~Version'),
+                cell: t('Version'),
                 props: {
                   modifier: 'nowrap',
                   sort: {
@@ -483,7 +480,7 @@ const APIResourcesList: FC = () => {
                 },
               },
               {
-                cell: t('public~Namespaced'),
+                cell: t('Namespaced'),
                 props: {
                   modifier: 'nowrap',
                   sort: {
@@ -493,7 +490,7 @@ const APIResourcesList: FC = () => {
                   },
                 },
               },
-              { cell: t('public~Description'), props: { modifier: 'nowrap' } },
+              { cell: t('Description'), props: { modifier: 'nowrap' } },
             ]}
             rows={paginatedResources.map((model: K8sKind) => [
               <APIResourceLink key={model.kind} model={model} />,
@@ -501,7 +498,7 @@ const APIResourcesList: FC = () => {
                 <Group value={model.apiGroup} />
               </span>,
               model.apiVersion,
-              model.namespaced ? t('public~true') : t('public~false'),
+              model.namespaced ? t('true') : t('false'),
               <div key="description" className="co-line-clamp">
                 {getResourceDescription(model)}
               </div>,
@@ -519,8 +516,8 @@ const APIResourcesList: FC = () => {
 APIResourcesList.displayName = 'APIResourcesList';
 
 export const APIExplorerPage: FC<{}> = () => {
-  const { t } = useTranslation();
-  const title = t('public~API Explorer');
+  const { t } = useTranslation('public');
+  const title = t('API Explorer');
   return (
     <>
       <DocumentTitle>{title}</DocumentTitle>
@@ -534,46 +531,46 @@ APIExplorerPage.displayName = 'APIExplorerPage';
 const APIResourceDetails: FC<APIResourceTabProps> = ({ customData: { kindObj } }) => {
   const { kind, apiGroup, apiVersion, namespaced, verbs, shortNames } = kindObj;
   const description = getResourceDescription(kindObj);
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <PaneBody>
       <DescriptionList>
         <DescriptionListGroup>
-          <DescriptionListTerm>{t('public~Kind')}</DescriptionListTerm>
+          <DescriptionListTerm>{t('Kind')}</DescriptionListTerm>
           <DescriptionListDescription>{kind}</DescriptionListDescription>
         </DescriptionListGroup>
         <DescriptionListGroup>
-          <DescriptionListTerm>{t('public~API group')}</DescriptionListTerm>
+          <DescriptionListTerm>{t('API group')}</DescriptionListTerm>
           <DescriptionListDescription className="co-select-to-copy">
             {apiGroup || '-'}
           </DescriptionListDescription>
         </DescriptionListGroup>
         <DescriptionListGroup>
-          <DescriptionListTerm>{t('public~API version')}</DescriptionListTerm>
+          <DescriptionListTerm>{t('API version')}</DescriptionListTerm>
           <DescriptionListDescription>{apiVersion}</DescriptionListDescription>
         </DescriptionListGroup>
         <DescriptionListGroup>
-          <DescriptionListTerm>{t('public~Namespaced')}</DescriptionListTerm>
+          <DescriptionListTerm>{t('Namespaced')}</DescriptionListTerm>
           <DescriptionListDescription>
-            {namespaced ? t('public~true') : t('public~false')}
+            {namespaced ? t('true') : t('false')}
           </DescriptionListDescription>
         </DescriptionListGroup>
         <DescriptionListGroup>
-          <DescriptionListTerm>{t('public~Verbs')}</DescriptionListTerm>
+          <DescriptionListTerm>{t('Verbs')}</DescriptionListTerm>
           <DescriptionListDescription>{verbs.join(', ')}</DescriptionListDescription>
         </DescriptionListGroup>
         {shortNames && (
           <DescriptionListGroup>
             <DescriptionListTermHelp
-              text={t('public~Short names')}
-              textHelp={t('public~Short names can be used to match this resource on the CLI.')}
+              text={t('Short names')}
+              textHelp={t('Short names can be used to match this resource on the CLI.')}
             />
             <DescriptionListDescription>{shortNames.join(', ')}</DescriptionListDescription>
           </DescriptionListGroup>
         )}
         {description && (
           <DescriptionListGroup>
-            <DescriptionListTerm>{t('public~Description')}</DescriptionListTerm>
+            <DescriptionListTerm>{t('Description')}</DescriptionListTerm>
             <DescriptionListDescription className="co-break-word co-pre-wrap">
               <LinkifyExternal>{description}</LinkifyExternal>
             </DescriptionListDescription>
@@ -651,7 +648,7 @@ const APIResourceAccessReview: FC<APIResourceTabProps> = ({
   const [showServiceAccounts, setShowServiceAccounts] = useState(false);
   const [accessResponse, setAccessResponse] = useState<ResourceAccessReviewResponse>();
   const [error, setError] = useState<APIError>();
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   // Pagination
   const pagination = useDataViewPagination({
@@ -783,10 +780,10 @@ const APIResourceAccessReview: FC<APIResourceTabProps> = ({
     });
   };
 
-  const bodyEmpty = useMemo(() => <BodyEmpty label={t('public~Subjects')} colSpan={2} />, [t]);
+  const bodyEmpty = useMemo(() => <BodyEmpty label={t('Subjects')} colSpan={2} />, [t]);
 
   if (error) {
-    return <LoadError label={t('public~Access review')}>{error.message}</LoadError>;
+    return <LoadError label={t('Access review')}>{error.message}</LoadError>;
   }
 
   if (!accessResponse) {
@@ -825,13 +822,13 @@ const APIResourceAccessReview: FC<APIResourceTabProps> = ({
               items={verbOptions}
               onChange={(v: K8sVerb) => setVerb(v)}
               selectedKey={verb}
-              titlePrefix={t('public~Verb')}
+              titlePrefix={t('Verb')}
             />
           </FlexItem>
           <FlexItem>
             <TextFilter
               defaultValue={filter}
-              label={t('public~by subject')}
+              label={t('by subject')}
               onChange={(_event, val) => setFilter(val)}
             />
           </FlexItem>
@@ -839,9 +836,9 @@ const APIResourceAccessReview: FC<APIResourceTabProps> = ({
             <Pagination
               itemCount={filteredData.length}
               titles={{
-                ofWord: t('public~of'),
-                itemsPerPage: t('public~Items per page'),
-                perPageSuffix: t('public~per page'),
+                ofWord: t('of'),
+                itemsPerPage: t('Items per page'),
+                perPageSuffix: t('per page'),
               }}
               {...pagination}
             />
@@ -857,7 +854,7 @@ const APIResourceAccessReview: FC<APIResourceTabProps> = ({
             <FlexItem>
               <Switch
                 id="user-switch"
-                label={t('public~{{count}} User', { count: users.length })}
+                label={t('{{count}} User', { count: users.length })}
                 isChecked={showUsers}
                 onChange={toggleShowUsers}
                 ouiaId="UserSwitch"
@@ -866,7 +863,7 @@ const APIResourceAccessReview: FC<APIResourceTabProps> = ({
             <FlexItem>
               <Switch
                 id="group-switch"
-                label={t('public~{{count}} Group', { count: groups.length })}
+                label={t('{{count}} Group', { count: groups.length })}
                 isChecked={showGroups}
                 onChange={toggleShowGroups}
                 ouiaId="GroupSwitch"
@@ -875,7 +872,7 @@ const APIResourceAccessReview: FC<APIResourceTabProps> = ({
             <FlexItem>
               <Switch
                 id="service-account-switch"
-                label={t('public~{{count}} ServiceAccount', { count: serviceAccounts.length })}
+                label={t('{{count}} ServiceAccount', { count: serviceAccounts.length })}
                 isChecked={showServiceAccounts}
                 onChange={toggleShowServiceAccounts}
                 ouiaId="ServiceAccountSwitch"
@@ -886,18 +883,19 @@ const APIResourceAccessReview: FC<APIResourceTabProps> = ({
         <p className="co-m-pane__explanation">
           {namespaced &&
             namespace &&
-            t(
-              'public~The following subjects can {{verb}} {{plural}} in namespace {{ namespace }}',
-              { verb, plural, namespace },
-            )}
+            t('The following subjects can {{verb}} {{plural}} in namespace {{ namespace }}', {
+              verb,
+              plural,
+              namespace,
+            })}
           {namespaced &&
             !namespace &&
-            t('public~The following subjects can {{verb}} {{plural}} in all namespaces', {
+            t('The following subjects can {{verb}} {{plural}} in all namespaces', {
               verb,
               plural,
             })}
           {!namespaced &&
-            t('public~The following subjects can {{verb}} {{plural}} at the cluster scope', {
+            t('The following subjects can {{verb}} {{plural}} at the cluster scope', {
               verb,
               plural,
             })}
@@ -905,10 +903,10 @@ const APIResourceAccessReview: FC<APIResourceTabProps> = ({
         <DataView activeState={filteredData.length === 0 ? 'empty' : undefined}>
           <InnerScrollContainer>
             <DataViewTable
-              aria-label={t('public~API resources')}
+              aria-label={t('API resources')}
               columns={[
                 {
-                  cell: t('public~Subject'),
+                  cell: t('Subject'),
                   props: {
                     modifier: 'nowrap',
                     sort: {
@@ -919,7 +917,7 @@ const APIResourceAccessReview: FC<APIResourceTabProps> = ({
                   },
                 },
                 {
-                  cell: t('public~Type'),
+                  cell: t('Type'),
                   props: {
                     modifier: 'nowrap',
                     sort: {
@@ -946,7 +944,7 @@ const APIResourceAccessReview: FC<APIResourceTabProps> = ({
   );
 };
 
-const APIResourcePage_ = (props) => {
+const InnerAPIResourcePage = (props) => {
   const params = useParams();
   const location = useLocation();
 
@@ -955,7 +953,7 @@ const APIResourcePage_ = (props) => {
   const kindsInFlight = props.k8s.getIn(['RESOURCES', 'inFlight']);
 
   const namespace = kindObj?.namespaced ? params.ns : undefined;
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const canCreateResourceAccessReview = useAccessReview({
     group: namespace
@@ -974,11 +972,11 @@ const APIResourcePage_ = (props) => {
 
   const breadcrumbs = [
     {
-      name: t('public~Explore'),
+      name: t('Explore'),
       path: '/api-explorer',
     },
     {
-      name: t('public~Resource details'),
+      name: t('Resource details'),
       path: location.pathname,
     },
   ];
@@ -1026,7 +1024,11 @@ const APIResourcePage_ = (props) => {
       <PageTitleContext.Provider value={titleProviderValues}>
         <ScrollToTopOnMount />
         <PageHeading
-          title={<div data-test-id="api-explorer-resource-title">{kindObj.label}</div>}
+          title={
+            <div data-test="api-explorer-resource-title" data-test-id="api-explorer-resource-title">
+              {kindObj.label}
+            </div>
+          }
           breadcrumbs={breadcrumbs}
         />
         <HorizontalNav pages={pages} customData={{ kindObj, namespace }} noStatusBox />
@@ -1040,7 +1042,7 @@ const k8StateToProps = ({ k8s }) => ({
 });
 
 export const APIResourcePage = connect(k8StateToProps)(
-  connectToFlags(FLAGS.OPENSHIFT)(APIResourcePage_),
+  connectToFlags(FLAGS.OPENSHIFT)(InnerAPIResourcePage),
 );
 
 type APIResourceLinkStateProps = {

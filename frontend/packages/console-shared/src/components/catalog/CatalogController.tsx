@@ -20,9 +20,9 @@ import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsM
 import { useFlag } from '../../hooks/useFlag';
 import { useQueryParams } from '../../hooks/useQueryParams';
 import PageBody from '../layout/PageBody';
-import CatalogView from './catalog-view/CatalogView';
-import CatalogTile from './CatalogTile';
-import CatalogDetailsModal from './details/CatalogDetailsModal';
+import { CatalogView } from './catalog-view/CatalogView';
+import { CatalogTile } from './CatalogTile';
+import { CatalogDetailsModal } from './details/CatalogDetailsModal';
 import { getURLWithParams, useGetAllDisabledSubCatalogs } from './utils/catalog-utils';
 import { determineAvailableFilters } from './utils/filter-utils';
 import type {
@@ -42,7 +42,7 @@ type CatalogControllerProps = CatalogService & {
   categories?: CatalogCategory[];
 };
 
-const CatalogController: FC<CatalogControllerProps> = ({
+export const CatalogController: FC<CatalogControllerProps> = ({
   type,
   items,
   itemsMap,
@@ -56,7 +56,7 @@ const CatalogController: FC<CatalogControllerProps> = ({
   categories,
 }) => {
   const { setQueryArgument, removeQueryArgument } = useQueryParamsMutator();
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const { pathname } = useLocation();
   const queryParams = useQueryParams();
   const [disabledSubCatalogs] = useGetAllDisabledSubCatalogs();
@@ -117,7 +117,7 @@ const CatalogController: FC<CatalogControllerProps> = ({
     });
     const crumbs = [
       {
-        name: t('console-shared~Software Catalog'),
+        name: t('Software Catalog'),
         path: `${pathname}?${params.toString()}`,
       },
     ];
@@ -209,7 +209,7 @@ const CatalogController: FC<CatalogControllerProps> = ({
           data={items}
           loaded={loaded}
           loadError={loadError}
-          label={t('console-shared~Catalog items')}
+          label={t('Catalog items')}
         >
           <CatalogView
             catalogType={type}
@@ -230,5 +230,3 @@ const CatalogController: FC<CatalogControllerProps> = ({
     </>
   );
 };
-
-export default CatalogController;

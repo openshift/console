@@ -1,7 +1,5 @@
 import type { FC } from 'react';
 import { useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Base64 } from 'js-base64';
 import {
   FormGroup,
   TextInput,
@@ -12,7 +10,9 @@ import {
   FormFieldGroup,
   ActionGroup,
 } from '@patternfly/react-core';
-import { MinusCircleIcon } from '@patternfly/react-icons';
+import { RhUiMinusCircleIcon } from '@patternfly/react-icons';
+import { Base64 } from 'js-base64';
+import { useTranslation } from 'react-i18next';
 
 export const PullSecretCredentialEntry: FC<PullSecretCredentialEntryProps> = ({
   id,
@@ -24,7 +24,7 @@ export const PullSecretCredentialEntry: FC<PullSecretCredentialEntryProps> = ({
   removeEntry,
   showRemoveButton,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const updateEntry = useCallback(
     (name: string, value: string): void => {
@@ -56,13 +56,13 @@ export const PullSecretCredentialEntry: FC<PullSecretCredentialEntryProps> = ({
             type="button"
             variant="link"
             data-test="remove-entry-button"
-            icon={<MinusCircleIcon />}
+            icon={<RhUiMinusCircleIcon />}
           >
-            {t('public~Remove credentials')}
+            {t('Remove credentials')}
           </Button>
         </ActionGroup>
       )}
-      <FormGroup label={t('public~Registry server address')} isRequired fieldId={`${id}-address`}>
+      <FormGroup label={t('Registry server address')} isRequired fieldId={`${id}-address`}>
         <TextInput
           id={`${id}-address`}
           type="text"
@@ -75,11 +75,11 @@ export const PullSecretCredentialEntry: FC<PullSecretCredentialEntryProps> = ({
         />
         <FormHelperText>
           <HelperText>
-            <HelperTextItem>{t('public~For example quay.io or docker.io')}</HelperTextItem>
+            <HelperTextItem>{t('For example quay.io or docker.io')}</HelperTextItem>
           </HelperText>
         </FormHelperText>
       </FormGroup>
-      <FormGroup label={t('public~Username')} isRequired fieldId={`${id}-username`}>
+      <FormGroup label={t('Username')} isRequired fieldId={`${id}-username`}>
         <TextInput
           id={`${id}-username`}
           type="text"
@@ -91,7 +91,7 @@ export const PullSecretCredentialEntry: FC<PullSecretCredentialEntryProps> = ({
           isRequired
         />
       </FormGroup>
-      <FormGroup label={t('public~Password')} isRequired fieldId={`${id}-password`}>
+      <FormGroup label={t('Password')} isRequired fieldId={`${id}-password`}>
         <TextInput
           id={`${id}-password`}
           type="password"
@@ -103,7 +103,7 @@ export const PullSecretCredentialEntry: FC<PullSecretCredentialEntryProps> = ({
           isRequired
         />
       </FormGroup>
-      <FormGroup label={t('public~Email')} fieldId={`${id}-email`}>
+      <FormGroup label={t('Email')} fieldId={`${id}-email`}>
         <TextInput
           id={`${id}-email`}
           type="email"

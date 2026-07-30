@@ -1,15 +1,15 @@
-import { useTranslation, Trans } from 'react-i18next';
 import { Banner, Button, Flex, PageSection } from '@patternfly/react-core';
-
+import { useTranslation, Trans } from 'react-i18next';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import {
   CLUSTER_TELEMETRY_ANALYTICS,
   PREFERRED_TELEMETRY_USER_PREFERENCE_KEY,
   USER_TELEMETRY_ANALYTICS,
-} from '@console/shared';
-import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+} from '@console/shared/src/constants/common';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
+
 export const TelemetryNotifier = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const [
     currentUserPreferenceTelemetryValue,
@@ -59,14 +59,14 @@ export const TelemetryNotifier = () => {
             className="co-global-telemetry-notification__button"
             onClick={() => userResponse(USER_TELEMETRY_ANALYTICS.ALLOW)}
           >
-            {t('public~Accept')}
+            {t('Accept')}
           </Button>
           <Button
             variant="tertiary"
             className="co-global-telemetry-notification__button"
             onClick={() => userResponse(USER_TELEMETRY_ANALYTICS.DENY)}
           >
-            {t('public~Deny')}
+            {t('Deny')}
           </Button>
         </Flex>
       </Banner>

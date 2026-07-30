@@ -1,4 +1,3 @@
-import type { FC, ReactNode } from 'react';
 import { screen } from '@testing-library/react';
 import * as utils from '@console/internal/components/utils/url-poll-hook';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
@@ -9,28 +8,9 @@ import { TopologyViewType } from '../topology-types';
 jest.mock('@console/plugin-sdk/src/api/useExtensions', () => ({
   useExtensions: () => [],
 }));
-jest.mock('@console/shared', () => {
-  const ActualShared = jest.requireActual('@console/shared');
-  return {
-    ...ActualShared,
-    useQueryParams: () => new Map(),
-  };
-});
-
-jest.mock('react-dnd', () => {
-  const OriginalReactDnd = jest.requireActual('react-dnd');
-  return {
-    ...OriginalReactDnd,
-    useDrag: () => [{ isDragging: false }, jest.fn(), null],
-    useDrop: () => [{ isOver: false, canDrop: false }, jest.fn()],
-    DragDropContext: ({ children }: { children: ReactNode }) => children,
-    DragSource: () => (component: FC) => component,
-    DropTarget: () => (component: FC) => component,
-  };
-});
-
-jest.mock('react-dnd-html5-backend', () => ({
-  HTML5Backend: jest.fn(),
+jest.mock('@console/shared/src/hooks/useQueryParams', () => ({
+  ...jest.requireActual('@console/shared/src/hooks/useQueryParams'),
+  useQueryParams: () => new Map(),
 }));
 
 jest.mock('../components/page/TopologyView', () => () => 'Mocked Topology View');

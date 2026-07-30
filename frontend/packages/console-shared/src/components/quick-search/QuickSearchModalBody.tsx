@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router';
 import type { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import { useTelemetry } from '../../hooks/useTelemetry';
-import type { CatalogType } from '../catalog';
+import type { CatalogType } from '../catalog/utils/types';
 import QuickSearchBar from './QuickSearchBar';
 import QuickSearchContent from './QuickSearchContent';
 import type { DetailsRendererFunction } from './QuickSearchDetails';

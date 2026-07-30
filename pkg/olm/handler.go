@@ -33,6 +33,7 @@ func NewOLMHandler(apiServerURL string, client *http.Client, service *CatalogSer
 	mux.HandleFunc("/api/olm/catalog-items/", o.catalogItemsHandler)
 	mux.HandleFunc("/api/olm/catalogd/metas/{catalogName}", middleware.AllowMethod(http.MethodGet, o.catalogdMetasHandler))
 	mux.HandleFunc("/api/olm/catalog-icons/{catalogName}/{packageName}", middleware.AllowMethod(http.MethodGet, o.catalogIconHandler))
+	mux.HandleFunc("/api/olm/lifecycle/{catalogNamespace}/{catalogName}/{packageName}", middleware.AllowMethod(http.MethodGet, o.lifecycleHandler))
 	mux.HandleFunc("/api/olm/list-operands/", o.operandsListHandler)
 	mux.HandleFunc("/api/olm/check-package-manifests/", o.checkPackageManifestHandler)
 	o.mux = mux

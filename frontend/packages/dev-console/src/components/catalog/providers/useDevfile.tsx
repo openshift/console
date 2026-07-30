@@ -7,9 +7,9 @@ import type {
   CatalogItemDetailsProperty,
   ExtensionHook,
 } from '@console/dynamic-plugin-sdk';
-import { coFetchJSON } from '@console/internal/co-fetch';
-import type { APIError } from '@console/shared';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import type { APIError } from '@console/shared/src/types/resource';
+import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
 import type { DevfileSample } from '../../import/devfile/devfile-types';
 
 const normalizeDevfile = (devfileSamples: DevfileSample[], t: TFunction): CatalogItem[] => {
@@ -69,7 +69,7 @@ const normalizeDevfile = (devfileSamples: DevfileSample[], t: TFunction): Catalo
 const useDevfile: ExtensionHook<CatalogItem[]> = (): [CatalogItem[], boolean, any] => {
   const [devfileSamples, setDevfileSamples] = useState<DevfileSample[]>();
   const [loadedError, setLoadedError] = useState<APIError>();
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
 
   useEffect(() => {
     let mounted = true;

@@ -55,23 +55,23 @@ import {
   definitionFor,
 } from '@console/internal/module/k8s';
 import {
-  Status,
-  SuccessStatus,
   LazyActionMenu,
-  ActionMenuVariant,
-  getNamespace,
-} from '@console/shared';
-import { KEBAB_COLUMN_CLASS } from '@console/shared/src/components/actions/LazyActionMenu';
-import ErrorAlert from '@console/shared/src/components/alerts/error';
+  KEBAB_COLUMN_CLASS,
+} from '@console/shared/src/components/actions/LazyActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import { ErrorAlert } from '@console/shared/src/components/alerts/error';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { Status } from '@console/shared/src/components/status/Status';
+import { SuccessStatus } from '@console/shared/src/components/status/statuses';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { useK8sModels } from '@console/shared/src/hooks/useK8sModels';
 import { useResourceDetailsPage } from '@console/shared/src/hooks/useResourceDetailsPage';
 import { useResourceListPage } from '@console/shared/src/hooks/useResourceListPage';
-import type { RouteParams } from '@console/shared/src/types';
+import { getNamespace } from '@console/shared/src/selectors/common';
+import type { RouteParams } from '@console/shared/src/types/route-params';
 import { ClusterServiceVersionModel } from '../../models';
 import type { ClusterServiceVersionKind, ProvidedAPI } from '../../types';
 import { useClusterServiceVersion } from '../../utils/useClusterServiceVersion';
@@ -210,42 +210,42 @@ export const OperandTableRow: FC<OperandTableRowProps> = ({ obj, showNamespace }
 
 const getOperandNamespace = (obj: ClusterServiceVersionKind): string | null => getNamespace(obj);
 
-export const OperandList: FC<OperandListProps> = (props) => {
-  const { t } = useTranslation();
+const OperandList: FC<OperandListProps> = (props) => {
+  const { t } = useTranslation('olm');
   const { noAPIsFound, showNamespace } = props;
 
   const nameHeader: Header = {
-    title: t('public~Name'),
+    title: t('Name'),
     sortField: 'metadata.name',
     transforms: [sortable],
     props: { className: tableColumnClasses[0] },
   };
   const kindHeader: Header = {
-    title: t('public~Kind'),
+    title: t('Kind'),
     sortField: 'kind',
     transforms: [sortable],
     props: { className: tableColumnClasses[1] },
   };
   const namespaceHeader: Header = {
-    title: t('public~Namespace'),
+    title: t('Namespace'),
     sortFunc: 'getOperandNamespace',
     transforms: [sortable],
     props: { className: tableColumnClasses[2] },
   };
   const statusHeader: Header = {
-    title: t('public~Status'),
+    title: t('Status'),
     sortFunc: 'operandStatus',
     transforms: [sortable],
     props: { className: tableColumnClasses[3] },
   };
   const labelsHeader: Header = {
-    title: t('public~Labels'),
+    title: t('Labels'),
     sortField: 'metadata.labels',
     transforms: [sortable],
     props: { className: tableColumnClasses[4] },
   };
   const lastUpdatedHeader: Header = {
-    title: t('public~Last updated'),
+    title: t('Last updated'),
     sortField: 'metadata.creationTimestamp',
     transforms: [sortable],
     props: { className: tableColumnClasses[5] },
@@ -299,13 +299,13 @@ export const OperandList: FC<OperandListProps> = (props) => {
       data={data}
       EmptyMsg={() =>
         noAPIsFound ? (
-          <ConsoleEmptyState title={t('olm~No provided APIs defined')}>
-            {t('olm~This application was not properly installed or configured.')}
+          <ConsoleEmptyState title={t('No provided APIs defined')}>
+            {t('This application was not properly installed or configured.')}
           </ConsoleEmptyState>
         ) : (
-          <ConsoleEmptyState title={t('olm~No operands found')}>
+          <ConsoleEmptyState title={t('No operands found')}>
             {t(
-              'olm~Operands are declarative components used to define the behavior of the application.',
+              'Operands are declarative components used to define the behavior of the application.',
             )}
           </ConsoleEmptyState>
         )
@@ -345,7 +345,7 @@ const getK8sWatchResources = (
 };
 
 export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const location = useLocation();
   const [namespace] = useActiveNamespace();
   const [showOperandsInAllNamespaces] = useShowOperandsInAllNamespaces();
@@ -421,7 +421,7 @@ export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
     Object.keys(watchedResources).length > 1
       ? [
           {
-            filterGroupName: t('olm~Resource Kind'),
+            filterGroupName: t('Resource Kind'),
             type: 'clusterserviceversion-resource-kind',
             reducer: ({ kind }) => kind,
             items: Object.keys(watchedResources).map((kind) => ({
@@ -447,12 +447,12 @@ export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
   return inFlight ? null : (
     <>
       <ListPageHeader
-        title={showTitle ? t('olm~All Instances') : undefined}
+        title={showTitle ? t('All Instances') : undefined}
         hideFavoriteButton
         helpText={managesAllNamespaces && <ShowOperandsInAllNamespacesRadioGroup />}
       >
         <ListPageCreateDropdown onClick={createNavigate} items={createItems}>
-          {t('olm~Create new')}
+          {t('Create new')}
         </ListPageCreateDropdown>
       </ListPageHeader>
       <ListPageBody>
@@ -478,7 +478,7 @@ export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
 };
 
 const DefaultProvidedAPIPage: FC<DefaultProvidedAPIPageProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const location = useLocation();
   const [showOperandsInAllNamespaces] = useShowOperandsInAllNamespaces();
 
@@ -518,9 +518,7 @@ const DefaultProvidedAPIPage: FC<DefaultProvidedAPIPageProps> = (props) => {
         hideFavoriteButton
         helpText={managesAllNamespaces && <ShowOperandsInAllNamespacesRadioGroup />}
       >
-        <ListPageCreateLink to={createPath}>
-          {t('public~Create {{label}}', { label })}
-        </ListPageCreateLink>
+        <ListPageCreateLink to={createPath}>{t('Create {{label}}', { label })}</ListPageCreateLink>
       </ListPageHeader>
       <ListPageBody>
         <ListPageFilter
@@ -602,7 +600,7 @@ const PodStatuses: FC<PodStatusesProps> = ({ kindObj, obj, podStatusDescriptors,
   ) : null;
 
 export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: OperandDetailsProps) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const { kind, status } = obj;
   const [errorMessage, setErrorMessage] = useState(null);
   const handleError = (err: Error) => setErrorMessage(err.message);
@@ -660,7 +658,7 @@ export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: Operan
     <div className="co-operand-details co-m-pane">
       <PaneBody>
         {errorMessage && <ErrorAlert message={errorMessage} />}
-        <SectionHeading text={t('olm~{{kind}} overview', { kind: displayName || kind })} />
+        <SectionHeading text={t('{{kind}} overview', { kind: displayName || kind })} />
         <PodStatuses
           kindObj={kindObj}
           obj={obj}
@@ -718,7 +716,7 @@ export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: Operan
       {Array.isArray(status?.conditions) &&
         (conditionsStatusDescriptors ?? []).every(({ path }) => path !== 'conditions') && (
           <PaneBody data-test="status.conditions">
-            <SectionHeading data-test="operand-conditions-heading" text={t('public~Conditions')} />
+            <SectionHeading data-test="operand-conditions-heading" text={t('Conditions')} />
             <Conditions conditions={status.conditions} />
           </PaneBody>
         )}
@@ -738,7 +736,7 @@ export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: Operan
 type OperandDetailsPageRouteParams = RouteParams<'appName' | 'ns' | 'name' | 'plural'>;
 
 const DefaultOperandDetailsPage: FC<DefaultOperandDetailsPageProps> = ({ k8sModel }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const params = useParams();
   const { appName, ns, name, plural } = params;
   const location = useLocation();
@@ -769,7 +767,7 @@ const DefaultOperandDetailsPage: FC<DefaultOperandDetailsPageProps> = ({ k8sMode
       createRedirect
       breadcrumbsFor={() => [
         {
-          name: t('olm~Installed Operators'),
+          name: t('Installed Operators'),
           path: `/k8s/ns/${params.ns}/${ClusterServiceVersionModel.plural}`,
         },
         {
@@ -777,7 +775,7 @@ const DefaultOperandDetailsPage: FC<DefaultOperandDetailsPageProps> = ({ k8sMode
           path: location.pathname.slice(0, location.pathname.lastIndexOf('/')),
         },
         {
-          name: t('olm~{{item}} details', { item: kindForReference(params.plural) }), // Use url param in case model doesn't exist
+          name: t('{{item}} details', { item: kindForReference(params.plural) }), // Use url param in case model doesn't exist
           path: `${location.pathname}`,
         },
       ]}
@@ -828,7 +826,7 @@ type OperandStatusType = {
   value: string;
 };
 
-export type OperandListProps = {
+type OperandListProps = {
   loaded: boolean;
   kinds?: GroupVersionKind[];
   data: K8sResourceKind[];
@@ -844,14 +842,6 @@ export type OperandListProps = {
 
 export type OperandStatusProps = {
   operand: K8sResourceKind;
-};
-
-export type OperandHeaderProps = {
-  data: K8sResourceKind[];
-};
-
-export type OperandRowProps = {
-  obj: K8sResourceKind;
 };
 
 export type ProvidedAPIsPageProps = {
@@ -890,13 +880,6 @@ export type OperandDetailsProps = {
 };
 
 type DefaultOperandDetailsPageProps = { customData: any; k8sModel: K8sModel };
-
-export type OperandResourceDetailsProps = {
-  csv?: { data: ClusterServiceVersionKind };
-  gvk: GroupVersionKind;
-  name: string;
-  namespace: string;
-};
 
 type Header = {
   title: string;

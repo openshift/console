@@ -12,6 +12,7 @@
   "No Image vulnerabilities found": "Aucune vulnérabilité d’image trouvée",
   "Image Manifest Vulnerabilities": "Vulnérabilités du manifeste d’image",
   "Search by image name...": "Rechercher par nom d’image...",
+  "Unable to load vulnerability data": "Impossible de charger les données de vulnérabilité",
   "Container": "Conteneur",
   "Image": "Image",
   "Security scan": "Analyse de sécurité",

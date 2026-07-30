@@ -12,7 +12,6 @@ export enum NodeType {
   PubSub = 'event-pubsub',
   SinkUri = 'sink-uri',
   EventSourceKafka = 'event-source-kafka',
-  Kafka = 'knative-kafka',
   KafkaSink = 'kafka-sink',
 }
 
@@ -28,10 +27,6 @@ export enum KameletType {
   Sink = 'Sink',
   Source = 'Source',
 }
-
-export type RevK8sResourceKind = K8sResourceKind & {
-  resources?: { [key: string]: any };
-};
 
 export type Subscriber = {
   kind: string;

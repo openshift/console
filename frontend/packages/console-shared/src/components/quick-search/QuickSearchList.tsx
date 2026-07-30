@@ -20,8 +20,8 @@ import type { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import { useTelemetry } from '../../hooks/useTelemetry';
-import type { CatalogType } from '../catalog';
-import { getIconProps } from '../catalog';
+import { getIconProps } from '../catalog/utils/catalog-utils';
+import type { CatalogType } from '../catalog/utils/types';
 import type { CatalogLinkData } from './utils/quick-search-types';
 import { handleCta } from './utils/quick-search-utils';
 
@@ -50,7 +50,7 @@ const QuickSearchList: FC<QuickSearchListProps> = ({
   limitItemCount,
   onListChange,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const navigate = useNavigate();
   const { removeQueryArgument } = useQueryParamsMutator();
   const fireTelemetryEvent = useTelemetry();
@@ -92,7 +92,7 @@ const QuickSearchList: FC<QuickSearchListProps> = ({
     <div className="ocs-quick-search-list">
       <DataList
         className="ocs-quick-search-list__list"
-        aria-label={t('console-shared~Quick search list')}
+        aria-label={t('Quick search list')}
         selectedDataListItemId={selectedItemId}
         onSelectDataListItem={onSelectListItem}
         isCompact

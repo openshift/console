@@ -3,13 +3,13 @@ import { useContext, useState, useCallback, useMemo } from 'react';
 import type { GraphElement } from '@patternfly/react-topology';
 import { ElementContext, ContextMenu } from '@patternfly/react-topology';
 import { observer } from 'mobx-react';
-import type { ActionContext } from '@console/shared';
-import { ActionServiceProvider } from '@console/shared';
-import { createContextMenuItems } from '../../../actions';
+import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
+import type { ActionContext } from '@console/shared/src/components/actions/types';
+import { createContextMenuItems } from '../../../actions/contextMenuActions';
 
 type Reference = ComponentProps<typeof ContextMenu>['reference'];
 
-export interface WithContextMenuProps {
+interface WithContextMenuProps {
   onContextMenu: (e: MouseEvent) => void;
   contextMenuOpen: boolean;
 }

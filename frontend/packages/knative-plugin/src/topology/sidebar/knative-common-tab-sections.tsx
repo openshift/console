@@ -11,9 +11,9 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { PodModel } from '@console/internal/models';
 import type { PodKind } from '@console/internal/module/k8s';
 import { podPhase, referenceForModel } from '@console/internal/module/k8s';
-import { AllPodStatus } from '@console/shared/src';
+import { AllPodStatus } from '@console/shared/src/constants/pod';
 import TopologySideBarTabSection from '@console/topology/src/components/side-bar/TopologySideBarTabSection';
-import { getResource } from '@console/topology/src/utils';
+import { getResource } from '@console/topology/src/utils/topology-utils';
 import KSRoutesOverviewList from '../../components/overview/RoutesOverviewList';
 import { RevisionModel } from '../../models';
 import type { RevisionKind } from '../../types';
@@ -27,7 +27,7 @@ import {
 } from './KnativeOverviewSections';
 
 const usePodsAdapterForKnative = (resource: K8sResourceCommon): PodsAdapterDataType => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const [rev, revisionLoaded, revisionErrorLoad] = useK8sWatchResource<RevisionKind[]>({
     kind: referenceForModel(RevisionModel),
     namespace: resource.metadata.namespace,
@@ -68,7 +68,7 @@ const usePodsAdapterForKnative = (resource: K8sResourceCommon): PodsAdapterDataT
       pods: servicePods,
       loaded: revisionLoaded,
       loadError: revisionErrorLoad,
-      emptyText: t('knative-plugin~All Revisions are autoscaled to 0.'),
+      emptyText: t('All Revisions are autoscaled to 0.'),
       allPodsLink: linkUrl,
     }),
     [servicePods, revisionLoaded, revisionErrorLoad, t, linkUrl],

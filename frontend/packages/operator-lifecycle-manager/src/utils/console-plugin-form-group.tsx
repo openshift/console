@@ -1,10 +1,8 @@
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FieldLevelHelp } from '@console/internal/components/utils';
-import {
-  ConsolePluginRadioInputs,
-  ConsolePluginWarning,
-} from '@console/shared/src/components/utils';
+import { ConsolePluginRadioInputs } from '@console/shared/src/components/utils/ConsolePluginRadioInputs';
+import { ConsolePluginWarning } from '@console/shared/src/components/utils/ConsolePluginWarning';
 import { isCatalogSourceTrusted } from '../utils';
 
 export const ConsolePluginFormGroup: FC<ConsolePluginFormGroupProps> = ({
@@ -13,16 +11,16 @@ export const ConsolePluginFormGroup: FC<ConsolePluginFormGroupProps> = ({
   enabledPlugins,
   setPluginEnabled,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const csvPluginsCount = csvPlugins.length;
 
   return (
     <div className="form-group">
       <fieldset>
-        <label className="co-required">{t('olm~Console plugin', { count: csvPluginsCount })}</label>
+        <label className="co-required">{t('Console plugin', { count: csvPluginsCount })}</label>
         <FieldLevelHelp>
           {t(
-            'olm~This operator includes a console plugin which provides a custom interface that can be included in the console. The console plugin will prompt for the console to be refreshed once it has been enabled. Make sure you trust this console plugin before enabling.',
+            'This operator includes a console plugin which provides a custom interface that can be included in the console. The console plugin will prompt for the console to be refreshed once it has been enabled. Make sure you trust this console plugin before enabling.',
           )}
         </FieldLevelHelp>
         {csvPlugins.map((plugin) => (

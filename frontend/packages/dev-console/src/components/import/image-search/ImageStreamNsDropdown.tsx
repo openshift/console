@@ -8,7 +8,7 @@ import { useK8sWatchResources } from '@console/internal/components/utils/k8s-wat
 import { ProjectModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { ResourceDropdownField } from '@console/shared';
+import { ResourceDropdownField } from '@console/shared/src/components/formik-fields/ResourceDropdownField';
 import { BuilderImagesNamespace } from '../../../utils/imagestream-utils';
 import { ImageStreamActions as Action } from '../import-types';
 import { ImageStreamContext } from './ImageStreamContext';
@@ -18,7 +18,7 @@ const ImageStreamNsDropdown: FC<{
   formContextField?: string;
   className?: string;
 }> = ({ disabled = false, formContextField, className }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const { values, setFieldValue, initialValues } = useFormikContext<FormikValues>();
   const { imageStream } = _.get(values, formContextField) || values;
   const { isi: initialIsi } = _.get(initialValues, formContextField) || initialValues;
@@ -66,8 +66,8 @@ const ImageStreamNsDropdown: FC<{
   return (
     <ResourceDropdownField
       name={`${fieldPrefix}imageStream.namespace`}
-      label={t('devconsole~Project')}
-      title={imageStream.namespace || t('devconsole~Select Project')}
+      label={t('Project')}
+      title={imageStream.namespace || t('Select Project')}
       fullWidth
       required
       resources={resources}

@@ -50,7 +50,11 @@ export const MultiStreamLogs: FC<MultiStreamLogsProps> = ({
   const containerStatus: ContainerStatus[] = resource?.status?.containerStatuses ?? [];
   return (
     <>
-      <div className="odc-multi-stream-logs__taskName" data-test-id="logs-taskName">
+      <div
+        className="odc-multi-stream-logs__taskName"
+        data-test-id="logs-taskName"
+        data-test="multi-stream-logs-task-name"
+      >
         {taskName}
         {stillFetching && (
           <span className="odc-multi-stream-logs__taskName__loading-indicator">

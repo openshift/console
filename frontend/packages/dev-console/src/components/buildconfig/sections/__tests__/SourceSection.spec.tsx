@@ -5,7 +5,7 @@ import type { FormikConfig } from 'formik';
 import { Formik } from 'formik';
 import { Provider } from 'react-redux';
 import * as rbacModule from '@console/dynamic-plugin-sdk/src/app/components/utils/rbac';
-import { GitProvider } from '@console/git-service/src';
+import { GitProvider } from '@console/git-service/src/types/git';
 import * as serverlessFxUtils from '@console/git-service/src/utils/serverless-strategy-detector';
 import store from '@console/internal/redux';
 import { BuildStrategyType } from '../../types';
@@ -13,16 +13,19 @@ import type { SourceSectionFormData } from '../SourceSection';
 import SourceSection from '../SourceSection';
 
 // Skip network calls to any external git service
-jest.mock('@console/git-service', () => ({
-  ...jest.requireActual('@console/git-service'),
+jest.mock('@console/git-service/src/services/git-service', () => ({
+  ...jest.requireActual('@console/git-service/src/services/git-service'),
   getGitService: function mockedGetGitService() {
     return null;
   },
 }));
 
-jest.mock('../EditorField', () =>
-  jest.requireActual('@console/shared/src/components/formik-fields/TextAreaField'),
-);
+jest.mock('../EditorField', () => {
+  const { TextAreaField } = jest.requireActual(
+    '@console/shared/src/components/formik-fields/TextAreaField',
+  );
+  return { __esModule: true, default: TextAreaField };
+});
 
 jest.mock('@console/dynamic-plugin-sdk/src/app/components/utils/rbac', () => ({
   ...jest.requireActual('@console/dynamic-plugin-sdk/src/app/components/utils/rbac'),
@@ -54,8 +57,7 @@ const Wrapper: FC<WrapperProps> = ({ children, ...formikConfig }) => (
   </Provider>
 );
 
-const getPatternFlyInputForLabel = (label: string) =>
-  screen.getByText(label).parentElement.parentElement.parentElement.querySelector('input');
+const getPatternFlyInputForLabel = (label: string) => screen.getByRole('textbox', { name: label });
 
 const initialValues: SourceSectionFormData = {
   formData: {
@@ -109,20 +111,20 @@ describe('SourceSection', () => {
   it('should render form with minimal form data', () => {
     const onSubmit = jest.fn();
 
-    const renderResult = render(
+    render(
       <Wrapper initialValues={initialValues} onSubmit={onSubmit}>
         <SourceSection />
       </Wrapper>,
     );
 
-    renderResult.getByTestId('section source');
-    renderResult.getByText('Source type');
-    renderResult.getByText('Please select your source type');
+    expect(screen.getByTestId('section source')).toBeInTheDocument();
+    expect(screen.getByText('Source type')).toBeVisible();
+    expect(screen.getByText('Please select your source type')).toBeVisible();
 
     // Expect that git input form and docker input field are not visible yet
-    expect(renderResult.queryByText('Git Repo URL')).toBeFalsy();
-    expect(renderResult.queryByText('Show advanced Git options')).toBeFalsy();
-    expect(renderResult.queryAllByText('Dockerfile')).toHaveLength(0);
+    expect(screen.queryByText('Git Repo URL')).toBeFalsy();
+    expect(screen.queryByText('Show advanced Git options')).toBeFalsy();
+    expect(screen.queryAllByText('Dockerfile')).toHaveLength(0);
 
     expect(onSubmit).toHaveBeenCalledTimes(0);
   });
@@ -131,21 +133,21 @@ describe('SourceSection', () => {
     const user = userEvent.setup();
     const onSubmit = jest.fn();
     spyUseAccessReview.mockReturnValue([true]);
-    const renderResult = render(
+    render(
       <Wrapper initialValues={initialValues} onSubmit={onSubmit}>
         <SourceSection />
       </Wrapper>,
     );
 
     // Select git
-    await user.click(renderResult.getByText('Please select your source type'));
-    await user.click(renderResult.getByText('Git'));
+    await user.click(screen.getByText('Please select your source type'));
+    await user.click(screen.getByText('Git'));
 
     // Assert subforms
     await waitFor(() => {
-      expect(renderResult.queryByText('Git Repo URL')).toBeTruthy();
-      expect(renderResult.queryByText('Show advanced Git options')).toBeTruthy();
-      expect(renderResult.queryAllByText('Dockerfile')).toHaveLength(0);
+      expect(screen.getByText('Git Repo URL')).toBeVisible();
+      expect(screen.getByText('Show advanced Git options')).toBeVisible();
+      expect(screen.queryAllByText('Dockerfile')).toHaveLength(0);
     });
 
     expect(onSubmit).toHaveBeenCalledTimes(0);
@@ -155,24 +157,24 @@ describe('SourceSection', () => {
     const user = userEvent.setup();
     const onSubmit = jest.fn();
 
-    const renderResult = render(
+    render(
       <Wrapper initialValues={initialValues} onSubmit={onSubmit}>
         <SourceSection />
       </Wrapper>,
     );
 
     // Select Dockerfile
-    expect(renderResult.queryAllByText('Dockerfile')).toHaveLength(0);
-    await user.click(renderResult.getByText('Please select your source type'));
+    expect(screen.queryAllByText('Dockerfile')).toHaveLength(0);
+    await user.click(screen.getByText('Please select your source type'));
 
-    expect(renderResult.queryAllByText('Dockerfile')).toHaveLength(1);
-    await user.click(renderResult.getByText('Dockerfile'));
+    expect(screen.queryAllByText('Dockerfile')).toHaveLength(1);
+    await user.click(screen.getByText('Dockerfile'));
 
     // Assert subforms
     await waitFor(() => {
-      expect(renderResult.queryByText('Git Repo URL')).toBeFalsy();
-      expect(renderResult.queryByText('Show advanced Git options')).toBeFalsy();
-      expect(renderResult.queryAllByText('Dockerfile')).toHaveLength(2);
+      expect(screen.queryByText('Git Repo URL')).toBeFalsy();
+      expect(screen.queryByText('Show advanced Git options')).toBeFalsy();
+      expect(screen.queryAllByText('Dockerfile')).toHaveLength(2);
     });
 
     expect(onSubmit).toHaveBeenCalledTimes(0);
@@ -182,16 +184,16 @@ describe('SourceSection', () => {
     const user = userEvent.setup();
     const onSubmit = jest.fn();
     spyUseAccessReview.mockReturnValue([true]);
-    const renderResult = render(
+    render(
       <Wrapper initialValues={initialValues} onSubmit={onSubmit}>
         <SourceSection />
       </Wrapper>,
     );
 
     // Fill out subform
-    await user.click(renderResult.getByText('Please select your source type'));
-    await user.click(renderResult.getByText('Git'));
-    await user.click(renderResult.getByText('Show advanced Git options'));
+    await user.click(screen.getByText('Please select your source type'));
+    await user.click(screen.getByText('Git'));
+    await user.click(screen.getByText('Show advanced Git options'));
 
     await user.type(
       getPatternFlyInputForLabel('Git Repo URL'),
@@ -199,7 +201,7 @@ describe('SourceSection', () => {
     );
 
     // Submit
-    const submitButton = renderResult.getByRole('button', { name: 'Submit' });
+    const submitButton = screen.getByRole('button', { name: 'Submit' });
     await user.click(submitButton);
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalledTimes(1);
@@ -240,19 +242,19 @@ describe('SourceSection', () => {
       isBuilderS2I: false,
       values: {},
     });
-    const renderResult = render(
+    render(
       <Wrapper initialValues={initialValues} onSubmit={onSubmit}>
         <SourceSection />
       </Wrapper>,
     );
 
     // Fill out subform
-    await user.click(renderResult.getByText('Please select your source type'));
-    await user.click(renderResult.getByText('Dockerfile'));
-    await user.type(renderResult.getByRole('textbox'), 'FROM: centos\nRUN echo hello world');
+    await user.click(screen.getByText('Please select your source type'));
+    await user.click(screen.getByText('Dockerfile'));
+    await user.type(screen.getByRole('textbox'), 'FROM: centos\nRUN echo hello world');
 
     // Submit
-    const submitButton = renderResult.getByRole('button', { name: 'Submit' });
+    const submitButton = screen.getByRole('button', { name: 'Submit' });
     await user.click(submitButton);
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalledTimes(1);

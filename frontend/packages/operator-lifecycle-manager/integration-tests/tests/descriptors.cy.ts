@@ -16,7 +16,9 @@ describe('Using OLM descriptor components', () => {
 
   afterEach(() => {
     cy.visit('/');
-    cy.exec(`oc delete ${testCRD.spec.names.kind} ${testCR.metadata.name} -n ${testName}`);
+    cy.exec(
+      `oc delete ${testCRD.spec.names.kind} ${testCR.metadata.name} -n ${testName} --ignore-not-found=true`,
+    );
     checkErrors();
   });
 

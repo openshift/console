@@ -1,7 +1,8 @@
+import type { PrometheusPollProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { useURLPoll } from '../utils/url-poll-hook';
 import { getPrometheusURL } from './helpers';
-import { DEFAULT_PROMETHEUS_SAMPLES, DEFAULT_PROMETHEUS_TIMESPAN, PrometheusResponse } from '.';
-import { PrometheusPollProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { PrometheusResponse } from '.';
+import { DEFAULT_PROMETHEUS_SAMPLES, DEFAULT_PROMETHEUS_TIMESPAN } from '.';
 
 type UsePrometheusPoll = (props: PrometheusPollProps) => [PrometheusResponse, unknown, boolean];
 

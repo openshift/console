@@ -9,7 +9,6 @@ import {
   alertingLoading,
   setAlertCount,
 } from '@console/internal/actions/observe';
-import { coFetchJSON } from '@console/internal/co-fetch';
 import { PrometheusEndpoint } from '@console/internal/components/graphs/helpers';
 import {
   getAlertsAndRules,
@@ -21,6 +20,7 @@ import {
 } from '@console/shared/src/components/dashboard/status-card/alert-utils';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useNotificationAlerts } from '@console/shared/src/hooks/useNotificationAlerts';
+import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
 
 /** Fetches notification alerts from redux store and updates the notification count.
  * Polls the Prometheus and Alertmanager for notification alerts AND silences, stores the
@@ -28,7 +28,7 @@ import { useNotificationAlerts } from '@console/shared/src/hooks/useNotification
  * @returns Nothing, its a side-effect-driven hook.
  */
 export const useNotificationPoller = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const dispatch = useConsoleDispatch();
 
   const [alerts, ,] = useNotificationAlerts();
@@ -85,9 +85,7 @@ export const useNotificationPoller = () => {
             : [],
       );
     } else {
-      dispatch(
-        alertingErrored('notificationAlerts', new Error(t('public~prometheusBaseURL not set'))),
-      );
+      dispatch(alertingErrored('notificationAlerts', new Error(t('prometheusBaseURL not set'))));
     }
 
     if (alertManagerBaseURL) {
@@ -107,7 +105,7 @@ export const useNotificationPoller = () => {
         return silences;
       });
     } else {
-      dispatch(alertingErrored('silences', new Error(t('public~alertManagerBaseURL not set'))));
+      dispatch(alertingErrored('silences', new Error(t('alertManagerBaseURL not set'))));
     }
 
     return () => {

@@ -1,35 +1,34 @@
 import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
-import * as _ from 'lodash';
-import { useTranslation } from 'react-i18next';
-
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { MachineHealthCheckModel, MachineModel } from '../models';
-import { K8sResourceKind, MachineHealthCheckKind } from '../module/k8s/types';
-import { referenceForModel } from '../module/k8s/k8s';
-import { DetailsPage } from './factory/details';
-import { ListPage } from './factory/list-page';
-import { DASH } from '@console/shared/src/constants';
-import { DetailsItem } from './utils/details-item';
-import { ResourceSummary } from './utils/details-page';
-import { EmptyBox, LoadingBox } from './utils/status-box';
-import { ResourceLink } from './utils/resource-link';
-import { SectionHeading } from './utils/headings';
-import { Selector } from './utils/selector';
-import { navFactory } from './utils/horizontal-nav';
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 import { Table, Thead, Tbody, Tr, Th, Td } from '@patternfly/react-table';
-import { TableColumn } from '@console/dynamic-plugin-sdk';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import {
   actionsCellProps,
   getNameCellProps,
   ConsoleDataView,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import type { TableColumn } from '@console/dynamic-plugin-sdk';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { DASH } from '@console/shared/src/constants/ui';
+import { MachineHealthCheckModel, MachineModel } from '../models';
+import { referenceForModel } from '../module/k8s/k8s';
+import type { K8sResourceKind, MachineHealthCheckKind } from '../module/k8s/types';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
+import { DetailsItem } from './utils/details-item';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { ResourceLink } from './utils/resource-link';
+import { Selector } from './utils/selector';
+import { EmptyBox, LoadingBox } from './utils/status-box';
 
 const machineHealthCheckReference = referenceForModel(MachineHealthCheckModel);
 
@@ -71,7 +70,7 @@ const useMachineHealthCheckColumns = (): {
   columns: TableColumn<MachineHealthCheckKind>[];
   resetAllColumnWidths: () => void;
 } => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
     MachineHealthCheckModel,
   );
@@ -79,7 +78,7 @@ const useMachineHealthCheckColumns = (): {
   const columns: TableColumn<MachineHealthCheckKind>[] = useMemo(() => {
     return [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         resizableProps: getResizableProps(tableColumnInfo[0].id),
@@ -89,7 +88,7 @@ const useMachineHealthCheckColumns = (): {
         },
       },
       {
-        title: t('public~Namespace'),
+        title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
@@ -98,7 +97,7 @@ const useMachineHealthCheckColumns = (): {
         },
       },
       {
-        title: t('public~Created'),
+        title: t('Created'),
         id: tableColumnInfo[2].id,
         sort: 'metadata.creationTimestamp',
         resizableProps: getResizableProps(tableColumnInfo[2].id),
@@ -137,7 +136,7 @@ const MachineHealthCheckList: FC<MachineHealthCheckListProps> = ({
         loadError={loadError}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
+        hideColumnManagement
         isResizable
         resetAllColumnWidths={resetAllColumnWidths}
       />
@@ -146,21 +145,21 @@ const MachineHealthCheckList: FC<MachineHealthCheckListProps> = ({
 };
 
 const UnhealthyConditionsTable: FC<{ obj: K8sResourceKind }> = ({ obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return _.isEmpty(obj.spec.unhealthyConditions) ? (
-    <EmptyBox label={t('public~Unhealthy conditions')} />
+    <EmptyBox label={t('Unhealthy conditions')} />
   ) : (
-    <Table variant="compact" borders={true}>
+    <Table variant="compact" borders>
       <Thead>
         <Tr>
-          <Th>{t('public~Type')}</Th>
-          <Th>{t('public~Status')}</Th>
-          <Th>{t('public~Timeout')}</Th>
+          <Th>{t('Type')}</Th>
+          <Th>{t('Status')}</Th>
+          <Th>{t('Timeout')}</Th>
         </Tr>
       </Thead>
       <Tbody>
-        {obj.spec.unhealthyConditions.map(({ status, timeout, type }, i: number) => (
-          <Tr key={i}>
+        {obj.spec.unhealthyConditions.map(({ status, timeout, type }) => (
+          <Tr key={`${type}-${status}`}>
             <Td>{type}</Td>
             <Td>{status}</Td>
             <Td>{timeout}</Td>
@@ -172,15 +171,15 @@ const UnhealthyConditionsTable: FC<{ obj: K8sResourceKind }> = ({ obj }) => {
 };
 
 const MachineHealthCheckDetails: FC<MachineHealthCheckDetailsProps> = ({ obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <>
       <PaneBody>
-        <SectionHeading text={t('public~MachineHealthCheck details')} />
+        <SectionHeading text={t('MachineHealthCheck details')} />
         <Grid hasGutter>
           <GridItem sm={6}>
             <ResourceSummary resource={obj}>
-              <DetailsItem label={t('public~Selector')} obj={obj} path="spec.selector">
+              <DetailsItem label={t('Selector')} obj={obj} path="spec.selector">
                 <Selector
                   kind={referenceForModel(MachineModel)}
                   selector={_.get(obj, 'spec.selector')}
@@ -191,23 +190,19 @@ const MachineHealthCheckDetails: FC<MachineHealthCheckDetailsProps> = ({ obj }) 
           </GridItem>
           <GridItem sm={6}>
             <DescriptionList>
-              <DetailsItem label={t('public~Max unhealthy')} obj={obj} path="spec.maxUnhealthy" />
+              <DetailsItem label={t('Max unhealthy')} obj={obj} path="spec.maxUnhealthy" />
               <DetailsItem
-                label={t('public~Expected machines')}
+                label={t('Expected machines')}
                 obj={obj}
                 path="status.expectedMachines"
               />
-              <DetailsItem
-                label={t('public~Current healthy')}
-                obj={obj}
-                path="status.currentHealthy"
-              />
+              <DetailsItem label={t('Current healthy')} obj={obj} path="status.currentHealthy" />
             </DescriptionList>
           </GridItem>
         </Grid>
       </PaneBody>
       <PaneBody>
-        <SectionHeading text={t('public~Unhealthy conditions')} />
+        <SectionHeading text={t('Unhealthy conditions')} />
         <UnhealthyConditionsTable obj={obj} />
       </PaneBody>
     </>
@@ -219,8 +214,8 @@ export const MachineHealthCheckPage: FC<MachineHealthCheckPageProps> = (props) =
     {...props}
     ListComponent={MachineHealthCheckList}
     kind={machineHealthCheckReference}
-    canCreate={true}
-    omitFilterToolbar={true}
+    canCreate
+    omitFilterToolbar
   />
 );
 
@@ -247,6 +242,6 @@ type MachineHealthCheckListProps = {
   hideColumnManagement?: boolean;
 };
 
-export type MachineHealthCheckDetailsProps = {
+type MachineHealthCheckDetailsProps = {
   obj: MachineHealthCheckKind;
 };

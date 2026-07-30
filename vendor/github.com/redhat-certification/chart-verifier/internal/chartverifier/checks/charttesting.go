@@ -13,7 +13,7 @@ import (
 	"github.com/helm/chart-testing/v3/pkg/util"
 	"github.com/opdev/getocprange"
 	"gopkg.in/yaml.v3"
-	"helm.sh/helm/v3/pkg/cli"
+	"helm.sh/helm/v4/pkg/cli"
 
 	"github.com/redhat-certification/chart-verifier/internal/chartverifier/utils"
 	"github.com/redhat-certification/chart-verifier/internal/tool"
@@ -227,7 +227,7 @@ func generateInstallConfig(
 			kubectl.DeleteNamespace(context.TODO(), namespace)
 		}
 	}
-	return
+	return namespace, release, releaseSelector, cleanup
 }
 
 // testRelease tests a release.

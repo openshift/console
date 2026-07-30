@@ -2,7 +2,9 @@ import type { FC } from 'react';
 import type { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { FlexForm, FormFooter, FormBody } from '@console/shared';
+import { FlexForm } from '@console/shared/src/components/form-utils/FlexForm';
+import { FormBody } from '@console/shared/src/components/form-utils/FormBody';
+import { FormFooter } from '@console/shared/src/components/form-utils/FormFooter';
 import AdminNamespaceSection from './AdminNamespaceSection';
 import CloudShellAdvancedOption from './CloudShellAdvancedOption';
 import NamespaceSection from './NamespaceSection';
@@ -13,7 +15,7 @@ const CloudShellSetupForm: FC<
     'errors' | 'handleSubmit' | 'handleReset' | 'status' | 'isSubmitting'
   > & { isAdmin?: boolean }
 > = ({ errors, handleSubmit, handleReset, status, isSubmitting, isAdmin = false }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('webterminal-plugin');
   return (
     <FlexForm onSubmit={handleSubmit}>
       <FormBody className="co-m-pane__form pf-v6-u-p-md">
@@ -24,9 +26,9 @@ const CloudShellSetupForm: FC<
         handleReset={handleReset}
         errorMessage={status && status.submitError}
         isSubmitting={isSubmitting}
-        submitLabel={t('webterminal-plugin~Start')}
+        submitLabel={t('Start')}
         disableSubmit={!_.isEmpty(errors) || isSubmitting}
-        resetLabel={t('webterminal-plugin~Cancel')}
+        resetLabel={t('Cancel')}
         sticky
       />
     </FlexForm>

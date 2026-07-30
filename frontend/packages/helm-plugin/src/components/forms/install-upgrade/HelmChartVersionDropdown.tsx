@@ -1,36 +1,36 @@
 import type { FC } from 'react';
 import { useState, useEffect } from 'react';
 import { GridItem } from '@patternfly/react-core';
-import { InfoCircleIcon } from '@patternfly/react-icons';
+import { RhUiInformationFillIcon } from '@patternfly/react-icons';
 import type { FormikValues } from 'formik';
 import { useFormikContext } from 'formik';
-import { safeLoad } from 'js-yaml';
+import { safeDump, safeLoad } from 'js-yaml';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import type { WatchK8sResource } from '@console/dynamic-plugin-sdk';
-import { coFetchJSON, coFetch } from '@console/internal/co-fetch';
 import type { ModalCallback } from '@console/internal/components/modals/types';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { DropdownField } from '@console/shared';
+import { DropdownField } from '@console/shared/src/components/formik-fields/DropdownField';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
-import { HelmChartRepositoryModel } from '../../../models';
+import { coFetchJSON, coFetch } from '@console/shared/src/utils/console-fetch';
+import { HelmChartRepositoryModel } from '../../../models/helm';
 import type { HelmChartMetaData, HelmChart, HelmChartEntries } from '../../../types/helm-types';
 import { HelmActionType } from '../../../types/helm-types';
 import {
   getChartURL,
   getChartVersions,
-  getChartValuesYAML,
   getChartReadme,
   concatVersions,
   getChartEntriesByName,
   getChartRepositoryTitle,
   getChartIndexEntry,
+  mergeHelmValuesOnChartVersionChange,
 } from '../../../utils/helm-utils';
 
-export type HelmChartVersionDropdownProps = {
+type HelmChartVersionDropdownProps = {
   chartVersion: string;
   chartName: string;
   helmAction: string;
@@ -51,10 +51,10 @@ const HelmChartVersionDropdown: FC<HelmChartVersionDropdownProps> = ({
   annotatedName,
   providerName,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   const {
     setFieldValue,
-    values: { chartRepoName, yamlData, formData, appVersion },
+    values: { chartRepoName, yamlData, formData, appVersion, editorType },
     setFieldTouched,
   } = useFormikContext<FormikValues>();
   const [helmChartVersions, setHelmChartVersions] = useState({});
@@ -69,7 +69,7 @@ const HelmChartVersionDropdown: FC<HelmChartVersionDropdownProps> = ({
   const [chartRepositories] = useK8sWatchResource<K8sResourceKind[]>(resourceSelector);
 
   const warningModalLauncher = useWarningModal({
-    title: t('helm-plugin~Change chart version?'),
+    title: t('Change chart version?'),
   });
 
   const warnOnChartVersionChange = (
@@ -86,9 +86,10 @@ const HelmChartVersionDropdown: FC<HelmChartVersionDropdownProps> = ({
           </Trans>
         </p>
         <p>
-          <InfoCircleIcon color="var(--pf-t--global--icon--color--status--info--default)" />{' '}
+          <RhUiInformationFillIcon color="var(--pf-t--global--icon--color--status--info--default)" />{' '}
           <Trans t={t} ns="helm-plugin">
-            All data entered for version <strong>{{ currentVersion }}</strong> will be reset
+            Values from your current release are merged with the new chart{"'"}s defaults. Review
+            the YAML or form before upgrading.
           </Trans>
         </p>
       </>
@@ -96,8 +97,8 @@ const HelmChartVersionDropdown: FC<HelmChartVersionDropdownProps> = ({
 
     warningModalLauncher({
       children: message,
-      confirmButtonLabel: t('helm-plugin~Proceed'),
-      cancelButtonLabel: t('helm-plugin~Cancel'),
+      confirmButtonLabel: t('Proceed'),
+      cancelButtonLabel: t('Cancel'),
       onConfirm: () => {
         onAccept();
         return Promise.resolve();
@@ -125,7 +126,7 @@ const HelmChartVersionDropdown: FC<HelmChartVersionDropdownProps> = ({
       try {
         const response = await coFetch(`/api/helm/charts/index.yaml?namespace=${namespace}`);
         const yaml = await response.text();
-        json = safeLoad(yaml);
+        json = safeLoad(yaml) as { entries: HelmChartEntries };
       } catch {
         if (ignore) return;
       }
@@ -180,17 +181,36 @@ const HelmChartVersionDropdown: FC<HelmChartVersionDropdownProps> = ({
         onVersionChange(res);
 
         const chartReadme = getChartReadme(res);
-        const valuesYAML = getChartValuesYAML(res);
         const valuesJSON = res?.values;
         const valuesSchema = res?.schema && JSON.parse(atob(res?.schema));
-        const editorType = valuesSchema ? EditorType.Form : EditorType.YAML;
-        setFieldValue('editorType', editorType);
-        setFieldValue('formSchema', valuesSchema);
-        setFieldValue('yamlData', valuesYAML);
-        setFieldValue('formData', valuesJSON);
-        setFieldValue('chartReadme', chartReadme);
-        setInitialYamlData(valuesYAML);
-        setInitialFormData(valuesJSON);
+        const nextEditorType = valuesSchema ? EditorType.Form : EditorType.YAML;
+        const mergedValues = mergeHelmValuesOnChartVersionChange(
+          valuesJSON as Record<string, unknown> | undefined,
+          yamlData as string,
+          formData,
+          editorType as EditorType,
+        );
+        try {
+          const mergedYaml = safeDump(mergedValues);
+          setFieldValue('editorType', nextEditorType);
+          setFieldValue('formSchema', valuesSchema);
+          setFieldValue('yamlData', mergedYaml);
+          setFieldValue('formData', mergedValues);
+          setFieldValue('chartReadme', chartReadme);
+          setInitialYamlData(mergedYaml);
+          setInitialFormData(mergedValues);
+        } catch (err) {
+          console.error('Failed to serialize merged values:', err); // eslint-disable-line no-console
+          // Fall back to using the merged values object without YAML serialization
+          setFieldValue('editorType', nextEditorType);
+          setFieldValue('formSchema', valuesSchema);
+          // Keep yamlData in sync as best we can - use empty or preserve previous
+          setFieldValue('yamlData', '');
+          setInitialYamlData('');
+          setFieldValue('formData', mergedValues);
+          setFieldValue('chartReadme', chartReadme);
+          setInitialFormData(mergedValues);
+        }
       })
       .catch((err) => {
         console.error(`Could not fetch helm chart with chart URL ${chartURL}:`, err); // eslint-disable-line no-console
@@ -211,12 +231,11 @@ const HelmChartVersionDropdown: FC<HelmChartVersionDropdownProps> = ({
 
   const isDisabled = _.isEmpty(helmChartVersions) || _.keys(helmChartVersions).length === 1;
 
-  const helpText =
-    helmAction === HelmActionType.Upgrade && t('helm-plugin~Select the version to upgrade to.');
+  const helpText = helmAction === HelmActionType.Upgrade && t('Select the version to upgrade to.');
 
   const title =
     _.isEmpty(helmChartVersions) && !chartVersion
-      ? t('helm-plugin~No versions available')
+      ? t('No versions available')
       : helmChartVersions[`${chartVersion}`] ||
         concatVersions(
           chartVersion,
@@ -229,7 +248,7 @@ const HelmChartVersionDropdown: FC<HelmChartVersionDropdownProps> = ({
     <GridItem span={6}>
       <DropdownField
         name="chartVersion"
-        label={t('helm-plugin~Chart version')}
+        label={t('Chart version')}
         items={helmChartVersions}
         helpText={!isDisabled ? helpText : ''}
         disabled={isDisabled}

@@ -1,4 +1,5 @@
-import { screen, waitFor, fireEvent } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import type { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
@@ -61,22 +62,23 @@ describe('ResourceRequirementsModal', () => {
   });
 
   it('should call k8sUpdate when form is submitted', async () => {
+    const user = userEvent.setup();
     k8sUpdateMock.mockResolvedValue({} as K8sResourceKind);
 
     renderModal();
 
-    fireEvent.change(screen.getByRole('textbox', { name: 'CPU cores' }), {
-      target: { value: '200m' },
-    });
-    fireEvent.change(screen.getByRole('textbox', { name: 'Memory' }), {
-      target: { value: '20Mi' },
-    });
-    fireEvent.change(screen.getByRole('textbox', { name: 'Storage' }), {
-      target: { value: '50Mi' },
-    });
+    const cpuInput = screen.getByRole('textbox', { name: 'CPU cores' });
+    await user.clear(cpuInput);
+    await user.type(cpuInput, '200m');
+    const memoryInput = screen.getByRole('textbox', { name: 'Memory' });
+    await user.clear(memoryInput);
+    await user.type(memoryInput, '20Mi');
+    const storageInput = screen.getByRole('textbox', { name: 'Storage' });
+    await user.clear(storageInput);
+    await user.type(storageInput, '50Mi');
 
     const saveButton = screen.getByRole('button', { name: 'Save' });
-    fireEvent.click(saveButton);
+    await user.click(saveButton);
 
     await waitFor(() => {
       expect(k8sUpdateMock).toHaveBeenCalled();
@@ -157,9 +159,10 @@ describe('ResourceRequirementsModalLink', () => {
   });
 
   it('should open resource requirements modal when button is clicked', async () => {
+    const user = userEvent.setup();
     renderWithProviders(<ResourceRequirementsModalLink obj={obj} type="limits" path="resources" />);
 
-    fireEvent.click(screen.getByRole('button'));
+    await user.click(screen.getByRole('button'));
 
     await waitFor(() => {
       expect(launchModalMock).toHaveBeenCalled();

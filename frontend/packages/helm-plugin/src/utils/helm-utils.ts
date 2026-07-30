@@ -1,12 +1,12 @@
 import * as fuzzy from 'fuzzysearch';
 import type { TFunction } from 'i18next';
-import { loadAll, safeDump, DEFAULT_SAFE_SCHEMA } from 'js-yaml';
+import { loadAll, safeDump, safeLoad, DEFAULT_SAFE_SCHEMA } from 'js-yaml';
 import * as _ from 'lodash';
-import { coFetchJSON } from '@console/internal/co-fetch';
 import type { Flatten } from '@console/internal/components/factory/list-page';
-import type { RowFilter } from '@console/internal/components/filter-toolbar';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
+import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
 import { WORKLOAD_TYPES } from '@console/shared/src/utils/resource-utils';
 import { toTitleCase } from '@console/shared/src/utils/utils';
 import { CHART_NAME_ANNOTATION, PROVIDER_NAME_ANNOTATION } from '../catalog/utils/const';
@@ -37,7 +37,7 @@ export const SelectedReleaseStatuses = [
   HelmReleaseStatus.Other,
 ];
 
-export const OtherReleaseStatuses = ['unknown', 'uninstalled', 'superseded', 'uninstalling'];
+const OtherReleaseStatuses = ['unknown', 'uninstalled', 'superseded', 'uninstalling'];
 
 export const releaseStatus = (status: string) => {
   if (!status) {
@@ -54,20 +54,6 @@ export const releaseStatusReducer = (release: HelmRelease) => {
     return HelmReleaseStatus.Other;
   }
   return release.info.status;
-};
-
-export const helmReleasesRowFilters = (t: TFunction): RowFilter[] => {
-  return [
-    {
-      filterGroupName: t('helm-plugin~Status'),
-      type: 'helm-release-status',
-      reducer: releaseStatusReducer,
-      items: SelectedReleaseStatuses.map((status) => ({
-        id: status,
-        title: HelmReleaseStatusLabels[status],
-      })),
-    },
-  ];
 };
 
 export const filterHelmReleasesByStatus = (releases: HelmRelease[], filter: string | string[]) => {
@@ -213,20 +199,16 @@ export const getChartVersions = (chartEntries: HelmChartMetaData[], t: TFunction
   return chartVersions;
 };
 
-export const getOriginRedirectURL = (
-  actionOrigin: string,
-  namespace: string,
-  releaseName?: string,
-) => {
+const getOriginRedirectURL = (actionOrigin: string, namespace: string, releaseName?: string) => {
   switch (actionOrigin) {
     case HelmActionOrigins.topology:
       return `/topology/ns/${namespace}`;
     case HelmActionOrigins.list:
-      return `/helm-releases/ns/${namespace}`;
+      return `/helm/ns/${namespace}`;
     case HelmActionOrigins.details:
       return `/helm-releases/ns/${namespace}/release/${releaseName}`;
     default:
-      return `/helm-releases/ns/${namespace}`;
+      return `/helm/ns/${namespace}`;
   }
 };
 
@@ -347,23 +329,63 @@ export const isGoingToTopology = (resources: K8sResourceKind[]) =>
     WORKLOAD_TYPES.includes(_.lowerFirst(_.get(modelFor(referenceFor(resource)), 'labelPlural'))),
   );
 
-export const fetchChartFromURL = (chartURL: string): Promise<HelmChart> => {
-  return coFetchJSON(`/api/helm/chart?url=${encodeURIComponent(chartURL)}&noRepo=true`);
+/**
+ * Merges the new chart's default `values` with values already in use (release / user edits).
+ * Arrays from currentUserValues replace arrays from newChartDefaults instead of merging by index.
+ */
+export const mergeHelmChartVersionUpgradeValues = (
+  newChartDefaults: Record<string, unknown>,
+  currentUserValues: Record<string, unknown>,
+): Record<string, unknown> => {
+  const mergeCustomizer = (objValue: unknown, srcValue: unknown) => {
+    if (Array.isArray(srcValue)) {
+      return srcValue; // Replace arrays instead of merging by index
+    }
+    return undefined; // use default merge for non-arrays
+  };
+  return _.mergeWith({}, newChartDefaults, currentUserValues, mergeCustomizer);
 };
 
-export const installChartFromURL = (
-  namespace: string,
-  releaseName: string,
-  chartURL: string,
-  chartVersion?: string,
-  values?: Record<string, unknown>,
-) => {
-  return coFetchJSON.post('/api/helm/release/async', {
-    namespace,
-    name: releaseName,
-    chart_url: chartURL, // eslint-disable-line @typescript-eslint/naming-convention
-    ...(chartVersion ? { chart_version: chartVersion } : {}), // eslint-disable-line @typescript-eslint/naming-convention
-    ...(values ? { values } : {}),
-    noRepo: true,
-  });
+/**
+ * Reads the effective values object from the install/upgrade form when changing chart version.
+ * Form mode prefers `formData`; YAML mode prefers parsed `yamlData`, then falls back to `formData`.
+ */
+export const getCurrentHelmUserValuesForUpgradeMerge = (
+  yamlData: string,
+  formData: unknown,
+  editorType: EditorType,
+): Record<string, unknown> => {
+  if (
+    editorType === EditorType.Form &&
+    formData &&
+    typeof formData === 'object' &&
+    !Array.isArray(formData)
+  ) {
+    return _.merge({}, formData as Record<string, unknown>);
+  }
+  if (yamlData) {
+    try {
+      const parsed = safeLoad(yamlData);
+      if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+        return _.merge({}, parsed as Record<string, unknown>);
+      }
+    } catch {
+      // ignore invalid YAML
+    }
+  }
+  if (formData && typeof formData === 'object' && !Array.isArray(formData)) {
+    return _.merge({}, formData as Record<string, unknown>);
+  }
+  return {};
+};
+
+/** Applies {@link mergeHelmChartVersionUpgradeValues} using the active editor source for current values. */
+export const mergeHelmValuesOnChartVersionChange = (
+  newChartValues: Record<string, unknown> | undefined,
+  yamlData: string,
+  formData: unknown,
+  editorType: EditorType,
+): Record<string, unknown> => {
+  const currentUserValues = getCurrentHelmUserValuesForUpgradeMerge(yamlData, formData, editorType);
+  return mergeHelmChartVersionUpgradeValues(newChartValues ?? {}, currentUserValues);
 };

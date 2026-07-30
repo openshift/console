@@ -1,6 +1,6 @@
 import type { ReactNode, ComponentType, FC } from 'react';
-import ErrorBoundary from '../error-boundary';
-import ErrorBoundaryFallbackInline from './ErrorBoundaryFallbackInline';
+import { ErrorBoundary } from '../error-boundary';
+import { ErrorBoundaryFallbackInline } from './ErrorBoundaryFallbackInline';
 
 type ErrorBoundaryInlineProps = {
   wrapper?: ComponentType<{ children: ReactNode }>;
@@ -11,7 +11,7 @@ type ErrorBoundaryInlineProps = {
  * Mount an error boundary that will render an inline error with modal stack trace.
  * @see ErrorBoundaryPage if you do not need an inline fallback.
  */
-const ErrorBoundaryInline: FC<ErrorBoundaryInlineProps> = ({
+export const ErrorBoundaryInline: FC<ErrorBoundaryInlineProps> = ({
   wrapper: Wrapper,
   children,
   ...props
@@ -31,5 +31,3 @@ const ErrorBoundaryInline: FC<ErrorBoundaryInlineProps> = ({
     </ErrorBoundary>
   );
 };
-
-export default ErrorBoundaryInline;

@@ -6,11 +6,6 @@ import { lazy } from 'react';
 // TODO: Improve focus and keybinding handling, see https://issues.redhat.com/browse/ODC-3554
 export const isModalOpen = () => document.body.classList.contains('ReactModal__Body--open');
 
-export const configureJobParallelismModal = (props) =>
-  import('./configure-count-modal' /* webpackChunkName: "configure-count-modal" */).then((m) =>
-    m.configureJobParallelismModal(props),
-  );
-
 // Lazy-loaded OverlayComponent for Configure Namespace Pull Secret Modal
 export const LazyConfigureNamespacePullSecretModalOverlay = lazy(() =>
   import(

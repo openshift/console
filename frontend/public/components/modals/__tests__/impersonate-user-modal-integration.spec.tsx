@@ -3,13 +3,14 @@
  * Tests the modal integrated with Redux actions and state
  */
 
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
-import { ImpersonateUserModal } from '../impersonate-user-modal';
-import { useK8sWatchResource } from '../../utils/k8s-watch-hook';
-import { GroupKind } from '../../../module/k8s';
 import * as UIActions from '../../../actions/ui';
+import type { GroupKind } from '../../../module/k8s';
+import { useK8sWatchResource } from '../../utils/k8s-watch-hook';
+import { ImpersonateUserModal } from '../impersonate-user-modal';
 
 // Mock dependencies
 jest.mock('../../utils/k8s-watch-hook', () => ({
@@ -54,24 +55,24 @@ describe('ImpersonateUserModal Integration Tests', () => {
 
   describe('Form submission with Redux integration', () => {
     it('should dispatch startImpersonate action with user only', async () => {
+      const user = userEvent.setup();
       const onClose = jest.fn();
       const onImpersonate = jest.fn((username) => {
         mockStartImpersonate('User', username);
       });
 
-      await act(async () => {
-        render(
-          <Provider store={mockStore}>
-            <ImpersonateUserModal isOpen={true} onClose={onClose} onImpersonate={onImpersonate} />
-          </Provider>,
-        );
-      });
+      render(
+        <Provider store={mockStore}>
+          <ImpersonateUserModal isOpen onClose={onClose} onImpersonate={onImpersonate} />
+        </Provider>,
+      );
 
       const usernameInput = screen.getByTestId('username-input');
-      fireEvent.change(usernameInput, { target: { value: 'testuser' } });
+      await user.clear(usernameInput);
+      await user.type(usernameInput, 'testuser');
 
       const submitButton = screen.getByTestId('impersonate-button');
-      fireEvent.click(submitButton);
+      await user.click(submitButton);
 
       await waitFor(() => {
         expect(onImpersonate).toHaveBeenCalledWith('testuser', []);
@@ -80,6 +81,7 @@ describe('ImpersonateUserModal Integration Tests', () => {
     });
 
     it('should dispatch startImpersonate action with user and groups', async () => {
+      const user = userEvent.setup();
       const onClose = jest.fn();
       const onImpersonate = jest.fn((username, groups) => {
         if (groups.length > 0) {
@@ -89,36 +91,26 @@ describe('ImpersonateUserModal Integration Tests', () => {
         }
       });
 
-      await act(async () => {
-        render(
-          <Provider store={mockStore}>
-            <ImpersonateUserModal isOpen={true} onClose={onClose} onImpersonate={onImpersonate} />
-          </Provider>,
-        );
-      });
+      render(
+        <Provider store={mockStore}>
+          <ImpersonateUserModal isOpen onClose={onClose} onImpersonate={onImpersonate} />
+        </Provider>,
+      );
 
       const usernameInput = screen.getByTestId('username-input');
-      fireEvent.change(usernameInput, { target: { value: 'multiuser' } });
+      await user.clear(usernameInput);
+      await user.type(usernameInput, 'multiuser');
 
       // Open groups dropdown
       const groupsInput = screen.getByPlaceholderText('Enter groups');
-      await act(async () => {
-        fireEvent.click(groupsInput);
-      });
+      await user.click(groupsInput);
 
       // Wait for dropdown to open and select first group
-      await waitFor(() => {
-        const firstGroup = screen.getByText('developers');
-        expect(firstGroup).toBeInTheDocument();
-      });
-
-      const developersOption = screen.getByText('developers');
-      await act(async () => {
-        fireEvent.click(developersOption);
-      });
+      const developersOption = await screen.findByText('developers');
+      await user.click(developersOption);
 
       const submitButton = screen.getByTestId('impersonate-button');
-      fireEvent.click(submitButton);
+      await user.click(submitButton);
 
       await waitFor(() => {
         expect(onImpersonate).toHaveBeenCalledWith('multiuser', ['developers']);
@@ -131,57 +123,50 @@ describe('ImpersonateUserModal Integration Tests', () => {
 
   describe('Group selection workflow', () => {
     it('should handle complete group selection flow', async () => {
+      const user = userEvent.setup();
       const onImpersonate = jest.fn();
 
-      await act(async () => {
-        render(
-          <Provider store={mockStore}>
-            <ImpersonateUserModal isOpen={true} onClose={jest.fn()} onImpersonate={onImpersonate} />
-          </Provider>,
-        );
-      });
+      render(
+        <Provider store={mockStore}>
+          <ImpersonateUserModal isOpen onClose={jest.fn()} onImpersonate={onImpersonate} />
+        </Provider>,
+      );
 
       // Enter username
       const usernameInput = screen.getByTestId('username-input');
-      fireEvent.change(usernameInput, { target: { value: 'groupuser' } });
+      await user.clear(usernameInput);
+      await user.type(usernameInput, 'groupuser');
 
       // Open dropdown
       const groupsInput = screen.getByPlaceholderText('Enter groups');
-      await act(async () => {
-        fireEvent.click(groupsInput);
-      });
+      await user.click(groupsInput);
 
       // Select first group
-      await waitFor(() => {
-        expect(screen.getByText('developers')).toBeInTheDocument();
-      });
-
-      const developersOption = screen.getByText('developers');
-      await act(async () => {
-        fireEvent.click(developersOption);
-      });
+      const developersOption = await screen.findByText('developers');
+      await user.click(developersOption);
 
       // Verify group chip appears
+      // eslint-disable-next-line testing-library/no-node-access -- PatternFly chips don't have accessible test IDs
       await waitFor(() => {
+        // eslint-disable-next-line testing-library/no-node-access -- PatternFly chips don't have accessible test IDs
         const chips = document.querySelectorAll('.pf-v6-c-label');
         expect(chips.length).toBeGreaterThan(0);
       });
 
       // Select second group
       const adminsOption = screen.getByText('admins');
-      await act(async () => {
-        fireEvent.click(adminsOption);
-      });
+      await user.click(adminsOption);
 
       // Verify two groups are selected
       await waitFor(() => {
+        // eslint-disable-next-line testing-library/no-node-access -- PatternFly chips don't have accessible test IDs
         const chips = document.querySelectorAll('.pf-v6-c-label');
         expect(chips.length).toBe(2);
       });
 
       // Submit
       const submitButton = screen.getByTestId('impersonate-button');
-      fireEvent.click(submitButton);
+      await user.click(submitButton);
 
       await waitFor(() => {
         expect(onImpersonate).toHaveBeenCalledWith('groupuser', ['developers', 'admins']);
@@ -189,48 +174,41 @@ describe('ImpersonateUserModal Integration Tests', () => {
     });
 
     it('should allow deselecting a group', async () => {
+      const user = userEvent.setup();
       const onImpersonate = jest.fn();
 
-      await act(async () => {
-        render(
-          <Provider store={mockStore}>
-            <ImpersonateUserModal isOpen={true} onClose={jest.fn()} onImpersonate={onImpersonate} />
-          </Provider>,
-        );
-      });
+      render(
+        <Provider store={mockStore}>
+          <ImpersonateUserModal isOpen onClose={jest.fn()} onImpersonate={onImpersonate} />
+        </Provider>,
+      );
 
       const usernameInput = screen.getByTestId('username-input');
-      fireEvent.change(usernameInput, { target: { value: 'deselectuser' } });
+      await user.clear(usernameInput);
+      await user.type(usernameInput, 'deselectuser');
 
       // Open and select group
       const groupsInput = screen.getByPlaceholderText('Enter groups');
-      await act(async () => {
-        fireEvent.click(groupsInput);
-      });
+      await user.click(groupsInput);
 
-      await waitFor(() => {
-        expect(screen.getByText('developers')).toBeInTheDocument();
-      });
-
-      const developersOption = screen.getByText('developers');
-      await act(async () => {
-        fireEvent.click(developersOption);
-      });
+      const developersOption = await screen.findByText('developers');
+      await user.click(developersOption);
 
       // Wait for chip to appear
       await waitFor(() => {
+        // eslint-disable-next-line testing-library/no-node-access -- PatternFly chips don't have accessible test IDs
         const chips = document.querySelectorAll('.pf-v6-c-label');
         expect(chips.length).toBe(1);
       });
 
       // Remove the group by clicking the X button
+      // eslint-disable-next-line testing-library/no-node-access -- PatternFly chips don't have accessible test IDs
       const closeButtons = document.querySelectorAll('.pf-v6-c-label__actions button');
       if (closeButtons.length > 0) {
-        await act(async () => {
-          fireEvent.click(closeButtons[0]);
-        });
+        await user.click(closeButtons[0]);
 
         await waitFor(() => {
+          // eslint-disable-next-line testing-library/no-node-access -- PatternFly chips don't have accessible test IDs
           const chips = document.querySelectorAll('.pf-v6-c-label');
           expect(chips.length).toBe(0);
         });
@@ -238,7 +216,7 @@ describe('ImpersonateUserModal Integration Tests', () => {
 
       // Submit with no groups
       const submitButton = screen.getByTestId('impersonate-button');
-      fireEvent.click(submitButton);
+      await user.click(submitButton);
 
       await waitFor(() => {
         expect(onImpersonate).toHaveBeenCalledWith('deselectuser', []);
@@ -248,30 +226,22 @@ describe('ImpersonateUserModal Integration Tests', () => {
 
   describe('Search and filter workflow', () => {
     it('should filter groups based on search input', async () => {
-      await act(async () => {
-        render(
-          <Provider store={mockStore}>
-            <ImpersonateUserModal isOpen={true} onClose={jest.fn()} onImpersonate={jest.fn()} />
-          </Provider>,
-        );
-      });
+      const user = userEvent.setup();
+      render(
+        <Provider store={mockStore}>
+          <ImpersonateUserModal isOpen onClose={jest.fn()} onImpersonate={jest.fn()} />
+        </Provider>,
+      );
 
       const groupsInput = screen.getByPlaceholderText('Enter groups');
 
       // Open dropdown first
-      await act(async () => {
-        fireEvent.click(groupsInput);
-      });
+      await user.click(groupsInput);
 
-      // Wait for dropdown to open
-      await waitFor(() => {
-        expect(screen.getByText('developers')).toBeInTheDocument();
-      });
+      expect(await screen.findByText('developers')).toBeInTheDocument();
 
       // Type to filter
-      await act(async () => {
-        fireEvent.change(groupsInput, { target: { value: 'dev' } });
-      });
+      await user.type(groupsInput, 'dev');
 
       await waitFor(() => {
         // Should show developers (matches "dev")
@@ -282,34 +252,24 @@ describe('ImpersonateUserModal Integration Tests', () => {
     });
 
     it('should show no results when filter matches nothing', async () => {
-      await act(async () => {
-        render(
-          <Provider store={mockStore}>
-            <ImpersonateUserModal isOpen={true} onClose={jest.fn()} onImpersonate={jest.fn()} />
-          </Provider>,
-        );
-      });
+      const user = userEvent.setup();
+      render(
+        <Provider store={mockStore}>
+          <ImpersonateUserModal isOpen onClose={jest.fn()} onImpersonate={jest.fn()} />
+        </Provider>,
+      );
 
       const groupsInput = screen.getByPlaceholderText('Enter groups');
 
       // Open dropdown first
-      await act(async () => {
-        fireEvent.click(groupsInput);
-      });
+      await user.click(groupsInput);
 
-      // Wait for dropdown to open
-      await waitFor(() => {
-        expect(screen.getByText('developers')).toBeInTheDocument();
-      });
+      expect(await screen.findByText('developers')).toBeInTheDocument();
 
       // Type to filter with non-matching text
-      await act(async () => {
-        fireEvent.change(groupsInput, { target: { value: 'nonexistent' } });
-      });
+      await user.type(groupsInput, 'nonexistent');
 
-      await waitFor(() => {
-        expect(screen.getByText('No results found')).toBeInTheDocument();
-      });
+      expect(await screen.findByText('No results found')).toBeVisible();
     });
   });
 
@@ -318,21 +278,19 @@ describe('ImpersonateUserModal Integration Tests', () => {
       const error = new Error('Failed to fetch groups');
       (useK8sWatchResource as jest.Mock).mockReturnValue([[], false, error]);
 
-      await act(async () => {
-        render(
-          <Provider store={mockStore}>
-            <ImpersonateUserModal isOpen={true} onClose={jest.fn()} onImpersonate={jest.fn()} />
-          </Provider>,
-        );
-      });
+      render(
+        <Provider store={mockStore}>
+          <ImpersonateUserModal isOpen onClose={jest.fn()} onImpersonate={jest.fn()} />
+        </Provider>,
+      );
 
-      await waitFor(() => {
-        expect(screen.getByText('Failed to load groups')).toBeInTheDocument();
-      });
+      expect(await screen.findByText('Failed to load groups')).toBeVisible();
 
       // Should still allow impersonation without groups
+      const ue = userEvent.setup();
       const usernameInput = screen.getByTestId('username-input');
-      fireEvent.change(usernameInput, { target: { value: 'erroruser' } });
+      await ue.clear(usernameInput);
+      await ue.type(usernameInput, 'erroruser');
 
       const submitButton = screen.getByTestId('impersonate-button');
       expect(submitButton).not.toBeDisabled();
@@ -341,33 +299,31 @@ describe('ImpersonateUserModal Integration Tests', () => {
 
   describe('Modal lifecycle workflow', () => {
     it('should reset form when reopening modal', async () => {
+      const ue = userEvent.setup();
       const { rerender } = render(
         <Provider store={mockStore}>
-          <ImpersonateUserModal isOpen={true} onClose={jest.fn()} onImpersonate={jest.fn()} />
+          <ImpersonateUserModal isOpen onClose={jest.fn()} onImpersonate={jest.fn()} />
         </Provider>,
       );
 
       // Fill form
       const usernameInput = screen.getByTestId('username-input');
-      fireEvent.change(usernameInput, { target: { value: 'tempuser' } });
+      await ue.clear(usernameInput);
+      await ue.type(usernameInput, 'tempuser');
 
       // Close modal
-      await act(async () => {
-        rerender(
-          <Provider store={mockStore}>
-            <ImpersonateUserModal isOpen={false} onClose={jest.fn()} onImpersonate={jest.fn()} />
-          </Provider>,
-        );
-      });
+      rerender(
+        <Provider store={mockStore}>
+          <ImpersonateUserModal isOpen={false} onClose={jest.fn()} onImpersonate={jest.fn()} />
+        </Provider>,
+      );
 
       // Reopen modal
-      await act(async () => {
-        rerender(
-          <Provider store={mockStore}>
-            <ImpersonateUserModal isOpen={true} onClose={jest.fn()} onImpersonate={jest.fn()} />
-          </Provider>,
-        );
-      });
+      rerender(
+        <Provider store={mockStore}>
+          <ImpersonateUserModal isOpen onClose={jest.fn()} onImpersonate={jest.fn()} />
+        </Provider>,
+      );
 
       // Form should be reset
       const resetUsernameInput = screen.getByTestId('username-input') as HTMLInputElement;
@@ -375,45 +331,41 @@ describe('ImpersonateUserModal Integration Tests', () => {
     });
 
     it('should call onClose when cancel is clicked', async () => {
+      const ue = userEvent.setup();
       const onClose = jest.fn();
 
-      await act(async () => {
-        render(
-          <Provider store={mockStore}>
-            <ImpersonateUserModal isOpen={true} onClose={onClose} onImpersonate={jest.fn()} />
-          </Provider>,
-        );
-      });
+      render(
+        <Provider store={mockStore}>
+          <ImpersonateUserModal isOpen onClose={onClose} onImpersonate={jest.fn()} />
+        </Provider>,
+      );
 
       const cancelButton = screen.getByTestId('cancel-button');
-      fireEvent.click(cancelButton);
+      await ue.click(cancelButton);
 
       expect(onClose).toHaveBeenCalled();
     });
   });
 
   describe('Readonly mode workflow', () => {
-    it('should support readonly username for prefilled scenarios', async () => {
-      await act(async () => {
-        render(
-          <Provider store={mockStore}>
-            <ImpersonateUserModal
-              isOpen={true}
-              onClose={jest.fn()}
-              onImpersonate={jest.fn()}
-              prefilledUsername="readonly-user"
-              isUsernameReadonly={true}
-            />
-          </Provider>,
-        );
-      });
+    it('should support readonly username for prefilled scenarios', () => {
+      render(
+        <Provider store={mockStore}>
+          <ImpersonateUserModal
+            isOpen
+            onClose={jest.fn()}
+            onImpersonate={jest.fn()}
+            prefilledUsername="readonly-user"
+            isUsernameReadonly
+          />
+        </Provider>,
+      );
 
       const usernameInput = screen.getByTestId('username-input') as HTMLInputElement;
       expect(usernameInput.value).toBe('readonly-user');
       expect(usernameInput).toHaveAttribute('readonly');
 
       // Readonly attribute should be present (prevents browser editing)
-      // Note: In test environment, fireEvent.change still works, but readonly
       // attribute is correctly set for browser behavior
     });
   });

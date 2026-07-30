@@ -19,7 +19,7 @@ interface PushSecretDropdownProps
 }
 
 const PushSecretDropdown: FC<PushSecretDropdownProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('shipwright-plugin');
   const autocompleteFilter = (strText, item): boolean => fuzzy(strText, item?.props?.name);
   const filterData = (item) => {
     return (
@@ -47,7 +47,7 @@ const PushSecretDropdown: FC<PushSecretDropdownProps> = (props) => {
       {...props}
       resources={resources}
       dataSelector={['metadata', 'name']}
-      placeholder={t('shipwright-plugin~Select a Secret')}
+      placeholder={t('Select a Secret')}
       autocompleteFilter={autocompleteFilter}
       resourceFilter={filterData}
       showBadge

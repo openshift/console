@@ -30,7 +30,7 @@ const QuickSearchModal: FC<QuickSearchModalProps> = ({
   limitItemCount,
   detailsRenderer,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const ref = useRef<HTMLDivElement>();
 
   // close the modal when clicking outside of it
@@ -48,7 +48,7 @@ const QuickSearchModal: FC<QuickSearchModalProps> = ({
     <Modal
       className="ocs-quick-search-modal"
       variant={ModalVariant.medium}
-      aria-label={t('console-shared~Quick search')}
+      aria-label={t('Quick search')}
       isOpen={isOpen}
       position="top"
       positionOffset="15%"

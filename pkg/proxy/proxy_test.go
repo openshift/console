@@ -1,7 +1,7 @@
 package proxy
 
 import (
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -53,7 +53,7 @@ func TestProxyHTTP(t *testing.T) {
 	if err != nil {
 		t.Fatalf("err GETting from /proxy/static: %v", err)
 	}
-	body, err := ioutil.ReadAll(res.Body)
+	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		t.Fatalf("err reading res.Body: %v", err)
 	}

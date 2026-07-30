@@ -16,25 +16,25 @@ import {
   Radio,
   TextInput,
 } from '@patternfly/react-core';
-import { ExclamationCircleIcon } from '@patternfly/react-icons';
-
-import { ClusterVersionModel } from '../../models';
-import { ClusterVersionKind, k8sPatch } from '../../module/k8s';
-import { ModalComponentProps } from '@console/shared/src/types/modal';
-import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import { RhUiErrorFillIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import { CLUSTER_VERSION_DEFAULT_UPSTREAM_SERVER_URL_PLACEHOLDER } from '@console/shared/src/constants/common';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
+import { ClusterVersionModel } from '../../models';
+import type { ClusterVersionKind } from '../../module/k8s';
+import { k8sPatch } from '../../module/k8s';
 import {
   documentationURLs,
   getDocumentationURL,
   isManaged,
   isUpstream,
 } from '../utils/documentation';
-import { useTranslation } from 'react-i18next';
-import { CLUSTER_VERSION_DEFAULT_UPSTREAM_SERVER_URL_PLACEHOLDER } from '@console/shared/src/constants';
-import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 
-export const ConfigureClusterUpstreamModal = (props: ConfigureClusterUpstreamModalProps) => {
+const ConfigureClusterUpstreamModal = (props: ConfigureClusterUpstreamModalProps) => {
   const { cv, close } = props;
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
   const currentUpstream = cv?.spec?.upstream;
@@ -51,7 +51,8 @@ export const ConfigureClusterUpstreamModal = (props: ConfigureClusterUpstreamMod
         if (!customURL) {
           setInvalidCustomURL(true);
           return;
-        } else if (customURL === currentUpstream) {
+        }
+        if (customURL === currentUpstream) {
           close();
           return;
         }
@@ -67,34 +68,35 @@ export const ConfigureClusterUpstreamModal = (props: ConfigureClusterUpstreamMod
     },
     [customSelected, customURL, currentUpstream, cv, handlePromise, close],
   );
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const updateURL = getDocumentationURL(documentationURLs.updateService);
 
   return (
     <>
       <ModalHeader
-        title={t('public~Edit upstream configuration')}
+        title={t('Edit upstream configuration')}
         data-test-id="modal-title"
+        data-test="modal-title"
         labelId="configure-cluster-upstream-modal-title"
       />
       <ModalBody>
         <Content component={ContentVariants.p}>
           {t(
-            'public~Select a configuration to receive updates. Updates can be configured to receive information from Red Hat or a custom update service.',
+            'Select a configuration to receive updates. Updates can be configured to receive information from Red Hat or a custom update service.',
           )}
         </Content>
         {!isManaged() && !isUpstream() && (
           <Content component={ContentVariants.p}>
             <ExternalLink
               href={updateURL}
-              text={t('public~Learn more about OpenShift local update services.')}
+              text={t('Learn more about OpenShift local update services.')}
             />
           </Content>
         )}
         <Form id="configure-cluster-upstream-form" onSubmit={submit}>
           <FormGroup
-            label={t('public~Configuration')}
+            label={t('Configuration')}
             role="radiogroup"
             fieldId="co-add-secret-to-workload"
             isStack
@@ -106,7 +108,7 @@ export const ConfigureClusterUpstreamModal = (props: ConfigureClusterUpstreamMod
                 setCustomSelected(false);
                 setInvalidCustomURL(false);
               }}
-              label={t('public~Default')}
+              label={t('Default')}
               isChecked={!customSelected}
               body={
                 !customSelected && (
@@ -121,7 +123,7 @@ export const ConfigureClusterUpstreamModal = (props: ConfigureClusterUpstreamMod
                     <FormHelperText className="pf-v6-u-mt-sm">
                       <HelperText>
                         <HelperTextItem>
-                          {t('public~Receive update information from Red Hat.')}
+                          {t('Receive update information from Red Hat.')}
                         </HelperTextItem>
                       </HelperText>
                     </FormHelperText>
@@ -138,7 +140,7 @@ export const ConfigureClusterUpstreamModal = (props: ConfigureClusterUpstreamMod
                   customURLInputRef.current?.focus();
                 }, 0);
               }}
-              label={t('public~Custom update service')}
+              label={t('Custom update service')}
               isChecked={customSelected}
               body={
                 customSelected && (
@@ -159,8 +161,8 @@ export const ConfigureClusterUpstreamModal = (props: ConfigureClusterUpstreamMod
                     {invalidCustomURL && (
                       <FormHelperText className="pf-v6-u-mt-sm">
                         <HelperText>
-                          <HelperTextItem icon={<ExclamationCircleIcon />} variant="error">
-                            {t('public~Please enter a URL.')}
+                          <HelperTextItem icon={<RhUiErrorFillIcon />} variant="error">
+                            {t('Please enter a URL.')}
                           </HelperTextItem>
                         </HelperText>
                       </FormHelperText>
@@ -181,10 +183,15 @@ export const ConfigureClusterUpstreamModal = (props: ConfigureClusterUpstreamMod
           data-test="confirm-action"
           form="configure-cluster-upstream-form"
         >
-          {t('public~Save')}
+          {t('Save')}
         </Button>
-        <Button variant="link" onClick={props.cancel} data-test-id="modal-cancel-action">
-          {t('public~Cancel')}
+        <Button
+          variant="link"
+          onClick={props.cancel}
+          data-test-id="modal-cancel-action"
+          data-test="modal-cancel-action"
+        >
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </>

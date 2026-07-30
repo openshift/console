@@ -7,19 +7,19 @@ interface AdvancedConfigurationProps {
 }
 
 export const AdvancedConfiguration: FC<AdvancedConfigurationProps> = ({ children }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <FormFieldGroupExpandable
       header={
         <FormFieldGroupHeader
           titleText={{
-            text: t('public~Advanced configuration'),
+            text: t('Advanced configuration'),
             id: 'advanced-configuration-id',
           }}
         />
       }
       data-test="advanced-configuration"
-      toggleAriaLabel={t('public~Advanced configuration')}
+      toggleAriaLabel={t('Advanced configuration')}
     >
       {children}
     </FormFieldGroupExpandable>

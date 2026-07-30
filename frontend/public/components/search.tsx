@@ -1,10 +1,6 @@
-import * as _ from 'lodash';
 import type { FC, MouseEvent } from 'react';
-import { useState, useEffect } from 'react';
-import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';
-import { useTranslation } from 'react-i18next';
-import { useLocation, useParams } from 'react-router';
+import { useState, useEffect, useMemo, memo } from 'react';
+import type { ToolbarLabel } from '@patternfly/react-core';
 import {
   Accordion,
   AccordionContent,
@@ -14,44 +10,50 @@ import {
   ButtonVariant,
   PageSection,
   Toolbar,
-  ToolbarLabel,
   ToolbarContent,
   ToolbarFilter,
   ToolbarItem,
 } from '@patternfly/react-core';
-import { PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
+import { RhUiAddCircleFillIcon, RhUiMinusCircleIcon } from '@patternfly/react-icons';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { useLocation, useParams } from 'react-router';
+import useConfirmNavUnpinModal from '@console/app/src/components/nav/useConfirmNavUnpinModal';
+import type { ResourceListPage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
+import { isResourceListPage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
+import { useActiveNamespace, useK8sModel } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { useActivePerspective } from '@console/dynamic-plugin-sdk/src/perspective';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import { getBadgeFromType } from '@console/shared/src/components/badges/badge-factory';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
+import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';
 import { usePinnedResources } from '@console/shared/src/hooks/usePinnedResources';
+import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
-import { DefaultPage } from './default-resource';
+import type { K8sResourceKindReference } from '../module/k8s';
+import { kindForReference, modelFor, referenceForModel } from '../module/k8s';
+import { split, selectorFromString } from '../module/k8s/selector';
 import { requirementFromString } from '../module/k8s/selector-requirement';
+import { DefaultPage } from './default-resource';
 import { ResourceListDropdown } from './resource-dropdown';
 import { getResourceListPages } from './resource-pages';
+import { SearchFilterDropdown, SearchFilterValues } from './search-filter-dropdown';
 import { withStartGuide } from './start-guide';
-import { split, selectorFromString } from '../module/k8s/selector';
-import {
-  kindForReference,
-  modelFor,
-  referenceForModel,
-  K8sResourceKindReference,
-} from '../module/k8s';
-import { LoadingBox, ConsoleEmptyState } from './utils/status-box';
-import { ResourceIcon } from './utils/resource-icon';
-import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import { AsyncComponent } from './utils/async';
-import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
-import useConfirmNavUnpinModal from '@console/app/src/components/nav/useConfirmNavUnpinModal';
-import { SearchFilterDropdown, searchFilterValues } from './search-filter-dropdown';
-import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
-import {
-  ResourceListPage,
-  isResourceListPage,
-} from '@console/dynamic-plugin-sdk/src/extensions/pages';
-import { useActivePerspective } from '@console/dynamic-plugin-sdk/src/perspective';
-import { useActiveNamespace, useK8sModel } from '@console/dynamic-plugin-sdk/src/lib-core';
-import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
+import { ResourceIcon } from './utils/resource-icon';
+import { LoadingBox, ConsoleEmptyState } from './utils/status-box';
 
-const ResourceList = ({ kind, mock, namespace, selector, nameFilter }) => {
+interface ResourceListProps {
+  kind: string;
+  mock: boolean;
+  namespace: string;
+  selector: any;
+  nameFilter: string;
+}
+
+const ResourceList = memo<ResourceListProps>(({ kind, mock, namespace, selector, nameFilter }) => {
   const { plural } = useParams<{ plural?: string }>();
   const [kindObj] = useK8sModel(kind || plural);
   const resourceListPageExtensions = useExtensions<ResourceListPage>(isResourceListPage);
@@ -81,9 +83,9 @@ const ResourceList = ({ kind, mock, namespace, selector, nameFilter }) => {
       hideColumnManagement
     />
   );
-};
+});
 
-const SearchPage_: FC<SearchProps> = (props) => {
+const InnerSearchPage: FC<SearchProps> = (props) => {
   const { setQueryArgument, removeQueryArguments } = useQueryParamsMutator();
   const [perspective] = useActivePerspective();
   const fireTelemetryEvent = useTelemetry();
@@ -95,13 +97,15 @@ const SearchPage_: FC<SearchProps> = (props) => {
   const [debouncedNameFilter, setDebouncedNameFilter] = useState('');
   const [pinnedResources, setPinnedResources, pinnedResourcesLoaded] = usePinnedResources();
   const { noProjectsAvailable } = props;
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const [namespace] = useActiveNamespace();
   const location = useLocation();
   const confirmNavUnpinModal = useConfirmNavUnpinModal(pinnedResources, setPinnedResources);
   // Set state variables from the URL
   useEffect(() => {
-    let kind: string, q: string, name: string;
+    let kind: string;
+    let q: string;
+    let name: string;
 
     if (location.search) {
       const sp = new URLSearchParams(location.search);
@@ -120,10 +124,12 @@ const SearchPage_: FC<SearchProps> = (props) => {
     const validTags = _.reject(tags, (tag) => requirementFromString(tag) === undefined);
     setLabelFilter(validTags);
     setTypeaheadNameFilter(name || '');
+    setDebouncedNameFilter(name || '');
   }, [location.search]);
 
   const debouncedNameFilterCallback = useDebounceCallback((nameFilter: string) => {
     setDebouncedNameFilter(nameFilter);
+    setQueryArgument('name', nameFilter);
   }, 300);
 
   useEffect(() => {
@@ -131,7 +137,7 @@ const SearchPage_: FC<SearchProps> = (props) => {
   }, [typeaheadNameFilter, debouncedNameFilterCallback]);
 
   const updateSelectedItems = (selection: string) => {
-    const updateItems = selectedItems;
+    const updateItems = new Set(selectedItems);
     fireTelemetryEvent('search-resource-selected', {
       resource: selection,
     });
@@ -141,7 +147,7 @@ const SearchPage_: FC<SearchProps> = (props) => {
   };
 
   const updateNewItems = (_filter: string, { key }: ToolbarLabel) => {
-    const updateItems = selectedItems;
+    const updateItems = new Set(selectedItems);
     updateItems.has(key) ? updateItems.delete(key) : updateItems.add(key);
     setSelectedItems(updateItems);
     setQueryArgument('kind', [...updateItems].join(','));
@@ -154,6 +160,7 @@ const SearchPage_: FC<SearchProps> = (props) => {
 
   const clearNameFilter = () => {
     setTypeaheadNameFilter('');
+    setDebouncedNameFilter('');
     setQueryArgument('name', '');
   };
 
@@ -165,6 +172,7 @@ const SearchPage_: FC<SearchProps> = (props) => {
   const clearAll = () => {
     setSelectedItems(new Set([]));
     setTypeaheadNameFilter('');
+    setDebouncedNameFilter('');
     setLabelFilter([]);
     removeQueryArguments('kind', 'name', 'q');
   };
@@ -188,7 +196,6 @@ const SearchPage_: FC<SearchProps> = (props) => {
 
   const updateNameFilter = (value: string) => {
     setTypeaheadNameFilter(value);
-    setQueryArgument('name', value);
   };
 
   const updateLabelFilter = (value: string, endOfString: boolean) => {
@@ -202,7 +209,7 @@ const SearchPage_: FC<SearchProps> = (props) => {
   };
 
   const updateSearchFilter = (type: string, value: string, endOfString: boolean) => {
-    type === searchFilterValues.Label
+    type === SearchFilterValues.Label
       ? updateLabelFilter(value, endOfString)
       : updateNameFilter(value);
   };
@@ -217,7 +224,7 @@ const SearchPage_: FC<SearchProps> = (props) => {
     const model = modelFor(item);
     // API discovery happens asynchronously. Avoid runtime errors if the model hasn't loaded.
     if (!model) {
-      return '';
+      return kindForReference(item);
     }
     const { labelPlural, labelPluralKey, apiVersion, apiGroup } = model;
     return (
@@ -239,16 +246,18 @@ const SearchPage_: FC<SearchProps> = (props) => {
     return model.labelKey ? t(model.labelKey) : model.label;
   };
 
+  const selector = useMemo(() => selectorFromString(labelFilter.join(',')), [labelFilter]);
+
   return (
     <>
-      <DocumentTitle>{t('public~Search')}</DocumentTitle>
-      <PageHeading title={t('public~Search')} />
+      <DocumentTitle>{t('Search')}</DocumentTitle>
+      <PageHeading title={t('Search')} />
       <PageSection hasBodyWrapper={false}>
         <Toolbar
           id="search-toolbar"
           clearAllFilters={clearAll}
           collapseListedFiltersBreakpoint="xl"
-          clearFiltersButtonText={t('public~Clear all filters')}
+          clearFiltersButtonText={t('Clear all filters')}
         >
           <ToolbarContent>
             <ToolbarItem>
@@ -264,16 +273,17 @@ const SearchPage_: FC<SearchProps> = (props) => {
                   ),
                 }))}
                 deleteLabel={updateNewItems}
-                categoryName={t('public~Resource')}
-                labelGroupCollapsedText={t('public~{{numRemaining}} more', {
+                categoryName={t('Resource')}
+                labelGroupCollapsedText={t('{{numRemaining}} more', {
+                  // eslint-disable-next-line no-template-curly-in-string
                   numRemaining: '${remaining}',
                 })}
-                labelGroupExpandedText={t('public~Show less')}
+                labelGroupExpandedText={t('Show less')}
               >
                 <ResourceListDropdown
                   selected={[...selectedItems]}
                   onChange={updateSelectedItems}
-                  recentList={true}
+                  recentList
                 />
               </ToolbarFilter>
             </ToolbarItem>
@@ -282,12 +292,12 @@ const SearchPage_: FC<SearchProps> = (props) => {
                 deleteLabelGroup={clearLabelFilter}
                 labels={[...labelFilter]}
                 deleteLabel={removeLabelFilter}
-                categoryName={t('public~Label')}
+                categoryName={t('Label')}
               >
                 <ToolbarFilter
                   labels={typeaheadNameFilter.length > 0 ? [typeaheadNameFilter] : []}
                   deleteLabel={clearNameFilter}
-                  categoryName={t('public~Name')}
+                  categoryName={t('Name')}
                 >
                   <SearchFilterDropdown
                     onChange={updateSearchFilter}
@@ -322,13 +332,13 @@ const SearchPage_: FC<SearchProps> = (props) => {
                     >
                       {pinnedResources.includes(resource) ? (
                         <>
-                          <MinusCircleIcon className="co-search-group__pin-toggle__icon" />
-                          {t('public~Remove from navigation')}
+                          <RhUiMinusCircleIcon className="co-search-group__pin-toggle__icon" />
+                          {t('Remove from navigation')}
                         </>
                       ) : (
                         <>
-                          <PlusCircleIcon className="co-search-group__pin-toggle__icon" />
-                          {t('public~Add to navigation')}
+                          <RhUiAddCircleFillIcon className="co-search-group__pin-toggle__icon" />
+                          {t('Add to navigation')}
                         </>
                       )}
                     </Button>
@@ -338,11 +348,11 @@ const SearchPage_: FC<SearchProps> = (props) => {
                   {!isCollapsed && (
                     <ResourceList
                       kind={resource}
-                      selector={selectorFromString(labelFilter.join(','))}
-                      nameFilter={typeaheadNameFilter}
+                      selector={selector}
+                      nameFilter={debouncedNameFilter}
                       namespace={namespace}
                       mock={noProjectsAvailable}
-                      key={`${resource}-${labelFilter.join(',')}-${debouncedNameFilter}`}
+                      key={resource}
                     />
                   )}
                 </AccordionContent>
@@ -351,8 +361,8 @@ const SearchPage_: FC<SearchProps> = (props) => {
           })}
         </Accordion>
         {selectedItems.size === 0 && (
-          <ConsoleEmptyState title={t('public~No resources selected')}>
-            {<p>{t('public~Select one or more resources from the dropdown.')}</p>}
+          <ConsoleEmptyState title={t('No resources selected')}>
+            {<p>{t('Select one or more resources from the dropdown.')}</p>}
           </ConsoleEmptyState>
         )}
       </PageSection>
@@ -360,7 +370,7 @@ const SearchPage_: FC<SearchProps> = (props) => {
   );
 };
 
-export const SearchPage = withStartGuide(SearchPage_);
+export const SearchPage = withStartGuide(InnerSearchPage);
 
 export type SearchProps = {
   namespace?: string;

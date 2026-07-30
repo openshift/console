@@ -2,12 +2,13 @@ import type { FC } from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
 import { useField } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { InputField, TextAreaField } from '@console/shared';
+import { InputField } from '@console/shared/src/components/formik-fields/InputField';
+import { TextAreaField } from '@console/shared/src/components/formik-fields/TextAreaField';
 import ApplicationSelector from '@console/topology/src/components/dropdowns/ApplicationSelector';
 import type { ProjectData } from '../import-types';
 import FormSection from '../section/FormSection';
 
-export interface AppSectionProps {
+interface AppSectionProps {
   project: ProjectData;
   noProjectsAvailable?: boolean;
   extraMargin?: boolean;
@@ -26,29 +27,29 @@ const AppSection: FC<AppSectionProps> = ({
     subPath ? `${subPath}.application.initial` : 'application.initial',
   );
   const [formType] = useField('formType');
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   return (
-    <FormSection title={t('devconsole~General')} extraMargin={extraMargin} fullWidth={fullWidth}>
+    <FormSection title={t('General')} extraMargin={extraMargin} fullWidth={fullWidth}>
       {noProjectsAvailable && (
         <>
           <InputField
             type={TextInputTypes.text}
             data-test-id="application-form-project-name"
             name={subPath ? `${subPath}.project.name` : 'project.name'}
-            label={t('devconsole~Project name')}
-            helpText={t('devconsole~A unique name for the Project.')}
+            label={t('Project name')}
+            helpText={t('A unique name for the Project.')}
             required
           />
           <InputField
             type={TextInputTypes.text}
             data-test-id="application-form-project-display-name"
             name={subPath ? `${subPath}.project.displayName` : 'project.displayName'}
-            label={t('devconsole~Project display name')}
+            label={t('Project display name')}
           />
           <TextAreaField
             data-test-id="application-form-project-description"
             name={subPath ? `${subPath}.project.description` : 'project.description'}
-            label={t('devconsole~Project description')}
+            label={t('Project description')}
           />
         </>
       )}
@@ -61,11 +62,12 @@ const AppSection: FC<AppSectionProps> = ({
       )}
       <InputField
         type={TextInputTypes.text}
+        data-test="application-form-app-name"
         data-test-id="application-form-app-name"
         name={subPath ? `${subPath}.name` : 'name'}
-        label={t('devconsole~Name')}
+        label={t('Name')}
         helpText={t(
-          'devconsole~A unique name given to the component that will be used to name associated resources.',
+          'A unique name given to the component that will be used to name associated resources.',
         )}
         isDisabled={formType.value && formType.value === 'edit'}
         required={!(formType.value && formType.value === 'edit')}

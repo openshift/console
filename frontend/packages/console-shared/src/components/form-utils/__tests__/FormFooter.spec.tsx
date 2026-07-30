@@ -1,16 +1,8 @@
-import { screen, fireEvent } from '@testing-library/react';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '../../../test-utils/unit-test-utils';
 import type { FormFooterProps } from '../form-utils-types';
-import FormFooter from '../FormFooter';
-
-// Mock ResizeObserver
-global.ResizeObserver = class ResizeObserver {
-  observe = () => {};
-
-  unobserve = () => {};
-
-  disconnect = () => {};
-};
+import { FormFooter } from '../FormFooter';
 
 describe('FormFooter', () => {
   let props: FormFooterProps;
@@ -35,14 +27,6 @@ describe('FormFooter', () => {
     expect(screen.getByRole('button', { name: 'Create' })).toBeVisible();
     expect(screen.getByRole('button', { name: 'Reset' })).toBeVisible();
     expect(screen.getByRole('button', { name: 'Cancel' })).toBeVisible();
-  });
-
-  it('should contain right labels in the submit and reset button', () => {
-    renderWithProviders(<FormFooter {...props} />);
-
-    expect(screen.getByRole('button', { name: 'Create' })).toHaveTextContent('Create');
-    expect(screen.getByRole('button', { name: 'Reset' })).toHaveTextContent('Reset');
-    expect(screen.getByRole('button', { name: 'Cancel' })).toHaveTextContent('Cancel');
   });
 
   it('should be able to configure data-test-id and labels', () => {
@@ -81,13 +65,14 @@ describe('FormFooter', () => {
     expect(screen.getByRole('button', { name: 'Create' })).toHaveAttribute('type', 'button');
   });
 
-  it('should call the handler when a button is clicked', () => {
+  it('should call the handler when a button is clicked', async () => {
+    const user = userEvent.setup();
     const handleSubmit = jest.fn();
     renderWithProviders(<FormFooter {...props} handleSubmit={handleSubmit} />);
 
-    fireEvent.click(screen.getByRole('button', { name: 'Create' }));
-    fireEvent.click(screen.getByRole('button', { name: 'Reset' }));
-    fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+    await user.click(screen.getByRole('button', { name: 'Create' }));
+    await user.click(screen.getByRole('button', { name: 'Reset' }));
+    await user.click(screen.getByRole('button', { name: 'Cancel' }));
 
     expect(handleSubmit).toHaveBeenCalledTimes(1);
     expect(props.handleReset).toHaveBeenCalledTimes(1);

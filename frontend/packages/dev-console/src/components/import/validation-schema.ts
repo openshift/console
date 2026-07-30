@@ -360,9 +360,6 @@ export const buildValidationSchema = yup.object().shape({
   strategy: yup.string(),
 });
 
-export const searchTermValidationSchema = (t: TFunction) =>
-  yup.string().required(t('devconsole~Required'));
-
 export const isiValidationSchema = (t: TFunction) =>
   yup.object().shape({
     name: yup.string().required(t('devconsole~Required')),

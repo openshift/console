@@ -6,15 +6,13 @@ import { useTranslation } from 'react-i18next';
 import AppSection from '@console/dev-console/src/components/import/app/AppSection';
 import { LoadingInline, useAccessReview2 } from '@console/internal/components/utils';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import {
-  FlexForm,
-  FormBody,
-  SyncedEditorField,
-  FormFooter,
-  CodeEditorField,
-  UNASSIGNED_APPLICATIONS_KEY,
-} from '@console/shared';
+import { FlexForm } from '@console/shared/src/components/form-utils/FlexForm';
+import { FormBody } from '@console/shared/src/components/form-utils/FormBody';
+import { FormFooter } from '@console/shared/src/components/form-utils/FormFooter';
+import { CodeEditorField } from '@console/shared/src/components/formik-fields/CodeEditorField';
+import { SyncedEditorField } from '@console/shared/src/components/formik-fields/SyncedEditorField';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { UNASSIGNED_APPLICATIONS_KEY } from '@console/shared/src/constants/common';
 import { useFormikValidationFix } from '@console/shared/src/hooks/useFormikValidationFix';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import { CREATE_APPLICATION_KEY } from '@console/topology/src/const';
@@ -30,7 +28,7 @@ interface AddBrokerFormProps {
 const AddBrokerForm: FC<FormikProps<AddBrokerFormYamlValues> & AddBrokerFormProps> = (
   formikProps,
 ) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const {
     values,
     errors,
@@ -97,7 +95,7 @@ const AddBrokerForm: FC<FormikProps<AddBrokerFormYamlValues> & AddBrokerFormProp
               }
               isInline
               title={t(
-                'knative-plugin~Note: Some fields may not be represented in this form view. Please select "YAML view" for full control.',
+                'Some fields might not be displayed in this form view. Select "YAML view" to edit all fields.',
               )}
               variant="info"
             />
@@ -138,8 +136,8 @@ const AddBrokerForm: FC<FormikProps<AddBrokerFormYamlValues> & AddBrokerFormProp
       lastViewUserPreferenceKey={LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY}
     />
   ) : (
-    <Alert variant="custom" title={t('knative-plugin~Broker cannot be created')} isInline>
-      {t('knative-plugin~You do not have write access in this project.')}
+    <Alert variant="custom" title={t('Broker cannot be created')} isInline>
+      {t('You do not have write access in this project.')}
     </Alert>
   );
 
@@ -153,13 +151,13 @@ const AddBrokerForm: FC<FormikProps<AddBrokerFormYamlValues> & AddBrokerFormProp
         handleReset={handleReset}
         errorMessage={status && status.submitError}
         isSubmitting={isSubmitting}
-        submitLabel={t('knative-plugin~Create')}
+        submitLabel={t('Create')}
         disableSubmit={
           !canCreateBroker ||
           (values.editorType === EditorType.YAML ? !dirty : !_.isEmpty(errors)) ||
           isSubmitting
         }
-        resetLabel={t('knative-plugin~Cancel')}
+        resetLabel={t('Cancel')}
         sticky
       />
     </FlexForm>

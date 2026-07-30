@@ -2,11 +2,11 @@ import { useMemo } from 'react';
 import type { TFunction } from 'i18next';
 import type { Action, K8sKind } from '@console/dynamic-plugin-sdk';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
-import { coFetchJSON } from '@console/internal/co-fetch';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceFor } from '@console/internal/module/k8s';
-import { LazyDeleteResourceModalOverlay } from '@console/shared';
-import { ProjectHelmChartRepositoryModel } from '../models';
+import { LazyDeleteResourceModalOverlay } from '@console/shared/src/components/modals/LazyDeleteResourceModal';
+import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
+import { ProjectHelmChartRepositoryModel } from '../models/helm';
 import type { HelmActionsScope } from './types';
 
 export const useHelmDeleteAction = (scope: HelmActionsScope, t: TFunction): Action | null => {

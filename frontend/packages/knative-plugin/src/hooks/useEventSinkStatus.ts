@@ -21,7 +21,7 @@ export const useEventSinkStatus = (
   normalizedSink: KnEventCatalogMetaData;
   kamelet: K8sResourceKind;
 } => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const [kameletNs, kameletNsLoaded] = useK8sGet<K8sResourceKind>(
     CamelKameletModel,
     kameletName,

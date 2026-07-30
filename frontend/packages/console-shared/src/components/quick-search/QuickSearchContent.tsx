@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { Split, SplitItem, Divider } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import type { CatalogItem } from '@console/dynamic-plugin-sdk';
-import type { CatalogType } from '../catalog';
+import type { CatalogType } from '../catalog/utils/types';
 import type { DetailsRendererFunction } from './QuickSearchDetails';
 import QuickSearchDetails from './QuickSearchDetails';
 import QuickSearchList from './QuickSearchList';

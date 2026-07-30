@@ -4,11 +4,11 @@ import { Alert } from '@patternfly/react-core';
 import { Base64 } from 'js-base64';
 import { throttle } from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { coFetchText } from '@console/internal/co-fetch';
 import { LOG_SOURCE_TERMINATED } from '@console/internal/components/utils';
 import type { PodKind, ContainerSpec } from '@console/internal/module/k8s';
 import { resourceURL, modelFor } from '@console/internal/module/k8s';
 import { WSFactory } from '@console/internal/module/ws-factory';
+import { coFetchText } from '@console/shared/src/utils/console-fetch';
 import './Logs.scss';
 
 type LogsProps = {
@@ -28,7 +28,7 @@ const Logs: FC<LogsProps> = ({
   render,
   autoScroll = true,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('shipwright-plugin');
   const { name } = container;
   const { kind, metadata = {} } = resource;
   const { name: resName, namespace: resNamespace } = metadata;
@@ -129,17 +129,17 @@ const Logs: FC<LogsProps> = ({
   }, [autoScroll, render, addContentAndScroll]);
 
   return (
-    <div className="odc-logs" style={{ display: render ? '' : 'none' }}>
+    <div className="odc-logs" data-test="odc-logs" style={{ display: render ? '' : 'none' }}>
       <p className="odc-logs__name">{name}</p>
       {error && (
         <Alert
           variant="danger"
           isInline
-          title={t('shipwright-plugin~An error occurred while retrieving the requested logs.')}
+          title={t('An error occurred while retrieving the requested logs.')}
         />
       )}
       <div>
-        <div className="odc-logs__content" ref={contentRef} />
+        <div className="odc-logs__content" data-test="odc-logs__content" ref={contentRef} />
         <div ref={scrollToRef} />
       </div>
     </div>

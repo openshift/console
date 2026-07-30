@@ -11,7 +11,7 @@ import {
   getMostRecentBuilderTag,
   getBuilderTagsSortedByVersion,
 } from '@console/internal/components/image-stream';
-import { ProjectModel, ImageStreamModel } from '@console/internal/models';
+import { ImageStreamModel } from '@console/internal/models';
 import type {
   ContainerPort,
   K8sResourceKind,
@@ -164,7 +164,7 @@ export const imageRegistryType = (t: TFunction) => {
   };
 };
 
-export const getSortedTags = (imageStream: K8sResourceKind) => {
+const getSortedTags = (imageStream: K8sResourceKind) => {
   return _.isArray(imageStream.status.tags) && imageStream.status.tags.length
     ? imageStream.status.tags.sort(({ tag: a }, { tag: b }) => {
         const v1 = semver.coerce(a);
@@ -188,16 +188,6 @@ export const getImageStreamTags = (imageStream: K8sResourceKind) => {
     tags[tag] = tag;
     return tags;
   }, {});
-};
-
-export const getProjectResource = (): WatchK8sResourceWithProp[] => {
-  return [
-    {
-      isList: true,
-      kind: ProjectModel.kind,
-      prop: ProjectModel.id,
-    },
-  ];
 };
 
 export const getImageStreamResource = (namespace: string): WatchK8sResourceWithProp[] => {

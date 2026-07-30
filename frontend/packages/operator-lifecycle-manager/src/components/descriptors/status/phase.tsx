@@ -1,9 +1,9 @@
 import type { FC } from 'react';
-import { BanIcon } from '@patternfly/react-icons';
+import { RhUiBanIcon } from '@patternfly/react-icons';
 
 export const Phase: FC<PhaseProps> = ({ status }) => (
   <span className={status === 'Failed' ? 'co-error' : ''}>
-    {status === 'Failed' && <BanIcon data-test-id="ban-icon" />} {status}
+    {status === 'Failed' && <RhUiBanIcon data-test-id="ban-icon" />} {status}
   </span>
 );
 

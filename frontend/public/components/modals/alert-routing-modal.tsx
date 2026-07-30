@@ -1,7 +1,5 @@
 import type { FC } from 'react';
 import { useState } from 'react';
-import * as _ from 'lodash';
-import { useTranslation } from 'react-i18next';
 import {
   Button,
   Form,
@@ -12,13 +10,14 @@ import {
   ModalVariant,
   TextInput,
 } from '@patternfly/react-core';
-
-import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import type { ModalComponentProps } from '@console/shared/src/types/modal';
-import { K8sResourceKind } from '../../module/k8s';
-import { AlertmanagerConfig } from '../monitoring/alertmanager/alertmanager-config';
-import { patchAlertmanagerConfig } from '../monitoring/alertmanager/alertmanager-utils';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
+import type { K8sResourceKind } from '../../module/k8s';
+import type { AlertmanagerConfig } from '../monitoring/alertmanager/alertmanager-config';
+import { patchAlertmanagerConfig } from '../monitoring/alertmanager/alertmanager-utils';
 
 const updateAlertRoutingProperty = (
   config: any,
@@ -35,15 +34,10 @@ const updateAlertRoutingProperty = (
   }
 };
 
-export const AlertRoutingModal: FC<AlertRoutingModalProps> = ({
-  config,
-  secret,
-  cancel,
-  close,
-}) => {
+const AlertRoutingModal: FC<AlertRoutingModalProps> = ({ config, secret, cancel, close }) => {
   const [errorMessage, setErrorMessage] = useState();
   const [inProgress, setInProgress] = useState(false);
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const submit = (event): void => {
     event.preventDefault();
@@ -65,21 +59,20 @@ export const AlertRoutingModal: FC<AlertRoutingModalProps> = ({
     updateAlertRoutingProperty(config, 'repeat_interval', repeatIntervalNew, repeatIntervalOld);
 
     setInProgress(true);
-    patchAlertmanagerConfig(secret, config).then(close, (err) => {
-      setErrorMessage(err.message);
-      setInProgress(false);
-    });
+    patchAlertmanagerConfig(secret, config)
+      .then(close, (err) => {
+        setErrorMessage(err.message);
+        setInProgress(false);
+      })
+      .catch(() => {});
   };
 
   return (
     <>
-      <ModalHeader
-        title={t('public~Edit routing configuration')}
-        labelId="alert-routing-modal-title"
-      />
+      <ModalHeader title={t('Edit routing configuration')} labelId="alert-routing-modal-title" />
       <ModalBody>
         <Form id="alert-routing-form" onSubmit={submit}>
-          <FormGroup label={t('public~Group by')} fieldId="group-by">
+          <FormGroup label={t('Group by')} fieldId="group-by">
             <TextInput
               id="group-by"
               name="input-group-by"
@@ -87,10 +80,11 @@ export const AlertRoutingModal: FC<AlertRoutingModalProps> = ({
               defaultValue={_.get(config, ['route', 'group_by'], []).join(', ')}
               placeholder="cluster, alertname"
               aria-describedby="input-group-by-help"
+              data-test="input-group-by"
               data-test-id="input-group-by"
             />
           </FormGroup>
-          <FormGroup label={t('public~Group wait')} fieldId="group-wait">
+          <FormGroup label={t('Group wait')} fieldId="group-wait">
             <TextInput
               id="group-wait"
               name="input-group-wait"
@@ -98,10 +92,11 @@ export const AlertRoutingModal: FC<AlertRoutingModalProps> = ({
               defaultValue={_.get(config, ['route', 'group_wait'], '')}
               placeholder="30s"
               aria-describedby="input-group-wait-help"
+              data-test="input-group-wait"
               data-test-id="input-group-wait"
             />
           </FormGroup>
-          <FormGroup label={t('public~Group interval')} fieldId="group-interval">
+          <FormGroup label={t('Group interval')} fieldId="group-interval">
             <TextInput
               id="group-interval"
               name="input-group-interval"
@@ -109,10 +104,11 @@ export const AlertRoutingModal: FC<AlertRoutingModalProps> = ({
               defaultValue={_.get(config, ['route', 'group_interval'], '')}
               placeholder="5m"
               aria-describedby="input-group-interval-help"
+              data-test="input-group-interval"
               data-test-id="input-group-interval"
             />
           </FormGroup>
-          <FormGroup label={t('public~Repeat interval')} fieldId="repeat-interval">
+          <FormGroup label={t('Repeat interval')} fieldId="repeat-interval">
             <TextInput
               id="repeat-interval"
               name="input-repeat-interval"
@@ -120,6 +116,7 @@ export const AlertRoutingModal: FC<AlertRoutingModalProps> = ({
               defaultValue={_.get(config, ['route', 'repeat_interval'], '')}
               placeholder="3h"
               aria-describedby="input-repeat-interval-help"
+              data-test="input-repeat-interval"
               data-test-id="input-repeat-interval"
             />
           </FormGroup>
@@ -134,10 +131,15 @@ export const AlertRoutingModal: FC<AlertRoutingModalProps> = ({
           data-test="confirm-action"
           form="alert-routing-form"
         >
-          {t('public~Save')}
+          {t('Save')}
         </Button>
-        <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
-          {t('public~Cancel')}
+        <Button
+          variant="link"
+          onClick={cancel}
+          data-test="modal-cancel-action"
+          data-test-id="modal-cancel-action"
+        >
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </>

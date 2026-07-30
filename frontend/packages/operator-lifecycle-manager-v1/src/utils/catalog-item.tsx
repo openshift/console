@@ -7,7 +7,7 @@ import {
 } from '@console/operator-lifecycle-manager/src/components/operator-hub/operator-hub-utils';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
-import PlainList from '@console/shared/src/components/lists/PlainList';
+import { PlainList } from '@console/shared/src/components/lists/PlainList';
 import { MarkdownView } from '@console/shared/src/components/markdown/MarkdownView';
 import type { OLMCatalogItem, OLMCatalogItemData } from '../types';
 

@@ -1,12 +1,12 @@
 import { act, renderHook } from '@testing-library/react';
-import { coFetchJSON } from '@console/internal/co-fetch';
+import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
 import type { DevfileSample } from '../../../import/devfile/devfile-types';
 import useDevfileSamples from '../useDevfileSamples';
 import { devfileSamples, expectedCatalogItems } from './useDevfileSamples.data';
 
 const ns: string = 'test';
 
-jest.mock('@console/internal/co-fetch', () => ({
+jest.mock('@console/shared/src/utils/console-fetch', () => ({
   coFetchJSON: jest.fn(),
 }));
 

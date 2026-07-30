@@ -9,7 +9,10 @@ import {
 import { useTranslation } from 'react-i18next';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { getNodeMaintenanceReason, getNodeMaintenanceCreationTimestamp } from '../../selectors';
+import {
+  getNodeMaintenanceReason,
+  getNodeMaintenanceCreationTimestamp,
+} from '../../selectors/node-maintenance';
 import { useStopNodeMaintenanceModal } from '../modals/StopNodeMaintenanceModal';
 
 type UnderMaintenancePopoverContentProps = {
@@ -19,7 +22,7 @@ type UnderMaintenancePopoverContentProps = {
 const UnderMaintenancePopoverContent: FC<UnderMaintenancePopoverContentProps> = ({
   nodeMaintenance,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('metal3-plugin');
   const stopNodeMaintenanceModalLauncher = useStopNodeMaintenanceModal();
   const reason = getNodeMaintenanceReason(nodeMaintenance);
   const creationTimestamp = getNodeMaintenanceCreationTimestamp(nodeMaintenance);
@@ -28,16 +31,16 @@ const UnderMaintenancePopoverContent: FC<UnderMaintenancePopoverContentProps> = 
     <>
       <p>
         {t(
-          "metal3-plugin~Node is under maintenance. The cluster will automatically rebuild node's data 30 minutes after entering maintenance.",
+          "Node is under maintenance. The cluster will automatically rebuild node's data 30 minutes after entering maintenance.",
         )}
       </p>
       <DescriptionList>
         <DescriptionListGroup>
-          <DescriptionListTerm>{t('metal3-plugin~Maintenance reason:')}</DescriptionListTerm>
+          <DescriptionListTerm>{t('Maintenance reason:')}</DescriptionListTerm>
           <DescriptionListDescription>{reason}</DescriptionListDescription>
         </DescriptionListGroup>
         <DescriptionListGroup>
-          <DescriptionListTerm>{t('metal3-plugin~Requested:')}</DescriptionListTerm>
+          <DescriptionListTerm>{t('Requested:')}</DescriptionListTerm>
           <DescriptionListDescription>
             <Timestamp timestamp={creationTimestamp} />
           </DescriptionListDescription>
@@ -49,7 +52,7 @@ const UnderMaintenancePopoverContent: FC<UnderMaintenancePopoverContentProps> = 
         onClick={() => stopNodeMaintenanceModalLauncher(nodeMaintenance)}
         isInline
       >
-        {t('metal3-plugin~Stop maintenance')}
+        {t('Stop maintenance')}
       </Button>
     </>
   );

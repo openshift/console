@@ -1,8 +1,10 @@
-import { CogsIcon } from '@patternfly/react-icons';
+import { RhUiGearGroupFillIcon } from '@patternfly/react-icons';
 import type { Perspective, ResolvedExtension } from '@console/dynamic-plugin-sdk';
 import { FLAGS } from '@console/shared/src/constants/common';
 
-export const icon: ResolvedExtension<Perspective>['properties']['icon'] = { default: CogsIcon };
+export const icon: ResolvedExtension<Perspective>['properties']['icon'] = {
+  default: RhUiGearGroupFillIcon,
+};
 
 export const getLandingPageURL: ResolvedExtension<Perspective>['properties']['landingPageURL'] = (
   flags,

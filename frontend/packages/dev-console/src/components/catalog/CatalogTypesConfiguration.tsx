@@ -8,14 +8,12 @@ import type { CatalogItemType } from '@console/dynamic-plugin-sdk/src/extensions
 import { isCatalogItemType } from '@console/dynamic-plugin-sdk/src/extensions';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/lib-core';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import type { SaveStatusProps } from '@console/shared/src/components/cluster-configuration';
-import {
-  useDebounceCallback,
-  useConsoleOperatorConfig,
-  patchConsoleOperatorConfig,
-  LoadError,
-  SaveStatus,
-} from '@console/shared/src/components/cluster-configuration';
+import { LoadError } from '@console/shared/src/components/cluster-configuration/LoadError';
+import { patchConsoleOperatorConfig } from '@console/shared/src/components/cluster-configuration/patchConsoleOperatorConfig';
+import type { SaveStatusProps } from '@console/shared/src/components/cluster-configuration/SaveStatus';
+import { SaveStatus } from '@console/shared/src/components/cluster-configuration/SaveStatus';
+import { useConsoleOperatorConfig } from '@console/shared/src/components/cluster-configuration/useConsoleOperatorConfig';
+import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 
 type Types = {
@@ -39,7 +37,7 @@ type ItemProps = { type: string; title: string };
 const Item: FC<ItemProps> = ({ title }) => <>{title}</>;
 
 const CatalogTypesConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const fireTelemetryEvent = useTelemetry();
 
   // Available catalog types
@@ -242,15 +240,15 @@ const CatalogTypesConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
   };
 
   return (
-    <FormSection title={t('devconsole~Software Catalog')} data-test="catalog-types form-section">
+    <FormSection title={t('Software Catalog')} data-test="catalog-types form-section">
       <FormHelperText>
         {t(
-          'devconsole~Another option to customize and standardize your development process. As an admin, you can disable the complete Software Catalog, or individual sub-catalogs (available as Types in the Software Catalog). Also here the "Search" and "Topology" will still show such resources.',
+          'Another option to customize and standardize your development process. As an admin, you can disable the complete Software Catalog, or individual sub-catalogs (available as Types in the Software Catalog). Also here the "Search" and "Topology" will still show such resources.',
         )}
       </FormHelperText>
       <DualListSelector
-        availableOptionsTitle={t('devconsole~Enabled types')}
-        chosenOptionsTitle={t('devconsole~Disabled types')}
+        availableOptionsTitle={t('Enabled types')}
+        chosenOptionsTitle={t('Disabled types')}
         isSearchable
         availableOptions={enabledOptions}
         chosenOptions={disabledOptions}

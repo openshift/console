@@ -1,6 +1,6 @@
 import type { TFunction } from 'i18next';
 import * as _ from 'lodash';
-import { ImportStrategy } from '@console/git-service/src';
+import { ImportStrategy } from '@console/git-service/src/types/git';
 import { hasIcon } from '@console/internal/components/catalog/catalog-item-icon';
 import { BuildStrategyType } from '@console/internal/components/utils/build-utils';
 import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models';
@@ -13,8 +13,8 @@ import {
   KNATIVE_MAXSCALE_ANNOTATION,
   KNATIVE_MINSCALE_ANNOTATION,
   PRIVATE_KNATIVE_SERVING_LABEL,
-  ServiceModel,
-} from '@console/knative-plugin';
+} from '@console/knative-plugin/src/const';
+import { ServiceModel } from '@console/knative-plugin/src/models';
 import { getLimitsDataFromResource } from '@console/shared/src/utils/resource-utils';
 import { ClusterBuildStrategy } from '@console/shipwright-plugin/src/types';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
@@ -69,7 +69,6 @@ export const getFlowTypePageTitle = (flowType: ApplicationFlowType): string => {
 };
 
 export enum BuildSourceType {
-  Git = 'Git',
   Binary = 'Binary',
 }
 
@@ -131,7 +130,7 @@ export const checkIfTriggerExists = (
   });
 };
 
-export const getGitDataFromBuildConfig = (buildConfig: K8sResourceKind) => {
+const getGitDataFromBuildConfig = (buildConfig: K8sResourceKind) => {
   const url = buildConfig?.spec?.source?.git?.uri ?? '';
   const gitData = {
     url,
@@ -188,7 +187,7 @@ export const getKsvcRouteData = (resource: K8sResourceKind) => {
   return routeData;
 };
 
-export const getDefaultLabels = () => {
+const getDefaultLabels = () => {
   return [
     'app',
     'app.kubernetes.io/instance',
@@ -214,7 +213,7 @@ export const getRouteLabels = (
   return filteredRouteLabels;
 };
 
-export const getRouteData = (route: K8sResourceKind, resource: K8sResourceKind) => {
+const getRouteData = (route: K8sResourceKind, resource: K8sResourceKind) => {
   let routeData = {
     disable: !_.isEmpty(route),
     create: !_.isEmpty(route),
@@ -260,7 +259,7 @@ const getBuildOption = (
   return BuildOptions.DISABLED;
 };
 
-export const getBuildData = (
+const getBuildData = (
   buildConfig: K8sResourceKind,
   shipwrightBuild: K8sResourceKind,
   pipeline: PipelineKind,
@@ -420,7 +419,7 @@ export const getUserLabels = (resource: K8sResourceKind) => {
   return userLabels;
 };
 
-export const getCommonInitialValues = (
+const getCommonInitialValues = (
   editAppResource: K8sResourceKind,
   route: K8sResourceKind,
   pipelineData: PipelineKind,
@@ -494,7 +493,7 @@ export const getIconInitialValues = (
   };
 };
 
-export const getGitAndDockerfileInitialValues = (
+const getGitAndDockerfileInitialValues = (
   buildConfig: K8sResourceKind,
   shipwrightBuild: K8sResourceKind,
   pipeline: PipelineKind,
@@ -562,7 +561,7 @@ export const deployImageInitialValues = {
   isSearchingForImage: false,
 };
 
-export const getExternalImageInitialValues = (appResources: AppResources) => {
+const getExternalImageInitialValues = (appResources: AppResources) => {
   const imageStreamList = appResources?.imageStream?.data;
   if (_.isEmpty(imageStreamList)) {
     return {};
@@ -582,7 +581,7 @@ export const getExternalImageInitialValues = (appResources: AppResources) => {
   };
 };
 
-export const getInternalImageInitialValues = (editAppResource: K8sResourceKind) => {
+const getInternalImageInitialValues = (editAppResource: K8sResourceKind) => {
   const imageStreamNamespace = _.get(
     editAppResource,
     'metadata.labels["app.openshift.io/runtime-namespace"]',

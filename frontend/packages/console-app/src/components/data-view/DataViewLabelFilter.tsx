@@ -20,7 +20,7 @@ export const DataViewLabelFilter = <TData,>({
   onChange,
   showToolbarItem,
 }: DataViewLabelFilterProps<TData>) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
 
   const [searchParams] = useSearchParams();
   const [labelInputText, setLabelInputText] = useState('');
@@ -54,7 +54,7 @@ export const DataViewLabelFilter = <TData,>({
           showSuggestions
           textValue={labelInputText}
           setTextValue={setLabelInputText}
-          placeholder={t('public~Filter by label')}
+          placeholder={t('Filter by label')}
           data={data}
         />
       </div>

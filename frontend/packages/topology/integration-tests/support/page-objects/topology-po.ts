@@ -80,7 +80,7 @@ export const topologyPO = {
     knativeServiceIcon: '[title="Service"]',
     tabs: '[data-test="topology-sidepane"] button[role="tab"]',
     sectionTitle: 'h2',
-    close: '[data-test="sidebar-close-button]',
+    close: '[data-test="sidebar-close-button"]',
     labelsList: '[data-test="label-list"]',
     editAnnotations: '[data-test="edit-annotations"]',
     tabName: '[data-test="topology-sidepane"] button[role="tab"]',

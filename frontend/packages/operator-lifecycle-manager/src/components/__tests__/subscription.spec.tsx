@@ -4,7 +4,7 @@ import * as Router from 'react-router';
 import { Table, MultiListPage, DetailsPage } from '@console/internal/components/factory';
 import { ResourceLink } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { LazyActionMenu } from '@console/shared/src';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import {
   testSubscription,
@@ -39,8 +39,8 @@ jest.mock('@console/internal/components/utils', () => ({
   ResourceLink: jest.fn(() => null),
 }));
 
-jest.mock('@console/shared/src', () => ({
-  ...jest.requireActual('@console/shared/src'),
+jest.mock('@console/shared/src/components/actions/LazyActionMenu', () => ({
+  ...jest.requireActual('@console/shared/src/components/actions/LazyActionMenu'),
   LazyActionMenu: jest.fn(() => null),
 }));
 

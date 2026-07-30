@@ -18,7 +18,7 @@ import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/Mod
 import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 
 const ModifyVACModalComponent: FC<ModifyVACModalComponentProps> = ({ resource, close, cancel }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const [volumeAttributesClass, setVolumeAttributesClass] = useState(
     resource?.spec?.volumeAttributesClassName || '',
   );
@@ -48,10 +48,7 @@ const ModifyVACModalComponent: FC<ModifyVACModalComponentProps> = ({ resource, c
 
   return (
     <>
-      <ModalHeader
-        title={t('console-app~Modify VolumeAttributesClass')}
-        labelId="modify-vac-modal-title"
-      />
+      <ModalHeader title={t('Modify VolumeAttributesClass')} labelId="modify-vac-modal-title" />
       <ModalBody>
         <Form
           id="modify-vac-form"
@@ -80,10 +77,10 @@ const ModifyVACModalComponent: FC<ModifyVACModalComponentProps> = ({ resource, c
           isLoading={inProgress}
           isDisabled={!volumeAttributesClass || inProgress}
         >
-          {t('console-app~Save')}
+          {t('Save')}
         </Button>
         <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
-          {t('console-app~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </>

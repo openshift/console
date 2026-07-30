@@ -3,7 +3,8 @@ import { useMemo } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { DetailsItem } from '@console/internal/components/utils';
-import { Status, SuccessStatus } from '@console/shared';
+import { Status } from '@console/shared/src/components/status/Status';
+import { SuccessStatus } from '@console/shared/src/components/status/statuses';
 import { DefaultCapability, Invalid, K8sResourceLinkCapability, SecretCapability } from '../common';
 import type { CapabilityProps } from '../types';
 import { StatusCapability } from '../types';
@@ -20,13 +21,13 @@ const PodStatuses: FC<StatusCapabilityProps<PodStatusChartProps['statuses']>> = 
   obj,
   value,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const detail = useMemo(() => {
     if (!_.isObject(value) || _.some(value, (v) => !_.isArray(v))) {
       return <Invalid path={descriptor.path} />;
     }
     if (_.every(value, (v) => _.isArray(v) && v.length === 0)) {
-      return <span className="pf-v6-u-text-color-subtle">{t('olm~No members')}</span>;
+      return <span className="pf-v6-u-text-color-subtle">{t('No members')}</span>;
     }
     return <PodStatusChart statuses={value} subTitle={descriptor.path} />;
   }, [descriptor.path, t, value]);
@@ -44,13 +45,13 @@ const PodStatuses: FC<StatusCapabilityProps<PodStatusChartProps['statuses']>> = 
 };
 
 const Link: FC<StatusCapabilityProps<string>> = ({ description, fullPath, label, obj, value }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   return (
     <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
       {!_.isNil(value) ? (
         <a href={value}>{value.replace(/https?:\/\//, '')}</a>
       ) : (
-        <span className="pf-v6-u-text-color-subtle">{t('public~None')}</span>
+        <span className="pf-v6-u-text-color-subtle">{t('None')}</span>
       )}
     </DetailsItem>
   );
@@ -75,11 +76,11 @@ const K8sPhaseReason: FC<StatusCapabilityProps<string>> = ({
   obj,
   value,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   return (
     <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
       {_.isEmpty(value) ? (
-        <span className="pf-v6-u-text-color-subtle">{t('public~None')}</span>
+        <span className="pf-v6-u-text-color-subtle">{t('None')}</span>
       ) : (
         <pre className="co-pre" style={{ width: 'max-content' }}>
           {value}

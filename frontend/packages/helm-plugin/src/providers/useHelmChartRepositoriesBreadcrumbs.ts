@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router';
 import type { K8sKind } from '@console/internal/module/k8s';
 import { useTabbedTableBreadcrumbsFor } from '@console/shared/src/hooks/useTabbedTableBreadcrumb';
-import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../models';
+import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../models/helm';
 
 export const getHelmChartRepositoriesModel = () => [
   HelmChartRepositoryModel,
@@ -10,7 +10,7 @@ export const getHelmChartRepositoriesModel = () => [
 ];
 
 export const useHelmChartRepositoriesBreadcrumbs = (kindObj: K8sKind) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   const params = useParams();
   const location = useLocation();
   return useTabbedTableBreadcrumbsFor(
@@ -19,7 +19,7 @@ export const useHelmChartRepositoriesBreadcrumbs = (kindObj: K8sKind) => {
     params,
     'helm',
     'repositories',
-    t('helm-plugin~Repositories'),
+    t('Repositories'),
     true,
   );
 };

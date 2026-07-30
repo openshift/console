@@ -6,18 +6,18 @@ import { SidebarSectionHeading } from '@console/internal/components/utils';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import ConfigurationsOverviewListItem from './ConfigurationsOverviewListItem';
 
-export type ConfigurationsOverviewListProps = {
+type ConfigurationsOverviewListProps = {
   configurations: K8sResourceKind[];
 };
 
 const ConfigurationsOverviewList: FC<ConfigurationsOverviewListProps> = ({ configurations }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   return (
     <>
-      <SidebarSectionHeading text={t('knative-plugin~Configurations')} />
+      <SidebarSectionHeading text={t('Configurations')} />
       {_.isEmpty(configurations) ? (
         <span className="pf-v6-u-text-color-subtle">
-          {t('knative-plugin~No configurations found for this resource.')}
+          {t('No configurations found for this resource.')}
         </span>
       ) : (
         <List isPlain isBordered>

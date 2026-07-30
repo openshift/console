@@ -133,7 +133,28 @@ afterEach(() => {
 jest.spyOn(module, "function");
 ```
 
-## End-to-End Testing
+## End-to-End Testing with Playwright
+
+E2E tests validate full user workflows against a real OpenShift cluster using Playwright. Tests live in `frontend/e2e/tests/<package>/`.
+
+- **Self-contained tests**: Each `test()` block creates its own resources, asserts independently, and cleans up via the `cleanup` fixture.
+- **Selectors**: Always use `page.getByTestId('x')` which queries `[data-test="x"]`. If a React element only has a legacy test attribute (`data-test-id`, `data-test-selector`, etc.), add `data-test` to the element. Never remove legacy attributes — external consumers may depend on them.
+- **Page Objects**: Extend `BasePage` (`e2e/pages/base-page.ts`) which provides `robustClick()`, `waitForLoadingComplete()`, and `goTo()`. Locators are `private readonly` properties; actions are `async` methods.
+- **Cluster Interactions**: Use `KubernetesClient` (`e2e/clients/kubernetes-client.ts`) — never shell commands in tests.
+- **Fixtures**: Import `test` and `expect` from `e2e/fixtures`, not from `@playwright/test`. Custom fixtures provide `cleanup`, `testConfig`, and `k8sClient`.
+
+### Running Playwright Tests
+
+Prerequisites: `oc login` to a cluster, set `BRIDGE_KUBEADMIN_PASSWORD` and `WEB_CONSOLE_URL` (or configure `e2e/.env`).
+
+- `yarn test-playwright` — run all tests in headless mode
+- `yarn test-playwright-headed` — run with a visible browser
+- `yarn test-playwright-debug` — run in debug mode (Playwright Inspector)
+- `yarn test-playwright-ui` — run in interactive UI mode
+- `yarn test-playwright-admin` — run only admin persona tests
+- `yarn test-playwright-developer` — run only developer persona tests
+
+## End-to-End Testing with Cypress (legacy)
 
 Integration/E2E tests validate full user workflows against a real/simulated OpenShift cluster using Cypress + Cucumber (Gherkin BDD).
 

@@ -10,11 +10,13 @@ import { css } from '@patternfly/react-styles';
 import type { Node } from '@patternfly/react-topology';
 import { observer } from '@patternfly/react-topology';
 import { ResourceIcon } from '@console/internal/components/utils';
-import { showKind, useDisplayFilters, useSearchFilter } from '../../filters';
-import { ApplicationModel } from '../../models';
-import GroupResourcesCell from './cells/GroupResourcesCell';
+import { showKind } from '../../filters/filter-utils';
+import { useDisplayFilters } from '../../filters/useDisplayFilters';
+import { useSearchFilter } from '../../filters/useSearchFilter';
+import { ApplicationModel } from '../../models/application';
+import { GroupResourcesCell } from './cells/GroupResourcesCell';
 import { getChildKinds } from './list-view-utils';
-import TopologyListViewKindGroup from './TopologyListViewKindGroup';
+import { TopologyListViewKindGroup } from './TopologyListViewKindGroup';
 
 interface TopologyListViewAppGroupProps {
   appGroup: Node;
@@ -22,7 +24,7 @@ interface TopologyListViewAppGroupProps {
   onSelect: (ids: string[]) => void;
 }
 
-const TopologyListViewAppGroup: FC<TopologyListViewAppGroupProps> = ({
+const TopologyListViewAppGroupComponent: FC<TopologyListViewAppGroupProps> = ({
   appGroup,
   selectedIds,
   onSelect,
@@ -102,4 +104,4 @@ const TopologyListViewAppGroup: FC<TopologyListViewAppGroupProps> = ({
   );
 };
 
-export default observer(TopologyListViewAppGroup);
+export const TopologyListViewAppGroup = observer(TopologyListViewAppGroupComponent);

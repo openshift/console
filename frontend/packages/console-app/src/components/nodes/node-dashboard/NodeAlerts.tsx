@@ -57,19 +57,17 @@ const LimitLink: FC<LimitLinkProps> = ({
     resourceQuotaQueries[requestedKey],
     humanize,
   );
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const available =
-    currentValue && totalValue
-      ? humanize(totalValue - currentValue).string
-      : t('console-app~Not available');
+    currentValue && totalValue ? humanize(totalValue - currentValue).string : t('Not available');
 
   return (
     <NodeUtilizationContext.Provider value={{ nodeName, nodeIP }}>
       <Popover
-        current={currentError ? t('console-app~Not available') : current.string}
-        total={totalError ? t('console-app~Not available') : total.string}
-        limit={limitError ? t('console-app~Not available') : limit.string}
-        requested={requestedError ? t('console-app~Not available') : requested.string}
+        current={currentError ? t('Not available') : current.string}
+        total={totalError ? t('Not available') : total.string}
+        limit={limitError ? t('Not available') : limit.string}
+        requested={requestedError ? t('Not available') : requested.string}
         available={available}
         limitState={limitState}
         requestedState={requestedState}
@@ -120,11 +118,11 @@ const HealthChecksLink: FC = () => {
   );
   const healthChecks = useK8sWatchResource<MachineHealthCheckKind[]>(machineHealthChecksResource);
   const healthState = getMachineHealth(obj, machine, healthChecks);
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   return (
     <PFPopover
       position={PopoverPosition.top}
-      headerContent={t('console-app~Health checks')}
+      headerContent={t('Health checks')}
       bodyContent={
         <HealthChecksPopup
           conditions={healthState.conditions}
@@ -135,7 +133,7 @@ const HealthChecksLink: FC = () => {
       maxWidth="21rem"
     >
       <Button variant="link" isInline className="co-status-card__popup">
-        {t('console-app~See details')}
+        {t('See details')}
       </Button>
     </PFPopover>
   );
@@ -147,7 +145,7 @@ interface NodeAlertsProps {
 
 const NodeAlerts: FC<NodeAlertsProps> = ({ children }) => {
   const { cpuLimit, memoryLimit, healthCheck } = useContext(NodeDashboardContext);
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
 
   const cpuMessage = getMessage(cpuLimit, {
     limReqErr: msg.CPU_LIMIT_REQ_ERROR,
@@ -177,7 +175,7 @@ const NodeAlerts: FC<NodeAlertsProps> = ({ children }) => {
       {!!cpuMessage && (
         <StatusItem
           Icon={cpuMessage.Icon}
-          message={t('console-app~{{ cpuMessage }}', { cpuMessage: cpuMessage.message })}
+          message={t('{{ cpuMessage }}', { cpuMessage: cpuMessage.message })}
         >
           <LimitLink
             humanize={humanizeCpuCores}
@@ -194,7 +192,7 @@ const NodeAlerts: FC<NodeAlertsProps> = ({ children }) => {
       {!!memoryMessage && (
         <StatusItem
           Icon={memoryMessage.Icon}
-          message={t('console-app~{{ memoryMessage }}', { memoryMessage: memoryMessage.message })}
+          message={t('{{ memoryMessage }}', { memoryMessage: memoryMessage.message })}
         >
           <LimitLink
             humanize={humanizeBinaryBytes}

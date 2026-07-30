@@ -1,11 +1,12 @@
-import { screen, act } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import * as ReactRouter from 'react-router';
-
-import { testPodInstance } from '../../../__mocks__/k8sResourcesMocks';
-import { PodKind } from '../../module/k8s';
-import { getContainerStatus } from '../../module/k8s/container';
+import { useFavoritesOptions } from '@console/internal/components/useFavoritesOptions';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
+import { testPodInstance } from '../../../__mocks__/k8sResourcesMocks';
+import type { PodKind } from '../../module/k8s';
+import { getContainerStatus } from '../../module/k8s/container';
 import { ContainersDetailsPage, ContainerDetails, ContainerDetailsList } from '../container';
+import { useK8sWatchResource } from '../utils/k8s-watch-hook';
 
 // Mock router hooks
 jest.mock('react-router', () => ({
@@ -29,9 +30,8 @@ jest.mock('../utils/k8s-watch-hook', () => ({
 
 const mockUseParams = ReactRouter.useParams as jest.Mock;
 const mockUseLocation = ReactRouter.useLocation as jest.Mock;
-const mockUseFavoritesOptions = require('@console/internal/components/useFavoritesOptions')
-  .useFavoritesOptions as jest.Mock;
-const mockUseK8sWatchResource = require('../utils/k8s-watch-hook').useK8sWatchResource as jest.Mock;
+const mockUseFavoritesOptions = useFavoritesOptions as jest.Mock;
+const mockUseK8sWatchResource = useK8sWatchResource as jest.Mock;
 
 describe('ContainersDetailsPage', () => {
   beforeEach(() => {
@@ -67,9 +67,7 @@ describe('ContainerDetails', () => {
       name: testPodInstance.spec.containers[0].name,
     });
 
-    await act(async () => {
-      renderWithProviders(<ContainerDetails pod={pod} loaded />);
-    });
+    renderWithProviders(<ContainerDetails pod={pod} loaded />);
 
     expect(screen.getByText('crash-app')).toBeVisible();
     // Verify "Waiting" appears in both the page heading and details section
@@ -83,9 +81,7 @@ describe('ContainerDetails', () => {
       name: 'non-existing-container',
     });
 
-    await act(async () => {
-      renderWithProviders(<ContainerDetails pod={pod} loaded />);
-    });
+    renderWithProviders(<ContainerDetails pod={pod} loaded />);
 
     expect(screen.getByRole('heading', { name: '404: Page Not Found' })).toBeVisible();
     expect(screen.getByText("We couldn't find that page.")).toBeVisible();
@@ -99,9 +95,7 @@ describe('ContainerDetails', () => {
       name: testPodInstance.spec.containers[0].name,
     });
 
-    await act(async () => {
-      renderWithProviders(<ContainerDetails pod={pod} loaded={false} />);
-    });
+    renderWithProviders(<ContainerDetails pod={pod} loaded={false} />);
 
     expect(screen.getByRole('progressbar', { name: 'Contents' })).toBeVisible();
   });

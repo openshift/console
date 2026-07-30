@@ -85,10 +85,17 @@ jest.mock('react-i18next', () => ({
   Trans: (props) => props.children,
 }));
 
-jest.mock('@console/shared', () => ({
+jest.mock('@console/shared/src/constants/common', () => ({
+  ...jest.requireActual('@console/shared/src/constants/common'),
   ALL_NAMESPACES_KEY: '__ALL_NAMESPACES__',
   FLAGS: {},
+}));
+
+jest.mock('@console/shared/src/hooks/useFlag', () => ({
   useFlag: jest.fn(() => false),
+}));
+
+jest.mock('@console/shared/src/hooks/useActiveNamespace', () => ({
   useActiveNamespace: jest.fn(() => ['test-namespace']),
 }));
 

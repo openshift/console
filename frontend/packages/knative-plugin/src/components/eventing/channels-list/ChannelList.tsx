@@ -6,11 +6,11 @@ import ChannelHeaders from './ChannelHeaders';
 import ChannelRow from './ChannelRow';
 
 const ChannelList: FC<TableProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   return (
     <Table
       {...props}
-      aria-label={t('knative-plugin~Channels')}
+      aria-label={t('Channels')}
       Header={ChannelHeaders(t)}
       Row={ChannelRow}
       virtualize

@@ -1,13 +1,5 @@
 import { useMemo, Suspense } from 'react';
 import * as _ from 'lodash';
-import { DASH } from '@console/shared/src/constants/ui';
-
-import { ListPage } from './factory';
-import { ResourceLink } from './utils/resource-link';
-import { Selector } from './utils/selector';
-import { LoadingBox } from './utils/status-box';
-import { ServiceMonitorModel } from '../models';
-import { referenceForModel } from '../module/k8s';
 import { useTranslation } from 'react-i18next';
 import {
   ConsoleDataView,
@@ -15,7 +7,14 @@ import {
   actionsCellProps,
   cellIsStickyProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { DASH } from '@console/shared/src/constants/ui';
+import { ServiceMonitorModel } from '../models';
+import { referenceForModel } from '../module/k8s';
+import { ListPage } from './factory';
+import { ResourceLink } from './utils/resource-link';
+import { Selector } from './utils/selector';
+import { LoadingBox } from './utils/status-box';
 
 const serviceMonitorTableColumnInfo = [
   { id: 'name' },
@@ -35,7 +34,7 @@ const namespaceSelectorLinks = ({ spec }) => {
       </span>
     ));
   }
-  return <span className="pf-v6-u-text-color-subtle">--</span>;
+  return <span className="pf-v6-u-text-color-subtle">{DASH}</span>;
 };
 
 const serviceSelectorLinks = ({ spec }) => {
@@ -98,11 +97,11 @@ const getServiceMonitorDataViewRows = (data, columns) => {
 };
 
 const useServiceMonitorColumns = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return useMemo(
     () => [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: serviceMonitorTableColumnInfo[0].id,
         sort: 'metadata.name',
         props: {
@@ -111,7 +110,7 @@ const useServiceMonitorColumns = () => {
         },
       },
       {
-        title: t('public~Namespace'),
+        title: t('Namespace'),
         id: serviceMonitorTableColumnInfo[1].id,
         sort: 'metadata.namespace',
         props: {
@@ -119,7 +118,7 @@ const useServiceMonitorColumns = () => {
         },
       },
       {
-        title: t('public~Service Selector'),
+        title: t('Service Selector'),
         id: serviceMonitorTableColumnInfo[2].id,
         sort: 'spec.selector',
         props: {
@@ -128,7 +127,7 @@ const useServiceMonitorColumns = () => {
         },
       },
       {
-        title: t('public~Monitoring Namespace'),
+        title: t('Monitoring Namespace'),
         id: serviceMonitorTableColumnInfo[3].id,
         sort: 'spec.namespaceSelector',
         props: {
@@ -147,7 +146,7 @@ const useServiceMonitorColumns = () => {
   );
 };
 
-export const ServiceMonitorsList = (props) => {
+const ServiceMonitorsList = (props) => {
   const { data, loaded } = props;
   const columns = useServiceMonitorColumns();
 
@@ -160,7 +159,7 @@ export const ServiceMonitorsList = (props) => {
         label={ServiceMonitorModel.labelPlural}
         columns={columns}
         getDataViewRows={getServiceMonitorDataViewRows}
-        hideColumnManagement={true}
+        hideColumnManagement
       />
     </Suspense>
   );
@@ -169,9 +168,9 @@ export const ServiceMonitorsList = (props) => {
 export const ServiceMonitorsPage = (props) => (
   <ListPage
     {...props}
-    canCreate={true}
+    canCreate
     kind={referenceForModel(ServiceMonitorModel)}
     ListComponent={ServiceMonitorsList}
-    omitFilterToolbar={true}
+    omitFilterToolbar
   />
 );

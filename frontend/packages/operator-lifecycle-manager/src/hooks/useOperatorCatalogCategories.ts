@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import * as _ from 'lodash';
 import type { CatalogCategory } from '@console/dynamic-plugin-sdk/src';
-import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { OLMAnnotation } from '../components/operator-hub';
 import { getCurrentCSVDescription } from '../utils/packagemanifests';

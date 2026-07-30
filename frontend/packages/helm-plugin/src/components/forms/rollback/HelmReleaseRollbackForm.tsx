@@ -3,7 +3,9 @@ import { Form, FormGroup } from '@patternfly/react-core';
 import type { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
-import { FormFooter, FormHeader, FormBody } from '@console/shared';
+import { FormBody } from '@console/shared/src/components/form-utils/FormBody';
+import { FormFooter } from '@console/shared/src/components/form-utils/FormFooter';
+import { FormHeader } from '@console/shared/src/components/form-utils/FormHeader';
 import type { HelmRelease, HelmActionConfigType } from '../../../types/helm-types';
 import { helmActionString } from '../../../utils/helm-utils';
 import HelmReleaseHistoryTable from '../../details-page/history/HelmReleaseHistoryTable';
@@ -27,7 +29,7 @@ const HelmReleaseRollbackForm: FC<Props> = ({
   releaseName,
   helmActionConfig,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   const { type: helmAction, title } = helmActionConfig;
 
   const formHelpText = (
@@ -49,11 +51,7 @@ const HelmReleaseRollbackForm: FC<Props> = ({
     <Form onSubmit={handleSubmit} className="pf-v6-u-display-block">
       <FormBody>
         <FormHeader title={title} helpText={formHelpText} />
-        <FormGroup
-          fieldId="revision-list-field"
-          label={t('helm-plugin~Revision history')}
-          isRequired
-        >
+        <FormGroup fieldId="revision-list-field" label={t('Revision history')} isRequired>
           <HelmReleaseHistoryTable releaseHistory={releaseHistory} />
         </FormGroup>
       </FormBody>
@@ -63,7 +61,7 @@ const HelmReleaseRollbackForm: FC<Props> = ({
         isSubmitting={isSubmitting}
         submitLabel={helmActionString(t)[helmAction]}
         disableSubmit={isSubmitting || !dirty || !_.isEmpty(errors)}
-        resetLabel={t('helm-plugin~Cancel')}
+        resetLabel={t('Cancel')}
         sticky
       />
     </Form>

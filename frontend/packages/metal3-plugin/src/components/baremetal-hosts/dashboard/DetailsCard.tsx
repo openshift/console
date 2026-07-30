@@ -6,15 +6,15 @@ import { Link } from 'react-router';
 import { OverviewDetailItem } from '@console/internal/components/overview/OverviewDetailItem';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import type { MachineKind, NodeKind } from '@console/internal/module/k8s';
-import { getName, getNamespace } from '@console/shared';
+import { getName, getNamespace } from '@console/shared/src/selectors/common';
 import { BareMetalHostModel } from '../../../models';
-import type { BareMetalHostKind } from '../../../types';
+import type { BareMetalHostKind } from '../../../types/host';
 import BareMetalHostRole from '../BareMetalHostRole';
 import NodeLink from '../NodeLink';
 import { BareMetalHostDashboardContext } from './BareMetalHostDashboardContext';
 
 const DetailsCard: FC<DetailsCardProps> = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('metal3-plugin');
   const { obj, machine, node } = useContext(BareMetalHostDashboardContext);
   const hostName = getName(obj);
   const nodeCell = <NodeLink nodeName={getName(node)} />;
@@ -33,7 +33,7 @@ const DetailsCard: FC<DetailsCardProps> = () => {
                   getNamespace(obj),
                 )}/details`}
               >
-                {t('metal3-plugin~View all')}
+                {t('View all')}
               </Link>
             </>
           ),
@@ -41,17 +41,17 @@ const DetailsCard: FC<DetailsCardProps> = () => {
           className: 'co-overview-card__actions',
         }}
       >
-        <CardTitle>{t('metal3-plugin~Details')}</CardTitle>
+        <CardTitle>{t('Details')}</CardTitle>
       </CardHeader>
       <CardBody>
         <DescriptionList>
-          <OverviewDetailItem title={t('metal3-plugin~Host name')} isLoading={false}>
+          <OverviewDetailItem title={t('Host name')} isLoading={false}>
             {hostName}
           </OverviewDetailItem>
-          <OverviewDetailItem title={t('metal3-plugin~Role')} isLoading={false}>
+          <OverviewDetailItem title={t('Role')} isLoading={false}>
             {hostRole}
           </OverviewDetailItem>
-          <OverviewDetailItem title={t('metal3-plugin~Node')} isLoading={false}>
+          <OverviewDetailItem title={t('Node')} isLoading={false}>
             {nodeCell}
           </OverviewDetailItem>
         </DescriptionList>

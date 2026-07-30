@@ -38,7 +38,7 @@ const normalizeKafkaSink = (namespace: string, t: TFunction): CatalogItem[] => {
 const useKafkaSinkProvider: ExtensionHook<CatalogItem[]> = ({
   namespace,
 }): [CatalogItem[], boolean, any] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const [canCreateKameletSink] = useAccessReview({
     group: KafkaSinkModel.apiGroup,
     resource: KafkaSinkModel.plural,

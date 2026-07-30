@@ -1,7 +1,7 @@
 import type { ArrayHelpers } from 'formik';
 import type { FieldProps } from '../field-types';
 
-export type OnChangeHandler = (newValue: string[]) => void;
+type OnChangeHandler = (newValue: string[]) => void;
 export type TextColumnFieldChildParameterProps = {
   name: string;
   onChange?: OnChangeHandler;
@@ -10,7 +10,7 @@ export type TextColumnFieldChildParameterProps = {
 };
 
 export type MergeNewValueUtil = (newValue: string) => string[];
-export type TextColumnFieldChildProps = (
+type TextColumnFieldChildProps = (
   data: TextColumnFieldChildParameterProps,
   mergeNewValue: MergeNewValueUtil,
 ) => React.ReactNode;

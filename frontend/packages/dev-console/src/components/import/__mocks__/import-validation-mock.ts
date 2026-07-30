@@ -1,4 +1,4 @@
-import { GitProvider } from '@console/git-service/src';
+import { GitProvider } from '@console/git-service/src/types/git';
 import { healthChecksProbeInitialData } from '../../health-checks/health-checks-probe-utils';
 import { defaultRepositoryFormValues } from '../../pipeline-section/pipeline/utils';
 import type { GitImportFormData } from '../import-types';

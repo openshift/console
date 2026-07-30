@@ -1,6 +1,4 @@
-import type { FC } from 'react';
-import { FormEvent } from 'react';
-import { useTranslation } from 'react-i18next';
+import type { FC, FormEvent } from 'react';
 import {
   FormGroup,
   TextInput,
@@ -11,10 +9,11 @@ import {
   HelperText,
   HelperTextItem,
 } from '@patternfly/react-core';
-import { SecretSubFormProps } from './types';
+import { useTranslation } from 'react-i18next';
+import type { SecretSubFormProps } from './types';
 
 export const WebHookSecretForm: FC<SecretSubFormProps> = ({ onChange, stringData }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const handleWebHookSecretChange = (newSecret: string) => {
     onChange({ stringData: { ...stringData, WebHookSecretKey: newSecret }, base64StringData: {} });
@@ -30,7 +29,7 @@ export const WebHookSecretForm: FC<SecretSubFormProps> = ({ onChange, stringData
   };
 
   return (
-    <FormGroup label={t('public~Webhook secret key')} isRequired fieldId="webhook-secret-key">
+    <FormGroup label={t('Webhook secret key')} isRequired fieldId="webhook-secret-key">
       <InputGroup>
         <InputGroupItem isFill>
           <TextInput
@@ -49,14 +48,14 @@ export const WebHookSecretForm: FC<SecretSubFormProps> = ({ onChange, stringData
             onClick={generateWebHookSecret}
             data-test="webhook-generate-button"
           >
-            {t('public~Generate')}
+            {t('Generate')}
           </Button>
         </InputGroupItem>
       </InputGroup>
       <FormHelperText>
         <HelperText>
           <HelperTextItem>
-            {t('public~Value of the secret will be supplied when invoking the webhook.')}
+            {t('Value of the secret will be supplied when invoking the webhook.')}
           </HelperTextItem>
         </HelperText>
       </FormHelperText>

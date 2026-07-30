@@ -7,7 +7,10 @@ import type { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { NameValueEditor } from '@console/internal/components/utils/name-value-editor';
-import { InputField, CheckboxField, getFieldId, TextColumnField } from '@console/shared';
+import { CheckboxField } from '@console/shared/src/components/formik-fields/CheckboxField';
+import { getFieldId } from '@console/shared/src/components/formik-fields/field-utils';
+import { InputField } from '@console/shared/src/components/formik-fields/InputField';
+import { TextColumnField } from '@console/shared/src/components/formik-fields/text-column-field/TextColumnField';
 import { Resources } from '../import/import-types';
 import { HealthCheckContext } from './health-checks-utils';
 
@@ -15,7 +18,7 @@ interface RequestTypeFormProps {
   probeType?: string;
 }
 
-export const renderPortField = (
+const renderPortField = (
   fieldName: string,
   resourceType: Resources,
   viewOnly: boolean,
@@ -44,7 +47,7 @@ export const renderPortField = (
 };
 
 export const HTTPRequestTypeForm: FC<RequestTypeFormProps> = ({ probeType }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const {
     values: { healthChecks, resources },
     setFieldValue,
@@ -79,20 +82,20 @@ export const HTTPRequestTypeForm: FC<RequestTypeFormProps> = ({ probeType }) => 
     <>
       <CheckboxField
         name={`healthChecks.${probeType}.data.httpGet.scheme`}
-        label={t('devconsole~Use HTTPS')}
+        label={t('Use HTTPS')}
         value="HTTPS"
         isDisabled={viewOnly}
       />
       <FormGroup
         fieldId={getFieldId(`healthChecks.${probeType}.data.httpGet.httpHeaders`, 'name-value')}
         name={`healthChecks.${probeType}.data.httpGet.httpHeaders`}
-        label={t('devconsole~HTTP Headers')}
+        label={t('HTTP Headers')}
       >
         <NameValueEditor
           nameValuePairs={nameValue}
-          valueString={t('devconsole~Value')}
-          nameString={t('devconsole~Header name')}
-          addString={t('devconsole~Add header')}
+          valueString={t('Value')}
+          nameString={t('Header name')}
+          addString={t('Add header')}
           readOnly={viewOnly}
           allowSorting={false}
           updateParentData={handleNameValuePairs}
@@ -101,7 +104,7 @@ export const HTTPRequestTypeForm: FC<RequestTypeFormProps> = ({ probeType }) => 
       <InputField
         type={TextInputTypes.text}
         name={`healthChecks.${probeType}.data.httpGet.path`}
-        label={t('devconsole~Path')}
+        label={t('Path')}
         placeholder="/"
         isDisabled={viewOnly}
       />
@@ -111,7 +114,7 @@ export const HTTPRequestTypeForm: FC<RequestTypeFormProps> = ({ probeType }) => 
 };
 
 export const TCPRequestTypeForm: FC<RequestTypeFormProps> = ({ probeType }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const {
     values: { resources },
   } = useFormikContext<FormikValues>();
@@ -121,7 +124,7 @@ export const TCPRequestTypeForm: FC<RequestTypeFormProps> = ({ probeType }) => {
 };
 
 export const CommandRequestTypeForm: FC<RequestTypeFormProps> = ({ probeType }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const {
     values: { healthChecks },
   } = useFormikContext<FormikValues>();
@@ -130,10 +133,10 @@ export const CommandRequestTypeForm: FC<RequestTypeFormProps> = ({ probeType }) 
   return (
     <TextColumnField
       name={`healthChecks.${probeType}.data.exec.command`}
-      label={t('devconsole~Command')}
-      addLabel={t('devconsole~Add command')}
-      placeholder={t('devconsole~argument')}
-      helpText={t('devconsole~The command to run inside the Container.')}
+      label={t('Command')}
+      addLabel={t('Add command')}
+      placeholder={t('argument')}
+      helpText={t('The command to run inside the Container.')}
       required
       disableDeleteRow={commands.length === 1}
       isReadOnly={viewOnly}

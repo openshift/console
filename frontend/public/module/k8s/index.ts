@@ -1,3 +1,4 @@
+/* eslint-disable no-barrel-files/no-barrel-files */
 export * from './job';
 export * from './k8s';
 export * from './pods';
@@ -11,7 +12,6 @@ export * from './template';
 export * from './swagger';
 export * from './event';
 export * from './types';
-export * from './k8s-ref';
 export {
   k8sGet,
   k8sCreate,
@@ -19,6 +19,5 @@ export {
   k8sPatch,
   k8sKill,
   k8sList,
-  getK8sResourcePath,
   resourceURL,
 } from '@console/dynamic-plugin-sdk/src/utils/k8s';

@@ -16,7 +16,7 @@ import AddGroupUsersModal from '../../components/modals/add-group-users-modal';
  * Actions specific to Group resources.
  */
 export const useGroupActions = (obj: GroupKind): Action[] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const dispatch = useConsoleDispatch();
   const navigate = useNavigate();
   const launchOverlay = useOverlay();
@@ -33,7 +33,7 @@ export const useGroupActions = (obj: GroupKind): Action[] => {
     () => ({
       stopImpersonate: (): Action => ({
         id: 'stop-impersonate',
-        label: t('public~Stop impersonating'),
+        label: t('Stop impersonating'),
         cta: () => {
           stopImpersonate();
           navigate(window.SERVER_FLAGS.basePath);
@@ -41,7 +41,7 @@ export const useGroupActions = (obj: GroupKind): Action[] => {
       }),
       impersonate: (): Action => ({
         id: 'impersonate-group',
-        label: t('public~Impersonate Group {{name}}', { name: obj?.metadata?.name }),
+        label: t('Impersonate Group {{name}}', { name: obj?.metadata?.name }),
         cta: () => {
           startImpersonate('Group', obj?.metadata?.name);
           navigate(window.SERVER_FLAGS.basePath);
@@ -50,7 +50,7 @@ export const useGroupActions = (obj: GroupKind): Action[] => {
       }),
       addUsers: (): Action => ({
         id: 'add-users',
-        label: t('public~Add Users'),
+        label: t('Add Users'),
         cta: () => launchOverlay(AddGroupUsersModal, { group: obj }),
         accessReview: asAccessReview(GroupModel, obj, 'patch'),
       }),

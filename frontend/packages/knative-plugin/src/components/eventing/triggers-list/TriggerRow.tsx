@@ -3,7 +3,7 @@ import type { RowFunctionArgs } from '@console/internal/components/factory';
 import { TableData } from '@console/internal/components/factory';
 import { ResourceLink } from '@console/internal/components/utils';
 import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
-import { LazyActionMenu } from '@console/shared/src';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { EventingBrokerModel } from '../../../models';
 import type { EventTriggerKind } from '../../../types';

@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
+import { ShortcutGrid } from '@patternfly/react-component-groups';
 import type { PopoverProps } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { ShortcutTable, Shortcut } from '../shortcuts';
-import { isMac } from '../shortcuts/Shortcut';
+
+const isMac = window.navigator.platform.includes('Mac');
 
 export const useShortcutPopover = (shortcutsPopoverProps?: Partial<PopoverProps>): PopoverProps => {
   const { t } = useTranslation('console-shared');
@@ -11,24 +12,29 @@ export const useShortcutPopover = (shortcutsPopoverProps?: Partial<PopoverProps>
     return {
       'aria-label': t('Shortcuts'),
       bodyContent: (
-        <ShortcutTable>
-          <Shortcut keyName="F1">{t('View all editor shortcuts')}</Shortcut>
-          <Shortcut ctrl keyName="space">
-            {t('Activate auto complete')}
-          </Shortcut>
-          <Shortcut ctrl shift={isMac} keyName="m">
-            {t('Toggle Tab action between insert Tab character and move focus out of editor')}
-          </Shortcut>
-          <Shortcut ctrlCmd shift keyName="o">
-            {t('View document outline')}
-          </Shortcut>
-          <Shortcut hover>{t('View property descriptions')}</Shortcut>
-          <Shortcut ctrlCmd keyName="s">
-            {t('Save')}
-          </Shortcut>
-        </ShortcutTable>
+        <ShortcutGrid
+          shortcuts={[
+            { keys: ['F1'], description: t('View all editor shortcuts') },
+            { keys: ['ctrl', 'space'], description: t('Activate auto complete') },
+            {
+              keys: isMac ? ['ctrl', 'shift', 'm'] : ['ctrl', 'm'],
+              description: t(
+                'Toggle Tab action between insert Tab character and move focus out of editor',
+              ),
+            },
+            {
+              keys: isMac ? ['cmd', 'shift', 'o'] : ['ctrl', 'shift', 'o'],
+              description: t('View document outline'),
+            },
+            { keys: [], hover: true, description: t('View property descriptions') },
+            {
+              keys: isMac ? ['cmd', 's'] : ['ctrl', 's'],
+              description: t('Save'),
+            },
+          ]}
+        />
       ),
-      maxWidth: '25rem',
+      maxWidth: '35rem',
       distance: 18,
       ...shortcutsPopoverProps,
     };

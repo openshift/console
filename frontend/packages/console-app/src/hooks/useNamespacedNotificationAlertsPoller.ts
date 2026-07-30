@@ -1,16 +1,16 @@
 import { useEffect, useState } from 'react';
+import type { NotificationAlerts } from 'public/reducers/observe';
 import { useTranslation } from 'react-i18next';
-import { coFetchJSON } from '@console/internal/co-fetch';
 import { PrometheusEndpoint } from '@console/internal/components/graphs/helpers';
 import { getAlertsAndRules } from '@console/internal/components/monitoring/utils';
 import {
   getAlertName,
   getAlertTime,
 } from '@console/shared/src/components/dashboard/status-card/alert-utils';
-import type { NotificationAlerts } from 'public/reducers/observe';
+import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
 
 export const useNamespacedNotificationAlertsPoller = (namespace: string) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const [alerts, setAlerts] = useState<NotificationAlerts['data']>([]);
   const [loaded, setLoaded] = useState<NotificationAlerts['loaded']>(false);
   const [loadError, setLoadError] = useState<NotificationAlerts['loadError']>(null);
@@ -19,7 +19,7 @@ export const useNamespacedNotificationAlertsPoller = (namespace: string) => {
     const { prometheusTenancyBaseURL } = window.SERVER_FLAGS;
 
     if (!prometheusTenancyBaseURL) {
-      setLoadError(new Error(t('public~prometheusBaseURL not set')));
+      setLoadError(new Error(t('prometheusBaseURL not set')));
       return () => {};
     }
 

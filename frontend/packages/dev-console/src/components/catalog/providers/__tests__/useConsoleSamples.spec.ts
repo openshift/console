@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import type { CatalogItem } from '@console/dynamic-plugin-sdk/src';
-import type { ConsoleSample } from '../../../../types';
+import type { ConsoleSample } from '../../../../types/samples';
 import { normalizeConsoleSamples, useConsoleSamplesCatalogProvider } from '../useConsoleSamples';
 import { gitImportSample, containerImportSample } from './useConsoleSamples.data';
 

@@ -1,4 +1,5 @@
-import { render } from '@testing-library/react';
+import type { ReactNode } from 'react';
+import { render, screen } from '@testing-library/react';
 import * as _ from 'lodash';
 import type { RowFunctionArgs } from '@console/internal/components/factory';
 import { revisionObj } from '../../../topology/__tests__/topology-knative-test-data';
@@ -6,11 +7,16 @@ import type { RevisionKind } from '../../../types';
 import RevisionRow from '../RevisionRow';
 
 jest.mock('@console/internal/components/factory', () => ({
-  TableData: 'TableData',
+  TableData: ({ children, className }: { children?: ReactNode; className?: string }) => (
+    <td data-test="mock-TableData" className={className}>
+      {children}
+    </td>
+  ),
 }));
 
 jest.mock('@console/internal/components/utils', () => ({
-  ResourceLink: 'ResourceLink',
+  ResourceLink: jest.requireActual('@console/knative-plugin/src/__tests__/rtl-stub-components')
+    .knativeInternalUtilsStubs.ResourceLink,
   Kebab: {
     columnClass: 'pf-c-table__action',
   },
@@ -26,8 +32,11 @@ jest.mock('@console/internal/module/k8s', () => ({
   },
 }));
 
-jest.mock('@console/shared', () => ({
+jest.mock('@console/shared/src/components/text/ClampedText', () => ({
   ClampedText: 'ClampedText',
+}));
+
+jest.mock('@console/shared/src/components/actions/LazyActionMenu', () => ({
   LazyActionMenu: 'LazyActionMenu',
 }));
 
@@ -51,15 +60,13 @@ describe('RevisionRow', () => {
   });
 
   it('should render the revision row with all TableData elements', () => {
-    const { container } = render(<RevisionRow {...revData} />);
-    const tableDatas = container.querySelectorAll('tabledata');
-    expect(tableDatas).toHaveLength(8);
+    render(<RevisionRow {...revData} />);
+    expect(screen.getAllByTestId('mock-TableData')).toHaveLength(8);
   });
 
   it('should show ResourceLink for associated service when service exists in labels', () => {
-    const { container } = render(<RevisionRow {...revData} />);
-    const resourceLinks = container.querySelectorAll('resourcelink');
-    expect(resourceLinks.length).toBeGreaterThan(0);
+    render(<RevisionRow {...revData} />);
+    expect(screen.getAllByTestId('mock-ResourceLink').length).toBeGreaterThan(0);
   });
 
   it('should handle case when service is not found in labels', () => {
@@ -76,14 +83,13 @@ describe('RevisionRow', () => {
         },
       },
     };
-    const { container } = render(<RevisionRow {...modifiedRevData} />);
-    const tableDatas = container.querySelectorAll('tabledata');
-    expect(tableDatas).toHaveLength(8);
+    render(<RevisionRow {...modifiedRevData} />);
+    expect(screen.getAllByTestId('mock-TableData')).toHaveLength(8);
   });
 
   it('should render conditions when status is present', () => {
-    const { container } = render(<RevisionRow {...revData} />);
-    expect(container.querySelector('tabledata')).toBeInTheDocument();
+    render(<RevisionRow {...revData} />);
+    expect(screen.getAllByTestId('mock-TableData')[0]).toBeVisible();
   });
 
   it('should handle case when status is not present', () => {
@@ -91,13 +97,12 @@ describe('RevisionRow', () => {
       ...revData,
       obj: _.omit(revData.obj, 'status'),
     };
-    const { container } = render(<RevisionRow {...noStatusRevData} />);
-    const tableDatas = container.querySelectorAll('tabledata');
-    expect(tableDatas).toHaveLength(8);
+    render(<RevisionRow {...noStatusRevData} />);
+    expect(screen.getAllByTestId('mock-TableData')).toHaveLength(8);
   });
 
   it('should render ready status properly', () => {
-    const { container } = render(<RevisionRow {...revData} />);
-    expect(container.querySelector('tabledata')).toBeInTheDocument();
+    render(<RevisionRow {...revData} />);
+    expect(screen.getAllByTestId('mock-TableData')[0]).toBeVisible();
   });
 });

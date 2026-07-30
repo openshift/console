@@ -7,7 +7,8 @@ import type { RowFunctionArgs } from '@console/internal/components/factory';
 import { TableData, Table } from '@console/internal/components/factory';
 import { ResourceLink } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-import LazyActionMenu, {
+import {
+  LazyActionMenu,
   KEBAB_COLUMN_CLASS,
 } from '@console/shared/src/components/actions/LazyActionMenu';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
@@ -15,7 +16,7 @@ import { getName, getNamespace } from '@console/shared/src/selectors/common';
 import { BMO_ENABLED_FLAG } from '../../features';
 import { useMaintenanceCapability } from '../../hooks/useMaintenanceCapability';
 import { BareMetalHostModel } from '../../models';
-import { getHostBMCAddress, getHostVendorInfo } from '../../selectors';
+import { getHostBMCAddress, getHostVendorInfo } from '../../selectors/baremetal-hosts';
 import type { BareMetalHostBundle } from '../types';
 import BareMetalHostRole from './BareMetalHostRole';
 import BareMetalHostSecondaryStatus from './BareMetalHostSecondaryStatus';
@@ -132,12 +133,12 @@ type BareMetalHostsTableProps = ComponentProps<typeof Table> & {
 };
 
 const BareMetalHostsTable: FC<BareMetalHostsTableProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('metal3-plugin');
   return (
     <Table
       {...props}
       defaultSortField="host.metadata.name"
-      aria-label={t('metal3-plugin~Bare Metal Hosts')}
+      aria-label={t('Bare Metal Hosts')}
       Header={HostsTableHeader(t)}
       Row={HostsTableRow}
       virtualize

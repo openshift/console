@@ -3,7 +3,7 @@ import type { UseUtilizationDuration } from '@console/dynamic-plugin-sdk/src/api
 import * as UIActions from '@console/internal/actions/ui';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
-import { DEFAULT_DURATION, DEFAULT_DURATION_KEY } from '../constants';
+import { DEFAULT_DURATION, DEFAULT_DURATION_KEY } from '../constants/duration';
 
 export const useUtilizationDuration: UseUtilizationDuration = (
   adjustDuration?: (duration: number) => number,

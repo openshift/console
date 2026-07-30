@@ -1,5 +1,3 @@
-import { useState, useCallback } from 'react';
-
 const isHTMLElement = (n: Node): n is HTMLElement => {
   return n.nodeType === Node.ELEMENT_NODE;
 };
@@ -19,17 +17,4 @@ export const getParentScrollableElement = (node: HTMLElement) => {
     parentNode = parentNode.parentNode;
   }
   return undefined;
-};
-
-export const useScrollContainer = (): [HTMLElement, (node: HTMLElement) => void] => {
-  const [scrollContainer, setScrollContainer] = useState<HTMLElement>(null);
-  const elementRef = useCallback((node: HTMLElement) => {
-    if (node === null) {
-      setScrollContainer(null);
-    }
-    if (node) {
-      setScrollContainer(getParentScrollableElement(node));
-    }
-  }, []);
-  return [scrollContainer, elementRef];
 };

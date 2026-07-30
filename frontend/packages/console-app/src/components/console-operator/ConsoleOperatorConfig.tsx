@@ -2,7 +2,7 @@ import type { FC, ComponentProps } from 'react';
 import { useMemo, useState, useCallback } from 'react';
 import type { PluginInfoEntry } from '@openshift/dynamic-plugin-sdk';
 import { Alert, Button } from '@patternfly/react-core';
-import { PencilAltIcon } from '@patternfly/react-icons';
+import { RhUiEditIcon } from '@patternfly/react-icons';
 import type { ISortBy, OnSort } from '@patternfly/react-table';
 import { SortByDirection, Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
@@ -33,7 +33,7 @@ import type {
 import { referenceForModel } from '@console/internal/module/k8s';
 import { usePluginInfo } from '@console/plugin-sdk/src/api/usePluginInfo';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { LazyConsolePluginModalOverlay } from '@console/shared/src/components/modals';
+import { LazyConsolePluginModalOverlay } from '@console/shared/src/components/modals/LazyConsolePluginModal';
 import {
   GreenCheckCircleIcon,
   YellowExclamationTriangleIcon,
@@ -115,7 +115,7 @@ export const ConsolePluginEnabledStatus: FC<ConsolePluginEnabledStatusProps> = (
     <>
       {consoleOperatorConfigLoaded && canPatchConsoleOperatorConfig && !developmentMode ? (
         <Button
-          icon={<PencilAltIcon />}
+          icon={<RhUiEditIcon />}
           iconPosition="end"
           data-test="edit-console-plugin"
           type="button"
@@ -420,7 +420,7 @@ export const ConsoleOperatorConfigDetailsPage: FC<ComponentProps<typeof DetailsP
   );
 };
 
-export type ConsolePluginTableRow = {
+type ConsolePluginTableRow = {
   name: string;
   version?: string;
   description?: string;

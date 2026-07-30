@@ -14,7 +14,7 @@ const NodeLogsUnitFilter: FC<NodeLogsUnitFilterProps> = ({ onChangeUnit }) => {
   const firstRender = useRef(true);
   const inputRef = useRef<HTMLInputElement>();
   const [values, setValues] = useState<string[]>(getQueryArgument('unit')?.split(',') || []);
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
 
   useEffect(() => {
     const input = inputRef.current;
@@ -56,7 +56,7 @@ const NodeLogsUnitFilter: FC<NodeLogsUnitFilterProps> = ({ onChangeUnit }) => {
     }
   }, [valuesString, onChangeUnit]);
 
-  const label = t('public~Filter by unit');
+  const label = t('Filter by unit');
 
   return (
     <>
@@ -72,7 +72,7 @@ const NodeLogsUnitFilter: FC<NodeLogsUnitFilterProps> = ({ onChangeUnit }) => {
       </FlexItem>
       {values.length > 0 && (
         <FlexItem>
-          <LabelGroup categoryName={t('public~Unit')} isClosable onClick={deleteCategory}>
+          <LabelGroup categoryName={t('Unit')} isClosable onClick={deleteCategory}>
             {values?.map((v) => (
               <Label variant="outline" key={v} onClose={() => deleteValue(v)}>
                 {v}

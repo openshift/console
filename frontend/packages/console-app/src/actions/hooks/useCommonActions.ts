@@ -44,7 +44,7 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
   message?: JSX.Element,
   editPath?: string,
 ): [ActionObject<T>, boolean] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const launchModal = useOverlay();
   const launchCountModal = useConfigureCountModal({
     resourceKind: kind,
@@ -78,7 +78,7 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
     () => ({
       [CommonActionCreator.Delete]: (): Action => ({
         id: 'delete-resource',
-        label: t('console-app~Delete {{kind}}', { kind: kind?.kind }),
+        label: t('Delete {{kind}}', { kind: kind?.kind }),
         cta: () =>
           launchModal(LazyDeleteModalOverlay, {
             kind,
@@ -90,7 +90,7 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
       [CommonActionCreator.Edit]: (): Action => {
         return {
           id: 'edit-resource',
-          label: t('console-app~Edit {{kind}}', { kind: kind?.kind }),
+          label: t('Edit {{kind}}', { kind: kind?.kind }),
           cta: {
             href: actualEditPath,
           },
@@ -99,7 +99,7 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
       },
       [CommonActionCreator.ModifyLabels]: (): Action => ({
         id: 'edit-labels',
-        label: t('console-app~Edit labels'),
+        label: t('Edit labels'),
         cta: () =>
           launchModal(LazyLabelsModalOverlay, {
             kind,
@@ -109,7 +109,7 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
       }),
       [CommonActionCreator.ModifyAnnotations]: (): Action => ({
         id: 'edit-annotations',
-        label: t('console-app~Edit annotations'),
+        label: t('Edit annotations'),
         cta: () =>
           launchModal(LazyAnnotationsModalOverlay, {
             kind,
@@ -119,7 +119,7 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
       }),
       [CommonActionCreator.ModifyCount]: (): Action => ({
         id: 'edit-pod-count',
-        label: t('console-app~Edit Pod count'),
+        label: t('Edit Pod count'),
         cta: launchCountModal,
         accessReview: asAccessReview(
           kind as K8sModel,
@@ -130,7 +130,7 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
       }),
       [CommonActionCreator.ModifyTolerations]: (): Action => ({
         id: 'edit-toleration',
-        label: t('console-app~Edit tolerations'),
+        label: t('Edit tolerations'),
         cta: () =>
           launchModal(LazyTolerationsModalOverlay, {
             resourceKind: kind,
@@ -140,7 +140,7 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
       }),
       [CommonActionCreator.ModifyTaints]: (): Action => ({
         id: 'edit-taints',
-        label: t('console-app~Edit taints'),
+        label: t('Edit taints'),
         cta: () =>
           launchModal(LazyTaintsModalOverlay, {
             resourceKind: kind,
@@ -150,7 +150,7 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
       }),
       [CommonActionCreator.AddStorage]: (): Action => ({
         id: 'add-storage',
-        label: t('console-app~Add storage'),
+        label: t('Add storage'),
         cta: {
           href: `${resourceObjPath(
             resource as K8sResourceKind,

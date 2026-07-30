@@ -1,4 +1,5 @@
 import type { ReactNode, FC } from 'react';
+import type { PopoverPosition } from '@patternfly/react-core';
 import {
   Grid,
   GridItem,
@@ -7,12 +8,11 @@ import {
   ModalFooter,
   ModalHeader,
   ModalVariant,
+  Popover,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@console/internal/components/ThemeProvider';
-import type { PopoverPlacement } from '@console/shared/src/components/popover/const';
-import Popover from '@console/shared/src/components/popover/Popover';
-import Spotlight from '@console/shared/src/components/spotlight/Spotlight';
+import { Spotlight } from '@console/shared/src/components/spotlight/Spotlight';
 import StepBadge from './steps/StepBadge';
 import StepContent from './steps/StepContent';
 import StepFooter from './steps/StepFooter';
@@ -22,7 +22,7 @@ import './TourStepComponent.scss';
 type TourStepComponentProps = {
   expandableSelector?: string;
   selector?: string;
-  placement?: string;
+  placement?: PopoverPosition;
   heading: string;
   content: ReactNode;
   introBannerLight?: ReactNode;
@@ -56,7 +56,7 @@ const TourStepComponent: FC<TourStepComponentProps> = ({
   onBack,
   onClose,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const { theme } = useTheme();
   const header = <StepHeader>{heading}</StepHeader>;
   const footer = (
@@ -86,17 +86,15 @@ const TourStepComponent: FC<TourStepComponentProps> = ({
     <>
       <Spotlight selector={selector} expandableSelector={expandableSelector} />
       <Popover
-        placement={placement as PopoverPlacement}
+        position={placement}
         headerContent={header}
         footerContent={footer}
-        open
-        onClose={handleClose}
-        trigger={selector}
-        uniqueId={step?.toString() || ''}
+        isVisible
+        shouldClose={handleClose}
+        triggerRef={() => document.querySelector<HTMLElement>(selector)}
+        bodyContent={stepContent}
         id="guided-tour-popover"
-      >
-        {stepContent}
-      </Popover>
+      />
     </>
   ) : (
     <Modal
@@ -106,7 +104,7 @@ const TourStepComponent: FC<TourStepComponentProps> = ({
       onClose={handleClose}
       id="guided-tour-modal"
       data-test="guided-tour-modal"
-      aria-label={t('console-app~guided tour {{step, number}}', { step })}
+      aria-label={t('guided tour {{step, number}}', { step })}
     >
       <ModalBody>
         <Grid hasGutter>

@@ -1,6 +1,9 @@
 import type { GitSectionFormData } from '@console/dev-console/src/components/import/git/GitSection';
 import type { GitData } from '@console/dev-console/src/components/import/import-types';
-import type { NameValueFromPair, NameValuePair } from '@console/shared/src';
+import type {
+  NameValueFromPair,
+  NameValuePair,
+} from '@console/shared/src/components/formik-fields/field-types';
 import type { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import type { BuildStrategyKind, ClusterBuildStrategyKind } from '../../types';
 

@@ -1,4 +1,3 @@
-import * as _ from 'lodash';
 import { useCallback, useState } from 'react';
 import type { FC } from 'react';
 import {
@@ -20,13 +19,15 @@ import {
   TextInput,
   Tooltip,
 } from '@patternfly/react-core';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import { k8sPatch, Patch, DeploymentUpdateStrategy, K8sResourceKind } from '../../module/k8s';
-import { DeploymentModel } from '../../models';
-import { ModalComponentProps } from '@console/shared/src/types/modal';
-import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
+import { DeploymentModel } from '../../models';
+import type { Patch, DeploymentUpdateStrategy, K8sResourceKind } from '../../module/k8s';
+import { k8sPatch } from '../../module/k8s';
 
 export const getNumberOrPercent = (value) => {
   if (typeof value === 'undefined') {
@@ -50,13 +51,13 @@ export const ConfigureUpdateStrategy: FC<ConfigureUpdateStrategyProps> = ({
   maxSurge,
   onChangeMaxSurge,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const strategyIsNotRollingUpdate = strategyType !== 'RollingUpdate';
   return (
     <>
       {showDescription && (
         <FormSection>
-          {t('public~How should the pods be replaced when a new revision is created?')}
+          {t('How should the pods be replaced when a new revision is created?')}
         </FormSection>
       )}
 
@@ -69,14 +70,14 @@ export const ConfigureUpdateStrategy: FC<ConfigureUpdateStrategyProps> = ({
         }}
         value="RollingUpdate"
         checked={strategyType === 'RollingUpdate'}
-        label={`${t('public~RollingUpdate')} (${t('public~default')})`}
+        label={`${t('RollingUpdate')} (${t('default')})`}
         description={t(
-          'public~Execute a smooth roll out of the new revision, based on the settings below',
+          'Execute a smooth roll out of the new revision, based on the settings below',
         )}
         autoFocus={strategyType === 'RollingUpdate'}
         body={
           <FormSection>
-            <FormGroup label={t('public~Max unavailable')} fieldId="input-max-unavailable">
+            <FormGroup label={t('Max unavailable')} fieldId="input-max-unavailable">
               <InputGroup>
                 <InputGroupItem isFill>
                   <TextInput
@@ -91,9 +92,9 @@ export const ConfigureUpdateStrategy: FC<ConfigureUpdateStrategyProps> = ({
                     data-test="max-unavailable-input"
                   />
                 </InputGroupItem>
-                <Tooltip content={t('public~Current desired pod count')}>
+                <Tooltip content={t('Current desired pod count')}>
                   <InputGroupText className="pf-v6-c-input-group__text">
-                    {t('public~of pod', { count: replicas })}
+                    {t('of pod', { count: replicas })}
                   </InputGroupText>
                 </Tooltip>
               </InputGroup>
@@ -101,7 +102,7 @@ export const ConfigureUpdateStrategy: FC<ConfigureUpdateStrategyProps> = ({
                 <HelperText>
                   <HelperTextItem id="input-max-unavailable-help">
                     {t(
-                      'public~Percentage of total number of pods or the maximum number ' +
+                      'Percentage of total number of pods or the maximum number ' +
                         'of pods that can be unavailable during the update(optional)',
                     )}
                   </HelperTextItem>
@@ -109,7 +110,7 @@ export const ConfigureUpdateStrategy: FC<ConfigureUpdateStrategyProps> = ({
               </FormHelperText>
             </FormGroup>
 
-            <FormGroup label={t('public~Max surge')} fieldId="input-max-surge">
+            <FormGroup label={t('Max surge')} fieldId="input-max-surge">
               <InputGroup>
                 <InputGroupItem isFill>
                   <TextInput
@@ -124,9 +125,9 @@ export const ConfigureUpdateStrategy: FC<ConfigureUpdateStrategyProps> = ({
                     data-test="max-surge-input"
                   />
                 </InputGroupItem>
-                <Tooltip content={t('public~Current desired pod count')}>
+                <Tooltip content={t('Current desired pod count')}>
                   <InputGroupText className="pf-v6-c-input-group__text">
-                    {t('public~greater than pod', { count: replicas })}
+                    {t('greater than pod', { count: replicas })}
                   </InputGroupText>
                 </Tooltip>
               </InputGroup>
@@ -134,7 +135,7 @@ export const ConfigureUpdateStrategy: FC<ConfigureUpdateStrategyProps> = ({
                 <HelperText>
                   <HelperTextItem id="input-max-surge-help">
                     {t(
-                      'public~Percentage of total number of pods or the maximum number ' +
+                      'Percentage of total number of pods or the maximum number ' +
                         'of pods that can be scheduled above the original number of pods(optional)',
                     )}
                   </HelperTextItem>
@@ -153,8 +154,8 @@ export const ConfigureUpdateStrategy: FC<ConfigureUpdateStrategyProps> = ({
         }}
         value="Recreate"
         checked={strategyType === 'Recreate'}
-        label={t('public~Recreate')}
-        description={t('public~Shut down all existing pods before creating new ones')}
+        label={t('Recreate')}
+        description={t('Shut down all existing pods before creating new ones')}
         autoFocus={strategyType === 'Recreate'}
         data-test="recreate-update-strategy-radio"
       />
@@ -162,7 +163,7 @@ export const ConfigureUpdateStrategy: FC<ConfigureUpdateStrategyProps> = ({
   );
 };
 
-export const ConfigureUpdateStrategyModal: FC<ConfigureUpdateStrategyModalProps> = ({
+const ConfigureUpdateStrategyModal: FC<ConfigureUpdateStrategyModalProps> = ({
   deployment,
   cancel,
   close,
@@ -176,7 +177,7 @@ export const ConfigureUpdateStrategyModal: FC<ConfigureUpdateStrategyModalProps>
   );
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const submit = useCallback(
     (event) => {
@@ -194,7 +195,9 @@ export const ConfigureUpdateStrategyModal: FC<ConfigureUpdateStrategyModalProps>
         patch,
         { path: '/spec/strategy/type', value: strategyType, op: 'replace' },
       ]);
-      handlePromise(promise).then(() => close());
+      handlePromise(promise)
+        .then(() => close())
+        .catch(() => {});
     },
     [strategyType, maxUnavailable, maxSurge, deployment, close, handlePromise],
   );
@@ -202,7 +205,7 @@ export const ConfigureUpdateStrategyModal: FC<ConfigureUpdateStrategyModalProps>
   return (
     <>
       <ModalHeader
-        title={t('public~Edit update strategy')}
+        title={t('Edit update strategy')}
         labelId="configure-update-strategy-modal-title"
       />
       <ModalBody>
@@ -227,10 +230,15 @@ export const ConfigureUpdateStrategyModal: FC<ConfigureUpdateStrategyModalProps>
           data-test="confirm-action"
           form="configure-update-strategy-form"
         >
-          {t('public~Save')}
+          {t('Save')}
         </Button>
-        <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
-          {t('public~Cancel')}
+        <Button
+          variant="link"
+          onClick={cancel}
+          data-test="modal-cancel-action"
+          data-test-id="modal-cancel-action"
+        >
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </>

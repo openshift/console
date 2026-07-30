@@ -1,14 +1,15 @@
 import type { FormEvent } from 'react';
 import { Component } from 'react';
-import * as _ from 'lodash';
-import { css } from '@patternfly/react-styles';
 import { Button } from '@patternfly/react-core';
-import { PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
+import { RhUiAddCircleFillIcon, RhUiMinusCircleIcon } from '@patternfly/react-icons';
+import { css } from '@patternfly/react-styles';
+import * as _ from 'lodash';
 /* eslint-disable-next-line */
 import { withTranslation, WithTranslation } from 'react-i18next';
 
-class ListInput_ extends Component<ListInputProps, ListInputState> {
+class InnerListInput extends Component<ListInputProps, ListInputState> {
   private helpID: string = _.uniqueId('list-view-help-');
+
   constructor(props: ListInputProps) {
     super(props);
     this.state = {
@@ -69,16 +70,19 @@ class ListInput_ extends Component<ListInputProps, ListInputState> {
                   required={missingValues && i === 0}
                   aria-describedby={helpText ? this.helpID : undefined}
                   data-test-list-input-for={label}
+                  data-test={`list-input-${label}`}
                   aria-label={label}
                 />
               </span>
             </div>
             <Button
-              icon={<MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />}
+              icon={
+                <RhUiMinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />
+              }
               type="button"
               className="pairs-list__span-btns"
               onClick={() => this.removeValue(i)}
-              aria-label={t('public~Remove')}
+              aria-label={t('Remove')}
               variant="plain"
               disabled={isEmpty}
             />
@@ -90,20 +94,20 @@ class ListInput_ extends Component<ListInputProps, ListInputState> {
           </div>
         )}
         <Button
-          icon={<PlusCircleIcon className="co-icon-space-r" />}
+          icon={<RhUiAddCircleFillIcon className="co-icon-space-r" />}
           className="pf-m-link--align-left"
           onClick={() => this.addValue()}
           type="button"
           variant="link"
         >
-          {t('public~Add more')}
+          {t('Add more')}
         </Button>
       </div>
     );
   }
 }
 
-export const ListInput = withTranslation()(ListInput_);
+export const ListInput = withTranslation()(InnerListInput);
 
 type ListInputState = {
   values: string[];

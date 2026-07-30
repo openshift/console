@@ -10,12 +10,12 @@ import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk/src';
-import { coFetchJSON } from '@console/internal/co-fetch';
 import { LoadingBox } from '@console/internal/components/utils';
-import { ALL_NAMESPACES_KEY } from '@console/shared/src';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { prune } from '@console/shared/src/components/dynamic-form/utils';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
+import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
 import type { HelmChart, HelmRelease } from '../../../types/helm-types';
 import {
   getChartValuesYAML,
@@ -40,7 +40,7 @@ const getFullChartURL = (chartURL: string, chartVersion: string): string => {
 
 const HelmURLChartInstallPage: FunctionComponent = () => {
   const params = useParams();
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   const [activePerspective] = useActivePerspective();
   const navigate = useNavigate();
   const namespace = params.ns;
@@ -65,38 +65,47 @@ const HelmURLChartInstallPage: FunctionComponent = () => {
     chartURL: '',
     chartVersion: '',
     namespace,
+    basicAuthSecretName: '',
   };
 
-  const fetchChartData = useCallback(async (chartURL: string, chartVersion: string) => {
-    setIsLoadingChart(true);
-    setChartError(null);
+  const fetchChartData = useCallback(
+    async (chartURL: string, chartVersion: string, basicAuthSecretName: string) => {
+      setIsLoadingChart(true);
+      setChartError(null);
 
-    try {
-      const fullChartURL = getFullChartURL(chartURL, chartVersion);
-      const apiUrl = `/api/helm/chart?url=${encodeURIComponent(fullChartURL)}&noRepo=true`;
+      try {
+        const fullChartURL = getFullChartURL(chartURL, chartVersion);
+        const authParam = basicAuthSecretName
+          ? `&basic_auth_secret_name=${encodeURIComponent(basicAuthSecretName)}`
+          : '';
+        const apiUrl = `/api/helm/chart?url=${encodeURIComponent(
+          fullChartURL,
+        )}&noRepo=true&namespace=${namespace}${authParam}`;
 
-      const res = await coFetchJSON(apiUrl);
-      const chart: HelmChart = res?.chart || res;
-      const valuesYAML = getChartValuesYAML(chart);
-      const valuesJSON = chart?.values ?? {};
-      const valuesSchema = chart?.schema && JSON.parse(atob(chart?.schema));
+        const res = await coFetchJSON(apiUrl);
+        const chart: HelmChart = res?.chart || res;
+        const valuesYAML = getChartValuesYAML(chart);
+        const valuesJSON = chart?.values ?? {};
+        const valuesSchema = chart?.schema && JSON.parse(atob(chart?.schema));
 
-      setInitialYamlData(valuesYAML);
-      setInitialFormData(valuesJSON as Record<string, unknown>);
-      setInitialFormSchema(valuesSchema);
-      setChartHasValues(!!valuesYAML);
-      setChartData(chart);
-    } catch (e) {
-      setChartError(e as Error);
-    } finally {
-      setIsLoadingChart(false);
-    }
-  }, []);
+        setInitialYamlData(valuesYAML);
+        setInitialFormData(valuesJSON as Record<string, unknown>);
+        setInitialFormSchema(valuesSchema);
+        setChartHasValues(!!valuesYAML);
+        setChartData(chart);
+      } catch (e) {
+        setChartError(e as Error);
+      } finally {
+        setIsLoadingChart(false);
+      }
+    },
+    [namespace],
+  );
 
   const handleNextStep = useCallback(
     (values: HelmURLChartFormData) => {
       setChartDetails(values);
-      fetchChartData(values.chartURL, values.chartVersion);
+      fetchChartData(values.chartURL, values.chartVersion, values.basicAuthSecretName);
       setCurrentStep(WizardStep.ConfigureInstall);
     },
     [fetchChartData],
@@ -112,7 +121,15 @@ const HelmURLChartInstallPage: FunctionComponent = () => {
     values: HelmURLInstallFormData,
     actions: FormikHelpers<HelmURLInstallFormData>,
   ) => {
-    const { releaseName, chartURL, chartVersion, yamlData, formData, editorType } = values;
+    const {
+      releaseName,
+      chartURL,
+      chartVersion,
+      yamlData,
+      formData,
+      editorType,
+      basicAuthSecretName,
+    } = values;
 
     let valuesObj: Record<string, unknown> | undefined;
     if (editorType === EditorType.Form) {
@@ -122,13 +139,13 @@ const HelmURLChartInstallPage: FunctionComponent = () => {
           valuesObj = prunedFormData;
         } else {
           actions.setStatus({
-            submitError: t('helm-plugin~Errors in the form data.'),
+            submitError: t('Errors in the form data.'),
           });
           return;
         }
       } catch (err) {
         actions.setStatus({
-          submitError: t('helm-plugin~Invalid Form Schema - {{errorText}}', {
+          submitError: t('Invalid Form Schema - {{errorText}}', {
             errorText: err.toString(),
           }),
         });
@@ -136,10 +153,10 @@ const HelmURLChartInstallPage: FunctionComponent = () => {
       }
     } else if (yamlData) {
       try {
-        valuesObj = safeLoad(yamlData);
+        valuesObj = safeLoad(yamlData) as Record<string, unknown>;
       } catch (err) {
         actions.setStatus({
-          submitError: t('helm-plugin~Invalid YAML - {{errorText}}', { errorText: err.toString() }),
+          submitError: t('Invalid YAML - {{errorText}}', { errorText: err.toString() }),
         });
         return;
       }
@@ -153,6 +170,7 @@ const HelmURLChartInstallPage: FunctionComponent = () => {
       chart_url: fullChartURL, // eslint-disable-line @typescript-eslint/naming-convention
       ...(chartVersion ? { chart_version: chartVersion } : {}), // eslint-disable-line @typescript-eslint/naming-convention
       ...(valuesObj ? { values: valuesObj } : {}),
+      ...(basicAuthSecretName ? { basic_auth_secret_name: basicAuthSecretName } : {}), // eslint-disable-line @typescript-eslint/naming-convention
       noRepo: true,
     };
 
@@ -171,7 +189,7 @@ const HelmURLChartInstallPage: FunctionComponent = () => {
       if (helmRelease && isGoingToTopology(resources)) {
         const secretId = res?.metadata?.uid;
         redirect = helmRelease?.info?.notes
-          ? `${redirect}?selectId=${secretId}&selectTab=${t('helm-plugin~Release notes')}`
+          ? `${redirect}?selectId=${secretId}&selectTab=${t('Release notes')}`
           : redirect;
       } else {
         redirect = `/helm-releases/ns/${namespace}/release/${releaseName}`;
@@ -197,6 +215,7 @@ const HelmURLChartInstallPage: FunctionComponent = () => {
       chartURL: chartDetails?.chartURL || '',
       chartVersion: chartDetails?.chartVersion || '',
       namespace,
+      basicAuthSecretName: chartDetails?.basicAuthSecretName || '',
       chartName: chartData?.metadata?.name || '',
       appVersion: chartData?.metadata?.appVersion || '',
       chartReadme: getChartReadme(chartData),
@@ -210,7 +229,7 @@ const HelmURLChartInstallPage: FunctionComponent = () => {
 
   const chartMetaDescription = chartData ? <HelmChartMetaDescription chart={chartData} /> : null;
 
-  const pageTitle = t('helm-plugin~Install Helm chart from Helm registry.');
+  const pageTitle = t('Install Helm chart from Helm registry.');
 
   return (
     <NamespacedPage

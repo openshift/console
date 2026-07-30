@@ -3,7 +3,6 @@
   "version": "0.0.0-fixed",
   "description": "Console web application",
   "private": true,
-  "main": "src/index.ts",
   "scripts": {
     "test": "yarn --cwd ../.. test packages/console-app"
   },
@@ -27,7 +26,7 @@
   },
   "consolePlugin": {
     "exposedModules": {
-      "detectIntegrationTest": "src/features/integration-test.ts",
+      "isOpenShift5": "src/features/openshift5.ts",
       "tourContext": "src/components/tour/tour-context.ts",
       "quickStartContext": "src/components/quick-starts/utils/quick-start-context.tsx",
       "quickStartConfiguration": "src/components/quick-starts/QuickStartConfiguration.tsx",
@@ -59,7 +58,7 @@
       "NamespaceDropdown": "src/components/user-preferences/namespace/NamespaceDropdown.tsx",
       "LanguageDropdown": "src/components/user-preferences/language/LanguageDropdown.tsx",
       "perspective": "src/utils/perspective.tsx",
-      "perspectiveConfiguration": "src/components/detect-perspective/PerspectiveConfiguration.tsx",
+      "perspectiveConfiguration": "src/components/detect-context/PerspectiveConfiguration.tsx",
       "DynamicPluginsPopover": "src/components/dashboards-page/dynamic-plugins-health-resource/DynamicPluginsPopover.tsx",
       "getDynamicPluginHealthState": "src/components/dashboards-page/dynamic-plugins-health-resource/status.ts",
       "k8sHealth": "src/components/dashboards-page/status.ts",
@@ -81,7 +80,6 @@
       "getConsoleOperatorConfigFlag": "src/hooks/useCanGetConsoleOperatorConfig.ts",
       "techPreviewFlag": "src/features/tech-preview.ts",
       "usePerspectivesAvailable": "src/components/user-preferences/perspective/usePerspectivesAvailable.ts",
-      "useNodeMgmtV1FlagProvider": "src/hooks/useNodeMgmtV1FlagProvider.ts",
       "defaultProvider": "src/actions/providers/default-provider.ts",
       "OperatorStatus": "src/components/dashboards-page/OperatorStatus.tsx",
       "dashboardsActivity": "src/components/dashboards-page/activity.ts",

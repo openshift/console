@@ -9,16 +9,14 @@ import { k8sCreate, k8sUpdate } from '@console/internal/module/k8s';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { safeJSToYAML, safeYAMLToJS } from '@console/shared/src/utils/yaml';
 import BuildConfigForm from './BuildConfigForm';
-import {
-  validationSchema,
-  convertBuildConfigToFormData,
-  convertFormDataToBuildConfig,
-} from './form-utils';
+import { convertFormDataToBuildConfig } from './form-utils/convert-to-buildconfig';
+import { convertBuildConfigToFormData } from './form-utils/convert-to-form';
 import type { BuildConfigFormikValues } from './form-utils/types';
+import { validationSchema } from './form-utils/validation';
 import type { BuildConfig } from './types';
 import { BuildConfigModel } from './types';
 
-export interface EditBuildConfigProps {
+interface EditBuildConfigProps {
   heading: string;
   namespace: string;
   name: string;
@@ -31,7 +29,7 @@ const EditBuildConfig: FC<EditBuildConfigProps> = ({
   name,
   buildConfig: watchedBuildConfig,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const navigate = useNavigate();
 
   const [initialValues] = useState<BuildConfigFormikValues>(() => {
@@ -56,7 +54,7 @@ const EditBuildConfig: FC<EditBuildConfigProps> = ({
     } catch (err) {
       helpers.setStatus({
         submitSuccess: '',
-        submitError: t('devconsole~Invalid YAML - {{err}}', { err }),
+        submitError: t('Invalid YAML - {{err}}', { err }),
       });
       return;
     }

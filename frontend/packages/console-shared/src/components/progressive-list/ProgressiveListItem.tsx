@@ -8,7 +8,7 @@ export interface ProgressiveListItemProps {
   name: string;
 }
 
-const ProgressiveListItem: FC<ProgressiveListItemProps> = ({ children }) => {
+export const ProgressiveListItem: FC<ProgressiveListItemProps> = ({ children }) => {
   const element = useRef<HTMLDivElement>();
   useEffect(() => {
     element.current.scrollIntoView({ behavior: 'smooth' });
@@ -19,5 +19,3 @@ const ProgressiveListItem: FC<ProgressiveListItemProps> = ({ children }) => {
     </div>
   );
 };
-
-export default ProgressiveListItem;

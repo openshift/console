@@ -10,16 +10,16 @@ import { LoadingBox } from '@console/internal/components/utils/status-box';
 import { safeYAMLToJS, safeJSToYAML } from '../../utils/yaml';
 import { EditorType } from '../synced-editor/editor-toggle';
 import { useEditorType } from '../synced-editor/useEditorType';
-import RadioGroupField from './RadioGroupField';
+import { RadioGroupField } from './RadioGroupField';
 
 import './SyncedEditorField.scss';
 
 type FormErrorCallback<ReturnValue = {}> = () => ReturnValue;
 type WithOrWithoutPromise<Type> = Promise<Type> | Type;
-export type SanitizeToForm<YAMLStruct = {}, FormOutput = {}> = (
+type SanitizeToForm<YAMLStruct = {}, FormOutput = {}> = (
   preFormData: YAMLStruct,
 ) => WithOrWithoutPromise<FormOutput | FormErrorCallback<FormOutput>>;
-export type SanitizeToYAML = (preFormData: string) => string;
+type SanitizeToYAML = (preFormData: string) => string;
 
 type EditorContext<SanitizeTo> = {
   name: string;
@@ -38,7 +38,7 @@ type SyncedEditorFieldProps = {
   noMargin?: boolean;
 };
 
-const SyncedEditorField: FC<SyncedEditorFieldProps> = ({
+export const SyncedEditorField: FC<SyncedEditorFieldProps> = ({
   name,
   formContext,
   yamlContext,
@@ -46,7 +46,7 @@ const SyncedEditorField: FC<SyncedEditorFieldProps> = ({
   noMargin = false,
   lastViewUserPreferenceKey,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const [field] = useField(name);
 
   const { values, setFieldValue, setStatus } = useFormikContext<FormikValues>();
@@ -152,16 +152,16 @@ const SyncedEditorField: FC<SyncedEditorFieldProps> = ({
         data-test="synced-editor-field"
       >
         <RadioGroupField
-          label={t('console-shared~Configure via:')}
+          label={t('Configure via:')}
           name={name}
           options={[
             {
-              label: formContext.label || t('console-shared~Form view'),
+              label: formContext.label || t('Form view'),
               value: EditorType.Form,
               isDisabled: formContext.isDisabled,
             },
             {
-              label: yamlContext.label || t('console-shared~YAML view'),
+              label: yamlContext.label || t('YAML view'),
               value: EditorType.YAML,
               isDisabled: yamlContext.isDisabled,
             },
@@ -175,26 +175,24 @@ const SyncedEditorField: FC<SyncedEditorFieldProps> = ({
           className="co-synced-editor__yaml-warning"
           variant="danger"
           isInline
-          title={t('console-shared~Invalid YAML cannot be persisted')}
+          title={t('Invalid YAML cannot be persisted')}
         >
           <p className="pf-v6-u-mb-sm">
-            {t('console-shared~Switching to form view will delete any invalid YAML.')}
+            {t('Switching to form view will delete any invalid YAML.')}
           </p>
           <Button variant="danger" onClick={onClickYAMLWarningConfirm}>
-            {t('console-shared~Switch and delete')}
+            {t('Switch and delete')}
           </Button>
           &nbsp;
           <Button variant="secondary" onClick={onClickYAMLWarningCancel}>
-            {t('console-shared~Cancel')}
+            {t('Cancel')}
           </Button>
         </Alert>
       )}
       {disabledFormAlert && (
         <Alert
           variant="custom"
-          title={t(
-            'console-shared~Form view is disabled for this chart because the schema is not available',
-          )}
+          title={t('Form view is disabled for this chart because the schema is not available')}
           actionClose={<AlertActionCloseButton onClose={() => setDisabledFormAlert(false)} />}
           isInline
         />
@@ -207,5 +205,3 @@ const SyncedEditorField: FC<SyncedEditorFieldProps> = ({
     <LoadingBox />
   );
 };
-
-export default SyncedEditorField;

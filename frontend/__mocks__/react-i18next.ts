@@ -1,4 +1,3 @@
-/* eslint-env node */
 const i18next = require('i18next');
 const react = jest.requireActual('react');
 const reactI18next = jest.requireActual('react-i18next');

@@ -1,12 +1,5 @@
 import type { FC } from 'react';
 import { Fragment, useContext, useState, useRef, useCallback, useEffect } from 'react';
-import * as _ from 'lodash';
-import { useTranslation } from 'react-i18next';
-import { shallowEqual } from 'react-redux';
-import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
-import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
-import { useNavigate } from 'react-router';
-import { BellIcon, EllipsisVIcon, ThIcon, QuestionCircleIcon } from '@patternfly/react-icons';
 import {
   Dropdown,
   Divider,
@@ -20,53 +13,68 @@ import {
   ToolbarGroup,
   ToolbarItem,
 } from '@patternfly/react-core';
+import {
+  RhUiNotificationIcon,
+  RhUiEllipsisVerticalIcon,
+  RhUiMenuSwitcherIcon,
+  RhUiQuestionMarkCircleIcon,
+} from '@patternfly/react-icons';
+import { FeedbackModal } from '@patternfly/react-user-feedback';
+import darkFeedbackImage from '@patternfly/react-user-feedback/dist/esm/images/rh_feedback-dark.svg';
+import feedbackImage from '@patternfly/react-user-feedback/dist/esm/images/rh_feedback.svg';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { shallowEqual } from 'react-redux';
+import { useNavigate } from 'react-router';
+import { action as reduxAction } from 'typesafe-actions';
+import { TourContext, TourActions } from '@console/app/src/components/tour';
+import { getImpersonate, useActivePerspective } from '@console/dynamic-plugin-sdk';
+import { ExternalLinkButton } from '@console/shared/src/components/links/ExternalLinkButton';
+import { LinkTo } from '@console/shared/src/components/links/LinkTo';
+import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
+import { getNotificationsVariant } from '@console/shared/src/components/toast/toastNotificationUtils';
+import { useNotificationHistory } from '@console/shared/src/components/toast/useNotificationHistory';
 import { ACM_LINK_ID, FLAGS } from '@console/shared/src/constants/common';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { useCopyCodeModal } from '@console/shared/src/hooks/useCopyCodeModal';
 import { useCopyLoginCommands } from '@console/shared/src/hooks/useCopyLoginCommands';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { useUser } from '@console/shared/src/hooks/useUser';
-import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils/namespace';
-import { ExternalLinkButton } from '@console/shared/src/components/links/ExternalLinkButton';
-import { LinkTo } from '@console/shared/src/components/links/LinkTo';
-import { CloudShellMastheadButton } from '@console/webterminal-plugin/src/components/cloud-shell/CloudShellMastheadButton';
 import { CloudShellMastheadAction } from '@console/webterminal-plugin/src/components/cloud-shell/CloudShellMastheadAction';
-import { getImpersonate, useActivePerspective } from '@console/dynamic-plugin-sdk';
+import { CloudShellMastheadButton } from '@console/webterminal-plugin/src/components/cloud-shell/CloudShellMastheadButton';
 import * as UIActions from '../../actions/ui';
-import { flagPending, featureReducerName } from '../../reducers/features';
-import { authSvc } from '../../module/auth';
-import { ClusterVersionKind, ConsoleLinkKind, getOCMLink } from '../../module/k8s';
-import { openshiftHelpBase } from '../utils/documentation';
-import { AboutModal } from '../about-modal';
-import { getReportBugLink } from '../../module/k8s/cluster-settings';
 import redhatLogoImg from '../../imgs/logos/redhat.svg';
-import { TourContext, TourActions } from '@console/app/src/components/tour';
 import { ClusterVersionModel, ConsoleLinkModel } from '../../models';
-import { FeedbackModal } from '@patternfly/react-user-feedback';
-import '@patternfly/react-user-feedback/dist/esm/Feedback/Feedback.css';
-import { useFeedbackLocal } from './feedback-local';
-import { action as reduxAction } from 'typesafe-actions';
-import feedbackImage from '@patternfly/react-user-feedback/dist/esm/images/rh_feedback.svg';
-import darkFeedbackImage from '@patternfly/react-user-feedback/dist/esm/images/rh_feedback-dark.svg';
+import { authSvc } from '../../module/auth';
+import type { ClusterVersionKind, ConsoleLinkKind } from '../../module/k8s';
+import { getOCMLink } from '../../module/k8s';
+import { getReportBugLink } from '../../module/k8s/cluster-settings';
+import { flagPending, featureReducerName } from '../../reducers/features';
+import { AboutModal } from '../about-modal';
+import { ImpersonateUserModal } from '../modals/impersonate-user-modal';
 import QuickCreate, { QuickCreateImportFromGit, QuickCreateContainerImages } from '../QuickCreate';
 import { useTheme, THEME_DARK } from '../ThemeProvider';
+import { openshiftHelpBase } from '../utils/documentation';
+import '@patternfly/react-user-feedback/dist/esm/Feedback/Feedback.css';
 import { useK8sWatchResource } from '../utils/k8s-watch-hook';
-import { ImpersonateUserModal } from '../modals/impersonate-user-modal';
+import { useFeedbackLocal } from './feedback-local';
 
 const LAST_CONSOLE_ACTIVITY_TIMESTAMP_LOCAL_STORAGE_KEY = 'last-console-activity-timestamp';
 
 const defaultHelpLinks = [
   {
-    // t('public~Learning Portal')
-    label: 'Learning Portal',
+    // t('public~Learning portal')
+    label: 'Learning portal',
     externalLink: true,
     href: 'https://learn.openshift.com/?ref=webconsole',
   },
   {
-    // t('public~OpenShift Blog')
-    label: 'OpenShift Blog',
+    // t('public~OpenShift blog')
+    label: 'OpenShift blog',
     externalLink: true,
     href: 'https://blog.openshift.com',
   },
@@ -106,12 +114,12 @@ interface StatusButtonProps {
 }
 
 const SystemStatusButton: FC<StatusButtonProps> = ({ statusPageData }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return !_.isEmpty(_.get(statusPageData, 'incidents')) ? (
     <ExternalLinkButton
       variant="plain"
       className="co-masthead-button"
-      aria-label={t('public~System status')}
+      aria-label={t('System status')}
       icon={<YellowExclamationTriangleIcon />}
       href={statusPageData.page.url}
     />
@@ -151,7 +159,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
   cv,
   isMastheadStacked,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const navigate = useNavigate();
   const fireTelemetryEvent = useTelemetry();
   const { tourDispatch, tour } = useContext(TourContext);
@@ -164,7 +172,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
   const [activePerspective] = useActivePerspective();
   const [requestTokenURL, externalLoginCommand] = useCopyLoginCommands();
   const launchCopyLoginCommandModal = useCopyCodeModal(
-    t('public~Login with this command'),
+    t('Login with this command'),
     externalLoginCommand,
   );
   const { clusterID, alertCount, canAccessNS, impersonate } = useConsoleSelector(
@@ -179,6 +187,12 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
 
   // Use centralized user hook for user data
   const { displayName, username } = useUser();
+  const { unreadCount: toastUnreadCount, hasUnreadDangerNotifications } = useNotificationHistory();
+  const notificationCount = (alertCount || 0) + toastUnreadCount;
+  const notificationBadgeVariant = getNotificationsVariant(
+    toastUnreadCount,
+    hasUnreadDangerNotifications,
+  );
   const [isAppLauncherDropdownOpen, setIsAppLauncherDropdownOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const [isKebabDropdownOpen, setIsKebabDropdownOpen] = useState(false);
@@ -267,11 +281,11 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
       window.SERVER_FLAGS.branding !== 'azure'
     ) {
       sections.push({
-        name: t('public~Red Hat Applications'),
+        name: t('Red Hat Applications'),
         isSection: true,
         actions: [
           {
-            label: t('public~OpenShift Cluster Manager'),
+            label: t('OpenShift Cluster Manager'),
             externalLink: true,
             href: getOCMLink(clusterID),
             image: <img src={redhatLogoImg} alt="" />,
@@ -283,7 +297,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
             },
           },
           {
-            label: t('public~Red Hat Hybrid Cloud Console'),
+            label: t('Red Hat Hybrid Cloud Console'),
             externalLink: true,
             href: 'https://console.redhat.com',
             image: <img src={redhatLogoImg} alt="" />,
@@ -301,11 +315,11 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
     // This should be removed when the extension to add items to the masthead is implemented: https://issues.redhat.com/browse/OU-488
     if (isTroubleshootingPanelPluginActive && activePerspective === 'admin') {
       sections.push({
-        name: t('public~Troubleshooting'),
+        name: t('Troubleshooting'),
         isSection: true,
         actions: [
           {
-            label: t('public~Signal Correlation'),
+            label: t('Signal correlation'),
             callback: (e) => {
               e.preventDefault();
               dispatch(reduxAction('openTroubleshootingPanel'));
@@ -358,7 +372,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
         ...(tour
           ? [
               {
-                label: t('public~Guided Tour'),
+                label: t('Guided tour'),
                 callback: handleGuidedTourClick,
               },
             ]
@@ -366,14 +380,14 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
         ...(quickstartFlag
           ? [
               {
-                label: t('public~Quick Starts'),
+                label: t('Quick starts'),
                 component: LinkTo('/quickstart'),
                 dataTest: 'masthead-quick-starts',
               },
             ]
           : []),
         {
-          label: t('public~Documentation'),
+          label: t('Documentation'),
           externalLink: true,
           href: openshiftHelpBase,
           callback: () => {
@@ -383,7 +397,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
         ...(consoleCLIDownloadFlag
           ? [
               {
-                label: t('public~Command Line Tools'),
+                label: t('Command line tools'),
                 callback: () => {
                   fireTelemetryEvent('CLI Clicked');
                 },
@@ -394,7 +408,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
         ...(reportBugLink
           ? [
               {
-                label: t('public~Share Feedback'),
+                label: t('Share feedback'),
                 callback: (e) => {
                   e.preventDefault();
                   onFeedbackModal();
@@ -412,7 +426,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
         label: t(`public~${helpLink.label}`),
       })),
       {
-        label: t('public~About'),
+        label: t('About'),
         callback: onAboutModal,
       },
       ...additionalHelpActions.actions,
@@ -525,7 +539,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
     const actions = [];
     const userActions: MastheadAction[] = [
       {
-        label: t('public~User Preferences'),
+        label: t('User preferences'),
         component: LinkTo('/user-preferences'),
       },
     ];
@@ -533,7 +547,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
     // Add impersonate option if user is currently impersonating
     if (impersonate) {
       userActions.unshift({
-        label: t('public~Stop impersonating'),
+        label: t('Stop impersonating'),
         callback: () => {
           dispatch(UIActions.stopImpersonate());
           // Use full page reload when stopping to ensure clean state
@@ -548,7 +562,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
     // Add impersonate option if not currently impersonating
     if (!impersonate) {
       userActions.unshift({
-        label: t('public~Impersonate User'),
+        label: t('Impersonate user'),
         callback: () => setIsImpersonateModalOpen(true),
         dataTest: 'impersonate-user',
       });
@@ -561,7 +575,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
       };
       if (requestTokenURL) {
         userActions.unshift({
-          label: t('public~Copy login command'),
+          label: t('Copy login command'),
           href: requestTokenURL,
           externalLink: true,
           dataTest: 'copy-login-command',
@@ -570,12 +584,12 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
         userActions.unshift({
           callback: launchCopyLoginCommandModal,
           dataTest: 'copy-login-command',
-          label: t('public~Copy login command'),
+          label: t('Copy login command'),
         });
       }
 
       userActions.push({
-        label: t('public~Log out'),
+        label: t('Log out'),
         callback: logout,
         dataTest: 'log-out',
       });
@@ -597,7 +611,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
         isSection: true,
         actions: [
           {
-            label: t('public~Import YAML'),
+            label: t('Import YAML'),
             component: LinkTo(getImportYAMLPath()),
           },
           {
@@ -634,14 +648,14 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
           onSelect={() => setIsKebabDropdownOpen(false)}
           toggle={(toggleRef) => (
             <MenuToggle
-              aria-label={t('public~Utility menu')}
+              aria-label={t('Utility menu')}
               ref={toggleRef}
               variant="plain"
               onClick={() => setIsKebabDropdownOpen(!isKebabDropdownOpen)}
               isExpanded={isKebabDropdownOpen}
               data-quickstart-id="qs-masthead-utilitymenu"
             >
-              <EllipsisVIcon />
+              <RhUiEllipsisVerticalIcon />
             </MenuToggle>
           )}
           ref={kebabMenuRef}
@@ -654,7 +668,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
 
     const userToggle = (
       <span className="co-username" data-test="username">
-        {authEnabledFlag ? displayName : t('public~Auth disabled')}
+        {authEnabledFlag ? displayName : t('Auth disabled')}
       </span>
     );
 
@@ -666,7 +680,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
         onSelect={() => setIsUserDropdownOpen(false)}
         toggle={(toggleRef) => (
           <MenuToggle
-            aria-label={t('public~User menu')}
+            aria-label={t('User menu')}
             variant="plainText"
             ref={toggleRef}
             onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
@@ -694,7 +708,9 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
         headers: { Accept: 'application/json' },
       })
         .then((response) => response.json())
-        .then((newstatusPageData) => setstatusPageData(newstatusPageData));
+        .then((newstatusPageData) => setstatusPageData(newstatusPageData))
+        // eslint-disable-next-line no-console
+        .catch((e) => console.error('Error fetching status page data', e));
     }
   }, [setstatusPageData]);
 
@@ -735,6 +751,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
 
   const launchActions = getLaunchActions();
   const alertAccess = canAccessNS && !!window.SERVER_FLAGS.prometheusBaseURL;
+  const showNotificationBadge = alertAccess || toastUnreadCount > 0;
   return (
     <>
       <Toolbar isFullHeight isStatic>
@@ -755,14 +772,14 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
                   onOpenChangeKeys={['Escape']}
                   toggle={(toggleRef) => (
                     <MenuToggle
-                      aria-label={t('public~Application launcher')}
+                      aria-label={t('Application launcher')}
                       ref={toggleRef}
                       variant="plain"
                       onClick={() => setIsAppLauncherDropdownOpen(!isAppLauncherDropdownOpen)}
                       isExpanded={isKebabDropdownOpen}
                       data-test-id="application-launcher"
                     >
-                      <ThIcon />
+                      <RhUiMenuSwitcherIcon />
                     </MenuToggle>
                   )}
                   ref={applicationLauncherMenuRef}
@@ -771,14 +788,13 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
                   {renderApplicationItems(launchActions)}
                 </Dropdown>
               )}
-              {alertAccess && (
+              {showNotificationBadge && (
                 <NotificationBadge
-                  aria-label={t('public~Notification drawer')}
+                  aria-label={t('Notification drawer')}
                   onClick={drawerToggle}
-                  // @ts-expect-error this prop is accepted as a button variant (but not documented).
-                  // this usage of the undocumented variant was approved by UX
-                  variant="plain"
-                  count={alertCount || 0}
+                  variant={notificationBadgeVariant}
+                  count={notificationCount || 0}
+                  icon={<RhUiNotificationIcon />}
                   data-quickstart-id="qs-masthead-notifications"
                   className="co-masthead-button"
                 />
@@ -792,7 +808,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
                 onSelect={() => setIsHelpDropdownOpen(false)}
                 toggle={(toggleRef) => (
                   <MenuToggle
-                    aria-label={t('public~Help menu')}
+                    aria-label={t('Help menu')}
                     ref={toggleRef}
                     variant="plain"
                     onClick={() => setIsHelpDropdownOpen(!isHelpDropdownOpen)}
@@ -801,7 +817,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
                     data-tour-id="tour-help-button"
                     data-quickstart-id="qs-masthead-help"
                   >
-                    <QuestionCircleIcon alt="" />
+                    <RhUiQuestionMarkCircleIcon alt="" />
                   </MenuToggle>
                 )}
                 ref={helpMenuRef}
@@ -823,18 +839,15 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
             visibility={{ default: isMastheadStacked ? 'visible' : 'hidden' }}
           >
             <SystemStatusButton statusPageData={statusPageData} />
-            {alertAccess && alertCount > 0 && (
+            {showNotificationBadge && notificationCount > 0 && (
               <NotificationBadge
-                aria-label={t('public~Notification drawer')}
+                aria-label={t('Notification drawer')}
                 onClick={drawerToggle}
-                // @ts-expect-error this prop is accepted as a button variant (but not documented).
-                // this usage of the undocumented variant was approved by UX
-                variant="plain"
-                count={alertCount}
+                variant={notificationBadgeVariant}
+                count={notificationCount}
+                icon={<RhUiNotificationIcon />}
                 data-quickstart-id="qs-masthead-notifications"
-              >
-                <BellIcon />
-              </NotificationBadge>
+              />
             )}
             <ToolbarItem>{renderMenu(true)}</ToolbarItem>
           </ToolbarGroup>

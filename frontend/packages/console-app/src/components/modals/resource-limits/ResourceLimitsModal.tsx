@@ -13,13 +13,10 @@ interface ResourceLimitsModalProps {
 type Props = FormikProps<FormikValues> & ResourceLimitsModalProps;
 
 const ResourceLimitsModal: FC<Props> = ({ handleSubmit, cancel, isSubmitting, status, errors }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   return (
     <>
-      <ModalHeader
-        title={t('console-app~Edit resource limits')}
-        labelId="resource-limits-modal-title"
-      />
+      <ModalHeader title={t('Edit resource limits')} labelId="resource-limits-modal-title" />
       <ModalBody>
         <Form id="resource-limits-form" role="form" onSubmit={handleSubmit}>
           <ResourceLimitSection hideTitle />
@@ -33,10 +30,10 @@ const ResourceLimitsModal: FC<Props> = ({ handleSubmit, cancel, isSubmitting, st
           isLoading={isSubmitting}
           isDisabled={!_.isEmpty(errors) || isSubmitting}
         >
-          {t('console-app~Save')}
+          {t('Save')}
         </Button>
         <Button variant="link" onClick={cancel}>
-          {t('console-app~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </>

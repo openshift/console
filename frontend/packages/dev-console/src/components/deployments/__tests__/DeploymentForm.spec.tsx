@@ -1,5 +1,6 @@
 import type { FC } from 'react';
-import { fireEvent, screen, cleanup, waitFor } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import i18n from 'i18next';
 import * as _ from 'lodash';
 import { setI18n } from 'react-i18next';
@@ -8,22 +9,6 @@ import { mockDeploymentConfig, mockEditDeploymentData } from '../__mocks__/deplo
 import MockForm from '../__mocks__/MockForm';
 import ContainerField from '../ContainerField';
 import DeploymentForm from '../DeploymentForm';
-
-class ResizeObserver {
-  observe() {
-    // do nothing
-  }
-
-  unobserve() {
-    // do nothing
-  }
-
-  disconnect() {
-    // do nothing
-  }
-}
-
-window.ResizeObserver = ResizeObserver;
 
 const mockContainerField: FC = () => {
   return <div>Container: xyz</div>;
@@ -51,12 +36,7 @@ const mockedContainerField = jest.mocked(ContainerField);
 const handleSubmit = jest.fn();
 const handleCancel = jest.fn();
 
-beforeAll(() => {
-  mockedContainerField.mockImplementation(mockContainerField);
-});
-
-beforeEach(() => {
-  // Initialize i18n.services if it doesn't exist
+function setupI18n() {
   if (!i18n.services) {
     (i18n as any).services = {};
   }
@@ -68,7 +48,9 @@ beforeEach(() => {
     nest: (str: string) => str,
   };
   setI18n(i18n);
+}
 
+function renderDeploymentForm() {
   renderWithProviders(
     <MockForm handleSubmit={handleSubmit}>
       {(props) => (
@@ -81,52 +63,51 @@ beforeEach(() => {
       )}
     </MockForm>,
   );
+}
+
+beforeAll(() => {
+  mockedContainerField.mockImplementation(mockContainerField);
 });
 
-afterEach(() => cleanup());
+beforeEach(() => {
+  setupI18n();
+});
 
 describe('EditDeploymentForm', () => {
   it('should show Form/YAML swicther with both options and Form view selected by default', async () => {
-    await waitFor(() => {
-      expect(screen.queryByTestId('synced-editor-field')).not.toBeNull();
-      expect(screen.queryByRole('radio', { name: /form view/i })).not.toBeNull();
-      expect(
-        screen.queryByRole('radio', {
-          name: /yaml view/i,
-        }),
-      ).not.toBeNull();
-      expect(
-        screen.queryByRole('radio', { name: /form view/i }).hasAttribute('checked'),
-      ).toBeTruthy();
-    });
+    renderDeploymentForm();
+    expect(await screen.findByTestId('synced-editor-field')).toBeVisible();
+    expect(await screen.findByRole('radio', { name: /form view/i })).toBeVisible();
+    expect(await screen.findByRole('radio', { name: /yaml view/i })).toBeVisible();
+    expect(screen.getByRole('radio', { name: /form view/i })).toBeChecked();
   });
 
   it('should show all the form sections wrt form/YAML view', async () => {
+    renderDeploymentForm();
+    const user = userEvent.setup();
     const formButton = screen.getByRole('radio', { name: /form view/i });
     const yamlButton = screen.getByRole('radio', {
       name: /yaml view/i,
     });
 
-    fireEvent.click(yamlButton);
+    await user.click(yamlButton);
 
-    await waitFor(() => {
-      expect(screen.queryByTestId('yaml-editor')).not.toBeNull();
-      expect(screen.queryByTestId('form-footer')).not.toBeNull();
-    });
+    expect(await screen.findByTestId('yaml-editor')).toBeVisible();
+    expect(await screen.findByTestId('form-footer')).toBeVisible();
 
-    fireEvent.click(formButton);
+    await user.click(formButton);
 
-    await waitFor(() => {
-      expect(screen.queryByTestId('info-alert')).not.toBeNull();
-      expect(screen.queryByTestId('deployment-strategy-section')).not.toBeNull();
-      expect(screen.queryByTestId('images-section')).not.toBeNull();
-      expect(screen.queryByTestId('environment-variables-section')).not.toBeNull();
-      expect(screen.queryByTestId('advanced-options-section')).not.toBeNull();
-      expect(screen.queryByTestId('form-footer')).not.toBeNull();
-    });
+    expect(await screen.findByTestId('info-alert')).toBeVisible();
+    expect(await screen.findByTestId('deployment-strategy-section')).toBeVisible();
+    expect(await screen.findByTestId('images-section')).toBeVisible();
+    expect(await screen.findByTestId('environment-variables-section')).toBeVisible();
+    expect(await screen.findByTestId('advanced-options-section')).toBeVisible();
+    expect(await screen.findByTestId('form-footer')).toBeVisible();
   });
 
   it('should disable save button and show loader on save button click', async () => {
+    renderDeploymentForm();
+    const user = userEvent.setup();
     const saveButton = screen.getByRole('button', {
       name: /save/i,
     });
@@ -138,23 +119,26 @@ describe('EditDeploymentForm', () => {
     mockValues.formData.isSearchingForImage = true;
     mockValues.formData.deploymentStrategy.rollingParams.timeoutSeconds = 500;
 
-    fireEvent.change(timeoutField, { target: { value: 500 } });
+    await user.clear(timeoutField);
+    await user.type(timeoutField, '500');
 
     expect(saveButton.hasAttribute('disabled')).toBeFalsy();
     await waitFor(() => {
       expect(timeoutField.value).toEqual('500');
     });
 
-    fireEvent.click(saveButton);
+    await user.click(saveButton);
 
-    expect(saveButton.hasAttribute('disabled')).toBeTruthy();
-    expect(saveButton.querySelector('.pf-v6-c-button__progress')).not.toBeNull();
     await waitFor(() => {
+      expect(saveButton).toBeDisabled();
+      expect(within(saveButton).getByRole('progressbar')).toBeInTheDocument();
       expect(handleSubmit).toHaveBeenCalledTimes(1);
     });
   });
 
   it('should load the form with current resource values on reload button click', async () => {
+    renderDeploymentForm();
+    const user = userEvent.setup();
     const reloadButton = screen.getByRole('button', {
       name: /reload/i,
     });
@@ -162,13 +146,14 @@ describe('EditDeploymentForm', () => {
       name: /timeout/i,
     }) as HTMLInputElement;
 
-    fireEvent.change(timeoutField, { target: { value: 500 } });
+    await user.clear(timeoutField);
+    await user.type(timeoutField, '500');
 
     await waitFor(() => {
       expect(timeoutField.value).toEqual('500');
     });
 
-    fireEvent.click(reloadButton);
+    await user.click(reloadButton);
 
     await waitFor(() => {
       expect(timeoutField.value).toEqual('600');
@@ -176,11 +161,13 @@ describe('EditDeploymentForm', () => {
   });
 
   it('should call handleCancel on Cancel button click ', async () => {
+    renderDeploymentForm();
+    const user = userEvent.setup();
     const cancelButton = screen.getByRole('button', {
       name: /cancel/i,
     });
 
-    fireEvent.click(cancelButton);
+    await user.click(cancelButton);
 
     await waitFor(() => expect(handleCancel).toHaveBeenCalledTimes(1));
   });

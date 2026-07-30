@@ -21,13 +21,13 @@ import {
   NodeLabel,
 } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
+import { noRegroupDragSourceSpec } from '../../components/graph-view/components/componentUtils';
 import {
-  noRegroupDragSourceSpec,
   NodeShadows,
   NODE_SHADOW_FILTER_ID,
   NODE_SHADOW_FILTER_ID_HOVER,
-} from '../../components/graph-view';
-import { useSearchFilter } from '../../filters';
+} from '../../components/graph-view/components/NodeShadows';
+import { useSearchFilter } from '../../filters/useSearchFilter';
 import { useShowLabel } from '../../filters/useShowLabel';
 import { getResource } from '../../utils/topology-utils';
 
@@ -63,7 +63,7 @@ const OperatorBackedServiceGroup: FC<OperatorBackedServiceGroupProps> = ({
   contextMenuOpen,
 }) => {
   const ref = useRef();
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   const [hover, hoverRef] = useHover(0, 200);
   const [innerHover, innerHoverRef] = useHover(0, 200);
   const [labelHover, labelHoverRef] = useHover();
@@ -94,7 +94,7 @@ const OperatorBackedServiceGroup: FC<OperatorBackedServiceGroupProps> = ({
       <Layer id={dragging || labelDragging ? undefined : 'groups2'}>
         <Tooltip
           triggerRef={ref}
-          content={t('topology~Create Service Binding')}
+          content={t('Create Service Binding')}
           trigger="manual"
           isVisible={dropTarget && canDrop}
           animationDuration={0}

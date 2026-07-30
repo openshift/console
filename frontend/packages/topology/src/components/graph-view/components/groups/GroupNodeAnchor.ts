@@ -1,7 +1,7 @@
 import type { Node } from '@patternfly/react-topology';
 import { Point, AbstractAnchor, getRectAnchorPoint } from '@patternfly/react-topology';
 
-class GroupNodeAnchor extends AbstractAnchor<Node> {
+export class GroupNodeAnchor extends AbstractAnchor<Node> {
   protected readonly width: number;
 
   protected readonly height: number;
@@ -22,5 +22,3 @@ class GroupNodeAnchor extends AbstractAnchor<Node> {
     return getRectAnchorPoint(center, this.width + offset2x, this.height + offset2x, reference);
   }
 }
-
-export default GroupNodeAnchor;

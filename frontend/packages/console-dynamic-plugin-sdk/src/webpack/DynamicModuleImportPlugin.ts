@@ -26,6 +26,17 @@ export type DynamicModulePackageSpecs = {
 const isDynamicModuleMap = (obj: unknown): obj is DynamicModuleMap =>
   _.isPlainObject(obj) && Object.values(obj).every((value) => typeof value === 'string');
 
+const defaultDynamicModuleImportSkipPrefixes = [
+  // PatternFly deprecated APIs
+  '@patternfly/react-core/deprecated',
+  // PatternFly internal APIs
+  '@patternfly/react-icons/dist/esm/createIcon',
+  '@patternfly/react-core/dist/esm/components/Tooltip/',
+  '@patternfly/react-core/dist/esm/components/Popover/',
+  // PatternFly public APIs which are not exported properly
+  '@patternfly/react-core/dist/esm/components/OverflowMenu/OverflowMenuContext',
+];
+
 /**
  * Parse or generate dynamic module maps for the provided packages.
  */
@@ -34,6 +45,8 @@ export const resolveDynamicModuleMaps = (
   packageSpecs: DynamicModulePackageSpecs,
   /** Absolute paths to `node_modules` directories to search. */
   modulePaths: string[],
+  /** Optional check if the package is available. */
+  isPackageAvailable: (pkgName: string) => boolean = () => true,
 ) =>
   Object.entries(packageSpecs).reduce<Record<string, DynamicModuleMap>>(
     (
@@ -48,6 +61,10 @@ export const resolveDynamicModuleMaps = (
         },
       ],
     ) => {
+      if (!isPackageAvailable(pkgName)) {
+        return acc;
+      }
+
       const basePath = modulePaths
         .map((p) => path.resolve(p, pkgName))
         .find((p) => fs.existsSync(p) && fs.statSync(p).isDirectory());
@@ -126,6 +143,11 @@ export type DynamicModuleImportPluginOptions = {
    * Such transformations should only apply to JavaScript or TypeScript code.
    */
   moduleFilter: (moduleRequest: string) => boolean;
+
+  /**
+   * Skip transforming imports whose module specifier matches one of these prefixes.
+   */
+  skipImportPrefixes?: string[];
 };
 
 /**
@@ -142,39 +164,21 @@ export class DynamicModuleImportPlugin implements WebpackPluginInstance {
       loader = '@openshift-console/dynamic-plugin-sdk-webpack/lib/webpack/loaders/dynamic-module-import-loader',
       dynamicModuleMaps,
       moduleFilter,
+      skipImportPrefixes = [],
     } = this.options;
 
-    compiler.hooks.thisCompilation.tap(DynamicModuleImportPlugin.name, (compilation) => {
-      const modifiedModules: string[] = [];
+    const loaderOptions: DynamicModuleImportLoaderOptions = {
+      dynamicModuleMaps,
+      skipImportPrefixes: _.uniq([
+        ...defaultDynamicModuleImportSkipPrefixes,
+        ...skipImportPrefixes,
+      ]),
+    };
 
-      compiler.webpack.NormalModule.getCompilationHooks(compilation).beforeLoaders.tap(
-        DynamicModuleImportPlugin.name,
-        (_loaders, normalModule) => {
-          const { userRequest } = normalModule;
-
-          const moduleRequest = userRequest.substring(
-            userRequest.lastIndexOf('!') === -1 ? 0 : userRequest.lastIndexOf('!') + 1,
-          );
-
-          if (!modifiedModules.includes(moduleRequest) && moduleFilter(moduleRequest)) {
-            const loaderOptions: DynamicModuleImportLoaderOptions = {
-              dynamicModuleMaps,
-              resourceMetadata: { jsx: /\.(jsx|tsx)$/.test(moduleRequest) },
-              skipImportPrefixes: [
-                // Imports for PatternFly deprecated APIs
-                '@patternfly/react-core/deprecated',
-                // Imports for PatternFly internal APIs (not exposed via package index)
-                '@patternfly/react-icons/dist/esm/createIcon',
-                '@patternfly/react-core/dist/esm/components/Tooltip/',
-                '@patternfly/react-core/dist/esm/components/Popover/',
-              ],
-            };
-
-            normalModule.loaders.push({ loader, options: loaderOptions } as any);
-            modifiedModules.push(moduleRequest);
-          }
-        },
-      );
+    compiler.options.module.rules.push({
+      test: (resource: string) => moduleFilter(resource),
+      enforce: 'pre',
+      use: [{ loader, options: loaderOptions }],
     });
   }
 }

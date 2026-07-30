@@ -6,16 +6,15 @@ import {
   AccordionToggle,
   AccordionContent,
 } from '@patternfly/react-core';
-import { InProgressIcon, QuestionCircleIcon } from '@patternfly/react-icons';
+import { RhUiInProgressIcon, RhUiQuestionMarkCircleFillIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
-import type { DashboardsInventoryItemGroup } from '@console/dynamic-plugin-sdk';
 import { useResolvedExtensions, isDashboardsInventoryItemGroup } from '@console/dynamic-plugin-sdk';
-import type { ResolvedExtension } from '@console/dynamic-plugin-sdk/dist/core/lib/types';
+import type { DashboardsInventoryItemGroup, ResolvedExtension } from '@console/dynamic-plugin-sdk';
 import type { ResourceInventoryItemProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { pluralize } from '@console/internal/components/utils/details-page';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
-import type { K8sResourceKind, K8sKind, K8sResourceCommon } from '@console/internal/module/k8s';
+import type { K8sKind, K8sResourceCommon } from '@console/internal/module/k8s';
 import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '../../status/icons';
 import InventoryItemNew, {
   InventoryItemStatus,
@@ -29,10 +28,10 @@ const defaultStatusGroupIcons = {
   [InventoryStatusGroup.WARN]: <YellowExclamationTriangleIcon />,
   [InventoryStatusGroup.ERROR]: <RedExclamationCircleIcon />,
   [InventoryStatusGroup.PROGRESS]: (
-    <InProgressIcon className="co-inventory-card__status-icon--progress" />
+    <RhUiInProgressIcon className="co-inventory-card__status-icon--progress" />
   ),
   [InventoryStatusGroup.UNKNOWN]: (
-    <QuestionCircleIcon className="co-inventory-card__status-icon--question" />
+    <RhUiQuestionMarkCircleFillIcon className="co-inventory-card__status-icon--question" />
   ),
 };
 
@@ -78,7 +77,7 @@ export const InventoryItem = memo<InventoryItemProps>(
     ExpandedComponent,
     dataTest,
   }) => {
-    const { t } = useTranslation();
+    const { t } = useTranslation('console-shared');
     const [expanded, setExpanded] = useState(false);
     const onClick = useCallback(() => setExpanded(!expanded), [expanded]);
     const titleMessage = pluralize(count, title, titlePlural, !isLoading && !error);
@@ -105,9 +104,7 @@ export const InventoryItem = memo<InventoryItemProps>(
               {!expanded && (error || !isLoading) && (
                 <div className="co-inventory-card__item-status">
                   {error ? (
-                    <div className="pf-v6-u-text-color-subtle">
-                      {t('console-shared~Not available')}
-                    </div>
+                    <div className="pf-v6-u-text-color-subtle">{t('Not available')}</div>
                   ) : (
                     children
                   )}
@@ -135,7 +132,7 @@ export const InventoryItem = memo<InventoryItemProps>(
   },
 );
 
-export const Status: FC<StatusProps> = ({ groupID, count }) => {
+const Status: FC<StatusProps> = ({ groupID, count }) => {
   const [groupExtensions] = useResolvedExtensions<DashboardsInventoryItemGroup>(
     isDashboardsInventoryItemGroup,
   );
@@ -216,7 +213,7 @@ export const ResourceInventoryItem: FC<ResourceInventoryItemProps> = ({
   basePath,
   dataTest,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   let Title: ComponentType = useCallback(
     (props) => (
       <ResourceTitleComponent
@@ -332,11 +329,6 @@ type StatusLinkProps = StatusProps & {
   namespace?: string;
   filterType?: string;
   basePath?: string;
-};
-
-export type ExpandedComponentProps = {
-  resource: K8sResourceKind[];
-  additionalResources?: { [key: string]: K8sResourceKind[] };
 };
 
 type ResourceTitleComponentComponent = {

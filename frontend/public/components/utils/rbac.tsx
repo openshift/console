@@ -1,15 +1,15 @@
+/* eslint-disable no-barrel-files/no-barrel-files */
 import type { ReactNode, FC } from 'react';
-import { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { getName, getNamespace } from '@console/shared/src/selectors/common';
+import type { ImpersonateKind } from '@console/dynamic-plugin-sdk';
 import {
   checkAccess,
   impersonateStateToProps,
-  ImpersonateKind,
   useAccessReviewAllowed,
   useAccessReview as useAccReview,
 } from '@console/dynamic-plugin-sdk';
-import {
+import { getName, getNamespace } from '@console/shared/src/selectors/common';
+import type {
   AccessReviewResourceAttributes,
   K8sKind,
   K8sResourceKind,
@@ -30,37 +30,6 @@ export const useAccessReview = (
   impersonate?: ImpersonateKind,
 ) => useAccessReviewAllowed(resourceAttributes, impersonate);
 
-export const useMultipleAccessReviews = (
-  multipleResourceAttributes: AccessReviewResourceAttributes[],
-  impersonate?: ImpersonateKind,
-): [AccessReviewsResult[], boolean] => {
-  const [loading, setLoading] = useState(true);
-  const [allowedArr, setAllowedArr] = useState<AccessReviewsResult[]>([]);
-
-  useEffect(() => {
-    const promises = multipleResourceAttributes.map((resourceAttributes) =>
-      checkAccess(resourceAttributes, impersonate),
-    );
-
-    Promise.all(promises)
-      .then((values) => {
-        setLoading(false);
-        const updatedAllowedArr = values.map<AccessReviewsResult>((result) => ({
-          resourceAttributes: result.spec.resourceAttributes,
-          allowed: result.status.allowed,
-        }));
-        setAllowedArr(updatedAllowedArr);
-      })
-      .catch((e) => {
-        // eslint-disable-next-line no-console
-        console.warn('SelfSubjectAccessReview failed', e);
-        setLoading(false);
-      });
-  }, [impersonate, multipleResourceAttributes]);
-
-  return [allowedArr, loading];
-};
-
 type RequireCreatePermissionOwnProps = {
   model: K8sKind;
   namespace?: string;
@@ -71,7 +40,7 @@ type RequireCreatePermissionProps = RequireCreatePermissionOwnProps & {
   impersonate?: ImpersonateKind;
 };
 
-const RequireCreatePermission_: FC<RequireCreatePermissionProps> = ({
+const InnerRequireCreatePermission: FC<RequireCreatePermissionProps> = ({
   model,
   namespace,
   impersonate,
@@ -93,14 +62,9 @@ export const RequireCreatePermission = connect<
   { impersonate?: ImpersonateKind },
   {},
   RequireCreatePermissionOwnProps
->(impersonateStateToProps)(RequireCreatePermission_);
+>(impersonateStateToProps)(InnerRequireCreatePermission);
 
 RequireCreatePermission.displayName = 'RequireCreatePermission';
-
-type AccessReviewsResult = {
-  resourceAttributes: AccessReviewResourceAttributes;
-  allowed: boolean;
-};
 
 export const asAccessReview = (
   kindObj: K8sKind,

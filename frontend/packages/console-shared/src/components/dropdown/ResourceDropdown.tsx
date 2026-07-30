@@ -40,6 +40,7 @@ export interface ResourceDropdownProps {
   autocompleteFilter?: ConsoleSelectProps['autocompleteFilter'];
   buttonClassName?: ConsoleSelectProps['buttonClassName'];
   className?: ConsoleSelectProps['className'];
+  dataTest?: ConsoleSelectProps['dataTest'];
   disabled?: ConsoleSelectProps['disabled'];
   id?: ConsoleSelectProps['id'];
   isFullWidth?: ConsoleSelectProps['isFullWidth'];
@@ -105,6 +106,7 @@ export const ResourceDropdown: FC<ResourceDropdownProps> = ({
   className,
   customResourceKey,
   dataSelector,
+  dataTest,
   disabled,
   id,
   isFullWidth,
@@ -124,7 +126,7 @@ export const ResourceDropdown: FC<ResourceDropdownProps> = ({
   transformLabel,
   userPreferencePrefix,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const [selectedTitle, setSelectedTitle] = useState<ReactNode>(null);
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
@@ -293,7 +295,7 @@ export const ResourceDropdown: FC<ResourceDropdownProps> = ({
     if (loadError) {
       return (
         <span className="pf-v6-u-text-color-status-danger">
-          {t('console-shared~Error loading - {{placeholder}}', { placeholder })}
+          {t('Error loading - {{placeholder}}', { placeholder })}
         </span>
       );
     }
@@ -319,6 +321,7 @@ export const ResourceDropdown: FC<ResourceDropdownProps> = ({
   return (
     <ConsoleSelect
       id={id}
+      dataTest={dataTest}
       ariaLabel={ariaLabel}
       className={className}
       menuClassName={menuClassName}

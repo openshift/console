@@ -1,24 +1,24 @@
-import type { FC } from 'react';
-import { useMemo } from 'react';
-import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { useMemo, memo } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
-import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
-import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ConsoleLinkModel } from '@console/internal/models';
-import { K8sResourceKind, LabelSelector, referenceForModel, Selector } from '../../../module/k8s';
+import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
+import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import type { K8sResourceKind, Selector } from '../../../module/k8s';
+import { LabelSelector, referenceForModel } from '../../../module/k8s';
+import { PROJECT_OVERVIEW_USER_PREFERENCE_KEY } from '../dashboards-page/cluster-dashboard/getting-started/constants';
+import { ActivityCard } from './activity-card';
 import { DetailsCard } from './details-card';
+import { GettingStartedSection as DevGettingStartedSection } from './getting-started/GettingStartedSection';
+import { InventoryCard } from './inventory-card';
+import { LauncherCard } from './launcher-card';
+import { ProjectDashboardContext } from './project-dashboard-context';
+import { ResourceQuotaCard } from './resource-quota-card';
 import { StatusCard } from './status-card';
 import { UtilizationCard } from './utilization-card';
-import { InventoryCard } from './inventory-card';
-import { ActivityCard } from './activity-card';
-import { ProjectDashboardContext } from './project-dashboard-context';
-import { LauncherCard } from './launcher-card';
-import { ResourceQuotaCard } from './resource-quota-card';
-import { GettingStartedSection as DevGettingStartedSection } from './getting-started/GettingStartedSection';
-import { PROJECT_OVERVIEW_USER_PREFERENCE_KEY } from '../dashboards-page/cluster-dashboard/getting-started/constants';
 
 const mainCards = [{ Card: StatusCard }, { Card: UtilizationCard }, { Card: ResourceQuotaCard }];
 const leftCards = [{ Card: DetailsCard }, { Card: InventoryCard }];
@@ -50,19 +50,19 @@ export const getNamespaceDashboardConsoleLinks = (
   });
 };
 
-export const ProjectDashboard: FC<ProjectDashboardProps> = ({ obj }) => {
-  const { t } = useTranslation();
+export const ProjectDashboard = memo<ProjectDashboardProps>(({ obj }) => {
+  const { t } = useTranslation('public');
   const [perspective] = useActivePerspective();
   const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
     isList: true,
     kind: referenceForModel(ConsoleLinkModel),
     optional: true,
   });
-  const namespaceLinks = getNamespaceDashboardConsoleLinks(obj, consoleLinks);
-  const context = {
+  const namespaceLinks = useMemo(() => getNamespaceDashboardConsoleLinks(obj, consoleLinks), [
     obj,
-    namespaceLinks,
-  };
+    consoleLinks,
+  ]);
+  const context = useMemo(() => ({ obj, namespaceLinks }), [obj, namespaceLinks]);
 
   const hasNamespaceLinks = !!namespaceLinks.length;
 
@@ -73,7 +73,7 @@ export const ProjectDashboard: FC<ProjectDashboardProps> = ({ obj }) => {
 
   return (
     <>
-      {perspective === 'dev' && <DocumentTitle>{t('public~Project overview')}</DocumentTitle>}
+      {perspective === 'dev' && <DocumentTitle>{t('Project overview')}</DocumentTitle>}
       <ProjectDashboardContext.Provider value={context}>
         <Dashboard>
           <DevGettingStartedSection
@@ -88,7 +88,7 @@ export const ProjectDashboard: FC<ProjectDashboardProps> = ({ obj }) => {
       </ProjectDashboardContext.Provider>
     </>
   );
-};
+});
 
 type ProjectDashboardProps = {
   obj: K8sResourceKind;

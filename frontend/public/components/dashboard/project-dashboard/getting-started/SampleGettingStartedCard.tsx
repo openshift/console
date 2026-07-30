@@ -1,17 +1,15 @@
 import type { FC } from 'react';
-import { CatalogIcon } from '@patternfly/react-icons';
+import { RhUiCatalogAltIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { CatalogItem } from '@console/dynamic-plugin-sdk';
-import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
-import CatalogServiceProvider from '@console/shared/src/components/catalog/service/CatalogServiceProvider';
-import { isCatalogTypeEnabled } from '@console/shared/src/components/catalog/utils/catalog-utils';
-import {
-  GettingStartedLink,
-  GettingStartedCard,
-} from '@console/shared/src/components/getting-started';
-import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { SAMPLE_CATALOG_TYPE_ID } from '@console/dev-console/src/const';
 import { getDisabledAddActions } from '@console/dev-console/src/utils/useAddActionExtensions';
+import type { CatalogItem } from '@console/dynamic-plugin-sdk';
+import { CatalogServiceProvider } from '@console/shared/src/components/catalog/service/CatalogServiceProvider';
+import { isCatalogTypeEnabled } from '@console/shared/src/components/catalog/utils/catalog-utils';
+import type { GettingStartedLink } from '@console/shared/src/components/getting-started/GettingStartedCard';
+import { GettingStartedCard } from '@console/shared/src/components/getting-started/GettingStartedCard';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 
 interface SampleGettingStartedCardProps {
   featured?: string[];
@@ -42,7 +40,7 @@ const orderCatalogItems = (allCatalogItems: CatalogItem[], featured: string[]): 
 };
 
 export const SampleGettingStartedCard: FC<SampleGettingStartedCardProps> = ({ featured = [] }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const [activeNamespace] = useActiveNamespace();
   const isSampleTypeEnabled = isCatalogTypeEnabled(SAMPLE_CATALOG_TYPE_ID);
 
@@ -53,7 +51,7 @@ export const SampleGettingStartedCard: FC<SampleGettingStartedCardProps> = ({ fe
 
   const moreLink: GettingStartedLink = {
     id: 'all-samples',
-    title: t('public~View all samples'),
+    title: t('View all samples'),
     href:
       activeNamespace && activeNamespace !== ALL_NAMESPACES_KEY
         ? `/samples/ns/${activeNamespace}`
@@ -89,12 +87,12 @@ export const SampleGettingStartedCard: FC<SampleGettingStartedCardProps> = ({ fe
         return (
           <GettingStartedCard
             id="samples"
-            icon={<CatalogIcon color="var(--co-global--palette--blue-400)" aria-hidden="true" />}
-            title={t('public~Create applications using samples')}
+            icon={
+              <RhUiCatalogAltIcon color="var(--co-global--palette--blue-400)" aria-hidden="true" />
+            }
+            title={t('Create applications using samples')}
             titleColor={'var(--co-global--palette--blue-400)'}
-            description={t(
-              'public~Choose a code sample to get started creating an application with.',
-            )}
+            description={t('Choose a code sample to get started creating an application with.')}
             links={links}
             moreLink={moreLink}
           />

@@ -6,18 +6,19 @@ import type { WatchK8sResource } from '@console/dynamic-plugin-sdk/src/extension
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { USER_PREFERENCE_PREFIX, useToast } from '@console/shared/src';
+import { useToast } from '@console/shared/src/components/toast/useToast';
+import { USER_PREFERENCE_PREFIX } from '@console/shared/src/constants/common';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
-import { ExportModel } from '../../models';
+import { ExportModel } from '../../models/gitops-primer';
 import type { ExportAppUserSettings } from './types';
 
-export const ExportAppContext = createContext({});
+const ExportAppContext = createContext({});
 
 export const ExportAppContextProvider = ExportAppContext.Provider;
 
 export const useExportAppFormToast = () => {
   const toast = useToast();
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   const [currentToasts, setCurrentToasts] = useState<{ [key: string]: { toastId: string } }>({});
   const [exportAppToast, setExportAppToast, exportAppToastLoaded] = useUserPreference<
     ExportAppUserSettings
@@ -81,9 +82,9 @@ export const useExportAppFormToast = () => {
     (expNamespace: string, routeUrl: string, key: string) => {
       const toastId = toast.addToast({
         variant: AlertVariant.info,
-        title: t('topology~Export application'),
+        title: t('Export application'),
         content: t(
-          'topology~All the resources are exported successfully from {{namespace}}. Click below to download it.',
+          'All the resources are exported successfully from {{namespace}}. Click below to download it.',
           {
             namespace: expNamespace,
           },
@@ -92,7 +93,7 @@ export const useExportAppFormToast = () => {
         actions: [
           {
             dismiss: true,
-            label: t('topology~Download'),
+            label: t('Download'),
             callback: () => {
               cleanToast(key);
               cleanToastConfig(key);

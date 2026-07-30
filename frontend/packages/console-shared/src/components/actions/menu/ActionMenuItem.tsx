@@ -10,7 +10,7 @@ import type { Action, ImpersonateKind } from '@console/dynamic-plugin-sdk';
 import { impersonateStateToProps } from '@console/dynamic-plugin-sdk';
 import { useAccessReview } from '@console/internal/components/utils/rbac';
 
-export type ActionMenuItemProps = {
+type ActionMenuItemProps = {
   action: Action;
   component?: ComponentType<DropdownItemProps>;
   autoFocus?: boolean;
@@ -65,6 +65,7 @@ const ActionItem: FC<ActionMenuItemProps & { isAllowed: boolean }> = ({
     isDisabled,
     className: classes,
     onClick: handleClick,
+    'data-test': label,
     'data-test-action': label,
     translate: 'no' as 'no',
   };

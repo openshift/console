@@ -15,7 +15,7 @@ import {
   HelperText,
   HelperTextItem,
 } from '@patternfly/react-core';
-import { HelpIcon } from '@patternfly/react-icons';
+import { RhUiQuestionMarkIcon } from '@patternfly/react-icons';
 import type { FormikValues } from 'formik';
 import { useFormikContext } from 'formik';
 import * as fuzzy from 'fuzzysearch';
@@ -24,12 +24,14 @@ import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { generateSecret } from '@console/dev-console/src/components/import/import-submit-utils';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import { GitProvider } from '@console/git-service/src';
+import { GitProvider } from '@console/git-service/src/types/git';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { SecretModel } from '@console/internal/models';
 import type { ConfigMapKind, SecretKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { RadioGroupField, InputField, ResourceDropdownField } from '@console/shared/src';
+import { InputField } from '@console/shared/src/components/formik-fields/InputField';
+import { RadioGroupField } from '@console/shared/src/components/formik-fields/RadioGroupField';
+import { ResourceDropdownField } from '@console/shared/src/components/formik-fields/ResourceDropdownField';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import PermissionsSection from './PermissionsSection';
@@ -39,14 +41,14 @@ type WebhoookSectionProps = {
   formContextField?: string;
 };
 
-export const AccessTokenDocLinks = {
+const AccessTokenDocLinks = {
   [GitProvider.GITHUB]:
     'https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token',
   [GitProvider.GITLAB]: 'https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html',
   [GitProvider.BITBUCKET]: 'https://support.atlassian.com/bitbucket-cloud/docs/app-passwords/',
 };
 
-export const WebhookDocLinks = {
+const WebhookDocLinks = {
   [GitProvider.GITHUB]:
     'https://docs.github.com/en/developers/webhooks-and-events/webhooks/creating-webhooks',
   [GitProvider.GITLAB]:
@@ -61,7 +63,7 @@ const WebhookSection: FC<WebhoookSectionProps> = ({ pac, formContextField }) => 
   const { gitProvider, webhook } = _.get(values, formContextField) || values;
   const [controllerUrl, setControllerUrl] = useState('');
   const [webhookSecret, setWebhookSecret] = useState('');
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
 
   useEffect(() => {
     const ctlUrl = pac?.data?.['controller-url'];
@@ -104,13 +106,13 @@ const WebhookSection: FC<WebhoookSectionProps> = ({ pac, formContextField }) => 
   const getPermssionSectionHeading = (git: GitProvider) => {
     switch (git) {
       case GitProvider.GITHUB:
-        return t('devconsole~See GitHub events');
+        return t('See GitHub events');
       case GitProvider.GITLAB:
-        return t('devconsole~See GitLab events');
+        return t('See GitLab events');
       case GitProvider.BITBUCKET:
-        return t('devconsole~See Bitbucket events');
+        return t('See Bitbucket events');
       default:
-        return t('devconsole~See Git events');
+        return t('See Git events');
     }
   };
 
@@ -166,7 +168,7 @@ const WebhookSection: FC<WebhoookSectionProps> = ({ pac, formContextField }) => 
     <FormSection fullWidth={!fieldPrefix} extraMargin>
       {gitProvider && gitProvider === GitProvider.BITBUCKET ? (
         <InputField
-          label={t('devconsole~Bitbucket username')}
+          label={t('Bitbucket username')}
           name={`${fieldPrefix}webhook.user`}
           type={TextInputTypes.text}
           required
@@ -174,26 +176,26 @@ const WebhookSection: FC<WebhoookSectionProps> = ({ pac, formContextField }) => 
       ) : null}
       <RadioGroupField
         name={`${fieldPrefix}webhook.method`}
-        label={t('devconsole~Secret')}
+        label={t('Secret')}
         labelIcon={
           <Tooltip
             position="right"
             content={
               <p>
                 {t(
-                  'devconsole~The secret is required to set the Build status and to attach the webhook to the Git repository.',
+                  'The secret is required to set the Build status and to attach the webhook to the Git repository.',
                 )}
               </p>
             }
           >
-            <HelpIcon />
+            <RhUiQuestionMarkIcon />
           </Tooltip>
         }
         required
         options={[
           {
             value: 'token',
-            label: t('devconsole~Git access token'),
+            label: t('Git access token'),
             activeChildren: (
               <InputField
                 name={`${fieldPrefix}webhook.token`}
@@ -205,17 +207,17 @@ const WebhookSection: FC<WebhoookSectionProps> = ({ pac, formContextField }) => 
           },
           {
             value: 'secret',
-            label: t('devconsole~Git access token secret'),
+            label: t('Git access token secret'),
 
             activeChildren: (
               <ResourceDropdownField
                 helpText={t(
-                  'devconsole~Secret with the Git access token for pulling pipeline and tasks from your Git repository.',
+                  'Secret with the Git access token for pulling pipeline and tasks from your Git repository.',
                 )}
                 name={`${fieldPrefix}webhook.secretRef`}
                 resources={resources}
                 dataSelector={['metadata', 'name']}
-                placeholder={t('devconsole~Select a secret')}
+                placeholder={t('Select a secret')}
                 autocompleteFilter={autocompleteFilter}
                 fullWidth
                 showBadge
@@ -234,7 +236,7 @@ const WebhookSection: FC<WebhoookSectionProps> = ({ pac, formContextField }) => 
         ]}
       />
       {webhook?.url && (
-        <FormGroup fieldId="test" label={t('devconsole~Webhook URL')}>
+        <FormGroup fieldId="test" label={t('Webhook URL')}>
           <ClipboardCopy
             isReadOnly
             name={`${fieldPrefix}webhook.url`}
@@ -249,7 +251,7 @@ const WebhookSection: FC<WebhoookSectionProps> = ({ pac, formContextField }) => 
             <HelperText>
               <HelperTextItem>
                 {t(
-                  'devconsole~We have detected a URL that can be used to configure the webhook. It will be created and attached to the Git repository.',
+                  'We have detected a URL that can be used to configure the webhook. It will be created and attached to the Git repository.',
                 )}
               </HelperTextItem>
             </HelperText>
@@ -258,7 +260,7 @@ const WebhookSection: FC<WebhoookSectionProps> = ({ pac, formContextField }) => 
       )}
 
       {gitProvider && gitProvider !== GitProvider.BITBUCKET ? (
-        <FormGroup fieldId={'webhook-secret-clipboard'} label={t('devconsole~Webhook secret')}>
+        <FormGroup fieldId={'webhook-secret-clipboard'} label={t('Webhook secret')}>
           <InputGroup style={{ display: 'flex' }}>
             <InputGroupItem>
               <ClipboardCopy
@@ -275,7 +277,7 @@ const WebhookSection: FC<WebhoookSectionProps> = ({ pac, formContextField }) => 
             </InputGroupItem>
             <InputGroupItem>
               <Button data-test="generate-secret" variant="control" onClick={generateWebhookSecret}>
-                {t('devconsole~Generate')}
+                {t('Generate')}
               </Button>
             </InputGroupItem>
           </InputGroup>
@@ -285,10 +287,7 @@ const WebhookSection: FC<WebhoookSectionProps> = ({ pac, formContextField }) => 
       {gitProvider && gitProvider !== GitProvider.UNSURE ? (
         <>
           <ExpandableSection toggleText={getPermssionSectionHeading(gitProvider)}>
-            <FormGroup
-              label={t('devconsole~Events triggering the webhook: ')}
-              fieldId="repo-permissions"
-            >
+            <FormGroup label={t('Events triggering the webhook: ')} fieldId="repo-permissions">
               <Content component={ContentVariants.small}>
                 <PermissionsSection formContextField={formContextField} />
               </Content>
@@ -296,7 +295,7 @@ const WebhookSection: FC<WebhoookSectionProps> = ({ pac, formContextField }) => 
           </ExpandableSection>
 
           <ExternalLink
-            text={t('devconsole~Read more about setting up webhook')}
+            text={t('Read more about setting up webhook')}
             href={WebhookDocLinks[gitProvider]}
           />
         </>

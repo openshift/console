@@ -6,16 +6,14 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import {
-  CodeEditorField,
-  FlexForm,
-  FormBody,
-  FormFooter,
-  InputField,
-  SyncedEditorField,
-} from '@console/shared';
 import SwitchToYAMLAlert from '@console/shared/src/components/alerts/SwitchToYAMLAlert';
 import { downloadYaml } from '@console/shared/src/components/editor/yaml-download-utils';
+import { FlexForm } from '@console/shared/src/components/form-utils/FlexForm';
+import { FormBody } from '@console/shared/src/components/form-utils/FormBody';
+import { FormFooter } from '@console/shared/src/components/form-utils/FormFooter';
+import { CodeEditorField } from '@console/shared/src/components/formik-fields/CodeEditorField';
+import { InputField } from '@console/shared/src/components/formik-fields/InputField';
+import { SyncedEditorField } from '@console/shared/src/components/formik-fields/SyncedEditorField';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import {
@@ -27,7 +25,7 @@ import PubSubFilter from '../../pub-sub/form-fields/PubSubFilter';
 import PubSubSubscriber from '../../pub-sub/form-fields/PubSubSubscriber';
 import { convertFormToTriggerYaml, convertYamlToForm } from './subscribe-utils';
 
-export interface SubscribeFormProps {
+interface SubscribeFormProps {
   filterEnabled: boolean;
   source: K8sResourceKind;
   handleCancel?: () => void;
@@ -47,7 +45,7 @@ const SubscribeForm: FC<Props> = ({
   errors,
   values,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const [showYAMLAlert, setShowYAMLAlert] = useState<boolean>(true);
   const { kind: sourceKind } = source;
   const dirty = values?.formData?.metadata?.name && values?.formData?.spec?.subscriber?.ref?.name;
@@ -71,7 +69,7 @@ const SubscribeForm: FC<Props> = ({
         <InputField
           type={TextInputTypes.text}
           name="formData.metadata.name"
-          label={t('knative-plugin~Name')}
+          label={t('Name')}
           required
         />
         <PubSubSubscriber autoSelect={false} />
@@ -105,8 +103,8 @@ const SubscribeForm: FC<Props> = ({
       </FormBody>
       <FormFooter
         isSubmitting={isSubmitting}
-        submitLabel={t('knative-plugin~Subscribe')}
-        cancelLabel={t('knative-plugin~Cancel')}
+        submitLabel={t('Subscribe')}
+        cancelLabel={t('Cancel')}
         disableSubmit={
           (values.editorType !== EditorType.YAML ? !dirty || !_.isEmpty(errors) : false) ||
           isSubmitting

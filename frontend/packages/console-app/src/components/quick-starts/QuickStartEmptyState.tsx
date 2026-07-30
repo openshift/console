@@ -7,7 +7,7 @@ import {
   EmptyStateVariant,
   Skeleton,
 } from '@patternfly/react-core';
-import { CubesIcon, WrenchIcon } from '@patternfly/react-icons';
+import { RhStandardTalkBubbleIcon, RhStandardCursorIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { QuickStartModel } from '@console/app/src/models';
 import { useAccessReview } from '@console/dynamic-plugin-sdk/src/app/components/utils/rbac';
@@ -32,7 +32,9 @@ export const QuickStartEmptyState = () => {
     <EmptyState
       titleText={t('No {{label}} found', { label: QuickStartModel.labelPlural })}
       headingLevel="h4"
-      icon={loading ? Skeleton : canAddQuickStarts ? WrenchIcon : CubesIcon}
+      icon={
+        loading ? Skeleton : canAddQuickStarts ? RhStandardCursorIcon : RhStandardTalkBubbleIcon
+      }
       variant={EmptyStateVariant.lg}
     >
       {!loading ? (

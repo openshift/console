@@ -1,10 +1,10 @@
 import type { FC } from 'react';
-import { useTranslation } from 'react-i18next';
-import * as _ from 'lodash';
 import { css } from '@patternfly/react-styles';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import type { TemplateKind, PartialObjectMetadata } from '@console/internal/module/k8s';
 import { returnIfValidURL } from '@console/shared/src/utils/utils';
-
-import { TemplateKind, PartialObjectMetadata } from '@console/internal/module/k8s';
+import threeScaleImg from '../../imgs/logos/3scale.svg';
 import aerogearImg from '../../imgs/logos/aerogear.svg';
 import amqImg from '../../imgs/logos/amq.svg';
 import angularjsImg from '../../imgs/logos/angularjs.svg';
@@ -31,9 +31,9 @@ import elasticImg from '../../imgs/logos/elastic.svg';
 import erlangImg from '../../imgs/logos/erlang.svg';
 import fedoraImg from '../../imgs/logos/fedora.svg';
 import freebsdImg from '../../imgs/logos/freebsd.svg';
+import gitImg from '../../imgs/logos/git.svg';
 import giteaImg from '../../imgs/logos/gitea.svg';
 import githubImg from '../../imgs/logos/github.svg';
-import gitImg from '../../imgs/logos/git.svg';
 import gitlabImg from '../../imgs/logos/gitlab.svg';
 import glassfishImg from '../../imgs/logos/glassfish.svg';
 import goGopherImg from '../../imgs/logos/go-gopher.svg';
@@ -98,7 +98,6 @@ import ssoImg from '../../imgs/logos/sso.svg';
 import stackoverflowImg from '../../imgs/logos/stackoverflow.svg';
 import suseImg from '../../imgs/logos/suse.svg';
 import symfonyImg from '../../imgs/logos/symfony.svg';
-import threeScaleImg from '../../imgs/logos/3scale.svg';
 import tomcatImg from '../../imgs/logos/tomcat.svg';
 import ubuntuImg from '../../imgs/logos/ubuntu.svg';
 import vertxImg from '../../imgs/logos/vertx.svg';
@@ -257,7 +256,7 @@ export const getTemplateIcon = (template: TemplateKind | PartialObjectMetadata):
 };
 
 export const ImageStreamIcon: FC<ImageStreamIconProps> = ({ tag, iconSize }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const iconClass = getImageStreamIcon(tag);
   const iconClassImg = getImageForIconClass(iconClass);
   return (
@@ -270,7 +269,7 @@ export const ImageStreamIcon: FC<ImageStreamIconProps> = ({ tag, iconSize }) => 
               iconSize && `co-catalog-item-icon__img--${iconSize}`,
             )}
             src={iconClassImg}
-            alt={t('public~Icon')}
+            alt={t('Icon')}
           />
         ) : (
           <span

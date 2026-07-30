@@ -1,20 +1,17 @@
-import * as _ from 'lodash';
 import type { FC, ReactNode } from 'react';
-import { useTranslation } from 'react-i18next';
-import CloseButton from '@console/shared/src/components/close-button';
-
-import { definitionFor, K8sKind } from '../../module/k8s';
-import {
-  ResourceSidebarSnippets,
-  ResourceSidebarSamples,
-  LoadSampleYaml,
-  DownloadSampleYaml,
-} from './resource-sidebar-samples';
-import { ExploreType } from './explore-type-sidebar';
-import { SimpleTabNav, Tab } from '../utils/simple-tab-nav';
-import { Sample } from '@console/shared/src/hooks/useResourceSidebarSamples';
 import { Flex, FlexItem, Title } from '@patternfly/react-core';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { CloseButton } from '@console/shared/src/components/close-button/CloseButton';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import type { Sample } from '@console/shared/src/hooks/useResourceSidebarSamples';
+import type { K8sKind } from '../../module/k8s';
+import { definitionFor } from '../../module/k8s';
+import type { Tab } from '../utils/simple-tab-nav';
+import { SimpleTabNav } from '../utils/simple-tab-nav';
+import { ExploreType } from './explore-type-sidebar';
+import type { LoadSampleYaml, DownloadSampleYaml } from './resource-sidebar-samples';
+import { ResourceSidebarSnippets, ResourceSidebarSamples } from './resource-sidebar-samples';
 
 const sidebarScrollTop = () => {
   document.getElementsByClassName('co-p-has-sidebar__sidebar')[0].scrollTop = 0;
@@ -25,7 +22,7 @@ const ResourceSidebarWrapper: FC<{
   toggleSidebar: () => void;
   children?: ReactNode;
 }> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { label, children, toggleSidebar } = props;
 
   return (
@@ -40,7 +37,7 @@ const ResourceSidebarWrapper: FC<{
               {label}
             </Title>
           </FlexItem>
-          <CloseButton ariaLabel={t('public~Close')} onClick={toggleSidebar} />
+          <CloseButton ariaLabel={t('Close')} onClick={toggleSidebar} />
         </Flex>
         {children}
       </PaneBody>
@@ -84,7 +81,7 @@ export const ResourceSidebar: FC<{
   samples: Sample[];
   snippets: Sample[];
 }> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const {
     downloadSampleYaml,
     kindObj,
@@ -101,7 +98,7 @@ export const ResourceSidebar: FC<{
   }
 
   const kindLabel = kindObj?.labelKey ? t(kindObj.labelKey) : kindObj?.label;
-  const label = sidebarLabel ? sidebarLabel : kindLabel;
+  const label = sidebarLabel || kindLabel;
 
   const showSamples = !_.isEmpty(samples);
   const showSnippets = !_.isEmpty(snippets);
@@ -112,20 +109,20 @@ export const ResourceSidebar: FC<{
   let tabs: Tab[] = [];
   if (showSamples) {
     tabs.push({
-      name: t('public~Samples'),
+      name: t('Samples'),
       component: ResourceSamples,
     });
   }
   if (showSnippets) {
     tabs.push({
-      name: t('public~Snippets'),
+      name: t('Snippets'),
       component: ResourceSnippets,
     });
   }
   if (showSchema) {
     tabs = [
       {
-        name: t('public~Schema'),
+        name: t('Schema'),
         component: ResourceSchema,
       },
       ...tabs,

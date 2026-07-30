@@ -9,10 +9,6 @@ export type DataSource = Extension<
   }
 >;
 
-export const isDataSource = (e: Extension): e is DataSource => {
-  return e.type === 'console.dashboards/datasource';
-};
-
 export type CustomDataSource = {
   basePath: string;
   dataSourceType: string;

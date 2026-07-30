@@ -92,20 +92,20 @@ export const useDeleteConnectorAction = (
   resourceObj?: any,
 ): Action => {
   const resource = resourceObj || getResource(element.getSource?.());
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
 
   const openConfirm = useWarningModal({
-    title: t('topology~Delete Connector?'),
+    title: t('Delete Connector?'),
     children: t(
-      'topology~Deleting the visual connector removes the `connects-to` annotation from the resources. Are you sure you want to delete the visual connector?',
+      'Deleting the visual connector removes the `connects-to` annotation from the resources. Are you sure you want to delete the visual connector?',
     ),
-    confirmButtonLabel: t('topology~Delete'),
+    confirmButtonLabel: t('Delete'),
     confirmButtonVariant: ButtonVariant.danger,
     onConfirm: () => {
       return removeTopologyResourceConnection(element, resource).catch((err) => {
         if (err) {
           launchErrorModal({
-            title: t('topology~Error deleting connector'),
+            title: t('Error deleting connector'),
             error: err.message,
           });
         }
@@ -117,7 +117,7 @@ export const useDeleteConnectorAction = (
   return useMemo(
     () => ({
       id: 'delete-connector',
-      label: t('topology~Delete connector'),
+      label: t('Delete connector'),
       cta: () => openConfirm(),
       accessReview: asAccessReview(kindObj, resource, 'delete'),
     }),

@@ -1,7 +1,6 @@
 import { screen } from '@testing-library/react';
-
-import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { CommandLineTools } from '@console/internal/components/command-line-tools';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 
 const obj = {
   data: [
@@ -12,6 +11,7 @@ const obj = {
       },
       spec: {
         displayName: 'helm - Helm 3 CLI',
+        description: '',
         links: [],
       },
     },
@@ -22,6 +22,7 @@ const obj = {
       },
       spec: {
         displayName: 'oc - OpenShift Command Line Interface (CLI)',
+        description: '',
         links: [],
       },
     },
@@ -30,23 +31,7 @@ const obj = {
   loadError: null,
 };
 
-const nativeResizeObserver = window.ResizeObserver;
-class ResizeObserver {
-  observe() {}
-  unobserve() {}
-  disconnect() {}
-}
-
 describe('CommandLineTools', () => {
-  beforeAll(() => {
-    window.ResizeObserver = ResizeObserver;
-  });
-
-  afterAll(() => {
-    window.ResizeObserver = nativeResizeObserver;
-    jest.restoreAllMocks();
-  });
-
   describe('When ordering is correct', () => {
     it('shows oc CLI first in the displayed list', async () => {
       renderWithProviders(<CommandLineTools obj={obj} />);

@@ -56,17 +56,6 @@ import type { ConnectsToData } from '../utils/connector-utils';
 import { edgesFromAnnotations } from '../utils/connector-utils';
 import { WORKLOAD_TYPES } from '../utils/topology-utils';
 
-export const dataObjectFromModel = (node: OdcNodeModel): TopologyDataObject => {
-  return {
-    id: node.id,
-    name: node.label,
-    type: node.type,
-    resource: node.resource,
-    resources: null,
-    data: null,
-  };
-};
-
 export const getContextDirByName = (data, name) => {
   if (!data?.builds && !data?.buildConfigs && !data?.pipelines) {
     return null;

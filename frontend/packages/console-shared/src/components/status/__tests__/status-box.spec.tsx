@@ -5,7 +5,7 @@ import {
   TimeoutError,
 } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
 import { useFavoritesOptions } from '@console/internal/components/useFavoritesOptions';
-import { StatusBox } from '..';
+import { StatusBox } from '../StatusBox';
 
 jest.mock('react-router', () => ({
   useLocation: jest.fn(),

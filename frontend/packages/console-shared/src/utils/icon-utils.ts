@@ -1,4 +1,5 @@
-import type { IconDefinition } from '@patternfly/react-icons/dist/esm/createIcon';
+// eslint-disable-next-line no-restricted-imports
+import type { IconData } from '@patternfly/react-icons/dist/esm/createIcon';
 
 const ICON_OPERATOR = 'icon-operator';
 export type CSVIcon = { base64data: string; mediatype: string };
@@ -12,7 +13,7 @@ export const getDefaultOperatorIcon = () => ICON_OPERATOR;
  * Modified from PF createIcon, returns a string with the SVG element instead of a React component.
  */
 export const getSvgFromPfIconConfig = (
-  { xOffset = 0, yOffset = 0, width, height, svgPath }: IconDefinition,
+  { icon: { xOffset = 0, yOffset = 0, width, height, svgPathData } }: { icon: IconData },
   className?: string,
 ): string => {
   const viewBox = [xOffset, yOffset, width, height].join(' ');
@@ -25,6 +26,6 @@ export const getSvgFromPfIconConfig = (
   width="1em"
   height="1em"
 >
-    <path d='${svgPath}' />
+    <path d='${svgPathData}' />
 </svg>`;
 };

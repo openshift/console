@@ -1,46 +1,4 @@
 import { useMemo, Suspense } from 'react';
-import * as _ from 'lodash';
-import { useParams, Link } from 'react-router';
-import { Table as PfTable, Thead, Tbody, Tr, Th, Td } from '@patternfly/react-table';
-import {
-  OutlinedCircleIcon,
-  ResourcesAlmostEmptyIcon,
-  ResourcesAlmostFullIcon,
-  ResourcesFullIcon,
-  UnknownIcon,
-} from '@patternfly/react-icons';
-import { Trans, useTranslation } from 'react-i18next';
-import AppliedClusterResourceQuotaCharts from '@console/app/src/components/resource-quota/AppliedClusterResourceQuotaCharts';
-import ResourceQuotaCharts from '@console/app/src/components/resource-quota/ResourceQuotaCharts';
-import ClusterResourceQuotaCharts from '@console/app/src/components/resource-quota/ClusterResourceQuotaCharts';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-
-import { FLAGS } from '@console/shared/src/constants/common';
-import { useFlag } from '@console/shared/src/hooks/useFlag';
-import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
-import { DASH } from '@console/shared/src/constants/ui';
-import { DetailsPage, MultiListPage } from './factory';
-import { SectionHeading } from './utils/headings';
-import { navFactory } from './utils/horizontal-nav';
-import { ResourceLink } from './utils/resource-link';
-import { ResourceSummary } from './utils/details-page';
-import { convertToBaseValue } from './utils/units';
-import { FieldLevelHelp } from './utils/field-level-help';
-import { useAccessReview } from './utils/rbac';
-import { LabelList } from './utils/label-list';
-import { Selector } from './utils/selector';
-import { DetailsItem } from './utils/details-item';
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { connectToFlags } from '../reducers/connectToFlags';
-import { flagPending } from '../reducers/features';
-import { LoadingBox } from './utils/status-box';
-import { referenceFor, referenceForModel } from '../module/k8s';
-import {
-  AppliedClusterResourceQuotaModel,
-  ResourceQuotaModel,
-  ClusterResourceQuotaModel,
-} from '../models';
-import { getUsedPercentage } from '@console/app/src/components/resource-quota/utils';
 import {
   DescriptionList,
   DescriptionListDescription,
@@ -50,14 +8,55 @@ import {
   GridItem,
 } from '@patternfly/react-core';
 import {
+  RhUiResourcesEmptyIcon,
+  RhUiResourcesAlmostEmptyIcon,
+  RhUiResourcesAlmostFullIcon,
+  RhUiResourcesFullIcon,
+  RhUiUnknownIcon,
+} from '@patternfly/react-icons';
+import { Table as PfTable, Thead, Tbody, Tr, Th, Td } from '@patternfly/react-table';
+import * as _ from 'lodash';
+import { Trans, useTranslation } from 'react-i18next';
+import { useParams, Link } from 'react-router';
+import {
   ConsoleDataView,
   getNameCellProps,
   actionsCellProps,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import AppliedClusterResourceQuotaCharts from '@console/app/src/components/resource-quota/AppliedClusterResourceQuotaCharts';
+import ClusterResourceQuotaCharts from '@console/app/src/components/resource-quota/ClusterResourceQuotaCharts';
+import ResourceQuotaCharts from '@console/app/src/components/resource-quota/ResourceQuotaCharts';
+import { getUsedPercentage } from '@console/app/src/components/resource-quota/utils';
 import { useIsKubevirtPluginActive } from '@console/app/src/utils/kubevirt';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
+import { FLAGS } from '@console/shared/src/constants/common';
+import { DASH } from '@console/shared/src/constants/ui';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
+import {
+  AppliedClusterResourceQuotaModel,
+  ResourceQuotaModel,
+  ClusterResourceQuotaModel,
+} from '../models';
+import { referenceFor, referenceForModel } from '../module/k8s';
+import { connectToFlags } from '../reducers/connectToFlags';
+import { flagPending } from '../reducers/features';
+import { DetailsPage, MultiListPage } from './factory';
+import { DetailsItem } from './utils/details-item';
+import { ResourceSummary } from './utils/details-page';
+import { FieldLevelHelp } from './utils/field-level-help';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { LabelList } from './utils/label-list';
+import { useAccessReview } from './utils/rbac';
+import { ResourceLink } from './utils/resource-link';
+import { Selector } from './utils/selector';
+import { LoadingBox } from './utils/status-box';
+import { convertToBaseValue } from './utils/units';
 
 const isClusterQuota = (quota) => !quota.metadata.namespace;
 
@@ -75,7 +74,7 @@ const quotaActions = (quota) => {
   return null;
 };
 
-export const getQuotaResourceTypes = (quota) => {
+const getQuotaResourceTypes = (quota) => {
   const specHard = isClusterQuota(quota)
     ? _.get(quota, 'spec.quota.hard')
     : _.get(quota, 'spec.hard');
@@ -116,7 +115,7 @@ export const getACRQResourceUsage = (quota, resourceType, namespace) => {
   };
 };
 
-export const getResourceUsage = (quota, resourceType) => {
+const getResourceUsage = (quota, resourceType) => {
   const isCluster = isClusterQuota(quota);
   const statusPath = isCluster ? ['status', 'total', 'hard'] : ['status', 'hard'];
   const specPath = isCluster ? ['spec', 'quota', 'hard'] : ['spec', 'hard'];
@@ -152,27 +151,27 @@ const appliedClusterResourceQuotaTableColumnInfo = [
 ];
 
 const QuotaStatus = ({ resourcesAtQuota }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return resourcesAtQuota > 0 ? (
     <>
       <YellowExclamationTriangleIcon />
-      {t('public~{{count}} resource reached quota', { count: resourcesAtQuota })}
+      {t('{{count}} resource reached quota', { count: resourcesAtQuota })}
     </>
   ) : (
-    t('public~none are at quota')
+    t('none are at quota')
   );
 };
 
 export const UsageIcon = ({ percent }) => {
-  let usageIcon = <UnknownIcon />;
+  let usageIcon = <RhUiUnknownIcon />;
   if (percent === 0) {
-    usageIcon = <OutlinedCircleIcon className="co-resource-quota-empty" />;
+    usageIcon = <RhUiResourcesEmptyIcon className="co-resource-quota-empty" />;
   } else if (percent > 0 && percent < 50) {
-    usageIcon = <ResourcesAlmostEmptyIcon className="co-resource-quota-almost-empty" />;
+    usageIcon = <RhUiResourcesAlmostEmptyIcon className="co-resource-quota-almost-empty" />;
   } else if (percent >= 50 && percent < 100) {
-    usageIcon = <ResourcesAlmostFullIcon className="co-resource-quota-almost-full" />;
+    usageIcon = <RhUiResourcesAlmostFullIcon className="co-resource-quota-almost-full" />;
   } else if (percent === 100) {
-    usageIcon = <ResourcesFullIcon className="co-resource-quota-full" />;
+    usageIcon = <RhUiResourcesFullIcon className="co-resource-quota-full" />;
   } else if (percent > 100) {
     usageIcon = <YellowExclamationTriangleIcon className="co-resource-quota-exceeded" />;
   }
@@ -215,26 +214,26 @@ export const QuotaScopesInline = ({ scopes }) => {
 };
 
 const QuotaScopesList = ({ scopes }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const quotaScopes = {
     Terminating: {
       description: t(
-        'public~Affects pods that have an active deadline. These pods usually include builds, deployers, and jobs.',
+        'Affects pods that have an active deadline. These pods usually include builds, deployers, and jobs.',
       ),
     },
     NotTerminating: {
       description: t(
-        'public~Affects pods that do not have an active deadline. These pods usually include your applications.',
+        'Affects pods that do not have an active deadline. These pods usually include your applications.',
       ),
     },
     BestEffort: {
       description: t(
-        'public~Affects pods that do not have resource limits set. These pods have a best effort quality of service.',
+        'Affects pods that do not have resource limits set. These pods have a best effort quality of service.',
       ),
     },
     NotBestEffort: {
       description: t(
-        'public~Affects pods that have at least one resource limit set. These pods do not have a best effort quality of service.',
+        'Affects pods that have at least one resource limit set. These pods do not have a best effort quality of service.',
       ),
     },
   };
@@ -253,20 +252,8 @@ const QuotaScopesList = ({ scopes }) => {
   });
 };
 
-export const hasComputeResources = (resourceTypes) => {
-  const chartResourceTypes = [
-    'requests.cpu',
-    'cpu',
-    'limits.cpu',
-    'requests.memory',
-    'memory',
-    'limits.memory',
-  ];
-  return _.intersection(resourceTypes, chartResourceTypes).length > 0;
-};
-
 const Details = ({ obj: rq }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const params = useParams();
   const resourceTypes = getQuotaResourceTypes(rq);
   const scopes = rq.spec?.scopes ?? rq.spec?.quota?.scopes;
@@ -277,17 +264,17 @@ const Details = ({ obj: rq }) => {
   let charts;
   switch (reference) {
     case appliedClusterQuotaReference:
-      text = t('public~AppliedClusterResourceQuota details');
+      text = t('AppliedClusterResourceQuota details');
       charts = (
         <AppliedClusterResourceQuotaCharts appliedClusterResourceQuota={rq} namespace={namespace} />
       );
       break;
     case clusterQuotaReference:
-      text = t('public~ClusterResourceQuota details');
+      text = t('ClusterResourceQuota details');
       charts = <ClusterResourceQuotaCharts clusterResourceQuota={rq} />;
       break;
     default:
-      text = t('public~ResourceQuota details');
+      text = t('ResourceQuota details');
       charts = <ResourceQuotaCharts resourceQuota={rq} />;
   }
   const canListCRQ = useAccessReview({
@@ -305,16 +292,12 @@ const Details = ({ obj: rq }) => {
           <GridItem sm={6}>
             <ResourceSummary resource={rq}>
               {canListCRQ && (
-                <DetailsItem
-                  label={t('public~ClusterResourceQuota')}
-                  obj={rq}
-                  path="rq.metadata.name"
-                >
+                <DetailsItem label={t('ClusterResourceQuota')} obj={rq} path="rq.metadata.name">
                   <ResourceLink kind={clusterQuotaReference} name={rq.metadata.name} />
                 </DetailsItem>
               )}
               <DetailsItem
-                label={t('public~Label selector')}
+                label={t('Label selector')}
                 obj={rq}
                 path="spec.selector.labels.matchLabels"
               >
@@ -324,7 +307,7 @@ const Details = ({ obj: rq }) => {
                 />
               </DetailsItem>
               <DetailsItem
-                label={t('public~Project annotations')}
+                label={t('Project annotations')}
                 obj={rq}
                 path="spec.selector.annotations"
               >
@@ -336,7 +319,7 @@ const Details = ({ obj: rq }) => {
             <GridItem sm={6}>
               <DescriptionList>
                 <DescriptionListGroup>
-                  <DescriptionListTerm>{t('public~Scopes')}</DescriptionListTerm>
+                  <DescriptionListTerm>{t('Scopes')}</DescriptionListTerm>
                   <QuotaScopesList scopes={scopes} />
                 </DescriptionListGroup>
               </DescriptionList>
@@ -349,17 +332,17 @@ const Details = ({ obj: rq }) => {
           <FieldLevelHelp>
             <p>
               {t(
-                'public~Requests are the amount of resources you expect to use. These are used when establishing if the cluster can fulfill your Request.',
+                'Requests are the amount of resources you expect to use. These are used when establishing if the cluster can fulfill your Request.',
               )}
             </p>
             <p>
               {t(
-                'public~Limits are a maximum amount of a resource you can consume. Applications consuming more than the Limit may be terminated.',
+                'Limits are a maximum amount of a resource you can consume. Applications consuming more than the Limit may be terminated.',
               )}
             </p>
             <p>
               {t(
-                'public~A cluster administrator can establish limits on both the amount you can request and your limits with a ResourceQuota.',
+                'A cluster administrator can establish limits on both the amount you can request and your limits with a ResourceQuota.',
               )}
             </p>
           </FieldLevelHelp>
@@ -367,11 +350,11 @@ const Details = ({ obj: rq }) => {
         <PfTable gridBreakPoint="">
           <Thead>
             <Tr>
-              <Th>{t('public~Resource type')}</Th>
-              <Th visibility={['hidden', 'visibleOnMd']}>{t('public~Capacity')}</Th>
-              <Th>{t('public~Used')}</Th>
-              {isACRQ && <Th>{t('public~Total used')}</Th>}
-              <Th>{t('public~Max')}</Th>
+              <Th>{t('Resource type')}</Th>
+              <Th visibility={['hidden', 'visibleOnMd']}>{t('Capacity')}</Th>
+              <Th>{t('Used')}</Th>
+              {isACRQ && <Th>{t('Total used')}</Th>}
+              <Th>{t('Max')}</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -530,13 +513,13 @@ const getAppliedClusterResourceQuotaDataViewRows = (data, columns, namespace) =>
 };
 
 const useResourceQuotaColumns = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(ResourceQuotaModel);
 
   const columns = useMemo(
     () => [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: resourceQuotaTableColumnInfo[0].id,
         sort: 'metadata.name',
         resizableProps: getResizableProps(resourceQuotaTableColumnInfo[0].id),
@@ -546,7 +529,7 @@ const useResourceQuotaColumns = () => {
         },
       },
       {
-        title: t('public~Namespace'),
+        title: t('Namespace'),
         id: resourceQuotaTableColumnInfo[1].id,
         sort: 'metadata.namespace',
         resizableProps: getResizableProps(resourceQuotaTableColumnInfo[1].id),
@@ -555,7 +538,7 @@ const useResourceQuotaColumns = () => {
         },
       },
       {
-        title: t('public~Label selector'),
+        title: t('Label selector'),
         id: resourceQuotaTableColumnInfo[2].id,
         sort: 'spec.selector.labels.matchLabels',
         resizableProps: getResizableProps(resourceQuotaTableColumnInfo[2].id),
@@ -564,7 +547,7 @@ const useResourceQuotaColumns = () => {
         },
       },
       {
-        title: t('public~Project annotations'),
+        title: t('Project annotations'),
         id: resourceQuotaTableColumnInfo[3].id,
         sort: 'spec.selector.annotations',
         resizableProps: getResizableProps(resourceQuotaTableColumnInfo[3].id),
@@ -573,7 +556,7 @@ const useResourceQuotaColumns = () => {
         },
       },
       {
-        title: t('public~Status'),
+        title: t('Status'),
         id: resourceQuotaTableColumnInfo[4].id,
         resizableProps: getResizableProps(resourceQuotaTableColumnInfo[4].id),
         props: {
@@ -581,7 +564,7 @@ const useResourceQuotaColumns = () => {
         },
       },
       {
-        title: t('public~Created'),
+        title: t('Created'),
         id: resourceQuotaTableColumnInfo[5].id,
         sort: 'metadata.creationTimestamp',
         resizableProps: getResizableProps(resourceQuotaTableColumnInfo[5].id),
@@ -603,7 +586,7 @@ const useResourceQuotaColumns = () => {
   return { columns, resetAllColumnWidths };
 };
 
-export const ResourceQuotasList = (props) => {
+const ResourceQuotasList = (props) => {
   const { data, loaded, namespace } = props;
   const { columns, resetAllColumnWidths } = useResourceQuotaColumns();
 
@@ -617,7 +600,7 @@ export const ResourceQuotasList = (props) => {
         getDataViewRows={(dvData, dvColumns) =>
           getResourceQuotaDataViewRows(dvData, dvColumns, namespace)
         }
-        hideColumnManagement={true}
+        hideColumnManagement
         isResizable
         resetAllColumnWidths={resetAllColumnWidths}
       />
@@ -626,7 +609,7 @@ export const ResourceQuotasList = (props) => {
 };
 
 const useAppliedClusterResourceQuotaColumns = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
     AppliedClusterResourceQuotaModel,
   );
@@ -634,7 +617,7 @@ const useAppliedClusterResourceQuotaColumns = () => {
   const columns = useMemo(
     () => [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: appliedClusterResourceQuotaTableColumnInfo[0].id,
         sort: 'metadata.name',
         resizableProps: getResizableProps(appliedClusterResourceQuotaTableColumnInfo[0].id),
@@ -644,7 +627,7 @@ const useAppliedClusterResourceQuotaColumns = () => {
         },
       },
       {
-        title: t('public~Label selector'),
+        title: t('Label selector'),
         id: appliedClusterResourceQuotaTableColumnInfo[1].id,
         sort: 'spec.selector.labels.matchLabels',
         resizableProps: getResizableProps(appliedClusterResourceQuotaTableColumnInfo[1].id),
@@ -653,7 +636,7 @@ const useAppliedClusterResourceQuotaColumns = () => {
         },
       },
       {
-        title: t('public~Project annotations'),
+        title: t('Project annotations'),
         id: appliedClusterResourceQuotaTableColumnInfo[2].id,
         sort: 'spec.selector.annotations',
         resizableProps: getResizableProps(appliedClusterResourceQuotaTableColumnInfo[2].id),
@@ -662,7 +645,7 @@ const useAppliedClusterResourceQuotaColumns = () => {
         },
       },
       {
-        title: t('public~Status'),
+        title: t('Status'),
         id: appliedClusterResourceQuotaTableColumnInfo[3].id,
         resizableProps: getResizableProps(appliedClusterResourceQuotaTableColumnInfo[3].id),
         props: {
@@ -670,7 +653,7 @@ const useAppliedClusterResourceQuotaColumns = () => {
         },
       },
       {
-        title: t('public~Created'),
+        title: t('Created'),
         id: appliedClusterResourceQuotaTableColumnInfo[4].id,
         sort: 'metadata.creationTimestamp',
         resizableProps: getResizableProps(appliedClusterResourceQuotaTableColumnInfo[4].id),
@@ -685,7 +668,7 @@ const useAppliedClusterResourceQuotaColumns = () => {
   return { columns, resetAllColumnWidths };
 };
 
-export const AppliedClusterResourceQuotasList = (props) => {
+const AppliedClusterResourceQuotasList = (props) => {
   const { data, loaded, namespace } = props;
   const { columns, resetAllColumnWidths } = useAppliedClusterResourceQuotaColumns();
 
@@ -700,7 +683,7 @@ export const AppliedClusterResourceQuotasList = (props) => {
         getDataViewRows={(dvData, dvColumns) =>
           getAppliedClusterResourceQuotaDataViewRows(dvData, dvColumns, namespace)
         }
-        hideColumnManagement={true}
+        hideColumnManagement
         isResizable
         resetAllColumnWidths={resetAllColumnWidths}
       />
@@ -708,7 +691,7 @@ export const AppliedClusterResourceQuotasList = (props) => {
   );
 };
 
-export const quotaType = (quota) => {
+const quotaType = (quota) => {
   if (!quota) {
     return undefined;
   }
@@ -716,11 +699,11 @@ export const quotaType = (quota) => {
 };
 
 // Split each resource quota into one row per subject
-export const flatten = (resources) => _.flatMap(resources, (resource) => _.compact(resource.data));
+const flatten = (resources) => _.flatMap(resources, (resource) => _.compact(resource.data));
 
 export const ResourceQuotasPage = connectToFlags(FLAGS.OPENSHIFT)(
   ({ namespace, flags, mock, showTitle }) => {
-    const { t } = useTranslation();
+    const { t } = useTranslation('public');
     const isKubevirtPluginActive = useIsKubevirtPluginActive();
     const quotasFeature = useFlag('KUBEVIRT_QUOTAS');
 
@@ -748,19 +731,19 @@ export const ResourceQuotasPage = connectToFlags(FLAGS.OPENSHIFT)(
 
       rowFilters = [
         {
-          filterGroupName: t('public~Role'),
+          filterGroupName: t('Role'),
           type: 'role-kind',
           reducer: quotaType,
           items: [
             {
               id: 'cluster',
-              title: t('public~Cluster-wide {{resource}}', {
+              title: t('Cluster-wide {{resource}}', {
                 resource: t(ResourceQuotaModel.labelPluralKey),
               }),
             },
             {
               id: 'namespace',
-              title: t('public~Namespace {{resource}}', {
+              title: t('Namespace {{resource}}', {
                 resource: t(ResourceQuotaModel.labelPluralKey),
               }),
             },
@@ -775,9 +758,9 @@ export const ResourceQuotasPage = connectToFlags(FLAGS.OPENSHIFT)(
     };
     return (
       <MultiListPage
-        canCreate={true}
+        canCreate
         createAccessReview={accessReview}
-        createButtonText={t('public~Create ResourceQuota')}
+        createButtonText={t('Create ResourceQuota')}
         createProps={{ to: `/k8s/ns/${createNS}/resourcequotas/~new` }}
         ListComponent={ResourceQuotasList}
         resources={resources}
@@ -788,7 +771,7 @@ export const ResourceQuotasPage = connectToFlags(FLAGS.OPENSHIFT)(
         helpText={
           <div className="pf-v6-u-text-color-subtle pf-v6-u-mt-sm">
             {t(
-              'public~Manage project capacity by limiting the number of objects and total compute resources available.',
+              'Manage project capacity by limiting the number of objects and total compute resources available.',
             )}
             {isKubevirtPluginActive && (
               <Trans t={t} ns="public">
@@ -813,14 +796,14 @@ export const ResourceQuotasPage = connectToFlags(FLAGS.OPENSHIFT)(
         rowFilters={rowFilters}
         mock={mock}
         showTitle={showTitle}
-        omitFilterToolbar={true}
+        omitFilterToolbar
       />
     );
   },
 );
 
 export const AppliedClusterResourceQuotasPage = ({ namespace, mock, showTitle }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const resources = [
     {
       kind: referenceForModel(AppliedClusterResourceQuotaModel),
@@ -840,7 +823,7 @@ export const AppliedClusterResourceQuotasPage = ({ namespace, mock, showTitle })
       title={t(AppliedClusterResourceQuotaModel.labelPluralKey)}
       mock={mock}
       showTitle={showTitle}
-      omitFilterToolbar={true}
+      omitFilterToolbar
     />
   );
 };

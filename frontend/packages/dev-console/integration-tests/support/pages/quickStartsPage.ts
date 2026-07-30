@@ -19,7 +19,7 @@ function clickVisibleButton(el: string) {
   });
 }
 
-export function closeQuickStart() {
+function closeQuickStart() {
   cy.get(quickStartSidebarPO.quickStartSidebarBody).should('be.visible');
   cy.get(quickStartSidebarPO.closePanel).should('be.visible').click();
   cy.get(quickStartLeaveModalPO.leaveModal).should('be.visible');

@@ -21,7 +21,7 @@ type ImageVuln = {
 };
 
 const ImageVulnerabilitiesList: FC<ImageVulnerabilitiesListProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('container-security');
   const {
     obj: {
       metadata: { name },
@@ -31,7 +31,7 @@ const ImageVulnerabilitiesList: FC<ImageVulnerabilitiesListProps> = (props) => {
 
   const imageVulnerabilitiesRowFilters: RowFilter<ImageVuln>[] = [
     {
-      filterGroupName: t('container-security~Type'),
+      filterGroupName: t('Type'),
       items: [
         { id: VulnerabilitiesType.appDependency, title: VulnerabilitiesType.appDependency },
         { id: VulnerabilitiesType.baseImage, title: VulnerabilitiesType.baseImage },
@@ -43,7 +43,7 @@ const ImageVulnerabilitiesList: FC<ImageVulnerabilitiesListProps> = (props) => {
         _.isEmpty(filter.selected),
     },
     {
-      filterGroupName: t('container-security~Severity'),
+      filterGroupName: t('Severity'),
       items: [
         { id: Priority.Defcon1, title: Priority.Defcon1 },
         { id: Priority.Critical, title: Priority.Critical },
@@ -74,7 +74,7 @@ const ImageVulnerabilitiesList: FC<ImageVulnerabilitiesListProps> = (props) => {
           optional: true,
         },
       ]}
-      title={t('container-security~Vulnerabilities')}
+      title={t('Vulnerabilities')}
       flatten={(resources: WatchK8sResults<{ imageVulnerabilities: ImageManifestVuln }>) => {
         return _.sortBy(
           _.flatten(

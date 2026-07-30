@@ -131,24 +131,21 @@ export const devFilePO = {
 
 ### Feature files Review
 
-- Epic related feature files needs to reviewed in 3 phases
+- Epic related feature files needs to reviewed in 2 phases
 
-1. Review by QE team for standardization & Functional check [Peer Review]
+1. Review by Dev team for standardization & Functional check [Peer Review]
 2. Review by Dev team [Preferably Feature owner]
-3. Assign to QE Lead for review
 
 - To update the feature files not related to epics
 
-1. Review by QE team for standardization & Functional check [Peer Review]
-2. Assign to QE Lead for review
+1. Review by team for standardization & Functional check [Peer Review]
 
 ### Code Review Process
 
 - Github adds a reviewer automatically for the PR
 
-1. Review by QE team for standardization [Peer Review]
+1. Review by Dev team for standardization [Peer Review]
 2. Review by Dev team [Optional]
-3. Assign to QE Lead for review
 
 ### What needs to be reviewed as part of Code Review
 
@@ -238,7 +235,7 @@ If you need to execute "smoke" tagged scripts present in single feature file the
 2. Comments should be included wherever required
 3. Don't include console.log statements while raising PR
 4. .gherkin-lintrc configuration file present in frontend folder is used to set Gherkin standards
-5. Execute the "yarn run gherkin-lint" command for every QE pr
+5. Execute the "yarn run gherkin-lint" command for every PR
 
 ## References
    [Cypress Cucumber Handbook](https://docs.google.com/document/d/1hL_k5r6CVxbY5va6RPPCJfndQjLwSdt6SUKj-kWLqig/edit#)

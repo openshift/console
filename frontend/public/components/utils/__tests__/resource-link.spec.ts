@@ -1,6 +1,4 @@
-import * as coFetchModule from '@console/dynamic-plugin-sdk/src/utils/fetch/console-fetch';
-import { resourcePathFromModel } from '../../../components/utils/resource-link';
-import { K8sKind } from '../../../module/k8s';
+import * as coFetchModule from '@console/shared/src/utils/console-fetch';
 import {
   ClusterOperatorModel,
   ClusterRoleModel,
@@ -8,13 +6,15 @@ import {
   PodModel,
   UserModel,
 } from '../../../models';
+import type { K8sKind } from '../../../module/k8s';
+import { resourcePathFromModel } from '../resource-link';
 
-jest.mock('@console/dynamic-plugin-sdk/src/utils/fetch/console-fetch', () => ({
-  ...jest.requireActual('@console/dynamic-plugin-sdk/src/utils/fetch/console-fetch'),
-  consoleFetch: jest.fn(),
+jest.mock('@console/shared/src/utils/console-fetch', () => ({
+  ...jest.requireActual('@console/shared/src/utils/console-fetch'),
+  coFetch: jest.fn(),
 }));
 
-const consoleFetchMock = coFetchModule.consoleFetch as jest.Mock;
+const consoleFetchMock = coFetchModule.coFetch as jest.Mock;
 
 describe('resourcePathFromModel', () => {
   beforeEach(() => {

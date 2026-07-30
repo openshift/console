@@ -13,6 +13,11 @@ module.exports = {
 
     // Augmenting configs: choose one or more
     jest: require('./lib/config/jest'),
+    playwright: require('./lib/config/playwright'),
+
+    // React Testing Library (test/spec files only). Also merged into `react-typescript-prettier`.
+    'testing-library-tests': require('./lib/config/testing-library-tests'),
+
     node: require('./lib/config/node'),
 
     // Add JSON linting (optional)
@@ -23,7 +28,7 @@ module.exports = {
 
     // ...or use the pre-composed configurations representing common code archetypes (choose one):
 
-    // Common web preset: React, TypeScript, Prettier
+    // Common web preset: React, TypeScript, Prettier, Testing Library on tests
     'react-typescript-prettier': {
       extends: [
         'plugin:console/react',
@@ -31,8 +36,10 @@ module.exports = {
         // TODO enable when we stop using jest with jasmine types
         // 'plugin:console/jest',
         'plugin:console/json',
+        'plugin:console/testing-library-tests',
         'plugin:console/prettier',
       ],
+
       rules: {
         // TODO fix for monorepo support
         'import/no-extraneous-dependencies': 'off',

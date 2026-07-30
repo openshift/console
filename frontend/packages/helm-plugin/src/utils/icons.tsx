@@ -1,4 +1,4 @@
-import { RepositoryIcon } from '@patternfly/react-icons';
+import { RhUiFoldersIcon } from '@patternfly/react-icons';
 import { createIcon } from '@patternfly/react-icons/dist/esm/createIcon';
 
 /** This should be kept in sync with [helm.svg](../../../../public/imgs/logos/helm.svg) */
@@ -12,4 +12,4 @@ export const HelmCatalogIcon = createIcon({
 
 export const helmCatalogIconSVG = <HelmCatalogIcon />;
 
-export const helmChartRepositoriesIconElement = <RepositoryIcon />;
+export const helmChartRepositoriesIconElement = <RhUiFoldersIcon />;

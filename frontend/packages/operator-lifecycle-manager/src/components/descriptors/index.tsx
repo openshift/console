@@ -6,7 +6,7 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { DetailsItem } from '@console/internal/components/utils';
 import type { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
-import { withFallback } from '@console/shared/src/components/error';
+import { withFallback } from '@console/shared/src/components/error/fallbacks/withFallback';
 import { getSchemaAtPath } from '@console/shared/src/utils/utils';
 import { SpecDescriptorDetailsItem } from './spec';
 import { StatusDescriptorDetailsItem } from './status';
@@ -55,7 +55,7 @@ const DescriptorDetailsItemArrayGroup: FC<DescriptorDetailsItemGroupProps> = ({
   schema,
   type,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const { arrayGroupPath, elementDescriptor, descriptor, nested } = group;
   const arrayGroupSchema = getSchemaAtPath(schema, `${type}.${arrayGroupPath}`);
   const description = descriptor?.description || arrayGroupSchema?.description;
@@ -88,7 +88,7 @@ const DescriptorDetailsItemArrayGroup: FC<DescriptorDetailsItemGroupProps> = ({
             </DescriptionList>
           ))
         ) : (
-          <span className="pf-v6-u-text-color-subtle">{t('public~None')}</span>
+          <span className="pf-v6-u-text-color-subtle">{t('None')}</span>
         )}
       </DetailsItem>
     </div>

@@ -7,14 +7,14 @@ import { DocumentTitle } from '@console/shared/src/components/document-title/Doc
 import NamespacedPage, { NamespacedPageVariants } from './NamespacedPage';
 import CreateProjectListPage, { CreateAProjectButton } from './projects/CreateProjectListPage';
 
-export interface SearchPageProps {
+interface SearchPageProps {
   noProjectsAvailable?: boolean;
 }
 
 const ProjectListPage = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   return (
-    <CreateProjectListPage title={t('devconsole~Search')}>
+    <CreateProjectListPage title={t('Search')}>
       {(openProjectModal) => (
         <Trans t={t} ns="devconsole">
           Select a Project to search inside
@@ -38,10 +38,10 @@ const PageContents: FC<SearchPageProps> = ({ noProjectsAvailable }) => {
 };
 
 const Search: FC<SearchPageProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   return (
     <>
-      <DocumentTitle>{t('devconsole~Search')}</DocumentTitle>
+      <DocumentTitle>{t('Search')}</DocumentTitle>
       <NamespacedPage variant={NamespacedPageVariants.light} hideApplications>
         <PageContents {...props} />
       </NamespacedPage>

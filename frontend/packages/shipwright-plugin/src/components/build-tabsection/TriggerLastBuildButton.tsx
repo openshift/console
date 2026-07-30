@@ -24,7 +24,7 @@ const TriggerLastBuildButton: FC<TriggerLastBuildButtonProps> = ({
   namespace,
   impersonate,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('shipwright-plugin');
   const launchModal = useOverlay();
   const defaultAccessReview: AccessReviewResourceAttributes = {
     group: BuildRunModel.apiGroup,
@@ -45,7 +45,7 @@ const TriggerLastBuildButton: FC<TriggerLastBuildButtonProps> = ({
   return (
     isAllowed && (
       <Button variant="secondary" onClick={onClick} isDisabled={!canRerunBuildRun(latestBuildRun)}>
-        {t('shipwright-plugin~Rerun latest BuildRun')}
+        {t('Rerun latest BuildRun')}
       </Button>
     )
   );

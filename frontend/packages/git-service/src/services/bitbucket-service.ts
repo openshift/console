@@ -1,9 +1,11 @@
 import * as GitUrlParse from 'git-url-parse';
 import { Base64 } from 'js-base64';
 import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/lib-core';
-import type { DevConsoleEndpointResponse } from '@console/shared/src';
-import type { GitSource, RepoMetadata, BranchList, RepoLanguageList, RepoFileList } from '../types';
-import { SecretType, RepoStatus } from '../types';
+import type { DevConsoleEndpointResponse } from '@console/shared/src/types/backend-api';
+import type { GitSource } from '../types/git';
+import { SecretType } from '../types/git';
+import type { RepoMetadata, BranchList, RepoLanguageList, RepoFileList } from '../types/repo';
+import { RepoStatus } from '../types/repo';
 import { BaseService } from './base-service';
 
 type BBWebhookBody = {
@@ -22,7 +24,7 @@ type BitbucketWebhookRequest = {
   body: BBWebhookBody;
 };
 
-export const BITBUCKET_WEBHOOK_BACKEND_URL = '/api/dev-console/webhooks/bitbucket';
+const BITBUCKET_WEBHOOK_BACKEND_URL = '/api/dev-console/webhooks/bitbucket';
 
 export class BitbucketService extends BaseService {
   private readonly metadata: RepoMetadata;

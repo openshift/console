@@ -12,7 +12,8 @@ import type { FormikValues } from 'formik';
 import { useFormikContext, useField } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { InputField, getFieldId } from '@console/shared';
+import { getFieldId } from '@console/shared/src/components/formik-fields/field-utils';
+import { InputField } from '@console/shared/src/components/formik-fields/InputField';
 import { useFormikValidationFix } from '@console/shared/src/hooks/useFormikValidationFix';
 import { CREATE_APPLICATION_KEY, UNASSIGNED_KEY } from '../../const';
 import { sanitizeApplicationValue } from '../../utils/application-utils';
@@ -29,7 +30,7 @@ const ApplicationSelector: FC<ApplicationSelectorProps> = ({
   noProjectsAvailable,
   subPath,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   const [applicationsAvailable, setApplicationsAvailable] = useState(true);
   // Initialize as undefined to detect the first load (even if empty)
   const availableApplications = useRef<string[] | undefined>();
@@ -75,11 +76,11 @@ const ApplicationSelector: FC<ApplicationSelectorProps> = ({
 
   const actionItems = [
     {
-      actionTitle: t('topology~Create application'),
+      actionTitle: t('Create application'),
       actionKey: CREATE_APPLICATION_KEY,
     },
     {
-      actionTitle: t('topology~No application group'),
+      actionTitle: t('No application group'),
       actionKey: UNASSIGNED_KEY,
     },
   ];
@@ -95,10 +96,10 @@ const ApplicationSelector: FC<ApplicationSelectorProps> = ({
     setFieldValue(nameField.name, trimmedApplicationName);
   };
 
-  const label = t('topology~Application');
+  const label = t('Application');
   const inputHelpText = applicationExists
-    ? t('topology~Warning: the application grouping already exists.')
-    : t('topology~A unique name given to the application grouping to label your resources.');
+    ? t('Warning: the application grouping already exists.')
+    : t('A unique name given to the application grouping to label your resources.');
 
   useEffect(() => {
     if (selectedKey.value === CREATE_APPLICATION_KEY) {
@@ -129,7 +130,7 @@ const ApplicationSelector: FC<ApplicationSelectorProps> = ({
                 <HelperTextItem variant="error">{errorMessage}</HelperTextItem>
               ) : (
                 <HelperTextItem>
-                  {t('topology~Select an Application to group this component.')}
+                  {t('Select an Application to group this component.')}
                 </HelperTextItem>
               )}
             </HelperText>
@@ -142,8 +143,9 @@ const ApplicationSelector: FC<ApplicationSelectorProps> = ({
           required={selectedKey.value === CREATE_APPLICATION_KEY}
           name={nameField.name}
           ref={applicationNameInputRef}
-          label={t('topology~Application name')}
+          label={t('Application name')}
           data-test-id="application-form-app-input"
+          data-test="application-form-app-input"
           helpText={inputHelpText}
           validated={applicationExists ? ValidatedOptions.warning : ValidatedOptions.default}
           onChange={handleAppChange}

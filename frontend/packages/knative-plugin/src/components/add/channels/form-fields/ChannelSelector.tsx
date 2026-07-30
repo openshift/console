@@ -4,8 +4,8 @@ import { useField } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import type { DropdownFieldProps } from '@console/shared';
-import { DropdownField } from '@console/shared';
+import { DropdownField } from '@console/shared/src/components/formik-fields/DropdownField';
+import type { DropdownFieldProps } from '@console/shared/src/components/formik-fields/field-types';
 import { EVENTING_CHANNEL_KIND } from '../../../../const';
 import { getChannelKind } from '../../../../utils/create-channel-utils';
 
@@ -20,7 +20,7 @@ const ChannelSelector: FC<ChannelSelectorProps> = ({
   defaultConfiguredChannel,
 }) => {
   const [selected] = useField('formData.type');
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const filteredChannels = _.flatten(
     _.partition(channels, (ref) => getChannelKind(ref) === EVENTING_CHANNEL_KIND),
   );
@@ -29,7 +29,7 @@ const ChannelSelector: FC<ChannelSelectorProps> = ({
     const channelName = getChannelKind(channel);
     acc[channel] =
       channelName === EVENTING_CHANNEL_KIND && defaultConfiguredChannel
-        ? t('knative-plugin~Default {{channelName}} ({{defaultConfiguredChannel}})', {
+        ? t('Default {{channelName}} ({{defaultConfiguredChannel}})', {
             channelName,
             defaultConfiguredChannel,
           })
@@ -55,9 +55,9 @@ const ChannelSelector: FC<ChannelSelectorProps> = ({
     <FormSection extraMargin>
       <DropdownField
         name="formData.type"
-        label={t('knative-plugin~Type')}
+        label={t('Type')}
         items={channelData}
-        title={t('knative-plugin~Type')}
+        title={t('Type')}
         onChange={onChange}
         fullWidth
         required

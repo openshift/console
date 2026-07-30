@@ -21,7 +21,7 @@ const healthChecksUrl = (model: K8sKind, obj: K8sResourceKind): string => {
   return `/k8s/ns/${namespace}/${resourceKind}/${name}/containers/${containerName}/health-checks`;
 };
 
-export const HealthChecksActionFactory: ResourceActionFactory = {
+const HealthChecksActionFactory: ResourceActionFactory = {
   AddHealthChecks: (kind: K8sKind, obj: K8sResourceKind): Action => ({
     id: 'add-health-checks',
     label: i18next.t('console-app~Add Health Checks'),

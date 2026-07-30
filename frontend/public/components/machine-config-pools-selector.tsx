@@ -1,20 +1,20 @@
 import type { FC, FormEvent } from 'react';
 import { Checkbox } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-
-import { isMCPWorker, MachineConfigPoolKind, NodeTypeNames } from '../module/k8s';
 import { NodeModel } from '../models';
+import type { MachineConfigPoolKind } from '../module/k8s';
+import { isMCPWorker, NodeTypeNames } from '../module/k8s';
 
 export const MachineConfigPoolsSelector: FC<MachineConfigPoolsSelectorProps> = ({
   machineConfigPools,
   onChange,
   selected,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <div className="form-group">
       <label id="version-label">
-        {t('public~Select {{resource}} to pause', { resource: NodeModel.labelPlural })}
+        {t('Select {{resource}} to pause', { resource: NodeModel.labelPlural })}
       </label>
       {machineConfigPools.map((mcp: MachineConfigPoolKind) => (
         <Checkbox

@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { getUser } from '@console/dynamic-plugin-sdk';
+import { AsyncComponent } from '@console/internal/components/utils';
 import { useAccessReview2 } from '@console/internal/components/utils/rbac';
 import { StatusBox, LoadError } from '@console/internal/components/utils/status-box';
 import type { UserInfo } from '@console/internal/module/k8s';
@@ -14,7 +15,6 @@ import { v1alpha1WorkspaceModel, WorkspaceModel } from '../../../models';
 import { FLAG_V1ALPHA2DEVWORKSPACE } from '../../const';
 import type { TerminalInitData } from './cloud-shell-utils';
 import { initTerminal, startWorkspace, CLOUD_SHELL_PHASE } from './cloud-shell-utils';
-import CloudshellExec from './CloudShellExec';
 import { CLOUD_SHELL_NAMESPACE_CONFIG_USER_PREFERENCE_KEY } from './const';
 import CloudShellAdminSetup from './setup/CloudShellAdminSetup';
 import CloudShellDeveloperSetup from './setup/CloudShellDeveloperSetup';
@@ -28,7 +28,7 @@ type StateProps = {
   user: UserInfo;
 };
 
-export type CloudShellTerminalProps = {
+type CloudShellTerminalProps = {
   onCancel?: () => void;
   terminalNumber?: number;
   setWorkspaceName?: (name: string, terminalNumber: number) => void;
@@ -80,7 +80,7 @@ const CloudShellTerminal: FC<CloudShellTerminalInternalProps & WithUserPreferenc
 
   const username = user?.username;
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('webterminal-plugin');
 
   const unrecoverableErrorFound = !operatorNamespace && namespaceLoadError;
 
@@ -133,9 +133,7 @@ const CloudShellTerminal: FC<CloudShellTerminalInternalProps & WithUserPreferenc
   // initialize the terminal once it is Running
   useEffect(() => {
     let unmounted = false;
-    const defaultError = t(
-      'webterminal-plugin~Failed to connect to your OpenShift command line terminal',
-    );
+    const defaultError = t('Failed to connect to your OpenShift command line terminal');
 
     if (workspacePhase === CLOUD_SHELL_PHASE.RUNNING) {
       initTerminal(username, workspaceName, workspaceNamespace)
@@ -145,7 +143,7 @@ const CloudShellTerminal: FC<CloudShellTerminalInternalProps & WithUserPreferenc
         .catch((e) => {
           if (!unmounted) {
             if (e?.response?.headers?.get('Content-Type')?.startsWith('text/plain')) {
-              // eslint-disable-next-line promise/no-nesting
+              /* eslint-disable promise/no-nesting */
               e.response
                 .text()
                 .then((text) => {
@@ -154,6 +152,7 @@ const CloudShellTerminal: FC<CloudShellTerminalInternalProps & WithUserPreferenc
                 .catch(() => {
                   setInitError(defaultError);
                 });
+              /* eslint-enable promise/no-nesting */
             } else {
               setInitError(defaultError);
             }
@@ -179,18 +178,14 @@ const CloudShellTerminal: FC<CloudShellTerminalInternalProps & WithUserPreferenc
       <StatusBox
         loaded={loaded}
         loadError={loadError}
-        label={t('webterminal-plugin~OpenShift command line terminal')}
+        label={t('OpenShift command line terminal')}
       />
     );
   }
 
   // failed to init the terminal
   if (initError) {
-    return (
-      <LoadError label={t('webterminal-plugin~OpenShift command line terminal')}>
-        {initError}
-      </LoadError>
-    );
+    return <LoadError label={t('OpenShift command line terminal')}>{initError}</LoadError>;
   }
 
   // loading the workspace resource
@@ -209,7 +204,12 @@ const CloudShellTerminal: FC<CloudShellTerminalInternalProps & WithUserPreferenc
 
   if (initData && workspaceNamespace) {
     return (
-      <CloudshellExec
+      <AsyncComponent
+        loader={() =>
+          import('./CloudShellExec' /* webpackChunkName: "cloud-shell-exec" */).then(
+            (m) => m.default,
+          )
+        }
         workspaceName={workspaceName}
         namespace={workspaceNamespace}
         workspaceId={workspaceId}

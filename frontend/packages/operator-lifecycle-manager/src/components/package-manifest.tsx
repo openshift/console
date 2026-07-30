@@ -15,8 +15,8 @@ import {
 import i18n from '@console/internal/i18n';
 import type { MatchExpression } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { OPERATOR_HUB_LABEL } from '@console/shared';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import { OPERATOR_HUB_LABEL } from '@console/shared/src/constants/common';
 import { PackageManifestModel, CatalogSourceModel } from '../models';
 import type { PackageManifestKind, CatalogSourceKind } from '../types';
 import { ClusterServiceVersionLogo } from './cluster-service-version-logo';
@@ -103,15 +103,15 @@ export const PackageManifestTableRow: FC<RowFunctionArgs<
 };
 
 const PackageManifestListEmptyMessage = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   return (
-    <ConsoleEmptyState title={t('olm~No PackageManifests Found')}>
-      {t('olm~The CatalogSource author has not added any packages.')}
+    <ConsoleEmptyState title={t('No PackageManifests Found')}>
+      {t('The CatalogSource author has not added any packages.')}
     </ConsoleEmptyState>
   );
 };
 
-export const PackageManifestList = (props: PackageManifestListProps) => {
+const PackageManifestList = (props: PackageManifestListProps) => {
   const { customData } = props;
 
   // If the CatalogSource is not present, display PackageManifests along with their CatalogSources (used in PackageManifest Search page)
@@ -203,7 +203,7 @@ export type PackageManifestsPageProps = {
   namespace?: string;
 };
 
-export type PackageManifestListProps = {
+type PackageManifestListProps = {
   customData?: { catalogSource: CatalogSourceKind };
   namespace?: string;
   data: PackageManifestKind[];

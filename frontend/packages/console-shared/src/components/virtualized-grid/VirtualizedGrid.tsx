@@ -18,7 +18,7 @@ import GroupByFilterGrid from './GroupByFilterGrid';
 import type { Item, GroupedItems, GridChildrenProps } from './types';
 import { CellMeasurementContext } from './utils';
 
-const VirtualizedGrid: FC<VirtualizedGridProps> = ({
+export const VirtualizedGrid: FC<VirtualizedGridProps> = ({
   items,
   className,
   isItemsGrouped = false,
@@ -103,5 +103,3 @@ const VirtualizedGrid: FC<VirtualizedGridProps> = ({
     </CellMeasurementContext.Provider>
   );
 };
-
-export default VirtualizedGrid;

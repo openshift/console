@@ -3,8 +3,9 @@ import { TextInputTypes } from '@patternfly/react-core';
 import type { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { InputField, FormBody } from '@console/shared';
-import { FormFooter } from '@console/shared/src/components/form-utils';
+import { FormBody } from '@console/shared/src/components/form-utils/FormBody';
+import { FormFooter } from '@console/shared/src/components/form-utils/FormFooter';
+import { InputField } from '@console/shared/src/components/formik-fields/InputField';
 import type { BuilderImage } from '../../utils/imagestream-utils';
 import BuilderImageTagSelector from './builder/BuilderImageTagSelector';
 import FormSection from './section/FormSection';
@@ -24,7 +25,7 @@ const ImportSampleForm: FC<Props> = ({
   status,
   isSubmitting,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const {
     image: { tag: selectedImagetag },
   } = values;
@@ -35,9 +36,9 @@ const ImportSampleForm: FC<Props> = ({
           <InputField
             type={TextInputTypes.text}
             name="name"
-            label={t('devconsole~Name')}
+            label={t('Name')}
             helpText={t(
-              'devconsole~A unique name given to the component that will be used to name associated resources.',
+              'A unique name given to the component that will be used to name associated resources.',
             )}
             data-test-id="application-form-app-name"
             required
@@ -49,7 +50,7 @@ const ImportSampleForm: FC<Props> = ({
           <InputField
             type={TextInputTypes.text}
             name="git.url"
-            label={t('devconsole~Git repo URL')}
+            label={t('Git repo URL')}
             data-test-id="git-form-input-url"
             isDisabled
           />
@@ -59,9 +60,9 @@ const ImportSampleForm: FC<Props> = ({
         handleReset={handleReset}
         errorMessage={status && status.submitError}
         isSubmitting={isSubmitting}
-        submitLabel={t('devconsole~Create')}
+        submitLabel={t('Create')}
         disableSubmit={!_.isEmpty(errors) || isSubmitting}
-        resetLabel={t('devconsole~Cancel')}
+        resetLabel={t('Cancel')}
         sticky
       />
     </form>

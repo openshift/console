@@ -1,16 +1,13 @@
 import type { FC } from 'react';
-import { ActionGroup, Alert, Button, ButtonVariant } from '@patternfly/react-core';
-import { DownloadIcon } from '@patternfly/react-icons';
-import { css } from '@patternfly/react-styles';
+import { ActionGroup, Alert, Button, ButtonVariant, PageSection } from '@patternfly/react-core';
+import { RhUiDownloadIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { ButtonBar } from '@console/internal/components/utils/button-bar';
-import { useScrollContainer } from '../../hooks/useScrollContainer';
-import { Shadows, useScrollShadows } from '../../hooks/useScrollShadows';
 import type { FormFooterProps } from './form-utils-types';
 
 import './FormFooter.scss';
 
-const FormFooter: FC<FormFooterProps> = ({
+export const FormFooter: FC<FormFooterProps> = ({
   handleSubmit,
   handleReset,
   handleCancel,
@@ -28,18 +25,13 @@ const FormFooter: FC<FormFooterProps> = ({
   showAlert,
   sticky,
 }) => {
-  const { t } = useTranslation();
-  const [scrollContainer, footerElementRef] = useScrollContainer();
-  const shadowPosition = useScrollShadows(sticky ? scrollContainer : null);
+  const { t } = useTranslation('console-shared');
   return (
-    <div
-      className={css('ocs-form-footer', {
-        'ocs-form-footer__sticky': sticky,
-        'ocs-form-footer__shadow':
-          sticky && (shadowPosition === Shadows.both || shadowPosition === Shadows.bottom),
-      })}
+    <PageSection
+      className="ocs-form-footer"
+      isStickyStuck={sticky}
+      stickyBase="bottom"
       data-test="form-footer"
-      ref={footerElementRef}
     >
       <ButtonBar
         inProgress={isSubmitting && hideSubmit}
@@ -51,10 +43,10 @@ const FormFooter: FC<FormFooterProps> = ({
             isInline
             className="co-alert"
             variant="info"
-            title={infoTitle || t('console-shared~You made changes to this page.')}
+            title={infoTitle || t('You made changes to this page.')}
           >
             {infoMessage ||
-              t('console-shared~Click {{submit}} to save changes or {{reset}} to cancel changes.', {
+              t('Click {{submit}} to save changes or {{reset}} to cancel changes.', {
                 submit: submitLabel,
                 reset: resetLabel,
               })}
@@ -71,7 +63,7 @@ const FormFooter: FC<FormFooterProps> = ({
               data-test-id="submit-button"
               data-test="save-changes"
             >
-              {submitLabel || t('console-shared~Save')}
+              {submitLabel || t('Save')}
             </Button>
           )}
           {handleReset && (
@@ -81,7 +73,7 @@ const FormFooter: FC<FormFooterProps> = ({
               variant={ButtonVariant.secondary}
               onClick={handleReset}
             >
-              {resetLabel || t('console-shared~Reload')}
+              {resetLabel || t('Reload')}
             </Button>
           )}
           {handleCancel && (
@@ -91,7 +83,7 @@ const FormFooter: FC<FormFooterProps> = ({
               variant={ButtonVariant.secondary}
               onClick={handleCancel}
             >
-              {cancelLabel || t('console-shared~Cancel')}
+              {cancelLabel || t('Cancel')}
             </Button>
           )}
           {handleDownload && (
@@ -101,14 +93,13 @@ const FormFooter: FC<FormFooterProps> = ({
               variant={ButtonVariant.secondary}
               className="pf-v6-c-button--align-right pf-v6-u-display-none pf-v6-u-display-flex-on-sm"
               onClick={handleDownload}
-              icon={<DownloadIcon />}
+              icon={<RhUiDownloadIcon />}
             >
-              {t('console-shared~Download')}
+              {t('Download')}
             </Button>
           )}
         </ActionGroup>
       </ButtonBar>
-    </div>
+    </PageSection>
   );
 };
-export default FormFooter;

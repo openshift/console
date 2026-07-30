@@ -27,7 +27,7 @@ const PaneBody: FC<PaneBodyProps> = ({
   );
 };
 
-export type PaneBodyProps = {
+type PaneBodyProps = {
   children: ReactNode;
   className?: string;
   fullHeight?: boolean;

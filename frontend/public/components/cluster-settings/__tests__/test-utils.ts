@@ -1,5 +1,5 @@
 // Reusable test utilities for Identity Provider (IDP) form components
-import { screen, fireEvent, within } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { verifyFormElementBasics } from '@console/shared/src/test-utils/unit-test-utils';
 
@@ -120,34 +120,42 @@ export const verifyPageTitleAndSubtitle = ({
 // Verifies file input UI elements and test file upload selection functionality and filename verifications.
 export const verifyIDPFileFields = async ({
   inputLabel,
+  fieldId,
   helpText,
   fileName = 'test-idp.pem',
   fileContent = mockData.testPemFileContent,
 }: {
   inputLabel: string;
+  /** `id` of the `DroppableFileInput` (see `data-test` on the PatternFly `FileUpload` in `file-input`). */
+  fieldId: string;
   helpText?: string;
   fileName?: string;
   fileContent?: string;
 }) => {
   const user = userEvent.setup();
 
+  const fileUpload = await screen.findByTestId(fieldId);
+
   // Wait for the async component to load and find the filename input by its aria-label
-  const filenameInput = await screen.findByLabelText(`${inputLabel} filename`);
+  const filenameInput = within(fileUpload).getByLabelText(`${inputLabel} filename`);
   verifyFormElementBasics(filenameInput, 'text', '');
 
-  // Find the file upload container by traversing up from the filename input
-  const fileUploadContainer = filenameInput.closest('.pf-v6-c-file-upload');
-  expect(fileUploadContainer).toBeInTheDocument();
-
   // Verify browse button is visible within the container
-  const browseButton = within(fileUploadContainer as HTMLElement).getByRole('button', {
+  const browseButton = within(fileUpload).getByRole('button', {
     name: 'Browse...',
   });
   expect(browseButton).toBeVisible();
 
-  // Find the hidden file input element within the container
-  const fileInput = fileUploadContainer.querySelector('input[type="file"]') as HTMLInputElement;
-  expect(fileInput).toBeTruthy();
+  // PF FileUpload renders an unlabeled hidden input[type=file], so we locate it from this scoped container.
+  const fileInput = within(fileUpload)
+    .getAllByDisplayValue('')
+    .find((element) => element instanceof HTMLInputElement && element.type === 'file') as
+    | HTMLInputElement
+    | undefined;
+  expect(fileInput).toBeDefined();
+  if (!fileInput) {
+    throw new Error(`Could not find file input for ${inputLabel}`);
+  }
 
   // Verify help text if provided - in PF FileUpload, this is the placeholder attribute
   if (helpText) {
@@ -161,7 +169,7 @@ export const verifyIDPFileFields = async ({
   await user.upload(fileInput, file);
 
   // Verify the file was properly selected and assigned to the input element
-  expect(fileInput.files).toBeTruthy();
+  expect(fileInput.files).toBeDefined();
   expect(fileInput.files?.length).toBe(1);
   expect(fileInput.files?.[0]).toBe(file);
   expect(fileInput.files?.[0]?.name).toBe(fileName);
@@ -176,7 +184,7 @@ export const verifyIDPFileFields = async ({
  * @param helpText - The expected help text for the input group (optional)
  * @param isRequired - Whether the first input element should be required (optional)
  */
-export const verifyIDPListInputFields = ({
+export const verifyIDPListInputFields = async ({
   inputLabel,
   testId,
   initialValue = '',
@@ -191,6 +199,7 @@ export const verifyIDPListInputFields = ({
   testValue?: string;
   isRequired?: boolean;
 }) => {
+  const user = userEvent.setup();
   const listInputContainer = screen.getByTestId(testId);
   expect(listInputContainer).toBeInTheDocument();
 
@@ -206,14 +215,15 @@ export const verifyIDPListInputFields = ({
   }
 
   // Test input element functionality by entering a value
-  fireEvent.change(initialInputFields[0], { target: { value: testValue } });
+  await user.clear(initialInputFields[0]);
+  await user.type(initialInputFields[0], testValue);
   expect(initialInputFields[0]).toHaveValue(testValue);
 
   const addMoreButton = within(listInputContainer).getByRole('button', { name: 'Add more' });
   verifyFormElementBasics(addMoreButton, 'button');
 
   // Click "Add more" and verify length increases
-  fireEvent.click(addMoreButton);
+  await user.click(addMoreButton);
   const updatedInputFields = within(listInputContainer).getAllByLabelText(inputLabel);
 
   expect(updatedInputFields.length).toBe(initialInputFields.length + 1);
@@ -225,7 +235,8 @@ export const verifyIDPListInputFields = ({
 
   // Test the new element by entering a value
   const newTestValue = `${testValue}-2`;
-  fireEvent.change(newField, { target: { value: newTestValue } });
+  await user.clear(newField);
+  await user.type(newField, newTestValue);
   expect(newField).toHaveValue(newTestValue);
 
   // Verify remove buttons exist for all elements
@@ -234,7 +245,7 @@ export const verifyIDPListInputFields = ({
   verifyFormElementBasics(removeButtons[0], 'button');
 
   // Click remove button and verify length decreases
-  fireEvent.click(removeButtons[0]);
+  await user.click(removeButtons[0]);
   const finalInputFields = within(listInputContainer).getAllByLabelText(inputLabel);
   expect(finalInputFields.length).toBe(updatedInputFields.length - 1);
 };

@@ -1,8 +1,8 @@
 import type { ComponentProps, FC } from 'react';
 import { useMemo } from 'react';
 import { observer } from '@patternfly/react-topology';
-import { WorkloadPodsNode } from '@console/topology/src/components/graph-view';
-import { getTopologyResourceObject } from '@console/topology/src/utils';
+import { WorkloadPodsNode } from '@console/topology/src/components/graph-view/components/nodes/WorkloadNode';
+import { getTopologyResourceObject } from '@console/topology/src/utils/topology-utils';
 import { usePodsForRevisions } from '../../../utils/usePodsForRevisions';
 
 const RevisionNode: FC<ComponentProps<typeof WorkloadPodsNode>> = (props) => {

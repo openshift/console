@@ -7,12 +7,12 @@ import { ErrorDetailsModal } from '@console/shared/src/components/modals/ErrorDe
 /**
  * Support for error boundary content that won't consume the whole page.
  */
-const ErrorBoundaryFallbackInline: FC<ErrorBoundaryFallbackProps> = (props) => {
-  const { t } = useTranslation();
+export const ErrorBoundaryFallbackInline: FC<ErrorBoundaryFallbackProps> = (props) => {
+  const { t } = useTranslation('console-shared');
   return (
     <Split hasGutter>
       <SplitItem>
-        <Alert variant="danger" isInline isPlain title={t('console-shared~Extension error')} />
+        <Alert variant="danger" isInline isPlain title={t('Extension error')} />
       </SplitItem>
       <SplitItem>
         <ErrorDetailsModal
@@ -23,5 +23,3 @@ const ErrorBoundaryFallbackInline: FC<ErrorBoundaryFallbackProps> = (props) => {
     </Split>
   );
 };
-
-export default ErrorBoundaryFallbackInline;

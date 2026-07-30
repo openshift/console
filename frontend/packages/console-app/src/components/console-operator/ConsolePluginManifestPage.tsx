@@ -10,7 +10,7 @@ import { BasicCodeEditor } from '@console/shared/src/components/editor/BasicCode
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 
 export const ConsolePluginManifestPage: FC<PageComponentProps> = ({ obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const pluginInfoEntries = usePluginInfo();
   const pluginName = useMemo(() => obj?.metadata?.name, [obj?.metadata?.name]);
 
@@ -34,9 +34,9 @@ export const ConsolePluginManifestPage: FC<PageComponentProps> = ({ obj }) => {
           // @ts-expect-error - headerMainContent expects string but we want to use a React element with Label
           headerMainContent={
             <div className="pf-v6-l-flex pf-m-align-items-center pf-m-gap-md">
-              <span>{t('console-app~console-extensions.json')}</span>
+              <span>{t('console-extensions.json')}</span>
               <Label color="grey" isCompact>
-                {t('console-app~Read only')}
+                {t('Read only')}
               </Label>
             </div>
           }
@@ -51,7 +51,7 @@ export const ConsolePluginManifestPage: FC<PageComponentProps> = ({ obj }) => {
           }}
         />
       ) : (
-        <EmptyBox label={t('console-app~Plugin manifest')} />
+        <EmptyBox label={t('Plugin manifest')} />
       )}
     </PaneBody>
   );

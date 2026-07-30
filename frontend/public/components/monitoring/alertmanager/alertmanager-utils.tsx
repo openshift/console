@@ -1,11 +1,11 @@
 /* eslint-disable camelcase */
-import * as _ from 'lodash';
 import { Base64 } from 'js-base64';
 import { safeLoad, safeDump } from 'js-yaml';
-
+import * as _ from 'lodash';
 import { SecretModel } from '../../../models';
-import { k8sPatch, K8sResourceKind } from '../../../module/k8s';
-import { AlertmanagerConfig } from './alertmanager-config';
+import type { K8sResourceKind } from '../../../module/k8s';
+import { k8sPatch } from '../../../module/k8s';
+import type { AlertmanagerConfig } from './alertmanager-config';
 
 // t('public~PagerDuty')
 // t('public~Webhook')
@@ -44,7 +44,7 @@ export const getAlertmanagerConfig = (
 ): { config: AlertmanagerConfig; errorMessage?: string } => {
   const parsedAlertmanagerYAML = getAlertmanagerYAML(secret);
   try {
-    const config = safeLoad(parsedAlertmanagerYAML.yaml);
+    const config = safeLoad(parsedAlertmanagerYAML.yaml) as AlertmanagerConfig;
     return { config, errorMessage: parsedAlertmanagerYAML.errorMessage };
   } catch (e) {
     return { config: null, errorMessage: `Error loading alertmanager.yaml: ${e}` };
@@ -55,7 +55,7 @@ export const patchAlertmanagerConfig = (
   secret: K8sResourceKind,
   yaml: object | string,
 ): Promise<any> => {
-  const yamlString = _.isObject(yaml) ? safeDump(yaml) : yaml;
+  const yamlString = _.isObject(yaml) ? safeDump(yaml) : String(yaml);
   const yamlEncodedString = Base64.encode(yamlString);
   const patch = [{ op: 'replace', path: '/data/alertmanager.yaml', value: yamlEncodedString }];
   return k8sPatch(SecretModel, secret, patch);

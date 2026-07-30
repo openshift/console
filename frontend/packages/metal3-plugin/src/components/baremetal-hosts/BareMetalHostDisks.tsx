@@ -6,8 +6,8 @@ import type { RowFunctionArgs } from '@console/internal/components/factory';
 import { Table, TableData } from '@console/internal/components/factory';
 import { humanizeDecimalBytes } from '@console/internal/components/utils';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { getHostStorage } from '../../selectors';
-import type { BareMetalHostDisk, BareMetalHostKind } from '../../types';
+import { getHostStorage } from '../../selectors/baremetal-hosts';
+import type { BareMetalHostDisk, BareMetalHostKind } from '../../types/host';
 
 const DisksTableHeader = (t: TFunction) => () => [
   { title: t('metal3-plugin~Name'), sortField: 'name', transforms: [sortable] },
@@ -46,7 +46,7 @@ type BareMetalHostDisksProps = {
 };
 
 const BareMetalHostDisks: FC<BareMetalHostDisksProps> = ({ obj: host, loadError, loaded }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('metal3-plugin');
   const disks = getHostStorage(host);
   return (
     <div className="co-m-list">
@@ -59,9 +59,7 @@ const BareMetalHostDisks: FC<BareMetalHostDisksProps> = ({ obj: host, loadError,
           loaded={loaded}
           loadError={
             loadError ||
-            (loaded && !host
-              ? { message: t('metal3-plugin~Bare metal host is not available') }
-              : undefined)
+            (loaded && !host ? { message: t('Bare metal host is not available') } : undefined)
           }
           getRowProps={getRowProps}
         />

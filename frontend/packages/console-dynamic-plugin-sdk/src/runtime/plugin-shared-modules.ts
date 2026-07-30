@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/triple-slash-reference, spaced-comment
-/// <reference types="webpack/module" />
+/// <reference types="@rspack/core/module" />
 
 const SHARED_SCOPE_NAME = 'default';
 
@@ -13,6 +13,34 @@ const SHARED_SCOPE_NAME = 'default';
 export const initSharedScope = async () => __webpack_init_sharing__(SHARED_SCOPE_NAME);
 
 /**
+ * webpack provided type of `__webpack_share_scopes__` object is incorrect; at runtime,
+ * each shared module comes with one or more version(s) with each version scoped to its
+ * own object, for example:
+ *
+ * ```js
+ * {
+ *   [SCOPE_NAME]: {
+ *     'react': {
+ *       '18.3.1': {
+ *         from: 'openshift-console',
+ *         eager: true,
+ *         loaded: 1,
+ *         get: moduleFactoryFunction,
+ *       }
+ *     }
+ *   }
+ * }
+ * ```
+ */
+type WebpackShareScopes = {
+  [scopeName: string]: {
+    [moduleName: string]: {
+      [moduleVersion: string]: typeof __webpack_share_scopes__[string][string];
+    };
+  };
+};
+
+/**
  * Get the webpack share scope object.
  */
 export const getSharedScope = () => {
@@ -20,7 +48,8 @@ export const getSharedScope = () => {
     throw new Error('Attempt to access share scope object before its initialization');
   }
 
-  return __webpack_share_scopes__[SHARED_SCOPE_NAME];
+  // TODO: Remove this type cast once __webpack_share_scopes__ object type is fixed
+  return (__webpack_share_scopes__[SHARED_SCOPE_NAME] as unknown) as WebpackShareScopes[string];
 };
 
 /**
@@ -29,8 +58,11 @@ export const getSharedScope = () => {
  * - add `react-router-dom-v5-compat` module aliased to `react-router`
  * - add `react-router-dom` module aliased to `react-router`
  */
-export const monkeyPatchSharedScope = () => {
-  const scope = getSharedScope();
+export const monkeyPatchSharedScope = (scope: ReturnType<typeof getSharedScope>) => {
+  if (!Object.keys(scope).includes('react-router')) {
+    throw new Error('Share scope object is not initialized');
+  }
+
   scope['react-router-dom'] = scope['react-router'];
   scope['react-router-dom-v5-compat'] = scope['react-router'];
 };

@@ -5,8 +5,8 @@ import { useRoutesWatcher } from '@console/shared/src/hooks/useRoutesWatcher';
 import { sampleDeployments } from '@console/shared/src/utils/__tests__/test-resource-data';
 import { ROUTE_URL_ANNOTATION, ROUTE_DISABLED_ANNOTATION } from '../../../../../../const';
 import { WorkloadModelProps } from '../../../../../../data-transforms/transform-utils';
-import { OdcBaseNode } from '../../../../../../elements';
-import UrlDecorator from '../UrlDecorator';
+import { OdcBaseNode } from '../../../../../../elements/OdcBaseNode';
+import { UrlDecorator } from '../UrlDecorator';
 
 jest.mock('@console/shared/src/hooks/useRoutesWatcher', () => ({
   useRoutesWatcher: jest.fn(),

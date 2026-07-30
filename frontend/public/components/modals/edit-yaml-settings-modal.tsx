@@ -1,5 +1,7 @@
+import type { FC, ReactNode, ComponentProps } from 'react';
+import { useState, useMemo } from 'react';
 import { CodeEditorControl } from '@patternfly/react-code-editor';
-import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
+import type { SwitchProps } from '@patternfly/react-core';
 import {
   Flex,
   FlexItem,
@@ -9,16 +11,19 @@ import {
   ModalHeader,
   NumberInput,
   Switch,
-  SwitchProps,
 } from '@patternfly/react-core';
 import {
-  CogIcon,
-  PaintRollerIcon,
+  // Icons do not have a suitable RH icon yet
+  /* eslint-disable no-restricted-imports */
   FontIcon,
-  ICursorIcon,
   MouseIcon,
+  /* eslint-enable no-restricted-imports */
+  RhUiAutoLightDarkModeIcon,
+  RhUiCommentIcon,
+  RhUiSettingsIcon,
 } from '@patternfly/react-icons';
-import { FC, ReactNode, ComponentProps, useState, useMemo } from 'react';
+import type { SimpleSelectOption } from '@patternfly/react-templates';
+import { SimpleSelect } from '@patternfly/react-templates';
 import { useTranslation } from 'react-i18next';
 import {
   OVERRIDE_YAML_EDITOR_THEME_USER_PREFERENCE_KEY,
@@ -26,7 +31,7 @@ import {
   SHOW_YAML_EDITOR_STICKY_SCROLL_USER_PREFERENCE_KEY,
   CUSTOM_YAML_EDITOR_FONT_SIZE_USER_PREFERENCE_KEY,
 } from '@console/shared/src/constants/common';
-import { SimpleSelect, SimpleSelectOption } from '@patternfly/react-templates';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 
 /*
  * The following is taken entirely from the PatternFly example
@@ -55,7 +60,7 @@ interface ConfigModalItemProps {
 }
 
 const ConfigModalItem: React.FC<ConfigModalItemProps> = ({
-  icon = <CogIcon />,
+  icon = <RhUiSettingsIcon />,
   description,
   title,
   id = `ConfigModalItem-${title.replace(/\s+/g, '-').toLowerCase()}`,
@@ -94,7 +99,7 @@ interface ConfigModalSwitchProps extends Omit<ConfigModalItemProps, 'slot'> {
 }
 
 const ConfigModalSwitch: React.FC<ConfigModalSwitchProps> = ({
-  icon = <CogIcon />,
+  icon = <RhUiSettingsIcon />,
   description,
   title,
   id = `ConfigModalSwitch-${title.replace(/\s+/g, '-').toLowerCase()}`,
@@ -170,7 +175,7 @@ const ThemeConfigItem: FC = () => {
       title={t('Theme')}
       description={t('Select the code editor color theme')}
       id="ConfigModalItem-color-theme"
-      icon={<PaintRollerIcon />}
+      icon={<RhUiAutoLightDarkModeIcon />}
       slot={
         <SimpleSelect
           toggleProps={{
@@ -236,7 +241,7 @@ const TooltipConfigItem = () => {
       description={t('Show tooltips for Resource names, Field names, and definitions')}
       onChange={(_e, checked) => setShowTooltips(checked)}
       isChecked={showTooltips}
-      icon={<ICursorIcon />}
+      icon={<RhUiCommentIcon />}
     />
   );
 };
@@ -300,7 +305,7 @@ export const EditYamlSettingsModal: FC<AppendToProps> = ({ appendTo }) => {
       <CodeEditorControl
         aria-label={t('Editor settings')}
         aria-haspopup="dialog"
-        icon={<CogIcon />}
+        icon={<RhUiSettingsIcon />}
         onClick={() => setIsModalOpen(true)}
         tooltipProps={{ content: t('Editor settings') }}
       />

@@ -1,16 +1,14 @@
 import { screen, waitFor } from '@testing-library/react';
-
-import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
-import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
-import { useFlag } from '@console/shared/src/hooks/useFlag';
 import {
   GettingStartedShowState,
   useGettingStartedShowState,
-} from '@console/shared/src/components/getting-started';
+} from '@console/shared/src/components/getting-started/useGettingStartedShowState';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { expectTextsNotInDocument } from '../../../../getting-started-test-utils';
-
-import { GettingStartedSection } from '../getting-started-section';
 import { CLUSTER_DASHBOARD_USER_PREFERENCE_KEY } from '../constants';
+import { GettingStartedSection } from '../getting-started-section';
 
 // Mock the child card components
 jest.mock('../cluster-setup-getting-started-card', () => ({
@@ -26,12 +24,14 @@ jest.mock('@console/shared/src/hooks/useFlag', () => ({
   useFlag: jest.fn<boolean, []>(),
 }));
 
-jest.mock('@console/shared/src/components/getting-started', () => ({
-  GettingStartedExpandableGrid: jest.requireActual('@console/shared/src/components/getting-started')
-    .GettingStartedExpandableGrid,
-  GettingStartedShowState: jest.requireActual('@console/shared/src/components/getting-started')
-    .GettingStartedShowState,
+jest.mock('@console/shared/src/components/getting-started/useGettingStartedShowState', () => ({
+  ...jest.requireActual(
+    '@console/shared/src/components/getting-started/useGettingStartedShowState',
+  ),
   useGettingStartedShowState: jest.fn(),
+}));
+
+jest.mock('@console/shared/src/components/getting-started/QuickStartGettingStartedCard', () => ({
   QuickStartGettingStartedCard: () => 'Learn with guided tours',
 }));
 
@@ -60,12 +60,10 @@ describe('GettingStartedSection', () => {
       <GettingStartedSection userPreferenceKey={CLUSTER_DASHBOARD_USER_PREFERENCE_KEY} />,
     );
 
-    await waitFor(() => {
-      const contentContainer = screen.getByTestId('getting-started-content');
-      expect(contentContainer).toHaveTextContent('Set up your cluster');
-      expect(contentContainer).toHaveTextContent('Learn with guided tours');
-      expect(contentContainer).toHaveTextContent('Explore new features');
-    });
+    const contentContainer = await screen.findByTestId('getting-started-content');
+    expect(contentContainer).toHaveTextContent('Set up your cluster');
+    expect(contentContainer).toHaveTextContent('Learn with guided tours');
+    expect(contentContainer).toHaveTextContent('Explore new features');
   });
 
   it('should render nothing when useFlag(FLAGS.OPENSHIFT) returns false', async () => {

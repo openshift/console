@@ -1,5 +1,5 @@
 import type { FC, ReactNode } from 'react';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { FormikConfig } from 'formik';
 import { Formik } from 'formik';
@@ -34,15 +34,15 @@ describe('SecretsSection', () => {
     };
     const onSubmit = jest.fn();
 
-    const renderResult = render(
+    render(
       <Wrapper initialValues={initialValues} onSubmit={onSubmit}>
         <SecretsSection namespace="a-namespace" />
       </Wrapper>,
     );
 
-    renderResult.getByTestId('section secrets');
-    renderResult.getByText('Secrets');
-    renderResult.getByText('Add secret');
+    expect(screen.getByTestId('section secrets')).toBeInTheDocument();
+    expect(screen.getByText('Secrets')).toBeVisible();
+    expect(screen.getByText('Add secret')).toBeVisible();
 
     expect(onSubmit).toHaveBeenCalledTimes(0);
   });
@@ -56,21 +56,21 @@ describe('SecretsSection', () => {
     };
     const onSubmit = jest.fn();
 
-    const renderResult = render(
+    render(
       <Wrapper initialValues={initialValues} onSubmit={onSubmit}>
         <SecretsSection namespace="a-namespace" />
       </Wrapper>,
     );
 
     // Do not render table by default
-    expect(renderResult.queryByText('Secret')).toBeFalsy();
-    expect(renderResult.queryByText('Mount point')).toBeFalsy();
+    expect(screen.queryByText('Secret')).toBeFalsy();
+    expect(screen.queryByText('Mount point')).toBeFalsy();
 
-    await user.click(renderResult.getByText('Add secret'));
+    await user.click(screen.getByText('Add secret'));
 
     // Now expecting that there is a table to select a secret
-    renderResult.getByText('Secret');
-    renderResult.getByText('Mount point');
+    expect(screen.getByText('Secret')).toBeVisible();
+    expect(screen.getByText('Mount point')).toBeVisible();
 
     expect(onSubmit).toHaveBeenCalledTimes(0);
   });
@@ -86,17 +86,17 @@ describe('SecretsSection', () => {
     };
     const onSubmit = jest.fn();
 
-    const renderResult = render(
+    render(
       <Wrapper initialValues={initialValues} onSubmit={onSubmit}>
         <SecretsSection namespace="a-namespace" />
       </Wrapper>,
     );
 
     // Expecting that the table is automatically shown
-    renderResult.getByText('Secret');
-    renderResult.getByText('Mount point');
-    expect(renderResult.container.querySelectorAll('[data-test~="row"]')).toHaveLength(2);
-    expect(renderResult.queryAllByRole('textbox')).toHaveLength(2);
+    expect(screen.getByText('Secret')).toBeVisible();
+    expect(screen.getByText('Mount point')).toBeVisible();
+    // Each row contains a textbox for mount point
+    expect(screen.queryAllByRole('textbox')).toHaveLength(2);
 
     expect(onSubmit).toHaveBeenCalledTimes(0);
   });

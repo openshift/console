@@ -21,7 +21,11 @@ export const catalogPage = {
   },
   search: (keyword: string) => {
     cy.get('.skeleton-catalog--grid').should('not.exist');
-    cy.get(catalogPO.search).clear().type(keyword);
+    // Split clear/type so Cypress re-queries the DOM between operations.
+    // Under React 18 createRoot, clear() can trigger a re-render that
+    // replaces the input node, detaching it before type() runs.
+    cy.get(catalogPO.search).clear();
+    cy.get(catalogPO.search).type(keyword);
   },
   verifyDialog: () => cy.get(catalogPO.sidePane.dialog).should('be.visible'),
   verifyCreateHelmReleasePage: () =>
@@ -82,6 +86,7 @@ export const catalogPage = {
         throw new Error('Card is not available in Catalog');
       }
     }
+    catalogPage.verifyPageTitle(type);
   },
   selectTemplateCategory: (templateCategoryTitle: string) => {
     const selector =
@@ -100,6 +105,7 @@ export const catalogPage = {
   selectHelmChartCard: (cardName: string) => cy.byTestID(`HelmChart-${cardName}`).first().click(),
   clickOnInstallButton: () => {
     cy.get(catalogPO.installHelmChart.create).click();
+    cy.get('.pf-v6-c-button__progress').should('not.exist');
     cy.get('.co-m-loader', { timeout: 40000 }).should('not.exist');
   },
   enterReleaseName: (releaseName: string) =>

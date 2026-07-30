@@ -1,3 +1,4 @@
+/* eslint-disable no-barrel-files/no-barrel-files */
 import type { FC } from 'react';
 import { Grid, GridItem, ListItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
@@ -7,7 +8,7 @@ import { RouteModel } from '../../models';
 import { RoutesOverviewListItem } from '../../types';
 import RoutesUrlLink from './RoutesUrlLink';
 
-export type RoutesOverviewListItemProps = {
+type RoutesOverviewListItemProps = {
   routeLink: RoutesOverviewListItem;
   uniqueRoutes?: string[];
   totalPercent?: string;
@@ -18,7 +19,7 @@ const RoutesOverviewListItem: FC<RoutesOverviewListItemProps> = ({
   totalPercent,
   uniqueRoutes,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   return (
     <ListItem>
       <Grid hasGutter>
@@ -31,10 +32,8 @@ const RoutesOverviewListItem: FC<RoutesOverviewListItemProps> = ({
           </GridItem>
         )}
       </Grid>
-      {url.length > 0 && <RoutesUrlLink urls={[url]} title={t('knative-plugin~Location')} />}
-      {uniqueRoutes?.length > 0 && (
-        <RoutesUrlLink urls={uniqueRoutes} title={t('knative-plugin~Unique Route')} />
-      )}
+      {url.length > 0 && <RoutesUrlLink urls={[url]} title={t('Location')} />}
+      {uniqueRoutes?.length > 0 && <RoutesUrlLink urls={uniqueRoutes} title={t('Unique Route')} />}
     </ListItem>
   );
 };

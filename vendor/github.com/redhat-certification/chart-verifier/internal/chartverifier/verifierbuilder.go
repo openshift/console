@@ -22,7 +22,7 @@ import (
 
 	"github.com/redhat-certification/chart-verifier/internal/chartverifier/profiles"
 
-	"helm.sh/helm/v3/pkg/cli"
+	"helm.sh/helm/v4/pkg/cli"
 
 	"github.com/spf13/viper"
 

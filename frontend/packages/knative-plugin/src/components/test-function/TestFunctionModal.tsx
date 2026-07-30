@@ -19,14 +19,14 @@ interface TestFunctionModalProps {
 type Props = FormikProps<FormikValues> & TestFunctionModalProps & ModalComponentProps;
 
 const TestFunctionModal: FC<Props> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const { handleSubmit, cancel, close, isSubmitting } = props;
   const [currentView, setCurrentView] = useState(ModalPanel.Request);
 
   return (
     <>
       <ModalHeader
-        title={t('knative-plugin~Test Serverless Function')}
+        title={t('Test Serverless Function')}
         labelId="test-function-modal-title"
         data-test-id="modal-title"
       />
@@ -59,7 +59,7 @@ const TestFunctionModal: FC<Props> = (props) => {
               isDisabled={isSubmitting}
               form="test-function-form"
             >
-              {t('knative-plugin~Test')}
+              {t('Test')}
             </Button>
             <Button
               type="button"
@@ -68,7 +68,7 @@ const TestFunctionModal: FC<Props> = (props) => {
               data-test-id="modal-cancel-action"
               onClick={cancel}
             >
-              {t('knative-plugin~Cancel')}
+              {t('Cancel')}
             </Button>
           </>
         ) : (
@@ -82,7 +82,7 @@ const TestFunctionModal: FC<Props> = (props) => {
                 setCurrentView(ModalPanel.Request);
               }}
             >
-              {t('knative-plugin~Back')}
+              {t('Back')}
             </Button>
             <Button
               type="button"
@@ -93,7 +93,7 @@ const TestFunctionModal: FC<Props> = (props) => {
                 close();
               }}
             >
-              {t('knative-plugin~Close')}
+              {t('Close')}
             </Button>
           </>
         )}

@@ -9,7 +9,7 @@ import { useHelmReleaseResourcesColumns } from './HelmReleaseResourcesHeader';
 import { getDataViewRows } from './HelmReleaseResourcesRow';
 
 const HelmReleaseResourcesList: FC<TableProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   const columns = useHelmReleaseResourcesColumns();
 
   return (
@@ -18,7 +18,7 @@ const HelmReleaseResourcesList: FC<TableProps> = (props) => {
         {...props}
         data={props.data}
         loaded={props.loaded}
-        label={t('helm-plugin~Resources')}
+        label={t('Resources')}
         columns={columns}
         getDataViewRows={getDataViewRows}
         hideColumnManagement

@@ -6,15 +6,13 @@ import { useTranslation } from 'react-i18next';
 import { DeploymentConfigDeprecationAlert } from '@console/internal/components/deployment-config';
 import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import {
-  FlexForm,
-  FormBody,
-  FormFooter,
-  FormHeader,
-  SyncedEditorField,
-  CodeEditorField,
-} from '@console/shared/src';
 import { downloadYaml } from '@console/shared/src/components/editor/yaml-download-utils';
+import { FlexForm } from '@console/shared/src/components/form-utils/FlexForm';
+import { FormBody } from '@console/shared/src/components/form-utils/FormBody';
+import { FormFooter } from '@console/shared/src/components/form-utils/FormFooter';
+import { FormHeader } from '@console/shared/src/components/form-utils/FormHeader';
+import { CodeEditorField } from '@console/shared/src/components/formik-fields/CodeEditorField';
+import { SyncedEditorField } from '@console/shared/src/components/formik-fields/SyncedEditorField';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import { getResourcesType } from '../edit-application/edit-application-utils';
@@ -42,7 +40,7 @@ const EditDeploymentForm: FC<
   errors,
   values: { editorType, formData, yamlData, formReloadCount },
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const resourceType = getResourcesType(resource);
   const isNew = !resource.metadata.name;
 
@@ -110,10 +108,10 @@ const EditDeploymentForm: FC<
         errorMessage={status?.submitError}
         successMessage={status?.submitSuccess}
         showAlert={isStale}
-        infoTitle={t('devconsole~This object has been updated.')}
-        infoMessage={t('devconsole~Click reload to see the new version.')}
+        infoTitle={t('This object has been updated.')}
+        infoMessage={t('Click reload to see the new version.')}
         isSubmitting={isSubmitting}
-        submitLabel={isNew ? t('devconsole~Create') : t('devconsole~Save')}
+        submitLabel={isNew ? t('Create') : t('Save')}
         disableSubmit={
           (editorType === EditorType.YAML ? !dirty : !dirty || !_.isEmpty(errors)) || isSubmitting
         }

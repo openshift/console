@@ -1,5 +1,6 @@
 import type { FC } from 'react';
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import * as _ from 'lodash';
 import { Provider } from 'react-redux';
 import store from '@console/internal/redux';
@@ -28,7 +29,7 @@ beforeAll(() => {
   mockedContainerField.mockImplementation(MockContainerField);
 });
 
-beforeEach(() =>
+const renderEnvironmentVariablesSection = () =>
   render(
     <MockForm initialValues={mockInitialValues} handleSubmit={handleSubmit}>
       {() => (
@@ -37,13 +38,11 @@ beforeEach(() =>
         </Provider>
       )}
     </MockForm>,
-  ),
-);
-
-afterEach(() => cleanup());
+  );
 
 describe('EnvironmentVariablesSection', () => {
   it('should show initial name value pairs', async () => {
+    renderEnvironmentVariablesSection();
     const names = screen.getAllByPlaceholderText(/name/i).map((ele: HTMLInputElement) => ele.value);
     const values = screen
       .getAllByPlaceholderText(/value/i)
@@ -53,9 +52,11 @@ describe('EnvironmentVariablesSection', () => {
   });
 
   it('should add a new row when (+) Add button is clicked', async () => {
+    renderEnvironmentVariablesSection();
+    const user = userEvent.setup();
     const addButton = screen.getByRole('button', { name: /add value/i });
 
-    fireEvent.click(addButton);
+    await user.click(addButton);
 
     const names = screen.getAllByPlaceholderText(/name/i).map((ele: HTMLInputElement) => ele.value);
     const values = screen
@@ -69,30 +70,32 @@ describe('EnvironmentVariablesSection', () => {
   });
 
   it('should add new row with resourse and key dropdowns when (+) Add ConfigMap or Secret button is clicked', async () => {
+    renderEnvironmentVariablesSection();
+    const user = userEvent.setup();
     const addCMSButton = screen.getByRole('button', {
       name: /add from configmap or secret/i,
     });
 
-    fireEvent.click(addCMSButton);
+    await user.click(addCMSButton);
 
     const resourceButton = screen.getByRole('button', { name: /select a resource/i });
     const keyButton = screen.getByRole('button', { name: /select a key/i });
 
-    fireEvent.click(resourceButton);
+    await user.click(resourceButton);
 
-    const resourceDropdown = screen.queryByPlaceholderText(/configmap or secret/i);
-    await waitFor(() => expect(resourceDropdown).not.toBeNull());
+    expect(await screen.findByPlaceholderText(/configmap or secret/i)).toBeVisible();
 
-    fireEvent.click(keyButton);
+    await user.click(keyButton);
 
-    const keyDropdown = screen.queryByPlaceholderText(/key/i);
-    await waitFor(() => expect(keyDropdown).not.toBeNull());
+    expect(await screen.findByPlaceholderText(/key/i)).toBeVisible();
   });
 
   it('should remove row when (-) button is clicked', async () => {
+    renderEnvironmentVariablesSection();
+    const user = userEvent.setup();
     const deleteButtons = screen.getAllByRole('button', { name: /delete/i });
 
-    fireEvent.click(deleteButtons[0]);
+    await user.click(deleteButtons[0]);
 
     const names = screen.getAllByPlaceholderText(/name/i).map((ele: HTMLInputElement) => ele.value);
     const values = screen

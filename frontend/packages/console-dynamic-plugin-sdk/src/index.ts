@@ -1,3 +1,4 @@
+/* eslint-disable no-barrel-files/no-barrel-files */
 /**
  * @file Entrypoint for the Console dynamic plugin SDK monorepo package.
  *

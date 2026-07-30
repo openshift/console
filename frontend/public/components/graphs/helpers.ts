@@ -1,11 +1,13 @@
+/* eslint-disable no-barrel-files/no-barrel-files */
 import * as _ from 'lodash';
+import { PrometheusEndpoint } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import {
   PROMETHEUS_BASE_PATH,
   PROMETHEUS_TENANCY_BASE_PATH,
   DEFAULT_PROMETHEUS_SAMPLES,
   DEFAULT_PROMETHEUS_TIMESPAN,
 } from './consts';
-import { PrometheusEndpoint } from '@console/dynamic-plugin-sdk/src/api/common-types';
+
 export { PrometheusEndpoint };
 
 // Range vector queries require end, start, and step search params

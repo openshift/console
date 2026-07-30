@@ -10,14 +10,12 @@ import {
   ResourceIcon,
 } from '@console/dynamic-plugin-sdk/src/lib-core';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import type { SaveStatusProps } from '@console/shared/src/components/cluster-configuration';
-import {
-  useDebounceCallback,
-  useConsoleOperatorConfig,
-  patchConsoleOperatorConfig,
-  LoadError,
-  SaveStatus,
-} from '@console/shared/src/components/cluster-configuration';
+import { LoadError } from '@console/shared/src/components/cluster-configuration/LoadError';
+import { patchConsoleOperatorConfig } from '@console/shared/src/components/cluster-configuration/patchConsoleOperatorConfig';
+import type { SaveStatusProps } from '@console/shared/src/components/cluster-configuration/SaveStatus';
+import { SaveStatus } from '@console/shared/src/components/cluster-configuration/SaveStatus';
+import { useConsoleOperatorConfig } from '@console/shared/src/components/cluster-configuration/useConsoleOperatorConfig';
+import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { QuickStartModel } from '../../models';
 import { getQuickStartNameRef, useQuickStarts } from './utils/useQuickStarts';
@@ -51,7 +49,7 @@ const Item: FC<ItemProps> = ({ id, quickStart }) => (
 );
 
 const QuickStartConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const fireTelemetryEvent = useTelemetry();
 
   // All available quick starts
@@ -114,7 +112,7 @@ const QuickStartConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
   const [saveStatus, setSaveStatus] = useState<SaveStatusProps>();
   const save = useDebounceCallback(() => {
     fireTelemetryEvent('Console cluster configuration changed', {
-      customize: 'Quick Starts',
+      customize: 'Quick starts',
       disabled,
     });
     setSaveStatus({ status: 'in-progress' });
@@ -154,13 +152,13 @@ const QuickStartConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
 
   return (
     <FormSection
-      title={t('console-app~Quick starts')}
+      title={t('Quick starts')}
       data-test="quickstarts form-section"
       id="quick-starts-configuration"
     >
       <DualListSelector
-        availableOptionsTitle={t('console-app~Enabled')}
-        chosenOptionsTitle={t('console-app~Disabled')}
+        availableOptionsTitle={t('Enabled')}
+        chosenOptionsTitle={t('Disabled')}
         isSearchable
         availableOptions={enabledOptions}
         chosenOptions={disabledOptions}

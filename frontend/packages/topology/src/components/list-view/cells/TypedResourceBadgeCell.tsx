@@ -11,7 +11,7 @@ interface TypedResourceBadgeCellProps {
   typeIcon?: ReactNode;
 }
 
-const TypedResourceBadgeCell: FC<TypedResourceBadgeCellProps> = ({
+const TypedResourceBadgeCellComponent: FC<TypedResourceBadgeCellProps> = ({
   typeIconClass,
   typeIcon,
   imageClass,
@@ -62,4 +62,4 @@ const TypedResourceBadgeCell: FC<TypedResourceBadgeCellProps> = ({
   );
 };
 
-export default observer(TypedResourceBadgeCell);
+export const TypedResourceBadgeCell = observer(TypedResourceBadgeCellComponent);

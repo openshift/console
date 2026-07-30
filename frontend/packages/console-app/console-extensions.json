@@ -13,7 +13,7 @@
   {
     "type": "console.flag",
     "properties": {
-      "handler": { "$codeRef": "detectIntegrationTest.handler" }
+      "handler": { "$codeRef": "isOpenShift5.handler" }
     }
   },
   {
@@ -23,8 +23,7 @@
       "tour": { "$codeRef": "getGuidedTour" }
     },
     "flags": {
-      "required": ["CONSOLE_CAPABILITY_GUIDEDTOUR_IS_ENABLED"],
-      "disallowed": ["INTEGRATION_TEST"]
+      "required": ["CONSOLE_CAPABILITY_GUIDEDTOUR_IS_ENABLED"]
     }
   },
   {
@@ -698,15 +697,6 @@
     }
   },
   {
-    "type": "console.flag/hookProvider",
-    "properties": {
-      "handler": { "$codeRef": "useNodeMgmtV1FlagProvider" }
-    },
-    "flags": {
-      "required": ["TECH_PREVIEW"]
-    }
-  },
-  {
     "type": "console.user-preference/group",
     "properties": {
       "id": "general",
@@ -735,36 +725,6 @@
     }
   },
   {
-    "type": "console.user-preference/group",
-    "properties": {
-      "id": "node-mgmt-v1",
-      "label": "%console-app~Node management%"
-    },
-    "flags": {
-      "required": ["TECH_PREVIEW"]
-    }
-  },
-  {
-    "type": "console.user-preference/item",
-    "properties": {
-      "id": "console.nodeMgmtV1.enabled",
-      "label": "%console-app~Node management%",
-      "groupId": "node-mgmt-v1",
-      "description": "%console-app~Enable node management enhancements. This is a technology preview feature.%",
-      "field": {
-        "type": "checkbox",
-        "userSettingsKey": "console.nodeMgmtV1.enabled",
-        "label": "%console-app~Enable node management enhancements%",
-        "trueValue": true,
-        "falseValue": false,
-        "defaultValue": true
-      }
-    },
-    "flags": {
-      "required": ["TECH_PREVIEW"]
-    }
-  },
-  {
     "type": "console.user-preference/item",
     "properties": {
       "id": "console.theme",
@@ -789,15 +749,55 @@
   {
     "type": "console.user-preference/item",
     "properties": {
+      "id": "console.theme/contrast",
+      "label": "%console-app~Contrast mode%",
+      "groupId": "general",
+      "description": "%console-app~Controls the contrast level of the console.%",
+      "field": {
+        "type": "dropdown",
+        "userSettingsKey": "console.theme/contrast",
+        "defaultValue": "systemDefault",
+        "options": [
+          {
+            "value": "systemDefault",
+            "label": "%console-app~System default%",
+            "description": "%console-app~Matches your operating system's contrast setting.%"
+          },
+          {
+            "value": "glass",
+            "label": "%console-app~Glass%",
+            "description": "%console-app~A modern, visually refreshed console appearance.%"
+          },
+          {
+            "value": "default",
+            "label": "%console-app~Traditional%",
+            "description": "%console-app~The traditional console appearance.%"
+          },
+          {
+            "value": "contrast",
+            "label": "%console-app~High contrast%",
+            "description": "%console-app~Enhances contrast between interface elements for readability.%"
+          }
+        ]
+      },
+      "insertAfter": "console.theme"
+    },
+    "flags": {
+      "required": ["FLAG_OPENSHIFT_5"]
+    }
+  },
+  {
+    "type": "console.user-preference/item",
+    "properties": {
       "id": "console.preferredPerspective",
       "label": "%console-app~Perspective%",
       "groupId": "general",
-      "description": "%console-app~If a perspective is not selected, the console defaults to the last viewed.%",
+      "description": "%console-app~If you don't select a perspective, the console defaults to the last viewed.%",
       "field": {
         "type": "custom",
         "component": { "$codeRef": "PreferredPerspectiveSelect" }
       },
-      "insertAfter": "console.theme"
+      "insertAfter": "console.theme/contrast"
     },
     "flags": {
       "required": ["FLAG_PERSPECTIVES_AVAILABLE"]
@@ -1153,7 +1153,7 @@
       "perspective": "admin",
       "section": "workloads",
       "id": "statefulsets",
-      "insertAfter": "deploymentconfigs",
+      "insertAfter": ["deploymentconfigs", "deployments"],
       "name": "%console-app~StatefulSets%",
       "model": {
         "group": "apps",

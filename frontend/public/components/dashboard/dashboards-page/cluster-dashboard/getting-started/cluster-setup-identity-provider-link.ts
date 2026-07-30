@@ -1,13 +1,11 @@
 import { useTranslation } from 'react-i18next';
-
-import { GettingStartedLink } from '@console/shared/src/components/getting-started';
-
-import { OAuthModel } from '@console/internal/models';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
+import { OAuthModel } from '@console/internal/models';
+import type { GettingStartedLink } from '@console/shared/src/components/getting-started/GettingStartedCard';
 import { useCanEditIdentityProviders, useOAuthData } from '@console/shared/src/hooks/oauth';
 
 export const useIdentityProviderLink = (): GettingStartedLink | null => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const canEdit = useCanEditIdentityProviders();
   const [oauthData, oauthLoaded, oauthLoadError] = useOAuthData(canEdit);
 
@@ -22,7 +20,7 @@ export const useIdentityProviderLink = (): GettingStartedLink | null => {
 
   return {
     id: 'identity-providers',
-    title: t('public~Add identity providers'),
+    title: t('Add identity providers'),
     href: resourcePathFromModel(OAuthModel, 'cluster'),
   };
 };

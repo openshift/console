@@ -32,7 +32,7 @@ import { JobActionCreator } from './types';
  * };
  */
 export const useJobActions = (obj: JobKind, filterActions?: JobActionCreator[]): Action[] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const launchModal = useConfigureCountModal();
 
   const memoizedFilterActions = useDeepCompareMemoize(filterActions);
@@ -41,7 +41,7 @@ export const useJobActions = (obj: JobKind, filterActions?: JobActionCreator[]):
     () => ({
       [JobActionCreator.ModifyJobParallelism]: () => ({
         id: 'edit-parallelism',
-        label: t('console-app~Edit parallelism'),
+        label: t('Edit parallelism'),
         cta: () => {
           const modalProps = configureJobParallelismModal({
             resourceKind: JobModel,

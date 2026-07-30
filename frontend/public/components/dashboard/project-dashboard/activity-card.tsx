@@ -1,34 +1,34 @@
 import type { FC } from 'react';
-import { useEffect, useMemo, useContext } from 'react';
-import * as _ from 'lodash';
-import { Map as ImmutableMap } from 'immutable';
-import { connect } from 'react-redux';
+import { useEffect, useMemo, useContext, memo } from 'react';
 import { Card, CardFooter, CardHeader, CardTitle, Divider } from '@patternfly/react-core';
+import type { Map as ImmutableMap } from 'immutable';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+import { Link } from 'react-router';
+import type { DashboardsOverviewResourceActivity } from '@console/dynamic-plugin-sdk';
+import {
+  useResolvedExtensions,
+  isDashboardsOverviewResourceActivity,
+} from '@console/dynamic-plugin-sdk';
 import ActivityBody, {
   RecentEventsBody,
   OngoingActivityBody,
 } from '@console/shared/src/components/dashboard/activity-card/ActivityBody';
 import { useDynamicK8sWatchResources } from '@console/shared/src/hooks/useDynamicK8sWatchResources';
-import { useK8sWatchResource } from '../../utils/k8s-watch-hook';
-import { EventModel } from '../../../models';
-import { EventKind, K8sKind, K8sResourceCommon } from '../../../module/k8s';
-import {
-  useResolvedExtensions,
-  DashboardsOverviewResourceActivity,
-  isDashboardsOverviewResourceActivity,
-} from '@console/dynamic-plugin-sdk';
-import { uniqueResource } from '../dashboards-page/cluster-dashboard/utils';
-import { RootState } from '../../../redux';
-import { ProjectDashboardContext } from './project-dashboard-context';
 import { getName } from '@console/shared/src/selectors/common';
-import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router';
+import { EventModel } from '../../../models';
+import type { EventKind, K8sKind, K8sResourceCommon } from '../../../module/k8s';
+import type { RootState } from '../../../redux';
+import { useK8sWatchResource } from '../../utils/k8s-watch-hook';
+import { uniqueResource } from '../dashboards-page/cluster-dashboard/utils';
+import { ProjectDashboardContext } from './project-dashboard-context';
 
 const RecentEvent: FC<{ projectName: string; viewEvents: string }> = ({
   projectName,
   viewEvents,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const [eventsData, eventsLoaded, eventsLoadError] = useK8sWatchResource<EventKind[]>(
     projectName
@@ -55,7 +55,7 @@ const RecentEvent: FC<{ projectName: string; viewEvents: string }> = ({
           <Divider />
           <CardFooter>
             <Link to={viewEvents} data-test="events-view-all-link">
-              {t('public~View all events')}
+              {t('View all events')}
             </Link>
           </CardFooter>
         </>
@@ -142,16 +142,16 @@ const OngoingActivityComponent: FC<OngoingActivityProps> = ({ projectName, model
 
 const OngoingActivity = connect(mapStateToProps)(OngoingActivityComponent);
 
-export const ActivityCard: FC = () => {
+export const ActivityCard = memo(() => {
   const { obj } = useContext(ProjectDashboardContext);
   const projectName = getName(obj);
   const viewEvents = `/k8s/ns/${projectName}/events`;
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <>
       <Card data-test-id="activity-card">
         <CardHeader>
-          <CardTitle>{t('public~Activity')}</CardTitle>
+          <CardTitle>{t('Activity')}</CardTitle>
         </CardHeader>
         <ActivityBody className="co-project-dashboard__activity-body">
           <OngoingActivity projectName={projectName} />
@@ -160,7 +160,7 @@ export const ActivityCard: FC = () => {
       </Card>
     </>
   );
-};
+});
 
 type OngoingActivityReduxProps = {
   models: ImmutableMap<string, K8sKind>;

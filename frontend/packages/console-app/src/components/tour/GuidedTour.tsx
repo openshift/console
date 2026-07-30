@@ -6,7 +6,7 @@ import { TourContext } from './tour-context';
 
 const GuidedTour: FC = () => {
   const { tourState, tour, totalSteps, onComplete } = useContext(TourContext);
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   if (!tour) return null;
   const { intro, steps, end } = tour;
   const { stepNumber, startTour, completedTour } = tourState || {};
@@ -21,8 +21,8 @@ const GuidedTour: FC = () => {
       <StepComponent
         {...intro}
         showStepBadge={false}
-        nextButtonText={t('console-app~Launch tour')}
-        backButtonText={t('console-app~Skip tour')}
+        nextButtonText={t('Launch tour')}
+        backButtonText={t('Skip tour')}
       />
     );
   if (currentStepNumber && totalSteps && currentStepNumber > totalSteps)
@@ -30,17 +30,11 @@ const GuidedTour: FC = () => {
       <StepComponent
         {...end}
         showStepBadge={false}
-        nextButtonText={t('console-app~Okay, got it!')}
-        backButtonText={t('console-app~Back')}
+        nextButtonText={t('Okay, got it!')}
+        backButtonText={t('Back')}
       />
     );
   const step = steps?.[currentStepNumber - 1];
-  return (
-    <StepComponent
-      {...step}
-      nextButtonText={t('console-app~Next')}
-      backButtonText={t('console-app~Back')}
-    />
-  );
+  return <StepComponent {...step} nextButtonText={t('Next')} backButtonText={t('Back')} />;
 };
 export default GuidedTour;

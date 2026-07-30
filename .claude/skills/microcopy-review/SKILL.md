@@ -185,13 +185,13 @@ text being reviewed (buttons, modals, alerts, etc.).
 
 These links point to raw markdown files containing the PatternFly UX writing guides.
 
-!`gh api repos/patternfly/patternfly-org/git/trees/main?recursive=1 --jq '.tree[] | select(.path | startswith("packages/documentation-site/patternfly-docs/content/content-design") and endswith(".md")) | "https://raw.githubusercontent.com/patternfly/patternfly-org/refs/heads/main/" + .path'`
+!`gh api 'repos/patternfly/patternfly-org/git/trees/main?recursive=1' --jq '.tree[] | select(.path | startswith("packages/documentation-site/patternfly-docs/content/content-design") and endswith(".md")) | "https://raw.githubusercontent.com/patternfly/patternfly-org/refs/heads/main/" + .path'`
 
 #### Red Hat supplementary style guide
 
 These links point to raw AsciiDoc files containing the Red Hat supplementary style guide.
 
-!`gh api repos/redhat-documentation/supplementary-style-guide/git/trees/main?recursive=1 --jq '.tree[] | select(.path | endswith(".adoc")) | "https://raw.githubusercontent.com/redhat-documentation/supplementary-style-guide/refs/heads/main/" + .path'`
+!`gh api 'repos/redhat-documentation/supplementary-style-guide/git/trees/main?recursive=1' --jq '.tree[] | select(.path | endswith(".adoc")) | "https://raw.githubusercontent.com/redhat-documentation/supplementary-style-guide/refs/heads/main/" + .path'`
 
 ### Step 4: Analyze text
 

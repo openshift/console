@@ -17,7 +17,7 @@ const TertiaryHeading: FC<TertiaryHeadingProps> = ({
   </Title>
 );
 
-export type TertiaryHeadingProps = {
+type TertiaryHeadingProps = {
   children: ReactNode;
   className?: string;
   altSpacing?: string;

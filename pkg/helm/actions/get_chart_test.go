@@ -1,7 +1,8 @@
 package actions
 
 import (
-	"io/ioutil"
+	"io"
+	"os"
 	"testing"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -9,11 +10,11 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/schema"
 
 	"github.com/stretchr/testify/require"
-	"helm.sh/helm/v3/pkg/action"
-	"helm.sh/helm/v3/pkg/chartutil"
-	kubefake "helm.sh/helm/v3/pkg/kube/fake"
-	"helm.sh/helm/v3/pkg/storage"
-	"helm.sh/helm/v3/pkg/storage/driver"
+	"helm.sh/helm/v4/pkg/action"
+	"helm.sh/helm/v4/pkg/chart/common"
+	kubefake "helm.sh/helm/v4/pkg/kube/fake"
+	"helm.sh/helm/v4/pkg/storage"
+	"helm.sh/helm/v4/pkg/storage/driver"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/dynamic"
@@ -89,9 +90,8 @@ func TestGetChartWithoutTls(t *testing.T) {
 	actionConfig := &action.Configuration{
 		RESTClientGetter: FakeConfig{},
 		Releases:         store,
-		KubeClient:       &kubefake.PrintingKubeClient{Out: ioutil.Discard},
-		Capabilities:     chartutil.DefaultCapabilities,
-		Log:              func(format string, v ...interface{}) {},
+		KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
+		Capabilities:     common.DefaultCapabilities,
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
@@ -202,9 +202,8 @@ func TestGetChartWithTlsData(t *testing.T) {
 	actionConfig := &action.Configuration{
 		RESTClientGetter: FakeConfig{},
 		Releases:         store,
-		KubeClient:       &kubefake.PrintingKubeClient{Out: ioutil.Discard},
-		Capabilities:     chartutil.DefaultCapabilities,
-		Log:              func(format string, v ...interface{}) {},
+		KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
+		Capabilities:     common.DefaultCapabilities,
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
@@ -216,9 +215,9 @@ func TestGetChartWithTlsData(t *testing.T) {
 			}
 			// create a secret in required namespace
 			if test.createSecret {
-				certificate, errCert := ioutil.ReadFile("./server.crt")
+				certificate, errCert := os.ReadFile("./server.crt")
 				require.NoError(t, errCert)
-				key, errKey := ioutil.ReadFile("./server.key")
+				key, errKey := os.ReadFile("./server.key")
 				require.NoError(t, errKey)
 				data := map[string][]byte{
 					tlsSecretKey:     key,
@@ -229,7 +228,7 @@ func TestGetChartWithTlsData(t *testing.T) {
 			}
 			//create a configMap in openshift-config namespace
 			if test.createConfigMap {
-				caCert, err := ioutil.ReadFile("./cacert.pem")
+				caCert, err := os.ReadFile("./cacert.pem")
 				require.NoError(t, err)
 				data := map[string]string{
 					caBundleKey: string(caCert),
@@ -336,9 +335,8 @@ func TestGetChartBasicAuth(t *testing.T) {
 	actionConfig := &action.Configuration{
 		RESTClientGetter: FakeConfig{},
 		Releases:         store,
-		KubeClient:       &kubefake.PrintingKubeClient{Out: ioutil.Discard},
-		Capabilities:     chartutil.DefaultCapabilities,
-		Log:              func(format string, v ...interface{}) {},
+		KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
+		Capabilities:     common.DefaultCapabilities,
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {

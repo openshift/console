@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
+import { useEffect, useRef, useState, useCallback, useMemo, startTransition } from 'react';
 import {
   TextInputTypes,
   Alert,
@@ -15,7 +15,8 @@ import { SecretFormType } from '@console/internal/components/secrets/create-secr
 import { ImageStreamImportsModel } from '@console/internal/models';
 import type { ContainerPort } from '@console/internal/module/k8s';
 import { k8sCreate } from '@console/internal/module/k8s';
-import { InputField, CheckboxField } from '@console/shared';
+import { CheckboxField } from '@console/shared/src/components/formik-fields/CheckboxField';
+import { InputField } from '@console/shared/src/components/formik-fields/InputField';
 import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';
 import { UNASSIGNED_KEY, CREATE_APPLICATION_KEY } from '@console/topology/src/const';
 import { isContainerImportSource } from '../../../types/samples';
@@ -90,7 +91,7 @@ const useQueryParametersIfDefined = (handleSearch: (image: string) => void) => {
 };
 
 const ImageSearch: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const inputRef = useRef<HTMLInputElement>();
   const { values, setFieldValue, dirty, initialValues, touched } = useFormikContext<FormikValues>();
   const launchCreateSecretModal = useCreateSecretModal();
@@ -194,13 +195,13 @@ const ImageSearch: FC = () => {
 
   const helpText = useMemo(() => {
     if (values.isSearchingForImage) {
-      return `${t('devconsole~Validating')}...`;
+      return `${t('Validating')}...`;
     }
     if (!values.isSearchingForImage && validated === ValidatedOptions.success) {
-      return t('devconsole~Validated');
+      return t('Validated');
     }
     if (validated === ValidatedOptions.error) {
-      return values.searchTerm === '' ? t('devconsole~Required') : values.isi.status?.message;
+      return values.searchTerm === '' ? t('Required') : values.isi.status?.message;
     }
     return '';
   }, [t, validated, values.isSearchingForImage, values.searchTerm, values.isi.status?.message]);
@@ -254,19 +255,20 @@ const ImageSearch: FC = () => {
         ref={inputRef}
         type={TextInputTypes.text}
         name="searchTerm"
-        placeholder={t(
-          'devconsole~docker.io/openshift/hello-openshift or quay.io/<username>/<image-name>',
-        )}
+        placeholder={t('docker.io/openshift/hello-openshift or quay.io/<username>/<image-name>')}
         helpText={helpText}
         helpTextInvalid={helpText}
         validated={validated}
         onChange={(e: KeyboardEvent) => {
-          resetFields();
-          setFieldValue('isi', {});
+          const { value } = e.target as HTMLInputElement;
+          startTransition(() => {
+            resetFields();
+            setFieldValue('isi', {});
+          });
           setValidated(ValidatedOptions.default);
-          debouncedHandleSearch((e.target as HTMLInputElement).value);
+          debouncedHandleSearch(value);
         }}
-        aria-label={t('devconsole~Image name')}
+        aria-label={t('Image name')}
         data-test-id="deploy-image-search-term"
         required
       />
@@ -294,14 +296,14 @@ const ImageSearch: FC = () => {
           isInline
           className="co-alert"
           variant="success"
-          title={t('devconsole~Secret "{{newImageSecret}}" was created.', { newImageSecret })}
+          title={t('Secret "{{newImageSecret}}" was created.', { newImageSecret })}
           actionClose={<AlertActionCloseButton onClose={() => shouldHideAlert(false)} />}
         />
       )}
       <div className="odc-image-search__advanced-options">
         <CheckboxField
           name="allowInsecureRegistry"
-          label={t('devconsole~Allow Images from insecure registries')}
+          label={t('Allow Images from insecure registries')}
           onChange={(val: boolean) => {
             values.searchTerm && handleSearch(values.searchTerm, val);
           }}

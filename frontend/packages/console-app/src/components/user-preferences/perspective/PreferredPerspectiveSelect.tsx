@@ -38,9 +38,9 @@ const PreferredPerspectiveSelectOptions: FC<PreferredPerspectiveSelectOptionsPro
 );
 
 const PreferrredPerspectiveSelect: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const fireTelemetryEvent = useTelemetry();
-  const lastViewed = t('console-app~Last viewed');
+  const lastViewed = t('Last viewed');
   const [isOpen, setIsOpen] = useState(false);
   const [
     preferredPerspectiveID,

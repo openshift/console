@@ -1,35 +1,35 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import * as _ from 'lodash';
-import { connect } from 'react-redux';
-
 import { Divider, ButtonVariant } from '@patternfly/react-core';
-import { k8sPatch } from '../../module/k8s';
-import { RoleModel, ClusterRoleModel } from '../../models';
-import { Kebab } from '../utils/kebab';
-import { EmptyBox } from '../utils/status-box';
-import { ResourceIcon } from '../utils/resource-icon';
-
-import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
-import { useTranslation } from 'react-i18next';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
+import { RoleModel, ClusterRoleModel } from '../../models';
+import { k8sPatch } from '../../module/k8s';
+import { Kebab } from '../utils/kebab';
+import { ResourceIcon } from '../utils/resource-icon';
+import { EmptyBox } from '../utils/status-box';
 
 export const RulesList = ({ rules, name, namespace }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return _.isEmpty(rules) ? (
-    <EmptyBox label={t('public~Rules')} />
+    <EmptyBox label={t('Rules')} />
   ) : (
     <Table gridBreakPoint="">
       <Thead>
         <Tr>
-          <Th>{t('public~Verbs')}</Th>
-          <Th visibility={['hidden', 'visibleOnSm']}>{t('public~API groups')}</Th>
-          <Th>{t('public~Resources')}</Th>
-          <Th>{t('public~Resource names')}</Th>
+          <Th>{t('Verbs')}</Th>
+          <Th visibility={['hidden', 'visibleOnSm']}>{t('API groups')}</Th>
+          <Th>{t('Resources')}</Th>
+          <Th>{t('Resource names')}</Th>
         </Tr>
       </Thead>
       <Tbody>
         {rules.map((rule, i) => (
+          // eslint-disable-next-line react/no-array-index-key
           <Tr key={i}>
+            {/* eslint-disable-next-line no-use-before-define */}
             <Rule {...rule} name={name} namespace={namespace} i={i} />
           </Tr>
         ))}
@@ -39,10 +39,11 @@ export const RulesList = ({ rules, name, namespace }) => {
 };
 
 const Actions = ({ verbs }) => {
+  const { t } = useTranslation('public');
   let actions = [];
   _.each(verbs, (a) => {
     if (a === '*') {
-      actions = <div className="rbac-rule-row">All</div>;
+      actions = <div className="rbac-rule-row">{t('All')}</div>;
       return false;
     }
     actions.push(
@@ -55,13 +56,15 @@ const Actions = ({ verbs }) => {
 };
 
 const Groups = ({ apiGroups }) => {
+  const { t } = useTranslation('public');
+
   // defaults to [""]
   let groups = [];
   _.each(apiGroups, (g) => {
     if (g === '*') {
       groups = (
         <div className="rbac-rule-row">
-          * <i>All</i>
+          * <i>{t('All')}</i>
         </div>
       );
       return false;
@@ -77,8 +80,10 @@ const Groups = ({ apiGroups }) => {
 
 const Resources = connect(({ k8s }) => ({ allModels: k8s.getIn(['RESOURCES', 'models']) }))(
   ({ resources, nonResourceURLs, allModels }) => {
+    const { t } = useTranslation('public');
+
     let allResources = [];
-    resources &&
+    if (resources) {
       _.each([...new Set(resources)].sort(), (r) => {
         if (r === '') {
           return false;
@@ -86,7 +91,7 @@ const Resources = connect(({ k8s }) => ({ allModels: k8s.getIn(['RESOURCES', 'mo
         if (r === '*') {
           allResources = [
             <span key={r} className="rbac-rule-resource rbac-rule-row">
-              All Resources
+              {t('All Resources')}
             </span>,
           ];
           return false;
@@ -101,6 +106,7 @@ const Resources = connect(({ k8s }) => ({ allModels: k8s.getIn(['RESOURCES', 'mo
           </span>,
         );
       });
+    }
 
     if (nonResourceURLs && nonResourceURLs.length) {
       if (allResources.length) {
@@ -111,7 +117,7 @@ const Resources = connect(({ k8s }) => ({ allModels: k8s.getIn(['RESOURCES', 'mo
         if (r === '*') {
           URLs = [
             <div className="rbac-rule-row" key={r}>
-              All Non-resource URLs
+              {t('All Non-resource URLs')}
             </div>,
           ];
           return false;
@@ -122,7 +128,7 @@ const Resources = connect(({ k8s }) => ({ allModels: k8s.getIn(['RESOURCES', 'mo
           </div>,
         );
       });
-      allResources.push.apply(allResources, URLs);
+      allResources.push(...URLs);
     }
     return <div className="rbac-rule-resources">{allResources}</div>;
   },
@@ -149,13 +155,13 @@ const ResourceNames = ({ resourceNames }) => {
 // });
 
 const RuleKebab = ({ name, namespace, i }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const openDeleteRuleConfirm = useWarningModal({
-    title: t('public~Delete rule'),
-    children: t('public~Are you sure you want to delete rule #{{ruleNumber}}?', {
+    title: t('Delete rule'),
+    children: t('Are you sure you want to delete rule #{{ruleNumber}}?', {
       ruleNumber: i,
     }),
-    confirmButtonLabel: t('public~Delete rule'),
+    confirmButtonLabel: t('Delete rule'),
     confirmButtonVariant: ButtonVariant.danger,
     onConfirm: () => {
       const kind = namespace ? RoleModel : ClusterRoleModel;
@@ -172,7 +178,7 @@ const RuleKebab = ({ name, namespace, i }) => {
   const options = [
     // EditRule,
     () => ({
-      label: t('public~Delete rule'),
+      label: t('Delete rule'),
       callback: () => openDeleteRuleConfirm(),
     }),
   ].map((f) => f(name, namespace, i));

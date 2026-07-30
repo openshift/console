@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import type { CatalogItem, ExtensionHook, SetFeatureFlag } from '@console/dynamic-plugin-sdk';
 import type { K8sKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { isCatalogTypeEnabled } from '@console/shared';
+import { isCatalogTypeEnabled } from '@console/shared/src/components/catalog/utils/catalog-utils';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 import {
   EVENT_SINK_CATALOG_TYPE_ID,
@@ -16,7 +16,7 @@ import {
   FLAG_KNATIVE_EVENTING_BROKER,
   FLAG_EVENT_SOURCE_PING,
 } from '../const';
-import { useEventSourceModelsWithAccess } from '../hooks';
+import { useEventSourceModelsWithAccess } from '../hooks/useEventSourceModelsWithAccess';
 import { getEventSourceIcon } from '../utils/get-knative-icon';
 import { getEventSourceCatalogProviderData } from './event-source-data';
 
@@ -53,7 +53,7 @@ const normalizeEventSources = (
 export const useEventSourceProvider: ExtensionHook<CatalogItem[]> = ({
   namespace,
 }): [CatalogItem[], boolean, any] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const { loaded, eventSourceModelsList: eventSourceModels } = useEventSourceModelsWithAccess(
     namespace,
   );

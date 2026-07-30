@@ -1,11 +1,6 @@
 /* eslint-disable camelcase, tsdoc/syntax */
 import type { FC } from 'react';
-
 import { useMemo, memo, Suspense } from 'react';
-import * as _ from 'lodash';
-import { NavBar } from '@console/internal/components/utils/horizontal-nav';
-import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
-import { Link, useNavigate } from 'react-router';
 import {
   Alert,
   Button,
@@ -22,40 +17,45 @@ import {
   GridItem,
   ButtonVariant,
 } from '@patternfly/react-core';
-import { PencilAltIcon } from '@patternfly/react-icons';
-import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { RhUiEditIcon } from '@patternfly/react-icons';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { breadcrumbsForGlobalConfig } from '../../cluster-settings/global-config';
-
-import { K8sResourceKind } from '../../../module/k8s';
-import { LazyAlertRoutingModalOverlay } from '../../modals';
-import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
-import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
-import { Kebab } from '../../utils/kebab';
-import { SectionHeading } from '../../utils/headings';
-import { StatusBox } from '../../utils/status-box';
-import { useK8sWatchResource } from '../../utils/k8s-watch-hook';
-import {
-  getAlertmanagerConfig,
-  patchAlertmanagerConfig,
-  receiverTypes,
-} from './alertmanager-utils';
+import { Link, useNavigate } from 'react-router';
 import {
   actionsCellProps,
   cellIsStickyProps,
   getNameCellProps,
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import {
+import type {
   ResourceFilters,
   ConsoleDataViewColumn,
   ConsoleDataViewRow,
   ResourceMetadata,
 } from '@console/app/src/components/data-view/types';
-import { RowProps, TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
+import type {
+  RowProps,
+  TableColumn,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { NavBar } from '@console/internal/components/utils/horizontal-nav';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DASH } from '@console/shared/src/constants/ui';
+import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
+import type { K8sResourceKind } from '../../../module/k8s';
+import { breadcrumbsForGlobalConfig } from '../../cluster-settings/global-config';
+import { LazyAlertRoutingModalOverlay } from '../../modals';
+import { SectionHeading } from '../../utils/headings';
+import { useK8sWatchResource } from '../../utils/k8s-watch-hook';
+import { Kebab } from '../../utils/kebab';
+import { StatusBox } from '../../utils/status-box';
+import {
+  getAlertmanagerConfig,
+  patchAlertmanagerConfig,
+  receiverTypes,
+} from './alertmanager-utils';
 
 export enum InitialReceivers {
   Critical = 'Critical',
@@ -72,30 +72,30 @@ interface AlertRoutingProps {
 
 const AlertRouting: FC<AlertRoutingProps> = ({ secret, config }) => {
   const groupBy = _.get(config, ['route', 'group_by'], []);
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const launchModal = useOverlay();
   return (
     <PaneBody>
-      <SectionHeading text={t('public~Alert routing')}>
+      <SectionHeading text={t('Alert routing')}>
         <Button
           onClick={() => launchModal(LazyAlertRoutingModalOverlay, { config, secret })}
           variant="secondary"
           data-test="edit-alert-routing-btn"
         >
-          {t('public~Edit')}
+          {t('Edit')}
         </Button>
       </SectionHeading>
       <Grid hasGutter>
         <GridItem sm={6}>
           <DescriptionList>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('public~Group by')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Group by')}</DescriptionListTerm>
               <DescriptionListDescription data-test="group_by_value">
                 {_.isEmpty(groupBy) ? '-' : _.join(groupBy, ', ')}
               </DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('public~Group wait')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Group wait')}</DescriptionListTerm>
               <DescriptionListDescription data-test="group_wait_value">
                 {_.get(config, ['route', 'group_wait'], '-')}
               </DescriptionListDescription>
@@ -105,13 +105,13 @@ const AlertRouting: FC<AlertRoutingProps> = ({ secret, config }) => {
         <GridItem sm={6}>
           <DescriptionList>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('public~Group interval')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Group interval')}</DescriptionListTerm>
               <DescriptionListDescription data-test="group_interval_value">
                 {_.get(config, ['route', 'group_interval'], '-')}
               </DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('public~Repeat interval')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Repeat interval')}</DescriptionListTerm>
               <DescriptionListDescription data-test="repeat_interval_value">
                 {_.get(config, ['route', 'repeat_interval'], '-')}
               </DescriptionListDescription>
@@ -154,7 +154,7 @@ const getIntegrationTypes = (receiver: AlertmanagerReceiver): string[] => {
  *     "severity": "critical"
  *   }
  * }]
-}*/
+} */
 const getRoutingLabelsByReceivers = (
   routes: AlertmanagerRoute[],
   parentLabels: { [key: string]: string } = {},
@@ -201,7 +201,8 @@ const hasSimpleReceiver = (
 ): boolean => {
   if (receiverIntegrationTypes.length === 0) {
     return true;
-  } else if (receiverIntegrationTypes.length === 1) {
+  }
+  if (receiverIntegrationTypes.length === 1) {
     const receiverConfig = receiverIntegrationTypes[0]; // ex: 'pagerduty_configs'
     const numConfigs = _.get(receiver, receiverConfig)?.length; // 'pagerduty_configs' is array and may have multiple sets of properties
     return _.hasIn(receiverTypes, receiverConfig) && numConfigs <= 1; // known receiver type and a single set of props
@@ -236,7 +237,13 @@ const RoutingLabels: FC<RoutingLabelsProps> = ({ data }) => {
   const values = [...lbls, ...(matchers ?? [])];
   return values.length > 0 ? (
     <PfLabelGroup>
-      {values.map((value, i) => (value ? <PfLabel key={`label-${i}`}>{value}</PfLabel> : DASH))}
+      {values.map((value, i) =>
+        value ? ( // eslint-disable-next-line react/no-array-index-key
+          <PfLabel key={`label-${i}`}>{value}</PfLabel>
+        ) : (
+          DASH
+        ),
+      )}
     </PfLabelGroup>
   ) : null;
 };
@@ -326,7 +333,7 @@ const getReceiverDataViewRows = (
 
     const receiverMenuItems = (receiverName: string) => [
       {
-        label: t('public~Edit Receiver'),
+        label: t('Edit Receiver'),
         callback: () => {
           const targetUrl = canUseEditForm
             ? `/settings/cluster/alertmanagerconfig/receivers/${receiverName}/edit`
@@ -335,18 +342,18 @@ const getReceiverDataViewRows = (
         },
       },
       {
-        label: t('public~Delete Receiver'),
+        label: t('Delete Receiver'),
         isDisabled: !canDelete,
         tooltip: !canDelete
-          ? t('public~Cannot delete the default receiver, or a receiver which has a sub-route')
+          ? t('Cannot delete the default receiver, or a receiver which has a sub-route')
           : '',
         callback: () => {
           openDeleteReceiverConfirm({
-            title: t('public~Delete Receiver'),
-            children: t('public~Are you sure you want to delete receiver {{receiverName}}?', {
+            title: t('Delete Receiver'),
+            children: t('Are you sure you want to delete receiver {{receiverName}}?', {
               receiverName,
             }),
-            confirmButtonLabel: t('public~Delete Receiver'),
+            confirmButtonLabel: t('Delete Receiver'),
             confirmButtonVariant: ButtonVariant.danger,
             onConfirm: () => {
               deleteReceiver(secret, config, receiverName, navigate);
@@ -368,8 +375,8 @@ const getReceiverDataViewRows = (
             receiver.name === InitialReceivers.Default) &&
           !integrationTypesLabel ? (
             <Link to={`/settings/cluster/alertmanagerconfig/receivers/${receiver.name}/edit`}>
-              {t('public~Configure')}
-              <PencilAltIcon className="co-icon-space-l" />
+              {t('Configure')}
+              <RhUiEditIcon className="co-icon-space-l" />
             </Link>
           ) : (
             integrationTypesLabel
@@ -380,7 +387,7 @@ const getReceiverDataViewRows = (
       },
       [tableColumnInfo[2].id]: {
         cell: isDefaultReceiver
-          ? t('public~All (default receiver)')
+          ? t('All (default receiver)')
           : _.map(receiverRoutingLabels, (rte, i) => {
               return <RoutingLabels data={rte} key={i} />;
             }),
@@ -406,11 +413,11 @@ const getReceiverDataViewRows = (
 };
 
 const useReceiverColumns = (): TableColumn<AlertmanagerReceiver>[] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const columns = useMemo(() => {
     return [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'name',
         props: {
@@ -419,14 +426,14 @@ const useReceiverColumns = (): TableColumn<AlertmanagerReceiver>[] => {
         },
       },
       {
-        title: t('public~Integration type'),
+        title: t('Integration type'),
         id: tableColumnInfo[1].id,
         props: {
           modifier: 'nowrap',
         },
       },
       {
-        title: t('public~Routing labels'),
+        title: t('Routing labels'),
         id: tableColumnInfo[2].id,
         props: {
           modifier: 'nowrap',
@@ -453,7 +460,7 @@ const ReceiversTable: FC<ReceiversTableProps> = (props) => {
   const { secret, config, data } = props;
   const { route } = config;
   const { receiver: defaultReceiverName, routes } = route;
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const navigate = useNavigate();
   const columns = useReceiverColumns();
 
@@ -476,16 +483,16 @@ const ReceiversTable: FC<ReceiversTableProps> = (props) => {
   return (
     <Suspense fallback={<div className="loading-skeleton--table" />}>
       <ConsoleDataView<AlertmanagerReceiver, ReceiverRowData, ReceiverFilters>
-        label={t('public~Receivers')}
+        label={t('Receivers')}
         data={data}
-        loaded={true}
+        loaded
         columns={columns}
         getObjectMetadata={getObjectMetadata}
         getDataViewRows={getReceiverDataViewRows}
         customRowData={customRowData}
-        hideColumnManagement={true}
+        hideColumnManagement
         hideNameLabelFilters={false}
-        hideLabelFilter={true}
+        hideLabelFilter
       />
     </Suspense>
   );
@@ -493,16 +500,16 @@ const ReceiversTable: FC<ReceiversTableProps> = (props) => {
 ReceiversTable.displayName = 'ReceiversTable';
 
 const ReceiversEmptyState: FC<{}> = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <EmptyState
       headingLevel="h2"
-      titleText={<>{t('public~No receivers found')}</>}
+      titleText={<>{t('No receivers found')}</>}
       variant={EmptyStateVariant.full}
     >
       <EmptyStateBody>
         {t(
-          'public~Create a receiver to get OpenShift alerts through other services such as email or a chat platform. The first receiver you create will become the default receiver and will automatically receive all alerts from this cluster. Subsequent receivers can have specific sets of alerts routed to them.',
+          'Create a receiver to get OpenShift alerts through other services such as email or a chat platform. The first receiver you create will become the default receiver and will automatically receive all alerts from this cluster. Subsequent receivers can have specific sets of alerts routed to them.',
         )}
       </EmptyStateBody>
     </EmptyState>
@@ -518,14 +525,14 @@ const Receivers: FC<ReceiversProps> = ({ secret, config }) => {
   const receivers = _.get(config, 'receivers', []);
 
   const numOfIncompleteReceivers = numberOfIncompleteReceivers(config);
-  const { t } = useTranslation();
-  const receiverString = t('public~receiver', { count: numOfIncompleteReceivers });
+  const { t } = useTranslation('public');
+  const receiverString = t('receiver', { count: numOfIncompleteReceivers });
   return (
     <PaneBody>
-      <SectionHeading text={t('public~Receivers')}>
+      <SectionHeading text={t('Receivers')}>
         <Link to="/settings/cluster/alertmanagerconfig/receivers/~new">
           <Button variant="primary" data-test="create-receiver">
-            {t('public~Create Receiver')}
+            {t('Create Receiver')}
           </Button>
         </Link>
       </SectionHeading>
@@ -534,11 +541,11 @@ const Receivers: FC<ReceiversProps> = ({ secret, config }) => {
           isInline
           className="co-alert co-alert--scrollable"
           variant="info"
-          title={t('public~Incomplete alert {{receiverString}}', { receiverString })}
+          title={t('Incomplete alert {{receiverString}}', { receiverString })}
         >
           <div className="co-pre-line">
             {t(
-              'public~Configure the {{receiverString}} to ensure that you learn about important issues with your cluster.',
+              'Configure the {{receiverString}} to ensure that you learn about important issues with your cluster.',
               { receiverString },
             )}
           </div>
@@ -554,7 +561,7 @@ const Receivers: FC<ReceiversProps> = ({ secret, config }) => {
 };
 
 const AlertmanagerConfiguration: FC<AlertmanagerConfigurationProps> = ({ obj: secret }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { config, errorMessage } = getAlertmanagerConfig(secret);
 
   if (errorMessage) {
@@ -563,7 +570,7 @@ const AlertmanagerConfiguration: FC<AlertmanagerConfigurationProps> = ({ obj: se
         isInline
         className="co-alert co-alert--scrollable"
         variant="danger"
-        title={t('public~An error occurred')}
+        title={t('An error occurred')}
       >
         <div className="co-pre-line">{errorMessage}</div>
       </Alert>
@@ -579,10 +586,10 @@ const AlertmanagerConfiguration: FC<AlertmanagerConfigurationProps> = ({ obj: se
 };
 
 const AlertmanagerConfigWrapper = memo<AlertmanagerConfigWrapperProps>(({ obj, ...props }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <>
-      <DocumentTitle>{t('public~Alerting')}</DocumentTitle>
+      <DocumentTitle>{t('Alerting')}</DocumentTitle>
       <StatusBox {...obj}>
         <AlertmanagerConfiguration {...props} obj={obj.data} />
       </StatusBox>
@@ -591,7 +598,7 @@ const AlertmanagerConfigWrapper = memo<AlertmanagerConfigWrapperProps>(({ obj, .
 });
 
 export const AlertmanagerConfig: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const configPath = 'alertmanagerconfig';
   const YAMLPath = 'alertmanageryaml';
@@ -607,15 +614,15 @@ export const AlertmanagerConfig: FC = () => {
 
   return (
     <>
-      <PageHeading breadcrumbs={breadcrumbs} title={t('public~Alertmanager')} />
+      <PageHeading breadcrumbs={breadcrumbs} title={t('Alertmanager')} />
       <NavBar
         pages={[
           {
-            name: t('public~Details'),
+            name: t('Details'),
             href: configPath,
           },
           {
-            name: t('public~YAML'),
+            name: t('YAML'),
             href: YAMLPath,
           },
         ]}
@@ -636,7 +643,7 @@ type AlertmanagerConfigurationProps = {
   obj?: K8sResourceKind;
   onCancel?: () => void;
 };
-type labels = {
+type Labels = {
   [key: string]: string;
 };
 
@@ -646,8 +653,8 @@ export type AlertmanagerRoute = {
   groupWait?: string;
   groupInterval?: string;
   repeatInterval?: string;
-  match?: labels[];
-  match_re?: labels[];
+  match?: Labels[];
+  match_re?: Labels[];
   routes?: AlertmanagerRoute[];
   matchers?: string[];
 };

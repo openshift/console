@@ -1,9 +1,9 @@
+/* eslint-disable no-barrel-files/no-barrel-files */
 export type {
   CodeRef,
   EncodedCodeRef,
   Extension,
   ExtensionFlags,
-  ExtensionPredicate as ExtensionTypeGuard,
   LoadedAndResolvedExtension as ResolvedExtension,
   LoadedExtension,
   MapCodeRefsToValues as ResolvedCodeRefProperties,

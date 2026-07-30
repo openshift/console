@@ -1,20 +1,20 @@
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { NumberSpinnerField } from '@console/shared';
+import { NumberSpinnerField } from '@console/shared/src/components/formik-fields/NumberSpinnerField';
 import FormSection from '../section/FormSection';
 
 const ScalingSection: FC<{ name: string }> = ({ name }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   return (
     <FormSection
-      title={t('devconsole~Scaling')}
-      subTitle={t('devconsole~Replicas are scaled manually based on CPU usage.')}
+      title={t('Scaling')}
+      subTitle={t('Replicas are scaled manually based on CPU usage.')}
       dataTest="scaling"
     >
       <NumberSpinnerField
         name={name}
-        label={t('devconsole~Replicas')}
-        helpText={t('devconsole~The number of instances of your Image.')}
+        label={t('Replicas')}
+        helpText={t('The number of instances of your Image.')}
         setOutputAsIntegerFlag
       />
     </FormSection>

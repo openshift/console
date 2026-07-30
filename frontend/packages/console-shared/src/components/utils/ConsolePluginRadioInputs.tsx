@@ -2,13 +2,13 @@ import type { FC, ChangeEvent } from 'react';
 import { FormGroup, Radio } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
-const ConsolePluginRadioInputs: FC<ConsolePluginRadioInputsProps> = ({
+export const ConsolePluginRadioInputs: FC<ConsolePluginRadioInputsProps> = ({
   autofocus,
   enabled,
   onChange: setEnabled,
   name,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const onChange = (e: ChangeEvent<HTMLInputElement>) =>
     setEnabled(e.currentTarget.value === 'enabled');
   return (
@@ -17,7 +17,7 @@ const ConsolePluginRadioInputs: FC<ConsolePluginRadioInputsProps> = ({
         id={`${name}-enabled`}
         name={name}
         value="enabled"
-        label={t('console-shared~Enable')}
+        label={t('Enable')}
         onChange={onChange}
         isChecked={enabled}
         data-checked-state={enabled}
@@ -28,7 +28,7 @@ const ConsolePluginRadioInputs: FC<ConsolePluginRadioInputsProps> = ({
         id={`${name}-disabled`}
         name={name}
         value="disabled"
-        label={t('console-shared~Disable')}
+        label={t('Disable')}
         onChange={onChange}
         isChecked={!enabled}
         data-checked-state={!enabled}
@@ -45,5 +45,3 @@ type ConsolePluginRadioInputsProps = {
   onChange: (enabled: boolean) => void;
   name: string;
 };
-
-export default ConsolePluginRadioInputs;

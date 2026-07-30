@@ -13,7 +13,7 @@ import { OLMv1TechPreviewBadge } from './OLMv1TechPreviewBadge';
  * Uses user settings to persist the toggle state.
  */
 export const OLMv1Switch: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm-v1');
   const techPreviewEnabled = useFlag(FLAG_TECH_PREVIEW);
   const [olmv1Enabled, setOlmv1Enabled] = useUserPreference<boolean>(
     OLMV1_ENABLED_USER_PREFERENCE_KEY,
@@ -33,10 +33,10 @@ export const OLMv1Switch: FC = () => {
       <FlexItem>
         <Switch
           id="olmv1-toggle"
-          label={t('olm-v1~Enable OLMv1')}
+          label={t('Enable OLMv1')}
           isChecked={olmv1Enabled ?? false}
           onChange={handleToggle}
-          aria-label={t('olm-v1~Toggle OLMv1 UI')}
+          aria-label={t('Toggle OLMv1 UI')}
         />
       </FlexItem>
       <FlexItem>

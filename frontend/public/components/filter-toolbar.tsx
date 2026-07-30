@@ -1,19 +1,15 @@
 import type { FC, Ref, MouseEvent, ChangeEvent, ReactText } from 'react';
 import { useState, useMemo, useCallback, useEffect, Fragment } from 'react';
-import * as _ from 'lodash';
-import { useLocation } from 'react-router';
-import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import type { MenuToggleElement, ToolbarLabel } from '@patternfly/react-core';
 import {
   Badge,
   Button,
   MenuToggle,
-  MenuToggleElement,
   Select,
   SelectGroup,
   SelectList,
   SelectOption,
   Toolbar,
-  ToolbarLabel,
   ToolbarContent,
   ToolbarFilter,
   ToolbarGroup,
@@ -21,27 +17,30 @@ import {
   ToolbarToggleGroup,
   Tooltip,
 } from '@patternfly/react-core';
-import { FilterIcon, ColumnsIcon } from '@patternfly/react-icons';
-import {
+import { RhUiFilterIcon, RhUiColumnsIcon } from '@patternfly/react-icons';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router';
+import type {
   RowFilterItem,
   ColumnLayout,
   OnFilterChange,
   FilterValue,
   RowSearchFilter,
 } from '@console/dynamic-plugin-sdk';
-import { ConsoleSelect } from '@console/internal/components/utils/console-select';
-import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
-import { useTranslation } from 'react-i18next';
+import { filterList } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
-import AutocompleteInput from './autocomplete';
-import { storagePrefix } from './row-filter';
-import { LazyColumnManagementModalOverlay } from './modals';
+import { ConsoleSelect } from '@console/internal/components/utils/console-select';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';
 import { useDeepCompareMemoize } from '@console/shared/src/hooks/useDeepCompareMemoize';
+import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
+import AutocompleteInput from './autocomplete';
 import { TextFilter } from './factory/text-filter';
-import { filterList } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
-import useRowFilterFix from './useRowFilterFix';
+import { LazyColumnManagementModalOverlay } from './modals';
+import { storagePrefix } from './row-filter';
 import useLabelSelectionFix from './useLabelSelectionFix';
+import useRowFilterFix from './useRowFilterFix';
 import useSearchFilters from './useSearchFilters';
 
 /**
@@ -53,7 +52,7 @@ enum FilterType {
   LABEL = 'Label',
 }
 
-export const filterTypeMap = Object.freeze({
+const filterTypeMap = Object.freeze({
   [FilterType.LABEL]: 'labels',
   [FilterType.NAME]: 'name',
 });
@@ -89,9 +88,9 @@ export const FilterToolbar: FC<FilterToolbarProps> = ({
   const location = useLocation();
   const launchModal = useOverlay();
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
-  const translatedNameFilterTitle = nameFilterTitle ?? t('public~Name');
+  const translatedNameFilterTitle = nameFilterTitle ?? t('Name');
 
   const { searchFiltersObject, searchFiltersState, changeSearchFiltersState } = useSearchFilters(
     rowSearchFilters,
@@ -103,7 +102,7 @@ export const FilterToolbar: FC<FilterToolbarProps> = ({
       case 'Name':
         return translatedNameFilterTitle;
       case 'Label':
-        return t('public~Label');
+        return t('Label');
       default:
         return searchFiltersObject?.[value]?.filterGroupName || value;
     }
@@ -120,7 +119,7 @@ export const FilterToolbar: FC<FilterToolbarProps> = ({
   };
 
   if (!hideLabelFilter && !hideNameLabelFilters) {
-    filterDropdownItems.LABEL = t('public~Label');
+    filterDropdownItems.LABEL = t('Label');
   }
 
   if (!hideNameLabelFilters) {
@@ -359,11 +358,11 @@ export const FilterToolbar: FC<FilterToolbarProps> = ({
       data-test="filter-toolbar"
       id="filter-toolbar"
       clearAllFilters={clearAll}
-      clearFiltersButtonText={t('public~Clear all filters')}
+      clearFiltersButtonText={t('Clear all filters')}
     >
       <ToolbarContent>
         {(rowFilters?.length > 0 || !hideNameLabelFilters) && (
-          <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md">
+          <ToolbarToggleGroup toggleIcon={<RhUiFilterIcon />} breakpoint="md">
             {rowFilters?.length > 0 && (
               <ToolbarItem>
                 {_.reduce(
@@ -382,10 +381,11 @@ export const FilterToolbar: FC<FilterToolbarProps> = ({
                       }
                       categoryName={key}
                       deleteLabelGroup={() => clearAllRowFilter(key)}
-                      labelGroupCollapsedText={t('public~{{numRemaining}} more', {
+                      labelGroupCollapsedText={t('{{numRemaining}} more', {
+                        // eslint-disable-next-line no-template-curly-in-string
                         numRemaining: '${remaining}',
                       })}
-                      labelGroupExpandedText={t('public~Show less')}
+                      labelGroupExpandedText={t('Show less')}
                     >
                       {acc}
                     </ToolbarFilter>
@@ -400,8 +400,8 @@ export const FilterToolbar: FC<FilterToolbarProps> = ({
                           isExpanded={isOpen}
                         >
                           <span>
-                            <FilterIcon className="span--icon__right-margin" />
-                            {t('public~Filter')}
+                            <RhUiFilterIcon className="span--icon__right-margin" />
+                            {t('Filter')}
                           </span>
                         </MenuToggle>
                       )}
@@ -433,7 +433,7 @@ export const FilterToolbar: FC<FilterToolbarProps> = ({
                     setLabelInputText('');
                     applyLabelFilters(_.difference(labelSelection, [chip]));
                   }}
-                  categoryName={t('public~Label')}
+                  categoryName={t('Label')}
                 >
                   <ToolbarFilter
                     labels={nameInputText ? [nameInputText] : []}
@@ -462,7 +462,7 @@ export const FilterToolbar: FC<FilterToolbarProps> = ({
                           showSuggestions
                           textValue={labelInputText}
                           setTextValue={setLabelInputText}
-                          placeholder={labelFilterPlaceholder ?? t('public~Search by label...')}
+                          placeholder={labelFilterPlaceholder ?? t('Search by label...')}
                           data={data}
                           labelPath={labelPath}
                         />
@@ -476,7 +476,7 @@ export const FilterToolbar: FC<FilterToolbarProps> = ({
                             setNameInputText(value);
                             debounceApplyNameFilter(value);
                           }}
-                          placeholder={nameFilterPlaceholder ?? t('public~Search by name...')}
+                          placeholder={nameFilterPlaceholder ?? t('Search by name...')}
                         />
                       )}
 
@@ -501,16 +501,16 @@ export const FilterToolbar: FC<FilterToolbarProps> = ({
         {columnLayout?.id && !hideColumnManagement && (
           <ToolbarGroup>
             <ToolbarItem>
-              <Tooltip content={t('public~Manage columns')} trigger="mouseenter">
+              <Tooltip content={t('Manage columns')} trigger="mouseenter">
                 <Button
-                  icon={<ColumnsIcon />}
+                  icon={<RhUiColumnsIcon />}
                   variant="plain"
                   onClick={() =>
                     launchModal(LazyColumnManagementModalOverlay, {
                       columnLayout,
                     })
                   }
-                  aria-label={t('public~Column management')}
+                  aria-label={t('Column management')}
                   data-test="manage-columns"
                 />
               </Tooltip>
@@ -530,11 +530,11 @@ type RowFilterBase<R> = {
   defaultSelected?: string[];
 };
 
-export type RowMatchFilter<R = any> = RowFilterBase<R> & {
+type RowMatchFilter<R = any> = RowFilterBase<R> & {
   isMatch: (obj: R, id: string) => boolean;
 };
 
-export type RowReducerFilter<R = any> = RowFilterBase<R> & {
+type RowReducerFilter<R = any> = RowFilterBase<R> & {
   reducer: (obj: R) => ReactText;
 };
 

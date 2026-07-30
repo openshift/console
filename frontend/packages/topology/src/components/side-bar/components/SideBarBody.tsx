@@ -11,7 +11,7 @@ import { useQueryParams } from '@console/shared/src/hooks/useQueryParams';
 import SideBarTabLoader from '../providers/SideBarTabLoader';
 
 const SimpleTabNavWrapper: FC<{ tabs: Tab[] }> = ({ tabs }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   const selectedTab = useConsoleSelector<string>(({ UI }) =>
     UI.getIn(['overview', 'selectedDetailsTab']),
   );
@@ -27,7 +27,7 @@ const SimpleTabNavWrapper: FC<{ tabs: Tab[] }> = ({ tabs }) => {
   return (
     <SimpleTabNav
       withinSidebar
-      selectedTab={selectTabParam || selectedTab || t('topology~Details')}
+      selectedTab={selectTabParam || selectedTab || t('Details')}
       tabs={tabs}
       onClickTab={handleClickTab}
     />

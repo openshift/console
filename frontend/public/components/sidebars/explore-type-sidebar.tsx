@@ -1,6 +1,5 @@
 import type { FC, MouseEvent } from 'react';
 import { useState, useEffect } from 'react';
-import * as _ from 'lodash';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -11,18 +10,13 @@ import {
   ListItem,
   Title,
 } from '@patternfly/react-core';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { CamelCaseWrap } from '@console/dynamic-plugin-sdk';
-import {
-  getDefinitionKey,
-  getSwaggerPath,
-  K8sKind,
-  SwaggerDefinition,
-  SwaggerDefinitions,
-  fetchSwagger,
-} from '../../module/k8s';
-import { EmptyBox } from '../utils/status-box';
+import type { K8sKind, SwaggerDefinition, SwaggerDefinitions } from '../../module/k8s';
+import { getDefinitionKey, getSwaggerPath, fetchSwagger } from '../../module/k8s';
 import { LinkifyExternal } from '../utils/link';
+import { EmptyBox } from '../utils/status-box';
 
 const getRef = (definition: SwaggerDefinition): string => {
   const ref = definition.$ref || _.get(definition, 'items.$ref');
@@ -37,7 +31,7 @@ export const ExploreType: FC<ExploreTypeProps> = (props) => {
   // OpenAPI document.
   const [drilldownHistory, setDrilldownHistory] = useState([]);
   const { kindObj, schema } = props;
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const [allDefinitions, setAllDefinitions] = useState<SwaggerDefinitions>(null);
 
   useEffect(() => {
@@ -80,7 +74,7 @@ export const ExploreType: FC<ExploreTypeProps> = (props) => {
   const required = new Set(currentDefinition?.required || []);
   const kindLabel = kindObj?.labelKey ? t(kindObj.labelKey) : kindObj?.kind;
   const breadcrumbs = drilldownHistory.length
-    ? [kindObj ? kindLabel : t('public~Schema'), ..._.map(drilldownHistory, 'name')]
+    ? [kindObj ? kindLabel : t('Schema'), ..._.map(drilldownHistory, 'name')]
     : [];
 
   const drilldown = (
@@ -129,6 +123,7 @@ export const ExploreType: FC<ExploreTypeProps> = (props) => {
             const isLast = i === breadcrumbs.length - 1;
             return (
               <BreadcrumbItem
+                // eslint-disable-next-line react/no-array-index-key
                 key={i}
                 isActive={isLast}
                 onClick={!isLast ? (e) => breadcrumbClicked(e, i) : undefined}
@@ -147,7 +142,7 @@ export const ExploreType: FC<ExploreTypeProps> = (props) => {
           </p>
         )}
         {_.isEmpty(currentProperties) ? (
-          <EmptyBox label={t('public~Properties')} />
+          <EmptyBox label={t('Properties')} />
         ) : (
           <List isPlain isBordered>
             {_.map(currentProperties, (definition: SwaggerDefinition, name: string) => {
@@ -164,7 +159,7 @@ export const ExploreType: FC<ExploreTypeProps> = (props) => {
                     &nbsp;
                     <Content component={ContentVariants.small}>
                       <span className="co-break-word">{definitionTypeStr}</span>
-                      {required.has(name) && <> &ndash; {t('public~required')}</>}
+                      {required.has(name) && <> &ndash; {t('required')}</>}
                     </Content>
                   </Title>
                   {definition.description && (
@@ -174,7 +169,7 @@ export const ExploreType: FC<ExploreTypeProps> = (props) => {
                   )}
                   {definition.enum && (
                     <p className="co-break-word co-pre-wrap">
-                      <strong>{t('public~Allowed values: ')}</strong>
+                      <strong>{t('Allowed values: ')}</strong>
                       <span className="co-break-word">{definition.enum.join(', ')}</span>
                     </p>
                   )}
@@ -185,7 +180,7 @@ export const ExploreType: FC<ExploreTypeProps> = (props) => {
                       isInline
                       variant="link"
                     >
-                      {t('public~View details')}
+                      {t('View details')}
                     </Button>
                   )}
                 </ListItem>

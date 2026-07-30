@@ -6,7 +6,7 @@ import type { FormikValues } from 'formik';
 import { useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { GitProvider } from '@console/git-service/src';
+import { GitProvider } from '@console/git-service/src/types/git';
 import GiteaIcon from '../GiteaIcon';
 import { GitReadableTypes } from '../import-types';
 
@@ -18,7 +18,7 @@ type GitTypeSelectorProps = {
 
 const GitTypeSelector: FC<GitTypeSelectorProps> = ({ fieldPrefix }) => {
   const { values, setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
 
   const handleGitTypeChange = (gitType: GitProvider) => {
     setFieldValue(`${fieldPrefix}git.type`, gitType, false);
@@ -28,7 +28,7 @@ const GitTypeSelector: FC<GitTypeSelectorProps> = ({ fieldPrefix }) => {
 
   return (
     <>
-      <FormGroup label={t('devconsole~Git type')} isRequired id="git-type">
+      <FormGroup label={t('Git type')} isRequired id="git-type">
         <Flex spaceItems={{ default: 'spaceItemsSm' }}>
           <FlexItem>
             <Tile

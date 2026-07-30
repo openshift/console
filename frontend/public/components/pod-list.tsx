@@ -1,3 +1,11 @@
+import type { FC, ReactNode } from 'react';
+import { useEffect, useMemo, Suspense, useCallback } from 'react';
+import { Button, Content, ContentVariants, Divider, Popover } from '@patternfly/react-core';
+import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
+import type { DataViewFilterOption } from '@patternfly/react-data-view/dist/esm/DataViewFilters';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router';
 import {
   actionsCellProps,
   ConsoleDataView,
@@ -6,38 +14,33 @@ import {
   initialFiltersDefault,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import {
+import type {
   ConsoleDataViewColumn,
   ConsoleDataViewRow,
   ResourceFilters,
 } from '@console/app/src/components/data-view/types';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { ListPageBody } from '@console/dynamic-plugin-sdk';
-import {
+import type {
   ColumnLayout,
   RowProps,
   TableColumn,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { Status } from '@console/shared/src/components/status/Status';
 import { COLUMN_MANAGEMENT_USER_PREFERENCE_KEY } from '@console/shared/src/constants/common';
 import { DASH } from '@console/shared/src/constants/ui';
-import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
-import type { TableColumnsType } from '@console/shared/src/types/tableColumn';
-import { Button, Content, ContentVariants, Divider, Popover } from '@patternfly/react-core';
-import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
-import type { DataViewFilterOption } from '@patternfly/react-data-view/dist/esm/DataViewFilters';
-import * as _ from 'lodash';
-import { useEffect, useMemo, FC, ReactNode, Suspense, useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
-import { Link } from 'react-router';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
+import type { TableColumnsType } from '@console/shared/src/types/tableColumn';
+import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
 import * as UIActions from '../actions/ui';
-import { coFetchJSON } from '../co-fetch';
 import { PodModel } from '../models';
-import { ContainerSpec, PodKind, referenceFor, referenceForModel, Selector } from '../module/k8s';
+import type { PodKind, Selector } from '../module/k8s';
+import { referenceFor, referenceForModel } from '../module/k8s';
 import {
   isContainerCrashLoopBackOff,
   isWindowsPod,
@@ -57,7 +60,6 @@ import { OwnerReferences } from './utils/owner-references';
 import { ResourceLink, resourcePath } from './utils/resource-link';
 import { LoadingBox } from './utils/status-box';
 import { formatBytesAsMiB, formatCores } from './utils/units';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 
 // Only request metrics if the device's screen width is larger than the
 // breakpoint where metrics are visible.
@@ -115,13 +117,13 @@ const tableColumnInfo = [
 const usePodsColumns = (
   showNodes: boolean,
 ): { columns: TableColumn<PodKind>[]; resetAllColumnWidths: () => void } => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(PodModel);
 
   const columns = useMemo(() => {
     return [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: tableColumnInfo[0].id,
         resizableProps: getResizableProps(tableColumnInfo[0].id),
         sort: 'metadata.name',
@@ -131,7 +133,7 @@ const usePodsColumns = (
         },
       },
       {
-        title: t('public~Namespace'),
+        title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
@@ -140,7 +142,7 @@ const usePodsColumns = (
         },
       },
       {
-        title: t('public~Status'),
+        title: t('Status'),
         id: tableColumnInfo[2].id,
         sort: (data, direction) => data.sort(sortResourceByValue(direction, podPhase)),
         resizableProps: getResizableProps(tableColumnInfo[2].id),
@@ -149,7 +151,7 @@ const usePodsColumns = (
         },
       },
       {
-        title: t('public~Ready'),
+        title: t('Ready'),
         id: tableColumnInfo[3].id,
         sort: (data, direction) =>
           data.sort(sortResourceByValue(direction, (obj) => podReadiness(obj).readyCount)),
@@ -159,7 +161,7 @@ const usePodsColumns = (
         },
       },
       {
-        title: t('public~Restarts'),
+        title: t('Restarts'),
         id: tableColumnInfo[4].id,
         sort: (data, direction) => data.sort(sortResourceByValue(direction, podRestarts)),
         resizableProps: getResizableProps(tableColumnInfo[4].id),
@@ -168,7 +170,7 @@ const usePodsColumns = (
         },
       },
       {
-        title: showNodes ? t('public~Node') : t('public~Owner'),
+        title: showNodes ? t('Node') : t('Owner'),
         id: tableColumnInfo[5].id,
         sort: showNodes ? 'spec.nodeName' : 'metadata.ownerReferences[0].name',
         resizableProps: getResizableProps(tableColumnInfo[5].id),
@@ -177,7 +179,7 @@ const usePodsColumns = (
         },
       },
       {
-        title: t('public~Memory'),
+        title: t('Memory'),
         id: tableColumnInfo[6].id,
         sort: (data, direction) =>
           data.sort(sortResourceByValue(direction, (obj) => UIActions.getPodMetric(obj, 'memory'))),
@@ -187,7 +189,7 @@ const usePodsColumns = (
         },
       },
       {
-        title: t('public~CPU'),
+        title: t('CPU'),
         id: tableColumnInfo[7].id,
         sort: (data, direction) =>
           data.sort(sortResourceByValue(direction, (obj) => UIActions.getPodMetric(obj, 'cpu'))),
@@ -197,7 +199,7 @@ const usePodsColumns = (
         },
       },
       {
-        title: t('public~Created'),
+        title: t('Created'),
         id: tableColumnInfo[8].id,
         sort: 'metadata.creationTimestamp',
         resizableProps: getResizableProps(tableColumnInfo[8].id),
@@ -206,7 +208,7 @@ const usePodsColumns = (
         },
       },
       {
-        title: t('public~Node'),
+        title: t('Node'),
         id: tableColumnInfo[9].id,
         sort: 'spec.nodeName',
         resizableProps: getResizableProps(tableColumnInfo[9].id),
@@ -216,7 +218,7 @@ const usePodsColumns = (
         additional: true,
       },
       {
-        title: t('public~Labels'),
+        title: t('Labels'),
         id: tableColumnInfo[10].id,
         sort: 'metadata.labels',
         resizableProps: getResizableProps(tableColumnInfo[10].id),
@@ -227,7 +229,7 @@ const usePodsColumns = (
         additional: true,
       },
       {
-        title: t('public~IP address'),
+        title: t('IP address'),
         id: tableColumnInfo[11].id,
         sort: 'status.podIP',
         resizableProps: getResizableProps(tableColumnInfo[11].id),
@@ -237,7 +239,7 @@ const usePodsColumns = (
         additional: true,
       },
       {
-        title: t('public~Receiving Traffic'),
+        title: t('Receiving Traffic'),
         id: tableColumnInfo[12].id,
         resizableProps: getResizableProps(tableColumnInfo[12].id),
         props: {
@@ -258,12 +260,8 @@ const usePodsColumns = (
 };
 
 const Cores: FC<CoresProps> = ({ cores }) => {
-  const { t } = useTranslation();
-  return cores ? (
-    <>{t('public~{{numCores}} cores', { numCores: formatCores(cores) })}</>
-  ) : (
-    <>{DASH}</>
-  );
+  const { t } = useTranslation('public');
+  return cores ? <>{t('{{numCores}} cores', { numCores: formatCores(cores) })}</> : <>{DASH}</>;
 };
 
 const PodStatusPopover: FC<PodStatusPopoverProps> = ({
@@ -289,13 +287,39 @@ export const PodStatus: FC<PodStatusProps> = ({ pod }) => {
   const containerStatusStateWaiting = pod.status?.containerStatuses?.find(
     (cs) => cs.state?.waiting,
   );
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   if (status === 'Pending' && unschedulableCondition) {
     return (
       <PodStatusPopover
         bodyContent={unschedulableCondition.message || ''}
-        headerContent={t('public~Pod unschedulable')}
+        headerContent={t('Pod unschedulable')}
+        status={status}
+      />
+    );
+  }
+  if (
+    (status === 'CreateContainerError' || status === 'CreateContainerConfigError') &&
+    containerStatusStateWaiting
+  ) {
+    return (
+      <PodStatusPopover
+        headerContent={t("Couldn't create container")}
+        bodyContent={containerStatusStateWaiting.state?.waiting?.message || ''}
+        footerContent={
+          <Content>
+            <Content component={ContentVariants.p}>
+              {t(
+                "The container didn't start. Common causes include missing ConfigMaps, Secrets, or volume mounts, and invalid security contexts.",
+              )}
+            </Content>
+            <Content component={ContentVariants.p}>
+              <Link to={`${resourcePath('Pod', pod.metadata.name, pod.metadata.namespace)}/events`}>
+                {t('View events')}
+              </Link>
+            </Content>
+          </Content>
+        }
         status={status}
       />
     );
@@ -307,25 +331,25 @@ export const PodStatus: FC<PodStatusProps> = ({ pod }) => {
     let footerLinks: ReactNode;
     let headerTitle = '';
     if (status === 'CrashLoopBackOff') {
-      headerTitle = t('public~Pod crash loop back-off');
-      const containers: ContainerSpec[] = pod.spec.containers;
+      headerTitle = t('Pod crash loop backoff');
+      const { containers } = pod.spec;
       footerLinks = (
         <Content>
           <Content component={ContentVariants.p}>
             {t(
-              'public~CrashLoopBackOff indicates that the application within the container is failing to start properly.',
+              'CrashLoopBackOff indicates that the application in the container is repeatedly failing to start.',
             )}
           </Content>
           <Content component={ContentVariants.p}>
-            {t('public~To troubleshoot, view logs and events, then debug in terminal.')}
+            {t('To troubleshoot, view logs and events, or open a terminal session.')}
           </Content>
           <Content component={ContentVariants.p}>
             <Link to={`${resourcePath('Pod', pod.metadata.name, pod.metadata.namespace)}/logs`}>
-              {t('public~View logs')}
+              {t('View logs')}
             </Link>
             &emsp;
             <Link to={`${resourcePath('Pod', pod.metadata.name, pod.metadata.namespace)}/events`}>
-              {t('public~View events')}
+              {t('View events')}
             </Link>
           </Content>
           <Divider />
@@ -341,11 +365,12 @@ export const PodStatus: FC<PodStatusProps> = ({ pod }) => {
                     )}/containers/${container.name}/debug`}
                     data-test={`popup-debug-container-link-${container.name}`}
                   >
-                    {t('public~Debug container {{name}}', { name: container.name })}
+                    {t('Debug container {{name}}', { name: container.name })}
                   </Link>
                 </div>
               );
             }
+            return null;
           })}
         </Content>
       );
@@ -454,13 +479,14 @@ export const PodList: FC<PodListProps> = ({
   data,
   loaded,
   loadError,
+  mock,
   hideNameLabelFilters,
   hideLabelFilter,
   hideColumnManagement,
   selectedColumns,
   ...props
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { columns, resetAllColumnWidths } = usePodsColumns(showNodes);
 
   const podMetrics = useConsoleSelector<UIActions.PodMetrics>(({ UI }) => {
@@ -472,7 +498,7 @@ export const PodList: FC<PodListProps> = ({
   const columnLayout = useMemo<ColumnLayout>(
     () => ({
       id: columnManagementID,
-      type: t('public~Pod'),
+      type: t('Pod'),
       columns: columns.map((col) => ({
         id: col.id,
         title: col.title,
@@ -491,33 +517,37 @@ export const PodList: FC<PodListProps> = ({
     () => [
       {
         value: 'Running',
-        label: t('public~Running'),
+        label: t('Running'),
       },
       {
         value: 'Pending',
-        label: t('public~Pending'),
+        label: t('Pending'),
       },
       {
         value: 'Terminating',
-        label: t('public~Terminating'),
+        label: t('Terminating'),
       },
       {
         value: 'CrashLoopBackOff',
-        label: t('public~CrashLoopBackOff'),
+        label: t('CrashLoopBackOff'),
+      },
+      {
+        value: 'CreateContainerError',
+        label: t('CreateContainerError'),
       },
       // Use title "Completed" to match what appears in the status column for the pod.
       // The pod phase is "Succeeded," but the container state is "Completed."
       {
         value: 'Succeeded',
-        label: t('public~Completed'),
+        label: t('Completed'),
       },
       {
         value: 'Failed',
-        label: t('public~Failed'),
+        label: t('Failed'),
       },
       {
         value: 'Unknown',
-        label: t('public~Unknown'),
+        label: t('Unknown'),
       },
     ],
     [t],
@@ -530,8 +560,8 @@ export const PodList: FC<PodListProps> = ({
       <DataViewCheckboxFilter
         key="status"
         filterId="status"
-        title={t('public~Status')}
-        placeholder={t('public~Filter by status')}
+        title={t('Status')}
+        placeholder={t('Filter by status')}
         options={podStatusFilterOptions}
       />,
     ],
@@ -558,6 +588,7 @@ export const PodList: FC<PodListProps> = ({
         data={data}
         loaded={loaded}
         loadError={loadError}
+        mock={mock}
         columns={columns}
         columnLayout={columnLayout}
         columnManagementID={columnManagementID}
@@ -580,6 +611,7 @@ export const PodList: FC<PodListProps> = ({
 export const PodsPage: FC<PodPageProps> = ({
   canCreate = true,
   namespace,
+  mock,
   showNodes,
   showTitle = true,
   selector,
@@ -588,8 +620,9 @@ export const PodsPage: FC<PodPageProps> = ({
   hideLabelFilter,
   hideColumnManagement,
   showNamespaceOverride,
+  hideFavoriteButton,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const dispatch = useConsoleDispatch();
   const [selectedColumns, , columnPreferenceLoaded] = useUserPreference<TableColumnsType>(
     COLUMN_MANAGEMENT_USER_PREFERENCE_KEY,
@@ -598,7 +631,7 @@ export const PodsPage: FC<PodPageProps> = ({
   );
 
   useEffect(() => {
-    if (showMetrics) {
+    if (showMetrics && !mock) {
       const updateMetrics = () =>
         fetchPodMetrics(namespace || '')
           .then((result) => dispatch(UIActions.setPodMetrics(result)))
@@ -615,16 +648,20 @@ export const PodsPage: FC<PodPageProps> = ({
       return () => clearInterval(id);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [namespace]);
+  }, [mock, namespace]);
 
-  const [pods, loaded, loadError] = useK8sWatchResource<PodKind[]>({
-    kind: PodModel.kind,
-    isList: true,
-    namespaced: true,
-    namespace,
-    selector,
-    fieldSelector,
-  });
+  const [pods, loaded, loadError] = useK8sWatchResource<PodKind[]>(
+    mock
+      ? null
+      : {
+          kind: PodModel.kind,
+          isList: true,
+          namespaced: true,
+          namespace,
+          selector,
+          fieldSelector,
+        },
+  );
 
   const resourceKind = referenceForModel(PodModel);
   const accessReview = {
@@ -638,10 +675,10 @@ export const PodsPage: FC<PodPageProps> = ({
 
   return (
     <>
-      <ListPageHeader title={showTitle ? t('public~Pods') : ''}>
-        {canCreate && (
+      <ListPageHeader title={showTitle ? t('Pods') : ''} hideFavoriteButton={hideFavoriteButton}>
+        {canCreate && !mock && (
           <ListPageCreate groupVersionKind={resourceKind} createAccessReview={accessReview}>
-            {t('public~Create Pod')}
+            {t('Create Pod')}
           </ListPageCreate>
         )}
       </ListPageHeader>
@@ -650,6 +687,7 @@ export const PodsPage: FC<PodPageProps> = ({
           data={pods}
           loaded={loaded}
           loadError={loadError}
+          mock={mock}
           showNamespaceOverride={showNamespaceOverride}
           showNodes={showNodes}
           namespace={namespace}
@@ -678,10 +716,6 @@ export type PodStatusProps = {
   pod: PodKind;
 };
 
-export type PodDetailsListProps = {
-  pod: PodKind;
-};
-
 type PodFilters = ResourceFilters & { status: string[] };
 
 type PodRowData = {
@@ -691,6 +725,7 @@ type PodListProps = {
   data: PodKind[];
   loaded: boolean;
   loadError: unknown;
+  mock?: boolean;
   showNodes?: boolean;
   showNamespaceOverride?: boolean;
   hideNameLabelFilters?: boolean;
@@ -703,6 +738,7 @@ type PodListProps = {
 type PodPageProps = {
   canCreate?: boolean;
   fieldSelector?: string;
+  mock?: boolean;
   namespace?: string;
   selector?: Selector;
   showTitle?: boolean;
@@ -711,4 +747,5 @@ type PodPageProps = {
   hideNameLabelFilters?: boolean;
   hideColumnManagement?: boolean;
   showNamespaceOverride?: boolean;
+  hideFavoriteButton?: boolean;
 };

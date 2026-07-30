@@ -1,28 +1,34 @@
-import * as _ from 'lodash';
 import type { FC, ReactText, ReactNode, ComponentType } from 'react';
-import { memo, useMemo, useState, useCallback, useEffect } from 'react';
-import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { forwardRef, memo, useMemo, useRef, useState, useCallback, useEffect } from 'react';
+import { css } from '@patternfly/react-styles';
 import {
   TableGridBreakpoint,
   SortByDirection,
-  OnSelect,
   Table as PfTable,
   Tr,
   Tbody,
   Td,
-  IRow,
-  ISortBy,
-  OnSort,
 } from '@patternfly/react-table';
-import { css } from '@patternfly/react-styles';
-import { CellMeasurerCache, CellMeasurer } from 'react-virtualized';
+import type { OnSelect, IRow, ISortBy, OnSort } from '@patternfly/react-table';
 import {
   AutoSizer,
   VirtualTableBody,
   WindowScroller,
 } from '@patternfly/react-virtualized-extension';
 import type { Scroll } from '@patternfly/react-virtualized-extension/dist/esm/components/Virtualized/types';
+import * as _ from 'lodash';
 import { useNavigate } from 'react-router';
+import { CellMeasurerCache, CellMeasurer } from 'react-virtualized';
+import type {
+  RowFilter as RowFilterExt,
+  K8sResourceKindReference,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { defaultChannelFor } from '@console/operator-lifecycle-manager/src/components';
+import type { PackageManifestKind } from '@console/operator-lifecycle-manager/src/types';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useDeepCompareMemoize } from '@console/shared/src/hooks/useDeepCompareMemoize';
+import { getName } from '@console/shared/src/selectors/common';
 import { getMachinePhase } from '@console/shared/src/selectors/machine';
 import { getMachineSetInstanceType } from '@console/shared/src/selectors/machineSet';
 import { pvcUsed } from '@console/shared/src/sorts/pvc';
@@ -32,22 +38,13 @@ import {
   snapshotSource,
   snapshotStatus,
 } from '@console/shared/src/sorts/snapshot';
-import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
-import { getName } from '@console/shared/src/selectors/common';
-import { useDeepCompareMemoize } from '@console/shared/src/hooks/useDeepCompareMemoize';
-import { PackageManifestKind } from '@console/operator-lifecycle-manager/src/types';
-import { defaultChannelFor } from '@console/operator-lifecycle-manager/src/components';
-import {
-  RowFilter as RowFilterExt,
-  K8sResourceKindReference,
-} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { RowFilter } from '../filter-toolbar';
 import * as UIActions from '../../actions/ui';
-import { alertingRuleStateOrder, alertSeverityOrder } from '../monitoring/utils';
-import { convertToBaseValue } from '../utils/units';
-import { WithScrollContainer } from '../utils/dom-utils';
-import { EmptyBox, StatusBox } from '../utils/status-box';
-import {
+import { getClusterOperatorVersion, getJobTypeAndCompletions } from '../../module/k8s';
+import { getClusterOperatorStatus } from '../../module/k8s/cluster-operator';
+import { getLatestVersionForCRD } from '../../module/k8s/k8s';
+import { podPhase, podReadiness, podRestarts } from '../../module/k8s/pods';
+import { getTemplateInstanceStatus } from '../../module/k8s/template';
+import type {
   CustomResourceDefinitionKind,
   K8sResourceKind,
   PodKind,
@@ -56,14 +53,14 @@ import {
   ClusterOperator,
   VolumeSnapshotContentKind,
 } from '../../module/k8s/types';
-import { getClusterOperatorStatus } from '../../module/k8s/cluster-operator';
-import { getClusterOperatorVersion, getJobTypeAndCompletions } from '../../module/k8s';
-import { getLatestVersionForCRD } from '../../module/k8s/k8s';
-import { getTemplateInstanceStatus } from '../../module/k8s/template';
-import { podPhase, podReadiness, podRestarts } from '../../module/k8s/pods';
+import type { RowFilter } from '../filter-toolbar';
+import { alertingRuleStateOrder, alertSeverityOrder } from '../monitoring/utils';
 import { displayDurationInWords } from '../utils/build-utils';
+import { WithScrollContainer } from '../utils/dom-utils';
+import { EmptyBox, StatusBox } from '../utils/status-box';
+import { convertToBaseValue } from '../utils/units';
+import { TableHeader } from './Table/TableHeader';
 import { useTableData } from './table-data-hook';
-import TableHeader from './Table/TableHeader';
 
 export const sorts = {
   alertingRuleStateOrder,
@@ -112,20 +109,24 @@ export const sorts = {
 };
 
 // Common table row/columns helper SFCs for implementing accessible data grid
-export const TableRow: FC<TableRowProps> = ({ id, index, trKey, style, className, ...props }) => {
-  return (
-    <Tr
-      {...props}
-      data-id={id}
-      data-index={index}
-      data-test-rows="resource-row"
-      data-key={trKey}
-      style={style}
-      className={css('pf-v6-c-table__tr', className)}
-      role="row"
-    />
-  );
-};
+export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
+  ({ id, index, trKey, style, className, ...props }, ref) => {
+    return (
+      <Tr
+        {...props}
+        ref={ref}
+        data-id={id}
+        data-index={index}
+        data-test="resource-row"
+        data-test-rows="resource-row"
+        data-key={trKey}
+        style={style}
+        className={css('pf-v6-c-table__tr', className)}
+        role="row"
+      />
+    );
+  },
+);
 TableRow.displayName = 'TableRow';
 
 export type TableRowProps = {
@@ -228,11 +229,16 @@ const VirtualBody: FC<VirtualBodyProps> = (props) => {
     onRowsRendered,
   } = props;
 
-  const cellMeasurementCache = new CellMeasurerCache({
-    fixedWidth: true,
-    minHeight: 44,
-    keyMapper: (rowIndex) => _.get(props.data[rowIndex], 'metadata.uid', rowIndex),
-  });
+  const dataRef = useRef(data);
+  dataRef.current = data;
+
+  const cellMeasurementCache = useRef(
+    new CellMeasurerCache({
+      fixedWidth: true,
+      minHeight: 44,
+      keyMapper: (rowIndex) => _.get(dataRef.current[rowIndex], 'metadata.uid', rowIndex),
+    }),
+  ).current;
 
   const rowRenderer = ({ index, isVisible, key, style, parent }) => {
     const rowArgs = {
@@ -290,7 +296,7 @@ export type RowFunctionArgs<T = any, C = any> = {
   customData?: C;
 };
 
-export type VirtualBodyProps = {
+type VirtualBodyProps = {
   customData?: any;
   Row: FC<RowFunctionArgs>;
   height: number;
@@ -321,23 +327,25 @@ const getActiveColumns = (
   showNamespaceOverride: boolean,
 ): TableColumn[] => {
   let columns = Header(componentProps);
-  if (_.isEmpty(activeColumns)) {
-    activeColumns = new Set(
+  let resolvedActiveColumns = activeColumns;
+  if (_.isEmpty(resolvedActiveColumns)) {
+    resolvedActiveColumns = new Set(
       columns.map((col) => {
         if (col.id && !col.additional) {
           return col.id;
         }
+        return undefined;
       }),
     );
   }
   if (columnManagementID) {
     columns = columns?.filter(
       (col) =>
-        isColumnVisible(windowWidth, col.id, activeColumns, showNamespaceOverride) ||
+        isColumnVisible(windowWidth, col.id, resolvedActiveColumns, showNamespaceOverride) ||
         col.title === '',
     );
   } else {
-    columns = columns?.filter((col) => activeColumns.has(col.id) || col.title === '');
+    columns = columns?.filter((col) => resolvedActiveColumns.has(col.id) || col.title === '');
   }
 
   const showNamespace =
@@ -431,6 +439,7 @@ const StandardTable: FC<StandardTableProps> = ({
       <Tbody>
         {rows.map((row, rowIndex) => {
           return (
+            // eslint-disable-next-line react/no-array-index-key
             <Tr key={`row-${rowIndex}`}>
               {onSelect && (
                 <Td
@@ -443,6 +452,7 @@ const StandardTable: FC<StandardTableProps> = ({
                 />
               )}
               {(Array.isArray(row) ? row : row.cells).map(({ props, title }, colIndex) => (
+                // eslint-disable-next-line react/no-array-index-key
                 <Td key={`col-${colIndex}`} {...(props ?? {})}>
                   {title}
                 </Td>
@@ -499,7 +509,7 @@ export const Table: FC<TableProps> = ({
   const Header = useDeepCompareMemoize(initHeader);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [sortBy, setSortBy] = useState({});
-  const columnShift = onSelect ? 1 : 0; //shift indexes by 1 if select provided
+  const columnShift = onSelect ? 1 : 0; // shift indexes by 1 if select provided
 
   const { currentSortField, currentSortFunc, currentSortOrder, data, listId } = useTableData({
     reduxID,
@@ -741,7 +751,7 @@ type StandardTableProps = Partial<ComponentProps> & {
   sortBy?: ISortBy;
 };
 
-export type ComponentProps = {
+type ComponentProps = {
   data: any[];
   filters: Filter[];
   selected: boolean;

@@ -4,8 +4,9 @@ import { Alert, TextInputTypes, ValidatedOptions } from '@patternfly/react-core'
 import type { FormikValues } from 'formik';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { getGitService, ImportStrategy, GitProvider } from '@console/git-service/src';
-import { InputField } from '@console/shared/src';
+import { getGitService } from '@console/git-service/src/services/git-service';
+import { GitProvider, ImportStrategy } from '@console/git-service/src/types/git';
+import { InputField } from '@console/shared/src/components/formik-fields/InputField';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
 import { ImportTypes, SampleRuntime } from '../import-types';
@@ -15,7 +16,7 @@ import DevfileInfo from './DevfileInfo';
 import './DevfileStrategySection.scss';
 
 const DevfileStrategySection: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const { values, setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
   const fireTelemetryEvent = useTelemetry();
   const {
@@ -79,16 +80,16 @@ const DevfileStrategySection: FC = () => {
 
   const helpText = useMemo(() => {
     if (validated === ValidatedOptions.success) {
-      return t('devconsole~Validated');
+      return t('Validated');
     }
     if (validated === ValidatedOptions.error) {
       if (type === GitProvider.UNSURE) {
-        return t('devconsole~Could not get Devfile for an unknown Git type');
+        return t('Could not get Devfile for an unknown Git type');
       }
-      return t('devconsole~Devfile not detected');
+      return t('Devfile not detected');
     }
     return t(
-      'devconsole~Allows the builds to use a different path to locate your Devfile, relative to the Context Dir field',
+      'Allows the builds to use a different path to locate your Devfile, relative to the Context Dir field',
     );
   }, [t, type, validated]);
 
@@ -128,7 +129,7 @@ const DevfileStrategySection: FC = () => {
             isInline
             className="odc-devfile-strategy-section__error-alert"
             variant="danger"
-            title={t('devconsole~Import is not possible.')}
+            title={t('Import is not possible.')}
           >
             {devfileParseError}
           </Alert>
@@ -139,8 +140,8 @@ const DevfileStrategySection: FC = () => {
           <InputField
             type={TextInputTypes.text}
             name="devfile.devfilePath"
-            label={t('devconsole~Devfile Path')}
-            placeholder={t('devconsole~Enter Devfile path')}
+            label={t('Devfile Path')}
+            placeholder={t('Enter Devfile path')}
             helpText={helpText}
             helpTextInvalid={helpText}
             data-test="git-form-devfile-path-input"

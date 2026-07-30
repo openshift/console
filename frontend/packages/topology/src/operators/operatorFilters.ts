@@ -1,5 +1,5 @@
 import type { Model } from '@patternfly/react-topology';
-import { isExpanded } from '../filters';
+import { isExpanded } from '../filters/filter-utils';
 import type { DisplayFilters } from '../topology-types';
 import { TopologyDisplayFilterType } from '../topology-types';
 import { TYPE_OPERATOR_BACKED_SERVICE } from './components/const';
@@ -34,5 +34,3 @@ export const applyOperatorDisplayOptions = (model: Model, filters: DisplayFilter
   });
   return appliedFilters;
 };
-
-export const applyDisplayOptions = () => applyOperatorDisplayOptions;

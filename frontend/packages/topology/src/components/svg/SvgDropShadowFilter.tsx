@@ -13,7 +13,7 @@ interface SvgDropShadowFilterProps {
   floodColor?: string;
 }
 
-const SvgDropShadowFilter: FC<SvgDropShadowFilterProps> = ({
+export const SvgDropShadowFilter: FC<SvgDropShadowFilterProps> = ({
   id,
   dx = 0,
   dy = 1,
@@ -65,5 +65,3 @@ const SvgDropShadowFilter: FC<SvgDropShadowFilterProps> = ({
     </SVGDefs>
   );
 };
-
-export default SvgDropShadowFilter;

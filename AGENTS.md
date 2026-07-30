@@ -21,21 +21,22 @@ Static plugins are built into the console bundle and are core parts of the appli
 - **Type safety:** When writing code for static plugins, ensure that all `$codeRef` ALWAYS **reference the corresponding extension type from the dynamic plugin SDK package**. This ensures type safety and consistency across both static and dynamic plugins.
 
 Example:
+
 ```jsonc
 // In console-extensions.json of a static plugin
 {
   "type": "console.flag",
-  "$codeRef": "exampleFlag.handler"
+  "$codeRef": "exampleFlag.handler",
 }
 ```
 
 ```typescript
 // In the exampleFlag exposed module of the static plugin:
-import type { FeatureFlagHandler } from '@console/dynamic-plugin-sdk/src/extensions/feature-flags';
+import type { FeatureFlagHandler } from "@console/dynamic-plugin-sdk/src/extensions/feature-flags";
 
 // Exposed type from dynamic plugin SDK is used for type safety
 export const handler: FeatureFlagHandler = (setFeatureFlag) => {
-  setFeatureFlag('EXAMPLE', true);
+  setFeatureFlag("EXAMPLE", true);
 };
 ```
 
@@ -43,7 +44,7 @@ export const handler: FeatureFlagHandler = (setFeatureFlag) => {
 
 OpenShift console is designed to be an extensible platform that allows "dynamic plugins" to extend the UI. Dynamic plugins load over the network at runtime, enabling operators and custom resources to contribute UI without rebuilding the console.
 
-The `console-dynamic-plugin-sdk` is the public API based on Webpack module federation that enables both static and dynamic plugins to integrate with the console.
+The `console-dynamic-plugin-sdk` is the public API based on Module Federation v1 that enables both static and dynamic plugins to integrate with the console.
 
 **BREAKING CHANGES REQUIRE EXTREME CARE** - this is a public API consumed by external plugins.
 
@@ -88,6 +89,14 @@ go mod vendor && go mod tidy # Update Go dependencies
 - Subject line answers "what changed"; body answers "why"
 - Frontend i18n updates: Run `yarn i18n` and commit updated keys alongside any code changes that affect i18n
 
+### Pull request strategy
+
+- When opening a PR, make sure to fill out the PR template located in `docs/pull_request_template.md` with all required sections. This helps the OpenShift Console team triage, review, and verify the changes effectively.
+- Always link to the relevant JIRA issue in the PR title and description. If not provided prompt the user for the JIRA.
+- You cannot produce screenshots or screen recordings but leave the field there so the user can fill it out afterwards.
+- You can use the `gh` CLI to open a PR but ALWAYS prompt the user before doing so to confirm the PR title, description, and linked JIRA issue are correct.
+- If the `jira` CLI or MCP is available, use it to fill out the PR description as well as assignee(s).
+
 ### Branch naming
 
 - Feature work: `CONSOLE-####` (Jira story number)
@@ -121,3 +130,7 @@ These files are the single source of truth for architecture, coding standards, a
 - [Dynamic Plugin SDK documentation](frontend/packages/console-dynamic-plugin-sdk/README.md) - architecture, design principles, and development guidelines. Consult before modifying SDK code.
 - [Extension Types Reference](frontend/packages/console-dynamic-plugin-sdk/docs/console-extensions.md) - complete extension type definitions, naming conventions (`console.*`), and deprecation notices.
 - [Console API Documentation](frontend/packages/console-dynamic-plugin-sdk/docs/api.md) - React components, hooks, utilities, and TypeScript types exported by the SDK.
+
+## Playwright migration
+
+We are migrating Cypress e2e tests to Playwright. Use `/migrate-cypress` to convert test files and `/debug-test` to fix failing tests. Shared migration context (translation tables, structural rules, checklist) is in `.claude/migration-context.md`.

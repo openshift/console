@@ -6,7 +6,7 @@ import { useAccessReview } from '@console/dynamic-plugin-sdk/src';
 import { MultiListPage } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../models';
+import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../models/helm';
 import RepositoriesList from './RepositoriesList';
 
 type RepositoriesPageProps = {
@@ -24,7 +24,7 @@ const RepositoriesPage: FC<RepositoriesPageProps> = ({
   createButtonText,
   createProps,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   const { ns: namespace } = useParams();
   const [projectHelmChartListAccess] = useAccessReview({
     group: ProjectHelmChartRepositoryModel.apiGroup,
@@ -107,12 +107,12 @@ const RepositoriesPage: FC<RepositoriesPageProps> = ({
 
   return (
     <>
-      <DocumentTitle>{t('helm-plugin~Helm Repositories')}</DocumentTitle>
+      <DocumentTitle>{t('Helm Repositories')}</DocumentTitle>
       <MultiListPage
         namespace={namespace}
         flatten={flatten}
         resources={resources}
-        label={t('helm-plugin~Repositories')}
+        label={t('Repositories')}
         ListComponent={RepositoriesList}
         title={title}
         createProps={createProps}

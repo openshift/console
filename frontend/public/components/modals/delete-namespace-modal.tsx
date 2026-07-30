@@ -1,18 +1,4 @@
 import { useState, useCallback } from 'react';
-import { useTranslation, Trans } from 'react-i18next';
-import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
-import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
-import { useNavigate } from 'react-router';
-import { k8sKill, K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
-import { ModalComponentProps } from '@console/shared/src/types/modal';
-import {
-  ALL_NAMESPACES_KEY,
-  LAST_NAMESPACE_NAME_USER_PREFERENCE_KEY,
-} from '@console/shared/src/constants/common';
-import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
-import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
-import { getActiveNamespace } from '../../reducers/ui';
-import { setActiveNamespace, formatNamespaceRoute } from '../../actions/ui';
 import {
   Button,
   Modal,
@@ -22,16 +8,32 @@ import {
   Content,
   ContentVariants,
 } from '@patternfly/react-core';
-import { OverlayComponent, useOverlay } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { useTranslation, Trans } from 'react-i18next';
+import { useNavigate } from 'react-router';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/lib-core';
+import type { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
+import { k8sKill } from '@console/internal/module/k8s';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import {
+  ALL_NAMESPACES_KEY,
+  LAST_NAMESPACE_NAME_USER_PREFERENCE_KEY,
+} from '@console/shared/src/constants/common';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
+import { setActiveNamespace, formatNamespaceRoute } from '../../actions/ui';
+import { getActiveNamespace } from '../../reducers/ui';
 
-export const DeleteNamespaceModal: OverlayComponent<DeleteNamespaceModalProps> = ({
+const DeleteNamespaceModal: OverlayComponent<DeleteNamespaceModalProps> = ({
   kind,
   resource,
   closeOverlay,
 }) => {
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
   const [confirmed, setConfirmed] = useState(false);
 
@@ -73,7 +75,7 @@ export const DeleteNamespaceModal: OverlayComponent<DeleteNamespaceModalProps> =
   return (
     <Modal isOpen onClose={closeOverlay} variant={ModalVariant.small}>
       <ModalHeader
-        title={t('public~Delete {{label}}?', { label: t(kind.labelKey) })}
+        title={t('Delete {{label}}?', { label: t(kind.labelKey) })}
         titleIconVariant="warning"
       />
       <ModalBody>
@@ -95,11 +97,12 @@ export const DeleteNamespaceModal: OverlayComponent<DeleteNamespaceModalProps> =
             type="text"
             data-test="project-name-input"
             onKeyUp={onKeyUp}
-            placeholder={t('public~Enter name')}
-            aria-label={t('public~Enter the name of the {{label}} to delete', {
+            placeholder={t('Enter name')}
+            aria-label={t('Enter the name of the {{label}} to delete', {
               label: t(kind.labelKey),
             })}
-            autoFocus={true}
+            // eslint-disable-next-line jsx-a11y/no-autofocus
+            autoFocus
           />
         </span>
       </ModalBody>
@@ -112,10 +115,15 @@ export const DeleteNamespaceModal: OverlayComponent<DeleteNamespaceModalProps> =
           isDisabled={!confirmed}
           data-test="confirm-action"
         >
-          {t('public~Delete')}
+          {t('Delete')}
         </Button>
-        <Button variant="link" onClick={closeOverlay} data-test-id="modal-cancel-action">
-          {t('public~Cancel')}
+        <Button
+          variant="link"
+          onClick={closeOverlay}
+          data-test="modal-cancel-action"
+          data-test-id="modal-cancel-action"
+        >
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </Modal>

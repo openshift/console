@@ -26,6 +26,7 @@ import type {
 } from '@console/internal/module/k8s';
 import { LabelSelector, apiVersionForModel } from '@console/internal/module/k8s';
 import { getBuildNumber } from '@console/internal/module/k8s/builds';
+import { AllPodStatus } from '../constants/pod';
 import {
   DEPLOYMENT_REVISION_ANNOTATION,
   DEPLOYMENT_CONFIG_LATEST_VERSION_ANNOTATION,
@@ -34,16 +35,9 @@ import {
   CONTAINER_WAITING_STATE_ERROR_REASONS,
   DEPLOYMENT_STRATEGY,
   DEPLOYMENT_PHASE,
-  AllPodStatus,
-} from '../constants';
-import type {
-  BuildConfigOverviewItem,
-  OverviewItemAlerts,
-  PodControllerOverviewItem,
-  OverviewItem,
-  ExtPodKind,
-  LimitsData,
-} from '../types';
+} from '../constants/resource';
+import type { OverviewItemAlerts, PodControllerOverviewItem, ExtPodKind } from '../types/pod';
+import type { BuildConfigOverviewItem, OverviewItem, LimitsData } from '../types/resource';
 import { doesHpaMatch } from './hpa-utils';
 import { isKnativeServing, isIdled } from './pod-utils';
 
@@ -57,7 +51,7 @@ export const WORKLOAD_TYPES = [
   'pods',
 ];
 
-export const MONITORABLE_KINDS = ['Deployment', 'DeploymentConfig', 'StatefulSet', 'DaemonSet'];
+const MONITORABLE_KINDS = ['Deployment', 'DeploymentConfig', 'StatefulSet', 'DaemonSet'];
 
 type ResourceItem = {
   [key: string]: K8sResourceKind[];
@@ -171,7 +165,7 @@ const getAnnotation = (obj: K8sResourceCommon, annotation: string): string => {
   return obj?.metadata?.annotations?.[annotation];
 };
 
-export const getDeploymentRevision = (obj: K8sResourceCommon): number => {
+const getDeploymentRevision = (obj: K8sResourceCommon): number => {
   const revision = getAnnotation(obj, DEPLOYMENT_REVISION_ANNOTATION);
   return revision && parseInt(revision, 10);
 };
@@ -190,7 +184,7 @@ export const getOwnerNameByKind = (obj: K8sResourceCommon, kind: K8sKind): strin
   )?.name;
 };
 
-export const sortReplicaSetsByRevision = (replicaSets: K8sResourceKind[]): K8sResourceKind[] => {
+const sortReplicaSetsByRevision = (replicaSets: K8sResourceKind[]): K8sResourceKind[] => {
   return sortByRevision(replicaSets, getDeploymentRevision);
 };
 
@@ -200,7 +194,7 @@ const sortReplicationControllersByRevision = (
   return sortByRevision(replicationControllers, getDeploymentConfigVersion);
 };
 
-export const sortBuilds = (builds: K8sResourceKind[]): K8sResourceKind[] => {
+const sortBuilds = (builds: K8sResourceKind[]): K8sResourceKind[] => {
   const byCreationTime = (left, right) => {
     const leftCreationTime = new Date(_.get(left, 'metadata.creationTimestamp', Date.now()));
     const rightCreationTime = new Date(_.get(right, 'metadata.creationTimestamp', Date.now()));
@@ -376,7 +370,7 @@ export const getPodsForResource = (resource: K8sResourceKind, resources: any): P
   return getOwnedResources(resource, pods?.data);
 };
 
-export const toReplicationControllerItem = (
+const toReplicationControllerItem = (
   rc: K8sResourceKind,
   resources: any,
 ): PodControllerOverviewItem => {
@@ -467,10 +461,7 @@ export const getStatefulSetsResource = (
   );
 };
 
-export const getActiveReplicaSets = (
-  deployment: K8sResourceKind,
-  resources: any,
-): K8sResourceKind[] => {
+const getActiveReplicaSets = (deployment: K8sResourceKind, resources: any): K8sResourceKind[] => {
   const { replicaSets } = resources;
   const currentRevision = getDeploymentRevision(deployment);
   const ownedRS = getOwnedResources(deployment, replicaSets?.data);
@@ -503,15 +494,12 @@ export const getJobsForCronJob = (cronJobUid: string, resources: any): JobKind[]
     }));
 };
 
-export const getBuildsForResource = (
-  buildConfig: K8sResourceKind,
-  resources: any,
-): K8sResourceKind[] => {
+const getBuildsForResource = (buildConfig: K8sResourceKind, resources: any): K8sResourceKind[] => {
   const { builds } = resources;
   return getOwnedResources(buildConfig, builds.data);
 };
 
-export const getBuildConfigsForCronJob = (
+const getBuildConfigsForCronJob = (
   cronJob: CronJobKind,
   resources: any,
 ): BuildConfigOverviewItem[] => {
@@ -630,7 +618,7 @@ export const getServicesForResource = (
   });
 };
 
-export const alertMessageResources: {
+const alertMessageResources: {
   [labelName: string]: { kind: string; namespaced?: boolean };
 } = {
   container: ContainerModel,
@@ -661,7 +649,7 @@ export const getWorkloadMonitoringAlerts = (
   return alerts;
 };
 
-export const validPod = (pod: K8sResourceKind) => {
+const validPod = (pod: K8sResourceKind) => {
   const owners = pod?.metadata?.ownerReferences;
   const phase = pod?.status?.phase;
   return _.isEmpty(owners) && phase !== 'Succeeded' && phase !== 'Failed';
@@ -670,10 +658,7 @@ export const validPod = (pod: K8sResourceKind) => {
 const isStandaloneJob = (job: K8sResourceKind) =>
   !_.find(job.metadata?.ownerReferences, (owner) => owner.kind === 'CronJob');
 
-export const getStandaloneJobs = (jobs: K8sResourceKind[]) =>
-  jobs.filter((job) => isStandaloneJob(job));
-
-export const getOverviewItemForResource = (
+const getOverviewItemForResource = (
   obj: K8sResourceKind,
   resources: any,
   utils?: ResourceUtil[],

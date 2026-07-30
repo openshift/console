@@ -1,7 +1,7 @@
 import type { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import * as yup from 'yup';
-import { GitProvider } from '@console/git-service/src';
+import { GitProvider } from '@console/git-service/src/types/git';
 import { nameValidationSchema, nameRegex } from '@console/shared/src/utils/yup-validations';
 import { healthChecksProbesValidationSchema } from '../health-checks/health-checks-probe-validation-utils';
 import { PipelineType } from '../pipeline-section/import-types';
@@ -22,7 +22,7 @@ import {
   importFlowPipelineTemplateValidationSchema,
 } from './validation-schema';
 
-export const pipelinesAccessTokenValidationSchema = (t: TFunction) =>
+const pipelinesAccessTokenValidationSchema = (t: TFunction) =>
   yup.object().shape({
     webhook: yup
       .object()
@@ -57,7 +57,7 @@ export const pipelinesAccessTokenValidationSchema = (t: TFunction) =>
       ),
   });
 
-export const importFlowRepositoryValidationSchema = (t: TFunction) => {
+const importFlowRepositoryValidationSchema = (t: TFunction) => {
   return yup.object().shape({
     repository: yup
       .object()

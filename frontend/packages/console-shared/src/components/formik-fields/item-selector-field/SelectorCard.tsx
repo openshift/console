@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { Card, CardBody, CardTitle } from '@patternfly/react-core';
-import { StarIcon } from '@patternfly/react-icons';
+import { RhUiStarFillIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import './SelectorCard.scss';
 
@@ -38,7 +38,7 @@ const SelectorCard: FC<SelectorCardProps> = ({
       </CardBody>
       {recommended && (
         <span className="odc-selector-card__recommended">
-          <StarIcon />
+          <RhUiStarFillIcon />
         </span>
       )}
     </Card>

@@ -5,15 +5,16 @@ import { useField, useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
-import { ImportStrategy } from '@console/git-service/src';
+import { ImportStrategy } from '@console/git-service/src/types/git';
 import { getActiveNamespace } from '@console/internal/actions/ui';
 import { useAccessReview } from '@console/internal/components/utils';
 import { DeploymentModel, DeploymentConfigModel } from '@console/internal/models';
 import { connectToFlags } from '@console/internal/reducers/connectToFlags';
 import type { FlagsObject } from '@console/internal/reducers/features';
-import { FLAG_KNATIVE_SERVING_SERVICE, ServiceModel } from '@console/knative-plugin';
-import type { SelectInputOption } from '@console/shared';
-import { SingleDropdownField } from '@console/shared';
+import { FLAG_KNATIVE_SERVING_SERVICE } from '@console/knative-plugin/src/const';
+import { ServiceModel } from '@console/knative-plugin/src/models';
+import type { SelectInputOption } from '@console/shared/src/components/formik-fields/field-types';
+import { SingleDropdownField } from '@console/shared/src/components/formik-fields/SingleDropdownField';
 import { FLAG_OPENSHIFT_DEPLOYMENTCONFIG } from '../../../const';
 import { Resources, ReadableResourcesNames } from '../import-types';
 import FormSection from './FormSection';
@@ -25,7 +26,7 @@ type ResourceSectionProps = {
 };
 
 const ResourceSection: FC<ResourceSectionProps> = ({ flags }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const [field] = useField<Resources[]>('resourceTypesNotValid');
   const fieldName = 'resources';
   const { values, setFieldValue } = useFormikContext<FormikValues>();
@@ -70,7 +71,7 @@ const ResourceSection: FC<ResourceSectionProps> = ({ flags }) => {
         label: t(ReadableResourcesNames[Resources.Kubernetes]),
         value: Resources.Kubernetes,
         description: t(
-          'devconsole~A {{deploymentLabel}} enables declarative updates for Pods and ReplicaSets.',
+          'A {{deploymentLabel}} enables declarative updates for Pods and ReplicaSets.',
           { deploymentLabel: DeploymentModel.label },
         ),
       });
@@ -80,7 +81,7 @@ const ResourceSection: FC<ResourceSectionProps> = ({ flags }) => {
         label: t(ReadableResourcesNames[Resources.OpenShift]),
         value: Resources.OpenShift,
         description: t(
-          'devconsole~A {{deploymentConfigLabel}} defines the template for a Pod and manages deploying new Images or configuration changes.',
+          'A {{deploymentConfigLabel}} defines the template for a Pod and manages deploying new Images or configuration changes.',
           { deploymentConfigLabel: DeploymentConfigModel.label },
         ),
       });
@@ -90,9 +91,7 @@ const ResourceSection: FC<ResourceSectionProps> = ({ flags }) => {
       options.push({
         label: t(ReadableResourcesNames[Resources.KnativeService]),
         value: Resources.KnativeService,
-        description: t(
-          'devconsole~A type of deployment that enables Serverless scaling to 0 when idle.',
-        ),
+        description: t('A type of deployment that enables Serverless scaling to 0 when idle.'),
       });
     }
     return options;
@@ -106,7 +105,7 @@ const ResourceSection: FC<ResourceSectionProps> = ({ flags }) => {
       <FormSection>
         <SingleDropdownField
           name={fieldName}
-          label={t('devconsole~Resource type')}
+          label={t('Resource type')}
           options={selectInputOptions}
           onChange={onChange}
           getLabelFromValue={(value: string) => t(ReadableResourcesNames[value])}
@@ -114,7 +113,7 @@ const ResourceSection: FC<ResourceSectionProps> = ({ flags }) => {
             <p className="pf-v6-c-form__helper-text">
               <Trans t={t} ns="devconsole">
                 Resource type to generate. The default can be set in{' '}
-                <Link to="/user-preferences/applications">User Preferences</Link>.
+                <Link to="/user-preferences/applications">User preferences</Link>.
               </Trans>
             </p>
           }

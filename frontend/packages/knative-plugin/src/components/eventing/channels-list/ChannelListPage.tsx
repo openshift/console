@@ -13,7 +13,7 @@ import {
 import ChannelList from './ChannelList';
 
 const ChannelListPage: FC<ComponentProps<typeof MultiListPage>> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const { loaded: modelsLoaded, eventSourceChannels } = useChannelModels();
   const flatten = (resources) =>
     modelsLoaded
@@ -46,7 +46,7 @@ const ChannelListPage: FC<ComponentProps<typeof MultiListPage>> = (props) => {
   const channelRowFilter = useMemo<RowFilter<K8sResourceCommon>[]>(
     () => [
       {
-        filterGroupName: t('knative-plugin~Type'),
+        filterGroupName: t('Type'),
         type: 'event-source-type',
         items: eventSourceChannels.map(({ id, label }) => ({ id, title: label })),
         reducer: getModelId,
@@ -58,10 +58,10 @@ const ChannelListPage: FC<ComponentProps<typeof MultiListPage>> = (props) => {
   );
   return (
     <>
-      <DocumentTitle>{t('knative-plugin~Channels')}</DocumentTitle>
+      <DocumentTitle>{t('Channels')}</DocumentTitle>
       <MultiListPage
         {...props}
-        label={t('knative-plugin~Channels')}
+        label={t('Channels')}
         flatten={flatten}
         resources={resources}
         rowFilters={channelRowFilter}

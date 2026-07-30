@@ -6,15 +6,9 @@ import RouteHeader from './RouteHeader';
 import RouteRow from './RouteRow';
 
 const RouteList: FC<TableProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   return (
-    <Table
-      {...props}
-      aria-label={t('knative-plugin~Routes')}
-      Header={RouteHeader(t)}
-      Row={RouteRow}
-      virtualize
-    />
+    <Table {...props} aria-label={t('Routes')} Header={RouteHeader(t)} Row={RouteRow} virtualize />
   );
 };
 

@@ -28,7 +28,7 @@ const StartBuildButton: FC<StartBuildButtonProps & StateProps> = ({
   namespace,
   impersonate,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('shipwright-plugin');
   const launchModal = useOverlay();
   const defaultAccessReview: AccessReviewResourceAttributes = {
     group: BuildRunModel.apiGroup,
@@ -48,7 +48,7 @@ const StartBuildButton: FC<StartBuildButtonProps & StateProps> = ({
   return (
     isAllowed && (
       <Button variant="secondary" onClick={onClick}>
-        {t('shipwright-plugin~Start Build')}
+        {t('Start Build')}
       </Button>
     )
   );

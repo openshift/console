@@ -8,7 +8,7 @@ import type {
   DetailsResourceAlertContent,
 } from '@console/dynamic-plugin-sdk';
 import { isDetailsResourceAlert, useResolvedExtensions } from '@console/dynamic-plugin-sdk';
-import { USER_PREFERENCE_PREFIX } from '@console/shared';
+import { USER_PREFERENCE_PREFIX } from '@console/shared/src/constants/common';
 import { useGetUserSettingConfigMap } from '@console/shared/src/hooks/useGetUserSettingConfigMap';
 import { useUserPreferenceLocalStorage } from '@console/shared/src/hooks/useUserPreferenceLocalStorage';
 import { deserializeData } from '@console/shared/src/utils/user-settings';

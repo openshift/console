@@ -1,7 +1,7 @@
 import type { ReactElement } from 'react';
 import { BitbucketIcon, GitAltIcon, GithubIcon, GitlabIcon } from '@patternfly/react-icons';
 import type { TFunction } from 'i18next';
-import { GitProvider } from '@console/git-service/src';
+import { GitProvider } from '@console/git-service/src/types/git';
 import CheIcon from './CheIcon';
 import GiteaIcon from './GiteaIcon';
 import { detectGitType } from './import-validation-utils';

@@ -20,7 +20,7 @@ type HelmRollbackFormData = {
 const HelmReleaseRollbackPage: FC = () => {
   const navigate = useNavigate();
   const handleCancel = useCallback(() => navigate(-1), [navigate]);
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   const { releaseName, ns: namespace } = useParams();
   const actionOrigin = getQueryArgument('actionOrigin') as HelmActionOrigins;
   const [releaseHistory, setReleaseHistory] = useState<HelmRelease[]>(null);

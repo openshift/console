@@ -1,58 +1,63 @@
 import type { FC, Ref, MouseEvent, ComponentType } from 'react';
-import { useState, useMemo } from 'react';
-import * as _ from 'lodash';
-import { useTranslation } from 'react-i18next';
+import { useState, useMemo, memo } from 'react';
+import type { MenuToggleElement } from '@patternfly/react-core';
 import {
   Badge,
   Card,
   CardHeader,
   CardTitle,
   MenuToggle,
-  MenuToggleElement,
   Select,
   SelectList,
   SelectOption,
   Split,
   SplitItem,
 } from '@patternfly/react-core';
-import {
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import type {
   ClusterOverviewUtilizationItem,
-  isClusterOverviewUtilizationItem,
   ClusterOverviewMultilineUtilizationItem,
-  isClusterOverviewMultilineUtilizationItem,
-  useResolvedExtensions,
   Humanize,
   TopConsumerPopoverProps,
 } from '@console/dynamic-plugin-sdk';
-import UtilizationItem, {
-  MultilineUtilizationItem,
+import {
+  isClusterOverviewUtilizationItem,
+  isClusterOverviewMultilineUtilizationItem,
+  useResolvedExtensions,
+} from '@console/dynamic-plugin-sdk';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import type { MachineConfigPoolKind } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
+import { UtilizationBody } from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
+import { UtilizationDurationDropdown } from '@console/shared/src/components/dashboard/utilization-card/UtilizationDurationDropdown';
+import type {
   QueryWithDescription,
   LimitRequested,
+} from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
+import {
+  UtilizationItem,
+  MultilineUtilizationItem,
   trimSecondsXMutator,
 } from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
-import { UtilizationBody } from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
-
 import { useDashboardResources } from '@console/shared/src/hooks/useDashboardResources';
+import { useUtilizationDuration } from '@console/shared/src/hooks/useUtilizationDuration';
+import {
+  getMultilineQueries,
+  getUtilizationQueries,
+  OverviewQuery,
+} from '@console/shared/src/promql/cluster-dashboard';
+import { getPrometheusQueryResponse } from '../../../../actions/dashboards';
+import { MachineConfigPoolModel } from '../../../../models';
+import type { DataPoint, PrometheusResponse } from '../../../graphs';
+import { getRangeVectorStats, getInstantVectorStats } from '../../../graphs/utils';
 import {
   humanizeBinaryBytes,
   humanizeCpuCores,
   humanizeNumber,
   humanizeDecimalBytesPerSec,
 } from '../../../utils/units';
-import { getRangeVectorStats, getInstantVectorStats } from '../../../graphs/utils';
-import {
-  getMultilineQueries,
-  getUtilizationQueries,
-  OverviewQuery,
-} from '@console/shared/src/promql/cluster-dashboard';
-import { MachineConfigPoolModel } from '../../../../models';
-import { getPrometheusQueryResponse } from '../../../../actions/dashboards';
-import { DataPoint, PrometheusResponse } from '../../../graphs';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { MachineConfigPoolKind, referenceForModel } from '@console/internal/module/k8s';
-import { UtilizationDurationDropdown } from '@console/shared/src/components/dashboard/utilization-card/UtilizationDurationDropdown';
-import { useUtilizationDuration } from '@console/shared/src/hooks/useUtilizationDuration';
 import {
   ClusterUtilizationContext,
   CPUPopover,
@@ -95,13 +100,17 @@ export const PrometheusUtilizationItem: FC<PrometheusUtilizationItemProps> = ({
   const dashboardResources = useDashboardResources({
     prometheusQueries: queries,
   });
-  const prometheusResults = dashboardResources.prometheusResults;
+  const { prometheusResults } = dashboardResources;
 
-  let utilization: PrometheusResponse, utilizationError: any;
-  let total: PrometheusResponse, totalError: any;
+  let utilization: PrometheusResponse;
+  let utilizationError: any;
+  let total: PrometheusResponse;
+  let totalError: any;
   let max: DataPoint<number>[];
-  let limit: PrometheusResponse, limitError: any;
-  let request: PrometheusResponse, requestError: any;
+  let limit: PrometheusResponse;
+  let limitError: any;
+  let request: PrometheusResponse;
+  let requestError: any;
   let isLoading = false;
 
   if (!isDisabled) {
@@ -156,7 +165,7 @@ export const PrometheusMultilineUtilizationItem: FC<PrometheusMultilineUtilizati
   const dashboardResources = useDashboardResources({
     prometheusQueries,
   });
-  const prometheusResults = dashboardResources.prometheusResults;
+  const { prometheusResults } = dashboardResources;
 
   const stats = [];
   let hasError = false;
@@ -199,7 +208,7 @@ const UtilizationCardNodeFilter: FC<UtilizationCardNodeFilterProps> = ({
   onNodeSelect,
   selectedNodes,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const sortedMCPs = machineConfigPools.sort((a, b) => {
     const order = ['worker', 'master'];
@@ -233,7 +242,7 @@ const UtilizationCardNodeFilter: FC<UtilizationCardNodeFilterProps> = ({
 
   const toggle = (toggleRef: Ref<MenuToggleElement>) => (
     <MenuToggle ref={toggleRef} onClick={(open) => setIsOpen(open)} variant="plainText">
-      {t('public~Filter by Node type')}
+      {t('Filter by Node type')}
       {selectedNodes.length > 0 && (
         <Badge className="pf-v6-u-ml-sm" isRead>
           {selectedNodes.length}
@@ -245,7 +254,7 @@ const UtilizationCardNodeFilter: FC<UtilizationCardNodeFilterProps> = ({
   return (
     <Select
       role="menu"
-      aria-label={t('public~Filter by Node type')}
+      aria-label={t('Filter by Node type')}
       onSelect={onNodeSelect}
       isOpen={isOpen}
       selected={selectedNodes}
@@ -257,8 +266,8 @@ const UtilizationCardNodeFilter: FC<UtilizationCardNodeFilterProps> = ({
   );
 };
 
-export const UtilizationCard = () => {
-  const { t } = useTranslation();
+export const UtilizationCard = memo(() => {
+  const { t } = useTranslation('public');
   const [machineConfigPools, machineConfigPoolsLoaded] = useK8sWatchResource<
     MachineConfigPoolKind[]
   >({
@@ -292,7 +301,7 @@ export const UtilizationCard = () => {
   );
   return (
     machineConfigPoolsLoaded && (
-      <Card data-test-id="utilization-card">
+      <Card data-test="utilization-card" data-test-id="utilization-card">
         <CardHeader
           actions={{
             actions: (
@@ -317,14 +326,12 @@ export const UtilizationCard = () => {
             className: undefined,
           }}
         >
-          <CardTitle data-test="utilization-card__title">
-            {t('public~Cluster utilization')}
-          </CardTitle>
+          <CardTitle data-test="utilization-card__title">{t('Cluster utilization')}</CardTitle>
         </CardHeader>
         <UtilizationBody>
           <ClusterUtilizationContext.Provider value={nodeType}>
             <PrometheusUtilizationItem
-              title={t('public~CPU')}
+              title={t('CPU')}
               utilizationQuery={utilizationQueries[OverviewQuery.CPU_UTILIZATION].utilization}
               totalQuery={utilizationQueries[OverviewQuery.CPU_UTILIZATION].total}
               requestQuery={utilizationQueries[OverviewQuery.CPU_UTILIZATION].requests}
@@ -332,7 +339,7 @@ export const UtilizationCard = () => {
               humanizeValue={humanizeCpuCores}
             />
             <PrometheusUtilizationItem
-              title={t('public~Memory')}
+              title={t('Memory')}
               utilizationQuery={utilizationQueries[OverviewQuery.MEMORY_UTILIZATION].utilization}
               totalQuery={utilizationQueries[OverviewQuery.MEMORY_UTILIZATION].total}
               requestQuery={utilizationQueries[OverviewQuery.MEMORY_UTILIZATION].requests}
@@ -341,7 +348,7 @@ export const UtilizationCard = () => {
               byteDataType={ByteDataTypes.BinaryBytes}
             />
             <PrometheusUtilizationItem
-              title={t('public~Filesystem')}
+              title={t('Filesystem')}
               utilizationQuery={utilizationQueries[OverviewQuery.STORAGE_UTILIZATION].utilization}
               totalQuery={utilizationQueries[OverviewQuery.STORAGE_UTILIZATION].total}
               TopConsumerPopover={StoragePopover}
@@ -349,13 +356,13 @@ export const UtilizationCard = () => {
               byteDataType={ByteDataTypes.BinaryBytes}
             />
             <PrometheusMultilineUtilizationItem
-              title={t('public~Network transfer')}
+              title={t('Network transfer')}
               queries={multilineQueries[OverviewQuery.NETWORK_UTILIZATION]}
               humanizeValue={humanizeDecimalBytesPerSec}
               TopConsumerPopovers={networkPopovers}
             />
             <PrometheusUtilizationItem
-              title={t('public~Pod count')}
+              title={t('Pod count')}
               utilizationQuery={utilizationQueries[OverviewQuery.POD_UTILIZATION].utilization}
               TopConsumerPopover={PodPopover}
               humanizeValue={humanizeNumber}
@@ -386,7 +393,7 @@ export const UtilizationCard = () => {
       </Card>
     )
   );
-};
+});
 
 type PrometheusCommonProps = {
   title: string;

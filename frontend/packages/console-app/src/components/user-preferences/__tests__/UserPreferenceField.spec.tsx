@@ -1,4 +1,4 @@
-import { screen, act } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import UserPreferenceField from '../UserPreferenceField';
 import {
@@ -25,34 +25,26 @@ describe('UserPreferenceField', () => {
     jest.clearAllMocks();
   });
 
-  it('should render custom component if field type is custom', async () => {
-    await act(async () => {
-      renderWithProviders(<UserPreferenceField item={userPreferenceItemWithCustomComponent} />);
-    });
+  it('should render custom component if field type is custom', () => {
+    renderWithProviders(<UserPreferenceField item={userPreferenceItemWithCustomComponent} />);
 
     expect(screen.getByTestId('test custom1 component')).toBeInTheDocument();
   });
 
-  it('should render dropdown field if field type is dropdown', async () => {
-    await act(async () => {
-      renderWithProviders(<UserPreferenceField item={userPreferenceItemWithDropdownField} />);
-    });
+  it('should render dropdown field if field type is dropdown', () => {
+    renderWithProviders(<UserPreferenceField item={userPreferenceItemWithDropdownField} />);
 
     expect(screen.getByText('Perspective')).toBeVisible();
   });
 
-  it('should render checkbox field if field type is checkbox', async () => {
-    await act(async () => {
-      renderWithProviders(<UserPreferenceField item={userPreferenceItemWithCheckboxField} />);
-    });
+  it('should render checkbox field if field type is checkbox', () => {
+    renderWithProviders(<UserPreferenceField item={userPreferenceItemWithCheckboxField} />);
 
     expect(screen.getByText('Date and time selections')).toBeVisible();
   });
 
-  it('should render form group with no interactive elements if field type is invalid or unknown', async () => {
-    await act(async () => {
-      renderWithProviders(<UserPreferenceField item={userPreferenceItemWithUnknownField} />);
-    });
+  it('should render form group with no interactive elements if field type is invalid or unknown', () => {
+    renderWithProviders(<UserPreferenceField item={userPreferenceItemWithUnknownField} />);
 
     expect(screen.getByText('Unknown Input')).toBeVisible();
   });

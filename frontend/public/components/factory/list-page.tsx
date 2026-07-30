@@ -1,44 +1,44 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import * as _ from 'lodash';
 import type { ComponentType, FC, ReactNode } from 'react';
 import { useEffect, useState, useMemo, useCallback } from 'react';
-import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
-import { useParams, useNavigate } from 'react-router';
 import { Button, Grid, GridItem } from '@patternfly/react-core';
+import { SimpleDropdown } from '@patternfly/react-templates';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { LinkTo } from '@console/shared/src/components/links/LinkTo';
-import { useDeepCompareMemoize } from '@console/shared/src/hooks/useDeepCompareMemoize';
-import withFallback from '@console/shared/src/components/error/fallbacks/withFallback';
-import ErrorBoundaryFallbackPage from '@console/shared/src/components/error/fallbacks/ErrorBoundaryFallbackPage';
-import {
+import { useParams, useNavigate } from 'react-router';
+import type { Selector } from '@console/dynamic-plugin-sdk/src/api/common-types';
+import { filterList } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
+import type {
   ColumnLayout,
   K8sResourceCommon,
   WatchK8sResource,
   WatchK8sResultsObject,
-} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { filterList } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { storagePrefix } from '../row-filter';
-import { ErrorPage404 } from '../error';
-import { K8sKind } from '../../module/k8s/types';
-import { getReferenceForModel as referenceForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
-import { Selector } from '@console/dynamic-plugin-sdk/src/api/common-types';
-import { useK8sWatchResources } from '../utils/k8s-watch-hook';
-import type {
   ResourcesObject,
   WatchK8sResourceWithProp,
   WatchK8sResults,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { inject, kindObj } from '../utils/inject';
 import {
   makeQuery,
   makeReduxID,
   NoModelError,
 } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/k8s-watcher';
+import { getReferenceForModel as referenceForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import { ErrorBoundaryFallbackPage } from '@console/shared/src/components/error/fallbacks/ErrorBoundaryFallbackPage';
+import { withFallback } from '@console/shared/src/components/error/fallbacks/withFallback';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { LinkTo } from '@console/shared/src/components/links/LinkTo';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
+import { useDeepCompareMemoize } from '@console/shared/src/hooks/useDeepCompareMemoize';
+import type { K8sKind } from '../../module/k8s/types';
+import { ErrorPage404 } from '../error';
+import type { RowFilter } from '../filter-toolbar';
+import { FilterToolbar } from '../filter-toolbar';
+import { storagePrefix } from '../row-filter';
+import { inject, kindObj } from '../utils/inject';
+import { useK8sWatchResources } from '../utils/k8s-watch-hook';
 import { RequireCreatePermission } from '../utils/rbac';
-import { FilterToolbar, RowFilter } from '../filter-toolbar';
 import ListPageHeader from './ListPage/ListPageHeader';
-import { SimpleDropdown } from '@patternfly/react-templates';
 
 type CreateProps = {
   action?: string;
@@ -106,6 +106,22 @@ export const ListPageWrapper: FC<ListPageWrapperProps> = (props) => {
     }
   }, [dispatch, nameFilter, memoizedIds]);
 
+  const rawFilters = useConsoleSelector((state) => {
+    if (!memoizedIds?.length) {
+      return undefined;
+    }
+    return memoizedIds.reduce((acc, id) => {
+      const idFilters = state.k8s.getIn([id, 'filters']);
+      if (idFilters) {
+        idFilters.forEach((value, key) => {
+          acc[key] = value;
+        });
+      }
+      return acc;
+    }, {});
+  });
+  const filters = useDeepCompareMemoize(rawFilters);
+
   const data = flatten ? flatten(watchedResources) : [];
   const Filter = (
     <FilterToolbar
@@ -128,7 +144,7 @@ export const ListPageWrapper: FC<ListPageWrapperProps> = (props) => {
       {!omitFilterToolbar && !_.isEmpty(data) && Filter}
       <Grid>
         <GridItem>
-          <ListComponent {...props} {...watchedResources} data={data} />
+          <ListComponent {...props} {...watchedResources} filters={filters} data={data} />
         </GridItem>
       </Grid>
     </div>
@@ -277,6 +293,7 @@ export const FireMan: FC<FireManProps & { filterList?: typeof filterList }> = (p
           initialItems={Object.keys(createProps.items).map((item) => ({
             value: item,
             content: createProps.items[item],
+            'data-test': `dropdown-menu-${item}`,
             'data-test-dropdown-menu': item,
           }))}
           onSelect={(_e, value: string) => runOrNavigate(value)}
@@ -372,7 +389,7 @@ export const ListPage = withFallback<ListPageProps>((props) => {
     omitFilterToolbar,
     flatten = (_resources) => (_resources[name || kind]?.data ?? []) as K8sResourceCommon[],
   } = props;
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const params = useParams();
   let { createProps } = props;
   const ko = kindObj(kind);
@@ -421,12 +438,10 @@ export const ListPage = withFallback<ListPageProps>((props) => {
       autoFocus={autoFocus}
       canCreate={canCreate}
       createAccessReview={createAccessReview}
-      createButtonText={
-        createButtonText || t('public~Create {{label}}', { label: t(labelKey) || label })
-      }
+      createButtonText={createButtonText || t('Create {{label}}', { label: t(labelKey) || label })}
       createProps={createProps}
       customData={customData}
-      filterLabel={filterLabel || t('public~by name')}
+      filterLabel={filterLabel || t('by name')}
       nameFilterPlaceholder={nameFilterPlaceholder}
       labelFilterPlaceholder={labelFilterPlaceholder}
       flatten={flatten}
@@ -528,7 +543,7 @@ export const MultiListPage: FC<MultiListPageProps> = (props) => {
     omitFilterToolbar,
   } = props;
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   // Build resources configuration for FireMan (needs prop for redux IDs)
   const k8sResources = useMemo(
@@ -609,9 +624,9 @@ export const MultiListPage: FC<MultiListPageProps> = (props) => {
       autoFocus={autoFocus}
       canCreate={canCreate}
       createAccessReview={createAccessReview}
-      createButtonText={createButtonText || t('public~Create')}
+      createButtonText={createButtonText || t('Create')}
       createProps={createProps}
-      filterLabel={filterLabel || t('public~by name')}
+      filterLabel={filterLabel || t('by name')}
       helpText={helpText}
       helpAlert={helpAlert}
       resources={mock ? [] : k8sResources}

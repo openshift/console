@@ -1,6 +1,7 @@
 /* eslint-disable camelcase */
 import type { FC } from 'react';
 import { ChartDonut } from '@patternfly/react-charts/victory';
+import { css } from '@patternfly/react-styles';
 import {
   chart_color_black_100,
   chart_color_green_300,
@@ -8,12 +9,10 @@ import {
   chart_color_yellow_400,
   chart_color_yellow_500,
 } from '@patternfly/react-tokens';
-import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
-
-import { PrometheusGraph, PrometheusGraphLink } from './prometheus-graph';
 import { useRefWidth } from '../utils/ref-width-hook';
-import { DataPoint } from '.';
+import { PrometheusGraph, PrometheusGraphLink } from './prometheus-graph';
+import type { DataPoint } from '.';
 
 export const DonutChart: FC<DonutChartProps> = ({
   data,
@@ -28,14 +27,14 @@ export const DonutChart: FC<DonutChartProps> = ({
   secondaryTitle,
   className,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const [ref, width] = useRefWidth();
 
-  const usedLabelText = usedLabel || t('public~used');
+  const usedLabelText = usedLabel || t('used');
   const secondaryTitleText = secondaryTitle || usedLabelText;
   const labelText = label || t('No data');
 
-  const labels = ({ datum: { x, y } }) => t('public~{{x}}: {{y}}%', { x, y });
+  const labels = ({ datum: { x, y } }) => t('{{x}}: {{y}}%', { x, y });
 
   const namespaceData = data.filter((datum) => datum.x === 'Namespace');
 

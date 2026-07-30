@@ -6,8 +6,8 @@ import type {
   WithTargetDragProps,
 } from '@patternfly/react-topology';
 import { EdgeTerminalType, observer } from '@patternfly/react-topology';
-import { BaseEdge } from '@console/topology/src/components/graph-view';
-import { getTopologyResourceObject } from '@console/topology/src/utils';
+import { BaseEdge } from '@console/topology/src/components/graph-view/components/edges/BaseEdge';
+import { getTopologyResourceObject } from '@console/topology/src/utils/topology-utils';
 import { EventingBrokerModel } from '../../../models';
 import { EVENT_MARKER_RADIUS } from '../../const';
 

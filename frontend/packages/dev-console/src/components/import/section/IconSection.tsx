@@ -6,7 +6,7 @@ import IconDropdown from '../icon/IconDropdown';
 import FormSection from './FormSection';
 
 const IconSection: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const [runtimeIconField] = useField<string>('runtimeIcon');
   const [customIconField] = useField<string>('customIcon');
   const formik = useFormikContext<{ runtimeIcon: string }>();
@@ -23,7 +23,7 @@ const IconSection: FC = () => {
 
   return (
     <FormSection>
-      <FormGroup fieldId="runtimeIcon" label={t('devconsole~Runtime icon')}>
+      <FormGroup fieldId="runtimeIcon" label={t('Runtime icon')}>
         <IconDropdown
           runtimeIcon={runtimeIconField.value}
           onRuntimeIconChanged={onChanged}
@@ -35,7 +35,7 @@ const IconSection: FC = () => {
           <HelperText>
             <HelperTextItem>
               {t(
-                'devconsole~The icon represents your Image in Topology view. A label or annotation will also be added to the resource defining the icon.',
+                'The icon represents your Image in Topology view. A label or annotation will also be added to the resource defining the icon.',
               )}
             </HelperTextItem>
           </HelperText>

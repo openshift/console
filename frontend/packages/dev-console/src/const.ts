@@ -10,11 +10,6 @@ export enum QUERY_PROPERTIES {
 /** connects to action for resources */
 export const INCONTEXT_ACTIONS_CONNECTS_TO = 'connectsTo';
 
-export enum CONNECTOR_INCONTEXT_ACTIONS {
-  /** connects to action for resources */
-  connectsTo = 'connectsTo',
-}
-
 export const SAMPLE_APPLICATION_GROUP = 'sample-app';
 
 export const PREFERRED_RESOURCE_TYPE_USER_PREFERENCE_KEY = 'devconsole.preferredResourceType';

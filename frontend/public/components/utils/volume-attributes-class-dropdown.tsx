@@ -1,16 +1,16 @@
 import type { FC } from 'react';
-import * as fuzzy from 'fuzzysearch';
 import { useEffect, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Alert } from '@patternfly/react-core';
-import { ConsoleSelect } from '@console/internal/components/utils/console-select';
-import { LoadingInline, ResourceName, ResourceIcon } from '.';
 import { css } from '@patternfly/react-styles';
-import { VolumeAttributesClassModel } from '../../models';
-import { VolumeAttributesClassKind } from '../../module/k8s';
-import { useFlag } from '@console/shared/src/hooks/useFlag';
-import { FLAGS } from '@console/shared/src/constants/common';
+import * as fuzzy from 'fuzzysearch';
+import { useTranslation } from 'react-i18next';
+import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { FLAGS } from '@console/shared/src/constants/common';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
+import { VolumeAttributesClassModel } from '../../models';
+import type { VolumeAttributesClassKind } from '../../module/k8s';
+import { LoadingInline, ResourceName, ResourceIcon } from '.';
 
 const getTitle = (vac: VolumeAttributesClassDropdownItem): React.ReactNode => {
   return vac.kindLabel ? (
@@ -44,7 +44,7 @@ const VolumeAttributesClassDropdownEntry: FC<{
   );
 };
 
-export const VolumeAttributesClassDropdownInner: FC<VolumeAttributesClassDropdownInnerProps> = ({
+const VolumeAttributesClassDropdownInner: FC<VolumeAttributesClassDropdownInnerProps> = ({
   id,
   loaded,
   loadError,
@@ -60,11 +60,9 @@ export const VolumeAttributesClassDropdownInner: FC<VolumeAttributesClassDropdow
   filter,
   noSelection = false,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const placeholderTitle = useMemo(
-    () => (
-      <span className="pf-v6-u-text-color-subtle">{t('public~Select VolumeAttributesClass')}</span>
-    ),
+    () => <span className="pf-v6-u-text-color-subtle">{t('Select VolumeAttributesClass')}</span>,
     [t],
   );
   const [state, setState] = useState<VolumeAttributesClassDropdownInnerState>({
@@ -165,8 +163,8 @@ export const VolumeAttributesClassDropdownInner: FC<VolumeAttributesClassDropdow
   return (
     <>
       {loadError ? (
-        <Alert isInline variant="danger" title={t('public~Error loading VolumeAttributesClass')}>
-          {loadError.message || t('public~Unable to load VolumeAttributesClass resources')}
+        <Alert isInline variant="danger" title={t('Error loading VolumeAttributesClass')}>
+          {loadError.message || t('Unable to load VolumeAttributesClass resources')}
         </Alert>
       ) : loaded ? (
         <div>
@@ -175,15 +173,15 @@ export const VolumeAttributesClassDropdownInner: FC<VolumeAttributesClassDropdow
               'co-required': required,
             })}
             htmlFor={id}
-            aria-label={hideClassName ? t('public~VolumeAttributesClass') : undefined}
+            aria-label={hideClassName ? t('VolumeAttributesClass') : undefined}
           >
-            {t('public~VolumeAttributesClass')}
+            {t('VolumeAttributesClass')}
           </label>
           <ConsoleSelect
             className="co-volume-attributes-class-dropdown"
             isFullWidth
             autocompleteFilter={autocompleteFilter}
-            autocompletePlaceholder={t('public~Select VolumeAttributesClass')}
+            autocompletePlaceholder={t('Select VolumeAttributesClass')}
             items={dropdownItems}
             selectedKey={selectedKey || ''}
             title={state.title}
@@ -195,7 +193,7 @@ export const VolumeAttributesClassDropdownInner: FC<VolumeAttributesClassDropdow
           />
           {describedBy && (
             <p className="help-block" id={describedBy}>
-              {t('public~Defines mutable volume parameters like IOPS and throughput.')}
+              {t('Defines mutable volume parameters like IOPS and throughput.')}
             </p>
           )}
         </div>
@@ -237,7 +235,7 @@ export const VolumeAttributesClassDropdown: FC<VolumeAttributesClassDropdownProp
   );
 };
 
-export type VolumeAttributesClassDropdownInnerProps = {
+type VolumeAttributesClassDropdownInnerProps = {
   id?: string;
   loaded?: boolean;
   loadError?: Error;
@@ -270,7 +268,7 @@ type VolumeAttributesClassDropdownItem = {
   resource?: VolumeAttributesClassKind;
 };
 
-export type VolumeAttributesClassDropdownInnerState = {
+type VolumeAttributesClassDropdownInnerState = {
   items: { [key: string]: VolumeAttributesClassDropdownItem };
   name: string;
   selectedKey: string;

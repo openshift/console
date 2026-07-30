@@ -11,7 +11,7 @@ import {
   createKnativeKafka,
 } from './knativeSubscriptions';
 
-export const pipelinesPage = {
+const pipelinesPage = {
   clickOnCreatePipeline: () => {
     detailsPage.titleShouldContain(pageTitle.Pipelines);
     app.waitForLoad();
@@ -102,7 +102,7 @@ const installIfNotInstalled = (operator: operators, tries: number = 4, polling: 
   });
 };
 
-export const waitForCRDs = (operator: operators) => {
+const waitForCRDs = (operator: operators) => {
   switch (operator) {
     case operators.PipelinesOperator:
       cy.log(`Verify the CRD's for the "${operator}"`);
@@ -249,46 +249,4 @@ export const verifyAndInstallKnativeOperator = () => {
 export const verifyAndInstallGitopsPrimerOperator = () => {
   perspective.switchTo(switchPerspective.Administrator);
   verifyAndInstallOperator(operators.GitopsPrimer);
-};
-
-export const verifyAndInstallWebTerminalOperator = () => {
-  perspective.switchTo(switchPerspective.Administrator);
-  operatorsPage.navigateToInstallOperatorsPage();
-
-  const installWTO = () => {
-    installOperator(operators.WebTerminalOperator);
-    operatorsPage.navigateToInstallOperatorsPage();
-    operatorsPage.searchOperatorInInstallPage('DevWorkspace Operator');
-    cy.get('.co-clusterserviceversion-logo__name__clusterserviceversion').should(
-      'include.text',
-      'DevWorkspace Operator',
-    );
-    cy.contains('Succeeded', { timeout: 300000 });
-    performPostInstallationSteps(operators.WebTerminalOperator);
-  };
-
-  cy.get('body').then(($e1) => {
-    if ($e1.find(operatorsPO.installOperators.search).length === 0) {
-      cy.log('Search filter is not visible, installing Web Terminal operator');
-      operatorsPage.navigateToInstallOperatorsPage();
-      installWTO();
-    } else {
-      cy.log('Search filter is visible, checking if Web Terminal operator is installed');
-      cy.get(operatorsPO.installOperators.search)
-        .should('be.visible')
-        .clear()
-        .type(operators.WebTerminalOperator);
-      cy.wait(5000);
-      cy.get('body', {
-        timeout: 50000,
-      }).then(($e2) => {
-        if ($e2.find(operatorsPO.installOperators.noOperatorsFound).length > 0) {
-          cy.log('Web Terminal operator not installed, installing...');
-          installWTO();
-        } else {
-          cy.log('Web Terminal operator is installed in cluster');
-        }
-      });
-    }
-  });
 };

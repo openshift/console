@@ -18,17 +18,6 @@ export const safeYAMLToJS = (yaml: string, fallback: any = {}, options: any = {}
   }
 };
 
-export const asyncJSToYAML = (js: any, options: any = {}): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    try {
-      const yaml = safeDump(js, options);
-      resolve(yaml);
-    } catch (e) {
-      reject(e);
-    }
-  });
-};
-
 export const asyncYAMLToJS = (yaml: string, options: any = {}): Promise<any> => {
   return new Promise((resolve, reject) => {
     try {

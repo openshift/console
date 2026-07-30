@@ -21,7 +21,7 @@ import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { VolumeSnapshotClassModel } from '@console/internal/models';
 import type { VolumeSnapshotClassKind, Selector } from '@console/internal/module/k8s';
 import { referenceForModel, referenceFor } from '@console/internal/module/k8s';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
 import { DASH } from '@console/shared/src/constants/ui';
 import { getAnnotations } from '@console/shared/src/selectors/common';
@@ -32,7 +32,7 @@ const tableColumnInfo = [{ id: 'name' }, { id: 'driver' }, { id: 'deletionPolicy
 
 const defaultSnapshotClassAnnotation = 'snapshot.storage.kubernetes.io/is-default-class';
 
-export const isDefaultSnapshotClass = (volumeSnapshotClass: VolumeSnapshotClassKind) =>
+const isDefaultSnapshotClass = (volumeSnapshotClass: VolumeSnapshotClassKind) =>
   getAnnotations(volumeSnapshotClass, { defaultSnapshotClassAnnotation: 'false' })[
     defaultSnapshotClassAnnotation
   ] === 'true';
@@ -87,7 +87,7 @@ const useVolumeSnapshotClassColumns = (): {
   columns: TableColumn<VolumeSnapshotClassKind>[];
   resetAllColumnWidths: () => void;
 } => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
     VolumeSnapshotClassModel,
   );
@@ -95,21 +95,21 @@ const useVolumeSnapshotClassColumns = (): {
   const columns: TableColumn<VolumeSnapshotClassKind>[] = useMemo(
     () => [
       {
-        title: t('console-app~Name'),
+        title: t('Name'),
         sort: 'metadata.name',
         id: tableColumnInfo[0].id,
         resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: { ...nameCellProps, modifier: 'nowrap' },
       },
       {
-        title: t('console-app~Driver'),
+        title: t('Driver'),
         sort: 'driver',
         id: tableColumnInfo[1].id,
         resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: { modifier: 'nowrap' },
       },
       {
-        title: t('console-app~Deletion policy'),
+        title: t('Deletion policy'),
         sort: 'deletionPolicy',
         id: tableColumnInfo[2].id,
         resizableProps: getResizableProps(tableColumnInfo[2].id),
@@ -132,7 +132,7 @@ const VolumeSnapshotClassTable: FC<VolumeSnapshotClassTableProps> = ({
   loaded,
   ...props
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const { columns, resetAllColumnWidths } = useVolumeSnapshotClassColumns();
   const getDataViewRows = useMemo(() => getDataViewRowsCreator(t), [t]);
 
@@ -159,7 +159,7 @@ export const VolumeSnapshotClassPage: FC<VolumeSnapshotClassPageProps> = ({
   namespace,
   selector,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
 
   const [resources, loaded, loadError] = useK8sWatchResource<VolumeSnapshotClassKind[]>({
     groupVersionKind: {
@@ -177,9 +177,7 @@ export const VolumeSnapshotClassPage: FC<VolumeSnapshotClassPageProps> = ({
     <>
       <ListPageHeader title={showTitle ? t(VolumeSnapshotClassModel.labelPluralKey || '') : ''}>
         {canCreate && (
-          <ListPageCreate groupVersionKind={kind}>
-            {t('console-app~Create VolumeSnapshotClass')}
-          </ListPageCreate>
+          <ListPageCreate groupVersionKind={kind}>{t('Create VolumeSnapshotClass')}</ListPageCreate>
         )}
       </ListPageHeader>
       <ListPageBody>

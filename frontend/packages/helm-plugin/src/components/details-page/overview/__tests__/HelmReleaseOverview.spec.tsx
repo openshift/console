@@ -34,20 +34,20 @@ describe('HelmReleaseOverview', () => {
   it('should render the Section Heading for the Overview page', () => {
     spyUseAccessReview.mockReturnValue([true]);
     renderWithProviders(<HelmReleaseOverview {...helmReleaseOverviewProps} />);
-    expect(screen.getByText('Helm Release details')).toBeTruthy();
+    expect(screen.getByText('Helm Release details')).toBeInTheDocument();
   });
 
   it('should render the ResourceSummary component', () => {
     spyUseAccessReview.mockReturnValue([true]);
     renderWithProviders(<HelmReleaseOverview {...helmReleaseOverviewProps} />);
-    expect(document.querySelector('[data-test-id="resource-summary"]')).toBeTruthy();
+    expect(screen.getByRole('link', { name: 'xyz' })).toBeInTheDocument();
   });
 
   it('should render the HelmChartSummary component', () => {
     spyUseAccessReview.mockReturnValue([true]);
     renderWithProviders(<HelmReleaseOverview {...helmReleaseOverviewProps} />);
     // HelmChartSummary typically renders chart information
-    expect(screen.getByText('Chart version')).toBeTruthy();
-    expect(screen.getByText('App version')).toBeTruthy();
+    expect(screen.getByText('Chart version')).toBeInTheDocument();
+    expect(screen.getByText('App version')).toBeInTheDocument();
   });
 });

@@ -3,7 +3,7 @@ import type { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk
 import { ManagedByOperatorLink } from '@console/internal/components/utils/managed-by';
 import TopologySideBarTabSection from '@console/topology/src/components/side-bar/TopologySideBarTabSection';
 import { TYPE_WORKLOAD } from '@console/topology/src/const';
-import { getResource } from '@console/topology/src/utils';
+import { getResource } from '@console/topology/src/utils/topology-utils';
 
 export const useManagedByOperatorLinkSideBarTabSection: DetailsTabSectionExtensionHook = (
   element: GraphElement,

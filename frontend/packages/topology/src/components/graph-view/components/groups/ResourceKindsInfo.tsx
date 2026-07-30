@@ -6,16 +6,16 @@ import type { OdcNodeModel } from '../../../../topology-types';
 
 import './ResourceKindsInfo.scss';
 
-export const RESOURCE_INFO_PADDING = 32;
-export const RESOURCE_KIND_ROW_WIDTH = 250;
-export const RESOURCE_KIND_ROW_HEIGHT = 29;
+const RESOURCE_INFO_PADDING = 32;
+const RESOURCE_KIND_ROW_WIDTH = 250;
+const RESOURCE_KIND_ROW_HEIGHT = 29;
 
 type ResourceKindsInfoProps = {
   groupResources: OdcNodeModel[];
   emptyValue?: ReactNode;
 };
 
-const ResourceKindsInfo: FC<ResourceKindsInfoProps> = ({ groupResources, emptyValue }) => {
+export const ResourceKindsInfo: FC<ResourceKindsInfoProps> = ({ groupResources, emptyValue }) => {
   const resourcesData = {};
   _.forEach(groupResources, (node: OdcNodeModel) => {
     if (!node) {
@@ -72,5 +72,3 @@ const ResourceKindsInfo: FC<ResourceKindsInfoProps> = ({ groupResources, emptyVa
     </foreignObject>
   );
 };
-
-export default ResourceKindsInfo;

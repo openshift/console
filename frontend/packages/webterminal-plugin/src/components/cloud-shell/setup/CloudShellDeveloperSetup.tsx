@@ -8,7 +8,7 @@ import { ProjectRequestModel } from '@console/internal/models';
 import type { K8sKind } from '@console/internal/module/k8s';
 import { k8sCreate } from '@console/internal/module/k8s';
 import type { RootState } from '@console/internal/redux';
-import { ALL_NAMESPACES_KEY } from '@console/shared';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import { newCloudShellWorkSpace, createCloudShellResourceName } from '../cloud-shell-utils';
 import type { CloudShellSetupFormData } from './cloud-shell-setup-utils';
 import {
@@ -47,7 +47,7 @@ const CloudShellDeveloperSetup: FC<Props> = ({
       },
     },
   };
-  const { t } = useTranslation();
+  const { t } = useTranslation('webterminal-plugin');
 
   const handleSubmit = async (values: CloudShellSetupFormData, actions) => {
     const createNamespace = values.namespace === CREATE_NAMESPACE_KEY;
@@ -84,7 +84,7 @@ const CloudShellDeveloperSetup: FC<Props> = ({
   return (
     <div className="wt-cloud-shell-setup">
       <Title headingLevel="h2" className="wt-cloud-shell-setup--title">
-        {t('webterminal-plugin~Initialize terminal')}
+        {t('Initialize terminal')}
       </Title>
       <Formik
         initialValues={initialValues}

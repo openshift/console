@@ -1,8 +1,8 @@
 import * as _ from 'lodash';
 import { plural } from 'pluralize';
 import type { Dispatch } from 'redux';
+import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
 import type { DiscoveryResources, K8sModel } from '../../../api/common-types';
-import { consoleFetchJSON } from '../../../utils/fetch/console-fetch';
 import { k8sBasePath } from '../../../utils/k8s/k8s';
 import { kindToAbbr } from '../../../utils/k8s/k8s-get-resource';
 import { getResourcesInFlight, receivedResources } from '../actions/k8s';
@@ -49,7 +49,7 @@ const defineModels = (list: APIResourceList): K8sModel[] => {
 };
 
 const getResources = async (): Promise<DiscoveryResources> => {
-  const apiResourceData = await consoleFetchJSON(`${k8sBasePath}/apis`);
+  const apiResourceData = await coFetchJSON(`${k8sBasePath}/apis`);
   const groupVersionMap = apiResourceData.groups.reduce(
     (acc, { name, versions, preferredVersion: { version } }) => {
       acc[name] = {
@@ -66,7 +66,7 @@ const getResources = async (): Promise<DiscoveryResources> => {
     ),
   )
     .concat(['/api/v1'])
-    .map((p) => consoleFetchJSON(`api/kubernetes${p}`).catch((err) => err));
+    .map((p) => coFetchJSON(`api/kubernetes${p}`).catch((err) => err));
 
   return Promise.all(all).then((data) => {
     const resourceSet = new Set<string>();

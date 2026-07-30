@@ -8,7 +8,7 @@ const SecondaryHeading: FC<SecondaryHeadingProps> = ({ children, className, ...p
   </Title>
 );
 
-export type SecondaryHeadingProps = {
+type SecondaryHeadingProps = {
   children: ReactNode;
   className?: string;
   id?: string;

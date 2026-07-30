@@ -11,7 +11,7 @@ import {
   ALL_APPLICATIONS_KEY,
   UNASSIGNED_APPLICATIONS_KEY,
   APPLICATION_USER_PREFERENCE_PREFIX,
-} from '@console/shared';
+} from '@console/shared/src/constants/common';
 import ApplicationDropdown from './ApplicationDropdown';
 
 interface NamespaceBarApplicationSelectorProps {
@@ -35,9 +35,9 @@ const NamespaceBarApplicationSelector: FC<Props> = ({
   onChange,
   disabled,
 }) => {
-  const { t } = useTranslation();
-  const allApplicationsTitle = t('topology~All applications');
-  const noApplicationsTitle = t('topology~No application group');
+  const { t } = useTranslation('topology');
+  const allApplicationsTitle = t('All applications');
+  const noApplicationsTitle = t('No application group');
   const dropdownTitle: string =
     application === ALL_APPLICATIONS_KEY
       ? allApplicationsTitle
@@ -62,7 +62,7 @@ const NamespaceBarApplicationSelector: FC<Props> = ({
       buttonClassName="pf-m-plain"
       namespace={namespace}
       title={title && <span className="btn-link__title">{title}</span>}
-      titlePrefix={t('topology~Application')}
+      titlePrefix={t('Application')}
       allSelectorItem={{
         allSelectorKey: ALL_APPLICATIONS_KEY,
         allSelectorTitle: allApplicationsTitle,

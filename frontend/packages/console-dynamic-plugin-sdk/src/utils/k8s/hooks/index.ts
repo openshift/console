@@ -1,3 +1,4 @@
+/* eslint-disable no-barrel-files/no-barrel-files */
 export { useK8sModel } from './useK8sModel';
 export { useK8sModels } from './useK8sModels';
 export { useK8sWatchResource } from './useK8sWatchResource';

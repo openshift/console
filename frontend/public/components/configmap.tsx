@@ -1,33 +1,34 @@
 import type { FC } from 'react';
-import * as _ from 'lodash';
 import { Suspense, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { DetailsPage } from './factory/details';
-import { ListPage } from './factory/list-page';
-import { ConfigMapData, ConfigMapBinaryData } from './configmap-and-secret-data';
-import { DASH } from '@console/shared/src/constants/ui';
-import { SectionHeading } from './utils/headings';
-import { navFactory } from './utils/horizontal-nav';
-import { ResourceLink } from './utils/resource-link';
-import { ResourceSummary } from './utils/details-page';
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { ConfigMapModel } from '../models/index';
 import { Grid, GridItem } from '@patternfly/react-core';
-import { ConfigMapKind, referenceForModel, TableColumn } from '../module/k8s';
-import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import {
   actionsCellProps,
   getNameCellProps,
   ConsoleDataView,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
+import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
-import { LoadingBox } from '@console/shared/src/components/loading';
-import { sortResourceByValue } from './factory/Table/sort';
+import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
+import { DASH } from '@console/shared/src/constants/ui';
+import { ConfigMapModel } from '../models/index';
+import type { ConfigMapKind, TableColumn } from '../module/k8s';
+import { referenceForModel } from '../module/k8s';
+import { ConfigMapData, ConfigMapBinaryData } from './configmap-and-secret-data';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
 import { sorts } from './factory/table';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { sortResourceByValue } from './factory/Table/sort';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { ResourceLink } from './utils/resource-link';
 
 const kind = referenceForModel(ConfigMapModel);
 const tableColumnInfo = [
@@ -83,13 +84,13 @@ const useConfigMapsColumns = (): {
   columns: TableColumn<ConfigMapKind>[];
   resetAllColumnWidths: () => void;
 } => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(ConfigMapModel);
 
   const columns = useMemo(
     () => [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         resizableProps: getResizableProps(tableColumnInfo[0].id),
@@ -99,7 +100,7 @@ const useConfigMapsColumns = (): {
         },
       },
       {
-        title: t('public~Namespace'),
+        title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
@@ -108,7 +109,7 @@ const useConfigMapsColumns = (): {
         },
       },
       {
-        title: t('public~Size'),
+        title: t('Size'),
         id: tableColumnInfo[2].id,
         sort: (data, direction) => data.sort(sortResourceByValue(direction, sorts.dataSize)),
         resizableProps: getResizableProps(tableColumnInfo[2].id),
@@ -117,7 +118,7 @@ const useConfigMapsColumns = (): {
         },
       },
       {
-        title: t('public~Created'),
+        title: t('Created'),
         id: tableColumnInfo[3].id,
         sort: 'metadata.creationTimestamp',
         resizableProps: getResizableProps(tableColumnInfo[3].id),
@@ -139,7 +140,7 @@ const useConfigMapsColumns = (): {
   return { columns, resetAllColumnWidths };
 };
 
-export const ConfigMaps: FC<ConfigMapsProps> = ({ data, loaded, ...props }) => {
+const ConfigMaps: FC<ConfigMapsProps> = ({ data, loaded, ...props }) => {
   const { columns, resetAllColumnWidths } = useConfigMapsColumns();
 
   return (
@@ -151,7 +152,7 @@ export const ConfigMaps: FC<ConfigMapsProps> = ({ data, loaded, ...props }) => {
         loaded={loaded}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
+        hideColumnManagement
         isResizable
         resetAllColumnWidths={resetAllColumnWidths}
       />
@@ -168,20 +169,20 @@ export const ConfigMapsPage: FC<ConfigMapsPageProps> = (props) => {
       {...props}
       kind={kind}
       ListComponent={ConfigMaps}
-      canCreate={true}
+      canCreate
       createProps={createProps}
-      omitFilterToolbar={true}
+      omitFilterToolbar
     />
   );
 };
 
 export const ConfigMapsDetailsPage: FC = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const ConfigMapDetails = ({ obj: configMap }: { obj: ConfigMapKind }) => {
     return (
       <>
         <PaneBody>
-          <SectionHeading text={t('public~ConfigMap details')} />
+          <SectionHeading text={t('ConfigMap details')} />
           <Grid hasGutter>
             <GridItem md={6}>
               <ResourceSummary resource={configMap} />
@@ -189,11 +190,11 @@ export const ConfigMapsDetailsPage: FC = (props) => {
           </Grid>
         </PaneBody>
         <PaneBody>
-          <SectionHeading text={t('public~Data')} />
-          <ConfigMapData data={configMap.data} label={t('public~Data')} />
+          <SectionHeading text={t('Data')} />
+          <ConfigMapData data={configMap.data} label={t('Data')} />
         </PaneBody>
         <PaneBody>
-          <SectionHeading text={t('public~Binary data')} />
+          <SectionHeading text={t('Binary data')} />
           <ConfigMapBinaryData data={configMap.binaryData} />
         </PaneBody>
       </>

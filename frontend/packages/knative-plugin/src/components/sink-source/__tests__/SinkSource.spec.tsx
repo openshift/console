@@ -15,11 +15,7 @@ jest.mock('formik', () => ({
   },
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-  }),
-}));
+jest.mock('react-i18next');
 
 jest.mock('@console/internal/module/k8s', () => ({
   k8sUpdate: jest.fn(),
@@ -63,8 +59,9 @@ describe('SinkSource', () => {
   });
 
   it('should render Formik child with proper props', () => {
-    const { container } = render(<SinkSource {...formProps} />);
-    expect(container).toBeInTheDocument();
-    expect(mockCapturedFormikProps.children).toBeDefined();
+    render(<SinkSource {...formProps} />);
+    expect(mockCapturedFormikProps).toEqual(
+      expect.objectContaining({ children: expect.any(Function) }),
+    );
   });
 });

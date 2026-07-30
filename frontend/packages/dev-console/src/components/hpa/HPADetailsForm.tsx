@@ -3,13 +3,14 @@ import { Alert, AlertActionCloseButton, Flex, Grid, GridItem } from '@patternfly
 import { useField, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import type { HorizontalPodAutoscalerKind } from '@console/internal/module/k8s';
-import { InputField, NumberSpinnerField } from '@console/shared';
+import { InputField } from '@console/shared/src/components/formik-fields/InputField';
+import { NumberSpinnerField } from '@console/shared/src/components/formik-fields/NumberSpinnerField';
 import { getMetricByType } from './hpa-utils';
 import HPAUtilizationField from './HPAUtilizationField';
 import type { HPAFormValues, SupportedMetricTypes } from './types';
 
 const HPADetailsForm: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const name = 'formData';
   const [field] = useField<HorizontalPodAutoscalerKind>(name);
   const {
@@ -84,7 +85,7 @@ const HPADetailsForm: FC = () => {
           }
           isInline
           title={t(
-            'devconsole~Note: Some fields may not be represented in this form view. Please select "YAML view" for full control.',
+            'Note: Some fields may not be represented in this form view. Please select "YAML view" for full control.',
           )}
           variant="info"
         />
@@ -94,28 +95,28 @@ const HPADetailsForm: FC = () => {
           <Flex direction={{ default: 'column' }}>
             <InputField
               isDisabled={nameDisabled}
-              label={t('devconsole~Name')}
+              label={t('Name')}
               name={`${name}.metadata.name`}
             />
             <NumberSpinnerField
-              label={t('devconsole~Minimum Pods')}
+              label={t('Minimum Pods')}
               name={`${name}.spec.minReplicas`}
               setOutputAsIntegerFlag
             />
             <NumberSpinnerField
-              label={t('devconsole~Maximum Pods')}
+              label={t('Maximum Pods')}
               name={`${name}.spec.maxReplicas`}
               setOutputAsIntegerFlag
             />
             <HPAUtilizationField
               hpa={field.value}
-              label={t('devconsole~CPU')}
+              label={t('CPU')}
               onUpdate={updateField('cpu')}
               type="cpu"
             />
             <HPAUtilizationField
               hpa={field.value}
-              label={t('devconsole~Memory')}
+              label={t('Memory')}
               onUpdate={updateField('memory')}
               type="memory"
             />

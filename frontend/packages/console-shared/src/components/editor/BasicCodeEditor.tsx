@@ -6,7 +6,7 @@ import * as monaco from 'monaco-editor';
 import { useTranslation } from 'react-i18next';
 import type { BasicCodeEditorProps } from '@console/dynamic-plugin-sdk';
 import { useTheme } from '@console/internal/components/ThemeProvider';
-import { ErrorBoundaryInline } from '@console/shared/src/components/error';
+import { ErrorBoundaryInline } from '@console/shared/src/components/error/fallbacks/ErrorBoundaryInline';
 import './BasicCodeEditor.scss';
 
 // Avoid using monaco from CDN
@@ -21,7 +21,7 @@ loader.config({ monaco });
  */
 export const BasicCodeEditor: FC<BasicCodeEditorProps> = (props) => {
   const { t } = useTranslation('console-shared');
-  const { theme } = useTheme();
+  const { theme, contrast } = useTheme();
 
   return (
     <ErrorBoundaryInline>
@@ -46,6 +46,7 @@ export const BasicCodeEditor: FC<BasicCodeEditorProps> = (props) => {
             window.monaco = monacoInstance; // for e2e tests
             props?.editorProps?.beforeMount?.(monacoInstance);
           },
+          ...(contrast === 'contrast' ? { theme: theme === 'dark' ? 'hc-black' : 'hc-light' } : {}),
         }}
         options={{
           fontFamily: 'var(--pf-t--global--font--family--mono)',

@@ -19,7 +19,7 @@ import {
   PipelineLayout,
 } from './types';
 
-export const getDuration = (seconds: number, long?: boolean): string => {
+const getDuration = (seconds: number, long?: boolean): string => {
   if (seconds === 0) {
     return i18next.t('devconsole~less than a sec');
   }
@@ -56,7 +56,7 @@ export const getDuration = (seconds: number, long?: boolean): string => {
   return duration.trim();
 };
 
-export const calculateDuration = (startTime: string, endTime?: string, long?: boolean) => {
+const calculateDuration = (startTime: string, endTime?: string, long?: boolean) => {
   const start = new Date(startTime).getTime();
   const end = endTime ? new Date(endTime).getTime() : new Date().getTime();
   const durationInSeconds = (end - start) / 1000;
@@ -72,7 +72,7 @@ enum TerminatedReasons {
   Completed = 'Completed',
 }
 
-export type TaskStatusStep = {
+type TaskStatusStep = {
   name: string;
   running?: { startedAt: string };
   terminated?: {

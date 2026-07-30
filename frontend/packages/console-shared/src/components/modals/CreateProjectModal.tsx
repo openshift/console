@@ -51,7 +51,7 @@ const DefaultCreateProjectModal: OverlayComponent<CreateProjectModalProps> = ({
     [dispatch],
   );
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
 
   const thenPromise = (res) => {
     setInProgress(false);
@@ -60,7 +60,7 @@ const DefaultCreateProjectModal: OverlayComponent<CreateProjectModalProps> = ({
   };
 
   const catchError = (error) => {
-    const err = error.message || t('console-shared~An error occurred. Please try again.');
+    const err = error.message || t('An error occurred. Please try again.');
     setInProgress(false);
     setErrorMessage(err);
     return Promise.reject(err);
@@ -117,38 +117,33 @@ const DefaultCreateProjectModal: OverlayComponent<CreateProjectModalProps> = ({
       onClose={closeOverlay}
       aria-labelledby="create-project-modal-title"
     >
-      <ModalHeader
-        title={t('console-shared~Create Project')}
-        labelId="create-project-modal-title"
-      />
+      <ModalHeader title={t('Create Project')} labelId="create-project-modal-title" />
       <ModalBody>
         <Content component={ContentVariants.p}>
-          {t(
-            'console-shared~An OpenShift project is an alternative representation of a Kubernetes namespace.',
-          )}
+          {t('An OpenShift project is an alternative representation of a Kubernetes namespace.')}
         </Content>
         {!isManaged() && (
           <Content component={ContentVariants.p}>
             <ExternalLink href={projectsURL}>
-              {t('console-shared~Learn more about working with projects')}
+              {t('Learn more about working with projects')}
             </ExternalLink>
           </Content>
         )}
         <Form onSubmit={submit} id="create-project-form">
           <FormGroup
-            label={t('console-shared~Name')}
+            label={t('Name')}
             isRequired
             fieldId="input-name"
             labelHelp={
               <FieldLevelHelp>
                 <Content component={ContentVariants.p}>
                   {t(
-                    "console-shared~A Project name must consist of lower case alphanumeric characters or '-', and must start and end with an alphanumeric character (e.g. 'my-name' or '123-abc').",
+                    "A Project name must consist of lower case alphanumeric characters or '-', and must start and end with an alphanumeric character (e.g. 'my-name' or '123-abc').",
                   )}
                 </Content>
                 <Content component={ContentVariants.p}>
                   {t(
-                    "console-shared~You must create a Namespace to be able to create projects that begin with 'openshift-', 'kubernetes-', or 'kube-'.",
+                    "You must create a Namespace to be able to create projects that begin with 'openshift-', 'kubernetes-', or 'kube-'.",
                   )}
                 </Content>
               </FieldLevelHelp>
@@ -164,7 +159,7 @@ const DefaultCreateProjectModal: OverlayComponent<CreateProjectModalProps> = ({
               isRequired
             />
           </FormGroup>
-          <FormGroup label={t('console-shared~Display name')} fieldId="input-display-name">
+          <FormGroup label={t('Display name')} fieldId="input-display-name">
             <TextInput
               id="input-display-name"
               name="displayName"
@@ -173,7 +168,7 @@ const DefaultCreateProjectModal: OverlayComponent<CreateProjectModalProps> = ({
               value={displayName}
             />
           </FormGroup>
-          <FormGroup label={t('console-shared~Description')} fieldId="input-description">
+          <FormGroup label={t('Description')} fieldId="input-description">
             <TextArea
               id="input-description"
               name="description"
@@ -194,7 +189,7 @@ const DefaultCreateProjectModal: OverlayComponent<CreateProjectModalProps> = ({
           data-test="confirm-action"
           id="confirm-action"
         >
-          {t('console-shared~Create')}
+          {t('Create')}
         </Button>
         <Button
           type="button"
@@ -203,7 +198,7 @@ const DefaultCreateProjectModal: OverlayComponent<CreateProjectModalProps> = ({
           onClick={closeOverlay}
           data-test-id="modal-cancel-action"
         >
-          {t('console-shared~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </Modal>

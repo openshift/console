@@ -8,10 +8,10 @@ const getVersion = (cv: ClusterVersionKind) =>
   cv && cv.status.history[0] ? cv.status.history[0].version : null;
 
 const ClusterUpdateActivityText: FC<ClusterUpdateActivityProps> = ({ resource }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   return (
     <ActivityItem>
-      {t('console-app~Updating cluster to {{version}}', { version: getVersion(resource) })}
+      {t('Updating cluster to {{version}}', { version: getVersion(resource) })}
     </ActivityItem>
   );
 };

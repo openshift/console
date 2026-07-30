@@ -3,14 +3,14 @@ import { DefaultCreateConnector } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import type { CreateConnectorProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 
-const CreateConnector: FC<CreateConnectorProps> = ({
+export const CreateConnector: FC<CreateConnectorProps> = ({
   startPoint,
   endPoint,
   dragging,
   hover,
   hints,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   return (
     <DefaultCreateConnector
       startPoint={startPoint}
@@ -18,9 +18,7 @@ const CreateConnector: FC<CreateConnectorProps> = ({
       dragging={dragging}
       hints={hints}
       hover={hover}
-      tipContents={hover && dragging ? t('topology~Add resources') : null}
+      tipContents={hover && dragging ? t('Add resources') : null}
     />
   );
 };
-
-export default CreateConnector;

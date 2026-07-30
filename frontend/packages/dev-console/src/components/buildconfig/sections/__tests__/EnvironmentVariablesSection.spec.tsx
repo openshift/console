@@ -1,5 +1,5 @@
 import type { FC, ReactNode } from 'react';
-import { render, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { FormikConfig } from 'formik';
 import { Formik } from 'formik';
@@ -34,18 +34,18 @@ describe('EnvironmentVariablesSection', () => {
     };
     const onSubmit = jest.fn();
 
-    const renderResult = render(
+    render(
       <Wrapper initialValues={initialValues} onSubmit={onSubmit}>
         <EnvironmentVariablesSection namespace="my-namespace" />
       </Wrapper>,
     );
 
-    renderResult.getByTestId('section environment-variables');
-    renderResult.getByText('Environment Variables');
-    expect(renderResult.queryAllByPlaceholderText('Name')).toHaveLength(1);
-    expect(renderResult.queryAllByPlaceholderText('Value')).toHaveLength(1);
-    renderResult.getByText('Add value');
-    renderResult.getByText('Add from ConfigMap or Secret');
+    expect(screen.getByTestId('section environment-variables')).toBeInTheDocument();
+    expect(screen.getByText('Environment Variables')).toBeVisible();
+    expect(screen.queryAllByPlaceholderText('Name')).toHaveLength(1);
+    expect(screen.queryAllByPlaceholderText('Value')).toHaveLength(1);
+    expect(screen.getByText('Add value')).toBeVisible();
+    expect(screen.getByText('Add from ConfigMap or Secret')).toBeVisible();
 
     expect(onSubmit).toHaveBeenCalledTimes(0);
   });
@@ -62,16 +62,16 @@ describe('EnvironmentVariablesSection', () => {
     };
     const onSubmit = jest.fn();
 
-    const renderResult = render(
+    render(
       <Wrapper initialValues={initialValues} onSubmit={onSubmit}>
         <EnvironmentVariablesSection namespace="my-namespace" />
       </Wrapper>,
     );
 
-    renderResult.getByTestId('section environment-variables');
-    renderResult.getByText('Environment Variables');
-    expect(renderResult.queryAllByPlaceholderText('Name')).toHaveLength(3);
-    expect(renderResult.queryAllByPlaceholderText('Value')).toHaveLength(3);
+    expect(screen.getByTestId('section environment-variables')).toBeInTheDocument();
+    expect(screen.getByText('Environment Variables')).toBeVisible();
+    expect(screen.queryAllByPlaceholderText('Name')).toHaveLength(3);
+    expect(screen.queryAllByPlaceholderText('Value')).toHaveLength(3);
 
     expect(onSubmit).toHaveBeenCalledTimes(0);
   });
@@ -104,16 +104,16 @@ describe('EnvironmentVariablesSection', () => {
     };
     const onSubmit = jest.fn();
 
-    const renderResult = render(
+    render(
       <Wrapper initialValues={initialValues} onSubmit={onSubmit}>
         <EnvironmentVariablesSection namespace="my-namespace" />
       </Wrapper>,
     );
 
-    renderResult.getByTestId('section environment-variables');
-    renderResult.getByText('Environment Variables');
-    expect(renderResult.queryAllByPlaceholderText('Name')).toHaveLength(3);
-    expect(renderResult.queryAllByPlaceholderText('Value')).toHaveLength(1);
+    expect(screen.getByTestId('section environment-variables')).toBeInTheDocument();
+    expect(screen.getByText('Environment Variables')).toBeVisible();
+    expect(screen.queryAllByPlaceholderText('Name')).toHaveLength(3);
+    expect(screen.queryAllByPlaceholderText('Value')).toHaveLength(1);
 
     expect(onSubmit).toHaveBeenCalledTimes(0);
   });
@@ -127,20 +127,20 @@ describe('EnvironmentVariablesSection', () => {
     };
     const onSubmit = jest.fn();
 
-    const renderResult = render(
+    render(
       <Wrapper initialValues={initialValues} onSubmit={onSubmit}>
         <EnvironmentVariablesSection namespace="my-namespace" />
       </Wrapper>,
     );
 
-    await user.click(renderResult.getByText('Add value'));
-    await user.click(renderResult.getByText('Add value'));
+    await user.click(screen.getByText('Add value'));
+    await user.click(screen.getByText('Add value'));
 
-    expect(renderResult.queryAllByPlaceholderText('Name')).toHaveLength(3);
-    expect(renderResult.queryAllByPlaceholderText('Value')).toHaveLength(3);
+    expect(screen.queryAllByPlaceholderText('Name')).toHaveLength(3);
+    expect(screen.queryAllByPlaceholderText('Value')).toHaveLength(3);
 
-    const [name1, name2, name3] = renderResult.queryAllByPlaceholderText('Name');
-    const [value1, value2, value3] = renderResult.queryAllByPlaceholderText('Value');
+    const [name1, name2, name3] = screen.queryAllByPlaceholderText('Name');
+    const [value1, value2, value3] = screen.queryAllByPlaceholderText('Value');
 
     await user.type(name1, 'env key 1');
     await user.type(value1, 'env value 1');
@@ -150,7 +150,7 @@ describe('EnvironmentVariablesSection', () => {
     await user.type(value3, 'env value 3');
 
     // Submit
-    const submitButton = renderResult.getByRole('button', { name: 'Submit' });
+    const submitButton = screen.getByRole('button', { name: 'Submit' });
     await user.click(submitButton);
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalledTimes(1);

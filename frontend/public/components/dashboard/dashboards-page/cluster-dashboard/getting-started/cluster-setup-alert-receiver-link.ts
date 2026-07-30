@@ -1,14 +1,12 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-
-import { GettingStartedLink } from '@console/shared/src/components/getting-started';
-
-import { SecretModel } from '@console/internal/models';
-import { SecretKind } from '@console/internal/module/k8s';
-import { useAccessReview } from '@console/internal/components/utils/rbac';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { getAlertmanagerConfig } from '@console/internal/components/monitoring/alertmanager/alertmanager-utils';
 import { numberOfIncompleteReceivers } from '@console/internal/components/monitoring/alertmanager/alertmanager-config';
+import { getAlertmanagerConfig } from '@console/internal/components/monitoring/alertmanager/alertmanager-utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { useAccessReview } from '@console/internal/components/utils/rbac';
+import { SecretModel } from '@console/internal/models';
+import type { SecretKind } from '@console/internal/module/k8s';
+import type { GettingStartedLink } from '@console/shared/src/components/getting-started/GettingStartedCard';
 
 const useCanEditAlertManagerConfigSecret = () =>
   useAccessReview({
@@ -33,7 +31,7 @@ const useAlertManagerConfigSecret = (watch: boolean) =>
   );
 
 export const useAlertReceiverLink = (): GettingStartedLink | null => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const canEdit = useCanEditAlertManagerConfigSecret();
   const [secret] = useAlertManagerConfigSecret(canEdit);
 
@@ -45,7 +43,7 @@ export const useAlertReceiverLink = (): GettingStartedLink | null => {
   if (canEdit && hasIncompleteReceivers) {
     return {
       id: 'alert-receivers',
-      title: t('public~Configure alert receivers'),
+      title: t('Configure alert receivers'),
       href: '/settings/cluster/alertmanagerconfig',
     };
   }

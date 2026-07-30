@@ -11,7 +11,7 @@ import QueryFocusApplication from '../QueryFocusApplication';
 import DeployImage from './DeployImage';
 
 const DeployImagePage: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const { ns: namespace } = useParams();
   const location = useLocation();
   const params = new URLSearchParams(location.search);
@@ -29,8 +29,8 @@ const DeployImagePage: FC = () => {
 
   return (
     <NamespacedPage disabled variant={NamespacedPageVariants.light}>
-      <DocumentTitle>{t('devconsole~Deploy Image')}</DocumentTitle>
-      <PageHeading title={t('devconsole~Deploy Image')} />
+      <DocumentTitle>{t('Deploy Image')}</DocumentTitle>
+      <PageHeading title={t('Deploy Image')} />
       <QueryFocusApplication>
         {(desiredApplication) => (
           <DeployImage

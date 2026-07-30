@@ -1,8 +1,5 @@
 import type { FC } from 'react';
 import { useState, useEffect } from 'react';
-import * as _ from 'lodash';
-import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
-import { Link } from 'react-router';
 import {
   AlertVariant,
   Content,
@@ -12,31 +9,32 @@ import {
   ToolbarItem,
 } from '@patternfly/react-core';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
+import i18next from 'i18next';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
+import type { ClusterGlobalConfig } from '@console/dynamic-plugin-sdk/src/extensions/cluster-settings';
+import { isClusterGlobalConfig } from '@console/dynamic-plugin-sdk/src/extensions/cluster-settings';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { IDP_TYPES } from '@console/shared/src/constants/auth';
+import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpgrade';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
+import type { K8sKind } from '../../module/k8s';
 import {
-  K8sKind,
   k8sList,
   referenceForModel,
   getResourceDescription,
   modelFor,
   referenceForGroupVersionKind,
 } from '../../module/k8s';
-import { EmptyBox, LoadingBox } from '../utils/status-box';
+import { fuzzyCaseInsensitive } from '../factory/table-filters';
+import { TextFilter } from '../factory/text-filter';
 import { ExpandableAlert } from '../utils/alerts';
 import { Kebab } from '../utils/kebab';
 import { resourcePathFromModel } from '../utils/resource-link';
-import { TextFilter } from '../factory/text-filter';
-import { fuzzyCaseInsensitive } from '../factory/table-filters';
-import i18next from 'i18next';
-import {
-  ClusterGlobalConfig,
-  isClusterGlobalConfig,
-} from '@console/dynamic-plugin-sdk/src/extensions/cluster-settings';
-import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpgrade';
+import { EmptyBox, LoadingBox } from '../utils/status-box';
 import filterNonUpgradableResources from './filterNonUpgradableResources';
-import { IDP_TYPES } from '@console/shared/src/constants/auth';
 
 type ConfigDataType = { model: K8sKind; id: string; name: string; namespace: string };
 
@@ -55,7 +53,7 @@ const ItemRow = ({ item, showAPIGroup }) => {
   return (
     <Tr data-test-action={item.label}>
       <Td width={30}>
-        <Link to={item.path} data-test-id={item.label}>
+        <Link to={item.path} data-test-id={item.label} data-test={item.label}>
           {item.label}
         </Link>
         {showAPIGroup && (
@@ -91,7 +89,7 @@ const useConfigResources = () => {
 };
 
 export const GlobalConfigPage: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const [globalConfigs] = useResolvedExtensions<ClusterGlobalConfig>(isClusterGlobalConfig);
   const [configResources, clusterOperatorConfigResources] = useConfigResources();
   const [errors, setErrors] = useState([]);
@@ -100,15 +98,15 @@ export const GlobalConfigPage: FC = () => {
   const [textFilter, setTextFilter] = useState('');
 
   const oauthMenuItems = _.map(IDP_TYPES, (label: string, id: string) => ({
-    label: t('public~{{label}}', { label }),
+    label: t('{{label}}', { label }),
     href: `/settings/idp/${id}`,
   }));
   const editYAMLMenuItem = (name: string, resourceLink: string) => ({
-    label: t('public~Edit {{name}} resource', { name }),
+    label: t('Edit {{name}} resource', { name }),
     href: `${resourceLink}/yaml`,
   });
   const viewAPIExplorerMenuItem = (name: string, apiExplorerLink: string) => ({
-    label: t('public~Explore {{name}} API', { name }),
+    label: t('Explore {{name}} API', { name }),
     href: apiExplorerLink,
   });
 
@@ -125,66 +123,68 @@ export const GlobalConfigPage: FC = () => {
           })
           .then((resources) => resources.map((i: K8sKind) => ({ ...i, model })));
       }),
-    ).then((responses) => {
-      const flattenedResponses = _.flatten(responses);
-      const winnowedResponses: ConfigDataType[] = flattenedResponses.map((item) => ({
-        model: item.model,
-        id: item.metadata.uid,
-        name: item.metadata.name,
-        namespace: item.metadata.namespace,
-      }));
-      const usableConfigs: ConfigDataType[] = globalConfigs.map(({ properties }) => {
-        const { group, version, kind } = properties.model;
-        return {
-          ...properties,
-          model: modelFor(referenceForGroupVersionKind(group)(version)(kind)),
-        };
-      });
-      const allItems = [...winnowedResponses, ...usableConfigs]
-        .flatMap((item) => {
-          if (item.model) {
-            const apiExplorerLink = `/api-resource/cluster/${referenceForModel(item.model)}`;
-            const resourceLink = resourcePathFromModel(item.model, item.name, item.namespace);
-            return {
-              label: item.model.kind,
-              apiGroup: item.model.apiGroup,
-              id: item.id,
-              description: getResourceDescription(item.model),
-              path: resourceLink,
+    )
+      .then((responses) => {
+        const flattenedResponses = _.flatten(responses);
+        const winnowedResponses: ConfigDataType[] = flattenedResponses.map((item) => ({
+          model: item.model,
+          id: item.metadata.uid,
+          name: item.metadata.name,
+          namespace: item.metadata.namespace,
+        }));
+        const usableConfigs: ConfigDataType[] = globalConfigs.map(({ properties }) => {
+          const { group, version, kind } = properties.model;
+          return {
+            ...properties,
+            model: modelFor(referenceForGroupVersionKind(group)(version)(kind)),
+          };
+        });
+        const allItems = [...winnowedResponses, ...usableConfigs]
+          .flatMap((item) => {
+            if (item.model) {
+              const apiExplorerLink = `/api-resource/cluster/${referenceForModel(item.model)}`;
+              const resourceLink = resourcePathFromModel(item.model, item.name, item.namespace);
+              return {
+                label: item.model.kind,
+                apiGroup: item.model.apiGroup,
+                id: item.id,
+                description: getResourceDescription(item.model),
+                path: resourceLink,
+                menuItems: [
+                  editYAMLMenuItem(item.model.kind, resourceLink),
+                  viewAPIExplorerMenuItem(item.model.kind, apiExplorerLink),
+                  ...(item.model.kind === 'OAuth' ? oauthMenuItems : []),
+                ],
+              };
+            }
+            return [];
+          })
+          .concat([
+            {
+              label: 'Alertmanager',
+              apiGroup: 'monitoring.coreos.com',
+              id: 'alertmanager',
+              description: 'Configure grouping and routing of alerts',
+              path: '/settings/cluster/alertmanagerconfig',
               menuItems: [
-                editYAMLMenuItem(item.model.kind, resourceLink),
-                viewAPIExplorerMenuItem(item.model.kind, apiExplorerLink),
-                ...(item.model.kind === 'OAuth' ? oauthMenuItems : []),
+                {
+                  label: t('Create Receiver'),
+                  href: '/settings/cluster/alertmanagerconfig/receivers/~new',
+                },
+                {
+                  label: t('Edit configuration YAML'),
+                  href: `/settings/cluster/alertmanageryaml`,
+                },
               ],
-            };
-          }
-          return [];
-        })
-        .concat([
-          {
-            label: 'Alertmanager',
-            apiGroup: 'monitoring.coreos.com',
-            id: 'alertmanager',
-            description: 'Configure grouping and routing of alerts',
-            path: '/settings/cluster/alertmanagerconfig',
-            menuItems: [
-              {
-                label: t('public~Create Receiver'),
-                href: '/settings/cluster/alertmanagerconfig/receivers/~new',
-              },
-              {
-                label: t('public~Edit configuration YAML'),
-                href: `/settings/cluster/alertmanageryaml`,
-              },
-            ],
-          },
-        ]);
-      const sortedItems = _.sortBy(_.flatten(allItems), 'label', 'asc');
-      if (isSubscribed) {
-        setItems(sortedItems);
-        setLoading(false);
-      }
-    });
+            },
+          ]);
+        const sortedItems = _.sortBy(_.flatten(allItems), 'label', 'asc');
+        if (isSubscribed) {
+          setItems(sortedItems);
+          setLoading(false);
+        }
+      })
+      .catch(() => {});
     return () => {
       isSubscribed = false;
     };
@@ -205,14 +205,14 @@ export const GlobalConfigPage: FC = () => {
       {!loading && (
         <>
           <Content component={ContentVariants.p} className="pf-v6-u-mb-xl">
-            {t('public~Edit the following resources to manage the configuration of your cluster.')}
+            {t('Edit the following resources to manage the configuration of your cluster.')}
           </Content>
           <Toolbar>
             <ToolbarContent>
               <ToolbarItem>
                 <TextFilter
                   value={textFilter}
-                  label={t('public~by name or description')}
+                  label={t('by name or description')}
                   onChange={(_event, val) => setTextFilter(val)}
                 />
               </ToolbarItem>
@@ -224,6 +224,7 @@ export const GlobalConfigPage: FC = () => {
         <ExpandableAlert
           variant={AlertVariant.danger}
           alerts={errors.map((error, i) => (
+            // eslint-disable-next-line react/no-array-index-key
             <div key={i}>{error}</div>
           ))}
         />
@@ -231,13 +232,13 @@ export const GlobalConfigPage: FC = () => {
       {loading && <LoadingBox />}
       {!loading &&
         (_.isEmpty(visibleItems) ? (
-          <EmptyBox label={t('public~Configuration resources')} />
+          <EmptyBox label={t('Configuration resources')} />
         ) : (
           <Table gridBreakPoint="">
             <Thead>
               <Tr>
-                <Th width={30}>{t('public~Configuration resource')}</Th>
-                <Th visibility={['hidden', 'visibleOnSm']}>{t('public~Description')}</Th>
+                <Th width={30}>{t('Configuration resource')}</Th>
+                <Th visibility={['hidden', 'visibleOnSm']}>{t('Description')}</Th>
               </Tr>
             </Thead>
             <Tbody>

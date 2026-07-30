@@ -6,7 +6,7 @@ import type {
   CatalogItemMetadataProvider,
 } from '@console/dynamic-plugin-sdk/src/extensions';
 import { renderHookWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
-import useCatalogExtensions from '../useCatalogExtensions';
+import { useCatalogExtensions } from '../useCatalogExtensions';
 
 let mockExtensions: (
   | CatalogItemProvider
@@ -17,7 +17,7 @@ let mockExtensions: (
 )[] = [];
 
 jest.mock('@console/dynamic-plugin-sdk/src/api/useResolvedExtensions', () => ({
-  useResolvedExtensions: (typeGuard) => [mockExtensions.filter(typeGuard), true],
+  useResolvedExtensions: (predicate) => [mockExtensions.filter(predicate), true],
 }));
 
 describe('useCatalogExtensions', () => {

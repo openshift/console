@@ -1,7 +1,6 @@
 import { screen, waitFor, act } from '@testing-library/react';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
-
-import { AsyncComponent } from '../../../components/utils/async';
+import { AsyncComponent } from '../async';
 
 // Mock LoadingBox component
 jest.mock('../../../components/utils/status-box', () => ({
@@ -53,6 +52,7 @@ describe('AsyncComponent', () => {
     // Fast-forward through all 26 attempts (initial + 25 retries)
     // Each iteration needs to flush promises and advance timers
     for (let i = 0; i < 26; i++) {
+      // eslint-disable-next-line no-await-in-loop
       await act(async () => {
         jest.advanceTimersByTime(30000); // Advance past any backoff delay
       });
@@ -127,11 +127,9 @@ describe('AsyncComponent', () => {
 
     renderWithProviders(<AsyncComponent loader={loader} className={className} />);
 
-    await waitFor(() => {
-      const component = screen.getByText('Foo Component');
-      expect(component).toBeInTheDocument();
-      expect(component).toHaveClass(className);
-    });
+    const component = await screen.findByText('Foo Component');
+    expect(component).toBeInTheDocument();
+    expect(component).toHaveClass(className);
   });
 
   it('renders new component if props.loader changes', async () => {

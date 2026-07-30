@@ -2,12 +2,12 @@ import { useState, useMemo, useEffect } from 'react';
 import { safeLoad } from 'js-yaml';
 import { useTranslation } from 'react-i18next';
 import type { ExtensionHook, CatalogItem, WatchK8sResults } from '@console/dynamic-plugin-sdk';
-import { coFetch } from '@console/internal/co-fetch';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
-import type { APIError } from '@console/shared';
-import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../models';
+import type { APIError } from '@console/shared/src/types/resource';
+import { coFetch } from '@console/shared/src/utils/console-fetch';
+import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../models/helm';
 import type { HelmChartEntries } from '../../types/helm-types';
 import { normalizeHelmCharts } from '../utils/catalog-utils';
 
@@ -18,7 +18,7 @@ type WatchResource = {
 const useHelmCharts: ExtensionHook<CatalogItem[]> = ({
   namespace,
 }): [CatalogItem[], boolean, any] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   const [helmCharts, setHelmCharts] = useState<HelmChartEntries>();
   const [loadedError, setLoadedError] = useState<APIError>();
 
@@ -52,7 +52,7 @@ const useHelmCharts: ExtensionHook<CatalogItem[]> = ({
       .then(async (res) => {
         if (mounted) {
           const yaml = await res.text();
-          const json = safeLoad(yaml);
+          const json = safeLoad(yaml) as { entries: HelmChartEntries };
           setHelmCharts(json.entries);
         }
       })

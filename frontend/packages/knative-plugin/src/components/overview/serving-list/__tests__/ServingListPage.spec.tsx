@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import * as Router from 'react-router';
 import ServingListPage from '../ServingListsPage';
 
@@ -8,18 +8,14 @@ jest.mock('react-router', () => ({
 }));
 
 jest.mock('@console/internal/components/namespace-bar', () => ({
-  NamespaceBar: 'NamespaceBar',
+  NamespaceBar: () => <div data-test="mock-NamespaceBar" />,
 }));
 
-jest.mock('@console/shared', () => ({
-  MultiTabListPage: 'MultiTabListPage',
+jest.mock('@console/shared/src/components/multi-tab-list/MultiTabListPage', () => ({
+  MultiTabListPage: () => <div data-test="mock-MultiTabListPage" />,
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-  }),
-}));
+jest.mock('react-i18next');
 
 jest.mock('@console/internal/module/k8s', () => ({
   referenceForModel: jest.fn(() => 'serving.knative.dev~v1~Service'),
@@ -48,14 +44,14 @@ describe('ServingListPage', () => {
   });
 
   it('should render NamespaceBar and MultiTabListPage', () => {
-    const { container } = render(<ServingListPage />);
-    expect(container.querySelector('namespacebar')).toBeInTheDocument();
-    expect(container.querySelector('multitablistpage')).toBeInTheDocument();
+    render(<ServingListPage />);
+    expect(screen.getByTestId('mock-NamespaceBar')).toBeVisible();
+    expect(screen.getByTestId('mock-MultiTabListPage')).toBeVisible();
   });
 
   it('should render the main components without errors', () => {
-    const { container } = render(<ServingListPage />);
-    expect(container.querySelector('namespacebar')).toBeInTheDocument();
-    expect(container.querySelector('multitablistpage')).toBeInTheDocument();
+    render(<ServingListPage />);
+    expect(screen.getByTestId('mock-NamespaceBar')).toBeVisible();
+    expect(screen.getByTestId('mock-MultiTabListPage')).toBeVisible();
   });
 });

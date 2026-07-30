@@ -1,7 +1,9 @@
 import { Button } from '@patternfly/react-core';
 import { screen } from '@testing-library/react';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
-import { AccessDenied, EmptyBox, ConsoleEmptyState } from '..';
+import { AccessDenied } from '../AccessDenied';
+import { ConsoleEmptyState } from '../ConsoleEmptyState';
+import { EmptyBox } from '../EmptyBox';
 
 const TestIcon = () => 'TestIcon';
 

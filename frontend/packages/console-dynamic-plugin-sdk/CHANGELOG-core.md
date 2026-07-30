@@ -10,16 +10,53 @@ For current development version of Console, use `4.x.0-prerelease.n` packages.
 For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility
 table in [Console dynamic plugins README](./README.md).
 
-## 4.22.0-prerelease.3 - TBD
+## 4.23.0-prerelease.5 - TBD
 
-- **Type-breaking**: Update `K8sResourceCommon`, `ObjectMetadata`, `OwnerReference` types to interfaces ([CONSOLE-5108], [#16097])
+- **Deprecated**: The use of multiple predicates in the `useResolvedExtensions` hook is deprecated ([#16115], [CONSOLE-5065])
+- **Type breaking**: Replace `ExtensionTypeGuard` with `ExtensionPredicate` from `@openshift/dynamic-plugin-sdk` ([#16115], [CONSOLE-5065])
 
-## 4.22.0-prerelease.2 - 2026-03-26
+## 4.23.0-prerelease.4 - 2026-07-14
+
+- Add optional `onSubmit` parameter to `useLabelsModal` hook for customizing label submission behavior ([CONSOLE-5356], [#16560])
+- Update `@patternfly/react-topology` peer dependency semver range to `~6.6.0` ([OCPBUGS-86587], [#16750])
+- Update `react-router` peer dependency semver range to `~7.18.1` ([CONSOLE-5415], [#16726])
+
+## 4.23.0-prerelease.3 - 2026-07-07
+
+- Add `@openshift/api-types` as a dependency and replace `K8sResourceCommon` and related types with imports from that package ([CONSOLE-5355], [#16585])
+- Improve control over toast notifications with new optional `ToastOptions` fields: `drawerGroup`, `skipOverflow` and `persistInDrawer` ([CONSOLE-5361], [#16636])
+- Add new extension type `console.node/inventory-item` to add inventory items to the Node inventory card ([CONSOLE-5315], [#16582])
+- Update `console.node/sub-nav-tab` extension to allow extending Health and Workloads details pages ([CONSOLE-4951], [CONSOLE-4954], [#16581], [#16574])
+
+## 4.23.0-prerelease.2 - 2026-05-27
+
+- Update `@patternfly/react-topology` peer dependency semver range to `~6.5.0` ([OCPBUGS-86488], [#16491])
+
+## 4.23.0-prerelease.1 - 2026-05-19
+
+- Add `useToast` hook for showing toast notifications ([CONSOLE-5273], [#16400])
+- Add new extension type `console.node/sub-nav-tab` to add custom sub-tabs to Node details page ([CONSOLE-4946], [#16124])
+- Add exported type `NodeStatus` for existing extension type `console.node/status` ([CONSOLE-3899], [#13493])
+
+## 4.22.0 - 2026-06-09
+
+> Initial release for OCP Console 4.22.
 
 > [!IMPORTANT]
 > This release includes breaking changes that impact all existing Console plugins.
 > Refer to [the release notes](https://github.com/openshift/console/blob/main/frontend/packages/console-dynamic-plugin-sdk/release-notes/4.22.md)
 > for details on how to adapt your plugins for Console 4.22.
+
+- Add `tooltipTriggerRef` prop to `BaseNodeProps` topology type ([OCPBUGS-84216], [#16241])
+- **Deprecated**: `VirtualizedTable`, `ListPageFilter`, and `useListPageFilter` components. Use PatternFly [Table](https://www.patternfly.org/components/table/) and [Data View](https://www.patternfly.org/extensions/data-view/overview/) components instead ([CONSOLE-4541], [#14967])
+
+## 4.22.0-prerelease.3 - 2026-04-24
+
+- **Breaking**: The `dynamic-core-api`, `console-fetch`, and `console-fetch-utils` modules are no longer provided. Console plugin APIs should be imported from the package index. ([OCPBUGS-81319], [#15655])
+- Added `HttpError` class export for `instanceof` checks on errors thrown by `consoleFetch` ([OCPBUGS-81319], [#15655])
+- **Type breaking**: Update `K8sResourceCommon`, `ObjectMetadata`, `OwnerReference` types to interfaces ([CONSOLE-5108], [#16097])
+
+## 4.22.0-prerelease.2 - 2026-03-26
 
 - **Breaking**: Changed `AlertAction` extension to use `LaunchOverlay` instead of `LaunchModal`. The `action` callback parameter is now typed as `LaunchOverlay`, which does not support the optional `id` parameter that `LaunchModal` had. Plugins implementing `console.alert-action` extensions must update their action callbacks accordingly. ([CONSOLE-4447])
 - **Breaking**: Removed support for `console.page/resource/tab` and `console.dashboards/overview/detail/item`
@@ -31,7 +68,7 @@ table in [Console dynamic plugins README](./README.md).
 - **Type breaking**: Changed `useDeleteModal` hook's `redirectTo` parameter type from `LocationDescriptor` (from `history`) to `To` (from `react-router`) ([CONSOLE-4990], [#15959])
 - **Type breaking**: Changed `FileUploadHandler` return type from `void` to `To | void`. Handlers can now return a path (from `react-router`) for programmatic navigation instead of calling history methods directly ([CONSOLE-4990], [#15959])
 - The following types are now re-exported from `@openshift/dynamic-plugin-sdk` instead of being defined
-  by Console: `CodeRef`, `EncodedCodeRef`, `LoadedExtension`, and `ResolvedExtension` ([CONSOLE-3769], [#15904])
+  locally: `CodeRef`, `EncodedCodeRef`, `LoadedExtension`, and `ResolvedExtension` ([CONSOLE-3769], [#15904])
 
 ## 4.22.0-prerelease.1 - 2025-01-21
 
@@ -59,7 +96,7 @@ table in [Console dynamic plugins README](./README.md).
 - **Type breaking**: Fix `popupComponent` prop type in extension `console.dashboards/overview/health/resource` ([CONSOLE-4796], [#15526])
 - **Type breaking**: `AlwaysOnExtension` and `ModelDefinition` types are removed from `api/common-types`. ([CONSOLE-3769], [#15509])
 - The following types are now re-exported from `@openshift/dynamic-plugin-sdk` instead of being defined
-  locally: `ExtensionFlags`, `ExtensionTypeGuard`, `ResolvedCodeRefProperties`, `RemoteEntryModule`, and `Update`. ([CONSOLE-4840], [#15509], [#15671])
+  locally: `ExtensionFlags`, `ExtensionTypeGuard`, `ResolvedCodeRefProperties`, `RemoteEntryModule`, and `Update` ([CONSOLE-4840], [#15509], [#15671])
 - Add optional `fetch` property to extension `console.dashboards/overview/health/url` ([CONSOLE-4796], [#15526])
 - Add optional `infrastructure` parameter to `PrometheusHealthHandler` type ([CONSOLE-4796], [#15526])
 - Allow `K8sResourceKind` in `TopologyDataObject`, `TopologyResourcesObject`, and `OverviewItem` types ([CONSOLE-4840], [#15699])
@@ -190,6 +227,7 @@ table in [Console dynamic plugins README](./README.md).
 [CONSOLE-4407]: https://issues.redhat.com/browse/CONSOLE-4407
 [CONSOLE-4447]: https://issues.redhat.com/browse/CONSOLE-4447
 [CONSOLE-4499]: https://issues.redhat.com/browse/CONSOLE-4499
+[CONSOLE-4541]: https://issues.redhat.com/browse/CONSOLE-4541
 [CONSOLE-4576]: https://issues.redhat.com/browse/CONSOLE-4576
 [CONSOLE-4630]: https://issues.redhat.com/browse/CONSOLE-4630
 [CONSOLE-4654]: https://issues.redhat.com/browse/CONSOLE-4654
@@ -198,12 +236,22 @@ table in [Console dynamic plugins README](./README.md).
 [CONSOLE-4796]: https://issues.redhat.com/browse/CONSOLE-4796
 [CONSOLE-4806]: https://issues.redhat.com/browse/CONSOLE-4806
 [CONSOLE-4840]: https://issues.redhat.com/browse/CONSOLE-4840
+[CONSOLE-4946]: https://issues.redhat.com/browse/CONSOLE-4946
+[CONSOLE-4951]: https://issues.redhat.com/browse/CONSOLE-4951
+[CONSOLE-4954]: https://issues.redhat.com/browse/CONSOLE-4954
 [CONSOLE-4990]: https://issues.redhat.com/browse/CONSOLE-4990
 [CONSOLE-5039]: https://issues.redhat.com/browse/CONSOLE-5039
 [CONSOLE-5050]: https://issues.redhat.com/browse/CONSOLE-5050
 [CONSOLE-5063]: https://issues.redhat.com/browse/CONSOLE-5063
+[CONSOLE-5065]: https://issues.redhat.com/browse/CONSOLE-5065
 [CONSOLE-5093]: https://issues.redhat.com/browse/CONSOLE-5093
 [CONSOLE-5108]: https://issues.redhat.com/browse/CONSOLE-5108
+[CONSOLE-5273]: https://issues.redhat.com/browse/CONSOLE-5273
+[CONSOLE-5315]: https://issues.redhat.com/browse/CONSOLE-5315
+[CONSOLE-5355]: https://issues.redhat.com/browse/CONSOLE-5355
+[CONSOLE-5356]: https://issues.redhat.com/browse/CONSOLE-5356
+[CONSOLE-5361]: https://issues.redhat.com/browse/CONSOLE-5361
+[CONSOLE-5415]: https://issues.redhat.com/browse/CONSOLE-5415
 [OCPBUGS-19048]: https://issues.redhat.com/browse/OCPBUGS-19048
 [OCPBUGS-30077]: https://issues.redhat.com/browse/OCPBUGS-30077
 [OCPBUGS-31355]: https://issues.redhat.com/browse/OCPBUGS-31355
@@ -226,6 +274,10 @@ table in [Console dynamic plugins README](./README.md).
 [OCPBUGS-58118]: https://issues.redhat.com/browse/OCPBUGS-58118
 [OCPBUGS-58258]: https://issues.redhat.com/browse/OCPBUGS-58258
 [OCPBUGS-62126]: https://issues.redhat.com/browse/OCPBUGS-62126
+[OCPBUGS-81319]: https://issues.redhat.com/browse/OCPBUGS-81319
+[OCPBUGS-84216]: https://issues.redhat.com/browse/OCPBUGS-84216
+[OCPBUGS-86488]: https://issues.redhat.com/browse/OCPBUGS-86488
+[OCPBUGS-86587]: https://issues.redhat.com/browse/OCPBUGS-86587
 [ODC-7425]: https://issues.redhat.com/browse/ODC-7425
 [#12983]: https://github.com/openshift/console/pull/12983
 [#13233]: https://github.com/openshift/console/pull/13233
@@ -256,6 +308,7 @@ table in [Console dynamic plugins README](./README.md).
 [#14864]: https://github.com/openshift/console/pull/14864
 [#14869]: https://github.com/openshift/console/pull/14869
 [#14876]: https://github.com/openshift/console/pull/14876
+[#14967]: https://github.com/openshift/console/pull/14967
 [#15017]: https://github.com/openshift/console/pull/15017
 [#15139]: https://github.com/openshift/console/pull/15139
 [#15167]: https://github.com/openshift/console/pull/15167
@@ -267,6 +320,7 @@ table in [Console dynamic plugins README](./README.md).
 [#15509]: https://github.com/openshift/console/pull/15509
 [#15526]: https://github.com/openshift/console/pull/15526
 [#15641]: https://github.com/openshift/console/pull/15641
+[#15655]: https://github.com/openshift/console/pull/15655
 [#15671]: https://github.com/openshift/console/pull/15671
 [#15699]: https://github.com/openshift/console/pull/15699
 [#15735]: https://github.com/openshift/console/pull/15735
@@ -280,3 +334,15 @@ table in [Console dynamic plugins README](./README.md).
 [#16043]: https://github.com/openshift/console/pull/16043
 [#16057]: https://github.com/openshift/console/pull/16057
 [#16097]: https://github.com/openshift/console/pull/16097
+[#16115]: https://github.com/openshift/console/pull/16115
+[#16241]: https://github.com/openshift/console/pull/16241
+[#16400]: https://github.com/openshift/console/pull/16400
+[#16491]: https://github.com/openshift/console/pull/16491
+[#16560]: https://github.com/openshift/console/pull/16560
+[#16574]: https://github.com/openshift/console/pull/16574
+[#16581]: https://github.com/openshift/console/pull/16581
+[#16582]: https://github.com/openshift/console/pull/16582
+[#16585]: https://github.com/openshift/console/pull/16585
+[#16636]: https://github.com/openshift/console/pull/16636
+[#16726]: https://github.com/openshift/console/pull/16726
+[#16750]: https://github.com/openshift/console/pull/16750

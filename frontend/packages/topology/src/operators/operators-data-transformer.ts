@@ -1,7 +1,6 @@
 import type { Model } from '@patternfly/react-topology/dist/esm/types';
 import * as _ from 'lodash';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { LabelSelector, modelFor, referenceFor } from '@console/internal/module/k8s';
 import { isOperatorBackedKnResource } from '@console/knative-plugin/src/topology/knative-topology-utils';
 import type { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager/src';
 import {
@@ -11,35 +10,6 @@ import {
 import { getTopologyEdgeItems } from '../data-transforms/transform-utils';
 import type { TopologyDataResources } from '../topology-types';
 import { WORKLOAD_TYPES } from '../utils/topology-utils';
-
-export const edgesFromServiceBinding = (
-  source: K8sResourceKind,
-  sbrs: K8sResourceKind[],
-): K8sResourceKind[] => {
-  const sourceBindings = [];
-  if (!sbrs) {
-    return sourceBindings;
-  }
-  sbrs.forEach((sbr) => {
-    let edgeExists = false;
-    const reference = referenceFor(source);
-    if (reference && sbr?.spec?.application?.resource === modelFor(reference)?.plural) {
-      if (sbr?.spec?.application?.name === source.metadata.name) {
-        edgeExists = true;
-      } else {
-        const matchLabels = sbr?.spec?.application?.labelSelector?.matchLabels;
-        if (matchLabels) {
-          const sbrSelector = new LabelSelector(sbr.spec.application.labelSelector);
-          if (sbrSelector.matches(source)) {
-            edgeExists = true;
-          }
-        }
-      }
-    }
-    edgeExists && sourceBindings.push(sbr);
-  });
-  return sourceBindings;
-};
 
 export const getOperatorGroupResource = (
   resource: K8sResourceKind,
@@ -81,7 +51,7 @@ export const getOperatorGroupResource = (
   return null;
 };
 
-export const getOperatorGroupResources = (resources: TopologyDataResources) => {
+const getOperatorGroupResources = (resources: TopologyDataResources) => {
   const obsGroups = [];
   WORKLOAD_TYPES.forEach((key) => {
     if (resources[key]?.data && resources[key].data.length) {

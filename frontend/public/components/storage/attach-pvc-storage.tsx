@@ -1,28 +1,22 @@
-import * as _ from 'lodash';
 import type { FC, ReactEventHandler, FormEvent } from 'react';
 import { useState, useEffect } from 'react';
 import { ActionGroup, Button, Radio } from '@patternfly/react-core';
+import * as _ from 'lodash';
 import { useTranslation, Trans } from 'react-i18next';
 import { useParams, useNavigate } from 'react-router';
-import {
-  ContainerSpec,
-  k8sCreate,
-  k8sGet,
-  K8sKind,
-  k8sPatch,
-  referenceFor,
-} from '../../module/k8s';
-import { ButtonBar } from '../utils/button-bar';
-import { LoadingBox } from '../utils/status-box';
-import { resourceObjPath } from '../utils/resource-link';
-import { Checkbox } from '../checkbox';
-import { CreatePVCForm } from './create-pvc';
 import { PersistentVolumeClaimModel } from '../../models';
+import type { ContainerSpec, K8sKind } from '../../module/k8s';
+import { k8sCreate, k8sGet, k8sPatch, referenceFor } from '../../module/k8s';
+import type { PodTemplate, PersistentVolumeClaimKind, Patch } from '../../module/k8s/types';
+import { Checkbox } from '../checkbox';
 import { ContainerSelector } from '../container-selector';
+import { ButtonBar } from '../utils/button-bar';
 import { PVCDropdown } from '../utils/pvc-dropdown';
-import { PodTemplate, PersistentVolumeClaimKind, Patch } from '../../module/k8s/types';
+import { resourceObjPath } from '../utils/resource-link';
+import { LoadingBox } from '../utils/status-box';
+import { CreatePVCForm } from './create-pvc';
 
-export const AttachStorageForm: FC<AttachStorageFormProps> = (props) => {
+const AttachStorageForm: FC<AttachStorageFormProps> = (props) => {
   const [obj, setObj] = useState(null);
   const [inProgress, setInProgress] = useState(false);
   const [useContainerSelector, setUseContainerSelector] = useState(false);
@@ -42,7 +36,7 @@ export const AttachStorageForm: FC<AttachStorageFormProps> = (props) => {
 
   const { kindObj, resourceName, namespace } = props;
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const navigate = useNavigate();
 
   const supportedKinds = [
@@ -56,7 +50,9 @@ export const AttachStorageForm: FC<AttachStorageFormProps> = (props) => {
 
   useEffect(() => {
     // Get the current resource so we can add to its definition
-    k8sGet(kindObj, resourceName, namespace).then(setObj);
+    k8sGet(kindObj, resourceName, namespace)
+      .then(setObj)
+      .catch(() => {});
   }, [kindObj, resourceName, namespace]);
 
   useEffect(() => {
@@ -142,7 +138,7 @@ export const AttachStorageForm: FC<AttachStorageFormProps> = (props) => {
   const validateDevicePath = (path: string) => {
     const existingDevicePaths = getDevicePaths(obj.spec.template);
     if (existingDevicePaths.includes(path)) {
-      setError(t('public~Device path is already in use.'));
+      setError(t('Device path is already in use.'));
     }
   };
 
@@ -255,28 +251,28 @@ export const AttachStorageForm: FC<AttachStorageFormProps> = (props) => {
       return;
     }
     setInProgress(true);
-    createPVCIfNecessary().then(
-      (pvcName: string) => {
-        return k8sPatch(kindObj, obj, getVolumePatches(pvcName)).then((resource) => {
-          setInProgress(false);
-          navigate(resourceObjPath(resource, referenceFor(resource)));
-        });
-      },
-      (err) => {
+    createPVCIfNecessary()
+      .then((pvcName: string) => {
+        return k8sPatch(kindObj, obj, getVolumePatches(pvcName));
+      })
+      .then((resource) => {
+        setInProgress(false);
+        navigate(resourceObjPath(resource, referenceFor(resource)));
+      })
+      .catch((err) => {
         setError(err.message);
         setInProgress(false);
-      },
-    );
+      });
   };
 
   return (
     <form className="co-m-pane__body-group co-m-pane__form" onSubmit={save}>
-      <label className="co-required">{t('public~PersistentVolumeClaim')}</label>
+      <label className="co-required">{t('PersistentVolumeClaim')}</label>
       <div className="form-group">
         <Radio
           id="existing"
           name="showCreatePVC"
-          label={t('public~Use existing claim')}
+          label={t('Use existing claim')}
           value="existing"
           onChange={handleShowCreatePVCChange}
           isChecked={showCreatePVC === 'existing'}
@@ -300,7 +296,7 @@ export const AttachStorageForm: FC<AttachStorageFormProps> = (props) => {
         <Radio
           id="new"
           name="showCreatePVC"
-          label={t('public~Create new claim')}
+          label={t('Create new claim')}
           value="new"
           onChange={handleShowCreatePVCChange}
           isChecked={showCreatePVC === 'new'}
@@ -318,7 +314,7 @@ export const AttachStorageForm: FC<AttachStorageFormProps> = (props) => {
       {claimVolumeMode === 'Block' ? (
         <div className="form-group">
           <label className="co-required" htmlFor="device-path">
-            {t('public~Device path')}
+            {t('Device path')}
           </label>
           <div>
             <span className="pf-v6-c-form-control">
@@ -333,14 +329,14 @@ export const AttachStorageForm: FC<AttachStorageFormProps> = (props) => {
               />
             </span>
             <p className="help-block" id="volume-device-help">
-              {t('public~Device path for the block volume inside the container.')}
+              {t('Device path for the block volume inside the container.')}
             </p>
           </div>
         </div>
       ) : (
         <div className="form-group">
           <label className="co-required" htmlFor="mount-path">
-            {t('public~Mount path')}
+            {t('Mount path')}
           </label>
           <div>
             <span className="pf-v6-c-form-control">
@@ -356,17 +352,17 @@ export const AttachStorageForm: FC<AttachStorageFormProps> = (props) => {
               />
             </span>
             <p className="help-block" id="mount-path-help">
-              {t('public~Mount path for the volume inside the container.')}
+              {t('Mount path for the volume inside the container.')}
             </p>
           </div>
           <Checkbox
-            label={t('public~Mount as read-only')}
+            label={t('Mount as read-only')}
             onChange={onMountAsReadOnlyChanged}
             checked={mountAsReadOnly}
             name="mountAsReadOnly"
           />
           <div className="form-group">
-            <label htmlFor="subpath">{t('public~Subpath')}</label>
+            <label htmlFor="subpath">{t('Subpath')}</label>
             <div>
               <span className="pf-v6-c-form-control">
                 <input
@@ -380,7 +376,7 @@ export const AttachStorageForm: FC<AttachStorageFormProps> = (props) => {
               </span>
               <p className="help-block" id="subpath-help">
                 {t(
-                  'public~Optional path within the volume from which it will be mounted into the container. Defaults to the root of the volume.',
+                  'Optional path within the volume from which it will be mounted into the container. Defaults to the root of the volume.',
                 )}
               </p>
             </div>
@@ -401,9 +397,9 @@ export const AttachStorageForm: FC<AttachStorageFormProps> = (props) => {
       )}
       {useContainerSelector && (
         <div className="form-group co-break-word">
-          <label>{t('public~Containers')}</label>
+          <label>{t('Containers')}</label>
           <Button type="button" onClick={handleSelectContainers} variant="link">
-            {t('public~(use all containers)')}
+            {t('(use all containers)')}
           </Button>
           <ContainerSelector
             containers={obj.spec.template.spec.containers}
@@ -411,7 +407,7 @@ export const AttachStorageForm: FC<AttachStorageFormProps> = (props) => {
             onChange={handleContainerSelectionChange}
           />
           <p className="help-block" id="subpath-help">
-            {t('public~Select which containers to mount volume into.')}
+            {t('Select which containers to mount volume into.')}
           </p>
         </div>
       )}
@@ -421,12 +417,13 @@ export const AttachStorageForm: FC<AttachStorageFormProps> = (props) => {
             type="submit"
             variant="primary"
             id="save-changes"
+            data-test="save-changes"
             isDisabled={showCreatePVC === 'existing' && !claimName}
           >
-            {t('public~Save')}
+            {t('Save')}
           </Button>
           <Button type="button" variant="secondary" onClick={() => navigate(-1)}>
-            {t('public~Cancel')}
+            {t('Cancel')}
           </Button>
         </ActionGroup>
       </ButtonBar>
@@ -442,7 +439,7 @@ export const AttachStorage = ({ kindObj, kindsInFlight }) => {
   return <AttachStorageForm namespace={params.ns} resourceName={params.name} kindObj={kindObj} />;
 };
 
-export type AttachStorageFormProps = {
+type AttachStorageFormProps = {
   kindObj: K8sKind;
   namespace: string;
   resourceName: string;

@@ -1,7 +1,6 @@
 import type { FC, ReactNode, MouseEvent, CSSProperties, RefObject } from 'react';
-import * as _ from 'lodash';
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
+import type { MenuToggleElement } from '@patternfly/react-core';
 import {
   Divider,
   SelectGroup,
@@ -10,12 +9,13 @@ import {
   MenuSearch,
   MenuSearchInput,
   MenuToggle,
-  MenuToggleElement,
   SearchInput,
   Select,
 } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 
 export type ActionItem = {
   actionKey: string;
@@ -128,7 +128,7 @@ export const ConsoleSelect: FC<ConsoleSelectProps> = ({
   const [selectedKey, setSelectedKey] = useState<string>(props.selectedKey ?? '');
   const [autocompleteText, setAutocompleteText] = useState<string>('');
   const [items, setItems] = useState<Record<string, React.ReactNode>>(props.items);
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   /* Dropdown bookmark state and helpers */
   // Should be undefined so that we don't save undefined-xxx.
@@ -179,12 +179,15 @@ export const ConsoleSelect: FC<ConsoleSelectProps> = ({
     [autocompleteFilter],
   );
 
-  // Update state when props change
+  // One-way prop→state sync. Do NOT include `selectedKey` in deps — it
+  // creates a feedback loop under React 18 createRoot where the effect
+  // reverts user selections before the prop update from onChange propagates.
   useEffect(() => {
-    if (props.selectedKey && props.selectedKey !== selectedKey) {
+    if (props.selectedKey !== undefined) {
       setSelectedKey(props.selectedKey);
     }
-  }, [props.selectedKey, selectedKey]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.selectedKey]);
 
   useEffect(() => {
     applyTextFilter(autocompleteText, props.items);
@@ -335,7 +338,7 @@ export const ConsoleSelect: FC<ConsoleSelectProps> = ({
         >
           {!bookmarkRows.length && !renderedActionItems && !rows.length && autocompleteText && (
             <SelectOption isDisabled data-test="console-select-no-results">
-              {t('public~No results found')}
+              {t('No results found')}
             </SelectOption>
           )}
 

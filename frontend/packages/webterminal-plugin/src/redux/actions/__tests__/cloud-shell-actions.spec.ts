@@ -1,4 +1,11 @@
-import { setCloudShellExpanded, setCloudShellActive, Actions } from '../cloud-shell-actions';
+import {
+  setCloudShellExpanded,
+  setCloudShellActive,
+  addDetachedSession,
+  removeDetachedSession,
+  clearDetachedSessions,
+  Actions,
+} from '../cloud-shell-actions';
 
 describe('Cloud shell actions', () => {
   it('should create expand action', () => {
@@ -35,6 +42,40 @@ describe('Cloud shell actions', () => {
         payload: {
           isActive: true,
         },
+      }),
+    );
+  });
+
+  it('should create addDetachedSession action', () => {
+    const session = {
+      id: 'test-pod-container-123',
+      podName: 'test-pod',
+      namespace: 'default',
+      containerName: 'container',
+      command: ['sh', '-i'],
+      cleanup: { type: 'namespace' as const, name: 'openshift-debug-abc' },
+    };
+    expect(addDetachedSession(session)).toEqual(
+      expect.objectContaining({
+        type: Actions.AddDetachedSession,
+        payload: session,
+      }),
+    );
+  });
+
+  it('should create removeDetachedSession action', () => {
+    expect(removeDetachedSession('session-1')).toEqual(
+      expect.objectContaining({
+        type: Actions.RemoveDetachedSession,
+        payload: { id: 'session-1' },
+      }),
+    );
+  });
+
+  it('should create clearDetachedSessions action', () => {
+    expect(clearDetachedSessions()).toEqual(
+      expect.objectContaining({
+        type: Actions.ClearDetachedSessions,
       }),
     );
   });

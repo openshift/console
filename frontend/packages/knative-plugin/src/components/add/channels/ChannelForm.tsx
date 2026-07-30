@@ -7,13 +7,11 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { LoadingInline } from '@console/internal/components/utils';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import {
-  FormFooter,
-  FlexForm,
-  FormBody,
-  CodeEditorField,
-  SyncedEditorField,
-} from '@console/shared';
+import { FlexForm } from '@console/shared/src/components/form-utils/FlexForm';
+import { FormBody } from '@console/shared/src/components/form-utils/FormBody';
+import { FormFooter } from '@console/shared/src/components/form-utils/FormFooter';
+import { CodeEditorField } from '@console/shared/src/components/formik-fields/CodeEditorField';
+import { SyncedEditorField } from '@console/shared/src/components/formik-fields/SyncedEditorField';
 import { useFormikValidationFix } from '@console/shared/src/hooks/useFormikValidationFix';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import {
@@ -53,7 +51,7 @@ const ChannelForm: FC<FormikProps<FormikValues> & OwnProps> = ({
     setErrors,
     setStatus,
   } = useFormikContext<FormikValues>();
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   useFormikValidationFix(values);
   const [defaultConfiguredChannel, defaultConfiguredChannelLoaded] = useDefaultChannelConfiguration(
     namespace,
@@ -115,7 +113,7 @@ const ChannelForm: FC<FormikProps<FormikValues> & OwnProps> = ({
           }
           isInline
           title={t(
-            'knative-plugin~Note: Some fields may not be represented in this form view. Please select "YAML view" for full control of object creation.',
+            'Note: Some fields may not be represented in this form view. Please select "YAML view" for full control of object creation.',
           )}
           variant="info"
         />
@@ -152,8 +150,8 @@ const ChannelForm: FC<FormikProps<FormikValues> & OwnProps> = ({
             </>
           )}
         {channels && channels.loaded && _.isEmpty(channels.channelList) && (
-          <Alert variant="custom" title={t('knative-plugin~Channel cannot be created')} isInline>
-            {t('knative-plugin~You do not have write access in this project.')}
+          <Alert variant="custom" title={t('Channel cannot be created')} isInline>
+            {t('You do not have write access in this project.')}
           </Alert>
         )}
       </FormBody>
@@ -161,9 +159,9 @@ const ChannelForm: FC<FormikProps<FormikValues> & OwnProps> = ({
         handleReset={handleReset}
         errorMessage={status && status.submitError}
         isSubmitting={isSubmitting}
-        submitLabel={t('knative-plugin~Create')}
+        submitLabel={t('Create')}
         disableSubmit={!dirty || !_.isEmpty(errors) || isSubmitting}
-        resetLabel={t('knative-plugin~Cancel')}
+        resetLabel={t('Cancel')}
         sticky
       />
     </FlexForm>

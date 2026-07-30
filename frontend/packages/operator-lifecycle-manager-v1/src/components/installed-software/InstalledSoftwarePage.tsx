@@ -6,18 +6,18 @@ import { useParams } from 'react-router';
 import { NamespaceBar } from '@console/internal/components/namespace-bar';
 import { AsyncComponent } from '@console/internal/components/utils';
 import type { Page } from '@console/internal/components/utils';
-import { MultiTabListPage } from '@console/shared';
+import { MultiTabListPage } from '@console/shared/src/components/multi-tab-list/MultiTabListPage';
 import ClusterExtensionListPage from '../cluster-extension/ClusterExtensionListPage';
 import { OLMv1TechPreviewBadge } from '../OLMv1TechPreviewBadge';
 
 const InstalledSoftwarePage: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm-v1');
   const { ns } = useParams<{ ns?: string }>();
 
   const clusterExtensionsPage = useMemo<Page>(
     () => ({
       href: '',
-      name: t('olm-v1~Cluster extensions (OLMv1)'),
+      name: t('Cluster extensions (OLMv1)'),
       badge: [
         <Flex key="olmv1-tech-preview-badge" alignItems={{ default: 'alignItemsCenter' }}>
           <OLMv1TechPreviewBadge />
@@ -31,7 +31,7 @@ const InstalledSoftwarePage: FC = () => {
   const clusterServiceVersionsPage = useMemo<Page>(
     () => ({
       href: 'olmv0-operators',
-      name: t('olm-v1~Operators (OLMv0)'),
+      name: t('Operators (OLMv0)'),
       component: () => (
         <AsyncComponent
           loader={() =>
@@ -55,7 +55,7 @@ const InstalledSoftwarePage: FC = () => {
   return (
     <>
       <NamespaceBar />
-      <MultiTabListPage title={t('olm-v1~Installed Software')} pages={pages} />
+      <MultiTabListPage title={t('Installed Software')} pages={pages} />
     </>
   );
 };

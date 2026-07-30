@@ -3,7 +3,9 @@ import type { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { usePreventDataLossLock } from '@console/internal/components/utils';
-import { FormFooter, FlexForm, FormBody } from '@console/shared/src/components/form-utils';
+import { FlexForm } from '@console/shared/src/components/form-utils/FlexForm';
+import { FormBody } from '@console/shared/src/components/form-utils/FormBody';
+import { FormFooter } from '@console/shared/src/components/form-utils/FormFooter';
 import { hasSampleQueryParameter } from '../../utils/samples';
 import AdvancedSection from './advanced/AdvancedSection';
 import AppSection from './app/AppSection';
@@ -23,7 +25,7 @@ const DeployImageForm: FC<FormikProps<FormikValues> & DeployImageFormProps> = ({
   dirty,
   projects,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   usePreventDataLossLock(isSubmitting);
 
   const isSample = hasSampleQueryParameter();
@@ -50,10 +52,10 @@ const DeployImageForm: FC<FormikProps<FormikValues> & DeployImageFormProps> = ({
         handleReset={handleReset}
         errorMessage={status && status.submitError}
         isSubmitting={isSubmitting}
-        submitLabel={t('devconsole~Create')}
+        submitLabel={t('Create')}
         sticky
         disableSubmit={!dirty || !_.isEmpty(errors) || isSubmitting}
-        resetLabel={t('devconsole~Cancel')}
+        resetLabel={t('Cancel')}
       />
     </FlexForm>
   );

@@ -5,7 +5,7 @@ import { useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { DropdownField } from '@console/shared/src';
+import { DropdownField } from '@console/shared/src/components/formik-fields/DropdownField';
 import type { Resources } from '../../import/import-types';
 import FormSection from '../../import/section/FormSection';
 import { getStrategyData } from '../utils/deployment-utils';
@@ -18,7 +18,7 @@ import {
 } from './utils/deployment-strategy-utils';
 import { DeploymentStrategyType } from './utils/types';
 
-export type DeploymentStrategySectionProps = {
+type DeploymentStrategySectionProps = {
   resourceType: Resources;
   resourceObj: K8sResourceKind;
 };
@@ -27,7 +27,7 @@ const DeploymentStrategySection: FC<DeploymentStrategySectionProps> = ({
   resourceType,
   resourceObj,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const {
     values: {
       formData: {
@@ -66,10 +66,11 @@ const DeploymentStrategySection: FC<DeploymentStrategySectionProps> = ({
   );
 
   return (
-    <FormSection title={t('devconsole~Deployment strategy')} dataTest="deployment-strategy-section">
+    <FormSection title={t('Deployment strategy')} dataTest="deployment-strategy-section">
       <DropdownField
         name="formData.deploymentStrategy.type"
-        label={t('devconsole~Strategy type')}
+        label={t('Strategy type')}
+        dataTest="deployment-strategy-type"
         items={getDeploymentStrategyItems(resourceType, t)}
         helpText={getDeploymentStrategyHelpText(resourceType, deploymentStrategy.type, t)}
         onChange={onChange}

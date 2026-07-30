@@ -4,7 +4,11 @@ import { useLocation, useParams } from 'react-router';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import type { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { useFlag } from '@console/dynamic-plugin-sdk/src/lib-core';
-import type { K8sResourceCondition, K8sResourceKind } from '@console/internal/module/k8s';
+import type {
+  K8sResourceCommon,
+  K8sResourceCondition,
+  K8sResourceKind,
+} from '@console/internal/module/k8s';
 import { useTabbedTableBreadcrumbsFor } from '@console/shared/src/hooks/useTabbedTableBreadcrumb';
 import { getBuildRunStatus } from './components/buildrun-status/BuildRunStatus';
 import { BUILDRUN_TO_RESOURCE_MAP_LABEL } from './const';
@@ -26,11 +30,11 @@ export type LatestBuildRunStatus = {
   status: ComputedBuildRunStatus;
 };
 
-export interface Runs {
+interface Runs {
   data?: BuildRun[];
 }
 
-export const getLatestRun = (runs: Runs, field: string): BuildRun => {
+const getLatestRun = (runs: Runs, field: string): BuildRun => {
   if (!runs || !runs.data || !(runs.data.length > 0) || !field) {
     return null;
   }
@@ -102,8 +106,9 @@ export const byCreationTime = (left: K8sResourceKind, right: K8sResourceKind): n
 export const isV1Alpha1Resource = (
   resource: Build | BuildRun,
 ): resource is
-  | IBuildV1Alpha1
-  | (IBuildRunV1Alpha1 & { status?: { conditions?: K8sResourceCondition[] } }) => {
+  | (IBuildV1Alpha1 & K8sResourceCommon)
+  | (IBuildRunV1Alpha1 &
+      K8sResourceCommon & { status?: { conditions?: K8sResourceCondition[] } }) => {
   return resource.apiVersion === 'shipwright.io/v1alpha1';
 };
 
@@ -194,46 +199,16 @@ const kindToTabMap = {
   [ClusterBuildStrategyModelV1Alpha1.kind]: 'clusterbuildstrategies',
 };
 
-/** convert a resource using a shipwright model to its corresponding k8s model */
-const resourceToModel = (obj: K8sResourceKind): K8sModel => {
-  if (obj?.apiVersion === 'shipwright.io/v1alpha1') {
-    switch (obj?.kind) {
-      case 'Build':
-        return BuildModelV1Alpha1;
-      case 'BuildRun':
-        return BuildRunModelV1Alpha1;
-      case 'BuildStrategy':
-        return BuildStrategyModelV1Alpha1;
-      case 'ClusterBuildStrategy':
-        return ClusterBuildStrategyModelV1Alpha1;
-      default:
-        return null;
-    }
-  }
-  switch (obj?.kind) {
-    case 'Build':
-      return BuildModel;
-    case 'BuildRun':
-      return BuildRunModel;
-    case 'BuildStrategy':
-      return BuildStrategyModel;
-    case 'ClusterBuildStrategy':
-      return ClusterBuildStrategyModel;
-    default:
-      return null;
-  }
-};
-
-export const useShipwrightBreadcrumbsFor = (obj: K8sResourceKind) => {
+export const useShipwrightBreadcrumbsFor = (kindObj: K8sModel) => {
   const isAdminPerspective = useActivePerspective()[0] === 'admin';
   const params = useParams();
   const location = useLocation();
   return useTabbedTableBreadcrumbsFor(
-    resourceToModel(obj),
+    kindObj ?? ({} as K8sModel),
     location,
     params,
     'k8s',
-    `shipwright.io/${kindToTabMap[obj.kind]}`,
+    kindObj ? `shipwright.io/${kindToTabMap[kindObj.kind]}` : null,
     undefined,
     isAdminPerspective,
   );

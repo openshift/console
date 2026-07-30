@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import { chart_color_red_orange_300 as knativeEventingColor } from '@patternfly/react-tokens/dist/esm/chart_color_red_orange_300';
 import * as _ from 'lodash';
-import { coFetch } from '@console/internal/co-fetch';
 import type { K8sKind } from '@console/internal/module/k8s';
 import {
   kindToAbbr,
   referenceForModel,
   getLatestVersionForCRD,
 } from '@console/internal/module/k8s';
+import { coFetch } from '@console/shared/src/utils/console-fetch';
 
 interface EventSourcetData {
   loaded: boolean;
@@ -120,18 +120,6 @@ export const getDynamicEventSourcesResourceList = (namespace: string, limit?: nu
   });
 };
 
-export const getDynamicEventSourcesWatchers = (namespace: string) => {
-  return eventSourceData.eventSourceModels.reduce((acc, model) => {
-    acc[referenceForModel(model)] = {
-      isList: true,
-      kind: referenceForModel(model),
-      namespace,
-      optional: true,
-    };
-    return acc;
-  }, {});
-};
-
 export const getDynamicEventSourceModel = (resourceRef: string): K8sKind => {
   return eventSourceData.eventSourceModels.find(
     (model: K8sKind) => referenceForModel(model) === resourceRef,
@@ -145,13 +133,6 @@ export const getDynamicEventSourcesModelRefs = (): string[] => {
 export const isDynamicEventResourceKind = (resourceRef: string): boolean => {
   const index = eventSourceData.eventSourceModels.findIndex(
     (model: K8sKind) => referenceForModel(model) === resourceRef,
-  );
-  return index !== -1;
-};
-
-export const isDynamicEventSourceKind = (kind: string): boolean => {
-  const index = eventSourceData.eventSourceModels.findIndex(
-    (model: K8sKind) => model.kind === kind,
   );
   return index !== -1;
 };
@@ -233,17 +214,6 @@ export const getDynamicChannelResourceList = (namespace: string, limit?: number)
   });
 };
 
-export const getDynamicEventingChannelWatchers = (namespace: string) => {
-  return eventSourceData.eventSourceChannels.reduce((acc, model) => {
-    acc[referenceForModel(model)] = {
-      isList: true,
-      kind: referenceForModel(model),
-      namespace,
-      optional: true,
-    };
-    return acc;
-  }, {});
-};
 export const useChannelResourcesList = (): EventChannelData => {
   const [modelRefs, setModelRefs] = useState<EventChannelData>({
     channels: [],

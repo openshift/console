@@ -19,16 +19,19 @@ import {
 import { LogViewer, LogViewerSearch } from '@patternfly/react-log-viewer';
 import { css } from '@patternfly/react-styles';
 import { Trans, useTranslation } from 'react-i18next';
-import { coFetch } from '@console/internal/co-fetch';
+import { FLAG_OPENSHIFT_5 } from '@console/app/src/consts';
+import { useFlag } from '@console/dynamic-plugin-sdk/src/utils/flags';
 import { useTheme } from '@console/internal/components/ThemeProvider';
+import { SectionHeading } from '@console/internal/components/utils';
 import { LoadingBox, LoadingInline } from '@console/internal/components/utils/status-box';
 import type { NodeKind } from '@console/internal/module/k8s';
 import { modelFor, resourceURL } from '@console/internal/module/k8s';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
-import { LOG_WRAP_LINES_USER_PREFERENCE_KEY } from '@console/shared/src/constants';
+import { LOG_WRAP_LINES_USER_PREFERENCE_KEY } from '@console/shared/src/constants/common';
 import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
+import { coFetch } from '@console/shared/src/utils/console-fetch';
 import NodeLogsUnitFilter from './NodeLogsUnitFilter';
 import './node-logs.scss';
 
@@ -96,7 +99,7 @@ const LogControls: FC<LogControlsProps> = ({
         </SelectOption>
       );
     });
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
 
   return (
     <Flex>
@@ -110,7 +113,7 @@ const LogControls: FC<LogControlsProps> = ({
               <MenuToggle
                 ref={toggleRef}
                 onClick={onTogglePath}
-                aria-label={t('public~Select a path')}
+                aria-label={t('Select a path')}
                 data-test="select-path"
               >
                 {path}
@@ -135,7 +138,7 @@ const LogControls: FC<LogControlsProps> = ({
                   className="co-node-logs__log-select"
                   toggle={(toggleRef: Ref<MenuToggleElement>) => (
                     <MenuToggle ref={toggleRef} onClick={onToggleFilename} data-test="select-file">
-                      {logFilename || t('public~Select a log file')}
+                      {logFilename || t('Select a log file')}
                     </MenuToggle>
                   )}
                   onOpenChange={(open) => setFilenameOpen(open)}
@@ -148,13 +151,13 @@ const LogControls: FC<LogControlsProps> = ({
         )}
         {showSearch && (
           <FlexItem>
-            <LogViewerSearch placeholder={t('public~Search')} minSearchChars={0} />
+            <LogViewerSearch placeholder={t('Search')} minSearchChars={0} />
           </FlexItem>
         )}
       </Flex>
       <FlexItem align={{ default: 'alignLeft', md: 'alignRight' }}>
         <Switch
-          label={t('public~Wrap lines')}
+          label={t('Wrap lines')}
           id="wrapLogLines"
           isChecked={isWrapLines}
           data-checked-state={isWrapLines}
@@ -168,7 +171,7 @@ const LogControls: FC<LogControlsProps> = ({
 };
 
 const HeaderBanner: FC<{ lineCount: number }> = ({ lineCount }) => {
-  const { t } = useTranslation('public');
+  const { t } = useTranslation('console-app');
   const count = lineCount === 0 ? lineCount : lineCount - 1;
   const headerText = t('{{count}} line', { count });
   return <Banner>{headerText}</Banner>;
@@ -176,6 +179,7 @@ const HeaderBanner: FC<{ lineCount: number }> = ({ lineCount }) => {
 
 const NodeLogs: FC<NodeLogsProps> = ({ obj: node }) => {
   const { getQueryArgument, setQueryArgument, removeQueryArgument } = useQueryParamsMutator();
+  const isOpenShift5 = useFlag(FLAG_OPENSHIFT_5);
 
   const {
     kind,
@@ -210,7 +214,7 @@ const NodeLogs: FC<NodeLogsProps> = ({ obj: node }) => {
     false,
     true,
   );
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const { theme } = useTheme();
 
   const isJournal = path === 'journal';
@@ -226,7 +230,7 @@ const NodeLogs: FC<NodeLogsProps> = ({ obj: node }) => {
         })
         .catch((e) => {
           setLoadingLog(false);
-          setError(t('public~Error fetching logs: {{message}}', { message: e.message }));
+          setError(t('Error fetching logs: {{message}}', { message: e.message }));
         });
     },
     [t],
@@ -287,7 +291,7 @@ const NodeLogs: FC<NodeLogsProps> = ({ obj: node }) => {
         .catch((e) => {
           setLoadingLog(false);
           setLoadingFilenames(false);
-          setError(t('public~Error fetching log filenames: {{message}}', { message: e.message }));
+          setError(t('Error fetching log filenames: {{message}}', { message: e.message }));
         });
     }
   }, [kind, name, ns, path, isJournal, isWindows, logFilename, getLogURL, t, unit]);
@@ -369,6 +373,7 @@ const NodeLogs: FC<NodeLogsProps> = ({ obj: node }) => {
 
   return (
     <PaneBody fullHeight>
+      {isOpenShift5 ? <SectionHeading text={t('Logs')} /> : null}
       <div className="log-window-wrapper">
         {(isLoadingLog || errorExists) && logControls}
         {(lineCount >= MAX_LINE_COUNT || trimmedContent?.length > 0) && !isLoadingLog && (
@@ -376,9 +381,9 @@ const NodeLogs: FC<NodeLogsProps> = ({ obj: node }) => {
             isInline
             className="co-alert co-alert--margin-bottom-sm"
             variant="warning"
-            title={t('public~The log is abridged due to length.')}
+            title={t('The log is abridged due to length.')}
           >
-            <Trans ns="public" t={t}>
+            <Trans ns="console-app" t={t}>
               To view unabridged log content,{' '}
               <ExternalLink href={logURL}>open the raw file in another window</ExternalLink>.
             </Trans>
@@ -393,9 +398,9 @@ const NodeLogs: FC<NodeLogsProps> = ({ obj: node }) => {
                   {isLoadingFilenames ? (
                     <LoadingInline />
                   ) : logFilenamesExist ? (
-                    t('public~No log file selected')
+                    t('No log file selected')
                   ) : (
-                    t('public~No log files exist')
+                    t('No log files exist')
                   )}
                 </>
               }
@@ -404,7 +409,7 @@ const NodeLogs: FC<NodeLogsProps> = ({ obj: node }) => {
             >
               <EmptyStateFooter>
                 {logFilenamesExist && (
-                  <EmptyStateBody>{t('public~Select a log file above')}</EmptyStateBody>
+                  <EmptyStateBody>{t('Select a log file above')}</EmptyStateBody>
                 )}
               </EmptyStateFooter>
             </EmptyState>

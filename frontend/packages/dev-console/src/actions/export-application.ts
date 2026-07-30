@@ -1,11 +1,11 @@
 import type { LaunchOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import type { ToastContextType } from '@console/shared/src/components/toast/ToastContext';
+import type { ToastContextValues } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { handleExportApplication } from '@console/topology/src/components/export-app/ExportApplicationModal';
 import { EXPORT_CR_NAME } from '@console/topology/src/const';
 
 type ExportApplicationActionType = {
   namespace: string;
-  toast: ToastContextType;
+  toast: ToastContextValues;
   launchModal: LaunchOverlay;
 };
 

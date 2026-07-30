@@ -8,9 +8,7 @@ export const PROVIDER_NAME_ANNOTATION = 'charts.openshift.io/provider';
 export const SUPPORT_URL_ANNOTATION = 'charts.openshift.io/supportURL';
 
 export enum PROVIDER_TYPE {
-  redhat = 'redhat',
   partner = 'partner',
-  community = 'community',
 }
 
 export const PROVIDER_TYPE_KEYS = {

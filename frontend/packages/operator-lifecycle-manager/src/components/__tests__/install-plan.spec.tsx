@@ -1,4 +1,5 @@
-import { screen, fireEvent, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import * as _ from 'lodash';
 import * as Router from 'react-router';
 import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
@@ -71,11 +72,13 @@ describe('InstallPlanTableRow', () => {
       </table>,
     );
 
-    const installPlanLinks = screen.getAllByText(installPlan.metadata.name);
+    const installPlanLinks = screen.getAllByRole('link', { name: installPlan.metadata.name });
+    // eslint-disable-next-line testing-library/no-node-access -- Multiple links with same name require href filtering
     const installPlanLink = installPlanLinks.find((link) =>
       link.getAttribute('href')?.includes('InstallPlan'),
     );
     expect(installPlanLink).toBeVisible();
+    expect(installPlanLink).toHaveAttribute('href', expect.stringContaining('InstallPlan'));
   });
 
   it('renders install plan namespace', () => {
@@ -135,7 +138,8 @@ describe('InstallPlanTableRow', () => {
     );
 
     const csvName = installPlan.spec.clusterServiceVersionNames[0];
-    const csvLinks = screen.getAllByText(csvName);
+    const csvLinks = screen.getAllByRole('link', { name: csvName });
+    // eslint-disable-next-line testing-library/no-node-access -- Multiple links with same name require href filtering
     const csvLink = csvLinks.find((link) =>
       link.getAttribute('href')?.includes('ClusterServiceVersion'),
     );
@@ -307,8 +311,9 @@ describe('InstallPlanPreview', () => {
 
     renderWithProviders(<InstallPlanPreview obj={manualPlan} />);
 
+    const user = userEvent.setup();
     const approveButton = screen.getByRole('button', { name: 'Approve' });
-    fireEvent.click(approveButton);
+    await user.click(approveButton);
 
     await waitFor(() => {
       expect(k8sPatchMock).toHaveBeenCalledWith(
@@ -379,10 +384,8 @@ describe('InstallPlanDetails', () => {
 
     renderWithProviders(<InstallPlanDetails obj={manualPlan} />);
 
-    const previewButton = screen.getByRole('button', { name: 'Preview InstallPlan' });
-    expect(previewButton).toBeVisible();
-
-    const link = previewButton.closest('a');
+    const link = screen.getByRole('link', { name: 'Preview InstallPlan' });
+    expect(link).toBeVisible();
     expect(link).toHaveAttribute(
       'href',
       `/k8s/ns/default/${referenceForModel(InstallPlanModel)}/${

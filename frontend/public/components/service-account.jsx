@@ -1,14 +1,6 @@
 import { useMemo, Suspense } from 'react';
-import { useTranslation } from 'react-i18next';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { DetailsPage, ListPage } from './factory';
-import { SectionHeading } from './utils/headings';
-import { navFactory } from './utils/horizontal-nav';
-import { ResourceLink } from './utils/resource-link';
-import { ResourceSummary } from './utils/details-page';
-import { LoadingBox } from './utils/status-box';
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { Grid, GridItem } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import {
   ConsoleDataView,
   getNameCellProps,
@@ -16,10 +8,18 @@ import {
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DASH } from '@console/shared/src/constants/ui';
-import { referenceForModel } from '../module/k8s';
 import { ServiceAccountModel } from '../models';
+import { referenceForModel } from '../module/k8s';
+import { DetailsPage, ListPage } from './factory';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { ResourceLink } from './utils/resource-link';
+import { LoadingBox } from './utils/status-box';
 
 const kind = 'ServiceAccount';
 const serviceAccountReference = referenceForModel(ServiceAccountModel);
@@ -72,11 +72,11 @@ const getDataViewRows = (data, columns) => {
 };
 
 const Details = ({ obj: serviceaccount }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   return (
     <PaneBody>
-      <SectionHeading text={t('public~ServiceAccount details')} />
+      <SectionHeading text={t('ServiceAccount details')} />
       <Grid hasGutter>
         <GridItem md={6}>
           <ResourceSummary resource={serviceaccount} />
@@ -95,13 +95,13 @@ const ServiceAccountsDetailsPage = (props) => (
 );
 
 const useServiceAccountColumns = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(ServiceAccountModel);
 
   const columns = useMemo(
     () => [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         resizableProps: getResizableProps(tableColumnInfo[0].id),
@@ -111,7 +111,7 @@ const useServiceAccountColumns = () => {
         },
       },
       {
-        title: t('public~Namespace'),
+        title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
@@ -120,7 +120,7 @@ const useServiceAccountColumns = () => {
         },
       },
       {
-        title: t('public~Secrets'),
+        title: t('Secrets'),
         id: tableColumnInfo[2].id,
         sort: 'secrets.length',
         resizableProps: getResizableProps(tableColumnInfo[2].id),
@@ -129,7 +129,7 @@ const useServiceAccountColumns = () => {
         },
       },
       {
-        title: t('public~Created'),
+        title: t('Created'),
         id: tableColumnInfo[3].id,
         sort: 'metadata.creationTimestamp',
         resizableProps: getResizableProps(tableColumnInfo[3].id),
@@ -153,7 +153,7 @@ const useServiceAccountColumns = () => {
 
 const ServiceAccountsList = (props) => {
   const { data, loaded } = props;
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { columns, resetAllColumnWidths } = useServiceAccountColumns();
 
   return (
@@ -162,10 +162,10 @@ const ServiceAccountsList = (props) => {
         {...props}
         data={data || []}
         loaded={loaded}
-        label={t('public~ServiceAccounts')}
+        label={t('ServiceAccounts')}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
+        hideColumnManagement
         isResizable
         resetAllColumnWidths={resetAllColumnWidths}
       />
@@ -173,11 +173,6 @@ const ServiceAccountsList = (props) => {
   );
 };
 const ServiceAccountsPage = (props) => (
-  <ListPage
-    ListComponent={ServiceAccountsList}
-    {...props}
-    canCreate={true}
-    omitFilterToolbar={true}
-  />
+  <ListPage ListComponent={ServiceAccountsList} {...props} canCreate omitFilterToolbar />
 );
-export { ServiceAccountsList, ServiceAccountsPage, ServiceAccountsDetailsPage };
+export { ServiceAccountsPage, ServiceAccountsDetailsPage };

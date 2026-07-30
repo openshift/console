@@ -1,19 +1,18 @@
 import type { FC } from 'react';
 import { useState, memo } from 'react';
-import * as _ from 'lodash';
-import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
-import { NavBar } from '@console/internal/components/utils/horizontal-nav';
 import { Alert, Content, ContentVariants, PageSection } from '@patternfly/react-core';
 import { safeLoad } from 'js-yaml';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { NavBar } from '@console/internal/components/utils/horizontal-nav';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import type { K8sResourceKind } from '../../../module/k8s';
 import { breadcrumbsForGlobalConfig } from '../../cluster-settings/global-config';
-
-import { K8sResourceKind } from '../../../module/k8s';
 import { AsyncComponent } from '../../utils/async';
+import { useK8sWatchResource } from '../../utils/k8s-watch-hook';
 import { StatusBox } from '../../utils/status-box';
 import { patchAlertmanagerConfig, getAlertmanagerYAML } from './alertmanager-utils';
-import { useK8sWatchResource } from '../../utils/k8s-watch-hook';
 
 const EditAlertmanagerYAML = (props) => (
   <AsyncComponent
@@ -27,7 +26,7 @@ const EditAlertmanagerYAML = (props) => (
 const AlertmanagerYAMLEditor: FC<AlertmanagerYAMLEditorProps> = ({ obj: secret }) => {
   const [errorMsg, setErrorMsg] = useState<string>();
   const [successMsg, setSuccessMsg] = useState<string>();
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const save = (yaml: string) => {
     if (_.isEmpty(yaml)) {
@@ -42,18 +41,20 @@ const AlertmanagerYAMLEditor: FC<AlertmanagerYAMLEditorProps> = ({ obj: secret }
       setSuccessMsg('');
       return;
     }
-    patchAlertmanagerConfig(secret, yaml).then(
-      (newSecret) => {
-        setSuccessMsg(
-          `${newSecret.metadata.name} has been updated to version ${newSecret.metadata.resourceVersion}`,
-        );
-        setErrorMsg('');
-      },
-      (err) => {
-        setErrorMsg(err.message);
-        setSuccessMsg('');
-      },
-    );
+    patchAlertmanagerConfig(secret, yaml)
+      .then(
+        (newSecret) => {
+          setSuccessMsg(
+            `${newSecret.metadata.name} has been updated to version ${newSecret.metadata.resourceVersion}`,
+          );
+          setErrorMsg('');
+        },
+        (err) => {
+          setErrorMsg(err.message);
+          setSuccessMsg('');
+        },
+      )
+      .catch(() => {});
   };
 
   const { yaml: alertmanagerYAML, errorMessage: loadErrorMsg } = getAlertmanagerYAML(secret);
@@ -76,7 +77,7 @@ const AlertmanagerYAMLEditor: FC<AlertmanagerYAMLEditorProps> = ({ obj: secret }
       <PageSection hasBodyWrapper={false} className="pf-v6-u-pb-0">
         <Content component={ContentVariants.p}>
           {t(
-            'public~Update this YAML to configure Routes, Receivers, Groupings and other Alertmanager settings.',
+            'Update this YAML to configure Routes, Receivers, Groupings and other Alertmanager settings.',
           )}
         </Content>
       </PageSection>
@@ -107,10 +108,10 @@ const AlertmanagerYAMLEditor: FC<AlertmanagerYAMLEditorProps> = ({ obj: secret }
 
 const AlertmanagerYAMLEditorWrapper = memo<AlertmanagerYAMLEditorWrapperProps>(
   ({ obj, ...props }) => {
-    const { t } = useTranslation();
+    const { t } = useTranslation('public');
     return (
       <>
-        <DocumentTitle>{t('public~Alerting')}</DocumentTitle>
+        <DocumentTitle>{t('Alerting')}</DocumentTitle>
         <StatusBox {...obj}>
           <AlertmanagerYAMLEditor {...props} obj={obj.data} />
         </StatusBox>
@@ -120,7 +121,7 @@ const AlertmanagerYAMLEditorWrapper = memo<AlertmanagerYAMLEditorWrapperProps>(
 );
 
 export const AlertmanagerYAML: FC<{}> = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const configPath = 'alertmanagerconfig';
   const YAMLPath = 'alertmanageryaml';
@@ -136,15 +137,15 @@ export const AlertmanagerYAML: FC<{}> = () => {
 
   return (
     <>
-      <PageHeading breadcrumbs={breadcrumbs} title={t('public~Alertmanager')} />
+      <PageHeading breadcrumbs={breadcrumbs} title={t('Alertmanager')} />
       <NavBar
         pages={[
           {
-            name: t('public~Details'),
+            name: t('Details'),
             href: configPath,
           },
           {
-            name: t('public~YAML'),
+            name: t('YAML'),
             href: YAMLPath,
           },
         ]}

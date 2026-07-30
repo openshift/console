@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import type { Action } from '@console/dynamic-plugin-sdk';
 import type { LazyActionMenuProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { checkAccess } from '@console/internal/components/utils/rbac';
-import ActionServiceProvider from './ActionServiceProvider';
+import { ActionServiceProvider } from './ActionServiceProvider';
 import ActionMenuContent from './menu/ActionMenuContent';
 import ActionMenuToggle from './menu/ActionMenuToggle';
 import { ActionMenuVariant } from './types';
@@ -52,7 +52,7 @@ const LazyMenuRenderer: FC<LazyMenuRendererProps> = ({
   return <Popper triggerRef={toggleRef} popper={menu} placement="bottom-end" isVisible={isOpen} />;
 };
 
-const LazyActionMenu: FC<LazyActionMenuProps> = ({
+export const LazyActionMenu: FC<LazyActionMenuProps> = ({
   context,
   variant = ActionMenuVariant.KEBAB,
   label,
@@ -103,5 +103,3 @@ const LazyActionMenu: FC<LazyActionMenuProps> = ({
     </>
   );
 };
-
-export default LazyActionMenu;

@@ -25,13 +25,13 @@ const ConfigTypeSection: FC<ConfigTypeSectionProps> = ({ pac, formContextField }
   const { values, setFieldValue } = useFormikContext<FormikValues & RepositoryFormValues>();
   const fieldPrefix = formContextField ? `${formContextField}.` : '';
   const { method } = _.get(values, formContextField) || values;
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
 
   return (
     <>
       <Content component="p">
         {t(
-          'devconsole~A GitHub App is already set up for this cluster. To use it, install the GitHub app on your personal account or GitHub organization.',
+          'A GitHub App is already set up for this cluster. To use it, install the GitHub app on your personal account or GitHub organization.',
         )}
       </Content>
       <br />
@@ -41,7 +41,7 @@ const ConfigTypeSection: FC<ConfigTypeSectionProps> = ({ pac, formContextField }
             <FlexItem span={3}>
               <Tile
                 data-test="github"
-                title={t('devconsole~Use GitHub App')}
+                title={t('Use GitHub App')}
                 onClick={() => setFieldValue(`${fieldPrefix}method`, PacConfigurationTypes.GITHUB)}
                 isSelected={method === PacConfigurationTypes.GITHUB}
               />
@@ -49,7 +49,7 @@ const ConfigTypeSection: FC<ConfigTypeSectionProps> = ({ pac, formContextField }
             <FlexItem span={3}>
               <Tile
                 data-test="webhook"
-                title={t('devconsole~Setup a webhook')}
+                title={t('Setup a webhook')}
                 onClick={() => setFieldValue(`${fieldPrefix}method`, PacConfigurationTypes.WEBHOOK)}
                 isSelected={method === PacConfigurationTypes.WEBHOOK}
               />

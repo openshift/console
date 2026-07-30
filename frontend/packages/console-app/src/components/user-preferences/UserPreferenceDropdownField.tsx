@@ -20,7 +20,7 @@ const UserPreferenceDropdownField: FC<UserPreferenceDropdownFieldProps> = ({
   description,
 }) => {
   // resources and calls to hooks
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const fireTelemetryEvent = useTelemetry();
   const [
     currentUserPreferenceValue,
@@ -86,7 +86,7 @@ const UserPreferenceDropdownField: FC<UserPreferenceDropdownFieldProps> = ({
         data-test={`select ${id}`}
         toggle={(toggleRef: Ref<MenuToggleElement>) => (
           <MenuToggle isFullWidth ref={toggleRef} onClick={(open) => setIsOpen(open)}>
-            {selected || t('console-app~Select an option')}
+            {selected || t('Select an option')}
           </MenuToggle>
         )}
       >

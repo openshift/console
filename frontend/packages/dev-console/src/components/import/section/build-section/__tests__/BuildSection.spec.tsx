@@ -35,12 +35,16 @@ jest.mock('@console/shared/src/hooks/useFlag', () => ({
   useFlag: jest.fn(() => false),
 }));
 
-jest.mock('@console/shared/src', () => ({
+jest.mock('@console/shared/src/components/formik-fields/EnvironmentField', () => ({
   EnvironmentField: (props) => `EnvironmentField envs=${JSON.stringify(props.envs)}`,
 }));
 
-jest.mock('@console/git-service/src', () => ({
+jest.mock('@console/git-service/src/services/git-service', () => ({
+  ...jest.requireActual('@console/git-service/src/services/git-service'),
   getGitService: jest.fn(),
+}));
+
+jest.mock('@console/git-service/src/types/git', () => ({
   ImportStrategy: {
     SERVERLESS_FUNCTION: 3,
     DEVFILE: 'DEVFILE',
@@ -89,6 +93,7 @@ jest.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => key,
   }),
+  withTranslation: () => (component) => component,
 }));
 
 describe('BuildSection', () => {

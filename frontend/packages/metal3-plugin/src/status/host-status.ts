@@ -7,9 +7,13 @@ import {
   HOST_PROGRESS_STATES,
   HOST_STATUS_DEPROVISIONING,
   HOST_STATUS_UNKNOWN,
-} from '../constants';
-import { getHostOperationalStatus, getHostProvisioningState, getHostErrorType } from '../selectors';
-import type { BareMetalHostKind } from '../types';
+} from '../constants/bare-metal-host';
+import {
+  getHostOperationalStatus,
+  getHostProvisioningState,
+  getHostErrorType,
+} from '../selectors/baremetal-hosts';
+import type { BareMetalHostKind } from '../types/host';
 import { getNodeMaintenanceStatus } from './node-maintenance-status';
 
 export const getBareMetalHostStatus = (host: BareMetalHostKind): StatusProps => {

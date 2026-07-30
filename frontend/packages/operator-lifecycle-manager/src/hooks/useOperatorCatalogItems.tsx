@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Spinner } from '@patternfly/react-core';
-import { CheckCircleIcon, ExclamationCircleIcon } from '@patternfly/react-icons';
+import { RhUiCheckCircleFillIcon, RhUiErrorFillIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import type {
@@ -9,7 +9,7 @@ import type {
   CatalogExtensionHookOptions,
   ExtensionHook,
 } from '@console/dynamic-plugin-sdk';
-import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import { parseList, strConcat } from '@console/shared/src/utils/utils';
 import { iconFor } from '../components';
 import { subscriptionFor } from '../components/operator-group';
@@ -65,7 +65,7 @@ const onValidSubscriptionAnnotationError = (error: Error, pkg: PackageManifestKi
     error,
   );
 
-export const useOperatorCatalogItems: ExtensionHook<CatalogItem[], CatalogExtensionHookOptions> = (
+const useOperatorCatalogItems: ExtensionHook<CatalogItem[], CatalogExtensionHookOptions> = (
   options,
 ) => {
   const { t } = useTranslation('olm');
@@ -267,7 +267,7 @@ export const useOperatorCatalogItems: ExtensionHook<CatalogItem[], CatalogExtens
                   text: t('Installed'),
                   color: 'green',
                   variant: 'outline',
-                  icon: <CheckCircleIcon />,
+                  icon: <RhUiCheckCircleFillIcon />,
                 } as CatalogItemBadge,
               ]
             : []),
@@ -288,7 +288,7 @@ export const useOperatorCatalogItems: ExtensionHook<CatalogItem[], CatalogExtens
                   color: 'orange',
                   tooltip: pkg.status.deprecation.message,
                   variant: 'outline',
-                  icon: <ExclamationCircleIcon />,
+                  icon: <RhUiErrorFillIcon />,
                 } as CatalogItemBadge,
               ]
             : []),

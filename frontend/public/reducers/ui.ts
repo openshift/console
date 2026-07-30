@@ -1,15 +1,16 @@
-import * as _ from 'lodash';
 import { Map as ImmutableMap } from 'immutable';
-
-import type { UIAction } from '../actions/ui';
-import { ActionType } from '../actions/common';
-import { ALL_APPLICATIONS_KEY, ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
-import { getNamespace } from '../components/utils/link';
-import { OverviewSpecialGroup } from '../components/overview/constants';
-import type { RootState } from '../redux';
+import * as _ from 'lodash';
 import { getUser } from '@console/dynamic-plugin-sdk';
+import { ALL_APPLICATIONS_KEY, ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
+import { ActionType } from '../actions/common';
+import type { UIAction } from '../actions/ui';
+import { OverviewSpecialGroup } from '../components/overview/constants';
+import { getNamespace } from '../components/utils/link';
+import type { RootState } from '../redux';
 
 export type UIState = ImmutableMap<string, any>;
+
+const NOTIFICATION_DRAWER_EXPANDED_PATH = ['notifications', 'isExpanded'];
 
 export default (state: UIState, action: UIAction): UIState => {
   if (!state) {
@@ -66,6 +67,7 @@ export default (state: UIState, action: UIAction): UIState => {
       return state.set('activeNamespace', action.payload.namespace);
 
     case ActionType.SetCurrentLocation: {
+      // eslint-disable-next-line no-param-reassign
       state = state.set('location', action.payload.location);
       const ns = getNamespace(action.payload.location);
       if (_.isUndefined(ns)) {
@@ -96,8 +98,8 @@ export default (state: UIState, action: UIAction): UIState => {
 
     case ActionType.NotificationDrawerToggleExpanded:
       return state.setIn(
-        ['notifications', 'isExpanded'],
-        !state.getIn(['notifications', 'isExpanded']),
+        NOTIFICATION_DRAWER_EXPANDED_PATH,
+        !state.getIn(NOTIFICATION_DRAWER_EXPANDED_PATH),
       );
 
     case ActionType.SelectOverviewItem:
@@ -128,9 +130,6 @@ export default (state: UIState, action: UIAction): UIState => {
     case ActionType.UpdateOverviewFilterValue: {
       return state.setIn(['overview', 'filterValue'], action.payload.value);
     }
-    case ActionType.UpdateTimestamps:
-      return state.set('lastTick', action.payload.lastTick);
-
     case ActionType.SetPodMetrics:
       return state.setIn(['metrics', 'pod'], action.payload.podMetrics);
 
@@ -171,3 +170,6 @@ export const userStateToProps = (state: RootState) => {
 export const getActiveNamespace = ({ UI }: RootState): string => UI.get('activeNamespace');
 
 export const getActiveApplication = ({ UI }: RootState): string => UI.get('activeApplication');
+
+export const isNotificationDrawerExpanded = ({ UI }: RootState): boolean =>
+  !!UI.getIn(NOTIFICATION_DRAWER_EXPANDED_PATH);

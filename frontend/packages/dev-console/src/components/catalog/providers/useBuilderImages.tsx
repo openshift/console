@@ -19,8 +19,8 @@ import {
 } from '@console/internal/components/image-stream';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { ANNOTATIONS } from '@console/shared';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { ANNOTATIONS } from '@console/shared/src/constants/common';
 
 const normalizeBuilderImages = (
   builderImageStreams: K8sResourceKind[],
@@ -39,7 +39,7 @@ const normalizeBuilderImages = (
     const iconClass = imgUrl ? null : icon;
     const description = tag?.annotations?.description ?? '';
     const tags = getAnnotationTags(tag);
-    const createLabel = t('devconsole~Create');
+    const createLabel = t('Create');
     const provider = annotations?.[ANNOTATIONS.providerDisplayName] ?? '';
     const href = `/catalog/source-to-image?imagestream=${name}&imagestream-ns=${namespace}&preselected-ns=${activeNamespace}`;
     const builderImageTag = _.head(imageStream.spec?.tags) as any;
@@ -132,7 +132,7 @@ const normalizeBuilderImages = (
 const useBuilderImages: ExtensionHook<CatalogItem[]> = ({
   namespace,
 }): [CatalogItem[], boolean, any] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const resourceSelector = {
     isList: true,
     kind: 'ImageStream',

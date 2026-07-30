@@ -1,4 +1,5 @@
-import { screen, fireEvent } from '@testing-library/react';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '../../../test-utils/unit-test-utils';
 import SwitchToYAMLAlert from '../SwitchToYAMLAlert';
 
@@ -42,12 +43,13 @@ describe('SwitchToYAMLAlert', () => {
     expect(closeButton).toBeInTheDocument();
   });
 
-  it('should call onClose when close button is clicked', () => {
+  it('should call onClose when close button is clicked', async () => {
+    const user = userEvent.setup();
     const mockOnClose = jest.fn();
     renderWithProviders(<SwitchToYAMLAlert onClose={mockOnClose} />);
 
     const closeButton = screen.getByRole('button', { name: /close/i });
-    fireEvent.click(closeButton);
+    await user.click(closeButton);
 
     expect(mockOnClose).toHaveBeenCalledTimes(1);
   });

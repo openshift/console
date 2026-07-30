@@ -1,7 +1,5 @@
-const merge = require('merge');
-
 module.exports = {
-  extends: ['prettier', 'prettier/react'],
+  extends: ['prettier'],
 
   plugins: ['prettier'],
 
@@ -12,9 +10,9 @@ module.exports = {
   overrides: [
     {
       files: ['*.ts', '*.tsx'],
-      rules: merge(require('./rules/prettier-typescript'), {
+      rules: {
         'prettier/prettier': 'error',
-      }),
+      },
     },
   ],
 };

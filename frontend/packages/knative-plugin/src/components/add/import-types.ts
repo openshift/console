@@ -1,5 +1,4 @@
 import type { TFunction } from 'i18next';
-import type { CatalogItem } from '@console/dynamic-plugin-sdk';
 import {
   EVENTING_KAFKA_CHANNEL_KIND,
   EVENTING_IMC_KIND,
@@ -24,24 +23,24 @@ export const defaultChannels = {
   InMemoryChannel: EVENTING_IMC_KIND,
   KafkaChannel: EVENTING_KAFKA_CHANNEL_KIND,
 };
-export interface ProjectData {
+interface ProjectData {
   name: string;
   displayName: string;
   description: string;
 }
 
-export interface ApplicationData {
+interface ApplicationData {
   initial: string;
   name: string;
   selectedKey: string;
   isInContext?: boolean;
 }
 
-export interface EventSourceData {
+interface EventSourceData {
   [x: string]: any;
 }
 
-export interface SinkResourceData {
+interface SinkResourceData {
   apiVersion: string;
   name: string;
   kind: string;
@@ -95,11 +94,6 @@ export interface KnEventCatalogMetaData {
   provider?: string;
   iconUrl?: string;
 }
-export interface EventSourceListData {
-  loaded: boolean;
-  eventSourceList: CatalogItem[];
-}
-
 export enum SinkType {
   Resource = 'resource',
   Uri = 'uri',

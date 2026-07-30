@@ -1,14 +1,14 @@
-import * as _ from 'lodash';
 import { memo, useState, useCallback, useRef, useEffect } from 'react';
+import type { RemotePluginManifest } from '@openshift/dynamic-plugin-sdk';
+import { AlertVariant } from '@patternfly/react-core';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { coFetchJSON } from '../co-fetch';
-import { useSafeFetch } from './utils';
-import { usePoll } from '@console/shared/src/hooks/usePoll';
-import type { ConsolePluginManifestJSON } from '@console/dynamic-plugin-sdk/src/schema/plugin-manifest';
 import { settleAllPromises } from '@console/dynamic-plugin-sdk/src/utils/promise';
 import { URL_POLL_DEFAULT_DELAY } from '@console/internal/components/utils/url-poll-hook';
-import { useToast } from '@console/shared/src/components/toast';
-import { AlertVariant } from '@patternfly/react-core';
+import { useToast } from '@console/shared/src/components/toast/useToast';
+import { usePoll } from '@console/shared/src/hooks/usePoll';
+import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
+import { useSafeFetch } from './utils';
 
 interface CheckUpdatesApiResult {
   consoleCommit: string;
@@ -19,7 +19,7 @@ interface CheckUpdatesApiResult {
 
 export const PollConsoleUpdates = memo(() => {
   const toastContext = useToast();
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const [isToastOpen, setToastOpen] = useState(false);
   const [pluginsChanged, setPluginsChanged] = useState(false);
@@ -31,10 +31,10 @@ export const PollConsoleUpdates = memo(() => {
   const [updateData, setUpdateData] = useState<CheckUpdatesApiResult>();
   const [updateError, setUpdateError] = useState<Error>();
   const [newPlugins, setNewPlugins] = useState<CheckUpdatesApiResult['plugins']>(null);
-  const [pluginManifestsData, setPluginManifestsData] = useState<ConsolePluginManifestJSON[]>();
+  const [pluginManifestsData, setPluginManifestsData] = useState<RemotePluginManifest[]>();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const safeFetch = useCallback(useSafeFetch(), []);
-  const fetchPluginManifest = (pluginName: string): Promise<ConsolePluginManifestJSON> =>
+  const fetchPluginManifest = (pluginName: string): Promise<RemotePluginManifest> =>
     coFetchJSON(
       `${window.SERVER_FLAGS.basePath}api/plugins/${pluginName}/plugin-manifest.json`,
       'get',
@@ -47,11 +47,16 @@ export const PollConsoleUpdates = memo(() => {
         setUpdateError(null);
         const pluginManifests = response?.plugins?.map((pluginName) =>
           fetchPluginManifest(pluginName),
-        ) as Promise<ConsolePluginManifestJSON>[];
+        ) as Promise<RemotePluginManifest>[];
         if (pluginManifests) {
-          settleAllPromises(pluginManifests).then(([fulfilledValues]) => {
-            setPluginManifestsData(fulfilledValues);
-          });
+          return settleAllPromises(pluginManifests);
+        }
+        return undefined;
+      })
+      .then((result) => {
+        if (result) {
+          const [fulfilledValues] = result;
+          setPluginManifestsData(fulfilledValues);
         }
       })
       .catch(setUpdateError);
@@ -59,7 +64,7 @@ export const PollConsoleUpdates = memo(() => {
   usePoll(tick, URL_POLL_DEFAULT_DELAY);
 
   const prevUpdateDataRef = useRef<CheckUpdatesApiResult>();
-  const prevPluginManifestsDataRef = useRef<ConsolePluginManifestJSON[]>();
+  const prevPluginManifestsDataRef = useRef<RemotePluginManifest[]>();
   useEffect(() => {
     prevUpdateDataRef.current = updateData;
     prevPluginManifestsDataRef.current = pluginManifestsData;
@@ -87,16 +92,18 @@ export const PollConsoleUpdates = memo(() => {
     const pluginEndpointsReady =
       newPlugins?.map((pluginName) => fetchPluginManifest(pluginName)) ?? [];
     if (!_.isEmpty(pluginEndpointsReady)) {
-      settleAllPromises(pluginEndpointsReady).then(([, rejectedReasons]) => {
-        if (!_.isEmpty(rejectedReasons)) {
-          setAllPluginEndpointsReady(false);
-          setTimeout(() => setIsFetchingPluginEndpoints(false), URL_POLL_DEFAULT_DELAY);
-          return;
-        }
-        setAllPluginEndpointsReady(true);
-        setIsFetchingPluginEndpoints(false);
-        setNewPlugins(null);
-      });
+      settleAllPromises(pluginEndpointsReady)
+        .then(([, rejectedReasons]) => {
+          if (!_.isEmpty(rejectedReasons)) {
+            setAllPluginEndpointsReady(false);
+            setTimeout(() => setIsFetchingPluginEndpoints(false), URL_POLL_DEFAULT_DELAY);
+            return;
+          }
+          setAllPluginEndpointsReady(true);
+          setIsFetchingPluginEndpoints(false);
+          setNewPlugins(null);
+        })
+        .catch(() => {});
       setIsFetchingPluginEndpoints(true);
     } else {
       setAllPluginEndpointsReady(true);
@@ -161,16 +168,16 @@ export const PollConsoleUpdates = memo(() => {
 
   toastContext.addToast({
     variant: AlertVariant.warning,
-    title: t('public~Web console update is available'),
+    title: t('Web console update is available'),
     content: t(
-      'public~There has been an update to the web console. Ensure any changes have been saved and refresh your browser to access the latest version.',
+      'There has been an update to the web console. Ensure any changes have been saved and refresh your browser to access the latest version.',
     ),
     timeout: false,
     dismissible: true,
     actions: [
       {
         dismiss: true,
-        label: t('public~Refresh web console'),
+        label: t('Refresh web console'),
         callback: () => {
           if (window.location.pathname.includes('/operatorhub/subscribe')) {
             window.location.href = '/catalog?catalogType=operator';

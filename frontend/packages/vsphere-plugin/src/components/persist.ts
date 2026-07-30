@@ -1,3 +1,4 @@
+import type { SecretKind } from '@openshift/api-types/dist/kubernetes/latest';
 import { safeLoad, dump } from 'js-yaml';
 import type { ConsoleTFunction } from '@console/dynamic-plugin-sdk';
 import type { K8sModel } from '@console/dynamic-plugin-sdk/src/api/core-api';
@@ -10,7 +11,9 @@ import {
   VSPHERE_CREDS_SECRET_NAME,
   VSPHERE_CREDS_SECRET_NAMESPACE,
 } from '../constants';
-import type { ConfigMap, Infrastructure, KubeControllerManager, Secret } from '../resources';
+import type { ConfigMap } from '../resources/configMap';
+import type { Infrastructure } from '../resources/infrastructure';
+import type { KubeControllerManager } from '../resources/kubeControllerManager';
 import type { ConnectionFormFormikValues, PersistOp, ProviderCM } from './types';
 import { encodeBase64, getErrorMessage } from './utils';
 
@@ -40,7 +43,7 @@ const getPersistSecretOp = async (
   };
 
   try {
-    const secret = await k8sGet<Secret>({
+    const secret = await k8sGet<SecretKind>({
       model: secretModel,
       name: VSPHERE_CREDS_SECRET_NAME,
       ns: VSPHERE_CREDS_SECRET_NAMESPACE,
@@ -68,7 +71,7 @@ const getPersistSecretOp = async (
       });
   } catch (e) {
     // Not found, create one
-    const data: Secret = {
+    const data: SecretKind = {
       apiVersion: secretModel.apiVersion,
       kind: secretModel.kind,
       metadata: {
@@ -98,7 +101,10 @@ const getPatchKubeControllerManagerOp = async (
       name: KUBE_CONTROLLER_MANAGER_NAME,
     });
   } catch (e) {
-    throw new PersistError(t('Failed to load kubecontrollermanager'), getErrorMessage(t, e));
+    throw new PersistError(
+      t('vsphere-plugin~Failed to load kubecontrollermanager'),
+      getErrorMessage(t, e),
+    );
   }
 
   cm.spec = cm.spec || {};
@@ -132,10 +138,12 @@ const updateYamlFormat = (
 ): string => {
   let cmCfg: ProviderCM;
   try {
-    cmCfg = safeLoad(cloudProviderConfig.data.config);
+    cmCfg = safeLoad(cloudProviderConfig.data.config) as ProviderCM;
   } catch (e) {
     throw new PersistError(
-      t('Failed to parse cloud provider config {{cm}}', { cm: cloudProviderConfig.metadata.name }),
+      t('vsphere-plugin~Failed to parse cloud provider config {{cm}}', {
+        cm: cloudProviderConfig.metadata.name,
+      }),
       getErrorMessage(t, e),
     );
   }
@@ -297,10 +305,15 @@ const updateIniFormat = (
 
   if (result.expectedValues.length > 0) {
     throw new PersistError(
-      t('Failed to parse cloud provider config {{cm}}', { cm: cloudProviderConfig.metadata.name }),
-      t('The following content was expected to be defined in the configMap: {{ expectedValues }}', {
-        expectedValues: result.expectedValues.join(', '),
+      t('vsphere-plugin~Failed to parse cloud provider config {{cm}}', {
+        cm: cloudProviderConfig.metadata.name,
       }),
+      t(
+        'vsphere-plugin~The following content was expected to be defined in the configMap: {{ expectedValues }}',
+        {
+          expectedValues: result.expectedValues.join(', '),
+        },
+      ),
     );
   }
 
@@ -516,6 +529,12 @@ const getPersistInfrastructureOp = async (
     vCenterDomainCfg.topology.resourcePool,
   );
 
+  // Template is in the form: /<datacenter>/vm/<extraPart>
+  const extraPartMatch = (vCenterDomainCfg.topology.template || '').match(/\/vm\/(.+)$/);
+  if (extraPartMatch) {
+    vCenterDomainCfg.topology.template = `/${values.datacenter}/vm/${extraPartMatch[1]}`;
+  }
+
   const vCenterCfg = initValues.vcenter
     ? infrastructure.spec.platformSpec.vsphere.vcenters.find((c) => c.server === initValues.vcenter)
     : infrastructure.spec.platformSpec.vsphere.vcenters[0];
@@ -562,7 +581,7 @@ const runPatches = async ({
     await persistSecret(queryParams);
   } catch (e) {
     throw new PersistError(
-      t('Failed to persist {{secret}}', { secret: VSPHERE_CREDS_SECRET_NAME }),
+      t('vsphere-plugin~Failed to persist {{secret}}', { secret: VSPHERE_CREDS_SECRET_NAME }),
       getErrorMessage(t, e),
     );
   }
@@ -570,20 +589,26 @@ const runPatches = async ({
   try {
     await persistKubeControllerManager(queryParams);
   } catch (e) {
-    throw new PersistError(t('Failed to patch kubecontrollermanager'), getErrorMessage(t, e));
+    throw new PersistError(
+      t('vsphere-plugin~Failed to patch kubecontrollermanager'),
+      getErrorMessage(t, e),
+    );
   }
 
   try {
     await persistProviderCM(queryParams);
   } catch (e) {
-    throw new PersistError(t('Failed to patch cloud provider config'), getErrorMessage(t, e));
+    throw new PersistError(
+      t('vsphere-plugin~Failed to patch cloud provider config'),
+      getErrorMessage(t, e),
+    );
   }
 
   const results = await Promise.allSettled(addTaints.map((op) => op(queryParams)));
   const rejectedPromise = results.find((r) => r.status === 'rejected');
   if (rejectedPromise) {
     throw new PersistError(
-      t('Failed to add taint to nodes'),
+      t('vsphere-plugin~Failed to add taint to nodes'),
       getErrorMessage(t, rejectedPromise.reason),
     );
   }
@@ -591,7 +616,10 @@ const runPatches = async ({
   try {
     await persistInfrastructure(queryParams);
   } catch (e) {
-    throw new PersistError(t('Failed to patch infrastructure spec'), getErrorMessage(t, e));
+    throw new PersistError(
+      t('vsphere-plugin~Failed to patch infrastructure spec'),
+      getErrorMessage(t, e),
+    );
   }
 };
 

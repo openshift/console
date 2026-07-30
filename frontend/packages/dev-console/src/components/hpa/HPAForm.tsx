@@ -5,13 +5,11 @@ import { isEmpty } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { HorizontalPodAutoscalerModel } from '@console/internal/models';
 import type { HorizontalPodAutoscalerKind, K8sResourceCommon } from '@console/internal/module/k8s';
-import {
-  FlexForm,
-  FormBody,
-  FormFooter,
-  SyncedEditorField,
-  CodeEditorField,
-} from '@console/shared';
+import { FlexForm } from '@console/shared/src/components/form-utils/FlexForm';
+import { FormBody } from '@console/shared/src/components/form-utils/FormBody';
+import { FormFooter } from '@console/shared/src/components/form-utils/FormFooter';
+import { CodeEditorField } from '@console/shared/src/components/formik-fields/CodeEditorField';
+import { SyncedEditorField } from '@console/shared/src/components/formik-fields/SyncedEditorField';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { sanitizeHPAToForm } from './hpa-utils';
 import HPADetailsForm from './HPADetailsForm';
@@ -34,7 +32,7 @@ const HPAForm: FC<FormikProps<HPAFormValues> & HPAFormProps> = ({
   validateForm,
   values,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY = 'devconsole.hpaForm.editor.lastView';
   const isForm = values.editorType === EditorType.Form;
   const formEditor = <HPADetailsForm />;
@@ -77,9 +75,9 @@ const HPAForm: FC<FormikProps<HPAFormValues> & HPAFormProps> = ({
         handleReset={handleReset}
         errorMessage={status?.submitError}
         isSubmitting={isSubmitting}
-        submitLabel={t('devconsole~Save')}
+        submitLabel={t('Save')}
         disableSubmit={(isForm && !isEmpty(errors)) || isSubmitting}
-        resetLabel={t('devconsole~Cancel')}
+        resetLabel={t('Cancel')}
         sticky
       />
     </FlexForm>

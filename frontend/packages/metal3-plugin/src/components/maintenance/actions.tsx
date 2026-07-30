@@ -4,12 +4,12 @@ import type { Action, ExtensionHook, K8sResourceCommon } from '@console/dynamic-
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import type { NodeKind } from '@console/internal/module/k8s';
 import { useMaintenanceCapability } from '../../hooks/useMaintenanceCapability';
-import { findNodeMaintenance } from '../../selectors';
+import { findNodeMaintenance } from '../../selectors/node-maintenance';
 import { useStartNodeMaintenanceModalLauncher } from '../modals/StartNodeMaintenanceModal';
 import { useStopNodeMaintenanceModal } from '../modals/StopNodeMaintenanceModal';
 
 export const useNodeMaintenanceActions: ExtensionHook<Action[], NodeKind> = (resource) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('metal3-plugin');
   const [maintenanceModel] = useMaintenanceCapability();
   const startNodeMaintenanceModal = useStartNodeMaintenanceModalLauncher({
     nodeName: resource.metadata.name,
@@ -31,7 +31,7 @@ export const useNodeMaintenanceActions: ExtensionHook<Action[], NodeKind> = (res
 
     let action: Action = {
       id: 'start-node-maintenance',
-      label: t('metal3-plugin~Start Maintenance'),
+      label: t('Start Maintenance'),
       cta: startNodeMaintenanceModal,
       insertBefore: 'edit-labels',
     };
@@ -39,7 +39,7 @@ export const useNodeMaintenanceActions: ExtensionHook<Action[], NodeKind> = (res
     if (nodeMaintenance) {
       action = {
         id: 'stop-node-maintenance',
-        label: t('metal3-plugin~Stop Maintenance'),
+        label: t('Stop Maintenance'),
         cta: () => stopNodeMaintenanceModalLauncher(nodeMaintenance),
         insertBefore: 'edit-labels',
       };

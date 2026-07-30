@@ -26,6 +26,7 @@ const BaseInputField: FC<
   helpTextInvalid,
   validated,
   isReadOnly,
+  dataTest,
   ...props
 }) => {
   const [field, { touched, error }] = useField({ name, type: 'input' });
@@ -40,6 +41,7 @@ const BaseInputField: FC<
         ...field,
         ...props,
         ...(isReadOnly !== undefined && { readOnly: isReadOnly }),
+        ...(dataTest && { 'data-test': dataTest }),
         value: field.value || '',
         id: fieldId,
         label,
@@ -55,7 +57,10 @@ const BaseInputField: FC<
         },
       })}
 
-      <FormHelperText id={`${fieldId}-helper`}>
+      <FormHelperText
+        id={`${fieldId}-helper`}
+        data-test={`form-input-${name.replace(/\./g, '-')}-field-helper`}
+      >
         <HelperText>
           {!isValid ? (
             <HelperTextItem variant="error">{errorMessage || helpTextInvalid}</HelperTextItem>

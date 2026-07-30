@@ -12,7 +12,6 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { supportedLocales } from './const';
-import { useLanguage } from './useLanguage';
 import {
   PREFERRED_LANGUAGE_USER_PREFERENCE_KEY,
   usePreferredLanguage,
@@ -21,7 +20,7 @@ import {
 import './LanguageDropdown.scss';
 
 const LanguageDropdown: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const fireTelemetryEvent = useTelemetry();
   const [preferredLanguage, setPreferredLanguage, preferredLanguageLoaded] = usePreferredLanguage();
   const [isOpen, setIsOpen] = useState(false);
@@ -36,7 +35,7 @@ const LanguageDropdown: FC = () => {
   );
 
   const [isUsingDefault, setIsUsingDefault] = useState<boolean>(!preferredLanguage);
-  const checkboxLabel: string = t('console-app~Use the default browser language setting.');
+  const checkboxLabel: string = t('Use the default browser language setting.');
 
   const onSelect = (_, selection: string) => {
     if (selection !== preferredLanguage) {
@@ -59,8 +58,6 @@ const LanguageDropdown: FC = () => {
       setPreferredLanguage('');
     }
   };
-
-  useLanguage(preferredLanguage, preferredLanguageLoaded); // sync the preferred language with local storage and set the console language
 
   useEffect(() => {
     if (preferredLanguageLoaded) {
@@ -92,13 +89,13 @@ const LanguageDropdown: FC = () => {
         id={'console.preferredLanguage'}
         toggle={(toggleRef: Ref<MenuToggleElement>) => (
           <MenuToggle
-            aria-label={t('console-app~Select a language')}
+            aria-label={t('Select a language')}
             isFullWidth
             isDisabled={isUsingDefault}
             ref={toggleRef}
             onClick={(open) => setIsOpen(open)}
           >
-            {supportedLocales[preferredLanguage] || t('console-app~Select a language')}
+            {supportedLocales[preferredLanguage] || t('Select a language')}
           </MenuToggle>
         )}
       >

@@ -3,7 +3,7 @@ package chartproxy
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 	"os/exec"
@@ -11,7 +11,7 @@ import (
 	"testing"
 	"time"
 
-	helmrepo "helm.sh/helm/v3/pkg/repo"
+	helmrepo "helm.sh/helm/v4/pkg/repo/v1"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -375,7 +375,7 @@ func TestHelmRepo_IndexFile(t *testing.T) {
 								if err != nil {
 									t.Error(err)
 								}
-								resp.Body = ioutil.NopCloser(r)
+								resp.Body = io.NopCloser(r)
 							}
 							return resp
 						}),
@@ -392,7 +392,7 @@ func TestHelmRepo_IndexFile(t *testing.T) {
 				if tt.expectedIndexFile != "" {
 					expectedIndexPath = tt.expectedIndexFile
 				}
-				data, err := ioutil.ReadFile(expectedIndexPath)
+				data, err := os.ReadFile(expectedIndexPath)
 				if err != nil {
 					t.Error(err)
 				}
@@ -527,10 +527,11 @@ func TestHelmRepoGetter_unmarshallConfig(t *testing.T) {
 		name            string
 		helmCRS         *unstructured.Unstructured
 		repoName        string
-		wantsErr        bool
+		wantsErrMsg     string
 		createSecret    bool
 		namespace       string
 		createNamespace bool
+		clusterScoped   bool
 	}{
 		{
 			name: "Namespace present",
@@ -554,10 +555,11 @@ func TestHelmRepoGetter_unmarshallConfig(t *testing.T) {
 				},
 			},
 			repoName:        "repo4",
-			wantsErr:        false,
+			wantsErrMsg:     "",
 			createSecret:    true,
 			namespace:       "testing",
 			createNamespace: true,
+			clusterScoped:   false,
 		},
 		{
 			name: "Namespace not present",
@@ -580,9 +582,65 @@ func TestHelmRepoGetter_unmarshallConfig(t *testing.T) {
 				},
 			},
 			repoName:        "repo5",
-			wantsErr:        false,
+			wantsErrMsg:     "",
 			createSecret:    true,
 			createNamespace: false,
+			clusterScoped:   false,
+		},
+		{
+			name: "HTTPS is required for cluster-scoped repositories using basic authentication",
+			helmCRS: &unstructured.Unstructured{
+				Object: map[string]interface{}{
+					"apiVersion": "helm.openshift.io/v1beta1",
+					"kind":       "HelmChartRepository",
+					"metadata": map[string]interface{}{
+						"namespace": "",
+						"name":      "repo6",
+					},
+					"spec": map[string]interface{}{
+						"connectionConfig": map[string]interface{}{
+							"url": "http://localhost:9553",
+							"basicAuthConfig": map[string]interface{}{
+								"name":      "fooSecret",
+								"namespace": "testing",
+							},
+						},
+					},
+				},
+			},
+			repoName:        "repo6",
+			wantsErrMsg:     "Basic authentication requires HTTPS repository for security",
+			createSecret:    false,
+			createNamespace: false,
+			clusterScoped:   true,
+		},
+		{
+			name: "HTTPS is required for namespace-scoped repositories using basic authentication",
+			helmCRS: &unstructured.Unstructured{
+				Object: map[string]interface{}{
+					"apiVersion": "helm.openshift.io/v1beta1",
+					"kind":       "ProjectHelmChartRepository",
+					"metadata": map[string]interface{}{
+						"namespace": "testing",
+						"name":      "repo7",
+					},
+					"spec": map[string]interface{}{
+						"connectionConfig": map[string]interface{}{
+							"url": "http://localhost:9553",
+							"basicAuthConfig": map[string]interface{}{
+								"name":      "fooSecret",
+								"namespace": "testing",
+							},
+						},
+					},
+				},
+			},
+			repoName:        "repo7",
+			wantsErrMsg:     "Basic authentication requires HTTPS repository for security",
+			createSecret:    false,
+			createNamespace: true,
+			namespace:       "testing",
+			clusterScoped:   false,
 		},
 	}
 	for _, tt := range tests {
@@ -595,9 +653,9 @@ func TestHelmRepoGetter_unmarshallConfig(t *testing.T) {
 			}
 			// create a secret in required namespace
 			if tt.createSecret {
-				certificate, errCert := ioutil.ReadFile("./server.crt")
+				certificate, errCert := os.ReadFile("./server.crt")
 				require.NoError(t, errCert)
-				key, errKey := ioutil.ReadFile("./server.key")
+				key, errKey := os.ReadFile("./server.key")
 				require.NoError(t, errKey)
 				data := map[string][]byte{
 					"tls.key": key,
@@ -610,9 +668,10 @@ func TestHelmRepoGetter_unmarshallConfig(t *testing.T) {
 				Client:     fake.K8sDynamicClient("helm.openshift.io/v1beta1", "HelmChartRepository", ""),
 				CoreClient: k8sfake.NewSimpleClientset(objs...).CoreV1(),
 			}
-			_, err := repoGetter.unmarshallConfig(*tt.helmCRS, tt.namespace, false)
-			if tt.wantsErr {
+			_, err := repoGetter.unmarshallConfig(*tt.helmCRS, tt.namespace, tt.clusterScoped)
+			if tt.wantsErrMsg != "" {
 				require.Error(t, err)
+				require.ErrorContains(t, err, tt.wantsErrMsg)
 			} else {
 				require.NoError(t, err)
 			}
@@ -630,13 +689,13 @@ func ExecuteScript(filepath string, waitForCompletion bool) error {
 	tlsCmd.Stderr = os.Stderr
 	err := tlsCmd.Start()
 	if err != nil {
-		bytes, _ := ioutil.ReadAll(os.Stderr)
+		bytes, _ := io.ReadAll(os.Stderr)
 		return fmt.Errorf("Error starting command :%s:%s:%w", filepath, string(bytes), err)
 	}
 	if waitForCompletion {
 		err = tlsCmd.Wait()
 		if err != nil {
-			bytes, _ := ioutil.ReadAll(os.Stderr)
+			bytes, _ := io.ReadAll(os.Stderr)
 			return fmt.Errorf("Error waiting command :%s:%s:%w", filepath, string(bytes), err)
 		}
 	}

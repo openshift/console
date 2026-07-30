@@ -6,15 +6,15 @@ import type { TopologyApplicationObject } from '@console/dynamic-plugin-sdk/src/
 import { LazyDeleteModalOverlay } from '@console/internal/components/modals';
 import { asAccessReview } from '@console/internal/components/utils';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { LazyDeleteResourceModalOverlay } from '@console/shared';
-import { ApplicationModel } from '@console/topology/src/models';
-import { cleanUpWorkload } from '@console/topology/src/utils';
+import { LazyDeleteResourceModalOverlay } from '@console/shared/src/components/modals/LazyDeleteResourceModal';
+import { ApplicationModel } from '@console/topology/src/models/application';
+import { cleanUpWorkload } from '@console/topology/src/utils/application-utils';
 
 export const useDeleteApplicationAction = (
   application: TopologyApplicationObject,
   resourceModel: K8sModel,
 ): Action | null => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const launchModal = useOverlay();
 
   return useMemo(() => {
@@ -27,7 +27,7 @@ export const useDeleteApplicationAction = (
     const primaryResource = application.resources[0].resource;
     return {
       id: 'delete-application',
-      label: t('devconsole~Delete application'),
+      label: t('Delete application'),
       cta: () => {
         const reqs = [];
         launchModal(LazyDeleteResourceModalOverlay, {
@@ -50,13 +50,13 @@ export const useDeleteResourceAction = (
   kind: K8sModel | undefined,
   obj: K8sResourceKind,
 ): Action => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const launchModal = useOverlay();
 
   return useMemo(
     () => ({
       id: `delete-resource`,
-      label: t('devconsole~Delete {{kind}}', { kind: kind?.kind }),
+      label: t('Delete {{kind}}', { kind: kind?.kind }),
       cta: () =>
         launchModal(LazyDeleteModalOverlay, {
           kind,

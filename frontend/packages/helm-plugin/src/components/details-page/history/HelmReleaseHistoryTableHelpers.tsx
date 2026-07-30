@@ -6,10 +6,12 @@ import type {
 } from '@patternfly/react-data-view/dist/esm/DataViewTable/DataViewTable';
 import type { SortByDirection, ThProps } from '@patternfly/react-table';
 import { Trans, useTranslation } from 'react-i18next';
-import { coFetchJSON } from '@console/internal/co-fetch';
-import { ActionMenu, Status, DASH } from '@console/shared';
+import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import { Status } from '@console/shared/src/components/status/Status';
+import { DASH } from '@console/shared/src/constants/ui';
 import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
+import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
 import type { HelmRelease } from '../../../types/helm-types';
 import { HelmReleaseStatusLabels, releaseStatus } from '../../../utils/helm-utils';
 import './HelmReleaseHistoryRow.scss';
@@ -19,7 +21,7 @@ type HelmReleaseHistoryKebabProps = {
 };
 
 const HelmReleaseHistoryKebab: FC<HelmReleaseHistoryKebabProps> = ({ obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   const message = (
     <Trans t={t} ns="helm-plugin">
       Are you sure you want to rollback <strong>{{ releaseName: obj.name }}</strong> to{' '}
@@ -34,10 +36,10 @@ const HelmReleaseHistoryKebab: FC<HelmReleaseHistoryKebabProps> = ({ obj }) => {
   const revision = obj.version;
 
   const openRollbackConfirm = useWarningModal({
-    title: t('helm-plugin~Rollback'),
+    title: t('Rollback'),
     children: message,
-    confirmButtonLabel: t('helm-plugin~Rollback'),
-    cancelButtonLabel: t('public~Cancel'),
+    confirmButtonLabel: t('Rollback'),
+    cancelButtonLabel: t('Cancel'),
     onConfirm: () => coFetchJSON.patch('/api/helm/release', payload),
     ouiaId: 'HelmRollbackConfirmation',
   });
@@ -47,7 +49,7 @@ const HelmReleaseHistoryKebab: FC<HelmReleaseHistoryKebabProps> = ({ obj }) => {
       actions={[
         {
           id: 'helm-rollback-modal-action',
-          label: t('helm-plugin~Rollback to Revision {{revision}}', { revision }),
+          label: t('Rollback to Revision {{revision}}', { revision }),
           cta: () => openRollbackConfirm(),
         },
       ]}
@@ -60,11 +62,11 @@ export const useHelmReleaseHistoryColumns = (
   sortBy: { index: number; direction: SortByDirection },
   onSort: (event: MouseEvent, columnId: string, direction: SortByDirection) => void,
 ): DataViewTh[] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   return useMemo(
     () => [
       {
-        cell: t('helm-plugin~Revision'),
+        cell: t('Revision'),
         props: {
           modifier: 'nowrap',
           sort: {
@@ -75,7 +77,7 @@ export const useHelmReleaseHistoryColumns = (
         } as ThProps,
       },
       {
-        cell: t('helm-plugin~Updated'),
+        cell: t('Updated'),
         props: {
           modifier: 'nowrap',
           sort: {
@@ -86,7 +88,7 @@ export const useHelmReleaseHistoryColumns = (
         } as ThProps,
       },
       {
-        cell: t('helm-plugin~Status'),
+        cell: t('Status'),
         props: {
           modifier: 'nowrap',
           sort: {
@@ -97,7 +99,7 @@ export const useHelmReleaseHistoryColumns = (
         } as ThProps,
       },
       {
-        cell: t('helm-plugin~Chart name'),
+        cell: t('Chart name'),
         props: {
           modifier: 'nowrap',
           sort: {
@@ -108,7 +110,7 @@ export const useHelmReleaseHistoryColumns = (
         } as ThProps,
       },
       {
-        cell: t('helm-plugin~Chart version'),
+        cell: t('Chart version'),
         props: {
           modifier: 'nowrap',
           sort: {
@@ -119,7 +121,7 @@ export const useHelmReleaseHistoryColumns = (
         } as ThProps,
       },
       {
-        cell: t('helm-plugin~App version'),
+        cell: t('App version'),
         props: {
           modifier: 'nowrap',
           sort: {
@@ -130,7 +132,7 @@ export const useHelmReleaseHistoryColumns = (
         } as ThProps,
       },
       {
-        cell: t('helm-plugin~Description'),
+        cell: t('Description'),
         props: {
           modifier: 'nowrap',
         } as ThProps,

@@ -1,6 +1,6 @@
 import { AsyncComponent } from '../../utils/async';
 
-//TODO :Create a shared LazyDroppableFileInput component.
+// TODO :Create a shared LazyDroppableFileInput component.
 export const DroppableFileInput = (props) => (
   <AsyncComponent
     loader={() => import('../../utils/file-input').then((c) => c.DroppableFileInput)}

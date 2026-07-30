@@ -12,7 +12,7 @@ import {
   SimpleListItem,
   Icon,
 } from '@patternfly/react-core';
-import { ArrowRightIcon, ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { RhUiArrowRightIcon, RhUiExternalLinkFillIcon } from '@patternfly/react-icons';
 import { Link } from 'react-router';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
@@ -114,7 +114,7 @@ export const GettingStartedCard: FC<GettingStartedCardProps> = ({
                     <Content component="p">
                       {link.title}
                       <Icon size="bodySm" className="pf-v6-u-ml-xs">
-                        {link.external ? <ExternalLinkAltIcon /> : <ArrowRightIcon />}
+                        {link.external ? <RhUiExternalLinkFillIcon /> : <RhUiArrowRightIcon />}
                       </Icon>
                     </Content>
                     {link.description && (

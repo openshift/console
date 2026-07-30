@@ -13,7 +13,7 @@ jest.mock('@console/shared/src/components/modals/ModalFooterWithAlerts', () => (
   ModalFooterWithAlerts: jest.fn(({ children }) => <div>{children}</div>),
 }));
 
-jest.mock('@console/shared', () => ({
+jest.mock('@console/shared/src/components/formik-fields/ResourceDropdownField', () => ({
   ResourceDropdownField: jest.fn(() => null),
 }));
 
@@ -23,10 +23,8 @@ jest.mock('@console/dev-console/src/components/import/section/FormSection', () =
 }));
 
 jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-  }),
-  Trans: jest.fn(() => null),
+  ...jest.requireActual('../../../../../../__mocks__/react-i18next'),
+  Trans: () => null,
 }));
 
 describe('SinkPubsubModal', () => {

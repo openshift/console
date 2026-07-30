@@ -1,15 +1,15 @@
 import type { FC } from 'react';
-import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
 import { ConfigMapModel } from '@console/internal/models';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useK8sWatchResource } from '../utils/k8s-watch-hook';
 import { StatusBox } from '../utils/status-box';
 import ConfigMapForm from './ConfigMapForm';
-import { ConfigMap } from './types';
+import type { ConfigMap } from './types';
 
 export const ConfigMapPage: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { ns: namespace, name } = useParams();
   const isCreateFlow: boolean = !name;
 
@@ -22,7 +22,7 @@ export const ConfigMapPage: FC = () => {
           namespace,
         },
   );
-  const title = isCreateFlow ? t('public~Create ConfigMap') : t('public~Edit ConfigMap');
+  const title = isCreateFlow ? t('Create ConfigMap') : t('Edit ConfigMap');
   const configMap: ConfigMap = isCreateFlow ? null : watchedConfigMap;
 
   const configMapForm = (

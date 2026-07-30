@@ -1,13 +1,15 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import type { FC, ReactNode } from 'react';
-import { useEffect, useRef, useMemo } from 'react';
-import * as _ from 'lodash';
-import { css } from '@patternfly/react-styles';
-import * as semver from 'semver';
+import { useEffect, useRef, useMemo, useState } from 'react';
 import {
   Alert,
   AlertActionLink,
   Button,
+  Card,
+  CardHeader,
+  CardTitle,
+  CardBody,
+  CardExpandableContent,
   Flex,
   FlexItem,
   Label,
@@ -21,29 +23,50 @@ import {
   DescriptionListTerm,
   DescriptionListDescription,
   DescriptionListGroup,
+  Stack,
+  StackItem,
 } from '@patternfly/react-core';
-import { Link } from 'react-router';
-import { useTranslation } from 'react-i18next';
-
-import { AddCircleOIcon, PauseCircleIcon, PencilAltIcon } from '@patternfly/react-icons';
-
-import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
-import { MarkdownView } from '@console/shared/src/components/markdown/MarkdownView';
 import {
-  ClusterServiceVersionKind,
-  ClusterServiceVersionModel,
-} from '@console/operator-lifecycle-manager';
-import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
+  RhUiAddCircleIcon,
+  RhUiPauseCircleIcon,
+  RhUiEditIcon,
+  RhUiInProgressIcon,
+} from '@patternfly/react-icons';
+import { css } from '@patternfly/react-styles';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router';
+import * as semver from 'semver';
+import type { WatchK8sResource } from '@console/dynamic-plugin-sdk';
+import { useAccessReview } from '@console/dynamic-plugin-sdk';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
+import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import type { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
+import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
+import { FEATURE_FLAG_LIGHTSPEED_PLUGIN } from '@console/shared/src/components/cluster-updates/constants';
+import { UpdateWorkflowOLSButton } from '@console/shared/src/components/cluster-updates/explain-button';
+import {
+  hasAvailableUpdates,
+  hasOperatorIssues,
+  determineWorkflowButtons,
+} from '@console/shared/src/components/cluster-updates/workflow-utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import { DescriptionListTermHelp } from '@console/shared/src/components/description-list/DescriptionListTermHelp';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
-
-import { ClusterOperatorPage } from './cluster-operator';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { MarkdownView } from '@console/shared/src/components/markdown/MarkdownView';
+import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
+import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
+import { FLAGS } from '@console/shared/src/constants/common';
 import {
-  LazyClusterChannelModalOverlay,
-  LazyClusterMoreUpdatesModalOverlay,
-  LazyClusterUpdateModalOverlay,
-} from '../modals';
-import { GlobalConfigPage } from './global-config';
+  isClusterExternallyManaged,
+  useCanClusterUpgrade,
+} from '@console/shared/src/hooks/useCanClusterUpgrade';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
+import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import {
   ClusterAutoscalerModel,
   ClusterOperatorModel,
@@ -52,11 +75,17 @@ import {
   MachineConfigModel,
   NodeModel,
 } from '../../models';
+import type {
+  ClusterOperator,
+  ClusterVersionKind,
+  K8sResourceKind,
+  MachineConfigPoolKind,
+  UpdateHistory,
+} from '../../module/k8s';
 import {
   clusterIsUpToDateOrUpdateAvailable,
-  ClusterOperator,
   ClusterUpdateStatus,
-  ClusterVersionKind,
+  ClusterVersionConditionType,
   clusterVersionReference,
   getClusterID,
   getClusterOperatorVersion,
@@ -78,53 +107,41 @@ import {
   isMCPWorker,
   isMinorVersionNewer,
   K8sResourceConditionStatus,
-  K8sResourceKind,
   MachineConfigPoolConditionType,
-  MachineConfigPoolKind,
   NodeTypeNames,
   NodeTypes,
   referenceForModel,
   showReleaseNotes,
   sortMCPsByCreationTimestamp,
   splitClusterVersionChannel,
-  UpdateHistory,
 } from '../../module/k8s';
-import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { hasNotRecommendedUpdates } from '../../module/k8s/cluster-settings';
+import {
+  LazyClusterChannelModalOverlay,
+  LazyClusterMoreUpdatesModalOverlay,
+  LazyClusterUpdateModalOverlay,
+} from '../modals';
+import { ErrorModal } from '../modals/error-modal';
+import { UpstreamConfigDetailsItem } from '../utils/details-page';
 import { documentationURLs, getDocumentationURL, isManaged } from '../utils/documentation';
-import { EmptyBox } from '../utils/status-box';
 import { FieldLevelHelp } from '../utils/field-level-help';
+import { SectionHeading } from '../utils/headings';
 import { HorizontalNav } from '../utils/horizontal-nav';
 import { ReleaseNotesLink } from '../utils/release-notes-link';
 import { ResourceLink, resourcePathFromModel } from '../utils/resource-link';
-import { SectionHeading } from '../utils/headings';
-import { togglePaused } from '../utils/workload-pause';
-import { UpstreamConfigDetailsItem } from '../utils/details-page';
-import { useAccessReview } from '../utils/rbac';
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import {
-  isClusterExternallyManaged,
-  useCanClusterUpgrade,
-} from '@console/shared/src/hooks/useCanClusterUpgrade';
-import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
-import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
-import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
-import { DescriptionListTermHelp } from '@console/shared/src/components/description-list/DescriptionListTermHelp';
-import { useFlag } from '@console/shared/src/hooks/useFlag';
-import { FLAGS } from '@console/shared/src/constants';
-
 import {
   ServiceLevel,
   useServiceLevelTitle,
   ServiceLevelText,
   ServiceLevelLoading,
 } from '../utils/service-level';
-import { hasAvailableUpdates, hasNotRecommendedUpdates } from '../../module/k8s/cluster-settings';
+import { EmptyBox } from '../utils/status-box';
+import { togglePaused } from '../utils/workload-pause';
+import { ClusterOperatorPage } from './cluster-operator';
 import { UpdateStatus } from './cluster-status';
-import { ErrorModal } from '../modals/error-modal';
-import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
+import { GlobalConfigPage } from './global-config';
 
-export const clusterAutoscalerReference = referenceForModel(ClusterAutoscalerModel);
+const clusterAutoscalerReference = referenceForModel(ClusterAutoscalerModel);
 
 const getMCPByName = (
   machineConfigPools: MachineConfigPoolKind[],
@@ -161,24 +178,18 @@ const getUpdatedOperatorsCount = (
   );
 };
 
-const getReleaseImageVersion = (obj: K8sResourceKind): string => {
-  return obj?.metadata?.annotations?.['machineconfiguration.openshift.io/release-image-version'];
-};
-
-const calculatePercentage = (numerator: number, denominator: number): number =>
-  Math.round((numerator / denominator) * 100);
-
-export const CurrentChannel: FC<CurrentChannelProps> = ({ cv, canUpgrade }) => {
-  const { t } = useTranslation();
+const CurrentChannel: FC<CurrentChannelProps> = ({ cv, canUpgrade }) => {
+  const { t } = useTranslation('public');
   const launchModal = useOverlay();
-  const label = cv.spec.channel || t('public~Not configured');
+  const label = cv.spec.channel || t('Not configured');
   return canUpgrade ? (
     <Button
-      icon={<PencilAltIcon />}
+      icon={<RhUiEditIcon />}
       iconPosition="end"
       type="button"
       isInline
       data-test-id="current-channel-update-link"
+      data-test="current-channel-update-link"
       onClick={() => launchModal(LazyClusterChannelModalOverlay, { cv: cv as ClusterVersionKind })}
       variant="link"
     >
@@ -189,17 +200,21 @@ export const CurrentChannel: FC<CurrentChannelProps> = ({ cv, canUpgrade }) => {
   );
 };
 
-export const CurrentVersion: FC<CurrentVersionProps> = ({ cv }) => {
+const CurrentVersion: FC<CurrentVersionProps> = ({ cv }) => {
   const desiredVersion = getDesiredClusterVersion(cv);
   const lastVersion = getLastCompletedUpdate(cv);
   const status = getClusterUpdateStatus(cv);
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   if (clusterIsUpToDateOrUpdateAvailable(status)) {
     return desiredVersion ? (
       <>
         <div>
-          <span className="co-select-to-copy" data-test-id="cluster-version">
+          <span
+            className="co-select-to-copy"
+            data-test="cluster-version"
+            data-test-id="cluster-version"
+          >
             {desiredVersion}
           </span>
         </div>
@@ -208,7 +223,7 @@ export const CurrentVersion: FC<CurrentVersionProps> = ({ cv }) => {
     ) : (
       <>
         <YellowExclamationTriangleIcon />
-        &nbsp;{t('public~Unknown')}
+        &nbsp;{t('Unknown')}
       </>
     );
   }
@@ -216,18 +231,22 @@ export const CurrentVersion: FC<CurrentVersionProps> = ({ cv }) => {
   return lastVersion ? (
     <>
       <div>
-        <span className="co-select-to-copy" data-test-id="cluster-version">
+        <span
+          className="co-select-to-copy"
+          data-test="cluster-version"
+          data-test-id="cluster-version"
+        >
           {lastVersion}
         </span>
       </div>
       <ReleaseNotesLink version={lastVersion} />
     </>
   ) : (
-    <>{t('public~None')}</>
+    <>{t('None')}</>
   );
 };
 
-export const UpdateLink: FC<CurrentVersionProps> = ({ cv, canUpgrade }) => {
+const UpdateLink: FC<CurrentVersionProps> = ({ cv, canUpgrade }) => {
   const launchModal = useOverlay();
   // assume if 'worker' is editable, others are too
   const workerMachineConfigPoolIsEditable = useAccessReview({
@@ -237,14 +256,33 @@ export const UpdateLink: FC<CurrentVersionProps> = ({ cv, canUpgrade }) => {
     name: NodeTypes.worker,
   });
   const status = getClusterUpdateStatus(cv);
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const hasNotRecommended = hasNotRecommendedUpdates(cv);
+  // Handle ErrorRetrieving separately - allow version selection regardless of other conditions
+  if (
+    canUpgrade &&
+    status === ClusterUpdateStatus.ErrorRetrieving &&
+    workerMachineConfigPoolIsEditable
+  ) {
+    return (
+      <div className="co-cluster-settings__details">
+        <Button
+          variant="primary"
+          type="button"
+          onClick={() => launchModal(LazyClusterUpdateModalOverlay, { cv })}
+          data-test-id="cv-update-button"
+        >
+          {t('public~Select a version')}
+        </Button>
+      </div>
+    );
+  }
+
   return canUpgrade &&
     (hasAvailableUpdates(cv) || hasNotRecommended) &&
-    (status === ClusterUpdateStatus.ErrorRetrieving ||
-      status === ClusterUpdateStatus.Failing ||
-      status === ClusterUpdateStatus.UpdatesAvailable ||
+    (status === ClusterUpdateStatus.UpdatesAvailable ||
       status === ClusterUpdateStatus.Updating ||
+      status === ClusterUpdateStatus.Failing ||
       (status === ClusterUpdateStatus.UpToDate && hasNotRecommended)) &&
     workerMachineConfigPoolIsEditable ? (
     <div className="co-cluster-settings__details">
@@ -253,43 +291,42 @@ export const UpdateLink: FC<CurrentVersionProps> = ({ cv, canUpgrade }) => {
         type="button"
         onClick={() => launchModal(LazyClusterUpdateModalOverlay, { cv })}
         data-test-id="cv-update-button"
+        data-test="cv-update-button"
       >
-        {t('public~Select a version')}
+        {t('Select a version')}
       </Button>
     </div>
   ) : null;
 };
 
-export const CurrentVersionHeader: FC<CurrentVersionProps> = ({ cv }) => {
+const CurrentVersionHeader: FC<CurrentVersionProps> = ({ cv }) => {
   const status = getClusterUpdateStatus(cv);
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <>
       {clusterIsUpToDateOrUpdateAvailable(status)
-        ? t('public~Current version')
-        : t('public~Last completed version')}
+        ? t('Current version')
+        : t('Last completed version')}
     </>
   );
 };
 
 export const ChannelDocLink: FC<{}> = () => {
   const upgradeURL = getDocumentationURL(documentationURLs.understandingUpgradeChannels);
-  const { t } = useTranslation();
-  return (
-    <ExternalLink href={upgradeURL} text={t('public~Learn more about OpenShift update channels')} />
-  );
+  const { t } = useTranslation('public');
+  return <ExternalLink href={upgradeURL} text={t('Learn more about OpenShift update channels')} />;
 };
 
 const ChannelHeader: FC<{}> = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <DescriptionListTermHelp
-      text={t('public~Channel')}
+      text={t('Channel')}
       textHelp={
         <Content>
           <Content component={ContentVariants.p}>
             {t(
-              'public~Channels help to control the pace of updates and recommend the appropriate release versions. Update channels are tied to a minor version of OpenShift Container Platform, for example 4.5.',
+              'Channels help to control the pace of updates and recommend the appropriate release versions. Update channels are tied to a minor version of OpenShift Container Platform, for example 4.5.',
             )}
           </Content>
           {!isManaged() && (
@@ -320,7 +357,7 @@ const ChannelLine: FC<ChannelLineProps> = ({ children, start }) => {
   return <li className={css('co-channel-line', { 'co-channel-start': start })}>{children}</li>;
 };
 
-export const ChannelName: FC<ChannelNameProps> = ({ children, current }) => {
+const ChannelName: FC<ChannelNameProps> = ({ children, current }) => {
   return (
     <span
       className={css('co-channel-name', {
@@ -345,7 +382,7 @@ const ChannelPath: FC<ChannelPathProps> = ({ children, current }) => {
   );
 };
 
-export const ChannelVersion: FC<ChannelVersionProps> = ({ children, current, updateBlocked }) => {
+const ChannelVersion: FC<ChannelVersionProps> = ({ children, current, updateBlocked }) => {
   const test = 'cv-channel-version';
   return (
     <span
@@ -364,7 +401,7 @@ export const ChannelVersion: FC<ChannelVersionProps> = ({ children, current, upd
 };
 
 export const UpdateBlockedLabel = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   return (
     <Label
@@ -373,21 +410,21 @@ export const UpdateBlockedLabel = () => {
       className="pf-v6-u-ml-sm"
       data-test="cv-update-blocked"
     >
-      {t('public~Update blocked')}
+      {t('Update blocked')}
     </Label>
   );
 };
 
 const ChannelVersionDot: FC<ChannelVersionDotProps> = ({ current, updateBlocked, version }) => {
   const releaseNotesLink = getReleaseNotesLink(version);
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const test = 'cv-channel-version-dot';
 
   return releaseNotesLink || updateBlocked ? (
     <Popover
       headerContent={
         <>
-          {t('public~Version')} {version}
+          {t('Version')} {version}
           {updateBlocked && <UpdateBlockedLabel />}
         </>
       }
@@ -396,7 +433,7 @@ const ChannelVersionDot: FC<ChannelVersionDotProps> = ({ current, updateBlocked,
           {updateBlocked && (
             <p data-test="cv-channel-version-dot-blocked-info">
               {t(
-                'public~See the alert above the visualization for instructions on how to unblock this version.',
+                'See the alert above the visualization for instructions on how to unblock this version.',
               )}
             </p>
           )}
@@ -428,7 +465,7 @@ const UpdatesBar: FC<UpdatesBarProps> = ({ children }) => {
   return <div className="co-cluster-settings__updates-bar">{children}</div>;
 };
 
-export const UpdatesGroup: FC<UpdatesGroupProps> = ({ children, divided }) => {
+const UpdatesGroup: FC<UpdatesGroupProps> = ({ children, divided }) => {
   return (
     <div
       className={css('co-cluster-settings__updates-group', {
@@ -441,7 +478,7 @@ export const UpdatesGroup: FC<UpdatesGroupProps> = ({ children, divided }) => {
   );
 };
 
-export const UpdatesProgress: FC<UpdatesProgressProps> = ({ children }) => {
+const UpdatesProgress: FC<UpdatesProgressProps> = ({ children }) => {
   return (
     <div className="co-cluster-settings__updates-progress" data-test="cv-updates-progress">
       {children}
@@ -453,7 +490,7 @@ const UpdatesType: FC<UpdatesTypeProps> = ({ children }) => {
   return <div className="co-cluster-settings__updates-type">{children}</div>;
 };
 
-export const NodesUpdatesGroup: FC<NodesUpdatesGroupProps> = ({
+const NodesUpdatesGroup: FC<NodesUpdatesGroupProps> = ({
   divided,
   desiredVersion,
   hideIfComplete,
@@ -481,7 +518,10 @@ export const NodesUpdatesGroup: FC<NodesUpdatesGroupProps> = ({
   });
   const isMaster = isMCPMaster(machineConfigPool);
   const isPaused = isMCPPaused(machineConfigPool);
-  const renderedConfigIsUpdated = getReleaseImageVersion(renderedConfig) === desiredVersion;
+  const renderedConfigIsUpdated =
+    renderedConfig?.metadata?.annotations?.[
+      'machineconfiguration.openshift.io/release-image-version'
+    ] === desiredVersion;
   const MCOIsUpdated = getClusterOperatorVersion(machineConfigOperator) === desiredVersion;
   const MCPisUpdated = machineConfigPool?.status?.conditions?.some(
     (c) => c.type === 'Updated' && c.status === K8sResourceConditionStatus.True,
@@ -493,10 +533,10 @@ export const NodesUpdatesGroup: FC<NodesUpdatesGroupProps> = ({
     updatedMachineCountReady || (MCPUpdatingTime > updateStartedTime && renderedConfigIsUpdated)
       ? machineConfigPool?.status?.updatedMachineCount
       : 0;
-  const percentMCPNodes = calculatePercentage(updatedMCPNodes, totalMCPNodes);
+  const percentMCPNodes = Math.round((updatedMCPNodes / totalMCPNodes) * 100);
   const isUpdated = percentMCPNodes === 100;
   const nodeRoleFilterValue = isMaster ? 'control-plane' : mcpName;
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return totalMCPNodes === 0 || (hideIfComplete && isUpdated)
     ? null
     : machineConfigOperatorLoaded && renderedConfigLoaded && (
@@ -508,7 +548,7 @@ export const NodesUpdatesGroup: FC<NodesUpdatesGroupProps> = ({
             {!isMaster && (
               <FieldLevelHelp>
                 {t(
-                  'public~{{name}} {{resource}} may continue to update after the update of {{master}} {{resource}} and {{resource2}} are complete.',
+                  '{{name}} {{resource}} may continue to update after the update of {{master}} {{resource}} and {{resource2}} are complete.',
                   {
                     name,
                     resource: NodeModel.labelPlural,
@@ -521,7 +561,7 @@ export const NodesUpdatesGroup: FC<NodesUpdatesGroupProps> = ({
           </UpdatesType>
           <UpdatesBar>
             <Progress
-              title={t('public~{{updatedMCPNodes}} of {{totalMCPNodes}}', {
+              title={t('{{updatedMCPNodes}} of {{totalMCPNodes}}', {
                 updatedMCPNodes,
                 totalMCPNodes,
               })}
@@ -541,7 +581,7 @@ export const NodesUpdatesGroup: FC<NodesUpdatesGroupProps> = ({
               }
               data-test="mcp-paused-button"
             >
-              {isPaused ? t('public~Resume update') : t('public~Pause update')}
+              {isPaused ? t('Resume update') : t('Pause update')}
             </Button>
           )}
         </UpdatesGroup>
@@ -576,7 +616,7 @@ const OtherNodes: FC<OtherNodesProps> = ({
   );
 };
 
-export const UpdatesGraph: FC<UpdatesGraphProps> = ({ cv }) => {
+const UpdatesGraph: FC<UpdatesGraphProps> = ({ cv }) => {
   const availableUpdates = getSortedAvailableUpdates(cv);
   const lastVersion = getLastCompletedUpdate(cv);
   const newestVersion = availableUpdates[0]?.version;
@@ -590,7 +630,7 @@ export const UpdatesGraph: FC<UpdatesGraphProps> = ({ cv }) => {
   const clusterUpgradeableFalse = !!getConditionUpgradeableFalse(cv);
   const newestVersionIsBlocked =
     clusterUpgradeableFalse && minorVersionIsNewer && !isClusterExternallyManaged();
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const launchModal = useOverlay();
 
   return (
@@ -615,7 +655,7 @@ export const UpdatesGraph: FC<UpdatesGraphProps> = ({ cv }) => {
                 onClick={() => launchModal(LazyClusterMoreUpdatesModalOverlay, { cv })}
                 data-test="cv-more-updates-button"
               >
-                {t('public~+ More')}
+                {t('+ More')}
               </Button>
             )}
           </ChannelLine>
@@ -634,9 +674,7 @@ export const UpdatesGraph: FC<UpdatesGraphProps> = ({ cv }) => {
             )}
           </ChannelLine>
         </ChannelPath>
-        <ChannelName current>
-          {t('public~{{currentChannel}} channel', { currentChannel })}
-        </ChannelName>
+        <ChannelName current>{t('{{currentChannel}} channel', { currentChannel })}</ChannelName>
       </Channel>
       {newerChannel && (
         <Channel>
@@ -647,7 +685,7 @@ export const UpdatesGraph: FC<UpdatesGraphProps> = ({ cv }) => {
             <ChannelLine />
             <ChannelLine />
           </ChannelPath>
-          <ChannelName>{t('public~{{newerChannel}} channel', { newerChannel })}</ChannelName>
+          <ChannelName>{t('{{newerChannel}} channel', { newerChannel })}</ChannelName>
         </Channel>
       )}
     </div>
@@ -664,7 +702,7 @@ const MachineConfigPoolsResource: WatchK8sResource = {
   kind: referenceForModel(MachineConfigPoolModel),
 };
 
-export const ClusterOperatorsLink: FC<ClusterOperatorsLinkProps> = ({
+const ClusterOperatorsLink: FC<ClusterOperatorsLinkProps> = ({
   onCancel,
   children,
   queryString,
@@ -681,7 +719,7 @@ export const ClusterOperatorsLink: FC<ClusterOperatorsLinkProps> = ({
   </Link>
 );
 
-export const UpdateInProgress: FC<UpdateInProgressProps> = ({
+const UpdateInProgress: FC<UpdateInProgressProps> = ({
   desiredVersion,
   machineConfigPools,
   workerMachineConfigPool,
@@ -690,9 +728,9 @@ export const UpdateInProgress: FC<UpdateInProgressProps> = ({
   const [clusterOperators] = useK8sWatchResource<ClusterOperator[]>(ClusterOperatorsResource);
   const totalOperatorsCount = clusterOperators?.length || 0;
   const updatedOperatorsCount = getUpdatedOperatorsCount(clusterOperators, desiredVersion);
-  const percentOperators = calculatePercentage(updatedOperatorsCount, totalOperatorsCount);
+  const percentOperators = Math.round((updatedOperatorsCount / totalOperatorsCount) * 100);
   const masterMachinePoolConfig = getMCPByName(machineConfigPools, NodeTypes.master);
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   return (
     <UpdatesProgress>
@@ -702,7 +740,7 @@ export const UpdateInProgress: FC<UpdateInProgressProps> = ({
         </UpdatesType>
         <UpdatesBar>
           <Progress
-            title={t('public~{{updatedOperatorsCount}} of {{totalOperatorsCount}}', {
+            title={t('{{updatedOperatorsCount}} of {{totalOperatorsCount}}', {
               updatedOperatorsCount,
               totalOperatorsCount,
             })}
@@ -745,6 +783,325 @@ const ClusterServiceVersionResource: WatchK8sResource = {
   kind: referenceForModel(ClusterServiceVersionModel),
 };
 
+// Helper function to get a condition by type from cluster version
+const getConditionOfType = (cv: ClusterVersionKind, type: ClusterVersionConditionType) =>
+  cv.status?.conditions?.find((c) => c.type === type);
+
+// Helper function to detect operator issues (degraded or unavailable)
+// Returns array of operator details for operators with problems
+const detectOperatorIssues = (
+  clusterOperators?: ClusterOperator[],
+): { name: string; issue: string; condition: any }[] => {
+  if (!clusterOperators || clusterOperators.length === 0) {
+    return [];
+  }
+
+  return clusterOperators
+    .map((operator) => {
+      const operatorConditions = operator.status?.conditions || [];
+      const degraded = operatorConditions.find((c) => c.type === 'Degraded' && c.status === 'True');
+      const available = operatorConditions.find(
+        (c) => c.type === 'Available' && c.status === 'False',
+      );
+
+      if (degraded) {
+        return {
+          name: operator.metadata?.name || 'unknown',
+          issue: 'degraded',
+          condition: degraded,
+        };
+      }
+      if (available) {
+        return {
+          name: operator.metadata?.name || 'unknown',
+          issue: 'not available',
+          condition: available,
+        };
+      }
+      return null;
+    })
+    .filter(Boolean);
+};
+
+// Helper function to parse and improve error messages for better user experience
+const parseUpdateFailureMessage = (
+  rawMessage: string,
+  t: (key: string, options?: { [key: string]: string | number }) => string,
+  cv?: ClusterVersionKind,
+  clusterOperators?: ClusterOperator[],
+): { title: string; message: string; operatorDetails?: string } => {
+  // Check for operator-specific failures first, regardless of rawMessage
+  // This ensures we always provide detailed operator information when available
+  if (cv && clusterOperators) {
+    const operatorIssueDetails = detectOperatorIssues(clusterOperators);
+
+    // If we have operator issues, return operator-specific message with technical details
+    if (operatorIssueDetails.length > 0) {
+      const operatorList = operatorIssueDetails
+        .map((detail) => `${detail.name} (${detail.issue})`)
+        .join(', ');
+
+      const baseMessage = t(
+        'public~{{count}} cluster operators are experiencing issues and need to be healthy before the cluster can be updated.',
+        { count: operatorIssueDetails.length },
+      );
+
+      // Build detailed operator condition information for technical details
+      const operatorDetailsMarkdown = operatorIssueDetails
+        .map((detail) => {
+          const conditionInfo = detail.condition.message
+            ? `\n  **Message**: ${detail.condition.message}`
+            : '';
+          const conditionReason = detail.condition.reason
+            ? `\n  **Reason**: ${detail.condition.reason}`
+            : '';
+          return `**${detail.name}**\n  **Status**: ${detail.condition.type}=${detail.condition.status}${conditionReason}${conditionInfo}`;
+        })
+        .join('\n\n');
+
+      return {
+        title: t('public~Cluster operators are experiencing issues'),
+        message: t(
+          'public~{{baseMessage}}\n\nAffected operators: {{operators}}\n\nCheck the operator status and ensure they have sufficient resources and network connectivity.',
+          { baseMessage, operators: operatorList },
+        ),
+        operatorDetails: operatorDetailsMarkdown,
+      };
+    }
+  }
+
+  // If rawMessage is empty AND no operator failures, check if cluster actually has issues
+  if (!rawMessage) {
+    // Check ClusterVersion conditions to see if there are real failures
+    const conditions = cv?.status?.conditions || [];
+    const hasFailing = conditions.some((c) => c.type === 'Failing' && c.status === 'True');
+    const isNotUpgradeable = conditions.some(
+      (c) => c.type === 'Upgradeable' && c.status === 'False',
+    );
+    const hasRetrievalFailure = conditions.some(
+      (c) => c.type === 'RetrievedUpdates' && c.status === 'False',
+    );
+    const hasReleaseIssue = conditions.some(
+      (c) => c.type === 'ReleaseAccepted' && c.status === 'False',
+    );
+
+    // If cluster has actual issues but no message, return generic fallback
+    if (hasFailing || isNotUpgradeable || hasRetrievalFailure || hasReleaseIssue) {
+      return {
+        title: t('public~Cluster has issues preventing updates'),
+        message: t(
+          'public~Your cluster is not ready to update. Check the cluster operator status and fix any failing or degraded operators before you update.',
+        ),
+      };
+    }
+
+    // Cluster is healthy and ready to upgrade - no message needed
+    return {
+      title: '',
+      message: '',
+    };
+  }
+
+  // Pattern: Update already in progress (informational, not an error)
+  // This message comes from Upgradeable condition during updates
+  if (
+    rawMessage.includes('An update is already in progress') ||
+    rawMessage.includes('UpdateInProgress')
+  ) {
+    // Return empty - this is normal during updates, not a blocking issue
+    // The isProgressing check above will show the "Updating" status
+    return {
+      title: '',
+      message: '',
+    };
+  }
+
+  // Pattern: ClusterVersionOverridesSet
+  if (
+    rawMessage.includes('ClusterVersionOverridesSet') ||
+    rawMessage.includes('cluster version overrides prevents upgrades')
+  ) {
+    return {
+      title: t('public~Update blocked by cluster version overrides'),
+      message: t(
+        'public~Your cluster version overrides are preventing automatic updates. To continue, remove the overrides from your ClusterVersion object.',
+      ),
+    };
+  }
+
+  // Pattern: ClusterOperatorsDegraded
+  if (
+    rawMessage.includes('ClusterOperatorsDegraded') ||
+    rawMessage.includes('ClusterOperatorNotAvailable')
+  ) {
+    return {
+      title: t('public~Update blocked by degraded cluster operators'),
+      message: t(
+        'public~Your cluster operators are in a degraded or unavailable state. Fix the operator issues before you update the cluster.',
+      ),
+    };
+  }
+
+  // Pattern: Validation failures
+  if (rawMessage.includes('validation failed') || rawMessage.includes('Validation error')) {
+    return {
+      title: t('public~Update validation failed'),
+      message: t(
+        'public~The update payload failed validation checks. Check the update manifest and cluster configuration for errors.',
+      ),
+    };
+  }
+
+  // Pattern: Network/connectivity issues
+  if (
+    rawMessage.includes('unable to retrieve') ||
+    rawMessage.includes('connection refused') ||
+    rawMessage.includes('timeout')
+  ) {
+    return {
+      title: t('public~Update failed due to connectivity issues'),
+      message: t(
+        'public~Your cluster cannot download or validate the update payload. Check your network connectivity and registry access.',
+      ),
+    };
+  }
+
+  // Pattern: Insufficient resources
+  if (rawMessage.includes('insufficient resources') || rawMessage.includes('out of disk space')) {
+    return {
+      title: t('public~Update failed due to insufficient resources'),
+      message: t(
+        'public~Your cluster does not have enough resources to complete the update. Make sure you have enough disk space and memory available.',
+      ),
+    };
+  }
+
+  // Pattern: Update blocked by policy
+  if (rawMessage.includes('blocked by policy') || rawMessage.includes('not permitted')) {
+    return {
+      title: t('public~Update blocked by cluster policy'),
+      message: t(
+        'public~Cluster policies or governance rules are blocking your update. Contact your cluster administrator for help resolving this issue.',
+      ),
+    };
+  }
+
+  // Pattern: Precondition failures (general)
+  if (rawMessage.includes('Preconditions failed') || rawMessage.includes('Precondition')) {
+    // Try to extract actionable advice (sentences that start with action words)
+    const adviceMatch = rawMessage.match(/\.\s*(Please [^.]+\.)/);
+    const advice = adviceMatch ? adviceMatch[1] : '';
+
+    return {
+      title: t('public~Update preconditions not met'),
+      message:
+        advice ||
+        t(
+          'public~Your cluster does not meet the required conditions for updating. Check the cluster status and fix any blocking conditions before you update.',
+        ),
+    };
+  }
+
+  // Pattern: Signatures/verification failures
+  if (rawMessage.includes('signature') || rawMessage.includes('verification failed')) {
+    return {
+      title: t('public~Update signature verification failed'),
+      message: t(
+        'public~The update payload could not be verified. Check the release signatures and registry certificates for issues.',
+      ),
+    };
+  }
+
+  // Check for broader operator issues (matching troubleshoot conditions)
+  if (cv && clusterOperators) {
+    const conditions = cv.status?.conditions || [];
+
+    // Check for cluster-level failure conditions
+    const failing = conditions.find((c) => c.type === 'Failing' && c.status === 'True');
+    const invalid = conditions.find((c) => c.type === 'Invalid' && c.status === 'True');
+    const retrievedUpdates = conditions.find(
+      (c) => c.type === 'RetrievedUpdates' && c.status === 'False',
+    );
+    const releaseAccepted = conditions.find(
+      (c) => c.type === 'ReleaseAccepted' && c.status === 'False',
+    );
+
+    // Check for operator issues using same logic as troubleshoot conditions
+    const operatorIssueDetails = detectOperatorIssues(clusterOperators);
+
+    // If we have operator issues, show appropriate banner with details
+    if (operatorIssueDetails.length > 0) {
+      const operatorList = operatorIssueDetails
+        .map((detail) => `${detail.name} (${detail.issue})`)
+        .join(', ');
+
+      const baseMessage = t(
+        'public~{{count}} cluster operators are experiencing issues and need to be healthy before the cluster can be updated.',
+        { count: operatorIssueDetails.length },
+      );
+
+      return {
+        title: t('public~Cluster operators are experiencing issues'),
+        message: t(
+          'public~{{baseMessage}}\n\nAffected operators: {{operators}}\n\nCheck the operator status and ensure they have sufficient resources and network connectivity.',
+          { baseMessage, operators: operatorList },
+        ),
+      };
+    }
+
+    // If we have other failure conditions (no operator issues but other problems)
+    const hasOtherFailures =
+      failing ||
+      invalid ||
+      (retrievedUpdates && retrievedUpdates.message) ||
+      (releaseAccepted && releaseAccepted.message);
+
+    if (hasOtherFailures) {
+      return {
+        title: t('public~Cluster update conditions need attention'),
+        message: t(
+          'public~Your cluster has conditions that prevent updates. Check the cluster status and fix any blocking conditions before you update.',
+        ),
+      };
+    }
+  }
+
+  // Default: try to extract meaningful parts from technical messages
+  if (rawMessage.length > 200) {
+    // For very long technical messages, try to extract the last sentence which often contains actionable advice
+    const sentences = rawMessage.split(/[.!?]+/).filter((s) => s.trim());
+    const lastSentence = sentences[sentences.length - 1]?.trim();
+
+    if (
+      lastSentence &&
+      (lastSentence.includes('Please ') ||
+        lastSentence.includes('remove ') ||
+        lastSentence.includes('Check '))
+    ) {
+      return {
+        title: t('public~Update failed'),
+        message: `${lastSentence}.`,
+      };
+    }
+  }
+
+  // Fallback: return cleaned up original message
+  const cleanMessage = rawMessage
+    .replace(/Preconditions failed for payload loaded version="[^"]*" image="[^"]*":\s*/, '') // Remove technical payload info
+    .replace(/Precondition "[^"]*" failed because of "[^"]*":\s*/, '') // Remove precondition technical details
+    .replace(/sha256:[a-f0-9]{64}/g, '[image digest]') // Replace long SHA digests
+    .trim();
+
+  return {
+    title: t('public~Update failed'),
+    message:
+      cleanMessage ||
+      t(
+        'public~Your cluster update could not be completed. Check the cluster status for details or try the update again.',
+      ),
+  };
+};
+
 export const ClusterNotUpgradeableAlert: FC<ClusterNotUpgradeableAlertProps> = ({
   cv,
   onCancel,
@@ -753,7 +1110,7 @@ export const ClusterNotUpgradeableAlert: FC<ClusterNotUpgradeableAlertProps> = (
   const [clusterServiceVersions] = useK8sWatchResource<ClusterServiceVersionKind[]>(
     ClusterServiceVersionResource,
   );
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const notUpgradeableClusterOperators = getNotUpgradeableResources(clusterOperators);
   const notUpgradeableClusterOperatorsPresent = notUpgradeableClusterOperators.length > 0;
   const notUpgradeableClusterServiceVersions = getNotUpgradeableResources(clusterServiceVersions);
@@ -774,10 +1131,10 @@ export const ClusterNotUpgradeableAlert: FC<ClusterNotUpgradeableAlertProps> = (
       title={
         currentVersionParsed && newerUpdateParsed
           ? t(
-              'public~This cluster should not be updated to {{nextMajorMinorVersion}}. You can continue to update to patch releases in {{currentMajorMinorVersion}}.',
+              'Your cluster cannot update to {{nextMajorMinorVersion}}. You can continue to install patch releases in {{currentMajorMinorVersion}}.',
               { nextMajorMinorVersion, currentMajorMinorVersion },
             )
-          : t('public~This cluster should not be updated to the next minor version.')
+          : t('Your cluster cannot update to the next minor version.')
       }
       className="co-alert"
       actionLinks={
@@ -786,7 +1143,7 @@ export const ClusterNotUpgradeableAlert: FC<ClusterNotUpgradeableAlertProps> = (
             {notUpgradeableClusterOperatorsPresent && (
               <FlexItem>
                 <ClusterOperatorsLink onCancel={onCancel} queryString="?status=Cannot+update">
-                  {t('public~View ClusterOperators')}
+                  {t('View ClusterOperators')}
                 </ClusterOperatorsLink>
               </FlexItem>
             )}
@@ -797,7 +1154,7 @@ export const ClusterNotUpgradeableAlert: FC<ClusterNotUpgradeableAlertProps> = (
                   onClick={onCancel}
                   to={`/k8s/ns/all-namespaces/${ClusterServiceVersionModel.plural}`}
                 >
-                  {t('public~View installed Operators')}
+                  {t('View installed Operators')}
                 </Link>
               </FlexItem>
             )}
@@ -814,7 +1171,7 @@ export const ClusterNotUpgradeableAlert: FC<ClusterNotUpgradeableAlertProps> = (
 export const MachineConfigPoolsArePausedAlert: FC<MachineConfigPoolsArePausedAlertProps> = ({
   machineConfigPools,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const [clusterVersion] = useK8sWatchResource<ClusterVersionKind>({
     kind: clusterVersionReference,
     name: 'version',
@@ -833,17 +1190,17 @@ export const MachineConfigPoolsArePausedAlert: FC<MachineConfigPoolsArePausedAle
     pausedMCPs?.length > 0 ? (
     <Alert
       isInline
-      title={t('public~{{resource}} updates are paused.', {
+      title={t('{{resource}} updates are paused.', {
         resource: NodeModel.label,
       })}
-      customIcon={<PauseCircleIcon />}
+      customIcon={<RhUiPauseCircleIcon />}
       actionLinks={
         workerMachineConfigPoolIsEditable && (
           <AlertActionLink
             onClick={() => Promise.all(getMCPsToPausePromises(pausedMCPs, false))}
             data-test="cluster-settings-alerts-paused-nodes-resume-link"
           >
-            {t('public~Resume all updates')}
+            {t('Resume all updates')}
           </AlertActionLink>
         )
       }
@@ -853,11 +1210,364 @@ export const MachineConfigPoolsArePausedAlert: FC<MachineConfigPoolsArePausedAle
   ) : null;
 };
 
-export const ClusterSettingsAlerts: FC<ClusterSettingsAlertsProps> = ({
+// Alert content component for cluster update status
+interface AlertContentProps {
+  failingCondition: boolean;
+  progressingCondition: boolean;
+  hasOperatorProblems: boolean;
+  retrievedUpdatesFailure: boolean;
+  message: string;
+  rawFailureMessage?: string;
+  operatorDetails?: string;
+  currentVersion: string;
+  desiredVersion: string;
+  showPreCheck: boolean;
+  cv: ClusterVersionKind;
+  t: (key: string, options?: { [key: string]: string | number }) => string;
+}
+
+const UpdateAlertContent: FC<AlertContentProps> = ({
+  failingCondition,
+  progressingCondition,
+  hasOperatorProblems,
+  retrievedUpdatesFailure,
+  message,
+  rawFailureMessage,
+  operatorDetails,
+  currentVersion,
+  desiredVersion,
+  showPreCheck,
   cv,
-  machineConfigPools,
+  t,
 }) => {
-  const { t } = useTranslation();
+  // Unified blocking condition predicate that covers all blocking states
+  // This ensures title and body rendering stay in sync
+  const isBlockingCondition =
+    !!failingCondition || hasOperatorProblems || retrievedUpdatesFailure || rawFailureMessage;
+  const isProgressing = !!progressingCondition;
+
+  // Memoize expensive operations
+  const hasUpdates = useMemo(() => hasAvailableUpdates(cv), [cv]);
+  const availableUpdates = useMemo(() => getSortedAvailableUpdates(cv), [cv]);
+
+  const updatesDisplayText = useMemo(() => {
+    if (!hasUpdates) {
+      return t('public~Cluster {{currentVersion}} - Up to Date', { currentVersion });
+    }
+
+    if (availableUpdates.length === 1) {
+      return t('public~Update Available: {{updateVersion}}', {
+        updateVersion: availableUpdates[0]?.version,
+      });
+    }
+
+    if (availableUpdates.length > 1) {
+      return t('public~Available Updates (latest: {{latestVersion}})', {
+        latestVersion: availableUpdates[0]?.version,
+      });
+    }
+    return '';
+  }, [hasUpdates, availableUpdates, currentVersion, t]);
+
+  if (isBlockingCondition && message) {
+    return (
+      <Stack hasGutter>
+        <StackItem>
+          <Label color="red" isCompact>
+            {t('public~Issue detected')}
+          </Label>
+        </StackItem>
+        <StackItem>
+          <div>{message}</div>
+        </StackItem>
+        {(operatorDetails || (rawFailureMessage && rawFailureMessage !== message)) && (
+          <StackItem>
+            <details className="pf-v6-u-mt-sm">
+              <summary className="pf-v6-u-font-size-sm pf-v6-u-color-200">
+                {t('public~View technical details')}
+              </summary>
+              <div className="pf-v6-u-mt-xs pf-v6-u-font-size-sm pf-v6-u-font-family-monospace">
+                <MarkdownView content={operatorDetails || rawFailureMessage} inline />
+              </div>
+            </details>
+          </StackItem>
+        )}
+      </Stack>
+    );
+  }
+
+  if (isProgressing) {
+    return (
+      <Stack hasGutter>
+        <StackItem>
+          <Flex
+            spaceItems={{ default: 'spaceItemsSm' }}
+            alignItems={{ default: 'alignItemsCenter' }}
+          >
+            <FlexItem>
+              <Label color="blue" isCompact icon={<RhUiInProgressIcon />}>
+                {t('public~Updating')}
+              </Label>
+            </FlexItem>
+            {currentVersion !== desiredVersion && (
+              <>
+                <FlexItem className="pf-v6-u-font-size-sm pf-v6-u-color-200">
+                  {currentVersion}
+                </FlexItem>
+                <FlexItem className="pf-v6-u-font-size-sm pf-v6-u-color-200">→</FlexItem>
+                <FlexItem className="pf-v6-u-font-size-sm pf-v6-u-font-weight-bold">
+                  {desiredVersion}
+                </FlexItem>
+              </>
+            )}
+          </Flex>
+        </StackItem>
+        <StackItem>
+          <div className="pf-v6-u-color-200 pf-v6-u-font-size-sm">
+            {currentVersion !== desiredVersion
+              ? t('public~Cluster is updating to {{desiredVersion}}', { desiredVersion })
+              : t('public~Cluster update is in progress')}
+          </div>
+        </StackItem>
+      </Stack>
+    );
+  }
+
+  if (showPreCheck) {
+    return (
+      <Flex direction={{ default: 'column' }} spaceItems={{ default: 'spaceItemsSm' }}>
+        <FlexItem>
+          <Flex
+            spaceItems={{ default: 'spaceItemsSm' }}
+            alignItems={{ default: 'alignItemsCenter' }}
+          >
+            {hasUpdates && availableUpdates.length > 0 && (
+              <FlexItem>
+                <Label color="green" isCompact>
+                  {availableUpdates.length === 1
+                    ? t('public~1 update available')
+                    : t('public~{{count}} updates available', { count: availableUpdates.length })}
+                </Label>
+              </FlexItem>
+            )}
+          </Flex>
+        </FlexItem>
+        <FlexItem>
+          <div>{updatesDisplayText}</div>
+        </FlexItem>
+        <FlexItem>
+          <div className="pf-v6-u-color-200 pf-v6-u-font-size-sm">
+            {hasUpdates
+              ? t('public~Check cluster health and update prerequisites')
+              : t('public~Verify cluster health and operational status')}
+          </div>
+        </FlexItem>
+      </Flex>
+    );
+  }
+
+  return (
+    <Flex direction={{ default: 'column' }} spaceItems={{ default: 'spaceItemsSm' }}>
+      <FlexItem>
+        <div>
+          {updatesDisplayText || t('public~Cluster {{currentVersion}}', { currentVersion })}
+        </div>
+      </FlexItem>
+      <FlexItem>
+        <div className="pf-v6-u-color-200 pf-v6-u-font-size-sm">
+          {t('public~Review cluster status')}
+        </div>
+      </FlexItem>
+    </Flex>
+  );
+};
+
+const UpdateAssessmentCard: FC<{
+  cv: ClusterVersionKind;
+  clusterOperators?: ClusterOperator[];
+  machineConfigPools?: MachineConfigPoolKind[];
+}> = ({ cv, clusterOperators, machineConfigPools }) => {
+  const { t } = useTranslation('public');
+  const isOLSAvailable = useFlag(FEATURE_FLAG_LIGHTSPEED_PLUGIN);
+  const [assessmentExpanded, setAssessmentExpanded] = useState(true);
+
+  // Memoize expensive computations (call all hooks before any returns)
+  const conditions = useMemo(() => cv.status?.conditions || [], [cv.status?.conditions]);
+  const currentVersion = useMemo(() => getLastCompletedUpdate(cv), [cv]);
+  const desiredVersion = useMemo(() => getDesiredClusterVersion(cv), [cv]);
+
+  // Check cluster and operator conditions for alert display
+  const progressingCondition = useMemo(
+    () => conditions.find((c) => c.type === 'Progressing' && c.status === 'True'),
+    [conditions],
+  );
+  const failingCondition = useMemo(
+    () => conditions.find((c) => c.type === 'Failing' && c.status === 'True'),
+    [conditions],
+  );
+  const hasOperatorProblems = useMemo(() => hasOperatorIssues(clusterOperators), [
+    clusterOperators,
+  ]);
+
+  // Determine button visibility using the new unified logic
+  const { showStatus, showPreCheck } = useMemo(
+    () => determineWorkflowButtons(cv, clusterOperators),
+    [cv, clusterOperators],
+  );
+
+  // Get failure details for display when issues exist
+  const upgradeableCondition = useMemo(
+    () => getConditionOfType(cv, ClusterVersionConditionType.Upgradeable),
+    [cv],
+  );
+  const releaseAccepted = useMemo(
+    () => getConditionOfType(cv, ClusterVersionConditionType.ReleaseAccepted),
+    [cv],
+  );
+  const retrievedUpdates = useMemo(
+    () => getConditionOfType(cv, ClusterVersionConditionType.RetrievedUpdates),
+    [cv],
+  );
+  const invalid = useMemo(() => getConditionOfType(cv, ClusterVersionConditionType.Invalid), [cv]);
+
+  const rawFailureMessage = useMemo(
+    () =>
+      failingCondition?.message ||
+      // Only use Upgradeable message when status is False (not upgradeable)
+      (upgradeableCondition?.status === 'False' ? upgradeableCondition.message : '') ||
+      // Only use ReleaseAccepted message when status is False (not accepted)
+      (releaseAccepted?.status === 'False' ? releaseAccepted.message : '') ||
+      // Only use RetrievedUpdates message when status is False (failed to retrieve)
+      (retrievedUpdates?.status === 'False' ? retrievedUpdates.message : '') ||
+      // Only use Invalid message when status is True (cluster version is invalid)
+      (invalid?.status === 'True' ? invalid.message : '') ||
+      '',
+    [failingCondition?.message, upgradeableCondition, releaseAccepted, retrievedUpdates, invalid],
+  );
+
+  const { message, operatorDetails } = useMemo(
+    () => parseUpdateFailureMessage(rawFailureMessage, t, cv, clusterOperators),
+    [rawFailureMessage, t, cv, clusterOperators],
+  );
+
+  // Memoize alert title determination
+  const alertTitle = useMemo(() => {
+    const hasFailures = !!failingCondition || hasOperatorProblems;
+    const isProgressing = !!progressingCondition;
+
+    if (hasFailures && isProgressing) {
+      return t('public~Update issues detected');
+    }
+    if (hasFailures) {
+      return t('public~Cluster issues detected');
+    }
+    if (isProgressing) {
+      return t('public~Cluster updating');
+    }
+    if (showPreCheck) {
+      return t('public~Cluster health');
+    }
+    return t('public~Cluster status');
+  }, [failingCondition, hasOperatorProblems, progressingCondition, showPreCheck, t]);
+
+  // Don't render if OLS is not available
+  if (!isOLSAvailable) {
+    return null;
+  }
+
+  // Don't render if no buttons should show
+  if (!showPreCheck && !showStatus) {
+    return null;
+  }
+
+  return (
+    <Card
+      isExpanded={assessmentExpanded}
+      data-test="cluster-settings-update-assessment-box"
+      className="pf-v6-u-mb-lg pf-v6-u-border-color-info pf-v6-u-border-width-sm"
+    >
+      <CardHeader
+        onExpand={() => setAssessmentExpanded(!assessmentExpanded)}
+        toggleButtonProps={{
+          id: 'update-assessment-toggle',
+          'aria-expanded': assessmentExpanded,
+        }}
+      >
+        <CardTitle>{t('public~AI Assessment')}</CardTitle>
+      </CardHeader>
+      <CardExpandableContent>
+        <CardBody>
+          <Alert
+            variant="info"
+            customIcon={<RhUiInProgressIcon />}
+            isInline
+            title={alertTitle}
+            actionLinks={
+              isOLSAvailable && (showPreCheck || showStatus) ? (
+                <Flex gap={{ default: 'gapLg' }} alignItems={{ default: 'alignItemsFlexStart' }}>
+                  {/* Pre-check button: appears when cluster is healthy and ready for updates */}
+                  {showPreCheck ? (
+                    <UpdateWorkflowOLSButton
+                      phase="pre-check"
+                      cv={cv}
+                      clusterOperators={clusterOperators}
+                      machineConfigPools={machineConfigPools}
+                      variant="primary"
+                    />
+                  ) : null}
+                  {/* Status button: appears when cluster is progressing or has issues */}
+                  {showStatus ? (
+                    <UpdateWorkflowOLSButton
+                      phase="status"
+                      cv={cv}
+                      clusterOperators={clusterOperators}
+                      machineConfigPools={machineConfigPools}
+                      variant="primary"
+                    />
+                  ) : null}
+                </Flex>
+              ) : null
+            }
+          >
+            <UpdateAlertContent
+              failingCondition={!!failingCondition}
+              progressingCondition={!!progressingCondition}
+              hasOperatorProblems={hasOperatorProblems}
+              retrievedUpdatesFailure={!!retrievedUpdates && retrievedUpdates.status === 'False'}
+              message={message}
+              rawFailureMessage={rawFailureMessage}
+              operatorDetails={operatorDetails}
+              currentVersion={currentVersion}
+              desiredVersion={desiredVersion}
+              showPreCheck={showPreCheck}
+              cv={cv}
+              t={t}
+            />
+          </Alert>
+          <Alert
+            variant="warning"
+            isInline
+            isPlain
+            title={t(
+              'public~Cluster updates are irreversible. After an update begins, it cannot be rolled back to the previous version. Verify your cluster is ready before you proceed.',
+            )}
+            className="pf-v6-u-mt-sm"
+            data-test="update-assessment-irreversibility-notice"
+          />
+        </CardBody>
+      </CardExpandableContent>
+    </Card>
+  );
+};
+
+const ClusterSettingsAlerts: FC<ClusterSettingsAlertsProps> = ({ cv, machineConfigPools }) => {
+  const { t } = useTranslation('public');
+  const isOLSAvailable = useFlag(FEATURE_FLAG_LIGHTSPEED_PLUGIN);
+
+  // Gate cluster operator watching behind OLS availability to prevent unnecessary API calls
+  const [clusterOperators] = useK8sWatchResource<ClusterOperator[]>(
+    isOLSAvailable ? ClusterOperatorsResource : null,
+  );
 
   if (isClusterExternallyManaged()) {
     return (
@@ -874,11 +1584,16 @@ export const ClusterSettingsAlerts: FC<ClusterSettingsAlertsProps> = ({
     <>
       {!!getConditionUpgradeableFalse(cv) && <ClusterNotUpgradeableAlert cv={cv} />}
       <MachineConfigPoolsArePausedAlert machineConfigPools={machineConfigPools} />
+      <UpdateAssessmentCard
+        cv={cv}
+        clusterOperators={clusterOperators}
+        machineConfigPools={machineConfigPools}
+      />
     </>
   );
 };
 
-export const ClusterVersionDetailsTable: FC<ClusterVersionDetailsTableProps> = ({
+const ClusterVersionDetailsTable: FC<ClusterVersionDetailsTableProps> = ({
   obj: cv,
   autoscalers,
 }) => {
@@ -891,11 +1606,12 @@ export const ClusterVersionDetailsTable: FC<ClusterVersionDetailsTableProps> = (
   const releaseNotes = showReleaseNotes();
   const status = getClusterUpdateStatus(cv);
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const canUpgrade = useCanClusterUpgrade();
   const [machineConfigPools] = useK8sWatchResource<MachineConfigPoolKind[]>(
     MachineConfigPoolsResource,
   );
+
   const serviceLevelTitle = useServiceLevelTitle();
 
   const desiredVersion = getDesiredClusterVersion(cv);
@@ -946,7 +1662,7 @@ export const ClusterVersionDetailsTable: FC<ClusterVersionDetailsTableProps> = (
                 <div className="co-cluster-settings__row">
                   <DescriptionList className="co-cluster-settings__details co-cluster-settings__details--status">
                     <DescriptionListGroup>
-                      <DescriptionListTerm>{t('public~Update status')}</DescriptionListTerm>
+                      <DescriptionListTerm>{t('Update status')}</DescriptionListTerm>
                       <DescriptionListDescription>
                         <UpdateStatus cv={cv} />
                       </DescriptionListDescription>
@@ -971,9 +1687,7 @@ export const ClusterVersionDetailsTable: FC<ClusterVersionDetailsTableProps> = (
                         className="pf-v6-u-my-sm"
                         isInline
                         isPlain
-                        title={t(
-                          'public~Click "Select a version" to view versions with known issues.',
-                        )}
+                        title={t('Click "Select a version" to view versions with known issues.')}
                         variant="info"
                         data-test="cv-not-recommended-alert"
                       />
@@ -1003,12 +1717,14 @@ export const ClusterVersionDetailsTable: FC<ClusterVersionDetailsTableProps> = (
                 )}
                 {(status === ClusterUpdateStatus.UpdatingAndFailing ||
                   status === ClusterUpdateStatus.Updating) && (
-                  <UpdateInProgress
-                    desiredVersion={desiredVersion}
-                    machineConfigPools={machineConfigPools}
-                    updateStartedTime={updateStartedTime}
-                    workerMachineConfigPool={workerMachineConfigPool}
-                  />
+                  <>
+                    <UpdateInProgress
+                      desiredVersion={desiredVersion}
+                      machineConfigPools={machineConfigPools}
+                      updateStartedTime={updateStartedTime}
+                      workerMachineConfigPool={workerMachineConfigPool}
+                    />
+                  </>
                 )}
               </div>
             </div>
@@ -1017,13 +1733,9 @@ export const ClusterVersionDetailsTable: FC<ClusterVersionDetailsTableProps> = (
         <DescriptionList>
           {window.SERVER_FLAGS.branding !== 'okd' && window.SERVER_FLAGS.branding !== 'azure' && (
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('public~Subscription')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Subscription')}</DescriptionListTerm>
               <DescriptionListDescription>
-                <ExternalLink
-                  text={t('public~OpenShift Cluster Manager')}
-                  href={getOCMLink(clusterID)}
-                />
-                .
+                <ExternalLink text={t('OpenShift Cluster Manager')} href={getOCMLink(clusterID)} />.
               </DescriptionListDescription>
             </DescriptionListGroup>
           )}
@@ -1046,7 +1758,7 @@ export const ClusterVersionDetailsTable: FC<ClusterVersionDetailsTableProps> = (
             </DescriptionListGroup>
           </ServiceLevel>
           <DescriptionListGroup>
-            <DescriptionListTerm>{t('public~Cluster ID')}</DescriptionListTerm>
+            <DescriptionListTerm>{t('Cluster ID')}</DescriptionListTerm>
             <DescriptionListDescription
               className="co-break-all co-select-to-copy"
               data-test-id="cv-details-table-cid"
@@ -1055,7 +1767,7 @@ export const ClusterVersionDetailsTable: FC<ClusterVersionDetailsTableProps> = (
             </DescriptionListDescription>
           </DescriptionListGroup>
           <DescriptionListGroup>
-            <DescriptionListTerm>{t('public~Desired release image')}</DescriptionListTerm>
+            <DescriptionListTerm>{t('Desired release image')}</DescriptionListTerm>
             <DescriptionListDescription
               className="co-break-all co-select-to-copy"
               data-test-id="cv-details-table-image"
@@ -1071,28 +1783,31 @@ export const ClusterVersionDetailsTable: FC<ClusterVersionDetailsTableProps> = (
             </DescriptionListDescription>
           </DescriptionListGroup>
           <DescriptionListGroup>
-            <DescriptionListTerm>{t('public~Cluster version configuration')}</DescriptionListTerm>
+            <DescriptionListTerm>{t('Cluster version configuration')}</DescriptionListTerm>
             <DescriptionListDescription>
-              <ResourceLink kind={referenceForModel(ClusterVersionModel)} name={cv.metadata.name} />
+              <ResourceLink
+                groupVersionKind={getGroupVersionKindForModel(ClusterVersionModel)}
+                name={cv.metadata.name}
+              />
             </DescriptionListDescription>
           </DescriptionListGroup>
           <UpstreamConfigDetailsItem resource={cv} />
           {autoscalers && canUpgrade && (
             <DescriptionListGroup>
               <DescriptionListTerm data-test="cv-autoscaler">
-                {t('public~Cluster autoscaler')}
+                {t('Cluster autoscaler')}
               </DescriptionListTerm>
               <DescriptionListDescription>
                 {_.isEmpty(autoscalers) ? (
                   <Link to={`${resourcePathFromModel(ClusterAutoscalerModel)}/~new`}>
-                    <AddCircleOIcon className="co-icon-space-r" />
-                    {t('public~Create autoscaler')}
+                    <RhUiAddCircleIcon className="co-icon-space-r" />
+                    {t('Create autoscaler')}
                   </Link>
                 ) : (
                   autoscalers.map((autoscaler) => (
                     <div key={autoscaler.metadata.uid}>
                       <ResourceLink
-                        kind={clusterAutoscalerReference}
+                        groupVersionKind={getGroupVersionKindForModel(ClusterAutoscalerModel)}
                         name={autoscaler.metadata.name}
                       />
                     </div>
@@ -1104,15 +1819,15 @@ export const ClusterVersionDetailsTable: FC<ClusterVersionDetailsTableProps> = (
         </DescriptionList>
       </PaneBody>
       <PaneBody>
-        <SectionHeading text={t('public~Update history')} />
+        <SectionHeading text={t('Update history')} />
         {_.isEmpty(history) ? (
-          <EmptyBox label={t('public~History')} />
+          <EmptyBox label={t('History')} />
         ) : (
           <>
             <Content>
               <Content component={ContentVariants.p} className="help-block pf-v6-u-mb-lg">
                 {t(
-                  'public~There is a threshold for rendering update data which may cause gaps in the information below.',
+                  'There is a threshold for rendering update data which may cause gaps in the information below.',
                 )}
               </Content>
             </Content>
@@ -1120,13 +1835,13 @@ export const ClusterVersionDetailsTable: FC<ClusterVersionDetailsTableProps> = (
               <table className="pf-v6-c-table pf-m-compact pf-m-border-rows">
                 <thead className="pf-v6-c-table__thead">
                   <tr className="pf-v6-c-table__tr">
-                    <th className="pf-v6-c-table__th">{t('public~Version')}</th>
-                    <th className="pf-v6-c-table__th">{t('public~State')}</th>
-                    <th className="pf-v6-c-table__th">{t('public~Started')}</th>
-                    <th className="pf-v6-c-table__th">{t('public~Completed')}</th>
+                    <th className="pf-v6-c-table__th">{t('Version')}</th>
+                    <th className="pf-v6-c-table__th">{t('State')}</th>
+                    <th className="pf-v6-c-table__th">{t('Started')}</th>
+                    <th className="pf-v6-c-table__th">{t('Completed')}</th>
                     {releaseNotes && (
                       <th className="pf-v6-c-table__th pf-m-hidden pf-m-visible-on-md">
-                        {t('public~Release notes')}
+                        {t('Release notes')}
                       </th>
                     )}
                   </tr>
@@ -1174,14 +1889,14 @@ export const ClusterVersionDetailsTable: FC<ClusterVersionDetailsTableProps> = (
   );
 };
 
-export const ClusterOperatorTabPage: FC<ClusterOperatorTabPageProps> = ({ obj: cv }) => (
+const ClusterOperatorTabPage: FC<ClusterOperatorTabPageProps> = ({ obj: cv }) => (
   <ClusterOperatorPage cv={cv} autoFocus={false} showTitle={false} />
 );
 
 export const ClusterSettingsPage: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const hasClusterAutoscaler = useFlag(FLAGS.CLUSTER_AUTOSCALER);
-  const title = t('public~Cluster Settings');
+  const title = t('Cluster Settings');
 
   const [objData, objLoaded, objLoadError] = useK8sWatchResource<ClusterVersionKind>({
     kind: clusterVersionReference,
@@ -1241,7 +1956,16 @@ export const ClusterSettingsPage: FC = () => {
 
   return (
     <PageTitleContext.Provider value={titleProviderValues}>
-      <PageHeading title={<div data-test-id="cluster-settings-page-heading">{title}</div>} />
+      <PageHeading
+        title={
+          <div
+            data-test-id="cluster-settings-page-heading"
+            data-test="cluster-settings-page-heading"
+          >
+            {title}
+          </div>
+        }
+      />
       <HorizontalNav {...horizontalNavProps} />
     </PageTitleContext.Provider>
   );

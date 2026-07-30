@@ -5,7 +5,7 @@ import { t } from '../../../../../../../__mocks__/i18next';
 import { monitoringDashboardQueries } from '../../queries';
 import { MonitoringDashboardGraph, GraphTypes } from '../MonitoringDashboardGraph';
 
-jest.mock('@console/shared/src/components/query-browser', () => ({
+jest.mock('@console/shared/src/components/query-browser/QueryBrowser', () => ({
   QueryBrowser: ({ isStack }: { isStack: boolean }) => `QueryBrowser isStack=${isStack}`,
 }));
 

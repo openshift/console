@@ -1,4 +1,9 @@
-import { cleanup, screen, act } from '@testing-library/react';
+import { screen } from '@testing-library/react';
+import {
+  renderWithProviders,
+  verifyInputField,
+} from '@console/shared/src/test-utils/unit-test-utils';
+import { AddOpenIDIDPPage } from '../openid-idp-form';
 import {
   verifyIDPAddAndCancelButtons,
   verifyPageTitleAndSubtitle,
@@ -7,25 +12,14 @@ import {
   mockData,
   setupFileReaderMock,
 } from './test-utils';
-import {
-  renderWithProviders,
-  verifyInputField,
-} from '@console/shared/src/test-utils/unit-test-utils';
-import { AddOpenIDIDPPage } from '../../cluster-settings/openid-idp-form';
 
 describe('Add Identity Provider: OpenID Connect', () => {
+  const renderPage = () => {
+    renderWithProviders(<AddOpenIDIDPPage />);
+  };
+
   beforeAll(() => {
     setupFileReaderMock();
-  });
-
-  beforeEach(async () => {
-    await act(async () => {
-      renderWithProviders(<AddOpenIDIDPPage />);
-    });
-  });
-
-  afterEach(() => {
-    cleanup();
   });
 
   afterAll(() => {
@@ -33,6 +27,7 @@ describe('Add Identity Provider: OpenID Connect', () => {
   });
 
   it('should render page title and sub title', () => {
+    renderPage();
     verifyPageTitleAndSubtitle({
       title: 'Add Identity Provider: OpenID Connect',
       subtitle:
@@ -41,6 +36,7 @@ describe('Add Identity Provider: OpenID Connect', () => {
   });
 
   it('should render the Name label, input element, and help text', async () => {
+    renderPage();
     await verifyInputField({
       inputLabel: 'Name',
       initialValue: 'openid',
@@ -52,6 +48,7 @@ describe('Add Identity Provider: OpenID Connect', () => {
   });
 
   it('should render the Client ID label, input element, and help text', async () => {
+    renderPage();
     await verifyInputField({
       inputLabel: 'Client ID',
       testValue: mockData.updatedFormValues.id,
@@ -60,6 +57,7 @@ describe('Add Identity Provider: OpenID Connect', () => {
   });
 
   it('should render the Client Secret label and input password element', async () => {
+    renderPage();
     await verifyInputField({
       inputLabel: 'Client secret',
       inputType: 'password',
@@ -69,6 +67,7 @@ describe('Add Identity Provider: OpenID Connect', () => {
   });
 
   it('should render the Issuer URL label and elements', async () => {
+    renderPage();
     await verifyInputField({
       inputLabel: 'Issuer URL',
       inputType: 'url',
@@ -80,6 +79,7 @@ describe('Add Identity Provider: OpenID Connect', () => {
   });
 
   it('should render the Claims sub heading abd text', () => {
+    renderPage();
     expect(screen.getByRole('heading', { name: 'Claims' })).toBeVisible();
     expect(
       screen.getByText(
@@ -88,8 +88,9 @@ describe('Add Identity Provider: OpenID Connect', () => {
     ).toBeVisible();
   });
 
-  it('should render the Preferred username label, input element, and help text', () => {
-    verifyIDPListInputFields({
+  it('should render the Preferred username label, input element, and help text', async () => {
+    renderPage();
+    await verifyIDPListInputFields({
       inputLabel: 'Preferred username',
       initialValue: 'preferred_username',
       testValue: mockData.updatedFormValues.username,
@@ -98,8 +99,9 @@ describe('Add Identity Provider: OpenID Connect', () => {
     });
   });
 
-  it('should render the Name label, input element, and help text', () => {
-    verifyIDPListInputFields({
+  it('should render the Name label, input element, and help text', async () => {
+    renderPage();
+    await verifyIDPListInputFields({
       inputLabel: 'Name',
       initialValue: 'name',
       testValue: mockData.updatedFormValues.name,
@@ -108,8 +110,9 @@ describe('Add Identity Provider: OpenID Connect', () => {
     });
   });
 
-  it('should render the Email label, input element, and help text', () => {
-    verifyIDPListInputFields({
+  it('should render the Email label, input element, and help text', async () => {
+    renderPage();
+    await verifyIDPListInputFields({
       inputLabel: 'Email',
       initialValue: 'email',
       testValue: mockData.updatedFormValues.email,
@@ -119,15 +122,18 @@ describe('Add Identity Provider: OpenID Connect', () => {
   });
 
   it('should render the More options sub heading and CA file label and input element', async () => {
+    renderPage();
     expect(screen.getByRole('heading', { name: 'More options' })).toBeVisible();
 
     await verifyIDPFileFields({
       inputLabel: 'CA file',
+      fieldId: 'ca-file-input',
     });
   });
 
-  it('should render the Extra scopes label, input element, and help text', () => {
-    verifyIDPListInputFields({
+  it('should render the Extra scopes label, input element, and help text', async () => {
+    renderPage();
+    await verifyIDPListInputFields({
       inputLabel: 'Extra scopes',
       testValue: mockData.updatedFormValues.updatedValue,
       testId: 'openid-more-options-extra-scopes',
@@ -136,6 +142,7 @@ describe('Add Identity Provider: OpenID Connect', () => {
   });
 
   it('should render control buttons in a button bar', () => {
+    renderPage();
     verifyIDPAddAndCancelButtons();
   });
 });

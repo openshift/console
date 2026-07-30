@@ -1,46 +1,50 @@
-import * as _ from 'lodash';
 import type { ComponentProps, ReactNode, FC } from 'react';
 import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
-import { css } from '@patternfly/react-styles';
-import { connect } from 'react-redux';
-import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
-import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
-import { action } from 'typesafe-actions';
-import { ActionType, getOLSCodeBlock } from '@console/internal/reducers/ols';
-import { safeLoad, safeLoadAll, safeDump } from 'js-yaml';
+import { CodeEditorControl } from '@patternfly/react-code-editor';
 import { ActionGroup, Alert, Button } from '@patternfly/react-core';
-import { DownloadIcon, CompressIcon, ExpandIcon } from '@patternfly/react-icons';
-import { Trans, useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router';
-import { FLAGS, ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
-import { getBadgeFromType } from '@console/shared/src/components/badges/badge-factory';
-import { useResourceSidebarSamples } from '@console/shared/src/hooks/useResourceSidebarSamples';
-import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
-import { useResourceConnectionHandler } from '@console/shared/src/hooks/useResourceConnectionHandler';
-
-import PageBody from '@console/shared/src/components/layout/PageBody';
+import { RhUiDownloadIcon, RhUiCompressIcon, RhUiExpandIcon } from '@patternfly/react-icons';
+import { css } from '@patternfly/react-styles';
+import { safeLoad, safeLoadAll, safeDump } from 'js-yaml';
+import * as _ from 'lodash';
 import type { editor } from 'monaco-editor/esm/vs/editor/editor.api';
+import { Trans, useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+import { useNavigate } from 'react-router';
+import { action } from 'typesafe-actions';
+import type { YAMLTemplate, K8sResourceKind } from '@console/dynamic-plugin-sdk';
+import { isYAMLTemplate, getImpersonate } from '@console/dynamic-plugin-sdk';
+import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
+import type { CodeEditorProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
+import { ActionType, getOLSCodeBlock } from '@console/internal/reducers/ols';
+import { getActiveNamespace } from '@console/internal/reducers/ui';
+import type { RootState } from '@console/internal/redux';
+import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
+import { getBadgeFromType } from '@console/shared/src/components/badges/badge-factory';
 import { CodeEditor } from '@console/shared/src/components/editor/CodeEditor';
 import { CodeEditorSidebar } from '@console/shared/src/components/editor/CodeEditorSidebar';
-import { fold } from '@console/shared/src/components/editor/yaml-editor-utils';
+import { ToggleSidebarButton } from '@console/shared/src/components/editor/ToggleSidebarButton';
 import { downloadYaml } from '@console/shared/src/components/editor/yaml-download-utils';
-import { useFullscreen } from '@console/shared/src/hooks/useFullscreen';
-import {
-  isYAMLTemplate,
-  getImpersonate,
-  YAMLTemplate,
-  K8sResourceKind,
-} from '@console/dynamic-plugin-sdk';
-import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
-import { useFlag } from '@console/shared/src/hooks/useFlag';
-import { LazyManagedResourceSaveModalOverlay } from './modals';
-import ReplaceCodeModal from './modals/replace-code-modal';
-import { checkAccess } from './utils/rbac';
-import { Loading } from './utils/status-box';
-import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
-import { resourceObjPath, resourceListPathFromModel } from './utils/resource-link';
+import { fold } from '@console/shared/src/components/editor/yaml-editor-utils';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
-import type { CodeEditorProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import PageBody from '@console/shared/src/components/layout/PageBody';
+import { FLAGS, ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
+import { useFullscreen } from '@console/shared/src/hooks/useFullscreen';
+import { useResourceConnectionHandler } from '@console/shared/src/hooks/useResourceConnectionHandler';
+import { useResourceSidebarSamples } from '@console/shared/src/hooks/useResourceSidebarSamples';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
+import { ConsoleYAMLSampleModel } from '../models';
+import { getYAMLTemplates } from '../models/yaml-templates';
+import type {
+  AccessReviewResourceAttributes,
+  CodeEditorRef,
+  K8sModel,
+  K8sResourceCommon,
+} from '../module/k8s';
 import {
   referenceForModel,
   k8sCreate,
@@ -48,24 +52,17 @@ import {
   k8sList,
   referenceFor,
   groupVersionFor,
-  AccessReviewResourceAttributes,
-  CodeEditorRef,
-  K8sModel,
-  K8sResourceCommon,
 } from '../module/k8s';
-import { ConsoleYAMLSampleModel } from '../models';
-import { getYAMLTemplates } from '../models/yaml-templates';
 import { findOwner } from '../module/k8s/managed-by';
-import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 import { definitionFor } from '../module/k8s/swagger';
 import { ImportYAMLResults } from './import-yaml-results';
+import { LazyManagedResourceSaveModalOverlay } from './modals';
 import { EditYamlSettingsModal, useEditYamlSettings } from './modals/edit-yaml-settings-modal';
-import { CodeEditorControl } from '@patternfly/react-code-editor';
-import { ToggleSidebarButton } from '@console/shared/src/components/editor/ToggleSidebarButton';
-import { RootState } from '@console/internal/redux';
-import { getActiveNamespace } from '@console/internal/reducers/ui';
-import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { ErrorModal } from './modals/error-modal';
+import { ReplaceCodeModal } from './modals/replace-code-modal';
+import { checkAccess } from './utils/rbac';
+import { resourceObjPath, resourceListPathFromModel } from './utils/resource-link';
+import { Loading } from './utils/status-box';
 
 const generateObjToLoad = (
   templateExtensions: Parameters<typeof getYAMLTemplates>[0],
@@ -75,8 +72,8 @@ const generateObjToLoad = (
   namespace = 'default',
 ) => {
   const sampleObj: K8sResourceKind = safeLoad(
-    yaml ? yaml : getYAMLTemplates(templateExtensions).getIn([kind, id]),
-  );
+    yaml || getYAMLTemplates(templateExtensions).getIn([kind, id]),
+  ) as K8sResourceKind;
   if (_.has(sampleObj.metadata, 'namespace')) {
     sampleObj.metadata.namespace = namespace;
   }
@@ -175,7 +172,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
     yamlSamplesList?: K8sResourceCommon[];
   }>(watchResources);
 
-  const yamlSamplesList = resources.yamlSamplesList;
+  const { yamlSamplesList } = resources;
   const fireTelemetryEvent = useTelemetry();
   const postFormSubmissionCallback = useResourceConnectionHandler<K8sResourceCommon>();
   const [errors, setErrors] = useState<string[]>(null);
@@ -213,7 +210,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
   const editor = useRef();
   const buttons = useRef();
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const getEditor = (): editor.IStandaloneCodeEditor | undefined =>
     monacoRef?.current && 'editor' in monacoRef.current ? monacoRef.current.editor : undefined;
@@ -249,6 +246,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
     const results = [];
     for (const obj of objs) {
       try {
+        // eslint-disable-next-line no-await-in-loop
         const result = await k8sCreate(getModel(obj), obj);
         results.push({
           status: 'fulfilled',
@@ -323,7 +321,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
             yaml = safeDump(obj, { lineWidth: -1 });
             checkEditAccess(obj);
           } catch (e) {
-            yaml = t('public~Error getting YAML: {{e}}', { e });
+            yaml = t('Error getting YAML: {{e}}', { e });
           }
         }
       }
@@ -336,7 +334,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
   const getResourceKindfromYAML = useCallback(
     (yaml) => {
       try {
-        const obj = safeLoad(yaml);
+        const obj = safeLoad(yaml) as Record<string, any>;
         return getModel(obj)?.kind;
       } catch (e) {
         return 'unknown';
@@ -378,7 +376,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
       return false;
     }
     try {
-      safeLoad(str);
+      safeLoad(str) as Record<string, any>;
       return true;
     } catch {
       return false;
@@ -502,7 +500,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
             // TODO: (ggreer). show message on new page. maybe delete old obj?
             return;
           }
-          const s = t('public~{{name}} has been updated to version {{version}}', {
+          const s = t('{{name}} has been updated to version {{version}}', {
             name: obj.metadata.name,
             version: o.metadata.resourceVersion,
           });
@@ -546,27 +544,27 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
   const validate = useCallback(
     (obj) => {
       if (!obj) {
-        return t('public~No YAML content found.');
+        return t('No YAML content found.');
       }
 
       if (!obj.apiVersion) {
-        return t('public~No "apiVersion" field found in YAML.');
+        return t('No "apiVersion" field found in YAML.');
       }
 
       if (!obj.kind) {
-        return t('public~No "kind" field found in YAML.');
+        return t('No "kind" field found in YAML.');
       }
 
       const objModel = getModel(obj);
       if (!objModel) {
         return t(
-          'public~The server doesn\'t have a resource type "kind: {{kind}}, apiVersion: {{apiVersion}}".',
+          'The server doesn\'t have a resource type "kind: {{kind}}, apiVersion: {{apiVersion}}".',
           { kind: obj.kind, apiVersion: obj.apiVersion },
         );
       }
 
       if (!obj.metadata) {
-        return t('public~No "metadata" field found in YAML.');
+        return t('No "metadata" field found in YAML.');
       }
 
       if (obj.metadata.namespace && !objModel.namespaced) {
@@ -576,7 +574,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
       // If this is a namespaced resource, default to the active namespace when none is specified in the YAML.
       if (!obj.metadata.namespace && objModel.namespaced) {
         if (props.activeNamespace === ALL_NAMESPACES_KEY) {
-          return t('public~No "metadata.namespace" field found in YAML.');
+          return t('No "metadata.namespace" field found in YAML.');
         }
         obj.metadata.namespace = props.activeNamespace;
       }
@@ -595,9 +593,9 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
     }
 
     try {
-      obj = safeLoad(editorMounted && getEditor()?.getValue());
+      obj = safeLoad(editorMounted && getEditor()?.getValue()) as Record<string, any>;
     } catch (e) {
-      handleError(t('public~Error parsing YAML: {{e}}', { e }));
+      handleError(t('Error parsing YAML: {{e}}', { e }));
       return;
     }
 
@@ -614,7 +612,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
 
       if (name !== newName) {
         handleError(
-          t('public~Cannot change resource name (original: "{{name}}", updated: "{{newName}}").', {
+          t('Cannot change resource name (original: "{{name}}", updated: "{{newName}}").', {
             name,
             newName,
           }),
@@ -624,7 +622,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
       if (namespace !== newNamespace) {
         handleError(
           t(
-            'public~Cannot change resource namespace (original: "{{namespace}}", updated: "{{newNamespace}}").',
+            'Cannot change resource namespace (original: "{{namespace}}", updated: "{{newNamespace}}").',
             { namespace, newNamespace },
           ),
         );
@@ -632,10 +630,10 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
       }
       if (props.obj.kind !== obj.kind) {
         handleError(
-          t(
-            'public~Cannot change resource kind (original: "{{original}}", updated: "{{updated}}").',
-            { original: props.obj.kind, updated: obj.kind },
-          ),
+          t('Cannot change resource kind (original: "{{original}}", updated: "{{updated}}").', {
+            original: props.obj.kind,
+            updated: obj.kind,
+          }),
         );
         return;
       }
@@ -645,10 +643,10 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
 
       if (apiGroup !== newAPIGroup) {
         handleError(
-          t(
-            'public~Cannot change API group (original: "{{apiGroup}}", updated: "{{newAPIGroup}}").',
-            { apiGroup, newAPIGroup },
-          ),
+          t('Cannot change API group (original: "{{apiGroup}}", updated: "{{newAPIGroup}}").', {
+            apiGroup,
+            newAPIGroup,
+          }),
         );
         return;
       }
@@ -678,7 +676,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
     try {
       objs = safeLoadAll(editorMounted && getEditor()?.getValue()).filter((obj) => obj);
     } catch (e) {
-      handleError(t('public~Error parsing YAML: {{e}}', { e }));
+      handleError(t('Error parsing YAML: {{e}}', { e }));
       return;
     }
 
@@ -687,7 +685,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
         if (objs[0]?.items?.length > 0) {
           objs = objs[0].items;
         } else {
-          handleError(t('public~"items" list is empty'));
+          handleError(t('"items" list is empty'));
           return;
         }
       } else {
@@ -698,7 +696,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
       return;
     }
 
-    //Run through client side validation for all resources
+    // Run through client side validation for all resources
     objs.forEach((obj) => {
       const validationError = validate(obj);
       if (validationError) {
@@ -708,7 +706,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
     });
 
     if (!hasErrors) {
-      //Check for duplicate name/kinds. ~ is not a valid name character, so use it to separate the fields
+      // Check for duplicate name/kinds. ~ is not a valid name character, so use it to separate the fields
       const filteredEntried = _.filter(objs, (obj) => !obj.metadata.generateName);
       const uniqueEntries = _.uniqBy(filteredEntried, (obj) =>
         [
@@ -719,9 +717,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
         ].join('~'),
       );
       if (uniqueEntries.length !== filteredEntried.length) {
-        handleError(
-          t('public~Resources in the same namespace and API group must have unique names'),
-        );
+        handleError(t('Resources in the same namespace and API group must have unique names'));
         return;
       }
       setErrors(null);
@@ -752,17 +748,17 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
     downloadYaml(data);
   };
 
-  const getYamlContent_ = (id = 'default', yaml = '', kind = referenceForModel(props.model)) => {
+  const getYamlContent = (id = 'default', yaml = '', kind = referenceForModel(props.model)) => {
     try {
       const s = generateObjToLoad(templateExtensions, kind, id, yaml, props.obj.metadata.namespace);
       setSampleObj(s);
       return s;
     } catch (error) {
       launchModal(ErrorModal, {
-        title: t('public~Failed to parse YAML sample'),
+        title: t('Failed to parse YAML sample'),
         error: (
           <div className="co-pre-line">
-            {error.message || error.name || t('public~An error occurred.')}
+            {error.message || error.name || t('An error occurred.')}
           </div>
         ),
       });
@@ -775,7 +771,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
   };
 
   const sanitizeYamlContent = (id, yaml, kind) => {
-    const contentObj = getYamlContent_(id, yaml, kind);
+    const contentObj = getYamlContent(id, yaml, kind);
     const sanitizedYaml = convertObjToYAMLString(contentObj);
     displayedVersion.current = _.get(contentObj, 'metadata.resourceVersion');
     return sanitizedYaml;
@@ -793,6 +789,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
   if (displayResults) {
     return (
       <ImportYAMLResults
+        // eslint-disable-next-line react/jsx-no-bind
         createResources={createResources}
         displayResults={setDisplayResults}
         importResources={resourceObjects}
@@ -830,9 +827,9 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
       key="edit-yaml-fullscreen-button"
       onClick={toggleFullscreen}
       isDisabled={!canUseFullScreen}
-      aria-label={t('public~Toggle fullscreen mode')}
-      tooltipProps={{ content: t('public~Toggle fullscreen mode') }}
-      icon={isFullscreen ? <CompressIcon /> : <ExpandIcon />}
+      aria-label={t('Toggle fullscreen mode')}
+      tooltipProps={{ content: t('Toggle fullscreen mode') }}
+      icon={isFullscreen ? <RhUiCompressIcon /> : <RhUiExpandIcon />}
     />
   );
 
@@ -851,7 +848,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
               </Trans>
             ) : (
               t(
-                'public~Create by manually entering YAML or JSON definitions, or by dragging and dropping a file into the editor.',
+                'Create by manually entering YAML or JSON definitions, or by dragging and dropping a file into the editor.',
               )
             ))
           }
@@ -892,12 +889,10 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
                     isInline
                     className="co-alert co-alert--scrollable"
                     variant="danger"
-                    title={t('public~An error occurred')}
+                    title={t('An error occurred')}
                     data-test="yaml-error"
                   >
-                    <div className="co-pre-line">
-                      {[...(errors ? errors : []), props.error].join('\n')}
-                    </div>
+                    <div className="co-pre-line">{[...(errors || []), props.error].join('\n')}</div>
                   </Alert>
                 )}
                 {success && (
@@ -908,9 +903,9 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
                     isInline
                     className="co-alert"
                     variant="info"
-                    title={t('public~This object has been updated.')}
+                    title={t('This object has been updated.')}
                   >
-                    {t('public~Click reload to see the new version.')}
+                    {t('Click reload to see the new version.')}
                   </Alert>
                 )}
                 <ActionGroup className="pf-v6-c-form__group--no-top-margin">
@@ -925,7 +920,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
                         dispatch(closeOLS());
                       }}
                     >
-                      {t('public~Create')}
+                      {t('Create')}
                     </Button>
                   )}
                   {!create && !readOnly && (
@@ -936,7 +931,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
                       data-test="save-changes"
                       onClick={() => save()}
                     >
-                      {t('public~Save')}
+                      {t('Save')}
                     </Button>
                   )}
                   {!create && !genericYAML && (
@@ -947,7 +942,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
                       data-test="reload-object"
                       onClick={() => reload()}
                     >
-                      {t('public~Reload')}
+                      {t('Reload')}
                     </Button>
                   )}
                   <Button
@@ -959,17 +954,17 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
                       dispatch(closeOLS());
                     }}
                   >
-                    {t('public~Cancel')}
+                    {t('Cancel')}
                   </Button>
                   {canDownload && (
                     <Button
-                      icon={<DownloadIcon />}
+                      icon={<RhUiDownloadIcon />}
                       type="submit"
                       variant="secondary"
                       className="pf-v6-c-button--align-right pf-v6-u-display-none pf-v6-u-display-flex-on-sm"
                       onClick={() => download()}
                     >
-                      {t('public~Download')}
+                      {t('Download')}
                     </Button>
                   )}
                 </ActionGroup>

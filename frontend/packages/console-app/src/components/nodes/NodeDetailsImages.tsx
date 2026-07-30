@@ -1,4 +1,5 @@
 import type { FC } from 'react';
+import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { SectionHeading } from '@console/internal/components/utils/headings';
@@ -12,33 +13,31 @@ type NodeDetailsImagesProps = {
 
 const NodeDetailsImages: FC<NodeDetailsImagesProps> = ({ node }) => {
   const images = _.filter(node.status.images, 'names');
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   return (
     <PaneBody>
-      <SectionHeading text={t('console-app~Images')} />
+      <SectionHeading text={t('Images')} />
       <div className="co-table-container">
-        <table className="pf-v6-c-table pf-m-compact pf-m-border-rows">
-          <thead className="pf-v6-c-table__thead">
-            <tr className="pf-v6-c-table__tr">
-              <th className="pf-v6-c-table__th">{t('console-app~Name')}</th>
-              <th className="pf-v6-c-table__th">{t('console-app~Size')}</th>
-            </tr>
-          </thead>
-          <tbody className="pf-v6-c-table__tbody">
+        <Table variant="compact" gridBreakPoint="">
+          <Thead>
+            <Tr>
+              <Th>{t('Name')}</Th>
+              <Th>{t('Size')}</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
             {_.map(images, (image, i) => (
-              <tr className="pf-v6-c-table__tr" key={i}>
-                <td className="pf-v6-c-table__td pf-m-break-word co-select-to-copy">
+              <Tr key={i}>
+                <Td dataLabel={t('Name')} modifier="breakWord" className="co-select-to-copy">
                   {image.names.find(
                     (name: string) => !name.includes('@') && !name.includes('<none>'),
                   ) || image.names[0]}
-                </td>
-                <td className="pf-v6-c-table__td">
-                  {humanizeBinaryBytes(image.sizeBytes).string || '-'}
-                </td>
-              </tr>
+                </Td>
+                <Td dataLabel={t('Size')}>{humanizeBinaryBytes(image.sizeBytes).string || '-'}</Td>
+              </Tr>
             ))}
-          </tbody>
-        </table>
+          </Tbody>
+        </Table>
       </div>
     </PaneBody>
   );

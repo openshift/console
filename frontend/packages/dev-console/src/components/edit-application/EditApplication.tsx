@@ -28,10 +28,6 @@ import {
 } from './edit-application-utils';
 import EditApplicationForm from './EditApplicationForm';
 
-export interface StateProps {
-  perspective: string;
-}
-
 const EditApplication: FC<EditApplicationProps> = ({
   namespace,
   appName,
@@ -39,7 +35,7 @@ const EditApplication: FC<EditApplicationProps> = ({
 }) => {
   const navigate = useNavigate();
   const handleCancel = useCallback(() => navigate(-1), [navigate]);
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const [perspective] = useActivePerspective();
   const perspectiveExtensions = usePerspectives();
   const uploadJarFormToastCallback = useUploadJarFormToast();

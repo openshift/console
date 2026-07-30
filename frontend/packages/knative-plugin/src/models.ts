@@ -191,24 +191,6 @@ export const EventingTriggerModel: K8sKind = {
   color: knativeEventingColor.value,
 };
 
-export const CamelIntegrationModel: K8sKind = {
-  apiGroup: CAMEL_APIGROUP,
-  apiVersion,
-  kind: 'Integration',
-  label: 'Integration',
-  // t('knative-plugin~Integration')
-  labelKey: 'knative-plugin~Integration',
-  labelPlural: 'Integrations',
-  // t('knative-plugin~Integration')
-  labelPluralKey: 'knative-plugin~Integrations',
-  plural: 'integrations',
-  id: 'integration',
-  abbr: 'I',
-  namespaced: true,
-  crd: true,
-  color: knativeEventingColor.value,
-};
-
 export const KafkaModel: K8sKind = {
   apiGroup: STRIMZI_KAFKA_APIGROUP,
   apiVersion: 'v1beta2',

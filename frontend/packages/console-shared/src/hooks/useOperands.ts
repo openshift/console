@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { consoleFetchJSON as coFetchJSON } from '@console/dynamic-plugin-sdk/src/utils/fetch';
 import type { K8sResourceCommon } from '@console/internal/module/k8s';
+import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
 
 export const useOperands = (
   operatorName: string,

@@ -1,42 +1,5 @@
 import type { FC } from 'react';
 import { Suspense } from 'react';
-import * as _ from 'lodash';
-import { Status } from '@console/shared/src/components/status/Status';
-import ActionServiceProvider from '@console/shared/src/components/actions/ActionServiceProvider';
-import ActionMenu from '@console/shared/src/components/actions/menu/ActionMenu';
-import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
-import { useTranslation } from 'react-i18next';
-import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import {
-  K8sKind,
-  K8sResourceKind,
-  K8sResourceKindReference,
-  referenceForModel,
-  DeploymentConfigKind,
-} from '../module/k8s';
-import { DeploymentConfigModel } from '../models';
-import { Conditions } from './conditions';
-import { ResourceEventStream } from './events';
-import { VolumesTable } from './volumes-table';
-import { DetailsPage } from './factory/details';
-import { ListPage } from './factory/list-page';
-import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
-import { LoadingBox } from './utils/status-box';
-
-import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
-import { AsyncComponent } from './utils/async';
-import { ContainerTable } from './utils/container-table';
-import { DetailsItem } from './utils/details-item';
-import { ResourceSummary, RuntimeClass } from './utils/details-page';
-import { SectionHeading } from './utils/headings';
-import { WorkloadPausedAlert } from './utils/workload-pause';
-import { navFactory } from './utils/horizontal-nav';
-import { getDocumentationURL, documentationURLs, isManaged } from './utils/documentation';
-import { ReplicationControllersPage } from './replication-controller';
-import { WorkloadTableHeader, useWorkloadColumns, getWorkloadDataViewRows } from './workload-table';
-import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 import {
   Alert,
   DescriptionList,
@@ -46,6 +9,42 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
+import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
+import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
+import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
+import { Status } from '@console/shared/src/components/status/Status';
+import { DeploymentConfigModel } from '../models';
+import type {
+  K8sKind,
+  K8sResourceKind,
+  K8sResourceKindReference,
+  DeploymentConfigKind,
+} from '../module/k8s';
+import { referenceForModel } from '../module/k8s';
+import { Conditions } from './conditions';
+import { ResourceEventStream } from './events';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
+import { ReplicationControllersPage } from './replication-controller';
+import { AsyncComponent } from './utils/async';
+import { ContainerTable } from './utils/container-table';
+import { DetailsItem } from './utils/details-item';
+import { ResourceSummary, RuntimeClass } from './utils/details-page';
+import { getDocumentationURL, documentationURLs, isManaged } from './utils/documentation';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { LoadingBox } from './utils/status-box';
+import { WorkloadPausedAlert } from './utils/workload-pause';
+import { VolumesTable } from './volumes-table';
+import { WorkloadTableHeader, useWorkloadColumns, getWorkloadDataViewRows } from './workload-table';
 
 const DeploymentConfigsReference: K8sResourceKindReference = 'DeploymentConfig';
 
@@ -71,70 +70,66 @@ const getDeploymentConfigStatus = (dc: K8sResourceKind): string => {
 };
 
 export const DeploymentConfigDetailsList = ({ dc }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const timeout = _.get(dc, 'spec.strategy.rollingParams.timeoutSeconds');
   const updatePeriod = _.get(dc, 'spec.strategy.rollingParams.updatePeriodSeconds');
   const interval = _.get(dc, 'spec.strategy.rollingParams.intervalSeconds');
   const triggers = _.map(dc.spec.triggers, 'type').join(', ');
   return (
     <DescriptionList>
-      <DetailsItem label={t('public~Latest version')} obj={dc} path="status.latestVersion" />
-      <DetailsItem label={t('public~Message')} obj={dc} path="status.details.message" hideEmpty />
-      <DetailsItem label={t('public~Update strategy')} obj={dc} path="spec.strategy.type" />
+      <DetailsItem label={t('Latest version')} obj={dc} path="status.latestVersion" />
+      <DetailsItem label={t('Message')} obj={dc} path="status.details.message" hideEmpty />
+      <DetailsItem label={t('Update strategy')} obj={dc} path="spec.strategy.type" />
       {dc.spec.strategy.type === 'Rolling' && (
         <>
           <DetailsItem
-            label={t('public~Timeout')}
+            label={t('Timeout')}
             obj={dc}
             path="spec.strategy.rollingParams.timeoutSeconds"
             hideEmpty
           >
-            {t('public~{{count}} second', { count: timeout })}
+            {t('{{count}} second', { count: timeout })}
           </DetailsItem>
           <DetailsItem
-            label={t('public~Update period')}
+            label={t('Update period')}
             obj={dc}
             path="spec.strategy.rollingParams.updatePeriodSeconds"
             hideEmpty
           >
-            {t('public~{{count}} second', { count: updatePeriod })}
+            {t('{{count}} second', { count: updatePeriod })}
           </DetailsItem>
           <DetailsItem
-            label={t('public~Interval')}
+            label={t('Interval')}
             obj={dc}
             path="spec.strategy.rollingParams.intervalSeconds"
             hideEmpty
           >
-            {t('public~{{count}} second', { count: interval })}
+            {t('{{count}} second', { count: interval })}
           </DetailsItem>
           <DetailsItem
-            label={t('public~Max unavailable')}
+            label={t('Max unavailable')}
             obj={dc}
             path="spec.strategy.rollingParams.maxUnavailable"
           >
-            {t('public~{{maxUnavailable}} of {{count}} pod', {
+            {t('{{maxUnavailable}} of {{count}} pod', {
               maxUnavailable: dc.spec.strategy.rollingParams.maxUnavailable ?? 1,
               count: dc.spec.replicas,
             })}
           </DetailsItem>
-          <DetailsItem
-            label={t('public~Max surge')}
-            obj={dc}
-            path="spec.strategy.rollingParams.maxSurge"
-          >
-            {t('public~{{maxSurge}} greater than {{count}} pod', {
+          <DetailsItem label={t('Max surge')} obj={dc} path="spec.strategy.rollingParams.maxSurge">
+            {t('{{maxSurge}} greater than {{count}} pod', {
               maxSurge: dc.spec.strategy.rollingParams.maxSurge ?? 1,
               count: dc.spec.replicas,
             })}
           </DetailsItem>
         </>
       )}
-      <DetailsItem label={t('public~Min ready seconds')} obj={dc} path="spec.minReadySeconds">
+      <DetailsItem label={t('Min ready seconds')} obj={dc} path="spec.minReadySeconds">
         {dc.spec.minReadySeconds
-          ? t('public~{{count}} second', { count: dc.spec.minReadySeconds })
-          : t('public~Not configured')}
+          ? t('{{count}} second', { count: dc.spec.minReadySeconds })
+          : t('Not configured')}
       </DetailsItem>
-      <DetailsItem label={t('public~Triggers')} obj={dc} path="spec.triggers" hideEmpty>
+      <DetailsItem label={t('Triggers')} obj={dc} path="spec.triggers" hideEmpty>
         {triggers}
       </DetailsItem>
       <RuntimeClass obj={dc} />
@@ -144,27 +139,27 @@ export const DeploymentConfigDetailsList = ({ dc }) => {
 };
 
 export const DeploymentConfigDeprecationAlert: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <Alert
       isInline
       variant="info"
-      title={t('public~DeploymentConfig is being deprecated with OpenShift 4.14')}
+      title={t('DeploymentConfig is being deprecated with OpenShift 4.14')}
     >
       <p>
         {t(
-          'public~Feature development of DeploymentConfigs will be deprecated in OpenShift Container Platform 4.14.',
+          'Feature development of DeploymentConfigs will be deprecated in OpenShift Container Platform 4.14.',
         )}
       </p>
       <p>
         {t(
-          'public~DeploymentConfigs will continue to be supported for security and critical fixes, but you should migrate to Deployments wherever it is possible.',
+          'DeploymentConfigs will continue to be supported for security and critical fixes, but you should migrate to Deployments wherever it is possible.',
         )}
       </p>
       {!isManaged() && (
         <ExternalLink
           href={getDocumentationURL(documentationURLs.deprecatedDeploymentConfig)}
-          text={t('public~Learn more about Deployments')}
+          text={t('Learn more about Deployments')}
           className="pf-v6-u-mt-md"
         />
       )}
@@ -172,19 +167,19 @@ export const DeploymentConfigDeprecationAlert: FC = () => {
   );
 };
 
-export const DeploymentConfigsDetails: FC<{ obj: K8sResourceKind }> = ({ obj: dc }) => {
-  const { t } = useTranslation();
+const DeploymentConfigsDetails: FC<{ obj: K8sResourceKind }> = ({ obj: dc }) => {
+  const { t } = useTranslation('public');
   return (
     <>
       <PaneBody>
-        <SectionHeading text={t('public~DeploymentConfig details')} />
+        <SectionHeading text={t('DeploymentConfig details')} />
         {dc.spec.paused && <WorkloadPausedAlert obj={dc} model={DeploymentConfigModel} />}
         <PodRingSet key={dc.metadata.uid} obj={dc} path="/spec/replicas" />
         <Grid hasGutter>
           <GridItem sm={6}>
             <ResourceSummary resource={dc} showPodSelector showNodeSelector showTolerations>
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('public~Status')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('Status')}</DescriptionListTerm>
                 <DescriptionListDescription>
                   <Status status={getDeploymentConfigStatus(dc)} />
                 </DescriptionListDescription>
@@ -197,14 +192,14 @@ export const DeploymentConfigsDetails: FC<{ obj: K8sResourceKind }> = ({ obj: dc
         </Grid>
       </PaneBody>
       <PaneBody>
-        <SectionHeading text={t('public~Containers')} />
+        <SectionHeading text={t('Containers')} />
         <ContainerTable containers={dc.spec.template.spec.containers} />
       </PaneBody>
       <PaneBody>
-        <VolumesTable resource={dc} heading={t('public~Volumes')} />
+        <VolumesTable resource={dc} heading={t('Volumes')} />
       </PaneBody>
       <PaneBody>
-        <SectionHeading text={t('public~Conditions')} />
+        <SectionHeading text={t('Conditions')} />
         <Conditions conditions={dc.status.conditions} />
       </PaneBody>
     </>
@@ -301,11 +296,7 @@ const getDataViewRows: GetDataViewRows<DeploymentConfigKind> = (data, columns) =
   return getWorkloadDataViewRows(data, columns, DeploymentConfigModel);
 };
 
-export const DeploymentConfigsList: FC<DeploymentConfigsListProps> = ({
-  data,
-  loaded,
-  ...props
-}) => {
+const DeploymentConfigsList: FC<DeploymentConfigsListProps> = ({ data, loaded, ...props }) => {
   const { columns, resetAllColumnWidths } = useWorkloadColumns<DeploymentConfigKind>(
     DeploymentConfigModel,
   );
@@ -319,7 +310,7 @@ export const DeploymentConfigsList: FC<DeploymentConfigsListProps> = ({
         loaded={loaded}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
+        hideColumnManagement
         isResizable
         resetAllColumnWidths={resetAllColumnWidths}
       />
@@ -337,9 +328,9 @@ export const DeploymentConfigsPage: FC<DeploymentConfigsPageProps> = (props) => 
       kind={DeploymentConfigsReference}
       ListComponent={DeploymentConfigsList}
       createProps={createProps}
-      canCreate={true}
+      canCreate
       helpAlert={<DeploymentConfigDeprecationAlert />}
-      omitFilterToolbar={true}
+      omitFilterToolbar
       {...props}
     />
   );

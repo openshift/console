@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import SvgDropShadowFilter from '../../svg/SvgDropShadowFilter';
+import { SvgDropShadowFilter } from '../../svg/SvgDropShadowFilter';
 
 export const NODE_SHADOW_FILTER_ID = 'NodeShadowsFilterId';
 export const NODE_SHADOW_FILTER_ID_HOVER = 'NodeShadowsFilterId--hover';

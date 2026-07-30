@@ -2,31 +2,31 @@
 
 // Mostly just a copy-paste from patternfly.
 import type { FC, CSSProperties } from 'react';
-
 import { cloneElement } from 'react';
-import { defaults } from 'lodash';
-import { Helpers } from 'victory-core';
-import {
-  ChartLegendTooltipContentProps,
-  ChartLegendTooltipProps,
-  ChartLegendTooltipLabelProps,
-  ChartLegend,
-  ChartLabel,
-  getTheme,
-  ChartCursorTooltip,
-  ChartTooltip,
-} from '@patternfly/react-charts/victory';
+import { ChartLegendTooltipStyles } from '@patternfly/react-charts/dist/esm/victory/components/ChartTheme/ChartStyles';
 import {
   getLegendTooltipSize,
   getLegendTooltipDataProps,
   getLegendTooltipVisibleData,
   getLegendTooltipVisibleText,
 } from '@patternfly/react-charts/dist/esm/victory/components/ChartUtils/chart-tooltip';
-import { ChartLegendTooltipStyles } from '@patternfly/react-charts/dist/esm/victory/components/ChartTheme/ChartStyles';
+import type {
+  ChartLegendTooltipContentProps,
+  ChartLegendTooltipProps,
+  ChartLegendTooltipLabelProps,
+} from '@patternfly/react-charts/victory';
+import {
+  ChartLegend,
+  ChartLabel,
+  getTheme,
+  ChartCursorTooltip,
+  ChartTooltip,
+} from '@patternfly/react-charts/victory';
+import { defaults } from 'lodash';
+import { Helpers } from 'victory';
+import type { DataPoint } from '.';
 
-import { DataPoint } from '.';
-
-export const ChartLegendTooltipContent: FC<
+const ChartLegendTooltipContent: FC<
   ChartLegendTooltipContentProps & {
     stack?: boolean;
     mainDataName?: string;
@@ -83,13 +83,14 @@ export const ChartLegendTooltipContent: FC<
   // Returns x position of flyout
   const getX = () => {
     if (!(center || flyoutWidth || width)) {
-      const x = (rest as any).x;
-      return x ? x : undefined;
+      const { x } = rest as any;
+      return x || undefined;
     }
     const _flyoutWidth = Helpers.evaluateProp(flyoutWidth, props);
     if (width > center.x + _flyoutWidth + pointerLength) {
       return center.x + ChartLegendTooltipStyles.flyout.padding / 2;
-    } else if (center.x < _flyoutWidth + pointerLength) {
+    }
+    if (center.x < _flyoutWidth + pointerLength) {
       return ChartLegendTooltipStyles.flyout.padding / 2 - pointerLength;
     }
     return center.x - _flyoutWidth;
@@ -98,13 +99,14 @@ export const ChartLegendTooltipContent: FC<
   // Returns y position
   const getY = () => {
     if (!(center || flyoutHeight || height)) {
-      const y = (rest as any).y;
-      return y ? y : undefined;
+      const { y } = rest as any;
+      return y || undefined;
     }
     const _flyoutHeight = Helpers.evaluateProp(flyoutHeight, props);
     if (center.y < _flyoutHeight / 2) {
       return ChartLegendTooltipStyles.flyout.padding / 2;
-    } else if (center.y > height - _flyoutHeight / 2) {
+    }
+    if (center.y > height - _flyoutHeight / 2) {
       return height - _flyoutHeight + ChartLegendTooltipStyles.flyout.padding / 2;
     }
     return center.y - _flyoutHeight / 2 + ChartLegendTooltipStyles.flyout.padding / 2;
@@ -183,7 +185,7 @@ export const ChartLegendTooltipContent: FC<
 };
 ChartLegendTooltipContent.displayName = 'ChartLegendTooltipContent';
 
-export const ChartLegendTooltipLabel: FC<ChartLegendTooltipLabelProps> = ({
+const ChartLegendTooltipLabel: FC<ChartLegendTooltipLabelProps> = ({
   index = 0,
   legendData,
   style,

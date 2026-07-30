@@ -9,7 +9,7 @@ type ClampedTextProps = {
   lineClamp?: number;
 };
 
-const ClampedText: FC<ClampedTextProps> = ({ children, lineClamp = 1 }) => {
+export const ClampedText: FC<ClampedTextProps> = ({ children, lineClamp = 1 }) => {
   const [isContentClamped, setContentClamped] = useState<boolean>(false);
   const measureRef = useRef<HTMLDivElement>(null);
   const debouncedSetContentClamped = useDebounceCallback(() => {
@@ -35,5 +35,3 @@ const ClampedText: FC<ClampedTextProps> = ({ children, lineClamp = 1 }) => {
     </div>
   );
 };
-
-export default ClampedText;

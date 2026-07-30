@@ -2,15 +2,15 @@ import type { FC } from 'react';
 import { useCallback, useEffect } from 'react';
 import type { FormikValues } from 'formik';
 import { useFormikContext } from 'formik';
-import type { DetectedBuildType } from '@console/git-service';
-import { ImportStrategy } from '@console/git-service';
+import { ImportStrategy } from '@console/git-service/src/types/git';
+import type { DetectedBuildType } from '@console/git-service/src/utils/build-tool-type-detector';
 import type { PipelineKind } from '../../../types/pipeline';
 import type { NormalizedBuilderImages } from '../../../utils/imagestream-utils';
 import FormSection from '../section/FormSection';
 import BuilderImageSelector from './BuilderImageSelector';
 import BuilderImageTagSelector from './BuilderImageTagSelector';
 
-export interface ImageSectionProps {
+interface ImageSectionProps {
   builderImages: NormalizedBuilderImages;
   existingPipeline?: PipelineKind;
 }

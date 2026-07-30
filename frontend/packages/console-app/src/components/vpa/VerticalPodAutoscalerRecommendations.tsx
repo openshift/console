@@ -13,21 +13,21 @@ import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { getVerticalPodAutoscalersForResource } from '@console/shared/src/utils/resource-utils';
 
 const Recommendations: FC<VerticalPodAutoscalerRecommendationsProps> = ({ obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const recommendations = obj?.status?.recommendation?.containerRecommendations ?? [];
   return (
     <>
-      {recommendations.length > 0 && <p>{t('console-app~Recommended')}</p>}
+      {recommendations.length > 0 && <p>{t('Recommended')}</p>}
       {recommendations.map((recommendation) => (
         <Fragment key={recommendation.containerName}>
           <div>
-            {t('console-app~Container name')}: {recommendation.containerName}
+            {t('Container name')}: {recommendation.containerName}
           </div>
           <div>
-            {t('console-app~CPU')}: {recommendation.target.cpu}
+            {t('CPU')}: {recommendation.target.cpu}
           </div>
           <div>
-            {t('console-app~Memory')}: {recommendation.target.memory}
+            {t('Memory')}: {recommendation.target.memory}
           </div>
         </Fragment>
       ))}
@@ -38,7 +38,7 @@ const Recommendations: FC<VerticalPodAutoscalerRecommendationsProps> = ({ obj })
 export const VerticalPodAutoscalerRecommendations: FC<VerticalPodAutoscalerRecommendationsProps> = ({
   obj,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const [vpas] = useK8sWatchResource<K8sResourceKind[]>({
     groupVersionKind: {
       group: 'autoscaling.k8s.io',
@@ -54,7 +54,7 @@ export const VerticalPodAutoscalerRecommendations: FC<VerticalPodAutoscalerRecom
 
   return (
     <DescriptionListGroup>
-      <DescriptionListTerm>{t('console-app~VerticalPodAutoscalers')}</DescriptionListTerm>
+      <DescriptionListTerm>{t('VerticalPodAutoscalers')}</DescriptionListTerm>
       <DescriptionListDescription>
         {verticalPodAutoscalers.length > 0
           ? verticalPodAutoscalers.map((vpa) => (
@@ -69,7 +69,7 @@ export const VerticalPodAutoscalerRecommendations: FC<VerticalPodAutoscalerRecom
                 <Recommendations obj={vpa} />
               </>
             ))
-          : t('console-app~No VerticalPodAutoscalers')}
+          : t('No VerticalPodAutoscalers')}
       </DescriptionListDescription>
     </DescriptionListGroup>
   );

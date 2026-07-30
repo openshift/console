@@ -2,7 +2,7 @@ import { render } from '@testing-library/react';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
 import TrafficModalRevisionsDropdownField from '../TrafficModalRevisionsDropdownField';
 
-jest.mock('@console/shared', () => ({
+jest.mock('@console/shared/src/components/formik-fields/DropdownField', () => ({
   DropdownField: jest.fn(() => null),
 }));
 

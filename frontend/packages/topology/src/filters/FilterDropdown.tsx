@@ -35,7 +35,7 @@ const FilterDropdown: FC<FilterDropdownProps> = ({
   isDisabled = false,
   opened = false,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   const fireTelemetryEvent = useTelemetry();
   const [isOpen, setIsOpen] = useState(opened);
   const groupsExpanded = filters?.find((f) => f.id === EXPAND_GROUPS_FILTER_ID)?.value ?? true;
@@ -90,9 +90,9 @@ const FilterDropdown: FC<FilterDropdownProps> = ({
       {expandFilters.length ? (
         <div className="odc-topology-filter-dropdown__group">
           <span className="odc-topology-filter-dropdown__expand-groups-switcher">
-            <span className="pf-v6-c-menu__group-title">{t('topology~Expand')}</span>
+            <span className="pf-v6-c-menu__group-title">{t('Expand')}</span>
             <Switch
-              aria-label={t('topology~Collapse groups')}
+              aria-label={t('Collapse groups')}
               isChecked={groupsExpanded}
               onChange={onGroupsExpandedChange}
             />
@@ -115,7 +115,7 @@ const FilterDropdown: FC<FilterDropdownProps> = ({
       {viewType === TopologyViewType.graph && showFilters.length ? (
         <div>
           <Divider />
-          <SelectGroup label={t('topology~Show')}>
+          <SelectGroup label={t('Show')}>
             {showFilters.map((filter) => (
               <SelectOption key={filter.id} value={filter.id} isSelected={filter.value} hasCheckbox>
                 {filter.labelKey ? t(filter.labelKey) : filter.label}
@@ -134,7 +134,7 @@ const FilterDropdown: FC<FilterDropdownProps> = ({
       isExpanded={isOpen}
       isDisabled={isSelectDisabled}
     >
-      {t('topology~Display options')}
+      {t('Display options')}
     </MenuToggle>
   );
 

@@ -8,8 +8,8 @@ import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
-import type { SelectInputOption } from '@console/shared/src';
-import { SingleDropdownField } from '@console/shared/src';
+import type { SelectInputOption } from '@console/shared/src/components/formik-fields/field-types';
+import { SingleDropdownField } from '@console/shared/src/components/formik-fields/SingleDropdownField';
 import { BuildStrategyModel, ClusterBuildStrategyModel } from '../../models';
 import type { BuildStrategyKind, ClusterBuildStrategyKind } from '../../types';
 
@@ -19,7 +19,7 @@ type BuildStrategySelectorProps = {
 };
 
 const BuildStrategySelector: FC<BuildStrategySelectorProps> = ({ namespace, formType }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('shipwright-plugin');
   const { setFieldValue } = useFormikContext<FormikValues>();
   const [error, setError] = useState('');
   const watchedResources = {
@@ -108,13 +108,13 @@ const BuildStrategySelector: FC<BuildStrategySelectorProps> = ({ namespace, form
       <SingleDropdownField
         data-test-id="build-strategy-field"
         name="formData.build.strategy"
-        label={t('shipwright-plugin~Build Strategy')}
+        label={t('Build Strategy')}
         onChange={onChange}
         isDisabled={formType === 'edit'}
-        ariaLabel={t('shipwright-plugin~Cluster Build Strategy')}
-        placeholderText={t('shipwright-plugin~Select Build Strategy')}
+        ariaLabel={t('Cluster Build Strategy')}
+        placeholderText={t('Select Build Strategy')}
         helpText={t(
-          'shipwright-plugin~Cluster Build Strategies define a shared group of steps, needed to fullfil the application build process.',
+          'Cluster Build Strategies define a shared group of steps, needed to fullfil the application build process.',
         )}
         options={clusterBuildStrategyOptions}
         toggleOnSelection

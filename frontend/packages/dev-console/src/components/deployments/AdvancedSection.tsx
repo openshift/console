@@ -1,7 +1,8 @@
 import type { FC } from 'react';
 import { useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { ProgressiveList, ProgressiveListItem } from '@console/shared/src';
+import { ProgressiveList } from '@console/shared/src/components/progressive-list/ProgressiveList';
+import { ProgressiveListItem } from '@console/shared/src/components/progressive-list/ProgressiveListItem';
 import ScalingSection from '../import/advanced/ScalingSection';
 import FormSection from '../import/section/FormSection';
 import PauseRolloutsSection from './PauseRolloutsSection';
@@ -11,19 +12,19 @@ type AdvancedSectionProps = {
 };
 
 const Footer = ({ children }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   return (
     <Trans
       t={t}
       ns="devconsole"
-      defaults="Click on the names to access advanced options for <0></0>."
+      i18nKey="Click on the names to access advanced options for <0></0>."
       components={[children]}
     />
   );
 };
 
 const List: FC<AdvancedSectionProps> = ({ resourceType }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const [visibleItems, setVisibleItems] = useState<string[]>([]);
   const handleVisibleItemChange = (item: string) => {
     setVisibleItems([...visibleItems, item]);
@@ -35,10 +36,10 @@ const List: FC<AdvancedSectionProps> = ({ resourceType }) => {
       onVisibleItemChange={handleVisibleItemChange}
       Footer={Footer}
     >
-      <ProgressiveListItem name={t('devconsole~Pause rollouts')}>
+      <ProgressiveListItem name={t('Pause rollouts')}>
         <PauseRolloutsSection name="formData.paused" resourceType={resourceType} />
       </ProgressiveListItem>
-      <ProgressiveListItem name={t('devconsole~Scaling')}>
+      <ProgressiveListItem name={t('Scaling')}>
         <ScalingSection name="formData.replicas" />
       </ProgressiveListItem>
     </ProgressiveList>
@@ -46,14 +47,10 @@ const List: FC<AdvancedSectionProps> = ({ resourceType }) => {
 };
 
 const AdvancedSection: FC<AdvancedSectionProps> = ({ resourceType }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
 
   return (
-    <FormSection
-      title={t('devconsole~Advanced options')}
-      dataTest="advanced-options-section"
-      fullWidth
-    >
+    <FormSection title={t('Advanced options')} dataTest="advanced-options-section" fullWidth>
       <div data-test="deployment-form-testid">
         <List resourceType={resourceType} />
       </div>

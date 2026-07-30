@@ -1,11 +1,11 @@
 import type { FC } from 'react';
-import * as _ from 'lodash';
+// eslint-disable-next-line no-restricted-imports -- Icons are purely decorative. Probably want to replace these with CSS in the future.
 import { CircleIcon, SquareIcon } from '@patternfly/react-icons';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-
-import { K8sResourceKindReference } from '../module/k8s';
-import { ResourceLink } from './utils/resource-link';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import type { K8sResourceKindReference } from '../module/k8s';
+import { ResourceLink } from './utils/resource-link';
 import { EmptyBox } from './utils/status-box';
 
 const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';
@@ -20,6 +20,7 @@ const ImageStreamTimelineItem: FC<ImageStreamTimelineItemProps> = ({
   linkToTag,
 }) => {
   const referenceAndSHA = _.split(tag.dockerImageReference, '@');
+  const { t } = useTranslation('public');
   return (
     <>
       <li>
@@ -28,7 +29,7 @@ const ImageStreamTimelineItem: FC<ImageStreamTimelineItemProps> = ({
             <CircleIcon />
           </span>
           <div className="co-images-stream-tag-timeline__timestamp">
-            <Timestamp timestamp={tag.created} simple={true} />
+            <Timestamp timestamp={tag.created} simple />
           </div>
         </div>
 
@@ -42,7 +43,9 @@ const ImageStreamTimelineItem: FC<ImageStreamTimelineItemProps> = ({
               title={tag.tag}
               linkTo={linkToTag}
             />
-            <div className="co-break-all">from {referenceAndSHA[0]}</div>
+            <div className="co-break-all">
+              {t('from {{reference}}', { reference: referenceAndSHA[0] })}
+            </div>
             <div className="co-break-all">{referenceAndSHA[1]}</div>
           </div>
         </div>
@@ -68,9 +71,9 @@ export const ImageStreamTimeline: FC<ImageStreamTimelineProps> = ({
   imageStreamName,
   imageStreamNamespace,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   if (!_.some(imageStreamTags, 'items')) {
-    return <EmptyBox label={t('public~Images')} />;
+    return <EmptyBox label={t('Images')} />;
   }
   const tagsArray: TagMeta[] = _.flatten(
     _.map(imageStreamTags, ({ tag, items }) => {

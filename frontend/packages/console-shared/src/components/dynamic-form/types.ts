@@ -3,7 +3,6 @@ export enum JSONSchemaType {
   number = 'number',
   integer = 'integer',
   boolean = 'boolean',
-  null = 'null',
   array = 'array',
   object = 'object',
 }
@@ -13,7 +12,7 @@ export type DynamicFormFieldOptionsList = {
   value: string;
 }[];
 
-export type DynamicFormFieldDependency = {
+type DynamicFormFieldDependency = {
   controlFieldPath: string;
   controlFieldValue: string;
   controlFieldName: string;

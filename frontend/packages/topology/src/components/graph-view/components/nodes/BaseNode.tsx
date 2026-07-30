@@ -14,9 +14,9 @@ import {
 import type { BaseNodeProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { useAccessReview } from '@console/internal/components/utils';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
-import { RESOURCE_NAME_TRUNCATE_LENGTH } from '@console/shared';
-import useHover from '../../../../behavior/useHover';
-import { useSearchFilter } from '../../../../filters';
+import { RESOURCE_NAME_TRUNCATE_LENGTH } from '@console/shared/src/constants/common';
+import { useHover } from '../../../../behavior/useHover';
+import { useSearchFilter } from '../../../../filters/useSearchFilter';
 import { useShowLabel } from '../../../../filters/useShowLabel';
 import { getTopologyResourceObject } from '../../../../utils/topology-utils';
 import { getKindStringAndAbbreviation } from './nodeUtils';
@@ -24,13 +24,14 @@ import { getKindStringAndAbbreviation } from './nodeUtils';
 import '../../../svg/SvgResourceIcon.scss';
 import './BaseNode.scss';
 
-const BaseNode: FC<BaseNodeProps> = ({
+const BaseNodeComponent: FC<BaseNodeProps> = ({
   className,
   innerRadius,
   icon,
   kind,
   element,
   hoverRef,
+  tooltipTriggerRef,
   children,
   onShowCreateConnector,
   onContextMenu,
@@ -42,7 +43,7 @@ const BaseNode: FC<BaseNodeProps> = ({
 }) => {
   const [hoverChange, setHoverChange] = useState<boolean>(false);
   const [hover, internalHoverRef] = useHover(200, 200, [hoverChange]);
-  const nodeHoverRefs = useCombineRefs(internalHoverRef, hoverRef);
+  const nodeHoverRefs = useCombineRefs(tooltipTriggerRef, internalHoverRef, hoverRef);
   // Keep hover active when context menu is open to prevent re-renders
   const isHovering = hover || contextMenuOpen;
   const { width, height } = element.getDimensions();
@@ -76,7 +77,11 @@ const BaseNode: FC<BaseNodeProps> = ({
   }, [createConnectorDrag]);
   return (
     <Layer id={isHovering ? TOP_LAYER : DEFAULT_LAYER}>
-      <g ref={nodeHoverRefs} data-test-id={element.getLabel()}>
+      <g
+        ref={nodeHoverRefs}
+        data-test-id={element.getLabel()}
+        data-test={filtered ? 'filtered-node' : undefined}
+      >
         <DefaultNode
           className={css('odc-base-node', className, alertVariant && StatusModifier[alertVariant], {
             'is-filtered': filtered,
@@ -98,7 +103,7 @@ const BaseNode: FC<BaseNodeProps> = ({
           raiseLabelOnHover={false}
           {...rest}
         >
-          <g data-test-id="base-node-handler">
+          <g data-test-id="base-node-handler" data-test="base-node-handler">
             {icon && showDetails && (
               <>
                 <circle fill="var(--pf-t--color--white)" cx={cx} cy={cy} r={innerRadius + 6} />
@@ -119,4 +124,4 @@ const BaseNode: FC<BaseNodeProps> = ({
   );
 };
 
-export default observer(BaseNode);
+export const BaseNode = observer(BaseNodeComponent);

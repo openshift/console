@@ -26,7 +26,7 @@ type HPAFormikFormProps = {
 const HPAFormikForm: FC<HPAFormikFormProps> = ({ existingHPA, targetResource }) => {
   const navigate = useNavigate();
   const handleCancel = useCallback(() => navigate(-1), [navigate]);
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const initialValues: HPAFormValues = {
     showCanUseYAMLMessage: true,
     disabledFields: {
@@ -53,7 +53,7 @@ const HPAFormikForm: FC<HPAFormikFormProps> = ({ existingHPA, targetResource }) 
       })
       .catch((error) => {
         helpers.setStatus({
-          submitError: error?.message || t('devconsole~Unknown error submitting'),
+          submitError: error?.message || t('Unknown error submitting'),
         });
       });
   };

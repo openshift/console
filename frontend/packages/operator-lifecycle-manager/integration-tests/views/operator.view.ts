@@ -22,7 +22,12 @@ export const operator = {
     cy.log('go to operator overview panel');
     cy.byTestID(operatorCardTestID).click();
     cy.log('go to the install form');
-    cy.byTestID('catalog-details-modal-cta').click({ force: true });
+    // Wait for the Install button to be visible and have a valid href before clicking.
+    // The button is conditionally rendered based on useCtaLink hook, which processes
+    // the CTA href asynchronously. Clicking before href is set causes navigation to fail.
+    cy.byTestID('catalog-details-modal-cta').should('be.visible');
+    cy.byTestID('catalog-details-modal-cta').should('have.attr', 'href').and('not.be.empty');
+    cy.byTestID('catalog-details-modal-cta').click();
     cy.log('verify the channel selection is displayed');
     cy.byTestID('operator-channel-select-toggle').should('exist');
     cy.log('verify the version selection is displayed');
@@ -39,7 +44,11 @@ export const operator = {
      */
     if (installToNamespace !== GlobalInstalledNamespace) {
       cy.log('configure Operator install for single namespace');
-      cy.byTestID('A specific namespace on the cluster-radio-input').check();
+      // Under React 18 concurrent rendering, install mode radios mount after async data loads.
+      // Increase timeout to handle deferred rendering.
+      cy.byTestID('A specific namespace on the cluster-radio-input', { timeout: 60000 })
+        .should('be.visible')
+        .check();
       if (useOperatorRecommendedNamespace) {
         cy.log('configure Operator install for operator recommended namespace');
         cy.byTestID('Operator recommended Namespace:-radio-input').check();
@@ -52,7 +61,11 @@ export const operator = {
         });
       }
     } else {
-      cy.byTestID('All namespaces on the cluster-radio-input').should('be.checked');
+      // Under React 18 concurrent rendering, install mode radios mount after async data loads.
+      // Increase timeout to handle deferred rendering.
+      cy.byTestID('All namespaces on the cluster-radio-input', { timeout: 60000 }).should(
+        'be.checked',
+      );
     }
     if (installToNamespace !== GlobalInstalledNamespace && !useOperatorRecommendedNamespace) {
       cy.byTestID('dropdown-selectbox').click();

@@ -1,7 +1,9 @@
 approvers:
 - acmenezes
 - acornett21
+- AdrielMendezRios
 - bcrochet
+- caxu-rh
 - dcurran90
 - dhoover103
 - itroyano
@@ -17,13 +19,13 @@ approvers:
 - rocrisp
 - skattoju
 - tonytcampbell
-- trgeiger
 - yashoza19
-- yuriolisa
 reviewers:
 - acmenezes
 - acornett21
+- AdrielMendezRios
 - bcrochet
+- caxu-rh
 - dcurran90
 - dhoover103
 - itroyano
@@ -39,6 +41,4 @@ reviewers:
 - rocrisp
 - skattoju
 - tonytcampbell
-- trgeiger
 - yashoza19
-- yuriolisa

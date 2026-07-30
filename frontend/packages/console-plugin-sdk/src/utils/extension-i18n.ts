@@ -4,6 +4,8 @@ import type { ConsoleTFunction } from '@console/dynamic-plugin-sdk/src/extension
 import type { Extension } from '@console/dynamic-plugin-sdk/src/types';
 import { deepForOwn } from '@console/dynamic-plugin-sdk/src/utils/object';
 
+const NS_SEPARATOR = '~';
+
 export const isTranslatableString = (value): value is string => {
   return (
     typeof value === 'string' && value.length > 2 && value.startsWith('%') && value.endsWith('%')
@@ -12,6 +14,28 @@ export const isTranslatableString = (value): value is string => {
 
 export const getTranslationKey = (value: string) =>
   isTranslatableString(value) ? value.substr(1, value.length - 2) : undefined;
+
+/**
+ * Collects the unique i18next namespaces referenced by translatable strings across all
+ * extensions. Useful for passing to `useTranslation(ns)` so Suspense waits for them.
+ */
+export const getNamespacesFromExtensions = <TExtension extends Extension>(
+  extensions: TExtension[],
+): string[] => {
+  const namespaces = new Set<string>();
+  extensions.forEach((extension) => {
+    deepForOwn(extension, isTranslatableString, (value) => {
+      const key = getTranslationKey(value);
+      if (key) {
+        const separatorIndex = key.indexOf(NS_SEPARATOR);
+        if (separatorIndex > 0) {
+          namespaces.add(key.substring(0, separatorIndex));
+        }
+      }
+    });
+  });
+  return Array.from(namespaces);
+};
 
 /**
  * Recursively updates the extension's properties, replacing all `%key%` placeholders within

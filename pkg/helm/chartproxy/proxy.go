@@ -4,8 +4,8 @@ import (
 	"sort"
 	"strings"
 
-	"helm.sh/helm/v3/pkg/chartutil"
-	"helm.sh/helm/v3/pkg/repo"
+	chartutil "helm.sh/helm/v4/pkg/chart/v2/util"
+	repo "helm.sh/helm/v4/pkg/repo/v1"
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/kubernetes"
 	v1 "k8s.io/client-go/kubernetes/typed/core/v1"

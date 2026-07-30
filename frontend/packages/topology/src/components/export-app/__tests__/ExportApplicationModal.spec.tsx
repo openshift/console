@@ -1,11 +1,12 @@
-import { act, screen, fireEvent } from '@testing-library/react';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import * as _ from 'lodash';
 import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import * as useToastModule from '@console/shared/src/components/toast/useToast';
 import * as useUserPreferenceModule from '@console/shared/src/hooks/useUserPreference';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { getExportAppData } from '@console/topology/src/utils/export-app-utils';
-import { ExportModel } from '../../../models';
+import { ExportModel } from '../../../models/gitops-primer';
 import { ExportApplicationModal } from '../ExportApplicationModal';
 import { mockExportData } from './export-data';
 
@@ -19,7 +20,7 @@ jest.mock('react-i18next', () => {
 
 jest.mock('@console/shared/src/components/toast/useToast', () => ({
   ...jest.requireActual('@console/shared/src/components/toast/useToast'),
-  default: jest.fn(),
+  useToast: jest.fn(),
 }));
 
 jest.mock('@console/shared/src/hooks/useUserPreference', () => ({
@@ -38,7 +39,7 @@ jest.mock('@console/shared/src/hooks/useTelemetry', () => ({
   useTelemetry: jest.fn(() => jest.fn()),
 }));
 
-const spyUseToast = useToastModule.default as jest.Mock;
+const spyUseToast = useToastModule.useToast as jest.Mock;
 const spyUseUserPreference = useUserPreferenceModule.useUserPreference as jest.Mock;
 const spyk8sCreate = k8sResourceModule.k8sCreate as jest.Mock;
 const spyk8sKill = k8sResourceModule.k8sKill as jest.Mock;
@@ -92,18 +93,18 @@ describe('ExportApplicationModal', () => {
   });
 
   it('should call k8sCreate with correct data on click of Ok button when the export resource is not created', async () => {
+    const user = userEvent.setup();
     renderWithProviders(
       <ExportApplicationModal namespace="my-app" name="my-export" cancel={jest.fn()} />,
     );
-    await act(async () => {
-      fireEvent.click(screen.getByTestId('close-btn'));
-    });
+    await user.click(screen.getByTestId('close-btn'));
 
     expect(spyk8sCreate).toHaveBeenCalledTimes(1);
     expect(spyk8sCreate).toHaveBeenCalledWith(ExportModel, getExportAppData('my-export', 'my-app'));
   });
 
   it('should call k8sKill and k8sCreate with correct data on click of Ok button when the export resource already exists', async () => {
+    const user = userEvent.setup();
     renderWithProviders(
       <ExportApplicationModal
         name="my-export"
@@ -112,9 +113,7 @@ describe('ExportApplicationModal', () => {
         cancel={jest.fn()}
       />,
     );
-    await act(async () => {
-      fireEvent.click(screen.getByTestId('close-btn'));
-    });
+    await user.click(screen.getByTestId('close-btn'));
 
     expect(spyk8sKill).toHaveBeenCalledTimes(1);
     expect(spyk8sKill).toHaveBeenCalledWith(ExportModel, mockExportData);
@@ -123,15 +122,14 @@ describe('ExportApplicationModal', () => {
   });
 
   it('should call k8sKill and k8sCreate with correct data on click of restart button when export app is in progress', async () => {
+    const user = userEvent.setup();
     const exportData = _.cloneDeep(mockExportData);
     exportData.status.completed = false;
     renderWithProviders(
       <ExportApplicationModal name="my-export" namespace="my-app" exportResource={exportData} />,
     );
 
-    await act(async () => {
-      fireEvent.click(screen.getByTestId('export-restart-btn'));
-    });
+    await user.click(screen.getByTestId('export-restart-btn'));
 
     expect(spyk8sKill).toHaveBeenCalledTimes(1);
     expect(spyk8sKill).toHaveBeenCalledWith(ExportModel, exportData);
@@ -140,15 +138,14 @@ describe('ExportApplicationModal', () => {
   });
 
   it('should call k8sKill with correct data on click of cancel button when export app is in progress', async () => {
+    const user = userEvent.setup();
     const exportData = _.cloneDeep(mockExportData);
     exportData.status.completed = false;
     renderWithProviders(
       <ExportApplicationModal name="my-export" namespace="my-app" exportResource={exportData} />,
     );
 
-    await act(async () => {
-      fireEvent.click(screen.getByTestId('export-restart-btn'));
-    });
+    await user.click(screen.getByTestId('export-cancel-btn'));
 
     expect(spyk8sKill).toHaveBeenCalledTimes(1);
     expect(spyk8sKill).toHaveBeenCalledWith(ExportModel, exportData);

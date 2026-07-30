@@ -50,7 +50,7 @@ const normalizeKamelets = (
 const useKameletsProvider: ExtensionHook<CatalogItem[]> = ({
   namespace,
 }): [CatalogItem[], boolean, any] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const canCreateKameletBinding = useAccessReview({
     group: CamelKameletBindingModel.apiGroup,
     resource: CamelKameletBindingModel.plural,

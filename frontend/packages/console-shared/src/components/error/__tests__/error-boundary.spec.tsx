@@ -1,6 +1,7 @@
 import { screen } from '@testing-library/react';
-import { ErrorBoundary, withFallback } from '..';
 import { renderWithProviders } from '../../../test-utils/unit-test-utils';
+import { ErrorBoundary } from '../error-boundary';
+import { withFallback } from '../fallbacks/withFallback';
 
 const Child = () => <span>Child</span>;
 const ProblemChild = () => {
@@ -47,8 +48,9 @@ describe('ErrorBoundary', () => {
       </ErrorBoundary>,
     );
 
-    expect(container.firstChild).toBeInTheDocument();
-    expect(container.firstChild?.textContent).toBe('');
+    // Default fallback renders an empty element
+    expect(container).not.toBeEmptyDOMElement();
+    expect(container.textContent).toBe('');
   });
 });
 
@@ -73,8 +75,9 @@ describe('withFallback HOC', () => {
     const WrappedComponent = withFallback(ProblemChild);
     const { container } = renderWithProviders(<WrappedComponent />);
 
-    expect(container.firstChild).toBeInTheDocument();
-    expect(container.firstChild?.textContent).toBe('');
+    // Default fallback renders an empty element
+    expect(container).not.toBeEmptyDOMElement();
+    expect(container.textContent).toBe('');
   });
 
   it('should render the custom fallback when the wrapped component throws an error', () => {

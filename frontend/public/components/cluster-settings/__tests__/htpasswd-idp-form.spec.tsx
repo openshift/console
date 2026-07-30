@@ -1,8 +1,8 @@
-import { cleanup, act } from '@testing-library/react';
 import {
   renderWithProviders,
   verifyInputField,
 } from '@console/shared/src/test-utils/unit-test-utils';
+import { AddHTPasswdPage } from '../htpasswd-idp-form';
 import {
   verifyIDPAddAndCancelButtons,
   verifyPageTitleAndSubtitle,
@@ -10,21 +10,14 @@ import {
   mockData,
   setupFileReaderMock,
 } from './test-utils';
-import { AddHTPasswdPage } from '../../cluster-settings/htpasswd-idp-form';
 
 describe('Add Identity Provider: HTPasswd', () => {
+  const renderPage = () => {
+    renderWithProviders(<AddHTPasswdPage />);
+  };
+
   beforeAll(() => {
     setupFileReaderMock();
-  });
-
-  beforeEach(async () => {
-    await act(async () => {
-      renderWithProviders(<AddHTPasswdPage />);
-    });
-  });
-
-  afterEach(() => {
-    cleanup();
   });
 
   afterAll(() => {
@@ -32,6 +25,7 @@ describe('Add Identity Provider: HTPasswd', () => {
   });
 
   it('should render page title and sub title', () => {
+    renderPage();
     verifyPageTitleAndSubtitle({
       title: 'Add Identity Provider: HTPasswd',
       subtitle:
@@ -39,8 +33,9 @@ describe('Add Identity Provider: HTPasswd', () => {
     });
   });
 
-  it('should render the Name label, input element, and help text', () => {
-    verifyInputField({
+  it('should render the Name label, input element, and help text', async () => {
+    renderPage();
+    await verifyInputField({
       inputLabel: 'Name',
       initialValue: 'htpasswd',
       testValue: mockData.updatedFormValues.name,
@@ -50,8 +45,10 @@ describe('Add Identity Provider: HTPasswd', () => {
   });
 
   it('should render the HTPasswd file file label and elements', async () => {
+    renderPage();
     await verifyIDPFileFields({
       inputLabel: 'HTPasswd file',
+      fieldId: 'htpasswd-file',
       helpText: 'Upload an HTPasswd file created using the htpasswd command.',
       fileName: 'example.htpasswd',
       fileContent: mockData.testHtpasswdFileContent,
@@ -59,6 +56,7 @@ describe('Add Identity Provider: HTPasswd', () => {
   });
 
   it('should render control buttons in a button bar', () => {
+    renderPage();
     verifyIDPAddAndCancelButtons();
   });
 });

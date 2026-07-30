@@ -1,7 +1,5 @@
-import * as _ from 'lodash';
-import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import type { FC } from 'react';
-import { css } from '@patternfly/react-styles';
+import { useMemo, useState, useCallback, useEffect } from 'react';
 import {
   Alert,
   Button,
@@ -10,27 +8,24 @@ import {
   Flex,
   FlexItem,
 } from '@patternfly/react-core';
+import { css } from '@patternfly/react-styles';
+import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
-import { AccessReviewResourceAttributes, getImpersonate } from '@console/dynamic-plugin-sdk';
-import { useMemo, useState, useCallback, useEffect } from 'react';
+import type { AccessReviewResourceAttributes } from '@console/dynamic-plugin-sdk';
+import { getImpersonate } from '@console/dynamic-plugin-sdk';
 import TertiaryHeading from '@console/shared/src/components/heading/TertiaryHeading';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
-import {
-  k8sPatch,
-  k8sGet,
-  referenceFor,
-  referenceForOwnerRef,
-  K8sResourceKind,
-  EnvVar,
-} from '../module/k8s';
-import { AsyncComponent } from './utils/async';
-import { checkAccess } from './utils/rbac';
-import { ContainerSelect } from './utils/container-select';
-import { EnvFromPair, EnvType, NameValueEditorPair } from './utils/types';
-import { FieldLevelHelp } from './utils/field-level-help';
-import { LoadingBox, LoadingInline } from './utils/status-box';
-import { ResourceLink } from './utils/resource-link';
 import { ConfigMapModel, SecretModel } from '../models';
+import type { K8sResourceKind, EnvVar } from '../module/k8s';
+import { k8sPatch, k8sGet, referenceFor, referenceForOwnerRef } from '../module/k8s';
+import { AsyncComponent } from './utils/async';
+import { ContainerSelect } from './utils/container-select';
+import { FieldLevelHelp } from './utils/field-level-help';
+import { checkAccess } from './utils/rbac';
+import { ResourceLink } from './utils/resource-link';
+import { LoadingBox, LoadingInline } from './utils/status-box';
+import { EnvFromPair, EnvType, NameValueEditorPair } from './utils/types';
 
 /**
  * Set up an AsyncComponent to wrap the name-value-editor to allow on demand loading to reduce the
@@ -174,10 +169,15 @@ const getContainersObjectForDropdown = (containerArray?: Container[]) => {
 
 class CurrentEnvVars {
   currentEnvVars: EnvVarsState;
+
   rawEnvData: RawEnvData;
+
   isContainerArray: boolean;
+
   isCreate: boolean;
+
   hasInitContainers: boolean;
+
   state: { allowed: boolean };
 
   constructor(data?: RawEnvData, isContainerArray?: boolean, path?: string[]) {
@@ -364,7 +364,7 @@ export const EnvironmentPage: FC<EnvironmentPageProps> = (props) => {
     useLoadingInline,
   } = props;
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const model = useConsoleSelector(
     (state) =>
@@ -430,7 +430,7 @@ export const EnvironmentPage: FC<EnvironmentPageProps> = (props) => {
     Promise.all([
       k8sGet(ConfigMapModel, null, envNamespace).catch((err) => {
         if (err.response?.status !== 403) {
-          const errorMsg = err.message || t('public~Could not load ConfigMaps.');
+          const errorMsg = err.message || t('Could not load ConfigMaps.');
           setLocalErrorMessage(errorMsg);
         }
         return {
@@ -439,17 +439,19 @@ export const EnvironmentPage: FC<EnvironmentPageProps> = (props) => {
       }),
       k8sGet(SecretModel, null, envNamespace).catch((err) => {
         if (err.response?.status !== 403) {
-          const errorMsg = err.message || t('public~Could not load Secrets.');
+          const errorMsg = err.message || t('Could not load Secrets.');
           setLocalErrorMessage(errorMsg);
         }
         return {
           secrets: {},
         };
       }),
-    ]).then(([cmaps, secs]) => {
-      setConfigMaps(cmaps);
-      setSecrets(secs);
-    });
+    ])
+      .then(([cmaps, secs]) => {
+        setConfigMaps(cmaps);
+        setSecrets(secs);
+      })
+      .catch(() => {});
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   /**
@@ -505,11 +507,13 @@ export const EnvironmentPage: FC<EnvironmentPageProps> = (props) => {
 
       const patches = currentEnvVars.getPatches(envPath);
       const promise = k8sPatch(model, obj, patches);
-      handlePromise(promise).then((res) => {
-        setCurrentEnvVars(new CurrentEnvVars(res, currentEnvVars.isContainerArray, envPath));
-        setLocalErrorMessage(null);
-        setSuccess(t('public~Successfully updated the environment variables.'));
-      });
+      handlePromise(promise)
+        .then((res) => {
+          setCurrentEnvVars(new CurrentEnvVars(res, currentEnvVars.isContainerArray, envPath));
+          setLocalErrorMessage(null);
+          setSuccess(t('Successfully updated the environment variables.'));
+        })
+        .catch(() => {});
     },
     [currentEnvVars, envPath, model, obj, handlePromise, t],
   );
@@ -539,6 +543,7 @@ export const EnvironmentPage: FC<EnvironmentPageProps> = (props) => {
     />
   ) : null;
 
+  /* eslint-disable react/no-array-index-key */
   const owners = (obj?.metadata?.ownerReferences || []).map((o, i) => (
     <ResourceLink
       key={i}
@@ -549,14 +554,15 @@ export const EnvironmentPage: FC<EnvironmentPageProps> = (props) => {
       inline
     />
   ));
+  /* eslint-enable react/no-array-index-key */
   const containerVars = (
     <>
       {isReadOnly && !_.isEmpty(owners) && (
-        <Alert isInline variant="info" title={t('public~Environment variables set from parent')}>
-          {t('public~View environment for resource')}{' '}
+        <Alert isInline variant="info" title={t('Environment variables set from parent')}>
+          {t('View environment for resource')}{' '}
           {owners.length > 1 ? (
             <>
-              {t('public~owners:')} {owners}
+              {t('owners:')} {owners}
             </>
           ) : (
             owners
@@ -566,14 +572,14 @@ export const EnvironmentPage: FC<EnvironmentPageProps> = (props) => {
       {currentEnvVars.isContainerArray && (
         <Flex>
           <FlexItem>
-            {containerType === 'containers' ? t('public~Container:') : t('public~Init container:')}
+            {containerType === 'containers' ? t('Container:') : t('Init container:')}
           </FlexItem>
           <FlexItem>{containerDropdown}</FlexItem>
         </Flex>
       )}
       {!currentEnvVars.isCreate && (
         <TertiaryHeading>
-          {t('public~Single values (env)')}
+          {t('Single values (env)')}
           {!isReadOnly && (
             <FieldLevelHelp>
               <Trans t={t} ns="public">
@@ -591,9 +597,9 @@ export const EnvironmentPage: FC<EnvironmentPageProps> = (props) => {
         nameValueId={containerIndex}
         nameValuePairs={envVar[EnvType.ENV]}
         updateParentData={updateEnvVars}
-        nameString={t('public~Name')}
+        nameString={t('Name')}
         readOnly={isReadOnly}
-        allowSorting={true}
+        allowSorting
         configMaps={configMaps}
         secrets={secrets}
         addConfigMapSecret={addConfigMapSecret}
@@ -601,17 +607,17 @@ export const EnvironmentPage: FC<EnvironmentPageProps> = (props) => {
       {currentEnvVars.isContainerArray && (
         <div className="environment-buttons">
           <TertiaryHeading>
-            {t('public~All values from existing ConfigMaps or Secrets (envFrom)')}
+            {t('All values from existing ConfigMaps or Secrets (envFrom)')}
             {!isReadOnly && (
               <FieldLevelHelp>
                 <>
                   {t(
-                    'public~Add new values by referencing an existing ConfigMap or Secret. Drag and drop environment variables within this section to change the order in which they are run.',
+                    'Add new values by referencing an existing ConfigMap or Secret. Drag and drop environment variables within this section to change the order in which they are run.',
                   )}
                   <br />
-                  <strong>{t('public~Note:')}</strong>{' '}
+                  <strong>{t('Note:')}</strong>{' '}
                   {t(
-                    'public~If identical values exist in both lists, the single value in the list above will take precedence.',
+                    'If identical values exist in both lists, the single value in the list above will take precedence.',
                   )}
                 </>
               </FieldLevelHelp>
@@ -656,10 +662,10 @@ export const EnvironmentPage: FC<EnvironmentPageProps> = (props) => {
                 onClick={saveChanges}
                 data-test="environment-save"
               >
-                {t('public~Save')}
+                {t('Save')}
               </Button>
               <Button isDisabled={inProgress} type="button" variant="secondary" onClick={reload}>
-                {t('public~Reload')}
+                {t('Reload')}
               </Button>
             </ActionGroup>
           )}

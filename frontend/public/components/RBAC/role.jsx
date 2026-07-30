@@ -1,36 +1,4 @@
-import * as _ from 'lodash';
 import { Component, useState, useMemo, useEffect, useCallback, Suspense } from 'react';
-import * as fuzzy from 'fuzzysearch';
-import { useLocation, useParams } from 'react-router';
-import { RoleModel, RoleBindingModel } from '../../models';
-import { useTranslation, withTranslation } from 'react-i18next';
-import i18next from 'i18next';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { BindingName, flatten as bindingsFlatten } from './bindings';
-import { RulesList } from './rules';
-import { DetailsPage } from '../factory/details';
-import { MultiListPage } from '../factory/list-page';
-import { TextFilter } from '../factory/text-filter';
-import {
-  ConsoleDataView,
-  getNameCellProps,
-  actionsCellProps,
-  nameCellProps,
-  initialFiltersDefault,
-} from '@console/app/src/components/data-view/ConsoleDataView';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
-import { tableFilters } from '../factory/table-filters';
-import { SectionHeading } from '../utils/headings';
-import { navFactory } from '../utils/horizontal-nav';
-import { ResourceLink, resourceListPathFromModel } from '../utils/resource-link';
-import { LoadingBox } from '../utils/status-box';
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { DetailsForKind } from '../default-resource';
-import { getLastNamespace } from '../utils/breadcrumbs';
-import { roleKind, roleType } from './role-type';
-import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
-import { DASH } from '@console/shared/src/constants/ui';
 import {
   DescriptionList,
   DescriptionListDescription,
@@ -39,9 +7,41 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
+import * as fuzzy from 'fuzzysearch';
+import i18next from 'i18next';
+import * as _ from 'lodash';
+import { useTranslation, withTranslation } from 'react-i18next';
+import { useLocation, useParams } from 'react-router';
+import {
+  ConsoleDataView,
+  getNameCellProps,
+  actionsCellProps,
+  nameCellProps,
+  initialFiltersDefault,
+} from '@console/app/src/components/data-view/ConsoleDataView';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
+import { DASH } from '@console/shared/src/constants/ui';
+import { RoleModel, RoleBindingModel } from '../../models';
 import { referenceForModel, referenceFor } from '../../module/k8s';
+import { DetailsForKind } from '../default-resource';
+import { DetailsPage } from '../factory/details';
+import { MultiListPage } from '../factory/list-page';
+import { tableFilters } from '../factory/table-filters';
+import { TextFilter } from '../factory/text-filter';
+import { getLastNamespace } from '../utils/breadcrumbs';
+import { SectionHeading } from '../utils/headings';
+import { navFactory } from '../utils/horizontal-nav';
+import { ResourceLink, resourceListPathFromModel } from '../utils/resource-link';
+import { LoadingBox } from '../utils/status-box';
+import { BindingName, flatten as bindingsFlatten } from './bindings';
+import { roleKind, roleType } from './role-type';
+import { RulesList } from './rules';
 
 const tableColumnInfo = [{ id: 'name' }, { id: 'namespace-always-show' }, { id: 'actions' }];
 
@@ -95,7 +95,7 @@ class Details extends Component {
     const { creationTimestamp, name, namespace } = ruleObj.metadata;
     const { ruleFilter } = this.state;
 
-    let rules = ruleObj.rules;
+    let { rules } = ruleObj;
     if (ruleFilter) {
       const fuzzyCaseInsensitive = (a, b) => fuzzy(_.toLower(a), _.toLower(b));
       const searchKeys = ['nonResourceURLs', 'resources', 'verbs', 'resourceNames'];
@@ -108,17 +108,17 @@ class Details extends Component {
     return (
       <div>
         <PaneBody>
-          <SectionHeading text={t('public~Role details')} />
+          <SectionHeading text={t('Role details')} />
           <Grid hasGutter>
             <GridItem span={6}>
               <DescriptionList>
                 <DescriptionListGroup>
-                  <DescriptionListTerm>{t('public~Role name')}</DescriptionListTerm>
+                  <DescriptionListTerm>{t('Role name')}</DescriptionListTerm>
                   <DescriptionListDescription>{name}</DescriptionListDescription>
                 </DescriptionListGroup>
                 {namespace && (
                   <DescriptionListGroup>
-                    <DescriptionListTerm>{t('public~Namespace')}</DescriptionListTerm>
+                    <DescriptionListTerm>{t('Namespace')}</DescriptionListTerm>
                     <DescriptionListDescription>
                       <ResourceLink kind="Namespace" name={namespace} />
                     </DescriptionListDescription>
@@ -129,7 +129,7 @@ class Details extends Component {
             <GridItem span={6}>
               <DescriptionList>
                 <DescriptionListGroup>
-                  <DescriptionListTerm>{t('public~Created at')}</DescriptionListTerm>
+                  <DescriptionListTerm>{t('Created at')}</DescriptionListTerm>
                   <DescriptionListDescription>
                     <Timestamp timestamp={creationTimestamp} />
                   </DescriptionListDescription>
@@ -139,19 +139,16 @@ class Details extends Component {
           </Grid>
         </PaneBody>
         <PaneBody>
-          <SectionHeading text={t('public~Rules')} />
+          <SectionHeading text={t('Rules')} />
           <div>
             {/* This page is temporarily disabled until we update the safe resources list.
             <div>
               <Link to={addHref(name, namespace)}>
-                <Button variant="primary">{t('public~Add Rule')}</Button>
+                <Button variant="primary">{t('Add Rule')}</Button>
               </Link>
             </div>
             */}
-            <TextFilter
-              label={t('public~rules by action or resource')}
-              onChange={this.changeFilter}
-            />
+            <TextFilter label={t('rules by action or resource')} onChange={this.changeFilter} />
           </div>
           <RulesList rules={rules} name={name} namespace={namespace} />
         </PaneBody>
@@ -203,11 +200,11 @@ const getBindingsDataViewRows = (data, columns) => {
 };
 
 const useBindingsColumns = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return useMemo(
     () => [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: bindingsTableColumnInfo[0].id,
         sort: 'metadata.name',
         props: {
@@ -216,7 +213,7 @@ const useBindingsColumns = () => {
         },
       },
       {
-        title: t('public~Subject kind'),
+        title: t('Subject kind'),
         id: bindingsTableColumnInfo[1].id,
         sort: 'subject.kind',
         props: {
@@ -224,7 +221,7 @@ const useBindingsColumns = () => {
         },
       },
       {
-        title: t('public~Subject name'),
+        title: t('Subject name'),
         id: bindingsTableColumnInfo[2].id,
         sort: 'subject.name',
         props: {
@@ -232,7 +229,7 @@ const useBindingsColumns = () => {
         },
       },
       {
-        title: t('public~Namespace'),
+        title: t('Namespace'),
         id: bindingsTableColumnInfo[3].id,
         sort: 'metadata.namespace',
         props: {
@@ -245,7 +242,7 @@ const useBindingsColumns = () => {
 };
 
 const BindingsListComponent = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const columns = useBindingsColumns();
 
   const { data, loaded, staticFilters } = props;
@@ -270,6 +267,7 @@ const BindingsListComponent = (props) => {
         if (filtersMap[filterKey]) {
           return filtersMap[filterKey](filterValue, binding);
         }
+        return true;
       });
     });
   }, [data, staticFilters]);
@@ -280,16 +278,16 @@ const BindingsListComponent = (props) => {
         {...props}
         data={filteredData}
         loaded={loaded}
-        label={t('public~RoleBindings')}
+        label={t('RoleBindings')}
         columns={columns}
         getDataViewRows={getBindingsDataViewRows}
-        hideColumnManagement={true}
+        hideColumnManagement
       />
     </Suspense>
   );
 };
 
-export const BindingsForRolePage = (props) => {
+const BindingsForRolePage = (props) => {
   const { name, ns } = useParams();
   const {
     obj: { kind },
@@ -299,11 +297,11 @@ export const BindingsForRolePage = (props) => {
     resources.push({ kind: 'ClusterRoleBinding', namespaced: false, optional: true });
   }
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <MultiListPage
-      canCreate={true}
-      createButtonText={t('public~Create binding')}
+      canCreate
+      createButtonText={t('Create binding')}
       createProps={{
         to: `/k8s/${
           ns ? `ns/${ns}` : 'cluster'
@@ -318,7 +316,7 @@ export const BindingsForRolePage = (props) => {
       resources={resources}
       namespace={ns}
       flatten={bindingsFlatten}
-      omitFilterToolbar={true}
+      omitFilterToolbar
     />
   );
 };
@@ -369,8 +367,6 @@ export const RolesDetailsPage = (props) => {
   );
 };
 
-export const ClusterRolesDetailsPage = RolesDetailsPage;
-
 export const ClusterRoleBindingsDetailsPage = (props) => {
   const pages = [navFactory.details(DetailsForKind), navFactory.editYaml()];
   const location = useLocation();
@@ -392,13 +388,13 @@ export const ClusterRoleBindingsDetailsPage = (props) => {
 };
 
 const useRolesColumns = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(RoleModel);
 
   const columns = useMemo(
     () => [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         resizableProps: getResizableProps(tableColumnInfo[0].id),
@@ -408,7 +404,7 @@ const useRolesColumns = () => {
         },
       },
       {
-        title: t('public~Namespace'),
+        title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
@@ -431,27 +427,27 @@ const useRolesColumns = () => {
 };
 
 const useRoleFilterOptions = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return useMemo(() => {
     return [
       {
         value: 'cluster',
-        label: t('public~Cluster-wide Roles'),
+        label: t('Cluster-wide Roles'),
       },
       {
         value: 'namespace',
-        label: t('public~Namespace Roles'),
+        label: t('Namespace Roles'),
       },
       {
         value: 'system',
-        label: t('public~System Roles'),
+        label: t('System Roles'),
       },
     ];
   }, [t]);
 };
 
 const RolesList = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { data, loaded } = props;
   const { columns, resetAllColumnWidths } = useRolesColumns();
   const roleFilterOptions = useRoleFilterOptions();
@@ -463,8 +459,8 @@ const RolesList = (props) => {
       <DataViewCheckboxFilter
         key="role-kind"
         filterId="role-kind"
-        title={t('public~Role')}
-        placeholder={t('public~Filter by role')}
+        title={t('Role')}
+        placeholder={t('Filter by role')}
         options={roleFilterOptions}
       />,
     ],
@@ -483,13 +479,13 @@ const RolesList = (props) => {
         {...props}
         data={data}
         loaded={loaded}
-        label={t('public~Roles')}
+        label={t('Roles')}
         columns={columns}
         getDataViewRows={getDataViewRows}
         initialFilters={initialFilters}
         additionalFilterNodes={additionalFilterNodes}
         matchesAdditionalFilters={matchesAdditionalFilters}
-        hideColumnManagement={true}
+        hideColumnManagement
         isResizable
         resetAllColumnWidths={resetAllColumnWidths}
       />
@@ -498,7 +494,7 @@ const RolesList = (props) => {
 };
 
 export const RolesPage = ({ namespace, mock, showTitle }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const location = useLocation();
 
   // Track which filter is selected from URL params
@@ -552,17 +548,17 @@ export const RolesPage = ({ namespace, mock, showTitle }) => {
   return (
     <MultiListPage
       ListComponent={RolesList}
-      canCreate={true}
+      canCreate
       showTitle={showTitle}
       namespace={namespace}
       createAccessReview={accessReview}
-      createButtonText={t('public~Create Role')}
+      createButtonText={t('Create Role')}
       createProps={{ to: `/k8s/ns/${createNS}/roles/~new` }}
       flatten={(resourcesData) => _.flatMap(resourcesData, 'data').filter((r) => !!r)}
       resources={resources}
-      title={t('public~Roles')}
+      title={t('Roles')}
       mock={mock}
-      omitFilterToolbar={true}
+      omitFilterToolbar
     />
   );
 };

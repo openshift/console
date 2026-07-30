@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import type { UserPreferenceCustomField as CustomFieldType } from '@console/dynamic-plugin-sdk/src';
-import { ErrorBoundaryInline } from '@console/shared/src/components/error';
+import { ErrorBoundaryInline } from '@console/shared/src/components/error/fallbacks/ErrorBoundaryInline';
 import type { UserPreferenceFieldProps } from './types';
 
 type UserPreferenceCustomFieldProps = UserPreferenceFieldProps<CustomFieldType>;

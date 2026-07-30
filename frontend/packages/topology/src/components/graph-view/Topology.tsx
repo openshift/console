@@ -1,5 +1,6 @@
 import type { FC } from 'react';
 import { memo, useRef, useState, useCallback, useEffect } from 'react';
+import { Hint, HintBody } from '@patternfly/react-core';
 import type {
   GraphElement,
   BaseEdge,
@@ -31,19 +32,19 @@ import type { TopologyComponentFactory } from '@console/dynamic-plugin-sdk/src/e
 import { isTopologyComponentFactory } from '@console/dynamic-plugin-sdk/src/extensions/topology';
 import type { RootState } from '@console/internal/redux';
 import { SyncPubSubModalLauncher } from '@console/knative-plugin/src/components/pub-sub/PubSubController';
-import { withFallback, ErrorBoundaryFallbackPage } from '@console/shared/src/components/error';
+import { ErrorBoundaryFallbackPage } from '@console/shared/src/components/error/fallbacks/ErrorBoundaryFallbackPage';
+import { withFallback } from '@console/shared/src/components/error/fallbacks/withFallback';
 import type { WithUserPreferenceProps } from '@console/shared/src/hoc/withUserPreference';
 import { withUserPreference } from '@console/shared/src/hoc/withUserPreference';
 import { useQueryParams } from '@console/shared/src/hooks/useQueryParams';
 import { TOPOLOGY_LAYOUT_CONFIG_USER_PREFERENCE_KEY } from '../../const';
-import { odcElementFactory } from '../../elements';
+import { odcElementFactory } from '../../elements/odcElementFactory';
 import { getTopologyGraphModel, setTopologyGraphModel } from '../../redux/action';
 import type { ShowGroupingHintEventListener } from '../../topology-types';
 import { SHOW_GROUPING_HINT_EVENT } from '../../topology-types';
-import { componentFactory } from './components';
+import { componentFactory } from './components/componentFactory';
 import { DEFAULT_LAYOUT, SUPPORTED_LAYOUTS, layoutFactory } from './layouts/layoutFactory';
 import TopologyControlBar from './TopologyControlBar';
-
 import './Topology.scss';
 
 const STORED_NODE_LAYOUT_FIELDS = ['id', 'x', 'y'];
@@ -93,7 +94,9 @@ const TopologyGraphView = memo<TopologyGraphViewProps>(
           <VisualizationSurface state={{ selectedIds: [selectedId] }} />
           {dragHint && (
             <div className="odc-topology__hint-container">
-              <div className="odc-topology__hint-background">{dragHint}</div>
+              <Hint>
+                <HintBody>{dragHint}</HintBody>
+              </Hint>
             </div>
           )}
           <TopologyControlBar visualization={visualization} isDisabled={controlsDisabled} />
@@ -129,7 +132,7 @@ interface TopologyProps {
   setVisualization: (vis: Visualization) => void;
 }
 
-const Topology: FC<
+const TopologyComponent: FC<
   TopologyProps & StateProps & DispatchProps & WithUserPreferenceProps<object>
 > = ({
   model,
@@ -379,7 +382,7 @@ const TopologyDispatchToProps = (dispatch): DispatchProps => ({
   },
 });
 
-export default withFallback(
+export const Topology = withFallback(
   connect<StateProps, DispatchProps, TopologyProps>(
     TopologyStateToProps,
     TopologyDispatchToProps,
@@ -387,7 +390,7 @@ export default withFallback(
     withUserPreference<TopologyProps & WithUserPreferenceProps<object>, object>(
       TOPOLOGY_LAYOUT_CONFIG_USER_PREFERENCE_KEY,
       {},
-    )(memo(Topology)),
+    )(memo(TopologyComponent)),
   ),
   ErrorBoundaryFallbackPage,
 );

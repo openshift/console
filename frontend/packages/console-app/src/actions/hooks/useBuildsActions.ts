@@ -41,7 +41,7 @@ export const useBuildsActions = (
   obj: K8sResourceKind,
   filterActions?: BuildActionCreator[],
 ): Action[] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const [kindObj] = useK8sModel(referenceFor(obj));
   const [commonActions, commonActionsReady] = useCommonActions(kindObj, obj, [
     CommonActionCreator.ModifyLabels,
@@ -54,13 +54,13 @@ export const useBuildsActions = (
 
   const warningModalProps = useMemo(
     () => ({
-      title: t('public~Cancel build?'),
-      children: t('public~Are you sure you want to cancel build {{name}}?', {
+      title: t('Cancel build?'),
+      children: t('Are you sure you want to cancel build {{name}}?', {
         name: obj.metadata.name,
       }),
       confirmButtonVariant: ButtonVariant.danger,
-      confirmButtonLabel: t('public~Yes, cancel'),
-      cancelButtonLabel: t("public~No, don't cancel"),
+      confirmButtonLabel: t('Yes, cancel'),
+      cancelButtonLabel: t("No, don't cancel"),
       onConfirm: () => {
         return k8sPatchResource({
           model: kindObj,
@@ -85,7 +85,7 @@ export const useBuildsActions = (
     () => ({
       [BuildActionCreator.CloneBuild]: () => ({
         id: 'clone-build',
-        label: t('public~Rebuild'),
+        label: t('Rebuild'),
         cta: () =>
           cloneBuild(obj)
             .then((clone) => {
@@ -106,7 +106,7 @@ export const useBuildsActions = (
       }),
       [BuildActionCreator.CancelBuild]: () => ({
         id: 'cancel-build',
-        label: t('public~Cancel build'),
+        label: t('Cancel build'),
         cta: () => cancelBuildModal(),
         accessReview: asAccessReview(kindObj, obj, 'patch'),
       }),

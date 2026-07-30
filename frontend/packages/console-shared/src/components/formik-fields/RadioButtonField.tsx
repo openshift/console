@@ -5,7 +5,7 @@ import { useField, useFormikContext } from 'formik';
 import type { RadioButtonFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
-const RadioButtonField: FC<RadioButtonFieldProps> = ({
+export const RadioButtonField: FC<RadioButtonFieldProps> = ({
   name,
   label,
   value,
@@ -41,5 +41,3 @@ const RadioButtonField: FC<RadioButtonFieldProps> = ({
     />
   );
 };
-
-export default RadioButtonField;

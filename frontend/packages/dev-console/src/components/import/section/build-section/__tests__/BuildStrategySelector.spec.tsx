@@ -14,8 +14,12 @@ jest.mock('formik', () => ({
   useFormikContext: jest.fn(),
 }));
 
-jest.mock('@console/shared/src', () => ({
+jest.mock('@console/shared/src/components/formik-fields/SingleDropdownField', () => ({
   SingleDropdownField: () => 'SingleDropdownField',
+}));
+
+jest.mock('@console/shared/src/components/formik-fields/field-types', () => ({
+  ...jest.requireActual('@console/shared/src/components/formik-fields/field-types'),
   SelectInputOption: {},
 }));
 
@@ -23,7 +27,7 @@ jest.mock('@console/internal/components/utils', () => ({
   LoadingInline: () => 'Loading...',
 }));
 
-jest.mock('@console/git-service/src', () => ({
+jest.mock('@console/git-service/src/types/git', () => ({
   ImportStrategy: {
     DOCKERFILE: 1,
     S2I: 0,

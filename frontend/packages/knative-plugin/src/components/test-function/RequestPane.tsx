@@ -1,18 +1,16 @@
 import type { FC } from 'react';
 import { useState } from 'react';
 import { Button, TextInputTypes, ExpandableSection } from '@patternfly/react-core';
-import { PlusCircleIcon } from '@patternfly/react-icons';
+import { RhUiAddCircleFillIcon } from '@patternfly/react-icons';
 import type { FormikProps, FormikValues } from 'formik/dist/types';
 import { useTranslation } from 'react-i18next';
 import { AsyncComponent } from '@console/internal/components/utils/async';
-import type { SelectInputOption } from '@console/shared/src/components';
-import {
-  DropdownField,
-  InputField,
-  SingleTypeaheadField,
-  CodeEditorField,
-} from '@console/shared/src/components';
-import { FormLayout } from '@console/shared/src/components/cluster-configuration';
+import { FormLayout } from '@console/shared/src/components/cluster-configuration/FormLayout';
+import { CodeEditorField } from '@console/shared/src/components/formik-fields/CodeEditorField';
+import { DropdownField } from '@console/shared/src/components/formik-fields/DropdownField';
+import type { SelectInputOption } from '@console/shared/src/components/formik-fields/field-types';
+import { InputField } from '@console/shared/src/components/formik-fields/InputField';
+import { SingleTypeaheadField } from '@console/shared/src/components/formik-fields/SingleTypeaheadField';
 import { InvokeFormat } from './types';
 import { getcurrentLanguage } from './utils';
 
@@ -28,7 +26,7 @@ const NameValueEditorComponent = (props) => (
 );
 
 const RequestPane: FC<FormikProps<FormikValues>> = ({ setFieldValue, values }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const [showCustomHeaders, setShowCustomHeaders] = useState(false);
   const {
     request: { customHeaders, format: invokeFormat, contentType, isAdvancedSettingsExpanded },
@@ -41,13 +39,13 @@ const RequestPane: FC<FormikProps<FormikValues>> = ({ setFieldValue, values }) =
   };
 
   const formatItems = {
-    [InvokeFormat.CloudEvent]: t('knative-plugin~CloudEvent'),
-    [InvokeFormat.HTTP]: t('knative-plugin~HTTP'),
+    [InvokeFormat.CloudEvent]: t('CloudEvent'),
+    [InvokeFormat.HTTP]: t('HTTP'),
   };
 
   const contentTypeItems: SelectInputOption[] = [
-    { value: 'application/json', label: t('knative-plugin~application/json'), disabled: false },
-    { value: 'application/yaml', label: t('knative-plugin~application/yaml'), disabled: false },
+    { value: 'application/json', label: t('application/json'), disabled: false },
+    { value: 'application/yaml', label: t('application/yaml'), disabled: false },
   ];
   const handleNameValuePairs = ({ nameValuePairs: updatedNameValuePairs }) => {
     /* Removing the extra element from arrays that are auto-generated */
@@ -70,7 +68,7 @@ const RequestPane: FC<FormikProps<FormikValues>> = ({ setFieldValue, values }) =
     <>
       <FormLayout>
         <DropdownField
-          label={t('knative-plugin~Format')}
+          label={t('Format')}
           name="request.format"
           items={formatItems}
           dataTest="invoke-format-dropdown"
@@ -80,7 +78,7 @@ const RequestPane: FC<FormikProps<FormikValues>> = ({ setFieldValue, values }) =
         />
         <SingleTypeaheadField
           name="request.contentType"
-          label={t('knative-plugin~Content-Type')}
+          label={t('Content-Type')}
           options={contentTypeItems}
           toggleOnSelection
           hideClearButton
@@ -88,7 +86,7 @@ const RequestPane: FC<FormikProps<FormikValues>> = ({ setFieldValue, values }) =
         />
       </FormLayout>
       <ExpandableSection
-        toggleText={t('knative-plugin~Advanced Settings')}
+        toggleText={t('Advanced Settings')}
         onToggle={onToggle}
         isExpanded={isExpanded}
         data-test="advanced-settings"
@@ -97,14 +95,14 @@ const RequestPane: FC<FormikProps<FormikValues>> = ({ setFieldValue, values }) =
           <InputField
             type={TextInputTypes.text}
             name={`request.type`}
-            label={t('knative-plugin~Type')}
+            label={t('Type')}
             data-test="request-type"
             placeholder="boson.fn"
           />
           <InputField
             type={TextInputTypes.text}
             name={`request.source`}
-            label={t('knative-plugin~Source')}
+            label={t('Source')}
             data-test="request-source"
             placeholder="/boson/fn"
           />
@@ -114,9 +112,9 @@ const RequestPane: FC<FormikProps<FormikValues>> = ({ setFieldValue, values }) =
           {showCustomHeaders || !checkCustomHeadersIsEmpty() ? (
             <NameValueEditorComponent
               nameValuePairs={customHeaders}
-              nameString={t('knative-plugin~Name')}
-              valueString={t('knative-plugin~Value')}
-              addString={t('knative-plugin~Add headers')}
+              nameString={t('Name')}
+              valueString={t('Value')}
+              addString={t('Add headers')}
               readOnly={false}
               allowSorting={false}
               updateParentData={handleNameValuePairs}
@@ -124,7 +122,10 @@ const RequestPane: FC<FormikProps<FormikValues>> = ({ setFieldValue, values }) =
           ) : (
             <Button
               icon={
-                <PlusCircleIcon data-test-id="pairs-list__add-icon" className="co-icon-space-r" />
+                <RhUiAddCircleFillIcon
+                  data-test-id="pairs-list__add-icon"
+                  className="co-icon-space-r"
+                />
               }
               className="pf-m-link--align-left"
               data-test="add-optional-header"
@@ -132,7 +133,7 @@ const RequestPane: FC<FormikProps<FormikValues>> = ({ setFieldValue, values }) =
               type="button"
               variant="link"
             >
-              {t('knative-plugin~Add optional headers')}
+              {t('Add optional headers')}
             </Button>
           )}
         </div>

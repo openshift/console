@@ -1,4 +1,5 @@
 import type { FC, ReactNode } from 'react';
+import { useRef } from 'react';
 import { Tooltip } from '@patternfly/react-core';
 import {
   NodeStatus,
@@ -11,18 +12,20 @@ import { useTranslation } from 'react-i18next';
 import { AlertSeverity } from '@console/dynamic-plugin-sdk';
 import type { WorkloadNodeProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
-import { AllPodStatus } from '@console/shared';
+import { AllPodStatus } from '@console/shared/src/constants/pod';
 import { useBuildConfigsWatcher } from '@console/shared/src/hooks/useBuildConfigsWatcher';
 import { usePodsWatcher } from '@console/shared/src/hooks/usePodsWatcher';
 import type { PodRCData } from '@console/shared/src/types/pod';
 import { getFiringAlerts, getSeverityAlertType } from '@console/shared/src/utils/alert-utils';
 import { calculateRadius, getPodStatus } from '@console/shared/src/utils/pod-utils';
-import { getFilterById, SHOW_POD_COUNT_FILTER_ID, useDisplayFilters } from '../../../../filters';
+import { SHOW_POD_COUNT_FILTER_ID } from '../../../../filters/const';
+import { getFilterById } from '../../../../filters/filter-utils';
+import { useDisplayFilters } from '../../../../filters/useDisplayFilters';
 import { getResource, getTopologyResourceObject } from '../../../../utils/topology-utils';
 import { useResourceQuotaAlert } from '../../../workload/resource-alert';
-import BaseNode from './BaseNode';
+import { BaseNode } from './BaseNode';
 import { getNodeDecorators } from './decorators/getNodeDecorators';
-import PodSet, { podSetInnerRadius } from './PodSet';
+import { PodSet, podSetInnerRadius } from './PodSet';
 
 import './WorkloadNode.scss';
 
@@ -86,7 +89,7 @@ const StatusSeverities = {
   ],
 };
 
-export const getNodePodStatus = (podStatus: AllPodStatus): number => {
+const getNodePodStatus = (podStatus: AllPodStatus): number => {
   switch (podStatus) {
     case AllPodStatus.Failed:
     case AllPodStatus.CrashLoopBackOff:
@@ -98,7 +101,7 @@ export const getNodePodStatus = (podStatus: AllPodStatus): number => {
   }
 };
 
-export const getAggregateStatus = (
+const getAggregateStatus = (
   donutStatus: PodRCData,
   alertSeverity: AlertSeverity,
   buildStatus: string,
@@ -146,7 +149,8 @@ const WorkloadPodsNode: FC<WorkloadPodsNodeProps> = observer(function WorkloadPo
   contextMenuOpen,
   ...rest
 }) {
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
+  const dropTooltipTriggerRef = useRef<SVGGElement>(null);
   const { width, height } = element.getDimensions();
   const workloadData = element.getData().data;
   const filters = useDisplayFilters();
@@ -157,7 +161,7 @@ const WorkloadPodsNode: FC<WorkloadPodsNodeProps> = observer(function WorkloadPo
   const { radius, decoratorRadius } = calculateRadius(size);
   const cx = width / 2;
   const cy = height / 2;
-  const tipContent = dropTooltip || t('topology~Create a visual connector');
+  const tipContent = dropTooltip || t('Create a visual connector');
   const showPodCountFilter = getFilterById(SHOW_POD_COUNT_FILTER_ID, filters);
   const showPodCount = showPodCountFilter?.value ?? false;
   const { decorators } = element.getGraph().getData();
@@ -185,9 +189,11 @@ const WorkloadPodsNode: FC<WorkloadPodsNodeProps> = observer(function WorkloadPo
         trigger="manual"
         isVisible={dropTarget && canDrop}
         animationDuration={0}
+        triggerRef={dropTooltipTriggerRef}
       >
         <BaseNode
           className="odc-workload-node"
+          tooltipTriggerRef={dropTooltipTriggerRef}
           hoverRef={hoverRef}
           innerRadius={podSetInnerRadius(size, donutStatus)}
           icon={showDetails && !showPodCount ? iconImageUrl : undefined}

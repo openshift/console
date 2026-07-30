@@ -4,7 +4,7 @@ import { Grid, GridItem, ListItem } from '@patternfly/react-core';
 import { ResourceLink } from '@console/internal/components/utils';
 import type { K8sResourceKind, OwnerReference } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { PodStatus } from '@console/shared';
+import { PodStatus } from '@console/shared/src/components/pod/PodStatus';
 import { RevisionModel } from '../../models';
 import { getTrafficByRevision } from '../../utils/get-knative-resources';
 import { usePodsForRevisions } from '../../utils/usePodsForRevisions';
@@ -12,7 +12,7 @@ import RoutesUrlLink from './RoutesUrlLink';
 
 import './RevisionsOverviewListItem.scss';
 
-export type RevisionsOverviewListItemProps = {
+type RevisionsOverviewListItemProps = {
   revision: K8sResourceKind;
   service: K8sResourceKind;
 };
@@ -44,7 +44,7 @@ const RevisionsOverviewListItem: FC<RevisionsOverviewListItemProps> = ({ revisio
         )}
       </Grid>
       {deploymentData.name && (
-        <div className="odc-revision-deployment-list">
+        <div className="odc-revision-deployment-list" data-test="revision-deployment-list">
           <Grid hasGutter>
             <GridItem span={9} sm={8}>
               <ResourceLink

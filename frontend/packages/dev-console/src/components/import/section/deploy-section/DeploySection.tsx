@@ -13,15 +13,12 @@ type DeploySectionProps = {
 };
 
 export const DeploySection: FC<DeploySectionProps> = ({ values, appResources }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   return (
-    <FormSection title={t('devconsole~Deploy')} fullWidth>
+    <FormSection title={t('Deploy')} fullWidth>
       <ResourceSection />
 
-      <ExpandableSection
-        isWidthLimited
-        toggleText={t('devconsole~Show advanced Deployment option')}
-      >
+      <ExpandableSection isWidthLimited toggleText={t('Show advanced Deployment option')}>
         <DeploymentConfigSection
           namespace={values.project.name}
           resource={appResources?.editAppResource?.data}

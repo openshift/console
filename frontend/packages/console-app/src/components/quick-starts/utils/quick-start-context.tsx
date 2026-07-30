@@ -1,3 +1,4 @@
+/* eslint-disable no-barrel-files/no-barrel-files */
 import { useCallback } from 'react';
 import type { QuickStartContextValues } from '@patternfly/quickstarts';
 import {
@@ -8,14 +9,14 @@ import {
 } from '@patternfly/quickstarts';
 import Pseudo from 'i18next-pseudo/es';
 import { useTranslation } from 'react-i18next';
-import useInlineExecuteCommandExtension from '@console/shared/src/components/markdown-extensions/inline-execute-extension';
-import MarkdownExecuteSnippet from '@console/shared/src/components/markdown-extensions/MarkdownExecuteSnippet';
-import useMultilineExecuteCommandExtension from '@console/shared/src/components/markdown-extensions/multiline-execute-extension';
+import { useInlineExecuteCommandExtension } from '@console/shared/src/components/markdown-extensions/inline-execute-extension';
+import { MarkdownExecuteSnippet } from '@console/shared/src/components/markdown-extensions/MarkdownExecuteSnippet';
+import { useMultilineExecuteCommandExtension } from '@console/shared/src/components/markdown-extensions/multiline-execute-extension';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { getLastLanguage } from '../../user-preferences/language/getLastLanguage';
 
-export { QuickStartContext, QuickStartContextProvider } from '@patternfly/quickstarts';
+export { QuickStartContextProvider } from '@patternfly/quickstarts';
 
 export const getProcessedResourceBundle = (resourceBundle, lng) => {
   const params = new URLSearchParams(window.location.search);
@@ -51,7 +52,7 @@ const useAllQuickStartStates = () =>
   useUserPreference(ALL_QUICK_START_STATE_KEY, getInitialState()?.allQuickStartStates ?? {});
 
 export const useValuesForQuickStartContext = (): QuickStartContextValues => {
-  const { i18n } = useTranslation();
+  const { i18n } = useTranslation('console-app');
   const [activeQuickStartID, setActiveQuickStartID] = useActiveQuickStartId();
   const [allQuickStartStates, setAllQuickStartStates] = useAllQuickStartStates();
   const fireTelemetryEvent = useTelemetry();
@@ -160,8 +161,8 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
     [activeQuickStartID, setAllQuickStartStates, fireTelemetryEvent],
   );
 
-  const language = getLastLanguage() || 'en';
-  const resourceBundle = i18n.getResourceBundle(language, 'console-app');
+  const language = i18n.resolvedLanguage || 'en';
+  const resourceBundle = i18n.getResourceBundle(language, 'console-app') ?? {};
   const processedResourceBundle = getProcessedResourceBundle(resourceBundle, language);
 
   // https://github.com/i18next/i18next-parser#caveats
@@ -169,7 +170,7 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
   // so that the i18n-parser can find them, and keep them in sync with the locale json file.
   // Changes made in this comment block take effect after `yarn i18n` is run.
   // const resources = [
-  //   t('console-app~Quick Starts'),
+  //   t('console-app~Quick starts'),
   //   t('console-app~No results found'),
   //   t('console-app~No results match the filter criteria. Remove filters or clear all filters to show results.'),
   //   t('console-app~Clear all filters'),
@@ -179,7 +180,8 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
   //   t('console-app~Filter by keyword...'),
   //   t('console-app~Select filter'),
   //   t('console-app~Status'),
-  //   t('console-app~{{count, number}} item', { count: 0 }),
+  //   t('console-app~{{count, number}} item'),
+  //   t('console-app~{{count, number}} item_plural'),
   //   t('console-app~Prerequisites ({{totalPrereqs}})'),
   //   t('console-app~View Prerequisites ({{totalPrereqs}})'),
   //   t('console-app~Prerequisites'),
@@ -197,7 +199,8 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
   //   t('console-app~Close'),
   //   t('console-app~Back'),
   //   t('console-app~Restart'),
-  //   t('console-app~In this quick start, you will complete {{count, number}} task', { count: 0 }),
+  //   t('console-app~In this quick start, you will complete {{count, number}} task'),
+  //   t('console-app~In this quick start, you will complete {{count, number}} task_plural'),
   //   t('console-app~{{taskIndex, number}}'),
   //   t('console-app~Check your work'),
   //   t('console-app~Yes'),

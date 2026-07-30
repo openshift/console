@@ -9,7 +9,7 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import type { K8sResourceCommon } from '@console/internal/module/k8s';
 import { getVerticalPodAutoscalersForResource } from '@console/shared/src/utils/resource-utils';
 import { TYPE_WORKLOAD } from '@console/topology/src/const';
-import { getResource } from '../../utils';
+import { getResource } from '../../utils/topology-utils';
 import TopologySideBarTabSection from '../side-bar/TopologySideBarTabSection';
 
 type VPATabSectionProps = {
@@ -17,10 +17,10 @@ type VPATabSectionProps = {
 };
 
 const VPATabSection: FC<VPATabSectionProps> = ({ vpas }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   return (
     <>
-      <SidebarSectionHeading text={t('topology~VerticalPodAutoscalers')} />
+      <SidebarSectionHeading text={t('VerticalPodAutoscalers')} />
       <List isPlain isBordered>
         {vpas.map((vpa: K8sResourceCommon) => (
           <ListItem key={vpa.metadata.name}>

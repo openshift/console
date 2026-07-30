@@ -13,7 +13,7 @@ import { ModalFooterWithAlerts } from '../modals/ModalFooterWithAlerts';
 
 const DeleteHPAModal: FC<DeleteHPAModalProps> = ({ close, cancel, hpa, workload }) => {
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const hpaName = hpa.metadata.name;
   const workloadName = workload.metadata.name;
 
@@ -27,7 +27,7 @@ const DeleteHPAModal: FC<DeleteHPAModalProps> = ({ close, cancel, hpa, workload 
   return (
     <>
       <ModalHeader
-        title={t('console-shared~Remove {{label}}?', { label: HorizontalPodAutoscalerModel.label })}
+        title={t('Remove {{label}}?', { label: HorizontalPodAutoscalerModel.label })}
         titleIconVariant="warning"
         labelId="delete-hpa-modal-title"
         data-test-id="modal-title"
@@ -37,16 +37,15 @@ const DeleteHPAModal: FC<DeleteHPAModalProps> = ({ close, cancel, hpa, workload 
           {hpaName ? (
             <>
               <p>
-                {t('console-shared~Are you sure you want to remove the {{hpaLabel}}', {
+                {t('Are you sure you want to remove the {{hpaLabel}}', {
                   hpaLabel: HorizontalPodAutoscalerModel.label,
                 })}{' '}
-                <b>{hpaName}</b> {t('console-shared~from')} <b>{workloadName}</b>?
+                <b>{hpaName}</b> {t('from')} <b>{workloadName}</b>?
               </p>
               <p>
-                {t(
-                  'console-shared~The resources that are attached to the {{hpaLabel}} will be deleted.',
-                  { hpaLabel: HorizontalPodAutoscalerModel.label },
-                )}
+                {t('The resources that are attached to the {{hpaLabel}} will be deleted.', {
+                  hpaLabel: HorizontalPodAutoscalerModel.label,
+                })}
               </p>
             </>
           ) : (
@@ -64,10 +63,10 @@ const DeleteHPAModal: FC<DeleteHPAModalProps> = ({ close, cancel, hpa, workload 
           isDisabled={inProgress || !!errorMessage}
           data-test="confirm-action"
         >
-          {t('console-shared~Remove')}
+          {t('Remove')}
         </Button>
         <Button variant="link" onClick={cancel}>
-          {t('console-shared~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </>

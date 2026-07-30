@@ -19,7 +19,7 @@ import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import type { ModalComponentProps } from '@console/shared/src/types/modal';
 import { usePromiseHandler } from '../../hooks/usePromiseHandler';
-import { InputField } from '../formik-fields';
+import { InputField } from '../formik-fields/InputField';
 import { ModalFooterWithAlerts } from './ModalFooterWithAlerts';
 
 const DeleteResourceForm: FC<FormikProps<FormikValues> & DeleteResourceModalProps> = ({
@@ -34,7 +34,7 @@ const DeleteResourceForm: FC<FormikProps<FormikValues> & DeleteResourceModalProp
   values,
   status,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const isValid = values.resourceName === resourceName;
   const submitLabel = actionLabel || t(actionLabelKey);
 
@@ -87,7 +87,7 @@ const DeleteResourceForm: FC<FormikProps<FormikValues> & DeleteResourceModalProp
           {submitLabel}
         </Button>
         <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
-          {t('console-shared~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </>

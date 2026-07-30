@@ -7,8 +7,9 @@ import type { GetDataViewRows } from '@console/app/src/components/data-view/type
 import { ResourceLink, resourcePath } from '@console/internal/components/utils';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceFor } from '@console/internal/module/k8s';
-import { Status, DASH } from '@console/shared';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import { Status } from '@console/shared/src/components/status/Status';
+import { DASH } from '@console/shared/src/constants/ui';
 import { tableColumnInfo } from './HelmReleaseResourcesHeader';
 
 type HelmReleaseResourceStatusProps = {
@@ -16,12 +17,12 @@ type HelmReleaseResourceStatusProps = {
 };
 
 export const HelmReleaseResourceStatus: FC<HelmReleaseResourceStatusProps> = ({ resource }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   const kind = referenceFor(resource);
   return resource.status?.replicas ? (
     <Link
       to={`${resourcePath(kind, resource.metadata.name, resource.metadata.namespace)}/pods`}
-      title={t('helm-plugin~Pods')}
+      title={t('Pods')}
     >
       {resource.status.replicas || 0} of {resource.spec.replicas} pods
     </Link>
@@ -66,5 +67,3 @@ export const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns)
     });
   });
 };
-
-export default getDataViewRows;

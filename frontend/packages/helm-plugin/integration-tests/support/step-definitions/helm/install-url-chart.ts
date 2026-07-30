@@ -1,11 +1,9 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants';
-import { navigateTo } from '@console/dev-console/integration-tests/support/pages';
-import { topologyPage } from '@console/topology/integration-tests/support/pages/topology/topology-page';
+import { navPaths } from '../../constants';
 import { urlChartInstallPage } from '../../pages';
 
 Given('user is at the URL chart install page', () => {
-  navigateTo(devNavigationMenu.Helm);
+  cy.clickNavLink(navPaths.helm);
   cy.byLegacyTestID('item-create').click();
   cy.get('[data-test-dropdown-menu]').contains('Helm Chart URL').click();
 });
@@ -50,8 +48,4 @@ When('user clicks on the Install button', () => {
 
 Then('user will see a validation error for invalid Chart URL format', () => {
   cy.get('.pf-m-error').should('exist');
-});
-
-Then('user will be redirected to Topology page', () => {
-  topologyPage.verifyTopologyPage();
 });

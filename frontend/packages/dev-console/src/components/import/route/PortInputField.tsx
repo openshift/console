@@ -1,8 +1,8 @@
 import type { FC } from 'react';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import type { SelectInputOption } from '@console/shared';
-import { SingleTypeaheadField } from '@console/shared';
+import type { SelectInputOption } from '@console/shared/src/components/formik-fields/field-types';
+import { SingleTypeaheadField } from '@console/shared/src/components/formik-fields/SingleTypeaheadField';
 import type { DeployImageFormData, GitImportFormData, UploadJarFormData } from '../import-types';
 
 interface PortInputFieldProps {
@@ -10,7 +10,7 @@ interface PortInputFieldProps {
 }
 
 const PortInputField: FC<PortInputFieldProps> = ({ defaultPort }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const {
     values: {
       image: { ports },
@@ -28,10 +28,10 @@ const PortInputField: FC<PortInputFieldProps> = ({ defaultPort }) => {
     <SingleTypeaheadField
       data-test-id="target-port-field"
       name="route.unknownTargetPort"
-      label={t('devconsole~Target port')}
-      ariaLabel={t('devconsole~Target port')}
+      label={t('Target port')}
+      ariaLabel={t('Target port')}
       placeholderText={placeholderPort.toString()}
-      helpText={t('devconsole~Target port for traffic.')}
+      helpText={t('Target port for traffic.')}
       options={portOptions}
       toggleOnSelection
     />

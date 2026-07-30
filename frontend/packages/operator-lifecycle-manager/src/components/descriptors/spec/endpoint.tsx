@@ -2,8 +2,9 @@ import type { FC } from 'react';
 import { Table, Thead, Tr, Th, Td, Tbody } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import { ResourceIcon } from '@console/internal/components/utils';
+import { DASH } from '@console/shared/src/constants/ui';
 
-export const EndpointRow: FC<EndpointRowProps> = ({ endpoint }) => {
+const EndpointRow: FC<EndpointRowProps> = ({ endpoint }) => {
   const { t } = useTranslation('olm');
 
   const detail = ['scheme', 'honorLabels', 'targetPort'].reduce(
@@ -16,17 +17,17 @@ export const EndpointRow: FC<EndpointRowProps> = ({ endpoint }) => {
       ) : (
         element
       ),
-    <span className="pf-v6-u-text-color-subtle">--</span>,
+    <span className="pf-v6-u-text-color-subtle">{DASH}</span>,
   );
 
   return (
     <Tr>
       <Td dataLabel={t('Port')}>
         <div>
-          <ResourceIcon kind="Service" /> {endpoint.port || '--'}
+          <ResourceIcon kind="Service" /> {endpoint.port || DASH}
         </div>
       </Td>
-      <Td dataLabel={t('Interval')}>{endpoint.interval || '--'}</Td>
+      <Td dataLabel={t('Interval')}>{endpoint.interval || DASH}</Td>
       <Td dataLabel={t('Details')}>{detail}</Td>
     </Tr>
   );
@@ -57,7 +58,7 @@ export const EndpointList: FC<EndpointListProps> = (props) => {
 /**
  * Taken from https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#endpoint
  */
-export type Endpoint = {
+type Endpoint = {
   port?: string;
   targetPort?: number | string;
   scheme?: string;
@@ -65,7 +66,7 @@ export type Endpoint = {
   interval?: string;
 };
 
-export type EndpointRowProps = {
+type EndpointRowProps = {
   endpoint: Endpoint;
 };
 

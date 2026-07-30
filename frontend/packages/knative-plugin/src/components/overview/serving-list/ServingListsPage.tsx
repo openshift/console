@@ -4,19 +4,19 @@ import { useParams } from 'react-router';
 import { NamespaceBar } from '@console/internal/components/namespace-bar';
 import type { Page } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-import type { MenuActions } from '@console/shared';
-import { MultiTabListPage } from '@console/shared';
+import type { MenuActions } from '@console/shared/src/components/multi-tab-list/multi-tab-list-page-types';
+import { MultiTabListPage } from '@console/shared/src/components/multi-tab-list/MultiTabListPage';
 import { ServiceModel, RevisionModel, RouteModel } from '../../../models';
 import RevisionsPage from '../../revisions/RevisionsPage';
 import RoutesPage from '../../routes/RoutesPage';
 import ServicesPage from '../../services/ServicesPage';
 
 const ServingListPage: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const { ns: namespace } = useParams();
   const [showTitle, canCreate] = [false, false];
   const menuActions: MenuActions = {
-    service: { label: t('knative-plugin~Service'), model: ServiceModel },
+    service: { label: t('Service'), model: ServiceModel },
   };
   const pages: Page[] = [
     {
@@ -62,7 +62,7 @@ const ServingListPage: FC = () => {
       <NamespaceBar />
       <MultiTabListPage
         pages={pages}
-        title={t('knative-plugin~Serving')}
+        title={t('Serving')}
         menuActions={menuActions}
         telemetryPrefix="Serving"
       />

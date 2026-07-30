@@ -14,16 +14,13 @@ import type {
   LaunchOverlay,
   OverlayComponent,
 } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import type { ToastContextValues } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { getGroupVersionKindForResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { dateTimeFormatter } from '@console/internal/components/utils/datetime';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import {
-  USER_PREFERENCE_PREFIX,
-  TOAST_TIMEOUT_DEFAULT,
-  TOAST_TIMEOUT_LONG,
-} from '@console/shared/src';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
-import type { ToastContextType } from '@console/shared/src/components/toast/ToastContext';
+import { USER_PREFERENCE_PREFIX } from '@console/shared/src/constants/common';
+import { TOAST_TIMEOUT_DEFAULT, TOAST_TIMEOUT_LONG } from '@console/shared/src/constants/duration';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import type { ModalComponentProps } from '@console/shared/src/types/modal';
@@ -39,12 +36,12 @@ import type { ExportAppUserSettings } from './types';
 export type ExportApplicationModalProps = ModalComponentProps & {
   name: string;
   namespace: string;
-  toast?: ToastContextType;
+  toast?: ToastContextValues;
   exportResource?: K8sResourceKind;
 };
 
 export const ExportApplicationModal: FC<ExportApplicationModalProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   const fireTelemetryEvent = useTelemetry();
   const { cancel, name, namespace, exportResource, toast } = props;
   const [startTime, setStartTime] = useState<string>(null);
@@ -77,7 +74,7 @@ export const ExportApplicationModal: FC<ExportApplicationModalProps> = (props) =
       };
       toast?.addToast({
         variant: AlertVariant.info,
-        title: t('topology~Export application'),
+        title: t('Export application'),
         content: (
           <>
             <Trans t={t} ns="topology">
@@ -93,7 +90,7 @@ export const ExportApplicationModal: FC<ExportApplicationModalProps> = (props) =
     } catch (error) {
       toast?.addToast({
         variant: AlertVariant.danger,
-        title: t('topology~Export application'),
+        title: t('Export application'),
         content: (
           <Trans t={t} ns="topology">
             Export of resources in <strong>{{ namespace }}</strong> has failed with error:{' '}
@@ -174,7 +171,7 @@ export const ExportApplicationModal: FC<ExportApplicationModalProps> = (props) =
   return (
     <>
       <ModalHeader
-        title={t('topology~Export Application')}
+        title={t('Export Application')}
         data-test-id="modal-title"
         labelId="export-application-modal-title"
       />
@@ -203,7 +200,7 @@ export const ExportApplicationModal: FC<ExportApplicationModalProps> = (props) =
           data-test={exportInProgress ? 'export-cancel-btn' : 'cancel-btn'}
           onClick={() => (exportInProgress ? handleCancel() : cancel())}
         >
-          {exportInProgress ? t('topology~Cancel Export') : t('topology~Cancel')}
+          {exportInProgress ? t('Cancel Export') : t('Cancel')}
         </Button>
         {exportInProgress && (
           <>
@@ -213,7 +210,7 @@ export const ExportApplicationModal: FC<ExportApplicationModalProps> = (props) =
               data-test="export-restart-btn"
               onClick={handleRestart}
             >
-              {t('topology~Restart Export')}
+              {t('Restart Export')}
             </Button>
             <ExportViewLogButton name={name} namespace={namespace} onViewLog={cancel} />
           </>
@@ -232,16 +229,14 @@ export const ExportApplicationModal: FC<ExportApplicationModalProps> = (props) =
               : handleStartExport()
           }
         >
-          {t('topology~OK')}
+          {t('OK')}
         </Button>
       </ModalFooterWithAlerts>
     </>
   );
 };
 
-export const ExportApplicationModalOverlay: OverlayComponent<ExportApplicationModalProps> = (
-  props,
-) => (
+const ExportApplicationModalOverlay: OverlayComponent<ExportApplicationModalProps> = (props) => (
   <Modal
     variant={ModalVariant.small}
     isOpen
@@ -255,7 +250,7 @@ export const ExportApplicationModalOverlay: OverlayComponent<ExportApplicationMo
 export const handleExportApplication = async (
   name: string,
   namespace: string,
-  toast: ToastContextType,
+  toast: ToastContextValues,
   launchModal: LaunchOverlay,
 ) => {
   try {

@@ -7,7 +7,9 @@ import { useK8sWatchResources } from '@console/internal/components/utils/k8s-wat
 import { SecretModel } from '@console/internal/models';
 import type { SecretKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { InputField, MultiColumnField, ResourceDropdownField } from '@console/shared';
+import { InputField } from '@console/shared/src/components/formik-fields/InputField';
+import { MultiColumnField } from '@console/shared/src/components/formik-fields/multi-column-field/MultiColumnField';
+import { ResourceDropdownField } from '@console/shared/src/components/formik-fields/ResourceDropdownField';
 import FormSection from '../../import/section/FormSection';
 
 export type SecretsSectionFormData = {
@@ -20,7 +22,7 @@ export type SecretsSectionFormData = {
 };
 
 const SecretsSection: FC<{ namespace: string }> = ({ namespace }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
 
   const autocompleteFilter = (text: string, item: any): boolean => fuzzy(text, item?.props?.name);
 
@@ -48,21 +50,21 @@ const SecretsSection: FC<{ namespace: string }> = ({ namespace }) => {
     ],
   );
 
-  const mountPointLabel = t('devconsole~Mount point');
+  const mountPointLabel = t('Mount point');
 
   return (
-    <FormSection title={t('devconsole~Secrets')} dataTest="section secrets">
+    <FormSection title={t('Secrets')} dataTest="section secrets">
       <MultiColumnField
         name="formData.secrets"
-        addLabel={t('devconsole~Add secret')}
-        headers={[t('devconsole~Secret'), mountPointLabel]}
+        addLabel={t('Add secret')}
+        headers={[t('Secret'), mountPointLabel]}
         emptyValues={{}}
       >
         <ResourceDropdownField
           name="secret"
           resources={resources}
           dataSelector={['metadata', 'name']}
-          placeholder={t('devconsole~Select a secret')}
+          placeholder={t('Select a secret')}
           autocompleteFilter={autocompleteFilter}
           fullWidth
           showBadge

@@ -1,27 +1,4 @@
-import * as _ from 'lodash';
 import { useMemo, Suspense } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Status } from '@console/shared/src/components/status/Status';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
-import ActionServiceProvider from '@console/shared/src/components/actions/ActionServiceProvider';
-import ActionMenu from '@console/shared/src/components/actions/menu/ActionMenu';
-import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
-import { DASH } from '@console/shared/src/constants/ui';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { ResourceEventStream } from './events';
-import { DetailsPage, ListPage, sorts } from './factory';
-import { ContainerTable } from './utils/container-table';
-import { navFactory, PodsComponent } from './utils/horizontal-nav';
-import { SectionHeading } from './utils/headings';
-import { ResourceSummary, ResourcePodCount, RuntimeClass } from './utils/details-page';
-import { AsyncComponent } from './utils/async';
-import { ResourceLink } from './utils/resource-link';
-import { OwnerReferences } from './utils/owner-references';
-import { LoadingBox } from './utils/status-box';
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { referenceForModel } from '../module/k8s';
-import { VolumesTable } from './volumes-table';
-import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 import {
   DescriptionList,
   DescriptionListDescription,
@@ -30,6 +7,8 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import {
   actionsCellProps,
   getNameCellProps,
@@ -37,9 +16,30 @@ import {
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { Status } from '@console/shared/src/components/status/Status';
+import { DASH } from '@console/shared/src/constants/ui';
 import { ReplicationControllerModel } from '../models';
+import { referenceForModel } from '../module/k8s';
+import { ResourceEventStream } from './events';
+import { DetailsPage, ListPage, sorts } from './factory';
 import { sortResourceByValue } from './factory/Table/sort';
+import { AsyncComponent } from './utils/async';
+import { ContainerTable } from './utils/container-table';
+import { ResourceSummary, ResourcePodCount, RuntimeClass } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { navFactory, PodsComponent } from './utils/horizontal-nav';
+import { OwnerReferences } from './utils/owner-references';
+import { ResourceLink } from './utils/resource-link';
+import { LoadingBox } from './utils/status-box';
+import { VolumesTable } from './volumes-table';
 import { ReplicasCount } from './workload-table';
 
 const EnvironmentPage = (props) => (
@@ -64,7 +64,7 @@ const { details, editYaml, pods, envEditor, events } = navFactory;
 const ReplicationControllerPods = (props) => <PodsComponent {...props} showNodes />;
 
 export const ReplicationControllersDetailsPage = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const Details = ({ obj: replicationController }) => {
     const revision = _.get(replicationController, [
       'metadata',
@@ -79,7 +79,7 @@ export const ReplicationControllersDetailsPage = (props) => {
     return (
       <>
         <PaneBody>
-          <SectionHeading text={t('public~ReplicationController details')} />
+          <SectionHeading text={t('ReplicationController details')} />
           <Grid hasGutter>
             <GridItem md={6}>
               <ResourceSummary
@@ -90,7 +90,7 @@ export const ReplicationControllersDetailsPage = (props) => {
               >
                 {revision && (
                   <DescriptionListGroup>
-                    <DescriptionListTerm>{t('public~Deployment revision')}</DescriptionListTerm>
+                    <DescriptionListTerm>{t('Deployment revision')}</DescriptionListTerm>
                     <DescriptionListDescription>{revision}</DescriptionListDescription>
                   </DescriptionListGroup>
                 )}
@@ -100,7 +100,7 @@ export const ReplicationControllersDetailsPage = (props) => {
               <DescriptionList>
                 {phase && (
                   <DescriptionListGroup>
-                    <DescriptionListTerm>{t('public~Phase')}</DescriptionListTerm>
+                    <DescriptionListTerm>{t('Phase')}</DescriptionListTerm>
                     <DescriptionListDescription>
                       <Status status={phase} />
                     </DescriptionListDescription>
@@ -114,11 +114,11 @@ export const ReplicationControllersDetailsPage = (props) => {
           </Grid>
         </PaneBody>
         <PaneBody>
-          <SectionHeading text={t('public~Containers')} />
+          <SectionHeading text={t('Containers')} />
           <ContainerTable containers={replicationController.spec.template.spec.containers} />
         </PaneBody>
         <PaneBody>
-          <VolumesTable resource={replicationController} heading={t('public~Volumes')} />
+          <VolumesTable resource={replicationController} heading={t('Volumes')} />
         </PaneBody>
       </>
     );
@@ -216,7 +216,7 @@ const getDataViewRows = (data, columns) => {
 };
 
 const useReplicationControllersColumns = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
     ReplicationControllerModel,
   );
@@ -224,7 +224,7 @@ const useReplicationControllersColumns = () => {
   const columns = useMemo(() => {
     return [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         resizableProps: getResizableProps(tableColumnInfo[0].id),
@@ -234,7 +234,7 @@ const useReplicationControllersColumns = () => {
         },
       },
       {
-        title: t('public~Namespace'),
+        title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
@@ -243,7 +243,7 @@ const useReplicationControllersColumns = () => {
         },
       },
       {
-        title: t('public~Status'),
+        title: t('Status'),
         id: tableColumnInfo[2].id,
         sort: (data, direction) => data.sort(sortResourceByValue(direction, sorts.numReplicas)),
         resizableProps: getResizableProps(tableColumnInfo[2].id),
@@ -252,7 +252,7 @@ const useReplicationControllersColumns = () => {
         },
       },
       {
-        title: t('public~Phase'),
+        title: t('Phase'),
         id: tableColumnInfo[3].id,
         sort: 'metadata.annotations["openshift.io/deployment.phase"]',
         resizableProps: getResizableProps(tableColumnInfo[3].id),
@@ -261,7 +261,7 @@ const useReplicationControllersColumns = () => {
         },
       },
       {
-        title: t('public~Owner'),
+        title: t('Owner'),
         id: tableColumnInfo[4].id,
         sort: 'metadata.ownerReferences[0].name',
         resizableProps: getResizableProps(tableColumnInfo[4].id),
@@ -270,7 +270,7 @@ const useReplicationControllersColumns = () => {
         },
       },
       {
-        title: t('public~Created'),
+        title: t('Created'),
         id: tableColumnInfo[5].id,
         sort: 'metadata.creationTimestamp',
         resizableProps: getResizableProps(tableColumnInfo[5].id),
@@ -303,7 +303,7 @@ const ReplicationControllersList = ({ data, loaded, ...props }) => {
         loaded={loaded}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
+        hideColumnManagement
         isResizable
         resetAllColumnWidths={resetAllColumnWidths}
       />
@@ -319,7 +319,7 @@ export const ReplicationControllersPage = (props) => {
       kind={referenceForModel(ReplicationControllerModel)}
       ListComponent={ReplicationControllersList}
       canCreate={canCreate}
-      omitFilterToolbar={true}
+      omitFilterToolbar
     />
   );
 };

@@ -7,7 +7,7 @@ import { useFormikValidationFix } from '../../hooks/useFormikValidationFix';
 import type { DropdownFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
-const NSDropdownField: FC<DropdownFieldProps> = ({
+export const NSDropdownField: FC<DropdownFieldProps> = ({
   label,
   helpText,
   required,
@@ -46,5 +46,3 @@ const NSDropdownField: FC<DropdownFieldProps> = ({
     </FormGroup>
   );
 };
-
-export default NSDropdownField;

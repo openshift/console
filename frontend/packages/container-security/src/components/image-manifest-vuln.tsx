@@ -8,7 +8,7 @@ import {
   GridItem,
   Tooltip,
 } from '@patternfly/react-core';
-import { ExclamationTriangleIcon } from '@patternfly/react-icons';
+import { RhUiWarningFillIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import { sortable, Table as PfTable, Thead, Th, Tbody, Td, Tr } from '@patternfly/react-table';
 import type { TFunction } from 'i18next';
@@ -37,9 +37,10 @@ import {
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import type { PodKind, ContainerStatus } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { EmptyStateResourceBadge, GreenCheckCircleIcon } from '@console/shared/';
+import { EmptyStateResourceBadge } from '@console/shared/src/components/badges/EmptyStateResourceBadge';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { GreenCheckCircleIcon } from '@console/shared/src/components/status/icons';
 import { vulnPriority, totalFor, priorityFor } from '../const';
 import { ImageManifestVulnModel } from '../models';
 import type { ImageManifestVuln } from '../types';
@@ -56,19 +57,19 @@ export const totalCount = (obj: ImageManifestVuln) => {
   const { highCount = 0, mediumCount = 0, lowCount = 0, unknownCount = 0 } = obj.status;
   return highCount + mediumCount + lowCount + unknownCount;
 };
-export const affectedPodsCount = (obj: ImageManifestVuln) =>
+const affectedPodsCount = (obj: ImageManifestVuln) =>
   Object.keys(obj.status?.affectedPods ?? {}).length;
 
-export const highestSeverityIndex = (obj: ImageManifestVuln) =>
+const highestSeverityIndex = (obj: ImageManifestVuln) =>
   priorityFor(obj.status?.highestSeverity).index;
 
-export const ImageManifestVulnDetails: FC<ImageManifestVulnDetailsProps> = (props) => {
-  const { t } = useTranslation();
+const ImageManifestVulnDetails: FC<ImageManifestVulnDetailsProps> = (props) => {
+  const { t } = useTranslation('container-security');
   const queryURL = quayURLFor(props.obj);
   return (
     <>
       <PaneBody>
-        <SectionHeading text={t('container-security~Image Manifest Vulnerabilities details')} />
+        <SectionHeading text={t('Image Manifest Vulnerabilities details')} />
         <ImageVulnerabilityToggleGroup obj={props.obj} />
       </PaneBody>
       <PaneBody>
@@ -78,18 +79,10 @@ export const ImageManifestVulnDetails: FC<ImageManifestVulnDetailsProps> = (prop
           </GridItem>
           <GridItem sm={6}>
             <DescriptionList>
-              <DetailsItem
-                label={t('container-security~Registry')}
-                obj={props.obj}
-                path="spec.image"
-              />
+              <DetailsItem label={t('Registry')} obj={props.obj} path="spec.image" />
 
               {queryURL && (
-                <DetailsItem
-                  label={t('container-security~Manifest')}
-                  obj={props.obj}
-                  path="obj.spec.manifest"
-                >
+                <DetailsItem label={t('Manifest')} obj={props.obj} path="obj.spec.manifest">
                   <ExternalLink text={shortenHash(props.obj.spec.manifest)} href={queryURL} />
                 </DetailsItem>
               )}
@@ -104,7 +97,7 @@ export const ImageManifestVulnDetails: FC<ImageManifestVulnDetailsProps> = (prop
   );
 };
 
-export const AffectedPods: FC<AffectedPodsProps> = (props) => {
+const AffectedPods: FC<AffectedPodsProps> = (props) => {
   const affectedPodsFor = (pods: PodKind[]) =>
     pods.filter((p) =>
       _.keys(props.obj.status?.affectedPods ?? {}).includes(
@@ -163,7 +156,7 @@ const tableColumnClasses = [
   css('pf-m-hidden', 'pf-m-visible-on-xl'),
 ];
 
-export const ImageManifestVulnTableRow: FC<RowFunctionArgs<ImageManifestVuln>> = ({ obj }) => {
+const ImageManifestVulnTableRow: FC<RowFunctionArgs<ImageManifestVuln>> = ({ obj }) => {
   const { name, namespace } = obj.metadata;
   const queryURL = quayURLFor(obj);
   return (
@@ -182,7 +175,7 @@ export const ImageManifestVulnTableRow: FC<RowFunctionArgs<ImageManifestVuln>> =
       <TableData className={tableColumnClasses[2]}>
         {obj.status?.highestSeverity ? (
           <>
-            <ExclamationTriangleIcon color={priorityFor(obj.status.highestSeverity).color.value} />
+            <RhUiWarningFillIcon color={priorityFor(obj.status.highestSeverity).color.value} />
             &nbsp;{obj.status.highestSeverity}
           </>
         ) : (
@@ -203,61 +196,61 @@ export const ImageManifestVulnTableRow: FC<RowFunctionArgs<ImageManifestVuln>> =
   );
 };
 
-export const ImageManifestVulnTableHeader = (t: TFunction) => () => [
+const ImageManifestVulnTableHeader = (t: TFunction) => () => [
   {
-    title: t('container-security~Image name'),
+    title: t('Image name'),
     sortField: 'spec.image',
     transforms: [sortable],
     props: { className: tableColumnClasses[0] },
   },
   {
-    title: t('container-security~Namespace'),
+    title: t('Namespace'),
     sortField: 'metadata.namespace',
     transforms: [sortable],
     props: { className: tableColumnClasses[1] },
     id: 'namespace',
   },
   {
-    title: t('container-security~Highest severity'),
+    title: t('Highest severity'),
     sortFunc: 'highestSeverityOrder',
     transforms: [sortable],
     props: { className: tableColumnClasses[2] },
   },
   {
-    title: t('container-security~Affected Pods'),
+    title: t('Affected Pods'),
     props: { className: tableColumnClasses[3] },
     transforms: [sortable],
     sortFunc: 'affectedPodsOrder',
   },
   {
-    title: t('container-security~Fixable'),
+    title: t('Fixable'),
     sortField: 'status.fixableCount',
     transforms: [sortable],
     props: { className: tableColumnClasses[4] },
   },
   {
-    title: t('container-security~Total'),
+    title: t('Total'),
     sortFunc: 'totalOrder',
     transforms: [sortable],
     props: { className: tableColumnClasses[5] },
   },
   {
-    title: t('container-security~Manifest'),
+    title: t('Manifest'),
     props: { className: tableColumnClasses[6] },
     transforms: [sortable],
     sortField: 'spec.manifest',
   },
 ];
 
-export const ImageManifestVulnList: FC<ImageManifestVulnListProps> = (props) => {
-  const { t } = useTranslation();
+const ImageManifestVulnList: FC<ImageManifestVulnListProps> = (props) => {
+  const { t } = useTranslation('container-security');
   const EmptyMsg = () => (
     <EmptyState
       headingLevel="h4"
       titleText={
         <>
           <EmptyStateResourceBadge model={ImageManifestVulnModel} />
-          {t('container-security~No Image vulnerabilities found')}
+          {t('No Image vulnerabilities found')}
         </>
       }
       variant={EmptyStateVariant.lg}
@@ -272,7 +265,7 @@ export const ImageManifestVulnList: FC<ImageManifestVulnListProps> = (props) => 
         affectedPodsOrder: affectedPodsCount,
         highestSeverityOrder: highestSeverityIndex,
       }}
-      aria-label={t('container-security~Image Manifest Vulnerabilities')}
+      aria-label={t('Image Manifest Vulnerabilities')}
       Header={ImageManifestVulnTableHeader(t)}
       Row={ImageManifestVulnTableRow}
       EmptyMsg={EmptyMsg}
@@ -282,7 +275,7 @@ export const ImageManifestVulnList: FC<ImageManifestVulnListProps> = (props) => 
 };
 
 export const ImageManifestVulnPage: FC<ImageManifestVulnPageProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('container-security');
   const params = useParams();
   const { showTitle = true, hideNameLabelFilters = true } = props;
   const namespace = props.namespace || params?.ns || params?.name;
@@ -299,11 +292,11 @@ export const ImageManifestVulnPage: FC<ImageManifestVulnPageProps> = (props) => 
         },
       ]}
       flatten={(resources) => _.get(resources.imageManifestVuln, 'data', [])}
-      title={t('container-security~Image Manifest Vulnerabilities')}
+      title={t('Image Manifest Vulnerabilities')}
       textFilter="image-name"
       canCreate={false}
       showTitle={showTitle}
-      nameFilterPlaceholder={t('container-security~Search by image name...')}
+      nameFilterPlaceholder={t('Search by image name...')}
       hideNameLabelFilters={hideNameLabelFilters}
       ListComponent={ImageManifestVulnList}
     />
@@ -316,8 +309,8 @@ export const ProjectImageManifestVulnListPage: FC<ImageManifestVulnPageProps> = 
 
 const podKey = (pod: PodKind) => [pod.metadata.namespace, pod.metadata.name].join('/');
 
-export const ContainerVulnerabilities: FC<ContainerVulnerabilitiesProps> = (props) => {
-  const { t } = useTranslation();
+const ContainerVulnerabilities: FC<ContainerVulnerabilitiesProps> = (props) => {
+  const { t } = useTranslation('container-security');
   const { loaded, loadError } = props.imageManifestVuln;
 
   const vulnFor = (containerStatus: ContainerStatus) =>
@@ -337,11 +330,7 @@ export const ContainerVulnerabilities: FC<ContainerVulnerabilitiesProps> = (prop
   if (loadError) {
     return (
       <PaneBody>
-        <Alert
-          isInline
-          variant="danger"
-          title={t('container-security~Unable to load vulnerability data')}
-        >
+        <Alert isInline variant="danger" title={t('Unable to load vulnerability data')}>
           {loadError instanceof Error ? loadError.message : String(loadError)}
         </Alert>
       </PaneBody>
@@ -361,11 +350,11 @@ export const ContainerVulnerabilities: FC<ContainerVulnerabilitiesProps> = (prop
       <PfTable gridBreakPoint="">
         <Thead>
           <Tr>
-            <Th width={30}>{t('container-security~Container')}</Th>
-            <Th width={50}>{t('container-security~Image')}</Th>
+            <Th width={30}>{t('Container')}</Th>
+            <Th width={50}>{t('Image')}</Th>
             <Th width={20}>
               <Tooltip content="Results provided by Quay security scanner">
-                <span>{t('container-security~Security scan')}</span>
+                <span>{t('Security scan')}</span>
               </Tooltip>
             </Th>
           </Tr>
@@ -384,7 +373,7 @@ export const ContainerVulnerabilities: FC<ContainerVulnerabilitiesProps> = (prop
                   vulnFor(status),
                   (vuln) => (
                     <span style={{ display: 'flex', alignItems: 'center' }}>
-                      <ExclamationTriangleIcon
+                      <RhUiWarningFillIcon
                         color={priorityFor(_.get(vuln.status, 'highestSeverity')).color.value}
                       />
                       &nbsp;
@@ -403,7 +392,7 @@ export const ContainerVulnerabilities: FC<ContainerVulnerabilitiesProps> = (prop
                   ),
                   () => (
                     <span>
-                      <GreenCheckCircleIcon /> {t('container-security~No vulnerabilities found')}
+                      <GreenCheckCircleIcon /> {t('No vulnerabilities found')}
                     </span>
                   ),
                 )}
@@ -435,7 +424,7 @@ export const ImageManifestVulnPodTab: FC<ImageManifestVulnPodTabProps> = (props)
   );
 };
 
-export type ContainerVulnerabilitiesProps = {
+type ContainerVulnerabilitiesProps = {
   pod: PodKind;
   imageManifestVuln: {
     data: ImageManifestVuln[];
@@ -451,15 +440,15 @@ export type ImageManifestVulnPageProps = {
   selector?: { [key: string]: string };
 };
 
-export type ImageManifestVulnListProps = {
+type ImageManifestVulnListProps = {
   data: ImageManifestVuln[];
 };
 
-export type ImageManifestVulnDetailsProps = {
+type ImageManifestVulnDetailsProps = {
   obj: ImageManifestVuln;
 };
 
-export type AffectedPodsProps = {
+type AffectedPodsProps = {
   obj: ImageManifestVuln;
 };
 

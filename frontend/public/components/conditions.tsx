@@ -1,11 +1,11 @@
 import type { FC } from 'react';
+import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import { CamelCaseWrap } from '@console/dynamic-plugin-sdk';
-import { ConsoleEmptyState } from './utils/status-box';
-import { LinkifyExternal } from './utils/link';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { ClusterServiceVersionCondition, K8sResourceCondition } from '../module/k8s';
-import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
+import type { ClusterServiceVersionCondition, K8sResourceCondition } from '../module/k8s';
+import { LinkifyExternal } from './utils/link';
+import { ConsoleEmptyState } from './utils/status-box';
 
 /**
  * Since ClusterServiceVersionCondition type is different from K8sResourceCondition, but InstallPlanCondition and SubscriptionCondition are identical, we will use the following enum to render the proper conditions table based on type.
@@ -19,24 +19,24 @@ export const Conditions: FC<ConditionsProps> = ({
   conditions,
   type = ConditionTypes.K8sResource,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const getStatusLabel = (status: string) => {
     switch (status) {
       case 'True':
-        return t('public~True');
+        return t('True');
       case 'False':
-        return t('public~False');
+        return t('False');
       default:
         return status;
     }
   };
 
-  const rows = (conditions as Array<K8sResourceCondition | ClusterServiceVersionCondition>)?.map?.(
+  const rows = (conditions as (K8sResourceCondition | ClusterServiceVersionCondition)[])?.map?.(
     (condition: K8sResourceCondition & ClusterServiceVersionCondition, i: number) => (
       <Tr
         data-test={type === ConditionTypes.ClusterServiceVersion ? condition.phase : condition.type}
-        key={i}
+        key={i} // eslint-disable-line react/no-array-index-key
       >
         {type === ConditionTypes.ClusterServiceVersion ? (
           <Td data-test={`condition[${i}].phase`}>
@@ -75,22 +75,22 @@ export const Conditions: FC<ConditionsProps> = ({
           <Thead>
             <Tr>
               {type === ConditionTypes.ClusterServiceVersion ? (
-                <Th>{t('public~Phase')}</Th>
+                <Th>{t('Phase')}</Th>
               ) : (
                 <>
-                  <Th>{t('public~Type')}</Th>
-                  <Th>{t('public~Status')}</Th>
+                  <Th>{t('Type')}</Th>
+                  <Th>{t('Status')}</Th>
                 </>
               )}
-              <Th visibility={['hidden', 'visibleOnLg']}>{t('public~Updated')}</Th>
-              <Th>{t('public~Reason')}</Th>
-              <Th visibility={['hidden', 'visibleOnSm']}>{t('public~Message')}</Th>
+              <Th visibility={['hidden', 'visibleOnLg']}>{t('Updated')}</Th>
+              <Th>{t('Reason')}</Th>
+              <Th visibility={['hidden', 'visibleOnSm']}>{t('Message')}</Th>
             </Tr>
           </Thead>
           <Tbody>{rows}</Tbody>
         </Table>
       ) : (
-        <ConsoleEmptyState>{t('public~No conditions found')}</ConsoleEmptyState>
+        <ConsoleEmptyState>{t('No conditions found')}</ConsoleEmptyState>
       )}
     </>
   );

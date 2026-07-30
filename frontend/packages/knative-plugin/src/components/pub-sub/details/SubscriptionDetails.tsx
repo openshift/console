@@ -14,11 +14,11 @@ interface SubscriptionDetails {
 }
 
 const SubscriptionDetails: FC<SubscriptionDetails> = ({ obj: subscription }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   return (
     <>
       <PaneBody>
-        <SectionHeading text={t('knative-plugin~Subscription details')} />
+        <SectionHeading text={t('Subscription details')} />
         <Grid hasGutter>
           <GridItem sm={6}>
             <ResourceSummary resource={subscription} />
@@ -26,7 +26,7 @@ const SubscriptionDetails: FC<SubscriptionDetails> = ({ obj: subscription }) => 
           <GridItem sm={6}>
             {subscription.spec?.channel?.kind && (
               <DynamicResourceLink
-                title={t('knative-plugin~Channel')}
+                title={t('Channel')}
                 name={subscription.spec.channel.name}
                 namespace={subscription.metadata.namespace}
                 kind={referenceFor(subscription.spec.channel)}
@@ -34,7 +34,7 @@ const SubscriptionDetails: FC<SubscriptionDetails> = ({ obj: subscription }) => 
             )}
             {subscription.spec?.subscriber?.ref && (
               <DynamicResourceLink
-                title={t('knative-plugin~Subscriber')}
+                title={t('Subscriber')}
                 name={subscription.spec.subscriber.ref.name}
                 namespace={subscription.metadata.namespace}
                 kind={referenceFor(subscription.spec.subscriber.ref)}
@@ -45,7 +45,7 @@ const SubscriptionDetails: FC<SubscriptionDetails> = ({ obj: subscription }) => 
       </PaneBody>
       {_.isArray(subscription?.status?.conditions) && (
         <PaneBody>
-          <SectionHeading text={t('knative-plugin~Conditions')} />
+          <SectionHeading text={t('Conditions')} />
           <Conditions conditions={subscription.status.conditions} />
         </PaneBody>
       )}

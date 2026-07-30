@@ -3,6 +3,7 @@
 set -e
 
 pushd frontend
-yarn install --immutable
-yarn run build
+YARN="node $(awk '/yarnPath:/{print $2}' .yarnrc.yml)"
+$YARN install --immutable
+$YARN run build
 popd

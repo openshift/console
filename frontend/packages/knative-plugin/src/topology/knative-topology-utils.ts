@@ -73,7 +73,7 @@ import type {
 } from './topology-types';
 import { NodeType, EdgeType, KameletType } from './topology-types';
 
-export const getKnNodeModelProps = (type: string) => {
+const getKnNodeModelProps = (type: string) => {
   switch (type) {
     case NodeType.EventSource:
     case NodeType.EventSink:
@@ -177,7 +177,7 @@ export const filterRevisionsByActiveApplication = (
   });
   return filteredRevisions;
 };
-export const isInternalResource = (resource: K8sResourceKind): boolean => {
+const isInternalResource = (resource: K8sResourceKind): boolean => {
   return resource.kind !== EventingBrokerModel.kind && !!resource.metadata?.ownerReferences;
 };
 
@@ -252,7 +252,7 @@ export const getKnativeDynamicResources = (
   }, []);
 };
 
-export const getSubscribedEventsources = (
+const getSubscribedEventsources = (
   pubSubResource: K8sResourceKind,
   resources: TopologyDataResources,
 ) => {
@@ -279,7 +279,7 @@ export const getSubscribedEventsources = (
  * @param resource
  * @param resources
  */
-export const getPubSubSubscribers = (
+const getPubSubSubscribers = (
   resource: K8sResourceKind,
   resources: TopologyDataResources,
 ): Subscriber[] | [] => {
@@ -414,7 +414,7 @@ const getChannelRef = (kind: string): string => {
  * @param ksvc Knative Service
  * @param resources
  */
-export const getSubscribedPubSubNodes = (
+const getSubscribedPubSubNodes = (
   ksvc: K8sResourceKind,
   resources: TopologyDataResources,
 ): K8sResourceKind[] => {
@@ -553,7 +553,7 @@ export const getDeploymentsForKamelet = (
 /**
  * Rollup data for deployments for revisions, event sources, event sinks
  */
-export const createKnativeDeploymentItems = (
+const createKnativeDeploymentItems = (
   resource: K8sResourceKind,
   resources: TopologyDataResources,
   utils?: KnativeUtil[],
@@ -591,7 +591,7 @@ export const createKnativeDeploymentItems = (
   };
 };
 
-export const createPubSubDataItems = (
+const createPubSubDataItems = (
   resource: K8sResourceKind,
   resources: TopologyDataResources,
 ): KnativeServiceOverviewItem => {
@@ -781,7 +781,7 @@ const getEventSourcesData = (sinkUri: string, resources) => {
 
 const getApiGroup = (apiVersion: string) => groupVersionFor(apiVersion)?.group;
 
-export const getEventSinkTopologyEdgeItems = (resource: K8sResourceKind, resources) => {
+const getEventSinkTopologyEdgeItems = (resource: K8sResourceKind, resources) => {
   const targetUid = resource?.metadata?.uid;
   const source = resource?.spec?.source?.ref;
   if (!targetUid || !source) return [];
@@ -843,7 +843,7 @@ export const getEventTopologyEdgeItems = (resource: K8sResourceKind, { data }): 
  * @param broker pass the eventing broker object
  * @param resources pass all the resources
  */
-export const getTriggerTopologyEdgeItems = (broker: K8sResourceKind, resources): EdgeModel[] => {
+const getTriggerTopologyEdgeItems = (broker: K8sResourceKind, resources): EdgeModel[] => {
   const {
     metadata: { uid, name },
   } = broker;
@@ -889,10 +889,7 @@ export const getTriggerTopologyEdgeItems = (broker: K8sResourceKind, resources):
   return edges;
 };
 
-export const getSubscriptionTopologyEdgeItems = (
-  resource: K8sResourceKind,
-  resources,
-): EdgeModel[] => {
+const getSubscriptionTopologyEdgeItems = (resource: K8sResourceKind, resources): EdgeModel[] => {
   const {
     kind,
     metadata: { uid, name },
@@ -1014,7 +1011,7 @@ export const getTrafficTopologyEdgeItems = (resource: K8sResourceKind, { data })
 /**
  * create all data that need to be shown on a topology data for knative service
  */
-export const createTopologyServiceNodeData = (
+const createTopologyServiceNodeData = (
   resource: K8sResourceKind,
   svcRes: OverviewItem,
   type: string,
@@ -1044,7 +1041,7 @@ export const createTopologyServiceNodeData = (
   };
 };
 
-export const createTopologyPubSubNodeData = (
+const createTopologyPubSubNodeData = (
   resource: K8sResourceKind,
   res: OverviewItem,
   type: string,
@@ -1170,7 +1167,7 @@ const sinkURIDataModel = (
   knDataModel.edges.push(...getEventTopologyEdgeItems(resource, resources.brokers));
 };
 
-export const createEventSinkTopologyNodeData = (
+const createEventSinkTopologyNodeData = (
   resource: K8sResourceKind,
   overviewItem: OverviewItem,
   type: string,
@@ -1393,7 +1390,7 @@ export const createSinkConnection = (source: Node, target: Node): Promise<K8sRes
   return createKnativeEventSourceSink(sourceObj, targetObj);
 };
 
-export const createEventingPubSubSink = (subObj: K8sResourceKind, target: K8sResourceKind) => {
+const createEventingPubSubSink = (subObj: K8sResourceKind, target: K8sResourceKind) => {
   if (!subObj || !target) {
     return Promise.reject();
   }

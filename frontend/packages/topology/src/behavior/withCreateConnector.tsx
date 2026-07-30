@@ -40,10 +40,10 @@ import type {
 // Updated to notify the wrapped component when the create connector is being dragged
 //
 
-export const CREATE_CONNECTOR_OPERATION = '#createconnector#';
-export const CREATE_CONNECTOR_DROP_TYPE = '#createConnector#';
+const CREATE_CONNECTOR_OPERATION = '#createconnector#';
+const CREATE_CONNECTOR_DROP_TYPE = '#createConnector#';
 
-export interface ConnectorChoice {
+interface ConnectorChoice {
   label: string;
 }
 
@@ -238,7 +238,7 @@ const CreateConnectorWidget: FC<CreateConnectorWidgetProps> = observer((props) =
 
   return (
     <>
-      {active ? <Layer id={TOP_LAYER}>{connector}</Layer> : connector}
+      <Layer id={TOP_LAYER}>{connector}</Layer>
       {prompt && (
         <ContextMenu
           reference={{ x: prompt.event.pageX, y: prompt.event.pageY }}

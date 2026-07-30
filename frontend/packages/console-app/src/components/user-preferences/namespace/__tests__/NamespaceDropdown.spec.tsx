@@ -1,4 +1,4 @@
-import { screen, act } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { useProjectOrNamespaceModel } from '@console/internal/components/utils/list-dropdown';
 import { NamespaceModel } from '@console/internal/models';
@@ -44,33 +44,27 @@ describe('NamespaceDropdown', () => {
     jest.clearAllMocks();
   });
 
-  it('should show loading state while namespace preferences are being fetched', async () => {
+  it('should show loading state while namespace preferences are being fetched', () => {
     setupMocks('', false);
 
-    await act(async () => {
-      renderWithProviders(<NamespaceDropdown />);
-    });
+    renderWithProviders(<NamespaceDropdown />);
 
     expect(screen.getByTestId('dropdown skeleton console.preferredNamespace')).toBeInTheDocument();
     expect(screen.queryByRole('button')).not.toBeInTheDocument();
   });
 
-  it('should display selected namespace name when preference is set', async () => {
+  it('should display selected namespace name when preference is set', () => {
     setupMocks(preferredNamespace, true);
 
-    await act(async () => {
-      renderWithProviders(<NamespaceDropdown />);
-    });
+    renderWithProviders(<NamespaceDropdown />);
 
     expect(screen.getByRole('button', { name: preferredNamespace })).toBeVisible();
   });
 
-  it('should show "Last viewed" option when no preference is set', async () => {
+  it('should show "Last viewed" option when no preference is set', () => {
     setupMocks(undefined, true);
 
-    await act(async () => {
-      renderWithProviders(<NamespaceDropdown />);
-    });
+    renderWithProviders(<NamespaceDropdown />);
 
     expect(screen.getByRole('button', { name: 'Last viewed' })).toBeVisible();
   });

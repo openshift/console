@@ -3,7 +3,6 @@
   "version": "0.0.0-fixed",
   "description": "Knative - Kubernetes-based platform to build, deploy, and manage modern serverless workloads",
   "private": true,
-  "main": "src/index.ts",
   "scripts": {
     "coverage": "yarn test --coverage --collectCoverageFrom='[\"packages/knative-plugin/src/**\",\"!**/__tests__/**\"]'",
     "lint": "yarn --cwd ../.. eslint packages/knative-plugin",

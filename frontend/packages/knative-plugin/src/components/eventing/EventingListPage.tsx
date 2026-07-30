@@ -3,8 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
 import { NamespaceBar } from '@console/internal/components/namespace-bar';
 import type { Page } from '@console/internal/components/utils';
-import type { MenuActions } from '@console/shared';
-import { isCatalogTypeEnabled, MultiTabListPage } from '@console/shared';
+import { isCatalogTypeEnabled } from '@console/shared/src/components/catalog/utils/catalog-utils';
+import type { MenuActions } from '@console/shared/src/components/multi-tab-list/multi-tab-list-page-types';
+import { MultiTabListPage } from '@console/shared/src/components/multi-tab-list/MultiTabListPage';
 import { EVENT_SOURCE_CATALOG_TYPE_ID } from '../../const';
 import { EventingBrokerModel } from '../../models';
 import BrokerListPage from './brokers-list/BrokerListPage';
@@ -14,23 +15,23 @@ import SubscriptionListPage from './subscription-list/SubscriptionListPage';
 import TriggerListPage from './triggers-list/TriggerListPage';
 
 const EventingListPage: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const { ns: namespace } = useParams();
   const [showTitle, canCreate] = [false, false];
   const nsSelected = namespace || 'default';
   const isEventSourceTypeEnabled = isCatalogTypeEnabled(EVENT_SOURCE_CATALOG_TYPE_ID);
   const menuActions: MenuActions = {
     eventSource: {
-      label: isEventSourceTypeEnabled ? t('knative-plugin~Event Source') : null,
+      label: isEventSourceTypeEnabled ? t('Event Source') : null,
       onSelection: () => `/catalog/ns/${nsSelected}?catalogType=EventSource&provider=["Red+Hat"]`,
     },
     brokers: {
-      label: t('knative-plugin~Broker'),
+      label: t('Broker'),
       model: EventingBrokerModel,
       onSelection: () => `/broker/ns/${nsSelected}`,
     },
     channels: {
-      label: t('knative-plugin~Channel'),
+      label: t('Channel'),
       onSelection: () => `/channel/ns/${nsSelected}`,
     },
   };
@@ -97,7 +98,7 @@ const EventingListPage: FC = () => {
       <NamespaceBar />
       <MultiTabListPage
         pages={pages}
-        title={t('knative-plugin~Eventing')}
+        title={t('Eventing')}
         menuActions={menuActions}
         telemetryPrefix="Eventing"
       />

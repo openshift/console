@@ -1,15 +1,16 @@
-import { consoleLogger, PluginStore } from '@openshift/dynamic-plugin-sdk';
-import { getSharedScope } from '@console/dynamic-plugin-sdk/src/runtime/plugin-shared-modules';
+import { PluginStore } from '@openshift/dynamic-plugin-sdk';
 import type { LocalPluginManifest } from '@openshift/dynamic-plugin-sdk';
 import type { Middleware } from 'redux';
-import { dynamicPluginNames } from '@console/plugin-sdk/src/utils/allowed-plugins';
-import type { RootState } from './redux';
 import { valid as semver } from 'semver';
-import { consoleFetch } from '@console/dynamic-plugin-sdk/src/utils/fetch/console-fetch';
-import { ValidationResult } from '@console/dynamic-plugin-sdk/src/validation/ValidationResult';
 import { REMOTE_ENTRY_CALLBACK } from '@console/dynamic-plugin-sdk/src/constants';
-import { noop } from 'lodash';
 import { initConsolePlugins } from '@console/dynamic-plugin-sdk/src/runtime/plugin-init';
+import { getSharedScope } from '@console/dynamic-plugin-sdk/src/runtime/plugin-shared-modules';
+import { ValidationResult } from '@console/dynamic-plugin-sdk/src/validation/ValidationResult';
+import { dynamicPluginNames } from '@console/plugin-sdk/src/utils/allowed-plugins';
+import { coFetch } from '@console/shared/src/utils/console-fetch';
+import type { RootState } from './redux';
+// eslint-disable-next-line @typescript-eslint/no-require-imports -- This module has its source generated during val-loader
+const localPlugins: LocalPluginManifest[] = require('../get-local-plugins').default;
 
 /**
  * Set by `console-operator` or `./bin/bridge -release-version`. If this is
@@ -17,24 +18,19 @@ import { initConsolePlugins } from '@console/dynamic-plugin-sdk/src/runtime/plug
  */
 const CURRENT_OPENSHIFT_VERSION = semver(window.SERVER_FLAGS.releaseVersion) ?? 'unknown';
 
-/**
- * Console local plugins module has its source generated during webpack build,
- * so we use dynamic require() instead of the usual static import statement.
- */
-const localPlugins: LocalPluginManifest[] = require('../get-local-plugins').default;
-
-// Suppress plugin SDK consoleLogger.info during testing to reduce noise
-// TODO: remove when upgrading to SDK 8.1 (codename "Blue")
-if (process.env.NODE_ENV === 'test') {
-  consoleLogger.info = noop;
-}
-
 const localPluginNames = localPlugins.map((p) => p.name);
 
 /** Checks if a plugin name is allowed to be loaded in Console. */
 const isAllowedPluginName = (name: string) => {
   return localPluginNames.includes(name) || dynamicPluginNames.includes(name);
 };
+
+if (process.env.NODE_ENV !== 'test') {
+  /* eslint-disable no-console */
+  console.info(`Static plugins: [${localPluginNames.join(', ') || '(empty)'}]`);
+  console.info(`Dynamic plugins: [${dynamicPluginNames.join(', ') || '(empty)'}]`);
+  /* eslint-enable no-console */
+}
 
 /**
  * Provides access to Console plugins and their extensions.
@@ -51,11 +47,10 @@ export const pluginStore = new PluginStore({
     // Explicitly define the default entry callback name
     entryCallbackSettings: {
       name: REMOTE_ENTRY_CALLBACK,
-      registerCallback: true,
     },
 
     // Use coFetch for plugin resource fetching
-    fetchImpl: consoleFetch,
+    fetchImpl: coFetch,
 
     // Allows plugins to target a specific version of OpenShift via semver
     customDependencyResolutions: {
@@ -97,26 +92,23 @@ export const pluginStore = new PluginStore({
       result.assertions.validDNSSubdomainName(manifest.name, 'metadata.name');
 
       // Only allow 'callback' registration method
-      result.assertions.validRegistrationMethod(manifest.registrationMethod);
+      result.assertThat(
+        manifest.registrationMethod === 'callback',
+        "registrationMethod must be 'callback', other methods are not supported",
+      );
 
       result.report();
 
       // No issues, return manifest as-is
       return manifest;
     },
-
-    // Double check that only 'callback' registration method is used
-    getPluginEntryModule: ({ name }) => {
-      throw new Error(
-        `Plugin "${name}" tried to load with registrationMethod "custom", but only "callback" is supported.`,
-      );
-    },
   },
 });
 
-localPlugins.forEach((plugin) => pluginStore.loadPlugin(plugin));
-
-initConsolePlugins(pluginStore);
+if (process.env.NODE_ENV !== 'production') {
+  // Expose Console plugin store for debugging
+  window.pluginStore = pluginStore;
+}
 
 /** Redux middleware that updates PluginStore FeatureFlags when redux actions are dispatched. */
 export const featureFlagMiddleware: Middleware<{}, RootState> = (s) => {
@@ -135,14 +127,12 @@ export const featureFlagMiddleware: Middleware<{}, RootState> = (s) => {
   };
 };
 
-if (process.env.NODE_ENV !== 'production') {
-  // Expose Console plugin store for debugging
-  window.pluginStore = pluginStore;
-}
-
-if (process.env.NODE_ENV !== 'test') {
-  // eslint-disable-next-line no-console
-  console.info(`Static plugins: [${localPluginNames.join(', ')}]`);
-  // eslint-disable-next-line no-console
-  console.info(`Dynamic plugins: [${dynamicPluginNames.join(', ')}]`);
-}
+// Ensure all static plugins are loaded before proceeding to load dynamic plugins
+Promise.allSettled(localPlugins.map((plugin) => pluginStore.loadPlugin(plugin)))
+  .then(() => {
+    initConsolePlugins(pluginStore);
+  })
+  .catch((err) => {
+    // eslint-disable-next-line no-console
+    console.error('Failed to load Console plugins', err);
+  });

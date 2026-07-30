@@ -12,7 +12,7 @@ type DynamicFormFieldProps = FormProps<any> & {
   showAlert?: boolean;
 };
 
-const DynamicFormField: FC<DynamicFormFieldProps> = ({
+export const DynamicFormField: FC<DynamicFormFieldProps> = ({
   name,
   schema,
   uiSchema,
@@ -37,7 +37,7 @@ const DynamicFormField: FC<DynamicFormFieldProps> = ({
         order={{ default: '1', md: '0' }}
       >
         <AsyncComponent
-          loader={() => import('../dynamic-form').then((c) => c.DynamicForm)}
+          loader={() => import('../dynamic-form/DynamicForm').then((c) => c.DynamicForm)}
           errors={errors}
           formContext={formContext}
           showAlert={showAlert}
@@ -54,5 +54,3 @@ const DynamicFormField: FC<DynamicFormFieldProps> = ({
     </Grid>
   );
 };
-
-export default DynamicFormField;

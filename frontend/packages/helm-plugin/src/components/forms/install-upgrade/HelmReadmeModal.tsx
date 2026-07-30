@@ -13,10 +13,10 @@ type HelmReadmeModalProps = {
 type Props = HelmReadmeModalProps & ModalComponentProps;
 
 const HelmReadmeModal: FC<Props> = ({ readme }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   return (
     <>
-      <ModalHeader title={t('helm-plugin~README')} labelId="helm-readme-modal-title" />
+      <ModalHeader title={t('README')} labelId="helm-readme-modal-title" />
       <ModalBody>
         <MarkdownView content={readme} />
       </ModalBody>

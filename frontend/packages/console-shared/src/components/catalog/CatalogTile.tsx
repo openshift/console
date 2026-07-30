@@ -1,5 +1,5 @@
 import type { FC, MouseEvent } from 'react';
-import { isValidElement, memo } from 'react';
+import { isValidElement } from 'react';
 import {
   CatalogTileBadge,
   CatalogTile as PfCatalogTile,
@@ -10,7 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import type { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
 import { isModifiedEvent } from '../../utils/utils';
-import CatalogBadges from './CatalogBadges';
+import { CatalogBadges } from './CatalogBadges';
 import { getIconProps } from './utils/catalog-utils';
 import type { CatalogType } from './utils/types';
 
@@ -23,11 +23,11 @@ type CatalogTileProps = {
   href?: string;
 };
 
-const CatalogTile: FC<CatalogTileProps> = ({ item, catalogTypes, onClick, href }) => {
-  const { t } = useTranslation();
+export const CatalogTile: FC<CatalogTileProps> = ({ item, catalogTypes, onClick, href }) => {
+  const { t } = useTranslation('console-shared');
   const navigate = useNavigate();
   const { uid, name, title, provider, description, type, typeLabel, badges } = item;
-  const vendor = provider ? t('console-shared~Provided by {{provider}}', { provider }) : null;
+  const vendor = provider ? t('Provided by {{provider}}', { provider }) : null;
   const catalogType = _.find(catalogTypes, ['value', type]);
 
   const typeBadges = [
@@ -63,5 +63,3 @@ const CatalogTile: FC<CatalogTileProps> = ({ item, catalogTypes, onClick, href }
     </PfCatalogTile>
   );
 };
-
-export default memo<CatalogTileProps>(CatalogTile);

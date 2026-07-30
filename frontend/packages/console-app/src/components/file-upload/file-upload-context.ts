@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import type { FileUpload } from '@console/dynamic-plugin-sdk';
 import { isFileUpload, useResolvedExtensions } from '@console/dynamic-plugin-sdk';
-import { useToast } from '@console/shared/src/components/toast';
+import { useToast } from '@console/shared/src/components/toast/useToast';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { getRequiredFileUploadExtension } from './file-upload-utils';
 
@@ -24,7 +24,7 @@ export const FileUploadContext = createContext<FileUploadContextType>({
 export const FileUploadContextProvider = FileUploadContext.Provider;
 
 export const useValuesFileUploadContext = (): FileUploadContextType => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const [fileUploadExtensions, resolved] = useResolvedExtensions<FileUpload>(isFileUpload);
   const toastContext = useToast();
   const [namespace] = useActiveNamespace();
@@ -55,9 +55,9 @@ export const useValuesFileUploadContext = (): FileUploadContextType => {
         } else {
           toastContext.addToast({
             variant: AlertVariant.warning,
-            title: t('console-app~Incompatible file type'),
+            title: t('Incompatible file type'),
             content: t(
-              'console-app~{{fileName}} cannot be uploaded. Only {{fileExtensions}} files are supported currently. Try another file.',
+              '{{fileName}} cannot be uploaded. Only {{fileExtensions}} files are supported currently. Try another file.',
               {
                 fileName: f.name,
                 fileExtensions: fileExtensions.toString(),

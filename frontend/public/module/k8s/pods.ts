@@ -1,12 +1,8 @@
-import * as _ from 'lodash';
+/* eslint-disable no-barrel-files/no-barrel-files */
 import i18next from 'i18next';
-import { PodPhase } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { ContainerSpec, ContainerStatus, PodKind, Volume, VolumeMount } from './types';
-
-export type {
-  PodPhase,
-  PodReadiness,
-} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import * as _ from 'lodash';
+import type { PodPhase } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { ContainerStatus, PodKind, Volume } from './types';
 
 const getRestartPolicy = (pod: PodKind) =>
   _.find(
@@ -41,7 +37,7 @@ const getRestartPolicy = (pod: PodKind) =>
     { id: _.get<any, string>(pod, 'spec.restartPolicy') },
   );
 
-export const VolumeSource = {
+const VolumeSource = {
   emptyDir: {
     id: 'emptyDir',
     label: i18next.t('public~Container volume'),
@@ -150,39 +146,6 @@ export const getVolumeLocation = (volume: Volume) => {
 };
 
 export const getRestartPolicyLabel = (pod: PodKind) => _.get(getRestartPolicy(pod), 'label', '');
-
-export const getVolumeMountPermissions = (v: VolumeMount) => {
-  if (!v) {
-    return null;
-  }
-
-  return v.readOnly ? 'Read-only' : 'Read/Write';
-};
-
-export const getVolumeMountsByPermissions = (pod: PodKind) => {
-  if (!pod || !pod.spec || !pod.spec.volumes) {
-    return [];
-  }
-  const m = {};
-
-  const volumes = (pod.spec.volumes || []).reduce((p, v: Volume) => {
-    p[v.name] = v;
-    return p;
-  }, {});
-
-  _.forEach(pod.spec.containers, (c: ContainerSpec) => {
-    _.forEach(c.volumeMounts, (v: VolumeMount) => {
-      const k = `${v.name}_${v.readOnly ? 'ro' : 'rw'}`;
-      const mount = { container: c.name, mountPath: v.mountPath, subPath: v.subPath };
-      if (k in m) {
-        return m[k].mounts.push(mount);
-      }
-      m[k] = { mounts: [mount], name: v.name, readOnly: !!v.readOnly, volume: volumes[v.name] };
-    });
-  });
-
-  return _.values(m);
-};
 
 export const podRestarts = (pod: PodKind): number => {
   if (!pod || !pod.status) {
@@ -299,11 +262,17 @@ export const podPhase = (pod: PodKind): PodPhase => {
 
 export const podPhaseFilterReducer = (pod: PodKind): PodPhase => {
   const status = podPhase(pod);
+  if (!status) {
+    return _.get(pod, 'status.phase', 'Unknown');
+  }
   if (status === 'Terminating') {
     return status;
   }
   if (status.includes('CrashLoopBackOff')) {
     return 'CrashLoopBackOff';
+  }
+  if (status === 'CreateContainerError' || status === 'CreateContainerConfigError') {
+    return 'CreateContainerError';
   }
   return _.get(pod, 'status.phase', 'Unknown');
 };

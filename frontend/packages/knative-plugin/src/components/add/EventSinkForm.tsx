@@ -4,13 +4,11 @@ import type { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import {
-  FormFooter,
-  SyncedEditorField,
-  CodeEditorField,
-  FlexForm,
-  FormBody,
-} from '@console/shared';
+import { FlexForm } from '@console/shared/src/components/form-utils/FlexForm';
+import { FormBody } from '@console/shared/src/components/form-utils/FormBody';
+import { FormFooter } from '@console/shared/src/components/form-utils/FormFooter';
+import { CodeEditorField } from '@console/shared/src/components/formik-fields/CodeEditorField';
+import { SyncedEditorField } from '@console/shared/src/components/formik-fields/SyncedEditorField';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import {
@@ -39,7 +37,7 @@ const EventSinkForm: FC<FormikProps<FormikValues> & OwnProps> = ({
   eventSinkMetaDescription,
   kameletSink,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY = 'knative.eventSinkForm.editor.lastView';
   const yamlEditor = <CodeEditorField name="yamlData" showSamples onSave={handleSubmit} />;
 
@@ -64,7 +62,7 @@ const EventSinkForm: FC<FormikProps<FormikValues> & OwnProps> = ({
             }
             isInline
             title={t(
-              'knative-plugin~Note: Some fields may not be represented in this form view. Please select "YAML view" for full control of object creation.',
+              'Some fields might not be displayed in this form view. Select "YAML view" to edit all fields.',
             )}
             variant="info"
           />
@@ -92,12 +90,12 @@ const EventSinkForm: FC<FormikProps<FormikValues> & OwnProps> = ({
         handleReset={handleReset}
         errorMessage={status && status.submitError}
         isSubmitting={isSubmitting}
-        submitLabel={t('knative-plugin~Create')}
+        submitLabel={t('Create')}
         disableSubmit={
           (values.editorType === EditorType.YAML ? !dirty : !dirty || !_.isEmpty(errors)) ||
           isSubmitting
         }
-        resetLabel={t('knative-plugin~Cancel')}
+        resetLabel={t('Cancel')}
         sticky
       />
     </FlexForm>

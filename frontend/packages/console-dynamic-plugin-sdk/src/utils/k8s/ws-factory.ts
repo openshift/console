@@ -344,6 +344,8 @@ export class WSFactory {
   }
 
   send(data: Parameters<typeof WebSocket.prototype.send>[0]) {
-    this.ws && this.ws.send(data);
+    if (this.ws?.readyState === WebSocket.OPEN) {
+      this.ws.send(data);
+    }
   }
 }

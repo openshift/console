@@ -1,10 +1,5 @@
 /* eslint-disable camelcase */
-import * as _ from 'lodash';
 import type { FC } from 'react';
-import { useTranslation } from 'react-i18next';
-
-import { SendResolvedAlertsCheckbox } from './send-resolved-alerts-checkbox';
-import { FormProps } from './receiver-form-props';
 import {
   FormGroup,
   FormHelperText,
@@ -12,13 +7,17 @@ import {
   HelperText,
   TextInput,
 } from '@patternfly/react-core';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { AdvancedConfiguration } from './advanced-configuration';
+import type { FormProps, SubFormModule } from './receiver-form-props';
+import { SendResolvedAlertsCheckbox } from './send-resolved-alerts-checkbox';
 
-export const Form: FC<FormProps> = ({ formValues, dispatchFormChange }) => {
-  const { t } = useTranslation();
+const Form: FC<FormProps> = ({ formValues, dispatchFormChange }) => {
+  const { t } = useTranslation('public');
   return (
     <>
-      <FormGroup label={t('public~URL')} fieldId="webhook-url" isRequired>
+      <FormGroup label={t('URL')} fieldId="webhook-url" isRequired>
         <TextInput
           id="webhook-url"
           data-test="webhook-url"
@@ -31,7 +30,7 @@ export const Form: FC<FormProps> = ({ formValues, dispatchFormChange }) => {
         <FormHelperText>
           <HelperText>
             <HelperTextItem id="webhook-url-help">
-              {t('public~The endpoint to send HTTP POST requests to.')}
+              {t('The endpoint to send HTTP POST requests to.')}
             </HelperTextItem>
           </HelperText>
         </FormHelperText>
@@ -47,22 +46,22 @@ export const Form: FC<FormProps> = ({ formValues, dispatchFormChange }) => {
   );
 };
 
-export const getInitialValues = (globals, receiverConfig) => {
+const getInitialValues = (globals, receiverConfig) => {
   return {
     webhookUrl: receiverConfig?.url || '',
     webhookSendResolved: _.get(receiverConfig, 'send_resolved', globals?.webhook_send_resolved),
   };
 };
 
-export const isFormInvalid = (formValues) => {
+const isFormInvalid = (formValues) => {
   return !formValues.webhookUrl;
 };
 
-export const updateGlobals = () => {
+const updateGlobals = () => {
   return {};
 };
 
-export const createReceiverConfig = (globals, formValues, receiverConfig) => {
+const createReceiverConfig = (globals, formValues, receiverConfig) => {
   _.set(receiverConfig, 'url', formValues.webhookUrl);
 
   if (formValues.webhookSendResolved !== globals.webhook_send_resolved) {
@@ -72,4 +71,12 @@ export const createReceiverConfig = (globals, formValues, receiverConfig) => {
   }
 
   return receiverConfig;
+};
+
+export const WebhookForm: SubFormModule = {
+  Form,
+  getInitialValues,
+  isFormInvalid,
+  updateGlobals,
+  createReceiverConfig,
 };

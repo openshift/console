@@ -2,7 +2,8 @@ import type { FC } from 'react';
 import type { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { FormBody, FormFooter } from '@console/shared/src/components/form-utils';
+import { FormBody } from '@console/shared/src/components/form-utils/FormBody';
+import { FormFooter } from '@console/shared/src/components/form-utils/FormFooter';
 import PipelineSection from '../pipeline-section/pipeline/PipelineSection';
 import AdvancedSection from './advanced/AdvancedSection';
 import AppSection from './app/AppSection';
@@ -27,7 +28,7 @@ export const SourceToImageForm: FC<
   dirty,
   projects,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const searchParams = new URLSearchParams(window.location.search);
   const imageStreamName = searchParams.get('imagestream');
   return (
@@ -51,9 +52,9 @@ export const SourceToImageForm: FC<
         handleReset={handleReset}
         errorMessage={status && status.submitError}
         isSubmitting={isSubmitting}
-        submitLabel={t('devconsole~Create')}
+        submitLabel={t('Create')}
         disableSubmit={!dirty || !_.isEmpty(errors) || isSubmitting}
-        resetLabel={t('devconsole~Cancel')}
+        resetLabel={t('Cancel')}
         sticky
       />
     </form>

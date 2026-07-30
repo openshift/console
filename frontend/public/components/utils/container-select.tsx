@@ -1,19 +1,18 @@
-import * as _ from 'lodash';
-import { FC, Ref, useState } from 'react';
+import type { FC, Ref } from 'react';
+import { useState } from 'react';
+import type { MenuToggleElement, SelectProps } from '@patternfly/react-core';
 import {
   Divider,
   MenuToggle,
-  MenuToggleElement,
   Select,
   SelectGroup,
   SelectList,
   SelectOption,
-  SelectProps,
 } from '@patternfly/react-core';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-
 import { ContainerModel } from '@console/internal/models';
-import { ContainerSpec } from '@console/internal/module/k8s';
+import type { ContainerSpec } from '@console/internal/module/k8s';
 import { ResourceName } from './resource-icon';
 
 export const ContainerLabel: FC<ContainerLabelProps> = ({ name }) => (
@@ -23,7 +22,7 @@ export const ContainerLabel: FC<ContainerLabelProps> = ({ name }) => (
 const ContainerSelectOptions: FC<ContainerSelectOptionsProps> = ({ containers }) => (
   <>
     {Object.values(containers ?? {}).map(({ name }) => (
-      <SelectOption key={name} value={name} data-test-dropdown-menu={name}>
+      <SelectOption key={name} value={name} data-test-dropdown-menu={name} data-test={name}>
         <ContainerLabel name={name} />
       </SelectOption>
     ))}
@@ -40,7 +39,7 @@ export const ContainerSelect: FC<ContainerSelectProps> = ({
   const [selected, setSelected] = useState<string>(
     currentKey || Object.values(containers ?? {})?.[0]?.name,
   );
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   if (_.isEmpty(containers)) {
     return null;
@@ -76,13 +75,13 @@ export const ContainerSelect: FC<ContainerSelectProps> = ({
     >
       {!_.isEmpty(initContainers) ? (
         <>
-          <SelectGroup label={t('public~Containers')}>
+          <SelectGroup label={t('Containers')}>
             <SelectList>
               <ContainerSelectOptions containers={containers} />
             </SelectList>
           </SelectGroup>
           <Divider />
-          <SelectGroup label={t('public~Init containers')}>
+          <SelectGroup label={t('Init containers')}>
             <SelectList>
               <ContainerSelectOptions containers={initContainers} />
             </SelectList>

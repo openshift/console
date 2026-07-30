@@ -1,3 +1,4 @@
+/* eslint-disable no-barrel-files/no-barrel-files */
 import {
   t_global_icon_color_status_warning_default as globalWarning100,
   t_color_white as globalWhite,

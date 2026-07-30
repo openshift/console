@@ -1,6 +1,8 @@
 import type { FC } from 'react';
-import { useReducer, useCallback, useEffect } from 'react';
+import { useMemo, useReducer, useCallback, useEffect } from 'react';
 import * as _ from 'lodash';
+import { FLAG_OPENSHIFT_5 } from '@console/app/src/consts';
+import { useFlag } from '@console/dynamic-plugin-sdk/src/utils/flags';
 import type { NodeKind } from '@console/internal/module/k8s';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
@@ -17,21 +19,21 @@ const leftCards = [{ Card: DetailsCard }, { Card: InventoryCard }];
 const mainCards = [{ Card: StatusCard }, { Card: UtilizationCard }];
 const rightCards = [{ Card: ActivityCard }];
 
-export enum ActionType {
+enum ActionType {
   CPU_LIMIT = 'CPU_LIMIT',
   MEMORY_LIMIT = 'MEMORY_LIMIT',
   HEALTH_CHECK = 'HEALTH_CHECK',
   OBJ = 'OBJ',
 }
 
-export const initialState = (obj: NodeKind): NodeDashboardState => ({
+const initialState = (obj: NodeKind): NodeDashboardState => ({
   obj,
   cpuLimit: undefined,
   memoryLimit: undefined,
   healthCheck: undefined,
 });
 
-export const reducer = (state: NodeDashboardState, action: NodeDashboardAction) => {
+const reducer = (state: NodeDashboardState, action: NodeDashboardAction) => {
   switch (action.type) {
     case ActionType.CPU_LIMIT: {
       if (_.isEqual(action.payload, state.cpuLimit)) {
@@ -75,6 +77,7 @@ export const reducer = (state: NodeDashboardState, action: NodeDashboardAction) 
 };
 
 const NodeDashboard: FC<NodeDashboardProps> = ({ obj }) => {
+  const isOpenShift5 = useFlag(FLAG_OPENSHIFT_5);
   const [state, dispatch] = useReducer(reducer, initialState(obj));
 
   useEffect(() => {
@@ -94,20 +97,35 @@ const NodeDashboard: FC<NodeDashboardProps> = ({ obj }) => {
     [],
   );
 
-  const context = {
-    obj,
-    cpuLimit: state.cpuLimit,
-    memoryLimit: state.memoryLimit,
-    healthCheck: state.healthCheck,
-    setCPULimit,
-    setMemoryLimit,
-    setHealthCheck,
-  };
+  const context = useMemo(
+    () => ({
+      obj,
+      cpuLimit: state.cpuLimit,
+      memoryLimit: state.memoryLimit,
+      healthCheck: state.healthCheck,
+      setCPULimit,
+      setMemoryLimit,
+      setHealthCheck,
+    }),
+    [
+      obj,
+      setCPULimit,
+      setHealthCheck,
+      setMemoryLimit,
+      state.cpuLimit,
+      state.healthCheck,
+      state.memoryLimit,
+    ],
+  );
 
   return (
     <NodeDashboardContext.Provider value={context}>
       <Dashboard>
-        <DashboardGrid mainCards={mainCards} leftCards={leftCards} rightCards={rightCards} />
+        <DashboardGrid
+          mainCards={mainCards}
+          leftCards={leftCards}
+          rightCards={isOpenShift5 ? undefined : rightCards}
+        />
       </Dashboard>
     </NodeDashboardContext.Provider>
   );

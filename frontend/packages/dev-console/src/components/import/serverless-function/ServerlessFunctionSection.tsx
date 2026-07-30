@@ -5,7 +5,7 @@ import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import type { BuilderImage } from '@console/dev-console/src/utils/imagestream-utils';
-import { getGitService } from '@console/git-service/src';
+import { getGitService } from '@console/git-service/src/services/git-service';
 import { evaluateFunc } from '@console/git-service/src/utils/serverless-strategy-detector';
 import { Loading } from '@console/internal/components/utils';
 import type { SupportedRuntime } from '../../../utils/serverless-functions';
@@ -16,7 +16,7 @@ import { useResourceType } from '../section/useResourceType';
 import './ServerlessFunctionSection.scss';
 
 const ServerlessFunctionSection = ({ builderImages }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const { values, setFieldValue, setFieldError, errors } = useFormikContext<FormikValues>();
   const {
     git: { url, type, ref, dir, secretResource },
@@ -36,14 +36,14 @@ const ServerlessFunctionSection = ({ builderImages }) => {
           setRuntimeImage(getRuntimeImage(res.values.runtime as SupportedRuntime, builderImages));
           if (notSupportedRuntime.includes(res.values.runtime)) {
             setHelpText(
-              t('devconsole~Support for {{runtime}} is not yet available.', {
+              t('Support for {{runtime}} is not yet available.', {
                 runtime: res.values.runtime,
               }),
             );
           } else {
             setHelpText(
               t(
-                'devconsole~Unsupported Runtime detected. Please update the Repository URL or change the Build Strategy to continue.',
+                'Unsupported Runtime detected. Please update the Repository URL or change the Build Strategy to continue.',
               ),
             );
           }
@@ -95,7 +95,7 @@ const ServerlessFunctionSection = ({ builderImages }) => {
           className="odc-serverless-function-strategy-section__error-alert"
           isInline
           variant="danger"
-          title={t('devconsole~Import is not possible.')}
+          title={t('Import is not possible.')}
         >
           {helpText}
         </Alert>

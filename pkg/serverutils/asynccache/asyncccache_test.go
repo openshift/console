@@ -44,26 +44,22 @@ func TestAsyncCache(t *testing.T) {
 		t.Error("expected usable context")
 	}
 
-	timedCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	timedCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	c.Run(timedCtx)
 
-	// test the values get properly changed
-	var matches int
-	var changed bool
-	for i := 0; i < 3; i++ {
-		newItem := c.GetItem()
-		if newItem == item {
-			matches++
-		} else {
-			changed = true
-		}
+	// wait.UntilWithContext fires runCache immediately, so wait briefly
+	// for the first refresh to complete before capturing the baseline.
+	time.Sleep(100 * time.Millisecond)
+	item = c.GetItem()
 
-		time.Sleep(1 * time.Second)
-	}
+	// within the 2s refresh interval the pointer should stay the same
+	time.Sleep(500 * time.Millisecond)
+	require.Equal(t, item, c.GetItem(), "item should not change within refresh interval")
 
-	require.Greater(t, matches, 0)
-	require.True(t, changed)
+	// after the refresh interval the item should be replaced
+	time.Sleep(2 * time.Second)
+	require.NotEqual(t, item, c.GetItem(), "item should change after refresh interval")
 	cancel()
 
 	// test that the cache returns error properly

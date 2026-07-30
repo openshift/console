@@ -1,6 +1,5 @@
 import type { Map as ImmutableMap } from 'immutable';
-import type { UserKind } from '@console/internal/module/k8s/types';
-import type { UserInfo } from '../../../extensions';
+import type { UserInfo, UserKind } from '../../../extensions';
 import type { ImpersonateKind, SDKStoreState, AdmissionWebhookWarning } from '../../redux-types';
 
 type GetImpersonate = (state: SDKStoreState) => ImpersonateKind;

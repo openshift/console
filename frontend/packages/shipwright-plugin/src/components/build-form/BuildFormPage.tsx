@@ -9,7 +9,7 @@ import type { Build } from '../../types';
 import EditBuild from './EditBuild';
 
 const BuildFormPage: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('shipwright-plugin');
   const { ns: namespace, name } = useParams();
 
   const isNew = !name;
@@ -52,9 +52,7 @@ const BuildFormPage: FC = () => {
       }
     : watchedBuild;
 
-  const title = isNew
-    ? t('shipwright-plugin~Create Shipwright Build')
-    : t('shipwright-plugin~Edit Shipwright Build');
+  const title = isNew ? t('Create Shipwright Build') : t('Edit Shipwright Build');
 
   return (
     <>

@@ -11,7 +11,7 @@ import {
   TabTitleText,
   PageSection,
 } from '@patternfly/react-core';
-import { ExclamationTriangleIcon, LockIcon } from '@patternfly/react-icons';
+import { RhUiWarningFillIcon, RhStandardPadlockLockedIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate } from 'react-router';
 import { LoadingBox } from '@console/internal/components/utils/status-box';
@@ -27,7 +27,7 @@ import useClusterConfigurationItems from './useClusterConfigurationItems';
 import './ClusterConfigurationPage.scss';
 
 const ClusterConfigurationPage: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const params = useParams();
   const navigate = useNavigate();
 
@@ -100,11 +100,11 @@ const ClusterConfigurationPage: FC = () => {
 
   return (
     <div className="co-cluster-configuration-page">
-      <DocumentTitle>{t('console-app~Cluster configuration')}</DocumentTitle>
+      <DocumentTitle>{t('Cluster configuration')}</DocumentTitle>
       <PageHeading
-        title={t('console-app~Cluster configuration')}
+        title={t('Cluster configuration')}
         helpText={t(
-          'console-app~Set cluster-wide configuration for the console experience. Your changes will be autosaved and will affect after a refresh.',
+          'Set cluster-wide configuration for the console experience. Your changes will be autosaved and will affect after a refresh.',
         )}
       />
       <PageSection>
@@ -113,13 +113,11 @@ const ClusterConfigurationPage: FC = () => {
         ) : clusterConfigurationTabs.length === 0 ? (
           <EmptyState
             headingLevel="h1"
-            icon={LockIcon}
-            titleText={<>{t('console-app~Insufficient permissions')}</>}
+            icon={RhStandardPadlockLockedIcon}
+            titleText={<>{t('Insufficient permissions')}</>}
           >
             <EmptyStateBody>
-              {t(
-                'console-app~You do not have sufficient permissions to read any cluster configuration.',
-              )}
+              {t('You do not have sufficient permissions to read any cluster configuration.')}
             </EmptyStateBody>
           </EmptyState>
         ) : (
@@ -144,8 +142,8 @@ const ClusterConfigurationPage: FC = () => {
               <section className="co-cluster-configuration-page pf-v6-c-tab-content">
                 <Status
                   status={IconStatus.warning}
-                  icon={<ExclamationTriangleIcon />}
-                  label={t('console-app~{{section}} not found', { section: activeTabId })}
+                  icon={<RhUiWarningFillIcon />}
+                  label={t('{{section}} not found', { section: activeTabId })}
                 />
               </section>
             ) : null}

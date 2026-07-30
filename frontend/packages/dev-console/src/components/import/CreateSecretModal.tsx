@@ -4,7 +4,7 @@ import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/us
 import type { SecretFormType } from '@console/internal/components/secrets/create-secret';
 import { SecretFormWrapper } from '@console/internal/components/secrets/create-secret';
 
-export interface CreateSecretModalProps {
+interface CreateSecretModalProps {
   namespace: string;
   formType: SecretFormType;
   save?: (name: string) => void;

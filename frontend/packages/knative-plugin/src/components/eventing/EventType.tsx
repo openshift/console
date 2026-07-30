@@ -20,7 +20,7 @@ const EventTypeHeaders = (t: TFunction) => () => {
   ];
 };
 
-export const EventTypeRow: FC<RowFunctionArgs<{ key: string; value: string }>> = ({ obj }) => {
+const EventTypeRow: FC<RowFunctionArgs<{ key: string; value: string }>> = ({ obj }) => {
   return (
     <>
       <TableData columnID="attributes">{obj.key}</TableData>
@@ -34,7 +34,7 @@ interface EventTypeProps {
 }
 
 const EventType: FC<EventTypeProps> = ({ eventType }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
 
   const specAttributes = ['type', 'source', 'schema'];
 
@@ -48,13 +48,13 @@ const EventType: FC<EventTypeProps> = ({ eventType }) => {
     <>
       {eventType.spec.description ? eventType.spec.description : ''}
       <div style={{ marginTop: 'var(--pf-t--global--spacer--md)' }}>
-        <Content component={ContentVariants.h3}>{t('knative-plugin~Event details')}</Content>
+        <Content component={ContentVariants.h3}>{t('Event details')}</Content>
       </div>
       <Table
         data={rows}
         defaultSortField={'attributes'}
         defaultSortOrder={SortByDirection.asc}
-        aria-label={t('knative-plugin~Event')}
+        aria-label={t('Event')}
         Header={EventTypeHeaders(t)}
         Row={EventTypeRow}
         loaded

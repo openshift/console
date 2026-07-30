@@ -375,5 +375,15 @@
       },
       "provider": { "$codeRef": "hostActionsProvider.useHostActionsProvider" }
     }
+  },
+  {
+    "type": "console.node/inventory-item",
+    "properties": {
+      "priority": 60,
+      "component": { "$codeRef": "baremetalNodeInventoryItemsForNode.default" }
+    },
+    "flags": {
+      "required": ["BAREMETAL", "METAL3"]
+    }
   }
 ]

@@ -34,10 +34,8 @@ export type StartNodeMaintenanceModalProps = ModalComponentProps & {
   nodeName: string;
 };
 
-export const StartNodeMaintenanceModal: OverlayComponent<StartNodeMaintenanceModalProps> = (
-  props,
-) => {
-  const { t } = useTranslation();
+const StartNodeMaintenanceModal: OverlayComponent<StartNodeMaintenanceModalProps> = (props) => {
+  const { t } = useTranslation('metal3-plugin');
   const { nodeName, closeOverlay } = props;
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
   const [model] = useMaintenanceCapability();
@@ -66,7 +64,7 @@ export const StartNodeMaintenanceModal: OverlayComponent<StartNodeMaintenanceMod
       aria-labelledby="start-node-maintenance-modal-title"
     >
       <ModalHeader
-        title={t('metal3-plugin~Start Maintenance')}
+        title={t('Start Maintenance')}
         data-test-id="modal-title"
         labelId="start-node-maintenance-modal-title"
       />
@@ -74,7 +72,7 @@ export const StartNodeMaintenanceModal: OverlayComponent<StartNodeMaintenanceMod
         <Stack hasGutter>
           <StackItem>
             {t(
-              'metal3-plugin~All managed workloads will be moved off of this node. New workloads and data will not be added to this node until maintenance is stopped.',
+              'All managed workloads will be moved off of this node. New workloads and data will not be added to this node until maintenance is stopped.',
             )}
           </StackItem>
           <StackItem>
@@ -97,11 +95,11 @@ export const StartNodeMaintenanceModal: OverlayComponent<StartNodeMaintenanceMod
             <StackItem>
               <Alert
                 variant="warning"
-                title={t('metal3-plugin~The Ceph storage cluster is not in a healthy state.')}
+                title={t('The Ceph storage cluster is not in a healthy state.')}
                 isInline
               >
                 {t(
-                  'metal3-plugin~Maintenance should not be started until the health of the storage cluster is restored.',
+                  'Maintenance should not be started until the health of the storage cluster is restored.',
                 )}
               </Alert>
             </StackItem>
@@ -117,10 +115,10 @@ export const StartNodeMaintenanceModal: OverlayComponent<StartNodeMaintenanceMod
           data-test="confirm-action"
           id="confirm-action"
         >
-          {t('metal3-plugin~Start Maintenance')}
+          {t('Start Maintenance')}
         </Button>
         <Button variant="link" onClick={closeOverlay} data-test-id="modal-cancel-action">
-          {t('metal3-plugin~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </Modal>

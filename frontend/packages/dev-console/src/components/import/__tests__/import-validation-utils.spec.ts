@@ -1,5 +1,5 @@
 import { cloneDeep } from 'lodash';
-import { GitProvider } from '@console/git-service/src';
+import { GitProvider } from '@console/git-service/src/types/git';
 import { CREATE_APPLICATION_KEY, UNASSIGNED_KEY } from '@console/topology/src/const';
 import { t } from '../../../../../../__mocks__/i18next';
 import { mockFormData } from '../__mocks__/import-validation-mock';

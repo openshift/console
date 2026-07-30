@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import type { PluginCSPViolations } from '@console/internal/actions/ui';
 import { setPluginCSPViolations } from '@console/internal/actions/ui';
-import { useToast } from '@console/shared/src/components/toast';
+import { useToast } from '@console/shared/src/components/toast/useToast';
 import { IS_PRODUCTION } from '@console/shared/src/constants/common';
 import { ONE_DAY } from '@console/shared/src/constants/time';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
@@ -67,11 +67,6 @@ export const newPluginCSPViolationEvent = (
  * Report CSP violation event for Cypress test purposes.
  */
 const reportCSPViolationToCypress = (event: SecurityPolicyViolationEvent) => {
-  // OCPBUGS-77931: Address CSP violations detected when running Cypress tests
-  if (event.effectiveDirective === 'img-src') {
-    return; // Catalog view links to arbitrary image URLs
-  }
-
   // Import from Git e2e tests make direct browser requests to api.github.com
   // which violates connect-src CSP. This is expected since git hosting can be
   // on any arbitrary hostname (e.g. Gitea) and cannot be allowlisted in CSP.
@@ -88,7 +83,7 @@ const reportCSPViolationToCypress = (event: SecurityPolicyViolationEvent) => {
 };
 
 export const useCSPViolationDetector = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const toastContext = useToast();
   const fireTelemetryEvent = useTelemetry();
   const pluginStore = usePluginStore();
@@ -143,9 +138,9 @@ export const useCSPViolationDetector = () => {
         if (pluginIsLoaded && !IS_PRODUCTION && !cspViolations[pluginName]) {
           toastContext.addToast({
             variant: AlertVariant.warning,
-            title: t('public~Content Security Policy violation in Console plugin'),
+            title: t('Content Security Policy violation in Console plugin'),
             content: t(
-              "public~{{pluginName}} might have violated the Console Content Security Policy. Refer to the browser's console logs for details.",
+              "{{pluginName}} might have violated the Console Content Security Policy. Refer to the browser's console logs for details.",
               {
                 pluginName,
               },

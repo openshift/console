@@ -3,20 +3,19 @@ import { useCallback } from 'react';
 import type { FormikProps } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import {
-  FlexForm,
-  FormBody,
-  FormFooter,
-  FormHeader,
-  SyncedEditorField,
-  CodeEditorField,
-} from '@console/shared/src';
 import { downloadYaml } from '@console/shared/src/components/editor/yaml-download-utils';
+import { FlexForm } from '@console/shared/src/components/form-utils/FlexForm';
+import { FormBody } from '@console/shared/src/components/form-utils/FormBody';
+import { FormFooter } from '@console/shared/src/components/form-utils/FormFooter';
+import { FormHeader } from '@console/shared/src/components/form-utils/FormHeader';
+import { CodeEditorField } from '@console/shared/src/components/formik-fields/CodeEditorField';
+import { SyncedEditorField } from '@console/shared/src/components/formik-fields/SyncedEditorField';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import BuildConfigFormEditor from './BuildConfigFormEditor';
-import { convertBuildConfigToFormData, convertFormDataToYAML } from './form-utils';
+import { convertFormDataToYAML } from './form-utils/convert-to-buildconfig';
+import { convertBuildConfigToFormData } from './form-utils/convert-to-form';
 import type { BuildConfigFormikValues } from './form-utils/types';
 import type { BuildConfig } from './types';
 import { BuildConfigModel } from './types';
@@ -41,7 +40,7 @@ const BuildConfigForm: FC<
   errors,
   values,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const [activeNamespace] = useActiveNamespace();
 
   const isNew = !watchedBuildConfig?.metadata?.name;
@@ -107,10 +106,10 @@ const BuildConfigForm: FC<
         errorMessage={status?.submitError}
         successMessage={status?.submitSuccess}
         showAlert={isStale}
-        infoTitle={t('devconsole~This object has been updated.')}
-        infoMessage={t('devconsole~Click reload to see the new version.')}
+        infoTitle={t('This object has been updated.')}
+        infoMessage={t('Click reload to see the new version.')}
         isSubmitting={isSubmitting}
-        submitLabel={isNew ? t('devconsole~Create') : t('devconsole~Save')}
+        submitLabel={isNew ? t('Create') : t('Save')}
         disableSubmit={
           (values.editorType === EditorType.YAML ? !dirty : !dirty || !_.isEmpty(errors)) ||
           isSubmitting

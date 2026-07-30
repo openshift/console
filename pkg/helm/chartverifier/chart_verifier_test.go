@@ -2,15 +2,15 @@ package chartverifier
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"helm.sh/helm/v3/pkg/action"
-	"helm.sh/helm/v3/pkg/chartutil"
-	kubefake "helm.sh/helm/v3/pkg/kube/fake"
-	"helm.sh/helm/v3/pkg/storage"
-	"helm.sh/helm/v3/pkg/storage/driver"
+	"helm.sh/helm/v4/pkg/action"
+	"helm.sh/helm/v4/pkg/chart/common"
+	kubefake "helm.sh/helm/v4/pkg/kube/fake"
+	"helm.sh/helm/v4/pkg/storage"
+	"helm.sh/helm/v4/pkg/storage/driver"
 	"k8s.io/client-go/rest"
 )
 
@@ -28,9 +28,8 @@ func TestVerifyApi(t *testing.T) {
 	actionConfig := &action.Configuration{
 		RESTClientGetter: FakeConfig{},
 		Releases:         store,
-		KubeClient:       &kubefake.PrintingKubeClient{Out: ioutil.Discard},
-		Capabilities:     chartutil.DefaultCapabilities,
-		Log:              func(format string, v ...interface{}) {},
+		KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
+		Capabilities:     common.DefaultCapabilities,
 	}
 	values := map[string]interface{}{
 		"provider": "developer-console",
@@ -45,9 +44,8 @@ func TestVerifyApiChartUrlNotPresent(t *testing.T) {
 	actionConfig := &action.Configuration{
 		RESTClientGetter: FakeConfig{},
 		Releases:         store,
-		KubeClient:       &kubefake.PrintingKubeClient{Out: ioutil.Discard},
-		Capabilities:     chartutil.DefaultCapabilities,
-		Log:              func(format string, v ...interface{}) {},
+		KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
+		Capabilities:     common.DefaultCapabilities,
 	}
 	values := map[string]interface{}{
 		"provider": "developer-console",

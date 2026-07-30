@@ -48,6 +48,7 @@ export const ExternalLink: FC<ExternalLinkProps> = ({
     // Overriding the `display` breaks the icon spacing, so we need to add our own
     iconProps={{ className: 'pf-v6-u-ml-xs' }}
     data-test-id={dataTestID}
+    data-test={dataTestID}
     href={href}
     isInline
     variant="link"

@@ -1,7 +1,8 @@
 import { useCallback } from 'react';
 import * as _ from 'lodash';
-import useMirroredLocalState, { UseMirroredLocalStateReturn } from './useMirroredLocalState';
 import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
+import type { UseMirroredLocalStateReturn } from './useMirroredLocalState';
+import useMirroredLocalState from './useMirroredLocalState';
 
 /**
  * Handles a state management hack-fix around the row filters dropdown.

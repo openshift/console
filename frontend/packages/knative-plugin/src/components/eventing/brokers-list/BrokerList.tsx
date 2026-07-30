@@ -6,11 +6,11 @@ import BrokerHeaders from './BrokerHeaders';
 import BrokerRow from './BrokerRow';
 
 const BrokerList: FC<TableProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   return (
     <Table
       {...props}
-      aria-label={t('knative-plugin~Brokers')}
+      aria-label={t('Brokers')}
       Header={BrokerHeaders(t)}
       Row={BrokerRow}
       virtualize

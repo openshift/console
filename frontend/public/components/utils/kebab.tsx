@@ -1,30 +1,20 @@
-import * as _ from 'lodash';
 import type { FC, MouseEvent, Ref, ReactNode, ComponentProps, ComponentType } from 'react';
 import { useState } from 'react';
-import { connect } from 'react-redux';
-import { useTranslation } from 'react-i18next';
-import i18next from 'i18next';
-import {
-  Dropdown,
-  DropdownItem,
-  DropdownList,
-  MenuToggle,
-  MenuToggleElement,
-  Tooltip,
-} from '@patternfly/react-core';
-import { EllipsisVIcon } from '@patternfly/react-icons';
-import { useNavigate } from 'react-router';
-import { impersonateStateToProps, ImpersonateKind } from '@console/dynamic-plugin-sdk';
-import {
-  AccessReviewResourceAttributes,
-  K8sKind,
-  K8sResourceKind,
-  K8sResourceKindReference,
-} from '../../module/k8s';
+import type { MenuToggleElement } from '@patternfly/react-core';
+import { Dropdown, DropdownItem, DropdownList, MenuToggle, Tooltip } from '@patternfly/react-core';
+import { RhUiEllipsisVerticalIcon } from '@patternfly/react-icons';
 import { ContextSubMenuItem } from '@patternfly/react-topology';
+import i18next from 'i18next';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+import { useNavigate } from 'react-router';
+import type { ImpersonateKind } from '@console/dynamic-plugin-sdk';
+import { impersonateStateToProps } from '@console/dynamic-plugin-sdk';
+import type { AccessReviewResourceAttributes, K8sKind, K8sResourceKind } from '../../module/k8s';
 import { useAccessReview, checkAccess } from './rbac';
 
-export const kebabOptionsToMenu = (options: KebabOption[]): KebabMenuOption[] => {
+const kebabOptionsToMenu = (options: KebabOption[]): KebabMenuOption[] => {
   const subs: { [key: string]: KebabSubMenuOption } = {};
   const menuOptions: KebabMenuOption[] = [];
 
@@ -61,20 +51,27 @@ export const kebabOptionsToMenu = (options: KebabOption[]): KebabMenuOption[] =>
   return menuOptions;
 };
 
-const KebabItem_: FC<KebabItemProps & { isAllowed: boolean }> = ({
+const KebabItemBase: FC<KebabItemProps & { isAllowed: boolean }> = ({
   option,
   onClick,
   autoFocus,
   isAllowed,
   Component = DropdownItem,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const isDisabled = !isAllowed || option.isDisabled || (!option.href && !option.callback);
   return (
     <Component
       onClick={(e) => !isDisabled && onClick(e, option)}
       autoFocus={autoFocus}
       isDisabled={isDisabled}
+      data-test={
+        option.labelKey
+          ? t(option.labelKey, option.labelKind)
+          : typeof option.label === 'string'
+          ? option.label
+          : undefined
+      }
       data-test-action={option.labelKey ? t(option.labelKey, option.labelKind) : option.label}
       icon={option.icon}
     >
@@ -82,17 +79,17 @@ const KebabItem_: FC<KebabItemProps & { isAllowed: boolean }> = ({
     </Component>
   );
 };
-export const KebabItemAccessReview_ = (
+export const KebabItemAccessReviewBase = (
   props: KebabItemProps & { impersonate: ImpersonateKind },
 ) => {
   const { option, impersonate } = props;
   const isAllowed = useAccessReview(option.accessReview, impersonate);
-  return <KebabItem_ {...props} isAllowed={isAllowed} />;
+  return <KebabItemBase {...props} isAllowed={isAllowed} />;
 };
 
-const KebabItemAccessReview = connect(impersonateStateToProps)(KebabItemAccessReview_);
+const KebabItemAccessReview = connect(impersonateStateToProps)(KebabItemAccessReviewBase);
 
-export const isKebabSubMenu = (option: KebabMenuOption): option is KebabSubMenuOption => {
+const isKebabSubMenu = (option: KebabMenuOption): option is KebabSubMenuOption => {
   // only a sub menu has children
   return Array.isArray((option as KebabSubMenuOption).children);
 };
@@ -104,7 +101,7 @@ export const KebabItem: FC<KebabItemProps> = (props) => {
   if (option.accessReview) {
     item = <KebabItemAccessReview {...props} />;
   } else {
-    item = <KebabItem_ {...props} isAllowed />;
+    item = <KebabItemBase {...props} isAllowed />;
   }
   const tooltip = option.tooltipKey ? i18next.t(option.tooltipKey) : option.tooltip;
 
@@ -124,8 +121,8 @@ type KebabMenuItemsProps = {
   className?: string;
 };
 
-export const KebabMenuItems: FC<KebabMenuItemsProps> = ({ options, onClick, focusItem }) => {
-  const { t } = useTranslation();
+const KebabMenuItems: FC<KebabMenuItemsProps> = ({ options, onClick, focusItem }) => {
+  const { t } = useTranslation('public');
 
   return (
     <DropdownList>
@@ -157,7 +154,7 @@ export const KebabItems: FC<KebabItemsProps> = ({ options, ...props }) => {
 };
 
 export const Kebab: KebabComponent = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const navigate = useNavigate();
   const { options, isDisabled, terminatingTooltip } = props;
   const [active, setActive] = useState(false);
@@ -214,13 +211,14 @@ export const Kebab: KebabComponent = (props) => {
           <MenuToggle
             ref={toggleRef}
             data-test-id="kebab-button"
+            data-test="kebab-button"
             onClick={toggle}
             onFocus={onHover}
             onMouseEnter={onHover}
             isDisabled={isDisabled}
-            aria-label={t('public~Actions')}
+            aria-label={t('Actions')}
             variant="plain"
-            icon={<EllipsisVIcon />}
+            icon={<RhUiEllipsisVerticalIcon />}
           />
         )}
         shouldFocusToggleOnSelect
@@ -256,23 +254,13 @@ export type KebabAction = (
   customData?: any,
 ) => KebabOption;
 
-export type ResourceKebabProps = {
-  kindObj: K8sKind;
-  actions: KebabAction[];
-  kind: K8sResourceKindReference;
-  resource: K8sResourceKind;
-  isDisabled?: boolean;
-  customData?: { [key: string]: any };
-  terminatingTooltip?: string;
-};
-
 type KebabSubMenuOption = {
   label?: string;
   labelKey?: string;
   children: KebabMenuOption[];
 };
 
-export type KebabMenuOption = KebabSubMenuOption | KebabOption;
+type KebabMenuOption = KebabSubMenuOption | KebabOption;
 
 type KebabProps = {
   options: KebabOption[];
@@ -300,8 +288,6 @@ export type KebabItemsProps = {
   focusItem?: KebabOption;
   className?: string;
 };
-
-export type KebabFactory = { [name: string]: KebabAction } & { common?: KebabAction[] };
 
 type KebabComponent = FC<KebabProps>;
 KebabItems.displayName = 'KebabItems';

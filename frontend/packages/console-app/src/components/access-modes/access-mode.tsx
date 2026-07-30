@@ -36,7 +36,7 @@ export const AccessModeSelector: FC<AccessModeSelectorProps> = (props) => {
     ignoreReadOnly,
   } = props;
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const pvcInitialAccessMode = pvcResource
     ? getPVCAccessModes(pvcResource, 'value')
     : availableAccessModes;
@@ -122,12 +122,7 @@ export const AccessModeSelector: FC<AccessModeSelectorProps> = (props) => {
   }, [accessMode, allowedAccessModes, changeAccessMode, pvcInitialAccessMode]);
 
   return (
-    <FormGroup
-      label={t('console-app~Access mode')}
-      isRequired
-      fieldId="access-mode"
-      className={className}
-    >
+    <FormGroup label={t('Access mode')} isRequired fieldId="access-mode" className={className}>
       {loaded && allowedAccessModes && (
         <Select
           isOpen={isOpen}
@@ -146,7 +141,9 @@ export const AccessModeSelector: FC<AccessModeSelectorProps> = (props) => {
           {description}
         </p>
       )}
-      {(!loaded || !allowedAccessModes) && <div className="skeleton-text" />}
+      {(!loaded || !allowedAccessModes) && (
+        <div className="skeleton-text" role="status" aria-busy="true" />
+      )}
     </FormGroup>
   );
 };

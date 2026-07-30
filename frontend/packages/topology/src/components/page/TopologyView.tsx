@@ -32,15 +32,15 @@ import {
   getTopologySearchQuery,
   TOPOLOGY_LABELS_FILTER_KEY,
   TOPOLOGY_SEARCH_FILTER_KEY,
-  useAppliedDisplayFilters,
-  useDisplayFilters,
-} from '../../filters';
+} from '../../filters/filter-utils';
 import { FilterContext } from '../../filters/FilterProvider';
 import TopologyFilterBar from '../../filters/TopologyFilterBar';
+import { useAppliedDisplayFilters } from '../../filters/useAppliedDisplayFilters';
+import { useDisplayFilters } from '../../filters/useDisplayFilters';
 import { setSupportedTopologyFilters, setSupportedTopologyKinds } from '../../redux/action';
 import type { GraphData, TopologyDecorator } from '../../topology-types';
 import { TopologyDisplayFilterType, TopologyViewType } from '../../topology-types';
-import Topology from '../graph-view/Topology';
+import { Topology } from '../graph-view/Topology';
 import TopologyListView from '../list-view/TopologyListView';
 import TopologyQuickSearch from '../quick-search/TopologyQuickSearch';
 import { isSidebarRenderable, SelectedEntityDetails } from '../side-bar/SelectedEntityDetails';
@@ -64,7 +64,7 @@ interface DispatchProps {
   onSupportedKindsChange?: (supportedKinds: { [key: string]: number }) => void;
 }
 
-export interface TopologyViewProps {
+interface TopologyViewProps {
   model: Model;
   namespace: string;
   viewType: TopologyViewType;
@@ -72,7 +72,7 @@ export interface TopologyViewProps {
 
 type ComponentProps = TopologyViewProps & StateProps & DispatchProps;
 
-export const ConnectedTopologyView: FC<ComponentProps> = ({
+const ConnectedTopologyView: FC<ComponentProps> = ({
   model,
   namespace,
   viewType,

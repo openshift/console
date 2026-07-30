@@ -3,12 +3,12 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import type { SelectInputOption } from '@console/shared';
+import type { SelectInputOption } from '@console/shared/src/components/formik-fields/field-types';
 import { getBootstrapServers } from '../utils/create-eventsources-utils';
 import { kafkaBootStrapServerResourcesWatcher } from '../utils/get-knative-resources';
 
 export const useBootstrapServers = (namespace: string): [SelectInputOption[], string] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const memoResources = useMemo(() => kafkaBootStrapServerResourcesWatcher(namespace), [namespace]);
   const { kafkas, kafkaconnections } = useK8sWatchResources<{
     [key: string]: K8sResourceKind[];
@@ -33,22 +33,17 @@ export const useBootstrapServers = (namespace: string): [SelectInputOption[], st
           }))
         : [
             {
-              value: t('knative-plugin~No bootstrap servers found'),
+              value: t('No bootstrap servers found'),
               disabled: true,
             },
           ];
-      placeholder = t('knative-plugin~Add bootstrap servers');
+      placeholder = t('Add bootstrap servers');
     } else if (isKafkasLoadError) {
-      placeholder = t(
-        'knative-plugin~{{loadErrorMessage}}. Try adding bootstrap servers manually.',
-        {
-          loadErrorMessage: `${kafkas.loadError.message}, ${kafkaconnections.loadError.message}`,
-        },
-      );
+      placeholder = t('{{loadErrorMessage}}. Try adding bootstrap servers manually.', {
+        loadErrorMessage: `${kafkas.loadError.message}, ${kafkaconnections.loadError.message}`,
+      });
     } else {
-      bootstrapServersOptions = [
-        { value: t('knative-plugin~Loading bootstrap servers...'), disabled: true },
-      ];
+      bootstrapServersOptions = [{ value: t('Loading bootstrap servers...'), disabled: true }];
       placeholder = '...';
     }
 

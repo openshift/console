@@ -9,7 +9,7 @@ jest.mock('@patternfly/react-core', () => ({
   },
 }));
 
-jest.mock('@console/shared/src', () => ({
+jest.mock('@console/shared/src/components/formik-fields/InputField', () => ({
   InputField: () => 'InputField',
 }));
 

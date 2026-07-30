@@ -1,5 +1,4 @@
-# Disabled due to createRoot concurrent rendering failures (OCPBUGS-82505)
-@add-flow @smoke @to-do
+@add-flow @smoke
 Feature: Create the different workloads from Add page
               As a user, I should be able to create an Application, component or service from one of the options provided on Add page
 
@@ -153,7 +152,7 @@ Feature: Create the different workloads from Add page
         Examples:
                   | card_name | form_header               | workload_name |
                   | Httpd     | Create Sample application | httpd-sample  |
-                  # | Basic Go  | Import from Git           | go-basic      | - OCPBUGS-77952 - flaky test
+                  | Basic Go  | Import from Git           | go-basic      |
 
         @regression
         Scenario: Quick Starts page when no Quick Start has started: QS-03-TC02

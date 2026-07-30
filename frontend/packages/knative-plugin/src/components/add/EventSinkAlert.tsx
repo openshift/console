@@ -13,20 +13,20 @@ const EventSinkAlert: FC<EventSinkAlertProps> = ({
   createSinkAccessLoading,
   createSinkAccess,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const showAlert = !isValidSink || (!createSinkAccessLoading && !createSinkAccess);
 
   return showAlert ? (
     <Alert
       variant={!isValidSink ? 'danger' : undefined}
-      title={t('knative-plugin~Event sink cannot be created')}
+      title={t('Event sink cannot be created')}
       isInline
     >
-      {!isValidSink && t('knative-plugin~Event sink is not found on this Cluster.')}
+      {!isValidSink && t('Event sink is not found on this Cluster.')}
       {!createSinkAccessLoading &&
         !createSinkAccess &&
         isValidSink &&
-        t('knative-plugin~You do not have create access for Event sink in this project.')}
+        t('You do not have create access for Event sink in this project.')}
     </Alert>
   ) : null;
 };

@@ -4,14 +4,14 @@ import type { NavigateFunction } from 'react-router';
 import { useParams, useNavigate } from 'react-router';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import { HorizontalNav } from '@console/internal/components/utils';
-import { ALL_NAMESPACES_KEY } from '@console/shared';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import CreateProjectListPage, { CreateAProjectButton } from '../projects/CreateProjectListPage';
 import MonitoringEvents from './events/MonitoringEvents';
 
-export const MONITORING_ALL_NS_PAGE_URI = '/dev-monitoring/all-namespaces';
+const MONITORING_ALL_NS_PAGE_URI = '/dev-monitoring/all-namespaces';
 
 const handleNamespaceChange = (newNamespace: string, navigate: NavigateFunction): void => {
   if (newNamespace === ALL_NAMESPACES_KEY) {
@@ -21,7 +21,7 @@ const handleNamespaceChange = (newNamespace: string, navigate: NavigateFunction)
 
 export const PageContents: FC = () => {
   const params = useParams();
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const activeNamespace = params.ns;
 
   const pages = [
@@ -34,18 +34,18 @@ export const PageContents: FC = () => {
   ];
   const titleProviderValues = {
     telemetryPrefix: 'Observe',
-    titlePrefix: t('devconsole~Observe'),
+    titlePrefix: t('Observe'),
   };
 
   return activeNamespace ? (
     <PageTitleContext.Provider value={titleProviderValues}>
       <div className="odc-monitoring-page">
-        <PageHeading title={t('devconsole~Observe')} />
+        <PageHeading title={t('Observe')} />
         <HorizontalNav contextId="dev-console-observe" pages={pages} noStatusBox />
       </div>
     </PageTitleContext.Provider>
   ) : (
-    <CreateProjectListPage title={t('devconsole~Observe')}>
+    <CreateProjectListPage title={t('Observe')}>
       {(openProjectModal) => (
         <Trans t={t} ns="devconsole">
           Select a Project to view monitoring metrics
@@ -70,5 +70,3 @@ export const MonitoringPage = (props) => {
     </NamespacedPage>
   );
 };
-
-export default MonitoringPage;

@@ -1,8 +1,6 @@
 import i18next from 'i18next';
 import * as _ from 'lodash';
 
-export const cephRBDProvisionerSuffix = 'rbd.csi.ceph.com';
-
 export const snapshotPVCStorageClassAnnotation = 'snapshot.storage.kubernetes.io/pvc-storage-class';
 export const snapshotPVCAccessModeAnnotation = 'snapshot.storage.kubernetes.io/pvc-access-modes';
 export const snapshotPVCVolumeModeAnnotation = 'snapshot.storage.kubernetes.io/pvc-volume-mode';
@@ -30,7 +28,7 @@ type ProvisionerAccessModeMapping = {
 
 // See https://kubernetes.io/docs/concepts/storage/persistent-volumes/#types-of-persistent-volumes and
 // https://docs.openshift.com/container-platform/4.15/storage/understanding-persistent-storage.html for more details
-export const provisionerAccessModeMapping: ProvisionerAccessModeMapping = Object.freeze({
+const provisionerAccessModeMapping: ProvisionerAccessModeMapping = Object.freeze({
   'kubernetes.io/no-provisioner': {
     Filesystem: ['ReadWriteOnce'],
     Block: ['ReadWriteOnce'],
@@ -120,6 +118,10 @@ export const provisionerAccessModeMapping: ProvisionerAccessModeMapping = Object
   'file.csi.azure.com': {
     Filesystem: ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany', 'ReadWriteOncePod'],
     Block: ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany', 'ReadWriteOncePod'],
+  },
+  'nfs.csi.ceph.com': {
+    Filesystem: ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany', 'ReadWriteOncePod'],
+    partialMatch: true,
   },
 });
 

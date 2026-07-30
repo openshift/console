@@ -1,13 +1,16 @@
 import type { FC } from 'react';
 import { useState } from 'react';
-import { saveAs } from 'file-saver';
 import { Alert, Button } from '@patternfly/react-core';
-import { DownloadIcon } from '@patternfly/react-icons';
-import { coFetch } from '../../co-fetch';
+import { RhUiDownloadIcon } from '@patternfly/react-icons';
+import { saveAs } from 'file-saver';
+import { useTranslation } from 'react-i18next';
+import { coFetch } from '@console/shared/src/utils/console-fetch';
 
 export const DownloadButton: FC<DownloadButtonProps> = (props) => {
   const [inFlight, setInFlight] = useState(false);
   const [error, setError] = useState(null);
+
+  const { t } = useTranslation('public');
 
   const download = () => {
     setInFlight(true);
@@ -20,20 +23,21 @@ export const DownloadButton: FC<DownloadButtonProps> = (props) => {
         () => setError(null),
         (e) => setError(e),
       )
-      .then(() => setInFlight(false));
+      .then(() => setInFlight(false))
+      .catch(() => {});
   };
 
   return (
     <>
       <Button
-        icon={<DownloadIcon />}
+        icon={<RhUiDownloadIcon />}
         variant="primary"
         style={{ marginBottom: 10 }}
         isDisabled={inFlight}
         type="button"
         onClick={() => download()}
       >
-        Download{inFlight && <>ing...</>}
+        {inFlight ? t('Downloading...') : t('Download')}
       </Button>
       {error && (
         <Alert
@@ -51,11 +55,6 @@ export type DownloadButtonProps = {
   url: string;
   filename?: string;
   className?: string;
-};
-
-export type DownloadButtonState = {
-  inFlight: boolean;
-  error: any;
 };
 
 DownloadButton.displayName = 'DownloadButton';

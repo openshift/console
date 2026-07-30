@@ -7,10 +7,10 @@ type TerminalLoadingBoxProps = {
 };
 
 const TerminalLoadingBox: FC<TerminalLoadingBoxProps> = ({ message }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('webterminal-plugin');
   return (
     <LoadingBox>
-      {message ?? t('webterminal-plugin~Connecting to your OpenShift command line terminal ...')}
+      {message ?? t('Connecting to your OpenShift command line terminal ...')}
     </LoadingBox>
   );
 };

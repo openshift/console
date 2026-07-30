@@ -24,7 +24,7 @@ const KindFilterDropdown: FC<KindFilterDropdownProps> = ({
   isDisabled = false,
   opened = false,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   const [isOpen, setIsOpen] = useState(opened);
   let kindFilters = filters.filter(
     (f) => f.type === TopologyDisplayFilterType.kind && supportedKinds[f.id],
@@ -70,7 +70,7 @@ const KindFilterDropdown: FC<KindFilterDropdownProps> = ({
     <div className="odc-topology-filter-dropdown__group odc-kind-filter-dropdown">
       <span className="odc-kind-filter-dropdown__clear-button">
         <Button variant="link" onClick={onClearFilters}>
-          {t('topology~Clear all filters')}
+          {t('Clear all filters')}
         </Button>
       </span>
       {kindFilters.map((filter) => (
@@ -95,7 +95,7 @@ const KindFilterDropdown: FC<KindFilterDropdownProps> = ({
       isExpanded={isOpen}
       isDisabled={isDisabled}
     >
-      {t('topology~Filter by resource')}
+      {t('Filter by resource')}
       {selectedFilterCount ? (
         <span className="odc-kind-filter-dropdown__kind-count">{selectedFilterCount}</span>
       ) : null}

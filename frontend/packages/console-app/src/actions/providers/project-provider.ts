@@ -9,7 +9,7 @@ import { CommonActionCreator } from '../hooks/types';
 import { useCommonActions } from '../hooks/useCommonActions';
 
 const useDeleteAction = (kindObj: K8sModel, resource: K8sResourceKind) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const launchDeleteModal = useDeleteNamespaceModalLauncher({ kind: kindObj, resource });
   const hidden = resource.metadata.name === 'default' || resource.status?.phase === 'Terminating';
 
@@ -17,7 +17,7 @@ const useDeleteAction = (kindObj: K8sModel, resource: K8sResourceKind) => {
     () => ({
       delete: () => ({
         id: 'delete-project',
-        label: t('console-app~Delete {{label}}', { label: t(kindObj.labelKey) }),
+        label: t('Delete {{label}}', { label: t(kindObj.labelKey) }),
         cta: launchDeleteModal,
         accessReview: asAccessReview(kindObj, resource, 'delete'),
       }),

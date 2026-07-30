@@ -13,7 +13,7 @@ import {
   getFiringAlerts,
   shouldHideMonitoringAlertDecorator,
 } from '@console/shared/src/utils/alert-utils';
-import Decorator from './Decorator';
+import { Decorator } from './Decorator';
 
 type DispatchProps = {
   showMonitoringOverview?: () => void;
@@ -32,7 +32,7 @@ interface MonitoringAlertsDecoratorProps {
 
 type MonitoringAlertsDecoratorType = MonitoringAlertsDecoratorProps & DispatchProps;
 
-const MonitoringAlertsDecorator: FC<MonitoringAlertsDecoratorType> = ({
+const MonitoringAlertsDecoratorComponent: FC<MonitoringAlertsDecoratorType> = ({
   element,
   radius,
   x,
@@ -40,7 +40,7 @@ const MonitoringAlertsDecorator: FC<MonitoringAlertsDecoratorType> = ({
   showMonitoringOverview,
 }) => {
   const ref = useRef();
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   const workloadData = element.getData().data;
   const { monitoringAlerts } = workloadData;
   const firingAlerts = getFiringAlerts(monitoringAlerts);
@@ -54,7 +54,7 @@ const MonitoringAlertsDecorator: FC<MonitoringAlertsDecoratorType> = ({
 
   if (shouldHideMonitoringAlertDecorator(severityAlertType)) return null;
 
-  const label = t('topology~Monitoring alert');
+  const label = t('Monitoring alert');
   return (
     <Tooltip triggerRef={ref} key="monitoringAlert" content={label} position={TooltipPosition.left}>
       <g ref={ref}>
@@ -68,7 +68,11 @@ const MonitoringAlertsDecorator: FC<MonitoringAlertsDecoratorType> = ({
   );
 };
 
-export default connect<null, DispatchProps, MonitoringAlertsDecoratorProps>(
+export const MonitoringAlertsDecorator = connect<
+  null,
+  DispatchProps,
+  MonitoringAlertsDecoratorProps
+>(
   null,
   dispatchToProps,
-)(MonitoringAlertsDecorator);
+)(MonitoringAlertsDecoratorComponent);

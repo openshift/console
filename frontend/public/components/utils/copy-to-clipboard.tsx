@@ -1,17 +1,17 @@
 import type { ReactNode } from 'react';
 import { memo, useState } from 'react';
-import * as _ from 'lodash';
 import {
   ClipboardCopyButton,
   CodeBlock,
   CodeBlockAction,
   CodeBlockCode,
 } from '@patternfly/react-core';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 
 export const CopyToClipboard = memo<CopyToClipboardProps>(({ value, visibleValue, id = 'id' }) => {
   const [copied, setCopied] = useState(false);
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const clipboardCopyFunc = (event, text) => {
     navigator.clipboard.writeText(text.toString());
@@ -21,8 +21,8 @@ export const CopyToClipboard = memo<CopyToClipboardProps>(({ value, visibleValue
     setCopied(true);
   };
 
-  const copyToClipboardText = t('public~Copy to clipboard');
-  const tooltipText = copied ? t('public~Copied') : copyToClipboardText;
+  const copyToClipboardText = t('Copy to clipboard');
+  const tooltipText = copied ? t('Copied') : copyToClipboardText;
   // Default to value if no visible value was specified.
   const displayValue = _.isNil(visibleValue) ? value : visibleValue;
 

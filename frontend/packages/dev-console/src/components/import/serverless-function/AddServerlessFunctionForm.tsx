@@ -6,12 +6,15 @@ import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import type { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
 import { k8sListResourceItems } from '@console/dynamic-plugin-sdk/src/utils/k8s';
-import { getGitService, GitProvider } from '@console/git-service/src';
+import { getGitService } from '@console/git-service/src/services/git-service';
+import { GitProvider } from '@console/git-service/src/types/git';
 import { evaluateFunc } from '@console/git-service/src/utils/serverless-strategy-detector';
 import { DOC_URL_SERVERLESS_FUNCTIONS_GETTING_STARTED } from '@console/internal/components/utils/documentation';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { ServerlessBuildStrategyType } from '@console/knative-plugin/src/types';
-import { FlexForm, FormBody, FormFooter } from '@console/shared/src/components/form-utils';
+import { FlexForm } from '@console/shared/src/components/form-utils/FlexForm';
+import { FormBody } from '@console/shared/src/components/form-utils/FormBody';
+import { FormFooter } from '@console/shared/src/components/form-utils/FormFooter';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 import {
@@ -56,7 +59,7 @@ const AddServerlessFunctionForm: FC<FormikProps<FormikValues> & AddServerlessFun
   setFieldValue,
   setStatus,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
 
   const {
     git: { validated, url, type, ref, dir, secretResource },
@@ -80,7 +83,7 @@ const AddServerlessFunctionForm: FC<FormikProps<FormikValues> & AddServerlessFun
           // eslint-disable-next-line consistent-return
           .then((isFuncYamlPresent) => {
             if (!isFuncYamlPresent) {
-              setHelpText(t('devconsole~Unable to find func.yaml in the repository.'));
+              setHelpText(t('Unable to find func.yaml in the repository.'));
               setStatus({ errors: 'func.yaml not present' });
             } else {
               return evaluateFunc(gitService);
@@ -104,15 +107,13 @@ const AddServerlessFunctionForm: FC<FormikProps<FormikValues> & AddServerlessFun
               );
               if (res?.values?.builder && res?.values?.builder !== 's2i') {
                 setHelpText(
-                  t(
-                    'devconsole~Unsupported builder strategy detected. s2i is currently supported.',
-                  ),
+                  t('Unsupported builder strategy detected. s2i is currently supported.'),
                 );
                 setStatus({ errors: 'Builder strategy not supported' });
               }
               if (builderImages?.[SupportedRuntime[res?.values?.runtime]] === undefined) {
                 setHelpText(
-                  t('devconsole~Support for {{runtime}} is not yet available.', {
+                  t('Support for {{runtime}} is not yet available.', {
                     runtime: res?.values?.runtime,
                   }),
                 );
@@ -174,7 +175,7 @@ const AddServerlessFunctionForm: FC<FormikProps<FormikValues> & AddServerlessFun
                 <Alert
                   variant="warning"
                   isInline
-                  title={t('devconsole~Serverless function cannot be created')}
+                  title={t('Serverless function cannot be created')}
                 >
                   {helpText}
                   <p className="odc-func-form-helpText">
@@ -186,7 +187,7 @@ const AddServerlessFunctionForm: FC<FormikProps<FormikValues> & AddServerlessFun
                   <ExternalLink
                     className="odc-func-form-link"
                     href={DOC_URL_SERVERLESS_FUNCTIONS_GETTING_STARTED}
-                    text={t('devconsole~Learn more')}
+                    text={t('Learn more')}
                   />
                 </Alert>
               )}
@@ -197,9 +198,9 @@ const AddServerlessFunctionForm: FC<FormikProps<FormikValues> & AddServerlessFun
         handleReset={handleReset}
         errorMessage={status && status.submitError}
         isSubmitting={isSubmitting}
-        submitLabel={t('devconsole~Create')}
+        submitLabel={t('Create')}
         disableSubmit={!dirty || !_.isEmpty(status?.errors) || !_.isEmpty(errors) || isSubmitting}
-        resetLabel={t('devconsole~Cancel')}
+        resetLabel={t('Cancel')}
         sticky
       />
     </FlexForm>

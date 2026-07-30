@@ -1,7 +1,29 @@
-import { useEffect, useContext } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useDynamicK8sWatchResources } from '@console/shared/src/hooks/useDynamicK8sWatchResources';
+import { useEffect, useContext, memo } from 'react';
 import { Card, CardBody, CardHeader, CardTitle, Stack, StackItem } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+import type {
+  DashboardsProjectOverviewInventoryItem,
+  K8sResourceCommon,
+  WatchK8sResource,
+  WatchK8sResources,
+  ProjectOverviewInventoryItem,
+} from '@console/dynamic-plugin-sdk';
+import {
+  useResolvedExtensions,
+  isDashboardsProjectOverviewInventoryItem,
+  isProjectOverviewInventoryItem,
+} from '@console/dynamic-plugin-sdk';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
+import type { StatusGroupMapper } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
+import { ResourceInventoryItem } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
+import {
+  getPodStatusGroups,
+  getPVCStatusGroups,
+  getVSStatusGroups,
+} from '@console/shared/src/components/dashboard/inventory-card/utils';
+import { ErrorBoundary } from '@console/shared/src/components/error/error-boundary';
+import { useDynamicK8sWatchResources } from '@console/shared/src/hooks/useDynamicK8sWatchResources';
+import { getName } from '@console/shared/src/selectors/common';
 import {
   PodModel,
   DeploymentModel,
@@ -14,31 +36,10 @@ import {
   SecretModel,
   VolumeSnapshotModel,
 } from '../../../models';
-import {
-  ResourceInventoryItem,
-  StatusGroupMapper,
-} from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
-import {
-  getPodStatusGroups,
-  getPVCStatusGroups,
-  getVSStatusGroups,
-} from '@console/shared/src/components/dashboard/inventory-card/utils';
+import type { K8sKind } from '../../../module/k8s';
+import { referenceForModel } from '../../../module/k8s';
 import { useAccessReview } from '../../utils/rbac';
-import { K8sKind, referenceForModel } from '../../../module/k8s';
-import { getName } from '@console/shared/src/selectors/common';
 import { ProjectDashboardContext } from './project-dashboard-context';
-import {
-  useResolvedExtensions,
-  DashboardsProjectOverviewInventoryItem,
-  isDashboardsProjectOverviewInventoryItem,
-  K8sResourceCommon,
-  WatchK8sResource,
-  WatchK8sResources,
-  ProjectOverviewInventoryItem,
-  isProjectOverviewInventoryItem,
-} from '@console/dynamic-plugin-sdk';
-import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
-import { ErrorBoundary } from '@console/shared/src/components/error';
 
 const createWatchResource = (
   model: K8sKind,
@@ -50,84 +51,81 @@ const createWatchResource = (
   namespace: projectName,
 });
 
-const ProjectInventoryItem: React.FC<ProjectInventoryItemProps> = ({
-  projectName,
-  model,
-  mapper,
-  additionalResources,
-  additionalDynamicResources,
-}) => {
-  const { watchResource, stopWatchResource, results: resources } = useDynamicK8sWatchResources();
+const ProjectInventoryItem = memo<ProjectInventoryItemProps>(
+  ({ projectName, model, mapper, additionalResources, additionalDynamicResources }) => {
+    const { watchResource, stopWatchResource, results: resources } = useDynamicK8sWatchResources();
 
-  useEffect(() => {
-    if (!projectName) {
-      return;
-    }
-
-    const resource = createWatchResource(model, projectName);
-    const { prop, ...resourceConfig } = resource;
-    watchResource(prop, resourceConfig);
-    if (additionalResources) {
-      additionalResources.forEach((r) => {
-        const { prop: key, ...config } = { ...r, namespace: projectName };
-        watchResource(key, config);
-      });
-    }
-
-    return () => {
-      stopWatchResource(resource.prop);
-      if (additionalResources) {
-        additionalResources.forEach((r) => stopWatchResource(r.prop));
+    useEffect(() => {
+      if (!projectName) {
+        return;
       }
-    };
-  }, [watchResource, stopWatchResource, projectName, model, additionalResources]);
 
-  const resourceResult = resources.resource?.data;
-  const resourceData = Array.isArray(resourceResult) ? resourceResult : [];
-  const resourceLoaded = resources.resource?.loaded ?? false;
-  const resourceLoadError = resources.resource?.loadError;
+      const resource = createWatchResource(model, projectName);
+      const { prop, ...resourceConfig } = resource;
+      watchResource(prop, resourceConfig);
+      if (additionalResources) {
+        additionalResources.forEach((r) => {
+          const { prop: key, ...config } = { ...r, namespace: projectName };
+          watchResource(key, config);
+        });
+      }
 
-  const additionalResourcesData = additionalResources
-    ? additionalResources.reduce<{ [key: string]: K8sResourceCommon[] }>((acc, r) => {
-        const data = resources[r.prop]?.data;
-        acc[r.prop] = Array.isArray(data) ? data : [];
-        return acc;
-      }, {})
-    : {};
-  const additionalResourcesLoaded = additionalResources
-    ? additionalResources
-        .filter((r) => !r.optional)
-        .every((r) => resources[r.prop]?.loaded ?? false)
-    : true;
-  const additionalResourcesLoadError = additionalResources
-    ? additionalResources.filter((r) => !r.optional).some((r) => !!resources[r.prop]?.loadError)
-    : false;
-
-  const dynamicResources = useK8sWatchResources(additionalDynamicResources || {});
-  const dynamicResourcesError = Object.values(dynamicResources).find((r) => r.loadError)?.loadError;
-  const dynamicResourcesLoaded = Object.keys(dynamicResources).every(
-    (key) => dynamicResources[key].loaded,
-  );
-
-  return (
-    <StackItem>
-      <ResourceInventoryItem
-        kind={model}
-        isLoading={
-          !projectName || !resourceLoaded || !additionalResourcesLoaded || !dynamicResourcesLoaded
+      return () => {
+        stopWatchResource(resource.prop);
+        if (additionalResources) {
+          additionalResources.forEach((r) => stopWatchResource(r.prop));
         }
-        namespace={projectName}
-        error={!!resourceLoadError || additionalResourcesLoadError || dynamicResourcesError}
-        resources={resourceData}
-        additionalResources={additionalResourcesData}
-        mapper={mapper}
-        dataTest="resource-inventory-item"
-      />
-    </StackItem>
-  );
-};
+      };
+    }, [watchResource, stopWatchResource, projectName, model, additionalResources]);
 
-export const InventoryCard = () => {
+    const resourceResult = resources.resource?.data;
+    const resourceData = Array.isArray(resourceResult) ? resourceResult : [];
+    const resourceLoaded = resources.resource?.loaded ?? false;
+    const resourceLoadError = resources.resource?.loadError;
+
+    const additionalResourcesData = additionalResources
+      ? additionalResources.reduce<{ [key: string]: K8sResourceCommon[] }>((acc, r) => {
+          const data = resources[r.prop]?.data;
+          acc[r.prop] = Array.isArray(data) ? data : [];
+          return acc;
+        }, {})
+      : {};
+    const additionalResourcesLoaded = additionalResources
+      ? additionalResources
+          .filter((r) => !r.optional)
+          .every((r) => resources[r.prop]?.loaded ?? false)
+      : true;
+    const additionalResourcesLoadError = additionalResources
+      ? additionalResources.filter((r) => !r.optional).some((r) => !!resources[r.prop]?.loadError)
+      : false;
+
+    const dynamicResources = useK8sWatchResources(additionalDynamicResources || {});
+    const dynamicResourcesError = Object.values(dynamicResources).find((r) => r.loadError)
+      ?.loadError;
+    const dynamicResourcesLoaded = Object.keys(dynamicResources).every(
+      (key) => dynamicResources[key].loaded,
+    );
+
+    return (
+      <StackItem>
+        <ResourceInventoryItem
+          kind={model}
+          isLoading={
+            !projectName || !resourceLoaded || !additionalResourcesLoaded || !dynamicResourcesLoaded
+          }
+          namespace={projectName}
+          error={!!resourceLoadError || additionalResourcesLoadError || dynamicResourcesError}
+          resources={resourceData}
+          additionalResources={additionalResourcesData}
+          mapper={mapper}
+          dataTest="resource-inventory-item"
+        />
+      </StackItem>
+    );
+  },
+);
+
+export const InventoryCard = memo(() => {
   const [itemExtensions] = useResolvedExtensions<DashboardsProjectOverviewInventoryItem>(
     isDashboardsProjectOverviewInventoryItem,
   );
@@ -143,12 +141,12 @@ export const InventoryCard = () => {
     namespace: projectName,
     verb: 'list',
   });
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   return (
-    <Card data-test-id="inventory-card">
+    <Card data-test="inventory-card" data-test-id="inventory-card">
       <CardHeader>
-        <CardTitle>{t('public~Inventory')}</CardTitle>
+        <CardTitle>{t('Inventory')}</CardTitle>
       </CardHeader>
       <CardBody>
         <Stack hasGutter>
@@ -194,7 +192,7 @@ export const InventoryCard = () => {
       </CardBody>
     </Card>
   );
-};
+});
 
 type ProjectInventoryItemProps = {
   projectName: string;

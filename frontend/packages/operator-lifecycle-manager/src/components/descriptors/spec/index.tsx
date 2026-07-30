@@ -11,6 +11,7 @@ import {
 } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { useAccessReview } from '@console/dynamic-plugin-sdk';
 import type { LabelListProps } from '@console/internal/components/utils';
 import {
   LoadingInline,
@@ -20,9 +21,10 @@ import {
   LabelList,
 } from '@console/internal/components/utils';
 import type { Selector as SelectorType } from '@console/internal/module/k8s';
-import { k8sPatch, k8sUpdate } from '@console/internal/module/k8s';
-import { YellowExclamationTriangleIcon } from '@console/shared';
+import { k8sPatch, k8sUpdate, referenceFor } from '@console/internal/module/k8s';
+import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import { DASH } from '@console/shared/src/constants/ui';
+import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { DefaultCapability, K8sResourceLinkCapability, SecretCapability } from '../common';
 import type { CapabilityProps, Error } from '../types';
 import { SpecCapability } from '../types';
@@ -50,6 +52,14 @@ const PodCount: FC<SpecCapabilityProps<number>> = ({
     specDescriptor: descriptor,
     specValue: value,
   });
+  const [k8sModel] = useK8sModel(referenceFor(obj));
+  const [canUpdate] = useAccessReview({
+    group: k8sModel?.apiGroup,
+    resource: k8sModel?.plural,
+    namespace: obj?.metadata?.namespace,
+    name: obj?.metadata?.name,
+    verb: 'update',
+  });
 
   return (
     <DetailsItem
@@ -58,6 +68,7 @@ const PodCount: FC<SpecCapabilityProps<number>> = ({
       obj={obj}
       path={fullPath}
       onEdit={launchConfigureSizeModal}
+      canEdit={canUpdate}
     >
       {_.isNil(value) ? '-' : `${value} pods`}
     </DetailsItem>
@@ -100,13 +111,13 @@ const NamespaceSelector: FC<SpecCapabilityProps<{ matchNames: string[] }>> = ({
   fullPath,
   value,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   return (
     <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
       {value?.matchNames?.[0] ? (
         <ResourceLink kind="Namespace" name={value.matchNames[0]} title={value.matchNames[0]} />
       ) : (
-        <span className="pf-v6-u-text-color-subtle">{t('public~None')}</span>
+        <span className="pf-v6-u-text-color-subtle">{t('None')}</span>
       )}
     </DetailsItem>
   );
@@ -119,18 +130,18 @@ const ResourceRequirements: FC<SpecCapabilityProps> = ({
   obj,
   fullPath,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   return (
     <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
       <DescriptionList className="co-spec-descriptor--resource-requirements">
         <DescriptionListGroup>
-          <DescriptionListTerm>{t('olm~Resource limits')}</DescriptionListTerm>
+          <DescriptionListTerm>{t('Resource limits')}</DescriptionListTerm>
           <DescriptionListDescription>
             <ResourceRequirementsModalLink type="limits" obj={obj} path={descriptor.path} />
           </DescriptionListDescription>
         </DescriptionListGroup>
         <DescriptionListGroup>
-          <DescriptionListTerm>{t('olm~Resource requests')}</DescriptionListTerm>
+          <DescriptionListTerm>{t('Resource requests')}</DescriptionListTerm>
           <DescriptionListDescription>
             <ResourceRequirementsModalLink type="requests" obj={obj} path={descriptor.path} />
           </DescriptionListDescription>
@@ -166,10 +177,18 @@ const BooleanSwitch: FC<SpecCapabilityProps<boolean>> = ({
   fullPath,
   value,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const [checked, setChecked] = useState(Boolean(value));
   const [confirmed, setConfirmed] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
+  const [k8sModel] = useK8sModel(referenceFor(obj));
+  const [canUpdate] = useAccessReview({
+    group: k8sModel?.apiGroup,
+    resource: k8sModel?.plural,
+    namespace: obj?.metadata?.namespace,
+    name: obj?.metadata?.name,
+    verb: 'update',
+  });
 
   const errorCb = (err: Error): void => {
     setConfirmed(false);
@@ -200,28 +219,29 @@ const BooleanSwitch: FC<SpecCapabilityProps<boolean>> = ({
         <Switch
           id={descriptor.path}
           isChecked={checked}
+          isDisabled={!canUpdate}
           onChange={(_event, val) => {
             setChecked(val);
             setConfirmed(false);
             setErrorMessage(null);
           }}
-          label={t('public~True')}
+          label={t('True')}
         />
         &nbsp;&nbsp;
         {checked !== Boolean(value) && confirmed && <LoadingInline />}
-        {checked !== Boolean(value) && !confirmed && (
+        {checked !== Boolean(value) && !confirmed && canUpdate && (
           <>
             &nbsp;&nbsp;
             <Button className="pf-m-link--align-left" type="button" variant="link" onClick={update}>
               <YellowExclamationTriangleIcon className="co-icon-space-r" />
-              {t('olm~Confirm change')}
+              {t('Confirm change')}
             </Button>
           </>
         )}
       </div>
       {errorMessage && (
         <div className="cos-error-title co-break-word">
-          {errorMessage || t('olm~An error occurred')}
+          {errorMessage || t('An error occurred')}
         </div>
       )}
     </DetailsItem>
@@ -237,9 +257,17 @@ const CheckboxUIComponent: FC<SpecCapabilityProps<boolean>> = ({
   fullPath,
   value,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const [checked, setChecked] = useState(Boolean(value));
   const [confirmed, setConfirmed] = useState(false);
+  const [k8sModel] = useK8sModel(referenceFor(obj));
+  const [canUpdate] = useAccessReview({
+    group: k8sModel?.apiGroup,
+    resource: k8sModel?.plural,
+    namespace: obj?.metadata?.namespace,
+    name: obj?.metadata?.name,
+    verb: 'update',
+  });
 
   const patchFor = (val: boolean) => [
     { op: 'add', path: `/spec/${getPatchPathFromDescriptor(descriptor)}`, value: val },
@@ -256,6 +284,7 @@ const CheckboxUIComponent: FC<SpecCapabilityProps<boolean>> = ({
           id={descriptor.path}
           style={{ marginLeft: '10px' }}
           isChecked={checked}
+          isDisabled={!canUpdate}
           data-checked-state={checked}
           label={label}
           onChange={(_event, val) => {
@@ -265,12 +294,12 @@ const CheckboxUIComponent: FC<SpecCapabilityProps<boolean>> = ({
         />
         &nbsp;&nbsp;
         {checked !== Boolean(value) && confirmed && <LoadingInline />}
-        {checked !== Boolean(value) && !confirmed && (
+        {checked !== Boolean(value) && !confirmed && canUpdate && (
           <>
             &nbsp;&nbsp;
             <Button className="pf-m-link--align-left" type="button" variant="link" onClick={update}>
               <YellowExclamationTriangleIcon className="co-icon-space-r" />
-              {t('olm~Confirm change')}
+              {t('Confirm change')}
             </Button>
           </>
         )}
@@ -289,12 +318,20 @@ const UpdateStrategy: FC<SpecCapabilityProps> = ({
   fullPath,
   value,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const launchUpdateStrategyModal = useConfigureUpdateStrategyModal({
     kindObj: model,
     resource: obj,
     specDescriptor: descriptor,
     specValue: value,
+  });
+  const [k8sModel] = useK8sModel(referenceFor(obj));
+  const [canUpdate] = useAccessReview({
+    group: k8sModel?.apiGroup,
+    resource: k8sModel?.plural,
+    namespace: obj?.metadata?.namespace,
+    name: obj?.metadata?.name,
+    verb: 'update',
   });
 
   return (
@@ -303,9 +340,10 @@ const UpdateStrategy: FC<SpecCapabilityProps> = ({
       label={label}
       obj={obj}
       onEdit={launchUpdateStrategyModal}
+      canEdit={canUpdate}
       path={fullPath}
     >
-      {value?.type ?? t('public~None')}
+      {value?.type ?? t('None')}
     </DetailsItem>
   );
 };

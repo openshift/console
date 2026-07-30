@@ -1,13 +1,13 @@
 package actions
 
 import (
-	"io/ioutil"
+	"os"
 	"testing"
 
 	configv1 "github.com/openshift/api/config/v1"
 	"github.com/openshift/api/helm/v1beta1"
 	"github.com/stretchr/testify/require"
-	"helm.sh/helm/v3/pkg/action"
+	"helm.sh/helm/v4/pkg/action"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -69,8 +69,8 @@ func TestAuthenticationDoesNotSetRepoURL(t *testing.T) {
 			}
 
 			if tt.hasTLS {
-				cert, _ := ioutil.ReadFile("./server.crt")
-				key, _ := ioutil.ReadFile("./server.key")
+				cert, _ := os.ReadFile("./server.crt")
+				key, _ := os.ReadFile("./server.key")
 				tlsSecret := &v1.Secret{
 					Data: map[string][]byte{
 						tlsSecretCertKey: cert,

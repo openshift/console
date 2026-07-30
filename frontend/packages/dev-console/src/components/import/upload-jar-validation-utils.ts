@@ -17,7 +17,7 @@ import {
 
 export const fileNameRegex = /\.(jar)$/i;
 
-export const fileUploadValidationSchema = (t: TFunction) =>
+const fileUploadValidationSchema = (t: TFunction) =>
   yup.object().shape({
     name: yup
       .string()

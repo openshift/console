@@ -7,23 +7,19 @@ import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import AddBareMetalHost from './AddBareMetalHost';
 
 const AddBareMetalHostPage: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('metal3-plugin');
   const location = useLocation();
   const { name, ns: namespace } = useParams();
   const enablePowerMgmt = new URLSearchParams(location.search).has('powerMgmt');
 
   const isEditing = !!name;
-  const title = isEditing
-    ? t('metal3-plugin~Edit Bare Metal Host')
-    : t('metal3-plugin~Add Bare Metal Host');
+  const title = isEditing ? t('Edit Bare Metal Host') : t('Add Bare Metal Host');
   return (
     <>
       <DocumentTitle>{title}</DocumentTitle>
       <PageHeading
         title={title}
-        helpText={t(
-          'metal3-plugin~Expand the hardware inventory by registering a new Bare Metal Host.',
-        )}
+        helpText={t('Expand the hardware inventory by registering a new Bare Metal Host.')}
       />
       <PaneBody className="co-m-pane__form">
         <AddBareMetalHost namespace={namespace} name={name} enablePowerMgmt={enablePowerMgmt} />

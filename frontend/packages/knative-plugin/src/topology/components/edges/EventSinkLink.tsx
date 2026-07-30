@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import type { Edge } from '@patternfly/react-topology';
 import { EdgeTerminalType, observer } from '@patternfly/react-topology';
-import { BaseEdge } from '@console/topology/src/components/graph-view';
+import { BaseEdge } from '@console/topology/src/components/graph-view/components/edges/BaseEdge';
 
 type EventSinkLinkProps = {
   element: Edge;

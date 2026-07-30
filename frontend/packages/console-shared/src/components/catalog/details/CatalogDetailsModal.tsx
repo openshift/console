@@ -13,10 +13,10 @@ import {
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import type { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
-import CatalogBadges from '../CatalogBadges';
+import { CatalogBadges } from '../CatalogBadges';
 import { useCtaLink } from '../hooks/useCtaLink';
 import { getIconProps } from '../utils/catalog-utils';
-import CatalogDetailsPanel from './CatalogDetailsPanel';
+import { CatalogDetailsPanel } from './CatalogDetailsPanel';
 import './CatalogDetailsModal.scss';
 
 type CatalogDetailsModalProps = {
@@ -24,8 +24,8 @@ type CatalogDetailsModalProps = {
   onClose: () => void;
 };
 
-const CatalogDetailsModal: FC<CatalogDetailsModalProps> = ({ item, onClose }) => {
-  const { t } = useTranslation();
+export const CatalogDetailsModal: FC<CatalogDetailsModalProps> = ({ item, onClose }) => {
+  const { t } = useTranslation('console-shared');
   const [to, label] = useCtaLink(item?.cta);
 
   if (!item) {
@@ -35,7 +35,7 @@ const CatalogDetailsModal: FC<CatalogDetailsModalProps> = ({ item, onClose }) =>
   const { name, title, badges } = item;
 
   const provider = item.provider
-    ? t('console-shared~Provided by {{provider}}', { provider: item.provider })
+    ? t('Provided by {{provider}}', { provider: item.provider })
     : null;
 
   const vendor = <div>{provider}</div>;
@@ -93,5 +93,3 @@ const CatalogDetailsModal: FC<CatalogDetailsModalProps> = ({ item, onClose }) =>
     </Modal>
   );
 };
-
-export default CatalogDetailsModal;

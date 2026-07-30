@@ -8,7 +8,7 @@ import { useK8sWatchResources } from '@console/internal/components/utils/k8s-wat
 import { ImageStreamModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { ResourceDropdownField } from '@console/shared';
+import { ResourceDropdownField } from '@console/shared/src/components/formik-fields/ResourceDropdownField';
 import { ImageStreamActions } from '../import-types';
 import { ImageStreamContext } from './ImageStreamContext';
 
@@ -18,7 +18,7 @@ const ImageStreamDropdown: FC<{
   reloadCount?: number;
   className?: string;
 }> = ({ disabled = false, formContextField, reloadCount, className }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const imgCollection = useRef<Record<string, Record<string, K8sResourceKind>>>({});
 
   const { values, setFieldValue, initialValues } = useFormikContext<FormikValues>();
@@ -39,8 +39,8 @@ const ImageStreamDropdown: FC<{
     return loading && !isStreamsAvailable
       ? ''
       : !isStreamsAvailable
-      ? t('devconsole~No Image Stream')
-      : t('devconsole~Select Image Stream');
+      ? t('No Image Stream')
+      : t('Select Image Stream');
   };
 
   const onDropdownChange = useCallback(
@@ -128,7 +128,7 @@ const ImageStreamDropdown: FC<{
   return (
     <ResourceDropdownField
       name={`${fieldPrefix}imageStream.image`}
-      label={t('devconsole~Image Stream')}
+      label={t('Image Stream')}
       resources={resources}
       dataSelector={['metadata', 'name']}
       key={imageStream.namespace}

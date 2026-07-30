@@ -11,9 +11,9 @@ import { observer, useDndDrop } from '@patternfly/react-topology';
 import type { WithCreateConnectorProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import openshiftImg from '@console/internal/imgs/logos/openshift.svg';
 import { modelFor, referenceFor, referenceForModel } from '@console/internal/module/k8s';
-import { getTopologyResourceObject } from '../../../../utils';
 import { getRelationshipProvider } from '../../../../utils/relationship-provider-utils';
-import BaseNode from './BaseNode';
+import { getTopologyResourceObject } from '../../../../utils/topology-utils';
+import { BaseNode } from './BaseNode';
 
 type BindableNodeProps = {
   element: GraphElement;

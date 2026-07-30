@@ -31,7 +31,7 @@ const DeleteRevisionModalController: FC<DeleteRevisionModalControllerProps> = ({
   cancel,
   close,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const navigate = useNavigate();
 
   const { namespace } = revision.metadata;
@@ -85,7 +85,7 @@ const DeleteRevisionModalController: FC<DeleteRevisionModalControllerProps> = ({
     return (
       <>
         <ModalHeader
-          title={t('knative-plugin~Unable to delete {{revlabel}}', {
+          title={t('Unable to delete {{revlabel}}', {
             revlabel: RevisionModel.label,
           })}
           titleIconVariant="danger"
@@ -94,7 +94,7 @@ const DeleteRevisionModalController: FC<DeleteRevisionModalControllerProps> = ({
         />
         <ModalBody>
           <p>
-            {t('knative-plugin~You cannot delete the last {{revlabel}} for the {{serviceLabel}}.', {
+            {t('You cannot delete the last {{revlabel}} for the {{serviceLabel}}.', {
               revlabel: RevisionModel.label,
               serviceLabel: ServiceModel.label,
             })}
@@ -107,7 +107,7 @@ const DeleteRevisionModalController: FC<DeleteRevisionModalControllerProps> = ({
             data-test-id="modal-cancel-action"
             onClick={close}
           >
-            {t('knative-plugin~OK')}
+            {t('OK')}
           </Button>
         </ModalFooter>
       </>
@@ -156,7 +156,7 @@ const DeleteRevisionModalController: FC<DeleteRevisionModalControllerProps> = ({
         }
       })
       .catch((err) => {
-        const errMessage = err.message || t('knative-plugin~An error occurred. Please try again');
+        const errMessage = err.message || t('An error occurred. Please try again');
         action.setStatus({ error: errMessage });
       });
   };
@@ -172,7 +172,7 @@ const DeleteRevisionModalController: FC<DeleteRevisionModalControllerProps> = ({
         return deleteRevisionAction(action);
       })
       .catch((err) => {
-        const errMessage = err.message || t('knative-plugin~An error occurred. Please try again');
+        const errMessage = err.message || t('An error occurred. Please try again');
         action.setStatus({ error: errMessage });
       });
   };

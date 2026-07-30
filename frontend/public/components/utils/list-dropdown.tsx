@@ -1,25 +1,26 @@
 import type { FC, ReactElement } from 'react';
-import * as _ from 'lodash';
 import { useState, useCallback, useEffect, useMemo } from 'react';
-import * as fuzzy from 'fuzzysearch';
 import { Alert } from '@patternfly/react-core';
-import { useFlag } from '@console/shared/src/hooks/useFlag';
-import { FLAGS } from '@console/shared/src/constants';
-import { ActionItem, ConsoleSelect } from '@console/internal/components/utils/console-select';
-import { LoadingInline } from './status-box';
-import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
-import { ResourceName } from './resource-icon';
-import { flagPending } from '../../reducers/features';
-import { NamespaceModel, ProjectModel } from '@console/internal/models';
+import * as fuzzy from 'fuzzysearch';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useCreateNamespaceModal } from '@console/shared/src/hooks/useCreateNamespaceModal';
-import { useCreateProjectModal } from '@console/shared/src/hooks/useCreateProjectModal';
-import {
+import type {
   K8sResourceCommon,
   K8sModel,
   K8sResourceKind,
   WatchK8sResource,
 } from '@console/dynamic-plugin-sdk/src';
+import type { ActionItem } from '@console/internal/components/utils/console-select';
+import { ConsoleSelect } from '@console/internal/components/utils/console-select';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
+import { NamespaceModel, ProjectModel } from '@console/internal/models';
+import { FLAGS } from '@console/shared/src/constants/common';
+import { useCreateNamespaceModal } from '@console/shared/src/hooks/useCreateNamespaceModal';
+import { useCreateProjectModal } from '@console/shared/src/hooks/useCreateProjectModal';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
+import { flagPending } from '../../reducers/features';
+import { ResourceName } from './resource-icon';
+import { LoadingInline } from './status-box';
 
 const getKey = (key, keyKind) => {
   return keyKind ? `${key}-${keyKind}` : key;
@@ -56,7 +57,7 @@ interface ListDropdownInternalProps extends Omit<ListDropdownProps, 'resources'>
   resources?: Record<string, ListDropdownResource>;
 }
 
-const ListDropdown_: FC<ListDropdownInternalProps> = ({
+const InnerListDropdown: FC<ListDropdownInternalProps> = ({
   desc,
   placeholder,
   loaded,
@@ -71,7 +72,7 @@ const ListDropdown_: FC<ListDropdownInternalProps> = ({
   onChange,
   ...props
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const [items, setItems] = useState<{
     [key: string]: { kindLabel: string; name: string; resource: K8sResourceKind };
   }>({});
@@ -99,9 +100,7 @@ const ListDropdown_: FC<ListDropdownInternalProps> = ({
 
   useEffect(() => {
     if (loadError) {
-      setTitle(
-        <div className="cos-error-title">{t('public~Error loading {{desc}}', { desc })}</div>,
-      );
+      setTitle(<div className="cos-error-title">{t('Error loading {{desc}}', { desc })}</div>);
       return;
     }
 
@@ -191,7 +190,7 @@ const ListDropdown_: FC<ListDropdownInternalProps> = ({
           isInline
           className="co-alert pf-v6-c-alert--top-margin"
           variant="info"
-          title={t('public~No {{selection}} found', {
+          title={t('No {{selection}} found', {
             selection: desc || props.selectedKeyKind,
           })}
         />
@@ -237,7 +236,12 @@ export const ListDropdown: FC<ListDropdownProps> = (props) => {
   }, [watchedResources]);
 
   return (
-    <ListDropdown_ {...props} resources={watchedResources} loaded={loaded} loadError={loadError} />
+    <InnerListDropdown
+      {...props}
+      resources={watchedResources}
+      loaded={loaded}
+      loadError={loadError}
+    />
   );
 };
 
@@ -257,7 +261,7 @@ export const useProjectOrNamespaceModel = (): [K8sModel, boolean] | [] => {
 };
 
 export const NsDropdown: FC<ListDropdownProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const createNamespaceModal = useCreateNamespaceModal();
   const createProjectModal = useCreateProjectModal();
   const [selectedKey, setSelectedKey] = useState(props.selectedKey);
@@ -267,7 +271,7 @@ export const NsDropdown: FC<ListDropdownProps> = (props) => {
     model && canCreate
       ? [
           {
-            actionTitle: t('public~Create {{resourceKindLabel}}', {
+            actionTitle: t('Create {{resourceKindLabel}}', {
               resourceKindLabel: model.labelKey ? t(model.labelKey) : model.label,
             }),
             actionKey: `Create_${model.label}`,
@@ -302,10 +306,10 @@ export const NsDropdown: FC<ListDropdownProps> = (props) => {
 
   const getPlaceholder = (placeholderModel) => {
     if (!placeholderModel.kind) {
-      return t('public~Select item');
+      return t('Select item');
     }
 
-    return t('public~Select {{kindLabel}}', {
+    return t('Select {{kindLabel}}', {
       kindLabel: placeholderModel.labelKey ? t(placeholderModel.labelKey) : placeholderModel.label,
     });
   };

@@ -4,7 +4,7 @@ import type { DataViewTh } from '@patternfly/react-data-view/dist/esm/DataViewTa
 import type { ThProps, SortByDirection } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 
-export const tableColumnInfo = [
+const tableColumnInfo = [
   { id: 'input', index: 0 },
   { id: 'revision', index: 1 },
   { id: 'updated', index: 2 },
@@ -21,21 +21,15 @@ export const getColumnIndexById = (columnId: string): number => {
   return column?.index ?? 1; // Default to revision column
 };
 
-// Helper function to get column ID by index
-export const getColumnIdByIndex = (index: number): string => {
-  const column = tableColumnInfo.find((col) => col.index === index);
-  return column?.id ?? 'revision'; // Default to revision column
-};
-
 export const useRevisionListColumns = (
   sortBy: { index: number; direction: SortByDirection },
   onSort: (event: MouseEvent, columnId: string, direction: SortByDirection) => void,
 ): DataViewTh[] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   return useMemo(
     () => [
       {
-        cell: <span className="pf-v6-u-screen-reader">{t('helm-plugin~Select')}</span>,
+        cell: <span className="pf-v6-u-screen-reader">{t('Select')}</span>,
         props: {
           modifier: 'nowrap',
           isStickyColumn: true,
@@ -43,7 +37,7 @@ export const useRevisionListColumns = (
         } as ThProps,
       },
       {
-        cell: t('helm-plugin~Revision'),
+        cell: t('Revision'),
         props: {
           modifier: 'nowrap',
           sort: {
@@ -54,7 +48,7 @@ export const useRevisionListColumns = (
         } as ThProps,
       },
       {
-        cell: t('helm-plugin~Updated'),
+        cell: t('Updated'),
         props: {
           modifier: 'nowrap',
           sort: {
@@ -65,7 +59,7 @@ export const useRevisionListColumns = (
         } as ThProps,
       },
       {
-        cell: t('helm-plugin~Status'),
+        cell: t('Status'),
         props: {
           modifier: 'nowrap',
           sort: {
@@ -76,7 +70,7 @@ export const useRevisionListColumns = (
         } as ThProps,
       },
       {
-        cell: t('helm-plugin~Chart name'),
+        cell: t('Chart name'),
         props: {
           modifier: 'nowrap',
           sort: {
@@ -87,7 +81,7 @@ export const useRevisionListColumns = (
         } as ThProps,
       },
       {
-        cell: t('helm-plugin~Chart version'),
+        cell: t('Chart version'),
         props: {
           modifier: 'nowrap',
           sort: {
@@ -98,7 +92,7 @@ export const useRevisionListColumns = (
         } as ThProps,
       },
       {
-        cell: t('helm-plugin~App version'),
+        cell: t('App version'),
         props: {
           modifier: 'nowrap',
           sort: {
@@ -109,7 +103,7 @@ export const useRevisionListColumns = (
         } as ThProps,
       },
       {
-        cell: t('helm-plugin~Description'),
+        cell: t('Description'),
         props: {
           modifier: 'nowrap',
         } as ThProps,
@@ -118,5 +112,3 @@ export const useRevisionListColumns = (
     [t, sortBy, onSort],
   );
 };
-
-export default useRevisionListColumns;

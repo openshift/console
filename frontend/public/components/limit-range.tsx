@@ -1,31 +1,31 @@
 import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
-import * as _ from 'lodash';
-import { useTranslation } from 'react-i18next';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { K8sResourceKindReference, K8sResourceKind, referenceForModel } from '../module/k8s';
-import { LimitRangeModel } from '../models';
-import { DetailsPage } from './factory/details';
-import { ListPage } from './factory/list-page';
-import { navFactory } from './utils/horizontal-nav';
-import { SectionHeading } from './utils/headings';
-import { ResourceLink } from './utils/resource-link';
-import { ResourceSummary } from './utils/details-page';
-import { LoadingBox } from './utils/status-box';
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { Grid, GridItem } from '@patternfly/react-core';
 import { Table, Thead, Tbody, Tr, Th, Td } from '@patternfly/react-table';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import {
   ConsoleDataView,
   getNameCellProps,
   actionsCellProps,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import { TableColumn } from '@console/internal/module/k8s';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DASH } from '@console/shared/src/constants/ui';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { LimitRangeModel } from '../models';
+import type { K8sResourceKindReference, K8sResourceKind, TableColumn } from '../module/k8s';
+import { referenceForModel } from '../module/k8s';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { ResourceLink } from './utils/resource-link';
+import { LoadingBox } from './utils/status-box';
 
 const LimitRangeReference: K8sResourceKindReference = LimitRangeModel.kind;
 
@@ -68,13 +68,13 @@ const useLimitRangeColumns = (): {
   columns: TableColumn<K8sResourceKind>[];
   resetAllColumnWidths: () => void;
 } => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(LimitRangeModel);
 
   const columns = useMemo(
     () => [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         resizableProps: getResizableProps(tableColumnInfo[0].id),
@@ -84,7 +84,7 @@ const useLimitRangeColumns = (): {
         },
       },
       {
-        title: t('public~Namespace'),
+        title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
@@ -93,7 +93,7 @@ const useLimitRangeColumns = (): {
         },
       },
       {
-        title: t('public~Created'),
+        title: t('Created'),
         id: tableColumnInfo[2].id,
         sort: 'metadata.creationTimestamp',
         resizableProps: getResizableProps(tableColumnInfo[2].id),
@@ -115,7 +115,7 @@ const useLimitRangeColumns = (): {
   return { columns, resetAllColumnWidths };
 };
 
-export const LimitRangeList: FC<{ data: K8sResourceKind[]; loaded: boolean }> = (props) => {
+const LimitRangeList: FC<{ data: K8sResourceKind[]; loaded: boolean }> = (props) => {
   const { data, loaded } = props;
   const { columns, resetAllColumnWidths } = useLimitRangeColumns();
 
@@ -127,7 +127,7 @@ export const LimitRangeList: FC<{ data: K8sResourceKind[]; loaded: boolean }> = 
         label={LimitRangeModel.labelPlural}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
+        hideColumnManagement
         isResizable
         resetAllColumnWidths={resetAllColumnWidths}
       />
@@ -140,8 +140,8 @@ export const LimitRangeListPage: FC<LimitRangeListPageProps> = (props) => (
     {...props}
     kind={LimitRangeReference}
     ListComponent={LimitRangeList}
-    canCreate={true}
-    omitFilterToolbar={true}
+    canCreate
+    omitFilterToolbar
   />
 );
 
@@ -184,21 +184,21 @@ const LimitRangeDetailsRows: FC<LimitRangeDetailsRowsProps> = ({ limit }) => {
   );
 };
 
-export const LimitRangeDetailsList = (resource) => {
-  const { t } = useTranslation();
+const LimitRangeDetailsList = (resource) => {
+  const { t } = useTranslation('public');
   return (
     <PaneBody>
-      <SectionHeading text={t('public~Limits')} />
+      <SectionHeading text={t('Limits')} />
       <Table variant="compact" borders>
         <Thead>
           <Tr>
-            <Th>{t('public~Type')}</Th>
-            <Th>{t('public~Resource')}</Th>
-            <Th>{t('public~Min')}</Th>
-            <Th>{t('public~Max')}</Th>
-            <Th>{t('public~Default request')}</Th>
-            <Th>{t('public~Default limit')}</Th>
-            <Th>{t('public~Max limit/request ratio')}</Th>
+            <Th>{t('Type')}</Th>
+            <Th>{t('Resource')}</Th>
+            <Th>{t('Min')}</Th>
+            <Th>{t('Max')}</Th>
+            <Th>{t('Default request')}</Th>
+            <Th>{t('Default limit')}</Th>
+            <Th>{t('Max limit/request ratio')}</Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -212,11 +212,11 @@ export const LimitRangeDetailsList = (resource) => {
 };
 
 export const LimitRangeDetailsPage = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const Details = ({ obj: rq }) => (
     <>
       <PaneBody>
-        <SectionHeading text={t('public~LimitRange details')} />
+        <SectionHeading text={t('LimitRange details')} />
         <Grid hasGutter>
           <GridItem md={6}>
             <ResourceSummary resource={rq} />
@@ -235,20 +235,14 @@ export const LimitRangeDetailsPage = (props) => {
   );
 };
 
-export type LimitRangeProps = {
-  obj: any;
-};
 export type LimitRangeListPageProps = {
   filterLabel: string;
 };
-export type LimitRangeDetailsRowsProps = {
+type LimitRangeDetailsRowsProps = {
   limit: any;
 };
 export type LimitRangeDetailsRowProps = {
   limitType: string;
   resource: string;
   limit: any;
-};
-export type LimitRangeHeaderProps = {
-  obj: any;
 };

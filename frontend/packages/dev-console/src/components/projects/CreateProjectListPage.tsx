@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { Button } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { FLAGS } from '@console/shared';
+import { FLAGS } from '@console/shared/src/constants/common';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useCreateNamespaceOrProjectModal } from '@console/shared/src/hooks/useCreateNamespaceOrProjectModal';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
@@ -11,7 +11,7 @@ import type { ProjectListPageProps } from './ProjectListPage';
 import ProjectListPage from './ProjectListPage';
 
 type LazySubTitleRender = (openProjectModal: () => void) => ReactNode;
-export interface CreateProjectListPageProps extends ProjectListPageProps {
+interface CreateProjectListPageProps extends ProjectListPageProps {
   title: string;
   children: LazySubTitleRender;
   onCreate?: (project: K8sResourceKind) => void;
@@ -22,7 +22,7 @@ type CreateAProjectButtonProps = {
 };
 
 export const CreateAProjectButton: FC<CreateAProjectButtonProps> = ({ openProjectModal }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const canCreateNs = useFlag(FLAGS.CAN_CREATE_NS);
   const canCreateProject = useFlag(FLAGS.CAN_CREATE_PROJECT);
   const isStartGuideEnabled = useFlag(FLAGS.SHOW_OPENSHIFT_START_GUIDE);

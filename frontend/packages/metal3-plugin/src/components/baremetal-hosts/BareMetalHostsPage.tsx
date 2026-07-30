@@ -18,10 +18,11 @@ import { getNodeMachineName } from '@console/shared/src/selectors/node';
 import { createLookup } from '@console/shared/src/utils/utils';
 import { useMaintenanceCapability } from '../../hooks/useMaintenanceCapability';
 import { BareMetalHostModel } from '../../models';
-import { getHostMachine, getNodeMaintenanceNodeName } from '../../selectors';
+import { getHostMachine } from '../../selectors/baremetal-hosts';
 import { getMachineMachineSetOwner } from '../../selectors/machine';
+import { getNodeMaintenanceNodeName } from '../../selectors/node-maintenance';
 import { getHostStatus } from '../../status/host-status';
-import type { BareMetalHostKind } from '../../types';
+import type { BareMetalHostKind } from '../../types/host';
 import type { BareMetalHostBundle } from '../types';
 import BareMetalHostsTable from './BareMetalHostsTable';
 import { hostStatusFilter } from './table-filters';
@@ -103,7 +104,7 @@ const getCreateProps = ({ namespace, t }: { namespace: string; t: TFunction }) =
 };
 
 const BareMetalHostsPage: FC<BareMetalHostsPageProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('metal3-plugin');
   const [model] = useMaintenanceCapability();
   const { namespace } = props;
   const resources: WatchK8sResourceWithProp[] = [
@@ -146,12 +147,12 @@ const BareMetalHostsPage: FC<BareMetalHostsPageProps> = (props) => {
       canCreate
       rowFilters={[hostStatusFilter(t)]}
       createProps={getCreateProps({ namespace, t })}
-      createButtonText={t('metal3-plugin~Add Host')}
+      createButtonText={t('Add Host')}
       namespace={namespace}
       resources={resources}
       flatten={flattenResources}
       ListComponent={BareMetalHostsTable}
-      title={t('metal3-plugin~Bare Metal Hosts')}
+      title={t('Bare Metal Hosts')}
     />
   );
 };

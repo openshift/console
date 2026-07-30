@@ -1,31 +1,23 @@
 import type { FC } from 'react';
 import { useMemo } from 'react';
-import { useLocation } from 'react-router';
-import { connect } from 'react-redux';
-import { Map as ImmutableMap } from 'immutable';
 import { useTranslation } from 'react-i18next';
-
-import { ClusterDashboard } from './cluster-dashboard/cluster-dashboard';
-import { HorizontalNav } from '../../utils/horizontal-nav';
-import { LoadingBox } from '../../utils/status-box';
-import type { Page } from '../../utils/horizontal-nav';
-import { AsyncComponent } from '../../utils/async';
-import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import { connect } from 'react-redux';
+import { useLocation } from 'react-router';
+import type { DashboardsCard, DashboardsTab, OverviewGridCard } from '@console/dynamic-plugin-sdk';
+import { isDashboardsCard, isDashboardsTab, GridPosition } from '@console/dynamic-plugin-sdk';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
-import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
-import {
-  DashboardsCard,
-  DashboardsTab,
-  isDashboardsCard,
-  isDashboardsTab,
-  GridPosition,
-  OverviewGridCard,
-} from '@console/dynamic-plugin-sdk';
-import { RootState } from '../../../redux';
+import type { RootState } from '../../../redux';
+import { AsyncComponent } from '../../utils/async';
+import { HorizontalNav } from '../../utils/horizontal-nav';
+import type { Page } from '../../utils/horizontal-nav';
+import { LoadingBox } from '../../utils/status-box';
+import { ClusterDashboard } from './cluster-dashboard/cluster-dashboard';
 
-export const getCardsOnPosition = (
+const getCardsOnPosition = (
   cards: DashboardsCard[],
   position: GridPosition,
 ): OverviewGridCard[] => [
@@ -37,14 +29,14 @@ export const getCardsOnPosition = (
     })),
 ];
 
-export const getPluginTabPages = (
+const getPluginTabPages = (
   tabs: DashboardsTab[],
   cards: DashboardsCard[],
   navSection: string,
   firstTabId: string,
 ): Page[] => {
-  tabs = tabs.filter((t) => t.properties.navSection === navSection);
-  return tabs.map((tab) => {
+  const filteredTabs = tabs.filter((t) => t.properties.navSection === navSection);
+  return filteredTabs.map((tab) => {
     const tabCards = cards.filter((c) => c.properties.tab === tab.properties.id);
     return {
       href: tab.properties.id === firstTabId ? '' : tab.properties.id,
@@ -62,9 +54,9 @@ export const getPluginTabPages = (
   });
 };
 
-const DashboardsPage_: FC<DashboardsPageProps> = ({ kindsInFlight, k8sModels }) => {
-  const { t } = useTranslation();
-  const title = t('public~Overview');
+const InnerDashboardsPage: FC<DashboardsPageProps> = ({ kindsInFlight, k8sModelsLoaded }) => {
+  const { t } = useTranslation('public');
+  const title = t('Overview');
   const tabExtensions = useExtensions<DashboardsTab>(isDashboardsTab);
   const cardExtensions = useExtensions<DashboardsCard>(isDashboardsCard);
 
@@ -97,7 +89,7 @@ const DashboardsPage_: FC<DashboardsPageProps> = ({ kindsInFlight, k8sModels }) 
     titlePrefix: title,
   };
 
-  return kindsInFlight && k8sModels.size === 0 ? (
+  return kindsInFlight && !k8sModelsLoaded ? (
     <LoadingBox />
   ) : (
     <>
@@ -109,14 +101,14 @@ const DashboardsPage_: FC<DashboardsPageProps> = ({ kindsInFlight, k8sModels }) 
   );
 };
 
-export const mapStateToProps = (state: RootState) => ({
+const mapStateToProps = (state: RootState) => ({
   kindsInFlight: state.k8s.getIn(['RESOURCES', 'inFlight']),
-  k8sModels: state.k8s.getIn(['RESOURCES', 'models']),
+  k8sModelsLoaded: state.k8s.getIn(['RESOURCES', 'loaded']),
 });
 
-export const DashboardsPage = connect(mapStateToProps)(DashboardsPage_);
+export const DashboardsPage = connect(mapStateToProps)(InnerDashboardsPage);
 
 export type DashboardsPageProps = {
   kindsInFlight: boolean;
-  k8sModels: ImmutableMap<string, any>;
+  k8sModelsLoaded: boolean;
 };

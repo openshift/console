@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import type { PodControllerOverviewItem } from '../types';
+import type { PodControllerOverviewItem } from '../types/pod';
 import { getReplicationControllersForResource } from '../utils/resource-utils';
 
 export const useReplicationControllersWatcher = (

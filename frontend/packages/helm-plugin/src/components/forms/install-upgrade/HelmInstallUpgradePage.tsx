@@ -10,12 +10,12 @@ import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk/src';
-import { coFetchJSON } from '@console/internal/co-fetch';
 import { LoadingBox } from '@console/internal/components/utils';
-import { ALL_NAMESPACES_KEY } from '@console/shared/src';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { prune } from '@console/shared/src/components/dynamic-form/utils';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
+import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
 import { CHART_NAME_ANNOTATION, PROVIDER_NAME_ANNOTATION } from '../../../catalog/utils/const';
 import type {
   HelmChart,
@@ -33,6 +33,7 @@ import {
   isGoingToTopology,
 } from '../../../utils/helm-utils';
 import { getHelmActionValidationSchema } from '../../../utils/helm-validation-utils';
+import { NONE_SECRET_KEY } from '../url-chart/useBasicAuthSecretDropdown';
 import HelmChartMetaDescription from './HelmChartMetaDescription';
 import type { HelmInstallUpgradeFormData } from './HelmInstallUpgradeForm';
 import HelmInstallUpgradeForm from './HelmInstallUpgradeForm';
@@ -53,7 +54,7 @@ const HelmInstallUpgradePage: FC = () => {
   const helmChartRepoName = searchParams.get('chartRepoName');
   const helmActionOrigin = searchParams.get('actionOrigin') as HelmActionOrigins;
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   const [chartData, setChartData] = useState<HelmChart>(null);
   const [chartName, setChartName] = useState<string>('');
   const [chartVersion, setChartVersion] = useState<string>('');
@@ -65,6 +66,7 @@ const HelmInstallUpgradePage: FC = () => {
   const [initialYamlData, setInitialYamlData] = useState<string>('');
   const [initialFormData, setInitialFormData] = useState<object>();
   const [initialFormSchema, setInitialFormSchema] = useState<JSONSchema7>();
+  const [initialBasicAuthSecretName, setInitialBasicAuthSecretName] = useState<string>('');
   const helmAction: HelmActionType = initialChartURL
     ? HelmActionType.Create
     : HelmActionType.Upgrade;
@@ -101,6 +103,9 @@ const HelmInstallUpgradePage: FC = () => {
       const valuesYAML = releaseValues || chartValues;
       const valuesJSON = (res?.config || chart?.values) ?? {};
       const valuesSchema = chart?.schema && JSON.parse(atob(chart?.schema));
+      const basicAuthSecretName =
+        chart?.metadata?.annotations?.['helm.openshift.io/auth-secret'] ?? '';
+      setInitialBasicAuthSecretName(basicAuthSecretName);
       setInitialYamlData(valuesYAML);
       setInitialFormData(valuesJSON);
       setInitialFormSchema(valuesSchema);
@@ -120,6 +125,8 @@ const HelmInstallUpgradePage: FC = () => {
     };
   }, [config.helmReleaseApi, helmAction]);
 
+  const isURLInstall = chartData?.metadata?.annotations?.installation === 'url_install';
+
   const initialValues: HelmInstallUpgradeFormData = {
     releaseName: initialReleaseName || helmChartName || '',
     chartURL: initialChartURL,
@@ -133,6 +140,8 @@ const HelmInstallUpgradePage: FC = () => {
     formData: initialFormData,
     formSchema: initialFormSchema,
     editorType: initialFormSchema ? EditorType.Form : EditorType.YAML,
+    basicAuthSecretName: initialBasicAuthSecretName,
+    isURLInstall,
   };
 
   const handleSubmit = (values, actions) => {
@@ -143,6 +152,7 @@ const HelmInstallUpgradePage: FC = () => {
       yamlData,
       formData,
       editorType,
+      basicAuthSecretName,
     }: HelmInstallUpgradeFormData = values;
     let valuesObj;
 
@@ -153,13 +163,13 @@ const HelmInstallUpgradePage: FC = () => {
           valuesObj = prunedFormData;
         } else {
           actions.setStatus({
-            submitError: t('helm-plugin~Errors in the form data.'),
+            submitError: t('Errors in the form data.'),
           });
           return Promise.resolve();
         }
       } catch (err) {
         actions.setStatus({
-          submitError: t('helm-plugin~Invalid Form Schema - {{errorText}}', {
+          submitError: t('Invalid Form Schema - {{errorText}}', {
             errorText: err.toString(),
           }),
         });
@@ -167,10 +177,10 @@ const HelmInstallUpgradePage: FC = () => {
       }
     } else if (yamlData) {
       try {
-        valuesObj = safeLoad(yamlData);
+        valuesObj = safeLoad(yamlData) as any;
       } catch (err) {
         actions.setStatus({
-          submitError: t('helm-plugin~Invalid YAML - {{errorText}}', { errorText: err.toString() }),
+          submitError: t('Invalid YAML - {{errorText}}', { errorText: err.toString() }),
         });
         return Promise.resolve();
       }
@@ -182,6 +192,14 @@ const HelmInstallUpgradePage: FC = () => {
       ...(chartURL ? { chart_url: chartURL } : {}), // eslint-disable-line @typescript-eslint/naming-convention
       ...(indexEntry ? { indexEntry } : { indexEntry: chartIndexEntry }),
       ...(valuesObj ? { values: valuesObj } : {}),
+      ...(values.isURLInstall
+        ? {
+            basic_auth_secret_name:
+              helmAction === HelmActionType.Create && basicAuthSecretName === NONE_SECRET_KEY
+                ? ''
+                : basicAuthSecretName,
+          }
+        : {}), // eslint-disable-line @typescript-eslint/naming-convention
     };
 
     return config
@@ -198,9 +216,7 @@ const HelmInstallUpgradePage: FC = () => {
         if (isGoingToTopology(resources)) {
           const secretId = res?.metadata?.uid;
           redirect = helmRelease?.info?.notes
-            ? `${config.redirectURL}?selectId=${secretId}&selectTab=${t(
-                'helm-plugin~Release notes',
-              )}`
+            ? `${config.redirectURL}?selectId=${secretId}&selectTab=${t('Release notes')}`
             : config.redirectURL;
         } else {
           redirect = `/helm-releases/ns/${namespace}/release/${releaseName}`;

@@ -41,7 +41,7 @@ const CloudShellAdminSetup: FC<Props> = ({
     },
   };
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('webterminal-plugin');
 
   const [initError, setInitError] = useState<string>();
 
@@ -96,17 +96,13 @@ const CloudShellAdminSetup: FC<Props> = ({
   };
 
   if (initError) {
-    return (
-      <LoadError label={t('webterminal-plugin~OpenShift command line terminal')}>
-        {initError}
-      </LoadError>
-    );
+    return <LoadError label={t('OpenShift command line terminal')}>{initError}</LoadError>;
   }
 
   return (
     <div className="wt-cloud-shell-setup">
       <Title headingLevel="h2" className="wt-cloud-shell-setup--title">
-        {t('webterminal-plugin~Initialize terminal')}
+        {t('Initialize terminal')}
       </Title>
       <Formik
         initialValues={initialValues}

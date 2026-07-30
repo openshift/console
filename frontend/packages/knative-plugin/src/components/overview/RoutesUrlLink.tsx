@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { ClipboardCopy } from '@patternfly/react-core/dist/dynamic/components/ClipboardCopy';
 import { ExternalLinkWithCopy } from '@console/internal/components/utils';
 
-export type RoutesUrlLinkProps = {
+type RoutesUrlLinkProps = {
   urls: string[];
   title?: string;
 };

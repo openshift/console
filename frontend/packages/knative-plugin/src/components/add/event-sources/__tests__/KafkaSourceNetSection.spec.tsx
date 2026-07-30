@@ -1,9 +1,9 @@
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import KafkaSourceNetSection from '../KafkaSourceNetSection';
 
 jest.mock('../../SecretKeySelector', () => ({
   __esModule: true,
-  default: 'SecretKeySelector',
+  default: () => <span data-test="mock-SecretKeySelector" />,
 }));
 
 jest.mock('formik', () => ({
@@ -35,8 +35,7 @@ jest.mock('formik', () => ({
 
 describe('KafkaSourceNetSection', () => {
   it('should render SecretKeySelector field for tls and sasl when they are enabled', () => {
-    const { container } = render(<KafkaSourceNetSection />);
-    const secretKeySelectors = container.querySelectorAll('SecretKeySelector');
-    expect(secretKeySelectors).toHaveLength(5);
+    render(<KafkaSourceNetSection />);
+    expect(screen.getAllByTestId('mock-SecretKeySelector')).toHaveLength(5);
   });
 });

@@ -5,7 +5,7 @@ import { formPO, topologyPO } from '../../pageObjects';
 import { addPage, gitPage } from '../add-flow';
 import { createForm, navigateTo } from '../app';
 
-export const selectImportFromGitQuickCreate = () => {
+const selectImportFromGitQuickCreate = () => {
   cy.get('[data-test="quick-create-dropdown"]').click();
   cy.get('[data-test="qc-import-from-git"] [role="menuitem"]')
     .should('be.visible')

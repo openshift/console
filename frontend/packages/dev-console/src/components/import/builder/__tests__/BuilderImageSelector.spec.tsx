@@ -4,9 +4,15 @@ import * as _ from 'lodash';
 import type { NormalizedBuilderImages } from '../../../../utils/imagestream-utils';
 import BuilderImageSelector from '../BuilderImageSelector';
 
-jest.mock('@console/shared', () => ({
-  ItemSelectorField: (props) =>
-    `ItemSelectorField name=${props.name} loadingItems=${props.loadingItems} recommended=${props.recommended}`,
+jest.mock(
+  '@console/shared/src/components/formik-fields/item-selector-field/ItemSelectorField',
+  () => ({
+    ItemSelectorField: (props) =>
+      `ItemSelectorField name=${props.name} loadingItems=${props.loadingItems} recommended=${props.recommended}`,
+  }),
+);
+
+jest.mock('@console/shared/src/components/formik-fields/field-utils', () => ({
   getFieldId: jest.fn(() => 'image-name-selector'),
 }));
 

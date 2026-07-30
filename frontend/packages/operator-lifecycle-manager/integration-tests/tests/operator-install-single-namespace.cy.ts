@@ -40,10 +40,17 @@ const cleanupOperatorResources = (namespace: string) => {
   );
 };
 
-// Disabled due to createRoot concurrent rendering failures (OCPBUGS-82508)
-xdescribe(`Installing "${testOperator.name}" operator in test namespace`, () => {
-  before(() => {
+describe(`Installing "${testOperator.name}" operator in test namespace`, () => {
+  before(function () {
     cy.login();
+    // cy.window() returns a Cypress Chainable, not a true Promise — it has no .catch() method.
+    // Cypress's command queue manages error handling; this disable is required.
+    // eslint-disable-next-line promise/catch-or-return
+    cy.window().then((win) => {
+      if (win.SERVER_FLAGS?.techPreview) {
+        this.skip();
+      }
+    });
     cy.createProjectWithCLI(testName);
     cleanupOperatorResources(testName);
   });

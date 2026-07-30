@@ -26,15 +26,15 @@ describe('NameSection', () => {
     const initialValues = {} as NameSectionFormData;
     const onSubmit = jest.fn();
 
-    const renderResult = render(
+    render(
       <Wrapper initialValues={initialValues} onSubmit={onSubmit}>
         <NameSection />
       </Wrapper>,
     );
 
-    renderResult.getByTestId('section name');
-    renderResult.getByText('Name');
-    const inputFields = renderResult.getAllByRole('textbox') as HTMLInputElement[];
+    expect(screen.getByTestId('section name')).toBeInTheDocument();
+    expect(screen.getByText('Name')).toBeVisible();
+    const inputFields = screen.getAllByRole('textbox') as HTMLInputElement[];
 
     expect(inputFields[0].getAttribute('label')).toEqual('Name');
     expect(inputFields[0].disabled).toBeFalsy();
@@ -47,15 +47,15 @@ describe('NameSection', () => {
     const initialValues: NameSectionFormData = { formData: {} };
     const onSubmit = jest.fn();
 
-    const renderResult = render(
+    render(
       <Wrapper initialValues={initialValues} onSubmit={onSubmit}>
         <NameSection />
       </Wrapper>,
     );
 
-    renderResult.getByTestId('section name');
-    renderResult.getByText('Name');
-    const inputFields = renderResult.getAllByRole('textbox') as HTMLInputElement[];
+    expect(screen.getByTestId('section name')).toBeInTheDocument();
+    expect(screen.getByText('Name')).toBeVisible();
+    const inputFields = screen.getAllByRole('textbox') as HTMLInputElement[];
 
     expect(inputFields[0].getAttribute('label')).toEqual('Name');
     expect(inputFields[0].disabled).toBeFalsy();
@@ -68,15 +68,15 @@ describe('NameSection', () => {
     const initialValues: NameSectionFormData = { formData: { name: 'initial name' } };
     const onSubmit = jest.fn();
 
-    const renderResult = render(
+    render(
       <Wrapper initialValues={initialValues} onSubmit={onSubmit}>
         <NameSection />
       </Wrapper>,
     );
 
-    renderResult.getByTestId('section name');
-    renderResult.getByText('Name');
-    const inputFields = renderResult.getAllByRole('textbox') as HTMLInputElement[];
+    expect(screen.getByTestId('section name')).toBeInTheDocument();
+    expect(screen.getByText('Name')).toBeVisible();
+    const inputFields = screen.getAllByRole('textbox') as HTMLInputElement[];
 
     expect(inputFields[0].getAttribute('label')).toEqual('Name');
     expect(inputFields[0].disabled).toBeTruthy();
@@ -90,13 +90,13 @@ describe('NameSection', () => {
     const initialValues: NameSectionFormData = { formData: { name: '' } };
     const onSubmit = jest.fn();
 
-    const renderResult = render(
+    render(
       <Wrapper initialValues={initialValues} onSubmit={onSubmit}>
         <NameSection />
       </Wrapper>,
     );
 
-    const [nameInput] = renderResult.getAllByRole('textbox') as HTMLInputElement[];
+    const [nameInput] = screen.getAllByRole('textbox') as HTMLInputElement[];
 
     expect(nameInput.value).toEqual('');
     expect(nameInput.disabled).toBeFalsy();
@@ -111,7 +111,7 @@ describe('NameSection', () => {
     expect(nameInput.disabled).toBeFalsy();
 
     // Submit
-    const submitButton = renderResult.getByRole('button', { name: 'Submit' });
+    const submitButton = screen.getByRole('button', { name: 'Submit' });
     await user.click(submitButton);
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalledTimes(1);

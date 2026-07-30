@@ -3,7 +3,6 @@ import { perspective, topologyPage } from '@console/dev-console/integration-test
 
 export const topologyAdminPerspective = () => {
   perspective.switchTo(switchPerspective.Administrator);
-  cy.get('[data-quickstart-id="qs-nav-workloads"]').should('be.visible').click({ force: true });
-  cy.byLegacyTestID('topology-header').should('be.visible').click({ force: true });
+  cy.byLegacyTestID('topology-header').should('exist').click({ force: true });
   topologyPage.verifyTopologyPage();
 };

@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react';
-import ToastProvider from '../ToastProvider';
-import useToast from '../useToast';
+import { ToastProvider } from '../ToastProvider';
+import { useToast } from '../useToast';
 
 describe('useToast', () => {
   it('should provide a context', () => {

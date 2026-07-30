@@ -8,7 +8,7 @@ import type { RoleBinding } from './project-access-form-utils-types';
 import ProjectAccess from './ProjectAccess';
 
 const ProjectAccessPage: FC = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const params = useParams();
   const location = useLocation();
   const namespace = params.ns;
@@ -30,7 +30,7 @@ const ProjectAccessPage: FC = (props) => {
 
   return (
     <>
-      <DocumentTitle>{t('devconsole~Project access')}</DocumentTitle>
+      <DocumentTitle>{t('Project access')}</DocumentTitle>
       <ProjectAccess
         fullFormView={showFullForm}
         namespace={namespace}

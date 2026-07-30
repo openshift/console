@@ -10,7 +10,7 @@ import {
 } from '@console/internal/components/utils/k8s-watch-hook';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { ServiceModel } from '@console/knative-plugin';
+import { ServiceModel } from '@console/knative-plugin/src/models';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { BuildModel as ShipwrightBuildModel } from '@console/shipwright-plugin/src/models';
 import { INSTANCE_LABEL, NAME_LABEL } from '../../const';
@@ -24,7 +24,7 @@ type WatchResource = {
 };
 
 const EditApplicationPage: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const params = useParams();
   const location = useLocation();
   const namespace = params.ns;
@@ -119,7 +119,7 @@ const EditApplicationPage: FC = () => {
 
   return (
     <NamespacedPage disabled variant={NamespacedPageVariants.light}>
-      <DocumentTitle>{t('devconsole~Edit')}</DocumentTitle>
+      <DocumentTitle>{t('Edit')}</DocumentTitle>
       <StatusBox loaded={isResourcesLoaded} data={editResData}>
         <EditApplicationComponent
           namespace={namespace}

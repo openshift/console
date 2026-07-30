@@ -1,10 +1,10 @@
 import type { FC } from 'react';
 import { useState, useMemo, useCallback } from 'react';
+import { Tooltip } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useCloudShellAvailable } from '@console/webterminal-plugin/src/components/cloud-shell/useCloudShellAvailable';
 import { useCloudShellCommandDispatch } from '@console/webterminal-plugin/src/redux/actions/cloud-shell-dispatchers';
 import { useEventListener } from '../../hooks/useEventListener';
-import { Tooltip } from '../Tooltip/Tooltip';
 import { MARKDOWN_EXECUTE_BUTTON_ID, MARKDOWN_SNIPPET_ID } from './const';
 
 type ExecuteSnippetProps = {
@@ -13,8 +13,8 @@ type ExecuteSnippetProps = {
   docContext: HTMLDocument;
 };
 
-export const ExecuteSnippet: FC<ExecuteSnippetProps> = ({ element, rootSelector, docContext }) => {
-  const { t } = useTranslation();
+const ExecuteSnippet: FC<ExecuteSnippetProps> = ({ element, rootSelector, docContext }) => {
+  const { t } = useTranslation('console-shared');
   const setCloudShellCommand = useCloudShellCommandDispatch();
   const [showRunning, setShowRunning] = useState<boolean>(false);
   const textToExecute = useMemo(() => {
@@ -34,18 +34,18 @@ export const ExecuteSnippet: FC<ExecuteSnippetProps> = ({ element, rootSelector,
     }, [textToExecute, element, setCloudShellCommand]),
   );
 
+  const clearExecuted = useCallback(() => {
+    element.removeAttribute('data-executed');
+  }, [element]);
+
+  useEventListener(element, 'mouseenter', clearExecuted);
+  useEventListener(element, 'focus', clearExecuted);
+
   return (
     <Tooltip
-      reference={() => element}
-      content={
-        showRunning
-          ? t('console-shared~Running in Web Terminal')
-          : t('console-shared~Run in Web Terminal')
-      }
-      onShow={() => {
-        element.removeAttribute('data-executed');
-      }}
-      onHide={() => {
+      triggerRef={() => element}
+      content={showRunning ? t('Running in Web Terminal') : t('Run in Web Terminal')}
+      onTooltipHidden={() => {
         setShowRunning(false);
       }}
     />
@@ -57,7 +57,10 @@ type MarkdownExecuteCommandProps = {
   rootSelector: string;
 };
 
-const MarkdownExecuteSnippet: FC<MarkdownExecuteCommandProps> = ({ docContext, rootSelector }) => {
+export const MarkdownExecuteSnippet: FC<MarkdownExecuteCommandProps> = ({
+  docContext,
+  rootSelector,
+}) => {
   const elements = docContext.querySelectorAll(`${rootSelector} [${MARKDOWN_EXECUTE_BUTTON_ID}]`);
   const showExecuteButton = useCloudShellAvailable();
   return elements.length > 0 && showExecuteButton ? (
@@ -76,5 +79,3 @@ const MarkdownExecuteSnippet: FC<MarkdownExecuteCommandProps> = ({ docContext, r
     </>
   ) : null;
 };
-
-export default MarkdownExecuteSnippet;

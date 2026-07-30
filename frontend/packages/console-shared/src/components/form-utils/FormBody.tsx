@@ -9,7 +9,7 @@ type FormBodyProps = {
   disablePaneBody?: boolean;
 };
 
-const FormBody: FC<FormBodyProps & HTMLProps<HTMLDivElement>> = ({
+export const FormBody: FC<FormBodyProps & HTMLProps<HTMLDivElement>> = ({
   children,
   className,
   style,
@@ -19,15 +19,17 @@ const FormBody: FC<FormBodyProps & HTMLProps<HTMLDivElement>> = ({
 }) => (
   <div
     {...props}
-    className={css('pf-v6-c-form', { 'pf-v6-c-page__main-section': !disablePaneBody }, className)}
+    className={css(
+      'pf-v6-c-form',
+      { 'pf-v6-c-page__main-section pf-m-fill': !disablePaneBody },
+      className,
+    )}
     style={
       flexLayout
-        ? { display: 'flex', flex: 1, flexDirection: 'column', paddingBottom: 0, ...(style ?? {}) }
-        : { paddingBottom: 0, ...(style ?? {}) }
+        ? { display: 'flex', flex: 1, flexDirection: 'column', ...(style ?? {}) }
+        : style ?? {}
     }
   >
     {children}
   </div>
 );
-
-export default FormBody;

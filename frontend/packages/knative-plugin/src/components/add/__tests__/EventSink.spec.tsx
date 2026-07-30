@@ -1,3 +1,4 @@
+import { screen } from '@testing-library/react';
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import {
@@ -14,8 +15,7 @@ jest.mock('@console/shared/src/hooks/useConsoleSelector', () => ({
 }));
 
 jest.mock('formik', () => ({
-  ...jest.requireActual('formik'),
-  Formik: 'Formik',
+  Formik: () => <span data-test="mock-Formik" />,
 }));
 
 describe('EventSinkSpec', () => {
@@ -23,7 +23,7 @@ describe('EventSinkSpec', () => {
 
   it('should render form with proper initialvalues', () => {
     useSelectorMock.mockReturnValue('appGroup');
-    const { container } = renderWithProviders(
+    renderWithProviders(
       <EventSink
         namespace={namespace}
         normalizedSink={mockNormalizedSink}
@@ -31,18 +31,18 @@ describe('EventSinkSpec', () => {
         sinkKind={'KameletBinding'}
       />,
     );
-    expect(container.querySelector('Formik')).toBeInTheDocument();
+    expect(screen.getByTestId('mock-Formik')).toBeInTheDocument();
   });
 
   it('should render form with proper initialvalues for kafkaSink', () => {
     useSelectorMock.mockReturnValue('appGroup');
-    const { container } = renderWithProviders(
+    renderWithProviders(
       <EventSink
         namespace={namespace}
         normalizedSink={mockNormalizedKafkaSink}
         sinkKind={'KafkaSink'}
       />,
     );
-    expect(container.querySelector('Formik')).toBeInTheDocument();
+    expect(screen.getByTestId('mock-Formik')).toBeInTheDocument();
   });
 });

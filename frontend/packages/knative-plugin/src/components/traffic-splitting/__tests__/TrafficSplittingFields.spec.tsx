@@ -6,8 +6,14 @@ import {
 } from '../../../utils/__mocks__/traffic-splitting-utils-mock';
 import TrafficSplittingFields from '../TrafficSplittingFields';
 
-jest.mock('@console/shared', () => ({
-  MultiColumnField: jest.fn(() => null),
+jest.mock(
+  '@console/shared/src/components/formik-fields/multi-column-field/MultiColumnField',
+  () => ({
+    MultiColumnField: jest.fn(() => null),
+  }),
+);
+
+jest.mock('@console/shared/src/components/formik-fields/InputField', () => ({
   InputField: jest.fn(() => null),
 }));
 
@@ -16,11 +22,7 @@ jest.mock('../TrafficModalRevisionsDropdownField', () => ({
   default: jest.fn(() => null),
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-  }),
-}));
+jest.mock('react-i18next');
 
 const formProps = {
   ...formikFormProps,

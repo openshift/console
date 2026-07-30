@@ -10,7 +10,7 @@ import type {
 import { observer } from '@patternfly/react-topology';
 import { useAccessReview } from '@console/internal/components/utils';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
-import GroupNode from '@console/topology/src/components/graph-view/components/groups/GroupNode';
+import { GroupNode } from '@console/topology/src/components/graph-view/components/groups/GroupNode';
 import { getKindStringAndAbbreviation } from '@console/topology/src/components/graph-view/components/nodes/nodeUtils';
 import { getResource } from '@console/topology/src/utils/topology-utils';
 import HelmReleaseGroup from './HelmReleaseGroup';

@@ -11,10 +11,14 @@ import {
   ReadableResourcesNames,
 } from '@console/dev-console/src/components/import/import-types';
 import type { NormalizedBuilderImages } from '@console/dev-console/src/utils/imagestream-utils';
-import { GitProvider, getGitService } from '@console/git-service/src';
+import { getGitService } from '@console/git-service/src/services/git-service';
+import { GitProvider } from '@console/git-service/src/types/git';
 import { LoadingInline } from '@console/internal/components/utils';
 import { k8sList } from '@console/internal/module/k8s';
-import { BlueInfoCircleIcon, CheckboxField, DropdownField, RadioGroupField } from '@console/shared';
+import { CheckboxField } from '@console/shared/src/components/formik-fields/CheckboxField';
+import { DropdownField } from '@console/shared/src/components/formik-fields/DropdownField';
+import { RadioGroupField } from '@console/shared/src/components/formik-fields/RadioGroupField';
+import { BlueInfoCircleIcon } from '@console/shared/src/components/status/icons';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 import {
   CLUSTER_PIPELINE_NS,
@@ -54,7 +58,7 @@ type PipelineTemplateProps = {
 };
 
 const PipelineTemplate: FC<PipelineTemplateProps> = ({ builderImages, existingPipeline }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const [noTemplateForRuntime, setNoTemplateForRuntime] = useState(false);
   const [isPacRepo, setIsPacRepo] = useState(false);
   const [isPipelineTypeChanged, setIsPipelineTypeChanged] = useState(false);
@@ -234,8 +238,7 @@ const PipelineTemplate: FC<PipelineTemplateProps> = ({ builderImages, existingPi
   }, [pipeline.templateSelected, pipelineTemplates]);
 
   if (noTemplateForRuntime) {
-    const builderImageTitle =
-      builderImages?.[image.selected]?.title || t('devconsole~this Builder Image');
+    const builderImageTitle = builderImages?.[image.selected]?.title || t('this Builder Image');
     const resourceName = t(ReadableResourcesNames[resources]);
     return (
       <Alert
@@ -259,14 +262,14 @@ const PipelineTemplate: FC<PipelineTemplateProps> = ({ builderImages, existingPi
     <>
       {buildOption !== BuildOptions.PIPELINES && (
         <CheckboxField
-          label={t('devconsole~Add pipeline')}
+          label={t('Add pipeline')}
           name="pipeline.enabled"
           isDisabled={isPipelineAttached}
         />
       )}
       {pipeline.enabled && isPacRepo && (
         <>
-          <span className="pf-c-form__label-text">{t('devconsole~Pipeline')}</span>
+          <span className="pf-c-form__label-text">{t('Pipeline')}</span>
           <RadioGroupField
             className="odc-pipeline-section-pac__radio-intent"
             name={'pipeline.type'}
@@ -276,14 +279,14 @@ const PipelineTemplate: FC<PipelineTemplateProps> = ({ builderImages, existingPi
                 value: PipelineType.PAC,
                 label: (
                   <>
-                    {t('devconsole~Build, deploy and configure a Pipeline Repository')}
+                    {t('Build, deploy and configure a Pipeline Repository')}
                     {'  '}
                     <Tooltip
                       position="right"
                       content={
                         <p>
                           {t(
-                            'devconsole~Automatically configure a new Pipeline Repository for your Git repository. This will automatically trigger new PipelineRuns on new commits or Pull Requests based on your configuration in your source code.',
+                            'Automatically configure a new Pipeline Repository for your Git repository. This will automatically trigger new PipelineRuns on new commits or Pull Requests based on your configuration in your source code.',
                           )}
                         </p>
                       }
@@ -298,14 +301,14 @@ const PipelineTemplate: FC<PipelineTemplateProps> = ({ builderImages, existingPi
                 value: PipelineType.PIPELINE,
                 label: (
                   <>
-                    {t('devconsole~Use Pipeline from this cluster')}
+                    {t('Use Pipeline from this cluster')}
                     {'  '}
                     <Tooltip
                       position="right"
                       content={
                         <p>
                           {t(
-                            'devconsole~Use an installed Pipeline from your cluster to build and deploy your component. Pipelines are from "openshift" namespace that support the relevant runtime are shown below.',
+                            'Use an installed Pipeline from your cluster to build and deploy your component. Pipelines are from "openshift" namespace that support the relevant runtime are shown below.',
                           )}
                         </p>
                       }
@@ -325,8 +328,8 @@ const PipelineTemplate: FC<PipelineTemplateProps> = ({ builderImages, existingPi
                     />
                     <br />
                     <ExpandableSection
-                      toggleText={`${isExpanded ? t('devconsole~Hide') : t('devconsole~Show')} ${t(
-                        'devconsole~pipeline visualization',
+                      toggleText={`${isExpanded ? t('Hide') : t('Show')} ${t(
+                        'pipeline visualization',
                       )}`}
                       isExpanded={isExpanded}
                       onToggle={() => setIsExpanded(!isExpanded)}
@@ -347,13 +350,11 @@ const PipelineTemplate: FC<PipelineTemplateProps> = ({ builderImages, existingPi
             title={pipelineTemplateItems[pipeline.templateSelected]}
             items={pipelineTemplateItems}
             disabled={isPipelineAttached}
-            label={t('devconsole~Pipeline')}
+            label={t('Pipeline')}
             fullWidth
           />
           <ExpandableSection
-            toggleText={`${isExpanded ? t('devconsole~Hide') : t('devconsole~Show')} ${t(
-              'devconsole~pipeline visualization',
-            )}`}
+            toggleText={`${isExpanded ? t('Hide') : t('Show')} ${t('pipeline visualization')}`}
             isExpanded={isExpanded}
             onToggle={() => setIsExpanded(!isExpanded)}
           >

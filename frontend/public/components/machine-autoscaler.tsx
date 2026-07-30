@@ -1,33 +1,5 @@
 import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
-import * as _ from 'lodash';
-import { useTranslation } from 'react-i18next';
-
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { DASH } from '@console/shared/src/constants';
-import { TableColumn } from '@console/dynamic-plugin-sdk';
-import {
-  actionsCellProps,
-  getNameCellProps,
-  ConsoleDataView,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import { MachineAutoscalerModel } from '../models';
-import {
-  groupVersionFor,
-  K8sResourceKind,
-  referenceForGroupVersionKind,
-  referenceForModel,
-} from '../module/k8s';
-import { DetailsPage } from './factory/details';
-import { ListPage } from './factory/list-page';
-import { LoadingBox } from './utils/status-box';
-import { navFactory } from './utils/horizontal-nav';
-import { ResourceLink } from './utils/resource-link';
-import { ResourceSummary } from './utils/details-page';
-import { SectionHeading } from './utils/headings';
 import {
   DescriptionListDescription,
   DescriptionListGroup,
@@ -35,7 +7,30 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import {
+  actionsCellProps,
+  getNameCellProps,
+  ConsoleDataView,
+  nameCellProps,
+} from '@console/app/src/components/data-view/ConsoleDataView';
+import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+import type { TableColumn } from '@console/dynamic-plugin-sdk';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { DASH } from '@console/shared/src/constants/ui';
+import { MachineAutoscalerModel } from '../models';
+import type { K8sResourceKind } from '../module/k8s';
+import { groupVersionFor, referenceForGroupVersionKind, referenceForModel } from '../module/k8s';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { ResourceLink } from './utils/resource-link';
+import { LoadingBox } from './utils/status-box';
 
 const machineAutoscalerReference = referenceForModel(MachineAutoscalerModel);
 
@@ -105,7 +100,7 @@ const useMachineAutoscalerColumns = (): {
   columns: TableColumn<K8sResourceKind>[];
   resetAllColumnWidths: () => void;
 } => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
     MachineAutoscalerModel,
   );
@@ -113,7 +108,7 @@ const useMachineAutoscalerColumns = (): {
   const columns: TableColumn<K8sResourceKind>[] = useMemo(() => {
     return [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         resizableProps: getResizableProps(tableColumnInfo[0].id),
@@ -123,7 +118,7 @@ const useMachineAutoscalerColumns = (): {
         },
       },
       {
-        title: t('public~Namespace'),
+        title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
@@ -132,7 +127,7 @@ const useMachineAutoscalerColumns = (): {
         },
       },
       {
-        title: t('public~Scale target'),
+        title: t('Scale target'),
         id: tableColumnInfo[2].id,
         sort: 'spec.scaleTargetRef.name',
         resizableProps: getResizableProps(tableColumnInfo[2].id),
@@ -141,7 +136,7 @@ const useMachineAutoscalerColumns = (): {
         },
       },
       {
-        title: t('public~Min'),
+        title: t('Min'),
         id: tableColumnInfo[3].id,
         sort: 'spec.minReplicas',
         resizableProps: getResizableProps(tableColumnInfo[3].id),
@@ -150,7 +145,7 @@ const useMachineAutoscalerColumns = (): {
         },
       },
       {
-        title: t('public~Max'),
+        title: t('Max'),
         id: tableColumnInfo[4].id,
         sort: 'spec.maxReplicas',
         resizableProps: getResizableProps(tableColumnInfo[4].id),
@@ -189,7 +184,7 @@ const MachineAutoscalerList: FC<MachineAutoscalerListProps> = ({
         loadError={loadError}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
+        hideColumnManagement
         isResizable
         resetAllColumnWidths={resetAllColumnWidths}
       />
@@ -198,28 +193,28 @@ const MachineAutoscalerList: FC<MachineAutoscalerListProps> = ({
 };
 
 const MachineAutoscalerDetails: FC<MachineAutoscalerDetailsProps> = ({ obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <>
       <PaneBody>
-        <SectionHeading text={t('public~MachineAutoscaler details')} />
+        <SectionHeading text={t('MachineAutoscaler details')} />
         <Grid hasGutter>
           <GridItem md={6}>
             <ResourceSummary resource={obj}>
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('public~Scale target')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('Scale target')}</DescriptionListTerm>
                 <DescriptionListDescription>
                   <MachineAutoscalerTargetLink obj={obj} />
                 </DescriptionListDescription>
               </DescriptionListGroup>
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('public~Min replicas')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('Min replicas')}</DescriptionListTerm>
                 <DescriptionListDescription>
                   {_.get(obj, 'spec.minReplicas', DASH)}
                 </DescriptionListDescription>
               </DescriptionListGroup>
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('public~Max replicas')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('Max replicas')}</DescriptionListTerm>
                 <DescriptionListDescription>
                   {_.get(obj, 'spec.maxReplicas') || DASH}
                 </DescriptionListDescription>
@@ -237,8 +232,8 @@ export const MachineAutoscalerPage: FC<MachineAutoscalerPageProps> = (props) => 
     {...props}
     ListComponent={MachineAutoscalerList}
     kind={machineAutoscalerReference}
-    canCreate={true}
-    omitFilterToolbar={true}
+    canCreate
+    omitFilterToolbar
   />
 );
 
@@ -266,6 +261,6 @@ type MachineAutoscalerTargetLinkProps = {
   obj: K8sResourceKind;
 };
 
-export type MachineAutoscalerDetailsProps = {
+type MachineAutoscalerDetailsProps = {
   obj: K8sResourceKind;
 };

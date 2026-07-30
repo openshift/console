@@ -15,9 +15,10 @@ import { resourcePathFromModel } from '@console/internal/components/utils/resour
 import type { K8sKind, K8sResourceCommon } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
-import { FLAGS, getName, getNamespace } from '../../..';
+import { FLAGS } from '../../../constants/common';
 import { useDashboardResources } from '../../../hooks/useDashboardResources';
-import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '../../status';
+import { getName, getNamespace } from '../../../selectors/common';
+import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '../../status/icons';
 import Status from '../status-card/StatusPopup';
 
 import './top-consumer-popover.scss';
@@ -33,7 +34,7 @@ const ConsumerPopover = memo<ConsumerPopoverProps>(
     description,
     children,
   }) => {
-    const { t } = useTranslation();
+    const { t } = useTranslation('console-shared');
     const [isOpen, setOpen] = useState(false);
     const onShow = useCallback(() => setOpen(true), []);
     const onHide = useCallback(() => setOpen(false), []);
@@ -43,7 +44,7 @@ const ConsumerPopover = memo<ConsumerPopoverProps>(
     return (
       <Popover
         position={position}
-        headerContent={t('console-shared~{{title}} breakdown', { title })}
+        headerContent={t('{{title}} breakdown', { title })}
         bodyContent={
           <PopoverBody
             humanize={humanize}
@@ -97,28 +98,28 @@ export const LimitsBody: FC<LimitsBodyProps> = ({
   available,
   requested,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   return (
     ((!!limitState && limitState !== LIMIT_STATE.OK) ||
       (!!requestedState && requestedState !== LIMIT_STATE.OK)) && (
       <ul className="co-utilization-card-popover__consumer-list">
-        <Status value={total}>{t('console-shared~Total capacity')}</Status>
+        <Status value={total}>{t('Total capacity')}</Status>
         <Status value={limit} icon={getLimitIcon(limitState)}>
-          {t('console-shared~Total limit')}
+          {t('Total limit')}
         </Status>
-        <Status value={current}>{t('console-shared~Current utilization')}</Status>
-        <Status value={available}>{t('console-shared~Current available capacity')}</Status>
+        <Status value={current}>{t('Current utilization')}</Status>
+        <Status value={available}>{t('Current available capacity')}</Status>
         <Status value={requested} icon={getLimitIcon(requestedState)}>
-          {t('console-shared~Total requested')}
+          {t('Total requested')}
         </Status>
       </ul>
     )
   );
 };
 
-export const PopoverBody = memo<PopoverBodyProps>(
+const PopoverBody = memo<PopoverBodyProps>(
   ({ humanize, consumers, namespace, isOpen, description, children }) => {
-    const { t } = useTranslation();
+    const { t } = useTranslation('console-shared');
     const [currentConsumer, setCurrentConsumer] = useState(consumers[0]);
     const [activePerspective, setActivePerspective] = useActivePerspective();
     const canAccessMonitoring =
@@ -172,7 +173,7 @@ export const PopoverBody = memo<PopoverBodyProps>(
     const dropdownItems = useMemo(
       () =>
         consumers.reduce((items, curr) => {
-          items[referenceForModel(curr.model)] = t('console-shared~By {{label}}', {
+          items[referenceForModel(curr.model)] = t('By {{label}}', {
             label: curr.model.labelKey ? t(curr.model.labelKey) : curr.model.label,
           });
           return items;
@@ -192,7 +193,7 @@ export const PopoverBody = memo<PopoverBodyProps>(
 
     let body: ReactNode;
     if (error || consumersLoadError) {
-      body = <div className="pf-v6-u-text-color-subtle">{t('console-shared~Not available')}</div>;
+      body = <div className="pf-v6-u-text-color-subtle">{t('Not available')}</div>;
     } else if (!consumerLoaded || !data) {
       body = (
         <ul className="co-utilization-card-popover__consumer-list">
@@ -208,7 +209,7 @@ export const PopoverBody = memo<PopoverBodyProps>(
         <>
           <ul
             className="co-utilization-card-popover__consumer-list"
-            aria-label={t('console-shared~Top consumer by {{label}}', { label: model.label })}
+            aria-label={t('Top consumer by {{label}}', { label: model.label })}
           >
             {top5Data &&
               top5Data.map((item) => {
@@ -233,7 +234,7 @@ export const PopoverBody = memo<PopoverBodyProps>(
               }
             }}
           >
-            {t('console-shared~View more')}
+            {t('View more')}
           </Link>
         </>
       );
@@ -247,10 +248,10 @@ export const PopoverBody = memo<PopoverBodyProps>(
         {children}
         <div className="co-utilization-card-popover__title">
           {consumers.length === 1
-            ? t('console-shared~Top {{label}} consumers', {
+            ? t('Top {{label}} consumers', {
                 label: currentConsumer.model.label.toLowerCase(),
               })
-            : t('console-shared~Top consumers')}
+            : t('Top consumers')}
         </div>
         {consumers.length > 1 && (
           <ConsoleSelect
@@ -258,7 +259,7 @@ export const PopoverBody = memo<PopoverBodyProps>(
             renderInline // needed for popover to not close on selection
             isFullWidth
             buttonClassName="pf-v6-u-my-sm"
-            aria-label={t('console-shared~Select consumer type')}
+            aria-label={t('Select consumer type')}
             items={dropdownItems}
             onChange={onDropdownChange}
             selectedKey={referenceForModel(model)}
@@ -306,7 +307,7 @@ type PopoverBodyProps = PopoverProps & {
   isOpen: boolean;
 };
 
-export type ConsumerPopoverProps = PopoverProps & {
+type ConsumerPopoverProps = PopoverProps & {
   position?: PopoverPosition;
   title: string;
   current: string;

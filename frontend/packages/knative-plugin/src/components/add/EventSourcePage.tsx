@@ -8,13 +8,13 @@ import { QUERY_PROPERTIES } from '@console/dev-console/src/const';
 import { LoadingBox } from '@console/internal/components/utils';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
-import { useEventSourceStatus } from '../../hooks';
+import { useEventSourceStatus } from '../../hooks/useEventSourceStatus';
 import { CamelKameletBindingModel } from '../../models';
 import ConnectedEventSource from './EventSource';
 import EventSourceAlert from './EventSourceAlert';
 
 const EventSourcePage: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const { ns: namespace } = useParams();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -32,11 +32,11 @@ const EventSourcePage: FC = () => {
 
   return (
     <NamespacedPage disabled variant={NamespacedPageVariants.light}>
-      <DocumentTitle>{t('knative-plugin~Event Source')}</DocumentTitle>
+      <DocumentTitle>{t('Event Source')}</DocumentTitle>
       <PageHeading
-        title={t('knative-plugin~Create Event Source')}
+        title={t('Create Event Source')}
         helpText={t(
-          'knative-plugin~Create an Event source to register interest in a class of events from a particular system. Configure using YAML and form views.',
+          'Create an Event source to register interest in a class of events from a particular system. Configure using YAML and form views.',
         )}
       />
 

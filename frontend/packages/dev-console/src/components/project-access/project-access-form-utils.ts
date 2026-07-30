@@ -16,10 +16,7 @@ export const getAvailableAccessRoles = (): string[] | undefined => {
   return JSON.parse(window.SERVER_FLAGS.projectAccessClusterRoles);
 };
 
-export const getFormDataFromRoleBinding = (
-  user: RoleBinding,
-  namespace: string,
-): UserRoleBinding[] =>
+const getFormDataFromRoleBinding = (user: RoleBinding, namespace: string): UserRoleBinding[] =>
   user.subjects?.map((obj) => ({
     roleBindingName: user.metadata.name,
     subject: { ...obj, namespace: obj.kind !== 'ServiceAccount' ? namespace : obj.namespace },

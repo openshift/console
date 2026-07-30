@@ -8,14 +8,12 @@ import type { AddAction, ResolvedExtension } from '@console/dynamic-plugin-sdk/s
 import { isAddAction, useResolvedExtensions } from '@console/dynamic-plugin-sdk/src';
 import './AddCardItem.scss';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import type { SaveStatusProps } from '@console/shared/src/components/cluster-configuration';
-import {
-  useDebounceCallback,
-  useConsoleOperatorConfig,
-  patchConsoleOperatorConfig,
-  LoadError,
-  SaveStatus,
-} from '@console/shared/src/components/cluster-configuration';
+import { LoadError } from '@console/shared/src/components/cluster-configuration/LoadError';
+import { patchConsoleOperatorConfig } from '@console/shared/src/components/cluster-configuration/patchConsoleOperatorConfig';
+import type { SaveStatusProps } from '@console/shared/src/components/cluster-configuration/SaveStatus';
+import { SaveStatus } from '@console/shared/src/components/cluster-configuration/SaveStatus';
+import { useConsoleOperatorConfig } from '@console/shared/src/components/cluster-configuration/useConsoleOperatorConfig';
+import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 
 type SoftwareCatalogAddPageConfig = K8sResourceKind & {
@@ -51,7 +49,7 @@ const Item: FC<ItemProps> = ({ id, addAction }) => (
 );
 
 const AddPageConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const fireTelemetryEvent = useTelemetry();
 
   // Available add page items
@@ -148,15 +146,15 @@ const AddPageConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
   };
 
   return (
-    <FormSection title={t('devconsole~Add page')} data-test="add-page form-section">
+    <FormSection title={t('Add page')} data-test="add-page form-section">
       <FormHelperText>
         {t(
-          'devconsole~Option to disable individual actions from the "+Add" page to simplify and standardize your development processes. Users can still create resources from a cli or via YAML. The "Search" and "Topology" will still show such resources.',
+          'Option to disable individual actions from the "+Add" page to simplify and standardize your development processes. Users can still create resources from a cli or via YAML. The "Search" and "Topology" will still show such resources.',
         )}
       </FormHelperText>
       <DualListSelector
-        availableOptionsTitle={t('devconsole~Enabled actions')}
-        chosenOptionsTitle={t('devconsole~Disabled actions')}
+        availableOptionsTitle={t('Enabled actions')}
+        chosenOptionsTitle={t('Disabled actions')}
         isSearchable
         availableOptions={enabledOptions}
         chosenOptions={disabledOptions}

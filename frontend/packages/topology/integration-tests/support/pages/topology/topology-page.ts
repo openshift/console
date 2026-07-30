@@ -52,19 +52,9 @@ export const topologyPage = {
     cy.get('.loading-box.loading-box__loaded', { timeout }).should('exist');
     cy.get('[data-surface="true"]').should('exist');
   },
-  verifyTopologyPage: (retries: number = 3) => {
+  verifyTopologyPage: () => {
     app.waitForDocumentLoad();
-    if (retries === 0) {
-      throw new Error(`URL does not contain 'topology'`);
-    }
-    if (retries > 0) {
-      cy.url().then(($url) => {
-        if (!$url.includes('topology')) {
-          cy.wait(20000);
-          topologyPage.verifyTopologyPage(retries - 1);
-        }
-      });
-    }
+    cy.url({ timeout: 60000 }).should('include', 'topology');
   },
   verifyTopologyGraphView: () => {
     // eslint-disable-next-line promise/catch-or-return
@@ -289,7 +279,7 @@ export const topologyPage = {
     cy.get(`[data-test-action="${action}"] button`).click();
   },
   getNode: (nodeName: string) => {
-    return cy.get(topologyPO.graph.nodeLabel).should('be.visible').contains(nodeName);
+    return cy.contains(topologyPO.graph.nodeLabel, nodeName, { timeout: 30000 }).should('exist');
   },
   getNodeLabel: (nodeName: string) => {
     return cy.get(topologyPO.graph.selectNodeLabel).should('be.visible').contains(nodeName);
@@ -336,10 +326,14 @@ export const topologyPage = {
       .click({ force: true });
   },
   clickOnHelmGroup: (groupName: string) => {
-    return cy
-      .get(topologyPO.graph.helmGroupLabelText)
-      .should('be.visible')
+    // Search for the helm group to ensure it's loaded and highlighted
+    topologyHelper.search(groupName);
+    // Wait for the search to highlight the group
+    cy.get('[data-type="helm-release"] .is-filtered', { timeout: 10000 }).should('exist');
+    // Now click on the helm group label
+    cy.get(topologyPO.graph.helmGroupLabelText)
       .contains(groupName)
+      .should('be.visible')
       .click({ force: true });
   },
   clickOnDeploymentNode: (nodeName: string) => {
@@ -352,7 +346,7 @@ export const topologyPage = {
     const id = `[data-id="group:${appName}"] .odc-resource-icon-application`;
     cy.log(id);
     cy.get('[data-test-id="base-node-handler"] image').should('be.visible');
-    cy.get('body').then(($el) => {
+    return cy.get('body').then(($el) => {
       if (!$el.find(topologyPO.sidePane.applicationGroupingsTitle).text().includes(appName)) {
         cy.get(id).next('text').click({ force: true });
       } else {

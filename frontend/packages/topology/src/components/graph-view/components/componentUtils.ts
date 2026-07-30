@@ -24,9 +24,10 @@ import {
 import i18next from 'i18next';
 import { action } from 'mobx';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import type { ActionContext } from '@console/shared';
+import type { ActionContext } from '@console/shared/src/components/actions/types';
 import { launchErrorModal } from '@console/shared/src/utils/error-modal-handler';
-import { createConnection, moveNodeToGroup } from '../../../utils';
+import { createConnection } from '../../../utils/createConnection';
+import { moveNodeToGroup } from '../../../utils/moveNodeToGroup';
 import { isWorkloadRegroupable, graphContextMenu, groupContextMenu } from './nodeContextMenu';
 import withTopologyContextMenu from './withTopologyContextMenu';
 import './GraphComponent.scss';
@@ -386,11 +387,9 @@ const createConnectorCallback = () => (
 };
 
 export {
-  GraphComponentProps,
   NodeComponentProps,
   EdgeComponentProps,
   EditableDragOperationType,
-  DragNodeObject,
   nodesEdgeIsDragging,
   noRegroupDragSourceSpec,
   nodeDragSourceSpec,
@@ -398,9 +397,7 @@ export {
   graphDropTargetSpec,
   applicationGroupDropTargetSpec,
   edgeDragSourceSpec,
-  noDropTargetSpec,
   createConnectorCallback,
-  REGROUP_OPERATION,
   MOVE_CONNECTOR_DROP_TYPE,
   NODE_DRAG_TYPE,
   EDGE_DRAG_TYPE,

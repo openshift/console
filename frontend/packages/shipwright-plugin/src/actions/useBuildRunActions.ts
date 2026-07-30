@@ -13,7 +13,7 @@ import { BuildRunModel } from '../models';
 import type { BuildRun } from '../types';
 
 const useBuildRunActions = (buildRun: BuildRun) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('shipwright-plugin');
   const navigate = useNavigate();
   const launchModal = useOverlay();
   const [kindObj, inFlight] = useK8sModel(referenceFor(buildRun));
@@ -22,7 +22,7 @@ const useBuildRunActions = (buildRun: BuildRun) => {
   const actions = useMemo<Action[]>(() => {
     const rerun: Action = {
       id: 'shipwright-buildrun-rerun',
-      label: t('shipwright-plugin~Rerun'),
+      label: t('Rerun'),
       cta: () => {
         rerunBuildRun(buildRun)
           .then((newBuildRun) => {

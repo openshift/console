@@ -1,9 +1,5 @@
 import type { FC } from 'react';
 import { useMemo, Fragment, Suspense } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
-import * as _ from 'lodash';
-import * as semver from 'semver';
-import { Table as PfTable, Thead, Tr, Th, Tbody, Td } from '@patternfly/react-table';
 import {
   AlertVariant,
   Button,
@@ -14,16 +10,11 @@ import {
   GridItem,
   Popover,
 } from '@patternfly/react-core';
-import { QuestionCircleIcon } from '@patternfly/react-icons';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import {
-  K8sResourceKind,
-  K8sResourceKindReference,
-  referenceForModel,
-  TableColumn,
-} from '../module/k8s';
-import { DetailsPage } from './factory/details';
-import { ListPage } from './factory/list-page';
+import { RhUiQuestionMarkCircleFillIcon } from '@patternfly/react-icons';
+import { Table as PfTable, Thead, Tr, Th, Tbody, Td } from '@patternfly/react-table';
+import * as _ from 'lodash';
+import { Trans, useTranslation } from 'react-i18next';
+import * as semver from 'semver';
 import {
   actionsCellProps,
   getNameCellProps,
@@ -31,24 +22,28 @@ import {
   nameCellProps,
   getLabelsColumnWidthStyleProp,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-
-import { ImageStreamModel } from '../models';
-import { DOC_URL_PODMAN } from './utils/documentation';
-import { CopyToClipboard } from './utils/copy-to-clipboard';
-import { ExpandableAlert } from './utils/alerts';
-import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
-import { SectionHeading } from './utils/headings';
-import { LabelList } from './utils/label-list';
-import { navFactory } from './utils/horizontal-nav';
-import { ResourceLink } from './utils/resource-link';
-import { ResourceSummary } from './utils/details-page';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { ImageStreamTimeline, getImageStreamTagName } from './image-stream-timeline';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
+import { ImageStreamModel } from '../models';
+import type { K8sResourceKind, K8sResourceKindReference, TableColumn } from '../module/k8s';
+import { referenceForModel } from '../module/k8s';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
+import { ImageStreamTimeline, getImageStreamTagName } from './image-stream-timeline';
+import { ExpandableAlert } from './utils/alerts';
+import { CopyToClipboard } from './utils/copy-to-clipboard';
+import { ResourceSummary } from './utils/details-page';
+import { DOC_URL_PODMAN } from './utils/documentation';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { LabelList } from './utils/label-list';
+import { ResourceLink } from './utils/resource-link';
 import { LoadingBox } from './utils/status-box';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 
 const ImageStreamsReference: K8sResourceKindReference = 'ImageStream';
 const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';
@@ -68,7 +63,7 @@ const getStatusTags = (imageStream: K8sResourceKind): any => {
   return _.keyBy(statusTags, 'tag');
 };
 
-export const getBuilderTags = (imageStream: K8sResourceKind): any[] => {
+const getBuilderTags = (imageStream: K8sResourceKind): any[] => {
   const statusTags = getStatusTags(imageStream);
   return _.filter(imageStream.spec.tags, (tag) => isBuilderTag(tag) && statusTags[tag.name]);
 };
@@ -113,7 +108,7 @@ const ImageStreamTagsRow: FC<ImageStreamTagsRowProps> = ({ imageStream, specTag,
     'annotations',
     'openshift.io/image.dockerRepositoryCheck',
   ]);
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <Tr>
       <Td modifier="breakWord">
@@ -135,23 +130,23 @@ const ImageStreamTagsRow: FC<ImageStreamTagsRowProps> = ({ imageStream, specTag,
           />
         )}
         {from && !referencesTag && <>{from.name}</>}
-        {!from && <span className="pf-v6-u-text-color-subtle">{t('public~pushed image')}</span>}
+        {!from && <span className="pf-v6-u-text-color-subtle">{t('pushed image')}</span>}
       </Td>
       <Td modifier="breakWord" visibility={['hidden', 'visibleOnSm']}>
         {!imageStreamStatus && dockerRepositoryCheck && (
           <>
             <YellowExclamationTriangleIcon />
-            &nbsp;{t('public~Unable to resolve')}
+            &nbsp;{t('Unable to resolve')}
           </>
         )}
-        {!imageStreamStatus && !dockerRepositoryCheck && !from && <>{t('public~Not synced yet')}</>}
+        {!imageStreamStatus && !dockerRepositoryCheck && !from && <>{t('Not synced yet')}</>}
         {/* We have no idea why in this case  */}
-        {!imageStreamStatus && !dockerRepositoryCheck && from && <>{t('public~Unresolved')}</>}
+        {!imageStreamStatus && !dockerRepositoryCheck && from && <>{t('Unresolved')}</>}
         {imageStreamStatus && image && <>{image}</>}
         {imageStreamStatus && !image && (
           <>
             <YellowExclamationTriangleIcon />
-            &nbsp;{t('public~There is no image associated with this tag')}
+            &nbsp;{t('There is no image associated with this tag')}
           </>
         )}
       </Td>
@@ -168,7 +163,7 @@ export const ExampleDockerCommandPopover: FC<ImageStreamManipulationHelpProps> =
   tag,
 }) => {
   const publicImageRepository = _.get(imageStream, 'status.publicDockerImageRepository');
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   if (!publicImageRepository) {
     return null;
   }
@@ -178,24 +173,24 @@ export const ExampleDockerCommandPopover: FC<ImageStreamManipulationHelpProps> =
 
   return (
     <Popover
-      headerContent={<>{t('public~Image registry commands')}</>}
+      headerContent={<>{t('Image registry commands')}</>}
       className="co-example-docker-command__popover"
       minWidth="600px"
       bodyContent={
         <div>
           <p>
             {t(
-              'public~Create a new ImageStreamTag by pushing an image to this ImageStream with the desired tag.',
+              'Create a new ImageStreamTag by pushing an image to this ImageStream with the desired tag.',
             )}
           </p>
           <br />
-          <p>{t('public~Authenticate to the internal registry')}</p>
+          <p>{t('Authenticate to the internal registry')}</p>
           <CopyToClipboard value={loginCommand} />
           <br />
-          <p>{t('public~Push an image to this ImageStream')}</p>
+          <p>{t('Push an image to this ImageStream')}</p>
           <CopyToClipboard value={pushCommand} />
           <br />
-          <p>{t('public~Pull an image from this ImageStream')}</p>
+          <p>{t('Pull an image from this ImageStream')}</p>
           <CopyToClipboard value={pullCommand} />
           <br />
           <p>
@@ -203,25 +198,25 @@ export const ExampleDockerCommandPopover: FC<ImageStreamManipulationHelpProps> =
               Red Hat Enterprise Linux users may use the equivalent <strong>podman</strong>{' '}
               commands.{' '}
             </Trans>
-            <ExternalLink href={DOC_URL_PODMAN} text={t('public~Learn more.')} />
+            <ExternalLink href={DOC_URL_PODMAN} text={t('Learn more.')} />
           </p>
         </div>
       }
     >
       <Button
-        icon={<QuestionCircleIcon className="co-icon-space-r" />}
+        icon={<RhUiQuestionMarkCircleFillIcon className="co-icon-space-r" />}
         className="pf-v6-u-display-none pf-v6-u-display-inline-flex-on-sm"
         type="button"
         variant="link"
       >
-        {t('public~Do you need to work with this ImageStream outside of the web console?')}
+        {t('Do you need to work with this ImageStream outside of the web console?')}
       </Button>
     </Popover>
   );
 };
 
-export const ImageStreamsDetails: FC<ImageStreamsDetailsProps> = ({ obj: imageStream }) => {
-  const { t } = useTranslation();
+const ImageStreamsDetails: FC<ImageStreamsDetailsProps> = ({ obj: imageStream }) => {
+  const { t } = useTranslation('public');
 
   const getImportErrors = (): string[] => {
     return _.transform(imageStream.status.tags, (acc, tag: any) => {
@@ -231,7 +226,7 @@ export const ImageStreamsDetails: FC<ImageStreamsDetailsProps> = ({ obj: imageSt
       );
       importErrorCondition &&
         acc.push(
-          t('public~Unable to sync image for tag {{tag}}. {{message}}', {
+          t('Unable to sync image for tag {{tag}}. {{message}}', {
             tag: `${imageStream.metadata.name}:${tag.tag}`,
             message: importErrorCondition.message,
           }),
@@ -256,27 +251,25 @@ export const ImageStreamsDetails: FC<ImageStreamsDetailsProps> = ({ obj: imageSt
             ))}
           />
         )}
-        <SectionHeading text={t('public~ImageStream details')} />
+        <SectionHeading text={t('ImageStream details')} />
         <Grid hasGutter>
           <GridItem md={6}>
             <ResourceSummary resource={imageStream}>
               {imageRepository && (
                 <DescriptionListGroup>
-                  <DescriptionListTerm>{t('public~Image repository')}</DescriptionListTerm>
+                  <DescriptionListTerm>{t('Image repository')}</DescriptionListTerm>
                   <DescriptionListDescription>{imageRepository}</DescriptionListDescription>
                 </DescriptionListGroup>
               )}
               {publicImageRepository && (
                 <DescriptionListGroup>
-                  <DescriptionListTerm>{t('public~Public image repository')}</DescriptionListTerm>
+                  <DescriptionListTerm>{t('Public image repository')}</DescriptionListTerm>
                   <DescriptionListDescription>{publicImageRepository}</DescriptionListDescription>
                 </DescriptionListGroup>
               )}
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('public~Image count')}</DescriptionListTerm>
-                <DescriptionListDescription>
-                  {imageCount ? imageCount : 0}
-                </DescriptionListDescription>
+                <DescriptionListTerm>{t('Image count')}</DescriptionListTerm>
+                <DescriptionListDescription>{imageCount || 0}</DescriptionListDescription>
               </DescriptionListGroup>
             </ResourceSummary>
             <ExampleDockerCommandPopover imageStream={imageStream} />
@@ -284,17 +277,17 @@ export const ImageStreamsDetails: FC<ImageStreamsDetailsProps> = ({ obj: imageSt
         </Grid>
       </PaneBody>
       <PaneBody>
-        <SectionHeading text={t('public~Tags')} />
+        <SectionHeading text={t('Tags')} />
         {_.isEmpty(imageStream.status.tags) ? (
-          <span className="pf-v6-u-text-color-subtle">{t('public~No tags')}</span>
+          <span className="pf-v6-u-text-color-subtle">{t('No tags')}</span>
         ) : (
           <PfTable gridBreakPoint="">
             <Thead>
               <Tr>
-                <Th>{t('public~Name')}</Th>
-                <Th>{t('public~From')}</Th>
-                <Th visibility={['hidden', 'visibleOnSm']}>{t('public~Identifier')}</Th>
-                <Th visibility={['hidden', 'visibleOnMd']}>{t('public~Last updated')}</Th>
+                <Th>{t('Name')}</Th>
+                <Th>{t('From')}</Th>
+                <Th visibility={['hidden', 'visibleOnSm']}>{t('Identifier')}</Th>
+                <Th visibility={['hidden', 'visibleOnMd']}>{t('Last updated')}</Th>
               </Tr>
             </Thead>
             <Tbody>
@@ -383,7 +376,7 @@ const useImageStreamColumns = (): {
   columns: TableColumn<K8sResourceKind>[];
   resetAllColumnWidths: () => void;
 } => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(
     ImageStreamModel,
   );
@@ -392,7 +385,7 @@ const useImageStreamColumns = (): {
     const labelsColumnId = tableColumnInfo[2].id;
     return [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         resizableProps: getResizableProps(tableColumnInfo[0].id),
@@ -402,7 +395,7 @@ const useImageStreamColumns = (): {
         },
       },
       {
-        title: t('public~Namespace'),
+        title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
@@ -411,7 +404,7 @@ const useImageStreamColumns = (): {
         },
       },
       {
-        title: t('public~Labels'),
+        title: t('Labels'),
         id: labelsColumnId,
         sort: 'metadata.labels',
         resizableProps: getResizableProps(labelsColumnId),
@@ -421,7 +414,7 @@ const useImageStreamColumns = (): {
         },
       },
       {
-        title: t('public~Created'),
+        title: t('Created'),
         id: tableColumnInfo[3].id,
         sort: 'metadata.creationTimestamp',
         resizableProps: getResizableProps(tableColumnInfo[3].id),
@@ -442,7 +435,7 @@ const useImageStreamColumns = (): {
   return { columns, resetAllColumnWidths };
 };
 
-export const ImageStreamsList: FC<ImageStreamsListProps> = ({ data, loaded, ...props }) => {
+const ImageStreamsList: FC<ImageStreamsListProps> = ({ data, loaded, ...props }) => {
   const { columns, resetAllColumnWidths } = useImageStreamColumns();
 
   return (
@@ -454,7 +447,7 @@ export const ImageStreamsList: FC<ImageStreamsListProps> = ({ data, loaded, ...p
         loaded={loaded}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
+        hideColumnManagement
         isResizable
         resetAllColumnWidths={resetAllColumnWidths}
       />
@@ -464,18 +457,16 @@ export const ImageStreamsList: FC<ImageStreamsListProps> = ({ data, loaded, ...p
 
 ImageStreamsList.displayName = 'ImageStreamsList';
 
-export const buildPhase = (build) => build.status.phase;
-
 export const ImageStreamsPage: FC<ImageStreamsPageProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <ListPage
       {...props}
-      title={t('public~ImageStreams')}
+      title={t('ImageStreams')}
       kind={kind}
       ListComponent={ImageStreamsList}
-      canCreate={true}
-      omitFilterToolbar={true}
+      canCreate
+      omitFilterToolbar
     />
   );
 };
@@ -497,7 +488,7 @@ export type ImageStreamManipulationHelpProps = {
   tag?: string;
 };
 
-export type ImageStreamsDetailsProps = {
+type ImageStreamsDetailsProps = {
   obj: K8sResourceKind;
 };
 

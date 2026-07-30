@@ -1,20 +1,19 @@
-import { Link } from 'react-router';
-import { connect } from 'react-redux';
 import { Banner, Flex } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation, Trans } from 'react-i18next';
-
-import { KUBE_ADMIN_USERNAMES } from '@console/shared';
+import { connect } from 'react-redux';
+import { Link } from 'react-router';
+import type { CoreState } from '@console/dynamic-plugin-sdk/src/app/redux-types';
+import { KUBE_ADMIN_USERNAMES } from '@console/shared/src/constants/common';
 import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpgrade';
 import { OAuthModel } from '../models';
 import { userStateToProps } from '../reducers/ui';
 import { resourcePathFromModel } from './utils/resource-link';
-import { CoreState } from '@console/dynamic-plugin-sdk/src/app/redux-types';
 
 const oAuthResourcePath = resourcePathFromModel(OAuthModel, 'cluster');
 
 export const KubeAdminNotifier = connect(userStateToProps)(({ user }: CoreState) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const canUpgrade = useCanClusterUpgrade();
   const username = _.get(user, 'username');
   return KUBE_ADMIN_USERNAMES.includes(username) && canUpgrade ? (

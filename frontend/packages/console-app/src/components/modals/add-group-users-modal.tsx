@@ -14,7 +14,7 @@ type AddGroupUsersModalProps = {
 };
 
 const AddGroupUsersModal: OverlayComponent<AddGroupUsersModalProps> = ({ group, closeOverlay }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const [values, setValues] = useState<string[]>(['']);
   const [inProgress, setInProgress] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
@@ -22,13 +22,13 @@ const AddGroupUsersModal: OverlayComponent<AddGroupUsersModalProps> = ({ group, 
   const onSubmit: MouseEventHandler<HTMLButtonElement> = async (e) => {
     e.preventDefault();
     if (!group?.metadata?.name) {
-      setErrorMessage(t('public~Selected group is unavailable'));
+      setErrorMessage(t('Selected group is unavailable'));
       return;
     }
     // Filter out empty values
     const validUsers = values.map((v) => v.trim()).filter((v) => v.length > 0);
     if (validUsers.length === 0) {
-      setErrorMessage(t('public~Enter at least one user'));
+      setErrorMessage(t('Enter at least one user'));
       return;
     }
     setInProgress(true);
@@ -52,23 +52,18 @@ const AddGroupUsersModal: OverlayComponent<AddGroupUsersModalProps> = ({ group, 
 
   return (
     <Modal isOpen onClose={closeOverlay} variant="small">
-      <ModalHeader title={t('public~Add Users')} labelId="add-group-users-modal-title" />
+      <ModalHeader title={t('Add Users')} labelId="add-group-users-modal-title" />
       <ModalBody>
         {!group?.metadata?.name ? (
-          <Alert isInline variant={AlertVariant.danger} title={t('public~Error occurred')}>
-            {t('public~Selected group is unavailable')}
+          <Alert isInline variant={AlertVariant.danger} title={t('Error occurred')}>
+            {t('Selected group is unavailable')}
           </Alert>
         ) : (
           <>
             <p className="pf-v6-u-mb-md">
-              {t('public~Add new users to group {{name}}', { name: group.metadata.name })}
+              {t('Add new users to group {{name}}', { name: group.metadata.name })}
             </p>
-            <ListInput
-              label={t('public~Users')}
-              required
-              initialValues={values}
-              onChange={setValues}
-            />
+            <ListInput label={t('Users')} required initialValues={values} onChange={setValues} />
           </>
         )}
       </ModalBody>
@@ -80,10 +75,10 @@ const AddGroupUsersModal: OverlayComponent<AddGroupUsersModalProps> = ({ group, 
           isDisabled={!group?.metadata?.name}
           onClick={onSubmit}
         >
-          {t('public~Save')}
+          {t('Save')}
         </Button>
         <Button variant="link" onClick={closeOverlay} type="button">
-          {t('public~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </Modal>

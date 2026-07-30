@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/react';
 import { mockFormikRenderer } from '../../../test-utils/unit-test-utils';
-import ItemSelectorField from '../item-selector-field/ItemSelectorField';
+import { ItemSelectorField } from '../item-selector-field/ItemSelectorField';
 
 describe('ItemSelectorField', () => {
   it('should not render if showIfSingle is false and list contains single item', () => {

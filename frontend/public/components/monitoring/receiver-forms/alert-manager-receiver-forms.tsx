@@ -1,9 +1,7 @@
 /* eslint-disable camelcase, tsdoc/syntax */
-import * as _ from 'lodash';
-import { FC, memo, useEffect, useReducer, useState, Ref } from 'react';
-import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import { useTranslation } from 'react-i18next';
-import { useParams, useNavigate } from 'react-router';
+import type { FC, Ref } from 'react';
+import { memo, useEffect, useReducer, useState } from 'react';
+import type { MenuToggleElement, SelectProps } from '@patternfly/react-core';
 import {
   ActionGroup,
   Alert,
@@ -14,39 +12,40 @@ import {
   HelperText,
   HelperTextItem,
   MenuToggle,
-  MenuToggleElement,
   Select,
   SelectOption,
-  SelectProps,
   TextInput,
 } from '@patternfly/react-core';
-import { ExclamationCircleIcon } from '@patternfly/react-icons';
+import { RhUiErrorFillIcon } from '@patternfly/react-icons';
 import { safeLoad } from 'js-yaml';
-
-import { APIError } from '@console/shared/src/types/resource';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { useParams, useNavigate } from 'react-router';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import type { APIError } from '@console/shared/src/types/resource';
+import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
+import type { K8sResourceKind } from '../../../module/k8s';
 import { ButtonBar } from '../../utils/button-bar';
-import { StatusBox } from '../../utils/status-box';
 import { useK8sWatchResource } from '../../utils/k8s-watch-hook';
+import { StatusBox } from '../../utils/status-box';
+import type {
+  AlertmanagerConfig,
+  AlertmanagerReceiver,
+  AlertmanagerRoute,
+} from '../alertmanager/alertmanager-config';
+import { InitialReceivers } from '../alertmanager/alertmanager-config';
 import {
   getAlertmanagerConfig,
   patchAlertmanagerConfig,
   receiverTypes,
 } from '../alertmanager/alertmanager-utils';
-import { K8sResourceKind } from '../../../module/k8s';
-import {
-  AlertmanagerConfig,
-  AlertmanagerReceiver,
-  AlertmanagerRoute,
-  InitialReceivers,
-} from '../alertmanager/alertmanager-config';
+import { EmailForm } from './email-receiver-form';
+import { PagerDutyForm } from './pagerduty-receiver-form';
 import { RoutingLabelEditor } from './routing-labels-editor';
-import * as PagerDutyForm from './pagerduty-receiver-form';
-import * as WebhookForm from './webhook-receiver-form';
-import * as EmailForm from './email-receiver-form';
-import * as SlackForm from './slack-receiver-form';
-import { coFetchJSON } from '../../../co-fetch';
-import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import { SlackForm } from './slack-receiver-form';
+import { WebhookForm } from './webhook-receiver-form';
 
 /**
  * Converts deprecated route match and match_re:
@@ -160,13 +159,13 @@ const getRouteLabelsForEditor = (
 };
 
 const AlertMsg: FC<AlertMsgProps> = ({ type }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   switch (type) {
     case InitialReceivers.Default:
       return (
         <>
           {t(
-            'public~Your default receiver will automatically receive all alerts from this cluster that are not caught by other receivers first.',
+            'Your default receiver will automatically receive all alerts from this cluster that are not caught by other receivers first.',
           )}
         </>
       );
@@ -174,7 +173,7 @@ const AlertMsg: FC<AlertMsgProps> = ({ type }) => {
       return (
         <>
           {t(
-            'public~The routing labels for this receiver are configured to capture critical alerts. Finish setting up this receiver by selecting a "Receiver Type" to choose a destination for these alerts. If this receiver is deleted, critical alerts will go to the default receiver instead.',
+            'The routing labels for this receiver are configured to capture critical alerts. Finish setting up this receiver by selecting a "Receiver Type" to choose a destination for these alerts. If this receiver is deleted, critical alerts will go to the default receiver instead.',
           )}
         </>
       );
@@ -182,19 +181,19 @@ const AlertMsg: FC<AlertMsgProps> = ({ type }) => {
       return (
         <>
           {t(
-            'public~The Watchdog alert fires constantly to confirm that your alerting stack is functioning correctly. This receiver is configured to prevent it from creating unnecessary notifications. You can edit this receiver if you plan to use the information that Watchdog provides, otherwise this receiver should remain in its current state with no set receiver type.',
+            'The Watchdog alert fires constantly to confirm that your alerting stack is functioning correctly. This receiver is configured to prevent it from creating unnecessary notifications. You can edit this receiver if you plan to use the information that Watchdog provides, otherwise this receiver should remain in its current state with no set receiver type.',
           )}
         </>
       );
     default:
-      return <>{t('public~unknown receiver type')}</>; // should never get here
+      return <>{t('unknown receiver type')}</>; // should never get here
   }
 };
 
 const ReceiverInfoTip: FC<ReceiverInfoTipProps> = ({ type }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
-    <Alert isInline variant="info" title={`${type} ${t('public~Receiver')}`}>
+    <Alert isInline variant="info" title={`${type} ${t('Receiver')}`}>
       <div className="co-pre-line">
         <AlertMsg type={type} />
       </div>
@@ -209,7 +208,7 @@ const ReceiverBaseForm: FC<ReceiverBaseFormProps> = ({
   editReceiverNamed,
   alertmanagerGlobals, // contains default props not in alertmanager.yaml's config.global
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const navigate = useNavigate();
   const [saveErrorMsg, setSaveErrorMsg] = useState<string>();
   const [inProgress, setInProgress] = useState<boolean>(false);
@@ -229,21 +228,21 @@ const ReceiverBaseForm: FC<ReceiverBaseFormProps> = ({
 
   // there is no api to get default values for these adv. config props
   const advancedConfigGlobals = {
-    ['pagerduty_send_resolved']: true,
-    ['pagerduty_client']: '{{ template "pagerduty.default.client" . }}',
-    ['pagerduty_client_url']: '{{ template "pagerduty.default.clientURL" . }}',
-    ['pagerduty_description']: '{{ template "pagerduty.default.description" .}}',
-    ['pagerduty_severity']: 'error',
-    ['email_send_resolved']: false,
-    ['email_html']: '{{ template "email.default.html" . }}',
-    ['slack_send_resolved']: false,
-    ['slack_username']: '{{ template "slack.default.username" . }}',
-    ['slack_icon_emoji']: '{{ template "slack.default.iconemoji" .}}',
-    ['slack_icon_url']: '{{ template "slack.default.iconurl" .}}',
-    ['slack_link_names']: false,
-    ['slack_title']: '{{ template "slack.default.title" .}}',
-    ['slack_text']: '{{ template "slack.default.text" .}}',
-    ['webhook_send_resolved']: true,
+    pagerduty_send_resolved: true,
+    pagerduty_client: '{{ template "pagerduty.default.client" . }}',
+    pagerduty_client_url: '{{ template "pagerduty.default.clientURL" . }}',
+    pagerduty_description: '{{ template "pagerduty.default.description" .}}',
+    pagerduty_severity: 'error',
+    email_send_resolved: false,
+    email_html: '{{ template "email.default.html" . }}',
+    slack_send_resolved: false,
+    slack_username: '{{ template "slack.default.username" . }}',
+    slack_icon_emoji: '{{ template "slack.default.iconemoji" .}}',
+    slack_icon_url: '{{ template "slack.default.iconurl" .}}',
+    slack_link_names: false,
+    slack_title: '{{ template "slack.default.title" .}}',
+    slack_text: '{{ template "slack.default.text" .}}',
+    webhook_send_resolved: true,
   };
 
   // default globals to config.global props first, then alertmanagerGlobals
@@ -291,7 +290,7 @@ const ReceiverBaseForm: FC<ReceiverBaseFormProps> = ({
   const [formValues, dispatchFormChange] = useReducer(formReducer, INITIAL_STATE);
   const [isTypeOpen, setIsTypeOpen] = useState(false);
   const [selectedType, setSelectedType] = useState<string>(
-    receiverTypes[formValues.receiverType] ?? t('public~Select receiver type...'),
+    receiverTypes[formValues.receiverType] ?? t('Select receiver type...'),
   );
 
   const onTypeToggleClick = () => {
@@ -396,30 +395,32 @@ const ReceiverBaseForm: FC<ReceiverBaseFormProps> = ({
 
     // Update 'alertmanager-main' Secret with new alertmanager.yaml configuration
     setInProgress(true);
-    patchAlertmanagerConfig(secret, updateConfig).then(
-      () => {
-        setSaveErrorMsg('');
-        setInProgress(false);
-        navigate('/settings/cluster/alertmanagerconfig');
-      },
-      (err) => {
-        setSaveErrorMsg(err.message);
-        setInProgress(false);
-      },
-    );
+    patchAlertmanagerConfig(secret, updateConfig)
+      .then(
+        () => {
+          setSaveErrorMsg('');
+          setInProgress(false);
+          navigate('/settings/cluster/alertmanagerconfig');
+        },
+        (err) => {
+          setSaveErrorMsg(err.message);
+          setInProgress(false);
+        },
+      )
+      .catch(() => {});
   };
   const receiverTypeLabel = formValues.receiverType
-    ? t('public~{{receiverTypeLabel}}', {
+    ? t('{{receiverTypeLabel}}', {
         receiverTypeLabel: receiverTypes[formValues.receiverType],
       })
     : null;
-  const defaultString = isDefaultReceiver ? t('public~Default') : null;
+  const defaultString = isDefaultReceiver ? t('Default') : null;
 
   return (
     <>
-      <DocumentTitle>{t('public~{{titleVerb}} Receiver', { titleVerb })}</DocumentTitle>
+      <DocumentTitle>{t('{{titleVerb}} Receiver', { titleVerb })}</DocumentTitle>
       <PageHeading
-        title={t('public~{{titleVerb}} {{receiverTypeLabel}} {{defaultString}} Receiver', {
+        title={t('{{titleVerb}} {{receiverTypeLabel}} {{defaultString}} Receiver', {
           titleVerb,
           receiverTypeLabel,
           defaultString,
@@ -434,7 +435,7 @@ const ReceiverBaseForm: FC<ReceiverBaseFormProps> = ({
           {formValues.receiverName === 'Watchdog' && !formValues.receiverType && (
             <ReceiverInfoTip type={InitialReceivers.Watchdog} />
           )}
-          <FormGroup label={t('public~Receiver name')} fieldId="receiver-name" isRequired>
+          <FormGroup label={t('Receiver name')} fieldId="receiver-name" isRequired>
             <TextInput
               value={formValues.receiverName ?? ''}
               onChange={(_e, value: string) =>
@@ -454,18 +455,18 @@ const ReceiverBaseForm: FC<ReceiverBaseFormProps> = ({
               <FormHelperText>
                 <HelperText>
                   <HelperTextItem
-                    icon={<ExclamationCircleIcon />}
+                    icon={<RhUiErrorFillIcon />}
                     variant="error"
                     id="receiver-name-help"
                     aria-live="polite"
                   >
-                    {t('public~A receiver with that name already exists.')}
+                    {t('A receiver with that name already exists.')}
                   </HelperTextItem>
                 </HelperText>
               </FormHelperText>
             )}
           </FormGroup>
-          <FormGroup label={t('public~Receiver type')} fieldId="receiver-type" isRequired>
+          <FormGroup label={t('Receiver type')} fieldId="receiver-type" isRequired>
             <Select
               id="receiver-type"
               isOpen={isTypeOpen}
@@ -474,7 +475,7 @@ const ReceiverBaseForm: FC<ReceiverBaseFormProps> = ({
               onOpenChange={(isOpen) => setIsTypeOpen(isOpen)}
               toggle={typeToggle}
               shouldFocusToggleOnSelect
-              aria-label={t('public~Select receiver type...')}
+              aria-label={t('Select receiver type...')}
             >
               {Object.entries(receiverTypes).map(([key, value]) => (
                 <SelectOption key={key} value={value} data-test={`receiver-type-${key}`}>
@@ -515,7 +516,7 @@ const ReceiverBaseForm: FC<ReceiverBaseFormProps> = ({
                 data-test="cancel"
                 onClick={() => navigate(-1)}
               >
-                {t('public~Cancel')}
+                {t('Cancel')}
               </Button>
             </ActionGroup>
           </ButtonBar>
@@ -543,7 +544,7 @@ const ReceiverWrapper = memo<ReceiverFormsWrapperProps>(({ obj, ...props }) => {
           setLoadError({ message: 'alertmanager.v2.status.config.original not found.' });
         } else {
           try {
-            const { global } = safeLoad(originalAlertmanagerConfigJSON);
+            const { global } = safeLoad(originalAlertmanagerConfigJSON) as Record<string, any>;
             setAlertmanagerGlobals(global);
             setLoaded(true);
           } catch (error) {
@@ -562,7 +563,7 @@ const ReceiverWrapper = memo<ReceiverFormsWrapperProps>(({ obj, ...props }) => {
       );
   }, [alertManagerBaseURL]);
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const combinedLoaded = obj.loaded && loaded;
   const combinedLoadError = obj.loadError || loadError;
@@ -570,7 +571,7 @@ const ReceiverWrapper = memo<ReceiverFormsWrapperProps>(({ obj, ...props }) => {
   return (
     <StatusBox
       data={obj.data}
-      label={t('public~Alertmanager globals')}
+      label={t('Alertmanager globals')}
       loaded={combinedLoaded}
       loadError={combinedLoadError}
     >
@@ -580,7 +581,7 @@ const ReceiverWrapper = memo<ReceiverFormsWrapperProps>(({ obj, ...props }) => {
 });
 
 export const CreateReceiver = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const [secret, loaded, loadError] = useK8sWatchResource({
     kind: 'Secret',
     name: 'alertmanager-main',
@@ -590,15 +591,15 @@ export const CreateReceiver = () => {
 
   return (
     <ReceiverWrapper
-      titleVerb={t('public~Create')}
-      saveButtonText={t('public~Create')}
+      titleVerb={t('Create')}
+      saveButtonText={t('Create')}
       obj={{ data: secret as K8sResourceKind, loaded, loadError }}
     />
   );
 };
 
 export const EditReceiver = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const params = useParams();
   const [secret, loaded, loadError] = useK8sWatchResource({
     kind: 'Secret',
@@ -609,8 +610,8 @@ export const EditReceiver = () => {
 
   return (
     <ReceiverWrapper
-      titleVerb={t('public~Edit')}
-      saveButtonText={t('public~Save')}
+      titleVerb={t('Edit')}
+      saveButtonText={t('Save')}
       editReceiverNamed={params.name}
       obj={{ data: secret as K8sResourceKind, loaded, loadError }}
     />

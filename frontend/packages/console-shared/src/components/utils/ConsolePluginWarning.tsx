@@ -2,20 +2,20 @@ import type { FC } from 'react';
 import { Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
-const ConsolePluginWarning: FC<ConsolePluginWarningProps> = ({
+export const ConsolePluginWarning: FC<ConsolePluginWarningProps> = ({
   enabled,
   previouslyEnabled,
   trusted,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   return (
     !previouslyEnabled &&
     enabled &&
     !trusted && (
-      <Alert variant="warning" isInline title={t('console-shared~Enabling console plugin')}>
+      <Alert variant="warning" isInline title={t('Enabling console plugin')}>
         <p>
           {t(
-            'console-shared~This console plugin will be able to provide a custom interface and run any Kubernetes command as the logged in user. Make sure you trust it before enabling.',
+            'This console plugin will be able to provide a custom interface and run any Kubernetes command as the logged in user. Make sure you trust it before enabling.',
           )}
         </p>
       </Alert>
@@ -28,5 +28,3 @@ type ConsolePluginWarningProps = {
   previouslyEnabled: boolean;
   trusted: boolean;
 };
-
-export default ConsolePluginWarning;

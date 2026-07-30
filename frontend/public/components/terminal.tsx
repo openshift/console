@@ -1,6 +1,7 @@
 import { forwardRef, useRef, useEffect, useImperativeHandle, useCallback, useState } from 'react';
-import { Terminal as XTerminal, ITerminalOptions, ITerminalAddon } from '@xterm/xterm';
 import { FitAddon } from '@xterm/addon-fit';
+import type { ITerminalOptions, ITerminalAddon } from '@xterm/xterm';
+import { Terminal as XTerminal } from '@xterm/xterm';
 import { getResizeObserver } from '@patternfly/react-core';
 import { useIsFullscreen } from '@console/shared/src/hooks/useFullscreen';
 
@@ -26,6 +27,11 @@ export interface TerminalProps {
   className?: string;
 }
 
+/**
+ * This component loads the entire `xterm` library with it.
+ * Use `AsyncComponent` on components that consume this one to dynamically
+ * load xterm only when used.
+ */
 export const Terminal = forwardRef<ImperativeTerminalType, TerminalProps>(
   ({ onData, onResize, padding = 52, options = defaultOptions, className }, ref) => {
     const terminal = useRef<XTerminal>();

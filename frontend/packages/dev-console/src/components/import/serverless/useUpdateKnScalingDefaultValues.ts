@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { getAutoscaleWindow } from './serverless-utils';
 import { useGetAutoscalerConfig } from './useGetAutoscalerConfig';
 
-export const setKnScalingDefaultValue = (initialValues, knScalingConfig) => {
+const setKnScalingDefaultValue = (initialValues, knScalingConfig) => {
   const { autoscalewindow, autoscalewindowUnit, defaultAutoscalewindowUnit } =
     knScalingConfig && getAutoscaleWindow(knScalingConfig['stable-window'] ?? '');
   // TODO: we should not mutate initial values at all.

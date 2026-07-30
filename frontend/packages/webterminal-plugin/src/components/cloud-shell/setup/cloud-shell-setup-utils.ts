@@ -18,7 +18,7 @@ export type CloudShellSetupFormData = {
 export const CREATE_NAMESPACE_KEY = '#CREATE_NAMESPACE_KEY#';
 const projectNameRegex = /^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/;
 
-export const newNamespaceValidationSchema = yup.string().when('namespace', {
+const newNamespaceValidationSchema = yup.string().when('namespace', {
   is: CREATE_NAMESPACE_KEY,
   then: (schema) =>
     schema
@@ -30,7 +30,7 @@ export const newNamespaceValidationSchema = yup.string().when('namespace', {
   otherwise: (schema) => schema,
 });
 
-export const advancedOptionsValidationSchema = yup.object().shape({
+const advancedOptionsValidationSchema = yup.object().shape({
   image: yup.string(),
 });
 

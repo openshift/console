@@ -23,8 +23,11 @@ jest.mock('@console/shared/src/components/modals/ModalFooterWithAlerts', () => (
   ModalFooterWithAlerts: jest.fn(({ children }) => <div>{children}</div>),
 }));
 
-jest.mock('@console/shared', () => ({
+jest.mock('@console/shared/src/components/formik-fields/InputField', () => ({
   InputField: jest.fn(() => null),
+}));
+
+jest.mock('@console/shared/src/components/formik-fields/field-utils', () => ({
   getFieldId: jest.fn(() => 'field-id'),
 }));
 
@@ -33,11 +36,7 @@ jest.mock('@console/dev-console/src/components/import/section/FormSection', () =
   default: jest.fn(() => null),
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-  }),
-}));
+jest.mock('react-i18next');
 
 type SinkUriModalProps = ComponentProps<typeof SinkUriModal>;
 

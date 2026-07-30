@@ -7,13 +7,13 @@ import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHe
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { getSampleRepo } from '../../../utils/imagestream-utils';
 
-export type ImageStreamInfoProps = {
+type ImageStreamInfoProps = {
   displayName: string;
   tag: object;
 };
 
 const ImageStreamInfo: FC<ImageStreamInfoProps> = ({ displayName, tag }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const annotationTags = getAnnotationTags(tag);
   const description = _.get(tag, 'annotations.description');
   const sampleRepo = getSampleRepo(tag);
@@ -40,7 +40,7 @@ const ImageStreamInfo: FC<ImageStreamInfoProps> = ({ displayName, tag }) => {
       {description && <p className="co-catalog-item-details__description">{description}</p>}
       {sampleRepo && (
         <p>
-          {t('devconsole~Sample repository:')} <ExternalLink href={sampleRepo} text={sampleRepo} />
+          {t('Sample repository:')} <ExternalLink href={sampleRepo} text={sampleRepo} />
         </p>
       )}
     </div>

@@ -34,7 +34,7 @@ export interface LifecycleHookFormData {
   isAddingLch: boolean;
   action: string;
 }
-export interface CommonStrategyParamsData {
+interface CommonStrategyParamsData {
   timeoutSeconds?: number;
   pre?: LifecycleHookFormData;
   post?: LifecycleHookFormData;
@@ -45,7 +45,7 @@ export interface CommonStrategyParamsData {
   maxUnavailable?: string;
 }
 
-export interface CustomStrategyParamsData {
+interface CustomStrategyParamsData {
   command?: string[];
   environment?: EnvVar[];
   image?: string;

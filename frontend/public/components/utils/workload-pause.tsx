@@ -1,8 +1,8 @@
 import { Alert, AlertActionLink } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-
-import { K8sKind, k8sPatch, k8sUpdate, K8sResourceKind } from '../../module/k8s/index';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
+import type { K8sKind, K8sResourceKind } from '../../module/k8s/index';
+import { k8sPatch, k8sUpdate } from '../../module/k8s/index';
 import { ErrorModal } from '../modals/error-modal';
 
 export const togglePaused = (model: K8sKind, obj: K8sResourceKind) => {
@@ -31,27 +31,25 @@ export const togglePaused = (model: K8sKind, obj: K8sResourceKind) => {
 };
 
 export const WorkloadPausedAlert = ({ model, obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const launchModal = useOverlay();
   return (
     <Alert
       isInline
       className="co-alert"
       variant="info"
-      title={<>{t('public~{{ metadataName }} is paused', { metadataName: obj.metadata.name })}</>}
+      title={<>{t('{{ metadataName }} is paused', { metadataName: obj.metadata.name })}</>}
       actionLinks={
         <AlertActionLink
           onClick={() =>
             togglePaused(model, obj).catch((err) => launchModal(ErrorModal, { error: err.message }))
           }
         >
-          {obj.kind === 'MachineConfigPool'
-            ? t('public~Resume updates')
-            : t('public~Resume rollouts')}
+          {obj.kind === 'MachineConfigPool' ? t('Resume updates') : t('Resume rollouts')}
         </AlertActionLink>
       }
     >
-      {t('public~This will stop any new rollouts or triggers from running until resumed.')}
+      {t('This will stop any new rollouts or triggers from running until resumed.')}
     </Alert>
   );
 };

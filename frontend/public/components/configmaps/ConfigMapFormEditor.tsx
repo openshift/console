@@ -1,21 +1,22 @@
 import type { FC } from 'react';
 import { useCallback, useEffect } from 'react';
+import type { FormikProps } from 'formik';
+import { useFormikContext } from 'formik';
 import * as _ from 'lodash';
-import { FormikProps, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import FlexForm from '@console/shared/src/components/form-utils/FlexForm';
-import FormBody from '@console/shared/src/components/form-utils/FormBody';
-import FormFooter from '@console/shared/src/components/form-utils/FormFooter';
-import FormHeader from '@console/shared/src/components/form-utils/FormHeader';
-import SyncedEditorField from '@console/shared/src/components/formik-fields/SyncedEditorField';
-import CodeEditorField from '@console/shared/src/components/formik-fields/CodeEditorField';
-import { downloadYaml } from '@console/shared/src/components/editor/yaml-download-utils';
 import { ConfigMapModel } from '@console/internal/models';
-import { safeJSToYAML, safeYAMLToJS } from '@console/shared/src/utils/yaml';
+import { downloadYaml } from '@console/shared/src/components/editor/yaml-download-utils';
+import { FlexForm } from '@console/shared/src/components/form-utils/FlexForm';
+import { FormBody } from '@console/shared/src/components/form-utils/FormBody';
+import { FormFooter } from '@console/shared/src/components/form-utils/FormFooter';
+import { FormHeader } from '@console/shared/src/components/form-utils/FormHeader';
+import { CodeEditorField } from '@console/shared/src/components/formik-fields/CodeEditorField';
+import { SyncedEditorField } from '@console/shared/src/components/formik-fields/SyncedEditorField';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
-import ConfigMapFormFields from './ConfigMapFormFields';
-import { ConfigMap, ConfigMapFormInitialValues } from './types';
+import { safeJSToYAML, safeYAMLToJS } from '@console/shared/src/utils/yaml';
 import { getInitialConfigMapFormData, sanitizeToForm, sanitizeToYaml } from './configmap-utils';
+import ConfigMapFormFields from './ConfigMapFormFields';
+import type { ConfigMap, ConfigMapFormInitialValues } from './types';
 
 interface ConfigMapFormEditorProps {
   configMap: ConfigMap;
@@ -37,16 +38,14 @@ export const ConfigMapFormEditor: FC<FormikProps<any> & ConfigMapFormEditorProps
   setSubmitting,
   errors,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { setFieldValue } = useFormikContext<ConfigMapFormInitialValues>();
   const { editorType, formData, yamlData, formReloadCount, isCreateFlow, resourceVersion } = values;
 
   const LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY = 'console.configMapForm.editor.lastView';
   const isStale = !!configMap && configMap?.metadata?.resourceVersion !== resourceVersion;
   const immutableCfg = !!configMap && configMap.immutable;
-  const immutableCfgError = t(
-    'public~Cannot update the object when immutable field is set to true',
-  );
+  const immutableCfgError = t('Cannot update the object when immutable field is set to true');
   const disableSubmit =
     immutableCfg ||
     (editorType === EditorType.YAML ? !dirty : !dirty || !_.isEmpty(errors)) ||
@@ -89,7 +88,7 @@ export const ConfigMapFormEditor: FC<FormikProps<any> & ConfigMapFormEditorProps
         <FormHeader
           title={title}
           helpText={t(
-            'public~Config maps hold key-value pairs that can be used in pods to read application configuration.',
+            'Config maps hold key-value pairs that can be used in pods to read application configuration.',
           )}
         />
         <SyncedEditorField
@@ -115,10 +114,10 @@ export const ConfigMapFormEditor: FC<FormikProps<any> & ConfigMapFormEditorProps
         errorMessage={status?.submitError || (immutableCfg && immutableCfgError)}
         successMessage={status?.submitSuccess}
         showAlert={isStale}
-        infoTitle={t('public~This object has been updated.')}
-        infoMessage={t('public~Click reload to see the new version.')}
+        infoTitle={t('This object has been updated.')}
+        infoMessage={t('Click reload to see the new version.')}
         isSubmitting={isSubmitting}
-        submitLabel={isCreateFlow ? t('public~Create') : t('public~Save')}
+        submitLabel={isCreateFlow ? t('Create') : t('Save')}
         disableSubmit={disableSubmit}
         handleCancel={handleCancel}
         handleDownload={editorType === EditorType.YAML && (() => downloadYaml(yamlData))}

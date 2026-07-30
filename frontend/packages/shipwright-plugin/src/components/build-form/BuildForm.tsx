@@ -4,15 +4,13 @@ import type { FormikProps } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
-import {
-  CodeEditorField,
-  FlexForm,
-  FormBody,
-  FormFooter,
-  FormHeader,
-  SyncedEditorField,
-} from '@console/shared/src';
 import { downloadYaml } from '@console/shared/src/components/editor/yaml-download-utils';
+import { FlexForm } from '@console/shared/src/components/form-utils/FlexForm';
+import { FormBody } from '@console/shared/src/components/form-utils/FormBody';
+import { FormFooter } from '@console/shared/src/components/form-utils/FormFooter';
+import { FormHeader } from '@console/shared/src/components/form-utils/FormHeader';
+import { CodeEditorField } from '@console/shared/src/components/formik-fields/CodeEditorField';
+import { SyncedEditorField } from '@console/shared/src/components/formik-fields/SyncedEditorField';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import { BuildModel } from '../../models';
@@ -43,7 +41,7 @@ const BuildForm: FC<BuildFormProp> = ({
   isSubmitting,
   errors,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('shipwright-plugin');
   const { ns } = useParams();
   const isNew = !watchedBuild?.metadata?.name;
   const isStale = !isNew && watchedBuild?.metadata?.resourceVersion !== values.resourceVersion;
@@ -94,10 +92,10 @@ const BuildForm: FC<BuildFormProp> = ({
         errorMessage={status?.submitError}
         successMessage={status?.submitSuccess}
         showAlert={isStale}
-        infoTitle={t('shipwright-plugin~This object has been updated.')}
-        infoMessage={t('shipwright-plugin~Click reload to see the new version.')}
+        infoTitle={t('This object has been updated.')}
+        infoMessage={t('Click reload to see the new version.')}
         isSubmitting={isSubmitting}
-        submitLabel={isNew ? t('shipwright-plugin~Create') : t('shipwright-plugin~Save')}
+        submitLabel={isNew ? t('Create') : t('Save')}
         disableSubmit={
           (values.editorType === EditorType.YAML ? !dirty : !dirty || !_.isEmpty(errors)) ||
           isSubmitting

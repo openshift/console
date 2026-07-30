@@ -1,8 +1,5 @@
 import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
-import * as _ from 'lodash';
-import { Link } from 'react-router';
-import { Trans, useTranslation } from 'react-i18next';
 import {
   Alert,
   Grid,
@@ -12,59 +9,62 @@ import {
   CardHeader,
   CardTitle,
 } from '@patternfly/react-core';
-
-import { ONE_HOUR, ONE_MINUTE } from '@console/shared/src/constants/time';
-import Status from '@console/dynamic-plugin-sdk/src/app/components/status/Status';
-import { usePrometheusGate } from '@console/shared/src/hooks/usePrometheusGate';
-import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
-import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { LazyActionMenu, ActionMenuVariant } from '@console/shared/src/components/actions';
-import {
-  K8sResourceKindReference,
-  referenceFor,
-  referenceForModel,
-  K8sResourceKind,
-  K8sModel,
-  TableColumn,
-} from '../module/k8s';
-import { getBuildNumber } from '../module/k8s/builds';
-import { DetailsPage } from './factory/details';
-import { ListPage } from './factory/list-page';
+import * as _ from 'lodash';
+import { Trans, useTranslation } from 'react-i18next';
+import { Link } from 'react-router';
 import {
   actionsCellProps,
   getNameCellProps,
   ConsoleDataView,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+import Status from '@console/dynamic-plugin-sdk/src/app/components/status/Status';
+import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { ONE_HOUR, ONE_MINUTE } from '@console/shared/src/constants/time';
+import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
+import { usePrometheusGate } from '@console/shared/src/hooks/usePrometheusGate';
+import { BuildConfigModel, BuildModel } from '../models';
+import type {
+  K8sResourceKindReference,
+  K8sResourceKind,
+  K8sModel,
+  TableColumn,
+} from '../module/k8s';
+import { referenceFor, referenceForModel } from '../module/k8s';
+import { getBuildNumber } from '../module/k8s/builds';
+import { BuildLogs } from './build-logs';
+import { BuildPipeline, BuildPipelineLogLink } from './build-pipeline';
+import { ResourceEventStream } from './events';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
+import { Area } from './graphs';
 import { AsyncComponent } from './utils/async';
 import { BuildHooks } from './utils/build-hooks';
 import { BuildStrategy } from './utils/build-strategy';
-import { ConsoleEmptyState, LoadingBox } from './utils/status-box';
+import { BuildStrategyType, getStrategyType, displayDurationInWords } from './utils/build-utils';
+import { timeFormatter, timeFormatterWithSeconds } from './utils/datetime';
 import { DetailsItem } from './utils/details-item';
+import { ResourceSummary } from './utils/details-page';
 import {
   documentationURLs,
   getDocumentationURL,
   isManaged,
   isUpstream,
 } from './utils/documentation';
-import { humanizeBinaryBytes, humanizeCpuCores } from './utils/units';
+import { SectionHeading } from './utils/headings';
 import { navFactory } from './utils/horizontal-nav';
 import { ResourceLink, resourcePath } from './utils/resource-link';
-import { ResourceSummary } from './utils/details-page';
-import { SectionHeading } from './utils/headings';
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { BuildPipeline, BuildPipelineLogLink } from './build-pipeline';
-import { BuildLogs } from './build-logs';
-import { ResourceEventStream } from './events';
-import { Area } from './graphs';
-import { BuildConfigModel, BuildModel } from '../models';
-import { timeFormatter, timeFormatterWithSeconds } from './utils/datetime';
-import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
-import { BuildStrategyType, getStrategyType, displayDurationInWords } from './utils/build-utils';
+import { ConsoleEmptyState, LoadingBox } from './utils/status-box';
+import { humanizeBinaryBytes, humanizeCpuCores } from './utils/units';
+
 const BuildsReference: K8sResourceKindReference = 'Build';
 
 export const BuildLogLink = ({ build }) => {
@@ -72,11 +72,11 @@ export const BuildLogLink = ({ build }) => {
     metadata: { name, namespace },
   } = build;
   const isPipeline = _.get(build, 'spec.strategy.type') === BuildStrategyType.JenkinsPipeline;
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return isPipeline ? (
     <BuildPipelineLogLink obj={build} />
   ) : (
-    <Link to={`${resourcePath('Build', name, namespace)}/logs`}>{t('public~View logs')}</Link>
+    <Link to={`${resourcePath('Build', name, namespace)}/logs`}>{t('View logs')}</Link>
   );
 };
 
@@ -92,7 +92,7 @@ export const BuildNumberLink = ({ build }) => {
 
 // TODO update to use QueryBrowser for each graph
 const BuildMetrics = ({ obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const podName = obj.metadata.annotations?.['openshift.io/build.pod-name'];
   const endTime = obj.status.completionTimestamp
     ? new Date(obj.status.completionTimestamp).getTime()
@@ -101,7 +101,7 @@ const BuildMetrics = ({ obj }) => {
     ? endTime - new Date(obj.status.startTimestamp).getTime()
     : ONE_HOUR;
   const timespan = Math.max(runTime, ONE_MINUTE); // Minimum timespan of one minute
-  const namespace = obj.metadata.namespace;
+  const { namespace } = obj.metadata;
   const domain = useMemo(() => ({ x: [endTime - timespan, endTime] }), [endTime, timespan]);
   const areaProps = useMemo(
     () => ({
@@ -121,7 +121,7 @@ const BuildMetrics = ({ obj }) => {
         <GridItem xl={6} lg={12}>
           <Card className="resource-metrics-dashboard__card">
             <CardHeader>
-              <CardTitle>{t('public~Memory usage')}</CardTitle>
+              <CardTitle>{t('Memory usage')}</CardTitle>
             </CardHeader>
             <CardBody className="resource-metrics-dashboard__card-body">
               <Area
@@ -136,7 +136,7 @@ const BuildMetrics = ({ obj }) => {
         <GridItem xl={6} lg={12}>
           <Card className="resource-metrics-dashboard__card">
             <CardHeader>
-              <CardTitle>{t('public~CPU usage')}</CardTitle>
+              <CardTitle>{t('CPU usage')}</CardTitle>
             </CardHeader>
             <CardBody className="resource-metrics-dashboard__card-body">
               <Area
@@ -150,7 +150,7 @@ const BuildMetrics = ({ obj }) => {
         <GridItem xl={6} lg={12}>
           <Card className="resource-metrics-dashboard__card">
             <CardHeader>
-              <CardTitle>{t('public~Filesystem')}</CardTitle>
+              <CardTitle>{t('Filesystem')}</CardTitle>
             </CardHeader>
             <CardBody className="resource-metrics-dashboard__card-body">
               <Area
@@ -169,8 +169,8 @@ const BuildMetrics = ({ obj }) => {
 };
 
 const OpenShiftPipelines: FC = () => {
-  const { t } = useTranslation();
-  const text = t('public~OpenShift Pipelines based on Tekton');
+  const { t } = useTranslation('public');
+  const text = t('OpenShift Pipelines based on Tekton');
   return isUpstream() || isManaged() ? (
     <>{text}</>
   ) : (
@@ -179,13 +179,13 @@ const OpenShiftPipelines: FC = () => {
 };
 
 export const PipelineBuildStrategyAlert: FC<BuildsDetailsProps> = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <Alert
       isInline
       className="co-alert"
       variant="info"
-      title={t('public~Pipeline build strategy deprecation')}
+      title={t('Pipeline build strategy deprecation')}
     >
       <Trans t={t} ns="public">
         With the release of <OpenShiftPipelines />, the pipelines build strategy has been
@@ -193,18 +193,18 @@ export const PipelineBuildStrategyAlert: FC<BuildsDetailsProps> = () => {
         CI/CD with Openshift Pipelines.{' '}
         <ExternalLink
           href="https://github.com/openshift/pipelines-tutorial/"
-          text={t('public~Try the OpenShift Pipelines tutorial')}
+          text={t('Try the OpenShift Pipelines tutorial')}
         />
       </Trans>
     </Alert>
   );
 };
 
-export const BuildsDetails: FC<BuildsDetailsProps> = ({ obj: build }) => {
+const BuildsDetails: FC<BuildsDetailsProps> = ({ obj: build }) => {
   const { logSnippet, message, startTimestamp, completionTimestamp } = build.status;
   const triggeredBy = _.map(build.spec.triggeredBy, 'message').join(', ');
   const hasPipeline = build.spec.strategy.type === BuildStrategyType.JenkinsPipeline;
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const BUILDCONFIG_TO_BUILD_REFERENCE_LABEL = 'openshift.io/build-config.name';
   const buildConfigName =
     build.status.config?.name || build.metadata.labels?.[BUILDCONFIG_TO_BUILD_REFERENCE_LABEL];
@@ -212,7 +212,7 @@ export const BuildsDetails: FC<BuildsDetailsProps> = ({ obj: build }) => {
     <>
       <PaneBody>
         {hasPipeline && <PipelineBuildStrategyAlert obj={build} />}
-        <SectionHeading text={t('public~Build details')} />
+        <SectionHeading text={t('Build details')} />
         <Grid hasGutter>
           {hasPipeline && (
             <GridItem>
@@ -221,24 +221,19 @@ export const BuildsDetails: FC<BuildsDetailsProps> = ({ obj: build }) => {
           )}
           <GridItem sm={6}>
             <ResourceSummary resource={build}>
-              <DetailsItem
-                label={t('public~Triggered by')}
-                obj={build}
-                path="spec.triggeredBy"
-                hideEmpty
-              >
+              <DetailsItem label={t('Triggered by')} obj={build} path="spec.triggeredBy" hideEmpty>
                 {triggeredBy}
               </DetailsItem>
             </ResourceSummary>
           </GridItem>
           <GridItem sm={6}>
             <BuildStrategy resource={build}>
-              <DetailsItem label={t('public~Status')} obj={build} path="status.phase">
+              <DetailsItem label={t('Status')} obj={build} path="status.phase">
                 <Status status={build.status.phase} />
               </DetailsItem>
 
               {buildConfigName && (
-                <DetailsItem label={t('public~BuildConfig')} obj={build} path="status.config">
+                <DetailsItem label={t('BuildConfig')} obj={build} path="status.config">
                   <ResourceLink
                     groupVersionKind={getGroupVersionKindForModel(BuildConfigModel)}
                     namespace={build.metadata.namespace}
@@ -247,7 +242,7 @@ export const BuildsDetails: FC<BuildsDetailsProps> = ({ obj: build }) => {
                 </DetailsItem>
               )}
               <DetailsItem
-                label={t('public~Start time')}
+                label={t('Start time')}
                 obj={build}
                 path="status.startTimestamp"
                 hideEmpty
@@ -255,28 +250,23 @@ export const BuildsDetails: FC<BuildsDetailsProps> = ({ obj: build }) => {
                 <Timestamp timestamp={startTimestamp} />
               </DetailsItem>
               <DetailsItem
-                label={t('public~Completion time')}
+                label={t('Completion time')}
                 obj={build}
                 path="status.completionTimestamp"
                 hideEmpty
               >
                 <Timestamp timestamp={completionTimestamp} />
               </DetailsItem>
-              <DetailsItem label={t('public~Duration')} obj={build} path="status.duration">
+              <DetailsItem label={t('Duration')} obj={build} path="status.duration">
                 {displayDurationInWords(
                   build?.status?.startTimestamp,
                   build?.status?.completionTimestamp,
                 )}
               </DetailsItem>
-              <DetailsItem label={t('public~Message')} obj={build} path="status.message" hideEmpty>
+              <DetailsItem label={t('Message')} obj={build} path="status.message" hideEmpty>
                 {message}
               </DetailsItem>
-              <DetailsItem
-                label={t('public~Log snippet')}
-                obj={build}
-                path="status.logSnippet"
-                hideEmpty
-              >
+              <DetailsItem label={t('Log snippet')} obj={build} path="status.logSnippet" hideEmpty>
                 <pre className="co-pre">{logSnippet}</pre>
               </DetailsItem>
             </BuildStrategy>
@@ -288,7 +278,7 @@ export const BuildsDetails: FC<BuildsDetailsProps> = ({ obj: build }) => {
   );
 };
 
-export const getEnvPath = (props) => {
+const getEnvPath = (props) => {
   const strategyType = getStrategyType(props.obj.spec.strategy.type);
   return strategyType ? ['spec', 'strategy', strategyType] : null;
 };
@@ -304,7 +294,7 @@ export const BuildEnvironmentComponent = (props) => {
   const { obj } = props;
   const readOnly = obj.kind === 'Build';
   const envPath = getEnvPath(props);
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   if (envPath) {
     return (
       <EnvironmentPage
@@ -317,7 +307,7 @@ export const BuildEnvironmentComponent = (props) => {
   }
   return (
     <ConsoleEmptyState>
-      {t('public~The environment variable editor does not support build strategy: {{ type }}', {
+      {t('The environment variable editor does not support build strategy: {{ type }}', {
         type: obj.spec.strategy.type,
       })}
       .
@@ -403,13 +393,13 @@ const useBuildsColumns = (): {
   columns: TableColumn<K8sResourceKind>[];
   resetAllColumnWidths: () => void;
 } => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(BuildModel);
 
   const columns = useMemo(() => {
     return [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         resizableProps: getResizableProps(tableColumnInfo[0].id),
@@ -419,7 +409,7 @@ const useBuildsColumns = (): {
         },
       },
       {
-        title: t('public~Namespace'),
+        title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
@@ -428,7 +418,7 @@ const useBuildsColumns = (): {
         },
       },
       {
-        title: t('public~Status'),
+        title: t('Status'),
         id: tableColumnInfo[2].id,
         sort: 'status.phase',
         resizableProps: getResizableProps(tableColumnInfo[2].id),
@@ -437,7 +427,7 @@ const useBuildsColumns = (): {
         },
       },
       {
-        title: t('public~Start time'),
+        title: t('Start time'),
         id: tableColumnInfo[3].id,
         sort: 'status.startTimestamp',
         resizableProps: getResizableProps(tableColumnInfo[3].id),
@@ -446,7 +436,7 @@ const useBuildsColumns = (): {
         },
       },
       {
-        title: t('public~Duration'),
+        title: t('Duration'),
         id: tableColumnInfo[4].id,
         sort: 'status.duration',
         resizableProps: getResizableProps(tableColumnInfo[4].id),
@@ -467,7 +457,7 @@ const useBuildsColumns = (): {
   return { columns, resetAllColumnWidths };
 };
 
-export const BuildsList: FC<BuildsListProps> = ({ data, loaded, ...props }) => {
+const BuildsList: FC<BuildsListProps> = ({ data, loaded, ...props }) => {
   const { columns, resetAllColumnWidths } = useBuildsColumns();
 
   return (
@@ -479,7 +469,7 @@ export const BuildsList: FC<BuildsListProps> = ({ data, loaded, ...props }) => {
         loaded={loaded}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
+        hideColumnManagement
         isResizable
         resetAllColumnWidths={resetAllColumnWidths}
       />
@@ -489,22 +479,22 @@ export const BuildsList: FC<BuildsListProps> = ({ data, loaded, ...props }) => {
 
 BuildsList.displayName = 'BuildsList';
 
-export const buildPhase = (build) => build.status.phase;
+const buildPhase = (build) => build.status.phase;
 
-export const allPhases = ['New', 'Pending', 'Running', 'Complete', 'Failed', 'Error', 'Cancelled'];
+const allPhases = ['New', 'Pending', 'Running', 'Complete', 'Failed', 'Error', 'Cancelled'];
 
 export const BuildsPage: FC<BuildsPageProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <ListPage
       {...props}
-      title={t('public~Builds')}
+      title={t('Builds')}
       kind={BuildsReference}
       ListComponent={BuildsList}
       canCreate={false}
       rowFilters={[
         {
-          filterGroupName: t('public~Status'),
+          filterGroupName: t('Status'),
           type: 'build-status',
           reducer: buildPhase,
           items: _.map(allPhases, (phase) => ({
@@ -513,7 +503,7 @@ export const BuildsPage: FC<BuildsPageProps> = (props) => {
           })),
         },
       ]}
-      omitFilterToolbar={true}
+      omitFilterToolbar
     />
   );
 };

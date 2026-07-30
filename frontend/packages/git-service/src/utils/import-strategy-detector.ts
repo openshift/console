@@ -1,6 +1,6 @@
 import type { BaseService } from '../services/base-service';
-import { RepoStatus } from '../types';
 import { ImportStrategy } from '../types/git';
+import { RepoStatus } from '../types/repo';
 import { detectBuildTypes } from './build-tool-type-detector';
 import { isServerlessFxRepository } from './serverless-strategy-detector';
 

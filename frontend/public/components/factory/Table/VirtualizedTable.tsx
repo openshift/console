@@ -1,8 +1,5 @@
 import type { FC } from 'react';
 import { useState, useMemo, useCallback, useEffect } from 'react';
-import * as _ from 'lodash';
-import { useNavigate } from 'react-router';
-import { useTranslation } from 'react-i18next';
 import { Button } from '@patternfly/react-core';
 import {
   TableGridBreakpoint,
@@ -11,17 +8,20 @@ import {
   Td,
 } from '@patternfly/react-table';
 import { AutoSizer, WindowScroller } from '@patternfly/react-virtualized-extension';
-import {
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router';
+import type {
   TableColumn,
   TableDataProps,
   VirtualizedTableFC,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { StatusBox } from '@console/shared/src/components/status/StatusBox';
 import { EmptyBox } from '@console/shared/src/components/empty-state/EmptyBox';
-import VirtualizedTableBody from './VirtualizedTableBody';
-import TableHeader from './TableHeader';
+import { StatusBox } from '@console/shared/src/components/status/StatusBox';
 import { WithScrollContainer } from '../../utils/dom-utils';
 import { sortResourceByValue } from './sort';
+import { TableHeader } from './TableHeader';
+import VirtualizedTableBody from './VirtualizedTableBody';
 
 const BREAKPOINT_SM = 576;
 const BREAKPOINT_MD = 768;
@@ -92,9 +92,9 @@ const VirtualizedTable: VirtualizedTableFC = ({
   csvData,
   onRowsRendered,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const navigate = useNavigate();
-  const columnShift = onSelect ? 1 : 0; //shift indexes by 1 if select provided
+  const columnShift = onSelect ? 1 : 0; // shift indexes by 1 if select provided
   const [sortBy, setSortBy] = useState<{
     index: number;
     direction: SortByDirection;
@@ -130,7 +130,8 @@ const VirtualizedTable: VirtualizedTableFC = ({
     const sortColumn = columns[sortBy.index - columnShift];
     if (!sortColumn?.sort) {
       return data;
-    } else if (typeof sortColumn.sort === 'string') {
+    }
+    if (typeof sortColumn.sort === 'string') {
       return data.sort(
         sortResourceByValue(sortBy.direction, (obj) => _.get(obj, sortColumn?.sort as string, '')),
       );
@@ -200,7 +201,7 @@ const VirtualizedTable: VirtualizedTableFC = ({
           <div className="co-virtualized-table" aria-label={ariaLabel}>
             {csvData && (
               <Button className="co-virtualized-table--export-csv-button" onClick={downloadCsv}>
-                {t('public~Export as CSV')}
+                {t('Export as CSV')}
               </Button>
             )}
             <PfTable gridBreakPoint={gridBreakPoint} className="pf-m-compact pf-m-border-rows">

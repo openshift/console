@@ -1,38 +1,5 @@
 import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
-import { Link } from 'react-router';
-import { useTranslation } from 'react-i18next';
-import { Status } from '@console/shared/src/components/status/Status';
-import ActionServiceProvider from '@console/shared/src/components/actions/ActionServiceProvider';
-import ActionMenu from '@console/shared/src/components/actions/menu/ActionMenu';
-import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
-import { DASH } from '@console/shared/src/constants/ui';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import {
-  getJobTypeAndCompletions,
-  JobKind,
-  K8sResourceKind,
-  referenceFor,
-  referenceForModel,
-  TableColumn,
-} from '../module/k8s';
-import { Conditions } from './conditions';
-import { DetailsPage } from './factory/details';
-import { ListPage } from './factory/list-page';
-import { ContainerTable } from './utils/container-table';
-import { DetailsItem } from './utils/details-item';
-import { LabelList } from './utils/label-list';
-import { LoadingBox } from './utils/status-box';
-import { PodsComponent, navFactory } from './utils/horizontal-nav';
-import { ResourceLink } from './utils/resource-link';
-import { ResourceSummary } from './utils/details-page';
-import { SectionHeading } from './utils/headings';
-
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { ResourceEventStream } from './events';
-import { JobModel } from '../models';
-import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 import {
   DescriptionList,
   DescriptionListDescription,
@@ -41,6 +8,8 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router';
 import {
   actionsCellProps,
   getNameCellProps,
@@ -48,11 +17,35 @@ import {
   nameCellProps,
   getLabelsColumnWidthStyleProp,
 } from '@console/app/src/components/data-view/ConsoleDataView';
+import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
-import { sortResourceByValue } from './factory/Table/sort';
+import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { Status } from '@console/shared/src/components/status/Status';
+import { DASH } from '@console/shared/src/constants/ui';
+import { JobModel } from '../models';
+import type { JobKind, K8sResourceKind, TableColumn } from '../module/k8s';
+import { getJobTypeAndCompletions, referenceFor, referenceForModel } from '../module/k8s';
+import { Conditions } from './conditions';
+import { ResourceEventStream } from './events';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
 import { sorts } from './factory/table';
+import { sortResourceByValue } from './factory/Table/sort';
+import { ContainerTable } from './utils/container-table';
+import { DetailsItem } from './utils/details-item';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { PodsComponent, navFactory } from './utils/horizontal-nav';
+import { LabelList } from './utils/label-list';
+import { ResourceLink } from './utils/resource-link';
+import { LoadingBox } from './utils/status-box';
 
 const kind = referenceForModel(JobModel);
 
@@ -67,10 +60,10 @@ const tableColumnInfo = [
 ];
 
 const Completions: FC<CompletionsCellProps> = ({ obj, completions }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <Link to={`/k8s/ns/${obj.metadata.namespace}/jobs/${obj.metadata.name}/pods`} title="pods">
-      {t('public~{{jobsSucceeded}} of {{completions}}', {
+      {t('{{jobsSucceeded}} of {{completions}}', {
         jobsSucceeded: obj.status.succeeded || 0,
         completions,
       })}
@@ -127,37 +120,33 @@ const getDataViewRows: GetDataViewRows<JobKind> = (data, columns) => {
   });
 };
 
-export const JobDetails: FC<JobsDetailsProps> = ({ obj: job }) => {
-  const { t } = useTranslation();
+const JobDetails: FC<JobsDetailsProps> = ({ obj: job }) => {
+  const { t } = useTranslation('public');
   return (
     <>
       <PaneBody>
         <Grid hasGutter>
           <GridItem md={6}>
-            <SectionHeading text={t('public~Job details')} />
+            <SectionHeading text={t('Job details')} />
             <ResourceSummary resource={job} showPodSelector>
+              <DetailsItem label={t('Desired completions')} obj={job} path="spec.completions" />
+              <DetailsItem label={t('Parallelism')} obj={job} path="spec.parallelism" />
               <DetailsItem
-                label={t('public~Desired completions')}
-                obj={job}
-                path="spec.completions"
-              />
-              <DetailsItem label={t('public~Parallelism')} obj={job} path="spec.parallelism" />
-              <DetailsItem
-                label={t('public~Active deadline seconds')}
+                label={t('Active deadline seconds')}
                 obj={job}
                 path="spec.activeDeadlineSeconds"
               >
                 {job.spec.activeDeadlineSeconds
-                  ? t('public~{{count}} second', { count: job.spec.activeDeadlineSeconds })
-                  : t('public~Not configured')}
+                  ? t('{{count}} second', { count: job.spec.activeDeadlineSeconds })
+                  : t('Not configured')}
               </DetailsItem>
             </ResourceSummary>
           </GridItem>
           <GridItem md={6}>
-            <SectionHeading text={t('public~Job status')} />
+            <SectionHeading text={t('Job status')} />
             <DescriptionList>
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('public~Status')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('Status')}</DescriptionListTerm>
                 <DescriptionListDescription>
                   <Status
                     status={
@@ -166,30 +155,26 @@ export const JobDetails: FC<JobsDetailsProps> = ({ obj: job }) => {
                   />
                 </DescriptionListDescription>
               </DescriptionListGroup>
-              <DetailsItem label={t('public~Start time')} obj={job} path="status.startTime">
+              <DetailsItem label={t('Start time')} obj={job} path="status.startTime">
                 <Timestamp timestamp={job.status.startTime} />
               </DetailsItem>
-              <DetailsItem
-                label={t('public~Completion time')}
-                obj={job}
-                path="status.completionTime"
-              >
+              <DetailsItem label={t('Completion time')} obj={job} path="status.completionTime">
                 <Timestamp timestamp={job.status.completionTime} />
               </DetailsItem>
               <DetailsItem
-                label={t('public~Succeeded pods')}
+                label={t('Succeeded pods')}
                 obj={job}
                 path="status.succeeded"
                 defaultValue="0"
               />
               <DetailsItem
-                label={t('public~Active pods')}
+                label={t('Active pods')}
                 obj={job}
                 path="status.active"
                 defaultValue="0"
               />
               <DetailsItem
-                label={t('public~Failed pods')}
+                label={t('Failed pods')}
                 obj={job}
                 path="status.failed"
                 defaultValue="0"
@@ -200,11 +185,11 @@ export const JobDetails: FC<JobsDetailsProps> = ({ obj: job }) => {
         </Grid>
       </PaneBody>
       <PaneBody>
-        <SectionHeading text={t('public~Containers')} />
+        <SectionHeading text={t('Containers')} />
         <ContainerTable containers={job.spec.template.spec.containers} />
       </PaneBody>
       <PaneBody>
-        <SectionHeading text={t('public~Conditions')} />
+        <SectionHeading text={t('Conditions')} />
         <Conditions conditions={job.status.conditions} />
       </PaneBody>
     </>
@@ -244,13 +229,13 @@ const useJobsColumns = (): {
   columns: TableColumn<JobKind>[];
   resetAllColumnWidths: () => void;
 } => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(JobModel);
 
   const columns = useMemo(() => {
     return [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         resizableProps: getResizableProps(tableColumnInfo[0].id),
@@ -260,7 +245,7 @@ const useJobsColumns = (): {
         },
       },
       {
-        title: t('public~Namespace'),
+        title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
@@ -269,7 +254,7 @@ const useJobsColumns = (): {
         },
       },
       {
-        title: t('public~Labels'),
+        title: t('Labels'),
         id: tableColumnInfo[2].id,
         sort: 'metadata.labels',
         resizableProps: getResizableProps(tableColumnInfo[2].id),
@@ -279,7 +264,7 @@ const useJobsColumns = (): {
         },
       },
       {
-        title: t('public~Completions'),
+        title: t('Completions'),
         id: tableColumnInfo[3].id,
         sort: (data, direction) =>
           data.sort(sortResourceByValue<JobKind>(direction, sorts.jobCompletionsSucceeded)),
@@ -289,7 +274,7 @@ const useJobsColumns = (): {
         },
       },
       {
-        title: t('public~Type'),
+        title: t('Type'),
         id: tableColumnInfo[4].id,
         sort: (data, direction) =>
           data.sort(sortResourceByValue<JobKind>(direction, sorts.jobType)),
@@ -299,7 +284,7 @@ const useJobsColumns = (): {
         },
       },
       {
-        title: t('public~Created'),
+        title: t('Created'),
         id: tableColumnInfo[5].id,
         sort: 'metadata.creationTimestamp',
         resizableProps: getResizableProps(tableColumnInfo[5].id),
@@ -332,7 +317,7 @@ const JobsList: FC<JobsListProps> = ({ data, loaded, ...props }) => {
         loaded={loaded}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
+        hideColumnManagement
         isResizable
         resetAllColumnWidths={resetAllColumnWidths}
       />
@@ -341,13 +326,7 @@ const JobsList: FC<JobsListProps> = ({ data, loaded, ...props }) => {
 };
 
 const JobsPage: FC<JobsPageProps> = (props) => (
-  <ListPage
-    {...props}
-    kind={kind}
-    ListComponent={JobsList}
-    canCreate={true}
-    omitFilterToolbar={true}
-  />
+  <ListPage {...props} kind={kind} ListComponent={JobsList} canCreate omitFilterToolbar />
 );
 export { JobsList, JobsPage, JobsDetailsPage };
 

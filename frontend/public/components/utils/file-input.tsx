@@ -1,9 +1,9 @@
 import type { FC, ReactNode } from 'react';
 import { useCallback, useState } from 'react';
+import type { FileUploadProps } from '@patternfly/react-core';
 import {
   Alert,
   FileUpload,
-  FileUploadProps,
   DropzoneErrorCode,
   TextArea,
   FormHelperText,
@@ -14,10 +14,10 @@ import {
   spinnerSize,
   FormGroup,
 } from '@patternfly/react-core';
+import styles from '@patternfly/react-styles/css/components/FileUpload/file-upload';
 import { isBinary } from 'istextorbinary';
 import { useTranslation } from 'react-i18next';
 import { units } from './units';
-import styles from '@patternfly/react-styles/css/components/FileUpload/file-upload';
 
 /** Maximal file size, in bytes, that user can upload */
 const MAX_UPLOAD_SIZE = 4000000;
@@ -25,6 +25,8 @@ const MAX_UPLOAD_SIZE = 4000000;
 export interface DroppableFileInputProps {
   /** The content of the input file, either as a UTF-8 string or a base64-encoded string if the file is binary */
   inputFileData: string;
+  /** Whether inputFileData is base64-encoded (true) or UTF-8 text (false) */
+  isBase64Input?: boolean;
   /** Callback function invoked when the file content changes */
   onChange: (inputFileData: string, inputFileIsBinary: boolean) => void;
   /** Label for the file input field */
@@ -43,6 +45,7 @@ export interface DroppableFileInputProps {
 
 export const DroppableFileInput: FC<DroppableFileInputProps> = ({
   inputFileData,
+  isBase64Input = false,
   onChange,
   label,
   id,
@@ -54,7 +57,10 @@ export const DroppableFileInput: FC<DroppableFileInputProps> = ({
   const [filename, setFilename] = useState<string>('');
   const [uploadErrorMessage, setUploadErrorMessage] = useState<string>('');
   const [inputFileIsBinary, setInputFileIsBinary] = useState<boolean>(
-    isBinary(filename, Buffer.from(inputFileData)),
+    isBinary(
+      filename,
+      isBase64Input ? Buffer.from(inputFileData, 'base64') : Buffer.from(inputFileData),
+    ),
   );
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -87,7 +93,7 @@ export const DroppableFileInput: FC<DroppableFileInputProps> = ({
 
   const handleFileRejected = useCallback<FileUploadProps['dropzoneProps']['onDropRejected']>(
     (rejections) => {
-      const code = rejections[0].errors[0].code;
+      const { code } = rejections[0].errors[0];
 
       switch (code) {
         case DropzoneErrorCode.FileTooLarge:
@@ -121,6 +127,7 @@ export const DroppableFileInput: FC<DroppableFileInputProps> = ({
     <FormGroup label={label} isRequired={isRequired} fieldId={id}>
       <FileUpload
         className="co-file-input pf-v6-u-mb-md"
+        data-test={id}
         id={id}
         type="text"
         value={inputFileData}

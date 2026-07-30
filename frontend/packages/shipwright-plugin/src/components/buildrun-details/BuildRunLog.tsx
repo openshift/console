@@ -8,12 +8,12 @@ import { TektonResourceLabel } from '../logs/TektonTaskRunLog';
 
 import './BuildRunLog.scss';
 
-export type TaskRunLogProps = {
+type TaskRunLogProps = {
   obj: TaskRunKind;
 };
 
 const BuildRunLog: FC<TaskRunLogProps> = ({ obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('shipwright-plugin');
   if (obj?.status?.podName) {
     const podResources = {
       kind: PodModel.kind,
@@ -28,17 +28,12 @@ const BuildRunLog: FC<TaskRunLogProps> = ({ obj }) => {
           taskRun={obj}
           taskName={obj?.metadata?.labels?.[TektonResourceLabel.pipelineTask] || ''}
           resource={podResources}
-          downloadAllLabel={t('shipwright-plugin~Download all TaskRun logs')}
+          downloadAllLabel={t('Download all TaskRun logs')}
         />
       </div>
     );
   }
-  return (
-    <StatusBox
-      label={t('shipwright-plugin~TaskRun log')}
-      loadError={new Error(t('shipwright-plugin~Pod not found'))}
-    />
-  );
+  return <StatusBox label={t('TaskRun log')} loadError={new Error(t('Pod not found'))} />;
 };
 
 export default BuildRunLog;

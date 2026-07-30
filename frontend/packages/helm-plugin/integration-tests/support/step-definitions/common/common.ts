@@ -16,8 +16,10 @@ import {
   gitPage,
   catalogPage,
   addPage,
+  app,
 } from '@console/dev-console/integration-tests/support/pages';
 import { checkDeveloperPerspective } from '@console/dev-console/integration-tests/support/pages/functions/checkDeveloperPerspective';
+import { navPaths } from '../../constants';
 
 Given('user is at developer perspective', () => {
   checkDeveloperPerspective();
@@ -33,12 +35,8 @@ Given('user has created or selected namespace {string}', (projectName: string) =
 });
 
 Given('user is at the Topology page', () => {
-  navigateTo(devNavigationMenu.Topology);
-  topologyPage.verifyTopologyPage();
-});
-
-Given('user is at the Topology page in admin view', () => {
-  cy.byLegacyTestID('topology-header').should('exist').click({ force: true });
+  cy.clickNavLink(navPaths.topology);
+  app.waitForLoad();
   topologyPage.verifyTopologyPage();
 });
 
@@ -77,10 +75,6 @@ When('user clicks node {string} to open the side bar', (name: string) => {
   topologyPage.componentNode(name).click({ force: true });
 });
 
-When('user navigates to Topology page', () => {
-  navigateTo(devNavigationMenu.Topology);
-});
-
 Then('modal with {string} appears', (header: string) => {
   modal.modalTitleShouldContain(header);
 });
@@ -94,11 +88,14 @@ When('user selects {string} card from add page', (cardName: string) => {
 });
 
 Given('user is at Software Catalog page', () => {
-  cy.byLegacyTestID('developer-catalog-header').should('exist').click({ force: true });
+  cy.clickNavLink(navPaths.softwareCatalog);
+  catalogPage.verifyTitle();
 });
 
 When('user selects Helm Charts type from Software Catalog page', () => {
   catalogPage.selectCatalogType(catalogTypes.HelmCharts);
+  // Wait for catalog cards to be filtered and displayed
+  catalogPage.isCardsDisplayed();
 });
 
 When('user switches to the {string} tab', (tab: string) => {

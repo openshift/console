@@ -87,7 +87,7 @@ export const alphanumericCompare = (a: string, b: string): number => {
   });
 };
 
-export const translationForResourceKind = {
+const translationForResourceKind = {
   // t('console-shared~Helm Release')
   HelmRelease: `console-shared~Helm Release`,
 };

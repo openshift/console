@@ -1,12 +1,13 @@
 import type { FC } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Button, Modal, ModalBody, ModalHeader, ModalVariant } from '@patternfly/react-core';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
-
-import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import { useTranslation } from 'react-i18next';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import { isClusterExternallyManaged } from '@console/shared/src/hooks/useCanClusterUpgrade';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
+import type { ClusterVersionKind } from '../../module/k8s';
 import {
-  ClusterVersionKind,
   getConditionUpgradeableFalse,
   getLastCompletedUpdate,
   getReleaseNotesLink,
@@ -14,27 +15,26 @@ import {
   isMinorVersionNewer,
   showReleaseNotes,
 } from '../../module/k8s';
-import { ModalComponentProps } from '@console/shared/src/types/modal';
 import {
   ClusterNotUpgradeableAlert,
   UpdateBlockedLabel,
 } from '../cluster-settings/cluster-settings';
 import { ReleaseNotesLink } from '../utils/release-notes-link';
-import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 
-export const ClusterMoreUpdatesModal: FC<ClusterMoreUpdatesModalProps> = ({ cancel, cv }) => {
+const ClusterMoreUpdatesModal: FC<ClusterMoreUpdatesModalProps> = ({ cancel, cv }) => {
   const availableUpdates = getSortedAvailableUpdates(cv);
   const moreAvailableUpdates = availableUpdates.slice(1).reverse();
   const releaseNotes = showReleaseNotes();
   const clusterUpgradeableFalseAndNotExternallyManaged =
     !!getConditionUpgradeableFalse(cv) && !isClusterExternallyManaged();
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   return (
     <>
       <ModalHeader
-        title={t('public~Other available paths')}
+        title={t('Other available paths')}
         data-test-id="modal-title"
+        data-test="modal-title"
         labelId="cluster-more-updates-modal-title"
       />
       <ModalBody>
@@ -44,8 +44,8 @@ export const ClusterMoreUpdatesModal: FC<ClusterMoreUpdatesModalProps> = ({ canc
         <Table variant="compact" borders>
           <Thead>
             <Tr>
-              <Th>{t('public~Version')}</Th>
-              {releaseNotes && <Th>{t('public~Release notes')}</Th>}
+              <Th>{t('Version')}</Th>
+              {releaseNotes && <Th>{t('Release notes')}</Th>}
             </Tr>
           </Thead>
           <Tbody>
@@ -81,7 +81,7 @@ export const ClusterMoreUpdatesModal: FC<ClusterMoreUpdatesModalProps> = ({ canc
           onClick={cancel}
           data-test="more-updates-modal-close-button"
         >
-          {t('public~Close')}
+          {t('Close')}
         </Button>
       </ModalFooterWithAlerts>
     </>

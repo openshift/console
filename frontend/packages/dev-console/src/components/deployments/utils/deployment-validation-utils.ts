@@ -9,7 +9,7 @@ import type {
   LifecycleHookFormData,
 } from './deployment-types';
 
-export const lchValidationSchema = (lch: LifecycleHookFormData) =>
+const lchValidationSchema = (lch: LifecycleHookFormData) =>
   yup.object().shape({
     action: yup.string().required(i18n.t('devconsole~Required')),
     lch: yup.object().shape({
@@ -29,7 +29,7 @@ export const lchValidationSchema = (lch: LifecycleHookFormData) =>
     }),
   });
 
-export const lchImageStreamDataSchema = (action: string) => {
+const lchImageStreamDataSchema = (action: string) => {
   return action === LifecycleAction.tagImages
     ? yup.object().shape({
         containerName: yup.string().required(i18n.t('devconsole~Required')),
@@ -42,7 +42,7 @@ export const lchImageStreamDataSchema = (action: string) => {
     : null;
 };
 
-export const deploymentStrategySchema = (strategy: DeploymentStrategy) => {
+const deploymentStrategySchema = (strategy: DeploymentStrategy) => {
   switch (strategy.type) {
     case DeploymentStrategyType.recreateParams: {
       const { pre, mid, post } = strategy.recreateParams ?? {};
@@ -103,7 +103,7 @@ export const deploymentStrategySchema = (strategy: DeploymentStrategy) => {
   }
 };
 
-export const editDeploymentFormSchema = (formValues: EditDeploymentFormData) =>
+const editDeploymentFormSchema = (formValues: EditDeploymentFormData) =>
   yup.object({
     name: yup.string().required(i18n.t('devconsole~Required')),
     deploymentStrategy: deploymentStrategySchema(formValues.deploymentStrategy),

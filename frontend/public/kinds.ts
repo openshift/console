@@ -1,14 +1,8 @@
 import { connect } from 'react-redux';
-import {
-  K8sKind,
-  K8sResourceKindReference,
-  GroupVersionKind,
-  isGroupVersionKind,
-  allModels,
-  getGroupVersionKind,
-} from './module/k8s';
-import { RootState } from './redux';
 import { getK8sModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sModel';
+import type { K8sKind, K8sResourceKindReference, GroupVersionKind } from './module/k8s';
+import { isGroupVersionKind, allModels, getGroupVersionKind } from './module/k8s';
+import type { RootState } from './redux';
 
 export const connectToModel = connect(
   ({ k8s }: RootState, props: { kind: K8sResourceKindReference } & any) => {
@@ -23,6 +17,12 @@ export const connectToModel = connect(
 /**
  * @deprecated TODO(alecmerdler): `plural` is not a unique lookup key, remove uses of this.
  * FIXME(alecmerdler): Not returning correctly typed `WrappedComponent`
+ *
+ * NOTE: This connect() call triggers a reselect dev-mode warning:
+ * "The result function returned its own inputs without modification"
+ * This is a false positive - the mapStateToProps does transform state (finding models, extracting values).
+ * The warning only appears in development and does not affect functionality.
+ * See: https://github.com/reduxjs/reselect/issues/635
  */
 export const connectToPlural = connect(
   (

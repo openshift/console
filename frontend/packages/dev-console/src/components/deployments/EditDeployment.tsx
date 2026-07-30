@@ -17,7 +17,7 @@ import type { EditDeploymentData, EditDeploymentFormikValues } from './utils/dep
 import { convertDeploymentToEditForm, convertEditFormToDeployment } from './utils/deployment-utils';
 import { validationSchema } from './utils/deployment-validation-utils';
 
-export interface EditDeploymentProps {
+interface EditDeploymentProps {
   heading: string;
   resource: K8sResourceKind;
   name: string;
@@ -25,7 +25,7 @@ export interface EditDeploymentProps {
 }
 
 const EditDeployment: FC<EditDeploymentProps> = ({ heading, resource, namespace, name }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const navigate = useNavigate();
   const isNew = !name;
 
@@ -46,14 +46,14 @@ const EditDeployment: FC<EditDeploymentProps> = ({ heading, resource, namespace,
     const resourceType = getResourcesType(resource);
     if (values.editorType === EditorType.YAML) {
       try {
-        deploymentRes = safeLoad(values.yamlData);
+        deploymentRes = safeLoad(values.yamlData) as K8sResourceKind;
         if (!deploymentRes?.metadata?.namespace) {
           deploymentRes.metadata.namespace = namespace;
         }
       } catch (err) {
         actions.setStatus({
           submitSuccess: '',
-          submitError: t('devconsole~Invalid YAML - {{err}}', { err }),
+          submitError: t('Invalid YAML - {{err}}', { err }),
         });
         return null;
       }
@@ -80,13 +80,13 @@ const EditDeployment: FC<EditDeploymentProps> = ({ heading, resource, namespace,
         if (isNew) {
           actions.setStatus({
             submitError: '',
-            submitSuccess: t('devconsole~{{resource}} has been created', { resource: res.kind }),
+            submitSuccess: t('{{resource}} has been created', { resource: res.kind }),
           });
         } else {
           const resVersion = res.metadata.resourceVersion;
           actions.setStatus({
             submitError: '',
-            submitSuccess: t('devconsole~{{name}} has been updated to version {{resVersion}}', {
+            submitSuccess: t('{{name}} has been updated to version {{resVersion}}', {
               name,
               resVersion,
             }),

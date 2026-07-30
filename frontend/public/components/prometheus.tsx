@@ -1,25 +1,24 @@
 import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
-
-import { ListPage } from './factory/list-page';
-import type { ListPageProps } from './factory/list-page';
-import { LabelList } from './utils/label-list';
-import { ResourceLink } from './utils/resource-link';
-import { Selector } from './utils/selector';
-import { LoadingBox } from './utils/status-box';
-import { PrometheusModel } from '../models';
-import { referenceForModel, referenceFor, K8sResourceKind } from '../module/k8s';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 import {
   ConsoleDataView,
   getNameCellProps,
   actionsCellProps,
   cellIsStickyProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import { TableColumn } from '@console/internal/module/k8s';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { DASH } from '@console/shared/src/constants/ui';
+import { PrometheusModel } from '../models';
+import type { K8sResourceKind, TableColumn } from '../module/k8s';
+import { referenceForModel, referenceFor } from '../module/k8s';
+import { ListPage } from './factory/list-page';
+import type { ListPageProps } from './factory/list-page';
+import { LabelList } from './utils/label-list';
+import { ResourceLink } from './utils/resource-link';
+import { Selector } from './utils/selector';
+import { LoadingBox } from './utils/status-box';
 
 const tableColumnInfo = [
   { id: 'name' },
@@ -87,11 +86,11 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {
 };
 
 const usePrometheusColumns = (): TableColumn<K8sResourceKind>[] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return useMemo(
     () => [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         props: {
@@ -100,7 +99,7 @@ const usePrometheusColumns = (): TableColumn<K8sResourceKind>[] => {
         },
       },
       {
-        title: t('public~Namespace'),
+        title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
         props: {
@@ -108,7 +107,7 @@ const usePrometheusColumns = (): TableColumn<K8sResourceKind>[] => {
         },
       },
       {
-        title: t('public~Labels'),
+        title: t('Labels'),
         id: tableColumnInfo[2].id,
         sort: 'metadata.labels',
         props: {
@@ -117,7 +116,7 @@ const usePrometheusColumns = (): TableColumn<K8sResourceKind>[] => {
         },
       },
       {
-        title: t('public~Version'),
+        title: t('Version'),
         id: tableColumnInfo[3].id,
         sort: 'spec.version',
         props: {
@@ -125,7 +124,7 @@ const usePrometheusColumns = (): TableColumn<K8sResourceKind>[] => {
         },
       },
       {
-        title: t('public~Service monitor selector'),
+        title: t('Service monitor selector'),
         id: tableColumnInfo[4].id,
         sort: 'spec.serviceMonitorSelector',
         props: {
@@ -145,9 +144,7 @@ const usePrometheusColumns = (): TableColumn<K8sResourceKind>[] => {
   );
 };
 
-export const PrometheusInstancesList: FC<{ data: K8sResourceKind[]; loaded: boolean }> = (
-  props,
-) => {
+const PrometheusInstancesList: FC<{ data: K8sResourceKind[]; loaded: boolean }> = (props) => {
   const { data, loaded } = props;
   const columns = usePrometheusColumns();
 
@@ -160,7 +157,7 @@ export const PrometheusInstancesList: FC<{ data: K8sResourceKind[]; loaded: bool
         label={PrometheusModel.labelPlural}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
+        hideColumnManagement
       />
     </Suspense>
   );
@@ -170,8 +167,8 @@ export const PrometheusInstancesPage = (props: Partial<ListPageProps<never>>) =>
   <ListPage
     {...props}
     ListComponent={PrometheusInstancesList}
-    canCreate={true}
+    canCreate
     kind={referenceForModel(PrometheusModel)}
-    omitFilterToolbar={true}
+    omitFilterToolbar
   />
 );

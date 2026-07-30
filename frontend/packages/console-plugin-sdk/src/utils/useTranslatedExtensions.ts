@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import type { Extension, LoadedExtension } from '@openshift/dynamic-plugin-sdk';
-import { translateExtension } from './extension-i18n';
+import { getNamespacesFromExtensions, translateExtension } from './extension-i18n';
 import useTranslationExt from './useTranslationExt';
 
 /**
@@ -17,7 +17,8 @@ import useTranslationExt from './useTranslationExt';
 export const useTranslatedExtensions = <TExtension extends Extension>(
   extensions: LoadedExtension<TExtension>[],
 ) => {
-  const { t } = useTranslationExt();
+  const namespaces = useMemo(() => getNamespacesFromExtensions(extensions), [extensions]);
+  const { t } = useTranslationExt(namespaces);
 
   return useMemo(() => extensions.map((e) => translateExtension(e, t)), [extensions, t]);
 };

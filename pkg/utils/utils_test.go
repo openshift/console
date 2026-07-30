@@ -10,7 +10,7 @@ import (
 const (
 	onClusterBaseUri        = "base-uri 'self'"
 	onClusterDefaultSrc     = "default-src 'self' console.redhat.com"
-	onClusterImgSrc         = "img-src 'self'"
+	onClusterImgSrc         = "img-src 'self' https:"
 	onClusterFontSrc        = "font-src 'self'"
 	onClusterScriptSrc      = "script-src 'self' console.redhat.com"
 	onClusterStyleSrc       = "style-src 'self'"
@@ -18,7 +18,7 @@ const (
 	onClusterConnectSrc     = "connect-src 'self' console.redhat.com"
 	offClusterBaseUri       = "base-uri 'self' http://localhost:8080 ws://localhost:8080"
 	offClusterDefaultSrc    = "default-src 'self' console.redhat.com http://localhost:8080 ws://localhost:8080"
-	offClusterImgSrc        = "img-src 'self' http://localhost:8080"
+	offClusterImgSrc        = "img-src 'self' https: http://localhost:8080"
 	offClusterFontSrc       = "font-src 'self' http://localhost:8080"
 	offClusterScriptSrc     = "script-src 'self' console.redhat.com http://localhost:8080 ws://localhost:8080"
 	offClusterStyleSrc      = "style-src 'self' http://localhost:8080"

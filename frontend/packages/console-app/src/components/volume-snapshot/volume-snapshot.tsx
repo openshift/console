@@ -38,7 +38,7 @@ import type {
   Selector,
 } from '@console/internal/module/k8s';
 import { referenceForModel, referenceFor } from '@console/internal/module/k8s';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
 import { Status } from '@console/shared/src/components/status/Status';
@@ -148,28 +148,28 @@ const getDataViewRows: GetDataViewRows<VolumeSnapshotKind, VolumeSnapshotRowData
 const useVolumeSnapshotColumns = (
   rowData: VolumeSnapshotRowData,
 ): { columns: TableColumn<VolumeSnapshotKind>[]; resetAllColumnWidths: () => void } => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(VolumeSnapshotModel);
 
   const columns: TableColumn<VolumeSnapshotKind>[] = useMemo(
     () =>
       [
         {
-          title: t('console-app~Name'),
+          title: t('Name'),
           sort: 'metadata.name',
           id: tableColumnInfo[0].id,
           resizableProps: getResizableProps(tableColumnInfo[0].id),
           props: { ...nameCellProps, modifier: 'nowrap' },
         },
         {
-          title: t('console-app~Namespace'),
+          title: t('Namespace'),
           sort: 'metadata.namespace',
           id: tableColumnInfo[1].id,
           resizableProps: getResizableProps(tableColumnInfo[1].id),
           props: { modifier: 'nowrap' },
         },
         {
-          title: t('console-app~Status'),
+          title: t('Status'),
           sort: (data, direction) =>
             data.sort(sortResourceByValue(direction, sorts.volumeSnapshotStatus)),
           id: tableColumnInfo[2].id,
@@ -177,7 +177,7 @@ const useVolumeSnapshotColumns = (
           props: { modifier: 'nowrap' },
         },
         {
-          title: t('console-app~Size'),
+          title: t('Size'),
           sort: (data, direction) =>
             data.sort(sortResourceByValue(direction, sorts.volumeSnapshotSize)),
           id: tableColumnInfo[3].id,
@@ -185,7 +185,7 @@ const useVolumeSnapshotColumns = (
           props: { modifier: 'nowrap' },
         },
         {
-          title: t('console-app~Source'),
+          title: t('Source'),
           sort: (data, direction) =>
             data.sort(sortResourceByValue(direction, sorts.volumeSnapshotSource)),
           id: tableColumnInfo[4].id,
@@ -193,7 +193,7 @@ const useVolumeSnapshotColumns = (
           props: { modifier: 'nowrap' },
         },
         {
-          title: t('console-app~Snapshot content'),
+          title: t('Snapshot content'),
           sort: 'status.boundVolumeSnapshotContentName',
           id: tableColumnInfo[5].id,
           resizableProps: getResizableProps(tableColumnInfo[5].id),
@@ -201,14 +201,14 @@ const useVolumeSnapshotColumns = (
           disabled: rowData.hideSnapshotContentColumn,
         },
         {
-          title: t('console-app~VolumeSnapshotClass'),
+          title: t('VolumeSnapshotClass'),
           sort: 'spec.volumeSnapshotClassName',
           id: tableColumnInfo[6].id,
           resizableProps: getResizableProps(tableColumnInfo[6].id),
           props: { modifier: 'nowrap' },
         },
         {
-          title: t('console-app~Created at'),
+          title: t('Created at'),
           sort: 'metadata.creationTimestamp',
           id: tableColumnInfo[7].id,
           resizableProps: getResizableProps(tableColumnInfo[7].id),
@@ -227,7 +227,7 @@ const useVolumeSnapshotColumns = (
 };
 
 const VolumeSnapshotTable: FC<VolumeSnapshotTableProps> = ({ data, loaded, ...props }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const canListVSC = useFlag(FLAGS.CAN_LIST_VSC);
 
   const customRowData: VolumeSnapshotRowData = {
@@ -240,15 +240,15 @@ const VolumeSnapshotTable: FC<VolumeSnapshotTableProps> = ({ data, loaded, ...pr
     () => [
       {
         value: 'Ready',
-        label: t('console-app~Ready'),
+        label: t('Ready'),
       },
       {
         value: 'Pending',
-        label: t('console-app~Pending'),
+        label: t('Pending'),
       },
       {
         value: 'Error',
-        label: t('console-app~Error'),
+        label: t('Error'),
       },
     ],
     [t],
@@ -264,8 +264,8 @@ const VolumeSnapshotTable: FC<VolumeSnapshotTableProps> = ({ data, loaded, ...pr
       <DataViewCheckboxFilter
         key="status"
         filterId="status"
-        title={t('console-app~Status')}
-        placeholder={t('console-app~Filter by status')}
+        title={t('Status')}
+        placeholder={t('Filter by status')}
         options={snapshotStatusFilterOptions}
       />,
     ],
@@ -310,37 +310,40 @@ const VolumeSnapshotTable: FC<VolumeSnapshotTableProps> = ({ data, loaded, ...pr
 
 export const VolumeSnapshotPage: FC<VolumeSnapshotPageProps> = ({
   canCreate = true,
+  mock,
   showTitle = true,
   namespace,
   selector,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
 
   const createPath = `/k8s/ns/${namespace || 'default'}/${VolumeSnapshotModel.plural}/~new/form`;
 
-  const [resources, loaded, loadError] = useK8sWatchResource<VolumeSnapshotKind[]>({
-    groupVersionKind: {
-      group: VolumeSnapshotModel.apiGroup,
-      kind: VolumeSnapshotModel.kind,
-      version: VolumeSnapshotModel.apiVersion,
-    },
-    isList: true,
-    namespaced: true,
-    namespace,
-    selector,
-  });
+  const [resources, loaded, loadError] = useK8sWatchResource<VolumeSnapshotKind[]>(
+    mock
+      ? null
+      : {
+          groupVersionKind: {
+            group: VolumeSnapshotModel.apiGroup,
+            kind: VolumeSnapshotModel.kind,
+            version: VolumeSnapshotModel.apiVersion,
+          },
+          isList: true,
+          namespaced: true,
+          namespace,
+          selector,
+        },
+  );
 
   return (
     <>
       <ListPageHeader title={showTitle ? t(VolumeSnapshotModel.labelPluralKey || '') : ''}>
-        {canCreate && (
-          <ListPageCreateLink to={createPath}>
-            {t('console-app~Create VolumeSnapshot')}
-          </ListPageCreateLink>
+        {canCreate && !mock && (
+          <ListPageCreateLink to={createPath}>{t('Create VolumeSnapshot')}</ListPageCreateLink>
         )}
       </ListPageHeader>
       <ListPageBody>
-        <VolumeSnapshotTable data={resources} loaded={loaded} loadError={loadError} />
+        <VolumeSnapshotTable data={resources} loaded={loaded} loadError={loadError} mock={mock} />
       </ListPageBody>
     </>
   );
@@ -387,6 +390,7 @@ type VolumeSnapshotFilters = ResourceFilters & {
 };
 
 type VolumeSnapshotPageProps = {
+  mock?: boolean;
   namespace?: string;
   canCreate?: boolean;
   showTitle?: boolean;
@@ -402,6 +406,7 @@ type VolumeSnapshotTableProps = {
   data: VolumeSnapshotKind[];
   loaded: boolean;
   loadError: unknown;
+  mock?: boolean;
 };
 
 type VolumeSnapshotRowData = {

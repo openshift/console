@@ -27,7 +27,7 @@ const rlValidationSchema = (t: TFunction) =>
   });
 
 const ResourceLimitsModalLauncher: FC<ResourceLimitsModalLauncherProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
 
   const handleSubmit = (values, actions) => {
     const {

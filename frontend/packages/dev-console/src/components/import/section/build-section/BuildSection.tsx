@@ -4,10 +4,11 @@ import { ExpandableSection } from '@patternfly/react-core';
 import type { FormikValues } from 'formik';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { ImportStrategy, getGitService } from '@console/git-service/src';
+import { getGitService } from '@console/git-service/src/services/git-service';
+import { ImportStrategy } from '@console/git-service/src/types/git';
 import { LoadingBox } from '@console/internal/components/utils';
 import { getStrategyType } from '@console/internal/components/utils/build-utils';
-import { EnvironmentField } from '@console/shared/src';
+import { EnvironmentField } from '@console/shared/src/components/formik-fields/EnvironmentField';
 import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { FLAG_OPENSHIFT_PIPELINE_AS_CODE } from '../../../../const';
@@ -30,7 +31,7 @@ type BuildSectionProps = {
 };
 
 export const BuildSection: FC<BuildSectionProps> = ({ values, appResources }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const {
     project: { name: namespace },
     build: { option: buildOption, env: buildEnv },
@@ -146,7 +147,7 @@ export const BuildSection: FC<BuildSectionProps> = ({ values, appResources }) =>
   }, [setFieldValue, values?.import?.selectedStrategy?.type, strategy, values?.formType]);
 
   return (
-    <FormSection title={t('devconsole~Build')}>
+    <FormSection title={t('Build')}>
       <BuildOption
         isDisabled={values?.formType === 'edit'}
         importStrategy={values?.import?.selectedStrategy?.type}
@@ -159,7 +160,7 @@ export const BuildSection: FC<BuildSectionProps> = ({ values, appResources }) =>
         />
       )}
       {values.isi || values.pipeline?.enabled ? null : (
-        <ExpandableSection toggleText={t('devconsole~Show advanced Build option')}>
+        <ExpandableSection toggleText={t('Show advanced Build option')}>
           {values.build?.option === BuildOptions.BUILDS && (
             <BuildConfigSection showHeader={false} />
           )}
@@ -170,7 +171,7 @@ export const BuildSection: FC<BuildSectionProps> = ({ values, appResources }) =>
           ) ? (
             <EnvironmentField
               name="build.env"
-              label={t('devconsole~Environment variables (build and runtime)')}
+              label={t('Environment variables (build and runtime)')}
               obj={{ metadata: { namespace } }}
               envs={envs}
             />

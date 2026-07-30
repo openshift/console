@@ -1,31 +1,30 @@
-import type { FC } from 'react';
-import { useContext, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useContext, useMemo, memo } from 'react';
 import { Card, CardHeader, CardTitle } from '@patternfly/react-core';
-import { UtilizationBody } from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
-import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
+import { useTranslation } from 'react-i18next';
+import type { ProjectOverviewUtilizationItem } from '@console/dynamic-plugin-sdk/src';
 import {
   isProjectOverviewUtilizationItem,
-  ProjectOverviewUtilizationItem,
   useResolvedExtensions,
 } from '@console/dynamic-plugin-sdk/src';
-import {
-  humanizeBinaryBytes,
-  humanizeCpuCores,
-  humanizeDecimalBytesPerSec,
-  humanizeNumber,
-} from '../../utils/units';
-import { ProjectDashboardContext } from './project-dashboard-context';
+import { UtilizationBody } from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
+import { UtilizationDurationDropdown } from '@console/shared/src/components/dashboard/utilization-card/UtilizationDurationDropdown';
+import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import {
   getUtilizationQueries,
   ProjectQueries,
   getMultilineQueries,
 } from '@console/shared/src/promql/project-dashboard';
 import {
+  humanizeBinaryBytes,
+  humanizeCpuCores,
+  humanizeDecimalBytesPerSec,
+  humanizeNumber,
+} from '../../utils/units';
+import {
   PrometheusUtilizationItem,
   PrometheusMultilineUtilizationItem,
 } from '../dashboards-page/cluster-dashboard/utilization-card';
-import { UtilizationDurationDropdown } from '@console/shared/src/components/dashboard/utilization-card/UtilizationDurationDropdown';
+import { ProjectDashboardContext } from './project-dashboard-context';
 import {
   CPUPopover,
   FilesystemPopover,
@@ -37,8 +36,8 @@ import {
 
 const networkPopovers = [NetworkInPopover, NetworkOutPopover];
 
-export const UtilizationCard: FC = () => {
-  const { t } = useTranslation();
+export const UtilizationCard = memo(() => {
+  const { t } = useTranslation('public');
   const { obj } = useContext(ProjectDashboardContext);
   const projectName = obj?.metadata?.name;
   const [queries, multilineQueries] = useMemo(
@@ -51,7 +50,7 @@ export const UtilizationCard: FC = () => {
   );
 
   return (
-    <Card data-test-id="utilization-card">
+    <Card data-test="utilization-card" data-test-id="utilization-card">
       <CardHeader
         actions={{
           actions: (
@@ -63,12 +62,12 @@ export const UtilizationCard: FC = () => {
           className: undefined,
         }}
       >
-        <CardTitle>{t('public~Utilization')}</CardTitle>
+        <CardTitle>{t('Utilization')}</CardTitle>
       </CardHeader>
       <UtilizationBody>
         <ProjectUtilizationContext.Provider value={projectName}>
           <PrometheusUtilizationItem
-            title={t('public~CPU')}
+            title={t('CPU')}
             humanizeValue={humanizeCpuCores}
             utilizationQuery={queries[ProjectQueries.CPU_USAGE]}
             requestQuery={queries[ProjectQueries.CPU_REQUESTS]}
@@ -76,7 +75,7 @@ export const UtilizationCard: FC = () => {
             namespace={projectName}
           />
           <PrometheusUtilizationItem
-            title={t('public~Memory')}
+            title={t('Memory')}
             humanizeValue={humanizeBinaryBytes}
             utilizationQuery={queries[ProjectQueries.MEMORY_USAGE]}
             requestQuery={queries[ProjectQueries.MEMORY_REQUESTS]}
@@ -85,7 +84,7 @@ export const UtilizationCard: FC = () => {
             namespace={projectName}
           />
           <PrometheusUtilizationItem
-            title={t('public~Filesystem')}
+            title={t('Filesystem')}
             humanizeValue={humanizeBinaryBytes}
             utilizationQuery={queries[ProjectQueries.FILESYSTEM_USAGE]}
             byteDataType={ByteDataTypes.BinaryBytes}
@@ -93,14 +92,14 @@ export const UtilizationCard: FC = () => {
             namespace={projectName}
           />
           <PrometheusMultilineUtilizationItem
-            title={t('public~Network transfer')}
+            title={t('Network transfer')}
             humanizeValue={humanizeDecimalBytesPerSec}
             queries={multilineQueries[ProjectQueries.NETWORK_UTILIZATION]}
             TopConsumerPopovers={networkPopovers}
             namespace={projectName}
           />
           <PrometheusUtilizationItem
-            title={t('public~Pod count')}
+            title={t('Pod count')}
             humanizeValue={humanizeNumber}
             utilizationQuery={queries[ProjectQueries.POD_COUNT]}
             namespace={projectName}
@@ -122,4 +121,4 @@ export const UtilizationCard: FC = () => {
       </UtilizationBody>
     </Card>
   );
-};
+});

@@ -4,10 +4,9 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import { getActiveNamespace } from '@console/internal/actions/ui';
-import { AsyncComponent } from '@console/internal/components/utils/async';
-import type { K8sResourceKind, GroupVersionKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceForModel, referenceForGroupVersionKind } from '@console/internal/module/k8s';
-import { ConsoleEmptyState } from '@console/shared/src/components/empty-state';
+import { ConsoleEmptyState } from '@console/shared/src/components/empty-state/ConsoleEmptyState';
 import { OPERATOR_NAMESPACE_ANNOTATION } from '../const';
 import { OperatorGroupModel } from '../models';
 import type { OperatorGroupKind, SubscriptionKind, PackageManifestKind } from '../types';
@@ -20,49 +19,22 @@ export const operatorNamespaceFor = (obj: K8sResourceKind) =>
 export const operatorGroupFor = (obj: K8sResourceKind) =>
   obj?.metadata?.annotations?.['olm.operatorGroup']; // FIXME magic string
 
-export const NoOperatorGroupMsg: FC = () => {
-  const { t } = useTranslation();
+const NoOperatorGroupMsg: FC = () => {
+  const { t } = useTranslation('olm');
   const actions = [
     <Link
       key="create-operator-group"
       to={`/ns/${getActiveNamespace()}/${referenceForModel(OperatorGroupModel)}/~new`}
     >
-      {t('olm~Create an OperatorGroup for this Namespace')}
+      {t('Create an OperatorGroup for this Namespace')}
     </Link>,
   ];
   return (
-    <ConsoleEmptyState title={t('olm~Namespace not enabled')} primaryActions={actions}>
+    <ConsoleEmptyState title={t('Namespace not enabled')} primaryActions={actions}>
       {t(
-        'olm~The Operator Lifecycle Manager will not watch this Namespace because it is not configured with an OperatorGroup.',
+        'The Operator Lifecycle Manager will not watch this Namespace because it is not configured with an OperatorGroup.',
       )}
     </ConsoleEmptyState>
-  );
-};
-
-export const OperatorGroupSelector: FC<OperatorGroupSelectorProps> = (props) => {
-  const { t } = useTranslation();
-  return (
-    <AsyncComponent
-      loader={() =>
-        import('@console/internal/components/utils/list-dropdown').then((m) => m.ListDropdown)
-      }
-      onChange={
-        props.onChange ||
-        function () {
-          return null;
-        }
-      }
-      desc={OperatorGroupModel.plural}
-      placeholder={t('olm~Select OperatorGroup')}
-      selectedKeyKind={referenceForModel(OperatorGroupModel)}
-      dataFilter={props.dataFilter}
-      resources={[
-        {
-          kind: referenceForModel(OperatorGroupModel),
-          fieldSelector: `metadata.name!=${props.excludeName}`,
-        },
-      ]}
-    />
   );
 };
 
@@ -125,8 +97,6 @@ export const supports = (set: InstallModeSet) => (obj: OperatorGroupKind) => {
 
 export const isGlobal = (obj: OperatorGroupKind) =>
   supports([{ type: InstallModeType.InstallModeTypeAllNamespaces, supported: true }])(obj);
-export const isSingle = (obj: OperatorGroupKind) =>
-  supports([{ type: InstallModeType.InstallModeTypeSingleNamespace, supported: true }])(obj);
 
 /**
  * Determines if a given Operator package has a `Subscription` that makes it available in the given namespace.
@@ -169,12 +139,6 @@ export const providedAPIsForOperatorGroup = (og: OperatorGroupKind) =>
 
 type RequireOperatorGroupProps = {
   operatorGroup: { loaded: boolean; data?: OperatorGroupKind[] };
-};
-
-export type OperatorGroupSelectorProps = {
-  onChange?: (name: string, kind: GroupVersionKind) => void;
-  excludeName?: string;
-  dataFilter?: (obj: OperatorGroupKind) => boolean;
 };
 
 NoOperatorGroupMsg.displayName = 'NoOperatorGroupMsg';

@@ -8,8 +8,10 @@ import {
   TimeoutError,
 } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
 import { ErrorPage404 } from '@console/internal/components/error';
-import { AccessDenied, EmptyBox } from '../empty-state';
-import { LoadError, LoadingBox } from '../loading';
+import { AccessDenied } from '../empty-state/AccessDenied';
+import { EmptyBox } from '../empty-state/EmptyBox';
+import { LoadError } from '../loading/LoadError';
+import { LoadingBox } from '../loading/LoadingBox';
 
 const Data: FC<DataProps> = ({
   NoDataEmptyMsg,

@@ -1,19 +1,18 @@
-import type { FC } from 'react';
-import { useContext } from 'react';
+import { useContext, memo } from 'react';
+import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
 import LauncherBody from '@console/shared/src/components/dashboard/launcher-card/LauncherBody';
 import LauncherItem from '@console/shared/src/components/dashboard/launcher-card/LauncherItem';
 import { ProjectDashboardContext } from './project-dashboard-context';
 
-export const LauncherCard: FC = () => {
+export const LauncherCard = memo(() => {
   const { namespaceLinks } = useContext(ProjectDashboardContext);
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
-    <Card data-test-id="launcher-card">
+    <Card data-test="launcher-card" data-test-id="launcher-card">
       <CardHeader>
-        <CardTitle>{t('public~Launcher')}</CardTitle>
+        <CardTitle>{t('Launcher')}</CardTitle>
       </CardHeader>
       <CardBody>
         <LauncherBody>
@@ -24,4 +23,4 @@ export const LauncherCard: FC = () => {
       </CardBody>
     </Card>
   );
-};
+});

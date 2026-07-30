@@ -2,7 +2,7 @@ import * as GitUrlParse from 'git-url-parse';
 import * as _ from 'lodash';
 import type { NavigateFunction } from 'react-router';
 import type { Perspective, ConsoleTFunction } from '@console/dynamic-plugin-sdk';
-import { GitProvider } from '@console/git-service/src';
+import { GitProvider } from '@console/git-service/src/types/git';
 import { SecretType } from '@console/internal/components/secrets/create-secret';
 import { BuildStrategyType } from '@console/internal/components/utils/build-utils';
 import {
@@ -18,12 +18,12 @@ import {
 } from '@console/internal/models';
 import type { K8sResourceKind, K8sVerb } from '@console/internal/module/k8s';
 import { k8sCreate, k8sGet, k8sUpdate } from '@console/internal/module/k8s';
-import { ServiceModel as KnServiceModel } from '@console/knative-plugin';
+import { ServiceModel as KnServiceModel } from '@console/knative-plugin/src/models';
 import {
   getDomainMappingRequests,
   getKnativeServiceDepResource,
 } from '@console/knative-plugin/src/utils/create-knative-utils';
-import type { LimitsData } from '@console/shared/src/types';
+import type { LimitsData } from '@console/shared/src/types/resource';
 import { getResourceLimitsData } from '@console/shared/src/utils/resource-utils';
 import { getRandomChars } from '@console/shared/src/utils/utils';
 import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
@@ -183,7 +183,7 @@ export const createWebhookSecret = (
   return k8sCreate(SecretModel, webhookSecret, dryRun ? dryRunOpt : {});
 };
 
-export const createOrUpdateShipwrightBuild = (
+const createOrUpdateShipwrightBuild = (
   formData: GitImportFormData,
   imageStream: K8sResourceKind,
   dryRun: boolean,
@@ -282,7 +282,7 @@ export const createOrUpdateShipwrightBuild = (
     : k8sCreate(ShipwrightBuildModel, newShipwrightBuild, dryRun ? dryRunOpt : {});
 };
 
-export const createOrUpdateBuildConfig = (
+const createOrUpdateBuildConfig = (
   formData: GitImportFormData,
   imageStream: K8sResourceKind,
   dryRun: boolean,
@@ -498,7 +498,7 @@ export const createOrUpdateDeployment = (
     : k8sCreate(DeploymentModel, deployment, dryRun ? dryRunOpt : {});
 };
 
-export const createOrUpdateDeploymentConfig = (
+const createOrUpdateDeploymentConfig = (
   formData: GitImportFormData,
   imageStream: K8sResourceKind,
   dryRun: boolean,
@@ -583,7 +583,7 @@ export const createOrUpdateDeploymentConfig = (
     : k8sCreate(DeploymentConfigModel, deploymentConfig, dryRun ? dryRunOpt : {});
 };
 
-export const managePipelineResources = async (
+const managePipelineResources = async (
   formData: GitImportFormData,
   pipelineData: PipelineKind,
 ): Promise<K8sResourceKind[]> => {

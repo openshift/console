@@ -14,7 +14,7 @@ import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/Mod
 import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import type { ModalComponentProps } from '@console/shared/src/types/modal';
 
-export const UpdateStrategyModal: FC<UpdateStrategyModalProps> = ({
+const UpdateStrategyModal: FC<UpdateStrategyModalProps> = ({
   cancel,
   close,
   path,
@@ -23,7 +23,7 @@ export const UpdateStrategyModal: FC<UpdateStrategyModalProps> = ({
   resourceKind,
   title,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const getPath = path.substring(1).replace('/', '.');
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
   const [strategyType, setStrategyType] = useState(
@@ -85,10 +85,10 @@ export const UpdateStrategyModal: FC<UpdateStrategyModalProps> = ({
           data-test="confirm-action"
           id="confirm-action"
         >
-          {t('public~Save')}
+          {t('Save')}
         </Button>
         <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
-          {t('public~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </>

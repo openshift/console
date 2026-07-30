@@ -31,6 +31,19 @@ spec:
             - containerPort: 9001
               protocol: TCP
           imagePullPolicy: Always
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          readinessProbe:
+            tcpSocket:
+              port: 9001
+            initialDelaySeconds: 5
+            periodSeconds: 5
           args:
             - '--ssl'
             - '--cert=/var/serving-cert/tls.crt'

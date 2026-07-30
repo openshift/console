@@ -10,7 +10,7 @@ import type { Node } from '@patternfly/react-topology';
 import { observer } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { getChildKinds } from './list-view-utils';
-import TopologyListViewKindGroup from './TopologyListViewKindGroup';
+import { TopologyListViewKindGroup } from './TopologyListViewKindGroup';
 
 interface TopologyListViewUnassignedGroupProps {
   items: Node[];
@@ -19,13 +19,13 @@ interface TopologyListViewUnassignedGroupProps {
   onSelect: (ids: string[]) => void;
 }
 
-const TopologyListViewUnassignedGroup: FC<TopologyListViewUnassignedGroupProps> = ({
+const TopologyListViewUnassignedGroupComponent: FC<TopologyListViewUnassignedGroupProps> = ({
   items,
   showCategory,
   selectedIds,
   onSelect,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   if (!items?.length) {
     return null;
   }
@@ -36,7 +36,7 @@ const TopologyListViewUnassignedGroup: FC<TopologyListViewUnassignedGroupProps> 
     <DataList aria-label="unassigned items" id="unassigned-items">
       {kindKeys.map((key) => (
         <TopologyListViewKindGroup
-          groupLabel={t('topology~unassigned')}
+          groupLabel={t('unassigned')}
           key={key}
           kind={key}
           childElements={kindsMap[key]}
@@ -58,7 +58,7 @@ const TopologyListViewUnassignedGroup: FC<TopologyListViewUnassignedGroupProps> 
       className="odc-topology-list-view__unassigned-label"
       id="unassigned_label"
     >
-      {t('topology~No application group')}
+      {t('No application group')}
     </DataListCell>,
   );
 
@@ -77,4 +77,4 @@ const TopologyListViewUnassignedGroup: FC<TopologyListViewUnassignedGroupProps> 
   );
 };
 
-export default observer(TopologyListViewUnassignedGroup);
+export const TopologyListViewUnassignedGroup = observer(TopologyListViewUnassignedGroupComponent);

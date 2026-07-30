@@ -16,7 +16,7 @@ type ResourcePageProperties = {
 };
 
 type RoutePageProperties = {
-  /** The perspective to which this page belongs to. If not specified, applies to all perspectives. */
+  /** The perspective this page belongs to. If not specified, applies to all perspectives. */
   perspective?: string;
   /** The component to be rendered when the route matches. */
   component: CodeRef<React.ComponentType>;

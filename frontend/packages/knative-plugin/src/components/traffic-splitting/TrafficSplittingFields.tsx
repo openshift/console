@@ -3,7 +3,8 @@ import { TextInputTypes } from '@patternfly/react-core';
 import type { FormikProps, FormikValues } from 'formik';
 import { pickBy, size } from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { MultiColumnField, InputField } from '@console/shared';
+import { InputField } from '@console/shared/src/components/formik-fields/InputField';
+import { MultiColumnField } from '@console/shared/src/components/formik-fields/multi-column-field/MultiColumnField';
 import type { RevisionItems } from '../../utils/traffic-splitting-utils';
 import TrafficModalRevisionsDropdownField from './TrafficModalRevisionsDropdownField';
 
@@ -14,7 +15,7 @@ interface TrafficSplittingFieldProps {
 type Props = FormikProps<FormikValues> & TrafficSplittingFieldProps;
 
 const TrafficSplittingFields: FC<Props> = ({ revisionItems, values }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const selectedRevisions: string[] = values.trafficSplitting.map(
     (traffic) => traffic.revisionName,
   );
@@ -22,23 +23,23 @@ const TrafficSplittingFields: FC<Props> = ({ revisionItems, values }) => {
   return (
     <MultiColumnField
       name="trafficSplitting"
-      addLabel={t('knative-plugin~Add Revision')}
+      addLabel={t('Add Revision')}
       headers={[
-        { name: t('knative-plugin~Split'), required: true },
-        t('knative-plugin~Tag'),
-        { name: t('knative-plugin~Revision'), required: true },
+        { name: t('Split'), required: true },
+        t('Tag'),
+        { name: t('Revision'), required: true },
       ]}
       emptyValues={{ percent: '', tag: '', revisionName: '' }}
       disableDeleteRow={values.trafficSplitting.length === 1}
       tooltipDeleteRow={
         values.trafficSplitting.length === 1
-          ? t('knative-plugin~Service must have at least one assigned revision')
+          ? t('Service must have at least one assigned revision')
           : undefined /* default */
       }
       disableAddRow={values.trafficSplitting.length === size(revisionItems)}
       tooltipAddRow={
         values.trafficSplitting.length === size(revisionItems)
-          ? t('knative-plugin~All revisions are already set to receive traffic')
+          ? t('All revisions are already set to receive traffic')
           : null /* no tooltip */
       }
       spans={[2, 3, 7]}
@@ -53,7 +54,7 @@ const TrafficSplittingFields: FC<Props> = ({ revisionItems, values }) => {
       <TrafficModalRevisionsDropdownField
         name="revisionName"
         revisionItems={items}
-        title={t('knative-plugin~Select a Revision')}
+        title={t('Select a Revision')}
       />
     </MultiColumnField>
   );

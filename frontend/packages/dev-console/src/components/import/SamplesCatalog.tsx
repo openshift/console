@@ -2,13 +2,14 @@ import type { FC } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
 import type { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
-import { CatalogController, CatalogServiceProvider } from '@console/shared';
+import { CatalogController } from '@console/shared/src/components/catalog/CatalogController';
+import { CatalogServiceProvider } from '@console/shared/src/components/catalog/service/CatalogServiceProvider';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import CreateProjectListPage, { CreateAProjectButton } from '../projects/CreateProjectListPage';
 
 const SampleCatalog: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const { ns: namespace } = useParams();
   const params = new URLSearchParams(window.location.search);
   const sampleType = params.get('sampleType');
@@ -18,7 +19,7 @@ const SampleCatalog: FC = () => {
   };
   return (
     <>
-      <DocumentTitle>{t('devconsole~Samples')}</DocumentTitle>
+      <DocumentTitle>{t('Samples')}</DocumentTitle>
       <NamespacedPage variant={NamespacedPageVariants.light} hideApplications>
         {namespace ? (
           <CatalogServiceProvider namespace={namespace} catalogId="samples-catalog">
@@ -40,16 +41,14 @@ const SampleCatalog: FC = () => {
                 <CatalogController
                   {...catalogItems}
                   hideSidebar
-                  title={t('devconsole~Samples')}
-                  description={t(
-                    'devconsole~Get Started using applications by choosing a code sample.',
-                  )}
+                  title={t('Samples')}
+                  description={t('Get Started using applications by choosing a code sample.')}
                 />
               );
             }}
           </CatalogServiceProvider>
         ) : (
-          <CreateProjectListPage title={t('devconsole~Samples')}>
+          <CreateProjectListPage title={t('Samples')}>
             {(openProjectModal) => (
               <Trans t={t} ns="devconsole">
                 Select a Project to view the list of samples

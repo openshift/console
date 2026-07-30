@@ -2,13 +2,16 @@ package oauth2
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"sync"
 	"time"
 
 	oidc "github.com/coreos/go-oidc"
 	"golang.org/x/oauth2"
+	"k8s.io/klog/v2"
 
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/auth/sessions"
@@ -35,6 +38,7 @@ type oidcConfig struct {
 	issuerURL              string
 	logoutRedirectOverride string
 	clientID               string
+	consoleBaseAddress     string
 	cookiePath             string
 	secureCookies          bool
 	constructOAuth2Config  oauth2ConfigConstructor
@@ -102,7 +106,7 @@ func (o *oidcAuth) refreshSession(ctx context.Context, w http.ResponseWriter, r 
 		&oauth2.Token{RefreshToken: cookieRefreshToken},
 	).Token()
 	if err != nil {
-		return nil, fmt.Errorf("failed to refresh a token %s: %w", cookieRefreshToken, err)
+		return nil, fmt.Errorf("failed to refresh a token: %w", err)
 	}
 
 	ls, err := o.sessions.UpdateTokens(w, r, o.verify, newTokens)
@@ -122,9 +126,57 @@ func (o *oidcAuth) DeleteSession(w http.ResponseWriter, r *http.Request) {
 	o.sessions.DeleteSession(w, r)
 }
 
+// logout handles the OIDC logout flow by constructing a logout redirect URL
+// with an id_token_hint appended (when available) and returning it as JSON.
 func (o *oidcAuth) logout(w http.ResponseWriter, r *http.Request) {
+	logoutURL := o.logoutRedirectURLWithIDTokenHint(w, r)
 	o.DeleteSession(w, r)
-	w.WriteHeader(http.StatusNoContent)
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(map[string]string{
+		"logoutRedirectURL": logoutURL,
+	}); err != nil {
+		klog.Errorf("failed to write logout redirect response: %v", err)
+	}
+}
+
+// logoutRedirectURLWithIDTokenHint builds the logout redirect URL with the
+// id_token_hint query parameter appended, per the OIDC RP-Initiated Logout spec.
+// Returns empty when the session or id_token is unavailable — the frontend
+// uses the static logout redirect when the returned URL is empty.
+func (o *oidcAuth) logoutRedirectURLWithIDTokenHint(w http.ResponseWriter, r *http.Request) string {
+	baseURL := o.LogoutRedirectURL()
+	if baseURL == "" {
+		return ""
+	}
+
+	ls, err := o.sessions.GetSession(w, r)
+	if err != nil || ls == nil {
+		klog.V(4).Infof("could not retrieve session for id_token_hint: %v", err)
+		return ""
+	}
+
+	idToken := ls.AccessToken()
+	if idToken == "" {
+		return ""
+	}
+
+	parsed, err := url.Parse(baseURL)
+	if err != nil {
+		klog.Errorf("failed to parse logout redirect URL: %v", err)
+		return ""
+	}
+
+	q := parsed.Query()
+	q.Set("id_token_hint", idToken)
+	if !q.Has("client_id") && o.clientID != "" {
+		q.Set("client_id", o.clientID)
+	}
+	if !q.Has("post_logout_redirect_uri") && o.consoleBaseAddress != "" {
+		q.Set("post_logout_redirect_uri", o.consoleBaseAddress)
+	}
+	parsed.RawQuery = q.Encode()
+	return parsed.String()
 }
 
 func (o *oidcAuth) getLoginState(w http.ResponseWriter, r *http.Request) (*sessions.LoginState, error) {

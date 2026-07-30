@@ -1,6 +1,6 @@
 import { renderWithProviders } from '../../../test-utils/unit-test-utils';
 import InteractiveSpotlight from '../InteractiveSpotlight';
-import Spotlight from '../Spotlight';
+import { Spotlight } from '../Spotlight';
 import StaticSpotlight from '../StaticSpotlight';
 
 // Mock StaticSpotlight

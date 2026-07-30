@@ -9,10 +9,10 @@ import {
   HOST_STATUS_TITLE_KEYS,
   HOST_STATUS_PROVISIONED,
   HOST_STATUS_EXTERNALLY_PROVISIONED,
-  NODE_STATUS_TITLE_KEYS,
   HOST_STATUS_AVAILABLE,
   HOST_STATUS_UNMANAGED,
-} from '../../constants';
+} from '../../constants/bare-metal-host';
+import { NODE_STATUS_TITLE_KEYS } from '../../constants/node-maintenance';
 import type { BareMetalHostBundle } from '../types';
 
 // NOTE(yaacov): hostStatesToFilterMap titles translation keys.

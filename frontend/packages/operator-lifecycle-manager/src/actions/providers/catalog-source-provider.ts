@@ -16,13 +16,13 @@ import type { CatalogSourceKind } from '../../types';
 import useOperatorHubConfig from '../../utils/useOperatorHubConfig';
 
 const useDisableSourceAction = (operatorHub: OperatorHubKind, sourceName: string): Action[] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const launchModal = useOverlay();
   const factory = useMemo(
     () => ({
       disableSource: () => ({
         id: 'disable-source',
-        label: t('olm~Disable'),
+        label: t('Disable'),
         cta: () =>
           launchModal(LazyDisableDefaultSourceModalOverlay, {
             kind: OperatorHubModel,
@@ -66,8 +66,4 @@ export const useCatalogSourceActionsProvider = (catalogSource: CatalogSourceKind
     () => [operatorHubLoaded && !operatorHubLoadError ? actions : [], !inFlight, undefined],
     [operatorHubLoaded, operatorHubLoadError, actions, inFlight],
   );
-};
-
-export const catalogSourceActionsProvider = {
-  useCatalogSourceActionsProvider,
 };

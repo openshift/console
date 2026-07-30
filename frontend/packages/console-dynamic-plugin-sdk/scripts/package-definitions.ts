@@ -13,7 +13,7 @@ import { resolvePath } from './utils/path';
 type GeneratedPackage = {
   /** Package output directory. */
   outDir: string;
-  /** Package manifest. Note: `version` is updated via the publish script. */
+  /** Package manifest. Note: `version` must be set before publishing. */
   manifest: PackageJson;
   /** Additional files or directories to copy to the package output directory. */
   filesToCopy: Record<string, string>;
@@ -76,15 +76,7 @@ const parseDeps = (
   missingDepCallback: MissingDependencyCallback,
 ) => {
   const srcDeps = { ...pkg.devDependencies, ...pkg.dependencies };
-
-  depNames
-    // Console does not have an explicit react-router-dom(-v5-compat) dependency.
-    // react-router-dom(-v5-compat) shared module impl. delegates to react-router.
-    .filter((name) => name !== 'react-router-dom-v5-compat')
-    .filter((name) => name !== 'react-router-dom')
-    .filter((name) => !srcDeps[name])
-    .forEach(missingDepCallback);
-
+  depNames.filter((name) => !srcDeps[name]).forEach(missingDepCallback);
   return _.pick(srcDeps, depNames);
 };
 
@@ -97,12 +89,20 @@ const parseDepsAs = (
 const parseSharedModuleDeps = (pkg: PackageJson, missingDepCallback: MissingDependencyCallback) =>
   parseDeps(
     pkg,
-    sharedPluginModules.filter(
-      (m) =>
-        m !== '@openshift/dynamic-plugin-sdk' && // This is a direct SDK dependency as well as a shared module
+    sharedPluginModules.filter((m) => {
+      const { allowFallback, aliased } = getSharedModuleMetadata(m);
+
+      return (
+        // Exclude Console plugin SDK shared modules.
         !m.startsWith('@openshift-console/') &&
-        !getSharedModuleMetadata(m).allowFallback,
-    ),
+        // This is a Console plugin SDK dependency and a shared module.
+        m !== '@openshift/dynamic-plugin-sdk' &&
+        // Exclude modules for which a plugin provided fallback version is disallowed.
+        // Also exclude modules whose implementation is aliased to another module.
+        !allowFallback &&
+        !aliased
+      );
+    }),
     missingDepCallback,
   );
 
@@ -130,7 +130,13 @@ export const getCorePackage: GetPackageDefinition = (
     dependencies: {
       ...parseDeps(
         rootPackage,
-        ['@openshift/dynamic-plugin-sdk', 'immutable', 'reselect', 'typesafe-actions'],
+        [
+          '@openshift/api-types',
+          '@openshift/dynamic-plugin-sdk',
+          'immutable',
+          'reselect',
+          'typesafe-actions',
+        ],
         missingDepCallback,
       ),
       ...parseDepsAs(rootPackage, { 'lodash-es': 'lodash' }, missingDepCallback),
@@ -203,8 +209,13 @@ export const getWebpackPackage: GetPackageDefinition = (
       ...parseDepsAs(rootPackage, { 'lodash-es': 'lodash' }, missingDepCallback),
     },
     peerDependencies: {
+      '@rspack/core': `>=${getMinDepVersion(rootPackage, '@rspack/core', missingDepCallback)}`,
       typescript: `>=${getMinDepVersion(rootPackage, 'typescript', missingDepCallback)}`,
       webpack: `>=${getMinDepVersion(rootPackage, 'webpack', missingDepCallback)}`,
+    },
+    peerDependenciesMeta: {
+      '@rspack/core': { optional: true },
+      webpack: { optional: true },
     },
   },
   filesToCopy: {

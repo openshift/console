@@ -1,6 +1,14 @@
-import * as _ from 'lodash';
 import type { FC } from 'react';
 import { useState, useCallback, useMemo, Suspense } from 'react';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  Grid,
+  GridItem,
+} from '@patternfly/react-core';
+import { RhUiBanIcon } from '@patternfly/react-icons';
 import {
   SortByDirection,
   TableVariant,
@@ -11,60 +19,51 @@ import {
   Th,
   Tr,
 } from '@patternfly/react-table';
-import { BanIcon } from '@patternfly/react-icons';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-
-import { DetailsPage } from './factory/details';
-import { ListPage } from './factory/list-page';
-import { sortResourceByValue } from './factory/Table/sort';
-import { AsyncComponent } from './utils/async';
-import { DetailsItem } from './utils/details-item';
-import { EmptyBox, LoadingBox } from './utils/status-box';
-import { navFactory } from './utils/horizontal-nav';
-import { ResourceLink } from './utils/resource-link';
-import { ResourceSummary } from './utils/details-page';
-import { SectionHeading } from './utils/headings';
-import {
-  apiVersionCompare,
-  CRDVersion,
-  CustomResourceDefinitionKind,
-  getLatestVersionForCRD,
-  K8sModel,
-  referenceForCRD,
-  referenceForModel,
-  TableColumn,
-} from '../module/k8s';
-import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
-import { CustomResourceDefinitionModel } from '../models';
-import { Conditions } from './conditions';
-import { getResourceListPages } from './resource-pages';
-import { DefaultPage } from './default-resource';
-import { GreenCheckCircleIcon } from '@console/shared/src/components/status/icons';
-import { DASH } from '@console/shared/src/constants/ui';
-import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
-import {
-  ResourceListPage,
-  isResourceListPage,
-} from '@console/dynamic-plugin-sdk/src/extensions/pages';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import {
-  DescriptionList,
-  DescriptionListDescription,
-  DescriptionListGroup,
-  DescriptionListTerm,
-  Grid,
-  GridItem,
-} from '@patternfly/react-core';
 import {
   actionsCellProps,
   getNameCellProps,
   ConsoleDataView,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import type { ResourceListPage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
+import { isResourceListPage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
+import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { GreenCheckCircleIcon } from '@console/shared/src/components/status/icons';
+import { DASH } from '@console/shared/src/constants/ui';
+import { CustomResourceDefinitionModel } from '../models';
+import type {
+  CRDVersion,
+  CustomResourceDefinitionKind,
+  K8sModel,
+  TableColumn,
+} from '../module/k8s';
+import {
+  apiVersionCompare,
+  getLatestVersionForCRD,
+  referenceForCRD,
+  referenceForModel,
+} from '../module/k8s';
+import { Conditions } from './conditions';
+import { DefaultPage } from './default-resource';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
+import { sortResourceByValue } from './factory/Table/sort';
+import { getResourceListPages } from './resource-pages';
+import { AsyncComponent } from './utils/async';
+import { DetailsItem } from './utils/details-item';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { ResourceLink } from './utils/resource-link';
+import { EmptyBox, LoadingBox } from './utils/status-box';
 
 const isEstablished = (conditions: any[]) => {
   const condition = _.find(conditions, (c) => c.type === 'Established');
@@ -76,25 +75,25 @@ const namespaced = (crd: CustomResourceDefinitionKind) => crd.spec.scope === 'Na
 const kind = referenceForModel(CustomResourceDefinitionModel);
 
 const Established: FC<{ crd: CustomResourceDefinitionKind }> = ({ crd }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return crd.status && isEstablished(crd.status.conditions) ? (
     <span>
-      <GreenCheckCircleIcon title={t('public~true')} />
+      <GreenCheckCircleIcon title={t('true')} />
     </span>
   ) : (
     <span>
-      <BanIcon title={t('public~false')} />
+      <RhUiBanIcon title={t('false')} />
     </span>
   );
 };
 
 const EmptyVersionsMsg: FC<{}> = () => {
-  const { t } = useTranslation();
-  return <EmptyBox label={t('public~CRD versions')} />;
+  const { t } = useTranslation('public');
+  return <EmptyBox label={t('CRD versions')} />;
 };
 
 const CRDVersionTable: FC<CRDVersionProps> = ({ versions }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const [sortBy, setSortBy] = useState({ index: 0, direction: SortByDirection.asc });
   const onSort = useCallback((_event, index, direction) => setSortBy({ index, direction }), []);
   const compare = useCallback(
@@ -120,10 +119,10 @@ const CRDVersionTable: FC<CRDVersionProps> = ({ versions }) => {
     [versions, compare],
   );
 
-  const headers = useMemo(() => [t('public~Name'), t('public~Served'), t('public~Storage')], [t]);
+  const headers = useMemo(() => [t('Name'), t('Served'), t('Storage')], [t]);
 
   return versionRows.length > 0 ? (
-    <PfTable variant={TableVariant.compact} aria-label={t('public~CRD versions')}>
+    <PfTable variant={TableVariant.compact} aria-label={t('CRD versions')}>
       <Thead>
         <Tr>
           {headers.map((header, columnIndex) => (
@@ -149,11 +148,11 @@ const CRDVersionTable: FC<CRDVersionProps> = ({ versions }) => {
 };
 
 const Details: FC<{ obj: CustomResourceDefinitionKind }> = ({ obj: crd }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <>
       <PaneBody>
-        <SectionHeading text={t('public~CustomResourceDefinition details')} />
+        <SectionHeading text={t('CustomResourceDefinition details')} />
         <Grid hasGutter>
           <GridItem sm={6}>
             <ResourceSummary showPodSelector={false} showNodeSelector={false} resource={crd} />
@@ -161,29 +160,29 @@ const Details: FC<{ obj: CustomResourceDefinitionKind }> = ({ obj: crd }) => {
           <GridItem sm={6}>
             <DescriptionList>
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('public~Established')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('Established')}</DescriptionListTerm>
                 <DescriptionListDescription>
                   <Established crd={crd} />
                 </DescriptionListDescription>
               </DescriptionListGroup>
-              <DetailsItem label={t('public~Group')} obj={crd} path="spec.group" />
+              <DetailsItem label={t('Group')} obj={crd} path="spec.group" />
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('public~Latest version')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('Latest version')}</DescriptionListTerm>
                 <DescriptionListDescription>
                   {getLatestVersionForCRD(crd)}
                 </DescriptionListDescription>
               </DescriptionListGroup>
-              <DetailsItem label={t('public~Scope')} obj={crd} path="spec.scope" />
+              <DetailsItem label={t('Scope')} obj={crd} path="spec.scope" />
             </DescriptionList>
           </GridItem>
         </Grid>
       </PaneBody>
       <PaneBody>
-        <SectionHeading text={t('public~Conditions')} />
+        <SectionHeading text={t('Conditions')} />
         <Conditions conditions={crd.status.conditions} />
       </PaneBody>
       <PaneBody>
-        <SectionHeading text={t('public~Versions')} />
+        <SectionHeading text={t('Versions')} />
         <CRDVersionTable versions={crd.spec.versions} />
       </PaneBody>
     </>
@@ -199,7 +198,7 @@ const Instances: FC<InstancesProps> = ({ obj, namespace }) => {
   return (
     <AsyncComponent
       loader={componentLoader}
-      namespace={namespace ? namespace : undefined}
+      namespace={namespace || undefined}
       kind={crdKind}
       showTitle={false}
       autoFocus={false}
@@ -220,7 +219,7 @@ const useCustomResourceDefinitionsColumns = (): {
   columns: TableColumn<CustomResourceDefinitionKind>[];
   resetAllColumnWidths: () => void;
 } => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
     CustomResourceDefinitionModel,
   );
@@ -228,7 +227,7 @@ const useCustomResourceDefinitionsColumns = (): {
   const columns: TableColumn<CustomResourceDefinitionKind>[] = useMemo(
     () => [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'spec.names.kind',
         resizableProps: getResizableProps(tableColumnInfo[0].id),
@@ -238,7 +237,7 @@ const useCustomResourceDefinitionsColumns = (): {
         },
       },
       {
-        title: t('public~Group'),
+        title: t('Group'),
         id: tableColumnInfo[1].id,
         sort: 'spec.group',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
@@ -247,7 +246,7 @@ const useCustomResourceDefinitionsColumns = (): {
         },
       },
       {
-        title: t('public~Latest version'),
+        title: t('Latest version'),
         id: tableColumnInfo[2].id,
         sort: (data, direction) =>
           data.sort(
@@ -259,7 +258,7 @@ const useCustomResourceDefinitionsColumns = (): {
         },
       },
       {
-        title: t('public~Namespaced'),
+        title: t('Namespaced'),
         id: tableColumnInfo[3].id,
         sort: 'spec.scope',
         resizableProps: getResizableProps(tableColumnInfo[3].id),
@@ -268,7 +267,7 @@ const useCustomResourceDefinitionsColumns = (): {
         },
       },
       {
-        title: t('public~Established'),
+        title: t('Established'),
         id: tableColumnInfo[4].id,
         resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
@@ -290,8 +289,8 @@ const useCustomResourceDefinitionsColumns = (): {
 };
 
 const IsNamespaced: FC<{ obj: CustomResourceDefinitionKind }> = ({ obj }) => {
-  const { t } = useTranslation();
-  return <>{namespaced(obj) ? t('public~Yes') : t('public~No')}</>;
+  const { t } = useTranslation('public');
+  return <>{namespaced(obj) ? t('Yes') : t('No')}</>;
 };
 
 const getDataViewRows: GetDataViewRows<CustomResourceDefinitionKind> = (data, columns) => {
@@ -344,7 +343,7 @@ const getDataViewRows: GetDataViewRows<CustomResourceDefinitionKind> = (data, co
   });
 };
 
-export const CustomResourceDefinitionsList: FC<CustomResourceDefinitionsListProps> = ({
+const CustomResourceDefinitionsList: FC<CustomResourceDefinitionsListProps> = ({
   data,
   loaded,
   ...props
@@ -360,7 +359,7 @@ export const CustomResourceDefinitionsList: FC<CustomResourceDefinitionsListProp
         loaded={loaded}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
+        hideColumnManagement
         isResizable
         resetAllColumnWidths={resetAllColumnWidths}
       />
@@ -373,8 +372,8 @@ export const CustomResourceDefinitionsPage: FC = (props) => (
     {...props}
     ListComponent={CustomResourceDefinitionsList}
     kind={kind}
-    canCreate={true}
-    omitFilterToolbar={true}
+    canCreate
+    omitFilterToolbar
   />
 );
 
@@ -403,7 +402,7 @@ export const CustomResourceDefinitionsDetailsPage: FC = (props) => {
   );
 };
 
-export type CustomResourceDefinitionsListProps = {
+type CustomResourceDefinitionsListProps = {
   data: CustomResourceDefinitionKind[];
   loaded: boolean;
 };
@@ -416,6 +415,6 @@ type InstancesProps = {
 CustomResourceDefinitionsList.displayName = 'CustomResourceDefinitionsList';
 CustomResourceDefinitionsPage.displayName = 'CustomResourceDefinitionsPage';
 
-export type CRDVersionProps = {
+type CRDVersionProps = {
   versions: CRDVersion[];
 };

@@ -16,7 +16,7 @@ export const isUnschedulableActive: IsNodeStatusActive<NodeStatusResources> = (n
 export const MarkAsSchedulablePopover: FC<NodePopoverContentProps<NodeStatusResources>> = ({
   node,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const launchModal = useOverlay();
   const [isExpanded, setExpanded] = useState(true);
 
@@ -25,7 +25,7 @@ export const MarkAsSchedulablePopover: FC<NodePopoverContentProps<NodeStatusReso
       await makeNodeSchedulable(node);
     } catch (err) {
       launchModal(ErrorModal, {
-        error: err.message || t('console-app~An error occurred. Please try again'),
+        error: err.message || t('An error occurred. Please try again'),
       });
     }
   };
@@ -36,7 +36,7 @@ export const MarkAsSchedulablePopover: FC<NodePopoverContentProps<NodeStatusReso
       onToggle={(_, expanded) => setExpanded(expanded)}
       toggleContent={
         <StatusIconAndText
-          title={t('console-app~Scheduling disabled')}
+          title={t('Scheduling disabled')}
           icon={<YellowExclamationTriangleIcon />}
         />
       }
@@ -44,12 +44,12 @@ export const MarkAsSchedulablePopover: FC<NodePopoverContentProps<NodeStatusReso
       <Stack hasGutter>
         <StackItem>
           {t(
-            "console-app~No new Pods or workloads will be placed on this Node until it's marked as schedulable.",
+            "No new Pods or workloads will be placed on this Node until it's marked as schedulable.",
           )}
         </StackItem>
         <StackItem>
           <Button isInline variant="link" onClick={onClickMarkAsSchedulable}>
-            {t('console-app~Mark as schedulable')}
+            {t('Mark as schedulable')}
           </Button>
         </StackItem>
       </Stack>

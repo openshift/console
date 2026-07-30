@@ -13,13 +13,13 @@ import { StatusBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import type { K8sResourceKindReference } from '@console/internal/module/k8s';
 import { kindForReference, modelFor, referenceFor } from '@console/internal/module/k8s';
-import { isCatalogTypeEnabled } from '@console/shared';
+import { isCatalogTypeEnabled } from '@console/shared/src/components/catalog/utils/catalog-utils';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useQueryParams } from '@console/shared/src/hooks/useQueryParams';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
-import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../../models';
+import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../../models/helm';
 import type { HelmChartRepositoryData, HelmChartRepositoryType } from '../../../types/helm-types';
 import CreateHelmChartRepositoryForm from './CreateHelmChartRepositoryForm';
 import {
@@ -43,7 +43,7 @@ const CreateHelmChartRepository: FC<CreateHelmChartRepositoryProps> = ({
   const resourceKind: K8sResourceKindReference = queryParams.get('kind');
   const isEditForm = !!existingRepoName;
   const actionOrigin = queryParams.get('actionOrigin');
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   const [namespace] = useActiveNamespace();
   const fireTelemetryEvent = useTelemetry();
   const isHelmEnabled = isCatalogTypeEnabled(HELM_CHART_CATALOG_TYPE_ID);
@@ -91,7 +91,7 @@ const CreateHelmChartRepository: FC<CreateHelmChartRepositoryProps> = ({
 
     if (values.editorType === EditorType.YAML) {
       try {
-        HelmChartRepositoryRes = safeLoad(values.yamlData);
+        HelmChartRepositoryRes = safeLoad(values.yamlData) as HelmChartRepositoryType;
         if (
           HelmChartRepositoryRes &&
           HelmChartRepositoryRes.kind === 'ProjectHelmChartRepository' &&
@@ -102,7 +102,7 @@ const CreateHelmChartRepository: FC<CreateHelmChartRepositoryProps> = ({
       } catch (err) {
         actions.setStatus({
           submitSuccess: '',
-          submitError: t('helm-plugin~Invalid YAML - {{err}}', { err }),
+          submitError: t('Invalid YAML - {{err}}', { err }),
         });
         return null;
       }
@@ -144,7 +144,7 @@ const CreateHelmChartRepository: FC<CreateHelmChartRepositoryProps> = ({
         });
         actions.setStatus({
           submitError: '',
-          submitSuccess: t('helm-plugin~{{hcr}} has been created', {
+          submitSuccess: t('{{hcr}} has been created', {
             hcr: HelmChartRepositoryRes.kind,
           }),
         });
@@ -153,7 +153,7 @@ const CreateHelmChartRepository: FC<CreateHelmChartRepositoryProps> = ({
       .catch((err) => {
         actions.setStatus({
           submitSuccess: '',
-          submitError: err?.message || t('helm-plugin~Unknown error submitting'),
+          submitError: err?.message || t('Unknown error submitting'),
         });
       });
   };

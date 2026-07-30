@@ -1,9 +1,9 @@
 import type { ComponentType, FC } from 'react';
 import { useEffect, useContext, useMemo } from 'react';
-import { Map as ImmutableMap } from 'immutable';
-import { useTranslation } from 'react-i18next';
 import { Stack, StackItem } from '@patternfly/react-core';
-import {
+import type { Map as ImmutableMap } from 'immutable';
+import { useTranslation } from 'react-i18next';
+import type {
   ResolvedExtension,
   DashboardsOverviewHealthOperator,
   DashboardsOverviewHealthURLSubsystem,
@@ -25,15 +25,16 @@ import {
   HealthState,
   healthStateMessage,
 } from '@console/shared/src/components/dashboard/status-card/states';
-import { useDynamicK8sWatchResources } from '@console/shared/src/hooks/useDynamicK8sWatchResources';
 import { useDashboardResources } from '@console/shared/src/hooks/useDashboardResources';
-import { K8sKind } from '../../../../module/k8s';
-import { AsyncComponent, LazyLoader } from '../../../utils/async';
-import { resourcePath } from '../../../utils/resource-link';
-import { useK8sWatchResource, useK8sWatchResources } from '../../../utils/k8s-watch-hook';
-import { uniqueResource } from './utils';
+import { useDynamicK8sWatchResources } from '@console/shared/src/hooks/useDynamicK8sWatchResources';
 import { getPrometheusQueryResponse } from '../../../../actions/dashboards';
+import type { K8sKind } from '../../../../module/k8s';
+import type { LazyLoader } from '../../../utils/async';
+import { AsyncComponent } from '../../../utils/async';
+import { useK8sWatchResource, useK8sWatchResources } from '../../../utils/k8s-watch-hook';
+import { resourcePath } from '../../../utils/resource-link';
 import { ClusterDashboardContext } from './context';
+import { uniqueResource } from './utils';
 
 const OperatorRow: FC<
   OperatorRowProps & {
@@ -56,8 +57,8 @@ const OperatorRow: FC<
   );
 };
 
-export const OperatorsPopup: FC<OperatorsPopupProps> = ({ resources, operatorSubsystems }) => {
-  const { t } = useTranslation();
+const OperatorsPopup: FC<OperatorsPopupProps> = ({ resources, operatorSubsystems }) => {
+  const { t } = useTranslation('public');
   const sections = [
     ...operatorSubsystems.map((o, index) => {
       const operatorResources = o.resources.reduce((acc, r) => {
@@ -82,9 +83,7 @@ export const OperatorsPopup: FC<OperatorsPopupProps> = ({ resources, operatorSub
   return (
     <Stack hasGutter>
       <StackItem>
-        {t(
-          'public~Operators create, configure, and manage applications by extending the Kubernetes API.',
-        )}
+        {t('Operators create, configure, and manage applications by extending the Kubernetes API.')}
       </StackItem>
       {sections}
     </Stack>
@@ -92,7 +91,7 @@ export const OperatorsPopup: FC<OperatorsPopupProps> = ({ resources, operatorSub
 };
 
 export const OperatorHealthItem: FC<OperatorHealthItemProps> = ({ operatorSubsystems }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { watchResource, stopWatchResource, results: resources } = useDynamicK8sWatchResources();
 
   useEffect(() => {
@@ -139,10 +138,10 @@ export const OperatorHealthItem: FC<OperatorHealthItemProps> = ({ operatorSubsys
 
   return (
     <HealthItem
-      title={t('public~Operators')}
+      title={t('Operators')}
       state={operatorsHealth.health}
       details={operatorsHealth.detailMessage}
-      popupTitle={t('public~Operator status')}
+      popupTitle={t('Operator status')}
     >
       <OperatorsPopup resources={resources} operatorSubsystems={operatorSubsystems} />
     </HealthItem>
@@ -150,7 +149,7 @@ export const OperatorHealthItem: FC<OperatorHealthItemProps> = ({ operatorSubsys
 };
 
 export const URLHealthItem: FC<URLHealthItemProps> = ({ subsystem, models }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const urls = useMemo(() => [{ url: subsystem.url, fetch: subsystem.fetch }], [
     subsystem.url,
@@ -196,7 +195,7 @@ export const URLHealthItem: FC<URLHealthItemProps> = ({ subsystem, models }) => 
 };
 
 export const PrometheusHealthItem: FC<PrometheusHealthItemProps> = ({ subsystem, models }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { infrastructure } = useContext(ClusterDashboardContext);
 
   const prometheusQueries = useMemo(() => subsystem.queries.map((query) => ({ query })), [
@@ -254,7 +253,7 @@ export const PrometheusHealthItem: FC<PrometheusHealthItemProps> = ({ subsystem,
 };
 
 export const ResourceHealthItem: FC<ResourceHealthItemProps> = ({ subsystem, namespace }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const { title, resources, healthHandler, popupComponent: PopupComponent, popupTitle } = subsystem;
 

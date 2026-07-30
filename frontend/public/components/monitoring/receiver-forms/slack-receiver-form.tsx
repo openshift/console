@@ -1,7 +1,5 @@
 /* eslint-disable camelcase */
-import * as _ from 'lodash';
 import type { FC } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
 import {
   Checkbox,
   FormGroup,
@@ -14,12 +12,13 @@ import {
   TextArea,
   TextInput,
 } from '@patternfly/react-core';
-
+import * as _ from 'lodash';
+import { Trans, useTranslation } from 'react-i18next';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
-import { SendResolvedAlertsCheckbox } from './send-resolved-alerts-checkbox';
-import { SaveAsDefaultCheckbox } from './save-as-default-checkbox';
-import { FormProps } from './receiver-form-props';
 import { AdvancedConfiguration } from './advanced-configuration';
+import type { FormProps, SubFormModule } from './receiver-form-props';
+import { SaveAsDefaultCheckbox } from './save-as-default-checkbox';
+import { SendResolvedAlertsCheckbox } from './send-resolved-alerts-checkbox';
 
 const GLOBAL_FIELDS = [
   'slack_api_url',
@@ -32,13 +31,13 @@ const GLOBAL_FIELDS = [
   'slack_text',
 ];
 
-export const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
-  const { t } = useTranslation();
+const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
+  const { t } = useTranslation('public');
   return (
     <>
       <Grid hasGutter>
         <GridItem span={7}>
-          <FormGroup label={t('public~Slack API URL')} fieldId="slack-api-url" isRequired>
+          <FormGroup label={t('Slack API URL')} fieldId="slack-api-url" isRequired>
             <TextInput
               id="slack-api-url"
               type="text"
@@ -55,7 +54,7 @@ export const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange })
             <FormHelperText>
               <HelperText>
                 <HelperTextItem id="slack-api-url-help">
-                  {t('public~The URL of the Slack webhook.')}
+                  {t('The URL of the Slack webhook.')}
                 </HelperTextItem>
               </HelperText>
             </FormHelperText>
@@ -66,16 +65,16 @@ export const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange })
           <SaveAsDefaultCheckbox
             formField="slackSaveAsDefault"
             disabled={formValues.slack_api_url === globals?.slack_api_url}
-            label={t('public~Save as default Slack API URL')}
+            label={t('Save as default Slack API URL')}
             formValues={formValues}
             dispatchFormChange={dispatchFormChange}
             tooltip={t(
-              'public~Checking this box will write the API URL to the global section of the configuration file where it will become the default API URL for future Slack receivers.',
+              'Checking this box will write the API URL to the global section of the configuration file where it will become the default API URL for future Slack receivers.',
             )}
           />
         </GridItem>
       </Grid>
-      <FormGroup label={t('public~Channel')} fieldId="slack-channel" isRequired>
+      <FormGroup label={t('Channel')} fieldId="slack-channel" isRequired>
         <TextInput
           id="slack-channel"
           type="text"
@@ -92,7 +91,7 @@ export const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange })
         <FormHelperText>
           <HelperText>
             <HelperTextItem id="slack-channel-help">
-              {t('public~The Slack channel or user to send notifications to.')}
+              {t('The Slack channel or user to send notifications to.')}
             </HelperTextItem>
           </HelperText>
         </FormHelperText>
@@ -106,14 +105,14 @@ export const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange })
         <FormGroup
           role="radiogroup"
           fieldId="slack-icon-type-group"
-          label={t('public~Icon')}
+          label={t('Icon')}
           isInline
           className="pf-v6-c-form__group-control--no-row-gap"
         >
           <Radio
             id="slack-icon-type"
             name="slackIconType"
-            label={t('public~URL')}
+            label={t('URL')}
             value="url"
             onChange={(e) =>
               dispatchFormChange({
@@ -128,7 +127,7 @@ export const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange })
           <Radio
             id="slack-icon-type-emoji"
             name="slackIconType"
-            label={t('public~Emoji')}
+            label={t('Emoji')}
             value="emoji"
             onChange={(e) =>
               dispatchFormChange({
@@ -158,7 +157,7 @@ export const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange })
               <FormHelperText>
                 <HelperText>
                   <HelperTextItem id="slack-icon-url-help">
-                    {t('public~The URL of the icon.')}
+                    {t('The URL of the icon.')}
                   </HelperTextItem>
                 </HelperText>
               </FormHelperText>
@@ -186,7 +185,7 @@ export const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange })
                       An{' '}
                       <ExternalLink
                         href="https://www.webfx.com/tools/emoji-cheat-sheet/"
-                        text={t('public~emoji code')}
+                        text={t('emoji code')}
                       />{' '}
                       to use in place of the default icon.
                     </Trans>
@@ -196,7 +195,7 @@ export const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange })
             </>
           )}
         </FormGroup>
-        <FormGroup label={t('public~Username')} fieldId="slack-username" isRequired>
+        <FormGroup label={t('Username')} fieldId="slack-username" isRequired>
           <TextInput
             id="slack-username"
             type="text"
@@ -210,14 +209,14 @@ export const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange })
           <FormHelperText>
             <HelperText>
               <HelperTextItem id="slack-username-help">
-                {t('public~The displayed username.')}
+                {t('The displayed username.')}
               </HelperTextItem>
             </HelperText>
           </FormHelperText>
         </FormGroup>
         <FormGroup>
           <Checkbox
-            label={t('public~Link names')}
+            label={t('Link names')}
             onChange={(_event, checked) =>
               dispatchFormChange({
                 type: 'setFormValues',
@@ -232,12 +231,12 @@ export const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange })
           <FormHelperText>
             <HelperText>
               <HelperTextItem id="slack-link-names-help">
-                {t('public~Find and link channel names and usernames.')}
+                {t('Find and link channel names and usernames.')}
               </HelperTextItem>
             </HelperText>
           </FormHelperText>
         </FormGroup>
-        <FormGroup label={t('public~Title')} fieldId="slack-title">
+        <FormGroup label={t('Title')} fieldId="slack-title">
           <TextArea
             id="slack-title"
             data-test="slack-title"
@@ -252,13 +251,11 @@ export const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange })
           />
           <FormHelperText>
             <HelperText>
-              <HelperTextItem id="slack-title-help">
-                {t('public~Slack message title')}
-              </HelperTextItem>
+              <HelperTextItem id="slack-title-help">{t('Slack message title')}</HelperTextItem>
             </HelperText>
           </FormHelperText>
         </FormGroup>
-        <FormGroup label={t('public~Text')} fieldId="slack-text">
+        <FormGroup label={t('Text')} fieldId="slack-text">
           <TextArea
             id="slack-text"
             data-test="slack-text"
@@ -270,7 +267,7 @@ export const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange })
           />
           <FormHelperText>
             <HelperText>
-              <HelperTextItem id="slack-text-help">{t('public~Slack message text')}</HelperTextItem>
+              <HelperTextItem id="slack-text-help">{t('Slack message text')}</HelperTextItem>
             </HelperText>
           </FormHelperText>
         </FormGroup>
@@ -279,7 +276,7 @@ export const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange })
   );
 };
 
-export const getInitialValues = (globals, receiverConfig) => {
+const getInitialValues = (globals, receiverConfig) => {
   const initValues: any = {
     slackSaveAsDefault: false,
     slackChannel: _.get(receiverConfig, 'channel'),
@@ -288,18 +285,18 @@ export const getInitialValues = (globals, receiverConfig) => {
   initValues.slackIconType = _.has(receiverConfig, 'icon_emoji') ? 'emoji' : 'url';
 
   GLOBAL_FIELDS.forEach((fld) => {
-    const configFieldName = fld.substring(fld.indexOf('_') + 1); //strip off leading 'slack_' prefix
+    const configFieldName = fld.substring(fld.indexOf('_') + 1); // strip off leading 'slack_' prefix
     initValues[fld] = _.get(receiverConfig, configFieldName, globals[fld]);
   });
 
   return initValues;
 };
 
-export const isFormInvalid = (formValues): boolean => {
+const isFormInvalid = (formValues): boolean => {
   return !formValues.slack_api_url || !formValues.slackChannel;
 };
 
-export const updateGlobals = (globals, formValues) => {
+const updateGlobals = (globals, formValues) => {
   const updatedGlobals = {};
   if (formValues.slackSaveAsDefault && formValues.slack_api_url) {
     _.set(updatedGlobals, 'slack_api_url', formValues.slack_api_url);
@@ -307,13 +304,13 @@ export const updateGlobals = (globals, formValues) => {
   return updatedGlobals;
 };
 
-export const createReceiverConfig = (globals, formValues, receiverConfig) => {
+const createReceiverConfig = (globals, formValues, receiverConfig) => {
   _.set(receiverConfig, 'channel', formValues.slackChannel);
 
   // Only save these props in receiverConfig if different from global
   GLOBAL_FIELDS.forEach((fld) => {
     const formValue = formValues[fld];
-    const configFieldName = fld.substring(fld.indexOf('_') + 1); //strip off leading 'slack_' prefix
+    const configFieldName = fld.substring(fld.indexOf('_') + 1); // strip off leading 'slack_' prefix
     if (formValue !== globals[fld]) {
       if (fld === 'slack_api_url' && formValues.slackSaveAsDefault) {
         _.unset(receiverConfig, 'api_url'); // saving as global so unset in config
@@ -328,4 +325,12 @@ export const createReceiverConfig = (globals, formValues, receiverConfig) => {
   _.unset(receiverConfig, formValues.slackIconType === 'url' ? 'icon_emoji' : 'icon_url');
 
   return receiverConfig;
+};
+
+export const SlackForm: SubFormModule = {
+  Form,
+  getInitialValues,
+  isFormInvalid,
+  updateGlobals,
+  createReceiverConfig,
 };

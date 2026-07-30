@@ -6,7 +6,7 @@ import { useK8sWatchResources } from '@console/internal/components/utils/k8s-wat
 import { PersistentVolumeClaimModel } from '@console/internal/models';
 import type { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { ResourceDropdownField } from '@console/shared';
+import { ResourceDropdownField } from '@console/shared/src/components/formik-fields/ResourceDropdownField';
 
 interface PVCDropdownProps {
   name: string;
@@ -14,7 +14,7 @@ interface PVCDropdownProps {
 }
 
 const PVCDropdown: FC<PVCDropdownProps> = ({ name, namespace }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('shipwright-plugin');
   const autocompleteFilter = (strText, item): boolean => fuzzy(strText, item?.props?.name);
 
   const watchedResources = useK8sWatchResources<{ pvcs: PersistentVolumeClaimKind[] }>({
@@ -43,7 +43,7 @@ const PVCDropdown: FC<PVCDropdownProps> = ({ name, namespace }) => {
       name={name}
       resources={resources}
       dataSelector={['metadata', 'name']}
-      placeholder={t('shipwright-plugin~Select a PVC')}
+      placeholder={t('Select a PVC')}
       autocompleteFilter={autocompleteFilter}
       fullWidth
       showBadge

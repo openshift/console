@@ -1,31 +1,16 @@
-import type { FC } from 'react';
-import {
-  MouseEventHandler,
-  ReactNode,
-  Ref,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
-import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
-import { Base64 } from 'js-base64';
-import * as _ from 'lodash';
-import { Trans, useTranslation } from 'react-i18next';
-import { detect } from 'chardet';
+import type { FC, MouseEventHandler, ReactNode, Ref } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import type { BannerStatus, MenuToggleElement } from '@patternfly/react-core';
 import {
   Alert,
   AlertActionCloseButton,
   AlertActionLink,
   AlertGroup,
   Banner,
-  BannerStatus,
   Button,
   Content,
   Flex,
   MenuToggle,
-  MenuToggleElement,
   Select,
   SelectList,
   SelectOption,
@@ -36,45 +21,50 @@ import {
   ToolbarToggleGroup,
   Tooltip,
 } from '@patternfly/react-core';
-import { LogViewer, LogViewerSearch } from '@patternfly/react-log-viewer';
 import {
-  BugIcon,
-  CompressIcon,
-  DownloadIcon,
-  ExpandIcon,
-  OutlinedPlayCircleIcon,
-  SearchIcon,
+  RhUiBugIcon,
+  RhUiCompressIcon,
+  RhUiDownloadIcon,
+  RhUiExpandIcon,
+  RhUiPlayCircleIcon,
+  RhUiSearchIcon,
 } from '@patternfly/react-icons';
+import { LogViewer, LogViewerSearch } from '@patternfly/react-log-viewer';
 import { css } from '@patternfly/react-styles';
+import { detect } from 'chardet';
+import { Base64 } from 'js-base64';
+import * as _ from 'lodash';
+import { Trans, useTranslation } from 'react-i18next';
+import { getImpersonate } from '@console/dynamic-plugin-sdk';
+import { useTheme } from '@console/internal/components/ThemeProvider';
+import { ConsoleExternalLogLinkModel, ProjectModel } from '@console/internal/models';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { ExternalLinkButton } from '@console/shared/src/components/links/ExternalLinkButton';
+import { LinkTo } from '@console/shared/src/components/links/LinkTo';
+import { Loading } from '@console/shared/src/components/loading/Loading';
+import { FetchProgressModal } from '@console/shared/src/components/modals/FetchProgressModal';
 import {
   FLAGS,
   LOG_WRAP_LINES_USER_PREFERENCE_KEY,
   SHOW_FULL_LOG_USER_PREFERENCE_KEY,
-} from '@console/shared/src/constants';
-import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
-import { useTheme } from '@console/internal/components/ThemeProvider';
-import { Loading } from '@console/shared/src/components/loading/Loading';
-import { FetchProgressModal } from '@console/shared/src/components/modals/FetchProgressModal';
-import { TogglePlay } from './toggle-play';
-import { ExternalLinkButton } from '@console/shared/src/components/links/ExternalLinkButton';
-import { LinkTo } from '@console/shared/src/components/links/LinkTo';
-import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
-import { modelFor, resourceURL } from '../../module/k8s';
-import { WSFactory } from '../../module/ws-factory';
-import { useFullscreen } from '@console/shared/src/hooks/useFullscreen';
-import { k8sGet, k8sList, K8sResourceKind, PodKind } from '@console/internal/module/k8s';
-import { ConsoleExternalLogLinkModel, ProjectModel } from '@console/internal/models';
+} from '@console/shared/src/constants/common';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
+import { useFullscreen } from '@console/shared/src/hooks/useFullscreen';
 import { usePrevious } from '@console/shared/src/hooks/usePrevious';
-import { resourcePath } from './resource-link';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
+import type { K8sResourceKind, PodKind } from '../../module/k8s';
+import { modelFor, resourceURL, k8sGet, k8sList } from '../../module/k8s';
 import { isWindowsPod } from '../../module/k8s/pods';
-import { getImpersonate } from '@console/dynamic-plugin-sdk';
+import { WSFactory } from '../../module/ws-factory';
+import { resourcePath } from './resource-link';
+import { TogglePlay } from './toggle-play';
 import useToggleLineBuffer from './useToggleLineBuffer';
 
-export const STREAM_EOF = 'eof';
-export const STREAM_LOADING = 'loading';
-export const STREAM_PAUSED = 'paused';
-export const STREAM_ACTIVE = 'streaming';
+const STREAM_EOF = 'eof';
+const STREAM_LOADING = 'loading';
+const STREAM_PAUSED = 'paused';
+const STREAM_ACTIVE = 'streaming';
 
 export const LOG_SOURCE_RESTARTING = 'restarting';
 export const LOG_SOURCE_RUNNING = 'running';
@@ -162,7 +152,7 @@ const FooterButton = ({ setStatus, linesBehind, className }) => {
     setStatus(STREAM_ACTIVE);
   };
   return (
-    <Button icon={<OutlinedPlayCircleIcon />} className={className} onClick={handleClick} isBlock>
+    <Button icon={<RhUiPlayCircleIcon />} className={className} onClick={handleClick} isBlock>
       &nbsp;{resumeText}
     </Button>
   );
@@ -216,7 +206,7 @@ const LogControls: FC<LogControlsProps> = ({
 
   const toolbarId = `resource-log-toolbar-${resource?.metadata?.name || 'unknown'}`;
 
-  const logTypes: Array<LogType> = [
+  const logTypes: LogType[] = [
     { type: LOG_TYPE_CURRENT, text: t('Current log') },
     { type: LOG_TYPE_PREVIOUS, text: t('Previous log') },
   ];
@@ -296,8 +286,8 @@ const LogControls: FC<LogControlsProps> = ({
 
   const renderPodLogLinks = () =>
     _.map(_.sortBy(podLogLinks, 'metadata.name'), (link) => {
-      const namespace = resource.metadata.namespace;
-      const namespaceFilter = link.spec.namespaceFilter;
+      const { namespace } = resource.metadata;
+      const { namespaceFilter } = link.spec;
       if (namespaceFilter) {
         try {
           const namespaceRegExp = new RegExp(namespaceFilter, 'g');
@@ -370,6 +360,7 @@ const LogControls: FC<LogControlsProps> = ({
             isSelected={isShowFullLog}
             hasCheckbox
             data-test-dropdown-menu="show-full-log"
+            data-test="show-full-log"
           >
             {t('Show full log')}
           </SelectOption>
@@ -380,6 +371,7 @@ const LogControls: FC<LogControlsProps> = ({
           isSelected={isWrapLines}
           hasCheckbox
           data-test-dropdown-menu="wrap-lines"
+          data-test="wrap-lines"
         >
           {t('Wrap lines')}
         </SelectOption>
@@ -391,7 +383,12 @@ const LogControls: FC<LogControlsProps> = ({
     showDebugAction(resource, containerName) &&
     (isWindowsPod(resource) ? (
       <Tooltip content={t('Debug in terminal is not currently available for Windows containers.')}>
-        <Button variant="control" isDisabled icon={<BugIcon />} aria-label={t('Debug container')} />
+        <Button
+          variant="control"
+          isDisabled
+          icon={<RhUiBugIcon />}
+          aria-label={t('Debug container')}
+        />
       </Tooltip>
     ) : (
       <Tooltip content={t('Debug container')}>
@@ -404,7 +401,7 @@ const LogControls: FC<LogControlsProps> = ({
               resource.metadata.namespace,
             )}/containers/${containerName}/debug`,
           )}
-          icon={<BugIcon />}
+          icon={<RhUiBugIcon />}
           aria-label={t('Debug container')}
           data-test="debug-container-link"
         />
@@ -428,7 +425,7 @@ const LogControls: FC<LogControlsProps> = ({
           <ToolbarGroup align={{ default: 'alignEnd' }}>
             {!_.isEmpty(podLogLinks) && renderPodLogLinks()}
             <ToolbarGroup>
-              <ToolbarToggleGroup toggleIcon={<SearchIcon />} breakpoint="lg">
+              <ToolbarToggleGroup toggleIcon={<RhUiSearchIcon />} breakpoint="lg">
                 <ToolbarItem>
                   <LogViewerSearch
                     onFocus={() => {
@@ -456,7 +453,7 @@ const LogControls: FC<LogControlsProps> = ({
                     variant="plain"
                     href={currentLogURL}
                     download={getLogDownloadFilename(resource, containerName)}
-                    icon={<DownloadIcon />}
+                    icon={<RhUiDownloadIcon />}
                   />
                 </Tooltip>
               </ToolbarItem>
@@ -466,7 +463,7 @@ const LogControls: FC<LogControlsProps> = ({
                     <Button
                       variant="plain"
                       onClick={toggleFullscreen}
-                      icon={isFullscreen ? <CompressIcon /> : <ExpandIcon />}
+                      icon={isFullscreen ? <RhUiCompressIcon /> : <RhUiExpandIcon />}
                     />
                   </Tooltip>
                 </ToolbarItem>
@@ -594,7 +591,7 @@ export const ResourceLog: FC<ResourceLogProps> = ({
     }
   }, [resource.kind, containerName]);
 
-  //Check to see if previous log exists
+  // Check to see if previous log exists
   useEffect(() => {
     if (resource.kind === 'Pod') {
       const container = resource.status?.containerStatuses?.find(
@@ -679,10 +676,10 @@ export const ResourceLog: FC<ResourceLogProps> = ({
         k8sList(ConsoleExternalLogLinkModel),
         k8sGet(ProjectModel, resource.metadata.namespace),
       ])
-        .then(([podLogLinks_, project]) => {
+        .then(([fetchedPodLogLinks, project]) => {
           // Project UID and namespace UID are the same value. Use the projects
           // API since normal OpenShift users can list projects.
-          setPodLogLinks(podLogLinks_);
+          setPodLogLinks(fetchedPodLogLinks);
           setNamespaceUID(project.metadata.uid);
         })
         .catch((e) => setError(e));

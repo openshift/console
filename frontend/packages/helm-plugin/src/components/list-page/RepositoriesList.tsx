@@ -5,12 +5,12 @@ import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDa
 import type { TableProps } from '@console/internal/components/factory';
 import { LoadingBox } from '@console/internal/components/utils';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { HelmRepositoriesCombinedListModel } from '../../models';
+import { HelmRepositoriesCombinedListModel } from '../../models/helm';
 import { useRepositoriesColumns } from './RepositoriesHeader';
 import { getDataViewRows } from './RepositoriesRow';
 
 const RepositoriesList: FC<TableProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   const { columns, resetAllColumnWidths } = useRepositoriesColumns(
     HelmRepositoriesCombinedListModel,
   );
@@ -21,7 +21,7 @@ const RepositoriesList: FC<TableProps> = (props) => {
         {...props}
         data={props.data}
         loaded={props.loaded}
-        label={t('helm-plugin~HelmChartRepositories')}
+        label={t('HelmChartRepositories')}
         columns={columns}
         getDataViewRows={getDataViewRows}
         hideColumnManagement

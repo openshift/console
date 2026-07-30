@@ -1,4 +1,4 @@
-import { NodeKind } from '@console/internal/module/k8s';
+import type { NodeKind } from '@console/internal/module/k8s';
 
 export const cloudProviderID = (node: NodeKind): string => {
   return node.spec.providerID ? node.spec.providerID.split('://')[0] : '';

@@ -1,7 +1,11 @@
 import type { FC } from 'react';
 import { List, ListItem } from '@patternfly/react-core';
 
-const PlainList: FC<PlainListProps> = ({ items }) =>
+type PlainListProps = {
+  items: string[];
+};
+
+export const PlainList: FC<PlainListProps> = ({ items }) =>
   items ? (
     <List isPlain>
       {items.map((i) => (
@@ -9,9 +13,3 @@ const PlainList: FC<PlainListProps> = ({ items }) =>
       ))}
     </List>
   ) : null;
-
-type PlainListProps = {
-  items: string[];
-};
-
-export default PlainList;

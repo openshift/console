@@ -18,18 +18,17 @@ import {
   ModalVariant,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { ColumnLayout, ManagedColumn } from '@console/dynamic-plugin-sdk';
-
+import type { ColumnLayout, ManagedColumn } from '@console/dynamic-plugin-sdk';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import { COLUMN_MANAGEMENT_USER_PREFERENCE_KEY } from '@console/shared/src/constants/common';
 import type { WithUserPreferenceProps } from '@console/shared/src/hoc/withUserPreference';
 import { withUserPreference } from '@console/shared/src/hoc/withUserPreference';
-import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import type { ModalComponentProps } from '@console/shared/src/types/modal';
 
-export const MAX_VIEW_COLS = 9;
+const MAX_VIEW_COLS = 9;
 
-export const NAME_COLUMN_ID = 'name';
+const NAME_COLUMN_ID = 'name';
 const readOnlyColumns = new Set([NAME_COLUMN_ID]);
 
 const DataListRow: FC<DataListRowProps> = ({
@@ -69,14 +68,14 @@ const DataListRow: FC<DataListRowProps> = ({
 );
 
 const NamespaceColumnHelpText: FC = () => {
-  const { t } = useTranslation();
-  return <>{t('public~The namespace column is only shown when in "All projects"')}</>;
+  const { t } = useTranslation('public');
+  return <>{t('The namespace column is only shown when in "All projects"')}</>;
 };
 
 export const ColumnManagementModal: FC<
   ColumnManagementModalProps & WithUserPreferenceProps<object>
 > = ({ cancel, close, columnLayout, setUserSettingState: setTableColumns, noLimit }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const defaultColumns = columnLayout.columns.filter((column) => column.id && !column.additional);
   const additionalColumns = columnLayout.columns.filter((column) => column.additional);
 
@@ -120,7 +119,7 @@ export const ColumnManagementModal: FC<
   return (
     <>
       <ModalHeader
-        title={t('public~Manage columns')}
+        title={t('Manage columns')}
         data-test-id="modal-title"
         labelId="column-management-modal-title"
       />
@@ -128,27 +127,27 @@ export const ColumnManagementModal: FC<
         <Form id="column-management-form" onSubmit={submit}>
           {!noLimit ? (
             <>
-              <p>{t('public~Selected columns will appear in the table.')}</p>
+              <p>{t('Selected columns will appear in the table.')}</p>
               <Alert
                 isInline
-                title={t('public~You can select up to {{MAX_VIEW_COLS}} columns', {
+                title={t('You can select up to {{MAX_VIEW_COLS}} columns', {
                   MAX_VIEW_COLS,
                 })}
                 variant="info"
               >
-                {columnLayout?.showNamespaceOverride && <NamespaceColumnHelpText />}
+                {!columnLayout?.showNamespaceOverride && <NamespaceColumnHelpText />}
               </Alert>
             </>
           ) : (
-            columnLayout?.showNamespaceOverride && <NamespaceColumnHelpText />
+            !columnLayout?.showNamespaceOverride && <NamespaceColumnHelpText />
           )}
           <Grid hasGutter>
             <GridItem sm={6}>
               <label>
-                {t('public~Default {{resourceKind}} columns', { resourceKind: columnLayout.type })}
+                {t('Default {{resourceKind}} columns', { resourceKind: columnLayout.type })}
               </label>
               <DataList
-                aria-label={t('public~Default column list')}
+                aria-label={t('Default column list')}
                 id="default-column-management"
                 isCompact
               >
@@ -164,9 +163,9 @@ export const ColumnManagementModal: FC<
               </DataList>
             </GridItem>
             <GridItem sm={6}>
-              <label>{t('public~Additional columns')}</label>
+              <label>{t('Additional columns')}</label>
               <DataList
-                aria-label={t('public~Additional column list')}
+                aria-label={t('Additional column list')}
                 id="additional-column-management"
                 isCompact
               >
@@ -192,13 +191,19 @@ export const ColumnManagementModal: FC<
           data-test="confirm-action"
           id="confirm-action"
         >
-          {t('public~Save')}
+          {t('Save')}
         </Button>
-        <Button variant="link" onClick={cancel} type="button" data-test-id="modal-cancel-action">
-          {t('public~Cancel')}
+        <Button
+          variant="link"
+          onClick={cancel}
+          type="button"
+          data-test="modal-cancel-action"
+          data-test-id="modal-cancel-action"
+        >
+          {t('Cancel')}
         </Button>
         <Button variant="link" onClick={resetColumns} type="button">
-          {t('public~Restore default columns')}
+          {t('Restore default columns')}
         </Button>
       </ModalFooterWithAlerts>
     </>

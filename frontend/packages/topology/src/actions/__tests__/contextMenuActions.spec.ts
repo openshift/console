@@ -1,5 +1,5 @@
 import { referenceFor } from '@console/internal/module/k8s';
-import { OdcBaseNode } from '../../elements';
+import { OdcBaseNode } from '../../elements/OdcBaseNode';
 import { TYPE_OPERATOR_BACKED_SERVICE } from '../../operators/components/const';
 import { contextMenuActions } from '../contextMenuActions';
 

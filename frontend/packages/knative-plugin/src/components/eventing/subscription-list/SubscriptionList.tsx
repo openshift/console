@@ -6,7 +6,7 @@ import getSubscriptionHeaders from './SubscriptionHeaders';
 import SubscriptionRow from './SubscriptionRow';
 
 const SubscriptionList: FC<TableProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const subscriptionData = props.customData?.channel
     ? props.data.filter((obj) => obj.spec.channel.name === props.customData.channel)
     : props.data;
@@ -14,7 +14,7 @@ const SubscriptionList: FC<TableProps> = (props) => {
   return (
     <Table
       {...props}
-      aria-label={t('knative-plugin~Subscriptions')}
+      aria-label={t('Subscriptions')}
       data={subscriptionData}
       Header={getSubscriptionHeaders(t, !props.customData?.channel)}
       Row={SubscriptionRow}

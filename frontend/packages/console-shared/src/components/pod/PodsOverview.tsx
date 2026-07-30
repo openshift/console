@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState } from 'react';
 import { Alert, AlertActionLink, Grid, GridItem, List, ListItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -13,9 +13,6 @@ import { LoadingBox } from '@console/internal/components/utils/status-box';
 import type { PodKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { podPhase, referenceFor } from '@console/internal/module/k8s';
 import type { BuildConfigData } from '@console/shared/src/hooks/useBuildConfigsWatcher';
-import { usePodsWatcher } from '@console/shared/src/hooks/usePodsWatcher';
-import { getResourcesToWatchForPods } from '@console/shared/src/utils/pod-resource-utils';
-import { getPodsForResource } from '@console/shared/src/utils/resource-utils';
 
 const kind: string = 'Pod';
 const MAX_PODS: number = 3;
@@ -74,7 +71,7 @@ const isPodWithoutImageId = (pod: PodKind) =>
   pod.status?.phase === 'Pending' &&
   pod.status?.containerStatuses?.some((containerStatus) => !containerStatus.imageID);
 
-export const podCompare = (pod1: PodKind, pod2: PodKind): number => {
+const podCompare = (pod1: PodKind, pod2: PodKind): number => {
   const error1 = isPodError(pod1);
   const error2 = isPodError(pod2);
 
@@ -106,7 +103,7 @@ const PodOverviewItem: FC<PodOverviewItemProps> = ({ pod }) => {
   const {
     metadata: { name, namespace },
   } = pod;
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   return (
     <ListItem>
       <Grid hasGutter>
@@ -120,7 +117,7 @@ const PodOverviewItem: FC<PodOverviewItemProps> = ({ pod }) => {
           <PodTraffic podName={name} namespace={namespace} tooltipFlag />
         </GridItem>
         <GridItem span={3}>
-          <Link to={`${resourcePath(kind, name, namespace)}/logs`}>{t('public~View logs')}</Link>
+          <Link to={`${resourcePath(kind, name, namespace)}/logs`}>{t('View logs')}</Link>
         </GridItem>
       </Grid>
     </ListItem>
@@ -212,7 +209,7 @@ export const PodsOverviewContent: FC<PodsOverviewContentProps> = ({
   const {
     metadata: { name, namespace },
   } = obj;
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const [showWaitingPods, setShowWaitingPods] = useState(false);
   const shipwrightBuilds = useGetShipwrightBuilds(namespace, name);
 
@@ -236,36 +233,36 @@ export const PodsOverviewContent: FC<PodsOverviewContentProps> = ({
   const errorPodCount = _.size(_.filter(pods, (pod) => isPodError(pod)));
   const podsShown = Math.max(Math.min(errorPodCount, MAX_ERROR_PODS), MAX_PODS);
   const linkTo = allPodsLink || `${resourcePath(referenceFor(obj), name, namespace)}/pods`;
-  const emptyMessage = emptyText || t('console-shared~No Pods found for this resource.');
+  const emptyMessage = emptyText || t('No Pods found for this resource.');
 
   const podAlert = showWaitingForBuildAlert ? (
     <Alert
       isInline
       variant="info"
-      title={t('public~Waiting for the build')}
+      title={t('Waiting for the build')}
       actionLinks={
         <AlertActionLink
           onClick={() => setShowWaitingPods(!showWaitingPods)}
           data-test="waiting-pods"
         >
           {showWaitingPods
-            ? t('console-shared~Hide waiting pods with errors')
-            : t('console-shared~Show waiting pods with errors')}
+            ? t('Hide waiting pods with errors')
+            : t('Show waiting pods with errors')}
         </AlertActionLink>
       }
     >
       {t(
-        'console-shared~Waiting for the first build to run successfully. You may temporarily see "ImagePullBackOff" and "ErrImagePull" errors while waiting.',
+        'Waiting for the first build to run successfully. You may temporarily see "ImagePullBackOff" and "ErrImagePull" errors while waiting.',
       )}
     </Alert>
   ) : null;
 
   return (
     <>
-      <SidebarSectionHeading text={t('public~Pods')}>
+      <SidebarSectionHeading text={t('Pods')}>
         {_.size(pods) > podsShown && (
           <Link className="sidebar__section-view-all" to={linkTo}>
-            {t('console-shared~View all {{podSize}}', { podSize: _.size(pods) })}
+            {t('View all {{podSize}}', { podSize: _.size(pods) })}
           </Link>
         )}
       </SidebarSectionHeading>
@@ -282,86 +279,6 @@ export const PodsOverviewContent: FC<PodsOverviewContentProps> = ({
 };
 PodsOverviewContent.displayName = 'PodsOverviewContent';
 
-export const PodsOverview: FC<PodsOverviewProps> = ({
-  obj,
-  podsFilter,
-  hideIfEmpty = false,
-  ...props
-}) => {
-  const {
-    metadata: { namespace },
-  } = obj;
-  const [pods, setPods] = useState<PodKind[]>([]);
-  const { podData, loadError, loaded } = usePodsWatcher(obj, obj.kind, namespace);
-
-  useEffect(() => {
-    if (!loadError && loaded) {
-      let updatedPods = podData.pods as PodKind[];
-      if (podsFilter) {
-        updatedPods = updatedPods.filter(podsFilter);
-      }
-      setPods(updatedPods);
-    }
-  }, [podData, loadError, loaded, podsFilter]);
-
-  if (!pods.length && hideIfEmpty) {
-    return null;
-  }
-
-  return (
-    <PodsOverviewContent obj={obj} pods={pods} loaded={loaded} loadError={loadError} {...props} />
-  );
-};
-
-export const PodsOverviewMultiple: FC<PodsOverviewMultipleProps> = ({
-  obj,
-  podResources,
-  podsFilter,
-  ...props
-}) => {
-  const {
-    metadata: { namespace },
-  } = obj;
-
-  const [pods, setPods] = useState<PodKind[]>([]);
-  const [loaded, setLoaded] = useState<boolean>(false);
-  const [loadError, setLoadError] = useState<string>('');
-  const watchedResources = useMemo(() => getResourcesToWatchForPods('CronJob', namespace), [
-    namespace,
-  ]);
-
-  const resources = useK8sWatchResources(watchedResources);
-
-  useEffect(() => {
-    const errorKey = Object.keys(resources).find((key) => resources[key].loadError);
-    if (errorKey) {
-      setLoadError(resources[errorKey].loadError);
-      return;
-    }
-    setLoadError('');
-    if (
-      Object.keys(resources).length > 0 &&
-      Object.keys(resources).every((key) => resources[key].loaded)
-    ) {
-      let updatedPods = podResources?.length
-        ? podResources.reduce((acc, resource) => {
-            acc.push(...getPodsForResource(resource, resources));
-            return acc;
-          }, [])
-        : [];
-      if (podsFilter) {
-        updatedPods = updatedPods.filter(podsFilter);
-      }
-      setPods(updatedPods);
-      setLoaded(true);
-    }
-  }, [podResources, podsFilter, resources]);
-
-  return (
-    <PodsOverviewContent obj={obj} pods={pods} loaded={loaded} loadError={loadError} {...props} />
-  );
-};
-
 type PodOverviewListProps = {
   pods: PodKind[];
 };
@@ -371,24 +288,6 @@ type PodsOverviewContentProps = {
   pods: PodKind[];
   loaded: boolean;
   loadError: string;
-  allPodsLink?: string;
-  emptyText?: string;
-  buildConfigData?: BuildConfigData;
-  podsFilter?: (pod: PodKind) => boolean;
-};
-
-type PodsOverviewProps = {
-  obj: K8sResourceKind;
-  allPodsLink?: string;
-  emptyText?: string;
-  buildConfigData?: BuildConfigData;
-  podsFilter?: (pod: PodKind) => boolean;
-  hideIfEmpty?: boolean;
-};
-
-type PodsOverviewMultipleProps = {
-  obj: K8sResourceKind;
-  podResources: K8sResourceKind[];
   allPodsLink?: string;
   emptyText?: string;
   buildConfigData?: BuildConfigData;

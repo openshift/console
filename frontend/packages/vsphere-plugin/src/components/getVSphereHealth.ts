@@ -7,7 +7,7 @@ import type {
   PrometheusValue,
   SubsystemHealth,
 } from '@console/dynamic-plugin-sdk';
-import type { ConfigMap } from '../resources';
+import type { ConfigMap } from '../resources/configMap';
 
 const getPrometheusMetricValue = (
   prometheusResult: PrometheusResult[],

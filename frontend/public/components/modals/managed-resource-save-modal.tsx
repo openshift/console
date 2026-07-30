@@ -1,6 +1,5 @@
 import type { FC } from 'react';
 import { useState } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
 import {
   Button,
   Content,
@@ -11,11 +10,13 @@ import {
   ModalHeader,
   ModalVariant,
 } from '@patternfly/react-core';
-import { referenceForOwnerRef, K8sResourceCommon, OwnerReference } from '../../module/k8s/';
-import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import { ModalComponentProps } from '@console/shared/src/types/modal';
-import { ResourceLink } from '../utils/resource-link';
+import { Trans, useTranslation } from 'react-i18next';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
+import type { K8sResourceCommon, OwnerReference } from '../../module/k8s';
+import { referenceForOwnerRef } from '../../module/k8s';
+import { ResourceLink } from '../utils/resource-link';
 
 const ManagedResourceSaveModal: FC<ManagedResourceSaveModalProps> = (props) => {
   const submit = (event) => {
@@ -25,11 +26,11 @@ const ManagedResourceSaveModal: FC<ManagedResourceSaveModalProps> = (props) => {
   };
 
   const { owner, resource } = props;
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <>
       <ModalHeader
-        title={t('public~Managed resource')}
+        title={t('Managed resource')}
         titleIconVariant="warning"
         labelId="managed-resource-save-modal-title"
       />
@@ -58,10 +59,15 @@ const ManagedResourceSaveModal: FC<ManagedResourceSaveModalProps> = (props) => {
           data-test="confirm-action"
           form="managed-resource-save-form"
         >
-          {t('public~Save')}
+          {t('Save')}
         </Button>
-        <Button variant="link" onClick={props.close} data-test-id="modal-cancel-action">
-          {t('public~Cancel')}
+        <Button
+          variant="link"
+          onClick={props.close}
+          data-test="modal-cancel-action"
+          data-test-id="modal-cancel-action"
+        >
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </>

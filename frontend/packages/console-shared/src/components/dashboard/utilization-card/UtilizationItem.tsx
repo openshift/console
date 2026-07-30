@@ -16,7 +16,7 @@ import {
 import { mapLimitsRequests } from '@console/internal/components/graphs/utils';
 import type { ByteDataTypes } from '../../../graph-helper/data-utils';
 import { useUtilizationDuration } from '../../../hooks/useUtilizationDuration';
-import { YellowExclamationTriangleIcon, RedExclamationCircleIcon } from '../../status';
+import { YellowExclamationTriangleIcon, RedExclamationCircleIcon } from '../../status/icons';
 
 const lastTimeInSeries = (series: DataPoint[]) => new Date(_.last(series)?.x ?? 0).getTime();
 const getMaxDate = (data: DataPoint[][]) =>
@@ -34,7 +34,7 @@ export const MultilineUtilizationItem = memo<MultilineUtilizationItemProps>(
     TopConsumerPopovers,
     byteDataType,
   }) => {
-    const { t } = useTranslation();
+    const { t } = useTranslation('console-shared');
     const { endDate, startDate, updateEndDate } = useUtilizationDuration();
 
     const getCurrentData = (
@@ -50,9 +50,9 @@ export const MultilineUtilizationItem = memo<MultilineUtilizationItemProps>(
           current += ` ${dataUnitsValue}`;
         }
         if (description === 'in') {
-          current = t('console-shared~{{amount}} in', { amount: current });
+          current = t('{{amount}} in', { amount: current });
         } else if (description === 'out') {
-          current = t('console-shared~{{amount}} out', { amount: current });
+          current = t('{{amount}} out', { amount: current });
         } else {
           current += ` ${description.toLowerCase()}`;
         }
@@ -79,9 +79,9 @@ export const MultilineUtilizationItem = memo<MultilineUtilizationItemProps>(
         const desc = query[0].description;
         for (const item of query) {
           if (desc === 'in') {
-            currData.push({ ...item, description: t('console-shared~in') });
+            currData.push({ ...item, description: t('in') });
           } else if (desc === 'out') {
-            currData.push({ ...item, description: t('console-shared~out') });
+            currData.push({ ...item, description: t('out') });
           } else {
             currData.push(item);
           }
@@ -104,7 +104,7 @@ export const MultilineUtilizationItem = memo<MultilineUtilizationItemProps>(
         height={70}
         byteDataType={byteDataType}
         showAllTooltip
-        ariaChartLinkLabel={t('console-shared~View {{title}} metrics in query browser', {
+        ariaChartLinkLabel={t('View {{title}} metrics in query browser', {
           title,
         })}
         ariaChartTitle={title}
@@ -121,14 +121,18 @@ export const MultilineUtilizationItem = memo<MultilineUtilizationItemProps>(
     });
 
     return (
-      <div className="co-utilization-card__item" data-test-id="utilization-item">
+      <div
+        className="co-utilization-card__item"
+        data-test="utilization-item"
+        data-test-id="utilization-item"
+      >
         <div className="co-utilization-card__item-description">
           <div className="co-utilization-card__item-section-multiline">
             <Title headingLevel="h4" data-test="utilization-item-title">
               {title}
             </Title>
             {error || (!isLoading && !(data.length && data.every((datum) => datum.length))) ? (
-              <div className="pf-v6-u-text-color-subtle">{t('console-shared~Not available')}</div>
+              <div className="pf-v6-u-text-color-subtle">{t('Not available')}</div>
             ) : (
               <div className="co-utilization-card__item-description">{currentValue}</div>
             )}
@@ -165,7 +169,7 @@ export const UtilizationItem = memo<UtilizationItemProps>(
     requested,
     setLimitReqState,
   }) => {
-    const { t } = useTranslation();
+    const { t } = useTranslation('console-shared');
     const { startDate, endDate, updateEndDate } = useUtilizationDuration();
     const { data, chartStyle } = mapLimitsRequests(
       utilization,
@@ -199,7 +203,7 @@ export const UtilizationItem = memo<UtilizationItemProps>(
     const chart = (
       <AreaChart
         domain={{ x: [startDate, endDate] }}
-        ariaChartLinkLabel={t('console-shared~View {{title}} metrics in query browser', {
+        ariaChartLinkLabel={t('View {{title}} metrics in query browser', {
           title,
         })}
         ariaChartTitle={title}
@@ -259,7 +263,11 @@ export const UtilizationItem = memo<UtilizationItemProps>(
     const currentHumanized = !_.isNil(current) ? humanizeValue(current).string : null;
 
     return (
-      <div className="co-utilization-card__item" data-test-id="utilization-item">
+      <div
+        className="co-utilization-card__item"
+        data-test="utilization-item"
+        data-test-id="utilization-item"
+      >
         <div className="co-utilization-card__item-description">
           <Flex
             justifyContent={{ default: 'justifyContentSpaceBetween' }}
@@ -272,7 +280,7 @@ export const UtilizationItem = memo<UtilizationItemProps>(
             </FlexItem>
             <FlexItem>
               {error || (!isLoading && !utilizationData?.length) ? (
-                <div className="pf-v6-u-text-color-subtle">{t('console-shared~Not available')}</div>
+                <div className="pf-v6-u-text-color-subtle">{t('Not available')}</div>
               ) : (
                 <div>
                   {LimitIcon && <LimitIcon className="co-utilization-card__item-icon" />}
@@ -306,7 +314,7 @@ export const UtilizationItem = memo<UtilizationItemProps>(
               >
                 {humanAvailable && humanMax && (
                   <>
-                    {t('console-shared~{{humanAvailable}} available of {{humanMax}}', {
+                    {t('{{humanAvailable}} available of {{humanMax}}', {
                       humanAvailable,
                       humanMax,
                     })}
@@ -314,7 +322,7 @@ export const UtilizationItem = memo<UtilizationItemProps>(
                 )}
                 {humanAvailable && !humanMax && (
                   <>
-                    {t('console-shared~{{humanAvailable}} available', {
+                    {t('{{humanAvailable}} available', {
                       humanAvailable,
                     })}
                   </>
@@ -326,7 +334,7 @@ export const UtilizationItem = memo<UtilizationItemProps>(
                   data-test="utilization-card-item-text"
                 >
                   <>
-                    {t('console-shared~{{humanLimit}} total limit', {
+                    {t('{{humanLimit}} total limit', {
                       humanLimit,
                     })}
                   </>
@@ -340,8 +348,6 @@ export const UtilizationItem = memo<UtilizationItemProps>(
     );
   },
 );
-
-export default UtilizationItem;
 
 export type LimitRequested = {
   limit: LIMIT_STATE;

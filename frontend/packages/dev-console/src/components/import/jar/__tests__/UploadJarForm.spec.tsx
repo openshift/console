@@ -8,9 +8,15 @@ jest.mock('@patternfly/react-core', () => ({
     `Alert variant=${props.variant} title="${props.title}" isInline=${props.isInline}`,
 }));
 
-jest.mock('@console/shared/src/components/form-utils', () => ({
+jest.mock('@console/shared/src/components/form-utils/FlexForm', () => ({
   FlexForm: (props) => props.children,
+}));
+
+jest.mock('@console/shared/src/components/form-utils/FormBody', () => ({
   FormBody: (props) => props.children,
+}));
+
+jest.mock('@console/shared/src/components/form-utils/FormFooter', () => ({
   FormFooter: () => 'FormFooter',
 }));
 

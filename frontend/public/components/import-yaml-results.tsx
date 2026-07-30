@@ -1,17 +1,16 @@
 import type { FC, ReactNode } from 'react';
 import { useState, useEffect } from 'react';
-import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import { useTranslation } from 'react-i18next';
 import { Bullseye, Button, Icon, Spinner, Title } from '@patternfly/react-core';
+import { Table, TableGridBreakpoint, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
+import { useTranslation } from 'react-i18next';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import {
   GreenCheckCircleIcon,
   RedExclamationCircleIcon,
   YellowExclamationTriangleIcon,
 } from '@console/shared/src/components/status/icons';
-import { Table, TableGridBreakpoint, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
-
-import { ResourceLink } from './utils/resource-link';
 import { referenceFor } from '../module/k8s';
+import { ResourceLink } from './utils/resource-link';
 
 /**
  * Without this prop our current TS types fail to match and require a `translate` prop to be added. PF suggests we
@@ -25,7 +24,7 @@ const reactPropFix = {
 };
 
 export const ImportYAMLPageStatus: FC<ImportYAMLPageStatusProps> = ({ errors, inFlight }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   let StatusBlock: ReactNode;
 
   if (inFlight) {
@@ -33,7 +32,7 @@ export const ImportYAMLPageStatus: FC<ImportYAMLPageStatusProps> = ({ errors, in
       <>
         <Spinner size="lg" />
         <Title headingLevel="h2" className="pf-v6-u-mb-sm">
-          {t('public~Creating resources...')}
+          {t('Creating resources...')}
         </Title>
       </>
     );
@@ -49,7 +48,7 @@ export const ImportYAMLPageStatus: FC<ImportYAMLPageStatusProps> = ({ errors, in
           className="pf-v6-u-mb-sm"
           data-test="resources-successfully-created"
         >
-          {t('public~Resources successfully created')}
+          {t('Resources successfully created')}
         </Title>
       </>
     );
@@ -61,7 +60,7 @@ export const ImportYAMLPageStatus: FC<ImportYAMLPageStatusProps> = ({ errors, in
         </Icon>
 
         <Title headingLevel="h2" className="pf-v6-u-mb-sm">
-          {t('public~One or more resources failed to be created')}
+          {t('One or more resources failed to be created')}
         </Title>
       </>
     );
@@ -104,34 +103,37 @@ export const ImportYAMLResults: FC<ImportYAMLResultsProps> = ({
   importResources,
   retryFailed,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const [importStatus, setImportStatus] = useState<ImportYAMLStatus[]>(
     importResources.map(() => ({
       creating: true,
-      message: t('public~Creating'),
+      message: t('Creating'),
     })),
   );
   const [inFlight, setInFlight] = useState(true);
   const errors = importStatus.some((s) => s.error);
 
   useEffect(() => {
-    createResources(importResources).then((results) => {
-      setImportStatus(
-        results.map((result) => {
-          if (result.status === 'fulfilled') {
-            return { creating: false, result: result.result, message: t('public~Created') };
-          }
-          if (result.status === 'rejected') {
-            return {
-              creating: false,
-              error: true,
-              message: t('public~Error: {{error}}', { error: result?.reason?.substring(11) }),
-            };
-          }
-        }),
-      );
-      setInFlight(false);
-    });
+    createResources(importResources)
+      .then((results) => {
+        setImportStatus(
+          results.map((result) => {
+            if (result.status === 'fulfilled') {
+              return { creating: false, result: result.result, message: t('Created') };
+            }
+            if (result.status === 'rejected') {
+              return {
+                creating: false,
+                error: true,
+                message: t('Error: {{error}}', { error: result?.reason?.substring(11) }),
+              };
+            }
+            return { creating: false, message: t('Unknown status') };
+          }),
+        );
+        setInFlight(false);
+      })
+      .catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -147,21 +149,21 @@ export const ImportYAMLResults: FC<ImportYAMLResultsProps> = ({
 
   return (
     <div className="co-import-yaml-results-page">
-      <DocumentTitle>{t('public~Import YAML Results')}</DocumentTitle>
+      <DocumentTitle>{t('Import YAML Results')}</DocumentTitle>
       <Bullseye>
         <div className="co-import-yaml-results-page__main">
           <ImportYAMLPageStatus inFlight={inFlight} errors={errors} />
           <Table
             gridBreakPoint={TableGridBreakpoint.none}
             variant="compact"
-            aria-label={t('public~Import YAML results')}
+            aria-label={t('Import YAML results')}
             {...reactPropFix}
           >
             <Thead {...reactPropFix}>
               <Tr {...reactPropFix}>
-                <Th {...reactPropFix}>{t('public~Name')}</Th>
-                <Th {...reactPropFix}>{t('public~Namespace')}</Th>
-                <Th {...reactPropFix}>{t('public~Creation status')}</Th>
+                <Th {...reactPropFix}>{t('Name')}</Th>
+                <Th {...reactPropFix}>{t('Namespace')}</Th>
+                <Th {...reactPropFix}>{t('Creation status')}</Th>
               </Tr>
             </Thead>
             <Tbody {...reactPropFix}>
@@ -173,6 +175,7 @@ export const ImportYAMLResults: FC<ImportYAMLResultsProps> = ({
                     ? `${resource.metadata.generateName}...`
                     : resource.metadata.name;
                 return (
+                  // eslint-disable-next-line react/no-array-index-key
                   <Tr key={index} {...reactPropFix}>
                     <Td {...reactPropFix}>
                       <ResourceLink
@@ -207,7 +210,7 @@ export const ImportYAMLResults: FC<ImportYAMLResultsProps> = ({
                     onClick={onRetry}
                     data-test="retry-failed-resources"
                   >
-                    {t('public~Retry failed resources')}
+                    {t('Retry failed resources')}
                   </Button>
                 </div>
               )}
@@ -218,7 +221,7 @@ export const ImportYAMLResults: FC<ImportYAMLResultsProps> = ({
                   type="button"
                   onClick={() => displayResults(false)}
                 >
-                  {t('public~Import more YAML')}
+                  {t('Import more YAML')}
                 </Button>
               </div>
             </>

@@ -9,16 +9,16 @@ import { useAccessReview, useActivePerspective } from '@console/dynamic-plugin-s
 import {
   HelmChartRepositoryModel,
   ProjectHelmChartRepositoryModel,
-} from '@console/helm-plugin/src/models';
+} from '@console/helm-plugin/src/models/helm';
 import { kindForReference } from '@console/internal/module/k8s';
-import { ALL_NAMESPACES_KEY } from '@console/shared/src';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import { useQueryParams } from '@console/shared/src/hooks/useQueryParams';
 import CreateHelmChartRepository from './CreateHelmChartRepository';
 
 const CreateHelmChartRepositoryPage: FC = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   const params = useParams();
   const queryParams = useQueryParams();
   const [activePerspective] = useActivePerspective();
@@ -51,9 +51,7 @@ const CreateHelmChartRepositoryPage: FC = () => {
   const renderForm = () => (
     <>
       <DocumentTitle>
-        {isEditForm
-          ? t('helm-plugin~Edit Helm Chart Repository')
-          : t('helm-plugin~Create Helm Chart Repository')}
+        {isEditForm ? t('Edit Helm Chart Repository') : t('Create Helm Chart Repository')}
       </DocumentTitle>
       <CreateHelmChartRepository
         showScopeType={canCreateHCR && canCreatePHCR}

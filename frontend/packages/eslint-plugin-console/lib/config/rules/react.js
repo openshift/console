@@ -1,4 +1,49 @@
 module.exports = {
+  // Require i18n namespace argument for useTranslation()
+  'no-restricted-syntax': [
+    'warn',
+    {
+      selector: "CallExpression[callee.name='useTranslation'][arguments.length=0]",
+      message:
+        "Pass the i18n namespace to useTranslation(). Example: useTranslation('public') instead of useTranslation().",
+    },
+  ],
+
+  // Restrict certain imports (lodash-es, React default/act, Font Awesome PF icons)
+  'no-restricted-imports': [
+    'error',
+    {
+      paths: [
+        {
+          name: 'lodash-es',
+          message: 'Use lodash instead. The bundler is configured to use lodash-es automatically.',
+        },
+        {
+          name: 'react',
+          importNames: ['default', '*'],
+          message: 'Use named imports instead.',
+        },
+        {
+          name: 'react',
+          importNames: ['act'],
+          message: "For consistency, import { act } from '@testing-library/react'",
+        },
+      ],
+      patterns: [
+        {
+          group: ['@patternfly/react-icons'],
+          importNamePattern:
+            '^(?!Rh|createIcon|GitAltIcon|TerminalIcon|GithubIcon|GitlabIcon|BitbucketIcon)',
+          message: 'Use RhMicron, RhUi, or RhStandard icon variants instead of Font Awesome icons.',
+        },
+        {
+          group: ['@patternfly/*/dist/js/**', '@patternfly/*/dist/cjs/**'],
+          message: 'Import from the package index instead of the CJS dist path.',
+        },
+      ],
+    },
+  ],
+
   // Forbid foreign propTypes; forbids using another component's prop types unless they are explicitly imported/exported
   'react/forbid-foreign-prop-types': 'error',
 
@@ -44,4 +89,34 @@ module.exports = {
 
   // Enforce component methods order (fixable)
   'react/sort-comp': 'off',
+
+  // Disable prop-types related rules (TypeScript handles this)
+  'react/no-unused-prop-types': 'off',
+  'react/forbid-prop-types': 'off',
+
+  /* ---- Rules new/changed in eslint-config-airbnb v19 / eslint-plugin-react v7.37 ---- */
+
+  // Disallow usage of string refs
+  'react/no-string-refs': 'warn',
+
+  // Enforce self-closing for components but not HTML elements
+  'react/self-closing-comp': ['error', { component: true, html: false }],
+
+  // Disallow unescaped entities in JSX
+  'react/no-unescaped-entities': 'off',
+
+  // Enforce function component definition style (new in airbnb v19)
+  'react/function-component-definition': 'off',
+
+  // Require defaultProps for non-required props (TypeScript handles this)
+  'react/require-default-props': 'off',
+
+  // Disallow useless JSX fragments (new in airbnb v19)
+  'react/jsx-no-useless-fragment': 'off',
+
+  // Prevent unstable nested components (new in react plugin)
+  'react/no-unstable-nested-components': 'off',
+
+  // Prevent creating context values in render (new in react plugin)
+  'react/jsx-no-constructed-context-values': 'off',
 };

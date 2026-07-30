@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { useState } from 'react';
-import { useTranslation, Trans } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router';
 import { CreateYAML } from '@console/internal/components/create-yaml';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -8,8 +8,8 @@ import { LoadingBox } from '@console/internal/components/utils/status-box';
 import type { K8sPodControllerKind } from '@console/internal/module/k8s';
 import { getGroupVersionKind } from '@console/internal/module/k8s';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
-import { SyncedEditor } from '@console/shared/src/components/synced-editor';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { SyncedEditor } from '@console/shared/src/components/synced-editor/SyncedEditor';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import { PodDisruptionBudgetModel } from '../../models';
 import { pdbToK8sResource, mergeInitialYAMLWithExistingResource } from './pdb-models';
@@ -20,7 +20,7 @@ import { getPDBResource } from './utils/get-pdb-resources';
 const LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY = 'console.pdbForm.editor.lastView';
 
 export const PDBFormPage: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const params = useParams();
   const location = useLocation();
   const match = {
@@ -58,9 +58,9 @@ export const PDBFormPage: FC = () => {
 
   const existingResource = getPDBResource(pdbResources, resource);
 
-  const formHelpText = t('console-app~Create by completing the form.');
+  const formHelpText = t('Create by completing the form.');
   const yamlHelpText = t(
-    'console-app~Create by manually entering YAML or JSON definitions, or by dragging and dropping a file into the editor.',
+    'Create by manually entering YAML or JSON definitions, or by dragging and dropping a file into the editor.',
   );
   const initialPDB = {
     name: '',
@@ -87,8 +87,8 @@ export const PDBFormPage: FC = () => {
   };
 
   const title = !existingResource
-    ? t('console-app~Create {{label}}', { label: PodDisruptionBudgetModel.label })
-    : t('console-app~Edit {{label}}', { label: PodDisruptionBudgetModel.label });
+    ? t('Create {{label}}', { label: PodDisruptionBudgetModel.label })
+    : t('Edit {{label}}', { label: PodDisruptionBudgetModel.label });
   const stillLoading = !loadedResource || !loadedPDBResource;
 
   return (
@@ -97,14 +97,7 @@ export const PDBFormPage: FC = () => {
         <LoadingBox />
       ) : (
         <>
-          <PageHeading
-            title={title}
-            helpText={
-              <Trans t={t} ns="console-app">
-                {helpText}
-              </Trans>
-            }
-          />
+          <PageHeading title={title} helpText={helpText} />
 
           <SyncedEditor
             context={{

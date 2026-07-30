@@ -1,6 +1,6 @@
 import type { Model, NodeModel } from '@patternfly/react-topology';
 import * as _ from 'lodash';
-import { ALL_APPLICATIONS_KEY } from '@console/shared';
+import { ALL_APPLICATIONS_KEY } from '@console/shared/src/constants/common';
 import { MockResources } from '@console/shared/src/utils/__tests__/test-resource-data';
 import { getImageForCSVIcon } from '@console/shared/src/utils/icon-utils';
 import { TEST_KINDS_MAP } from '../../__tests__/topology-test-data';
@@ -8,8 +8,8 @@ import { TYPE_WORKLOAD } from '../../const';
 import { baseDataModelGetter } from '../../data-transforms/data-transformer';
 import { getWorkloadResources } from '../../data-transforms/transform-utils';
 import { updateModelFromFilters } from '../../data-transforms/updateModelFromFilters';
-import { getFilterById } from '../../filters';
 import { DEFAULT_TOPOLOGY_FILTERS, EXPAND_GROUPS_FILTER_ID } from '../../filters/const';
+import { getFilterById } from '../../filters/filter-utils';
 import type { WorkloadData, TopologyDataResources } from '../../topology-types';
 import { TopologyDisplayFilterType } from '../../topology-types';
 import { WORKLOAD_TYPES } from '../../utils/topology-utils';

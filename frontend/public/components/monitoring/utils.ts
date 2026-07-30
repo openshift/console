@@ -1,9 +1,7 @@
 import * as _ from 'lodash';
 import { murmur3 } from 'murmurhash-js';
-import {
+import type {
   Alert,
-  AlertSeverity,
-  AlertStates,
   PrometheusLabels,
   PrometheusRule,
   Rule,
@@ -11,23 +9,14 @@ import {
   PrometheusRulesResponse,
   PerspectiveType,
 } from '@console/dynamic-plugin-sdk';
+import { AlertSeverity, AlertStates } from '@console/dynamic-plugin-sdk';
+import type { MonitoringResource } from './types';
 
-import { MonitoringResource } from './types';
-
-export const PROMETHEUS_BASE_PATH = window.SERVER_FLAGS.prometheusBaseURL;
-
-export const AlertResource: MonitoringResource = {
+const AlertResource: MonitoringResource = {
   kind: 'Alert',
   label: 'Alert',
   plural: '/monitoring/alerts',
   abbr: 'AL',
-};
-
-export const SilenceResource: MonitoringResource = {
-  kind: 'Silence',
-  label: 'Silence',
-  plural: '/monitoring/silences',
-  abbr: 'SL',
 };
 
 export const labelsToParams = (labels: PrometheusLabels) =>

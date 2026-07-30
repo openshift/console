@@ -6,7 +6,7 @@ import { DroppableFileInput } from '@console/internal/components/utils/file-inpu
 import type { DroppableFileInputFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
-const DroppableFileInputField: FC<DroppableFileInputFieldProps> = ({
+export const DroppableFileInputField: FC<DroppableFileInputFieldProps> = ({
   name,
   label,
   helpText,
@@ -31,5 +31,3 @@ const DroppableFileInputField: FC<DroppableFileInputFieldProps> = ({
     </FormGroup>
   );
 };
-
-export default DroppableFileInputField;

@@ -1,21 +1,19 @@
+import { useContext, useMemo, memo } from 'react';
+import { Card, CardHeader, CardTitle, Gallery } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+import type { DashboardsOverviewHealthResourceSubsystem } from '@console/dynamic-plugin-sdk';
 import {
-  DashboardsOverviewHealthResourceSubsystem,
   isDashboardsOverviewHealthResourceSubsystem,
   useResolvedExtensions,
 } from '@console/dynamic-plugin-sdk';
 import { LoadingInline } from '@console/internal/components/utils/status-box';
-import { Status } from '@console/shared/src/components/status/Status';
 import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
-import { Card, CardHeader, CardTitle, Gallery } from '@patternfly/react-core';
-import type { FC } from 'react';
-import { useContext, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Status } from '@console/shared/src/components/status/Status';
 import { ResourceHealthItem } from '../dashboards-page/cluster-dashboard/health-item';
+import { DashboardNamespacedAlerts } from '../dashboards-page/cluster-dashboard/status-card';
 import { ProjectDashboardContext } from './project-dashboard-context';
 
-import { DashboardNamespacedAlerts } from '../dashboards-page/cluster-dashboard/status-card';
-
-export const StatusCard: FC = () => {
+export const StatusCard = memo(() => {
   const { obj } = useContext(ProjectDashboardContext);
   const [subsystemExtensions, extensionsResolved] = useResolvedExtensions<
     DashboardsOverviewHealthResourceSubsystem
@@ -24,15 +22,13 @@ export const StatusCard: FC = () => {
     () => subsystemExtensions.find((s) => s.properties.title === 'Image Vulnerabilities'),
     [subsystemExtensions],
   );
-  const {
-    metadata: { name: namespace },
-  } = obj;
-  const { t } = useTranslation();
+  const namespace = obj?.metadata?.name;
+  const { t } = useTranslation('public');
 
   return (
-    <Card data-test-id="status-card">
+    <Card data-test="status-card" data-test-id="status-card">
       <CardHeader>
-        <CardTitle>{t('public~Status')}</CardTitle>
+        <CardTitle>{t('Status')}</CardTitle>
       </CardHeader>
       {obj ? (
         <>
@@ -53,4 +49,4 @@ export const StatusCard: FC = () => {
       )}
     </Card>
   );
-};
+});

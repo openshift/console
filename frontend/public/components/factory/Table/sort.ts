@@ -1,6 +1,5 @@
 import { SortByDirection } from '@patternfly/react-table';
-
-import { K8sResourceCommon } from '../../../module/k8s';
+import type { K8sResourceCommon } from '../../../module/k8s';
 
 const isNumber = (value): value is number => Number.isFinite(value);
 

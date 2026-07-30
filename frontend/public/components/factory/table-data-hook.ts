@@ -1,14 +1,14 @@
 import { useMemo } from 'react';
-import * as _ from 'lodash';
-import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
-import { createSelectorCreator, lruMemoize } from 'reselect';
 import { SortByDirection } from '@patternfly/react-table';
-import { useDeepCompareMemoize } from '@console/shared/src/hooks/useDeepCompareMemoize';
-import { RowFilter } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import * as _ from 'lodash';
+import { createSelectorCreator, lruMemoize } from 'reselect';
 import { useExactSearch } from '@console/app/src/components/user-preferences/search/useExactSearch';
-import { RootState } from '../../redux';
+import type { RowFilter } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
+import { useDeepCompareMemoize } from '@console/shared/src/hooks/useDeepCompareMemoize';
+import type { RootState } from '../../redux';
+import type { Filter } from './table';
 import { tableFilters } from './table-filters';
-import { Filter } from './table';
 
 export const getFilteredRows = <D = any>(
   filters: Filter[],

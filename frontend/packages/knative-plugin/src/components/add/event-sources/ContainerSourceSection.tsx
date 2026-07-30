@@ -14,7 +14,8 @@ import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { getSuggestedName } from '@console/dev-console/src/utils/imagestream-utils';
 import { AsyncComponent } from '@console/internal/components/utils';
-import { InputField, TextColumnField } from '@console/shared';
+import { InputField } from '@console/shared/src/components/formik-fields/InputField';
+import { TextColumnField } from '@console/shared/src/components/formik-fields/text-column-field/TextColumnField';
 import TertiaryHeading from '@console/shared/src/components/heading/TertiaryHeading';
 import { EventSources } from '../import-types';
 
@@ -32,7 +33,7 @@ interface ContainerSourceSectionProps {
 }
 
 const ContainerSourceSection: FC<ContainerSourceSectionProps> = ({ title, fullWidth }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const { values, setFieldValue } = useFormikContext<FormikValues>();
   const {
     formData: {
@@ -61,13 +62,13 @@ const ContainerSourceSection: FC<ContainerSourceSectionProps> = ({ title, fullWi
   );
   return (
     <FormSection title={title} extraMargin fullWidth={fullWidth} dataTest={`${title} section`}>
-      <TertiaryHeading>{t('knative-plugin~Container')}</TertiaryHeading>
+      <TertiaryHeading>{t('Container')}</TertiaryHeading>
       <InputField
         data-test-id="container-image-field"
         type={TextInputTypes.text}
         name={containerPaths.Image}
-        label={t('knative-plugin~Image')}
-        helpText={t('knative-plugin~The Image to run inside of the Container')}
+        label={t('Image')}
+        helpText={t('The Image to run inside of the Container')}
         required
         onChange={(e) => {
           setFieldValue(containerPaths.Name, getSuggestedName(e.target.value));
@@ -77,19 +78,19 @@ const ContainerSourceSection: FC<ContainerSourceSectionProps> = ({ title, fullWi
         data-test-id="container-name-field"
         type={TextInputTypes.text}
         name={containerPaths.Name}
-        label={t('knative-plugin~Name')}
-        helpText={t('knative-plugin~The name of the Image')}
+        label={t('Name')}
+        helpText={t('The name of the Image')}
       />
       <TextColumnField
         data-test-id="container-arg-field"
         name={containerPaths.Args}
-        label={t('knative-plugin~Arguments')}
-        addLabel={t('knative-plugin~Add args')}
-        placeholder={t('knative-plugin~argument')}
-        helpText={t('knative-plugin~Arguments passed to the Container')}
+        label={t('Arguments')}
+        addLabel={t('Add args')}
+        placeholder={t('argument')}
+        helpText={t('Arguments passed to the Container')}
         disableDeleteRow={args?.length === 1}
       />
-      <FormGroup fieldId="containersource-env" label={t('knative-plugin~Environment variables')}>
+      <FormGroup fieldId="containersource-env" label={t('Environment variables')}>
         <AsyncComponent
           loader={() =>
             import('@console/internal/components/utils/name-value-editor').then(
@@ -98,19 +99,17 @@ const ContainerSourceSection: FC<ContainerSourceSectionProps> = ({ title, fullWi
           }
           data-test-id="container-env-field"
           nameValuePairs={nameValue}
-          valueString={t('knative-plugin~Value')}
-          nameString={t('knative-plugin~Name')}
+          valueString={t('Value')}
+          nameString={t('Name')}
           readOnly={false}
           allowSorting={false}
           updateParentData={handleNameValuePairs}
-          addLabel={t('knative-plugin~Add more')}
+          addString={t('Add more')}
         />
 
         <FormHelperText>
           <HelperText>
-            <HelperTextItem>
-              {t('knative-plugin~The list of variables to set in the Container.')}
-            </HelperTextItem>
+            <HelperTextItem>{t('The list of variables to set in the Container.')}</HelperTextItem>
           </HelperText>
         </FormHelperText>
       </FormGroup>

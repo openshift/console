@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../../../models';
+import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../../../models/helm';
 import {
   convertToForm,
   convertToHelmChartRepository,

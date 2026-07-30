@@ -82,7 +82,7 @@ export const useDeploymentActions = <T extends readonly DeploymentActionCreator[
   resource: K8sResourceKind | undefined,
   filterActions?: T,
 ): [ActionObject<T>, boolean] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
 
   const memoizedFilterActions = useDeepCompareMemoize(filterActions);
   const launchModal = useOverlay();
@@ -91,7 +91,7 @@ export const useDeploymentActions = <T extends readonly DeploymentActionCreator[
     () => ({
       [DeploymentActionCreator.EditDeployment]: (): Action => ({
         id: `edit-deployment`,
-        label: t('console-app~Edit {{kind}}', { kind: kind?.kind }),
+        label: t('Edit {{kind}}', { kind: kind?.kind }),
         cta: {
           href: `${resourceObjPath(
             resource as K8sResourceKind,
@@ -103,7 +103,7 @@ export const useDeploymentActions = <T extends readonly DeploymentActionCreator[
       }),
       [DeploymentActionCreator.UpdateStrategy]: (): Action => ({
         id: 'edit-update-strategy',
-        label: t('console-app~Edit update strategy'),
+        label: t('Edit update strategy'),
         cta: () => launchModal(LazyConfigureUpdateStrategyModalOverlay, { deployment: resource }),
         accessReview: {
           group: kind?.apiGroup,
@@ -115,9 +115,7 @@ export const useDeploymentActions = <T extends readonly DeploymentActionCreator[
       }),
       [DeploymentActionCreator.PauseRollout]: (): Action => ({
         id: 'pause-rollout',
-        label: resource?.spec?.paused
-          ? t('console-app~Resume rollouts')
-          : t('console-app~Pause rollouts'),
+        label: resource?.spec?.paused ? t('Resume rollouts') : t('Pause rollouts'),
         cta: () =>
           togglePaused(kind as K8sModel, resource as K8sResourceKind).catch((err) =>
             launchModal(ErrorModal, { error: err.message }),
@@ -132,7 +130,7 @@ export const useDeploymentActions = <T extends readonly DeploymentActionCreator[
       }),
       [DeploymentActionCreator.RestartRollout]: (): Action => ({
         id: 'restart-rollout',
-        label: t('console-app~Restart rollout'),
+        label: t('Restart rollout'),
         cta: () =>
           restartRollout(kind, resource).catch((err) =>
             launchModal(ErrorModal, { error: err.message }),
@@ -149,7 +147,7 @@ export const useDeploymentActions = <T extends readonly DeploymentActionCreator[
       }),
       [DeploymentActionCreator.StartDCRollout]: (): Action => ({
         id: 'start-rollout',
-        label: t('console-app~Start rollout'),
+        label: t('Start rollout'),
         cta: () =>
           deploymentConfigRollout(resource as K8sResourceKind).catch((err) => {
             const error = err.message;
@@ -166,7 +164,7 @@ export const useDeploymentActions = <T extends readonly DeploymentActionCreator[
       }),
       [DeploymentActionCreator.EditResourceLimits]: (): Action => ({
         id: 'edit-resource-limits',
-        label: t('console-app~Edit resource limits'),
+        label: t('Edit resource limits'),
         cta: () =>
           launchModal(LazyResourceLimitsModalOverlay, {
             model: kind,

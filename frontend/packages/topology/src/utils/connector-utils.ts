@@ -68,7 +68,7 @@ export const listInstanceResources = (
 };
 
 // Updates the item to add an new connect's to value replacing an old value if provided
-export const updateItemAppConnectTo = (
+const updateItemAppConnectTo = (
   item: K8sResourceKind,
   connections: (string | ConnectsToData)[],
   connectValue: ConnectsToData,

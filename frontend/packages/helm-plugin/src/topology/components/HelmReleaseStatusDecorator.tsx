@@ -3,8 +3,8 @@ import { useRef } from 'react';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import type { Node } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
-import { Status } from '@console/shared';
-import { BuildDecoratorBubble } from '@console/topology/src/components/graph-view';
+import { Status } from '@console/shared/src/components/status/Status';
+import { BuildDecoratorBubble } from '@console/topology/src/components/graph-view/components/nodes/decorators/BuildDecoratorBubble';
 import { releaseStatus } from '../../utils/helm-utils';
 
 type HelmReleaseStatusDecoratorProps = {
@@ -21,14 +21,14 @@ const HelmReleaseStatusDecorator: FC<HelmReleaseStatusDecoratorProps> = ({
   y,
 }) => {
   const ref = useRef();
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   const { data } = element.getData();
 
   if (!data) {
     return null;
   }
   const status = releaseStatus(data.status);
-  const label = t('helm-plugin~Helm release is {{status}}', { status });
+  const label = t('Helm release is {{status}}', { status });
 
   return (
     <Tooltip triggerRef={ref} content={label} position={TooltipPosition.left}>

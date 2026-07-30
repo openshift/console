@@ -9,8 +9,8 @@ import { k8sCreateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { modelFor, referenceFor, getGroupVersionKind } from '@console/internal/module/k8s';
 import { getActiveApplication } from '@console/internal/reducers/ui';
-import { ALL_APPLICATIONS_KEY } from '@console/shared';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { ALL_APPLICATIONS_KEY } from '@console/shared/src/constants/common';
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { usePerspectives } from '@console/shared/src/hooks/usePerspectives';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
@@ -55,7 +55,7 @@ const EventSink: FC<EventSinkProps> = ({
   const handleCancel = useCallback(() => navigate(-1), [navigate]);
   const perpectiveExtension = usePerspectives();
   const [perspective] = useActivePerspective();
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const application = useConsoleSelector(getActiveApplication);
   const currentApp = selectedApplication || application;
 
@@ -136,10 +136,10 @@ const EventSink: FC<EventSinkProps> = ({
     }
     const errMessage =
       knEventSinkResource?.kind && knEventSinkResource?.apiVersion
-        ? t('knative-plugin~No model registered for {{referenceForKnEventSink}}', {
+        ? t('No model registered for {{referenceForKnEventSink}}', {
             referenceForKnEventSink: referenceFor(knEventSinkResource),
           })
-        : t('knative-plugin~Invalid YAML');
+        : t('Invalid YAML');
     return Promise.reject(new Error(errMessage));
   };
 

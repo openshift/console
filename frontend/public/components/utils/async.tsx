@@ -1,6 +1,7 @@
-import { ComponentType, lazy, ComponentProps, Suspense, useRef, FC } from 'react';
+import type { ComponentType, ComponentProps, FC } from 'react';
+import { lazy, Suspense, useRef } from 'react';
+import { ErrorBoundaryPage } from '@console/shared/src/components/error/fallbacks/ErrorBoundaryPage';
 import { LoadingBox } from './status-box';
-import { ErrorBoundaryPage } from '@console/shared/src/components/error';
 
 /** A function that lazily loads a component. */
 export type LazyLoader<C extends ComponentType> = () => Promise<C>;
@@ -36,13 +37,15 @@ const withRetry = <C extends ComponentType>(loader: LazyLoader<C>): LazyLoader<C
 
     for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
       try {
+        // eslint-disable-next-line no-await-in-loop
         return await loader(); // Attempt to load component
       } catch (error) {
         lastError = error;
 
         // Wait with exponential backoff before retrying (capped at 30s)
         if (attempt < MAX_RETRIES) {
-          const delay = Math.min(100 * Math.pow(2, attempt), 30000);
+          const delay = Math.min(100 * 2 ** attempt, 30000);
+          // eslint-disable-next-line no-await-in-loop
           await new Promise((resolve) => setTimeout(resolve, delay));
         }
       }
@@ -78,6 +81,7 @@ export const AsyncComponent = <C extends ComponentType>({
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const LazyComponent = lazyComponentRef.current!;
 
   /*

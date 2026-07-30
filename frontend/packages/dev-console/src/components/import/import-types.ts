@@ -1,12 +1,17 @@
 import type { ComponentType } from 'react';
 import type { ValidatedOptions } from '@patternfly/react-core';
+import type { TFunction } from 'i18next';
 import type { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
-import { GitProvider } from '@console/git-service/src';
+import { GitProvider } from '@console/git-service/src/types/git';
 import type { DetectedStrategy } from '@console/git-service/src/utils/import-strategy-detector';
 import type { LazyLoader } from '@console/internal/components/utils/async';
 import { DeploymentModel, DeploymentConfigModel } from '@console/internal/models';
 import type { K8sResourceKind, ContainerPort, SecretKind } from '@console/internal/module/k8s';
-import type { NameValuePair, NameValueFromPair, LimitsData } from '@console/shared';
+import type {
+  NameValuePair,
+  NameValueFromPair,
+} from '@console/shared/src/components/formik-fields/field-types';
+import type { LimitsData } from '@console/shared/src/types/resource';
 import type { ClusterBuildStrategy } from '@console/shipwright-plugin/src/types';
 import type { NormalizedBuilderImages } from '../../utils/imagestream-utils';
 import type { HealthCheckFormProbe } from '../health-checks/health-checks-types';
@@ -22,7 +27,7 @@ export interface DeployImageFormProps {
       }
     | WatchK8sResultsObject<K8sResourceKind[]>;
 }
-export type ImageStreamPayload = boolean | K8sResourceKind;
+type ImageStreamPayload = boolean | K8sResourceKind;
 
 export type ImageStreamState = {
   accessLoading: ImageStreamPayload;
@@ -64,15 +69,6 @@ export interface GitImportFormProps {
     loadError?: any;
   };
 }
-export interface DevfileImportFormProps {
-  builderImages?: NormalizedBuilderImages;
-  projects?: {
-    data: K8sResourceKind[];
-    loaded: boolean;
-    loadError?: any;
-  };
-}
-
 export interface DeployImageFormData {
   formType?: string;
   project: ProjectData;
@@ -108,7 +104,7 @@ export interface DeployImageFormData {
   import?: ImportStrategyData;
 }
 
-export type FileUploadData = {
+type FileUploadData = {
   name: string;
   value: File | '';
   javaArgs?: string;
@@ -147,14 +143,14 @@ export interface GitImportFormData extends BaseFormData {
   import?: ImportStrategyData;
 }
 
-export interface ApplicationData {
+interface ApplicationData {
   initial?: string;
   name: string;
   selectedKey: string;
   isInContext?: boolean;
 }
 
-export interface ImageData {
+interface ImageData {
   selected: string;
   recommended: string;
   isRecommending: boolean;
@@ -192,7 +188,7 @@ export interface GitData {
   secretResource?: K8sResourceKind;
 }
 
-export interface DockerData {
+interface DockerData {
   dockerfilePath?: string;
   dockerfileHasError?: boolean;
 }
@@ -206,7 +202,7 @@ export type DevfileData = {
   devfileProjectType?: string;
 };
 
-export type PacData = {
+type PacData = {
   pacHasError: boolean;
   repository: RepositoryFormValues;
 };
@@ -232,7 +228,7 @@ export interface RouteData {
   labels?: { [name: string]: string };
 }
 
-export interface TLSData {
+interface TLSData {
   termination: TerminationType;
   insecureEdgeTerminationPolicy: InsecureTrafficType | PassthroughInsecureTrafficType;
   certificate: string;
@@ -259,7 +255,7 @@ export interface DetectedStrategyFormData extends DetectedStrategy {
   iconUrl?: string;
 }
 
-export interface ImportStrategyData {
+interface ImportStrategyData {
   loaded?: boolean;
   knativeFuncLoaded?: boolean;
   loadError?: string;
@@ -284,7 +280,7 @@ export interface ServerlessData {
   domainMapping?: string[];
 }
 
-export interface ServerlessScaling {
+interface ServerlessScaling {
   minpods: number | '';
   maxpods: number | '';
   concurrencytarget: number | '';
@@ -306,7 +302,6 @@ export const GitReadableTypes = {
 export enum ImportTypes {
   git = 'git',
   devfile = 'devfile',
-  docker = 'docker',
   s2i = 's2i',
 }
 
@@ -323,6 +318,7 @@ export enum BuildOptions {
   DISABLED = 'DISABLED',
 }
 
+/** @public Members used as runtime key-value map via SampleRuntime[dynamicKey] */
 export enum SampleRuntime {
   // eslint-disable-next-line @typescript-eslint/naming-convention
   'Node.js' = 'nodejs',
@@ -386,32 +382,17 @@ export interface AutoscaleWindowType {
   defaultAutoscalewindowUnit: string;
 }
 
-export enum CPUUnits {
-  m = 'millicores',
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  '' = 'cores',
-}
+export const getCPUUnits = (t: TFunction): Record<string, string> => ({
+  // t('devconsole~millicores')
+  // t('devconsole~cores')
+  m: t('devconsole~millicores'),
+  '': t('devconsole~cores'),
+});
 
+/** @public Passed as unitOptions prop to ResourceLimitField */
 export enum MemoryUnits {
   Mi = 'Mi',
   Gi = 'Gi',
-}
-
-export enum ImportOptions {
-  GIT = 'GIT',
-  CONTAINER = 'CONTAINER',
-  CATALOG = 'CATALOG',
-  DOCKERFILE = 'DOCKERFILE',
-  DEVFILE = 'DEVFILE',
-  DATABASE = 'DATABASE',
-  EVENTSOURCE = 'EVENTSOURCE',
-  EVENTPUBSUB = 'EVENTPUBSUB',
-  OPERATORBACKED = 'OPERATORBACKED',
-  HELMCHARTS = 'HELMCHARTS',
-  SAMPLES = 'SAMPLES',
-  EVENTCHANNEL = 'EVENTCHANNEL',
-  EVENTBROKER = 'EVENTBROKER',
-  UPLOADJAR = 'UPLOADJAR',
 }
 
 export interface HealthChecksFormData {

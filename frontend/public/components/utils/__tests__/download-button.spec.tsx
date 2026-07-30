@@ -1,8 +1,8 @@
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
+import { render, screen, waitFor, act } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import * as fileSaver from 'file-saver';
-
-import { DownloadButton } from '../../../components/utils/download-button';
-import * as coFetchModule from '@console/dynamic-plugin-sdk/src/utils/fetch/console-fetch';
+import * as coFetchModule from '@console/shared/src/utils/console-fetch';
+import { DownloadButton } from '../download-button';
 
 // Mock file-saver
 jest.mock('file-saver', () => ({
@@ -10,13 +10,13 @@ jest.mock('file-saver', () => ({
 }));
 
 // Mock console-fetch
-jest.mock('@console/dynamic-plugin-sdk/src/utils/fetch/console-fetch', () => ({
-  consoleFetch: jest.fn(),
+jest.mock('@console/shared/src/utils/console-fetch', () => ({
+  coFetch: jest.fn(),
 }));
 
 describe('DownloadButton', () => {
   const url = 'http://google.com';
-  const mockConsoleFetch = coFetchModule.consoleFetch as jest.Mock;
+  const mockConsoleFetch = coFetchModule.coFetch as jest.Mock;
   const mockSaveAs = fileSaver.saveAs as jest.Mock;
 
   beforeEach(() => {
@@ -31,22 +31,20 @@ describe('DownloadButton', () => {
   });
 
   it('renders button which calls `consoleFetch` to download URL when clicked', async () => {
-    await act(async () => {
-      render(<DownloadButton url={url} />);
-    });
+    const user = userEvent.setup();
+    render(<DownloadButton url={url} />);
 
     const downloadButton = screen.getByRole('button');
     expect(downloadButton).toBeInTheDocument();
 
-    await act(async () => {
-      fireEvent.click(downloadButton);
-    });
+    await user.click(downloadButton);
 
     // Verify consoleFetch was called with the correct URL
     expect(mockConsoleFetch).toHaveBeenCalledWith(url, {}, 30000);
   });
 
   it('renders "Downloading..." if download is in flight', async () => {
+    const user = userEvent.setup();
     let resolvePromise: (value: Blob) => void;
     const controlledPromise = new Promise<Blob>((resolve) => {
       resolvePromise = resolve;
@@ -57,16 +55,12 @@ describe('DownloadButton', () => {
     };
     mockConsoleFetch.mockResolvedValue(mockResponse as Response);
 
-    await act(async () => {
-      render(<DownloadButton url={url} />);
-    });
+    render(<DownloadButton url={url} />);
 
     const downloadButton = screen.getByRole('button');
 
     // Click to start download
-    await act(async () => {
-      fireEvent.click(downloadButton);
-    });
+    await user.click(downloadButton);
 
     // Check that button shows "Downloading..." while in flight
     await waitFor(() => {
@@ -75,6 +69,7 @@ describe('DownloadButton', () => {
 
     // Resolve the promise to complete the download
     await act(async () => {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       resolvePromise!(new Blob(['test content']));
     });
   });

@@ -1,60 +1,60 @@
 import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
+import { Grid, GridItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import {
-  K8sModel,
-  K8sResourceKind,
-  K8sResourceKindReference,
-  referenceForModel,
-  TableColumn,
-} from '../module/k8s';
-import { DetailsPage } from './factory/details';
-import { ListPage } from './factory/list-page';
-import type { DetailsPageProps } from './factory/details';
-import { BuildHooks } from './utils/build-hooks';
-import { BuildStrategy } from './utils/build-strategy';
-import { BuildStrategyType, displayDurationInWords } from './utils/build-utils';
-import { navFactory } from './utils/horizontal-nav';
-import { ResourceLink } from './utils/resource-link';
-import { ResourceSummary } from './utils/details-page';
-import { SectionHeading } from './utils/headings';
-import { WebhookTriggers } from './utils/webhooks';
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { BuildsPage, BuildEnvironmentComponent, PipelineBuildStrategyAlert } from './build';
-import { ResourceEventStream } from './events';
-import { BuildModel, BuildConfigModel } from '../models';
-import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import { useK8sWatchResource } from './utils/k8s-watch-hook';
-import { Status } from '@console/shared/src/components/status/Status';
-import { Grid, GridItem } from '@patternfly/react-core';
-import { DASH } from '@console/shared/src/constants/ui';
 import {
   actionsCellProps,
   getNameCellProps,
   ConsoleDataView,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import { LoadingBox } from './utils/status-box';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
-import { sortResourceByValue } from './factory/Table/sort';
-import { sorts } from './factory/table';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { Status } from '@console/shared/src/components/status/Status';
+import { DASH } from '@console/shared/src/constants/ui';
+import { BuildModel, BuildConfigModel } from '../models';
+import type {
+  K8sModel,
+  K8sResourceKind,
+  K8sResourceKindReference,
+  TableColumn,
+} from '../module/k8s';
+import { referenceForModel } from '../module/k8s';
+import { BuildsPage, BuildEnvironmentComponent, PipelineBuildStrategyAlert } from './build';
+import { ResourceEventStream } from './events';
+import { DetailsPage } from './factory/details';
+import type { DetailsPageProps } from './factory/details';
+import { ListPage } from './factory/list-page';
+import { sorts } from './factory/table';
+import { sortResourceByValue } from './factory/Table/sort';
+import { BuildHooks } from './utils/build-hooks';
+import { BuildStrategy } from './utils/build-strategy';
+import { BuildStrategyType, displayDurationInWords } from './utils/build-utils';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { useK8sWatchResource } from './utils/k8s-watch-hook';
+import { ResourceLink } from './utils/resource-link';
+import { LoadingBox } from './utils/status-box';
+import { WebhookTriggers } from './utils/webhooks';
 
 const BuildConfigsReference: K8sResourceKindReference = referenceForModel(BuildConfigModel);
 
-export const BuildConfigsDetails: FC<BuildConfigsDetailsProps> = ({ obj: buildConfig }) => {
+const BuildConfigsDetails: FC<BuildConfigsDetailsProps> = ({ obj: buildConfig }) => {
   const hasPipeline = buildConfig.spec.strategy.type === BuildStrategyType.JenkinsPipeline;
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <>
       <PaneBody>
         {hasPipeline && <PipelineBuildStrategyAlert obj={buildConfig} />}
-        <SectionHeading text={t('public~BuildConfig details')} />
+        <SectionHeading text={t('BuildConfig details')} />
         <Grid hasGutter>
           <GridItem sm={6}>
             <ResourceSummary resource={buildConfig} />
@@ -220,13 +220,13 @@ const useBuildConfigColumns = (): {
   columns: TableColumn<BuildConfig>[];
   resetAllColumnWidths: () => void;
 } => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(BuildConfigModel);
 
   const columns = useMemo(() => {
     return [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         resizableProps: getResizableProps(tableColumnInfo[0].id),
@@ -236,7 +236,7 @@ const useBuildConfigColumns = (): {
         },
       },
       {
-        title: t('public~Namespace'),
+        title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
@@ -245,7 +245,7 @@ const useBuildConfigColumns = (): {
         },
       },
       {
-        title: t('public~Last run'),
+        title: t('Last run'),
         id: tableColumnInfo[2].id,
         sort: 'latestBuild.metadata.name',
         resizableProps: getResizableProps(tableColumnInfo[2].id),
@@ -254,7 +254,7 @@ const useBuildConfigColumns = (): {
         },
       },
       {
-        title: t('public~Last run status'),
+        title: t('Last run status'),
         id: tableColumnInfo[3].id,
         sort: 'latestBuild.status.phase',
         resizableProps: getResizableProps(tableColumnInfo[3].id),
@@ -263,7 +263,7 @@ const useBuildConfigColumns = (): {
         },
       },
       {
-        title: t('public~Last run time'),
+        title: t('Last run time'),
         id: tableColumnInfo[4].id,
         sort: 'latestBuild.metadata.creationTimestamp',
         resizableProps: getResizableProps(tableColumnInfo[4].id),
@@ -272,7 +272,7 @@ const useBuildConfigColumns = (): {
         },
       },
       {
-        title: t('public~Last run duration'),
+        title: t('Last run duration'),
         id: tableColumnInfo[5].id,
         sort: (data, direction) => data.sort(sortResourceByValue(direction, sorts.buildDuration)),
         resizableProps: getResizableProps(tableColumnInfo[5].id),
@@ -293,7 +293,7 @@ const useBuildConfigColumns = (): {
   return { columns, resetAllColumnWidths };
 };
 
-export const BuildConfigsList: FC<BuildConfigsListProps> = ({ data, loaded, ...props }) => {
+const BuildConfigsList: FC<BuildConfigsListProps> = ({ data, loaded, ...props }) => {
   const { columns, resetAllColumnWidths } = useBuildConfigColumns();
   const buildModel = referenceForModel(BuildModel);
   const BUILDCONFIG_TO_BUILD_REFERENCE_LABEL = 'openshift.io/build-config.name';
@@ -342,7 +342,7 @@ export const BuildConfigsList: FC<BuildConfigsListProps> = ({ data, loaded, ...p
         loaded={loaded}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
+        hideColumnManagement
         isResizable
         resetAllColumnWidths={resetAllColumnWidths}
       />
@@ -353,36 +353,36 @@ export const BuildConfigsList: FC<BuildConfigsListProps> = ({ data, loaded, ...p
 BuildConfigsList.displayName = 'BuildConfigsList';
 
 export const BuildConfigsPage: FC<BuildConfigsPageProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const params = useParams();
   const allStrategies = [
-    { id: BuildStrategyType.Docker, title: t('public~Docker') },
-    { id: BuildStrategyType.Devfile, title: t('public~Devfile') },
-    { id: BuildStrategyType.JenkinsPipeline, title: t('public~JenkinsPipeline') },
-    { id: BuildStrategyType.Source, title: t('public~Source') },
-    { id: BuildStrategyType.Custom, title: t('public~Custom') },
+    { id: BuildStrategyType.Docker, title: t('Docker') },
+    { id: BuildStrategyType.Devfile, title: t('Devfile') },
+    { id: BuildStrategyType.JenkinsPipeline, title: t('JenkinsPipeline') },
+    { id: BuildStrategyType.Source, title: t('Source') },
+    { id: BuildStrategyType.Custom, title: t('Custom') },
   ];
 
   const statusFilters = [
-    { id: 'New', title: t('public~New') },
-    { id: 'Pending', title: t('public~Pending') },
-    { id: 'Running', title: t('public~Running') },
-    { id: 'Complete', title: t('public~Complete') },
-    { id: 'Failed', title: t('public~Failed') },
-    { id: 'Error', title: t('public~Error') },
-    { id: 'Cancelled', title: t('public~Cancelled') },
-    { id: 'Unknown', title: t('public~Unknown') },
+    { id: 'New', title: t('New') },
+    { id: 'Pending', title: t('Pending') },
+    { id: 'Running', title: t('Running') },
+    { id: 'Complete', title: t('Complete') },
+    { id: 'Failed', title: t('Failed') },
+    { id: 'Error', title: t('Error') },
+    { id: 'Cancelled', title: t('Cancelled') },
+    { id: 'Unknown', title: t('Unknown') },
   ];
 
   const filters = [
     {
-      filterGroupName: t('public~Build strategy'),
+      filterGroupName: t('Build strategy'),
       type: 'build-strategy',
       reducer: buildStrategy,
       items: allStrategies,
     },
     {
-      filterGroupName: t('public~Build status'),
+      filterGroupName: t('Build status'),
       type: 'build-run-status',
       reducer: getBuildStatus,
       items: statusFilters,
@@ -400,18 +400,18 @@ export const BuildConfigsPage: FC<BuildConfigsPageProps> = (props) => {
 
   return (
     <>
-      <DocumentTitle>{t('public~BuildConfigs')}</DocumentTitle>
+      <DocumentTitle>{t('BuildConfigs')}</DocumentTitle>
       <ListPage
         {...props}
-        title={t('public~BuildConfigs')}
+        title={t('BuildConfigs')}
         kind={BuildConfigsReference}
         ListComponent={BuildConfigsList}
         canCreate={props.canCreate ?? true}
         createProps={createProps}
         filterLabel={props.filterLabel}
         rowFilters={filters}
-        omitFilterToolbar={true}
-        hideColumnManagement={true}
+        omitFilterToolbar
+        hideColumnManagement
       />
     </>
   );
@@ -424,7 +424,7 @@ type BuildConfigsListProps = {
   namespace: string;
 };
 
-export type BuildConfigsDetailsProps = {
+type BuildConfigsDetailsProps = {
   obj: K8sResourceKind;
 };
 

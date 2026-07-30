@@ -1,12 +1,13 @@
-import { ExtensionK8sGroupModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
-import {
+/* eslint-disable no-barrel-files/no-barrel-files */
+import type { ExtensionK8sGroupModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
+import type {
   GroupVersionKind,
   K8sResourceCommon,
   OwnerReference,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { modelFor } from './k8s-models';
 import { referenceForGroupVersionKind, referenceForModel } from './k8s-ref';
-import { K8sKind, K8sResourceKind } from './types';
+import type { K8sKind, K8sResourceKind } from './types';
 
 export * from './crd-versions';
 export * from './k8s-ref';

@@ -1,6 +1,0 @@
-kind: ShipwrightBuild
-apiVersion: operator.shipwright.io/v1alpha1
-metadata:
-  name: openshift-builds
-spec:
-  targetNamespace: openshift-builds

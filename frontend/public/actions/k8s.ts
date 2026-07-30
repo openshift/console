@@ -1,23 +1,20 @@
+/* eslint-disable no-barrel-files/no-barrel-files */
 import * as _ from 'lodash';
-import { Dispatch } from 'redux';
-import { ActionType as Action } from 'typesafe-actions';
-import { checkAccess } from '@console/internal/components/utils/rbac';
-
-import { cacheResources, getResources as getResources_ } from '../module/k8s/get-resources';
-import { fetchSwagger, CustomResourceDefinitionKind, K8sResourceKind } from '../module/k8s';
-import { makeReduxID } from '../components/utils/k8s-watcher';
-import { CustomResourceDefinitionModel } from '../models';
+import type { Dispatch } from 'redux';
 import {
   watchK8sList,
   getResourcesInFlight,
   receivedResources,
 } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
+import { checkAccess } from '@console/internal/components/utils/rbac';
+import { makeReduxID } from '../components/utils/k8s-watcher';
+import { CustomResourceDefinitionModel } from '../models';
+import type { CustomResourceDefinitionKind, K8sResourceKind } from '../module/k8s';
+import { cacheResources, getResources as getResources_ } from '../module/k8s/get-resources';
 
 export {
-  watchK8sObject,
   watchK8sList,
   stopK8sWatch,
-  getResourcesInFlight,
   receivedResources,
 } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
 
@@ -38,15 +35,7 @@ export const getResources = () => (dispatch: Dispatch) => {
       dispatch(receivedResources(resources));
     })
     // eslint-disable-next-line no-console
-    .catch((err) => console.error('Fetching resource failed:', err))
-    .finally(() => {
-      setTimeout(() => {
-        fetchSwagger().catch((e) => {
-          // eslint-disable-next-line no-console
-          console.error('Could not fetch OpenAPI yaml after fetching all resources.', e);
-        });
-      }, 10000);
-    });
+    .catch((err) => console.error('Fetching resource failed:', err));
 };
 
 export const startAPIDiscovery = () => (dispatch) => {
@@ -100,9 +89,3 @@ export const startAPIDiscovery = () => (dispatch) => {
       console.warn('Error while start API discovery', e);
     });
 };
-
-const k8sActions = {
-  startAPIDiscovery,
-};
-
-export type K8sAction = Action<typeof k8sActions>;

@@ -73,69 +73,69 @@ export const CreateCatalogSource = () => {
     setAvailability(value as AvailabilityValue);
   };
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const availabilityKinds: RadioGroupItems = [
     {
       name: 'catalog-source-availability',
       value: AvailabilityValue.ALL_NAMESPACES,
-      label: t('olm~Cluster-wide CatalogSource'),
-      description: t('olm~Catalog will be available in all namespaces'),
+      label: t('Cluster-wide CatalogSource'),
+      description: t('Catalog will be available in all namespaces'),
     },
     {
       name: 'catalog-source-availability',
       value: AvailabilityValue.SINGLE_NAMESPACE,
-      label: t('olm~Namespaced CatalogSource'),
-      description: t('olm~Catalog will only be available in a single namespace'),
+      label: t('Namespaced CatalogSource'),
+      description: t('Catalog will only be available in a single namespace'),
     },
   ];
 
-  const title = t('olm~Create CatalogSource');
+  const title = t('Create CatalogSource');
   return (
     <div className="co-m-pane__form">
       <DocumentTitle>{title}</DocumentTitle>
       <PageHeading
         title={title}
         helpText={t(
-          'olm~Create a CatalogSource in order to make operators available in Software Catalog.',
+          'Create a CatalogSource in order to make operators available in Software Catalog.',
         )}
       />
       <PaneBody>
         <Form onSubmit={onSave}>
-          <FormGroup fieldId="catalog-source-name" isRequired label={t('olm~CatalogSource name')}>
+          <FormGroup fieldId="catalog-source-name" isRequired label={t('CatalogSource name')}>
             <TextInput
               id="catalog-source-name"
               isRequired
               name="catalog-source-name"
               onChange={(_event, value) => setName(value)}
-              placeholder={t('olm~e.g. custom-catalog-source')}
+              placeholder={t('e.g. custom-catalog-source')}
               type="text"
               value={name}
               data-test="catalog-source-name"
             />
           </FormGroup>
-          <FormGroup fieldId="catalog-source-display-name" label={t('olm~Display name')}>
+          <FormGroup fieldId="catalog-source-display-name" label={t('Display name')}>
             <TextInput
               id="catalog-source-display-name"
               name="caltalog-source-display-name"
               onChange={(_event, value) => setDisplayName(value)}
-              placeholder={t('olm~e.g. Custom catalog source')}
+              placeholder={t('e.g. Custom catalog source')}
               type="text"
               value={displayName}
             />
           </FormGroup>
-          <FormGroup fieldId="catalog-source-publisher" label={t('olm~Publisher name')}>
+          <FormGroup fieldId="catalog-source-publisher" label={t('Publisher name')}>
             <TextInput
               id="catalog-source-publisher"
               isRequired
               name="catalog-source-publisher"
               onChange={(_event, value) => setPublisher(value)}
-              placeholder={t('olm~e.g. John Doe')}
+              placeholder={t('e.g. John Doe')}
               type="text"
               value={publisher}
             />
           </FormGroup>
           <FormGroup
-            label={t('olm~Image (URL of container image)')}
+            label={t('Image (URL of container image)')}
             isRequired
             fieldId="catalog-source-image"
           >
@@ -146,20 +146,18 @@ export const CreateCatalogSource = () => {
               id="catalog-source-image"
               name="catalog-source-image"
               onChange={(_event, value) => setImage(value)}
-              placeholder={t('olm~e.g. quay.io/johndoe/catalog-registry:latest')}
+              placeholder={t('e.g. quay.io/johndoe/catalog-registry:latest')}
               value={image}
               data-test="catalog-source-image"
             />
 
             <FormHelperText>
               <HelperText>
-                <HelperTextItem>
-                  {t('olm~URL of container image hosted on a registry.')}
-                </HelperTextItem>
+                <HelperTextItem>{t('URL of container image hosted on a registry.')}</HelperTextItem>
               </HelperText>
             </FormHelperText>
           </FormGroup>
-          <FormGroup fieldId="catalog-source-availability" label={t('olm~Availability')}>
+          <FormGroup fieldId="catalog-source-availability" label={t('Availability')}>
             <RadioGroup
               currentValue={availability}
               items={availabilityKinds}
@@ -167,7 +165,7 @@ export const CreateCatalogSource = () => {
             />
           </FormGroup>
           {availability === AvailabilityValue.SINGLE_NAMESPACE && (
-            <FormGroup fieldId="catalog-source-namespace" label={t('olm~Namespace')} isRequired>
+            <FormGroup fieldId="catalog-source-namespace" label={t('Namespace')} isRequired>
               <NsDropdown
                 selectedKey={namespace}
                 onChange={onNamespaceChange}
@@ -178,10 +176,10 @@ export const CreateCatalogSource = () => {
           <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
             <ActionGroup className="pf-v6-c-form__group--no-top-margin">
               <Button type="submit" variant="primary" id="save-changes" data-test="save-changes">
-                {t('olm~Create')}
+                {t('Create')}
               </Button>
               <Button type="button" variant="secondary" id="cancel" onClick={handleCancel}>
-                {t('olm~Cancel')}
+                {t('Cancel')}
               </Button>
             </ActionGroup>
           </ButtonBar>

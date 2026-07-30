@@ -1,10 +1,6 @@
+/* eslint-disable no-barrel-files/no-barrel-files */
 import type {
   ResolvedExtension,
-  ClusterConfigurationGroup,
-  ClusterConfigurationItem,
-} from '@console/dynamic-plugin-sdk/src';
-
-export {
   ClusterConfigurationGroup,
   ClusterConfigurationItem,
 } from '@console/dynamic-plugin-sdk/src';

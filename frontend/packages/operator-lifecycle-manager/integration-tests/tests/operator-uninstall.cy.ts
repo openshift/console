@@ -22,10 +22,17 @@ const alertExists = (titleText: string) => {
   cy.get('.co-alert').contains(titleText).should('exist');
 };
 
-// Disabled due to createRoot concurrent rendering failures (OCPBUGS-82509)
-xdescribe(`Testing uninstall of ${testOperator.name} Operator`, () => {
-  before(() => {
+describe(`Testing uninstall of ${testOperator.name} Operator`, () => {
+  before(function () {
     cy.login();
+    // cy.window() returns a Cypress Chainable, not a true Promise — it has no .catch() method.
+    // Cypress's command queue manages error handling; this disable is required.
+    // eslint-disable-next-line promise/catch-or-return
+    cy.window().then((win) => {
+      if (win.SERVER_FLAGS?.techPreview) {
+        this.skip();
+      }
+    });
     cy.createProjectWithCLI(testName);
     operator.install(
       testOperator.name,

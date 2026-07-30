@@ -168,6 +168,159 @@ func TestRedirectAuthError(t *testing.T) {
 	}
 }
 
+func TestOAuth2ConfigForHost(t *testing.T) {
+	p := &mockOIDCProvider{}
+	s := httptest.NewServer(http.HandlerFunc(p.handleDiscovery))
+	defer s.Close()
+	p.issuer = s.URL
+
+	ccfg := &Config{
+		ClientID:     "fake-client-id",
+		ClientSecret: "fake-secret",
+		Scope:        []string{"openid"},
+		RedirectURL:  "https://console.example.com/auth/callback",
+		IssuerURL:    p.issuer,
+		ErrorURL:     "/auth/error",
+		SuccessURL:   "/",
+		CookiePath:   "/api",
+		K8sConfig:    &rest.Config{},
+		AllowedRedirectHosts: map[string]bool{
+			"console.example.com":               true,
+			"console-alt.example.com":           true,
+			"console.internal.example.com:8443": true,
+		},
+	}
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	a, err := NewOAuth2Authenticator(ctx, ccfg)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	tests := []struct {
+		name            string
+		host            string
+		wantRedirectURL string
+	}{
+		{
+			name:            "primary host returns original redirect URL",
+			host:            "console.example.com",
+			wantRedirectURL: "https://console.example.com/auth/callback",
+		},
+		{
+			name:            "secondary host rewrites redirect URL",
+			host:            "console-alt.example.com",
+			wantRedirectURL: "https://console-alt.example.com/auth/callback",
+		},
+		{
+			name:            "host with port rewrites redirect URL",
+			host:            "console.internal.example.com:8443",
+			wantRedirectURL: "https://console.internal.example.com:8443/auth/callback",
+		},
+		{
+			name:            "unknown host returns original redirect URL",
+			host:            "evil.example.com",
+			wantRedirectURL: "https://console.example.com/auth/callback",
+		},
+		{
+			name:            "empty host returns original redirect URL",
+			host:            "",
+			wantRedirectURL: "https://console.example.com/auth/callback",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			cfg := a.oauth2ConfigForHost(tt.host)
+			if cfg.RedirectURL != tt.wantRedirectURL {
+				t.Errorf("oauth2ConfigForHost(%q).RedirectURL = %q, want %q",
+					tt.host, cfg.RedirectURL, tt.wantRedirectURL)
+			}
+		})
+	}
+}
+
+func TestOAuth2ConfigForHostNilAllowedHosts(t *testing.T) {
+	p := &mockOIDCProvider{}
+	s := httptest.NewServer(http.HandlerFunc(p.handleDiscovery))
+	defer s.Close()
+	p.issuer = s.URL
+
+	ccfg := &Config{
+		ClientID:     "fake-client-id",
+		ClientSecret: "fake-secret",
+		Scope:        []string{"openid"},
+		RedirectURL:  "https://console.example.com/auth/callback",
+		IssuerURL:    p.issuer,
+		ErrorURL:     "/auth/error",
+		SuccessURL:   "/",
+		CookiePath:   "/api",
+		K8sConfig:    &rest.Config{},
+	}
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	a, err := NewOAuth2Authenticator(ctx, ccfg)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	cfg := a.oauth2ConfigForHost("anything.example.com")
+	if cfg.RedirectURL != "https://console.example.com/auth/callback" {
+		t.Errorf("expected original redirect URL, got %q", cfg.RedirectURL)
+	}
+}
+
+func TestLoginFuncUsesRequestHost(t *testing.T) {
+	p := &mockOIDCProvider{}
+	s := httptest.NewServer(http.HandlerFunc(p.handleDiscovery))
+	defer s.Close()
+	p.issuer = s.URL
+
+	ccfg := &Config{
+		ClientID:     "fake-client-id",
+		ClientSecret: "fake-secret",
+		Scope:        []string{"openid"},
+		RedirectURL:  "https://console.example.com/auth/callback",
+		IssuerURL:    p.issuer,
+		ErrorURL:     "/auth/error",
+		SuccessURL:   "/",
+		CookiePath:   "/api",
+		K8sConfig:    &rest.Config{},
+		AllowedRedirectHosts: map[string]bool{
+			"console.example.com":     true,
+			"console-alt.example.com": true,
+		},
+	}
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	a, err := NewOAuth2Authenticator(ctx, ccfg)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	rr := httptest.NewRecorder()
+	req := httptest.NewRequest("GET", "https://console-alt.example.com/", nil)
+
+	a.LoginFunc(rr, req)
+
+	loc := rr.Header().Get("Location")
+	u, err := url.Parse(loc)
+	if err != nil {
+		t.Fatalf("failed to parse location header: %v", err)
+	}
+
+	redirectURI := u.Query().Get("redirect_uri")
+	if redirectURI != "https://console-alt.example.com/auth/callback" {
+		t.Errorf("LoginFunc redirect_uri = %q, want %q", redirectURI, "https://console-alt.example.com/auth/callback")
+	}
+}
+
 func makeAuthenticator() (*OAuth2Authenticator, error) {
 	errURL := "https://example.com/error"
 	sucURL := "https://example.com/success"

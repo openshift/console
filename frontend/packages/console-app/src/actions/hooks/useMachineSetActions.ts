@@ -34,7 +34,7 @@ export const useMachineSetActions = (
   obj: MachineSetKind,
   filterActions?: MachineSetActionCreator[],
 ): Action[] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const launcher = useOverlay();
 
   const memoizedFilterActions = useDeepCompareMemoize(filterActions);
@@ -43,7 +43,7 @@ export const useMachineSetActions = (
     () => ({
       [MachineSetActionCreator.EditMachineCount]: () => ({
         id: 'edit-machine-count',
-        label: t('public~Edit Machine count'),
+        label: t('Edit Machine count'),
         cta: () =>
           launcher(ConfigureCountModal, {
             resourceKind: MachineSetModel,
@@ -59,7 +59,7 @@ export const useMachineSetActions = (
       }),
       [MachineSetActionCreator.CreateMachineAutoscaler]: () => ({
         id: 'create-machine-autoscaler',
-        label: t('public~Create MachineAutoscaler'),
+        label: t('Create MachineAutoscaler'),
         cta: () =>
           launcher(ConfigureMachineAutoscalerModal, {
             machineSet: obj,

@@ -1,14 +1,20 @@
-import { action, ActionType as Action } from 'typesafe-actions';
-import { Dispatch } from 'redux';
-
-import { coFetchJSON } from '../co-fetch';
+import type { Dispatch } from 'redux';
+import type { ActionType as Action } from 'typesafe-actions';
+import { action } from 'typesafe-actions';
+import type { Fetch, RequestMap } from '@console/dynamic-plugin-sdk/src/api/internal-types';
+import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
+import type { PrometheusResponse } from '../components/graphs';
+import { getPrometheusURL, PrometheusEndpoint } from '../components/graphs/helpers';
+import {
+  computeAdaptiveDelay,
+  emaToDelay,
+  MIN_POLL_DELAY,
+  MAX_POLL_DELAY,
+  SCALE_FACTOR,
+} from '../components/utils/adaptive-polling';
 import { k8sBasePath } from '../module/k8s/consts';
 import { isWatchActive, RESULTS_TYPE } from '../reducers/dashboard-results';
 import type { RootState } from '../redux';
-import { getPrometheusURL, PrometheusEndpoint } from '../components/graphs/helpers';
-import { PrometheusResponse } from '../components/graphs';
-import { URL_POLL_DEFAULT_DELAY } from '../components/utils/url-poll-hook';
-import { Fetch, RequestMap } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 
 export enum ActionType {
   StopWatch = 'stopWatch',
@@ -29,9 +35,10 @@ export const updateWatchTimeout = (type: RESULTS_TYPE, key: string, timeout: Nod
   action(ActionType.UpdateWatchTimeout, { type, key, timeout });
 export const updateWatchInFlight = (type: RESULTS_TYPE, key: string, inFlight: boolean) =>
   action(ActionType.UpdateWatchInFlight, { type, key, inFlight });
-export const setError = (type: RESULTS_TYPE, key: string, error) =>
+const setError = (type: RESULTS_TYPE, key: string, error) =>
   action(ActionType.SetError, { type, key, error });
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- used in typeof for type export
 const dashboardsActions = {
   stopWatch,
   setData,
@@ -41,7 +48,7 @@ const dashboardsActions = {
   setError,
 };
 
-export const getQueryKey = (query: string, timespan?: number): string =>
+const getQueryKey = (query: string, timespan?: number): string =>
   timespan ? `${query}@${timespan}` : query;
 
 export const getPrometheusQueryResponse = (
@@ -62,23 +69,32 @@ const fetchPeriodically: FetchPeriodically = async (
   getURL,
   getState,
   fetch,
+  responseTimeEma = 0,
 ) => {
   if (!isWatchActive(getState().dashboards, type, key)) {
     return;
   }
+  let nextEma = responseTimeEma;
   try {
     dispatch(updateWatchInFlight(type, key, true));
+    const startTime = Date.now();
     const data = await fetch(getURL());
+    const elapsed = Date.now() - startTime;
+    [, nextEma] = computeAdaptiveDelay(elapsed, responseTimeEma);
     dispatch(setData(type, key, data));
     dispatch(setError(type, key, null));
   } catch (error) {
+    // Feed a synthetic slow response into the EMA to gradually back off without jumping to max
+    const errorSeed =
+      responseTimeEma === 0 ? MIN_POLL_DELAY / SCALE_FACTOR : MAX_POLL_DELAY / SCALE_FACTOR;
+    [, nextEma] = computeAdaptiveDelay(errorSeed, responseTimeEma);
     dispatch(setError(type, key, error));
     dispatch(setData(type, key, null));
   } finally {
     dispatch(updateWatchInFlight(type, key, false));
     const timeout = setTimeout(
-      () => fetchPeriodically(dispatch, type, key, getURL, getState, fetch),
-      URL_POLL_DEFAULT_DELAY,
+      () => fetchPeriodically(dispatch, type, key, getURL, getState, fetch, nextEma),
+      emaToDelay(nextEma),
     );
     dispatch(updateWatchTimeout(type, key, timeout));
   }
@@ -133,7 +149,6 @@ export type WatchPrometheusQueryAction = (
   namespace?: string,
   timespan?: number,
 ) => ThunkAction;
-export type StopWatchURLAction = (url: string) => ReturnType<typeof stopWatch>;
 export type StopWatchPrometheusAction = (
   query: string,
   timespan?: number,
@@ -146,6 +161,7 @@ type FetchPeriodically = (
   getURL: () => string,
   getState: () => RootState,
   fetch: Fetch,
+  responseTimeEma?: number,
 ) => void;
 
 export type DashboardsAction = Action<typeof dashboardsActions>;

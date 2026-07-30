@@ -35,6 +35,9 @@ const DashboardGrid: FC<OverviewGridProps> = ({ mainCards, leftCards, rightCards
     smallGrid,
   ]);
 
+  const mainGridSpan =
+    leftCards?.length && rightCards?.length ? 6 : leftCards?.length || rightCards?.length ? 9 : 12;
+
   return (
     <div ref={containerRef}>
       {smallGrid ? (
@@ -51,15 +54,19 @@ const DashboardGrid: FC<OverviewGridProps> = ({ mainCards, leftCards, rightCards
         </Grid>
       ) : (
         <Grid className="co-dashboard-grid">
-          <GridItem lg={3} md={3} sm={3}>
-            <Grid className="co-dashboard-grid">{leftGridCards}</Grid>
-          </GridItem>
-          <GridItem lg={6} md={6} sm={6}>
+          {leftCards?.length ? (
+            <GridItem lg={3} md={3} sm={3}>
+              <Grid className="co-dashboard-grid">{leftGridCards}</Grid>
+            </GridItem>
+          ) : null}
+          <GridItem lg={mainGridSpan} md={mainGridSpan} sm={mainGridSpan}>
             <Grid className="co-dashboard-grid">{mainGridCards}</Grid>
           </GridItem>
-          <GridItem lg={3} md={3} sm={3}>
-            <Grid className="co-dashboard-grid">{rightGridCards}</Grid>
-          </GridItem>
+          {rightCards?.length ? (
+            <GridItem lg={3} md={3} sm={3}>
+              <Grid className="co-dashboard-grid">{rightGridCards}</Grid>
+            </GridItem>
+          ) : null}
         </Grid>
       )}
     </div>

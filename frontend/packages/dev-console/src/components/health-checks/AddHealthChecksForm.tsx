@@ -23,7 +23,7 @@ type AddHealthChecksFormProps = {
 const AddHealthChecksForm: FC<AddHealthChecksFormProps> = ({ resource, currentContainer }) => {
   const navigate = useNavigate();
   const handleCancel = useCallback(() => navigate(-1), [navigate]);
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   if (!resource.loaded && !resource.loadError) {
     return <LoadingBox />;
   }
@@ -38,7 +38,7 @@ const AddHealthChecksForm: FC<AddHealthChecksFormProps> = ({ resource, currentCo
   );
 
   if (_.isEmpty(container)) {
-    return <div className="pf-v6-u-text-align-center">{t('devconsole~Container not found')}</div>;
+    return <div className="pf-v6-u-text-align-center">{t('Container not found')}</div>;
   }
 
   const handleSubmit = (values, actions) => {

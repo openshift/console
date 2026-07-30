@@ -19,7 +19,7 @@ type QuickSearchControllerProps = {
   detailsRenderer?: DetailsRendererFunction;
 };
 
-const QuickSearchController: FC<QuickSearchControllerProps> = ({
+export const QuickSearchController: FC<QuickSearchControllerProps> = ({
   namespace,
   quickSearchProviders,
   searchPlaceholder,
@@ -31,7 +31,7 @@ const QuickSearchController: FC<QuickSearchControllerProps> = ({
   disableKeyboardOpen = false,
   detailsRenderer,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
 
   const isLimitedList = limitItemCount > 0;
   const searchCatalog = useCallback(
@@ -105,5 +105,3 @@ const QuickSearchController: FC<QuickSearchControllerProps> = ({
     />
   );
 };
-
-export default QuickSearchController;

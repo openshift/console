@@ -7,9 +7,10 @@ import type {
   SelfSubjectAccessReviewKind,
   AccessReviewResourceAttributes,
 } from '@console/internal/module/k8s';
-import { podColor, AllPodStatus, DEPLOYMENT_STRATEGY, DEPLOYMENT_PHASE } from '../constants';
-import type { PodControllerOverviewItem, DeploymentStrategy } from '../types';
-import type { ExtPodKind, PodRCData } from '../types/pod';
+import { podColor, AllPodStatus } from '../constants/pod';
+import { DEPLOYMENT_STRATEGY, DEPLOYMENT_PHASE } from '../constants/resource';
+import type { PodControllerOverviewItem, ExtPodKind, PodRCData } from '../types/pod';
+import type { DeploymentStrategy } from '../types/resource';
 
 export const podStatus = Object.keys(podColor);
 

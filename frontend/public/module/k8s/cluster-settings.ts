@@ -1,23 +1,20 @@
+import i18next from 'i18next';
 import * as _ from 'lodash';
 import * as semver from 'semver';
-import i18next from 'i18next';
-
+import type { K8sResourceCondition } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { K8sResourceConditionStatus } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { k8sPatch } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { ClusterVersionModel, MachineConfigPoolModel } from '../../models';
 import { referenceForModel } from './k8s-ref';
-import {
+import type {
   ClusterVersionCondition,
-  ClusterVersionConditionType,
   ClusterVersionKind,
   ConditionalUpdate,
   UpdateHistory,
   VersionUpdate,
   MachineConfigPoolKind,
 } from './types';
-import { k8sPatch } from '@console/dynamic-plugin-sdk/src/utils/k8s';
-import {
-  K8sResourceCondition,
-  K8sResourceConditionStatus,
-} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { ClusterVersionConditionType } from './types';
 
 export enum ClusterUpdateStatus {
   UpToDate = 'Up to Date',
@@ -157,7 +154,7 @@ export const getClusterVersionCondition = (
   return _.find(conditions, { type });
 };
 
-export const isProgressing = (cv: ClusterVersionKind): boolean => {
+const isProgressing = (cv: ClusterVersionKind): boolean => {
   return !_.isEmpty(
     getClusterVersionCondition(
       cv,
@@ -167,7 +164,7 @@ export const isProgressing = (cv: ClusterVersionKind): boolean => {
   );
 };
 
-export const invalid = (cv: ClusterVersionKind): boolean => {
+const invalid = (cv: ClusterVersionKind): boolean => {
   return !_.isEmpty(
     getClusterVersionCondition(
       cv,
@@ -177,7 +174,7 @@ export const invalid = (cv: ClusterVersionKind): boolean => {
   );
 };
 
-export const releaseNotAccepted = (cv: ClusterVersionKind): boolean => {
+const releaseNotAccepted = (cv: ClusterVersionKind): boolean => {
   return !_.isEmpty(
     getClusterVersionCondition(
       cv,
@@ -187,7 +184,7 @@ export const releaseNotAccepted = (cv: ClusterVersionKind): boolean => {
   );
 };
 
-export const failedToRetrieveUpdates = (cv: ClusterVersionKind): boolean => {
+const failedToRetrieveUpdates = (cv: ClusterVersionKind): boolean => {
   return !_.isEmpty(
     getClusterVersionCondition(
       cv,
@@ -197,7 +194,7 @@ export const failedToRetrieveUpdates = (cv: ClusterVersionKind): boolean => {
   );
 };
 
-export const updateFailing = (cv: ClusterVersionKind): boolean => {
+const updateFailing = (cv: ClusterVersionKind): boolean => {
   return !_.isEmpty(
     getClusterVersionCondition(
       cv,
@@ -336,8 +333,6 @@ export const getReleaseNotesLink = (version: string): string => {
 
   return `https://access.redhat.com/documentation/en-us/openshift_container_platform/${major}.${minor}/html/release_notes/ocp-${major}-${minor}-release-notes#ocp-${major}-${minor}-${patch}_release-notes`;
 };
-
-export const getClusterName = (): string => window.SERVER_FLAGS.kubeAPIServerURL || null;
 
 export const getClusterID = (cv: ClusterVersionKind): string => _.get(cv, 'spec.clusterID');
 

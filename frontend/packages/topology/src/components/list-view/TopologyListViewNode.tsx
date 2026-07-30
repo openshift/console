@@ -23,22 +23,20 @@ import {
   getFiringAlerts,
   shouldHideMonitoringAlertDecorator,
 } from '@console/shared/src/utils/alert-utils';
-import { useSearchFilter } from '../../filters';
+import { useSearchFilter } from '../../filters/useSearchFilter';
 import { getResource, getResourceKind } from '../../utils/topology-utils';
-import {
-  AlertsCell,
-  GroupResourcesCell,
-  CpuCell,
-  MemoryCell,
-  StatusCell,
-  TypedResourceBadgeCell,
-} from './cells';
+import { AlertsCell } from './cells/AlertsCell';
+import { CpuCell } from './cells/CpuCell';
+import { GroupResourcesCell } from './cells/GroupResourcesCell';
+import { MemoryCell } from './cells/MemoryCell';
+import { StatusCell } from './cells/StatusCell';
+import { TypedResourceBadgeCell } from './cells/TypedResourceBadgeCell';
 
 type DispatchProps = {
   onSelectTab?: (name: string) => void;
 };
 
-const TopologyListViewNode: FC<TopologyListViewNodeProps & DispatchProps> = ({
+const TopologyListViewNodeComponent: FC<TopologyListViewNodeProps & DispatchProps> = ({
   item,
   selectedIds,
   onSelect,
@@ -54,7 +52,7 @@ const TopologyListViewNode: FC<TopologyListViewNodeProps & DispatchProps> = ({
   noPods = false,
   children,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   const [filtered] = useSearchFilter(item.getLabel(), getResource(item)?.metadata?.labels);
   if (!item.isVisible) {
     return null;
@@ -72,7 +70,7 @@ const TopologyListViewNode: FC<TopologyListViewNodeProps & DispatchProps> = ({
     alertIndicator = shouldHideMonitoringAlertDecorator(severityAlertType) ? null : (
       <Tooltip
         key="monitoringAlert"
-        content={t('topology~Monitoring alert')}
+        content={t('Monitoring alert')}
         position={TooltipPosition.right}
       >
         <Button
@@ -131,7 +129,7 @@ const TopologyListViewNode: FC<TopologyListViewNodeProps & DispatchProps> = ({
       {children ? (
         <DataListContent
           className="odc-topology-list-view__group-children"
-          aria-label={t('topology~{{kindLabel}} {{label}}', {
+          aria-label={t('{{kindLabel}} {{label}}', {
             label: item.getLabel(),
             kindLabel: modelFor(kind)?.label ?? kind,
           })}
@@ -139,7 +137,7 @@ const TopologyListViewNode: FC<TopologyListViewNodeProps & DispatchProps> = ({
           isHidden={false}
         >
           <DataList
-            aria-label={t('topology~{{label}} sub-resources', { label: item.getLabel() })}
+            aria-label={t('{{label}} sub-resources', { label: item.getLabel() })}
             selectedDataListItemId={selectedIds[0]}
             onSelectDataListItem={(_event, id) => onSelect(selectedIds[0] === id ? [] : [id])}
           >
@@ -155,7 +153,7 @@ const TopologyListViewNodeDispatchToProps = (dispatch): DispatchProps => ({
   onSelectTab: (name) => dispatch(selectOverviewDetailsTab(name)),
 });
 
-export default connect<{}, DispatchProps, TopologyListViewNodeProps>(
+export const TopologyListViewNode = connect<{}, DispatchProps, TopologyListViewNodeProps>(
   null,
   TopologyListViewNodeDispatchToProps,
-)(observer(TopologyListViewNode));
+)(observer(TopologyListViewNodeComponent));

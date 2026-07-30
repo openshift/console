@@ -53,7 +53,7 @@ const podControllerMetricsQueries = {
   ),
 };
 
-export const getPodMetricsQueries = (name: string): { [key: string]: string[] } => ({
+const getPodMetricsQueries = (name: string): { [key: string]: string[] } => ({
   [ResourceUtilizationQuery.MEMORY]: [
     podMetricsQueries[ResourceUtilizationQuery.MEMORY]({ name }),
     podMetricsQueries[ResourceUtilizationQuery.QUOTA_LIMIT]({ name, resource: 'memory' }),
@@ -75,7 +75,7 @@ export const getPodMetricsQueries = (name: string): { [key: string]: string[] } 
   ],
 });
 
-export const getPodControllerMetricsQueries = (
+const getPodControllerMetricsQueries = (
   name: string,
   type: string,
 ): { [key: string]: string[] } => ({

@@ -1,15 +1,20 @@
 import type { FC, ReactNode } from 'react';
 import { useMemo } from 'react';
+import { Gallery, GalleryItem, Card, CardHeader, CardTitle } from '@patternfly/react-core';
+import type { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash';
-import { connect } from 'react-redux';
-import { Map as ImmutableMap } from 'immutable';
-import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import {
+import { connect } from 'react-redux';
+import { Link } from 'react-router';
+import type {
   DashboardsOverviewHealthSubsystem,
   DashboardsOverviewHealthPrometheusSubsystem,
   DashboardsOverviewHealthURLSubsystem,
   DashboardsOverviewHealthOperator,
+  ResolvedExtension,
+  WatchK8sResource,
+} from '@console/dynamic-plugin-sdk';
+import {
   isDashboardsOverviewHealthSubsystem,
   isDashboardsOverviewHealthURLSubsystem,
   isDashboardsOverviewHealthPrometheusSubsystem,
@@ -17,43 +22,34 @@ import {
   isResolvedDashboardsOverviewHealthPrometheusSubsystem,
   isResolvedDashboardsOverviewHealthResourceSubsystem,
   isResolvedDashboardsOverviewHealthOperator,
-  ResolvedExtension,
   useResolvedExtensions,
-  WatchK8sResource,
 } from '@console/dynamic-plugin-sdk';
-import { Gallery, GalleryItem, Card, CardHeader, CardTitle } from '@patternfly/react-core';
-import { BlueArrowCircleUpIcon } from '@console/shared/src/components/status/icons';
-import { ALL_NAMESPACES_KEY, FLAGS } from '@console/shared/src/constants/common';
-import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpgrade';
-
-import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
-import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
 import AlertItem, {
   StatusItem,
 } from '@console/shared/src/components/dashboard/status-card/AlertItem';
-import { alertURL } from '../../../monitoring/utils';
+import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
+import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
+import { BlueArrowCircleUpIcon } from '@console/shared/src/components/status/icons';
+import { ALL_NAMESPACES_KEY, FLAGS } from '@console/shared/src/constants/common';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
+import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpgrade';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import {
-  ClusterVersionKind,
-  referenceForModel,
-  hasAvailableUpdates,
-  K8sKind,
-  ObjectMetadata,
-} from '../../../../module/k8s';
+  useNamespacedNotificationAlerts,
+  useNotificationAlerts,
+} from '@console/shared/src/hooks/useNotificationAlerts';
 import { ClusterVersionModel } from '../../../../models';
-import { RootState } from '../../../../redux';
+import type { ClusterVersionKind, K8sKind, ObjectMetadata } from '../../../../module/k8s';
+import { referenceForModel, hasAvailableUpdates } from '../../../../module/k8s';
+import type { RootState } from '../../../../redux';
+import { alertURL } from '../../../monitoring/utils';
+import { useK8sWatchResource } from '../../../utils/k8s-watch-hook';
 import {
   OperatorHealthItem,
   PrometheusHealthItem,
   URLHealthItem,
   ResourceHealthItem,
 } from './health-item';
-import { useK8sWatchResource } from '../../../utils/k8s-watch-hook';
-import { useFlag } from '@console/shared/src/hooks/useFlag';
-import {
-  useNamespacedNotificationAlerts,
-  useNotificationAlerts,
-} from '@console/shared/src/hooks/useNotificationAlerts';
-import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 
 const filterSubsystems = (
   subsystems: (
@@ -86,7 +82,7 @@ const cvResource: WatchK8sResource = {
 };
 
 export const DashboardAlerts: FC<DashboardAlertsProps> = ({ labelSelector }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const hasCVResource = useFlag(FLAGS.CLUSTER_VERSION);
   const [alerts, , loadError] = useNotificationAlerts(labelSelector);
   const [cv, cvLoaded] = useK8sWatchResource<ClusterVersionKind>(
@@ -102,9 +98,9 @@ export const DashboardAlerts: FC<DashboardAlertsProps> = ({ labelSelector }) => 
         <StatusItem
           key="clusterUpdate"
           Icon={() => <BlueArrowCircleUpIcon size="heading_2xl" />}
-          message={t('public~A cluster version update is available')}
+          message={t('A cluster version update is available')}
         >
-          <Link to="/settings/cluster?showVersions">{t('public~Update cluster')}</Link>
+          <Link to="/settings/cluster?showVersions">{t('Update cluster')}</Link>
         </StatusItem>
       )}
       {alerts.map((alert) => (
@@ -143,7 +139,7 @@ export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels
     () => subsystems.findIndex((e) => isResolvedDashboardsOverviewHealthOperator(e)),
     [subsystems],
   );
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const healthItems: { title: string; Component: ReactNode }[] = [];
   subsystems.forEach((subsystem) => {
     if (isResolvedDashboardsOverviewHealthURLSubsystem(subsystem)) {
@@ -187,7 +183,7 @@ export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels
   }
 
   return (
-    <Card data-test-id="status-card">
+    <Card data-test="status-card" data-test-id="status-card">
       <CardHeader
         actions={{
           actions: (
@@ -200,7 +196,7 @@ export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels
                   setActiveNamespace(ALL_NAMESPACES_KEY);
                 }}
               >
-                {t('public~View alerts')}
+                {t('View alerts')}
               </Link>
             </>
           ),
@@ -208,7 +204,7 @@ export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels
           className: 'co-overview-card__actions',
         }}
       >
-        <CardTitle>{t('public~Status')}</CardTitle>
+        <CardTitle>{t('Status')}</CardTitle>
       </CardHeader>
       <HealthBody>
         <Gallery className="co-overview-status__health" hasGutter>

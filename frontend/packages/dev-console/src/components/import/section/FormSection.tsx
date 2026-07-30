@@ -3,7 +3,7 @@ import { FormHelperText, Title } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import './FormSection.scss';
 
-export interface FormSectionProps {
+interface FormSectionProps {
   title?: ReactNode;
   subTitle?: ReactNode;
   fullWidth?: boolean;

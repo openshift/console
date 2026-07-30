@@ -1,7 +1,6 @@
 import type { FC } from 'react';
 import * as _ from 'lodash';
-
-import { Volume } from '../../module/k8s';
+import type { Volume } from '../../module/k8s';
 import { getVolumeLocation, getVolumeType } from '../../module/k8s/pods';
 import { ResourceLink } from './resource-link';
 

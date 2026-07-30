@@ -77,7 +77,7 @@ const normalizeEventType = (eventType: K8sResourceKind, t: TFunction): CatalogIt
 const useEventTypeProvider: ExtensionHook<CatalogItem[]> = ({
   namespace,
 }): [CatalogItem[], boolean, any] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const [canGetEventType] = useAccessReview({
     group: EventingEventTypeModel.apiGroup,
     resource: EventingEventTypeModel.plural,

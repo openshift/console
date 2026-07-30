@@ -23,9 +23,9 @@ import {
   modelFor,
   referenceForGroupVersionKind,
 } from '@console/internal/module/k8s';
-import { Status } from '@console/shared';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import type { RouteParams } from '@console/shared/src/types';
+import { Status } from '@console/shared/src/components/status/Status';
+import type { RouteParams } from '@console/shared/src/types/route-params';
 import type { CRDDescription, ProvidedAPI } from '../types';
 import { OperandLink } from './operand/operand-link';
 import { providedAPIForReference } from './index';
@@ -47,7 +47,7 @@ const tableColumnClasses = [
   'pf-m-hidden pf-m-visible-on-sm',
 ];
 
-export const ResourceTableRow: FC<RowFunctionArgs<
+const ResourceTableRow: FC<RowFunctionArgs<
   K8sResourceKind,
   {
     linkFor: (obj: K8sResourceKind, providedAPI: ProvidedAPI) => JSX.Element;
@@ -66,29 +66,29 @@ export const ResourceTableRow: FC<RowFunctionArgs<
   </>
 );
 
-export const ResourceTable: FC<ResourceTableProps> = (props) => {
-  const { t } = useTranslation();
+const ResourceTable: FC<ResourceTableProps> = (props) => {
+  const { t } = useTranslation('olm');
   const ResourceTableHeader = () => [
     {
-      title: t('olm~Name'),
+      title: t('Name'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: t('olm~Kind'),
+      title: t('Kind'),
       sortField: 'kind',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: t('olm~Status'),
+      title: t('Status'),
       sortField: 'status.phase',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: t('olm~Created'),
+      title: t('Created'),
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
@@ -98,12 +98,12 @@ export const ResourceTable: FC<ResourceTableProps> = (props) => {
   return (
     <Table
       {...props}
-      aria-label={t('olm~Operand Resources')}
+      aria-label={t('Operand Resources')}
       Header={ResourceTableHeader}
       Row={ResourceTableRow}
       EmptyMsg={() => (
-        <ConsoleEmptyState title={t('olm~No resources found')}>
-          {t('olm~There are no Kubernetes resources used by this operand.')}
+        <ConsoleEmptyState title={t('No resources found')}>
+          {t('There are no Kubernetes resources used by this operand.')}
         </ConsoleEmptyState>
       )}
       virtualize
@@ -144,7 +144,7 @@ export const linkForCsvResource = (
 type ResourcesPageRouteParams = RouteParams<'plural'>;
 
 export const Resources: FC<ResourcesProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const { plural } = useParams<ResourcesPageRouteParams>();
   const providedAPI = providedAPIForReference(props.customData, plural);
 
@@ -171,12 +171,12 @@ export const Resources: FC<ResourcesProps> = (props) => {
 
   return (
     <MultiListPage
-      filterLabel={t('olm~Resources by name')}
+      filterLabel={t('Resources by name')}
       resources={watchResources}
       rowFilters={[
         {
           type: 'clusterserviceversion-resource-kind',
-          filterGroupName: t('olm~Kind'),
+          filterGroupName: t('Kind'),
           reducer: ({ kind }) => kindForReference(kind),
           items: watchResources.map(({ kind }) => ({
             id: kindForReference(kind),
@@ -197,9 +197,7 @@ export type ResourcesProps = {
   customData: any;
 };
 
-export type ResourceListProps = {};
-
-export type ResourceTableProps = {
+type ResourceTableProps = {
   loaded: boolean;
   loadError?: string;
   data: K8sResourceKind[];

@@ -15,32 +15,29 @@ import {
 } from '@console/internal/components/utils';
 import type { K8sKind, K8sResourceKind, RouteKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { ActionMenu, ActionMenuVariant, ActionServiceProvider } from '@console/shared';
+import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
+import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { useTabbedTableBreadcrumbsFor } from '@console/shared/src/hooks/useTabbedTableBreadcrumb';
 import { PRIVATE_KNATIVE_SERVING_LABEL } from '../../const';
 import { serverlessTab } from '../../utils/serverless-tab-utils';
 
 const RouteDetails: FC<RoutesDetailsProps> = ({ obj: route }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const isPrivateKSVC =
     route?.metadata?.labels?.[PRIVATE_KNATIVE_SERVING_LABEL] === 'cluster-local';
   return (
     <>
       <PaneBody>
-        <SectionHeading text={t('knative-plugin~Route details')} />
+        <SectionHeading text={t('Route details')} />
         <Grid hasGutter>
           <GridItem sm={6}>
             <ResourceSummary resource={route} />
           </GridItem>
           <GridItem sm={6}>
             <DescriptionList>
-              <DetailsItem
-                label={t('knative-plugin~Location')}
-                obj={route}
-                path="status.url"
-                hideEmpty
-              >
+              <DetailsItem label={t('Location')} obj={route} path="status.url" hideEmpty>
                 {isPrivateKSVC ? (
                   <ClipboardCopy isReadOnly hoverTip="Copy" clickTip="Copied">
                     {route?.status?.url}
@@ -58,7 +55,7 @@ const RouteDetails: FC<RoutesDetailsProps> = ({ obj: route }) => {
         </Grid>
       </PaneBody>
       <PaneBody>
-        <SectionHeading text={t('knative-plugin~Conditions')} />
+        <SectionHeading text={t('Conditions')} />
         <Conditions conditions={route?.status?.conditions} />
       </PaneBody>
     </>

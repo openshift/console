@@ -9,14 +9,14 @@ import {
   ModalVariant,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
-import { ModalComponentProps } from '@console/shared/src/types/modal';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
 
 export const ErrorModal: OverlayComponent<ErrorModalProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { error, title } = props;
-  const titleText = title || t('public~Error');
+  const titleText = title || t('Error');
   return (
     <Modal
       isOpen
@@ -28,7 +28,7 @@ export const ErrorModal: OverlayComponent<ErrorModalProps> = (props) => {
       <ModalBody>{error}</ModalBody>
       <ModalFooter>
         <Button key="cancel" variant={ButtonVariant.primary} onClick={props.closeOverlay}>
-          {t('public~OK')}
+          {t('OK')}
         </Button>
       </ModalFooter>
     </Modal>

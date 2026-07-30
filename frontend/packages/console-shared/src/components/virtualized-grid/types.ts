@@ -1,3 +1,4 @@
+/* eslint-disable no-barrel-files/no-barrel-files */
 import type { GridCellProps } from 'react-virtualized';
 import type { VirtualizedGridItem } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 
@@ -19,9 +20,4 @@ export type GridChildrenProps = {
   columnCount: number;
   items: CellItem[];
   rowCount: number;
-};
-
-export type CellSize = {
-  height: string | number;
-  width: string | number;
 };

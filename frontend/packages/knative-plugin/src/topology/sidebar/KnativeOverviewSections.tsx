@@ -2,8 +2,8 @@ import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ResourceSummary } from '@console/internal/components/utils';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import type { OverviewItem } from '@console/shared';
-import { PodRing } from '@console/shared';
+import { PodRing } from '@console/shared/src/components/pod/PodRing';
+import type { OverviewItem } from '@console/shared/src/types/resource';
 import TopologySideBarTabSection from '@console/topology/src/components/side-bar/TopologySideBarTabSection';
 import DomainMappingOverviewList from '../../components/overview/domain-mapping/DomainMappingOverviewList';
 import { PubSubResourceOverviewList } from '../../components/overview/EventPubSubResources';
@@ -27,43 +27,37 @@ type SubscriptionsOverviewList = {
 };
 
 export const EventSourcesOverviewList: FC<OverviewListProps> = ({ items }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   return items?.length > 0 ? (
     <TopologySideBarTabSection>
-      <PubSubResourceOverviewList items={items} title={t('knative-plugin~Event Sources')} />
+      <PubSubResourceOverviewList items={items} title={t('Event Sources')} />
     </TopologySideBarTabSection>
   ) : null;
 };
 
 export const SubscriptionsOverviewList: FC<SubscriptionsOverviewList> = ({ subscriptions }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   return subscriptions?.length > 0 ? (
     <TopologySideBarTabSection>
-      <EventPubSubSubscribers
-        subscribers={subscriptions}
-        title={t('knative-plugin~Subscriptions')}
-      />
+      <EventPubSubSubscribers subscribers={subscriptions} title={t('Subscriptions')} />
     </TopologySideBarTabSection>
   ) : null;
 };
 
 export const TriggersOverviewList: FC<SubscriptionsOverviewList> = ({ subscriptions }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   return subscriptions?.length > 0 ? (
     <TopologySideBarTabSection>
-      <EventPubSubSubscribers subscribers={subscriptions} title={t('knative-plugin~Triggers')} />
+      <EventPubSubSubscribers subscribers={subscriptions} title={t('Triggers')} />
     </TopologySideBarTabSection>
   ) : null;
 };
 
 export const DomainMappingsOverviewList: FC<OverviewListProps> = ({ items }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   return items?.length > 0 ? (
     <TopologySideBarTabSection>
-      <DomainMappingOverviewList
-        domainMappings={items}
-        title={t('knative-plugin~Domain mappings')}
-      />
+      <DomainMappingOverviewList domainMappings={items} title={t('Domain mappings')} />
     </TopologySideBarTabSection>
   ) : null;
 };
@@ -101,7 +95,7 @@ export const KnativeOverviewDetails: FC<KnativeOverviewDetailsProps> = ({ item }
   );
 };
 
-export const KnativeEventSinkPodRing: FC<KnativeOverviewDetailsProps> = ({ item }) => {
+const KnativeEventSinkPodRing: FC<KnativeOverviewDetailsProps> = ({ item }) => {
   const { revisions, obj } = item as { obj: K8sResourceKind; revisions: K8sResourceKind[] };
   const { pods } = usePodsForRevisions(
     revisions?.map((r) => r.metadata.uid),

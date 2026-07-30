@@ -1,7 +1,6 @@
 import type { ActionType as Action } from 'typesafe-actions';
 import { action } from 'typesafe-actions';
-import type { UserKind } from '@console/internal/module/k8s/types';
-import type { UserInfo } from '../../../extensions';
+import type { UserInfo, UserKind } from '../../../extensions';
 import type { AdmissionWebhookWarning } from '../../redux-types';
 
 export enum ActionType {
@@ -28,6 +27,7 @@ export const setAdmissionWebhookWarning = (id: string, warning: AdmissionWebhook
   action(ActionType.SetAdmissionWebhookWarning, { id, warning });
 export const removeAdmissionWebhookWarning = (id) =>
   action(ActionType.RemoveAdmissionWebhookWarning, { id });
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- used in typeof for type export
 const coreActions = {
   setUser,
   setUserResource,

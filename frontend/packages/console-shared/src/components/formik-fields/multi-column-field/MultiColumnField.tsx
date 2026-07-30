@@ -6,7 +6,7 @@ import type { FormikValues } from 'formik';
 import { FieldArray, useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { useFormikValidationFix } from '../../../hooks/useFormikValidationFix';
-import SecondaryStatus from '../../status/SecondaryStatus';
+import { SecondaryStatus } from '../../status/SecondaryStatus';
 import type { MultiColumnFieldProps } from '../field-types';
 import { getSpans } from './multicolumn-field-utils';
 import MultiColumnFieldFooter from './MultiColumnFieldFooter';
@@ -14,7 +14,7 @@ import MultiColumnFieldHeader from './MultiColumnFieldHeader';
 import MultiColumnFieldRow from './MultiColumnFieldRow';
 import './MultiColumnField.scss';
 
-const MultiColumnField: FC<MultiColumnFieldProps> = ({
+export const MultiColumnField: FC<MultiColumnFieldProps> = ({
   children,
   name,
   label,
@@ -100,5 +100,3 @@ const MultiColumnField: FC<MultiColumnFieldProps> = ({
     />
   );
 };
-
-export default MultiColumnField;

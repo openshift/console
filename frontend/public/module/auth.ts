@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { consoleFetch as coFetch } from '@console/dynamic-plugin-sdk/src/utils/fetch';
+import { coFetch } from '@console/shared/src/utils/console-fetch';
 import { stripBasePath } from '../components/utils/link';
 
 const {
@@ -26,6 +26,10 @@ const name = 'name';
 const email = 'email';
 const clearLocalStorageKeys = [userID, name, email];
 
+// Constants for redirect loop detection
+const AUTH_REDIRECT_COUNT_KEY = 'auth-redirect-count';
+const MAX_AUTH_REDIRECTS = 3;
+
 const setNext = (next: string) => {
   if (!next) {
     return;
@@ -49,6 +53,39 @@ const clearLocalStorage = (keys: string[]) => {
       console.error('Failed to clear localStorage', e);
     }
   });
+};
+
+// Helper functions for redirect counter
+const getAuthRedirectCount = () => {
+  try {
+    const count = sessionStorage.getItem(AUTH_REDIRECT_COUNT_KEY);
+    return count ? parseInt(count, 10) : 0;
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error('Failed to get auth redirect count from sessionStorage', e);
+    return 0;
+  }
+};
+
+const incrementAuthRedirectCount = () => {
+  try {
+    const count = getAuthRedirectCount() + 1;
+    sessionStorage.setItem(AUTH_REDIRECT_COUNT_KEY, count.toString());
+    return count;
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error('Failed to increment auth redirect count in sessionStorage', e);
+    return 0;
+  }
+};
+
+const resetAuthRedirectCount = () => {
+  try {
+    sessionStorage.removeItem(AUTH_REDIRECT_COUNT_KEY);
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error('Failed to reset auth redirect count in sessionStorage', e);
+  }
 };
 
 export const authSvc = {
@@ -85,14 +122,25 @@ export const authSvc = {
     setNext(next);
     clearLocalStorage(clearLocalStorageKeys);
     coFetch(logoutURL, { method: 'POST' })
-      // eslint-disable-next-line no-console
-      .catch((e) => console.error('Error logging out', e))
-      .then(() => {
+      .then(async (response) => {
+        let dynamicLogoutURL: string | undefined;
+        try {
+          const data: { logoutRedirectURL?: string } = await response.json();
+          dynamicLogoutURL = data?.logoutRedirectURL;
+        } catch {
+          dynamicLogoutURL = undefined;
+        }
+
         if (isKubeAdmin) {
           authSvc.logoutKubeAdmin();
+        } else if (dynamicLogoutURL) {
+          window.location.assign(dynamicLogoutURL);
         } else {
           authSvc.logoutRedirect(next);
         }
+      })
+      .catch(() => {
+        authSvc.logoutRedirect(next);
       });
   }),
 
@@ -125,5 +173,41 @@ export const authSvc = {
     if (![window.location.href, window.location.pathname].includes(loginURL)) {
       window.location.assign(loginURL);
     }
+  },
+
+  // Handle 401 responses with redirect loop detection.
+  // Wrapped in _.once so that only the first 401 per page load triggers the
+  // flow — the SPA fires many API calls concurrently and each would otherwise
+  // increment the redirect counter past MAX_AUTH_REDIRECTS within a single load.
+  handle401: _.once((next) => {
+    const redirectCount = incrementAuthRedirectCount();
+
+    // If we've exceeded the max redirects, redirect to the error page
+    if (redirectCount > MAX_AUTH_REDIRECTS) {
+      // eslint-disable-next-line no-console
+      console.error(
+        `Authentication redirect loop detected (${redirectCount} consecutive 401 responses). Redirecting to error page.`,
+      );
+
+      // Build error page URL with query parameters
+      const errorURL = new URL(loginErrorURL || '/auth/error', window.location.origin);
+      errorURL.searchParams.set('error', 'redirect_loop_detected');
+      errorURL.searchParams.set('error_type', 'auth');
+
+      // Avoid redirecting if we're already on the error page
+      if (![window.location.href, window.location.pathname].includes(loginErrorURL)) {
+        window.location.href = errorURL.toString();
+      }
+      resetAuthRedirectCount();
+      return;
+    }
+
+    // Proceed with normal logout flow
+    authSvc.logout(next);
+  }),
+
+  // Reset redirect counter (called on successful k8s requests)
+  resetRedirectCount: () => {
+    resetAuthRedirectCount();
   },
 };

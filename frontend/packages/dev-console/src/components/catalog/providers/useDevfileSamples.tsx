@@ -2,8 +2,8 @@ import { useState, useEffect, useMemo } from 'react';
 import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import type { CatalogItem, ExtensionHook } from '@console/dynamic-plugin-sdk';
-import { coFetchJSON } from '@console/internal/co-fetch';
-import type { APIError } from '@console/shared';
+import type { APIError } from '@console/shared/src/types/resource';
+import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
 import type { DevfileSample } from '../../import/devfile/devfile-types';
 
 const normalizeDevfileSamples = (
@@ -50,7 +50,7 @@ const normalizeDevfileSamples = (
 const useDevfileSamples: ExtensionHook<CatalogItem[]> = ({
   namespace,
 }): [CatalogItem[], boolean, any] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const [devfileSamples, setDevfileSamples] = useState<DevfileSample[]>();
   const [loadedError, setLoadedError] = useState<APIError>();
 

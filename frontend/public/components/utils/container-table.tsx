@@ -1,8 +1,8 @@
 import type { FC } from 'react';
+import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { ContainerSpec } from '../../module/k8s';
-import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
+import type { ContainerSpec } from '../../module/k8s';
 
 const ContainerRow: FC<ContainerRowProps> = ({ container }) => {
   const resourceLimits = _.get(container, 'resources.limits');
@@ -24,15 +24,15 @@ const ContainerRow: FC<ContainerRowProps> = ({ container }) => {
 };
 
 export const ContainerTable: FC<ContainerTableProps> = ({ containers }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <Table gridBreakPoint="">
       <Thead>
         <Tr>
-          <Th>{t('public~Name')}</Th>
-          <Th>{t('public~Image')}</Th>
-          <Th visibility={['hidden', 'visibleOnSm']}>{t('public~Resource limits')}</Th>
-          <Th visibility={['hidden', 'visibleOnMd']}>{t('public~Ports')}</Th>
+          <Th>{t('Name')}</Th>
+          <Th>{t('Image')}</Th>
+          <Th visibility={['hidden', 'visibleOnSm']}>{t('Resource limits')}</Th>
+          <Th visibility={['hidden', 'visibleOnMd']}>{t('Ports')}</Th>
         </Tr>
       </Thead>
       <Tbody>
@@ -44,7 +44,7 @@ export const ContainerTable: FC<ContainerTableProps> = ({ containers }) => {
   );
 };
 
-export type ContainerRowProps = {
+type ContainerRowProps = {
   container: ContainerSpec;
 };
 

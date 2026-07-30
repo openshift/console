@@ -1,6 +1,6 @@
 import { BadgeType, getBadgeFromType } from '../badge-factory';
-import DevPreviewBadge from '../DevPreviewBadge';
-import TechPreviewBadge from '../TechPreviewBadge';
+import { DevPreviewBadge } from '../DevPreviewBadge';
+import { TechPreviewBadge } from '../TechPreviewBadge';
 
 describe('Test Badge Type Factory', () => {
   it('expect to always get back a badge using an official type', () => {

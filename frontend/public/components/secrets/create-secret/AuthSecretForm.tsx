@@ -1,17 +1,12 @@
-import type { FC } from 'react';
-import { useState, Ref, MouseEvent as ReactMouseEvent } from 'react';
+import type { FC, Ref, MouseEvent as ReactMouseEvent } from 'react';
+import { useState } from 'react';
+import type { MenuToggleElement } from '@patternfly/react-core';
+import { FormGroup, Select, SelectOption, SelectList, MenuToggle } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import {
-  FormGroup,
-  Select,
-  SelectOption,
-  SelectList,
-  MenuToggle,
-  MenuToggleElement,
-} from '@patternfly/react-core';
-import { SecretType, SecretSubFormProps, SecretStringData } from './types';
 import { BasicAuthSubform } from './BasicAuthSubform';
 import { SSHAuthSubform } from './SSHAuthSubform';
+import type { SecretSubFormProps, SecretStringData } from './types';
+import { SecretType } from './types';
 
 export const AuthSecretForm: FC<SecretSubFormProps> = ({
   onChange,
@@ -19,7 +14,7 @@ export const AuthSecretForm: FC<SecretSubFormProps> = ({
   isCreate,
   secretType,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const [authType, setAuthType] = useState<SecretType>(secretType);
   const [data, setData] = useState<SecretStringData>(stringData);
   const [isAuthTypeSelectOpen, setIsAuthTypeSelectOpen] = useState(false);
@@ -27,11 +22,11 @@ export const AuthSecretForm: FC<SecretSubFormProps> = ({
   const getDisplayText = (type: SecretType): string => {
     switch (type) {
       case SecretType.basicAuth:
-        return t('public~Basic authentication');
+        return t('Basic authentication');
       case SecretType.sshAuth:
-        return t('public~SSH key');
+        return t('SSH key');
       default:
-        return t('public~Select authentication type');
+        return t('Select authentication type');
     }
   };
 
@@ -51,7 +46,7 @@ export const AuthSecretForm: FC<SecretSubFormProps> = ({
   return (
     <>
       {isCreate && (
-        <FormGroup label={t('public~Authentication type')} fieldId="dropdown-selectbox" isRequired>
+        <FormGroup label={t('Authentication type')} fieldId="dropdown-selectbox" isRequired>
           <Select
             id="dropdown-selectbox"
             isOpen={isAuthTypeSelectOpen}
@@ -75,10 +70,10 @@ export const AuthSecretForm: FC<SecretSubFormProps> = ({
                 value={SecretType.basicAuth}
                 data-test-dropdown-menu={SecretType.basicAuth}
               >
-                {t('public~Basic authentication')}
+                {t('Basic authentication')}
               </SelectOption>
               <SelectOption value={SecretType.sshAuth} data-test-dropdown-menu={SecretType.sshAuth}>
-                {t('public~SSH key')}
+                {t('SSH key')}
               </SelectOption>
             </SelectList>
           </Select>

@@ -8,7 +8,7 @@ const PaneBodyGroup: FC<PaneBodyGroupProps> = ({ children, ...props }) => {
   );
 };
 
-export type PaneBodyGroupProps = {
+type PaneBodyGroupProps = {
   children: ReactNode;
 };
 export default PaneBodyGroup;

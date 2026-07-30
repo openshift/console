@@ -6,7 +6,8 @@ import type { TableProps, RowFunctionArgs } from '@console/internal/components/f
 import { Table, TableData } from '@console/internal/components/factory';
 import { ResourceLink } from '@console/internal/components/utils';
 import { referenceFor } from '@console/internal/module/k8s';
-import LazyActionMenu, {
+import {
+  LazyActionMenu,
   KEBAB_COLUMN_CLASS,
 } from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
@@ -25,7 +26,7 @@ const columnClassNames = [
   KEBAB_COLUMN_CLASS,
 ];
 
-export const BuildRunHeader = () => {
+const BuildRunHeader = () => {
   // This function is NOT called as component, so we can not use useTranslation here.
   const t = i18next.t.bind(i18next);
 
@@ -68,7 +69,7 @@ export const BuildRunHeader = () => {
   ];
 };
 
-export const BuildRunRow: FC<RowFunctionArgs<BuildRun>> = ({ obj: buildRun }) => {
+const BuildRunRow: FC<RowFunctionArgs<BuildRun>> = ({ obj: buildRun }) => {
   const kindReference = referenceFor(buildRun);
   const context = { [kindReference]: buildRun };
 
@@ -101,12 +102,12 @@ export const BuildRunRow: FC<RowFunctionArgs<BuildRun>> = ({ obj: buildRun }) =>
 };
 
 export const BuildRunTable: FC<TableProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('shipwright-plugin');
 
   return (
     <Table
       {...props}
-      aria-label={t('shipwright-plugin~BuildRuns')}
+      aria-label={t('BuildRuns')}
       Header={BuildRunHeader}
       Row={BuildRunRow}
       customSorts={{
@@ -119,5 +120,3 @@ export const BuildRunTable: FC<TableProps> = (props) => {
     />
   );
 };
-
-export default BuildRunTable;

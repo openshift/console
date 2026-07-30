@@ -4,14 +4,6 @@ import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-ut
 import { ApplicationFlowType } from '../edit-application-utils';
 import EditApplicationForm from '../EditApplicationForm';
 
-global.ResizeObserver = class ResizeObserver {
-  observe = () => {};
-
-  unobserve = () => {};
-
-  disconnect = () => {};
-};
-
 jest.mock('react-i18next', () => ({
   __esModule: true,
   useTranslation: () => ({

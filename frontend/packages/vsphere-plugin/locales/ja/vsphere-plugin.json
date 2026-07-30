@@ -8,6 +8,7 @@
   "Not configured yet": "まだ設定されていません",
   "Prometheus query failed.": "Prometheus クエリーが失敗しました。",
   "Invalid credentials": "無効な認証情報",
+  "Synchronization failed": "同期に失敗しました",
   "Failing {{reason}}": "失敗 {{reason}}",
   "Failed to load kubecontrollermanager": "kubecontrollermanager の読み込みに失敗しました",
   "Failed to parse cloud provider config {{cm}}": "クラウドプロバイダーの設定 {{cm}} の解析に失敗しました",

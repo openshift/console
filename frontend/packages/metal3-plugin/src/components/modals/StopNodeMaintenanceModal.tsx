@@ -8,7 +8,10 @@ import {
   NodeMaintenanceKubevirtBetaModel,
   NodeMaintenanceKubevirtAlphaModel,
 } from '../../models';
-import { getNodeMaintenanceReason, getNodeMaintenanceNodeName } from '../../selectors';
+import {
+  getNodeMaintenanceReason,
+  getNodeMaintenanceNodeName,
+} from '../../selectors/node-maintenance';
 
 const getMaintenanceModel = (nodeMaintenance: K8sResourceKind) => {
   if (
@@ -27,7 +30,7 @@ const getMaintenanceModel = (nodeMaintenance: K8sResourceKind) => {
 };
 
 export const useStopNodeMaintenanceModal = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('metal3-plugin');
   const launchWarningModal = useWarningModal();
 
   return useCallback(
@@ -37,14 +40,14 @@ export const useStopNodeMaintenanceModal = () => {
       const nodeName = getNodeMaintenanceNodeName(nodeMaintenance);
 
       launchWarningModal({
-        title: t('metal3-plugin~Stop maintenance'),
+        title: t('Stop maintenance'),
         children: (
-          <Trans t={t} ns="metal3-plugin">
-            Are you sure you want to stop maintenance <strong>{reasonLabel}</strong> on node{' '}
-            <strong>{nodeName}</strong>?
+          <Trans t={t} ns="metal3-plugin" values={{ reasonLabel, nodeName }}>
+            Are you sure you want to stop maintenance <strong>{{ reasonLabel }}</strong> on node{' '}
+            <strong>{{ nodeName }}</strong>?
           </Trans>
         ),
-        confirmButtonLabel: t('metal3-plugin~Stop maintenance'),
+        confirmButtonLabel: t('Stop maintenance'),
         onConfirm: () => k8sKill(getMaintenanceModel(nodeMaintenance), nodeMaintenance),
       });
     },

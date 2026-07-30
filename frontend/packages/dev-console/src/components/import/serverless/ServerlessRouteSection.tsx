@@ -8,8 +8,8 @@ import { LoadingInline } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { DomainMappingModel } from '@console/knative-plugin/src';
-import { MultiTypeaheadField } from '@console/shared';
+import { DomainMappingModel } from '@console/knative-plugin/src/models';
+import { MultiTypeaheadField } from '@console/shared/src/components/formik-fields/MultiTypeaheadField';
 import type { GitImportFormData, DeployImageFormData, UploadJarFormData } from '../import-types';
 import {
   getAllOtherDomainMappingInUse,
@@ -19,7 +19,7 @@ import {
 } from './serverless-utils';
 
 const ServerlessRouteSection: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const {
     setFieldValue,
     values: {
@@ -77,11 +77,11 @@ const ServerlessRouteSection: FC = () => {
           <MultiTypeaheadField
             data-test-id="domain-mapping-field"
             name="serverless.domainMapping"
-            label={t('devconsole~Domain mapping')}
-            ariaLabel={t('devconsole~Domain mapping')}
+            label={t('Domain mapping')}
+            ariaLabel={t('Domain mapping')}
             options={domainMappingResources}
-            placeholderText={t('devconsole~Add domain')}
-            helpText={t('devconsole~Enter custom domain to map to the Knative service')}
+            placeholderText={t('Add domain')}
+            helpText={t('Enter custom domain to map to the Knative service')}
             isCreatable
           />
           {hasOtherKsvcDomainMappings(serverless.domainMapping) && (
@@ -89,12 +89,10 @@ const ServerlessRouteSection: FC = () => {
               data-test="domain-mapping-warning"
               variant="warning"
               isInline
-              title={t('devconsole~Domain mapping(s) will be updated')}
+              title={t('Domain mapping(s) will be updated')}
             >
               <div style={{ marginBottom: 'var(--pf-t--global--spacer--sm)' }}>
-                {t(
-                  'devconsole~Warning: The following domain(s) will be removed from the associated service',
-                )}
+                {t('Warning: The following domain(s) will be removed from the associated service')}
               </div>
               {domainsInUse.length > 0 && (
                 <ul>

@@ -2,7 +2,9 @@ import type { FC } from 'react';
 import type { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { FormFooter, FlexForm, FormBody } from '@console/shared';
+import { FlexForm } from '@console/shared/src/components/form-utils/FlexForm';
+import { FormBody } from '@console/shared/src/components/form-utils/FormBody';
+import { FormFooter } from '@console/shared/src/components/form-utils/FormFooter';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import type { NormalizedBuilderImages } from '../../utils/imagestream-utils';
 import AdvancedSection from '../import/advanced/AdvancedSection';
@@ -21,7 +23,7 @@ import PipelineSection from '../pipeline-section/pipeline/PipelineSection';
 import type { AppResources } from './edit-application-types';
 import { ApplicationFlowType, getFlowTypePageTitle } from './edit-application-utils';
 
-export interface EditApplicationFormProps {
+interface EditApplicationFormProps {
   flowType: ApplicationFlowType;
   builderImages?: NormalizedBuilderImages;
   appResources: AppResources;
@@ -41,7 +43,7 @@ const EditApplicationForm: FC<
   isSubmitting,
   appResources,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   return (
     <>
       <PageHeading title={t(getFlowTypePageTitle(flowType))} />
@@ -87,9 +89,9 @@ const EditApplicationForm: FC<
           handleReset={handleReset}
           errorMessage={status && status.submitError}
           isSubmitting={isSubmitting}
-          submitLabel={t('devconsole~Save')}
+          submitLabel={t('Save')}
           disableSubmit={!dirty || !_.isEmpty(errors) || isSubmitting}
-          resetLabel={t('devconsole~Cancel')}
+          resetLabel={t('Cancel')}
           sticky
         />
       </FlexForm>

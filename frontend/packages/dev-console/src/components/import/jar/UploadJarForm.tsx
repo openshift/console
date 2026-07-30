@@ -6,7 +6,9 @@ import { useTranslation } from 'react-i18next';
 import type { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
 import { usePreventDataLossLock } from '@console/internal/components/utils';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { FlexForm, FormBody, FormFooter } from '@console/shared/src/components/form-utils';
+import { FlexForm } from '@console/shared/src/components/form-utils/FlexForm';
+import { FormBody } from '@console/shared/src/components/form-utils/FormBody';
+import { FormFooter } from '@console/shared/src/components/form-utils/FormFooter';
 import type { BuilderImage } from '../../../utils/imagestream-utils';
 import AdvancedSection from '../advanced/AdvancedSection';
 import AppSection from '../app/AppSection';
@@ -17,7 +19,7 @@ import IconSection from '../section/IconSection';
 import ResourceSection from '../section/ResourceSection';
 import JarSection from './section/JarSection';
 
-export type UploadJarFormProps = {
+type UploadJarFormProps = {
   namespace: string;
   projects: WatchK8sResultsObject<K8sResourceKind[]>;
   builderImage?: BuilderImage;
@@ -34,7 +36,7 @@ const UploadJarForm: FC<FormikProps<FormikValues> & UploadJarFormProps> = ({
   projects,
   builderImage,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   usePreventDataLossLock(isSubmitting);
   const {
     image: { tag: selectedImagetag },
@@ -54,12 +56,8 @@ const UploadJarForm: FC<FormikProps<FormikValues> & UploadJarFormProps> = ({
               showImageInfo={false}
             />
           ) : (
-            <Alert
-              variant="warning"
-              title={t('devconsole~Unable to detect the Builder Image.')}
-              isInline
-            >
-              {t('devconsole~No associated Builder Image is found for Java.')}
+            <Alert variant="warning" title={t('Unable to detect the Builder Image.')} isInline>
+              {t('No associated Builder Image is found for Java.')}
             </Alert>
           )}
         </FormSection>
@@ -74,10 +72,10 @@ const UploadJarForm: FC<FormikProps<FormikValues> & UploadJarFormProps> = ({
         handleReset={handleReset}
         errorMessage={status && status.submitError}
         isSubmitting={isSubmitting}
-        submitLabel={t('devconsole~Create')}
+        submitLabel={t('Create')}
         sticky
         disableSubmit={!dirty || !_.isEmpty(errors) || isSubmitting}
-        resetLabel={t('devconsole~Cancel')}
+        resetLabel={t('Cancel')}
       />
     </FlexForm>
   );

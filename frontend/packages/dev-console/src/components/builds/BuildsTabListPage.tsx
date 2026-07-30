@@ -5,8 +5,9 @@ import { useParams, useNavigate } from 'react-router';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import type { Page } from '@console/internal/components/utils';
 import { AsyncComponent } from '@console/internal/components/utils';
-import type { MenuActions } from '@console/shared';
-import { MultiTabListPage, getBadgeFromType } from '@console/shared';
+import { getBadgeFromType } from '@console/shared/src/components/badges/badge-factory';
+import type { MenuActions } from '@console/shared/src/components/multi-tab-list/multi-tab-list-page-types';
+import { MultiTabListPage } from '@console/shared/src/components/multi-tab-list/MultiTabListPage';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { useResourceListPages } from '@console/shared/src/hooks/useResourceListPages';
@@ -21,10 +22,10 @@ import CreateProjectListPage, { CreateAProjectButton } from '../projects/CreateP
  * are available and load their (dynamic) resource list page.
  */
 const BuildsTabListPage: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const { ns: namespace, '*': currentTab } = useParams();
   const navigate = useNavigate();
-  const title = t('devconsole~Builds');
+  const title = t('Builds');
   const menuActions: MenuActions = {};
   const pages: Page[] = [];
   const [preferredTab, setPreferredTab, preferredTabLoaded] = useUserPreference<string>(
@@ -51,7 +52,7 @@ const BuildsTabListPage: FC = () => {
   );
   if (namespace) {
     menuActions.buildConfig = {
-      label: t('devconsole~BuildConfig'),
+      label: t('BuildConfig'),
       onSelection: () => `/k8s/ns/${namespace}/buildconfigs/~new/form`,
     };
   }
@@ -111,7 +112,7 @@ const BuildsTabListPage: FC = () => {
   }, [shipwrightBuildEnabled, shipwrightBuildLoader, shipwrightBuildModel.badge]);
   if (namespace && shipwrightBuildComponent) {
     menuActions.shipwrightBuild = {
-      label: t('devconsole~Shipwright Build'),
+      label: t('Shipwright Build'),
       onSelection: () => `/k8s/ns/${namespace}/${shipwrightKind}/~new/form`,
     };
     pages.push({

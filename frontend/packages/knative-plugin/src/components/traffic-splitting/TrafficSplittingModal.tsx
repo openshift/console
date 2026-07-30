@@ -14,20 +14,18 @@ interface TrafficSplittingModalProps {
 type Props = FormikProps<FormikValues> & TrafficSplittingModalProps & ModalComponentProps;
 
 const TrafficSplittingModal: FC<Props> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const { handleSubmit, cancel, isSubmitting, status } = props;
   return (
     <>
       <ModalHeader
-        title={t('knative-plugin~Set traffic distribution')}
+        title={t('Set traffic distribution')}
         labelId="traffic-splitting-modal-title"
         data-test-id="modal-title"
       />
       <ModalBody>
         <Form id="traffic-splitting-form" onSubmit={handleSubmit} className="pf-v6-u-mr-md">
-          <p>
-            {t('knative-plugin~Set traffic distribution for the Revisions of the Knative Service')}
-          </p>
+          <p>{t('Set traffic distribution for the Revisions of the Knative Service')}</p>
           <TrafficSplittingFields {...props} />
         </Form>
       </ModalBody>
@@ -39,10 +37,10 @@ const TrafficSplittingModal: FC<Props> = (props) => {
           isDisabled={isSubmitting}
           form="traffic-splitting-form"
         >
-          {t('knative-plugin~Save')}
+          {t('Save')}
         </Button>
         <Button variant="link" onClick={cancel} type="button" data-test-id="modal-cancel-action">
-          {t('knative-plugin~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </>

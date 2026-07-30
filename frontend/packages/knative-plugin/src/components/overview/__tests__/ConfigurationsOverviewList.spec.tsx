@@ -4,7 +4,7 @@ import ConfigurationsOverviewList from '../ConfigurationsOverviewList';
 
 jest.mock('../ConfigurationsOverviewListItem', () => ({
   __esModule: true,
-  default: 'ConfigurationsOverviewListItem',
+  default: () => <span data-test="mock-ConfigurationsOverviewListItem" />,
 }));
 
 describe('ConfigurationsOverviewList', () => {
@@ -14,9 +14,7 @@ describe('ConfigurationsOverviewList', () => {
   });
 
   it('should render ConfigurationsOverviewListItem', () => {
-    const { container } = render(
-      <ConfigurationsOverviewList configurations={sampleKnativeConfigurations.data} />,
-    );
-    expect(container.querySelector('ConfigurationsOverviewListItem')).toBeInTheDocument();
+    render(<ConfigurationsOverviewList configurations={sampleKnativeConfigurations.data} />);
+    expect(screen.getByTestId('mock-ConfigurationsOverviewListItem')).toBeVisible();
   });
 });

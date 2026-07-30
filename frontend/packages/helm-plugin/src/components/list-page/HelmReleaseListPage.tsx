@@ -3,12 +3,12 @@ import { useTranslation } from 'react-i18next';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import HelmReleaseList from './HelmReleaseList';
 
-const HelmReleaseListPage: FC = () => {
-  const { t } = useTranslation();
+const HelmReleaseListPage: FC<{ mock?: boolean }> = ({ mock }) => {
+  const { t } = useTranslation('helm-plugin');
   return (
     <div>
-      <PageHeading title={t('helm-plugin~Helm Releases')} />
-      <HelmReleaseList />
+      <PageHeading title={t('Helm Releases')} />
+      <HelmReleaseList mock={mock} />
     </div>
   );
 };

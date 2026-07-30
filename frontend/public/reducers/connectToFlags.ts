@@ -1,8 +1,8 @@
-import { connect } from 'react-redux';
 import * as _ from 'lodash';
-import { FLAGS } from '@console/shared/src/constants';
+import { connect } from 'react-redux';
+import type { FLAGS } from '@console/shared/src/constants/common';
 import type { RootState } from '../redux';
-import { FeatureState, FlagsObject } from './features';
+import type { FeatureState, FlagsObject } from './features';
 
 export const stateToFlagsObject = (state: FeatureState, desiredFlags: string[]): FlagsObject =>
   desiredFlags.reduce((allFlags, f) => ({ ...allFlags, [f]: state.get(f) }), {} as FlagsObject);

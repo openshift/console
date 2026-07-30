@@ -27,7 +27,7 @@ export const getBuildRunStatus = (buildRun: BuildRun): ComputedBuildRunStatus =>
   return ComputedBuildRunStatus.UNKNOWN;
 };
 
-export const getBuildRunStatusProps = (buildRun: BuildRun): StatusProps => {
+const getBuildRunStatusProps = (buildRun: BuildRun): StatusProps => {
   const succeededCondition = getSucceededCondition(buildRun);
   if (succeededCondition) {
     if (succeededCondition.status === 'Unknown' && succeededCondition.reason === 'Pending') {

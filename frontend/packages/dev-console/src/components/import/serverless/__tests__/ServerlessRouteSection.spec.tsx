@@ -58,11 +58,11 @@ jest.mock('@console/internal/components/utils', () => ({
   LoadingInline: () => 'Loading...',
 }));
 
-jest.mock('@console/shared', () => ({
+jest.mock('@console/shared/src/components/formik-fields/MultiTypeaheadField', () => ({
   MultiTypeaheadField: () => 'MultiTypeaheadField',
 }));
 
-jest.mock('@console/knative-plugin/src', () => ({
+jest.mock('@console/knative-plugin/src/models', () => ({
   DomainMappingModel: {
     kind: 'DomainMapping',
     apiGroup: 'serving.knative.dev',

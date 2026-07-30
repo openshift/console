@@ -29,7 +29,7 @@ export interface ResourceDropdownFieldProps
   dataTest?: string;
 }
 
-const ResourceDropdownField: FC<ResourceDropdownFieldProps> = ({
+export const ResourceDropdownField: FC<ResourceDropdownFieldProps> = ({
   label,
   helpText,
   required,
@@ -98,5 +98,3 @@ const ResourceDropdownField: FC<ResourceDropdownFieldProps> = ({
     </FormGroup>
   );
 };
-
-export default ResourceDropdownField;

@@ -1,16 +1,17 @@
 import type { FC } from 'react';
 import { useState, useEffect } from 'react';
-import { Button, Split, SplitItem, Bullseye } from '@patternfly/react-core';
-import { AngleDownIcon, AngleUpIcon, AutomationIcon } from '@patternfly/react-icons';
+import { Button, Split, SplitItem, Bullseye, Tooltip } from '@patternfly/react-core';
+import { RhUiCaretDownIcon, RhUiCaretUpIcon, RhUiAutomationIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import type { ImpersonateKind } from '@console/dynamic-plugin-sdk';
 import type { K8sResourceKind, K8sKind } from '@console/internal/module/k8s';
 import { k8sPatch } from '@console/internal/module/k8s';
+import { useNonScalableImageCheck } from '../../hooks/useNonScalableImageCheck';
 import { useRelatedHPA } from '../../hooks/useRelatedHPA';
-import type { ExtPodKind } from '../../types';
+import type { ExtPodKind } from '../../types/pod';
 import { usePodRingLabel, usePodScalingAccessStatus } from '../../utils/pod-ring-utils';
-import PodStatus from './PodStatus';
+import { PodStatus } from './PodStatus';
 import './PodRing.scss';
 
 interface PodRingProps {
@@ -23,7 +24,7 @@ interface PodRingProps {
   enableScaling?: boolean;
 }
 
-const PodRing: FC<PodRingProps> = ({
+export const PodRing: FC<PodRingProps> = ({
   pods,
   obj,
   resourceKind,
@@ -33,7 +34,7 @@ const PodRing: FC<PodRingProps> = ({
   enableScaling = true,
 }) => {
   const [clickCount, setClickCount] = useState(obj.spec.replicas);
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const isAccessScalingAllowed = usePodScalingAccessStatus(
     obj,
     resourceKind,
@@ -82,6 +83,7 @@ const PodRing: FC<PodRingProps> = ({
   } = obj;
   const [hpa] = useRelatedHPA(apiVersion, kind, name, namespace);
   const hpaControlledScaling = !!hpa;
+  const { isNonScalable } = useNonScalableImageCheck(obj);
 
   const isScalingAllowed = isAccessScalingAllowed && !hpaControlledScaling;
 
@@ -115,10 +117,10 @@ const PodRing: FC<PodRingProps> = ({
             type="button"
             variant="link"
             data-test="enable-autoscale"
-            icon={<AutomationIcon />}
+            icon={<RhUiAutomationIcon />}
             onClick={() => handleClick(1)}
           >
-            {t('console-shared~Enable Autoscale')}
+            {t('Enable Autoscale')}
           </Button>
         </SplitItem>
       )}
@@ -126,21 +128,38 @@ const PodRing: FC<PodRingProps> = ({
         <SplitItem>
           <Bullseye>
             <div>
+              {(() => {
+                const scaleUpButton = (
+                  <Button
+                    icon={<RhUiCaretUpIcon style={{ fontSize: '20' }} />}
+                    type="button"
+                    variant="plain"
+                    aria-label={t('Increase the Pod count')}
+                    title={t('Increase the Pod count')}
+                    onClick={() => handleClick(1)}
+                    isBlock
+                  />
+                );
+                // Show tooltip preemptively at >= 1 replica so users see
+                // the non-scalable warning before attempting to scale up
+                return isNonScalable && clickCount >= 1 ? (
+                  <Tooltip
+                    content={t(
+                      'This image is not intended to run with more than one replica. Scaling up is not supported and might cause issues.',
+                    )}
+                  >
+                    {scaleUpButton}
+                  </Tooltip>
+                ) : (
+                  scaleUpButton
+                );
+              })()}
               <Button
-                icon={<AngleUpIcon style={{ fontSize: '20' }} />}
+                icon={<RhUiCaretDownIcon style={{ fontSize: '20' }} />}
                 type="button"
                 variant="plain"
-                aria-label={t('console-shared~Increase the Pod count')}
-                title={t('console-shared~Increase the Pod count')}
-                onClick={() => handleClick(1)}
-                isBlock
-              />
-              <Button
-                icon={<AngleDownIcon style={{ fontSize: '20' }} />}
-                type="button"
-                variant="plain"
-                aria-label={t('console-shared~Decrease the Pod count')}
-                title={t('console-shared~Decrease the Pod count')}
+                aria-label={t('Decrease the Pod count')}
+                title={t('Decrease the Pod count')}
                 onClick={() => handleClick(-1)}
                 isBlock
                 isDisabled={clickCount <= 0}
@@ -152,5 +171,3 @@ const PodRing: FC<PodRingProps> = ({
     </Split>
   );
 };
-
-export default PodRing;

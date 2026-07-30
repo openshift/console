@@ -6,7 +6,7 @@ import { useK8sWatchResources } from '@console/internal/components/utils/k8s-wat
 import { SecretModel } from '@console/internal/models';
 import type { SecretKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { ResourceDropdownField } from '@console/shared';
+import { ResourceDropdownField } from '@console/shared/src/components/formik-fields/ResourceDropdownField';
 
 interface SecretDropdownProps {
   name: string;
@@ -14,7 +14,7 @@ interface SecretDropdownProps {
 }
 
 const SecretDropdown: FC<SecretDropdownProps> = ({ name, namespace }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('shipwright-plugin');
   const autocompleteFilter = (strText, item): boolean => fuzzy(strText, item?.props?.name);
 
   const watchedResources = useK8sWatchResources<{ secrets: SecretKind[] }>({
@@ -47,7 +47,7 @@ const SecretDropdown: FC<SecretDropdownProps> = ({ name, namespace }) => {
       name={name}
       resources={resources}
       dataSelector={['metadata', 'name']}
-      placeholder={t('shipwright-plugin~Select a Secret')}
+      placeholder={t('Select a Secret')}
       autocompleteFilter={autocompleteFilter}
       fullWidth
       showBadge

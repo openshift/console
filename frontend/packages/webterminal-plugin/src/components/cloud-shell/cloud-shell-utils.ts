@@ -1,6 +1,6 @@
-import { coFetchJSON, coFetch } from '@console/internal/co-fetch';
 import type { K8sResourceKind, K8sKind, EnvVar } from '@console/internal/module/k8s';
 import { k8sPatch, k8sGet } from '@console/internal/module/k8s';
+import { coFetchJSON, coFetch } from '@console/shared/src/utils/console-fetch';
 import { getRandomChars } from '@console/shared/src/utils/utils';
 import { v1alpha1WorkspaceModel, WorkspaceModel } from '../../../models';
 
@@ -64,7 +64,7 @@ export const CLOUD_SHELL_LABEL = 'console.openshift.io/terminal';
 export const CLOUD_SHELL_CREATOR_LABEL = 'controller.devfile.io/creator';
 export const CLOUD_SHELL_RESTRICTED_ANNOTATION = 'controller.devfile.io/restricted-access';
 export const CLOUD_SHELL_STOPPED_BY_ANNOTATION = 'controller.devfile.io/stopped-by';
-export const CLOUD_SHELL_SOURCE_ANNOTATION = 'controller.devfile.io/devworkspace-source';
+const CLOUD_SHELL_SOURCE_ANNOTATION = 'controller.devfile.io/devworkspace-source';
 export const CLOUD_SHELL_PROTECTED_NAMESPACE = 'openshift-terminal';
 
 export const createCloudShellResourceName = () => `terminal-${getRandomChars(6)}`;
@@ -199,7 +199,7 @@ export const sendActivityTick = (workspaceName: string, namespace: string): void
   );
 };
 
-export const checkTerminalAvailable = () => coFetch('/api/terminal/available');
+export const checkTerminalAvailable = () => coFetch('/api/terminal/available', { priority: 'low' });
 
 export const getCloudShellCR = (workspaceModel: K8sKind, name: string, ns: string) => {
   return k8sGet(workspaceModel, name, ns);

@@ -3,7 +3,7 @@ import { observable, makeObservable } from 'mobx';
 import type { K8sResourceKind, K8sResourceKindReference } from '@console/internal/module/k8s';
 import type { OdcEdgeModel } from '../topology-types';
 
-class OdcBaseEdge extends BaseEdge {
+export class OdcBaseEdge extends BaseEdge {
   public resource?: K8sResourceKind | undefined = undefined;
 
   public resourceKind?: K8sResourceKindReference | undefined = undefined;
@@ -44,5 +44,3 @@ class OdcBaseEdge extends BaseEdge {
     }
   }
 }
-
-export default OdcBaseEdge;

@@ -26,9 +26,9 @@ export const QuickStartCatalogPage: FC = () => {
 
   return (
     <>
-      <DocumentTitle>{t('Quick Starts')}</DocumentTitle>
+      <DocumentTitle>{t('Quick starts')}</DocumentTitle>
       <PageHeading
-        title={t('Quick Starts')}
+        title={t('Quick starts')}
         helpText={t(
           'Learn how to create, import, and run applications on OpenShift with step-by-step instructions and tasks.',
         )}

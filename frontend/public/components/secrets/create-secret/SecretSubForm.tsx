@@ -1,9 +1,10 @@
 import type { FC } from 'react';
-import { SecretSubFormProps, SecretFormType } from './types';
 import { AuthSecretForm } from './AuthSecretForm';
-import { PullSecretForm } from './PullSecretForm';
-import { WebHookSecretForm } from './WebHookSecretForm';
 import { OpaqueSecretForm } from './OpaqueSecretForm';
+import { PullSecretForm } from './PullSecretForm';
+import type { SecretSubFormProps } from './types';
+import { SecretFormType } from './types';
+import { WebHookSecretForm } from './WebHookSecretForm';
 
 export const SecretSubForm: FC<SecretSubFormProps & { formType: SecretFormType }> = ({
   formType,

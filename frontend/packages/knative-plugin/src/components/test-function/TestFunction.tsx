@@ -1,14 +1,14 @@
 import type { FC } from 'react';
 import type { FormikValues, FormikHelpers } from 'formik';
 import { Formik } from 'formik';
-import { coFetchJSON } from '@console/internal/co-fetch';
+import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
 import type { ServiceKind } from '../../types';
 import TestFunctionModal from './TestFunctionModal';
 import type { TestFunctionFormikValues } from './types';
 import { InvokeFormat } from './types';
 import { generatePayload, parseResponse } from './utils';
 
-export interface TestFunctionProps {
+interface TestFunctionProps {
   service: ServiceKind;
   cancel?: () => void;
   close?: () => void;

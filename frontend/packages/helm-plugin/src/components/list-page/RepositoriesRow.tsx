@@ -6,27 +6,27 @@ import { LazyActionMenu } from '@console/dynamic-plugin-sdk/src/lib-internal';
 import { ResourceLink } from '@console/internal/components/utils';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
-import { DASH } from '@console/shared';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
-import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../models';
+import { DASH } from '@console/shared/src/constants/ui';
+import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../models/helm';
 import { tableColumnInfo } from './RepositoriesHeader';
 
 const helmChartRepositoryReference = referenceForModel(HelmChartRepositoryModel);
 const projectHelmChartRepositoryReference = referenceForModel(ProjectHelmChartRepositoryModel);
 
 const CombinedNamespaceCell: FC<{ namespace?: string }> = ({ namespace }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   return namespace ? (
     <ResourceLink kind="Namespace" name={namespace} />
   ) : (
-    <>{t('helm-plugin~All Namespaces')}</>
+    <>{t('All Namespaces')}</>
   );
 };
 
 const DisabledCell: FC<{ disabled?: boolean }> = ({ disabled }) => {
-  const { t } = useTranslation();
-  return <>{disabled ? t('helm-plugin~True') : t('helm-plugin~False')}</>;
+  const { t } = useTranslation('helm-plugin');
+  return <>{disabled ? t('True') : t('False')}</>;
 };
 
 export const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {
@@ -88,5 +88,3 @@ export const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns)
     });
   });
 };
-
-export default getDataViewRows;

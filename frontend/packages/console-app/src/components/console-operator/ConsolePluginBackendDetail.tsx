@@ -6,7 +6,7 @@ import {
 } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { ServiceModel } from '@console/internal/models';
 import type { ConsolePluginKind } from '@console/internal/module/k8s';
-import { DASH } from '@console/shared/src/constants';
+import { DASH } from '@console/shared/src/constants/ui';
 
 const ConsolePluginBackendDetail: FC<ConsolePluginBackendDetailProps> = ({
   obj: {

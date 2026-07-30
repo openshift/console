@@ -7,13 +7,13 @@ import { resourcePathFromModel } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { BuildConfigModel, BuildModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { useToast } from '@console/shared';
+import { useToast } from '@console/shared/src/components/toast/useToast';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { getOwnedResources } from '@console/shared/src/utils/resource-utils';
 
 export const useUploadJarFormToast = () => {
   const toast = useToast();
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const navigate = useNavigate();
   const [namespace] = useActiveNamespace();
   const buildsResource: WatchK8sResource = useMemo(
@@ -34,9 +34,9 @@ export const useUploadJarFormToast = () => {
       const link = `${resourcePathFromModel(BuildModel, buildName, namespace)}/logs`;
       toast.addToast({
         variant: AlertVariant.info,
-        title: t('devconsole~JAR file uploading'),
+        title: t('JAR file uploading'),
         content: t(
-          'devconsole~JAR file is uploading to {{namespace}}. You can view the upload progress in the build logs. This may take a few minutes. If you exit the browser while upload is in progress it may fail.',
+          'JAR file is uploading to {{namespace}}. You can view the upload progress in the build logs. This may take a few minutes. If you exit the browser while upload is in progress it may fail.',
           {
             namespace,
           },
@@ -45,7 +45,7 @@ export const useUploadJarFormToast = () => {
         actions: [
           {
             dismiss: true,
-            label: t('devconsole~View build logs'),
+            label: t('View build logs'),
             callback: () => navigate(link),
           },
         ],

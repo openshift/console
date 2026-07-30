@@ -1,8 +1,9 @@
 import type { FC } from 'react';
+import type { ISortBy, OnSelect, OnSort } from '@patternfly/react-table';
+import { Th, Thead, Tr } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
-import { ISortBy, OnSelect, OnSort, Th, Thead, Tr } from '@patternfly/react-table';
-import { TableColumn as InternalTableColumn } from '../table';
-import { TableColumn as SDKTableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { TableColumn as SDKTableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { TableColumn as InternalTableColumn } from '../table';
 
 export const TableHeader: FC<TableHeaderProps> = ({
   allRowsSelected,
@@ -12,12 +13,12 @@ export const TableHeader: FC<TableHeaderProps> = ({
   onSelect,
   onSort,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const select = canSelectAll ? { select: { onSelect, isSelected: allRowsSelected } } : {};
   return (
     <Thead>
       <Tr>
-        {onSelect && <Th aria-label={t('public~Row select')} {...select} />}
+        {onSelect && <Th aria-label={t('Row select')} {...select} />}
         {columns.map(({ id, title, sort, sortField, sortFunc, props }, columnIndex) => {
           const sortable = sortField || sortFunc || sort;
           return (
@@ -25,7 +26,7 @@ export const TableHeader: FC<TableHeaderProps> = ({
               key={id || title || 'actions'}
               sort={sortable ? { sortBy, onSort, columnIndex } : null}
               data-label={title}
-              screenReaderText={!title && t('public~Actions')}
+              screenReaderText={!title && t('Actions')}
               {...(props ?? {})}
             >
               {title}
@@ -47,5 +48,3 @@ type TableHeaderProps = {
   onSort?: OnSort;
   sortBy?: ISortBy;
 };
-
-export default TableHeader;

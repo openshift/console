@@ -16,7 +16,7 @@ import {
 import EventSourceList from './EventSourceList';
 
 const EventSourceListPage: FC<ComponentProps<typeof MultiListPage>> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const { loaded: modelsLoaded, eventSourceModels } = useEventSourceModels();
   const isKameletEnabled = useFlag(FLAG_CAMEL_KAMELETS);
   const sourcesModel = useMemo(
@@ -53,7 +53,7 @@ const EventSourceListPage: FC<ComponentProps<typeof MultiListPage>> = (props) =>
   const eventSourceRowFilters = useMemo<RowFilter<K8sResourceCommon>[]>(
     () => [
       {
-        filterGroupName: t('knative-plugin~Type'),
+        filterGroupName: t('Type'),
         type: 'event-source-type',
         items: sourcesModel.map(({ id, label }) => ({ id, title: label })),
         reducer: getModelId,
@@ -65,10 +65,10 @@ const EventSourceListPage: FC<ComponentProps<typeof MultiListPage>> = (props) =>
   );
   return (
     <>
-      <DocumentTitle>{t('knative-plugin~Event Sources')}</DocumentTitle>
+      <DocumentTitle>{t('Event Sources')}</DocumentTitle>
       <MultiListPage
         {...props}
-        label={t('knative-plugin~Event Sources')}
+        label={t('Event Sources')}
         rowFilters={eventSourceRowFilters}
         flatten={flatten}
         resources={resources}

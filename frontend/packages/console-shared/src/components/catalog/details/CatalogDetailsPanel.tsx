@@ -8,25 +8,25 @@ import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import CatalogPageOverlay from '../catalog-view/CatalogPageOverlay';
 import CatalogPageOverlayDescription from '../catalog-view/CatalogPageOverlayDescription';
-import { customPropertyPresent } from '../utils';
+import { customPropertyPresent } from '../utils/catalog-utils';
 
 type CatalogDetailsPanelProps = {
   item: CatalogItem;
 };
 
-const CatalogDetailsPanel: FC<CatalogDetailsPanelProps> = ({ item }) => {
-  const { t } = useTranslation();
+export const CatalogDetailsPanel: FC<CatalogDetailsPanelProps> = ({ item }) => {
+  const { t } = useTranslation('console-shared');
   const { description, provider, creationTimestamp, supportUrl, documentationUrl, details } = item;
   const created = Date.parse(creationTimestamp) ? (
     <Timestamp timestamp={creationTimestamp} />
   ) : (
     creationTimestamp
   );
-  const notAvailable = t('console-shared~N/A');
-  const providerLabel = t('console-shared~Provider');
-  const createdAtLabel = t('console-shared~Created at');
-  const supportLabel = t('console-shared~Support');
-  const documentationLabel = t('console-shared~Documentation');
+  const notAvailable = t('N/A');
+  const providerLabel = t('Provider');
+  const createdAtLabel = t('Created at');
+  const supportLabel = t('Support');
+  const documentationLabel = t('Documentation');
 
   return (
     <CatalogPageOverlay>
@@ -50,11 +50,7 @@ const CatalogDetailsPanel: FC<CatalogDetailsPanelProps> = ({ item }) => {
           <PropertyItem
             label={supportLabel}
             value={
-              supportUrl ? (
-                <ExternalLink href={supportUrl} text={t('console-shared~Get support')} />
-              ) : (
-                notAvailable
-              )
+              supportUrl ? <ExternalLink href={supportUrl} text={t('Get support')} /> : notAvailable
             }
           />
         )}
@@ -63,10 +59,7 @@ const CatalogDetailsPanel: FC<CatalogDetailsPanelProps> = ({ item }) => {
             label={documentationLabel}
             value={
               documentationUrl ? (
-                <ExternalLink
-                  href={documentationUrl}
-                  text={t('console-shared~Refer documentation')}
-                />
+                <ExternalLink href={documentationUrl} text={t('Refer documentation')} />
               ) : (
                 notAvailable
               )
@@ -92,5 +85,3 @@ const CatalogDetailsPanel: FC<CatalogDetailsPanelProps> = ({ item }) => {
     </CatalogPageOverlay>
   );
 };
-
-export default CatalogDetailsPanel;

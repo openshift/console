@@ -22,13 +22,13 @@ export type PipelineTaskRef = {
   params?: PipelineTaskParam[];
 };
 
-export type PipelineTaskWorkspace = {
+type PipelineTaskWorkspace = {
   name: string;
   workspace: string;
   optional?: boolean;
 };
 
-export type PipelineTaskResource = {
+type PipelineTaskResource = {
   name: string;
   resource?: string;
   from?: string[];
@@ -39,13 +39,13 @@ export type PipelineTaskParam = {
   value: any;
 };
 
-export type WhenExpression = {
+type WhenExpression = {
   input: string;
   operator: string;
   values: string[];
 };
 
-export type PipelineResult = {
+type PipelineResult = {
   name: string;
   value: string;
   description?: string;
@@ -107,14 +107,14 @@ export type PLRTaskRunData = {
   };
 };
 
-export type ChildReferences = {
+type ChildReferences = {
   apiVersion: string;
   kind: string;
   name: string;
   pipelineTaskName: string;
 };
 
-export type PipelineRunStatus = {
+type PipelineRunStatus = {
   succeededCondition?: string;
   creationTimestamp?: string;
   conditions?: K8sResourceCondition[];
@@ -133,14 +133,14 @@ export type PipelineRunStatus = {
 };
 
 export type PipelineRunEmbeddedResourceParam = { name: string; value: string };
-export type PipelineRunEmbeddedResource = {
+type PipelineRunEmbeddedResource = {
   name: string;
   resourceSpec: {
     params: PipelineRunEmbeddedResourceParam[];
     type: string;
   };
 };
-export type PipelineRunReferenceResource = {
+type PipelineRunReferenceResource = {
   name: string;
   resourceRef: {
     name: string;
@@ -181,7 +181,7 @@ export type VolumeTypePVC = {
   claimName: string;
 };
 
-export type PipelineRunResource = PipelineRunReferenceResource | PipelineRunEmbeddedResource;
+type PipelineRunResource = PipelineRunReferenceResource | PipelineRunEmbeddedResource;
 
 export type PipelineRunWorkspace = {
   name: string;
@@ -215,7 +215,7 @@ export type PipelineRunKind = K8sResourceCommon & {
   status?: PipelineRunStatus;
 };
 
-export type RepositoryStatus = {
+type RepositoryStatus = {
   completionTime?: string;
   conditions?: K8sResourceCondition[];
   logurl?: string;
@@ -252,7 +252,7 @@ export type TaskKindAlpha = TaskKind & {
   };
 };
 
-export enum CustomRunStatus {
+enum CustomRunStatus {
   RunCancelled = 'RunCancelled',
 }
 

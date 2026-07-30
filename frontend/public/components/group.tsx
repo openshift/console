@@ -1,37 +1,37 @@
 import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
-import * as _ from 'lodash';
-
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { GroupModel, UserModel } from '../models';
-import { referenceForModel, GroupKind } from '../module/k8s';
-import { DetailsPage } from './factory/details';
-import { ListPage } from './factory/list-page';
-import { RoleBindingsPage } from './RBAC';
-import { asAccessReview } from './utils/rbac';
-import { EmptyBox, LoadingBox } from './utils/status-box';
-import { Kebab, KebabOption } from './utils/kebab';
-import { navFactory } from './utils/horizontal-nav';
-import { ResourceLink } from './utils/resource-link';
-import { ResourceSummary } from './utils/details-page';
-import { SectionHeading } from './utils/headings';
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { useTranslation } from 'react-i18next';
 import { Grid, GridItem, ButtonVariant } from '@patternfly/react-core';
 import { Table, Thead, Tbody, Tr, Th, Td } from '@patternfly/react-table';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
-import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
-import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import {
   ConsoleDataView,
   getNameCellProps,
   actionsCellProps,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import { TableColumn, K8sResourceKind } from '@console/internal/module/k8s';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DASH } from '@console/shared/src/constants/ui';
+import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
+import { GroupModel, UserModel } from '../models';
+import type { GroupKind, TableColumn, K8sResourceKind } from '../module/k8s';
+import { referenceForModel } from '../module/k8s';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
+import { RoleBindingsPage } from './RBAC';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import type { KebabOption } from './utils/kebab';
+import { Kebab } from './utils/kebab';
+import { asAccessReview } from './utils/rbac';
+import { ResourceLink } from './utils/resource-link';
+import { EmptyBox, LoadingBox } from './utils/status-box';
 
 const tableColumnInfo = [{ id: 'name' }, { id: 'users' }, { id: 'created' }, { id: 'actions' }];
 
@@ -80,13 +80,13 @@ const useGroupColumns = (): {
   columns: TableColumn<GroupKind>[];
   resetAllColumnWidths: () => void;
 } => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(GroupModel);
 
   const columns: TableColumn<GroupKind>[] = useMemo(
     () => [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         resizableProps: getResizableProps(tableColumnInfo[0].id),
@@ -96,7 +96,7 @@ const useGroupColumns = (): {
         },
       },
       {
-        title: t('public~Users'),
+        title: t('Users'),
         id: tableColumnInfo[1].id,
         sort: 'users.length',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
@@ -105,7 +105,7 @@ const useGroupColumns = (): {
         },
       },
       {
-        title: t('public~Created'),
+        title: t('Created'),
         id: tableColumnInfo[2].id,
         sort: 'metadata.creationTimestamp',
         resizableProps: getResizableProps(tableColumnInfo[2].id),
@@ -127,9 +127,9 @@ const useGroupColumns = (): {
   return { columns, resetAllColumnWidths };
 };
 
-export const GroupList: FC<{ data: GroupKind[]; loaded: boolean }> = (props) => {
+const GroupList: FC<{ data: GroupKind[]; loaded: boolean }> = (props) => {
   const { data, loaded } = props;
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { columns, resetAllColumnWidths } = useGroupColumns();
 
   return (
@@ -138,10 +138,10 @@ export const GroupList: FC<{ data: GroupKind[]; loaded: boolean }> = (props) => 
         {...props}
         data={data}
         loaded={loaded}
-        label={t('public~Groups')}
+        label={t('Groups')}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
+        hideColumnManagement
         isResizable
         resetAllColumnWidths={resetAllColumnWidths}
       />
@@ -150,30 +150,30 @@ export const GroupList: FC<{ data: GroupKind[]; loaded: boolean }> = (props) => 
 };
 
 export const GroupPage: FC<GroupPageProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <ListPage
       {...props}
-      title={t('public~Groups')}
+      title={t('Groups')}
       kind={referenceForModel(GroupModel)}
       ListComponent={GroupList}
       canCreate
-      omitFilterToolbar={true}
+      omitFilterToolbar
     />
   );
 };
 
 const UserKebab: FC<UserKebabProps> = ({ group, user }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const showConfirm = useWarningModal({
-    title: t('public~Remove User from Group?'),
-    children: t('public~Remove User {{ user }} from Group {{ name }}?', {
+    title: t('Remove User from Group?'),
+    children: t('Remove User {{ user }} from Group {{ name }}?', {
       user,
       name: group.metadata.name,
     }),
     confirmButtonVariant: ButtonVariant.danger,
-    confirmButtonLabel: t('public~Remove'),
-    cancelButtonLabel: t('public~Cancel'),
+    confirmButtonLabel: t('Remove'),
+    cancelButtonLabel: t('Cancel'),
     onConfirm: () => {
       const value = (group.users || []).filter((u: string) => u !== user);
       return k8sPatchResource({
@@ -185,7 +185,7 @@ const UserKebab: FC<UserKebabProps> = ({ group, user }) => {
   });
   const options: KebabOption[] = [
     {
-      label: t('public~Remove User'),
+      label: t('Remove User'),
       callback: () => showConfirm(),
       accessReview: asAccessReview(GroupModel, group, 'patch'),
     },
@@ -194,14 +194,14 @@ const UserKebab: FC<UserKebabProps> = ({ group, user }) => {
 };
 
 const UsersTable: FC<UsersTableProps> = ({ group, users }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return _.isEmpty(users) ? (
-    <EmptyBox label={t('public~Users')} />
+    <EmptyBox label={t('Users')} />
   ) : (
     <Table variant="compact" borders>
       <Thead>
         <Tr>
-          <Th>{t('public~Name')}</Th>
+          <Th>{t('Name')}</Th>
           <Th />
         </Tr>
       </Thead>
@@ -222,12 +222,12 @@ const UsersTable: FC<UsersTableProps> = ({ group, users }) => {
 };
 
 const GroupDetails: FC<GroupDetailsProps> = ({ obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const users: string[] = obj.users ? [...obj.users].sort() : [];
   return (
     <>
       <PaneBody>
-        <SectionHeading text={t('public~Group details')} />
+        <SectionHeading text={t('Group details')} />
         <Grid hasGutter>
           <GridItem md={6}>
             <ResourceSummary resource={obj} />
@@ -235,7 +235,7 @@ const GroupDetails: FC<GroupDetailsProps> = ({ obj }) => {
         </Grid>
       </PaneBody>
       <PaneBody>
-        <SectionHeading text={t('public~Users')} />
+        <SectionHeading text={t('Users')} />
         <UsersTable group={obj} users={users} />
       </PaneBody>
     </>

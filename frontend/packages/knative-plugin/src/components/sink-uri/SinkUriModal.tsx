@@ -13,10 +13,11 @@ import {
 import type { FormikProps, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import { InputField, getFieldId } from '@console/shared';
+import { getFieldId } from '@console/shared/src/components/formik-fields/field-utils';
+import { InputField } from '@console/shared/src/components/formik-fields/InputField';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 
-export interface SinkUriModalProps {
+interface SinkUriModalProps {
   cancel?: () => void;
 }
 
@@ -30,13 +31,13 @@ const SinkUriModal: FC<Props> = ({
   values,
   initialValues,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const fieldId = getFieldId('sink-name', 'uri');
   const dirty = values?.uri !== initialValues.uri;
   return (
     <>
       <ModalHeader
-        title={t('knative-plugin~Edit URI')}
+        title={t('Edit URI')}
         labelId="sink-uri-modal-title"
         data-test-id="modal-title"
       />
@@ -47,7 +48,7 @@ const SinkUriModal: FC<Props> = ({
               <InputField
                 type={TextInputTypes.text}
                 name="uri"
-                placeholder={t('knative-plugin~Enter URI')}
+                placeholder={t('Enter URI')}
                 data-test-id="edit-sink-uri"
                 required
               />
@@ -55,7 +56,7 @@ const SinkUriModal: FC<Props> = ({
               <FormHelperText>
                 <HelperText>
                   <HelperTextItem>
-                    {t('knative-plugin~Editing this URI will affect all associated Event Sources.')}
+                    {t('Editing this URI will affect all associated Event Sources.')}
                   </HelperTextItem>
                 </HelperText>
               </FormHelperText>
@@ -71,10 +72,10 @@ const SinkUriModal: FC<Props> = ({
           isDisabled={!dirty}
           form="sink-uri-form"
         >
-          {t('knative-plugin~Save')}
+          {t('Save')}
         </Button>
         <Button variant="link" onClick={cancel} type="button" data-test-id="modal-cancel-action">
-          {t('knative-plugin~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </>

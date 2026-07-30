@@ -3,9 +3,9 @@ import { useRef, useState, useMemo, memo } from 'react';
 import { ChartDonut } from '@patternfly/react-charts/victory';
 import { Tooltip } from '@patternfly/react-core';
 import * as _ from 'lodash';
-import { podColor, AllPodStatus } from '../../constants';
+import { podColor, AllPodStatus } from '../../constants/pod';
 import { useForceUpdate } from '../../hooks/useForceUpdate';
-import type { ExtPodKind } from '../../types';
+import type { ExtPodKind } from '../../types/pod';
 import { calculateRadius, podStatus, getPodStatus } from '../../utils/pod-utils';
 
 import './PodStatus.scss';
@@ -44,7 +44,7 @@ const podStatusIsNumeric = (podStatusValue: string) => {
   );
 };
 
-const PodStatus: FC<PodStatusProps> = ({
+const PodStatusBase: FC<PodStatusProps> = ({
   innerRadius = podStatusInnerRadius,
   outerRadius = podStatusOuterRadius,
   x,
@@ -176,4 +176,4 @@ const PodStatus: FC<PodStatusProps> = ({
   return chartDonut;
 };
 
-export default memo<PodStatusProps>((props) => <PodStatus {...props} />);
+export const PodStatus = memo<PodStatusProps>((props) => <PodStatusBase {...props} />);

@@ -1,7 +1,5 @@
-import * as _ from 'lodash';
 import type { FormEvent } from 'react';
 import { useState } from 'react';
-import { css } from '@patternfly/react-styles';
 import {
   Button,
   Form,
@@ -11,16 +9,19 @@ import {
   ModalVariant,
   Tooltip,
 } from '@patternfly/react-core';
+import { RhUiMinusCircleIcon, RhUiAddCircleFillIcon } from '@patternfly/react-icons';
+import { css } from '@patternfly/react-styles';
 import { Table, Thead, Tr, Th, Td, Tbody } from '@patternfly/react-table';
-import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
-import { EmptyBox } from '../utils/status-box';
-import { K8sKind, k8sPatch, Toleration, TolerationOperator } from '../../module/k8s';
-import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import type { ModalComponentProps } from '@console/shared/src/types/modal';
-import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
+import { k8sPatch } from '../../module/k8s';
+import type { K8sKind, Toleration, TolerationOperator } from '../../module/k8s';
+import { EmptyBox } from '../utils/status-box';
 
 const TolerationsModal = (props: TolerationsModalProps) => {
   const getTolerationsFromResource = (): Toleration[] => {
@@ -33,7 +34,7 @@ const TolerationsModal = (props: TolerationsModalProps) => {
   const [tolerations, setTolerations] = useState<Toleration[]>(getTolerationsFromResource() || []);
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const operators = {
     Exists: 'Exists',
@@ -111,19 +112,19 @@ const TolerationsModal = (props: TolerationsModalProps) => {
 
   return (
     <>
-      <ModalHeader title={t('public~Edit tolerations')} labelId="tolerations-modal-title" />
+      <ModalHeader title={t('Edit tolerations')} labelId="tolerations-modal-title" />
       <ModalBody>
         <Form id="tolerations-form" onSubmit={submit}>
           {_.isEmpty(tolerations) ? (
-            <EmptyBox label={t('public~Tolerations')} />
+            <EmptyBox label={t('Tolerations')} />
           ) : (
-            <Table aria-label={t('public~Tolerations')} variant="compact" borders={false}>
+            <Table aria-label={t('Tolerations')} variant="compact" borders={false}>
               <Thead>
                 <Tr>
-                  <Th>{t('public~Key')}</Th>
-                  <Th>{t('public~Operator')}</Th>
-                  <Th>{t('public~Value')}</Th>
-                  <Th>{t('public~Effect')}</Th>
+                  <Th>{t('Key')}</Th>
+                  <Th>{t('Operator')}</Th>
+                  <Th>{t('Value')}</Th>
+                  <Th>{t('Effect')}</Th>
                 </Tr>
               </Thead>
 
@@ -134,7 +135,7 @@ const TolerationsModal = (props: TolerationsModalProps) => {
                   const valueReadOnly = !isEditable(toleration) || operator === 'Exists';
                   return (
                     <Tr key={i}>
-                      <Td dataLabel={t('public~Key')}>
+                      <Td dataLabel={t('Key')}>
                         <span
                           className={css('pf-v6-c-form-control', {
                             'pf-m-readonly': keyReadOnly,
@@ -148,7 +149,7 @@ const TolerationsModal = (props: TolerationsModalProps) => {
                           />
                         </span>
                       </Td>
-                      <Td dataLabel={t('public~Operator')}>
+                      <Td dataLabel={t('Operator')}>
                         {isEditable(toleration) ? (
                           <ConsoleSelect
                             isFullWidth
@@ -164,7 +165,7 @@ const TolerationsModal = (props: TolerationsModalProps) => {
                           </span>
                         )}
                       </Td>
-                      <Td dataLabel={t('public~Value')}>
+                      <Td dataLabel={t('Value')}>
                         <span
                           className={css('pf-v6-c-form-control', {
                             'pf-m-readonly': valueReadOnly,
@@ -178,7 +179,7 @@ const TolerationsModal = (props: TolerationsModalProps) => {
                           />
                         </span>
                       </Td>
-                      <Td dataLabel={t('public~Effect')}>
+                      <Td dataLabel={t('Effect')}>
                         {isEditable(toleration) ? (
                           <ConsoleSelect
                             isFullWidth
@@ -196,14 +197,14 @@ const TolerationsModal = (props: TolerationsModalProps) => {
                       </Td>
                       <Td isActionCell>
                         {isEditable(toleration) && (
-                          <Tooltip content={t('public~Remove')}>
+                          <Tooltip content={t('Remove')}>
                             <Button
                               icon={
-                                <MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />
+                                <RhUiMinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />
                               }
                               type="button"
                               onClick={() => remove(i)}
-                              aria-label={t('public~Remove')}
+                              aria-label={t('Remove')}
                               variant="plain"
                             />
                           </Tooltip>
@@ -217,7 +218,10 @@ const TolerationsModal = (props: TolerationsModalProps) => {
           )}
           <Button
             icon={
-              <PlusCircleIcon data-test-id="pairs-list__add-icon" className="co-icon-space-r" />
+              <RhUiAddCircleFillIcon
+                data-test-id="pairs-list__add-icon"
+                className="co-icon-space-r"
+              />
             }
             iconPosition="left"
             onClick={addRow}
@@ -225,7 +229,7 @@ const TolerationsModal = (props: TolerationsModalProps) => {
             variant="link"
             isInline
           >
-            {t('public~Add more')}
+            {t('Add more')}
           </Button>
         </Form>
       </ModalBody>
@@ -239,10 +243,16 @@ const TolerationsModal = (props: TolerationsModalProps) => {
           data-test="confirm-action"
           id="confirm-action"
         >
-          {t('public~Save')}
+          {t('Save')}
         </Button>
-        <Button type="button" variant="link" onClick={cancel} data-test-id="modal-cancel-action">
-          {t('public~Cancel')}
+        <Button
+          type="button"
+          variant="link"
+          onClick={cancel}
+          data-test="modal-cancel-action"
+          data-test-id="modal-cancel-action"
+        >
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </>

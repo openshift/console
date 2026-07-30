@@ -18,9 +18,9 @@ import {
   isCatalogItemMetadataProvider,
   isCatalogCategoriesProvider,
 } from '@console/dynamic-plugin-sdk/src/extensions';
-import { useGetAllDisabledSubCatalogs } from '../utils';
+import { useGetAllDisabledSubCatalogs } from '../utils/catalog-utils';
 
-const useCatalogExtensions = (
+export const useCatalogExtensions = (
   catalogId: string,
   catalogType?: string,
 ): [
@@ -176,5 +176,3 @@ const useCatalogExtensions = (
       categoryProvidersResolved,
   ];
 };
-
-export default useCatalogExtensions;

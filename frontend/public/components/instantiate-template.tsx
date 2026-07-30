@@ -1,9 +1,5 @@
 import type { FC, ReactEventHandler, FormEvent } from 'react';
 import { useState, useRef, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router';
-import * as _ from 'lodash';
-import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import { css } from '@patternfly/react-styles';
 import {
   ActionGroup,
   Button,
@@ -19,36 +15,41 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
-import { CompressIcon, ExpandIcon } from '@patternfly/react-icons';
-/* eslint-disable import/named */
+import { RhUiCompressIcon, RhUiExpandIcon } from '@patternfly/react-icons';
+import { css } from '@patternfly/react-styles';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-
-import { ANNOTATIONS } from '@console/shared';
+import { useLocation, useNavigate } from 'react-router';
+import type { Perspective } from '@console/dynamic-plugin-sdk';
+import { isPerspective, useActivePerspective } from '@console/dynamic-plugin-sdk';
+import { k8sCreateResource, k8sUpdateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+/* eslint-disable import/named */
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
-import { Perspective, isPerspective, useActivePerspective } from '@console/dynamic-plugin-sdk';
-import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
-import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
+import { ANNOTATIONS } from '@console/shared/src/constants/common';
+import { SecretModel, TemplateInstanceModel } from '../models';
+import type {
+  K8sResourceKind,
+  TemplateKind,
+  TemplateInstanceKind,
+  TemplateParameter,
+} from '../module/k8s';
 import {
   getTemplateIcon,
   getTemplateIconClass,
   normalizeIconClass,
 } from './catalog/catalog-item-icon';
 import { ButtonBar } from './utils/button-bar';
-import { LoadError, LoadingBox } from './utils/status-box';
-import { NsDropdown } from './utils/list-dropdown';
 import { useK8sWatchResource } from './utils/k8s-watch-hook';
-import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
-import { SecretModel, TemplateInstanceModel } from '../models';
-import {
-  K8sResourceKind,
-  TemplateKind,
-  TemplateInstanceKind,
-  TemplateParameter,
-} from '../module/k8s';
-import { k8sCreateResource, k8sUpdateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
+import { NsDropdown } from './utils/list-dropdown';
+import { LoadError, LoadingBox } from './utils/status-box';
 
 const TemplateResourceDetails: FC<TemplateResourceDetailsProps> = ({ template }) => {
+  const { t } = useTranslation('public');
   const resources = _.uniq(_.compact(_.map(template.objects, 'kind'))).sort();
   if (_.isEmpty(resources)) {
     return null;
@@ -57,7 +58,7 @@ const TemplateResourceDetails: FC<TemplateResourceDetailsProps> = ({ template })
   return (
     <>
       <Divider className="co-divider" />
-      <p>The following resources will be created:</p>
+      <p>{t('The following resources will be created:')}</p>
       <ul>
         {resources.map((kind: string) => (
           <li key={kind}>{kind}</li>
@@ -69,7 +70,7 @@ const TemplateResourceDetails: FC<TemplateResourceDetailsProps> = ({ template })
 TemplateResourceDetails.displayName = 'TemplateResourceDetails';
 
 const TemplateInfo: FC<TemplateInfoProps> = ({ template }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const annotations = template.metadata.annotations || {};
   const { description } = annotations;
   const displayName = annotations[ANNOTATIONS.displayName] || template.metadata.name;
@@ -119,12 +120,12 @@ const TemplateInfo: FC<TemplateInfoProps> = ({ template }) => {
             <ul className="list-inline">
               {documentationURL && (
                 <li className="co-break-word">
-                  <ExternalLink href={documentationURL} text={t('public~View documentation')} />
+                  <ExternalLink href={documentationURL} text={t('View documentation')} />
                 </li>
               )}
               {supportURL && (
                 <li className="co-break-word">
-                  <ExternalLink href={supportURL} text={t('public~Get support')} />
+                  <ExternalLink href={supportURL} text={t('Get support')} />
                 </li>
               )}
             </ul>
@@ -174,7 +175,7 @@ const TemplateFormField: FC<TemplateFormFieldProps> = ({
         onClick={() => setIsTextArea(!isTextArea)}
         variant="control"
       >
-        {isTextArea ? <CompressIcon /> : <ExpandIcon />}
+        {isTextArea ? <RhUiCompressIcon /> : <RhUiExpandIcon />}
       </Button>
     </Tooltip>
   );
@@ -200,7 +201,7 @@ const TemplateFormField: FC<TemplateFormFieldProps> = ({
   );
 };
 
-export const TemplateForm: FC<TemplateFormProps> = (props) => {
+const TemplateForm: FC<TemplateFormProps> = (props) => {
   const { preselectedNamespace: ns = '', obj } = props;
 
   const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
@@ -211,7 +212,7 @@ export const TemplateForm: FC<TemplateFormProps> = (props) => {
   const [error, setError] = useState('');
   const isInitialLoad = useRef(true);
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -320,7 +321,7 @@ export const TemplateForm: FC<TemplateFormProps> = (props) => {
   };
 
   if (obj.loadError) {
-    return <LoadError label={t('public~Template')}>{obj.loadError.message}</LoadError>;
+    return <LoadError label={t('Template')}>{obj.loadError.message}</LoadError>;
   }
 
   if (!obj.loaded) {
@@ -329,8 +330,8 @@ export const TemplateForm: FC<TemplateFormProps> = (props) => {
 
   if (!obj.data) {
     return (
-      <LoadError label={t('public~Template')}>
-        {t('public~Template not found or invalid URL parameters.')}
+      <LoadError label={t('Template')}>
+        {t('Template not found or invalid URL parameters.')}
       </LoadError>
     );
   }
@@ -347,7 +348,7 @@ export const TemplateForm: FC<TemplateFormProps> = (props) => {
         <form className="pf-v6-c-form co-instantiate-template-form" onSubmit={save}>
           <div className="form-group">
             <label className="co-required" htmlFor="namespace">
-              {t('public~Namespace')}
+              {t('Namespace')}
             </label>
             <NsDropdown selectedKey={namespace} onChange={(v) => setNamespace(v)} id="namespace" />
           </div>
@@ -361,7 +362,7 @@ export const TemplateForm: FC<TemplateFormProps> = (props) => {
             }: TemplateParameter) => {
               const value = parameters[name] || '';
               const helpID = description ? `${name}-help` : '';
-              const placeholder = generate ? t('public~(generated if empty)') : '';
+              const placeholder = generate ? t('(generated if empty)') : '';
               // Only set required for parameters not generated.
               const requiredInput = requiredParam && !generate;
               return (
@@ -382,10 +383,10 @@ export const TemplateForm: FC<TemplateFormProps> = (props) => {
           <ButtonBar className="co-instantiate-template-form__button-bar" errorMessage={error}>
             <ActionGroup className="pf-v6-c-form">
               <Button type="submit" variant="primary" isLoading={inProgress}>
-                {t('public~Create')}
+                {t('Create')}
               </Button>
               <Button type="button" variant="secondary" onClick={() => navigate(-1)}>
-                {t('public~Cancel')}
+                {t('Cancel')}
               </Button>
             </ActionGroup>
           </ButtonBar>

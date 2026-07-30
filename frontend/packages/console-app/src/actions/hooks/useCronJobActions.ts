@@ -8,7 +8,7 @@ import { resourceObjPath } from '@console/internal/components/utils';
 import { JobModel } from '@console/internal/models';
 import type { CronJobKind, JobKind } from '@console/internal/module/k8s';
 import { k8sCreate, referenceFor } from '@console/internal/module/k8s';
-import { useToast } from '@console/shared/src/components/toast';
+import { useToast } from '@console/shared/src/components/toast/useToast';
 import { CronJobActionCreator } from './types';
 
 const startJob = (obj: CronJobKind): Promise<JobKind> => {

@@ -28,6 +28,7 @@ const (
 	unsafeEval    = "'unsafe-eval'"
 	unsafeInline  = "'unsafe-inline'"
 	none          = "'none'"
+	https         = "https:"
 )
 
 // Generate a cryptographically secure random array of bytes.
@@ -62,11 +63,11 @@ func BuildCSPDirectives(k8sMode string, pluginsCSP serverconfig.MultiKeyValue, i
 	// The default sources are the sources that are allowed for all directives.
 	// When running on-cluster, the default sources are just 'self' and 'console.redhat.com'.
 	// When running off-cluster, 'http://localhost:8080' and 'ws://localhost:8080' are appended to the
-	// default sources. Image source, font source, and style source only use 'self' and
-	// 'http://localhost:8080'.
+	// default sources. Image source uses 'self' and 'https:'. Font source and style source only
+	// use 'self'.
 	baseUriDirective := []string{baseURI, self}
 	defaultSrcDirective := []string{defaultSrc, self, consoleDot}
-	imgSrcDirective := []string{imgSrc, self}
+	imgSrcDirective := []string{imgSrc, self, https}
 	fontSrcDirective := []string{fontSrc, self}
 	scriptSrcDirective := []string{scriptSrc, self, consoleDot}
 	styleSrcDirective := []string{styleSrc, self}

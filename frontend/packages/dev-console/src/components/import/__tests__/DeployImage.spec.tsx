@@ -76,10 +76,6 @@ jest.mock('../DeployImageForm', () => ({
   default: () => 'Deploy Image Form Content',
 }));
 
-jest.mock('@console/shared/src/components/form-utils', () => ({
-  ...jest.requireActual('@console/shared/src/components/form-utils'),
-}));
-
 describe('DeployImage Page Test', () => {
   beforeEach(() => {
     jest.spyOn(Router, 'useParams').mockReturnValue({
@@ -91,7 +87,6 @@ describe('DeployImage Page Test', () => {
       state: null,
       hash: null,
       key: 'test',
-      unstable_mask: undefined,
     });
   });
 

@@ -8,7 +8,7 @@
   margin-top: var(--pf-t--global--spacer--xs);
 }
 
-:where(:not([class*='pf-v6-c-'])) {
+:where(:not([class*='pf-v6-c-'], .pf-v6-c-table label)) {
   @at-root label#{&} {
     display: inline-block;
     max-width: 100%;

@@ -10,7 +10,7 @@ import type {
 } from '@patternfly/react-topology';
 import { observer } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
-import { GroupNode } from '../../components/graph-view';
+import { GroupNode } from '../../components/graph-view/components/groups/GroupNode';
 
 type OperatorBackedServiceNodeProps = {
   element: Node;
@@ -32,11 +32,11 @@ const OperatorBackedServiceNode: FC<OperatorBackedServiceNodeProps> = ({
   ...rest
 }) => {
   const ref = useRef();
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   return (
     <Tooltip
       triggerRef={ref}
-      content={t('topology~Create Service Binding')}
+      content={t('Create Service Binding')}
       trigger="manual"
       isVisible={dropTarget && canDrop}
       animationDuration={0}

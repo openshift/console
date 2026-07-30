@@ -1,21 +1,22 @@
 import type { FC, FormEvent } from 'react';
 import { useState, useMemo } from 'react';
-import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import { useParams } from 'react-router';
 import { Radio } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
+import { useParams } from 'react-router';
+import type { StorageProvider } from '@console/dynamic-plugin-sdk';
+import { isStorageProvider } from '@console/dynamic-plugin-sdk';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
-import { isStorageProvider, StorageProvider } from '@console/dynamic-plugin-sdk';
-import { useDeepCompareMemoize } from '@console/shared/src/hooks/useDeepCompareMemoize';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { K8sKind } from '../../module/k8s';
+import { useDeepCompareMemoize } from '@console/shared/src/hooks/useDeepCompareMemoize';
+import { connectToPlural } from '../../kinds';
+import type { K8sKind } from '../../module/k8s';
 import { AsyncComponent } from '../utils/async';
 import { ResourceLink } from '../utils/resource-link';
 import { LoadingBox } from '../utils/status-box';
-import { connectToPlural } from '../../kinds';
 
-export type AttachStorageFormProps = {
+type AttachStorageFormProps = {
   kindObj: K8sKind;
   kindsInFlight: any;
 };
@@ -34,12 +35,12 @@ const AttachStorageInner: FC<AttachStorageFormProps> = (props) => {
   const { kindObj, kindsInFlight } = props;
   const params = useParams();
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const storageProvidersMap: StorageProviderMap = useMemo(() => {
     const providers = {
       '0': {
-        name: t('public~PersistentVolumeClaim'),
+        name: t('PersistentVolumeClaim'),
         Component: () => import('./attach-pvc-storage').then((m) => m.AttachStorage),
       },
     };
@@ -61,11 +62,11 @@ const AttachStorageInner: FC<AttachStorageFormProps> = (props) => {
     <LoadingBox />
   ) : (
     <>
-      <DocumentTitle>{t('public~Add Storage')}</DocumentTitle>
+      <DocumentTitle>{t('Add Storage')}</DocumentTitle>
       <PageHeading
         title={
           <>
-            {t('public~Add Storage')}
+            {t('Add Storage')}
             <Trans t={t} ns="public">
               {' '}
               to{' '}
@@ -82,7 +83,7 @@ const AttachStorageInner: FC<AttachStorageFormProps> = (props) => {
           <>
             {Object.keys(storageProvidersMap).length > 1 && (
               <>
-                <label className="co-required">{t('public~Storage type')}</label>
+                <label className="co-required">{t('Storage type')}</label>
                 {Object.entries(storageProvidersMap).map(([k, v]) => (
                   <Radio
                     key={k}
@@ -106,9 +107,9 @@ const AttachStorageInner: FC<AttachStorageFormProps> = (props) => {
   );
 };
 
-const AttachStorage_ = connectToPlural(AttachStorageInner);
+const InnerAttachStorage = connectToPlural(AttachStorageInner);
 
 export const AttachStorage = (props) => {
   const params = useParams();
-  return <AttachStorage_ {...props} params={params} />;
+  return <InnerAttachStorage {...props} params={params} />;
 };

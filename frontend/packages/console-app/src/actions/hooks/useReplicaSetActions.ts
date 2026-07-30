@@ -22,7 +22,7 @@ export const useReplicaSetActions = (
   resource: ReplicaSetKind,
   filterActions?: ReplicaSetActionCreator[],
 ): Action[] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const launchModal = useOverlay();
   const memoizedFilterActions = useDeepCompareMemoize(filterActions);
 
@@ -30,7 +30,7 @@ export const useReplicaSetActions = (
     () => ({
       [ReplicaSetActionCreator.RollbackDeploymentAction]: (): Action => ({
         id: 'rollback-deployment',
-        label: t('console-app~Rollback'),
+        label: t('Rollback'),
         cta: () =>
           launchModal(LazyRollbackModalOverlay, {
             resource,

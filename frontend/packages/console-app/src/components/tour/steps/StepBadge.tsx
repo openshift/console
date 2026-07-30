@@ -8,10 +8,10 @@ type StepBadgeProps = {
 };
 
 const StepBadge: FC<StepBadgeProps> = ({ stepNumber, totalSteps }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   return (
     <span className="co-step-badge">
-      {t('console-app~Step {{stepNumber, number}}/{{totalSteps, number}}', {
+      {t('Step {{stepNumber, number}}/{{totalSteps, number}}', {
         stepNumber,
         totalSteps,
       })}

@@ -80,7 +80,7 @@ Console plugin SDK packages follow a semver scheme where the major and minor ver
 the earliest supported OCP Console version, and the patch version number indicates the release of that
 particular package.
 
-During development, we will publish prerelease versions of plugin SDK packages, e.g. `4.19.0-prerelease.1`.
+During development, we will publish prerelease versions of plugin SDK packages, for example, `4.19.0-prerelease.1`.
 Once the given Console version is released (GA), we will publish corresponding plugin SDK packages without
 the prerelease tag, e.g. `4.19.0`.
 
@@ -163,8 +163,8 @@ Set up CI and related workflows to test your plugin on all supported Console ver
 plugin, verify that the Console version on the cluster falls within the supported Console version range.
 
 This approach uses a single development branch without the need to maintain separate release branches for
-different Console versions. Be aware of the Console plugin API version skew potential due to your plugin
-supporting multiple Console versions.
+different Console versions. Be aware of the risk of Console plugin API version skew when your plugin
+supports multiple Console versions.
 
 ## Shared modules
 
@@ -186,8 +186,8 @@ The following shared modules are provided by Console, without plugins providing 
 - `redux`
 - `redux-thunk`
 
-Shared modules which are provided by Console are listed as optional `peerDependencies` in the manifest
-of `@openshift-console/dynamic-plugin-sdk` package.
+Shared modules without plugin fallbacks are defined as optional `peerDependencies` in the
+`@openshift-console/dynamic-plugin-sdk` package.
 
 ## How to upgrade your plugins
 
@@ -516,19 +516,19 @@ Before publishing, it's recommended to log into your npm user account:
 npm login
 ```
 
-Build all distributable [SDK packages](#sdk-packages) into `dist` directory:
+Build all distributable SDK packages into `dist` directory and set their version:
 
 ```sh
-yarn build
+yarn build && yarn set-dist-version <version>
 ```
 
 Finally, publish relevant packages to [npm registry](https://www.npmjs.com/):
 
 ```sh
-yarn publish dist/<pkg> --no-git-tag-version --new-version <version>
+(cd ./dist/<pkg> && npm publish)
 ```
 
-If the given package doesn't exist in npm registry, add `--access public` to `yarn publish` command.
+If the given package doesn't exist in npm registry, add `--access public` to `npm publish`.
 
 If the newly published version comes before the latest published version in terms of semver rules
 (e.g. hotfix release 1.0.2 for an older minor version stream 1.0.x), ensure the `latest` dist-tag

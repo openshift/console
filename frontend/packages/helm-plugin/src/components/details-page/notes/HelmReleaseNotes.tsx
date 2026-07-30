@@ -4,7 +4,7 @@ import { MarkdownView } from '@console/shared/src/components/markdown/MarkdownVi
 import type { HelmRelease } from '../../../types/helm-types';
 import HelmReleaseNotesEmptyState from './HelmReleaseNotesEmptyState';
 
-export interface HelmReleaseNotesProps {
+interface HelmReleaseNotesProps {
   customData: HelmRelease;
 }
 

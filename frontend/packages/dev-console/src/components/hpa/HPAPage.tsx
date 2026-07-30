@@ -16,8 +16,8 @@ import { getRequestsWarning, VALID_HPA_TARGET_KINDS } from './hpa-utils';
 import HPAFormikForm from './HPAFormikForm';
 import HPAPageHeader from './HPAPageHeader';
 
-const HPAPage: FC<PageComponentProps> = () => {
-  const { t } = useTranslation();
+export const HPAPage: FC<PageComponentProps> = () => {
+  const { t } = useTranslation('devconsole');
   const { ns, resourceRef, name } = useParams();
   const breakdown = getGroupVersionKind(resourceRef) || [];
   const [group, version, kind] = breakdown;
@@ -36,9 +36,7 @@ const HPAPage: FC<PageComponentProps> = () => {
   const error = hpaError || workloadError?.message;
 
   const validSupportedType = VALID_HPA_TARGET_KINDS.includes(kind);
-  const title = `${hpa ? t('devconsole~Edit') : t('devconsole~Add')} ${
-    HorizontalPodAutoscalerModel.label
-  }`;
+  const title = `${hpa ? t('Edit') : t('Add')} ${HorizontalPodAutoscalerModel.label}`;
 
   if (!breakdown) {
     return <ErrorPage404 />;
@@ -73,5 +71,3 @@ const HPAPage: FC<PageComponentProps> = () => {
     </NamespacedPage>
   );
 };
-
-export default HPAPage;

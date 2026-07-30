@@ -11,7 +11,10 @@ import { navFactory, LoadingBox, StatusBox } from '@console/internal/components/
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { SecretModel } from '@console/internal/models';
 import type { K8sResourceKindReference, SecretKind } from '@console/internal/module/k8s';
-import { ActionMenu, ActionMenuVariant, Status, ActionServiceProvider } from '@console/shared';
+import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
+import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import { Status } from '@console/shared/src/components/status/Status';
 import type { HelmRelease } from '../../types/helm-types';
 import { HelmActionOrigins } from '../../types/helm-types';
 import { fetchHelmRelease, HelmReleaseStatusLabels, releaseStatus } from '../../utils/helm-utils';
@@ -38,7 +41,7 @@ export const LoadedHelmReleaseDetails: FC<LoadedHelmReleaseDetailsProps> = ({
   helmRelease,
   secrets,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   const { ns: namespace } = useParams();
   const location = useLocation();
 
@@ -106,10 +109,10 @@ export const LoadedHelmReleaseDetails: FC<LoadedHelmReleaseDetailsProps> = ({
       customData={helmRelease.data}
       breadcrumbsFor={() => [
         {
-          name: t('helm-plugin~Helm Releases'),
+          name: t('Helm Releases'),
           path: `/helm/ns/${namespace}`,
         },
-        { name: t('helm-plugin~Helm Release details'), path: `${location.pathname}` },
+        { name: t('Helm Release details'), path: `${location.pathname}` },
       ]}
       title={title}
       kind={SecretReference}

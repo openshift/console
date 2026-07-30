@@ -4,18 +4,18 @@ import type { FormikValues } from 'formik';
 import { useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { ImportStrategy } from '@console/git-service/src';
+import { ImportStrategy } from '@console/git-service/src/types/git';
 import { ResourceName } from '@console/internal/components/utils';
 import { ImageStreamTagModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { DropdownField } from '@console/shared';
+import { DropdownField } from '@console/shared/src/components/formik-fields/DropdownField';
 import type { BuilderImage } from '../../../utils/imagestream-utils';
 import { getTagDataWithDisplayName, getPorts } from '../../../utils/imagestream-utils';
 import { useSafeK8s } from '../../../utils/safe-k8s-hook';
 import BuilderImageEnvironments from './BuilderImageEnvironments';
 import ImageStreamInfo from './ImageStreamInfo';
 
-export interface BuilderImageTagSelectorProps {
+interface BuilderImageTagSelectorProps {
   selectedBuilderImage: BuilderImage;
   selectedImageTag: string;
   showImageInfo?: boolean;
@@ -26,7 +26,7 @@ const BuilderImageTagSelector: FC<BuilderImageTagSelectorProps> = ({
   selectedImageTag,
   showImageInfo = true,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const {
     values: {
       import: { showEditImportStrategy, selectedStrategy },
@@ -81,7 +81,7 @@ const BuilderImageTagSelector: FC<BuilderImageTagSelectorProps> = ({
       >
         <DropdownField
           name="image.tag"
-          label={t('devconsole~Builder Image version')}
+          label={t('Builder Image version')}
           items={tagItems}
           title={tagItems[selectedImageTag]}
           fullWidth

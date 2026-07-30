@@ -11,12 +11,12 @@ export const UtilizationDurationDropdown: FC<UtilizationDurationDropdownProps> =
   adjustDuration,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const { selectedKey, updateSelectedKey, updateDuration } = useUtilizationDuration(adjustDuration);
   const items = {
-    [DurationKeys.OneHour]: t('console-shared~1 hour'),
-    [DurationKeys.SixHours]: t('console-shared~6 hours'),
-    [DurationKeys.TwentyFourHours]: t('console-shared~24 hours'),
+    [DurationKeys.OneHour]: t('1 hour'),
+    [DurationKeys.SixHours]: t('6 hours'),
+    [DurationKeys.TwentyFourHours]: t('24 hours'),
   };
 
   const onSelect = useCallback(
@@ -29,7 +29,7 @@ export const UtilizationDurationDropdown: FC<UtilizationDurationDropdownProps> =
   );
 
   return (
-    <div data-test-id="duration-select">
+    <div data-test="duration-select" data-test-id="duration-select">
       <Select
         toggle={(toggleRef: Ref<MenuToggleElement>) => (
           <MenuToggle

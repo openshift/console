@@ -9,8 +9,8 @@ import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { k8sCreate, modelFor, referenceFor } from '@console/internal/module/k8s';
 import { getActiveApplication } from '@console/internal/reducers/ui';
 import type { RootState } from '@console/internal/redux';
-import { ALL_APPLICATIONS_KEY } from '@console/shared';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { ALL_APPLICATIONS_KEY } from '@console/shared/src/constants/common';
 import { usePerspectives } from '@console/shared/src/hooks/usePerspectives';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import { sanitizeApplicationValue } from '@console/topology/src/utils/application-utils';
@@ -37,7 +37,7 @@ const AddChannel: FC<Props> = ({ namespace, channels, activeApplication }) => {
   const navigate = useNavigate();
   const handleCancel = useCallback(() => navigate(-1), [navigate]);
   const [perspective] = useActivePerspective();
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const initialFormData: AddChannelFormData = {
     project: {
       name: namespace || '',
@@ -78,10 +78,10 @@ const AddChannel: FC<Props> = ({ namespace, channels, activeApplication }) => {
     }
     const errMessage =
       channelResource?.kind && channelResource?.apiVersion
-        ? t('knative-plugin~No model registered for {{refrenceForChannel}}', {
+        ? t('No model registered for {{refrenceForChannel}}', {
             refrenceForChannel: referenceFor(channelResource),
           })
-        : t('knative-plugin~Invalid YAML');
+        : t('Invalid YAML');
     return Promise.reject(new Error(errMessage));
   };
 

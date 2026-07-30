@@ -1,18 +1,17 @@
 import { screen, waitFor } from '@testing-library/react';
-
-import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
+import { CatalogServiceProvider } from '@console/shared/src/components/catalog/service/CatalogServiceProvider';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
-import CatalogServiceProvider from '@console/shared/src/components/catalog/service/CatalogServiceProvider';
-import { loadingCatalogService, loadedCatalogService } from './SampleGettingStartedCard.data';
-import { SampleGettingStartedCard } from '../SampleGettingStartedCard';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { cleanupServerFlag } from '../../../getting-started-test-utils';
+import { SampleGettingStartedCard } from '../SampleGettingStartedCard';
+import { loadingCatalogService, loadedCatalogService } from './SampleGettingStartedCard.data';
 
 jest.mock('@console/shared/src/hooks/useActiveNamespace', () => ({
   useActiveNamespace: jest.fn(),
 }));
 
 jest.mock('@console/shared/src/components/catalog/service/CatalogServiceProvider', () => ({
-  default: jest.fn(),
+  CatalogServiceProvider: jest.fn(),
 }));
 
 const useActiveNamespaceMock = useActiveNamespace as jest.Mock;

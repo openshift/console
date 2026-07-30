@@ -1,12 +1,14 @@
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { revisionObj } from '../../../topology/__tests__/topology-knative-test-data';
 import { usePodsForRevisions } from '../../../utils/usePodsForRevisions';
 import DeploymentOverviewList from '../DeploymentOverviewList';
 
-jest.mock('@console/internal/components/utils', () => ({
-  ResourceLink: 'ResourceLink',
-  SidebarSectionHeading: 'SidebarSectionHeading',
-}));
+jest.mock(
+  '@console/internal/components/utils',
+  () =>
+    jest.requireActual('@console/knative-plugin/src/__tests__/rtl-stub-components')
+      .knativeInternalUtilsStubs,
+);
 
 jest.mock('../../../utils/usePodsForRevisions', () => ({
   usePodsForRevisions: jest.fn(),
@@ -49,8 +51,8 @@ describe('DeploymentOverviewList', () => {
   });
 
   it('should render DeploymentOverviewList with ResourceLink', () => {
-    const { container } = render(<DeploymentOverviewList resource={revisionObj} />);
-    expect(container.querySelector('SidebarSectionHeading')).toBeInTheDocument();
-    expect(container.querySelector('ResourceLink')).toBeInTheDocument();
+    render(<DeploymentOverviewList resource={revisionObj} />);
+    expect(screen.getByTestId('mock-SidebarSectionHeading')).toBeVisible();
+    expect(screen.getByTestId('mock-ResourceLink')).toBeVisible();
   });
 });

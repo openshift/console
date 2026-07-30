@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-import type { PrometheusResponse } from '@console/internal/components/graphs';
 
 export enum HostQuery {
   CPU_UTILIZATION = 'CPU_UTILIZATION',
@@ -11,8 +10,6 @@ export enum HostQuery {
   NETWORK_OUT_UTILIZATION = 'NETWORK_OUT_UTILIZATION',
   NETWORK_UTILIZATION = 'NETWORK_UTILIZATION',
   NUMBER_OF_PODS = 'NUMBER_OF_PODS',
-  NUMBER_OF_FANS = 'NUMBER_OF_FANS',
-  NUMBER_OF_PSUS = 'NUMBER_OF_PSUS',
 
   // popover queries
   PODS_BY_CPU = 'PODS_BY_CPU',
@@ -105,9 +102,6 @@ type HostQueryType = {
 type HostUtilizationQueryType = {
   [key: string]: { utilization: string; total?: string };
 };
-
-export const getHostQueryResultError = (result: PrometheusResponse): boolean =>
-  _.get(result, 'status', '') !== 'success';
 
 export const getTopConsumerQueries = (nodeName: string): HostQueryType => ({
   [HostQuery.PODS_BY_CPU]: getQuery(nodeName, nodeQueriesByNodeName[HostQuery.PODS_BY_CPU]),

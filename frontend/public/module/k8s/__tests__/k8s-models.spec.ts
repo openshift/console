@@ -8,7 +8,7 @@ import {
   kindForReference,
   versionForReference,
   modelsToMap,
-} from '../../k8s';
+} from '..';
 import {
   testCRD,
   testCRDInvalidVersion,
@@ -29,7 +29,7 @@ import {
   DeploymentModel,
   ClusterResourceQuotaModel,
   PrometheusModel,
-} from '../../../../public/models';
+} from '../../../models';
 
 describe('referenceFor', () => {
   it('returns a reference for objects without an API group', () => {

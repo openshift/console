@@ -1,5 +1,5 @@
 import type { FC, ReactNode } from 'react';
-import { render, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { FormikConfig } from 'formik';
 import { Formik } from 'formik';
@@ -38,16 +38,16 @@ describe('PolicySectionFormData', () => {
   it('should render form', () => {
     const onSubmit = jest.fn();
 
-    const renderResult = render(
+    render(
       <Wrapper initialValues={initialValues} onSubmit={onSubmit}>
         <PolicySection />
       </Wrapper>,
     );
 
-    renderResult.getByTestId('section policy');
-    renderResult.getByText('Policy');
-    renderResult.getByText('Run policy');
-    renderResult.getByTestId('dropdown run-policy');
+    expect(screen.getByTestId('section policy')).toBeInTheDocument();
+    expect(screen.getByText('Policy')).toBeVisible();
+    expect(screen.getByText('Run policy')).toBeVisible();
+    expect(screen.getByTestId('dropdown run-policy')).toBeVisible();
 
     expect(onSubmit).toHaveBeenCalledTimes(0);
   });
@@ -56,17 +56,17 @@ describe('PolicySectionFormData', () => {
     const user = userEvent.setup();
     const onSubmit = jest.fn();
 
-    const renderResult = render(
+    render(
       <Wrapper initialValues={initialValues} onSubmit={onSubmit}>
         <PolicySection />
       </Wrapper>,
     );
 
-    await user.click(renderResult.getByText('Serial'));
-    await user.click(renderResult.getByText('Parallel'));
+    await user.click(screen.getByText('Serial'));
+    await user.click(screen.getByText('Parallel'));
 
     // Submit
-    const submitButton = renderResult.getByRole('button', { name: 'Submit' });
+    const submitButton = screen.getByRole('button', { name: 'Submit' });
     await user.click(submitButton);
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalledTimes(1);
@@ -86,17 +86,17 @@ describe('PolicySectionFormData', () => {
     const user = userEvent.setup();
     const onSubmit = jest.fn();
 
-    const renderResult = render(
+    render(
       <Wrapper initialValues={initialValues} onSubmit={onSubmit}>
         <PolicySection />
       </Wrapper>,
     );
 
-    await user.click(renderResult.getByText('Serial'));
-    await user.click(renderResult.getByText('Serial latest only'));
+    await user.click(screen.getByText('Serial'));
+    await user.click(screen.getByText('Serial latest only'));
 
     // Submit
-    const submitButton = renderResult.getByRole('button', { name: 'Submit' });
+    const submitButton = screen.getByRole('button', { name: 'Submit' });
     await user.click(submitButton);
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalledTimes(1);

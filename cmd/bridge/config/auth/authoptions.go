@@ -230,6 +230,7 @@ func (c *completedOptions) ApplyTo(
 	var err error
 	srv.Authenticator, err = c.getAuthenticator(
 		srv.BaseURL,
+		srv.AdditionalBaseURLs,
 		k8sEndpoint,
 		caCertFilePath,
 		srv.InternalProxiedK8SClientConfig,
@@ -242,12 +243,14 @@ func (c *completedOptions) ApplyTo(
 		return err
 	}
 
-	srv.CSRFVerifier = csrfverifier.NewCSRFVerifier(srv.BaseURL, useSecureCookies)
+	allBaseURLs := append([]*url.URL{srv.BaseURL}, srv.AdditionalBaseURLs...)
+	srv.CSRFVerifier = csrfverifier.NewCSRFVerifier(allBaseURLs, useSecureCookies)
 	return nil
 }
 
 func (c *completedOptions) getAuthenticator(
 	baseURL *url.URL,
+	additionalBaseURLs []*url.URL,
 	k8sEndpoint *url.URL,
 	caCertFilePath string,
 	k8sClientConfig *rest.Config,
@@ -273,12 +276,18 @@ func (c *completedOptions) getAuthenticator(
 	var (
 		err                      error
 		userAuthOIDCIssuerURL    *url.URL
-		authLoginErrorEndpoint   = proxy.SingleJoiningSlash(baseURL.String(), server.AuthLoginErrorEndpoint)
-		authLoginSuccessEndpoint = proxy.SingleJoiningSlash(baseURL.String(), server.AuthLoginSuccessEndpoint)
+		authLoginErrorEndpoint   = proxy.SingleJoiningSlash(baseURL.Path, server.AuthLoginErrorEndpoint)
+		authLoginSuccessEndpoint = proxy.SingleJoiningSlash(baseURL.Path, server.AuthLoginSuccessEndpoint)
 		oidcClientSecret         = c.ClientSecret
 		// Abstraction leak required by NewAuthenticator. We only want the browser to send the auth token for paths starting with basePath/api.
 		cookiePath = proxy.SingleJoiningSlash(baseURL.Path, "/api")
 	)
+
+	allowedRedirectHosts := make(map[string]bool, 1+len(additionalBaseURLs))
+	allowedRedirectHosts[baseURL.Host] = true
+	for _, u := range additionalBaseURLs {
+		allowedRedirectHosts[u.Host] = true
+	}
 
 	var scopes []string
 	authSource := oauth2.AuthSourceOIDC
@@ -294,18 +303,17 @@ func (c *completedOptions) getAuthenticator(
 
 	}
 
-	oidcClientSecret = c.ClientSecret
-
 	// Config for logging into console.
 	oidcClientConfig := &oauth2.Config{
-		AuthSource:     authSource,
-		IssuerURL:      userAuthOIDCIssuerURL.String(),
-		IssuerCA:       c.CAFilePath,
-		ClientID:       c.ClientID,
-		ClientSecret:   oidcClientSecret,
-		RedirectURL:    proxy.SingleJoiningSlash(baseURL.String(), server.AuthLoginCallbackEndpoint),
-		Scope:          scopes,
-		OCLoginCommand: c.OCLoginCommand,
+		AuthSource:         authSource,
+		IssuerURL:          userAuthOIDCIssuerURL.String(),
+		IssuerCA:           c.CAFilePath,
+		ClientID:           c.ClientID,
+		ClientSecret:       oidcClientSecret,
+		RedirectURL:        proxy.SingleJoiningSlash(baseURL.String(), server.AuthLoginCallbackEndpoint),
+		ConsoleBaseAddress: baseURL.String(),
+		Scope:              scopes,
+		OCLoginCommand:     c.OCLoginCommand,
 
 		// Use the k8s CA file for OpenShift OAuth metadata discovery.
 		// This might be different than IssuerCA.
@@ -319,8 +327,9 @@ func (c *completedOptions) getAuthenticator(
 		CookieEncryptionKey:     sessionConfig.CookieEncryptionKey,
 		CookieAuthenticationKey: sessionConfig.CookieAuthenticationKey,
 
-		K8sConfig: k8sClientConfig,
-		Metrics:   authMetrics,
+		K8sConfig:            k8sClientConfig,
+		Metrics:              authMetrics,
+		AllowedRedirectHosts: allowedRedirectHosts,
 	}
 
 	if c.LogoutRedirectURL != nil {

@@ -1,0 +1,279 @@
+import type { FC, Ref } from 'react';
+import { useState, useEffect } from 'react';
+import type { MenuToggleElement } from '@patternfly/react-core';
+import {
+  FormGroup,
+  FormSection,
+  ExpandableSection,
+  CodeBlock,
+  CodeBlockCode,
+  Select,
+  SelectOption,
+  SelectList,
+  MenuToggle,
+} from '@patternfly/react-core';
+import { safeDump } from 'js-yaml';
+import { useTranslation } from 'react-i18next';
+import type { Perspective as PerspectiveExtension } from '@console/dynamic-plugin-sdk/src';
+import { isPerspective } from '@console/dynamic-plugin-sdk/src';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
+import { FormLayout } from '@console/shared/src/components/cluster-configuration/FormLayout';
+import { LoadError } from '@console/shared/src/components/cluster-configuration/LoadError';
+import { patchConsoleOperatorConfig } from '@console/shared/src/components/cluster-configuration/patchConsoleOperatorConfig';
+import type { SaveStatusProps } from '@console/shared/src/components/cluster-configuration/SaveStatus';
+import { SaveStatus } from '@console/shared/src/components/cluster-configuration/SaveStatus';
+import { useConsoleOperatorConfig } from '@console/shared/src/components/cluster-configuration/useConsoleOperatorConfig';
+import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
+import type {
+  PerspectiveVisibility,
+  Perspective,
+} from '@console/shared/src/utils/override-perspectives';
+import { PerspectiveVisibilityState } from '@console/shared/src/utils/override-perspectives';
+
+type PerspectivesConsoleConfig = K8sResourceKind & {
+  spec: {
+    customization?: {
+      perspectives: Perspective[];
+    };
+  };
+};
+
+type PerspectiveVisibilitySelectOptions = {
+  value: string;
+  title: string;
+  description: string;
+  visibility?: PerspectiveVisibility;
+  isSelected: boolean;
+};
+
+const PerspectiveVisibilitySelect: FC<{
+  toggleId: string;
+  disabled: boolean;
+  value?: PerspectiveVisibility;
+  onChange: (selectedOption: PerspectiveVisibilitySelectOptions) => void;
+}> = ({ toggleId, disabled, value, onChange }) => {
+  const { t } = useTranslation('console-app');
+
+  const options: PerspectiveVisibilitySelectOptions[] = [
+    {
+      value: 'Enabled',
+      title: t('Enabled'),
+      description: t('Perspectives are enabled by default.'),
+      visibility: { state: PerspectiveVisibilityState.Enabled },
+      isSelected: !value || !value.state || value.state === PerspectiveVisibilityState.Enabled,
+    },
+    {
+      value: 'RequiredNamespace',
+      title: t('Only visible for privileged users'),
+      description: t('Privileged users can list all namespaces.'),
+      visibility: {
+        state: PerspectiveVisibilityState.AccessReview,
+        accessReview: {
+          required: [
+            {
+              resource: 'namespaces',
+              verb: 'get',
+            },
+          ],
+        },
+      },
+      isSelected:
+        value?.state === PerspectiveVisibilityState.AccessReview &&
+        value.accessReview?.required?.length === 1 &&
+        value.accessReview.required[0].resource === 'namespaces' &&
+        value.accessReview.required[0].verb === 'get' &&
+        Object.values(value.accessReview.required[0]).filter(Boolean).length === 2 &&
+        !value.accessReview?.missing?.length,
+    },
+    {
+      value: 'MissingNamespace',
+      title: t('Only visible for unprivileged users'),
+      description: t('Unprivileged users cannot list all namespaces.'),
+      visibility: {
+        state: PerspectiveVisibilityState.AccessReview,
+        accessReview: {
+          missing: [
+            {
+              resource: 'namespaces',
+              verb: 'get',
+            },
+          ],
+        },
+      },
+      isSelected:
+        value?.state === PerspectiveVisibilityState.AccessReview &&
+        value.accessReview?.missing?.length === 1 &&
+        value.accessReview.missing[0].resource === 'namespaces' &&
+        value.accessReview.missing[0].verb === 'get' &&
+        Object.values(value.accessReview.missing[0]).filter(Boolean).length === 2 &&
+        !value.accessReview?.required?.length,
+    },
+    {
+      value: 'Disabled',
+      title: t('Disabled'),
+      description: t('Disable this perspectives for all users.'),
+      visibility: { state: PerspectiveVisibilityState.Disabled },
+      isSelected: value?.state === PerspectiveVisibilityState.Disabled,
+    },
+  ];
+
+  if (!options.some((option) => option.isSelected)) {
+    options.push({
+      value: 'Custom',
+      title: t('Custom'),
+      description: t(
+        'This perspective is shown based on custom access review rules. Please open the console configuration resource to inspect or update this rules.',
+      ),
+      isSelected: true,
+    });
+  }
+
+  const [isOpen, setIsOpen] = useState(false);
+  const selection = options.find((option) => option.isSelected)?.value;
+
+  return (
+    <>
+      <Select
+        isOpen={isOpen}
+        onSelect={() => setIsOpen(false)}
+        selected={selection}
+        onOpenChange={(open) => setIsOpen(open)}
+        toggle={(toggleRef: Ref<MenuToggleElement>) => (
+          <MenuToggle
+            isFullWidth
+            id={toggleId}
+            isDisabled={disabled}
+            ref={toggleRef}
+            onClick={(open) => setIsOpen(open)}
+          >
+            {options.find((option) => option.isSelected)?.title}
+          </MenuToggle>
+        )}
+      >
+        <SelectList>
+          {options.map((option) => (
+            <SelectOption
+              key={option.value}
+              value={option.value}
+              description={option.description}
+              onClick={() => onChange(option)}
+            >
+              {option.title}
+            </SelectOption>
+          ))}
+        </SelectList>
+      </Select>
+      {selection === 'Custom' && value?.accessReview && (
+        <ExpandableSection toggleText={t('Access review rules')}>
+          <CodeBlock>
+            <CodeBlockCode>{safeDump(value.accessReview)}</CodeBlockCode>
+          </CodeBlock>
+        </ExpandableSection>
+      )}
+    </>
+  );
+};
+
+const PerspectiveConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
+  const { t } = useTranslation('console-app');
+  const fireTelemetryEvent = useTelemetry();
+
+  // All available perspectives
+  const perspectiveExtensions = useExtensions<PerspectiveExtension>(isPerspective);
+
+  // Current configuration
+  const [consoleConfig, consoleConfigLoaded, consoleConfigError] = useConsoleOperatorConfig<
+    PerspectivesConsoleConfig
+  >();
+  const [configuredPerspectives, setConfiguredPerspectives] = useState<Perspective[]>();
+  useEffect(() => {
+    if (consoleConfig && consoleConfigLoaded && !configuredPerspectives) {
+      setConfiguredPerspectives(consoleConfig?.spec?.customization?.perspectives);
+    }
+  }, [configuredPerspectives, consoleConfig, consoleConfigLoaded]);
+
+  // Save the latest changes
+  const [saveStatus, setSaveStatus] = useState<SaveStatusProps>();
+  const save = useDebounceCallback(() => {
+    setSaveStatus({ status: 'in-progress' });
+
+    const patch: PerspectivesConsoleConfig = {
+      spec: {
+        customization: {
+          perspectives: configuredPerspectives ?? [],
+        },
+      },
+    };
+    patchConsoleOperatorConfig(patch)
+      .then(() => setSaveStatus({ status: 'successful' }))
+      .catch((error) => setSaveStatus({ status: 'error', error }));
+  }, 2000);
+
+  const disabled =
+    readonly || !perspectiveExtensions || !consoleConfigLoaded || !!consoleConfigError;
+
+  return (
+    <FormLayout isHorizontal>
+      <FormSection title={t('Perspectives')} data-test="perspectives form-section">
+        {perspectiveExtensions.map((perspectiveExtension) => {
+          const fieldId = perspectiveExtension.uid;
+          const perspectiveId = perspectiveExtension.properties.id;
+          const value = configuredPerspectives?.find((p) => p.id === perspectiveId)?.visibility;
+          const onChange = (selectedOption: PerspectiveVisibilitySelectOptions) => {
+            fireTelemetryEvent('Console cluster perspective configuration changed', {
+              customize: 'Perspective',
+              id: perspectiveExtension.properties.id,
+              name: perspectiveExtension.properties.name,
+              visibility: selectedOption.value,
+            });
+            if (selectedOption.visibility) {
+              setConfiguredPerspectives((oldConfiguredPerspectives) => {
+                const newConfiguredPerspectives = oldConfiguredPerspectives
+                  ? [...oldConfiguredPerspectives]
+                  : [];
+                const index = newConfiguredPerspectives.findIndex((p) => p.id === perspectiveId);
+                if (index === -1) {
+                  newConfiguredPerspectives.push({
+                    id: perspectiveId,
+                    visibility: selectedOption.visibility ?? {
+                      state: PerspectiveVisibilityState.Enabled,
+                    },
+                  });
+                } else {
+                  newConfiguredPerspectives[index].visibility = selectedOption.visibility ?? {
+                    state: PerspectiveVisibilityState.Enabled,
+                  };
+                }
+                return newConfiguredPerspectives;
+              });
+            }
+            save();
+          };
+
+          return (
+            <FormGroup
+              key={perspectiveExtension.uid}
+              label={perspectiveExtension.properties.name}
+              fieldId={fieldId}
+              data-test="perspectives form-group"
+            >
+              <PerspectiveVisibilitySelect
+                toggleId={fieldId}
+                disabled={disabled}
+                value={value}
+                onChange={onChange}
+              />
+            </FormGroup>
+          );
+        })}
+
+        <LoadError error={consoleConfigError} />
+        {saveStatus && <SaveStatus status={saveStatus.status} error={saveStatus.error} />}
+      </FormSection>
+    </FormLayout>
+  );
+};
+
+export default PerspectiveConfiguration;

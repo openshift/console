@@ -10,7 +10,7 @@ type BuildStatusSectionProps = {
 };
 
 const BuildStatusSection: FC<BuildStatusSectionProps> = ({ obj, buildStatus }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('shipwright-plugin');
 
   if (!buildStatus) {
     return null;
@@ -19,17 +19,17 @@ const BuildStatusSection: FC<BuildStatusSectionProps> = ({ obj, buildStatus }) =
   return (
     <DescriptionList>
       {buildStatus.registered ? (
-        <DetailsItem label={t('shipwright-plugin~Registered')} obj={obj} path="status.registered">
+        <DetailsItem label={t('Registered')} obj={obj} path="status.registered">
           {buildStatus.registered}
         </DetailsItem>
       ) : null}
       {buildStatus.reason ? (
-        <DetailsItem label={t('shipwright-plugin~Reason')} obj={obj} path="status.reason">
+        <DetailsItem label={t('Reason')} obj={obj} path="status.reason">
           {buildStatus.reason}
         </DetailsItem>
       ) : null}
       {buildStatus.message ? (
-        <DetailsItem label={t('shipwright-plugin~Message')} obj={obj} path="status.message">
+        <DetailsItem label={t('Message')} obj={obj} path="status.message">
           {buildStatus.message}
         </DetailsItem>
       ) : null}

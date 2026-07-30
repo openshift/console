@@ -1,13 +1,18 @@
-import * as _ from 'lodash';
-import { Base64 } from 'js-base64';
-import * as yup from 'yup';
-import { FormikValues } from 'formik';
+import type { FormikValues } from 'formik';
 import i18next from 'i18next';
-import { safeJSToYAML } from '@console/shared/src/utils/yaml';
+import { Base64 } from 'js-base64';
+import * as _ from 'lodash';
+import * as yup from 'yup';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
-import { ConfigMap, ConfigMapFormData, ConfigMapFormInitialValues, KeyValuePair } from './types';
+import { safeJSToYAML } from '@console/shared/src/utils/yaml';
+import type {
+  ConfigMap,
+  ConfigMapFormData,
+  ConfigMapFormInitialValues,
+  KeyValuePair,
+} from './types';
 
-export const initialConfigmapData: ConfigMap = {
+const initialConfigmapData: ConfigMap = {
   apiVersion: 'v1',
   kind: 'ConfigMap',
   metadata: {
@@ -66,7 +71,7 @@ export const getInitialConfigMapFormData = (
   return { ...initialFormData, namespace, name, data, binaryData, immutable };
 };
 
-export const getConfigmapFormData = (
+const getConfigmapFormData = (
   formData: ConfigMapFormData,
   yamlData: ConfigMap,
 ): ConfigMapFormData => {

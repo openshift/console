@@ -5,7 +5,7 @@ import { ResourceSummary } from '@console/internal/components/utils';
 import { StatefulSetModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
-import { getResource } from '../../utils';
+import { getResource } from '../../utils/topology-utils';
 
 type StatefulSetSideBarDetailsProps = {
   ss: K8sResourceKind;

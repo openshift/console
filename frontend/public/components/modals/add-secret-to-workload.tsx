@@ -1,8 +1,5 @@
-import type { FC, ReactEventHandler, FormEvent, ReactNode } from 'react';
+import type { FC, ReactEventHandler, FormEvent } from 'react';
 import { useState, useEffect, useCallback } from 'react';
-import * as _ from 'lodash';
-import * as fuzzy from 'fuzzysearch';
-import { useNavigate } from 'react-router';
 import {
   Button,
   Content,
@@ -16,27 +13,30 @@ import {
   Radio,
   TextInput,
 } from '@patternfly/react-core';
-
-import { K8sKind, k8sList, k8sPatch, K8sResourceKind } from '../../module/k8s';
-import { DeploymentModel, DeploymentConfigModel, StatefulSetModel } from '../../models';
+import * as fuzzy from 'fuzzysearch';
+import * as _ from 'lodash';
+import { Trans, useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
+import { DeploymentModel, DeploymentConfigModel, StatefulSetModel } from '../../models';
+import type { K8sKind, K8sResourceKind } from '../../module/k8s';
+import { k8sList, k8sPatch } from '../../module/k8s';
 import { ResourceIcon, ResourceName } from '../utils/resource-icon';
 import { resourcePathFromModel } from '../utils/resource-link';
 /* eslint-disable import/named */
-import { Trans, useTranslation } from 'react-i18next';
-import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
-import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import { ModalCallback } from './types';
-import type { ModalComponentProps } from '@console/shared/src/types/modal';
-import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import type { ModalCallback } from './types';
 
 const workloadResourceModels = [DeploymentModel, DeploymentConfigModel, StatefulSetModel];
 const getContainers = (workload: K8sResourceKind) =>
   _.get(workload, 'spec.template.spec.containers') || [];
 
-export const AddSecretToWorkloadModal: FC<AddSecretToWorkloadModalProps> = (props) => {
+const AddSecretToWorkloadModal: FC<AddSecretToWorkloadModalProps> = (props) => {
   const { namespace, secretName } = props;
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const navigate = useNavigate();
 
   const [inProgress, setInProgress] = useState(false);
@@ -60,23 +60,29 @@ export const AddSecretToWorkloadModal: FC<AddSecretToWorkloadModalProps> = (prop
           })
           .then((res: K8sResourceKind[]): WorkloadItem[] => res.map((obj) => ({ model, obj })));
       }),
-    ).then((responses) => {
-      // TODO: Group by kind.
-      const allItems: WorkloadItem[] = _.flatten(responses);
-      const workloadsByUid = _.keyBy(allItems, 'obj.metadata.uid');
-      const sortedItems = _.orderBy(allItems, ['obj.metadata.name', 'model.kind'], ['asc', 'asc']);
-      const options = _.reduce(
-        sortedItems,
-        (list, item) => {
-          const { name, uid } = item.obj.metadata;
-          list[uid] = <ResourceName kind={item.model.kind} name={name} />;
-          return list;
-        },
-        {},
-      );
-      setWorkloadOptions(options);
-      setWorkloadsByUID(workloadsByUid);
-    });
+    )
+      .then((responses) => {
+        // TODO: Group by kind.
+        const allItems: WorkloadItem[] = _.flatten(responses);
+        const workloadsByUid = _.keyBy(allItems, 'obj.metadata.uid');
+        const sortedItems = _.orderBy(
+          allItems,
+          ['obj.metadata.name', 'model.kind'],
+          ['asc', 'asc'],
+        );
+        const options = _.reduce(
+          sortedItems,
+          (list, item) => {
+            const { name, uid } = item.obj.metadata;
+            list[uid] = <ResourceName kind={item.model.kind} name={name} />;
+            return list;
+          },
+          {},
+        );
+        setWorkloadOptions(options);
+        setWorkloadsByUID(workloadsByUid);
+      })
+      .catch(() => {});
   }, [namespace]);
 
   const autocompleteFilter = (text, item) => {
@@ -177,12 +183,12 @@ export const AddSecretToWorkloadModal: FC<AddSecretToWorkloadModalProps> = (prop
 
   const addAsEnvironment = addAs === 'environment';
   const addAsVolume = addAs === 'volume';
-  const selectWorkloadPlaceholder = t('public~Select a workload');
+  const selectWorkloadPlaceholder = t('Select a workload');
 
   return (
     <>
       <ModalHeader
-        title={t('public~Add secret to workload')}
+        title={t('Add secret to workload')}
         data-test-id="modal-title"
         labelId="add-secret-to-workload-modal-title"
       />
@@ -195,7 +201,7 @@ export const AddSecretToWorkloadModal: FC<AddSecretToWorkloadModalProps> = (prop
         </Content>
         <Form id="co-add-secret-to-workload" onSubmit={submit}>
           <FormGroup
-            label={t('public~Add this secret to workload')}
+            label={t('Add this secret to workload')}
             isRequired
             fieldId="co-add-secret-to-workload__workload"
           >
@@ -211,7 +217,7 @@ export const AddSecretToWorkloadModal: FC<AddSecretToWorkloadModalProps> = (prop
             />
           </FormGroup>
           <FormGroup
-            label={t('public~Add secret as')}
+            label={t('Add secret as')}
             isRequired
             role="radiogroup"
             fieldId="co-add-secret-to-workload"
@@ -220,7 +226,7 @@ export const AddSecretToWorkloadModal: FC<AddSecretToWorkloadModalProps> = (prop
             <Radio
               id="co-add-secret-to-workload__envvars"
               name="co-add-secret-to-workload__add-as"
-              label={t('public~Environment variables')}
+              label={t('Environment variables')}
               value="environment"
               onChange={onAddAsChange}
               isChecked={addAsEnvironment}
@@ -228,7 +234,7 @@ export const AddSecretToWorkloadModal: FC<AddSecretToWorkloadModalProps> = (prop
               data-checked-state={addAsEnvironment}
               body={
                 addAsEnvironment && (
-                  <FormGroup label={t('public~Prefix')} fieldId="co-add-secret-to-workload__prefix">
+                  <FormGroup label={t('Prefix')} fieldId="co-add-secret-to-workload__prefix">
                     <TextInput
                       name="prefix"
                       id="co-add-secret-to-workload__prefix"
@@ -245,7 +251,7 @@ export const AddSecretToWorkloadModal: FC<AddSecretToWorkloadModalProps> = (prop
             <Radio
               id="co-add-secret-to-workload__volume"
               name="co-add-secret-to-workload__add-as"
-              label={t('public~Volume')}
+              label={t('Volume')}
               value="volume"
               onChange={onAddAsChange}
               isChecked={addAsVolume}
@@ -254,7 +260,7 @@ export const AddSecretToWorkloadModal: FC<AddSecretToWorkloadModalProps> = (prop
               body={
                 addAsVolume && (
                   <FormGroup
-                    label={t('public~Mount path')}
+                    label={t('Mount path')}
                     isRequired
                     fieldId="co-add-secret-to-workload__mountpath"
                   >
@@ -285,17 +291,22 @@ export const AddSecretToWorkloadModal: FC<AddSecretToWorkloadModalProps> = (prop
           id="confirm-action"
           form="co-add-secret-to-workload"
         >
-          {t('public~Save')}
+          {t('Save')}
         </Button>
-        <Button variant="link" onClick={props.cancel} data-test-id="modal-cancel-action">
-          {t('public~Cancel')}
+        <Button
+          variant="link"
+          onClick={props.cancel}
+          data-test="modal-cancel-action"
+          data-test-id="modal-cancel-action"
+        >
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </>
   );
 };
 
-export const AddSecretToWorkloadModalOverlay: OverlayComponent<AddSecretToWorkloadModalProps> = (
+const AddSecretToWorkloadModalOverlay: OverlayComponent<AddSecretToWorkloadModalProps> = (
   props,
 ) => {
   const [isOpen, setIsOpen] = useState(true);
@@ -339,18 +350,3 @@ export type AddSecretToWorkloadModalProps = {
   secretName: string;
   namespace: string;
 } & ModalComponentProps;
-
-export type AddSecretToWorkloadModalState = {
-  inProgress: boolean;
-  errorMessage: string;
-  workloadOptions: {
-    [uid: string]: ReactNode;
-  };
-  workloadsByUID: {
-    [uid: string]: WorkloadItem;
-  };
-  selectedWorkloadUID: string;
-  addAs: string;
-  prefix: string;
-  mountPath: string;
-};

@@ -14,7 +14,7 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { CustomResourceDefinitionModel } from '@console/internal/models';
 import type { K8sResourceKind, CustomResourceDefinitionKind } from '@console/internal/module/k8s';
 import { kindForReference, nameForModel, definitionFor } from '@console/internal/module/k8s';
-import { getBadgeFromType } from '@console/shared/src/components/badges';
+import { getBadgeFromType } from '@console/shared/src/components/badges/badge-factory';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import {
   getSchemaErrors,
@@ -22,11 +22,11 @@ import {
   prune,
 } from '@console/shared/src/components/dynamic-form/utils';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
-import { SyncedEditor } from '@console/shared/src/components/synced-editor';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { SyncedEditor } from '@console/shared/src/components/synced-editor/SyncedEditor';
 import { useCreateResourceExtension } from '@console/shared/src/hooks/useCreateResourceExtension';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
-import type { RouteParams } from '@console/shared/src/types';
+import type { RouteParams } from '@console/shared/src/types/route-params';
 import { exampleForModel, providedAPIForModel } from '..';
 import { ClusterServiceVersionModel } from '../../models';
 import type { ClusterServiceVersionKind, ProvidedAPI } from '../../types';
@@ -44,7 +44,7 @@ export const CreateOperand: FC<CreateOperandProps> = ({
   loaded,
   loadError,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const params = useParams();
   const [model] = useK8sModel(params.plural);
   const [crd] = useK8sWatchResource<CustomResourceDefinitionKind>(
@@ -58,7 +58,7 @@ export const CreateOperand: FC<CreateOperandProps> = ({
   );
 
   const formHelpText = t(
-    'olm~Create by completing the form. Default values may be provided by the Operator authors.',
+    'Create by completing the form. Default values may be provided by the Operator authors.',
   );
 
   const [activePerspective] = useActivePerspective();
@@ -107,7 +107,7 @@ export const CreateOperand: FC<CreateOperandProps> = ({
         newMethod === EditorType.Form
           ? formHelpText
           : t(
-              'olm~Create by manually entering YAML or JSON definitions, or by dragging and dropping a file into the editor.',
+              'Create by manually entering YAML or JSON definitions, or by dragging and dropping a file into the editor.',
             ),
       );
     },
@@ -119,7 +119,7 @@ export const CreateOperand: FC<CreateOperandProps> = ({
   return (
     <StatusBox loaded={loaded} loadError={loadError} data={csv}>
       <PageHeading
-        title={t('olm~Create {{item}}', { item: model.label })}
+        title={t('Create {{item}}', { item: model.label })}
         badge={getBadgeFromType(model.badge)}
         helpText={helpText}
       />
@@ -143,7 +143,7 @@ export const CreateOperand: FC<CreateOperandProps> = ({
 type CreateOperandPageRouteParams = RouteParams<'csvName' | 'ns'>;
 
 const CreateOperandPage: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const params = useParams();
   const createResourceExtension = useCreateResourceExtension(params.plural);
   const { csvName, ns } = useParams<CreateOperandPageRouteParams>();
@@ -152,7 +152,7 @@ const CreateOperandPage: FC = () => {
   return (
     <>
       <DocumentTitle>
-        {t('olm~Create {{item}}', { item: kindForReference(params.plural) })}
+        {t('Create {{item}}', { item: kindForReference(params.plural) })}
       </DocumentTitle>
       <ModelStatusBox groupVersionKind={params.plural}>
         {createResourceExtension ? (

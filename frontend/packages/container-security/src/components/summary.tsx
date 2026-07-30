@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { ChartDonut } from '@patternfly/react-charts/victory';
 import { Stack, StackItem, pluralize } from '@patternfly/react-core';
-import { ExclamationTriangleIcon } from '@patternfly/react-icons';
+import { RhUiWarningFillIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
@@ -50,7 +50,7 @@ export const SecurityBreakdownPopup: FC<SecurityBreakdownPopupProps> = ({
   imageManifestVuln,
   namespace,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('container-security');
   const resource = imageManifestVuln.data;
   const vulnsFor = (severity: string) =>
     resource.filter((v) => v.status?.highestSeverity === severity);
@@ -66,7 +66,7 @@ export const SecurityBreakdownPopup: FC<SecurityBreakdownPopupProps> = ({
       unknownCount = 0,
     } = v.status;
     const totalCount = highCount + mediumCount + lowCount + unknownCount;
-    return t('container-security~{{fixableCount, number}} of {{totalCount, number}} fixable', {
+    return t('{{fixableCount, number}} of {{totalCount, number}} fixable', {
       fixableCount,
       totalCount,
     });
@@ -86,16 +86,14 @@ export const SecurityBreakdownPopup: FC<SecurityBreakdownPopupProps> = ({
               `container-security~This project's container images from Quay are analyzed to identify vulnerabilities. Images from other registries are not scanned.`,
             )
           : t(
-              'container-security~Container images from Quay are analyzed to identify vulnerabilities. Images from other registries are not scanned.',
+              'Container images from Quay are analyzed to identify vulnerabilities. Images from other registries are not scanned.',
             )}
       </StackItem>
       {!_.isEmpty(resource) ? (
         <>
           <StackItem>
             <div className="co-status-popup__row">
-              <div className="co-status-popup__text--bold">
-                {t('container-security~Vulnerable Container Images')}
-              </div>
+              <div className="co-status-popup__text--bold">{t('Vulnerable Container Images')}</div>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <div style={{ width: '66%', marginRight: '24px' }}>
@@ -104,7 +102,7 @@ export const SecurityBreakdownPopup: FC<SecurityBreakdownPopupProps> = ({
                     !_.isEmpty(vulnsFor(priority.value)) ? (
                       <div className="co-status-popup__row" key={priority.value}>
                         <div>
-                          <ExclamationTriangleIcon
+                          <RhUiWarningFillIcon
                             color={priority.color.value}
                             title={priority.title}
                           />
@@ -117,7 +115,7 @@ export const SecurityBreakdownPopup: FC<SecurityBreakdownPopupProps> = ({
                   .toArray()}
               </div>
               <div>
-                <Link to={baseVulnListUrl} aria-label={t('container-security~View all')}>
+                <Link to={baseVulnListUrl} aria-label={t('View all')}>
                   <ChartDonut
                     colorScale={vulnPriority.map((priority) => priority.color.value).toArray()}
                     data={vulnPriority
@@ -127,7 +125,7 @@ export const SecurityBreakdownPopup: FC<SecurityBreakdownPopupProps> = ({
                         y: vulnsFor(priority.value).length,
                       }))
                       .toArray()}
-                    title={t('container-security~{{vulnImageCount, number}} total', {
+                    title={t('{{vulnImageCount, number}} total', {
                       vulnImageCount: resource.length,
                     })}
                   />
@@ -140,11 +138,11 @@ export const SecurityBreakdownPopup: FC<SecurityBreakdownPopupProps> = ({
               <div className="co-status-popup__row">
                 <div>
                   <span className="co-status-popup__text--bold">
-                    {t('container-security~Fixable Container Images')}
+                    {t('Fixable Container Images')}
                   </span>
                   <span className="pf-v6-u-text-color-subtle">
                     &nbsp;
-                    {t('container-security~{{vulnImageCount, number}} total', {
+                    {t('{{vulnImageCount, number}} total', {
                       vulnImageCount: fixableVulns.size,
                     })}
                   </span>
@@ -152,18 +150,16 @@ export const SecurityBreakdownPopup: FC<SecurityBreakdownPopupProps> = ({
               </div>
               <div className="co-status-popup__row">
                 <span className="co-status-popup__text--bold">
-                  {namespace ? t('container-security~Image') : t('container-security~Impact')}
+                  {namespace ? t('Image') : t('Impact')}
                 </span>
-                <span className="co-status-popup__text--bold">
-                  {t('container-security~Vulnerabilities')}
-                </span>
+                <span className="co-status-popup__text--bold">{t('Vulnerabilities')}</span>
               </div>
               {_.sortBy(_.take([...fixableVulns.values()], 5), [
                 (v) => priorityFor(v.status?.highestSeverity).index,
               ]).map((v, key) => (
                 <div className="co-status-popup__row" key={v.metadata.name}>
                   <span>
-                    <ExclamationTriangleIcon
+                    <RhUiWarningFillIcon
                       color={priorityFor(v.status?.highestSeverity).color.value}
                     />{' '}
                     <Link
@@ -200,7 +196,7 @@ export const SecurityBreakdownPopup: FC<SecurityBreakdownPopupProps> = ({
                   }}
                   data-test="view-all"
                 >
-                  {t('container-security~View all')}
+                  {t('View all')}
                 </Link>
               </div>
             </StackItem>
@@ -208,9 +204,7 @@ export const SecurityBreakdownPopup: FC<SecurityBreakdownPopupProps> = ({
         </>
       ) : (
         <StackItem>
-          <span className="pf-v6-u-text-color-subtle">
-            {t('container-security~No vulnerabilities detected.')}
-          </span>
+          <span className="pf-v6-u-text-color-subtle">{t('No vulnerabilities detected.')}</span>
         </StackItem>
       )}
     </Stack>

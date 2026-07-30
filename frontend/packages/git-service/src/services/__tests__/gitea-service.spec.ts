@@ -1,6 +1,8 @@
 import * as nock from 'nock';
-import type { GitSource, BranchList, RepoFileList, BuildType, RepoLanguageList } from '../../types';
-import { RepoStatus } from '../../types';
+import type { BuildType } from '../../types/build-tools';
+import type { GitSource } from '../../types/git';
+import type { BranchList, RepoFileList, RepoLanguageList } from '../../types/repo';
+import { RepoStatus } from '../../types/repo';
 import { GiteaService } from '../gitea-service';
 
 describe('Gitea Service', () => {

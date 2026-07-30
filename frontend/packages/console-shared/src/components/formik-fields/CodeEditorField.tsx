@@ -24,7 +24,7 @@ const SampleResource: WatchK8sResource = {
   isList: true,
 };
 
-const CodeEditorField: FC<CodeEditorFieldProps> = ({
+export const CodeEditorField: FC<CodeEditorFieldProps> = ({
   name,
   label,
   model,
@@ -128,5 +128,3 @@ const CodeEditorField: FC<CodeEditorFieldProps> = ({
     </div>
   );
 };
-
-export default CodeEditorField;

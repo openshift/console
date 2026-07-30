@@ -7,7 +7,7 @@ import { ResourceLink } from '@console/internal/components/utils';
 import { timeFormatter } from '@console/internal/components/utils/datetime';
 import type { EventKind } from '@console/internal/module/k8s';
 import { referenceFor } from '@console/internal/module/k8s';
-import { YellowExclamationTriangleIcon } from '@console/shared';
+import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import './MonitoringOverviewEvents.scss';
 
 interface MonitoringOverviewEventsProps {
@@ -15,7 +15,7 @@ interface MonitoringOverviewEventsProps {
 }
 
 const MonitoringOverviewEvents: FC<MonitoringOverviewEventsProps> = ({ events }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   return (
     <div className="odc-monitoring-events">
       {!_.isEmpty(events) ? (
@@ -45,9 +45,7 @@ const MonitoringOverviewEvents: FC<MonitoringOverviewEventsProps> = ({ events })
           );
         })
       ) : (
-        <div className="pf-v6-u-text-color-subtle">
-          {t('devconsole~There are no recent events.')}
-        </div>
+        <div className="pf-v6-u-text-color-subtle">{t('There are no recent events.')}</div>
       )}
     </div>
   );

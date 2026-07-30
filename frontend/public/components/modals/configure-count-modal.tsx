@@ -1,15 +1,25 @@
+import { useState, useCallback } from 'react';
+import {
+  Alert,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  Button,
+  FormGroup,
+  Form,
+} from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useState, useCallback } from 'react';
-import { Modal, ModalHeader, ModalBody, Button, FormGroup, Form } from '@patternfly/react-core';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
-import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
-import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
-import { K8sResourceKind, K8sModel } from '../../module/k8s';
-import { NumberSpinner, NumberSpinnerProps } from '../utils/number-spinner';
-import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
+import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import { useNonScalableImageCheck } from '@console/shared/src/hooks/useNonScalableImageCheck';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
+import type { K8sResourceKind, K8sModel } from '../../module/k8s';
+import type { NumberSpinnerProps } from '../utils/number-spinner';
+import { NumberSpinner } from '../utils/number-spinner';
 
 export const ConfigureCountModal: OverlayComponent<ConfigureCountModalProps> = (props) => {
   const {
@@ -32,8 +42,10 @@ export const ConfigureCountModal: OverlayComponent<ConfigureCountModalProps> = (
   } = props;
   const getPath = path ? path.substring(1).replace('/', '.') : '';
   const [value, setValue] = useState<number>(_.get(resource, getPath) ?? defaultValue);
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
+  const isReplicaPath = path === '/spec/replicas';
+  const { isNonScalable } = useNonScalableImageCheck(isReplicaPath ? resource : null);
 
   const submit = useCallback(
     (e) => {
@@ -69,7 +81,7 @@ export const ConfigureCountModal: OverlayComponent<ConfigureCountModalProps> = (
   const onValueChange: NumberSpinnerProps['onChange'] = (event) => {
     const eventValue = (event.target as HTMLInputElement).value;
     const numericValue = Number(eventValue);
-    if (!isNaN(numericValue)) {
+    if (!Number.isNaN(numericValue)) {
       setValue(numericValue);
     }
   };
@@ -87,6 +99,18 @@ export const ConfigureCountModal: OverlayComponent<ConfigureCountModalProps> = (
         description={messageKey ? t(messageKey, messageVariablesSafe) : message}
       />
       <ModalBody>
+        {isReplicaPath && isNonScalable && value > 1 && (
+          <Alert
+            variant="warning"
+            isInline
+            title={t('Non-scalable image')}
+            className="pf-v6-u-mb-md"
+          >
+            {t(
+              'This image is not intended to run with more than one replica. Running multiple instances is not supported and might cause issues.',
+            )}
+          </Alert>
+        )}
         <Form id="configure-count-form">
           <FormGroup>
             <NumberSpinner
@@ -111,7 +135,7 @@ export const ConfigureCountModal: OverlayComponent<ConfigureCountModalProps> = (
           {buttonTextKey ? t(buttonTextKey, buttonTextVariables) : buttonText}
         </Button>
         <Button variant="link" onClick={closeOverlay} type="button">
-          {t('public~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </Modal>

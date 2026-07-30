@@ -3,7 +3,7 @@ import { Trans } from 'react-i18next';
 import { Link } from 'react-router';
 import { useAccessReview } from '@console/dynamic-plugin-sdk/src';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
-import { ProjectHelmChartRepositoryModel } from '../../models';
+import { ProjectHelmChartRepositoryModel } from '../../models/helm';
 
 const LinkToCreatePHCR: FC = () => {
   const [namespace] = useActiveNamespace();

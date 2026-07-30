@@ -5,19 +5,19 @@ import { useNavigate } from 'react-router';
 import type { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions/catalog';
 import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import { useTelemetry } from '../../hooks/useTelemetry';
-import CatalogBadges from '../catalog/CatalogBadges';
+import { CatalogBadges } from '../catalog/CatalogBadges';
 import { handleCta } from './utils/quick-search-utils';
 
 import './QuickSearchDetails.scss';
 
-export type QuickSearchDetailsRendererProps = {
+type QuickSearchDetailsRendererProps = {
   selectedItem: CatalogItem;
   closeModal: () => void;
   navigate: (url: string) => void;
   removeQueryArgument: (key: string) => void;
 };
 export type DetailsRendererFunction = (props: QuickSearchDetailsRendererProps) => ReactNode;
-export interface QuickSearchDetailsProps {
+interface QuickSearchDetailsProps {
   selectedItem: CatalogItem;
   closeModal: () => void;
   detailsRenderer?: DetailsRendererFunction;
@@ -28,7 +28,7 @@ const QuickSearchDetails: FC<QuickSearchDetailsProps> = ({
   closeModal,
   detailsRenderer,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const navigate = useNavigate();
   const { removeQueryArgument } = useQueryParamsMutator();
   const fireTelemetryEvent = useTelemetry();
@@ -39,7 +39,7 @@ const QuickSearchDetails: FC<QuickSearchDetailsProps> = ({
         <Title headingLevel="h4">{selectedItem.name}</Title>
         {selectedItem.provider && (
           <span className="ocs-quick-search-details__provider">
-            {t('console-shared~Provided by {{provider}}', {
+            {t('Provided by {{provider}}', {
               provider: selectedItem.provider,
             })}
           </span>

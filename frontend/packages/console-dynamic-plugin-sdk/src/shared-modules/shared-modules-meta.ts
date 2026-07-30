@@ -18,6 +18,16 @@ type SharedModuleMetadata = Partial<{
   allowFallback: boolean;
 
   /**
+   * If `true`, this module's implementation is aliased to another module.
+   *
+   * Plugins should avoid using aliased modules due to risk of potential skew between
+   * aliased vs actual module code.
+   *
+   * @default false
+   */
+  aliased: boolean;
+
+  /**
    * A message describing the deprecation, if the module has been deprecated.
    *
    * @default false
@@ -57,8 +67,8 @@ const sharedPluginModulesMetadata: Record<SharedModuleNames, SharedModuleMetadat
   'react-i18next': {},
   'react-redux': {},
   'react-router': {},
-  'react-router-dom': { deprecated: 'Use react-router instead.' },
-  'react-router-dom-v5-compat': { deprecated: 'Use react-router instead.' },
+  'react-router-dom': { aliased: true, deprecated: 'Use react-router instead.' },
+  'react-router-dom-v5-compat': { aliased: true, deprecated: 'Use react-router instead.' },
   redux: {},
   'redux-thunk': {},
 };
@@ -72,7 +82,8 @@ export const getSharedModuleMetadata = (
   const {
     singleton = true,
     allowFallback = false,
+    aliased = false,
     deprecated = false,
   } = sharedPluginModulesMetadata[moduleName];
-  return { singleton, allowFallback, deprecated };
+  return { singleton, allowFallback, aliased, deprecated };
 };

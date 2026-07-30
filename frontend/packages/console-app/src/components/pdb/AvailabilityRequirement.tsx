@@ -4,15 +4,15 @@ import { useTranslation } from 'react-i18next';
 import type { PodDisruptionBudgetKind } from './types';
 
 const AvailabilityRequirement: FC<AvailabilityRequirementProps> = ({ pdb, replicas }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   return (
     <>
       {!_.isNil(pdb?.spec?.minAvailable)
-        ? t('console-app~Min available {{minAvailable}} of {{count}} pod', {
+        ? t('Min available {{minAvailable}} of {{count}} pod', {
             minAvailable: pdb.spec.minAvailable,
             count: replicas,
           })
-        : t('console-app~Max unavailable {{maxUnavailable}} of {{count}} pod', {
+        : t('Max unavailable {{maxUnavailable}} of {{count}} pod', {
             maxUnavailable: pdb?.spec?.maxUnavailable,
             count: replicas,
           })}

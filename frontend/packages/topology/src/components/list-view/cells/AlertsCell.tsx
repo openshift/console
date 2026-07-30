@@ -4,7 +4,7 @@ import { DataListCell, Tooltip } from '@patternfly/react-core';
 import type { Node } from '@patternfly/react-topology';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Status as TooltipStatus } from '@console/shared';
+import { Status as TooltipStatus } from '@console/shared/src/components/status/Status';
 import { useBuildConfigsWatcher } from '@console/shared/src/hooks/useBuildConfigsWatcher';
 import { useIsMobile } from '@console/shared/src/hooks/useIsMobile';
 import { usePodsWatcher } from '@console/shared/src/hooks/usePodsWatcher';
@@ -15,7 +15,7 @@ import {
   getResourcePausedAlert,
   getReplicationControllerAlerts,
 } from '@console/shared/src/utils/resource-utils';
-import { getResource } from '../../../utils';
+import { getResource } from '../../../utils/topology-utils';
 import { useResourceQuotaAlert } from '../../workload/resource-alert';
 
 import './AlertsCell.scss';
@@ -56,8 +56,8 @@ const AlertTooltip = ({ alerts, severity, isMobile }) => {
   );
 };
 
-const AlertsCell: FC<AlertsProps> = ({ item }) => {
-  const { t } = useTranslation();
+export const AlertsCell: FC<AlertsProps> = ({ item }) => {
+  const { t } = useTranslation('topology');
   const isMobile = useIsMobile();
   const resource = getResource(item);
   const { podData, loaded } = usePodsWatcher(resource);
@@ -129,9 +129,7 @@ const AlertsCell: FC<AlertsProps> = ({ item }) => {
       <div className="odc-topology-list-view__alert-cell">
         {(error || warning || info) && (
           <div className="odc-topology-list-view__alert-cell__status">
-            <span className="odc-topology-list-view__alert-cell__label">
-              {t('topology~Alerts:')}
-            </span>
+            <span className="odc-topology-list-view__alert-cell__label">{t('Alerts:')}</span>
             <AlertTooltip severity="Error" alerts={error} isMobile={isMobile} />
             <AlertTooltip severity="Warning" alerts={warning} isMobile={isMobile} />
             <AlertTooltip severity="Info" alerts={info} isMobile={isMobile} />
@@ -139,9 +137,7 @@ const AlertsCell: FC<AlertsProps> = ({ item }) => {
         )}
         {(buildNew || buildPending || buildRunning || buildFailed || buildError) && (
           <div className="odc-topology-list-view__alert-cell__status">
-            <span className="odc-topology-list-view__alert-cell__label">
-              {t('topology~Builds:')}
-            </span>
+            <span className="odc-topology-list-view__alert-cell__label">{t('Builds:')}</span>
             <AlertTooltip severity="New" alerts={buildNew} isMobile={isMobile} />
             <AlertTooltip severity="Pending" alerts={buildPending} isMobile={isMobile} />
             <AlertTooltip severity="Running" alerts={buildRunning} isMobile={isMobile} />
@@ -153,5 +149,3 @@ const AlertsCell: FC<AlertsProps> = ({ item }) => {
     </DataListCell>
   );
 };
-
-export default AlertsCell;

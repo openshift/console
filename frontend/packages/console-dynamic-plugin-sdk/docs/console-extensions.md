@@ -40,44 +40,47 @@
 38.  [console.navigation/resource-ns](#consolenavigationresource-ns)
 39.  [console.navigation/section](#consolenavigationsection)
 40.  [console.navigation/separator](#consolenavigationseparator)
-41.  [console.page/resource/details](#consolepageresourcedetails)
-42.  [console.page/resource/list](#consolepageresourcelist)
-43.  [console.page/route](#consolepageroute)
-44.  [console.page/route/standalone](#consolepageroutestandalone)
-45.  [console.perspective](#consoleperspective)
-46.  [console.project-overview/inventory-item](#consoleproject-overviewinventory-item)
-47.  [console.project-overview/utilization-item](#consoleproject-overviewutilization-item)
-48.  [console.pvc/alert](#consolepvcalert)
-49.  [console.pvc/create-prop](#consolepvccreate-prop)
-50.  [console.pvc/delete](#consolepvcdelete)
-51.  [console.pvc/status](#consolepvcstatus)
-52.  [console.redux-reducer](#consoleredux-reducer)
-53.  [console.resource/create](#consoleresourcecreate)
-54.  [console.resource/details-item](#consoleresourcedetails-item)
-55.  [console.storage-class/provisioner](#consolestorage-classprovisioner)
-56.  [console.storage-provider](#consolestorage-provider)
-57.  [console.tab](#consoletab)
-58.  [console.tab/horizontalNav](#consoletabhorizontalNav)
-59.  [console.telemetry/listener](#consoletelemetrylistener)
-60.  [console.topology/adapter/build](#consoletopologyadapterbuild)
-61.  [console.topology/adapter/network](#consoletopologyadapternetwork)
-62.  [console.topology/adapter/pod](#consoletopologyadapterpod)
-63.  [console.topology/component/factory](#consoletopologycomponentfactory)
-64.  [console.topology/create/connector](#consoletopologycreateconnector)
-65.  [console.topology/data/factory](#consoletopologydatafactory)
-66.  [console.topology/decorator/provider](#consoletopologydecoratorprovider)
-67.  [console.topology/details/resource-alert](#consoletopologydetailsresource-alert)
-68.  [console.topology/details/resource-link](#consoletopologydetailsresource-link)
-69.  [console.topology/details/tab](#consoletopologydetailstab)
-70.  [console.topology/details/tab-section](#consoletopologydetailstab-section)
-71.  [console.topology/display/filters](#consoletopologydisplayfilters)
-72.  [console.topology/relationship/provider](#consoletopologyrelationshipprovider)
-73.  [console.user-preference/group](#consoleuser-preferencegroup)
-74.  [console.user-preference/item](#consoleuser-preferenceitem)
-75.  [console.yaml-template](#consoleyaml-template)
-76.  [dev-console.add/action](#dev-consoleaddaction)
-77.  [dev-console.add/action-group](#dev-consoleaddaction-group)
-78.  [dev-console.import/environment](#dev-consoleimportenvironment)
+41.  [console.node/inventory-item](#consolenodeinventory-item)
+42.  [console.node/status](#consolenodestatus)
+43.  [console.node/sub-nav-tab](#consolenodesub-nav-tab)
+44.  [console.page/resource/details](#consolepageresourcedetails)
+45.  [console.page/resource/list](#consolepageresourcelist)
+46.  [console.page/route](#consolepageroute)
+47.  [console.page/route/standalone](#consolepageroutestandalone)
+48.  [console.perspective](#consoleperspective)
+49.  [console.project-overview/inventory-item](#consoleproject-overviewinventory-item)
+50.  [console.project-overview/utilization-item](#consoleproject-overviewutilization-item)
+51.  [console.pvc/alert](#consolepvcalert)
+52.  [console.pvc/create-prop](#consolepvccreate-prop)
+53.  [console.pvc/delete](#consolepvcdelete)
+54.  [console.pvc/status](#consolepvcstatus)
+55.  [console.redux-reducer](#consoleredux-reducer)
+56.  [console.resource/create](#consoleresourcecreate)
+57.  [console.resource/details-item](#consoleresourcedetails-item)
+58.  [console.storage-class/provisioner](#consolestorage-classprovisioner)
+59.  [console.storage-provider](#consolestorage-provider)
+60.  [console.tab](#consoletab)
+61.  [console.tab/horizontalNav](#consoletabhorizontalNav)
+62.  [console.telemetry/listener](#consoletelemetrylistener)
+63.  [console.topology/adapter/build](#consoletopologyadapterbuild)
+64.  [console.topology/adapter/network](#consoletopologyadapternetwork)
+65.  [console.topology/adapter/pod](#consoletopologyadapterpod)
+66.  [console.topology/component/factory](#consoletopologycomponentfactory)
+67.  [console.topology/create/connector](#consoletopologycreateconnector)
+68.  [console.topology/data/factory](#consoletopologydatafactory)
+69.  [console.topology/decorator/provider](#consoletopologydecoratorprovider)
+70.  [console.topology/details/resource-alert](#consoletopologydetailsresource-alert)
+71.  [console.topology/details/resource-link](#consoletopologydetailsresource-link)
+72.  [console.topology/details/tab](#consoletopologydetailstab)
+73.  [console.topology/details/tab-section](#consoletopologydetailstab-section)
+74.  [console.topology/display/filters](#consoletopologydisplayfilters)
+75.  [console.topology/relationship/provider](#consoletopologyrelationshipprovider)
+76.  [console.user-preference/group](#consoleuser-preferencegroup)
+77.  [console.user-preference/item](#consoleuser-preferenceitem)
+78.  [console.yaml-template](#consoleyaml-template)
+79.  [dev-console.add/action](#dev-consoleaddaction)
+80.  [dev-console.add/action-group](#dev-consoleaddaction-group)
+81.  [dev-console.import/environment](#dev-consoleimportenvironment)
 
 ---
 
@@ -674,8 +677,8 @@ This extension can be used to contribute a navigation item that points to a spec
 | `id` | `string` | no | A unique identifier for this item. |
 | `name` | `string` | no | The name of this item. |
 | `href` | `string` | no | The link href value. |
-| `perspective` | `string` | yes | The perspective ID to which this item belongs to. If not specified, contributes to the default perspective. |
-| `section` | `string` | yes | Navigation section to which this item belongs to. If not specified, render this item as a top level link. |
+| `perspective` | `string` | yes | The perspective ID this item belongs to. If not specified, contributes to the default perspective. |
+| `section` | `string` | yes | Navigation section this item belongs to. If not specified, render this item as a top level link. |
 | `dataAttributes` | `{ [key: string]: string; }` | yes | Adds data attributes to the DOM. |
 | `startsWith` | `string[]` | yes | Mark this item as active when the URL starts with one of these paths. |
 | `insertBefore` | `string \| string[]` | yes | Insert this item before the item referenced here. For arrays, the first one found in order is used. |
@@ -697,8 +700,8 @@ This extension can be used to contribute a navigation item that points to a clus
 | ---- | ---------- | -------- | ----------- |
 | `id` | `string` | no | A unique identifier for this item. |
 | `model` | `ExtensionK8sModel` | no | The model for which this nav item links to. |
-| `perspective` | `string` | yes | The perspective ID to which this item belongs to. If not specified, contributes to the default perspective. |
-| `section` | `string` | yes | Navigation section to which this item belongs to. If not specified, render this item as a top level link. |
+| `perspective` | `string` | yes | The perspective ID this item belongs to. If not specified, contributes to the default perspective. |
+| `section` | `string` | yes | Navigation section this item belongs to. If not specified, render this item as a top level link. |
 | `dataAttributes` | `{ [key: string]: string; }` | yes | Adds data attributes to the DOM. |
 | `startsWith` | `string[]` | yes | Mark this item as active when the URL starts with one of these paths. |
 | `insertBefore` | `string \| string[]` | yes | Insert this item before the item referenced here. For arrays, the first one found in order is used. |
@@ -719,8 +722,8 @@ This extension can be used to contribute a navigation item that points to a name
 | ---- | ---------- | -------- | ----------- |
 | `id` | `string` | no | A unique identifier for this item. |
 | `model` | `ExtensionK8sModel` | no | The model for which this nav item links to. |
-| `perspective` | `string` | yes | The perspective ID to which this item belongs to. If not specified, contributes to the default perspective. |
-| `section` | `string` | yes | Navigation section to which this item belongs to. If not specified, render this item as a top level link. |
+| `perspective` | `string` | yes | The perspective ID this item belongs to. If not specified, contributes to the default perspective. |
+| `section` | `string` | yes | Navigation section this item belongs to. If not specified, render this item as a top level link. |
 | `dataAttributes` | `{ [key: string]: string; }` | yes | Adds data attributes to the DOM. |
 | `startsWith` | `string[]` | yes | Mark this item as active when the URL starts with one of these paths. |
 | `insertBefore` | `string \| string[]` | yes | Insert this item before the item referenced here. For arrays, the first one found in order is used. |
@@ -742,7 +745,7 @@ This extension can be used to define a new section of navigation items in the na
 | `id` | `string` | no | A unique identifier for this item. |
 | `insertBefore` | `string \| string[]` | yes | Insert this item before the item referenced here. For arrays, the first one found in order is used. |
 | `insertAfter` | `string \| string[]` | yes | Insert this item after the item referenced here. For arrays, the first one found in order is used. `insertBefore` takes precedence. |
-| `perspective` | `string` | yes | The perspective ID to which this item belongs to. If not specified, contributes to the default perspective. |
+| `perspective` | `string` | yes | The perspective ID this item belongs to. If not specified, contributes to the default perspective. |
 | `dataAttributes` | `{ [key: string]: string; }` | yes | Adds data attributes to the DOM. |
 | `name` | `string` | yes | Name of this section. If not supplied, only a separator will be shown above the section. |
 
@@ -759,11 +762,59 @@ This extension can be used to add a separator between navigation items in the na
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
 | `id` | `string` | no | A unique identifier for this item. |
+| `section` | `string` | yes | Navigation section this item belongs to. If not specified, render this item as a top level link. |
 | `insertBefore` | `string \| string[]` | yes | Insert this item before the item referenced here. For arrays, the first one found in order is used. |
 | `insertAfter` | `string \| string[]` | yes | Insert this item after the item referenced here. For arrays, the first one found in order is used. `insertBefore` takes precedence. |
-| `perspective` | `string` | yes | The perspective ID to which this item belongs to. If not specified, contributes to the default perspective. |
-| `section` | `string` | yes | Navigation section to which this item belongs to. If not specified, render this item as a top level link. |
+| `perspective` | `string` | yes | The perspective ID this item belongs to. If not specified, contributes to the default perspective. |
 | `dataAttributes` | `{ [key: string]: string; }` | yes | Adds data attributes to the DOM. |
+
+---
+
+## `console.node/inventory-item`
+
+### Summary 
+
+Use this extension to add inventory items to the Node inventory card.<br/><br/>Example implementation:<br/>```tsx<br/>const MyInventoryItem: React.FC<InventoryItemComponentProps> = ({ obj }) => {<br/>  const count = calculateCount(obj);<br/>  return <InventoryItem title="My Resource" count={count} />;<br/>};<br/>```
+
+### Properties
+
+| Name | Value Type | Optional | Description |
+| ---- | ---------- | -------- | ----------- |
+| `priority` | `number` | no | The inventory item that displays in the node inventory card. The UI uses the priority value to order this item relative to other inventory items. For example, Images: 70.<br/><br/>Note: Inventory items are shown in priority order from highest to lowest. Current node inventory item priorities are:<br/>  Pods: 90<br/>  Images: 70 |
+| `component` | `CodeRef<ComponentType<InventoryItemComponentProps>>` | no | The React component that renders in the inventory card. |
+
+---
+
+## `console.node/status`
+
+### Summary 
+
+Use this extension to add additional states to a Node resource.
+
+### Properties
+
+| Name | Value Type | Optional | Description |
+| ---- | ---------- | -------- | ----------- |
+| `isActive` | `CodeRef<IsNodeStatusActive<T>>` | no | Returns `true` if the additional state is active. |
+| `PopoverContent` | `CodeRef<ComponentType<NodePopoverContentProps<T>>>` | no | React component that will be rendered in status popover |
+| `title` | `string` | no | Title of the additional Node state |
+| `resources` | `WatchK8sResources<T>` | yes | Resources required to determine the extra state. |
+
+---
+
+## `console.node/sub-nav-tab`
+
+### Summary 
+
+Use this extension to add custom sub-tabs to the Node details page.<br/><br/>Notes:<br/>- The `tabId` must be unique across all tabs for the parent tab. If multiple plugins register the same `tabId`, the UI displays only the first one loaded.<br/>- The `name` property supports i18n translation keys in the format `%namespace~key%`.<br/>- The UI sorts tabs by priority in descending order with highest priority first. If two tabs have the same priority, the UI sorts them alphabetically by name.<br/>- The component receives the Node resource as the `obj` prop using `SubPageComponentProps`.
+
+### Properties
+
+| Name | Value Type | Optional | Description |
+| ---- | ---------- | -------- | ----------- |
+| `parentTab` | `'configuration' \| 'health' \| 'workload'` | no | Which detail tab to add the sub-tab to. Valid values: configuration, health, workload. |
+| `page` | `{ tabId: string; name: string; priority: number; }` | no | The page that displays as a sub-tab. It requires the tab name and its corresponding priority.<br/><br/>Notes:<br/>The UI displays tabs in priority order from highest to lowest. Default built-in tab priorities include:<br/>- **configuration**:<br/>  - storage/70<br/>  - machine/50<br/>  - high-availability/30<br/>- **health**:<br/>  - performance/70<br/>  - logs/30<br/>- **workload**:<br/>  - pods/30 |
+| `component` | `CodeRef<ComponentType<SubPageComponentProps<NodeKind>>>` | no | The component that renders the sub-tab contents. It receives the Node resource as the obj prop. |
 
 ---
 
@@ -809,7 +860,7 @@ Adds a new page to the Console router.<br/><br/>Console application uses [React 
 | ---- | ---------- | -------- | ----------- |
 | `component` | `CodeRef<React.ComponentType<{}>>` | no | The component to be rendered when the route matches. |
 | `path` | `string \| string[]` | no | Valid URL path or array of paths. Note that React Router v7 does not use `path-to-regexp`. |
-| `perspective` | `string` | yes | The perspective to which this page belongs to. If not specified, applies to all perspectives. |
+| `perspective` | `string` | yes | The perspective this page belongs to. If not specified, applies to all perspectives. |
 | `exact` | `boolean` | yes | When `true`, the path must match the URL exactly. |
 
 ---
@@ -824,8 +875,8 @@ Adds a new standalone page rendered outside the common Console page layout.<br/>
 
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
-| `component` | `CodeRef<React.ComponentType<{}>>` | no | The component to be rendered when the route matches. |
 | `path` | `string \| string[]` | no | Valid URL path or array of paths. Note that React Router v7 does not use `path-to-regexp`. |
+| `component` | `CodeRef<React.ComponentType<{}>>` | no | The component to be rendered when the route matches. |
 | `exact` | `boolean` | yes | When `true`, the path must match the URL exactly. |
 
 ---

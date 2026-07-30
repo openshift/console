@@ -2,12 +2,13 @@ import { screen } from '@testing-library/react';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import TourStepComponent from '../TourStepComponent';
 
-jest.mock('@console/shared/src/components/popover/Popover', () => ({
-  default: () => 'POPOVER_RENDERED',
+jest.mock('@patternfly/react-core', () => ({
+  ...jest.requireActual('@patternfly/react-core'),
+  Popover: () => 'POPOVER_RENDERED',
 }));
 
 jest.mock('@console/shared/src/components/spotlight/Spotlight', () => ({
-  default: () => 'SPOTLIGHT_RENDERED',
+  Spotlight: () => 'SPOTLIGHT_RENDERED',
 }));
 
 describe('TourStepComponent', () => {

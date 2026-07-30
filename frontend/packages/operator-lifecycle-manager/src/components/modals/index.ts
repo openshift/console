@@ -18,15 +18,6 @@ export const LazySubscriptionChannelModalOverlay = lazy(() =>
   ),
 );
 
-// Lazy-loaded OverlayComponent for Uninstall Operator Modal
-export const LazyUninstallOperatorModalOverlay = lazy(() =>
-  import('./uninstall-operator-modal' /* webpackChunkName: "uninstall-operator-modal" */).then(
-    (m) => ({
-      default: m.UninstallOperatorModalOverlay,
-    }),
-  ),
-);
-
 // Lazy-loaded OverlayComponent for Disable Default Source Modal
 export const LazyDisableDefaultSourceModalOverlay = lazy(() =>
   import(
@@ -58,14 +49,5 @@ export const LazyInstallPlanPreviewModalOverlay = lazy(() =>
 export const LazyUpdateStrategyModalOverlay = lazy(() =>
   import('./update-strategy-modal' /* webpackChunkName: "update-strategy-modal" */).then((m) => ({
     default: m.UpdateStrategyModalOverlay,
-  })),
-);
-
-// Lazy-loaded OverlayComponent for Community Operator Warning Modal
-export const LazyCommunityOperatorWarningModalOverlay = lazy(() =>
-  import(
-    '../operator-hub/operator-hub-community-provider-modal' /* webpackChunkName: "community-operator-warning-modal" */
-  ).then((m) => ({
-    default: m.CommunityOperatorWarningModalOverlay,
   })),
 );

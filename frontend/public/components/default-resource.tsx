@@ -1,58 +1,56 @@
-import * as _ from 'lodash';
 import type { ComponentProps, FC, ReactNode } from 'react';
 import { useMemo, useCallback } from 'react';
-import { JSONPath } from 'jsonpath-plus';
-import { useTranslation } from 'react-i18next';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
-import { PageComponentProps } from '@console/dynamic-plugin-sdk/src/extensions/horizontal-nav-tabs';
-import { getGroupVersionKindForResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
-import { useK8sModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sModel';
-import { useDetailsItemExtensionsForResource } from '@console/shared/src/hooks/useDetailsItemExtensionsForResource';
-import { ExtensionDetailsItem } from '@console/shared/src/components/details-page/ExtensionDetailsItem';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { Conditions } from './conditions';
-import { DetailsPage } from './factory/details';
-import { ListPage } from './factory/list-page';
-import type { TableProps } from './factory/table';
-import {
-  referenceFor,
-  K8sResourceKind,
-  CRDAdditionalPrinterColumn,
-  referenceForExtensionModel,
-  ExtensionK8sGroupModel,
-} from '../module/k8s';
-import { DetailsItem } from './utils/details-item';
-import { kindObj } from './utils/inject';
-import { navFactory } from './utils/horizontal-nav';
-import { ResourceLink } from './utils/resource-link';
-import { ResourceSummary } from './utils/details-page';
-import { SectionHeading } from './utils/headings';
-import { LoadingBox } from './utils/status-box';
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { RowProps, TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { useCRDAdditionalPrinterColumns } from '@console/shared/src/hooks/useCRDAdditionalPrinterColumns';
-import { AdditionalPrinterColumnValue } from '@console/shared/src/components/additional-printer-column/AdditionalPrinterColumnValue';
+import { JSONPath } from 'jsonpath-plus';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
 import {
   actionsCellProps,
   cellIsStickyProps,
   getNameCellProps,
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import {
+import type {
   ConsoleDataViewColumn,
   ConsoleDataViewRow,
 } from '@console/app/src/components/data-view/types';
-import { DASH } from '@console/shared/src/constants/ui';
-import {
-  isResourceActionProvider,
-  ResourceActionProvider,
-  useResolvedExtensions,
-  ResolvedExtension,
-} from '@console/dynamic-plugin-sdk';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
-import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
-import ActionMenu from '@console/shared/src/components/actions/menu/ActionMenu';
+import type { ResourceActionProvider, ResolvedExtension } from '@console/dynamic-plugin-sdk';
+import { isResourceActionProvider, useResolvedExtensions } from '@console/dynamic-plugin-sdk';
+import type {
+  RowProps,
+  TableColumn,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { PageComponentProps } from '@console/dynamic-plugin-sdk/src/extensions/horizontal-nav-tabs';
+import { useK8sModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sModel';
+import { getGroupVersionKindForResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import { AdditionalPrinterColumnValue } from '@console/shared/src/components/additional-printer-column/AdditionalPrinterColumnValue';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import { ExtensionDetailsItem } from '@console/shared/src/components/details-page/ExtensionDetailsItem';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { DASH } from '@console/shared/src/constants/ui';
+import { useCRDAdditionalPrinterColumns } from '@console/shared/src/hooks/useCRDAdditionalPrinterColumns';
+import { useDetailsItemExtensionsForResource } from '@console/shared/src/hooks/useDetailsItemExtensionsForResource';
+import type {
+  K8sResourceKind,
+  CRDAdditionalPrinterColumn,
+  ExtensionK8sGroupModel,
+} from '../module/k8s';
+import { referenceFor, referenceForExtensionModel } from '../module/k8s';
+import { Conditions } from './conditions';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
+import type { TableProps } from './factory/table';
+import { DetailsItem } from './utils/details-item';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { kindObj } from './utils/inject';
+import { ResourceLink } from './utils/resource-link';
+import { LoadingBox } from './utils/status-box';
 
 const tableColumnInfo = [{ id: 'name' }, { id: 'namespace' }, { id: 'created' }, { id: 'actions' }];
 
@@ -88,12 +86,12 @@ const ResourceActionsMenu: FC<ResourceActionsMenuProps> = ({ resource, variant, 
 };
 
 const NamespaceCell: FC<NamespaceCellProps> = ({ namespace }) => {
-  const { t } = useTranslation();
-  return namespace ? <ResourceLink kind="Namespace" name={namespace} /> : <>{t('public~None')}</>;
+  const { t } = useTranslation('public');
+  return namespace ? <ResourceLink kind="Namespace" name={namespace} /> : <>{t('None')}</>;
 };
 
 export const DetailsForKind: FC<PageComponentProps<K8sResourceKind>> = ({ obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const groupVersionKind = getGroupVersionKindForResource(obj);
   const [model] = useK8sModel(groupVersionKind);
   const leftDetailsItemExtensions = useDetailsItemExtensionsForResource(obj, 'left');
@@ -122,7 +120,7 @@ export const DetailsForKind: FC<PageComponentProps<K8sResourceKind>> = ({ obj })
     <>
       <PaneBody>
         <SectionHeading
-          text={t('public~{{kind}} details', {
+          text={t('{{kind}} details', {
             kind: model?.labelKey ? t(model.labelKey) : model?.label,
           })}
         />
@@ -167,7 +165,7 @@ export const DetailsForKind: FC<PageComponentProps<K8sResourceKind>> = ({ obj })
       </PaneBody>
       {_.isArray(obj?.status?.conditions) && (
         <PaneBody>
-          <SectionHeading text={t('public~Conditions')} />
+          <SectionHeading text={t('Conditions')} />
           <Conditions conditions={obj.status.conditions} />
         </PaneBody>
       )}
@@ -250,7 +248,7 @@ const getDataViewRows = (
 const useDefaultResourceColumns = <T extends K8sResourceKind>(
   additionalPrinterColumns: CRDAdditionalPrinterColumn[],
 ): TableColumn<T>[] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const columns = useMemo(() => {
     const additionalPrinterColumnsHeaders = additionalPrinterColumns.map((col) => {
       const path = col.jsonPath;
@@ -269,7 +267,7 @@ const useDefaultResourceColumns = <T extends K8sResourceKind>(
 
     const baseColumns = [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
         props: {
@@ -278,7 +276,7 @@ const useDefaultResourceColumns = <T extends K8sResourceKind>(
         },
       },
       {
-        title: t('public~Namespace'),
+        title: t('Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
         props: {
@@ -290,7 +288,7 @@ const useDefaultResourceColumns = <T extends K8sResourceKind>(
 
     if (!checkColumnsForCreationTimestamp(additionalPrinterColumns)) {
       baseColumns.push({
-        title: t('public~Created'),
+        title: t('Created'),
         id: tableColumnInfo[2].id,
         sort: 'metadata.creationTimestamp',
         props: {
@@ -317,7 +315,7 @@ const useDefaultResourceColumns = <T extends K8sResourceKind>(
 };
 
 export const DefaultList: FC<TableProps & { kinds: string[] }> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { kinds, data, loaded } = props;
   const [model] = useK8sModel(kinds[0]);
   const [additionalPrinterColumns, additionalPrinterColumnsLoaded] = useCRDAdditionalPrinterColumns(
@@ -365,7 +363,7 @@ export const DefaultList: FC<TableProps & { kinds: string[] }> = (props) => {
               resourceProviderExtensionsResolved,
             )
           }
-          hideColumnManagement={true}
+          hideColumnManagement
         />
       )}
     </>
@@ -378,7 +376,7 @@ export const DefaultPage: FC<Omit<ComponentProps<typeof ListPage>, 'ListComponen
     {...props}
     ListComponent={DefaultList}
     canCreate={props.canCreate ?? _.get(kindObj(props.kind), 'crd')}
-    omitFilterToolbar={true}
+    omitFilterToolbar
   />
 );
 DefaultPage.displayName = 'DefaultPage';

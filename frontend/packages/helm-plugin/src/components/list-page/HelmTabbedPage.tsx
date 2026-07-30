@@ -11,16 +11,16 @@ import { useAccessReview, useActivePerspective } from '@console/dynamic-plugin-s
 import { withStartGuide } from '@console/internal/components/start-guide';
 import type { Page } from '@console/internal/components/utils';
 import { LoadingBox } from '@console/internal/components/utils';
-import type { MenuActions } from '@console/shared';
-import { MultiTabListPage } from '@console/shared';
+import type { MenuActions } from '@console/shared/src/components/multi-tab-list/multi-tab-list-page-types';
+import { MultiTabListPage } from '@console/shared/src/components/multi-tab-list/MultiTabListPage';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
-import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../models';
+import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../models/helm';
 import HelmReleaseList from './HelmReleaseList';
 import HelmReleaseListPage from './HelmReleaseListPage';
 import RepositoriesPage from './RepositoriesListPage';
 
-const HelmPage: FC<{ namespace: string | undefined }> = ({ namespace }) => {
-  const { t } = useTranslation();
+const HelmPage: FC<{ mock?: boolean; namespace: string | undefined }> = ({ mock, namespace }) => {
+  const { t } = useTranslation('helm-plugin');
   const isHelmVisible = useFlag('HELM_CHARTS_CATALOG_TYPE');
   const [showTitle, canCreate] = [false, false];
   const [projectHelmChartCreateAccess, loadingCreatePHCR] = useAccessReview({
@@ -60,21 +60,16 @@ const HelmPage: FC<{ namespace: string | undefined }> = ({ namespace }) => {
 
   const menuActions: MenuActions = {
     helmRelease: {
-      label: isHelmVisible ? t('helm-plugin~Helm Release') : undefined,
+      label: isHelmVisible ? t('Helm Release') : undefined,
       onSelection: () => `/catalog/ns/${namespace || 'default'}?catalogType=HelmChart`,
     },
     projectHelmChartRepository: {
-      label:
-        projectHelmChartCreateAccess || helmChartCreateAccess
-          ? t('helm-plugin~Repository')
-          : undefined,
+      label: projectHelmChartCreateAccess || helmChartCreateAccess ? t('Repository') : undefined,
       onSelection: () => `/helm-repositories/ns/${namespace || 'default'}/~new/form`,
     },
     helmChartInstallation: {
       label:
-        projectHelmChartCreateAccess || helmChartCreateAccess
-          ? t('helm-plugin~Helm chart URL')
-          : undefined,
+        projectHelmChartCreateAccess || helmChartCreateAccess ? t('Helm chart URL') : undefined,
       onSelection: () => `/helm/ns/${namespace || 'default'}/url-chart`,
     },
   };
@@ -85,6 +80,9 @@ const HelmPage: FC<{ namespace: string | undefined }> = ({ namespace }) => {
       // t('helm-plugin~Helm Releases')
       nameKey: 'helm-plugin~Helm Releases',
       component: HelmReleaseList,
+      pageData: {
+        mock,
+      },
     },
     {
       href: 'repositories',
@@ -115,24 +113,24 @@ const HelmPage: FC<{ namespace: string | undefined }> = ({ namespace }) => {
     (helmChartListAccess && helmChartCreateAccess && helmChartEditAccess) ? (
     <MultiTabListPage
       pages={pages}
-      title={t('helm-plugin~Helm')}
+      title={t('Helm')}
       menuActions={menuActions}
       telemetryPrefix="Helm"
     />
   ) : (
-    <HelmReleaseListPage />
+    <HelmReleaseListPage mock={mock} />
   );
 };
 
-export const PageContents: FC = () => {
-  const { t } = useTranslation();
+const PageContents: FC<{ noProjectsAvailable?: boolean }> = ({ noProjectsAvailable }) => {
+  const { t } = useTranslation('helm-plugin');
   const { ns: namespace } = useParams();
   const [activePerspective] = useActivePerspective();
 
   return activePerspective === 'admin' || namespace ? (
-    <HelmPage namespace={namespace} />
+    <HelmPage namespace={namespace} mock={noProjectsAvailable} />
   ) : (
-    <CreateProjectListPage title={t('helm-plugin~Helm')}>
+    <CreateProjectListPage title={t('Helm')}>
       {(openProjectModal) => (
         <Trans t={t} ns="helm-plugin">
           Select a Project to view its details

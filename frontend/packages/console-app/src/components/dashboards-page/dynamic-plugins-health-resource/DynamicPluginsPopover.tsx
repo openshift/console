@@ -13,7 +13,7 @@ import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector
 import NotLoadedDynamicPlugins from './NotLoadedDynamicPlugins';
 
 const DynamicPluginsPopover: FC<DynamicPluginsPopoverProps> = ({ consolePlugins }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const pluginInfoEntries = usePluginInfo();
   const cspViolations = useConsoleSelector<PluginCSPViolations>(({ UI }) =>
     UI.get('pluginCSPViolations'),
@@ -34,24 +34,21 @@ const DynamicPluginsPopover: FC<DynamicPluginsPopoverProps> = ({ consolePlugins 
     <Stack hasGutter>
       <StackItem>
         {t(
-          'console-app~A dynamic plugin allows you to add custom pages and other extensions to your interface at runtime.',
+          'A dynamic plugin allows you to add custom pages and other extensions to your interface at runtime.',
         )}
       </StackItem>
       {failedPlugins.length > 0 && (
-        <NotLoadedDynamicPlugins plugins={failedPlugins} label={t('console-app~Failed plugins')} />
+        <NotLoadedDynamicPlugins plugins={failedPlugins} label={t('Failed plugins')} />
       )}
       {pendingPlugins.length > 0 && (
-        <NotLoadedDynamicPlugins
-          plugins={pendingPlugins}
-          label={t('console-app~Pending plugins')}
-        />
+        <NotLoadedDynamicPlugins plugins={pendingPlugins} label={t('Pending plugins')} />
       )}
       <StackItem>
         <StatusPopupSection
-          firstColumn={t('console-app~Loaded plugins')}
+          firstColumn={t('Loaded plugins')}
           secondColumn={
             <>
-              {t('console-app~{{enabledCount}}/{{totalCount}} enabled', {
+              {t('{{enabledCount}}/{{totalCount}} enabled', {
                 enabledCount: developmentMode ? loadedPlugins.length : enabledPlugins.length,
                 totalCount: developmentMode ? loadedPlugins.length : consolePlugins.data.length,
               })}
@@ -63,9 +60,7 @@ const DynamicPluginsPopover: FC<DynamicPluginsPopoverProps> = ({ consolePlugins 
               variant="warning"
               isInline
               isPlain
-              title={t(
-                'console-app~One or more plugins might have Content Security Policy violations.',
-              )}
+              title={t('One or more plugins might have Content Security Policy violations.')}
             />
           )}
           <Link
@@ -73,7 +68,7 @@ const DynamicPluginsPopover: FC<DynamicPluginsPopoverProps> = ({ consolePlugins 
               ConsoleOperatorConfigModel,
             )}/cluster/console-plugins`}
           >
-            {t('console-app~View all')}
+            {t('View all')}
           </Link>
         </StatusPopupSection>
       </StackItem>

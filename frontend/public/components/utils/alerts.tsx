@@ -1,15 +1,8 @@
 import type { FC, ReactNode } from 'react';
 import { useState } from 'react';
+import type { AlertVariant } from '@patternfly/react-core';
+import { Alert, Button, Flex, FlexItem, List, ListItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
-import {
-  Alert,
-  AlertVariant,
-  Button,
-  Flex,
-  FlexItem,
-  List,
-  ListItem,
-} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
 export const ExpandableAlert: FC<CustomAlertProps> = ({ alerts, variant }) => {
@@ -25,7 +18,7 @@ export const ExpandableAlert: FC<CustomAlertProps> = ({ alerts, variant }) => {
     ) : (
       alerts
     );
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   return (
     <Alert
@@ -35,7 +28,7 @@ export const ExpandableAlert: FC<CustomAlertProps> = ({ alerts, variant }) => {
       title={
         <Flex justifyContent={{ default: 'justifyContentSpaceBetween' }}>
           <FlexItem>
-            {t('public~There is {{count}} {{variant}} alert', { count: alertCount, variant })}
+            {t('There is {{count}} {{variant}} alert', { count: alertCount, variant })}
           </FlexItem>
           <FlexItem>
             <Button
@@ -44,7 +37,7 @@ export const ExpandableAlert: FC<CustomAlertProps> = ({ alerts, variant }) => {
               variant="link"
               className="pf-v6-u-py-0"
             >
-              {expanded ? t('public~Hide details') : t('public~Show details')}
+              {expanded ? t('Hide details') : t('Show details')}
             </Button>
           </FlexItem>
         </Flex>

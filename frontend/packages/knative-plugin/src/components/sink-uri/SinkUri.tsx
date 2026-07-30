@@ -7,7 +7,7 @@ import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { k8sUpdate, referenceFor, modelFor } from '@console/internal/module/k8s';
 import SinkUriModal from './SinkUriModal';
 
-export interface SinkUriProps {
+interface SinkUriProps {
   source: K8sResourceKind;
   eventSourceList: K8sResourceKind[];
   cancel?: () => void;
@@ -15,7 +15,7 @@ export interface SinkUriProps {
 }
 
 const SinkUri: FC<SinkUriProps> = ({ source, eventSourceList, cancel, close }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const initialValues = {
     uri: source.spec?.sinkUri ?? '',
   };
@@ -34,7 +34,7 @@ const SinkUri: FC<SinkUriProps> = ({ source, eventSourceList, cancel, close }) =
         close();
       })
       .catch((err) => {
-        const errMessage = err.message || t('knative-plugin~An error occurred. Please try again');
+        const errMessage = err.message || t('An error occurred. Please try again');
         action.setStatus({ error: errMessage });
       });
   };

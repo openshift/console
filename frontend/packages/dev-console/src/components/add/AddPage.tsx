@@ -1,23 +1,23 @@
 import type { FC } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
-import { FLAGS } from '@console/shared';
+import { withStartGuide } from '@console/internal/components/start-guide';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { FLAGS } from '@console/shared/src/constants/common';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
-import { withStartGuide } from '../../../../../public/components/start-guide';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import CreateProjectListPage, { CreateAProjectButton } from '../projects/CreateProjectListPage';
 import AddPageLayout from './AddPageLayout';
 
 // Exported for testing
 export const PageContents: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const { ns: namespace } = useParams();
   const isOpenShift = useFlag(FLAGS.OPENSHIFT);
 
   if (!namespace) {
     return (
-      <CreateProjectListPage title={t('devconsole~Add')}>
+      <CreateProjectListPage title={t('Add')}>
         {(openProjectModal) =>
           isOpenShift ? (
             <Trans t={t} ns="devconsole">
@@ -35,19 +35,19 @@ export const PageContents: FC = () => {
     );
   }
 
-  return <AddPageLayout title={t('devconsole~Add')} />;
+  return <AddPageLayout title={t('Add')} />;
 };
 
 const PageContentsWithStartGuide = withStartGuide(PageContents);
 
 const AddPage: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const { ns: namespace } = useParams();
   const nsVariant = namespace ? null : NamespacedPageVariants.light;
 
   return (
     <>
-      <DocumentTitle>{`+${t('devconsole~Add')}`}</DocumentTitle>
+      <DocumentTitle>{`+${t('Add')}`}</DocumentTitle>
       <NamespacedPage variant={nsVariant} hideApplications>
         <PageContentsWithStartGuide />
       </NamespacedPage>

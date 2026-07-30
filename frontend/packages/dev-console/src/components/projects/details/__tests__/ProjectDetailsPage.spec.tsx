@@ -56,7 +56,8 @@ jest.mock('@console/internal/models', () => ({
   },
 }));
 
-jest.mock('@console/shared', () => ({
+jest.mock('@console/shared/src/constants/common', () => ({
+  ...jest.requireActual('@console/shared/src/constants/common'),
   ALL_NAMESPACES_KEY: '__ALL_NAMESPACES__',
 }));
 

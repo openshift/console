@@ -4,13 +4,11 @@ import { Form, TextInputTypes } from '@patternfly/react-core';
 import type { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import {
-  MultiColumnField,
-  InputField,
-  DropdownField,
-  FormFooter,
-  NSDropdownField,
-} from '@console/shared';
+import { FormFooter } from '@console/shared/src/components/form-utils/FormFooter';
+import { DropdownField } from '@console/shared/src/components/formik-fields/DropdownField';
+import { InputField } from '@console/shared/src/components/formik-fields/InputField';
+import { MultiColumnField } from '@console/shared/src/components/formik-fields/multi-column-field/MultiColumnField';
+import { NSDropdownField } from '@console/shared/src/components/formik-fields/NSDropdownField';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import type { Roles } from './project-access-form-utils';
 import { ignoreRoleBindingName } from './project-access-form-utils';
@@ -28,8 +26,8 @@ type SubjectNamespaceDropdownProps = {
   values: FormikValues;
 };
 
-export const SubjectNamespaceDropdown: FC<SubjectNamespaceDropdownProps> = ({ name, values }) => {
-  const { t } = useTranslation();
+const SubjectNamespaceDropdown: FC<SubjectNamespaceDropdownProps> = ({ name, values }) => {
+  const { t } = useTranslation('devconsole');
   const arr = name.split('.');
   const showDropdown =
     arr.length > 2 && values?.projectAccess?.[arr?.[1]]?.subject?.kind === 'ServiceAccount';
@@ -37,7 +35,7 @@ export const SubjectNamespaceDropdown: FC<SubjectNamespaceDropdownProps> = ({ na
     <div>
       <DropdownField
         name={`${name}.kind`}
-        title={t('devconsole~Select a type')}
+        title={t('Select a type')}
         items={{ Group: 'Group', ServiceAccount: 'ServiceAccount', User: 'User' }}
         fullWidth
         className="odc-project-access-form__subject-kind-dropdown"
@@ -60,7 +58,7 @@ const ProjectAccessForm: FC<ProjectAccessFormProps> = ({
   initialValues,
   onCancel,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const [isStaleInfo, setIsStaleInfo] = useState<boolean>(false);
   const disableSubmit = !dirty || !_.isEmpty(errors) || isSubmitting;
 
@@ -85,20 +83,16 @@ const ProjectAccessForm: FC<ProjectAccessFormProps> = ({
         <div className="co-m-pane__form">
           <MultiColumnField
             name="projectAccess"
-            addLabel={t('devconsole~Add access')}
-            headers={[t('devconsole~Subject'), t('devconsole~Name'), t('devconsole~Role')]}
+            addLabel={t('Add access')}
+            headers={[t('Subject'), t('Name'), t('Role')]}
             emptyValues={{ name: '', role: '' }}
           >
             <SubjectNamespaceDropdown name="subject" values={values} />
-            <InputField
-              name="subject.name"
-              type={TextInputTypes.text}
-              placeholder={t('devconsole~Name')}
-            />
+            <InputField name="subject.name" type={TextInputTypes.text} placeholder={t('Name')} />
             <DropdownField
               dataTest="role-dropdown"
               name="role"
-              title={t('devconsole~Select a role')}
+              title={t('Select a role')}
               items={roles}
               fullWidth
             />
@@ -112,10 +106,10 @@ const ProjectAccessForm: FC<ProjectAccessFormProps> = ({
         successMessage={!dirty && status?.success}
         disableSubmit={isStaleInfo || disableSubmit}
         showAlert={isStaleInfo || !disableSubmit}
-        submitLabel={t('devconsole~Save')}
-        resetLabel={t('devconsole~Reload')}
-        infoTitle={isStaleInfo && t('devconsole~This list has been updated.')}
-        infoMessage={isStaleInfo && t('devconsole~Click reload to see the new list.')}
+        submitLabel={t('Save')}
+        resetLabel={t('Reload')}
+        infoTitle={isStaleInfo && t('This list has been updated.')}
+        infoMessage={isStaleInfo && t('Click reload to see the new list.')}
         handleCancel={onCancel}
       />
     </Form>

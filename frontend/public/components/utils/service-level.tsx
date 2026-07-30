@@ -1,4 +1,5 @@
-import { FC, ReactNode, useEffect, useState } from 'react';
+import type { FC, ReactNode } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Alert,
   Label,
@@ -7,28 +8,28 @@ import {
   NotificationDrawerListItemHeader,
   Skeleton,
 } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+import { k8sGet } from '@console/dynamic-plugin-sdk/src/api/core-api';
+import * as UIActions from '@console/internal/actions/ui';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
-import { useTranslation } from 'react-i18next';
-import * as UIActions from '@console/internal/actions/ui';
-import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/utils/fetch';
-import { getDuration, dateFormatter } from './datetime';
-import { getOCMLink } from '../../module/k8s';
-import { k8sGet } from '@console/dynamic-plugin-sdk/src/api/core-api';
+import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
 import { SecretModel } from '../../models';
+import { getOCMLink } from '../../module/k8s';
+import { getDuration, dateFormatter } from './datetime';
 import { FieldLevelHelp } from './field-level-help';
 import { NotificationTypes } from './types';
-import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 
 const useServiceLevelText = (level: string): string => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const levels = {
-    Premium: t('public~Premium'),
-    Standard: t('public~Standard'),
-    'Self-Support': t('public~Self-support'),
-    Eval: t('public~Self-support, 60 day trial'),
-    None: t('public~None'), // Eval has ended
-    Unknown: t('public~Unknown'), // Not officially returned from the API, but is used when no results are returned from the API
+    Premium: t('Premium'),
+    Standard: t('Standard'),
+    'Self-Support': t('Self-support'),
+    Eval: t('Self-support, 60 day trial'),
+    None: t('None'), // Eval has ended
+    Unknown: t('Unknown'), // Not officially returned from the API, but is used when no results are returned from the API
   };
 
   if (!level) {
@@ -48,7 +49,7 @@ const TrialDaysLeft: FC<{
   trialDaysLeft: number | null;
   label?: boolean;
 }> = ({ level, trialDaysLeft, label }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   if ((level !== 'Eval' && level !== 'None') || (level === 'Eval' && trialDaysLeft === null)) {
     return null;
@@ -56,14 +57,14 @@ const TrialDaysLeft: FC<{
 
   let variant: 'warning' | 'danger' = 'warning';
 
-  let alertText = t('public~{{count}} day remaining', { count: trialDaysLeft });
+  let alertText = t('{{count}} day remaining', { count: trialDaysLeft });
   if (trialDaysLeft === 0) {
-    alertText = t('public~< 1 day remaining');
+    alertText = t('< 1 day remaining');
   }
 
   if (trialDaysLeft < 0 || level === 'None') {
     variant = 'danger';
-    alertText = t('public~Trial expired');
+    alertText = t('Trial expired');
   }
 
   if (label) {
@@ -101,9 +102,10 @@ const useLoadServiceLevel = (): [boolean, boolean, (clusterID: string) => void] 
       return;
     }
     setLoadingSecret(true);
+    // eslint-disable-next-line promise/catch-or-return
     k8sGet({ model: SecretModel, name: 'pull-secret', ns: 'openshift-config' })
       .then((response) => {
-        // @ts-ignore  Data is not recognized as part of response.
+        // @ts-expect-error Data is not recognized as part of response.
         const secret = JSON.parse(atob(response.data['.dockerconfigjson']));
         const token = secret.auths['cloud.openshift.com'].auth;
         const headers = {
@@ -117,48 +119,47 @@ const useLoadServiceLevel = (): [boolean, boolean, (clusterID: string) => void] 
         setLoadingServiceLevel(true);
         hasSecretAccess = true;
 
-        consoleFetchJSON(apiUrl, 'GET', {
+        return coFetchJSON(apiUrl, 'GET', {
           headers,
-        })
-          .then((ocmResponse) => {
-            if (!ocmResponse.items || ocmResponse.items?.length === 0) {
-              throw new Error('Cluster ID used to get support level was not recognized');
-            }
-
-            const levelSetting = ocmResponse.items[0].support_level;
-            const expirationDate = ocmResponse.items[0].eval_expiration_date;
-
-            const trialEnd = expirationDate ? new Date(expirationDate) : null;
-            const now = new Date();
-            let daysLeft = trialEnd ? getDuration(trialEnd.getTime() - now.getTime()).days : null;
-
-            daysLeft = trialEnd.getTime() < now.getTime() ? -1 : daysLeft;
-
-            const trialDateEnd = trialEnd ? dateFormatter.format(trialEnd) : null;
-            dispatch(
-              UIActions.setServiceLevel(
-                levelSetting,
-                daysLeft,
-                clusterID,
-                trialDateEnd,
-                hasSecretAccess,
-              ),
-            );
-          })
-          .catch((err) => {
-            dispatch(UIActions.setServiceLevel(null, null, clusterID, null, hasSecretAccess));
-            // eslint-disable-next-line no-console
-            console.error('API call to get support level has failed', err);
-          })
-          .finally(() => {
-            // done trying to get service level
-            setLoadingServiceLevel(false);
-          });
+        });
       })
-      .catch(() => {
-        // Error getting pull secret (this is expected if the user doesn't have access)
-        setLoadingSecret(false);
+      .then((ocmResponse) => {
+        if (!ocmResponse.items || ocmResponse.items?.length === 0) {
+          throw new Error('Cluster ID used to get support level was not recognized');
+        }
+
+        const levelSetting = ocmResponse.items[0].support_level;
+        const expirationDate = ocmResponse.items[0].eval_expiration_date;
+
+        const trialEnd = expirationDate ? new Date(expirationDate) : null;
+        const now = new Date();
+        let daysLeft = trialEnd ? getDuration(trialEnd.getTime() - now.getTime()).days : null;
+
+        daysLeft = trialEnd.getTime() < now.getTime() ? -1 : daysLeft;
+
+        const trialDateEnd = trialEnd ? dateFormatter.format(trialEnd) : null;
+        dispatch(
+          UIActions.setServiceLevel(
+            levelSetting,
+            daysLeft,
+            clusterID,
+            trialDateEnd,
+            hasSecretAccess,
+          ),
+        );
+      })
+      .catch((err) => {
+        if (!hasSecretAccess) {
+          // Error getting pull secret (this is expected if the user doesn't have access)
+          setLoadingSecret(false);
+        } else {
+          // eslint-disable-next-line no-console
+          console.error('API call to get support level has failed', err);
+        }
         dispatch(UIActions.setServiceLevel(null, null, clusterID, null, hasSecretAccess));
+      })
+      .finally(() => {
+        setLoadingServiceLevel(false);
       });
   };
 
@@ -202,8 +203,8 @@ const useGetServiceLevel = (
 };
 
 export const ServiceLevelLoading: FC = () => {
-  const { t } = useTranslation();
-  return <Skeleton screenreaderText={t('public~Loading')} />;
+  const { t } = useTranslation('public');
+  return <Skeleton screenreaderText={t('Loading')} />;
 };
 
 export const ServiceLevel: FC<{
@@ -231,7 +232,7 @@ type ServiceLevelTextProps = {
   inline?: boolean;
 };
 export const ServiceLevelText: FC<ServiceLevelTextProps> = ({ clusterID, inline }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { level, daysRemaining } = useGetServiceLevel(clusterID);
   const levelText = (
     <>
@@ -239,7 +240,7 @@ export const ServiceLevelText: FC<ServiceLevelTextProps> = ({ clusterID, inline 
       {!inline && !level ? (
         <FieldLevelHelp>
           {t(
-            'public~API failed to return the Service Level Agreement setting for this cluster. Check again later.',
+            'API failed to return the Service Level Agreement setting for this cluster. Check again later.',
           )}
         </FieldLevelHelp>
       ) : null}
@@ -263,18 +264,15 @@ export const ServiceLevelText: FC<ServiceLevelTextProps> = ({ clusterID, inline 
       </div>
       {!inline ? (
         <div>
-          <ExternalLink
-            text={t('public~Manage subscription settings')}
-            href={getOCMLink(clusterID)}
-          />
+          <ExternalLink text={t('Manage subscription settings')} href={getOCMLink(clusterID)} />
         </div>
       ) : null}
     </div>
   );
 };
 export const useServiceLevelTitle = (): string => {
-  const { t } = useTranslation();
-  return t('public~Service Level Agreement (SLA)');
+  const { t } = useTranslation('public');
+  return t('Service Level Agreement (SLA)');
 };
 
 export const useShowServiceLevelNotifications = (clusterID: string): boolean => {
@@ -285,7 +283,7 @@ export const useShowServiceLevelNotifications = (clusterID: string): boolean => 
 export const ServiceLevelNotification: FC<{
   clusterID?: string;
 }> = ({ clusterID }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { level, daysRemaining, trialDateEnd } = useGetServiceLevel(clusterID);
   const showServiceLevelNotification = useShowServiceLevelNotifications(clusterID);
 
@@ -294,13 +292,13 @@ export const ServiceLevelNotification: FC<{
   }
   let notificationStart = '';
   if (level === 'None' || (level === 'Eval' && daysRemaining < 0)) {
-    notificationStart = t('public~Your 60-day self-support trial expired.');
+    notificationStart = t('Your 60-day self-support trial expired.');
   }
 
   notificationStart =
     daysRemaining === 0
-      ? t('public~Your 60-day self-support trial will end in < 1 day.')
-      : t('public~Your 60-day self-support trial will end in {{count}} day on {{date}}.', {
+      ? t('Your 60-day self-support trial will end in < 1 day.')
+      : t('Your 60-day self-support trial will end in {{count}} day on {{date}}.', {
           count: daysRemaining,
           date: trialDateEnd,
         });
@@ -309,14 +307,14 @@ export const ServiceLevelNotification: FC<{
     <NotificationDrawerListItem variant={NotificationTypes.warning} isHoverable={false}>
       <NotificationDrawerListItemHeader
         variant={NotificationTypes.warning}
-        title={t('public~This cluster is not supported.')}
+        title={t('This cluster is not supported.')}
       />
       <NotificationDrawerListItemBody>
         <>
           {`${notificationStart} ${t(
-            'public~For continued support, upgrade your cluster or transfer cluster ownership to an account with an active subscription.',
+            'For continued support, upgrade your cluster or transfer cluster ownership to an account with an active subscription.',
           )}`}{' '}
-          <ExternalLink href={getOCMLink(clusterID)}>{t('public~Get support')}</ExternalLink>
+          <ExternalLink href={getOCMLink(clusterID)}>{t('Get support')}</ExternalLink>
         </>
       </NotificationDrawerListItemBody>
     </NotificationDrawerListItem>

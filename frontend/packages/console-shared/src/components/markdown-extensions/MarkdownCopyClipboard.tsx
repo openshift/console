@@ -1,8 +1,8 @@
 import type { FC } from 'react';
 import { useState, useMemo, useCallback } from 'react';
+import { Tooltip } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useEventListener } from '../../hooks/useEventListener';
-import { Tooltip } from '../Tooltip/Tooltip';
 import { MARKDOWN_COPY_BUTTON_ID, MARKDOWN_SNIPPET_ID } from './const';
 
 type CopyClipboardProps = {
@@ -11,8 +11,8 @@ type CopyClipboardProps = {
   docContext: HTMLDocument;
 };
 
-export const CopyClipboard: FC<CopyClipboardProps> = ({ element, rootSelector, docContext }) => {
-  const { t } = useTranslation();
+const CopyClipboard: FC<CopyClipboardProps> = ({ element, rootSelector, docContext }) => {
+  const { t } = useTranslation('console-shared');
   const [showSuccessContent, setShowSuccessContent] = useState<boolean>(false);
   const textToCopy = useMemo(() => {
     const copyTextId = element.getAttribute(MARKDOWN_COPY_BUTTON_ID);
@@ -36,13 +36,9 @@ export const CopyClipboard: FC<CopyClipboardProps> = ({ element, rootSelector, d
 
   return (
     <Tooltip
-      reference={() => element as HTMLElement}
-      content={
-        showSuccessContent
-          ? t('console-shared~Successfully copied to clipboard!')
-          : t('console-shared~Copy to clipboard')
-      }
-      onHide={() => {
+      triggerRef={() => element}
+      content={showSuccessContent ? t('Successfully copied to clipboard!') : t('Copy to clipboard')}
+      onTooltipHidden={() => {
         setShowSuccessContent(false);
       }}
     />
@@ -54,7 +50,10 @@ type MarkdownCopyClipboardProps = {
   rootSelector: string;
 };
 
-const MarkdownCopyClipboard: FC<MarkdownCopyClipboardProps> = ({ docContext, rootSelector }) => {
+export const MarkdownCopyClipboard: FC<MarkdownCopyClipboardProps> = ({
+  docContext,
+  rootSelector,
+}) => {
   const elements = docContext.querySelectorAll(`${rootSelector} [${MARKDOWN_COPY_BUTTON_ID}]`);
   return elements.length > 0 ? (
     <>
@@ -72,5 +71,3 @@ const MarkdownCopyClipboard: FC<MarkdownCopyClipboardProps> = ({ docContext, roo
     </>
   ) : null;
 };
-
-export default MarkdownCopyClipboard;

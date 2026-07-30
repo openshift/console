@@ -2,7 +2,7 @@ import i18next from 'i18next';
 import type { Action } from '@console/dynamic-plugin-sdk';
 import { truncateMiddle } from '@console/internal/components/utils';
 import type { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
-import { RESOURCE_NAME_TRUNCATE_LENGTH } from '@console/shared';
+import { RESOURCE_NAME_TRUNCATE_LENGTH } from '@console/shared/src/constants/common';
 
 export const EditImportApplication = (kind: K8sKind, obj: K8sResourceKind): Action => ({
   id: 'edit-import-app',

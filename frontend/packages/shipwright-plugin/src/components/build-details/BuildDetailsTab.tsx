@@ -12,12 +12,12 @@ type BuildDetailsTabProps = {
 };
 
 const BuildDetailsTab: FC<BuildDetailsTabProps> = ({ obj: build }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('shipwright-plugin');
 
   return (
     <>
       <PaneBody>
-        <SectionHeading text={t('shipwright-plugin~Build details')} />
+        <SectionHeading text={t('Build details')} />
 
         <Grid hasGutter>
           <GridItem sm={6}>
@@ -31,7 +31,7 @@ const BuildDetailsTab: FC<BuildDetailsTabProps> = ({ obj: build }) => {
 
       {build.status ? (
         <PaneBody>
-          <SectionHeading text={t('shipwright-plugin~Status')} />
+          <SectionHeading text={t('Status')} />
           <BuildStatusSection obj={build} buildStatus={build.status} />
         </PaneBody>
       ) : null}

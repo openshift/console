@@ -19,7 +19,7 @@ const DisableDefaultSourceModal: FC<DisableDefaultSourceModalProps> = ({
   cancel,
 }) => {
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const submit = useCallback(
     (event: FormEvent<EventTarget>): void => {
       event.preventDefault();
@@ -49,7 +49,7 @@ const DisableDefaultSourceModal: FC<DisableDefaultSourceModalProps> = ({
   return (
     <>
       <ModalHeader
-        title={t('olm~Disable CatalogSource?')}
+        title={t('Disable CatalogSource?')}
         titleIconVariant="warning"
         data-test-id="modal-title"
         labelId="disable-default-source-modal-title"
@@ -57,7 +57,7 @@ const DisableDefaultSourceModal: FC<DisableDefaultSourceModalProps> = ({
       <ModalBody>
         <Form id="disable-default-source-form" onSubmit={submit}>
           {t(
-            'olm~By disabling a default source, the operators it provides will no longer appear in Software Catalog and any operator that has been installed from this source will no longer receive updates until the source is re-enabled. Disabling the source will also remove the corresponding OperatorSource and CatalogSource resources from the cluster.',
+            'By disabling a default source, the operators it provides will no longer appear in Software Catalog and any operator that has been installed from this source will no longer receive updates until the source is re-enabled. Disabling the source will also remove the corresponding OperatorSource and CatalogSource resources from the cluster.',
           )}
         </Form>
       </ModalBody>
@@ -71,10 +71,10 @@ const DisableDefaultSourceModal: FC<DisableDefaultSourceModalProps> = ({
           data-test="confirm-action"
           id="confirm-action"
         >
-          {t('public~Disable')}
+          {t('Disable')}
         </Button>
         <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
-          {t('public~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </>

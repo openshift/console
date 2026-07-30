@@ -21,24 +21,20 @@ import {
   referenceForModel,
 } from '@console/internal/module/k8s';
 import type { RootState } from '@console/internal/redux';
-import { YellowExclamationTriangleIcon } from '@console/shared';
-import type { SaveStatusProps } from '@console/shared/src/components/cluster-configuration';
-import {
-  useDebounceCallback,
-  useConsoleOperatorConfig,
-  LoadError,
-  SaveStatus,
-  patchConsoleOperatorConfig,
-} from '@console/shared/src/components/cluster-configuration';
+import { LoadError } from '@console/shared/src/components/cluster-configuration/LoadError';
+import { patchConsoleOperatorConfig } from '@console/shared/src/components/cluster-configuration/patchConsoleOperatorConfig';
+import type { SaveStatusProps } from '@console/shared/src/components/cluster-configuration/SaveStatus';
+import { SaveStatus } from '@console/shared/src/components/cluster-configuration/SaveStatus';
+import { useConsoleOperatorConfig } from '@console/shared/src/components/cluster-configuration/useConsoleOperatorConfig';
+import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
+import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';
+import { usePerspectives } from '@console/shared/src/hooks/usePerspectives';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import type {
   Perspective,
   PerspectivePinnedResource,
-} from '@console/shared/src/hooks/usePerspectives';
-import {
-  PerspectiveVisibilityState,
-  usePerspectives,
-} from '@console/shared/src/hooks/usePerspectives';
-import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
+} from '@console/shared/src/utils/override-perspectives';
+import { PerspectiveVisibilityState } from '@console/shared/src/utils/override-perspectives';
 import './PinnedResourcesConfiguration.scss';
 
 // skip duplicate resources.
@@ -75,7 +71,7 @@ const PinnedResourcesConfiguration: FC<PinnedResourcesConfigurationProps> = ({
   allK8sModels,
   groupVersionMap,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const fireTelemetryEvent = useTelemetry();
   const perspectiveExtensions = usePerspectives();
   const [pinnedResources, setPinnedResources] = useState<PerspectivePinnedResource[]>();
@@ -136,7 +132,7 @@ const PinnedResourcesConfiguration: FC<PinnedResourcesConfigurationProps> = ({
           <span>
             {model.labelKey ? t(model.labelKey) : model.kind}
             {model.badge && model.badge === 'Tech Preview' && (
-              <span className="co-resource-item__tech-dev-preview">{t('public~Tech Preview')}</span>
+              <span className="co-resource-item__tech-dev-preview">{t('Tech Preview')}</span>
             )}
           </span>
           {isDup(model.kind) && (
@@ -152,7 +148,7 @@ const PinnedResourcesConfiguration: FC<PinnedResourcesConfigurationProps> = ({
   const InvalidItem = memo<ItemProps>(({ title }) => (
     <div style={{ display: 'flex', alignItems: 'center' }}>
       <span className="co-resource-icon--fixed-width">
-        <Tooltip position="top" content={t('devconsole~Resource not found')}>
+        <Tooltip position="top" content={t('Resource not found')}>
           <Icon size="md">
             <YellowExclamationTriangleIcon />
           </Icon>
@@ -310,18 +306,15 @@ const PinnedResourcesConfiguration: FC<PinnedResourcesConfigurationProps> = ({
   };
 
   return (
-    <FormSection
-      title={t('devconsole~Pre-pinned navigation items')}
-      data-test="pinned-resource form-section"
-    >
+    <FormSection title={t('Pre-pinned navigation items')} data-test="pinned-resource form-section">
       <FormHelperText>
         {t(
-          'devconsole~As admin you can change the pinned resources that are shown to users by default. Users can still override this configuration and add or reorder their pinned resources. As soon as a user changes the default settings, new default settings are no longer applied.',
+          'As admin you can change the pinned resources that are shown to users by default. Users can still override this configuration and add or reorder their pinned resources. As soon as a user changes the default settings, new default settings are no longer applied.',
         )}
       </FormHelperText>
       <DualListSelector
-        availableOptionsTitle={t('devconsole~Available Resources')}
-        chosenOptionsTitle={t('devconsole~Pinned Resources')}
+        availableOptionsTitle={t('Available Resources')}
+        chosenOptionsTitle={t('Pinned Resources')}
         isSearchable
         availableOptions={availableResources}
         chosenOptions={prePinnedResources}

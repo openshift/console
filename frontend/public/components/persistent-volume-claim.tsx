@@ -1,10 +1,6 @@
 import type { FC } from 'react';
 import { useMemo, useCallback, Suspense, useState, useEffect } from 'react';
-import * as _ from 'lodash';
-import i18next, { TFunction } from 'i18next';
-import { useTranslation } from 'react-i18next';
-import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
-import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
+import { ChartDonut } from '@patternfly/react-charts/victory';
 import {
   Alert,
   AlertActionCloseButton,
@@ -17,7 +13,10 @@ import {
 } from '@patternfly/react-core';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 import type { DataViewFilterOption } from '@patternfly/react-data-view/dist/esm/DataViewFilters';
-import { ChartDonut } from '@patternfly/react-charts/victory';
+import type { TFunction } from 'i18next';
+import i18next from 'i18next';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import {
   actionsCellProps,
   getNameCellProps,
@@ -25,47 +24,50 @@ import {
   ConsoleDataView,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import { ResourceFilters, GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type { ResourceFilters, GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import { TableColumn } from '@console/dynamic-plugin-sdk/src/lib-core';
-import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
+import { useResolvedExtensions } from '@console/dynamic-plugin-sdk';
+import type { PVCStatus, PVCAlert } from '@console/dynamic-plugin-sdk/src/extensions/pvc';
 import {
   isPVCAlert,
   isPVCCreateProp,
   isPVCStatus,
-  PVCStatus,
-  PVCAlert,
 } from '@console/dynamic-plugin-sdk/src/extensions/pvc';
-import { useResolvedExtensions } from '@console/dynamic-plugin-sdk';
-import { PersistentVolumeClaimKind, referenceFor } from '@console/internal/module/k8s';
-import ActionServiceProvider from '@console/shared/src/components/actions/ActionServiceProvider';
-import ActionMenu from '@console/shared/src/components/actions/menu/ActionMenu';
+import type { TableColumn } from '@console/dynamic-plugin-sdk/src/lib-core';
+import type { PVCMetrics } from '@console/internal/actions/ui';
+import { setPVCMetrics } from '@console/internal/actions/ui';
+import { PersistentVolumeClaimModel, VolumeAttributesClassModel } from '@console/internal/models';
+import type { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
+import { referenceFor } from '@console/internal/module/k8s';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
+import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
 import { Status } from '@console/shared/src/components/status/Status';
 import { FLAGS } from '@console/shared/src/constants/common';
-import { calculateRadius } from '@console/shared/src/utils/pod-utils';
+import { DASH } from '@console/shared/src/constants/ui';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { getNamespace, getName } from '@console/shared/src/selectors/common';
 import { getRequestedPVCSize } from '@console/shared/src/selectors/storage';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
-import { useFlag } from '@console/shared/src/hooks/useFlag';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { DASH } from '@console/shared/src/constants/ui';
+import { calculateRadius } from '@console/shared/src/utils/pod-utils';
 import { Conditions } from './conditions';
-import { DetailsPage, DetailsPageProps } from './factory/details';
-import { ListPage } from './factory/list-page';
-import { navFactory } from './utils/horizontal-nav';
-import { SectionHeading } from './utils/headings';
-import { ResourceLink } from './utils/resource-link';
-import { ResourceSummary } from './utils/details-page';
-import { Selector } from './utils/selector';
-import { humanizeBinaryBytes, convertToBaseValue } from './utils/units';
 import { ResourceEventStream } from './events';
-import { PVCMetrics, setPVCMetrics } from '@console/internal/actions/ui';
-import { PersistentVolumeClaimModel } from '@console/internal/models';
+import type { DetailsPageProps } from './factory/details';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
 import { PrometheusEndpoint } from './graphs/helpers';
 import { usePrometheusPoll } from './graphs/prometheus-poll-hook';
-import { VolumeAttributesClassModel } from '../models';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { ResourceLink } from './utils/resource-link';
+import { Selector } from './utils/selector';
+import { humanizeBinaryBytes, convertToBaseValue } from './utils/units';
 
 const { kind } = PersistentVolumeClaimModel;
 
@@ -105,7 +107,7 @@ const getVACAlertState = (pvc: PersistentVolumeClaimKind) => {
 };
 
 export const PVCStatusComponent: FC<PVCStatusProps> = ({ pvc }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const [pvcStatusExtensions, resolved] = useResolvedExtensions<PVCStatus>(isPVCStatus);
 
   if (resolved && pvcStatusExtensions.length > 0) {
@@ -119,15 +121,11 @@ export const PVCStatusComponent: FC<PVCStatusProps> = ({ pvc }) => {
     return PriorityStatusComponent ? (
       <PriorityStatusComponent pvc={pvc} />
     ) : (
-      <Status
-        status={pvc.metadata.deletionTimestamp ? t('public~Terminating') : pvc.status.phase}
-      />
+      <Status status={pvc.metadata.deletionTimestamp ? t('Terminating') : pvc.status.phase} />
     );
   }
 
-  return (
-    <Status status={pvc.metadata.deletionTimestamp ? t('public~Terminating') : pvc.status.phase} />
-  );
+  return <Status status={pvc.metadata.deletionTimestamp ? t('Terminating') : pvc.status.phase} />;
 };
 
 const getDataViewRowsCreator: (
@@ -161,7 +159,7 @@ const getDataViewRowsCreator: (
             title={obj.spec.volumeName}
           />
         ) : (
-          <div className="pf-v6-u-text-color-subtle">{t('public~No PersistentVolume')}</div>
+          <div className="pf-v6-u-text-color-subtle">{t('No PersistentVolume')}</div>
         ),
       },
       [tableColumnInfo[4].id]: {
@@ -203,7 +201,7 @@ const usePersistentVolumeClaimColumns = (): {
   columns: TableColumn<PersistentVolumeClaimKind>[];
   resetAllColumnWidths: () => void;
 } => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
     PersistentVolumeClaimModel,
   );
@@ -211,49 +209,49 @@ const usePersistentVolumeClaimColumns = (): {
   const columns: TableColumn<PersistentVolumeClaimKind>[] = useMemo(
     () => [
       {
-        title: t('public~Name'),
+        title: t('Name'),
         sort: 'metadata.name',
         id: tableColumnInfo[0].id,
         resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: { ...nameCellProps, modifier: 'nowrap' },
       },
       {
-        title: t('public~Namespace'),
+        title: t('Namespace'),
         sort: 'metadata.namespace',
         id: tableColumnInfo[1].id,
         resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: { modifier: 'nowrap' },
       },
       {
-        title: t('public~Status'),
+        title: t('Status'),
         sort: 'status.phase',
         id: tableColumnInfo[2].id,
         resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: { modifier: 'nowrap' },
       },
       {
-        title: t('public~PersistentVolume'),
+        title: t('PersistentVolume'),
         sort: 'spec.volumeName',
         id: tableColumnInfo[3].id,
         resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: { modifier: 'nowrap' },
       },
       {
-        title: t('public~Capacity'),
+        title: t('Capacity'),
         sort: 'pvcStorage',
         id: tableColumnInfo[4].id,
         resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: { modifier: 'nowrap' },
       },
       {
-        title: t('public~Used'),
+        title: t('Used'),
         sort: 'pvcUsed',
         id: tableColumnInfo[5].id,
         resizableProps: getResizableProps(tableColumnInfo[5].id),
         props: { modifier: 'nowrap' },
       },
       {
-        title: t('public~StorageClass'),
+        title: t('StorageClass'),
         sort: 'spec.storageClassName',
         id: tableColumnInfo[6].id,
         resizableProps: getResizableProps(tableColumnInfo[6].id),
@@ -273,7 +271,7 @@ const usePersistentVolumeClaimColumns = (): {
 
 const PVCDetails: FC<PVCDetailsProps> = ({ obj: pvc }) => {
   const flags = useFlag(FLAGS.CAN_LIST_PV);
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const canListPV = flags[FLAGS.CAN_LIST_PV];
   const isVACSupported = useFlag(FLAGS.VAC_PLATFORM_SUPPORT);
@@ -350,7 +348,7 @@ const PVCDetails: FC<PVCDetailsProps> = ({ obj: pvc }) => {
           <Alert
             isInline
             variant="danger"
-            title={t('public~VolumeAttributesClass modification failed')}
+            title={t('VolumeAttributesClass modification failed')}
             className="co-alert co-alert--margin-bottom-sm"
             actionClose={<AlertActionCloseButton onClose={() => setIsErrorAlertDismissed(true)} />}
             data-test-id="vac-error-alert"
@@ -366,14 +364,14 @@ const PVCDetails: FC<PVCDetailsProps> = ({ obj: pvc }) => {
             variant="info"
             title={
               volumeAttributesClassName && !currentVolumeAttributesClassName
-                ? t('public~VolumeAttributesClass application pending')
-                : t('public~VolumeAttributesClass modification in progress')
+                ? t('VolumeAttributesClass application pending')
+                : t('VolumeAttributesClass modification in progress')
             }
             className="co-alert co-alert--margin-bottom-sm"
             actionClose={<AlertActionCloseButton onClose={() => setIsInfoAlertDismissed(true)} />}
           >
             {!currentVolumeAttributesClassName
-              ? t('public~VolumeAttributesClass "{{target}}" is pending application.', {
+              ? t('VolumeAttributesClass "{{target}}" is pending application.', {
                   target: volumeAttributesClassName,
                 })
               : t(
@@ -385,19 +383,15 @@ const PVCDetails: FC<PVCDetailsProps> = ({ obj: pvc }) => {
                 )}
           </Alert>
         )}
-        <SectionHeading text={t('public~PersistentVolumeClaim details')} />
+        <SectionHeading text={t('PersistentVolumeClaim details')} />
         {totalCapacityMetric && !loading && (
           <div className="co-pvc-donut">
             <ChartDonut
               ariaDesc={
-                availableMetrics
-                  ? t('public~Available versus used capacity')
-                  : t('public~Total capacity')
+                availableMetrics ? t('Available versus used capacity') : t('Total capacity')
               }
               ariaTitle={
-                availableMetrics
-                  ? t('public~Available versus used capacity')
-                  : t('public~Total capacity')
+                availableMetrics ? t('Available versus used capacity') : t('Total capacity')
               }
               height={130}
               width={130}
@@ -405,9 +399,9 @@ const PVCDetails: FC<PVCDetailsProps> = ({ obj: pvc }) => {
               radius={radius}
               data={donutData}
               labels={({ datum }) => `${datum.y} ${totalCapacity.unit} ${datum.x}`}
-              subTitle={availableMetrics ? t('public~Available') : t('public~Total')}
+              subTitle={availableMetrics ? t('Available') : t('Total')}
               title={availableMetrics ? availableCapacityString : totalCapacityString}
-              constrainToVisibleArea={true}
+              constrainToVisibleArea
             />
           </div>
         )}
@@ -415,7 +409,7 @@ const PVCDetails: FC<PVCDetailsProps> = ({ obj: pvc }) => {
           <GridItem sm={6}>
             <ResourceSummary resource={pvc}>
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('public~Label selector')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('Label selector')}</DescriptionListTerm>
                 <DescriptionListDescription data-test-id="pvc-name">
                   <Selector selector={labelSelector} kind="PersistentVolume" />
                 </DescriptionListDescription>
@@ -425,20 +419,20 @@ const PVCDetails: FC<PVCDetailsProps> = ({ obj: pvc }) => {
           <GridItem sm={6}>
             <DescriptionList>
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('public~Status')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('Status')}</DescriptionListTerm>
                 <DescriptionListDescription data-test-id="pvc-status">
                   <PVCStatusComponent pvc={pvc} />
                 </DescriptionListDescription>
               </DescriptionListGroup>
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('public~Requested capacity')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('Requested capacity')}</DescriptionListTerm>
                 <DescriptionListDescription data-test="pvc-requested-capacity">
                   {humanizeBinaryBytes(totalRequestMetric).string}
                 </DescriptionListDescription>
               </DescriptionListGroup>
               {storage && (
                 <DescriptionListGroup>
-                  <DescriptionListTerm>{t('public~Capacity')}</DescriptionListTerm>
+                  <DescriptionListTerm>{t('Capacity')}</DescriptionListTerm>
                   <DescriptionListDescription data-test-id="pvc-capacity">
                     {totalCapacity.string}
                   </DescriptionListDescription>
@@ -446,7 +440,7 @@ const PVCDetails: FC<PVCDetailsProps> = ({ obj: pvc }) => {
               )}
               {usedMetrics && _.isEmpty(loadError) && !loading && (
                 <DescriptionListGroup>
-                  <DescriptionListTerm>{t('public~Used')}</DescriptionListTerm>
+                  <DescriptionListTerm>{t('Used')}</DescriptionListTerm>
                   <DescriptionListDescription>
                     {humanizeBinaryBytes(usedMetrics).string}
                   </DescriptionListDescription>
@@ -454,20 +448,20 @@ const PVCDetails: FC<PVCDetailsProps> = ({ obj: pvc }) => {
               )}
               {!_.isEmpty(accessModes) && (
                 <DescriptionListGroup>
-                  <DescriptionListTerm>{t('public~Access modes')}</DescriptionListTerm>
+                  <DescriptionListTerm>{t('Access modes')}</DescriptionListTerm>
                   <DescriptionListDescription data-test-id="pvc-access-mode">
                     {accessModes.join(', ')}
                   </DescriptionListDescription>
                 </DescriptionListGroup>
               )}
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('public~Volume mode')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('Volume mode')}</DescriptionListTerm>
                 <DescriptionListDescription data-test-id="pvc-volume-mode">
                   {volumeMode || 'Filesystem'}
                 </DescriptionListDescription>
               </DescriptionListGroup>
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('public~StorageClasses')}</DescriptionListTerm>
+                <DescriptionListTerm>{t('StorageClasses')}</DescriptionListTerm>
                 <DescriptionListDescription data-test-id="pvc-storageclass">
                   {storageClassName ? (
                     <ResourceLink kind="StorageClass" name={storageClassName} />
@@ -478,9 +472,7 @@ const PVCDetails: FC<PVCDetailsProps> = ({ obj: pvc }) => {
               </DescriptionListGroup>
               {isVACSupported && volumeAttributesClassName !== currentVolumeAttributesClassName && (
                 <DescriptionListGroup>
-                  <DescriptionListTerm>
-                    {t('public~Requested VolumeAttributesClass')}
-                  </DescriptionListTerm>
+                  <DescriptionListTerm>{t('Requested VolumeAttributesClass')}</DescriptionListTerm>
                   <DescriptionListDescription data-test-id="pvc-requested-vac">
                     {volumeAttributesClassName ? (
                       <ResourceLink
@@ -495,7 +487,7 @@ const PVCDetails: FC<PVCDetailsProps> = ({ obj: pvc }) => {
               )}
               {isVACSupported && !!currentVolumeAttributesClassName && (
                 <DescriptionListGroup>
-                  <DescriptionListTerm>{t('public~VolumeAttributesClass')}</DescriptionListTerm>
+                  <DescriptionListTerm>{t('VolumeAttributesClass')}</DescriptionListTerm>
                   <DescriptionListDescription data-test-id="pvc-current-vac">
                     <ResourceLink
                       kind={referenceFor(VolumeAttributesClassModel)}
@@ -506,7 +498,7 @@ const PVCDetails: FC<PVCDetailsProps> = ({ obj: pvc }) => {
               )}
               {volumeName && canListPV && (
                 <DescriptionListGroup>
-                  <DescriptionListTerm>{t('public~PersistentVolumes')}</DescriptionListTerm>
+                  <DescriptionListTerm>{t('PersistentVolumes')}</DescriptionListTerm>
                   <DescriptionListDescription data-test-id="persistent-volume">
                     <ResourceLink kind="PersistentVolume" name={volumeName} />
                   </DescriptionListDescription>
@@ -517,19 +509,19 @@ const PVCDetails: FC<PVCDetailsProps> = ({ obj: pvc }) => {
         </Grid>
       </PaneBody>
       <PaneBody>
-        <SectionHeading text={t('public~Conditions')} />
+        <SectionHeading text={t('Conditions')} />
         <Conditions conditions={conditions} />
       </PaneBody>
     </>
   );
 };
 
-export const PersistentVolumeClaimList: FC<PersistentVolumeClaimListProps> = ({
+const PersistentVolumeClaimList: FC<PersistentVolumeClaimListProps> = ({
   data,
   loaded,
   ...props
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { columns, resetAllColumnWidths } = usePersistentVolumeClaimColumns();
   const pvcMetrics = useConsoleSelector<PVCMetrics>(({ UI }) => UI.getIn(['metrics', 'pvc']));
 
@@ -539,15 +531,15 @@ export const PersistentVolumeClaimList: FC<PersistentVolumeClaimListProps> = ({
     () => [
       {
         value: 'Pending',
-        label: t('public~Pending'),
+        label: t('Pending'),
       },
       {
         value: 'Bound',
-        label: t('public~Bound'),
+        label: t('Bound'),
       },
       {
         value: 'Lost',
-        label: t('public~Lost'),
+        label: t('Lost'),
       },
     ],
     [t],
@@ -563,8 +555,8 @@ export const PersistentVolumeClaimList: FC<PersistentVolumeClaimListProps> = ({
       <DataViewCheckboxFilter
         key="status"
         filterId="status"
-        title={t('public~Status')}
-        placeholder={t('public~Filter by status')}
+        title={t('Status')}
+        placeholder={t('Filter by status')}
         options={pvcStatusFilterOptions}
       />,
     ],
@@ -590,7 +582,7 @@ export const PersistentVolumeClaimList: FC<PersistentVolumeClaimListProps> = ({
     <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<PersistentVolumeClaimKind>
         {...props}
-        label={t('public~PersistentVolumeClaims')}
+        label={t('PersistentVolumeClaims')}
         data={data}
         loaded={loaded}
         columns={columns}
@@ -610,7 +602,7 @@ export const PersistentVolumeClaimsPage: FC<PersistentVolumeClaimsPageProps> = (
   namespace,
   ...props
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const createPropExtensions = useExtensions(isPVCCreateProp);
   const dispatch = useConsoleDispatch();
 
@@ -662,11 +654,11 @@ export const PersistentVolumeClaimsPage: FC<PersistentVolumeClaimsPageProps> = (
   return (
     <ListPage
       {...props}
-      title={t('public~PersistentVolumeClaims')}
+      title={t('PersistentVolumeClaims')}
       kind={kind}
       ListComponent={PersistentVolumeClaimList}
-      canCreate={true}
-      omitFilterToolbar={true}
+      canCreate
+      omitFilterToolbar
       createProps={createProps}
       customData={pvcMetrics}
     />
@@ -674,7 +666,7 @@ export const PersistentVolumeClaimsPage: FC<PersistentVolumeClaimsPageProps> = (
 };
 
 export const PersistentVolumeClaimsDetailsPage: FC<DetailsPageProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const customActionMenu = (kindObj, obj) => {
     const resourceKind = referenceFor(kindObj);
@@ -694,7 +686,7 @@ export const PersistentVolumeClaimsDetailsPage: FC<DetailsPageProps> = (props) =
     <DetailsPage
       {...props}
       getResourceStatus={(pvc) =>
-        pvc.metadata.deletionTimestamp ? t('public~Terminating') : pvc.status.phase
+        pvc.metadata.deletionTimestamp ? t('Terminating') : pvc.status.phase
       }
       customActionMenu={customActionMenu}
       pages={[

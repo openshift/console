@@ -2,7 +2,8 @@ import type { FC } from 'react';
 import { useState } from 'react';
 import type { FormikValues } from 'formik';
 import { Trans, useTranslation } from 'react-i18next';
-import { ProgressiveList, ProgressiveListItem } from '@console/shared/src';
+import { ProgressiveList } from '@console/shared/src/components/progressive-list/ProgressiveList';
+import { ProgressiveListItem } from '@console/shared/src/components/progressive-list/ProgressiveListItem';
 import type { AppResources } from '../../edit-application/edit-application-types';
 import HealthChecks from '../../health-checks/HealthChecks';
 import { Resources } from '../import-types';
@@ -20,19 +21,19 @@ type AdvancedSectionProps = {
 };
 
 const Footer = ({ children }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   return (
     <Trans
       t={t}
       ns="devconsole"
-      defaults="Click on the names to access advanced options for <0></0>."
+      i18nKey="Click on the names to access advanced options for <0></0>."
       components={[children]}
     />
   );
 };
 
 const List: FC<AdvancedSectionProps> = ({ appResources, values }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
 
   const [visibleItems, setVisibleItems] = useState([]);
   const handleVisibleItemChange = (item: string) => {
@@ -45,11 +46,11 @@ const List: FC<AdvancedSectionProps> = ({ appResources, values }) => {
       onVisibleItemChange={handleVisibleItemChange}
       Footer={Footer}
     >
-      <ProgressiveListItem name={t('devconsole~Health checks')}>
-        <HealthChecks title={t('devconsole~Health checks')} resourceType={values.resources} />
+      <ProgressiveListItem name={t('Health checks')}>
+        <HealthChecks title={t('Health checks')} resourceType={values.resources} />
       </ProgressiveListItem>
       {values?.formType === 'edit' ? (
-        <ProgressiveListItem name={t('devconsole~Deployment')}>
+        <ProgressiveListItem name={t('Deployment')}>
           <DeploymentConfigSection
             namespace={values.project.name}
             resource={appResources?.editAppResource?.data}
@@ -57,17 +58,17 @@ const List: FC<AdvancedSectionProps> = ({ appResources, values }) => {
         </ProgressiveListItem>
       ) : null}
 
-      <ProgressiveListItem name={t('devconsole~Scaling')}>
+      <ProgressiveListItem name={t('Scaling')}>
         {values.resources === Resources.KnativeService ? (
           <ServerlessScalingSection />
         ) : (
           <ScalingSection name="deployment.replicas" />
         )}
       </ProgressiveListItem>
-      <ProgressiveListItem name={t('devconsole~Resource limits')}>
+      <ProgressiveListItem name={t('Resource limits')}>
         <ResourceLimitSection />
       </ProgressiveListItem>
-      <ProgressiveListItem name={t('devconsole~Labels')}>
+      <ProgressiveListItem name={t('Labels')}>
         <LabelSection />
       </ProgressiveListItem>
     </ProgressiveList>
@@ -75,9 +76,9 @@ const List: FC<AdvancedSectionProps> = ({ appResources, values }) => {
 };
 
 const AdvancedSection: FC<AdvancedSectionProps> = ({ values, appResources }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   return (
-    <FormSection title={t('devconsole~Advanced options')}>
+    <FormSection title={t('Advanced options')}>
       <RouteSection route={values.route} resources={values.resources} />
       <div>
         <List appResources={appResources} values={values} />

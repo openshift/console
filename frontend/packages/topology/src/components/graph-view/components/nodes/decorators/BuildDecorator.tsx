@@ -5,10 +5,10 @@ import type { Node } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { BuildModel } from '@console/internal/models';
-import { Status } from '@console/shared';
+import { Status } from '@console/shared/src/components/status/Status';
 import { useBuildConfigsWatcher } from '@console/shared/src/hooks/useBuildConfigsWatcher';
-import { getResource } from '../../../../../utils';
-import BuildDecoratorBubble from './BuildDecoratorBubble';
+import { getResource } from '../../../../../utils/topology-utils';
+import { BuildDecoratorBubble } from './BuildDecoratorBubble';
 
 interface BuildDecoratorProps {
   element: Node;
@@ -17,9 +17,9 @@ interface BuildDecoratorProps {
   y: number;
 }
 
-const BuildDecorator: FC<BuildDecoratorProps> = ({ element, radius, x, y }) => {
+export const BuildDecorator: FC<BuildDecoratorProps> = ({ element, radius, x, y }) => {
   const ref = useRef();
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   const resource = getResource(element);
   const { buildConfigs } = useBuildConfigsWatcher(resource);
   const build = buildConfigs?.[0]?.builds?.[0];
@@ -28,7 +28,7 @@ const BuildDecorator: FC<BuildDecoratorProps> = ({ element, radius, x, y }) => {
     return null;
   }
 
-  const label = t('topology~Build {{status}}', { status: build.status?.phase });
+  const label = t('Build {{status}}', { status: build.status?.phase });
 
   const link = `${resourcePathFromModel(
     BuildModel,
@@ -46,5 +46,3 @@ const BuildDecorator: FC<BuildDecoratorProps> = ({ element, radius, x, y }) => {
     </Tooltip>
   );
 };
-
-export default BuildDecorator;

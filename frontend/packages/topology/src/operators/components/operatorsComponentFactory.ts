@@ -1,12 +1,12 @@
 import type { FC, ComponentType } from 'react';
 import type { GraphElement, WithContextMenuProps } from '@patternfly/react-topology';
 import { withDragNode, withSelection } from '@patternfly/react-topology';
-import { contextMenuActions } from '../../actions';
+import { contextMenuActions } from '../../actions/contextMenuActions';
 import {
   withContextMenu,
   withNoDrop,
   noRegroupDragSourceSpec,
-} from '../../components/graph-view/components';
+} from '../../components/graph-view/components/componentUtils';
 import { TYPE_OPERATOR_BACKED_SERVICE } from './const';
 import OperatorBackedService from './OperatorBackedService';
 

@@ -31,7 +31,7 @@ const prefixedCapabilities = new Set([
   StatusCapability.k8sResourcePrefix,
 ]);
 
-export const testConditionsDescriptor = {
+const testConditionsDescriptor = {
   path: 'testConditions',
   displayName: 'Test Conditions',
   description: '',
@@ -142,61 +142,6 @@ export const testClusterServiceVersion: ClusterServiceVersionKind = {
   },
 };
 
-export const localClusterServiceVersion: ClusterServiceVersionKind = {
-  apiVersion: 'operators.coreos.com/v1alpha1',
-  kind: 'ClusterServiceVersion',
-  metadata: {
-    name: 'local-testapp',
-    uid: 'c02c0a8f-88e0-12e7-851b-080027b424ef',
-    creationTimestamp: '2017-08-20T18:19:49Z',
-    namespace: 'default',
-  },
-  spec: {
-    displayName: 'Local Test App',
-    description: 'This app does cool stuff - locally',
-    labels: {
-      'alm-owner-local-testapp':
-        'local-testapp.clusterserviceversions.operators.coreos.com.v1alpha1',
-    },
-    selector: {
-      matchLabels: {
-        'alm-owner-local-testapp':
-          'local-testapp.clusterserviceversions.operators.coreos.com.v1alpha1',
-      },
-    },
-    installModes: [],
-    install: {
-      strategy: 'Deployment',
-      spec: {
-        permissions: [
-          {
-            serviceAccountName: 'local-operator',
-            rules: [
-              { apiGroups: ['testapp.coreos.com'], resources: ['testresources'], verbs: ['*'] },
-            ],
-          },
-        ],
-        deployments: [{ name: 'testapp-operator', spec: {} }],
-      },
-    },
-    customresourcedefinitions: {
-      owned: [
-        {
-          name: 'testresources.testapp.coreos.com',
-          kind: 'TestResource',
-          version: 'v1',
-          displayName: 'Test Resource',
-          statusDescriptors: [],
-        },
-      ],
-    },
-  },
-  status: {
-    phase: ClusterServiceVersionPhase.CSVPhaseSucceeded,
-    reason: CSVConditionReason.CSVReasonInstallSuccessful,
-  },
-};
-
 export const testResourceInstance: K8sResourceKind = {
   apiVersion: 'testapp.coreos.com/v1alpha1',
   kind: 'TestResource',
@@ -240,28 +185,6 @@ export const testResourceInstance: K8sResourceKind = {
         type: 'BarType',
       },
     ],
-  },
-};
-
-export const testOwnedResourceInstance: K8sResourceKind = {
-  apiVersion: 'ownedoperators.coreos.com/v1alpha1',
-  kind: 'TestOwnedResource',
-  metadata: {
-    name: 'owned-test-resource',
-    uid: '62fa5eac-3df4-448d-a576-916dd5b432f2',
-    creationTimestamp: '2005-02-20T18:13:42Z',
-    ownerReferences: [
-      {
-        name: testResourceInstance.metadata.name,
-        kind: 'TestResource',
-        apiVersion: testResourceInstance.apiVersion,
-        uid: testResourceInstance.metadata.uid,
-      },
-    ],
-  },
-  spec: {},
-  status: {
-    'some-filled-path': 'this is filled!',
   },
 };
 
@@ -355,24 +278,6 @@ export const testInstallPlan: InstallPlanKind = {
     catalogSources: ['test-catalog'],
     plan: [],
   },
-};
-
-export const testOperatorDeployment: K8sResourceKind = {
-  apiVersion: 'apps/v1beta2',
-  kind: 'Deployment',
-  metadata: {
-    namespace: testClusterServiceVersion.metadata.namespace,
-    name: 'test-operator',
-    ownerReferences: [
-      {
-        name: testClusterServiceVersion.metadata.name,
-        uid: testClusterServiceVersion.metadata.uid,
-        kind: testClusterServiceVersion.kind,
-        apiVersion: testClusterServiceVersion.apiVersion,
-      },
-    ],
-  },
-  spec: {},
 };
 
 export const testSubscription: SubscriptionKind = {
@@ -753,27 +658,7 @@ export const dummyPackageManifest = {
   },
 };
 
-export const operatorHubListPageProps = {
-  loaded: true,
-  loadError: null,
-  operatorGroups: { loaded: false },
-  catalogSourceConfig: { loaded: false },
-  packageManifests: {
-    loaded: true,
-    data: [
-      amqPackageManifest,
-      etcdPackageManifest,
-      federationv2PackageManifest,
-      prometheusPackageManifest,
-    ] as PackageManifestKind[],
-  },
-  clusterServiceVersions: null,
-  cloudCredentials: { loaded: true, data: manualCred },
-  infrastructure: { loaded: true, data: infra },
-  authentication: { loaded: true, data: auth },
-};
-
-export const operatorHubTileViewPageProps = {
+const operatorHubTileViewPageProps = {
   items: [
     {
       obj: amqPackageManifest,
@@ -898,123 +783,6 @@ export const operatorHubTileViewPageProps = {
   ] as OperatorHubItem[],
   openOverlay: null,
 };
-
-export const operatorHubTileViewPagePropsWithDummy = {
-  items: [
-    operatorHubTileViewPageProps.items[0],
-    operatorHubTileViewPageProps.items[1],
-    operatorHubTileViewPageProps.items[2],
-    operatorHubTileViewPageProps.items[3],
-    {
-      obj: dummyPackageManifest,
-      installed: false,
-      kind: 'PackageManifest',
-      name: 'dummy',
-      uid: 'dummy/openshift-operator-lifecycle-manager',
-      iconClass: null,
-      description: undefined,
-      provider: 'Custom',
-      tags: undefined,
-      version: '1.0.0',
-      certifiedLevel: undefined,
-      healthIndex: undefined,
-      repository: undefined,
-      containerImage: undefined,
-      createdAt: undefined,
-      support: undefined,
-      longDescription: undefined,
-      categories: ['dummy'],
-      catalogSource: 'testing',
-      catalogSourceNamespace: 'openshift-marketplace',
-      validSubscription: undefined,
-      infraFeatures: undefined,
-      cloudCredentials: manualCred,
-      infrastructure: infra,
-      authentication: auth,
-    },
-  ],
-  openOverlay: null,
-};
-
-export const filterCounts = {
-  CoreOS: 1,
-  'Red Hat': 4,
-  Installed: 1,
-  'Not Installed': 4,
-};
-
-export const operatorHubCategories = [
-  {
-    id: 'all',
-    numItems: 8,
-  },
-  {
-    id: 'messaging',
-    numItems: 1,
-  },
-  {
-    id: 'streaming',
-    numItems: 1,
-  },
-  {
-    id: 'database',
-    numItems: 1,
-  },
-  {
-    id: 'monitoring',
-    numItems: 1,
-  },
-  {
-    id: 'alerting',
-    numItems: 1,
-  },
-  {
-    id: 'catalog',
-    numItems: 1,
-  },
-  {
-    id: 'other',
-    numItems: 1,
-  },
-];
-
-export const mockFilterStrings = [
-  {
-    filter: '',
-    resultLength: 4,
-  },
-  {
-    filter: 'prometheus',
-    resultLength: 1,
-  },
-  {
-    filter: 'high performance',
-    resultLength: 1,
-  },
-  {
-    filter: 'this will have no results',
-    resultLength: 0,
-  },
-];
-
-export const mockProviderStrings = [
-  {
-    provider: '',
-    output: '',
-  },
-  {
-    provider: 'Red Hat',
-    output: 'Red Hat',
-  },
-  {
-    provider: 'Red Hat, Inc.',
-    output: 'Red Hat',
-  },
-  {
-    provider: 'Dummy LLC',
-    output: 'Dummy',
-  },
-];
 
 export const operatorHubDetailsProps = {
   item: operatorHubTileViewPageProps.items[0],

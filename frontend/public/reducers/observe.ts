@@ -1,8 +1,9 @@
-import * as _ from 'lodash';
 import { List as ImmutableList, Map as ImmutableMap } from 'immutable';
-import { Alert, AlertStates, RuleStates, SilenceStates } from '@console/dynamic-plugin-sdk';
-
-import { ActionType, ObserveAction } from '../actions/observe';
+import * as _ from 'lodash';
+import type { Alert } from '@console/dynamic-plugin-sdk';
+import { AlertStates, RuleStates, SilenceStates } from '@console/dynamic-plugin-sdk';
+import type { ObserveAction } from '../actions/observe';
+import { ActionType } from '../actions/observe';
 import { isSilenced } from '../components/monitoring/utils';
 
 const MONITORING_DASHBOARDS_DEFAULT_TIMESPAN = 30 * 60 * 1000;
@@ -18,7 +19,7 @@ const newQueryBrowserQuery = (): ImmutableMap<string, any> =>
     isExpanded: true,
   });
 
-export const silenceFiringAlerts = (firingAlerts, silences) => {
+const silenceFiringAlerts = (firingAlerts, silences) => {
   // For each firing alert, store a list of the Silences that are silencing it
   // and set its state to show it is silenced
   _.each(firingAlerts, (a) => {
@@ -152,7 +153,9 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
       silenceFiringAlerts(firingAlerts, silences);
       silenceFiringAlerts(_.filter(notificationAlerts?.data, isAlertFiring), silences);
       notificationAlerts.data = _.reject(notificationAlerts.data, { state: AlertStates.Silenced });
+      // eslint-disable-next-line no-param-reassign
       state = state.set(alertsKey, alerts);
+      // eslint-disable-next-line no-param-reassign
       state = state.set('notificationAlerts', notificationAlerts);
 
       // For each Silence, store a list of the Alerts it is silencing
@@ -172,7 +175,7 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
       );
 
     case ActionType.QueryBrowserDuplicateQuery: {
-      const index = action.payload.index;
+      const { index } = action.payload;
       const originQueryText = state.getIn(['queryBrowser', 'queries', index, 'text']);
       const duplicate = newQueryBrowserQuery().merge({
         text: originQueryText,
@@ -240,7 +243,7 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
       return state.setIn(['queryBrowser', 'timespan'], action.payload.timespan);
 
     case ActionType.QueryBrowserToggleAllSeries: {
-      const index = action.payload.index;
+      const { index } = action.payload;
       const isDisabledSeriesEmpty = _.isEmpty(
         state.getIn(['queryBrowser', 'queries', index, 'disabledSeries']),
       );

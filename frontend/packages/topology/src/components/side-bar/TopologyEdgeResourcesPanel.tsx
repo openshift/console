@@ -17,7 +17,7 @@ type TopologyEdgeResourcesPanelProps = {
 };
 
 const TopologyEdgeResourcesPanel: FC<TopologyEdgeResourcesPanelProps> = ({ edge }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
     isList: true,
     kind: referenceForModel(ConsoleLinkModel),
@@ -33,7 +33,7 @@ const TopologyEdgeResourcesPanel: FC<TopologyEdgeResourcesPanelProps> = ({ edge 
 
   return (
     <div className="overview__sidebar-pane-body">
-      <SidebarSectionHeading text={t('topology~Connections')} />
+      <SidebarSectionHeading text={t('Connections')} />
       <List isPlain isBordered>
         {_.map(resources, (resource) => {
           if (!resource) {
@@ -68,7 +68,7 @@ const TopologyEdgeResourcesPanel: FC<TopologyEdgeResourcesPanelProps> = ({ edge 
       </List>
       {data?.sbr?.status.secret && (
         <>
-          <SidebarSectionHeading text={t('topology~Secret')} />
+          <SidebarSectionHeading text={t('Secret')} />
           <List isPlain isBordered>
             <ListItem key={data.sbr.status.secret}>
               <ResourceLink
@@ -83,10 +83,10 @@ const TopologyEdgeResourcesPanel: FC<TopologyEdgeResourcesPanelProps> = ({ edge 
       )}
       {edge.getType() === TYPE_TRAFFIC_CONNECTOR && (
         <>
-          <SidebarSectionHeading text={t('topology~Kiali link')} />
+          <SidebarSectionHeading text={t('Kiali link')} />
           <ExternalLink
             href={getNamespaceDashboardKialiLink(consoleLinks, namespace)}
-            text={t('topology~Kiali Graph view')}
+            text={t('Kiali Graph view')}
             dataTestID="kiali-link"
           />
         </>

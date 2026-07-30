@@ -1,3 +1,4 @@
+/* eslint-disable no-barrel-files/no-barrel-files */
 import type { FC } from 'react';
 import { useMemo } from 'react';
 import { Stack, StackItem } from '@patternfly/react-core';
@@ -7,8 +8,8 @@ import { PopoverStatus, NodeStatus } from '@console/dynamic-plugin-sdk';
 import { humanizeBinaryBytes, humanizeNumber } from '@console/internal/components/utils/units';
 import type { NodeKind } from '@console/internal/module/k8s';
 import ConsumerPopover from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
-import { ErrorBoundary } from '@console/shared/src/components/error';
-import SecondaryStatus from '@console/shared/src/components/status/SecondaryStatus';
+import { ErrorBoundary } from '@console/shared/src/components/error/error-boundary';
+import { SecondaryStatus } from '@console/shared/src/components/status/SecondaryStatus';
 import { Status } from '@console/shared/src/components/status/Status';
 import { PressureQueries, Condition } from '../../queries';
 import { nodeStatus } from '../../status/node';
@@ -47,7 +48,7 @@ export const NodeStatusWithExtensions: FC<NodeStatusWithExtensionsProps> = ({
   className,
   statusExtensions,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
 
   const { popoverContent, secondaryStatuses } = useMemo(() => statusExtensions(node), [
     statusExtensions,
@@ -59,7 +60,7 @@ export const NodeStatusWithExtensions: FC<NodeStatusWithExtensionsProps> = ({
   return (
     <>
       {popoverContent.length ? (
-        <PopoverStatus title={t('console-app~Node status')} statusBody={mainStatus}>
+        <PopoverStatus title={t('Node status')} statusBody={mainStatus}>
           <Stack>
             {popoverContent.map(({ content, uid }) => (
               <ErrorBoundary key={uid}>
@@ -79,10 +80,9 @@ export const NodeStatusWithExtensions: FC<NodeStatusWithExtensionsProps> = ({
             current={_.startCase(item)}
             consumers={PressureQueries[item](node.metadata.name)}
             humanize={humanizeMap[item]}
-            description={t(
-              "console-app~This node's {{conditionDescription}}. Performance may be degraded.",
-              { conditionDescription: conditionDescriptionMap[item] },
-            )}
+            description={t("This node's {{conditionDescription}}. Performance may be degraded.", {
+              conditionDescription: conditionDescriptionMap[item],
+            })}
           />
         </div>
       ))}

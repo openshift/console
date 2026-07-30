@@ -4,17 +4,18 @@ import { DetailsPage } from '@console/internal/components/factory';
 import type { Page } from '@console/internal/components/utils';
 import { navFactory } from '@console/internal/components/utils';
 import { referenceFor } from '@console/internal/module/k8s';
-import {
-  ActionMenu,
-  ActionMenuVariant,
-  ActionServiceProvider,
-} from '@console/shared/src/components/actions';
-import { useShipwrightBreadcrumbsFor } from '../../utils';
+import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
+import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import { useBuildModel, useShipwrightBreadcrumbsFor } from '../../utils';
 import BuildDetailsTab from './BuildDetailsTab';
 import BuildEventsTab from './BuildEventsTab';
 import BuildRunsTab from './BuildRunsTab';
 
 const BuildDetailsPage: FC<DetailsPageProps> = (props) => {
+  const model = useBuildModel();
+  const breadcrumbs = useShipwrightBreadcrumbsFor(model);
+
   const customActionMenu = (_, build) => {
     const kindReference = referenceFor(build);
     const context = { [kindReference]: build };
@@ -46,7 +47,7 @@ const BuildDetailsPage: FC<DetailsPageProps> = (props) => {
       {...props}
       customActionMenu={customActionMenu}
       pages={pages}
-      breadcrumbsFor={useShipwrightBreadcrumbsFor}
+      breadcrumbsFor={() => breadcrumbs}
     />
   );
 };

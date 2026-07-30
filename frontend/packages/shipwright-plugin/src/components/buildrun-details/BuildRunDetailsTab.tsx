@@ -14,12 +14,12 @@ type BuildRunDetailsTabProps = {
 };
 
 const BuildRunDetailsTab: FC<BuildRunDetailsTabProps> = ({ obj: buildRun }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('shipwright-plugin');
 
   return (
     <>
       <PaneBody>
-        <SectionHeading text={t('shipwright-plugin~BuildRun details')} />
+        <SectionHeading text={t('BuildRun details')} />
 
         <Grid hasGutter>
           <GridItem sm={6}>
@@ -31,9 +31,7 @@ const BuildRunDetailsTab: FC<BuildRunDetailsTabProps> = ({ obj: buildRun }) => {
                 <BuildRunSection buildRun={buildRun} />
               </FlexItem>
               <FlexItem>
-                <Content component={ContentVariants.h3}>
-                  {t('shipwright-plugin~BuildSpec details')}
-                </Content>
+                <Content component={ContentVariants.h3}>{t('BuildSpec details')}</Content>
                 <BuildSpecSection
                   obj={buildRun}
                   buildSpec={
@@ -58,7 +56,7 @@ const BuildRunDetailsTab: FC<BuildRunDetailsTabProps> = ({ obj: buildRun }) => {
 
       {buildRun.status?.conditions?.length ? (
         <PaneBody>
-          <SectionHeading text={t('shipwright-plugin~Conditions')} />
+          <SectionHeading text={t('Conditions')} />
           <Conditions conditions={buildRun.status.conditions} />
         </PaneBody>
       ) : null}

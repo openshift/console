@@ -53,7 +53,7 @@ export type HelmChartEntries = {
   [name: string]: HelmChartMetaData[];
 };
 
-export interface HelmReleaseResourcesData {
+interface HelmReleaseResourcesData {
   releaseName: string;
   releaseVersion: number | string;
   chartIcon: string;
@@ -136,11 +136,4 @@ export interface HelmChartRepositoryData {
   yamlData: string;
   formData: HelmChartRepositoryFormData;
   formReloadCount?: number;
-}
-
-export interface HelmChartURLData {
-  name: string;
-  namespace: string;
-  chartURL: string;
-  version: number | string;
 }

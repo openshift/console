@@ -26,7 +26,7 @@ type BuildSpecSectionProps = {
 };
 
 const BuildSpecSection: FC<BuildSpecSectionProps> = ({ obj, buildSpec, path }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('shipwright-plugin');
 
   if (!buildSpec) {
     return null;
@@ -52,7 +52,7 @@ const BuildSpecSection: FC<BuildSpecSectionProps> = ({ obj, buildSpec, path }) =
   return (
     <DescriptionList>
       {buildSpec.strategy ? (
-        <DetailsItem label={t('shipwright-plugin~Strategy')} obj={obj} path={`${path}.strategy`}>
+        <DetailsItem label={t('Strategy')} obj={obj} path={`${path}.strategy`}>
           {buildSpec.strategy.kind === 'ClusterBuildStrategy' ? (
             <ResourceLink
               groupVersionKind={getGroupVersionKindForModel(
@@ -75,7 +75,7 @@ const BuildSpecSection: FC<BuildSpecSectionProps> = ({ obj, buildSpec, path }) =
       ) : null}
       {url ? (
         <DetailsItem
-          label={t('shipwright-plugin~Source URL')}
+          label={t('Source URL')}
           obj={obj}
           path={isV1Alpha1Resource(obj) ? `${path}.source.url` : `${path}.source.git.url`}
         >
@@ -83,17 +83,13 @@ const BuildSpecSection: FC<BuildSpecSectionProps> = ({ obj, buildSpec, path }) =
         </DetailsItem>
       ) : null}
       {contextDir ? (
-        <DetailsItem
-          label={t('shipwright-plugin~Context dir')}
-          obj={obj}
-          path={`${path}.source.contextDir`}
-        >
+        <DetailsItem label={t('Context dir')} obj={obj} path={`${path}.source.contextDir`}>
           <ClipboardCopy variant={ClipboardCopyVariant.inlineCompact}>{contextDir}</ClipboardCopy>
         </DetailsItem>
       ) : null}
       {credentials ? (
         <DetailsItem
-          label={t('shipwright-plugin~Source credentials')}
+          label={t('Source credentials')}
           obj={obj}
           path={
             isV1Alpha1Resource(obj)
@@ -109,7 +105,7 @@ const BuildSpecSection: FC<BuildSpecSectionProps> = ({ obj, buildSpec, path }) =
         </DetailsItem>
       ) : null}
       {isV1Alpha1Resource(obj) && buildSpec?.sources?.length ? (
-        <DetailsItem label={t('shipwright-plugin~Sources')} obj={obj} path={`${path}.sources`}>
+        <DetailsItem label={t('Sources')} obj={obj} path={`${path}.sources`}>
           {buildSpec.sources?.map((source) => (
             <Fragment key={source.name}>
               {source.name}:<br />
@@ -121,7 +117,7 @@ const BuildSpecSection: FC<BuildSpecSectionProps> = ({ obj, buildSpec, path }) =
       ) : null}
       {dockerFile ? (
         <DetailsItem
-          label={t('shipwright-plugin~Dockerfile')}
+          label={t('Dockerfile')}
           obj={obj}
           path={
             isV1Alpha1Resource(obj)
@@ -134,7 +130,7 @@ const BuildSpecSection: FC<BuildSpecSectionProps> = ({ obj, buildSpec, path }) =
       ) : null}
       {builderImage ? (
         <DetailsItem
-          label={t('shipwright-plugin~Builder image')}
+          label={t('Builder image')}
           obj={obj}
           path={
             isV1Alpha1Resource(obj)
@@ -146,17 +142,13 @@ const BuildSpecSection: FC<BuildSpecSectionProps> = ({ obj, buildSpec, path }) =
         </DetailsItem>
       ) : null}
       {buildSpec.output?.image ? (
-        <DetailsItem
-          label={t('shipwright-plugin~Output image')}
-          obj={obj}
-          path={`${path}.output.image`}
-        >
+        <DetailsItem label={t('Output image')} obj={obj} path={`${path}.output.image`}>
           <BuildOutput buildSpec={buildSpec} />
         </DetailsItem>
       ) : null}
       {outputCredentials ? (
         <DetailsItem
-          label={t('shipwright-plugin~Output credentials')}
+          label={t('Output credentials')}
           obj={obj}
           path={
             isV1Alpha1Resource(obj)

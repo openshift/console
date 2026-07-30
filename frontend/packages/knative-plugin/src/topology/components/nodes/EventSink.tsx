@@ -23,8 +23,8 @@ import type { WithCreateConnectorProps } from '@console/dynamic-plugin-sdk/src/e
 import { DeploymentModel } from '@console/internal/models';
 import { referenceForModel, referenceFor } from '@console/internal/module/k8s';
 import { usePodsWatcher } from '@console/shared/src/hooks/usePodsWatcher';
-import { PodSet } from '@console/topology/src/components/graph-view';
-import { BaseNode } from '@console/topology/src/components/graph-view/components/nodes';
+import { BaseNode } from '@console/topology/src/components/graph-view/components/nodes/BaseNode';
+import { PodSet } from '@console/topology/src/components/graph-view/components/nodes/PodSet';
 import { KafkaSinkModel } from '../../../models';
 import { getEventSourceIcon } from '../../../utils/get-knative-icon';
 import { EventSinkIcon } from '../../../utils/icons';
@@ -35,7 +35,7 @@ import { MOVE_EV_SRC_CONNECTOR_OPERATION } from '../knativeComponentUtils';
 
 import './EventSource.scss';
 
-export type EventSinkProps = {
+type EventSinkProps = {
   element: Node;
   dragging?: boolean;
   edgeDragging?: boolean;
@@ -65,7 +65,7 @@ const EventSink: FC<EventSinkProps> = ({
 }) => {
   useAnchor(EventSinkTargetAnchor, AnchorEnd.target, TYPE_EVENT_SINK_LINK);
   const ref = useRef();
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const [hover, hoverRef] = useHover();
   const groupRefs = useCombineRefs(dragNodeRef, dndDropRef);
   const { data, resources, resource } = element.getData();
@@ -127,7 +127,7 @@ const EventSink: FC<EventSinkProps> = ({
     <Tooltip
       content={
         edgeOperation === MOVE_EV_SRC_CONNECTOR_OPERATION
-          ? t('knative-plugin~Move sink to KafkaSink')
+          ? t('Move sink to KafkaSink')
           : tooltipLabel ?? ''
       }
       trigger="manual"

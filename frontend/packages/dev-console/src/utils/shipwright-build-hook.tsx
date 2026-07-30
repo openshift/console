@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ImportStrategy } from '@console/git-service/src';
+import { ImportStrategy } from '@console/git-service/src/types/git';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { useFlag } from '@console/shared/src/hooks/useFlag';

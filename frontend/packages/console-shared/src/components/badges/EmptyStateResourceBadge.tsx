@@ -8,12 +8,10 @@ type EmptyStateResourceBadgeProps = {
   model: K8sKind;
 };
 
-const EmptyStateResourceBadge: FC<EmptyStateResourceBadgeProps> = ({ model }) => (
+export const EmptyStateResourceBadge: FC<EmptyStateResourceBadgeProps> = ({ model }) => (
   <div className="ocs-empty-state-resource-badge">
     <Badge className="ocs-empty-state-resource-badge--badge" isRead>
       {model.abbr || kindToAbbr(model.kind)}
     </Badge>
   </div>
 );
-
-export default EmptyStateResourceBadge;

@@ -46,7 +46,7 @@ export const ClusterServiceVersionHeaderTitle: FC<ClusterServiceVersionHeaderTit
   version,
   deprecation,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
 
   return (
     <div className="co-clusterserviceversion-logo__name">
@@ -61,7 +61,7 @@ export const ClusterServiceVersionHeaderTitle: FC<ClusterServiceVersionHeaderTit
       </Title>
       {provider && (
         <span className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle">
-          {t('olm~{{version}} provided by {{provider}}', {
+          {t('{{version}} provided by {{provider}}', {
             version: version || '',
             provider: _.get(provider, 'name', provider),
           })}

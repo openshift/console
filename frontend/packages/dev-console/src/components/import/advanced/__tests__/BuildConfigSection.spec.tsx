@@ -18,8 +18,8 @@ jest.mock('@console/internal/module/k8s', () => ({
   modelFor: () => ({ kind: 'Deployment', crd: false }),
 }));
 
-jest.mock('@console/shared', () => ({
-  ...jest.requireActual('@console/shared'),
+jest.mock('@console/shared/src/components/formik-fields/CheckboxField', () => ({
+  ...jest.requireActual('@console/shared/src/components/formik-fields/CheckboxField'),
   CheckboxField: (props) => `CheckboxField ${props.name}`,
 }));
 

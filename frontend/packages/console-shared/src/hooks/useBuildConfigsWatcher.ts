@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import type { BuildConfigOverviewItem } from '../types';
+import type { BuildConfigOverviewItem } from '../types/resource';
 import { getBuildConfigsForResource } from '../utils/resource-utils';
 
 export type BuildConfigData = {

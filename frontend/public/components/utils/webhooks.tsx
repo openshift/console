@@ -1,20 +1,20 @@
 import type { FC } from 'react';
 import { useState, useEffect } from 'react';
-import * as _ from 'lodash';
-import { Base64 } from 'js-base64';
-import { PasteIcon } from '@patternfly/react-icons';
 import { Button, AlertVariant } from '@patternfly/react-core';
+import { RhUiClipboardIcon } from '@patternfly/react-icons';
+import { Base64 } from 'js-base64';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { K8sResourceKind, k8sGet } from '../../module/k8s';
+import { SecretModel } from '../../models';
+import type { K8sResourceKind } from '../../module/k8s';
+import { k8sGet } from '../../module/k8s';
+import { ErrorModal } from '../modals/error-modal';
 import { ExpandableAlert } from './alerts';
 import { SectionHeading } from './headings';
-import { ResourceLink } from './resource-link';
 import { useAccessReview } from './rbac';
-import { SecretModel } from '../../models';
-import { ErrorModal } from '../modals/error-modal';
-import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
+import { ResourceLink } from './resource-link';
 
 const kubeAPIServerURL = window.SERVER_FLAGS.kubeAPIServerURL || 'https://<api-server>';
 enum TriggerTypes {
@@ -51,7 +51,7 @@ const getTableColumnClasses = (canGetSecret: boolean) => {
 };
 
 export const WebhookTriggers: FC<WebhookTriggersProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const launchModal = useOverlay();
   const { resource } = props;
   const { name, namespace } = resource.metadata;
@@ -105,11 +105,13 @@ export const WebhookTriggers: FC<WebhookTriggersProps> = (props) => {
           );
         },
       ),
-    ).then((secrets) => {
-      setSecretErrors(errors);
-      setWebhookSecrets(_.compact(secrets));
-      setLoaded(true);
-    });
+    )
+      .then((secrets) => {
+        setSecretErrors(errors);
+        setWebhookSecrets(_.compact(secrets));
+        setLoaded(true);
+      })
+      .catch(() => {});
   }, [secretNames, isLoaded, canGetSecret, namespace, launchModal]);
 
   if (_.isEmpty(webhookTriggers)) {
@@ -119,7 +121,7 @@ export const WebhookTriggers: FC<WebhookTriggersProps> = (props) => {
   const getWebhookURL = (trigger: WebhookTrigger, secret?: string) => {
     const triggerProperty = getTriggerProperty(trigger);
     return `${kubeAPIServerURL}/apis/build.openshift.io/v1/namespaces/${namespace}/buildconfigs/${name}/webhooks/${
-      secret ? secret : '<secret>'
+      secret || '<secret>'
     }/${triggerProperty}`;
   };
 
@@ -127,7 +129,7 @@ export const WebhookTriggers: FC<WebhookTriggersProps> = (props) => {
     const triggerProperty = getTriggerProperty(trigger);
     const secretName = _.get(trigger, [triggerProperty, 'secretReference', 'name']);
     if (!secretName) {
-      return <span className="pf-v6-u-text-color-subtle">No secret</span>;
+      return <span className="pf-v6-u-text-color-subtle">{t('No secret')}</span>;
     }
     const webhookSecret: K8sResourceKind = webhookSecrets.find(
       (secret: K8sResourceKind) => secret.metadata.name === secretName,
@@ -159,7 +161,7 @@ export const WebhookTriggers: FC<WebhookTriggersProps> = (props) => {
     if (!_.has(webhookSecret, 'data.WebHookSecretKey')) {
       launchModal(ErrorModal, {
         error: t(
-          'public~Secret referenced in the {{triggerProperty}} webhook trigger does not contain "WebHookSecretKey" key. Webhook trigger won’t work due to the invalid secret reference',
+          'Secret referenced in the {{triggerProperty}} webhook trigger does not contain "WebHookSecretKey" key. Webhook trigger won’t work due to the invalid secret reference',
           { triggerProperty },
         ),
       });
@@ -179,13 +181,13 @@ export const WebhookTriggers: FC<WebhookTriggersProps> = (props) => {
     );
     return webhookSecret || plainSecret ? (
       <Button
-        icon={<PasteIcon />}
+        icon={<RhUiClipboardIcon />}
         variant="link"
         type="button"
         onClick={() => copyWebhookToClipboard(trigger)}
       >
         &nbsp;
-        {t('public~Copy URL with Secret')}
+        {t('Copy URL with Secret')}
       </Button>
     ) : null;
   };
@@ -202,14 +204,15 @@ export const WebhookTriggers: FC<WebhookTriggersProps> = (props) => {
           ))}
         />
       )}
-      <SectionHeading text={t('public~Webhooks')} />
+      <SectionHeading text={t('Webhooks')} />
       <div className="co-table-container">
         <table className="pf-v6-c-table pf-m-compact pf-m-border-rows">
           <thead className="pf-v6-c-table__thead">
             <tr className="pf-v6-c-table__tr">
-              <th className={tableColumnClasses[0]}>{t('public~Type')}</th>
-              <th className={tableColumnClasses[1]}>{t('public~Webhook URL')}</th>
-              <th className={tableColumnClasses[2]}>{t('public~Secret')}</th>
+              <th className={tableColumnClasses[0]}>{t('Type')}</th>
+              <th className={tableColumnClasses[1]}>{t('Webhook URL')}</th>
+              <th className={tableColumnClasses[2]}>{t('Secret')}</th>
+              {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
               <th className={tableColumnClasses[3]} />
             </tr>
           </thead>
@@ -238,7 +241,7 @@ export type WebhookTriggersProps = {
   resource: K8sResourceKind;
 };
 
-export type WebhookTrigger = {
+type WebhookTrigger = {
   type: string;
   [key: string]: any;
 };

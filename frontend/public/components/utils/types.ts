@@ -28,13 +28,13 @@ export type HumanizeResult = {
   unit: string;
 };
 
-export type Humanize = {
-  (v: React.ReactText, initialUnit?: string, preferredUnit?: string): HumanizeResult;
-};
+export type Humanize = (
+  v: React.ReactText,
+  initialUnit?: string,
+  preferredUnit?: string,
+) => HumanizeResult;
 
 export enum NotificationTypes {
   info = 'info',
   warning = 'warning',
-  critical = 'danger',
-  success = 'success',
 }

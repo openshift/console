@@ -8,8 +8,8 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { ConsoleLinkModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { getCheDecoratorData, getEditURL } from '../../../../../utils';
-import Decorator from './Decorator';
+import { getCheDecoratorData, getEditURL } from '../../../../../utils/topology-utils';
+import { Decorator } from './Decorator';
 
 interface DefaultDecoratorProps {
   element: Node;
@@ -18,9 +18,9 @@ interface DefaultDecoratorProps {
   y: number;
 }
 
-const EditDecorator: FC<DefaultDecoratorProps> = ({ element, radius, x, y }) => {
+export const EditDecorator: FC<DefaultDecoratorProps> = ({ element, radius, x, y }) => {
   const ref = useRef();
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
     isList: true,
     kind: referenceForModel(ConsoleLinkModel),
@@ -36,7 +36,7 @@ const EditDecorator: FC<DefaultDecoratorProps> = ({ element, radius, x, y }) => 
   if (!repoIcon) {
     return null;
   }
-  const label = t('topology~Edit source code');
+  const label = t('Edit source code');
   return (
     <Tooltip triggerRef={ref} content={label} position={TooltipPosition.right}>
       <g ref={ref}>
@@ -47,5 +47,3 @@ const EditDecorator: FC<DefaultDecoratorProps> = ({ element, radius, x, y }) => 
     </Tooltip>
   );
 };
-
-export default EditDecorator;

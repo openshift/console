@@ -1,9 +1,16 @@
 import { checkErrors, testName } from '@console/cypress-integration-tests/support';
 
-// Disabled due to createRoot concurrent rendering failures (OCPBUGS-82506)
-xdescribe('Interacting with Operators', () => {
-  before(() => {
+describe('Interacting with Operators', () => {
+  before(function () {
     cy.login();
+    // cy.window() returns a Cypress Chainable, not a true Promise — it has no .catch() method.
+    // Cypress's command queue manages error handling; this disable is required.
+    // eslint-disable-next-line promise/catch-or-return
+    cy.window().then((win) => {
+      if (win.SERVER_FLAGS?.techPreview) {
+        this.skip();
+      }
+    });
     cy.createProjectWithCLI(testName);
   });
 
@@ -40,11 +47,16 @@ xdescribe('Interacting with Operators', () => {
         cy.log('more than one tile should be present');
         cy.get('.co-catalog-tile').its('length').should('be.gt', 0);
         cy.log('the first tile title text for Certified should not be the same as Community');
+        // Wait for catalog to re-render with new filter - under React 18 concurrent rendering,
+        // tile updates are batched and happen asynchronously. Use .should() callback to retry
+        // until the tile content actually changes.
         cy.get('.co-catalog-tile')
           .first()
           .find('.catalog-tile-pf-title')
-          .invoke('text')
-          .should('not.equal', origCatalogTitleTxt);
+          .should(($title) => {
+            const newTitleTxt = $title.text();
+            expect(newTitleTxt).not.to.equal(origCatalogTitleTxt);
+          });
       });
 
     cy.log('filters Operators by name');

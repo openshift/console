@@ -33,13 +33,13 @@ const QuickSearchBar = forwardRef<HTMLInputElement, QuickSearchBarProps>(
     },
     inputRef,
   ) => {
-    const { t } = useTranslation();
+    const { t } = useTranslation('console-shared');
     return (
       <TextInputGroup data-test="quick-search-bar">
         <TextInputGroupMain
           type="text"
           ref={inputRef}
-          aria-label={t('console-shared~Quick search bar')}
+          aria-label={t('Quick search bar')}
           placeholder={searchPlaceholder}
           onChange={onSearch}
           autoFocus={autoFocus}
@@ -50,9 +50,7 @@ const QuickSearchBar = forwardRef<HTMLInputElement, QuickSearchBarProps>(
         {(!itemsLoaded || showNoResults) && (
           <TextInputGroupUtilities className="pf-v6-u-mr-md">
             {itemsLoaded && showNoResults && (
-              <InputGroupText data-test="quick-search-no-results">
-                {t('console-shared~No results')}
-              </InputGroupText>
+              <InputGroupText data-test="quick-search-no-results">{t('No results')}</InputGroupText>
             )}
             {!itemsLoaded && (
               <InputGroupText>

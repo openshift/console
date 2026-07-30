@@ -1,4 +1,4 @@
-import { act, renderHook } from '@testing-library/react';
+import { renderHook, waitFor } from '@testing-library/react';
 import { checkAccess } from '@console/internal/components/utils';
 import type {
   AccessReviewResourceAttributes,
@@ -29,15 +29,14 @@ describe('useAddActionsAccessReviews', () => {
     const extensionsWithAccessReview = addActionExtensions.filter(
       (action) => !!action.properties.accessReview,
     );
-    const { result, rerender } = renderHook(() =>
+    const { result } = renderHook(() =>
       useAddActionsAccessReviews(namespace, extensionsWithAccessReview),
     );
-    await act(async () => {
-      rerender();
+    await waitFor(() => {
+      const accessReviewResults = Object.values(result.current);
+      expect(accessReviewResults.length).toEqual(extensionsWithAccessReview.length);
+      expect(accessReviewResults.every((x) => x === AccessReviewStatus.DENIED)).toBe(true);
     });
-    const accessReviewResults = Object.values(result.current);
-    expect(accessReviewResults.length).toEqual(extensionsWithAccessReview.length);
-    expect(accessReviewResults.every((x) => x === AccessReviewStatus.DENIED)).toBe(true);
   });
 
   it('should return access review status allowed for all extensions which do not have an accessReview prop', () => {
@@ -57,15 +56,14 @@ describe('useAddActionsAccessReviews', () => {
     const extensionsWithAccessReview = addActionExtensions.filter(
       (action) => !!action.properties.accessReview,
     );
-    const { result, rerender } = renderHook(() =>
+    const { result } = renderHook(() =>
       useAddActionsAccessReviews(namespace, extensionsWithAccessReview),
     );
-    await act(async () => {
-      rerender();
+    await waitFor(() => {
+      const accessReviewResults = Object.values(result.current);
+      expect(accessReviewResults.length).toEqual(extensionsWithAccessReview.length);
+      expect(accessReviewResults.every((x) => x === AccessReviewStatus.ALLOWED)).toBe(true);
     });
-    const accessReviewResults = Object.values(result.current);
-    expect(accessReviewResults.length).toEqual(extensionsWithAccessReview.length);
-    expect(accessReviewResults.every((x) => x === AccessReviewStatus.ALLOWED)).toBe(true);
   });
 
   it('should return accessReviewResults with proper access review status for extensions which do not have an accessReview prop or for which accessReviewResult is true', async () => {
@@ -83,18 +81,15 @@ describe('useAddActionsAccessReviews', () => {
       (resourceAttributes: AccessReviewResourceAttributes) =>
         createCheckAccessPromise(resourceAttributes.group === mockAccessGroup),
     );
-    const { result, rerender } = renderHook(() =>
-      useAddActionsAccessReviews(namespace, addActionExtensions),
-    );
-    await act(async () => {
-      rerender();
-    });
-    expect(Object.entries(result.current).length).toEqual(addActionExtensions.length);
-    extensionsWithMockAccessGroup.forEach((ext) => {
-      expect(result.current[ext.properties.id]).toBe(AccessReviewStatus.ALLOWED);
-    });
-    extensionsWithoutMockAccessGroup.forEach((ext) => {
-      expect(result.current[ext.properties.id]).toBe(AccessReviewStatus.DENIED);
+    const { result } = renderHook(() => useAddActionsAccessReviews(namespace, addActionExtensions));
+    await waitFor(() => {
+      expect(Object.entries(result.current).length).toEqual(addActionExtensions.length);
+      extensionsWithMockAccessGroup.forEach((ext) => {
+        expect(result.current[ext.properties.id]).toBe(AccessReviewStatus.ALLOWED);
+      });
+      extensionsWithoutMockAccessGroup.forEach((ext) => {
+        expect(result.current[ext.properties.id]).toBe(AccessReviewStatus.DENIED);
+      });
     });
   });
 });

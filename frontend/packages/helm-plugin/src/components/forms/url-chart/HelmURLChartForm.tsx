@@ -2,12 +2,20 @@ import type { FC } from 'react';
 import { useEffect } from 'react';
 import { TextInputTypes, Grid, GridItem } from '@patternfly/react-core';
 import type { FormikProps } from 'formik';
+import * as fuzzy from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import { InputField, FormFooter, FormBody, FormHeader, FlexForm } from '@console/shared';
+import { FlexForm } from '@console/shared/src/components/form-utils/FlexForm';
+import { FormBody } from '@console/shared/src/components/form-utils/FormBody';
+import { FormFooter } from '@console/shared/src/components/form-utils/FormFooter';
+import { FormHeader } from '@console/shared/src/components/form-utils/FormHeader';
+import { InputField } from '@console/shared/src/components/formik-fields/InputField';
+import { ResourceDropdownField } from '@console/shared/src/components/formik-fields/ResourceDropdownField';
 import type { HelmURLChartFormData } from './types';
+import { useBasicAuthSecretDropdown, CREATE_SECRET_KEY } from './useBasicAuthSecretDropdown';
+import { useSecretResources } from './useSecretResources';
 
-export interface HelmURLChartFormProps {
+interface HelmURLChartFormProps {
   namespace: string;
   onNext: () => void;
 }
@@ -17,14 +25,24 @@ const HelmURLChartForm: FC<FormikProps<HelmURLChartFormData> & HelmURLChartFormP
   status,
   isSubmitting,
   onNext,
+  namespace,
   isValid,
   dirty,
   values,
   setFieldValue,
   setFieldError,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
+  const { handleSecretChange } = useBasicAuthSecretDropdown({
+    namespace,
+    currentSecretName: values.basicAuthSecretName,
+    setFieldValue,
+  });
 
+  const autocompleteFilter = (strText: string, item: any, key?: string): boolean =>
+    fuzzy(strText, item?.props?.name || (typeof item === 'string' ? item : key) || '');
+
+  const secretResources = useSecretResources(namespace);
   const isNextDisabled = !isValid || !dirty || isSubmitting;
 
   // Auto-populate releaseName and chartVersion from URL
@@ -34,7 +52,7 @@ const HelmURLChartForm: FC<FormikProps<HelmURLChartFormData> & HelmURLChartFormP
     try {
       url = new URL(values.chartURL);
     } catch {
-      setFieldError('chartURL', t('helm-plugin~Invalid chart URL format.'));
+      setFieldError('chartURL', t('Invalid chart URL format.'));
       return;
     }
     const scheme = url.protocol;
@@ -74,9 +92,9 @@ const HelmURLChartForm: FC<FormikProps<HelmURLChartFormData> & HelmURLChartFormP
     >
       <FormBody flexLayout>
         <FormHeader
-          title={t('helm-plugin~Install Helm chart from URL')}
+          title={t('Install Helm chart from URL')}
           helpText={t(
-            'helm-plugin~To install a Helm chart, enter the chart URL - Open Container Initiative (OCI) URL or HTTP/HTTPS tar file and version.',
+            'To install a Helm chart, enter the chart URL - Open Container Initiative (OCI) URL or HTTP/HTTPS tar file and version.',
           )}
           marginBottom="lg"
         />
@@ -86,9 +104,9 @@ const HelmURLChartForm: FC<FormikProps<HelmURLChartFormData> & HelmURLChartFormP
               <InputField
                 type={TextInputTypes.text}
                 name="chartURL"
-                label={t('helm-plugin~Chart URL')}
+                label={t('Chart URL')}
                 helpText={t(
-                  'helm-plugin~The OCI URL or HTTP/HTTPS tar file for the Helm chart; for example - oci://registry.example.com/charts/mychart or https://example.com/chart-1.0.0.tgz.',
+                  'The OCI URL or HTTP/HTTPS tar file for the Helm chart; for example - oci://registry.example.com/charts/mychart or https://example.com/chart-1.0.0.tgz.',
                 )}
                 placeholder="oci://registry.example.com/charts/mychart or https://example.com/chart-1.0.0.tgz"
                 required
@@ -99,8 +117,8 @@ const HelmURLChartForm: FC<FormikProps<HelmURLChartFormData> & HelmURLChartFormP
               <InputField
                 type={TextInputTypes.text}
                 name="releaseName"
-                label={t('helm-plugin~Release name')}
-                helpText={t('helm-plugin~Unique name for Helm release.')}
+                label={t('Release name')}
+                helpText={t('Unique name for Helm release.')}
                 required
                 data-test="oci-release-name"
               />
@@ -109,11 +127,34 @@ const HelmURLChartForm: FC<FormikProps<HelmURLChartFormData> & HelmURLChartFormP
               <InputField
                 type={TextInputTypes.text}
                 name="chartVersion"
-                label={t('helm-plugin~Chart version')}
-                helpText={t('helm-plugin~The version of chart to install.')}
+                label={t('Chart version')}
+                helpText={t('The version of chart to install.')}
                 placeholder="1.0.0"
                 required
                 data-test="oci-chart-version"
+              />
+            </GridItem>
+            <GridItem md={12}>
+              <ResourceDropdownField
+                name="basicAuthSecretName"
+                label={t('Secret for Basic authentication')}
+                resources={secretResources}
+                dataSelector={['metadata', 'name']}
+                fullWidth
+                placeholder={t('Select a secret')}
+                showBadge
+                autocompleteFilter={autocompleteFilter}
+                actionItems={[
+                  {
+                    actionTitle: t('Create Secret'),
+                    actionKey: CREATE_SECRET_KEY,
+                  },
+                ]}
+                onChange={handleSecretChange}
+                helpText={t(
+                  'Secret with "{{username}}" and "{{password}}" keys for OCI/HTTP(S) authentication.',
+                  { username: 'username', password: 'password' },
+                )}
               />
             </GridItem>
           </Grid>
@@ -123,9 +164,9 @@ const HelmURLChartForm: FC<FormikProps<HelmURLChartFormData> & HelmURLChartFormP
         handleReset={handleReset}
         errorMessage={status?.submitError}
         isSubmitting={isSubmitting}
-        submitLabel={t('helm-plugin~Next')}
+        submitLabel={t('Next')}
         disableSubmit={isNextDisabled}
-        resetLabel={t('helm-plugin~Cancel')}
+        resetLabel={t('Cancel')}
         sticky
       />
     </FlexForm>

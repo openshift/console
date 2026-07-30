@@ -7,7 +7,7 @@ type SecondaryStatusProps = {
   dataStatusID?: string;
 };
 
-const SecondaryStatus: FC<SecondaryStatusProps> = ({ status, className, dataStatusID }) => {
+export const SecondaryStatus: FC<SecondaryStatusProps> = ({ status, className, dataStatusID }) => {
   const statusLabel = _.compact(_.concat([], status)).join(', ');
   const cssClassName = className || '';
   if (statusLabel) {
@@ -21,5 +21,3 @@ const SecondaryStatus: FC<SecondaryStatusProps> = ({ status, className, dataStat
   }
   return null;
 };
-
-export default SecondaryStatus;

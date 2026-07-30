@@ -1,6 +1,5 @@
-import { useState, useCallback, FC } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router';
+import type { FC } from 'react';
+import { useState, useCallback } from 'react';
 import {
   Button,
   Content,
@@ -12,15 +11,18 @@ import {
   ModalHeader,
   ModalVariant,
 } from '@patternfly/react-core';
-import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import { ModalComponentProps } from '@console/shared/src/types/modal';
+import { Trans, useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
+import { getRequestedPVCSize } from '@console/shared/src/selectors/storage';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
+import { k8sPatch, referenceFor } from '../../module/k8s';
+import type { K8sKind, K8sResourceKind } from '../../module/k8s';
 import { RequestSizeInput } from '../utils/request-size-input';
 import { resourceObjPath } from '../utils/resource-link';
 import { validate, convertToBaseValue, humanizeBinaryBytesWithoutB } from '../utils/units';
-import { k8sPatch, referenceFor, K8sKind, K8sResourceKind } from '../../module/k8s/';
-import { getRequestedPVCSize } from '@console/shared/src/selectors/storage';
-import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
-import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 
 // Modal for expanding persistent volume claims
 const ExpandPVCModal: FC<ExpandPVCModalProps> = ({ resource, kind, close, cancel }) => {
@@ -30,7 +32,7 @@ const ExpandPVCModal: FC<ExpandPVCModalProps> = ({ resource, kind, close, cancel
   const [requestSizeUnit, setRequestSizeUnit] = useState(defaultSize[1] || 'Gi');
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const navigate = useNavigate();
 
   const handleRequestSizeInputChange = (obj) => {
@@ -49,10 +51,12 @@ const ExpandPVCModal: FC<ExpandPVCModalProps> = ({ resource, kind, close, cancel
         },
       ];
 
-      handlePromise(k8sPatch(kind, resource, patch)).then((res) => {
-        close();
-        navigate(resourceObjPath(res, referenceFor(res)));
-      });
+      handlePromise(k8sPatch(kind, resource, patch))
+        .then((res) => {
+          close();
+          navigate(resourceObjPath(res, referenceFor(res)));
+        })
+        .catch(() => {});
     },
     [requestSizeValue, requestSizeUnit, kind, resource, close, handlePromise, navigate],
   );
@@ -65,7 +69,7 @@ const ExpandPVCModal: FC<ExpandPVCModalProps> = ({ resource, kind, close, cancel
 
   return (
     <>
-      <ModalHeader title={t('public~Expand {{kind}}', { kind: kind.label })} />
+      <ModalHeader title={t('Expand {{kind}}', { kind: kind.label })} />
       <ModalBody>
         <Content component={ContentVariants.p}>
           <Trans t={t} ns="public">
@@ -76,9 +80,9 @@ const ExpandPVCModal: FC<ExpandPVCModalProps> = ({ resource, kind, close, cancel
           </Trans>
         </Content>
         <Form id="expand-pvc-form" onSubmit={submit}>
-          <FormGroup label={t('public~Total size')} isRequired fieldId="pvc-expand-size-input">
+          <FormGroup label={t('Total size')} isRequired fieldId="pvc-expand-size-input">
             <RequestSizeInput
-              name={t('public~requestSize')}
+              name={t('requestSize')}
               required
               onChange={handleRequestSizeInputChange}
               defaultRequestSizeUnit={requestSizeUnit}
@@ -99,10 +103,15 @@ const ExpandPVCModal: FC<ExpandPVCModalProps> = ({ resource, kind, close, cancel
           data-test="confirm-action"
           form="expand-pvc-form"
         >
-          {t('public~Expand')}
+          {t('Expand')}
         </Button>
-        <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
-          {t('public~Cancel')}
+        <Button
+          variant="link"
+          onClick={cancel}
+          data-test="modal-cancel-action"
+          data-test-id="modal-cancel-action"
+        >
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </>

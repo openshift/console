@@ -1,13 +1,13 @@
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { getDeletetionTimestamp } from '@console/shared/src/selectors';
+import { getDeletetionTimestamp } from '@console/shared/src/selectors/common';
 import type { StatusProps } from '../components/types';
 import {
   NODE_STATUS_TITLE_KEYS,
   NODE_STATUS_UNDER_MAINTENANCE,
   NODE_STATUS_STOPPING_MAINTENANCE,
   NODE_STATUS_STARTING_MAINTENANCE,
-} from '../constants';
-import { getNodeMaintenancePhase } from '../selectors';
+} from '../constants/node-maintenance';
+import { getNodeMaintenancePhase } from '../selectors/node-maintenance';
 
 export const getNodeMaintenanceStatus = (maintenance: K8sResourceKind): StatusProps => {
   if (!maintenance) return null;

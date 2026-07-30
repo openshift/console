@@ -7,8 +7,8 @@ import { asAccessReview, resourceObjPath } from '@console/internal/components/ut
 import { truncateMiddle } from '@console/internal/components/utils/truncate-middle';
 import type { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { RESOURCE_NAME_TRUNCATE_LENGTH } from '@console/shared/src/constants';
-import { cleanUpWorkload } from '@console/topology/src/utils';
+import { RESOURCE_NAME_TRUNCATE_LENGTH } from '@console/shared/src/constants/common';
+import { cleanUpWorkload } from '@console/topology/src/utils/application-utils';
 import { usePubSubModalLauncher } from '../components/pub-sub/PubSubController';
 import { useDeleteRevisionModalLauncher } from '../components/revisions/DeleteRevisionModalController';
 import { useSinkPubsubModalLauncher } from '../components/sink-pubsub/SinkPubsubController';

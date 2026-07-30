@@ -10,14 +10,14 @@ import { SinkType } from '../add/import-types';
 import { craftResourceKey } from '../pub-sub/pub-sub-utils';
 import SinkSourceModal from './SinkSourceModal';
 
-export interface SinkSourceProps {
+interface SinkSourceProps {
   source: K8sResourceKind;
   cancel?: () => void;
   close?: () => void;
 }
 
 const SinkSource: FC<SinkSourceProps> = ({ source, cancel, close }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const {
     metadata: { namespace, name },
     spec,
@@ -65,7 +65,7 @@ const SinkSource: FC<SinkSourceProps> = ({ source, cancel, close }) => {
         close();
       })
       .catch((err) => {
-        const errMessage = err.message || t('knative-plugin~An error occurred. Please try again');
+        const errMessage = err.message || t('An error occurred. Please try again');
         action.setStatus({ error: errMessage });
       });
   };

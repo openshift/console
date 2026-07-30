@@ -4,10 +4,10 @@ import type { FormikValues } from 'formik';
 import { useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
-import { ImportStrategy } from '@console/git-service/src/types';
+import { ImportStrategy } from '@console/git-service/src/types/git';
 import { LoadingInline } from '@console/internal/components/utils';
-import type { SelectInputOption } from '@console/shared';
-import { SingleDropdownField } from '@console/shared';
+import type { SelectInputOption } from '@console/shared/src/components/formik-fields/field-types';
+import { SingleDropdownField } from '@console/shared/src/components/formik-fields/SingleDropdownField';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { FLAG_OPENSHIFT_BUILDCONFIG, FLAG_OPENSHIFT_PIPELINE } from '../../../../const';
 import {
@@ -24,7 +24,7 @@ type BuildOptionProps = {
 };
 
 export const BuildOption: FC<BuildOptionProps> = ({ isDisabled, importStrategy }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const { setFieldValue } = useFormikContext<FormikValues>();
   const isBuildV1Enabled = useFlag(FLAG_OPENSHIFT_BUILDCONFIG);
   const isShipwrightBuildsEnabled = useShipwrightBuilds();
@@ -42,7 +42,7 @@ export const BuildOption: FC<BuildOptionProps> = ({ isDisabled, importStrategy }
         label: t(ReadableBuildOptions[BuildOptions.SHIPWRIGHT_BUILD]),
         value: BuildOptions.SHIPWRIGHT_BUILD,
         description: t(
-          'devconsole~Shipwright is an extensible framework for building container images on OpenShift Container Platform cluster.',
+          'Shipwright is an extensible framework for building container images on OpenShift Container Platform cluster.',
         ),
       });
     }
@@ -52,7 +52,7 @@ export const BuildOption: FC<BuildOptionProps> = ({ isDisabled, importStrategy }
         label: t(ReadableBuildOptions[BuildOptions.BUILDS]),
         value: BuildOptions.BUILDS,
         description: t(
-          'devconsole~Build configuration describes build definitions used for transforming source code into a runnable container image.',
+          'Build configuration describes build definitions used for transforming source code into a runnable container image.',
         ),
       });
     }
@@ -63,7 +63,7 @@ export const BuildOption: FC<BuildOptionProps> = ({ isDisabled, importStrategy }
         label: t(ReadableBuildOptions[BuildOptions.PIPELINES]),
         value: BuildOptions.PIPELINES,
         description: t(
-          'devconsole~Build using pipeline describes a process for transforming source code into a runnable container image. Pipelines support can be added using Red Hat OpenShift Pipelines Operator.',
+          'Build using pipeline describes a process for transforming source code into a runnable container image. Pipelines support can be added using Red Hat OpenShift Pipelines Operator.',
         ),
       });
     }
@@ -90,7 +90,7 @@ export const BuildOption: FC<BuildOptionProps> = ({ isDisabled, importStrategy }
   return strategyLoaded ? (
     <SingleDropdownField
       name={fieldName}
-      label={t('devconsole~Build option')}
+      label={t('Build option')}
       options={selectInputOptions}
       onChange={onChange}
       isDisabled={isDisabled}

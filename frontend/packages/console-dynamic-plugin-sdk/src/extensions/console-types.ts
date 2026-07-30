@@ -5,10 +5,17 @@ import type {
   ReactNodeArray,
   SetStateAction,
   Dispatch,
+  ElementType,
 } from 'react';
+import type { K8sResourceCommon, ObjectMetadata } from '@openshift/api-types';
+import type {
+  Extension,
+  ExtensionPredicate,
+  LoadedAndResolvedExtension,
+} from '@openshift/dynamic-plugin-sdk';
 import type { QuickStartContextValues } from '@patternfly/quickstarts';
 import type { CodeEditorProps as PfCodeEditorProps } from '@patternfly/react-code-editor';
-import type { ButtonProps } from '@patternfly/react-core';
+import type { AlertVariant, ButtonProps } from '@patternfly/react-core';
 import type {
   ICell,
   OnSelect,
@@ -26,75 +33,18 @@ import type {
   PrometheusEndpoint,
   PrometheusLabels,
   PrometheusValue,
-  ResolvedExtension,
   Selector,
 } from '../api/common-types';
-import type { Extension, ExtensionTypeGuard } from '../types';
 import type { CustomDataSource } from './dashboard-data-source';
 
-/**
- * ManagedFieldsEntry is a workflow-id, a FieldSet and the group version of the resource that the fieldset applies to.
- */
-export interface ManagedFieldsEntry {
-  /**
-   * APIVersion defines the version of this resource that this field set applies to. The format is "group/version" just like the top-level APIVersion field. It is necessary to track the version of a field set because it cannot be automatically converted.
-   */
-  apiVersion?: string;
-  /**
-   * FieldsType is the discriminator for the different fields format and version. There is currently only one possible value: "FieldsV1"
-   */
-  fieldsType?: string;
-  /**
-   * FieldsV1 holds the first JSON version format as described in the "FieldsV1" type.
-   */
-  fieldsV1?: {};
-  /**
-   * Manager is an identifier of the workflow managing these fields.
-   */
-  manager?: string;
-  /**
-   * Operation is the type of operation which lead to this ManagedFieldsEntry being created. The only valid values for this field are 'Apply' and 'Update'.
-   */
-  operation?: string;
-  /**
-   * Subresource is the name of the subresource used to update that object, or empty string if the object was updated through the main resource. The value of this field is used to distinguish between managers, even if they share the same name. For example, a status update will be distinct from a regular update using the same manager name. Note that the APIVersion field is not related to the Subresource field and it always corresponds to the version of the main resource.
-   */
-  subresource?: string;
-  /**
-   * Time is the timestamp of when the ManagedFields entry was added. The timestamp will also be updated if a field is added, the manager changes any of the owned fields value or removes a field. The timestamp does not update when a field is removed from the entry because another manager took it over.
-   */
-  time?: string;
-}
-
-/**
- * OwnerReference contains enough information to let you identify an owning object. An owning object must be in the same namespace as the dependent, or be cluster-scoped, so there is no namespace field.
- */
-export interface OwnerReference {
-  /**
-   * API version of the referent.
-   */
-  apiVersion: string;
-  /**
-   * If true, AND if the owner has the "foregroundDeletion" finalizer, then the owner cannot be deleted from the key-value store until this reference is removed. See https://kubernetes.io/docs/concepts/architecture/garbage-collection/#foreground-deletion for how the garbage collector interacts with this field and enforces the foreground deletion. Defaults to false. To set this field, a user needs "delete" permission of the owner, otherwise 422 (Unprocessable Entity) will be returned.
-   */
-  blockOwnerDeletion?: boolean;
-  /**
-   * If true, this reference points to the managing controller.
-   */
-  controller?: boolean;
-  /**
-   * Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-   */
-  kind: string;
-  /**
-   * Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names#names
-   */
-  name: string;
-  /**
-   * UID of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names#uids
-   */
-  uid: string;
-}
+/* eslint-disable no-barrel-files/no-barrel-files */
+export type {
+  ManagedFieldsEntry,
+  OwnerReference,
+  ObjectMetadata,
+  K8sResourceCommon,
+} from '@openshift/api-types';
+/* eslint-enable no-barrel-files/no-barrel-files */
 
 export type ObjectReference = {
   kind?: string;
@@ -105,114 +55,6 @@ export type ObjectReference = {
   resourceVersion?: string;
   fieldPath?: string;
 };
-
-/**
- * ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
- */
-export interface ObjectMetadata {
-  /**
-   * Annotations is an unstructured key value map stored with a resource that may be set by external tools to store and retrieve arbitrary metadata. They are not queryable and should be preserved when modifying objects. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations
-   */
-  annotations?: { [k: string]: string };
-  clusterName?: string;
-  /**
-   * CreationTimestamp is a timestamp representing the server time when this object was created. It is not guaranteed to be set in happens-before order across separate operations. Clients may not set this value. It is represented in RFC3339 form and is in UTC.
-   *
-   * Populated by the system. Read-only. Null for lists. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
-   */
-  creationTimestamp?: string;
-  /**
-   * Number of seconds allowed for this object to gracefully terminate before it will be removed from the system. Only set when deletionTimestamp is also set. May only be shortened. Read-only.
-   */
-  deletionGracePeriodSeconds?: number;
-  /**
-   * DeletionTimestamp is RFC 3339 date and time at which this resource will be deleted. This field is set by the server when a graceful deletion is requested by the user, and is not directly settable by a client. The resource is expected to be deleted (no longer visible from resource lists, and not reachable by name) after the time in this field, once the finalizers list is empty. As long as the finalizers list contains items, deletion is blocked. Once the deletionTimestamp is set, this value may not be unset or be set further into the future, although it may be shortened or the resource may be deleted prior to this time. For example, a user may request that a pod is deleted in 30 seconds. The Kubelet will react by sending a graceful termination signal to the containers in the pod. After that 30 seconds, the Kubelet will send a hard termination signal (SIGKILL) to the container and after cleanup, remove the pod from the API. In the presence of network partitions, this object may still exist after this timestamp, until an administrator or automated process can determine the resource is fully terminated. If not set, graceful deletion of the object has not been requested.
-   *
-   * Populated by the system when a graceful deletion is requested. Read-only. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
-   */
-  deletionTimestamp?: string;
-  /**
-   * Must be empty before the object is deleted from the registry. Each entry is an identifier for the responsible component that will remove the entry from the list. If the deletionTimestamp of the object is non-nil, entries in this list can only be removed. Finalizers may be processed and removed in any order.  Order is NOT enforced because it introduces significant risk of stuck finalizers. finalizers is a shared field, any actor with permission can reorder it. If the finalizer list is processed in order, then this can lead to a situation in which the component responsible for the first finalizer in the list is waiting for a signal (field value, external system, or other) produced by a component responsible for a finalizer later in the list, resulting in a deadlock. Without enforced ordering finalizers are free to order amongst themselves and are not vulnerable to ordering changes in the list.
-   */
-  finalizers?: string[];
-  /**
-   * GenerateName is an optional prefix, used by the server, to generate a unique name ONLY IF the Name field has not been provided. If this field is used, the name returned to the client will be different than the name passed. This value will also be combined with a unique suffix. The provided value has the same validation rules as the Name field, and may be truncated by the length of the suffix required to make the value unique on the server.
-   *
-   * If this field is specified and the generated name exists, the server will return a 409.
-   *
-   * Applied only if Name is not specified. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#idempotency
-   */
-  generateName?: string;
-  /**
-   * A sequence number representing a specific generation of the desired state. Populated by the system. Read-only.
-   */
-  generation?: number;
-  /**
-   * Map of string keys and values that can be used to organize and categorize (scope and select) objects. May match selectors of replication controllers and services. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels
-   */
-  labels?: { [k: string]: string };
-  /**
-   * ManagedFields maps workflow-id and version to the set of fields that are managed by that workflow. This is mostly for internal housekeeping, and users typically shouldn't need to set or understand this field. A workflow can be the user's name, a controller's name, or the name of a specific apply path like "ci-cd". The set of fields is always in the version that the workflow used when modifying the object.
-   */
-  managedFields?: ManagedFieldsEntry[];
-  /**
-   * Name must be unique within a namespace. Is required when creating resources, although some resources may allow a client to request the generation of an appropriate name automatically. Name is primarily intended for creation idempotence and configuration definition. Cannot be updated. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names#names
-   */
-  name?: string;
-  /**
-   * Namespace defines the space within which each name must be unique. An empty namespace is equivalent to the "default" namespace, but "default" is the canonical representation. Not all objects are required to be scoped to a namespace - the value of this field for those objects will be empty.
-   *
-   * Must be a DNS_LABEL. Cannot be updated. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces
-   */
-  namespace?: string;
-  /**
-   * List of objects depended by this object. If ALL objects in the list have been deleted, this object will be garbage collected. If this object is managed by a controller, then an entry in this list will point to this controller, with the controller field set to true. There cannot be more than one managing controller.
-   */
-  ownerReferences?: OwnerReference[];
-  /**
-   * An opaque value that represents the internal version of this object that can be used by clients to determine when objects have changed. May be used for optimistic concurrency, change detection, and the watch operation on a resource or set of resources. Clients must treat these values as opaque and passed unmodified back to the server. They may only be valid for a particular resource or set of resources.
-   *
-   * Populated by the system. Read-only. Value must be treated as opaque by clients and . More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#concurrency-control-and-consistency
-   */
-  resourceVersion?: string;
-  /**
-   * Deprecated: selfLink is a legacy read-only field that is no longer populated by the system.
-   *
-   * @deprecated
-   */
-  selfLink?: string;
-  /**
-   * UID is the unique in time and space value for this object. It is typically generated by the server on successful creation of a resource and is not allowed to change on PUT operations.
-   *
-   * Populated by the system. Read-only. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names#uids
-   */
-  uid?: string;
-}
-
-// Properties common to (almost) all Kubernetes resources.
-/** Properties common to (almost) all Kubernetes resources. */
-export interface K8sResourceCommon {
-  /**
-   * APIVersion defines the versioned schema of this representation of an object.
-   * Servers should convert recognized schemas to the latest internal value, and
-   * may reject unrecognized values.
-   * More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-   */
-  apiVersion?: string;
-  /**
-   * Kind is a string value representing the REST resource this object represents.
-   * Servers may infer this from the endpoint the client submits requests to.
-   * Cannot be updated.
-   * In CamelCase.
-   * More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-   */
-  kind?: string;
-  /**
-   * metadata is the standard object metadata.
-   * More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
-   */
-  metadata?: ObjectMetadata;
-}
 
 export type K8sResourceKind = K8sResourceCommon & {
   spec?: {
@@ -424,8 +266,8 @@ export type UseK8sWatchResources = <R extends ResourcesObject>(
 ) => WatchK8sResults<R>;
 
 export type UseResolvedExtensions = <E extends Extension>(
-  ...typeGuards: ExtensionTypeGuard<E>[]
-) => [ResolvedExtension<E>[], boolean, any[]];
+  ...predicates: ExtensionPredicate<E>[]
+) => [LoadedAndResolvedExtension<E>[], boolean, any[]];
 
 export type GetSegmentAnalytics = () => {
   // TODO: use proper Segment Analytics API type
@@ -433,6 +275,14 @@ export type GetSegmentAnalytics = () => {
   analyticsEnabled: boolean;
 };
 
+/**
+ * A custom wrapper around `fetch` that adds console-specific headers and allows for retries and timeouts.
+ * It also validates the response status code and throws an appropriate error or logs out the user if required.
+ * @param url - The URL to fetch
+ * @param options - The options to pass to fetch
+ * @param timeout - The timeout in milliseconds
+ * @returns A promise that resolves to the response.
+ */
 export type ConsoleFetch = (
   url: string,
   options?: RequestInit,
@@ -440,14 +290,94 @@ export type ConsoleFetch = (
 ) => Promise<Response>;
 
 export type ConsoleFetchJSON<T = any> = {
+  /**
+   * A custom wrapper around `fetch` that adds console-specific headers and allows for retries and timeouts.
+   * It also validates the response status code and throws an appropriate error or logs out the user if required.
+   * It returns the response as a JSON object.
+   * Uses consoleFetch internally.
+   * @param url The URL to fetch
+   * @param method  The HTTP method to use. Defaults to GET
+   * @param options The options to pass to fetch
+   * @param timeout The timeout in milliseconds
+   * @returns A promise that resolves to the response as text or JSON object.
+   */
   (url: string, method?: string, options?: RequestInit, timeout?: number): Promise<T>;
+  /**
+   * A custom DELETE method of consoleFetchJSON.
+   * It sends an optional JSON object as the body of the request and adds extra headers for patch request.
+   * @param url The URL to delete the object
+   * @param json The JSON to delete the object
+   * @param options The options to pass to fetch
+   * @param timeout The timeout in milliseconds
+   */
   delete(url: string, json?: any, options?: RequestInit, timeout?: number): Promise<T>;
+  /**
+   * A custom POST method of consoleFetchJSON.
+   * It sends the JSON object as the body of the request.
+   * @param url The URL to post the object
+   * @param json The JSON to POST the object
+   * @param options The options to pass to fetch
+   * @param timeout The timeout in milliseconds
+   */
   post(url: string, json: any, options?: RequestInit, timeout?: number): Promise<T>;
+  /**
+   * A custom PUT method of consoleFetchJSON.
+   * It sends the JSON object as the body of the request.
+   * @param url The URL to put the object
+   * @param json The JSON to PUT the object
+   * @param options The options to pass to fetch
+   * @param timeout The timeout in milliseconds
+   */
   put(url: string, json: any, options?: RequestInit, timeout?: number): Promise<T>;
+  /**
+   * A custom PATCH method of consoleFetchJSON.
+   * It sends the JSON object as the body of the request.
+   * @param url The URL to patch the object
+   * @param json The JSON to PATCH the object
+   * @param options The options to pass to fetch
+   * @param timeout The timeout in milliseconds
+   */
   patch(url: string, json: any, options?: RequestInit, timeout?: number): Promise<T>;
 };
 
+/**
+ * A custom wrapper around `fetch` that adds console-specific headers and allows for retries and timeouts.
+ * It also validates the response status code and throws an appropriate error or logs out the user if required.
+ * It returns the response as a text.
+ * Uses `consoleFetch` internally.
+ * @param url The URL to fetch
+ * @param options The options to pass to fetch
+ * @param timeout The timeout in milliseconds
+ * @returns A promise that resolves to the response as text or JSON object.
+ */
 export type ConsoleFetchText<T = any> = (...args: Parameters<ConsoleFetch>) => Promise<T>;
+
+/**
+ * Headers that are added to all requests made by consoleFetch and consoleFetchJSON.
+ *
+ * These headers are used for impersonation and CSRF protection.
+ */
+export type ConsoleRequestHeaders = {
+  'Impersonate-Group'?: string | string[];
+  'Impersonate-User'?: string;
+  'X-CSRFToken'?: string;
+};
+
+/**
+ * A function that creates impersonation headers for API requests using current redux state.
+ * @returns an object containing the appropriate impersonation requst headers, based on redux state
+ */
+export type GetConsoleRequestHeaders = () => ConsoleRequestHeaders;
+
+/**
+ * Normalizes console headers to be compatible with fetch API's HeadersInit.
+ * Converts array values (like Impersonate-Group) to a format that fetch() accepts.
+ * @param headers - Headers object that may contain array values
+ * @returns Normalized headers object with only string values
+ */
+export type NormalizeConsoleHeaders = (
+  headers: Record<string, string | string[] | undefined>,
+) => Record<string, string>;
 
 export type ConsoleTFunction = TFunction | ((key: string, options?: any) => string);
 
@@ -689,6 +619,68 @@ export type UseActivePerspective = () => [
   PerspectiveType,
   (perspective: string, next?: string) => void,
 ];
+
+export type ToastOptions = {
+  /** Optional ID identifying this toast. If not provided, one will be generated. */
+  id?: string;
+  /** The toast title. */
+  title: string;
+  /** The toast variant, one of: success, danger, warning, info, default */
+  variant: AlertVariant;
+  /** The toast content. */
+  content: ReactNode;
+  /** Optional actions to display in the toast. */
+  actions?: {
+    /** The action label. */
+    label: string;
+    /** The action callback. */
+    callback: () => void;
+    /** If `true`, executing this action will dismiss the toast. */
+    dismiss?: boolean;
+    /** Sets the base component to render. defaults to button */
+    component?: ElementType<any> | ComponentType<any>;
+    /** The data test id */
+    dataTest?: string;
+  }[];
+  /** The data test id */
+  dataTest?: string;
+  /** If `true`, displays a close button. */
+  dismissible?: boolean;
+  /**
+   * If set to true, the time out is 8000 milliseconds.
+   * If a number is provided, alert will be dismissed after that amount of time in milliseconds.
+   */
+  timeout?: number | boolean;
+  /** Callback when the toast is removed. */
+  onRemove?: (id: string) => void;
+  /** Callback to run when toast is dismissed with close button */
+  onClose?: () => void;
+  /** Optional group name for the notification drawer section. Omit to use the built-in default group (displayed as "Other Alerts"). Custom values are shown as-is and are not translated by Console. */
+  drawerGroup?: string;
+  /**
+   * When `true`, the toast is excluded from the visible toast cap and overflow link.
+   * Defaults to `true`.
+   * When `persistInDrawer` is `true` and `skipOverflow` is not explicitly set, defaults to `false`.
+   * Set `persistInDrawer: true` with `skipOverflow: true` for always-visible drawer-persisted toasts.
+   */
+  skipOverflow?: boolean;
+  /**
+   * When `true`, the toast is persisted in the notification drawer with read/unread state.
+   * Defaults `skipOverflow` to `false` so drawer-persisted toasts participate in the overflow cap,
+   * but an explicit `skipOverflow: true` is respected for always-visible toasts.
+   * Defaults to `false`.
+   */
+  persistInDrawer?: boolean;
+};
+
+export type ToastContextValues = {
+  /** Add a toast alert. Returns the toast ID. */
+  addToast: (options: ToastOptions) => string;
+  /** Remove a toast alert. */
+  removeToast: (id: string) => void;
+};
+
+export type UseToast = () => ToastContextValues;
 
 export type QueryParams = {
   watch?: string;
@@ -946,7 +938,24 @@ export type UseDeleteModal = (
   deleteAllResources?: () => Promise<K8sResourceKind[]>,
 ) => () => void;
 
-export type UseLabelsModal = (resource: K8sResourceCommon) => () => void;
+/**
+ * Callback for custom label submission in the labels modal.
+ *
+ * **Contract:**
+ * - Must return a `Promise` that resolves with the updated resource on success.
+ * - Must return a rejected `Promise` on failure so the modal can display the error.
+ * - Must not throw synchronously; all errors should be expressed as rejected promises.
+ * - Receives the current resource and the full set of edited labels (not a diff).
+ */
+export type LabelsModalOnSubmit = (
+  resource: K8sResourceCommon,
+  labels: { [key: string]: string },
+) => Promise<K8sResourceCommon>;
+
+export type UseLabelsModal = (
+  resource: K8sResourceCommon,
+  onSubmit?: LabelsModalOnSubmit,
+) => () => void;
 
 export type UseValuesForNamespaceContext = () => {
   namespace: string;
@@ -1095,6 +1104,12 @@ export type ExtPodStatus = {
 export type ExtPodKind = {
   status?: ExtPodStatus;
 } & K8sResourceKind;
+
+/** Describes `user.openshift.io~v1~User` */
+export type UserKind = {
+  fullName?: string;
+  identities: string[];
+} & K8sResourceCommon;
 
 export type PodControllerOverviewItem = {
   alerts: OverviewItemAlerts;

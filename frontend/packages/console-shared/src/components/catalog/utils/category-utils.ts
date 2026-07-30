@@ -9,7 +9,7 @@ export const NO_GROUPING = 'none';
 export const ALL_CATEGORY = 'all';
 export const OTHER_CATEGORY = 'other';
 
-export const matchSubcategories = (
+const matchSubcategories = (
   category: CatalogCategory,
   item: CatalogItem,
 ): (CatalogCategory | CatalogSubcategory)[] => {
@@ -42,7 +42,7 @@ export const matchSubcategories = (
 };
 
 // categorize item id under sub and main categories
-export const addItem = (
+const addItem = (
   categorizedIds: Record<string, string[]>,
   itemId: string,
   categoryId: string,

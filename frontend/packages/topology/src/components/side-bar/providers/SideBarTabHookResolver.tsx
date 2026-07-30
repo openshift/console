@@ -2,12 +2,12 @@ import type { ReactNode, ReactElement, FC } from 'react';
 import { useMemo, Fragment } from 'react';
 import type { GraphElement } from '@patternfly/react-topology';
 import { isEdge } from '@patternfly/react-topology';
-import { observer } from 'mobx-react-lite';
+import { observer } from 'mobx-react';
 import { useTranslation } from 'react-i18next';
 import type { DetailsTab, DetailsTabSection, ResolvedExtension } from '@console/dynamic-plugin-sdk';
 import type { Tab } from '@console/internal/components/utils';
 import { orderExtensionBasedOnInsertBeforeAndAfter } from '@console/shared/src/utils/order-extensions';
-import { getResource } from '@console/topology/src/utils';
+import { getResource } from '@console/topology/src/utils/topology-utils';
 import { DefaultResourceSideBar } from '../DefaultResourceSideBar';
 import TopologyEdgeResourcesPanel from '../TopologyEdgeResourcesPanel';
 
@@ -35,7 +35,7 @@ const TabBarTabHookResolver: FC<TabBarTabHookResolverProps> = ({
   tabSectionExtensions,
   tabExtensions,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
 
   // resolving hooks in loop since number of extensions will remain the same
   // TODO: Render each hook in its own child component...
@@ -101,12 +101,12 @@ const TabBarTabHookResolver: FC<TabBarTabHookResolverProps> = ({
     const resource = getResource(graphElement);
     resource &&
       tabs.push({
-        name: t('topology~Details'),
+        name: t('Details'),
         component: () => <DefaultResourceSideBar resource={resource} />,
       });
     isEdge(graphElement) &&
       tabs.push({
-        name: t('topology~Resources'),
+        name: t('Resources'),
         component: () => <TopologyEdgeResourcesPanel edge={graphElement} />,
       });
   }

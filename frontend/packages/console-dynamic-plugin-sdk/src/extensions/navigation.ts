@@ -4,9 +4,9 @@ import type { Extension } from '../types';
 type NavItemProperties = {
   /** A unique identifier for this item. */
   id: string;
-  /** The perspective ID to which this item belongs to. If not specified, contributes to the default perspective. */
+  /** The perspective ID this item belongs to. If not specified, contributes to the default perspective. */
   perspective?: string;
-  /** Navigation section to which this item belongs to. If not specified, render this item as a top level link. */
+  /** Navigation section this item belongs to. If not specified, render this item as a top level link. */
   section?: string;
   /** Adds data attributes to the DOM. */
   dataAttributes?: { [key: string]: string };

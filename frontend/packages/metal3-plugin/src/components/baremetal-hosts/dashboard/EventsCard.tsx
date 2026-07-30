@@ -8,15 +8,16 @@ import { ResourceLink, resourcePathFromModel } from '@console/internal/component
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { EventModel, MachineModel, NodeModel } from '@console/internal/models';
 import type { EventKind, K8sResourceKind, MachineKind } from '@console/internal/module/k8s';
-import { getName, getNamespace, getMachineNodeName } from '@console/shared';
 import ActivityBody, {
   RecentEventsBody,
   Activity,
 } from '@console/shared/src/components/dashboard/activity-card/ActivityBody';
 import ActivityItem from '@console/shared/src/components/dashboard/activity-card/ActivityItem';
+import { getName, getNamespace } from '@console/shared/src/selectors/common';
+import { getMachineNodeName } from '@console/shared/src/selectors/machine';
 import { BareMetalHostModel } from '../../../models';
 import { isHostInProgressState, getBareMetalHostStatus } from '../../../status/host-status';
-import type { BareMetalHostKind } from '../../../types';
+import type { BareMetalHostKind } from '../../../types/host';
 import { BareMetalHostDashboardContext } from './BareMetalHostDashboardContext';
 
 const matchesInvolvedObject = (
@@ -47,7 +48,7 @@ const getHostEventsFilter = (
 ): ((event: EventKind) => boolean) => _.partial(hostEventsFilter, host, machine);
 
 const EventsCard: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('metal3-plugin');
   const { obj, machine } = useContext(BareMetalHostDashboardContext);
 
   const [eventsData, eventsLoaded, eventsLoadError] = useK8sWatchResource<EventKind[]>({
@@ -73,7 +74,7 @@ const EventsCard: FC = () => {
                   getNamespace(obj),
                 )}/events`}
               >
-                {t('metal3-plugin~View events')}
+                {t('View events')}
               </Link>
             </>
           ),
@@ -84,7 +85,7 @@ const EventsCard: FC = () => {
         <CardTitle>Activity</CardTitle>
       </CardHeader>
       <ActivityBody>
-        <div className="co-activity-card__ongoing-title">Ongoing</div>
+        <div className="co-activity-card__ongoing-title">{t('Ongoing')}</div>
         <div className="co-activity-card__ongoing-body">
           {inProgress ? (
             <Activity timestamp={null}>
@@ -100,7 +101,7 @@ const EventsCard: FC = () => {
           ) : (
             <Activity>
               <div className="pf-v6-u-text-color-subtle">
-                {t('metal3-plugin~There are no ongoing activities.')}
+                {t('There are no ongoing activities.')}
               </div>
             </Activity>
           )}

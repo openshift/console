@@ -1,7 +1,7 @@
 import type { FC, ReactNode } from 'react';
-import * as _ from 'lodash';
 import { Children, cloneElement } from 'react';
 import { Alert, AlertGroup } from '@patternfly/react-core';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { LoadingInline } from './status-box';
 
@@ -16,13 +16,13 @@ const injectDisabled = (children, disabled) => {
 };
 
 export const ErrorMessage = ({ message }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <Alert
       isInline
       className="co-alert co-alert--scrollable"
       variant="danger"
-      title={t('public~An error occurred')}
+      title={t('An error occurred')}
       data-test="alert-error"
     >
       <div className="co-pre-line">{message}</div>

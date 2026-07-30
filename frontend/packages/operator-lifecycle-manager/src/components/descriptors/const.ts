@@ -1,9 +1,9 @@
 import * as _ from 'lodash';
 import { SpecCapability, StatusCapability } from './types';
 
-export const REGEXP_K8S_RESOURCE_CAPABILITY = _.escapeRegExp(SpecCapability.k8sResourcePrefix);
-export const REGEXP_FIELD_DEPENDENCY_CAPABILITY = _.escapeRegExp(SpecCapability.fieldDependency);
-export const REGEXP_SELECT_CAPABILITY = _.escapeRegExp(SpecCapability.select);
+const REGEXP_K8S_RESOURCE_CAPABILITY = _.escapeRegExp(SpecCapability.k8sResourcePrefix);
+const REGEXP_FIELD_DEPENDENCY_CAPABILITY = _.escapeRegExp(SpecCapability.fieldDependency);
+const REGEXP_SELECT_CAPABILITY = _.escapeRegExp(SpecCapability.select);
 
 export const REGEXP_K8S_RESOURCE_SUFFIX = new RegExp(
   `^${REGEXP_K8S_RESOURCE_CAPABILITY}(?:core[:~]v1[:~])?([^?]*)[?]?(.*)$`,

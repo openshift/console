@@ -6,7 +6,7 @@ import {
   EmptyStateActions,
   EmptyStateFooter,
 } from '@patternfly/react-core';
-import { TopologyIcon } from '@patternfly/react-icons';
+import { RhUiTopologyIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
@@ -15,11 +15,11 @@ type LimitExceededStateProps = {
 };
 
 export const LimitExceededState: FC<LimitExceededStateProps> = ({ onShowTopologyAnyway }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
   return (
     <EmptyState
       headingLevel="h4"
-      icon={TopologyIcon}
+      icon={RhUiTopologyIcon}
       titleText={<>{t(`topology~Loading is taking longer than expected`)}</>}
     >
       <EmptyStateBody>
@@ -29,11 +29,11 @@ export const LimitExceededState: FC<LimitExceededStateProps> = ({ onShowTopology
       </EmptyStateBody>
       <EmptyStateFooter>
         <Button variant="primary" component={(props) => <Link {...props} to="/search-page" />}>
-          {t('topology~Go to Search')}
+          {t('Go to Search')}
         </Button>
         <EmptyStateActions>
           <Button variant="link" onClick={onShowTopologyAnyway}>
-            {t('topology~Continue')}
+            {t('Continue')}
           </Button>
         </EmptyStateActions>
       </EmptyStateFooter>

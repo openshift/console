@@ -38,7 +38,7 @@ export const usePVCActions = (
   obj: PersistentVolumeClaimKind,
   filterActions?: PVCActionCreator[],
 ): Action[] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const launchModal = useOverlay();
 
   const memoizedFilterActions = useDeepCompareMemoize(filterActions);
@@ -47,7 +47,7 @@ export const usePVCActions = (
     () => ({
       [PVCActionCreator.ExpandPVC]: () => ({
         id: 'expand-pvc',
-        label: t('console-app~Expand PVC'),
+        label: t('Expand PVC'),
         cta: () =>
           launchModal(LazyExpandPVCModalOverlay, {
             kind: PersistentVolumeClaimModel,
@@ -57,9 +57,9 @@ export const usePVCActions = (
       }),
       [PVCActionCreator.PVCSnapshot]: () => ({
         id: 'create-snapshot',
-        label: t('console-app~Create snapshot'),
+        label: t('Create snapshot'),
         disabled: obj?.status?.phase !== 'Bound',
-        tooltip: obj?.status?.phase !== 'Bound' ? t('console-app~PVC is not Bound') : '',
+        tooltip: obj?.status?.phase !== 'Bound' ? t('PVC is not Bound') : '',
         cta: {
           href: `/k8s/ns/${obj.metadata?.namespace}/${VolumeSnapshotModel.plural}/~new/form?pvc=${obj.metadata?.name}`,
         },
@@ -67,26 +67,26 @@ export const usePVCActions = (
       }),
       [PVCActionCreator.ClonePVC]: () => ({
         id: 'clone-pvc',
-        label: t('console-app~Clone PVC'),
+        label: t('Clone PVC'),
         disabled: obj?.status?.phase !== 'Bound',
-        tooltip: obj?.status?.phase !== 'Bound' ? t('console-app~PVC is not Bound') : '',
+        tooltip: obj?.status?.phase !== 'Bound' ? t('PVC is not Bound') : '',
         cta: () => launchModal(LazyClonePVCModalOverlay, { resource: obj }),
         accessReview: asAccessReview(PersistentVolumeClaimModel, obj, 'create'),
       }),
       [PVCActionCreator.ModifyVAC]: () => ({
         id: 'modify-vac',
-        label: t('console-app~Modify VolumeAttributesClass'),
+        label: t('Modify VolumeAttributesClass'),
         disabled: obj?.status?.phase !== 'Bound',
         tooltip:
           obj?.status?.phase !== 'Bound'
-            ? t('console-app~PVC must be Bound to modify VolumeAttributesClass')
+            ? t('PVC must be Bound to modify VolumeAttributesClass')
             : '',
         cta: () => launchModal(ModifyVACModal, { resource: obj }),
         accessReview: asAccessReview(PersistentVolumeClaimModel, obj, 'patch'),
       }),
       [PVCActionCreator.DeletePVC]: () => ({
         id: 'delete-pvc',
-        label: t('public~Delete PersistentVolumeClaim'),
+        label: t('Delete PersistentVolumeClaim'),
         cta: () => launchModal(LazyDeletePVCModalOverlay, { pvc: obj }),
         accessReview: asAccessReview(PersistentVolumeClaimModel, obj, 'delete'),
       }),

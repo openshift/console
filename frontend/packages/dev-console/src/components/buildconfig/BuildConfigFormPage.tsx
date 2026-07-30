@@ -9,7 +9,7 @@ import type { BuildConfig } from './types';
 import { BuildConfigModel } from './types';
 
 const BuildConfigFormPage: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const { ns: namespace, name } = useParams();
 
   const isNew = !name;
@@ -33,7 +33,7 @@ const BuildConfigFormPage: FC = () => {
       }
     : watchedBuildConfig;
 
-  const title = isNew ? t('devconsole~Create BuildConfig') : t('devconsole~Edit BuildConfig');
+  const title = isNew ? t('Create BuildConfig') : t('Edit BuildConfig');
   return (
     <>
       <DocumentTitle>{title}</DocumentTitle>

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { capitalize } from 'lodash';
 import {
   useTheme,
   THEME_DARK,
@@ -6,18 +7,18 @@ import {
   darkThemeMq,
 } from '@console/internal/components/ThemeProvider';
 import okdLogoImg from '../../imgs/okd-logo.svg';
+import dedicatedLogoImg from '../../imgs/openshift-dedicated-logo.svg';
 import openshiftLogoImg from '../../imgs/openshift-logo.svg';
 import onlineLogoImg from '../../imgs/openshift-online-logo.svg';
-import dedicatedLogoImg from '../../imgs/openshift-dedicated-logo.svg';
 import rosaLogoImg from '../../imgs/openshift-service-on-aws-logo.svg';
-import { capitalize } from 'lodash';
 
-type CUSTOM_LOGO = typeof FAVICON_TYPE | typeof MASTHEAD_TYPE;
+type CustomLogo = typeof FAVICON_TYPE | typeof MASTHEAD_TYPE;
 export const FAVICON_TYPE = 'Favicon';
 export const MASTHEAD_TYPE = 'Masthead';
 
 export const getBrandingDetails = () => {
-  let staticLogo: string, productName: string;
+  let staticLogo: string;
+  let productName: string;
   // Webpack won't bundle these images if we don't directly reference them, hence the switch
   switch (window.SERVER_FLAGS.branding) {
     case 'openshift':
@@ -62,7 +63,7 @@ export const getBrandingDetails = () => {
  * @param type - The type of the custom logo to query.
  * @returns Returns logoURL blob URL and the loading state of the API request.
  */
-export const useCustomLogoURL = (type: CUSTOM_LOGO): { logoUrl: string; loading: Boolean } => {
+export const useCustomLogoURL = (type: CustomLogo): { logoUrl: string; loading: Boolean } => {
   const [logoUrl, setLogoUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const { theme } = useTheme();
@@ -99,7 +100,6 @@ export const useCustomLogoURL = (type: CUSTOM_LOGO): { logoUrl: string; loading:
       } else if (response.status === 404) {
         setLogoUrl('');
         setLoading(false);
-        return;
       } else {
         throw new Error(`Failed to fetch ${fetchURL}: ${response.statusText}`);
       }

@@ -23,21 +23,21 @@ import {
 import { useTranslation } from 'react-i18next';
 import type { WithCreateConnectorProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
-import { useHover } from '@console/topology/src/behavior';
-import type { NodeDragSourceSpecType } from '@console/topology/src/components/graph-view';
+import { useHover } from '@console/topology/src/behavior/useHover';
+import type { NodeDragSourceSpecType } from '@console/topology/src/components/graph-view/components/componentUtils';
+import { getNodeDecorators } from '@console/topology/src/components/graph-view/components/nodes/decorators/getNodeDecorators';
 import {
   NodeShadows,
   NODE_SHADOW_FILTER_ID,
   NODE_SHADOW_FILTER_ID_HOVER,
-} from '@console/topology/src/components/graph-view';
-import { getNodeDecorators } from '@console/topology/src/components/graph-view/components/nodes/decorators/getNodeDecorators';
-import { useSearchFilter } from '@console/topology/src/filters';
+} from '@console/topology/src/components/graph-view/components/NodeShadows';
+import { useSearchFilter } from '@console/topology/src/filters/useSearchFilter';
 import { useShowLabel } from '@console/topology/src/filters/useShowLabel';
 import { getResource } from '@console/topology/src/utils/topology-utils';
 import { isServerlessFunction } from '../../knative-topology-utils';
 import RevisionTrafficSourceAnchor from '../anchors/RevisionTrafficSourceAnchor';
 
-export type KnativeServiceGroupProps = {
+type KnativeServiceGroupProps = {
   element: Node;
   badge?: string;
   badgeColor?: string;
@@ -84,7 +84,7 @@ const KnativeServiceGroup: FC<KnativeServiceGroupProps> = ({
   createConnectorDrag,
 }) => {
   const ref = useRef();
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const [hoverChange, setHoverChange] = useState<boolean>(false);
   const [hover, hoverRef] = useHover(200, 200, [hoverChange]);
   const [innerHover, innerHoverRef] = useHover(0, 200);
@@ -200,7 +200,7 @@ const KnativeServiceGroup: FC<KnativeServiceGroupProps> = ({
               />
               {!hasChildren && (
                 <text x={x + width / 2} y={y + height / 2} dy="0.35em" textAnchor="middle">
-                  {t('knative-plugin~No Revisions')}
+                  {t('No Revisions')}
                 </text>
               )}
             </g>

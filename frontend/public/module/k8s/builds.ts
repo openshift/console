@@ -1,8 +1,6 @@
 import * as _ from 'lodash';
-
 import { BuildModel, BuildConfigModel } from '../../models';
-import { k8sCreate } from './';
-import { formatPrometheusDuration } from '@console/shared/src/utils/datetime';
+import { k8sCreate } from '.';
 
 const BUILD_NUMBER_ANNOTATION = 'openshift.io/build.number';
 
@@ -35,24 +33,6 @@ export const startBuild = (buildConfig) => {
 
 export const cloneBuild = (build) => {
   return createBuildRequest(build, BuildModel, 'clone');
-};
-
-export const isFinished = (build) => !!_.get(build, 'status.completionTimestamp');
-
-// Formats duration for finished builds.
-export const formatBuildDuration = (build) => {
-  if (!isFinished(build)) {
-    return '';
-  }
-
-  const duration = _.get(build, 'status.duration');
-  if (!_.isFinite(duration)) {
-    return '';
-  }
-
-  // Duration in the build is returned as nanoseconds. Convert to milliseconds.
-  const ms = Math.floor(duration / 1000 / 1000);
-  return formatPrometheusDuration(ms);
 };
 
 export const getBuildNumber = (build) => {

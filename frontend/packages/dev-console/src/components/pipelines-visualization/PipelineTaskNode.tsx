@@ -29,7 +29,7 @@ import type { TaskKind, StepStatus } from './types';
 import { NodeType, FLAG_PIPELINES_OPERATOR_VERSION_1_17_OR_NEWER } from './types';
 import './PipelineTaskNode.scss';
 
-export const getTooltipContent = (statusReason: ComputedStatus): string => {
+const getTooltipContent = (statusReason: ComputedStatus): string => {
   switch (statusReason) {
     case ComputedStatus.Succeeded:
     case ComputedStatus.Failed:

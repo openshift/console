@@ -6,7 +6,7 @@ import { ClusterServiceVersionModel } from '../models';
 import type { ClusterServiceVersionKind, SubscriptionKind } from '../types';
 import { ClusterServiceVersionPhase } from '../types';
 
-export const isCSV = (obj: K8sResourceKind): boolean =>
+const isCSV = (obj: K8sResourceKind): boolean =>
   Boolean(obj) && referenceFor(obj) === referenceForModel(ClusterServiceVersionModel);
 
 export const isCopiedCSV = (obj: K8sResourceKind): boolean =>

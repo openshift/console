@@ -15,14 +15,14 @@ import type { ModalComponentProps } from '@console/shared/src/types/modal';
 import type { StepResource } from '../../types';
 import { referenceForStepResource } from '../index';
 
-export const InstallPlanPreview: FC<InstallPlanPreviewModalProps> = ({ cancel, stepResource }) => {
-  const { t } = useTranslation();
+const InstallPlanPreview: FC<InstallPlanPreviewModalProps> = ({ cancel, stepResource }) => {
+  const { t } = useTranslation('olm');
   return (
     <>
       <ModalHeader
         title={
           <>
-            {t('olm~InstallPlan Preview')}{' '}
+            {t('InstallPlan Preview')}{' '}
             <ResourceLink
               linkTo={false}
               name={stepResource.name}
@@ -38,7 +38,7 @@ export const InstallPlanPreview: FC<InstallPlanPreviewModalProps> = ({ cancel, s
       </ModalBody>
       <ModalFooter>
         <Button variant="primary" onClick={() => cancel()}>
-          {t('public~OK')}
+          {t('OK')}
         </Button>
       </ModalFooter>
     </>

@@ -13,7 +13,7 @@ import type {
   SpecCapability,
 } from '@console/operator-lifecycle-manager/src/components/descriptors/types';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
-import { UNASSIGNED_APPLICATIONS_KEY } from '@console/shared/src/constants';
+import { UNASSIGNED_APPLICATIONS_KEY } from '@console/shared/src/constants/common';
 import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
 import { CREATE_APPLICATION_KEY } from '@console/topology/src/const';
 import { getEventSourceCatalogProviderData } from '../catalog/event-source-data';

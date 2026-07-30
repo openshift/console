@@ -1,7 +1,7 @@
 import type { SetFeatureFlag } from '@console/dynamic-plugin-sdk';
 import { useAccessReview } from '@console/dynamic-plugin-sdk';
 import { ConsoleOperatorConfigModel } from '@console/internal/models';
-import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src';
+import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants/resource';
 import { FLAG_CAN_GET_CONSOLE_OPERATOR_CONFIG } from '../consts';
 
 const useCanGetConsoleOperatorConfig = (setFeatureFlag: SetFeatureFlag) => {

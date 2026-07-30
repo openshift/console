@@ -1,4 +1,4 @@
-import { ModalVariant } from '@patternfly/react-core';
+import { ModalVariant, PopoverPosition } from '@patternfly/react-core';
 import {
   finishTourText,
   helpTourText,
@@ -16,7 +16,7 @@ import {
 
 const getSelector = (id: string): string => `[data-tour-id="${id}"]`;
 
-export const getGuidedTour = (): TourDataType => ({
+const getGuidedTour = (): TourDataType => ({
   intro: {
     // t('devconsole~Welcome to the Developer Perspective!')
     heading: '%devconsole~Welcome to the Developer Perspective!%',
@@ -27,14 +27,14 @@ export const getGuidedTour = (): TourDataType => ({
   },
   steps: [
     {
-      placement: 'right',
+      placement: PopoverPosition.right,
       // t('devconsole~Perspective Switcher')
       heading: '%devconsole~Perspective Switcher%',
       content: perspectiveSwitcherTourText,
       selector: getSelector('tour-perspective-dropdown'),
     },
     {
-      placement: 'right',
+      placement: PopoverPosition.right,
       // t('devconsole~Observe')
       heading: '%devconsole~Observe%',
       // t('devconsole~Monitor application metrics, create custom metrics queries and view and silence alerts in your project.')
@@ -43,7 +43,7 @@ export const getGuidedTour = (): TourDataType => ({
       selector: getSelector('tour-software-catalog-nav'),
     },
     {
-      placement: 'right',
+      placement: PopoverPosition.right,
       // t('devconsole~Search')
       heading: '%devconsole~Search%',
       content: searchTourText,
@@ -51,23 +51,23 @@ export const getGuidedTour = (): TourDataType => ({
     },
     {
       flags: ['DEVWORKSPACE'],
-      placement: 'bottom',
+      placement: PopoverPosition.bottom,
       // t('devconsole~Web Terminal')
       heading: '%devconsole~Web Terminal%',
       content: webTerminalGuidedTourText,
       selector: getSelector('tour-cloud-shell-button'),
     },
     {
-      placement: 'bottom',
+      placement: PopoverPosition.bottom,
       // t('devconsole~Help')
       heading: '%devconsole~Help%',
       content: helpTourText,
       selector: getSelector('tour-help-button'),
     },
     {
-      placement: 'bottom',
-      // t('devconsole~User Preferences')
-      heading: '%devconsole~User Preferences%',
+      placement: PopoverPosition.bottom,
+      // t('devconsole~User preferences')
+      heading: '%devconsole~User preferences%',
       content: userPreferencesTourText,
       selector: getSelector('tour-user-button'),
     },

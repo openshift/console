@@ -11,15 +11,16 @@ import { observer, useDragNode } from '@patternfly/react-topology';
 import type { WithCreateConnectorProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { useAccessReview } from '@console/internal/components/utils';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
-import { nodeDragSourceSpec, GroupNode } from '@console/topology/src/components/graph-view';
+import { nodeDragSourceSpec } from '@console/topology/src/components/graph-view/components/componentUtils';
+import { GroupNode } from '@console/topology/src/components/graph-view/components/groups/GroupNode';
 import { getKindStringAndAbbreviation } from '@console/topology/src/components/graph-view/components/nodes/nodeUtils';
-import { getResource } from '@console/topology/src/utils';
+import { getResource } from '@console/topology/src/utils/topology-utils';
 import { TYPE_KNATIVE_SERVICE } from '../../const';
 import KnativeServiceGroup from './KnativeServiceGroup';
 
 import './KnativeService.scss';
 
-export type KnativeServiceProps = {
+type KnativeServiceProps = {
   element: Node;
   highlight?: boolean;
   canDrop?: boolean;

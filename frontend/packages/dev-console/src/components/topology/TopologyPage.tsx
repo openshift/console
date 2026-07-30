@@ -4,10 +4,10 @@ import { DocumentTitle } from '@console/shared/src/components/document-title/Doc
 import Topology from '@console/topology/src/components/page/TopologyPage';
 
 const TopologyPage: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   return (
     <>
-      <DocumentTitle>{t('devconsole~Topology')}</DocumentTitle>
+      <DocumentTitle>{t('Topology')}</DocumentTitle>
       <Topology />
     </>
   );

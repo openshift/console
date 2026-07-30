@@ -1,3 +1,4 @@
+import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { t } from '../../../../../__mocks__/i18next';
 import {
   mockHelmReleases,
@@ -24,6 +25,9 @@ import {
   loadHelmManifestResources,
   getChartIndexEntry,
   isGoingToTopology,
+  mergeHelmChartVersionUpgradeValues,
+  getCurrentHelmUserValuesForUpgradeMerge,
+  mergeHelmValuesOnChartVersionChange,
 } from '../helm-utils';
 
 describe('Helm Releases Utils', () => {
@@ -304,6 +308,91 @@ metadata:
           metadata: { name: 'second' },
         },
       ]);
+    });
+  });
+
+  describe('Helm upgrade values merge on chart version change', () => {
+    it('mergeHelmChartVersionUpgradeValues should keep user overrides over new chart defaults', () => {
+      const newChart = { replicas: 1, image: { tag: 'v2' } };
+      const user = { replicas: 5, extra: true };
+      expect(mergeHelmChartVersionUpgradeValues(newChart, user)).toEqual({
+        replicas: 5,
+        image: { tag: 'v2' },
+        extra: true,
+      });
+    });
+
+    it('mergeHelmChartVersionUpgradeValues should add keys that exist only on the new chart', () => {
+      const newChart = { newFlag: false, service: { type: 'ClusterIP' } };
+      const user = { replicas: 2 };
+      expect(mergeHelmChartVersionUpgradeValues(newChart, user)).toEqual({
+        newFlag: false,
+        service: { type: 'ClusterIP' },
+        replicas: 2,
+      });
+    });
+
+    it('mergeHelmChartVersionUpgradeValues should replace arrays instead of merging by index', () => {
+      const newChart = { tolerations: [{ key: 'node' }, { key: 'disk' }], env: ['DEFAULT=1'] };
+      const user = { tolerations: [{ key: 'custom' }], env: [] };
+      expect(mergeHelmChartVersionUpgradeValues(newChart, user)).toEqual({
+        tolerations: [{ key: 'custom' }],
+        env: [],
+      });
+    });
+
+    it('mergeHelmChartVersionUpgradeValues should preserve user arrays even when chart has none', () => {
+      const newChart = { replicas: 1 };
+      const user = { customList: ['a', 'b', 'c'] };
+      expect(mergeHelmChartVersionUpgradeValues(newChart, user)).toEqual({
+        replicas: 1,
+        customList: ['a', 'b', 'c'],
+      });
+    });
+
+    it('getCurrentHelmUserValuesForUpgradeMerge should prefer formData in Form editor mode', () => {
+      const yaml = 'replicas: 99\n';
+      const form = { replicas: 1, fromForm: true };
+      expect(getCurrentHelmUserValuesForUpgradeMerge(yaml, form, EditorType.Form)).toEqual({
+        replicas: 1,
+        fromForm: true,
+      });
+    });
+
+    it('getCurrentHelmUserValuesForUpgradeMerge should parse YAML in YAML editor mode', () => {
+      const yaml = 'replicas: 3\ncustom:\n  path: kept\n';
+      const form = { replicas: 1 };
+      expect(getCurrentHelmUserValuesForUpgradeMerge(yaml, form, EditorType.YAML)).toEqual({
+        replicas: 3,
+        custom: { path: 'kept' },
+      });
+    });
+
+    it('getCurrentHelmUserValuesForUpgradeMerge should fall back to formData when YAML is invalid', () => {
+      expect(
+        getCurrentHelmUserValuesForUpgradeMerge('[ broken: ', { ok: true }, EditorType.YAML),
+      ).toEqual({ ok: true });
+    });
+
+    it('getCurrentHelmUserValuesForUpgradeMerge should return an empty object when nothing usable is present', () => {
+      expect(getCurrentHelmUserValuesForUpgradeMerge('', undefined, EditorType.YAML)).toEqual({});
+      expect(getCurrentHelmUserValuesForUpgradeMerge('', null, EditorType.Form)).toEqual({});
+    });
+
+    it('mergeHelmValuesOnChartVersionChange should merge chart defaults with the active editor values (upgrade regression)', () => {
+      const newChartValues = { image: { tag: '2.0.0' }, replicas: 1 };
+      const yamlData = 'replicas: 7\nimage:\n  tag: 1.0.0\nflight:\n  enabled: true\n';
+      const merged = mergeHelmValuesOnChartVersionChange(
+        newChartValues,
+        yamlData,
+        { replicas: 0 },
+        EditorType.YAML,
+      );
+      expect(merged).toEqual({
+        image: { tag: '1.0.0' },
+        replicas: 7,
+        flight: { enabled: true },
+      });
     });
   });
 });

@@ -24,7 +24,7 @@ import { useJobsForCronJobWatcher } from '@console/shared/src/hooks/useJobsForCr
 import { usePodsWatcher } from '@console/shared/src/hooks/usePodsWatcher';
 import { getResourcesToWatchForPods } from '@console/shared/src/utils/pod-resource-utils';
 import { getPodsForResource } from '@console/shared/src/utils/resource-utils';
-import { getResource } from '../../utils';
+import { getResource } from '../../utils/topology-utils';
 
 export const getDataFromAdapter = <T extends { resource: K8sResourceCommon }, E extends Extension>(
   element: GraphElement,

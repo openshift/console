@@ -4,7 +4,7 @@ import { sortCatalogItems } from './catalog-utils';
 import type { CatalogFilter, CatalogFilterCounts, CatalogFilters } from './types';
 import { CatalogSortOrder } from './types';
 
-export const filterByGroup = (
+const filterByGroup = (
   items: CatalogItem[],
   filters: CatalogFilters,
 ): Record<string, CatalogItem[]> => {

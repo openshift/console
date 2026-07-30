@@ -134,7 +134,7 @@ const getCompatibleCapabilities = (type: string): (StatusCapability | SpecCapabi
 // Given type and descriptor, return a list of non-deprecated x-descriptors compatible with type.
 // Deprecated and incompatible x-descriptors are logged as warnings in console. If
 // 'allowDeprecated' is true, deprecated x-descriptors are logged but still returned as valid.
-export function getValidCapabilitiesForDataType<CapabilityType extends string = SpecCapability>(
+function getValidCapabilitiesForDataType<CapabilityType extends string = SpecCapability>(
   descriptor: Descriptor<CapabilityType>,
   type: string,
 ): CapabilityType[] {

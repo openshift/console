@@ -9,12 +9,12 @@ interface SinkSectionProps {
 }
 
 const SinkSection: FC<SinkSectionProps> = ({ namespace, fullWidth }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   return (
     <FormSection
       title={
         <>
-          {t('knative-plugin~Target')}
+          {t('Target')}
           <span
             className="pf-v6-c-form__label-required"
             aria-hidden="true"
@@ -24,7 +24,7 @@ const SinkSection: FC<SinkSectionProps> = ({ namespace, fullWidth }) => {
           </span>
         </>
       }
-      subTitle={t('knative-plugin~Add a target to route cloud events from this Event source.')}
+      subTitle={t('Add a target to route cloud events from this Event source.')}
       extraMargin
       fullWidth={fullWidth}
     >

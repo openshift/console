@@ -60,17 +60,13 @@ jest.mock('react-i18next', () => ({
   }),
 }));
 
-jest.mock('@console/shared', () => ({
+jest.mock('@console/shared/src/utils/alert-utils', () => ({
+  ...jest.requireActual('@console/shared/src/utils/alert-utils'),
   getFiringAlerts: jest.fn((alerts) => alerts.filter((alert) => alert.state === 'firing')),
 }));
 
 jest.mock('@console/internal/models', () => ({
   DeploymentConfigModel: { kind: 'DeploymentConfig' },
-}));
-
-jest.mock('@patternfly/react-icons', () => ({
-  ...jest.requireActual('@patternfly/react-icons'),
-  InfoCircleIcon: () => 'InfoCircleIcon',
 }));
 
 describe('Monitoring Metric Section', () => {

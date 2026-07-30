@@ -28,6 +28,24 @@ module.exports = {
   // When there is only a single export from a module, prefer using default export over named export.
   'import/prefer-default-export': 'off',
 
+  // Require braces around all control flow bodies
+  curly: ['error', 'all'],
+
+  // Require consistent return statements
+  'consistent-return': 'off',
+
+  // Require consistent use of this alias
+  'consistent-this': ['warn', 'that'],
+
+  // Enforce a maximum depth that callbacks can be nested
+  'max-nested-callbacks': ['warn', 4],
+
+  // Disallow use of alert
+  'no-alert': 'error',
+
+  // Disallow use of constant expressions in conditions
+  'no-constant-condition': 'error',
+
   // Disallow console statements
   'no-console': 'error',
 
@@ -69,6 +87,9 @@ module.exports = {
   // enforce a maximum number of classes per file
   'max-classes-per-file': 'off',
 
+  // Disallow dangling underscores in identifiers
+  'no-underscore-dangle': 'off',
+
   // Disallow use of Object.prototypes builtins directly
   'no-prototype-builtins': 'off',
 
@@ -78,6 +99,48 @@ module.exports = {
   // Disallow using Object.assign with an object literal as the first argument and prefer the use of object spread instead.
   'prefer-object-spread': 'off',
 
+  // Require object shorthand for properties only
+  'object-shorthand': ['error', 'properties'],
+
+  // Require const for variables that are never reassigned after declared
+  'prefer-const': ['error', { destructuring: 'all' }],
+
   // Disallow assignments that can lead to race conditions due to usage of `await` or `yield`
   'require-atomic-updates': 'off',
+
+  /* ---- Rules new/changed in eslint-config-airbnb-base v15 / ESLint v8 ---- */
+
+  // Default parameters should be last (new in airbnb v15)
+  'default-param-last': 'off',
+
+  // Disallow relative package imports (new in airbnb v15)
+  'import/no-relative-packages': 'off',
+
+  // Disallow cyclical imports (new in airbnb v15)
+  'import/no-cycle': 'off',
+
+  // Disallow named default exports (noisy with TypeScript re-exports)
+  'import/no-named-as-default-member': 'off',
+
+  // Prefer arrow functions as callbacks (new in airbnb v15)
+  'prefer-arrow-callback': 'off',
+
+  // Disallow returning values from Promise executor (new in eslint:recommended v8)
+  'no-promise-executor-return': 'off',
+
+  // Require arrow function bodies to use braces (new in airbnb v15)
+  'arrow-body-style': 'off',
+
+  // Ensure named imports match exported names (too many false positives with TypeScript)
+  'import/named': 'off',
+
+  // global-require was removed from ESLint core in v7 but airbnb still references it
+  'global-require': 'off',
+
+  // New rules from eslint:recommended v8 - disabled for now, enable in follow-up PRs
+  'no-unsafe-optional-chaining': 'off',
+  'no-import-assign': 'off',
+  'no-constructor-return': 'off',
+  'prefer-regex-literals': 'off',
+  'no-restricted-exports': 'off',
 };

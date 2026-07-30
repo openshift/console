@@ -1,26 +1,19 @@
 import type { FC } from 'react';
 import { useCallback, useMemo } from 'react';
-import { useParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
-import {
-  YAMLTemplate,
-  isYAMLTemplate,
-} from '@console/dynamic-plugin-sdk/src/extensions/yaml-templates';
-import { getYAMLTemplates } from '../models/yaml-templates';
+import type { YAMLTemplate } from '@console/dynamic-plugin-sdk/src/extensions/yaml-templates';
+import { isYAMLTemplate } from '@console/dynamic-plugin-sdk/src/extensions/yaml-templates';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
 import { connectToPlural } from '../kinds';
+import { getYAMLTemplates } from '../models/yaml-templates';
+import type { K8sKind, K8sResourceKindReference, K8sResourceKind } from '../module/k8s';
+import { apiVersionForModel, referenceForModel } from '../module/k8s';
+import { ErrorPage404 } from './error';
 import { AsyncComponent } from './utils/async';
 import { LoadingBox } from './utils/status-box';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import {
-  K8sKind,
-  apiVersionForModel,
-  referenceForModel,
-  K8sResourceKindReference,
-  K8sResourceKind,
-} from '../module/k8s';
-import { ErrorPage404 } from './error';
-import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
 
 export const CreateYAMLInner: FC<CreateYAMLProps> = ({
   params,
@@ -32,7 +25,7 @@ export const CreateYAMLInner: FC<CreateYAMLProps> = ({
   isCreate = true,
   template,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const namespace = params.ns || 'default';
   const [templateExtensions, resolvedTemplates] = useResolvedExtensions<YAMLTemplate>(
     useCallback(
@@ -87,10 +80,10 @@ export const CreateYAMLInner: FC<CreateYAMLProps> = ({
     return <ErrorPage404 />;
   }
   const header = isCreate
-    ? t('public~Create {{objLabel}}', {
+    ? t('Create {{objLabel}}', {
         objLabel: kindObj.labelKey ? t(kindObj.labelKey) : kindObj.label,
       })
-    : t('public~Edit {{objLabel}}', {
+    : t('Edit {{objLabel}}', {
         objLabel: kindObj.labelKey ? t(kindObj.labelKey) : kindObj.label,
       });
 
@@ -110,11 +103,11 @@ export const CreateYAMLInner: FC<CreateYAMLProps> = ({
   );
 };
 
-const CreateYAML_ = connectToPlural(CreateYAMLInner);
+const ConnectedCreateYAML = connectToPlural(CreateYAMLInner);
 
 export const CreateYAML = (props) => {
   const params = useParams();
-  return <CreateYAML_ {...props} params={params} />;
+  return <ConnectedCreateYAML {...props} params={params} />;
 };
 
 export const EditYAMLPage: FC<EditYAMLPageProps> = (props) => {

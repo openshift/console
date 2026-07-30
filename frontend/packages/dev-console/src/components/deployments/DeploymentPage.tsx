@@ -10,7 +10,7 @@ import EditDeployment from './EditDeployment';
 import { getDefaultDeployment } from './utils/deployment-utils';
 
 const DeploymentPage: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const { ns: namespace, name } = useParams();
 
   const isNew = !name;
@@ -27,7 +27,7 @@ const DeploymentPage: FC = () => {
 
   const deployment: K8sResourceKind = isNew ? getDefaultDeployment(namespace) : watchedDeployment;
 
-  const title = isNew ? t('devconsole~Create Deployment') : t('devconsole~Edit Deployment');
+  const title = isNew ? t('Create Deployment') : t('Edit Deployment');
 
   return (
     <>

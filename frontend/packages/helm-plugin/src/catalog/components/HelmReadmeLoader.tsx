@@ -2,8 +2,8 @@ import type { FC } from 'react';
 import { useState, useEffect } from 'react';
 import { Base64 } from 'js-base64';
 import { useTranslation } from 'react-i18next';
-import { coFetchJSON } from '@console/internal/co-fetch';
 import { MarkdownView } from '@console/shared/src/components/markdown/MarkdownView';
+import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
 
 type HelmReadmeLoaderProps = {
   chartURL: string;
@@ -12,7 +12,7 @@ type HelmReadmeLoaderProps = {
 };
 
 const HelmReadmeLoader: FC<HelmReadmeLoaderProps> = ({ chartURL, namespace, chartIndexEntry }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('helm-plugin');
   const [readme, setReadme] = useState<string>();
   const [loaded, setLoaded] = useState<boolean>(false);
 
@@ -38,7 +38,7 @@ const HelmReadmeLoader: FC<HelmReadmeLoaderProps> = ({ chartURL, namespace, char
 
       if (!unmounted) {
         setLoaded(true);
-        readmeData && setReadme(`## ${t('helm-plugin~README')}\n${readmeData}`);
+        readmeData && setReadme(`## ${t('README')}\n${readmeData}`);
       }
     };
 
@@ -51,7 +51,7 @@ const HelmReadmeLoader: FC<HelmReadmeLoaderProps> = ({ chartURL, namespace, char
 
   if (!loaded) return <div className="loading-skeleton--table" />;
 
-  return <MarkdownView content={readme} emptyMsg={t('helm-plugin~README not available')} />;
+  return <MarkdownView content={readme} emptyMsg={t('README not available')} />;
 };
 
 export default HelmReadmeLoader;

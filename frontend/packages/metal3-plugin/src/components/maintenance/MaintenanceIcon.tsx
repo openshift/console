@@ -1,6 +1,6 @@
 import type { FC } from 'react';
-import { MaintenanceIcon } from '@patternfly/react-icons';
+import { RhUiBuildIcon } from '@patternfly/react-icons';
 
 export const NodeMaintenanceIcon: FC = () => {
-  return <MaintenanceIcon />;
+  return <RhUiBuildIcon />;
 };

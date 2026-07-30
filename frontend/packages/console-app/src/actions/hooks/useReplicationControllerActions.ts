@@ -39,13 +39,13 @@ export const useReplicationControllerActions = <
   obj: ReplicationControllerKind,
   filterActions?: T,
 ): [ActionObject<T>, boolean] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const launchModal = useOverlay();
   const openCancelRolloutConfirm = useWarningModal({
-    title: t('console-app~Cancel rollout'),
-    children: t('console-app~Are you sure you want to cancel this rollout?'),
-    confirmButtonLabel: t('console-app~Yes, cancel'),
-    cancelButtonLabel: t("console-app~No, don't cancel"),
+    title: t('Cancel rollout'),
+    children: t('Are you sure you want to cancel this rollout?'),
+    confirmButtonLabel: t('Yes, cancel'),
+    cancelButtonLabel: t("No, don't cancel"),
     onConfirm: () => {
       return k8sPatchResource({
         model: kind,
@@ -72,7 +72,7 @@ export const useReplicationControllerActions = <
     () => ({
       [ReplicationControllerActionCreator.RollbackDeploymentConfig]: (): Action => ({
         id: 'rollback-deployment-config',
-        label: t('console-app~Rollback'),
+        label: t('Rollback'),
         disabled: INACTIVE_STATUSES.includes(
           obj?.metadata?.annotations?.['openshift.io/deployment.phase'] || '',
         ),
@@ -90,7 +90,7 @@ export const useReplicationControllerActions = <
       }),
       [ReplicationControllerActionCreator.CancelRollout]: (): Action => ({
         id: 'cancel-rollout',
-        label: t('console-app~Cancel rollout'),
+        label: t('Cancel rollout'),
         cta: () => openCancelRolloutConfirm(),
         accessReview: asAccessReview(kind, obj, 'patch'),
       }),

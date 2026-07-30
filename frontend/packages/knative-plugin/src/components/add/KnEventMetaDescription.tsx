@@ -11,7 +11,7 @@ type KnEventMetaDescriptionProps = {
 };
 
 const KnEventMetaDescription: FC<KnEventMetaDescriptionProps> = ({ normalizedData }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   if (_.isEmpty(normalizedData)) {
     return null;
   }
@@ -38,7 +38,7 @@ const KnEventMetaDescription: FC<KnEventMetaDescriptionProps> = ({ normalizedDat
           </Title>
           {provider && (
             <span className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle">
-              {t('knative-plugin~Provided by {{provider}}', {
+              {t('Provided by {{provider}}', {
                 provider,
               })}
             </span>

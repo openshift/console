@@ -29,6 +29,7 @@ import Status, {
 } from '@console/shared/src/components/dashboard/status-card/StatusPopup';
 import { getNodeMachineNameAndNamespace } from '@console/shared/src/selectors/node';
 import NodeStatus from '../NodeStatus';
+import { parseDurationToSeconds } from '../utils/utils';
 import { CONDITIONS_WARNING } from './messages';
 import { NodeDashboardContext } from './NodeDashboardContext';
 
@@ -63,16 +64,13 @@ export const HealthChecksPopup: FC<HealthChecksPopupProps> = ({
         : healthStateMapping[HealthState.OK].icon,
     };
   });
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   return (
     <Stack hasGutter>
       <StackItem>
-        {t(
-          'console-app~{{ machineHealthCheckLabelPlural }} automatically remediate node health issues.',
-          {
-            machineHealthCheckLabelPlural: MachineHealthCheckModel.labelPlural,
-          },
-        )}
+        {t('{{ machineHealthCheckLabelPlural }} automatically remediate node health issues.', {
+          machineHealthCheckLabelPlural: MachineHealthCheckModel.labelPlural,
+        })}
       </StackItem>
       {!!machineHealthChecks?.length && (
         <StackItem>
@@ -99,10 +97,7 @@ export const HealthChecksPopup: FC<HealthChecksPopupProps> = ({
       )}
       {!!conditions.length && (
         <StackItem>
-          <StatusPopupSection
-            firstColumn={t('console-app~Conditions')}
-            secondColumn={t('console-app~Status')}
-          >
+          <StatusPopupSection firstColumn={t('Conditions')} secondColumn={t('Status')}>
             {groupedConditions.map((c) => (
               <Status {...c} key={c.title}>
                 {c.title}
@@ -116,7 +111,7 @@ export const HealthChecksPopup: FC<HealthChecksPopupProps> = ({
           <Alert
             variant="warning"
             isInline
-            title={reboot ? t('console-app~Reboot pending') : t('console-app~Reprovision pending')}
+            title={reboot ? t('Reboot pending') : t('Reprovision pending')}
             className="co-node-health__popup-alert"
           >
             {CONDITIONS_WARNING(reboot)}
@@ -131,12 +126,9 @@ export const HealthChecksPopup: FC<HealthChecksPopupProps> = ({
             title="Multiple resources"
             className="co-node-health__popup-alert"
           >
-            {t(
-              'console-app~Only one {{ machineHealthCheckLabel }} resource should match this node.',
-              {
-                machineHealthCheckLabel: MachineHealthCheckModel.label,
-              },
-            )}
+            {t('Only one {{ machineHealthCheckLabel }} resource should match this node.', {
+              machineHealthCheckLabel: MachineHealthCheckModel.label,
+            })}
           </Alert>
         </StackItem>
       )}
@@ -160,13 +152,19 @@ const isConditionFailing = (
   node: NodeKind,
   { type, status, timeout }: MachineHealthCondition,
 ): boolean => {
-  const nodeCondition = node.status.conditions.find((c) => c.type === type && c.status === status);
+  const nodeCondition = node.status?.conditions?.find(
+    (c) => c.type === type && c.status === status,
+  );
   if (!nodeCondition) {
     return false;
   }
   const transitionTime = new Date(nodeCondition.lastTransitionTime).getTime();
   const currentTime = new Date().getTime();
-  const withTO = transitionTime + 1000 * parseInt(timeout, 10);
+  const timeoutInSeconds = parseDurationToSeconds(timeout);
+  if (timeoutInSeconds === undefined) {
+    return false;
+  }
+  const withTO = transitionTime + timeoutInSeconds * 1000;
   return withTO < currentTime;
 };
 
@@ -240,10 +238,10 @@ type HealthChecksItemProps = {
   };
 };
 
-export const HealthChecksItem: FC<HealthChecksItemProps> = ({ disabledAlert }) => {
+const HealthChecksItem: FC<HealthChecksItemProps> = ({ disabledAlert }) => {
   const { obj, setHealthCheck } = useContext(NodeDashboardContext);
   const [name, namespace] = getNodeMachineNameAndNamespace(obj);
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const machine = useK8sWatchResource<MachineKind>(
     name && namespace
       ? {
@@ -280,11 +278,7 @@ export const HealthChecksItem: FC<HealthChecksItemProps> = ({ disabledAlert }) =
   }, [failingHealthCheck, reboot, setHealthCheck]);
 
   return (
-    <HealthItem
-      title={t('console-app~Health checks')}
-      popupTitle={t('console-app~Health checks')}
-      {...healthState}
-    >
+    <HealthItem title={t('Health checks')} popupTitle={t('Health checks')} {...healthState}>
       <HealthChecksPopup
         conditions={healthState.conditions}
         machineHealthChecks={healthState.matchingHC}

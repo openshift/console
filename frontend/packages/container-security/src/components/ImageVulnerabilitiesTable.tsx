@@ -18,49 +18,47 @@ const getRowProps = (vulnerability: Vulnerability) => ({
 });
 
 const ImageVulnerabilitiesTable: FC<ImageVulnerabilitiesTableProps> = (props) => {
-  const { t } = useTranslation();
-  const EmptyMsg = () => (
-    <ConsoleEmptyState title={t('container-security~No Image vulnerabilities found')} />
-  );
+  const { t } = useTranslation('container-security');
+  const EmptyMsg = () => <ConsoleEmptyState title={t('No Image vulnerabilities found')} />;
   const ImageVulnerabilitiesTableHeader = () => [
     {
-      title: t('container-security~Name'),
+      title: t('Name'),
       transforms: [sortable],
       sortField: 'vulnerability.name',
       props: { className: imageVulnerabilitiesTableColumnClasses[0] },
     },
     {
-      title: t('container-security~Severity'),
+      title: t('Severity'),
       transforms: [sortable],
       sortField: 'vulnerability.severity',
       props: { className: imageVulnerabilitiesTableColumnClasses[1] },
     },
     {
-      title: t('container-security~Package'),
+      title: t('Package'),
       transforms: [sortable],
       sortField: 'feature.name',
       props: { className: imageVulnerabilitiesTableColumnClasses[2] },
     },
     {
-      title: t('container-security~Type'),
+      title: t('Type'),
       transforms: [sortable],
       sortFunc: 'vulnerabilityType',
       props: { className: imageVulnerabilitiesTableColumnClasses[3] },
     },
     {
-      title: t('container-security~Source'),
+      title: t('Source'),
       transforms: [sortable],
       sortFunc: 'vulnerabilitySource',
       props: { className: imageVulnerabilitiesTableColumnClasses[4] },
     },
     {
-      title: t('container-security~Current version'),
+      title: t('Current version'),
       transforms: [sortable],
       sortField: 'feature.version',
       props: { className: imageVulnerabilitiesTableColumnClasses[3] },
     },
     {
-      title: t('container-security~Fixed in version'),
+      title: t('Fixed in version'),
       transforms: [sortable],
       sortField: 'vulnerability.fixedby',
       props: { className: imageVulnerabilitiesTableColumnClasses[4] },
@@ -73,7 +71,7 @@ const ImageVulnerabilitiesTable: FC<ImageVulnerabilitiesTableProps> = (props) =>
         vulnerabilityType: (obj) => getVulnerabilityType(obj.vulnerability),
         vulnerabilitySource: (obj) => getVulnerabilitySource(obj.vulnerability),
       }}
-      aria-label={t('container-security~Vulnerabilities')}
+      aria-label={t('Vulnerabilities')}
       Header={ImageVulnerabilitiesTableHeader}
       Row={ImageVulnerabilityRow}
       EmptyMsg={EmptyMsg}

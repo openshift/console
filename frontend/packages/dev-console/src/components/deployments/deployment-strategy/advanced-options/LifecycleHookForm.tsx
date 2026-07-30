@@ -4,7 +4,9 @@ import { useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { ActionGroupWithIcons, DropdownField, RadioGroupField } from '@console/shared/src';
+import { ActionGroupWithIcons } from '@console/shared/src/components/form-utils/ActionGroupWithIcons';
+import { DropdownField } from '@console/shared/src/components/formik-fields/DropdownField';
+import { RadioGroupField } from '@console/shared/src/components/formik-fields/RadioGroupField';
 import FormSection from '../../../import/section/FormSection';
 import { lifecycleActionType } from '../utils/deployment-strategy-utils';
 import { FailurePolicyOptions } from '../utils/types';
@@ -27,14 +29,14 @@ const LifecycleHookForm: FC<LifecycleHookFormProps> = ({
   onSubmit,
   onClose,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const { errors } = useFormikContext<FormikValues>();
   return (
     <div className="odc-deployment-lifecycle-hook-form">
       <FormSection>
         <RadioGroupField
           name={`formData.deploymentStrategy.${dataAttribute}.${lifecycleHook}.action`}
-          label={t('devconsole~Lifecycle Action')}
+          label={t('Lifecycle Action')}
           required
           options={[
             {
@@ -57,10 +59,10 @@ const LifecycleHookForm: FC<LifecycleHookFormProps> = ({
         />
         <DropdownField
           name={`formData.deploymentStrategy.${dataAttribute}.${lifecycleHook}.lch.failurePolicy`}
-          label={t('devconsole~Failure Policy')}
-          title={t('devconsole~Select a Failure Policy')}
+          label={t('Failure Policy')}
+          title={t('Select a Failure Policy')}
           items={FailurePolicyOptions}
-          helpText={t('devconsole~Fail the deployment if the hook fails.')}
+          helpText={t('Fail the deployment if the hook fails.')}
           fullWidth
           required
         />

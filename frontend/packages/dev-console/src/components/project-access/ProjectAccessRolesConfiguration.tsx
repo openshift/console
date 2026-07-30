@@ -12,14 +12,12 @@ import {
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sWatchResource';
 import { ClusterRoleModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import type { SaveStatusProps } from '@console/shared/src/components/cluster-configuration';
-import {
-  useDebounceCallback,
-  useConsoleOperatorConfig,
-  patchConsoleOperatorConfig,
-  LoadError,
-  SaveStatus,
-} from '@console/shared/src/components/cluster-configuration';
+import { LoadError } from '@console/shared/src/components/cluster-configuration/LoadError';
+import { patchConsoleOperatorConfig } from '@console/shared/src/components/cluster-configuration/patchConsoleOperatorConfig';
+import type { SaveStatusProps } from '@console/shared/src/components/cluster-configuration/SaveStatus';
+import { SaveStatus } from '@console/shared/src/components/cluster-configuration/SaveStatus';
+import { useConsoleOperatorConfig } from '@console/shared/src/components/cluster-configuration/useConsoleOperatorConfig';
+import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 
 const defaultClusterRoleNames = ['admin', 'edit', 'view'];
@@ -51,7 +49,7 @@ const Item: FC<ItemProps> = ({ name, clusterRole }) => (
 );
 
 const ProjectAccessRolesConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const fireTelemetryEvent = useTelemetry();
 
   // Available cluster roles
@@ -170,13 +168,10 @@ const ProjectAccessRolesConfiguration: FC<{ readonly: boolean }> = ({ readonly }
   };
 
   return (
-    <FormSection
-      title={t('devconsole~Project access')}
-      data-test="project-access-roles form-section"
-    >
+    <FormSection title={t('Project access')} data-test="project-access-roles form-section">
       <DualListSelector
-        availableOptionsTitle={t('devconsole~Available Cluster Roles')}
-        chosenOptionsTitle={t('devconsole~Chosen Cluster Roles')}
+        availableOptionsTitle={t('Available Cluster Roles')}
+        chosenOptionsTitle={t('Chosen Cluster Roles')}
         isSearchable
         availableOptions={availableOptions}
         chosenOptions={chosenOptions}

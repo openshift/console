@@ -3,8 +3,9 @@ import type { K8sResourceKind, MachineKind, NodeKind } from '@console/internal/m
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
 import { getMachineNode } from '@console/shared/src/selectors/machine';
-import { findNodeMaintenance, getHostMachine } from '../../../selectors';
-import type { BareMetalHostKind } from '../../../types';
+import { getHostMachine } from '../../../selectors/baremetal-hosts';
+import { findNodeMaintenance } from '../../../selectors/node-maintenance';
+import type { BareMetalHostKind } from '../../../types/host';
 import { BareMetalHostDashboardContext } from './BareMetalHostDashboardContext';
 import DetailsCard from './DetailsCard';
 import EventsCard from './EventsCard';

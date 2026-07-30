@@ -6,7 +6,7 @@ import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
 import { PodDisruptionBudgetModel } from '../../models';
 import type { PodDisruptionBudgetKind } from './types';
 
-export const intOrString = (val: string | number): string | number => {
+const intOrString = (val: string | number): string | number => {
   if (val === '') {
     return val;
   }

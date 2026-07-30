@@ -1,12 +1,4 @@
-import ActionServiceProvider from '@console/shared/src/components/actions/ActionServiceProvider';
-import ActionMenu from '@console/shared/src/components/actions/menu/ActionMenu';
-import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
-import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { Status } from '@console/shared/src/components/status/Status';
-import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
-import { usePrometheusGate } from '@console/shared/src/hooks/usePrometheusGate';
+import type { FC, ReactElement } from 'react';
 import {
   Card,
   CardBody,
@@ -21,16 +13,25 @@ import {
 } from '@patternfly/react-core';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import * as _ from 'lodash';
-import { FC, ReactElement } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
-import {
+import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
+import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
+import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { Status } from '@console/shared/src/components/status/Status';
+import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
+import { usePrometheusGate } from '@console/shared/src/hooks/usePrometheusGate';
+import type {
   ContainerSpec,
   ContainerState,
   K8sResourceKindReference,
   PodKind,
-  referenceForModel,
 } from '../module/k8s';
+import { referenceForModel } from '../module/k8s';
 import {
   getContainerRestartCount,
   getContainerState,
@@ -43,7 +44,9 @@ import { DetailsPage } from './factory/details';
 import type { PrometheusResult } from './graphs';
 import { Area } from './graphs/area';
 import { Stack } from './graphs/stack';
+import { PodStatus } from './pod-list';
 import { PodLogs } from './pod-logs';
+import { PodTraffic } from './pod-traffic';
 import { AsyncComponent } from './utils/async';
 import { DetailsItem } from './utils/details-item';
 import { ResourceSummary, RuntimeClass } from './utils/details-page';
@@ -68,9 +71,6 @@ import { VolumesTable } from './volumes-table';
 // t('public~Login is required. Please try again.')
 // t('public~Could not check CSRF token. Please try again.')
 // t('public~Invalid login or password. Please try again.')
-import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
-import { PodTraffic } from './pod-traffic';
-import { PodStatus } from './pod-list';
 
 export const ContainerLink: FC<ContainerLinkProps> = ({ pod, name }) => (
   <span className="co-resource-item co-resource-item--inline">
@@ -83,7 +83,7 @@ export const ContainerLink: FC<ContainerLinkProps> = ({ pod, name }) => (
 ContainerLink.displayName = 'ContainerLink';
 
 const ContainerRunningSince: FC<ContainerRunningSinceProps> = ({ startedAt }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return startedAt ? (
     <Trans t={t} ns="public">
       since <Timestamp timestamp={startedAt} simple />
@@ -92,7 +92,7 @@ const ContainerRunningSince: FC<ContainerRunningSinceProps> = ({ startedAt }) =>
 };
 
 const ContainerTerminatedAt: FC<ContainerTerminatedAtProps> = ({ finishedAt }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return finishedAt ? (
     <Trans t={t} ns="public">
       at <Timestamp timestamp={finishedAt} simple />{' '}
@@ -101,26 +101,28 @@ const ContainerTerminatedAt: FC<ContainerTerminatedAtProps> = ({ finishedAt }) =
 };
 
 const ContainerTerminatedExitCode: FC<ContainerTerminatedExitCodeProps> = ({ exitCode }) => {
-  const { t } = useTranslation();
-  return exitCode ? <>{t('public~with exit code {{exitCode}} ', { exitCode })}</> : null;
+  const { t } = useTranslation('public');
+  return exitCode ? <>{t('with exit code {{exitCode}} ', { exitCode })}</> : null;
 };
 
 const ContainerTerminatedReason: FC<ContainerTerminatedReasonProps> = ({ reason }) => {
-  const { t } = useTranslation();
-  return reason ? <>{t('public~({{reason}})', { reason })}</> : null;
+  const { t } = useTranslation('public');
+  return reason ? <>{t('({{reason}})', { reason })}</> : null;
 };
 
 export const ContainerLastState: FC<ContainerLastStateProps> = ({ containerLastState }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   if (containerLastState?.waiting) {
-    return <>{t('public~Waiting {{reason}}', { reason: containerLastState.waiting?.reason })}</>;
-  } else if (containerLastState?.running) {
+    return <>{t('Waiting {{reason}}', { reason: containerLastState.waiting?.reason })}</>;
+  }
+  if (containerLastState?.running) {
     return (
       <Trans t={t} ns="public">
         Running <ContainerRunningSince startedAt={containerLastState.running?.startedAt} />
       </Trans>
     );
-  } else if (containerLastState?.terminated) {
+  }
+  if (containerLastState?.terminated) {
     return (
       <Trans t={t} ns="public">
         Terminated <ContainerTerminatedAt finishedAt={containerLastState.terminated?.finishedAt} />
@@ -133,7 +135,7 @@ export const ContainerLastState: FC<ContainerLastStateProps> = ({ containerLastS
 };
 
 export const ContainerRow: FC<ContainerRowProps> = ({ pod, container }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const cstatus = getContainerStatus(pod, container.name);
   const cstate = getContainerState(cstatus);
   const startedAt =
@@ -154,9 +156,7 @@ export const ContainerRow: FC<ContainerRowProps> = ({ pod, container }) => {
       <Td visibility={['hidden', 'visibleOnMd']}>
         <Status status={cstate.label} />
       </Td>
-      <Td visibility={['hidden', 'visibleOnMd']}>
-        {cstatus?.ready ? t('public~Ready') : t('public~Not ready')}
-      </Td>
+      <Td visibility={['hidden', 'visibleOnMd']}>{cstatus?.ready ? t('Ready') : t('Not ready')}</Td>
       <Td visibility={['hidden', 'visibleOnXl']}>
         <ContainerLastState containerLastState={cstatus?.lastState} />
       </Td>
@@ -173,32 +173,32 @@ export const ContainerRow: FC<ContainerRowProps> = ({ pod, container }) => {
 };
 ContainerRow.displayName = 'ContainerRow';
 
-export const PodContainerTable: FC<PodContainerTableProps> = ({ heading, containers, pod }) => {
-  const { t } = useTranslation();
+const PodContainerTable: FC<PodContainerTableProps> = ({ heading, containers, pod }) => {
+  const { t } = useTranslation('public');
   return (
     <>
       <SectionHeading text={heading} />
       <Table gridBreakPoint="">
         <Thead>
           <Tr>
-            <Th width={20}>{t('public~Name')}</Th>
-            <Th>{t('public~Image')}</Th>
-            <Th visibility={['hidden', 'visibleOnMd']}>{t('public~State')}</Th>
-            <Th visibility={['hidden', 'visibleOnMd']}>{t('public~Ready')}</Th>
-            <Th visibility={['hidden', 'visibleOnXl']}>{t('public~Last State')}</Th>
-            <Th visibility={['hidden', 'visibleOnLg']}>{t('public~Restarts')}</Th>
+            <Th width={20}>{t('Name')}</Th>
+            <Th>{t('Image')}</Th>
+            <Th visibility={['hidden', 'visibleOnMd']}>{t('State')}</Th>
+            <Th visibility={['hidden', 'visibleOnMd']}>{t('Ready')}</Th>
+            <Th visibility={['hidden', 'visibleOnXl']}>{t('Last State')}</Th>
+            <Th visibility={['hidden', 'visibleOnLg']}>{t('Restarts')}</Th>
             <Th width={10} visibility={['hidden', 'visibleOnLg']}>
-              {t('public~Started')}
+              {t('Started')}
             </Th>
             <Th width={10} visibility={['hidden', 'visibleOnXl']}>
-              {t('public~Finished')}
+              {t('Finished')}
             </Th>
-            <Th visibility={['hidden', 'visibleOnXl']}>{t('public~Exit code')}</Th>
+            <Th visibility={['hidden', 'visibleOnXl']}>{t('Exit code')}</Th>
           </Tr>
         </Thead>
         <Tbody>
-          {containers.map((c: ContainerSpec, i: number) => (
-            <ContainerRow key={i} pod={pod} container={c} />
+          {containers.map((c: ContainerSpec) => (
+            <ContainerRow key={c.name} pod={pod} container={c} />
           ))}
         </Tbody>
       </Table>
@@ -212,18 +212,18 @@ const getNetworkName = (result: PrometheusResult) =>
 
 // TODO update to use QueryBrowser for each graph
 const PodMetrics: FC<PodMetricsProps> = ({ obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <Dashboard className="resource-metrics-dashboard">
       <Grid hasGutter>
         <GridItem xl={6} lg={12}>
           <Card className="resource-metrics-dashboard__card">
             <CardHeader>
-              <CardTitle>{t('public~Memory usage')}</CardTitle>
+              <CardTitle>{t('Memory usage')}</CardTitle>
             </CardHeader>
             <CardBody className="resource-metrics-dashboard__card-body">
               <Area
-                ariaChartLinkLabel={t('public~View in query browser')}
+                ariaChartLinkLabel={t('View in query browser')}
                 humanize={humanizeBinaryBytes}
                 byteDataType={ByteDataTypes.BinaryBytes}
                 namespace={obj.metadata.namespace}
@@ -237,11 +237,11 @@ const PodMetrics: FC<PodMetricsProps> = ({ obj }) => {
         <GridItem xl={6} lg={12}>
           <Card className="resource-metrics-dashboard__card">
             <CardHeader>
-              <CardTitle>{t('public~CPU usage')}</CardTitle>
+              <CardTitle>{t('CPU usage')}</CardTitle>
             </CardHeader>
             <CardBody className="resource-metrics-dashboard__card-body">
               <Area
-                ariaChartLinkLabel={t('public~View in query browser')}
+                ariaChartLinkLabel={t('View in query browser')}
                 humanize={humanizeCpuCores}
                 namespace={obj.metadata.namespace}
                 query={`pod:container_cpu_usage:sum{pod='${obj.metadata.name}',namespace='${obj.metadata.namespace}'}`}
@@ -254,11 +254,11 @@ const PodMetrics: FC<PodMetricsProps> = ({ obj }) => {
         <GridItem xl={6} lg={12}>
           <Card className="resource-metrics-dashboard__card">
             <CardHeader>
-              <CardTitle>{t('public~Filesystem')}</CardTitle>
+              <CardTitle>{t('Filesystem')}</CardTitle>
             </CardHeader>
             <CardBody className="resource-metrics-dashboard__card-body">
               <Area
-                ariaChartLinkLabel={t('public~View in query browser')}
+                ariaChartLinkLabel={t('View in query browser')}
                 humanize={humanizeBinaryBytes}
                 byteDataType={ByteDataTypes.BinaryBytes}
                 namespace={obj.metadata.namespace}
@@ -270,11 +270,11 @@ const PodMetrics: FC<PodMetricsProps> = ({ obj }) => {
         <GridItem xl={6} lg={12}>
           <Card className="resource-metrics-dashboard__card">
             <CardHeader>
-              <CardTitle>{t('public~Network in')}</CardTitle>
+              <CardTitle>{t('Network in')}</CardTitle>
             </CardHeader>
             <CardBody className="resource-metrics-dashboard__card-body">
               <Stack
-                ariaChartLinkLabel={t('public~View in query browser')}
+                ariaChartLinkLabel={t('View in query browser')}
                 humanize={humanizeDecimalBytesPerSec}
                 namespace={obj.metadata.namespace}
                 query={`pod_interface_network:container_network_receive_bytes:irate5m{pod='${obj.metadata.name}', namespace='${obj.metadata.namespace}'}`}
@@ -286,11 +286,11 @@ const PodMetrics: FC<PodMetricsProps> = ({ obj }) => {
         <GridItem xl={6} lg={12}>
           <Card className="resource-metrics-dashboard__card">
             <CardHeader>
-              <CardTitle>{t('public~Network out')}</CardTitle>
+              <CardTitle>{t('Network out')}</CardTitle>
             </CardHeader>
             <CardBody className="resource-metrics-dashboard__card-body">
               <Stack
-                ariaChartLinkLabel={t('public~View in query browser')}
+                ariaChartLinkLabel={t('View in query browser')}
                 humanize={humanizeDecimalBytesPerSec}
                 namespace={obj.metadata.namespace}
                 query={`pod_interface_network:container_network_transmit_bytes_total:irate5m{pod='${obj.metadata.name}', namespace='${obj.metadata.namespace}'}`}
@@ -305,31 +305,27 @@ const PodMetrics: FC<PodMetricsProps> = ({ obj }) => {
 };
 
 export const PodDetailsList: FC<PodDetailsListProps> = ({ pod }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const moreThanOnePodIPs = pod.status?.podIPs?.length > 1;
   const moreThanOneHostIPs = pod.status?.hostIPs?.length > 1;
   return (
     <DescriptionList>
       <DescriptionListGroup>
-        <DescriptionListTerm>{t('public~Status')}</DescriptionListTerm>
+        <DescriptionListTerm>{t('Status')}</DescriptionListTerm>
         <DescriptionListDescription>
           <PodStatus pod={pod} />
         </DescriptionListDescription>
       </DescriptionListGroup>
-      <DetailsItem label={t('public~Restart policy')} obj={pod} path="spec.restartPolicy">
+      <DetailsItem label={t('Restart policy')} obj={pod} path="spec.restartPolicy">
         {getRestartPolicyLabel(pod)}
       </DetailsItem>
-      <DetailsItem
-        label={t('public~Active deadline seconds')}
-        obj={pod}
-        path="spec.activeDeadlineSeconds"
-      >
+      <DetailsItem label={t('Active deadline seconds')} obj={pod} path="spec.activeDeadlineSeconds">
         {pod.spec.activeDeadlineSeconds
-          ? t('public~{{count}} second', { count: pod.spec.activeDeadlineSeconds })
-          : t('public~Not configured')}
+          ? t('{{count}} second', { count: pod.spec.activeDeadlineSeconds })
+          : t('Not configured')}
       </DetailsItem>
       <DetailsItem
-        label={moreThanOnePodIPs ? t('public~Pod IPs') : t('public~Pod IP')}
+        label={moreThanOnePodIPs ? t('Pod IPs') : t('Pod IP')}
         obj={pod}
         path={moreThanOnePodIPs ? 'status.podIPs' : 'status.podIP'}
       >
@@ -338,7 +334,7 @@ export const PodDetailsList: FC<PodDetailsListProps> = ({ pod }) => {
           : pod.status?.podIP || ''}
       </DetailsItem>
       <DetailsItem
-        label={moreThanOneHostIPs ? t('public~Host IPs') : t('public~Host IP')}
+        label={moreThanOneHostIPs ? t('Host IPs') : t('Host IP')}
         obj={pod}
         path={moreThanOneHostIPs ? 'status.hostIPs' : 'status.hostIP'}
       >
@@ -346,11 +342,11 @@ export const PodDetailsList: FC<PodDetailsListProps> = ({ pod }) => {
           ? pod.status?.hostIPs?.map((hostIP) => hostIP.ip).join(', ') || ''
           : pod.status?.hostIP || ''}
       </DetailsItem>
-      <DetailsItem label={t('public~Node')} obj={pod} path="spec.nodeName" hideEmpty>
+      <DetailsItem label={t('Node')} obj={pod} path="spec.nodeName" hideEmpty>
         <NodeLink name={pod.spec.nodeName || ''} />
       </DetailsItem>
       {pod.spec.imagePullSecrets && (
-        <DetailsItem label={t('public~Image pull secret')} obj={pod} path="spec.imagePullSecrets">
+        <DetailsItem label={t('Image pull secret')} obj={pod} path="spec.imagePullSecrets">
           {pod.spec.imagePullSecrets.map((imagePullSecret) => (
             <ResourceLink
               key={imagePullSecret.name}
@@ -363,7 +359,7 @@ export const PodDetailsList: FC<PodDetailsListProps> = ({ pod }) => {
       )}
       <RuntimeClass obj={pod} path="spec.runtimeClassName" />
       <PodDisruptionBudgetField obj={pod} />
-      <DetailsItem label={t('public~Receiving Traffic')} obj={pod}>
+      <DetailsItem label={t('Receiving Traffic')} obj={pod}>
         <PodTraffic podName={pod.metadata.name || ''} namespace={pod.metadata.namespace || ''} />
       </DetailsItem>
     </DescriptionList>
@@ -388,7 +384,7 @@ const Details: FC<PodDetailsProps> = ({ obj: pod }) => {
   limits.cpu = _.reduce(
     pod.spec.containers,
     (sum, container) => {
-      const value = units.dehumanize(_.get(container, 'resources.limits.cpu', 0), 'numeric').value;
+      const { value } = units.dehumanize(_.get(container, 'resources.limits.cpu', 0), 'numeric');
       return sum + value;
     },
     0,
@@ -396,20 +392,20 @@ const Details: FC<PodDetailsProps> = ({ obj: pod }) => {
   limits.memory = _.reduce(
     pod.spec.containers,
     (sum, container) => {
-      const value = units.dehumanize(
+      const { value } = units.dehumanize(
         _.get(container, 'resources.limits.memory', 0),
         'binaryBytesWithoutB',
-      ).value;
+      );
       return sum + value;
     },
     0,
   );
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <>
       <ScrollToTopOnMount />
       <PaneBody>
-        <SectionHeading text={t('public~Pod details')} />
+        <SectionHeading text={t('Pod details')} />
         <Grid hasGutter>
           <GridItem sm={6}>
             <PodResourceSummary pod={pod} />
@@ -423,7 +419,7 @@ const Details: FC<PodDetailsProps> = ({ obj: pod }) => {
         <PaneBody>
           <PodContainerTable
             key="initContainerTable"
-            heading={t('public~Init containers')}
+            heading={t('Init containers')}
             containers={pod.spec.initContainers}
             pod={pod}
           />
@@ -432,16 +428,16 @@ const Details: FC<PodDetailsProps> = ({ obj: pod }) => {
       <PaneBody>
         <PodContainerTable
           key="containerTable"
-          heading={t('public~Containers')}
+          heading={t('Containers')}
           containers={pod.spec.containers}
           pod={pod}
         />
       </PaneBody>
       <PaneBody>
-        <VolumesTable resource={pod} heading={t('public~Volumes')} />
+        <VolumesTable resource={pod} heading={t('Volumes')} />
       </PaneBody>
       <PaneBody>
-        <SectionHeading text={t('public~Conditions')} />
+        <SectionHeading text={t('Conditions')} />
         <Conditions conditions={pod.status?.conditions || []} />
       </PaneBody>
     </>
@@ -462,7 +458,7 @@ const EnvironmentPage = (props: {
 
 const envPath = ['spec', 'containers'];
 const PodEnvironmentComponent = (props: { obj: PodKind }) => (
-  <EnvironmentPage obj={props.obj} rawEnvData={props.obj.spec} envPath={envPath} readOnly={true} />
+  <EnvironmentPage obj={props.obj} rawEnvData={props.obj.spec} envPath={envPath} readOnly />
 );
 
 export const PodConnectLoader: FC<PodConnectLoaderProps> = ({
@@ -471,6 +467,7 @@ export const PodConnectLoader: FC<PodConnectLoaderProps> = ({
   initialContainer,
   infoMessage,
   attach = false,
+  cleanupOnDetach,
 }) => (
   <PaneBody>
     <Grid>
@@ -483,6 +480,7 @@ export const PodConnectLoader: FC<PodConnectLoaderProps> = ({
             infoMessage={infoMessage}
             initialContainer={initialContainer}
             attach={attach}
+            cleanupOnDetach={cleanupOnDetach}
           />
         </div>
       </GridItem>
@@ -563,10 +561,6 @@ type PodMetricsProps = {
   obj: PodKind;
 };
 
-export type PodStatusProps = {
-  pod: PodKind;
-};
-
 type PodResourceSummaryProps = {
   pod: PodKind;
 };
@@ -581,6 +575,7 @@ type PodConnectLoaderProps = {
   infoMessage?: ReactElement;
   initialContainer?: string;
   attach?: boolean;
+  cleanupOnDetach?: { type: 'namespace' | 'pod'; name: string; namespace?: string };
 };
 
 type PodDetailsProps = {

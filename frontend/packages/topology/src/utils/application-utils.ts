@@ -42,12 +42,12 @@ import { getBuildConfigsForResource } from '@console/shared/src/utils/resource-u
 import { CREATE_APPLICATION_KEY, UNASSIGNED_KEY } from '../const';
 import { listInstanceResources } from './connector-utils';
 
-export const getPipeline = (resource: K8sResourceKind, pipelines: PipelineKind[]): PipelineKind => {
+const getPipeline = (resource: K8sResourceKind, pipelines: PipelineKind[]): PipelineKind => {
   const pipeline = pipelines.find((p: PipelineKind) => p.metadata.name === resource.metadata.name);
   return pipeline;
 };
 
-export const getTriggerTemplates = (
+const getTriggerTemplates = (
   pipeline: PipelineKind,
   triggerTemplates: TriggerTemplateKind[],
 ): TriggerTemplateKind[] => {
@@ -60,7 +60,7 @@ export const getTriggerTemplates = (
   return triggerTemplate;
 };
 
-export const getEventListeners = (
+const getEventListeners = (
   triggerTemplates: TriggerTemplateKind[],
   eventListeners: EventListenerKind[],
 ): EventListenerKind[] => {

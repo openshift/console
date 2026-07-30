@@ -15,27 +15,27 @@ import { SectionHeading } from '@console/internal/components/utils/headings';
 import { navFactory } from '@console/internal/components/utils/horizontal-nav';
 import type { VolumeSnapshotClassKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
-import ActionServiceProvider from '@console/shared/src/components/actions/ActionServiceProvider';
-import ActionMenu from '@console/shared/src/components/actions/menu/ActionMenu';
+import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
+import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 
 const { editYaml, events } = navFactory;
 
 const Details: FC<DetailsProps> = ({ obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   return (
     <PaneBody>
-      <SectionHeading text={t('console-app~VolumeSnapshotClass details')} />
+      <SectionHeading text={t('VolumeSnapshotClass details')} />
       <Grid hasGutter>
         <GridItem md={6}>
           <ResourceSummary resource={obj}>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('console-app~Driver')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Driver')}</DescriptionListTerm>
               <DescriptionListDescription>{obj?.driver}</DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('console-app~Deletion policy')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('Deletion policy')}</DescriptionListTerm>
               <DescriptionListDescription>{obj?.deletionPolicy}</DescriptionListDescription>
             </DescriptionListGroup>
           </ResourceSummary>

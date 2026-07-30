@@ -10,7 +10,7 @@ interface RestoreGettingStartedButtonProps {
 export const RestoreGettingStartedButton: FC<RestoreGettingStartedButtonProps> = ({
   userPreferenceKey,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const [showState, setShowState, showStateLoaded] = useGettingStartedShowState(userPreferenceKey);
 
   if (!showStateLoaded || showState !== GettingStartedShowState.HIDE) {
@@ -31,7 +31,7 @@ export const RestoreGettingStartedButton: FC<RestoreGettingStartedButtonProps> =
       style={{ cursor: 'pointer' }}
       data-test="restore-getting-started"
     >
-      {t('console-shared~Show getting started resources')}
+      {t('Show getting started resources')}
     </Label>
   );
 };

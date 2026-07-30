@@ -11,7 +11,7 @@ import { ConfigMapModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { getGroupVersionKind, modelFor, isGroupVersionKind } from '@console/internal/module/k8s';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
-import { UNASSIGNED_APPLICATIONS_KEY } from '@console/shared/src/constants';
+import { UNASSIGNED_APPLICATIONS_KEY } from '@console/shared/src/constants/common';
 import { CREATE_APPLICATION_KEY } from '@console/topology/src/const';
 import type {
   ChannelListProps,
@@ -167,7 +167,7 @@ export const useDefaultChannelConfiguration = (namespace: string): [string, bool
   );
   let defaultConfiguredChannel = EVENTING_IMC_KIND;
   if (configMap && defaultConfiguredChannelLoaded) {
-    const cfg = safeLoad(configMap.data?.['default-ch-config']);
+    const cfg = safeLoad(configMap.data?.['default-ch-config']) as Record<string, any>;
 
     defaultConfiguredChannel = _.hasIn(cfg?.namespaceDefaults, namespace)
       ? cfg?.namespaceDefaults[namespace].kind

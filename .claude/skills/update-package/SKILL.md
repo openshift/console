@@ -70,7 +70,7 @@ Update the specified package to its reasonably latest stable version or to the v
 - **Interactive approach**: Ask user for migration docs, changelogs, or specific fixes when needed
 - Use WebFetch to analyze provided documentation URLs
 - Provide progress updates during long operations (build: 2-5min, tests: 1-3min)
-- Use TodoWrite to track phases (TodoWrite is a Claude Code tool for tracking workflow phases with states: pending, in_progress, completed)
+- Use TaskCreate/TaskUpdate to track phases (these are Claude Code tools for tracking workflow phases with states: pending, in_progress, completed)
 
 **Special Cases**:
 - **PatternFly**: May need coordinated @patternfly/* updates; check peer deps

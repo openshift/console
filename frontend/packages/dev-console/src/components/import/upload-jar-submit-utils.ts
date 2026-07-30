@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-import { coFetch } from '@console/internal/co-fetch';
 import {
   ServiceModel,
   RouteModel,
@@ -9,12 +8,13 @@ import {
 } from '@console/internal/models';
 import type { K8sResourceKind, K8sVerb } from '@console/internal/module/k8s';
 import { k8sCreate, k8sUpdate } from '@console/internal/module/k8s';
-import { ServiceModel as KnServiceModel } from '@console/knative-plugin';
+import { ServiceModel as KnServiceModel } from '@console/knative-plugin/src/models';
 import {
   getDomainMappingRequests,
   getKnativeServiceDepResource,
 } from '@console/knative-plugin/src/utils/create-knative-utils';
 import type { NameValuePair } from '@console/shared/src/components/formik-fields/field-types';
+import { coFetch } from '@console/shared/src/utils/console-fetch';
 import { getResourceLimitsData } from '@console/shared/src/utils/resource-utils';
 import { getRandomChars } from '@console/shared/src/utils/utils';
 import { CUSTOM_ICON_ANNOTATION } from '../../const';
@@ -226,7 +226,7 @@ const createOrUpdateDeploymentConfig = (
     : k8sCreate(DeploymentConfigModel, deploymentConfig, dryRun ? dryRunOpt : {});
 };
 
-export const createOrUpdateBuildConfig = (
+const createOrUpdateBuildConfig = (
   formData: UploadJarFormData,
   imageStream: K8sResourceKind,
   dryRun: boolean,

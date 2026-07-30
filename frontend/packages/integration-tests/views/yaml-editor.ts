@@ -31,7 +31,6 @@ export const isImportLoaded = () => {
   cy.get('.monaco-editor textarea:first').should('exist');
 };
 export const clickSaveCreateButton = () => cy.byTestID('save-changes').click();
-export const clickCancelButton = () => cy.byTestID('cancel').click();
 export const clickReloadButton = () => cy.byTestID('reload-object').click();
 
 // YAML Editor Settings Modal helpers

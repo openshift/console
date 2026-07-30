@@ -18,13 +18,13 @@ export const ServiceAccountDropdown: FC<ServiceAccountDropdownProps> = ({
   onChange,
   id,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm-v1');
   const createServiceAccountModal = useCreateServiceAccountModal();
 
   const actionItems = namespace
     ? [
         {
-          actionTitle: t('olm-v1~Create ServiceAccount'),
+          actionTitle: t('Create ServiceAccount'),
           actionKey: 'Create_ServiceAccount',
         },
       ]
@@ -66,7 +66,7 @@ export const ServiceAccountDropdown: FC<ServiceAccountDropdownProps> = ({
           : []
       }
       desc={ServiceAccountModel.label}
-      placeholder={t('olm-v1~Select service account')}
+      placeholder={t('Select service account')}
       selectedKey={selectedKey}
       selectedKeyKind={ServiceAccountModel.kind}
       onChange={handleOnChange}

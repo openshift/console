@@ -10,14 +10,14 @@ type DeploymentOverviewListProps = {
 };
 
 const DeploymentOverviewList: FC<DeploymentOverviewListProps> = ({ resource }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const { pods } = usePodsForRevisions(resource.metadata.uid, resource.metadata.namespace);
   const { obj } = pods?.[0] || {};
   const namespace = obj?.metadata?.namespace;
   const deploymentData = obj?.metadata?.ownerReferences[0];
   return (
     <>
-      <SidebarSectionHeading text={t('knative-plugin~Deployment')} />
+      <SidebarSectionHeading text={t('Deployment')} />
       {deploymentData && deploymentData.name ? (
         <List isPlain isBordered>
           <ListItem>
@@ -30,7 +30,7 @@ const DeploymentOverviewList: FC<DeploymentOverviewListProps> = ({ resource }) =
         </List>
       ) : (
         <span className="pf-v6-u-text-color-subtle">
-          {t('knative-plugin~No Deployment found for this resource.')}
+          {t('No Deployment found for this resource.')}
         </span>
       )}
     </>

@@ -6,14 +6,6 @@ import { getResourcesType } from '../../edit-application/edit-application-utils'
 import AddHealthChecks from '../AddHealthChecks';
 import { getHealthChecksData } from '../create-health-checks-probe-utils';
 
-global.ResizeObserver = class ResizeObserver {
-  observe = () => {};
-
-  unobserve = () => {};
-
-  disconnect = () => {};
-};
-
 jest.mock('react-i18next', () => ({
   __esModule: true,
   useTranslation: () => ({

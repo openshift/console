@@ -1,32 +1,32 @@
 import type { FC } from 'react';
 import { Suspense } from 'react';
-import ActionServiceProvider from '@console/shared/src/components/actions/ActionServiceProvider';
-import ActionMenu from '@console/shared/src/components/actions/menu/ActionMenu';
+import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
+import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
+import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
+import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import PodRing from '@console/shared/src/components/pod/PodRing';
+import { PodRing } from '@console/shared/src/components/pod/PodRing';
 import { usePodsWatcher } from '@console/shared/src/hooks/usePodsWatcher';
 import { usePrometheusGate } from '@console/shared/src/hooks/usePrometheusGate';
-import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
-import { useWorkloadColumns, getWorkloadDataViewRows } from './workload-table';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
-import { useTranslation } from 'react-i18next';
-import { DaemonSetKind, K8sResourceKind, referenceForModel } from '../module/k8s';
+import { DaemonSetModel } from '../models';
+import type { DaemonSetKind, K8sResourceKind } from '../module/k8s';
+import { referenceForModel } from '../module/k8s';
+import { ResourceEventStream } from './events';
 import { DetailsPage } from './factory/details';
 import { ListPage } from './factory/list-page';
 import { AsyncComponent } from './utils/async';
 import { ContainerTable } from './utils/container-table';
 import { DetailsItem } from './utils/details-item';
 import { detailsPage, ResourceSummary } from './utils/details-page';
-import { navFactory, PodsComponent } from './utils/horizontal-nav';
-
-import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
-import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
-import { DaemonSetModel } from '../models';
-import { ResourceEventStream } from './events';
 import { SectionHeading } from './utils/headings';
+import { navFactory, PodsComponent } from './utils/horizontal-nav';
 import { LoadingBox, LoadingInline } from './utils/status-box';
 import { VolumesTable } from './volumes-table';
+import { useWorkloadColumns, getWorkloadDataViewRows } from './workload-table';
 
 const kind = referenceForModel(DaemonSetModel);
 
@@ -35,31 +35,23 @@ const getDataViewRows: GetDataViewRows<DaemonSetKind> = (data, columns) => {
 };
 
 export const DaemonSetDetailsList: FC<DaemonSetDetailsListProps> = ({ ds }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
     <DescriptionList>
-      <DetailsItem
-        label={t('public~Current count')}
-        obj={ds}
-        path="status.currentNumberScheduled"
-      />
-      <DetailsItem
-        label={t('public~Desired count')}
-        obj={ds}
-        path="status.desiredNumberScheduled"
-      />
+      <DetailsItem label={t('Current count')} obj={ds} path="status.currentNumberScheduled" />
+      <DetailsItem label={t('Desired count')} obj={ds} path="status.desiredNumberScheduled" />
       <PodDisruptionBudgetField obj={ds} />
     </DescriptionList>
   );
 };
 
 const DaemonSetDetails: FC<DaemonSetDetailsProps> = ({ obj: daemonset }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const { podData, loaded } = usePodsWatcher(daemonset);
   return (
     <>
       <PaneBody>
-        <SectionHeading text={t('public~DaemonSet details')} />
+        <SectionHeading text={t('DaemonSet details')} />
         {loaded ? (
           <PodRing
             key={daemonset.metadata.uid}
@@ -86,11 +78,11 @@ const DaemonSetDetails: FC<DaemonSetDetailsProps> = ({ obj: daemonset }) => {
         </Grid>
       </PaneBody>
       <PaneBody>
-        <SectionHeading text={t('public~Containers')} />
+        <SectionHeading text={t('Containers')} />
         <ContainerTable containers={daemonset.spec.template.spec.containers} />
       </PaneBody>
       <PaneBody>
-        <VolumesTable resource={daemonset} heading={t('public~Volumes')} />
+        <VolumesTable resource={daemonset} heading={t('Volumes')} />
       </PaneBody>
     </>
   );
@@ -113,7 +105,7 @@ const EnvironmentTab: FC<EnvironmentTabProps> = (props) => (
   />
 );
 
-export const DaemonSetsList: FC<DaemonSetsListProps> = ({ data, loaded, ...props }) => {
+const DaemonSetsList: FC<DaemonSetsListProps> = ({ data, loaded, ...props }) => {
   const { columns, resetAllColumnWidths } = useWorkloadColumns<DaemonSetKind>(DaemonSetModel);
 
   return (
@@ -125,7 +117,7 @@ export const DaemonSetsList: FC<DaemonSetsListProps> = ({ data, loaded, ...props
         loaded={loaded}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
+        hideColumnManagement
         isResizable
         resetAllColumnWidths={resetAllColumnWidths}
       />
@@ -134,13 +126,7 @@ export const DaemonSetsList: FC<DaemonSetsListProps> = ({ data, loaded, ...props
 };
 
 export const DaemonSetsPage: FC<DaemonSetsPageProps> = (props) => (
-  <ListPage
-    canCreate={true}
-    ListComponent={DaemonSetsList}
-    kind={kind}
-    omitFilterToolbar={true}
-    {...props}
-  />
+  <ListPage canCreate ListComponent={DaemonSetsList} kind={kind} omitFilterToolbar {...props} />
 );
 
 const DaemonSetPods: FC<DaemonSetPodsProps> = (props) => <PodsComponent {...props} showNodes />;

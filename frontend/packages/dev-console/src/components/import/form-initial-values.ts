@@ -1,4 +1,4 @@
-import { sanitizeApplicationValue } from '@console/topology/src/utils';
+import { sanitizeApplicationValue } from '@console/topology/src/utils/application-utils';
 import { healthChecksProbeInitialData } from '../health-checks/health-checks-probe-utils';
 import type { BaseFormData } from './import-types';
 import { Resources } from './import-types';

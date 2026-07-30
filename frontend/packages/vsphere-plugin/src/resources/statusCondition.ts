@@ -1,14 +1,5 @@
 import type { K8sResourceCondition } from './k8sResource';
 
-export type StatusCondition = {
-  status: string;
-  type: string;
-
-  lastTransitionTime: string;
-  message: string;
-  reason: string;
-};
-
 export const getCondition = (
   resource: {
     status: {

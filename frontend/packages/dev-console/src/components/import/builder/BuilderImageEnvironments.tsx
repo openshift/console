@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
 import type { FormikValues } from 'formik';
 import { useFormikContext } from 'formik';
-import { InputField } from '@console/shared';
+import { InputField } from '@console/shared/src/components/formik-fields/InputField';
 import { useBuilderImageEnvironments } from './builderImageHooks';
 
 interface BuilderImageEnvironmentsProps {

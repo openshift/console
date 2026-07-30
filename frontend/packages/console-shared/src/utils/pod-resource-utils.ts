@@ -6,7 +6,7 @@ import {
 } from '@console/internal/models';
 import type { K8sResourceKind, PodKind, WatchK8sResources } from '@console/internal/module/k8s';
 import { apiVersionForModel } from '@console/internal/module/k8s';
-import type { PodRCData } from '../types';
+import type { PodRCData } from '../types/pod';
 import {
   getJobsForCronJob,
   getPodsForResource,

@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@patternfly/react-core';
-import { RebootingIcon } from '@patternfly/react-icons';
+import { RhUiRefreshIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
@@ -16,7 +16,6 @@ import type { Alert } from '@console/dynamic-plugin-sdk';
 import { StatusIconAndText } from '@console/dynamic-plugin-sdk';
 import { alertURL } from '@console/internal/components/monitoring/utils';
 import { resourcePathFromModel } from '@console/internal/components/utils';
-import { BlueInfoCircleIcon } from '@console/shared';
 import AlertItem, {
   StatusItem,
 } from '@console/shared/src/components/dashboard/status-card/AlertItem';
@@ -24,13 +23,14 @@ import AlertsBody from '@console/shared/src/components/dashboard/status-card/Ale
 import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
 import HealthItem from '@console/shared/src/components/dashboard/status-card/HealthItem';
 import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
+import { BlueInfoCircleIcon } from '@console/shared/src/components/status/icons';
 import { useNotificationAlerts } from '@console/shared/src/hooks/useNotificationAlerts';
 import {
   HOST_STATUS_DESCRIPTION_KEYS,
   HOST_HARDWARE_ERROR_STATES,
   HOST_STATUS_UNMANAGED,
   HOST_REGISTERING_STATES,
-} from '../../../constants';
+} from '../../../constants/bare-metal-host';
 import { BareMetalHostModel } from '../../../models';
 import {
   getHostPowerStatus,
@@ -38,9 +38,9 @@ import {
   hasPowerManagement,
   isDetached,
   isHostScheduledForRestart,
-} from '../../../selectors';
+} from '../../../selectors/baremetal-hosts';
 import { getBareMetalHostStatus, getHostStatus } from '../../../status/host-status';
-import type { BareMetalHostKind } from '../../../types';
+import type { BareMetalHostKind } from '../../../types/host';
 import BareMetalHostPowerStatusIcon from '../BareMetalHostPowerStatusIcon';
 import BareMetalHostStatus from '../BareMetalHostStatus';
 import { BareMetalHostDashboardContext } from './BareMetalHostDashboardContext';
@@ -68,24 +68,19 @@ const PowerStatus = ({ obj }: { obj: BareMetalHostKind }) => {
   const hasPowerMgmt = hasPowerManagement(obj);
   const powerStatus = getHostPowerStatus(obj);
   const restartScheduled = isHostScheduledForRestart(obj);
-  const { t } = useTranslation();
+  const { t } = useTranslation('metal3-plugin');
   if (isDetached(obj)) {
-    return <HealthItem title={t('metal3-plugin~Detached')} state={HealthState.UNKNOWN} />;
+    return <HealthItem title={t('Detached')} state={HealthState.UNKNOWN} />;
   }
   if (!hasPowerMgmt) {
-    return (
-      <HealthItem
-        title={t('metal3-plugin~No power management')}
-        state={HealthState.NOT_AVAILABLE}
-      />
-    );
+    return <HealthItem title={t('No power management')} state={HealthState.NOT_AVAILABLE} />;
   }
   return (
     <StatusIconAndText
-      title={restartScheduled ? t('metal3-plugin~Restart pending') : powerStatus}
+      title={restartScheduled ? t('Restart pending') : powerStatus}
       icon={
         restartScheduled ? (
-          <RebootingIcon />
+          <RhUiRefreshIcon />
         ) : (
           <BareMetalHostPowerStatusIcon powerStatus={powerStatus} />
         )
@@ -96,7 +91,7 @@ const PowerStatus = ({ obj }: { obj: BareMetalHostKind }) => {
 };
 
 const HealthCard: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('metal3-plugin');
   const { obj, machine, node, nodeMaintenance } = useContext(BareMetalHostDashboardContext);
 
   const [data, loaded, loadError] = useNotificationAlerts();
@@ -128,7 +123,7 @@ const HealthCard: FC = () => {
             </GalleryItem>
             <GalleryItem>
               <HealthItem
-                title={t('metal3-plugin~Hardware')}
+                title={t('Hardware')}
                 state={hwHealth.state}
                 details={t(hwHealth.titleKey)}
               />

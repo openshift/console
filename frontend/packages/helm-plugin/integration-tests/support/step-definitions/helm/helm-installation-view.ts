@@ -17,6 +17,8 @@ When('user clicks on the Create button on side bar', () => {
 });
 
 When('user clicks on the chart versions dropdown menu', () => {
+  // Wait for the dropdown to be enabled (starts disabled while loading chart versions)
+  cy.get(helmPO.upgradeHelmRelease.chartVersion).should('not.be.disabled');
   cy.get(helmPO.upgradeHelmRelease.chartVersion).click();
 });
 

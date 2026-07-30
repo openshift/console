@@ -32,7 +32,7 @@ export const useVolumeSnapshotActions = (
   resource: VolumeSnapshotKind,
   filterActions?: VolumeSnapshotActionCreator[],
 ): Action[] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const launchModal = useOverlay();
 
   const memoizedFilterActions = useDeepCompareMemoize(filterActions);
@@ -41,9 +41,9 @@ export const useVolumeSnapshotActions = (
     () => ({
       [VolumeSnapshotActionCreator.RestorePVC]: () => ({
         id: 'clone-pvc',
-        label: t('console-app~Restore as new PVC'),
+        label: t('Restore as new PVC'),
         disabled: !resource?.status?.readyToUse,
-        tooltip: !resource?.status?.readyToUse ? t('console-app~Volume Snapshot is not Ready') : '',
+        tooltip: !resource?.status?.readyToUse ? t('Volume Snapshot is not Ready') : '',
         cta: () =>
           launchModal(LazyRestorePVCModalOverlay, {
             resource,

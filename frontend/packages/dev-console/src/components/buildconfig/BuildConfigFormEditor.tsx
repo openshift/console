@@ -1,8 +1,9 @@
 import type { FC } from 'react';
 import { useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { ProgressiveList, ProgressiveListItem } from '@console/shared/src';
 import SwitchToYAMLAlert from '@console/shared/src/components/alerts/SwitchToYAMLAlert';
+import { ProgressiveList } from '@console/shared/src/components/progressive-list/ProgressiveList';
+import { ProgressiveListItem } from '@console/shared/src/components/progressive-list/ProgressiveListItem';
 import FormSection from '../import/section/FormSection';
 import EnvironmentVariablesSection from './sections/EnvironmentVariablesSection';
 import HooksSection from './sections/HooksSection';
@@ -18,19 +19,19 @@ type BuildConfigFormEditorProps = {
 };
 
 const Footer = ({ children }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   return (
     <Trans
       t={t}
       ns="devconsole"
-      defaults="Click on the names to access advanced options for <0></0>."
+      i18nKey="Click on the names to access advanced options for <0></0>."
       components={[children]}
     />
   );
 };
 
 const List: FC<BuildConfigFormEditorProps> = ({ namespace }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
 
   const [visibleItems, setVisibleItems] = useState<string[]>([]);
   const handleVisibleItemChange = (item: string) => {
@@ -43,16 +44,16 @@ const List: FC<BuildConfigFormEditorProps> = ({ namespace }) => {
       onVisibleItemChange={handleVisibleItemChange}
       Footer={Footer}
     >
-      <ProgressiveListItem name={t('devconsole~Triggers')}>
+      <ProgressiveListItem name={t('Triggers')}>
         <TriggersSection namespace={namespace} />
       </ProgressiveListItem>
-      <ProgressiveListItem name={t('devconsole~Secrets')}>
+      <ProgressiveListItem name={t('Secrets')}>
         <SecretsSection namespace={namespace} />
       </ProgressiveListItem>
-      <ProgressiveListItem name={t('devconsole~Run Policy')}>
+      <ProgressiveListItem name={t('Run Policy')}>
         <PolicySection />
       </ProgressiveListItem>
-      <ProgressiveListItem name={t('devconsole~Hooks')}>
+      <ProgressiveListItem name={t('Hooks')}>
         <HooksSection />
       </ProgressiveListItem>
     </ProgressiveList>
@@ -60,7 +61,7 @@ const List: FC<BuildConfigFormEditorProps> = ({ namespace }) => {
 };
 
 const BuildConfigFormEditor: FC<BuildConfigFormEditorProps> = ({ namespace }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const [showYAMLAlert, setShowYAMLAlert] = useState<boolean>(true);
 
   return (
@@ -72,11 +73,7 @@ const BuildConfigFormEditor: FC<BuildConfigFormEditorProps> = ({ namespace }) =>
       <ImagesSection />
       <EnvironmentVariablesSection namespace={namespace} />
 
-      <FormSection
-        title={t('devconsole~Advanced options')}
-        dataTest="section advanced-options"
-        fullWidth
-      >
+      <FormSection title={t('Advanced options')} dataTest="section advanced-options" fullWidth>
         <div>
           <List namespace={namespace} />
         </div>

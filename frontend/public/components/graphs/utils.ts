@@ -1,12 +1,11 @@
-import * as _ from 'lodash';
-import i18n from 'i18next';
 import { chart_color_orange_300 as requestedColor } from '@patternfly/react-tokens/dist/esm/chart_color_orange_300';
-
-import { PrometheusResponse, DataPoint, PrometheusResult } from '.';
+import i18n from 'i18next';
+import * as _ from 'lodash';
 import type { Humanize } from '../utils/types';
+import type { PrometheusResponse, DataPoint, PrometheusResult } from '.';
 
-export const defaultXMutator: XMutator = (x) => new Date(x * 1000);
-export const defaultYMutator: YMutator = (y) => parseFloat(y);
+const defaultXMutator: XMutator = (x) => new Date(x * 1000);
+const defaultYMutator: YMutator = (y) => parseFloat(y);
 
 export const getRangeVectorStats: GetRangeStats = (
   response,

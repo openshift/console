@@ -10,20 +10,18 @@ import { getKnativeRoutesLinks, groupTrafficByRevision } from '../../utils/resou
 import KSRoutes from './KSRoutes';
 import RoutesOverviewListItem from './RoutesOverviewListItem';
 
-export type RoutesOverviewListProps = {
+type RoutesOverviewListProps = {
   ksroutes: K8sResourceKind[];
   resource: K8sResourceKind;
 };
 
 const RoutesOverviewList: FC<RoutesOverviewListProps> = ({ ksroutes, resource }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   return (
     <>
-      <SidebarSectionHeading text={t('knative-plugin~Routes')} />
+      <SidebarSectionHeading text={t('Routes')} />
       {_.isEmpty(ksroutes) ? (
-        <span className="pf-v6-u-text-color-subtle">
-          {t('knative-plugin~No Routes found for this resource.')}
-        </span>
+        <span className="pf-v6-u-text-color-subtle">{t('No Routes found for this resource.')}</span>
       ) : (
         <List isPlain isBordered>
           {_.map(ksroutes, (route) => {

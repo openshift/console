@@ -1,5 +1,6 @@
 import type { FC, HTMLProps } from 'react';
-import { ButtonProps, NumberInput } from '@patternfly/react-core';
+import type { ButtonProps } from '@patternfly/react-core';
+import { NumberInput } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
 export const NumberSpinner: FC<NumberSpinnerProps> = ({
@@ -11,7 +12,7 @@ export const NumberSpinner: FC<NumberSpinnerProps> = ({
   'aria-label': ariaLabel,
   ...inputProps
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   return (
     <div className="co-m-number-spinner">
@@ -25,10 +26,10 @@ export const NumberSpinner: FC<NumberSpinnerProps> = ({
         inputAriaLabel={ariaLabel}
         inputProps={{ ...inputProps }}
         className={className}
-        minusBtnAriaLabel={t('public~Decrement')}
-        minusBtnProps={{ 'data-test-id': 'Decrement' } as ButtonProps}
-        plusBtnAriaLabel={t('public~Increment')}
-        plusBtnProps={{ 'data-test-id': 'Increment' } as ButtonProps}
+        minusBtnAriaLabel={t('Decrement')}
+        minusBtnProps={{ 'data-test-id': 'Decrement', 'data-test': 'Decrement' } as ButtonProps}
+        plusBtnAriaLabel={t('Increment')}
+        plusBtnProps={{ 'data-test-id': 'Increment', 'data-test': 'Increment' } as ButtonProps}
         isDisabled={inputProps.disabled}
       />
     </div>

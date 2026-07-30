@@ -2,20 +2,27 @@ import type { ComponentProps } from 'react';
 import { screen } from '@testing-library/react';
 import { useField } from 'formik';
 import * as _ from 'lodash';
-import { coFetchJSON } from '@console/internal/co-fetch';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { useEditorType } from '@console/shared/src/components/synced-editor/useEditorType';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
+import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
 import { HelmActionType } from '../../../types/helm-types';
 import type { HelmInstallUpgradeFormData } from '../install-upgrade/HelmInstallUpgradeForm';
 import HelmInstallUpgradeForm from '../install-upgrade/HelmInstallUpgradeForm';
 
-// Mock the barrel import from @console/shared
-jest.mock('@console/shared', () => ({
-  ...jest.requireActual('@console/shared'),
+jest.mock('@console/shared/src/components/formik-fields/CodeEditorField', () => ({
+  ...jest.requireActual('@console/shared/src/components/formik-fields/CodeEditorField'),
   CodeEditorField: () => 'CodeEditorField',
+}));
+
+jest.mock('@console/shared/src/components/formik-fields/DynamicFormField', () => ({
+  ...jest.requireActual('@console/shared/src/components/formik-fields/DynamicFormField'),
   DynamicFormField: () => 'DynamicFormField',
+}));
+
+jest.mock('@console/shared/src/components/form-utils/FlexForm', () => ({
+  ...jest.requireActual('@console/shared/src/components/form-utils/FlexForm'),
   FlexForm: ({ children }: any) => children,
 }));
 

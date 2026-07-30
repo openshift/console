@@ -1,7 +1,7 @@
 import type { RefObject, SetStateAction, FC } from 'react';
 import { useEffect } from 'react';
 import { MenuToggle } from '@patternfly/react-core';
-import { EllipsisVIcon } from '@patternfly/react-icons';
+import { RhUiEllipsisVerticalIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { ActionMenuVariant } from '../types';
 
@@ -26,9 +26,9 @@ const ActionMenuToggle: FC<ActionMenuToggleProps> = ({
   onToggleClick,
   onToggleHover,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const isKebabVariant = toggleVariant === ActionMenuVariant.KEBAB;
-  const toggleLabel = toggleTitle || t('console-shared~Actions');
+  const toggleLabel = toggleTitle || t('Actions');
 
   const handleMenuKeys = (event) => {
     if (!isOpen) {
@@ -86,11 +86,12 @@ const ActionMenuToggle: FC<ActionMenuToggleProps> = ({
       aria-label={toggleLabel}
       aria-haspopup="true"
       data-test-id={isKebabVariant ? 'kebab-button' : 'actions-menu-button'}
+      data-test={isKebabVariant ? 'kebab-button' : 'actions-menu-button'}
       onClick={handleToggleClick}
       onFocus={onToggleHover}
       onMouseOver={onToggleHover}
     >
-      {isKebabVariant ? <EllipsisVIcon /> : toggleLabel}
+      {isKebabVariant ? <RhUiEllipsisVerticalIcon /> : toggleLabel}
     </MenuToggle>
   );
 };

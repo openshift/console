@@ -17,7 +17,7 @@ interface NumberSpinnerFieldProps extends FieldProps {
   max?: number;
 }
 
-const NumberSpinnerField: FC<NumberSpinnerFieldProps> = ({
+export const NumberSpinnerField: FC<NumberSpinnerFieldProps> = ({
   label,
   helpText,
   required,
@@ -72,5 +72,3 @@ const NumberSpinnerField: FC<NumberSpinnerFieldProps> = ({
     </FormGroup>
   );
 };
-
-export default NumberSpinnerField;

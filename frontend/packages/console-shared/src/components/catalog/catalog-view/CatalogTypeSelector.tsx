@@ -14,8 +14,11 @@ interface CatalogTypeSelectorProps {
   catalogTypeCounts: CatalogTypeCounts;
 }
 
-const CatalogTypeSelector: FC<CatalogTypeSelectorProps> = ({ catalogTypes, catalogTypeCounts }) => {
-  const { t } = useTranslation();
+export const CatalogTypeSelector: FC<CatalogTypeSelectorProps> = ({
+  catalogTypes,
+  catalogTypeCounts,
+}) => {
+  const { t } = useTranslation('console-shared');
   const { pathname, search } = useLocation();
 
   const typeDescriptions = useMemo(
@@ -33,7 +36,7 @@ const CatalogTypeSelector: FC<CatalogTypeSelectorProps> = ({ catalogTypes, catal
   return (
     <>
       <Title headingLevel="h4" style={{ marginLeft: '14px' }}>
-        {t('console-shared~Type')}
+        {t('Type')}
         <FieldLevelHelp>{typeDescriptions}</FieldLevelHelp>
       </Title>
       <VerticalTabs data-test="catalog-types">
@@ -58,5 +61,3 @@ const CatalogTypeSelector: FC<CatalogTypeSelectorProps> = ({ catalogTypes, catal
     </>
   );
 };
-
-export default CatalogTypeSelector;

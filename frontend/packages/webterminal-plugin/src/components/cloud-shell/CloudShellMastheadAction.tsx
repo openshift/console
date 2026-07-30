@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { Split, SplitItem } from '@patternfly/react-core';
-import { CheckIcon } from '@patternfly/react-icons';
+import { RhUiCheckIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useToggleCloudShellExpanded } from '../../redux/actions/cloud-shell-dispatchers';
 import { useIsCloudShellExpanded } from '../../redux/reducers/cloud-shell-selectors';
@@ -11,7 +11,7 @@ export const CloudShellMastheadAction: FC<{ className?: string }> = ({ className
   const toggleCloudShellExpanded = useToggleCloudShellExpanded();
   const open = useIsCloudShellExpanded();
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('webterminal-plugin');
   if (!terminalAvailable) {
     return null;
   }
@@ -24,7 +24,7 @@ export const CloudShellMastheadAction: FC<{ className?: string }> = ({ className
       data-quickstart-id="qs-masthead-cloudshell"
     >
       <Split className="pf-v6-u-w-100">
-        <SplitItem isFilled>{t('webterminal-plugin~OpenShift command line')}</SplitItem>
+        <SplitItem isFilled>{t('OpenShift command line')}</SplitItem>
         {open ? (
           <SplitItem>
             <span
@@ -34,7 +34,7 @@ export const CloudShellMastheadAction: FC<{ className?: string }> = ({ className
                 paddingLeft: 'var(--pf-t--global--spacer--md)',
               }}
             >
-              <CheckIcon />
+              <RhUiCheckIcon />
             </span>
           </SplitItem>
         ) : null}

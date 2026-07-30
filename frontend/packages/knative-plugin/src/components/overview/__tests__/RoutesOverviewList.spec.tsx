@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { render, screen } from '@testing-library/react';
 import type { K8sResourceKind } from '@console/internal/module/k8s/types';
 import { MockKnativeResources } from '../../../topology/__tests__/topology-knative-test-data';
@@ -7,24 +8,23 @@ jest.mock('@console/internal/components/utils/rbac', () => ({
   useAccessReview: jest.fn(() => true),
 }));
 
-jest.mock('@console/internal/components/utils', () => ({
-  SidebarSectionHeading: 'SidebarSectionHeading',
-}));
+jest.mock(
+  '@console/internal/components/utils',
+  () =>
+    jest.requireActual('@console/knative-plugin/src/__tests__/rtl-stub-components')
+      .knativeInternalUtilsStubs,
+);
 
 jest.mock('@patternfly/react-core', () => ({
-  List: 'List',
+  List: ({ children }: { children?: ReactNode }) => <>{children}</>,
 }));
 
 jest.mock('../KSRoutes', () => ({
   __esModule: true,
-  default: 'KSRoutes',
+  default: () => null,
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-  }),
-}));
+jest.mock('react-i18next');
 
 jest.mock('../../../utils/resource-overview-utils', () => ({
   getKnativeRoutesLinks: jest.fn(() => [{ url: 'test-url' }]),
@@ -33,7 +33,7 @@ jest.mock('../../../utils/resource-overview-utils', () => ({
 
 jest.mock('../RoutesOverviewListItem', () => ({
   __esModule: true,
-  default: 'RoutesOverviewListItem',
+  default: () => <div data-test="mock-RoutesOverviewListItem" />,
 }));
 
 describe('RoutesOverviewList', () => {
@@ -43,24 +43,23 @@ describe('RoutesOverviewList', () => {
   });
 
   it('should render RoutesOverviewListItem', () => {
-    const { container } = render(
+    render(
       <RoutesOverviewList
         ksroutes={MockKnativeResources.ksroutes.data}
         resource={MockKnativeResources.revisions.data[0]}
       />,
     );
-    expect(container.querySelector('list')).toBeInTheDocument();
-    expect(container.querySelector('routesoverviewlistitem')).toBeInTheDocument();
+    expect(screen.getByTestId('mock-RoutesOverviewListItem')).toBeVisible();
   });
 
   it('should render multiple RoutesOverviewListItem when multiple routes', () => {
-    const { container } = render(
+    render(
       <RoutesOverviewList
         ksroutes={MockKnativeResources.ksroutes.data}
         resource={MockKnativeResources.revisions.data[0]}
       />,
     );
-    expect(container.querySelector('routesoverviewlistitem')).toBeInTheDocument();
+    expect(screen.getByTestId('mock-RoutesOverviewListItem')).toBeVisible();
   });
 
   it('should render with different route data', () => {
@@ -78,13 +77,13 @@ describe('RoutesOverviewList', () => {
       },
     };
 
-    const { container } = render(
+    render(
       <RoutesOverviewList
         ksroutes={[mockRouteData]}
         resource={MockKnativeResources.revisions.data[0]}
       />,
     );
-    expect(container.querySelector('routesoverviewlistitem')).toBeInTheDocument();
+    expect(screen.getByTestId('mock-RoutesOverviewListItem')).toBeVisible();
   });
 
   it('should handle complex route configurations', () => {
@@ -109,12 +108,12 @@ describe('RoutesOverviewList', () => {
       },
     };
 
-    const { container } = render(
+    render(
       <RoutesOverviewList
         ksroutes={[mockRouteData]}
         resource={MockKnativeResources.revisions.data[0]}
       />,
     );
-    expect(container.querySelector('routesoverviewlistitem')).toBeInTheDocument();
+    expect(screen.getByTestId('mock-RoutesOverviewListItem')).toBeVisible();
   });
 });

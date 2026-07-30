@@ -17,7 +17,7 @@ import { useFormikValidationFix } from '../../hooks/useFormikValidationFix';
 import type { SingleDropdownFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
-const SingleDropdownField: FC<SingleDropdownFieldProps> = ({
+export const SingleDropdownField: FC<SingleDropdownFieldProps> = ({
   name,
   label,
   ariaLabel,
@@ -56,6 +56,7 @@ const SingleDropdownField: FC<SingleDropdownFieldProps> = ({
   const toggle = (toggleRef: Ref<MenuToggleElement>) => (
     <MenuToggle
       aria-label={ariaLabel}
+      data-test={`form-select-input-${name.replace(/\./g, '-')}-field`}
       id={fieldId}
       isDisabled={isDisabled}
       isExpanded={isOpen}
@@ -110,5 +111,3 @@ const SingleDropdownField: FC<SingleDropdownFieldProps> = ({
     </FormGroup>
   );
 };
-
-export default SingleDropdownField;

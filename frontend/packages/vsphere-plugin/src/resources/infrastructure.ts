@@ -20,6 +20,7 @@ export type Infrastructure = K8sResourceCommon & {
             datastore?: string;
             networks?: string[];
             resourcePool?: string;
+            template?: string;
           };
           zone?: string;
         }[];

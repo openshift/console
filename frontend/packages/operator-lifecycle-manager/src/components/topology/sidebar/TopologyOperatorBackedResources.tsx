@@ -42,7 +42,7 @@ const OperatorResources: FC<OperatorResourcesProps> = ({
   flatten,
   linkForResource,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const loaded = Object.values(resources).every((r) => r.loaded);
   const loadError = Object.values(resources).find((r) => r.loadError)?.loadError;
   const manifestResources = flatten(resources);
@@ -51,7 +51,7 @@ const OperatorResources: FC<OperatorResourcesProps> = ({
       data={manifestResources}
       loaded={loaded}
       loadError={loadError}
-      label={t('olm~Resources')}
+      label={t('Resources')}
     >
       <TopologyGroupResourcesPanel
         manifestResources={manifestResources}
@@ -136,7 +136,7 @@ const TopologyOperatorBackedResources: FC<TopologyOperatorBackedResourcesProps> 
   item,
   csv,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('olm');
   const { resource } = item;
   const { namespace } = resource.metadata;
   const reference = referenceFor(resource);
@@ -150,7 +150,7 @@ const TopologyOperatorBackedResources: FC<TopologyOperatorBackedResourcesProps> 
 
     return (
       <div className="co-m-pane__heading-owner">
-        {t('olm~Managed by')}{' '}
+        {t('Managed by')}{' '}
         <span className="co-resource-item">
           <ResourceIcon kind={kind} />
           <Link

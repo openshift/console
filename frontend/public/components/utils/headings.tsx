@@ -1,44 +1,36 @@
 import type { FC, ReactNode, ComponentType } from 'react';
-import {
-  isResourceActionProvider,
-  ResourceActionProvider,
-  ResourceStatus,
-  useResolvedExtensions,
-} from '@console/dynamic-plugin-sdk';
-import { ActionMenuVariant, LazyActionMenu } from '@console/shared/src/components/actions';
-import { Status, YellowExclamationTriangleIcon } from '@console/shared/src/components/status';
-import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
+import { useCallback } from 'react';
 import { ActionListItem, Button, Title } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
-import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-
-import { PageHeading, PageHeadingProps } from '@console/shared/src/components/heading/PageHeading';
-import { ActionsMenu } from '@console/internal/components/utils/actions-menu';
-import { connectToModel } from '../../kinds';
+import type { ResourceActionProvider } from '@console/dynamic-plugin-sdk';
 import {
+  isResourceActionProvider,
+  ResourceStatus,
+  useResolvedExtensions,
+} from '@console/dynamic-plugin-sdk';
+import type { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { Action } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { ActionsMenu } from '@console/internal/components/utils/actions-menu';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import type { PageHeadingProps } from '@console/shared/src/components/heading/PageHeading';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
+import { Status } from '@console/shared/src/components/status/Status';
+import { connectToModel } from '../../kinds';
+import type {
   ExtensionK8sGroupModel,
   K8sKind,
   K8sResourceKind,
   K8sResourceKindReference,
-  referenceForExtensionModel,
 } from '../../module/k8s';
-import type { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { ResourceIcon } from './resource-icon';
+import { referenceForExtensionModel } from '../../module/k8s';
 import { ManagedByOperatorLink } from './managed-by';
-import { Action } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { ResourceIcon } from './resource-icon';
 
-export const ResourceItemDeleting = () => {
-  const { t } = useTranslation();
-  return (
-    <span className="co-resource-item__deleting">
-      <YellowExclamationTriangleIcon /> {t('public~Deleting')}
-    </span>
-  );
-};
-
-export const ActionButtons: FC<ActionButtonsProps> = ({ actionButtons }) => (
+const ActionButtons: FC<ActionButtonsProps> = ({ actionButtons }) => (
   <>
     {_.map(actionButtons, (actionButton, i) => {
       if (!_.isEmpty(actionButton)) {
@@ -88,7 +80,7 @@ export const ConnectedPageHeading = connectToModel(
     titleFunc,
     ...props
   }: ConnectedPageHeadingProps) => {
-    const { t } = useTranslation();
+    const { t } = useTranslation('public');
 
     const data = _.get(obj, 'data');
     const hasData = !_.isEmpty(data);
@@ -127,7 +119,7 @@ export const ConnectedPageHeading = connectToModel(
         <LazyActionMenu
           context={{ [kind]: data }}
           variant={ActionMenuVariant.DROPDOWN}
-          label={t('public~Actions')}
+          label={t('Actions')}
         />
       ) : (
         <>
@@ -172,7 +164,11 @@ export const ConnectedPageHeading = connectToModel(
             (kind || resourceTitle || resourceStatus) && (
               <div className="co-m-pane__heading co-resource-item">
                 {kind && <ResourceIcon kind={kind} className="co-m-resource-icon--lg" />}{' '}
-                <span data-test-id="resource-title" className="co-resource-item__resource-name">
+                <span
+                  data-test-id="resource-title"
+                  data-test="resource-title"
+                  className="co-resource-item__resource-name"
+                >
                   {resourceTitle}
                   {data?.metadata?.namespace && data?.metadata?.ownerReferences?.length && (
                     <ManagedByOperatorLink obj={data} />
@@ -224,7 +220,7 @@ export const SidebarSectionHeading: FC<SidebarSectionHeadingProps> = ({
   </Title>
 );
 
-export type ActionButtonsProps = {
+type ActionButtonsProps = {
   actionButtons: any[];
 };
 

@@ -11,7 +11,7 @@ import { getDisabledAddActions } from '@console/dev-console/src/utils/useAddActi
 import type { Action } from '@console/dynamic-plugin-sdk';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceFor, referenceForModel, modelFor } from '@console/internal/module/k8s';
-import { isCatalogTypeEnabled } from '@console/shared';
+import { isCatalogTypeEnabled } from '@console/shared/src/components/catalog/utils/catalog-utils';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { useMoveConnectorAction } from '@console/topology/src/actions/edgeActions';

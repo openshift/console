@@ -3,7 +3,7 @@ package metrics
 import (
 	"bufio"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"strconv"
@@ -152,7 +152,7 @@ func countMetric(t *testing.T, ts *httptest.Server, metric string, labels ...str
 	res := getMetrics(t, ts)
 	defer res.Body.Close()
 
-	bytes, err := ioutil.ReadAll(res.Body)
+	bytes, err := io.ReadAll(res.Body)
 	if err != nil {
 		t.Fatalf("read error: %s", err)
 	}

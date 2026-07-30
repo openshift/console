@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
-import { ResourceDropdown } from '@console/shared';
+import { ResourceDropdown } from '@console/shared/src/components/dropdown/ResourceDropdown';
 import type { ResourceDropdownProps } from '../../../../console-shared/src/components/dropdown/ResourceDropdown';
 import { getBaseWatchedResources } from '../../data-transforms/transform-utils';
 
@@ -11,7 +11,7 @@ type ApplicationDropdownProps = Omit<ResourceDropdownProps, 'dataSelector' | 'pl
 };
 
 const ApplicationDropdown: FC<ApplicationDropdownProps> = ({ namespace, ...props }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('topology');
 
   const watchedBaseResources = useMemo(() => getBaseWatchedResources(namespace), [namespace]);
 
@@ -37,10 +37,11 @@ const ApplicationDropdown: FC<ApplicationDropdownProps> = ({ namespace, ...props
   return (
     <ResourceDropdown
       {...props}
+      dataTest={props.id}
       resources={resources}
       loaded={loaded}
       loadError={loadError}
-      placeholder={t('topology~Select an application')}
+      placeholder={t('Select an application')}
       dataSelector={['metadata', 'labels', 'app.kubernetes.io/part-of']}
     />
   );

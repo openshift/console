@@ -10,11 +10,11 @@ import NodeHealth from './NodeHealth';
 
 const StatusCard: FC = () => {
   const { obj } = useContext(NodeDashboardContext);
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   return (
     <Card data-test-id="status-card">
       <CardHeader>
-        <CardTitle>{t('console-app~Status')}</CardTitle>
+        <CardTitle>{t('Status')}</CardTitle>
       </CardHeader>
       {obj ? (
         <>

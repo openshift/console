@@ -12,7 +12,7 @@ const units = {
 };
 
 // The maximum allowed clock skew in milliseconds where we show a date as "Just now" even if it is from the future.
-export const maxClockSkewMS = -60000;
+const maxClockSkewMS = -60000;
 const lang = getLastLanguage();
 
 // https://tc39.es/ecma402/#datetimeformat-objects
@@ -66,7 +66,7 @@ export const utcDateTimeFormatter = new Intl.DateTimeFormat(lang, {
   timeZoneName: 'short',
 });
 
-export const relativeTimeFormatter = (langArg?: string) =>
+const relativeTimeFormatter = (langArg?: string) =>
   Intl.RelativeTimeFormat ? new Intl.RelativeTimeFormat(langArg ?? lang) : null;
 
 export const getDuration = (ms: number) => {
@@ -136,15 +136,6 @@ export const fromNow = (dateTime: string | Date, now?: Date, options?, langArg?:
 };
 
 export const isValid = (dateTime: Date) => dateTime instanceof Date && !_.isNaN(dateTime.valueOf());
-
-const zeroPad = (number: number) => (number < 10 ? `0${number}` : number);
-
-export const twentyFourHourTime = (date: Date, showSeconds?: boolean): string => {
-  const hours = zeroPad(date.getHours() ?? 0);
-  const minutes = `:${zeroPad(date.getMinutes() ?? 0)}`;
-  const seconds = showSeconds ? `:${zeroPad(date.getSeconds() ?? 0)}` : '';
-  return `${hours}${minutes}${seconds}`;
-};
 
 export const timestampFor = (mdate: Date, now: Date, omitSuffix: boolean, language: string) => {
   if (!isValid(mdate)) {

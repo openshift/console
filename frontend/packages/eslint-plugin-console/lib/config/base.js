@@ -11,11 +11,14 @@ module.exports = {
     es6: true,
   },
 
-  plugins: ['promise', 'sort-class-members'],
+  plugins: ['promise', 'sort-class-members', 'no-barrel-files'],
 
   rules: merge(
     require('./rules/promise'),
     require('./rules/sort-class-members'),
     require('./rules/airbnb-base-overrides'),
+    {
+      'no-barrel-files/no-barrel-files': 'error',
+    },
   ),
 };

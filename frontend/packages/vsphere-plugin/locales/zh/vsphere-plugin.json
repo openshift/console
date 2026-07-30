@@ -8,6 +8,7 @@
   "Not configured yet": "未配置",
   "Prometheus query failed.": "Prometheus 查询失败。",
   "Invalid credentials": "无效凭证",
+  "Synchronization failed": "同步失败",
   "Failing {{reason}}": "失败 {{reason}}",
   "Failed to load kubecontrollermanager": "加载 kubecontrollermanager 失败",
   "Failed to parse cloud provider config {{cm}}": "解析云供应商配置 {{cm}} 失败",

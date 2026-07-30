@@ -1,9 +1,7 @@
 import type { FC } from 'react';
 import { useMemo, useCallback } from 'react';
-import * as _ from 'lodash';
-import i18n from 'i18next';
+import type { ChartAreaProps } from '@patternfly/react-charts/victory';
 import {
-  ChartAreaProps,
   Chart,
   ChartArea,
   ChartAxis,
@@ -12,30 +10,27 @@ import {
   getCustomTheme,
   ChartGroup,
 } from '@patternfly/react-charts/victory';
-
 import {
   t_global_icon_color_status_warning_default as warningColor,
   t_global_icon_color_status_danger_default as dangerColor,
 } from '@patternfly/react-tokens';
-
-import { processFrame, ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
+import i18n from 'i18next';
+import * as _ from 'lodash';
+import type { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
+import { processFrame } from '@console/shared/src/graph-helper/data-utils';
 import { timeFormatter } from '../utils/datetime';
-import { humanizeNumber } from '../utils/units';
 import { useRefWidth } from '../utils/ref-width-hook';
 import type { Humanize } from '../utils/types';
+import { humanizeNumber } from '../utils/units';
+import { GraphEmpty } from './graph-empty';
 import { PrometheusEndpoint } from './helpers';
 import { PrometheusGraph, PrometheusGraphLink } from './prometheus-graph';
 import { usePrometheusPoll } from './prometheus-poll-hook';
 import { areaTheme } from './themes';
-import {
-  DataPoint,
-  CursorVoronoiContainer,
-  DEFAULT_PROMETHEUS_SAMPLES,
-  DEFAULT_PROMETHEUS_TIMESPAN,
-} from './';
-import { mapLimitsRequests } from './utils';
-import { GraphEmpty } from './graph-empty';
 import { ChartLegendTooltip } from './tooltip';
+import { mapLimitsRequests } from './utils';
+import { CursorVoronoiContainer, DEFAULT_PROMETHEUS_SAMPLES, DEFAULT_PROMETHEUS_TIMESPAN } from '.';
+import type { DataPoint } from '.';
 
 const DEFAULT_HEIGHT = 180;
 const DEFAULT_TICK_COUNT = 2;
@@ -182,6 +177,7 @@ export const AreaChart: FC<AreaChartProps> = ({
             <ChartGroup>
               {processedData.map((datum, index) => (
                 <ChartArea
+                  // eslint-disable-next-line react/no-array-index-key
                   key={index}
                   data={datum}
                   style={chartStyle && chartStyle[index]}
@@ -264,7 +260,7 @@ export type AreaChartProps = {
   yAxis?: boolean;
   padding?: object;
   chartStyle?: object[];
-  byteDataType?: ByteDataTypes; //Use this to process the whole data frame at once
+  byteDataType?: ByteDataTypes; // Use this to process the whole data frame at once
   showAllTooltip?: boolean;
   mainDataName?: string;
 };

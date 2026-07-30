@@ -1,17 +1,15 @@
+import { isBinary } from 'istextorbinary';
+import { Base64 } from 'js-base64';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { WebHookSecretKey } from './const';
-import {
-  SecretFormType,
-  SecretFilterValues,
-  SecretType,
+import type {
   PullSecretCredential,
   Base64StringData,
   OpaqueDataEntry,
   SecretChangeData,
 } from './types';
-import { isBinary } from 'istextorbinary';
-import { Base64 } from 'js-base64';
+import { SecretFormType, SecretFilterValues, SecretType } from './types';
 
 export const toDefaultSecretType = (formType: SecretFormType): SecretType => {
   switch (formType) {
@@ -45,15 +43,20 @@ export const determineSecretType = (stringData): SecretType => {
   const dataKeys = _.keys(stringData).sort();
   if (_.isEqual(dataKeys, ['tls.crt', 'tls.key'])) {
     return SecretType.tls;
-  } else if (_.isEqual(dataKeys, ['ca.crt', 'namespace', 'service-ca.crt', 'token'])) {
+  }
+  if (_.isEqual(dataKeys, ['ca.crt', 'namespace', 'service-ca.crt', 'token'])) {
     return SecretType.serviceAccountToken;
-  } else if (_.isEqual(dataKeys, ['.dockercfg'])) {
+  }
+  if (_.isEqual(dataKeys, ['.dockercfg'])) {
     return SecretType.dockercfg;
-  } else if (_.isEqual(dataKeys, ['.dockerconfigjson'])) {
+  }
+  if (_.isEqual(dataKeys, ['.dockerconfigjson'])) {
     return SecretType.dockerconfigjson;
-  } else if (dataKeys.includes('password')) {
+  }
+  if (dataKeys.includes('password')) {
     return SecretType.basicAuth;
-  } else if (_.isEqual(dataKeys, ['ssh-privatekey'])) {
+  }
+  if (_.isEqual(dataKeys, ['ssh-privatekey'])) {
     return SecretType.sshAuth;
   }
   return SecretType.opaque;
@@ -71,32 +74,32 @@ export const getPullSecretFileName = (secretType: SecretType): string => {
 };
 
 export const useSecretTitle = (isCreate: boolean, formType: SecretFormType): string => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   switch (formType) {
     case SecretFormType.generic:
-      return isCreate ? t('public~Create key/value secret') : t('public~Edit key/value secret');
+      return isCreate ? t('Create key/value secret') : t('Edit key/value secret');
     case SecretFormType.image:
-      return isCreate ? t('public~Create image pull secret') : t('public~Edit image pull secret');
+      return isCreate ? t('Create image pull secret') : t('Edit image pull secret');
     default:
       return isCreate
-        ? t('public~Create {{formType}} secret', { formType })
-        : t('public~Edit {{formType}} secret', { formType });
+        ? t('Create {{formType}} secret', { formType })
+        : t('Edit {{formType}} secret', { formType });
   }
 };
 
 export const useSecretDescription = (formType: SecretFormType): string => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   switch (formType) {
     case SecretFormType.generic:
       return t(
-        'public~Key/value secrets let you inject sensitive data into your application as files or environment variables.',
+        'Key/value secrets let you inject sensitive data into your application as files or environment variables.',
       );
     case SecretFormType.source:
-      return t('public~Source secrets let you authenticate against a Git server.');
+      return t('Source secrets let you authenticate against a Git server.');
     case SecretFormType.image:
-      return t('public~Image pull secrets let you authenticate against a private image registry.');
+      return t('Image pull secrets let you authenticate against a private image registry.');
     case SecretFormType.webhook:
-      return t('public~Webhook secrets let you authenticate a webhook trigger.');
+      return t('Webhook secrets let you authenticate a webhook trigger.');
     default:
       return null;
   }

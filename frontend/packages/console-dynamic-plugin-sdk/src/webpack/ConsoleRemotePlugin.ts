@@ -27,9 +27,12 @@ import { DynamicModuleImportPlugin, resolveDynamicModuleMaps } from './DynamicMo
 
 const loadPluginPackageJSON = () => readPkg.sync({ normalize: false }) as ConsolePluginPackageJSON;
 
+// Resolve from cwd, not this file's real path, so symlinked SDK installations work
 const loadVendorPackageJSON = (moduleName: string) =>
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  require(`${moduleName}/package.json`) as readPkg.PackageJson;
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  require(require.resolve(`${moduleName}/package.json`, {
+    paths: [process.cwd()],
+  })) as readPkg.PackageJson;
 
 const getVendorPackageVersion = (moduleName: string) => {
   try {
@@ -43,6 +46,9 @@ const getPackageDependencies = (pkg: readPkg.PackageJson) => ({
   ...pkg.devDependencies,
   ...pkg.dependencies,
 });
+
+const hasPackageDependency = (pkg: readPkg.PackageJson, depName: string) =>
+  Object.keys(getPackageDependencies(pkg)).includes(depName);
 
 const getPluginSDKPackagePeerDependencies = () =>
   loadVendorPackageJSON('@openshift-console/dynamic-plugin-sdk').peerDependencies;
@@ -132,16 +138,17 @@ export const validateConsoleExtensionsFileSchema = (
   return new SchemaValidator(description).validate(schema, extensions);
 };
 
-const getDeprecatedSharedModuleWarnings = (pkg: ConsolePluginPackageJSON): string[] => {
-  const pluginDeps = getPackageDependencies(pkg);
+const getCompileTimeSharedModuleWarnings = (pkg: ConsolePluginPackageJSON): string[] => {
   const warnings: string[] = [];
 
   sharedPluginModules.forEach((moduleName) => {
-    const { deprecated } = getSharedModuleMetadata(moduleName);
+    const { deprecated, aliased } = getSharedModuleMetadata(moduleName);
 
-    if (deprecated && pluginDeps[moduleName]) {
+    if ((deprecated || aliased) && hasPackageDependency(pkg, moduleName)) {
       warnings.push(
-        `[DEPRECATION WARNING] Console provided shared module ${moduleName} has been deprecated: ${deprecated}`,
+        deprecated
+          ? `[WARNING] Console provided shared module ${moduleName} has been deprecated: ${deprecated}`
+          : `[WARNING] Console provided shared module ${moduleName} is aliased, beware of potential skew between aliased vs actual module code`,
       );
     }
   });
@@ -150,7 +157,6 @@ const getDeprecatedSharedModuleWarnings = (pkg: ConsolePluginPackageJSON): strin
 };
 
 const validateConsoleProvidedSharedModules = (pkg: ConsolePluginPackageJSON) => {
-  const pluginDeps = getPackageDependencies(pkg);
   const sdkPkgDeps = getPluginSDKPackagePeerDependencies();
   const result = new ValidationResult('package.json');
 
@@ -159,7 +165,7 @@ const validateConsoleProvidedSharedModules = (pkg: ConsolePluginPackageJSON) => 
 
     // Skip modules that allow a fallback version to be provided by the plugin.
     // Also skip modules which are not explicitly listed in the plugin's dependencies.
-    if (allowFallback || !pluginDeps[moduleName]) {
+    if (allowFallback || !hasPackageDependency(pkg, moduleName)) {
       return;
     }
 
@@ -320,6 +326,22 @@ export type ConsoleRemotePluginOptions = Partial<{
      *   _except_ for `@openshift-console/*` packages
      */
     moduleFilter: (moduleRequest: string) => boolean;
+
+    /**
+     * Skip transforming imports whose module specifier matches one of these prefixes.
+     *
+     * This option allows plugins to import parts of vendor packages that are not exposed directly
+     * via package index but have to be imported from a specific path, for example:
+     * ```ts
+     * // Cannot import Tile from '@patternfly/react-core' index
+     * import { Tile } from '@patternfly/react-core/deprecated';
+     * ```
+     *
+     * Import prefixes specified here will be added to the default skip list.
+     *
+     * If not specified, no additional import prefixes will be added to the default skip list.
+     */
+    skipImportPrefixes: string[];
   }>;
 }>;
 
@@ -381,6 +403,7 @@ export class ConsoleRemotePlugin implements WebpackPluginInstance {
     this.dynamicModuleMaps = resolveDynamicModuleMaps(
       this.adaptedOptions.sharedDynamicModuleSettings.packageSpecs ?? dynamicModulePackageSpecs,
       resolvedModulePaths,
+      (pkgName) => hasPackageDependency(this.pkg, pkgName),
     );
   }
 
@@ -454,6 +477,7 @@ export class ConsoleRemotePlugin implements WebpackPluginInstance {
     new DynamicModuleImportPlugin({
       dynamicModuleMaps: this.dynamicModuleMaps,
       moduleFilter: sharedDynamicModuleSettings.moduleFilter ?? dynamicModuleImportTransformFilter,
+      skipImportPrefixes: sharedDynamicModuleSettings.skipImportPrefixes,
     }).apply(compiler);
 
     // Post-build validations performed before emitting assets
@@ -474,7 +498,7 @@ export class ConsoleRemotePlugin implements WebpackPluginInstance {
         }
       }
 
-      getDeprecatedSharedModuleWarnings(this.pkg).forEach((message) => {
+      getCompileTimeSharedModuleWarnings(this.pkg).forEach((message) => {
         compilation.warnings.push(new compiler.webpack.WebpackError(message));
       });
     });

@@ -1,4 +1,5 @@
-import { screen, fireEvent, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import * as _ from 'lodash';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { testSubscription, testPackageManifest } from '../../../../mocks';
@@ -83,13 +84,14 @@ describe('SubscriptionChannelModal', () => {
   });
 
   it('updates subscription when different channel is selected and form is submitted', async () => {
+    const user = userEvent.setup();
     renderWithProviders(<SubscriptionChannelModal {...subscriptionChannelModalProps} />);
 
     const nightlyRadio = screen.getByRole('radio', { name: /nightly/i });
-    fireEvent.click(nightlyRadio);
+    await user.click(nightlyRadio);
 
     const saveButton = screen.getByRole('button', { name: 'Save' });
-    fireEvent.click(saveButton);
+    await user.click(saveButton);
 
     await waitFor(() => {
       expect(k8sUpdate).toHaveBeenCalledTimes(1);
@@ -106,13 +108,14 @@ describe('SubscriptionChannelModal', () => {
   });
 
   it('calls close callback after successful form submission', async () => {
+    const user = userEvent.setup();
     renderWithProviders(<SubscriptionChannelModal {...subscriptionChannelModalProps} />);
 
     const nightlyRadio = screen.getByRole('radio', { name: /nightly/i });
-    fireEvent.click(nightlyRadio);
+    await user.click(nightlyRadio);
 
     const saveButton = screen.getByRole('button', { name: 'Save' });
-    fireEvent.click(saveButton);
+    await user.click(saveButton);
 
     await waitFor(() => {
       expect(close).toHaveBeenCalledTimes(1);
@@ -126,14 +129,15 @@ describe('SubscriptionChannelModal', () => {
     expect(saveButton).toBeDisabled();
   });
 
-  it('enables submit button when channel selection changes', () => {
+  it('enables submit button when channel selection changes', async () => {
+    const user = userEvent.setup();
     renderWithProviders(<SubscriptionChannelModal {...subscriptionChannelModalProps} />);
 
     const saveButton = screen.getByRole('button', { name: 'Save' });
     expect(saveButton).toBeDisabled();
 
     const nightlyRadio = screen.getByRole('radio', { name: /nightly/i });
-    fireEvent.click(nightlyRadio);
+    await user.click(nightlyRadio);
 
     expect(saveButton).not.toBeDisabled();
   });

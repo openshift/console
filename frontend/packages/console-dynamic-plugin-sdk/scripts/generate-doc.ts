@@ -78,7 +78,7 @@ const renderDocNode = (docNode?: tsdoc.DocNode): string => {
 
 type PluginAPIInfo = {
   name: string;
-  kind: 'Variable' | 'TypeAlias' | 'Interface' | 'Enum';
+  kind: 'Variable' | 'TypeAlias' | 'Interface' | 'Enum' | 'Class';
   srcFilePath: string;
   isDeprecated: boolean;
   doc: {
@@ -104,6 +104,9 @@ const getPluginAPIKind = (declaration: ts.Declaration): PluginAPIInfo['kind'] =>
   }
   if (ts.isEnumDeclaration(declaration)) {
     return 'Enum';
+  }
+  if (ts.isClassDeclaration(declaration)) {
+    return 'Class';
   }
   throw new Error(`Unexpected declaration kind: ${declaration.kind}`);
 };
@@ -191,7 +194,7 @@ renderTemplate('scripts/templates/api.md.ejs', {
       }
       return a.name.localeCompare(b.name);
     }),
-  declarationKinds: ['Variable', 'TypeAlias', 'Interface', 'Enum'],
+  declarationKinds: ['Variable', 'TypeAlias', 'Interface', 'Enum', 'Class'],
   gitBranch: parseJSONC('console-meta.jsonc')['git-branch'],
   printComments,
   removeNewLines: (text: string) => text.replace('\n', ''),

@@ -1,7 +1,7 @@
 import { Children, cloneElement, isValidElement } from 'react';
 import * as _ from 'lodash';
-
-import { modelFor, kindForReference, K8sResourceKindReference, K8sModel } from '../../module/k8s';
+import type { K8sResourceKindReference, K8sModel } from '../../module/k8s';
+import { modelFor, kindForReference } from '../../module/k8s';
 
 export const inject = (children: React.ReactNode, props: object) => {
   const safeProps = _.omit(props, ['children']);

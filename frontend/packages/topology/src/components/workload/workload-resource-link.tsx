@@ -2,7 +2,7 @@ import type { GraphElement } from '@patternfly/react-topology';
 import { Link } from 'react-router';
 import { ResourceIcon, resourcePath } from '@console/internal/components/utils';
 import { referenceFor } from '@console/internal/module/k8s';
-import { getResource } from '../../utils';
+import { getResource } from '../../utils/topology-utils';
 
 export const getWorkloadResourceLink = (element: GraphElement) => {
   const resource = getResource(element);

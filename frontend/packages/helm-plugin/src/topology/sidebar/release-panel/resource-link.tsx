@@ -1,7 +1,7 @@
 import type { GraphElement } from '@patternfly/react-topology';
 import { Link } from 'react-router';
 import { ResourceIcon } from '@console/internal/components/utils/resource-icon';
-import { getResource } from '@console/topology/src/utils';
+import { getResource } from '@console/topology/src/utils/topology-utils';
 import { TYPE_HELM_RELEASE } from '../../components/const';
 
 const helmReleasePanelResourceLink = (element: GraphElement) => {

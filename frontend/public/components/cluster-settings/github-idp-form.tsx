@@ -1,18 +1,18 @@
 import { useState } from 'react';
-import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { ActionGroup, Button, Title } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
 import { useNavigate } from 'react-router';
-import { ActionGroup, Button, Title } from '@patternfly/react-core';
-
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { SecretModel, ConfigMapModel } from '../../models';
-import { IdentityProvider, k8sCreate, OAuthKind } from '../../module/k8s';
+import type { IdentityProvider, OAuthKind } from '../../module/k8s';
+import { k8sCreate } from '../../module/k8s';
 import { ButtonBar } from '../utils/button-bar';
 import { ListInput } from '../utils/list-input';
-import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
-import { addIDP, getOAuthResource as getOAuth, redirectToOAuthPage, mockNames } from './';
-import { IDPNameInput } from './idp-name-input';
 import { IDPCAFileInput } from './idp-cafile-input';
+import { IDPNameInput } from './idp-name-input';
+import { addIDP, getOAuthResource as getOAuth, redirectToOAuthPage, mockNames } from '.';
 
 export const AddGitHubPage = () => {
   const navigate = useNavigate();
@@ -26,7 +26,7 @@ export const AddGitHubPage = () => {
   const [teams, setTeams] = useState([]);
   const [caFileContent, setCaFileContent] = useState('');
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   const thenPromise = (res) => {
     setInProgress(false);
@@ -35,7 +35,7 @@ export const AddGitHubPage = () => {
   };
 
   const catchError = (error) => {
-    const err = error.message || t('public~An error occurred. Please try again.');
+    const err = error.message || t('An error occurred. Please try again.');
     setInProgress(false);
     setErrorMessage(err);
     return Promise.reject(err);
@@ -120,37 +120,29 @@ export const AddGitHubPage = () => {
     return handlePromise(addIDP(oauth, idp, dryRun));
   };
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault();
     if (organizations.length > 0 && teams.length > 0) {
-      setErrorMessage(t('public~Specify either organizations or teams, but not both.'));
+      setErrorMessage(t('Specify either organizations or teams, but not both.'));
       return;
     }
 
     // Clear any previous errors.
     setErrorMessage('');
-    getOAuthResource().then((oauth: OAuthKind) => {
+    try {
+      const oauth: OAuthKind = await getOAuthResource();
       const mockCA = caFileContent ? mockNames.ca : '';
-      addGitHubIDP(oauth, mockNames.secret, mockCA, true)
-        .then(() => {
-          const promises = [createClientSecret(), createCAConfigMap()];
-
-          Promise.all(promises)
-            .then(([secret, configMap]) => {
-              const caName = configMap ? configMap.metadata.name : '';
-              return addGitHubIDP(oauth, secret.metadata.name, caName);
-            })
-            .then(() => {
-              redirectToOAuthPage(navigate);
-            });
-        })
-        .catch((err) => {
-          setErrorMessage(err);
-        });
-    });
+      await addGitHubIDP(oauth, mockNames.secret, mockCA, true);
+      const [secret, configMap] = await Promise.all([createClientSecret(), createCAConfigMap()]);
+      const caName = configMap ? configMap.metadata.name : '';
+      await addGitHubIDP(oauth, secret.metadata.name, caName);
+      redirectToOAuthPage(navigate);
+    } catch (err) {
+      setErrorMessage(err);
+    }
   };
 
-  const title = t('public~Add Identity Provider: GitHub');
+  const title = t('Add Identity Provider: GitHub');
 
   return (
     <div className="co-m-pane__form">
@@ -158,7 +150,7 @@ export const AddGitHubPage = () => {
       <PageHeading
         title={title}
         helpText={t(
-          'public~You can use the GitHub integration to connect to either GitHub or GitHub Enterprise. For GitHub Enterprise, you must provide the hostname of your instance and can optionally provide a CA certificate bundle to use in requests to the server.',
+          'You can use the GitHub integration to connect to either GitHub or GitHub Enterprise. For GitHub Enterprise, you must provide the hostname of your instance and can optionally provide a CA certificate bundle to use in requests to the server.',
         )}
       />
       <PaneBody>
@@ -166,12 +158,12 @@ export const AddGitHubPage = () => {
           <IDPNameInput value={name} onChange={(e) => setName(e.currentTarget.value)} />
           <div className="form-group">
             <label className="co-required" htmlFor="client-id">
-              {t('public~Client ID')}
+              {t('Client ID')}
             </label>
             <span className="pf-v6-c-form-control">
               <input
                 type="text"
-                aria-label={t('public~Client ID')}
+                aria-label={t('Client ID')}
                 onChange={(e) => setClientID(e.currentTarget.value)}
                 value={clientID}
                 id="client-id"
@@ -181,12 +173,12 @@ export const AddGitHubPage = () => {
           </div>
           <div className="form-group">
             <label className="co-required" htmlFor="client-secret">
-              {t('public~Client secret')}
+              {t('Client secret')}
             </label>
             <span className="pf-v6-c-form-control">
               <input
                 type="password"
-                aria-label={t('public~Client secret')}
+                aria-label={t('Client secret')}
                 onChange={(e) => setClientSecret(e.currentTarget.value)}
                 value={clientSecret}
                 id="client-secret"
@@ -195,11 +187,11 @@ export const AddGitHubPage = () => {
             </span>
           </div>
           <div className="form-group">
-            <label htmlFor="hostname">{t('public~Hostname')}</label>
+            <label htmlFor="hostname">{t('Hostname')}</label>
             <span className="pf-v6-c-form-control">
               <input
                 type="text"
-                aria-label={t('public~Hostname')}
+                aria-label={t('Hostname')}
                 onChange={(e) => setHostname(e.currentTarget.value)}
                 value={hostname}
                 id="hostname"
@@ -207,7 +199,7 @@ export const AddGitHubPage = () => {
               />
             </span>
             <p className="help-block" id="idp-hostname-help">
-              {t('public~Optional domain for use with a hosted instance of GitHub Enterprise.')}
+              {t('Optional domain for use with a hosted instance of GitHub Enterprise.')}
             </p>
           </div>
           <IDPCAFileInput
@@ -217,7 +209,7 @@ export const AddGitHubPage = () => {
           />
           <div className="co-form-section__separator" />
           <Title headingLevel="h3" className="pf-v6-u-mb-sm">
-            {t('public~Organizations')}
+            {t('Organizations')}
           </Title>
           <p>
             <Trans
@@ -231,14 +223,14 @@ export const AddGitHubPage = () => {
             </Trans>
           </p>
           <ListInput
-            label={t('public~Organization')}
+            label={t('Organization')}
             id="organization-list-input"
             onChange={(c: string[]) => setOrganizations(c)}
-            helpText={t('public~Restricts which organizations are allowed to log in.')}
+            helpText={t('Restricts which organizations are allowed to log in.')}
           />
           <div className="co-form-section__separator" />
           <Title headingLevel="h3" className="pf-v6-u-mb-sm">
-            {t('public~Teams')}
+            {t('Teams')}
           </Title>
           <p>
             <Trans
@@ -252,20 +244,18 @@ export const AddGitHubPage = () => {
             </Trans>
           </p>
           <ListInput
-            label={t('public~Team')}
+            label={t('Team')}
             id="team-list-input"
             onChange={(c: string[]) => setTeams(c)}
-            helpText={t(
-              'public~Restricts which teams are allowed to log in. The format is <org>/<team>.',
-            )}
+            helpText={t('Restricts which teams are allowed to log in. The format is <org>/<team>.')}
           />
           <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
             <ActionGroup className="pf-v6-c-form">
-              <Button type="submit" variant="primary" data-test-id="add-idp">
-                {t('public~Add')}
+              <Button type="submit" variant="primary" data-test-id="add-idp" data-test="add-idp">
+                {t('Add')}
               </Button>
               <Button type="button" variant="secondary" onClick={() => navigate(-1)}>
-                {t('public~Cancel')}
+                {t('Cancel')}
               </Button>
             </ActionGroup>
           </ButtonBar>
@@ -273,16 +263,4 @@ export const AddGitHubPage = () => {
       </PaneBody>
     </div>
   );
-};
-
-export type AddGitHubPageState = {
-  name: string;
-  clientID: string;
-  clientSecret: string;
-  hostname: string;
-  organizations: string[];
-  teams: string[];
-  caFileContent: string;
-  inProgress: boolean;
-  errorMessage: string;
 };

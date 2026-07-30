@@ -4,7 +4,7 @@ import { Button, Popover, PopoverPosition } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 import type { HealthItemProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
-import { SecondaryStatus } from '../../status';
+import { SecondaryStatus } from '../../status/SecondaryStatus';
 import { HealthState, healthStateMapping, healthStateMessage } from './states';
 
 const HealthItemIcon: FC<HealthItemIconProps> = ({ state, dataTest }) => {
@@ -30,7 +30,7 @@ const HealthItem = memo<HealthItemProps>(
     icon,
     children,
   }) => {
-    const { t } = useTranslation();
+    const { t } = useTranslation('console-shared');
 
     const detailMessage = details || healthStateMessage(state, t);
 
@@ -42,7 +42,7 @@ const HealthItem = memo<HealthItemProps>(
         {state === HealthState.LOADING ? (
           <div className="skeleton-health">
             <span className="pf-v6-u-screen-reader">
-              {t('public~Loading {{title}} status', { title })}
+              {t('Loading {{title}} status', { title })}
             </span>
           </div>
         ) : (

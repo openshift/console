@@ -1,4 +1,2 @@
-export { Bar } from './bar';
-export { Gauge } from './gauge';
+/* eslint-disable no-barrel-files/no-barrel-files */
 export { Area } from './area';
-export { Stack } from './stack';

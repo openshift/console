@@ -1,7 +1,5 @@
-import * as _ from 'lodash';
 import type { FormEvent, FormEventHandler } from 'react';
 import { useState, useEffect, useCallback, Fragment } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   Alert,
   Button,
@@ -15,15 +13,20 @@ import {
   ModalVariant,
   Radio,
 } from '@patternfly/react-core';
+import { RhUiAiInfoIcon } from '@patternfly/react-icons';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { DropdownWithSwitch } from '@console/shared/src/components/dropdown';
-
-import { ClusterVersionModel, MachineConfigPoolModel, NodeModel } from '../../models';
-import { FieldLevelHelp } from '../utils/field-level-help';
-import { LinkifyExternal } from '../utils/link';
+import { UpdateWorkflowOLSButton } from '@console/shared/src/components/cluster-updates/explain-button';
+import { DropdownWithSwitch } from '@console/shared/src/components/dropdown/dropdown-with-switch/DropdownWithSwitch';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
+import { ClusterVersionModel, MachineConfigPoolModel, NodeModel } from '../../models';
+import type { ClusterVersionKind, MachineConfigPoolKind } from '../../module/k8s';
 import {
-  ClusterVersionKind,
   getConditionUpgradeableFalse,
   getDesiredClusterVersion,
   getMCPsToPausePromises,
@@ -34,21 +37,19 @@ import {
   isMCPPaused,
   isMinorVersionNewer,
   k8sPatch,
-  MachineConfigPoolKind,
   NodeTypeNames,
   referenceForModel,
   sortMCPsByCreationTimestamp,
 } from '../../module/k8s';
-import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import { ModalComponentProps } from '@console/shared/src/types/modal';
 import {
   ClusterNotUpgradeableAlert,
   UpdateBlockedLabel,
 } from '../cluster-settings/cluster-settings';
 import { MachineConfigPoolsSelector } from '../machine-config-pools-selector';
-import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import { FieldLevelHelp } from '../utils/field-level-help';
+import { LinkifyExternal } from '../utils/link';
 
-enum upgradeTypes {
+enum UpgradeTypes {
   Full = 'Full',
   Partial = 'Partial',
 }
@@ -76,9 +77,11 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
   });
   const [error, setError] = useState('');
   const [machineConfigPoolsToPause, setMachineConfigPoolsToPause] = useState<string[]>([]);
-  const [upgradeType, setUpgradeType] = useState<upgradeTypes>(upgradeTypes.Full);
+  const [upgradeType, setUpgradeType] = useState<UpgradeTypes>(UpgradeTypes.Full);
   const [includeNotRecommended, setIncludeNotRecommended] = useState(false);
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
+  const isLightspeedAvailable = useFlag('LIGHTSPEED_PLUGIN');
+
   useEffect(() => {
     const initialMCPPausedValues = machineConfigPools
       .filter((mcp) => !isMCPMaster(mcp) && isMCPPaused(mcp))
@@ -117,7 +120,7 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
       if (!desiredRecommendedUpdate && !desiredNotRecommendedUpdate) {
         setError(
           t(
-            'public~Version {{desiredVersion}} not found among the supported updates. Select another version.',
+            'Version {{desiredVersion}} not found among the supported updates. Select another version.',
             { desiredVersion },
           ),
         );
@@ -128,7 +131,7 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
       setError('');
       let MCPsToPausePromises;
       let MCPsToResumePromises;
-      if (upgradeType === upgradeTypes.Full) {
+      if (upgradeType === UpgradeTypes.Full) {
         MCPsToPausePromises = [];
         MCPsToResumePromises = getMCPsToPausePromises(pausedMCPs, false);
       } else {
@@ -196,31 +199,32 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
     {
       items: recommendedOptions,
       key: 'recommended',
-      label: t('public~Recommended'),
+      label: t('Recommended'),
     },
   ];
   if (includeNotRecommended) {
     options.unshift({
       items: notRecommendedOptions,
       key: 'notRecommended',
-      label: t('public~Have known issues'),
+      label: t('Have known issues'),
     });
   }
 
   return (
     <>
       <ModalHeader
-        title={t('public~Update cluster')}
+        title={t('Select a version')}
         data-test-id="modal-title"
+        data-test="modal-title"
         labelId="cluster-update-modal-title"
       />
       <ModalBody>
         <Form id="cluster-update-form" onSubmit={submit}>
           {clusterUpgradeableFalse && <ClusterNotUpgradeableAlert onCancel={cancel} cv={cv} />}
-          <FormGroup label={t('public~Current version')} fieldId="current-version">
-            <p>{currentVersion}</p>
+          <FormGroup label={t('Current version')} fieldId="current-version">
+            <Content component={ContentVariants.p}>{currentVersion}</Content>
           </FormGroup>
-          <FormGroup label={t('public~Select new version')} fieldId="version-select">
+          <FormGroup label={t('Select a version')} fieldId="version-select">
             <DropdownWithSwitch
               isFullWidth
               onSelect={onSelectVersion}
@@ -230,10 +234,10 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
               switchIsDisabled={notRecommendedOptions.length === 0}
               switchLabel={
                 <>
-                  {t('public~Include versions with known issues')}
+                  {t('Include versions with known issues')}
                   <FieldLevelHelp>
                     {t(
-                      'public~These versions are supported, but include known issues. Review the known issues before updating.',
+                      'These versions are supported, but include known issues. Review the known issues before updating.',
                     )}
                   </FieldLevelHelp>
                 </>
@@ -247,7 +251,7 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
                 className="pf-v6-u-mt-sm"
                 isInline
                 title={t(
-                  'public~Updating this cluster to {{desiredVersion}} is supported, but includes known issues.  Review the known issues before updating.',
+                  'Updating your cluster to {{desiredVersion}} is supported, but it includes known issues. Review the known issues before you update.',
                   { desiredVersion: desiredNotRecommendedUpdate.release.version },
                 )}
                 variant="info"
@@ -271,10 +275,10 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
           <FormGroup
             label={
               <>
-                {t('public~Update options')}
+                {t('Update options')}
                 <FieldLevelHelp>
                   {t(
-                    'public~Full cluster update allows you to update all your Nodes, but takes longer. Control plane only update allows you to pause worker and custom pool Nodes to accommodate your maintenance schedule.',
+                    'Full cluster update allows you to update all your Nodes, but takes longer. Control plane only update allows you to pause worker and custom pool Nodes to accommodate your maintenance schedule.',
                   )}
                 </FieldLevelHelp>
               </>
@@ -282,14 +286,14 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
             role="radiogroup"
           >
             <Radio
-              isChecked={upgradeType === upgradeTypes.Full}
-              name={upgradeTypes.Full}
-              onChange={() => handleUpgradeTypeChange(upgradeTypes.Full)}
-              label={t('public~Full cluster update')}
-              id={upgradeTypes.Full}
-              value={upgradeTypes.Full}
+              isChecked={upgradeType === UpgradeTypes.Full}
+              name={UpgradeTypes.Full}
+              onChange={() => handleUpgradeTypeChange(UpgradeTypes.Full)}
+              label={t('Full cluster update')}
+              id={UpgradeTypes.Full}
+              value={UpgradeTypes.Full}
               description={t(
-                'public~{{master}}, {{worker}}, and custom pool {{resource}} are updated concurrently. This might take longer, so make sure to allocate enough time for maintenance.',
+                '{{master}}, {{worker}}, and custom pool {{resource}} are updated concurrently. This might take longer, so make sure to allocate enough time for maintenance.',
                 {
                   master: NodeTypeNames.Master,
                   worker: NodeTypeNames.Worker,
@@ -300,13 +304,13 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
               body={
                 machineConfigPoolsLoaded &&
                 pausedMCPs.length > 0 &&
-                upgradeType === upgradeTypes.Full && (
+                upgradeType === UpgradeTypes.Full && (
                   <Alert
                     variant="warning"
                     isInline
                     isPlain
                     title={t(
-                      'public~Paused {{worker}} or custom pool {{resource}} updates will be resumed. If you want to update only the control plane, select "Control plane only update" below.',
+                      'The cluster will resume paused {{worker}} or custom pool {{resource}} updates. To update only the control plane, select "Control plane only update" below.',
                       { worker: NodeTypeNames.Worker, resource: NodeModel.label },
                     )}
                     data-test="update-cluster-modal-paused-nodes-warning"
@@ -316,19 +320,19 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
               data-test="update-cluster-modal-full-update-radio"
             />
             <Radio
-              isChecked={upgradeType === upgradeTypes.Partial}
-              name={upgradeTypes.Partial}
-              onChange={() => handleUpgradeTypeChange(upgradeTypes.Partial)}
-              label={t('public~Control plane only update')}
-              id={upgradeTypes.Partial}
-              value={upgradeTypes.Partial}
+              isChecked={upgradeType === UpgradeTypes.Partial}
+              name={UpgradeTypes.Partial}
+              onChange={() => handleUpgradeTypeChange(UpgradeTypes.Partial)}
+              label={t('Control plane only update')}
+              id={UpgradeTypes.Partial}
+              value={UpgradeTypes.Partial}
               description={t(
-                'public~Pause {{worker}} or custom pool {{resource}} updates to accommodate your maintenance schedule.',
+                'Pause {{worker}} or custom pool {{resource}} updates to accommodate your maintenance schedule.',
                 { worker: NodeTypeNames.Worker, resource: NodeModel.label },
               )}
               className="pf-v6-u-mb-md"
               body={
-                upgradeType === upgradeTypes.Partial && (
+                upgradeType === UpgradeTypes.Partial && (
                   <MachineConfigPoolsSelector
                     machineConfigPools={pauseableMCPs}
                     selected={machineConfigPoolsToPause}
@@ -339,6 +343,50 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
               data-test="update-cluster-modal-partial-update-radio"
             />
           </FormGroup>
+          {/* OLS Update Precheck Section */}
+          {isLightspeedAvailable && desiredVersion && (
+            <Alert
+              variant="info"
+              customIcon={
+                <RhUiAiInfoIcon style={{ color: 'var(--pf-t--global--color--purple--300)' }} />
+              }
+              isInline
+              title={
+                <>
+                  <Content component={ContentVariants.p}>{t('Update Prerequisites')}</Content>
+                  <Content component={ContentVariants.small}>
+                    {t('Updating from {{currentVersion}} to {{desiredVersion}}', {
+                      currentVersion,
+                      desiredVersion,
+                    })}
+                  </Content>
+                </>
+              }
+              actionLinks={
+                <UpdateWorkflowOLSButton
+                  phase="pre-check"
+                  cv={cv}
+                  targetVersion={desiredVersion}
+                  variant="secondary"
+                  data-test="ols-update-modal-precheck"
+                  onClick={() => {
+                    // Close modal when OLS opens
+                    close();
+                  }}
+                />
+              }
+              data-test="update-cluster-modal-ols-precheck"
+            />
+          )}
+          <Alert
+            variant="warning"
+            isInline
+            isPlain
+            title={t(
+              'Cluster updates are irreversible. After an update begins, it cannot be rolled back to the previous version. Verify your cluster is ready before you proceed.',
+            )}
+            data-test="update-cluster-modal-irreversibility-notice"
+          />
         </Form>
       </ModalBody>
       <ModalFooterWithAlerts errorMessage={errorMessage || error}>
@@ -351,13 +399,19 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
           id="confirm-action"
           isDisabled={
             !desiredVersion ||
-            (upgradeType === upgradeTypes.Partial && machineConfigPoolsToPause.length === 0)
+            (upgradeType === UpgradeTypes.Partial && machineConfigPoolsToPause.length === 0)
           }
         >
-          {t('public~Update')}
+          {t('Update cluster')}
         </Button>
-        <Button variant="link" onClick={cancel} type="button" data-test-id="modal-cancel-action">
-          {t('public~Cancel')}
+        <Button
+          variant="link"
+          onClick={cancel}
+          type="button"
+          data-test-id="modal-cancel-action"
+          data-test="modal-cancel-action"
+        >
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </>

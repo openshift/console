@@ -7,11 +7,11 @@ import { Trans, useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import type { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { ResourceDropdownField } from '@console/shared';
+import { ResourceDropdownField } from '@console/shared/src/components/formik-fields/ResourceDropdownField';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import { craftResourceKey } from '../pub-sub/pub-sub-utils';
 
-export interface SinkPubsubModalProps {
+interface SinkPubsubModalProps {
   resourceName: string;
   resourceDropdown: WatchK8sResultsObject<K8sResourceKind | K8sResourceKind[]>[];
   labelTitle: string;
@@ -34,7 +34,7 @@ const SinkPubsubModal: FC<Props> = ({
   values,
   initialValues,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const autocompleteFilter = (strText, item): boolean => fuzzy(strText, item?.props?.name);
   const onSinkChange = useCallback(
     (selectedValue, target) => {
@@ -82,7 +82,7 @@ const SinkPubsubModal: FC<Props> = ({
               dataSelector={['metadata', 'name']}
               fullWidth
               required
-              placeholder={t('knative-plugin~Select a sink')}
+              placeholder={t('Select a sink')}
               showBadge
               autocompleteFilter={autocompleteFilter}
               customResourceKey={craftResourceKey}
@@ -101,10 +101,10 @@ const SinkPubsubModal: FC<Props> = ({
           isDisabled={!dirty}
           form="sink-pubsub-form"
         >
-          {t('knative-plugin~Save')}
+          {t('Save')}
         </Button>
         <Button variant="link" onClick={cancel} type="button" data-test-id="modal-cancel-action">
-          {t('knative-plugin~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </>

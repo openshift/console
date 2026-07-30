@@ -1,9 +1,10 @@
+/* eslint-disable no-barrel-files/no-barrel-files */
 import type { FC } from 'react';
 // import { UserPreferenceCustomField as CustomFieldType } from '@console/dynamic-plugin-sdk/src';
 import { ClusterConfigurationCustomField } from '@console/dynamic-plugin-sdk/src';
 import type { ResolvedCodeRefProperties } from '@console/dynamic-plugin-sdk/src/types';
-import { FormLayout } from '@console/shared/src/components/cluster-configuration';
-import { ErrorBoundaryInline } from '@console/shared/src/components/error';
+import { FormLayout } from '@console/shared/src/components/cluster-configuration/FormLayout';
+import { ErrorBoundaryInline } from '@console/shared/src/components/error/fallbacks/ErrorBoundaryInline';
 import type { ResolvedClusterConfigurationItem } from './types';
 
 type ClusterConfigurationCustomFieldProps = {
@@ -20,7 +21,9 @@ const ClusterConfigurationCustomField: FC<ClusterConfigurationCustomFieldProps> 
   return (
     <ErrorBoundaryInline>
       <FormLayout>
-        <CustomComponent {...field.props} readonly={item.readonly} />
+        <div role="group" aria-label={item.label} data-readonly={String(item.readonly)}>
+          <CustomComponent {...field.props} readonly={item.readonly} />
+        </div>
       </FormLayout>
     </ErrorBoundaryInline>
   );

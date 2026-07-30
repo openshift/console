@@ -1,5 +1,5 @@
 import type { Reducer, Dispatch, ReducerAction } from 'react';
-import { createContext, useReducer, useState, useEffect, useCallback } from 'react';
+import { createContext, useCallback, useEffect, useReducer, useRef, useState } from 'react';
 import { pick, union, isEqual } from 'lodash';
 import { createSelector } from 'reselect';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
@@ -9,6 +9,7 @@ import { INTERNAL_DO_NOT_USE_isGuidedTour as isGuidedTour } from '@console/dynam
 import { getFlagsObject } from '@console/internal/reducers/features';
 import type { RootState } from '@console/internal/redux';
 import { useTranslatedExtensions } from '@console/plugin-sdk/src/utils/useTranslatedExtensions';
+import { INTEGRATION_TEST_USER_AGENT } from '@console/shared/src/constants/common';
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { TourActions } from './const';
@@ -128,9 +129,8 @@ const useTranslatedTourExtensions = () => {
 
 export const useTourValuesForContext = (): TourContextType => {
   const [activePerspective] = useActivePerspective();
-  const [perspective, setPerspective] = useState<string>(activePerspective);
   const tourExtension = useTranslatedTourExtensions();
-  const tour = tourExtension.find(({ properties }) => properties.perspective === perspective);
+  const tour = tourExtension.find(({ properties }) => properties.perspective === activePerspective);
   const selectorSteps = tour?.properties?.tour?.steps ?? [];
   const flags = useConsoleSelector(
     (state) => getRequiredFlagsByTour(state, selectorSteps),
@@ -139,7 +139,8 @@ export const useTourValuesForContext = (): TourContextType => {
   const [tourCompletionState, setTourCompletionState, loaded] = useTourStateForPerspective(
     activePerspective,
   );
-  const completed = tourCompletionState?.completed;
+  const isIntegrationTest = window.navigator.userAgent === INTEGRATION_TEST_USER_AGENT;
+  const completed = tourCompletionState?.completed || isIntegrationTest;
   const onComplete = () => {
     if (completed === false) {
       setTourCompletionState(true);
@@ -151,14 +152,22 @@ export const useTourValuesForContext = (): TourContextType => {
     startTour: !completed,
   });
 
+  const [initializedWithLoadedData, setInitializedWithLoadedData] = useState(false);
+  const prevPerspective = useRef(activePerspective);
+  if (prevPerspective.current !== activePerspective) {
+    prevPerspective.current = activePerspective;
+    if (initializedWithLoadedData) {
+      setInitializedWithLoadedData(false);
+    }
+  }
   useEffect(() => {
-    tourDispatch({ type: TourActions.initialize, payload: { completed } });
-    setPerspective(activePerspective);
-    // only run effect when the active perspective changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activePerspective, loaded]);
+    if (loaded) {
+      tourDispatch({ type: TourActions.initialize, payload: { completed } });
+      setInitializedWithLoadedData(true);
+    }
+  }, [activePerspective, completed, loaded]);
 
-  if (!tour || !loaded) return { tour: null };
+  if (!tour || !loaded || !initializedWithLoadedData) return { tour: null };
   const {
     properties: {
       tour: { intro, steps: unfilteredSteps, end },

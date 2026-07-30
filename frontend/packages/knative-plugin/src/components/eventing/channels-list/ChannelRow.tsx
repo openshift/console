@@ -5,7 +5,8 @@ import { TableData } from '@console/internal/components/factory';
 import { ResourceLink } from '@console/internal/components/utils';
 import { NamespaceModel } from '@console/internal/models';
 import { referenceFor } from '@console/internal/module/k8s';
-import LazyActionMenu, {
+import {
+  LazyActionMenu,
   KEBAB_COLUMN_CLASS,
 } from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
@@ -18,7 +19,7 @@ const ChannelRow: FC<RowFunctionArgs<EventChannelKind>> = ({ obj }) => {
   const {
     metadata: { name, namespace, creationTimestamp, uid },
   } = obj;
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const objReference = referenceFor(obj);
   const kind = getDynamicChannelModel(objReference);
   const context = { [objReference]: obj };
@@ -36,10 +37,7 @@ const ChannelRow: FC<RowFunctionArgs<EventChannelKind>> = ({ obj }) => {
       <TableData columnID="ready">{(readyCondition && readyCondition.status) || '-'}</TableData>
       <TableData columnID="condition">
         {obj.status
-          ? t(
-              'knative-plugin~{{OKcount}} OK / {{conditionsSize}}',
-              getConditionStats(obj.status.conditions),
-            )
+          ? t('{{OKcount}} OK / {{conditionsSize}}', getConditionStats(obj.status.conditions))
           : '-'}
       </TableData>
       <TableData>{kind.label}</TableData>

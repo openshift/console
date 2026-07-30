@@ -1,26 +1,20 @@
-import * as _ from 'lodash';
 import type { FC } from 'react';
 import { useState, useEffect, useRef, useMemo, Suspense } from 'react';
+import { PageSection } from '@patternfly/react-core';
+import * as _ from 'lodash';
 import { Route, Routes, Navigate, useParams, useLocation, matchRoutes } from 'react-router';
-import { useActivePerspective, Perspective } from '@console/dynamic-plugin-sdk';
+import { usePluginRoutes } from '@console/app/src/hooks/usePluginRoutes';
+import type { Perspective } from '@console/dynamic-plugin-sdk';
+import { useActivePerspective } from '@console/dynamic-plugin-sdk';
+import { getReferenceForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { usePluginInfo } from '@console/plugin-sdk/src/api/usePluginInfo';
+import { ErrorBoundaryPage } from '@console/shared/src/components/error/fallbacks/ErrorBoundaryPage';
 import { FLAGS } from '@console/shared/src/constants/common';
-import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import {
   getPerspectiveVisitedKey,
   usePerspectives,
 } from '@console/shared/src/hooks/usePerspectives';
-import { ErrorBoundaryPage } from '@console/shared/src/components/error';
-import { getReferenceForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s';
-import { connectToFlags } from '../reducers/connectToFlags';
-import { flagPending, FlagsObject } from '../reducers/features';
-import { GlobalNotifications } from './global-notifications';
-import { NamespaceBar } from './namespace-bar';
-import { SearchPage } from './search';
-import { ResourceDetailsPage, ResourceListPage } from './resource-list';
-import { AsyncComponent } from './utils/async';
-import { LoadingBox } from './utils/status-box';
-import { namespacedPrefixes } from './utils/link';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import {
   AlertmanagerModel,
   CronJobModel,
@@ -28,11 +22,19 @@ import {
   VolumeSnapshotModel,
 } from '../models';
 import { referenceForModel } from '../module/k8s';
-import { NamespaceRedirect } from './utils/namespace-redirect';
-import { PageSection } from '@patternfly/react-core';
-import { usePluginRoutes } from '@console/app/src/hooks/usePluginRoutes';
+import { connectToFlags } from '../reducers/connectToFlags';
+import type { FlagsObject } from '../reducers/features';
+import { flagPending } from '../reducers/features';
 import CreateResource from './create-resource';
+import { GlobalNotifications } from './global-notifications';
 import { TelemetryNotifier } from './global-telemetry-notifications';
+import { NamespaceBar } from './namespace-bar';
+import { ResourceDetailsPage, ResourceListPage } from './resource-list';
+import { SearchPage } from './search';
+import { AsyncComponent } from './utils/async';
+import { namespacedPrefixes } from './utils/link';
+import { NamespaceRedirect } from './utils/namespace-redirect';
+import { LoadingBox } from './utils/status-box';
 
 const RedirectComponent = () => {
   const location = useLocation();
@@ -79,7 +81,7 @@ type DefaultPageProps = {
 };
 
 // The default page component lets us connect to flags without connecting the entire App.
-const DefaultPage_: FC<DefaultPageProps> = ({ flags }) => {
+const InnerDefaultPage: FC<DefaultPageProps> = ({ flags }) => {
   const [activePerspective] = useActivePerspective();
   const perspectiveExtensions = usePerspectives();
   const [visited, setVisited, visitedLoaded] = useUserPreference<boolean>(
@@ -120,7 +122,7 @@ const DefaultPage = connectToFlags(
   FLAGS.OPENSHIFT,
   FLAGS.CAN_LIST_NS,
   FLAGS.MONITORING,
-)(DefaultPage_);
+)(InnerDefaultPage);
 
 // REDIRECT ROUTES FOR REACT-ROUTER-V6
 const StatusProjectsRedirect = () => {
@@ -768,7 +770,7 @@ const AppContents: FC = () => {
         {matches && <NamespaceBar />}
       </PageSection>
       <PageSection
-        isFilled={true}
+        isFilled
         hasBodyWrapper={false}
         padding={{ default: 'noPadding' }}
         className="pf-v6-c-page__main-section--no-gap pf-v6-u-flex-shrink-1"

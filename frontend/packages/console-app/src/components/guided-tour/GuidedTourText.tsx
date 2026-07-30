@@ -7,11 +7,11 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 
 const HelpTourText: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   return (
     <>
       {t(
-        'console-app~Access our new quick starts where you can learn more about creating or deploying an application using OpenShift Developer Console. You can also restart this tour anytime here.',
+        'Access our new quick starts where you can learn more about creating or deploying an application using OpenShift Developer Console. You can also restart this tour anytime here.',
       )}
     </>
   );
@@ -20,11 +20,11 @@ const HelpTourText: FC = () => {
 export const helpTourText = <HelpTourText />;
 
 const UserPrefrencesTourText: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   return (
     <>
       {t(
-        'console-app~Set your individual console preferences including default views, language, import settings, and more.',
+        'Set your individual console preferences including default views, language, import settings, and more.',
       )}
     </>
   );
@@ -38,7 +38,7 @@ export const FinishTourText: FC = () => {
     kind: referenceForModel(ConsoleLinkModel),
     optional: true,
   });
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
   const openshiftBlogLink =
     consoleLinks.filter((link: K8sResourceKind) => link.metadata?.name === 'openshift-blog')[0]
       ?.spec?.href || 'https://developers.redhat.com/products/openshift/whats-new';

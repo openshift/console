@@ -7,21 +7,21 @@ import {
   withDndDrop,
 } from '@patternfly/react-topology';
 import type { ViewComponentFactory } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
-import { contextMenuActions } from '@console/topology/src/actions';
-import { withCreateConnector } from '@console/topology/src/behavior';
+import { contextMenuActions } from '@console/topology/src/actions/contextMenuActions';
+import { withCreateConnector } from '@console/topology/src/behavior/withCreateConnector';
 import type {
   NodeComponentProps,
   EditableDragOperationType,
-} from '@console/topology/src/components/graph-view';
+} from '@console/topology/src/components/graph-view/components/componentUtils';
 import {
   withContextMenu,
   withNoDrop,
   nodeDragSourceSpec,
   createConnectorCallback,
-  CreateConnector,
-  BaseEdge,
-} from '@console/topology/src/components/graph-view';
-import { withEditReviewAccess } from '@console/topology/src/utils';
+} from '@console/topology/src/components/graph-view/components/componentUtils';
+import { BaseEdge } from '@console/topology/src/components/graph-view/components/edges/BaseEdge';
+import { CreateConnector } from '@console/topology/src/components/graph-view/components/edges/CreateConnector';
+import { withEditReviewAccess } from '@console/topology/src/utils/withEditReviewAccess';
 import {
   TYPE_EVENT_SOURCE,
   TYPE_EVENT_SOURCE_LINK,

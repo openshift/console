@@ -24,8 +24,8 @@ jest.mock('../../section/FormSection', () => ({
   default: (props) => `${props.title || ''} ${props.subTitle || ''} ${props.children}`,
 }));
 
-jest.mock('@console/shared', () => ({
-  ...jest.requireActual('@console/shared'),
+jest.mock('@console/shared/src/components/formik-fields/ResourceLimitField', () => ({
+  ...jest.requireActual('@console/shared/src/components/formik-fields/ResourceLimitField'),
   ResourceLimitField: (props) => `ResourceLimitField: ${props.label}`,
 }));
 

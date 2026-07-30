@@ -6,7 +6,7 @@ import type { SelfSubjectAccessReviewKind } from '@console/internal/module/k8s';
 export type AddAccessReviewResults = {
   [addActionId: string]: AccessReviewStatus;
 };
-export type NamespacedAddAccessReviewResults = {
+type NamespacedAddAccessReviewResults = {
   [namespace: string]: AddAccessReviewResults;
 };
 export enum AccessReviewStatus {

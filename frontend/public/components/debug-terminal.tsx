@@ -1,21 +1,23 @@
-import * as _ from 'lodash';
 import type { FC, ReactNode } from 'react';
-import { useState, useMemo, useEffect } from 'react';
-import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import { useParams, useLocation } from 'react-router';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { Alert } from '@patternfly/react-core';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { LoadingBox } from '@console/internal/components/utils/status-box';
-import { ConnectedPageHeading } from '@console/internal/components/utils/headings';
-import { ObjectMetadata, PodKind, k8sCreate, k8sKillByName } from '@console/internal/module/k8s';
+import { useParams, useLocation } from 'react-router';
 import { PodConnectLoader } from '@console/internal/components/pod';
-import { PodModel } from '@console/internal/models';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-
-import { resourcePath } from './utils/resource-link';
 import { getBreadcrumbPath } from '@console/internal/components/utils/breadcrumbs';
+import { ConnectedPageHeading } from '@console/internal/components/utils/headings';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { LoadingBox } from '@console/internal/components/utils/status-box';
+import { PodModel } from '@console/internal/models';
+import type { ObjectMetadata, PodKind } from '@console/internal/module/k8s';
+import { k8sCreate, k8sKillByName } from '@console/internal/module/k8s';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
+import { getDetachedSessions } from '@console/webterminal-plugin/src/redux/reducers/cloud-shell-selectors';
 import { isWindowsPod } from '../module/k8s/pods';
+import { resourcePath } from './utils/resource-link';
 
 const pickWorkloadAnnotations = (
   annotations: ObjectMetadata['annotations'],
@@ -70,14 +72,19 @@ const DebugTerminalError: FC<DebugTerminalErrorProps> = ({ error, description })
   );
 };
 
-const DebugTerminalInner: FC<DebugTerminalInnerProps> = ({ debugPod, initialContainer }) => {
-  const { t } = useTranslation();
+const DebugTerminalInner: FC<DebugTerminalInnerProps> = ({
+  debugPod,
+  initialContainer,
+  debugPodName,
+  debugPodNamespace,
+}) => {
+  const { t } = useTranslation('public');
   const infoMessage = (
     <Alert
       variant="info"
       isInline
       title={t(
-        'public~This temporary pod has a modified entrypoint command to debug a failing container. The pod will be deleted when the terminal window is closed.',
+        'This temporary pod has a modified entrypoint command to debug a failing container. The pod will be deleted when the terminal window is closed.',
       )}
     />
   );
@@ -86,7 +93,7 @@ const DebugTerminalInner: FC<DebugTerminalInnerProps> = ({ debugPod, initialCont
     case 'Unknown':
       return (
         <DebugTerminalError
-          error={<>{t('public~The debug pod failed.')}</>}
+          error={<>{t('The debug pod failed.')}</>}
           description={
             debugPod.status.containerStatuses?.[0]?.state?.terminated?.message ||
             debugPod.status.message
@@ -99,6 +106,11 @@ const DebugTerminalInner: FC<DebugTerminalInnerProps> = ({ debugPod, initialCont
           obj={debugPod}
           initialContainer={initialContainer}
           infoMessage={infoMessage}
+          cleanupOnDetach={
+            debugPodName && debugPodNamespace
+              ? { type: 'pod', name: debugPodName, namespace: debugPodNamespace }
+              : undefined
+          }
         />
       );
     case 'Pending':
@@ -108,10 +120,13 @@ const DebugTerminalInner: FC<DebugTerminalInnerProps> = ({ debugPod, initialCont
   }
 };
 
-export const DebugTerminal: FC<DebugTerminalProps> = ({ podData, containerName }) => {
+const DebugTerminal: FC<DebugTerminalProps> = ({ podData, containerName }) => {
   const [errorMessage, setErrorMessage] = useState('');
   const [generatedDebugPodName, setGeneratedDebugPodName] = useState('');
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
+  const detachedSessions = useConsoleSelector(getDetachedSessions);
+  const detachedSessionsRef = useRef(detachedSessions);
+  detachedSessionsRef.current = detachedSessions;
   const podNamespace = podData?.metadata.namespace;
   const podContainerName = containerName || podData?.spec.containers[0].name;
   const debugPodName = `${podData?.metadata?.name?.replace(/\./g, '-')}-debug-`;
@@ -147,7 +162,12 @@ export const DebugTerminal: FC<DebugTerminalProps> = ({ podData, containerName }
     window.addEventListener('beforeunload', closeTab);
     return () => {
       if (newDebugPod) {
-        deleteDebugPod(newDebugPod.metadata.name);
+        const isDetached = detachedSessionsRef.current.some(
+          (s) => s.podName === newDebugPod.metadata.name,
+        );
+        if (!isDetached) {
+          deleteDebugPod(newDebugPod.metadata.name);
+        }
       }
       window.removeEventListener('beforeunload', closeTab);
     };
@@ -170,10 +190,17 @@ export const DebugTerminal: FC<DebugTerminalProps> = ({ podData, containerName }
 
   if (generatedDebugPodName) {
     if (err) {
-      return <DebugTerminalError error={err.message || t('public~The debug pod failed.')} />;
+      return <DebugTerminalError error={err.message || t('The debug pod failed.')} />;
     }
     if (loaded) {
-      return <DebugTerminalInner initialContainer={containerName} debugPod={debugPod} />;
+      return (
+        <DebugTerminalInner
+          initialContainer={containerName}
+          debugPod={debugPod}
+          debugPodName={generatedDebugPodName}
+          debugPodNamespace={podNamespace}
+        />
+      );
     }
   }
 
@@ -181,7 +208,7 @@ export const DebugTerminal: FC<DebugTerminalProps> = ({ podData, containerName }
 };
 
 export const DebugTerminalPage: FC<DebugTerminalPageProps> = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const params = useParams();
   const { podName, ns, name } = params;
   const { pathname: url } = useLocation();
@@ -195,22 +222,22 @@ export const DebugTerminalPage: FC<DebugTerminalPageProps> = () => {
 
   return (
     <div>
-      <DocumentTitle>{t('public~Debug {{name}}', { name })}</DocumentTitle>
+      <DocumentTitle>{t('Debug {{name}}', { name })}</DocumentTitle>
       <ConnectedPageHeading
-        title={t('public~Debug {{name}}', { name })}
+        title={t('Debug {{name}}', { name })}
         kind="Pod"
         obj={{ data: podData }}
         breadcrumbs={[
-          { name: t('public~Pods'), path: getBreadcrumbPath(params, 'pods') },
+          { name: t('Pods'), path: getBreadcrumbPath(params, 'pods') },
           {
             name: podName,
             path: resourcePath('Pod', podName, ns),
           },
           {
-            name: t('public~Container details'),
+            name: t('Container details'),
             path: `${resourcePath('Pod', podName, ns)}/containers/${name}`,
           },
-          { name: t('public~Debug container'), path: url },
+          { name: t('Debug container'), path: url },
         ]}
       />
       {loaded && !err && <DebugTerminal podData={podData} containerName={name} />}
@@ -230,6 +257,8 @@ type DebugTerminalErrorProps = {
 type DebugTerminalInnerProps = {
   debugPod: PodKind;
   initialContainer?: string;
+  debugPodName?: string;
+  debugPodNamespace?: string;
 };
 
 type DebugTerminalProps = {

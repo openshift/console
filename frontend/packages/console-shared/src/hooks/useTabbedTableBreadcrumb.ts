@@ -18,7 +18,7 @@ export const useTabbedTableBreadcrumbsFor = (
   customBreadcrumbURLRequired?: boolean,
   customBreadCrumbDetailsPrefix?: string,
 ) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-shared');
   const { label, labelKey, labelPlural, labelPluralKey } = kindObj;
   const currentNamespace = useConsoleSelector((state) => getActiveNamespace(state));
   const nsURL =
@@ -35,7 +35,7 @@ export const useTabbedTableBreadcrumbsFor = (
                 : getBreadcrumbPath(params),
             },
             {
-              name: t('console-shared~{{label}} details', {
+              name: t('{{label}} details', {
                 label: customBreadCrumbDetailsPrefix || (labelKey ? t(labelKey) : label),
               }),
               path: createPath(location),

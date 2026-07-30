@@ -2,7 +2,7 @@ import type { ComponentProps } from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import * as UseQueryParams from '@console/shared/src/hooks/useQueryParams';
 import { renderWithProviders } from '../../../test-utils/unit-test-utils';
-import CatalogController from '../CatalogController';
+import { CatalogController } from '../CatalogController';
 
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),

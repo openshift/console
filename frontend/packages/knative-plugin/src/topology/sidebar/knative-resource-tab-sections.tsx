@@ -7,26 +7,26 @@ import type { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk
 import { SidebarSectionHeading, ResourceLink } from '@console/internal/components/utils';
 import type { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import { referenceFor, podPhase } from '@console/internal/module/k8s';
-import { AllPodStatus } from '@console/shared';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { AllPodStatus } from '@console/shared/src/constants/pod';
 import { usePodsWatcher } from '@console/shared/src/hooks/usePodsWatcher';
 import TopologySideBarTabSection from '@console/topology/src/components/side-bar/TopologySideBarTabSection';
-import { getResource } from '@console/topology/src/utils';
+import { getResource } from '@console/topology/src/utils/topology-utils';
 import { usePodsForRevisions } from '../../utils/usePodsForRevisions';
 import { NodeType } from '../topology-types';
 
 export const EventSinkSourceSection: FC<{ resource: K8sResourceKind }> = ({ resource }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   const target = resource?.spec?.source?.ref;
   const reference = target && referenceFor(target);
   const sinkUri = resource?.spec?.source?.uri;
 
   return (
     <>
-      <SidebarSectionHeading text={t('knative-plugin~Source')} />
+      <SidebarSectionHeading text={t('Source')} />
       {!reference && !sinkUri ? (
         <span data-test="event-sink-text" className="pf-v6-u-text-color-subtle">
-          {t('knative-plugin~No Source found for this resource.')}
+          {t('No Source found for this resource.')}
         </span>
       ) : (
         <List isPlain isBordered>
@@ -41,7 +41,7 @@ export const EventSinkSourceSection: FC<{ resource: K8sResourceKind }> = ({ reso
             ) : (
               <>
                 <span data-test="event-sink-target-uri" className="pf-v6-u-text-color-subtle">
-                  {t('knative-plugin~Target URI:')}{' '}
+                  {t('Target URI:')}{' '}
                 </span>
                 <ExternalLink href={sinkUri} displayBlock text={sinkUri} />
               </>
@@ -68,8 +68,8 @@ export const useKnativeSidepanelEventSinkSection: DetailsTabSectionExtensionHook
   return [undefined, true, undefined];
 };
 
-export const usePodsForEventSink = (resource: K8sResourceKind, data) => {
-  const { t } = useTranslation();
+const usePodsForEventSink = (resource: K8sResourceKind, data) => {
+  const { t } = useTranslation('knative-plugin');
   const { revisions, associatedDeployment } = data;
   const { pods, loaded, loadError } = usePodsForRevisions(
     revisions?.map((r) => r.metadata.uid) ?? '',
@@ -100,7 +100,7 @@ export const usePodsForEventSink = (resource: K8sResourceKind, data) => {
         ],
         [],
       ),
-      emptyText: t('knative-plugin~All Revisions are autoscaled to 0.'),
+      emptyText: t('All Revisions are autoscaled to 0.'),
       loaded,
       loadError,
     };
@@ -116,7 +116,7 @@ export const usePodsForEventSink = (resource: K8sResourceKind, data) => {
   ]);
 };
 
-export const usePodsForEventSource = (resource: K8sResourceKind, data) => {
+const usePodsForEventSource = (resource: K8sResourceKind, data) => {
   const { associatedDeployment } = data;
   const {
     podData: podsDeployment,

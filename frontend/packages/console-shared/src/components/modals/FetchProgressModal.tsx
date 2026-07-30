@@ -15,9 +15,9 @@ import {
   EmptyStateFooter,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { coFetch } from '@console/internal/co-fetch';
 import { units } from '@console/internal/components/utils/units';
-import { useToast } from '../toast';
+import { coFetch } from '@console/shared/src/utils/console-fetch';
+import { useToast } from '../toast/useToast';
 
 export interface FetchProgressModalProps {
   /** URL to fetch */
@@ -228,7 +228,7 @@ export const FetchProgressModal: FC<FetchProgressModalProps> = ({
           variant="link"
           onClick={endState ? handleClose : handleCancel}
         >
-          {endState ? t('console-shared~Close') : t('console-shared~Cancel')}
+          {endState ? t('Close') : t('Cancel')}
         </Button>
       </ModalFooter>
     </Modal>

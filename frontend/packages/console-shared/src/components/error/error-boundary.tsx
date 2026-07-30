@@ -13,7 +13,7 @@ type ErrorBoundaryInnerProps = ErrorBoundaryProps & {
 };
 
 /** Needed for tests -- should not be imported by application logic */
-export type ErrorBoundaryState = {
+type ErrorBoundaryState = {
   hasError: boolean;
   error: { message: string; stack: string; name: string };
   errorInfo: { componentStack: string };
@@ -79,7 +79,7 @@ class ErrorBoundaryInner extends Component<ErrorBoundaryInnerProps, ErrorBoundar
 }
 
 // Functional wrapper to handle location changes
-const ErrorBoundary: FC<ErrorBoundaryProps> = ({ children, FallbackComponent }) => {
+export const ErrorBoundary: FC<ErrorBoundaryProps> = ({ children, FallbackComponent }) => {
   const location = useLocation();
 
   return (
@@ -88,5 +88,3 @@ const ErrorBoundary: FC<ErrorBoundaryProps> = ({ children, FallbackComponent }) 
     </ErrorBoundaryInner>
   );
 };
-
-export default ErrorBoundary;

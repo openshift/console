@@ -14,18 +14,3 @@ export const ClusterExtensionModel: K8sKind = {
   id: 'clusterextension',
   crd: true,
 };
-
-export const ClusterCatalogModel: K8sKind = {
-  label: 'ClusterCatalog',
-  labelKey: 'olm-v1~ClusterCatalog',
-  labelPlural: 'ClusterCatalogs',
-  labelPluralKey: 'olm-v1~ClusterCatalogs',
-  apiVersion: 'v1',
-  apiGroup: 'olm.operatorframework.io',
-  plural: 'clustercatalogs',
-  abbr: 'CC',
-  namespaced: false,
-  kind: 'ClusterCatalog',
-  id: 'clustercatalog',
-  crd: true,
-};

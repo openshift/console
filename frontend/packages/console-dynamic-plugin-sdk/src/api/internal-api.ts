@@ -25,6 +25,7 @@ import {
   CellIsStickyProps,
   GetNameCellProps,
   ActionsCellProps,
+  GetCSRFToken,
 } from './internal-types';
 
 export * from './internal-console-api';
@@ -58,7 +59,7 @@ export const ResourceInventoryItem: FC<ResourceInventoryItemProps> = require('@c
   .ResourceInventoryItem;
 
 export const UtilizationItem: FC<UtilizationItemProps> = require('@console/shared/src/components/dashboard/utilization-card/UtilizationItem')
-  .default;
+  .UtilizationItem;
 
 export const UtilizationBody: FC<UtilizationBodyProps> = require('@console/shared/src/components/dashboard/utilization-card/UtilizationBody')
   .UtilizationBody;
@@ -67,10 +68,10 @@ export const UtilizationDurationDropdown: FC<UtilizationDurationDropdownProps> =
   .UtilizationDurationDropdown;
 
 export const VirtualizedGrid: FC<VirtualizedGridProps> = require('@console/shared/src/components/virtualized-grid/VirtualizedGrid')
-  .default;
+  .VirtualizedGrid;
 
 export const LazyActionMenu: FC<LazyActionMenuProps> = require('@console/shared/src/components/actions/LazyActionMenu')
-  .default;
+  .LazyActionMenu;
 
 export const QuickStartsLoader: FC<QuickStartsLoaderProps> = require('@console/app/src/components/quick-starts/loader/QuickStartsLoader')
   .QuickStartsLoader;
@@ -84,7 +85,7 @@ export const useDashboardResources: UseDashboardResources = require('@console/sh
 export const useURLPoll: UseURLPoll = require('@console/internal/components/utils/url-poll-hook')
   .useURLPoll;
 
-export const useLastNamespace: UseLastNamespace = require('@console/app/src/components/detect-namespace/useLastNamespace')
+export const useLastNamespace: UseLastNamespace = require('@console/app/src/components/detect-context/useLastNamespace')
   .useLastNamespace;
 
 export const ConsoleDataView: <
@@ -98,6 +99,12 @@ export const ConsoleDataView: <
 export const cellIsStickyProps: CellIsStickyProps = require('@console/app/src/components/data-view/ConsoleDataView')
   .cellIsStickyProps;
 
+export const getNameColumnProps: (
+  hasRightBorder?: boolean,
+  withBulkSelect?: boolean,
+) => CellIsStickyProps = require('@console/app/src/components/data-view/ConsoleDataView')
+  .getNameColumnProps;
+
 export const getNameCellProps: GetNameCellProps = require('@console/app/src/components/data-view/ConsoleDataView')
   .getNameCellProps;
 
@@ -109,3 +116,6 @@ export const initialFiltersDefault: ResourceFilters = require('@console/app/src/
 
 export const definitionFor: DefinitionFor = require('@console/internal/module/k8s/swagger')
   .definitionFor;
+
+export const getCSRFToken: GetCSRFToken = require('@console/shared/src/utils/console-fetch-utils')
+  .getCSRFToken;

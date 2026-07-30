@@ -13,7 +13,13 @@ export const FavoriteNavItem: FC<FavoriteNavItemProps> = ({
 }) => {
   return (
     <NavItem className={className} isActive={isActive}>
-      <NavLink {...navLinkProps} {...dataAttributes} to={to} className="pf-v6-u-py-0 pf-v6-u-pr-0">
+      <NavLink
+        {...navLinkProps}
+        {...dataAttributes}
+        to={to}
+        className="pf-v6-u-py-0 pf-v6-u-pr-0"
+        aria-current={isActive ? 'page' : undefined}
+      >
         {children}
       </NavLink>
     </NavItem>

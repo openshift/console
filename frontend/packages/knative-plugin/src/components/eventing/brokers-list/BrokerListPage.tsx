@@ -7,10 +7,10 @@ import { EventingBrokerModel } from '../../../models';
 import BrokerList from './BrokerList';
 
 const BrokerListPage: FC<ComponentProps<typeof ListPage>> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   return (
     <>
-      <DocumentTitle>{t('knative-plugin~Brokers')}</DocumentTitle>
+      <DocumentTitle>{t('Brokers')}</DocumentTitle>
       <ListPage
         canCreate={false}
         {...props}

@@ -1,3 +1,4 @@
+/* eslint-disable no-barrel-files/no-barrel-files */
 export * from './line-buffer';
 export * from './kebab';
 export * from './selector';
@@ -22,7 +23,6 @@ export * from './link';
 export * from './alerts';
 export * from './async';
 export * from './download-button';
-export * from './entitlements';
 export * from './build-strategy';
 export * from './copy-to-clipboard';
 export * from './build-hooks';
@@ -44,7 +44,6 @@ export * from './volume-type';
 export * from './skeleton-catalog';
 export * from './dom-utils';
 export * from './owner-references';
-export { default } from './operator-backed-owner-references';
 export * from './field-level-help';
 export * from './details-item';
 export * from './types';

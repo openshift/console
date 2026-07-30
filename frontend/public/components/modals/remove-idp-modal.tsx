@@ -1,8 +1,8 @@
-import { useTranslation, Trans } from 'react-i18next';
 import { Button, Modal, ModalBody, ModalHeader, ModalVariant } from '@patternfly/react-core';
-import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
+import { useTranslation, Trans } from 'react-i18next';
 import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import { K8sModel, OAuthKind } from '@console/internal/module/k8s';
+import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
+import type { K8sModel, OAuthKind } from '@console/internal/module/k8s';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 
@@ -14,7 +14,7 @@ const RemoveIdentityProviderModalContent: OverlayComponent<RemoveIdentityProvide
   type,
   closeOverlay,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
 
   const handleSubmit = (): void => {
@@ -29,14 +29,16 @@ const RemoveIdentityProviderModalContent: OverlayComponent<RemoveIdentityProvide
           },
         ],
       }),
-    ).then(() => closeOverlay());
+    )
+      .then(() => closeOverlay())
+      .catch(() => {});
   };
 
   return (
     <>
       <ModalHeader
         titleIconVariant="warning"
-        title={t('public~Remove identity provider from OAuth?')}
+        title={t('Remove identity provider from OAuth?')}
         labelId="remove-idp-modal-title"
         data-test-id="modal-title"
       />
@@ -55,16 +57,17 @@ const RemoveIdentityProviderModalContent: OverlayComponent<RemoveIdentityProvide
           data-test="confirm-action"
           id="confirm-action"
         >
-          {t('public~Remove')}
+          {t('Remove')}
         </Button>
         <Button
           type="button"
           variant="link"
           isDisabled={inProgress}
           onClick={closeOverlay}
+          data-test="modal-cancel-action"
           data-test-id="modal-cancel-action"
         >
-          {t('public~Cancel')}
+          {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
     </>

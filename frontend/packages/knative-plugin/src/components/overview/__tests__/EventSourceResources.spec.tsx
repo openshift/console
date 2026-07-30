@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { render, screen } from '@testing-library/react';
 import * as _ from 'lodash';
 import { referenceForModel } from '@console/internal/module/k8s';
@@ -12,38 +13,37 @@ import { ServiceModel } from '../../../models';
 import { getEventSourceResponse } from '../../../topology/__tests__/topology-knative-test-data';
 import { EventSourceTarget } from '../EventSourceResources';
 
-jest.mock('@console/internal/components/utils', () => ({
-  ResourceLink: 'ResourceLink',
-  SidebarSectionHeading: 'SidebarSectionHeading',
-}));
+jest.mock(
+  '@console/internal/components/utils',
+  () =>
+    jest.requireActual('@console/knative-plugin/src/__tests__/rtl-stub-components')
+      .knativeInternalUtilsStubs,
+);
 
 jest.mock('@console/shared/src/components/links/ExternalLink', () => ({
-  ExternalLink: 'ExternalLink',
+  ExternalLink: ({ href, children }: { href?: string; children?: ReactNode }) => (
+    <a data-test="mock-ExternalLink" href={href}>
+      {children}
+    </a>
+  ),
 }));
 
 jest.mock('../EventSourceOwnedList', () => ({
   __esModule: true,
-  default: 'EventSourceOwnedList',
+  default: () => <div data-test="mock-EventSourceOwnedList" />,
 }));
 
 jest.mock('@patternfly/react-core', () => ({
-  List: 'List',
-  ListItem: 'ListItem',
+  List: ({ children }: { children?: ReactNode }) => children ?? null,
+  ListItem: ({ children }: { children?: ReactNode }) => children ?? null,
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-  }),
-}));
+jest.mock('react-i18next');
 
-jest.mock('@console/shared', () => {
-  const ActualShared = jest.requireActual('@console/shared');
-  return {
-    ...ActualShared,
-    usePodsWatcher: jest.fn(),
-  };
-});
+jest.mock('@console/shared/src/hooks/usePodsWatcher', () => ({
+  ...jest.requireActual('@console/shared/src/hooks/usePodsWatcher'),
+  usePodsWatcher: jest.fn(),
+}));
 
 describe('EventSinkServicesOverviewList', () => {
   it('should show error info if no sink present or sink,kind is incorrect', () => {
@@ -59,7 +59,7 @@ describe('EventSinkServicesOverviewList', () => {
   });
 
   it('should have ResourceLink with proper kind for sink to knSvc', () => {
-    const { container } = render(
+    render(
       <EventSourceTarget
         obj={
           getEventSourceResponse(KNATIVE_EVENT_SOURCE_APIGROUP, 'v1', EVENT_SOURCE_API_SERVER_KIND)
@@ -67,8 +67,8 @@ describe('EventSinkServicesOverviewList', () => {
         }
       />,
     );
-    const resourceLink = container.querySelector('ResourceLink');
-    expect(resourceLink).toBeInTheDocument();
+    const resourceLink = screen.getByTestId('mock-ResourceLink');
+    expect(resourceLink).toBeVisible();
     expect(resourceLink).toHaveAttribute('kind', referenceForModel(ServiceModel));
   });
 
@@ -85,9 +85,9 @@ describe('EventSinkServicesOverviewList', () => {
         .data[0],
       ...{ spec: sinkData },
     };
-    const { container } = render(<EventSourceTarget obj={sinkChannelData} />);
-    const resourceLink = container.querySelector('ResourceLink');
-    expect(resourceLink).toBeInTheDocument();
+    render(<EventSourceTarget obj={sinkChannelData} />);
+    const resourceLink = screen.getByTestId('mock-ResourceLink');
+    expect(resourceLink).toBeVisible();
     expect(resourceLink).toHaveAttribute('kind', 'messaging.knative.dev~v1~InMemoryChannel');
   });
 
@@ -99,13 +99,13 @@ describe('EventSinkServicesOverviewList', () => {
         uri: 'http://overlayimage.testproject3.svc.cluster.local',
       },
     };
-    const { container } = render(<EventSourceTarget obj={mockData} />);
-    expect(container.querySelector('ExternalLink')).toBeInTheDocument();
-    expect(container.querySelector('ResourceLink')).not.toBeInTheDocument();
+    render(<EventSourceTarget obj={mockData} />);
+    expect(screen.getByTestId('mock-ExternalLink')).toBeVisible();
+    expect(screen.queryByTestId('mock-ResourceLink')).not.toBeInTheDocument();
   });
 
   it('should have ExternalLink when sinkUri is present', () => {
-    const { container } = render(
+    render(
       <EventSourceTarget
         obj={
           getEventSourceResponse(KNATIVE_EVENT_SOURCE_APIGROUP, 'v1', EVENT_SOURCE_API_SERVER_KIND)
@@ -113,7 +113,7 @@ describe('EventSinkServicesOverviewList', () => {
         }
       />,
     );
-    expect(container.querySelector('ExternalLink')).toBeInTheDocument();
+    expect(screen.getByTestId('mock-ExternalLink')).toBeVisible();
   });
 
   it('should not have ExternalLink when no sinkUri is present', () => {
@@ -122,7 +122,7 @@ describe('EventSinkServicesOverviewList', () => {
         .data[0],
       'status',
     );
-    const { container } = render(<EventSourceTarget obj={mockEventSourceDataNoURI} />);
-    expect(container.querySelector('ExternalLink')).not.toBeInTheDocument();
+    render(<EventSourceTarget obj={mockEventSourceDataNoURI} />);
+    expect(screen.queryByTestId('mock-ExternalLink')).not.toBeInTheDocument();
   });
 });

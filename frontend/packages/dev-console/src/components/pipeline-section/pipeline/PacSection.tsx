@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import type { FormikValues } from 'formik';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { GitProvider } from '@console/git-service/src';
+import { GitProvider } from '@console/git-service/src/types/git';
 import { ExpandCollapse, Loading } from '@console/internal/components/utils';
 import ConfigTypeSection from './ConfigTypeSection';
 import { usePacInfo } from './pac-hook';
@@ -12,13 +12,13 @@ import { recommendRepositoryName } from './utils';
 import WebhookSection from './WebhookSection';
 import './PacSection.scss';
 
-export enum PacConfigurationTypes {
+enum PacConfigurationTypes {
   GITHUB = 'github',
   WEBHOOK = 'webhook',
 }
 
 const PacSection: FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('devconsole');
   const formContextField = 'pac.repository';
   const [githubAppAvailable, setGithubAppAvailable] = useState(false);
   const { values, setFieldValue } = useFormikContext<FormikValues>();
@@ -49,10 +49,7 @@ const PacSection: FC = () => {
 
   return pac ? (
     <>
-      <ExpandCollapse
-        textCollapsed={t('devconsole~View details')}
-        textExpanded={t('devconsole~Hide details')}
-      >
+      <ExpandCollapse textCollapsed={t('View details')} textExpanded={t('Hide details')}>
         <InfoPanel />
       </ExpandCollapse>
 

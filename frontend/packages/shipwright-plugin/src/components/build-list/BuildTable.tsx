@@ -9,7 +9,8 @@ import type { TableProps, RowFunctionArgs } from '@console/internal/components/f
 import { Table, TableData } from '@console/internal/components/factory';
 import { ResourceLink } from '@console/internal/components/utils';
 import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
-import LazyActionMenu, {
+import {
+  LazyActionMenu,
   KEBAB_COLUMN_CLASS,
 } from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
@@ -32,13 +33,13 @@ const columnClassNames = [
   KEBAB_COLUMN_CLASS,
 ];
 
-export const BuildHeader = () => {
+const BuildHeader = () => {
   // This function is NOT called as component, so we can not use useTranslation here.
   const t = i18next.t.bind(i18next);
 
   return [
     {
-      title: i18next.t('shipwright-plugin~Name'),
+      title: t('shipwright-plugin~Name'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: columnClassNames[0] },
@@ -85,7 +86,7 @@ export const BuildHeader = () => {
   ];
 };
 
-export const BuildRow: FC<RowFunctionArgs<Build>> = ({ obj: build }) => {
+const BuildRow: FC<RowFunctionArgs<Build>> = ({ obj: build }) => {
   const kindReference = referenceFor(build);
   const context = { [kindReference]: build };
   const buildRunKindReference = isV1Alpha1Resource(build)
@@ -151,7 +152,7 @@ type BuildTableProps = TableProps & {
 };
 
 export const BuildTable: FC<BuildTableProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('shipwright-plugin');
   const buildRunModel = useFlag('SHIPWRIGHT_BUILDRUN')
     ? referenceForModel(BuildRunModel)
     : referenceForModel(BuildRunModelV1Alpha1);
@@ -191,7 +192,7 @@ export const BuildTable: FC<BuildTableProps> = (props) => {
     <Table
       {...props}
       data={buildResource}
-      aria-label={t('shipwright-plugin~Builds')}
+      aria-label={t('Builds')}
       Header={BuildHeader}
       Row={BuildRow}
       defaultSortField="metadata.name"
@@ -204,5 +205,3 @@ export const BuildTable: FC<BuildTableProps> = (props) => {
     />
   );
 };
-
-export default BuildTable;

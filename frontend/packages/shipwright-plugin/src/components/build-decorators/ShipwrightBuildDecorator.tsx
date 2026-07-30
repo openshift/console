@@ -7,8 +7,8 @@ import { Link } from 'react-router';
 import { impersonateStateToProps } from '@console/dynamic-plugin-sdk';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { Status } from '@console/shared';
-import { BuildDecoratorBubble } from '@console/topology/src/components/graph-view';
+import { Status } from '@console/shared/src/components/status/Status';
+import { BuildDecoratorBubble } from '@console/topology/src/components/graph-view/components/nodes/decorators/BuildDecoratorBubble';
 import { BUILDRUN_TO_RESOURCE_MAP_LABEL } from '../../const';
 import { BuildRunModel, BuildRunModelV1Alpha1 } from '../../models';
 import type { Build, BuildRun } from '../../types';
@@ -31,7 +31,7 @@ type StateProps = {
   };
 };
 
-export const ConnectedBuildRunDecorator: FC<BuildRunDecoratorProps & StateProps> = ({
+const ConnectedBuildRunDecorator: FC<BuildRunDecoratorProps & StateProps> = ({
   buildRuns,
   resource,
   radius,
@@ -39,7 +39,7 @@ export const ConnectedBuildRunDecorator: FC<BuildRunDecoratorProps & StateProps>
   y,
 }) => {
   const ref = useRef();
-  const { t } = useTranslation();
+  const { t } = useTranslation('shipwright-plugin');
   const { latestBuildRun, status } = getLatestBuildRunStatusforDeployment(buildRuns, resource);
 
   const statusIcon = <Status status={status} iconOnly noTooltip />;
@@ -70,7 +70,7 @@ export const ConnectedBuildRunDecorator: FC<BuildRunDecoratorProps & StateProps>
       </Link>
     );
   } else {
-    tooltipContent = t('shipwright-plugin~Build not started');
+    tooltipContent = t('Build not started');
 
     decoratorContent = (
       <BuildDecoratorBubble x={x} y={y} radius={radius} ariaLabel={tooltipContent}>

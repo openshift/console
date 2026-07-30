@@ -54,7 +54,6 @@ export interface TextAreaProps extends FieldProps {
 }
 
 export enum GroupTextType {
-  TextInput = 'text',
   TextArea = 'textArea',
 }
 
@@ -64,10 +63,6 @@ export interface CheckboxFieldProps extends FieldProps {
   onChange?: (val: boolean) => void;
   label?: ReactNode;
   helpText?: ReactNode;
-}
-
-export interface SearchInputFieldProps extends BaseInputFieldProps {
-  onSearch: (searchTerm: string) => void;
 }
 
 export interface DropdownFieldProps extends FieldProps {
@@ -154,14 +149,14 @@ export interface NameValueFromPair {
   valueFrom: ConfigMapKeyRef | SecretKeyRef;
 }
 
-export interface ConfigMapKeyRef {
+interface ConfigMapKeyRef {
   configMapKeyRef: {
     key: string;
     name: string;
   };
 }
 
-export interface SecretKeyRef {
+interface SecretKeyRef {
   secretKeyRef: {
     key: string;
     name: string;
@@ -186,7 +181,7 @@ export interface RadioGroupFieldProps extends FieldProps {
   helpText?: ReactNode;
 }
 
-export interface RadioGroupOption {
+interface RadioGroupOption {
   value: string;
   label: ReactNode;
   isDisabled?: boolean;
@@ -203,7 +198,7 @@ export interface SelectInputOption {
   hasCheckbox?: boolean;
 }
 
-export interface SelectInputFieldProps extends FieldProps {
+interface SelectInputFieldProps extends FieldProps {
   ariaLabel?: string;
   options: SelectInputOption[];
   isDisabled?: boolean;

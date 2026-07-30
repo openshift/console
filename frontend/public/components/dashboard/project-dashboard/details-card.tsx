@@ -1,8 +1,4 @@
-import * as _ from 'lodash';
-import type { FC } from 'react';
-import { useContext } from 'react';
-import { css } from '@patternfly/react-styles';
-import { useTranslation } from 'react-i18next';
+import { useContext, memo } from 'react';
 import {
   Card,
   CardBody,
@@ -11,17 +7,20 @@ import {
   Button,
   DescriptionList,
 } from '@patternfly/react-core';
+import { css } from '@patternfly/react-styles';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router';
 import { OverviewDetailItem } from '@console/internal/components/overview/OverviewDetailItem';
+import { GreenCheckCircleIcon } from '@console/shared/src/components/status/icons';
 import { getName } from '@console/shared/src/selectors/common';
 import { getRequester } from '@console/shared/src/selectors/namespace';
-import { GreenCheckCircleIcon } from '@console/shared/src/components/status/icons';
+import { ProjectModel } from '../../../models';
 import { LabelList } from '../../utils/label-list';
 import { resourcePathFromModel } from '../../utils/resource-link';
-import { ProjectModel } from '../../../models';
 import { ProjectDashboardContext } from './project-dashboard-context';
-import { Link } from 'react-router';
 
-export const DetailsCard: FC = () => {
+export const DetailsCard = memo(() => {
   const { obj } = useContext(ProjectDashboardContext);
   const keys = _.keys(obj.metadata.labels).sort();
   const labelsSubset = _.take(keys, 3);
@@ -29,15 +28,15 @@ export const DetailsCard: FC = () => {
   const description = obj.metadata.annotations?.['openshift.io/description'];
   const detailsLink = `${resourcePathFromModel(ProjectModel, obj.metadata.name)}/details`;
   const serviceMeshEnabled = obj.metadata?.labels?.['maistra.io/member-of'];
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   return (
-    <Card data-test-id="details-card">
+    <Card data-test="details-card" data-test-id="details-card">
       <CardHeader
         actions={{
           actions: (
             <>
               <Link to={detailsLink} data-test="details-card-view-all">
-                {t('public~View all')}
+                {t('View all')}
               </Link>
             </>
           ),
@@ -45,45 +44,45 @@ export const DetailsCard: FC = () => {
           className: 'co-overview-card__actions',
         }}
       >
-        <CardTitle>{t('public~Details')}</CardTitle>
+        <CardTitle>{t('Details')}</CardTitle>
       </CardHeader>
       <CardBody>
         <DescriptionList>
-          <OverviewDetailItem isLoading={!obj} title={t('public~Name')}>
+          <OverviewDetailItem isLoading={!obj} title={t('Name')}>
             {getName(obj)}
           </OverviewDetailItem>
-          <OverviewDetailItem isLoading={!obj} title={t('public~Requester')}>
+          <OverviewDetailItem isLoading={!obj} title={t('Requester')}>
             {getRequester(obj) || (
-              <span className="pf-v6-u-text-color-subtle">{t('public~No requester')}</span>
+              <span className="pf-v6-u-text-color-subtle">{t('No requester')}</span>
             )}
           </OverviewDetailItem>
-          <OverviewDetailItem isLoading={!obj} title={t('public~Labels')}>
+          <OverviewDetailItem isLoading={!obj} title={t('Labels')}>
             <div className="co-project-dashboard__details-labels">
               <LabelList kind={ProjectModel.kind} labels={firstThreelabels} />
               {keys.length > 3 && (
                 <Button variant="link">
-                  <Link to={detailsLink}>{t('public~View all')}</Link>
+                  <Link to={detailsLink}>{t('View all')}</Link>
                 </Button>
               )}
             </div>
           </OverviewDetailItem>
-          <OverviewDetailItem isLoading={!obj} title={t('public~Description')}>
+          <OverviewDetailItem isLoading={!obj} title={t('Description')}>
             <span
               className={css({
                 'pf-v6-u-text-color-subtle': !description,
                 'co-project-dashboard-details-card__description': description,
               })}
             >
-              {description || t('public~No description')}
+              {description || t('No description')}
             </span>
           </OverviewDetailItem>
           {serviceMeshEnabled && (
-            <OverviewDetailItem isLoading={!obj} title={t('public~Service mesh')}>
-              <GreenCheckCircleIcon /> {t('public~Service mesh enabled')}
+            <OverviewDetailItem isLoading={!obj} title={t('Service mesh')}>
+              <GreenCheckCircleIcon /> {t('Service mesh enabled')}
             </OverviewDetailItem>
           )}
         </DescriptionList>
       </CardBody>
     </Card>
   );
-};
+});

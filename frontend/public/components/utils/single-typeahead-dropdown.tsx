@@ -1,22 +1,25 @@
+import type { FC, Ref } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
+import type {
+  MenuToggleProps,
+  MenuToggleElement,
+  SelectProps,
+  SelectOptionProps,
+  TextInputGroupMainProps,
+} from '@patternfly/react-core';
 import {
   Button,
   MenuToggle,
-  MenuToggleProps,
-  MenuToggleElement,
   Select,
-  SelectProps,
   SelectList,
   SelectOption,
-  SelectOptionProps,
   TextInputGroup,
   TextInputGroupMain,
   TextInputGroupUtilities,
-  TextInputGroupMainProps,
 } from '@patternfly/react-core';
+import { RhUiCloseIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
-import { FC, Ref, useState, useMemo, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { TimesIcon } from '@patternfly/react-icons';
 
 export type SingleTypeaheadDropdownProps = {
   /** The items to display in the dropdown */
@@ -82,7 +85,7 @@ export const SingleTypeaheadDropdown: FC<SingleTypeaheadDropdownProps> = ({
   menuToggleProps = {},
   selectProps = {},
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const [isOpen, setIsOpen] = useState(false);
   const [selectOptions, setSelectOptions] = useState<SelectOptionProps[]>(items);
   const selectedValue = useMemo(() => selectOptions.find((i) => i.value === selectedKey), [
@@ -120,7 +123,7 @@ export const SingleTypeaheadDropdown: FC<SingleTypeaheadDropdownProps> = ({
         newSelectOptions = [
           ...newSelectOptions,
           {
-            children: t('public~Create new option "{{option}}"', { option: inputValue }),
+            children: t('Create new option "{{option}}"', { option: inputValue }),
             value: CREATE_NEW,
           },
         ];
@@ -315,7 +318,7 @@ export const SingleTypeaheadDropdown: FC<SingleTypeaheadDropdownProps> = ({
           id={`${ID_PREFIX}-input`}
           autoComplete="off"
           innerRef={textInputRef}
-          placeholder={placeholder ?? t('public~Filter options')}
+          placeholder={placeholder ?? t('Filter options')}
           {...(activeItemId && { 'aria-activedescendant': activeItemId })}
           role="combobox"
           isExpanded={isOpen}
@@ -332,10 +335,10 @@ export const SingleTypeaheadDropdown: FC<SingleTypeaheadDropdownProps> = ({
         {!hideClearButton && (
           <TextInputGroupUtilities {...(!inputValue ? { style: { display: 'none' } } : {})}>
             <Button
-              icon={<TimesIcon aria-hidden />}
+              icon={<RhUiCloseIcon aria-hidden />}
               variant="plain"
               onClick={onClearButtonClick}
-              aria-label={t('public~Clear input value')}
+              aria-label={t('Clear input value')}
             />
           </TextInputGroupUtilities>
         )}
@@ -363,6 +366,7 @@ export const SingleTypeaheadDropdown: FC<SingleTypeaheadDropdownProps> = ({
 
           return (
             <SelectOptionComponent
+              // eslint-disable-next-line react/no-array-index-key
               key={k}
               isSelected={selectedKey === v.value}
               isFocused={focusedItemIndex === k}
@@ -375,7 +379,7 @@ export const SingleTypeaheadDropdown: FC<SingleTypeaheadDropdownProps> = ({
           );
         })}
         {_.isEmpty(filteredSelectOptions) && filterValue && !enableCreateNew && (
-          <SelectOption isDisabled={true} isAriaDisabled={true} value={NO_RESULTS}>
+          <SelectOption isDisabled isAriaDisabled value={NO_RESULTS}>
             {t(`public~No results found`)}
           </SelectOption>
         )}

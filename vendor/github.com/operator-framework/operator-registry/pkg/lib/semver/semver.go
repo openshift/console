@@ -27,6 +27,7 @@ func BuildIdCompare(b semver.Version, v semver.Version) (int, error) {
 }
 
 func buildAsPrerelease(v semver.Version) (*semver.Version, error) {
+	// nolint:prealloc
 	var pre []semver.PRVersion
 	for _, b := range v.Build {
 		p, err := semver.NewPRVersion(b)

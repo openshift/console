@@ -1,13 +1,15 @@
-import type { FC } from 'react';
-import { ImpersonateKind, impersonateStateToProps } from '@console/dynamic-plugin-sdk';
-import { Button, Dropdown, MenuToggle, MenuToggleElement } from '@patternfly/react-core';
+import type { FC, ReactNode, RefObject } from 'react';
+import { useEffect, useState } from 'react';
+import type { MenuToggleElement } from '@patternfly/react-core';
+import { Button, Dropdown, MenuToggle } from '@patternfly/react-core';
 import { some } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { useNavigate } from 'react-router';
-
-import { ReactNode, RefObject, useEffect, useState } from 'react';
-import { KebabItem, KebabItems, KebabOption } from './kebab';
+import { impersonateStateToProps } from '@console/dynamic-plugin-sdk';
+import type { ImpersonateKind } from '@console/dynamic-plugin-sdk';
+import type { KebabOption } from './kebab';
+import { KebabItem, KebabItems } from './kebab';
 import { checkAccess } from './rbac';
 
 type ActionsMenuProps = {
@@ -22,7 +24,7 @@ type ActionsMenuDropdownProps = {
 };
 
 const ActionsMenuDropdown: FC<ActionsMenuDropdownProps> = ({ actions, title, active }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const navigate = useNavigate();
   const [isActive, setIsActive] = useState(!!active);
 
@@ -63,9 +65,10 @@ const ActionsMenuDropdown: FC<ActionsMenuDropdownProps> = ({ actions, title, act
           ref={toggleRef}
           onClick={() => setIsActive(!active)}
           isExpanded={active}
+          data-test="actions-menu-button"
           data-test-id="actions-menu-button"
         >
-          {title || t('public~Actions')}
+          {title || t('Actions')}
         </MenuToggle>
       )}
     >

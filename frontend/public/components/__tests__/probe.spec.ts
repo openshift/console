@@ -53,12 +53,42 @@ describe('k8sProbe', () => {
         });
       });
     });
+
+    describe('for grpc', () => {
+      it('returns port and service', () => {
+        expect(parseCmd('grpc', '5000:my-service')).toEqual({ port: 5000, service: 'my-service' });
+      });
+
+      it('returns port only when no service specified', () => {
+        expect(parseCmd('grpc', '5000')).toEqual({ port: 5000 });
+      });
+
+      it('returns null for empty string', () => {
+        expect(parseCmd('grpc', '')).toBeNull();
+      });
+    });
   });
 
   describe('#flattenCmd', () => {
     describe('for tcpSocket', () => {
       it('casts port number to string', () => {
         expect(flattenCmd('tcpSocket', { port: 8080 })).toEqual('8080');
+      });
+    });
+
+    describe('for grpc', () => {
+      it('returns port as string', () => {
+        expect(flattenCmd('grpc', { port: 5000 })).toEqual('5000');
+      });
+
+      it('returns port with service when service is specified', () => {
+        expect(flattenCmd('grpc', { port: 5000, service: 'my-service' })).toEqual(
+          '5000 (my-service)',
+        );
+      });
+
+      it('returns empty string when port is missing', () => {
+        expect(flattenCmd('grpc', {})).toEqual('');
       });
     });
   });

@@ -1,16 +1,15 @@
-import { useContext } from 'react';
-import { useTranslation } from 'react-i18next';
-
+import { useContext, memo } from 'react';
 import { Card, CardBody, CardHeader, CardTitle, Stack, StackItem } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/api/core-api';
+import AppliedClusterResourceQuotaItem from '@console/shared/src/components/dashboard/resource-quota-card/AppliedClusterResourceQuotaItem';
 import ResourceQuotaBody from '@console/shared/src/components/dashboard/resource-quota-card/ResourceQuotaBody';
 import ResourceQuotaItem from '@console/shared/src/components/dashboard/resource-quota-card/ResourceQuotaItem';
-import AppliedClusterResourceQuotaItem from '@console/shared/src/components/dashboard/resource-quota-card/AppliedClusterResourceQuotaItem';
 import { AppliedClusterResourceQuotaModel, ResourceQuotaModel } from '../../../models';
+import type { ResourceQuotaKind, AppliedClusterResourceQuotaKind } from '../../../module/k8s';
 import { ProjectDashboardContext } from './project-dashboard-context';
-import { ResourceQuotaKind, AppliedClusterResourceQuotaKind } from '../../../module/k8s';
 
-export const ResourceQuotaCard = () => {
+export const ResourceQuotaCard = memo(() => {
   const { obj } = useContext(ProjectDashboardContext);
 
   const [quotas, rqLoaded, rqLoadError] = useK8sWatchResource<ResourceQuotaKind[]>({
@@ -34,12 +33,12 @@ export const ResourceQuotaCard = () => {
     isList: true,
   });
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
 
   return (
-    <Card data-test-id="resource-quotas-card">
+    <Card data-test="resource-quotas-card" data-test-id="resource-quotas-card">
       <CardHeader>
-        <CardTitle>{t('public~ResourceQuotas')}</CardTitle>
+        <CardTitle>{t('ResourceQuotas')}</CardTitle>
       </CardHeader>
       <CardBody>
         <ResourceQuotaBody error={!!rqLoadError} isLoading={!rqLoaded}>
@@ -55,13 +54,13 @@ export const ResourceQuotaCard = () => {
         </ResourceQuotaBody>
       </CardBody>
       <CardHeader>
-        <CardTitle>{t('public~AppliedClusterResourceQuotas')}</CardTitle>
+        <CardTitle>{t('AppliedClusterResourceQuotas')}</CardTitle>
       </CardHeader>
       <CardBody>
         <ResourceQuotaBody
           error={!!acrqLoadError}
           isLoading={!acrqLoaded}
-          noText={t('public~No AppliedClusterResourceQuotas')}
+          noText={t('No AppliedClusterResourceQuotas')}
         >
           {clusterQuotas.length ? (
             <Stack hasGutter>
@@ -79,4 +78,4 @@ export const ResourceQuotaCard = () => {
       </CardBody>
     </Card>
   );
-};
+});

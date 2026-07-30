@@ -20,20 +20,20 @@ type BuildRunSectionProps = {
 };
 
 const BuildRunSection: FC<BuildRunSectionProps> = ({ buildRun }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('shipwright-plugin');
   const buildModel = isV1Alpha1Resource(buildRun) ? BuildModelV1Alpha1 : BuildModel;
 
   return (
     <DescriptionList>
       <DescriptionListGroup>
-        <DescriptionListTerm>{t('shipwright-plugin~Status')}</DescriptionListTerm>
+        <DescriptionListTerm>{t('Status')}</DescriptionListTerm>
         <DescriptionListDescription>
           <BuildRunStatus buildRun={buildRun} />
         </DescriptionListDescription>
       </DescriptionListGroup>
 
       <DetailsItem
-        label={t('shipwright-plugin~Build')}
+        label={t('Build')}
         obj={buildRun}
         path={isV1Alpha1Resource(buildRun) ? 'spec.buildRef' : 'spec.build'}
       >
@@ -48,20 +48,16 @@ const BuildRunSection: FC<BuildRunSectionProps> = ({ buildRun }) => {
         )}
       </DetailsItem>
 
-      <DetailsItem label={t('shipwright-plugin~Start time')} obj={buildRun} path="status.startTime">
+      <DetailsItem label={t('Start time')} obj={buildRun} path="status.startTime">
         <Timestamp timestamp={buildRun.status?.startTime} />
       </DetailsItem>
 
-      <DetailsItem
-        label={t('shipwright-plugin~Completion time')}
-        obj={buildRun}
-        path="status.completionTime"
-      >
+      <DetailsItem label={t('Completion time')} obj={buildRun} path="status.completionTime">
         <Timestamp timestamp={buildRun.status?.completionTime} />
       </DetailsItem>
 
       <DescriptionListGroup>
-        <DescriptionListTerm>{t('shipwright-plugin~Duration')}</DescriptionListTerm>
+        <DescriptionListTerm>{t('Duration')}</DescriptionListTerm>
         <DescriptionListDescription>
           {buildRun.status?.startTime ? <BuildRunDuration buildRun={buildRun} /> : '-'}
         </DescriptionListDescription>

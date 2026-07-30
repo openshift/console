@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
-import * as _ from 'lodash';
+/* eslint-disable @typescript-eslint/no-use-before-define, import/order */
 import {
   useState,
   useRef,
@@ -10,102 +9,94 @@ import {
   Suspense,
   useMemo,
 } from 'react';
-import type { FC, Provider as ProviderComponent, ReactNode } from 'react';
+import type { FC } from 'react';
+import { PluginStoreProvider } from '@openshift/dynamic-plugin-sdk';
+import { Flex, Page, SkipToContent } from '@patternfly/react-core';
+import * as _ from 'lodash';
 import { createRoot } from 'react-dom/client';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
-import { linkify } from 'react-linkify';
-import { Provider } from 'react-redux';
-import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
-import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
-import { mapExtensionToRoutes } from '@console/app/src/hooks/usePluginRoutes';
-import { BrowserRouter, useParams, useLocation, Routes, Route } from 'react-router';
-import store, { applyReduxExtensions } from '../redux';
 import { useTranslation } from 'react-i18next';
-import type { LoadedAndResolvedExtension } from '@openshift/dynamic-plugin-sdk';
-import { PluginStoreProvider } from '@openshift/dynamic-plugin-sdk';
-import { detectFeatures } from '../actions/features';
-import { setFlag } from '../actions/flags';
-import AppContents from './app-contents';
-import { Masthead } from './masthead/masthead';
-import { getBrandingDetails } from './utils/branding';
-import { ConsoleNotifier } from './console-notifier';
-import { NotificationDrawer } from './notification-drawer';
-import { Navigation } from '@console/app/src/components/nav';
-import { AsyncComponent } from './utils/async';
-import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
-import * as UIActions from '../actions/ui';
-import { fetchSwagger, getCachedResources } from '../module/k8s';
-import { receivedResources, startAPIDiscovery } from '../actions/k8s';
-import { pluginStore } from '../plugins';
-// cloud shell imports must come later than features
-import CloudShellDrawer from '@console/webterminal-plugin/src/components/cloud-shell/CloudShell';
-import DetectPerspective from '@console/app/src/components/detect-perspective/DetectPerspective';
-import DetectNamespace from '@console/app/src/components/detect-namespace/DetectNamespace';
-import DetectLanguage from '@console/app/src/components/detect-language/DetectLanguage';
-import { FeatureFlagExtensionLoader } from '@console/app/src/components/flags/FeatureFlagExtensionLoader';
-import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
+import { Provider } from 'react-redux';
+import { BrowserRouter, useParams, useLocation, Routes, Route } from 'react-router';
 import {
-  useResolvedExtensions,
-  isContextProvider,
-  isReduxReducer,
-  isStandaloneRoutePage,
-  getUser,
-  useActivePerspective,
-  ReduxReducer,
-  ContextProvider,
-} from '@console/dynamic-plugin-sdk';
-import { GuidedTour } from '@console/app/src/components/tour';
+  ContextProviderExtensionWrapper,
+  DetectContext,
+} from '@console/app/src/components/detect-context/DetectContext';
+import { FeatureFlagExtensionLoader } from '@console/app/src/components/flags/FeatureFlagExtensionLoader';
+import Lightspeed from '@console/app/src/components/lightspeed/Lightspeed';
+import { Navigation } from '@console/app/src/components/nav';
 import { QuickStartDrawer } from '@console/app/src/components/quick-starts/QuickStartDrawer';
+import { GuidedTour } from '@console/app/src/components/tour';
+import { mapExtensionToRoutes } from '@console/app/src/hooks/usePluginRoutes';
+import { isStandaloneRoutePage, getUser, useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { ModalProvider } from '@console/dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
 import { OverlayProvider } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import ToastProvider from '@console/shared/src/components/toast/ToastProvider';
-import { SyncModalLaunchers } from '@console/shared/src/utils/error-modal-handler';
-import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
-import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';
 import { LOGIN_ERROR_PATH } from '@console/internal/module/auth';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
+import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
 import { FLAGS } from '@console/shared/src/constants/common';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
+import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
+import { coFetch } from '@console/shared/src/utils/console-fetch';
+import { SyncModalLaunchers } from '@console/shared/src/utils/error-modal-handler';
 import { addTestError } from '@console/shared/src/utils/test-errors';
-import Lightspeed from '@console/app/src/components/lightspeed/Lightspeed';
-import { ThemeProvider } from './ThemeProvider';
+import CloudShellDrawer from '@console/webterminal-plugin/src/components/cloud-shell/CloudShell';
+import { detectFeatures } from '../actions/features';
+import { setFlag } from '../actions/flags';
+import { receivedResources, startAPIDiscovery } from '../actions/k8s';
+import * as UIActions from '../actions/ui';
 import { init as initI18n } from '../i18n';
-import { Flex, Page, SkipToContent } from '@patternfly/react-core';
+import { fetchSwagger, getCachedResources } from '../module/k8s';
+import { pluginStore } from '../plugins';
+import { isNotificationDrawerExpanded } from '../reducers/ui';
+import store from '../redux';
+import AppContents from './app-contents';
+import { ConsoleNotifier } from './console-notifier';
 import { AuthenticationErrorPage } from './error';
+import { Masthead } from './masthead/masthead';
+import { NotificationDrawer } from './notification-drawer';
+import { ThemeProvider } from './ThemeProvider';
+import { ConnectedToastProvider } from './toast/ConnectedToastProvider';
+import { AsyncComponent } from './utils/async';
+import { getBrandingDetails } from './utils/branding';
+// cloud shell imports must come later than features
 import '../vendor.scss';
 import '../style.scss';
 import '@patternfly/quickstarts/dist/quickstarts.min.css';
-
-const PF_BREAKPOINT_MD = 768;
-const PF_BREAKPOINT_XL = 1200;
-const NOTIFICATION_DRAWER_BREAKPOINT = 1800;
 import { PollConsoleUpdates } from './poll-console-updates';
 import { withoutSensitiveInformations, getTelemetryTitle } from './utils/telemetry';
-import { graphQLReady } from '../graphql/client';
 import { AdmissionWebhookWarningNotifications } from '@console/app/src/components/admission-webhook-warnings/AdmissionWebhookWarningNotifications';
 import { usePackageManifestCheck } from '@console/shared/src/hooks/usePackageManifestCheck';
 import { useCSPViolationDetector } from '@console/app/src/hooks/useCSPViolationDetector';
 import { useNotificationPoller } from '@console/app/src/hooks/useNotificationPoller';
 import { useImpersonateRefreshFeatures } from './useImpersonateRefreshFeatures';
 
+const PF_BREAKPOINT_MD = 768;
+const PF_BREAKPOINT_XL = 1200;
+const NOTIFICATION_DRAWER_BREAKPOINT = 1800;
+
+const root = createRoot(document.getElementById('app')!); // eslint-disable-line @typescript-eslint/no-non-null-assertion
+root.render(<LoadingBox blame="Init" />);
+
+// Trigger an early authenticated fetch so unauthenticated users are redirected
+// to the login page immediately, before the app shell renders. coFetch's 401
+// interceptor calls authSvc.handle401() which handles the redirect.
+coFetch(`${window.SERVER_FLAGS.basePath}api/kubernetes/api`, {
+  priority: 'high',
+})
+  .then(() => document.documentElement.classList.remove('co-auth-pending'))
+  .catch(() => {});
+
+// TODO: remove when upgrading to @xterm/xterm 7.0.0 - github.com/openshift/console/issues/16486
+delete process.title;
+
 initI18n();
 
-// Disable linkify 'fuzzy links' across the app.
-// Only linkify url strings beginning with a proper protocol scheme.
-linkify.set({ fuzzyLink: false });
-
-const EnhancedProvider: FC<{
-  provider: ProviderComponent<any>;
-  useValueHook: () => any;
-  children: ReactNode;
-}> = ({ provider: Component, useValueHook, children }) => {
-  const value = useValueHook();
-  return <Component value={value}>{children}</Component>;
-};
-
-const App: FC<{
-  contextProviderExtensions: LoadedAndResolvedExtension<ContextProvider>[];
-}> = ({ contextProviderExtensions }) => {
-  const { t } = useTranslation();
+const App: FC = () => {
+  const { t } = useTranslation('public');
   const location = useLocation();
   const params = useParams();
 
@@ -238,9 +229,7 @@ const App: FC<{
     }
   };
 
-  const isNotificationDrawerExpanded = useConsoleSelector(
-    ({ UI }) => !!UI.getIn(['notifications', 'isExpanded']),
-  );
+  const isDrawerExpanded = useConsoleSelector(isNotificationDrawerExpanded);
 
   const drawerRef = useRef<HTMLElement | null>(null);
 
@@ -253,7 +242,7 @@ const App: FC<{
   };
 
   const content = (
-    <Suspense fallback={<LoadingBox blame="App content suspense" />}>
+    <Suspense fallback={<LoadingBox blame="AppContent" />}>
       <ConsoleNotifier location="BannerTop" />
       <QuickStartDrawer>
         <CloudShellDrawer>
@@ -267,6 +256,7 @@ const App: FC<{
               id="content"
               // Need to pass mainTabIndex=null to enable keyboard scrolling as default tabIndex is set to -1 by patternfly
               mainTabIndex={null}
+              onPageResize={() => {}}
               masthead={
                 <Masthead
                   isNavOpen={isNavOpen}
@@ -283,18 +273,18 @@ const App: FC<{
               }
               skipToContent={
                 <SkipToContent href={`${location.pathname}${location.search}#content-scrollable`}>
-                  {t('public~Skip to content')}
+                  {t('Skip to content')}
                 </SkipToContent>
               }
               notificationDrawer={
                 <NotificationDrawer
                   onDrawerChange={onNotificationDrawerToggle}
-                  isDrawerExpanded={isNotificationDrawerExpanded}
+                  isDrawerExpanded={isDrawerExpanded}
                   drawerRef={drawerRef}
                 />
               }
               onNotificationDrawerExpand={() => focusDrawer()}
-              isNotificationDrawerExpanded={isNotificationDrawerExpanded}
+              isNotificationDrawerExpanded={isDrawerExpanded}
               style={{ flex: '1', height: '0' }}
             >
               <AppContents />
@@ -312,48 +302,17 @@ const App: FC<{
   );
 
   return (
-    <DetectPerspective>
+    <DetectContext>
       <CaptureTelemetry />
-      <DetectNamespace>
-        <ModalProvider>
-          <OverlayProvider>
-            <SyncModalLaunchers />
-            <Suspense fallback={<LoadingBox blame="contextProviderExtensions suspense" />}>
-              {contextProviderExtensions.reduce(
-                (children, e) => (
-                  <EnhancedProvider key={e.uid} {...e.properties}>
-                    {children}
-                  </EnhancedProvider>
-                ),
-                content,
-              )}
-            </Suspense>
-          </OverlayProvider>
-        </ModalProvider>
-      </DetectNamespace>
-      <DetectLanguage />
-    </DetectPerspective>
+      <ModalProvider>
+        <OverlayProvider>
+          <SyncModalLaunchers />
+          <ContextProviderExtensionWrapper>{content}</ContextProviderExtensionWrapper>
+        </OverlayProvider>
+      </ModalProvider>
+    </DetectContext>
   );
 };
-
-const AppWithExtensions: FC = () => {
-  const [reduxReducerExtensions, reducersResolved] = useResolvedExtensions<ReduxReducer>(
-    isReduxReducer,
-  );
-  const [contextProviderExtensions, providersResolved] = useResolvedExtensions<ContextProvider>(
-    isContextProvider,
-  );
-
-  if (reducersResolved && providersResolved) {
-    applyReduxExtensions(reduxReducerExtensions);
-    return <App contextProviderExtensions={contextProviderExtensions} />;
-  }
-
-  return <LoadingBox blame="AppWithExtensions" />;
-};
-
-const root = createRoot(document.getElementById('app')!);
-root.render(<LoadingBox blame="Init" />);
 
 const AppRouter: FC = () => {
   const standaloneRouteExtensions = useExtensions(isStandaloneRoutePage);
@@ -374,7 +333,7 @@ const AppRouter: FC = () => {
   );
 
   return (
-    <BrowserRouter basename={window.SERVER_FLAGS.basePath}>
+    <BrowserRouter useTransitions={false} basename={window.SERVER_FLAGS.basePath}>
       <Routes>
         {/*
           Treat the authentication error page as a standalone route.
@@ -382,7 +341,7 @@ const AppRouter: FC = () => {
         */}
         <Route path={LOGIN_ERROR_PATH} element={<AuthenticationErrorPage />} />
         {standaloneRoutes}
-        <Route path="/*" element={<AppWithExtensions />} />
+        <Route path="/*" element={<App />} />
       </Routes>
     </BrowserRouter>
   );
@@ -467,81 +426,78 @@ const initApiDiscovery = (storeInstance) => {
   updateSwaggerDefinitionContinual();
 };
 
-graphQLReady.onReady(() => {
-  const { productName } = getBrandingDetails();
-  store.dispatch<any>(detectFeatures());
+const { productName } = getBrandingDetails();
+store.dispatch<any>(detectFeatures());
 
-  initApiDiscovery(store);
+initApiDiscovery(store);
 
-  // Global timer to ensure all <Timestamp> components update in sync
-  setInterval(() => store.dispatch(UIActions.updateTimestamps(Date.now())), 10000);
-
-  // Used by GUI tests to check for unhandled exceptions
-  window.onerror = (message, source, lineno, colno, error) => {
-    // ResizeObserver loop errors are non-actionable and can be ignored
-    if (typeof message === 'string' && message.includes('ResizeObserver loop')) {
-      return undefined;
-    }
-
-    const formattedStack = error?.stack?.replace(/\\n/g, '\n');
-    const formattedMessage = `unhandled error: ${message} ${formattedStack || ''}`;
-    addTestError(formattedMessage);
-    // eslint-disable-next-line no-console
-    console.error(formattedMessage, error || message);
-  };
-  window.onunhandledrejection = (promiseRejectionEvent) => {
-    const { reason } = promiseRejectionEvent;
-    const formattedMessage = `unhandled promise rejection: ${reason}`;
-    addTestError(formattedMessage);
-    // eslint-disable-next-line no-console
-    console.error(formattedMessage, reason);
-  };
-
-  if ('serviceWorker' in navigator) {
-    if (window.SERVER_FLAGS.loadTestFactor > 1) {
-      // eslint-disable-next-line import/no-unresolved
-      // @ts-expect-error file-loader is not a module but it does resolve
-      import('file-loader?name=load-test.sw.js!../load-test.sw.js')
-        .then(() => navigator.serviceWorker.register('/load-test.sw.js'))
-        .then(
-          () =>
-            new Promise<void>((r) =>
-              navigator.serviceWorker.controller
-                ? r()
-                : navigator.serviceWorker.addEventListener('controllerchange', () => r()),
-            ),
-        )
-        .then(() =>
-          navigator.serviceWorker.controller.postMessage({
-            topic: 'setFactor',
-            value: window.SERVER_FLAGS.loadTestFactor,
-          }),
-        );
-    } else {
-      navigator.serviceWorker
-        .getRegistrations()
-        .then((registrations) => registrations.forEach((reg) => reg.unregister()))
-        // eslint-disable-next-line no-console
-        .catch((e) => console.warn('Error unregistering service workers', e));
-    }
+// Used by GUI tests to check for unhandled exceptions
+window.onerror = (message, source, lineno, colno, error) => {
+  // ResizeObserver loop errors are non-actionable and can be ignored
+  if (typeof message === 'string' && message.includes('ResizeObserver loop')) {
+    return undefined;
   }
 
-  root.render(
-    <Suspense fallback={<LoadingBox blame="Root suspense" />}>
-      <Provider store={store}>
-        <PluginStoreProvider store={pluginStore}>
-          <ThemeProvider>
-            <HelmetProvider>
-              <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
-              <ToastProvider>
-                <PollConsoleUpdates />
-                <AdmissionWebhookWarningNotifications />
-                <AppRouter />
-              </ToastProvider>
-            </HelmetProvider>
-          </ThemeProvider>
-        </PluginStoreProvider>
-      </Provider>
-    </Suspense>,
-  );
-});
+  const formattedStack = error?.stack?.replace(/\\n/g, '\n');
+  const formattedMessage = `unhandled error: ${message} ${formattedStack || ''}`;
+  addTestError(formattedMessage);
+  // eslint-disable-next-line no-console
+  console.error(formattedMessage, error || message);
+};
+window.onunhandledrejection = (promiseRejectionEvent) => {
+  const { reason } = promiseRejectionEvent;
+  const formattedMessage = `unhandled promise rejection: ${reason}`;
+  addTestError(formattedMessage);
+  // eslint-disable-next-line no-console
+  console.error(formattedMessage, reason);
+};
+
+if ('serviceWorker' in navigator) {
+  if (window.SERVER_FLAGS.loadTestFactor > 1) {
+    navigator.serviceWorker
+      .register(`${window.SERVER_FLAGS.basePath}load-test.sw.js`)
+      .then(
+        () =>
+          new Promise<void>((r) =>
+            navigator.serviceWorker.controller
+              ? r()
+              : navigator.serviceWorker.addEventListener('controllerchange', () => r()),
+          ),
+      )
+      .then(() =>
+        navigator.serviceWorker.controller.postMessage({
+          topic: 'setFactor',
+          value: window.SERVER_FLAGS.loadTestFactor,
+        }),
+      )
+      .catch((e) => {
+        // eslint-disable-next-line no-console
+        console.warn('Error registering load test service worker', e);
+      });
+  } else {
+    navigator.serviceWorker
+      .getRegistrations()
+      .then((registrations) => registrations.forEach((reg) => reg.unregister()))
+      // eslint-disable-next-line no-console
+      .catch((e) => console.warn('Error unregistering service workers', e));
+  }
+}
+
+root.render(
+  <Suspense fallback={<LoadingBox blame="Root suspense" />}>
+    <Provider store={store}>
+      <PluginStoreProvider store={pluginStore}>
+        <ThemeProvider>
+          <HelmetProvider>
+            <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
+            <ConnectedToastProvider>
+              <PollConsoleUpdates />
+              <AdmissionWebhookWarningNotifications />
+              <AppRouter />
+            </ConnectedToastProvider>
+          </HelmetProvider>
+        </ThemeProvider>
+      </PluginStoreProvider>
+    </Provider>
+  </Suspense>,
+);

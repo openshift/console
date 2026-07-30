@@ -8,7 +8,9 @@ import ImageSearchSection from '@console/dev-console/src/components/import/image
 import type { DeployImageFormProps } from '@console/dev-console/src/components/import/import-types';
 import IconSection from '@console/dev-console/src/components/import/section/IconSection';
 import { usePreventDataLossLock } from '@console/internal/components/utils';
-import { FormFooter, FlexForm, FormBody } from '@console/shared/src/components/form-utils';
+import { FlexForm } from '@console/shared/src/components/form-utils/FlexForm';
+import { FormBody } from '@console/shared/src/components/form-utils/FormBody';
+import { FormFooter } from '@console/shared/src/components/form-utils/FormFooter';
 
 const KnatifyForm: FC<FormikProps<FormikValues> & DeployImageFormProps> = ({
   values,
@@ -20,7 +22,7 @@ const KnatifyForm: FC<FormikProps<FormikValues> & DeployImageFormProps> = ({
   dirty,
   projects,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('knative-plugin');
   usePreventDataLossLock(isSubmitting);
 
   return (
@@ -38,10 +40,10 @@ const KnatifyForm: FC<FormikProps<FormikValues> & DeployImageFormProps> = ({
         handleReset={handleReset}
         errorMessage={status && status.submitError}
         isSubmitting={isSubmitting}
-        submitLabel={t('knative-plugin~Create')}
+        submitLabel={t('Create')}
         sticky
         disableSubmit={!dirty || !_.isEmpty(errors) || isSubmitting}
-        resetLabel={t('knative-plugin~Cancel')}
+        resetLabel={t('Cancel')}
       />
     </FlexForm>
   );

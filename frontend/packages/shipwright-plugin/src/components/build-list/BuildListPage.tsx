@@ -22,18 +22,18 @@ const getBuildStatus = (build: Build): string => {
 };
 
 const BuildListPage: FC<BuildListPageProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('shipwright-plugin');
 
   const filters: RowFilter<Build>[] = [
     {
       type: 'status',
-      filterGroupName: t('shipwright-plugin~BuildRun status'),
+      filterGroupName: t('BuildRun status'),
       items: [
-        { id: 'Pending', title: t('shipwright-plugin~Pending') },
-        { id: 'Running', title: t('shipwright-plugin~Running') },
-        { id: 'Succeeded', title: t('shipwright-plugin~Succeeded') },
-        { id: 'Failed', title: t('shipwright-plugin~Failed') },
-        { id: 'Unknown', title: t('shipwright-plugin~Unknown') },
+        { id: 'Pending', title: t('Pending') },
+        { id: 'Running', title: t('Running') },
+        { id: 'Succeeded', title: t('Succeeded') },
+        { id: 'Failed', title: t('Failed') },
+        { id: 'Unknown', title: t('Unknown') },
       ],
       reducer: getBuildStatus,
       filter: (filterValue, build: Build): boolean => {
@@ -47,7 +47,7 @@ const BuildListPage: FC<BuildListPageProps> = (props) => {
 
   return (
     <ListPage
-      title={t('shipwright-plugin~Builds')}
+      title={t('Builds')}
       kind={referenceForModel(buildModel)}
       ListComponent={BuildTable}
       rowFilters={filters}

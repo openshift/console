@@ -5,13 +5,14 @@ import { observer } from '@patternfly/react-topology';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { ResourceIcon } from '@console/internal/components/utils';
 import { isValidUrl, labelForNodeKind } from '@console/shared/src/utils/utils';
-import { showKind, useDisplayFilters } from '../../../filters';
+import { showKind } from '../../../filters/filter-utils';
+import { useDisplayFilters } from '../../../filters/useDisplayFilters';
 
 interface GroupResourcesCellProps {
   group: Node;
 }
 
-const GroupResourcesCell: FC<GroupResourcesCellProps> = ({ group }) => {
+const GroupResourcesCellComponent: FC<GroupResourcesCellProps> = ({ group }) => {
   const displayFilters = useDisplayFilters();
   const { groupResources } = group.getData();
   const shownResources = groupResources.filter((res) =>
@@ -55,4 +56,4 @@ const GroupResourcesCell: FC<GroupResourcesCellProps> = ({ group }) => {
   );
 };
 
-export default observer(GroupResourcesCell);
+export const GroupResourcesCell = observer(GroupResourcesCellComponent);

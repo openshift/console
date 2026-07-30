@@ -17,7 +17,7 @@ import {
   WorkloadModelProps,
 } from './transform-utils';
 
-export const getFilteredTrafficWorkload = (nodes: KialiNode[]): KialiNode[] =>
+const getFilteredTrafficWorkload = (nodes: KialiNode[]): KialiNode[] =>
   nodes.filter(({ data }) => data.nodeType === TYPE_WORKLOAD);
 
 export const getTrafficConnectors = (

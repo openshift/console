@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
-import { ALL_NAMESPACES_KEY } from '@console/shared';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import HelmReleaseDetails from './HelmReleaseDetails';
 
 const HelmReleaseDetailsPage: FC = () => {
@@ -13,9 +13,9 @@ const HelmReleaseDetailsPage: FC = () => {
   const handleNamespaceChange = useCallback(
     (newNamespace: string): void => {
       if (newNamespace === ALL_NAMESPACES_KEY) {
-        navigate('/helm-releases/all-namespaces');
+        navigate('/helm/all-namespaces');
       } else {
-        navigate(`/helm-releases/ns/${newNamespace}`);
+        navigate(`/helm/ns/${newNamespace}`);
       }
     },
     [navigate],

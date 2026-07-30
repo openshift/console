@@ -5,10 +5,11 @@ import { FieldArray, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { ExpandCollapse } from '@console/internal/components/utils/expand-collapse';
-import { InputField, TextColumnField } from '@console/shared';
+import { InputField } from '@console/shared/src/components/formik-fields/InputField';
+import { TextColumnField } from '@console/shared/src/components/formik-fields/text-column-field/TextColumnField';
 import type { BuildFormikValues, BuildParam, ModalParameter } from './types';
 
-export const paramIsRequired = (param: BuildParam): boolean => {
+const paramIsRequired = (param: BuildParam): boolean => {
   return param.type === 'array' ? !param.defaults : !param.default;
 };
 
@@ -73,7 +74,7 @@ const ParameterFields: FC<ParameterFieldsProps> = ({ params }) => {
 };
 
 const ParameterSection: FC<ParametersSectionProps> = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('shipwright-plugin');
   const {
     values: { formData },
   } = useFormikContext<BuildFormikValues>();
@@ -83,20 +84,18 @@ const ParameterSection: FC<ParametersSectionProps> = () => {
 
   return (
     formData?.parameters.length > 0 && (
-      <FormSection title={t('shipwright-plugin~Parameters')}>
+      <FormSection title={t('Parameters')}>
         {requiredParams.length > 0 ? (
           <ParameterFields params={requiredParams} />
         ) : (
           <span className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle">
-            {t(
-              'shipwright-plugin~No required parameters are associated with the selected build strategy.',
-            )}
+            {t('No required parameters are associated with the selected build strategy.')}
           </span>
         )}
         {optionalParams.length > 0 && (
           <ExpandCollapse
-            textExpanded={t('shipwright-plugin~Hide optional parameters')}
-            textCollapsed={t('shipwright-plugin~Show optional parameters')}
+            textExpanded={t('Hide optional parameters')}
+            textCollapsed={t('Show optional parameters')}
             dataTest="parameters-options"
           >
             <ParameterFields params={optionalParams} />

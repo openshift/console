@@ -9,7 +9,7 @@ import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
  * Stored column widths keyed by table then column for easy reading in the configMap.
  * Example: { "core~v1~Pod": { "name": 200, "namespace": 150 } }
  */
-export type ColumnWidthUserSettings = Record<string, Record<string, number>>;
+type ColumnWidthUserSettings = Record<string, Record<string, number>>;
 
 /** Callback when a table column is resized: event, column id, and new width in pixels. */
 type ColumnResizeOnResize = (
@@ -94,31 +94,4 @@ export const useColumnWidthSettings = (
   );
 
   return { getResizableProps, getWidth, resetAllColumnWidths };
-};
-
-/**
- * Per-column hook for resizable props. Prefer {@link useColumnWidthSettings} for tables
- * with many columns so that one configMap entry holds all column widths and each resize
- * creates/updates only that column's entry.
- */
-export const useResizableColumnProps = (
-  model: K8sModel,
-  columnId: string,
-): {
-  isResizable: true;
-  width?: number;
-  onResize: ColumnResizeOnResize;
-  resizeButtonAriaLabel: string;
-  resetAllColumnWidths: () => void;
-} => {
-  const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(model);
-  const resizableProps = getResizableProps(columnId);
-  return useMemo(
-    () => ({
-      ...resizableProps,
-      width: getWidth(columnId),
-      resetAllColumnWidths,
-    }),
-    [resizableProps, getWidth, columnId, resetAllColumnWidths],
-  );
 };
