@@ -3441,7 +3441,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@openshift/dynamic-plugin-sdk@npm:^9.0.0":
+"@openshift/dynamic-plugin-sdk@npm:9.0.0":
   version: 9.0.0
   resolution: "@openshift/dynamic-plugin-sdk@npm:9.0.0"
   dependencies:
@@ -3452,6 +3452,20 @@ __metadata:
   peerDependencies:
     react: ^18 || ^19
   checksum: 10c0/29de4ecd6811d621d0b83c55aec3e04371f94f26f33b1544bedcf20c9c4e6ed825d1cf3d6190c7292f840c35490f2c84450220874b43c01a29edf03d500b17cd
+  languageName: node
+  linkType: hard
+
+"@openshift/dynamic-plugin-sdk@patch:@openshift/dynamic-plugin-sdk@npm%3A9.0.0#~/.yarn/patches/@openshift-dynamic-plugin-sdk-npm-9.0.0-7d880bbaea.patch":
+  version: 9.0.0
+  resolution: "@openshift/dynamic-plugin-sdk@patch:@openshift/dynamic-plugin-sdk@npm%3A9.0.0#~/.yarn/patches/@openshift-dynamic-plugin-sdk-npm-9.0.0-7d880bbaea.patch::version=9.0.0&hash=8ade0f"
+  dependencies:
+    lodash: "npm:^4.17.23"
+    semver: "npm:^7.7.3"
+    uuid: "npm:^8.3.2"
+    zod: "npm:^3.25.67"
+  peerDependencies:
+    react: ^18 || ^19
+  checksum: 10c0/618e1ca8c14674bf3b38e613de24e5bc12fd22d90fe8f0609dadf673cbeaca1a872504fac38311058967345741f3ef0e1da6182f09ca3760b05c870b855a679a
   languageName: node
   linkType: hard
 

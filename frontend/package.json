@@ -220,6 +220,7 @@
     "node": ">=22.x"
   },
   "resolutions": {
+    "@openshift/dynamic-plugin-sdk": "patch:@openshift/dynamic-plugin-sdk@npm%3A9.0.0#~/.yarn/patches/@openshift-dynamic-plugin-sdk-npm-9.0.0-7d880bbaea.patch",
     "@types/lodash": "4.14.106",
     "esbuild": "^0.28.1",
     "follow-redirects": "^1.16.0",
