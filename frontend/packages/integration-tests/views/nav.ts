@@ -68,15 +68,14 @@ export const nav = {
                     'have.attr',
                     'aria-expanded',
                     'true',
-                    { timeout: 5000 },
+                    { timeout: 10000 },
                   );
 
-                  // eslint-disable-next-line cypress/no-unnecessary-waiting
-                  cy.wait(1000); // wait for the menu options to render
-
-                  cy.byLegacyTestID('perspective-switcher-menu-option')
+                  // Wait for menu options to be visible instead of fixed delay
+                  cy.byLegacyTestID('perspective-switcher-menu-option', { timeout: 10000 })
+                    .should('be.visible')
                     .contains(newPerspective)
-                    .click({ force: true });
+                    .click();
                 }
               });
             break;
@@ -113,14 +112,11 @@ export const nav = {
                     { timeout: 10000 },
                   );
 
-                  // Wait a bit for portal to render
-                  // eslint-disable-next-line cypress/no-unnecessary-waiting
-                  cy.wait(1500);
-
-                  // Click Developer option
-                  cy.contains('[data-test-id="perspective-switcher-menu-option"]', 'Developer', {
-                    timeout: 10000,
-                  }).click();
+                  // Wait for menu options to be visible instead of fixed delay
+                  cy.byLegacyTestID('perspective-switcher-menu-option', { timeout: 10000 })
+                    .should('be.visible')
+                    .contains('Developer')
+                    .click();
                 }
               });
 
@@ -130,11 +126,11 @@ export const nav = {
               .should('contain.text', 'Developer');
             break;
           default:
-            cy.byLegacyTestID('perspective-switcher-toggle')
-              .click()
-              .byLegacyTestID('perspective-switcher-menu-option')
+            cy.byLegacyTestID('perspective-switcher-toggle').click();
+            cy.byLegacyTestID('perspective-switcher-menu-option', { timeout: 10000 })
+              .should('be.visible')
               .contains(newPerspective)
-              .click({ force: true });
+              .click();
         }
       },
     },
