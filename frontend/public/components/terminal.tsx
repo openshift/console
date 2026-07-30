@@ -86,17 +86,20 @@ export const Terminal = forwardRef<ImperativeTerminalType, TerminalProps>(
         unobserveResize = getResizeObserver(
           terminalRef.current,
           () => {
-            requestAnimationFrame(() => {
-              if (!terminal.current) {
-                return;
-              }
-              fit.fit();
-              onResize(terminal.current.rows, terminal.current.cols);
-              // @ts-expect-error The internal xterm textarea was not repositioned when the window was resized.
-              // See https://bugzilla.redhat.com/show_bug.cgi?id=1983220
-              // and https://github.com/xtermjs/xterm.js/issues/3390
-              terminal.current._core?._syncTextArea?.();
-            });
+            if (!terminal.current) {
+              return;
+            }
+            // @ts-expect-error Guard: skip resize if xterm's render service hasn't initialized yet.
+            // ResizeObserver can fire before the internal dimensions are available.
+            if (!terminal.current._core?._renderService?.dimensions) {
+              return;
+            }
+            fit.fit();
+            onResize(terminal.current.rows, terminal.current.cols);
+            // @ts-expect-error The internal xterm textarea was not repositioned when the window was resized.
+            // See https://bugzilla.redhat.com/show_bug.cgi?id=1983220
+            // and https://github.com/xtermjs/xterm.js/issues/3390
+            terminal.current._core?._syncTextArea?.();
           },
           true,
         );
