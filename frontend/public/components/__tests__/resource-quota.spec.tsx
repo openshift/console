@@ -188,3 +188,85 @@ describe('Check applied cluster quota table columns by ResourceUsageRow', () => 
     expect(screen.getByText('2')).toBeVisible();
   });
 });
+
+describe('Check memory resource humanization in ResourceUsageRow', () => {
+  const memoryQuota = {
+    apiVersion: 'v1',
+    kind: 'ResourceQuota',
+    metadata: { name: 'example', namespace: 'example' },
+    spec: { hard: { 'requests.memory': '2147483648' } },
+    status: {
+      hard: { 'requests.memory': '2147483648' },
+      used: { 'requests.memory': '1073741824' },
+    },
+  };
+
+  it('displays memory values in human-readable format (GiB)', () => {
+    renderWithProviders(
+      <table>
+        <tbody>
+          <ResourceUsageRow resourceType="requests.memory" quota={memoryQuota} />
+        </tbody>
+      </table>,
+    );
+
+    // Verify the resource type
+    expect(screen.getByText('requests.memory')).toBeVisible();
+
+    // Verify memory values are humanized (1 GiB used, 2 GiB limit)
+    expect(screen.getByText('1 GiB')).toBeVisible();
+    expect(screen.getByText('2 GiB')).toBeVisible();
+  });
+
+  const storageQuota = {
+    apiVersion: 'v1',
+    kind: 'ResourceQuota',
+    metadata: { name: 'example', namespace: 'example' },
+    spec: { hard: { 'requests.storage': '10737418240' } },
+    status: {
+      hard: { 'requests.storage': '10737418240' },
+      used: { 'requests.storage': '5368709120' },
+    },
+  };
+
+  it('displays storage values in human-readable format (GiB)', () => {
+    renderWithProviders(
+      <table>
+        <tbody>
+          <ResourceUsageRow resourceType="requests.storage" quota={storageQuota} />
+        </tbody>
+      </table>,
+    );
+
+    // Verify the resource type
+    expect(screen.getByText('requests.storage')).toBeVisible();
+
+    // Verify storage values are humanized (5 GiB used, 10 GiB limit)
+    expect(screen.getByText('5 GiB')).toBeVisible();
+    expect(screen.getByText('10 GiB')).toBeVisible();
+  });
+
+  const memoryQuotaWithK8sQuantity = {
+    apiVersion: 'v1',
+    kind: 'ResourceQuota',
+    metadata: { name: 'example', namespace: 'example' },
+    spec: { hard: { 'requests.memory': '4Gi' } },
+    status: {
+      hard: { 'requests.memory': '4Gi' },
+      used: { 'requests.memory': '2Gi' },
+    },
+  };
+
+  it('displays Kubernetes quantity strings in human-readable format (GiB)', () => {
+    renderWithProviders(
+      <table>
+        <tbody>
+          <ResourceUsageRow resourceType="requests.memory" quota={memoryQuotaWithK8sQuantity} />
+        </tbody>
+      </table>,
+    );
+
+    expect(screen.getByText('2 GiB')).toBeVisible();
+    expect(screen.getByText('4 GiB')).toBeVisible();
+  });
+});
