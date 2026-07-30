@@ -1523,7 +1523,24 @@
         "version": "v1",
         "kind": "ImageStream"
       }
-    }
+    },
+    "flags": { "required": ["OPENSHIFT_BUILDCONFIG"] }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "perspective": "admin",
+      "section": "storage",
+      "id": "imagestreams-no-builds",
+      "name": "%console-app~ImageStreams%",
+      "startsWith": ["imagestreamtags"],
+      "model": {
+        "group": "image.openshift.io",
+        "version": "v1",
+        "kind": "ImageStream"
+      }
+    },
+    "flags": { "disallowed": ["OPENSHIFT_BUILDCONFIG"] }
   },
   {
     "type": "console.navigation/resource-cluster",
