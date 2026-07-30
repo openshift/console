@@ -72,6 +72,25 @@ export const convertToHelmChartRepository = (
   return newResource;
 };
 
+const HTTPS_PROBE_TIMEOUT_MS = 3000;
+
+export const tryHttpsUpgrade = async (httpUrl: string): Promise<string | null> => {
+  if (!httpUrl?.startsWith('http://')) {
+    return null;
+  }
+  const httpsUrl = httpUrl.replace(/^http:\/\//, 'https://');
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), HTTPS_PROBE_TIMEOUT_MS);
+  try {
+    const response = await fetch(httpsUrl, { method: 'HEAD', signal: controller.signal });
+    return response.ok ? httpsUrl : null;
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timeoutId);
+  }
+};
+
 export const getDefaultResource = (
   namespace: string,
   kindRef?: K8sResourceKindReference,
