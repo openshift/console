@@ -13,7 +13,6 @@ import {
 import type { FC, Provider as ProviderComponent, ReactNode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
-import { linkify } from 'react-linkify';
 import { Provider } from 'react-redux';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
@@ -91,10 +90,6 @@ import { useImpersonateRefreshFeatures } from './useImpersonateRefreshFeatures';
 delete process.title;
 
 initI18n();
-
-// Disable linkify 'fuzzy links' across the app.
-// Only linkify url strings beginning with a proper protocol scheme.
-linkify.set({ fuzzyLink: false });
 
 const EnhancedProvider: FC<{
   provider: ProviderComponent<any>;
