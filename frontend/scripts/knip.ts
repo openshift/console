@@ -85,7 +85,7 @@ const packageWorkspaces = Object.fromEntries(
         `packages/${dir.name}`,
         {
           entry: hasExtensions ? [extensionsFile] : [],
-          project: ['src/**/*.{ts,tsx,js,jsx}'],
+          project: ['src/**/*.{ts,tsx,js,jsx,json}'],
         },
       ];
     }),
@@ -205,6 +205,9 @@ const compileScript = async (source: string, filename: string): Promise<string> 
 };
 
 const config: KnipConfig = {
+  treatConfigHintsAsErrors: true,
+  treatTagHintsAsErrors: true,
+
   compilers: {
     json: compileJSON,
   },
@@ -222,7 +225,8 @@ const config: KnipConfig = {
     // public/ is the @console/internal workspace (has its own package.json)
     public: {
       entry: ['load-test.sw.js'],
-      project: ['**/*.{ts,tsx,js,jsx}'],
+      project: ['**/*.{ts,tsx,js,jsx,json}'],
+      ignore: ['locales/**/*']
     },
 
     // Suppress SDK from knip checks as any code there could be used by a dynamic remote plugin
@@ -247,7 +251,7 @@ const config: KnipConfig = {
     '@patternfly/patternfly', // imported via SCSS, which knip cannot trace
   ],
 
-  ignore: ['**/.eslintrc.js', '**/__{tests,mocks}__/**'],
+  ignore: ['**/__{tests,mocks}__/**'],
 
   // Too many false positives
   exclude: ['binaries', 'devDependencies'],
