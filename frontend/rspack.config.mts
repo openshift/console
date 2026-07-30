@@ -10,7 +10,6 @@ import {
   ProgressPlugin,
   sharing,
 } from '@rspack/core';
-import { RsdoctorRspackPlugin } from '@rsdoctor/rspack-plugin';
 import { TsCheckerRspackPlugin } from 'ts-checker-rspack-plugin';
 import { ReactRefreshRspackPlugin } from '@rspack/plugin-react-refresh';
 import * as _ from 'lodash';
@@ -368,25 +367,34 @@ if (CHECK_CYCLES === 'true') {
 }
 
 if (ANALYZE_BUNDLE === 'true') {
-  config.plugins.push(
-    new RsdoctorRspackPlugin({
-      features: {
-        loader: false // doesn't work: "Load data failed, please try again"
-      },
-      output: {
-        mode: 'brief',
-        options: {
-          type: ['html'],
-          htmlOptions: {
-            writeDataJson: false,
-            reportHtmlName: 'report.html',
+  // lazy imported to avoid @rspack/resolver causing issues on unsupported architectures (ppc64/s390x)
+  try {
+    const { RsdoctorRspackPlugin } = require('@rsdoctor/rspack-plugin');
+    config.plugins.push(
+      new RsdoctorRspackPlugin({
+        features: {
+          loader: false // doesn't work: "Load data failed, please try again"
+        },
+        output: {
+          mode: 'brief',
+          options: {
+            type: ['html'],
+            htmlOptions: {
+              writeDataJson: false,
+              reportHtmlName: 'report.html',
+            },
           },
         },
-      },
-      // Don't open report in default browser automatically
-      disableClientServer: true,
-    }),
-  );
+        // Don't open report in default browser automatically
+        disableClientServer: true,
+      }),
+    );
+    } catch (err) {
+    console.warn(
+        'Failed to load @rsdoctor/rspack-plugin. Bundle analysis will not be available.',
+        err,
+      );
+    }
 
   // Only fail the build due to excess bundle size if running analyze.sh
   // This way, the other tests (frontend, e2e) can still provide feedback in CI
