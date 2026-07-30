@@ -1,6 +1,14 @@
-import * as _ from 'lodash';
 import type { FC } from 'react';
 import { useState, useCallback, useMemo, Suspense } from 'react';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  Grid,
+  GridItem,
+} from '@patternfly/react-core';
+import { RhUiBanIcon } from '@patternfly/react-icons';
 import {
   SortByDirection,
   TableVariant,
@@ -11,60 +19,51 @@ import {
   Th,
   Tr,
 } from '@patternfly/react-table';
-import { RhUiBanIcon } from '@patternfly/react-icons';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-
-import { DetailsPage } from './factory/details';
-import { ListPage } from './factory/list-page';
-import { sortResourceByValue } from './factory/Table/sort';
-import { AsyncComponent } from './utils/async';
-import { DetailsItem } from './utils/details-item';
-import { EmptyBox, LoadingBox } from './utils/status-box';
-import { navFactory } from './utils/horizontal-nav';
-import { ResourceLink } from './utils/resource-link';
-import { ResourceSummary } from './utils/details-page';
-import { SectionHeading } from './utils/headings';
-import {
-  apiVersionCompare,
-  CRDVersion,
-  CustomResourceDefinitionKind,
-  getLatestVersionForCRD,
-  K8sModel,
-  referenceForCRD,
-  referenceForModel,
-  TableColumn,
-} from '../module/k8s';
-import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
-import { CustomResourceDefinitionModel } from '../models';
-import { Conditions } from './conditions';
-import { getResourceListPages } from './resource-pages';
-import { DefaultPage } from './default-resource';
-import { GreenCheckCircleIcon } from '@console/shared/src/components/status/icons';
-import { DASH } from '@console/shared/src/constants/ui';
-import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
-import {
-  ResourceListPage,
-  isResourceListPage,
-} from '@console/dynamic-plugin-sdk/src/extensions/pages';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import {
-  DescriptionList,
-  DescriptionListDescription,
-  DescriptionListGroup,
-  DescriptionListTerm,
-  Grid,
-  GridItem,
-} from '@patternfly/react-core';
 import {
   actionsCellProps,
   getNameCellProps,
   ConsoleDataView,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+import type { ResourceListPage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
+import { isResourceListPage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
+import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { GreenCheckCircleIcon } from '@console/shared/src/components/status/icons';
+import { DASH } from '@console/shared/src/constants/ui';
+import { CustomResourceDefinitionModel } from '../models';
+import type {
+  CRDVersion,
+  CustomResourceDefinitionKind,
+  K8sModel,
+  TableColumn,
+} from '../module/k8s';
+import {
+  apiVersionCompare,
+  getLatestVersionForCRD,
+  referenceForCRD,
+  referenceForModel,
+} from '../module/k8s';
+import { Conditions } from './conditions';
+import { DefaultPage } from './default-resource';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
+import { sortResourceByValue } from './factory/Table/sort';
+import { getResourceListPages } from './resource-pages';
+import { AsyncComponent } from './utils/async';
+import { DetailsItem } from './utils/details-item';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { ResourceLink } from './utils/resource-link';
+import { EmptyBox, LoadingBox } from './utils/status-box';
 
 const isEstablished = (conditions: any[]) => {
   const condition = _.find(conditions, (c) => c.type === 'Established');
@@ -199,7 +198,7 @@ const Instances: FC<InstancesProps> = ({ obj, namespace }) => {
   return (
     <AsyncComponent
       loader={componentLoader}
-      namespace={namespace ? namespace : undefined}
+      namespace={namespace || undefined}
       kind={crdKind}
       showTitle={false}
       autoFocus={false}
@@ -360,7 +359,7 @@ const CustomResourceDefinitionsList: FC<CustomResourceDefinitionsListProps> = ({
         loaded={loaded}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
+        hideColumnManagement
         isResizable
         resetAllColumnWidths={resetAllColumnWidths}
       />
@@ -373,8 +372,8 @@ export const CustomResourceDefinitionsPage: FC = (props) => (
     {...props}
     ListComponent={CustomResourceDefinitionsList}
     kind={kind}
-    canCreate={true}
-    omitFilterToolbar={true}
+    canCreate
+    omitFilterToolbar
   />
 );
 

@@ -1,8 +1,5 @@
 import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
-import * as _ from 'lodash';
-import { Link } from 'react-router';
-import { Trans, useTranslation } from 'react-i18next';
 import {
   Alert,
   Grid,
@@ -12,60 +9,62 @@ import {
   CardHeader,
   CardTitle,
 } from '@patternfly/react-core';
-
-import { ONE_HOUR, ONE_MINUTE } from '@console/shared/src/constants/time';
-import Status from '@console/dynamic-plugin-sdk/src/app/components/status/Status';
-import { usePrometheusGate } from '@console/shared/src/hooks/usePrometheusGate';
-import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
-import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
-import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
-import {
-  K8sResourceKindReference,
-  referenceFor,
-  referenceForModel,
-  K8sResourceKind,
-  K8sModel,
-  TableColumn,
-} from '../module/k8s';
-import { getBuildNumber } from '../module/k8s/builds';
-import { DetailsPage } from './factory/details';
-import { ListPage } from './factory/list-page';
+import * as _ from 'lodash';
+import { Trans, useTranslation } from 'react-i18next';
+import { Link } from 'react-router';
 import {
   actionsCellProps,
   getNameCellProps,
   ConsoleDataView,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+import Status from '@console/dynamic-plugin-sdk/src/app/components/status/Status';
+import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { ONE_HOUR, ONE_MINUTE } from '@console/shared/src/constants/time';
+import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
+import { usePrometheusGate } from '@console/shared/src/hooks/usePrometheusGate';
+import { BuildConfigModel, BuildModel } from '../models';
+import type {
+  K8sResourceKindReference,
+  K8sResourceKind,
+  K8sModel,
+  TableColumn,
+} from '../module/k8s';
+import { referenceFor, referenceForModel } from '../module/k8s';
+import { getBuildNumber } from '../module/k8s/builds';
+import { BuildLogs } from './build-logs';
+import { BuildPipeline, BuildPipelineLogLink } from './build-pipeline';
+import { ResourceEventStream } from './events';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
+import { Area } from './graphs';
 import { AsyncComponent } from './utils/async';
 import { BuildHooks } from './utils/build-hooks';
 import { BuildStrategy } from './utils/build-strategy';
-import { ConsoleEmptyState, LoadingBox } from './utils/status-box';
+import { BuildStrategyType, getStrategyType, displayDurationInWords } from './utils/build-utils';
+import { timeFormatter, timeFormatterWithSeconds } from './utils/datetime';
 import { DetailsItem } from './utils/details-item';
+import { ResourceSummary } from './utils/details-page';
 import {
   documentationURLs,
   getDocumentationURL,
   isManaged,
   isUpstream,
 } from './utils/documentation';
-import { humanizeBinaryBytes, humanizeCpuCores } from './utils/units';
+import { SectionHeading } from './utils/headings';
 import { navFactory } from './utils/horizontal-nav';
 import { ResourceLink, resourcePath } from './utils/resource-link';
-import { ResourceSummary } from './utils/details-page';
-import { SectionHeading } from './utils/headings';
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { BuildPipeline, BuildPipelineLogLink } from './build-pipeline';
-import { BuildLogs } from './build-logs';
-import { ResourceEventStream } from './events';
-import { Area } from './graphs';
-import { BuildConfigModel, BuildModel } from '../models';
-import { timeFormatter, timeFormatterWithSeconds } from './utils/datetime';
-import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
-import { BuildStrategyType, getStrategyType, displayDurationInWords } from './utils/build-utils';
+import { ConsoleEmptyState, LoadingBox } from './utils/status-box';
+import { humanizeBinaryBytes, humanizeCpuCores } from './utils/units';
+
 const BuildsReference: K8sResourceKindReference = 'Build';
 
 export const BuildLogLink = ({ build }) => {
@@ -102,7 +101,7 @@ const BuildMetrics = ({ obj }) => {
     ? endTime - new Date(obj.status.startTimestamp).getTime()
     : ONE_HOUR;
   const timespan = Math.max(runTime, ONE_MINUTE); // Minimum timespan of one minute
-  const namespace = obj.metadata.namespace;
+  const { namespace } = obj.metadata;
   const domain = useMemo(() => ({ x: [endTime - timespan, endTime] }), [endTime, timespan]);
   const areaProps = useMemo(
     () => ({
@@ -470,7 +469,7 @@ const BuildsList: FC<BuildsListProps> = ({ data, loaded, ...props }) => {
         loaded={loaded}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
+        hideColumnManagement
         isResizable
         resetAllColumnWidths={resetAllColumnWidths}
       />
@@ -504,7 +503,7 @@ export const BuildsPage: FC<BuildsPageProps> = (props) => {
           })),
         },
       ]}
-      omitFilterToolbar={true}
+      omitFilterToolbar
     />
   );
 };

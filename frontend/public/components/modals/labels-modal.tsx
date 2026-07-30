@@ -1,7 +1,5 @@
-import * as _ from 'lodash';
 import type { FC } from 'react';
 import { useState, useEffect, useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   Button,
   Content,
@@ -13,21 +11,23 @@ import {
   ModalHeader,
   ModalVariant,
 } from '@patternfly/react-core';
-import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
-import { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
-import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
-import {
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import type { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import type {
   K8sResourceCommon,
   LabelsModalOnSubmit,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import { K8sResourceKind } from '../../module/k8s';
+import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
-import { ModalComponentProps } from '@console/shared/src/types/modal';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
+import type { K8sResourceKind } from '../../module/k8s';
+import { useK8sWatchResource } from '../utils/k8s-watch-hook';
 import { ResourceIcon } from '../utils/resource-icon';
 import { SelectorInput } from '../utils/selector-input';
-import { useK8sWatchResource } from '../utils/k8s-watch-hook';
-import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 
 const LABELS_PATH = '/metadata/labels';
 const TEMPLATE_SELECTOR_PATH = '/spec/template/metadata/labels';

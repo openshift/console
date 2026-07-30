@@ -1,20 +1,20 @@
 import type { FC } from 'react';
 import { useState } from 'react';
+import { ActionGroup, Button } from '@patternfly/react-core';
 import * as _ from 'lodash';
-import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
-import { ActionGroup, Button } from '@patternfly/react-core';
-
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { SecretModel, ConfigMapModel } from '../../models';
-import { IdentityProvider, k8sCreate, OAuthKind } from '../../module/k8s';
-import { ButtonBar } from '../utils/button-bar';
+import type { IdentityProvider, OAuthKind } from '../../module/k8s';
+import { k8sCreate } from '../../module/k8s';
 import { AsyncComponent } from '../utils/async';
-import { addIDP, getOAuthResource as getOAuth, redirectToOAuthPage, mockNames } from './';
-import { IDPNameInput } from './idp-name-input';
+import { ButtonBar } from '../utils/button-bar';
 import { IDPCAFileInput } from './idp-cafile-input';
+import { IDPNameInput } from './idp-name-input';
+import { addIDP, getOAuthResource as getOAuth, redirectToOAuthPage, mockNames } from '.';
 
 const DroppableFileInput = (props: any) => (
   <AsyncComponent
@@ -134,7 +134,7 @@ export const AddBasicAuthPage: FC = () => {
     return handlePromise(addIDP(oauth, idp, dryRun));
   };
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault();
     if (_.isEmpty(keyFileContent) !== _.isEmpty(certFileContent)) {
       setErrorMessage(
@@ -144,27 +144,19 @@ export const AddBasicAuthPage: FC = () => {
     }
     // Clear any previous errors.
     setErrorMessage('');
-    getOAuthResource().then((oauth: OAuthKind) => {
+    try {
+      const oauth: OAuthKind = await getOAuthResource();
       const mockSecret = certFileContent ? mockNames.secret : '';
       const mockCA = caFileContent ? mockNames.ca : '';
-      addBasicAuthIDP(oauth, mockSecret, mockCA, true)
-        .then(() => {
-          const promises = [createTLSSecret(), createCAConfigMap()];
-
-          Promise.all(promises)
-            .then(([tlsSecret, configMap]) => {
-              const caName = configMap ? configMap.metadata.name : '';
-              const secretName = tlsSecret ? tlsSecret.metadata.name : '';
-              return addBasicAuthIDP(oauth, secretName, caName);
-            })
-            .then(() => {
-              redirectToOAuthPage(navigate);
-            });
-        })
-        .catch((err) => {
-          setErrorMessage(err);
-        });
-    });
+      await addBasicAuthIDP(oauth, mockSecret, mockCA, true);
+      const [tlsSecret, configMap] = await Promise.all([createTLSSecret(), createCAConfigMap()]);
+      const caName = configMap ? configMap.metadata.name : '';
+      const secretName = tlsSecret ? tlsSecret.metadata.name : '';
+      await addBasicAuthIDP(oauth, secretName, caName);
+      redirectToOAuthPage(navigate);
+    } catch (err) {
+      setErrorMessage(err);
+    }
   };
 
   const title = t('Add Identity Provider: Basic Authentication');

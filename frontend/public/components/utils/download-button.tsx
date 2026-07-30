@@ -1,10 +1,10 @@
 import type { FC } from 'react';
 import { useState } from 'react';
-import { saveAs } from 'file-saver';
 import { Alert, Button } from '@patternfly/react-core';
 import { RhUiDownloadIcon } from '@patternfly/react-icons';
-import { coFetch } from '@console/shared/src/utils/console-fetch';
+import { saveAs } from 'file-saver';
 import { useTranslation } from 'react-i18next';
+import { coFetch } from '@console/shared/src/utils/console-fetch';
 
 export const DownloadButton: FC<DownloadButtonProps> = (props) => {
   const [inFlight, setInFlight] = useState(false);
@@ -23,7 +23,8 @@ export const DownloadButton: FC<DownloadButtonProps> = (props) => {
         () => setError(null),
         (e) => setError(e),
       )
-      .then(() => setInFlight(false));
+      .then(() => setInFlight(false))
+      .catch(() => {});
   };
 
   return (

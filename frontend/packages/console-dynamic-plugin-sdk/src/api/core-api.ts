@@ -64,6 +64,7 @@ export * from './utils';
  * stability of the `predicate` parameter.
  *
  * @param predicate Predicate (type guard) to filter extensions of a specific type.
+ *
  * @returns Tuple `[resolvedExtensions, resolved, errors]` containing a list of matching extensions,
  * a boolean flag indicating whether the resolution is complete, and a list of errors detected during
  * the resolution.

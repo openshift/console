@@ -1,39 +1,35 @@
 import type { ReactNode } from 'react';
 import { useMemo, useState, useCallback } from 'react';
-import { useLocation, useParams, Location } from 'react-router';
 import * as _ from 'lodash';
-import { getBadgeFromType } from '@console/shared/src/components/badges/badge-factory';
-import { getTitleForNodeKind } from '@console/shared/src/utils/utils';
-import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
-import { withFallback } from '@console/shared/src/components/error/fallbacks/withFallback';
-import { ErrorBoundaryFallbackPage } from '@console/shared/src/components/error/fallbacks/ErrorBoundaryFallbackPage';
-import { ResolvedExtension } from '@console/dynamic-plugin-sdk/src/types';
+import { useLocation, useParams } from 'react-router';
+import type { Location } from 'react-router';
+import type { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
-import { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
-import {
-  isDetailPageBreadCrumbs,
-  DetailPageBreadCrumbs,
-} from '@console/dynamic-plugin-sdk/src/extensions/breadcrumbs';
-import {
+import type { DetailPageBreadCrumbs } from '@console/dynamic-plugin-sdk/src/extensions/breadcrumbs';
+import { isDetailPageBreadCrumbs } from '@console/dynamic-plugin-sdk/src/extensions/breadcrumbs';
+import type {
   K8sResourceKindReference,
   K8sResourceKind,
   K8sResourceCommon,
   WatchK8sResource,
   WatchK8sResultsObject,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { HorizontalNav } from '../utils/horizontal-nav';
+import type { ResolvedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
-import type { Page } from '../utils/horizontal-nav';
-import {
-  ConnectedPageHeading,
-  ConnectedPageHeadingProps,
-  KebabOptionsCreator,
-} from '../utils/headings';
-import { K8sKind } from '../../module/k8s/types';
-import { breadcrumbsForDetailsPage } from '../utils/breadcrumbs';
-import DetailsBreadcrumbResolver from './details-breadcrumb-resolver';
+import { getBadgeFromType } from '@console/shared/src/components/badges/badge-factory';
+import { ErrorBoundaryFallbackPage } from '@console/shared/src/components/error/fallbacks/ErrorBoundaryFallbackPage';
+import { withFallback } from '@console/shared/src/components/error/fallbacks/withFallback';
+import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
-import { KebabAction } from '../utils/kebab';
+import { getTitleForNodeKind } from '@console/shared/src/utils/utils';
+import type { K8sKind } from '../../module/k8s/types';
+import { breadcrumbsForDetailsPage } from '../utils/breadcrumbs';
+import { ConnectedPageHeading } from '../utils/headings';
+import type { ConnectedPageHeadingProps, KebabOptionsCreator } from '../utils/headings';
+import { HorizontalNav } from '../utils/horizontal-nav';
+import type { Page } from '../utils/horizontal-nav';
+import type { KebabAction } from '../utils/kebab';
+import DetailsBreadcrumbResolver from './details-breadcrumb-resolver';
 
 const useBreadCrumbsForDetailPage = (
   kindObj: K8sKind,

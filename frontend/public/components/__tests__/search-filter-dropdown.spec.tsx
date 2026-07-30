@@ -1,8 +1,7 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-
-import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { SearchFilterDropdown } from '@console/internal/components/search-filter-dropdown';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 
 const renderDropdown = () =>
   renderWithProviders(

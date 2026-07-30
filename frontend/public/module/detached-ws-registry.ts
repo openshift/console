@@ -8,8 +8,8 @@
  */
 
 import type { DetachedSessionCleanup } from '@console/webterminal-plugin/src/redux/actions/cloud-shell-actions';
-import { k8sKillByName } from './k8s';
 import { NamespaceModel, PodModel } from '../models';
+import { k8sKillByName } from './k8s';
 
 const registry = new Map<string, any>();
 

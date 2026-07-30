@@ -66,8 +66,8 @@
   "dependencies": {
     "@monaco-editor/react": "^4.7.0",
     "@openshift/api-types": "^1.0.0",
-    "@openshift/dynamic-plugin-sdk": "^8.2.0",
-    "@openshift/dynamic-plugin-sdk-webpack": "^5.2.0",
+    "@openshift/dynamic-plugin-sdk": "^9.0.0",
+    "@openshift/dynamic-plugin-sdk-webpack": "^5.3.0",
     "@patternfly/patternfly": "~6.6.0",
     "@patternfly/quickstarts": "~6.6.0",
     "@patternfly/react-catalog-view-extension": "~6.5.0",
@@ -220,6 +220,7 @@
     "node": ">=22.x"
   },
   "resolutions": {
+    "@openshift/dynamic-plugin-sdk": "patch:@openshift/dynamic-plugin-sdk@npm%3A9.0.0#~/.yarn/patches/@openshift-dynamic-plugin-sdk-npm-9.0.0-7d880bbaea.patch",
     "@types/lodash": "4.14.106",
     "esbuild": "^0.28.1",
     "follow-redirects": "^1.16.0",

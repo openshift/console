@@ -1,5 +1,9 @@
 import { screen } from '@testing-library/react';
-import { AddGitHubPage } from '../../cluster-settings/github-idp-form';
+import {
+  renderWithProviders,
+  verifyInputField,
+} from '@console/shared/src/test-utils/unit-test-utils';
+import { AddGitHubPage } from '../github-idp-form';
 import {
   verifyIDPAddAndCancelButtons,
   verifyPageTitleAndSubtitle,
@@ -8,10 +12,6 @@ import {
   mockData,
   setupFileReaderMock,
 } from './test-utils';
-import {
-  renderWithProviders,
-  verifyInputField,
-} from '@console/shared/src/test-utils/unit-test-utils';
 
 describe('Add Identity Provider: GitHub', () => {
   const renderPage = async () => {

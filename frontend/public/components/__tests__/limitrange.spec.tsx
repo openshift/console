@@ -1,7 +1,6 @@
 import { screen } from '@testing-library/react';
-
-import { LimitRangeDetailsRow } from '../limit-range';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
+import { LimitRangeDetailsRow } from '../limit-range';
 
 describe('LimitRangeDetailsRow', () => {
   const limitContent = {

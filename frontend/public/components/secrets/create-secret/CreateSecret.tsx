@@ -1,6 +1,6 @@
 import { useParams } from 'react-router';
-import { SecretFormType } from './types';
 import { SecretFormWrapper } from './SecretFormWrapper';
+import type { SecretFormType } from './types';
 
 export const CreateSecret = () => {
   const params = useParams();
@@ -9,7 +9,7 @@ export const CreateSecret = () => {
     <SecretFormWrapper
       fixed={{ metadata: { namespace: params.ns } }}
       formType={formType}
-      isCreate={true}
+      isCreate
     />
   );
 };

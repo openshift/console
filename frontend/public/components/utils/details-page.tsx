@@ -1,30 +1,29 @@
 import type { ComponentType, FC, ReactNode } from 'react';
-import { useTranslation } from 'react-i18next';
-import * as _ from 'lodash';
 import { Button, DescriptionList } from '@patternfly/react-core';
 import { RhUiEditIcon } from '@patternfly/react-icons';
-import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpgrade';
-import { useAnnotationsModal } from '@console/shared/src/hooks/useAnnotationsModal';
-import { useLabelsModal } from '@console/shared/src/hooks/useLabelsModal';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { CommonActionCreator } from '@console/app/src/actions/hooks/types';
+import { useCommonActions } from '@console/app/src/actions/hooks/useCommonActions';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
-import { DetailsItem } from './details-item';
-import { LabelList } from './label-list';
-import { OwnerReferences } from './owner-references';
-import { ResourceLink } from './resource-link';
-import { Selector } from './selector';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { useAccessReview } from './rbac';
-import {
+import { useAnnotationsModal } from '@console/shared/src/hooks/useAnnotationsModal';
+import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpgrade';
+import { useLabelsModal } from '@console/shared/src/hooks/useLabelsModal';
+import type {
   ClusterVersionKind,
   K8sResourceCommon,
   K8sResourceKind,
-  modelFor,
-  referenceFor,
   Toleration,
 } from '../../module/k8s';
+import { modelFor, referenceFor } from '../../module/k8s';
 import { LazyConfigureClusterUpstreamModalOverlay } from '../modals';
-import { CommonActionCreator } from '@console/app/src/actions/hooks/types';
-import { useCommonActions } from '@console/app/src/actions/hooks/useCommonActions';
+import { DetailsItem } from './details-item';
+import { LabelList } from './label-list';
+import { OwnerReferences } from './owner-references';
+import { useAccessReview } from './rbac';
+import { ResourceLink } from './resource-link';
+import { Selector } from './selector';
 
 export const pluralize = (
   i: number,

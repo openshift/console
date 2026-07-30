@@ -6,19 +6,17 @@ import {
   ChartThemeColor,
   getCustomTheme,
 } from '@patternfly/react-charts/victory';
-
+import type { CustomDataSource } from '@console/dynamic-plugin-sdk/src/extensions/dashboard-data-source';
 import { useRefWidth } from '../utils/ref-width-hook';
-import { usePrometheusPoll } from './prometheus-poll-hook';
+import type { Humanize } from '../utils/types';
+import { humanizeNumber } from '../utils/units';
+import { GraphEmpty } from './graph-empty';
 import { PrometheusEndpoint } from './helpers';
 import { PrometheusGraph, PrometheusGraphLink } from './prometheus-graph';
+import { usePrometheusPoll } from './prometheus-poll-hook';
 import { barTheme } from './themes';
-import { humanizeNumber } from '../utils/units';
-import type { Humanize } from '../utils/types';
-import { DataPoint } from '.';
 import { getInstantVectorStats } from './utils';
-import { GraphEmpty } from './graph-empty';
-
-import { CustomDataSource } from '@console/dynamic-plugin-sdk/src/extensions/dashboard-data-source';
+import type { DataPoint } from '.';
 
 const DEFAULT_BAR_WIDTH = 10;
 const PADDING_RATIO = 1 / 3;
@@ -53,6 +51,7 @@ export const BarChart: FC<BarChartProps> = ({
         {data.length ? (
           <div data-test="bar-chart" role="img" aria-label={title}>
             {data.map((datum, index) => (
+              // eslint-disable-next-line react/no-array-index-key
               <Fragment key={index}>
                 <div className="graph-bar__label" data-test={`bar-label-${index}`}>
                   {LabelComponent ? (

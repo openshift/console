@@ -1,59 +1,63 @@
 import type { FC, Ref, MouseEvent, ComponentType } from 'react';
 import { useState, useMemo, memo } from 'react';
-import * as _ from 'lodash';
-import { useTranslation } from 'react-i18next';
+import type { MenuToggleElement } from '@patternfly/react-core';
 import {
   Badge,
   Card,
   CardHeader,
   CardTitle,
   MenuToggle,
-  MenuToggleElement,
   Select,
   SelectList,
   SelectOption,
   Split,
   SplitItem,
 } from '@patternfly/react-core';
-import {
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import type {
   ClusterOverviewUtilizationItem,
-  isClusterOverviewUtilizationItem,
   ClusterOverviewMultilineUtilizationItem,
-  isClusterOverviewMultilineUtilizationItem,
-  useResolvedExtensions,
   Humanize,
   TopConsumerPopoverProps,
 } from '@console/dynamic-plugin-sdk';
 import {
-  UtilizationItem,
-  MultilineUtilizationItem,
+  isClusterOverviewUtilizationItem,
+  isClusterOverviewMultilineUtilizationItem,
+  useResolvedExtensions,
+} from '@console/dynamic-plugin-sdk';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import type { MachineConfigPoolKind } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
+import { UtilizationBody } from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
+import { UtilizationDurationDropdown } from '@console/shared/src/components/dashboard/utilization-card/UtilizationDurationDropdown';
+import type {
   QueryWithDescription,
   LimitRequested,
+} from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
+import {
+  UtilizationItem,
+  MultilineUtilizationItem,
   trimSecondsXMutator,
 } from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
-import { UtilizationBody } from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
-
 import { useDashboardResources } from '@console/shared/src/hooks/useDashboardResources';
+import { useUtilizationDuration } from '@console/shared/src/hooks/useUtilizationDuration';
+import {
+  getMultilineQueries,
+  getUtilizationQueries,
+  OverviewQuery,
+} from '@console/shared/src/promql/cluster-dashboard';
+import { getPrometheusQueryResponse } from '../../../../actions/dashboards';
+import { MachineConfigPoolModel } from '../../../../models';
+import type { DataPoint, PrometheusResponse } from '../../../graphs';
+import { getRangeVectorStats, getInstantVectorStats } from '../../../graphs/utils';
 import {
   humanizeBinaryBytes,
   humanizeCpuCores,
   humanizeNumber,
   humanizeDecimalBytesPerSec,
 } from '../../../utils/units';
-import { getRangeVectorStats, getInstantVectorStats } from '../../../graphs/utils';
-import {
-  getMultilineQueries,
-  getUtilizationQueries,
-  OverviewQuery,
-} from '@console/shared/src/promql/cluster-dashboard';
-import { MachineConfigPoolModel } from '../../../../models';
-import { getPrometheusQueryResponse } from '../../../../actions/dashboards';
-import { DataPoint, PrometheusResponse } from '../../../graphs';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { MachineConfigPoolKind, referenceForModel } from '@console/internal/module/k8s';
-import { UtilizationDurationDropdown } from '@console/shared/src/components/dashboard/utilization-card/UtilizationDurationDropdown';
-import { useUtilizationDuration } from '@console/shared/src/hooks/useUtilizationDuration';
 import {
   ClusterUtilizationContext,
   CPUPopover,
@@ -96,13 +100,17 @@ export const PrometheusUtilizationItem: FC<PrometheusUtilizationItemProps> = ({
   const dashboardResources = useDashboardResources({
     prometheusQueries: queries,
   });
-  const prometheusResults = dashboardResources.prometheusResults;
+  const { prometheusResults } = dashboardResources;
 
-  let utilization: PrometheusResponse, utilizationError: any;
-  let total: PrometheusResponse, totalError: any;
+  let utilization: PrometheusResponse;
+  let utilizationError: any;
+  let total: PrometheusResponse;
+  let totalError: any;
   let max: DataPoint<number>[];
-  let limit: PrometheusResponse, limitError: any;
-  let request: PrometheusResponse, requestError: any;
+  let limit: PrometheusResponse;
+  let limitError: any;
+  let request: PrometheusResponse;
+  let requestError: any;
   let isLoading = false;
 
   if (!isDisabled) {
@@ -157,7 +165,7 @@ export const PrometheusMultilineUtilizationItem: FC<PrometheusMultilineUtilizati
   const dashboardResources = useDashboardResources({
     prometheusQueries,
   });
-  const prometheusResults = dashboardResources.prometheusResults;
+  const { prometheusResults } = dashboardResources;
 
   const stats = [];
   let hasError = false;

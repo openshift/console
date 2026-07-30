@@ -1,12 +1,4 @@
-import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
-import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
-import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
-import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { Status } from '@console/shared/src/components/status/Status';
-import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
-import { usePrometheusGate } from '@console/shared/src/hooks/usePrometheusGate';
+import type { FC, ReactElement } from 'react';
 import {
   Card,
   CardBody,
@@ -21,16 +13,25 @@ import {
 } from '@patternfly/react-core';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import * as _ from 'lodash';
-import { FC, ReactElement } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
-import {
+import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
+import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
+import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { Status } from '@console/shared/src/components/status/Status';
+import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
+import { usePrometheusGate } from '@console/shared/src/hooks/usePrometheusGate';
+import type {
   ContainerSpec,
   ContainerState,
   K8sResourceKindReference,
   PodKind,
-  referenceForModel,
 } from '../module/k8s';
+import { referenceForModel } from '../module/k8s';
 import {
   getContainerRestartCount,
   getContainerState,
@@ -43,7 +44,9 @@ import { DetailsPage } from './factory/details';
 import type { PrometheusResult } from './graphs';
 import { Area } from './graphs/area';
 import { Stack } from './graphs/stack';
+import { PodStatus } from './pod-list';
 import { PodLogs } from './pod-logs';
+import { PodTraffic } from './pod-traffic';
 import { AsyncComponent } from './utils/async';
 import { DetailsItem } from './utils/details-item';
 import { ResourceSummary, RuntimeClass } from './utils/details-page';
@@ -68,9 +71,6 @@ import { VolumesTable } from './volumes-table';
 // t('public~Login is required. Please try again.')
 // t('public~Could not check CSRF token. Please try again.')
 // t('public~Invalid login or password. Please try again.')
-import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
-import { PodTraffic } from './pod-traffic';
-import { PodStatus } from './pod-list';
 
 export const ContainerLink: FC<ContainerLinkProps> = ({ pod, name }) => (
   <span className="co-resource-item co-resource-item--inline">
@@ -114,13 +114,15 @@ export const ContainerLastState: FC<ContainerLastStateProps> = ({ containerLastS
   const { t } = useTranslation('public');
   if (containerLastState?.waiting) {
     return <>{t('Waiting {{reason}}', { reason: containerLastState.waiting?.reason })}</>;
-  } else if (containerLastState?.running) {
+  }
+  if (containerLastState?.running) {
     return (
       <Trans t={t} ns="public">
         Running <ContainerRunningSince startedAt={containerLastState.running?.startedAt} />
       </Trans>
     );
-  } else if (containerLastState?.terminated) {
+  }
+  if (containerLastState?.terminated) {
     return (
       <Trans t={t} ns="public">
         Terminated <ContainerTerminatedAt finishedAt={containerLastState.terminated?.finishedAt} />
@@ -195,8 +197,8 @@ const PodContainerTable: FC<PodContainerTableProps> = ({ heading, containers, po
           </Tr>
         </Thead>
         <Tbody>
-          {containers.map((c: ContainerSpec, i: number) => (
-            <ContainerRow key={i} pod={pod} container={c} />
+          {containers.map((c: ContainerSpec) => (
+            <ContainerRow key={c.name} pod={pod} container={c} />
           ))}
         </Tbody>
       </Table>
@@ -382,7 +384,7 @@ const Details: FC<PodDetailsProps> = ({ obj: pod }) => {
   limits.cpu = _.reduce(
     pod.spec.containers,
     (sum, container) => {
-      const value = units.dehumanize(_.get(container, 'resources.limits.cpu', 0), 'numeric').value;
+      const { value } = units.dehumanize(_.get(container, 'resources.limits.cpu', 0), 'numeric');
       return sum + value;
     },
     0,
@@ -390,10 +392,10 @@ const Details: FC<PodDetailsProps> = ({ obj: pod }) => {
   limits.memory = _.reduce(
     pod.spec.containers,
     (sum, container) => {
-      const value = units.dehumanize(
+      const { value } = units.dehumanize(
         _.get(container, 'resources.limits.memory', 0),
         'binaryBytesWithoutB',
-      ).value;
+      );
       return sum + value;
     },
     0,
@@ -456,7 +458,7 @@ const EnvironmentPage = (props: {
 
 const envPath = ['spec', 'containers'];
 const PodEnvironmentComponent = (props: { obj: PodKind }) => (
-  <EnvironmentPage obj={props.obj} rawEnvData={props.obj.spec} envPath={envPath} readOnly={true} />
+  <EnvironmentPage obj={props.obj} rawEnvData={props.obj.spec} envPath={envPath} readOnly />
 );
 
 export const PodConnectLoader: FC<PodConnectLoaderProps> = ({

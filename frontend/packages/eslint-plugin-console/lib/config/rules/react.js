@@ -36,6 +36,10 @@ module.exports = {
             '^(?!Rh|createIcon|GitAltIcon|TerminalIcon|GithubIcon|GitlabIcon|BitbucketIcon)',
           message: 'Use RhMicron, RhUi, or RhStandard icon variants instead of Font Awesome icons.',
         },
+        {
+          group: ['@patternfly/*/dist/js/**', '@patternfly/*/dist/cjs/**'],
+          message: 'Import from the package index instead of the CJS dist path.',
+        },
       ],
     },
   ],

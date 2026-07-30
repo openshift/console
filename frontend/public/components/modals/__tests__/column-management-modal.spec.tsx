@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react';
-import { ColumnManagementModal } from '@console/internal/components/modals/column-management-modal';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { transformGroupVersionKindToReference } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import { ColumnManagementModal } from '@console/internal/components/modals/column-management-modal';
 import { PodModel } from '@console/internal/models';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 

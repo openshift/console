@@ -1,9 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import type { FC, ReactNode } from 'react';
 import { useEffect, useRef, useMemo, useState } from 'react';
-import * as _ from 'lodash';
-import { css } from '@patternfly/react-styles';
-import * as semver from 'semver';
 import {
   Alert,
   AlertActionLink,
@@ -29,41 +26,47 @@ import {
   Stack,
   StackItem,
 } from '@patternfly/react-core';
-import { Link } from 'react-router';
-import { useTranslation } from 'react-i18next';
-
 import {
   RhUiAddCircleIcon,
   RhUiPauseCircleIcon,
   RhUiEditIcon,
   RhUiInProgressIcon,
 } from '@patternfly/react-icons';
-
+import { css } from '@patternfly/react-styles';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router';
+import * as semver from 'semver';
+import type { WatchK8sResource } from '@console/dynamic-plugin-sdk';
+import { useAccessReview } from '@console/dynamic-plugin-sdk';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
+import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import type { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
+import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
+import { FEATURE_FLAG_LIGHTSPEED_PLUGIN } from '@console/shared/src/components/cluster-updates/constants';
 import { UpdateWorkflowOLSButton } from '@console/shared/src/components/cluster-updates/explain-button';
 import {
   hasAvailableUpdates,
   hasOperatorIssues,
   determineWorkflowButtons,
 } from '@console/shared/src/components/cluster-updates/workflow-utils';
-import { FEATURE_FLAG_LIGHTSPEED_PLUGIN } from '@console/shared/src/components/cluster-updates/constants';
-
-import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
-import { MarkdownView } from '@console/shared/src/components/markdown/MarkdownView';
-import {
-  ClusterServiceVersionKind,
-  ClusterServiceVersionModel,
-} from '@console/operator-lifecycle-manager';
-import { WatchK8sResource, useAccessReview } from '@console/dynamic-plugin-sdk';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import { DescriptionListTermHelp } from '@console/shared/src/components/description-list/DescriptionListTermHelp';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
-
-import { ClusterOperatorPage } from './cluster-operator';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { MarkdownView } from '@console/shared/src/components/markdown/MarkdownView';
+import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
+import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
+import { FLAGS } from '@console/shared/src/constants/common';
 import {
-  LazyClusterChannelModalOverlay,
-  LazyClusterMoreUpdatesModalOverlay,
-  LazyClusterUpdateModalOverlay,
-} from '../modals';
-import { GlobalConfigPage } from './global-config';
+  isClusterExternallyManaged,
+  useCanClusterUpgrade,
+} from '@console/shared/src/hooks/useCanClusterUpgrade';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
+import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import {
   ClusterAutoscalerModel,
   ClusterOperatorModel,
@@ -72,12 +75,17 @@ import {
   MachineConfigModel,
   NodeModel,
 } from '../../models';
+import type {
+  ClusterOperator,
+  ClusterVersionKind,
+  K8sResourceKind,
+  MachineConfigPoolKind,
+  UpdateHistory,
+} from '../../module/k8s';
 import {
   clusterIsUpToDateOrUpdateAvailable,
-  ClusterOperator,
   ClusterUpdateStatus,
   ClusterVersionConditionType,
-  ClusterVersionKind,
   clusterVersionReference,
   getClusterID,
   getClusterOperatorVersion,
@@ -99,52 +107,39 @@ import {
   isMCPWorker,
   isMinorVersionNewer,
   K8sResourceConditionStatus,
-  K8sResourceKind,
   MachineConfigPoolConditionType,
-  MachineConfigPoolKind,
   NodeTypeNames,
   NodeTypes,
   referenceForModel,
   showReleaseNotes,
   sortMCPsByCreationTimestamp,
   splitClusterVersionChannel,
-  UpdateHistory,
 } from '../../module/k8s';
-import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { hasNotRecommendedUpdates } from '../../module/k8s/cluster-settings';
+import {
+  LazyClusterChannelModalOverlay,
+  LazyClusterMoreUpdatesModalOverlay,
+  LazyClusterUpdateModalOverlay,
+} from '../modals';
+import { ErrorModal } from '../modals/error-modal';
+import { UpstreamConfigDetailsItem } from '../utils/details-page';
 import { documentationURLs, getDocumentationURL, isManaged } from '../utils/documentation';
-import { EmptyBox } from '../utils/status-box';
 import { FieldLevelHelp } from '../utils/field-level-help';
+import { SectionHeading } from '../utils/headings';
 import { HorizontalNav } from '../utils/horizontal-nav';
 import { ReleaseNotesLink } from '../utils/release-notes-link';
 import { ResourceLink, resourcePathFromModel } from '../utils/resource-link';
-import { SectionHeading } from '../utils/headings';
-import { togglePaused } from '../utils/workload-pause';
-import { UpstreamConfigDetailsItem } from '../utils/details-page';
-
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import {
-  isClusterExternallyManaged,
-  useCanClusterUpgrade,
-} from '@console/shared/src/hooks/useCanClusterUpgrade';
-import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
-import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
-import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
-import { DescriptionListTermHelp } from '@console/shared/src/components/description-list/DescriptionListTermHelp';
-import { useFlag } from '@console/shared/src/hooks/useFlag';
-import { FLAGS } from '@console/shared/src/constants/common';
-
 import {
   ServiceLevel,
   useServiceLevelTitle,
   ServiceLevelText,
   ServiceLevelLoading,
 } from '../utils/service-level';
-import { hasNotRecommendedUpdates } from '../../module/k8s/cluster-settings';
+import { EmptyBox } from '../utils/status-box';
+import { togglePaused } from '../utils/workload-pause';
+import { ClusterOperatorPage } from './cluster-operator';
 import { UpdateStatus } from './cluster-status';
-import { ErrorModal } from '../modals/error-modal';
-import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
-import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import { GlobalConfigPage } from './global-config';
 
 const clusterAutoscalerReference = referenceForModel(ClusterAutoscalerModel);
 
@@ -796,7 +791,7 @@ const getConditionOfType = (cv: ClusterVersionKind, type: ClusterVersionConditio
 // Returns array of operator details for operators with problems
 const detectOperatorIssues = (
   clusterOperators?: ClusterOperator[],
-): Array<{ name: string; issue: string; condition: any }> => {
+): { name: string; issue: string; condition: any }[] => {
   if (!clusterOperators || clusterOperators.length === 0) {
     return [];
   }

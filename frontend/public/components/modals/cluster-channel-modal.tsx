@@ -1,6 +1,5 @@
 import type { FormEventHandler } from 'react';
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   Button,
   Content,
@@ -16,22 +15,18 @@ import {
   ModalVariant,
   TextInput,
 } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import * as semver from 'semver';
-
-import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import { ChannelDocLink } from '../cluster-settings/cluster-settings';
-import { ClusterVersionModel } from '../../models';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
-import { isManaged } from '../utils/documentation';
-import { ModalComponentProps } from '@console/shared/src/types/modal';
-import {
-  ClusterVersionKind,
-  getAvailableClusterChannels,
-  getLastCompletedUpdate,
-  k8sPatch,
-} from '../../module/k8s';
-import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
+import { ClusterVersionModel } from '../../models';
+import type { ClusterVersionKind } from '../../module/k8s';
+import { getAvailableClusterChannels, getLastCompletedUpdate, k8sPatch } from '../../module/k8s';
+import { ChannelDocLink } from '../cluster-settings/cluster-settings';
+import { isManaged } from '../utils/documentation';
 
 const ClusterChannelModal = (props: ClusterChannelModalProps) => {
   const { cancel, close, cv } = props;

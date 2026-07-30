@@ -1,10 +1,9 @@
+import i18next from 'i18next';
 import * as _ from 'lodash';
 import { plural } from 'pluralize';
-import i18next from 'i18next';
-
-import { K8sKind, K8sVerb } from '../../module/k8s';
-import { isModelMetadata, ModelMetadata } from '@console/dynamic-plugin-sdk';
-import { DiscoveryResources } from '@console/dynamic-plugin-sdk/src/api/common-types';
+import type { ModelMetadata } from '@console/dynamic-plugin-sdk';
+import { isModelMetadata } from '@console/dynamic-plugin-sdk';
+import type { DiscoveryResources } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import type { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import {
   getTranslationKey,
@@ -13,8 +12,9 @@ import {
 } from '@console/plugin-sdk/src/utils/extension-i18n';
 import { API_DISCOVERY_RESOURCES_LOCAL_STORAGE_KEY } from '@console/shared/src/constants/common';
 import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
-import { pluginStore } from '../../plugins';
 import { loading as i18nLoading } from '../../i18n';
+import { pluginStore } from '../../plugins';
+import type { K8sKind, K8sVerb } from '.';
 
 const ADMIN_RESOURCES = new Set([
   'roles',

@@ -1,17 +1,16 @@
 /* eslint-disable no-barrel-files/no-barrel-files */
 import * as _ from 'lodash';
-import { Dispatch } from 'redux';
-import { checkAccess } from '@console/internal/components/utils/rbac';
-
-import { cacheResources, getResources as getResources_ } from '../module/k8s/get-resources';
-import { CustomResourceDefinitionKind, K8sResourceKind } from '../module/k8s';
-import { makeReduxID } from '../components/utils/k8s-watcher';
-import { CustomResourceDefinitionModel } from '../models';
+import type { Dispatch } from 'redux';
 import {
   watchK8sList,
   getResourcesInFlight,
   receivedResources,
 } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
+import { checkAccess } from '@console/internal/components/utils/rbac';
+import { makeReduxID } from '../components/utils/k8s-watcher';
+import { CustomResourceDefinitionModel } from '../models';
+import type { CustomResourceDefinitionKind, K8sResourceKind } from '../module/k8s';
+import { cacheResources, getResources as getResources_ } from '../module/k8s/get-resources';
 
 export {
   watchK8sList,

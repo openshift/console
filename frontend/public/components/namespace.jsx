@@ -1,7 +1,4 @@
 import { Suspense, useEffect, useMemo, useState, useCallback } from 'react';
-import * as _ from 'lodash';
-import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import { css } from '@patternfly/react-styles';
 import {
   Alert,
   Button,
@@ -12,85 +9,13 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
-
-import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
-import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
-import { useTranslation } from 'react-i18next';
-import i18next from 'i18next';
-
+import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 import { RhUiEditIcon } from '@patternfly/react-icons';
+import { css } from '@patternfly/react-styles';
+import i18next from 'i18next';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
-
-import { Status } from '@console/shared/src/components/status/Status';
-import { getRequester, getDescription } from '@console/shared/src/selectors/namespace';
-import {
-  FLAGS,
-  COLUMN_MANAGEMENT_USER_PREFERENCE_KEY,
-  REQUESTER_FILTER,
-} from '@console/shared/src/constants/common';
-import { GreenCheckCircleIcon } from '@console/shared/src/components/status/icons';
-import { getName } from '@console/shared/src/selectors/common';
-import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
-import { isModifiedEvent } from '@console/shared/src/utils/utils';
-import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
-import { useFlag } from '@console/shared/src/hooks/useFlag';
-import { usePrometheusGate } from '@console/shared/src/hooks/usePrometheusGate';
-import { DASH } from '@console/shared/src/constants/ui';
-import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
-import * as k8sActions from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
-import { useActivePerspective } from '@console/dynamic-plugin-sdk';
-import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import {
-  ConsoleLinkModel,
-  NamespaceModel,
-  ProjectModel,
-  SecretModel,
-  ServiceAccountModel,
-} from '../models';
-import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
-import { k8sGet, referenceForModel } from '../module/k8s';
-import * as UIActions from '../actions/ui';
-import { DetailsPage, ListPage, sorts } from './factory';
-import { sortResourceByValue } from './factory/Table/sort';
-import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
-import { DetailsItem } from './utils/details-item';
-import { LabelList } from './utils/label-list';
-import { LoadingInline, LoadingBox } from './utils/status-box';
-import { ResourceIcon } from './utils/resource-icon';
-import { ResourceLink } from './utils/resource-link';
-import { ResourceSummary } from './utils/details-page';
-import { SectionHeading } from './utils/headings';
-import {
-  formatBytesAsMiB,
-  formatCores,
-  humanizeBinaryBytes,
-  humanizeCpuCores,
-} from './utils/units';
-import { navFactory } from './utils/horizontal-nav';
-import { useAccessReview } from './utils/rbac';
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { LazyConfigureNamespacePullSecretModalOverlay } from './modals';
-import { RoleBindingsPage } from './RBAC';
-import { Bar } from './graphs/bar';
-import { Area } from './graphs/area';
-import { PROMETHEUS_BASE_PATH } from './graphs/consts';
-import { flagPending } from '../reducers/features';
-import { OpenShiftGettingStarted } from './start-guide';
-import { OverviewListPage } from './overview';
-import {
-  getNamespaceDashboardConsoleLinks,
-  ProjectDashboard,
-} from './dashboard/project-dashboard/project-dashboard';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-
-import {
-  isCurrentUser,
-  isOtherUser,
-  isSystemNamespace,
-} from '@console/shared/src/components/namespace/filters';
-import { useCreateNamespaceModal } from '@console/shared/src/hooks/useCreateNamespaceModal';
-import { useCreateProjectModal } from '@console/shared/src/hooks/useCreateProjectModal';
 import {
   actionsCellProps,
   nameCellProps,
@@ -100,10 +25,81 @@ import {
   getLabelsColumnWidthStyleProp,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
+import { useActivePerspective } from '@console/dynamic-plugin-sdk';
+import * as k8sActions from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import {
+  isCurrentUser,
+  isOtherUser,
+  isSystemNamespace,
+} from '@console/shared/src/components/namespace/filters';
+import { GreenCheckCircleIcon } from '@console/shared/src/components/status/icons';
+import { Status } from '@console/shared/src/components/status/Status';
+import {
+  FLAGS,
+  COLUMN_MANAGEMENT_USER_PREFERENCE_KEY,
+  REQUESTER_FILTER,
+} from '@console/shared/src/constants/common';
+import { DASH } from '@console/shared/src/constants/ui';
+import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
+import { useCreateNamespaceModal } from '@console/shared/src/hooks/useCreateNamespaceModal';
+import { useCreateProjectModal } from '@console/shared/src/hooks/useCreateProjectModal';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
+import { usePrometheusGate } from '@console/shared/src/hooks/usePrometheusGate';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
+import { getName } from '@console/shared/src/selectors/common';
+import { getRequester, getDescription } from '@console/shared/src/selectors/namespace';
+import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
+import { isModifiedEvent } from '@console/shared/src/utils/utils';
+import * as UIActions from '../actions/ui';
+import {
+  ConsoleLinkModel,
+  NamespaceModel,
+  ProjectModel,
+  SecretModel,
+  ServiceAccountModel,
+} from '../models';
+import { k8sGet, referenceForModel } from '../module/k8s';
+import { flagPending } from '../reducers/features';
+import {
+  getNamespaceDashboardConsoleLinks,
+  ProjectDashboard,
+} from './dashboard/project-dashboard/project-dashboard';
+import { DetailsPage, ListPage, sorts } from './factory';
+import { sortResourceByValue } from './factory/Table/sort';
+import { Area } from './graphs/area';
+import { Bar } from './graphs/bar';
+import { PROMETHEUS_BASE_PATH } from './graphs/consts';
+import { LazyConfigureNamespacePullSecretModalOverlay } from './modals';
+import { OverviewListPage } from './overview';
+import { RoleBindingsPage } from './RBAC';
+import { OpenShiftGettingStarted } from './start-guide';
+import { DetailsItem } from './utils/details-item';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { LabelList } from './utils/label-list';
+import { useAccessReview } from './utils/rbac';
+import { ResourceIcon } from './utils/resource-icon';
+import { ResourceLink } from './utils/resource-link';
+import { LoadingInline, LoadingBox } from './utils/status-box';
+import {
+  formatBytesAsMiB,
+  formatCores,
+  humanizeBinaryBytes,
+  humanizeCpuCores,
+} from './utils/units';
 
 const getDisplayName = (obj) =>
   _.get(obj, ['metadata', 'annotations', 'openshift.io/display-name']);
@@ -291,7 +287,7 @@ const getNamespaceDataViewRows = (rowData, tableColumns, namespaceMetrics, t) =>
     const bytes = namespaceMetrics?.memory?.[name];
     const cores = namespaceMetrics?.cpu?.[name];
     const description = getDescription(ns);
-    const labels = ns.metadata.labels;
+    const { labels } = ns.metadata;
 
     const rowCells = {
       [namespaceColumnInfo[0].id]: {
@@ -467,9 +463,9 @@ export const NamespacesPage = (props) => {
     <ListPage
       {...props}
       ListComponent={NamespacesList}
-      canCreate={true}
+      canCreate
       createHandler={() => createNamespaceModal()}
-      omitFilterToolbar={true}
+      omitFilterToolbar
     />
   );
 };
@@ -613,7 +609,7 @@ const getProjectDataViewRows = (
     const bytes = namespaceMetrics?.memory?.[name];
     const cores = namespaceMetrics?.cpu?.[name];
     const description = getDescription(project);
-    const labels = project.metadata.labels;
+    const { labels } = project.metadata;
 
     const rowCells = {
       [projectColumnInfo[0].id]: {
@@ -866,7 +862,7 @@ export const ProjectsPage = (props) => {
       skipAccessReview
       textFilter="project-name"
       kind="Project"
-      omitFilterToolbar={true}
+      omitFilterToolbar
     />
   );
 };

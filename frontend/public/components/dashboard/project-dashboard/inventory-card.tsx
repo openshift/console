@@ -1,7 +1,29 @@
 import { useEffect, useContext, memo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useDynamicK8sWatchResources } from '@console/shared/src/hooks/useDynamicK8sWatchResources';
 import { Card, CardBody, CardHeader, CardTitle, Stack, StackItem } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+import type {
+  DashboardsProjectOverviewInventoryItem,
+  K8sResourceCommon,
+  WatchK8sResource,
+  WatchK8sResources,
+  ProjectOverviewInventoryItem,
+} from '@console/dynamic-plugin-sdk';
+import {
+  useResolvedExtensions,
+  isDashboardsProjectOverviewInventoryItem,
+  isProjectOverviewInventoryItem,
+} from '@console/dynamic-plugin-sdk';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
+import type { StatusGroupMapper } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
+import { ResourceInventoryItem } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
+import {
+  getPodStatusGroups,
+  getPVCStatusGroups,
+  getVSStatusGroups,
+} from '@console/shared/src/components/dashboard/inventory-card/utils';
+import { ErrorBoundary } from '@console/shared/src/components/error/error-boundary';
+import { useDynamicK8sWatchResources } from '@console/shared/src/hooks/useDynamicK8sWatchResources';
+import { getName } from '@console/shared/src/selectors/common';
 import {
   PodModel,
   DeploymentModel,
@@ -14,31 +36,10 @@ import {
   SecretModel,
   VolumeSnapshotModel,
 } from '../../../models';
-import {
-  ResourceInventoryItem,
-  StatusGroupMapper,
-} from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
-import {
-  getPodStatusGroups,
-  getPVCStatusGroups,
-  getVSStatusGroups,
-} from '@console/shared/src/components/dashboard/inventory-card/utils';
+import type { K8sKind } from '../../../module/k8s';
+import { referenceForModel } from '../../../module/k8s';
 import { useAccessReview } from '../../utils/rbac';
-import { K8sKind, referenceForModel } from '../../../module/k8s';
-import { getName } from '@console/shared/src/selectors/common';
 import { ProjectDashboardContext } from './project-dashboard-context';
-import {
-  useResolvedExtensions,
-  DashboardsProjectOverviewInventoryItem,
-  isDashboardsProjectOverviewInventoryItem,
-  K8sResourceCommon,
-  WatchK8sResource,
-  WatchK8sResources,
-  ProjectOverviewInventoryItem,
-  isProjectOverviewInventoryItem,
-} from '@console/dynamic-plugin-sdk';
-import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
-import { ErrorBoundary } from '@console/shared/src/components/error/error-boundary';
 
 const createWatchResource = (
   model: K8sKind,

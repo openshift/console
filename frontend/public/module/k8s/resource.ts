@@ -1,6 +1,6 @@
-import { K8sResourceCommon, QueryParams } from '@console/dynamic-plugin-sdk/src';
+import type { K8sResourceCommon, QueryParams } from '@console/dynamic-plugin-sdk/src';
 import { k8sPatch, k8sKill, k8sList, k8sWatch } from '@console/dynamic-plugin-sdk/src/utils/k8s';
-import { K8sKind, Patch } from './types';
+import type { K8sKind, Patch } from './types';
 
 export type Options = {
   ns?: string;

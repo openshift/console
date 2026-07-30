@@ -1,10 +1,13 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import type { FC } from 'react';
-import { Link } from 'react-router';
+import { sortable } from '@patternfly/react-table';
+import i18next from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import i18next from 'i18next';
-import {
+import { Link } from 'react-router';
+import { KEBAB_COLUMN_CLASS } from '@console/shared/src/components/actions/LazyActionMenu';
+import { connectToModel } from '../kinds';
+import type {
   ContainerSpec,
   K8sKind,
   K8sResourceKind,
@@ -14,18 +17,16 @@ import {
   Volume,
   VolumeMount,
 } from '../module/k8s';
-import { asAccessReview } from './utils/rbac';
-import { EmptyBox } from './utils/status-box';
-import { Kebab, KebabOption } from './utils/kebab';
-import { ResourceIcon } from './utils/resource-icon';
-import { SectionHeading } from './utils/headings';
-import { VolumeType } from './utils/volume-type';
 import { Table } from './factory/table';
-import { sortable } from '@patternfly/react-table';
-import { connectToModel } from '../kinds';
 import { useRemoveModalLauncher } from './modals/remove-volume-modal';
-import { ModalCallback } from './modals/types';
-import { KEBAB_COLUMN_CLASS } from '@console/shared/src/components/actions/LazyActionMenu';
+import type { ModalCallback } from './modals/types';
+import { SectionHeading } from './utils/headings';
+import type { KebabOption } from './utils/kebab';
+import { Kebab } from './utils/kebab';
+import { asAccessReview } from './utils/rbac';
+import { ResourceIcon } from './utils/resource-icon';
+import { EmptyBox } from './utils/status-box';
+import { VolumeType } from './utils/volume-type';
 
 const removeVolume = (
   removeVolumeModal: ModalCallback,
@@ -220,7 +221,7 @@ export const VolumesTable = (props) => {
         <Table
           {...tableProps}
           aria-label={t('Volumes')}
-          loaded={true}
+          loaded
           label={props.heading}
           data={data}
           Header={VolumesTableHeader}

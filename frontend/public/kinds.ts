@@ -1,14 +1,8 @@
 import { connect } from 'react-redux';
-import {
-  K8sKind,
-  K8sResourceKindReference,
-  GroupVersionKind,
-  isGroupVersionKind,
-  allModels,
-  getGroupVersionKind,
-} from './module/k8s';
-import { RootState } from './redux';
 import { getK8sModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sModel';
+import type { K8sKind, K8sResourceKindReference, GroupVersionKind } from './module/k8s';
+import { isGroupVersionKind, allModels, getGroupVersionKind } from './module/k8s';
+import type { RootState } from './redux';
 
 export const connectToModel = connect(
   ({ k8s }: RootState, props: { kind: K8sResourceKindReference } & any) => {

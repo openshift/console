@@ -1,12 +1,13 @@
 /* eslint-disable no-barrel-files/no-barrel-files */
 import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash';
-
+import type { FeatureState } from '@console/dynamic-plugin-sdk/src/app/features';
+import { ActionType as K8sActionType } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
+import type { ModelFeatureFlag } from '@console/dynamic-plugin-sdk/src/extensions/feature-flags';
+import { isModelFeatureFlag } from '@console/dynamic-plugin-sdk/src/extensions/feature-flags';
 import { FLAGS } from '@console/shared/src/constants/common';
-import {
-  isModelFeatureFlag,
-  ModelFeatureFlag,
-} from '@console/dynamic-plugin-sdk/src/extensions/feature-flags';
+import type { FeatureAction } from '../actions/flags';
+import { ActionType } from '../actions/flags';
 import {
   ClusterAutoscalerModel,
   ConsoleCLIDownloadModel,
@@ -20,13 +21,10 @@ import {
   MachineModel,
   PrometheusModel,
 } from '../models';
-import { K8sModel } from '../module/k8s';
+import type { K8sModel } from '../module/k8s';
 import { referenceForGroupVersionKind, referenceForModel } from '../module/k8s/k8s-ref';
-import type { RootState } from '../redux';
-import { ActionType as K8sActionType } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
-import { FeatureState } from '@console/dynamic-plugin-sdk/src/app/features';
-import { FeatureAction, ActionType } from '../actions/flags';
 import { pluginStore } from '../plugins';
+import type { RootState } from '../redux';
 
 // eslint-disable-next-line prettier/prettier
 export type { FeatureState };
@@ -69,7 +67,7 @@ const addToCRDs = (ref: string, flag: string) => {
 };
 
 const getModelRef = (e: ModelFeatureFlag) => {
-  const model = e.properties.model;
+  const { model } = e.properties;
   return referenceForGroupVersionKind(model.group)(model.version)(model.kind);
 };
 
@@ -124,6 +122,7 @@ export const featureReducer = (state: FeatureState, action: FeatureAction): Feat
 
     case K8sActionType.ReceivedResources:
       // Flip all flags to false to signify that we did not see them
+      // eslint-disable-next-line no-param-reassign
       _.each(CRDs, (v) => (state = state.set(v, false)));
 
       return action.payload.resources.models

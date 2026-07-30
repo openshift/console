@@ -1,46 +1,50 @@
-import * as _ from 'lodash';
 import type { ComponentProps, ReactNode, FC } from 'react';
 import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
-import { css } from '@patternfly/react-styles';
-import { connect } from 'react-redux';
-import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
-import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
-import { action } from 'typesafe-actions';
-import { ActionType, getOLSCodeBlock } from '@console/internal/reducers/ols';
-import { safeLoad, safeLoadAll, safeDump } from 'js-yaml';
+import { CodeEditorControl } from '@patternfly/react-code-editor';
 import { ActionGroup, Alert, Button } from '@patternfly/react-core';
 import { RhUiDownloadIcon, RhUiCompressIcon, RhUiExpandIcon } from '@patternfly/react-icons';
-import { Trans, useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router';
-import { FLAGS, ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
-import { getBadgeFromType } from '@console/shared/src/components/badges/badge-factory';
-import { useResourceSidebarSamples } from '@console/shared/src/hooks/useResourceSidebarSamples';
-import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
-import { useResourceConnectionHandler } from '@console/shared/src/hooks/useResourceConnectionHandler';
-
-import PageBody from '@console/shared/src/components/layout/PageBody';
+import { css } from '@patternfly/react-styles';
+import { safeLoad, safeLoadAll, safeDump } from 'js-yaml';
+import * as _ from 'lodash';
 import type { editor } from 'monaco-editor/esm/vs/editor/editor.api';
+import { Trans, useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+import { useNavigate } from 'react-router';
+import { action } from 'typesafe-actions';
+import type { YAMLTemplate, K8sResourceKind } from '@console/dynamic-plugin-sdk';
+import { isYAMLTemplate, getImpersonate } from '@console/dynamic-plugin-sdk';
+import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
+import type { CodeEditorProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
+import { ActionType, getOLSCodeBlock } from '@console/internal/reducers/ols';
+import { getActiveNamespace } from '@console/internal/reducers/ui';
+import type { RootState } from '@console/internal/redux';
+import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
+import { getBadgeFromType } from '@console/shared/src/components/badges/badge-factory';
 import { CodeEditor } from '@console/shared/src/components/editor/CodeEditor';
 import { CodeEditorSidebar } from '@console/shared/src/components/editor/CodeEditorSidebar';
-import { fold } from '@console/shared/src/components/editor/yaml-editor-utils';
+import { ToggleSidebarButton } from '@console/shared/src/components/editor/ToggleSidebarButton';
 import { downloadYaml } from '@console/shared/src/components/editor/yaml-download-utils';
-import { useFullscreen } from '@console/shared/src/hooks/useFullscreen';
-import {
-  isYAMLTemplate,
-  getImpersonate,
-  YAMLTemplate,
-  K8sResourceKind,
-} from '@console/dynamic-plugin-sdk';
-import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
-import { useFlag } from '@console/shared/src/hooks/useFlag';
-import { LazyManagedResourceSaveModalOverlay } from './modals';
-import { ReplaceCodeModal } from './modals/replace-code-modal';
-import { checkAccess } from './utils/rbac';
-import { Loading } from './utils/status-box';
-import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
-import { resourceObjPath, resourceListPathFromModel } from './utils/resource-link';
+import { fold } from '@console/shared/src/components/editor/yaml-editor-utils';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
-import type { CodeEditorProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import PageBody from '@console/shared/src/components/layout/PageBody';
+import { FLAGS, ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
+import { useFullscreen } from '@console/shared/src/hooks/useFullscreen';
+import { useResourceConnectionHandler } from '@console/shared/src/hooks/useResourceConnectionHandler';
+import { useResourceSidebarSamples } from '@console/shared/src/hooks/useResourceSidebarSamples';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
+import { ConsoleYAMLSampleModel } from '../models';
+import { getYAMLTemplates } from '../models/yaml-templates';
+import type {
+  AccessReviewResourceAttributes,
+  CodeEditorRef,
+  K8sModel,
+  K8sResourceCommon,
+} from '../module/k8s';
 import {
   referenceForModel,
   k8sCreate,
@@ -48,24 +52,17 @@ import {
   k8sList,
   referenceFor,
   groupVersionFor,
-  AccessReviewResourceAttributes,
-  CodeEditorRef,
-  K8sModel,
-  K8sResourceCommon,
 } from '../module/k8s';
-import { ConsoleYAMLSampleModel } from '../models';
-import { getYAMLTemplates } from '../models/yaml-templates';
 import { findOwner } from '../module/k8s/managed-by';
-import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 import { definitionFor } from '../module/k8s/swagger';
 import { ImportYAMLResults } from './import-yaml-results';
+import { LazyManagedResourceSaveModalOverlay } from './modals';
 import { EditYamlSettingsModal, useEditYamlSettings } from './modals/edit-yaml-settings-modal';
-import { CodeEditorControl } from '@patternfly/react-code-editor';
-import { ToggleSidebarButton } from '@console/shared/src/components/editor/ToggleSidebarButton';
-import { RootState } from '@console/internal/redux';
-import { getActiveNamespace } from '@console/internal/reducers/ui';
-import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { ErrorModal } from './modals/error-modal';
+import { ReplaceCodeModal } from './modals/replace-code-modal';
+import { checkAccess } from './utils/rbac';
+import { resourceObjPath, resourceListPathFromModel } from './utils/resource-link';
+import { Loading } from './utils/status-box';
 
 const generateObjToLoad = (
   templateExtensions: Parameters<typeof getYAMLTemplates>[0],
@@ -75,7 +72,7 @@ const generateObjToLoad = (
   namespace = 'default',
 ) => {
   const sampleObj: K8sResourceKind = safeLoad(
-    yaml ? yaml : getYAMLTemplates(templateExtensions).getIn([kind, id]),
+    yaml || getYAMLTemplates(templateExtensions).getIn([kind, id]),
   ) as K8sResourceKind;
   if (_.has(sampleObj.metadata, 'namespace')) {
     sampleObj.metadata.namespace = namespace;
@@ -175,7 +172,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
     yamlSamplesList?: K8sResourceCommon[];
   }>(watchResources);
 
-  const yamlSamplesList = resources.yamlSamplesList;
+  const { yamlSamplesList } = resources;
   const fireTelemetryEvent = useTelemetry();
   const postFormSubmissionCallback = useResourceConnectionHandler<K8sResourceCommon>();
   const [errors, setErrors] = useState<string[]>(null);
@@ -249,6 +246,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
     const results = [];
     for (const obj of objs) {
       try {
+        // eslint-disable-next-line no-await-in-loop
         const result = await k8sCreate(getModel(obj), obj);
         results.push({
           status: 'fulfilled',
@@ -698,7 +696,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
       return;
     }
 
-    //Run through client side validation for all resources
+    // Run through client side validation for all resources
     objs.forEach((obj) => {
       const validationError = validate(obj);
       if (validationError) {
@@ -708,7 +706,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
     });
 
     if (!hasErrors) {
-      //Check for duplicate name/kinds. ~ is not a valid name character, so use it to separate the fields
+      // Check for duplicate name/kinds. ~ is not a valid name character, so use it to separate the fields
       const filteredEntried = _.filter(objs, (obj) => !obj.metadata.generateName);
       const uniqueEntries = _.uniqBy(filteredEntried, (obj) =>
         [
@@ -750,7 +748,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
     downloadYaml(data);
   };
 
-  const getYamlContent_ = (id = 'default', yaml = '', kind = referenceForModel(props.model)) => {
+  const getYamlContent = (id = 'default', yaml = '', kind = referenceForModel(props.model)) => {
     try {
       const s = generateObjToLoad(templateExtensions, kind, id, yaml, props.obj.metadata.namespace);
       setSampleObj(s);
@@ -773,7 +771,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
   };
 
   const sanitizeYamlContent = (id, yaml, kind) => {
-    const contentObj = getYamlContent_(id, yaml, kind);
+    const contentObj = getYamlContent(id, yaml, kind);
     const sanitizedYaml = convertObjToYAMLString(contentObj);
     displayedVersion.current = _.get(contentObj, 'metadata.resourceVersion');
     return sanitizedYaml;
@@ -791,6 +789,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
   if (displayResults) {
     return (
       <ImportYAMLResults
+        // eslint-disable-next-line react/jsx-no-bind
         createResources={createResources}
         displayResults={setDisplayResults}
         importResources={resourceObjects}
@@ -893,9 +892,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
                     title={t('An error occurred')}
                     data-test="yaml-error"
                   >
-                    <div className="co-pre-line">
-                      {[...(errors ? errors : []), props.error].join('\n')}
-                    </div>
+                    <div className="co-pre-line">{[...(errors || []), props.error].join('\n')}</div>
                   </Alert>
                 )}
                 {success && (

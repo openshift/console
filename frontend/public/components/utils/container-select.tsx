@@ -1,19 +1,18 @@
-import * as _ from 'lodash';
-import { FC, Ref, useState } from 'react';
+import type { FC, Ref } from 'react';
+import { useState } from 'react';
+import type { MenuToggleElement, SelectProps } from '@patternfly/react-core';
 import {
   Divider,
   MenuToggle,
-  MenuToggleElement,
   Select,
   SelectGroup,
   SelectList,
   SelectOption,
-  SelectProps,
 } from '@patternfly/react-core';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-
 import { ContainerModel } from '@console/internal/models';
-import { ContainerSpec } from '@console/internal/module/k8s';
+import type { ContainerSpec } from '@console/internal/module/k8s';
 import { ResourceName } from './resource-icon';
 
 export const ContainerLabel: FC<ContainerLabelProps> = ({ name }) => (

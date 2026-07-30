@@ -1,7 +1,4 @@
 import type { FC, ReactNode, MouseEvent } from 'react';
-import * as _ from 'lodash';
-import { css } from '@patternfly/react-styles';
-import { RhUiEditIcon } from '@patternfly/react-icons';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -14,11 +11,14 @@ import {
   Split,
   SplitItem,
 } from '@patternfly/react-core';
+import { RhUiEditIcon } from '@patternfly/react-icons';
+import { css } from '@patternfly/react-styles';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-
-import { getPropertyDescription, K8sResourceKind, referenceFor } from '../../module/k8s';
-import { LinkifyExternal } from './link';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
+import type { K8sResourceKind } from '../../module/k8s';
+import { getPropertyDescription, referenceFor } from '../../module/k8s';
+import { LinkifyExternal } from './link';
 
 const PropertyPath: FC<{ kind: string; path: string | string[] }> = ({ kind, path }) => {
   const pathArray: string[] = _.toPath(path);
@@ -28,6 +28,7 @@ const PropertyPath: FC<{ kind: string; path: string | string[] }> = ({ kind, pat
       {pathArray.map((property, i) => {
         const isLast = i === pathArray.length - 1;
         return (
+          // eslint-disable-next-line react/no-array-index-key
           <BreadcrumbItem key={i} isActive={isLast}>
             {property}
           </BreadcrumbItem>

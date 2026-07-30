@@ -1,9 +1,5 @@
-import type { FC } from 'react';
-import * as _ from 'lodash';
-import { useState, useMemo, FormEvent } from 'react';
-import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import { useTranslation } from 'react-i18next';
-import { Base64 } from 'js-base64';
+import type { FC, FormEvent } from 'react';
+import { useState, useMemo } from 'react';
 import {
   ActionGroup,
   Button,
@@ -19,25 +15,30 @@ import {
   ModalVariant,
   ButtonVariant,
 } from '@patternfly/react-core';
+import { isBinary } from 'istextorbinary';
+import { Base64 } from 'js-base64';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate } from 'react-router';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
-import { k8sCreate, k8sUpdate, K8sResourceKind, referenceFor } from '../../../module/k8s';
-import { ButtonBar } from '../../utils/button-bar';
-import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
-import { resourceObjPath } from '../../utils/resource-link';
 import { SecretModel } from '../../../models';
-import { SecretFormType } from './types';
+import type { K8sResourceKind } from '../../../module/k8s';
+import { k8sCreate, k8sUpdate, referenceFor } from '../../../module/k8s';
+import { ButtonBar } from '../../utils/button-bar';
+import { resourceObjPath } from '../../utils/resource-link';
+import { SecretSubForm } from './SecretSubForm';
+import type { SecretFormType } from './types';
 import {
   toDefaultSecretType,
   determineSecretType,
   useSecretTitle,
   useSecretDescription,
 } from './utils';
-import { SecretSubForm } from './SecretSubForm';
-import { isBinary } from 'istextorbinary';
 
-export const SecretFormWrapper: FC<BaseEditSecretProps_> = (props) => {
+export const SecretFormWrapper: FC<BaseEditSecretProps> = (props) => {
   const { formType, isCreate, modal, onCancel } = props;
   const { t } = useTranslation('public');
   const navigate = useNavigate();
@@ -139,21 +140,23 @@ export const SecretFormWrapper: FC<BaseEditSecretProps_> = (props) => {
     (isCreate
       ? k8sCreate(SecretModel, newSecret)
       : k8sUpdate(SecretModel, newSecret, metadata.namespace, newSecret.metadata.name)
-    ).then(
-      (s) => {
-        setInProgress(false);
-        if (props.onSave) {
-          props.onSave(s.metadata.name);
-        }
-        if (!props.modal) {
-          navigate(resourceObjPath(s, referenceFor(s)));
-        }
-      },
-      (err) => {
-        setError(err.message);
-        setInProgress(false);
-      },
-    );
+    )
+      .then(
+        (s) => {
+          setInProgress(false);
+          if (props.onSave) {
+            props.onSave(s.metadata.name);
+          }
+          if (!props.modal) {
+            navigate(resourceObjPath(s, referenceFor(s)));
+          }
+        },
+        (err) => {
+          setError(err.message);
+          setInProgress(false);
+        },
+      )
+      .catch(() => {});
   };
 
   const renderBody = () => {
@@ -192,7 +195,7 @@ export const SecretFormWrapper: FC<BaseEditSecretProps_> = (props) => {
   };
 
   return modal ? (
-    <Modal isOpen={true} onClose={onCancel || cancel} title={title} variant={ModalVariant.medium}>
+    <Modal isOpen onClose={onCancel || cancel} title={title} variant={ModalVariant.medium}>
       <ModalHeader title={title} />
       <ModalBody>{renderBody()}</ModalBody>
       <ModalFooterWithAlerts errorMessage={error}>
@@ -239,7 +242,7 @@ export const SecretFormWrapper: FC<BaseEditSecretProps_> = (props) => {
   );
 };
 
-type BaseEditSecretProps_ = {
+type BaseEditSecretProps = {
   obj?: K8sResourceKind;
   fixed: any;
   kind?: string;

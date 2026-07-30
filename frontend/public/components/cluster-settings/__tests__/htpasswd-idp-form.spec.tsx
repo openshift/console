@@ -2,6 +2,7 @@ import {
   renderWithProviders,
   verifyInputField,
 } from '@console/shared/src/test-utils/unit-test-utils';
+import { AddHTPasswdPage } from '../htpasswd-idp-form';
 import {
   verifyIDPAddAndCancelButtons,
   verifyPageTitleAndSubtitle,
@@ -9,7 +10,6 @@ import {
   mockData,
   setupFileReaderMock,
 } from './test-utils';
-import { AddHTPasswdPage } from '../../cluster-settings/htpasswd-idp-form';
 
 describe('Add Identity Provider: HTPasswd', () => {
   const renderPage = () => {

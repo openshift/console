@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
-
 import { BuildModel, BuildConfigModel } from '../../models';
-import { k8sCreate } from './';
+import { k8sCreate } from '.';
+
 const BUILD_NUMBER_ANNOTATION = 'openshift.io/build.number';
 
 export enum BuildPhase {

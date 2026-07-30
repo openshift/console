@@ -1,31 +1,30 @@
 /* eslint-disable no-barrel-files/no-barrel-files */
 import { Base64 } from 'js-base64';
-import { action, ActionType as Action } from 'typesafe-actions';
 import * as _ from 'lodash';
-
-// FIXME(alecmerdler): Do not `import store`
-import store from '../redux';
-import { OverviewItem } from '@console/shared/src/types/resource';
-import {
-  ALL_NAMESPACES_KEY,
-  LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
-} from '@console/shared/src/constants/common';
-import { K8sResourceKind, PodKind, NodeKind } from '../module/k8s';
-import { detectFeatures } from './features';
-import { clearSSARFlags } from './flags';
-import { OverviewSpecialGroup } from '../components/overview/constants';
-import { setClusterID, setCreateProjectMessage, ActionType } from './common';
+import type { ActionType as Action } from 'typesafe-actions';
+import { action } from 'typesafe-actions';
 import {
   beginImpersonate,
   endImpersonate,
   getUser,
   getImpersonate,
 } from '@console/dynamic-plugin-sdk';
-import {
+import type {
   MetricValuesByName,
   NamespaceMetrics,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { DeprecatedOperatorWarning } from '@console/operator-lifecycle-manager/src/types';
+import type { DeprecatedOperatorWarning } from '@console/operator-lifecycle-manager/src/types';
+import {
+  ALL_NAMESPACES_KEY,
+  LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
+} from '@console/shared/src/constants/common';
+import type { OverviewItem } from '@console/shared/src/types/resource';
+import type { OverviewSpecialGroup } from '../components/overview/constants';
+import type { K8sResourceKind, PodKind, NodeKind } from '../module/k8s';
+import store from '../redux'; // FIXME(alecmerdler): Do not `import store`
+import { setClusterID, setCreateProjectMessage, ActionType } from './common';
+import { detectFeatures } from './features';
+import { clearSSARFlags } from './flags';
 
 export type { NamespaceMetrics } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
@@ -161,18 +160,18 @@ export const setActiveApplication = (application: string) => {
 };
 
 export const setActiveNamespace = (namespace: string = '') => {
-  namespace = namespace.trim();
+  const trimmedNamespace = namespace.trim();
   // make it noop when new active namespace is the same
   // otherwise users will get page refresh and cry about
   // broken direct links and bookmarks
-  if (namespace !== getActiveNamespace()) {
+  if (trimmedNamespace !== getActiveNamespace()) {
     // save last namespace in session storage (persisted only for current browser tab). Used to remember/restore if
     // "All Projects" was selected when returning to the list view (typically from details view) via breadcrumb or
     // sidebar navigation
-    sessionStorage.setItem(LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY, namespace);
+    sessionStorage.setItem(LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY, trimmedNamespace);
   }
 
-  return action(ActionType.SetActiveNamespace, { namespace });
+  return action(ActionType.SetActiveNamespace, { namespace: trimmedNamespace });
 };
 
 /**
@@ -181,7 +180,7 @@ export const setActiveNamespace = (namespace: string = '') => {
  * and "/" aren't allowed, so we base64 encode and replace illegal chars.
  */
 const encodeImpersonationValue = (value: string, textEncoder: TextEncoder): string => {
-  return Base64.encode(String.fromCharCode.apply(String, textEncoder.encode(value)))
+  return Base64.encode(String.fromCharCode(...textEncoder.encode(value)))
     .replace(/=/g, '_')
     .replace(/\//g, '-');
 };

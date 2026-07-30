@@ -6,12 +6,22 @@ import {
   Content,
   ContentVariants,
 } from '@patternfly/react-core';
-import { Link } from 'react-router';
 import { Trans, useTranslation } from 'react-i18next';
-import { useClusterVersion } from '@console/shared/src/hooks/useClusterVersion';
+import { Link } from 'react-router';
+import { usePluginInfo } from '@console/plugin-sdk/src/api/usePluginInfo';
 import { BlueArrowCircleUpIcon } from '@console/shared/src/components/status/icons';
 import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpgrade';
-import { usePluginInfo } from '@console/plugin-sdk/src/api/usePluginInfo';
+import { useClusterVersion } from '@console/shared/src/hooks/useClusterVersion';
+import redHatFedoraWatermarkImg from '../imgs/red-hat-fedora-watermark.svg';
+import redHatFedoraImg from '../imgs/red-hat-fedora.svg';
+import {
+  getClusterID,
+  getCurrentVersion,
+  getK8sGitVersion,
+  getOpenShiftVersion,
+  hasAvailableUpdates,
+} from '../module/k8s/cluster-settings';
+import { k8sVersion } from '../module/status';
 import { getBrandingDetails, MASTHEAD_TYPE, useCustomLogoURL } from './utils/branding';
 import { ReleaseNotesLink } from './utils/release-notes-link';
 import {
@@ -20,16 +30,6 @@ import {
   ServiceLevelText,
   ServiceLevelLoading,
 } from './utils/service-level';
-import { k8sVersion } from '../module/status';
-import {
-  getClusterID,
-  getCurrentVersion,
-  getK8sGitVersion,
-  getOpenShiftVersion,
-  hasAvailableUpdates,
-} from '../module/k8s/cluster-settings';
-import redHatFedoraImg from '../imgs/red-hat-fedora.svg';
-import redHatFedoraWatermarkImg from '../imgs/red-hat-fedora-watermark.svg';
 
 const DynamicPlugins: FC = () => {
   const { t } = useTranslation('public');

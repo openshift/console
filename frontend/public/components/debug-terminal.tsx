@@ -1,23 +1,23 @@
-import * as _ from 'lodash';
 import type { FC, ReactNode } from 'react';
 import { useState, useMemo, useEffect, useRef } from 'react';
-import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import { useParams, useLocation } from 'react-router';
 import { Alert } from '@patternfly/react-core';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { LoadingBox } from '@console/internal/components/utils/status-box';
-import { ConnectedPageHeading } from '@console/internal/components/utils/headings';
-import { ObjectMetadata, PodKind, k8sCreate, k8sKillByName } from '@console/internal/module/k8s';
+import { useParams, useLocation } from 'react-router';
 import { PodConnectLoader } from '@console/internal/components/pod';
+import { getBreadcrumbPath } from '@console/internal/components/utils/breadcrumbs';
+import { ConnectedPageHeading } from '@console/internal/components/utils/headings';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { LoadingBox } from '@console/internal/components/utils/status-box';
 import { PodModel } from '@console/internal/models';
+import type { ObjectMetadata, PodKind } from '@console/internal/module/k8s';
+import { k8sCreate, k8sKillByName } from '@console/internal/module/k8s';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { getDetachedSessions } from '@console/webterminal-plugin/src/redux/reducers/cloud-shell-selectors';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-
-import { resourcePath } from './utils/resource-link';
-import { getBreadcrumbPath } from '@console/internal/components/utils/breadcrumbs';
 import { isWindowsPod } from '../module/k8s/pods';
+import { resourcePath } from './utils/resource-link';
 
 const pickWorkloadAnnotations = (
   annotations: ObjectMetadata['annotations'],

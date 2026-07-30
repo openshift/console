@@ -1,7 +1,5 @@
 /* eslint-disable camelcase */
-import * as _ from 'lodash';
 import type { FC } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   FormGroup,
   FormHelperText,
@@ -13,11 +11,12 @@ import {
   Radio,
   TextInput,
 } from '@patternfly/react-core';
-
-import { SendResolvedAlertsCheckbox } from './send-resolved-alerts-checkbox';
-import { SaveAsDefaultCheckbox } from './save-as-default-checkbox';
-import type { FormProps, SubFormModule } from './receiver-form-props';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { AdvancedConfiguration } from './advanced-configuration';
+import type { FormProps, SubFormModule } from './receiver-form-props';
+import { SaveAsDefaultCheckbox } from './save-as-default-checkbox';
+import { SendResolvedAlertsCheckbox } from './send-resolved-alerts-checkbox';
 
 const GLOBAL_FIELDS = [
   'pagerduty_url',
@@ -246,7 +245,7 @@ const getInitialValues = (globals, receiverConfig) => {
   initValues.pagerdutyIntegrationKey = receiverConfig?.service_key || receiverConfig?.routing_key;
 
   GLOBAL_FIELDS.forEach((fld) => {
-    const configFieldName = fld.substring(fld.indexOf('_') + 1); //strip off leading 'pagerduty_' prefix
+    const configFieldName = fld.substring(fld.indexOf('_') + 1); // strip off leading 'pagerduty_' prefix
     initValues[fld] = _.get(receiverConfig, configFieldName, globals[fld]);
   });
 
@@ -277,7 +276,7 @@ const createReceiverConfig = (globals, formValues, receiverConfig) => {
   // Only save these props in formValues different from globals
   GLOBAL_FIELDS.forEach((fld) => {
     const formValue = formValues[fld];
-    const configFieldName = fld.substring(fld.indexOf('_') + 1); //strip off leading 'pagerduty_' prefix
+    const configFieldName = fld.substring(fld.indexOf('_') + 1); // strip off leading 'pagerduty_' prefix
     if (formValue !== globals[fld]) {
       if (fld === 'pagerduty_url' && formValues.pagerdutySaveAsDefault) {
         _.unset(receiverConfig, 'url'); // saving as global so unset in config

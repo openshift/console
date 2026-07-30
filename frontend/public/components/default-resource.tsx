@@ -1,58 +1,56 @@
-import * as _ from 'lodash';
 import type { ComponentProps, FC, ReactNode } from 'react';
 import { useMemo, useCallback } from 'react';
-import { JSONPath } from 'jsonpath-plus';
-import { useTranslation } from 'react-i18next';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
-import { PageComponentProps } from '@console/dynamic-plugin-sdk/src/extensions/horizontal-nav-tabs';
-import { getGroupVersionKindForResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
-import { useK8sModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sModel';
-import { useDetailsItemExtensionsForResource } from '@console/shared/src/hooks/useDetailsItemExtensionsForResource';
-import { ExtensionDetailsItem } from '@console/shared/src/components/details-page/ExtensionDetailsItem';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { Conditions } from './conditions';
-import { DetailsPage } from './factory/details';
-import { ListPage } from './factory/list-page';
-import type { TableProps } from './factory/table';
-import {
-  referenceFor,
-  K8sResourceKind,
-  CRDAdditionalPrinterColumn,
-  referenceForExtensionModel,
-  ExtensionK8sGroupModel,
-} from '../module/k8s';
-import { DetailsItem } from './utils/details-item';
-import { kindObj } from './utils/inject';
-import { navFactory } from './utils/horizontal-nav';
-import { ResourceLink } from './utils/resource-link';
-import { ResourceSummary } from './utils/details-page';
-import { SectionHeading } from './utils/headings';
-import { LoadingBox } from './utils/status-box';
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { RowProps, TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { useCRDAdditionalPrinterColumns } from '@console/shared/src/hooks/useCRDAdditionalPrinterColumns';
-import { AdditionalPrinterColumnValue } from '@console/shared/src/components/additional-printer-column/AdditionalPrinterColumnValue';
+import { JSONPath } from 'jsonpath-plus';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
 import {
   actionsCellProps,
   cellIsStickyProps,
   getNameCellProps,
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import {
+import type {
   ConsoleDataViewColumn,
   ConsoleDataViewRow,
 } from '@console/app/src/components/data-view/types';
-import { DASH } from '@console/shared/src/constants/ui';
-import {
-  isResourceActionProvider,
-  ResourceActionProvider,
-  useResolvedExtensions,
-  ResolvedExtension,
-} from '@console/dynamic-plugin-sdk';
+import type { ResourceActionProvider, ResolvedExtension } from '@console/dynamic-plugin-sdk';
+import { isResourceActionProvider, useResolvedExtensions } from '@console/dynamic-plugin-sdk';
+import type {
+  RowProps,
+  TableColumn,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { PageComponentProps } from '@console/dynamic-plugin-sdk/src/extensions/horizontal-nav-tabs';
+import { useK8sModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sModel';
+import { getGroupVersionKindForResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
-import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
 import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import { AdditionalPrinterColumnValue } from '@console/shared/src/components/additional-printer-column/AdditionalPrinterColumnValue';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import { ExtensionDetailsItem } from '@console/shared/src/components/details-page/ExtensionDetailsItem';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { DASH } from '@console/shared/src/constants/ui';
+import { useCRDAdditionalPrinterColumns } from '@console/shared/src/hooks/useCRDAdditionalPrinterColumns';
+import { useDetailsItemExtensionsForResource } from '@console/shared/src/hooks/useDetailsItemExtensionsForResource';
+import type {
+  K8sResourceKind,
+  CRDAdditionalPrinterColumn,
+  ExtensionK8sGroupModel,
+} from '../module/k8s';
+import { referenceFor, referenceForExtensionModel } from '../module/k8s';
+import { Conditions } from './conditions';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
+import type { TableProps } from './factory/table';
+import { DetailsItem } from './utils/details-item';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { kindObj } from './utils/inject';
+import { ResourceLink } from './utils/resource-link';
+import { LoadingBox } from './utils/status-box';
 
 const tableColumnInfo = [{ id: 'name' }, { id: 'namespace' }, { id: 'created' }, { id: 'actions' }];
 
@@ -365,7 +363,7 @@ export const DefaultList: FC<TableProps & { kinds: string[] }> = (props) => {
               resourceProviderExtensionsResolved,
             )
           }
-          hideColumnManagement={true}
+          hideColumnManagement
         />
       )}
     </>
@@ -378,7 +376,7 @@ export const DefaultPage: FC<Omit<ComponentProps<typeof ListPage>, 'ListComponen
     {...props}
     ListComponent={DefaultList}
     canCreate={props.canCreate ?? _.get(kindObj(props.kind), 'crd')}
-    omitFilterToolbar={true}
+    omitFilterToolbar
   />
 );
 DefaultPage.displayName = 'DefaultPage';

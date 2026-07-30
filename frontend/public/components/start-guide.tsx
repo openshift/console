@@ -1,21 +1,20 @@
 import type { FC, ComponentType } from 'react';
-import * as _ from 'lodash';
-import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { Button, ButtonVariant, Divider, EmptyStateVariant } from '@patternfly/react-core';
+import { RhStandardHandWavingIcon } from '@patternfly/react-icons';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-
+import { useActivePerspective } from '@console/dynamic-plugin-sdk';
+import { ExternalLinkButton } from '@console/shared/src/components/links/ExternalLinkButton';
 import { FLAGS } from '@console/shared/src/constants/common';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
-import { useActivePerspective } from '@console/dynamic-plugin-sdk';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
+import { useCreateNamespaceOrProjectModal } from '@console/shared/src/hooks/useCreateNamespaceOrProjectModal';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
+import { ProjectModel } from '../models';
+import type { K8sResourceKind } from '../module/k8s/types';
 import { openshiftHelpBase } from './utils/documentation';
 import { LinkifyExternal } from './utils/link';
 import { ConsoleEmptyState } from './utils/status-box';
-import { ProjectModel } from '../models';
-import { K8sResourceKind } from '../module/k8s/types';
-import { useCreateNamespaceOrProjectModal } from '@console/shared/src/hooks/useCreateNamespaceOrProjectModal';
-import { useFlag } from '@console/shared/src/hooks/useFlag';
-import { RhStandardHandWavingIcon } from '@patternfly/react-icons';
-import { ExternalLinkButton } from '@console/shared/src/components/links/ExternalLinkButton';
 
 export const OpenShiftGettingStarted: FC<OpenShiftGettingStartedProps> = () => {
   const { t } = useTranslation('public');

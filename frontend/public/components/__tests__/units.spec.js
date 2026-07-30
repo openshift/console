@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-
 import { units, validate, convertToBaseValue, humanizePercentage } from '../utils/units';
 
 describe('units', () => {
@@ -32,7 +31,7 @@ describe('units', () => {
       it(`${value} into ${expectedValue}/${expectedString}`, () => {
         const humanized = units.humanize(value, 'numeric', false);
         expect(humanized.value).toEqual(expectedValue);
-        expect(humanized.string).toEqual(expectedString); //string is always rounded
+        expect(humanized.string).toEqual(expectedString); // string is always rounded
       });
     };
 

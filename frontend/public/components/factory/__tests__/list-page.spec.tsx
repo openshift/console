@@ -1,15 +1,15 @@
 import type { FC } from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { TextFilter } from '@console/internal/components/factory/text-filter';
-import { getFilteredRows } from '@console/internal/components/factory/table-data-hook';
 import {
   ListPageWrapper,
   FireMan,
   MultiListPage,
 } from '@console/internal/components/factory/list-page';
-import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
+import { getFilteredRows } from '@console/internal/components/factory/table-data-hook';
+import { TextFilter } from '@console/internal/components/factory/text-filter';
 import * as k8sWatchHook from '@console/internal/components/utils/k8s-watch-hook';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResources: jest.fn(() => ({})),

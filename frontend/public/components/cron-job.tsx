@@ -1,52 +1,50 @@
 import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
-import type { RowFilter } from '@console/dynamic-plugin-sdk';
-import { useTranslation } from 'react-i18next';
-import type { TFunction } from 'i18next';
-import { DASH } from '@console/shared/src/constants/ui';
-import { getPodsForResource } from '@console/shared/src/utils/resource-utils';
-import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
-import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
-import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
-import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { DetailsPage } from './factory/details';
-import { ListPage, ListPageWrapper } from './factory/list-page';
-import {
-  CronJobKind,
-  K8sResourceCommon,
-  K8sResourceKind,
-  referenceForModel,
-  referenceFor,
-  TableColumn,
-  podPhaseFilterReducer,
-  PodKind,
-} from '../module/k8s';
-import { ContainerTable } from './utils/container-table';
-import { DetailsItem } from './utils/details-item';
-import { ResourceLink } from './utils/resource-link';
-import { useK8sWatchResources } from './utils/k8s-watch-hook';
-import { ResourceSummary } from './utils/details-page';
-import { SectionHeading } from './utils/headings';
-import { navFactory } from './utils/horizontal-nav';
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { ResourceEventStream } from './events';
-import { CronJobModel } from '../models';
-import { PodList } from './pod-list';
-import { JobsList } from './job';
-import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
+import type { TFunction } from 'i18next';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import {
   actionsCellProps,
   getNameCellProps,
   ConsoleDataView,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
+import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
+import type { RowFilter } from '@console/dynamic-plugin-sdk';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { DASH } from '@console/shared/src/constants/ui';
+import { getPodsForResource } from '@console/shared/src/utils/resource-utils';
+import { CronJobModel } from '../models';
+import type {
+  CronJobKind,
+  K8sResourceCommon,
+  K8sResourceKind,
+  TableColumn,
+  PodKind,
+} from '../module/k8s';
+import { referenceForModel, referenceFor, podPhaseFilterReducer } from '../module/k8s';
+import { ResourceEventStream } from './events';
+import { DetailsPage } from './factory/details';
+import { ListPage, ListPageWrapper } from './factory/list-page';
+import { JobsList } from './job';
+import { PodList } from './pod-list';
+import { ContainerTable } from './utils/container-table';
+import { DetailsItem } from './utils/details-item';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { useK8sWatchResources } from './utils/k8s-watch-hook';
+import { ResourceLink } from './utils/resource-link';
 import { LoadingBox } from './utils/status-box';
-import * as _ from 'lodash';
 
 const kind = referenceForModel(CronJobModel);
 
@@ -269,8 +267,8 @@ const CronJobPodsComponent: FC<CronJobPodsComponentProps> = ({ obj }) => {
         kinds={['Pods']}
         ListComponent={PodList}
         rowFilters={podFilters}
-        hideColumnManagement={true}
-        omitFilterToolbar={true}
+        hideColumnManagement
+        omitFilterToolbar
         loaded={loaded}
         loadError={loadError}
       />
@@ -310,8 +308,8 @@ const CronJobJobsComponent: FC<CronJobJobsComponentProps> = ({ obj }) => {
         flatten={() => flattenedJobs}
         kinds={['Jobs']}
         ListComponent={JobsList}
-        hideColumnManagement={true}
-        omitFilterToolbar={true}
+        hideColumnManagement
+        omitFilterToolbar
         loaded={loaded}
         loadError={loadError}
       />
@@ -408,7 +406,7 @@ const CronJobsList: FC<CronJobsListProps> = ({ data, loaded, ...props }) => {
         loaded={loaded}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
+        hideColumnManagement
         isResizable
         resetAllColumnWidths={resetAllColumnWidths}
       />
@@ -417,13 +415,7 @@ const CronJobsList: FC<CronJobsListProps> = ({ data, loaded, ...props }) => {
 };
 
 export const CronJobsPage: FC<CronJobsPageProps> = (props) => (
-  <ListPage
-    {...props}
-    ListComponent={CronJobsList}
-    kind={kind}
-    canCreate={true}
-    omitFilterToolbar={true}
-  />
+  <ListPage {...props} ListComponent={CronJobsList} kind={kind} canCreate omitFilterToolbar />
 );
 
 export const CronJobsDetailsPage: FC = (props) => {

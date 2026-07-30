@@ -1,10 +1,5 @@
 /* eslint-disable camelcase */
-import * as _ from 'lodash';
 import type { FC } from 'react';
-import { useTranslation } from 'react-i18next';
-
-import { SendResolvedAlertsCheckbox } from './send-resolved-alerts-checkbox';
-import type { FormProps, SubFormModule } from './receiver-form-props';
 import {
   FormGroup,
   FormHelperText,
@@ -12,7 +7,11 @@ import {
   HelperText,
   TextInput,
 } from '@patternfly/react-core';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { AdvancedConfiguration } from './advanced-configuration';
+import type { FormProps, SubFormModule } from './receiver-form-props';
+import { SendResolvedAlertsCheckbox } from './send-resolved-alerts-checkbox';
 
 const Form: FC<FormProps> = ({ formValues, dispatchFormChange }) => {
   const { t } = useTranslation('public');

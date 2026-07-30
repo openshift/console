@@ -6,12 +6,11 @@ import {
 } from '@patternfly/react-charts/victory';
 import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
-
-import { PrometheusGraph, PrometheusGraphLink } from './prometheus-graph';
-import { humanizePercentage } from '../utils/units';
 import { useRefWidth } from '../utils/ref-width-hook';
 import type { Humanize } from '../utils/types';
-import { DataPoint } from '.';
+import { humanizePercentage } from '../utils/units';
+import { PrometheusGraph, PrometheusGraphLink } from './prometheus-graph';
+import type { DataPoint } from '.';
 
 const DEFAULT_THRESHOLDS = [{ value: 67 }, { value: 92 }];
 

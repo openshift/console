@@ -1,11 +1,11 @@
 import type { FC } from 'react';
+import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import { CamelCaseWrap } from '@console/dynamic-plugin-sdk';
-import { ConsoleEmptyState } from './utils/status-box';
-import { LinkifyExternal } from './utils/link';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { ClusterServiceVersionCondition, K8sResourceCondition } from '../module/k8s';
-import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
+import type { ClusterServiceVersionCondition, K8sResourceCondition } from '../module/k8s';
+import { LinkifyExternal } from './utils/link';
+import { ConsoleEmptyState } from './utils/status-box';
 
 /**
  * Since ClusterServiceVersionCondition type is different from K8sResourceCondition, but InstallPlanCondition and SubscriptionCondition are identical, we will use the following enum to render the proper conditions table based on type.
@@ -32,11 +32,11 @@ export const Conditions: FC<ConditionsProps> = ({
     }
   };
 
-  const rows = (conditions as Array<K8sResourceCondition | ClusterServiceVersionCondition>)?.map?.(
+  const rows = (conditions as (K8sResourceCondition | ClusterServiceVersionCondition)[])?.map?.(
     (condition: K8sResourceCondition & ClusterServiceVersionCondition, i: number) => (
       <Tr
         data-test={type === ConditionTypes.ClusterServiceVersion ? condition.phase : condition.type}
-        key={i}
+        key={i} // eslint-disable-line react/no-array-index-key
       >
         {type === ConditionTypes.ClusterServiceVersion ? (
           <Td data-test={`condition[${i}].phase`}>

@@ -1,10 +1,10 @@
 import type { ComponentType } from 'react';
 import { memo, useMemo, useRef } from 'react';
-import { CellMeasurerCache, CellMeasurer } from 'react-virtualized';
+import type { OnSelect } from '@patternfly/react-table';
 import { VirtualTableBody } from '@patternfly/react-virtualized-extension';
 import type { Scroll } from '@patternfly/react-virtualized-extension/dist/esm/components/Virtualized/types';
-import { OnSelect } from '@patternfly/react-table';
-import {
+import { CellMeasurerCache, CellMeasurer } from 'react-virtualized';
+import type {
   K8sResourceCommon,
   TableColumn,
   RowProps,

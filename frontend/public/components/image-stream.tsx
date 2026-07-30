@@ -1,9 +1,5 @@
 import type { FC } from 'react';
 import { useMemo, Fragment, Suspense } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
-import * as _ from 'lodash';
-import * as semver from 'semver';
-import { Table as PfTable, Thead, Tr, Th, Tbody, Td } from '@patternfly/react-table';
 import {
   AlertVariant,
   Button,
@@ -15,15 +11,10 @@ import {
   Popover,
 } from '@patternfly/react-core';
 import { RhUiQuestionMarkCircleFillIcon } from '@patternfly/react-icons';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import {
-  K8sResourceKind,
-  K8sResourceKindReference,
-  referenceForModel,
-  TableColumn,
-} from '../module/k8s';
-import { DetailsPage } from './factory/details';
-import { ListPage } from './factory/list-page';
+import { Table as PfTable, Thead, Tr, Th, Tbody, Td } from '@patternfly/react-table';
+import * as _ from 'lodash';
+import { Trans, useTranslation } from 'react-i18next';
+import * as semver from 'semver';
 import {
   actionsCellProps,
   getNameCellProps,
@@ -31,24 +22,28 @@ import {
   nameCellProps,
   getLabelsColumnWidthStyleProp,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-
-import { ImageStreamModel } from '../models';
-import { DOC_URL_PODMAN } from './utils/documentation';
-import { CopyToClipboard } from './utils/copy-to-clipboard';
-import { ExpandableAlert } from './utils/alerts';
-import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
-import { SectionHeading } from './utils/headings';
-import { LabelList } from './utils/label-list';
-import { navFactory } from './utils/horizontal-nav';
-import { ResourceLink } from './utils/resource-link';
-import { ResourceSummary } from './utils/details-page';
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { ImageStreamTimeline, getImageStreamTagName } from './image-stream-timeline';
-import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
-import { LoadingBox } from './utils/status-box';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
+import { ImageStreamModel } from '../models';
+import type { K8sResourceKind, K8sResourceKindReference, TableColumn } from '../module/k8s';
+import { referenceForModel } from '../module/k8s';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
+import { ImageStreamTimeline, getImageStreamTagName } from './image-stream-timeline';
+import { ExpandableAlert } from './utils/alerts';
+import { CopyToClipboard } from './utils/copy-to-clipboard';
+import { ResourceSummary } from './utils/details-page';
+import { DOC_URL_PODMAN } from './utils/documentation';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { LabelList } from './utils/label-list';
+import { ResourceLink } from './utils/resource-link';
+import { LoadingBox } from './utils/status-box';
 
 const ImageStreamsReference: K8sResourceKindReference = 'ImageStream';
 const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';
@@ -274,9 +269,7 @@ const ImageStreamsDetails: FC<ImageStreamsDetailsProps> = ({ obj: imageStream })
               )}
               <DescriptionListGroup>
                 <DescriptionListTerm>{t('Image count')}</DescriptionListTerm>
-                <DescriptionListDescription>
-                  {imageCount ? imageCount : 0}
-                </DescriptionListDescription>
+                <DescriptionListDescription>{imageCount || 0}</DescriptionListDescription>
               </DescriptionListGroup>
             </ResourceSummary>
             <ExampleDockerCommandPopover imageStream={imageStream} />
@@ -454,7 +447,7 @@ const ImageStreamsList: FC<ImageStreamsListProps> = ({ data, loaded, ...props })
         loaded={loaded}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
+        hideColumnManagement
         isResizable
         resetAllColumnWidths={resetAllColumnWidths}
       />
@@ -472,8 +465,8 @@ export const ImageStreamsPage: FC<ImageStreamsPageProps> = (props) => {
       title={t('ImageStreams')}
       kind={kind}
       ListComponent={ImageStreamsList}
-      canCreate={true}
-      omitFilterToolbar={true}
+      canCreate
+      omitFilterToolbar
     />
   );
 };

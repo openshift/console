@@ -77,12 +77,13 @@ const convertBaseValueToUnits = (value, unitArray, divisor, initialUnit, preferr
     }
   }
 
+  let currentValue = value;
   let unit = units_.shift();
-  while (value >= divisor && units_.length > 0) {
-    value = value / divisor;
+  while (currentValue >= divisor && units_.length > 0) {
+    currentValue /= divisor;
     unit = units_.shift();
   }
-  return { value, unit };
+  return { value: currentValue, unit };
 };
 
 const convertValueWithUnitsToBaseValue = (value, unitArray, divisor) => {
@@ -111,16 +112,15 @@ const convertValueWithUnitsToBaseValue = (value, unitArray, divisor) => {
 
   // get the numeric value & prepare unit array for conversion
   units_ = units_.slice(startingUnitIndex);
-  value = value.substring(0, truncateStringAt);
-  value = _.toNumber(value);
+  let currentValue = _.toNumber(value.substring(0, truncateStringAt));
 
   let unit = units_.shift();
   while (units_.length > 0) {
-    value = value * divisor;
+    currentValue *= divisor;
     unit = units_.shift();
   }
 
-  return { value, unit };
+  return { value: currentValue, unit };
 };
 
 const getDefaultFractionDigits = (value) => {
@@ -140,35 +140,32 @@ const formatValue = (value, options) => {
   });
 
   // 2nd check converts -0 to 0.
-  if (!isFinite(value) || value === 0) {
-    value = 0;
+  let currentValue = value;
+  if (!Number.isFinite(currentValue) || currentValue === 0) {
+    currentValue = 0;
   }
-  return Intl.NumberFormat(locales, rest).format(value);
+  return Intl.NumberFormat(locales, rest).format(currentValue);
 };
 
-const round = (units.round = (value, fractionDigits) => {
-  if (!isFinite(value)) {
+const round = (value, fractionDigits) => {
+  if (!Number.isFinite(value)) {
     return 0;
   }
-  const multiplier = Math.pow(10, fractionDigits || getDefaultFractionDigits(value));
+  const multiplier = 10 ** (fractionDigits || getDefaultFractionDigits(value));
   return Math.round(value * multiplier) / multiplier;
-});
+};
+units.round = round;
 
-const humanize = (units.humanize = (
-  value,
-  typeName,
-  useRound = false,
-  initialUnit,
-  preferredUnit,
-) => {
+const humanize = (value, typeName, useRound = false, initialUnit, preferredUnit) => {
   const type = getType(typeName);
 
-  if (!isFinite(value) || value < 0) {
-    value = 0;
+  let currentValue = value;
+  if (!Number.isFinite(currentValue) || currentValue < 0) {
+    currentValue = 0;
   }
 
   let converted = convertBaseValueToUnits(
-    value,
+    currentValue,
     type.units,
     type.divisor,
     initialUnit,
@@ -193,7 +190,8 @@ const humanize = (units.humanize = (
     unit: converted.unit,
     value: converted.value,
   };
-});
+};
+units.humanize = humanize;
 
 const formatPercentage = (value, options) => {
   const { locales, ...rest } = _.defaults(
@@ -233,13 +231,14 @@ export const humanizeCpuCores = (v) => {
 };
 export const humanizePercentage = (value) => {
   // 2nd check converts -0 to 0.
-  if (!isFinite(value) || value === 0) {
-    value = 0;
+  let currentValue = value;
+  if (!Number.isFinite(currentValue) || currentValue === 0) {
+    currentValue = 0;
   }
   return {
-    string: formatPercentage(value / 100),
+    string: formatPercentage(currentValue / 100),
     unit: '%',
-    value: round(value, 1),
+    value: round(currentValue, 1),
   };
 };
 
@@ -250,7 +249,8 @@ units.dehumanize = (value, typeName) => {
 
 validate.split = (value) => {
   const index = value.search(/([a-zA-Z]+)/g);
-  let number, unit;
+  let number;
+  let unit;
   if (index === -1) {
     number = value;
   } else {
@@ -273,7 +273,7 @@ const validateNumber = (float = '') => {
   if (float < 0) {
     return 'must be positive';
   }
-  if (!isFinite(float)) {
+  if (!Number.isFinite(Number(float))) {
     return 'must be a number';
   }
 };

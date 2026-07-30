@@ -1,35 +1,31 @@
 import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
-import * as _ from 'lodash';
-import { useTranslation } from 'react-i18next';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import {
-  K8sResourceKindReference,
-  K8sResourceKind,
-  referenceForModel,
-  TableColumn,
-} from '../module/k8s';
-import { LimitRangeModel } from '../models';
-import { DetailsPage } from './factory/details';
-import { ListPage } from './factory/list-page';
-import { navFactory } from './utils/horizontal-nav';
-import { SectionHeading } from './utils/headings';
-import { ResourceLink } from './utils/resource-link';
-import { ResourceSummary } from './utils/details-page';
-import { LoadingBox } from './utils/status-box';
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { Grid, GridItem } from '@patternfly/react-core';
 import { Table, Thead, Tbody, Tr, Th, Td } from '@patternfly/react-table';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import {
   ConsoleDataView,
   getNameCellProps,
   actionsCellProps,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import { DASH } from '@console/shared/src/constants/ui';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { DASH } from '@console/shared/src/constants/ui';
+import { LimitRangeModel } from '../models';
+import type { K8sResourceKindReference, K8sResourceKind, TableColumn } from '../module/k8s';
+import { referenceForModel } from '../module/k8s';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { ResourceLink } from './utils/resource-link';
+import { LoadingBox } from './utils/status-box';
 
 const LimitRangeReference: K8sResourceKindReference = LimitRangeModel.kind;
 
@@ -131,7 +127,7 @@ const LimitRangeList: FC<{ data: K8sResourceKind[]; loaded: boolean }> = (props)
         label={LimitRangeModel.labelPlural}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
+        hideColumnManagement
         isResizable
         resetAllColumnWidths={resetAllColumnWidths}
       />
@@ -144,8 +140,8 @@ export const LimitRangeListPage: FC<LimitRangeListPageProps> = (props) => (
     {...props}
     kind={LimitRangeReference}
     ListComponent={LimitRangeList}
-    canCreate={true}
-    omitFilterToolbar={true}
+    canCreate
+    omitFilterToolbar
   />
 );
 

@@ -1,13 +1,13 @@
 import type { ReactNode, ComponentProps, FC } from 'react';
 import { useState } from 'react';
-import * as _ from 'lodash';
+import { ClipboardCopyButton } from '@patternfly/react-core';
+import { css } from '@patternfly/react-styles';
 import Linkify from 'linkify-react/dist/linkify-react.mjs';
 import type { IntermediateRepresentation, Opts } from 'linkifyjs';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { ClipboardCopyButton } from '@patternfly/react-core';
-import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
-import { css } from '@patternfly/react-styles';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 
 // Kubernetes "dns-friendly" names match
 // [a-z0-9]([-a-z0-9]*[a-z0-9])?  and are 63 or fewer characters
@@ -38,8 +38,8 @@ export const namespacedPrefixes = [
 export const stripBasePath = (path: string): string => path.replace(basePathPattern, '/');
 
 export const getNamespace = (path: string): string => {
-  path = stripBasePath(path);
-  const split = path.split('/').filter((x) => x);
+  const strippedPath = stripBasePath(path);
+  const split = strippedPath.split('/').filter((x) => x);
 
   if (split[1] === 'all-namespaces') {
     return ALL_NAMESPACES_KEY;
@@ -47,8 +47,10 @@ export const getNamespace = (path: string): string => {
 
   let ns: string;
   if (split[1] === 'cluster' && ['namespaces', 'projects'].includes(split[2]) && split[3]) {
+    // eslint-disable-next-line prefer-destructuring
     ns = split[3];
   } else if (split[1] === 'ns' && split[2]) {
+    // eslint-disable-next-line prefer-destructuring
     ns = split[2];
   } else {
     return;

@@ -1,15 +1,15 @@
 /* eslint-disable no-barrel-files/no-barrel-files */
 import type { ReactNode, FC } from 'react';
 import { connect } from 'react-redux';
-import { getName, getNamespace } from '@console/shared/src/selectors/common';
+import type { ImpersonateKind } from '@console/dynamic-plugin-sdk';
 import {
   checkAccess,
   impersonateStateToProps,
-  ImpersonateKind,
   useAccessReviewAllowed,
   useAccessReview as useAccReview,
 } from '@console/dynamic-plugin-sdk';
-import {
+import { getName, getNamespace } from '@console/shared/src/selectors/common';
+import type {
   AccessReviewResourceAttributes,
   K8sKind,
   K8sResourceKind,
@@ -40,7 +40,7 @@ type RequireCreatePermissionProps = RequireCreatePermissionOwnProps & {
   impersonate?: ImpersonateKind;
 };
 
-const RequireCreatePermission_: FC<RequireCreatePermissionProps> = ({
+const InnerRequireCreatePermission: FC<RequireCreatePermissionProps> = ({
   model,
   namespace,
   impersonate,
@@ -62,7 +62,7 @@ export const RequireCreatePermission = connect<
   { impersonate?: ImpersonateKind },
   {},
   RequireCreatePermissionOwnProps
->(impersonateStateToProps)(RequireCreatePermission_);
+>(impersonateStateToProps)(InnerRequireCreatePermission);
 
 RequireCreatePermission.displayName = 'RequireCreatePermission';
 

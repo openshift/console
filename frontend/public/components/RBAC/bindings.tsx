@@ -1,9 +1,5 @@
 import type { FC } from 'react';
-import * as _ from 'lodash';
 import { useMemo, useCallback, useState, useEffect, Suspense } from 'react';
-import { useParams, useLocation, useNavigate } from 'react-router';
-import { useTranslation } from 'react-i18next';
-import i18next from 'i18next';
 import {
   ActionGroup,
   Button,
@@ -13,29 +9,11 @@ import {
   Radio,
   TextInput,
 } from '@patternfly/react-core';
-import { ListPageBody } from '@console/dynamic-plugin-sdk';
-import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import { FLAGS } from '@console/shared/src/constants/common';
-import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
-import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
-import { useFlag } from '@console/shared/src/hooks/useFlag';
-import { DASH } from '@console/shared/src/constants/ui';
-import { ClusterRoleBindingModel, RoleBindingModel } from '../../models';
-import {
-  ClusterRoleBindingKind,
-  getQN,
-  k8sCreate,
-  k8sPatch,
-  referenceFor,
-  RoleBindingKind,
-  Subject,
-  TableColumn,
-} from '../../module/k8s';
-import type { MultiListPageProps } from '../factory/list-page';
-import ListPageHeader from '../factory/ListPage/ListPageHeader';
-import { ListPageCreateLink } from '../factory/ListPage/ListPageCreate';
+import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
+import i18next from 'i18next';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { useParams, useLocation, useNavigate } from 'react-router';
 import {
   ConsoleDataView,
   initialFiltersDefault,
@@ -43,21 +21,40 @@ import {
   actionsCellProps,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
-import { GetDataViewRows, ResourceFilters } from '@console/app/src/components/data-view/types';
+import type { GetDataViewRows, ResourceFilters } from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+import { ListPageBody } from '@console/dynamic-plugin-sdk';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { FLAGS } from '@console/shared/src/constants/common';
+import { DASH } from '@console/shared/src/constants/ui';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
+import { getQueryArgument } from '@console/shared/src/hooks/useQueryParamsMutator';
+import { ClusterRoleBindingModel, RoleBindingModel } from '../../models';
+import type {
+  ClusterRoleBindingKind,
+  RoleBindingKind,
+  Subject,
+  TableColumn,
+} from '../../module/k8s';
+import { getQN, k8sCreate, k8sPatch, referenceFor } from '../../module/k8s';
+import { flagPending } from '../../reducers/features';
+import type { MultiListPageProps } from '../factory/list-page';
+import { ListPageCreateLink } from '../factory/ListPage/ListPageCreate';
+import ListPageHeader from '../factory/ListPage/ListPageHeader';
 import { tableFilters } from '../factory/table-filters';
 import { ButtonBar } from '../utils/button-bar';
-import { getQueryArgument } from '@console/shared/src/hooks/useQueryParamsMutator';
 import { kindObj } from '../utils/inject';
+import { useK8sWatchResource, useK8sWatchResources } from '../utils/k8s-watch-hook';
 import type { ListDropdownProps } from '../utils/list-dropdown';
 import { ListDropdown, NsDropdown } from '../utils/list-dropdown';
-import { ResourceLink, resourceObjPath } from '../utils/resource-link';
-import { ResourceName } from '../utils/resource-icon';
-import { StatusBox, LoadingBox } from '../utils/status-box';
 import { useAccessReview } from '../utils/rbac';
-import { flagPending } from '../../reducers/features';
-import { useK8sWatchResource, useK8sWatchResources } from '../utils/k8s-watch-hook';
+import { ResourceName } from '../utils/resource-icon';
+import { ResourceLink, resourceObjPath } from '../utils/resource-link';
+import { StatusBox, LoadingBox } from '../utils/status-box';
 
 // Split each binding into one row per subject
 export const flatten = (resources): BindingKind[] =>
@@ -186,7 +183,7 @@ const BindingKebab: FC<BindingProps> = ({ binding }) => {
 };
 
 const RoleLink: FC<BindingProps> = ({ binding }) => {
-  const kind = binding.roleRef.kind;
+  const { kind } = binding.roleRef;
 
   // Cluster Roles have no namespace and for Roles, the Role's namespace matches the Role Binding's namespace
   const ns = kind === 'ClusterRole' ? undefined : binding.metadata.namespace;
@@ -325,6 +322,7 @@ const BindingsList: FC<BindingsListTableProps> = (props) => {
         if (filtersMap[filterKey]) {
           return filtersMap[filterKey](filterValue, binding);
         }
+        return true;
       });
     });
   }, [data, staticFilters]);
@@ -341,7 +339,7 @@ const BindingsList: FC<BindingsListTableProps> = (props) => {
         additionalFilterNodes={additionalFilterNodes}
         matchesAdditionalFilters={matchesAdditionalFilters}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
+        hideColumnManagement
         isResizable
         resetAllColumnWidths={resetAllColumnWidths}
       />
@@ -598,19 +596,21 @@ const BaseEditRoleBinding: FC<BaseEditRoleBindingProps> = (props) => {
             value: subject,
           },
         ])
-    ).then(
-      (obj) => {
-        setInProgress(false);
-        if (metadata.namespace) {
-          props.setActiveNamespace(metadata.namespace);
-        }
-        navigate(resourceObjPath(obj, referenceFor(obj)));
-      },
-      (err) => {
-        setError(err.message);
-        setInProgress(false);
-      },
-    );
+    )
+      .then(
+        (obj) => {
+          setInProgress(false);
+          if (metadata.namespace) {
+            props.setActiveNamespace(metadata.namespace);
+          }
+          navigate(resourceObjPath(obj, referenceFor(obj)));
+        },
+        (err) => {
+          setError(err.message);
+          setInProgress(false);
+        },
+      )
+      .catch(() => {});
   };
 
   const RoleDropdown: FC<RoleDropdownProps> =
@@ -618,7 +618,7 @@ const BaseEditRoleBinding: FC<BaseEditRoleBindingProps> = (props) => {
 
   const title = `${props.titleVerbAndKind}`;
 
-  const isSubjectDisabled = fixed?.subjectRef?.subjectName ? true : false;
+  const isSubjectDisabled = !!fixed?.subjectRef?.subjectName;
 
   const bindingKinds = [
     {
@@ -813,7 +813,7 @@ export const CreateRoleBinding: FC = () => {
       setActiveNamespace={setActiveNamespace}
       metadata={metadata}
       fixed={fixed}
-      isCreate={true}
+      isCreate
       titleVerbAndKind={t('Create RoleBinding')}
     />
   );
@@ -895,7 +895,7 @@ export const CopyRoleBinding: FC<EditRoleBindingProps> = ({ kind }) => {
       loadError={loadError}
       fixedKeys={['kind']}
       subjectIndex={getSubjectIndex()}
-      isCreate={true}
+      isCreate
       titleVerbAndKind={t('Duplicate RoleBinding')}
     />
   );

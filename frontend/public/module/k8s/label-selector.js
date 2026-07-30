@@ -4,7 +4,7 @@
  * Converted from Angular based  "kubernetes-label-selector"
  *    git://github.com/kubernetes-ui/label-selector.git
  *    author: Jessica Forrester <jforrest@redhat.com>
- **/
+ * */
 import * as _ from 'lodash';
 // selector (optional) - the JSON format as returned by k8s API, will also
 //      handle {key: null} as the key exists operator (not currently returned
@@ -92,15 +92,19 @@ export class LabelSelector {
       delete this._conjuncts[conjunct];
     }
   }
+
   clearConjuncts() {
     this._conjuncts = {};
   }
+
   isEmpty() {
     return _.isEmpty(this._conjuncts);
   }
+
   each(fn) {
     _.forEach(this._conjuncts, fn);
   }
+
   select(resources) {
     // If passed an array, return an array.
     if (_.isArray(resources)) {
@@ -109,6 +113,7 @@ export class LabelSelector {
     // Otherwise handle it as a map.
     return _.pickBy(resources, _.bind(this.matches, this));
   }
+
   matchesLabels(labels) {
     if (this.isEmpty()) {
       return this._emptySelectsAll;
@@ -153,6 +158,7 @@ export class LabelSelector {
     }
     return true;
   }
+
   matches(resource) {
     if (!resource) {
       return false;
@@ -160,9 +166,11 @@ export class LabelSelector {
     const labels = resource.metadata?.labels || {};
     return this.matchesLabels(labels);
   }
+
   hasConjunct(conjunct) {
     return !!this._conjuncts[this._getIdForConjunct(conjunct)];
   }
+
   findConjunctsMatching(operator, key) {
     return _.pickBy(
       this._conjuncts,
@@ -172,6 +180,7 @@ export class LabelSelector {
       }),
     );
   }
+
   // Test whether this label selector covers the given selector
   covers(selector) {
     if (this.isEmpty()) {
@@ -246,7 +255,8 @@ export class LabelSelector {
     let conjunctString = conjunct.key;
     if (conjunct.operator === 'exists') {
       return `${conjunctString} exists`;
-    } else if (conjunct.operator === 'does not exist') {
+    }
+    if (conjunct.operator === 'does not exist') {
       return `${conjunctString} does not exist`;
     }
     if (conjunct.operator === 'not in') {

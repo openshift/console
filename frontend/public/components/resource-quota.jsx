@@ -1,46 +1,4 @@
 import { useMemo, Suspense } from 'react';
-import * as _ from 'lodash';
-import { useParams, Link } from 'react-router';
-import { Table as PfTable, Thead, Tbody, Tr, Th, Td } from '@patternfly/react-table';
-import {
-  RhUiResourcesEmptyIcon,
-  RhUiResourcesAlmostEmptyIcon,
-  RhUiResourcesAlmostFullIcon,
-  RhUiResourcesFullIcon,
-  RhUiUnknownIcon,
-} from '@patternfly/react-icons';
-import { Trans, useTranslation } from 'react-i18next';
-import AppliedClusterResourceQuotaCharts from '@console/app/src/components/resource-quota/AppliedClusterResourceQuotaCharts';
-import ResourceQuotaCharts from '@console/app/src/components/resource-quota/ResourceQuotaCharts';
-import ClusterResourceQuotaCharts from '@console/app/src/components/resource-quota/ClusterResourceQuotaCharts';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-
-import { FLAGS } from '@console/shared/src/constants/common';
-import { useFlag } from '@console/shared/src/hooks/useFlag';
-import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
-import { DASH } from '@console/shared/src/constants/ui';
-import { DetailsPage, MultiListPage } from './factory';
-import { SectionHeading } from './utils/headings';
-import { navFactory } from './utils/horizontal-nav';
-import { ResourceLink } from './utils/resource-link';
-import { ResourceSummary } from './utils/details-page';
-import { convertToBaseValue } from './utils/units';
-import { FieldLevelHelp } from './utils/field-level-help';
-import { useAccessReview } from './utils/rbac';
-import { LabelList } from './utils/label-list';
-import { Selector } from './utils/selector';
-import { DetailsItem } from './utils/details-item';
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { connectToFlags } from '../reducers/connectToFlags';
-import { flagPending } from '../reducers/features';
-import { LoadingBox } from './utils/status-box';
-import { referenceFor, referenceForModel } from '../module/k8s';
-import {
-  AppliedClusterResourceQuotaModel,
-  ResourceQuotaModel,
-  ClusterResourceQuotaModel,
-} from '../models';
-import { getUsedPercentage } from '@console/app/src/components/resource-quota/utils';
 import {
   DescriptionList,
   DescriptionListDescription,
@@ -50,14 +8,55 @@ import {
   GridItem,
 } from '@patternfly/react-core';
 import {
+  RhUiResourcesEmptyIcon,
+  RhUiResourcesAlmostEmptyIcon,
+  RhUiResourcesAlmostFullIcon,
+  RhUiResourcesFullIcon,
+  RhUiUnknownIcon,
+} from '@patternfly/react-icons';
+import { Table as PfTable, Thead, Tbody, Tr, Th, Td } from '@patternfly/react-table';
+import * as _ from 'lodash';
+import { Trans, useTranslation } from 'react-i18next';
+import { useParams, Link } from 'react-router';
+import {
   ConsoleDataView,
   getNameCellProps,
   actionsCellProps,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import AppliedClusterResourceQuotaCharts from '@console/app/src/components/resource-quota/AppliedClusterResourceQuotaCharts';
+import ClusterResourceQuotaCharts from '@console/app/src/components/resource-quota/ClusterResourceQuotaCharts';
+import ResourceQuotaCharts from '@console/app/src/components/resource-quota/ResourceQuotaCharts';
+import { getUsedPercentage } from '@console/app/src/components/resource-quota/utils';
 import { useIsKubevirtPluginActive } from '@console/app/src/utils/kubevirt';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
+import { FLAGS } from '@console/shared/src/constants/common';
+import { DASH } from '@console/shared/src/constants/ui';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
+import {
+  AppliedClusterResourceQuotaModel,
+  ResourceQuotaModel,
+  ClusterResourceQuotaModel,
+} from '../models';
+import { referenceFor, referenceForModel } from '../module/k8s';
+import { connectToFlags } from '../reducers/connectToFlags';
+import { flagPending } from '../reducers/features';
+import { DetailsPage, MultiListPage } from './factory';
+import { DetailsItem } from './utils/details-item';
+import { ResourceSummary } from './utils/details-page';
+import { FieldLevelHelp } from './utils/field-level-help';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { LabelList } from './utils/label-list';
+import { useAccessReview } from './utils/rbac';
+import { ResourceLink } from './utils/resource-link';
+import { Selector } from './utils/selector';
+import { LoadingBox } from './utils/status-box';
+import { convertToBaseValue } from './utils/units';
 
 const isClusterQuota = (quota) => !quota.metadata.namespace;
 
@@ -601,7 +600,7 @@ const ResourceQuotasList = (props) => {
         getDataViewRows={(dvData, dvColumns) =>
           getResourceQuotaDataViewRows(dvData, dvColumns, namespace)
         }
-        hideColumnManagement={true}
+        hideColumnManagement
         isResizable
         resetAllColumnWidths={resetAllColumnWidths}
       />
@@ -684,7 +683,7 @@ const AppliedClusterResourceQuotasList = (props) => {
         getDataViewRows={(dvData, dvColumns) =>
           getAppliedClusterResourceQuotaDataViewRows(dvData, dvColumns, namespace)
         }
-        hideColumnManagement={true}
+        hideColumnManagement
         isResizable
         resetAllColumnWidths={resetAllColumnWidths}
       />
@@ -759,7 +758,7 @@ export const ResourceQuotasPage = connectToFlags(FLAGS.OPENSHIFT)(
     };
     return (
       <MultiListPage
-        canCreate={true}
+        canCreate
         createAccessReview={accessReview}
         createButtonText={t('Create ResourceQuota')}
         createProps={{ to: `/k8s/ns/${createNS}/resourcequotas/~new` }}
@@ -797,7 +796,7 @@ export const ResourceQuotasPage = connectToFlags(FLAGS.OPENSHIFT)(
         rowFilters={rowFilters}
         mock={mock}
         showTitle={showTitle}
-        omitFilterToolbar={true}
+        omitFilterToolbar
       />
     );
   },
@@ -824,7 +823,7 @@ export const AppliedClusterResourceQuotasPage = ({ namespace, mock, showTitle })
       title={t(AppliedClusterResourceQuotaModel.labelPluralKey)}
       mock={mock}
       showTitle={showTitle}
-      omitFilterToolbar={true}
+      omitFilterToolbar
     />
   );
 };

@@ -1,17 +1,15 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import * as _ from 'lodash';
-import { connect } from 'react-redux';
-
 import { Divider, ButtonVariant } from '@patternfly/react-core';
-import { k8sPatch } from '../../module/k8s';
-import { RoleModel, ClusterRoleModel } from '../../models';
-import { Kebab } from '../utils/kebab';
-import { EmptyBox } from '../utils/status-box';
-import { ResourceIcon } from '../utils/resource-icon';
-
-import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
-import { useTranslation } from 'react-i18next';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
+import { RoleModel, ClusterRoleModel } from '../../models';
+import { k8sPatch } from '../../module/k8s';
+import { Kebab } from '../utils/kebab';
+import { ResourceIcon } from '../utils/resource-icon';
+import { EmptyBox } from '../utils/status-box';
 
 export const RulesList = ({ rules, name, namespace }) => {
   const { t } = useTranslation('public');
@@ -29,7 +27,9 @@ export const RulesList = ({ rules, name, namespace }) => {
       </Thead>
       <Tbody>
         {rules.map((rule, i) => (
+          // eslint-disable-next-line react/no-array-index-key
           <Tr key={i}>
+            {/* eslint-disable-next-line no-use-before-define */}
             <Rule {...rule} name={name} namespace={namespace} i={i} />
           </Tr>
         ))}
@@ -83,7 +83,7 @@ const Resources = connect(({ k8s }) => ({ allModels: k8s.getIn(['RESOURCES', 'mo
     const { t } = useTranslation('public');
 
     let allResources = [];
-    resources &&
+    if (resources) {
       _.each([...new Set(resources)].sort(), (r) => {
         if (r === '') {
           return false;
@@ -106,6 +106,7 @@ const Resources = connect(({ k8s }) => ({ allModels: k8s.getIn(['RESOURCES', 'mo
           </span>,
         );
       });
+    }
 
     if (nonResourceURLs && nonResourceURLs.length) {
       if (allResources.length) {
@@ -127,7 +128,7 @@ const Resources = connect(({ k8s }) => ({ allModels: k8s.getIn(['RESOURCES', 'mo
           </div>,
         );
       });
-      allResources.push.apply(allResources, URLs);
+      allResources.push(...URLs);
     }
     return <div className="rbac-rule-resources">{allResources}</div>;
   },

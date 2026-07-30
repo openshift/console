@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useCallback, useState } from 'react';
-import { UseURLPoll } from '@console/dynamic-plugin-sdk/src/api/internal-types';
+import type { UseURLPoll } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { usePoll } from '@console/shared/src/hooks/usePoll';
 import { useSafeFetch } from './safe-fetch-hook';
 
@@ -17,7 +17,7 @@ export const useURLPoll: UseURLPoll = <R>(
   const safeFetch = useSafeFetch();
   const tick = useCallback(() => {
     if (url) {
-      safeFetch(url)
+      return safeFetch(url)
         .then((data) => {
           setResponse(data);
           setError(null);
@@ -31,9 +31,8 @@ export const useURLPoll: UseURLPoll = <R>(
           }
         })
         .finally(() => setLoading(false));
-    } else {
-      setLoading(false);
     }
+    setLoading(false);
   }, [url]);
 
   usePoll(tick, delay, ...dependencies);

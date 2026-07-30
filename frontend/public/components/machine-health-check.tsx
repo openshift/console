@@ -1,35 +1,34 @@
 import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
-import * as _ from 'lodash';
-import { useTranslation } from 'react-i18next';
-
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { MachineHealthCheckModel, MachineModel } from '../models';
-import { K8sResourceKind, MachineHealthCheckKind } from '../module/k8s/types';
-import { referenceForModel } from '../module/k8s/k8s';
-import { DetailsPage } from './factory/details';
-import { ListPage } from './factory/list-page';
-import { DASH } from '@console/shared/src/constants/ui';
-import { DetailsItem } from './utils/details-item';
-import { ResourceSummary } from './utils/details-page';
-import { EmptyBox, LoadingBox } from './utils/status-box';
-import { ResourceLink } from './utils/resource-link';
-import { SectionHeading } from './utils/headings';
-import { Selector } from './utils/selector';
-import { navFactory } from './utils/horizontal-nav';
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 import { Table, Thead, Tbody, Tr, Th, Td } from '@patternfly/react-table';
-import { TableColumn } from '@console/dynamic-plugin-sdk';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import {
   actionsCellProps,
   getNameCellProps,
   ConsoleDataView,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+import type { TableColumn } from '@console/dynamic-plugin-sdk';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { DASH } from '@console/shared/src/constants/ui';
+import { MachineHealthCheckModel, MachineModel } from '../models';
+import { referenceForModel } from '../module/k8s/k8s';
+import type { K8sResourceKind, MachineHealthCheckKind } from '../module/k8s/types';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
+import { DetailsItem } from './utils/details-item';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { ResourceLink } from './utils/resource-link';
+import { Selector } from './utils/selector';
+import { EmptyBox, LoadingBox } from './utils/status-box';
 
 const machineHealthCheckReference = referenceForModel(MachineHealthCheckModel);
 
@@ -137,7 +136,7 @@ const MachineHealthCheckList: FC<MachineHealthCheckListProps> = ({
         loadError={loadError}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
+        hideColumnManagement
         isResizable
         resetAllColumnWidths={resetAllColumnWidths}
       />
@@ -150,7 +149,7 @@ const UnhealthyConditionsTable: FC<{ obj: K8sResourceKind }> = ({ obj }) => {
   return _.isEmpty(obj.spec.unhealthyConditions) ? (
     <EmptyBox label={t('Unhealthy conditions')} />
   ) : (
-    <Table variant="compact" borders={true}>
+    <Table variant="compact" borders>
       <Thead>
         <Tr>
           <Th>{t('Type')}</Th>
@@ -159,8 +158,8 @@ const UnhealthyConditionsTable: FC<{ obj: K8sResourceKind }> = ({ obj }) => {
         </Tr>
       </Thead>
       <Tbody>
-        {obj.spec.unhealthyConditions.map(({ status, timeout, type }, i: number) => (
-          <Tr key={i}>
+        {obj.spec.unhealthyConditions.map(({ status, timeout, type }) => (
+          <Tr key={`${type}-${status}`}>
             <Td>{type}</Td>
             <Td>{status}</Td>
             <Td>{timeout}</Td>
@@ -215,8 +214,8 @@ export const MachineHealthCheckPage: FC<MachineHealthCheckPageProps> = (props) =
     {...props}
     ListComponent={MachineHealthCheckList}
     kind={machineHealthCheckReference}
-    canCreate={true}
-    omitFilterToolbar={true}
+    canCreate
+    omitFilterToolbar
   />
 );
 
