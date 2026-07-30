@@ -1,8 +1,8 @@
 import { forwardRef, useRef, useEffect, useImperativeHandle, useCallback, useState } from 'react';
+import { getResizeObserver } from '@patternfly/react-core';
 import { FitAddon } from '@xterm/addon-fit';
 import type { ITerminalOptions, ITerminalAddon } from '@xterm/xterm';
 import { Terminal as XTerminal } from '@xterm/xterm';
-import { getResizeObserver } from '@patternfly/react-core';
 import { useIsFullscreen } from '@console/shared/src/hooks/useFullscreen';
 
 const defaultOptions: ITerminalOptions = {
