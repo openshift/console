@@ -1,4 +1,6 @@
-import { type Locator, type Page, expect } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
+
+import { expect } from '../fixtures';
 
 export async function getEditorContent(page: Page): Promise<string> {
   await page.waitForFunction(
