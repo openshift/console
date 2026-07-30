@@ -8,7 +8,6 @@ const INCLUDED_IMPACTS = new Set(['serious', 'critical']);
 
 const LOADING_SELECTORS = [
   '.pf-v6-c-spinner',
-  '.pf-v5-c-spinner',
   '.pf-c-spinner',
   '.co-m-loader',
   '[data-test="loading-indicator"]',
@@ -20,7 +19,9 @@ const LOADING_SELECTORS = [
 
 function formatViolations(violations: Result[], target: string): string {
   const lines: string[] = [
-    `${violations.length} accessibility violation${violations.length === 1 ? '' : 's'} ${violations.length === 1 ? 'was' : 'were'} detected for ${target}:`,
+    `${violations.length} accessibility violation${violations.length === 1 ? '' : 's'} ${
+      violations.length === 1 ? 'was' : 'were'
+    } detected for ${target}:`,
   ];
 
   violations.forEach((violation, index) => {
@@ -54,7 +55,7 @@ export async function testA11y(page: Page, target: string, selector?: string): P
       await loading.first().waitFor({ state: 'hidden', timeout: 5_000 });
     }
   } catch {
-    // Loading indicators may have already disappeared — continue
+    // Loading indicators may have already disappeared - continue
   }
 
   let builder = new AxeBuilder({ page }).disableRules('color-contrast');
