@@ -193,16 +193,31 @@ export default abstract class BasePage {
     await setEditorContent(this.page, content);
   }
 
+  getPerspectiveSwitcherToggle(): Locator {
+    return this.page.getByTestId('perspective-switcher-toggle');
+  }
+
+  getPinnedResourceItems(): Locator {
+    return this.page.getByTestId('draggable-pinned-resource-item');
+  }
+
+  getSyncedEditor(): Locator {
+    return this.page.getByTestId('synced-editor-field');
+  }
+
+  getEditorRadio(name: string): Locator {
+    return this.getSyncedEditor().getByRole('radio', { name });
+  }
+
   async ensureFormView(formFieldLocator?: Locator): Promise<void> {
-    const syncedEditor = this.page.getByTestId('synced-editor-field');
+    const syncedEditor = this.getSyncedEditor();
     // eslint-disable-next-line no-restricted-syntax
     await syncedEditor.waitFor({ state: 'visible', timeout: 60_000 });
-    const formRadio = syncedEditor.getByRole('radio', { name: 'Form view' });
+    const formRadio = this.getEditorRadio('Form view');
     if (!(await formRadio.isChecked())) {
       await formRadio.click();
     }
     if (formFieldLocator) {
-      // Wait for form to render after switching to form view (not acting on it, just ensuring visibility)
       // eslint-disable-next-line no-restricted-syntax
       await formFieldLocator.waitFor({ state: 'visible', timeout: 30_000 });
     }
