@@ -9,6 +9,7 @@ export type ConnectionFormFormikValues = {
   defaultDatastore: string;
   folder: string;
   vCenterCluster: string;
+  network: string; // Primary network name
   isInit?: boolean;
 };
 
