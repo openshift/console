@@ -231,6 +231,10 @@
   "lint-staged": {
     "*.{js,jsx,ts,tsx,json}": "eslint --color --fix"
   },
+  "optionalDependencies": {
+    "@rspack/binding-linux-ppc64-gnu": "npm:@megahard/binding-linux-ppc64-gnu@1.2.7-alpha.0-3652-gf2510302a4",
+    "@rspack/binding-linux-s390x-gnu": "npm:@megahard/binding-linux-s390x-gnu@1.2.7-alpha.0-3652-gf2510302a4"
+  },
   "dependenciesMeta": {
     "cypress": {
       "built": true
