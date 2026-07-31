@@ -1,4 +1,3 @@
-import { createHash } from 'crypto';
 import type { SetStateAction } from 'react';
 import { useRef, useCallback, useEffect, useState, useMemo } from 'react';
 import type { UseUserPreference } from '@console/dynamic-plugin-sdk';
@@ -10,6 +9,7 @@ import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector
 import {
   createConfigMap,
   deserializeData,
+  hashUsernameForSettings,
   seralizeData,
   updateConfigMap,
   USER_SETTING_CONFIGMAP_NAMESPACE,
@@ -70,25 +70,12 @@ export const useUserPreference: UseUserPreference = <T>(
   // Request counter
   const [isRequestPending, increaseRequest, decreaseRequest] = useCounterRef();
 
-  const hashNameOrKubeadmin = (name: string): string | null => {
-    if (!name) {
-      return null;
-    }
-
-    if (name === 'kube:admin') {
-      return 'kubeadmin';
-    }
-    const hash = createHash('sha256');
-    hash.update(name);
-    return hash.digest('hex');
-  };
-
   // User and impersonate
   const userUid = useConsoleSelector((state) => {
     const impersonateName = getImpersonate(state)?.name;
     const { uid, username } = getUser(state) ?? {};
-    const hashName = hashNameOrKubeadmin(username);
-    return impersonateName || uid || hashName || '';
+    const hashName = hashUsernameForSettings(username, uid);
+    return impersonateName || hashName || '';
   });
 
   const impersonate: boolean = useConsoleSelector((state) => !!getImpersonate(state));
