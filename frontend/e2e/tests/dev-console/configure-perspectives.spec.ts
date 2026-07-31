@@ -1,5 +1,5 @@
 import { test, expect } from '../../fixtures';
-import BasePage, { warmupSPA } from '../../pages/base-page';
+import BasePage, { ensureDeveloperPerspective, warmupSPA } from '../../pages/base-page';
 
 class PerspectivePage extends BasePage {
   getPerspectiveToggle() {
@@ -14,10 +14,14 @@ class PerspectivePage extends BasePage {
 }
 
 test.describe('Configure perspectives', { tag: ['@dev-console', '@regression'] }, () => {
-  test('verifies developer perspective is available in the switcher', async ({ page }) => {
+  test('verifies developer perspective is available in the switcher', async ({
+    page,
+    k8sClient,
+  }) => {
     await warmupSPA(page);
+    await ensureDeveloperPerspective(page, k8sClient);
+
     const perspectivePage = new PerspectivePage(page);
-    await expect(perspectivePage.getPerspectiveToggle()).toBeVisible();
     await perspectivePage.getPerspectiveToggle().click();
     await expect(perspectivePage.getPerspectiveOption('Developer')).toBeVisible();
   });

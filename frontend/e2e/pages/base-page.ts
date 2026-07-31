@@ -1,5 +1,7 @@
 import { type Locator, type Page, expect } from '@playwright/test';
 
+import type KubernetesClient from '../clients/kubernetes-client';
+
 export async function getEditorContent(page: Page): Promise<string> {
   await page.waitForFunction(
     () => {
@@ -25,8 +27,37 @@ export async function setEditorContent(page: Page, content: string): Promise<voi
 export async function warmupSPA(page: Page): Promise<void> {
   await expect(async () => {
     await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 60_000 });
-    await expect(page.getByTestId('page-heading')).toBeVisible({ timeout: 30_000 });
+    await expect(page.locator('#page-sidebar')).toBeVisible({ timeout: 30_000 });
   }).toPass({ intervals: [1_000, 2_000, 5_000], timeout: 90_000 });
+}
+
+export async function ensureDeveloperPerspective(
+  page: Page,
+  k8sClient: KubernetesClient,
+): Promise<void> {
+  const toggle = page.getByTestId('perspective-switcher-toggle');
+  await expect(toggle).toBeVisible();
+  const isSinglePerspective =
+    (await toggle.getAttribute('id')) === 'only-one-perspective';
+  if (isSinglePerspective) {
+    await k8sClient.customObjectsApi.patchClusterCustomObject({
+      group: 'operator.openshift.io',
+      version: 'v1',
+      plural: 'consoles',
+      name: 'cluster',
+      body: [
+        {
+          op: 'add',
+          path: '/spec/customization/perspectives',
+          value: [{ id: 'dev', visibility: { state: 'Enabled' } }],
+        },
+      ],
+    });
+    await expect(async () => {
+      await page.reload();
+      await expect(toggle).not.toHaveAttribute('id', 'only-one-perspective');
+    }).toPass({ timeout: 60_000 });
+  }
 }
 
 export default abstract class BasePage {
