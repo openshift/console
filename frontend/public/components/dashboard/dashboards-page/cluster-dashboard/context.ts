@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { K8sResourceKind } from '../../../../module/k8s';
+import type { K8sResourceKind } from '../../../../module/k8s';
 
 export const ClusterDashboardContext = createContext<ClusterDashboardContext>({
   infrastructureLoaded: true,

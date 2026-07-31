@@ -1,11 +1,10 @@
 import { screen, waitFor } from '@testing-library/react';
 import { fromJS, Map as ImmutableMap } from 'immutable';
-
-import { EnvironmentPage } from '../environment';
 import * as rbacModule from '@console/dynamic-plugin-sdk/src/app/components/utils/rbac';
 import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { DeploymentModel } from '../../models';
+import { EnvironmentPage } from '../environment';
 
 jest.mock('@console/dynamic-plugin-sdk/src/app/components/utils/rbac', () => ({
   ...jest.requireActual('@console/dynamic-plugin-sdk/src/app/components/utils/rbac'),
@@ -41,7 +40,7 @@ describe('EnvironmentPage', () => {
   describe('Read-only Environment View', () => {
     it('verifies the environment variables in a read-only format for users without edit permissions', async () => {
       renderWithProviders(
-        <EnvironmentPage obj={obj} rawEnvData={sampleEnvData} envPath={[]} readOnly={true} />,
+        <EnvironmentPage obj={obj} rawEnvData={sampleEnvData} envPath={[]} readOnly />,
       );
 
       await waitFor(() => {
@@ -59,7 +58,7 @@ describe('EnvironmentPage', () => {
           obj={obj}
           rawEnvData={{ env: [{ name: 'test', value: ':0', ID: 0 }] }}
           envPath={[]}
-          readOnly={true}
+          readOnly
         />,
       );
 
@@ -73,7 +72,7 @@ describe('EnvironmentPage', () => {
 
     it('verifies environment variables clearly without editing capabilities', async () => {
       renderWithProviders(
-        <EnvironmentPage obj={obj} rawEnvData={sampleEnvData} envPath={[]} readOnly={true} />,
+        <EnvironmentPage obj={obj} rawEnvData={sampleEnvData} envPath={[]} readOnly />,
       );
 
       await waitFor(() => {
@@ -208,7 +207,7 @@ describe('EnvironmentPage', () => {
           obj={obj}
           rawEnvData={{ env: [{ name: 'test', value: ':0', ID: 0 }] }}
           envPath={[]}
-          readOnly={true}
+          readOnly
         />,
       );
     });

@@ -20,7 +20,8 @@
       "dashboardActivity": "src/components/maintenance/DashboardActivity.ts",
       "maintenanceDashboardActivity": "src/components/maintenance/MaintenanceDashboardActivity.tsx",
       "baremetalHostsDashboardActivity": "src/components/baremetal-hosts/dashboard/BareMetalStatusActivity.tsx",
-      "hostActionsProvider": "src/components/baremetal-hosts/host-actions-provider.ts"
+      "hostActionsProvider": "src/components/baremetal-hosts/host-actions-provider.ts",
+      "baremetalNodeInventoryItemsForNode": "src/components/baremetal-nodes/BareMetalHostInventoryItemsForNode.tsx"
     }
   }
 }

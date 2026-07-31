@@ -7,12 +7,12 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"helm.sh/helm/v3/pkg/action"
-	"helm.sh/helm/v3/pkg/chartutil"
-	kubefake "helm.sh/helm/v3/pkg/kube/fake"
-	"helm.sh/helm/v3/pkg/release"
-	"helm.sh/helm/v3/pkg/storage"
-	"helm.sh/helm/v3/pkg/storage/driver"
+	"helm.sh/helm/v4/pkg/action"
+	"helm.sh/helm/v4/pkg/chart/common"
+	kubefake "helm.sh/helm/v4/pkg/kube/fake"
+	releasecommon "helm.sh/helm/v4/pkg/release/common"
+	"helm.sh/helm/v4/pkg/storage"
+	"helm.sh/helm/v4/pkg/storage/driver"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
@@ -72,8 +72,7 @@ func TestGetRelease(t *testing.T) {
 				RESTClientGetter: FakeConfig{},
 				Releases:         store,
 				KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
-				Capabilities:     chartutil.DefaultCapabilities,
-				Log:              func(format string, v ...interface{}) {},
+				Capabilities:     common.DefaultCapabilities,
 			}
 			client := K8sDynamicClientFromCRs(tt.helmCRS...)
 			clientInterface := k8sfake.NewSimpleClientset()
@@ -85,7 +84,7 @@ func TestGetRelease(t *testing.T) {
 				rel, err := GetRelease(tt.releaseName, actionConfig)
 				require.NoError(t, err)
 				require.Equal(t, tt.releaseName, rel.Name)
-				require.Equal(t, release.StatusDeployed, rel.Info.Status)
+				require.Equal(t, releasecommon.StatusDeployed, rel.Info.Status)
 				require.Equal(t, tt.manifestValue, rel.Manifest)
 			} else if tt.testName == "invalid chart path" {
 				require.Error(t, err)
@@ -157,8 +156,7 @@ func TestGetReleaseWithTlsData(t *testing.T) {
 				RESTClientGetter: FakeConfig{},
 				Releases:         store,
 				KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
-				Capabilities:     chartutil.DefaultCapabilities,
-				Log:              func(format string, v ...interface{}) {},
+				Capabilities:     common.DefaultCapabilities,
 			}
 			// create a namespace if it is not same as openshift-config
 			if tt.createNamespace && tt.namespace != configNamespace {

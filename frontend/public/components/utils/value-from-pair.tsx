@@ -1,8 +1,7 @@
 import type { FC, ReactElement, ReactNode } from 'react';
-import * as _ from 'lodash';
 import * as fuzzy from 'fuzzysearch';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { ResourceName } from './resource-icon';
 
@@ -28,10 +27,10 @@ import { ResourceName } from './resource-icon';
 //       divisor: 1 // 1 is default
 
 type K8sItemList = {
-  items?: Array<{
+  items?: {
     metadata: { name: string };
     data?: Record<string, string>;
-  }>;
+  }[];
 };
 
 type RefValue = {
@@ -201,6 +200,7 @@ const NameKeyDropdownPair: FC<NameKeyDropdownPairProps> = ({
       <ConsoleSelect
         menuClassName="value-from__menu dropdown-menu--text-wrap"
         className="value-from"
+        dataTest="value-from-select"
         autocompleteFilter={nameAutocompleteFilter}
         autocompletePlaceholder={placeholderString}
         items={items}

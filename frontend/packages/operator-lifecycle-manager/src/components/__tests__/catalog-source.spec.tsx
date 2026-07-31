@@ -195,7 +195,6 @@ describe('CreateSubscriptionYAML', () => {
       state: null,
       hash: '',
       key: 'default',
-      unstable_mask: undefined,
     });
     mockUseK8sWatchResources.mockClear();
   });

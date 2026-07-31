@@ -30,6 +30,7 @@ const GroupMenuContent: FC<GroupMenuContentProps> = ({ option, onClick }) => (
 // Need to keep this in the same file to avoid circular dependency.
 const SubMenuContent: FC<GroupMenuContentProps> = ({ option, onClick }) => (
   <MenuItem
+    data-test={option.id}
     data-test-action={option.id}
     flyoutMenu={
       <Menu containsFlyout>

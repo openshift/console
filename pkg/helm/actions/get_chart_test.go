@@ -10,11 +10,11 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/schema"
 
 	"github.com/stretchr/testify/require"
-	"helm.sh/helm/v3/pkg/action"
-	"helm.sh/helm/v3/pkg/chartutil"
-	kubefake "helm.sh/helm/v3/pkg/kube/fake"
-	"helm.sh/helm/v3/pkg/storage"
-	"helm.sh/helm/v3/pkg/storage/driver"
+	"helm.sh/helm/v4/pkg/action"
+	"helm.sh/helm/v4/pkg/chart/common"
+	kubefake "helm.sh/helm/v4/pkg/kube/fake"
+	"helm.sh/helm/v4/pkg/storage"
+	"helm.sh/helm/v4/pkg/storage/driver"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/dynamic"
@@ -91,8 +91,7 @@ func TestGetChartWithoutTls(t *testing.T) {
 		RESTClientGetter: FakeConfig{},
 		Releases:         store,
 		KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
-		Capabilities:     chartutil.DefaultCapabilities,
-		Log:              func(format string, v ...interface{}) {},
+		Capabilities:     common.DefaultCapabilities,
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
@@ -204,8 +203,7 @@ func TestGetChartWithTlsData(t *testing.T) {
 		RESTClientGetter: FakeConfig{},
 		Releases:         store,
 		KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
-		Capabilities:     chartutil.DefaultCapabilities,
-		Log:              func(format string, v ...interface{}) {},
+		Capabilities:     common.DefaultCapabilities,
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
@@ -338,8 +336,7 @@ func TestGetChartBasicAuth(t *testing.T) {
 		RESTClientGetter: FakeConfig{},
 		Releases:         store,
 		KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
-		Capabilities:     chartutil.DefaultCapabilities,
-		Log:              func(format string, v ...interface{}) {},
+		Capabilities:     common.DefaultCapabilities,
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {

@@ -1,14 +1,13 @@
 import { useContext, memo } from 'react';
-import { useTranslation } from 'react-i18next';
-
 import { Card, CardBody, CardHeader, CardTitle, Stack, StackItem } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/api/core-api';
+import AppliedClusterResourceQuotaItem from '@console/shared/src/components/dashboard/resource-quota-card/AppliedClusterResourceQuotaItem';
 import ResourceQuotaBody from '@console/shared/src/components/dashboard/resource-quota-card/ResourceQuotaBody';
 import ResourceQuotaItem from '@console/shared/src/components/dashboard/resource-quota-card/ResourceQuotaItem';
-import AppliedClusterResourceQuotaItem from '@console/shared/src/components/dashboard/resource-quota-card/AppliedClusterResourceQuotaItem';
 import { AppliedClusterResourceQuotaModel, ResourceQuotaModel } from '../../../models';
+import type { ResourceQuotaKind, AppliedClusterResourceQuotaKind } from '../../../module/k8s';
 import { ProjectDashboardContext } from './project-dashboard-context';
-import { ResourceQuotaKind, AppliedClusterResourceQuotaKind } from '../../../module/k8s';
 
 export const ResourceQuotaCard = memo(() => {
   const { obj } = useContext(ProjectDashboardContext);
@@ -37,7 +36,7 @@ export const ResourceQuotaCard = memo(() => {
   const { t } = useTranslation('public');
 
   return (
-    <Card data-test-id="resource-quotas-card">
+    <Card data-test="resource-quotas-card" data-test-id="resource-quotas-card">
       <CardHeader>
         <CardTitle>{t('ResourceQuotas')}</CardTitle>
       </CardHeader>

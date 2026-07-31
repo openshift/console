@@ -1,5 +1,5 @@
-import { renderHook } from '@testing-library/react';
 import { useRef } from 'react';
+import { renderHook } from '@testing-library/react';
 import type { CodeEditorRef } from '../../module/k8s';
 
 describe('EditYAML: getEditor function', () => {

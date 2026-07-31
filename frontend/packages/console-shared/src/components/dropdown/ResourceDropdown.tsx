@@ -40,6 +40,7 @@ export interface ResourceDropdownProps {
   autocompleteFilter?: ConsoleSelectProps['autocompleteFilter'];
   buttonClassName?: ConsoleSelectProps['buttonClassName'];
   className?: ConsoleSelectProps['className'];
+  dataTest?: ConsoleSelectProps['dataTest'];
   disabled?: ConsoleSelectProps['disabled'];
   id?: ConsoleSelectProps['id'];
   isFullWidth?: ConsoleSelectProps['isFullWidth'];
@@ -105,6 +106,7 @@ export const ResourceDropdown: FC<ResourceDropdownProps> = ({
   className,
   customResourceKey,
   dataSelector,
+  dataTest,
   disabled,
   id,
   isFullWidth,
@@ -319,6 +321,7 @@ export const ResourceDropdown: FC<ResourceDropdownProps> = ({
   return (
     <ConsoleSelect
       id={id}
+      dataTest={dataTest}
       ariaLabel={ariaLabel}
       className={className}
       menuClassName={menuClassName}

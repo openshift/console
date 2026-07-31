@@ -1,8 +1,5 @@
-import {
-  truncateMiddle,
-  shouldTruncate,
-  TruncateOptions,
-} from '../../../components/utils/truncate-middle';
+import type { TruncateOptions } from '../truncate-middle';
+import { truncateMiddle, shouldTruncate } from '../truncate-middle';
 
 const testTruncateText = 'ThisTextShouldBeTruncatedByDefault';
 

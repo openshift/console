@@ -1,45 +1,44 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import * as _ from 'lodash';
 import type { ComponentType, FC, ReactNode } from 'react';
 import { useEffect, useState, useMemo, useCallback } from 'react';
-import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
-import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
-import { useParams, useNavigate } from 'react-router';
 import { Button, Grid, GridItem } from '@patternfly/react-core';
+import { SimpleDropdown } from '@patternfly/react-templates';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { LinkTo } from '@console/shared/src/components/links/LinkTo';
-import { useDeepCompareMemoize } from '@console/shared/src/hooks/useDeepCompareMemoize';
-import { withFallback } from '@console/shared/src/components/error/fallbacks/withFallback';
-import { ErrorBoundaryFallbackPage } from '@console/shared/src/components/error/fallbacks/ErrorBoundaryFallbackPage';
-import {
+import { useParams, useNavigate } from 'react-router';
+import type { Selector } from '@console/dynamic-plugin-sdk/src/api/common-types';
+import { filterList } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
+import type {
   ColumnLayout,
   K8sResourceCommon,
   WatchK8sResource,
   WatchK8sResultsObject,
-} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { filterList } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { storagePrefix } from '../row-filter';
-import { ErrorPage404 } from '../error';
-import { K8sKind } from '../../module/k8s/types';
-import { getReferenceForModel as referenceForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
-import { Selector } from '@console/dynamic-plugin-sdk/src/api/common-types';
-import { useK8sWatchResources } from '../utils/k8s-watch-hook';
-import type {
   ResourcesObject,
   WatchK8sResourceWithProp,
   WatchK8sResults,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { inject, kindObj } from '../utils/inject';
 import {
   makeQuery,
   makeReduxID,
   NoModelError,
 } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/k8s-watcher';
+import { getReferenceForModel as referenceForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import { ErrorBoundaryFallbackPage } from '@console/shared/src/components/error/fallbacks/ErrorBoundaryFallbackPage';
+import { withFallback } from '@console/shared/src/components/error/fallbacks/withFallback';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { LinkTo } from '@console/shared/src/components/links/LinkTo';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
+import { useDeepCompareMemoize } from '@console/shared/src/hooks/useDeepCompareMemoize';
+import type { K8sKind } from '../../module/k8s/types';
+import { ErrorPage404 } from '../error';
+import type { RowFilter } from '../filter-toolbar';
+import { FilterToolbar } from '../filter-toolbar';
+import { storagePrefix } from '../row-filter';
+import { inject, kindObj } from '../utils/inject';
+import { useK8sWatchResources } from '../utils/k8s-watch-hook';
 import { RequireCreatePermission } from '../utils/rbac';
-import { FilterToolbar, RowFilter } from '../filter-toolbar';
 import ListPageHeader from './ListPage/ListPageHeader';
-import { SimpleDropdown } from '@patternfly/react-templates';
 
 type CreateProps = {
   action?: string;
@@ -294,6 +293,7 @@ export const FireMan: FC<FireManProps & { filterList?: typeof filterList }> = (p
           initialItems={Object.keys(createProps.items).map((item) => ({
             value: item,
             content: createProps.items[item],
+            'data-test': `dropdown-menu-${item}`,
             'data-test-dropdown-menu': item,
           }))}
           onSelect={(_e, value: string) => runOrNavigate(value)}

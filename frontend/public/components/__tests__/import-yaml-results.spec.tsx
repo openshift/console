@@ -1,5 +1,4 @@
 import { screen, waitFor } from '@testing-library/react';
-
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import {
   ImportYAMLResults,
@@ -12,13 +11,9 @@ describe('ImportYAMLResults: test component layout', () => {
     return renderWithProviders(
       <ImportYAMLResults
         createResources={() => Promise.resolve([])}
-        displayResults={() => {
-          return;
-        }}
+        displayResults={() => {}}
         importResources={[]}
-        retryFailed={() => {
-          return;
-        }}
+        retryFailed={() => {}}
       />,
     );
   };

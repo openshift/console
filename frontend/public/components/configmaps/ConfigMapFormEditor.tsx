@@ -1,21 +1,22 @@
 import type { FC } from 'react';
 import { useCallback, useEffect } from 'react';
+import type { FormikProps } from 'formik';
+import { useFormikContext } from 'formik';
 import * as _ from 'lodash';
-import { FormikProps, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { ConfigMapModel } from '@console/internal/models';
+import { downloadYaml } from '@console/shared/src/components/editor/yaml-download-utils';
 import { FlexForm } from '@console/shared/src/components/form-utils/FlexForm';
 import { FormBody } from '@console/shared/src/components/form-utils/FormBody';
 import { FormFooter } from '@console/shared/src/components/form-utils/FormFooter';
 import { FormHeader } from '@console/shared/src/components/form-utils/FormHeader';
-import { SyncedEditorField } from '@console/shared/src/components/formik-fields/SyncedEditorField';
 import { CodeEditorField } from '@console/shared/src/components/formik-fields/CodeEditorField';
-import { downloadYaml } from '@console/shared/src/components/editor/yaml-download-utils';
-import { ConfigMapModel } from '@console/internal/models';
-import { safeJSToYAML, safeYAMLToJS } from '@console/shared/src/utils/yaml';
+import { SyncedEditorField } from '@console/shared/src/components/formik-fields/SyncedEditorField';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
-import ConfigMapFormFields from './ConfigMapFormFields';
-import { ConfigMap, ConfigMapFormInitialValues } from './types';
+import { safeJSToYAML, safeYAMLToJS } from '@console/shared/src/utils/yaml';
 import { getInitialConfigMapFormData, sanitizeToForm, sanitizeToYaml } from './configmap-utils';
+import ConfigMapFormFields from './ConfigMapFormFields';
+import type { ConfigMap, ConfigMapFormInitialValues } from './types';
 
 interface ConfigMapFormEditorProps {
   configMap: ConfigMap;

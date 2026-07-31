@@ -15,7 +15,7 @@ export const nav = {
           .should('be.visible')
           .then(($toggle) => {
             if (text === switchPerspective.Administrator) {
-              if ($toggle.attr('id') === 'core-platform-perspective') {
+              if ($toggle.attr('id') === 'only-one-perspective') {
                 cy.log('Admin is the only perspective available');
                 return;
               }
@@ -36,7 +36,7 @@ export const nav = {
               .scrollIntoView()
               .should('be.visible')
               .then(($toggle) => {
-                if ($toggle.attr('id') === 'core-platform-perspective') {
+                if ($toggle.attr('id') === 'only-one-perspective') {
                   cy.log('Admin is the only perspective available');
                   cy.byLegacyTestID('perspective-switcher-toggle').should('be.visible');
                   return;

@@ -1,5 +1,34 @@
 import type { Locator, Page } from '@playwright/test';
 
+import { expect } from '../fixtures';
+
+export async function getEditorContent(page: Page): Promise<string> {
+  await page.waitForFunction(
+    () => {
+      const value = (window as any).monaco?.editor?.getModels()?.[0]?.getValue?.();
+      return typeof value === 'string' && value.trim().length > 0;
+    },
+    { timeout: 30_000 },
+  );
+  return page.evaluate(() => {
+    return (window as any).monaco.editor.getModels()[0].getValue();
+  });
+}
+
+export async function setEditorContent(page: Page, content: string): Promise<void> {
+  await page.waitForFunction(() => (window as any).monaco?.editor?.getModels()?.[0], {
+    timeout: 10_000,
+  });
+  await page.evaluate((text) => {
+    (window as any).monaco.editor.getModels()[0].setValue(text);
+  }, content);
+}
+
+export async function warmupSPA(page: Page): Promise<void> {
+  await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 60_000 });
+  await expect(page.getByTestId('page-heading')).toBeVisible({ timeout: 30_000 });
+}
+
 export default abstract class BasePage {
   constructor(public readonly page: Page) {}
 
@@ -31,6 +60,11 @@ export default abstract class BasePage {
 
   protected async goTo(url: string): Promise<void> {
     await this.page.goto(url, { timeout: 90_000 });
+    await this.waitForLoadingComplete();
+  }
+
+  protected async retryOnError(): Promise<void> {
+    await this.page.reload({ waitUntil: 'domcontentloaded' });
     await this.waitForLoadingComplete();
   }
 
@@ -99,19 +133,49 @@ export default abstract class BasePage {
     await this.robustClick(button);
   }
 
+  async waitForEditorReady(): Promise<void> {
+    await this.page.waitForFunction(
+      () => !!(window as any).monaco?.editor?.getModels()?.[0],
+      { timeout: 30_000 },
+    );
+  }
+
+  async getEditorContent(): Promise<string> {
+    return getEditorContent(this.page);
+  }
+
+  async setEditorContent(content: string): Promise<void> {
+    await setEditorContent(this.page, content);
+  }
+
+  async ensureFormView(formFieldLocator?: Locator): Promise<void> {
+    const syncedEditor = this.page.getByTestId('synced-editor-field');
+    // eslint-disable-next-line no-restricted-syntax
+    await syncedEditor.waitFor({ state: 'visible', timeout: 60_000 });
+    const formRadio = syncedEditor.getByRole('radio', { name: 'Form view' });
+    if (!(await formRadio.isChecked())) {
+      await formRadio.click();
+    }
+    if (formFieldLocator) {
+      // Wait for form to render after switching to form view (not acting on it, just ensuring visibility)
+      // eslint-disable-next-line no-restricted-syntax
+      await formFieldLocator.waitFor({ state: 'visible', timeout: 30_000 });
+    }
+  }
+
   async switchPerspective(target: 'Developer' | 'Administrator'): Promise<void> {
     const labelMap: Record<string, string[]> = {
       Administrator: ['Administrator', 'Core platform'],
       Developer: ['Developer'],
     };
-    const toggle = this.page.locator('[data-test-id="perspective-switcher-toggle"]');
+    const toggle = this.page.getByTestId('perspective-switcher-toggle');
     const labels = labelMap[target] || [target];
     const currentText = (await toggle.textContent()) || '';
     if (labels.some((label) => currentText.includes(label))) {
       return;
     }
     await this.robustClick(toggle);
-    const menuOption = this.page.locator('[data-test-id="perspective-switcher-menu-option"]');
+    const menuOption = this.page.getByTestId('perspective-switcher-menu-option');
     for (const label of labels) {
       const option = menuOption.filter({ hasText: label });
       if ((await option.count()) > 0) {

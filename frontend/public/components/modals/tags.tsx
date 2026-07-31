@@ -1,19 +1,18 @@
-import * as _ from 'lodash';
 import type { FC } from 'react';
 import { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Button, Form, Modal, ModalBody, ModalHeader } from '@patternfly/react-core';
-
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import type { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import type { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { k8sPatch } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
-import { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
-import { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import { ModalComponentProps } from '@console/shared/src/types/modal';
-import { NameValueEditorPair } from '../utils/types';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
 import { AsyncComponent } from '../utils/async';
 import { useK8sWatchResource } from '../utils/k8s-watch-hook';
-import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
-import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import { NameValueEditorPair } from '../utils/types';
 
 /**
  * Set up an AsyncComponent to wrap the name-value-editor to allow on demand loading to reduce the
@@ -107,6 +106,7 @@ const TagsModal = (props: TagsModalProps) => {
           variant="link"
           isDisabled={inProgress}
           onClick={props.cancel}
+          data-test="modal-cancel-action"
           data-test-id="modal-cancel-action"
         >
           {t('Cancel')}

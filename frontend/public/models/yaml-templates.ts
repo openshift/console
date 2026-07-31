@@ -1,11 +1,11 @@
 import { Map as ImmutableMap } from 'immutable';
-
-import { GroupVersionKind, referenceForModel, referenceForExtensionModel } from '../module/k8s';
-import * as k8sModels from '../models';
-import * as appModels from '@console/app/src/models/';
-import { YAMLTemplate } from '@console/dynamic-plugin-sdk/src/extensions/yaml-templates';
-import { ResolvedExtension } from '@console/dynamic-plugin-sdk';
 import { PodDisruptionBudgetModel } from '@console/app/src/models';
+import * as appModels from '@console/app/src/models/';
+import type { ResolvedExtension } from '@console/dynamic-plugin-sdk';
+import type { YAMLTemplate } from '@console/dynamic-plugin-sdk/src/extensions/yaml-templates';
+import type { GroupVersionKind } from '../module/k8s';
+import { referenceForModel, referenceForExtensionModel } from '../module/k8s';
+import * as k8sModels from '.';
 
 /**
  * Sample YAML manifests for some of the statically-defined Kubernetes models.
@@ -196,7 +196,7 @@ spec:
   storageClassName: slow
   nfs:
     path: /tmp
-    server: 172.17.0.2
+    server: 192.0.2.1
 `,
   )
   .setIn(

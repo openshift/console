@@ -44,18 +44,18 @@ type ProxyService struct {
 
 // ServingInfo holds configuration for serving HTTP.
 type ServingInfo struct {
-	BindAddress  string `yaml:"bindAddress,omitempty"`
-	CertFile     string `yaml:"certFile,omitempty"`
-	KeyFile      string `yaml:"keyFile,omitempty"`
-	RedirectPort int    `yaml:"redirectPort,omitempty"`
+	BindAddress   string   `yaml:"bindAddress,omitempty"`
+	CertFile      string   `yaml:"certFile,omitempty"`
+	KeyFile       string   `yaml:"keyFile,omitempty"`
+	RedirectPort  int      `yaml:"redirectPort,omitempty"`
+	MinTLSVersion string   `yaml:"minTLSVersion,omitempty"`
+	CipherSuites  []string `yaml:"cipherSuites,omitempty"`
 
 	// These fields are defined in `HTTPServingInfo`, but are not supported for console. Fail if any are specified.
 	// https://github.com/openshift/api/blob/0cb4131a7636e1ada6b2769edc9118f0fe6844c8/config/v1/types.go#L7-L38
 	BindNetwork           string        `yaml:"bindNetwork,omitempty"`
 	ClientCA              string        `yaml:"clientCA,omitempty"`
 	NamedCertificates     []interface{} `yaml:"namedCertificates,omitempty"`
-	MinTLSVersion         string        `yaml:"minTLSVersion,omitempty"`
-	CipherSuites          []string      `yaml:"cipherSuites,omitempty"`
 	MaxRequestsInFlight   int64         `yaml:"maxRequestsInFlight,omitempty"`
 	RequestTimeoutSeconds int64         `yaml:"requestTimeoutSeconds,omitempty"`
 }
@@ -72,15 +72,17 @@ type MonitoringInfo struct {
 
 // ClusterInfo holds information the about the cluster such as master public URL and console public URL.
 type ClusterInfo struct {
-	ConsoleBaseAddress   string                `yaml:"consoleBaseAddress,omitempty"`
-	ConsoleBasePath      string                `yaml:"consoleBasePath,omitempty"`
-	MasterPublicURL      string                `yaml:"masterPublicURL,omitempty"`
-	ControlPlaneTopology configv1.TopologyMode `yaml:"controlPlaneTopology,omitempty"`
-	ReleaseVersion       string                `yaml:"releaseVersion,omitempty"`
-	NodeArchitectures    []string              `yaml:"nodeArchitectures,omitempty"`
-	NodeOperatingSystems []string              `yaml:"nodeOperatingSystems,omitempty"`
-	CopiedCSVsDisabled   bool                  `yaml:"copiedCSVsDisabled,omitempty"`
-	TechPreviewEnabled   bool                  `yaml:"techPreviewEnabled,omitempty"`
+	ConsoleBaseAddress             string                `yaml:"consoleBaseAddress,omitempty"`
+	AdditionalConsoleBaseAddresses []string              `yaml:"additionalConsoleBaseAddresses,omitempty"`
+	ConsoleBasePath                string                `yaml:"consoleBasePath,omitempty"`
+	MasterPublicURL                string                `yaml:"masterPublicURL,omitempty"`
+	ControlPlaneTopology           configv1.TopologyMode `yaml:"controlPlaneTopology,omitempty"`
+	ReleaseVersion                 string                `yaml:"releaseVersion,omitempty"`
+	NodeArchitectures              []string              `yaml:"nodeArchitectures,omitempty"`
+	NodeOperatingSystems           []string              `yaml:"nodeOperatingSystems,omitempty"`
+	CopiedCSVsDisabled             bool                  `yaml:"copiedCSVsDisabled,omitempty"`
+	TechPreviewEnabled             bool                  `yaml:"techPreviewEnabled,omitempty"`
+	OLMLifecycleMetadataEnabled    bool                  `yaml:"olmLifecycleMetadataEnabled,omitempty"`
 }
 
 // Auth holds configuration for authenticating with OpenShift. The auth method is assumed to be "openshift".

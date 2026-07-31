@@ -1,30 +1,31 @@
 import type { FC } from 'react';
 import { useEffect, useMemo, memo } from 'react';
-import * as _ from 'lodash';
-import { Map as ImmutableMap } from 'immutable';
-import { connect } from 'react-redux';
-import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router';
-
 import { Card, CardHeader, CardTitle, CardFooter, Divider } from '@patternfly/react-core';
-import { useDynamicK8sWatchResources } from '@console/shared/src/hooks/useDynamicK8sWatchResources';
-import { useDashboardResources } from '@console/shared/src/hooks/useDashboardResources';
-import { useK8sWatchResource } from '../../../utils/k8s-watch-hook';
-import { EventModel } from '../../../../models';
-import { EventKind, K8sKind, K8sResourceCommon } from '../../../../module/k8s';
+import type { Map as ImmutableMap } from 'immutable';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+import { Link } from 'react-router';
+import type {
+  DashboardsOverviewResourceActivity,
+  DashboardsOverviewPrometheusActivity,
+} from '@console/dynamic-plugin-sdk';
+import {
+  useResolvedExtensions,
+  isDashboardsOverviewResourceActivity,
+  isDashboardsOverviewPrometheusActivity,
+} from '@console/dynamic-plugin-sdk';
 import ActivityBody, {
   RecentEventsBody,
   OngoingActivityBody,
 } from '@console/shared/src/components/dashboard/activity-card/ActivityBody';
-import {
-  useResolvedExtensions,
-  DashboardsOverviewResourceActivity,
-  DashboardsOverviewPrometheusActivity,
-  isDashboardsOverviewResourceActivity,
-  isDashboardsOverviewPrometheusActivity,
-} from '@console/dynamic-plugin-sdk';
+import { useDashboardResources } from '@console/shared/src/hooks/useDashboardResources';
+import { useDynamicK8sWatchResources } from '@console/shared/src/hooks/useDynamicK8sWatchResources';
+import { EventModel } from '../../../../models';
+import type { EventKind, K8sKind, K8sResourceCommon } from '../../../../module/k8s';
+import type { PrometheusResponse } from '../../../graphs';
+import { useK8sWatchResource } from '../../../utils/k8s-watch-hook';
 import { uniqueResource } from './utils';
-import { PrometheusResponse } from '../../../graphs';
 
 const viewEvents = '/k8s/all-namespaces/events';
 

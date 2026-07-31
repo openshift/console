@@ -52,6 +52,11 @@ export const useSubscriptionActions = (
           cta: {
             href: `/k8s/ns/${obj.metadata.namespace}/${ClusterServiceVersionModel.plural}/${installedCSV}`,
           },
+          accessReview: asAccessReview(
+            ClusterServiceVersionModel,
+            { metadata: { namespace: obj.metadata.namespace, name: installedCSV } },
+            'get',
+          ),
         };
       },
     }),

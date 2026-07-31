@@ -1,12 +1,12 @@
 import { useCallback } from 'react';
-import { connect } from 'react-redux';
-import { useTranslation } from 'react-i18next';
 import { Banner, Flex, Button, Tooltip } from '@patternfly/react-core';
-import { getImpersonate, ImpersonateKind } from '@console/dynamic-plugin-sdk';
-
+import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+import type { ImpersonateKind } from '@console/dynamic-plugin-sdk';
+import { getImpersonate } from '@console/dynamic-plugin-sdk';
+import type { RootState } from '@console/internal/redux';
 import * as UIActions from '../actions/ui';
 import { modelFor } from '../module/k8s';
-import { RootState } from '@console/internal/redux';
 
 export const ImpersonateNotifier = connect(
   (state: RootState) => ({ impersonate: getImpersonate(state) }),
@@ -64,8 +64,8 @@ export const ImpersonateNotifier = connect(
         <Tooltip
           content={
             <div>
-              {groups.map((group, index) => (
-                <div key={index}>{group}</div>
+              {groups.map((group) => (
+                <div key={group}>{group}</div>
               ))}
             </div>
           }

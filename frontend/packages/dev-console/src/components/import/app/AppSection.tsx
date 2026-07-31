@@ -62,6 +62,7 @@ const AppSection: FC<AppSectionProps> = ({
       )}
       <InputField
         type={TextInputTypes.text}
+        data-test="application-form-app-name"
         data-test-id="application-form-app-name"
         name={subPath ? `${subPath}.name` : 'name'}
         label={t('Name')}

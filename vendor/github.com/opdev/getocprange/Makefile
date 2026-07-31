@@ -34,17 +34,13 @@ lint: golangci-lint ## Run golangci-lint linter checks.
 	$(GOLANGCI_LINT) run
 
 GOLANGCI_LINT = $(shell pwd)/bin/golangci-lint
-GOLANGCI_LINT_VERSION ?= v1.52.2
+GOLANGCI_LINT_VERSION ?= v2.1.6
 golangci-lint: $(GOLANGCI_LINT)
 $(GOLANGCI_LINT):
-	$(call go-install-tool,$(GOLANGCI_LINT),github.com/golangci/golangci-lint/cmd/golangci-lint@$(GOLANGCI_LINT_VERSION))
+	$(call go-install-tool,$(GOLANGCI_LINT),github.com/golangci/golangci-lint/v2/cmd/golangci-lint@$(GOLANGCI_LINT_VERSION))
 
 GOFUMPT = $(shell pwd)/bin/gofumpt
-# TODO(komish): 
-# gofumpt pinned to 0.6.0 which is the last version to support a min go
-# version of 1.20. When our min go version in go.mod is updated, we can bump
-# this back to latest.
-GOFUMPT_VERSION ?= v0.6.0
+GOFUMPT_VERSION ?= v0.8.0
 gofumpt: ## Download envtest-setup locally if necessary.
 	$(call go-install-tool,$(GOFUMPT),mvdan.cc/gofumpt@$(GOFUMPT_VERSION))
 

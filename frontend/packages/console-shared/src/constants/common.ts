@@ -122,5 +122,7 @@ export enum CLUSTER_TELEMETRY_ANALYTICS {
 export const CLUSTER_VERSION_DEFAULT_UPSTREAM_SERVER_URL_PLACEHOLDER =
   'https://api.openshift.com/api/upgrades_info/v1/graph';
 
+export const INTEGRATION_TEST_USER_AGENT = 'ConsoleIntegrationTestEnvironment';
+
 export const PREFERRED_TELEMETRY_USER_PREFERENCE_KEY = 'telemetry.analytics';
 export const IS_PRODUCTION = process.env.NODE_ENV === 'production';

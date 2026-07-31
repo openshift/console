@@ -27,9 +27,11 @@ import (
 	"strings"
 
 	"github.com/opdev/getocprange"
-	"helm.sh/helm/v3/pkg/action"
-	"helm.sh/helm/v3/pkg/lint"
-	"helm.sh/helm/v3/pkg/lint/support"
+	"helm.sh/helm/v4/pkg/action"
+
+	chartv2 "helm.sh/helm/v4/pkg/chart/v2"
+	"helm.sh/helm/v4/pkg/chart/v2/lint"
+	"helm.sh/helm/v4/pkg/chart/v2/lint/support"
 
 	"github.com/redhat-certification/chart-verifier/internal/chartverifier/pyxis"
 	"github.com/redhat-certification/chart-verifier/internal/tool"
@@ -234,12 +236,105 @@ func NotContainCRDs(opts *CheckOptions) (Result, error) {
 
 	r := NewResult(true, ChartDoesNotContainCRDs)
 
-	if len(c.CRDObjects()) > 0 {
+	// Check standard CRD directory in main chart and dependencies
+	if hasCRDObjects(c) {
 		r.Ok = false
 		r.SetResult(false, ChartContainCRDs)
+		return r, nil
+	}
+
+	// Check for CRDs in templates (main chart and dependencies)
+	if hasCRDInTemplates(c) {
+		r.Ok = false
+		r.SetResult(false, ChartContainCRDs)
+		return r, nil
+	}
+
+	// Check for CRDs in files (root directory of main chart and dependencies)
+	if hasCRDInFiles(c) {
+		r.Ok = false
+		r.SetResult(false, ChartContainCRDs)
+		return r, nil
 	}
 
 	return r, nil
+}
+
+func hasCRDObjects(c *chartv2.Chart) bool {
+	// Check main chart CRDs directory
+	if len(c.CRDObjects()) > 0 {
+		return true
+	}
+
+	// Recursively check dependencies' CRDs directories
+	for _, dep := range c.Dependencies() {
+		if hasCRDObjects(dep) {
+			return true
+		}
+	}
+
+	return false
+}
+
+func hasCRDInTemplates(c *chartv2.Chart) bool {
+	// Check main chart templates
+	for _, f := range c.Templates {
+		if !strings.HasSuffix(f.Name, ".yaml") && !strings.HasSuffix(f.Name, ".yml") {
+			continue
+		}
+		if isCRDFile(f.Data) {
+			return true
+		}
+	}
+
+	// Check dependency/subchart templates
+	for _, dep := range c.Dependencies() {
+		if hasCRDInTemplates(dep) {
+			return true
+		}
+	}
+
+	return false
+}
+
+func isCRDFile(data []byte) bool {
+	// Split on YAML document separator for multi-doc files
+	docs := strings.Split(string(data), "\n---")
+	for _, doc := range docs {
+		for _, line := range strings.Split(doc, "\n") {
+			trimmed := strings.TrimSpace(line)
+			if strings.HasPrefix(trimmed, "kind:") {
+				kind := strings.TrimSpace(strings.TrimPrefix(trimmed, "kind:"))
+				// Remove surrounding quotes if present (both single and double)
+				kind = strings.Trim(kind, "\"'")
+				if kind == "CustomResourceDefinition" {
+					return true
+				}
+			}
+		}
+	}
+	return false
+}
+
+func hasCRDInFiles(c *chartv2.Chart) bool {
+	// Check this chart's files (root directory)
+	for _, f := range c.Files {
+		if !strings.HasSuffix(f.Name, ".yaml") && !strings.HasSuffix(f.Name, ".yml") {
+			continue
+		}
+		if isCRDFile(f.Data) {
+			return true
+		}
+	}
+
+	// Recursively check dependencies
+	for _, dep := range c.Dependencies() {
+		if hasCRDInFiles(dep) {
+			return true
+		}
+	}
+
+	return false
 }
 
 func HelmLint(opts *CheckOptions) (Result, error) {
@@ -247,8 +342,12 @@ func HelmLint(opts *CheckOptions) (Result, error) {
 	if err != nil {
 		return NewResult(false, err.Error()), err
 	}
+
 	r := NewResult(true, HelmLintSuccessful)
-	linter := lint.All(p, opts.Values, "default", false)
+	// TODO: When chart/v3 is released, consider whether it makes sense to use
+	// actions.Lint related APIs vs. chart/v3/lint (given we use chart/v2/lint
+	// here, but will need to support both.)
+	linter := lint.RunAll(p, opts.Values, "default")
 	if linter.HighestSeverity > support.WarningSev {
 		reason := ""
 		for _, m := range linter.Messages {
@@ -361,6 +460,7 @@ func SignatureIsValid(opts *CheckOptions) (Result, error) {
 		if err != nil {
 			return NewResult(false, fmt.Sprintf("%s : get error was %v", SignatureFailure, err)), nil
 		}
+		defer resp.Body.Close()
 
 		if resp.StatusCode == 404 {
 			return NewSkippedResult(fmt.Sprintf("%s : %s", ChartNotSigned, SignatureIsNotPresentSuccess)), nil
@@ -411,7 +511,7 @@ func SignatureIsValid(opts *CheckOptions) (Result, error) {
 	}
 	verify.Keyring = keyringFilename
 
-	err = verify.Run(chartPath)
+	_, err = verify.Run(chartPath)
 	if err != nil {
 		failureMsg := fmt.Sprintf("%s : %s : %v", ChartSigned, SignatureFailure, err)
 		return NewResult(false, failureMsg), nil
@@ -458,6 +558,8 @@ func downloadFile(fileURL *url.URL, directory string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	defer file.Close()
+
 	client := http.Client{
 		CheckRedirect: func(r *http.Request, via []*http.Request) error {
 			r.URL.Opaque = r.URL.Path
@@ -476,8 +578,6 @@ func downloadFile(fileURL *url.URL, directory string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	// #nosec G307
-	defer file.Close()
 
 	return filePath, nil
 }

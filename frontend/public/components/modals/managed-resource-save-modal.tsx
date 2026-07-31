@@ -1,6 +1,5 @@
 import type { FC } from 'react';
 import { useState } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
 import {
   Button,
   Content,
@@ -11,11 +10,13 @@ import {
   ModalHeader,
   ModalVariant,
 } from '@patternfly/react-core';
-import { referenceForOwnerRef, K8sResourceCommon, OwnerReference } from '../../module/k8s/';
-import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import { ModalComponentProps } from '@console/shared/src/types/modal';
-import { ResourceLink } from '../utils/resource-link';
+import { Trans, useTranslation } from 'react-i18next';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
+import type { K8sResourceCommon, OwnerReference } from '../../module/k8s';
+import { referenceForOwnerRef } from '../../module/k8s';
+import { ResourceLink } from '../utils/resource-link';
 
 const ManagedResourceSaveModal: FC<ManagedResourceSaveModalProps> = (props) => {
   const submit = (event) => {
@@ -60,7 +61,12 @@ const ManagedResourceSaveModal: FC<ManagedResourceSaveModalProps> = (props) => {
         >
           {t('Save')}
         </Button>
-        <Button variant="link" onClick={props.close} data-test-id="modal-cancel-action">
+        <Button
+          variant="link"
+          onClick={props.close}
+          data-test="modal-cancel-action"
+          data-test-id="modal-cancel-action"
+        >
           {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>

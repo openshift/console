@@ -7,10 +7,10 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
-import { ImpersonateUserModal } from '../impersonate-user-modal';
-import { useK8sWatchResource } from '../../utils/k8s-watch-hook';
-import { GroupKind } from '../../../module/k8s';
 import * as UIActions from '../../../actions/ui';
+import type { GroupKind } from '../../../module/k8s';
+import { useK8sWatchResource } from '../../utils/k8s-watch-hook';
+import { ImpersonateUserModal } from '../impersonate-user-modal';
 
 // Mock dependencies
 jest.mock('../../utils/k8s-watch-hook', () => ({
@@ -63,7 +63,7 @@ describe('ImpersonateUserModal Integration Tests', () => {
 
       render(
         <Provider store={mockStore}>
-          <ImpersonateUserModal isOpen={true} onClose={onClose} onImpersonate={onImpersonate} />
+          <ImpersonateUserModal isOpen onClose={onClose} onImpersonate={onImpersonate} />
         </Provider>,
       );
 
@@ -93,7 +93,7 @@ describe('ImpersonateUserModal Integration Tests', () => {
 
       render(
         <Provider store={mockStore}>
-          <ImpersonateUserModal isOpen={true} onClose={onClose} onImpersonate={onImpersonate} />
+          <ImpersonateUserModal isOpen onClose={onClose} onImpersonate={onImpersonate} />
         </Provider>,
       );
 
@@ -128,7 +128,7 @@ describe('ImpersonateUserModal Integration Tests', () => {
 
       render(
         <Provider store={mockStore}>
-          <ImpersonateUserModal isOpen={true} onClose={jest.fn()} onImpersonate={onImpersonate} />
+          <ImpersonateUserModal isOpen onClose={jest.fn()} onImpersonate={onImpersonate} />
         </Provider>,
       );
 
@@ -179,7 +179,7 @@ describe('ImpersonateUserModal Integration Tests', () => {
 
       render(
         <Provider store={mockStore}>
-          <ImpersonateUserModal isOpen={true} onClose={jest.fn()} onImpersonate={onImpersonate} />
+          <ImpersonateUserModal isOpen onClose={jest.fn()} onImpersonate={onImpersonate} />
         </Provider>,
       );
 
@@ -229,7 +229,7 @@ describe('ImpersonateUserModal Integration Tests', () => {
       const user = userEvent.setup();
       render(
         <Provider store={mockStore}>
-          <ImpersonateUserModal isOpen={true} onClose={jest.fn()} onImpersonate={jest.fn()} />
+          <ImpersonateUserModal isOpen onClose={jest.fn()} onImpersonate={jest.fn()} />
         </Provider>,
       );
 
@@ -255,7 +255,7 @@ describe('ImpersonateUserModal Integration Tests', () => {
       const user = userEvent.setup();
       render(
         <Provider store={mockStore}>
-          <ImpersonateUserModal isOpen={true} onClose={jest.fn()} onImpersonate={jest.fn()} />
+          <ImpersonateUserModal isOpen onClose={jest.fn()} onImpersonate={jest.fn()} />
         </Provider>,
       );
 
@@ -280,7 +280,7 @@ describe('ImpersonateUserModal Integration Tests', () => {
 
       render(
         <Provider store={mockStore}>
-          <ImpersonateUserModal isOpen={true} onClose={jest.fn()} onImpersonate={jest.fn()} />
+          <ImpersonateUserModal isOpen onClose={jest.fn()} onImpersonate={jest.fn()} />
         </Provider>,
       );
 
@@ -302,7 +302,7 @@ describe('ImpersonateUserModal Integration Tests', () => {
       const ue = userEvent.setup();
       const { rerender } = render(
         <Provider store={mockStore}>
-          <ImpersonateUserModal isOpen={true} onClose={jest.fn()} onImpersonate={jest.fn()} />
+          <ImpersonateUserModal isOpen onClose={jest.fn()} onImpersonate={jest.fn()} />
         </Provider>,
       );
 
@@ -321,7 +321,7 @@ describe('ImpersonateUserModal Integration Tests', () => {
       // Reopen modal
       rerender(
         <Provider store={mockStore}>
-          <ImpersonateUserModal isOpen={true} onClose={jest.fn()} onImpersonate={jest.fn()} />
+          <ImpersonateUserModal isOpen onClose={jest.fn()} onImpersonate={jest.fn()} />
         </Provider>,
       );
 
@@ -336,7 +336,7 @@ describe('ImpersonateUserModal Integration Tests', () => {
 
       render(
         <Provider store={mockStore}>
-          <ImpersonateUserModal isOpen={true} onClose={onClose} onImpersonate={jest.fn()} />
+          <ImpersonateUserModal isOpen onClose={onClose} onImpersonate={jest.fn()} />
         </Provider>,
       );
 
@@ -352,11 +352,11 @@ describe('ImpersonateUserModal Integration Tests', () => {
       render(
         <Provider store={mockStore}>
           <ImpersonateUserModal
-            isOpen={true}
+            isOpen
             onClose={jest.fn()}
             onImpersonate={jest.fn()}
             prefilledUsername="readonly-user"
-            isUsernameReadonly={true}
+            isUsernameReadonly
           />
         </Provider>,
       );

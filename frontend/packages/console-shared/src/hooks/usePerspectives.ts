@@ -2,41 +2,15 @@ import { useState, useCallback, useEffect, useMemo } from 'react';
 import type {
   Perspective as PerspectiveExtension,
   PerspectiveType,
-  AccessReviewResourceAttributes,
 } from '@console/dynamic-plugin-sdk';
 import { isPerspective, checkAccess } from '@console/dynamic-plugin-sdk';
 import type { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import { USER_PREFERENCE_PREFIX } from '../constants/common';
+import type { PerspectiveAccessReview } from '../utils/override-perspectives';
+import { PerspectiveVisibilityState, overridePerspectives } from '../utils/override-perspectives';
 
 const PERSPECTIVE_VISITED_FEATURE_KEY = 'perspective.visited';
-
-export enum PerspectiveVisibilityState {
-  Enabled = 'Enabled',
-  Disabled = 'Disabled',
-  AccessReview = 'AccessReview',
-}
-
-type PerspectiveAccessReview = {
-  required?: AccessReviewResourceAttributes[];
-  missing?: AccessReviewResourceAttributes[];
-};
-
-type PerspectiveVisibility = {
-  state: PerspectiveVisibilityState;
-  accessReview?: PerspectiveAccessReview;
-};
-
-export type PerspectivePinnedResource = {
-  group: string;
-  version: string;
-  resource: string;
-};
-export type Perspective = {
-  id: string;
-  visibility: PerspectiveVisibility;
-  pinnedResources?: PerspectivePinnedResource[];
-};
 
 export const getPerspectiveVisitedKey = (perspective: PerspectiveType): string =>
   `${USER_PREFERENCE_PREFIX}.${PERSPECTIVE_VISITED_FEATURE_KEY}.${perspective}`;
@@ -83,7 +57,8 @@ export const usePerspectives = (): LoadedExtension<PerspectiveExtension>[] => {
   const perspectiveExtensions = useExtensions<PerspectiveExtension>(isPerspective);
   const [results, setResults] = useState<Record<string, boolean>>(() => {
     let obj: Record<string, boolean> = {};
-    if (!window.SERVER_FLAGS.perspectives) {
+
+    if (!overridePerspectives) {
       obj = perspectiveExtensions.reduce(
         (acc: Record<string, boolean>, ex: LoadedExtension<PerspectiveExtension>) => {
           acc[ex.properties.id] = true;
@@ -92,9 +67,10 @@ export const usePerspectives = (): LoadedExtension<PerspectiveExtension>[] => {
         {},
       );
     } else {
-      const perspectives: Perspective[] = JSON.parse(window.SERVER_FLAGS.perspectives);
       obj = perspectiveExtensions.reduce((acc, perspectiveExtension) => {
-        const perspective = perspectives?.find((p) => p.id === perspectiveExtension.properties.id);
+        const perspective = overridePerspectives.find(
+          (p) => p.id === perspectiveExtension.properties.id,
+        );
 
         if (
           !perspective?.visibility?.state ||
@@ -124,11 +100,13 @@ export const usePerspectives = (): LoadedExtension<PerspectiveExtension>[] => {
     },
     [setResults],
   );
+
   useEffect(() => {
-    if (window.SERVER_FLAGS.perspectives) {
-      const perspectives: Perspective[] = JSON.parse(window.SERVER_FLAGS.perspectives);
+    if (overridePerspectives) {
       perspectiveExtensions.forEach((perspectiveExtension) => {
-        const perspective = perspectives?.find((p) => p.id === perspectiveExtension.properties.id);
+        const perspective = overridePerspectives.find(
+          (p) => p.id === perspectiveExtension.properties.id,
+        );
 
         if (
           !perspective ||
@@ -156,8 +134,9 @@ export const usePerspectives = (): LoadedExtension<PerspectiveExtension>[] => {
       });
     }
   }, [perspectiveExtensions, handleResults]);
+
   const perspectives = useMemo(() => {
-    if (!window.SERVER_FLAGS.perspectives) {
+    if (!overridePerspectives) {
       return perspectiveExtensions;
     }
 
@@ -168,6 +147,7 @@ export const usePerspectives = (): LoadedExtension<PerspectiveExtension>[] => {
       ? perspectiveExtensions.filter((p) => p.properties.id === 'admin')
       : filteredExtensions;
   }, [perspectiveExtensions, results]);
+
   return perspectives;
 };
 

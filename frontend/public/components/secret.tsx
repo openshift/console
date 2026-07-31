@@ -1,45 +1,39 @@
 import type { FC } from 'react';
-import * as _ from 'lodash';
 import { Suspense, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { DetailsPage } from './factory/details';
-import { ListPage } from './factory/list-page';
-import { SecretData } from './configmap-and-secret-data';
-import { DASH } from '@console/shared/src/constants/ui';
-import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
-import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
-import {
-  referenceFor,
-  SecretKind,
-  K8sModel,
-  K8sResourceKind,
-  referenceForModel,
-  TableColumn,
-} from '../module/k8s';
-import { SectionHeading } from './utils/headings';
-import { ResourceLink } from './utils/resource-link';
-import { ResourceSummary, detailsPage } from './utils/details-page';
-import { navFactory } from './utils/horizontal-nav';
-import { SecretFilterValues } from './secrets/create-secret/types';
-import { secretTypeFilterReducer } from './secrets/create-secret';
-import { useAddSecretToWorkloadModalLauncher } from './modals/add-secret-to-workload';
-import { DetailsItem } from './utils/details-item';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import {
   actionsCellProps,
   getNameCellProps,
   ConsoleDataView,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
+import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
-import { LoadingBox } from './utils/status-box';
-import { sortResourceByValue } from './factory/Table/sort';
-import { sorts } from './factory/table';
-import { SecretModel } from '../models';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { DASH } from '@console/shared/src/constants/ui';
+import { SecretModel } from '../models';
+import type { SecretKind, K8sModel, K8sResourceKind, TableColumn } from '../module/k8s';
+import { referenceFor, referenceForModel } from '../module/k8s';
+import { SecretData } from './configmap-and-secret-data';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
+import { sorts } from './factory/table';
+import { sortResourceByValue } from './factory/Table/sort';
+import { useAddSecretToWorkloadModalLauncher } from './modals/add-secret-to-workload';
+import { secretTypeFilterReducer } from './secrets/create-secret';
+import { SecretFilterValues } from './secrets/create-secret/types';
+import { DetailsItem } from './utils/details-item';
+import { ResourceSummary, detailsPage } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { ResourceLink } from './utils/resource-link';
+import { LoadingBox } from './utils/status-box';
 
 const kindRef = referenceForModel(SecretModel);
 
@@ -205,7 +199,7 @@ const SecretsList: FC<SecretsListProps> = ({ data, loaded, ...props }) => {
         loaded={loaded}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
+        hideColumnManagement
         isResizable
         resetAllColumnWidths={resetAllColumnWidths}
       />
@@ -267,11 +261,11 @@ const SecretsPage: FC<SecretsPageProps> = (props) => {
       {...props}
       kind={kindRef}
       ListComponent={SecretsList}
-      canCreate={true}
+      canCreate
       rowFilters={filters}
       createButtonText={t('Create')}
       createProps={createProps}
-      omitFilterToolbar={true}
+      omitFilterToolbar
     />
   );
 };

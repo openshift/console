@@ -23,8 +23,16 @@ const alertExists = (titleText: string) => {
 };
 
 describe(`Testing uninstall of ${testOperator.name} Operator`, () => {
-  before(() => {
+  before(function () {
     cy.login();
+    // cy.window() returns a Cypress Chainable, not a true Promise — it has no .catch() method.
+    // Cypress's command queue manages error handling; this disable is required.
+    // eslint-disable-next-line promise/catch-or-return
+    cy.window().then((win) => {
+      if (win.SERVER_FLAGS?.techPreview) {
+        this.skip();
+      }
+    });
     cy.createProjectWithCLI(testName);
     operator.install(
       testOperator.name,

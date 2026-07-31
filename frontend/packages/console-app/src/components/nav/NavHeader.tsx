@@ -2,8 +2,6 @@ import type { FC, MouseEvent, Ref } from 'react';
 import { useMemo, useState, useCallback } from 'react';
 import type { MenuToggleElement } from '@patternfly/react-core';
 import { MenuToggle, Select, SelectList, SelectOption, Title } from '@patternfly/react-core';
-import { RhUiGearGroupFillIcon } from '@patternfly/react-icons';
-import { useTranslation } from 'react-i18next';
 import type { Perspective } from '@console/dynamic-plugin-sdk';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { AsyncComponent } from '@console/internal/components/utils/async';
@@ -26,6 +24,7 @@ const PerspectiveDropdownItem: FC<PerspectiveDropdownItemProps> = ({ perspective
   return (
     <SelectOption
       key={perspective.properties.id}
+      data-test="perspective-switcher-menu-option"
       data-test-id="perspective-switcher-menu-option"
       onClick={(e: MouseEvent<HTMLLinkElement>) => {
         e.preventDefault();
@@ -49,7 +48,6 @@ const NavHeader: FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
   const [activePerspective, setActivePerspective] = useActivePerspective();
   const [isPerspectiveDropdownOpen, setPerspectiveDropdownOpen] = useState(false);
   const perspectiveExtensions = usePerspectives();
-  const { t } = useTranslation('console-app');
 
   const togglePerspectiveOpen = useCallback(() => {
     setPerspectiveDropdownOpen((isOpen) => !isOpen);
@@ -73,12 +71,23 @@ const NavHeader: FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
     />
   ));
 
-  const { icon, name } = useMemo(
+  const { icon, name } = useMemo<{
+    icon: Perspective['properties']['icon'];
+    name: Perspective['properties']['name'];
+  }>(
     () =>
       perspectiveExtensions.find((p) => p?.properties?.id === activePerspective)?.properties ??
-      perspectiveExtensions[0]?.properties ?? { icon: null, name: null },
+      perspectiveExtensions[0]?.properties ?? { icon: null, name: '' },
     [activePerspective, perspectiveExtensions],
   );
+
+  const ActivePerspectiveIcon = icon ? (
+    <AsyncComponent
+      key={activePerspective}
+      loader={() => icon().then((m) => m.default)}
+      LoadingComponent={IconLoadingComponent}
+    />
+  ) : null;
 
   return perspectiveDropdownItems.length > 1 ? (
     <div
@@ -93,24 +102,16 @@ const NavHeader: FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
         toggle={(toggleRef: Ref<MenuToggleElement>) => (
           <MenuToggle
             isFullWidth
+            data-test="perspective-switcher-toggle"
             data-test-id="perspective-switcher-toggle"
             isExpanded={isPerspectiveDropdownOpen}
             ref={toggleRef}
             onClick={() => togglePerspectiveOpen()}
-            icon={
-              icon && (
-                <AsyncComponent
-                  loader={() => icon().then((m) => m.default)}
-                  LoadingComponent={IconLoadingComponent}
-                />
-              )
-            }
+            icon={ActivePerspectiveIcon}
           >
-            {name && (
-              <Title headingLevel="h2" size="md">
-                {name}
-              </Title>
-            )}
+            <Title headingLevel="h2" size="md">
+              {name}
+            </Title>
           </MenuToggle>
         )}
         popperProps={{
@@ -121,9 +122,13 @@ const NavHeader: FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
       </Select>
     </div>
   ) : (
-    <div data-test-id="perspective-switcher-toggle" id="core-platform-perspective">
+    <div
+      data-test="perspective-switcher-toggle"
+      data-test-id="perspective-switcher-toggle"
+      id="only-one-perspective"
+    >
       <Title headingLevel="h2" size="md">
-        <RhUiGearGroupFillIcon /> {t('Core platform')}
+        {ActivePerspectiveIcon} {name}
       </Title>
     </div>
   );

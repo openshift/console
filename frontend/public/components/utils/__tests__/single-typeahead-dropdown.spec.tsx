@@ -1,6 +1,5 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { SingleTypeaheadDropdown } from '../single-typeahead-dropdown';
 
@@ -56,7 +55,7 @@ describe('SingleTypeaheadDropdown', () => {
         items={[{ value: 'test', children: 'test' }]}
         onChange={onChange}
         selectedKey=""
-        hideClearButton={true}
+        hideClearButton
       />,
     );
 

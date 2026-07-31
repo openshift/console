@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router';
 import {
   Button,
   Form,
@@ -10,16 +9,19 @@ import {
   StackItem,
 } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
-import { resourceListPathFromModel } from '../utils/resource-link';
-import { getName } from '@console/shared/src/selectors/common';
+import { useNavigate } from 'react-router';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
-import { isPVCDelete, PVCDelete } from '@console/dynamic-plugin-sdk/src/extensions/pvc';
-import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import { ModalComponentProps } from '@console/shared/src/types/modal';
-import { k8sKill, PersistentVolumeClaimKind } from '@console/internal/module/k8s';
-import { PersistentVolumeClaimModel } from '../../models';
-import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import { isPVCDelete } from '@console/dynamic-plugin-sdk/src/extensions/pvc';
+import type { PVCDelete } from '@console/dynamic-plugin-sdk/src/extensions/pvc';
+import type { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
+import { k8sKill } from '@console/internal/module/k8s';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
+import { getName } from '@console/shared/src/selectors/common';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
+import { PersistentVolumeClaimModel } from '../../models';
+import { resourceListPathFromModel } from '../utils/resource-link';
 
 const DeletePVCModal = (props: DeletePVCModalProps) => {
   const { pvc, close, cancel } = props;
@@ -39,10 +41,12 @@ const DeletePVCModal = (props: DeletePVCModalProps) => {
         predicate(pvcMetadata) && onPVCKill(pvcMetadata),
     );
 
-    handlePromise(Promise.all([promise, ...extensionPromises])).then(() => {
-      close();
-      navigate(resourceListPathFromModel(PersistentVolumeClaimModel, pvc.metadata.namespace));
-    });
+    handlePromise(Promise.all([promise, ...extensionPromises]))
+      .then(() => {
+        close();
+        navigate(resourceListPathFromModel(PersistentVolumeClaimModel, pvc.metadata.namespace));
+      })
+      .catch(() => {});
   };
 
   const alertComponents = pvcDeleteExtensions.map(
@@ -87,7 +91,13 @@ const DeletePVCModal = (props: DeletePVCModalProps) => {
         >
           {t('Delete')}
         </Button>
-        <Button variant="link" onClick={cancel} type="button" data-test-id="modal-cancel-action">
+        <Button
+          variant="link"
+          onClick={cancel}
+          type="button"
+          data-test="modal-cancel-action"
+          data-test-id="modal-cancel-action"
+        >
           {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>

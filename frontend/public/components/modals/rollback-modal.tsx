@@ -1,7 +1,5 @@
 import type { FC, FormEvent } from 'react';
 import { useState, useEffect } from 'react';
-import * as _ from 'lodash';
-import { Trans, useTranslation } from 'react-i18next';
 import {
   Alert,
   Button,
@@ -12,19 +10,21 @@ import {
   ModalHeader,
   ModalVariant,
 } from '@patternfly/react-core';
+import * as _ from 'lodash';
+import { Trans, useTranslation } from 'react-i18next';
 import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
 import {
   getDeploymentConfigVersion,
   getOwnerNameByKind,
 } from '@console/shared/src/utils/resource-utils';
-import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
-import type { ModalComponentProps } from '@console/shared/src/types/modal';
-import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
-import { LoadingInline } from '../utils/status-box';
 import { DeploymentConfigModel, DeploymentModel, ReplicationControllerModel } from '../../models';
 import type { K8sResourceKind } from '../../module/k8s';
 import { k8sCreate, k8sPatch, k8sUpdate } from '../../module/k8s';
 import { useK8sWatchResource } from '../utils/k8s-watch-hook';
+import { LoadingInline } from '../utils/status-box';
 
 const ANNOTATIONS_TO_SKIP = [
   'kubectl.kubernetes.io/last-applied-configuration',
@@ -235,6 +235,7 @@ const BaseRollbackModal: FC<RollbackModalProps> = (props) => {
           variant="link"
           onClick={props.cancel}
           type="button"
+          data-test="modal-cancel-action"
           data-test-id="modal-cancel-action"
         >
           {t('Cancel')}

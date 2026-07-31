@@ -17,14 +17,14 @@ const (
 )
 
 type CSRFVerifier struct {
-	refererURL    *url.URL
+	refererURLs   []*url.URL
 	secureCookies bool
 }
 
-func NewCSRFVerifier(refererURL *url.URL, secureCookies bool) *CSRFVerifier {
+func NewCSRFVerifier(refererURLs []*url.URL, secureCookies bool) *CSRFVerifier {
 	return &CSRFVerifier{
 		secureCookies: secureCookies,
-		refererURL:    refererURL,
+		refererURLs:   refererURLs,
 	}
 }
 
@@ -90,16 +90,17 @@ func (c *CSRFVerifier) verifySourceOrigin(r *http.Request) (err error) {
 		return err
 	}
 
-	isValid := c.refererURL.Hostname() == u.Hostname() &&
-		c.refererURL.Port() == u.Port() &&
-		c.refererURL.Scheme == u.Scheme &&
-		// The Origin header does not have a path
-		(u.Path == "" || strings.HasPrefix(u.Path, c.refererURL.Path))
-
-	if !isValid {
-		return fmt.Errorf("invalid Origin or Referer: %v expected `%v`", source, c.refererURL)
+	for _, refererURL := range c.refererURLs {
+		isValid := refererURL.Hostname() == u.Hostname() &&
+			refererURL.Port() == u.Port() &&
+			refererURL.Scheme == u.Scheme &&
+			// The Origin header does not have a path
+			(u.Path == "" || strings.HasPrefix(u.Path, refererURL.Path))
+		if isValid {
+			return nil
+		}
 	}
-	return nil
+	return fmt.Errorf("invalid Origin or Referer: %v expected one of %v", source, c.refererURLs)
 }
 
 func (c *CSRFVerifier) verifyCSRFToken(r *http.Request) error {

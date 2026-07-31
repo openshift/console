@@ -1,10 +1,8 @@
 /* eslint-disable no-barrel-files/no-barrel-files */
-import * as _ from 'lodash';
 import i18next from 'i18next';
-import { PodPhase } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { ContainerStatus, PodKind, Volume } from './types';
-
-export type { PodPhase } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import * as _ from 'lodash';
+import type { PodPhase } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { ContainerStatus, PodKind, Volume } from './types';
 
 const getRestartPolicy = (pod: PodKind) =>
   _.find(

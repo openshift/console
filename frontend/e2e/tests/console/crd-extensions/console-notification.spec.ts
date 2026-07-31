@@ -75,26 +75,16 @@ test.describe(`${crd} CRD`, { tag: ['@admin'] }, () => {
         await expect(page.getByRole('heading', { name })).toBeVisible();
 
         await expect(page.getByTestId('additional-printer-columns')).toBeVisible();
-        await expect(page.locator('[data-test-selector="details-item-label__Text"]')).toHaveText(
-          'Text',
-        );
-        await expect(page.locator('[data-test-selector="details-item-value__Text"]')).toHaveText(
-          text,
-        );
-        await expect(
-          page.locator('[data-test-selector="details-item-label__Location"]'),
-        ).toHaveText('Location');
-        await expect(
-          page.locator('[data-test-selector="details-item-value__Location"]'),
-        ).toHaveText(location);
-        await expect(page.locator('[data-test-selector="details-item-label__Age"]')).toHaveText(
-          'Age',
-        );
-        await expect(page.locator('[data-test-selector="details-item-value__Age"]')).toBeVisible();
+        await expect(page.getByTestId('details-item-label__Text')).toHaveText('Text');
+        await expect(page.getByTestId('details-item-value__Text')).toHaveText(text);
+        await expect(page.getByTestId('details-item-label__Location')).toHaveText('Location');
+        await expect(page.getByTestId('details-item-value__Location')).toHaveText(location);
+        await expect(page.getByTestId('details-item-label__Age')).toHaveText('Age');
+        await expect(page.getByTestId('details-item-value__Age')).toBeVisible();
       });
 
       await test.step('Verify notification banner appears', async () => {
-        const notification = page.locator(`[data-test="${name}-${location}"]`);
+        const notification = page.getByTestId(`${name}-${location}`);
         await expect(notification).toBeVisible();
         await expect(notification).toContainText(text);
       });
@@ -110,7 +100,7 @@ test.describe(`${crd} CRD`, { tag: ['@admin'] }, () => {
       });
 
       await test.step('Verify modified notification banner appears', async () => {
-        const altNotification = page.locator(`[data-test="${name}-${altLocation}"]`);
+        const altNotification = page.getByTestId(`${name}-${altLocation}`);
         await expect(altNotification).toBeVisible();
         await expect(altNotification).toContainText(altText);
       });

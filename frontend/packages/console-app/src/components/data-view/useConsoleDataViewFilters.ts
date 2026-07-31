@@ -15,6 +15,9 @@ const getK8sResourceMetadata = (obj: K8sResourceCommon): ResourceMetadata => ({
   labels: obj.metadata?.labels,
 });
 
+const getOpenShiftDisplayName = (resource: K8sResourceCommon): string | undefined =>
+  resource.metadata?.annotations?.['openshift.io/display-name'];
+
 export const useConsoleDataViewFilters = <
   TData,
   TFilters extends ResourceFilters = ResourceFilters
@@ -75,12 +78,14 @@ export const useConsoleDataViewFilters = <
     () =>
       data?.filter((resource) => {
         const { name: resourceName, labels } = getObjectMetadata(resource);
+        const displayName = getOpenShiftDisplayName(resource as K8sResourceCommon);
 
-        // Filter by K8s resource name
+        // Filter by K8s resource name or display name
+        const matchFn = isExactSearch ? exactMatch : fuzzyCaseInsensitive;
         const matchesName =
-          !filters.name || isExactSearch
-            ? exactMatch(filters.name, resourceName)
-            : fuzzyCaseInsensitive(filters.name, resourceName);
+          !filters.name ||
+          matchFn(filters.name, resourceName) ||
+          matchFn(filters.name, displayName);
 
         const resourceLabels = mapLabelsToStrings(labels);
         const filterLabelsArray = filters.label?.split(',') ?? [];

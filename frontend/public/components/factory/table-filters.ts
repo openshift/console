@@ -1,28 +1,28 @@
-import * as _ from 'lodash';
 import * as fuzzy from 'fuzzysearch';
+import * as _ from 'lodash';
 import { nodeStatus } from '@console/app/src/status/node';
-import { snapshotStatus } from '@console/shared/src/sorts/snapshot';
-import { getNodeRoles } from '@console/shared/src/selectors/node';
-import { getLabelsAsString } from '@console/shared/src/utils/label-filter';
-import { Alert, Rule } from '@console/dynamic-plugin-sdk/src/api/common-types';
-import {
+import type { Alert, Rule } from '@console/dynamic-plugin-sdk/src/api/common-types';
+import type {
   AnyRowFilter,
   FilterValue,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { requesterFilter } from '@console/shared/src/components/namespace/filters';
 import { routeStatus } from '@console/shared/src/components/utils/routes';
-import { secretTypeFilterReducer } from '../secrets/create-secret';
-import { roleType } from '../RBAC/role-type';
-import {
+import { getNodeRoles } from '@console/shared/src/selectors/node';
+import { snapshotStatus } from '@console/shared/src/sorts/snapshot';
+import { getLabelsAsString } from '@console/shared/src/utils/label-filter';
+import { getClusterOperatorStatus } from '../../module/k8s/cluster-operator';
+import { getTemplateInstanceStatus } from '../../module/k8s/template';
+import type {
   K8sResourceKind,
   MachineKind,
   VolumeSnapshotKind,
   CustomResourceDefinitionKind,
 } from '../../module/k8s/types';
-import { getClusterOperatorStatus } from '../../module/k8s/cluster-operator';
-import { getTemplateInstanceStatus } from '../../module/k8s/template';
+import type { Target } from '../monitoring/types';
 import { alertDescription } from '../monitoring/utils';
-import { Target } from '../monitoring/types';
-import { requesterFilter } from '@console/shared/src/components/namespace/filters';
+import { roleType } from '../RBAC/role-type';
+import { secretTypeFilterReducer } from '../secrets/create-secret';
 
 export const fuzzyCaseInsensitive = (a: string, b: string): boolean =>
   fuzzy(_.toLower(a), _.toLower(b));
@@ -143,7 +143,7 @@ export const tableFilters = (isExactSearch: boolean): FilterMap => {
         return true;
       }
 
-      const phase = build.status.phase;
+      const { phase } = build.status;
       return phases.selected.includes(phase) || !_.includes(phases.all, phase);
     },
 
@@ -185,7 +185,7 @@ export const tableFilters = (isExactSearch: boolean): FilterMap => {
         return true;
       }
 
-      const phase = pvc.status.phase;
+      const { phase } = pvc.status;
       return phases.selected.includes(phase) || !_.includes(phases.all, phase);
     },
 

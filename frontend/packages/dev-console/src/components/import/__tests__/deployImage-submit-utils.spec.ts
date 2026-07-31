@@ -1,3 +1,4 @@
+/* eslint-disable max-nested-callbacks */
 import * as _ from 'lodash';
 import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import {

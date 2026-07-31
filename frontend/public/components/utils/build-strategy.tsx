@@ -1,11 +1,11 @@
 import type { FC } from 'react';
-import { useTranslation } from 'react-i18next';
-import * as _ from 'lodash';
 import { CodeBlock, CodeBlockCode, DescriptionList } from '@patternfly/react-core';
-import { K8sResourceKind, K8sResourceKindReference } from '../../module/k8s';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import type { K8sResourceKind, K8sResourceKindReference } from '../../module/k8s';
+import { getStrategyType } from './build-utils';
 import { DetailsItem } from './details-item';
 import { ResourceLink } from './resource-link';
-import { getStrategyType } from '../utils/build-utils';
 
 const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';
 

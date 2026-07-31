@@ -1,5 +1,6 @@
 import type { ComponentType } from 'react';
 import type { ValidatedOptions } from '@patternfly/react-core';
+import type { TFunction } from 'i18next';
 import type { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
 import { GitProvider } from '@console/git-service/src/types/git';
 import type { DetectedStrategy } from '@console/git-service/src/utils/import-strategy-detector';
@@ -381,12 +382,12 @@ export interface AutoscaleWindowType {
   defaultAutoscalewindowUnit: string;
 }
 
-/** @public Passed as unitOptions prop to ResourceLimitField */
-export enum CPUUnits {
-  m = 'millicores',
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  '' = 'cores',
-}
+export const getCPUUnits = (t: TFunction): Record<string, string> => ({
+  // t('devconsole~millicores')
+  // t('devconsole~cores')
+  m: t('devconsole~millicores'),
+  '': t('devconsole~cores'),
+});
 
 /** @public Passed as unitOptions prop to ResourceLimitField */
 export enum MemoryUnits {

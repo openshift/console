@@ -1,9 +1,5 @@
 import type { FC } from 'react';
 import { useCallback, useEffect, useRef, useState, useMemo } from 'react';
-import * as _ from 'lodash';
-import { Base64 } from 'js-base64';
-import { useTranslation } from 'react-i18next';
-import { RhUiExpandIcon } from '@patternfly/react-icons';
 import {
   Button,
   Alert,
@@ -14,21 +10,35 @@ import {
   ToolbarItem,
   Flex,
   FlexItem,
+  Tooltip,
 } from '@patternfly/react-core';
+import { RhUiExpandIcon, RhUiExternalLinkFillIcon } from '@patternfly/react-icons';
+import { css } from '@patternfly/react-styles';
+import { Base64 } from 'js-base64';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { getImpersonate } from '@console/dynamic-plugin-sdk';
-
-import store from '../redux';
-import { ContainerLabel, ContainerSelect } from './utils/container-select';
-import { LoadingBox } from './utils/status-box';
 import { FLAGS } from '@console/shared/src/constants/common';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { useFullscreen } from '@console/shared/src/hooks/useFullscreen';
-import { Terminal, ImperativeTerminalType } from './terminal';
-import { WSFactory } from '../module/ws-factory';
-import { PodKind, resourceURL } from '../module/k8s';
+import {
+  addDetachedSession,
+  setCloudShellExpanded,
+} from '@console/webterminal-plugin/src/redux/actions/cloud-shell-actions';
+import { MAX_DETACHED_SESSIONS } from '@console/webterminal-plugin/src/redux/reducers/cloud-shell-reducer';
+import { useDetachedSessions } from '@console/webterminal-plugin/src/redux/reducers/cloud-shell-selectors';
 import { PodModel } from '../models';
+import { storeDetachedWebSocket } from '../module/detached-ws-registry';
+import type { PodKind } from '../module/k8s';
+import { resourceURL } from '../module/k8s';
 import { isWindowsPod } from '../module/k8s/pods';
-import { css } from '@patternfly/react-styles';
+import { WSFactory } from '../module/ws-factory';
+import store from '../redux';
+import type { ImperativeTerminalType } from './terminal';
+import { Terminal } from './terminal';
+import { ContainerLabel, ContainerSelect } from './utils/container-select';
+import { LoadingBox } from './utils/status-box';
 
 // pod connect WS protocol is FD prefixed, base64 encoded data (sometimes json stringified)
 
@@ -47,6 +57,7 @@ type PodConnectProps = {
   initialContainer?: string;
   message?: React.ReactNode;
   infoMessage?: React.ReactNode;
+  cleanupOnDetach?: { type: 'namespace' | 'pod'; name: string; namespace?: string };
 };
 
 /** @internal Use PodConnectLoader instead for tree shaking to work */
@@ -56,12 +67,18 @@ export const PodConnect: FC<PodConnectProps> = ({
   initialContainer,
   message,
   infoMessage,
+  cleanupOnDetach,
 }) => {
   const { t } = useTranslation('public');
   const terminalRef = useRef<ImperativeTerminalType>(null);
   const wsRef = useRef<any>(null);
   const isOpenShift = useFlag(FLAGS.OPENSHIFT);
   const [fullscreenRef, toggleFullscreen, isFullscreen, canUseFullScreen] = useFullscreen();
+  const dispatch = useConsoleDispatch();
+  const [detached, setDetached] = useState(false);
+  const detachedRef = useRef(false);
+  const detachedSessions = useDetachedSessions();
+  const atSessionLimit = detachedSessions.length >= MAX_DETACHED_SESSIONS;
 
   const [open, setOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -120,6 +137,7 @@ export const PodConnect: FC<PodConnectProps> = ({
           if (previous.includes(NO_SH)) {
             terminalRef.current?.reset();
             terminalRef.current?.onConnectionClosed(
+              // eslint-disable-next-line no-restricted-globals
               `This container doesn't have a /bin/sh shell. Try specifying your command in a terminal with:\r\n\r\n ${usedClient} -n ${namespace} exec ${name} -ti <command>`,
             );
             wsRef.current.destroy();
@@ -150,13 +168,37 @@ export const PodConnect: FC<PodConnectProps> = ({
       .onerror((evt: any) => console.error(`WS error?! ${evt}`));
   }, [podName, namespace, isWindows, attach, activeContainer, t, isOpenShift]);
 
-  // Connect on mount and when dependencies change
+  const detachToCloudShell = useCallback(() => {
+    if (!wsRef.current || !open) {
+      return;
+    }
+    const command = isWindows ? ['cmd'] : ['sh', '-i', '-c', 'TERM=xterm sh'];
+    const id = `${podName}-${activeContainer}-${Date.now()}`;
+    storeDetachedWebSocket(id, wsRef.current);
+    wsRef.current = null;
+    detachedRef.current = true;
+    dispatch(
+      addDetachedSession({
+        id,
+        podName,
+        namespace,
+        containerName: activeContainer,
+        command,
+        cleanup: cleanupOnDetach,
+      }),
+    );
+    dispatch(setCloudShellExpanded(true));
+    setDetached(true);
+  }, [dispatch, podName, namespace, activeContainer, open, isWindows, cleanupOnDetach]);
+
   useEffect(() => {
     connect();
     return () => {
-      const exitCode = 'exit\r';
       if (wsRef.current) {
-        exitCode.split('').forEach((char) => wsRef.current.send(`0${Base64.encode(char)}`));
+        if (!detachedRef.current) {
+          const exitCode = 'exit\r';
+          exitCode.split('').forEach((char) => wsRef.current.send(`0${Base64.encode(char)}`));
+        }
         wsRef.current.destroy();
       }
     };
@@ -229,8 +271,33 @@ export const PodConnect: FC<PodConnectProps> = ({
                 )}
               </FlexItem>
             </Flex>
-            {!error && canUseFullScreen && (
-              <ToolbarGroup align={{ default: 'alignEnd' }}>
+            <ToolbarGroup align={{ default: 'alignEnd' }}>
+              {!error && open && (
+                <ToolbarItem>
+                  <Tooltip
+                    content={
+                      atSessionLimit && !detached
+                        ? t(
+                            'Maximum {{count}} detached sessions. Close an existing session to detach a new one.',
+                            { count: MAX_DETACHED_SESSIONS },
+                          )
+                        : t(
+                            'Detach this terminal to the Cloud Shell drawer so it persists across navigation',
+                          )
+                    }
+                  >
+                    <Button
+                      icon={<RhUiExternalLinkFillIcon className="co-icon-space-r" />}
+                      variant="link"
+                      onClick={detachToCloudShell}
+                      isDisabled={detached || atSessionLimit}
+                    >
+                      {detached ? t('Detached') : t('Detach to Cloud Shell')}
+                    </Button>
+                  </Tooltip>
+                </ToolbarItem>
+              )}
+              {!error && canUseFullScreen && (
                 <ToolbarItem>
                   <Button
                     icon={<RhUiExpandIcon className="co-icon-space-r" />}
@@ -241,8 +308,8 @@ export const PodConnect: FC<PodConnectProps> = ({
                     {isFullscreen ? t('Collapse') : t('Expand')}
                   </Button>
                 </ToolbarItem>
-              </ToolbarGroup>
-            )}
+              )}
+            </ToolbarGroup>
           </ToolbarContent>
         </Toolbar>
         {error && (

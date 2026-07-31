@@ -171,6 +171,7 @@ const commonConfig = {
     experimentalMemoryManagement: true,
     numTestsKeptInMemory: 50,
     injectDocumentDomain: true,
+    // Keep in sync with INTEGRATION_TEST_USER_AGENT in packages/console-shared/src/constants/common.ts
     userAgent: 'ConsoleIntegrationTestEnvironment',
   },
 };

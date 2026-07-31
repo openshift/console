@@ -1,30 +1,30 @@
 import { useContext, useMemo, memo } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Card, CardHeader, CardTitle } from '@patternfly/react-core';
-import { UtilizationBody } from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
-import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
+import { useTranslation } from 'react-i18next';
+import type { ProjectOverviewUtilizationItem } from '@console/dynamic-plugin-sdk/src';
 import {
   isProjectOverviewUtilizationItem,
-  ProjectOverviewUtilizationItem,
   useResolvedExtensions,
 } from '@console/dynamic-plugin-sdk/src';
-import {
-  humanizeBinaryBytes,
-  humanizeCpuCores,
-  humanizeDecimalBytesPerSec,
-  humanizeNumber,
-} from '../../utils/units';
-import { ProjectDashboardContext } from './project-dashboard-context';
+import { UtilizationBody } from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
+import { UtilizationDurationDropdown } from '@console/shared/src/components/dashboard/utilization-card/UtilizationDurationDropdown';
+import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import {
   getUtilizationQueries,
   ProjectQueries,
   getMultilineQueries,
 } from '@console/shared/src/promql/project-dashboard';
 import {
+  humanizeBinaryBytes,
+  humanizeCpuCores,
+  humanizeDecimalBytesPerSec,
+  humanizeNumber,
+} from '../../utils/units';
+import {
   PrometheusUtilizationItem,
   PrometheusMultilineUtilizationItem,
 } from '../dashboards-page/cluster-dashboard/utilization-card';
-import { UtilizationDurationDropdown } from '@console/shared/src/components/dashboard/utilization-card/UtilizationDurationDropdown';
+import { ProjectDashboardContext } from './project-dashboard-context';
 import {
   CPUPopover,
   FilesystemPopover,

@@ -18,13 +18,12 @@ import {
   ModalVariant,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { ColumnLayout, ManagedColumn } from '@console/dynamic-plugin-sdk';
-
+import type { ColumnLayout, ManagedColumn } from '@console/dynamic-plugin-sdk';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import { COLUMN_MANAGEMENT_USER_PREFERENCE_KEY } from '@console/shared/src/constants/common';
 import type { WithUserPreferenceProps } from '@console/shared/src/hoc/withUserPreference';
 import { withUserPreference } from '@console/shared/src/hoc/withUserPreference';
-import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import type { ModalComponentProps } from '@console/shared/src/types/modal';
 
 const MAX_VIEW_COLS = 9;
@@ -136,11 +135,11 @@ export const ColumnManagementModal: FC<
                 })}
                 variant="info"
               >
-                {columnLayout?.showNamespaceOverride && <NamespaceColumnHelpText />}
+                {!columnLayout?.showNamespaceOverride && <NamespaceColumnHelpText />}
               </Alert>
             </>
           ) : (
-            columnLayout?.showNamespaceOverride && <NamespaceColumnHelpText />
+            !columnLayout?.showNamespaceOverride && <NamespaceColumnHelpText />
           )}
           <Grid hasGutter>
             <GridItem sm={6}>
@@ -194,7 +193,13 @@ export const ColumnManagementModal: FC<
         >
           {t('Save')}
         </Button>
-        <Button variant="link" onClick={cancel} type="button" data-test-id="modal-cancel-action">
+        <Button
+          variant="link"
+          onClick={cancel}
+          type="button"
+          data-test="modal-cancel-action"
+          data-test-id="modal-cancel-action"
+        >
           {t('Cancel')}
         </Button>
         <Button variant="link" onClick={resetColumns} type="button">

@@ -29,8 +29,12 @@ export enum NodeQueries {
 }
 
 const queries = {
-  [NodeQueries.CPU_USAGE]: _.template(`instance:node_cpu:rate:sum{instance='<%= node %>'}`),
-  [NodeQueries.CPU_TOTAL]: _.template(`instance:node_num_cpu:sum{instance='<%= node %>'}`),
+  [NodeQueries.CPU_USAGE]: _.template(
+    `instance:node_cpu:rate:sum{instance='<%= node %>'} or sum without(mode, core) (rate(windows_cpu_time_total{mode!="idle", instance=~'<%= ipAddress %>:.*'}[3m]))`,
+  ),
+  [NodeQueries.CPU_TOTAL]: _.template(
+    `instance:node_num_cpu:sum{instance='<%= node %>'} or count(windows_cpu_time_total{mode="idle", instance=~'<%= ipAddress %>:.*'})`,
+  ),
   [NodeQueries.MEMORY_USAGE]: _.template(
     `node_memory_MemTotal_bytes{instance='<%= node %>'} - node_memory_MemAvailable_bytes{instance='<%= node %>'}`,
   ),
@@ -130,8 +134,8 @@ export const getResourceQutoaQueries = (node: string) => ({
 });
 
 export const getUtilizationQueries = (node: string, ipAddress: string) => ({
-  [NodeQueries.CPU_USAGE]: queries[NodeQueries.CPU_USAGE]({ node }),
-  [NodeQueries.CPU_TOTAL]: queries[NodeQueries.CPU_TOTAL]({ node }),
+  [NodeQueries.CPU_USAGE]: queries[NodeQueries.CPU_USAGE]({ node, ipAddress }),
+  [NodeQueries.CPU_TOTAL]: queries[NodeQueries.CPU_TOTAL]({ node, ipAddress }),
   [NodeQueries.MEMORY_USAGE]: queries[NodeQueries.MEMORY_USAGE]({ node }),
   [NodeQueries.MEMORY_TOTAL]: queries[NodeQueries.MEMORY_TOTAL]({ node }),
   [NodeQueries.POD_COUNT]: queries[NodeQueries.POD_COUNT]({ ipAddress }),

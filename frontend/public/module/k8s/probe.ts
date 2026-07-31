@@ -1,7 +1,6 @@
-import * as _ from 'lodash';
 import i18next from 'i18next';
-
-import {
+import * as _ from 'lodash';
+import type {
   ContainerLifecycle,
   ContainerLifecycleStage,
   ContainerProbe,
@@ -10,7 +9,7 @@ import {
   Handler,
   HTTPGetProbe,
   TCPSocketProbe,
-} from './';
+} from '.';
 
 const parsers = {
   exec: function (str: string) {
@@ -24,13 +23,17 @@ const parsers = {
       return null;
     }
     // XXX: Kubernetes allows for named ports, but the URL spec says ports must be digits.
-    let scheme: string, port: string, host: string, hostname: string, rest: string[];
+    let scheme: string;
+    let port: string;
+    let host: string;
+    let hostname: string;
+    let rest: string[];
     [scheme, ...rest] = str.split('://');
     if (!scheme) {
       return null;
     }
-    str = rest.join();
-    [host, ...rest] = str.split('/');
+    const hostAndPath = rest.join();
+    [host, ...rest] = hostAndPath.split('/');
     const path = `/${rest.join()}`;
     [hostname, port] = host.split(':');
     if (_.isUndefined(port)) {
@@ -68,11 +71,12 @@ const parsers = {
     }
     const parts = str.split(':');
     const port = parseInt(parts[0], 10);
-    if (isNaN(port)) {
+    if (Number.isNaN(port)) {
       return null;
     }
     const result: { port: number; service?: string } = { port };
     if (parts[1]) {
+      // eslint-disable-next-line prefer-destructuring
       result.service = parts[1];
     }
     return result;
@@ -205,12 +209,14 @@ export const mapLifecycleConfigToFields = function (lifecycle: ContainerLifecycl
 
   if (!_.isEmpty(lifecycle.postStart)) {
     const k = _.keys(lifecycle.postStart);
+    // eslint-disable-next-line prefer-destructuring
     f.postStart.type = k[0];
     f.postStart.cmd = flattenCmd(k[0], lifecycle.postStart[k[0]]);
   }
 
   if (!_.isEmpty(lifecycle.preStop)) {
     const k = _.keys(lifecycle.preStop);
+    // eslint-disable-next-line prefer-destructuring
     f.preStop.type = k[0];
     f.preStop.cmd = flattenCmd(k[0], lifecycle.preStop[k[0]]);
   }
@@ -230,6 +236,7 @@ export const mapProbeToFields = function (probe: ContainerProbe, podIP: string) 
 
   const k = _.keys(probe);
   if (!_.isEmpty(k)) {
+    // eslint-disable-next-line prefer-destructuring
     f.type = k[0];
     f.cmd = flattenCmd(k[0], probe[k[0]], podIP);
   }

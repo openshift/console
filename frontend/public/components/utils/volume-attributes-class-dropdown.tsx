@@ -1,16 +1,16 @@
 import type { FC } from 'react';
-import * as fuzzy from 'fuzzysearch';
 import { useEffect, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Alert } from '@patternfly/react-core';
-import { ConsoleSelect } from '@console/internal/components/utils/console-select';
-import { LoadingInline, ResourceName, ResourceIcon } from '.';
 import { css } from '@patternfly/react-styles';
-import { VolumeAttributesClassModel } from '../../models';
-import { VolumeAttributesClassKind } from '../../module/k8s';
-import { useFlag } from '@console/shared/src/hooks/useFlag';
-import { FLAGS } from '@console/shared/src/constants/common';
+import * as fuzzy from 'fuzzysearch';
+import { useTranslation } from 'react-i18next';
+import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { FLAGS } from '@console/shared/src/constants/common';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
+import { VolumeAttributesClassModel } from '../../models';
+import type { VolumeAttributesClassKind } from '../../module/k8s';
+import { LoadingInline, ResourceName, ResourceIcon } from '.';
 
 const getTitle = (vac: VolumeAttributesClassDropdownItem): React.ReactNode => {
   return vac.kindLabel ? (

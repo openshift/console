@@ -53,6 +53,12 @@ test.describe('Create namespace from install operators', { tag: ['@admin'] }, ()
   });
 
   test('creates namespace from operator install page', async ({ page }) => {
+    // OLMv1 is enabled by default on techPreview clusters, replacing the OLMv0
+    // OperatorHub catalog with an empty Software Catalog. Skip instead of timing out.
+    await page.goto('/');
+    const isTechPreview = await page.evaluate(() => window.SERVER_FLAGS.techPreview);
+    test.skip(isTechPreview, 'OLMv1 is active on techPreview clusters — OLMv0 OperatorHub catalog is unavailable');
+
     await test.step('Navigate to catalog and open operator details', async () => {
       await page.goto('/catalog/ns/default?catalogType=operator');
       await page.getByPlaceholder('Filter by keyword...').fill(operatorName);

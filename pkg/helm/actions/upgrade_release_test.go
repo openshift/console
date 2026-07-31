@@ -9,19 +9,20 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/require"
-	"helm.sh/helm/v3/pkg/action"
-	"helm.sh/helm/v3/pkg/chart"
-	"helm.sh/helm/v3/pkg/chartutil"
-	kubefake "helm.sh/helm/v3/pkg/kube/fake"
-	"helm.sh/helm/v3/pkg/release"
-	"helm.sh/helm/v3/pkg/storage"
-	"helm.sh/helm/v3/pkg/storage/driver"
-	helmTime "helm.sh/helm/v3/pkg/time"
+	"helm.sh/helm/v4/pkg/action"
+	"helm.sh/helm/v4/pkg/chart/common"
+	chart "helm.sh/helm/v4/pkg/chart/v2"
+	kubefake "helm.sh/helm/v4/pkg/kube/fake"
+	releasecommon "helm.sh/helm/v4/pkg/release/common"
+	releasev1 "helm.sh/helm/v4/pkg/release/v1"
+	"helm.sh/helm/v4/pkg/storage"
+	"helm.sh/helm/v4/pkg/storage/driver"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
 	k8sfake "k8s.io/client-go/kubernetes/fake"
+	helmTime "time"
 )
 
 func TestUpgradeReleaseWithoutDependencies(t *testing.T) {
@@ -105,8 +106,7 @@ func TestUpgradeReleaseWithoutDependencies(t *testing.T) {
 				RESTClientGetter: FakeConfig{},
 				Releases:         store,
 				KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
-				Capabilities:     chartutil.DefaultCapabilities,
-				Log:              func(format string, v ...interface{}) {},
+				Capabilities:     common.DefaultCapabilities,
 			}
 
 			if tt.createNamespace && tt.namespace != configNamespace {
@@ -114,10 +114,10 @@ func TestUpgradeReleaseWithoutDependencies(t *testing.T) {
 				objs = append(objs, nsSpec)
 			}
 
-			r := release.Release{
+			r := releasev1.Release{
 				Name:      "test",
 				Namespace: tt.namespace,
-				Info: &release.Info{
+				Info: &releasev1.Info{
 					FirstDeployed: helmTime.Time{},
 					Status:        "deployed",
 				},
@@ -160,7 +160,7 @@ func TestUpgradeReleaseWithoutDependencies(t *testing.T) {
 				require.NoError(t, err)
 				require.Equal(t, r.Name, rel.Name)
 				require.Equal(t, r.Namespace, rel.Namespace)
-				require.Equal(t, release.StatusDeployed, rel.Info.Status)
+				require.Equal(t, releasecommon.StatusDeployed, rel.Info.Status)
 				require.Equal(t, tt.chartVersion, rel.Chart.Metadata.Version)
 				require.Equal(t, 2, rel.Version)
 				require.Equal(t, r.Chart.Metadata.Annotations["chart_url"], rel.Chart.Metadata.Annotations["chart_url"])
@@ -212,16 +212,15 @@ func TestUpgradeReleaseWithDependencies(t *testing.T) {
 				RESTClientGetter: FakeConfig{},
 				Releases:         store,
 				KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
-				Capabilities:     chartutil.DefaultCapabilities,
-				Log:              func(format string, v ...interface{}) {},
+				Capabilities:     common.DefaultCapabilities,
 			}
 			client := K8sDynamicClientFromCRs(tt.helmCRS...)
 			clientInterface := k8sfake.NewSimpleClientset()
 			coreClient := clientInterface.CoreV1()
-			r := release.Release{
+			r := releasev1.Release{
 				Name:      "test",
 				Namespace: "test-namespace",
-				Info: &release.Info{
+				Info: &releasev1.Info{
 					FirstDeployed: helmTime.Time{},
 					Status:        "deployed",
 				},
@@ -244,7 +243,7 @@ func TestUpgradeReleaseWithDependencies(t *testing.T) {
 				require.NoError(t, err)
 				require.Equal(t, r.Name, rel.Name)
 				require.Equal(t, r.Namespace, rel.Namespace)
-				require.Equal(t, release.StatusDeployed, rel.Info.Status)
+				require.Equal(t, releasecommon.StatusDeployed, rel.Info.Status)
 				require.Equal(t, tt.chartVersion, rel.Chart.Metadata.Version)
 				require.Equal(t, 2, rel.Version)
 				require.Equal(t, r.Chart.Metadata.Annotations["chart_url"], rel.Chart.Metadata.Annotations["chart_url"])
@@ -280,8 +279,7 @@ func TestUpgradeNonExistRelease(t *testing.T) {
 				RESTClientGetter: FakeConfig{},
 				Releases:         store,
 				KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
-				Capabilities:     chartutil.DefaultCapabilities,
-				Log:              func(format string, v ...interface{}) {},
+				Capabilities:     common.DefaultCapabilities,
 			}
 			client := K8sDynamicClientFromCRs()
 			clientInterface := k8sfake.NewSimpleClientset()
@@ -342,16 +340,15 @@ func TestUpgradeReleaseWithCustomValues(t *testing.T) {
 				RESTClientGetter: FakeConfig{},
 				Releases:         store,
 				KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
-				Capabilities:     chartutil.DefaultCapabilities,
-				Log:              func(format string, v ...interface{}) {},
+				Capabilities:     common.DefaultCapabilities,
 			}
 			client := K8sDynamicClientFromCRs(tt.helmCRS...)
 			clientInterface := k8sfake.NewSimpleClientset()
 			coreClient := clientInterface.CoreV1()
-			r := release.Release{
+			r := releasev1.Release{
 				Name:      "test",
 				Namespace: "test-namespace",
-				Info: &release.Info{
+				Info: &releasev1.Info{
 					FirstDeployed: helmTime.Time{},
 					Status:        "deployed",
 				},
@@ -374,7 +371,7 @@ func TestUpgradeReleaseWithCustomValues(t *testing.T) {
 				require.NoError(t, err)
 				require.Equal(t, r.Name, rel.Name)
 				require.Equal(t, r.Namespace, rel.Namespace)
-				require.Equal(t, release.StatusDeployed, rel.Info.Status)
+				require.Equal(t, releasecommon.StatusDeployed, rel.Info.Status)
 				require.Equal(t, tt.chartVersion, rel.Chart.Metadata.Version)
 				require.Equal(t, 2, rel.Version)
 				require.Equal(t, r.Chart.Metadata.Annotations["chart_url"], rel.Chart.Metadata.Annotations["chart_url"])
@@ -454,8 +451,7 @@ func TestUpgradeReleaseWithoutDependenciesAsync(t *testing.T) {
 				RESTClientGetter: FakeConfig{},
 				Releases:         store,
 				KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
-				Capabilities:     chartutil.DefaultCapabilities,
-				Log:              func(format string, v ...interface{}) {},
+				Capabilities:     common.DefaultCapabilities,
 			}
 
 			if tt.createNamespace && tt.namespace != configNamespace {
@@ -463,10 +459,10 @@ func TestUpgradeReleaseWithoutDependenciesAsync(t *testing.T) {
 				objs = append(objs, nsSpec)
 			}
 
-			r := release.Release{
+			r := releasev1.Release{
 				Name:      tt.releaseName,
 				Namespace: tt.namespace,
-				Info: &release.Info{
+				Info: &releasev1.Info{
 					FirstDeployed: helmTime.Time{},
 					Status:        "deployed",
 				},
@@ -506,7 +502,7 @@ func TestUpgradeReleaseWithoutDependenciesAsync(t *testing.T) {
 			var rel *v1.Secret
 			var err error
 			go func() {
-				rel, err = UpgradeReleaseAsync(tt.namespace, tt.releaseName, tt.chartPath, nil, actionConfig, client, coreClient, false, tt.indexEntry)
+				rel, err = UpgradeReleaseAsync(tt.namespace, tt.releaseName, tt.chartPath, nil, actionConfig, client, coreClient, false, tt.indexEntry, "")
 				if tt.requireErr {
 					fmt.Println("Error", err)
 					require.Error(t, err)
@@ -573,8 +569,7 @@ func TestUpgradeReleaseWithDependenciesAsync(t *testing.T) {
 				RESTClientGetter: FakeConfig{},
 				Releases:         store,
 				KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
-				Capabilities:     chartutil.DefaultCapabilities,
-				Log:              func(format string, v ...interface{}) {},
+				Capabilities:     common.DefaultCapabilities,
 			}
 			client := K8sDynamicClientFromCRs(tt.helmCRS...)
 			clientInterface := k8sfake.NewSimpleClientset()
@@ -582,10 +577,10 @@ func TestUpgradeReleaseWithDependenciesAsync(t *testing.T) {
 			secretsDriver := driver.NewSecrets(coreClient.Secrets(tt.releaseNamespace))
 			var rel *v1.Secret
 			var err error
-			r := release.Release{
+			r := releasev1.Release{
 				Name:      tt.releaseName,
 				Namespace: tt.releaseNamespace,
-				Info: &release.Info{
+				Info: &releasev1.Info{
 					FirstDeployed: helmTime.Time{},
 					Status:        "deployed",
 				},
@@ -602,7 +597,7 @@ func TestUpgradeReleaseWithDependenciesAsync(t *testing.T) {
 			store.Create(&r)
 
 			go func() {
-				rel, err = UpgradeReleaseAsync(tt.releaseNamespace, tt.releaseName, tt.chartPath, tt.values, actionConfig, client, coreClient, true, tt.indexEntry)
+				rel, err = UpgradeReleaseAsync(tt.releaseNamespace, tt.releaseName, tt.chartPath, tt.values, actionConfig, client, coreClient, true, tt.indexEntry, "")
 				require.NoError(t, err)
 				require.Equal(t, fmt.Sprintf("sh.helm.release.v1.%v.v2", tt.releaseName), rel.ObjectMeta.Name)
 			}()
@@ -665,14 +660,13 @@ func TestUpgradeReleaseWithCustomValuesAsync(t *testing.T) {
 				RESTClientGetter: FakeConfig{},
 				Releases:         store,
 				KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
-				Capabilities:     chartutil.DefaultCapabilities,
-				Log:              func(format string, v ...interface{}) {},
+				Capabilities:     common.DefaultCapabilities,
 			}
 
-			r := release.Release{
+			r := releasev1.Release{
 				Name:      tt.releaseName,
 				Namespace: tt.releaseNamespace,
-				Info: &release.Info{
+				Info: &releasev1.Info{
 					FirstDeployed: helmTime.Time{},
 					Status:        "deployed",
 				},
@@ -694,7 +688,7 @@ func TestUpgradeReleaseWithCustomValuesAsync(t *testing.T) {
 			var rel *v1.Secret
 			var err error
 			go func() {
-				rel, err = UpgradeReleaseAsync(tt.releaseNamespace, tt.releaseName, tt.chartPath, tt.values, actionConfig, client, coreClient, true, tt.indexEntry)
+				rel, err = UpgradeReleaseAsync(tt.releaseNamespace, tt.releaseName, tt.chartPath, tt.values, actionConfig, client, coreClient, true, tt.indexEntry, "")
 				require.NoError(t, err)
 				require.Equal(t, fmt.Sprintf("sh.helm.release.v1.%v.v2", tt.releaseName), rel.ObjectMeta.Name)
 			}()
@@ -704,4 +698,234 @@ func TestUpgradeReleaseWithCustomValuesAsync(t *testing.T) {
 			require.NoError(t, err)
 		})
 	}
+}
+
+func TestUpgradeAfterURLInstallWithSecrets(t *testing.T) {
+	tests := []struct {
+		testName         string
+		chartPath        string
+		chartName        string
+		chartVersion     string
+		releaseName      string
+		releaseNamespace string
+		secretName       string
+		secretData       map[string][]byte
+	}{
+		{
+			testName:         "upgrade valid release with custom values should return successful response",
+			chartPath:        "http://localhost:8181/charts/mychart-0.1.0.tgz",
+			chartName:        "mychart",
+			chartVersion:     "0.1.0",
+			releaseName:      "auth-persist-test",
+			releaseNamespace: "test-namespace",
+			secretName:       "test-secret",
+			secretData:       map[string][]byte{username: []byte("AzureDiamond"), password: []byte("hunter2")},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.testName, func(t *testing.T) {
+			store := storage.Init(driver.NewMemory())
+			actionConfig := &action.Configuration{
+				RESTClientGetter: FakeConfig{},
+				Releases:         store,
+				KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
+				Capabilities:     common.DefaultCapabilities,
+			}
+			authSecret := &v1.Secret{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      tt.secretName,
+					Namespace: tt.releaseNamespace,
+				},
+				Data: tt.secretData,
+			}
+			clientInterface := k8sfake.NewSimpleClientset(authSecret)
+			coreClient := clientInterface.CoreV1()
+			registryClient, err := GetDefaultOCIRegistry()
+			require.NoError(t, err)
+			actionConfig.RegistryClient = registryClient
+			dynamicClient := K8sDynamicClientFromCRs()
+
+			// Simulate a URL install by creating the release with auth annotation
+			installRelease := releasev1.Release{
+				Name:      tt.releaseName,
+				Namespace: tt.releaseNamespace,
+				Info: &releasev1.Info{
+					FirstDeployed: helmTime.Time{},
+					Status:        "deployed",
+				},
+				Version: 1,
+				Chart: &chart.Chart{
+					Metadata: &chart.Metadata{
+						Name:    tt.chartName,
+						Version: tt.chartVersion,
+						Annotations: map[string]string{
+							"chart_url":              tt.chartPath,
+							helmAuthSecretAnnotation: tt.secretName,
+						},
+					},
+				},
+			}
+			store.Create(&installRelease)
+
+			// Verify the installed release has the auth annotation
+			rel, err := GetRelease(tt.releaseName, actionConfig)
+			require.NoError(t, err)
+			require.Equal(t, tt.secretName, rel.Chart.Metadata.Annotations[helmAuthSecretAnnotation])
+
+			// Upgrade — chartUrl is recovered from the annotation, auth credentials are applied
+			secretsDriver := driver.NewSecrets(coreClient.Secrets(tt.releaseNamespace))
+			go func() {
+				upgradeResult, upgradeErr := UpgradeReleaseAsync(tt.releaseNamespace, tt.releaseName, "", nil, actionConfig, dynamicClient, coreClient, true, "", "")
+				require.NoError(t, upgradeErr)
+				require.Equal(t, fmt.Sprintf("sh.helm.release.v1.%v.v2", tt.releaseName), upgradeResult.ObjectMeta.Name)
+			}()
+			time.Sleep(10 * time.Second)
+			installRelease.Version = 2
+			err = secretsDriver.Create(fmt.Sprintf("sh.helm.release.v1.%v.v2", tt.releaseName), &installRelease)
+			require.NoError(t, err)
+
+			// Verify the upgraded release preserved the auth annotation
+			rel, err = GetRelease(tt.releaseName, actionConfig)
+			require.NoError(t, err)
+			require.Equal(t, tt.secretName, rel.Chart.Metadata.Annotations[helmAuthSecretAnnotation])
+		})
+	}
+}
+
+func TestUpgradeAsyncExplicitSecretOverridesAnnotation(t *testing.T) {
+	store := storage.Init(driver.NewMemory())
+	actionConfig := &action.Configuration{
+		RESTClientGetter: FakeConfig{},
+		Releases:         store,
+		KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
+		Capabilities:     common.DefaultCapabilities,
+	}
+
+	// Only create the override secret, not the annotation secret.
+	// If the code incorrectly uses the annotation value ("missing-secret"),
+	// GetUserCredentials will fail because that secret doesn't exist.
+	overrideSecret := &v1.Secret{
+		ObjectMeta: metav1.ObjectMeta{Name: "new-secret", Namespace: "test-ns"},
+		Data:       map[string][]byte{username: []byte("new-user"), password: []byte("new-pass")},
+	}
+	clientInterface := k8sfake.NewSimpleClientset(overrideSecret)
+	coreClient := clientInterface.CoreV1()
+	registryClient, err := GetDefaultOCIRegistry()
+	require.NoError(t, err)
+	actionConfig.RegistryClient = registryClient
+	dynamicClient := K8sDynamicClientFromCRs()
+
+	installRelease := releasev1.Release{
+		Name:      "override-test",
+		Namespace: "test-ns",
+		Info:      &releasev1.Info{FirstDeployed: helmTime.Time{}, Status: "deployed"},
+		Version:   1,
+		Chart: &chart.Chart{
+			Metadata: &chart.Metadata{
+				Name:    "mychart",
+				Version: "0.1.0",
+				Annotations: map[string]string{
+					"chart_url":              "http://localhost:8181/charts/mychart-0.1.0.tgz",
+					helmAuthSecretAnnotation: "missing-secret",
+				},
+			},
+		},
+	}
+	store.Create(&installRelease)
+
+	// Pass "new-secret" explicitly — this should override "missing-secret" from the annotation.
+	// The chart fetch will fail with 401 (fake credentials), but the key assertion is that
+	// it does NOT fail with "failed to get user credentials Secret missing-secret" which
+	// would indicate the annotation value was used instead of the explicit override.
+	_, err = UpgradeReleaseAsync("test-ns", "override-test", "", nil, actionConfig, dynamicClient, coreClient, true, "", "new-secret")
+	require.Error(t, err)
+	require.NotContains(t, err.Error(), "missing-secret", "should use the explicit secret, not the annotation value")
+}
+
+func TestUpgradeAsyncNoneSentinelClearsAnnotationSecret(t *testing.T) {
+	store := storage.Init(driver.NewMemory())
+	actionConfig := &action.Configuration{
+		RESTClientGetter: FakeConfig{},
+		Releases:         store,
+		KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
+		Capabilities:     common.DefaultCapabilities,
+	}
+
+	// Create the annotation secret — if __none__ doesn't work, the code would
+	// fall back to this secret and NOT produce a 401 auth hint.
+	annotationSecret := &v1.Secret{
+		ObjectMeta: metav1.ObjectMeta{Name: "old-secret", Namespace: "test-ns"},
+		Data:       map[string][]byte{username: []byte("user"), password: []byte("pass")},
+	}
+	clientInterface := k8sfake.NewSimpleClientset(annotationSecret)
+	coreClient := clientInterface.CoreV1()
+	registryClient, err := GetDefaultOCIRegistry()
+	require.NoError(t, err)
+	actionConfig.RegistryClient = registryClient
+	dynamicClient := K8sDynamicClientFromCRs()
+
+	installRelease := releasev1.Release{
+		Name:      "none-test",
+		Namespace: "test-ns",
+		Info:      &releasev1.Info{FirstDeployed: helmTime.Time{}, Status: "deployed"},
+		Version:   1,
+		Chart: &chart.Chart{
+			Metadata: &chart.Metadata{
+				Name:    "mychart",
+				Version: "0.1.0",
+				Annotations: map[string]string{
+					"chart_url":              "http://localhost:8181/charts/mychart-0.1.0.tgz",
+					helmAuthSecretAnnotation: "old-secret",
+				},
+			},
+		},
+	}
+	store.Create(&installRelease)
+
+	// "__none__" sentinel — should clear the secret and NOT fall back to the annotation.
+	// The chart fetch will fail with 401 since no auth is applied, proving the sentinel worked.
+	_, err = UpgradeReleaseAsync("test-ns", "none-test", "", nil, actionConfig, dynamicClient, coreClient, true, "", "__none__")
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "registry requires authentication",
+		"should get 401 hint because __none__ cleared the secret and skipped annotation fallback")
+}
+
+func TestUpgradeAsyncGetUserCredentialsFailureReturnsError(t *testing.T) {
+	store := storage.Init(driver.NewMemory())
+	actionConfig := &action.Configuration{
+		RESTClientGetter: FakeConfig{},
+		Releases:         store,
+		KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
+		Capabilities:     common.DefaultCapabilities,
+	}
+
+	// No secrets in the fake client — GetUserCredentials will fail
+	clientInterface := k8sfake.NewSimpleClientset()
+	coreClient := clientInterface.CoreV1()
+	registryClient, err := GetDefaultOCIRegistry()
+	require.NoError(t, err)
+	actionConfig.RegistryClient = registryClient
+	dynamicClient := K8sDynamicClientFromCRs()
+
+	installRelease := releasev1.Release{
+		Name:      "err-test",
+		Namespace: "test-ns",
+		Info:      &releasev1.Info{FirstDeployed: helmTime.Time{}, Status: "deployed"},
+		Version:   1,
+		Chart: &chart.Chart{
+			Metadata: &chart.Metadata{
+				Name:    "mychart",
+				Version: "0.1.0",
+				Annotations: map[string]string{
+					"chart_url": "http://localhost:8181/charts/mychart-0.1.0.tgz",
+				},
+			},
+		},
+	}
+	store.Create(&installRelease)
+
+	// Pass a secret name that doesn't exist — should return an error, not silently log
+	_, err = UpgradeReleaseAsync("test-ns", "err-test", "", nil, actionConfig, dynamicClient, coreClient, true, "", "nonexistent-secret")
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "failed to get user credentials Secret nonexistent-secret")
 }

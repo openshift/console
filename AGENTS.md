@@ -44,7 +44,7 @@ export const handler: FeatureFlagHandler = (setFeatureFlag) => {
 
 OpenShift console is designed to be an extensible platform that allows "dynamic plugins" to extend the UI. Dynamic plugins load over the network at runtime, enabling operators and custom resources to contribute UI without rebuilding the console.
 
-The `console-dynamic-plugin-sdk` is the public API based on Webpack module federation that enables both static and dynamic plugins to integrate with the console.
+The `console-dynamic-plugin-sdk` is the public API based on Module Federation v1 that enables both static and dynamic plugins to integrate with the console.
 
 **BREAKING CHANGES REQUIRE EXTREME CARE** - this is a public API consumed by external plugins.
 

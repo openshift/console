@@ -1,5 +1,5 @@
-import * as _ from 'lodash';
-import { Base64 } from 'js-base64';
+import type { FC, ChangeEvent, FormEvent } from 'react';
+import { useState, useCallback } from 'react';
 import {
   Alert,
   Button,
@@ -18,17 +18,20 @@ import {
   Radio,
   TextInput,
 } from '@patternfly/react-core';
+import { Base64 } from 'js-base64';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import type { FC, ChangeEvent, FormEvent } from 'react';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import { CONST } from '@console/shared/src/constants/common';
 import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { k8sPatchByName, k8sCreate, k8sGet, K8sResourceKind } from '../../module/k8s';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
 import { SecretModel, ServiceAccountModel } from '../../models';
-import { useState, useCallback } from 'react';
-import { ModalComponentProps } from '@console/shared/src/types/modal';
+import type { K8sResourceKind } from '../../module/k8s';
+import { k8sPatchByName, k8sCreate } from '../../module/k8s';
 import { ResourceIcon } from '../utils/resource-icon';
-import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 
 interface FormData {
   username: string;
@@ -156,7 +159,6 @@ const ConfigureNamespacePullSecret: FC<ConfigureNamespacePullSecretProps> = (pro
         data,
         type: CONST.PULL_SECRET_TYPE,
       };
-
       const promise = k8sCreate(SecretModel, secret)
         .then(() => k8sGet(ServiceAccountModel, 'default', namespace.metadata.name, {}))
         .then((defaultServiceAccount: ServiceAccountKind) =>
@@ -336,7 +338,12 @@ const ConfigureNamespacePullSecret: FC<ConfigureNamespacePullSecretProps> = (pro
         >
           {t('Save')}
         </Button>
-        <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
+        <Button
+          variant="link"
+          onClick={cancel}
+          data-test="modal-cancel-action"
+          data-test-id="modal-cancel-action"
+        >
           {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>

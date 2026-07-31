@@ -21,7 +21,7 @@ import { sortable } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router';
-import { ResourceStatus, StatusIconAndText } from '@console/dynamic-plugin-sdk';
+import { ResourceStatus, StatusIconAndText, useAccessReview } from '@console/dynamic-plugin-sdk';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import type { K8sResourceKind } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/lib-core';
@@ -543,6 +543,13 @@ const SubscriptionUpdates: FC<SubscriptionUpdatesProps> = ({
   const prevInstallPlanApproval = useRef(obj?.spec?.installPlanApproval);
   const prevChannel = useRef(obj?.spec?.channel);
   const [waitingForUpdate, setWaitingForUpdate] = useState(false);
+  const [canUpdateSubscription] = useAccessReview({
+    group: SubscriptionModel.apiGroup,
+    resource: SubscriptionModel.plural,
+    namespace: obj?.metadata?.namespace,
+    name: obj?.metadata?.name,
+    verb: 'update',
+  });
 
   useEffect(() => {
     const stillWaiting =
@@ -610,18 +617,22 @@ const SubscriptionUpdates: FC<SubscriptionUpdatesProps> = ({
             <LoadingInline />
           ) : (
             <>
-              <Button
-                type="button"
-                isInline
-                onClick={channelModal}
-                variant="link"
-                isDisabled={!pkg}
-                data-test="subscription-channel-update-button"
-                icon={<RhUiEditIcon />}
-                iconPosition="end"
-              >
-                {obj.spec.channel || t('No channel')}
-              </Button>
+              {canUpdateSubscription ? (
+                <Button
+                  type="button"
+                  isInline
+                  onClick={channelModal}
+                  variant="link"
+                  isDisabled={!pkg}
+                  data-test="subscription-channel-update-button"
+                  icon={<RhUiEditIcon />}
+                  iconPosition="end"
+                >
+                  {obj.spec.channel || t('olm~No channel')}
+                </Button>
+              ) : (
+                <span>{obj.spec.channel || t('olm~No channel')}</span>
+              )}
               {deprecatedChannel.deprecation && (
                 <DeprecatedOperatorWarningIcon
                   dataTest="deprecated-operator-warning-subscription-update-icon"
@@ -643,16 +654,20 @@ const SubscriptionUpdates: FC<SubscriptionUpdatesProps> = ({
           ) : (
             <>
               <div>
-                <Button
-                  icon={<RhUiEditIcon />}
-                  iconPosition="end"
-                  type="button"
-                  isInline
-                  onClick={approvalModal}
-                  variant="link"
-                >
-                  {obj.spec.installPlanApproval || 'Automatic'}
-                </Button>
+                {canUpdateSubscription ? (
+                  <Button
+                    icon={<RhUiEditIcon />}
+                    iconPosition="end"
+                    type="button"
+                    isInline
+                    onClick={approvalModal}
+                    variant="link"
+                  >
+                    {obj.spec.installPlanApproval || 'Automatic'}
+                  </Button>
+                ) : (
+                  <span>{obj.spec.installPlanApproval || 'Automatic'}</span>
+                )}
               </div>
               {obj.spec.installPlanApproval === InstallPlanApproval.Automatic &&
                 manualSubscriptionsInNamespace?.length > 0 && (

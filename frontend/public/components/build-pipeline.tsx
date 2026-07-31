@@ -1,17 +1,17 @@
 import type { FC } from 'react';
+import { RhUiBanIcon, RhUiPendingIcon, RhUiSyncIcon } from '@patternfly/react-icons';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
-import * as _ from 'lodash';
-import { RhUiBanIcon, RhUiPendingIcon, RhUiSyncIcon } from '@patternfly/react-icons';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
-import { resourcePath } from './utils/resource-link';
-import { fromNow } from './utils/datetime';
-import { K8sResourceKind } from '../module/k8s';
-import { getBuildNumber } from '../module/k8s/builds';
 import {
   GreenCheckCircleIcon,
   RedExclamationCircleIcon,
 } from '@console/shared/src/components/status/icons';
+import type { K8sResourceKind } from '../module/k8s';
+import { getBuildNumber } from '../module/k8s/builds';
+import { fromNow } from './utils/datetime';
+import { resourcePath } from './utils/resource-link';
 
 type BuildStageData = {
   id: string;

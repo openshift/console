@@ -29,6 +29,7 @@ import Status, {
 } from '@console/shared/src/components/dashboard/status-card/StatusPopup';
 import { getNodeMachineNameAndNamespace } from '@console/shared/src/selectors/node';
 import NodeStatus from '../NodeStatus';
+import { parseDurationToSeconds } from '../utils/utils';
 import { CONDITIONS_WARNING } from './messages';
 import { NodeDashboardContext } from './NodeDashboardContext';
 
@@ -151,13 +152,19 @@ const isConditionFailing = (
   node: NodeKind,
   { type, status, timeout }: MachineHealthCondition,
 ): boolean => {
-  const nodeCondition = node.status.conditions.find((c) => c.type === type && c.status === status);
+  const nodeCondition = node.status?.conditions?.find(
+    (c) => c.type === type && c.status === status,
+  );
   if (!nodeCondition) {
     return false;
   }
   const transitionTime = new Date(nodeCondition.lastTransitionTime).getTime();
   const currentTime = new Date().getTime();
-  const withTO = transitionTime + 1000 * parseInt(timeout, 10);
+  const timeoutInSeconds = parseDurationToSeconds(timeout);
+  if (timeoutInSeconds === undefined) {
+    return false;
+  }
+  const withTO = transitionTime + timeoutInSeconds * 1000;
   return withTO < currentTime;
 };
 

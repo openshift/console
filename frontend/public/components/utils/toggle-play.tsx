@@ -1,5 +1,6 @@
 import type { FC } from 'react';
-import { Button, ButtonProps } from '@patternfly/react-core';
+import type { ButtonProps } from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core';
 import { RhUiPauseFillIcon, RhUiPlayFillIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';

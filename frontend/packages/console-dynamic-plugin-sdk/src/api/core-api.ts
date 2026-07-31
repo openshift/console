@@ -48,18 +48,34 @@ export * from './common-types';
 export * from './utils';
 
 /**
- * React hook for consuming Console extensions with resolved `CodeRef` properties.
- * This hook accepts the same argument(s) as `useExtensions` hook and returns an adapted list of extension instances, resolving all code references within each extension's properties.
- * Initially, the hook returns an empty array. Once the resolution is complete, the React component is re-rendered with the hook returning an adapted list of extensions.
- * When the list of matching extensions changes, the resolution is restarted. The hook will continue to return the previous result until the resolution completes.
- * The hook's result elements are guaranteed to be referentially stable across re-renders.
+ * React hook for consuming Console extensions containing code references.
+ *
+ * Initially, this hook returns a result tuple `[resolvedExtensions: [], resolved: false, errors: []]`.
+ *
+ * Once the resolution is complete, this hook re-renders the component with a result tuple containing
+ * all matching extensions that had their code references resolved successfully along with any errors
+ * that occurred during the process.
+ *
+ * When the list of matching extensions changes, the resolution is restarted. In such case, the hook
+ * will _not_ re-render the component with empty initial result since it's preferable to use existing
+ * state until the current resolution completes.
+ *
+ * The hook's result is guaranteed to be referentially stable across re-renders, assuming referential
+ * stability of the `predicate` parameter.
+ *
+ * @param predicate Predicate (type guard) to filter extensions of a specific type.
+ *
+ * @returns Tuple `[resolvedExtensions, resolved, errors]` containing a list of matching extensions,
+ * a boolean flag indicating whether the resolution is complete, and a list of errors detected during
+ * the resolution.
+ *
  * @example
  * ```ts
- * const [navItemExtensions, navItemsResolved] = useResolvedExtensions<NavItem>(isNavItem);
- * // process adapted extensions and render your component
+ * const Example = () => {
+ *   const [navItems, navItemsResolved] = useResolvedExtensions(isNavItem);
+ *   // process extensions and render your component
+ * };
  * ```
- * @param typeGuards A list of callbacks that each accept a dynamic plugin extension as an argument and return a boolean flag indicating whether or not the extension meets desired type constraints
- * @returns Tuple containing a list of adapted extension instances with resolved code references, a boolean flag indicating whether the resolution is complete, and a list of errors detected during the resolution.
  */
 export const useResolvedExtensions: UseResolvedExtensions = require('@console/dynamic-plugin-sdk/src/api/useResolvedExtensions')
   .useResolvedExtensions;
@@ -881,12 +897,25 @@ export const useDeleteModal: UseDeleteModal = require('@console/shared/src/hooks
  * A hook that provides a callback to launch a modal for editing Kubernetes resource labels.
  *
  * @param {object} resource - The resource to edit labels for, an object of K8sResourceCommon type.
+ * @param {function} [onSubmit] - Optional callback that completely replaces the default `k8sPatchResource` patch (including pod-selector template-label synchronization). Receives the resource and the full edited labels object. Must return a Promise resolving with the updated resource on success or rejecting on failure. The callback should be wrapped in `useCallback` to avoid unnecessary re-renders.
  * @returns A function which will launch a modal for editing a resource's labels.
  * @example
  * ```tsx
+ * // Basic usage – default k8sPatchResource behavior
  * const PodLabelsButton = ({ pod }) => {
  *   const { t } = useTranslation();
  *   const launchLabelsModal = useLabelsModal(pod);
+ *   return <button onClick={launchLabelsModal}>{t('Edit Pod Labels')}</button>
+ * }
+ *
+ * // Custom onSubmit – receives the resource and edited labels, returns a Promise
+ * const CustomLabelsButton = ({ pod }) => {
+ *   const { t } = useTranslation();
+ *   const onSubmit = React.useCallback(
+ *     (resource, labels) => updateLabelsOnServer(resource, labels),
+ *     [],
+ *   );
+ *   const launchLabelsModal = useLabelsModal(pod, onSubmit);
  *   return <button onClick={launchLabelsModal}>{t('Edit Pod Labels')}</button>
  * }
  * ```
@@ -994,7 +1023,8 @@ export const useActivePerspective: UseActivePerspective = require('@console/dyna
  *      addToast({
  *        title: 'Success',
  *        variant: 'success',
- *        content: 'Operation completed successfully.'
+ *        content: 'Operation completed successfully.',
+ *        drawerGroup: 'Operations',
  *      });
  *    };
  *    return <button onClick={handleClick}>Show Toast</button>;

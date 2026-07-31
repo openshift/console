@@ -1,8 +1,5 @@
 import type { FC, ReactEventHandler, FormEvent } from 'react';
 import { useState, useEffect, useCallback } from 'react';
-import * as _ from 'lodash';
-import * as fuzzy from 'fuzzysearch';
-import { useNavigate } from 'react-router';
 import {
   Button,
   Content,
@@ -16,19 +13,22 @@ import {
   Radio,
   TextInput,
 } from '@patternfly/react-core';
-
-import { K8sKind, k8sList, k8sPatch, K8sResourceKind } from '../../module/k8s';
-import { DeploymentModel, DeploymentConfigModel, StatefulSetModel } from '../../models';
+import * as fuzzy from 'fuzzysearch';
+import * as _ from 'lodash';
+import { Trans, useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
+import { DeploymentModel, DeploymentConfigModel, StatefulSetModel } from '../../models';
+import type { K8sKind, K8sResourceKind } from '../../module/k8s';
+import { k8sList, k8sPatch } from '../../module/k8s';
 import { ResourceIcon, ResourceName } from '../utils/resource-icon';
 import { resourcePathFromModel } from '../utils/resource-link';
 /* eslint-disable import/named */
-import { Trans, useTranslation } from 'react-i18next';
-import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
-import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import { ModalCallback } from './types';
-import type { ModalComponentProps } from '@console/shared/src/types/modal';
-import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import type { ModalCallback } from './types';
 
 const workloadResourceModels = [DeploymentModel, DeploymentConfigModel, StatefulSetModel];
 const getContainers = (workload: K8sResourceKind) =>
@@ -60,23 +60,29 @@ const AddSecretToWorkloadModal: FC<AddSecretToWorkloadModalProps> = (props) => {
           })
           .then((res: K8sResourceKind[]): WorkloadItem[] => res.map((obj) => ({ model, obj })));
       }),
-    ).then((responses) => {
-      // TODO: Group by kind.
-      const allItems: WorkloadItem[] = _.flatten(responses);
-      const workloadsByUid = _.keyBy(allItems, 'obj.metadata.uid');
-      const sortedItems = _.orderBy(allItems, ['obj.metadata.name', 'model.kind'], ['asc', 'asc']);
-      const options = _.reduce(
-        sortedItems,
-        (list, item) => {
-          const { name, uid } = item.obj.metadata;
-          list[uid] = <ResourceName kind={item.model.kind} name={name} />;
-          return list;
-        },
-        {},
-      );
-      setWorkloadOptions(options);
-      setWorkloadsByUID(workloadsByUid);
-    });
+    )
+      .then((responses) => {
+        // TODO: Group by kind.
+        const allItems: WorkloadItem[] = _.flatten(responses);
+        const workloadsByUid = _.keyBy(allItems, 'obj.metadata.uid');
+        const sortedItems = _.orderBy(
+          allItems,
+          ['obj.metadata.name', 'model.kind'],
+          ['asc', 'asc'],
+        );
+        const options = _.reduce(
+          sortedItems,
+          (list, item) => {
+            const { name, uid } = item.obj.metadata;
+            list[uid] = <ResourceName kind={item.model.kind} name={name} />;
+            return list;
+          },
+          {},
+        );
+        setWorkloadOptions(options);
+        setWorkloadsByUID(workloadsByUid);
+      })
+      .catch(() => {});
   }, [namespace]);
 
   const autocompleteFilter = (text, item) => {
@@ -287,7 +293,12 @@ const AddSecretToWorkloadModal: FC<AddSecretToWorkloadModalProps> = (props) => {
         >
           {t('Save')}
         </Button>
-        <Button variant="link" onClick={props.cancel} data-test-id="modal-cancel-action">
+        <Button
+          variant="link"
+          onClick={props.cancel}
+          data-test="modal-cancel-action"
+          data-test-id="modal-cancel-action"
+        >
           {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>

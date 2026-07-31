@@ -1,7 +1,5 @@
 /* eslint-disable camelcase */
-import * as _ from 'lodash';
 import type { FC } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
 import {
   Checkbox,
   FormGroup,
@@ -14,12 +12,13 @@ import {
   TextArea,
   TextInput,
 } from '@patternfly/react-core';
-
+import * as _ from 'lodash';
+import { Trans, useTranslation } from 'react-i18next';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
-import { SendResolvedAlertsCheckbox } from './send-resolved-alerts-checkbox';
-import { SaveAsDefaultCheckbox } from './save-as-default-checkbox';
-import type { FormProps, SubFormModule } from './receiver-form-props';
 import { AdvancedConfiguration } from './advanced-configuration';
+import type { FormProps, SubFormModule } from './receiver-form-props';
+import { SaveAsDefaultCheckbox } from './save-as-default-checkbox';
+import { SendResolvedAlertsCheckbox } from './send-resolved-alerts-checkbox';
 
 const GLOBAL_FIELDS = [
   'slack_api_url',
@@ -286,7 +285,7 @@ const getInitialValues = (globals, receiverConfig) => {
   initValues.slackIconType = _.has(receiverConfig, 'icon_emoji') ? 'emoji' : 'url';
 
   GLOBAL_FIELDS.forEach((fld) => {
-    const configFieldName = fld.substring(fld.indexOf('_') + 1); //strip off leading 'slack_' prefix
+    const configFieldName = fld.substring(fld.indexOf('_') + 1); // strip off leading 'slack_' prefix
     initValues[fld] = _.get(receiverConfig, configFieldName, globals[fld]);
   });
 
@@ -311,7 +310,7 @@ const createReceiverConfig = (globals, formValues, receiverConfig) => {
   // Only save these props in receiverConfig if different from global
   GLOBAL_FIELDS.forEach((fld) => {
     const formValue = formValues[fld];
-    const configFieldName = fld.substring(fld.indexOf('_') + 1); //strip off leading 'slack_' prefix
+    const configFieldName = fld.substring(fld.indexOf('_') + 1); // strip off leading 'slack_' prefix
     if (formValue !== globals[fld]) {
       if (fld === 'slack_api_url' && formValues.slackSaveAsDefault) {
         _.unset(receiverConfig, 'api_url'); // saving as global so unset in config

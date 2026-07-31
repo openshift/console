@@ -26,4 +26,14 @@ describe('monkeyPatchSharedScope', () => {
     expect(testScope['react-router-dom']).toEqual(testScope['react-router']);
     expect(testScope['react-router-dom-v5-compat']).toEqual(testScope['react-router']);
   });
+
+  it('throws error when share scope object is not initialized', () => {
+    expect(() => {
+      monkeyPatchSharedScope({});
+    }).toThrow();
+
+    expect(() => {
+      monkeyPatchSharedScope({ react: {} });
+    }).toThrow();
+  });
 });

@@ -53,14 +53,13 @@ test.describe('Alertmanager', { tag: ['@admin'] }, () => {
 
     await page.getByTestId('edit-alert-routing-btn').click();
 
-    // Edit routing values (using legacy test IDs)
-    await page.locator('[data-test-id="input-group-by"]').fill(', cluster');
-    await page.locator('[data-test-id="input-group-wait"]').clear();
-    await page.locator('[data-test-id="input-group-wait"]').fill('60s');
-    await page.locator('[data-test-id="input-group-interval"]').clear();
-    await page.locator('[data-test-id="input-group-interval"]').fill('10m');
-    await page.locator('[data-test-id="input-repeat-interval"]').clear();
-    await page.locator('[data-test-id="input-repeat-interval"]').fill('24h');
+    await page.getByTestId('input-group-by').fill(', cluster');
+    await page.getByTestId('input-group-wait').clear();
+    await page.getByTestId('input-group-wait').fill('60s');
+    await page.getByTestId('input-group-interval').clear();
+    await page.getByTestId('input-group-interval').fill('10m');
+    await page.getByTestId('input-repeat-interval').clear();
+    await page.getByTestId('input-repeat-interval').fill('24h');
 
     await page.getByTestId('confirm-action').click();
 
@@ -241,16 +240,18 @@ route:
     });
 
     await test.step('Verify match and match_re were converted to matchers in YAML', async () => {
-      await alertmanager.navigateToYAMLPage();
-      const yamlContent = await alertmanager.getYAMLContent();
+      await expect(async () => {
+        await alertmanager.navigateToYAMLPage();
+        const yamlContent = await alertmanager.getYAMLContent();
 
-      const config: AlertmanagerConfig = jsYaml.load(yamlContent) as AlertmanagerConfig;
-      const route: AlertmanagerRoute | undefined = config.route.routes?.find(
-        (r: AlertmanagerRoute) => r.receiver === receiverName,
-      );
+        const config: AlertmanagerConfig = jsYaml.load(yamlContent) as AlertmanagerConfig;
+        const route: AlertmanagerRoute | undefined = config.route.routes?.find(
+          (r: AlertmanagerRoute) => r.receiver === receiverName,
+        );
 
-      expect(route?.matchers?.[0]).toBe(matcher1);
-      expect(route?.matchers?.[1]).toBe(matcher2);
+        expect(route?.matchers?.[0]).toBe(matcher1);
+        expect(route?.matchers?.[1]).toBe(matcher2);
+      }).toPass({ intervals: [2_000, 3_000, 5_000], timeout: 30_000 });
     });
   });
 });

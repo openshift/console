@@ -1,12 +1,13 @@
 /* eslint-disable no-barrel-files/no-barrel-files */
-import { JSONSchema7 } from 'json-schema';
-import {
+import type { MachineHealthCheckKind } from '@openshift/api-types/dist/openshift/latest';
+import type { JSONSchema7 } from 'json-schema';
+import type {
   Selector,
   MatchLabels,
   K8sModel,
   K8sVerb,
 } from '@console/dynamic-plugin-sdk/src/api/common-types';
-import {
+import type {
   NodeAddress,
   ObjectReference,
   ObjectMetadata,
@@ -15,8 +16,7 @@ import {
   NodeCondition,
   TaintEffect,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { EventInvolvedObject } from './event';
-import type { MachineHealthCheckKind } from '@openshift/api-types/dist/openshift/latest';
+import type { EventInvolvedObject } from './event';
 
 export * from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 export * from '@console/dynamic-plugin-sdk/src/api/common-types';
@@ -834,7 +834,7 @@ export type MachineConfigPoolKind = {
   status?: MachineConfigPoolStatus;
 } & K8sResourceKind;
 
-type Release = {
+export type Release = {
   version: string;
   image: string;
   url?: string;
@@ -879,6 +879,18 @@ type ClusterVersionStatus = {
   conditions?: ClusterVersionCondition[];
   availableUpdates?: VersionUpdate[];
   conditionalUpdates?: ConditionalUpdate[];
+  capabilities?: {
+    enabledCapabilities: string[];
+    knownCapabilities: string[];
+  };
+};
+
+type ClusterVersionSpecOverride = {
+  group?: string;
+  kind: string;
+  name: string;
+  namespace?: string;
+  unmanaged?: boolean;
 };
 
 type ClusterVersionSpec = {
@@ -886,6 +898,11 @@ type ClusterVersionSpec = {
   clusterID: string;
   desiredUpdate?: Release;
   upstream?: string;
+  capabilities?: {
+    additionalEnabledCapabilities?: string[];
+    baselineCapabilitySet?: string;
+  };
+  overrides?: ClusterVersionSpecOverride[];
 };
 
 export type ClusterVersionKind = {

@@ -1,6 +1,6 @@
 import type { FC, ComponentProps } from 'react';
 import { useCallback } from 'react';
-import { FLAG_NODE_MGMT_V1 } from '@console/app/src/consts';
+import { FLAG_OPENSHIFT_5 } from '@console/app/src/consts';
 import { ResourceEventStream } from '@console/internal/components/events';
 import { DetailsPage } from '@console/internal/components/factory';
 import { PodsPage } from '@console/internal/components/pod-list';
@@ -15,10 +15,12 @@ import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { isWindowsNode } from '@console/shared/src/selectors/node';
 import { nodeStatus } from '../../status/node';
 import { NodeConfiguration } from './configuration/NodeConfiguration';
+import { NodeHealth } from './health/NodeHealth';
 import NodeDashboard from './node-dashboard/NodeDashboard';
 import NodeDetails from './NodeDetails';
 import NodeLogs from './NodeLogs';
 import NodeTerminal from './NodeTerminal';
+import { NodeWorkload } from './NodeWorkload';
 
 const NodePodsPage: FC<PageComponentProps<NodeKind>> = ({ obj }) => (
   <PodsPage
@@ -28,40 +30,61 @@ const NodePodsPage: FC<PageComponentProps<NodeKind>> = ({ obj }) => (
   />
 );
 
+const overviewTab = {
+  href: '',
+  // t('console-app~Overview')
+  nameKey: 'console-app~Overview',
+  component: NodeDashboard,
+};
+
+const detailsTab = {
+  href: 'details',
+  // t('console-app~Details')
+  nameKey: 'console-app~Details',
+  component: NodeDetails,
+};
+
+const configurationTab = {
+  href: 'configuration',
+  // t('console-app~Configuration')
+  nameKey: 'console-app~Configuration',
+  component: NodeConfiguration,
+};
+
+const healthTab = {
+  href: 'health',
+  // t('console-app~Health')
+  nameKey: 'console-app~Health',
+  component: NodeHealth,
+};
+
+const workloadTab = {
+  href: 'workload',
+  // t('console-app~Workload')
+  nameKey: 'console-app~Workload',
+  component: NodeWorkload,
+};
+
+const yamlTab = navFactory.editYaml();
+const podsTab = navFactory.pods(NodePodsPage);
+const logsTab = navFactory.logs(NodeLogs);
+const eventsTab = navFactory.events(ResourceEventStream);
+const terminalTab = navFactory.terminal(NodeTerminal);
+
 export const NodeDetailsPage: FC<ComponentProps<typeof DetailsPage>> = (props) => {
-  const nodeMgmtV1Enabled = useFlag(FLAG_NODE_MGMT_V1);
+  const isOpenShift5 = useFlag(FLAG_OPENSHIFT_5);
 
   const pagesFor = useCallback(
-    (node: NodeKind) => [
-      {
-        href: '',
-        // t('console-app~Overview')
-        nameKey: 'console-app~Overview',
-        component: NodeDashboard,
-      },
-      {
-        href: 'details',
-        // t('console-app~Details')
-        nameKey: 'console-app~Details',
-        component: NodeDetails,
-      },
-      ...(nodeMgmtV1Enabled
-        ? [
-            {
-              href: 'configuration',
-              // t('console-app~Configuration')
-              nameKey: 'console-app~Configuration',
-              component: NodeConfiguration,
-            },
-          ]
-        : []),
-      navFactory.editYaml(),
-      navFactory.pods(NodePodsPage),
-      navFactory.logs(NodeLogs),
-      navFactory.events(ResourceEventStream),
-      ...(!isWindowsNode(node) ? [navFactory.terminal(NodeTerminal)] : []),
-    ],
-    [nodeMgmtV1Enabled],
+    (node: NodeKind) => {
+      const tabs = isOpenShift5
+        ? [overviewTab, detailsTab, configurationTab, healthTab, workloadTab, yamlTab]
+        : [overviewTab, detailsTab, yamlTab, podsTab, logsTab, eventsTab];
+      if (!isWindowsNode(node)) {
+        tabs.push(terminalTab);
+      }
+      return tabs;
+    },
+    [isOpenShift5],
   );
 
   const customActionMenu = (kindObj: K8sModel, obj: NodeKind) => {

@@ -1,0 +1,26 @@
+diff --git a/dist/index.cjs.js b/dist/index.cjs.js
+index 37d8e75173d438fc038befb23dab3b441ed90088..5232f402726c1807762f5dab687e24b252e6a6b7 100644
+--- a/dist/index.cjs.js
++++ b/dist/index.cjs.js
+@@ -392,7 +392,7 @@ const pluginRuntimeMetadataSchema = zod.z.object({
+  * Schema for a `RemotePluginManifest` object.
+  */
+ const remotePluginManifestSchema = pluginRuntimeMetadataSchema.extend({
+-    baseURL: zod.z.string().url(),
++    baseURL: zod.z.string(),
+     extensions: zod.z.array(extensionSchema),
+     loadScripts: zod.z.array(zod.z.string()).nonempty(),
+     registrationMethod: zod.z.enum(['callback', 'custom']),
+diff --git a/dist/index.esm.js b/dist/index.esm.js
+index b32696c3bef97784ce9ccee27c80a69570e8891c..f1c45973c7119338cd1ebc9f6043b6985dcc3cbb 100644
+--- a/dist/index.esm.js
++++ b/dist/index.esm.js
+@@ -374,7 +374,7 @@ const pluginRuntimeMetadataSchema = z.object({
+  * Schema for a `RemotePluginManifest` object.
+  */
+ const remotePluginManifestSchema = pluginRuntimeMetadataSchema.extend({
+-    baseURL: z.string().url(),
++    baseURL: z.string(),
+     extensions: z.array(extensionSchema),
+     loadScripts: z.array(z.string()).nonempty(),
+     registrationMethod: z.enum(['callback', 'custom']),

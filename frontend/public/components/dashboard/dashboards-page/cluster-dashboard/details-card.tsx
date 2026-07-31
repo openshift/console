@@ -1,37 +1,29 @@
 import type { FC } from 'react';
 import { useContext, useState, useEffect, memo } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Card, CardBody, CardHeader, CardTitle, DescriptionList } from '@patternfly/react-core';
 import { RhUiInProgressIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router';
+import type { WatchK8sResource, CustomOverviewDetailItem } from '@console/dynamic-plugin-sdk';
+import { useResolvedExtensions, isCustomOverviewDetailItem } from '@console/dynamic-plugin-sdk';
+import { OverviewDetailItem } from '@console/internal/components/overview/OverviewDetailItem';
+import { ErrorBoundaryInline } from '@console/shared/src/components/error/fallbacks/ErrorBoundaryInline';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { BlueArrowCircleUpIcon } from '@console/shared/src/components/status/icons';
 import { FLAGS } from '@console/shared/src/constants/common';
+import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpgrade';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import {
   getInfrastructureAPIURL,
   getInfrastructurePlatform,
   isSingleNode,
 } from '@console/shared/src/selectors/infrastructure';
-import { useFlag } from '@console/shared/src/hooks/useFlag';
-import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpgrade';
-import { ErrorBoundaryInline } from '@console/shared/src/components/error/fallbacks/ErrorBoundaryInline';
-import {
-  useResolvedExtensions,
-  isCustomOverviewDetailItem,
-  WatchK8sResource,
-  CustomOverviewDetailItem,
-} from '@console/dynamic-plugin-sdk';
-import { OverviewDetailItem } from '@console/internal/components/overview/OverviewDetailItem';
 import { ClusterVersionModel } from '../../../../models';
-import {
-  ServiceLevel,
-  useServiceLevelTitle,
-  ServiceLevelText,
-  ServiceLevelLoading,
-} from '../../../utils/service-level';
+import type { ClusterVersionKind } from '../../../../module/k8s';
 import {
   referenceForModel,
   getOpenShiftVersion,
   getK8sGitVersion,
-  ClusterVersionKind,
   getClusterID,
   getDesiredClusterVersion,
   getLastCompletedUpdate,
@@ -40,11 +32,15 @@ import {
   ClusterUpdateStatus,
   getOCMLink,
 } from '../../../../module/k8s';
-import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { flagPending } from '../../../../reducers/features';
-import { LoadingInline } from '../../../utils/status-box';
-import { Link } from 'react-router';
 import { useK8sWatchResource } from '../../../utils/k8s-watch-hook';
+import {
+  ServiceLevel,
+  useServiceLevelTitle,
+  ServiceLevelText,
+  ServiceLevelLoading,
+} from '../../../utils/service-level';
+import { LoadingInline } from '../../../utils/status-box';
 import { ClusterDashboardContext } from './context';
 
 const ClusterVersion: FC<ClusterVersionProps> = ({ cv }) => {
@@ -139,7 +135,7 @@ export const DetailsCard = memo(() => {
   const k8sGitVersion = getK8sGitVersion(k8sVersion);
 
   return (
-    <Card data-test-id="details-card">
+    <Card data-test="details-card" data-test-id="details-card">
       <CardHeader
         actions={{
           actions: (

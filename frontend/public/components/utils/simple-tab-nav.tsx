@@ -1,7 +1,7 @@
 import type { FC, ReactElement } from 'react';
 import { isValidElement, createElement } from 'react';
-import { css } from '@patternfly/react-styles';
 import { Tabs, Tab as PfTab, TabTitleText } from '@patternfly/react-core';
+import { css } from '@patternfly/react-styles';
 
 export type Tab = {
   name: string;

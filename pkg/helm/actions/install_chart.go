@@ -11,10 +11,12 @@ import (
 
 	"github.com/openshift/api/helm/v1beta1"
 	"github.com/openshift/console/pkg/helm/metrics"
-	"helm.sh/helm/v3/pkg/action"
-	"helm.sh/helm/v3/pkg/chart"
-	"helm.sh/helm/v3/pkg/chart/loader"
-	"helm.sh/helm/v3/pkg/release"
+	"helm.sh/helm/v4/pkg/action"
+	chart "helm.sh/helm/v4/pkg/chart/v2"
+	"helm.sh/helm/v4/pkg/chart/v2/loader"
+	"helm.sh/helm/v4/pkg/kube"
+	"helm.sh/helm/v4/pkg/registry"
+	releasev1 "helm.sh/helm/v4/pkg/release/v1"
 	kv1 "k8s.io/api/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -48,9 +50,17 @@ var (
 	httpURLRe = regexp.MustCompile(`(?i)^https?://` + hostPort + `/.+\.(?:tar\.gz|tgz)$`)
 )
 
-// isValidChartURL validates chart URLs using RFC-compliant hostname labels.
+const (
+	helmAuthSecretAnnotation = "helm.openshift.io/auth-secret"
+)
+
+type RegistryClientSetter interface {
+	SetRegistryClient(rc *registry.Client)
+}
+
+// IsValidChartURL validates chart URLs using RFC-compliant hostname labels.
 // Accepts oci://<registry>/<path> and http(s)://<host>/<path>.tgz|tar.gz URLs.
-func isValidChartURL(raw string) bool {
+func IsValidChartURL(raw string) bool {
 	return ociURLRe.MatchString(raw) || httpURLRe.MatchString(raw)
 }
 
@@ -95,11 +105,13 @@ func chartVersionFromURL(raw string) string {
 	return ""
 }
 
-func InstallChart(ns, name, url string, vals map[string]interface{}, conf *action.Configuration, client dynamic.Interface, coreClient corev1client.CoreV1Interface, fileCleanUp bool, indexEntry string) (*release.Release, error) {
+func InstallChart(ns, name, url string, vals map[string]interface{}, conf *action.Configuration, client dynamic.Interface, coreClient corev1client.CoreV1Interface, fileCleanUp bool, indexEntry string) (*releasev1.Release, error) {
 	var err error
 	var chartInfo *ChartInfo
 	var cp, chartLocation string
 	cmd := action.NewInstall(conf)
+	cmd.ServerSideApply = false
+	cmd.WaitStrategy = kube.HookOnlyStrategy
 	// tlsFiles contain references of files to be removed once the chart
 	// operation depending on those files is finished.
 	tlsFiles := []*os.File{}
@@ -153,9 +165,14 @@ func InstallChart(ns, name, url string, vals map[string]interface{}, conf *actio
 	ch.Metadata.Annotations["chart_url"] = url
 
 	cmd.Namespace = ns
-	release, err := cmd.Run(ch, vals)
+	result, err := cmd.Run(ch, vals)
 	if err != nil {
 		return nil, err
+	}
+
+	rel, ok := result.(*releasev1.Release)
+	if !ok {
+		return nil, fmt.Errorf("unexpected release type %T", result)
 	}
 
 	if ch.Metadata.Name != "" && ch.Metadata.Version != "" {
@@ -170,7 +187,7 @@ func InstallChart(ns, name, url string, vals map[string]interface{}, conf *actio
 			os.Remove(f.Name())
 		}
 	}()
-	return release, nil
+	return rel, nil
 }
 
 func InstallChartAsync(ns, name, url string, vals map[string]interface{}, conf *action.Configuration, client dynamic.Interface, coreClient corev1client.CoreV1Interface, fileCleanUp bool, indexEntry string) (*kv1.Secret, error) {
@@ -178,6 +195,8 @@ func InstallChartAsync(ns, name, url string, vals map[string]interface{}, conf *
 	var chartInfo *ChartInfo
 	var cp, chartLocation string
 	cmd := action.NewInstall(conf)
+	cmd.ServerSideApply = false
+	cmd.WaitStrategy = kube.HookOnlyStrategy
 	// tlsFiles contain references of files to be removed once the chart
 	// operation depending on those files is finished.
 	tlsFiles := []*os.File{}
@@ -281,15 +300,23 @@ func GetUserCredentials(coreClient corev1client.CoreV1Interface, ns, secretName 
 }
 
 // applyBasicAuthFromSecret sets cmd.Username and cmd.Password from a userCredentials and sets the registry client
-func applyBasicAuthFromUserCredentials(cmd *action.Install, userCredentials *UserCredentials) error {
+func applyBasicAuthFromUserCredentials(cmd *action.ChartPathOptions, setter RegistryClientSetter, userCredentials *UserCredentials) error {
 	cmd.Username = userCredentials.Username
 	cmd.Password = userCredentials.Password
 	rc, err := GetOCIRegistry(false, false, userCredentials)
 	if err != nil {
 		return fmt.Errorf("failed to configure OCI registry client: %w", err)
 	}
-	cmd.SetRegistryClient(rc)
+	setter.SetRegistryClient(rc)
 	return nil
+}
+
+// addAuthSecretAnnotation adds the auth secret reference to the release annotations via chart metadata.
+func addAuthSecretAnnotation(ch *chart.Chart, secretName string) {
+	if secretName == "" {
+		return
+	}
+	ch.Metadata.Annotations[helmAuthSecretAnnotation] = secretName
 }
 
 // InstallChartFromURL installs a chart from an OCI or direct HTTP(S) chart URL.
@@ -297,11 +324,13 @@ func applyBasicAuthFromUserCredentials(cmd *action.Install, userCredentials *Use
 // basicAuthSecretName names a Secret in ns containing username and password keys for registry auth.
 func InstallChartFromURL(ns, name, url string, vals map[string]interface{}, conf *action.Configuration, coreClient corev1client.CoreV1Interface, version, basicAuthSecretName string) (*kv1.Secret, error) {
 
-	if !isValidChartURL(url) {
+	if !IsValidChartURL(url) {
 		return nil, fmt.Errorf("invalid chart URL: %s, must be oci:// URL or http(s)://*.tgz", url)
 	}
 
 	cmd := action.NewInstall(conf)
+	cmd.ServerSideApply = false
+	cmd.WaitStrategy = kube.HookOnlyStrategy
 	cmd.ReleaseName = name
 	cmd.Namespace = ns
 
@@ -312,7 +341,7 @@ func InstallChartFromURL(ns, name, url string, vals map[string]interface{}, conf
 		if err != nil {
 			return nil, err
 		}
-		if err := applyBasicAuthFromUserCredentials(cmd, userCredentials); err != nil {
+		if err := applyBasicAuthFromUserCredentials(&cmd.ChartPathOptions, cmd, userCredentials); err != nil {
 			return nil, err
 		}
 	}
@@ -329,6 +358,9 @@ func InstallChartFromURL(ns, name, url string, vals map[string]interface{}, conf
 
 	cp, err := cmd.ChartPathOptions.LocateChart(url, settings)
 	if err != nil {
+		if basicAuthSecretName == "" && (strings.Contains(err.Error(), "401") || strings.Contains(strings.ToLower(err.Error()), "unauthorized")) {
+			return nil, fmt.Errorf("error locating chart: %w; registry requires authentication - select a Secret with \"username\" and \"password\" keys for basic authentication", err)
+		}
 		return nil, fmt.Errorf("error locating chart: %v", err)
 	}
 	ch, err := loader.Load(cp)
@@ -345,6 +377,7 @@ func InstallChartFromURL(ns, name, url string, vals map[string]interface{}, conf
 	}
 	ch.Metadata.Annotations["chart_url"] = url
 	ch.Metadata.Annotations["installation"] = "url_install"
+	addAuthSecretAnnotation(ch, basicAuthSecretName)
 	go func() {
 		_, err := cmd.Run(ch, vals)
 		if err == nil {

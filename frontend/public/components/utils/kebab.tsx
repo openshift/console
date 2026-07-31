@@ -1,22 +1,17 @@
-import * as _ from 'lodash';
 import type { FC, MouseEvent, Ref, ReactNode, ComponentProps, ComponentType } from 'react';
 import { useState } from 'react';
-import { connect } from 'react-redux';
-import { useTranslation } from 'react-i18next';
-import i18next from 'i18next';
-import {
-  Dropdown,
-  DropdownItem,
-  DropdownList,
-  MenuToggle,
-  MenuToggleElement,
-  Tooltip,
-} from '@patternfly/react-core';
+import type { MenuToggleElement } from '@patternfly/react-core';
+import { Dropdown, DropdownItem, DropdownList, MenuToggle, Tooltip } from '@patternfly/react-core';
 import { RhUiEllipsisVerticalIcon } from '@patternfly/react-icons';
-import { useNavigate } from 'react-router';
-import { impersonateStateToProps, ImpersonateKind } from '@console/dynamic-plugin-sdk';
-import { AccessReviewResourceAttributes, K8sKind, K8sResourceKind } from '../../module/k8s';
 import { ContextSubMenuItem } from '@patternfly/react-topology';
+import i18next from 'i18next';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+import { useNavigate } from 'react-router';
+import type { ImpersonateKind } from '@console/dynamic-plugin-sdk';
+import { impersonateStateToProps } from '@console/dynamic-plugin-sdk';
+import type { AccessReviewResourceAttributes, K8sKind, K8sResourceKind } from '../../module/k8s';
 import { useAccessReview, checkAccess } from './rbac';
 
 const kebabOptionsToMenu = (options: KebabOption[]): KebabMenuOption[] => {
@@ -56,7 +51,7 @@ const kebabOptionsToMenu = (options: KebabOption[]): KebabMenuOption[] => {
   return menuOptions;
 };
 
-const KebabItem_: FC<KebabItemProps & { isAllowed: boolean }> = ({
+const KebabItemBase: FC<KebabItemProps & { isAllowed: boolean }> = ({
   option,
   onClick,
   autoFocus,
@@ -70,6 +65,13 @@ const KebabItem_: FC<KebabItemProps & { isAllowed: boolean }> = ({
       onClick={(e) => !isDisabled && onClick(e, option)}
       autoFocus={autoFocus}
       isDisabled={isDisabled}
+      data-test={
+        option.labelKey
+          ? t(option.labelKey, option.labelKind)
+          : typeof option.label === 'string'
+          ? option.label
+          : undefined
+      }
       data-test-action={option.labelKey ? t(option.labelKey, option.labelKind) : option.label}
       icon={option.icon}
     >
@@ -77,15 +79,15 @@ const KebabItem_: FC<KebabItemProps & { isAllowed: boolean }> = ({
     </Component>
   );
 };
-export const KebabItemAccessReview_ = (
+export const KebabItemAccessReviewBase = (
   props: KebabItemProps & { impersonate: ImpersonateKind },
 ) => {
   const { option, impersonate } = props;
   const isAllowed = useAccessReview(option.accessReview, impersonate);
-  return <KebabItem_ {...props} isAllowed={isAllowed} />;
+  return <KebabItemBase {...props} isAllowed={isAllowed} />;
 };
 
-const KebabItemAccessReview = connect(impersonateStateToProps)(KebabItemAccessReview_);
+const KebabItemAccessReview = connect(impersonateStateToProps)(KebabItemAccessReviewBase);
 
 const isKebabSubMenu = (option: KebabMenuOption): option is KebabSubMenuOption => {
   // only a sub menu has children
@@ -99,7 +101,7 @@ export const KebabItem: FC<KebabItemProps> = (props) => {
   if (option.accessReview) {
     item = <KebabItemAccessReview {...props} />;
   } else {
-    item = <KebabItem_ {...props} isAllowed />;
+    item = <KebabItemBase {...props} isAllowed />;
   }
   const tooltip = option.tooltipKey ? i18next.t(option.tooltipKey) : option.tooltip;
 

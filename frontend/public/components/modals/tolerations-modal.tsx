@@ -1,7 +1,5 @@
-import * as _ from 'lodash';
 import type { FormEvent } from 'react';
 import { useState } from 'react';
-import { css } from '@patternfly/react-styles';
 import {
   Button,
   Form,
@@ -11,16 +9,19 @@ import {
   ModalVariant,
   Tooltip,
 } from '@patternfly/react-core';
-import { Table, Thead, Tr, Th, Td, Tbody } from '@patternfly/react-table';
 import { RhUiMinusCircleIcon, RhUiAddCircleFillIcon } from '@patternfly/react-icons';
+import { css } from '@patternfly/react-styles';
+import { Table, Thead, Tr, Th, Td, Tbody } from '@patternfly/react-table';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
-import { EmptyBox } from '../utils/status-box';
-import { K8sKind, k8sPatch, Toleration, TolerationOperator } from '../../module/k8s';
-import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import type { ModalComponentProps } from '@console/shared/src/types/modal';
-import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
+import { k8sPatch } from '../../module/k8s';
+import type { K8sKind, Toleration, TolerationOperator } from '../../module/k8s';
+import { EmptyBox } from '../utils/status-box';
 
 const TolerationsModal = (props: TolerationsModalProps) => {
   const getTolerationsFromResource = (): Toleration[] => {
@@ -244,7 +245,13 @@ const TolerationsModal = (props: TolerationsModalProps) => {
         >
           {t('Save')}
         </Button>
-        <Button type="button" variant="link" onClick={cancel} data-test-id="modal-cancel-action">
+        <Button
+          type="button"
+          variant="link"
+          onClick={cancel}
+          data-test="modal-cancel-action"
+          data-test-id="modal-cancel-action"
+        >
           {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>

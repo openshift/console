@@ -45,6 +45,7 @@ const ConsolePluginModal = (props: ConsolePluginModalProps) => {
             : t('Console plugin enablement')
         }
         labelId="console-plugin-modal-title"
+        data-test="modal-title"
         data-test-id="modal-title"
       />
       <ModalBody>
@@ -85,7 +86,12 @@ const ConsolePluginModal = (props: ConsolePluginModalProps) => {
         >
           {t('Save')}
         </Button>
-        <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
+        <Button
+          variant="link"
+          onClick={cancel}
+          data-test="modal-cancel-action"
+          data-test-id="modal-cancel-action"
+        >
           {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>

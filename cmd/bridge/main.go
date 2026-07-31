@@ -99,6 +99,7 @@ func main() {
 	fListen := fs.String("listen", "http://0.0.0.0:9000", "")
 
 	fBaseAddress := fs.String("base-address", "", "Format: <http | https>://domainOrIPAddress[:port]. Example: https://openshift.example.com.")
+	fAdditionalBaseAddresses := fs.String("additional-base-addresses", "", "Comma-separated additional console base URLs for multi-domain support.")
 	fBasePath := fs.String("base-path", "/", "")
 
 	// See https://github.com/openshift/service-serving-cert-signer
@@ -178,6 +179,7 @@ func main() {
 	fNodeOperatingSystems := fs.String("node-operating-systems", "", "List of node operating systems. Example --node-operating-system=linux,windows")
 	fCopiedCSVsDisabled := fs.Bool("copied-csvs-disabled", false, "Flag to indicate if OLM copied CSVs are disabled.")
 	fTechPreview := fs.Bool("tech-preview", false, "Enable console Technology Preview features.")
+	fOLMLifecycleMetadata := fs.Bool("olm-lifecycle-metadata", false, "Enable OLM Operator lifecycle and compatibility features.")
 
 	cfg, err := serverconfig.Parse(fs, os.Args[1:], "BRIDGE")
 	if err != nil {
@@ -204,6 +206,25 @@ func main() {
 		flags.FatalIfFailed(flags.NewInvalidFlagError("base-path", "value must start and end with slash"))
 	}
 	baseURL.Path = *fBasePath
+
+	var additionalBaseURLs []*url.URL
+	if *fAdditionalBaseAddresses != "" {
+		for _, addr := range strings.Split(*fAdditionalBaseAddresses, ",") {
+			addr = strings.TrimSpace(addr)
+			if addr == "" {
+				continue
+			}
+			u, err := url.Parse(addr)
+			if err != nil {
+				klog.Fatalf("invalid additional base address %q: %v", addr, err)
+			}
+			if u.Scheme == "" || u.Host == "" {
+				klog.Fatalf("additional base address %q must be an absolute URL with scheme and host", addr)
+			}
+			u.Path = *fBasePath
+			additionalBaseURLs = append(additionalBaseURLs, u)
+		}
+	}
 
 	documentationBaseURL := &url.URL{}
 	if *fDocumentationBaseURL != "" {
@@ -324,6 +345,7 @@ func main() {
 	srv := &server.Server{
 		PublicDir:                    *fPublicDir,
 		BaseURL:                      baseURL,
+		AdditionalBaseURLs:           additionalBaseURLs,
 		Branding:                     branding,
 		CustomProductName:            *fCustomProductName,
 		CustomLogoFiles:              customLogoFlags,
@@ -357,6 +379,7 @@ func main() {
 		K8sMode:                      *fK8sMode,
 		CopiedCSVsDisabled:           *fCopiedCSVsDisabled,
 		TechPreview:                  *fTechPreview,
+		OLMLifecycleMetadata:         *fOLMLifecycleMetadata,
 		Capabilities:                 capabilities,
 	}
 
@@ -742,7 +765,7 @@ func main() {
 		klog.Info("HTTP/2 enabled")
 	}
 
-	listener, err := listen(listenURL.Scheme, listenURL.Host, *fTLSCertFile, *fTLSKeyFile)
+	listener, err := listen(listenURL.Scheme, listenURL.Host, *fTLSCertFile, *fTLSKeyFile, cfg.ServingInfo.MinTLSVersion, cfg.ServingInfo.CipherSuites)
 	if err != nil {
 		klog.Fatalf("error getting listener, %v", err)
 	}
@@ -781,7 +804,7 @@ func main() {
 	httpsrv.Serve(listener)
 }
 
-func listen(scheme, host, certFile, keyFile string) (net.Listener, error) {
+func listen(scheme, host, certFile, keyFile, minTLSVersion string, cipherSuites []string) (net.Listener, error) {
 	klog.Infof("Binding to %s...", host)
 	if scheme == "http" {
 		klog.Info("Not using TLS")
@@ -799,5 +822,26 @@ func listen(scheme, host, certFile, keyFile string) (net.Listener, error) {
 			return &cert, nil
 		},
 	}
+
+	if minTLSVersion != "" {
+		minVersion, err := oscrypto.TLSVersion(minTLSVersion)
+		if err != nil {
+			return nil, fmt.Errorf("invalid minTLSVersion %q: %w", minTLSVersion, err)
+		}
+		tlsConfig.MinVersion = minVersion
+	}
+
+	if len(cipherSuites) > 0 {
+		ciphers := make([]uint16, 0, len(cipherSuites))
+		for _, cipherName := range cipherSuites {
+			cipher, err := oscrypto.CipherSuite(cipherName)
+			if err != nil {
+				return nil, fmt.Errorf("invalid cipher suite %q: %w", cipherName, err)
+			}
+			ciphers = append(ciphers, cipher)
+		}
+		tlsConfig.CipherSuites = ciphers
+	}
+
 	return tls.Listen("tcp", host, tlsConfig)
 }

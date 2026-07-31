@@ -1,7 +1,5 @@
-import * as _ from 'lodash';
 import type { FC, FormEvent } from 'react';
 import { useState, useCallback } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
 import {
   Button,
   Content,
@@ -12,20 +10,21 @@ import {
   ModalHeader,
   ModalVariant,
 } from '@patternfly/react-core';
+import * as _ from 'lodash';
+import { Trans, useTranslation } from 'react-i18next';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
-import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import {
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import type {
   ContainerSpec,
-  getVolumeType,
   K8sKind,
-  k8sPatch,
   K8sResourceKind,
   Volume,
   VolumeMount,
-} from '../../module/k8s/';
-import { RowVolumeData } from '../volumes-table';
-import { ModalCallback } from './types';
-import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+} from '../../module/k8s';
+import { getVolumeType, k8sPatch } from '../../module/k8s';
+import type { RowVolumeData } from '../volumes-table';
+import type { ModalCallback } from './types';
 
 const RemoveVolumeModal: FC<RemoveVolumeModalProps> = (props) => {
   const [inProgress, setInProgress] = useState(false);
@@ -87,7 +86,7 @@ const RemoveVolumeModal: FC<RemoveVolumeModalProps> = (props) => {
   const { kind, resource, volume } = props;
   const type: string = _.get(getVolumeType(volume.volumeDetail), 'id', '');
   const volumeName = volume.name;
-  const label = kind.label;
+  const { label } = kind;
   const resourceName = resource.metadata.name;
   return (
     <>
@@ -122,7 +121,12 @@ const RemoveVolumeModal: FC<RemoveVolumeModalProps> = (props) => {
         >
           {t('Remove volume')}
         </Button>
-        <Button variant="link" onClick={props.cancel} data-test-id="modal-cancel-action">
+        <Button
+          variant="link"
+          onClick={props.cancel}
+          data-test="modal-cancel-action"
+          data-test-id="modal-cancel-action"
+        >
           {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>

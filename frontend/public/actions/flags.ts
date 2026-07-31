@@ -1,11 +1,13 @@
 import * as _ from 'lodash';
+import type { ActionType as Action } from 'typesafe-actions';
+import { action } from 'typesafe-actions';
+import type { receivedResources } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
+import type { ModelFeatureFlag } from '@console/dynamic-plugin-sdk/src/extensions/feature-flags';
 import type { ResolvedExtension } from '@console/dynamic-plugin-sdk/src/types';
-import { ModelFeatureFlag } from '@console/dynamic-plugin-sdk/src/extensions/feature-flags';
-import { receivedResources } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
-import { K8sModel } from '@console/internal/module/k8s';
+import { k8sBasePath } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s';
+import type { K8sModel } from '@console/internal/module/k8s';
 import { FLAGS } from '@console/shared/src/constants/common';
-import { ActionType as Action, action } from 'typesafe-actions';
-import { fetchURL } from '../graphql/client';
+import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
 import { GroupModel, UserModel, VolumeSnapshotContentModel } from '../models';
 
 export enum ActionType {
@@ -14,7 +16,7 @@ export enum ActionType {
   UpdateModelFlags = 'updateModelFlags',
 }
 
-const projectListPath = '/apis/project.openshift.io/v1/projects?limit=1';
+const projectListPath = `${k8sBasePath}/apis/project.openshift.io/v1/projects?limit=1`;
 
 export const retryFlagDetection = (dispatch, cb) => {
   setTimeout(() => cb(dispatch), 15000);
@@ -48,18 +50,20 @@ const detectShowOpenShiftStartGuide = (dispatch, canListNS: boolean = false) => 
     return;
   }
 
-  fetchURL(projectListPath).then(
-    (res) => dispatch(setFlag(FLAGS.SHOW_OPENSHIFT_START_GUIDE, _.isEmpty(res.items))),
-    (err) =>
-      err?.response?.status === 404
-        ? dispatch(setFlag(FLAGS.SHOW_OPENSHIFT_START_GUIDE, false))
-        : handleError(
-            err,
-            FLAGS.SHOW_OPENSHIFT_START_GUIDE,
-            dispatch,
-            detectShowOpenShiftStartGuide,
-          ),
-  );
+  coFetchJSON(projectListPath)
+    .then(
+      (res) => dispatch(setFlag(FLAGS.SHOW_OPENSHIFT_START_GUIDE, _.isEmpty(res.items))),
+      (err) =>
+        err?.response?.status === 404
+          ? dispatch(setFlag(FLAGS.SHOW_OPENSHIFT_START_GUIDE, false))
+          : handleError(
+              err,
+              FLAGS.SHOW_OPENSHIFT_START_GUIDE,
+              dispatch,
+              detectShowOpenShiftStartGuide,
+            ),
+    )
+    .catch(() => {});
 };
 
 // Check the user's access to some resources.

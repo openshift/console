@@ -13,7 +13,7 @@ export interface ClusterAuthConfig {
   token?: string;
 }
 
-function isNotFound(err: unknown): boolean {
+export function isNotFound(err: unknown): boolean {
   if (typeof err === 'object' && err !== null) {
     const statusCode = (err as any).statusCode ?? (err as any).response?.statusCode;
     if (statusCode === 404) {
@@ -286,8 +286,12 @@ export default class KubernetesClient {
 
   async createNamespace(name: string, labels?: Record<string, string>): Promise<void> {
     try {
-      await this.k8sApi.readNamespace({ name });
-      return; // already exists
+      const { status } = await this.k8sApi.readNamespace({ name });
+      if (status?.phase === 'Terminating') {
+        await this.waitForNamespaceDeleted(name);
+      } else {
+        return; // already exists and is active
+      }
     } catch (err) {
       if (!isNotFound(err)) {
         throw err;
@@ -370,12 +374,101 @@ export default class KubernetesClient {
     const existing = await this.k8sApi.readNamespacedConfigMap({ name, namespace });
     const existingData = (existing as any)?.data || {};
     const mergedData = { ...existingData, ...patchData };
-    await this.k8sApi.patchNamespacedConfigMap({
-      name,
+    await this.mergePatchResource(
+      `/api/v1/namespaces/${namespace}/configmaps/${name}`,
+      { data: mergedData },
+    );
+  }
+
+  async createConfigMap(
+    name: string,
+    namespace: string,
+    data: Record<string, string> = {},
+  ): Promise<void> {
+    await this.k8sApi.createNamespacedConfigMap({
       namespace,
-      body: { data: mergedData },
-      contentType: k8s.PatchStrategy.MergePatch,
-    } as any);
+      body: { apiVersion: 'v1', kind: 'ConfigMap', metadata: { name, namespace }, data },
+    });
+  }
+
+  async createSecret(
+    name: string,
+    namespace: string,
+    data: Record<string, string> = {},
+  ): Promise<void> {
+    await this.k8sApi.createNamespacedSecret({
+      namespace,
+      body: { apiVersion: 'v1', kind: 'Secret', metadata: { name, namespace }, data },
+    });
+  }
+
+  async mergePatchResource(apiPath: string, patch: object): Promise<void> {
+    const opts: https.RequestOptions = {};
+    this.kubeConfig.applyToHTTPSOptions(opts);
+    const cluster = this.kubeConfig.getCurrentCluster();
+    const url = new URL(apiPath, cluster?.server);
+    const body = JSON.stringify(patch);
+    const proxyUrl = KubernetesClient.getProxyUrl();
+    const agent = proxyUrl ? KubernetesClient.createProxyAgent(proxyUrl) : undefined;
+    await new Promise<void>((resolve, reject) => {
+      const req = https.request(
+        {
+          hostname: url.hostname,
+          port: url.port || 443,
+          path: url.pathname,
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/merge-patch+json',
+            'Content-Length': Buffer.byteLength(body),
+            ...opts.headers,
+          },
+          rejectUnauthorized: false,
+          ca: opts.ca,
+          cert: opts.cert,
+          key: opts.key,
+          agent,
+        },
+        (res) => {
+          let data = '';
+          res.on('data', (chunk) => (data += chunk));
+          res.on('end', () => {
+            if (res.statusCode && res.statusCode >= 200 && res.statusCode < 300) {
+              resolve();
+            } else {
+              reject(new Error(`Patch failed: ${res.statusCode} ${data}`));
+            }
+          });
+        },
+      );
+      req.setTimeout(30_000, () => {
+        req.destroy(new Error('mergePatchResource request timed out after 30s'));
+      });
+      req.on('error', reject);
+      req.write(body);
+      req.end();
+    });
+  }
+
+  async annotateConfigMap(
+    name: string,
+    namespace: string,
+    annotations: Record<string, string | null>,
+  ): Promise<void> {
+    await this.mergePatchResource(
+      `/api/v1/namespaces/${namespace}/configmaps/${name}`,
+      { metadata: { annotations } },
+    );
+  }
+
+  async labelConfigMap(
+    name: string,
+    namespace: string,
+    labels: Record<string, string | null>,
+  ): Promise<void> {
+    await this.mergePatchResource(
+      `/api/v1/namespaces/${namespace}/configmaps/${name}`,
+      { metadata: { labels } },
+    );
   }
 
   async deleteConfigMap(name: string, namespace: string): Promise<void> {
@@ -435,6 +528,46 @@ export default class KubernetesClient {
     }
   }
 
+  async createClusterCustomResource(
+    group: string,
+    version: string,
+    plural: string,
+    body: Record<string, unknown>,
+  ): Promise<unknown> {
+    const response = await this.coApi.createClusterCustomObject({
+      body,
+      group,
+      plural,
+      version,
+    });
+    return response;
+  }
+
+  async getClusterCustomResource(
+    group: string,
+    version: string,
+    plural: string,
+    name: string,
+  ): Promise<unknown> {
+    const response = await this.coApi.getClusterCustomObject({ group, name, plural, version });
+    return response;
+  }
+
+  async deleteClusterCustomResource(
+    group: string,
+    version: string,
+    plural: string,
+    name: string,
+  ): Promise<void> {
+    try {
+      await this.coApi.deleteClusterCustomObject({ group, name, plural, version });
+    } catch (err) {
+      if (!isNotFound(err)) {
+        throw err;
+      }
+    }
+  }
+
   async getCustomResource(
     group: string,
     version: string,
@@ -486,9 +619,149 @@ export default class KubernetesClient {
     });
   }
 
+
+  async waitForDeploymentReady(
+    name: string,
+    namespace: string,
+    timeoutMs = 120_000,
+  ): Promise<void> {
+    const ready = await pollUntil(
+      async () => {
+        try {
+          const deployment = await this.appsApi.readNamespacedDeployment({ name, namespace });
+          const status = deployment.status;
+          const desired = deployment.spec?.replicas ?? 1;
+          return (
+            status?.availableReplicas === desired &&
+            status?.updatedReplicas === desired &&
+            (status?.conditions ?? []).some(
+              (c) => c.type === 'Available' && c.status === 'True',
+            )
+          );
+        } catch {
+          return false;
+        }
+      },
+      timeoutMs,
+      2_000,
+    );
+    if (!ready) {
+      const diag = await this.getDeploymentDiagnostics(name, namespace);
+      throw new Error(
+        `Deployment ${namespace}/${name} not ready after ${timeoutMs / 1000}s.\n${diag}`,
+      );
+    }
+  }
+
+  private async getDeploymentDiagnostics(name: string, namespace: string): Promise<string> {
+    const lines: string[] = [];
+    try {
+      const deployment = await this.appsApi.readNamespacedDeployment({ name, namespace });
+      const conditions = deployment.status?.conditions ?? [];
+      lines.push(
+        `Deployment status: replicas=${deployment.status?.replicas ?? 0}, ` +
+          `ready=${deployment.status?.readyReplicas ?? 0}, ` +
+          `available=${deployment.status?.availableReplicas ?? 0}, ` +
+          `updated=${deployment.status?.updatedReplicas ?? 0}`,
+      );
+      for (const c of conditions) {
+        lines.push(`  condition ${c.type}=${c.status}: ${c.message ?? ''}`);
+      }
+    } catch (err) {
+      lines.push(`Could not read deployment: ${err}`);
+    }
+    try {
+      const pods = await this.k8sApi.listNamespacedPod({ namespace, labelSelector: `app=${name}` });
+      for (const pod of pods.items) {
+        const podName = pod.metadata?.name ?? 'unknown';
+        const phase = pod.status?.phase ?? 'Unknown';
+        lines.push(`Pod ${podName}: phase=${phase}`);
+        for (const cs of pod.status?.containerStatuses ?? []) {
+          const state = cs.state?.waiting
+            ? `Waiting: ${cs.state.waiting.reason} - ${cs.state.waiting.message ?? ''}`
+            : cs.state?.terminated
+            ? `Terminated: ${cs.state.terminated.reason}`
+            : 'Running';
+          lines.push(`  container ${cs.name}: ready=${cs.ready}, restarts=${cs.restartCount}, ${state}`);
+        }
+        try {
+          const events = await this.k8sApi.listNamespacedEvent({
+            namespace,
+            fieldSelector: `involvedObject.name=${podName}`,
+          });
+          const recent = events.items
+            .sort(
+              (a, b) =>
+                new Date(b.lastTimestamp ?? 0).getTime() -
+                new Date(a.lastTimestamp ?? 0).getTime(),
+            )
+            .slice(0, 10);
+          for (const ev of recent) {
+            lines.push(`  event: ${ev.reason} - ${ev.message} (count=${ev.count ?? 1})`);
+          }
+        } catch {
+          lines.push(`  Could not fetch events for pod ${podName}`);
+        }
+      }
+    } catch (err) {
+      lines.push(`Could not list pods: ${err}`);
+    }
+    return lines.join('\n');
+  }
+
   async deletePod(name: string, namespace: string): Promise<void> {
     try {
       await this.k8sApi.deleteNamespacedPod({ name, namespace });
+    } catch (err) {
+      if (!isNotFound(err)) {
+        throw err;
+      }
+    }
+  }
+
+  async waitForPodReady(name: string, namespace: string, timeoutMs = 120_000): Promise<boolean> {
+    return pollUntil(
+      async () => {
+        try {
+          const pod = await this.k8sApi.readNamespacedPod({ name, namespace });
+          if (pod?.status?.phase !== 'Running') {
+            return false;
+          }
+          const containers = pod?.status?.containerStatuses;
+          if (!containers || containers.length === 0) {
+            return false;
+          }
+          return containers.every((c) => c.ready === true);
+        } catch {
+          return false;
+        }
+      },
+      timeoutMs,
+      2_000,
+    );
+  }
+
+  async createDeployment(namespace: string, body: Partial<k8s.V1Deployment>): Promise<void> {
+    await this.appsApi.createNamespacedDeployment({ namespace, body: body as k8s.V1Deployment });
+  }
+
+  async createResourceQuota(
+    name: string,
+    namespace: string,
+    spec: k8s.V1ResourceQuotaSpec,
+  ): Promise<void> {
+    await this.k8sApi.createNamespacedResourceQuota({
+      namespace,
+      body: {
+        metadata: { name, namespace },
+        spec,
+      },
+    });
+  }
+
+  async deleteResourceQuota(name: string, namespace: string): Promise<void> {
+    try {
+      await this.k8sApi.deleteNamespacedResourceQuota({ name, namespace });
     } catch (err) {
       if (!isNotFound(err)) {
         throw err;

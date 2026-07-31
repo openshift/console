@@ -34,7 +34,7 @@ class DemoErrorBoundaryWithTranslation extends React.Component<DemoErrorBoundary
     const { error, errorInfo } = this.state;
     const FallbackComponent = this.props.FallbackComponent || DefaultFallback;
     if (error) {
-      return <FallbackComponent title={t('plugin__console-demo-plugin~Oops something went wrong in your dynamic plug-in')} errorMessage={error?.message} componentStack={errorInfo?.componentStack} stack={error?.stack} />;
+      return <FallbackComponent title={t('Oops something went wrong in your dynamic plugin')} errorMessage={error?.message} componentStack={errorInfo?.componentStack} stack={error?.stack} />;
     }
     return this.props.children;
   }

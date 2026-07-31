@@ -192,7 +192,7 @@ const PDBForm: FC<PodDisruptionBudgetFormProps> = ({
                   <Title headingLevel="h3">{t('Selector')}</Title>
                   <Content component="p" className="pdb-form-popover__description">
                     {t(
-                      'Label query over pods whose evictions are managed by the disruption budget. Anull selector will match no pods, while an empty ({}) selector will select all pods within the namespace.',
+                      'Label query for pods whose evictions are managed by the disruption budget. A null selector will match no pods, while an empty ({}) selector will select all pods within the namespace.',
                     )}
                   </Content>
                 </FieldLevelHelp>

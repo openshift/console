@@ -4,9 +4,10 @@ import * as dotenv from 'dotenv';
 dotenv.config({ path: path.resolve(__dirname, 'e2e', '.env'), quiet: true });
 
 import { defineConfig, devices } from '@playwright/test';
+import { INTEGRATION_TEST_USER_AGENT } from './packages/console-shared/src/constants/common';
 
 const isCI = !!process.env.OPENSHIFT_CI || !!process.env.CI;
-const chrome = { ...devices['Desktop Chrome'], userAgent: 'ConsoleIntegrationTestEnvironment' };
+const chrome = { ...devices['Desktop Chrome'], userAgent: INTEGRATION_TEST_USER_AGENT };
 const isDebug = process.env.DEBUG === '1' || process.env.DEBUG === 'true';
 const baseURL = process.env.WEB_CONSOLE_URL || 'http://localhost:9000';
 
@@ -21,7 +22,6 @@ const packages = [
   'helm',
   'knative',
   'olm',
-  'telemetry',
   'topology',
   'webterminal',
 ];
@@ -36,6 +36,7 @@ const chromeArgs = [
   '--no-sandbox',
   '--disable-setuid-sandbox',
   '--disable-background-networking',
+  '--disable-background-timer-throttling',
   '--disable-client-side-phishing-detection',
   '--disable-default-apps',
   '--disable-extensions',
@@ -49,25 +50,33 @@ export default defineConfig({
   testDir: './e2e/tests',
   testMatch: '**/*.spec.ts',
   forbidOnly: isCI,
-  retries: isCI ? 1 : 0,
+  globalTimeout: Number(process.env.GLOBAL_TIMEOUT_MS) || 0,
+  maxFailures: isCI ? 10 : 0,
+  retries: isCI ? 2 : 0,
   timeout: 120_000,
   reporter: isCI
     ? [
-        ['dot'],
-        ['junit', { outputFile: path.resolve(__dirname, 'test-results', 'junit-results.xml') }],
+        ['line'],
+        [
+          'junit',
+          {
+            outputFile: path.resolve(__dirname, 'test-results', 'junit-results.xml'),
+            includeRetries: true,
+          },
+        ],
         ['html', { outputFolder: path.resolve(__dirname, 'playwright-report'), open: 'never' }],
+        [
+          './e2e/reporters/prow-junit-reporter.ts',
+          {
+            outputFile: path.resolve(__dirname, 'test-results', 'prow-junit-results.xml'),
+          },
+        ],
       ]
     : [['list']],
-
-  expect: {
-    timeout: 40_000,
-  },
 
   use: {
     testIdAttribute: 'data-test',
     baseURL,
-    actionTimeout: 60_000,
-    navigationTimeout: 90_000,
     trace: isCI ? 'on-first-retry' : 'retain-on-failure',
     screenshot: 'only-on-failure',
     video: isDebug ? 'on' : 'retain-on-failure',
@@ -78,7 +87,7 @@ export default defineConfig({
     },
   },
 
-  workers: process.env.WORKERS ? parseInt(process.env.WORKERS, 10) : isCI ? 1 : undefined,
+  workers: process.env.WORKERS ? Number(process.env.WORKERS) || undefined : undefined,
 
   projects: [
     {

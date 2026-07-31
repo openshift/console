@@ -205,6 +205,65 @@ describe('utils', () => {
       expect(sorted.map((i) => i.properties.id)).toContain('a');
       expect(sorted.map((i) => i.properties.id)).toContain('b');
     });
+
+    it('should maintain order when all insertAfter targets exist in workloads scenario', () => {
+      const items = [
+        createNavExtension('topology'),
+        createNavExtension('pods', { insertAfter: 'topology' }),
+        createNavExtension('deployments', { insertAfter: 'pods' }),
+        createNavExtension('deploymentconfigs', { insertAfter: 'deployments' }),
+        createNavExtension('statefulsets', { insertAfter: ['deploymentconfigs', 'deployments'] }),
+        createNavExtension('secrets', { insertAfter: 'statefulsets' }),
+      ];
+
+      const sorted = getSortedNavExtensions(items);
+
+      expect(sorted.map((i) => i.properties.id)).toEqual([
+        'topology',
+        'pods',
+        'deployments',
+        'deploymentconfigs',
+        'statefulsets',
+        'secrets',
+      ]);
+    });
+
+    it('should use fallback insertAfter target when primary target is missing', () => {
+      const items = [
+        createNavExtension('topology'),
+        createNavExtension('pods', { insertAfter: 'topology' }),
+        createNavExtension('deployments', { insertAfter: 'pods' }),
+        createNavExtension('statefulsets', { insertAfter: ['deploymentconfigs', 'deployments'] }),
+        createNavExtension('secrets', { insertAfter: 'statefulsets' }),
+      ];
+
+      const sorted = getSortedNavExtensions(items);
+
+      expect(sorted.map((i) => i.properties.id)).toEqual([
+        'topology',
+        'pods',
+        'deployments',
+        'statefulsets',
+        'secrets',
+      ]);
+    });
+
+    it('should push item to end when insertAfter target does not exist and no fallback', () => {
+      const items = [
+        createNavExtension('topology'),
+        createNavExtension('pods', { insertAfter: 'topology' }),
+        createNavExtension('deployments', { insertAfter: 'pods' }),
+        createNavExtension('statefulsets', { insertAfter: 'deploymentconfigs' }),
+        createNavExtension('secrets', { insertAfter: 'statefulsets' }),
+      ];
+
+      const sorted = getSortedNavExtensions(items);
+      expect(sorted[0].properties.id).toBe('topology');
+      expect(sorted[1].properties.id).toBe('pods');
+      expect(sorted[2].properties.id).toBe('deployments');
+      expect(sorted.map((i) => i.properties.id)).toContain('statefulsets');
+      expect(sorted.map((i) => i.properties.id)).toContain('secrets');
+    });
   });
 
   describe('sortExtensionItems', () => {

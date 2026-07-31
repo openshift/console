@@ -3,10 +3,7 @@ import * as path from 'path';
 import type { KnipConfig } from 'knip';
 import { resolvePluginPackages } from '@console/plugin-sdk/src/codegen/plugin-resolver';
 import { extensionsFile } from '@console/dynamic-plugin-sdk/src/constants';
-import {
-  isEncodedCodeRef,
-  parseEncodedCodeRefValue,
-} from '@console/dynamic-plugin-sdk/src/coderefs/coderef-resolver';
+import { isEncodedCodeRef } from '@openshift/dynamic-plugin-sdk';
 import { parseJSONC } from '@console/dynamic-plugin-sdk/src/utils/jsonc';
 import type { ConsoleExtensionsJSON } from '@console/dynamic-plugin-sdk/src/schema/console-extensions';
 import { traverse, types as t, parseAsync } from '@babel/core';
@@ -19,6 +16,16 @@ const makeImport = (modulePath: string, exportName: string, id: number) =>
 
 /** Plugin packages indexed by path, resolved once when knip loads the config */
 const pluginPackagesByPath = new Map(resolvePluginPackages().map((pkg) => [pkg._path, pkg]));
+
+/**
+ * Parse the `EncodedCodeRef` value into `[moduleName, exportName]` tuple.
+ *
+ * Returns an empty array if the value doesn't match the expected format.
+ */
+const parseEncodedCodeRefValue = (value: string): [string, string] | [] => {
+  const match = value.match(/^([^.]+)(?:\.(.+)){0,1}$/);
+  return match ? [match[1], match[2] || 'default'] : [];
+};
 
 /**
  * JSON compiler for console-extensions.json files.
@@ -78,7 +85,7 @@ const packageWorkspaces = Object.fromEntries(
         `packages/${dir.name}`,
         {
           entry: hasExtensions ? [extensionsFile] : [],
-          project: ['src/**/*.{ts,tsx,js,jsx}'],
+          project: ['src/**/*.{ts,tsx,js,jsx,json}'],
         },
       ];
     }),
@@ -198,6 +205,9 @@ const compileScript = async (source: string, filename: string): Promise<string> 
 };
 
 const config: KnipConfig = {
+  treatConfigHintsAsErrors: true,
+  treatTagHintsAsErrors: true,
+
   compilers: {
     json: compileJSON,
   },
@@ -210,12 +220,13 @@ const config: KnipConfig = {
 
   workspaces: {
     // Disable auto-detected plugins that don't work at the moment
-    '.': { project: [], webpack: false, jest: false },
+    '.': { project: [], jest: false },
 
     // public/ is the @console/internal workspace (has its own package.json)
     public: {
-      entry: ['components/app.tsx', 'load-test.sw.js'],
-      project: ['**/*.{ts,tsx,js,jsx}'],
+      entry: ['load-test.sw.js'],
+      project: ['**/*.{ts,tsx,js,jsx,json}'],
+      ignore: ['locales/**/*']
     },
 
     // Suppress SDK from knip checks as any code there could be used by a dynamic remote plugin
@@ -240,7 +251,7 @@ const config: KnipConfig = {
     '@patternfly/patternfly', // imported via SCSS, which knip cannot trace
   ],
 
-  ignore: ['**/.eslintrc.js', '**/__{tests,mocks}__/**'],
+  ignore: ['**/__{tests,mocks}__/**'],
 
   // Too many false positives
   exclude: ['binaries', 'devDependencies'],

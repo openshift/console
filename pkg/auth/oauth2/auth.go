@@ -28,6 +28,7 @@ import (
 const (
 	stateCookieName   = "login-state"
 	errorOAuth        = "oauth_error"
+	stateLength       = 32 // hex-encoded 16 random bytes
 	errorLoginState   = "login_state_error"
 	errorCookie       = "cookie_error"
 	errorInternal     = "internal_error"
@@ -65,6 +66,10 @@ type OAuth2Authenticator struct {
 
 	// Custom login command to display in the console
 	ocLoginCommand string
+
+	// allowedRedirectHosts maps host (or host:port) strings that are
+	// allowed for dynamic OAuth redirect_uri selection.
+	allowedRedirectHosts map[string]bool
 }
 
 // loginMethod is used to handle OAuth2 responses and associate bearer tokens
@@ -107,6 +112,7 @@ type Config struct {
 	LogoutRedirectOverride string // overrides the OIDC provider's front-channel logout URL
 	IssuerCA               string
 	RedirectURL            string
+	ConsoleBaseAddress     string // used as post_logout_redirect_uri in OIDC RP-Initiated Logout
 	ClientID               string
 	ClientSecret           string
 	Scope                  []string
@@ -128,6 +134,10 @@ type Config struct {
 
 	// Custom login command to display in the console
 	OCLoginCommand string
+
+	// AllowedRedirectHosts maps host (or host:port) strings that are allowed
+	// for dynamic OAuth redirect_uri rewriting (multi-domain console support).
+	AllowedRedirectHosts map[string]bool
 }
 
 type completedConfig struct {
@@ -200,6 +210,7 @@ func NewOAuth2Authenticator(ctx context.Context, config *Config) (*OAuth2Authent
 		issuerURL:              c.IssuerURL,
 		logoutRedirectOverride: c.LogoutRedirectOverride,
 		clientID:               c.ClientID,
+		consoleBaseAddress:     c.ConsoleBaseAddress,
 		cookiePath:             c.CookiePath,
 		secureCookies:          c.SecureCookies,
 		constructOAuth2Config:  a.oauth2ConfigConstructor,
@@ -256,6 +267,24 @@ func (a *OAuth2Authenticator) oauth2ConfigConstructor(endpointConfig oauth2.Endp
 	return &baseOAuth2Config
 }
 
+// oauth2ConfigForHost returns an oauth2.Config with the redirect URL rewritten
+// to use the given host, if that host is in the allowed set. Otherwise it
+// returns the default config with the original redirect URL.
+func (a *OAuth2Authenticator) oauth2ConfigForHost(host string) *oauth2.Config {
+	cfg := a.oauth2Config()
+	if host == "" || !a.allowedRedirectHosts[host] {
+		return cfg
+	}
+	u, err := url.Parse(a.redirectURL)
+	if err != nil {
+		klog.Errorf("failed to parse redirect URL %q: %v", a.redirectURL, err)
+		return cfg
+	}
+	u.Host = host
+	cfg.RedirectURL = u.String()
+	return cfg
+}
+
 func newUnstartedAuthenticator(c *completedConfig) *OAuth2Authenticator {
 	return &OAuth2Authenticator{
 		clientFunc: c.clientFunc,
@@ -264,13 +293,14 @@ func newUnstartedAuthenticator(c *completedConfig) *OAuth2Authenticator {
 		clientSecret: c.ClientSecret,
 		scopes:       c.Scope,
 
-		redirectURL:    c.RedirectURL,
-		errorURL:       c.ErrorURL,
-		successURL:     c.SuccessURL,
-		secureCookies:  c.SecureCookies,
-		k8sConfig:      c.K8sConfig,
-		metrics:        c.Metrics,
-		ocLoginCommand: c.OCLoginCommand,
+		redirectURL:          c.RedirectURL,
+		errorURL:             c.ErrorURL,
+		successURL:           c.SuccessURL,
+		secureCookies:        c.SecureCookies,
+		k8sConfig:            c.K8sConfig,
+		metrics:              c.Metrics,
+		ocLoginCommand:       c.OCLoginCommand,
+		allowedRedirectHosts: c.AllowedRedirectHosts,
 	}
 }
 
@@ -287,13 +317,15 @@ func (a *OAuth2Authenticator) LoginFunc(w http.ResponseWriter, r *http.Request) 
 	state := hex.EncodeToString(randData[:])
 
 	cookie := http.Cookie{
-		Name:     stateCookieName,
+		Name:     stateCookieName + "-" + state[:8],
 		Value:    state,
 		HttpOnly: true,
 		Secure:   a.secureCookies,
+		Path:     "/auth",
+		MaxAge:   300,
 	}
 	http.SetCookie(w, &cookie)
-	http.Redirect(w, r, a.oauth2Config().AuthCodeURL(state), http.StatusSeeOther)
+	http.Redirect(w, r, a.oauth2ConfigForHost(r.Host).AuthCodeURL(state), http.StatusSeeOther)
 }
 
 // LogoutFunc cleans up session cookies.
@@ -321,11 +353,20 @@ func (a *OAuth2Authenticator) CallbackFunc(fn func(loginInfo sessions.LoginJSON,
 			return
 		}
 
-		cookieState, err := r.Cookie(stateCookieName)
-		if err != nil {
-			klog.Errorf("failed to parse state cookie: %v", err)
-			a.redirectAuthError(w, errorMissingState)
-			return
+		// Look up the per-state cookie for this login flow.
+		var cookieState *http.Cookie
+		if len(urlState) == stateLength {
+			cookieState, _ = r.Cookie(stateCookieName + "-" + urlState[:8])
+		}
+		if cookieState == nil {
+			// Fall back to legacy single cookie for rolling-update compat.
+			var cookieErr error
+			cookieState, cookieErr = r.Cookie(stateCookieName)
+			if cookieErr != nil {
+				klog.Errorf("failed to parse state cookie: %v", cookieErr)
+				a.redirectAuthError(w, errorMissingState)
+				return
+			}
 		}
 
 		// Lack of both `error` and `code` indicates some other redirect with no params.
@@ -341,12 +382,14 @@ func (a *OAuth2Authenticator) CallbackFunc(fn func(loginInfo sessions.LoginJSON,
 		}
 
 		if urlState != cookieState.Value {
-			klog.Error("state in url does not match State cookie")
+			klog.Errorf("state in url does not match state cookie %s", cookieState.Name)
 			a.redirectAuthError(w, errorInvalidState)
 			return
 		}
+		http.SetCookie(w, &http.Cookie{Name: cookieState.Name, Path: "/auth", MaxAge: -1})
+
 		ctx := oidc.ClientContext(r.Context(), a.clientFunc())
-		oauthConfig := a.oauth2Config()
+		oauthConfig := a.oauth2ConfigForHost(r.Host)
 		token, err := oauthConfig.Exchange(ctx, code)
 		if err != nil {
 			klog.Errorf("unable to verify auth code with issuer: %v", err)

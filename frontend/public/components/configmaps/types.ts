@@ -1,5 +1,5 @@
-import { ObjectMetadata } from '@console/internal/module/k8s/types';
-import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import type { ObjectMetadata } from '@console/internal/module/k8s/types';
+import type { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 
 type KeyValueObject = {
   [key: string]: string;

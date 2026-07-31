@@ -1,4 +1,5 @@
 import type { FC } from 'react';
+import { useEffect, useState } from 'react';
 import {
   ActionGroup,
   Alert,
@@ -17,6 +18,7 @@ import type { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
 import { ResourceStatus, StatusIconAndText } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/api/core-api';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
+import { getResources } from '@console/internal/actions/k8s';
 import { ErrorModal } from '@console/internal/components/modals/error-modal';
 import {
   LoadingInline,
@@ -34,6 +36,8 @@ import {
   RedExclamationCircleIcon,
   YellowExclamationTriangleIcon,
 } from '@console/shared/src/components/status/icons';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import type { RouteParams } from '@console/shared/src/types/route-params';
 import {
   ClusterServiceVersionModel,
@@ -161,18 +165,33 @@ export const CreateInitializationResourceButton: FC<InitializationResourceButton
   obj,
 }) => {
   const { t } = useTranslation('olm');
+  const dispatch = useConsoleDispatch();
+  const reference = initializationResource ? referenceFor(initializationResource) : undefined;
+  const [model, inFlight] = useK8sModel(reference);
+  const [apiRefreshed, setAPIRefreshed] = useState(false);
+
+  // Trigger an API discovery refresh when the CRD model is missing so the
+  // user doesn't have to wait for the next 60-second poll cycle.
+  const modelMissing = !inFlight && !model && !!initializationResource;
+  useEffect(() => {
+    if (!apiRefreshed && modelMissing) {
+      dispatch(getResources());
+      setAPIRefreshed(true);
+    }
+  }, [apiRefreshed, dispatch, modelMissing]);
+
   if (!initializationResource) {
     return null;
   }
 
-  const reference = referenceFor(initializationResource);
   const kind = initializationResource?.kind;
+  const isDisabled = disabled || !model;
   const button = (
-    <Button aria-disabled={disabled} isDisabled={disabled} variant="primary">
+    <Button aria-disabled={isDisabled} isDisabled={isDisabled} variant="primary">
       {t('Create {{item}}', { item: kind })}
     </Button>
   );
-  return disabled ? (
+  return isDisabled ? (
     button
   ) : (
     <Link
@@ -599,7 +618,7 @@ type InitializationLinkProps = {
 };
 type InitializationResourceButtonProps = {
   disabled?: boolean;
-  initializationResource: K8sResourceKind;
+  initializationResource?: K8sResourceKind;
   obj: ClusterServiceVersionKind | InstallPlanKind | SubscriptionKind;
 };
 type ViewOperatorButtonProps = {

@@ -236,14 +236,6 @@ func addServingInfo(fs *flag.FlagSet, servingInfo *ServingInfo) (err error) {
 		return errors.New("servingInfo.namedCertificates are not supported")
 	}
 
-	if servingInfo.MinTLSVersion != "" {
-		return errors.New("servingInfo.minTLSVersion is not supported")
-	}
-
-	if len(servingInfo.CipherSuites) > 0 {
-		return errors.New("servingInfo.cipherSuites is not supported")
-	}
-
 	if servingInfo.MaxRequestsInFlight != 0 {
 		return errors.New("servingInfo.maxRequestsInFlight is not supported")
 	}
@@ -258,6 +250,10 @@ func addServingInfo(fs *flag.FlagSet, servingInfo *ServingInfo) (err error) {
 func addClusterInfo(fs *flag.FlagSet, clusterInfo *ClusterInfo) {
 	if clusterInfo.ConsoleBaseAddress != "" {
 		fs.Set("base-address", clusterInfo.ConsoleBaseAddress)
+	}
+
+	if len(clusterInfo.AdditionalConsoleBaseAddresses) > 0 {
+		fs.Set("additional-base-addresses", strings.Join(clusterInfo.AdditionalConsoleBaseAddresses, ","))
 	}
 
 	if clusterInfo.ConsoleBasePath != "" {
@@ -290,6 +286,10 @@ func addClusterInfo(fs *flag.FlagSet, clusterInfo *ClusterInfo) {
 
 	if clusterInfo.TechPreviewEnabled {
 		fs.Set("tech-preview", "true")
+	}
+
+	if clusterInfo.OLMLifecycleMetadataEnabled {
+		fs.Set("olm-lifecycle-metadata", "true")
 	}
 }
 

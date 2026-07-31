@@ -1,12 +1,11 @@
 import type { FC } from 'react';
-import { ListDropdown } from './list-dropdown';
 import { useTranslation } from 'react-i18next';
-
 import { PersistentVolumeClaimModel } from '../../models';
-import { PersistentVolumeClaimKind } from '../../../public/module/k8s/types';
+import type { PersistentVolumeClaimKind } from '../../module/k8s/types';
+import { ListDropdown } from './list-dropdown';
 
 export const PVCDropdown: FC<PVCDropdownProps> = (props) => {
-  const kind = PersistentVolumeClaimModel.kind;
+  const { kind } = PersistentVolumeClaimModel;
   const { namespace, selectedKey, desc } = props;
   const resources = [{ kind, namespace }];
   const { t } = useTranslation('public');

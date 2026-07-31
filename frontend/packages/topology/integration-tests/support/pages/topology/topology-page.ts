@@ -346,7 +346,7 @@ export const topologyPage = {
     const id = `[data-id="group:${appName}"] .odc-resource-icon-application`;
     cy.log(id);
     cy.get('[data-test-id="base-node-handler"] image').should('be.visible');
-    cy.get('body').then(($el) => {
+    return cy.get('body').then(($el) => {
       if (!$el.find(topologyPO.sidePane.applicationGroupingsTitle).text().includes(appName)) {
         cy.get(id).next('text').click({ force: true });
       } else {

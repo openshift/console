@@ -8,6 +8,11 @@ import type {
   ElementType,
 } from 'react';
 import type { K8sResourceCommon, ObjectMetadata } from '@openshift/api-types';
+import type {
+  Extension,
+  ExtensionPredicate,
+  LoadedAndResolvedExtension,
+} from '@openshift/dynamic-plugin-sdk';
 import type { QuickStartContextValues } from '@patternfly/quickstarts';
 import type { CodeEditorProps as PfCodeEditorProps } from '@patternfly/react-code-editor';
 import type { AlertVariant, ButtonProps } from '@patternfly/react-core';
@@ -28,10 +33,8 @@ import type {
   PrometheusEndpoint,
   PrometheusLabels,
   PrometheusValue,
-  ResolvedExtension,
   Selector,
 } from '../api/common-types';
-import type { Extension, ExtensionTypeGuard } from '../types';
 import type { CustomDataSource } from './dashboard-data-source';
 
 /* eslint-disable no-barrel-files/no-barrel-files */
@@ -263,8 +266,8 @@ export type UseK8sWatchResources = <R extends ResourcesObject>(
 ) => WatchK8sResults<R>;
 
 export type UseResolvedExtensions = <E extends Extension>(
-  ...typeGuards: ExtensionTypeGuard<E>[]
-) => [ResolvedExtension<E>[], boolean, any[]];
+  ...predicates: ExtensionPredicate<E>[]
+) => [LoadedAndResolvedExtension<E>[], boolean, any[]];
 
 export type GetSegmentAnalytics = () => {
   // TODO: use proper Segment Analytics API type
@@ -652,6 +655,22 @@ export type ToastOptions = {
   onRemove?: (id: string) => void;
   /** Callback to run when toast is dismissed with close button */
   onClose?: () => void;
+  /** Optional group name for the notification drawer section. Omit to use the built-in default group (displayed as "Other Alerts"). Custom values are shown as-is and are not translated by Console. */
+  drawerGroup?: string;
+  /**
+   * When `true`, the toast is excluded from the visible toast cap and overflow link.
+   * Defaults to `true`.
+   * When `persistInDrawer` is `true` and `skipOverflow` is not explicitly set, defaults to `false`.
+   * Set `persistInDrawer: true` with `skipOverflow: true` for always-visible drawer-persisted toasts.
+   */
+  skipOverflow?: boolean;
+  /**
+   * When `true`, the toast is persisted in the notification drawer with read/unread state.
+   * Defaults `skipOverflow` to `false` so drawer-persisted toasts participate in the overflow cap,
+   * but an explicit `skipOverflow: true` is respected for always-visible toasts.
+   * Defaults to `false`.
+   */
+  persistInDrawer?: boolean;
 };
 
 export type ToastContextValues = {
@@ -919,7 +938,24 @@ export type UseDeleteModal = (
   deleteAllResources?: () => Promise<K8sResourceKind[]>,
 ) => () => void;
 
-export type UseLabelsModal = (resource: K8sResourceCommon) => () => void;
+/**
+ * Callback for custom label submission in the labels modal.
+ *
+ * **Contract:**
+ * - Must return a `Promise` that resolves with the updated resource on success.
+ * - Must return a rejected `Promise` on failure so the modal can display the error.
+ * - Must not throw synchronously; all errors should be expressed as rejected promises.
+ * - Receives the current resource and the full set of edited labels (not a diff).
+ */
+export type LabelsModalOnSubmit = (
+  resource: K8sResourceCommon,
+  labels: { [key: string]: string },
+) => Promise<K8sResourceCommon>;
+
+export type UseLabelsModal = (
+  resource: K8sResourceCommon,
+  onSubmit?: LabelsModalOnSubmit,
+) => () => void;
 
 export type UseValuesForNamespaceContext = () => {
   namespace: string;

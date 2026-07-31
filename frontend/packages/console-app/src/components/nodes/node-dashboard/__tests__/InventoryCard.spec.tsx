@@ -1,41 +1,43 @@
 import { render, screen } from '@testing-library/react';
+import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
+import { useFlag } from '@console/dynamic-plugin-sdk/src/utils/flags';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import type { NodeKind } from '@console/internal/module/k8s';
-import { useFlag } from '@console/shared/src/hooks/useFlag';
-import BareMetalInventoryItems from '../BareMetalInventoryItems';
 import InventoryCard from '../InventoryCard';
 import { NodeDashboardContext } from '../NodeDashboardContext';
-import VirtualMachinesInventoryItems from '../VirtualMachinesInventoryItems';
 
-jest.mock('@console/shared/src/hooks/useFlag', () => ({
-  useFlag: jest.fn(),
+jest.mock('@console/dynamic-plugin-sdk/src/api/useResolvedExtensions', () => ({
+  ...jest.requireActual('@console/dynamic-plugin-sdk/src/api/useResolvedExtensions'),
+  useResolvedExtensions: jest.fn(),
+}));
+
+jest.mock('@console/dynamic-plugin-sdk/src/utils/flags', () => ({
+  useFlag: jest.fn(() => false),
 }));
 
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResource: jest.fn(),
 }));
 
-// Mock child components using jest.fn
-jest.mock('@console/app/src/components/nodes/node-dashboard/BareMetalInventoryItems', () => ({
-  __esModule: true,
-  default: jest.fn(() => null),
-}));
+const mockResourceInventoryItem = jest.fn();
 
-jest.mock('@console/app/src/components/nodes/node-dashboard/VirtualMachinesInventoryItems', () => ({
-  __esModule: true,
-  default: jest.fn(() => null),
-}));
-
-// Mock InventoryItem components
 jest.mock('@console/shared/src/components/dashboard/inventory-card/InventoryItem', () => ({
-  InventoryItem: ({ count }) => `Images: ${count || 0}`,
-  ResourceInventoryItem: () => 'Pod Inventory',
+  InventoryItem: ({ title, count }: { title: string; count?: number }) => (
+    <div data-test-inventory-item={`${title}:${count ?? 0}`}>{`${title}: ${count ?? 0}`}</div>
+  ),
+  ResourceInventoryItem: (props: { basePath: string }) => {
+    mockResourceInventoryItem(props);
+    return <div data-test-inventory-item="pods">Pod Inventory</div>;
+  },
 }));
 
-const useFlagMock = useFlag as jest.Mock;
+const MockExtensionInventoryItem = jest.fn(() => (
+  <div data-test-inventory-item="extension">Extension Inventory Item</div>
+));
+
+const useResolvedExtensionsMock = useResolvedExtensions as jest.Mock;
 const useK8sWatchResourceMock = useK8sWatchResource as jest.Mock;
-const BareMetalInventoryItemsMock = BareMetalInventoryItems as jest.Mock;
-const VirtualMachinesInventoryItemsMock = VirtualMachinesInventoryItems as jest.Mock;
+const useFlagMock = useFlag as jest.Mock;
 
 describe('InventoryCard', () => {
   const mockNode: NodeKind = {
@@ -68,61 +70,124 @@ describe('InventoryCard', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    useFlagMock.mockReturnValue(false);
+    useResolvedExtensionsMock.mockReturnValue([[], true]);
     useK8sWatchResourceMock.mockReturnValue([[], true, undefined]);
   });
 
   it('should render the inventory card with title', () => {
-    useFlagMock.mockReturnValue(false);
     renderWithContext();
 
     expect(screen.getByText('Inventory')).toBeVisible();
   });
 
-  it('should render Pod and Image inventory items when NODE_MGMT_V1 flag state is false', () => {
-    useFlagMock.mockReturnValue(false);
+  it('should render Pod and Image inventory items', () => {
     renderWithContext();
 
-    expect(screen.getByText('Pods')).toBeVisible();
     expect(screen.getByText('Pod Inventory')).toBeVisible();
-    expect(screen.getByText('Images')).toBeVisible();
-    expect(screen.getByText('Images: 2')).toBeVisible();
+    expect(screen.getByText('Image: 2')).toBeVisible();
   });
 
-  it('should render Pod and Image inventory items when NODE_MGMT_V1 flag state is true', () => {
-    useFlagMock.mockReturnValue(true);
+  it('should watch pods for the current node', () => {
     renderWithContext();
 
-    expect(screen.getByText('Pods')).toBeVisible();
+    expect(useK8sWatchResourceMock).toHaveBeenCalledWith({
+      isList: true,
+      kind: 'Pod',
+      fieldSelector: 'spec.nodeName=test-node',
+    });
+  });
+
+  it('should show loading state for pods when pods are not loaded', () => {
+    useK8sWatchResourceMock.mockReturnValue([[], false, undefined]);
+
+    renderWithContext();
+
+    expect(screen.getByText('Pod: 0')).toBeVisible();
+    expect(screen.queryByText('Pod Inventory')).not.toBeInTheDocument();
+  });
+
+  it('should render standard inventory items when extensions are not resolved', () => {
+    useResolvedExtensionsMock.mockReturnValue([[], false]);
+
+    renderWithContext();
+
     expect(screen.getByText('Pod Inventory')).toBeVisible();
-    expect(screen.getByText('Images')).toBeVisible();
-    expect(screen.getByText('Images: 2')).toBeVisible();
+    expect(screen.getByText('Image: 2')).toBeVisible();
+    expect(screen.queryByText('Extension Inventory Item')).not.toBeInTheDocument();
   });
 
-  it('should not render BareMetalInventoryItems when NODE_MGMT_V1 flag is off', () => {
+  it('should render extension inventory items when extensions are resolved', () => {
+    useResolvedExtensionsMock.mockReturnValue([
+      [
+        {
+          uid: 'extension-1',
+          type: 'console.node/inventory-item',
+          properties: {
+            priority: 80,
+            component: MockExtensionInventoryItem,
+          },
+        },
+      ],
+      true,
+    ]);
+
+    renderWithContext();
+
+    expect(MockExtensionInventoryItem).toHaveBeenCalled();
+    expect(screen.getByText('Extension Inventory Item')).toBeVisible();
+  });
+
+  it('should use legacy pods path when FLAG_OPENSHIFT_5 is disabled', () => {
     useFlagMock.mockReturnValue(false);
+
     renderWithContext();
 
-    expect(BareMetalInventoryItemsMock).not.toHaveBeenCalled();
+    expect(mockResourceInventoryItem).toHaveBeenCalledWith(
+      expect.objectContaining({
+        basePath: '/k8s/cluster/nodes/test-node/pods',
+      }),
+    );
   });
 
-  it('should not render VirtualMachinesInventoryItems when NODE_MGMT_V1 flag is off', () => {
-    useFlagMock.mockReturnValue(false);
-    renderWithContext();
-
-    expect(VirtualMachinesInventoryItemsMock).not.toHaveBeenCalled();
-  });
-
-  it('should render BareMetalInventoryItems when NODE_MGMT_V1 flag is on', () => {
+  it('should use workload pods path when FLAG_OPENSHIFT_5 is enabled', () => {
     useFlagMock.mockReturnValue(true);
+
     renderWithContext();
 
-    expect(BareMetalInventoryItemsMock).toHaveBeenCalled();
+    expect(mockResourceInventoryItem).toHaveBeenCalledWith(
+      expect.objectContaining({
+        basePath: '/k8s/cluster/nodes/test-node/workload/pods',
+      }),
+    );
   });
 
-  it('should render VirtualMachinesInventoryItems when NODE_MGMT_V1 flag is on', () => {
-    useFlagMock.mockReturnValue(true);
+  it('should sort inventory items by priority from highest to lowest', () => {
+    useResolvedExtensionsMock.mockReturnValue([
+      [
+        {
+          uid: 'extension-1',
+          type: 'console.node/inventory-item',
+          properties: {
+            priority: 80,
+            component: MockExtensionInventoryItem,
+          },
+        },
+      ],
+      true,
+    ]);
+
     renderWithContext();
 
-    expect(VirtualMachinesInventoryItemsMock).toHaveBeenCalled();
+    const podInventory = screen.getByText('Pod Inventory');
+    const extensionInventory = screen.getByText('Extension Inventory Item');
+    const imageInventory = screen.getByText('Image: 2');
+
+    expect(podInventory.compareDocumentPosition(extensionInventory)).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING,
+    );
+    expect(extensionInventory.compareDocumentPosition(imageInventory)).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING,
+    );
   });
 });

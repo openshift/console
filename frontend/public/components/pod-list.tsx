@@ -1,3 +1,11 @@
+import type { FC, ReactNode } from 'react';
+import { useEffect, useMemo, Suspense, useCallback } from 'react';
+import { Button, Content, ContentVariants, Divider, Popover } from '@patternfly/react-core';
+import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
+import type { DataViewFilterOption } from '@patternfly/react-data-view/dist/esm/DataViewFilters';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router';
 import {
   actionsCellProps,
   ConsoleDataView,
@@ -6,13 +14,14 @@ import {
   initialFiltersDefault,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import {
+import type {
   ConsoleDataViewColumn,
   ConsoleDataViewRow,
   ResourceFilters,
 } from '@console/app/src/components/data-view/types';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { ListPageBody } from '@console/dynamic-plugin-sdk';
-import {
+import type {
   ColumnLayout,
   RowProps,
   TableColumn,
@@ -23,21 +32,15 @@ import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { Status } from '@console/shared/src/components/status/Status';
 import { COLUMN_MANAGEMENT_USER_PREFERENCE_KEY } from '@console/shared/src/constants/common';
 import { DASH } from '@console/shared/src/constants/ui';
-import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
-import type { TableColumnsType } from '@console/shared/src/types/tableColumn';
-import { Button, Content, ContentVariants, Divider, Popover } from '@patternfly/react-core';
-import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
-import type { DataViewFilterOption } from '@patternfly/react-data-view/dist/esm/DataViewFilters';
-import * as _ from 'lodash';
-import { useEffect, useMemo, FC, ReactNode, Suspense, useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
-import { Link } from 'react-router';
-import * as UIActions from '../actions/ui';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
+import type { TableColumnsType } from '@console/shared/src/types/tableColumn';
 import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
+import * as UIActions from '../actions/ui';
 import { PodModel } from '../models';
-import { ContainerSpec, PodKind, referenceFor, referenceForModel, Selector } from '../module/k8s';
+import type { PodKind, Selector } from '../module/k8s';
+import { referenceFor, referenceForModel } from '../module/k8s';
 import {
   isContainerCrashLoopBackOff,
   isWindowsPod,
@@ -57,7 +60,6 @@ import { OwnerReferences } from './utils/owner-references';
 import { ResourceLink, resourcePath } from './utils/resource-link';
 import { LoadingBox } from './utils/status-box';
 import { formatBytesAsMiB, formatCores } from './utils/units';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 
 // Only request metrics if the device's screen width is larger than the
 // breakpoint where metrics are visible.
@@ -330,7 +332,7 @@ export const PodStatus: FC<PodStatusProps> = ({ pod }) => {
     let headerTitle = '';
     if (status === 'CrashLoopBackOff') {
       headerTitle = t('Pod crash loop backoff');
-      const containers: ContainerSpec[] = pod.spec.containers;
+      const { containers } = pod.spec;
       footerLinks = (
         <Content>
           <Content component={ContentVariants.p}>
@@ -368,6 +370,7 @@ export const PodStatus: FC<PodStatusProps> = ({ pod }) => {
                 </div>
               );
             }
+            return null;
           })}
         </Content>
       );
@@ -617,6 +620,7 @@ export const PodsPage: FC<PodPageProps> = ({
   hideLabelFilter,
   hideColumnManagement,
   showNamespaceOverride,
+  hideFavoriteButton,
 }) => {
   const { t } = useTranslation('public');
   const dispatch = useConsoleDispatch();
@@ -671,7 +675,7 @@ export const PodsPage: FC<PodPageProps> = ({
 
   return (
     <>
-      <ListPageHeader title={showTitle ? t('Pods') : ''}>
+      <ListPageHeader title={showTitle ? t('Pods') : ''} hideFavoriteButton={hideFavoriteButton}>
         {canCreate && !mock && (
           <ListPageCreate groupVersionKind={resourceKind} createAccessReview={accessReview}>
             {t('Create Pod')}
@@ -743,4 +747,5 @@ type PodPageProps = {
   hideNameLabelFilters?: boolean;
   hideColumnManagement?: boolean;
   showNamespaceOverride?: boolean;
+  hideFavoriteButton?: boolean;
 };

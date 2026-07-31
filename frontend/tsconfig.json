@@ -46,5 +46,5 @@
     "**/integration-tests",
     "e2e"
   ],
-  "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx", "**/*.json"]
+  "include": ["**/*.js", "**/*.jsx", "**/*.mts", "**/*.ts", "**/*.tsx", "**/*.json"]
 }

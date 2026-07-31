@@ -1,19 +1,19 @@
 import type { FC } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import type { K8sResourceKind } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { ConsoleEmptyState } from '@console/shared/src/components/empty-state/ConsoleEmptyState';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { BuildPhase } from '../module/k8s/builds';
+import { getJenkinsLogURL, BuildPipelineLogLink } from './build-pipeline';
+import { BuildStrategyType } from './utils/build-utils';
+import type { PageComponentProps } from './utils/horizontal-nav';
 import {
   ResourceLog,
   LOG_SOURCE_RUNNING,
   LOG_SOURCE_TERMINATED,
   LOG_SOURCE_WAITING,
 } from './utils/resource-log';
-import { ConsoleEmptyState } from '@console/shared/src/components/empty-state/ConsoleEmptyState';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { getJenkinsLogURL, BuildPipelineLogLink } from './build-pipeline';
-import { BuildStrategyType } from './utils/build-utils';
-import { BuildPhase } from '../module/k8s/builds';
-import { PageComponentProps } from './utils/horizontal-nav';
-import { K8sResourceKind } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
 const PipelineLogMessage: FC<{
   build: K8sResourceKind;

@@ -17,7 +17,7 @@ const Footer = ({ children }) => {
     <Trans
       t={t}
       ns="devconsole"
-      defaults="Click on the names to access advanced options for <0></0>."
+      i18nKey="Click on the names to access advanced options for <0></0>."
       components={[children]}
     />
   );

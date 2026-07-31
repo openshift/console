@@ -1,8 +1,7 @@
 import type { FC, FormEvent } from 'react';
-import { useTranslation } from 'react-i18next';
-
-import { ContainerSpec } from '../module/k8s';
 import { Checkbox } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+import type { ContainerSpec } from '../module/k8s';
 
 export const ContainerSelector: FC<ContainerSelectorProps> = ({
   containers,

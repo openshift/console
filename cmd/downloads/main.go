@@ -28,8 +28,6 @@ func main() {
 		klog.Fatalf("Failed to configure downloads server config: %v", err)
 		os.Exit(1)
 	}
-	defer os.RemoveAll(downloadsServerConfig.TempDir)
-
 	downloadsServerConfig.CreateArchivesInBackground()
 
 	// Listen for incoming connections

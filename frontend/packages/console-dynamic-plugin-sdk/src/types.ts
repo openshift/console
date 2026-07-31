@@ -4,7 +4,6 @@ export type {
   EncodedCodeRef,
   Extension,
   ExtensionFlags,
-  ExtensionPredicate as ExtensionTypeGuard,
   LoadedAndResolvedExtension as ResolvedExtension,
   LoadedExtension,
   MapCodeRefsToValues as ResolvedCodeRefProperties,

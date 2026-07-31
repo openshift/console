@@ -1,12 +1,12 @@
 import type { FC } from 'react';
-import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import type { ConsoleNotificationKind } from '@openshift/api-types/dist/openshift/latest';
 import { Banner, Flex } from '@patternfly/react-core';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { FLAGS } from '@console/shared/src/constants/common';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
-import { referenceForModel } from '../module/k8s';
 import { ConsoleNotificationModel } from '../models/index';
+import { referenceForModel } from '../module/k8s';
 import { useK8sWatchResource } from './utils/k8s-watch-hook';
-import type { ConsoleNotificationKind } from '@openshift/api-types/dist/openshift/latest';
 
 type ConsoleNotifierProps = {
   location: 'BannerTop' | 'BannerBottom' | 'BannerTopBottom';

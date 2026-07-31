@@ -1,8 +1,5 @@
-import * as _ from 'lodash';
 import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router';
 import {
   Card,
   DescriptionList,
@@ -13,33 +10,37 @@ import {
   GridItem,
   Tooltip,
 } from '@patternfly/react-core';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
-import { DASH } from '@console/shared/src/constants/ui';
-import { TableColumn } from '@console/dynamic-plugin-sdk';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router';
 import {
   actionsCellProps,
   getNameCellProps,
   ConsoleDataView,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import { Conditions } from './conditions';
+import type { TableColumn } from '@console/dynamic-plugin-sdk';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
+import { DASH } from '@console/shared/src/constants/ui';
 import { ControlPlaneMachineSetModel } from '../models';
-import { ControlPlaneMachineSetKind, referenceForModel } from '../module/k8s';
+import type { ControlPlaneMachineSetKind } from '../module/k8s';
+import { referenceForModel } from '../module/k8s';
+import { Conditions } from './conditions';
+import { ResourceEventStream } from './events';
 import { DetailsPage } from './factory/details';
 import { ListPage } from './factory/list-page';
-import { LoadingBox } from './utils/status-box';
-import { navFactory } from './utils/horizontal-nav';
-import { ResourceLink, resourcePath } from './utils/resource-link';
+import { MachinePage, machineReference } from './machine';
+import type { MachineTabPageProps } from './machine-set';
 import { ResourceSummary } from './utils/details-page';
 import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { ResourceLink, resourcePath } from './utils/resource-link';
 import { Selector } from './utils/selector';
-import { ResourceEventStream } from './events';
-import { MachinePage, machineReference } from './machine';
-import { MachineTabPageProps } from './machine-set';
-import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { LoadingBox } from './utils/status-box';
 
 const controlPlaneMachineSetReference = referenceForModel(ControlPlaneMachineSetModel);
 const getDesiredReplicas = (resource: ControlPlaneMachineSetKind) => {
@@ -345,7 +346,7 @@ const ControlPlaneMachineSetList: FC<ControlPlaneMachineSetListProps> = ({
         loadError={loadError}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
+        hideColumnManagement
         isResizable
         resetAllColumnWidths={resetAllColumnWidths}
       />
@@ -359,7 +360,7 @@ export const ControlPlaneMachineSetListPage: FC<any> = (props) => (
     ListComponent={ControlPlaneMachineSetList}
     kind={controlPlaneMachineSetReference}
     canCreate
-    omitFilterToolbar={true}
+    omitFilterToolbar
   />
 );
 

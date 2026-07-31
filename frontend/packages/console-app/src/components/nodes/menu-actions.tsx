@@ -53,7 +53,7 @@ export const useNodeActions: ExtensionHook<Action[], NodeKind> = (obj) => {
     () => (
       <p>
         {t(
-          'This action cannot be undone. Deleting a node will instruct Kubernetes that the node is down or unrecoverable and delete all pods scheduled to that node. If the node is still running but unresponsive and the node is deleted, stateful workloads and persistent volumes may suffer corruption or data loss. Only delete a node that you have confirmed is completely stopped and cannot be restored.',
+          'You cannot undo this action. Deleting a node signals to Kubernetes that the node is unrecoverable, which deletes all pods scheduled to it. If you delete a node that is still running but unresponsive, stateful workloads and persistent volumes might suffer data loss or corruption. Only delete a node after you confirm that it has completely stopped and you cannot restore it.',
         )}
       </p>
     ),

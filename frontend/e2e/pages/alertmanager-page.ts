@@ -1,6 +1,6 @@
-import { expect } from '@playwright/test';
 import yaml from 'js-yaml';
 
+import { expect } from '../fixtures';
 import BasePage from './base-page';
 
 type AlertmanagerConfig = {
@@ -63,20 +63,11 @@ export class AlertmanagerPage extends BasePage {
   }
 
   async getYAMLContent(): Promise<string> {
-    // Get content from Monaco editor
-    const content = await this.page.evaluate(() => {
-      const monacoEditor = (window as any).monaco?.editor?.getModels()?.[0];
-      return monacoEditor?.getValue() || '';
-    });
-
-    return content;
+    return this.getEditorContent();
   }
 
   async setYAMLContent(content: string): Promise<void> {
-    await this.page.evaluate((text) => {
-      const monacoEditor = (window as any).monaco?.editor?.getModels()?.[0];
-      monacoEditor?.setValue(text);
-    }, content);
+    await this.setEditorContent(content);
   }
 
   async validateReceiverInList(receiverName: string): Promise<void> {

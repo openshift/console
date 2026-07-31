@@ -1,23 +1,24 @@
 import { memo, useMemo, useState, useEffect } from 'react';
 import { Card, CardBody, CardHeader, CardTitle, Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import {
-  ResourceInventoryItem,
-  StatusGroupMapper,
-} from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
-import { ErrorBoundary } from '@console/shared/src/components/error/error-boundary';
-import { K8sKind, referenceForModel, K8sResourceCommon } from '../../../../module/k8s';
-import {
-  useResolvedExtensions,
+import type {
   DashboardsOverviewInventoryItem,
   DashboardsOverviewInventoryItemReplacement,
-  isDashboardsOverviewInventoryItem,
-  isDashboardsOverviewInventoryItemReplacement,
   ResolvedExtension,
   WatchK8sResources,
   ClusterOverviewInventoryItem,
+} from '@console/dynamic-plugin-sdk';
+import {
+  useResolvedExtensions,
+  isDashboardsOverviewInventoryItem,
+  isDashboardsOverviewInventoryItemReplacement,
   isClusterOverviewInventoryItem,
 } from '@console/dynamic-plugin-sdk';
+import type { StatusGroupMapper } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
+import { ResourceInventoryItem } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
+import { ErrorBoundary } from '@console/shared/src/components/error/error-boundary';
+import type { K8sKind, K8sResourceCommon } from '../../../../module/k8s';
+import { referenceForModel } from '../../../../module/k8s';
 import { useK8sWatchResource, useK8sWatchResources } from '../../../utils/k8s-watch-hook';
 
 const mergeItems = (
@@ -112,7 +113,7 @@ export const InventoryCard = memo(() => {
   const { t } = useTranslation('public');
 
   return (
-    <Card data-test-id="inventory-card">
+    <Card data-test="inventory-card" data-test-id="inventory-card">
       <CardHeader>
         <CardTitle>{t('Cluster inventory')}</CardTitle>
       </CardHeader>

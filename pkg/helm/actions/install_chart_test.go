@@ -1,21 +1,25 @@
 package actions
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"os"
 	"testing"
 	"time"
 
+	helmTime "time"
+
 	"github.com/stretchr/testify/require"
-	"helm.sh/helm/v3/pkg/action"
-	"helm.sh/helm/v3/pkg/chart"
-	"helm.sh/helm/v3/pkg/chartutil"
-	kubefake "helm.sh/helm/v3/pkg/kube/fake"
-	"helm.sh/helm/v3/pkg/release"
-	"helm.sh/helm/v3/pkg/storage"
-	"helm.sh/helm/v3/pkg/storage/driver"
-	helmTime "helm.sh/helm/v3/pkg/time"
+	"helm.sh/helm/v4/pkg/action"
+	"helm.sh/helm/v4/pkg/chart/common"
+	chart "helm.sh/helm/v4/pkg/chart/v2"
+	kubefake "helm.sh/helm/v4/pkg/kube/fake"
+	"helm.sh/helm/v4/pkg/registry"
+	releasecommon "helm.sh/helm/v4/pkg/release/common"
+	releasev1 "helm.sh/helm/v4/pkg/release/v1"
+	"helm.sh/helm/v4/pkg/storage"
+	"helm.sh/helm/v4/pkg/storage/driver"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
@@ -23,6 +27,14 @@ import (
 	k8sfake "k8s.io/client-go/kubernetes/fake"
 	"k8s.io/client-go/rest"
 )
+
+type mockRegistryClientSetter struct {
+	client *registry.Client
+}
+
+func (m *mockRegistryClientSetter) SetRegistryClient(rc *registry.Client) {
+	m.client = rc
+}
 
 type FakeConfig struct {
 	action.RESTClientGetter
@@ -96,8 +108,7 @@ func TestInstallChart(t *testing.T) {
 				RESTClientGetter: FakeConfig{},
 				Releases:         store,
 				KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
-				Capabilities:     chartutil.DefaultCapabilities,
-				Log:              func(format string, v ...interface{}) {},
+				Capabilities:     common.DefaultCapabilities,
 			}
 			client := K8sDynamicClientFromCRs(tt.helmCRS...)
 			clientInterface := k8sfake.NewSimpleClientset()
@@ -107,7 +118,7 @@ func TestInstallChart(t *testing.T) {
 				require.NoError(t, err)
 				require.Equal(t, "test", rel.Name)
 				require.Equal(t, "test-namespace", rel.Namespace)
-				require.Equal(t, release.StatusDeployed, rel.Info.Status)
+				require.Equal(t, releasecommon.StatusDeployed, rel.Info.Status)
 				require.Equal(t, tt.chartName, rel.Chart.Metadata.Name)
 				require.Equal(t, tt.chartVersion, rel.Chart.Metadata.Version)
 				require.Equal(t, tt.chartPath, rel.Chart.Metadata.Annotations["chart_url"])
@@ -175,8 +186,7 @@ func TestInstallChartWithTlsData(t *testing.T) {
 				RESTClientGetter: FakeConfig{},
 				Releases:         store,
 				KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
-				Capabilities:     chartutil.DefaultCapabilities,
-				Log:              func(format string, v ...interface{}) {},
+				Capabilities:     common.DefaultCapabilities,
 			}
 			// create a namespace if it is not same as openshift-config
 			if tt.createNamespace && tt.namespace != configNamespace {
@@ -272,8 +282,7 @@ func TestInstallChartBasicAuth(t *testing.T) {
 				RESTClientGetter: FakeConfig{},
 				Releases:         store,
 				KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
-				Capabilities:     chartutil.DefaultCapabilities,
-				Log:              func(format string, v ...interface{}) {},
+				Capabilities:     common.DefaultCapabilities,
 			}
 			// create a namespace if it is not same as openshift-config
 			if tt.createNamespace && tt.namespace != configNamespace {
@@ -359,8 +368,7 @@ func TestInstallChartAsync(t *testing.T) {
 				RESTClientGetter: FakeConfig{},
 				Releases:         store,
 				KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
-				Capabilities:     chartutil.DefaultCapabilities,
-				Log:              func(format string, v ...interface{}) {},
+				Capabilities:     common.DefaultCapabilities,
 			}
 			objs := []runtime.Object{}
 			client := K8sDynamicClientFromCRs(tt.helmCRS...)
@@ -379,10 +387,10 @@ func TestInstallChartAsync(t *testing.T) {
 			}()
 			if tt.requireError == false {
 				secretsDriver := driver.NewSecrets(coreClient.Secrets(tt.namespace))
-				r := release.Release{
+				r := releasev1.Release{
 					Name:      tt.releaseName,
 					Namespace: tt.namespace,
-					Info: &release.Info{
+					Info: &releasev1.Info{
 						FirstDeployed: helmTime.Time{},
 						Status:        "pending-install",
 					},
@@ -537,6 +545,18 @@ func TestInstallChartFromURL(t *testing.T) {
 			expectedErrMsg:      "failed to find \"password\" key in secret",
 		},
 	}
+
+	// In Helm v4, ORAS v2 strictly enforces HTTPS when plainHTTP=false.
+	// The production code in applyBasicAuthFromUserCredentials hardcodes
+	// plainHTTP=false for security. Override the registry client factory
+	// so test registries (which use plain HTTP) work correctly.
+	originalNewRegistryClient := newRegistryClient
+	defer func() { newRegistryClient = originalNewRegistryClient }()
+	newRegistryClient = func(options ...registry.ClientOption) (*registry.Client, error) {
+		options = append(options, registry.ClientOptPlainHTTP())
+		return originalNewRegistryClient(options...)
+	}
+
 	for _, tt := range tests {
 		t.Run(tt.testName, func(t *testing.T) {
 			store := storage.Init(driver.NewMemory())
@@ -544,8 +564,7 @@ func TestInstallChartFromURL(t *testing.T) {
 				RESTClientGetter: FakeConfig{},
 				Releases:         store,
 				KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
-				Capabilities:     chartutil.DefaultCapabilities,
-				Log:              func(format string, v ...interface{}) {},
+				Capabilities:     common.DefaultCapabilities,
 			}
 			registryClient, err := GetOCIRegistry(tt.skipTLSVerify, tt.plainHTTP, nil)
 			require.NoError(t, err)
@@ -589,10 +608,10 @@ func TestInstallChartFromURL(t *testing.T) {
 			go func() {
 				time.Sleep(2 * time.Second)
 				secretsDriver := driver.NewSecrets(coreClient.Secrets("test-namespace"))
-				r := release.Release{
+				r := releasev1.Release{
 					Name:      tt.releaseName,
 					Namespace: "test-namespace",
-					Info: &release.Info{
+					Info: &releasev1.Info{
 						FirstDeployed: helmTime.Time{},
 						Status:        "pending-install",
 					},
@@ -644,10 +663,146 @@ func TestIsValidChartURL(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := isValidChartURL(tt.url)
+			got := IsValidChartURL(tt.url)
 			if got != tt.valid {
-				t.Errorf("isValidChartURL(%q) = %v, want %v", tt.url, got, tt.valid)
+				t.Errorf("IsValidChartURL(%q) = %v, want %v", tt.url, got, tt.valid)
 			}
 		})
 	}
+}
+
+func TestAddAuthSecretAnnotation(t *testing.T) {
+	t.Run("sets annotation when secretName is non-empty", func(t *testing.T) {
+		ch := &chart.Chart{
+			Metadata: &chart.Metadata{
+				Annotations: make(map[string]string),
+			},
+		}
+		addAuthSecretAnnotation(ch, "my-auth-secret")
+		require.Equal(t, "my-auth-secret", ch.Metadata.Annotations[helmAuthSecretAnnotation])
+	})
+
+	t.Run("no-op when secretName is empty", func(t *testing.T) {
+		ch := &chart.Chart{
+			Metadata: &chart.Metadata{
+				Annotations: make(map[string]string),
+			},
+		}
+		addAuthSecretAnnotation(ch, "")
+		_, exists := ch.Metadata.Annotations[helmAuthSecretAnnotation]
+		require.False(t, exists)
+	})
+
+	t.Run("preserves existing annotations", func(t *testing.T) {
+		ch := &chart.Chart{
+			Metadata: &chart.Metadata{
+				Annotations: map[string]string{
+					"chart_url":    "oci://registry.example.com/charts/mychart:1.0.0",
+					"installation": "url_install",
+				},
+			},
+		}
+		addAuthSecretAnnotation(ch, "my-auth-secret")
+		require.Equal(t, "my-auth-secret", ch.Metadata.Annotations[helmAuthSecretAnnotation])
+		require.Equal(t, "oci://registry.example.com/charts/mychart:1.0.0", ch.Metadata.Annotations["chart_url"])
+		require.Equal(t, "url_install", ch.Metadata.Annotations["installation"])
+	})
+}
+
+func TestGetUserCredentials(t *testing.T) {
+	t.Run("returns credentials from valid secret", func(t *testing.T) {
+		secret := &v1.Secret{
+			ObjectMeta: metav1.ObjectMeta{
+				Name:      "auth-secret",
+				Namespace: "test-ns",
+			},
+			Data: map[string][]byte{
+				"username": []byte("admin"),
+				"password": []byte("s3cret"),
+			},
+		}
+		clientset := k8sfake.NewSimpleClientset(secret)
+		coreClient := clientset.CoreV1()
+
+		creds, err := GetUserCredentials(coreClient, "test-ns", "auth-secret")
+		require.NoError(t, err)
+		require.Equal(t, "admin", creds.Username)
+		require.Equal(t, "s3cret", creds.Password)
+	})
+
+	t.Run("returns error when secret not found", func(t *testing.T) {
+		clientset := k8sfake.NewSimpleClientset()
+		coreClient := clientset.CoreV1()
+
+		_, err := GetUserCredentials(coreClient, "test-ns", "nonexistent")
+		require.Error(t, err)
+		require.ErrorContains(t, err, "failed to get secret")
+	})
+
+	t.Run("returns error when username key is missing", func(t *testing.T) {
+		secret := &v1.Secret{
+			ObjectMeta: metav1.ObjectMeta{
+				Name:      "bad-secret",
+				Namespace: "test-ns",
+			},
+			Data: map[string][]byte{
+				"password": []byte("s3cret"),
+			},
+		}
+		clientset := k8sfake.NewSimpleClientset(secret)
+		coreClient := clientset.CoreV1()
+
+		_, err := GetUserCredentials(coreClient, "test-ns", "bad-secret")
+		require.Error(t, err)
+		require.ErrorContains(t, err, "failed to find \"username\" key in secret")
+	})
+
+	t.Run("returns error when password key is missing", func(t *testing.T) {
+		secret := &v1.Secret{
+			ObjectMeta: metav1.ObjectMeta{
+				Name:      "bad-secret",
+				Namespace: "test-ns",
+			},
+			Data: map[string][]byte{
+				"username": []byte("admin"),
+			},
+		}
+		clientset := k8sfake.NewSimpleClientset(secret)
+		coreClient := clientset.CoreV1()
+
+		_, err := GetUserCredentials(coreClient, "test-ns", "bad-secret")
+		require.Error(t, err)
+		require.ErrorContains(t, err, "failed to find \"password\" key in secret")
+	})
+}
+
+func TestApplyBasicAuthFromUserCredentials(t *testing.T) {
+	t.Run("sets credentials and registry client", func(t *testing.T) {
+		opts := &action.ChartPathOptions{}
+		setter := &mockRegistryClientSetter{}
+		creds := &UserCredentials{Username: "admin", Password: "s3cret"}
+
+		err := applyBasicAuthFromUserCredentials(opts, setter, creds)
+		require.NoError(t, err)
+		require.Equal(t, "admin", opts.Username)
+		require.Equal(t, "s3cret", opts.Password)
+		require.NotNil(t, setter.client)
+	})
+
+	t.Run("returns error when registry client creation fails", func(t *testing.T) {
+		original := newRegistryClient
+		defer func() { newRegistryClient = original }()
+		newRegistryClient = func(opts ...registry.ClientOption) (*registry.Client, error) {
+			return nil, errors.New("mock registry error")
+		}
+
+		opts := &action.ChartPathOptions{}
+		setter := &mockRegistryClientSetter{}
+		creds := &UserCredentials{Username: "admin", Password: "s3cret"}
+
+		err := applyBasicAuthFromUserCredentials(opts, setter, creds)
+		require.Error(t, err)
+		require.ErrorContains(t, err, "failed to configure OCI registry client")
+		require.Nil(t, setter.client)
+	})
 }

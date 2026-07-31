@@ -352,7 +352,6 @@ describe('OperandDetailsPage', () => {
       state: null,
       hash: '',
       key: 'default',
-      unstable_mask: undefined,
     });
   });
 
@@ -391,7 +390,6 @@ describe('ProvidedAPIsPage', () => {
       state: null,
       hash: '',
       key: 'default',
-      unstable_mask: undefined,
     });
   });
 
@@ -426,7 +424,6 @@ describe('ProvidedAPIPage', () => {
       state: null,
       hash: '',
       key: 'default',
-      unstable_mask: undefined,
     });
   });
 

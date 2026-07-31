@@ -145,6 +145,7 @@ const ApplicationSelector: FC<ApplicationSelectorProps> = ({
           ref={applicationNameInputRef}
           label={t('Application name')}
           data-test-id="application-form-app-input"
+          data-test="application-form-app-input"
           helpText={inputHelpText}
           validated={applicationExists ? ValidatedOptions.warning : ValidatedOptions.default}
           onChange={handleAppChange}
