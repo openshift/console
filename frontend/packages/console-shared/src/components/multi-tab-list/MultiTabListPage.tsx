@@ -98,6 +98,7 @@ export const MultiTabListPage: FC<MultiTabListPageProps> = ({
                     value: item,
                     content: items[item],
                     'data-test-dropdown-menu': item,
+                    'data-test': item,
                   }))}
                   onSelect={(_e, value: string) => {
                     onSelectCreateAction(value);
