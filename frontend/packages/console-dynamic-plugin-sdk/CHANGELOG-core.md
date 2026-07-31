@@ -12,6 +12,7 @@ table in [Console dynamic plugins README](./README.md).
 
 ## 4.23.0-prerelease.5 - TBD
 
+- Update `react-router` peer dependency semver range to `~7.18.1` ([CONSOLE-5415], [#16726])
 - **Deprecated**: The use of multiple predicates in the `useResolvedExtensions` hook is deprecated ([#16115], [CONSOLE-5065])
 - **Type breaking**: Replace `ExtensionTypeGuard` with `ExtensionPredicate` from `@openshift/dynamic-plugin-sdk` ([#16115], [CONSOLE-5065])
 
@@ -19,7 +20,6 @@ table in [Console dynamic plugins README](./README.md).
 
 - Add optional `onSubmit` parameter to `useLabelsModal` hook for customizing label submission behavior ([CONSOLE-5356], [#16560])
 - Update `@patternfly/react-topology` peer dependency semver range to `~6.6.0` ([OCPBUGS-86587], [#16750])
-- Update `react-router` peer dependency semver range to `~7.18.1` ([CONSOLE-5415], [#16726])
 
 ## 4.23.0-prerelease.3 - 2026-07-07
 
