@@ -384,11 +384,11 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
             variant="warning"
             isInline
             isPlain
-            title={t(
-              'Cluster updates are irreversible. After an update begins, it cannot be rolled back to the previous version. Verify your cluster is ready before you proceed.',
-            )}
+            title={t('Cluster updates are irreversible')}
             data-test="update-cluster-modal-irreversibility-notice"
-          />
+          >
+            {t('After an update begins, you cannot roll back to the previous version.')}
+          </Alert>
         </Form>
       </ModalBody>
       <ModalFooterWithAlerts errorMessage={errorMessage || error}>

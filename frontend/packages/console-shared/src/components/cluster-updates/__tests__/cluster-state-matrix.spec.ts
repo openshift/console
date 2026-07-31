@@ -338,7 +338,7 @@ describe('OLS Cluster State Matrix - Complete Scenarios', () => {
 
       const prompt = generateUpdatePrompt(phase, cv, mockT, operators);
       expect(prompt).toContain('Troubleshoot Analysis');
-      expect(prompt).toContain('Root Cause');
+      expect(prompt).toContain('Root cause');
       expect(prompt).toContain('Failed ClusterOperators');
     });
   });
@@ -389,7 +389,7 @@ describe('OLS Cluster State Matrix - Complete Scenarios', () => {
 
       const prompt = generateUpdatePrompt('status', cv, mockT);
       expect(prompt).toContain('Troubleshoot');
-      expect(prompt).toContain('Root Cause');
+      expect(prompt).toContain('Root cause');
     });
   });
 
@@ -494,7 +494,7 @@ describe('OLS Cluster State Matrix - Complete Scenarios', () => {
 
       const prompt = generateUpdatePrompt(phase, cv, mockT, operators);
       expect(prompt).toContain('Pre-Check Analysis');
-      expect(prompt).toContain('Available Updates');
+      expect(prompt).toContain('Available updates');
     });
   });
 
@@ -615,7 +615,7 @@ describe('OLS Cluster State Matrix - Complete Scenarios', () => {
 
       expect(prompt).toContain('Pre-Check Analysis');
       expect(prompt).toContain('4.15.1');
-      expect(prompt).toContain('Target Version');
+      expect(prompt).toContain('Target version');
     });
   });
 
@@ -772,13 +772,13 @@ describe('OLS Cluster State Matrix - Complete Scenarios', () => {
         const prompt = generateUpdatePrompt(phase, cv, mockT, operators);
 
         expect(prompt).toContain('Pre-Check Analysis');
-        expect(prompt).toContain('Available Updates');
-        expect(prompt).toContain('Upgrade Readiness');
+        expect(prompt).toContain('Available updates');
+        expect(prompt).toContain('Upgrade readiness');
         expect(prompt).toContain('scope_definition');
 
         expect(prompt).toContain('<security>');
         expect(prompt).toContain('<confidence_qualifiers>');
-        expect(prompt).toContain('Data Completeness');
+        expect(prompt).toContain('Data completeness');
 
         expect(prompt).toContain('4.14.10');
       });
@@ -806,13 +806,13 @@ describe('OLS Cluster State Matrix - Complete Scenarios', () => {
         expect(prompt).toContain('Troubleshoot Analysis');
         expect(prompt).toContain('Degraded');
         expect(prompt).toContain('Failed ClusterOperators');
-        expect(prompt).toContain('Root Cause');
-        expect(prompt).toContain('Investigation Steps');
-        expect(prompt).toContain('Recovery Actions');
+        expect(prompt).toContain('Root cause');
+        expect(prompt).toContain('Investigation steps');
+        expect(prompt).toContain('Recovery actions');
 
         expect(prompt).toContain('<security>');
         expect(prompt).toContain('<confidence_qualifiers>');
-        expect(prompt).toContain('Data Completeness');
+        expect(prompt).toContain('Data completeness');
       });
     });
 
@@ -838,13 +838,13 @@ describe('OLS Cluster State Matrix - Complete Scenarios', () => {
         const prompt = generateUpdatePrompt(phase, cv, mockT, operators);
 
         expect(prompt).toContain('Pre-Check Analysis');
-        expect(prompt).toContain('Conditional Updates');
+        expect(prompt).toContain('Conditional updates');
         expect(prompt).toContain('conditionalUpdates');
-        expect(prompt).toContain('Risk Analysis');
+        expect(prompt).toContain('risk analysis');
 
         expect(prompt).toContain('<security>');
         expect(prompt).toContain('<confidence_qualifiers>');
-        expect(prompt).toContain('Data Completeness');
+        expect(prompt).toContain('Data completeness');
       });
     });
 
@@ -895,7 +895,7 @@ describe('OLS Cluster State Matrix - Complete Scenarios', () => {
 
         expect(prompt).toContain('<security>');
         expect(prompt).toContain('<confidence_qualifiers>');
-        expect(prompt).toContain('Data Completeness');
+        expect(prompt).toContain('Data completeness');
       });
     });
   });

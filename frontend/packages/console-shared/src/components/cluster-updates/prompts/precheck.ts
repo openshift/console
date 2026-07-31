@@ -34,6 +34,7 @@ ${languageConstraint}
 - NEVER use placeholder or dummy data - only reference real data from tool calls.
 - ONLY report issues that are actually present in the data.
 - ONLY OUTPUT the Summary and TL;DR sections.
+- CRITICAL: The TL;DR section MUST end with the **Recommendation** field. NEVER omit it.
 - Be specific about the source of any issues identified.
 - CRITICAL: When counting available updates, count ALL array elements in status.availableUpdates AND status.conditionalUpdates separately.
 ${securityConstraint}
@@ -379,29 +380,29 @@ If get_alerts is available:
 
 <output_format>
 ## Summary
-**Update Service Health**
-- **Cincinnati Service**: [spec.upstream URL if configured, otherwise "Default Red Hat update service"]
-- **Service Status**: [RetrievedUpdates condition status and message]
-- **Last Update Check**: [From RetrievedUpdates condition lastTransitionTime]
-- **Update Channel**: [Current spec.channel]
-- **Channel Validity**: [Confirmed valid for current version, or flagged as not in status.desired.channels]
+**Update service health**
+- **Cincinnati service**: [spec.upstream URL if configured, otherwise "Default Red Hat update service"]
+- **Service status**: [RetrievedUpdates condition status and message]
+- **Last update check**: [From RetrievedUpdates condition lastTransitionTime]
+- **Update channel**: [Current spec.channel]
+- **Channel validity**: [Confirmed valid for current version, or flagged as not in status.desired.channels]
 - **Cluster ID**: [spec.clusterID]
-**Cluster History Context**
-- **Initial Version**: [First entry from status.history with date]
-- **Upgrade Path**: [Recent version progression from history]
-- **Last Completed Upgrade**: [Most recent Completed entry with timeframe]
-- **Partial/Failed Upgrade History**: [Any Partial entries, otherwise "None"]
-- **Cluster Age**: [Time since initial installation]
-**Available Updates**
-- **Recommended Updates**: [Count from status.availableUpdates with versions]
-- **Conditional Updates**: [Count from status.conditionalUpdates]
-- **Conditional Update Risk Analysis**: For each conditional update with Recommended=False, list:
+**Cluster history context**
+- **Initial version**: [First entry from status.history with date]
+- **Upgrade path**: [Recent version progression from history]
+- **Last completed upgrade**: [Most recent Completed entry with timeframe]
+- **Partial/failed upgrade history**: [Any Partial entries, otherwise "None"]
+- **Cluster age**: [Time since initial installation]
+**Available updates**
+- **Recommended updates**: [Count from status.availableUpdates with versions]
+- **Conditional updates**: [Count from status.conditionalUpdates]
+- **Conditional update risk analysis**: For each conditional update with Recommended=False, list:
   - Target version, risk name, risk message, reference URL
   - Otherwise: "No conditional update risks apply to this cluster"
-**Upgrade Readiness Assessment**
+**Upgrade readiness assessment**
 
 YOU MUST explicitly state the status field value for each condition you check.
-**ClusterVersion Conditions:**
+**ClusterVersion conditions:**
 - **Failing**: [type="Failing" found with status="X"] → [interpretation]
 - **Upgradeable**: [type="Upgradeable" found with status="X" OR not found] → [interpretation, including reason and message if status="False"]
 - **Available**: [type="Available" found with status="X"] → [interpretation]
@@ -409,45 +410,45 @@ YOU MUST explicitly state the status field value for each condition you check.
 - **RetrievedUpdates**: [status="X"] → [interpretation]
 - **ReleaseAccepted**: [status="X"] → [interpretation]
 - **ImplicitlyEnabledCapabilities**: [status="X"] → [interpretation]
-**Admin-Ack Gates (Minor Upgrade Prerequisite):**
-- **Defined Gates** (from openshift-config-managed/admin-gates): [list of keys, or "None"]
+**Admin-ack gates (minor upgrade prerequisite):**
+- **Defined gates** (from openshift-config-managed/admin-gates): [list of keys, or "None"]
 - **Acknowledged** (from openshift-config/admin-acks with value "true"): [list of keys]
-- **Outstanding Gates Blocking Minor Upgrade**: [list of keys not acked, or "None — all gates satisfied"]
+- **Outstanding gates blocking minor upgrade**: [list of keys not acked, or "None — all gates satisfied"]
 - **Action**: For each outstanding gate, provide the exact oc patch command using the actual key name.
-**ClusterOperator Health:**
-- **Total Operators**: [count]
-- **Operators With Issues**: For each problematic operator, report:
+**ClusterOperator health:**
+- **Total operators**: [count]
+- **Operators with issues**: For each problematic operator, report:
   - Name
   - Failing condition (type and status)
   - Reason and message
 - If none: "All ClusterOperators report Available=True, Degraded=False, Upgradeable=True"
-**Infrastructure Health:**
+**Infrastructure health:**
 - **MachineConfigPools**: For each pool, report state. Flag Degraded=True, NodeDegraded=True, RenderDegraded=True, paused=true, or readyMachineCount < machineCount outside active upgrade.
-- **Node Status**: Count of NotReady nodes with names and reasons. Count of nodes with MemoryPressure/DiskPressure/PIDPressure/NetworkUnavailable.
-- **Resource Pressure**: From nodes_top, list nodes with >90% CPU or memory.
+- **Node status**: Count of NotReady nodes with names and reasons. Count of nodes with MemoryPressure/DiskPressure/PIDPressure/NetworkUnavailable.
+- **Resource pressure**: From nodes_top, list nodes with >90% CPU or memory.
 - **Pending CSRs**: Count and signer names if 5 or more pending node-related CSRs.
 - **MachineHealthChecks**: Count of unpaused MHCs (informational recommendation).
-- **User Workload PDBs**: Count of problematic non-OpenShift PDBs that could block node draining, with namespace/name and the offending field.
-**Deprecated API Usage:**
-- **Deprecated APIs Removed In Target**: For each, report API name, removedInRelease, and top callers (username/userAgent).
+- **User workload PDBs**: Count of problematic non-OpenShift PDBs that could block node draining, with namespace/name and the offending field.
+**Deprecated API usage:**
+- **Deprecated APIs removed in target**: For each, report API name, removedInRelease, and top callers (username/userAgent).
 - If none or APIRequestCount unavailable: state explicitly.
-**Layered Operator Health (OLM):**
-- **Subscriptions With Issues**: For each, namespace and Subscription name with the failing condition (CatalogSourcesUnhealthy, InstallPlanFailed, ResolutionFailed, etc.).
+**Layered operator health (OLM):**
+- **Subscriptions with issues**: For each, namespace and Subscription name with the failing condition (CatalogSourcesUnhealthy, InstallPlanFailed, ResolutionFailed, etc.).
 - If none: "All Subscriptions healthy"
-**Recent Events** (Last 30 minutes, upgrade-relevant namespaces):
-- **Critical Events**: Count and grouped descriptions.
-- **Warning Events**: Count and grouped descriptions.
-- **User-Friendly Summary**: Translate technical events into plain language.
+**Recent events** (Last 30 minutes, upgrade-relevant namespaces):
+- **Critical events**: Count and grouped descriptions.
+- **Warning events**: Count and grouped descriptions.
+- **User-friendly summary**: Translate technical events into plain language.
 - If none: "No recent errors or warnings detected in upgrade-relevant components"
-**Active Alerts** (if available):
-- **Critical Alerts**: Count and names.
-- **Warning Alerts**: Count and names.
-- **Impact on Upgrade**: For each, explain effect on upgrade readiness.
+**Active alerts** (if available):
+- **Critical alerts**: Count and names.
+- **Warning alerts**: Count and names.
+- **Impact on upgrade**: For each, explain effect on upgrade readiness.
 - If unavailable: skip section.
 **Configuration:**
 - **Overrides**: Any spec.overrides entries with unmanaged=true.
 - **Capabilities**: Enabled count, disabled-but-known count with names, ImplicitlyEnabledCapabilities note if applicable.
-**Final Assessment:**
+**Final assessment:**
 Based ONLY on issues identified above:
 - If no upgrade-blocking conditions and no unaccepted conditional risks: "Cluster appears ready for upgrade."
 - If only conditional update risks or warnings (no hard blockers): "Cluster can upgrade after administrator review of: [list]. No hard blockers."
@@ -463,33 +464,33 @@ A "hard blocker" means at least one of:
 - Outstanding admin-ack gate (only blocks minor upgrades, not z-stream)
 - Deprecated API in active use that is removed in target minor
 ## TL;DR
-- **Current Version**: ${currentVersion}
-- **Available Updates**: [count from status.availableUpdates]
-- **Latest Recommended Update**: [version with channels]
-- **Conditional Updates**: [count] ([N with Recommended=False risks applying to this cluster])
-- **Update Channel**: [current spec.channel] ([valid / not in status.desired.channels])
-- **Channel Options**: [available channels for current version]
+- **Current version**: ${currentVersion}
+- **Data completeness**: [Complete | Partial | Limited]
+- **Available updates**: [count from status.availableUpdates]
+- **Latest recommended update**: [version with channels]
+- **Conditional updates**: [count] ([N with Recommended=False risks applying to this cluster])
+- **Update channel**: [current spec.channel] ([valid / not in status.desired.channels])
+- **Channel options**: [available channels for current version]
 - **Capabilities**: [enabled count / disabled count with names]
-- **Initial Version**: [from history with date]
-- **Last Upgrade**: [most recent completed upgrade with date]
-- **Cincinnati Health**: [service status with timestamp]
-- **Admin-Ack Gates**: [satisfied | N outstanding: list of keys]
-- **Upgrade Blocked**: [Yes | No — only "Yes" if a hard blocker per definition above is present]
-- **Upgrade Blockers**: [specific list with status field values, or "No blockers"]
-- **Conditional Risks To Acknowledge**: [risk names with target versions, or "None"]
+- **Initial version**: [from history with date]
+- **Last upgrade**: [most recent completed upgrade with date]
+- **Cincinnati health**: [service status with timestamp]
+- **Admin-ack gates**: [satisfied | N outstanding: list of keys]
+- **Upgrade blocked**: [Yes | No — only "Yes" if a hard blocker per definition above is present]
+- **Upgrade blockers**: [specific list with status field values, or "No blockers"]
+- **Conditional risks to acknowledge**: [risk names with target versions, or "None"]
 - **Unhealthy ClusterOperators**: [count and names with the failing condition]
 - **Degraded MCPs**: [count and names with failing condition]
 - **Paused MCPs**: [names if any]
-- **Node Issues**: [count of NotReady or pressure-affected nodes with names]
-- **Resource Pressure**: [nodes with >90% CPU or memory]
-- **User Workload PDBs Blocking Drain**: [count with namespace/name]
-- **Pending Node CSRs**: [count if >= 5, else omit or "None significant"]
-- **Deprecated APIs In Use**: [count removed in target, with API names]
-- **Layered Operator Issues**: [count of unhealthy Subscriptions]
-- **Recent Events**: [count of upgrade-relevant errors/warnings in last 30 min]
-- **Active Alerts**: [count of critical/warning, skip if unavailable]
-- **Configuration Issues**: [overrides or capability concerns]
-- **Data Completeness**: [Full | Partial — list missing sources | Limited — list missing essential sources] → [High | Moderate | Limited] confidence
+- **Node issues**: [count of NotReady or pressure-affected nodes with names]
+- **Resource pressure**: [nodes with >90% CPU or memory]
+- **User workload PDBs blocking drain**: [count with namespace/name]
+- **Pending node CSRs**: [count if >= 5, else omit or "None significant"]
+- **Deprecated APIs in use**: [count removed in target, with API names]
+- **Layered operator issues**: [count of unhealthy Subscriptions]
+- **Recent events**: [count of upgrade-relevant errors/warnings in last 30 min]
+- **Active alerts**: [count of critical/warning, skip if unavailable]
+- **Configuration issues**: [overrides or capability concerns]
 - **Recommendation**: [Proceed with upgrade | Address warnings first | Blocked — resolve listed issues]
 </output_format>`;
 };

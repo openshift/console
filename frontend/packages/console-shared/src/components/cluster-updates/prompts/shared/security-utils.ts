@@ -19,6 +19,6 @@ Qualify your assessment confidence based on data completeness:
 - **High confidence**: All essential data (${options.highConfidenceData}) retrieved successfully and ${options.highConfidenceQuality}.
 - **Moderate confidence**: Essential data available but some supporting data (${options.moderateConfidenceMissing}) could not be retrieved. Note which data sources are missing.
 - **Limited data**: One or more essential data sources failed. Clearly state which data is missing and that ${suffix}.${additional}
-Include a **Data Completeness** line in the TL;DR section.
+Include a **Data completeness** line in the TL;DR section.
 </confidence_qualifiers>`;
 };
