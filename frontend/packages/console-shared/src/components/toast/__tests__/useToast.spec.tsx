@@ -7,5 +7,6 @@ describe('useToast', () => {
     const { result } = renderHook(() => useToast(), { wrapper: ToastProvider });
     expect(typeof result.current.addToast).toBe('function');
     expect(typeof result.current.removeToast).toBe('function');
+    expect(typeof result.current.minimizeToast).toBe('function');
   });
 });

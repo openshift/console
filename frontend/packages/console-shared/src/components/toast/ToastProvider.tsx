@@ -6,7 +6,9 @@ import {
   AlertActionCloseButton,
   AlertActionLink,
   AlertVariant,
+  Button,
 } from '@patternfly/react-core';
+import { RhUiMinusIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import type {
   ToastOptions,
@@ -116,6 +118,22 @@ export const ToastProvider: FC<ToastProviderProps> = ({
     );
   }, []);
 
+  const minimizeToast = useCallback((id: string) => {
+    let canMinimize = false;
+    setToasts((state) => {
+      const toast = state.find((item) => item.id === id);
+      canMinimize = toast?.persistInDrawer === true;
+      return canMinimize ? state.filter((item) => item.id !== id) : state;
+    });
+    if (canMinimize) {
+      setNotifications((state) =>
+        state.map((notification) =>
+          notification.id === id ? { ...notification, isRead: false } : notification,
+        ),
+      );
+    }
+  }, []);
+
   const clearNotification = useCallback(
     (id: string) => {
       setNotifications((state) => {
@@ -170,8 +188,9 @@ export const ToastProvider: FC<ToastProviderProps> = ({
     () => ({
       addToast,
       removeToast,
+      minimizeToast,
     }),
-    [addToast, removeToast],
+    [addToast, removeToast, minimizeToast],
   );
 
   const notificationHistoryController = useMemo(
@@ -214,49 +233,69 @@ export const ToastProvider: FC<ToastProviderProps> = ({
             overflowMessage={overflowMessage}
             onOverflowClick={onOverflowClick}
           >
-            {visibleToasts.map((toast) => (
-              <Alert
-                key={toast.id}
-                title={toast.title}
-                variant={toast.variant}
-                timeout={toast.timeout}
-                onTimeout={() => removeToast(toast.id)}
-                data-test={toast.dataTest || `${toast.title} alert`}
-                actionClose={
-                  toast.dismissible ? (
-                    <AlertActionCloseButton
-                      onClose={() => {
-                        toast.onClose && toast.onClose();
-                        removeToast(toast.id);
-                      }}
-                    />
-                  ) : undefined
-                }
-                actionLinks={
-                  toast.actions?.length > 0 ? (
-                    <>
-                      {toast.actions.map((action) => (
-                        <AlertActionLink
-                          key={action.label}
-                          onClick={() => {
-                            if (action.dismiss) {
-                              removeToast(toast.id);
+            {visibleToasts.map((toast) => {
+              const minimizeAsIconButton =
+                toast.minimizable && toast.persistInDrawer && !toast.dismissible;
+
+              return (
+                <Alert
+                  key={toast.id}
+                  title={toast.title}
+                  variant={toast.variant}
+                  timeout={toast.timeout}
+                  onTimeout={() => removeToast(toast.id)}
+                  data-test={toast.dataTest || `${toast.title} alert`}
+                  actionClose={
+                    toast.dismissible ? (
+                      <AlertActionCloseButton
+                        onClose={() => {
+                          toast.onClose && toast.onClose();
+                          removeToast(toast.id);
+                        }}
+                      />
+                    ) : minimizeAsIconButton ? (
+                      <Button
+                        variant="plain"
+                        aria-label={t('Minimize alert: {{title}}', { title: toast.title })}
+                        icon={<RhUiMinusIcon />}
+                        onClick={() => minimizeToast(toast.id)}
+                        data-test={
+                          toast.dataTest ? `${toast.dataTest}-minimize` : 'toast-minimize-action'
+                        }
+                      />
+                    ) : undefined
+                  }
+                  actionLinks={
+                    toast.actions?.length > 0 ? (
+                      <>
+                        {toast.actions.map((action) => (
+                          <AlertActionLink
+                            key={action.label}
+                            onClick={() => {
+                              if (action.minimize) {
+                                minimizeToast(toast.id);
+                              } else if (action.dismiss) {
+                                removeToast(toast.id);
+                              }
+                              action.callback();
+                            }}
+                            component={action.component}
+                            data-test={
+                              action.dataTest ||
+                              (action.minimize ? 'toast-minimize-action-link' : 'toast-action')
                             }
-                            action.callback();
-                          }}
-                          component={action.component}
-                          data-test={action.dataTest || 'toast-action'}
-                        >
-                          {action.label}
-                        </AlertActionLink>
-                      ))}
-                    </>
-                  ) : undefined
-                }
-              >
-                {toast.content}
-              </Alert>
-            ))}
+                          >
+                            {action.label}
+                          </AlertActionLink>
+                        ))}
+                      </>
+                    ) : undefined
+                  }
+                >
+                  {toast.content}
+                </Alert>
+              );
+            })}
           </AlertGroup>
         ) : null}
       </NotificationHistoryContext.Provider>
