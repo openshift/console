@@ -30,6 +30,7 @@ import {
   RhUiAddCircleIcon,
   RhUiPauseCircleIcon,
   RhUiEditIcon,
+  RhUiAiInfoIcon,
   RhUiInProgressIcon,
 } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
@@ -1493,13 +1494,13 @@ const UpdateAssessmentCard: FC<{
           'aria-expanded': assessmentExpanded,
         }}
       >
-        <CardTitle>{t('public~AI Assessment')}</CardTitle>
+        <CardTitle>{t('public~AI assessment')}</CardTitle>
       </CardHeader>
       <CardExpandableContent>
         <CardBody>
           <Alert
             variant="info"
-            customIcon={<RhUiInProgressIcon />}
+            customIcon={<RhUiAiInfoIcon />}
             isInline
             title={alertTitle}
             actionLinks={
@@ -1548,12 +1549,12 @@ const UpdateAssessmentCard: FC<{
             variant="warning"
             isInline
             isPlain
-            title={t(
-              'public~Cluster updates are irreversible. After an update begins, it cannot be rolled back to the previous version. Verify your cluster is ready before you proceed.',
-            )}
+            title={t('Cluster updates are irreversible')}
             className="pf-v6-u-mt-sm"
             data-test="update-assessment-irreversibility-notice"
-          />
+          >
+            {t('After an update begins, you cannot roll back to the previous version.')}
+          </Alert>
         </CardBody>
       </CardExpandableContent>
     </Card>

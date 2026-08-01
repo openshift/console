@@ -77,6 +77,7 @@ ${languageConstraint}
 - NEVER use placeholder or dummy data - only reference real data from tool calls
 - ONLY report issues that are actually present in the data
 - ONLY OUTPUT the Summary and TL;DR sections
+- CRITICAL: The TL;DR section MUST end with the **Recommendation** field. NEVER omit it.
 - Be specific about the source of any issues identified
 ${securityConstraint}
 ${confidenceQualifiers}
@@ -241,15 +242,15 @@ Provide a clear assessment based ONLY on real data from tool calls (resources_ge
 
 **CRITICAL INSTRUCTION**: Parse version numbers from status.conditionalUpdates and identify which versions fall between ${currentVersion} and ${targetVersion}. Report risks for ALL of these versions, not just ${targetVersion}.
 
-**Target Version Analysis**
+**Target version analysis**
 - **Availability**: [Whether ${targetVersion} is in availableUpdates or conditionalUpdates]
 - **Channels**: [Channels available for ${targetVersion}]
-- **Release Information**: [URL and metadata for ${targetVersion} if available]
+- **Release information**: [URL and metadata for ${targetVersion} if available]
 
 **Conditional Updates Risk Analysis - Upgrade Path from ${currentVersion} to ${targetVersion}**:
-- **Version Range Analyzed**: [List all versions between ${currentVersion} and ${targetVersion} that have conditional update risks]
-- **Total Risks in Upgrade Path**: [Count of all risk conditions across all versions in the range]
-- **Risk Details by Version** (in chronological order from lowest to highest version):
+- **Version range analyzed**: [List all versions between ${currentVersion} and ${targetVersion} that have conditional update risks]
+- **Total risks in upgrade path**: [Count of all risk conditions across all versions in the range]
+- **Risk details by version** (in chronological order from lowest to highest version):
 
  For each version with risks in the upgrade path:
  * **Version**: [e.g., 4.21.18]
@@ -260,57 +261,57 @@ Provide a clear assessment based ONLY on real data from tool calls (resources_ge
    - Mitigation: [Specific steps to address this risk]
    - Documentation: [URL from message if available]
 
-- **Cumulative Risk Assessment for Upgrade Path**:
+- **Cumulative risk assessment for upgrade path**:
  * If no risks in path: "No conditional update risks from ${currentVersion} to ${targetVersion}"
  * If risks don't apply: "Conditional updates exist but risks do not apply to this cluster configuration"
  * If risks apply but manageable: "Upgrade path has manageable risks - schedule maintenance window and review all mitigations"
  * If risks are severe: "Review all risks carefully before proceeding - multiple versions in upgrade path have concerns"
- * **Planning Guidance**: "You will encounter [X] risk conditions across [Y] versions in the upgrade path from ${currentVersion} to ${targetVersion}"
+ * **Planning guidance**: "You will encounter [X] risk conditions across [Y] versions in the upgrade path from ${currentVersion} to ${targetVersion}"
 
-**Upgrade Readiness Assessment**
+**Upgrade readiness assessment**
 
 YOU MUST explicitly state the status field value for each condition you check:
-**ClusterVersion Conditions:**
-- **Failing Condition**: [type="Failing" found with status="X"] → [Interpretation: if status="False" then NOT failing/healthy, if status="True" then failing/problem]
-- **Upgradeable Condition**: [type="Upgradeable" found with status="X" OR not found] → [Interpretation: if status="False" then upgrades blocked, if status="True" or missing then upgrades allowed]
-- **Available Condition**: [type="Available" found with status="X"] → [Interpretation: if status="True" then available/healthy, if status="False" then not available/problem]
-**ClusterOperator Health:**
+**ClusterVersion conditions:**
+- **Failing condition**: [type="Failing" found with status="X"] → [Interpretation: if status="False" then NOT failing/healthy, if status="True" then failing/problem]
+- **Upgradeable condition**: [type="Upgradeable" found with status="X" OR not found] → [Interpretation: if status="False" then upgrades blocked, if status="True" or missing then upgrades allowed]
+- **Available condition**: [type="Available" found with status="X"] → [Interpretation: if status="True" then available/healthy, if status="False" then not available/problem]
+**ClusterOperator health:**
 - Verify ClusterOperator resources in config.openshift.io/v1 API group
 - For each operator, check status.conditions and explicitly state status field values
 - Flag operators with: Available status="False" OR Degraded status="True" OR Upgradeable status="False"
 - Include their message and reason fields
-**Infrastructure Health:**
+**Infrastructure health:**
 - **MachineConfigPools**: [Count and status of MCPs - report Degraded, Paused, or out-of-sync pools]
-- **Node Status**: [Count NotReady nodes with their reasons]
-- **Resource Pressure**: [From nodes_top - report nodes with >90% CPU or memory usage]
-- **User Workload PDBs**: [Count of problematic non-OpenShift PDBs that could block node draining]
-**Cincinnati Update Service Health**:
-- **Service Configuration**: [spec.upstream URL if configured, otherwise "Default Red Hat update service"]
-- **Service Status**: [RetrievedUpdates condition status and message]
-- **Last Update Check**: [From RetrievedUpdates condition lastTransitionTime]
-- **Update Channel**: [Current spec.channel]
+- **Node status**: [Count NotReady nodes with their reasons]
+- **Resource pressure**: [From nodes_top - report nodes with >90% CPU or memory usage]
+- **User workload PDBs**: [Count of problematic non-OpenShift PDBs that could block node draining]
+**Cincinnati update service health**:
+- **Service configuration**: [spec.upstream URL if configured, otherwise "Default Red Hat update service"]
+- **Service status**: [RetrievedUpdates condition status and message]
+- **Last update check**: [From RetrievedUpdates condition lastTransitionTime]
+- **Update channel**: [Current spec.channel]
 - **Cluster ID**: [spec.clusterID for telemetry]
-**Recent Events** (Last 30 minutes):
-- **Critical Events**: [Count and description of error events]
-- **Warning Events**: [Count and description of warning events]
-- **User-Friendly Summary**: [Translate technical events into plain language explanation]
+**Recent events** (Last 30 minutes):
+- **Critical events**: [Count and description of error events]
+- **Warning events**: [Count and description of warning events]
+- **User-friendly summary**: [Translate technical events into plain language explanation]
 - **Example**: "3 ImagePullBackOff events in openshift-authentication - operator unable to download container images"
 - If no concerning events: "No recent errors or warnings detected"
-**Active Alerts** (if available):
-- **Critical Alerts**: [Count and names of firing critical alerts]
-- **Warning Alerts**: [Count and names of firing warning alerts]
-- **Impact on Upgrade**: [Explain how these alerts affect upgrade readiness to ${targetVersion}]
-- **User-Friendly Explanation**: [Translate alert names into actionable recommendations]
+**Active alerts** (if available):
+- **Critical alerts**: [Count and names of firing critical alerts]
+- **Warning alerts**: [Count and names of firing warning alerts]
+- **Impact on upgrade**: [Explain how these alerts affect upgrade readiness to ${targetVersion}]
+- **User-friendly explanation**: [Translate alert names into actionable recommendations]
 - **Example**: "KubePersistentVolumeFillingUp: Storage volume is 85% full - free up space before upgrading"
 - If alerts not available: Skip this section
 
-**Final Assessment**:
+**Final assessment**:
 If ${targetVersion} is available and no critical issues are found:
 - If no conditional risks in upgrade path: Clearly state the cluster appears ready for upgrade to ${targetVersion}
 - If conditional risks exist but don't apply: State the upgrade path is clear despite conditional updates existing
 - If conditional risks apply: Explain ALL risks across the upgrade path and provide comprehensive mitigation guidance
 
-**Upgrade Path Summary**:
+**Upgrade path summary**:
 - List ALL versions with conditional update risks between ${currentVersion} and ${targetVersion}
 - For multi-hop upgrades, clarify that risks at intermediate versions will be encountered
 - Provide consolidated recommendation considering ALL risks in the path, not just target version
@@ -318,27 +319,27 @@ If ${targetVersion} is available and no critical issues are found:
 If ${targetVersion} is not available, recommend the closest available version and analyze risks for that path instead.
 
 ## TL;DR
-- **Current Version**: ${currentVersion}
-- **Target Version**: ${targetVersion}
-- **Target Available**: [Yes in availableUpdates / Yes in conditionalUpdates with risks / No]
-- **Upgrade Path**: [${currentVersion} → ${targetVersion}, list intermediate versions if applicable]
-- **Conditional Risks in Upgrade Path**: [Total count of risk conditions across ALL versions from ${currentVersion} to ${targetVersion}, or "None"]
-- **Versions with Risks**: [List versions in upgrade path that have conditional update risks, e.g., "4.21.18, 4.21.20" or "None"]
-- **Risks Apply to Cluster**: [Yes/No - if ANY conditional risks in upgrade path apply to this cluster configuration]
-- **Risk Severity**: [If risks exist: Blocker / Requires Planning / Minor Concern / Does Not Apply]
-- **Target Channels**: [Channels for ${targetVersion} if available]
-- **Current Channel**: [spec.channel from ClusterVersion]
-- **Cincinnati Health**: [Update service status, e.g., "Default service healthy (RetrievedUpdates=True)" or "Custom upstream: URL (status)"]
-- **Upgrade Blocked**: [Yes if blocked / No if not blocked - ONLY report "Yes" if: Upgradeable condition has status="False" OR Failing condition has status="True" OR operators have Available status="False" or Upgradeable status="False"]
-- **Upgrade Blockers**: [if blockers exist with specific reason - MUST include the actual status field value you read, e.g., "Upgradeable condition status=False: reason message" OR "No blockers - all conditions healthy"]
+- **Current version**: ${currentVersion}
+- **Target version**: ${targetVersion}
+- **Data completeness**: [Complete | Partial | Limited]
+- **Target available**: [Yes in availableUpdates / Yes in conditionalUpdates with risks / No]
+- **Upgrade path**: [${currentVersion} → ${targetVersion}, list intermediate versions if applicable]
+- **Conditional risks in upgrade path**: [Total count of risk conditions across ALL versions from ${currentVersion} to ${targetVersion}, or "None"]
+- **Versions with risks**: [List versions in upgrade path that have conditional update risks, e.g., "4.21.18, 4.21.20" or "None"]
+- **Risks apply to cluster**: [Yes/No - if ANY conditional risks in upgrade path apply to this cluster configuration]
+- **Risk severity**: [If risks exist: Blocker / Requires Planning / Minor Concern / Does Not Apply]
+- **Target channels**: [Channels for ${targetVersion} if available]
+- **Current channel**: [spec.channel from ClusterVersion]
+- **Cincinnati health**: [Update service status, e.g., "Default service healthy (RetrievedUpdates=True)" or "Custom upstream: URL (status)"]
+- **Upgrade blocked**: [Yes if blocked / No if not blocked - ONLY report "Yes" if: Upgradeable condition has status="False" OR Failing condition has status="True" OR operators have Available status="False" or Upgradeable status="False"]
+- **Upgrade blockers**: [if blockers exist with specific reason - MUST include the actual status field value you read, e.g., "Upgradeable condition status=False: reason message" OR "No blockers - all conditions healthy"]
 - **Unhealthy ClusterOperators**: [count and names if any]
-- **User Workload PDBs**: [count of problematic NON-OpenShift PDBs]
+- **User workload PDBs**: [count of problematic NON-OpenShift PDBs]
 - **Degraded MCPs**: [count and names if any]
-- **Node Issues**: [count of NotReady nodes if any, include Ready=False reason]
-- **Resource Pressure**: [nodes with >90% CPU or memory usage]
-- **Recent Events**: [count of error/warning events in last 30 min, user-friendly summary]
-- **Active Alerts**: [count of critical/warning alerts, skip if tool unavailable]
-- **Data Completeness**: [Full | Partial — list missing sources | Limited — list missing essential sources] → [High | Moderate | Limited] confidence
+- **Node issues**: [count of NotReady nodes if any, include Ready=False reason]
+- **Resource pressure**: [nodes with >90% CPU or memory usage]
+- **Recent events**: [count of error/warning events in last 30 min, user-friendly summary]
+- **Active alerts**: [count of critical/warning alerts, skip if tool unavailable]
 - **Recommendation**: [Proceed with upgrade to ${targetVersion} | Address risks/warnings first | Blocked - resolve issues | Target not available - use X.X.X instead]
 </output_format>`;
 };

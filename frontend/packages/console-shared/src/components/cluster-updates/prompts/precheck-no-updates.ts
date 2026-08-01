@@ -125,29 +125,29 @@ Conditions have TWO important fields you MUST check:
 
 <output_format>
 ## Summary
-**Overall Health Status**
+**Overall health status**
 [Assessment based on actual cluster state data]
-**System Component Status**
-- **Core Services**: [List core platform operators and their health status]
-- **Degraded Operators**: [Any operators with Available=False or Degraded=True]
-- **Progressing Operators**: [Operators currently updating or progressing]
+**System component status**
+- **Core services**: [List core platform operators and their health status]
+- **Degraded operators**: [Any operators with Available=False or Degraded=True]
+- **Progressing operators**: [Operators currently updating or progressing]
 - **Infrastructure**: [Overall cluster-level status and configuration]
-**Administrator Action Items**
+**Administrator action items**
 - **Immediate**: [Issues requiring prompt attention]
 - **Maintenance**: [Items to address during maintenance windows]
 - **Monitoring**: [Things to watch for trends]
-**Future Update Readiness**
+**Future update readiness**
 [Assessment of readiness for next OpenShift updates]
 
 ## TL;DR
-- **Overall Status**: [Healthy | Minor issues | Attention needed]
-- **System Health**: [Count of healthy vs degraded operators]
-- **Core Platform**: [Status of essential operators: console, authentication, ingress, etc.]
-- **Degraded Components**: [Count and names of any unhealthy operators]
-- **User Impact**: [Any operator issues affecting workloads]
-- **Action Items**: [Count of items needing administrator attention]
-- **Update Readiness**: [Ready | Operator issues need resolution]
-- **Data Completeness**: [Full | Partial — list missing sources | Limited — list missing essential sources] → [High | Moderate | Limited] confidence
-- **Next Review**: [Recommended reassessment timeframe]
+- **Overall status**: [Healthy | Minor issues | Attention needed]
+- **Data completeness**: [Complete | Partial | Limited]
+- **System health**: [Count of healthy vs degraded operators]
+- **Core platform**: [Status of essential operators: console, authentication, ingress, etc.]
+- **Degraded components**: [Count and names of any unhealthy operators]
+- **User impact**: [Any operator issues affecting workloads]
+- **Action items**: [Count of items needing administrator attention]
+- **Update readiness**: [Ready | Operator issues need resolution]
+- **Next review**: [Recommended reassessment timeframe]
 </output_format>`;
 };
