@@ -21,7 +21,7 @@ export class HelmPage extends BasePage {
   private readonly submitButton = this.page.getByTestId('save-changes');
   private readonly cancelButton = this.page.getByTestId('reset-button');
   private readonly formTitle = this.page.getByTestId('form-title');
-  private readonly formSection = this.page.locator('#root_field-group')
+  private readonly formSection = this.page.locator('#root_field-group');
   private readonly formViewRadio = this.page.locator('#form-radiobutton-editorType-form-field');
   private readonly yamlViewRadio = this.page.locator('#form-radiobutton-editorType-yaml-field');
   private readonly chartVersionDropdown = this.page.locator('#form-dropdown-chartVersion-field');
@@ -56,13 +56,12 @@ export class HelmPage extends BasePage {
   async clickKebabMenu(): Promise<void> {
     const kebabButton = this.page.getByTestId('kebab-button').first();
     await this.robustClick(kebabButton);
-    // Wait for the dropdown menu to appear after clicking
     // eslint-disable-next-line no-restricted-syntax
-    await this.page.locator('[data-test-action]').first().waitFor({ state: 'visible', timeout: 10_000 });
+    await this.page.getByTestId('action-items').waitFor({ state: 'visible', timeout: 10_000 });
   }
 
   async selectAction(actionName: string): Promise<void> {
-    await this.robustClick(this.page.locator(`[data-test-action="${actionName}"]`));
+    await this.robustClick(this.page.getByTestId(actionName));
   }
 
   async navigateToCatalog(namespace: string): Promise<void> {
@@ -89,8 +88,6 @@ export class HelmPage extends BasePage {
 
   async clickInstallButton(): Promise<void> {
     await this.robustClick(this.submitButton);
-    // eslint-disable-next-line no-restricted-syntax
-    await this.submitButton.waitFor({ state: "visible" });
     await this.waitForLoadingComplete(40_000);
   }
 
@@ -113,8 +110,6 @@ export class HelmPage extends BasePage {
 
   async clickUpgradeButton(): Promise<void> {
     await this.robustClick(this.submitButton);
-    // eslint-disable-next-line no-restricted-syntax
-    await this.submitButton.waitFor({ state: "visible", timeout: 1_000 });
     await this.waitForLoadingComplete(60_000);
   }
 
@@ -124,8 +119,6 @@ export class HelmPage extends BasePage {
 
   async clickRollbackButton(): Promise<void> {
     await this.robustClick(this.submitButton);
-    // eslint-disable-next-line no-restricted-syntax
-    await this.submitButton.waitFor({ state: "visible", timeout: 2_000 });
     await this.waitForLoadingComplete(60_000);
   }
 

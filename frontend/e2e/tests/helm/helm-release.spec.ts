@@ -152,7 +152,6 @@ test.describe('Helm Release', { tag: ['@helm', '@smoke'] }, () => {
       // Ensure upgrade is fully completed before checking menu
       await expect(helmPage.getStatusText().first()).toContainText('Deployed', { timeout: 60_000 });
       await helmPage.clickKebabMenu();
-      // const upgradeAction = page.locator('[data-test-action="Upgrade"]');
       const upgradeAction = helmDetailsPage.getActionMenuItem('Upgrade');
       await expect(upgradeAction).toBeVisible({ timeout: 15_000 });
       await expect(helmDetailsPage.getActionMenuItem('Rollback')).toBeVisible();
