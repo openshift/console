@@ -47,7 +47,7 @@ test.describe('Helm Topology', { tag: ['@helm', '@regression'] }, () => {
       await helmPage.switchPerspective('Developer');
       await topologyPage.navigateToTopologyGraph(ns);
       await topologyPage.verifyWorkloadVisible(releaseName);
-      await topologyPage.rightClickOnNode(releaseName);
+      await topologyPage.rightClickOnGroup(releaseName);
       await expect(topologyPage.getContextMenuItem('Upgrade')).toBeVisible({ timeout: 10_000 });
       await expect(topologyPage.getContextMenuItem('Delete Helm Release')).toBeVisible();
       await page.keyboard.press('Escape');
@@ -103,9 +103,7 @@ test.describe('Helm Topology', { tag: ['@helm', '@regression'] }, () => {
 
     await test.step('Click Deployments link in Resources tab (HR-07-TC02)', async () => {
       await sidebarPage.clickTab('Resources');
-      const deploymentLink = sidebarPage.getResourceLink(new RegExp(releaseName));
-      await expect(deploymentLink.first()).toBeVisible({ timeout: 30_000 });
-      await sidebarPage.clickResourceLink(new RegExp(releaseName));
+      await sidebarPage.clickTypedResourceLink('/deployments/');
       await expect(page).toHaveURL(/\/deployments\//, { timeout: 30_000 });
     });
 
@@ -115,7 +113,7 @@ test.describe('Helm Topology', { tag: ['@helm', '@regression'] }, () => {
       await topologyPage.clickOnNode(releaseName);
       await sidebarPage.verify();
       await sidebarPage.clickTab('Resources');
-      await sidebarPage.clickResourceLink(new RegExp(`${releaseName}.*Service|Service.*${releaseName}`, 'i'));
+      await sidebarPage.clickTypedResourceLink('/services/');
       await expect(page).toHaveURL(/\/services\//, { timeout: 30_000 });
     });
 
@@ -125,7 +123,7 @@ test.describe('Helm Topology', { tag: ['@helm', '@regression'] }, () => {
       await topologyPage.clickOnNode(releaseName);
       await sidebarPage.verify();
       await sidebarPage.clickTab('Resources');
-      await sidebarPage.clickResourceLink(new RegExp(`${releaseName}.*Route|Route.*${releaseName}`, 'i'));
+      await sidebarPage.clickTypedResourceLink('/routes/');
       await expect(page).toHaveURL(/\/routes\//, { timeout: 30_000 });
     });
 

@@ -110,6 +110,13 @@ export class TopologyPage extends BasePage {
       .filter({ hasText: nodeName });
   }
 
+  // PF Topology internal class — no data-test available; may break on PF upgrades
+  getGroupNode(groupName: string): Locator {
+    return this.page
+      .locator('g[class$="topology__group__label"]')
+      .filter({ hasText: groupName });
+  }
+
   async ensureGraphView(): Promise<void> {
     const currentLabel = await this.switcher.getAttribute('aria-label');
     if (currentLabel === 'Graph view') {
@@ -136,6 +143,16 @@ export class TopologyPage extends BasePage {
     const node = this.getNode(nodeName);
     await expect(node.first()).toBeVisible({ timeout: 30_000 });
     await node.first().click({ button: 'right' });
+  }
+
+  async rightClickOnGroup(groupName: string): Promise<void> {
+    await this.ensureGraphView();
+    await this.search(groupName);
+    await expect(this.highlightedNode.first()).toBeVisible({ timeout: 30_000 });
+
+    const group = this.getGroupNode(groupName);
+    await expect(group.first()).toBeVisible({ timeout: 30_000 });
+    await group.first().click({ button: 'right' });
   }
 
   getContextMenuItem(action: string): Locator {
