@@ -118,22 +118,26 @@ const CreateHelmChartRepositoryFormEditor: FC<CreateHelmChartRepositoryFormEdito
         helpText={!existingRepo ? t('A unique name for the Helm Chart repository.') : null}
         isDisabled={!!existingRepo}
         required
+        data-test="repo-name"
       />
       <InputField
         type={TextInputTypes.text}
         name="formData.repoDisplayName"
         label={t('Display name')}
         helpText={t('A display name for the Helm Chart repository.')}
+        data-test="repo-display-name"
       />
       <InputField
         type={TextInputTypes.text}
         name="formData.repoDescription"
         label={t('Description')}
         helpText={t('A description for the Helm Chart repository.')}
+        data-test="repo-description"
       />
       <CheckboxField
         name="formData.disabled"
         label={t('Disable usage of the repo in the Software Catalog.')}
+        data-test="repo-disabled"
       />
       <InputField
         type={TextInputTypes.text}
@@ -141,6 +145,7 @@ const CreateHelmChartRepositoryFormEditor: FC<CreateHelmChartRepositoryFormEdito
         label={t('URL')}
         helpText={t('Helm Chart repository URL.')}
         required
+        data-test="repo-url"
       />
       <ExpandCollapse
         textExpanded={t('Hide advanced options')}

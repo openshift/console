@@ -25,6 +25,9 @@ export class HelmPage extends BasePage {
   private readonly formViewRadio = this.page.locator('#form-radiobutton-editorType-form-field');
   private readonly yamlViewRadio = this.page.locator('#form-radiobutton-editorType-yaml-field');
   private readonly chartVersionDropdown = this.page.locator('#form-dropdown-chartVersion-field');
+  private readonly createDropdown = this.page.getByTestId('tab-list-page-create');
+  private readonly helmReleasesTab = this.page.getByRole('tab', { name: 'Helm Releases' });
+  private readonly repositoriesTab = this.page.getByRole('tab', { name: 'Repositories' });
 
   async navigateToHelmReleases(namespace: string): Promise<void> {
     await this.goTo(`/helm/ns/${namespace}`);
@@ -78,6 +81,7 @@ export class HelmPage extends BasePage {
   }
 
   async clickCreateOnSidePane(): Promise<void> {
+    // force: true needed because the catalog side pane overlay can intercept pointer events
     await this.robustClick(this.catalogSidePane.locator('[role="button"]'), { force: true });
   }
 
@@ -88,7 +92,6 @@ export class HelmPage extends BasePage {
 
   async clickInstallButton(): Promise<void> {
     await this.robustClick(this.submitButton);
-    await this.waitForLoadingComplete(40_000);
   }
 
   async upgradeChartVersion(): Promise<void> {
@@ -110,7 +113,6 @@ export class HelmPage extends BasePage {
 
   async clickUpgradeButton(): Promise<void> {
     await this.robustClick(this.submitButton);
-    await this.waitForLoadingComplete(60_000);
   }
 
   async selectRevision(): Promise<void> {
@@ -119,7 +121,6 @@ export class HelmPage extends BasePage {
 
   async clickRollbackButton(): Promise<void> {
     await this.robustClick(this.submitButton);
-    await this.waitForLoadingComplete(60_000);
   }
 
   getEmptyMessage(): Locator {
@@ -170,5 +171,59 @@ export class HelmPage extends BasePage {
     return this.page.locator(
       `[data-ouia-component-id="DataViewCheckboxFilter-filter-item-${status.toLowerCase()}"]`,
     );
+  }
+
+  getHelmReleasesTab(): Locator {
+    return this.helmReleasesTab;
+  }
+
+  getRepositoriesTab(): Locator {
+    return this.repositoriesTab;
+  }
+
+  async clickCreateDropdown(): Promise<void> {
+    await this.robustClick(this.createDropdown);
+  }
+
+  async selectCreateOption(key: string): Promise<void> {
+    await this.robustClick(this.page.getByTestId(key));
+  }
+
+  async clickRepositoriesTab(): Promise<void> {
+    await this.robustClick(this.repositoriesTab);
+  }
+
+  async clickHelmReleasesTab(): Promise<void> {
+    await this.robustClick(this.helmReleasesTab);
+  }
+
+  getCreateDropdownItem(key: string): Locator {
+    return this.page.getByTestId(key);
+  }
+
+  getChartTiles(): Locator {
+    return this.page.locator('[data-test^="HelmChart-"]');
+  }
+
+  getYamlEditor(): Locator {
+    return this.page.locator('.monaco-editor');
+  }
+
+  getChartVersionDropdown(): Locator {
+    return this.chartVersionDropdown;
+  }
+
+  getAddPageHelmCard(): Locator {
+    return this.page.getByTestId('item helm');
+  }
+
+  getNonConfigurableAlert(): Locator {
+    return this.page.getByText(
+      "Helm release is not configurable since the Helm Chart doesn't define any values.",
+    );
+  }
+
+  getClearAllFiltersButton(): Locator {
+    return this.page.getByRole('button', { name: /clear all filters/i });
   }
 }
