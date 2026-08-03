@@ -30,14 +30,6 @@ export class TopologySidebarPage extends BasePage {
     await this.robustClick(this.getTab(tabName));
   }
 
-  getResourceLink(name: string | RegExp): Locator {
-    return this.dialog.getByRole('link', { name });
-  }
-
-  async clickResourceLink(name: string | RegExp): Promise<void> {
-    await this.robustClick(this.getResourceLink(name));
-  }
-
   async clickTypedResourceLink(resourcePath: string): Promise<void> {
     const link = this.dialog.locator(`a[href*="${resourcePath}"]`);
     await this.robustClick(link.first());

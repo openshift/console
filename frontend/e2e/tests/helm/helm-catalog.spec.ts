@@ -94,9 +94,8 @@ test.describe('Helm Catalog', { tag: ['@helm', '@regression'] }, () => {
 
     await test.step('Clear all filters (HR-05-TC10)', async () => {
       const clearButton = helmPage.getClearAllFiltersButton();
-      if (await clearButton.isVisible().catch(() => false)) {
-        await clearButton.click();
-      }
+      await expect(clearButton).toBeVisible({ timeout: 10_000 });
+      await clearButton.click();
       await expect(helmPage.getTable()).toBeVisible({ timeout: 30_000 });
     });
 
