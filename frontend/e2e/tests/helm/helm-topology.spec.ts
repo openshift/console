@@ -31,11 +31,11 @@ test.describe('Helm Topology', { tag: ['@helm', '@regression'] }, () => {
       await helmPage.clickInstallButton();
     });
 
+    await test.step('Wait for release to be deployed', async () => {
+      await helmPage.waitForHelmReleaseDeployed(ns, releaseName);
+    });
+
     await test.step('Verify kebab menu options on Helm page (HR-01-TC02)', async () => {
-      await helmPage.navigateToHelmReleases(ns);
-      await helmPage.searchByName(releaseName);
-      await expect(helmPage.getTable()).toBeVisible({ timeout: 30_000 });
-      await expect(helmPage.getStatusText().first()).toContainText('Deployed', { timeout: 60_000 });
 
       await helmPage.clickKebabMenu();
       await expect(helmDetailsPage.getActionMenuItem('Upgrade')).toBeVisible();
@@ -45,8 +45,10 @@ test.describe('Helm Topology', { tag: ['@helm', '@regression'] }, () => {
 
     await test.step('Verify context menu in topology (HR-01-TC01)', async () => {
       await helmPage.switchPerspective('Developer');
-      await topologyPage.navigateToTopologyGraph(ns);
-      await topologyPage.verifyWorkloadVisible(releaseName);
+      await expect(async () => {
+        await topologyPage.navigateToTopologyGraph(ns);
+        await topologyPage.verifyWorkloadVisible(releaseName);
+      }).toPass({ intervals: [5_000, 10_000], timeout: 60_000 });
       await topologyPage.rightClickOnGroup(releaseName);
       await expect(topologyPage.getContextMenuItem('Upgrade')).toBeVisible({ timeout: 10_000 });
       await expect(topologyPage.getContextMenuItem('Delete Helm Release')).toBeVisible();
@@ -83,15 +85,15 @@ test.describe('Helm Topology', { tag: ['@helm', '@regression'] }, () => {
     });
 
     await test.step('Wait for release to be deployed', async () => {
-      await helmPage.navigateToHelmReleases(ns);
-      await helmPage.searchByName(releaseName);
-      await expect(helmPage.getStatusText().first()).toContainText('Deployed', { timeout: 60_000 });
+      await helmPage.waitForHelmReleaseDeployed(ns, releaseName);
     });
 
     await test.step('Switch to Developer perspective and open topology', async () => {
       await helmPage.switchPerspective('Developer');
-      await topologyPage.navigateToTopologyGraph(ns);
-      await topologyPage.verifyWorkloadVisible(releaseName);
+      await expect(async () => {
+        await topologyPage.navigateToTopologyGraph(ns);
+        await topologyPage.verifyWorkloadVisible(releaseName);
+      }).toPass({ intervals: [5_000, 10_000], timeout: 60_000 });
     });
 
     await test.step('Open sidebar and verify tabs (HR-07-TC01)', async () => {
@@ -108,8 +110,8 @@ test.describe('Helm Topology', { tag: ['@helm', '@regression'] }, () => {
     });
 
     await test.step('Navigate back and click Services link (HR-07-TC04)', async () => {
-      await page.goBack();
-      await topologyPage.verifyWorkloadVisible(releaseName);
+      await topologyPage.navigateToTopologyGraph(ns);
+      await topologyPage.verifyWorkloadVisible(releaseName, 60_000);
       await topologyPage.clickOnNode(releaseName);
       await sidebarPage.verify();
       await sidebarPage.clickTab('Resources');
@@ -118,8 +120,8 @@ test.describe('Helm Topology', { tag: ['@helm', '@regression'] }, () => {
     });
 
     await test.step('Navigate back and click Routes link (HR-07-TC06)', async () => {
-      await page.goBack();
-      await topologyPage.verifyWorkloadVisible(releaseName);
+      await topologyPage.navigateToTopologyGraph(ns);
+      await topologyPage.verifyWorkloadVisible(releaseName, 60_000);
       await topologyPage.clickOnNode(releaseName);
       await sidebarPage.verify();
       await sidebarPage.clickTab('Resources');

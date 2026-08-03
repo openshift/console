@@ -98,7 +98,7 @@ export class TopologyPage extends BasePage {
   async verifyGroupLabel(workloadName: string, groupName: string, timeout = 15_000): Promise<void> {
     await this.ensureGraphView();
     await this.search(workloadName);
-    const label = this.page.locator('g[class$="topology__group__label"]');
+    const label = this.page.locator('g[class*="topology__group__label"]');
     const textContent = label.locator('> text');
     await expect(textContent).toHaveText(groupName, { timeout });
   }
@@ -113,7 +113,7 @@ export class TopologyPage extends BasePage {
   // PF Topology internal class — no data-test available; may break on PF upgrades
   getGroupNode(groupName: string): Locator {
     return this.page
-      .locator('g[class$="topology__group__label"]')
+      .locator('g[class*="topology__group__label"]')
       .filter({ hasText: groupName });
   }
 
