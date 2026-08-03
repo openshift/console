@@ -138,8 +138,12 @@ export class TopologyPage extends BasePage {
     await node.first().click({ button: 'right' });
   }
 
+  getContextMenuItem(action: string): Locator {
+    return this.page.getByRole('menuitem', { name: action });
+  }
+
   async selectContextMenuAction(action: string): Promise<void> {
-    const actionButton = this.page.getByRole('menuitem', { name: action })
+    const actionButton = this.getContextMenuItem(action);
     await expect(actionButton).toBeVisible({ timeout: 10_000 });
     await this.robustClick(actionButton);
   }
