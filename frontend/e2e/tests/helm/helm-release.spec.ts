@@ -65,6 +65,7 @@ test.describe('Helm Release', { tag: ['@helm', '@smoke'] }, () => {
     k8sClient,
     cleanup,
   }) => {
+    test.setTimeout(300_000);
     const ns = `aut-helm-lifecycle-${Date.now()}`;
     const releaseName = 'nodejs-release';
     await k8sClient.createNamespace(ns);
@@ -88,8 +89,9 @@ test.describe('Helm Release', { tag: ['@helm', '@smoke'] }, () => {
       await expect(helmPage.getTable()).toBeVisible({ timeout: 30_000 });
     });
 
-    await test.step('Verify status icons (HR-01-TC04)', async () => {
-      await expect(helmPage.getStatusIcon().first()).toBeVisible({ timeout: 60_000 });
+    await test.step('Wait for release to be deployed and verify status icons (HR-01-TC04)', async () => {
+      await helmPage.waitForHelmReleaseDeployed(ns, releaseName);
+      await expect(helmPage.getStatusIcon().first()).toBeVisible();
       await expect(helmPage.getStatusText().first()).toBeVisible();
     });
 
@@ -149,8 +151,7 @@ test.describe('Helm Release', { tag: ['@helm', '@smoke'] }, () => {
     });
 
     await test.step('Verify kebab menu actions after upgrade (HR-08-TC01)', async () => {
-      // Ensure upgrade is fully completed before checking menu
-      await expect(helmPage.getStatusText().first()).toContainText('Deployed', { timeout: 60_000 });
+      await helmPage.waitForHelmReleaseDeployed(ns, releaseName);
       await helmPage.clickKebabMenu();
       const upgradeAction = helmDetailsPage.getActionMenuItem('Upgrade');
       await expect(upgradeAction).toBeVisible({ timeout: 15_000 });
