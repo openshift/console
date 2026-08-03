@@ -102,7 +102,7 @@ test.describe(
       await test.step('Configure and create deployment', async () => {
         await deployPage.selectRuntimeIcon('fedora');
         await deployPage.enterName('hello-internal');
-        await deployPage.selectResourceType('deployment');
+        await deployPage.selectResourceType('Deployment');
         await deployPage.clickCreate();
       });
 

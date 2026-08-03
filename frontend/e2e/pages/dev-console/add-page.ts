@@ -52,10 +52,11 @@ export class AddPage extends BasePage {
   }
 
   async clickShowGettingStartedResources(): Promise<void> {
-    await this.page.reload({ waitUntil: 'domcontentloaded' });
     const link = this.page.getByTestId('restore-getting-started');
-    // eslint-disable-next-line no-restricted-syntax
-    await link.waitFor({ state: 'visible', timeout: 30_000 });
+    await expect(async () => {
+      await this.page.reload({ waitUntil: 'domcontentloaded' });
+      await expect(link).toBeVisible({ timeout: 5_000 });
+    }).toPass({ intervals: [1_000, 2_000, 5_000], timeout: 60_000 });
     await this.robustClick(link);
   }
 
@@ -110,7 +111,7 @@ export class AddPage extends BasePage {
   }
 
   getAddCardHeading(name: string): Locator {
-    return this.page.getByTestId('add-cards').getByRole('heading', { name, exact: true });
+    return this.page.getByTestId('add-cards').getByRole('heading', { level: 2, name, exact: true });
   }
 
   getViewAllLink(): Locator {
@@ -164,10 +165,10 @@ export class ImportFromGitPage extends BasePage {
     const toggle = this.page.locator('#form-select-input-resources-field');
     // eslint-disable-next-line no-restricted-syntax
     await toggle.waitFor({ state: 'visible', timeout: 30_000 });
-    const currentValue = (await toggle.textContent()) || '';
-    if (currentValue.includes(type)) return;
+    const currentValue = (await toggle.textContent())?.trim() || '';
+    if (currentValue === type) return;
     await this.robustClick(toggle);
-    const option = this.page.getByRole('option', { name: type, exact: true });
+    const option = this.page.getByRole('option', { name: new RegExp(`^${type}\\b`) });
     await this.robustClick(option);
   }
 
@@ -344,10 +345,10 @@ export class DeployImagePage extends BasePage {
     const toggle = this.page.locator('#form-select-input-resources-field');
     // eslint-disable-next-line no-restricted-syntax
     await toggle.waitFor({ state: 'visible', timeout: 30_000 });
-    const currentValue = (await toggle.textContent()) || '';
-    if (currentValue.includes(type)) return;
+    const currentValue = (await toggle.textContent())?.trim() || '';
+    if (currentValue === type) return;
     await this.robustClick(toggle);
-    const option = this.page.getByRole('option', { name: type, exact: true });
+    const option = this.page.getByRole('option', { name: new RegExp(`^${type}\\b`) });
     await this.robustClick(option);
   }
 
@@ -510,9 +511,11 @@ export class TopologyPage extends BasePage {
     const workload = this.getWorkload(name);
     // eslint-disable-next-line no-restricted-syntax
     await workload.waitFor({ state: 'visible', timeout: 60_000 });
-    // Dismiss any open sidebar that may intercept clicks on topology nodes
     await this.page.keyboard.press('Escape');
-    await this.robustClick(workload);
+    await expect(async () => {
+      await this.robustClick(workload);
+      await expect(this.getSidebar()).toBeVisible({ timeout: 5_000 });
+    }).toPass({ intervals: [1_000, 2_000, 5_000], timeout: 30_000 });
   }
 
   getSidebar(): Locator {

@@ -44,8 +44,8 @@ test.describe('Add page on Developer Console', { tag: ['@dev-console', '@regress
   test('displays Add page cards and options [A-11-TC02]', async () => {
     await expect(addPage.getAddCardHeading('Software Catalog')).toBeVisible({ timeout: 30_000 });
     await expect(addPage.getAddCardHeading('Git Repository')).toBeVisible();
-    await expect(addPage.getAddCardHeading('Container images')).toBeVisible();
-    await expect(addPage.getAddCardHeading('Samples')).toBeVisible();
+    await expect(addPage.getCardItem('deploy-image')).toBeVisible();
+    await expect(addPage.getCardItem('import-from-samples')).toBeVisible();
     await expect(addPage.getAddCardHeading('From Local Machine')).toBeVisible();
   });
 
@@ -102,7 +102,6 @@ test.describe(
       });
 
       await test.step('Show Getting Started Resources again', async () => {
-        await addPage.page.reload({ waitUntil: 'domcontentloaded' });
         await addPage.clickShowGettingStartedResources();
         const gettingStarted = addPage.getGettingStartedResources();
         await expect(gettingStarted).toBeVisible({ timeout: 30_000 });
