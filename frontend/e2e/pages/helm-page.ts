@@ -1,5 +1,7 @@
 import type { Locator } from '@playwright/test';
 
+import { expect } from '../fixtures';
+
 import BasePage from './base-page';
 
 export class HelmPage extends BasePage {
@@ -225,5 +227,13 @@ export class HelmPage extends BasePage {
 
   getClearAllFiltersButton(): Locator {
     return this.page.getByText(/clear filters/i);
+  }
+
+  async waitForHelmReleaseDeployed(ns: string, releaseName: string, timeout = 120_000): Promise<void> {
+    await expect(async () => {
+      await this.navigateToHelmReleases(ns);
+      await this.searchByName(releaseName);
+      await expect(this.statusText.first()).toContainText('Deployed', { timeout: 10_000 });
+    }).toPass({ intervals: [5_000, 10_000, 15_000], timeout });
   }
 }
