@@ -46,23 +46,23 @@ export class HelmRepositoryPage extends BasePage {
   }
 
   async fillName(name: string): Promise<void> {
-    await this.nameField.locator('input').clear();
-    await this.nameField.locator('input').fill(name);
+    await this.nameField.clear();
+    await this.nameField.fill(name);
   }
 
   async fillDisplayName(name: string): Promise<void> {
-    await this.displayNameField.locator('input').clear();
-    await this.displayNameField.locator('input').fill(name);
+    await this.displayNameField.clear();
+    await this.displayNameField.fill(name);
   }
 
   async fillDescription(description: string): Promise<void> {
-    await this.descriptionField.locator('input').clear();
-    await this.descriptionField.locator('input').fill(description);
+    await this.descriptionField.clear();
+    await this.descriptionField.fill(description);
   }
 
   async fillUrl(url: string): Promise<void> {
-    await this.urlField.locator('input').clear();
-    await this.urlField.locator('input').fill(url);
+    await this.urlField.clear();
+    await this.urlField.fill(url);
   }
 
   async clickCreate(): Promise<void> {
@@ -90,15 +90,4 @@ export class HelmRepositoryPage extends BasePage {
     await this.robustClick(this.page.getByTestId(`Edit ${resourceType}`));
   }
 
-  getChartRepositoriesFilter(): Locator {
-    return this.page.getByText('Chart Repositories');
-  }
-
-  getFilterOption(name: string): Locator {
-    return this.page.getByText(name);
-  }
-
-  async clickChartRepositoriesFilter(): Promise<void> {
-    await this.robustClick(this.getChartRepositoriesFilter());
-  }
 }

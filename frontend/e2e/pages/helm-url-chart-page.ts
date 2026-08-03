@@ -19,7 +19,7 @@ export class HelmURLChartPage extends BasePage {
   private readonly nonConfigurableAlert = this.page.getByText(
     "Helm release is not configurable since the Helm Chart doesn't define any values.",
   );
-  private readonly urlValidationError = this.page.getByText('Invalid chart URL format');
+  private readonly urlValidationError = this.page.getByText('Must be a valid OCI URL or a valid HTTP/HTTPS tar file');
 
   async navigateToUrlChart(namespace: string): Promise<void> {
     await this.goTo(`/helm/ns/${namespace}/url-chart`);
@@ -66,18 +66,18 @@ export class HelmURLChartPage extends BasePage {
   }
 
   async fillChartUrl(url: string): Promise<void> {
-    await this.chartUrlField.locator('input').clear();
-    await this.chartUrlField.locator('input').fill(url);
+    await this.chartUrlField.clear();
+    await this.chartUrlField.fill(url);
   }
 
   async fillReleaseName(name: string): Promise<void> {
-    await this.releaseNameField.locator('input').clear();
-    await this.releaseNameField.locator('input').fill(name);
+    await this.releaseNameField.clear();
+    await this.releaseNameField.fill(name);
   }
 
   async fillChartVersion(version: string): Promise<void> {
-    await this.chartVersionField.locator('input').clear();
-    await this.chartVersionField.locator('input').fill(version);
+    await this.chartVersionField.clear();
+    await this.chartVersionField.fill(version);
   }
 
   async clickNext(): Promise<void> {

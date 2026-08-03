@@ -48,7 +48,7 @@ test.describe('Helm URL Chart Install', { tag: ['@helm', '@regression'] }, () =>
       await urlChartPage.fillReleaseName('');
       await urlChartPage.fillChartVersion('');
       // Click the url field to trigger blur on version field
-      await urlChartPage.getChartUrlField().locator('input').click();
+      await urlChartPage.getChartUrlField().click();
 
       await expect(urlChartPage.getSubmitButton()).toBeDisabled();
     });
@@ -58,7 +58,7 @@ test.describe('Helm URL Chart Install', { tag: ['@helm', '@regression'] }, () =>
       await urlChartPage.fillReleaseName('test-release');
       await urlChartPage.fillChartVersion('1.0.0');
       // Trigger validation by blurring
-      await urlChartPage.getReleaseNameField().locator('input').click();
+      await urlChartPage.getReleaseNameField().click();
 
       await expect(urlChartPage.getUrlValidationError()).toBeVisible({ timeout: 10_000 });
     });
@@ -84,21 +84,21 @@ test.describe('Helm URL Chart Install', { tag: ['@helm', '@regression'] }, () =>
       );
 
       // Verify auto-populated fields
-      await expect(urlChartPage.getReleaseNameField().locator('input')).toHaveValue('dotnet', {
+      await expect(urlChartPage.getReleaseNameField()).toHaveValue('dotnet', {
         timeout: 10_000,
       });
-      await expect(urlChartPage.getChartVersionField().locator('input')).toHaveValue('0.0.1', {
+      await expect(urlChartPage.getChartVersionField()).toHaveValue('0.0.1', {
         timeout: 10_000,
       });
     });
 
     await test.step('Click Next and verify step 2 disabled fields', async () => {
       await urlChartPage.clickNext();
-      await expect(urlChartPage.getStep2ChartUrl().locator('input')).toBeDisabled({
+      await expect(urlChartPage.getStep2ChartUrl()).toBeDisabled({
         timeout: 30_000,
       });
-      await expect(urlChartPage.getStep2ReleaseName().locator('input')).toBeDisabled();
-      await expect(urlChartPage.getStep2ChartVersion().locator('input')).toBeDisabled();
+      await expect(urlChartPage.getStep2ReleaseName()).toBeDisabled();
+      await expect(urlChartPage.getStep2ChartVersion()).toBeDisabled();
     });
 
     await test.step('Install the chart', async () => {
@@ -139,7 +139,7 @@ test.describe('Helm URL Chart Install', { tag: ['@helm', '@regression'] }, () =>
         await urlChartPage.fillChartUrl('oci://ghcr.io/stefanprodan/charts/podinfo');
         await urlChartPage.fillChartVersion('6.7.1');
 
-        await expect(urlChartPage.getReleaseNameField().locator('input')).toHaveValue('podinfo', {
+        await expect(urlChartPage.getReleaseNameField()).toHaveValue('podinfo', {
           timeout: 10_000,
         });
       });

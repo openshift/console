@@ -34,14 +34,14 @@ export class HelmPage extends BasePage {
   }
 
   async searchByName(name: string): Promise<void> {
-    const filterToggle = this.dataViewFilters.getByRole('button');
+    const filterToggle = this.dataViewFilters.getByRole('button').first();
     await this.robustClick(filterToggle, { timeout: 60_000 });
     await this.page.getByRole('menuitem', { name: 'Name' }).click();
     await this.nameFilterInput.fill(name);
   }
 
   async filterByStatus(status: string): Promise<void> {
-    const filterToggle = this.dataViewFilters.getByRole('button');
+    const filterToggle = this.dataViewFilters.getByRole('button').first();
     await this.robustClick(filterToggle);
     await this.page.getByRole('menuitem', { name: 'Status' }).click();
     await this.robustClick(this.filterDropdown);
