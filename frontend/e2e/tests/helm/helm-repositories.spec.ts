@@ -161,20 +161,18 @@ test.describe('Helm Repositories', { tag: ['@helm', '@regression'] }, () => {
       await repoPage.clickCreate();
     });
 
-    await test.step('Verify repo visible in Chart Repositories filter in its namespace', async () => {
+    await test.step('Verify repo visible in Repositories tab in its namespace', async () => {
       const helmPage = new HelmPage(page);
-      await helmPage.goTo(`/catalog/ns/${ns}?catalogType=HelmChart`);
-      await expect(repoPage.getChartRepositoriesFilter()).toBeVisible({ timeout: 30_000 });
-      await repoPage.clickChartRepositoriesFilter();
-      await expect(repoPage.getFilterOption(repoDisplayName)).toBeVisible({ timeout: 10_000 });
+      await helmPage.navigateToHelmReleases(ns);
+      await helmPage.clickRepositoriesTab();
+      await expect(repoPage.getRepositoryRow(repoName)).toBeVisible({ timeout: 30_000 });
     });
 
     await test.step('Verify repo NOT visible in a different namespace', async () => {
       const helmPage = new HelmPage(page);
-      await helmPage.goTo(`/catalog/ns/${otherNs}?catalogType=HelmChart`);
-      await expect(repoPage.getChartRepositoriesFilter()).toBeVisible({ timeout: 30_000 });
-      await repoPage.clickChartRepositoriesFilter();
-      await expect(repoPage.getFilterOption(repoDisplayName)).toBeHidden();
+      await helmPage.navigateToHelmReleases(otherNs);
+      await helmPage.clickRepositoriesTab();
+      await expect(repoPage.getRepositoryRow(repoName)).toBeHidden({ timeout: 10_000 });
     });
   });
 });
