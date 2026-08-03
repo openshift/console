@@ -224,6 +224,6 @@ export class HelmPage extends BasePage {
   }
 
   getClearAllFiltersButton(): Locator {
-    return this.page.getByRole('button', { name: /clear all filters/i });
+    return this.page.getByText(/clear filters/i);
   }
 }
