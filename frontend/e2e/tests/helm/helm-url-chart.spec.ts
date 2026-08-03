@@ -106,11 +106,8 @@ test.describe('Helm URL Chart Install', { tag: ['@helm', '@regression'] }, () =>
       await expect(page).toHaveURL(/\/helm\/|\/topology\//, { timeout: 60_000 });
     });
 
-    await test.step('Verify release exists in helm releases list', async () => {
-      await helmPage.navigateToHelmReleases(ns);
-      await helmPage.searchByName('dotnet');
-      await expect(helmPage.getTable()).toBeVisible({ timeout: 30_000 });
-      await expect(helmPage.getStatusText().first()).toContainText('Deployed', { timeout: 60_000 });
+    await test.step('Wait for release to be deployed', async () => {
+      await helmPage.waitForHelmReleaseDeployed(ns, 'dotnet');
     });
 
     await test.step('Upgrade URL-installed release (HR-URL-TC06)', async () => {
