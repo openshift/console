@@ -52,7 +52,10 @@ const HelmURLChartForm: FC<FormikProps<HelmURLChartFormData> & HelmURLChartFormP
     try {
       url = new URL(values.chartURL);
     } catch {
-      setFieldError('chartURL', t('Invalid chart URL format.'));
+      setFieldError(
+        'chartURL',
+        t('Invalid chart URL. Enter an OCI URL (oci://...) or an HTTPS .tar file URL.'),
+      );
       return;
     }
     const scheme = url.protocol;
@@ -94,7 +97,7 @@ const HelmURLChartForm: FC<FormikProps<HelmURLChartFormData> & HelmURLChartFormP
         <FormHeader
           title={t('Install Helm Chart from URL')}
           helpText={t(
-            'Enter an OCI registry URL or an HTTP/HTTPS .tar file link and version to install the chart.',
+            'Enter an OCI registry URL or an HTTP/HTTPS .tar file URL and version to install the Helm Chart.',
           )}
           marginBottom="lg"
         />
@@ -106,7 +109,7 @@ const HelmURLChartForm: FC<FormikProps<HelmURLChartFormData> & HelmURLChartFormP
                 name="chartURL"
                 label={t('Chart URL')}
                 helpText={t(
-                  'OCI or HTTP/HTTPS .tar file for the Helm Chart; for example, oci://registry.example.com/charts/mychart or https://example.com/chart-1.0.0.tgz.',
+                  'OCI URL or HTTP/HTTPS .tar file for the Helm Chart; for example, oci://registry.example.com/charts/mychart or https://example.com/chart-1.0.0.tgz.',
                 )}
                 placeholder="oci://registry.example.com/charts/mychart or https://example.com/chart-1.0.0.tgz"
                 required
