@@ -323,9 +323,6 @@ export const getConditionUpgradeableFalse = (resource) =>
     (c) => c.type === 'Upgradeable' && c.status === K8sResourceConditionStatus.False,
   );
 
-export const getNotUpgradeableResources = (resources) =>
-  resources.filter((resource) => getConditionUpgradeableFalse(resource));
-
 export enum NodeTypes {
   master = 'master',
   worker = 'worker',
