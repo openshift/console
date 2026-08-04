@@ -8,7 +8,7 @@ export class UserPreferencesPage extends BasePage {
 
   async navigateToPreferences(): Promise<void> {
     await this.masthead.openUserDropdown();
-    const userPrefsLink = this.page.getByRole('menuitem', { name: 'User Preferences' });
+    const userPrefsLink = this.page.getByRole('menuitem', { name: 'User preferences' });
     await this.robustClick(userPrefsLink);
     await this.waitForLoadingComplete();
   }
