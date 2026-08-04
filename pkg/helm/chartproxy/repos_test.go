@@ -3,7 +3,7 @@ package chartproxy
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"os"
@@ -260,11 +260,12 @@ func TestHelmRepoGetter_List(t *testing.T) {
 
 func TestHelmRepoGetter_ListErrors(t *testing.T) {
 	tests := []struct {
-		name             string
-		helmCRS          []*unstructured.Unstructured
-		expectedRepoName []string
-		apiErrors        []apiError
-		namespace        string
+		name                    string
+		helmCRS                 []*unstructured.Unstructured
+		expectedRepoName        []string
+		expectedConfigErrorRepo []string
+		apiErrors               []apiError
+		namespace               string
 	}{
 		{
 			name: "skip repo that refer non-existent config map",
@@ -303,7 +304,8 @@ func TestHelmRepoGetter_ListErrors(t *testing.T) {
 					},
 				},
 			},
-			expectedRepoName: []string{"repo2"},
+			expectedRepoName:        []string{"repo2"},
+			expectedConfigErrorRepo: []string{"repo1"},
 		},
 		{
 			name: "skip repo that refer config map that cannot be accessed",
@@ -349,7 +351,8 @@ func TestHelmRepoGetter_ListErrors(t *testing.T) {
 					msg:      "foo",
 				},
 			},
-			expectedRepoName: []string{"repo2"},
+			expectedRepoName:        []string{"repo2"},
+			expectedConfigErrorRepo: []string{"repo1"},
 		},
 		{
 			name: "skip repo that refer secret that cannot be accessed",
@@ -395,7 +398,8 @@ func TestHelmRepoGetter_ListErrors(t *testing.T) {
 					msg:      "foo",
 				},
 			},
-			expectedRepoName: []string{"repo2"},
+			expectedRepoName:        []string{"repo2"},
+			expectedConfigErrorRepo: []string{"repo1"},
 		},
 	}
 	for _, tt := range tests {
@@ -408,7 +412,7 @@ func TestHelmRepoGetter_ListErrors(t *testing.T) {
 				})
 			}
 			repoGetter := NewRepoGetter(client, coreClient.CoreV1())
-			repos, err := repoGetter.List(tt.namespace)
+			repos, configErrors, err := repoGetter.List(tt.namespace)
 			if err != nil {
 				t.Error(err)
 			}
@@ -418,6 +422,17 @@ func TestHelmRepoGetter_ListErrors(t *testing.T) {
 			for i, repoName := range tt.expectedRepoName {
 				if repoName != repos[i].Name {
 					t.Errorf("Expected %v but got %v", repoName, repos[i].Name)
+				}
+			}
+			if len(configErrors) != len(tt.expectedConfigErrorRepo) {
+				t.Fatalf("Expected %v config errors, but got %v", len(tt.expectedConfigErrorRepo), len(configErrors))
+			}
+			for i, expectedName := range tt.expectedConfigErrorRepo {
+				if configErrors[i].Name != expectedName {
+					t.Errorf("Expected config error repo %v but got %v", expectedName, configErrors[i].Name)
+				}
+				if configErrors[i].Error == "" {
+					t.Errorf("Expected non-empty error message for repo %v", expectedName)
 				}
 			}
 		})
@@ -500,7 +515,7 @@ func TestHelmRepo_IndexFile(t *testing.T) {
 								if err != nil {
 									t.Error(err)
 								}
-								resp.Body = ioutil.NopCloser(r)
+								resp.Body = io.NopCloser(r)
 							}
 							return resp
 						}),
@@ -517,7 +532,7 @@ func TestHelmRepo_IndexFile(t *testing.T) {
 				if tt.expectedIndexFile != "" {
 					expectedIndexPath = tt.expectedIndexFile
 				}
-				data, err := ioutil.ReadFile(expectedIndexPath)
+				data, err := os.ReadFile(expectedIndexPath)
 				if err != nil {
 					t.Error(err)
 				}
@@ -624,7 +639,7 @@ func TestHelmRepoGetter_SkipDisabled(t *testing.T) {
 			client := fake.K8sDynamicClientFromCRs(tt.helmCRS...)
 			coreClient := k8sfake.NewSimpleClientset()
 			repoGetter := NewRepoGetter(client, coreClient.CoreV1())
-			repos, err := repoGetter.List(tt.namespace)
+			repos, _, err := repoGetter.List(tt.namespace)
 			if err != nil {
 				t.Error(err)
 			}
@@ -829,9 +844,9 @@ func TestHelmRepoGetter_unmarshallConfig(t *testing.T) {
 			}
 			// create a secret in required namespace
 			if tt.createSecret {
-				certificate, errCert := ioutil.ReadFile("./server.crt")
+				certificate, errCert := os.ReadFile("./server.crt")
 				require.NoError(t, errCert)
-				key, errKey := ioutil.ReadFile("./server.key")
+				key, errKey := os.ReadFile("./server.key")
 				require.NoError(t, errKey)
 				data := map[string][]byte{
 					"tls.key": key,
@@ -870,13 +885,13 @@ func ExecuteScript(filepath string, waitForCompletion bool) error {
 	tlsCmd.Stderr = os.Stderr
 	err := tlsCmd.Start()
 	if err != nil {
-		bytes, _ := ioutil.ReadAll(os.Stderr)
+		bytes, _ := io.ReadAll(os.Stderr)
 		return fmt.Errorf("Error starting command :%s:%s:%w", filepath, string(bytes), err)
 	}
 	if waitForCompletion {
 		err = tlsCmd.Wait()
 		if err != nil {
-			bytes, _ := ioutil.ReadAll(os.Stderr)
+			bytes, _ := io.ReadAll(os.Stderr)
 			return fmt.Errorf("Error waiting command :%s:%s:%w", filepath, string(bytes), err)
 		}
 	}
