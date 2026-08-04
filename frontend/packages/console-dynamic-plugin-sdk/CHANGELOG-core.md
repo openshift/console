@@ -10,7 +10,7 @@ For current development version of Console, use `4.x.0-prerelease.n` packages.
 For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility
 table in [Console dynamic plugins README](./README.md).
 
-## 4.23.0-prerelease.5 - TBD
+## 4.23.0-prerelease.5 - 2026-08-04
 
 - **Deprecated**: The use of multiple predicates in the `useResolvedExtensions` hook is deprecated ([#16115], [CONSOLE-5065])
 - **Type breaking**: Replace `ExtensionTypeGuard` with `ExtensionPredicate` from `@openshift/dynamic-plugin-sdk` ([#16115], [CONSOLE-5065])
