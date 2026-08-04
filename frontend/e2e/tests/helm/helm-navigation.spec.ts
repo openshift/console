@@ -1,4 +1,5 @@
 import { test, expect } from '../../fixtures';
+import { warmupSPA } from '../../pages/base-page';
 import { HelmPage } from '../../pages/helm-page';
 import { TopologyPage } from '../../pages/topology-page';
 
@@ -15,6 +16,8 @@ test.describe('Helm Chart Navigation', { tag: ['@helm'] }, () => {
     const helmPage = new HelmPage(page);
 
     await test.step('Navigate to Helm Chart catalog and open Nodejs chart', async () => {
+      await warmupSPA(page);
+      await helmPage.switchPerspective('Developer');
       await helmPage.navigateToCatalogHelmCharts(ns);
       await helmPage.searchAndSelectHelmChart('Nodejs');
     });
@@ -34,6 +37,8 @@ test.describe('Helm Chart Navigation', { tag: ['@helm'] }, () => {
     const topologyPage = new TopologyPage(page);
 
     await test.step('Navigate to Helm Chart catalog and open Nodejs chart', async () => {
+      await warmupSPA(page);
+      await helmPage.switchPerspective('Developer');
       await helmPage.navigateToCatalogHelmCharts(ns);
       await helmPage.searchAndSelectHelmChart('Nodejs');
     });
@@ -55,6 +60,8 @@ test.describe('Helm Chart Navigation', { tag: ['@helm'] }, () => {
     const helmPage = new HelmPage(page);
 
     await test.step('Navigate to Helm releases page', async () => {
+      await warmupSPA(page);
+      await helmPage.switchPerspective('Developer');
       await helmPage.navigateToHelmReleases(ns);
     });
 
@@ -76,6 +83,8 @@ test.describe('Helm Chart Navigation', { tag: ['@helm'] }, () => {
     const helmPage = new HelmPage(page);
 
     await test.step('Navigate to Helm releases page', async () => {
+      await warmupSPA(page);
+      await helmPage.switchPerspective('Developer');
       await helmPage.navigateToHelmReleases(ns);
     });
 
@@ -99,6 +108,8 @@ test.describe('Helm Chart Navigation', { tag: ['@helm'] }, () => {
     const helmPage = new HelmPage(page);
 
     await test.step('Install a Helm Chart to have searchable data', async () => {
+      await warmupSPA(page);
+      await helmPage.switchPerspective('Developer');
       await helmPage.navigateToCatalogHelmCharts(ns);
       await helmPage.searchAndSelectHelmChart('Nodejs');
       await helmPage.clickCreate();

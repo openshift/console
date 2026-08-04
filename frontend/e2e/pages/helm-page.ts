@@ -20,9 +20,7 @@ export class HelmPage extends BasePage {
   private readonly yamlEditorLines = this.page.locator('div.view-lines');
   private readonly catalogSearch = this.page.locator('input[placeholder="Filter by keyword..."]');
   private readonly catalogSidePane = this.page.locator('[role="dialog"]');
-  private readonly catalogSidePaneButton = this.page
-    .locator('[role="dialog"] [role="button"]')
-    .first();
+  private readonly catalogSidePaneButton = this.page.getByTestId('catalog-details-modal-cta');
 
   // Helm release list locators
   private readonly emptyMessage = this.page.getByText('No Helm Releases found');
@@ -100,7 +98,7 @@ export class HelmPage extends BasePage {
     // Select "Status" from the filter type toggle
     const filterToggle = this.filtersContainer.locator('.pf-v6-c-menu-toggle').first();
     await this.robustClick(filterToggle);
-    await this.page.locator('.pf-v6-c-menu__list-item').filter({ hasText: 'Status' }).click();
+    await this.robustClick(this.page.locator('.pf-v6-c-menu__list-item').filter({ hasText: 'Status' }));
     // Open the checkbox filter dropdown
     await this.robustClick(this.filterDropdownButton);
   }
@@ -151,7 +149,7 @@ export class HelmPage extends BasePage {
     // Select "Name" from the filter type toggle
     const filterToggle = this.filtersContainer.locator('.pf-v6-c-menu-toggle').first();
     await this.robustClick(filterToggle);
-    await this.page.locator('.pf-v6-c-menu__list-item').filter({ hasText: 'Name' }).click();
+    await this.robustClick(this.page.locator('.pf-v6-c-menu__list-item').filter({ hasText: 'Name' }));
     await this.nameFilterInput.fill(name);
   }
 
@@ -316,15 +314,6 @@ export class HelmPage extends BasePage {
     await this.robustClick(repoLink);
   }
 
-  // --- Catalog/Helm Release creation ---
-
-  async searchCatalogAndSelectChart(chartName: string): Promise<void> {
-    await this.catalogSearch.fill(chartName);
-    await this.page.getByTestId(`HelmChart-${chartName}`).first().click();
-    await expect(this.catalogSidePane).toBeVisible();
-    await this.robustClick(this.catalogSidePaneButton);
-  }
-
   // --- Helm release list getters ---
 
   getEmptyMessage(): Locator {
@@ -396,7 +385,7 @@ export class HelmPage extends BasePage {
   async filterByStatus(status: string): Promise<void> {
     const filterToggle = this.filtersContainer.locator('.pf-v6-c-menu-toggle').first();
     await this.robustClick(filterToggle);
-    await this.page.locator('.pf-v6-c-menu__list-item').filter({ hasText: 'Status' }).click();
+    await this.robustClick(this.page.locator('.pf-v6-c-menu__list-item').filter({ hasText: 'Status' }));
     await this.robustClick(this.filterDropdownButton);
     const filterItem = this.page.locator(
       `[data-ouia-component-id="DataViewCheckboxFilter-filter-item-${status.toLowerCase()}"]`,
@@ -431,8 +420,6 @@ export class HelmPage extends BasePage {
 
   async clickInstallButton(): Promise<void> {
     await this.robustClick(this.submitButton);
-    // eslint-disable-next-line no-restricted-syntax
-    await this.submitButton.waitFor({ state: 'visible' });
     await this.waitForLoadingComplete(40_000);
   }
 
@@ -441,10 +428,8 @@ export class HelmPage extends BasePage {
   async upgradeChartVersion(): Promise<void> {
     await this.chartVersionDropdown.click();
     const items = this.page.getByTestId('console-select-item');
-    const count = await items.count();
-    if (count > 0) {
-      await items.first().click();
-    }
+    await expect(items.first()).toBeVisible({ timeout: 10_000 });
+    await items.first().click();
     const confirmButton = this.page.getByRole('button', { name: 'Proceed' });
     try {
       // eslint-disable-next-line no-restricted-syntax
@@ -457,8 +442,6 @@ export class HelmPage extends BasePage {
 
   async clickUpgradeButton(): Promise<void> {
     await this.robustClick(this.submitButton);
-    // eslint-disable-next-line no-restricted-syntax
-    await this.submitButton.waitFor({ state: 'visible', timeout: 1_000 });
     await this.waitForLoadingComplete(60_000);
   }
 
@@ -468,8 +451,6 @@ export class HelmPage extends BasePage {
 
   async clickRollbackButton(): Promise<void> {
     await this.robustClick(this.submitButton);
-    // eslint-disable-next-line no-restricted-syntax
-    await this.submitButton.waitFor({ state: 'visible', timeout: 2_000 });
     await this.waitForLoadingComplete(60_000);
   }
 }

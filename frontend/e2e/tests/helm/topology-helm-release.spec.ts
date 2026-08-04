@@ -89,11 +89,12 @@ test.describe(
     test('resource links in sidebar navigate to correct details pages: HR-07-TC02 through HR-07-TC06', async ({
       page,
     }) => {
+      const RELEASE_NAME_2 = 'nodejs-release-links';
       const topology = new TopologyPage(page);
       const sidebar = new TopologySidebarPage(page);
 
       await test.step('Install Helm chart', async () => {
-        await installHelmChart(page, NS, HELM_RELEASE_NAME, HELM_CHART_NAME);
+        await installHelmChart(page, NS, RELEASE_NAME_2, HELM_CHART_NAME);
       });
 
       const resourceTests = [
@@ -107,11 +108,11 @@ test.describe(
       for (const { label, resourceKind, plural, id } of resourceTests) {
         await test.step(`${label} link navigates to ${resourceKind} details page: ${id}`, async () => {
           await topology.navigateToTopologyGraph(NS);
-          await topology.clickOnHelmGroup(HELM_RELEASE_NAME);
+          await topology.clickOnHelmGroup(RELEASE_NAME_2);
           await sidebar.verify();
           await sidebar.selectTab('Resources');
 
-          const href = `/k8s/ns/${NS}/${plural}/${HELM_RELEASE_NAME}`;
+          const href = `/k8s/ns/${NS}/${plural}/${RELEASE_NAME_2}`;
           await sidebar.clickResourceLink(href);
 
           // Verify we landed on the resource details page

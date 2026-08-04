@@ -93,7 +93,7 @@ test.describe('Helm page tabs', { tag: ['@helm'] }, () => {
       });
 
       await test.step('Search and select Nodejs chart from catalog', async () => {
-        await helmPage.searchCatalogAndSelectChart('Nodejs');
+        await helmPage.searchAndSelectHelmChart('Nodejs');
       });
 
       await test.step('Fill release name and create', async () => {
