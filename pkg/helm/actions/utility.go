@@ -105,7 +105,7 @@ func getChartInfoFromChartUrl(
 	client dynamic.Interface,
 	coreClient corev1client.CoreV1Interface,
 ) (*ChartInfo, error) {
-	repositories, err := chartproxy.NewRepoGetter(client, coreClient).List(namespace)
+	repositories, _, err := chartproxy.NewRepoGetter(client, coreClient).List(namespace)
 	if err != nil {
 		return nil, fmt.Errorf("error listing repositories: %v", err)
 	}
