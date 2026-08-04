@@ -51,15 +51,6 @@ export class AddPage extends BasePage {
     await this.robustClick(this.detailsSwitch.locator('input'));
   }
 
-  async clickShowGettingStartedResources(): Promise<void> {
-    const link = this.page.getByTestId('restore-getting-started');
-    await expect(async () => {
-      await this.page.reload({ waitUntil: 'domcontentloaded' });
-      await expect(link).toBeVisible({ timeout: 5_000 });
-    }).toPass({ intervals: [1_000, 2_000, 5_000], timeout: 60_000 });
-    await this.robustClick(link);
-  }
-
   async hideGettingStarted(): Promise<void> {
     const closeButton = this.gettingStartedResources.getByRole('button', { name: 'Close' });
     await this.robustClick(closeButton);
@@ -519,7 +510,7 @@ export class TopologyPage extends BasePage {
   }
 
   getSidebar(): Locator {
-    return this.page.getByTestId('topology-sidebar');
+    return this.page.getByTestId('topology-sidepane');
   }
 
   getSidebarTitle(): Locator {

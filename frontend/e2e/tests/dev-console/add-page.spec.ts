@@ -93,7 +93,9 @@ test.describe(
       await addPage.ensureDevPerspectiveAndNavigate(ns, k8sClient);
     });
 
-    test('hide and show Getting started resources [A-11-TC06, A-11-TC07]', async () => {
+    test('hide and show Getting started resources [A-11-TC06, A-11-TC07]', async ({
+      k8sClient,
+    }) => {
       await test.step('Hide Getting Started Resources', async () => {
         const gettingStarted = addPage.getGettingStartedResources();
         await expect(gettingStarted).toBeVisible({ timeout: 30_000 });
@@ -102,7 +104,8 @@ test.describe(
       });
 
       await test.step('Show Getting Started Resources again', async () => {
-        await addPage.clickShowGettingStartedResources();
+        await ensureGettingStartedVisible(k8sClient);
+        await addPage.navigateToAdd(ns);
         const gettingStarted = addPage.getGettingStartedResources();
         await expect(gettingStarted).toBeVisible({ timeout: 30_000 });
       });
