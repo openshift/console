@@ -514,7 +514,7 @@ export class TopologyPage extends BasePage {
   }
 
   getSidebarTitle(): Locator {
-    return this.page.getByTestId('resource-title');
+    return this.page.getByTestId('topology-sidepane').getByTestId('page-heading');
   }
 
   async waitForWorkload(name: string, timeoutMs = 120_000): Promise<void> {
