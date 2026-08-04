@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"slices"
+	"strings"
 
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/devconsole/common"
@@ -19,9 +19,10 @@ var webhookHeaderDenyList = []string{"Host"}
 
 var client = newSafeHTTPClient()
 
-func contains(slice []string, item string) bool {
+func containsCaseInsensitive(slice []string, header string) bool {
+	canonical := strings.ToLower(header)
 	for _, s := range slice {
-		if s == item {
+		if strings.ToLower(s) == canonical {
 			return true
 		}
 	}
@@ -35,15 +36,10 @@ func makeHTTPRequest(ctx context.Context, url string, headers http.Header, body 
 	}
 
 	for key, values := range headers {
-		canonicalKey := http.CanonicalHeaderKey(key)
-		if slices.ContainsFunc(proxyHeaderDenyList, func(deny string) bool {
-			return http.CanonicalHeaderKey(deny) == canonicalKey
-		}) {
+		if containsCaseInsensitive(proxyHeaderDenyList, key) {
 			continue
 		}
-		if slices.ContainsFunc(webhookHeaderDenyList, func(deny string) bool {
-			return http.CanonicalHeaderKey(deny) == canonicalKey
-		}) {
+		if containsCaseInsensitive(webhookHeaderDenyList, key) {
 			continue
 		}
 		for _, value := range values {
