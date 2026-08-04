@@ -9,7 +9,7 @@ describe('tryHttpsUpgrade', () => {
   });
 
   it('should return https URL when server responds with 200', async () => {
-    global.fetch = jest.fn().mockResolvedValue(new Response(null, { status: 200 }));
+    global.fetch = jest.fn().mockResolvedValue({ ok: true });
     const result = await tryHttpsUpgrade('http://example.com/repo');
     expect(result).toBe('https://example.com/repo');
     expect(global.fetch).toHaveBeenCalledWith(
@@ -19,13 +19,13 @@ describe('tryHttpsUpgrade', () => {
   });
 
   it('should return null when server responds with a non-OK status', async () => {
-    global.fetch = jest.fn().mockResolvedValue(new Response(null, { status: 404 }));
+    global.fetch = jest.fn().mockResolvedValue({ ok: false });
     const result = await tryHttpsUpgrade('http://example.com/repo');
     expect(result).toBeNull();
   });
 
   it('should return null when server responds with 500', async () => {
-    global.fetch = jest.fn().mockResolvedValue(new Response(null, { status: 500 }));
+    global.fetch = jest.fn().mockResolvedValue({ ok: false });
     const result = await tryHttpsUpgrade('http://example.com/repo');
     expect(result).toBeNull();
   });
