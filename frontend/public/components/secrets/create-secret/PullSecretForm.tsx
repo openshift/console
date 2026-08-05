@@ -68,12 +68,14 @@ export const PullSecretForm: FC<SecretSubFormProps> = ({
             <SelectList>
               <SelectOption
                 value={PullSecretAuthenticationType.credentials}
+                data-test={PullSecretAuthenticationType.credentials}
                 data-test-dropdown-menu={PullSecretAuthenticationType.credentials}
               >
                 {t('Image registry credentials')}
               </SelectOption>
               <SelectOption
                 value={PullSecretAuthenticationType.config}
+                data-test={PullSecretAuthenticationType.config}
                 data-test-dropdown-menu={PullSecretAuthenticationType.config}
               >
                 {t('Upload configuration file')}
