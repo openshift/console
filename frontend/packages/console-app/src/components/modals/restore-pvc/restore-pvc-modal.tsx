@@ -271,12 +271,19 @@ const RestorePVCModal: FC<RestorePVCModalProps> = ({ close, cancel, resource }) 
           type="submit"
           variant="primary"
           form="restore-pvc-form"
+          data-test="confirm-action"
+          id="confirm-action"
           isLoading={inProgress}
           isDisabled={!pvcSC || !validSize || inProgress}
         >
           {t('Restore')}
         </Button>
-        <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
+        <Button
+          variant="link"
+          onClick={cancel}
+          data-test="modal-cancel-action"
+          data-test-id="modal-cancel-action"
+        >
           {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>

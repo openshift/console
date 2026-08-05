@@ -267,12 +267,19 @@ const ClonePVCModal = (props: ClonePVCModalProps) => {
           type="submit"
           variant="primary"
           form="clone-pvc-form"
+          data-test="confirm-action"
+          id="confirm-action"
           isLoading={inProgress}
           isDisabled={!validSize || !pvcSC || inProgress}
         >
           {t('Clone')}
         </Button>
-        <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
+        <Button
+          variant="link"
+          onClick={cancel}
+          data-test="modal-cancel-action"
+          data-test-id="modal-cancel-action"
+        >
           {t('Cancel')}
         </Button>
       </ModalFooterWithAlerts>
