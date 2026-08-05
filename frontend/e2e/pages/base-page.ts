@@ -31,6 +31,18 @@ export async function warmupSPA(page: Page): Promise<void> {
     await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 60_000 });
     await expect(page.locator('#page-sidebar')).toBeVisible({ timeout: 30_000 });
   }).toPass({ intervals: [1_000, 2_000, 5_000], timeout: 90_000 });
+  await dismissQuickStartDrawer(page);
+}
+
+export async function dismissQuickStartDrawer(page: Page): Promise<void> {
+  const closeButton = page.getByRole('button', { name: 'Close drawer panel' });
+  try {
+    // eslint-disable-next-line no-restricted-syntax
+    await closeButton.waitFor({ state: 'visible', timeout: 5_000 });
+    await closeButton.click();
+  } catch {
+    // No quickstart drawer open — continue
+  }
 }
 
 export async function ensureDeveloperPerspective(

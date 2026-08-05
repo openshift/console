@@ -355,6 +355,7 @@ export default class KubernetesClient {
         admin: { completed: true },
         dev: { completed: true },
       }),
+      'console.quickstart.active': '',
     };
     if (defaultNamespace) {
       patchData['console.lastNamespace'] = defaultNamespace;
