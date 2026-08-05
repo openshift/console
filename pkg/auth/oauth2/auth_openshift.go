@@ -213,7 +213,12 @@ func (o *openShiftAuth) logout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//  Delete the session
+	if refreshToken := ls.RefreshToken(); refreshToken != "" {
+		if delErr := oauthClient.OAuthAuthorizeTokens().Delete(ctx, tokenToObjectName(refreshToken), metav1.DeleteOptions{}); delErr != nil {
+			klog.V(4).Infof("failed to revoke refresh token on logout: %v", delErr)
+		}
+	}
+
 	o.sessions.DeleteSession(w, r)
 	w.WriteHeader(http.StatusNoContent)
 }
@@ -241,7 +246,7 @@ func (o *openShiftAuth) refreshSession(ctx context.Context, w http.ResponseWrite
 	).Token()
 
 	if err != nil {
-		return nil, fmt.Errorf("failed to refresh a token %s: %w", cookieRefreshToken, err)
+		return nil, fmt.Errorf("failed to refresh a token: %w", err)
 	}
 
 	ls, err := o.sessions.UpdateTokens(w, r, nil, newTokens)

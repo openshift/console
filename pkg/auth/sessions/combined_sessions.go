@@ -7,6 +7,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/gorilla/securecookie"
 	gorilla "github.com/gorilla/sessions"
 	"golang.org/x/oauth2"
 )
@@ -34,6 +35,12 @@ func NewSessionStore(authnKey, encryptKey []byte, secureCookies bool, cookiePath
 	clientStore.Options.HttpOnly = true
 	clientStore.Options.SameSite = http.SameSiteStrictMode
 	clientStore.Options.Path = cookiePath
+
+	for _, codec := range clientStore.Codecs {
+		if sc, ok := codec.(*securecookie.SecureCookie); ok {
+			sc.MaxLength(8192)
+		}
+	}
 
 	return &CombinedSessionStore{
 		serverStore: NewServerSessionStore(32768),
