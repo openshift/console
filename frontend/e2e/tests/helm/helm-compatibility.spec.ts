@@ -26,10 +26,12 @@ test.describe('Helm Chart Compatibility', { tag: ['@helm'] }, () => {
     });
   });
 
+  // eslint-disable-next-line playwright/expect-expect
   test('Check meta data for importing helm charts from index.yaml: HR-02-TC02', async () => {
     test.skip(true, 'Manual test - requires inspecting Network tab');
   });
 
+  // eslint-disable-next-line playwright/expect-expect
   test('Check chart versions compatible with cluster: HR-02-TC03', async () => {
     test.skip(true, 'Manual test - requires verifying kubeversion compatibility');
   });

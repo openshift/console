@@ -32,14 +32,17 @@ test.describe('Helm Chart Installation View', { tag: ['@helm'] }, () => {
     });
   });
 
+  // eslint-disable-next-line playwright/expect-expect
   test('Grouping of Helm multiple chart versions: HR-04-TC01', async () => {
     test.skip(true, 'Known broken - only one version of Nodejs chart available');
   });
 
+  // eslint-disable-next-line playwright/expect-expect
   test('Switch from YAML to Form view: HR-04-TC02', async () => {
     test.skip(true, 'Manual test');
   });
 
+  // eslint-disable-next-line playwright/expect-expect
   test('Data does not change while switching Form to YAML view: HR-04-TC03', async () => {
     test.skip(true, 'Known broken - replica count field no longer exists in the form');
   });

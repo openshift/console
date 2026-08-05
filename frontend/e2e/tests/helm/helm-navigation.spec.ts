@@ -28,6 +28,7 @@ test.describe('Helm Chart Navigation', { tag: ['@helm'] }, () => {
     });
   });
 
+  // eslint-disable-next-line playwright/expect-expect
   test('HR-05-TC04: Install Helm Chart', async ({ page, cleanup, k8sClient }) => {
     const ns = `aut-helm-tc04-${Date.now()}`;
     await k8sClient.createNamespace(ns);
@@ -52,6 +53,7 @@ test.describe('Helm Chart Navigation', { tag: ['@helm'] }, () => {
     });
   });
 
+  // eslint-disable-next-line playwright/expect-expect
   test('HR-05-TC09: Select all filters', async ({ page, cleanup, k8sClient }) => {
     const ns = `aut-helm-tc09-${Date.now()}`;
     await k8sClient.createNamespace(ns);
@@ -75,6 +77,7 @@ test.describe('Helm Chart Navigation', { tag: ['@helm'] }, () => {
     });
   });
 
+  // eslint-disable-next-line playwright/expect-expect
   test('HR-05-TC10: Clear all filters', async ({ page, cleanup, k8sClient }) => {
     const ns = `aut-helm-tc10-${Date.now()}`;
     await k8sClient.createNamespace(ns);
@@ -124,10 +127,12 @@ test.describe('Helm Chart Navigation', { tag: ['@helm'] }, () => {
     });
   });
 
+  // eslint-disable-next-line playwright/expect-expect
   test('HR-05-TC07: Filter out failed Helm Charts', async () => {
     test.skip(true, 'Manual test - requires a Helm release in Failed state');
   });
 
+  // eslint-disable-next-line playwright/expect-expect
   test('HR-05-TC08: Filter out other Helm Charts', async () => {
     test.skip(true, 'Manual test - requires a Helm release in Other state');
   });

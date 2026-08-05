@@ -111,30 +111,37 @@ test.describe('Install the Helm Release', { tag: ['@helm'] }, () => {
     });
   });
 
+  // eslint-disable-next-line playwright/expect-expect
   test('Software Catalog Page when Helm Charts checkbox is selected: HR-06-TC02', async () => {
     test.skip(true, 'Manual test - requires multiple helm chart repositories pre-configured');
   });
 
+  // eslint-disable-next-line playwright/expect-expect
   test('Install Helm Chart from Software Catalog Page using YAML View: HR-06-TC03', async () => {
     test.skip(true, 'Known broken test - form submit does not work correctly');
   });
 
+  // eslint-disable-next-line playwright/expect-expect
   test('Certification filter in Helm Catalog Page: HR-06-TC08', async () => {
     test.skip(true, 'Requires providerType annotations in index.yaml - not yet implemented');
   });
 
+  // eslint-disable-next-line playwright/expect-expect
   test('Applying Redhat Certification filter: HR-06-TC09', async () => {
     test.skip(true, 'Requires providerType annotations in index.yaml - not yet implemented');
   });
 
+  // eslint-disable-next-line playwright/expect-expect
   test('Certified badge in Helm Catalog Page: HR-06-TC10', async () => {
     test.skip(true, 'Manual test - requires providerType annotations in repos');
   });
 
+  // eslint-disable-next-line playwright/expect-expect
   test('Certified badge in Helm install side panel: HR-06-TC11', async () => {
     test.skip(true, 'Manual test - requires providerType annotations in repos');
   });
 
+  // eslint-disable-next-line playwright/expect-expect
   test('Creating projecthelmchartrepository by non-admin user: HR-06-TC13', async () => {
     test.skip(true, 'Manual test - requires consoledeveloper login');
   });
