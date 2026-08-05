@@ -59,14 +59,8 @@ func (ss *SessionStore) AddSession(tokenVerifier IDTokenVerifier, token *oauth2.
 	}
 	ls.sessionToken = sessionToken
 
-	// Generate a small reference ID for the refresh token (stored in cookie instead of full token)
-	ls.refreshTokenID = RandomString(32)
-
 	ss.mux.Lock()
 	ss.byToken[sessionToken] = ls
-	if ls.refreshToken != "" {
-		ss.byRefreshTokenID[ls.refreshTokenID] = ls.refreshToken
-	}
 
 	// Assume token expiration is always the same time in the future. Should be close enough for government work.
 	ss.byAge = append(ss.byAge, ls)

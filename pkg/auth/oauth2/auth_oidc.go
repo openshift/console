@@ -41,6 +41,8 @@ type oidcConfig struct {
 	consoleBaseAddress     string
 	cookiePath             string
 	secureCookies          bool
+	cookieAuthenticationKey []byte
+	cookieEncryptionKey    []byte
 	constructOAuth2Config  oauth2ConfigConstructor
 }
 

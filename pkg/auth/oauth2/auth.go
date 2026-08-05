@@ -213,6 +213,8 @@ func NewOAuth2Authenticator(ctx context.Context, config *Config) (*OAuth2Authent
 		consoleBaseAddress:     c.ConsoleBaseAddress,
 		cookiePath:             c.CookiePath,
 		secureCookies:          c.SecureCookies,
+		cookieAuthenticationKey: c.CookieAuthenticationKey,
+		cookieEncryptionKey:    c.CookieEncryptionKey,
 		constructOAuth2Config:  a.oauth2ConfigConstructor,
 	}
 

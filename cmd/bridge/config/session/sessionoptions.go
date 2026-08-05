@@ -33,8 +33,8 @@ func NewSessionOptions() *SessionOptions {
 }
 
 func (opts *SessionOptions) AddFlags(fs *flag.FlagSet) {
-	fs.StringVar(&opts.CookieEncryptionKeyPath, "cookie-encryption-key-file", "", "Encryption key used to encrypt cookies. Must be set when --user-auth is 'oidc'.")
-	fs.StringVar(&opts.CookieAuthenticationKeyPath, "cookie-authentication-key-file", "", "Authentication key used to sign cookies. Must be set when --user-auth is 'oidc'.")
+	fs.StringVar(&opts.CookieEncryptionKeyPath, "cookie-encryption-key-file", "", "Encryption key used to encrypt cookies. Required when --user-auth is 'oidc', optional when 'openshift'.")
+	fs.StringVar(&opts.CookieAuthenticationKeyPath, "cookie-authentication-key-file", "", "Authentication key used to sign cookies. Required when --user-auth is 'oidc', optional when 'openshift'.")
 }
 
 func (opts *SessionOptions) ApplyConfig(config *serverconfig.Session) {
@@ -50,9 +50,15 @@ func (opts *SessionOptions) Validate(userAuthType flagvalues.AuthType) []error {
 		if opts.CookieEncryptionKeyPath == "" || opts.CookieAuthenticationKeyPath == "" {
 			errs = append(errs, fmt.Errorf("cookie-encryption-key-file and cookie-authentication-key-file must be set when --user-auth is 'oidc'"))
 		}
+	case flagvalues.AuthTypeOpenShift:
+		bothSet := opts.CookieEncryptionKeyPath != "" && opts.CookieAuthenticationKeyPath != ""
+		neitherSet := opts.CookieEncryptionKeyPath == "" && opts.CookieAuthenticationKeyPath == ""
+		if !bothSet && !neitherSet {
+			errs = append(errs, fmt.Errorf("cookie-encryption-key-file and cookie-authentication-key-file must both be set or both be unset when --user-auth is 'openshift'"))
+		}
 	default:
 		if opts.CookieEncryptionKeyPath != "" || opts.CookieAuthenticationKeyPath != "" {
-			errs = append(errs, fmt.Errorf("cookie-encryption-key-file and cookie-authentication-key-file must not be set when --user-auth is not 'oidc'"))
+			errs = append(errs, fmt.Errorf("cookie-encryption-key-file and cookie-authentication-key-file must not be set when --user-auth is not 'oidc' or 'openshift'"))
 		}
 	}
 

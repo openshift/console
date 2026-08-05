@@ -166,11 +166,9 @@ func TestCombinedSessionStore_AddSession(t *testing.T) {
 					refreshFound = true
 					gotRefresh := make(map[interface{}]interface{})
 					require.NoError(t, securecookie.DecodeMulti(openshiftRefreshTokenCookieName, c.Value, &gotRefresh, cookieCodecs...))
-					// The cookie now contains an ID, not the actual refresh token
-					refreshTokenID := gotRefresh["refresh-token-id"].(string)
-					actualRefreshToken := cs.serverStore.byRefreshTokenID[refreshTokenID]
+					actualRefreshToken := gotRefresh["refresh-token"].(string)
 					if actualRefreshToken != tt.wantRefreshToken {
-						t.Errorf("wanted refresh token to be %q, got %q (via ID %q)", tt.wantRefreshToken, actualRefreshToken, refreshTokenID)
+						t.Errorf("wanted refresh token to be %q, got %q", tt.wantRefreshToken, actualRefreshToken)
 					}
 				}
 			}
@@ -266,6 +264,36 @@ func TestCombinedSessionStore_GetSession(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestCombinedSessionStore_GetSession_LegacyCookie(t *testing.T) {
+	encryptionKey := []byte(randomString(32))
+	authnKey := []byte(randomString(64))
+	cookieCodecs := securecookie.CodecsFromPairs(authnKey, encryptionKey)
+
+	testServerSessions := NewServerSessionStore(10)
+	testServerSessions.byToken["1"] = &LoginState{sessionToken: "1"}
+
+	cs := NewSessionStore(authnKey, encryptionKey, true, "/")
+	cs.serverStore = testServerSessions
+
+	testCookies := &testCookieFactory{
+		cookieCodecs: cookieCodecs,
+		serverStore:  cs.serverStore,
+	}
+
+	req, err := http.NewRequest(http.MethodGet, "/", nil)
+	require.NoError(t, err)
+
+	testCookies.WithRefreshToken("refresh-old").WithLegacyFormat()
+	req = testCookies.Complete(t, req)
+
+	testWriter := httptest.NewRecorder()
+	got, err := cs.GetSession(testWriter, req)
+	require.NoError(t, err)
+
+	// Legacy format should resolve through byRefreshTokenID map
+	require.Nil(t, got, "should not find session by refresh token alone without byRefreshToken mapping")
 }
 
 func addIDToken(t *oauth2.Token, idtoken string) *oauth2.Token {
@@ -623,12 +651,12 @@ func TestCombinedSessionStore_DeleteSession(t *testing.T) {
 }
 
 type testCookieFactory struct {
-	cookieCodecs   []securecookie.Codec
-	sessionToken   *string
-	refreshToken   *string
-	refreshTokenID *string
-	customCookies  map[string]map[interface{}]interface{}
-	serverStore    *SessionStore // needed to set up refresh token ID mapping
+	cookieCodecs    []securecookie.Codec
+	sessionToken    *string
+	refreshToken    *string
+	useLegacyFormat bool // use old refresh-token-id format for backward compat testing
+	customCookies   map[string]map[interface{}]interface{}
+	serverStore     *SessionStore
 }
 
 func (f *testCookieFactory) WithSessionToken(sessionToken string) *testCookieFactory {
@@ -649,6 +677,11 @@ func (f *testCookieFactory) WithCustomCookie(cookieName string, cookieValue map[
 	return f
 }
 
+func (f *testCookieFactory) WithLegacyFormat() *testCookieFactory {
+	f.useLegacyFormat = true
+	return f
+}
+
 func (f *testCookieFactory) Complete(t *testing.T, req *http.Request) *http.Request {
 	if f.sessionToken != nil {
 		attachCookieOrDie(t, req, SessionCookieName(),
@@ -658,19 +691,23 @@ func (f *testCookieFactory) Complete(t *testing.T, req *http.Request) *http.Requ
 			f.cookieCodecs)
 	}
 	if f.refreshToken != nil {
-		// Generate an ID for the refresh token and store the mapping
-		id := randomString(32)
-		if f.serverStore != nil {
-			f.serverStore.byRefreshTokenID[id] = *f.refreshToken
+		if f.useLegacyFormat {
+			id := randomString(32)
+			if f.serverStore != nil {
+				f.serverStore.byRefreshTokenID[id] = *f.refreshToken
+			}
+			attachCookieOrDie(t, req, openshiftRefreshTokenCookieName,
+				map[interface{}]interface{}{
+					"refresh-token-id": id,
+				},
+				f.cookieCodecs)
+		} else {
+			attachCookieOrDie(t, req, openshiftRefreshTokenCookieName,
+				map[interface{}]interface{}{
+					"refresh-token": *f.refreshToken,
+				},
+				f.cookieCodecs)
 		}
-		f.refreshTokenID = &id
-
-		// Store only the ID in the cookie
-		attachCookieOrDie(t, req, openshiftRefreshTokenCookieName,
-			map[interface{}]interface{}{
-				"refresh-token-id": id,
-			},
-			f.cookieCodecs)
 	}
 
 	for cookieName, cookieValue := range f.customCookies {

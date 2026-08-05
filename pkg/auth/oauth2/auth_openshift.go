@@ -72,19 +72,26 @@ func newOpenShiftAuth(ctx context.Context, k8sClient *http.Client, c *oidcConfig
 	}
 	o.oauthEndpointCache.Run(ctx)
 
-	authnKey, err := utils.RandomString(64)
-	if err != nil {
-		return nil, err
-	}
-
-	encryptionKey, err := utils.RandomString(32)
-	if err != nil {
-		return nil, err
+	var authnKey, encryptionKey []byte
+	if len(c.cookieAuthenticationKey) > 0 && len(c.cookieEncryptionKey) > 0 {
+		authnKey = c.cookieAuthenticationKey
+		encryptionKey = c.cookieEncryptionKey
+	} else {
+		authnKeyStr, err := utils.RandomString(64)
+		if err != nil {
+			return nil, err
+		}
+		encryptionKeyStr, err := utils.RandomString(32)
+		if err != nil {
+			return nil, err
+		}
+		authnKey = []byte(authnKeyStr)
+		encryptionKey = []byte(encryptionKeyStr)
 	}
 
 	o.sessions = sessions.NewSessionStore(
-		[]byte(authnKey),
-		[]byte(encryptionKey),
+		authnKey,
+		encryptionKey,
 		c.secureCookies,
 		c.cookiePath,
 	)
