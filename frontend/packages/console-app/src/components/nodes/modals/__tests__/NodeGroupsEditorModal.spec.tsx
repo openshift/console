@@ -409,7 +409,10 @@ describe('NodeGroupsEditorModal', () => {
 
     it('disables Save button during submission', async () => {
       (k8sPatchResource as jest.Mock).mockImplementation(
-        () => new Promise((resolve) => setTimeout(resolve, 100)),
+        () =>
+          new Promise((resolve) => {
+            setTimeout(resolve, 100);
+          }),
       );
 
       renderWithProviders(

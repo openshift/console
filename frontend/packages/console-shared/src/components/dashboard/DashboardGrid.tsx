@@ -8,7 +8,7 @@ import './dashboard.scss';
 
 const mapCardsToGrid = (
   cards: OverviewGridCard[] = [],
-  keyPrefix: string,
+  keyPrefix: string = undefined,
   ignoreCardSpan: boolean = false,
 ): ReactNode[] =>
   cards.map(({ Card, span = 12 }, index) => (

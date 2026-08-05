@@ -1,4 +1,4 @@
-import { testName } from '@console/cypress-integration-tests/support/support';
+import { testName } from '@console/cypress-integration-tests/support';
 import {
   SpecCapability,
   StatusCapability,

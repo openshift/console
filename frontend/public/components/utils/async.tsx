@@ -45,7 +45,9 @@ const withRetry = <C extends ComponentType>(loader: LazyLoader<C>): LazyLoader<C
       if (attempt < MAX_RETRIES) {
         const delay = Math.min(100 * 2 ** attempt, 30000);
         // eslint-disable-next-line no-await-in-loop
-        await new Promise((resolve) => setTimeout(resolve, delay));
+        await new Promise((resolve) => {
+          setTimeout(resolve, delay);
+        });
       }
     }
   }

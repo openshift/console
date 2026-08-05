@@ -107,7 +107,7 @@ const useHelmCharts: ExtensionHook<CatalogItem[]> = ({
     () =>
       normalizeHelmCharts(
         helmCharts,
-        [...chartRepositories?.hcrs?.data, ...chartRepositories?.phcrs?.data],
+        [...(chartRepositories?.hcrs?.data ?? []), ...(chartRepositories?.phcrs?.data ?? [])],
         namespace,
         t,
       ),

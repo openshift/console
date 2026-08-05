@@ -326,7 +326,7 @@ export const getBootstrapServers = (kafkaResources: K8sResourceKind[]) => {
   const servers = kafkaResources?.reduce((acc, kafka) => {
     const listners = [
       ...(kafka?.status?.listeners
-        ? kafka.status.listeners.map((l) => l?.bootstrapServers?.split(','))?.flat()
+        ? kafka.status.listeners.map((l) => l?.bootstrapServers?.split(',') ?? []).flat()
         : []),
       ...(kafka?.status?.bootstrapServerHost ? [kafka.status.bootstrapServerHost] : []),
     ];

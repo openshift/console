@@ -152,7 +152,7 @@ const isColumnVisible = (
   widthInPixels: number,
   columnID: string,
   columns: Set<string> = new Set(),
-  showNamespaceOverride,
+  showNamespaceOverride = undefined,
 ) => {
   const showNamespace =
     columnID !== 'namespace' ||

@@ -19,7 +19,7 @@ import { DeploymentActionCreator } from './types';
 const restartRollout = (model: K8sModel | undefined, obj: K8sResourceKind | undefined) => {
   if (!model || !obj) return Promise.reject(new Error('Model or resource is undefined'));
   const patch: { path: string; op: string; value?: any }[] = [];
-  if (!('annotations' in obj.spec?.template?.metadata)) {
+  if (!('annotations' in (obj.spec?.template?.metadata ?? {}))) {
     patch.push({
       path: '/spec/template/metadata/annotations',
       op: 'add',

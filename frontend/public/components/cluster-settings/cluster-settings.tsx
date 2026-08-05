@@ -170,8 +170,8 @@ const getUpdatedOperatorsCount = (
   clusterOperators: ClusterOperator[],
   desiredVersion: string,
 ): number =>
-  clusterOperators?.filter((operator) => getClusterOperatorVersion(operator) === desiredVersion)?.length ?? 0
-  );
+  clusterOperators?.filter((operator) => getClusterOperatorVersion(operator) === desiredVersion)
+    ?.length ?? 0;
 
 const CurrentChannel: FC<CurrentChannelProps> = ({ cv, canUpgrade }) => {
   const { t } = useTranslation('public');

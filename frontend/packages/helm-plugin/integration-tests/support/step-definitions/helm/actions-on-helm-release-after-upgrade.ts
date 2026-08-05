@@ -1,4 +1,4 @@
-import { catalogPage } from '@dev-console/integration-tests/support/pages/pages';
+import { catalogPage } from '@dev-console/integration-tests/support/pages/add-flow/catalog-page';
 import { Given } from 'cypress-cucumber-preprocessor/steps';
 
 Given(

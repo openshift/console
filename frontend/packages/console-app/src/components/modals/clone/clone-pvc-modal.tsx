@@ -62,7 +62,7 @@ const ClonePVCModal = (props: ClonePVCModalProps) => {
   const navigate = useNavigate();
   const { close, cancel, resource } = props;
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler<PersistentVolumeClaimKind>();
-  const { name: pvcName, namespace } = resource?.metadata;
+  const { name: pvcName, namespace } = resource?.metadata ?? {};
   const baseValue = convertToBaseValue(getRequestedPVCSize(resource));
   const defaultSize: string[] = validate.split(humanizeBinaryBytesWithoutB(baseValue).string);
   const pvcRequestedSize = humanizeBinaryBytes(baseValue).string;

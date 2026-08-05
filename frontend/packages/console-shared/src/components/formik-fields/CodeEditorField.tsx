@@ -59,7 +59,7 @@ export const CodeEditorField: FC<CodeEditorFieldProps> = ({
   const [templateExtensions] = useResolvedExtensions<YAMLTemplate>(isYAMLTemplate);
 
   const sanitizeYamlContent = useCallback(
-    (id: string = 'default', yaml: string = '', kind: string) => {
+    (id: string = 'default', yaml: string = '', kind: string = undefined) => {
       if (yaml) {
         return yaml;
       }

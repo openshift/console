@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { Stack, StackItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { PopoverStatus, NodeStatus } from '@console/dynamic-plugin-sdk';
+import { PopoverStatus } from '@console/dynamic-plugin-sdk';
 import { humanizeBinaryBytes, humanizeNumber } from '@console/internal/components/utils/units';
 import type { NodeKind } from '@console/internal/module/k8s';
 import ConsumerPopover from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';

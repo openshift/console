@@ -25,7 +25,7 @@ import { ANNOTATIONS } from '@console/shared/src/constants/common';
 const normalizeBuilderImages = (
   builderImageStreams: K8sResourceKind[],
   activeNamespace: string = '',
-  t: TFunction,
+  t: TFunction = undefined,
 ): CatalogItem[] => {
   const normalizedBuilderImages = _.map(builderImageStreams, (imageStream) => {
     const uid = imageStream.metadata?.uid || '';

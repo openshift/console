@@ -106,10 +106,8 @@ const EditApplication: FC<EditApplicationProps> = ({
         ? normalizeBuilderImages(imageStreamsData)
         : {};
       if (appResources.buildConfig.loaded && appResources.buildConfig.data) {
-        const {
-          name: imageName,
-          namespace: imageNs,
-        } = appResources.buildConfig.data?.spec?.strategy.sourceStrategy.from;
+        const { name: imageName, namespace: imageNs } =
+          appResources.buildConfig.data?.spec?.strategy.sourceStrategy.from ?? {};
         const selectedImage = imageName?.split(':')[0];
         const builderImageExists = imageNs === 'openshift' && allBuilderImages?.[selectedImage];
         if (!builderImageExists) {

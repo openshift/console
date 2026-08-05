@@ -156,7 +156,13 @@ const round = (value, fractionDigits) => {
 };
 units.round = round;
 
-const humanize = (value, typeName, useRound = false, initialUnit, preferredUnit) => {
+const humanize = (
+  value,
+  typeName,
+  useRound = false,
+  initialUnit = undefined,
+  preferredUnit = undefined,
+) => {
   const type = getType(typeName);
 
   let currentValue = value;

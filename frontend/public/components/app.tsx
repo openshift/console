@@ -452,11 +452,13 @@ if ('serviceWorker' in navigator) {
       .register(`${window.SERVER_FLAGS.basePath}load-test.sw.js`)
       .then(
         () =>
-          new Promise<void>((r) =>
-            navigator.serviceWorker.controller
-              ? r()
-              : navigator.serviceWorker.addEventListener('controllerchange', () => r()),
-          ),
+          new Promise<void>((r) => {
+            if (navigator.serviceWorker.controller) {
+              r();
+            } else {
+              navigator.serviceWorker.addEventListener('controllerchange', () => r());
+            }
+          }),
       )
       .then(() =>
         navigator.serviceWorker.controller.postMessage({

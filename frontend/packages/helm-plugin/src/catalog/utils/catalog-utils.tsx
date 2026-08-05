@@ -28,7 +28,7 @@ export const normalizeHelmCharts = (
   chartEntries: HelmChartEntries,
   chartRepositories: K8sResourceKind[],
   activeNamespace: string = '',
-  t: TFunction,
+  t: TFunction = undefined,
 ): CatalogItem[] =>
   _.reduce(
     chartEntries,

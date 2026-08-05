@@ -119,7 +119,7 @@ const getPipelineTasks = (
     kind: 'PipelineRun',
     spec: {},
   },
-  taskRuns: TaskRunKind[],
+  taskRuns: TaskRunKind[] = undefined,
 ): PipelineTask[][] => {
   // Each unit in 'out' array is termed as stage | out = [stage1 = [task1], stage2 = [task2,task3], stage3 = [task4]]
   const out = [];
@@ -303,7 +303,7 @@ export const getGraphDataModel = (
     kind: 'PipelineRun',
     spec: {},
   },
-  taskRuns: TaskRunKind[],
+  taskRuns: TaskRunKind[] = undefined,
 ): {
   graph: GraphModel;
   nodes: PipelineMixedNodeModel[];
@@ -358,7 +358,10 @@ export const getGraphDataModel = (
     if (dependancies) {
       dependancies.forEach((dep: string) => {
         const depObj = dag.vertices.get(dep);
-        if (depObj?.level - vertex.level <= 1 || vertex.data.runAfter?.includes(depObj?.name)) {
+        if (
+          (depObj?.level ?? 0) - vertex.level <= 1 ||
+          vertex.data.runAfter?.includes(depObj?.name)
+        ) {
           runAfterTasks.push(dep);
         }
       });
@@ -369,7 +372,7 @@ export const getGraphDataModel = (
       const nearestDeps: Vertex[] = v.filter((v1) => v1?.level === minLevelDep?.level);
       nearestDeps.forEach((nd: Vertex) => {
         if (vertex.dependancyNames.includes(nd?.name)) {
-          if (nd?.level - vertex.level <= 1 || vertex.dependancyNames.length === 0) {
+          if ((nd?.level ?? 0) - vertex.level <= 1 || vertex.dependancyNames.length === 0) {
             runAfterTasks.push(nd?.name);
           }
         }

@@ -87,7 +87,7 @@ import { getManualSubscriptionsInNamespace, NamespaceIncludesManualApproval } fr
 
 export const catalogSourceForSubscription = (
   catalogSources: CatalogSourceKind[] = [],
-  subscription: SubscriptionKind,
+  subscription: SubscriptionKind = undefined,
 ): CatalogSourceKind =>
   catalogSources.find(
     (source) =>
@@ -97,13 +97,13 @@ export const catalogSourceForSubscription = (
 
 const installedCSVForSubscription = (
   clusterServiceVersions: ClusterServiceVersionKind[] = [],
-  subscription: SubscriptionKind,
+  subscription: SubscriptionKind = undefined,
 ): ClusterServiceVersionKind =>
   clusterServiceVersions.find((csv) => csv?.metadata?.name === subscription?.status?.installedCSV);
 
 const packageForSubscription = (
   packageManifests: PackageManifestKind[] = [],
-  subscription: SubscriptionKind,
+  subscription: SubscriptionKind = undefined,
 ): PackageManifestKind =>
   packageManifests.find(
     (pkg) =>
@@ -115,7 +115,7 @@ const packageForSubscription = (
 
 const installPlanForSubscription = (
   installPlans: InstallPlanKind[] = [],
-  subscription: SubscriptionKind,
+  subscription: SubscriptionKind = undefined,
 ): InstallPlanKind =>
   installPlans.find((ip) => ip?.metadata?.name === subscription?.status?.installPlanRef?.name);
 

@@ -64,7 +64,7 @@ export const PackageManifestTableRow: FC<RowFunctionArgs<
 >> = ({ obj: packageManifest, customData }) => {
   const channel = defaultChannelFor(packageManifest);
 
-  const { displayName, version, provider } = channel?.currentCSVDesc;
+  const { displayName, version, provider } = channel?.currentCSVDesc ?? {};
 
   return (
     <>

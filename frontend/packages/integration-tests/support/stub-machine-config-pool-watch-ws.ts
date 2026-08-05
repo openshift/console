@@ -32,7 +32,7 @@ export const stubMachineConfigPoolWatchWebSocket = (win: Window) => {
         } as unknown) as WebSocket;
       }
 
-      return new OriginalWebSocket(url, protocols);
+      super(url, protocols);
     }
   }
 

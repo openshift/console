@@ -413,7 +413,7 @@ export const useUriActionsProvider = (element: GraphElement) => {
 
 export const useKnativeConnectorActionProvider = (element: Edge) => {
   const { resource } =
-    isEdge(element) && element.getSource()?.getData() && element.getSource().getData();
+    (isEdge(element) && element.getSource()?.getData() && element.getSource().getData()) || {};
   const sourceModel = resource ? modelFor(referenceFor(resource)) : null;
   const sinkSourceModalLauncher = useSinkSourceModalLauncher({ source: resource });
   const moveConnectorAction = useMoveConnectorAction(sourceModel, element);

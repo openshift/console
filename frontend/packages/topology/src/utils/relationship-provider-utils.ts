@@ -43,7 +43,9 @@ export const getRelationshipProvider = (): DropTargetSpec<
         : [];
     return (
       relationshipExtension.length > 0 &&
-      relationshipExtension.sort((a, b) => b.properties?.priority - a.properties?.priority)[0]
+      relationshipExtension.sort(
+        (a, b) => (b.properties?.priority ?? 0) - (a.properties?.priority ?? 0),
+      )[0]
     );
   };
 

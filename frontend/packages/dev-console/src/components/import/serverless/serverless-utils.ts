@@ -5,7 +5,7 @@ import type { AutoscaleWindowType } from '../import-types';
 
 export const getAutoscaleWindow = (autoscaleValue: string): AutoscaleWindowType => {
   const windowRegEx = /^[0-9]+|[a-zA-Z]*/g;
-  const [val, unit] = autoscaleValue?.match(windowRegEx);
+  const [val, unit] = autoscaleValue?.match(windowRegEx) ?? [];
   return {
     autoscalewindow: Number(val) || '',
     autoscalewindowUnit: unit || 's',
@@ -52,7 +52,7 @@ export const hasOtherKsvcDomainMappings = (domainMapping: string[]): boolean =>
 export const getAllOtherDomainMappingInUse = (
   domainMappings: string[],
   data: K8sResourceKind[] = [],
-  serviceName: string,
+  serviceName: string = undefined,
 ): K8sResourceKind[] =>
   domainMappings
     .filter((d) => hasOtherKsvcDomainMappings([d]))

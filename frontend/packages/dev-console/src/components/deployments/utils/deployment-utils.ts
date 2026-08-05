@@ -120,11 +120,13 @@ export const getDefaultDeployment = (namespace: string): K8sResourceKind => {
 };
 
 export const getContainerNames = (containers: ContainerSpec[]) =>
-  containers?.reduce((acc, container) => ({
-        ...acc,
-        [container.name]: container.name,
-      }), {}) ?? []
-  );
+  containers?.reduce(
+    (acc, container) => ({
+      ...acc,
+      [container.name]: container.name,
+    }),
+    {},
+  ) ?? [];
 
 const getLchImageStreamData = (
   resName: string,
