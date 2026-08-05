@@ -143,12 +143,12 @@ const fetchNamespaceMetrics = () => {
   ];
   const promises = metrics.map(({ key, query }) => {
     const url = `${PROMETHEUS_BASE_PATH}/api/v1/query?&query=${query}`;
-    return coFetchJSON(url).then(({ data: { result } }) => {
-      return result.reduce((acc, data) => {
+    return coFetchJSON(url).then(({ data: { result } }) =>
+      result.reduce((acc, data) => {
         const value = Number(data.value[1]);
         return _.set(acc, [key, data.metric.namespace], value);
-      }, {});
-    });
+      }, {}),
+    );
   });
   return (
     Promise.all(promises)
@@ -280,8 +280,8 @@ const useNamespacesColumns = () => {
 
 const NamespacesColumnManagementID = referenceForModel(NamespaceModel);
 
-const getNamespaceDataViewRows = (rowData, tableColumns, namespaceMetrics, t) => {
-  return rowData.map(({ obj: ns }) => {
+const getNamespaceDataViewRows = (rowData, tableColumns, namespaceMetrics, t) =>
+  rowData.map(({ obj: ns }) => {
     const name = getName(ns);
     const requester = getRequester(ns);
     const bytes = namespaceMetrics?.memory?.[name];
@@ -351,7 +351,6 @@ const getNamespaceDataViewRows = (rowData, tableColumns, namespaceMetrics, t) =>
       };
     });
   });
-};
 
 const NamespacesList = (props) => {
   const { t } = useTranslation('public');
@@ -602,8 +601,8 @@ const getProjectDataViewRows = (
   showMetrics,
   ProjectLinkComponent,
   t,
-) => {
-  return rowData.map(({ obj: project }) => {
+) =>
+  rowData.map(({ obj: project }) => {
     const name = getName(project);
     const requester = getRequester(project);
     const bytes = namespaceMetrics?.memory?.[name];
@@ -677,7 +676,6 @@ const getProjectDataViewRows = (
       };
     });
   });
-};
 
 export const ProjectLink = ({ project }) => {
   const dispatch = useConsoleDispatch();
@@ -1086,13 +1084,11 @@ export const NamespaceDetails = ({ obj: ns, customData }) => {
         <PaneBody>
           <SectionHeading text={t('Launcher')} />
           <ul className="pf-v6-c-list pf-m-plain">
-            {_.map(_.sortBy(links, 'spec.text'), (link) => {
-              return (
-                <li key={link.metadata.uid}>
-                  <ExternalLink href={link.spec.href} text={link.spec.text} />
-                </li>
-              );
-            })}
+            {_.map(_.sortBy(links, 'spec.text'), (link) => (
+              <li key={link.metadata.uid}>
+                <ExternalLink href={link.spec.href} text={link.spec.text} />
+              </li>
+            ))}
           </ul>
         </PaneBody>
       )}
@@ -1100,15 +1096,13 @@ export const NamespaceDetails = ({ obj: ns, customData }) => {
   );
 };
 
-const RolesPage = ({ obj: { metadata } }) => {
-  return (
-    <RoleBindingsPage
-      createPath={`/k8s/ns/${metadata.name}/rolebindings/~new`}
-      namespace={metadata.name}
-      showTitle={false}
-    />
-  );
-};
+const RolesPage = ({ obj: { metadata } }) => (
+  <RoleBindingsPage
+    createPath={`/k8s/ns/${metadata.name}/rolebindings/~new`}
+    namespace={metadata.name}
+    showTitle={false}
+  />
+);
 
 export const NamespacesDetailsPage = (props) => (
   <DetailsPage
@@ -1128,34 +1122,32 @@ export const NamespacesDetailsPage = (props) => (
   />
 );
 
-export const ProjectsDetailsPage = (props) => {
-  return (
-    <DetailsPage
-      {...props}
-      kind={referenceForModel(ProjectModel)}
-      customActionMenu={(k8sObj, obj) => (
-        <LazyActionMenu
-          context={{ [referenceForModel(ProjectModel)]: obj }}
-          variant={ActionMenuVariant.DROPDOWN}
-        />
-      )}
-      pages={[
-        {
-          href: '',
-          // t('public~Overview')
-          nameKey: 'public~Overview',
-          component: ProjectDashboard,
-        },
-        {
-          href: 'details',
-          // t('public~Details')
-          nameKey: 'public~Details',
-          component: NamespaceDetails,
-        },
-        navFactory.editYaml(),
-        navFactory.workloads(OverviewListPage),
-        navFactory.roles(RolesPage),
-      ]}
-    />
-  );
-};
+export const ProjectsDetailsPage = (props) => (
+  <DetailsPage
+    {...props}
+    kind={referenceForModel(ProjectModel)}
+    customActionMenu={(k8sObj, obj) => (
+      <LazyActionMenu
+        context={{ [referenceForModel(ProjectModel)]: obj }}
+        variant={ActionMenuVariant.DROPDOWN}
+      />
+    )}
+    pages={[
+      {
+        href: '',
+        // t('public~Overview')
+        nameKey: 'public~Overview',
+        component: ProjectDashboard,
+      },
+      {
+        href: 'details',
+        // t('public~Details')
+        nameKey: 'public~Details',
+        component: NamespaceDetails,
+      },
+      navFactory.editYaml(),
+      navFactory.workloads(OverviewListPage),
+      navFactory.roles(RolesPage),
+    ]}
+  />
+);

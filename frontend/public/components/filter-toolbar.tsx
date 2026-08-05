@@ -371,12 +371,10 @@ export const FilterToolbar: FC<FilterToolbarProps> = ({
                   (acc, key) => (
                     <ToolbarFilter
                       key={key}
-                      labels={_.intersection(selectedRowFilters, filters[key]).map((item) => {
-                        return {
-                          key: item,
-                          node: filtersNameMap[item],
-                        };
-                      })}
+                      labels={_.intersection(selectedRowFilters, filters[key]).map((item) => ({
+                        key: item,
+                        node: filtersNameMap[item],
+                      }))}
                       deleteLabel={(_filter, chip: ToolbarLabel) =>
                         updateRowFilterSelected([chip.key])
                       }

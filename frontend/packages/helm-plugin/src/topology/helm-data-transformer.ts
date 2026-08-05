@@ -55,9 +55,7 @@ export const getTopologyHelmReleaseGroupItem = (
     return returnData;
   }
 
-  const secret = secrets.find((nextSecret) => {
-    return nextSecret.metadata.labels?.name === releaseName;
-  });
+  const secret = secrets.find((nextSecret) => nextSecret.metadata.labels?.name === releaseName);
 
   if (secret) {
     const appGroup = getTopologyGroupItems(secret);
@@ -160,8 +158,8 @@ export const getHelmGraphModelFromMap = (
   return helmDataModel;
 };
 
-const getHelmReleaseMap = (namespace: string) => {
-  return fetchHelmReleases(namespace)
+const getHelmReleaseMap = (namespace: string) =>
+  fetchHelmReleases(namespace)
     .then((releases) =>
       releases.reduce((acc, release) => {
         try {
@@ -187,7 +185,6 @@ const getHelmReleaseMap = (namespace: string) => {
       }, {}),
     )
     .catch(() => ({}));
-};
 
 const getHelmTopologyDataModel = () => {
   let secretCount = -1;

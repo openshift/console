@@ -38,23 +38,21 @@ const PropertyPath: FC<{ kind: string; path: string | string[] }> = ({ kind, pat
   );
 };
 
-const EditButton: FC<EditButtonProps> = (props) => {
-  return (
-    <Button
-      icon={<RhUiEditIcon />}
-      iconPosition="end"
-      type="button"
-      variant="link"
-      isInline
-      onClick={props.onClick}
-      data-test={
-        props.testId ? `${props.testId}-details-item__edit-button` : 'details-item__edit-button'
-      }
-    >
-      {props.children}
-    </Button>
-  );
-};
+const EditButton: FC<EditButtonProps> = (props) => (
+  <Button
+    icon={<RhUiEditIcon />}
+    iconPosition="end"
+    type="button"
+    variant="link"
+    isInline
+    onClick={props.onClick}
+    data-test={
+      props.testId ? `${props.testId}-details-item__edit-button` : 'details-item__edit-button'
+    }
+  >
+    {props.children}
+  </Button>
+);
 
 /**
  * A wrapper around PatternFly's `DescriptionListGroup`. This component

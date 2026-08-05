@@ -16,6 +16,5 @@ export type TelemetryEventListener = <P = any>(eventType: string, properties?: P
 
 // Type guards
 
-export const isTelemetryListener = (e: Extension): e is TelemetryListener => {
-  return e.type === 'console.telemetry/listener';
-};
+export const isTelemetryListener = (e: Extension): e is TelemetryListener =>
+  e.type === 'console.telemetry/listener';

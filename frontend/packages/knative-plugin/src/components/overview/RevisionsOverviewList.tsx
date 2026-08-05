@@ -42,9 +42,9 @@ const RevisionsOverviewList: FC<RevisionsOverviewListProps> = ({
     if (!revisions || !revisions.length) {
       return [];
     }
-    const [revWithTraffic, revWithoutTraffic] = _.partition(revisions, (element) => {
-      return traffic ? _.find(traffic, { revisionName: element.metadata?.name }) : false;
-    }).map((element) => _.sortBy(element, ['metadata.creationTimestamp']));
+    const [revWithTraffic, revWithoutTraffic] = _.partition(revisions, (element) =>
+      traffic ? _.find(traffic, { revisionName: element.metadata?.name }) : false,
+    ).map((element) => _.sortBy(element, ['metadata.creationTimestamp']));
     return revWithTraffic.length < MAX_REVISIONS
       ? _.concat(revWithTraffic, revWithoutTraffic.slice(0, MAX_REVISIONS - revWithTraffic.length))
       : revWithTraffic;

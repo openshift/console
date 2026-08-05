@@ -342,12 +342,10 @@ const ConnectedTopologyView: FC<ComponentProps> = ({
   return topologyViewComponent;
 };
 
-const TopologyStateToProps = (state: RootState): StateProps => {
-  return {
-    application: getActiveApplication(state),
-    eventSourceEnabled: getEventSourceStatus(state),
-  };
-};
+const TopologyStateToProps = (state: RootState): StateProps => ({
+  application: getActiveApplication(state),
+  eventSourceEnabled: getEventSourceStatus(state),
+});
 
 const TopologyDispatchToProps = (dispatch): DispatchProps => ({
   onSelectTab: (name) => dispatch(selectOverviewDetailsTab(name)),

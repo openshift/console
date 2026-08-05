@@ -82,10 +82,10 @@ const BaseRollbackModal: FC<RollbackModalProps> = (props) => {
 
     handlePromise(
       // create the deployment config rollback
-      k8sCreate(DeploymentConfigModel, req, opts).then((updatedDC) => {
+      k8sCreate(DeploymentConfigModel, req, opts).then((updatedDC) =>
         // update the deployment config based on the one returned by the rollback
-        return k8sUpdate(DeploymentConfigModel, updatedDC);
-      }),
+        k8sUpdate(DeploymentConfigModel, updatedDC),
+      ),
     )
       .then(() => {
         props.close();

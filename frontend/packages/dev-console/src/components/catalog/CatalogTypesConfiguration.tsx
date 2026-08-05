@@ -44,13 +44,15 @@ const CatalogTypesConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
   const [catalogTypesExtensions, catalogTypesExtensionsLoaded] = useResolvedExtensions<
     CatalogItemType
   >(isCatalogItemType);
-  const sortedCatalogTypeExtensions = useMemo(() => {
-    return [...catalogTypesExtensions].sort((catalogTypeExtensionA, catalogTypeExtensionB) => {
-      const titleA = catalogTypeExtensionA.properties.title;
-      const titleB = catalogTypeExtensionB.properties.title;
-      return titleA.localeCompare(titleB);
-    });
-  }, [catalogTypesExtensions]);
+  const sortedCatalogTypeExtensions = useMemo(
+    () =>
+      [...catalogTypesExtensions].sort((catalogTypeExtensionA, catalogTypeExtensionB) => {
+        const titleA = catalogTypeExtensionA.properties.title;
+        const titleB = catalogTypeExtensionB.properties.title;
+        return titleA.localeCompare(titleB);
+      }),
+    [catalogTypesExtensions],
+  );
   const catalogTypesByType = useMemo<Record<string, CatalogItemType>>(
     () =>
       catalogTypesExtensions.reduce((acc, catalogItemType) => {
@@ -235,9 +237,8 @@ const CatalogTypesConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
     save();
   };
 
-  const filterOption = (option: ReactElement<ItemProps>, input: string): boolean => {
-    return fuzzy(input.toLocaleLowerCase(), option.props.title.toLocaleLowerCase());
-  };
+  const filterOption = (option: ReactElement<ItemProps>, input: string): boolean =>
+    fuzzy(input.toLocaleLowerCase(), option.props.title.toLocaleLowerCase());
 
   return (
     <FormSection title={t('Software Catalog')} data-test="catalog-types form-section">

@@ -61,9 +61,7 @@ const TaintsModal = (props: TaintsModalProps) => {
     setTaints(tmpTaints);
   };
 
-  const newTaint = (): Taint => {
-    return { key: '', value: '', effect: 'NoSchedule' };
-  };
+  const newTaint = (): Taint => ({ key: '', value: '', effect: 'NoSchedule' });
 
   const addRow = () => {
     setTaints([...taints, newTaint()]);
@@ -192,17 +190,15 @@ type TaintsModalProps = {
   resource: NodeKind;
 } & ModalComponentProps;
 
-const TaintsModalOverlay: OverlayComponent<TaintsModalProps> = (props) => {
-  return (
-    <Modal
-      isOpen
-      onClose={props.closeOverlay}
-      variant={ModalVariant.small}
-      aria-labelledby="taints-modal-title"
-    >
-      <TaintsModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
-    </Modal>
-  );
-};
+const TaintsModalOverlay: OverlayComponent<TaintsModalProps> = (props) => (
+  <Modal
+    isOpen
+    onClose={props.closeOverlay}
+    variant={ModalVariant.small}
+    aria-labelledby="taints-modal-title"
+  >
+    <TaintsModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
+  </Modal>
+);
 
 export { TaintsModalOverlay };

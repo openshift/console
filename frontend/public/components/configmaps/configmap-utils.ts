@@ -183,7 +183,7 @@ const keyValueValidation = (values) =>
       key: yup
         .string()
         .required(i18next.t('public~Required'))
-        .test('unique', i18next.t('public~Key must be unique'), function (value) {
+        .test('unique', i18next.t('public~Key must be unique'), (value) => {
           const { data, binaryData } = values.formData;
           const existingPairs = [...data, ...binaryData].filter((d) => d);
           const found = existingPairs.filter((v) => v.key === value);

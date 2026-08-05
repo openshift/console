@@ -11,15 +11,14 @@ describe('LimitRangeDetailsRow', () => {
     maxLimitRequestRatio: '',
   };
 
-  const renderLimitRangeDetailsRow = () => {
-    return renderWithProviders(
+  const renderLimitRangeDetailsRow = () =>
+    renderWithProviders(
       <table>
         <tbody>
           <LimitRangeDetailsRow limitType={'Container'} resource={'memory'} limit={limitContent} />
         </tbody>
       </table>,
     );
-  };
 
   it('verifies the limit type as Container', () => {
     renderLimitRangeDetailsRow();

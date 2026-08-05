@@ -91,8 +91,8 @@ const ChannelForm: FC<FormikProps<FormikValues> & OwnProps> = ({
     [setErrors, setStatus, setFieldValue, setFieldTouched, values.formData, validateForm],
   );
 
-  const sanitizeToYaml = () => {
-    return safeJSToYAML(
+  const sanitizeToYaml = () =>
+    safeJSToYAML(
       getCatalogChannelData(values as YamlFormSyncData<AddChannelFormData>),
       'yamlData',
       {
@@ -100,7 +100,6 @@ const ChannelForm: FC<FormikProps<FormikValues> & OwnProps> = ({
         noRefs: true,
       },
     );
-  };
 
   const yamlEditor = <CodeEditorField name="yamlData" showSamples onSave={handleSubmit} />;
 

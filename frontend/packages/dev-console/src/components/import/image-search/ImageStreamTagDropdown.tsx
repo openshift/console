@@ -156,11 +156,12 @@ const ImageStreamTagDropdown: FC<{
     touched,
   ]);
 
-  useEffect(() => {
-    return () => {
+  useEffect(
+    () => () => {
       unmounted.current = true;
-    };
-  }, []);
+    },
+    [],
+  );
 
   return (
     <DropdownField

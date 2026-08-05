@@ -1,12 +1,10 @@
 import type { FC, ReactNode } from 'react';
 
-const PaneBodyGroup: FC<PaneBodyGroupProps> = ({ children, ...props }) => {
-  return (
-    <div className="co-m-pane__body-group" {...props}>
-      {children}
-    </div>
-  );
-};
+const PaneBodyGroup: FC<PaneBodyGroupProps> = ({ children, ...props }) => (
+  <div className="co-m-pane__body-group" {...props}>
+    {children}
+  </div>
+);
 
 type PaneBodyGroupProps = {
   children: ReactNode;

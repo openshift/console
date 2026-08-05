@@ -113,9 +113,10 @@ export const useHPAActions = (kindObj: K8sKind, resource: K8sResourceKind) => {
     ];
   }, [kindObj, launchModal, relatedHPAs, resource, supportsHPA]);
 
-  const result = useMemo<[Action[], HorizontalPodAutoscalerKind[]]>(() => {
-    return [actions, relatedHPAs];
-  }, [actions, relatedHPAs]);
+  const result = useMemo<[Action[], HorizontalPodAutoscalerKind[]]>(() => [actions, relatedHPAs], [
+    actions,
+    relatedHPAs,
+  ]);
 
   return result;
 };

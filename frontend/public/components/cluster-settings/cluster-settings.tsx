@@ -147,9 +147,7 @@ const clusterAutoscalerReference = referenceForModel(ClusterAutoscalerModel);
 const getMCPByName = (
   machineConfigPools: MachineConfigPoolKind[],
   name: string,
-): MachineConfigPoolKind => {
-  return machineConfigPools?.find((mcp) => mcp.metadata.name === name);
-};
+): MachineConfigPoolKind => machineConfigPools?.find((mcp) => mcp.metadata.name === name);
 
 const getStartedTimeForCVDesiredVersion = (
   cv: ClusterVersionKind,
@@ -171,13 +169,9 @@ const getUpdatingTimeForMCP = (machineConfigPool: MachineConfigPoolKind): string
 const getUpdatedOperatorsCount = (
   clusterOperators: ClusterOperator[],
   desiredVersion: string,
-): number => {
-  return (
-    clusterOperators?.filter((operator) => {
-      return getClusterOperatorVersion(operator) === desiredVersion;
-    })?.length ?? 0
+): number =>
+  clusterOperators?.filter((operator) => getClusterOperatorVersion(operator) === desiredVersion)?.length ?? 0
   );
-};
 
 const CurrentChannel: FC<CurrentChannelProps> = ({ cv, canUpgrade }) => {
   const { t } = useTranslation('public');
@@ -341,47 +335,41 @@ const ChannelHeader: FC<{}> = () => {
   );
 };
 
-const Channel: FC<ChannelProps> = ({ children, endOfLife }) => {
-  return (
-    <div
-      className={css('co-channel', {
-        'co-channel--end-of-life': endOfLife,
-      })}
-      data-test="cv-channel"
-    >
-      {children}
-    </div>
-  );
-};
+const Channel: FC<ChannelProps> = ({ children, endOfLife }) => (
+  <div
+    className={css('co-channel', {
+      'co-channel--end-of-life': endOfLife,
+    })}
+    data-test="cv-channel"
+  >
+    {children}
+  </div>
+);
 
-const ChannelLine: FC<ChannelLineProps> = ({ children, start }) => {
-  return <li className={css('co-channel-line', { 'co-channel-start': start })}>{children}</li>;
-};
+const ChannelLine: FC<ChannelLineProps> = ({ children, start }) => (
+  <li className={css('co-channel-line', { 'co-channel-start': start })}>{children}</li>
+);
 
-const ChannelName: FC<ChannelNameProps> = ({ children, current }) => {
-  return (
-    <span
-      className={css('co-channel-name', {
-        'co-channel-name--current': current,
-      })}
-      data-test="cv-channel-name"
-    >
-      {children}
-    </span>
-  );
-};
+const ChannelName: FC<ChannelNameProps> = ({ children, current }) => (
+  <span
+    className={css('co-channel-name', {
+      'co-channel-name--current': current,
+    })}
+    data-test="cv-channel-name"
+  >
+    {children}
+  </span>
+);
 
-const ChannelPath: FC<ChannelPathProps> = ({ children, current }) => {
-  return (
-    <ul
-      className={css('co-channel-path', {
-        'co-channel-path--current': current,
-      })}
-    >
-      {children}
-    </ul>
-  );
-};
+const ChannelPath: FC<ChannelPathProps> = ({ children, current }) => (
+  <ul
+    className={css('co-channel-path', {
+      'co-channel-path--current': current,
+    })}
+  >
+    {children}
+  </ul>
+);
 
 const ChannelVersion: FC<ChannelVersionProps> = ({ children, current, updateBlocked }) => {
   const test = 'cv-channel-version';
@@ -462,34 +450,30 @@ const ChannelVersionDot: FC<ChannelVersionDotProps> = ({ current, updateBlocked,
   );
 };
 
-const UpdatesBar: FC<UpdatesBarProps> = ({ children }) => {
-  return <div className="co-cluster-settings__updates-bar">{children}</div>;
-};
+const UpdatesBar: FC<UpdatesBarProps> = ({ children }) => (
+  <div className="co-cluster-settings__updates-bar">{children}</div>
+);
 
-const UpdatesGroup: FC<UpdatesGroupProps> = ({ children, divided }) => {
-  return (
-    <div
-      className={css('co-cluster-settings__updates-group', {
-        'co-cluster-settings__updates-group--divided': divided,
-      })}
-      data-test="cv-updates-group"
-    >
-      {children}
-    </div>
-  );
-};
+const UpdatesGroup: FC<UpdatesGroupProps> = ({ children, divided }) => (
+  <div
+    className={css('co-cluster-settings__updates-group', {
+      'co-cluster-settings__updates-group--divided': divided,
+    })}
+    data-test="cv-updates-group"
+  >
+    {children}
+  </div>
+);
 
-const UpdatesProgress: FC<UpdatesProgressProps> = ({ children }) => {
-  return (
-    <div className="co-cluster-settings__updates-progress" data-test="cv-updates-progress">
-      {children}
-    </div>
-  );
-};
+const UpdatesProgress: FC<UpdatesProgressProps> = ({ children }) => (
+  <div className="co-cluster-settings__updates-progress" data-test="cv-updates-progress">
+    {children}
+  </div>
+);
 
-const UpdatesType: FC<UpdatesTypeProps> = ({ children }) => {
-  return <div className="co-cluster-settings__updates-type">{children}</div>;
-};
+const UpdatesType: FC<UpdatesTypeProps> = ({ children }) => (
+  <div className="co-cluster-settings__updates-type">{children}</div>
+);
 
 const NodesUpdatesGroup: FC<NodesUpdatesGroupProps> = ({
   divided,
@@ -600,19 +584,17 @@ const OtherNodes: FC<OtherNodesProps> = ({
     .sort(sortMCPsByCreationTimestamp);
   return (
     <>
-      {otherNodes.map((mcp) => {
-        return (
-          <NodesUpdatesGroup
-            desiredVersion={desiredVersion}
-            divided
-            hideIfComplete={hideIfComplete}
-            key={mcp.metadata.uid}
-            name={mcp.metadata.name}
-            machineConfigPool={mcp}
-            updateStartedTime={updateStartedTime}
-          />
-        );
-      })}
+      {otherNodes.map((mcp) => (
+        <NodesUpdatesGroup
+          desiredVersion={desiredVersion}
+          divided
+          hideIfComplete={hideIfComplete}
+          key={mcp.metadata.uid}
+          name={mcp.metadata.name}
+          machineConfigPool={mcp}
+          updateStartedTime={updateStartedTime}
+        />
+      ))}
     </>
   );
 };

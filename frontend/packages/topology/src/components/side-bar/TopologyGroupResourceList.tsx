@@ -13,21 +13,19 @@ const TopologyGroupResourceList: FC<TopologyGroupResourceListProps> = ({
   resources,
   releaseNamespace,
   linkForResource,
-}) => {
-  return (
-    <List isPlain isBordered>
-      {resources
-        .sort((r1, r2) => r1.metadata.name.localeCompare(r2.metadata.name))
-        .map((resource) => (
-          <TopologyGroupResourceItem
-            key={resource.metadata.name}
-            item={resource}
-            releaseNamespace={releaseNamespace}
-            linkForResource={linkForResource}
-          />
-        ))}
-    </List>
-  );
-};
+}) => (
+  <List isPlain isBordered>
+    {resources
+      .sort((r1, r2) => r1.metadata.name.localeCompare(r2.metadata.name))
+      .map((resource) => (
+        <TopologyGroupResourceItem
+          key={resource.metadata.name}
+          item={resource}
+          releaseNamespace={releaseNamespace}
+          linkForResource={linkForResource}
+        />
+      ))}
+  </List>
+);
 
 export default TopologyGroupResourceList;

@@ -70,9 +70,10 @@ import { hideKnatifyAction, MakeServerless } from './knatify';
 export const useMakeServerlessActionProvider = (resource: K8sResourceKind) => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource));
 
-  const deploymentActions = useMemo(() => {
-    return hideKnatifyAction(resource) ? [] : MakeServerless(kindObj, resource);
-  }, [kindObj, resource]);
+  const deploymentActions = useMemo(
+    () => (hideKnatifyAction(resource) ? [] : MakeServerless(kindObj, resource)),
+    [kindObj, resource],
+  );
 
   return [deploymentActions, !inFlight, undefined];
 };
@@ -81,9 +82,10 @@ export const useSinkPubSubActionProvider = (resource: K8sResourceKind) => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource));
   const commonActions = useCommonResourceActions(kindObj, resource);
   const moveSinkSourceAction = useMoveSinkPubsubAction(kindObj, resource);
-  const actions = useMemo(() => {
-    return [moveSinkSourceAction, ...commonActions];
-  }, [moveSinkSourceAction, commonActions]);
+  const actions = useMemo(() => [moveSinkSourceAction, ...commonActions], [
+    moveSinkSourceAction,
+    commonActions,
+  ]);
 
   return [actions, !inFlight, undefined];
 };

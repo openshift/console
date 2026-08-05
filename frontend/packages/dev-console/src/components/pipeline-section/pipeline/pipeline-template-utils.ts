@@ -106,27 +106,21 @@ const getPipelineRunGenerateName = (pipelineRun: PipelineRunKind): string => {
   return `${pipelineRun?.metadata?.name?.replace(/-[a-z0-9]{5,6}$/, '')}-`;
 };
 
-const getPipelineRunParams = (pipelineParams: TektonParam[]): PipelineRunParam[] => {
-  return (
-    pipelineParams &&
-    pipelineParams.map((param) => ({
-      name: param.name,
-      value: param.default,
-    }))
-  );
-};
+const getPipelineRunParams = (pipelineParams: TektonParam[]): PipelineRunParam[] =>
+  pipelineParams &&
+  pipelineParams.map((param) => ({
+    name: param.name,
+    value: param.default,
+  }));
 
 const getPipelineRunWorkspaces = (
   pipelineWorkspaces: PipelineModalFormWorkspace[],
-): PipelineRunWorkspace[] => {
-  return (
-    pipelineWorkspaces &&
-    pipelineWorkspaces.map((workspace) => ({
-      name: workspace.name,
-      ...workspace.data,
-    }))
-  );
-};
+): PipelineRunWorkspace[] =>
+  pipelineWorkspaces &&
+  pipelineWorkspaces.map((workspace) => ({
+    name: workspace.name,
+    ...workspace.data,
+  }));
 
 enum StartedByAnnotation {
   user = 'pipeline.openshift.io/started-by',
@@ -145,13 +139,11 @@ export type ServiceAccountType = {
   imagePullSecrets: ServiceAccountSecretNames[];
 } & K8sResourceCommon;
 
-const getImageUrl = (name: string, namespace: string) => {
-  return `image-registry.openshift-image-registry.svc:5000/${namespace}/${name}`;
-};
+const getImageUrl = (name: string, namespace: string) =>
+  `image-registry.openshift-image-registry.svc:5000/${namespace}/${name}`;
 
-const getDefinedObj = (objData: ParamData): ParamData => {
-  return _.omitBy(objData, (v) => _.isUndefined(v) || _.isNull(v) || v === '');
-};
+const getDefinedObj = (objData: ParamData): ParamData =>
+  _.omitBy(objData, (v) => _.isUndefined(v) || _.isNull(v) || v === '');
 
 type PipelineModalFormResource = {
   name: string;
@@ -422,11 +414,11 @@ const getServerlessFunctionDefaultPersistentVolumeClaim = async (
     model: StorageClassModel,
     queryParams: {},
   });
-  const defaultStorageClass = storageClasses?.find((storageClass) => {
-    return (
-      storageClass.metadata?.annotations?.['storageclass.kubernetes.io/is-default-class'] === 'true'
-    );
-  });
+  const defaultStorageClass = storageClasses?.find(
+    (storageClass) =>
+      storageClass.metadata?.annotations?.['storageclass.kubernetes.io/is-default-class'] ===
+      'true',
+  );
   const defaultStorageClassName = defaultStorageClass?.metadata?.name;
   return {
     volumeClaimTemplate: {
@@ -453,32 +445,29 @@ const getServerlessFunctionDefaultPersistentVolumeClaim = async (
   };
 };
 
-const getDefaultVolumeClaimTemplate = (pipelineName: string): VolumeClaimTemplateType => {
-  return {
-    volumeClaimTemplate: {
-      metadata: {
-        labels: { [TektonResourceLabel.pipeline]: pipelineName },
-      },
-      spec: {
-        accessModes: ['ReadWriteOnce'],
-        resources: {
-          requests: {
-            storage: '1Gi',
-          },
+const getDefaultVolumeClaimTemplate = (pipelineName: string): VolumeClaimTemplateType => ({
+  volumeClaimTemplate: {
+    metadata: {
+      labels: { [TektonResourceLabel.pipeline]: pipelineName },
+    },
+    spec: {
+      accessModes: ['ReadWriteOnce'],
+      resources: {
+        requests: {
+          storage: '1Gi',
         },
       },
     },
-  };
-};
+  },
+});
 
 const convertMapToNameValueArray = (map: {
   [key: string]: any;
-}): PipelineRunEmbeddedResourceParam[] => {
-  return Object.keys(map).map((name) => {
+}): PipelineRunEmbeddedResourceParam[] =>
+  Object.keys(map).map((name) => {
     const value = map[name];
     return { name, value };
   });
-};
 
 const processWorkspaces = (values: StartPipelineFormValues): StartPipelineFormValues => {
   const { workspaces } = values;
@@ -527,13 +516,11 @@ const createPipelineResource = (
       type,
       params: convertMapToNameValueArray(getDefinedObj(params)),
       ...(secretResp && {
-        secrets: _.map(secretResp.data, (value, name) => {
-          return {
-            fieldName: name,
-            secretKey: name,
-            secretName: secretResp?.metadata?.name,
-          };
-        }),
+        secrets: _.map(secretResp.data, (value, name) => ({
+          fieldName: name,
+          secretKey: name,
+          secretName: secretResp?.metadata?.name,
+        })),
       }),
     },
   };
@@ -550,9 +537,9 @@ const resourceSubmit = async (
   } = resourceValues;
 
   return secrets
-    ? createSecretResource(secrets, type, namespace).then((secretResp) => {
-        return createPipelineResource(params, type, namespace, secretResp);
-      })
+    ? createSecretResource(secrets, type, namespace).then((secretResp) =>
+        createPipelineResource(params, type, namespace, secretResp),
+      )
     : createPipelineResource(params, type, namespace);
 };
 
@@ -562,9 +549,8 @@ const processResources = async (
   const { namespace, resources } = values;
 
   const toCreateResources: { [index: string]: PipelineModalFormResource } = resources.reduce(
-    (acc, resource, index) => {
-      return resource.selection === CREATE_PIPELINE_RESOURCE ? { ...acc, [index]: resource } : acc;
-    },
+    (acc, resource, index) =>
+      resource.selection === CREATE_PIPELINE_RESOURCE ? { ...acc, [index]: resource } : acc,
     {},
   );
   const createdResources = await Promise.all(
@@ -618,8 +604,8 @@ export const getPipelineParams = (
   dockerfilePath: string,
   tag: string,
   buildEnv: any,
-) => {
-  return (params || []).map((param) => {
+) =>
+  (params || []).map((param) => {
     switch (param.name) {
       case 'APP_NAME':
         return { ...param, default: name };
@@ -641,7 +627,6 @@ export const getPipelineParams = (
         return param;
     }
   });
-};
 
 export const pipelineRuntimeOrVersionChanged = (
   template: PipelineKind,
@@ -859,19 +844,17 @@ const createTriggerTemplate = (
   pipeline: PipelineKind,
   pipelineRun: PipelineRunKind,
   params: TriggerTemplateKindParam[],
-): TriggerTemplateKind => {
-  return {
-    apiVersion: apiVersionForModel(TriggerTemplateModel),
-    kind: TriggerTemplateModel.kind,
-    metadata: {
-      name: `trigger-template-${pipeline?.metadata?.name}-${getRandomChars()}`,
-    },
-    spec: {
-      params,
-      resourcetemplates: [pipelineRun],
-    },
-  };
-};
+): TriggerTemplateKind => ({
+  apiVersion: apiVersionForModel(TriggerTemplateModel),
+  kind: TriggerTemplateModel.kind,
+  metadata: {
+    name: `trigger-template-${pipeline?.metadata?.name}-${getRandomChars()}`,
+  },
+  spec: {
+    params,
+    resourcetemplates: [pipelineRun],
+  },
+});
 
 const exposeRoute = async (elName: string, ns: string, iteration = 0) => {
   const elResource: EventListenerKind = await k8sGet(EventListenerModel, elName, ns);

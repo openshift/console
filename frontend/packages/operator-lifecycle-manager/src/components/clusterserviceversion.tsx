@@ -800,8 +800,8 @@ const ClusterServiceVersionList: FC<ClusterServiceVersionListProps> = ({
   const filterOperators = (
     operators: (ClusterServiceVersionKind | SubscriptionKind)[],
     allNamespaceActive: boolean,
-  ): (ClusterServiceVersionKind | SubscriptionKind)[] => {
-    return operators.filter((operator) => {
+  ): (ClusterServiceVersionKind | SubscriptionKind)[] =>
+    operators.filter((operator) => {
       if (isSubscription(operator)) {
         return true;
       }
@@ -818,7 +818,6 @@ const ClusterServiceVersionList: FC<ClusterServiceVersionListProps> = ({
       }
       return isStandaloneCSV(operator);
     });
-  };
 
   const formatTargetNamespaces = (obj: ClusterServiceVersionKind | SubscriptionKind): string => {
     if (obj.kind === 'Subscription') {

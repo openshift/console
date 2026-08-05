@@ -26,27 +26,25 @@ const getPseudoTranslatedQuickStart = (
   quickStart: QuickStart,
   lang?: string,
   country?: string,
-): QuickStart => {
-  return {
-    ...quickStart,
-    metadata: {
-      ...quickStart.metadata,
-      name: `${quickStart.metadata.name}${lang ? `-${lang}` : ''}${country ? `-${country}` : ''}`,
-      labels: {
-        ...quickStart.metadata.labels,
-        'console.openshift.io/name': quickStart.metadata.name,
-        'console.openshift.io/lang': lang,
-        'console.openshift.io/country': country,
-      },
+): QuickStart => ({
+  ...quickStart,
+  metadata: {
+    ...quickStart.metadata,
+    name: `${quickStart.metadata.name}${lang ? `-${lang}` : ''}${country ? `-${country}` : ''}`,
+    labels: {
+      ...quickStart.metadata.labels,
+      'console.openshift.io/name': quickStart.metadata.name,
+      'console.openshift.io/lang': lang,
+      'console.openshift.io/country': country,
     },
-    spec: {
-      ...quickStart.spec,
-      displayName: `${quickStart.spec.displayName}${lang ? ` ${lang}` : ''}${
-        country ? `-${country}` : ''
-      }`,
-    },
-  };
-};
+  },
+  spec: {
+    ...quickStart.spec,
+    displayName: `${quickStart.spec.displayName}${lang ? ` ${lang}` : ''}${
+      country ? `-${country}` : ''
+    }`,
+  },
+});
 
 export const translatedQuickStarts: QuickStart[] = [
   getPseudoTranslatedQuickStart(quickStartSample),

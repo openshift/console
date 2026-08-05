@@ -22,9 +22,7 @@ import { flagPending } from '../../reducers/features';
 import { ResourceName } from './resource-icon';
 import { LoadingInline } from './status-box';
 
-const getKey = (key, keyKind) => {
-  return keyKind ? `${key}-${keyKind}` : key;
-};
+const getKey = (key, keyKind) => (keyKind ? `${key}-${keyKind}` : key);
 
 interface ListDropdownResource extends Partial<WatchK8sResource & { prop?: string }> {
   data?: K8sResourceCommon[];
@@ -225,15 +223,17 @@ export const ListDropdown: FC<ListDropdownProps> = (props) => {
     watchResources,
   );
 
-  const loaded = useMemo(() => {
-    return Object.values(watchedResources)
-      .filter((r) => !r.loadError)
-      .every((r) => r.loaded);
-  }, [watchedResources]);
+  const loaded = useMemo(
+    () =>
+      Object.values(watchedResources)
+        .filter((r) => !r.loadError)
+        .every((r) => r.loaded),
+    [watchedResources],
+  );
 
-  const loadError = useMemo(() => {
-    return Object.values(watchedResources).some((r) => r.loadError);
-  }, [watchedResources]);
+  const loadError = useMemo(() => Object.values(watchedResources).some((r) => r.loadError), [
+    watchedResources,
+  ]);
 
   return (
     <InnerListDropdown

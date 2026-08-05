@@ -7,27 +7,23 @@ import type { RowFunctionArgs } from '@console/internal/components/factory';
 import { Table, TableData } from '@console/internal/components/factory';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 
-const EventTypeHeaders = (t: TFunction) => () => {
-  return [
-    {
-      id: 'attributes',
-      title: t('knative-plugin~Attributes'),
-    },
-    {
-      id: 'values',
-      title: t('knative-plugin~Values'),
-    },
-  ];
-};
+const EventTypeHeaders = (t: TFunction) => () => [
+  {
+    id: 'attributes',
+    title: t('knative-plugin~Attributes'),
+  },
+  {
+    id: 'values',
+    title: t('knative-plugin~Values'),
+  },
+];
 
-const EventTypeRow: FC<RowFunctionArgs<{ key: string; value: string }>> = ({ obj }) => {
-  return (
-    <>
-      <TableData columnID="attributes">{obj.key}</TableData>
-      <TableData columnID="values">{obj.value}</TableData>
-    </>
-  );
-};
+const EventTypeRow: FC<RowFunctionArgs<{ key: string; value: string }>> = ({ obj }) => (
+  <>
+    <TableData columnID="attributes">{obj.key}</TableData>
+    <TableData columnID="values">{obj.value}</TableData>
+  </>
+);
 
 interface EventTypeProps {
   eventType: K8sResourceKind;
@@ -40,9 +36,7 @@ const EventType: FC<EventTypeProps> = ({ eventType }) => {
 
   const rows = specAttributes
     .filter((a) => eventType.spec.hasOwnProperty(a))
-    .map((a) => {
-      return { key: a, value: eventType.spec[a] };
-    });
+    .map((a) => ({ key: a, value: eventType.spec[a] }));
 
   return (
     <>

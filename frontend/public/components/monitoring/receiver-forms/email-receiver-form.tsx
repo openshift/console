@@ -270,14 +270,11 @@ const getInitialValues = (globals, receiverConfig) => {
   return initValues;
 };
 
-const isFormInvalid = (formValues) => {
-  return (
-    !formValues.emailTo ||
-    !formValues.smtp_from ||
-    !formValues.smtp_smarthost ||
-    !formValues.smtp_hello
-  );
-};
+const isFormInvalid = (formValues) =>
+  !formValues.emailTo ||
+  !formValues.smtp_from ||
+  !formValues.smtp_smarthost ||
+  !formValues.smtp_hello;
 
 const updateGlobals = (globals, formValues) => {
   const updatedGlobals = {};

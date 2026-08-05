@@ -232,38 +232,36 @@ export const SubscriptionTableRow: FC<RowFunctionArgs> = ({ obj }) => {
 
 export const SubscriptionsList = requireOperatorGroup((props: SubscriptionsListProps) => {
   const { t } = useTranslation('olm');
-  const SubscriptionTableHeader = () => {
-    return [
-      {
-        title: t('Name'),
-        sortField: 'metadata.name',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[0] },
-      },
-      {
-        title: t('Namespace'),
-        sortField: 'metadata.namespace',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[1] },
-      },
-      {
-        title: t('Status'),
-        props: { className: tableColumnClasses[2] },
-      },
-      {
-        title: t('Update channel'),
-        props: { className: tableColumnClasses[3] },
-      },
-      {
-        title: t('Update approval'),
-        props: { className: tableColumnClasses[4] },
-      },
-      {
-        title: '',
-        props: { className: tableColumnClasses[5] },
-      },
-    ];
-  };
+  const SubscriptionTableHeader = () => [
+    {
+      title: t('Name'),
+      sortField: 'metadata.name',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[0] },
+    },
+    {
+      title: t('Namespace'),
+      sortField: 'metadata.namespace',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[1] },
+    },
+    {
+      title: t('Status'),
+      props: { className: tableColumnClasses[2] },
+    },
+    {
+      title: t('Update channel'),
+      props: { className: tableColumnClasses[3] },
+    },
+    {
+      title: t('Update approval'),
+      props: { className: tableColumnClasses[4] },
+    },
+    {
+      title: '',
+      props: { className: tableColumnClasses[5] },
+    },
+  ];
   return (
     <Table
       {...props}

@@ -52,8 +52,8 @@ const useVolumeAttributesClassColumns = (): {
     VolumeAttributesClassModel,
   );
 
-  const columns: TableColumn<VolumeAttributesClassKind>[] = useMemo(() => {
-    return [
+  const columns: TableColumn<VolumeAttributesClassKind>[] = useMemo(
+    () => [
       {
         title: t('Name'),
         id: tableColumnInfo[0].id,
@@ -88,14 +88,15 @@ const useVolumeAttributesClassColumns = (): {
           ...actionsCellProps,
         },
       },
-    ];
-  }, [t, getResizableProps]);
+    ],
+    [t, getResizableProps],
+  );
 
   return { columns, resetAllColumnWidths };
 };
 
-const getDataViewRows: GetDataViewRows<VolumeAttributesClassKind, undefined> = (data, columns) => {
-  return data.map(({ obj }) => {
+const getDataViewRows: GetDataViewRows<VolumeAttributesClassKind, undefined> = (data, columns) =>
+  data.map(({ obj }) => {
     const { name } = obj.metadata;
     const parameterCount = Object.keys(obj?.parameters || {}).length;
 
@@ -135,7 +136,6 @@ const getDataViewRows: GetDataViewRows<VolumeAttributesClassKind, undefined> = (
       };
     });
   });
-};
 
 const VolumeAttributesClassList: FC<VolumeAttributesClassListProps> = ({
   data,
@@ -165,17 +165,15 @@ const VolumeAttributesClassList: FC<VolumeAttributesClassListProps> = ({
   );
 };
 
-export const VolumeAttributesClassPage: FC<ListPageProps> = (props) => {
-  return (
-    <ListPage
-      {...props}
-      ListComponent={VolumeAttributesClassList}
-      kind={VolumeAttributesClassModel.kind}
-      canCreate
-      omitFilterToolbar
-    />
-  );
-};
+export const VolumeAttributesClassPage: FC<ListPageProps> = (props) => (
+  <ListPage
+    {...props}
+    ListComponent={VolumeAttributesClassList}
+    kind={VolumeAttributesClassModel.kind}
+    canCreate
+    omitFilterToolbar
+  />
+);
 
 const VolumeAttributesClassDetails: FC<VolumeAttributesClassDetailsProps> = ({ obj }) => {
   const { t } = useTranslation('public');

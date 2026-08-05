@@ -170,16 +170,18 @@ const CreateSnapshotForm = (props: SnapshotResourceProps) => {
     StorageClassModel,
   );
   const title = t('Create VolumeSnapshot');
-  const resourceWatch = useMemo(() => {
-    return Object.assign(
-      {
-        kind: PersistentVolumeClaimModel.kind,
-        namespace,
-        isList: true,
-      },
-      selectedPVCName ? { name: selectedPVCName } : null,
-    );
-  }, [namespace, selectedPVCName]);
+  const resourceWatch = useMemo(
+    () =>
+      Object.assign(
+        {
+          kind: PersistentVolumeClaimModel.kind,
+          namespace,
+          isList: true,
+        },
+        selectedPVCName ? { name: selectedPVCName } : null,
+      ),
+    [namespace, selectedPVCName],
+  );
 
   const [data, loaded, loadError] = useK8sWatchResource<PersistentVolumeClaimKind[]>(resourceWatch);
   const scList = scObjListLoaded ? scObjList.items : [];

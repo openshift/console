@@ -177,9 +177,7 @@ const TopologyComponent: FC<
     const onVisualizationLayoutChange = _.debounce(() => {
       const visModel = newVisualization.toModel();
       const updatedLayoutData = setTopologyLayout(namespace, visModel.nodes, visModel.graph.layout);
-      setTopologyLayoutData((prevState) => {
-        return { ...prevState, ...updatedLayoutData };
-      });
+      setTopologyLayoutData((prevState) => ({ ...prevState, ...updatedLayoutData }));
     }, 200);
 
     newVisualization.addEventListener(NODE_POSITIONED_EVENT, onVisualizationLayoutChange);
@@ -190,9 +188,7 @@ const TopologyComponent: FC<
       // will crash in @patternfly/react-topology Visualization `getLayout(type: string)`
       if (!SUPPORTED_LAYOUTS.includes(storedLayout.layout)) {
         graphModel.graph.layout = DEFAULT_LAYOUT;
-        setTopologyLayoutData((prevState) => {
-          return { ...prevState, layout: DEFAULT_LAYOUT };
-        });
+        setTopologyLayoutData((prevState) => ({ ...prevState, layout: DEFAULT_LAYOUT }));
       } else {
         graphModel.graph.layout = storedLayout.layout;
       }
@@ -370,11 +366,9 @@ const TopologyComponent: FC<
   );
 };
 
-const TopologyStateToProps = (state: RootState): StateProps => {
-  return {
-    getStoredGraphModel: (namespace: string) => getTopologyGraphModel(state, namespace),
-  };
-};
+const TopologyStateToProps = (state: RootState): StateProps => ({
+  getStoredGraphModel: (namespace: string) => getTopologyGraphModel(state, namespace),
+});
 
 const TopologyDispatchToProps = (dispatch): DispatchProps => ({
   onGraphModelChange: (namespace: string, model: GraphModel) => {

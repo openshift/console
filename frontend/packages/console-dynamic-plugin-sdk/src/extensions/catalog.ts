@@ -109,29 +109,23 @@ export type SupportedCatalogExtensions =
 
 // Type guards
 
-export const isCatalogItemType = (e: Extension): e is CatalogItemType => {
-  return e.type === 'console.catalog/item-type';
-};
+export const isCatalogItemType = (e: Extension): e is CatalogItemType =>
+  e.type === 'console.catalog/item-type';
 
-export const isCatalogItemTypeMetadata = (e: Extension): e is CatalogItemTypeMetadata => {
-  return e.type === 'console.catalog/item-type-metadata';
-};
+export const isCatalogItemTypeMetadata = (e: Extension): e is CatalogItemTypeMetadata =>
+  e.type === 'console.catalog/item-type-metadata';
 
-export const isCatalogItemProvider = (e: Extension): e is CatalogItemProvider => {
-  return e.type === 'console.catalog/item-provider';
-};
+export const isCatalogItemProvider = (e: Extension): e is CatalogItemProvider =>
+  e.type === 'console.catalog/item-provider';
 
-export const isCatalogItemFilter = (e: Extension): e is CatalogItemFilter => {
-  return e.type === 'console.catalog/item-filter';
-};
+export const isCatalogItemFilter = (e: Extension): e is CatalogItemFilter =>
+  e.type === 'console.catalog/item-filter';
 
-export const isCatalogItemMetadataProvider = (e: Extension): e is CatalogItemMetadataProvider => {
-  return e.type === 'console.catalog/item-metadata';
-};
+export const isCatalogItemMetadataProvider = (e: Extension): e is CatalogItemMetadataProvider =>
+  e.type === 'console.catalog/item-metadata';
 
-export const isCatalogCategoriesProvider = (e: Extension): e is CatalogCategoriesProvider => {
-  return e.type === 'console.catalog/categories-provider';
-};
+export const isCatalogCategoriesProvider = (e: Extension): e is CatalogCategoriesProvider =>
+  e.type === 'console.catalog/categories-provider';
 
 // Support types
 

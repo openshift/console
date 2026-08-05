@@ -156,8 +156,8 @@ const envVarsToArray = (
   return [[env, envFrom]];
 };
 
-const getContainersObjectForDropdown = (containerArray?: Container[]) => {
-  return _.reduce(
+const getContainersObjectForDropdown = (containerArray?: Container[]) =>
+  _.reduce(
     containerArray,
     (result, elem, order) => {
       result[elem.name] = { ...elem, order };
@@ -165,7 +165,6 @@ const getContainersObjectForDropdown = (containerArray?: Container[]) => {
     },
     {},
   );
-};
 
 class CurrentEnvVars {
   currentEnvVars: EnvVarsState;
@@ -218,9 +217,8 @@ class CurrentEnvVars {
     isContainerArray: boolean,
     path: string[],
   ): this {
-    const getNestedValue = (obj: K8sResourceKind | RawEnvData, pathArray: string[]): unknown => {
-      return pathArray.reduce((acc, key) => acc?.[key], obj);
-    };
+    const getNestedValue = (obj: K8sResourceKind | RawEnvData, pathArray: string[]): unknown =>
+      pathArray.reduce((acc, key) => acc?.[key], obj);
 
     if (isContainerArray) {
       const parentPath = path.slice(0, -1);
@@ -311,9 +309,7 @@ class CurrentEnvVars {
    * Return env var pairs in name value notation, and strip out pairs that have empty name and values.
    */
   _envVarsToNameVal(finalEnvPairs: unknown[]): EnvVar[] {
-    const isEmpty = (value) => {
-      return _.isObject(value) ? _.values(value).every(isEmpty) : !value;
-    };
+    const isEmpty = (value) => (_.isObject(value) ? _.values(value).every(isEmpty) : !value);
     return _.filter(finalEnvPairs, (finalEnvPair) => {
       const name = finalEnvPair[NameValueEditorPair.Name];
       const value = finalEnvPair[NameValueEditorPair.Value];
@@ -334,12 +330,12 @@ class CurrentEnvVars {
       (finalEnvPair) =>
         !_.isEmpty(finalEnvPair[EnvFromPair.Resource]) &&
         !finalEnvPair[EnvFromPair.Resource].configMapSecretRef,
-    ).map((finalPairForContainer) => {
-      return _.assign(
+    ).map((finalPairForContainer) =>
+      _.assign(
         { prefix: finalPairForContainer[EnvFromPair.Prefix] },
         finalPairForContainer[EnvFromPair.Resource],
-      );
-    });
+      ),
+    );
   }
 }
 

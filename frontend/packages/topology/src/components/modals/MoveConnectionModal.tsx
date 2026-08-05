@@ -165,15 +165,14 @@ const MoveConnectionModal: FC<MoveConnectionModalProps> = (props) => {
   );
 
   const handleSubmit = useCallback(
-    (values, actions) => {
-      return handlePromise(onSubmit(values.target))
+    (values, actions) =>
+      handlePromise(onSubmit(values.target))
         .then(() => {
           close();
         })
         .catch((err) => {
           actions.setStatus({ submitError: err });
-        });
-    },
+        }),
     [handlePromise, onSubmit, close],
   );
 

@@ -38,11 +38,10 @@ export const nodeRoles = (node: NodeKind) => {
 export const sortWithCSRResource = <D>(getter: (obj: NodeKind) => D, csrDefaultValue: D) => (
   data: (NodeKind | NodeCertificateSigningRequestKind)[],
   direction: SortByDirection,
-) => {
-  return data.sort(
+) =>
+  data.sort(
     sortResourceByValue<NodeKind>(direction, (obj) => {
       const val = isCSRResource(obj) ? csrDefaultValue : getter(obj);
       return val;
     }),
   );
-};

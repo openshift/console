@@ -15,13 +15,12 @@ const NetworkTabSection: FC<{
   networkAdapter: {
     resource: K8sResourceCommon;
   };
-}> = ({ networkAdapter }) => {
-  return networkAdapter ? (
+}> = ({ networkAdapter }) =>
+  networkAdapter ? (
     <TopologySideBarTabSection>
       <NetworkingOverview obj={networkAdapter.resource} />
     </TopologySideBarTabSection>
   ) : null;
-};
 
 export const useNetworkingSideBarTabSection: DetailsTabSectionExtensionHook = (
   element: GraphElement,

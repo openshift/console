@@ -209,9 +209,7 @@ export const ResourceUsageRow = ({ quota, resourceType, namespace = undefined })
   );
 };
 
-export const QuotaScopesInline = ({ scopes }) => {
-  return <span>({scopes.join(', ')})</span>;
-};
+export const QuotaScopesInline = ({ scopes }) => <span>({scopes.join(', ')})</span>;
 
 const QuotaScopesList = ({ scopes }) => {
   const { t } = useTranslation('public');
@@ -368,8 +366,8 @@ const Details = ({ obj: rq }) => {
   );
 };
 
-const getResourceQuotaDataViewRows = (data, columns, namespace) => {
-  return data.map(({ obj }) => {
+const getResourceQuotaDataViewRows = (data, columns, namespace) =>
+  data.map(({ obj }) => {
     const { metadata, spec } = obj;
     const resourceKind = referenceFor(obj);
 
@@ -451,10 +449,9 @@ const getResourceQuotaDataViewRows = (data, columns, namespace) => {
       };
     });
   });
-};
 
-const getAppliedClusterResourceQuotaDataViewRows = (data, columns, namespace) => {
-  return data.map(({ obj }) => {
+const getAppliedClusterResourceQuotaDataViewRows = (data, columns, namespace) =>
+  data.map(({ obj }) => {
     const { metadata, spec } = obj;
 
     // Calculate resources at quota
@@ -510,7 +507,6 @@ const getAppliedClusterResourceQuotaDataViewRows = (data, columns, namespace) =>
       };
     });
   });
-};
 
 const useResourceQuotaColumns = () => {
   const { t } = useTranslation('public');
@@ -828,16 +824,14 @@ export const AppliedClusterResourceQuotasPage = ({ namespace, mock, showTitle })
   );
 };
 
-export const ResourceQuotasDetailsPage = (props) => {
-  return <DetailsPage {...props} pages={[navFactory.details(Details), navFactory.editYaml()]} />;
-};
+export const ResourceQuotasDetailsPage = (props) => (
+  <DetailsPage {...props} pages={[navFactory.details(Details), navFactory.editYaml()]} />
+);
 
-export const AppliedClusterResourceQuotasDetailsPage = (props) => {
-  return (
-    <DetailsPage
-      {...props}
-      kind={appliedClusterQuotaReference}
-      pages={[navFactory.details(Details), navFactory.editYaml()]}
-    />
-  );
-};
+export const AppliedClusterResourceQuotasDetailsPage = (props) => (
+  <DetailsPage
+    {...props}
+    kind={appliedClusterQuotaReference}
+    pages={[navFactory.details(Details), navFactory.editYaml()]}
+  />
+);

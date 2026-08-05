@@ -103,9 +103,10 @@ export const useTourStateForPerspective = (
     tourLocalState?.[perspective],
     useCallback(
       (completed: boolean) => {
-        setTourLocalState((state) => {
-          return { ...state, [perspective]: { ...state[perspective], completed } };
-        });
+        setTourLocalState((state) => ({
+          ...state,
+          [perspective]: { ...state[perspective], completed },
+        }));
       },
       [perspective, setTourLocalState],
     ),

@@ -14,9 +14,8 @@ interface SourceSecretDropdownProps
 
 const SourceSecretDropdown: FC<SourceSecretDropdownProps> = (props) => {
   const { t } = useTranslation('devconsole');
-  const filterData = (item: SecretKind) => {
-    return item.type === 'kubernetes.io/basic-auth' || item.type === 'kubernetes.io/ssh-auth';
-  };
+  const filterData = (item: SecretKind) =>
+    item.type === 'kubernetes.io/basic-auth' || item.type === 'kubernetes.io/ssh-auth';
 
   const [secrets, secretsLoaded, secretsLoadError] = useK8sWatchResource<SecretKind[]>({
     isList: true,

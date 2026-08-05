@@ -53,8 +53,8 @@ describe('InventoryCard', () => {
     },
   };
 
-  const renderWithContext = (node: NodeKind = mockNode) => {
-    return render(
+  const renderWithContext = (node: NodeKind = mockNode) =>
+    render(
       <NodeDashboardContext.Provider
         value={{
           obj: node,
@@ -66,7 +66,6 @@ describe('InventoryCard', () => {
         <InventoryCard />
       </NodeDashboardContext.Provider>,
     );
-  };
 
   beforeEach(() => {
     jest.clearAllMocks();

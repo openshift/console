@@ -292,14 +292,14 @@ export const SingleTypeaheadDropdown: FC<SingleTypeaheadDropdownProps> = ({
     onClear && onClear(selectedKey);
   };
 
-  const selectedItemWidth = useMemo(() => {
-    // font is hardcoded because canvas can't read the non-global CSS variables
-    return (
+  const selectedItemWidth = useMemo(
+    () =>
+      // font is hardcoded because canvas can't read the non-global CSS variables
       resizeToFit &&
       selectedValue &&
-      getTextWidth(String(selectedValue.children), '14px RedHatText')
-    );
-  }, [resizeToFit, selectedValue]);
+      getTextWidth(String(selectedValue.children), '14px RedHatText'),
+    [resizeToFit, selectedValue],
+  );
 
   const toggle = (toggleRef: Ref<MenuToggleElement>) => (
     <MenuToggle

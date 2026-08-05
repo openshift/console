@@ -155,9 +155,8 @@ export const setServiceLevel = (
     hasSecretAccess,
   });
 
-export const setActiveApplication = (application: string) => {
-  return action(ActionType.SetActiveApplication, { application });
-};
+export const setActiveApplication = (application: string) =>
+  action(ActionType.SetActiveApplication, { application });
 
 export const setActiveNamespace = (namespace: string = '') => {
   const trimmedNamespace = namespace.trim();
@@ -179,11 +178,10 @@ export const setActiveNamespace = (namespace: string = '') => {
  * Subprotocols are comma-separated, so commas aren't allowed. Also "="
  * and "/" aren't allowed, so we base64 encode and replace illegal chars.
  */
-const encodeImpersonationValue = (value: string, textEncoder: TextEncoder): string => {
-  return Base64.encode(String.fromCharCode(...textEncoder.encode(value)))
+const encodeImpersonationValue = (value: string, textEncoder: TextEncoder): string =>
+  Base64.encode(String.fromCharCode(...textEncoder.encode(value)))
     .replace(/=/g, '_')
     .replace(/\//g, '-');
-};
 
 export const startImpersonate = (kind: string, name: string, groups?: string[]) => async (
   dispatch,
@@ -227,15 +225,14 @@ export const stopImpersonate = () => (dispatch) => {
   dispatch(clearSSARFlags());
   dispatch(detectFeatures());
 };
-export const sortList = (listId: string, field: string, func: string, orderBy: string) => {
+export const sortList = (listId: string, field: string, func: string, orderBy: string) =>
   // const url = new URL(window.location.href);
   // const sp = new URLSearchParams(window.location.search);
   // sp.set('orderBy', orderBy);
   // sp.set('sortBy', column);
   // history.replace(`${url.pathname}?${sp.toString()}${url.hash}`);
 
-  return action(ActionType.SortList, { listId, field, func, orderBy });
-};
+  action(ActionType.SortList, { listId, field, func, orderBy });
 const selectOverviewItem = (uid: string) => action(ActionType.SelectOverviewItem, { uid });
 export const selectOverviewDetailsTab = (tab: string) =>
   action(ActionType.SelectOverviewDetailsTab, { tab });
@@ -267,21 +264,16 @@ export const setUtilizationDurationSelectedKey = (key) =>
 export const setUtilizationDurationEndTime = (endTime) =>
   action(ActionType.SetUtilizationDurationEndTime, { endTime });
 
-export const setShowOperandsInAllNamespaces = (value: boolean) => {
-  return action(ActionType.SetShowOperandsInAllNamespaces, { value });
-};
-export const setDeprecatedPackage = (value: DeprecatedOperatorWarning) => {
-  return action(ActionType.SetDeprecatedPackage, { value });
-};
-export const setDeprecatedChannel = (value: DeprecatedOperatorWarning) => {
-  return action(ActionType.SetDeprecatedChannel, { value });
-};
-export const setDeprecatedVersion = (value: DeprecatedOperatorWarning) => {
-  return action(ActionType.SetDeprecatedVersion, { value });
-};
-export const setPluginCSPViolations = (pluginName: string, hasViolation: boolean) => {
-  return action(ActionType.SetPluginCSPViolations, { pluginName, hasViolation });
-};
+export const setShowOperandsInAllNamespaces = (value: boolean) =>
+  action(ActionType.SetShowOperandsInAllNamespaces, { value });
+export const setDeprecatedPackage = (value: DeprecatedOperatorWarning) =>
+  action(ActionType.SetDeprecatedPackage, { value });
+export const setDeprecatedChannel = (value: DeprecatedOperatorWarning) =>
+  action(ActionType.SetDeprecatedChannel, { value });
+export const setDeprecatedVersion = (value: DeprecatedOperatorWarning) =>
+  action(ActionType.SetDeprecatedVersion, { value });
+export const setPluginCSPViolations = (pluginName: string, hasViolation: boolean) =>
+  action(ActionType.SetPluginCSPViolations, { pluginName, hasViolation });
 
 // TODO(alecmerdler): Implement all actions using `typesafe-actions` and add them to this export
 // eslint-disable-next-line @typescript-eslint/no-unused-vars -- used in typeof for type export

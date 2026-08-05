@@ -241,9 +241,8 @@ export class GitlabService extends BaseService {
     }
   };
 
-  filePath = (file: string): string => {
-    return this.metadata.contextDir ? `${this.metadata.contextDir}/${file}` : file;
-  };
+  filePath = (file: string): string =>
+    this.metadata.contextDir ? `${this.metadata.contextDir}/${file}` : file;
 
   isDockerfilePresent = () => this.isFilePresent(this.filePath(`${this.metadata.dockerfilePath}`));
 

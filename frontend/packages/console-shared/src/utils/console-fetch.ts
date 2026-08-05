@@ -110,9 +110,8 @@ export const coFetchJSON: ConsoleFetchJSON = (url, method = 'GET', options = {},
   return coFetchCommon(url, method, allOptions, timeout);
 };
 
-export const coFetchText: ConsoleFetchText = (url, options = {}, timeout) => {
-  return coFetchCommon(url, 'GET', options, timeout);
-};
+export const coFetchText: ConsoleFetchText = (url, options = {}, timeout) =>
+  coFetchCommon(url, 'GET', options, timeout);
 
 const coFetchSendJSON = (
   url: string,
@@ -136,11 +135,10 @@ const coFetchSendJSON = (
   return coFetchJSON(url, method, _.defaultsDeep(allOptions, options), timeout);
 };
 
-coFetchJSON.delete = (url, json = null, options = {}, timeout) => {
-  return json
+coFetchJSON.delete = (url, json = null, options = {}, timeout) =>
+  json
     ? coFetchSendJSON(url, 'DELETE', json, options, timeout)
     : coFetchJSON(url, 'DELETE', options, timeout);
-};
 
 coFetchJSON.post = (url: string, json, options = {}, timeout) =>
   coFetchSendJSON(url, 'POST', json, options, timeout);

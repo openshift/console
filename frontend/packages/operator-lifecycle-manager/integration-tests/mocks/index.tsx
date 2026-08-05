@@ -1,5 +1,8 @@
-import { testName } from '../../../integration-tests/support';
-import { SpecCapability, StatusCapability } from '../../src/components/descriptors/types';
+import { testName } from '@console/cypress-integration-tests/support/support';
+import {
+  SpecCapability,
+  StatusCapability,
+} from '@console/operator-lifecycle-manager/src/components/descriptors/types';
 
 const defaultValueFor = <C extends SpecCapability | StatusCapability>(capability: C) => {
   switch (capability) {

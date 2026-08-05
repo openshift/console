@@ -257,14 +257,15 @@ export const ResourceHealthItem: FC<ResourceHealthItemProps> = ({ subsystem, nam
 
   const { title, resources, healthHandler, popupComponent: PopupComponent, popupTitle } = subsystem;
 
-  const resourcesWithNamespace: WatchK8sResources<ResourcesObject> = useMemo(() => {
-    return {
+  const resourcesWithNamespace: WatchK8sResources<ResourcesObject> = useMemo(
+    () => ({
       ...resources,
       ...(resources.imageManifestVuln && {
         imageManifestVuln: { ...resources.imageManifestVuln, namespace },
       }),
-    };
-  }, [resources, namespace]);
+    }),
+    [resources, namespace],
+  );
 
   const resourcesResult: WatchK8sResults<ResourcesObject> = useK8sWatchResources(
     resourcesWithNamespace,

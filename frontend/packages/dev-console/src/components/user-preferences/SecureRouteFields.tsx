@@ -37,42 +37,49 @@ const SecureRouteFields: FC = () => {
   const [isTLSTerminationOpen, setIsTLSTerminationOpen] = useState<boolean>(false);
   const [isInsecureTrafficOpen, setIsInsecureTrafficOpen] = useState<boolean>(false);
 
-  const terminationOptions = useMemo(() => {
-    return {
+  const terminationOptions = useMemo(
+    () => ({
       [TerminationType.EDGE]: t('Edge'),
       [TerminationType.PASSTHROUGH]: t('Passthrough'),
       [TerminationType.REENCRYPT]: t('Re-encrypt'),
-    };
-  }, [t]);
+    }),
+    [t],
+  );
 
-  const tlsTerminationSelectOptions: JSX.Element[] = useMemo(() => {
-    return Object.keys(terminationOptions).map((tlsTerminationOption) => (
-      <SelectOption key={tlsTerminationOption} value={tlsTerminationOption}>
-        {terminationOptions[tlsTerminationOption]}
-      </SelectOption>
-    ));
-  }, [terminationOptions]);
+  const tlsTerminationSelectOptions: JSX.Element[] = useMemo(
+    () =>
+      Object.keys(terminationOptions).map((tlsTerminationOption) => (
+        <SelectOption key={tlsTerminationOption} value={tlsTerminationOption}>
+          {terminationOptions[tlsTerminationOption]}
+        </SelectOption>
+      )),
+    [terminationOptions],
+  );
 
-  const insecureTrafficOptions = useMemo(() => {
-    return tlsTermination === TerminationType.PASSTHROUGH
-      ? {
-          [PassthroughInsecureTrafficType.None]: t('None'),
-          [PassthroughInsecureTrafficType.Redirect]: t('Redirect'),
-        }
-      : {
-          [InsecureTrafficType.None]: t('None'),
-          [InsecureTrafficType.Allow]: t('Allow'),
-          [InsecureTrafficType.Redirect]: t('Redirect'),
-        };
-  }, [t, tlsTermination]);
+  const insecureTrafficOptions = useMemo(
+    () =>
+      tlsTermination === TerminationType.PASSTHROUGH
+        ? {
+            [PassthroughInsecureTrafficType.None]: t('None'),
+            [PassthroughInsecureTrafficType.Redirect]: t('Redirect'),
+          }
+        : {
+            [InsecureTrafficType.None]: t('None'),
+            [InsecureTrafficType.Allow]: t('Allow'),
+            [InsecureTrafficType.Redirect]: t('Redirect'),
+          },
+    [t, tlsTermination],
+  );
 
-  const insecureTrafficSelectOptions: JSX.Element[] = useMemo(() => {
-    return Object.keys(insecureTrafficOptions).map((insecureTrafficOption) => (
-      <SelectOption key={insecureTrafficOption} value={insecureTrafficOption}>
-        {insecureTrafficOptions[insecureTrafficOption]}
-      </SelectOption>
-    ));
-  }, [insecureTrafficOptions]);
+  const insecureTrafficSelectOptions: JSX.Element[] = useMemo(
+    () =>
+      Object.keys(insecureTrafficOptions).map((insecureTrafficOption) => (
+        <SelectOption key={insecureTrafficOption} value={insecureTrafficOption}>
+          {insecureTrafficOptions[insecureTrafficOption]}
+        </SelectOption>
+      )),
+    [insecureTrafficOptions],
+  );
 
   const onSecureRouteChecked = useCallback(
     (_event: FormEvent<HTMLInputElement>, checked: boolean) => {

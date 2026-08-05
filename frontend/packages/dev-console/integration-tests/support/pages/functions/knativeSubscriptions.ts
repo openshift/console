@@ -1,7 +1,7 @@
+import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 import { operators } from '@console/dev-console/integration-tests/support/constants/global';
 import { operatorsPO } from '@console/dev-console/integration-tests/support/pageObjects/operators-po';
 import { app, projectNameSpace } from '@console/dev-console/integration-tests/support/pages/app';
-import { detailsPage } from '../../../../../integration-tests/views/details-page';
 import { pageTitle } from '../../constants';
 import { operatorsPage } from '../operators-page';
 
@@ -106,7 +106,7 @@ export const createKnativeServingUsingCLI = (retries: number = 3) => {
   const yamlFile = '../../knative-plugin/integration-tests/testData/knative-serving.yaml';
   cy.exec(`oc apply -f ${yamlFile} -n ${namespace}`, {
     failOnNonZeroExit: false,
-  }).then(function (result) {
+  }).then((result) => {
     cy.log(result.stdout || result.stderr);
     if (result.stderr) {
       if (retries === 0) {
@@ -123,7 +123,7 @@ export const createKnativeEventingUsingCLI = (retries: number = 3) => {
   const yamlFile = '../../knative-plugin/integration-tests/testData/knative-eventing.yaml';
   cy.exec(`oc apply -f ${yamlFile} -n ${namespace}`, {
     failOnNonZeroExit: false,
-  }).then(function (result) {
+  }).then((result) => {
     cy.log(result.stdout || result.stderr);
     if (result.stderr) {
       if (retries === 0) {
@@ -140,7 +140,7 @@ export const createKnativeKafkaUsingCLI = (retries: number = 3) => {
   const yamlFile = '../../knative-plugin/integration-tests/testData/knative-kafka.yaml';
   cy.exec(`oc apply -f ${yamlFile} -n ${namespace}`, {
     failOnNonZeroExit: false,
-  }).then(function (result) {
+  }).then((result) => {
     cy.log(result.stdout || result.stderr);
     if (result.stderr) {
       if (retries === 0) {

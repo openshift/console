@@ -88,8 +88,8 @@ const EditApplication: FC<EditApplicationProps> = ({
     return createOrUpdateDeployImageResources(values, false, 'update', appResources);
   };
 
-  const handleSubmit = (values, actions) => {
-    return updateResources(values)
+  const handleSubmit = (values, actions) =>
+    updateResources(values)
       .then(() => {
         actions.setStatus({ submitError: '' });
         handleRedirect(namespace, perspective, perspectiveExtensions, navigate);
@@ -97,7 +97,6 @@ const EditApplication: FC<EditApplicationProps> = ({
       .catch((err) => {
         actions.setStatus({ submitError: err.message });
       });
-  };
 
   useEffect(() => {
     let ignore = false;

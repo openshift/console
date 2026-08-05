@@ -40,9 +40,9 @@ import { useConsoleDataViewFilters } from './useConsoleDataViewFilters';
 
 export const initialFiltersDefault: ResourceFilters = { name: '', label: '' };
 
-const BodyLoading: FC<{ columns: number }> = ({ columns }) => {
-  return <SkeletonTableBody rowsCount={5} columnsCount={columns} />;
-};
+const BodyLoading: FC<{ columns: number }> = ({ columns }) => (
+  <SkeletonTableBody rowsCount={5} columnsCount={columns} />
+);
 
 const BodyEmpty: FC<{ label: string; colSpan: number }> = ({ label, colSpan }) => {
   const { t } = useTranslation('console-app');

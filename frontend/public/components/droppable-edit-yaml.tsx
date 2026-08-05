@@ -107,12 +107,9 @@ export const DroppableEditYAML: FC<DroppableEditYAMLProps & EditYAMLProps> = ({
   const onDropRejected: MultipleFileUploadProps['dropzoneProps']['onDropRejected'] = useCallback(
     (rejections) => {
       setErrors(
-        rejections.map((rejection) => {
-          return getDropErrorMessage(
-            rejection.errors[0].code as DropzoneErrorCode,
-            rejection.file.name,
-          );
-        }),
+        rejections.map((rejection) =>
+          getDropErrorMessage(rejection.errors[0].code as DropzoneErrorCode, rejection.file.name),
+        ),
       );
     },
     [getDropErrorMessage],

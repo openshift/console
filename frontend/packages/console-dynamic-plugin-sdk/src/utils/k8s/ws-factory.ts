@@ -200,7 +200,7 @@ export class WSFactory {
     if (!handlers) {
       return;
     }
-    handlers.forEach(function (h) {
+    handlers.forEach((h) => {
       try {
         h(data);
       } catch (e) {

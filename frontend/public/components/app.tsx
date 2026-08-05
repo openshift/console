@@ -100,17 +100,11 @@ const App: FC = () => {
   const location = useLocation();
   const params = useParams();
 
-  const isLargeLayout = () => {
-    return window.innerWidth >= NOTIFICATION_DRAWER_BREAKPOINT;
-  };
+  const isLargeLayout = () => window.innerWidth >= NOTIFICATION_DRAWER_BREAKPOINT;
 
-  const isDesktop = () => {
-    return window.innerWidth >= PF_BREAKPOINT_XL;
-  };
+  const isDesktop = () => window.innerWidth >= PF_BREAKPOINT_XL;
 
-  const isMobile = () => {
-    return window.innerWidth < PF_BREAKPOINT_MD;
-  };
+  const isMobile = () => window.innerWidth < PF_BREAKPOINT_MD;
 
   const [prevLocation, setPrevLocation] = useState(location);
   const [prevParams, setPrevParams] = useState(params);

@@ -55,8 +55,8 @@ const tableColumnInfo = [{ id: 'name' }, { id: 'namespace' }, { id: 'status' }, 
 const getTemplateInstanceDataViewRows = (
   rowData: RowProps<TemplateInstanceKind, TemplateInstanceRowData>[],
   tableColumns: ConsoleDataViewColumn<TemplateInstanceKind>[],
-): ConsoleDataViewRow[] => {
-  return rowData.map(({ obj }) => {
+): ConsoleDataViewRow[] =>
+  rowData.map(({ obj }) => {
     const { name, namespace } = obj.metadata;
     const status = getTemplateInstanceStatus(obj);
 
@@ -92,12 +92,11 @@ const getTemplateInstanceDataViewRows = (
       };
     });
   });
-};
 
 const useTemplateInstanceColumns = (): TableColumn<TemplateInstanceKind>[] => {
   const { t } = useTranslation('public');
-  const columns = useMemo(() => {
-    return [
+  const columns = useMemo(
+    () => [
       {
         title: t('Name'),
         id: tableColumnInfo[0].id,
@@ -133,8 +132,9 @@ const useTemplateInstanceColumns = (): TableColumn<TemplateInstanceKind>[] => {
           ...cellIsStickyProps,
         },
       },
-    ];
-  }, [t]);
+    ],
+    [t],
+  );
   return columns;
 };
 
@@ -142,8 +142,8 @@ const TemplateInstanceList: FC<TemplateInstanceListProps> = ({ data, loaded, ...
   const { t } = useTranslation('public');
   const columns = useTemplateInstanceColumns();
 
-  const templateInstanceStatusFilterOptions = useMemo<DataViewFilterOption[]>(() => {
-    return [
+  const templateInstanceStatusFilterOptions = useMemo<DataViewFilterOption[]>(
+    () => [
       {
         value: 'Ready',
         label: t('Ready'),
@@ -156,8 +156,9 @@ const TemplateInstanceList: FC<TemplateInstanceListProps> = ({ data, loaded, ...
         value: 'Failed',
         label: t('Failed'),
       },
-    ];
-  }, [t]);
+    ],
+    [t],
+  );
 
   const initialFilters = useMemo(() => ({ ...initialFiltersDefault, status: [] }), []);
 

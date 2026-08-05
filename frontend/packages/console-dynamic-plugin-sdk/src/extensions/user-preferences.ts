@@ -82,10 +82,8 @@ export type UserPreferenceItem = Extension<
 
 // Type guards
 
-export const isUserPreferenceGroup = (e: Extension): e is UserPreferenceGroup => {
-  return e.type === 'console.user-preference/group';
-};
+export const isUserPreferenceGroup = (e: Extension): e is UserPreferenceGroup =>
+  e.type === 'console.user-preference/group';
 
-export const isUserPreferenceItem = (e: Extension): e is UserPreferenceItem => {
-  return e.type === 'console.user-preference/item';
-};
+export const isUserPreferenceItem = (e: Extension): e is UserPreferenceItem =>
+  e.type === 'console.user-preference/item';

@@ -121,13 +121,11 @@ const getDebugPod = async (
   return template;
 };
 
-const NodeTerminalError: FC<NodeTerminalErrorProps> = ({ error }) => {
-  return (
-    <PaneBody>
-      <Alert variant="danger" isInline title={error} data-test="node-terminal-error" />
-    </PaneBody>
-  );
-};
+const NodeTerminalError: FC<NodeTerminalErrorProps> = ({ error }) => (
+  <PaneBody>
+    <Alert variant="danger" isInline title={error} data-test="node-terminal-error" />
+  </PaneBody>
+);
 
 const NodeTerminalInner: FC<NodeTerminalInnerProps> = ({
   pod,

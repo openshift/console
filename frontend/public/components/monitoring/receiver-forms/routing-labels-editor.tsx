@@ -25,9 +25,7 @@ import { DOC_URL_PROMETHEUS_MATCHERS } from '../../utils/documentation';
 
 const DEFAULT_RECEIVER_LABEL = 'All (default receiver)';
 
-const hasDuplicateNames = (labels: string[]): boolean => {
-  return labels.length !== _.uniq(labels).length;
-};
+const hasDuplicateNames = (labels: string[]): boolean => labels.length !== _.uniq(labels).length;
 
 export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultReceiver }) => {
   const setRouteLabel = (path: number, v: string): void => {
@@ -42,9 +40,8 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
     });
   };
 
-  const onRoutingLabelChange = (path: number): ((e) => void) => {
-    return (e) => setRouteLabel(path, e.target.value);
-  };
+  const onRoutingLabelChange = (path: number): ((e) => void) => (e) =>
+    setRouteLabel(path, e.target.value);
 
   const addRoutingLabel = (): void => {
     setRouteLabel(formValues.routeLabels.length, '');
@@ -82,35 +79,33 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
               </InputGroupItem>
             </InputGroup>
           )}
-          {_.map(formValues.routeLabels, (routeLabel, i: number) => {
-            return (
-              <InputGroup key={i}>
-                <InputGroupItem isFill>
-                  <TextInput
-                    id={`routing-label-${i}`}
-                    type="text"
-                    data-test={`label-${i}`}
-                    onChange={onRoutingLabelChange(i)}
-                    placeholder={t('Matcher')}
-                    value={routeLabel}
-                    aria-describedby="routing-labels-help"
+          {_.map(formValues.routeLabels, (routeLabel, i: number) => (
+            <InputGroup key={i}>
+              <InputGroupItem isFill>
+                <TextInput
+                  id={`routing-label-${i}`}
+                  type="text"
+                  data-test={`label-${i}`}
+                  onChange={onRoutingLabelChange(i)}
+                  placeholder={t('Matcher')}
+                  value={routeLabel}
+                  aria-describedby="routing-labels-help"
+                />
+              </InputGroupItem>
+              <InputGroupItem>
+                <Tooltip content={t('Remove')}>
+                  <Button
+                    icon={<RhUiMinusCircleIcon />}
+                    type="button"
+                    onClick={() => removeRoutingLabel(i)}
+                    aria-label={t('Remove')}
+                    isDisabled={!isDefaultReceiver && formValues.routeLabels.length <= 1}
+                    variant="plain"
                   />
-                </InputGroupItem>
-                <InputGroupItem>
-                  <Tooltip content={t('Remove')}>
-                    <Button
-                      icon={<RhUiMinusCircleIcon />}
-                      type="button"
-                      onClick={() => removeRoutingLabel(i)}
-                      aria-label={t('Remove')}
-                      isDisabled={!isDefaultReceiver && formValues.routeLabels.length <= 1}
-                      variant="plain"
-                    />
-                  </Tooltip>
-                </InputGroupItem>
-              </InputGroup>
-            );
-          })}
+                </Tooltip>
+              </InputGroupItem>
+            </InputGroup>
+          ))}
         </Stack>
       </FormGroup>
       {formValues.routeLabelDuplicateNamesError && (

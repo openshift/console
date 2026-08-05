@@ -83,15 +83,13 @@ const componentsTableColumnClasses = [
   css('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-v6-c-table__td'),
 ];
 
-const InstallPlanHint: FC<InstallPlanHintProps> = ({ title, body, footer }) => {
-  return (
-    <Hint>
-      <HintTitle className="pf-v6-u-font-size-md">{title}</HintTitle>
-      <HintBody>{body}</HintBody>
-      <HintFooter>{footer}</HintFooter>
-    </Hint>
-  );
-};
+const InstallPlanHint: FC<InstallPlanHintProps> = ({ title, body, footer }) => (
+  <Hint>
+    <HintTitle className="pf-v6-u-font-size-md">{title}</HintTitle>
+    <HintBody>{body}</HintBody>
+    <HintFooter>{footer}</HintFooter>
+  </Hint>
+);
 
 export const InstallPlanTableRow: FC<RowFunctionArgs> = ({ obj }) => {
   const { t } = useTranslation('olm');
@@ -177,40 +175,38 @@ const EmptyMsg: FC = () => {
 
 export const InstallPlansList = requireOperatorGroup((props: InstallPlansListProps) => {
   const { t } = useTranslation('olm');
-  const InstallPlanTableHeader = () => {
-    return [
-      {
-        title: t('Name'),
-        sortField: 'metadata.name',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[0] },
-      },
-      {
-        title: t('Namespace'),
-        sortField: 'metadata.namespace',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[1] },
-      },
-      {
-        title: t('Status'),
-        sortField: 'status.phase',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[2] },
-      },
-      {
-        title: t('Components'),
-        props: { className: tableColumnClasses[3] },
-      },
-      {
-        title: t('Subscriptions'),
-        props: { className: tableColumnClasses[4] },
-      },
-      {
-        title: '',
-        props: { className: tableColumnClasses[5] },
-      },
-    ];
-  };
+  const InstallPlanTableHeader = () => [
+    {
+      title: t('Name'),
+      sortField: 'metadata.name',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[0] },
+    },
+    {
+      title: t('Namespace'),
+      sortField: 'metadata.namespace',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[1] },
+    },
+    {
+      title: t('Status'),
+      sortField: 'status.phase',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[2] },
+    },
+    {
+      title: t('Components'),
+      props: { className: tableColumnClasses[3] },
+    },
+    {
+      title: t('Subscriptions'),
+      props: { className: tableColumnClasses[4] },
+    },
+    {
+      title: '',
+      props: { className: tableColumnClasses[5] },
+    },
+  ];
 
   return (
     <Table

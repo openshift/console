@@ -73,11 +73,9 @@ import { ResourceIcon } from './utils/resource-icon';
 import { ScrollToTopOnMount } from './utils/scroll-to-top-on-mount';
 import { LoadError, LoadingBox } from './utils/status-box';
 
-const mapStateToProps = (state: RootState): APIResourceLinkStateProps => {
-  return {
-    activeNamespace: state.UI.get('activeNamespace'),
-  };
-};
+const mapStateToProps = (state: RootState): APIResourceLinkStateProps => ({
+  activeNamespace: state.UI.get('activeNamespace'),
+});
 
 const getAPIResourceLink = (activeNamespace: string, model: K8sKind) => {
   const ref = referenceForModel(model);
@@ -205,9 +203,10 @@ const APIResourcesList: FC = () => {
 
   const navigate = useNavigate();
   // group options
-  const groups: Set<string> = models.reduce((result: Set<string>, { apiGroup }) => {
-    return apiGroup ? result.add(apiGroup) : result;
-  }, new Set<string>());
+  const groups: Set<string> = models.reduce(
+    (result: Set<string>, { apiGroup }) => (apiGroup ? result.add(apiGroup) : result),
+    new Set<string>(),
+  );
   const sortedGroups: string[] = [...groups].sort();
   const groupOptions = sortedGroups.reduce(
     (result, group: string) => {
@@ -232,9 +231,10 @@ const APIResourcesList: FC = () => {
   };
 
   // version options
-  const versions: Set<string> = models.reduce((result: Set<string>, { apiVersion }) => {
-    return result.add(apiVersion);
-  }, new Set<string>());
+  const versions: Set<string> = models.reduce(
+    (result: Set<string>, { apiVersion }) => result.add(apiVersion),
+    new Set<string>(),
+  );
   const sortedVersions: string[] = [...versions].sort();
   const versionOptions = sortedVersions.reduce(
     (result, version: string) => {
@@ -338,12 +338,14 @@ const APIResourcesList: FC = () => {
     return sorted;
   }, [filteredResources, sortBy, sortByParam, orderByParam]);
 
-  const paginatedResources = useMemo(() => {
-    return sortedResources.slice(
-      (pagination.page - 1) * pagination.perPage,
-      (pagination.page - 1) * pagination.perPage + pagination.perPage,
-    );
-  }, [sortedResources, pagination.page, pagination.perPage]);
+  const paginatedResources = useMemo(
+    () =>
+      sortedResources.slice(
+        (pagination.page - 1) * pagination.perPage,
+        (pagination.page - 1) * pagination.perPage + pagination.perPage,
+      ),
+    [sortedResources, pagination.page, pagination.perPage],
+  );
 
   const onSort = (_event: MouseEvent, index: number, direction: 'asc' | 'desc') => {
     setQueryArgument(SORT_BY_PARAM, String(index));
@@ -582,13 +584,11 @@ const APIResourceDetails: FC<APIResourceTabProps> = ({ customData: { kindObj } }
 };
 
 const scrollTop = () => (document.getElementById('content-scrollable').scrollTop = 0);
-const APIResourceSchema: FC<APIResourceTabProps> = ({ customData: { kindObj } }) => {
-  return (
-    <PaneBody>
-      <ExploreType kindObj={kindObj} scrollTop={scrollTop} />
-    </PaneBody>
-  );
-};
+const APIResourceSchema: FC<APIResourceTabProps> = ({ customData: { kindObj } }) => (
+  <PaneBody>
+    <ExploreType kindObj={kindObj} scrollTop={scrollTop} />
+  </PaneBody>
+);
 
 const APIResourceInstances: FC<APIResourceTabProps> = ({ customData: { kindObj, namespace } }) => {
   const resourceListPageExtensions = useExtensions<ResourceListPage>(isResourceListPage);

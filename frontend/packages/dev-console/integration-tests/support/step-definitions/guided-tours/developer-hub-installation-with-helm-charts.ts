@@ -28,9 +28,7 @@ When(
   'user see the tour will start with link to four steps present as a sidepane with close button',
   () => {
     cy.get(quickStartSidebarPO.quickStartSidebar).should('be.visible');
-    cy.get('[class*="quick-start-task-header__title"]').then(($elements) => {
-      return $elements.length === 3;
-    });
+    cy.get('[class*="quick-start-task-header__title"]').then(($elements) => $elements.length === 3);
   },
 );
 
@@ -39,9 +37,7 @@ When(
   (tourName: string) => {
     cy.get(quickStartCard(tourName)).click();
     cy.get(quickStartSidebarPO.quickStartSidebar).contains(tourName);
-    cy.get('[class*="quick-start-task-header__title"]').then(($elements) => {
-      return $elements.length === 4;
-    });
+    cy.get('[class*="quick-start-task-header__title"]').then(($elements) => $elements.length === 4);
     cy.get(quickStartSidebarPO.closePanel).should('be.visible');
   },
 );

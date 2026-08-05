@@ -113,19 +113,20 @@ const ResourceTable: FC<ResourceTableProps> = (props) => {
 
 export const flattenCsvResources = (
   parentObj: K8sResourceCommon,
-): Flatten<{ [key: string]: K8sResourceCommon[] }, K8sResourceCommon[]> => (resources) => {
-  return _.flatMap(resources, (resource, kind: string) =>
+): Flatten<{ [key: string]: K8sResourceCommon[] }, K8sResourceCommon[]> => (resources) =>
+  _.flatMap(resources, (resource, kind: string) =>
     _.map(resource.data, (item) => ({ ...item, kind })),
-  ).reduce((owned, resource) => {
-    return (resource.metadata.ownerReferences || []).some(
-      (ref) =>
-        ref.uid === parentObj.metadata.uid ||
-        owned.some(({ metadata }) => metadata.uid === ref.uid),
-    )
-      ? owned.concat([resource])
-      : owned;
-  }, []);
-};
+  ).reduce(
+    (owned, resource) =>
+      (resource.metadata.ownerReferences || []).some(
+        (ref) =>
+          ref.uid === parentObj.metadata.uid ||
+          owned.some(({ metadata }) => metadata.uid === ref.uid),
+      )
+        ? owned.concat([resource])
+        : owned,
+    [],
+  );
 
 // NOTE: This is us building the `ownerReferences` graph client-side
 // FIXME: Comparing `kind` is not enough to determine if an object is a custom resource

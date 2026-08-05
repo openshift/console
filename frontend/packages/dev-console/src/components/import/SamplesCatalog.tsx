@@ -26,12 +26,11 @@ const SampleCatalog: FC = () => {
             {(service) => {
               let filteredLists: CatalogItem[];
               if (sampleType) {
-                filteredLists = service.items.filter((item) => {
-                  return (
+                filteredLists = service.items.filter(
+                  (item) =>
                     item?.typeLabel === labelFilter?.value ||
-                    item?.data?.metadata?.labels[labelFilter?.label] === labelFilter?.value
-                  );
-                });
+                    item?.data?.metadata?.labels[labelFilter?.label] === labelFilter?.value,
+                );
               } else {
                 filteredLists = service.items;
               }

@@ -98,18 +98,20 @@ const BuildsTabListPage: FC = () => {
     : 'shipwright.io~v1alpha1~Build';
   const shipwrightBuildLoader = resourceListPages.get(shipwrightKind);
   const [shipwrightBuildModel] = useK8sModel(shipwrightKind);
-  const shipwrightBuildComponent = useMemo(() => {
-    return shipwrightBuildEnabled && shipwrightBuildLoader
-      ? (childProps) => (
-          <AsyncComponent
-            key="shipwright-builds"
-            loader={shipwrightBuildLoader}
-            badge={getBadgeFromType(shipwrightBuildModel.badge)}
-            {...childProps}
-          />
-        )
-      : null;
-  }, [shipwrightBuildEnabled, shipwrightBuildLoader, shipwrightBuildModel.badge]);
+  const shipwrightBuildComponent = useMemo(
+    () =>
+      shipwrightBuildEnabled && shipwrightBuildLoader
+        ? (childProps) => (
+            <AsyncComponent
+              key="shipwright-builds"
+              loader={shipwrightBuildLoader}
+              badge={getBadgeFromType(shipwrightBuildModel.badge)}
+              {...childProps}
+            />
+          )
+        : null,
+    [shipwrightBuildEnabled, shipwrightBuildLoader, shipwrightBuildModel.badge],
+  );
   if (namespace && shipwrightBuildComponent) {
     menuActions.shipwrightBuild = {
       label: t('Shipwright Build'),

@@ -40,8 +40,8 @@ const NoOperatorGroupMsg: FC = () => {
 
 export const requireOperatorGroup = <P extends RequireOperatorGroupProps>(
   Component: ComponentType<P>,
-) => {
-  return class RequireOperatorGroup extends ReactComponent<P> {
+) =>
+  class RequireOperatorGroup extends ReactComponent<P> {
     static WrappedComponent = Component;
 
     render() {
@@ -51,7 +51,6 @@ export const requireOperatorGroup = <P extends RequireOperatorGroupProps>(
       return namespaceEnabled ? <Component {...this.props} /> : <NoOperatorGroupMsg />;
     }
   } as ComponentClass<P> & { WrappedComponent: ComponentType<P> };
-};
 
 export type InstallModeSet = { type: InstallModeType; supported: boolean }[];
 
@@ -104,8 +103,8 @@ export const isGlobal = (obj: OperatorGroupKind) =>
  */
 export const subscriptionFor = (allSubscriptions: SubscriptionKind[] = []) => (
   allGroups: OperatorGroupKind[] = [],
-) => (pkg: PackageManifestKind) => (ns = '') => {
-  return allSubscriptions
+) => (pkg: PackageManifestKind) => (ns = '') =>
+  allSubscriptions
     .filter(
       (sub) =>
         sub.spec.name === pkg.status.packageName &&
@@ -119,13 +118,11 @@ export const subscriptionFor = (allSubscriptions: SubscriptionKind[] = []) => (
           (isGlobal(og) || og.status?.namespaces?.includes(ns)),
       ),
     );
-};
 
 export const installedFor = (allSubscriptions: SubscriptionKind[] = []) => (
   allGroups: OperatorGroupKind[] = [],
-) => (pkg: PackageManifestKind) => (ns = '') => {
-  return !_.isNil(subscriptionFor(allSubscriptions)(allGroups)(pkg)(ns));
-};
+) => (pkg: PackageManifestKind) => (ns = '') =>
+  !_.isNil(subscriptionFor(allSubscriptions)(allGroups)(pkg)(ns));
 
 export const providedAPIsForOperatorGroup = (og: OperatorGroupKind) =>
   (og?.metadata?.annotations?.['olm.providedAPIs'] ?? '')

@@ -323,9 +323,8 @@ export const topologyPO = {
   },
 };
 
-export const typeOfWorkload = (workload: string) => {
-  return `[data-id="odc-topology-graph"] .odc-resource-icon-${workload
+export const typeOfWorkload = (workload: string) =>
+  `[data-id="odc-topology-graph"] .odc-resource-icon-${workload
     .toLowerCase()
     .replace(' ', '')
     .trim()}`;
-};

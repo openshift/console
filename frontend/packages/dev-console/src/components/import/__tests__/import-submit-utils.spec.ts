@@ -232,20 +232,18 @@ describe('Import Submit Utils', () => {
       const mockData = _.cloneDeep(defaultData);
       mockData.pipeline.enabled = true;
 
-      createPipelineForImportFlowMock.mockImplementation((name, namespace) => {
-        return {
-          metadata: {
-            name,
-            namespace,
-            labels: { 'app.kubernetes.io/instance': name },
-          },
-          spec: {
-            params: [],
-            resources: [],
-            tasks: [],
-          },
-        };
-      });
+      createPipelineForImportFlowMock.mockImplementation((name, namespace) => ({
+        metadata: {
+          name,
+          namespace,
+          labels: { 'app.kubernetes.io/instance': name },
+        },
+        spec: {
+          params: [],
+          resources: [],
+          tasks: [],
+        },
+      }));
       createPipelineRunForImportFlowMock.mockImplementation(jest.fn()); // can't handle a no-arg spyOn invoke, stub
       createTriggerMock.mockImplementation(() => Promise.resolve([]));
 

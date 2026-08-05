@@ -54,26 +54,19 @@ import { LoadingBox } from './utils/status-box';
 
 const tableColumnInfo = [{ id: 'name' }, { id: 'namespace' }, { id: 'created' }, { id: 'actions' }];
 
-const getPathArray = (path: string) => {
-  return JSONPath.toPathArray(path);
-};
+const getPathArray = (path: string) => JSONPath.toPathArray(path);
 
 const checkPathHasSpecialCharacter = (path: string) => {
   const pathArray = getPathArray(path);
   return pathArray.some((segment) => /[^a-zA-Z0-9]/.test(segment));
 };
 
-const checkColumnsForCreationTimestamp = (columns: CRDAdditionalPrinterColumn[]) => {
-  return columns.some((col) => col.jsonPath === '.metadata.creationTimestamp');
-};
+const checkColumnsForCreationTimestamp = (columns: CRDAdditionalPrinterColumn[]) =>
+  columns.some((col) => col.jsonPath === '.metadata.creationTimestamp');
 
-const checkAdditionalPrinterColumns = (columns: CRDAdditionalPrinterColumn[]) => {
-  return columns.length > 0;
-};
+const checkAdditionalPrinterColumns = (columns: CRDAdditionalPrinterColumn[]) => columns.length > 0;
 
-const getAdditionaPrinterColumnID = (column: CRDAdditionalPrinterColumn) => {
-  return `apc-${column.name}`;
-};
+const getAdditionaPrinterColumnID = (column: CRDAdditionalPrinterColumn) => `apc-${column.name}`;
 
 type ResourceActionsMenuProps = {
   resource: K8sResourceKind;
@@ -180,8 +173,8 @@ const getDataViewRows = (
   kinds: string[],
   resourceProviderExtensions: ResolvedExtension<ResourceActionProvider>[],
   resourceProviderExtensionsResolved: boolean,
-): ConsoleDataViewRow[] => {
-  return data.map(({ obj }) => {
+): ConsoleDataViewRow[] =>
+  data.map(({ obj }) => {
     const { name, namespace, creationTimestamp } = obj.metadata;
     const kind = referenceFor(obj) || kinds[0];
 
@@ -243,7 +236,6 @@ const getDataViewRows = (
       };
     });
   });
-};
 
 const useDefaultResourceColumns = <T extends K8sResourceKind>(
   additionalPrinterColumns: CRDAdditionalPrinterColumn[],

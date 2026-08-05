@@ -46,8 +46,8 @@ export const useReplicationControllerActions = <
     children: t('Are you sure you want to cancel this rollout?'),
     confirmButtonLabel: t('Yes, cancel'),
     cancelButtonLabel: t("No, don't cancel"),
-    onConfirm: () => {
-      return k8sPatchResource({
+    onConfirm: () =>
+      k8sPatchResource({
         model: kind,
         resource: obj,
         data: [
@@ -62,8 +62,7 @@ export const useReplicationControllerActions = <
             value: 'cancelled by the user',
           },
         ],
-      });
-    },
+      }),
   });
 
   const memoizedFilterActions = useDeepCompareMemoize(filterActions);

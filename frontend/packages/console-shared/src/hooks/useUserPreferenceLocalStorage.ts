@@ -11,11 +11,12 @@ export const useUserPreferenceLocalStorage = <T>(
 ): [T, Dispatch<SetStateAction<T>>] => {
   // Mount status for safety state updates
   const mounted = useRef(true);
-  useEffect(() => {
-    return () => {
+  useEffect(
+    () => () => {
       mounted.current = false;
-    };
-  }, []);
+    },
+    [],
+  );
 
   const storage = session ? sessionStorage : localStorage;
   const keyRef = useRef(key);

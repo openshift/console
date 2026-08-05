@@ -60,8 +60,8 @@ const PVStatus = ({ pv }: { pv: PersistentVolumeKind }) => (
 const getDataViewRowsCreator: (t: TFunction) => GetDataViewRows<PersistentVolumeKind> = (t) => (
   data,
   columns,
-) => {
-  return data.map(({ obj }) => {
+) =>
+  data.map(({ obj }) => {
     const name = obj.metadata?.name || '';
     const namespace = obj.metadata?.namespace || '';
     const labels = obj.metadata?.labels || {};
@@ -112,7 +112,6 @@ const getDataViewRowsCreator: (t: TFunction) => GetDataViewRows<PersistentVolume
       };
     });
   });
-};
 
 const usePersistentVolumeColumns = (): {
   columns: TableColumn<PersistentVolumeKind>[];

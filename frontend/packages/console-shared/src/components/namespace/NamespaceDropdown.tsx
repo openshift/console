@@ -141,19 +141,17 @@ export const NamespaceGroup: FC<{
       <Divider />
       <MenuGroup label={label}>
         <MenuList>
-          {options.map((option) => {
-            return (
-              <MenuItem
-                key={option.key}
-                itemId={option.key}
-                isFavorited={canFavorite ? !!favorites?.[option.key] : undefined}
-                isSelected={selectedKey === option.key}
-                data-test="dropdown-menu-item-link"
-              >
-                {option.title}
-              </MenuItem>
-            );
-          })}
+          {options.map((option) => (
+            <MenuItem
+              key={option.key}
+              itemId={option.key}
+              isFavorited={canFavorite ? !!favorites?.[option.key] : undefined}
+              isSelected={selectedKey === option.key}
+              data-test="dropdown-menu-item-link"
+            >
+              {option.title}
+            </MenuItem>
+          ))}
         </MenuList>
       </MenuGroup>
     </>

@@ -69,20 +69,16 @@ export const SampleGettingStartedCard: FC<SampleGettingStartedCardProps> = ({ fe
         }
 
         const links: GettingStartedLink[] = service.loaded
-          ? slicedCatalogItems.map((item) => {
-              return {
-                id: item.uid,
-                title: item.name,
-                href: item.cta?.href,
-                onClick: item.cta?.callback,
-              };
-            })
-          : featured.map((uid) => {
-              return {
-                id: uid,
-                loading: true,
-              };
-            });
+          ? slicedCatalogItems.map((item) => ({
+              id: item.uid,
+              title: item.name,
+              href: item.cta?.href,
+              onClick: item.cta?.callback,
+            }))
+          : featured.map((uid) => ({
+              id: uid,
+              loading: true,
+            }));
 
         return (
           <GettingStartedCard

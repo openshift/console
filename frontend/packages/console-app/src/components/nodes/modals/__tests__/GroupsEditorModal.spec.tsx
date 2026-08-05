@@ -400,9 +400,7 @@ describe('GroupsEditorModal', () => {
       const saveButton = screen.getByRole('button', { name: 'Save' });
       await user.click(saveButton);
 
-      const detailsButton = await waitFor(() => {
-        return screen.getByRole('button', { name: 'Show details' });
-      });
+      const detailsButton = await screen.findByRole('button', { name: 'Show details' });
 
       await user.click(detailsButton);
 

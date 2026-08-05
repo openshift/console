@@ -450,20 +450,18 @@ export const PodAffinity: FC<PodAffinityProps> = ({ affinity, onChange, uid = ''
           </DescriptionListTerm>
         </Tooltip>
         <DescriptionListDescription>
-          {preferredRules.map((preferredRule, ruleIndex) => {
+          {preferredRules.map((preferredRule, ruleIndex) => (
             // Have to use array index in the key bc any other unique id whould have to use editable fields.
-            return (
-              <PodAffinityRule
-                // eslint-disable-next-line react/no-array-index-key
-                key={`${uid}-pod-affinity-preferred-${ruleIndex}`}
-                onChange={(rule) => updatePreferredRules(rule, ruleIndex)}
-                onClickRemove={() => removePreferredRule(ruleIndex)}
-                showRemoveButton
-                rule={preferredRule}
-                type={AffinityRuleType.Preferred}
-              />
-            );
-          })}
+            <PodAffinityRule
+              // eslint-disable-next-line react/no-array-index-key
+              key={`${uid}-pod-affinity-preferred-${ruleIndex}`}
+              onChange={(rule) => updatePreferredRules(rule, ruleIndex)}
+              onClickRemove={() => removePreferredRule(ruleIndex)}
+              showRemoveButton
+              rule={preferredRule}
+              type={AffinityRuleType.Preferred}
+            />
+          ))}
 
           <div>
             <Button

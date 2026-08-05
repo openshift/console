@@ -200,8 +200,8 @@ const bindingType = (binding: BindingKind) => {
   return binding.metadata?.namespace ? 'namespace' : 'cluster';
 };
 
-const getDataViewRows: GetDataViewRows<BindingKind> = (data, columns) => {
-  return data.map((row) => {
+const getDataViewRows: GetDataViewRows<BindingKind> = (data, columns) =>
+  data.map((row) => {
     const binding = row.obj;
     const rowCells = {
       [tableColumnInfo[0].id]: {
@@ -240,7 +240,6 @@ const getDataViewRows: GetDataViewRows<BindingKind> = (data, columns) => {
       };
     });
   });
-};
 
 const BindingsList: FC<BindingsListTableProps> = (props) => {
   const { t } = useTranslation('public');
@@ -313,8 +312,8 @@ const BindingsList: FC<BindingsListTableProps> = (props) => {
     // Convert staticFilters to array format if it's an object
     const filtersArray = Array.isArray(staticFilters) ? staticFilters : [staticFilters];
 
-    return data.filter((binding) => {
-      return filtersArray.every((filter) => {
+    return data.filter((binding) =>
+      filtersArray.every((filter) => {
         const filterKey = Object.keys(filter)[0];
         const filterValue = filter[filterKey];
 
@@ -323,8 +322,8 @@ const BindingsList: FC<BindingsListTableProps> = (props) => {
           return filtersMap[filterKey](filterValue, binding);
         }
         return true;
-      });
-    });
+      }),
+    );
   }, [data, staticFilters]);
 
   return (
@@ -508,9 +507,7 @@ const BaseEditRoleBinding: FC<BaseEditRoleBindingProps> = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const getSubject = () => {
-    return _.get(data, `subjects[${subjectIndex}]`);
-  };
+  const getSubject = () => _.get(data, `subjects[${subjectIndex}]`);
 
   const setSubject = (patch) => {
     const { kind, name, namespace } = Object.assign({}, getSubject(), patch);

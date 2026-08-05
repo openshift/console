@@ -136,8 +136,7 @@ const getClusterOperatorStatusPriority: GetOperatorStatusPriority<ClusterOperato
 
 export const getClusterOperatorHealthStatus: GetOperatorsWithStatuses<ClusterOperator> = (
   resources,
-) => {
-  return (resources.clusterOperators.data as ClusterOperator[]).map((co) =>
+) =>
+  (resources.clusterOperators.data as ClusterOperator[]).map((co) =>
     getOperatorsStatus<ClusterOperator>([co], getClusterOperatorStatusPriority),
   );
-};

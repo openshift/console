@@ -189,12 +189,10 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
       ),
     };
   };
-  const recommendedOptions = availableSortedUpdates.map(({ version }) => {
-    return dropdownItem(version);
-  });
-  const notRecommendedOptions = notRecommendedSortedUpdates.map(({ release: { version } }) => {
-    return dropdownItem(version);
-  });
+  const recommendedOptions = availableSortedUpdates.map(({ version }) => dropdownItem(version));
+  const notRecommendedOptions = notRecommendedSortedUpdates.map(({ release: { version } }) =>
+    dropdownItem(version),
+  );
   const options = [
     {
       items: recommendedOptions,
@@ -418,19 +416,17 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
   );
 };
 
-export const ClusterUpdateModalOverlay: OverlayComponent<ClusterUpdateModalProps> = (props) => {
-  return (
-    <Modal
-      isOpen
-      onClose={props.closeOverlay}
-      variant={ModalVariant.small}
-      aria-labelledby="cluster-update-modal-title"
-      data-test="update-cluster-modal"
-    >
-      <ClusterUpdateModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
-    </Modal>
-  );
-};
+export const ClusterUpdateModalOverlay: OverlayComponent<ClusterUpdateModalProps> = (props) => (
+  <Modal
+    isOpen
+    onClose={props.closeOverlay}
+    variant={ModalVariant.small}
+    aria-labelledby="cluster-update-modal-title"
+    data-test="update-cluster-modal"
+  >
+    <ClusterUpdateModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
+  </Modal>
+);
 
 type ClusterUpdateModalProps = {
   cv: ClusterVersionKind;

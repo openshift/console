@@ -1,9 +1,8 @@
 import { useAccessReviewAllowed } from '@console/dynamic-plugin-sdk';
 import { ClusterVersionModel } from '@console/internal/models';
 
-export const isClusterExternallyManaged = (): boolean => {
-  return window.SERVER_FLAGS.controlPlaneTopology === 'External';
-};
+export const isClusterExternallyManaged = (): boolean =>
+  window.SERVER_FLAGS.controlPlaneTopology === 'External';
 
 export const useCanClusterUpgrade = (): boolean => {
   const hasPermissionsToUpdate = useAccessReviewAllowed({

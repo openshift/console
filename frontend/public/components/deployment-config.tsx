@@ -260,21 +260,17 @@ const DetailsActionMenu: FC<DetailsActionMenuProps> = ({ kindObj, obj }) => {
 
   return (
     <ActionServiceProvider context={context}>
-      {({ actions, options, loaded }) => {
-        return (
-          loaded && (
-            <ActionMenu actions={actions} options={options} variant={ActionMenuVariant.DROPDOWN} />
-          )
-        );
-      }}
+      {({ actions, options, loaded }) =>
+        loaded && (
+          <ActionMenu actions={actions} options={options} variant={ActionMenuVariant.DROPDOWN} />
+        )
+      }
     </ActionServiceProvider>
   );
 };
 
 export const DeploymentConfigsDetailsPage: FC = (props) => {
-  const customActionMenu = (kindObj, obj) => {
-    return <DetailsActionMenu kindObj={kindObj} obj={obj} />;
-  };
+  const customActionMenu = (kindObj, obj) => <DetailsActionMenu kindObj={kindObj} obj={obj} />;
   return (
     <DetailsPage
       {...props}
@@ -287,14 +283,11 @@ export const DeploymentConfigsDetailsPage: FC = (props) => {
 };
 DeploymentConfigsDetailsPage.displayName = 'DeploymentConfigsDetailsPage';
 
-const DeploymentConfigTableHeader = () => {
-  return WorkloadTableHeader();
-};
+const DeploymentConfigTableHeader = () => WorkloadTableHeader();
 DeploymentConfigTableHeader.displayName = 'DeploymentConfigTableHeader';
 
-const getDataViewRows: GetDataViewRows<DeploymentConfigKind> = (data, columns) => {
-  return getWorkloadDataViewRows(data, columns, DeploymentConfigModel);
-};
+const getDataViewRows: GetDataViewRows<DeploymentConfigKind> = (data, columns) =>
+  getWorkloadDataViewRows(data, columns, DeploymentConfigModel);
 
 const DeploymentConfigsList: FC<DeploymentConfigsListProps> = ({ data, loaded, ...props }) => {
   const { columns, resetAllColumnWidths } = useWorkloadColumns<DeploymentConfigKind>(

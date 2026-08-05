@@ -8,8 +8,8 @@ const isMac = window.navigator.platform.includes('Mac');
 export const useShortcutPopover = (shortcutsPopoverProps?: Partial<PopoverProps>): PopoverProps => {
   const { t } = useTranslation('console-shared');
 
-  return useMemo((): PopoverProps => {
-    return {
+  return useMemo(
+    (): PopoverProps => ({
       'aria-label': t('Shortcuts'),
       bodyContent: (
         <ShortcutGrid
@@ -37,6 +37,7 @@ export const useShortcutPopover = (shortcutsPopoverProps?: Partial<PopoverProps>
       maxWidth: '35rem',
       distance: 18,
       ...shortcutsPopoverProps,
-    };
-  }, [t, shortcutsPopoverProps]);
+    }),
+    [t, shortcutsPopoverProps],
+  );
 };

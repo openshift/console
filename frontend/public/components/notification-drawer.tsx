@@ -297,11 +297,10 @@ export const NotificationDrawer: FC<NotificationDrawerProps> = ({
   const [criticalAlerts, nonCriticalAlerts] = useMemo(() => {
     const criticalAlertLabelSelector = new LabelSelector({ severity: AlertSeverity.Critical });
     return alerts.reduce<AlertAccumulator>(
-      ([criticalAlertAcc, nonCriticalAlertAcc], alert) => {
-        return criticalAlertLabelSelector.matchesLabels(alert.labels)
+      ([criticalAlertAcc, nonCriticalAlertAcc], alert) =>
+        criticalAlertLabelSelector.matchesLabels(alert.labels)
           ? [[...criticalAlertAcc, alert], nonCriticalAlertAcc]
-          : [criticalAlertAcc, [...nonCriticalAlertAcc, alert]];
-      },
+          : [criticalAlertAcc, [...nonCriticalAlertAcc, alert]],
       [[], []],
     );
   }, [alerts]);

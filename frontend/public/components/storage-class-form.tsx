@@ -160,7 +160,7 @@ const StorageClassFormInner: FC<StorageClassFormProps> = (props) => {
         returnVal.error = t('Storage name is required');
         returnVal.nameIsValid = false;
       } else if (resources.current) {
-        _.each(resources.current.data, function (storageClass) {
+        _.each(resources.current.data, (storageClass) => {
           if (storageClass.metadata.name === updatedName.toLowerCase()) {
             returnVal.error = t('Storage name must be unique');
             returnVal.nameIsValid = false;

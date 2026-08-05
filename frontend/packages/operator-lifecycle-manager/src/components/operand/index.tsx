@@ -322,8 +322,8 @@ const getK8sWatchResources = (
   models: ProvidedAPIModels,
   providedAPIs: ProvidedAPI[],
   namespace?: string,
-): GetK8sWatchResources => {
-  return providedAPIs.reduce((resourceAccumulator, api) => {
+): GetK8sWatchResources =>
+  providedAPIs.reduce((resourceAccumulator, api) => {
     const reference = referenceForProvidedAPI(api);
     const model = models?.[reference];
 
@@ -342,7 +342,6 @@ const getK8sWatchResources = (
       },
     };
   }, {});
-};
 
 export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
   const { t } = useTranslation('olm');
@@ -583,19 +582,17 @@ export const ProvidedAPIPage = (props: ProvidedAPIPageProps) => {
 const PodStatuses: FC<PodStatusesProps> = ({ kindObj, obj, podStatusDescriptors, schema }) =>
   podStatusDescriptors?.length > 0 ? (
     <Grid hasGutter>
-      {podStatusDescriptors.map((statusDescriptor: StatusDescriptor) => {
-        return (
-          <GridItem sm={6} key={statusDescriptor.path}>
-            <DescriptorDetailsItem
-              type={DescriptorType.status}
-              descriptor={statusDescriptor}
-              model={kindObj}
-              obj={obj}
-              schema={schema}
-            />
-          </GridItem>
-        );
-      })}
+      {podStatusDescriptors.map((statusDescriptor: StatusDescriptor) => (
+        <GridItem sm={6} key={statusDescriptor.path}>
+          <DescriptorDetailsItem
+            type={DescriptorType.status}
+            descriptor={statusDescriptor}
+            model={kindObj}
+            obj={obj}
+            schema={schema}
+          />
+        </GridItem>
+      ))}
     </Grid>
   ) : null;
 
@@ -610,9 +607,7 @@ export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: Operan
     [
       ...(csv?.spec?.customresourcedefinitions?.owned ?? []),
       ...(csv?.spec?.customresourcedefinitions?.required ?? []),
-    ].find((def) => {
-      return def.name === crd?.metadata?.name && def.version === kindObj?.apiVersion;
-    }) ?? {};
+    ].find((def) => def.name === crd?.metadata?.name && def.version === kindObj?.apiVersion) ?? {};
 
   const schema =
     crd?.spec?.versions?.find((v) => v.name === version)?.schema?.openAPIV3Schema ??

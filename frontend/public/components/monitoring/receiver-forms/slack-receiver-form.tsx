@@ -292,9 +292,8 @@ const getInitialValues = (globals, receiverConfig) => {
   return initValues;
 };
 
-const isFormInvalid = (formValues): boolean => {
-  return !formValues.slack_api_url || !formValues.slackChannel;
-};
+const isFormInvalid = (formValues): boolean =>
+  !formValues.slack_api_url || !formValues.slackChannel;
 
 const updateGlobals = (globals, formValues) => {
   const updatedGlobals = {};

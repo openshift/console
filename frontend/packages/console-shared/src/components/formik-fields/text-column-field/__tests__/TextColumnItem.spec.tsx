@@ -22,13 +22,12 @@ const mockArrayHelper = {
   pop: jest.fn(),
 };
 
-const renderInFormik = (component: React.ReactElement) => {
-  return renderWithProviders(
+const renderInFormik = (component: React.ReactElement) =>
+  renderWithProviders(
     <Formik initialValues={{ fieldName: [''] }} onSubmit={jest.fn()}>
       {component}
     </Formik>,
   );
-};
 
 describe('TextColumnItem', () => {
   it('should render TextColumnItem with input field and remove button', () => {

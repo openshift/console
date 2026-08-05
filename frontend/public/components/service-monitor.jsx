@@ -50,8 +50,8 @@ const serviceSelectorLinks = ({ spec }) => {
   return <Selector selector={spec.selector} kind="Service" />;
 };
 
-const getServiceMonitorDataViewRows = (data, columns) => {
-  return data.map(({ obj }) => {
+const getServiceMonitorDataViewRows = (data, columns) =>
+  data.map(({ obj }) => {
     const { metadata } = obj;
     const resourceKind = referenceForModel(ServiceMonitorModel);
 
@@ -94,7 +94,6 @@ const getServiceMonitorDataViewRows = (data, columns) => {
       };
     });
   });
-};
 
 const useServiceMonitorColumns = () => {
   const { t } = useTranslation('public');

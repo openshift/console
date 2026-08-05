@@ -32,8 +32,8 @@ const tableColumnInfo = [
   { id: '' },
 ];
 
-const getDataViewRows: GetDataViewRows<PodDisruptionBudgetKind> = (data, columns) => {
-  return data.map(({ obj: pdb }) => {
+const getDataViewRows: GetDataViewRows<PodDisruptionBudgetKind> = (data, columns) =>
+  data.map(({ obj: pdb }) => {
     const { name, namespace } = pdb.metadata;
     const resourceKind = referenceForModel(PodDisruptionBudgetModel);
     const context = { [resourceKind]: pdb };
@@ -73,7 +73,6 @@ const getDataViewRows: GetDataViewRows<PodDisruptionBudgetKind> = (data, columns
       };
     });
   });
-};
 
 const usePDBColumns = (): {
   columns: TableColumn<PodDisruptionBudgetKind>[];
@@ -84,8 +83,8 @@ const usePDBColumns = (): {
     PodDisruptionBudgetModel,
   );
 
-  const columns = useMemo(() => {
-    return [
+  const columns = useMemo(
+    () => [
       {
         title: t('Name'),
         id: tableColumnInfo[0].id,
@@ -148,8 +147,9 @@ const usePDBColumns = (): {
           ...actionsCellProps,
         },
       },
-    ];
-  }, [t, getResizableProps]);
+    ],
+    [t, getResizableProps],
+  );
 
   return { columns, resetAllColumnWidths };
 };

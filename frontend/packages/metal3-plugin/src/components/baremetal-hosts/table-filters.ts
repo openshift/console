@@ -60,9 +60,8 @@ const hostStatesToFilterMap = Object.freeze({
   },
 });
 
-export const getHostFilterStatus = (bundle: BareMetalHostBundle): string => {
-  return _.findKey(hostStatesToFilterMap, ({ states }) => states.includes(bundle.status.status));
-};
+export const getHostFilterStatus = (bundle: BareMetalHostBundle): string =>
+  _.findKey(hostStatesToFilterMap, ({ states }) => states.includes(bundle.status.status));
 
 export const hostStatusFilter = (t: TFunction): RowFilter<BareMetalHostBundle> => ({
   filterGroupName: t('metal3-plugin~Status'),

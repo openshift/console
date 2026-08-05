@@ -10,8 +10,8 @@ export const setPubSubModalLauncher = (launcher: LaunchOverlay | null) => {
 
 // Imperative API for non-React contexts (topology connectors)
 // Uses the launcher from OverlayProvider context to ensure proper accessibility
-export const addPubSubConnectionModal = (props) => {
-  return import('./PubSubController' /* webpackChunkName: "pub-sub-connectors" */).then((m) => {
+export const addPubSubConnectionModal = (props) =>
+  import('./PubSubController' /* webpackChunkName: "pub-sub-connectors" */).then((m) => {
     if (!launchPubSubModalRef) {
       // eslint-disable-next-line no-console
       console.error(
@@ -46,4 +46,3 @@ export const addPubSubConnectionModal = (props) => {
       });
     });
   });
-};

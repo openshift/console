@@ -121,14 +121,13 @@ export const checkIfTriggerExists = (
   triggers: { [key: string]: any }[],
   type: string,
   resourceKind?: string,
-) => {
-  return !!_.find(triggers, (trigger) => {
+) =>
+  !!_.find(triggers, (trigger) => {
     if (resourceKind === DeploymentConfigModel.kind && type === 'ImageChange') {
       return trigger.type === type && trigger.imageChangeParams?.automatic;
     }
     return trigger.type === type;
   });
-};
 
 const getGitDataFromBuildConfig = (buildConfig: K8sResourceKind) => {
   const url = buildConfig?.spec?.source?.git?.uri ?? '';
@@ -187,18 +186,16 @@ export const getKsvcRouteData = (resource: K8sResourceKind) => {
   return routeData;
 };
 
-const getDefaultLabels = () => {
-  return [
-    'app',
-    'app.kubernetes.io/instance',
-    'app.openshift.io/runtime',
-    'app.openshift.io/runtime-icon',
-    'app.kubernetes.io/part-of',
-    'app.openshift.io/runtime-version',
-    'app.openshift.io/runtime-namespace',
-    'networking.knative.dev/visibility',
-  ];
-};
+const getDefaultLabels = () => [
+  'app',
+  'app.kubernetes.io/instance',
+  'app.openshift.io/runtime',
+  'app.openshift.io/runtime-icon',
+  'app.kubernetes.io/part-of',
+  'app.openshift.io/runtime-version',
+  'app.openshift.io/runtime-namespace',
+  'networking.knative.dev/visibility',
+];
 
 export const getRouteLabels = (
   route: K8sResourceKind,

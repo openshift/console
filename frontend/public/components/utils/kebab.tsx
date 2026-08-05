@@ -89,11 +89,9 @@ export const KebabItemAccessReviewBase = (
 
 const KebabItemAccessReview = connect(impersonateStateToProps)(KebabItemAccessReviewBase);
 
-const isKebabSubMenu = (option: KebabMenuOption): option is KebabSubMenuOption => {
+const isKebabSubMenu = (option: KebabMenuOption): option is KebabSubMenuOption =>
   // only a sub menu has children
-  return Array.isArray((option as KebabSubMenuOption).children);
-};
-
+  Array.isArray((option as KebabSubMenuOption).children);
 export const KebabItem: FC<KebabItemProps> = (props) => {
   const { option } = props;
   let item;

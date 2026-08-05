@@ -78,9 +78,9 @@ export const isPodReady = (pod: PodKind): boolean =>
   pod?.status?.phase === 'Running' &&
   (pod?.status?.containerStatuses?.every((s) => s?.ready) ?? false);
 
-export const getCurrentPod = (pods: PodKind[]) => {
+export const getCurrentPod = (pods: PodKind[]) =>
   // Return the newest, most ready Pod created
-  return [...pods].sort((a: PodKind, b: PodKind) => {
+  [...pods].sort((a: PodKind, b: PodKind) => {
     const aReady = isPodReady(a);
     const bReady = isPodReady(b);
     if (aReady !== bReady) {
@@ -88,7 +88,6 @@ export const getCurrentPod = (pods: PodKind[]) => {
     }
     return a.metadata.creationTimestamp > b.metadata.creationTimestamp ? -1 : 1;
   })[0];
-};
 
 export const getVMIPod = (vmi: K8sResourceCommon, pods: PodKind[]) => {
   if (!pods || !vmi) {

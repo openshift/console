@@ -4,10 +4,9 @@ import { ConsoleOperatorConfigModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { CONSOLE_OPERATOR_CONFIG_NAME } from '../../constants/resource';
 
-export const useConsoleOperatorConfig = <R extends K8sResourceKind>() => {
-  return useK8sWatchResource<R>({
+export const useConsoleOperatorConfig = <R extends K8sResourceKind>() =>
+  useK8sWatchResource<R>({
     groupVersionKind: getGroupVersionKindForModel(ConsoleOperatorConfigModel),
     isList: false,
     name: CONSOLE_OPERATOR_CONFIG_NAME,
   });
-};

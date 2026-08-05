@@ -84,27 +84,28 @@ export const CatalogController: FC<CatalogControllerProps> = ({
     return defaultDescription;
   };
 
-  const filterGroups: string[] = useMemo(() => {
-    return typeExtension?.properties.filters?.map((filter) => filter.attribute) ?? [];
-  }, [typeExtension]);
+  const filterGroups: string[] = useMemo(
+    () => typeExtension?.properties.filters?.map((filter) => filter.attribute) ?? [],
+    [typeExtension],
+  );
 
-  const filterGroupMap: CatalogFilterGroupMap = useMemo(() => {
-    return (
+  const filterGroupMap: CatalogFilterGroupMap = useMemo(
+    () =>
       typeExtension?.properties.filters?.reduce((map, filter) => {
         map[filter.attribute] = filter;
         return map;
-      }, {}) ?? {}
-    );
-  }, [typeExtension]);
+      }, {}) ?? {},
+    [typeExtension],
+  );
 
-  const groupings: CatalogStringMap = useMemo(() => {
-    return (
+  const groupings: CatalogStringMap = useMemo(
+    () =>
       typeExtension?.properties.groupings?.reduce((map, group) => {
         map[group.attribute] = group.label;
         return map;
-      }, {}) ?? {}
-    );
-  }, [typeExtension]);
+      }, {}) ?? {},
+    [typeExtension],
+  );
 
   const breadcrumbs = useMemo(() => {
     const categoryParam = queryParams.get(CatalogQueryParams.CATEGORY);

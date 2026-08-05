@@ -35,45 +35,35 @@ export const getPackageSource = (packageManifest: PackageManifestKind): Operator
   return defaultPackageSourceMap?.[catalogSource] || catalogSourceDisplayName || catalogSource;
 };
 
-export const getClusterCatalogSource = (clusterCatalog?: string): OperatorSource => {
-  return defaultClusterCatalogSourceMap?.[clusterCatalog] || OperatorSource.Custom;
-};
+export const getClusterCatalogSource = (clusterCatalog?: string): OperatorSource =>
+  defaultClusterCatalogSourceMap?.[clusterCatalog] || OperatorSource.Custom;
 
 export const isAWSSTSCluster = (
   cloudcreds: CloudCredentialKind,
   infra: InfrastructureKind,
   auth: AuthenticationKind,
-): boolean => {
-  return (
-    cloudcreds?.spec?.credentialsMode === 'Manual' &&
-    infra?.status?.platform === 'AWS' &&
-    auth?.spec?.serviceAccountIssuer !== ''
-  );
-};
+): boolean =>
+  cloudcreds?.spec?.credentialsMode === 'Manual' &&
+  infra?.status?.platform === 'AWS' &&
+  auth?.spec?.serviceAccountIssuer !== '';
 
 export const isAzureWIFCluster = (
   cloudcreds: CloudCredentialKind,
   infra: InfrastructureKind,
   auth: AuthenticationKind,
-): boolean => {
-  return (
-    cloudcreds?.spec?.credentialsMode === 'Manual' &&
-    infra?.status?.platform === 'Azure' &&
-    auth?.spec?.serviceAccountIssuer !== ''
-  );
-};
+): boolean =>
+  cloudcreds?.spec?.credentialsMode === 'Manual' &&
+  infra?.status?.platform === 'Azure' &&
+  auth?.spec?.serviceAccountIssuer !== '';
 
 export const isGCPWIFCluster = (
   cloudcreds: CloudCredentialKind,
   infra: InfrastructureKind,
   auth: AuthenticationKind,
-): boolean => {
-  return (
-    cloudcreds?.spec?.credentialsMode === 'Manual' &&
-    infra?.status?.platform === 'GCP' &&
-    auth?.spec?.serviceAccountIssuer !== ''
-  );
-};
+): boolean =>
+  cloudcreds?.spec?.credentialsMode === 'Manual' &&
+  infra?.status?.platform === 'GCP' &&
+  auth?.spec?.serviceAccountIssuer !== '';
 
 export const infrastructureFeatureMap = {
   disconnected: InfrastructureFeature.Disconnected,
@@ -249,9 +239,8 @@ export const getInfrastructureFeatures: AnnotationParser<
         const tokenAuthIsSupported = azureTokenAuthIsSupported || awsTokenAuthIsSupported;
         return tokenAuthIsSupported ? includeFeature() : excludeFeature();
       };
-      const resolveTokenAuthGCPFeature = () => {
-        return gcpTokenAuthIsSupported ? includeFeature() : excludeFeature();
-      };
+      const resolveTokenAuthGCPFeature = () =>
+        gcpTokenAuthIsSupported ? includeFeature() : excludeFeature();
 
       switch (feature) {
         case InfrastructureFeature.Disconnected:

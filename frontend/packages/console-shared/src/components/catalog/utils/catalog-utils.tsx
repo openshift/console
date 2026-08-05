@@ -267,15 +267,15 @@ export const sortCatalogItems = (
 
     case CatalogSortOrder.ASC:
       // Sort alphabetically A-Z (pure alphabetical, no Red Hat prioritization)
-      return [...filteredItems].sort((a, b) => {
-        return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
-      });
+      return [...filteredItems].sort((a, b) =>
+        a.name.toLowerCase().localeCompare(b.name.toLowerCase()),
+      );
 
     case CatalogSortOrder.DESC:
       // Sort alphabetically Z-A (pure alphabetical, no Red Hat prioritization)
-      return [...filteredItems].sort((a, b) => {
-        return b.name.toLowerCase().localeCompare(a.name.toLowerCase());
-      });
+      return [...filteredItems].sort((a, b) =>
+        b.name.toLowerCase().localeCompare(a.name.toLowerCase()),
+      );
 
     default:
       // Fallback to relevance sorting
@@ -359,9 +359,7 @@ export const getCatalogTypeCounts = (
 export const customPropertyPresent = (
   catalogItemDetails: CatalogItemDetails,
   proppertyName: string,
-): boolean => {
-  return catalogItemDetails?.properties?.some((property) => property.label === proppertyName);
-};
+): boolean => catalogItemDetails?.properties?.some((property) => property.label === proppertyName);
 
 export const applyCatalogItemMetadata = (
   catalogItems: CatalogItem[],
@@ -445,9 +443,7 @@ export const useGetAllDisabledSubCatalogs = () => {
 export const useIsSoftwareCatalogEnabled = (): boolean => {
   const [disabledSubCatalogs] = useGetAllDisabledSubCatalogs();
   const catalogExtensionsArray = useExtensions<CatalogItemType>(isCatalogItemType);
-  const catalogTypeExtensions = catalogExtensionsArray.map((type) => {
-    return type.properties.type;
-  });
+  const catalogTypeExtensions = catalogExtensionsArray.map((type) => type.properties.type);
   if (disabledSubCatalogs?.length === catalogTypeExtensions?.length) {
     return (
       JSON.stringify(disabledSubCatalogs.sort()) !== JSON.stringify(catalogTypeExtensions.sort())

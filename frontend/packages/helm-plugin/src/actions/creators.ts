@@ -31,14 +31,13 @@ export const useHelmDeleteAction = (scope: HelmActionsScope, t: TFunction): Acti
           resourceType: 'Helm Release',
           actionLabel: t('helm-plugin~Delete'),
           redirect,
-          onSubmit: () => {
-            return coFetchJSON.delete(
+          onSubmit: () =>
+            coFetchJSON.delete(
               `/api/helm/release/async?name=${releaseName}&ns=${namespace}&version=${releaseVersion}`,
               null,
               null,
               -1,
-            );
-          },
+            ),
         });
       },
     };

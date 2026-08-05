@@ -19,9 +19,7 @@ export const dryRunOpt = { queryParams: { dryRun: 'All' } };
 
 const isDeployImageFormData = (
   formData: DeployImageFormData | GitImportFormData | UploadJarFormData,
-): formData is DeployImageFormData => {
-  return 'isi' in (formData as DeployImageFormData);
-};
+): formData is DeployImageFormData => 'isi' in (formData as DeployImageFormData);
 
 export const createService = (
   formData: DeployImageFormData | GitImportFormData | UploadJarFormData,

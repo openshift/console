@@ -34,19 +34,17 @@ export const getOtherKsvcFromDomainMapping = (
 export const removeDuplicateDomainMappings = (
   allDomainMappings: string[],
   connectedDomainMappings: string[],
-): string[] => {
-  return [
-    ...new Set(
-      allDomainMappings
-        ?.filter((dm) =>
-          connectedDomainMappings?.length > 0
-            ? connectedDomainMappings?.includes(removeKsvcInfoFromDomainMapping(dm))
-            : true,
-        )
-        .map((n) => removeKsvcInfoFromDomainMapping(n)),
-    ),
-  ];
-};
+): string[] => [
+  ...new Set(
+    allDomainMappings
+      ?.filter((dm) =>
+        connectedDomainMappings?.length > 0
+          ? connectedDomainMappings?.includes(removeKsvcInfoFromDomainMapping(dm))
+          : true,
+      )
+      .map((n) => removeKsvcInfoFromDomainMapping(n)),
+  ),
+];
 
 export const hasOtherKsvcDomainMappings = (domainMapping: string[]): boolean =>
   domainMapping.some((dm) => new RegExp(DOMAIN_MAPPING_KSVC_INFO_REGEX).test(dm));

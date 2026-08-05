@@ -53,8 +53,8 @@ export const mockData = {
 };
 
 // The FileReader mock prevents async operations for file upload testing
-export const setupFileReaderMock = () => {
-  return jest.spyOn(global, 'FileReader').mockImplementation(
+export const setupFileReaderMock = () =>
+  jest.spyOn(global, 'FileReader').mockImplementation(
     (): FileReader => {
       const mockFileReader: Partial<FileReader> = {
         readAsText: jest.fn(),
@@ -90,7 +90,6 @@ export const setupFileReaderMock = () => {
       return mockFileReader as FileReader;
     },
   );
-};
 
 /**
  * Verifies page title and subtitle.

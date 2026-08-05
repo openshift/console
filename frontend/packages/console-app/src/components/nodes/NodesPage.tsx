@@ -182,8 +182,8 @@ const useNodesColumns = (
   const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(NodeModel);
   const isAdmin = useFlag(FLAGS.CAN_LIST_NS);
 
-  const columns = useMemo(() => {
-    return [
+  const columns = useMemo(
+    () => [
       createSelectionColumn<NodeRowItem>(),
       {
         title: t('Name'),
@@ -384,8 +384,9 @@ const useNodesColumns = (
           ...actionsCellProps,
         },
       },
-    ];
-  }, [t, getResizableProps, isOpenShift5, vmsEnabled, isAdmin, getWidth]);
+    ],
+    [t, getResizableProps, isOpenShift5, vmsEnabled, isAdmin, getWidth],
+  );
 
   return { columns, resetAllColumnWidths };
 };
@@ -413,8 +414,8 @@ const getNodeDataViewRows = (
     selectedItems: Set<string>;
     onSelect: (itemId: string, isSelecting: boolean) => void;
   },
-): ConsoleDataViewRow[] => {
-  return rowData.map(({ obj }, rowIndex) => {
+): ConsoleDataViewRow[] =>
+  rowData.map(({ obj }, rowIndex) => {
     const isCSR = isCSRResource(obj);
     const node = isCSR ? null : (obj as NodeKind);
     const csr = isCSR ? (obj as NodeCertificateSigningRequestKind) : null;
@@ -584,7 +585,6 @@ const getNodeDataViewRows = (
       };
     });
   });
-};
 
 export const buildIPToHostnameMap = (nodes: NodeKind[]): Map<string, string> => {
   const ipToHostname = new Map<string, string>();
@@ -651,16 +651,16 @@ const fetchNodeMetrics = (nodes: NodeKind[]): Promise<NodeMetrics> => {
   ];
   const promises = metrics.map(({ key, query }) => {
     const url = getPrometheusURL({ endpoint: PrometheusEndpoint.QUERY, query });
-    return coFetchJSON(url).then(({ data: { result } }) => {
-      return result.reduce((acc, data) => {
+    return coFetchJSON(url).then(({ data: { result } }) =>
+      result.reduce((acc, data) => {
         const value = Number(data.value[1]);
         const instance = resolveInstanceLabel(
           data.metric.instance || data.metric.node,
           ipToHostname,
         );
         return _.set(acc, [key, instance], value);
-      }, {});
-    });
+      }, {}),
+    );
   });
   return Promise.all(promises).then((data: any[]) => _.assign({}, ...data));
 };
@@ -801,12 +801,14 @@ const NodeList: FC<NodeListProps> = ({
 
   const groupNames = getExistingGroups(data as NodeKind[]);
 
-  const nodeGroupFilterOptions = useMemo<DataViewFilterOption[]>(() => {
-    return groupNames.map((groupName) => ({
-      value: groupName,
-      label: groupName,
-    }));
-  }, [groupNames]);
+  const nodeGroupFilterOptions = useMemo<DataViewFilterOption[]>(
+    () =>
+      groupNames.map((groupName) => ({
+        value: groupName,
+        label: groupName,
+      })),
+    [groupNames],
+  );
 
   const machineSetFilterOptions = useMemo<DataViewFilterOption[]>(
     () =>

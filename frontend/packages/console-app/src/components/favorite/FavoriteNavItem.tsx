@@ -10,21 +10,19 @@ export const FavoriteNavItem: FC<FavoriteNavItemProps> = ({
   to,
   children,
   ...navLinkProps
-}) => {
-  return (
-    <NavItem className={className} isActive={isActive}>
-      <NavLink
-        {...navLinkProps}
-        {...dataAttributes}
-        to={to}
-        className="pf-v6-u-py-0 pf-v6-u-pr-0"
-        aria-current={isActive ? 'page' : undefined}
-      >
-        {children}
-      </NavLink>
-    </NavItem>
-  );
-};
+}) => (
+  <NavItem className={className} isActive={isActive}>
+    <NavLink
+      {...navLinkProps}
+      {...dataAttributes}
+      to={to}
+      className="pf-v6-u-py-0 pf-v6-u-pr-0"
+      aria-current={isActive ? 'page' : undefined}
+    >
+      {children}
+    </NavLink>
+  </NavItem>
+);
 
 export type FavoriteNavItemProps = {
   to: string;

@@ -58,8 +58,8 @@ export const getBuildRunDuration = (buildRun: BuildRun): string => {
   return getDuration(seconds, true);
 };
 
-const BuildRunDuration: FC<{ buildRun: BuildRun }> = ({ buildRun }) => {
-  return <>{getBuildRunDuration(buildRun)}</>;
-};
+const BuildRunDuration: FC<{ buildRun: BuildRun }> = ({ buildRun }) => (
+  <>{getBuildRunDuration(buildRun)}</>
+);
 
 export default BuildRunDuration;

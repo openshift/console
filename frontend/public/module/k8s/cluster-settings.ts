@@ -43,31 +43,24 @@ export const getSortedAvailableUpdates = (cv: ClusterVersionKind): VersionUpdate
   }
 };
 
-const getConditionalClusterUpdates = (cv: ClusterVersionKind): ConditionalUpdate[] => {
-  return (
-    cv?.status?.conditionalUpdates?.map((update) => ({
-      conditions: update.conditions,
-      release: {
-        image: update.release.image,
-        version: update.release.version,
-      },
-    })) ?? []
-  );
-};
+const getConditionalClusterUpdates = (cv: ClusterVersionKind): ConditionalUpdate[] =>
+  cv?.status?.conditionalUpdates?.map((update) => ({
+    conditions: update.conditions,
+    release: {
+      image: update.release.image,
+      version: update.release.version,
+    },
+  })) ?? [];
 
 export const getNotRecommendedUpdateCondition = (
   conditions: K8sResourceCondition[],
-): K8sResourceCondition => {
-  return conditions?.find(
-    (condition) => condition.type === 'Recommended' && condition.status !== 'True',
-  );
-};
+): K8sResourceCondition =>
+  conditions?.find((condition) => condition.type === 'Recommended' && condition.status !== 'True');
 
-const getNotRecommendedUpdates = (cv: ClusterVersionKind): ConditionalUpdate[] => {
-  return getConditionalClusterUpdates(cv).filter((update) =>
+const getNotRecommendedUpdates = (cv: ClusterVersionKind): ConditionalUpdate[] =>
+  getConditionalClusterUpdates(cv).filter((update) =>
     getNotRecommendedUpdateCondition(update.conditions),
   );
-};
 
 export const getSortedNotRecommendedUpdates = (cv: ClusterVersionKind): ConditionalUpdate[] => {
   const notRecommended = getNotRecommendedUpdates(cv);
@@ -108,13 +101,10 @@ export const isMinorVersionNewer = (currentVersion, otherVersion) => {
   );
 };
 
-export const getAvailableClusterChannels = (cv) => {
-  return cv?.status?.desired?.channels || [];
-};
+export const getAvailableClusterChannels = (cv) => cv?.status?.desired?.channels || [];
 
-export const getDesiredClusterVersion = (cv: ClusterVersionKind): string => {
-  return _.get(cv, 'status.desired.version');
-};
+export const getDesiredClusterVersion = (cv: ClusterVersionKind): string =>
+  _.get(cv, 'status.desired.version');
 
 export const getClusterVersionChannel = (cv: ClusterVersionKind): string => cv?.spec?.channel;
 
@@ -123,18 +113,17 @@ export const splitClusterVersionChannel = (channel: string) => {
   return parsed ? { prefix: parsed[1], version: parsed[2] } : null;
 };
 
-export const getSimilarClusterVersionChannels = (cv, currentPrefix) => {
-  return getAvailableClusterChannels(cv).filter((channel: string) => {
-    return currentPrefix && splitClusterVersionChannel(channel)?.prefix === currentPrefix;
-  });
-};
+export const getSimilarClusterVersionChannels = (cv, currentPrefix) =>
+  getAvailableClusterChannels(cv).filter(
+    (channel: string) =>
+      currentPrefix && splitClusterVersionChannel(channel)?.prefix === currentPrefix,
+  );
 
-export const getNewerClusterVersionChannel = (similarChannels, currentChannel) => {
-  return similarChannels.find(
+export const getNewerClusterVersionChannel = (similarChannels, currentChannel) =>
+  similarChannels.find(
     // find the next minor version, which there should never be more than one
     (channel) => semver.gt(semver.coerce(channel).version, semver.coerce(currentChannel).version),
   );
-};
 
 export const getLastCompletedUpdate = (cv: ClusterVersionKind): string => {
   const history: UpdateHistory[] = _.get(cv, 'status.history', []);
@@ -154,63 +143,56 @@ export const getClusterVersionCondition = (
   return _.find(conditions, { type });
 };
 
-const isProgressing = (cv: ClusterVersionKind): boolean => {
-  return !_.isEmpty(
+const isProgressing = (cv: ClusterVersionKind): boolean =>
+  !_.isEmpty(
     getClusterVersionCondition(
       cv,
       ClusterVersionConditionType.Progressing,
       K8sResourceConditionStatus.True,
     ),
   );
-};
 
-const invalid = (cv: ClusterVersionKind): boolean => {
-  return !_.isEmpty(
+const invalid = (cv: ClusterVersionKind): boolean =>
+  !_.isEmpty(
     getClusterVersionCondition(
       cv,
       ClusterVersionConditionType.Invalid,
       K8sResourceConditionStatus.True,
     ),
   );
-};
 
-const releaseNotAccepted = (cv: ClusterVersionKind): boolean => {
-  return !_.isEmpty(
+const releaseNotAccepted = (cv: ClusterVersionKind): boolean =>
+  !_.isEmpty(
     getClusterVersionCondition(
       cv,
       ClusterVersionConditionType.ReleaseAccepted,
       K8sResourceConditionStatus.False,
     ),
   );
-};
 
-const failedToRetrieveUpdates = (cv: ClusterVersionKind): boolean => {
-  return !_.isEmpty(
+const failedToRetrieveUpdates = (cv: ClusterVersionKind): boolean =>
+  !_.isEmpty(
     getClusterVersionCondition(
       cv,
       ClusterVersionConditionType.RetrievedUpdates,
       K8sResourceConditionStatus.False,
     ),
   );
-};
 
-const updateFailing = (cv: ClusterVersionKind): boolean => {
-  return !_.isEmpty(
+const updateFailing = (cv: ClusterVersionKind): boolean =>
+  !_.isEmpty(
     getClusterVersionCondition(
       cv,
       ClusterVersionConditionType.Failing,
       K8sResourceConditionStatus.True,
     ),
   );
-};
 
-export const hasAvailableUpdates = (cv: ClusterVersionKind): boolean => {
-  return !_.isEmpty(getAvailableClusterUpdates(cv));
-};
+export const hasAvailableUpdates = (cv: ClusterVersionKind): boolean =>
+  !_.isEmpty(getAvailableClusterUpdates(cv));
 
-export const hasNotRecommendedUpdates = (cv: ClusterVersionKind): boolean => {
-  return !_.isEmpty(getNotRecommendedUpdates(cv));
-};
+export const hasNotRecommendedUpdates = (cv: ClusterVersionKind): boolean =>
+  !_.isEmpty(getNotRecommendedUpdates(cv));
 
 export const getClusterUpdateStatus = (cv: ClusterVersionKind): ClusterUpdateStatus => {
   if (invalid(cv)) {
@@ -253,9 +235,8 @@ export const getOpenShiftVersion = (cv: ClusterVersionKind): string => {
   return lastUpdate.state === 'Partial' ? `Updating to ${lastUpdate.version}` : lastUpdate.version;
 };
 
-export const getCurrentVersion = (cv: ClusterVersionKind): string => {
-  return _.get(cv, 'status.history[0].version') || _.get(cv, 'spec.desiredUpdate.version');
-};
+export const getCurrentVersion = (cv: ClusterVersionKind): string =>
+  _.get(cv, 'status.history[0].version') || _.get(cv, 'spec.desiredUpdate.version');
 
 export const getReportBugLink = (
   cv: ClusterVersionKind,
@@ -311,9 +292,7 @@ export const getReportBugLink = (
       };
 };
 
-export const showReleaseNotes = (): boolean => {
-  return window.SERVER_FLAGS.branding === 'ocp';
-};
+export const showReleaseNotes = (): boolean => window.SERVER_FLAGS.branding === 'ocp';
 
 // example link: https://access.redhat.com/documentation/en-us/openshift_container_platform/4.9/html/release_notes/ocp-4-9-release-notes#ocp-4-9-4
 export const getReleaseNotesLink = (version: string): string => {

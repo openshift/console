@@ -177,17 +177,15 @@ const CreateHelmChartRepository: FC<CreateHelmChartRepositoryProps> = ({
         onSubmit={handleSubmit}
         enableReinitialize
       >
-        {(formikProps) => {
-          return (
-            <CreateHelmChartRepositoryForm
-              {...formikProps}
-              namespace={namespace}
-              handleCancel={handleCancel}
-              showScopeType={showScopeType}
-              existingRepo={existingRepoName && hcr}
-            />
-          );
-        }}
+        {(formikProps) => (
+          <CreateHelmChartRepositoryForm
+            {...formikProps}
+            namespace={namespace}
+            handleCancel={handleCancel}
+            showScopeType={showScopeType}
+            existingRepo={existingRepoName && hcr}
+          />
+        )}
       </Formik>
     </StatusBox>
   );

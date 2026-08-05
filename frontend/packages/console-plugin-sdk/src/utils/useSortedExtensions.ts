@@ -11,13 +11,12 @@ const pluginOrderMap = new Map(dynamicPluginNames.map((name, index) => [name, in
  */
 const sortExtensionsByPluginOrder = <TExtension extends Extension>(
   extensions: LoadedExtension<TExtension>[],
-) => {
-  return [...extensions].sort(
+) =>
+  [...extensions].sort(
     (a, b) =>
       (pluginOrderMap.get(a.pluginName) ?? Number.MIN_SAFE_INTEGER) -
       (pluginOrderMap.get(b.pluginName) ?? Number.MIN_SAFE_INTEGER),
   );
-};
 
 /**
  * Sort extensions in the same order as the list of enabled plugins in Console operator config.

@@ -111,21 +111,17 @@ export const InnerResourceListDropdown: FC<ResourceListDropdownProps> = (props) 
     [resources],
   );
 
-  const filterGroupVersionKind = (resourceList: string[]): string[] => {
-    return resourceList.filter((resource) => {
+  const filterGroupVersionKind = (resourceList: string[]): string[] =>
+    resourceList.filter((resource) => {
       const parts = resource.split('~');
       return parts.length === 3 && parts.every((part) => part.trim() !== '');
     });
-  };
-  const recentSelectedList = (data: string[] | string): string[] => {
-    return (
-      (data &&
-        data !== '[]' &&
-        data !== 'undefined' &&
-        JSON.parse(_.isString(data) ? data : JSON.stringify(data))) ??
-      []
-    );
-  };
+  const recentSelectedList = (data: string[] | string): string[] =>
+    (data &&
+      data !== '[]' &&
+      data !== 'undefined' &&
+      JSON.parse(_.isString(data) ? data : JSON.stringify(data))) ??
+    [];
 
   useEffect(() => {
     setSelectedOptions(selected);

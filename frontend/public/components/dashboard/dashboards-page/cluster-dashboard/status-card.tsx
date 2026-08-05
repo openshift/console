@@ -131,9 +131,10 @@ export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels
   );
   const [, setActiveNamespace] = useActiveNamespace();
 
-  const subsystems = useMemo(() => {
-    return filterSubsystems([...subsystemExtensions], k8sModels);
-  }, [subsystemExtensions, k8sModels]);
+  const subsystems = useMemo(() => filterSubsystems([...subsystemExtensions], k8sModels), [
+    subsystemExtensions,
+    k8sModels,
+  ]);
 
   const operatorSubsystemIndex = useMemo(
     () => subsystems.findIndex((e) => isResolvedDashboardsOverviewHealthOperator(e)),
@@ -208,13 +209,11 @@ export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels
       </CardHeader>
       <HealthBody>
         <Gallery className="co-overview-status__health" hasGutter>
-          {healthItems.map((item) => {
-            return (
-              <GalleryItem key={item.title} data-test={item.title}>
-                {item.Component}
-              </GalleryItem>
-            );
-          })}
+          {healthItems.map((item) => (
+            <GalleryItem key={item.title} data-test={item.title}>
+              {item.Component}
+            </GalleryItem>
+          ))}
         </Gallery>
       </HealthBody>
       <DashboardAlerts />

@@ -5,10 +5,8 @@ import type { DocumentTitleProps } from '@console/dynamic-plugin-sdk/src/extensi
 /**
  * A component to change the document title of the page.
  */
-export const DocumentTitle: FC<DocumentTitleProps> = ({ children }) => {
-  return (
-    <Helmet>
-      <title>{String(children)}</title>
-    </Helmet>
-  );
-};
+export const DocumentTitle: FC<DocumentTitleProps> = ({ children }) => (
+  <Helmet>
+    <title>{String(children)}</title>
+  </Helmet>
+);

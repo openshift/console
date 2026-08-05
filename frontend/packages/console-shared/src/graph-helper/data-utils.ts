@@ -6,9 +6,7 @@ import { getType } from '@console/internal/components/utils/units';
 
 export { ByteDataTypes };
 
-const log = (x: number, y: number) => {
-  return Math.log(y) / Math.log(x);
-};
+const log = (x: number, y: number) => Math.log(y) / Math.log(x);
 
 // Get the larget unit seen in the dataframe within the supported range
 const bestUnit = (dataPoints: DataPoint[][], type) => {

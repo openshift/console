@@ -21,11 +21,9 @@ jest.mock('@console/internal/components/utils/rbac', () => ({
   useAccessReview2: () => [false, false],
 }));
 
-jest.mock('@console/shared/src/hooks/useUserPreference', () => {
-  return {
-    useUserPreference: () => ['', () => {}, true],
-  };
-});
+jest.mock('@console/shared/src/hooks/useUserPreference', () => ({
+  useUserPreference: () => ['', () => {}, true],
+}));
 
 jest.mock('@console/shared/src/hooks/useFlag', () => ({
   useFlag: jest.fn<boolean, []>(),

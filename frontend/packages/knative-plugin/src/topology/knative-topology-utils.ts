@@ -177,9 +177,8 @@ export const filterRevisionsByActiveApplication = (
   });
   return filteredRevisions;
 };
-const isInternalResource = (resource: K8sResourceKind): boolean => {
-  return resource.kind !== EventingBrokerModel.kind && !!resource.metadata?.ownerReferences;
-};
+const isInternalResource = (resource: K8sResourceKind): boolean =>
+  resource.kind !== EventingBrokerModel.kind && !!resource.metadata?.ownerReferences;
 
 const isSubscriber = (
   resource: K8sResourceKind,
@@ -245,12 +244,11 @@ export const getTriggerFilters = (resource: K8sResourceKind) => {
 export const getKnativeDynamicResources = (
   resources: TopologyDataResources,
   dynamicProps: string[],
-): K8sResourceKind[] => {
-  return dynamicProps.reduce((acc, currProp) => {
+): K8sResourceKind[] =>
+  dynamicProps.reduce((acc, currProp) => {
     const currPropResource = resources[currProp]?.data ?? [];
     return [...acc, ...currPropResource];
   }, []);
-};
 
 const getSubscribedEventsources = (
   pubSubResource: K8sResourceKind,
@@ -353,19 +351,15 @@ const getPubSubSubscribers = (
               ) {
                 return acc;
               }
-              const relationshipResources = (resources[relationshipResource].data || []).filter(
-                (relationshipRes) => {
-                  return isRelatedResource(relRes, relationshipRes, resource);
-                },
-              );
-              const relationShipData = relationshipResources.map((res) => {
-                return {
-                  kind: referenceFor(res),
-                  name: res.metadata.name,
-                  namespace: res.metadata.namespace,
-                  ...getTriggerFilters(res),
-                };
-              });
+              const relationshipResources = (
+                resources[relationshipResource].data || []
+              ).filter((relationshipRes) => isRelatedResource(relRes, relationshipRes, resource));
+              const relationShipData = relationshipResources.map((res) => ({
+                kind: referenceFor(res),
+                name: res.metadata.name,
+                namespace: res.metadata.namespace,
+                ...getTriggerFilters(res),
+              }));
               if (relationShipData.length > 0) {
                 const obj = {
                   kind: referenceFor(relRes),
@@ -404,9 +398,7 @@ export const getSubscriberByType = (
  */
 const getChannelRef = (kind: string): string => {
   const channelResourceProps = getDynamicChannelModelRefs();
-  return _.find(channelResourceProps, (channel) => {
-    return kind === kindForReference(channel);
-  });
+  return _.find(channelResourceProps, (channel) => kind === kindForReference(channel));
 };
 
 /**
@@ -525,9 +517,7 @@ export const getKnativeServiceData = (
     eventSources,
   };
   if (utils) {
-    return utils.reduce((acc, util) => {
-      return { ...acc, ...util(resource, resources) };
-    }, overviewItem);
+    return utils.reduce((acc, util) => ({ ...acc, ...util(resource, resources) }), overviewItem);
   }
   return overviewItem;
 };
@@ -575,9 +565,7 @@ const createKnativeDeploymentItems = (
     };
 
     if (utils) {
-      return utils.reduce((acc, util) => {
-        return { ...acc, ...util(resource, resources) };
-      }, overviewItems);
+      return utils.reduce((acc, util) => ({ ...acc, ...util(resource, resources) }), overviewItems);
     }
 
     return overviewItems;
@@ -614,9 +602,7 @@ const createPubSubDataItems = (
     (acc, subs) => {
       const subUid = _.get(subs, 'metadata.uid');
       const subscribers = spec?.subscribable?.subscribers || spec?.subscribers;
-      const isSubscribableData = _.findIndex(subscribers, function ({ uid }) {
-        return uid === subUid;
-      });
+      const isSubscribableData = _.findIndex(subscribers, ({ uid }) => uid === subUid);
       if (isSubscribableData !== -1) {
         acc.eventingsubscription.push(subs);
         const subscriptionSvc = _.get(subs, 'spec.subscriber.ref', null);
@@ -657,9 +643,10 @@ const createPubSubDataItems = (
     );
     [PodModel, DeploymentModel].forEach(({ kind, plural: resType }) => {
       triggersData[resType] = resources?.[resType]?.data
-        .filter((resourceObject) => {
-          return resourceObject?.metadata?.labels?.['eventing.knative.dev/broker'] === name;
-        })
+        .filter(
+          (resourceObject) =>
+            resourceObject?.metadata?.labels?.['eventing.knative.dev/broker'] === name,
+        )
         .map((obj) => ({ ...obj, ...{ kind } }));
     });
   }
@@ -757,9 +744,10 @@ export const getSinkUriTopologyEdgeItems = (
 };
 
 const getSinkTargetUid = (nodeData: NodeModel[], sinkUri: string) => {
-  const sinkNodeData = _.find(nodeData, ({ data: nodeResData }) => {
-    return sinkUri === nodeResData?.data?.sinkUri;
-  });
+  const sinkNodeData = _.find(
+    nodeData,
+    ({ data: nodeResData }) => sinkUri === nodeResData?.data?.sinkUri,
+  );
 
   return sinkNodeData?.id ?? '';
 };
@@ -1374,11 +1362,10 @@ export const getKameletSinkAndSourceBindings = (resources) => {
 export const isOperatorBackedKnSinkService = (
   obj: K8sResourceKind,
   knEventSinks: K8sResourceKind[],
-) => {
-  return !!_.find(knEventSinks, (evsrc) =>
+) =>
+  !!_.find(knEventSinks, (evsrc) =>
     obj.metadata?.labels?.[CAMEL_SOURCE_INTEGRATION]?.startsWith(evsrc.metadata.name),
   );
-};
 
 export const createSinkConnection = (source: Node, target: Node): Promise<K8sResourceKind> => {
   if (!source || !target || source === target) {

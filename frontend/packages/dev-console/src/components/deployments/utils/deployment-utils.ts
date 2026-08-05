@@ -119,16 +119,12 @@ export const getDefaultDeployment = (namespace: string): K8sResourceKind => {
   return defaultDeployment;
 };
 
-export const getContainerNames = (containers: ContainerSpec[]) => {
-  return (
-    containers?.reduce((acc, container) => {
-      return {
+export const getContainerNames = (containers: ContainerSpec[]) =>
+  containers?.reduce((acc, container) => ({
         ...acc,
         [container.name]: container.name,
-      };
-    }, {}) ?? []
+      }), {}) ?? []
   );
-};
 
 const getLchImageStreamData = (
   resName: string,
@@ -167,31 +163,27 @@ const getLchImageStreamData = (
   };
 };
 
-const getLifecycleHookData = (lch: any): LifecycleHookData => {
-  return {
-    failurePolicy: lch?.failurePolicy ?? FailurePolicyType.Abort,
-    execNewPod: {
-      command: lch?.execNewPod?.command ?? [''],
-      containerName: lch?.execNewPod?.containerName,
-      env: lch?.execNewPod?.env,
-      volumes: _.join(lch?.execNewPod?.volumes, ','),
-    },
-    tagImages: lch?.tagImages ?? [],
-  };
-};
+const getLifecycleHookData = (lch: any): LifecycleHookData => ({
+  failurePolicy: lch?.failurePolicy ?? FailurePolicyType.Abort,
+  execNewPod: {
+    command: lch?.execNewPod?.command ?? [''],
+    containerName: lch?.execNewPod?.containerName,
+    env: lch?.execNewPod?.env,
+    volumes: _.join(lch?.execNewPod?.volumes, ','),
+  },
+  tagImages: lch?.tagImages ?? [],
+});
 
-const getLifecycleHookFormData = (lch: any): LifecycleHookFormData => {
-  return {
-    lch: getLifecycleHookData(lch),
-    exists: !!lch,
-    isAddingLch: false,
-    action: lch
-      ? lch.hasOwnProperty(LifecycleAction.execNewPod)
-        ? LifecycleAction.execNewPod
-        : LifecycleAction.tagImages
-      : LifecycleAction.execNewPod,
-  };
-};
+const getLifecycleHookFormData = (lch: any): LifecycleHookFormData => ({
+  lch: getLifecycleHookData(lch),
+  exists: !!lch,
+  isAddingLch: false,
+  action: lch
+    ? lch.hasOwnProperty(LifecycleAction.execNewPod)
+      ? LifecycleAction.execNewPod
+      : LifecycleAction.tagImages
+    : LifecycleAction.execNewPod,
+});
 
 export const getStrategyData = (
   type: DeploymentStrategyType,

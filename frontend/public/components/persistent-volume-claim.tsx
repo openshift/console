@@ -131,8 +131,8 @@ export const PVCStatusComponent: FC<PVCStatusProps> = ({ pvc }) => {
 const getDataViewRowsCreator: (
   t: TFunction,
   pvcMetrics: PVCMetrics,
-) => GetDataViewRows<PersistentVolumeClaimKind> = (t, pvcMetrics) => (data, columns) => {
-  return data.map(({ obj }) => {
+) => GetDataViewRows<PersistentVolumeClaimKind> = (t, pvcMetrics) => (data, columns) =>
+  data.map(({ obj }) => {
     const metrics = pvcMetrics?.usedCapacity?.[getNamespace(obj)]?.[getName(obj)];
     const [name, namespace] = [getName(obj), getNamespace(obj)];
     const totalCapacityMetric = convertToBaseValue(obj.status?.capacity?.storage);
@@ -195,7 +195,6 @@ const getDataViewRowsCreator: (
       };
     });
   });
-};
 
 const usePersistentVolumeClaimColumns = (): {
   columns: TableColumn<PersistentVolumeClaimKind>[];

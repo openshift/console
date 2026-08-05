@@ -43,12 +43,9 @@ import { Selector } from './utils/selector';
 import { LoadingBox } from './utils/status-box';
 
 const controlPlaneMachineSetReference = referenceForModel(ControlPlaneMachineSetModel);
-const getDesiredReplicas = (resource: ControlPlaneMachineSetKind) => {
-  return resource.spec.replicas;
-};
-const getReadyReplicas = (resource: ControlPlaneMachineSetKind) => {
-  return resource?.status?.readyReplicas || 0;
-};
+const getDesiredReplicas = (resource: ControlPlaneMachineSetKind) => resource.spec.replicas;
+const getReadyReplicas = (resource: ControlPlaneMachineSetKind) =>
+  resource?.status?.readyReplicas || 0;
 
 const ControlPlaneMachineSetCounts: FC<ControlPlaneMachineSetCountsProps> = ({ resource }) => {
   const { t } = useTranslation('public');
@@ -207,8 +204,8 @@ const useControlPlaneMachineSetColumns = (): {
     ControlPlaneMachineSetModel,
   );
 
-  const columns: TableColumn<ControlPlaneMachineSetKind>[] = useMemo(() => {
-    return [
+  const columns: TableColumn<ControlPlaneMachineSetKind>[] = useMemo(
+    () => [
       {
         title: t('Name'),
         id: tableColumnInfo[0].id,
@@ -262,8 +259,9 @@ const useControlPlaneMachineSetColumns = (): {
           ...actionsCellProps,
         },
       },
-    ];
-  }, [t, getResizableProps]);
+    ],
+    [t, getResizableProps],
+  );
 
   return { columns, resetAllColumnWidths };
 };
@@ -280,8 +278,8 @@ export const MachinesCell: FC<MachinesCellProps> = ({ desiredReplicas, readyRepl
   );
 };
 
-const getDataViewRows: GetDataViewRows<ControlPlaneMachineSetKind> = (data, columns) => {
-  return data.map(({ obj }) => {
+const getDataViewRows: GetDataViewRows<ControlPlaneMachineSetKind> = (data, columns) =>
+  data.map(({ obj }) => {
     const { name, namespace } = obj.metadata;
     const desiredReplicas = getDesiredReplicas(obj);
     const readyReplicas = getReadyReplicas(obj);
@@ -326,7 +324,6 @@ const getDataViewRows: GetDataViewRows<ControlPlaneMachineSetKind> = (data, colu
       };
     });
   });
-};
 
 const ControlPlaneMachineSetList: FC<ControlPlaneMachineSetListProps> = ({
   data,

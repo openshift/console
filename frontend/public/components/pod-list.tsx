@@ -86,12 +86,12 @@ const fetchPodMetrics = (namespace: string): Promise<UIActions.PodMetrics> => {
       const url = namespace
         ? `${PROMETHEUS_TENANCY_BASE_PATH}/api/v1/query?namespace=${namespace}&query=${query}`
         : `${PROMETHEUS_BASE_PATH}/api/v1/query?query=${query}`;
-      return coFetchJSON(url).then(({ data: { result } }) => {
-        return result.reduce((acc, data) => {
+      return coFetchJSON(url).then(({ data: { result } }) =>
+        result.reduce((acc, data) => {
           const value = Number(data.value[1]);
           return _.set(acc, [key, data.metric.namespace, data.metric.pod], value);
-        }, {});
-      });
+        }, {}),
+      );
     },
   );
   return Promise.all(promises).then((data: unknown[]) => _.assign({}, ...data));
@@ -120,8 +120,8 @@ const usePodsColumns = (
   const { t } = useTranslation('public');
   const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(PodModel);
 
-  const columns = useMemo(() => {
-    return [
+  const columns = useMemo(
+    () => [
       {
         title: t('Name'),
         id: tableColumnInfo[0].id,
@@ -254,8 +254,9 @@ const usePodsColumns = (
           ...actionsCellProps,
         },
       },
-    ];
-  }, [t, showNodes, getResizableProps, getWidth]);
+    ],
+    [t, showNodes, getResizableProps, getWidth],
+  );
   return { columns, resetAllColumnWidths };
 };
 
@@ -269,15 +270,13 @@ const PodStatusPopover: FC<PodStatusPopoverProps> = ({
   headerContent,
   footerContent,
   status,
-}) => {
-  return (
-    <Popover headerContent={headerContent} bodyContent={bodyContent} footerContent={footerContent}>
-      <Button variant="link" isInline data-test="popover-status-button">
-        <Status status={status} />
-      </Button>
-    </Popover>
-  );
-};
+}) => (
+  <Popover headerContent={headerContent} bodyContent={bodyContent} footerContent={footerContent}>
+    <Button variant="link" isInline data-test="popover-status-button">
+      <Status status={status} />
+    </Button>
+  </Popover>
+);
 
 export const PodStatus: FC<PodStatusProps> = ({ pod }) => {
   const status = podPhase(pod);
@@ -394,8 +393,8 @@ const getPodDataViewRows = (
   tableColumns: ConsoleDataViewColumn<PodKind>[],
   showNodes: boolean,
   podMetrics: UIActions.PodMetrics,
-): ConsoleDataViewRow[] => {
-  return rowData.map(({ obj }) => {
+): ConsoleDataViewRow[] =>
+  rowData.map(({ obj }) => {
     const { name, namespace, creationTimestamp, labels } = obj.metadata;
     const { readyCount, totalContainers } = podReadiness(obj);
     const phase = podPhase(obj);
@@ -471,7 +470,6 @@ const getPodDataViewRows = (
       };
     });
   });
-};
 
 export const PodList: FC<PodListProps> = ({
   showNamespaceOverride,
@@ -489,9 +487,9 @@ export const PodList: FC<PodListProps> = ({
   const { t } = useTranslation('public');
   const { columns, resetAllColumnWidths } = usePodsColumns(showNodes);
 
-  const podMetrics = useConsoleSelector<UIActions.PodMetrics>(({ UI }) => {
-    return UI.getIn(['metrics', 'pod']);
-  });
+  const podMetrics = useConsoleSelector<UIActions.PodMetrics>(({ UI }) =>
+    UI.getIn(['metrics', 'pod']),
+  );
 
   const columnManagementID = referenceForModel(PodModel);
 

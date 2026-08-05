@@ -173,9 +173,7 @@ export const serverlessValidationSchema = (t: TFunction) =>
             .test(
               'domainname-has-segements',
               t('devconsole~Domain name must consist of at least two segments separated by dots.'),
-              function (domainName: string) {
-                return domainName.split('.').length >= 2;
-              },
+              (domainName: string) => domainName.split('.').length >= 2,
             ),
         ),
       }),

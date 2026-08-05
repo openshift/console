@@ -8,20 +8,18 @@ import type {
   HelmChartRepositoryType,
 } from '../../../types/helm-types';
 
-export const convertToForm = (resource: HelmChartRepositoryType) => {
-  return {
-    scope: resource?.kind,
-    repoName: resource?.metadata?.name ?? '',
-    repoDisplayName: resource?.spec?.name ?? '',
-    ca: resource?.spec?.connectionConfig?.ca?.name ?? '',
-    disabled: resource?.spec?.disabled ?? false,
-    tlsClientConfig: resource?.spec?.connectionConfig?.tlsClientConfig?.name ?? '',
-    basicAuthConfig: resource?.spec?.connectionConfig?.basicAuthConfig?.name ?? '',
-    repoDescription: resource?.spec?.description ?? '',
-    repoUrl: resource?.spec?.connectionConfig?.url ?? '',
-    metadata: _.omit(resource?.metadata, ['name', 'namespace']) ?? {},
-  };
-};
+export const convertToForm = (resource: HelmChartRepositoryType) => ({
+  scope: resource?.kind,
+  repoName: resource?.metadata?.name ?? '',
+  repoDisplayName: resource?.spec?.name ?? '',
+  ca: resource?.spec?.connectionConfig?.ca?.name ?? '',
+  disabled: resource?.spec?.disabled ?? false,
+  tlsClientConfig: resource?.spec?.connectionConfig?.tlsClientConfig?.name ?? '',
+  basicAuthConfig: resource?.spec?.connectionConfig?.basicAuthConfig?.name ?? '',
+  repoDescription: resource?.spec?.description ?? '',
+  repoUrl: resource?.spec?.connectionConfig?.url ?? '',
+  metadata: _.omit(resource?.metadata, ['name', 'namespace']) ?? {},
+});
 
 export const convertToHelmChartRepository = (
   formValues: HelmChartRepositoryFormData,

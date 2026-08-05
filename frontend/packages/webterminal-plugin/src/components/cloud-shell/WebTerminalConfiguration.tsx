@@ -39,25 +39,27 @@ const WebTerminalConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
   const [imageCheckBox, setImageCheckBox] = useState(false);
   const [saveStatus, setSaveStatus] = useState<SaveStatusProps>();
 
-  const webTerminalExecResource: WatchK8sResource = useMemo(() => {
-    return {
+  const webTerminalExecResource: WatchK8sResource = useMemo(
+    () => ({
       kind: referenceForModel(DevWorkspaceTemplateModel),
       namespaced: true,
       isList: false,
       name: 'web-terminal-exec',
       namespace: operatorNamespace || DEFAULT_NS_OPERATORS,
-    };
-  }, [operatorNamespace]);
+    }),
+    [operatorNamespace],
+  );
 
-  const webTerminalToolingResource: WatchK8sResource = useMemo(() => {
-    return {
+  const webTerminalToolingResource: WatchK8sResource = useMemo(
+    () => ({
       kind: referenceForModel(DevWorkspaceTemplateModel),
       namespaced: true,
       isList: false,
       name: 'web-terminal-tooling',
       namespace: operatorNamespace || DEFAULT_NS_OPERATORS,
-    };
-  }, [operatorNamespace]);
+    }),
+    [operatorNamespace],
+  );
 
   const [webTerminalExec, isLoaded, loadError] = useK8sWatchResource<CloudShellResource>(
     webTerminalExecResource,

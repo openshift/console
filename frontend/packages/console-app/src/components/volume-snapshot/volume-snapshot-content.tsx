@@ -47,8 +47,8 @@ const tableColumnInfo = [
   { id: '' },
 ];
 
-const getDataViewRows: GetDataViewRows<VolumeSnapshotContentKind> = (data, columns) => {
-  return data.map(({ obj }) => {
+const getDataViewRows: GetDataViewRows<VolumeSnapshotContentKind> = (data, columns) =>
+  data.map(({ obj }) => {
     const name = obj.metadata?.name || '';
     const creationTimestamp = obj.metadata?.creationTimestamp || '';
     const snapshotName = obj.spec?.volumeSnapshotRef?.name || '';
@@ -103,7 +103,6 @@ const getDataViewRows: GetDataViewRows<VolumeSnapshotContentKind> = (data, colum
       };
     });
   });
-};
 
 const useVolumeSnapshotContentColumns = (): {
   columns: TableColumn<VolumeSnapshotContentKind>[];

@@ -10,6 +10,6 @@ type ErrorBoundaryPageProps = {
  * Mount an error boundary that will render a full page error stack trace.
  * @see ErrorBoundaryInline for a more inline option.
  */
-export const ErrorBoundaryPage: FC<ErrorBoundaryPageProps> = (props) => {
-  return <ErrorBoundary {...props} FallbackComponent={ErrorBoundaryFallbackPage} />;
-};
+export const ErrorBoundaryPage: FC<ErrorBoundaryPageProps> = (props) => (
+  <ErrorBoundary {...props} FallbackComponent={ErrorBoundaryFallbackPage} />
+);

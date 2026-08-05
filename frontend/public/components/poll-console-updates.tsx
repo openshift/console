@@ -111,13 +111,12 @@ export const PollConsoleUpdates = memo(() => {
     }
   }
 
-  const pluginManifestsVersionsChanged = pluginManifestsData?.some((manifest) => {
-    return prevPluginManifestsData?.some((previousManifest) => {
-      return (
-        manifest.name === previousManifest.name && manifest.version !== previousManifest.version
-      );
-    });
-  });
+  const pluginManifestsVersionsChanged = pluginManifestsData?.some((manifest) =>
+    prevPluginManifestsData?.some(
+      (previousManifest) =>
+        manifest.name === previousManifest.name && manifest.version !== previousManifest.version,
+    ),
+  );
   if (
     stateInitialized &&
     !_.isEmpty(prevPluginManifestsData) &&

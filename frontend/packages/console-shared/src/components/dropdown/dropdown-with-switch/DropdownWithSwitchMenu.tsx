@@ -22,38 +22,36 @@ const DropdownWithSwitchMenu: FC<DropdownWithSwitchMenuProps> = ({
   switchLabelClassName,
   switchLabelIsReversed,
   switchOnChange,
-}) => {
-  return (
-    <Menu
-      activeItemId={selected}
-      isScrollable
-      onSelect={(event: MouseEvent, itemId: string) => {
-        onSelect(event, itemId);
-        setOpen(false);
-      }}
-      ref={menuRef}
-      style={{ position: 'absolute', zIndex: 100 }}
-    >
-      <MenuContent>
-        <MenuSearch>
-          <MenuSearchInput>
-            <Switch
-              className={switchLabelClassName}
-              isChecked={switchIsChecked}
-              isDisabled={switchIsDisabled}
-              isReversed={switchLabelIsReversed}
-              label={switchLabel}
-              onChange={(_event, value) => switchOnChange(value)}
-              data-test="dropdown-with-switch-switch"
-            />
-          </MenuSearchInput>
-        </MenuSearch>
-        <Divider />
-        <DropdownWithSwitchGroups options={options} selectedKey={selected} />
-      </MenuContent>
-    </Menu>
-  );
-};
+}) => (
+  <Menu
+    activeItemId={selected}
+    isScrollable
+    onSelect={(event: MouseEvent, itemId: string) => {
+      onSelect(event, itemId);
+      setOpen(false);
+    }}
+    ref={menuRef}
+    style={{ position: 'absolute', zIndex: 100 }}
+  >
+    <MenuContent>
+      <MenuSearch>
+        <MenuSearchInput>
+          <Switch
+            className={switchLabelClassName}
+            isChecked={switchIsChecked}
+            isDisabled={switchIsDisabled}
+            isReversed={switchLabelIsReversed}
+            label={switchLabel}
+            onChange={(_event, value) => switchOnChange(value)}
+            data-test="dropdown-with-switch-switch"
+          />
+        </MenuSearchInput>
+      </MenuSearch>
+      <Divider />
+      <DropdownWithSwitchGroups options={options} selectedKey={selected} />
+    </MenuContent>
+  </Menu>
+);
 
 type DropdownWithSwitchMenuProps = {
   menuRef: MutableRefObject<HTMLDivElement>;

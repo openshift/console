@@ -305,8 +305,8 @@ export const getEventSourceMetadata = (eventSourceModel: K8sKind, t): KnEventCat
 export const getEventSourceModelsWithAccess = (
   namespace: string,
   eventSourceModels: K8sKind[],
-): Promise<K8sKind>[] => {
-  return eventSourceModels.map((model) => {
+): Promise<K8sKind>[] =>
+  eventSourceModels.map((model) => {
     const { apiGroup, plural } = model;
     return checkAccess({
       group: apiGroup,
@@ -321,7 +321,6 @@ export const getEventSourceModelsWithAccess = (
         return null;
       });
   });
-};
 
 export const getBootstrapServers = (kafkaResources: K8sResourceKind[]) => {
   const servers = kafkaResources?.reduce((acc, kafka) => {

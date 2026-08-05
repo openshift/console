@@ -276,12 +276,13 @@ export const OperatorDescription: FC<OperatorDescriptionProps> = ({
     });
   }, [currentCSVDescription, clusterIsAWSSTS, clusterIsAzureWIF, clusterIsGCPWIF, packageManifest]);
 
-  const [isTokenAuth, isTokenAuthGCP] = useMemo(() => {
-    return [
+  const [isTokenAuth, isTokenAuthGCP] = useMemo(
+    () => [
       (infraFeatures ?? []).includes(InfrastructureFeature.TokenAuth),
       (infraFeatures ?? []).includes(InfrastructureFeature.TokenAuthGCP),
-    ];
-  }, [infraFeatures]);
+    ],
+    [infraFeatures],
+  );
 
   useEffect(() => {
     setDeprecatedPackage({ deprecation: packageManifestStatus?.deprecation });

@@ -69,8 +69,8 @@ const isDefaultVirtClass = (storageClass: K8sResourceKind) => {
 const getDataViewRowsCreator: (
   t: TFunction,
   isKubevirtPluginActive: boolean,
-) => GetDataViewRows<StorageClassResourceKind> = (t, isKubevirtPluginActive) => (data, columns) => {
-  return data.map(({ obj }) => {
+) => GetDataViewRows<StorageClassResourceKind> = (t, isKubevirtPluginActive) => (data, columns) =>
+  data.map(({ obj }) => {
     const name = obj.metadata?.name || '';
     const context = { [referenceFor(obj)]: obj };
 
@@ -114,7 +114,6 @@ const getDataViewRowsCreator: (
       };
     });
   });
-};
 
 const useStorageClassColumns = (): {
   columns: TableColumn<StorageClassResourceKind>[];

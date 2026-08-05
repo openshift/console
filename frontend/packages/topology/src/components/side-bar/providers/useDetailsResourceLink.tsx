@@ -8,13 +8,15 @@ export const useDetailsResourceLink = (element: GraphElement): ReactNode => {
   const [resurceLinkExtension, resolved] = useResolvedExtensions<DetailsResourceLink>(
     isDetailsResourceLink,
   );
-  const resourceLink = useMemo(() => {
-    return resolved
-      ? resurceLinkExtension
-          .sort((a, b) => b.properties.priority - a.properties.priority)
-          .find(({ properties: { link } }) => !!link(element))
-          ?.properties?.link?.(element)
-      : null;
-  }, [resurceLinkExtension, resolved, element]);
+  const resourceLink = useMemo(
+    () =>
+      resolved
+        ? resurceLinkExtension
+            .sort((a, b) => b.properties.priority - a.properties.priority)
+            .find(({ properties: { link } }) => !!link(element))
+            ?.properties?.link?.(element)
+        : null,
+    [resurceLinkExtension, resolved, element],
+  );
   return resourceLink;
 };

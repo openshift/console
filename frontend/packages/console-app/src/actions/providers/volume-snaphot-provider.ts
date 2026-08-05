@@ -9,9 +9,10 @@ export const useVolumeSnapshotActionsProvider = (resource: VolumeSnapshotKind) =
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource));
   const volumeSnapshotActions = useVolumeSnapshotActions(resource);
   const commonActions = useCommonResourceActions(kindObj, resource);
-  const actions = useMemo(() => {
-    return [...volumeSnapshotActions, ...commonActions];
-  }, [volumeSnapshotActions, commonActions]);
+  const actions = useMemo(() => [...volumeSnapshotActions, ...commonActions], [
+    volumeSnapshotActions,
+    commonActions,
+  ]);
 
   return [actions, !inFlight, undefined];
 };

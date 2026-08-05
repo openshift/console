@@ -40,17 +40,19 @@ const ServerlessRouteSection: FC = () => {
   const [data, domainMappingLoaded, domainMappingLoadErr] = useK8sWatchResource<K8sResourceKind[]>(
     resource,
   );
-  const domainMappingResources = useMemo(() => {
-    return domainMappingLoaded && !domainMappingLoadErr
-      ? data.map((dm) => {
-          const ksvc = getOtherKsvcFromDomainMapping(dm, name);
-          return {
-            value: ksvc ? `${dm.metadata.name} (${ksvc})` : dm.metadata.name,
-            disabled: false,
-          };
-        })
-      : [];
-  }, [domainMappingLoaded, domainMappingLoadErr, data, name]);
+  const domainMappingResources = useMemo(
+    () =>
+      domainMappingLoaded && !domainMappingLoadErr
+        ? data.map((dm) => {
+            const ksvc = getOtherKsvcFromDomainMapping(dm, name);
+            return {
+              value: ksvc ? `${dm.metadata.name} (${ksvc})` : dm.metadata.name,
+              disabled: false,
+            };
+          })
+        : [],
+    [domainMappingLoaded, domainMappingLoadErr, data, name],
+  );
 
   useEffect(() => {
     if (domainMappingLoaded && !domainMappingLoadErr && data?.length) {
@@ -96,16 +98,14 @@ const ServerlessRouteSection: FC = () => {
               </div>
               {domainsInUse.length > 0 && (
                 <ul>
-                  {domainsInUse.map((dm) => {
-                    return (
-                      <li key={dm.metadata.uid}>
-                        {t(`devconsole~{{domainMapping}} from {{knativeService}}`, {
-                          domainMapping: dm.metadata.name,
-                          knativeService: dm.spec.ref.name,
-                        })}
-                      </li>
-                    );
-                  })}
+                  {domainsInUse.map((dm) => (
+                    <li key={dm.metadata.uid}>
+                      {t(`devconsole~{{domainMapping}} from {{knativeService}}`, {
+                        domainMapping: dm.metadata.name,
+                        knativeService: dm.spec.ref.name,
+                      })}
+                    </li>
+                  ))}
                 </ul>
               )}
             </Alert>

@@ -63,12 +63,11 @@ export const SampleGettingStartedCard: FC<SampleGettingStartedCardProps> = ({ fe
       {(service) => {
         const orderedCatalogItems = orderCatalogItems(service.items || [], featured);
 
-        const orderedCatalogItemsTemp = orderedCatalogItems.filter((item) => {
-          return (
+        const orderedCatalogItemsTemp = orderedCatalogItems.filter(
+          (item) =>
             item?.typeLabel === 'Serverless function' ||
-            item?.data?.metadata?.labels['sample-type'] === 'Serverless function'
-          );
-        });
+            item?.data?.metadata?.labels['sample-type'] === 'Serverless function',
+        );
 
         const slicedCatalogItems = orderedCatalogItemsTemp.slice(0, 2);
 
@@ -77,20 +76,16 @@ export const SampleGettingStartedCard: FC<SampleGettingStartedCardProps> = ({ fe
         }
 
         const links: GettingStartedLink[] = service.loaded
-          ? slicedCatalogItems.map((item) => {
-              return {
-                id: item.uid,
-                title: item.name,
-                href: item.cta?.href,
-                onClick: item.cta?.callback,
-              };
-            })
-          : featured.map((uid) => {
-              return {
-                id: uid,
-                loading: true,
-              };
-            });
+          ? slicedCatalogItems.map((item) => ({
+              id: item.uid,
+              title: item.name,
+              href: item.cta?.href,
+              onClick: item.cta?.callback,
+            }))
+          : featured.map((uid) => ({
+              id: uid,
+              loading: true,
+            }));
 
         return (
           <GettingStartedCard

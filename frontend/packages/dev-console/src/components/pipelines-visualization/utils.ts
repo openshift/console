@@ -364,9 +364,7 @@ export const getGraphDataModel = (
       });
     }
     if (depsFromContextVariables.length > 0) {
-      const v = depsFromContextVariables.map((d) => {
-        return dag.vertices.get(d);
-      });
+      const v = depsFromContextVariables.map((d) => dag.vertices.get(d));
       const minLevelDep = _.minBy(v, (d) => d?.level);
       const nearestDeps: Vertex[] = v.filter((v1) => v1?.level === minLevelDep?.level);
       nearestDeps.forEach((nd: Vertex) => {

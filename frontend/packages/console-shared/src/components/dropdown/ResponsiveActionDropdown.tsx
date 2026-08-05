@@ -111,20 +111,18 @@ export const ResponsiveActionDropdown: FC<ResponsiveActionDropdownProps> = ({
   'aria-label': ariaLabel,
   breakpoint = 'md',
   variant = 'primary',
-}) => {
-  return (
-    <OverflowMenu breakpoint={breakpoint}>
-      <OverflowMenuContent isPersistent>
-        <InternalDropdown
-          label={label}
-          isDisabled={isDisabled}
-          data-test={dataTest}
-          aria-label={ariaLabel}
-          variant={variant}
-        >
-          {children}
-        </InternalDropdown>
-      </OverflowMenuContent>
-    </OverflowMenu>
-  );
-};
+}) => (
+  <OverflowMenu breakpoint={breakpoint}>
+    <OverflowMenuContent isPersistent>
+      <InternalDropdown
+        label={label}
+        isDisabled={isDisabled}
+        data-test={dataTest}
+        aria-label={ariaLabel}
+        variant={variant}
+      >
+        {children}
+      </InternalDropdown>
+    </OverflowMenuContent>
+  </OverflowMenu>
+);

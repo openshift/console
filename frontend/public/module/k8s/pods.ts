@@ -103,14 +103,12 @@ export const getVolumeType = (volume: Volume) => {
   if (!volume) {
     return null;
   }
-  return _.find(VolumeSource, function (v) {
-    return !!volume[v.id];
-  });
+  return _.find(VolumeSource, (v) => !!volume[v.id]);
 };
 
 const genericFormatter = (volInfo) => {
   const keys = Object.keys(volInfo).sort();
-  const parts = keys.map(function (key) {
+  const parts = keys.map((key) => {
     if (key === 'readOnly') {
       return '';
     }
@@ -152,9 +150,9 @@ export const podRestarts = (pod: PodKind): number => {
     return 0;
   }
   const { initContainerStatuses = [], containerStatuses = [] } = pod.status;
-  const isInitializing = initContainerStatuses.some(({ state }) => {
-    return !state.terminated || state.terminated.exitCode !== 0;
-  });
+  const isInitializing = initContainerStatuses.some(
+    ({ state }) => !state.terminated || state.terminated.exitCode !== 0,
+  );
   const toCheck = isInitializing ? initContainerStatuses : containerStatuses;
   return toCheck.reduce(
     (restartCount, status: ContainerStatus) => restartCount + status.restartCount,
@@ -277,9 +275,8 @@ export const podPhaseFilterReducer = (pod: PodKind): PodPhase => {
   return _.get(pod, 'status.phase', 'Unknown');
 };
 
-export const isWindowsPod = (pod: PodKind): boolean => {
-  return pod?.spec?.tolerations?.some((t) => t.key === 'os' && t.value === 'Windows');
-};
+export const isWindowsPod = (pod: PodKind): boolean =>
+  pod?.spec?.tolerations?.some((t) => t.key === 'os' && t.value === 'Windows');
 
 export const isContainerCrashLoopBackOff = (pod: PodKind, containerName: string): boolean => {
   const containerStatus = pod?.status?.containerStatuses?.find((c) => c.name === containerName);

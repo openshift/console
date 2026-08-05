@@ -41,11 +41,12 @@ export const useUserPreference: UseUserPreference = <T>(
 ) => {
   // Mount status for safety state updates
   const mounted = useRef(true);
-  useEffect(() => {
-    return () => {
+  useEffect(
+    () => () => {
       mounted.current = false;
-    };
-  }, []);
+    },
+    [],
+  );
 
   // Keys and values
   const keyRef = useRef<string>(key?.replace(/[^-._a-zA-Z0-9]/g, '_'));

@@ -190,25 +190,20 @@ type PullSecretData = DockerCfg | DockerConfigJSON;
 
 export const opaqueEntriesToObject = (
   opaqueEntriesArray: OpaqueDataEntry[] = [],
-): SecretChangeData => {
-  return opaqueEntriesArray.reduce(
-    (acc, { key, value }) => {
-      return {
-        base64StringData: { ...acc.base64StringData, [key]: value },
-      };
-    },
+): SecretChangeData =>
+  opaqueEntriesArray.reduce(
+    (acc, { key, value }) => ({
+      base64StringData: { ...acc.base64StringData, [key]: value },
+    }),
     { base64StringData: {} },
   );
-};
 
-export const newOpaqueSecretEntry = (): OpaqueDataEntry => {
-  return {
-    key: '',
-    value: '',
-    isBinary_: false,
-    uid: _.uniqueId(),
-  };
-};
+export const newOpaqueSecretEntry = (): OpaqueDataEntry => ({
+  key: '',
+  value: '',
+  isBinary_: false,
+  uid: _.uniqueId(),
+});
 
 export const opaqueSecretObjectToArray = (
   base64StringData: Base64StringData,
@@ -216,14 +211,12 @@ export const opaqueSecretObjectToArray = (
   if (_.isEmpty(base64StringData)) {
     return [newOpaqueSecretEntry()];
   }
-  return Object.entries(base64StringData).map(([key, value]) => {
-    return {
-      key,
-      value,
-      isBinary_: isBinary(null, Buffer.from(value || '', 'base64')),
-      uid: _.uniqueId(),
-    };
-  });
+  return Object.entries(base64StringData).map(([key, value]) => ({
+    key,
+    value,
+    isBinary_: isBinary(null, Buffer.from(value || '', 'base64')),
+    uid: _.uniqueId(),
+  }));
 };
 
 export const secretTypeFilterReducer = (secret: { type: SecretType }): string => {

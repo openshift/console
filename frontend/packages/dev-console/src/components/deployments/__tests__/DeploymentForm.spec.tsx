@@ -10,9 +10,7 @@ import MockForm from '../__mocks__/MockForm';
 import ContainerField from '../ContainerField';
 import DeploymentForm from '../DeploymentForm';
 
-const mockContainerField: FC = () => {
-  return <div>Container: xyz</div>;
-};
+const mockContainerField: FC = () => <div>Container: xyz</div>;
 
 jest.mock('../ContainerField', () => ({
   __esModule: true,

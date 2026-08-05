@@ -57,8 +57,8 @@ const pipelinesAccessTokenValidationSchema = (t: TFunction) =>
       ),
   });
 
-const importFlowRepositoryValidationSchema = (t: TFunction) => {
-  return yup.object().shape({
+const importFlowRepositoryValidationSchema = (t: TFunction) =>
+  yup.object().shape({
     repository: yup
       .object()
       .when(['pipelineType', 'pipelineEnabled'], ([pipelineType, pipelineEnabled], schema) =>
@@ -67,7 +67,6 @@ const importFlowRepositoryValidationSchema = (t: TFunction) => {
           : schema,
       ),
   });
-};
 
 export const validationSchema = (t: TFunction) =>
   yup.object().shape({
@@ -89,13 +88,10 @@ export const validationSchema = (t: TFunction) =>
     pipeline: importFlowPipelineTemplateValidationSchema,
   });
 
-const hasDomain = (url: string, domain: string): boolean => {
-  return (
-    url.startsWith(`https://${domain}/`) ||
-    url.startsWith(`https://www.${domain}/`) ||
-    url.includes(`@${domain}:`)
-  );
-};
+const hasDomain = (url: string, domain: string): boolean =>
+  url.startsWith(`https://${domain}/`) ||
+  url.startsWith(`https://www.${domain}/`) ||
+  url.includes(`@${domain}:`);
 
 export const detectGitType = (url: string): GitProvider => {
   if (!gitUrlRegex.test(url)) {

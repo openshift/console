@@ -48,10 +48,9 @@ const matchModel = (toMatchWith: K8sGroupVersionKind) => (model: K8sGroupVersion
   model.version === toMatchWith.version &&
   model.kind === toMatchWith.kind;
 
-const filterNonUpgradableResources = (model: K8sModel): boolean => {
-  return !resourcesToOmit.find(
+const filterNonUpgradableResources = (model: K8sModel): boolean =>
+  !resourcesToOmit.find(
     matchModel({ group: model.apiGroup, version: model.apiVersion, kind: model.kind }),
   );
-};
 
 export default filterNonUpgradableResources;

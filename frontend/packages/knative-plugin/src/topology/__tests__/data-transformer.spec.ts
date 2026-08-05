@@ -89,17 +89,14 @@ const getTransformedTopologyData = (
   });
 };
 
-const getNodeById = (id: string, graphData: Model): NodeModel => {
-  return graphData.nodes.find((n) => n.id === id);
-};
+const getNodeById = (id: string, graphData: Model): NodeModel =>
+  graphData.nodes.find((n) => n.id === id);
 
-const getNodesByType = (type: string, graphData: Model): NodeModel[] => {
-  return graphData.nodes.filter((n) => n.type === type);
-};
+const getNodesByType = (type: string, graphData: Model): NodeModel[] =>
+  graphData.nodes.filter((n) => n.type === type);
 
-const getEdgesByType = (type: string, graphData: Model): EdgeModel[] => {
-  return graphData.edges.filter((n) => n.type === type);
-};
+const getEdgesByType = (type: string, graphData: Model): EdgeModel[] =>
+  graphData.edges.filter((n) => n.type === type);
 
 const filterers = [applyKnativeDisplayOptions];
 

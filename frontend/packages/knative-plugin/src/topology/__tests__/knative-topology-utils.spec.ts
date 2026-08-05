@@ -240,14 +240,13 @@ describe('Knative Topology Utils', () => {
     jest.clearAllMocks();
   });
 
-  it('should return rejected promise if source is not provided', () => {
-    return expect(
+  it('should return rejected promise if source is not provided', () =>
+    expect(
       createKnativeEventSourceSink(undefined, MockKnativeResources.ksservices.data[0]),
-    ).rejects.toBeUndefined();
-  });
+    ).rejects.toBeUndefined());
 
-  it('should return rejected promise if target is not provided', () => {
-    return expect(
+  it('should return rejected promise if target is not provided', () =>
+    expect(
       createKnativeEventSourceSink(
         getEventSourceResponse(
           KNATIVE_EVENT_SOURCE_APIGROUP_DEP,
@@ -256,17 +255,15 @@ describe('Knative Topology Utils', () => {
         ).data[0],
         undefined,
       ),
-    ).rejects.toBeUndefined();
-  });
+    ).rejects.toBeUndefined());
 
-  it('should return rejected promise if source equals target', () => {
-    return expect(
+  it('should return rejected promise if source equals target', () =>
+    expect(
       createKnativeEventSourceSink(
         MockKnativeResources.ksservices.data[0],
         MockKnativeResources.ksservices.data[0],
       ),
-    ).rejects.toBeUndefined();
-  });
+    ).rejects.toBeUndefined());
 
   it('should move sink to the target knServcice', (done) => {
     createKnativeEventSourceSink(

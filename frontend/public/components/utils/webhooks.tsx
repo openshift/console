@@ -94,16 +94,15 @@ export const WebhookTriggers: FC<WebhookTriggersProps> = (props) => {
     let errors: string[] = [];
     Promise.all(
       secretNames.map(
-        (webhookName: string): Promise<K8sResourceKind> => {
-          return k8sGet(SecretModel, webhookName, namespace).then(
+        (webhookName: string): Promise<K8sResourceKind> =>
+          k8sGet(SecretModel, webhookName, namespace).then(
             (secret) => secret,
             (error) => {
               errors = [...errors, `Error: ${error.message}`];
               launchModal(ErrorModal, { error: error.message });
               return null;
             },
-          );
-        },
+          ),
       ),
     )
       .then((secrets) => {

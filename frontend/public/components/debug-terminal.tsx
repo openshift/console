@@ -62,15 +62,13 @@ const getDebugPod = (debugPodName: string, podToDebug: PodKind, containerName: s
   return debugPod;
 };
 
-const DebugTerminalError: FC<DebugTerminalErrorProps> = ({ error, description }) => {
-  return (
-    <PaneBody>
-      <Alert variant="danger" isInline title={error}>
-        <p>{description}</p>
-      </Alert>
-    </PaneBody>
-  );
-};
+const DebugTerminalError: FC<DebugTerminalErrorProps> = ({ error, description }) => (
+  <PaneBody>
+    <Alert variant="danger" isInline title={error}>
+      <p>{description}</p>
+    </Alert>
+  </PaneBody>
+);
 
 const DebugTerminalInner: FC<DebugTerminalInnerProps> = ({
   debugPod,
@@ -130,10 +128,11 @@ const DebugTerminal: FC<DebugTerminalProps> = ({ podData, containerName }) => {
   const podNamespace = podData?.metadata.namespace;
   const podContainerName = containerName || podData?.spec.containers[0].name;
   const debugPodName = `${podData?.metadata?.name?.replace(/\./g, '-')}-debug-`;
-  const podToCreate = useMemo(() => {
-    return getDebugPod(debugPodName, podData, podContainerName);
+  const podToCreate = useMemo(
+    () => getDebugPod(debugPodName, podData, podContainerName),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debugPodName, podContainerName]);
+    [debugPodName, podContainerName],
+  );
 
   useEffect(() => {
     const deleteDebugPod = async (podToDelete) => {

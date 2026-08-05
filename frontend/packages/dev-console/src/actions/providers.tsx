@@ -56,14 +56,15 @@ export const useEditImportActionProvider = (resource: K8sResourceKind) => {
   return [editImportAction, !inFlight, undefined];
 };
 
-const resourceAttributes = (model: K8sModel, namespace: string): AccessReviewResourceAttributes => {
-  return {
-    group: model.apiGroup || '',
-    resource: model.plural,
-    namespace,
-    verb: 'create',
-  };
-};
+const resourceAttributes = (
+  model: K8sModel,
+  namespace: string,
+): AccessReviewResourceAttributes => ({
+  group: model.apiGroup || '',
+  resource: model.plural,
+  namespace,
+  verb: 'create',
+});
 
 export const useSoftwareCatalogProvider = (setFeatureFlag: SetFeatureFlag) => {
   setFeatureFlag(FLAG_DEVELOPER_CATALOG, useIsSoftwareCatalogEnabled());

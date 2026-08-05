@@ -17,16 +17,13 @@ import store from '../../redux';
 import { getModelExtensionMetadata } from './get-resources';
 import { referenceForModel, referenceForGroupVersionKind } from './k8s-ref';
 
-const modelKey = (model: K8sKind): string => {
+const modelKey = (model: K8sKind): string =>
   // TODO: Use `referenceForModel` even for known API objects
-  return model.crd ? referenceForModel(model) : model.kind;
-};
-
-export const modelsToMap = (models: K8sKind[]): ImmutableMap<K8sResourceKindReference, K8sKind> => {
-  return ImmutableMap<K8sResourceKindReference, K8sKind>().withMutations((map) => {
+  model.crd ? referenceForModel(model) : model.kind;
+export const modelsToMap = (models: K8sKind[]): ImmutableMap<K8sResourceKindReference, K8sKind> =>
+  ImmutableMap<K8sResourceKindReference, K8sKind>().withMutations((map) => {
     models.forEach((model) => map.set(modelKey(model), model));
   });
-};
 
 /**
  * Contains static resource definitions for Kubernetes objects.

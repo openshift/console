@@ -137,19 +137,17 @@ const ClusterChannelModal = (props: ClusterChannelModalProps) => {
   );
 };
 
-export const ClusterChannelModalOverlay: OverlayComponent<ClusterChannelModalProps> = (props) => {
-  return (
-    <Modal
-      isOpen
-      onClose={props.closeOverlay}
-      variant={ModalVariant.small}
-      data-test="channel-modal"
-      aria-labelledby="cluster-channel-modal-title"
-    >
-      <ClusterChannelModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
-    </Modal>
-  );
-};
+export const ClusterChannelModalOverlay: OverlayComponent<ClusterChannelModalProps> = (props) => (
+  <Modal
+    isOpen
+    onClose={props.closeOverlay}
+    variant={ModalVariant.small}
+    data-test="channel-modal"
+    aria-labelledby="cluster-channel-modal-title"
+  >
+    <ClusterChannelModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
+  </Modal>
+);
 
 type ClusterChannelModalProps = {
   cv: ClusterVersionKind;

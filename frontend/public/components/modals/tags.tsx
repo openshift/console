@@ -121,18 +121,16 @@ const AnnotationsModal: FC<AnnotationsModalProps> = (props) => (
   <TagsModal path="/metadata/annotations" tags={props.resource?.metadata?.annotations} {...props} />
 );
 
-export const AnnotationsModalOverlay: OverlayComponent<AnnotationsModalProps> = (props) => {
-  return (
-    <Modal
-      variant="small"
-      isOpen
-      onClose={props.closeOverlay}
-      aria-labelledby="annotations-modal-title"
-    >
-      <AnnotationsModal {...props} cancel={props.closeOverlay} close={props.closeOverlay} />
-    </Modal>
-  );
-};
+export const AnnotationsModalOverlay: OverlayComponent<AnnotationsModalProps> = (props) => (
+  <Modal
+    variant="small"
+    isOpen
+    onClose={props.closeOverlay}
+    aria-labelledby="annotations-modal-title"
+  >
+    <AnnotationsModal {...props} cancel={props.closeOverlay} close={props.closeOverlay} />
+  </Modal>
+);
 
 TagsModal.displayName = 'TagsModal';
 

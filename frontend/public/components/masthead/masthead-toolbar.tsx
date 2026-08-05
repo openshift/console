@@ -440,13 +440,11 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
   };
 
   const getAdditionalActions = (links: ConsoleLinkKind[]): MastheadSection => {
-    const actions = _.map(links, (link) => {
-      return {
-        label: link.spec.text,
-        externalLink: true,
-        href: link.spec.href,
-      };
-    });
+    const actions = _.map(links, (link) => ({
+      label: link.spec.text,
+      externalLink: true,
+      href: link.spec.href,
+    }));
 
     return {
       isSection: true,

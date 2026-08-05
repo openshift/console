@@ -74,9 +74,9 @@ export const CatalogServiceProvider: FC<CatalogServiceProviderProps> = ({
         ? catalogProviderExtensions.some(({ uid }) => extItemsMap[uid] || extItemsErrorMap[uid])
         : catalogProviderExtensions.every(({ uid }) => extItemsMap[uid] || extItemsErrorMap[uid])));
 
-  const enabledCatalogProviderExtensions = catalogProviderExtensions.filter((item) => {
-    return !disabledSubCatalogs?.includes(item?.properties?.type);
-  });
+  const enabledCatalogProviderExtensions = catalogProviderExtensions.filter(
+    (item) => !disabledSubCatalogs?.includes(item?.properties?.type),
+  );
   const preCatalogItems = useMemo(() => {
     if (!loaded) {
       return [];
@@ -128,12 +128,9 @@ export const CatalogServiceProvider: FC<CatalogServiceProviderProps> = ({
     }));
   }, []);
 
-  const searchCatalog = useCallback(
-    (query: string) => {
-      return keywordCompare(query, catalogItems);
-    },
-    [catalogItems],
-  );
+  const searchCatalog = useCallback((query: string) => keywordCompare(query, catalogItems), [
+    catalogItems,
+  ]);
 
   const catalogItemsMap = useMemo(() => {
     const result: { [type: string]: CatalogItem[] } = {};

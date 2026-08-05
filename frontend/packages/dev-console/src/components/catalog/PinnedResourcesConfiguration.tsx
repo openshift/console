@@ -91,30 +91,32 @@ const PinnedResourcesConfiguration: FC<PinnedResourcesConfigurationProps> = ({
     [perspectiveExtensions],
   );
 
-  const resources = useMemo(() => {
-    return allK8sModels
-      ?.filter(({ apiGroup, apiVersion, kind, verbs }) => {
-        if (skipGroups.has(apiGroup) || skipResources.has(`${apiGroup}/${apiVersion}.${kind}`)) {
-          return false;
-        }
+  const resources = useMemo(
+    () =>
+      allK8sModels
+        ?.filter(({ apiGroup, apiVersion, kind, verbs }) => {
+          if (skipGroups.has(apiGroup) || skipResources.has(`${apiGroup}/${apiVersion}.${kind}`)) {
+            return false;
+          }
 
-        // Only show resources that can be listed.
-        if (!verbs?.some((v) => v === 'list')) {
-          return false;
-        }
+          // Only show resources that can be listed.
+          if (!verbs?.some((v) => v === 'list')) {
+            return false;
+          }
 
-        // Only show preferred version for resources in the same API group.
-        const preferred = (m: K8sKind) =>
-          groupVersionMap?.[m.apiGroup]?.preferredVersion === m.apiVersion;
+          // Only show preferred version for resources in the same API group.
+          const preferred = (m: K8sKind) =>
+            groupVersionMap?.[m.apiGroup]?.preferredVersion === m.apiVersion;
 
-        const sameGroupKind = (m: K8sKind) =>
-          m.kind === kind && m.apiGroup === apiGroup && m.apiVersion !== apiVersion;
+          const sameGroupKind = (m: K8sKind) =>
+            m.kind === kind && m.apiGroup === apiGroup && m.apiVersion !== apiVersion;
 
-        return !allK8sModels.find((m) => sameGroupKind(m) && preferred(m));
-      })
-      .toOrderedMap()
-      .sortBy(({ kind, apiGroup }) => `${kind} ${apiGroup}`);
-  }, [allK8sModels, groupVersionMap]);
+          return !allK8sModels.find((m) => sameGroupKind(m) && preferred(m));
+        })
+        .toOrderedMap()
+        .sortBy(({ kind, apiGroup }) => `${kind} ${apiGroup}`),
+    [allK8sModels, groupVersionMap],
+  );
 
   // Track duplicate names so we know when to show the group.
   const kinds = resources.groupBy((m) => m.kind);
@@ -180,13 +182,11 @@ const PinnedResourcesConfiguration: FC<PinnedResourcesConfigurationProps> = ({
               : groupVersionKind.kind;
             return modelFor(ref);
           });
-          defaultPinnedResources = getModels?.map((resource) => {
-            return {
-              group: resource?.apiGroup ? resource?.apiGroup : '',
-              version: resource?.apiVersion,
-              resource: resource?.plural,
-            };
-          });
+          defaultPinnedResources = getModels?.map((resource) => ({
+            group: resource?.apiGroup ? resource?.apiGroup : '',
+            version: resource?.apiVersion,
+            resource: resource?.plural,
+          }));
         }
         setPinnedResources(defaultPinnedResources);
         setPinnedResourcesConfigured(defaultPinnedResources);
@@ -198,13 +198,15 @@ const PinnedResourcesConfiguration: FC<PinnedResourcesConfigurationProps> = ({
     }
   }, [configuredPerspectives, consoleConfig, consoleConfigLoaded, defaultPins]);
 
-  const items = useMemo(() => {
-    return resources
-      .map((model: K8sKind) => {
-        return <Item title={model.labelKey ? t(model.labelKey) : model.kind} model={model} />;
-      })
-      .toArray();
-  }, [resources, t, Item]);
+  const items = useMemo(
+    () =>
+      resources
+        .map((model: K8sKind) => (
+          <Item title={model.labelKey ? t(model.labelKey) : model.kind} model={model} />
+        ))
+        .toArray(),
+    [resources, t, Item],
+  );
 
   const availableResources = useMemo<React.ReactElement<ItemProps>[]>(() => {
     if (!consoleConfigLoaded) {
@@ -274,13 +276,11 @@ const PinnedResourcesConfiguration: FC<PinnedResourcesConfigurationProps> = ({
     newDisabledOptions: ReactElement<ItemProps>[],
   ) => {
     const validResources = newDisabledOptions.filter((item) => item?.props?.model);
-    const newPinnedResources = validResources?.map((resource) => {
-      return {
-        group: resource?.props?.model?.apiGroup ? resource?.props?.model?.apiGroup : '',
-        version: resource?.props?.model?.apiVersion,
-        resource: resource?.props?.model?.plural,
-      };
-    });
+    const newPinnedResources = validResources?.map((resource) => ({
+      group: resource?.props?.model?.apiGroup ? resource?.props?.model?.apiGroup : '',
+      version: resource?.props?.model?.apiVersion,
+      resource: resource?.props?.model?.plural,
+    }));
     setPerspectiveData(() => {
       const newConfiguredPerspectives = configuredPerspectives ? [...configuredPerspectives] : [];
       const devPerspective = newConfiguredPerspectives?.find((p) => p.id === 'dev');
@@ -301,9 +301,8 @@ const PinnedResourcesConfiguration: FC<PinnedResourcesConfigurationProps> = ({
     save();
   };
 
-  const filterOption = (option: ReactElement<ItemProps>, input: string): boolean => {
-    return fuzzy(input?.toLocaleLowerCase(), option?.props?.title.toLocaleLowerCase());
-  };
+  const filterOption = (option: ReactElement<ItemProps>, input: string): boolean =>
+    fuzzy(input?.toLocaleLowerCase(), option?.props?.title.toLocaleLowerCase());
 
   return (
     <FormSection title={t('Pre-pinned navigation items')} data-test="pinned-resource form-section">

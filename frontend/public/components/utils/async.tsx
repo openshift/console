@@ -31,27 +31,25 @@ const MAX_RETRIES = 25;
  * If the loader fails, it will retry up to {@link MAX_RETRIES} times with
  * increasing delays.
  */
-const withRetry = <C extends ComponentType>(loader: LazyLoader<C>): LazyLoader<C> => {
-  return async () => {
-    let lastError: unknown;
+const withRetry = <C extends ComponentType>(loader: LazyLoader<C>): LazyLoader<C> => async () => {
+  let lastError: unknown;
 
-    for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
-      try {
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      // eslint-disable-next-line no-await-in-loop
+      return await loader(); // Attempt to load component
+    } catch (error) {
+      lastError = error;
+
+      // Wait with exponential backoff before retrying (capped at 30s)
+      if (attempt < MAX_RETRIES) {
+        const delay = Math.min(100 * 2 ** attempt, 30000);
         // eslint-disable-next-line no-await-in-loop
-        return await loader(); // Attempt to load component
-      } catch (error) {
-        lastError = error;
-
-        // Wait with exponential backoff before retrying (capped at 30s)
-        if (attempt < MAX_RETRIES) {
-          const delay = Math.min(100 * 2 ** attempt, 30000);
-          // eslint-disable-next-line no-await-in-loop
-          await new Promise((resolve) => setTimeout(resolve, delay));
-        }
+        await new Promise((resolve) => setTimeout(resolve, delay));
       }
     }
-    throw lastError;
-  };
+  }
+  throw lastError;
 };
 
 /**

@@ -58,8 +58,8 @@ const tableColumnInfo = [
   { id: '' },
 ];
 
-const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {
-  return data.map(({ obj }) => {
+const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) =>
+  data.map(({ obj }) => {
     const { name, namespace } = obj.metadata;
 
     const rowCells = {
@@ -94,7 +94,6 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {
       };
     });
   });
-};
 
 const useMachineAutoscalerColumns = (): {
   columns: TableColumn<K8sResourceKind>[];
@@ -105,8 +104,8 @@ const useMachineAutoscalerColumns = (): {
     MachineAutoscalerModel,
   );
 
-  const columns: TableColumn<K8sResourceKind>[] = useMemo(() => {
-    return [
+  const columns: TableColumn<K8sResourceKind>[] = useMemo(
+    () => [
       {
         title: t('Name'),
         id: tableColumnInfo[0].id,
@@ -160,8 +159,9 @@ const useMachineAutoscalerColumns = (): {
           ...actionsCellProps,
         },
       },
-    ];
-  }, [t, getResizableProps]);
+    ],
+    [t, getResizableProps],
+  );
 
   return { columns, resetAllColumnWidths };
 };

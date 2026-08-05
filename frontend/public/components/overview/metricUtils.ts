@@ -42,12 +42,9 @@ export const fetchOverviewMetrics = (
     });
   });
 
-  return Promise.all(promises).then((data) => {
-    return data.reduce(
-      (acc: OverviewMetrics, metric): OverviewMetrics => _.assign(acc, metric),
-      {},
-    );
-  });
+  return Promise.all(promises).then((data) =>
+    data.reduce((acc: OverviewMetrics, metric): OverviewMetrics => _.assign(acc, metric), {}),
+  );
 };
 
 export const fetchMonitoringAlerts = (namespace: string): Promise<Alert[]> => {

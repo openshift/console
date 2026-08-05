@@ -52,21 +52,19 @@ const OperatorHubDetails: FC<OperatorHubDetailsProps> = ({ obj: operatorHub }) =
             >
               {operatorHub?.status?.sources
                 .sort((a, b) => (a.name ?? '').localeCompare(b.name ?? ''))
-                .map((source, idx) => {
-                  return (
-                    <DescriptionList key={source.name}>
-                      <DetailsItem
-                        label={source.name}
-                        obj={operatorHub}
-                        path={`status.sources[${idx}]`}
-                      >
-                        <p data-test={`status_${source.name}`}>
-                          {source.disabled ? t('Disabled') : t('Enabled')}
-                        </p>
-                      </DetailsItem>
-                    </DescriptionList>
-                  );
-                })}
+                .map((source, idx) => (
+                  <DescriptionList key={source.name}>
+                    <DetailsItem
+                      label={source.name}
+                      obj={operatorHub}
+                      path={`status.sources[${idx}]`}
+                    >
+                      <p data-test={`status_${source.name}`}>
+                        {source.disabled ? t('Disabled') : t('Enabled')}
+                      </p>
+                    </DetailsItem>
+                  </DescriptionList>
+                ))}
             </DetailsItem>
           </DescriptionList>
         </GridItem>

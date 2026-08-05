@@ -725,34 +725,32 @@ export const getEventSourceResponse = (
   apiGroup: string,
   apiVersion: string,
   kind: string,
-): WatchK8sResultsObject<K8sResourceKind[]> => {
-  return {
-    loaded: true,
-    loadError: '',
-    data: [
-      {
-        apiVersion: `${apiGroup}/${apiVersion}`,
-        kind,
-        metadata: {
+): WatchK8sResultsObject<K8sResourceKind[]> => ({
+  loaded: true,
+  loadError: '',
+  data: [
+    {
+      apiVersion: `${apiGroup}/${apiVersion}`,
+      kind,
+      metadata: {
+        name: 'overlayimage',
+        namespace: 'testproject3',
+        uid: '1317f615-9636-11e9-b134-06a61d886b689_1',
+        creationTimestamp: '2019-06-12T07:07:57Z',
+      },
+      spec: {
+        sink: {
+          apiVersion: 'serving.knative.dev/v1',
+          kind: 'Service',
           name: 'overlayimage',
-          namespace: 'testproject3',
-          uid: '1317f615-9636-11e9-b134-06a61d886b689_1',
-          creationTimestamp: '2019-06-12T07:07:57Z',
-        },
-        spec: {
-          sink: {
-            apiVersion: 'serving.knative.dev/v1',
-            kind: 'Service',
-            name: 'overlayimage',
-          },
-        },
-        status: {
-          sinkUri: 'http://overlayimage.testproject3.svc.cluster.local',
         },
       },
-    ],
-  };
-};
+      status: {
+        sinkUri: 'http://overlayimage.testproject3.svc.cluster.local',
+      },
+    },
+  ],
+});
 
 export const kafkaConnectionData = {
   loaded: true,
