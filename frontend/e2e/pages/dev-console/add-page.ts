@@ -498,7 +498,16 @@ export class TopologyPage extends BasePage {
     );
   }
 
+  async ensureGraphView(): Promise<void> {
+    const switcher = this.page.getByTestId('topology-switcher-view');
+    const currentLabel = await switcher.getAttribute('aria-label');
+    if (currentLabel === 'Graph view') {
+      await this.robustClick(switcher);
+    }
+  }
+
   async clickWorkload(name: string): Promise<void> {
+    await this.ensureGraphView();
     const workload = this.getWorkload(name);
     // eslint-disable-next-line no-restricted-syntax
     await workload.waitFor({ state: 'visible', timeout: 60_000 });
