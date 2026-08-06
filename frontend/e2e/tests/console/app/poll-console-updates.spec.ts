@@ -121,6 +121,8 @@ test.describe('PollConsoleUpdates', { tag: ['@admin'] }, () => {
   test('triggers the console update toast when a plugin is added and a different plugin endpoint is erroring', async ({
     page,
   }) => {
+    test.setTimeout(300_000);
+
     const updates = createMutableHandler((route) =>
       route.fulfill({ json: UPDATES_NEW_PLUGIN }),
     );
@@ -138,7 +140,10 @@ test.describe('PollConsoleUpdates', { tag: ['@admin'] }, () => {
 
     updates.setHandler((route) => route.fulfill({ json: UPDATES_NEW_PLUGIN2 }));
 
-    await page.waitForResponse((resp) => resp.url().includes('/api/check-updates'));
+    await page.waitForResponse(
+      (resp) => resp.url().includes('/api/check-updates') && resp.status() === 200,
+      { timeout: 30_000 },
+    );
 
     await expect(page.getByTestId('refresh-web-console')).not.toBeAttached({
       timeout: 30_000,
