@@ -225,13 +225,13 @@ export const getHelmActionConfig = (
     case HelmActionType.Create:
       return {
         type: HelmActionType.Create,
-        title: t('helm-plugin~Create Helm Release'),
+        title: t('helm-plugin~Create Helm release'),
         subTitle: {
           form: t(
-            'helm-plugin~The Helm Release can be created by completing the form. Default values may be provided by the Helm chart authors.',
+            'helm-plugin~You can create a Helm release by completing the form. The Helm Chart authors might have provided default values.',
           ),
           yaml: t(
-            'helm-plugin~The Helm Release can be created by manually entering YAML or JSON definitions.',
+            'helm-plugin~You can create a Helm release by manually entering YAML or JSON definitions.',
           ),
         },
         helmReleaseApi: `/api/helm/chart?url=${encodeURIComponent(
@@ -243,7 +243,7 @@ export const getHelmActionConfig = (
     case HelmActionType.Upgrade:
       return {
         type: HelmActionType.Upgrade,
-        title: t('helm-plugin~Upgrade Helm Release'),
+        title: t('helm-plugin~Upgrade Helm release'),
         subTitle: {
           form: t(
             'helm-plugin~Upgrade by selecting a new chart version or manually changing the form values.',
@@ -260,7 +260,7 @@ export const getHelmActionConfig = (
     case HelmActionType.Rollback:
       return {
         type: HelmActionType.Rollback,
-        title: t('helm-plugin~Rollback Helm Release'),
+        title: t('helm-plugin~Rollback Helm release'),
         subTitle: ``,
         helmReleaseApi: `/api/helm/release/history?ns=${namespace}&name=${releaseName}`,
         fetch: coFetchJSON.patch,

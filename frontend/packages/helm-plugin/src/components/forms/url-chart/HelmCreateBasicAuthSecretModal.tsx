@@ -65,7 +65,7 @@ export const HelmCreateBasicAuthSecretModal: OverlayComponent<HelmCreateBasicAut
 
     // "__none__" is a sentinel used by the upgrade path to clear auth; reject it as a secret name.
     if (trimmedSecretName === '__none__') {
-      setErrorMessage(t('This name is reserved. Choose a different name.'));
+      setErrorMessage(t('This name is reserved for system use. Choose a different name.'));
       setInProgress(false);
       return;
     }
@@ -124,7 +124,7 @@ export const HelmCreateBasicAuthSecretModal: OverlayComponent<HelmCreateBasicAut
             />
             <FormHelperText>
               <HelperText>
-                <HelperTextItem>{t('Unique name of the Secret')}</HelperTextItem>
+                <HelperTextItem>{t('Unique name for the Secret')}</HelperTextItem>
               </HelperText>
             </FormHelperText>
           </FormGroup>

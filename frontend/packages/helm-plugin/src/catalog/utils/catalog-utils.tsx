@@ -62,7 +62,7 @@ export const normalizeHelmCharts = (
               <span style={{ verticalAlign: 'middle' }}>{displayName}</span>{' '}
               <Tooltip
                 content={t(
-                  'helm-plugin~This Helm Chart is provided by a trusted partner and has been verified for ease of integration.',
+                  'helm-plugin~A trusted partner provides this Helm Chart and has verified it for ease of integration.',
                 )}
               >
                 <img src={certifiedIcon} alt={t('helm-plugin~Certified')} />
@@ -90,7 +90,7 @@ export const normalizeHelmCharts = (
 
         const detailsProperties: CatalogItemDetailsProperty[] = [
           {
-            label: t('helm-plugin~Latest Chart version'),
+            label: t('helm-plugin~Latest chart version'),
             value: version,
           },
           {
@@ -170,7 +170,7 @@ export const normalizeHelmCharts = (
           supportUrl,
         };
 
-        // group Helm chart with same name and different version together
+        // group Helm Chart with same name and different version together
         const existingChartIndex = normalizedCharts.findIndex((currentChart) => {
           return (
             (currentChart.attributes?.name === name &&
