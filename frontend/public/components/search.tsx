@@ -324,26 +324,26 @@ const InnerSearchPage: FC<SearchProps> = (props) => {
                   id={`${resource}-toggle`}
                 >
                   {getToggleText(resource)}
-                  {perspective !== 'admin' && pinnedResourcesLoaded && (
-                    <Button
-                      className="co-search-group__pin-toggle"
-                      variant={ButtonVariant.link}
-                      onClick={(e) => pinToggle(e, resource)}
-                    >
-                      {pinnedResources.includes(resource) ? (
-                        <>
-                          <RhUiMinusCircleIcon className="co-search-group__pin-toggle__icon" />
-                          {t('Remove from navigation')}
-                        </>
-                      ) : (
-                        <>
-                          <RhUiAddCircleFillIcon className="co-search-group__pin-toggle__icon" />
-                          {t('Add to navigation')}
-                        </>
-                      )}
-                    </Button>
-                  )}
                 </AccordionToggle>
+                {perspective !== 'admin' && pinnedResourcesLoaded && (
+                  <Button
+                    className="co-search-group__pin-toggle"
+                    variant={ButtonVariant.link}
+                    onClick={(e) => pinToggle(e, resource)}
+                  >
+                    {pinnedResources.includes(resource) ? (
+                      <>
+                        <RhUiMinusCircleIcon className="co-search-group__pin-toggle__icon" />
+                        {t('Remove from navigation')}
+                      </>
+                    ) : (
+                      <>
+                        <RhUiAddCircleFillIcon className="co-search-group__pin-toggle__icon" />
+                        {t('Add to navigation')}
+                      </>
+                    )}
+                  </Button>
+                )}
                 <AccordionContent>
                   {!isCollapsed && (
                     <ResourceList
