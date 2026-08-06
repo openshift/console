@@ -211,6 +211,15 @@ export class TopologyPage extends BasePage {
     }
   }
 
+  async clickOnHelmGroup(groupName: string): Promise<void> {
+    await this.ensureGraphView();
+    await this.search(groupName);
+    const helmGroup = this.page.locator('[data-type="helm-release"] .is-filtered');
+    await expect(helmGroup.first()).toBeAttached({ timeout: 30_000 });
+    const label = this.page.locator('.odc-helm-release .odc-base-node__label').filter({ hasText: groupName });
+    await this.robustClick(label.first());
+  }
+
   // Catalog/quick search methods
   async clickBuilderImageItem(imageName: string): Promise<void> {
     await this.page.getByTestId(`item-name-${imageName}`).first().click();

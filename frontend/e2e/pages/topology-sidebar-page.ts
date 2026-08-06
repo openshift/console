@@ -1,3 +1,5 @@
+import type { Locator } from '@playwright/test';
+
 import { expect } from '../fixtures';
 
 import BasePage from './base-page';
@@ -19,5 +21,20 @@ export class TopologySidebarPage extends BasePage {
     await this.waitForLoadingComplete();
     const actionItem = this.page.getByRole('menuitem', { name: action });
     await this.robustClick(actionItem);
+  }
+
+  getTab(tabName: string): Locator {
+    return this.dialog.getByRole('tab', { name: tabName });
+  }
+
+  async selectTab(tabName: string): Promise<void> {
+    const tab = this.getTab(tabName);
+    await this.robustClick(tab);
+    await this.waitForLoadingComplete();
+  }
+
+  async clickResourceLink(href: string): Promise<void> {
+    const link = this.dialog.locator(`a[href="${href}"]`);
+    await this.robustClick(link);
   }
 }
