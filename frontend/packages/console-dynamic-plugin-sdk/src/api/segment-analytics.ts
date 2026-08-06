@@ -22,16 +22,21 @@ const TELEMETRY_JS_URL =
     TELEMETRY_API_KEY,
   )}/analytics.min.js`;
 
+const CONSOLE_VERSION =
+  window.SERVER_FLAGS.releaseVersion || window.SERVER_FLAGS.consoleVersion || '';
+const IS_CI_ENVIRONMENT = /test-ci|ci-ln-|nightly/i.test(CONSOLE_VERSION);
+
 export const TELEMETRY_DISABLED =
   !TELEMETRY_API_KEY ||
+  IS_CI_ENVIRONMENT ||
   window.SERVER_FLAGS.telemetry?.DISABLED === 'true' ||
   window.SERVER_FLAGS.telemetry?.DEVSANDBOX_DISABLED === 'true' ||
   window.SERVER_FLAGS.telemetry?.TELEMETER_CLIENT_DISABLED === 'true';
 
 export const TELEMETRY_DEBUG = window.SERVER_FLAGS.telemetry?.DEBUG === 'true';
 
-// Sample 20% of sessions
-const SAMPLE_SESSION = Math.random() < 0.2;
+// Sample 10% of sessions
+const SAMPLE_SESSION = Math.random() < 0.1;
 
 // TODO: replace this copy-pasted Segment init snippet with proper use of Segment package
 // https://segment.com/docs/connections/sources/catalog/libraries/website/javascript/quickstart/#step-2-install-segment-to-your-site
@@ -108,7 +113,6 @@ const initSegmentAnalytics = () => {
     options.integrations = { 'Segment.io': { apiHost: TELEMETRY_API_HOST } };
   }
   analytics.load(TELEMETRY_API_KEY, options);
-  analytics.page(); // Make the first page call to load the integrations
 };
 
 if (!SAMPLE_SESSION) {
