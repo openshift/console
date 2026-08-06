@@ -100,42 +100,42 @@ const fetchPeriodically: FetchPeriodically = async (
   }
 };
 
-export const watchPrometheusQuery: WatchPrometheusQueryAction = (query, namespace, timespan) => (
-  dispatch,
-  getState,
-) => {
-  const queryKey = getQueryKey(query, timespan);
-  const isActive = isWatchActive(getState().dashboards, RESULTS_TYPE.PROMETHEUS, queryKey);
-  dispatch(activateWatch(RESULTS_TYPE.PROMETHEUS, queryKey));
-  if (!isActive) {
-    const prometheusBaseURL = namespace
-      ? window.SERVER_FLAGS.prometheusTenancyBaseURL
-      : window.SERVER_FLAGS.prometheusBaseURL;
-    if (!prometheusBaseURL) {
-      dispatch(
-        setError(RESULTS_TYPE.PROMETHEUS, queryKey, new Error('Prometheus URL is not available')),
-      );
-    } else {
-      const url = () =>
-        getPrometheusURL({
-          endpoint: timespan ? PrometheusEndpoint.QUERY_RANGE : PrometheusEndpoint.QUERY,
-          namespace,
-          query,
-          timespan,
-        });
-      fetchPeriodically(dispatch, RESULTS_TYPE.PROMETHEUS, queryKey, url, getState, coFetchJSON);
+export const watchPrometheusQuery: WatchPrometheusQueryAction =
+  (query, namespace, timespan) => (dispatch, getState) => {
+    const queryKey = getQueryKey(query, timespan);
+    const isActive = isWatchActive(getState().dashboards, RESULTS_TYPE.PROMETHEUS, queryKey);
+    dispatch(activateWatch(RESULTS_TYPE.PROMETHEUS, queryKey));
+    if (!isActive) {
+      const prometheusBaseURL = namespace
+        ? window.SERVER_FLAGS.prometheusTenancyBaseURL
+        : window.SERVER_FLAGS.prometheusBaseURL;
+      if (!prometheusBaseURL) {
+        dispatch(
+          setError(RESULTS_TYPE.PROMETHEUS, queryKey, new Error('Prometheus URL is not available')),
+        );
+      } else {
+        const url = () =>
+          getPrometheusURL({
+            endpoint: timespan ? PrometheusEndpoint.QUERY_RANGE : PrometheusEndpoint.QUERY,
+            namespace,
+            query,
+            timespan,
+          });
+        fetchPeriodically(dispatch, RESULTS_TYPE.PROMETHEUS, queryKey, url, getState, coFetchJSON);
+      }
     }
-  }
-};
+  };
 
-export const watchURL: WatchURLAction = (url, fetch = coFetchJSON) => (dispatch, getState) => {
-  const isActive = isWatchActive(getState().dashboards, RESULTS_TYPE.URL, url);
-  dispatch(activateWatch(RESULTS_TYPE.URL, url));
-  if (!isActive) {
-    const k8sURL = () => `${k8sBasePath}/${url}`;
-    fetchPeriodically(dispatch, RESULTS_TYPE.URL, url, k8sURL, getState, fetch);
-  }
-};
+export const watchURL: WatchURLAction =
+  (url, fetch = coFetchJSON) =>
+  (dispatch, getState) => {
+    const isActive = isWatchActive(getState().dashboards, RESULTS_TYPE.URL, url);
+    dispatch(activateWatch(RESULTS_TYPE.URL, url));
+    if (!isActive) {
+      const k8sURL = () => `${k8sBasePath}/${url}`;
+      fetchPeriodically(dispatch, RESULTS_TYPE.URL, url, k8sURL, getState, fetch);
+    }
+  };
 
 export const stopWatchPrometheusQuery: StopWatchPrometheusAction = (query, timespan) =>
   stopWatch(RESULTS_TYPE.PROMETHEUS, getQueryKey(query, timespan));

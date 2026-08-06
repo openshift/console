@@ -153,7 +153,7 @@ export const FilterToolbar: FC<FilterToolbarProps> = ({
         ...item,
         count: (rowFilter as RowMatchFilter).isMatch
           ? _.filter(data, (d) => (rowFilter as RowMatchFilter).isMatch(d, item.id)).length
-          : _.countBy(data, (rowFilter as RowReducerFilter).reducer)?.[item.id] ?? '0',
+          : (_.countBy(data, (rowFilter as RowReducerFilter).reducer)?.[item.id] ?? '0'),
       })),
     })),
   );

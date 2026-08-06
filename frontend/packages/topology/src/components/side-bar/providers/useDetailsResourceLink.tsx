@@ -5,9 +5,8 @@ import type { DetailsResourceLink } from '@console/dynamic-plugin-sdk';
 import { isDetailsResourceLink, useResolvedExtensions } from '@console/dynamic-plugin-sdk';
 
 export const useDetailsResourceLink = (element: GraphElement): ReactNode => {
-  const [resurceLinkExtension, resolved] = useResolvedExtensions<DetailsResourceLink>(
-    isDetailsResourceLink,
-  );
+  const [resurceLinkExtension, resolved] =
+    useResolvedExtensions<DetailsResourceLink>(isDetailsResourceLink);
   const resourceLink = useMemo(
     () =>
       resolved

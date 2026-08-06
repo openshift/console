@@ -10,7 +10,7 @@ jest.mock('@console/shared/src/utils/console-fetch', () => ({
   coFetchJSON: jest.fn(),
 }));
 
-const getMock = (coFetchJSON as unknown) as jest.Mock;
+const getMock = coFetchJSON as unknown as jest.Mock;
 
 beforeEach(() => {
   jest.resetAllMocks();

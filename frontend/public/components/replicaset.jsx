@@ -200,9 +200,8 @@ const getDataViewRows = (data, columns) =>
 
 const useReplicaSetsColumns = () => {
   const { t } = useTranslation('public');
-  const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(
-    ReplicaSetModel,
-  );
+  const { getResizableProps, getWidth, resetAllColumnWidths } =
+    useColumnWidthSettings(ReplicaSetModel);
 
   const columns = useMemo(
     () => [

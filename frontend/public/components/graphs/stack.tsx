@@ -61,10 +61,10 @@ const StackChart: FC<AreaChartProps> = ({
     return [data, ''];
   }, [byteDataType, data]);
 
-  const tickFormat = useCallback((tick) => `${humanize(tick, unit, unit).string}`, [
-    humanize,
-    unit,
-  ]);
+  const tickFormat = useCallback(
+    (tick) => `${humanize(tick, unit, unit).string}`,
+    [humanize, unit],
+  );
 
   const getLabel = useCallback(
     (prop, includeDate = true) => {

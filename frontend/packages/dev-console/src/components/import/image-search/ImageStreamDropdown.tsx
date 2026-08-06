@@ -39,8 +39,8 @@ const ImageStreamDropdown: FC<{
     loading && !isStreamsAvailable
       ? ''
       : !isStreamsAvailable
-      ? t('No Image Stream')
-      : t('Select Image Stream');
+        ? t('No Image Stream')
+        : t('Select Image Stream');
 
   const onDropdownChange = useCallback(
     (img: string) => {

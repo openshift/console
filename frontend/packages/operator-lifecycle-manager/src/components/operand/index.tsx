@@ -440,8 +440,9 @@ export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
   const [staticData, filteredData, onFilterChange] = useListPageFilter(data, rowFilters);
   const loaded = Object.values(resources).every((r) => r.loaded);
   // only pass the first loadError as StatusBox can only display one
-  const loadError: Record<string, any> = Object.values(resources).find((r) => r.loadError)
-    ?.loadError;
+  const loadError: Record<string, any> = Object.values(resources).find(
+    (r) => r.loadError,
+  )?.loadError;
 
   return inFlight ? null : (
     <>
@@ -613,41 +614,37 @@ export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: Operan
     crd?.spec?.versions?.find((v) => v.name === version)?.schema?.openAPIV3Schema ??
     (definitionFor(kindObj) as JSONSchema7);
 
-  const {
-    podStatuses,
-    mainStatusDescriptor,
-    conditionsStatusDescriptors,
-    otherStatusDescriptors,
-  } = (statusDescriptors ?? []).reduce((acc, descriptor) => {
-    if (isMainStatusDescriptor(descriptor)) {
+  const { podStatuses, mainStatusDescriptor, conditionsStatusDescriptors, otherStatusDescriptors } =
+    (statusDescriptors ?? []).reduce((acc, descriptor) => {
+      if (isMainStatusDescriptor(descriptor)) {
+        return {
+          ...acc,
+          mainStatusDescriptor: descriptor,
+        };
+      }
+
+      if (
+        descriptor['x-descriptors']?.includes(StatusCapability.conditions) ||
+        descriptor.path === 'conditions'
+      ) {
+        return {
+          ...acc,
+          conditionsStatusDescriptors: [...(acc.conditionsStatusDescriptors ?? []), descriptor],
+        };
+      }
+
+      if (descriptor['x-descriptors']?.includes(StatusCapability.podStatuses)) {
+        return {
+          ...acc,
+          podStatuses: [...(acc.podStatuses ?? []), descriptor],
+        };
+      }
+
       return {
         ...acc,
-        mainStatusDescriptor: descriptor,
+        otherStatusDescriptors: [...(acc.otherStatusDescriptors ?? []), descriptor],
       };
-    }
-
-    if (
-      descriptor['x-descriptors']?.includes(StatusCapability.conditions) ||
-      descriptor.path === 'conditions'
-    ) {
-      return {
-        ...acc,
-        conditionsStatusDescriptors: [...(acc.conditionsStatusDescriptors ?? []), descriptor],
-      };
-    }
-
-    if (descriptor['x-descriptors']?.includes(StatusCapability.podStatuses)) {
-      return {
-        ...acc,
-        podStatuses: [...(acc.podStatuses ?? []), descriptor],
-      };
-    }
-
-    return {
-      ...acc,
-      otherStatusDescriptors: [...(acc.otherStatusDescriptors ?? []), descriptor],
-    };
-  }, {} as any);
+    }, {} as any);
 
   return (
     <div className="co-operand-details co-m-pane">

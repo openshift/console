@@ -338,7 +338,7 @@ FireMan.displayName = 'FireMan';
 
 export type Flatten<
   F extends ResourcesObject = { [key: string]: K8sResourceCommon | K8sResourceCommon[] },
-  R = any
+  R = any,
 > = (resources: WatchK8sResults<F>) => R;
 
 export type ListPageProps<L = any, C = any> = PageCommonProps<L, C> & {
@@ -562,28 +562,30 @@ export const MultiListPage: FC<MultiListPageProps> = (props) => {
     if (mock) {
       return {};
     }
-    return k8sResources.reduce((acc, r) => {
-      const key = r.prop || r.kind;
-      acc[key] = {
-        kind: r.kind,
-        groupVersionKind: r.groupVersionKind,
-        name: r.name,
-        namespace: r.namespace,
-        isList: r.isList,
-        selector: r.selector,
-        fieldSelector: r.fieldSelector,
-        limit: r.limit,
-        namespaced: r.namespaced,
-        optional: r.optional,
-        partialMetadata: r.partialMetadata,
-      };
-      return acc;
-    }, {} as Record<string, WatchK8sResource>);
+    return k8sResources.reduce(
+      (acc, r) => {
+        const key = r.prop || r.kind;
+        acc[key] = {
+          kind: r.kind,
+          groupVersionKind: r.groupVersionKind,
+          name: r.name,
+          namespace: r.namespace,
+          isList: r.isList,
+          selector: r.selector,
+          fieldSelector: r.fieldSelector,
+          limit: r.limit,
+          namespaced: r.namespaced,
+          optional: r.optional,
+          partialMetadata: r.partialMetadata,
+        };
+        return acc;
+      },
+      {} as Record<string, WatchK8sResource>,
+    );
   }, [k8sResources, mock]);
 
-  const watchedResources = useK8sWatchResources<
-    Record<string, K8sResourceCommon | K8sResourceCommon[]>
-  >(watchResources);
+  const watchedResources =
+    useK8sWatchResources<Record<string, K8sResourceCommon | K8sResourceCommon[]>>(watchResources);
 
   // Aggregate individual resource loading states into a single boolean
   const loaded = useMemo(() => {

@@ -41,9 +41,8 @@ const useHelmCharts: ExtensionHook<CatalogItem[]> = ({
     [namespace],
   );
 
-  const chartRepositories: WatchK8sResults<WatchResource> = useK8sWatchResources<WatchResource>(
-    resourceSelector,
-  );
+  const chartRepositories: WatchK8sResults<WatchResource> =
+    useK8sWatchResources<WatchResource>(resourceSelector);
 
   const chartRepositoriesLoaded =
     Object.keys(chartRepositories).length > 0 &&

@@ -61,15 +61,11 @@ const WebTerminalConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
     [operatorNamespace],
   );
 
-  const [webTerminalExec, isLoaded, loadError] = useK8sWatchResource<CloudShellResource>(
-    webTerminalExecResource,
-  );
+  const [webTerminalExec, isLoaded, loadError] =
+    useK8sWatchResource<CloudShellResource>(webTerminalExecResource);
 
-  const [
-    webTerminalTooling,
-    iswebTerminalToolingLoaded,
-    webTerminalToolingloadError,
-  ] = useK8sWatchResource<CloudShellResource>(webTerminalToolingResource);
+  const [webTerminalTooling, iswebTerminalToolingLoaded, webTerminalToolingloadError] =
+    useK8sWatchResource<CloudShellResource>(webTerminalToolingResource);
 
   const terminalExecResource =
     webTerminalExec &&

@@ -35,13 +35,12 @@ export const nodeRoles = (node: NodeKind) => {
   return roles.sort().join(', ');
 };
 
-export const sortWithCSRResource = <D>(getter: (obj: NodeKind) => D, csrDefaultValue: D) => (
-  data: (NodeKind | NodeCertificateSigningRequestKind)[],
-  direction: SortByDirection,
-) =>
-  data.sort(
-    sortResourceByValue<NodeKind>(direction, (obj) => {
-      const val = isCSRResource(obj) ? csrDefaultValue : getter(obj);
-      return val;
-    }),
-  );
+export const sortWithCSRResource =
+  <D>(getter: (obj: NodeKind) => D, csrDefaultValue: D) =>
+  (data: (NodeKind | NodeCertificateSigningRequestKind)[], direction: SortByDirection) =>
+    data.sort(
+      sortResourceByValue<NodeKind>(direction, (obj) => {
+        const val = isCSRResource(obj) ? csrDefaultValue : getter(obj);
+        return val;
+      }),
+    );

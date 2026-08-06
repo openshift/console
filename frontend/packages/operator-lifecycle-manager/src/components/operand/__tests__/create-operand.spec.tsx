@@ -38,8 +38,8 @@ jest.mock('@console/shared/src/components/heading/PageHeading', () => ({
 
 const mockUseK8sModel = useK8sModel as jest.Mock;
 const mockUseK8sWatchResource = useK8sWatchResource as jest.Mock;
-const mockSyncedEditor = (SyncedEditor as unknown) as jest.Mock;
-const mockCreateYAML = (CreateYAML as unknown) as jest.Mock;
+const mockSyncedEditor = SyncedEditor as unknown as jest.Mock;
+const mockCreateYAML = CreateYAML as unknown as jest.Mock;
 
 describe('CreateOperand', () => {
   beforeEach(() => {

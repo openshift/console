@@ -398,12 +398,15 @@ const updateSwaggerDefinitionContinual = () => {
     console.error('Could not fetch OpenAPI after application start:', e);
   });
   clearInterval(updateSwaggerInterval);
-  updateSwaggerInterval = setInterval(() => {
-    fetchSwagger().catch((e) => {
-      // eslint-disable-next-line no-console
-      console.error('Could not fetch OpenAPI to stay up to date:', e);
-    });
-  }, 5 * 60 * 1000);
+  updateSwaggerInterval = setInterval(
+    () => {
+      fetchSwagger().catch((e) => {
+        // eslint-disable-next-line no-console
+        console.error('Could not fetch OpenAPI to stay up to date:', e);
+      });
+    },
+    5 * 60 * 1000,
+  );
 };
 
 // Load cached API resources from localStorage to speed up page load.

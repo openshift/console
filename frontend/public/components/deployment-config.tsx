@@ -290,9 +290,8 @@ const getDataViewRows: GetDataViewRows<DeploymentConfigKind> = (data, columns) =
   getWorkloadDataViewRows(data, columns, DeploymentConfigModel);
 
 const DeploymentConfigsList: FC<DeploymentConfigsListProps> = ({ data, loaded, ...props }) => {
-  const { columns, resetAllColumnWidths } = useWorkloadColumns<DeploymentConfigKind>(
-    DeploymentConfigModel,
-  );
+  const { columns, resetAllColumnWidths } =
+    useWorkloadColumns<DeploymentConfigKind>(DeploymentConfigModel);
 
   return (
     <Suspense fallback={<LoadingBox />}>

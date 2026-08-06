@@ -27,11 +27,8 @@ import {
 const SecureRouteFields: FC = () => {
   const { t } = useTranslation('devconsole');
   const fireTelemetryEvent = useTelemetry();
-  const [
-    preferredRoutingOptions,
-    setPreferredRoutingOptions,
-    preferredRoutingOptionsLoaded,
-  ] = usePreferredRoutingOptions();
+  const [preferredRoutingOptions, setPreferredRoutingOptions, preferredRoutingOptionsLoaded] =
+    usePreferredRoutingOptions();
   const { secure, tlsTermination, insecureTraffic } =
     preferredRoutingOptionsLoaded && preferredRoutingOptions;
   const [isTLSTerminationOpen, setIsTLSTerminationOpen] = useState<boolean>(false);

@@ -47,7 +47,7 @@ const createMockNode = (name: string, groups?: string): NodeKind =>
     },
     spec: {},
     status: {},
-  } as NodeKind);
+  }) as NodeKind;
 
 describe('NodeGroupsEditorModal', () => {
   let user: ReturnType<typeof userEvent.setup>;

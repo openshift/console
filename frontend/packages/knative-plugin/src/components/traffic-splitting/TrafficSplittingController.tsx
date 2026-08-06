@@ -67,8 +67,8 @@ const TrafficSplittingModalProvider: OverlayComponent<Props> = (props) => (
 
 export const useTrafficSplittingModalLauncher = (props: Props) => {
   const launcher = useOverlay();
-  return useCallback(() => launcher<Props>(TrafficSplittingModalProvider, props), [
-    launcher,
-    props,
-  ]);
+  return useCallback(
+    () => launcher<Props>(TrafficSplittingModalProvider, props),
+    [launcher, props],
+  );
 };

@@ -151,9 +151,8 @@ const TopologyComponent: FC<
   const storedLayoutApplied = useRef<boolean>(false);
   const queryParams = useQueryParams();
   const selectedId = queryParams.get('selectId');
-  const [componentFactoryExtensions, extensionsResolved] = useResolvedExtensions<
-    TopologyComponentFactory
-  >(isTopologyComponentFactory);
+  const [componentFactoryExtensions, extensionsResolved] =
+    useResolvedExtensions<TopologyComponentFactory>(isTopologyComponentFactory);
 
   const createVisualization = useCallback(() => {
     const storedLayout = topologyLayoutDataJson?.[namespace];

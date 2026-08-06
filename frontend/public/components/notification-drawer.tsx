@@ -262,9 +262,10 @@ export const NotificationDrawer: FC<NotificationDrawerProps> = ({
     clearAllNotifications,
     markAllNotificationsRead,
   } = useNotificationHistory();
-  const groupedToastNotifications = useMemo(() => groupToastNotifications(toastNotifications), [
-    toastNotifications,
-  ]);
+  const groupedToastNotifications = useMemo(
+    () => groupToastNotifications(toastNotifications),
+    [toastNotifications],
+  );
   const otherAlertsToastNotifications = getToastNotificationsForGroup(
     groupedToastNotifications,
     DEFAULT_TOAST_DRAWER_GROUP,
@@ -281,10 +282,10 @@ export const NotificationDrawer: FC<NotificationDrawerProps> = ({
     navigate(location);
   };
 
-  const alertActionExtensionsMap = useMemo(() => getAlertActions(alertActionExtensions, navigate), [
-    alertActionExtensions,
-    navigate,
-  ]);
+  const alertActionExtensionsMap = useMemo(
+    () => getAlertActions(alertActionExtensions, navigate),
+    [alertActionExtensions, navigate],
+  );
 
   const canUpgrade = useCanClusterUpgrade();
   const updateList: ReactNode[] = getUpdateNotificationEntries(

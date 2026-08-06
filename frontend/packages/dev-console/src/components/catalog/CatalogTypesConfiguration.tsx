@@ -41,9 +41,8 @@ const CatalogTypesConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
   const fireTelemetryEvent = useTelemetry();
 
   // Available catalog types
-  const [catalogTypesExtensions, catalogTypesExtensionsLoaded] = useResolvedExtensions<
-    CatalogItemType
-  >(isCatalogItemType);
+  const [catalogTypesExtensions, catalogTypesExtensionsLoaded] =
+    useResolvedExtensions<CatalogItemType>(isCatalogItemType);
   const sortedCatalogTypeExtensions = useMemo(
     () =>
       [...catalogTypesExtensions].sort((catalogTypeExtensionA, catalogTypeExtensionB) => {
@@ -63,9 +62,8 @@ const CatalogTypesConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
   );
 
   // Current configuration
-  const [consoleConfig, consoleConfigLoaded, consoleConfigError] = useConsoleOperatorConfig<
-    SoftwareCatalogTypesConsoleConfig
-  >();
+  const [consoleConfig, consoleConfigLoaded, consoleConfigError] =
+    useConsoleOperatorConfig<SoftwareCatalogTypesConsoleConfig>();
   const [types, setTypes] = useState<Types>();
   useEffect(() => {
     if (consoleConfig && consoleConfigLoaded && !types) {
@@ -173,8 +171,8 @@ const CatalogTypesConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
         types?.state === 'Enabled'
           ? types.enabled || []
           : types?.state === 'Disabled'
-          ? types.disabled || []
-          : null,
+            ? types.disabled || []
+            : null,
     });
     setSaveStatus({ status: 'in-progress' });
 

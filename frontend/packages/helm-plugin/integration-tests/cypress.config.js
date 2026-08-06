@@ -3,8 +3,7 @@ const { defineConfig } = require('@console/cypress-integration-tests/cypress-com
 module.exports = defineConfig({
   fixturesFolder: 'testData',
   env: {
-    TAGS:
-      '@helm and (@pre-condition or @smoke or @regression) and not (@manual or @to-do or @broken-test)',
+    TAGS: '@helm and (@pre-condition or @smoke or @regression) and not (@manual or @to-do or @broken-test)',
     NAMESPACE: 'aut-helm',
   },
   e2e: {

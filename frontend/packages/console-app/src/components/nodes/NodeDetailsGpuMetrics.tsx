@@ -156,13 +156,10 @@ const NodeDetailsGpuMetrics: FC<NodeDetailsGpuMetricsProps> = ({ node }) => {
   const fbUsedMap = useMemo(() => resultsByGpu(fbUsedResponse), [fbUsedResponse]);
   const fbFreeMap = useMemo(() => resultsByGpu(fbFreeResponse), [fbFreeResponse]);
 
-  const gpuIds = useMemo(() => collectGpuIds(utilMap, tempMap, powerMap, fbUsedMap, fbFreeMap), [
-    utilMap,
-    tempMap,
-    powerMap,
-    fbUsedMap,
-    fbFreeMap,
-  ]);
+  const gpuIds = useMemo(
+    () => collectGpuIds(utilMap, tempMap, powerMap, fbUsedMap, fbFreeMap),
+    [utilMap, tempMap, powerMap, fbUsedMap, fbFreeMap],
+  );
 
   const hasMetrics = gpuIds.length > 0;
 

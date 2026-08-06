@@ -34,10 +34,10 @@ const useStartBuildAction = (obj: BuildConfig): Action[] => {
     }),
     [launchModal, t],
   );
-  const actions = useMemo<Action[]>(() => [factory[BuildConfigActionCreator.StartBuild](obj)], [
-    factory,
-    obj,
-  ]);
+  const actions = useMemo<Action[]>(
+    () => [factory[BuildConfigActionCreator.StartBuild](obj)],
+    [factory, obj],
+  );
   return actions;
 };
 

@@ -75,9 +75,12 @@ const RestorePVCModal: FC<RestorePVCModalProps> = ({ close, cancel, resource }) 
   const namespace = getNamespace(resource);
   const snapshotName = getName(resource);
 
-  const [pvcResource, pvcResourceLoaded, pvcResourceLoadError] = useK8sGet<
-    PersistentVolumeClaimKind
-  >(PersistentVolumeClaimModel, resource?.spec?.source?.persistentVolumeClaimName, namespace);
+  const [pvcResource, pvcResourceLoaded, pvcResourceLoadError] =
+    useK8sGet<PersistentVolumeClaimKind>(
+      PersistentVolumeClaimModel,
+      resource?.spec?.source?.persistentVolumeClaimName,
+      namespace,
+    );
 
   const pvcStorageClassName = pvcResource?.spec?.storageClassName;
   const pvcNotFound = pvcResourceLoaded && !pvcResource;

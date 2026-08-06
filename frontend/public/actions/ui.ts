@@ -183,42 +183,40 @@ const encodeImpersonationValue = (value: string, textEncoder: TextEncoder): stri
     .replace(/=/g, '_')
     .replace(/\//g, '-');
 
-export const startImpersonate = (kind: string, name: string, groups?: string[]) => async (
-  dispatch,
-  getState,
-) => {
-  const textEncoder = new TextEncoder();
+export const startImpersonate =
+  (kind: string, name: string, groups?: string[]) => async (dispatch, getState) => {
+    const textEncoder = new TextEncoder();
 
-  const imp = getImpersonate(getState());
-  if ((imp?.name && imp.name !== name) || (imp?.kind && imp.kind !== kind)) {
-    // eslint-disable-next-line no-console
-    console.warn(`Impersonate race detected: ${name} vs ${imp.name} / ${kind} ${imp.kind}`);
-    return;
-  }
+    const imp = getImpersonate(getState());
+    if ((imp?.name && imp.name !== name) || (imp?.kind && imp.kind !== kind)) {
+      // eslint-disable-next-line no-console
+      console.warn(`Impersonate race detected: ${name} vs ${imp.name} / ${kind} ${imp.kind}`);
+      return;
+    }
 
-  const encodedName = encodeImpersonationValue(name, textEncoder);
+    const encodedName = encodeImpersonationValue(name, textEncoder);
 
-  let subprotocols;
-  if (kind === 'User') {
-    subprotocols = [`Impersonate-User.${encodedName}`];
-  } else if (kind === 'Group') {
-    subprotocols = [`Impersonate-Group.${encodedName}`];
-  } else if (kind === 'UserWithGroups' && groups && groups.length > 0) {
-    // User with multiple groups impersonation
-    // Encode user subprotocol
-    subprotocols = [`Impersonate-User.${encodedName}`];
-    // Encode each group as a separate subprotocol
-    groups.forEach((group) => {
-      const encodedGroup = encodeImpersonationValue(group, textEncoder);
-      subprotocols.push(`Impersonate-Group.${encodedGroup}`);
-    });
-  }
+    let subprotocols;
+    if (kind === 'User') {
+      subprotocols = [`Impersonate-User.${encodedName}`];
+    } else if (kind === 'Group') {
+      subprotocols = [`Impersonate-Group.${encodedName}`];
+    } else if (kind === 'UserWithGroups' && groups && groups.length > 0) {
+      // User with multiple groups impersonation
+      // Encode user subprotocol
+      subprotocols = [`Impersonate-User.${encodedName}`];
+      // Encode each group as a separate subprotocol
+      groups.forEach((group) => {
+        const encodedGroup = encodeImpersonationValue(group, textEncoder);
+        subprotocols.push(`Impersonate-Group.${encodedGroup}`);
+      });
+    }
 
-  dispatch(beginImpersonate(kind, name, subprotocols, groups));
+    dispatch(beginImpersonate(kind, name, subprotocols, groups));
 
-  // Don't clear/refresh flags here - the App component's useLayoutEffect will handle it
-  // This ensures flags refresh happens in sync with React's render cycle
-};
+    // Don't clear/refresh flags here - the App component's useLayoutEffect will handle it
+    // This ensures flags refresh happens in sync with React's render cycle
+  };
 
 export const stopImpersonate = () => (dispatch) => {
   dispatch(endImpersonate());

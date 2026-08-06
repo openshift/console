@@ -96,11 +96,11 @@ export const ReplicasCount: FC<ReplicasCountProps> = ({ obj, kind }) => {
   // DaemonSets use different status fields than Deployments
   const isDaemonSet = kind?.includes('DaemonSet');
   const statusReplicas = isDaemonSet
-    ? obj.status?.currentNumberScheduled ?? 0
-    : obj.status?.replicas ?? 0;
+    ? (obj.status?.currentNumberScheduled ?? 0)
+    : (obj.status?.replicas ?? 0);
   const specReplicas = isDaemonSet
-    ? obj.status?.desiredNumberScheduled ?? 0
-    : obj.spec?.replicas ?? 0;
+    ? (obj.status?.desiredNumberScheduled ?? 0)
+    : (obj.spec?.replicas ?? 0);
 
   return (
     <Link to={`${resourcePath(kind, obj.metadata.name, obj.metadata.namespace)}/pods`} title="pods">

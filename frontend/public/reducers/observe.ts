@@ -125,8 +125,8 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
               value === MONITORING_DASHBOARDS_VARIABLE_ALL_OPTION_KEY || newOptions.includes(value)
                 ? value
                 : perspective === 'dev' && key === 'namespace'
-                ? state.get('activeNamespace')
-                : newOptions[0],
+                  ? state.get('activeNamespace')
+                  : newOptions[0],
           };
       return state.mergeIn(['dashboards', perspective, 'variables', key], ImmutableMap(patch));
     }

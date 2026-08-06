@@ -106,15 +106,12 @@ const ConnectedTopologyView: FC<ComponentProps> = ({
   );
   const appliedFilters = useAppliedDisplayFilters();
 
-  const [displayFilterExtensions, displayFilterExtensionsResolved] = useResolvedExtensions<
-    TopologyDisplayFilters
-  >(isTopologyDisplayFilters);
-  const [createConnectors, createConnectorsResolved] = useResolvedExtensions<
-    TopologyCreateConnector
-  >(isTopologyCreateConnector);
-  const [extensionDecorators, extensionDecoratorsResolved] = useResolvedExtensions<
-    TopologyDecoratorProvider
-  >(isTopologyDecoratorProvider);
+  const [displayFilterExtensions, displayFilterExtensionsResolved] =
+    useResolvedExtensions<TopologyDisplayFilters>(isTopologyDisplayFilters);
+  const [createConnectors, createConnectorsResolved] =
+    useResolvedExtensions<TopologyCreateConnector>(isTopologyCreateConnector);
+  const [extensionDecorators, extensionDecoratorsResolved] =
+    useResolvedExtensions<TopologyDecoratorProvider>(isTopologyDecoratorProvider);
   const [relationshipProvider] = useResolvedExtensions<TopologyRelationshipProvider>(
     isTopologyRelationshipProvider,
   );

@@ -25,7 +25,7 @@ const isDataViewConfigurableColumn = (
 export const useConsoleDataViewData = <
   TData,
   TCustomRowData = any,
-  TFilters extends ResourceFilters = ResourceFilters
+  TFilters extends ResourceFilters = ResourceFilters,
 >({
   columns,
   filteredData,

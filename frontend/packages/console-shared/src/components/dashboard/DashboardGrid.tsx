@@ -22,18 +22,18 @@ const DashboardGrid: FC<OverviewGridProps> = ({ mainCards, leftCards, rightCards
   const [containerRef, width] = useRefWidth();
   const smallGrid = !!width && width <= 992; // 992px is equivalent of --pf-t--global--breakpoint--lg
 
-  const mainGridCards = useMemo(() => mapCardsToGrid(mainCards, 'main', smallGrid), [
-    mainCards,
-    smallGrid,
-  ]);
-  const leftGridCards = useMemo(() => mapCardsToGrid(leftCards, 'left', smallGrid), [
-    leftCards,
-    smallGrid,
-  ]);
-  const rightGridCards = useMemo(() => mapCardsToGrid(rightCards, 'right', smallGrid), [
-    rightCards,
-    smallGrid,
-  ]);
+  const mainGridCards = useMemo(
+    () => mapCardsToGrid(mainCards, 'main', smallGrid),
+    [mainCards, smallGrid],
+  );
+  const leftGridCards = useMemo(
+    () => mapCardsToGrid(leftCards, 'left', smallGrid),
+    [leftCards, smallGrid],
+  );
+  const rightGridCards = useMemo(
+    () => mapCardsToGrid(rightCards, 'right', smallGrid),
+    [rightCards, smallGrid],
+  );
 
   const mainGridSpan =
     leftCards?.length && rightCards?.length ? 6 : leftCards?.length || rightCards?.length ? 9 : 12;

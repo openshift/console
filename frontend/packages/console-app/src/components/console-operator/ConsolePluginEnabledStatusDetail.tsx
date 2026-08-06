@@ -19,17 +19,18 @@ const ConsolePluginEnabledStatusDetail: FC<DetailsItemComponentProps> = ({ obj }
     () => pluginInfoEntries.find((entry) => entry.manifest.name === pluginName),
     [pluginInfoEntries, pluginName],
   );
-  const enabledPlugins = useMemo<string[]>(() => consoleOperatorConfig?.spec?.plugins ?? [], [
-    consoleOperatorConfig?.spec?.plugins,
-  ]);
+  const enabledPlugins = useMemo<string[]>(
+    () => consoleOperatorConfig?.spec?.plugins ?? [],
+    [consoleOperatorConfig?.spec?.plugins],
+  );
 
   return consoleOperatorConfigLoaded && pluginName ? (
     <ConsolePluginEnabledStatus
       pluginName={pluginName}
       enabled={
         developmentMode
-          ? (pluginInfo?.status === 'loaded' && pluginInfo.enabled) ?? false
-          : enabledPlugins.includes(pluginName) ?? false
+          ? ((pluginInfo?.status === 'loaded' && pluginInfo.enabled) ?? false)
+          : (enabledPlugins.includes(pluginName) ?? false)
       }
     />
   ) : (

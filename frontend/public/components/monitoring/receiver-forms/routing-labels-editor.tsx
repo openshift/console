@@ -40,8 +40,10 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
     });
   };
 
-  const onRoutingLabelChange = (path: number): ((e) => void) => (e) =>
-    setRouteLabel(path, e.target.value);
+  const onRoutingLabelChange =
+    (path: number): ((e) => void) =>
+    (e) =>
+      setRouteLabel(path, e.target.value);
 
   const addRoutingLabel = (): void => {
     setRouteLabel(formValues.routeLabels.length, '');

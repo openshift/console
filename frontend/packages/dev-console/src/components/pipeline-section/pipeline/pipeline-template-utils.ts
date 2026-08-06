@@ -348,36 +348,36 @@ const getPipelineRunFromForm = (
   return getPipelineRunData(pipeline, pipelineRunData, options);
 };
 
-const supportWorkspaceDefaults = (preselectPVC: string) => (
-  workspace: TektonWorkspace,
-): PipelineModalFormWorkspace => {
-  let workspaceSetting: PipelineModalFormWorkspaceStructure = {
-    type: VolumeTypes.EmptyDirectory,
-    data: { emptyDir: {} },
-  };
+const supportWorkspaceDefaults =
+  (preselectPVC: string) =>
+  (workspace: TektonWorkspace): PipelineModalFormWorkspace => {
+    let workspaceSetting: PipelineModalFormWorkspaceStructure = {
+      type: VolumeTypes.EmptyDirectory,
+      data: { emptyDir: {} },
+    };
 
-  if (preselectPVC) {
-    workspaceSetting = {
-      type: VolumeTypes.PVC,
-      data: {
-        persistentVolumeClaim: {
-          claimName: preselectPVC,
+    if (preselectPVC) {
+      workspaceSetting = {
+        type: VolumeTypes.PVC,
+        data: {
+          persistentVolumeClaim: {
+            claimName: preselectPVC,
+          },
         },
-      },
-    };
-  }
-  if (workspace.optional) {
-    workspaceSetting = {
-      type: VolumeTypes.NoWorkspace,
-      data: {},
-    };
-  }
+      };
+    }
+    if (workspace.optional) {
+      workspaceSetting = {
+        type: VolumeTypes.NoWorkspace,
+        data: {},
+      };
+    }
 
-  return {
-    ...workspace,
-    ...workspaceSetting,
+    return {
+      ...workspace,
+      ...workspaceSetting,
+    };
   };
-};
 
 const convertPipelineToModalData = (
   pipeline: PipelineKind,
@@ -561,18 +561,16 @@ const processResources = async (
   const indexLookup = Object.keys(toCreateResources);
   return {
     ...values,
-    resources: resources.map(
-      (resource, index): PipelineModalFormResource => {
-        if (toCreateResources[index]) {
-          const creationIndex = indexLookup.indexOf(index.toString());
-          return {
-            ...resource,
-            selection: createdResources?.[creationIndex]?.metadata?.name,
-          };
-        }
-        return resource;
-      },
-    ),
+    resources: resources.map((resource, index): PipelineModalFormResource => {
+      if (toCreateResources[index]) {
+        const creationIndex = indexLookup.indexOf(index.toString());
+        return {
+          ...resource,
+          selection: createdResources?.[creationIndex]?.metadata?.name,
+        };
+      }
+      return resource;
+    }),
   };
 };
 
@@ -901,7 +899,7 @@ export const submitTrigger = async (
     generateName: true,
   });
   const triggerTemplateParams: TriggerTemplateKindParam[] = triggerBinding.resource.spec.params.map(
-    ({ name }) => ({ name } as TriggerTemplateKindParam),
+    ({ name }) => ({ name }) as TriggerTemplateKindParam,
   );
   const triggerTemplate: TriggerTemplateKind = createTriggerTemplate(
     pipeline,

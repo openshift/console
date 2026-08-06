@@ -10,7 +10,8 @@ import type { DropdownFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
 export interface ResourceDropdownFieldProps
-  extends Omit<DropdownFieldProps, 'onChange'>,
+  extends
+    Omit<DropdownFieldProps, 'onChange'>,
     Pick<
       ResourceDropdownProps,
       | 'dataSelector'

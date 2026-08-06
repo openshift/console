@@ -8,8 +8,7 @@ type DetectorProps = {
   setActivePerspective: (perspective: string, next: string) => void;
   perspectiveExtensions: Perspective[];
   detectors: (
-    | undefined
-    | ResolvedExtension<Perspective>['properties']['usePerspectiveDetection']
+    undefined | ResolvedExtension<Perspective>['properties']['usePerspectiveDetection']
   )[];
 };
 
@@ -60,14 +59,14 @@ const Detector: FC<DetectorProps> = ({
 
 const PerspectiveDetector: FC<PerspectiveDetectorProps> = ({ setActivePerspective }) => {
   const perspectiveExtensions = usePerspectives();
-  const [detectors, setDetectors] = useState<
-    (undefined | ResolvedExtension<Perspective>['properties']['usePerspectiveDetection'])[]
-  >();
+  const [detectors, setDetectors] =
+    useState<
+      (undefined | ResolvedExtension<Perspective>['properties']['usePerspectiveDetection'])[]
+    >();
   useEffect(() => {
     let resolveCount = 0;
-    const resolvedDetectors: ResolvedExtension<
-      Perspective
-    >['properties']['usePerspectiveDetection'][] = [];
+    const resolvedDetectors: ResolvedExtension<Perspective>['properties']['usePerspectiveDetection'][] =
+      [];
     perspectiveExtensions.forEach((p, i) => {
       if (p.properties.usePerspectiveDetection) {
         p.properties

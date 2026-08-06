@@ -173,9 +173,8 @@ const namespaceColumnInfo = [
 
 const useNamespacesColumns = () => {
   const { t } = useTranslation('public');
-  const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(
-    NamespaceModel,
-  );
+  const { getResizableProps, getWidth, resetAllColumnWidths } =
+    useColumnWidthSettings(NamespaceModel);
 
   const columns = useMemo(
     () => [
@@ -476,9 +475,8 @@ const projectColumnInfo = namespaceColumnInfo;
 
 const useProjectsColumns = ({ showMetrics, showActions }) => {
   const { t } = useTranslation('public');
-  const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(
-    ProjectModel,
-  );
+  const { getResizableProps, getWidth, resetAllColumnWidths } =
+    useColumnWidthSettings(ProjectModel);
 
   const columns = useMemo(() => {
     const cols = [

@@ -76,9 +76,8 @@ const PinnedResourcesConfiguration: FC<PinnedResourcesConfigurationProps> = ({
   const perspectiveExtensions = usePerspectives();
   const [pinnedResources, setPinnedResources] = useState<PerspectivePinnedResource[]>();
   const [perspectiveData, setPerspectiveData] = useState<Perspective[]>();
-  const [pinnedResourcesConfigured, setPinnedResourcesConfigured] = useState<
-    PerspectivePinnedResource[]
-  >();
+  const [pinnedResourcesConfigured, setPinnedResourcesConfigured] =
+    useState<PerspectivePinnedResource[]>();
   const defaultPins: DefaultPins = useMemo(
     () =>
       perspectiveExtensions.reduce(
@@ -162,9 +161,8 @@ const PinnedResourcesConfiguration: FC<PinnedResourcesConfigurationProps> = ({
     </div>
   ));
 
-  const [consoleConfig, consoleConfigLoaded, consoleConfigError] = useConsoleOperatorConfig<
-    PerspectivesConsoleConfig
-  >();
+  const [consoleConfig, consoleConfigLoaded, consoleConfigError] =
+    useConsoleOperatorConfig<PerspectivesConsoleConfig>();
 
   const [configuredPerspectives, setConfiguredPerspectives] = useState<Perspective[]>();
   useEffect(() => {

@@ -31,10 +31,13 @@ const orderQuickStarts = (
 
   // Prioritize featured quick starts and keep specified order
   if (featured) {
-    const featuredQuickStartsByName = filteredQuickStarts.reduce((acc, q) => {
-      acc[q.metadata.name] = q;
-      return acc;
-    }, {} as Record<string, QuickStart>);
+    const featuredQuickStartsByName = filteredQuickStarts.reduce(
+      (acc, q) => {
+        acc[q.metadata.name] = q;
+        return acc;
+      },
+      {} as Record<string, QuickStart>,
+    );
     featured.forEach((quickStartName) => {
       if (
         featuredQuickStartsByName[quickStartName] &&

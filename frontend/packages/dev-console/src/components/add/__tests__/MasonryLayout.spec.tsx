@@ -71,7 +71,7 @@ describe('Masonry Layout', () => {
     window.HTMLElement.prototype.getBoundingClientRect = () =>
       ({
         width,
-      } as DOMRect);
+      }) as DOMRect;
   };
 
   it('should render loading component if loading is true and LoadingComponent is defined', async () => {

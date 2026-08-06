@@ -109,7 +109,7 @@ type StatusGroup = {
 
 export type StatusGroupMapper<
   T extends K8sResourceCommon = K8sResourceCommon,
-  R extends { [key: string]: K8sResourceCommon[] } = { [key: string]: K8sResourceCommon[] }
+  R extends { [key: string]: K8sResourceCommon[] } = { [key: string]: K8sResourceCommon[] },
 > = (resources: T[], additionalResources?: R) => StatusGroup;
 
 export enum HealthState {
@@ -240,7 +240,7 @@ export type FirehoseResource = {
  * @see WatchK8sResultsObject
  */
 export type FirehoseResult<
-  R extends K8sResourceCommon | K8sResourceCommon[] = K8sResourceCommon[]
+  R extends K8sResourceCommon | K8sResourceCommon[] = K8sResourceCommon[],
 > = {
   loaded: boolean;
   loadError: string;
@@ -800,9 +800,9 @@ export type Humanize = (
 ) => HumanizeResult;
 
 export enum LIMIT_STATE {
-  'ERROR' = 'ERROR',
-  'WARN' = 'WARN',
-  'OK' = 'OK',
+  ERROR = 'ERROR',
+  WARN = 'WARN',
+  OK = 'OK',
 }
 
 export type TopConsumerPopoverProps = {

@@ -81,19 +81,17 @@ const fetchPodMetrics = (namespace: string): Promise<UIActions.PodMetrics> => {
         : 'pod:container_cpu_usage:sum',
     },
   ];
-  const promises = metrics.map(
-    ({ key, query }): Promise<UIActions.PodMetrics> => {
-      const url = namespace
-        ? `${PROMETHEUS_TENANCY_BASE_PATH}/api/v1/query?namespace=${namespace}&query=${query}`
-        : `${PROMETHEUS_BASE_PATH}/api/v1/query?query=${query}`;
-      return coFetchJSON(url).then(({ data: { result } }) =>
-        result.reduce((acc, data) => {
-          const value = Number(data.value[1]);
-          return _.set(acc, [key, data.metric.namespace, data.metric.pod], value);
-        }, {}),
-      );
-    },
-  );
+  const promises = metrics.map(({ key, query }): Promise<UIActions.PodMetrics> => {
+    const url = namespace
+      ? `${PROMETHEUS_TENANCY_BASE_PATH}/api/v1/query?namespace=${namespace}&query=${query}`
+      : `${PROMETHEUS_BASE_PATH}/api/v1/query?query=${query}`;
+    return coFetchJSON(url).then(({ data: { result } }) =>
+      result.reduce((acc, data) => {
+        const value = Number(data.value[1]);
+        return _.set(acc, [key, data.metric.namespace, data.metric.pod], value);
+      }, {}),
+    );
+  });
   return Promise.all(promises).then((data: unknown[]) => _.assign({}, ...data));
 };
 

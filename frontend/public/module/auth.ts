@@ -3,14 +3,8 @@ import { coFetch } from '@console/shared/src/utils/console-fetch';
 import { setAuthHandlerProvider } from '@console/shared/src/utils/validate-status';
 import { stripBasePath } from '../components/utils/link';
 
-const {
-  kubeAdminLogoutURL,
-  loginErrorURL,
-  loginSuccessURL,
-  loginURL,
-  logoutRedirect,
-  logoutURL,
-} = window.SERVER_FLAGS;
+const { kubeAdminLogoutURL, loginErrorURL, loginSuccessURL, loginURL, logoutRedirect, logoutURL } =
+  window.SERVER_FLAGS;
 
 export const LOGIN_ERROR_PATH = loginErrorURL
   ? new URL(loginErrorURL, window.location.href).pathname

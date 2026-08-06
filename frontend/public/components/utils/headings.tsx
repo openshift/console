@@ -92,9 +92,8 @@ export const ConnectedPageHeading = connectToModel(
       [kind],
     );
 
-    const [resourceProviderExtensions, resourceProviderExtensionsResolved] = useResolvedExtensions<
-      ResourceActionProvider
-    >(resourceProviderGuard);
+    const [resourceProviderExtensions, resourceProviderExtensionsResolved] =
+      useResolvedExtensions<ResourceActionProvider>(resourceProviderGuard);
 
     const hasExtensionActions =
       resourceProviderExtensionsResolved && resourceProviderExtensions?.length > 0;

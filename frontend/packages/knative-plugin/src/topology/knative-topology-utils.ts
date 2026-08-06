@@ -351,9 +351,9 @@ const getPubSubSubscribers = (
               ) {
                 return acc;
               }
-              const relationshipResources = (
-                resources[relationshipResource].data || []
-              ).filter((relationshipRes) => isRelatedResource(relRes, relationshipRes, resource));
+              const relationshipResources = (resources[relationshipResource].data || []).filter(
+                (relationshipRes) => isRelatedResource(relRes, relationshipRes, resource),
+              );
               const relationShipData = relationshipResources.map((res) => ({
                 kind: referenceFor(res),
                 name: res.metadata.name,
@@ -1341,7 +1341,7 @@ export const getKameletSinkAndSourceBindings = (resources) => {
   const camelKameletResources: K8sResourceKind[] =
     resources?.kamelets?.data?.length > 0
       ? resources.kamelets.data
-      : resources?.kameletGlobalNS?.data ?? [];
+      : (resources?.kameletGlobalNS?.data ?? []);
   const sinkCamelKameletResources: K8sResourceKind[] = camelKameletResources.filter(
     (camelKamelet) => camelKamelet.metadata.labels['camel.apache.org/kamelet.type'] === 'sink',
   );

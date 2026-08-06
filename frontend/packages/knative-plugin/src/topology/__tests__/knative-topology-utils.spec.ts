@@ -52,7 +52,8 @@ jest.mock('../../utils/fetch-dynamic-eventsources-utils', () => ({
 }));
 
 const k8sUpdateMock = k8sResourceModule.k8sUpdate as jest.Mock;
-const getDynamicEventSourcesModelRefsMock = knativefetchutils.getDynamicEventSourcesModelRefs as jest.Mock;
+const getDynamicEventSourcesModelRefsMock =
+  knativefetchutils.getDynamicEventSourcesModelRefs as jest.Mock;
 
 describe('knative topology utils', () => {
   beforeEach(() => {

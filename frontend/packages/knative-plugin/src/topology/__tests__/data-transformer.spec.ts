@@ -57,7 +57,8 @@ jest.mock('@console/dynamic-plugin-sdk/src/app/components/utils/rbac', () => ({
   checkAccess: jest.fn(),
 }));
 
-const getDynamicEventSourcesModelRefsMock = knativefetchutils.getDynamicEventSourcesModelRefs as jest.Mock;
+const getDynamicEventSourcesModelRefsMock =
+  knativefetchutils.getDynamicEventSourcesModelRefs as jest.Mock;
 const k8sKillMock = k8sResourceModule.k8sKill as jest.Mock;
 const k8sListMock = k8sResourceModule.k8sList as jest.Mock;
 const checkAccessMock = rbacModule.checkAccess as jest.Mock;

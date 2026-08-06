@@ -142,8 +142,11 @@ const GitSection: FC<GitSectionProps> = ({
     : formikErrors;
   const formReloadCount: number = _.get(formikValues, 'formReloadCount');
 
-  const { url: defaultSampleURL, dir: defaultSampleDir, ref: defaultSampleRef } =
-    defaultSample || {};
+  const {
+    url: defaultSampleURL,
+    dir: defaultSampleDir,
+    ref: defaultSampleRef,
+  } = defaultSample || {};
   const defaultSampleTagObj = useMemo(
     () =>
       defaultSampleURL

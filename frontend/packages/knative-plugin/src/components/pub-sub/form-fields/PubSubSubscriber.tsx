@@ -23,9 +23,8 @@ type PubSubSubscriberProps = {
 
 const PubSubSubscriber: FC<PubSubSubscriberProps> = ({ autoSelect = true, cancel }) => {
   const { t } = useTranslation('knative-plugin');
-  const { values, setFieldValue, setFieldTouched, validateForm, setStatus } = useFormikContext<
-    FormikValues
-  >();
+  const { values, setFieldValue, setFieldTouched, validateForm, setStatus } =
+    useFormikContext<FormikValues>();
   const { namespace } = values.formData.metadata;
   const [resourceAlert, setResourceAlert] = useState(false);
   const autocompleteFilter = (strText, item): boolean => fuzzy(strText, item?.props?.name);

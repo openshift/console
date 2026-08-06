@@ -58,10 +58,9 @@ export const PackageManifestTableHeaderWithCatalogSource = () => [
   },
 ];
 
-export const PackageManifestTableRow: FC<RowFunctionArgs<
-  PackageManifestKind,
-  { catalogSource: CatalogSourceKind }
->> = ({ obj: packageManifest, customData }) => {
+export const PackageManifestTableRow: FC<
+  RowFunctionArgs<PackageManifestKind, { catalogSource: CatalogSourceKind }>
+> = ({ obj: packageManifest, customData }) => {
   const channel = defaultChannelFor(packageManifest);
 
   const { displayName, version, provider } = channel?.currentCSVDesc ?? {};

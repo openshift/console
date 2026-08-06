@@ -43,10 +43,12 @@ const resourcesToOmit: K8sGroupVersionKind[] = [
   },
 ];
 
-const matchModel = (toMatchWith: K8sGroupVersionKind) => (model: K8sGroupVersionKind): boolean =>
-  model.group === toMatchWith.group &&
-  model.version === toMatchWith.version &&
-  model.kind === toMatchWith.kind;
+const matchModel =
+  (toMatchWith: K8sGroupVersionKind) =>
+  (model: K8sGroupVersionKind): boolean =>
+    model.group === toMatchWith.group &&
+    model.version === toMatchWith.version &&
+    model.kind === toMatchWith.kind;
 
 const filterNonUpgradableResources = (model: K8sModel): boolean =>
   !resourcesToOmit.find(

@@ -18,9 +18,9 @@ export const getOperatorsComponentFactory = (
     case TYPE_OPERATOR_BACKED_SERVICE:
       return withSelection({ controlled: true })(
         withContextMenu(contextMenuActions)(
-          withNoDrop()(withDragNode(noRegroupDragSourceSpec)(OperatorBackedService)) as FC<
-            WithContextMenuProps
-          >,
+          withNoDrop()(
+            withDragNode(noRegroupDragSourceSpec)(OperatorBackedService),
+          ) as FC<WithContextMenuProps>,
         ),
       );
     default:

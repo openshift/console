@@ -48,19 +48,16 @@ export const useWatchVirtualMachineInstances = (
       }
     : undefined;
 
-  const [
-    virtualMachineInstances,
-    virtualMachineInstancesLoaded,
-    virtualMachineInstancesLoadError,
-  ] = useAccessibleResources(
-    isKubevirtPluginActive
-      ? {
-          groupVersionKind: VirtualMachineInstanceGroupVersionKind,
-          isList: true,
-          namespaced: true,
-        }
-      : undefined,
-  );
+  const [virtualMachineInstances, virtualMachineInstancesLoaded, virtualMachineInstancesLoadError] =
+    useAccessibleResources(
+      isKubevirtPluginActive
+        ? {
+            groupVersionKind: VirtualMachineInstanceGroupVersionKind,
+            isList: true,
+            namespaced: true,
+          }
+        : undefined,
+    );
 
   const nodeVirtualMachineInstances = useMemo(
     () => filterVirtualMachineInstancesByNode(virtualMachineInstances, nodeName),

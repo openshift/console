@@ -27,8 +27,7 @@ export const ExploreAdminFeaturesGettingStartedCard: FC = () => {
         id: 'openshift-ai',
         title: t('OpenShift AI'),
         description: t('Build, deploy, and manage AI-enabled applications.'),
-        href:
-          '/catalog?catalogType=operator&keyword=openshift+ai&selectedId=rhods-operator-redhat-operators-openshift-marketplace',
+        href: '/catalog?catalogType=operator&keyword=openshift+ai&selectedId=rhods-operator-redhat-operators-openshift-marketplace',
       },
       {
         id: 'trusted-software-supply-chain',

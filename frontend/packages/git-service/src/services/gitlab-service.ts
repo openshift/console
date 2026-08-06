@@ -73,9 +73,14 @@ export class GitlabService extends BaseService {
   };
 
   getRepoMetadata(): RepoMetadata {
-    const { name, owner, protocols, port, resource, full_name: fullName } = GitUrlParse(
-      this.gitsource.url,
-    );
+    const {
+      name,
+      owner,
+      protocols,
+      port,
+      resource,
+      full_name: fullName,
+    } = GitUrlParse(this.gitsource.url);
     const contextDir = removeLeadingSlash(this.gitsource.contextDir);
     const rawProtocol = protocols?.[0];
     const isHttpProtocol = rawProtocol === 'http' || rawProtocol === 'https';

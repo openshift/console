@@ -70,9 +70,8 @@ const useMachineHealthCheckColumns = (): {
   resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('public');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
-    MachineHealthCheckModel,
-  );
+  const { getResizableProps, resetAllColumnWidths } =
+    useColumnWidthSettings(MachineHealthCheckModel);
 
   const columns: TableColumn<MachineHealthCheckKind>[] = useMemo(
     () => [

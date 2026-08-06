@@ -151,10 +151,10 @@ export const OperatorHealthItem: FC<OperatorHealthItemProps> = ({ operatorSubsys
 export const URLHealthItem: FC<URLHealthItemProps> = ({ subsystem, models }) => {
   const { t } = useTranslation('public');
 
-  const urls = useMemo(() => [{ url: subsystem.url, fetch: subsystem.fetch }], [
-    subsystem.url,
-    subsystem.fetch,
-  ]);
+  const urls = useMemo(
+    () => [{ url: subsystem.url, fetch: subsystem.fetch }],
+    [subsystem.url, subsystem.fetch],
+  );
   const { urlResults } = useDashboardResources({ urls });
   const modelExists =
     subsystem.additionalResource && !!models.get(subsystem.additionalResource.kind);
@@ -198,9 +198,10 @@ export const PrometheusHealthItem: FC<PrometheusHealthItemProps> = ({ subsystem,
   const { t } = useTranslation('public');
   const { infrastructure } = useContext(ClusterDashboardContext);
 
-  const prometheusQueries = useMemo(() => subsystem.queries.map((query) => ({ query })), [
-    subsystem.queries,
-  ]);
+  const prometheusQueries = useMemo(
+    () => subsystem.queries.map((query) => ({ query })),
+    [subsystem.queries],
+  );
   const { prometheusResults } = useDashboardResources({ prometheusQueries });
 
   const modelExists =
@@ -267,9 +268,8 @@ export const ResourceHealthItem: FC<ResourceHealthItemProps> = ({ subsystem, nam
     [resources, namespace],
   );
 
-  const resourcesResult: WatchK8sResults<ResourcesObject> = useK8sWatchResources(
-    resourcesWithNamespace,
-  );
+  const resourcesResult: WatchK8sResults<ResourcesObject> =
+    useK8sWatchResources(resourcesWithNamespace);
   const healthState: SubsystemHealth = healthHandler?.(resourcesResult, t) ?? {
     state: HealthState.NOT_AVAILABLE,
     message: healthStateMessage(HealthState.NOT_AVAILABLE, t),

@@ -167,10 +167,10 @@ export const CatalogView: FC<CatalogViewProps> = ({
     return [allCategory, ...sortedCategories, otherCategory];
   }, [categories, t]);
 
-  const categorizedIds = useMemo(() => categorize(items, catalogCategories), [
-    catalogCategories,
-    items,
-  ]);
+  const categorizedIds = useMemo(
+    () => categorize(items, catalogCategories),
+    [catalogCategories, items],
+  );
 
   const activeCategory = useMemo(
     () =>

@@ -209,9 +209,10 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
   const userInactivityTimeout = useRef(null);
   const isKubeAdmin = username === 'kube:admin';
 
-  const drawerToggle = useCallback(() => dispatch(UIActions.notificationDrawerToggleExpanded()), [
-    dispatch,
-  ]);
+  const drawerToggle = useCallback(
+    () => dispatch(UIActions.notificationDrawerToggleExpanded()),
+    [dispatch],
+  );
 
   const getImportYAMLPath = () => formatNamespacedRouteForResource('import', activeNamespace);
   const onFeedbackModal = () => setIsFeedbackModalOpen(true);

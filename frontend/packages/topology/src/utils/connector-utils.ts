@@ -270,7 +270,7 @@ const getSourceAndTargetForBinding = async (
 };
 
 export const doConnectsToBinding = async <
-  R extends K8sResourceKind[] | K8sResourceKind = K8sResourceKind[]
+  R extends K8sResourceKind[] | K8sResourceKind = K8sResourceKind[],
 >(
   resources: R,
   contextualSource: string,

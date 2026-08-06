@@ -343,5 +343,5 @@ type GetInfrastructureFeatureOptions = AnnotationParserOptions & {
 
 type AnnotationParser<
   Result = any,
-  Options extends AnnotationParserOptions = AnnotationParserOptions
+  Options extends AnnotationParserOptions = AnnotationParserOptions,
 > = (annotations: ObjectMetadata['annotations'], options?: Options) => Result;

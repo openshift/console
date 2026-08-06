@@ -29,8 +29,13 @@ const ImageStreamTagDropdown: FC<{
   const unmounted = useRef(false);
   let imageStreamTagList = {};
   const { values, setFieldValue, initialValues, touched } = useFormikContext<FormikValues>();
-  const { name: resourceName, imageStream, application, formType, isi: isiValues } =
-    _.get(values, formContextField) || values;
+  const {
+    name: resourceName,
+    imageStream,
+    application,
+    formType,
+    isi: isiValues,
+  } = _.get(values, formContextField) || values;
   const isiPorts = isiValues?.ports;
   const { imageStream: initialImageStream, route: initialRoute } =
     _.get(initialValues, formContextField) || initialValues;

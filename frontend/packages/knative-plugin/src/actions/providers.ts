@@ -82,10 +82,10 @@ export const useSinkPubSubActionProvider = (resource: K8sResourceKind) => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource));
   const commonActions = useCommonResourceActions(kindObj, resource);
   const moveSinkSourceAction = useMoveSinkPubsubAction(kindObj, resource);
-  const actions = useMemo(() => [moveSinkSourceAction, ...commonActions], [
-    moveSinkSourceAction,
-    commonActions,
-  ]);
+  const actions = useMemo(
+    () => [moveSinkSourceAction, ...commonActions],
+    [moveSinkSourceAction, commonActions],
+  );
 
   return [actions, !inFlight, undefined];
 };

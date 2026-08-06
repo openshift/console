@@ -23,7 +23,7 @@ export const getRangeVectorStats: GetRangeStats = (
           y: yMutator?.(y) ?? defaultYMutator(y),
           description: _.isFunction(description) ? description(r, index) : description,
           symbol,
-        } as DataPoint<Date>),
+        }) as DataPoint<Date>,
     ),
   );
 };

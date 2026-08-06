@@ -61,9 +61,8 @@ export const TopologyPage: FC<TopologyPageProps> = ({
 }) => {
   const { getQueryArgument, setQueryArgument, removeQueryArgument } = useQueryParamsMutator();
   const [preferredTopologyView, preferredTopologyViewLoaded] = usePreferredTopologyView();
-  const [topologyLastView, setTopologyLastView, isTopologyLastViewLoaded] = useUserPreference<
-    TopologyViewType
-  >(TOPOLOGY_VIEW_CONFIG_USER_PREFERENCE_KEY, defaultViewType);
+  const [topologyLastView, setTopologyLastView, isTopologyLastViewLoaded] =
+    useUserPreference<TopologyViewType>(TOPOLOGY_VIEW_CONFIG_USER_PREFERENCE_KEY, defaultViewType);
 
   const params = useParams();
 

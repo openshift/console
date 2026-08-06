@@ -22,10 +22,13 @@ const orderCatalogItems = (allCatalogItems: CatalogItem[], featured: string[]): 
 
   // Prioritze featured catalog items
   if (featured) {
-    const featuredQuickStartsByName = allCatalogItems.reduce((acc, ci) => {
-      acc[ci.uid] = ci;
-      return acc;
-    }, {} as Record<string, CatalogItem>);
+    const featuredQuickStartsByName = allCatalogItems.reduce(
+      (acc, ci) => {
+        acc[ci.uid] = ci;
+        return acc;
+      },
+      {} as Record<string, CatalogItem>,
+    );
     featured.forEach((uid) => {
       if (featuredQuickStartsByName[uid]) {
         orderedCatalogItems.push(featuredQuickStartsByName[uid]);

@@ -30,8 +30,9 @@ export const getRelationshipProvider = (): DropTargetSpec<
     const sourceNode = getSourceNode(monitor);
     const targetNode = props.element;
 
-    const topologyRelationshipExtensions = targetNode.getGraph()?.getData()
-      ?.relationshipProviderExtensions;
+    const topologyRelationshipExtensions = targetNode
+      .getGraph()
+      ?.getData()?.relationshipProviderExtensions;
     const relationshipExtension =
       sourceNode instanceof OdcBaseNode &&
       targetNode instanceof OdcBaseNode &&

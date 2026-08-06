@@ -114,11 +114,8 @@ export const useTableData = ({
     [tableSelectorCreator, listId],
   );
 
-  const [
-    currentSortField,
-    currentSortFunc,
-    currentSortOrder = defaultSortOrder,
-  ] = useConsoleSelector(sortSelector);
+  const [currentSortField, currentSortFunc, currentSortOrder = defaultSortOrder] =
+    useConsoleSelector(sortSelector);
 
   return useMemo(() => {
     const allFilters = staticFilters ? Object.assign({}, filters, ...staticFilters) : filters;

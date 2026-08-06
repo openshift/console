@@ -197,8 +197,12 @@ export const getStrategyData = (
   switch (type) {
     case DeploymentStrategyType.recreateParams: {
       if (resourceType === Resources.Kubernetes) return {};
-      const { mid: midHook, post: postHook, pre: preHook, timeoutSeconds } =
-        strategy.recreateParams ?? {};
+      const {
+        mid: midHook,
+        post: postHook,
+        pre: preHook,
+        timeoutSeconds,
+      } = strategy.recreateParams ?? {};
       return {
         recreateParams: {
           timeoutSeconds,
@@ -458,8 +462,12 @@ const getUpdatedStrategy = (strategy: DeploymentStrategy, resourceType: string) 
   ]);
   switch (type) {
     case DeploymentStrategyType.recreateParams: {
-      const { mid: midHook, post: postHook, pre: preHook, timeoutSeconds } =
-        strategy.recreateParams ?? {};
+      const {
+        mid: midHook,
+        post: postHook,
+        pre: preHook,
+        timeoutSeconds,
+      } = strategy.recreateParams ?? {};
       return {
         ...newStrategy,
         ...(resourceType === Resources.OpenShift
@@ -613,8 +621,8 @@ export const convertEditFormToDeployment = (
           ...(deployment.metadata.name
             ? {}
             : newDeployment.metadata.name
-            ? { app: newDeployment.metadata.name }
-            : {}),
+              ? { app: newDeployment.metadata.name }
+              : {}),
         },
         triggers: [
           ...(fromImageStreamTag
@@ -660,8 +668,8 @@ export const convertEditFormToDeployment = (
             ...(deployment.metadata.name
               ? {}
               : newDeployment.metadata.name
-              ? { app: newDeployment.metadata.name }
-              : {}),
+                ? { app: newDeployment.metadata.name }
+                : {}),
           },
         },
       },

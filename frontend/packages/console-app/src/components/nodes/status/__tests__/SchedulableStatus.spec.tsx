@@ -29,7 +29,7 @@ describe('SchedulableStatus', () => {
       spec: {
         unschedulable,
       },
-    } as NodeKind);
+    }) as NodeKind;
 
   describe('isUnschedulableActive', () => {
     it('should return true when node is unschedulable', () => {

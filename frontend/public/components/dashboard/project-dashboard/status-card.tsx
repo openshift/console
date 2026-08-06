@@ -15,9 +15,10 @@ import { ProjectDashboardContext } from './project-dashboard-context';
 
 export const StatusCard = memo(() => {
   const { obj } = useContext(ProjectDashboardContext);
-  const [subsystemExtensions, extensionsResolved] = useResolvedExtensions<
-    DashboardsOverviewHealthResourceSubsystem
-  >(isDashboardsOverviewHealthResourceSubsystem);
+  const [subsystemExtensions, extensionsResolved] =
+    useResolvedExtensions<DashboardsOverviewHealthResourceSubsystem>(
+      isDashboardsOverviewHealthResourceSubsystem,
+    );
   const subsystem = useMemo(
     () => subsystemExtensions.find((s) => s.properties.title === 'Image Vulnerabilities'),
     [subsystemExtensions],

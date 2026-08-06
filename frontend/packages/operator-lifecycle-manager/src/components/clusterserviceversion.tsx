@@ -1183,9 +1183,8 @@ const ClusterServiceVersionDetails: FC<ClusterServiceVersionDetailsProps> = (pro
 
   const csvPlugins = getClusterServiceVersionPlugins(metadata?.annotations);
   const permissions = _.uniqBy(spec?.install?.spec?.permissions, 'serviceAccountName');
-  const { deprecatedPackage, deprecatedChannel, deprecatedVersion } = findDeprecatedOperator(
-    subscription,
-  );
+  const { deprecatedPackage, deprecatedChannel, deprecatedVersion } =
+    findDeprecatedOperator(subscription);
 
   return (
     <>

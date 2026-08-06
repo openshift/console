@@ -1296,9 +1296,10 @@ const UpdateAssessmentCard: FC<{
     () => conditions.find((c) => c.type === 'Failing' && c.status === 'True'),
     [conditions],
   );
-  const hasOperatorProblems = useMemo(() => hasOperatorIssues(clusterOperators), [
-    clusterOperators,
-  ]);
+  const hasOperatorProblems = useMemo(
+    () => hasOperatorIssues(clusterOperators),
+    [clusterOperators],
+  );
 
   // Determine button visibility using the new unified logic
   const { showStatus, showPreCheck } = useMemo(

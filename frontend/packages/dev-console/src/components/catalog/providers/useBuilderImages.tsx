@@ -139,9 +139,8 @@ const useBuilderImages: ExtensionHook<CatalogItem[]> = ({
     namespace: 'openshift',
     prop: 'imageStreams',
   };
-  const [imageStreams, loaded, loadedError] = useK8sWatchResource<K8sResourceKind[]>(
-    resourceSelector,
-  );
+  const [imageStreams, loaded, loadedError] =
+    useK8sWatchResource<K8sResourceKind[]>(resourceSelector);
 
   const builderImageStreams = useMemo(() => _.filter(imageStreams, isBuilder), [imageStreams]);
 

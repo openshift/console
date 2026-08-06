@@ -302,9 +302,8 @@ const useMachineConfigPoolColumns = (): {
   resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('public');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
-    MachineConfigPoolModel,
-  );
+  const { getResizableProps, resetAllColumnWidths } =
+    useColumnWidthSettings(MachineConfigPoolModel);
 
   const columns: TableColumn<MachineConfigPoolKind>[] = useMemo(
     () => [

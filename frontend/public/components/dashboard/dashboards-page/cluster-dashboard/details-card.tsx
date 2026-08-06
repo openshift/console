@@ -96,14 +96,12 @@ const clusterVersionResource: WatchK8sResource = {
 export const DetailsCard = memo(() => {
   const { t } = useTranslation('public');
   const openshiftFlag = useFlag(FLAGS.OPENSHIFT);
-  const { infrastructure, infrastructureLoaded, infrastructureError } = useContext(
-    ClusterDashboardContext,
-  );
+  const { infrastructure, infrastructureLoaded, infrastructureError } =
+    useContext(ClusterDashboardContext);
   const [k8sVersion, setK8sVersion] = useState<{ gitVersion?: string }>();
   const [k8sVersionError, setK8sVersionError] = useState();
-  const [clusterVersionData, clusterVersionLoaded, clusterVersionError] = useK8sWatchResource<
-    ClusterVersionKind
-  >(clusterVersionResource);
+  const [clusterVersionData, clusterVersionLoaded, clusterVersionError] =
+    useK8sWatchResource<ClusterVersionKind>(clusterVersionResource);
   const [customDetailItemsExtensions] = useResolvedExtensions<CustomOverviewDetailItem>(
     isCustomOverviewDetailItem,
   );

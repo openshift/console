@@ -333,16 +333,14 @@ export const NameValueEditor: FC<NameValueEditorProps> = ({
           </GridItem>
           <GridItem span={12}>
             <DragDropSort
-              items={nameValuePairs.map(
-                (pair, i): DraggableObject => ({
-                  id: `pair-${(pair[NameValueEditorPair.Index] as number) ?? i}`,
-                  props: {
-                    dragButtonAriaLabel: t('Drag to reorder'),
-                    className: 'pf-v6-u-display-flex pf-v6-u-align-items-center',
-                  },
-                  content: makePairElement(pair, i),
-                }),
-              )}
+              items={nameValuePairs.map((pair, i): DraggableObject => ({
+                id: `pair-${(pair[NameValueEditorPair.Index] as number) ?? i}`,
+                props: {
+                  dragButtonAriaLabel: t('Drag to reorder'),
+                  className: 'pf-v6-u-display-flex pf-v6-u-align-items-center',
+                },
+                content: makePairElement(pair, i),
+              }))}
               onDrop={handleDrop}
             >
               <div className="pairs-list__drag-container" />
@@ -506,13 +504,11 @@ export const EnvFromEditor: FC<EnvFromEditorProps> = ({
           </GridItem>
           <GridItem span={12}>
             <DragDropSort
-              items={nameValuePairs.map(
-                (pair, i): DraggableObject => ({
-                  id: `pair-${(pair[EnvFromPair.Index] as number) ?? i}`,
-                  props: { className: 'pf-v6-u-display-flex pf-v6-u-align-items-center' },
-                  content: makeEnvFromElement(pair, i),
-                }),
-              )}
+              items={nameValuePairs.map((pair, i): DraggableObject => ({
+                id: `pair-${(pair[EnvFromPair.Index] as number) ?? i}`,
+                props: { className: 'pf-v6-u-display-flex pf-v6-u-align-items-center' },
+                content: makeEnvFromElement(pair, i),
+              }))}
               onDrop={handleDrop}
             >
               <div className="pairs-list__drag-container" />

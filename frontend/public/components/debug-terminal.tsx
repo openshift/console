@@ -40,9 +40,8 @@ const getDebugPod = (debugPodName: string, podToDebug: PodKind, containerName: s
   delete debugPod.metadata.labels;
   debugPod.metadata.annotations = pickWorkloadAnnotations(debugPod.metadata.annotations);
   debugPod.metadata.annotations['debug.openshift.io/source-container'] = containerName;
-  debugPod.metadata.annotations[
-    'debug.openshift.io/source-resource'
-  ] = `/v1, Resource=pods/${podToDebug?.metadata?.name}`;
+  debugPod.metadata.annotations['debug.openshift.io/source-resource'] =
+    `/v1, Resource=pods/${podToDebug?.metadata?.name}`;
   debugPod.metadata.generateName = debugPodName;
   debugPod.spec.restartPolicy = 'Never';
 

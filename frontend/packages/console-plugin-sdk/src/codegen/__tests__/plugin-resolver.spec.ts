@@ -59,20 +59,18 @@ describe('readPackages', () => {
       }),
     };
 
-    readPkgMock.mockImplementation(
-      ({ cwd }): Package => {
-        if (cwd === appPackagePath) {
-          return appPackage;
-        }
-        if (cwd === pluginPackagePath) {
-          return pluginPackage;
-        }
-        if (cwd === utilsPackagePath) {
-          return utilsPackage;
-        }
-        throw new Error('invalid mock arguments');
-      },
-    );
+    readPkgMock.mockImplementation(({ cwd }): Package => {
+      if (cwd === appPackagePath) {
+        return appPackage;
+      }
+      if (cwd === pluginPackagePath) {
+        return pluginPackage;
+      }
+      if (cwd === utilsPackagePath) {
+        return utilsPackage;
+      }
+      throw new Error('invalid mock arguments');
+    });
 
     expect(
       readPackages([

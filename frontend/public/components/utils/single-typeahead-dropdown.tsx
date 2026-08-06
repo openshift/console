@@ -88,10 +88,10 @@ export const SingleTypeaheadDropdown: FC<SingleTypeaheadDropdownProps> = ({
   const { t } = useTranslation('public');
   const [isOpen, setIsOpen] = useState(false);
   const [selectOptions, setSelectOptions] = useState<SelectOptionProps[]>(items);
-  const selectedValue = useMemo(() => selectOptions.find((i) => i.value === selectedKey), [
-    selectOptions,
-    selectedKey,
-  ]);
+  const selectedValue = useMemo(
+    () => selectOptions.find((i) => i.value === selectedKey),
+    [selectOptions, selectedKey],
+  );
   const [inputValue, setInputValue] = useState<string>(String(selectedValue?.children) || '');
   const [filterValue, setFilterValue] = useState<string>('');
   const [filteredSelectOptions, setFilteredSelectOptions] = useState<SelectOptionProps[]>(items);
@@ -362,7 +362,7 @@ export const SingleTypeaheadDropdown: FC<SingleTypeaheadDropdownProps> = ({
       <SelectList id={`${ID_PREFIX}-listbox`}>
         {filteredSelectOptions.map((v, k) => {
           const SelectOptionComponent =
-            v.value === CREATE_NEW ? SelectOption : OptionComponent ?? SelectOption;
+            v.value === CREATE_NEW ? SelectOption : (OptionComponent ?? SelectOption);
 
           return (
             <SelectOptionComponent

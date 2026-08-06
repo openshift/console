@@ -177,8 +177,8 @@ export const CatalogController: FC<CatalogControllerProps> = ({
           enableDetailsPanel
             ? openDetailsPanel
             : item.cta?.callback
-            ? () => item.cta.callback()
-            : null
+              ? () => item.cta.callback()
+              : null
         }
         href={
           !enableDetailsPanel

@@ -1344,8 +1344,7 @@ export const MockKnativeBuildConfig = {
       sourceStrategy: {
         from: {
           kind: 'DockerImage',
-          name:
-            'image-registry.openshift-image-registry.svc:5000/openshift/modern-webapp@sha256:eb672caddbf6f1d2283ecc2e7f69142bd605f5a0067c951dd9b829f29343edc4',
+          name: 'image-registry.openshift-image-registry.svc:5000/openshift/modern-webapp@sha256:eb672caddbf6f1d2283ecc2e7f69142bd605f5a0067c951dd9b829f29343edc4',
         },
         pullSecret: { name: 'builder-dockercfg-9jcf2' },
       },

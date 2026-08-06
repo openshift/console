@@ -161,10 +161,10 @@ const StorageClassList: FC<StorageClassListProps> = ({ data, loaded, ...props })
   const { t } = useTranslation('public');
   const { columns, resetAllColumnWidths } = useStorageClassColumns();
   const isKubevirtPluginActive = useIsKubevirtPluginActive();
-  const getDataViewRows = useMemo(() => getDataViewRowsCreator(t, isKubevirtPluginActive), [
-    t,
-    isKubevirtPluginActive,
-  ]);
+  const getDataViewRows = useMemo(
+    () => getDataViewRowsCreator(t, isKubevirtPluginActive),
+    [t, isKubevirtPluginActive],
+  );
 
   return (
     <Suspense fallback={<LoadingBox />}>

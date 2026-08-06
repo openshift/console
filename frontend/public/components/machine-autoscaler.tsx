@@ -100,9 +100,8 @@ const useMachineAutoscalerColumns = (): {
   resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('public');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
-    MachineAutoscalerModel,
-  );
+  const { getResizableProps, resetAllColumnWidths } =
+    useColumnWidthSettings(MachineAutoscalerModel);
 
   const columns: TableColumn<K8sResourceKind>[] = useMemo(
     () => [

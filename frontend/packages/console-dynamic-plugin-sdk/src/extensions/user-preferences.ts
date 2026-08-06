@@ -39,9 +39,7 @@ export type UserPreferenceCustomField = {
 };
 
 export type UserPreferenceField =
-  | UserPreferenceDropdownField
-  | UserPreferenceCheckboxField
-  | UserPreferenceCustomField;
+  UserPreferenceDropdownField | UserPreferenceCheckboxField | UserPreferenceCustomField;
 
 /** This extension can be used to add a group on the console user-preferences page.
     It will appear as a vertical tab option on the console user-preferences page. */

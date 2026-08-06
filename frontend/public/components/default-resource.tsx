@@ -181,15 +181,18 @@ const getDataViewRows = (
     const hasExtensionActions =
       resourceProviderExtensionsResolved && resourceProviderExtensions?.length > 0;
 
-    const additionalPrinterColumnsCells = additionalPrinterColumns.reduce((acc, col) => {
-      acc[getAdditionaPrinterColumnID(col)] = {
-        cell: <AdditionalPrinterColumnValue key={col.name} col={col} obj={obj} />,
-        props: {
-          'data-test': `additional-printer-column-data-${col.name}`,
-        },
-      };
-      return acc;
-    }, {} as Record<string, { cell: ReactNode; props?: any }>);
+    const additionalPrinterColumnsCells = additionalPrinterColumns.reduce(
+      (acc, col) => {
+        acc[getAdditionaPrinterColumnID(col)] = {
+          cell: <AdditionalPrinterColumnValue key={col.name} col={col} obj={obj} />,
+          props: {
+            'data-test': `additional-printer-column-data-${col.name}`,
+          },
+        };
+        return acc;
+      },
+      {} as Record<string, { cell: ReactNode; props?: any }>,
+    );
 
     const rowCells = {
       [tableColumnInfo[0].id]: {
@@ -310,9 +313,8 @@ export const DefaultList: FC<TableProps & { kinds: string[] }> = (props) => {
   const { t } = useTranslation('public');
   const { kinds, data, loaded } = props;
   const [model] = useK8sModel(kinds[0]);
-  const [additionalPrinterColumns, additionalPrinterColumnsLoaded] = useCRDAdditionalPrinterColumns(
-    model,
-  );
+  const [additionalPrinterColumns, additionalPrinterColumnsLoaded] =
+    useCRDAdditionalPrinterColumns(model);
   const columns = useDefaultResourceColumns(
     additionalPrinterColumnsLoaded ? additionalPrinterColumns : [],
   );
@@ -322,9 +324,8 @@ export const DefaultList: FC<TableProps & { kinds: string[] }> = (props) => {
       referenceForExtensionModel(e.properties.model as ExtensionK8sGroupModel) === kinds[0],
     [kinds],
   );
-  const [resourceProviderExtensions, resourceProviderExtensionsResolved] = useResolvedExtensions<
-    ResourceActionProvider
-  >(resourceProviderGuard);
+  const [resourceProviderExtensions, resourceProviderExtensionsResolved] =
+    useResolvedExtensions<ResourceActionProvider>(resourceProviderGuard);
 
   const getAriaLabel = () => {
     // API discovery happens asynchronously. Avoid runtime errors if the model hasn't loaded.
@@ -381,9 +382,8 @@ export const DefaultDetailsPage: FC<ComponentProps<typeof DetailsPage>> = (props
       referenceForExtensionModel(e.properties.model as ExtensionK8sGroupModel) === props.kind,
     [props.kind],
   );
-  const [resourceProviderExtensions, resourceProviderExtensionsResolved] = useResolvedExtensions<
-    ResourceActionProvider
-  >(resourceProviderGuard);
+  const [resourceProviderExtensions, resourceProviderExtensionsResolved] =
+    useResolvedExtensions<ResourceActionProvider>(resourceProviderGuard);
   const hasExtensionActions =
     resourceProviderExtensionsResolved && resourceProviderExtensions?.length > 0;
   return (

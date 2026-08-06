@@ -261,7 +261,7 @@ export const ConsoleSelect: FC<ConsoleSelectProps> = ({
           itemKey={key}
           content={content}
           selected={selected}
-          isBookmarked={enableBookmarks && bookmarks ? bookmarks[key] ?? false : undefined}
+          isBookmarked={enableBookmarks && bookmarks ? (bookmarks[key] ?? false) : undefined}
         />,
       );
     });
@@ -294,7 +294,7 @@ export const ConsoleSelect: FC<ConsoleSelectProps> = ({
             ref={toggleRef}
           >
             {titlePrefix && `${titlePrefix}: `}
-            {alwaysShowTitle ? title : selectedKey ? items[selectedKey] ?? title : title}
+            {alwaysShowTitle ? title : selectedKey ? (items[selectedKey] ?? title) : title}
           </MenuToggle>
         )}
         zIndex={9999}

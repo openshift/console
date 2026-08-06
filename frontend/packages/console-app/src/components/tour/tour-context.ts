@@ -137,9 +137,8 @@ export const useTourValuesForContext = (): TourContextType => {
     (state) => getRequiredFlagsByTour(state, selectorSteps),
     isEqual,
   );
-  const [tourCompletionState, setTourCompletionState, loaded] = useTourStateForPerspective(
-    activePerspective,
-  );
+  const [tourCompletionState, setTourCompletionState, loaded] =
+    useTourStateForPerspective(activePerspective);
   const isIntegrationTest = window.navigator.userAgent === INTEGRATION_TEST_USER_AGENT;
   const completed = tourCompletionState?.completed || isIntegrationTest;
   const onComplete = () => {

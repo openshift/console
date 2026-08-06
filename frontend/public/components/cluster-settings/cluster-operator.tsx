@@ -77,7 +77,7 @@ const getIcon = (status: OperatorStatus) =>
     [OperatorStatus.CannotUpdate]: <YellowExclamationTriangleIcon />,
     [OperatorStatus.Unavailable]: <RedExclamationCircleIcon />,
     [OperatorStatus.Unknown]: <RhUiUnknownIcon />,
-  }[status]);
+  })[status];
 
 const OperatorStatusIconAndLabel: FC<OperatorStatusIconAndLabelProps> = ({ status }) => {
   const icon = getIcon(status);

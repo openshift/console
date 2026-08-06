@@ -73,8 +73,8 @@ export const initialValuesFromK8sResource = (from: PodDisruptionBudgetKind): For
     _.isNil(from?.spec?.minAvailable) && _.isNil(from?.spec?.maxUnavailable)
       ? i18next.t('console-app~Requirement')
       : !_.isNil(from?.spec?.minAvailable)
-      ? 'minAvailable'
-      : 'maxUnavailable',
+        ? 'minAvailable'
+        : 'maxUnavailable',
 });
 
 export const patchPDB = (

@@ -129,15 +129,13 @@ const PopoverBody = memo<PopoverBodyProps>(
       () => (isOpen ? getResourceToWatch(model, namespace, fieldSelector) : null),
       [fieldSelector, isOpen, model, namespace],
     );
-    const [consumerData, consumerLoaded, consumersLoadError] = useK8sWatchResource<
-      K8sResourceCommon[]
-    >(k8sResource);
+    const [consumerData, consumerLoaded, consumersLoadError] =
+      useK8sWatchResource<K8sResourceCommon[]>(k8sResource);
 
-    const prometheusQueries = useMemo(() => (isOpen ? [{ query, namespace }] : []), [
-      query,
-      namespace,
-      isOpen,
-    ]);
+    const prometheusQueries = useMemo(
+      () => (isOpen ? [{ query, namespace }] : []),
+      [query, namespace, isOpen],
+    );
 
     const { prometheusResults } = useDashboardResources({
       prometheusQueries,

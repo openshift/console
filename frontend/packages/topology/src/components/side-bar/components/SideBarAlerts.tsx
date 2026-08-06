@@ -63,9 +63,8 @@ const ResolveResourceAlerts: FC<{
 });
 
 const SideBarAlerts: FC<{ element: GraphElement }> = ({ element }) => {
-  const [resourceAlertsExtension, resolved] = useResolvedExtensions<DetailsResourceAlert>(
-    isDetailsResourceAlert,
-  );
+  const [resourceAlertsExtension, resolved] =
+    useResolvedExtensions<DetailsResourceAlert>(isDetailsResourceAlert);
   return resolved ? (
     <>
       {resourceAlertsExtension.map(({ uid, properties: { contentProvider, ...props } }) => {

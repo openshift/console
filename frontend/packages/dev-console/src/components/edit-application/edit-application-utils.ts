@@ -341,9 +341,8 @@ export const getServerlessData = (resource: K8sResourceKind): ServerlessData => 
     } = resource;
     const annotations = metadata?.annotations;
     const autoscalewindowAnnotation = annotations?.[KNATIVE_AUTOSCALEWINDOW_ANNOTATION] || '';
-    const { autoscalewindow, autoscalewindowUnit, defaultAutoscalewindowUnit } = getAutoscaleWindow(
-      autoscalewindowAnnotation,
-    );
+    const { autoscalewindow, autoscalewindowUnit, defaultAutoscalewindowUnit } =
+      getAutoscaleWindow(autoscalewindowAnnotation);
     serverlessData = {
       scaling: {
         minpods: annotations?.[KNATIVE_MINSCALE_ANNOTATION] || '',
@@ -481,8 +480,8 @@ export const getIconInitialValues = (
   const isKnative =
     overrideKnative ?? getResourcesType(editAppResource) === Resources.KnativeService;
   const customIcon = isKnative
-    ? editAppResource?.spec?.template?.metadata?.annotations?.[CUSTOM_ICON_ANNOTATION] ?? null
-    : editAppResource?.metadata?.annotations?.[CUSTOM_ICON_ANNOTATION] ?? null;
+    ? (editAppResource?.spec?.template?.metadata?.annotations?.[CUSTOM_ICON_ANNOTATION] ?? null)
+    : (editAppResource?.metadata?.annotations?.[CUSTOM_ICON_ANNOTATION] ?? null);
 
   return {
     runtimeIcon,
@@ -503,8 +502,8 @@ const getGitAndDockerfileInitialValues = (
   const git = !_.isEmpty(buildConfig)
     ? getGitDataFromBuildConfig(buildConfig)
     : !_.isEmpty(shipwrightBuild)
-    ? getGitDataFromShipwrightBuild(shipwrightBuild)
-    : getGitDataFromPipeline(pipeline);
+      ? getGitDataFromShipwrightBuild(shipwrightBuild)
+      : getGitDataFromPipeline(pipeline);
   const initialValues = {
     git,
     docker: {

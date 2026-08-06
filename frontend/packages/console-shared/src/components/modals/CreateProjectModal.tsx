@@ -207,9 +207,8 @@ const DefaultCreateProjectModal: OverlayComponent<CreateProjectModalProps> = ({
 
 export const CreateProjectModal: OverlayComponent<CreateProjectModalProps> = (props) => {
   // Get create project modal extensions
-  const [createProjectModalExtensions, resolved] = useResolvedExtensions<
-    CreateProjectModalExtension
-  >(isCreateProjectModal);
+  const [createProjectModalExtensions, resolved] =
+    useResolvedExtensions<CreateProjectModalExtension>(isCreateProjectModal);
 
   // resolve the modal component from the extensions, if at least one exists
   const Component = createProjectModalExtensions?.[0]?.properties?.component;

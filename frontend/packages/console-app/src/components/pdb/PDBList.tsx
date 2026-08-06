@@ -79,9 +79,8 @@ const usePDBColumns = (): {
   resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('console-app');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
-    PodDisruptionBudgetModel,
-  );
+  const { getResizableProps, resetAllColumnWidths } =
+    useColumnWidthSettings(PodDisruptionBudgetModel);
 
   const columns = useMemo(
     () => [

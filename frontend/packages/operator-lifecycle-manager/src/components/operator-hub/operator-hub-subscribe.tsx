@@ -122,8 +122,13 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
   const handleCancel = useCallback(() => navigate(-1), [navigate]);
   const [activeNamespace] = useActiveNamespace();
   const { name: pkgName } = packageManifest?.metadata ?? {};
-  const { provider, channels = [], packageName, catalogSource, catalogSourceNamespace } =
-    packageManifest?.status ?? {};
+  const {
+    provider,
+    channels = [],
+    packageName,
+    catalogSource,
+    catalogSourceNamespace,
+  } = packageManifest?.status ?? {};
 
   const { pathname: url } = useLocation();
   const [roleARNText, setRoleARNText] = useState('');
@@ -155,9 +160,8 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
   const [cannotResolve, setCannotResolve] = useState(false);
   const [suggestedNamespaceExists, setSuggestedNamespaceExists] = useState(false);
   const [suggestedNamespaceExistsInFlight, setSuggestedNamespaceExistsInFlight] = useState(true);
-  const [useSuggestedNSForSingleInstallMode, setUseSuggestedNSForSingleInstallMode] = useState(
-    true,
-  );
+  const [useSuggestedNSForSingleInstallMode, setUseSuggestedNSForSingleInstallMode] =
+    useState(true);
 
   const defaultEnableMonitoring =
     packageManifest?.metadata?.labels?.provider?.includes('Red Hat') &&
@@ -173,12 +177,8 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
   const [enabledPlugins, setEnabledPlugins] = useState<string[]>([]);
   const { t } = useTranslation('olm');
 
-  const {
-    deprecatedPackage,
-    deprecatedChannel,
-    deprecatedVersion,
-    setDeprecatedPackage,
-  } = useDeprecatedOperatorWarnings();
+  const { deprecatedPackage, deprecatedChannel, deprecatedVersion, setDeprecatedPackage } =
+    useDeprecatedOperatorWarnings();
   const deprecatedWarning =
     deprecatedPackage?.deprecation ||
     deprecatedChannel?.deprecation ||

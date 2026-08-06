@@ -150,10 +150,10 @@ export const sendRoleBindingRequest = (
             },
           ]
         : removeRoleSubjectFlag === 1 && user.subjects.length > 0
-        ? getUpdatedSubjects(user.subjects)
-        : user.subjects.length > 1
-        ? getUpdatedSubjects(user.subjects)
-        : getUpdatedSubjects([user.subject]);
+          ? getUpdatedSubjects(user.subjects)
+          : user.subjects.length > 1
+            ? getUpdatedSubjects(user.subjects)
+            : getUpdatedSubjects([user.subject]);
     const roleBinding: RoleBinding = {
       apiVersion: 'rbac.authorization.k8s.io/v1',
       kind: 'RoleBinding',

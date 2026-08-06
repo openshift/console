@@ -37,9 +37,8 @@ const ServerlessRouteSection: FC = () => {
     }),
     [namespace],
   );
-  const [data, domainMappingLoaded, domainMappingLoadErr] = useK8sWatchResource<K8sResourceKind[]>(
-    resource,
-  );
+  const [data, domainMappingLoaded, domainMappingLoadErr] =
+    useK8sWatchResource<K8sResourceKind[]>(resource);
   const domainMappingResources = useMemo(
     () =>
       domainMappingLoaded && !domainMappingLoadErr

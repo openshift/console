@@ -59,7 +59,8 @@ const getKnativeServiceDepResourceMock = knativeUtils.getKnativeServiceDepResour
 const submitTriggerMock = pipelineUtils.submitTrigger as jest.Mock;
 const createTriggerMock = pipelineUtils.createTrigger as jest.Mock;
 const createPipelineForImportFlowMock = pipelineUtils.createPipelineForImportFlow as jest.Mock;
-const createPipelineRunForImportFlowMock = pipelineUtils.createPipelineRunForImportFlow as jest.Mock;
+const createPipelineRunForImportFlowMock =
+  pipelineUtils.createPipelineRunForImportFlow as jest.Mock;
 const setPipelineNotStartedMock = pipelineUtils.setPipelineNotStarted as jest.Mock;
 const createOrUpdateImageStreamMock = submitUtils.createOrUpdateImageStream as jest.Mock;
 

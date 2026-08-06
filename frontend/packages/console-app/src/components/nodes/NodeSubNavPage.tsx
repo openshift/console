@@ -34,9 +34,8 @@ export const NodeSubNavPage: FC<NodeSubNavPageProps> = ({ obj, pageId, standardP
   const { setAllQueryArguments } = useQueryParamsMutator();
   const activeTabKey = queryParams.get('activeTab');
 
-  const [subTabExtensions, extensionsResolved] = useResolvedExtensions<NodeSubNavTab>(
-    isNodeSubNavTab,
-  );
+  const [subTabExtensions, extensionsResolved] =
+    useResolvedExtensions<NodeSubNavTab>(isNodeSubNavTab);
   const nodeSubTabExtensions = useTranslatedExtensions(subTabExtensions ?? []);
 
   const pages: SubPageType[] = useMemo(() => {

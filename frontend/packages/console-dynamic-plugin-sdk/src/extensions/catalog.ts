@@ -219,9 +219,7 @@ export type CatalogItemBadge = {
   variant?: 'outline' | 'filled';
 };
 
-export type CatalogItemMetadataProviderFunction = (
-  item: CatalogItem,
-) =>
+export type CatalogItemMetadataProviderFunction = (item: CatalogItem) =>
   | {
       tags?: string[];
       badges?: CatalogItemBadge[];

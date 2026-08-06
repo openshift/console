@@ -7,11 +7,10 @@ import type { SecretKind } from '@console/internal/module/k8s';
 import type { ResourceDropdownProps } from '@console/shared/src/components/dropdown/ResourceDropdown';
 import { ResourceDropdown } from '@console/shared/src/components/dropdown/ResourceDropdown';
 
-interface PushSecretDropdownProps
-  extends Omit<
-    ResourceDropdownProps,
-    'dataSelector' | 'placeholder' | 'autocompleteFilter' | 'resourceFilter' | 'showBadge'
-  > {
+interface PushSecretDropdownProps extends Omit<
+  ResourceDropdownProps,
+  'dataSelector' | 'placeholder' | 'autocompleteFilter' | 'resourceFilter' | 'showBadge'
+> {
   namespace?: string;
   onChange?: (key: string) => void;
   title?: ReactNode;

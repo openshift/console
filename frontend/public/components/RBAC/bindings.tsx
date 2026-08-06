@@ -401,9 +401,10 @@ export const RoleBindingsPage: FC<RoleBindingsPageProps> = ({
   }, [resources]);
 
   // Aggregate errors from all resources
-  const loadError = useMemo(() => Object.values(resources).find((r) => r.loadError)?.loadError, [
-    resources,
-  ]);
+  const loadError = useMemo(
+    () => Object.values(resources).find((r) => r.loadError)?.loadError,
+    [resources],
+  );
 
   return (
     <>

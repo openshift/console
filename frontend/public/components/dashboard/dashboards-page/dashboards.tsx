@@ -62,10 +62,10 @@ const InnerDashboardsPage: FC<DashboardsPageProps> = ({ kindsInFlight, k8sModels
 
   const location = useLocation();
 
-  const pluginPages = useMemo(() => getPluginTabPages(tabExtensions, cardExtensions, 'home', ''), [
-    tabExtensions,
-    cardExtensions,
-  ]);
+  const pluginPages = useMemo(
+    () => getPluginTabPages(tabExtensions, cardExtensions, 'home', ''),
+    [tabExtensions, cardExtensions],
+  );
 
   const allPages: Page[] = useMemo(
     () => [

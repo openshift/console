@@ -30,10 +30,13 @@ const orderQuickStarts = (
 
   // Prioritize featured quick starts and keep specified order
   if (featured) {
-    const featuredQuickStartsByName = filteredQuickStarts.reduce((acc, q) => {
-      acc[q.metadata.name] = q;
-      return acc;
-    }, {} as Record<string, QuickStart>);
+    const featuredQuickStartsByName = filteredQuickStarts.reduce(
+      (acc, q) => {
+        acc[q.metadata.name] = q;
+        return acc;
+      },
+      {} as Record<string, QuickStart>,
+    );
     featured.forEach((quickStartName) => {
       if (
         featuredQuickStartsByName[quickStartName] &&
@@ -73,14 +76,12 @@ export const QuickStartGettingStartedCard: FC<QuickStartGettingStartedCardProps>
             {
               id: 'serverless-functions-using-cli-link',
               title: t('Create Serverless functions using CLI'),
-              href:
-                'https://access.redhat.com/documentation/en-us/red_hat_openshift_serverless/1.30/html/functions/index',
+              href: 'https://access.redhat.com/documentation/en-us/red_hat_openshift_serverless/1.30/html/functions/index',
               external: true,
             },
             {
               id: 'serverless-functions-using-ide-link',
-              href:
-                'https://github.com/redhat-developer/vscode-openshift-tools/blob/main/README.serverlessfn.md',
+              href: 'https://github.com/redhat-developer/vscode-openshift-tools/blob/main/README.serverlessfn.md',
               title: t('Create Serverless functions using IDE'),
               external: true,
             },

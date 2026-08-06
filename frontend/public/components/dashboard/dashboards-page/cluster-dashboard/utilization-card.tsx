@@ -280,9 +280,10 @@ export const UtilizationCard = memo(() => {
   const [dynamicItemExtensions] = useResolvedExtensions<ClusterOverviewUtilizationItem>(
     isClusterOverviewUtilizationItem,
   );
-  const [dynamicMultilineItemExtensions] = useResolvedExtensions<
-    ClusterOverviewMultilineUtilizationItem
-  >(isClusterOverviewMultilineUtilizationItem);
+  const [dynamicMultilineItemExtensions] =
+    useResolvedExtensions<ClusterOverviewMultilineUtilizationItem>(
+      isClusterOverviewMultilineUtilizationItem,
+    );
 
   // TODO: add `useUserPreference` to store selectedNodes
   const onNodeSelect = (event: MouseEvent, selection: string) => {

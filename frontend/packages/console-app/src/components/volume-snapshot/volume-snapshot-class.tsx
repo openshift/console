@@ -37,59 +37,56 @@ const isDefaultSnapshotClass = (volumeSnapshotClass: VolumeSnapshotClassKind) =>
     defaultSnapshotClassAnnotation
   ] === 'true';
 
-const getDataViewRowsCreator: (t: TFunction) => GetDataViewRows<VolumeSnapshotClassKind> = (t) => (
-  data,
-  columns,
-) =>
-  data.map(({ obj }) => {
-    const name = obj.metadata?.name || '';
-    const { deletionPolicy, driver } = obj;
-    const context = { [referenceFor(obj)]: obj };
+const getDataViewRowsCreator: (t: TFunction) => GetDataViewRows<VolumeSnapshotClassKind> =
+  (t) => (data, columns) =>
+    data.map(({ obj }) => {
+      const name = obj.metadata?.name || '';
+      const { deletionPolicy, driver } = obj;
+      const context = { [referenceFor(obj)]: obj };
 
-    const rowCells = {
-      [tableColumnInfo[0].id]: {
-        cell: (
-          <ResourceLink name={name} kind={kind}>
-            {isDefaultSnapshotClass(obj) && (
-              <span className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle co-resource-item__help-text">
-                &ndash; {t('console-app~Default')}
-              </span>
-            )}
-          </ResourceLink>
-        ),
-        props: getNameCellProps(name),
-      },
-      [tableColumnInfo[1].id]: {
-        cell: driver,
-      },
-      [tableColumnInfo[2].id]: {
-        cell: deletionPolicy,
-      },
-      [tableColumnInfo[3].id]: {
-        cell: <LazyActionMenu context={context} />,
-        props: actionsCellProps,
-      },
-    };
-
-    return columns.map(({ id }) => {
-      const cell = rowCells[id]?.cell || DASH;
-      const props = rowCells[id]?.props || undefined;
-      return {
-        id,
-        props,
-        cell,
+      const rowCells = {
+        [tableColumnInfo[0].id]: {
+          cell: (
+            <ResourceLink name={name} kind={kind}>
+              {isDefaultSnapshotClass(obj) && (
+                <span className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle co-resource-item__help-text">
+                  &ndash; {t('console-app~Default')}
+                </span>
+              )}
+            </ResourceLink>
+          ),
+          props: getNameCellProps(name),
+        },
+        [tableColumnInfo[1].id]: {
+          cell: driver,
+        },
+        [tableColumnInfo[2].id]: {
+          cell: deletionPolicy,
+        },
+        [tableColumnInfo[3].id]: {
+          cell: <LazyActionMenu context={context} />,
+          props: actionsCellProps,
+        },
       };
+
+      return columns.map(({ id }) => {
+        const cell = rowCells[id]?.cell || DASH;
+        const props = rowCells[id]?.props || undefined;
+        return {
+          id,
+          props,
+          cell,
+        };
+      });
     });
-  });
 
 const useVolumeSnapshotClassColumns = (): {
   columns: TableColumn<VolumeSnapshotClassKind>[];
   resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('console-app');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
-    VolumeSnapshotClassModel,
-  );
+  const { getResizableProps, resetAllColumnWidths } =
+    useColumnWidthSettings(VolumeSnapshotClassModel);
 
   const columns: TableColumn<VolumeSnapshotClassKind>[] = useMemo(
     () => [

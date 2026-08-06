@@ -47,7 +47,7 @@ const TaintsModal = (props: TaintsModalProps) => {
 
   const change = (e, i: number, field: string) => {
     // Handle both native events (from input) and values (from ConsoleSelect)
-    const newValue = typeof e === 'string' ? e : e.target?.value ?? e;
+    const newValue = typeof e === 'string' ? e : (e.target?.value ?? e);
     setTaints((prevTaints) => {
       const clonedTaints = _.cloneDeep(prevTaints);
       clonedTaints[i][field] = newValue;

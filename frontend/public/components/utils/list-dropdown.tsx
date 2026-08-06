@@ -202,26 +202,28 @@ export const ListDropdown: FC<ListDropdownProps> = (props) => {
     if (!props.resources || props.resources.length === 0) {
       return {};
     }
-    return props.resources.reduce((acc, resource) => {
-      // Use prop as key if provided, otherwise fallback to kind
-      const key = resource.prop || resource.kind;
-      acc[key] = {
-        kind: resource.kind,
-        isList: true,
-        namespace: resource.namespace,
-        selector: resource.selector,
-        fieldSelector: resource.fieldSelector,
-        limit: resource.limit,
-        namespaced: resource.namespaced,
-        optional: resource.optional,
-      };
-      return acc;
-    }, {} as Record<string, WatchK8sResource>);
+    return props.resources.reduce(
+      (acc, resource) => {
+        // Use prop as key if provided, otherwise fallback to kind
+        const key = resource.prop || resource.kind;
+        acc[key] = {
+          kind: resource.kind,
+          isList: true,
+          namespace: resource.namespace,
+          selector: resource.selector,
+          fieldSelector: resource.fieldSelector,
+          limit: resource.limit,
+          namespaced: resource.namespaced,
+          optional: resource.optional,
+        };
+        return acc;
+      },
+      {} as Record<string, WatchK8sResource>,
+    );
   }, [props.resources]);
 
-  const watchedResources = useK8sWatchResources<Record<string, K8sResourceCommon[]>>(
-    watchResources,
-  );
+  const watchedResources =
+    useK8sWatchResources<Record<string, K8sResourceCommon[]>>(watchResources);
 
   const loaded = useMemo(
     () =>
@@ -231,9 +233,10 @@ export const ListDropdown: FC<ListDropdownProps> = (props) => {
     [watchedResources],
   );
 
-  const loadError = useMemo(() => Object.values(watchedResources).some((r) => r.loadError), [
-    watchedResources,
-  ]);
+  const loadError = useMemo(
+    () => Object.values(watchedResources).some((r) => r.loadError),
+    [watchedResources],
+  );
 
   return (
     <InnerListDropdown

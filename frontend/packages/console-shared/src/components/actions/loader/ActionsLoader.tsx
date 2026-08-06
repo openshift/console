@@ -56,17 +56,14 @@ const ActionsLoader: FC<ActionsLoaderProps> = ({
     [contextId],
   );
 
-  const [providerExtensions, providerExtensionsResolved] = useResolvedExtensions<ActionProvider>(
-    providerGuard,
-  );
+  const [providerExtensions, providerExtensionsResolved] =
+    useResolvedExtensions<ActionProvider>(providerGuard);
 
-  const [filterExtensions, filterExtensionsResolved] = useResolvedExtensions<ActionFilter>(
-    filterGuard,
-  );
+  const [filterExtensions, filterExtensionsResolved] =
+    useResolvedExtensions<ActionFilter>(filterGuard);
 
-  const [resourceProviderExtensions, resourceProviderExtensionsResolved] = useResolvedExtensions<
-    ResourceActionProvider
-  >(resourceProviderGuard);
+  const [resourceProviderExtensions, resourceProviderExtensionsResolved] =
+    useResolvedExtensions<ResourceActionProvider>(resourceProviderGuard);
 
   const allProviderExtensions = [...providerExtensions, ...resourceProviderExtensions];
   const allProviderExtensionsResolved =

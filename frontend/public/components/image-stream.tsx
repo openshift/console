@@ -374,9 +374,8 @@ const useImageStreamColumns = (): {
   resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('public');
-  const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(
-    ImageStreamModel,
-  );
+  const { getResizableProps, getWidth, resetAllColumnWidths } =
+    useColumnWidthSettings(ImageStreamModel);
 
   const columns: TableColumn<K8sResourceKind>[] = useMemo(() => {
     const labelsColumnId = tableColumnInfo[2].id;

@@ -43,9 +43,9 @@ const getK8sModels = () => {
  * NOTE: This will not work for CRDs defined at runtime, use `connectToModels` instead.
  */
 export const modelFor = (ref: K8sResourceKindReference): K8sModel => {
-  const metadataExtensions = pluginStore.getExtensions().filter(isModelMetadata) as LoadedExtension<
-    ModelMetadata
-  >[];
+  const metadataExtensions = pluginStore
+    .getExtensions()
+    .filter(isModelMetadata) as LoadedExtension<ModelMetadata>[];
 
   let m = getK8sModels().get(ref);
   if (m) {

@@ -7,8 +7,10 @@ import type { SecretKind } from '@console/internal/module/k8s';
 import type { ResourceDropdownProps } from '@console/shared/src/components/dropdown/ResourceDropdown';
 import { ResourceDropdown } from '@console/shared/src/components/dropdown/ResourceDropdown';
 
-interface SourceSecretDropdownProps
-  extends Omit<ResourceDropdownProps, 'resources' | 'placeholder' | 'dataSelector'> {
+interface SourceSecretDropdownProps extends Omit<
+  ResourceDropdownProps,
+  'resources' | 'placeholder' | 'dataSelector'
+> {
   namespace?: string;
 }
 

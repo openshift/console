@@ -577,7 +577,7 @@ const getNodeDataViewRows = (
         };
       }
       // For select column, don't default to DASH - checkbox is rendered via props
-      const cellContent = id === 'select' ? rowCell.cell ?? '' : rowCell.cell ?? DASH;
+      const cellContent = id === 'select' ? (rowCell.cell ?? '') : (rowCell.cell ?? DASH);
       return {
         id,
         props: rowCell.props,
@@ -1068,17 +1068,15 @@ export const NodesPage: FC<NodesPageProps> = ({ selector }) => {
     [machines],
   );
 
-  const [machineSets, machineSetsLoaded] = useWatchResourcesIfAllowed<MachineSetKind[]>(
-    MachineSetModel,
-  );
+  const [machineSets, machineSetsLoaded] =
+    useWatchResourcesIfAllowed<MachineSetKind[]>(MachineSetModel);
 
   const [controlPlaneMachineSets, controlPlaneMachineSetsLoaded] = useWatchResourcesIfAllowed<
     ControlPlaneMachineSetKind[]
   >(ControlPlaneMachineSetModel);
 
-  const [machineConfigPools, machineConfigPoolsLoaded] = useWatchResourcesIfAllowed<
-    MachineConfigPoolKind[]
-  >(MachineConfigPoolModel);
+  const [machineConfigPools, machineConfigPoolsLoaded] =
+    useWatchResourcesIfAllowed<MachineConfigPoolKind[]>(MachineConfigPoolModel);
 
   const [csrs, csrsLoaded, csrsLoadError] = useWatchResourcesIfAllowed<
     CertificateSigningRequestKind[]

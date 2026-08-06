@@ -325,7 +325,7 @@ const StorageClassFormInner: FC<StorageClassFormProps> = (props) => {
     _.each(defaultParams, (values, param) => {
       const isVisible = _.isFunction(values?.visible)
         ? values.visible(defaultParams)
-        : values?.visible ?? true;
+        : (values?.visible ?? true);
       if (!isVisible && values.value) {
         hiddenParmas[param] = values;
       }

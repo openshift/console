@@ -127,12 +127,12 @@ const CreateHelmChartRepository: FC<CreateHelmChartRepositoryProps> = ({
             HelmChartRepositoryRes.metadata.namespace ?? namespace
           }?catalogType=HelmChart`
         : HelmChartRepositoryRes.kind === ProjectHelmChartRepositoryModel.kind
-        ? `/k8s/ns/${HelmChartRepositoryRes.metadata.namespace}/${referenceFor(
-            HelmChartRepositoryRes,
-          )}/${HelmChartRepositoryRes.metadata.name}`
-        : `/k8s/cluster/${referenceFor(HelmChartRepositoryRes)}/${
-            HelmChartRepositoryRes.metadata.name
-          }`;
+          ? `/k8s/ns/${HelmChartRepositoryRes.metadata.namespace}/${referenceFor(
+              HelmChartRepositoryRes,
+            )}/${HelmChartRepositoryRes.metadata.name}`
+          : `/k8s/cluster/${referenceFor(HelmChartRepositoryRes)}/${
+              HelmChartRepositoryRes.metadata.name
+            }`;
 
     return resourceCall
       .then(() => {

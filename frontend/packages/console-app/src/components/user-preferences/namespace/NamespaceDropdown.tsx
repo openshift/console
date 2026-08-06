@@ -49,11 +49,8 @@ const NamespaceDropdown: FC = () => {
     isList: true,
     optional: true,
   });
-  const [
-    preferredNamespace,
-    setPreferredNamespace,
-    preferredNamespaceLoaded,
-  ] = usePreferredNamespace();
+  const [preferredNamespace, setPreferredNamespace, preferredNamespaceLoaded] =
+    usePreferredNamespace();
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [filterText, setFilterText] = useState('');

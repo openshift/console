@@ -54,42 +54,40 @@ export const mockData = {
 
 // The FileReader mock prevents async operations for file upload testing
 export const setupFileReaderMock = () =>
-  jest.spyOn(global, 'FileReader').mockImplementation(
-    (): FileReader => {
-      const mockFileReader: Partial<FileReader> = {
-        readAsText: jest.fn(),
-        readAsArrayBuffer: jest.fn(function (this: FileReader) {
-          // Simulate the file reading process synchronously
-          // Create a mock ArrayBuffer with some dummy data
-          const arrayBuffer = new ArrayBuffer(8);
-          (this as { result: ArrayBuffer }).result = arrayBuffer;
-          // Trigger the onload event immediately if it exists
-          if (this.onload) {
-            this.onload({} as ProgressEvent<FileReader>);
-          }
-        }),
-        readyState: 0,
-        result: null,
-        error: null,
-        onabort: null,
-        onerror: null,
-        onload: null,
-        onloadend: null,
-        onloadstart: null,
-        onprogress: null,
-        abort: jest.fn(),
-        readAsBinaryString: jest.fn(),
-        readAsDataURL: jest.fn(),
-        DONE: 2,
-        EMPTY: 0,
-        LOADING: 1,
-        addEventListener: jest.fn(),
-        removeEventListener: jest.fn(),
-        dispatchEvent: jest.fn(() => true),
-      };
-      return mockFileReader as FileReader;
-    },
-  );
+  jest.spyOn(global, 'FileReader').mockImplementation((): FileReader => {
+    const mockFileReader: Partial<FileReader> = {
+      readAsText: jest.fn(),
+      readAsArrayBuffer: jest.fn(function (this: FileReader) {
+        // Simulate the file reading process synchronously
+        // Create a mock ArrayBuffer with some dummy data
+        const arrayBuffer = new ArrayBuffer(8);
+        (this as { result: ArrayBuffer }).result = arrayBuffer;
+        // Trigger the onload event immediately if it exists
+        if (this.onload) {
+          this.onload({} as ProgressEvent<FileReader>);
+        }
+      }),
+      readyState: 0,
+      result: null,
+      error: null,
+      onabort: null,
+      onerror: null,
+      onload: null,
+      onloadend: null,
+      onloadstart: null,
+      onprogress: null,
+      abort: jest.fn(),
+      readAsBinaryString: jest.fn(),
+      readAsDataURL: jest.fn(),
+      DONE: 2,
+      EMPTY: 0,
+      LOADING: 1,
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+      dispatchEvent: jest.fn(() => true),
+    };
+    return mockFileReader as FileReader;
+  });
 
 /**
  * Verifies page title and subtitle.
@@ -149,8 +147,7 @@ export const verifyIDPFileFields = async ({
   const fileInput = within(fileUpload)
     .getAllByDisplayValue('')
     .find((element) => element instanceof HTMLInputElement && element.type === 'file') as
-    | HTMLInputElement
-    | undefined;
+    HTMLInputElement | undefined;
   expect(fileInput).toBeDefined();
   if (!fileInput) {
     throw new Error(`Could not find file input for ${inputLabel}`);

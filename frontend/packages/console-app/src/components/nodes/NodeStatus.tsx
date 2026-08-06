@@ -49,10 +49,10 @@ export const NodeStatusWithExtensions: FC<NodeStatusWithExtensionsProps> = ({
 }) => {
   const { t } = useTranslation('console-app');
 
-  const { popoverContent, secondaryStatuses } = useMemo(() => statusExtensions(node), [
-    statusExtensions,
-    node,
-  ]);
+  const { popoverContent, secondaryStatuses } = useMemo(
+    () => statusExtensions(node),
+    [statusExtensions, node],
+  );
 
   const mainStatus = <Status status={nodeStatus(node)} className={className} />;
 

@@ -57,10 +57,10 @@ export const ProjectDashboard = memo<ProjectDashboardProps>(({ obj }) => {
     kind: referenceForModel(ConsoleLinkModel),
     optional: true,
   });
-  const namespaceLinks = useMemo(() => getNamespaceDashboardConsoleLinks(obj, consoleLinks), [
-    obj,
-    consoleLinks,
-  ]);
+  const namespaceLinks = useMemo(
+    () => getNamespaceDashboardConsoleLinks(obj, consoleLinks),
+    [obj, consoleLinks],
+  );
   const context = useMemo(() => ({ obj, namespaceLinks }), [obj, namespaceLinks]);
 
   const hasNamespaceLinks = !!namespaceLinks.length;

@@ -63,7 +63,7 @@ const BodyEmpty: FC<{ label: string; colSpan: number }> = ({ label, colSpan }) =
 export const ConsoleDataView = <
   TData,
   TCustomRowData = any,
-  TFilters extends ResourceFilters = ResourceFilters
+  TFilters extends ResourceFilters = ResourceFilters,
 >({
   label,
   data,
@@ -141,14 +141,15 @@ export const ConsoleDataView = <
     selection,
   });
 
-  const bodyLoading = useMemo(() => <BodyLoading columns={dataViewColumns.length} />, [
-    dataViewColumns.length,
-  ]);
+  const bodyLoading = useMemo(
+    () => <BodyLoading columns={dataViewColumns.length} />,
+    [dataViewColumns.length],
+  );
 
-  const bodyEmpty = useMemo(() => <BodyEmpty label={label} colSpan={dataViewColumns.length} />, [
-    dataViewColumns.length,
-    label,
-  ]);
+  const bodyEmpty = useMemo(
+    () => <BodyEmpty label={label} colSpan={dataViewColumns.length} />,
+    [dataViewColumns.length, label],
+  );
 
   const activeState = useMemo(() => {
     if (!loaded) {

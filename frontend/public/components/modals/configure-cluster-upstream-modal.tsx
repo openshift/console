@@ -198,9 +198,9 @@ const ConfigureClusterUpstreamModal = (props: ConfigureClusterUpstreamModalProps
   );
 };
 
-export const ConfigureClusterUpstreamModalOverlay: OverlayComponent<ConfigureClusterUpstreamModalProps> = (
-  props,
-) => {
+export const ConfigureClusterUpstreamModalOverlay: OverlayComponent<
+  ConfigureClusterUpstreamModalProps
+> = (props) => {
   const [isOpen, setIsOpen] = useState(true);
   const handleClose = () => {
     setIsOpen(false);

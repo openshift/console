@@ -69,8 +69,8 @@ const KebabItemBase: FC<KebabItemProps & { isAllowed: boolean }> = ({
         option.labelKey
           ? t(option.labelKey, option.labelKind)
           : typeof option.label === 'string'
-          ? option.label
-          : undefined
+            ? option.label
+            : undefined
       }
       data-test-action={option.labelKey ? t(option.labelKey, option.labelKind) : option.label}
       icon={option.icon}

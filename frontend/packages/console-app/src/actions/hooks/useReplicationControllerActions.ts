@@ -33,7 +33,7 @@ const INACTIVE_STATUSES = ['New', 'Pending', 'Running'];
  *
  */
 export const useReplicationControllerActions = <
-  T extends readonly ReplicationControllerActionCreator[]
+  T extends readonly ReplicationControllerActionCreator[],
 >(
   kind: K8sModel,
   obj: ReplicationControllerKind,

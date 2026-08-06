@@ -84,10 +84,10 @@ export const AreaChart: FC<AreaChartProps> = ({
   );
 
   const xTickFormat = useCallback((tick) => formatDate(tick), [formatDate]);
-  const yTickFormat = useCallback((tick) => `${humanize(tick, unit, unit).string}`, [
-    humanize,
-    unit,
-  ]);
+  const yTickFormat = useCallback(
+    (tick) => `${humanize(tick, unit, unit).string}`,
+    [humanize, unit],
+  );
 
   const domain = useMemo<AreaChartProps['domain']>(
     () => ({

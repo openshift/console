@@ -236,7 +236,7 @@ const convertFormDataTriggersToBuildConfig = (
                   : { secretReference: { name: trigger.secret } }),
                 ...(trigger.allowEnv ? { allowEnv: trigger.allowEnv } : {}),
               },
-            } as BuildConfigTrigger),
+            }) as BuildConfigTrigger,
         ),
     );
   }

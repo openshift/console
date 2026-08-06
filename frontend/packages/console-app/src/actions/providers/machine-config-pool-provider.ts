@@ -40,9 +40,9 @@ export const useMachineConfigPoolActionsProvider = (
   const pauseAction = usePauseAction(resource);
   const commonActions = useCommonResourceActions(kindObj, resource);
 
-  const actions = useMemo<Action[]>(() => [...pauseAction, ...commonActions], [
-    pauseAction,
-    commonActions,
-  ]);
+  const actions = useMemo<Action[]>(
+    () => [...pauseAction, ...commonActions],
+    [pauseAction, commonActions],
+  );
   return [actions, !inFlight, false];
 };
