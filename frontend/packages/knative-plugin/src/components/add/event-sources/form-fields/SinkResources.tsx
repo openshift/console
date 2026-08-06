@@ -201,7 +201,7 @@ const SinkResources: FC<SinkResourcesProps> = ({ namespace, isMoveSink }) => {
         </>
       )}
       <ResourceDropdownField
-        menuClassName={'max-height-menu'}
+        menuClassName="max-height-menu"
         data-test="sinkable-resources"
         name="formData.sink.key"
         resources={resourcesData}

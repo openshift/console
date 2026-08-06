@@ -56,7 +56,8 @@ import { DefaultPage } from './default-resource';
 import { DetailsPage } from './factory/details';
 import { ListPage } from './factory/list-page';
 import { sortResourceByValue } from './factory/Table/sort';
-import { getResourceListPages } from './resource-pages';
+// eslint-disable-next-line import/no-cycle -- import to this module is dynamic
+import { getResourceListPages } from './list-pages';
 import { AsyncComponent } from './utils/async';
 import { DetailsItem } from './utils/details-item';
 import { ResourceSummary } from './utils/details-page';

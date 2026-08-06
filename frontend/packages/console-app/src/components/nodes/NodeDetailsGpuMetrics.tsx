@@ -12,9 +12,12 @@ import {
 } from '@patternfly/react-core';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
-import type { PrometheusResponse, PrometheusResult } from '@console/internal/components/graphs';
 import { PrometheusEndpoint } from '@console/internal/components/graphs/helpers';
 import { usePrometheusPoll } from '@console/internal/components/graphs/prometheus-poll-hook';
+import type {
+  PrometheusResponse,
+  PrometheusResult,
+} from '@console/internal/components/graphs/types';
 import { SectionHeading } from '@console/internal/components/utils/headings';
 import type { NodeKind } from '@console/internal/module/k8s';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';

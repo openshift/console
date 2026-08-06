@@ -64,7 +64,7 @@ import { DefaultPage } from './default-resource';
 import { ErrorPage404 } from './error';
 import { exactMatch, fuzzyCaseInsensitive } from './factory/table-filters';
 import { TextFilter } from './factory/text-filter';
-import { getResourceListPages } from './resource-pages';
+import { getResourceListPages } from './list-pages';
 import { RowFilter } from './row-filter';
 import { ExploreType } from './sidebars/explore-type-sidebar';
 import { AsyncComponent } from './utils/async';

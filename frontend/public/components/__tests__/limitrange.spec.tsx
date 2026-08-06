@@ -15,7 +15,7 @@ describe('LimitRangeDetailsRow', () => {
     renderWithProviders(
       <table>
         <tbody>
-          <LimitRangeDetailsRow limitType={'Container'} resource={'memory'} limit={limitContent} />
+          <LimitRangeDetailsRow limitType="Container" resource="memory" limit={limitContent} />
         </tbody>
       </table>,
     );

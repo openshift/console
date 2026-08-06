@@ -22,15 +22,16 @@ import { timeFormatter } from '../utils/datetime';
 import { useRefWidth } from '../utils/ref-width-hook';
 import type { Humanize } from '../utils/types';
 import { humanizeNumber } from '../utils/units';
+import { DEFAULT_PROMETHEUS_SAMPLES, DEFAULT_PROMETHEUS_TIMESPAN } from './consts';
+import { CursorVoronoiContainer } from './cursor-voronoi-container';
 import { GraphEmpty } from './graph-empty';
 import { PrometheusEndpoint } from './helpers';
 import { PrometheusGraph, PrometheusGraphLink } from './prometheus-graph';
 import { usePrometheusPoll } from './prometheus-poll-hook';
 import { areaTheme } from './themes';
 import { ChartLegendTooltip } from './tooltip';
+import type { DataPoint } from './types';
 import { mapLimitsRequests } from './utils';
-import { CursorVoronoiContainer, DEFAULT_PROMETHEUS_SAMPLES, DEFAULT_PROMETHEUS_TIMESPAN } from '.';
-import type { DataPoint } from '.';
 
 const DEFAULT_HEIGHT = 180;
 const DEFAULT_TICK_COUNT = 2;

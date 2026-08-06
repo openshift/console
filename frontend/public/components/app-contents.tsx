@@ -682,7 +682,7 @@ const AppContents: FC = () => {
       />
 
       <Route
-        path={'/k8s/cluster/storageclasses/~new/form'}
+        path="/k8s/cluster/storageclasses/~new/form"
         element={
           <AsyncComponent
             loader={() =>

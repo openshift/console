@@ -112,7 +112,7 @@ export const QuickStartGettingStartedCard: FC<QuickStartGettingStartedCardProps>
               <RhUiRouteIcon color="var(--co-global--palette--purple-600)" aria-hidden="true" />
             }
             title={title || t('Build with guided documentation')}
-            titleColor={'var(--co-global--palette--purple-600)'}
+            titleColor="var(--co-global--palette--purple-600)"
             description={
               description ||
               t(

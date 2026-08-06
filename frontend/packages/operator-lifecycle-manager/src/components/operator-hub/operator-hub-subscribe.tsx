@@ -655,9 +655,7 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
             >
               existing Subscription
             </Link>{' '}
-            in order to install this Operator in Namespace {'"'}
-            {{ selectedTargetNamespace }}
-            {'"'}
+            in order to install this Operator in Namespace "{{ selectedTargetNamespace }}"
           </Trans>
         </p>
       </Alert>

@@ -3,8 +3,8 @@ import type { ActionType as Action } from 'typesafe-actions';
 import { action } from 'typesafe-actions';
 import type { Fetch, RequestMap } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
-import type { PrometheusResponse } from '../components/graphs';
 import { getPrometheusURL, PrometheusEndpoint } from '../components/graphs/helpers';
+import type { PrometheusResponse } from '../components/graphs/types';
 import {
   computeAdaptiveDelay,
   emaToDelay,

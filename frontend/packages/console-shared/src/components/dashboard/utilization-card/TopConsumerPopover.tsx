@@ -7,7 +7,7 @@ import { Link } from 'react-router';
 import type { Humanize } from '@console/dynamic-plugin-sdk';
 import { LIMIT_STATE, useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { getPrometheusQueryResponse } from '@console/internal/actions/dashboards';
-import type { DataPoint } from '@console/internal/components/graphs';
+import type { DataPoint } from '@console/internal/components/graphs/types';
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';

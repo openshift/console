@@ -33,8 +33,8 @@ describe('TextColumnItem', () => {
   it('should render TextColumnItem with input field and remove button', () => {
     renderInFormik(
       <TextColumnItem
-        name={'fieldName'}
-        label={'label value'}
+        name="fieldName"
+        label="label value"
         idx={0}
         rowValues={['']}
         arrayHelpers={mockArrayHelper}

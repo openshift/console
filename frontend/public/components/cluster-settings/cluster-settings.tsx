@@ -37,14 +37,11 @@ import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
-import * as semver from 'semver';
 import type { WatchK8sResource } from '@console/dynamic-plugin-sdk';
 import { useAccessReview } from '@console/dynamic-plugin-sdk';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import type { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
-import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
 import { FEATURE_FLAG_LIGHTSPEED_PLUGIN } from '@console/shared/src/components/cluster-updates/constants';
 import { UpdateWorkflowOLSButton } from '@console/shared/src/components/cluster-updates/explain-button';
 import {
@@ -97,8 +94,6 @@ import {
   getLastCompletedUpdate,
   getMCPsToPausePromises,
   getNewerClusterVersionChannel,
-  getNewerMinorVersionUpdate,
-  getNotUpgradeableResources,
   getOCMLink,
   getReleaseNotesLink,
   getSimilarClusterVersionChannels,
@@ -124,7 +119,7 @@ import {
 } from '../modals';
 import { ErrorModal } from '../modals/error-modal';
 import { UpstreamConfigDetailsItem } from '../utils/details-page';
-import { documentationURLs, getDocumentationURL, isManaged } from '../utils/documentation';
+import { isManaged } from '../utils/documentation';
 import { FieldLevelHelp } from '../utils/field-level-help';
 import { SectionHeading } from '../utils/headings';
 import { HorizontalNav } from '../utils/horizontal-nav';
@@ -139,6 +134,11 @@ import {
 import { EmptyBox } from '../utils/status-box';
 import { togglePaused } from '../utils/workload-pause';
 import { ClusterOperatorPage } from './cluster-operator';
+import {
+  ChannelDocLink,
+  ClusterNotUpgradeableAlert,
+  UpdateBlockedLabel,
+} from './cluster-settings-utils';
 import { UpdateStatus } from './cluster-status';
 import { GlobalConfigPage } from './global-config';
 
@@ -306,12 +306,6 @@ const CurrentVersionHeader: FC<CurrentVersionProps> = ({ cv }) => {
   );
 };
 
-export const ChannelDocLink: FC<{}> = () => {
-  const upgradeURL = getDocumentationURL(documentationURLs.understandingUpgradeChannels);
-  const { t } = useTranslation('public');
-  return <ExternalLink href={upgradeURL} text={t('Learn more about OpenShift update channels')} />;
-};
-
 const ChannelHeader: FC<{}> = () => {
   const { t } = useTranslation('public');
   return (
@@ -386,21 +380,6 @@ const ChannelVersion: FC<ChannelVersionProps> = ({ children, current, updateBloc
       )}
       {children}
     </span>
-  );
-};
-
-export const UpdateBlockedLabel = () => {
-  const { t } = useTranslation('public');
-
-  return (
-    <Label
-      status="warning"
-      variant="outline"
-      className="pf-v6-u-ml-sm"
-      data-test="cv-update-blocked"
-    >
-      {t('Update blocked')}
-    </Label>
   );
 };
 
@@ -761,11 +740,6 @@ const UpdateInProgress: FC<UpdateInProgressProps> = ({
   );
 };
 
-const ClusterServiceVersionResource: WatchK8sResource = {
-  isList: true,
-  kind: referenceForModel(ClusterServiceVersionModel),
-};
-
 // Helper function to get a condition by type from cluster version
 const getConditionOfType = (cv: ClusterVersionKind, type: ClusterVersionConditionType) =>
   cv.status?.conditions?.find((c) => c.type === type);
@@ -1083,72 +1057,6 @@ const parseUpdateFailureMessage = (
         'public~Your cluster update could not be completed. Check the cluster status for details or try the update again.',
       ),
   };
-};
-
-export const ClusterNotUpgradeableAlert: FC<ClusterNotUpgradeableAlertProps> = ({
-  cv,
-  onCancel,
-}) => {
-  const [clusterOperators] = useK8sWatchResource<ClusterOperator[]>(ClusterOperatorsResource);
-  const [clusterServiceVersions] = useK8sWatchResource<ClusterServiceVersionKind[]>(
-    ClusterServiceVersionResource,
-  );
-  const { t } = useTranslation('public');
-  const notUpgradeableClusterOperators = getNotUpgradeableResources(clusterOperators);
-  const notUpgradeableClusterOperatorsPresent = notUpgradeableClusterOperators.length > 0;
-  const notUpgradeableClusterServiceVersions = getNotUpgradeableResources(clusterServiceVersions);
-  const notUpgradeableCSVsPresent = notUpgradeableClusterServiceVersions.length > 0;
-  const clusterUpgradeableFalseCondition = getConditionUpgradeableFalse(cv);
-  const currentVersion = getLastCompletedUpdate(cv);
-  const currentVersionParsed = semver.parse(currentVersion);
-  const currentMajorMinorVersion = `${currentVersionParsed?.major}.${currentVersionParsed?.minor}`;
-  const availableUpdates = getSortedAvailableUpdates(cv);
-  const newerUpdate = getNewerMinorVersionUpdate(currentVersion, availableUpdates);
-  const newerUpdateParsed = semver.parse(newerUpdate?.version);
-  const nextMajorMinorVersion = `${newerUpdateParsed?.major}.${newerUpdateParsed?.minor}`;
-
-  return (
-    <Alert
-      variant="warning"
-      isInline
-      title={
-        currentVersionParsed && newerUpdateParsed
-          ? t(
-              'Your cluster cannot update to {{nextMajorMinorVersion}}. You can continue to install patch releases in {{currentMajorMinorVersion}}.',
-              { nextMajorMinorVersion, currentMajorMinorVersion },
-            )
-          : t('Your cluster cannot update to the next minor version.')
-      }
-      className="co-alert"
-      actionLinks={
-        (notUpgradeableClusterOperatorsPresent || notUpgradeableCSVsPresent) && (
-          <Flex>
-            {notUpgradeableClusterOperatorsPresent && (
-              <FlexItem>
-                <ClusterOperatorsLink onCancel={onCancel} queryString="?status=Cannot+update">
-                  {t('View ClusterOperators')}
-                </ClusterOperatorsLink>
-              </FlexItem>
-            )}
-            {notUpgradeableCSVsPresent && (
-              // TODO:  update link to include filter once installed Operators filters are updated
-              <FlexItem>
-                <Link
-                  onClick={onCancel}
-                  to={`/k8s/ns/all-namespaces/${ClusterServiceVersionModel.plural}`}
-                >
-                  {t('View installed Operators')}
-                </Link>
-              </FlexItem>
-            )}
-          </Flex>
-        )
-      }
-      data-test="cluster-settings-alerts-not-upgradeable"
-    >
-      <MarkdownView content={clusterUpgradeableFalseCondition.message} inline />
-    </Alert>
-  );
 };
 
 export const MachineConfigPoolsArePausedAlert: FC<MachineConfigPoolsArePausedAlertProps> = ({
@@ -2045,11 +1953,6 @@ type UpdateInProgressProps = {
   machineConfigPools: MachineConfigPoolKind[];
   workerMachineConfigPool: MachineConfigPoolKind;
   updateStartedTime: string;
-};
-
-type ClusterNotUpgradeableAlertProps = {
-  cv: ClusterVersionKind;
-  onCancel?: () => void;
 };
 
 type MachineConfigPoolsArePausedAlertProps = {

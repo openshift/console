@@ -145,7 +145,7 @@ const PubSubSubscriber: FC<PubSubSubscriberProps> = ({ autoSelect = true, cancel
                   cancel && cancel();
                 }}
               >
-                {'Add page'}
+                Add page
               </Link>
               .
             </Trans>

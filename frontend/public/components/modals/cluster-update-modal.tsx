@@ -44,7 +44,7 @@ import {
 import {
   ClusterNotUpgradeableAlert,
   UpdateBlockedLabel,
-} from '../cluster-settings/cluster-settings';
+} from '../cluster-settings/cluster-settings-utils';
 import { MachineConfigPoolsSelector } from '../machine-config-pools-selector';
 import { FieldLevelHelp } from '../utils/field-level-help';
 import { LinkifyExternal } from '../utils/link';

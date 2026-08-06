@@ -11,8 +11,8 @@ import {
   applyConsoleHeaders,
   getConsoleRequestHeaders,
   normalizeConsoleHeaders,
-  validateStatus,
 } from './console-fetch-utils';
+import { validateStatus } from './validate-status';
 
 const defaultRequestOptions: RequestInit = {
   headers: {},

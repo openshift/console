@@ -171,18 +171,16 @@ export const Footer: FC<{
     <>
       {canCreateNew ? (
         <MenuFooter className="co-namespace-dropdown__footer">
-          {
-            <Button
-              variant="secondary"
-              onClick={() => {
-                setOpen(false);
-                onCreateNew();
-              }}
-              data-test-dropdown-menu="#CREATE_RESOURCE_ACTION#"
-            >
-              {isProject ? t('Create Project') : t('Create Namespace')}
-            </Button>
-          }
+          <Button
+            variant="secondary"
+            onClick={() => {
+              setOpen(false);
+              onCreateNew();
+            }}
+            data-test-dropdown-menu="#CREATE_RESOURCE_ACTION#"
+          >
+            {isProject ? t('Create Project') : t('Create Namespace')}
+          </Button>
         </MenuFooter>
       ) : null}
     </>

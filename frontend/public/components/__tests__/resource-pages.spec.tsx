@@ -1,5 +1,6 @@
 import { isGroupVersionKind } from '../../module/k8s';
-import { getResourceDetailsPages, getResourceListPages } from '../resource-pages';
+import { getResourceListPages } from '../list-pages';
+import { getResourceDetailsPages } from '../resource-pages';
 
 const isComponent = (Component) =>
   typeof Component === 'function' ||

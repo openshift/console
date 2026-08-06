@@ -20,7 +20,7 @@ const HelmReleaseOverview: FC<HelmReleaseOverviewProps> = ({ obj, customData }) 
       <SectionHeading text={t('Helm Release details')} />
       <Grid hasGutter>
         <GridItem sm={6}>
-          <ResourceSummary resource={obj} customPathName={'metadata.labels.name'} />
+          <ResourceSummary resource={obj} customPathName="metadata.labels.name" />
         </GridItem>
         <GridItem sm={6}>
           <HelmChartSummary helmRelease={customData} obj={obj} />

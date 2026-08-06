@@ -62,7 +62,7 @@ const KeyValueFileInputField: FC<KeyValueEntryFormProps & FieldProps> = ({
           {fieldValues?.map((v, idx) => (
             <Flex
               className="key-value--wrapper"
-              data-test={'key-value-pair'}
+              data-test="key-value-pair"
               key={`${idx.toString()}-${uniqId}`}
               direction={{ default: 'column' }}
             >

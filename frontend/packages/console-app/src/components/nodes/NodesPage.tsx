@@ -40,7 +40,7 @@ import type {
 import type { NodeMetrics } from '@console/internal/actions/ui';
 import { setNodeMetrics } from '@console/internal/actions/ui';
 import ListPageHeader from '@console/internal/components/factory/ListPage/ListPageHeader';
-import { PROMETHEUS_BASE_PATH } from '@console/internal/components/graphs';
+import { PROMETHEUS_BASE_PATH } from '@console/internal/components/graphs/consts';
 import { getPrometheusURL, PrometheusEndpoint } from '@console/internal/components/graphs/helpers';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { LabelList } from '@console/internal/components/utils/label-list';

@@ -142,7 +142,7 @@ const SourceResources: FC<SourceResourcesProps> = ({ namespace, isMoveSink }) =>
       )}
       <ResourceDropdownField
         key={resourcesData.length === 0 ? 'no-resources' : 'resources'}
-        menuClassName={'max-height-menu'}
+        menuClassName="max-height-menu"
         data-test="sourcable-resources"
         name="formData.source.key"
         resources={resourcesData}

@@ -18,7 +18,7 @@ import {
 import {
   ClusterNotUpgradeableAlert,
   UpdateBlockedLabel,
-} from '../cluster-settings/cluster-settings';
+} from '../cluster-settings/cluster-settings-utils';
 import { ReleaseNotesLink } from '../utils/release-notes-link';
 
 const ClusterMoreUpdatesModal: FC<ClusterMoreUpdatesModalProps> = ({ cancel, cv }) => {

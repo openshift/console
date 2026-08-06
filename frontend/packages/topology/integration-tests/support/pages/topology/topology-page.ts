@@ -490,8 +490,8 @@ export const topologyListPage = {
 
 export const createServiceBindingConnect = (
   bindingName: string = 'testing',
-  senderNode: string,
-  recieverNode: string,
+  senderNode: string = undefined,
+  recieverNode: string = undefined,
 ) => {
   topologyPage.rightClickOnNode(senderNode);
   cy.byTestActionID('Create Service Binding').should('be.visible').click();

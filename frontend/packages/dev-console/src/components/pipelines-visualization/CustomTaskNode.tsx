@@ -121,7 +121,7 @@ const CustomTaskComponent: FC<CustomTaskProps> = ({
               color: customTaskColor.value,
             }}
           >
-            {<RhUiQuestionMarkCircleFillIcon />}
+            <RhUiQuestionMarkCircleFillIcon />
           </svg>
         </>
       )}

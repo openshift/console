@@ -69,7 +69,7 @@ export const ExploreAdminFeaturesGettingStartedCard: FC = () => {
       id="admin-features"
       icon={<RhUiFlagIcon color="var(--co-global--palette--orange-400)" aria-hidden="true" />}
       title={t('Explore new features and capabilities')}
-      titleColor={'var(--co-global--palette--orange-400)'}
+      titleColor="var(--co-global--palette--orange-400)"
       links={links}
       moreLink={moreLink}
     />

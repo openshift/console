@@ -50,7 +50,7 @@ import {
 } from '@console/shared/src/promql/cluster-dashboard';
 import { getPrometheusQueryResponse } from '../../../../actions/dashboards';
 import { MachineConfigPoolModel } from '../../../../models';
-import type { DataPoint, PrometheusResponse } from '../../../graphs';
+import type { DataPoint, PrometheusResponse } from '../../../graphs/types';
 import { getRangeVectorStats, getInstantVectorStats } from '../../../graphs/utils';
 import {
   humanizeBinaryBytes,

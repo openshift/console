@@ -5,8 +5,8 @@ import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import type { ModalComponentProps } from '@console/shared/src/types/modal';
+import { setPubSubModalLauncher } from './pub-sub-state';
 import PubSub from './PubSub';
-import { setPubSubModalLauncher } from './PubSubModalLauncher';
 
 type PubSubControllerProps = {
   source: K8sResourceKind;

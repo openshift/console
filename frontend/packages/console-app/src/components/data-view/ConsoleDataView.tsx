@@ -30,7 +30,7 @@ import type {
   ConsoleDataViewProps,
 } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
-import { LazyColumnManagementModalOverlay } from '@console/internal/components/modals';
+import { LazyColumnManagementModalOverlay } from '@console/internal/components/modals/lazy-column-management-modal';
 import { EmptyBox } from '@console/shared/src/components/empty-state/EmptyBox';
 import { StatusBox } from '@console/shared/src/components/status/StatusBox';
 import { DataViewLabelFilter } from './DataViewLabelFilter';

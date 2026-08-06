@@ -106,7 +106,7 @@ const NamespaceDropdown: FC = () => {
       headingLevel="h4"
       icon={RhStandardAlertIcon}
       titleText={<>{t('Unable to load')}</>}
-      data-test={'dropdown console.preferredNamespace error'}
+      data-test="dropdown console.preferredNamespace error"
     >
       <EmptyStateBody>{loadErrorDescription}</EmptyStateBody>
     </EmptyState>
@@ -143,7 +143,7 @@ const NamespaceDropdown: FC = () => {
 
   const lastNamespaceOption: JSX.Element = (
     <MenuList className="co-user-preference__namespace-menu__last-viewed">
-      <Divider component="li" key={'divider'} />
+      <Divider component="li" key="divider" />
       <MenuItem
         key={lastViewedOption.key}
         itemId={lastViewedOption.key}
@@ -198,15 +198,11 @@ const NamespaceDropdown: FC = () => {
       isOpen={dropdownOpen}
       title={selected}
       onToggle={onToggle}
-      data-test={'dropdown console.preferredNamespace'}
+      data-test="dropdown console.preferredNamespace"
       className="co-user-preference__namespace-menu-toggle"
     />
   ) : (
-    <Skeleton
-      height="30px"
-      width="100%"
-      data-test={'dropdown skeleton console.preferredNamespace'}
-    />
+    <Skeleton height="30px" width="100%" data-test="dropdown skeleton console.preferredNamespace" />
   );
 };
 

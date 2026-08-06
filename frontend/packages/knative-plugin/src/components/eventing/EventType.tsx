@@ -46,7 +46,7 @@ const EventType: FC<EventTypeProps> = ({ eventType }) => {
       </div>
       <Table
         data={rows}
-        defaultSortField={'attributes'}
+        defaultSortField="attributes"
         defaultSortOrder={SortByDirection.asc}
         aria-label={t('Event')}
         Header={EventTypeHeaders(t)}

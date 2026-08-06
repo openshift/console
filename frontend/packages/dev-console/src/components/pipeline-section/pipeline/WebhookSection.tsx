@@ -260,7 +260,7 @@ const WebhookSection: FC<WebhoookSectionProps> = ({ pac, formContextField }) => 
       )}
 
       {gitProvider && gitProvider !== GitProvider.BITBUCKET ? (
-        <FormGroup fieldId={'webhook-secret-clipboard'} label={t('Webhook secret')}>
+        <FormGroup fieldId="webhook-secret-clipboard" label={t('Webhook secret')}>
           <InputGroup style={{ display: 'flex' }}>
             <InputGroupItem>
               <ClipboardCopy

@@ -94,7 +94,7 @@ export const SampleGettingStartedCard: FC<SampleGettingStartedCardProps> = ({ fe
               <RhUiCatalogAltIcon color="var(--co-global--palette--blue-400)" aria-hidden="true" />
             }
             title={t('Create functions using samples')}
-            titleColor={'var(--co-global--palette--blue-400)'}
+            titleColor="var(--co-global--palette--blue-400)"
             description={t('Choose a code sample to create a function.')}
             links={links}
             moreLink={moreLink}

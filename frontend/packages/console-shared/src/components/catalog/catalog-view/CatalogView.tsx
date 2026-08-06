@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import type { CatalogCategory } from '@console/dynamic-plugin-sdk/src';
 import type { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
-import { isModalOpen } from '@console/internal/components/modals';
+import { isModalOpen } from '@console/internal/components/modals/is-modal-open';
 import { useQueryParams } from '../../../hooks/useQueryParams';
 import PaneBody from '../../layout/PaneBody';
 import { setURLParams, updateURLParams, getCatalogTypeCounts } from '../utils/catalog-utils';

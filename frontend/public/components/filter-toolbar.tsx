@@ -37,7 +37,7 @@ import { useDeepCompareMemoize } from '@console/shared/src/hooks/useDeepCompareM
 import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import AutocompleteInput from './autocomplete';
 import { TextFilter } from './factory/text-filter';
-import { LazyColumnManagementModalOverlay } from './modals';
+import { LazyColumnManagementModalOverlay } from './modals/lazy-column-management-modal';
 import { storagePrefix } from './row-filter';
 import useLabelSelectionFix from './useLabelSelectionFix';
 import useRowFilterFix from './useRowFilterFix';

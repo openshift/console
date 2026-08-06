@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { PROMETHEUS_TENANCY_BASE_PATH } from '@console/internal/components/graphs';
+import { PROMETHEUS_TENANCY_BASE_PATH } from '@console/internal/components/graphs/consts';
 import type { OverviewMetrics } from '@console/internal/components/overview/metricUtils';
 import {
   fetchOverviewMetrics,

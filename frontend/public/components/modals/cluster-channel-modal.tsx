@@ -25,7 +25,7 @@ import type { ModalComponentProps } from '@console/shared/src/types/modal';
 import { ClusterVersionModel } from '../../models';
 import type { ClusterVersionKind } from '../../module/k8s';
 import { getAvailableClusterChannels, getLastCompletedUpdate, k8sPatch } from '../../module/k8s';
-import { ChannelDocLink } from '../cluster-settings/cluster-settings';
+import { ChannelDocLink } from '../cluster-settings/cluster-settings-utils';
 import { isManaged } from '../utils/documentation';
 
 const ClusterChannelModal = (props: ClusterChannelModalProps) => {

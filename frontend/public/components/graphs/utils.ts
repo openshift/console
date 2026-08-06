@@ -2,7 +2,7 @@ import { chart_color_orange_300 as requestedColor } from '@patternfly/react-toke
 import i18n from 'i18next';
 import * as _ from 'lodash';
 import type { Humanize } from '../utils/types';
-import type { PrometheusResponse, DataPoint, PrometheusResult } from '.';
+import type { PrometheusResponse, DataPoint, PrometheusResult } from './types';
 
 const defaultXMutator: XMutator = (x) => new Date(x * 1000);
 const defaultYMutator: YMutator = (y) => parseFloat(y);

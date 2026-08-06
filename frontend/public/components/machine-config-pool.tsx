@@ -123,7 +123,7 @@ const MachineConfigPoolCharacteristics: FC<MachineConfigPoolCharacteristicsProps
                 : '-'}
             </DescriptionListDescription>
           </DescriptionListGroup>
-          <DetailsItem label={t('Paused')} obj={obj} path={'spec.paused'}>
+          <DetailsItem label={t('Paused')} obj={obj} path="spec.paused">
             {obj.spec?.paused ? t('True') : t('False')}
           </DetailsItem>
         </>

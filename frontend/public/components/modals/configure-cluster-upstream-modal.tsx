@@ -114,7 +114,7 @@ const ConfigureClusterUpstreamModal = (props: ConfigureClusterUpstreamModalProps
                 !customSelected && (
                   <>
                     <TextInput
-                      id={'cluster-version-default-upstream-server-url'}
+                      id="cluster-version-default-upstream-server-url"
                       type="url"
                       readOnly
                       value={CLUSTER_VERSION_DEFAULT_UPSTREAM_SERVER_URL_PLACEHOLDER}

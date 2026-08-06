@@ -16,15 +16,15 @@ import { useRefWidth } from '../utils/ref-width-hook';
 import { humanizeNumber } from '../utils/units';
 import type { AreaChartProps } from './area';
 import { AreaChart } from './area';
+import { CursorVoronoiContainer } from './cursor-voronoi-container';
 import { GraphEmpty } from './graph-empty';
 import { PrometheusEndpoint } from './helpers';
 import { PrometheusGraph, PrometheusGraphLink } from './prometheus-graph';
 import { usePrometheusPoll } from './prometheus-poll-hook';
 import { areaTheme } from './themes';
 import { ChartLegendTooltip } from './tooltip';
+import type { DataPoint, PrometheusResult } from './types';
 import { getRangeVectorStats } from './utils';
-import { CursorVoronoiContainer } from '.';
-import type { DataPoint, PrometheusResult } from '.';
 
 const DEFAULT_HEIGHT = 180;
 const DEFAULT_SAMPLES = 60;

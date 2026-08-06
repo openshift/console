@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import { coFetch } from '@console/shared/src/utils/console-fetch';
+import { setAuthHandlerProvider } from '@console/shared/src/utils/validate-status';
 import { stripBasePath } from '../components/utils/link';
 
 const {
@@ -211,3 +212,5 @@ export const authSvc = {
     resetAuthRedirectCount();
   },
 };
+
+setAuthHandlerProvider(() => Promise.resolve(authSvc));

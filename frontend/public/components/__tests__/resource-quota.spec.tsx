@@ -92,7 +92,7 @@ describe('Check quota table columns by ResourceUsageRow', () => {
     renderWithProviders(
       <table>
         <tbody>
-          <ResourceUsageRow resourceType={'limits.cpu'} quota={quota} />
+          <ResourceUsageRow resourceType="limits.cpu" quota={quota} />
         </tbody>
       </table>,
     );
@@ -123,7 +123,7 @@ describe('Check cluster quota table columns by ResourceUsageRow', () => {
     renderWithProviders(
       <table>
         <tbody>
-          <ResourceUsageRow resourceType={'limits.cpu'} quota={quota} />
+          <ResourceUsageRow resourceType="limits.cpu" quota={quota} />
         </tbody>
       </table>,
     );
@@ -167,7 +167,7 @@ describe('Check applied cluster quota table columns by ResourceUsageRow', () => 
     renderWithProviders(
       <table>
         <tbody>
-          <ResourceUsageRow resourceType={'limits.cpu'} quota={quota} namespace="test-namespace" />
+          <ResourceUsageRow resourceType="limits.cpu" quota={quota} namespace="test-namespace" />
         </tbody>
       </table>,
     );
