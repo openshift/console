@@ -3,7 +3,6 @@ import * as _ from 'lodash-es';
 import { useState, useRef, useCallback, useEffect, useLayoutEffect, memo, Suspense } from 'react';
 import { render } from 'react-dom';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
-import { linkify } from 'react-linkify';
 import { Provider, useSelector, useDispatch } from 'react-redux';
 import { Router } from 'react-router-dom';
 import { useParams, useLocation, CompatRouter, Routes, Route } from 'react-router-dom-v5-compat';
@@ -80,10 +79,6 @@ import { useImpersonateRefreshFeatures } from './useImpersonateRefreshFeatures';
 delete process.title;
 
 initI18n();
-
-// Disable linkify 'fuzzy links' across the app.
-// Only linkify url strings beginning with a proper protocol scheme.
-linkify.set({ fuzzyLink: false });
 
 const EnhancedProvider: React.FC<{
   provider: React.Provider<any>;
