@@ -14,7 +14,7 @@ import {
   PageSidebarBody,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { createPath, useLocation } from 'react-router';
+import { createPath, useLocation, useNavigate } from 'react-router';
 import type { Perspective, ReduxReducer, ContextProvider } from '@console/dynamic-plugin-sdk';
 import {
   PerspectiveContext,
@@ -168,12 +168,21 @@ export const DetectContext: FC<{ children: ReactNode }> = ({ children }) => {
   const perspectiveExtensions = usePerspectives();
   const perspectiveParam = getPerspectiveURLParam(perspectiveExtensions);
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (perspectiveParam && perspectiveParam !== activePerspective) {
-      setActivePerspective(perspectiveParam, createPath(location));
+    if (perspectiveParam) {
+      const params = new URLSearchParams(location.search);
+      params.delete('perspective');
+      const search = params.toString();
+      const cleanPath = createPath({ ...location, search: search ? `?${search}` : '' });
+      if (perspectiveParam !== activePerspective) {
+        setActivePerspective(perspectiveParam, cleanPath);
+      } else {
+        navigate(cleanPath, { replace: true });
+      }
     }
-  }, [perspectiveParam, activePerspective, setActivePerspective, location]);
+  }, [perspectiveParam, activePerspective, setActivePerspective, navigate, location]);
 
   useEffect(() => {
     if (reducersResolved) {
