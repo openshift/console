@@ -244,16 +244,22 @@ const NodeTerminal: FC<NodeTerminalProps> = ({ obj: node }) => {
     createDebugPod();
     window.addEventListener('beforeunload', closeTab);
     return () => {
-      deleteNamespace(namespace.metadata.name);
+      if (namespace) {
+        deleteNamespace(namespace.metadata.name);
+      }
       window.removeEventListener('beforeunload', closeTab);
     };
   }, [nodeName, isWindows]);
 
-  return errorMessage ? (
-    <NodeTerminalError error={errorMessage} />
-  ) : (
-    <NodeTerminalInner pod={pod} loaded={loaded} loadError={loadError} />
-  );
+  if (errorMessage) {
+    return <NodeTerminalError error={errorMessage} />;
+  }
+
+  if (!podName) {
+    return <LoadingBox />;
+  }
+
+  return <NodeTerminalInner pod={pod} loaded={loaded} loadError={loadError} />;
 };
 
 export default NodeTerminal;

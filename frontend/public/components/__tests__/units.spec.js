@@ -181,6 +181,7 @@ describe('units', () => {
     test_(1073741824, '1 GiB');
     test_(1099511627776, '1 TiB');
     test_(1125899906842624, '1 PiB');
+    test_(1152921504606846976, '1 EiB');
   });
 
   describe('should humanize binaryBytesWithoutB values', () => {
@@ -219,6 +220,7 @@ describe('units', () => {
     test_(1073741824, '1 Gi');
     test_(1099511627776, '1 Ti');
     test_(1125899906842624, '1 Pi');
+    test_(1152921504606846976, '1 Ei');
   });
 
   describe('should de-humanize binaryBytesWithoutB values', () => {
@@ -257,6 +259,7 @@ describe('units', () => {
     test_('1Gi', 1073741824);
     test_('1Ti', 1099511627776);
     test_('1Pi', 1125899906842624);
+    test_('1Ei', 1152921504606846976);
     test_('100 i', 100);
     test_('100 Ki', 102400);
   });
@@ -283,7 +286,7 @@ describe('units', () => {
 
 describe('validate', () => {
   it('memory', () => {
-    ['32', '32M', '32Mi'].forEach((v) => {
+    ['32', '32M', '32Mi', '1Ei'].forEach((v) => {
       expect(validate.memory(v)).toEqual(undefined);
     });
 
@@ -357,6 +360,7 @@ describe('convert to base value', () => {
   test_('1Gi', 1073741824);
   test_('1Ti', 1099511627776);
   test_('1Pi', 1125899906842624);
+  test_('1Ei', 1152921504606846976);
 
   // decimal memory units
   test_('1k', 1000);

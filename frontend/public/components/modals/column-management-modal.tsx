@@ -136,11 +136,11 @@ export const ColumnManagementModal: FC<
                 })}
                 variant="info"
               >
-                {columnLayout?.showNamespaceOverride && <NamespaceColumnHelpText />}
+                {!columnLayout?.showNamespaceOverride && <NamespaceColumnHelpText />}
               </Alert>
             </>
           ) : (
-            columnLayout?.showNamespaceOverride && <NamespaceColumnHelpText />
+            !columnLayout?.showNamespaceOverride && <NamespaceColumnHelpText />
           )}
           <Grid hasGutter>
             <GridItem sm={6}>
