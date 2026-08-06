@@ -79,7 +79,7 @@ export type DashboardsOverviewHealthPrometheusSubsystem = Extension<
 /** Adds a health subsystem to the status card of Overview dashboard where the source of status is a K8s REST API. */
 export type DashboardsOverviewHealthURLSubsystem<
   T = any,
-  R extends K8sResourceCommon | K8sResourceCommon[] = K8sResourceCommon | K8sResourceCommon[]
+  R extends K8sResourceCommon | K8sResourceCommon[] = K8sResourceCommon | K8sResourceCommon[],
 > = Extension<
   'console.dashboards/overview/health/url',
   {
@@ -111,42 +111,40 @@ export type DashboardsOverviewHealthURLSubsystem<
 >;
 
 /** Adds a health subsystem to the status card of Overview dashboard where the source of status is a K8s Resource. */
-export type DashboardsOverviewHealthResourceSubsystem<
-  T extends ResourcesObject = ResourcesObject
-> = Extension<
-  'console.dashboards/overview/health/resource',
-  {
-    /** The display name of the subsystem. */
-    title: string;
-    /** Kubernetes resources which will be fetched and passed to `healthHandler`. */
-    resources: CodeRef<WatchK8sResources<T>>;
-    /** Resolve the subsystem's health. */
-    healthHandler: CodeRef<ResourceHealthHandler<T>>;
-    /** Loader for popup content. If defined, a health item will be represented as a link which opens popup with given content. */
-    popupComponent?: CodeRef<React.ComponentType<{ namespace?: string } | WatchK8sResults<T>>>;
-    /** The title of the popover. */
-    popupTitle?: string;
-  }
->;
+export type DashboardsOverviewHealthResourceSubsystem<T extends ResourcesObject = ResourcesObject> =
+  Extension<
+    'console.dashboards/overview/health/resource',
+    {
+      /** The display name of the subsystem. */
+      title: string;
+      /** Kubernetes resources which will be fetched and passed to `healthHandler`. */
+      resources: CodeRef<WatchK8sResources<T>>;
+      /** Resolve the subsystem's health. */
+      healthHandler: CodeRef<ResourceHealthHandler<T>>;
+      /** Loader for popup content. If defined, a health item will be represented as a link which opens popup with given content. */
+      popupComponent?: CodeRef<React.ComponentType<{ namespace?: string } | WatchK8sResults<T>>>;
+      /** The title of the popover. */
+      popupTitle?: string;
+    }
+  >;
 
 /** Adds a health subsystem to the status card of Overview dashboard where the source of status is a K8s REST API. */
-export type DashboardsOverviewHealthOperator<
-  T extends K8sResourceCommon = K8sResourceCommon
-> = Extension<
-  'console.dashboards/overview/health/operator',
-  {
-    /** Title of operators section in the popup. */
-    title: string;
-    /** Kubernetes resources which will be fetched and passed to `healthHandler`. */
-    resources: CodeRef<WatchK8sResourceWithProp[]>;
-    /** Resolves status for the operators. */
-    getOperatorsWithStatuses?: CodeRef<GetOperatorsWithStatuses<T>>;
-    /** Loader for popup row component. */
-    operatorRowLoader?: CodeRef<React.ComponentType<OperatorRowProps<T>>>;
-    /** Links to all resources page. If not provided then a list page of the first resource from resources prop is used. */
-    viewAllLink?: string;
-  }
->;
+export type DashboardsOverviewHealthOperator<T extends K8sResourceCommon = K8sResourceCommon> =
+  Extension<
+    'console.dashboards/overview/health/operator',
+    {
+      /** Title of operators section in the popup. */
+      title: string;
+      /** Kubernetes resources which will be fetched and passed to `healthHandler`. */
+      resources: CodeRef<WatchK8sResourceWithProp[]>;
+      /** Resolves status for the operators. */
+      getOperatorsWithStatuses?: CodeRef<GetOperatorsWithStatuses<T>>;
+      /** Loader for popup row component. */
+      operatorRowLoader?: CodeRef<React.ComponentType<OperatorRowProps<T>>>;
+      /** Links to all resources page. If not provided then a list page of the first resource from resources prop is used. */
+      viewAllLink?: string;
+    }
+  >;
 
 /** Adds an inventory status group. */
 export type DashboardsInventoryItemGroup = Extension<
@@ -162,7 +160,7 @@ export type DashboardsInventoryItemGroup = Extension<
 /** Adds a resource tile to the overview inventory card. */
 export type DashboardsOverviewInventoryItem<
   T extends K8sModel = K8sModel,
-  R extends { [key: string]: K8sResourceCommon[] } = { [key: string]: K8sResourceCommon[] }
+  R extends { [key: string]: K8sResourceCommon[] } = { [key: string]: K8sResourceCommon[] },
 > = Extension<
   'console.dashboards/overview/inventory/item',
   DashboardsOverviewInventoryItemProperties<T, R> & {}
@@ -171,7 +169,7 @@ export type DashboardsOverviewInventoryItem<
 /** Replaces an overview inventory card. */
 export type DashboardsOverviewInventoryItemReplacement<
   T extends K8sModel = K8sModel,
-  R extends { [key: string]: K8sResourceCommon[] } = { [key: string]: K8sResourceCommon[] }
+  R extends { [key: string]: K8sResourceCommon[] } = { [key: string]: K8sResourceCommon[] },
 > = Extension<
   'console.dashboards/overview/inventory/item/replacement',
   DashboardsOverviewInventoryItemProperties<T, R> & {}
@@ -180,28 +178,27 @@ export type DashboardsOverviewInventoryItemReplacement<
 /** Adds a resource tile to the project overview inventory card. */
 export type DashboardsProjectOverviewInventoryItem<
   T extends K8sModel = K8sModel,
-  R extends { [key: string]: K8sResourceCommon[] } = { [key: string]: K8sResourceCommon[] }
+  R extends { [key: string]: K8sResourceCommon[] } = { [key: string]: K8sResourceCommon[] },
 > = Extension<
   'console.dashboards/project/overview/item',
   DashboardsOverviewInventoryItemProperties<T, R> & {}
 >;
 
 /** Adds an activity to the Activity Card of Overview Dashboard where the triggering of activity is based on watching a K8s resource. */
-export type DashboardsOverviewResourceActivity<
-  T extends K8sResourceCommon = K8sResourceCommon
-> = Extension<
-  'console.dashboards/overview/activity/resource',
-  {
-    /** The utilization item to be replaced. */
-    k8sResource: CodeRef<WatchK8sResourceWithProp & { isList: true }>;
-    /** Function which determines if the given resource represents the action. If not defined, every resource represents activity. */
-    isActivity?: CodeRef<(resource: T) => boolean>;
-    /** Timestamp for the given action, which will be used for ordering. */
-    getTimestamp?: CodeRef<(resource: T) => Date>;
-    /** The action component. */
-    component: CodeRef<React.ComponentType<K8sActivityProps<T>>>;
-  }
->;
+export type DashboardsOverviewResourceActivity<T extends K8sResourceCommon = K8sResourceCommon> =
+  Extension<
+    'console.dashboards/overview/activity/resource',
+    {
+      /** The utilization item to be replaced. */
+      k8sResource: CodeRef<WatchK8sResourceWithProp & { isList: true }>;
+      /** Function which determines if the given resource represents the action. If not defined, every resource represents activity. */
+      isActivity?: CodeRef<(resource: T) => boolean>;
+      /** Timestamp for the given action, which will be used for ordering. */
+      getTimestamp?: CodeRef<(resource: T) => Date>;
+      /** The action component. */
+      component: CodeRef<React.ComponentType<K8sActivityProps<T>>>;
+    }
+  >;
 
 /** Adds an activity to the Activity Card of Prometheus Overview Dashboard where the triggering of activity is based on watching a K8s resource. */
 export type DashboardsOverviewPrometheusActivity = Extension<
@@ -306,7 +303,7 @@ export const isDashboardsOverviewHealthSubsystem = (
 
 type DashboardsOverviewInventoryItemProperties<
   T extends K8sModel = K8sModel,
-  R extends { [key: string]: K8sResourceCommon[] } = { [key: string]: K8sResourceCommon[] }
+  R extends { [key: string]: K8sResourceCommon[] } = { [key: string]: K8sResourceCommon[] },
 > = {
   /** The model for `resource` which will be fetched. Used to get the model's `label` or `abbr`. */
   model: CodeRef<T>;

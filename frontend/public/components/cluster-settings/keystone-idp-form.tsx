@@ -57,9 +57,7 @@ export const AddKeystonePage = () => {
     );
   };
 
-  const getOAuthResource = () => {
-    return handlePromise(getOAuth());
-  };
+  const getOAuthResource = () => handlePromise(getOAuth());
 
   const createTLSSecret = () => {
     if (!certFileContent) {

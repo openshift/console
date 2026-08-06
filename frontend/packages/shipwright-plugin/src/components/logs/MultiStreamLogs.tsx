@@ -28,9 +28,7 @@ export const MultiStreamLogs: FC<MultiStreamLogsProps> = ({
   dataRef.current = containers;
 
   useEffect(() => {
-    setCurrentLogsGetter(() => {
-      return scrollPane.current?.innerText;
-    });
+    setCurrentLogsGetter(() => scrollPane.current?.innerText);
   }, [setCurrentLogsGetter]);
 
   const handleComplete = useCallback((containerName) => {

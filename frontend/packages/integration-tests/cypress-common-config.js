@@ -94,7 +94,7 @@ function setupNodeEvents(on, config) {
   /* In a Docker container, the default size of the /dev/shm shared memory space is 64MB.
    * This is not typically enough to run Chrome and can cause the browser to crash. You can
    * fix this by passing the --disable-dev-shm-usage flag to Chrome. */
-  on('before:browser:launch', (browser = {}, launchOptions) => {
+  on('before:browser:launch', (browser = {}, launchOptions = undefined) => {
     if (browser.family === 'chromium' && browser.name !== 'electron') {
       launchOptions.args.push('--disable-dev-shm-usage');
     }

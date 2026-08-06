@@ -120,15 +120,13 @@ export type InstallPlanApprovalModalProps = {
 
 export const InstallPlanApprovalModalOverlay: OverlayComponent<InstallPlanApprovalModalProps> = (
   props,
-) => {
-  return (
-    <Modal
-      variant={ModalVariant.small}
-      isOpen
-      onClose={props.closeOverlay}
-      aria-labelledby="installplan-approval-modal-title"
-    >
-      <InstallPlanApprovalModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
-    </Modal>
-  );
-};
+) => (
+  <Modal
+    variant={ModalVariant.small}
+    isOpen
+    onClose={props.closeOverlay}
+    aria-labelledby="installplan-approval-modal-title"
+  >
+    <InstallPlanApprovalModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
+  </Modal>
+);

@@ -99,9 +99,8 @@ const InventoryCard: FC = () => {
   const { obj } = useContext(NodeDashboardContext);
   const { t } = useTranslation('console-app');
 
-  const [inventoryItemExtensions, inventoryItemExtensionsResolved] = useResolvedExtensions<
-    NodeInventoryExtensionItem
-  >(isNodeInventoryItem);
+  const [inventoryItemExtensions, inventoryItemExtensionsResolved] =
+    useResolvedExtensions<NodeInventoryExtensionItem>(isNodeInventoryItem);
 
   const inventoryItems = useMemo(() => {
     if (!inventoryItemExtensionsResolved) {

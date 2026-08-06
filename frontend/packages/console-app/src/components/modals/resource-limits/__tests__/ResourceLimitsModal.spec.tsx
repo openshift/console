@@ -75,7 +75,7 @@ const baseDeployment = (): K8sResourceKind =>
         },
       },
     },
-  } as K8sResourceKind);
+  }) as K8sResourceKind;
 
 type RenderResourceLimitsModalOptions = {
   resource?: K8sResourceKind;

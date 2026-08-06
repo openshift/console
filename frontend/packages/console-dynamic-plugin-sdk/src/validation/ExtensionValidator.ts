@@ -82,27 +82,30 @@ export const findWebpackModules = (
   pluginBasePath?: string,
 ) => {
   const webpackModules = Array.from(compilation.modules);
-  return Object.keys(exposedModules).reduce((acc, moduleName) => {
-    const absolutePath =
-      pluginBasePath &&
-      guessModuleFilePath(path.resolve(pluginBasePath, exposedModules[moduleName]));
+  return Object.keys(exposedModules).reduce(
+    (acc, moduleName) => {
+      const absolutePath =
+        pluginBasePath &&
+        guessModuleFilePath(path.resolve(pluginBasePath, exposedModules[moduleName]));
 
-    acc[moduleName] = webpackModules.find((m: NormalModule) => {
-      // @ts-expect-error rootModule is internal to webpack's ModuleConcatenationPlugin
-      const rootModule = m?.rootModule as NormalModule;
+      acc[moduleName] = webpackModules.find((m: NormalModule) => {
+        // @ts-expect-error rootModule is internal to webpack's ModuleConcatenationPlugin
+        const rootModule = m?.rootModule as NormalModule;
 
-      /* first strategy: check if the module name matches the rawRequest */
-      const rawRequest = m?.rawRequest || rootModule?.rawRequest;
-      const matchesRawRequest = rawRequest && rawRequest === exposedModules[moduleName];
+        /* first strategy: check if the module name matches the rawRequest */
+        const rawRequest = m?.rawRequest || rootModule?.rawRequest;
+        const matchesRawRequest = rawRequest && rawRequest === exposedModules[moduleName];
 
-      /* second strategy: check if the absolute path matches the resource */
-      const resource = m?.resource || rootModule?.resource;
-      const matchesAbsolutePath = resource && resource === absolutePath;
+        /* second strategy: check if the absolute path matches the resource */
+        const resource = m?.resource || rootModule?.resource;
+        const matchesAbsolutePath = resource && resource === absolutePath;
 
-      return matchesRawRequest || matchesAbsolutePath;
-    });
-    return acc;
-  }, {} as { [moduleName: string]: Module });
+        return matchesRawRequest || matchesAbsolutePath;
+      });
+      return acc;
+    },
+    {} as { [moduleName: string]: Module },
+  );
 };
 
 export class ExtensionValidator extends BaseValidator {

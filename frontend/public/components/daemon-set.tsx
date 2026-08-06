@@ -30,9 +30,8 @@ import { useWorkloadColumns, getWorkloadDataViewRows } from './workload-table';
 
 const kind = referenceForModel(DaemonSetModel);
 
-const getDataViewRows: GetDataViewRows<DaemonSetKind> = (data, columns) => {
-  return getWorkloadDataViewRows(data, columns, DaemonSetModel);
-};
+const getDataViewRows: GetDataViewRows<DaemonSetKind> = (data, columns) =>
+  getWorkloadDataViewRows(data, columns, DaemonSetModel);
 
 export const DaemonSetDetailsList: FC<DaemonSetDetailsListProps> = ({ ds }) => {
   const { t } = useTranslation('public');

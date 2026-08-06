@@ -250,9 +250,7 @@ const ImageStreamTagsDetails: FC<ImageStreamTagsDetailsProps> = ({
   );
 };
 
-const parseName = (nameAndTag: string): string => {
-  return nameAndTag.split(':')[0];
-};
+const parseName = (nameAndTag: string): string => nameAndTag.split(':')[0];
 
 const getImageStreamNameAndTag = (imageStreamTag: K8sResourceKind) => {
   const imageStreamTagName: string = _.get(imageStreamTag, 'metadata.name') || '';

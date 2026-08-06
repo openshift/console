@@ -222,10 +222,10 @@ export const getMachineHealth = (
       matchingHC.length > 1
         ? 'Multiple resources'
         : failingConditions
-        ? `${pluralize(failingConditions, 'condition')} failing`
-        : conditions.length > 0
-        ? `${pluralize(conditions.length, 'condition')} passing`
-        : i18next.t('console-app~No conditions'),
+          ? `${pluralize(failingConditions, 'condition')} failing`
+          : conditions.length > 0
+            ? `${pluralize(conditions.length, 'condition')} passing`
+            : i18next.t('console-app~No conditions'),
     conditions,
     matchingHC,
   };

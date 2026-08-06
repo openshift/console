@@ -3,11 +3,9 @@ import userEvent from '@testing-library/user-event';
 import { mockDropdownData } from '../__mocks__/dropdown-data-mock';
 import { ResourceDropdown } from '../ResourceDropdown';
 
-jest.mock('@console/shared/src/hooks/useUserPreference', () => {
-  return {
-    useUserPreference: () => ['', () => {}, true],
-  };
-});
+jest.mock('@console/shared/src/hooks/useUserPreference', () => ({
+  useUserPreference: () => ['', () => {}, true],
+}));
 
 const componentFactory = (props = {}) => (
   <ResourceDropdown

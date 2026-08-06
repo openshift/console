@@ -136,19 +136,20 @@ Cypress.Commands.add('checkErrors', () => {
 Cypress.Commands.add('waitUntilEnabled', (selector: string, timeout: number = 20000): any => {
   const start = new Date().getTime();
 
-  return cy.get(selector).then(($el) => {
-    return new Promise((resolve, reject) => {
-      const checkEnabled = () => {
-        if ($el.is(':enabled')) {
-          resolve($el);
-        } else if (new Date().getTime() - start > timeout) {
-          reject(new Error(`Timed out waiting for ${selector} to become enabled`));
-        } else {
-          setTimeout(checkEnabled, 100);
-        }
-      };
+  return cy.get(selector).then(
+    ($el) =>
+      new Promise((resolve, reject) => {
+        const checkEnabled = () => {
+          if ($el.is(':enabled')) {
+            resolve($el);
+          } else if (new Date().getTime() - start > timeout) {
+            reject(new Error(`Timed out waiting for ${selector} to become enabled`));
+          } else {
+            setTimeout(checkEnabled, 100);
+          }
+        };
 
-      checkEnabled();
-    });
-  });
+        checkEnabled();
+      }),
+  );
 });

@@ -18,7 +18,7 @@ import {
 import {
   ClusterNotUpgradeableAlert,
   UpdateBlockedLabel,
-} from '../cluster-settings/cluster-settings';
+} from '../cluster-settings/cluster-settings-utils';
 import { ReleaseNotesLink } from '../utils/release-notes-link';
 
 const ClusterMoreUpdatesModal: FC<ClusterMoreUpdatesModalProps> = ({ cancel, cv }) => {
@@ -49,28 +49,26 @@ const ClusterMoreUpdatesModal: FC<ClusterMoreUpdatesModalProps> = ({ cancel, cv 
             </Tr>
           </Thead>
           <Tbody>
-            {moreAvailableUpdates.map((update) => {
-              return (
-                <Tr key={update.version}>
+            {moreAvailableUpdates.map((update) => (
+              <Tr key={update.version}>
+                <Td>
+                  {update.version}
+                  {clusterUpgradeableFalseAndNotExternallyManaged &&
+                    isMinorVersionNewer(getLastCompletedUpdate(cv), update.version) && (
+                      <UpdateBlockedLabel />
+                    )}
+                </Td>
+                {releaseNotes && (
                   <Td>
-                    {update.version}
-                    {clusterUpgradeableFalseAndNotExternallyManaged &&
-                      isMinorVersionNewer(getLastCompletedUpdate(cv), update.version) && (
-                        <UpdateBlockedLabel />
-                      )}
+                    {getReleaseNotesLink(update.version) ? (
+                      <ReleaseNotesLink version={update.version} />
+                    ) : (
+                      '-'
+                    )}
                   </Td>
-                  {releaseNotes && (
-                    <Td>
-                      {getReleaseNotesLink(update.version) ? (
-                        <ReleaseNotesLink version={update.version} />
-                      ) : (
-                        '-'
-                      )}
-                    </Td>
-                  )}
-                </Tr>
-              );
-            })}
+                )}
+              </Tr>
+            ))}
           </Tbody>
         </Table>
       </ModalBody>
@@ -90,19 +88,17 @@ const ClusterMoreUpdatesModal: FC<ClusterMoreUpdatesModalProps> = ({ cancel, cv 
 
 export const ClusterMoreUpdatesModalOverlay: OverlayComponent<ClusterMoreUpdatesModalProps> = (
   props,
-) => {
-  return (
-    <Modal
-      isOpen
-      onClose={props.closeOverlay}
-      variant={ModalVariant.small}
-      aria-labelledby="cluster-more-updates-modal-title"
-      data-test="more-updates-modal"
-    >
-      <ClusterMoreUpdatesModal {...props} cancel={props.closeOverlay} />
-    </Modal>
-  );
-};
+) => (
+  <Modal
+    isOpen
+    onClose={props.closeOverlay}
+    variant={ModalVariant.small}
+    aria-labelledby="cluster-more-updates-modal-title"
+    data-test="more-updates-modal"
+  >
+    <ClusterMoreUpdatesModal {...props} cancel={props.closeOverlay} />
+  </Modal>
+);
 
 export type ClusterMoreUpdatesModalProps = {
   cv: ClusterVersionKind;

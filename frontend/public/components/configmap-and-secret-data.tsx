@@ -152,29 +152,31 @@ export const SecretData: FC<SecretDataProps> = ({ data }) => {
     [data],
   );
 
-  const dataDescriptionList = useMemo(() => {
-    return data
-      ? Object.keys(data)
-          .sort()
-          .map((k) => {
-            const isBinary = ITOB.isBinary(k, Buffer.from(data[k], 'base64'));
-            return (
-              <DescriptionListGroup key={k}>
-                <DescriptionListTerm i18n-not-translated="true" data-test="secret-data-term">
-                  {k}
-                </DescriptionListTerm>
-                <DescriptionListDescription>
-                  {isBinary ? (
-                    <DownloadBinaryButton label={k} value={data[k]} />
-                  ) : (
-                    <SecretValue value={data[k]} reveal={reveal} id={k} />
-                  )}
-                </DescriptionListDescription>
-              </DescriptionListGroup>
-            );
-          })
-      : [];
-  }, [data, reveal]);
+  const dataDescriptionList = useMemo(
+    () =>
+      data
+        ? Object.keys(data)
+            .sort()
+            .map((k) => {
+              const isBinary = ITOB.isBinary(k, Buffer.from(data[k], 'base64'));
+              return (
+                <DescriptionListGroup key={k}>
+                  <DescriptionListTerm i18n-not-translated="true" data-test="secret-data-term">
+                    {k}
+                  </DescriptionListTerm>
+                  <DescriptionListDescription>
+                    {isBinary ? (
+                      <DownloadBinaryButton label={k} value={data[k]} />
+                    ) : (
+                      <SecretValue value={data[k]} reveal={reveal} id={k} />
+                    )}
+                  </DescriptionListDescription>
+                </DescriptionListGroup>
+              );
+            })
+        : [],
+    [data, reveal],
+  );
 
   return (
     <>

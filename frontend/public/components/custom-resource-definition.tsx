@@ -56,7 +56,8 @@ import { DefaultPage } from './default-resource';
 import { DetailsPage } from './factory/details';
 import { ListPage } from './factory/list-page';
 import { sortResourceByValue } from './factory/Table/sort';
-import { getResourceListPages } from './resource-pages';
+// eslint-disable-next-line import/no-cycle -- import to this module is dynamic
+import { getResourceListPages } from './list-pages';
 import { AsyncComponent } from './utils/async';
 import { DetailsItem } from './utils/details-item';
 import { ResourceSummary } from './utils/details-page';
@@ -293,8 +294,8 @@ const IsNamespaced: FC<{ obj: CustomResourceDefinitionKind }> = ({ obj }) => {
   return <>{namespaced(obj) ? t('Yes') : t('No')}</>;
 };
 
-const getDataViewRows: GetDataViewRows<CustomResourceDefinitionKind> = (data, columns) => {
-  return data.map(({ obj }) => {
+const getDataViewRows: GetDataViewRows<CustomResourceDefinitionKind> = (data, columns) =>
+  data.map(({ obj }) => {
     const { name, namespace } = obj.metadata;
     const displayName = _.get(obj, 'spec.names.kind');
 
@@ -341,7 +342,6 @@ const getDataViewRows: GetDataViewRows<CustomResourceDefinitionKind> = (data, co
       };
     });
   });
-};
 
 const CustomResourceDefinitionsList: FC<CustomResourceDefinitionsListProps> = ({
   data,
@@ -377,30 +377,28 @@ export const CustomResourceDefinitionsPage: FC = (props) => (
   />
 );
 
-export const CustomResourceDefinitionsDetailsPage: FC = (props) => {
-  return (
-    <DetailsPage
-      {...props}
-      kind={referenceForModel(CustomResourceDefinitionModel)}
-      customActionMenu={(k8sObj: K8sModel, obj: CustomResourceDefinitionKind) => (
-        <LazyActionMenu
-          context={{ [referenceForModel(CustomResourceDefinitionModel)]: obj }}
-          variant={ActionMenuVariant.DROPDOWN}
-        />
-      )}
-      pages={[
-        navFactory.details(Details),
-        navFactory.editYaml(),
-        {
-          // t('public~Instances')
-          nameKey: 'public~Instances',
-          href: 'instances',
-          component: Instances,
-        },
-      ]}
-    />
-  );
-};
+export const CustomResourceDefinitionsDetailsPage: FC = (props) => (
+  <DetailsPage
+    {...props}
+    kind={referenceForModel(CustomResourceDefinitionModel)}
+    customActionMenu={(k8sObj: K8sModel, obj: CustomResourceDefinitionKind) => (
+      <LazyActionMenu
+        context={{ [referenceForModel(CustomResourceDefinitionModel)]: obj }}
+        variant={ActionMenuVariant.DROPDOWN}
+      />
+    )}
+    pages={[
+      navFactory.details(Details),
+      navFactory.editYaml(),
+      {
+        // t('public~Instances')
+        nameKey: 'public~Instances',
+        href: 'instances',
+        component: Instances,
+      },
+    ]}
+  />
+);
 
 type CustomResourceDefinitionsListProps = {
   data: CustomResourceDefinitionKind[];

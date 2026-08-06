@@ -101,16 +101,15 @@ export const useDeleteConnectorAction = (
     ),
     confirmButtonLabel: t('Delete'),
     confirmButtonVariant: ButtonVariant.danger,
-    onConfirm: () => {
-      return removeTopologyResourceConnection(element, resource).catch((err) => {
+    onConfirm: () =>
+      removeTopologyResourceConnection(element, resource).catch((err) => {
         if (err) {
           launchErrorModal({
             title: t('Error deleting connector'),
             error: err.message,
           });
         }
-      });
-    },
+      }),
     ouiaId: 'TopologyDeleteConnectorConfirmation',
   });
 

@@ -230,37 +230,30 @@ export const topologyPage = {
     cy.get(topologyPO.sidePane.tabName).eq(1).should('contain.text', sideBarTabs.Resources);
     cy.get(topologyPO.sidePane.tabs).eq(2).should('contain.text', sideBarTabs.ReleaseNotes);
   },
-  getAppNode: (appName: string) => {
-    return cy.get(`[data-id="group:${appName}"] g.odc-resource-icon text`).contains('A');
-  },
-  getRoute: (nodeName: string) => {
-    return cy
+  getAppNode: (appName: string) =>
+    cy.get(`[data-id="group:${appName}"] g.odc-resource-icon text`).contains('A'),
+  getRoute: (nodeName: string) =>
+    cy
       .get('[data-test-id="base-node-handler"] > text')
       .contains(nodeName)
       .parentsUntil(topologyPO.graph.node)
       .next('a')
-      .eq(2);
-  },
-  getBuild: (nodeName: string) => {
-    return cy.get(`a[href="/k8s/ns/aut/builds/${nodeName}-1/logs"]`);
-  },
-  componentNode: (nodeName: string) => {
-    return cy.get('g[class$=topology__node__label] > text').contains(nodeName);
-  },
+      .eq(2),
+  getBuild: (nodeName: string) => cy.get(`a[href="/k8s/ns/aut/builds/${nodeName}-1/logs"]`),
+  componentNode: (nodeName: string) =>
+    cy.get('g[class$=topology__node__label] > text').contains(nodeName),
   componentNodeClick: (nodeName: string, options?: { timeout: number }) => {
     topologyHelper.search(nodeName);
     cy.get('[data-type="workload"] .is-filtered [data-test-id="base-node-handler"]', options)
       .first()
       .click({ force: true });
   },
-  knativeNode: (nodeName: string) => {
-    return cy.get('g.odc-knative-service__label > text').contains(nodeName);
-  },
-  getEventSource: (eventSource: string) => {
-    return cy
+  knativeNode: (nodeName: string) =>
+    cy.get('g.odc-knative-service__label > text').contains(nodeName),
+  getEventSource: (eventSource: string) =>
+    cy
       .get('[data-type="event-source"] g[class$=topology__node__label] > text')
-      .contains(eventSource);
-  },
+      .contains(eventSource),
   getRevisionNode: (serviceName: string) => {
     cy.get('[data-type="knative-revision"] g[class$=topology__node__label] > text')
       .contains(serviceName.substring(0, 6))
@@ -278,24 +271,19 @@ export const topologyPage = {
     cy.byTestActionID(action).should('be.visible');
     cy.get(`[data-test-action="${action}"] button`).click();
   },
-  getNode: (nodeName: string) => {
-    return cy.contains(topologyPO.graph.nodeLabel, nodeName, { timeout: 30000 }).should('exist');
-  },
-  getNodeLabel: (nodeName: string) => {
-    return cy.get(topologyPO.graph.selectNodeLabel).should('be.visible').contains(nodeName);
-  },
-  getKnativeNode: (nodeName: string) => {
-    return cy.get(topologyPO.graph.knativeNodeLabel).should('be.visible').contains(nodeName);
-  },
-  getGroup: (groupName: string) => {
-    return cy.get(topologyPO.graph.groupLabelText).should('be.visible').contains(groupName);
-  },
-  getDeploymentNode: (nodeName: string) => {
-    return cy
+  getNode: (nodeName: string) =>
+    cy.contains(topologyPO.graph.nodeLabel, nodeName, { timeout: 30000 }).should('exist'),
+  getNodeLabel: (nodeName: string) =>
+    cy.get(topologyPO.graph.selectNodeLabel).should('be.visible').contains(nodeName),
+  getKnativeNode: (nodeName: string) =>
+    cy.get(topologyPO.graph.knativeNodeLabel).should('be.visible').contains(nodeName),
+  getGroup: (groupName: string) =>
+    cy.get(topologyPO.graph.groupLabelText).should('be.visible').contains(groupName),
+  getDeploymentNode: (nodeName: string) =>
+    cy
       .get(topologyPO.graph.nodeLabel)
       .should('be.visible')
-      .contains(new RegExp(`Deployment.*${nodeName}`));
-  },
+      .contains(new RegExp(`Deployment.*${nodeName}`)),
   rightClickOnNode: (nodeName: string) => {
     topologyPage.getNode(nodeName).trigger('contextmenu', { force: true });
   },
@@ -318,13 +306,12 @@ export const topologyPage = {
   clickOnGroup: (groupName: string) => {
     topologyPage.getGroup(groupName).click({ force: true });
   },
-  clickOnKnativeGroup: (knativeGroupName: string) => {
-    return cy
+  clickOnKnativeGroup: (knativeGroupName: string) =>
+    cy
       .get(topologyPO.graph.knativeLabelText)
       .should('be.visible')
       .contains(knativeGroupName)
-      .click({ force: true });
-  },
+      .click({ force: true }),
   clickOnHelmGroup: (groupName: string) => {
     // Search for the helm group to ensure it's loaded and highlighted
     topologyHelper.search(groupName);
@@ -368,24 +355,18 @@ export const topologyPage = {
   clickOnSinkBinding: (nodeName: string = 'sink-binding') => {
     topologyPage.getNode(nodeName).click({ force: true });
   },
-  getHelmRelease: (helmReleaseName: string) => {
-    return cy
+  getHelmRelease: (helmReleaseName: string) =>
+    cy
       .get('[data-type="helm-release"]')
       .find(topologyPO.graph.selectNodeLabel)
-      .contains(helmReleaseName);
-  },
-  getKnativeService: (serviceName: string) => {
-    return cy
+      .contains(helmReleaseName),
+  getKnativeService: (serviceName: string) =>
+    cy
       .get('[data-type="knative-service"]')
       .find(topologyPO.graph.knativeNodeLabel)
-      .contains(serviceName);
-  },
-  getKnativeRevision: (serviceName: string) => {
-    return cy
-      .get('[data-type="knative-revision"]')
-      .find('g.odc-workload-node')
-      .contains(serviceName);
-  },
+      .contains(serviceName),
+  getKnativeRevision: (serviceName: string) =>
+    cy.get('[data-type="knative-revision"]').find('g.odc-workload-node').contains(serviceName),
   waitForKnativeRevision: () => {
     cy.get(topologyPO.graph.node, { timeout: 600000 }).should('be.visible');
   },
@@ -509,8 +490,8 @@ export const topologyListPage = {
 
 export const createServiceBindingConnect = (
   bindingName: string = 'testing',
-  senderNode: string,
-  recieverNode: string,
+  senderNode: string = undefined,
+  recieverNode: string = undefined,
 ) => {
   topologyPage.rightClickOnNode(senderNode);
   cy.byTestActionID('Create Service Binding').should('be.visible').click();

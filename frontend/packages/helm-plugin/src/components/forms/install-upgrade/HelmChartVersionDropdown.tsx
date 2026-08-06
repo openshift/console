@@ -88,8 +88,8 @@ const HelmChartVersionDropdown: FC<HelmChartVersionDropdownProps> = ({
         <p>
           <RhUiInformationFillIcon color="var(--pf-t--global--icon--color--status--info--default)" />{' '}
           <Trans t={t} ns="helm-plugin">
-            Values from your current release are merged with the new chart{"'"}s defaults. Review
-            the YAML or form before upgrading.
+            Values from your current release are merged with the new chart's defaults. Review the
+            YAML or form before upgrading.
           </Trans>
         </p>
       </>

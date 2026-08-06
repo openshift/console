@@ -78,23 +78,14 @@ const useOperatorCatalogItems: ExtensionHook<CatalogItem[], CatalogExtensionHook
     operatorHubPackageManifestsLoadError,
   ] = useOperatorHubPackageManifests(targetNamespace);
   const [subscriptions, subscriptionsLoaded, subscriptionsLoadError] = useSubscriptions();
-  const [
-    clusterServiceVersions,
-    clusterServiceVersionsLoaded,
-    clusterServiceVersionsLoadError,
-  ] = useClusterServiceVersions(targetNamespace);
+  const [clusterServiceVersions, clusterServiceVersionsLoaded, clusterServiceVersionsLoadError] =
+    useClusterServiceVersions(targetNamespace);
   // cloudCredentials are optional
   const [cloudCredentials] = useClusterCloudCredentialConfig();
-  const [
-    infrastructure,
-    infrastructureLoaded,
-    infrastructureLoadError,
-  ] = useClusterInfrastructureConfig();
-  const [
-    authentication,
-    authenticationLoaded,
-    authenticationLoadError,
-  ] = useClusterAuthenticationConfig();
+  const [infrastructure, infrastructureLoaded, infrastructureLoadError] =
+    useClusterInfrastructureConfig();
+  const [authentication, authenticationLoaded, authenticationLoadError] =
+    useClusterAuthenticationConfig();
 
   const [updateChannel, setUpdateChannel] = useState('');
   const [updateVersion, setUpdateVersion] = useState('');
@@ -146,302 +137,298 @@ const useOperatorCatalogItems: ExtensionHook<CatalogItem[], CatalogExtensionHook
       return [];
     }
 
-    const allItems = operatorHubPackageManifests.map(
-      (pkg): CatalogItem => {
-        const { kind } = PackageManifestModel;
-        const { catalogSource, catalogSourceNamespace } = pkg.status;
-        const source = getPackageSource(pkg);
-        const subscription = subscriptionFor(subscriptions)(operatorGroups)(pkg)(targetNamespace);
-        const clusterServiceVersion = clusterServiceVersionFor(clusterServiceVersions)(
-          subscription,
-        );
-        const channel = updateChannel || pkg.status.defaultChannel || pkg.status.channels[0]?.name;
-        const currentCSVDesc = getCurrentCSVDescription(pkg);
-        const { displayName } = currentCSVDesc ?? {};
-        const currentCSVAnnotations: CSVAnnotations = currentCSVDesc?.annotations ?? {};
-        const infrastructureFeatures = getInfrastructureFeatures(currentCSVAnnotations, {
-          clusterIsAWSSTS,
-          clusterIsAzureWIF,
-          clusterIsGCPWIF,
-          onError: (error) => onInfrastructureFeaturesAnnotationError(error, pkg),
-        });
-        const [validSubscription, validSubscriptionFilters] = getValidSubscription(
-          currentCSVAnnotations,
-          {
-            onError: (error) => onValidSubscriptionAnnotationError(error, pkg),
-          },
-        );
-        const {
+    const allItems = operatorHubPackageManifests.map((pkg): CatalogItem => {
+      const { kind } = PackageManifestModel;
+      const { catalogSource, catalogSourceNamespace } = pkg.status;
+      const source = getPackageSource(pkg);
+      const subscription = subscriptionFor(subscriptions)(operatorGroups)(pkg)(targetNamespace);
+      const clusterServiceVersion = clusterServiceVersionFor(clusterServiceVersions)(subscription);
+      const channel = updateChannel || pkg.status.defaultChannel || pkg.status.channels[0]?.name;
+      const currentCSVDesc = getCurrentCSVDescription(pkg);
+      const { displayName } = currentCSVDesc ?? {};
+      const currentCSVAnnotations: CSVAnnotations = currentCSVDesc?.annotations ?? {};
+      const infrastructureFeatures = getInfrastructureFeatures(currentCSVAnnotations, {
+        clusterIsAWSSTS,
+        clusterIsAzureWIF,
+        clusterIsGCPWIF,
+        onError: (error) => onInfrastructureFeaturesAnnotationError(error, pkg),
+      });
+      const [validSubscription, validSubscriptionFilters] = getValidSubscription(
+        currentCSVAnnotations,
+        {
+          onError: (error) => onValidSubscriptionAnnotationError(error, pkg),
+        },
+      );
+      const {
+        capabilities,
+        certifiedLevel,
+        healthIndex,
+        repository,
+        containerImage,
+        createdAt,
+        support,
+        capabilities: capabilityLevel,
+        [OLMAnnotation.Categories]: categories,
+        [OLMAnnotation.ActionText]: marketplaceActionText,
+        [OLMAnnotation.RemoteWorkflow]: marketplaceRemoteWorkflow,
+        [OLMAnnotation.SupportWorkflow]: marketplaceSupportWorkflow,
+      } = currentCSVAnnotations;
+      const keywords =
+        currentCSVDesc?.keywords || parseList(currentCSVAnnotations?.keywords || '') || [];
+      const installed = clusterServiceVersion?.status?.phase === 'Succeeded';
+      const isInstalling =
+        loaded &&
+        !_.isNil(subscription) &&
+        !_.isNil(clusterServiceVersion?.status?.phase) &&
+        clusterServiceVersion?.status?.phase !== 'Succeeded';
+      const installState = installed ? InstalledState.Installed : InstalledState.NotInstalled;
+      const description = currentCSVAnnotations?.description || currentCSVDesc?.description;
+      const longDescription = currentCSVDesc?.description || currentCSVAnnotations?.description;
+      const name = displayName ?? pkg.metadata.name;
+      const obj = pkg;
+      const provider =
+        currentCSVDesc?.provider?.name ||
+        pkg.status.provider?.name ||
+        pkg.metadata.labels?.provider;
+      const uid = `${pkg.metadata.name}-${pkg.status.catalogSource}-${pkg.status.catalogSourceNamespace}`;
+      const latestVersion = currentCSVDesc?.version;
+      const tags = (categories ?? '')
+        .toLowerCase()
+        .split(',')
+        .map((c) => c.trim())
+        .filter(Boolean);
+      const imgUrl = iconFor(pkg);
+      const type = 'operator';
+
+      // Compute tokenizedAuth per operator based on its infrastructureFeatures
+      // Only set tokenizedAuth if both the cluster supports it AND the operator supports it
+      // (i.e., the operator's CSV annotations don't have token-auth-aws/azure/gcp=false)
+      let operatorTokenizedAuth: TokenizedAuthProvider | undefined;
+      if (clusterIsAWSSTS && infrastructureFeatures.includes(InfrastructureFeature.TokenAuth)) {
+        operatorTokenizedAuth = 'AWS';
+      } else if (
+        clusterIsAzureWIF &&
+        infrastructureFeatures.includes(InfrastructureFeature.TokenAuth)
+      ) {
+        operatorTokenizedAuth = 'Azure';
+      } else if (
+        clusterIsGCPWIF &&
+        infrastructureFeatures.includes(InfrastructureFeature.TokenAuthGCP)
+      ) {
+        operatorTokenizedAuth = 'GCP';
+      }
+
+      // Build install parameters URL
+      const installParams: Record<string, string> = {
+        pkg: pkg.metadata.name,
+        catalog: catalogSource,
+        catalogNamespace: catalogSourceNamespace,
+        ...(targetNamespace && { targetNamespace }),
+      };
+
+      if (operatorTokenizedAuth) {
+        installParams.tokenizedAuth = operatorTokenizedAuth;
+      }
+
+      const installParamsURL = new URLSearchParams(installParams).toString();
+      const installLink = `/operatorhub/subscribe?${installParamsURL}`;
+      const uninstallLink = subscription
+        ? `/k8s/ns/${subscription.metadata.namespace}/${SubscriptionModel.plural}/${subscription.metadata.name}?showDelete=true`
+        : null;
+      const cta =
+        installed && uninstallLink
+          ? {
+              label: t('Uninstall'),
+              href: uninstallLink,
+              variant: 'secondary',
+            }
+          : {
+              label: t('Install'),
+              href: installLink,
+              variant: 'primary',
+            };
+
+      const badges = [
+        ...(installed && !isInstalling
+          ? [
+              {
+                text: t('Installed'),
+                color: 'green',
+                variant: 'outline',
+                icon: <RhUiCheckCircleFillIcon />,
+              } as CatalogItemBadge,
+            ]
+          : []),
+        ...(isInstalling
+          ? [
+              {
+                text: t('Installing'),
+                color: 'blue',
+                variant: 'outline',
+                icon: <Spinner size="sm" />,
+              } as CatalogItemBadge,
+            ]
+          : []),
+        ...(pkg?.status?.deprecation
+          ? [
+              {
+                text: t('Deprecated'),
+                color: 'orange',
+                tooltip: pkg.status.deprecation.message,
+                variant: 'outline',
+                icon: <RhUiErrorFillIcon />,
+              } as CatalogItemBadge,
+            ]
+          : []),
+      ];
+
+      return {
+        attributes: {
           capabilities,
+          infrastructureFeatures,
+          installState,
+          keywords,
+          provider,
+          source,
+          validSubscription: validSubscriptionFilters,
+          metadataName: pkg.metadata.name, // Add metadata name for enhanced scoring
+        },
+        badges,
+        creationTimestamp: createdAt,
+        cta,
+        description,
+        data: {
+          authentication,
+          capabilityLevel,
+          catalogSource,
+          catalogSourceNamespace,
+          categories,
           certifiedLevel,
-          healthIndex,
-          repository,
+          cloudCredentials,
           containerImage,
           createdAt,
-          support,
-          capabilities: capabilityLevel,
-          [OLMAnnotation.Categories]: categories,
-          [OLMAnnotation.ActionText]: marketplaceActionText,
-          [OLMAnnotation.RemoteWorkflow]: marketplaceRemoteWorkflow,
-          [OLMAnnotation.SupportWorkflow]: marketplaceSupportWorkflow,
-        } = currentCSVAnnotations;
-        const keywords =
-          currentCSVDesc?.keywords || parseList(currentCSVAnnotations?.keywords || '') || [];
-        const installed = clusterServiceVersion?.status?.phase === 'Succeeded';
-        const isInstalling =
-          loaded &&
-          !_.isNil(subscription) &&
-          !_.isNil(clusterServiceVersion?.status?.phase) &&
-          clusterServiceVersion?.status?.phase !== 'Succeeded';
-        const installState = installed ? InstalledState.Installed : InstalledState.NotInstalled;
-        const description = currentCSVAnnotations?.description || currentCSVDesc?.description;
-        const longDescription = currentCSVDesc?.description || currentCSVAnnotations?.description;
-        const name = displayName ?? pkg.metadata.name;
-        const obj = pkg;
-        const provider =
-          currentCSVDesc?.provider?.name ||
-          pkg.status.provider?.name ||
-          pkg.metadata.labels?.provider;
-        const uid = `${pkg.metadata.name}-${pkg.status.catalogSource}-${pkg.status.catalogSourceNamespace}`;
-        const latestVersion = currentCSVDesc?.version;
-        const tags = (categories ?? '')
-          .toLowerCase()
-          .split(',')
-          .map((c) => c.trim())
-          .filter(Boolean);
-        const imgUrl = iconFor(pkg);
-        const type = 'operator';
-
-        // Compute tokenizedAuth per operator based on its infrastructureFeatures
-        // Only set tokenizedAuth if both the cluster supports it AND the operator supports it
-        // (i.e., the operator's CSV annotations don't have token-auth-aws/azure/gcp=false)
-        let operatorTokenizedAuth: TokenizedAuthProvider | undefined;
-        if (clusterIsAWSSTS && infrastructureFeatures.includes(InfrastructureFeature.TokenAuth)) {
-          operatorTokenizedAuth = 'AWS';
-        } else if (
-          clusterIsAzureWIF &&
-          infrastructureFeatures.includes(InfrastructureFeature.TokenAuth)
-        ) {
-          operatorTokenizedAuth = 'Azure';
-        } else if (
-          clusterIsGCPWIF &&
-          infrastructureFeatures.includes(InfrastructureFeature.TokenAuthGCP)
-        ) {
-          operatorTokenizedAuth = 'GCP';
-        }
-
-        // Build install parameters URL
-        const installParams: Record<string, string> = {
-          pkg: pkg.metadata.name,
-          catalog: catalogSource,
-          catalogNamespace: catalogSourceNamespace,
-          ...(targetNamespace && { targetNamespace }),
-        };
-
-        if (operatorTokenizedAuth) {
-          installParams.tokenizedAuth = operatorTokenizedAuth;
-        }
-
-        const installParamsURL = new URLSearchParams(installParams).toString();
-        const installLink = `/operatorhub/subscribe?${installParamsURL}`;
-        const uninstallLink = subscription
-          ? `/k8s/ns/${subscription.metadata.namespace}/${SubscriptionModel.plural}/${subscription.metadata.name}?showDelete=true`
-          : null;
-        const cta =
-          installed && uninstallLink
-            ? {
-                label: t('Uninstall'),
-                href: uninstallLink,
-                variant: 'secondary',
-              }
-            : {
-                label: t('Install'),
-                href: installLink,
-                variant: 'primary',
-              };
-
-        const badges = [
-          ...(installed && !isInstalling
-            ? [
-                {
-                  text: t('Installed'),
-                  color: 'green',
-                  variant: 'outline',
-                  icon: <RhUiCheckCircleFillIcon />,
-                } as CatalogItemBadge,
-              ]
-            : []),
-          ...(isInstalling
-            ? [
-                {
-                  text: t('Installing'),
-                  color: 'blue',
-                  variant: 'outline',
-                  icon: <Spinner size="sm" />,
-                } as CatalogItemBadge,
-              ]
-            : []),
-          ...(pkg?.status?.deprecation
-            ? [
-                {
-                  text: t('Deprecated'),
-                  color: 'orange',
-                  tooltip: pkg.status.deprecation.message,
-                  variant: 'outline',
-                  icon: <RhUiErrorFillIcon />,
-                } as CatalogItemBadge,
-              ]
-            : []),
-        ];
-
-        return {
-          attributes: {
-            capabilities,
-            infrastructureFeatures,
-            installState,
-            keywords,
-            provider,
-            source,
-            validSubscription: validSubscriptionFilters,
-            metadataName: pkg.metadata.name, // Add metadata name for enhanced scoring
-          },
-          badges,
-          creationTimestamp: createdAt,
-          cta,
           description,
-          data: {
-            authentication,
-            capabilityLevel,
-            catalogSource,
-            catalogSourceNamespace,
-            categories,
-            certifiedLevel,
-            cloudCredentials,
-            containerImage,
-            createdAt,
-            description,
-            healthIndex,
-            imgUrl,
-            infrastructureFeatures,
-            infrastructure,
-            installed,
-            installState,
-            isInstalling,
-            keywords,
-            kind,
-            longDescription,
-            marketplaceActionText,
-            marketplaceRemoteWorkflow,
-            marketplaceSupportWorkflow,
-            name,
-            obj,
-            provider,
-            repository,
-            source,
-            subscription,
-            support,
-            tags,
-            uid,
-            validSubscription,
-            validSubscriptionFilters,
-            version: latestVersion,
-          },
-          details: {
-            properties: [
-              {
-                label: t('Channel'),
-                value: (
-                  <OperatorChannelSelect
-                    packageManifest={pkg}
-                    selectedUpdateChannel={channel}
-                    setUpdateChannel={setUpdateChannel}
-                    setUpdateVersion={setUpdateVersion}
-                  />
-                ),
-              },
-              {
-                label: t('Version'),
-                value: (
-                  <OperatorVersionSelect
-                    packageManifest={pkg}
-                    selectedUpdateChannel={channel}
-                    updateVersion={updateVersion}
-                    setUpdateVersion={setUpdateVersion}
-                  />
-                ),
-              },
-              {
-                label: t('Capability level'),
-                value: <OperatorCapability packageManifest={pkg} />,
-              },
-              { label: t('Source'), value: source || '-' },
-              { label: t('Provider'), value: provider || '-' },
-              {
-                label: t('Infrastructure features'),
-                value: (
-                  <OperatorInfrastructureFeatures
-                    packageManifest={pkg}
-                    clusterIsAWSSTS={clusterIsAWSSTS}
-                    clusterIsAzureWIF={clusterIsAzureWIF}
-                    clusterIsGCPWIF={clusterIsGCPWIF}
-                  />
-                ),
-              },
-              {
-                label: t('Valid subscriptions'),
-                value: <OperatorValidSubscriptions packageManifest={pkg} />,
-              },
-              {
-                label: t('Repository'),
-                value: <OperatorRepository packageManifest={pkg} />,
-              },
-              {
-                label: t('Container image'),
-                value: <OperatorContainerImage packageManifest={pkg} />,
-              },
-              {
-                label: t('Created at'),
-                value: <OperatorCreatedAt packageManifest={pkg} />,
-              },
-              {
-                label: t('Support'),
-                value: <OperatorSupport packageManifest={pkg} />,
-              },
-            ],
-            descriptions: [
-              {
-                value: (
-                  <OperatorDescription
-                    catalogSource={catalogSource}
-                    description={description}
-                    installed={installed}
-                    isInstalling={isInstalling}
-                    subscription={subscription}
-                    version={latestVersion}
-                    clusterIsAWSSTS={clusterIsAWSSTS}
-                    clusterIsAzureWIF={clusterIsAzureWIF}
-                    clusterIsGCPWIF={clusterIsGCPWIF}
-                    longDescription={longDescription}
-                    packageManifest={pkg}
-                  />
-                ),
-              },
-            ],
-          },
-          icon: {
-            url: imgUrl,
-          },
+          healthIndex,
+          imgUrl,
+          infrastructureFeatures,
+          infrastructure,
+          installed,
+          installState,
+          isInstalling,
+          keywords,
+          kind,
+          longDescription,
+          marketplaceActionText,
+          marketplaceRemoteWorkflow,
+          marketplaceSupportWorkflow,
           name,
+          obj,
           provider,
-          supportUrl: support,
+          repository,
+          source,
+          subscription,
+          support,
           tags,
-          title: name,
-          type,
-          typeLabel: source,
           uid,
-        };
-      },
-    );
+          validSubscription,
+          validSubscriptionFilters,
+          version: latestVersion,
+        },
+        details: {
+          properties: [
+            {
+              label: t('Channel'),
+              value: (
+                <OperatorChannelSelect
+                  packageManifest={pkg}
+                  selectedUpdateChannel={channel}
+                  setUpdateChannel={setUpdateChannel}
+                  setUpdateVersion={setUpdateVersion}
+                />
+              ),
+            },
+            {
+              label: t('Version'),
+              value: (
+                <OperatorVersionSelect
+                  packageManifest={pkg}
+                  selectedUpdateChannel={channel}
+                  updateVersion={updateVersion}
+                  setUpdateVersion={setUpdateVersion}
+                />
+              ),
+            },
+            {
+              label: t('Capability level'),
+              value: <OperatorCapability packageManifest={pkg} />,
+            },
+            { label: t('Source'), value: source || '-' },
+            { label: t('Provider'), value: provider || '-' },
+            {
+              label: t('Infrastructure features'),
+              value: (
+                <OperatorInfrastructureFeatures
+                  packageManifest={pkg}
+                  clusterIsAWSSTS={clusterIsAWSSTS}
+                  clusterIsAzureWIF={clusterIsAzureWIF}
+                  clusterIsGCPWIF={clusterIsGCPWIF}
+                />
+              ),
+            },
+            {
+              label: t('Valid subscriptions'),
+              value: <OperatorValidSubscriptions packageManifest={pkg} />,
+            },
+            {
+              label: t('Repository'),
+              value: <OperatorRepository packageManifest={pkg} />,
+            },
+            {
+              label: t('Container image'),
+              value: <OperatorContainerImage packageManifest={pkg} />,
+            },
+            {
+              label: t('Created at'),
+              value: <OperatorCreatedAt packageManifest={pkg} />,
+            },
+            {
+              label: t('Support'),
+              value: <OperatorSupport packageManifest={pkg} />,
+            },
+          ],
+          descriptions: [
+            {
+              value: (
+                <OperatorDescription
+                  catalogSource={catalogSource}
+                  description={description}
+                  installed={installed}
+                  isInstalling={isInstalling}
+                  subscription={subscription}
+                  version={latestVersion}
+                  clusterIsAWSSTS={clusterIsAWSSTS}
+                  clusterIsAzureWIF={clusterIsAzureWIF}
+                  clusterIsGCPWIF={clusterIsGCPWIF}
+                  longDescription={longDescription}
+                  packageManifest={pkg}
+                />
+              ),
+            },
+          ],
+        },
+        icon: {
+          url: imgUrl,
+        },
+        name,
+        provider,
+        supportUrl: support,
+        tags,
+        title: name,
+        type,
+        typeLabel: source,
+        uid,
+      };
+    });
     const uniqueItems = _.uniqBy(allItems, 'uid');
     const dupCount = allItems.length - uniqueItems.length;
     if (dupCount > 0) {

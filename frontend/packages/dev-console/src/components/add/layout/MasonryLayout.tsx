@@ -41,10 +41,10 @@ export const MasonryLayout: FC<MasonryLayoutProps> = ({
   }, [resizeThreshold]);
 
   const handleResize = useDebounceCallback(updateWidth, 100);
-  const columnCount = useMemo(() => (width ? Math.floor(width / columnWidth) || 1 : null), [
-    columnWidth,
-    width,
-  ]);
+  const columnCount = useMemo(
+    () => (width ? Math.floor(width / columnWidth) || 1 : null),
+    [columnWidth, width],
+  );
 
   useEffect(() => {
     if (!measureRef.current) return undefined;

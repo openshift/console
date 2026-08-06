@@ -128,10 +128,10 @@ const HelmReleaseHistoryTable: FC<HelmReleaseHistoryTableProps> = ({
     return sortedReleaseHistory.slice(startIndex, endIndex);
   }, [sortedReleaseHistory, pagination.page, pagination.perPage]);
 
-  const rows = useMemo(() => rowRenderer(paginatedReleaseHistory), [
-    rowRenderer,
-    paginatedReleaseHistory,
-  ]);
+  const rows = useMemo(
+    () => rowRenderer(paginatedReleaseHistory),
+    [rowRenderer, paginatedReleaseHistory],
+  );
 
   return (
     <Suspense fallback={<LoadingBox />}>

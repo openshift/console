@@ -122,7 +122,7 @@ const installOperatorUsingCLI = (operator: operators) => {
 
   cy.exec(`oc apply -f ${yamlFile}`, {
     failOnNonZeroExit: false,
-  }).then(function (result) {
+  }).then((result) => {
     if (result.stderr) {
       throw new Error(result.stderr);
     } else {
@@ -185,7 +185,7 @@ const checkSubscriptionStatus = (operator: operators) => {
     {
       failOnNonZeroExit: false,
     },
-  ).then(function (result) {
+  ).then((result) => {
     if (result.stdout.includes('condition met')) {
       cy.log(`${operator} is installed in cluster, check operator status.`);
       checkOperatorStatus(operator);

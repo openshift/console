@@ -18,20 +18,18 @@ export type BreadcrumbsProps = {
  */
 export const Breadcrumbs: FC<BreadcrumbsProps> = ({ breadcrumbs }) => (
   <Breadcrumb data-test="page-heading-breadcrumbs">
-    {breadcrumbs.map((crumb, i, { length }) => {
-      return (
-        <BreadcrumbItem
-          to={crumb.path}
-          key={`${crumb.path}-${crumb.name}`}
-          data-test={`breadcrumb-link-${i}`}
-          data-test-id={`breadcrumb-link-${i}`}
-          isActive={i === length - 1}
-          component={LinkTo(crumb.path)}
-        >
-          {crumb.name}
-        </BreadcrumbItem>
-      );
-    })}
+    {breadcrumbs.map((crumb, i, { length }) => (
+      <BreadcrumbItem
+        to={crumb.path}
+        key={`${crumb.path}-${crumb.name}`}
+        data-test={`breadcrumb-link-${i}`}
+        data-test-id={`breadcrumb-link-${i}`}
+        isActive={i === length - 1}
+        component={LinkTo(crumb.path)}
+      >
+        {crumb.name}
+      </BreadcrumbItem>
+    ))}
   </Breadcrumb>
 );
 

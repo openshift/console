@@ -86,7 +86,7 @@ const LanguageDropdown: FC = () => {
         selected={preferredLanguage}
         onSelect={onSelect}
         data-test="dropdown console.preferredLanguage"
-        id={'console.preferredLanguage'}
+        id="console.preferredLanguage"
         toggle={(toggleRef: Ref<MenuToggleElement>) => (
           <MenuToggle
             aria-label={t('Select a language')}

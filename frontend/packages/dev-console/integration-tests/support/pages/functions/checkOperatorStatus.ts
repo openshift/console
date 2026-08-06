@@ -16,7 +16,7 @@ export const checkRedHatIntegrationCamelKOperatorStatus = (retries: number = 5) 
       {
         failOnNonZeroExit: false,
       },
-    ).then(function (result) {
+    ).then((result) => {
       if (result.stdout.includes('condition met')) {
         cy.log(`Success: ${result.stdout}`);
       } else {
@@ -39,7 +39,7 @@ export const checkWebterminalOperatorStatus = (retries: number = 5) => {
       {
         failOnNonZeroExit: false,
       },
-    ).then(function (result) {
+    ).then((result) => {
       if (result.stdout.includes('condition met')) {
         cy.log(`Success: ${result.stdout}`);
       } else {
@@ -64,7 +64,7 @@ export const checkDevWorkspaceOperatorStatus = (retries: number = 5) => {
       {
         failOnNonZeroExit: false,
       },
-    ).then(function (result) {
+    ).then((result) => {
       if (result.stdout.includes('condition met')) {
         cy.log(`Success: ${result.stdout}`);
       } else {
@@ -78,7 +78,7 @@ export const checkDevWorkspaceOperatorStatus = (retries: number = 5) => {
       {
         failOnNonZeroExit: false,
       },
-    ).then(function (result) {
+    ).then((result) => {
       if (result.stdout.includes('condition met')) {
         cy.log(`Success: ${result.stdout}`);
       } else {
@@ -101,7 +101,7 @@ export const checkShipwrightOperatorStatus = (retries: number = 5) => {
       {
         failOnNonZeroExit: false,
       },
-    ).then(function (result) {
+    ).then((result) => {
       if (result.stdout.includes('condition met')) {
         cy.log(`Success: ${result.stdout}`);
       } else {
@@ -124,7 +124,7 @@ export const checkBuildsForOpenshiftOperatorStatus = (retries: number = 5) => {
       {
         failOnNonZeroExit: false,
       },
-    ).then(function (result) {
+    ).then((result) => {
       if (result.stdout.includes('condition met')) {
         cy.log(`Success: ${result.stdout}`);
       } else {
@@ -147,7 +147,7 @@ export const checkPipelineOperatorStatus = (retries: number = 5) => {
       {
         failOnNonZeroExit: false,
       },
-    ).then(function (result) {
+    ).then((result) => {
       if (result.stdout.includes('condition met')) {
         cy.log(`Success: ${result.stdout}`);
       } else {
@@ -166,7 +166,7 @@ export const checkKnativeOperatorStatus = () => {
       {
         failOnNonZeroExit: false,
       },
-    ).then(function (result) {
+    ).then((result) => {
       if (result.stdout.includes('condition met')) {
         cy.log(result.stdout);
       } else if (resourceName === 'KnativeServing') {

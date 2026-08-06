@@ -15,14 +15,11 @@ export const usePreferredRoutingOptions = (): [
   Dispatch<SetStateAction<RoutingOptions>>,
   boolean,
 ] => {
-  const [
-    preferredRoutingOptions,
-    setPreferredRoutingOptions,
-    preferredRoutingOptionsLoaded,
-  ] = useUserPreference<RoutingOptions>(PREFERRED_SECURE_ROUTING_OPTIONS_USER_PREFERENCE_KEY, {
-    secure: true,
-    tlsTermination: 'edge',
-    insecureTraffic: 'Redirect',
-  });
+  const [preferredRoutingOptions, setPreferredRoutingOptions, preferredRoutingOptionsLoaded] =
+    useUserPreference<RoutingOptions>(PREFERRED_SECURE_ROUTING_OPTIONS_USER_PREFERENCE_KEY, {
+      secure: true,
+      tlsTermination: 'edge',
+      insecureTraffic: 'Redirect',
+    });
   return [preferredRoutingOptions, setPreferredRoutingOptions, preferredRoutingOptionsLoaded];
 };

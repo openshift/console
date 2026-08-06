@@ -126,8 +126,8 @@ const columnLayoutNamespaceDisabled = [
 ];
 
 describe('ColumnManagementModal component', () => {
-  const renderColumnManagementModal = (columns = columnLayout) => {
-    return renderWithProviders(
+  const renderColumnManagementModal = (columns = columnLayout) =>
+    renderWithProviders(
       <ColumnManagementModal
         columnLayout={{
           columns,
@@ -147,7 +147,6 @@ describe('ColumnManagementModal component', () => {
         setUserSettingState={jest.fn()}
       />,
     );
-  };
 
   describe('basic rendering', () => {
     it('renders title and subtitle', () => {

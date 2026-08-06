@@ -32,8 +32,8 @@ const tableColumnInfo = [
   { id: 'actions' },
 ];
 
-const getDataViewRows = (data, columns) => {
-  return data.map(({ obj }) => {
+const getDataViewRows = (data, columns) =>
+  data.map(({ obj }) => {
     const {
       metadata: { name, namespace, uid, creationTimestamp },
       secrets,
@@ -69,7 +69,6 @@ const getDataViewRows = (data, columns) => {
       };
     });
   });
-};
 
 const Details = ({ obj: serviceaccount }) => {
   const { t } = useTranslation('public');

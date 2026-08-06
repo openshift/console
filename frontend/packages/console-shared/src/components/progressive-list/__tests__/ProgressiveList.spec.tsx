@@ -12,9 +12,9 @@ const DummyComponent: FC = () => <div>Dummy Component</div>;
 const BarComponent: FC = () => <div>Bar Component</div>;
 const FooComponent: FC = () => <div>Foo Component</div>;
 
-const Footer: FC<{ children?: ReactNode }> = ({ children }) => {
-  return <div>Click on the names to access advanced options for {children}.</div>;
-};
+const Footer: FC<{ children?: ReactNode }> = ({ children }) => (
+  <div>Click on the names to access advanced options for {children}.</div>
+);
 
 describe('ProgressiveList', () => {
   it('should only display component related to item name mentioned in the visibleItems array', () => {

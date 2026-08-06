@@ -260,16 +260,14 @@ const ImportForm: FC<ImportFormProps & StateProps> = ({
       });
   };
 
-  const renderForm = (formikProps: FormikProps<any>) => {
-    return (
-      <AsyncComponent
-        {...formikProps}
-        projects={projects}
-        builderImages={builderImages}
-        loader={importData.loader}
-      />
-    );
-  };
+  const renderForm = (formikProps: FormikProps<any>) => (
+    <AsyncComponent
+      {...formikProps}
+      projects={projects}
+      builderImages={builderImages}
+      loader={importData.loader}
+    />
+  );
 
   return (
     <StatusBox

@@ -24,7 +24,7 @@
     "eslint-plugin-n": "^17.24.0",
     "eslint-plugin-no-barrel-files": "^1.1.0",
     "eslint-plugin-playwright": "^2.10.2",
-    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-prettier": "^5.5.6",
     "eslint-plugin-promise": "^6.6.0",
     "eslint-plugin-react": "^7.37.0",
     "eslint-plugin-react-hooks": "^5.0.0",

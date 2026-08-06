@@ -29,8 +29,8 @@ const tableColumnInfo = [
   { id: 'actions' },
 ];
 
-const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {
-  return data.map(({ obj }) => {
+const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) =>
+  data.map(({ obj }) => {
     const { metadata, spec } = obj;
     const resourceKind = referenceFor(obj);
     const context = { [resourceKind]: obj };
@@ -83,7 +83,6 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {
       };
     });
   });
-};
 
 const usePrometheusColumns = (): TableColumn<K8sResourceKind>[] => {
   const { t } = useTranslation('public');

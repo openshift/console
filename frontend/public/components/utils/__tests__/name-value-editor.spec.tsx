@@ -156,8 +156,8 @@ describe('NameValueEditor', () => {
         <NameValueEditor
           nameValuePairs={[['name', 'value', 0]]}
           updateParentData={() => {}}
-          nameString={'foo'}
-          valueString={'bar'}
+          nameString="foo"
+          valueString="bar"
         />,
       );
       expect(screen.getByText('foo')).toBeInTheDocument();

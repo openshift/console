@@ -18,20 +18,18 @@ const PipelineTopologyGraph: FC<PipelineTopologyGraphProps> = ({
   model,
   componentFactory,
   ...props
-}) => {
-  return (
-    <div
-      className={css('odc-pipeline-topology-graph', { builder })}
-      data-test={props['data-test'] || 'pipeline-topology-graph'}
-    >
-      <PipelineVisualizationSurface
-        model={model}
-        componentFactory={componentFactory}
-        noScrollbar={builder}
-        {...props}
-      />
-    </div>
-  );
-};
+}) => (
+  <div
+    className={css('odc-pipeline-topology-graph', { builder })}
+    data-test={props['data-test'] || 'pipeline-topology-graph'}
+  >
+    <PipelineVisualizationSurface
+      model={model}
+      componentFactory={componentFactory}
+      noScrollbar={builder}
+      {...props}
+    />
+  </div>
+);
 
 export default memo<PipelineTopologyGraphProps>(PipelineTopologyGraph);

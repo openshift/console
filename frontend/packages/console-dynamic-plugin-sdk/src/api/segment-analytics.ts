@@ -124,9 +124,7 @@ if (analyticsEnabled) {
   initSegmentAnalytics();
 }
 
-export const getSegmentAnalytics: GetSegmentAnalytics = () => {
-  return {
-    analytics: (window as any).analytics,
-    analyticsEnabled,
-  };
-};
+export const getSegmentAnalytics: GetSegmentAnalytics = () => ({
+  analytics: (window as any).analytics,
+  analyticsEnabled,
+});

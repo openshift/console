@@ -178,8 +178,7 @@ export const loadedCatalogService: CatalogService = {
       tags: ['NodeJS', 'Express'],
       cta: {
         label: 'Create Devfile Sample',
-        href:
-          '/import?importType=devfile&formType=sample&devfileName=nodejs-basic&gitRepo=https://github.com/nodeshift-starters/devfile-sample.git',
+        href: '/import?importType=devfile&formType=sample&devfileName=nodejs-basic&gitRepo=https://github.com/nodeshift-starters/devfile-sample.git',
       },
       icon: {
         url: 'https://nodejs.org/static/images/logos/nodejs-new-pantone-black.svg',
@@ -193,8 +192,7 @@ export const loadedCatalogService: CatalogService = {
       tags: ['Python'],
       cta: {
         label: 'Create Devfile Sample',
-        href:
-          '/import?importType=devfile&formType=sample&devfileName=python-basic&gitRepo=https://github.com/devfile-samples/devfile-sample-python-basic.git',
+        href: '/import?importType=devfile&formType=sample&devfileName=python-basic&gitRepo=https://github.com/devfile-samples/devfile-sample-python-basic.git',
       },
       icon: {
         url: 'https://www.python.org/static/community_logos/python-logo-generic.svg',
@@ -208,8 +206,7 @@ export const loadedCatalogService: CatalogService = {
       tags: ['Java', 'Quarkus'],
       cta: {
         label: 'Create Devfile Sample',
-        href:
-          '/import?importType=devfile&formType=sample&devfileName=code-with-quarkus&gitRepo=https://github.com/devfile-samples/devfile-sample-code-with-quarkus.git',
+        href: '/import?importType=devfile&formType=sample&devfileName=code-with-quarkus&gitRepo=https://github.com/devfile-samples/devfile-sample-code-with-quarkus.git',
       },
       icon: {
         url: 'https://design.jboss.org/quarkus/logo/final/SVG/quarkus_icon_rgb_default.svg',
@@ -223,8 +220,7 @@ export const loadedCatalogService: CatalogService = {
       tags: ['Java', 'Spring'],
       cta: {
         label: 'Create Devfile Sample',
-        href:
-          '/import?importType=devfile&formType=sample&devfileName=java-springboot-basic&gitRepo=https://github.com/devfile-samples/devfile-sample-java-springboot-basic.git',
+        href: '/import?importType=devfile&formType=sample&devfileName=java-springboot-basic&gitRepo=https://github.com/devfile-samples/devfile-sample-java-springboot-basic.git',
       },
       icon: {
         url: 'https://spring.io/images/projects/spring-edf462fec682b9d48cf628eaf9e19521.svg',
@@ -410,8 +406,7 @@ export const loadedCatalogService: CatalogService = {
         tags: ['NodeJS', 'Express'],
         cta: {
           label: 'Create Devfile Sample',
-          href:
-            '/import?importType=devfile&formType=sample&devfileName=nodejs-basic&gitRepo=https://github.com/nodeshift-starters/devfile-sample.git',
+          href: '/import?importType=devfile&formType=sample&devfileName=nodejs-basic&gitRepo=https://github.com/nodeshift-starters/devfile-sample.git',
         },
         icon: {
           url: 'https://nodejs.org/static/images/logos/nodejs-new-pantone-black.svg',
@@ -425,8 +420,7 @@ export const loadedCatalogService: CatalogService = {
         tags: ['Python'],
         cta: {
           label: 'Create Devfile Sample',
-          href:
-            '/import?importType=devfile&formType=sample&devfileName=python-basic&gitRepo=https://github.com/devfile-samples/devfile-sample-python-basic.git',
+          href: '/import?importType=devfile&formType=sample&devfileName=python-basic&gitRepo=https://github.com/devfile-samples/devfile-sample-python-basic.git',
         },
         icon: {
           url: 'https://www.python.org/static/community_logos/python-logo-generic.svg',
@@ -440,8 +434,7 @@ export const loadedCatalogService: CatalogService = {
         tags: ['Java', 'Quarkus'],
         cta: {
           label: 'Create Devfile Sample',
-          href:
-            '/import?importType=devfile&formType=sample&devfileName=code-with-quarkus&gitRepo=https://github.com/devfile-samples/devfile-sample-code-with-quarkus.git',
+          href: '/import?importType=devfile&formType=sample&devfileName=code-with-quarkus&gitRepo=https://github.com/devfile-samples/devfile-sample-code-with-quarkus.git',
         },
         icon: {
           url: 'https://design.jboss.org/quarkus/logo/final/SVG/quarkus_icon_rgb_default.svg',
@@ -455,8 +448,7 @@ export const loadedCatalogService: CatalogService = {
         tags: ['Java', 'Spring'],
         cta: {
           label: 'Create Devfile Sample',
-          href:
-            '/import?importType=devfile&formType=sample&devfileName=java-springboot-basic&gitRepo=https://github.com/devfile-samples/devfile-sample-java-springboot-basic.git',
+          href: '/import?importType=devfile&formType=sample&devfileName=java-springboot-basic&gitRepo=https://github.com/devfile-samples/devfile-sample-java-springboot-basic.git',
         },
         icon: {
           url: 'https://spring.io/images/projects/spring-edf462fec682b9d48cf628eaf9e19521.svg',

@@ -30,8 +30,8 @@ const tableColumnInfo = [
   { id: '' },
 ];
 
-const getDataViewRows: GetDataViewRows<ClusterExtensionKind> = (data, columns) => {
-  return data.map(({ obj }) => {
+const getDataViewRows: GetDataViewRows<ClusterExtensionKind> = (data, columns) =>
+  data.map(({ obj }) => {
     const name = obj.metadata?.name ?? '';
     const namespace = obj.spec?.namespace ?? '';
     const packageName = obj.spec?.source?.catalog?.packageName ?? '';
@@ -89,7 +89,6 @@ const getDataViewRows: GetDataViewRows<ClusterExtensionKind> = (data, columns) =
       };
     });
   });
-};
 
 const useClusterExtensionColumns = (): TableColumn<ClusterExtensionKind>[] => {
   const { t } = useTranslation('olm-v1');

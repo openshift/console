@@ -1872,8 +1872,7 @@ export const sampleBuilds: WatchK8sResultsObject<K8sResourceKind[]> = {
           sourceStrategy: {
             from: {
               kind: 'DockerImage',
-              name:
-                'image-registry.openshift-image-registry.svc:5000/openshift/nodejs@sha256:0ad231dc2d1c34ed3fb29fb304821171155e0a1a23f0e0490b2cd8ca60915517',
+              name: 'image-registry.openshift-image-registry.svc:5000/openshift/nodejs@sha256:0ad231dc2d1c34ed3fb29fb304821171155e0a1a23f0e0490b2cd8ca60915517',
             },
             pullSecret: {
               name: 'builder-dockercfg-tx6qx',

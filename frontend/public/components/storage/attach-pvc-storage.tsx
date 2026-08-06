@@ -96,9 +96,8 @@ const AttachStorageForm: FC<AttachStorageFormProps> = (props) => {
     setSelectedContainers(checkedItems);
   };
 
-  const isContainerSelected = ({ name }) => {
-    return !useContainerSelector || selectedContainers.includes(name);
-  };
+  const isContainerSelected = ({ name }) =>
+    !useContainerSelector || selectedContainers.includes(name);
 
   const getMountPaths = (podTemplate: any): string[] => {
     const containers: ContainerSpec[] = _.get(podTemplate, 'spec.containers', []);
@@ -163,11 +162,10 @@ const AttachStorageForm: FC<AttachStorageFormProps> = (props) => {
     setMountAsReadOnly(!mountAsReadOnly);
   };
 
-  const createPVCIfNecessary = () => {
-    return showCreatePVC === 'new'
+  const createPVCIfNecessary = () =>
+    showCreatePVC === 'new'
       ? k8sCreate(PersistentVolumeClaimModel, newPVCObj).then((claim) => claim.metadata.name)
       : Promise.resolve(claimName);
-  };
 
   const getVolumeMountPatches = (): Patch[] => {
     const mount = {
@@ -252,9 +250,7 @@ const AttachStorageForm: FC<AttachStorageFormProps> = (props) => {
     }
     setInProgress(true);
     createPVCIfNecessary()
-      .then((pvcName: string) => {
-        return k8sPatch(kindObj, obj, getVolumePatches(pvcName));
-      })
+      .then((pvcName: string) => k8sPatch(kindObj, obj, getVolumePatches(pvcName)))
       .then((resource) => {
         setInProgress(false);
         navigate(resourceObjPath(resource, referenceFor(resource)));

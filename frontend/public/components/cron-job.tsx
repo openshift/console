@@ -90,8 +90,8 @@ const BooleanDisplay: FC<{ value?: boolean }> = ({ value }) => {
   return <>{value ? t('True') : t('False')}</>;
 };
 
-const getDataViewRows: GetDataViewRows<CronJobKind> = (data, columns) => {
-  return data.map(({ obj: cronjob }) => {
+const getDataViewRows: GetDataViewRows<CronJobKind> = (data, columns) =>
+  data.map(({ obj: cronjob }) => {
     const { name, namespace } = cronjob.metadata;
     const resourceKind = referenceFor(cronjob);
     const context = { [resourceKind]: cronjob };
@@ -137,7 +137,6 @@ const getDataViewRows: GetDataViewRows<CronJobKind> = (data, columns) => {
       };
     });
   });
-};
 
 const CronJobDetails: FC<CronJobDetailsProps> = ({ obj: cronjob }) => {
   const job = cronjob.spec.jobTemplate;
@@ -324,8 +323,8 @@ const useCronJobsColumns = (): {
   const { t } = useTranslation('public');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(CronJobModel);
 
-  const columns = useMemo(() => {
-    return [
+  const columns = useMemo(
+    () => [
       {
         title: t('Name'),
         id: tableColumnInfo[0].id,
@@ -388,8 +387,9 @@ const useCronJobsColumns = (): {
           ...actionsCellProps,
         },
       },
-    ];
-  }, [t, getResizableProps]);
+    ],
+    [t, getResizableProps],
+  );
 
   return { columns, resetAllColumnWidths };
 };

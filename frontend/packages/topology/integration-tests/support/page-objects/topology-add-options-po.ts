@@ -1,3 +1,1 @@
-export const topologyAddOptionsPO = (optionName: string) => {
-  return `[data-test-action="${optionName}"]`;
-};
+export const topologyAddOptionsPO = (optionName: string) => `[data-test-action="${optionName}"]`;

@@ -22,8 +22,8 @@ export const useNavExtensionsForPerspective = (
       (!extension.properties.perspective && isDefaultPerspective),
     [isDefaultPerspective, perspective],
   );
-  return useMemo(() => allNavExtensions.filter(isExtensionForCurrentPerspective), [
-    allNavExtensions,
-    isExtensionForCurrentPerspective,
-  ]);
+  return useMemo(
+    () => allNavExtensions.filter(isExtensionForCurrentPerspective),
+    [allNavExtensions, isExtensionForCurrentPerspective],
+  );
 };

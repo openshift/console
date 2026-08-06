@@ -76,9 +76,8 @@ const OperatorResourcesGetter: FC<OperatorResourcesGetterProps> = ({
   flatten,
 }) => {
   const providedAPI = providedAPIForReference(csv, modelReference);
-  const linkForResource = (obj: K8sResourceKind) => {
-    return linkForCsvResource(obj, providedAPI, csv.metadata.name);
-  };
+  const linkForResource = (obj: K8sResourceKind) =>
+    linkForCsvResource(obj, providedAPI, csv.metadata.name);
 
   const resourcesToGet = useMemo(() => {
     const defaultResources = [
@@ -98,22 +97,24 @@ const OperatorResourcesGetter: FC<OperatorResourcesGetterProps> = ({
     );
   }, [providedAPI]);
 
-  const watchedResources = useMemo(() => {
-    return resourcesToGet.reduce((acc, descriptor) => {
-      const { name, kind, version } = descriptor;
-      const group = name ? name.substring(name.indexOf('.') + 1) : '';
-      const reference = group ? referenceForGroupVersionKind(group)(version)(kind) : kind;
-      const model = modelFor(reference);
-      acc[kind] = {
-        kind: model && !model.crd ? kind : reference,
-        namespaced: model ? model.namespaced : true,
-        namespace,
-        isList: true,
-        optional: true,
-      };
-      return acc;
-    }, {});
-  }, [namespace, resourcesToGet]);
+  const watchedResources = useMemo(
+    () =>
+      resourcesToGet.reduce((acc, descriptor) => {
+        const { name, kind, version } = descriptor;
+        const group = name ? name.substring(name.indexOf('.') + 1) : '';
+        const reference = group ? referenceForGroupVersionKind(group)(version)(kind) : kind;
+        const model = modelFor(reference);
+        acc[kind] = {
+          kind: model && !model.crd ? kind : reference,
+          namespaced: model ? model.namespaced : true,
+          namespace,
+          isList: true,
+          optional: true,
+        };
+        return acc;
+      }, {}),
+    [namespace, resourcesToGet],
+  );
 
   const resources = useK8sWatchResources<{ [key: string]: K8sResourceKind[] }>(watchedResources);
 

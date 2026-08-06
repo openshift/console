@@ -179,14 +179,8 @@ const InstallingHint: FC<InstallingHintProps> = ({ subscription }) => {
 
 const OperatorHubItemDetailsHint: FC<OperatorHubItemDetailsHintProps> = (props) => {
   const { t } = useTranslation('olm');
-  const {
-    installed,
-    isInstalling,
-    catalogSource,
-    subscription,
-    latestVersion,
-    installedChannel,
-  } = props;
+  const { installed, isInstalling, catalogSource, subscription, latestVersion, installedChannel } =
+    props;
   if (isInstalling) {
     return (
       <StackItem>
@@ -244,12 +238,8 @@ export const OperatorDescription: FC<OperatorDescriptionProps> = ({
   packageManifest,
 }) => {
   const { t } = useTranslation('olm');
-  const {
-    deprecatedPackage,
-    deprecatedChannel,
-    deprecatedVersion,
-    setDeprecatedPackage,
-  } = useDeprecatedOperatorWarnings();
+  const { deprecatedPackage, deprecatedChannel, deprecatedVersion, setDeprecatedPackage } =
+    useDeprecatedOperatorWarnings();
   const deprecatedWarning =
     deprecatedPackage?.deprecation ||
     deprecatedChannel?.deprecation ||
@@ -276,12 +266,13 @@ export const OperatorDescription: FC<OperatorDescriptionProps> = ({
     });
   }, [currentCSVDescription, clusterIsAWSSTS, clusterIsAzureWIF, clusterIsGCPWIF, packageManifest]);
 
-  const [isTokenAuth, isTokenAuthGCP] = useMemo(() => {
-    return [
+  const [isTokenAuth, isTokenAuthGCP] = useMemo(
+    () => [
       (infraFeatures ?? []).includes(InfrastructureFeature.TokenAuth),
       (infraFeatures ?? []).includes(InfrastructureFeature.TokenAuthGCP),
-    ];
-  }, [infraFeatures]);
+    ],
+    [infraFeatures],
+  );
 
   useEffect(() => {
     setDeprecatedPackage({ deprecation: packageManifestStatus?.deprecation });

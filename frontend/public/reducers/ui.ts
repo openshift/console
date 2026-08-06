@@ -163,9 +163,7 @@ export default (state: UIState, action: UIAction): UIState => {
   return state;
 };
 
-export const userStateToProps = (state: RootState) => {
-  return { user: getUser(state) };
-};
+export const userStateToProps = (state: RootState) => ({ user: getUser(state) });
 
 export const getActiveNamespace = ({ UI }: RootState): string => UI.get('activeNamespace');
 

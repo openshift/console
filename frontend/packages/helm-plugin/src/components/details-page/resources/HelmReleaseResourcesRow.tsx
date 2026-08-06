@@ -31,8 +31,8 @@ export const HelmReleaseResourceStatus: FC<HelmReleaseResourceStatusProps> = ({ 
   );
 };
 
-export const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {
-  return data.map(({ obj: resource }) => {
+export const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) =>
+  data.map(({ obj: resource }) => {
     const kind = referenceFor(resource);
     const rowCells = {
       [tableColumnInfo[0].id]: {
@@ -66,4 +66,3 @@ export const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns)
       };
     });
   });
-};

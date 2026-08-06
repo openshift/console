@@ -102,13 +102,10 @@ const MetricsTable: FC<MetricsTableProps> = ({ obj: hpa }) => {
     return <MetricsRow key={key} type={type} current={currentValue} target={targetValue} />;
   };
 
-  const resourceRow = (metric, current, key) => {
-    return resourceRowFn(metric, current, key, 'resource');
-  };
+  const resourceRow = (metric, current, key) => resourceRowFn(metric, current, key, 'resource');
 
-  const containerResourceRow = (metric, current, key) => {
-    return resourceRowFn(metric, current, key, 'containerResource');
-  };
+  const containerResourceRow = (metric, current, key) =>
+    resourceRowFn(metric, current, key, 'containerResource');
 
   const podRow = (metric, current, key) => {
     const { pods } = metric;
@@ -255,8 +252,8 @@ const tableColumnInfo = [
   { id: '' },
 ];
 
-const getDataViewRows: GetDataViewRows<HorizontalPodAutoscalerKind> = (data, columns) => {
-  return data.map(({ obj }) => {
+const getDataViewRows: GetDataViewRows<HorizontalPodAutoscalerKind> = (data, columns) =>
+  data.map(({ obj }) => {
     const { name, namespace } = obj.metadata;
 
     const rowCells = {
@@ -309,7 +306,6 @@ const getDataViewRows: GetDataViewRows<HorizontalPodAutoscalerKind> = (data, col
       };
     });
   });
-};
 
 const useHorizontalPodAutoscalersColumns = (): {
   columns: TableColumn<HorizontalPodAutoscalerKind>[];
@@ -320,8 +316,8 @@ const useHorizontalPodAutoscalersColumns = (): {
     HorizontalPodAutoscalerModel,
   );
 
-  const columns: TableColumn<HorizontalPodAutoscalerKind>[] = useMemo(() => {
-    return [
+  const columns: TableColumn<HorizontalPodAutoscalerKind>[] = useMemo(
+    () => [
       {
         title: t('Name'),
         id: tableColumnInfo[0].id,
@@ -385,8 +381,9 @@ const useHorizontalPodAutoscalersColumns = (): {
           ...actionsCellProps,
         },
       },
-    ];
-  }, [t, getResizableProps, getWidth]);
+    ],
+    [t, getResizableProps, getWidth],
+  );
 
   return { columns, resetAllColumnWidths };
 };

@@ -37,12 +37,12 @@ const ChannelSelector: FC<ChannelSelectorProps> = ({
     return acc;
   }, {});
 
-  const getGenericChannel = useCallback((): string => {
-    return (
+  const getGenericChannel = useCallback(
+    (): string =>
       filteredChannels.find((ch) => getChannelKind(ch) === EVENTING_CHANNEL_KIND) ||
-      filteredChannels[0]
-    );
-  }, [filteredChannels]);
+      filteredChannels[0],
+    [filteredChannels],
+  );
 
   useEffect(() => {
     if (!selected.value && filteredChannels.length > 0) {

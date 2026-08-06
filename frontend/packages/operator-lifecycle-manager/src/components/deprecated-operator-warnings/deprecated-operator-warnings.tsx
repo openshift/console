@@ -10,9 +10,9 @@ enum DeprecatedOperatorType {
   ChannelDeprecated = 'ChannelDeprecated',
   VersionDeprecated = 'BundleDeprecated',
 }
-const findDeprecation = (obj: SubscriptionKind, type: string): DeprecatedOperatorWarning => {
-  return { deprecation: obj?.status?.conditions?.find((f) => f.type === type) };
-};
+const findDeprecation = (obj: SubscriptionKind, type: string): DeprecatedOperatorWarning => ({
+  deprecation: obj?.status?.conditions?.find((f) => f.type === type),
+});
 
 export const findDeprecatedOperator = (
   obj: SubscriptionKind,
@@ -20,13 +20,11 @@ export const findDeprecatedOperator = (
   deprecatedPackage: DeprecatedOperatorWarning;
   deprecatedChannel: DeprecatedOperatorWarning;
   deprecatedVersion: DeprecatedOperatorWarning;
-} => {
-  return {
-    deprecatedPackage: findDeprecation(obj, DeprecatedOperatorType.PackageDeprecated),
-    deprecatedChannel: findDeprecation(obj, DeprecatedOperatorType.ChannelDeprecated),
-    deprecatedVersion: findDeprecation(obj, DeprecatedOperatorType.VersionDeprecated),
-  };
-};
+} => ({
+  deprecatedPackage: findDeprecation(obj, DeprecatedOperatorType.PackageDeprecated),
+  deprecatedChannel: findDeprecation(obj, DeprecatedOperatorType.ChannelDeprecated),
+  deprecatedVersion: findDeprecation(obj, DeprecatedOperatorType.VersionDeprecated),
+});
 
 export const DeprecatedOperatorWarningBadge: FC<DeprecatedOperatorWarningBadge> = ({
   deprecation,

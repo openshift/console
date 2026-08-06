@@ -47,9 +47,8 @@ const ImportSamplePage: FC = () => {
 
   if (!imageStreamloaded) return <LoadingBox />;
 
-  const { [imageStreamName]: builderImage }: NormalizedBuilderImages = normalizeBuilderImages(
-    imageStream,
-  );
+  const { [imageStreamName]: builderImage }: NormalizedBuilderImages =
+    normalizeBuilderImages(imageStream);
 
   const { name: imageName, recentTag: tag } = builderImage;
 

@@ -121,13 +121,11 @@ const getDebugPod = async (
   return template;
 };
 
-const NodeTerminalError: FC<NodeTerminalErrorProps> = ({ error }) => {
-  return (
-    <PaneBody>
-      <Alert variant="danger" isInline title={error} data-test="node-terminal-error" />
-    </PaneBody>
-  );
-};
+const NodeTerminalError: FC<NodeTerminalErrorProps> = ({ error }) => (
+  <PaneBody>
+    <Alert variant="danger" isInline title={error} data-test="node-terminal-error" />
+  </PaneBody>
+);
 
 const NodeTerminalInner: FC<NodeTerminalInnerProps> = ({
   pod,
@@ -251,7 +249,9 @@ const NodeTerminal: FC<NodeTerminalProps> = ({ obj: node }) => {
         });
         const podToCreate = await getDebugPod(name, namespace.metadata.name, nodeName, isWindows);
         // wait for the namespace to be ready
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        await new Promise<void>((resolve) => {
+          setTimeout(resolve, 1000);
+        });
         const debugPod = await k8sCreate(PodModel, podToCreate);
         if (debugPod) {
           setPodName(name);

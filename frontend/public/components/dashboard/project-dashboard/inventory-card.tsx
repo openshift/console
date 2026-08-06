@@ -100,8 +100,9 @@ const ProjectInventoryItem = memo<ProjectInventoryItemProps>(
       : false;
 
     const dynamicResources = useK8sWatchResources(additionalDynamicResources || {});
-    const dynamicResourcesError = Object.values(dynamicResources).find((r) => r.loadError)
-      ?.loadError;
+    const dynamicResourcesError = Object.values(dynamicResources).find(
+      (r) => r.loadError,
+    )?.loadError;
     const dynamicResourcesLoaded = Object.keys(dynamicResources).every(
       (key) => dynamicResources[key].loaded,
     );

@@ -60,16 +60,14 @@ export const DynamicForm: FC<DynamicFormProps> = ({
       />
     );
   }
-  const FormErrorFallbackComponent: FC<ErrorBoundaryFallbackProps> = () => {
-    return (
-      <Alert
-        isInline
-        className="co-alert co-break-word"
-        variant="danger"
-        title={t('There is an issue in this form view. Select "YAML view" for full control.')}
-      />
-    );
-  };
+  const FormErrorFallbackComponent: FC<ErrorBoundaryFallbackProps> = () => (
+    <Alert
+      isInline
+      className="co-alert co-break-word"
+      variant="danger"
+      title={t('There is an issue in this form view. Select "YAML view" for full control.')}
+    />
+  );
 
   return (
     <>

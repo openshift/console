@@ -45,8 +45,8 @@ const tableColumnInfo = [
   { id: 'actions' },
 ];
 
-const getDataViewRows: GetDataViewRows<UserKind> = (data, columns) => {
-  return data.map(({ obj: user }) => {
+const getDataViewRows: GetDataViewRows<UserKind> = (data, columns) =>
+  data.map(({ obj: user }) => {
     const rowCells = {
       [tableColumnInfo[0].id]: {
         cell: <ResourceLink kind={referenceForModel(UserModel)} name={user.metadata.name} />,
@@ -74,7 +74,6 @@ const getDataViewRows: GetDataViewRows<UserKind> = (data, columns) => {
       };
     });
   });
-};
 
 const UsersHelpText = () => {
   const { t } = useTranslation('public');
@@ -251,25 +250,23 @@ const UserDetails: FC<UserDetailsProps> = ({ obj }) => {
   );
 };
 
-export const UserDetailsPage: FC = (props) => {
-  return (
-    <DetailsPage
-      {...props}
-      kind={referenceForModel(UserModel)}
-      customActionMenu={(k8sObj: K8sModel, obj: UserKind) => (
-        <LazyActionMenu
-          context={{ [referenceForModel(UserModel)]: obj }}
-          variant={ActionMenuVariant.DROPDOWN}
-        />
-      )}
-      pages={[
-        navFactory.details(UserDetails),
-        navFactory.editYaml(),
-        navFactory.roles(RoleBindingsTab),
-      ]}
-    />
-  );
-};
+export const UserDetailsPage: FC = (props) => (
+  <DetailsPage
+    {...props}
+    kind={referenceForModel(UserModel)}
+    customActionMenu={(k8sObj: K8sModel, obj: UserKind) => (
+      <LazyActionMenu
+        context={{ [referenceForModel(UserModel)]: obj }}
+        variant={ActionMenuVariant.DROPDOWN}
+      />
+    )}
+    pages={[
+      navFactory.details(UserDetails),
+      navFactory.editYaml(),
+      navFactory.roles(RoleBindingsTab),
+    ]}
+  />
+);
 
 type UserPageProps = {
   autoFocus?: boolean;

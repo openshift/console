@@ -22,9 +22,9 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import type { DataPoint } from '@console/internal/components/graphs';
 import { PrometheusEndpoint } from '@console/internal/components/graphs/helpers';
 import { usePrometheusPoll } from '@console/internal/components/graphs/prometheus-poll-hook';
+import type { DataPoint } from '@console/internal/components/graphs/types';
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
 import { dropdownUnits } from '@console/internal/components/storage/shared';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
@@ -62,7 +62,7 @@ const ClonePVCModal = (props: ClonePVCModalProps) => {
   const navigate = useNavigate();
   const { close, cancel, resource } = props;
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler<PersistentVolumeClaimKind>();
-  const { name: pvcName, namespace } = resource?.metadata;
+  const { name: pvcName, namespace } = resource?.metadata ?? {};
   const baseValue = convertToBaseValue(getRequestedPVCSize(resource));
   const defaultSize: string[] = validate.split(humanizeBinaryBytesWithoutB(baseValue).string);
   const pvcRequestedSize = humanizeBinaryBytes(baseValue).string;

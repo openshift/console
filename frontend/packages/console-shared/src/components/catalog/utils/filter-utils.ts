@@ -7,9 +7,9 @@ import { CatalogSortOrder } from './types';
 const filterByGroup = (
   items: CatalogItem[],
   filters: CatalogFilters,
-): Record<string, CatalogItem[]> => {
+): Record<string, CatalogItem[]> =>
   // Filter items by each filter group
-  return _.reduce(
+  _.reduce(
     filters,
     (filtered, group, key) => {
       // Only apply active filters
@@ -37,8 +37,6 @@ const filterByGroup = (
     },
     {},
   );
-};
-
 export const filterByAttributes = (
   items: CatalogItem[],
   filters: CatalogFilters,
@@ -63,19 +61,16 @@ export const filterBySearchKeyword = (
   items: CatalogItem[],
   searchKeyword: string,
   sortOrder: CatalogSortOrder = CatalogSortOrder.RELEVANCE,
-): CatalogItem[] => {
-  return sortCatalogItems(items, sortOrder, searchKeyword);
-};
+): CatalogItem[] => sortCatalogItems(items, sortOrder, searchKeyword);
 
 export const filterByCategory = (
   items: CatalogItem[],
   categoryId: string,
   categorizedIds: Record<string, string[]>,
-): CatalogItem[] => {
-  return categoryId !== 'all'
+): CatalogItem[] =>
+  categoryId !== 'all'
     ? items.filter((item) => categorizedIds[categoryId]?.includes(item.uid))
     : items;
-};
 
 export const determineAvailableFilters = (
   initialFilters: CatalogFilters,
@@ -157,9 +152,7 @@ export const getFilterGroupCounts = (
 export const getFilterSearchParam = (groupFilter: CatalogFilter): string => {
   const activeValues = _.reduce(
     _.keys(groupFilter),
-    (result, typeKey) => {
-      return groupFilter[typeKey].active ? result.concat(typeKey) : result;
-    },
+    (result, typeKey) => (groupFilter[typeKey].active ? result.concat(typeKey) : result),
     [],
   );
 

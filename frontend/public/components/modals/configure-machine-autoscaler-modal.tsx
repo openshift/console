@@ -12,12 +12,9 @@ import type { K8sResourceKind } from '../../module/k8s';
 import { NumberSpinner } from '../utils/number-spinner';
 import { resourcePathFromModel } from '../utils/resource-link';
 
-export const ConfigureMachineAutoscalerModal: OverlayComponent<ConfigureMachineAutoscalerModalProps> = ({
-  machineSet,
-  closeOverlay,
-  close,
-  cancel: cancelProp,
-}) => {
+export const ConfigureMachineAutoscalerModal: OverlayComponent<
+  ConfigureMachineAutoscalerModalProps
+> = ({ machineSet, closeOverlay, close, cancel: cancelProp }) => {
   const navigate = useNavigate();
   const [minReplicas, setMinReplicas] = useState(1);
   const [maxReplicas, setMaxReplicas] = useState(12);

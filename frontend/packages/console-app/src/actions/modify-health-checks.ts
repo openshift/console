@@ -20,35 +20,31 @@ const healthChecksUrl = (model: K8sKind, obj: K8sResourceKind): string => {
 };
 
 /** @deprecated - Moving to Extensible Action for Deployment resource, see @console/app/src/actions */
-export const AddHealthChecks = (model: K8sKind, obj: K8sResourceKind): KebabOption => {
-  return {
-    // t('console-app~Add Health Checks')
-    labelKey: 'console-app~Add Health Checks',
-    hidden: healthChecksAdded(obj),
-    href: healthChecksUrl(model, obj),
-    accessReview: {
-      group: model.apiGroup,
-      resource: model.plural,
-      name: obj.metadata?.name,
-      namespace: obj.metadata?.namespace,
-      verb: 'update',
-    },
-  };
-};
+export const AddHealthChecks = (model: K8sKind, obj: K8sResourceKind): KebabOption => ({
+  // t('console-app~Add Health Checks')
+  labelKey: 'console-app~Add Health Checks',
+  hidden: healthChecksAdded(obj),
+  href: healthChecksUrl(model, obj),
+  accessReview: {
+    group: model.apiGroup,
+    resource: model.plural,
+    name: obj.metadata?.name,
+    namespace: obj.metadata?.namespace,
+    verb: 'update',
+  },
+});
 
 /** @deprecated - Moving to Extensible Action for Deployment resource, see @console/app/src/actions */
-export const EditHealthChecks = (model: K8sKind, obj: K8sResourceKind): KebabOption => {
-  return {
-    // t('console-app~Edit Health Checks')
-    labelKey: 'console-app~Edit Health Checks',
-    hidden: !healthChecksAdded(obj),
-    href: healthChecksUrl(model, obj),
-    accessReview: {
-      group: model.apiGroup,
-      resource: model.plural,
-      name: obj.metadata?.name,
-      namespace: obj.metadata?.namespace,
-      verb: 'get',
-    },
-  };
-};
+export const EditHealthChecks = (model: K8sKind, obj: K8sResourceKind): KebabOption => ({
+  // t('console-app~Edit Health Checks')
+  labelKey: 'console-app~Edit Health Checks',
+  hidden: !healthChecksAdded(obj),
+  href: healthChecksUrl(model, obj),
+  accessReview: {
+    group: model.apiGroup,
+    resource: model.plural,
+    name: obj.metadata?.name,
+    namespace: obj.metadata?.namespace,
+    verb: 'get',
+  },
+});

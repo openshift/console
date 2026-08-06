@@ -30,8 +30,9 @@ export const getRelationshipProvider = (): DropTargetSpec<
     const sourceNode = getSourceNode(monitor);
     const targetNode = props.element;
 
-    const topologyRelationshipExtensions = targetNode.getGraph()?.getData()
-      ?.relationshipProviderExtensions;
+    const topologyRelationshipExtensions = targetNode
+      .getGraph()
+      ?.getData()?.relationshipProviderExtensions;
     const relationshipExtension =
       sourceNode instanceof OdcBaseNode &&
       targetNode instanceof OdcBaseNode &&
@@ -43,7 +44,9 @@ export const getRelationshipProvider = (): DropTargetSpec<
         : [];
     return (
       relationshipExtension.length > 0 &&
-      relationshipExtension.sort((a, b) => b.properties?.priority - a.properties?.priority)[0]
+      relationshipExtension.sort(
+        (a, b) => (b.properties?.priority ?? 0) - (a.properties?.priority ?? 0),
+      )[0]
     );
   };
 

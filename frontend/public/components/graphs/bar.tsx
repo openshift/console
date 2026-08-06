@@ -15,8 +15,8 @@ import { PrometheusEndpoint } from './helpers';
 import { PrometheusGraph, PrometheusGraphLink } from './prometheus-graph';
 import { usePrometheusPoll } from './prometheus-poll-hook';
 import { barTheme } from './themes';
+import type { DataPoint } from './types';
 import { getInstantVectorStats } from './utils';
-import type { DataPoint } from '.';
 
 const DEFAULT_BAR_WIDTH = 10;
 const PADDING_RATIO = 1 / 3;

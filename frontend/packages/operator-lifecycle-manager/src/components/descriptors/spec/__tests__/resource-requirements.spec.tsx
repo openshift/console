@@ -31,8 +31,8 @@ describe('ResourceRequirementsModal', () => {
   const cancel = jest.fn();
   const close = jest.fn();
 
-  const renderModal = (props: Partial<ResourceRequirementsModalProps> = {}) => {
-    return renderWithProviders(
+  const renderModal = (props: Partial<ResourceRequirementsModalProps> = {}) =>
+    renderWithProviders(
       <ResourceRequirementsModal
         title={title}
         description={description}
@@ -45,7 +45,6 @@ describe('ResourceRequirementsModal', () => {
         {...props}
       />,
     );
-  };
 
   beforeEach(() => {
     cancel.mockClear();

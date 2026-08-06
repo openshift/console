@@ -143,8 +143,7 @@ export const appResources: AppResources = {
               imageTrigger: {
                 from: {
                   kind: 'DockerImage',
-                  name:
-                    'image-registry.openshift-image-registry.svc:5000/div/nationalparks-py@sha256:7d67c08b5b993d72533f9bb07b6429c5a2263de8b67cc1b0ae09d4c0b0d39f97',
+                  name: 'image-registry.openshift-image-registry.svc:5000/div/nationalparks-py@sha256:7d67c08b5b993d72533f9bb07b6429c5a2263de8b67cc1b0ae09d4c0b0d39f97',
                 },
               },
             },

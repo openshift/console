@@ -20,7 +20,8 @@ export const useDebounceCallback = <T extends (...args: any[]) => any>(
   const callbackRef = useRef<T>();
   callbackRef.current = callback;
 
-  return useMemo(() => {
-    return debounce((...args) => callbackRef.current(...args), timeout, memDebounceParams);
-  }, [memDebounceParams, timeout]);
+  return useMemo(
+    () => debounce((...args) => callbackRef.current(...args), timeout, memDebounceParams),
+    [memDebounceParams, timeout],
+  );
 };

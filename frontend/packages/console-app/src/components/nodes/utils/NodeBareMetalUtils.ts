@@ -67,17 +67,16 @@ export const useWatchBareMetalHost = (
       }
     : undefined;
 
-  const [bareMetalHosts, bareMetalHostsLoaded, bareMetalHostsLoadError] = useAccessibleResources<
-    K8sResourceKind
-  >(
-    isBareMetalPluginActive
-      ? {
-          groupVersionKind: BareMetalHostGroupVersionKind,
-          isList: true,
-          namespaced: true,
-        }
-      : undefined,
-  );
+  const [bareMetalHosts, bareMetalHostsLoaded, bareMetalHostsLoadError] =
+    useAccessibleResources<K8sResourceKind>(
+      isBareMetalPluginActive
+        ? {
+            groupVersionKind: BareMetalHostGroupVersionKind,
+            isList: true,
+            namespaced: true,
+          }
+        : undefined,
+    );
   const [machines, machinesLoaded, machinesLoadError] = useAccessibleResources<MachineKind>(
     isBareMetalPluginActive
       ? {

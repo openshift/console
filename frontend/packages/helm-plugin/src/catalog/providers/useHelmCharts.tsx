@@ -41,9 +41,8 @@ const useHelmCharts: ExtensionHook<CatalogItem[]> = ({
     [namespace],
   );
 
-  const chartRepositories: WatchK8sResults<WatchResource> = useK8sWatchResources<WatchResource>(
-    resourceSelector,
-  );
+  const chartRepositories: WatchK8sResults<WatchResource> =
+    useK8sWatchResources<WatchResource>(resourceSelector);
 
   const chartRepositoriesLoaded =
     Object.keys(chartRepositories).length > 0 &&
@@ -107,7 +106,7 @@ const useHelmCharts: ExtensionHook<CatalogItem[]> = ({
     () =>
       normalizeHelmCharts(
         helmCharts,
-        [...chartRepositories?.hcrs?.data, ...chartRepositories?.phcrs?.data],
+        [...(chartRepositories?.hcrs?.data ?? []), ...(chartRepositories?.phcrs?.data ?? [])],
         namespace,
         t,
       ),

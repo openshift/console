@@ -66,9 +66,9 @@ describe('PerspectiveDetector', () => {
 
   it('should set detected perspective when detection is successful', async () => {
     let promiseResolver: (value: () => [boolean, boolean]) => void;
-    const testPromise = new Promise<() => [boolean, boolean]>(
-      (resolver) => (promiseResolver = resolver),
-    );
+    const testPromise = new Promise<() => [boolean, boolean]>((resolver) => {
+      promiseResolver = resolver;
+    });
     mockPerspectives[1].properties.usePerspectiveDetection = () => testPromise;
 
     (usePerspectives as jest.Mock).mockImplementation(() => mockPerspectives);
@@ -84,9 +84,9 @@ describe('PerspectiveDetector', () => {
 
   it('should set default perspective when detection fails', async () => {
     let promiseResolver: (value: () => [boolean, boolean]) => void;
-    const testPromise = new Promise<() => [boolean, boolean]>(
-      (resolver) => (promiseResolver = resolver),
-    );
+    const testPromise = new Promise<() => [boolean, boolean]>((resolver) => {
+      promiseResolver = resolver;
+    });
     mockPerspectives[1].properties.usePerspectiveDetection = () => testPromise;
 
     (usePerspectives as jest.Mock).mockImplementation(() => mockPerspectives);
@@ -131,9 +131,9 @@ describe('PerspectiveDetector', () => {
     ];
 
     let promiseResolver: (value: () => [boolean, boolean]) => void;
-    const testPromise = new Promise<() => [boolean, boolean]>(
-      (resolver) => (promiseResolver = resolver),
-    );
+    const testPromise = new Promise<() => [boolean, boolean]>((resolver) => {
+      promiseResolver = resolver;
+    });
     mockPerspectives[1].properties.usePerspectiveDetection = () => testPromise;
 
     (usePerspectives as jest.Mock).mockImplementation(() => mockPerspectives);
@@ -149,9 +149,9 @@ describe('PerspectiveDetector', () => {
 
   it('preserves query and hash when setting perspective', async () => {
     let promiseResolver: (value: () => [boolean, boolean]) => void;
-    const testPromise = new Promise<() => [boolean, boolean]>(
-      (resolver) => (promiseResolver = resolver),
-    );
+    const testPromise = new Promise<() => [boolean, boolean]>((resolver) => {
+      promiseResolver = resolver;
+    });
     mockPerspectives[1].properties.usePerspectiveDetection = () => testPromise;
 
     (usePerspectives as jest.Mock).mockImplementation(() => mockPerspectives);

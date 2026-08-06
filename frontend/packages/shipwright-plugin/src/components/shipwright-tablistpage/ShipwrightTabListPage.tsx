@@ -26,53 +26,45 @@ const commonPageProps = {
   hideBadge: true,
 };
 
-const buildListTab = (model: K8sModel): Page => {
-  return {
-    href: 'builds',
-    component: BuildListPage,
-    nameKey: 'shipwright-plugin~Builds',
-    pageData: {
-      ...commonPageProps,
-      kind: referenceForModel(model),
-    },
-  };
-};
+const buildListTab = (model: K8sModel): Page => ({
+  href: 'builds',
+  component: BuildListPage,
+  nameKey: 'shipwright-plugin~Builds',
+  pageData: {
+    ...commonPageProps,
+    kind: referenceForModel(model),
+  },
+});
 
-const buildRunListTab = (model: K8sModel): Page => {
-  return {
-    href: 'buildruns',
-    component: BuildRunListPage,
-    nameKey: 'shipwright-plugin~BuildRuns',
-    pageData: {
-      ...commonPageProps,
-      kind: referenceForModel(model),
-    },
-  };
-};
+const buildRunListTab = (model: K8sModel): Page => ({
+  href: 'buildruns',
+  component: BuildRunListPage,
+  nameKey: 'shipwright-plugin~BuildRuns',
+  pageData: {
+    ...commonPageProps,
+    kind: referenceForModel(model),
+  },
+});
 
-const buildStrategyTab = (model: K8sModel): Page => {
-  return {
-    href: 'buildstrategies',
-    component: DefaultPage,
-    nameKey: 'shipwright-plugin~BuildStrategies',
-    pageData: {
-      ...commonPageProps,
-      kind: referenceForModel(model),
-    },
-  };
-};
+const buildStrategyTab = (model: K8sModel): Page => ({
+  href: 'buildstrategies',
+  component: DefaultPage,
+  nameKey: 'shipwright-plugin~BuildStrategies',
+  pageData: {
+    ...commonPageProps,
+    kind: referenceForModel(model),
+  },
+});
 
-const clusterBuildStrategyTab = (model: K8sModel): Page => {
-  return {
-    href: 'clusterbuildstrategies',
-    component: DefaultPage,
-    nameKey: 'shipwright-plugin~ClusterBuildStrategies',
-    pageData: {
-      ...commonPageProps,
-      kind: referenceForModel(model),
-    },
-  };
-};
+const clusterBuildStrategyTab = (model: K8sModel): Page => ({
+  href: 'clusterbuildstrategies',
+  component: DefaultPage,
+  nameKey: 'shipwright-plugin~ClusterBuildStrategies',
+  pageData: {
+    ...commonPageProps,
+    kind: referenceForModel(model),
+  },
+});
 
 const ShipwrightTabListPage: FC = () => {
   const { t } = useTranslation('shipwright-plugin');

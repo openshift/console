@@ -99,18 +99,16 @@ export enum SinkType {
   Uri = 'uri',
 }
 
-export const sourceSinkType = (t: TFunction) => {
-  return {
-    Resource: {
-      value: SinkType.Resource,
-      label: t('knative-plugin~Resource'),
-    },
-    Uri: {
-      value: SinkType.Uri,
-      label: t('knative-plugin~URI'),
-    },
-  };
-};
+export const sourceSinkType = (t: TFunction) => ({
+  Resource: {
+    value: SinkType.Resource,
+    label: t('knative-plugin~Resource'),
+  },
+  Uri: {
+    value: SinkType.Uri,
+    label: t('knative-plugin~URI'),
+  },
+});
 export interface AddChannelFormData {
   project?: ProjectData;
   application: ApplicationData;

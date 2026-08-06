@@ -48,25 +48,23 @@ const getPseudoTranslatedConsoleSample = (
   sample: ConsoleSample,
   lang?: string,
   country?: string,
-): ConsoleSample => {
-  return {
-    ...sample,
-    metadata: {
-      ...sample.metadata,
-      name: `${sample.metadata.name}${lang ? `-${lang}` : ''}${country ? `-${country}` : ''}`,
-      labels: {
-        ...sample.metadata.labels,
-        'console.openshift.io/name': sample.metadata.name,
-        'console.openshift.io/lang': lang,
-        'console.openshift.io/country': country,
-      },
+): ConsoleSample => ({
+  ...sample,
+  metadata: {
+    ...sample.metadata,
+    name: `${sample.metadata.name}${lang ? `-${lang}` : ''}${country ? `-${country}` : ''}`,
+    labels: {
+      ...sample.metadata.labels,
+      'console.openshift.io/name': sample.metadata.name,
+      'console.openshift.io/lang': lang,
+      'console.openshift.io/country': country,
     },
-    spec: {
-      ...sample.spec,
-      title: `${sample.spec.title}${lang ? ` ${lang}` : ''}${country ? `-${country}` : ''}`,
-    },
-  };
-};
+  },
+  spec: {
+    ...sample.spec,
+    title: `${sample.spec.title}${lang ? ` ${lang}` : ''}${country ? `-${country}` : ''}`,
+  },
+});
 
 export const translatedGitImportSamples: ConsoleSample[] = [
   getPseudoTranslatedConsoleSample(gitImportSample),

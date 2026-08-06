@@ -7,16 +7,17 @@ import type { SecretKind } from '@console/internal/module/k8s';
 import type { ResourceDropdownProps } from '@console/shared/src/components/dropdown/ResourceDropdown';
 import { ResourceDropdown } from '@console/shared/src/components/dropdown/ResourceDropdown';
 
-interface SourceSecretDropdownProps
-  extends Omit<ResourceDropdownProps, 'resources' | 'placeholder' | 'dataSelector'> {
+interface SourceSecretDropdownProps extends Omit<
+  ResourceDropdownProps,
+  'resources' | 'placeholder' | 'dataSelector'
+> {
   namespace?: string;
 }
 
 const SourceSecretDropdown: FC<SourceSecretDropdownProps> = (props) => {
   const { t } = useTranslation('devconsole');
-  const filterData = (item: SecretKind) => {
-    return item.type === 'kubernetes.io/basic-auth' || item.type === 'kubernetes.io/ssh-auth';
-  };
+  const filterData = (item: SecretKind) =>
+    item.type === 'kubernetes.io/basic-auth' || item.type === 'kubernetes.io/ssh-auth';
 
   const [secrets, secretsLoaded, secretsLoadError] = useK8sWatchResource<SecretKind[]>({
     isList: true,

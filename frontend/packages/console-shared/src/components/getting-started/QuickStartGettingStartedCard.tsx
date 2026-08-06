@@ -31,10 +31,13 @@ const orderQuickStarts = (
 
   // Prioritize featured quick starts and keep specified order
   if (featured) {
-    const featuredQuickStartsByName = filteredQuickStarts.reduce((acc, q) => {
-      acc[q.metadata.name] = q;
-      return acc;
-    }, {} as Record<string, QuickStart>);
+    const featuredQuickStartsByName = filteredQuickStarts.reduce(
+      (acc, q) => {
+        acc[q.metadata.name] = q;
+        return acc;
+      },
+      {} as Record<string, QuickStart>,
+    );
     featured.forEach((quickStartName) => {
       if (
         featuredQuickStartsByName[quickStartName] &&
@@ -112,7 +115,7 @@ export const QuickStartGettingStartedCard: FC<QuickStartGettingStartedCardProps>
               <RhUiRouteIcon color="var(--co-global--palette--purple-600)" aria-hidden="true" />
             }
             title={title || t('Build with guided documentation')}
-            titleColor={'var(--co-global--palette--purple-600)'}
+            titleColor="var(--co-global--palette--purple-600)"
             description={
               description ||
               t(

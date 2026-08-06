@@ -69,8 +69,8 @@ const KebabItemBase: FC<KebabItemProps & { isAllowed: boolean }> = ({
         option.labelKey
           ? t(option.labelKey, option.labelKind)
           : typeof option.label === 'string'
-          ? option.label
-          : undefined
+            ? option.label
+            : undefined
       }
       data-test-action={option.labelKey ? t(option.labelKey, option.labelKind) : option.label}
       icon={option.icon}
@@ -89,11 +89,9 @@ export const KebabItemAccessReviewBase = (
 
 const KebabItemAccessReview = connect(impersonateStateToProps)(KebabItemAccessReviewBase);
 
-const isKebabSubMenu = (option: KebabMenuOption): option is KebabSubMenuOption => {
+const isKebabSubMenu = (option: KebabMenuOption): option is KebabSubMenuOption =>
   // only a sub menu has children
-  return Array.isArray((option as KebabSubMenuOption).children);
-};
-
+  Array.isArray((option as KebabSubMenuOption).children);
 export const KebabItem: FC<KebabItemProps> = (props) => {
   const { option } = props;
   let item;

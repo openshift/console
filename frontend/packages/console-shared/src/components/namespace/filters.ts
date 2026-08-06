@@ -14,9 +14,8 @@ export const isSystemNamespace = (option: { title: string; key?: string }) => {
   return startsWithNamespace || isNamespace;
 };
 
-export const isOtherUser = (user: string, title: string): boolean => {
-  return !isCurrentUser(user) && !isSystemNamespace({ title });
-};
+export const isOtherUser = (user: string, title: string): boolean =>
+  !isCurrentUser(user) && !isSystemNamespace({ title });
 
 export const requesterFilter = (filter, obj): boolean => {
   if (filter.selected.length === 0) {

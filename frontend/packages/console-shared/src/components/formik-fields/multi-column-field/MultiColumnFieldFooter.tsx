@@ -21,7 +21,7 @@ const MultiColumnFieldFooter: FC<MultiColumnFieldFooterProps> = ({
   const { t } = useTranslation('console-shared');
   const button = (
     <Button
-      data-test={'add-action'}
+      data-test="add-action"
       variant="link"
       isAriaDisabled={disableAddRow}
       onClick={!disableAddRow ? onAdd : undefined}

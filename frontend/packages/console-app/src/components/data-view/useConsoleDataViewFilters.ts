@@ -20,7 +20,7 @@ const getOpenShiftDisplayName = (resource: K8sResourceCommon): string | undefine
 
 export const useConsoleDataViewFilters = <
   TData,
-  TFilters extends ResourceFilters = ResourceFilters
+  TFilters extends ResourceFilters = ResourceFilters,
 >({
   data,
   initialFilters,

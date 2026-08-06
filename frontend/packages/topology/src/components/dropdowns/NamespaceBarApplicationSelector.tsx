@@ -42,8 +42,8 @@ const NamespaceBarApplicationSelector: FC<Props> = ({
     application === ALL_APPLICATIONS_KEY
       ? allApplicationsTitle
       : application === UNASSIGNED_APPLICATIONS_KEY
-      ? noApplicationsTitle
-      : application;
+        ? noApplicationsTitle
+        : application;
   const [title, setTitle] = useState<string>(dropdownTitle);
   useEffect(() => {
     if (!disabled) {

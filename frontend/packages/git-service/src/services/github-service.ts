@@ -111,9 +111,7 @@ export class GithubService extends BaseService {
         owner: this.metadata.owner,
         repo: this.metadata.repoName,
       });
-      const list = resp.data.map((r) => {
-        return r.name;
-      });
+      const list = resp.data.map((r) => r.name);
       return { branches: list };
     } catch (e) {
       return { branches: [] };

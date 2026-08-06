@@ -209,9 +209,10 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
   const userInactivityTimeout = useRef(null);
   const isKubeAdmin = username === 'kube:admin';
 
-  const drawerToggle = useCallback(() => dispatch(UIActions.notificationDrawerToggleExpanded()), [
-    dispatch,
-  ]);
+  const drawerToggle = useCallback(
+    () => dispatch(UIActions.notificationDrawerToggleExpanded()),
+    [dispatch],
+  );
 
   const getImportYAMLPath = () => formatNamespacedRouteForResource('import', activeNamespace);
   const onFeedbackModal = () => setIsFeedbackModalOpen(true);
@@ -440,13 +441,11 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
   };
 
   const getAdditionalActions = (links: ConsoleLinkKind[]): MastheadSection => {
-    const actions = _.map(links, (link) => {
-      return {
-        label: link.spec.text,
-        externalLink: true,
-        href: link.spec.href,
-      };
-    });
+    const actions = _.map(links, (link) => ({
+      label: link.spec.text,
+      externalLink: true,
+      href: link.spec.href,
+    }));
 
     return {
       isSection: true,

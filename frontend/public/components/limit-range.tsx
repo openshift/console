@@ -31,8 +31,8 @@ const LimitRangeReference: K8sResourceKindReference = LimitRangeModel.kind;
 
 const tableColumnInfo = [{ id: 'name' }, { id: 'namespace' }, { id: 'created' }, { id: 'actions' }];
 
-const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {
-  return data.map(({ obj }) => {
+const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) =>
+  data.map(({ obj }) => {
     const { name, namespace, creationTimestamp } = obj.metadata;
 
     const rowCells = {
@@ -62,7 +62,6 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {
       };
     });
   });
-};
 
 const useLimitRangeColumns = (): {
   columns: TableColumn<K8sResourceKind>[];
@@ -149,19 +148,17 @@ export const LimitRangeDetailsRow: FC<LimitRangeDetailsRowProps> = ({
   limitType,
   resource,
   limit,
-}) => {
-  return (
-    <Tr>
-      <Td>{limitType}</Td>
-      <Td>{resource}</Td>
-      <Td>{limit.min || '-'}</Td>
-      <Td>{limit.max || '-'}</Td>
-      <Td>{limit.defaultRequest || '-'}</Td>
-      <Td>{limit.default || '-'}</Td>
-      <Td>{limit.maxLimitRequestRatio || '-'}</Td>
-    </Tr>
-  );
-};
+}) => (
+  <Tr>
+    <Td>{limitType}</Td>
+    <Td>{resource}</Td>
+    <Td>{limit.min || '-'}</Td>
+    <Td>{limit.max || '-'}</Td>
+    <Td>{limit.defaultRequest || '-'}</Td>
+    <Td>{limit.default || '-'}</Td>
+    <Td>{limit.maxLimitRequestRatio || '-'}</Td>
+  </Tr>
+);
 
 const LimitRangeDetailsRows: FC<LimitRangeDetailsRowsProps> = ({ limit }) => {
   const properties = ['max', 'min', 'default', 'defaultRequest', 'maxLimitRequestRatio'];

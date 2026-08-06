@@ -62,6 +62,5 @@ const getPullPolicy = (container: ContainerSpec) => {
   return pullPolicy[container?.imagePullPolicy];
 };
 
-export const getPullPolicyLabel = (container: ContainerSpec): string => {
-  return getPullPolicy(container)?.label || '';
-};
+export const getPullPolicyLabel = (container: ContainerSpec): string =>
+  getPullPolicy(container)?.label || '';

@@ -18,10 +18,8 @@ describe('getAddGroups', () => {
   });
 
   it('should add actions to their respective action groups', () => {
-    const softwareCatalogGroupItems: ResolvedExtension<
-      AddAction
-    >[] = addActionExtensions.filter((action) =>
-      action.properties.groupId.includes('developer-catalog'),
+    const softwareCatalogGroupItems: ResolvedExtension<AddAction>[] = addActionExtensions.filter(
+      (action) => action.properties.groupId.includes('developer-catalog'),
     );
     const addGroups: AddGroup[] = getAddGroups(addActionExtensions, addActionGroup);
     expect(addGroups.find((group) => group.id === 'developer-catalog').items.length).toEqual(
@@ -30,11 +28,10 @@ describe('getAddGroups', () => {
   });
 
   it('should filter out the groups for which there are no add actions', () => {
-    const addActionsExcludingSoftwareCatalogGroupItems: ResolvedExtension<
-      AddAction
-    >[] = addActionExtensions.filter(
-      (action) => !action.properties.groupId.includes('developer-catalog'),
-    );
+    const addActionsExcludingSoftwareCatalogGroupItems: ResolvedExtension<AddAction>[] =
+      addActionExtensions.filter(
+        (action) => !action.properties.groupId.includes('developer-catalog'),
+      );
     const addGroups: AddGroup[] = getAddGroups(
       addActionsExcludingSoftwareCatalogGroupItems,
       addActionGroup,
@@ -92,9 +89,8 @@ describe('filterNamespaceScopedUrl', () => {
   });
 
   it(`should return only those add actions whose href does not have ":namespace" if namespace equals ${ALL_NAMESPACES_KEY}`, () => {
-    const addActionsWithoutNamespacedHref: ResolvedExtension<
-      AddAction
-    >[] = addActionExtensions.filter(({ properties: { href } }) => !href.match(/:namespace\b/));
+    const addActionsWithoutNamespacedHref: ResolvedExtension<AddAction>[] =
+      addActionExtensions.filter(({ properties: { href } }) => !href.match(/:namespace\b/));
 
     const filteredAddActions: ResolvedExtension<AddAction>[] = filterNamespaceScopedUrl(
       ALL_NAMESPACES_KEY,

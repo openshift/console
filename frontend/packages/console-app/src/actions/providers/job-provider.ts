@@ -12,11 +12,10 @@ export const useJobActionsProvider = (resource: JobKind) => {
   const commonActions = useCommonResourceActions(kindObj, resource);
   const jobActions = useJobActions(resource);
 
-  const actions = useMemo(() => [...jobActions, ...pdbActions, ...commonActions], [
-    pdbActions,
-    commonActions,
-    jobActions,
-  ]);
+  const actions = useMemo(
+    () => [...jobActions, ...pdbActions, ...commonActions],
+    [pdbActions, commonActions, jobActions],
+  );
 
   return [actions, !inFlight, undefined];
 };

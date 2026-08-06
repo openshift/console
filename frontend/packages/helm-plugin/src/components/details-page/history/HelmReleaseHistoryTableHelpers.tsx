@@ -150,44 +150,41 @@ export const getHelmReleaseHistoryRows = (
   releaseHistory: HelmRelease[],
   totalRevisions: number,
   latestHelmReleaseVersion: number | string,
-): DataViewTd[][] => {
-  return releaseHistory.map((revision) => {
-    return [
-      {
-        cell: revision.version,
-      },
-      {
-        cell: <Timestamp timestamp={revision.info.last_deployed} />,
-      },
-      {
-        cell: (
-          <Status
-            status={releaseStatus(revision.info.status)}
-            title={HelmReleaseStatusLabels[revision.info.status]}
-          />
-        ),
-      },
-      {
-        cell: revision.chart.metadata.name,
-      },
-      {
-        cell: revision.chart.metadata.version,
-      },
-      {
-        cell: revision.chart.metadata.appVersion || DASH,
-      },
-      {
-        cell: revision.info.description,
-      },
-      {
-        cell:
-          totalRevisions > 1 && latestHelmReleaseVersion !== revision.version ? (
-            <HelmReleaseHistoryKebab obj={revision} />
-          ) : null,
-      },
-    ];
-  });
-};
+): DataViewTd[][] =>
+  releaseHistory.map((revision) => [
+    {
+      cell: revision.version,
+    },
+    {
+      cell: <Timestamp timestamp={revision.info.last_deployed} />,
+    },
+    {
+      cell: (
+        <Status
+          status={releaseStatus(revision.info.status)}
+          title={HelmReleaseStatusLabels[revision.info.status]}
+        />
+      ),
+    },
+    {
+      cell: revision.chart.metadata.name,
+    },
+    {
+      cell: revision.chart.metadata.version,
+    },
+    {
+      cell: revision.chart.metadata.appVersion || DASH,
+    },
+    {
+      cell: revision.info.description,
+    },
+    {
+      cell:
+        totalRevisions > 1 && latestHelmReleaseVersion !== revision.version ? (
+          <HelmReleaseHistoryKebab obj={revision} />
+        ) : null,
+    },
+  ]);
 
 // Helper function to get column index by ID (matching the history table structure)
 export const getHistoryColumnIndexById = (columnId: string): number => {

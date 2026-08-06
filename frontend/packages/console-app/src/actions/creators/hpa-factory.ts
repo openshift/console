@@ -50,10 +50,10 @@ export const useHPAActions = (kindObj: K8sKind, resource: K8sResourceKind) => {
     [namespace],
   );
   const extraResources = useK8sWatchResources<DeploymentActionExtraResources>(watchedResources);
-  const relatedHPAs = useMemo(() => extraResources.hpas.data.filter(doesHpaMatch(resource)), [
-    extraResources.hpas.data,
-    resource,
-  ]);
+  const relatedHPAs = useMemo(
+    () => extraResources.hpas.data.filter(doesHpaMatch(resource)),
+    [extraResources.hpas.data, resource],
+  );
 
   const supportsHPA = useMemo(
     () =>
@@ -113,9 +113,10 @@ export const useHPAActions = (kindObj: K8sKind, resource: K8sResourceKind) => {
     ];
   }, [kindObj, launchModal, relatedHPAs, resource, supportsHPA]);
 
-  const result = useMemo<[Action[], HorizontalPodAutoscalerKind[]]>(() => {
-    return [actions, relatedHPAs];
-  }, [actions, relatedHPAs]);
+  const result = useMemo<[Action[], HorizontalPodAutoscalerKind[]]>(
+    () => [actions, relatedHPAs],
+    [actions, relatedHPAs],
+  );
 
   return result;
 };

@@ -14,9 +14,7 @@ type PopoverContent = {
   uid: string;
 };
 
-export type GetNodeStatusExtensions = (
-  node: NodeKind,
-) => {
+export type GetNodeStatusExtensions = (node: NodeKind) => {
   popoverContent: PopoverContent[];
   secondaryStatuses: string[];
 };

@@ -63,9 +63,8 @@ const EditDeploymentForm: FC<
     </>
   );
 
-  const sanitizeToForm = (yamlDeployment: K8sResourceKind) => {
-    return convertDeploymentToEditForm(yamlDeployment);
-  };
+  const sanitizeToForm = (yamlDeployment: K8sResourceKind) =>
+    convertDeploymentToEditForm(yamlDeployment);
 
   const sanitizeToYaml = () =>
     safeJSToYAML(convertEditFormToDeployment(formData, resource), 'yamlData', {

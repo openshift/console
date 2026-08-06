@@ -28,16 +28,14 @@ const convertBuildStrategyToFormData = (build: Build, values: BuildFormikValues)
 };
 
 const convertBuildParamsToFormData = (build: Build, values) => {
-  const params = build.spec?.paramValues?.map((paramValue) => {
-    return {
-      name: paramValue.name,
-      ...(paramValue.value
-        ? { value: paramValue.value }
-        : { value: paramValue?.values?.map((val) => val.value) }),
-      ...(paramValue.value ? { default: paramValue.value } : {}),
-      type: paramValue.values ? 'array' : 'string',
-    };
-  });
+  const params = build.spec?.paramValues?.map((paramValue) => ({
+    name: paramValue.name,
+    ...(paramValue.value
+      ? { value: paramValue.value }
+      : { value: paramValue?.values?.map((val) => val.value) }),
+    ...(paramValue.value ? { default: paramValue.value } : {}),
+    type: paramValue.values ? 'array' : 'string',
+  }));
   values.formData.parameters = params || [];
 };
 
@@ -146,8 +144,8 @@ const convertFormDataOutputToBuild = (values: BuildFormikValues, build: Build) =
 
 const convertFromDataVolumesToBuild = (values: BuildFormikValues, build: Build) => {
   const { volumes } = values.formData;
-  const buildVolumes = volumes.map((volume) => {
-    return (
+  const buildVolumes = volumes.map(
+    (volume) =>
       volume.overridable && {
         name: volume.name,
         ...(volume.resourceType === 'emptyDir'
@@ -159,29 +157,26 @@ const convertFromDataVolumesToBuild = (values: BuildFormikValues, build: Build) 
                 name: volume.resource,
               },
             }),
-      }
-    );
-  });
+      },
+  );
   build.spec.volumes = buildVolumes;
 };
 
 const convertFormDataParamsToBuild = (values, build: Build) => {
   const { parameters } = values.formData;
-  const paramValues = parameters?.map((param) => {
-    return {
-      name: param.name,
-      ...(param.type === 'string'
-        ? { value: param.value }
-        : {
-            values:
-              param.value.length > 0
-                ? param.value?.map((val) => ({
-                    value: val,
-                  }))
-                : [],
-          }),
-    };
-  });
+  const paramValues = parameters?.map((param) => ({
+    name: param.name,
+    ...(param.type === 'string'
+      ? { value: param.value }
+      : {
+          values:
+            param.value.length > 0
+              ? param.value?.map((val) => ({
+                  value: val,
+                }))
+              : [],
+        }),
+  }));
 
   build.spec.paramValues = paramValues || [];
 };

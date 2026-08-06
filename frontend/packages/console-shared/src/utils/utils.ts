@@ -11,15 +11,14 @@ export type K8sEntityMap<A extends K8sResourceKind> = EntityMap<A>;
 
 type KeyResolver<A> = (entity: A) => string;
 
-export const createBasicLookup = <A>(list: A[], getKey: KeyResolver<A>): EntityMap<A> => {
-  return (list || []).reduce((lookup, entity) => {
+export const createBasicLookup = <A>(list: A[], getKey: KeyResolver<A>): EntityMap<A> =>
+  (list || []).reduce((lookup, entity) => {
     const key = getKey(entity);
     if (key) {
       lookup[key] = entity;
     }
     return lookup;
   }, {});
-};
 
 export const createLookup = <A extends K8sResourceKind>(
   loadingList: WatchK8sResultsObject<A[]>,
@@ -31,12 +30,11 @@ export const createLookup = <A extends K8sResourceKind>(
   return {};
 };
 
-export const getRandomChars = (len = 6): string => {
-  return Math.random()
+export const getRandomChars = (len = 6): string =>
+  Math.random()
     .toString(36)
     .replace(/[^a-z0-9]+/g, '')
     .substr(1, len);
-};
 
 export const isValidUrl = (url: string): boolean => URL.canParse(url);
 
@@ -57,22 +55,19 @@ const recursiveGetSchemaAtPath = (
 };
 
 // Get a schema at the provided path string.
-export const getSchemaAtPath = (schema: JSONSchema7, path: string): JSONSchema7 => {
-  return recursiveGetSchemaAtPath(schema, toPath(path));
-};
+export const getSchemaAtPath = (schema: JSONSchema7, path: string): JSONSchema7 =>
+  recursiveGetSchemaAtPath(schema, toPath(path));
 
 // Converts a string to title case `some-title` -> `Some Title`
-export const toTitleCase = (title: string): string => {
-  return title
+export const toTitleCase = (title: string): string =>
+  title
     .split('-')
     .map((w) => (w ? w[0].toUpperCase() + w.substr(1) : ''))
     .join(' ');
-};
 
 // Check for a modified mouse event. For example - Ctrl + Click
-export const isModifiedEvent = (event: React.MouseEvent<HTMLElement>) => {
-  return !!(event.metaKey || event.altKey || event.ctrlKey || event.shiftKey);
-};
+export const isModifiedEvent = (event: React.MouseEvent<HTMLElement>) =>
+  !!(event.metaKey || event.altKey || event.ctrlKey || event.shiftKey);
 
 // Returns true if subject starts with at least one search string
 export const startsWithSome = (subject: string, ...searchStrings: string[]): boolean =>
@@ -80,12 +75,11 @@ export const startsWithSome = (subject: string, ...searchStrings: string[]): boo
     (searchString) => searchString?.length > 0 && subject.startsWith(searchString),
   );
 
-export const alphanumericCompare = (a: string, b: string): number => {
-  return a.localeCompare(b, undefined, {
+export const alphanumericCompare = (a: string, b: string): number =>
+  a.localeCompare(b, undefined, {
     numeric: true,
     sensitivity: 'base',
   });
-};
 
 const translationForResourceKind = {
   // t('console-shared~Helm Release')

@@ -216,10 +216,10 @@ export const ToastProvider: FC<ToastProviderProps> = ({
     ],
   );
 
-  const visibleToasts = useMemo(() => getVisibleToasts(toasts, maxDisplayed), [
-    maxDisplayed,
-    toasts,
-  ]);
+  const visibleToasts = useMemo(
+    () => getVisibleToasts(toasts, maxDisplayed),
+    [maxDisplayed, toasts],
+  );
 
   return (
     <ToastContext.Provider value={toastController}>

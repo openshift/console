@@ -210,15 +210,14 @@ const getDomainMappingDeleteList = (
   ksvcName: string,
   allDomainMapping: K8sResourceKind[],
   selDomainMappingNames: string[],
-): DomainMappingResponse[] => {
-  return allDomainMapping
+): DomainMappingResponse[] =>
+  allDomainMapping
     .filter((dmRes) => dmRes.spec?.ref?.name === ksvcName)
     .filter((dmSvc) => !selDomainMappingNames?.includes(dmSvc.metadata.name))
     .map((dmDel) => ({
       action: DomainMappingResponseAction.Delete,
       resource: dmDel,
     }));
-};
 
 const formDomainMappingStruct = (
   name: string,

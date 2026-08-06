@@ -59,7 +59,8 @@ const getKnativeServiceDepResourceMock = knativeUtils.getKnativeServiceDepResour
 const submitTriggerMock = pipelineUtils.submitTrigger as jest.Mock;
 const createTriggerMock = pipelineUtils.createTrigger as jest.Mock;
 const createPipelineForImportFlowMock = pipelineUtils.createPipelineForImportFlow as jest.Mock;
-const createPipelineRunForImportFlowMock = pipelineUtils.createPipelineRunForImportFlow as jest.Mock;
+const createPipelineRunForImportFlowMock =
+  pipelineUtils.createPipelineRunForImportFlow as jest.Mock;
 const setPipelineNotStartedMock = pipelineUtils.setPipelineNotStarted as jest.Mock;
 const createOrUpdateImageStreamMock = submitUtils.createOrUpdateImageStream as jest.Mock;
 
@@ -232,20 +233,18 @@ describe('Import Submit Utils', () => {
       const mockData = _.cloneDeep(defaultData);
       mockData.pipeline.enabled = true;
 
-      createPipelineForImportFlowMock.mockImplementation((name, namespace) => {
-        return {
-          metadata: {
-            name,
-            namespace,
-            labels: { 'app.kubernetes.io/instance': name },
-          },
-          spec: {
-            params: [],
-            resources: [],
-            tasks: [],
-          },
-        };
-      });
+      createPipelineForImportFlowMock.mockImplementation((name, namespace) => ({
+        metadata: {
+          name,
+          namespace,
+          labels: { 'app.kubernetes.io/instance': name },
+        },
+        spec: {
+          params: [],
+          resources: [],
+          tasks: [],
+        },
+      }));
       createPipelineRunForImportFlowMock.mockImplementation(jest.fn()); // can't handle a no-arg spyOn invoke, stub
       createTriggerMock.mockImplementation(() => Promise.resolve([]));
 

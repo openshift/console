@@ -70,8 +70,8 @@ const PubSub: FC<PubSubProps> = ({
     },
   };
 
-  const handleSubmit = (values: FormikValues, action: FormikHelpers<FormikValues>) => {
-    return k8sCreate(getResourceModel(), sanitizeResourceName(values.formData))
+  const handleSubmit = (values: FormikValues, action: FormikHelpers<FormikValues>) =>
+    k8sCreate(getResourceModel(), sanitizeResourceName(values.formData))
       .then(() => {
         action.setStatus({ subscriberAvailable: true, error: '' });
         close();
@@ -83,7 +83,6 @@ const PubSub: FC<PubSubProps> = ({
           error: errMessage,
         });
       });
-  };
 
   const labelTitle = t('Add {{kind}}', {
     kind: t(labelKey) || kind,

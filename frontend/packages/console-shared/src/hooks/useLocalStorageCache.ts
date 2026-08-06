@@ -64,9 +64,10 @@ export const useLocalStorageCache = <T = any>(
     [getNewSerializedRecords, key],
   );
 
-  const getRecords = useCallback((): T[] => refreshCache().map(({ timestamp, ...rest }) => rest), [
-    refreshCache,
-  ]);
+  const getRecords = useCallback(
+    (): T[] => refreshCache().map(({ timestamp, ...rest }) => rest),
+    [refreshCache],
+  );
 
   return [getRecords, addRecord];
 };

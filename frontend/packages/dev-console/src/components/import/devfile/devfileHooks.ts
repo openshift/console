@@ -174,8 +174,8 @@ export const useSelectedDevfileSample = () => {
     };
   }, []);
 
-  return useMemo(() => devfileSamples?.find((sample) => sample.name === devfileName), [
-    devfileSamples,
-    devfileName,
-  ]);
+  return useMemo(
+    () => devfileSamples?.find((sample) => sample.name === devfileName),
+    [devfileSamples, devfileName],
+  );
 };

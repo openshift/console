@@ -114,13 +114,8 @@ export const getLastTime = (event: EventKind): string | null | undefined => {
   return event.lastTimestamp || lastObservedTime || event.eventTime;
 };
 
-export const sortEvents = (events: EventKind[] | Record<string, EventKind>): EventKind[] => {
-  return _.orderBy(
-    events,
-    [getLastTime, getFirstTime, 'name'],
-    ['desc', 'desc', 'asc'],
-  ) as EventKind[];
-};
+export const sortEvents = (events: EventKind[] | Record<string, EventKind>): EventKind[] =>
+  _.orderBy(events, [getLastTime, getFirstTime, 'name'], ['desc', 'desc', 'asc']) as EventKind[];
 
 // Predicate function to filter by event "type" (normal, warning, or all)
 export const typeFilter = (eventType: string, event: EventKind): boolean => {
@@ -333,10 +328,11 @@ const filterEvents = (
 ): EventKind[] => {
   // Don't use `fuzzy` because it results in some surprising matches in long event messages.
   // Instead perform an exact substring match on each word in the text filter.
-  const words = _.uniq(_.toLower(textFilter).match(/\S+/g) ?? []).sort((a, b) => {
-    // Sort the longest words first.
-    return b.length - a.length;
-  });
+  const words = _.uniq(_.toLower(textFilter).match(/\S+/g) ?? []).sort(
+    (a, b) =>
+      // Sort the longest words first.
+      b.length - a.length,
+  );
 
   const textMatches = (obj: EventKind): boolean => {
     if (_.isEmpty(words)) {
@@ -401,9 +397,10 @@ const EventStream: FC<EventStreamProps> = ({
     return sortEvents(dataSource).slice(0, maxMessages);
   }, [pausedSnapshot, eventsData]);
 
-  const filteredEvents = useMemo(() => {
-    return filterEvents(sortedEvents, { kind, type, filter, textFilter }).slice(0, maxMessages);
-  }, [sortedEvents, kind, type, filter, textFilter]);
+  const filteredEvents = useMemo(
+    () => filterEvents(sortedEvents, { kind, type, filter, textFilter }).slice(0, maxMessages),
+    [sortedEvents, kind, type, filter, textFilter],
+  );
 
   const toggleStream = () => {
     setActive((prev) => {
@@ -563,14 +560,12 @@ export const EventsList: FC<EventsListProps> = (props) => {
                 isClosable
                 onClick={clearSelection}
               >
-                {[...selected].map((chip) => {
-                  return (
-                    <Label variant="outline" key={chip} onClose={() => removeResource(chip)}>
-                      <ResourceIcon kind={chip} />
-                      {kindForReference(chip)}
-                    </Label>
-                  );
-                })}
+                {[...selected].map((chip) => (
+                  <Label variant="outline" key={chip} onClose={() => removeResource(chip)}>
+                    <ResourceIcon kind={chip} />
+                    {kindForReference(chip)}
+                  </Label>
+                ))}
               </LabelGroup>
             </ToolbarContent>
           )}
