@@ -140,7 +140,7 @@ test.describe('Visiting other routes', { tag: ['@admin', '@smoke'] }, () => {
     }) => {
       await page.goto(route.path, { timeout: 90_000 });
       const expectedPath = route.path.split('?')[0];
-      await expect(page).toHaveURL(new RegExp(expectedPath.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+      await expect(page).toHaveURL(new RegExp(`^${expectedPath.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?:\\?.*)?$`));
       await expect(page.getByTestId('loading-indicator')).toHaveCount(0);
       await expect(page.getByTestId('error-page')).not.toBeAttached();
 

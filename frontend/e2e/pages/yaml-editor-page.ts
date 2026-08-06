@@ -122,6 +122,10 @@ export class YamlEditorPage extends BasePage {
 
   async getEditorContent(): Promise<string> {
     return this.page.evaluate(() => {
+      // Check if Monaco is initialized before accessing editor API
+      if (!(window as any).monaco?.editor?.getModels) {
+        return '';
+      }
       const models = (window as any).monaco.editor.getModels();
       return models[0]?.getValue() || '';
     });

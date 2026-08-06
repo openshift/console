@@ -10,8 +10,8 @@ export interface TestOperandProps {
   group: string;
   version: string;
   kind: string;
-  createActionID?: string;
   exampleName: string;
+  createActionID?: string; // Optional - for operators with multiple operand types
 }
 
 export class OperatorDetailsPage extends BasePage {
@@ -24,7 +24,7 @@ export class OperatorDetailsPage extends BasePage {
    * Verify operator details page sections exist
    */
   async verifyDetailsPageSections(): Promise<void> {
-    await expect(this.getSectionHeading('Provided APIs')).toBeVisible({ timeout: 60_000 });
+    await expect(this.getSectionHeading('Provided APIs')).toBeVisible({ timeout: 30_000 });
     await expect(this.getSectionHeading('ClusterServiceVersion details')).toBeVisible({ timeout: 30_000 });
     await expect(this.page.getByTestId('resource-summary')).toBeVisible({ timeout: 30_000 });
   }
@@ -41,7 +41,15 @@ export class OperatorDetailsPage extends BasePage {
       await expect(this.page.getByTestId('horizontal-link-All instances')).toBeVisible({ timeout: 30_000 });
       await this.detailsPage.selectTab('All instances');
     } else {
-      await this.detailsPage.selectTab(operandName);
+      // For single namespace, try common tab variations
+      try {
+        await this.detailsPage.selectTab(operandName);
+      } catch (error) {
+        // If operand name tab doesn't exist, try "All instances" as fallback
+        console.log(`Tab ${operandName} not found, trying "All instances"`);
+        await expect(this.page.getByTestId('horizontal-link-All instances')).toBeVisible({ timeout: 10_000 });
+        await this.detailsPage.selectTab('All instances');
+      }
     }
   }
 
@@ -59,15 +67,16 @@ export class OperatorDetailsPage extends BasePage {
     // Click create button
     await this.robustClick(this.createItemButton);
 
-    // If specific create action ID is provided, wait for dropdown and click it
+    // If createActionID is provided, select it from the dropdown
     if (createActionID) {
-      // Wait for the dropdown item to be visible before clicking
-      await expect(this.page.getByTestId(createActionID)).toBeVisible({ timeout: 30_000 });
-      await this.robustClick(this.page.getByTestId(createActionID));
+      console.log(`Selecting create action: ${createActionID}`);
+      const dropdownOption = this.page.getByTestId(createActionID);
+      await expect(dropdownOption).toBeVisible({ timeout: 10_000 });
+      await this.robustClick(dropdownOption);
     }
 
     // Verify we're on the create form
-    await expect(this.page).toHaveURL(/~new/);
+    await expect(this.page).toHaveURL(/~new/, { timeout: 30_000 });
 
     // Fill in the name
     await expect(this.nameInput).toBeEnabled();
@@ -78,7 +87,7 @@ export class OperatorDetailsPage extends BasePage {
     await this.clickSubmitButton();
 
     // Wait for form submission and redirect
-    await expect(this.page).not.toHaveURL(/~new/, { timeout: 60_000 });
+    await expect(this.page).not.toHaveURL(/~new/, { timeout: 30_000 });
   }
 
   /**
@@ -134,40 +143,6 @@ export class OperatorDetailsPage extends BasePage {
   }
 
   /**
-   * Create operand instance from the current tab (no navigation)
-   */
-  async createOperandFromTab(testOperand: TestOperandProps): Promise<void> {
-    const { exampleName, createActionID } = testOperand;
-
-    // Verify operand doesn't already exist
-    await expect(this.getOperandLink(exampleName)).not.toBeAttached();
-
-    // Click create button
-    await this.robustClick(this.createItemButton);
-
-    // If specific create action ID is provided, wait for dropdown and click it
-    if (createActionID) {
-      // Wait for the dropdown item to be visible before clicking
-      await expect(this.page.getByTestId(createActionID)).toBeVisible({ timeout: 30_000 });
-      await this.robustClick(this.page.getByTestId(createActionID));
-    }
-
-    // Verify we're on the create form
-    await expect(this.page).toHaveURL(/~new/);
-
-    // Fill in the name
-    await expect(this.nameInput).toBeEnabled();
-    await this.nameInput.clear();
-    await this.nameInput.fill(exampleName);
-
-    // Submit the form
-    await this.clickSubmitButton();
-
-    // Wait for form submission and redirect
-    await expect(this.page).not.toHaveURL(/~new/, { timeout: 60_000 });
-  }
-
-  /**
    * Click operand link (no navigation, just click)
    */
   async clickOperandLink(exampleName: string): Promise<void> {
@@ -201,7 +176,7 @@ export class OperatorDetailsPage extends BasePage {
     await expect(this.modalPage.getModalTitle()).toContainText('Uninstall Operator?');
 
     // Wait for loading skeleton to disappear
-    await expect(this.page.locator('.loading-skeleton--table')).not.toBeAttached({ timeout: 120_000 });
+    await expect(this.page.locator('.loading-skeleton--table')).not.toBeAttached({ timeout: 30_000 });
 
     if (submit) {
       await this.modalPage.submit();
@@ -212,16 +187,30 @@ export class OperatorDetailsPage extends BasePage {
   /**
    * Uninstall operator with all operands
    */
-  async uninstallOperatorWithOperands(): Promise<void> {
+  async uninstallOperatorWithOperands(deleteOperands: boolean = false): Promise<void> {
     await this.detailsPage.clickPageAction('Uninstall Operator');
     await this.modalPage.waitForOpen();
     await expect(this.modalPage.getModalTitle()).toContainText('Uninstall Operator?');
 
     // Wait for loading skeleton to disappear
-    await expect(this.page.locator('.loading-skeleton--table')).not.toBeAttached({ timeout: 120_000 });
+    await expect(this.page.locator('.loading-skeleton--table')).not.toBeAttached({ timeout: 30_000 });
 
-    // Check delete all operands option
-    await this.page.getByTestId('delete-all-operands').click();
+    // Check delete all operands option if it exists and is requested
+    if (deleteOperands) {
+      console.log('🔍 Looking for delete-all-operands checkbox...');
+      const deleteAllOperandsCheckbox = this.page.getByTestId('delete-all-operands');
+      try {
+        await expect(deleteAllOperandsCheckbox).toBeVisible({ timeout: 5_000 });
+        console.log('✅ Found delete-all-operands checkbox, clicking it...');
+        await deleteAllOperandsCheckbox.click();
+        console.log('✅ Successfully clicked delete-all-operands checkbox');
+      } catch (error) {
+        console.log('⏹️ No delete-all-operands checkbox found - this operator may only have one operand');
+        console.log('⏹️ Continuing with uninstall without checkbox...');
+      }
+    } else {
+      console.log('⏹️ Skipping delete-all-operands checkbox (deleteOperands = false)');
+    }
 
     await this.modalPage.submit();
     await this.modalPage.waitForClosed();

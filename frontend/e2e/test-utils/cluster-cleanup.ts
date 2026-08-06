@@ -23,21 +23,10 @@ export async function cleanupClusterTestResources(k8sClient: any, options: Clust
 
   try {
     // 1. Find all test namespaces
-    // Note: KubernetesClient doesn't expose listNamespace, so we'll use kubectl directly
-    // This is a limitation of the current client implementation
-    console.log('⚠️  KubernetesClient API limitation: using kubectl for namespace listing');
-
-    // For now, clean up known test namespaces by pattern
-    const { exec } = require('child_process');
-    const { promisify } = require('util');
-    const execPromise = promisify(exec);
-
-    const { stdout } = await execPromise('kubectl get namespaces --output=json');
-    const namespacesData = JSON.parse(stdout);
-    const namespaces = namespacesData;
-    const testNamespaces = namespaces.items?.filter((ns: any) =>
-      ns.metadata.name.startsWith('test-') || ns.metadata.name.startsWith('test-operator-')
-    ) || [];
+    const namespaces = await client.listNamespaces();
+    const testNamespaces = namespaces.filter((ns: any) =>
+      ns.metadata.name.startsWith('test-')
+    );
 
     console.log(`\nFound ${testNamespaces.length} test namespaces:`);
     testNamespaces.forEach((ns: any) => {

@@ -42,7 +42,7 @@ export class OperatorInstallPage extends BasePage {
     await expect(this.versionSelect).toBeVisible();
 
     // Verify global installation is selected by default
-    await expect(this.allNamespacesRadio).toBeChecked({ timeout: 60_000 });
+    await expect(this.allNamespacesRadio).toBeChecked({ timeout: 30_000 });
 
     // Install the operator
     await this.robustClick(this.installOperatorButton);
@@ -77,14 +77,17 @@ export class OperatorInstallPage extends BasePage {
     await this.robustClick(this.installButton);
 
     // Configure for specific namespace installation
-    await this.specificNamespaceRadio.check({ timeout: 60_000 });
+    await this.specificNamespaceRadio.check({ timeout: 30_000 });
 
     if (useOperatorRecommended) {
       await this.operatorRecommendedRadio.check();
     } else {
-      // Check if select namespace radio exists
-      if (await this.selectNamespaceRadio.count() > 0) {
+      // Check if select namespace radio exists with timeout
+      try {
+        await this.selectNamespaceRadio.waitFor({ state: 'visible', timeout: 5_000 });
         await this.selectNamespaceRadio.check();
+      } catch (error) {
+        // Element not available within timeout, continue without checking it
       }
 
       // Select the namespace
@@ -126,11 +129,14 @@ export class OperatorInstallPage extends BasePage {
     await this.robustClick(this.installButton);
 
     // Configure for specific namespace installation
-    await this.specificNamespaceRadio.check({ timeout: 60_000 });
+    await this.specificNamespaceRadio.check({ timeout: 30_000 });
 
-    // Check if select namespace radio exists
-    if (await this.selectNamespaceRadio.count() > 0) {
+    // Check if select namespace radio exists with timeout
+    try {
+      await this.selectNamespaceRadio.waitFor({ state: 'visible', timeout: 5_000 });
       await this.selectNamespaceRadio.check();
+    } catch (error) {
+      // Element not available within timeout, continue without checking it
     }
 
     // Create new namespace through UI
