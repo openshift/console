@@ -56,12 +56,14 @@ export async function performAggressiveOperatorCleanup(k8sClient: any, config: O
     // Additional aggressive steps
     await cleanupTestNamespaces(k8sClient, config, true); // deleteNamespaces = true
 
-    // Wait for cleanup to propagate
+    // Wait for cleanup to propagate with polling
     console.log('⏳ Waiting for cleanup to propagate...');
-    await new Promise(resolve => setTimeout(resolve, 10_000));
+    const remainingOperators = await waitForOperatorCleanup(k8sClient, packageName, 30_000);
 
-    // Verify and force-delete any remaining operators
-    await verifyAndForceCleanup(k8sClient, packageName);
+    // Force-delete only the remaining stragglers
+    if (remainingOperators.length > 0) {
+      await verifyAndForceCleanup(k8sClient, packageName);
+    }
 
     console.log(`✅ Aggressive cleanup complete for ${packageName}`);
   } catch (error) {
@@ -79,7 +81,7 @@ async function cleanupTestNamespaces(k8sClient: any, config: OperatorTestConfig,
     const namespaces = await k8sClient.listNamespaces();
     const testNamespaces = namespaces.filter((ns: any) => {
       const name: string | undefined = ns?.metadata?.name;
-      return Boolean(name && (name.startsWith('test-') || name.includes(packageName)));
+      return Boolean(name && name.startsWith('test-'));
     });
 
     for (const testNs of testNamespaces) {
@@ -112,6 +114,34 @@ async function cleanupTestNamespaces(k8sClient: any, config: OperatorTestConfig,
 /**
  * Verify cleanup worked and force-delete any remaining operators
  */
+/**
+ * Poll for operator cleanup completion with timeout
+ */
+async function waitForOperatorCleanup(k8sClient: any, packageName: string, timeoutMs = 30_000): Promise<any[]> {
+  const startTime = Date.now();
+  let remainingOperators: any[] = [];
+
+  while (Date.now() - startTime < timeoutMs) {
+    try {
+      const allOperators = await k8sClient.listClusterCustomResources('operators.coreos.com', 'v1', 'operators');
+      remainingOperators = allOperators.filter((op: any) => op.metadata.name?.includes(packageName));
+
+      if (remainingOperators.length === 0) {
+        console.log(`✅ All ${packageName} operators cleaned up successfully`);
+        return [];
+      }
+
+      console.log(`⏳ Still waiting for ${remainingOperators.length} ${packageName} operators to be cleaned up...`);
+      await new Promise(resolve => setTimeout(resolve, 2_000)); // Poll every 2 seconds
+    } catch (error) {
+      console.log(`Error checking operator cleanup status:`, error.message);
+      await new Promise(resolve => setTimeout(resolve, 2_000));
+    }
+  }
+
+  return remainingOperators;
+}
+
 async function verifyAndForceCleanup(k8sClient: any, packageName: string): Promise<void> {
   try {
     const remainingOperators = await k8sClient.listClusterCustomResources('operators.coreos.com', 'v1', 'operators');
@@ -120,7 +150,7 @@ async function verifyAndForceCleanup(k8sClient: any, packageName: string): Promi
     );
 
     if (matchingOperators.length > 0) {
-      console.log(`⚠️  Warning: Found remaining ${packageName} operators after cleanup:`,
+      console.log(`⚠️  Warning: Found ${matchingOperators.length} remaining ${packageName} operators that need force deletion:`,
         matchingOperators.map((op: any) => op.metadata.name)
       );
 
@@ -133,8 +163,6 @@ async function verifyAndForceCleanup(k8sClient: any, packageName: string): Promi
           console.log(`Failed to force delete ${op.metadata.name}:`, error.message);
         }
       }
-    } else {
-      console.log(`✅ No remaining ${packageName} operators found`);
     }
   } catch (error) {
     console.log('Could not verify cleanup state:', error.message);
@@ -149,14 +177,14 @@ export function createOperatorTestHooks(config: OperatorTestConfig) {
     beforeEach: async ({ k8sClient, page }: any) => {
       console.log(`=== ${config.packageName.toUpperCase()} BEFORE EACH: Starting cleanup ===`);
       await performOperatorCleanup(k8sClient, config);
-      await page.waitForTimeout(5000); // Wait for cleanup to propagate
+      await waitForOperatorCleanup(k8sClient, config.packageName, 15_000);
       console.log(`=== ${config.packageName.toUpperCase()} BEFORE EACH: Cleanup complete ===`);
     },
 
     afterEach: async ({ k8sClient }: any) => {
       console.log(`=== ${config.packageName.toUpperCase()} AFTER EACH: Starting safety cleanup ===`);
-      // Give UI operations time to complete
-      await new Promise(resolve => setTimeout(resolve, 5000));
+      // Give UI operations time to complete with polling
+      await waitForOperatorCleanup(k8sClient, config.packageName, 15_000);
       await performOperatorCleanup(k8sClient, config);
       console.log(`=== ${config.packageName.toUpperCase()} AFTER EACH: Cleanup complete ===`);
     },

@@ -37,7 +37,11 @@ test.describe('Software Catalog Operator filtering', { tag: ['@admin'] }, () => 
       }).toPass();
 
       // Track which tile is first with Community filter
-      const originalTileText = await catalogPage.getFirstCatalogTileTitle().textContent();
+      const originalTileText = catalogPage.getFirstCatalogTileTitle();
+
+      // Validate that we captured a valid tile title
+      await expect(originalTileText).toHaveText();
+      expect(originalTileText?.trim()).not.toBe('');
 
       // Disable Community filter
       await catalogPage.toggleSourceFilter('community');
@@ -50,7 +54,7 @@ test.describe('Software Catalog Operator filtering', { tag: ['@admin'] }, () => 
       }).toPass();
 
       // Verify the first tile title is different from Community filter
-      await catalogPage.verifyTileTextChanged(originalTileText || '');
+      await catalogPage.verifyTileTextChanged(originalTileText!);
     });
 
     await test.step('Test operator name search functionality', async () => {
@@ -75,26 +79,19 @@ test.describe('Software Catalog Operator filtering', { tag: ['@admin'] }, () => 
       await catalogPage.searchOperators('NoOperatorsTestXYZ123NonExistent');
 
       // Wait for search to complete and verify no tiles
-      await expect(catalogPage.getCatalogTiles()).not.toBeAttached({ timeout: 10_000 });
+      await expect(catalogPage.getCatalogTiles()).toHaveCount(0, { timeout: 10_000 });
 
-      // Check if clear filters button appears
+      // Assert clear filters button is visible and click it
       const clearButton = catalogPage.getClearFiltersButton();
-      if (await clearButton.count() > 0) {
-        await expect(clearButton).toBeVisible();
-        await catalogPage.clickClearAllFilters();
-        await expect(catalogPage.getSearchInput()).toBeEmpty();
-        await expect(async () => {
-          const count = await catalogPage.getCatalogTiles().count();
-          expect(count).toBeGreaterThan(0);
-        }).toPass();
-      } else {
-        // If clear button doesn't appear, just clear the search manually
-        await catalogPage.clearSearchFilter();
-        await expect(async () => {
-          const count = await catalogPage.getCatalogTiles().count();
-          expect(count).toBeGreaterThan(0);
-        }).toPass();
-      }
+      await expect(clearButton).toBeVisible();
+      await catalogPage.clickClearAllFilters();
+
+      // Verify search input is empty and catalog tiles return
+      await expect(catalogPage.getSearchInput()).toBeEmpty();
+      await expect(async () => {
+        const count = await catalogPage.getCatalogTiles().count();
+        expect(count).toBeGreaterThan(0);
+      }).toPass();
     });
 
     await test.step('Test category filter functionality', async () => {

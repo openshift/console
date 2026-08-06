@@ -2,7 +2,7 @@ import { test, expect } from '../../fixtures';
 import { OperatorInstallPage } from '../../pages/operator-install-page';
 import { InstalledOperatorsPage } from '../../pages/installed-operators-page';
 import { OperatorDetailsPage, TestOperandProps } from '../../pages/operator-details-page';
-import { cleanupOperatorResources, cleanupAllOperatorsByPackageName } from '../../test-utils/operator-cleanup';
+import { cleanupOperatorResources, cleanupAllOperatorsByPackageName, forceCleanupAllOperatorsByPackageName, deleteStuckDatagridOperator } from '../../test-utils/operator-cleanup';
 
 const testOperator = {
   name: 'Data Grid',
@@ -35,75 +35,106 @@ async function cleanupDataGridOperatorResources(k8sClient: any) {
 
 test.describe(`Globally installing "${testOperator.name}" operator in ${globalNamespace}`, { tag: ['@admin'] }, () => {
   test.beforeEach(async ({ k8sClient, page }) => {
-    console.log('=== BEFORE EACH: Starting cleanup ===');
+    console.log('\n🧹 ========= BEFORE EACH: Starting cleanup =========');
 
-    // First clean up cluster-scoped Operator resources that prevent reinstallation
     try {
-      const operators = await k8sClient.listClusterCustomResources('operators.coreos.com', 'v1', 'operators');
-      const dataGridOperators = operators.filter((op: any) => op.metadata.name.includes(operatorPackageName));
+      // Run the normal cleanup procedures (they have built-in quick checks now)
+      console.log('⏳ Running cleanupAllOperatorsByPackageName...');
+      await cleanupAllOperatorsByPackageName(k8sClient, operatorPackageName);
+      console.log('✅ cleanupAllOperatorsByPackageName complete');
 
-      for (const operator of dataGridOperators) {
-        console.log(`Deleting cluster operator: ${operator.metadata.name}`);
-        await k8sClient.deleteClusterCustomResource('operators.coreos.com', 'v1', 'operators', operator.metadata.name);
-      }
+      console.log('⏳ Running forceCleanupAllOperatorsByPackageName...');
+      await forceCleanupAllOperatorsByPackageName(k8sClient, operatorPackageName);
+      console.log('✅ forceCleanupAllOperatorsByPackageName complete');
+
+      console.log('⏳ Running deleteStuckDatagridOperator...');
+      await deleteStuckDatagridOperator(k8sClient);
+      console.log('✅ deleteStuckDatagridOperator complete');
+
+      // Clean up any remaining resources in the global namespace specifically
+      console.log('⏳ Running namespace-specific cleanup...');
+      await cleanupOperatorResources(k8sClient, {
+        operatorPackageName,
+        operandPlural: 'infinispans',
+        testOperand,
+        namespace: globalNamespace,
+      });
+      console.log('✅ namespace-specific cleanup complete');
+
     } catch (error) {
-      console.log('Error cleaning up cluster operators:', error.message);
+      console.log(`❌ Cleanup error: ${error.message}`);
+      throw error;
     }
 
-    // Then do aggressive cluster-wide cleanup of all operators for this package
-    await cleanupAllOperatorsByPackageName(k8sClient, operatorPackageName);
-
-    // Then do namespace-specific cleanup
-    await cleanupDataGridOperatorResources(k8sClient);
-
-    // Also clean up any test namespaces that might have conflicting OperatorGroups
-    try {
-      const namespaces = await k8sClient.listNamespaces();
-      const testNamespaces = namespaces.filter((ns: any) => ns.metadata.name.startsWith('test-'));
-
-      for (const testNs of testNamespaces) {
-        const nsName = (testNs as any)?.metadata?.name;
-        if (nsName) {
-          console.log(`Cleaning up test namespace: ${nsName}`);
-          await cleanupOperatorResources(k8sClient, {
-            operatorPackageName,
-            operandPlural: 'infinispans',
-            namespace: nsName,
-          });
-        }
-      }
-    } catch (error) {
-      console.log('Error cleaning up test namespaces:', error.message);
-    }
-
-    // Wait for cleanup to propagate
-    await page.waitForTimeout(5000); // Reduced from 15s to 5s
-    console.log('=== BEFORE EACH: Cleanup complete ===');
+    console.log('🎉 ========= BEFORE EACH: ALL CLEANUP COMPLETE =========\n');
   });
 
   test.afterEach(async ({ k8sClient }) => {
-    console.log('=== AFTER EACH: Safety cleanup (UI uninstall should have handled this) ===');
+    console.log('\n🧽 ========= AFTER EACH: Verifying UI uninstall =========');
 
-    // Give UI uninstall time to complete first
-    await new Promise(resolve => setTimeout(resolve, 10000));
-
-    // Clean up cluster-scoped Operator resources first
     try {
-      const operators = await k8sClient.listClusterCustomResources('operators.coreos.com', 'v1', 'operators');
-      const dataGridOperators = operators.filter((op: any) => op.metadata.name.includes(operatorPackageName));
+      // Give UI uninstall substantial time to complete naturally
+      console.log('⏳ Waiting 15 seconds for UI uninstall to complete naturally...');
+      await new Promise(resolve => setTimeout(resolve, 15000));
 
-      for (const operator of dataGridOperators) {
-        console.log(`[AfterEach] Deleting cluster operator: ${operator.metadata.name}`);
-        await k8sClient.deleteClusterCustomResource('operators.coreos.com', 'v1', 'operators', operator.metadata.name);
+      // Check if UI uninstall actually completed successfully
+      console.log('🔍 Checking if UI uninstall completed...');
+      let uiUninstallSucceeded = false;
+
+      try {
+        const operators = await k8sClient.listClusterCustomResources('operators.coreos.com', 'v1', 'operators');
+        const remainingOperators = operators.filter((op: any) =>
+          op.metadata.name?.includes(operatorPackageName) ||
+          op.metadata.name?.includes('datagrid') ||
+          op.metadata.name === 'datagrid.openshift-operators'
+        );
+
+        const subscriptions = await k8sClient.listCustomResources('operators.coreos.com', 'v1alpha1', globalNamespace, 'subscriptions');
+        const remainingSubscriptions = subscriptions.filter((sub: any) =>
+          sub.metadata.name?.includes(operatorPackageName) ||
+          sub.metadata.name?.includes('datagrid')
+        );
+
+        if (remainingOperators.length === 0 && remainingSubscriptions.length === 0) {
+          console.log('✅ UI uninstall completed successfully - no cleanup needed');
+          uiUninstallSucceeded = true;
+        } else {
+          console.log(`⚠️ UI uninstall incomplete: ${remainingOperators.length} operators, ${remainingSubscriptions.length} subscriptions still exist`);
+        }
+      } catch (error) {
+        console.log(`Error checking UI uninstall status: ${error.message}`);
       }
+
+      // Only run cleanup if UI uninstall failed or left resources behind
+      if (!uiUninstallSucceeded) {
+        console.log('🧽 UI uninstall incomplete - running safety cleanup...');
+
+        console.log('⏳ Running safety cleanupAllOperatorsByPackageName...');
+        await cleanupAllOperatorsByPackageName(k8sClient, operatorPackageName);
+
+        console.log('⏳ Running safety forceCleanupAllOperatorsByPackageName...');
+        await forceCleanupAllOperatorsByPackageName(k8sClient, operatorPackageName);
+
+        console.log('⏳ Running safety deleteStuckDatagridOperator...');
+        await deleteStuckDatagridOperator(k8sClient);
+
+        console.log('⏳ Running safety namespace-specific cleanup...');
+        await cleanupOperatorResources(k8sClient, {
+          operatorPackageName,
+          operandPlural: 'infinispans',
+          testOperand,
+          namespace: globalNamespace,
+        });
+
+        console.log('✅ Safety cleanup complete');
+      }
+
     } catch (error) {
-      console.log('Error in afterEach cluster operator cleanup:', error.message);
+      console.log(`❌ Safety cleanup error: ${error.message}`);
+      // Don't throw here - we don't want afterEach to fail the test
     }
 
-    // Only clean up if UI uninstall failed to remove everything
-    await cleanupAllOperatorsByPackageName(k8sClient, operatorPackageName);
-
-    console.log('=== AFTER EACH: Safety cleanup complete ===');
+    console.log('🎉 ========= AFTER EACH: COMPLETE =========\n');
   });
 
   test(`Globally installs ${testOperator.name} operator in ${globalNamespace} and creates ${testOperand.name} operand`, async ({
@@ -111,6 +142,8 @@ test.describe(`Globally installing "${testOperator.name}" operator in ${globalNa
     k8sClient,
     cleanup,
   }) => {
+    console.log('\n🚀 ========= TEST EXECUTION STARTING =========\n');
+
     const installPage = new OperatorInstallPage(page);
     const installedOperatorsPage = new InstalledOperatorsPage(page);
     const operatorDetailsPage = new OperatorDetailsPage(page);

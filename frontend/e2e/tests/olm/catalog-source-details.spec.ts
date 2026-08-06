@@ -114,7 +114,11 @@ test.describe('CatalogSource details page', { tag: ['@admin'] }, () => {
       await catalogSourcePage.navigateToOperatorHubSources();
 
       // Wait for the CatalogSource to appear in the UI after K8s creation
-      await expect(page.getByTestId(catalogSourceName)).toBeVisible({ timeout: 60_000 });
+      const catalogSourceElement = page.getByTestId(catalogSourceName);
+      await expect(catalogSourceElement).toBeVisible({ timeout: 60_000 });
+
+      // Scroll into view if needed
+      await catalogSourceElement.scrollIntoViewIfNeeded();
 
       await catalogSourcePage.openCatalogSourceDetails(catalogSourceName);
     });

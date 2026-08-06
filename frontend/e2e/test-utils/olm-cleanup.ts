@@ -63,8 +63,25 @@ export async function cleanupOLMOperatorCompletely(
         } catch (error) {
           if (forceDelete) {
             console.log(`⚠️ Normal deletion failed, trying force delete for ${operator.metadata.name}`);
-            // Force delete if normal deletion fails (this requires shell access)
-            // k8sClient doesn't support force deletion, so we'd need to use kubectl/oc
+            try {
+              // Force delete by stripping finalizers and retrying deletion
+              await k8sClient.patchClusterCustomResource(
+                'operators.coreos.com',
+                'v1',
+                'operators',
+                operator.metadata.name,
+                [{ op: 'replace', path: '/metadata/finalizers', value: [] }]
+              );
+              await k8sClient.deleteClusterCustomResource(
+                'operators.coreos.com',
+                'v1',
+                'operators',
+                operator.metadata.name
+              );
+              console.log(`✅ Force deleted Operator ${operator.metadata.name}`);
+            } catch (forceError) {
+              console.log(`❌ Force delete failed for Operator ${operator.metadata.name}: ${forceError.message}`);
+            }
           } else {
             console.log(`❌ Failed to delete Operator ${operator.metadata.name}: ${error.message}`);
           }
@@ -76,9 +93,26 @@ export async function cleanupOLMOperatorCompletely(
     if (namespacePattern) {
       console.log(`\n--- Cleaning namespaces matching pattern: ${namespacePattern} ---`);
 
-      // Note: k8sClient doesn't expose namespace listing, so we'll document the limitation
-      console.log('⚠️ Namespace cleanup requires manual intervention due to k8sClient limitations');
-      console.log(`Manual command: kubectl delete namespace $(kubectl get namespaces -o name | grep ${namespacePattern})`);
+      const namespaces = await k8sClient.listNamespaces();
+      const matchingNamespaces = namespaces.filter((ns: any) =>
+        ns.metadata.name.startsWith('test-')
+      );
+
+      console.log(`Found ${matchingNamespaces.length} matching namespaces`);
+
+      for (const namespace of matchingNamespaces) {
+        const nsName = namespace.metadata.name;
+        if (dryRun) {
+          console.log(`[DRY RUN] Would delete namespace ${nsName}`);
+        } else {
+          try {
+            await k8sClient.deleteNamespace(nsName);
+            console.log(`✅ Deleted namespace ${nsName}`);
+          } catch (error) {
+            console.log(`❌ Failed to delete namespace ${nsName}: ${error.message}`);
+          }
+        }
+      }
     }
 
     console.log(`\n=== CLEANUP COMPLETE ${dryRun ? '(DRY RUN)' : ''} ===`);
@@ -111,6 +145,6 @@ export async function cleanupOperatorWithOLMResources(
   // Then clean up the cluster-scoped OLM resources
   await cleanupOLMOperatorCompletely(k8sClient, {
     operatorPackageName,
-    namespacePattern: namespace.startsWith('test-') ? 'test-' : undefined,
+    namespacePattern: namespace.startsWith('test-') ? 'test-' : namespace,
   });
 }

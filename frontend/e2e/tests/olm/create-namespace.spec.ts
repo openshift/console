@@ -22,7 +22,7 @@ test.describe('Create namespace from install operators', { tag: ['@admin'] }, ()
     // Clean up any test namespaces from previous runs
     try {
       const namespaces = await k8sClient.listNamespaces();
-      const testNamespaces = namespaces.filter((ns: any) => ns.metadata.name.startsWith('test-create-ns-'));
+      const testNamespaces = namespaces.filter((ns: any) => ns.metadata.name.startsWith('test-'));
 
       for (const testNs of testNamespaces) {
         const nsName = (testNs as any)?.metadata?.name;
