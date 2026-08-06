@@ -231,7 +231,7 @@ test.describe('Edit Groups Button', () => {
     const editButton = page.getByRole('button', { name: /edit groups/i });
     await expect(editButton).toBeVisible();
 
-    const pageHeader = page.locator('[data-test="page-header"], .pf-v6-c-page__main-section').first();
+    const pageHeader = page.getByTestId('page-heading');
     const headerButton = pageHeader.getByRole('button', { name: /edit groups/i });
     await expect(headerButton).toBeVisible();
   });
