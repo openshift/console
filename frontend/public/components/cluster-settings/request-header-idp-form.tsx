@@ -1,18 +1,18 @@
 import { useState } from 'react';
-import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { ActionGroup, Button, Title } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
-import { ActionGroup, Button, Title } from '@patternfly/react-core';
-
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ConfigMapModel } from '../../models';
-import { IdentityProvider, k8sCreate, OAuthKind, K8sResourceKind } from '../../module/k8s';
+import type { IdentityProvider, OAuthKind, K8sResourceKind } from '../../module/k8s';
+import { k8sCreate } from '../../module/k8s';
 import { ButtonBar } from '../utils/button-bar';
 import { ListInput } from '../utils/list-input';
-import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
-import { addIDP, getOAuthResource as getOAuth, redirectToOAuthPage, mockNames } from './';
-import { IDPNameInput } from './idp-name-input';
 import { IDPCAFileInput } from './idp-cafile-input';
+import { IDPNameInput } from './idp-name-input';
+import { addIDP, getOAuthResource as getOAuth, redirectToOAuthPage, mockNames } from '.';
 
 export const AddRequestHeaderPage = () => {
   const navigate = useNavigate();
@@ -98,7 +98,7 @@ export const AddRequestHeaderPage = () => {
     return handlePromise(addIDP(oauth, idp, dryRun));
   };
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault();
     if (!caFileContent) {
       setErrorMessage(t('You must specify a CA File.'));
@@ -107,21 +107,15 @@ export const AddRequestHeaderPage = () => {
 
     // Clear any previous errors.
     setErrorMessage('');
-    getOAuthResource().then((oauth: OAuthKind) => {
-      addRequestHeaderIDP(oauth, mockNames.ca, true)
-        .then(() => {
-          return createCAConfigMap()
-            .then((configMap: K8sResourceKind) =>
-              addRequestHeaderIDP(oauth, configMap.metadata.name),
-            )
-            .then(() => {
-              redirectToOAuthPage(navigate);
-            });
-        })
-        .catch((err) => {
-          setErrorMessage(err);
-        });
-    });
+    try {
+      const oauth: OAuthKind = await getOAuthResource();
+      await addRequestHeaderIDP(oauth, mockNames.ca, true);
+      const configMap: K8sResourceKind = await createCAConfigMap();
+      await addRequestHeaderIDP(oauth, configMap.metadata.name);
+      redirectToOAuthPage(navigate);
+    } catch (err) {
+      setErrorMessage(err);
+    }
   };
 
   const title = t('Add Identity Provider: Request Header');

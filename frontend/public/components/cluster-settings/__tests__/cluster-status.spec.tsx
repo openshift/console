@@ -1,13 +1,13 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
-import { UpdateStatus } from '../cluster-status';
+import type { ClusterVersionKind } from '../../../module/k8s';
 import {
   ClusterVersionConditionType,
-  ClusterVersionKind,
   K8sResourceConditionStatus,
   k8sPatch,
 } from '../../../module/k8s';
+import { UpdateStatus } from '../cluster-status';
 
 // Mock functions
 const mockLaunchModal = jest.fn();

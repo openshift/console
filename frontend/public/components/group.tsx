@@ -1,37 +1,37 @@
 import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
-import * as _ from 'lodash';
-
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { GroupModel, UserModel } from '../models';
-import { referenceForModel, GroupKind } from '../module/k8s';
-import { DetailsPage } from './factory/details';
-import { ListPage } from './factory/list-page';
-import { RoleBindingsPage } from './RBAC';
-import { asAccessReview } from './utils/rbac';
-import { EmptyBox, LoadingBox } from './utils/status-box';
-import { Kebab, KebabOption } from './utils/kebab';
-import { navFactory } from './utils/horizontal-nav';
-import { ResourceLink } from './utils/resource-link';
-import { ResourceSummary } from './utils/details-page';
-import { SectionHeading } from './utils/headings';
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { useTranslation } from 'react-i18next';
 import { Grid, GridItem, ButtonVariant } from '@patternfly/react-core';
 import { Table, Thead, Tbody, Tr, Th, Td } from '@patternfly/react-table';
-import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
-import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
-import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import {
   ConsoleDataView,
   getNameCellProps,
   actionsCellProps,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import { TableColumn, K8sResourceKind } from '@console/internal/module/k8s';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DASH } from '@console/shared/src/constants/ui';
+import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
+import { GroupModel, UserModel } from '../models';
+import type { GroupKind, TableColumn, K8sResourceKind } from '../module/k8s';
+import { referenceForModel } from '../module/k8s';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
+import { RoleBindingsPage } from './RBAC';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import type { KebabOption } from './utils/kebab';
+import { Kebab } from './utils/kebab';
+import { asAccessReview } from './utils/rbac';
+import { ResourceLink } from './utils/resource-link';
+import { EmptyBox, LoadingBox } from './utils/status-box';
 
 const tableColumnInfo = [{ id: 'name' }, { id: 'users' }, { id: 'created' }, { id: 'actions' }];
 
@@ -141,7 +141,7 @@ const GroupList: FC<{ data: GroupKind[]; loaded: boolean }> = (props) => {
         label={t('Groups')}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
+        hideColumnManagement
         isResizable
         resetAllColumnWidths={resetAllColumnWidths}
       />
@@ -158,7 +158,7 @@ export const GroupPage: FC<GroupPageProps> = (props) => {
       kind={referenceForModel(GroupModel)}
       ListComponent={GroupList}
       canCreate
-      omitFilterToolbar={true}
+      omitFilterToolbar
     />
   );
 };

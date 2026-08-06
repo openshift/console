@@ -1,20 +1,20 @@
-import * as _ from 'lodash';
 import type { FC } from 'react';
 import { useState } from 'react';
-import { Button, Level, LevelItem, List, ListItem, Title } from '@patternfly/react-core';
 import { Language } from '@patternfly/react-code-editor';
-import { BasicCodeEditor } from '@console/shared/src/components/editor/BasicCodeEditor';
+import { Button, Level, LevelItem, List, ListItem, Title } from '@patternfly/react-core';
 import {
   RhUiDownloadIcon,
   RhUiClipboardIcon,
   RhUiCaretDownIcon,
   RhUiCaretRightIcon,
 } from '@patternfly/react-icons';
-import { Sample } from '@console/shared/src/hooks/useResourceSidebarSamples';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-
 import type { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
-import { K8sKind, K8sResourceKind, referenceFor } from '../../module/k8s';
+import { BasicCodeEditor } from '@console/shared/src/components/editor/BasicCodeEditor';
+import type { Sample } from '@console/shared/src/hooks/useResourceSidebarSamples';
+import type { K8sKind, K8sResourceKind } from '../../module/k8s';
+import { referenceFor } from '../../module/k8s';
 
 const ResourceSidebarSample: FC<ResourceSidebarSampleProps> = ({
   sample,

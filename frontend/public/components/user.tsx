@@ -1,7 +1,5 @@
 import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
-import { Link } from 'react-router';
-import * as _ from 'lodash';
 import {
   Button,
   Content,
@@ -9,18 +7,9 @@ import {
   DescriptionListGroup,
   DescriptionListTerm,
 } from '@patternfly/react-core';
-
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { OAuthModel, UserModel } from '../models';
-import { K8sModel, referenceForModel, UserKind } from '../module/k8s';
-import { DetailsPage } from './factory/details';
-import { ListPage } from './factory/list-page';
-import { RoleBindingsPage } from './RBAC';
-import { ConsoleEmptyState, LoadingBox } from './utils/status-box';
-import { navFactory } from './utils/horizontal-nav';
-import { ResourceLink, resourcePathFromModel } from './utils/resource-link';
-import { ResourceSummary } from './utils/details-page';
-import { SectionHeading } from './utils/headings';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router';
 import {
   ConsoleDataView,
   getNameCellProps,
@@ -32,11 +21,22 @@ import type {
   GetDataViewRows,
 } from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import { useCanEditIdentityProviders, useOAuthData } from '@console/shared/src/hooks/oauth';
-import { DASH } from '@console/shared/src/constants/ui';
-import { useTranslation } from 'react-i18next';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { DASH } from '@console/shared/src/constants/ui';
+import { useCanEditIdentityProviders, useOAuthData } from '@console/shared/src/hooks/oauth';
+import { OAuthModel, UserModel } from '../models';
+import type { K8sModel, UserKind } from '../module/k8s';
+import { referenceForModel } from '../module/k8s';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
+import { RoleBindingsPage } from './RBAC';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { ResourceLink, resourcePathFromModel } from './utils/resource-link';
+import { ConsoleEmptyState, LoadingBox } from './utils/status-box';
 
 const tableColumnInfo = [
   { id: 'name' },
@@ -196,7 +196,7 @@ const UserList: FC<UserListProps> = (props) => {
         label={t('Users')}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
+        hideColumnManagement
         isResizable
         resetAllColumnWidths={resetAllColumnWidths}
       />
@@ -214,7 +214,7 @@ export const UserPage: FC<UserPageProps> = (props) => {
       kind={referenceForModel(UserModel)}
       ListComponent={UserList}
       canCreate={false}
-      omitFilterToolbar={true}
+      omitFilterToolbar
     />
   );
 };

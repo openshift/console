@@ -1,9 +1,9 @@
-import { AddBasicAuthPage } from '../../cluster-settings/basicauth-idp-form';
 import { screen } from '@testing-library/react';
 import {
   renderWithProviders,
   verifyInputField,
 } from '@console/shared/src/test-utils/unit-test-utils';
+import { AddBasicAuthPage } from '../basicauth-idp-form';
 import {
   verifyIDPAddAndCancelButtons,
   verifyPageTitleAndSubtitle,

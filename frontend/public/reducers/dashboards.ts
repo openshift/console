@@ -1,6 +1,7 @@
-import { ActionType, DashboardsAction } from '../actions/dashboards';
 import { fromJS, Map as ImmutableMap } from 'immutable';
-import { RequestMap } from '@console/dynamic-plugin-sdk/src/api/internal-types';
+import type { RequestMap } from '@console/dynamic-plugin-sdk/src/api/internal-types';
+import type { DashboardsAction } from '../actions/dashboards';
+import { ActionType } from '../actions/dashboards';
 import { RESULTS_TYPE } from './dashboard-results';
 
 export const defaults = {

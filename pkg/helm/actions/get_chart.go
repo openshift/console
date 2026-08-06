@@ -3,6 +3,7 @@ package actions
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/openshift/api/helm/v1beta1"
 	"helm.sh/helm/v4/pkg/action"
@@ -67,7 +68,7 @@ func GetChart(url string, conf *action.Configuration, repositoryNamespace string
 // Secret in namespace with username and password keys when the registry requires authentication.
 func GetChartFromURL(url string, conf *action.Configuration, namespace string, client dynamic.Interface, coreClient corev1client.CoreV1Interface, filesCleanup bool, basicAuthSecretName string) (*chart.Chart, error) {
 
-	if !isValidChartURL(url) {
+	if !IsValidChartURL(url) {
 		return nil, fmt.Errorf("invalid chart URL: %s, must be oci:// URL or http(s)://*.tgz", url)
 	}
 	cmd := action.NewInstall(conf)
@@ -83,6 +84,9 @@ func GetChartFromURL(url string, conf *action.Configuration, namespace string, c
 	}
 	chartLocation, err := cmd.ChartPathOptions.LocateChart(url, settings)
 	if err != nil {
+		if basicAuthSecretName == "" && (strings.Contains(err.Error(), "401") || strings.Contains(strings.ToLower(err.Error()), "unauthorized")) {
+			return nil, fmt.Errorf("error getting chart from URL: %w; registry requires authentication - select a Secret with \"username\" and \"password\" keys for basic authentication", err)
+		}
 		return nil, fmt.Errorf("error getting chart from URL: %v", err)
 	}
 	return loader.Load(chartLocation)

@@ -1,7 +1,6 @@
 import type { FC, ReactNode, MouseEvent, CSSProperties, RefObject } from 'react';
-import * as _ from 'lodash';
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
+import type { MenuToggleElement } from '@patternfly/react-core';
 import {
   Divider,
   SelectGroup,
@@ -10,12 +9,13 @@ import {
   MenuSearch,
   MenuSearchInput,
   MenuToggle,
-  MenuToggleElement,
   SearchInput,
   Select,
 } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 
 export type ActionItem = {
   actionKey: string;

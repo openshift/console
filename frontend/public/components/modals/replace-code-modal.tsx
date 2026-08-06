@@ -1,4 +1,3 @@
-import { useTranslation } from 'react-i18next';
 import {
   Button,
   Modal,
@@ -7,6 +6,7 @@ import {
   ModalHeader,
   ModalVariant,
 } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 
 export const ReplaceCodeModal = ({ handleCodeReplace }) => {
   const { t } = useTranslation('public');

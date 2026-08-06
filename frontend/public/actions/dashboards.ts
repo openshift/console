@@ -1,12 +1,10 @@
-import { action, ActionType as Action } from 'typesafe-actions';
-import { Dispatch } from 'redux';
-
+import type { Dispatch } from 'redux';
+import type { ActionType as Action } from 'typesafe-actions';
+import { action } from 'typesafe-actions';
+import type { Fetch, RequestMap } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
-import { k8sBasePath } from '../module/k8s/consts';
-import { isWatchActive, RESULTS_TYPE } from '../reducers/dashboard-results';
-import type { RootState } from '../redux';
+import type { PrometheusResponse } from '../components/graphs';
 import { getPrometheusURL, PrometheusEndpoint } from '../components/graphs/helpers';
-import { PrometheusResponse } from '../components/graphs';
 import {
   computeAdaptiveDelay,
   emaToDelay,
@@ -14,7 +12,9 @@ import {
   MAX_POLL_DELAY,
   SCALE_FACTOR,
 } from '../components/utils/adaptive-polling';
-import { Fetch, RequestMap } from '@console/dynamic-plugin-sdk/src/api/internal-types';
+import { k8sBasePath } from '../module/k8s/consts';
+import { isWatchActive, RESULTS_TYPE } from '../reducers/dashboard-results';
+import type { RootState } from '../redux';
 
 export enum ActionType {
   StopWatch = 'stopWatch',

@@ -2,14 +2,14 @@ import { useState } from 'react';
 import type { FC } from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { NameValueEditor } from '../../../components/utils/name-value-editor';
-import { PairValue } from '../../../components/utils/value-from-pair';
+import { NameValueEditor } from '../name-value-editor';
+import type { PairValue } from '../value-from-pair';
 
 jest.mock('react-i18next');
 
 /** Keeps nameValuePairs in state so controlled inputs match typed values after updateParentData. */
 const NameValueEditorHarness: FC<{
-  initialPairs: Array<[string, string, number]>;
+  initialPairs: [string, string, number][];
   onUpdate: jest.Mock;
 }> = ({ initialPairs, onUpdate }) => {
   const [pairs, setPairs] = useState<PairValue[][]>(initialPairs);
@@ -179,8 +179,8 @@ describe('NameValueEditor', () => {
         <NameValueEditor
           nameValuePairs={[['name', 'value', 0]]}
           updateParentData={() => {}}
-          readOnly={true}
-          allowSorting={true}
+          readOnly
+          allowSorting
         />,
       );
       expect(screen.getByDisplayValue('name')).toBeDisabled();
@@ -200,7 +200,7 @@ describe('NameValueEditor', () => {
           ]}
           updateParentData={() => {}}
           readOnly={false}
-          allowSorting={true}
+          allowSorting
         />,
       );
       expect(screen.getAllByLabelText('Drag to reorder')).toHaveLength(2);
@@ -223,7 +223,7 @@ describe('NameValueEditor', () => {
           nameValuePairs={[['name', 'value', 0]]}
           updateParentData={() => {}}
           readOnly={false}
-          allowSorting={true}
+          allowSorting
         />,
       );
       expect(screen.queryByLabelText('Drag to reorder')).not.toBeInTheDocument();

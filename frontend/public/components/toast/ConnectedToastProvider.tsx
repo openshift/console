@@ -1,8 +1,8 @@
 import type { FC, ReactNode } from 'react';
 import { useCallback } from 'react';
+import { ToastProvider } from '@console/shared/src/components/toast/ToastProvider';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
-import { ToastProvider } from '@console/shared/src/components/toast/ToastProvider';
 import * as UIActions from '../../actions/ui';
 import { isNotificationDrawerExpanded } from '../../reducers/ui';
 

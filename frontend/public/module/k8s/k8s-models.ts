@@ -1,24 +1,21 @@
 import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash';
-import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
-import { getModelExtensionMetadata } from './get-resources';
-import * as staticModels from '../../models';
-import { apiVersionCompare } from '@console/internal/module/k8s/crd-versions';
-import { kindForReference } from '@console/internal/module/k8s/for-ref';
-import { referenceForModel, referenceForGroupVersionKind } from './k8s-ref';
-import store from '../../redux';
-import { pluginStore } from '../../plugins';
-import type { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
-import {
-  isModelMetadata,
-  K8sResourceKindReference,
-  ModelMetadata,
-} from '@console/dynamic-plugin-sdk';
-import {
+import type { K8sResourceKindReference, ModelMetadata } from '@console/dynamic-plugin-sdk';
+import { isModelMetadata } from '@console/dynamic-plugin-sdk';
+import type {
   K8sKind,
   DiscoveryResources,
   K8sModel,
 } from '@console/dynamic-plugin-sdk/src/api/common-types';
+import type { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
+import { apiVersionCompare } from '@console/internal/module/k8s/crd-versions';
+import { kindForReference } from '@console/internal/module/k8s/for-ref';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
+import * as staticModels from '../../models';
+import { pluginStore } from '../../plugins';
+import store from '../../redux';
+import { getModelExtensionMetadata } from './get-resources';
+import { referenceForModel, referenceForGroupVersionKind } from './k8s-ref';
 
 const modelKey = (model: K8sKind): string => {
   // TODO: Use `referenceForModel` even for known API objects

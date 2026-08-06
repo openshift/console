@@ -1,49 +1,49 @@
 import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
+import { Grid, GridItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import {
-  K8sModel,
-  K8sResourceKind,
-  K8sResourceKindReference,
-  referenceForModel,
-  TableColumn,
-} from '../module/k8s';
-import { DetailsPage } from './factory/details';
-import { ListPage } from './factory/list-page';
-import type { DetailsPageProps } from './factory/details';
-import { BuildHooks } from './utils/build-hooks';
-import { BuildStrategy } from './utils/build-strategy';
-import { BuildStrategyType, displayDurationInWords } from './utils/build-utils';
-import { navFactory } from './utils/horizontal-nav';
-import { ResourceLink } from './utils/resource-link';
-import { ResourceSummary } from './utils/details-page';
-import { SectionHeading } from './utils/headings';
-import { WebhookTriggers } from './utils/webhooks';
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { BuildsPage, BuildEnvironmentComponent, PipelineBuildStrategyAlert } from './build';
-import { ResourceEventStream } from './events';
-import { BuildModel, BuildConfigModel } from '../models';
-import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import { useK8sWatchResource } from './utils/k8s-watch-hook';
-import { Status } from '@console/shared/src/components/status/Status';
-import { Grid, GridItem } from '@patternfly/react-core';
-import { DASH } from '@console/shared/src/constants/ui';
 import {
   actionsCellProps,
   getNameCellProps,
   ConsoleDataView,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import { LoadingBox } from './utils/status-box';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
-import { sortResourceByValue } from './factory/Table/sort';
-import { sorts } from './factory/table';
-import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { Status } from '@console/shared/src/components/status/Status';
+import { DASH } from '@console/shared/src/constants/ui';
+import { BuildModel, BuildConfigModel } from '../models';
+import type {
+  K8sModel,
+  K8sResourceKind,
+  K8sResourceKindReference,
+  TableColumn,
+} from '../module/k8s';
+import { referenceForModel } from '../module/k8s';
+import { BuildsPage, BuildEnvironmentComponent, PipelineBuildStrategyAlert } from './build';
+import { ResourceEventStream } from './events';
+import { DetailsPage } from './factory/details';
+import type { DetailsPageProps } from './factory/details';
+import { ListPage } from './factory/list-page';
+import { sorts } from './factory/table';
+import { sortResourceByValue } from './factory/Table/sort';
+import { BuildHooks } from './utils/build-hooks';
+import { BuildStrategy } from './utils/build-strategy';
+import { BuildStrategyType, displayDurationInWords } from './utils/build-utils';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { useK8sWatchResource } from './utils/k8s-watch-hook';
+import { ResourceLink } from './utils/resource-link';
+import { LoadingBox } from './utils/status-box';
+import { WebhookTriggers } from './utils/webhooks';
 
 const BuildConfigsReference: K8sResourceKindReference = referenceForModel(BuildConfigModel);
 
@@ -342,7 +342,7 @@ const BuildConfigsList: FC<BuildConfigsListProps> = ({ data, loaded, ...props })
         loaded={loaded}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
+        hideColumnManagement
         isResizable
         resetAllColumnWidths={resetAllColumnWidths}
       />
@@ -410,8 +410,8 @@ export const BuildConfigsPage: FC<BuildConfigsPageProps> = (props) => {
         createProps={createProps}
         filterLabel={props.filterLabel}
         rowFilters={filters}
-        omitFilterToolbar={true}
-        hideColumnManagement={true}
+        omitFilterToolbar
+        hideColumnManagement
       />
     </>
   );

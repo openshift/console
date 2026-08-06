@@ -1,5 +1,3 @@
-import * as _ from 'lodash';
-import { useTranslation } from 'react-i18next';
 import { useState, useCallback } from 'react';
 import {
   Alert,
@@ -10,15 +8,18 @@ import {
   FormGroup,
   Form,
 } from '@patternfly/react-core';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
-import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
-import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
-import { K8sResourceKind, K8sModel } from '../../module/k8s';
-import { NumberSpinner, NumberSpinnerProps } from '../utils/number-spinner';
-import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
-import { useNonScalableImageCheck } from '@console/shared/src/hooks/useNonScalableImageCheck';
+import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import { useNonScalableImageCheck } from '@console/shared/src/hooks/useNonScalableImageCheck';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
+import type { K8sResourceKind, K8sModel } from '../../module/k8s';
+import type { NumberSpinnerProps } from '../utils/number-spinner';
+import { NumberSpinner } from '../utils/number-spinner';
 
 export const ConfigureCountModal: OverlayComponent<ConfigureCountModalProps> = (props) => {
   const {
@@ -80,7 +81,7 @@ export const ConfigureCountModal: OverlayComponent<ConfigureCountModalProps> = (
   const onValueChange: NumberSpinnerProps['onChange'] = (event) => {
     const eventValue = (event.target as HTMLInputElement).value;
     const numericValue = Number(eventValue);
-    if (!isNaN(numericValue)) {
+    if (!Number.isNaN(numericValue)) {
       setValue(numericValue);
     }
   };

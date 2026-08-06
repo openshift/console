@@ -1,9 +1,5 @@
 import type { FC } from 'react';
 import { useCallback, useEffect, useRef, useState, useMemo } from 'react';
-import * as _ from 'lodash';
-import { Base64 } from 'js-base64';
-import { useTranslation } from 'react-i18next';
-import { RhUiExpandIcon, RhUiExternalLinkFillIcon } from '@patternfly/react-icons';
 import {
   Button,
   Alert,
@@ -16,28 +12,33 @@ import {
   FlexItem,
   Tooltip,
 } from '@patternfly/react-core';
+import { RhUiExpandIcon, RhUiExternalLinkFillIcon } from '@patternfly/react-icons';
+import { css } from '@patternfly/react-styles';
+import { Base64 } from 'js-base64';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { getImpersonate } from '@console/dynamic-plugin-sdk';
+import { FLAGS } from '@console/shared/src/constants/common';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
+import { useFullscreen } from '@console/shared/src/hooks/useFullscreen';
 import {
   addDetachedSession,
   setCloudShellExpanded,
 } from '@console/webterminal-plugin/src/redux/actions/cloud-shell-actions';
-import { useDetachedSessions } from '@console/webterminal-plugin/src/redux/reducers/cloud-shell-selectors';
 import { MAX_DETACHED_SESSIONS } from '@console/webterminal-plugin/src/redux/reducers/cloud-shell-reducer';
-
-import store from '../redux';
+import { useDetachedSessions } from '@console/webterminal-plugin/src/redux/reducers/cloud-shell-selectors';
+import { PodModel } from '../models';
 import { storeDetachedWebSocket } from '../module/detached-ws-registry';
+import type { PodKind } from '../module/k8s';
+import { resourceURL } from '../module/k8s';
+import { isWindowsPod } from '../module/k8s/pods';
+import { WSFactory } from '../module/ws-factory';
+import store from '../redux';
+import type { ImperativeTerminalType } from './terminal';
+import { Terminal } from './terminal';
 import { ContainerLabel, ContainerSelect } from './utils/container-select';
 import { LoadingBox } from './utils/status-box';
-import { FLAGS } from '@console/shared/src/constants/common';
-import { useFlag } from '@console/shared/src/hooks/useFlag';
-import { useFullscreen } from '@console/shared/src/hooks/useFullscreen';
-import { Terminal, ImperativeTerminalType } from './terminal';
-import { WSFactory } from '../module/ws-factory';
-import { PodKind, resourceURL } from '../module/k8s';
-import { PodModel } from '../models';
-import { isWindowsPod } from '../module/k8s/pods';
-import { css } from '@patternfly/react-styles';
 
 // pod connect WS protocol is FD prefixed, base64 encoded data (sometimes json stringified)
 
@@ -136,6 +137,7 @@ export const PodConnect: FC<PodConnectProps> = ({
           if (previous.includes(NO_SH)) {
             terminalRef.current?.reset();
             terminalRef.current?.onConnectionClosed(
+              // eslint-disable-next-line no-restricted-globals
               `This container doesn't have a /bin/sh shell. Try specifying your command in a terminal with:\r\n\r\n ${usedClient} -n ${namespace} exec ${name} -ti <command>`,
             );
             wsRef.current.destroy();

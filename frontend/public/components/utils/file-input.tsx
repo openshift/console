@@ -1,9 +1,9 @@
 import type { FC, ReactNode } from 'react';
 import { useCallback, useState } from 'react';
+import type { FileUploadProps } from '@patternfly/react-core';
 import {
   Alert,
   FileUpload,
-  FileUploadProps,
   DropzoneErrorCode,
   TextArea,
   FormHelperText,
@@ -14,10 +14,10 @@ import {
   spinnerSize,
   FormGroup,
 } from '@patternfly/react-core';
+import styles from '@patternfly/react-styles/css/components/FileUpload/file-upload';
 import { isBinary } from 'istextorbinary';
 import { useTranslation } from 'react-i18next';
 import { units } from './units';
-import styles from '@patternfly/react-styles/css/components/FileUpload/file-upload';
 
 /** Maximal file size, in bytes, that user can upload */
 const MAX_UPLOAD_SIZE = 4000000;
@@ -93,7 +93,7 @@ export const DroppableFileInput: FC<DroppableFileInputProps> = ({
 
   const handleFileRejected = useCallback<FileUploadProps['dropzoneProps']['onDropRejected']>(
     (rejections) => {
-      const code = rejections[0].errors[0].code;
+      const { code } = rejections[0].errors[0];
 
       switch (code) {
         case DropzoneErrorCode.FileTooLarge:

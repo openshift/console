@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
-import * as _ from 'lodash';
+/* eslint-disable @typescript-eslint/no-use-before-define, import/order */
 import {
   useState,
   useRef,
@@ -11,66 +10,62 @@ import {
   useMemo,
 } from 'react';
 import type { FC } from 'react';
+import { PluginStoreProvider } from '@openshift/dynamic-plugin-sdk';
+import { Flex, Page, SkipToContent } from '@patternfly/react-core';
+import * as _ from 'lodash';
 import { createRoot } from 'react-dom/client';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
-import { linkify } from 'react-linkify';
-import { Provider } from 'react-redux';
-import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
-import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
-import { mapExtensionToRoutes } from '@console/app/src/hooks/usePluginRoutes';
-import { BrowserRouter, useParams, useLocation, Routes, Route } from 'react-router';
-import store from '../redux';
 import { useTranslation } from 'react-i18next';
-import { PluginStoreProvider } from '@openshift/dynamic-plugin-sdk';
-import { detectFeatures } from '../actions/features';
-import { setFlag } from '../actions/flags';
-import AppContents from './app-contents';
-import { Masthead } from './masthead/masthead';
-import { getBrandingDetails } from './utils/branding';
-import { ConsoleNotifier } from './console-notifier';
-import { NotificationDrawer } from './notification-drawer';
-import { Navigation } from '@console/app/src/components/nav';
-import { AsyncComponent } from './utils/async';
-import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
-import * as UIActions from '../actions/ui';
-import { isNotificationDrawerExpanded } from '../reducers/ui';
-import { fetchSwagger, getCachedResources } from '../module/k8s';
-import { receivedResources, startAPIDiscovery } from '../actions/k8s';
-import { pluginStore } from '../plugins';
-// cloud shell imports must come later than features
-import CloudShellDrawer from '@console/webterminal-plugin/src/components/cloud-shell/CloudShell';
+import { Provider } from 'react-redux';
+import { BrowserRouter, useParams, useLocation, Routes, Route } from 'react-router';
 import {
   ContextProviderExtensionWrapper,
   DetectContext,
 } from '@console/app/src/components/detect-context/DetectContext';
 import { FeatureFlagExtensionLoader } from '@console/app/src/components/flags/FeatureFlagExtensionLoader';
-import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
-import { isStandaloneRoutePage, getUser, useActivePerspective } from '@console/dynamic-plugin-sdk';
-import { GuidedTour } from '@console/app/src/components/tour';
+import Lightspeed from '@console/app/src/components/lightspeed/Lightspeed';
+import { Navigation } from '@console/app/src/components/nav';
 import { QuickStartDrawer } from '@console/app/src/components/quick-starts/QuickStartDrawer';
+import { GuidedTour } from '@console/app/src/components/tour';
+import { mapExtensionToRoutes } from '@console/app/src/hooks/usePluginRoutes';
+import { isStandaloneRoutePage, getUser, useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { ModalProvider } from '@console/dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
 import { OverlayProvider } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import { ConnectedToastProvider } from './toast/ConnectedToastProvider';
-import { SyncModalLaunchers } from '@console/shared/src/utils/error-modal-handler';
-import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
-import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';
 import { LOGIN_ERROR_PATH } from '@console/internal/module/auth';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
+import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
 import { FLAGS } from '@console/shared/src/constants/common';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
+import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { coFetch } from '@console/shared/src/utils/console-fetch';
+import { SyncModalLaunchers } from '@console/shared/src/utils/error-modal-handler';
 import { addTestError } from '@console/shared/src/utils/test-errors';
-import Lightspeed from '@console/app/src/components/lightspeed/Lightspeed';
-import { ThemeProvider } from './ThemeProvider';
+import CloudShellDrawer from '@console/webterminal-plugin/src/components/cloud-shell/CloudShell';
+import { detectFeatures } from '../actions/features';
+import { setFlag } from '../actions/flags';
+import { receivedResources, startAPIDiscovery } from '../actions/k8s';
+import * as UIActions from '../actions/ui';
 import { init as initI18n } from '../i18n';
-import { Flex, Page, SkipToContent } from '@patternfly/react-core';
+import { fetchSwagger, getCachedResources } from '../module/k8s';
+import { pluginStore } from '../plugins';
+import { isNotificationDrawerExpanded } from '../reducers/ui';
+import store from '../redux';
+import AppContents from './app-contents';
+import { ConsoleNotifier } from './console-notifier';
 import { AuthenticationErrorPage } from './error';
+import { Masthead } from './masthead/masthead';
+import { NotificationDrawer } from './notification-drawer';
+import { ThemeProvider } from './ThemeProvider';
+import { ConnectedToastProvider } from './toast/ConnectedToastProvider';
+import { AsyncComponent } from './utils/async';
+import { getBrandingDetails } from './utils/branding';
+// cloud shell imports must come later than features
 import '../vendor.scss';
 import '../style.scss';
 import '@patternfly/quickstarts/dist/quickstarts.min.css';
-
-const PF_BREAKPOINT_MD = 768;
-const PF_BREAKPOINT_XL = 1200;
-const NOTIFICATION_DRAWER_BREAKPOINT = 1800;
 import { PollConsoleUpdates } from './poll-console-updates';
 import { withoutSensitiveInformations, getTelemetryTitle } from './utils/telemetry';
 import { AdmissionWebhookWarningNotifications } from '@console/app/src/components/admission-webhook-warnings/AdmissionWebhookWarningNotifications';
@@ -79,7 +74,11 @@ import { useCSPViolationDetector } from '@console/app/src/hooks/useCSPViolationD
 import { useNotificationPoller } from '@console/app/src/hooks/useNotificationPoller';
 import { useImpersonateRefreshFeatures } from './useImpersonateRefreshFeatures';
 
-const root = createRoot(document.getElementById('app')!);
+const PF_BREAKPOINT_MD = 768;
+const PF_BREAKPOINT_XL = 1200;
+const NOTIFICATION_DRAWER_BREAKPOINT = 1800;
+
+const root = createRoot(document.getElementById('app')!); // eslint-disable-line @typescript-eslint/no-non-null-assertion
 root.render(<LoadingBox blame="Init" />);
 
 // Trigger an early authenticated fetch so unauthenticated users are redirected
@@ -95,10 +94,6 @@ coFetch(`${window.SERVER_FLAGS.basePath}api/kubernetes/api`, {
 delete process.title;
 
 initI18n();
-
-// Disable linkify 'fuzzy links' across the app.
-// Only linkify url strings beginning with a proper protocol scheme.
-linkify.set({ fuzzyLink: false });
 
 const App: FC = () => {
   const { t } = useTranslation('public');
@@ -436,9 +431,6 @@ store.dispatch<any>(detectFeatures());
 
 initApiDiscovery(store);
 
-// Global timer to ensure all <Timestamp> components update in sync
-setInterval(() => store.dispatch(UIActions.updateTimestamps(Date.now())), 10000);
-
 // Used by GUI tests to check for unhandled exceptions
 window.onerror = (message, source, lineno, colno, error) => {
   // ResizeObserver loop errors are non-actionable and can be ignored
@@ -462,10 +454,8 @@ window.onunhandledrejection = (promiseRejectionEvent) => {
 
 if ('serviceWorker' in navigator) {
   if (window.SERVER_FLAGS.loadTestFactor > 1) {
-    // @ts-expect-error file-loader is not a module but it does resolve
-    // eslint-disable-next-line import/no-unresolved
-    import('file-loader?name=load-test.sw.js!../load-test.sw.js')
-      .then(() => navigator.serviceWorker.register('/load-test.sw.js'))
+    navigator.serviceWorker
+      .register(`${window.SERVER_FLAGS.basePath}load-test.sw.js`)
       .then(
         () =>
           new Promise<void>((r) =>
@@ -479,7 +469,11 @@ if ('serviceWorker' in navigator) {
           topic: 'setFactor',
           value: window.SERVER_FLAGS.loadTestFactor,
         }),
-      );
+      )
+      .catch((e) => {
+        // eslint-disable-next-line no-console
+        console.warn('Error registering load test service worker', e);
+      });
   } else {
     navigator.serviceWorker
       .getRegistrations()

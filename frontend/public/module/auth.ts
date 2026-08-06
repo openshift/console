@@ -123,10 +123,13 @@ export const authSvc = {
     clearLocalStorage(clearLocalStorageKeys);
     coFetch(logoutURL, { method: 'POST' })
       .then(async (response) => {
-        const dynamicLogoutURL: string | undefined = await response
-          .json()
-          .then((data: { logoutRedirectURL?: string }) => data?.logoutRedirectURL)
-          .catch(() => undefined);
+        let dynamicLogoutURL: string | undefined;
+        try {
+          const data: { logoutRedirectURL?: string } = await response.json();
+          dynamicLogoutURL = data?.logoutRedirectURL;
+        } catch {
+          dynamicLogoutURL = undefined;
+        }
 
         if (isKubeAdmin) {
           authSvc.logoutKubeAdmin();

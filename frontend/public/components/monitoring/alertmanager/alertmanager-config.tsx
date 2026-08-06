@@ -1,11 +1,6 @@
 /* eslint-disable camelcase, tsdoc/syntax */
 import type { FC } from 'react';
-
 import { useMemo, memo, Suspense } from 'react';
-import * as _ from 'lodash';
-import { NavBar } from '@console/internal/components/utils/horizontal-nav';
-import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
-import { Link, useNavigate } from 'react-router';
 import {
   Alert,
   Button,
@@ -23,39 +18,44 @@ import {
   ButtonVariant,
 } from '@patternfly/react-core';
 import { RhUiEditIcon } from '@patternfly/react-icons';
-import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { breadcrumbsForGlobalConfig } from '../../cluster-settings/global-config';
-
-import { K8sResourceKind } from '../../../module/k8s';
-import { LazyAlertRoutingModalOverlay } from '../../modals';
-import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
-import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
-import { Kebab } from '../../utils/kebab';
-import { SectionHeading } from '../../utils/headings';
-import { StatusBox } from '../../utils/status-box';
-import { useK8sWatchResource } from '../../utils/k8s-watch-hook';
-import {
-  getAlertmanagerConfig,
-  patchAlertmanagerConfig,
-  receiverTypes,
-} from './alertmanager-utils';
+import { Link, useNavigate } from 'react-router';
 import {
   actionsCellProps,
   cellIsStickyProps,
   getNameCellProps,
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import {
+import type {
   ResourceFilters,
   ConsoleDataViewColumn,
   ConsoleDataViewRow,
   ResourceMetadata,
 } from '@console/app/src/components/data-view/types';
-import { RowProps, TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
+import type {
+  RowProps,
+  TableColumn,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { NavBar } from '@console/internal/components/utils/horizontal-nav';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DASH } from '@console/shared/src/constants/ui';
+import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
+import type { K8sResourceKind } from '../../../module/k8s';
+import { breadcrumbsForGlobalConfig } from '../../cluster-settings/global-config';
+import { LazyAlertRoutingModalOverlay } from '../../modals';
+import { SectionHeading } from '../../utils/headings';
+import { useK8sWatchResource } from '../../utils/k8s-watch-hook';
+import { Kebab } from '../../utils/kebab';
+import { StatusBox } from '../../utils/status-box';
+import {
+  getAlertmanagerConfig,
+  patchAlertmanagerConfig,
+  receiverTypes,
+} from './alertmanager-utils';
 
 export enum InitialReceivers {
   Critical = 'Critical',
@@ -154,7 +154,7 @@ const getIntegrationTypes = (receiver: AlertmanagerReceiver): string[] => {
  *     "severity": "critical"
  *   }
  * }]
-}*/
+} */
 const getRoutingLabelsByReceivers = (
   routes: AlertmanagerRoute[],
   parentLabels: { [key: string]: string } = {},
@@ -201,7 +201,8 @@ const hasSimpleReceiver = (
 ): boolean => {
   if (receiverIntegrationTypes.length === 0) {
     return true;
-  } else if (receiverIntegrationTypes.length === 1) {
+  }
+  if (receiverIntegrationTypes.length === 1) {
     const receiverConfig = receiverIntegrationTypes[0]; // ex: 'pagerduty_configs'
     const numConfigs = _.get(receiver, receiverConfig)?.length; // 'pagerduty_configs' is array and may have multiple sets of properties
     return _.hasIn(receiverTypes, receiverConfig) && numConfigs <= 1; // known receiver type and a single set of props
@@ -236,7 +237,13 @@ const RoutingLabels: FC<RoutingLabelsProps> = ({ data }) => {
   const values = [...lbls, ...(matchers ?? [])];
   return values.length > 0 ? (
     <PfLabelGroup>
-      {values.map((value, i) => (value ? <PfLabel key={`label-${i}`}>{value}</PfLabel> : DASH))}
+      {values.map((value, i) =>
+        value ? ( // eslint-disable-next-line react/no-array-index-key
+          <PfLabel key={`label-${i}`}>{value}</PfLabel>
+        ) : (
+          DASH
+        ),
+      )}
     </PfLabelGroup>
   ) : null;
 };
@@ -478,14 +485,14 @@ const ReceiversTable: FC<ReceiversTableProps> = (props) => {
       <ConsoleDataView<AlertmanagerReceiver, ReceiverRowData, ReceiverFilters>
         label={t('Receivers')}
         data={data}
-        loaded={true}
+        loaded
         columns={columns}
         getObjectMetadata={getObjectMetadata}
         getDataViewRows={getReceiverDataViewRows}
         customRowData={customRowData}
-        hideColumnManagement={true}
+        hideColumnManagement
         hideNameLabelFilters={false}
-        hideLabelFilter={true}
+        hideLabelFilter
       />
     </Suspense>
   );
@@ -636,7 +643,7 @@ type AlertmanagerConfigurationProps = {
   obj?: K8sResourceKind;
   onCancel?: () => void;
 };
-type labels = {
+type Labels = {
   [key: string]: string;
 };
 
@@ -646,8 +653,8 @@ export type AlertmanagerRoute = {
   groupWait?: string;
   groupInterval?: string;
   repeatInterval?: string;
-  match?: labels[];
-  match_re?: labels[];
+  match?: Labels[];
+  match_re?: Labels[];
   routes?: AlertmanagerRoute[];
   matchers?: string[];
 };

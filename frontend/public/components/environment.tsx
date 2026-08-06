@@ -1,7 +1,5 @@
-import * as _ from 'lodash';
-import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import type { FC } from 'react';
-import { css } from '@patternfly/react-styles';
+import { useMemo, useState, useCallback, useEffect } from 'react';
 import {
   Alert,
   Button,
@@ -10,27 +8,24 @@ import {
   Flex,
   FlexItem,
 } from '@patternfly/react-core';
+import { css } from '@patternfly/react-styles';
+import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
-import { AccessReviewResourceAttributes, getImpersonate } from '@console/dynamic-plugin-sdk';
-import { useMemo, useState, useCallback, useEffect } from 'react';
+import type { AccessReviewResourceAttributes } from '@console/dynamic-plugin-sdk';
+import { getImpersonate } from '@console/dynamic-plugin-sdk';
 import TertiaryHeading from '@console/shared/src/components/heading/TertiaryHeading';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
-import {
-  k8sPatch,
-  k8sGet,
-  referenceFor,
-  referenceForOwnerRef,
-  K8sResourceKind,
-  EnvVar,
-} from '../module/k8s';
-import { AsyncComponent } from './utils/async';
-import { checkAccess } from './utils/rbac';
-import { ContainerSelect } from './utils/container-select';
-import { EnvFromPair, EnvType, NameValueEditorPair } from './utils/types';
-import { FieldLevelHelp } from './utils/field-level-help';
-import { LoadingBox, LoadingInline } from './utils/status-box';
-import { ResourceLink } from './utils/resource-link';
 import { ConfigMapModel, SecretModel } from '../models';
+import type { K8sResourceKind, EnvVar } from '../module/k8s';
+import { k8sPatch, k8sGet, referenceFor, referenceForOwnerRef } from '../module/k8s';
+import { AsyncComponent } from './utils/async';
+import { ContainerSelect } from './utils/container-select';
+import { FieldLevelHelp } from './utils/field-level-help';
+import { checkAccess } from './utils/rbac';
+import { ResourceLink } from './utils/resource-link';
+import { LoadingBox, LoadingInline } from './utils/status-box';
+import { EnvFromPair, EnvType, NameValueEditorPair } from './utils/types';
 
 /**
  * Set up an AsyncComponent to wrap the name-value-editor to allow on demand loading to reduce the
@@ -174,10 +169,15 @@ const getContainersObjectForDropdown = (containerArray?: Container[]) => {
 
 class CurrentEnvVars {
   currentEnvVars: EnvVarsState;
+
   rawEnvData: RawEnvData;
+
   isContainerArray: boolean;
+
   isCreate: boolean;
+
   hasInitContainers: boolean;
+
   state: { allowed: boolean };
 
   constructor(data?: RawEnvData, isContainerArray?: boolean, path?: string[]) {
@@ -446,10 +446,12 @@ export const EnvironmentPage: FC<EnvironmentPageProps> = (props) => {
           secrets: {},
         };
       }),
-    ]).then(([cmaps, secs]) => {
-      setConfigMaps(cmaps);
-      setSecrets(secs);
-    });
+    ])
+      .then(([cmaps, secs]) => {
+        setConfigMaps(cmaps);
+        setSecrets(secs);
+      })
+      .catch(() => {});
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   /**
@@ -505,11 +507,13 @@ export const EnvironmentPage: FC<EnvironmentPageProps> = (props) => {
 
       const patches = currentEnvVars.getPatches(envPath);
       const promise = k8sPatch(model, obj, patches);
-      handlePromise(promise).then((res) => {
-        setCurrentEnvVars(new CurrentEnvVars(res, currentEnvVars.isContainerArray, envPath));
-        setLocalErrorMessage(null);
-        setSuccess(t('Successfully updated the environment variables.'));
-      });
+      handlePromise(promise)
+        .then((res) => {
+          setCurrentEnvVars(new CurrentEnvVars(res, currentEnvVars.isContainerArray, envPath));
+          setLocalErrorMessage(null);
+          setSuccess(t('Successfully updated the environment variables.'));
+        })
+        .catch(() => {});
     },
     [currentEnvVars, envPath, model, obj, handlePromise, t],
   );
@@ -539,6 +543,7 @@ export const EnvironmentPage: FC<EnvironmentPageProps> = (props) => {
     />
   ) : null;
 
+  /* eslint-disable react/no-array-index-key */
   const owners = (obj?.metadata?.ownerReferences || []).map((o, i) => (
     <ResourceLink
       key={i}
@@ -549,6 +554,7 @@ export const EnvironmentPage: FC<EnvironmentPageProps> = (props) => {
       inline
     />
   ));
+  /* eslint-enable react/no-array-index-key */
   const containerVars = (
     <>
       {isReadOnly && !_.isEmpty(owners) && (
@@ -593,7 +599,7 @@ export const EnvironmentPage: FC<EnvironmentPageProps> = (props) => {
         updateParentData={updateEnvVars}
         nameString={t('Name')}
         readOnly={isReadOnly}
-        allowSorting={true}
+        allowSorting
         configMaps={configMaps}
         secrets={secrets}
         addConfigMapSecret={addConfigMapSecret}

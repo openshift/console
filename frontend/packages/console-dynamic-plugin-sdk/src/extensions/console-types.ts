@@ -8,6 +8,11 @@ import type {
   ElementType,
 } from 'react';
 import type { K8sResourceCommon, ObjectMetadata } from '@openshift/api-types';
+import type {
+  Extension,
+  ExtensionPredicate,
+  LoadedAndResolvedExtension,
+} from '@openshift/dynamic-plugin-sdk';
 import type { QuickStartContextValues } from '@patternfly/quickstarts';
 import type { CodeEditorProps as PfCodeEditorProps } from '@patternfly/react-code-editor';
 import type { AlertVariant, ButtonProps } from '@patternfly/react-core';
@@ -28,10 +33,8 @@ import type {
   PrometheusEndpoint,
   PrometheusLabels,
   PrometheusValue,
-  ResolvedExtension,
   Selector,
 } from '../api/common-types';
-import type { Extension, ExtensionPredicate } from '../types';
 import type { CustomDataSource } from './dashboard-data-source';
 
 /* eslint-disable no-barrel-files/no-barrel-files */
@@ -264,7 +267,7 @@ export type UseK8sWatchResources = <R extends ResourcesObject>(
 
 export type UseResolvedExtensions = <E extends Extension>(
   ...predicates: ExtensionPredicate<E>[]
-) => [ResolvedExtension<E>[], boolean, any[]];
+) => [LoadedAndResolvedExtension<E>[], boolean, any[]];
 
 export type GetSegmentAnalytics = () => {
   // TODO: use proper Segment Analytics API type
@@ -634,6 +637,13 @@ export type ToastOptions = {
     callback: () => void;
     /** If `true`, executing this action will dismiss the toast. */
     dismiss?: boolean;
+    /**
+     * If `true`, executing this action minimizes the toast: hides it from the on-screen alert group
+     * while keeping it unread in the notification drawer, without invoking `onClose` or canceling the
+     * underlying operation. Has no effect when the toast isn't persisted in the drawer
+     * (`persistInDrawer: true`). Takes precedence over `dismiss` when both are `true`.
+     */
+    minimize?: boolean;
     /** Sets the base component to render. defaults to button */
     component?: ElementType<any> | ComponentType<any>;
     /** The data test id */
@@ -668,6 +678,12 @@ export type ToastOptions = {
    * Defaults to `false`.
    */
   persistInDrawer?: boolean;
+  /**
+   * When `true` and `dismissible` is `false`, shows a Minimize icon button in the close button's slot.
+   * Minimizing hides the toast on-screen while keeping it unread in the drawer, without invoking
+   * `onClose`. No-op when `persistInDrawer` isn't `true`. Defaults to `false`.
+   */
+  minimizable?: boolean;
 };
 
 export type ToastContextValues = {
@@ -675,6 +691,12 @@ export type ToastContextValues = {
   addToast: (options: ToastOptions) => string;
   /** Remove a toast alert. */
   removeToast: (id: string) => void;
+  /**
+   * Minimize a toast: hide it from the on-screen alert group while keeping it unread in the
+   * notification drawer history. Does not invoke `onClose`. No-op if the toast is not persisted
+   * in the drawer (`persistInDrawer: true`).
+   */
+  minimizeToast: (id: string) => void;
 };
 
 export type UseToast = () => ToastContextValues;

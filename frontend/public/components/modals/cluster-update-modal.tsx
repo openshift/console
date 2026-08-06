@@ -1,7 +1,5 @@
-import * as _ from 'lodash';
 import type { FormEvent, FormEventHandler } from 'react';
 import { useState, useEffect, useCallback, Fragment } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   Alert,
   Button,
@@ -16,16 +14,19 @@ import {
   Radio,
 } from '@patternfly/react-core';
 import { RhUiAiInfoIcon } from '@patternfly/react-icons';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { UpdateWorkflowOLSButton } from '@console/shared/src/components/cluster-updates/explain-button';
 import { DropdownWithSwitch } from '@console/shared/src/components/dropdown/dropdown-with-switch/DropdownWithSwitch';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
-
-import { ClusterVersionModel, MachineConfigPoolModel, NodeModel } from '../../models';
-import { FieldLevelHelp } from '../utils/field-level-help';
-import { LinkifyExternal } from '../utils/link';
 import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
+import { ClusterVersionModel, MachineConfigPoolModel, NodeModel } from '../../models';
+import type { ClusterVersionKind, MachineConfigPoolKind } from '../../module/k8s';
 import {
-  ClusterVersionKind,
   getConditionUpgradeableFalse,
   getDesiredClusterVersion,
   getMCPsToPausePromises,
@@ -36,22 +37,19 @@ import {
   isMCPPaused,
   isMinorVersionNewer,
   k8sPatch,
-  MachineConfigPoolKind,
   NodeTypeNames,
   referenceForModel,
   sortMCPsByCreationTimestamp,
 } from '../../module/k8s';
-import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import { ModalComponentProps } from '@console/shared/src/types/modal';
 import {
   ClusterNotUpgradeableAlert,
   UpdateBlockedLabel,
 } from '../cluster-settings/cluster-settings';
 import { MachineConfigPoolsSelector } from '../machine-config-pools-selector';
-import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
-import { UpdateWorkflowOLSButton } from '@console/shared/src/components/cluster-updates/explain-button';
+import { FieldLevelHelp } from '../utils/field-level-help';
+import { LinkifyExternal } from '../utils/link';
 
-enum upgradeTypes {
+enum UpgradeTypes {
   Full = 'Full',
   Partial = 'Partial',
 }
@@ -79,7 +77,7 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
   });
   const [error, setError] = useState('');
   const [machineConfigPoolsToPause, setMachineConfigPoolsToPause] = useState<string[]>([]);
-  const [upgradeType, setUpgradeType] = useState<upgradeTypes>(upgradeTypes.Full);
+  const [upgradeType, setUpgradeType] = useState<UpgradeTypes>(UpgradeTypes.Full);
   const [includeNotRecommended, setIncludeNotRecommended] = useState(false);
   const { t } = useTranslation('public');
   const isLightspeedAvailable = useFlag('LIGHTSPEED_PLUGIN');
@@ -133,7 +131,7 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
       setError('');
       let MCPsToPausePromises;
       let MCPsToResumePromises;
-      if (upgradeType === upgradeTypes.Full) {
+      if (upgradeType === UpgradeTypes.Full) {
         MCPsToPausePromises = [];
         MCPsToResumePromises = getMCPsToPausePromises(pausedMCPs, false);
       } else {
@@ -253,7 +251,7 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
                 className="pf-v6-u-mt-sm"
                 isInline
                 title={t(
-                  'Updating this cluster to {{desiredVersion}} is supported, but includes known issues.  Review the known issues before updating.',
+                  'Updating your cluster to {{desiredVersion}} is supported, but it includes known issues. Review the known issues before you update.',
                   { desiredVersion: desiredNotRecommendedUpdate.release.version },
                 )}
                 variant="info"
@@ -288,12 +286,12 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
             role="radiogroup"
           >
             <Radio
-              isChecked={upgradeType === upgradeTypes.Full}
-              name={upgradeTypes.Full}
-              onChange={() => handleUpgradeTypeChange(upgradeTypes.Full)}
+              isChecked={upgradeType === UpgradeTypes.Full}
+              name={UpgradeTypes.Full}
+              onChange={() => handleUpgradeTypeChange(UpgradeTypes.Full)}
               label={t('Full cluster update')}
-              id={upgradeTypes.Full}
-              value={upgradeTypes.Full}
+              id={UpgradeTypes.Full}
+              value={UpgradeTypes.Full}
               description={t(
                 '{{master}}, {{worker}}, and custom pool {{resource}} are updated concurrently. This might take longer, so make sure to allocate enough time for maintenance.',
                 {
@@ -306,13 +304,13 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
               body={
                 machineConfigPoolsLoaded &&
                 pausedMCPs.length > 0 &&
-                upgradeType === upgradeTypes.Full && (
+                upgradeType === UpgradeTypes.Full && (
                   <Alert
                     variant="warning"
                     isInline
                     isPlain
                     title={t(
-                      'Paused {{worker}} or custom pool {{resource}} updates will be resumed. If you want to update only the control plane, select "Control plane only update" below.',
+                      'The cluster will resume paused {{worker}} or custom pool {{resource}} updates. To update only the control plane, select "Control plane only update" below.',
                       { worker: NodeTypeNames.Worker, resource: NodeModel.label },
                     )}
                     data-test="update-cluster-modal-paused-nodes-warning"
@@ -322,19 +320,19 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
               data-test="update-cluster-modal-full-update-radio"
             />
             <Radio
-              isChecked={upgradeType === upgradeTypes.Partial}
-              name={upgradeTypes.Partial}
-              onChange={() => handleUpgradeTypeChange(upgradeTypes.Partial)}
+              isChecked={upgradeType === UpgradeTypes.Partial}
+              name={UpgradeTypes.Partial}
+              onChange={() => handleUpgradeTypeChange(UpgradeTypes.Partial)}
               label={t('Control plane only update')}
-              id={upgradeTypes.Partial}
-              value={upgradeTypes.Partial}
+              id={UpgradeTypes.Partial}
+              value={UpgradeTypes.Partial}
               description={t(
                 'Pause {{worker}} or custom pool {{resource}} updates to accommodate your maintenance schedule.',
                 { worker: NodeTypeNames.Worker, resource: NodeModel.label },
               )}
               className="pf-v6-u-mb-md"
               body={
-                upgradeType === upgradeTypes.Partial && (
+                upgradeType === UpgradeTypes.Partial && (
                   <MachineConfigPoolsSelector
                     machineConfigPools={pauseableMCPs}
                     selected={machineConfigPoolsToPause}
@@ -380,6 +378,15 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
               data-test="update-cluster-modal-ols-precheck"
             />
           )}
+          <Alert
+            variant="warning"
+            isInline
+            isPlain
+            title={t('Cluster updates are irreversible')}
+            data-test="update-cluster-modal-irreversibility-notice"
+          >
+            {t('After an update begins, you cannot roll back to the previous version.')}
+          </Alert>
         </Form>
       </ModalBody>
       <ModalFooterWithAlerts errorMessage={errorMessage || error}>
@@ -392,7 +399,7 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
           id="confirm-action"
           isDisabled={
             !desiredVersion ||
-            (upgradeType === upgradeTypes.Partial && machineConfigPoolsToPause.length === 0)
+            (upgradeType === UpgradeTypes.Partial && machineConfigPoolsToPause.length === 0)
           }
         >
           {t('Update cluster')}

@@ -11,13 +11,13 @@ import {
 } from '@patternfly/react-core';
 import { useNavigate } from 'react-router';
 import { ReactSVG } from 'react-svg';
-import { MastheadToolbar } from './masthead-toolbar';
 import {
   FAVICON_TYPE,
   getBrandingDetails,
   MASTHEAD_TYPE,
   useCustomLogoURL,
 } from '../utils/branding';
+import { MastheadToolbar } from './masthead-toolbar';
 
 type MastheadProps = {
   isMastheadStacked: boolean;

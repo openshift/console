@@ -14,7 +14,7 @@ const normalizeDevfileSamples = (
   const normalizedDevfileSamples = devfileSamples.map((sample) => {
     const { name: uid, displayName, description, tags, git, icon, provider } = sample;
     const gitRepositoryUrl = Object.values(git.remotes)[0];
-    const label = t('Create Devfile Sample');
+    const label = t('devconsole~Create Devfile Sample');
 
     const searchParams = new URLSearchParams();
     searchParams.set('formType', 'sample');

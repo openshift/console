@@ -1,10 +1,13 @@
 import { test, expect } from '../../fixtures';
+import { ensureDeveloperPerspective, warmupSPA } from '../../pages/base-page';
 import { ClusterCustomizationPage } from '../../pages/dev-console/cluster-customization-page';
 
 test.describe('Cluster configuration customization', { tag: ['@dev-console', '@regression'] }, () => {
   let customizationPage: ClusterCustomizationPage;
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page, k8sClient }) => {
+    await warmupSPA(page);
+    await ensureDeveloperPerspective(page, k8sClient);
     customizationPage = new ClusterCustomizationPage(page);
     await customizationPage.navigateToCustomize();
     await expect(customizationPage.getHeading()).toBeVisible({ timeout: 30_000 });

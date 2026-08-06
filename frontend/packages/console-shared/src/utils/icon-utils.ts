@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-restricted-imports
 import type { IconData } from '@patternfly/react-icons/dist/esm/createIcon';
 
 const ICON_OPERATOR = 'icon-operator';

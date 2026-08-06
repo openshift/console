@@ -1,4 +1,4 @@
-import { ModelMetadata } from '@console/dynamic-plugin-sdk';
+import type { ModelMetadata } from '@console/dynamic-plugin-sdk';
 import type { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { pluralizeKind, getModelExtensionMetadata } from '../get-resources';
 

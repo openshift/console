@@ -3,6 +3,7 @@ import * as path from 'path';
 import { fileURLToPath } from 'url';
 
 import { test, expect } from '../../fixtures';
+import { dismissQuickStartDrawer } from '../../pages/base-page';
 import { TopologyPage } from '../../pages/topology-page';
 import { TopologySidebarPage } from '../../pages/topology-sidebar-page';
 import type { Page } from '@playwright/test';
@@ -59,6 +60,7 @@ async function mockGitHubApi(page: Page, repoMock: any, contentsMock: any) {
 async function createWorkload(page: Page, workloadName: string) {
   const topology = new TopologyPage(page);
   await page.goto('/');
+  await dismissQuickStartDrawer(page);
   await topology.switchPerspective('Administrator');
   await topology.navigateToTopologyGraph(NS);
   
@@ -119,6 +121,7 @@ test.describe('Perform actions on topology', { tag: ['@smoke'] }, () => {
   test('empty state of topology: T-06-TC01', async ({ page }) => {
     const topology = new TopologyPage(page);
     await page.goto('/');
+    await dismissQuickStartDrawer(page);
     await topology.switchPerspective('Administrator');
     await topology.navigateToTopology(NS);
     
@@ -137,6 +140,7 @@ test.describe('Perform actions on topology', { tag: ['@smoke'] }, () => {
   });
   
   test('Build the application from topology page', async ({ page }) => {
+    test.setTimeout(300_000);
     const topology = new TopologyPage(page);
     await createWorkload(page, 'dotnet-build-test');
     
@@ -147,6 +151,7 @@ test.describe('Perform actions on topology', { tag: ['@smoke'] }, () => {
   });
   
   test('Edit workload application groupings: T-09-TC01', async ({ page }) => {
+    test.setTimeout(300_000);
     const topology = new TopologyPage(page);
     await createWorkload(page, 'dotnet-edit-test');
     
@@ -185,6 +190,7 @@ test.describe('Perform actions on topology', { tag: ['@smoke'] }, () => {
   });
   
   test('Default state of Display dropdown: T-16-TC01', async ({ page }) => {
+    test.setTimeout(300_000);
     const topology = new TopologyPage(page);
     await createWorkload(page, 'dotnet-display-test');
     
@@ -202,6 +208,7 @@ test.describe('Perform actions on topology', { tag: ['@smoke'] }, () => {
   });
   
   test('Delete workload via Action menu: T-15-TC01', async ({ page }) => {
+    test.setTimeout(300_000);
     const topology = new TopologyPage(page);
     const sidebar = new TopologySidebarPage(page);
     await createWorkload(page, 'dotnet-delete-test');

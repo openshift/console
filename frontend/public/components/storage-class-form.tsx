@@ -1,37 +1,40 @@
 import type { FC, FormEvent } from 'react';
 import { useState, useRef, useEffect } from 'react';
-import { connect } from 'react-redux';
-import { useNavigate } from 'react-router';
+import { ActionGroup, Button, Checkbox } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash';
-import { ActionGroup, Button, Checkbox } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { getName } from '@console/shared/src/selectors/common';
-import {
-  isStorageClassProvisioner,
+import { connect } from 'react-redux';
+import { useNavigate } from 'react-router';
+import type {
   StorageClassProvisioner,
-  useResolvedExtensions,
   ProvisionerDetails as UnResolvedProvisionerDetails,
-  ProvisionerType,
   ResolvedExtension,
   K8sResourceCommon,
 } from '@console/dynamic-plugin-sdk';
-import { ResolvedCodeRefProperties } from '@console/dynamic-plugin-sdk/src/types';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { LinkTo } from '@console/shared/src/components/links/LinkTo';
-import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import {
+  isStorageClassProvisioner,
+  useResolvedExtensions,
+  ProvisionerType,
+} from '@console/dynamic-plugin-sdk';
+import type { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { ResolvedCodeRefProperties } from '@console/dynamic-plugin-sdk/src/types';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { LinkTo } from '@console/shared/src/components/links/LinkTo';
+import { getName } from '@console/shared/src/selectors/common';
+import * as k8sActions from '../actions/k8s';
+import { CSIDriverModel, StorageClassModel } from '../models';
+import { k8sCreate, referenceForModel, referenceFor } from '../module/k8s';
+import type { K8sResourceKind } from '../module/k8s';
 import { AsyncComponent } from './utils/async';
 import { ButtonBar } from './utils/button-bar';
-import type { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { NameValueEditorPair } from './utils/types';
 import { useK8sWatchResources } from './utils/k8s-watch-hook';
 import { resourceObjPath } from './utils/resource-link';
-import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
-import { k8sCreate, K8sResourceKind, referenceForModel, referenceFor } from './../module/k8s';
-import * as k8sActions from '../actions/k8s';
-import { CSIDriverModel, StorageClassModel } from './../models';
+import { NameValueEditorPair } from './utils/types';
 
 const NameValueEditorComponent = (props) => (
   <AsyncComponent
@@ -292,12 +295,10 @@ const StorageClassFormInner: FC<StorageClassFormProps> = (props) => {
     const newParams = { ...newStorageClass.parameters };
     if (checkbox) {
       newParams[param] = { value: event.target.checked } as Parameters[keyof Parameters];
+    } else if (event.target) {
+      newParams[param] = { value: event.target.value } as Parameters[keyof Parameters];
     } else {
-      if (event.target) {
-        newParams[param] = { value: event.target.value } as Parameters[keyof Parameters];
-      } else {
-        newParams[param] = { value: event } as Parameters[keyof Parameters];
-      }
+      newParams[param] = { value: event } as Parameters[keyof Parameters];
     }
 
     _.forOwn(newParams, (value, key) => {
@@ -362,7 +363,7 @@ const StorageClassFormInner: FC<StorageClassFormProps> = (props) => {
   };
 
   const getFormParams = (newStorageClassBeforeCreation) => {
-    const type = newStorageClassBeforeCreation.type;
+    const { type } = newStorageClassBeforeCreation;
     const dataParameters = _.pickBy(
       _.mapValues(newStorageClassBeforeCreation.parameters, (value, key) => {
         let finalValue = value.value;
@@ -470,7 +471,7 @@ const StorageClassFormInner: FC<StorageClassFormProps> = (props) => {
             id={paramId}
             dataTest={paramId}
           />
-          <span className="help-block">{validationMsg ? validationMsg : null}</span>
+          <span className="help-block">{validationMsg || null}</span>
         </>
       ) : (
         <>
@@ -504,7 +505,7 @@ const StorageClassFormInner: FC<StorageClassFormProps> = (props) => {
               </span>
             </>
           )}
-          <span className="help-block">{validationMsg ? validationMsg : parameter.hintText}</span>
+          <span className="help-block">{validationMsg || parameter.hintText}</span>
         </>
       );
 

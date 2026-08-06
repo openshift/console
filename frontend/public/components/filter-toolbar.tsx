@@ -1,19 +1,15 @@
 import type { FC, Ref, MouseEvent, ChangeEvent, ReactText } from 'react';
 import { useState, useMemo, useCallback, useEffect, Fragment } from 'react';
-import * as _ from 'lodash';
-import { useLocation } from 'react-router';
-import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import type { MenuToggleElement, ToolbarLabel } from '@patternfly/react-core';
 import {
   Badge,
   Button,
   MenuToggle,
-  MenuToggleElement,
   Select,
   SelectGroup,
   SelectList,
   SelectOption,
   Toolbar,
-  ToolbarLabel,
   ToolbarContent,
   ToolbarFilter,
   ToolbarGroup,
@@ -22,26 +18,29 @@ import {
   Tooltip,
 } from '@patternfly/react-core';
 import { RhUiFilterIcon, RhUiColumnsIcon } from '@patternfly/react-icons';
-import {
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router';
+import type {
   RowFilterItem,
   ColumnLayout,
   OnFilterChange,
   FilterValue,
   RowSearchFilter,
 } from '@console/dynamic-plugin-sdk';
-import { ConsoleSelect } from '@console/internal/components/utils/console-select';
-import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
-import { useTranslation } from 'react-i18next';
+import { filterList } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
-import AutocompleteInput from './autocomplete';
-import { storagePrefix } from './row-filter';
-import { LazyColumnManagementModalOverlay } from './modals';
+import { ConsoleSelect } from '@console/internal/components/utils/console-select';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';
 import { useDeepCompareMemoize } from '@console/shared/src/hooks/useDeepCompareMemoize';
+import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
+import AutocompleteInput from './autocomplete';
 import { TextFilter } from './factory/text-filter';
-import { filterList } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
-import useRowFilterFix from './useRowFilterFix';
+import { LazyColumnManagementModalOverlay } from './modals';
+import { storagePrefix } from './row-filter';
 import useLabelSelectionFix from './useLabelSelectionFix';
+import useRowFilterFix from './useRowFilterFix';
 import useSearchFilters from './useSearchFilters';
 
 /**
@@ -216,6 +215,7 @@ export const FilterToolbar: FC<FilterToolbarProps> = ({
           <Fragment key={item.id} />
         ) : (
           <SelectOption
+            data-test={`row-filter-${item.id}`}
             data-test-row-filter={item.id}
             key={item.id}
             id={item.id}
@@ -383,6 +383,7 @@ export const FilterToolbar: FC<FilterToolbarProps> = ({
                       categoryName={key}
                       deleteLabelGroup={() => clearAllRowFilter(key)}
                       labelGroupCollapsedText={t('{{numRemaining}} more', {
+                        // eslint-disable-next-line no-template-curly-in-string
                         numRemaining: '${remaining}',
                       })}
                       labelGroupExpandedText={t('Show less')}
@@ -390,7 +391,7 @@ export const FilterToolbar: FC<FilterToolbarProps> = ({
                       {acc}
                     </ToolbarFilter>
                   ),
-                  <div data-test-id="filter-dropdown-toggle">
+                  <div data-test="filter-dropdown-toggle" data-test-id="filter-dropdown-toggle">
                     <Select
                       role="menu"
                       toggle={(toggleRef: Ref<MenuToggleElement>) => (

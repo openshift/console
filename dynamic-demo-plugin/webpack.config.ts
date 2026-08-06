@@ -1,6 +1,6 @@
 /* eslint-env node */
 
-import * as webpack from 'webpack';
+import type { Configuration } from 'webpack';
 import * as path from 'path';
 import { ConsoleRemotePlugin } from '@openshift-console/dynamic-plugin-sdk-webpack';
 import { CopyRspackPlugin } from '@rspack/core';
@@ -15,7 +15,7 @@ if (!isRunningWebpack && !isRunningRspack) {
   throw new Error('Unknown bundler');
 }
 
-const config: webpack.Configuration = {
+const config: Configuration = {
   mode: 'development',
   context: path.resolve(__dirname, 'src'),
   entry: {},

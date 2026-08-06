@@ -1,11 +1,10 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Map as ImmutableMap } from 'immutable';
-
-import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import type { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { getReferenceForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
-import { ResourceListDropdown_ } from '../resource-dropdown';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
+import { InnerResourceListDropdown } from '../resource-dropdown';
 
 jest.mock('../utils/resource-icon', () => ({
   ResourceIcon: jest.fn(() => null),
@@ -71,7 +70,7 @@ const defaultProps = {
 const renderDropdown = (models: K8sKind[], groupToVersionMap = {}, props = {}) => {
   const allModels = buildModelsMap(models);
   return render(
-    <ResourceListDropdown_
+    <InnerResourceListDropdown
       {...defaultProps}
       allModels={allModels}
       groupToVersionMap={groupToVersionMap}

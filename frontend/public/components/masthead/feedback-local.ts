@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { getReportBugLink } from '@console/internal/module/k8s/cluster-settings';
+import type { getReportBugLink } from '@console/internal/module/k8s/cluster-settings';
 
 export function useFeedbackLocal(reportBug: ReturnType<typeof getReportBugLink>) {
   const { t } = useTranslation('public');

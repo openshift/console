@@ -1,10 +1,13 @@
+/* eslint-disable no-restricted-globals */
 /**
  * Shamelessly taken from https://stackoverflow.com/a/2117523/6909941.
  */
 const uuidFor = () => {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-    const r = (Math.random() * 16) | 0,
-      v = c === 'x' ? r : (r & 0x3) | 0x8;
+    // eslint-disable-next-line no-bitwise
+    const r = (Math.random() * 16) | 0;
+    // eslint-disable-next-line no-bitwise
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
 };
@@ -82,7 +85,7 @@ self.addEventListener('fetch', (event) => {
           return new Response(new Blob([JSON.stringify(json)], { type: 'application/json' }), {
             headers: response.headers,
           });
-        } catch (e) {
+        } catch {
           return response;
         }
       })(),
@@ -96,7 +99,7 @@ self.addEventListener('message', (event) => {
       multiplicationFactor = event.data.value;
       break;
     default:
-      throw 'No topic on incoming message to load test worker';
+      throw new Error('No topic on incoming message to load test worker');
   }
 });
 

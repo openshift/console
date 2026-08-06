@@ -49,7 +49,7 @@ test.describe('Cluster Settings channel modal', { tag: ['@admin', '@smoke'] }, (
 
       const dropdown = clusterSettings
         .getChannelModal()
-        .locator('[data-test="console-select-menu-toggle"]');
+        .getByTestId('console-select-menu-toggle');
       await expect(dropdown).toBeVisible();
 
       await clusterSettings.page.keyboard.press('Escape');

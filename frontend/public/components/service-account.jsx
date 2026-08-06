@@ -1,14 +1,6 @@
 import { useMemo, Suspense } from 'react';
-import { useTranslation } from 'react-i18next';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { DetailsPage, ListPage } from './factory';
-import { SectionHeading } from './utils/headings';
-import { navFactory } from './utils/horizontal-nav';
-import { ResourceLink } from './utils/resource-link';
-import { ResourceSummary } from './utils/details-page';
-import { LoadingBox } from './utils/status-box';
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { Grid, GridItem } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import {
   ConsoleDataView,
   getNameCellProps,
@@ -17,9 +9,17 @@ import {
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DASH } from '@console/shared/src/constants/ui';
-import { referenceForModel } from '../module/k8s';
 import { ServiceAccountModel } from '../models';
+import { referenceForModel } from '../module/k8s';
+import { DetailsPage, ListPage } from './factory';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { ResourceLink } from './utils/resource-link';
+import { LoadingBox } from './utils/status-box';
 
 const kind = 'ServiceAccount';
 const serviceAccountReference = referenceForModel(ServiceAccountModel);
@@ -165,7 +165,7 @@ const ServiceAccountsList = (props) => {
         label={t('ServiceAccounts')}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
+        hideColumnManagement
         isResizable
         resetAllColumnWidths={resetAllColumnWidths}
       />
@@ -173,11 +173,6 @@ const ServiceAccountsList = (props) => {
   );
 };
 const ServiceAccountsPage = (props) => (
-  <ListPage
-    ListComponent={ServiceAccountsList}
-    {...props}
-    canCreate={true}
-    omitFilterToolbar={true}
-  />
+  <ListPage ListComponent={ServiceAccountsList} {...props} canCreate omitFilterToolbar />
 );
 export { ServiceAccountsPage, ServiceAccountsDetailsPage };

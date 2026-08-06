@@ -13,8 +13,8 @@ const GithubSection: FC<GithubSectionProps> = ({ pac }) => {
   const appLink = pac?.data?.['app-link'] ?? '';
   return (
     <Content component="p">
-      <Trans t={t} ns="devconsole">
-        Use <ExternalLink href={appLink}>{appLink}</ExternalLink> link to install the GitHub
+      <Trans t={t} ns="devconsole" values={{ appLink }}>
+        Use <ExternalLink href={appLink}>{'{{appLink}}'}</ExternalLink> link to install the GitHub
         Application to your repositories in your organisation/account.
       </Trans>
     </Content>

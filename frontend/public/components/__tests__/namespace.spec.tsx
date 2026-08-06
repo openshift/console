@@ -1,11 +1,10 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-
-import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
-import { PullSecret, ProjectLink } from '../namespace';
 import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { testNamespace } from '../../../__mocks__/k8sResourcesMocks';
 import { ServiceAccountModel } from '../../models';
+import { PullSecret, ProjectLink } from '../namespace';
 
 jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource', () => ({
   ...jest.requireActual('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource'),

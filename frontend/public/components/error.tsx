@@ -1,14 +1,11 @@
 import type { FC } from 'react';
+import type { ErrorStateProps as PfErrorStateProps } from '@patternfly/react-component-groups';
+import { ErrorState as PfErrorState, NotFoundIcon } from '@patternfly/react-component-groups';
+import { CodeBlock, CodeBlockCode, Stack, StackItem } from '@patternfly/react-core';
+import { Trans, useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { ButtonLink } from '@console/shared/src/components/links/ButtonLink';
-import {
-  ErrorState as PfErrorState,
-  ErrorStateProps as PfErrorStateProps,
-  NotFoundIcon,
-} from '@patternfly/react-component-groups';
-import { Trans, useTranslation } from 'react-i18next';
-import { CodeBlock, CodeBlockCode, Stack, StackItem } from '@patternfly/react-core';
 import { useFavoritesOptions } from './useFavoritesOptions';
 
 export const ErrorPage404: FC<PfErrorStateProps> = (props) => {
@@ -114,12 +111,12 @@ const LoginErrorMessage: FC = () => {
       }
     default:
       return (
-        <Trans ns="public">
-          There was an authentication error with the system:
+        <>
+          {t('There was an authentication error with the system:')}
           <CodeBlock>
             <CodeBlockCode>{error}</CodeBlockCode>
           </CodeBlock>
-        </Trans>
+        </>
       );
   }
 };

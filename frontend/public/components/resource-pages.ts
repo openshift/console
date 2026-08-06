@@ -1,6 +1,6 @@
 import { Map as ImmutableMap } from 'immutable';
-import { ResourceDetailsPage, ResourceListPage } from '@console/dynamic-plugin-sdk';
-import { referenceForModel, GroupVersionKind, referenceForExtensionModel } from '../module/k8s';
+import { PodDisruptionBudgetModel } from '@console/app/src/models';
+import type { ResourceDetailsPage, ResourceListPage } from '@console/dynamic-plugin-sdk';
 import {
   AlertmanagerModel,
   AppliedClusterResourceQuotaModel,
@@ -54,7 +54,8 @@ import {
   ClusterRoleBindingModel,
   ControlPlaneMachineSetModel,
 } from '../models';
-import { PodDisruptionBudgetModel } from '@console/app/src/models';
+import type { GroupVersionKind } from '../module/k8s';
+import { referenceForModel, referenceForExtensionModel } from '../module/k8s';
 
 const addDynamicResourcePage = (
   map: ImmutableMap<ResourceMapKey, ResourceMapValue>,
@@ -166,7 +167,7 @@ const baseDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
     import('./replicaset' /* webpackChunkName: "replicaset" */).then(
       (m) => m.ReplicaSetsDetailsPage,
     ),
-  ) //TODO should be replica-set
+  ) // TODO should be replica-set
   .set(referenceForModel(ReplicationControllerModel), () =>
     import('./replication-controller' /* webpackChunkName: "replication-controller" */).then(
       (m) => m.ReplicationControllersDetailsPage,
@@ -374,7 +375,7 @@ const baseListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
   )
   .set(referenceForModel(ReplicaSetModel), () =>
     import('./replicaset' /* webpackChunkName: "replicaset" */).then((m) => m.ReplicaSetsPage),
-  ) //TODO should be replica-set
+  ) // TODO should be replica-set
   .set(referenceForModel(ReplicationControllerModel), () =>
     import('./replication-controller' /* webpackChunkName: "replication-controller" */).then(
       (m) => m.ReplicationControllersPage,

@@ -1,27 +1,21 @@
 import type { FC, Ref } from 'react';
 import { useState } from 'react';
+import type { MenuToggleElement } from '@patternfly/react-core';
+import { Button, Dropdown, DropdownItem, DropdownList, MenuToggle } from '@patternfly/react-core';
 import * as _ from 'lodash';
-import {
-  Button,
-  Dropdown,
-  DropdownItem,
-  DropdownList,
-  MenuToggle,
-  MenuToggleElement,
-} from '@patternfly/react-core';
 import { Link } from 'react-router';
-import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
-import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
-import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
-import {
+import type {
   ListPageCreateProps,
   CreateWithPermissionsProps,
   ListPageCreateLinkProps,
   ListPageCreateButtonProps,
   ListPageCreateDropdownProps,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { RequireCreatePermission } from '../../utils/rbac';
 import { transformGroupVersionKindToReference } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
+import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
+import { RequireCreatePermission } from '../../utils/rbac';
 
 const CreateWithPermissions: FC<CreateWithPermissionsProps> = ({
   createAccessReview,

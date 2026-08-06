@@ -1,7 +1,7 @@
 import type { FC, ReactNode } from 'react';
-import * as _ from 'lodash';
 import { Children, cloneElement } from 'react';
 import { Alert, AlertGroup } from '@patternfly/react-core';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { LoadingInline } from './status-box';
 

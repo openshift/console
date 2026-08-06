@@ -1,37 +1,38 @@
 import * as _ from 'lodash';
-import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useParams, useLocation } from 'react-router';
+import type {
+  ResourceDetailsPage as ResourceDetailsPageExt,
+  ResourceListPage as ResourceListPageExt,
+} from '@console/dynamic-plugin-sdk/src/extensions/pages';
+import {
+  isResourceDetailsPage,
+  isResourceListPage,
+} from '@console/dynamic-plugin-sdk/src/extensions/pages';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import { getBadgeFromType } from '@console/shared/src/components/badges/badge-factory';
-import { getTitleForNodeKind } from '@console/shared/src/utils/utils';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
+import { getTitleForNodeKind } from '@console/shared/src/utils/utils';
 import { connectToPlural } from '../kinds';
-import { ErrorPage404 } from './error';
-import { withStartGuide } from './start-guide';
-import { AsyncComponent } from './utils/async';
-import { LoadingBox } from './utils/status-box';
-import { DefaultPage, DefaultDetailsPage } from './default-resource';
-import { getResourceListPages, getResourceDetailsPages } from './resource-pages';
+import type { K8sKind, K8sResourceKindReference } from '../module/k8s';
 import {
   apiVersionForReference,
   isGroupVersionKind,
-  K8sKind,
-  K8sResourceKindReference,
   kindForReference,
   referenceForExtensionModel,
   referenceForModel,
 } from '../module/k8s';
-import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
-import {
-  ResourceDetailsPage as ResourceDetailsPageExt,
-  isResourceDetailsPage,
-  ResourceListPage as ResourceListPageExt,
-  isResourceListPage,
-} from '@console/dynamic-plugin-sdk/src/extensions/pages';
+import { DefaultPage, DefaultDetailsPage } from './default-resource';
+import { ErrorPage404 } from './error';
+import { getResourceListPages, getResourceDetailsPages } from './resource-pages';
+import { withStartGuide } from './start-guide';
+import { AsyncComponent } from './utils/async';
+import { LoadingBox } from './utils/status-box';
 
 // Parameters can be in pros.params (in URL) or in props.route (attribute of Route tag)
 const allParams = (props) => Object.assign({}, _.get(props, 'params'), props);
 
-const ResourceListPage_ = connectToPlural(
+const InnerResourceListPage = connectToPlural(
   withStartGuide((props: ResourceListPageProps) => {
     const resourceListPageExtensions = useExtensions<ResourceListPageExt>(isResourceListPage);
     const { kindObj, kindsInFlight, modelRef, noProjectsAvailable, ns, plural } = allParams(props);
@@ -72,10 +73,10 @@ const ResourceListPage_ = connectToPlural(
 
 export const ResourceListPage = (props) => {
   const params = useParams();
-  return <ResourceListPage_ {...props} params={params} />;
+  return <InnerResourceListPage {...props} params={params} />;
 };
 
-const ResourceDetailsPage_ = connectToPlural((props: ResourceDetailsPageProps) => {
+const InnerResourceDetailsPage = connectToPlural((props: ResourceDetailsPageProps) => {
   const detailsPageExtensions = useExtensions<ResourceDetailsPageExt>(isResourceDetailsPage);
   const location = useLocation();
 
@@ -125,7 +126,7 @@ const ResourceDetailsPage_ = connectToPlural((props: ResourceDetailsPageProps) =
 
 export const ResourceDetailsPage = (props) => {
   const params = useParams();
-  return <ResourceDetailsPage_ {...props} params={params} />;
+  return <InnerResourceDetailsPage {...props} params={params} />;
 };
 
 type ResourceListPageProps = {

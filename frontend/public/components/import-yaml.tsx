@@ -1,7 +1,7 @@
-import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import { AsyncComponent } from './utils/async';
 import { useTranslation } from 'react-i18next';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useQueryParams } from '@console/shared/src/hooks/useQueryParams';
+import { AsyncComponent } from './utils/async';
 
 export const ImportYamlPage = () => {
   const { t } = useTranslation('public');
@@ -18,7 +18,7 @@ export const ImportYamlPage = () => {
         blame="ImportYamlPage"
         loader={() => import('./droppable-edit-yaml').then((c) => c.DroppableEditYAML)}
         allowMultiple
-        create={true}
+        create
         download={false}
         header={title}
         isCodeImportRedirect={isCodeImportRedirect}

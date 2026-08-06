@@ -1,6 +1,5 @@
 import type { FC } from 'react';
 import { useMemo, Suspense, useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   Button,
   DescriptionList,
@@ -11,25 +10,27 @@ import {
   GridItem,
 } from '@patternfly/react-core';
 import { RhUiEditIcon } from '@patternfly/react-icons';
-import { DASH } from '@console/shared/src/constants/ui';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { referenceForModel, K8sResourceKind, TableColumn } from '../module/k8s';
-import { DetailsPage } from './factory/details';
-import { ListPage } from './factory/list-page';
+import { useTranslation } from 'react-i18next';
 import {
   cellIsStickyProps,
   getNameCellProps,
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { DASH } from '@console/shared/src/constants/ui';
+import { AlertmanagerModel } from '../models';
+import type { K8sResourceKind, TableColumn } from '../module/k8s';
+import { referenceForModel } from '../module/k8s';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
+import { useConfigureCountModal } from './modals/configure-count-modal';
+import { pluralize } from './utils/details-page';
 import { SectionHeading } from './utils/headings';
-import { LabelList } from './utils/label-list';
 import { navFactory } from './utils/horizontal-nav';
+import { LabelList } from './utils/label-list';
 import { ResourceLink } from './utils/resource-link';
 import { Selector } from './utils/selector';
-import { pluralize } from './utils/details-page';
-import { useConfigureCountModal } from './modals/configure-count-modal';
-import { AlertmanagerModel } from '../models';
 import { LoadingBox } from './utils/status-box';
 
 const Details: FC<DetailsProps> = (props) => {
@@ -231,7 +232,7 @@ const AlertManagersList: FC<AlertManagersListProps> = ({ data, loaded, ...props 
         loaded={loaded}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
+        hideColumnManagement
       />
     </Suspense>
   );
@@ -243,7 +244,7 @@ export const AlertManagersPage = (props) => (
     ListComponent={AlertManagersList}
     canCreate={false}
     kind={kind}
-    omitFilterToolbar={true}
+    omitFilterToolbar
   />
 );
 

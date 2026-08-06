@@ -161,8 +161,8 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
     [activeQuickStartID, setAllQuickStartStates, fireTelemetryEvent],
   );
 
-  const language = getLastLanguage() || 'en';
-  const resourceBundle = i18n.getResourceBundle(language, 'console-app');
+  const language = i18n.resolvedLanguage || 'en';
+  const resourceBundle = i18n.getResourceBundle(language, 'console-app') ?? {};
   const processedResourceBundle = getProcessedResourceBundle(resourceBundle, language);
 
   // https://github.com/i18next/i18next-parser#caveats
@@ -180,7 +180,8 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
   //   t('console-app~Filter by keyword...'),
   //   t('console-app~Select filter'),
   //   t('console-app~Status'),
-  //   t('console-app~{{count, number}} item', { count: 0 }),
+  //   t('console-app~{{count, number}} item'),
+  //   t('console-app~{{count, number}} item_plural'),
   //   t('console-app~Prerequisites ({{totalPrereqs}})'),
   //   t('console-app~View Prerequisites ({{totalPrereqs}})'),
   //   t('console-app~Prerequisites'),
@@ -198,7 +199,8 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
   //   t('console-app~Close'),
   //   t('console-app~Back'),
   //   t('console-app~Restart'),
-  //   t('console-app~In this quick start, you will complete {{count, number}} task', { count: 0 }),
+  //   t('console-app~In this quick start, you will complete {{count, number}} task'),
+  //   t('console-app~In this quick start, you will complete {{count, number}} task_plural'),
   //   t('console-app~{{taskIndex, number}}'),
   //   t('console-app~Check your work'),
   //   t('console-app~Yes'),

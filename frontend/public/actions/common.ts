@@ -17,7 +17,6 @@ export enum ActionType {
   UpdateOverviewSelectedGroup = 'updateOverviewSelectedGroup',
   UpdateOverviewLabels = 'updateOverviewLabels',
   UpdateOverviewFilterValue = 'updateOverviewFilterValue',
-  UpdateTimestamps = 'updateTimestamps',
   SetPodMetrics = 'setPodMetrics',
   SetNamespaceMetrics = 'setNamespaceMetrics',
   SetNodeMetrics = 'setNodeMetrics',

@@ -1,5 +1,7 @@
+import type { FC, ReactNode, ComponentProps } from 'react';
+import { useState, useMemo } from 'react';
 import { CodeEditorControl } from '@patternfly/react-code-editor';
-import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
+import type { SwitchProps } from '@patternfly/react-core';
 import {
   Flex,
   FlexItem,
@@ -9,7 +11,6 @@ import {
   ModalHeader,
   NumberInput,
   Switch,
-  SwitchProps,
 } from '@patternfly/react-core';
 import {
   // Icons do not have a suitable RH icon yet
@@ -21,7 +22,8 @@ import {
   RhUiCommentIcon,
   RhUiSettingsIcon,
 } from '@patternfly/react-icons';
-import { FC, ReactNode, ComponentProps, useState, useMemo } from 'react';
+import type { SimpleSelectOption } from '@patternfly/react-templates';
+import { SimpleSelect } from '@patternfly/react-templates';
 import { useTranslation } from 'react-i18next';
 import {
   OVERRIDE_YAML_EDITOR_THEME_USER_PREFERENCE_KEY,
@@ -29,7 +31,7 @@ import {
   SHOW_YAML_EDITOR_STICKY_SCROLL_USER_PREFERENCE_KEY,
   CUSTOM_YAML_EDITOR_FONT_SIZE_USER_PREFERENCE_KEY,
 } from '@console/shared/src/constants/common';
-import { SimpleSelect, SimpleSelectOption } from '@patternfly/react-templates';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 
 /*
  * The following is taken entirely from the PatternFly example

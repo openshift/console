@@ -49,14 +49,14 @@ const normalizeBuilderImages = (
     const detailsProperties: CatalogItemDetailsProperty[] = [];
     if (sampleRepo) {
       detailsProperties.push({
-        label: t('Sample repository'),
+        label: t('devconsole~Sample repository'),
         value: <ExternalLink href={sampleRepo} className="co-break-all" text={sampleRepo} />,
       });
     }
 
     const imageStreamText = (
       <>
-        <p>{t('The following resources will be created:')}</p>
+        <p>{t('devconsole~The following resources will be created:')}</p>
         <ul>
           <li>
             <Trans ns="devconsole" t={t}>

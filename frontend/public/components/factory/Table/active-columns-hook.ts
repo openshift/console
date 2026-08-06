@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
+import type { TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import {
   ALL_NAMESPACES_KEY,
   COLUMN_MANAGEMENT_USER_PREFERENCE_KEY,
 } from '@console/shared/src/constants/common';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
-import { TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
 export const useActiveColumns = <D = any>({
   columns,
@@ -32,6 +32,7 @@ export const useActiveColumns = <D = any>({
               if (col.id && !col.additional) {
                 return col.id;
               }
+              return undefined;
             }),
           );
 

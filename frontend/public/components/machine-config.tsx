@@ -1,8 +1,5 @@
-import * as _ from 'lodash';
 import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
-import { useTranslation } from 'react-i18next';
-import { TFunction } from 'i18next';
 import {
   Button,
   ButtonVariant,
@@ -16,31 +13,35 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
-import { BlueInfoCircleIcon, TableColumn } from '@console/dynamic-plugin-sdk';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { DASH } from '@console/shared/src/constants/ui';
+import type { TFunction } from 'i18next';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import {
   actionsCellProps,
   getNameCellProps,
   ConsoleDataView,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-
-import { MachineConfigKind, referenceForModel } from '../module/k8s';
+import type { TableColumn } from '@console/dynamic-plugin-sdk';
+import { BlueInfoCircleIcon } from '@console/dynamic-plugin-sdk';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { DASH } from '@console/shared/src/constants/ui';
 import { MachineConfigModel } from '../models';
+import type { MachineConfigKind } from '../module/k8s';
+import { referenceForModel } from '../module/k8s';
+import { ResourceEventStream } from './events';
 import { DetailsPage } from './factory/details';
 import { ListPage } from './factory/list-page';
 import { CopyToClipboard } from './utils/copy-to-clipboard';
-import { LoadingBox } from './utils/status-box';
-import { navFactory } from './utils/horizontal-nav';
-import { ResourceLink } from './utils/resource-link';
 import { ResourceSummary } from './utils/details-page';
 import { SectionHeading } from './utils/headings';
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { ResourceEventStream } from './events';
-import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { navFactory } from './utils/horizontal-nav';
+import { ResourceLink } from './utils/resource-link';
+import { LoadingBox } from './utils/status-box';
 
 export const machineConfigReference = referenceForModel(MachineConfigModel);
 
@@ -275,7 +276,7 @@ const MachineConfigList: FC<MachineConfigListProps> = ({ data, loaded, loadError
         loadError={loadError}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
+        hideColumnManagement
         isResizable
         resetAllColumnWidths={resetAllColumnWidths}
       />
@@ -289,7 +290,7 @@ export const MachineConfigPage: FC<any> = ({ canCreate = true, ...rest }) => (
     canCreate={canCreate}
     ListComponent={MachineConfigList}
     kind={machineConfigReference}
-    omitFilterToolbar={true}
+    omitFilterToolbar
   />
 );
 

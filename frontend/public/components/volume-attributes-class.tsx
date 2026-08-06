@@ -1,13 +1,28 @@
 import type { FC } from 'react';
-import * as _ from 'lodash';
 import { useMemo, Suspense } from 'react';
+import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import {
+  actionsCellProps,
+  getNameCellProps,
+  initialFiltersDefault,
+  ConsoleDataView,
+  nameCellProps,
+} from '@console/app/src/components/data-view/ConsoleDataView';
+import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
-import { DetailsPage, ListPage, ListPageProps } from './factory';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { DASH } from '@console/shared/src/constants/ui';
+import { VolumeAttributesClassModel } from '../models';
+import type { VolumeAttributesClassKind, TableColumn, K8sGroupVersionKind } from '../module/k8s';
+import { referenceFor } from '../module/k8s';
+import type { ListPageProps } from './factory';
+import { DetailsPage, ListPage } from './factory';
 import {
   DetailsItem,
   LoadingBox,
@@ -17,24 +32,6 @@ import {
   detailsPage,
   navFactory,
 } from './utils';
-import {
-  VolumeAttributesClassKind,
-  TableColumn,
-  K8sGroupVersionKind,
-  referenceFor,
-} from '../module/k8s';
-import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
-import { VolumeAttributesClassModel } from '../models';
-import { DASH } from '@console/shared/src/constants/ui';
-import {
-  actionsCellProps,
-  getNameCellProps,
-  initialFiltersDefault,
-  ConsoleDataView,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 
 const [group, version] = VolumeAttributesClassModel.apiVersion.split('/');
 
@@ -160,7 +157,7 @@ const VolumeAttributesClassList: FC<VolumeAttributesClassListProps> = ({
         columns={columns}
         initialFilters={initialFiltersDefault}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
+        hideColumnManagement
         isResizable
         resetAllColumnWidths={resetAllColumnWidths}
       />
@@ -174,8 +171,8 @@ export const VolumeAttributesClassPage: FC<ListPageProps> = (props) => {
       {...props}
       ListComponent={VolumeAttributesClassList}
       kind={VolumeAttributesClassModel.kind}
-      canCreate={true}
-      omitFilterToolbar={true}
+      canCreate
+      omitFilterToolbar
     />
   );
 };

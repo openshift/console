@@ -1,8 +1,5 @@
 import type { FC } from 'react';
 import { useState, useMemo } from 'react';
-import { Base64 } from 'js-base64';
-import { saveAs } from 'file-saver';
-import { RhUiViewIcon, RhUiViewOffIcon } from '@patternfly/react-icons';
 import {
   Button,
   DescriptionList,
@@ -10,18 +7,22 @@ import {
   DescriptionListGroup,
   DescriptionListTerm,
 } from '@patternfly/react-core';
-import { useTranslation } from 'react-i18next';
-import { CopyToClipboard } from './utils/copy-to-clipboard';
-import { EmptyBox } from './utils/status-box';
-import { SectionHeading } from './utils/headings';
+import { RhUiViewIcon, RhUiViewOffIcon } from '@patternfly/react-icons';
+import { saveAs } from 'file-saver';
 import * as ITOB from 'istextorbinary';
+import { Base64 } from 'js-base64';
+import { useTranslation } from 'react-i18next';
+import { DASH } from '@console/shared/src/constants/ui';
+import { CopyToClipboard } from './utils/copy-to-clipboard';
+import { SectionHeading } from './utils/headings';
+import { EmptyBox } from './utils/status-box';
 
 const MaskedData: FC<{}> = () => {
   const { t } = useTranslation('public');
   return (
     <>
       <span className="pf-v6-u-screen-reader">{t('Value hidden')}</span>
-      <span aria-hidden="true">&bull;&bull;&bull;&bull;&bull;</span>
+      <span aria-hidden="true">{DASH}</span>
     </>
   );
 };

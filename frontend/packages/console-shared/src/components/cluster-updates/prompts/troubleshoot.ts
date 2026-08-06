@@ -8,6 +8,7 @@ import {
   PROMPT_TIMEOUT_LOG_TAIL_LINES_FULL,
 } from './shared/constants';
 import { getLanguageConstraint } from './shared/language-utils';
+import { securityConstraint, getConfidenceQualifiers } from './shared/security-utils';
 
 /**
  * Troubleshoot prompt for failing or stalled cluster updates
@@ -19,6 +20,15 @@ import { getLanguageConstraint } from './shared/language-utils';
  */
 export const createTroubleshootPrompt = (currentVersion: string, desiredVersion: string) => {
   const languageConstraint = getLanguageConstraint();
+  const confidenceQualifiers = getConfidenceQualifiers({
+    highConfidenceData: 'ClusterVersion + ClusterOperators + pod logs',
+    highConfidenceQuality: 'root cause is clear',
+    moderateConfidenceMissing: 'pod logs, events, nodes, alerts',
+    limitedDataSuffix: 'the diagnosis may be incomplete',
+    additionalGuidance: `Apply confidence to root cause claims:
+- When identifying a root cause, state your confidence and the evidence (e.g., "High confidence: pod logs confirm certificate expiry as root cause").
+- When the root cause is inferred from conditions alone without log confirmation, qualify as moderate confidence.`,
+  });
 
   return `# OpenShift Cluster Upgrade Troubleshoot Analysis
 
@@ -69,6 +79,9 @@ export const createTroubleshootPrompt = (currentVersion: string, desiredVersion:
 - Provide conservative, investigation-focused remediation
 - Focus on root cause identification using real error messages, not aggressive fixes
 - ONLY OUTPUT the Summary and TL;DR sections
+- CRITICAL: The TL;DR section MUST end with the **Next steps** field. NEVER omit it.
+${securityConstraint}
+${confidenceQualifiers}
 ${languageConstraint}
 </constraints>
 
@@ -108,7 +121,7 @@ Before making ANY conclusion about a condition, you MUST explicitly state:
 
 <failure_analysis_requirements>
 
-1. **Upgrade Failure Root Cause**:
+1. **Upgrade failure root cause**:
  - Find condition where type="Failing" AND status="True"
  - Extract the EXACT reason and message from the Failing condition
  - Check status.history for failed upgrade attempts and their specific errors
@@ -163,7 +176,7 @@ Before making ANY conclusion about a condition, you MUST explicitly state:
  - Signature verification status (spec.signatureStores if custom, otherwise default Red Hat stores)
  - Network connectivity issues affecting update process
 
-9. **Failure Events Timeline** (using events_list):
+9. **Failure events timeline** (using events_list):
  - Query events from last 1 hour (upgrade failures develop over time)
  - Focus on Error and Warning events in openshift-* namespaces
  - Look for event patterns that explain the failure:
@@ -175,7 +188,7 @@ Before making ANY conclusion about a condition, you MUST explicitly state:
  - **User-friendly translation**: Explain technical events in plain language
  - **Example**: "10 minutes ago: authentication operator pod started crashing (CrashLoopBackOff). 5 minutes ago: authentication unavailable. Now: upgrade blocked"
 
-10. **Active Critical Alerts** (using get_alerts - if available):
+10. **Active critical alerts** (using get_alerts - if available):
  - Query critical alerts that might explain upgrade failure
  - Focus on infrastructure and operator alerts
  - **Correlation**: Connect alerts to failing operators
@@ -193,74 +206,75 @@ Before making ANY conclusion about a condition, you MUST explicitly state:
 
 <output_format>
 ## Summary
-**Root Cause Analysis**
+**Root cause analysis**
 Based on the ClusterVersion data:
-- **Current Version**: ${currentVersion}
-- **Target Version**: ${desiredVersion}
-- **Failure Type**: [Extract from actual Failing condition reason]
-- **Specific Error**: [Quote the actual failure message from conditions]
-**Component Analysis**
+- **Current version**: ${currentVersion}
+- **Target version**: ${desiredVersion}
+- **Failure type**: [Extract from actual Failing condition reason]
+- **Specific error**: [Quote the actual failure message from conditions]
+**Component analysis**
 - **Failed ClusterOperators**: [List specific operators with Available=False, Degraded=True, or failing conditions]
-- **Operator Error Details**: [Actual error messages from pod logs - be specific!]
+- **Operator error details**: [Actual error messages from pod logs - be specific!]
  - Example: "authentication operator pod logs show: 'Error: certificate expired at 2026-04-15 12:00:00 UTC'"
 - **Stuck ClusterOperators**: [List operators stuck in Progressing=True with error messages]
-- **Affected Services**: [Impact on cluster functionality based on failed operators]
-**Failed Upgrade Context**
-- **Target Version**: [From status.desired.version with metadata]
-- **Release Information**: [Target release details and known issues from status.desired.url]
-- **Upgrade Path**: [Source → Target version progression]
-- **Target Availability**: [Verify target version is still in available updates]
-**Historical Failure Analysis**
-- **Previous Attempts**: [Recent upgrade attempts from status.history]
-- **Failure Pattern**: [Recurring vs new failure based on history]
-- **Last Successful Upgrade**: [Most recent completed upgrade for comparison]
-- **Cluster Stability**: [Overall upgrade success rate and patterns]
-**Update Service Health**
-- **Service Configuration**: [spec.upstream if custom, otherwise "Default Red Hat service"]
-- **Cincinnati Status**: [RetrievedUpdates condition status and message]
-- **Last Update Check**: [Recent update retrieval timestamp from RetrievedUpdates]
-- **Available Updates**: [Confirm availableUpdates array is populated]
-- **Connectivity Issues**: [Network or authentication problems affecting updates]
-**Failure Events Timeline** (Last hour):
-- **Event Summary**: [Count of error vs warning events]
-- **Timeline of Key Events**: [Chronological sequence showing how failure developed]
+- **Affected services**: [Impact on cluster functionality based on failed operators]
+**Failed upgrade context**
+- **Target version**: [From status.desired.version with metadata]
+- **Release information**: [Target release details and known issues from status.desired.url]
+- **Upgrade path**: [Source → Target version progression]
+- **Target availability**: [Verify target version is still in available updates]
+**Historical failure analysis**
+- **Previous attempts**: [Recent upgrade attempts from status.history]
+- **Failure pattern**: [Recurring vs new failure based on history]
+- **Last successful upgrade**: [Most recent completed upgrade for comparison]
+- **Cluster stability**: [Overall upgrade success rate and patterns]
+**Update service health**
+- **Service configuration**: [spec.upstream if custom, otherwise "Default Red Hat service"]
+- **Cincinnati status**: [RetrievedUpdates condition status and message]
+- **Last update check**: [Recent update retrieval timestamp from RetrievedUpdates]
+- **Available updates**: [Confirm availableUpdates array is populated]
+- **Connectivity issues**: [Network or authentication problems affecting updates]
+**Failure events timeline** (Last hour):
+- **Event summary**: [Count of error vs warning events]
+- **Timeline of key events**: [Chronological sequence showing how failure developed]
  - Example: "60 min ago: Started upgrade to 4.21.7"
  - Example: "45 min ago: authentication operator pod started failing (CrashLoopBackOff)"
  - Example: "30 min ago: authentication operator marked Degraded"
  - Example: "Now: Upgrade stuck, authentication unavailable"
-- **Technical Errors Found**: [Specific error types: ImagePullBackOff, OOMKilled, etc.]
-- **User-Friendly Explanation**: [What these events mean in plain language]
-**Active Critical Alerts** (if available):
-- **Alert Count**: [Number of critical/warning alerts]
-- **Key Alerts**: [Names and descriptions of alerts related to failure]
+- **Technical errors found**: [Specific error types: ImagePullBackOff, OOMKilled, etc.]
+- **User-friendly explanation**: [What these events mean in plain language]
+**Active critical alerts** (if available):
+- **Alert count**: [Number of critical/warning alerts]
+- **Key alerts**: [Names and descriptions of alerts related to failure]
 - **Correlation**: [How alerts connect to failing operators]
 - **Example**: "KubeAPIDown alert + authentication operator failure → API server connectivity issue"
 - If alerts not available: "Alert monitoring unavailable"
-**Investigation Steps**
+**Investigation steps**
 1. [First diagnostic step based on actual failure type]
 2. [Second diagnostic step]
 3. [Log locations to check]
-**Recovery Actions** (Conservative Approach)
+**Recovery actions** (Conservative Approach)
 1. [Investigation-focused first step]
 2. [Monitoring and validation steps]
 3. [When to escalate to support]
 
 ## TL;DR
-- **Failure Type**: [Specific failure reason from conditions]
-- **Target Version**: [Failed upgrade target with release info]
-- **Root Cause**: [Primary component or process failing - with actual error from logs]
-- **Failed Components**: [Count and names of failed ClusterOperators]
-- **Error Messages**: [Key errors from pod logs - be specific!]
-- **Event Summary**: [Count of error events in last hour, key patterns]
-- **Alert Status**: [Critical alerts related to failure, if available]
-- **Historical Pattern**: [Recurring failure vs new issue]
-- **Last Success**: [Most recent completed upgrade for context]
-- **Update Service**: [Cincinnati health, e.g., "Default service working (RetrievedUpdates=True)" or "Custom upstream failing"]
-- **Node Issues**: [Count of NotReady nodes if any]
-- **Infrastructure Problems**: [Any detected infrastructure issues]
+- **Failure type**: [Specific failure reason from conditions]
+- **Data completeness**: [Complete | Partial | Limited]
+- **Target version**: [Failed upgrade target with release info]
+- **Root cause**: [Primary component or process failing - with actual error from logs]
+- **Failed components**: [Count and names of failed ClusterOperators]
+- **Error messages**: [Key errors from pod logs - be specific!]
+- **Event summary**: [Count of error events in last hour, key patterns]
+- **Alert status**: [Critical alerts related to failure, if available]
+- **Historical pattern**: [Recurring failure vs new issue]
+- **Last success**: [Most recent completed upgrade for context]
+- **Update service**: [Cincinnati health, e.g., "Default service working (RetrievedUpdates=True)" or "Custom upstream failing"]
+- **Node issues**: [Count of NotReady nodes if any]
+- **Infrastructure problems**: [Any detected infrastructure issues]
 - **MCP Issues**: [Count of degraded MachineConfigPools if any]
-- **Next Steps**: [Conservative investigation approach based on actual errors found]
 - **Escalation**: [When to contact Red Hat support]
-- **Recovery Time**: [Realistic estimate based on failure type]
+- **Recovery time**: [Realistic estimate based on failure type]
+- **Next steps**: [Conservative investigation approach based on actual errors found]
 </output_format>`;
 };

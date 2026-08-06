@@ -220,7 +220,7 @@ describe('OLS Workflow Enhancements', () => {
 
       // Prompt should mention conditional updates analysis
       expect(prompt).toContain('Conditional Updates');
-      expect(prompt).toContain('Risk Analysis');
+      expect(prompt).toContain('risk analysis');
       expect(prompt).toContain('conditionalUpdates');
     });
   });

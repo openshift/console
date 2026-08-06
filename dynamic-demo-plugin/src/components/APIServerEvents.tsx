@@ -6,6 +6,7 @@ import {
 } from '@openshift-console/dynamic-plugin-sdk';
 import { PageSection, Title } from '@patternfly/react-core';
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 
 const apiServerResource: WatchK8sResource = {
   kind: 'Deployment',
@@ -16,11 +17,12 @@ const apiServerResource: WatchK8sResource = {
 
 const APIServerEvents: React.FC = () => {
   const [object, loaded, loadError] = useK8sWatchResource<K8sResourceCommon>(apiServerResource);
+  const { t } = useTranslation('plugin__console-demo-plugin');
 
   return (
     <>
       <PageSection>
-        <Title headingLevel="h1">API Server Events</Title>
+        <Title headingLevel="h1">{t('API Server Events')}</Title>
       </PageSection>
       <PageSection>
         {loaded && !loadError && <ResourceEventStream resource={object} />}

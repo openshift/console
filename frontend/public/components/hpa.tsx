@@ -1,30 +1,9 @@
 import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
-import * as _ from 'lodash';
-import { Table as PfTable, Th, Tr, Thead, Tbody, Td } from '@patternfly/react-table';
-import { Trans, useTranslation } from 'react-i18next';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import {
-  K8sResourceKindReference,
-  HorizontalPodAutoscalerKind,
-  TableColumn,
-  referenceForModel,
-} from '../module/k8s';
-import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
-import { HorizontalPodAutoscalerModel } from '../models';
-import { Conditions } from './conditions';
-import { DetailsPage } from './factory/details';
-import { ListPage } from './factory/list-page';
-import { DetailsItem } from './utils/details-item';
-import { LabelList } from './utils/label-list';
-import { LoadingBox } from './utils/status-box';
-import { ResourceLink } from './utils/resource-link';
-import { ResourceSummary } from './utils/details-page';
-import { SectionHeading } from './utils/headings';
-import { navFactory } from './utils/horizontal-nav';
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { ResourceEventStream } from './events';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
+import { Table as PfTable, Th, Tr, Thead, Tbody, Td } from '@patternfly/react-table';
+import * as _ from 'lodash';
+import { Trans, useTranslation } from 'react-i18next';
 import {
   actionsCellProps,
   getNameCellProps,
@@ -32,10 +11,31 @@ import {
   ConsoleDataView,
   getLabelsColumnWidthStyleProp,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import { DASH } from '@console/shared/src/constants/ui';
+import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { DASH } from '@console/shared/src/constants/ui';
+import { HorizontalPodAutoscalerModel } from '../models';
+import type {
+  K8sResourceKindReference,
+  HorizontalPodAutoscalerKind,
+  TableColumn,
+} from '../module/k8s';
+import { referenceForModel } from '../module/k8s';
+import { Conditions } from './conditions';
+import { ResourceEventStream } from './events';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
+import { DetailsItem } from './utils/details-item';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { LabelList } from './utils/label-list';
+import { ResourceLink } from './utils/resource-link';
+import { LoadingBox } from './utils/status-box';
 
 const HorizontalPodAutoscalersReference: K8sResourceKindReference = referenceForModel(
   HorizontalPodAutoscalerModel,
@@ -121,7 +121,7 @@ const MetricsTable: FC<MetricsTableProps> = ({ obj: hpa }) => {
 
   const objectRow = (metric, current, ns, key, scaleTarget) => {
     const { object } = metric;
-    const name = object.metric.name;
+    const { name } = object.metric;
     const type = (
       <Trans t={t} ns="public">
         {{ name }} on
@@ -173,6 +173,7 @@ const MetricsTable: FC<MetricsTableProps> = ({ obj: hpa }) => {
                 return containerResourceRow(metric, current, i);
               default:
                 return (
+                  // eslint-disable-next-line react/no-array-index-key
                   <Tr key={i}>
                     <Td width={50}>
                       {metric.type}{' '}
@@ -406,7 +407,7 @@ const HorizontalPodAutoscalersList: FC<HorizontalPodAutoscalersListProps> = ({
         loaded={loaded}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
+        hideColumnManagement
         isResizable
         resetAllColumnWidths={resetAllColumnWidths}
       />
@@ -420,8 +421,8 @@ export const HorizontalPodAutoscalersPage: FC<HorizontalPodAutoscalersPageProps>
     {...props}
     kind={HorizontalPodAutoscalersReference}
     ListComponent={HorizontalPodAutoscalersList}
-    canCreate={true}
-    omitFilterToolbar={true}
+    canCreate
+    omitFilterToolbar
   />
 );
 HorizontalPodAutoscalersPage.displayName = 'HorizontalPodAutoscalersListPage';

@@ -1,34 +1,34 @@
 import type { FC, ReactNode, ComponentType } from 'react';
-import {
-  isResourceActionProvider,
-  ResourceActionProvider,
-  ResourceStatus,
-  useResolvedExtensions,
-} from '@console/dynamic-plugin-sdk';
-import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
-import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
-import { Status } from '@console/shared/src/components/status/Status';
-import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
+import { useCallback } from 'react';
 import { ActionListItem, Button, Title } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
-import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-
-import { PageHeading, PageHeadingProps } from '@console/shared/src/components/heading/PageHeading';
-import { ActionsMenu } from '@console/internal/components/utils/actions-menu';
-import { connectToModel } from '../../kinds';
+import type { ResourceActionProvider } from '@console/dynamic-plugin-sdk';
 import {
+  isResourceActionProvider,
+  ResourceStatus,
+  useResolvedExtensions,
+} from '@console/dynamic-plugin-sdk';
+import type { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { Action } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { ActionsMenu } from '@console/internal/components/utils/actions-menu';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import type { PageHeadingProps } from '@console/shared/src/components/heading/PageHeading';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
+import { Status } from '@console/shared/src/components/status/Status';
+import { connectToModel } from '../../kinds';
+import type {
   ExtensionK8sGroupModel,
   K8sKind,
   K8sResourceKind,
   K8sResourceKindReference,
-  referenceForExtensionModel,
 } from '../../module/k8s';
-import type { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { ResourceIcon } from './resource-icon';
+import { referenceForExtensionModel } from '../../module/k8s';
 import { ManagedByOperatorLink } from './managed-by';
-import { Action } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { ResourceIcon } from './resource-icon';
 
 const ActionButtons: FC<ActionButtonsProps> = ({ actionButtons }) => (
   <>
@@ -196,7 +196,12 @@ export const SectionHeading: FC<SectionHeadingProps> = ({
   required,
   id,
 }) => (
-  <SecondaryHeading style={style} data-test-section-heading={text} id={id}>
+  <SecondaryHeading
+    style={style}
+    data-test={`section-heading-${text}`}
+    data-test-section-heading={text}
+    id={id}
+  >
     <span
       className={css({
         'co-required': required,

@@ -1,6 +1,7 @@
 import '../../../__mocks__/localStorage';
-import { K8sKind, resourceURL } from '../../module/k8s';
 import { PodModel, UserModel } from '../../models';
+import type { K8sKind } from '../../module/k8s';
+import { resourceURL } from '../../module/k8s';
 
 type ResourceURLOptions = {
   name?: string;

@@ -1,16 +1,16 @@
 import { useState, useCallback } from 'react';
+import { Modal, ModalHeader, ModalBody, Button, FormGroup, Form } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
-import { Modal, ModalHeader, ModalBody, Button, FormGroup, Form } from '@patternfly/react-core';
-import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import { k8sCreateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import { MachineAutoscalerModel } from '../../models';
+import type { K8sResourceKind } from '../../module/k8s';
 import { NumberSpinner } from '../utils/number-spinner';
 import { resourcePathFromModel } from '../utils/resource-link';
-import { K8sResourceKind } from '../../module/k8s';
-import { k8sCreateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
-import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
-import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 
 export const ConfigureMachineAutoscalerModal: OverlayComponent<ConfigureMachineAutoscalerModalProps> = ({
   machineSet,

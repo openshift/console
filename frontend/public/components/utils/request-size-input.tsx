@@ -1,7 +1,7 @@
 import type { FC, ReactEventHandler, ReactNode } from 'react';
 import { useState, useEffect } from 'react';
-import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { useTranslation } from 'react-i18next';
+import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { NumberSpinner } from './number-spinner';
 
 export const RequestSizeInput: FC<RequestSizeInputProps> = ({

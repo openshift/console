@@ -11,11 +11,11 @@ const EventTypeHeaders = (t: TFunction) => () => {
   return [
     {
       id: 'attributes',
-      title: t('Attributes'),
+      title: t('knative-plugin~Attributes'),
     },
     {
       id: 'values',
-      title: t('Values'),
+      title: t('knative-plugin~Values'),
     },
   ];
 };

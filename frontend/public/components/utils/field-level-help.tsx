@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { memo, Children } from 'react';
-import { Button, Popover, PopoverProps } from '@patternfly/react-core';
+import type { PopoverProps } from '@patternfly/react-core';
+import { Button, Popover } from '@patternfly/react-core';
 import { RhUiQuestionMarkCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 

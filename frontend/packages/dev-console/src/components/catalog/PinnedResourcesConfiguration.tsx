@@ -28,15 +28,13 @@ import { SaveStatus } from '@console/shared/src/components/cluster-configuration
 import { useConsoleOperatorConfig } from '@console/shared/src/components/cluster-configuration/useConsoleOperatorConfig';
 import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';
+import { usePerspectives } from '@console/shared/src/hooks/usePerspectives';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import type {
   Perspective,
   PerspectivePinnedResource,
-} from '@console/shared/src/hooks/usePerspectives';
-import {
-  PerspectiveVisibilityState,
-  usePerspectives,
-} from '@console/shared/src/hooks/usePerspectives';
-import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
+} from '@console/shared/src/utils/override-perspectives';
+import { PerspectiveVisibilityState } from '@console/shared/src/utils/override-perspectives';
 import './PinnedResourcesConfiguration.scss';
 
 // skip duplicate resources.

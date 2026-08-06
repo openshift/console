@@ -1,19 +1,19 @@
 import { useState } from 'react';
+import { ActionGroup, Button, Title } from '@patternfly/react-core';
 import * as _ from 'lodash';
-import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
-import { ActionGroup, Button, Title } from '@patternfly/react-core';
-
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ConfigMapModel, SecretModel } from '../../models';
-import { IdentityProvider, k8sCreate, OAuthKind } from '../../module/k8s';
+import type { IdentityProvider, OAuthKind } from '../../module/k8s';
+import { k8sCreate } from '../../module/k8s';
 import { ButtonBar } from '../utils/button-bar';
 import { ListInput } from '../utils/list-input';
-import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
-import { addIDP, getOAuthResource as getOAuth, redirectToOAuthPage, mockNames } from './';
-import { IDPNameInput } from './idp-name-input';
 import { IDPCAFileInput } from './idp-cafile-input';
+import { IDPNameInput } from './idp-name-input';
+import { addIDP, getOAuthResource as getOAuth, redirectToOAuthPage, mockNames } from '.';
 
 export const AddLDAPPage = () => {
   const navigate = useNavigate();
@@ -138,31 +138,26 @@ export const AddLDAPPage = () => {
     return handlePromise(addIDP(oauth, idp, dryRun));
   };
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault();
     // Clear any previous errors.
     setErrorMessage('');
-    getOAuthResource().then((oauth: OAuthKind) => {
+    try {
+      const oauth: OAuthKind = await getOAuthResource();
       const mockSecret = bindPassword ? mockNames.secret : '';
       const mockCA = caFileContent ? mockNames.ca : '';
-      addLDAPIDP(oauth, mockSecret, mockCA, true)
-        .then(() => {
-          const promises = [createBindPasswordSecret(), createCAConfigMap()];
-
-          Promise.all(promises)
-            .then(([bindPasswordSecret, caConfigMap]) => {
-              const bindPasswordSecretName = _.get(bindPasswordSecret, 'metadata.name');
-              const caConfigMapName = _.get(caConfigMap, 'metadata.name');
-              return addLDAPIDP(oauth, bindPasswordSecretName, caConfigMapName);
-            })
-            .then(() => {
-              redirectToOAuthPage(navigate);
-            });
-        })
-        .catch((err) => {
-          setErrorMessage(err);
-        });
-    });
+      await addLDAPIDP(oauth, mockSecret, mockCA, true);
+      const [bindPasswordSecret, caConfigMap] = await Promise.all([
+        createBindPasswordSecret(),
+        createCAConfigMap(),
+      ]);
+      const bindPasswordSecretName = _.get(bindPasswordSecret, 'metadata.name');
+      const caConfigMapName = _.get(caConfigMap, 'metadata.name');
+      await addLDAPIDP(oauth, bindPasswordSecretName, caConfigMapName);
+      redirectToOAuthPage(navigate);
+    } catch (err) {
+      setErrorMessage(err);
+    }
   };
 
   const title = t('Add Identity Provider: LDAP');

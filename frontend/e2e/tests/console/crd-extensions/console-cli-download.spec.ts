@@ -67,7 +67,7 @@ test.describe(`${crd} CRD`, { tag: ['@admin'] }, () => {
 
     await test.step('Verify instance appears on Command Line Tools page', async () => {
       await page.goto('/command-line-tools');
-      await expect(page.locator(`[data-test-id="${name}"]`)).toContainText(name);
+      await expect(page.getByTestId(name)).toContainText(name);
     });
 
     await test.step('Delete the ConsoleCLIDownload instance', async () => {
