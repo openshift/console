@@ -4,6 +4,7 @@ import {
   isK8sUrl,
   validateStatus,
 } from '@console/shared/src/utils/console-fetch-utils';
+import { updateLastConsoleActivity } from '../activity-tracker';
 import { coFetch } from '../console-fetch';
 
 describe('unescapeGoUnicode', () => {
@@ -133,5 +134,32 @@ describe('consoleFetch', () => {
       // ignore
     }
     expect(window.fetch).toHaveBeenCalledTimes(3);
+  });
+});
+
+describe('updateLastConsoleActivity', () => {
+  beforeEach(() => {
+    localStorage.clear();
+    jest.restoreAllMocks();
+  });
+
+  it('should set the activity timestamp in localStorage', () => {
+    updateLastConsoleActivity();
+    expect(localStorage.getItem('last-console-activity-timestamp')).not.toBeNull();
+  });
+
+  it('should dispatch a console-activity event', () => {
+    const handler = jest.fn();
+    window.addEventListener('console-activity', handler);
+    updateLastConsoleActivity();
+    window.removeEventListener('console-activity', handler);
+    expect(handler).toHaveBeenCalledTimes(1);
+  });
+
+  it('should not throw when localStorage is unavailable', () => {
+    jest.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new DOMException('QuotaExceededError');
+    });
+    expect(() => updateLastConsoleActivity()).not.toThrow();
   });
 });

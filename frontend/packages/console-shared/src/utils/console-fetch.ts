@@ -7,6 +7,7 @@ import type {
   ConsoleFetch,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { RetryError, TimeoutError } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
+import { updateLastConsoleActivity } from './activity-tracker';
 import {
   applyConsoleHeaders,
   getConsoleRequestHeaders,
@@ -36,6 +37,7 @@ export const coFetch: ConsoleFetch = async (url, options = {}, timeout = 60000) 
         res = await fetch(url, allOptions).then((resp) =>
           validateStatus(resp, url, allOptions.method, attempt < 3),
         );
+        updateLastConsoleActivity();
       } catch (e) {
         if (e instanceof RetryError) {
           retry = true;
