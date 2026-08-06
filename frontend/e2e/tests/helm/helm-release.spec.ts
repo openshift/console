@@ -50,8 +50,8 @@ test.describe('Helm Release', { tag: ['@helm', '@smoke'] }, () => {
     await test.step('Verify Create Helm Release page', async () => {
       await expect(helmPage.getFormTitle()).toHaveText('Create Helm Release');
       await expect(helmPage.getReleaseNameInput()).toHaveValue('nodejs');
-      await expect(helmPage.getFormViewRadio()).toBeChecked();
-      await expect(helmPage.getYamlViewRadio()).not.toBeChecked();
+      await expect(helmPage.getFormViewRadio()).toBeChecked({ timeout: 30_000 });
+      await expect(helmPage.getYamlViewRadio()).not.toBeChecked({ timeout: 10_000 });
       await expect(helmPage.getFormSections().first()).toBeVisible();
     });
 

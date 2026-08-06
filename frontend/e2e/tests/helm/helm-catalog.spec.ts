@@ -189,6 +189,7 @@ test.describe('Helm Catalog', { tag: ['@helm', '@regression'] }, () => {
     k8sClient,
     cleanup,
   }) => {
+    const NON_CONFIGURABLE_CHART = 'Httpd Imagestreams';
     const ns = `aut-helm-noconfig-${Date.now()}`;
     await k8sClient.createNamespace(ns);
     cleanup.trackNamespace(ns);
@@ -198,7 +199,16 @@ test.describe('Helm Catalog', { tag: ['@helm', '@regression'] }, () => {
     await test.step('Navigate to catalog and select non-configurable chart', async () => {
       await helmPage.navigateToCatalog(ns);
       await helmPage.selectHelmChartsType();
-      await helmPage.searchAndSelectChart('Httpd Imagestreams');
+      await page.getByPlaceholder('Filter by keyword...').fill(NON_CONFIGURABLE_CHART);
+      const chartTile = page.getByTestId(`HelmChart-${NON_CONFIGURABLE_CHART}`).first();
+      const noResults = page.getByText('No results found');
+      // Wait for catalog to settle — either the chart tile appears or "No results found"
+      await expect(chartTile.or(noResults)).toBeVisible({ timeout: 30_000 });
+      test.skip(
+        await noResults.isVisible(),
+        `Chart "${NON_CONFIGURABLE_CHART}" not available on this cluster`,
+      );
+      await chartTile.click();
       await helmPage.clickCreateOnSidePane();
     });
 
