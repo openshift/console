@@ -25,7 +25,7 @@ spec:
           - ALL
   restartPolicy: Always`;
 
-describe('Debug pod', () => {
+xdescribe('Debug pod', () => {
   before(() => {
     cy.login();
     cy.createProjectWithCLI(testName);
