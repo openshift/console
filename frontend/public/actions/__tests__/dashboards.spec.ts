@@ -1,5 +1,7 @@
 import { Map as ImmutableMap } from 'immutable';
-
+import { MIN_POLL_DELAY } from '../../components/utils/adaptive-polling';
+import { RESULTS_TYPE } from '../../reducers/dashboard-results';
+import { defaults } from '../../reducers/dashboards';
 import {
   watchURL,
   ActionType,
@@ -7,9 +9,6 @@ import {
   stopWatchPrometheusQuery,
   watchPrometheusQuery,
 } from '../dashboards';
-import { defaults } from '../../reducers/dashboards';
-import { RESULTS_TYPE } from '../../reducers/dashboard-results';
-import { MIN_POLL_DELAY } from '../../components/utils/adaptive-polling';
 
 const testStopWatch = (stopAction, type: RESULTS_TYPE, key: string) => {
   expect(stopAction(key)).toEqual({

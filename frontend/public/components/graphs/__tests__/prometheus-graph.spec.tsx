@@ -1,7 +1,4 @@
 import { act, screen } from '@testing-library/react';
-
-import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
-import { FLAGS } from '@console/shared/src/constants/common';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { setFlag } from '@console/internal/actions/flags';
 import * as UIActions from '@console/internal/actions/ui';
@@ -9,6 +6,8 @@ import {
   PrometheusGraph,
   PrometheusGraphLink,
 } from '@console/internal/components/graphs/prometheus-graph';
+import { FLAGS } from '@console/shared/src/constants/common';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 
 jest.mock('@console/dynamic-plugin-sdk/src/perspective/useActivePerspective', () => ({
   default: jest.fn(),
@@ -148,7 +147,7 @@ describe('PrometheusGraphLink', () => {
       <PrometheusGraphLink query="test">
         <div>
           <span>Chart data</span>
-          <button>Action</button>
+          <button type="button">Action</button>
         </div>
       </PrometheusGraphLink>,
     );

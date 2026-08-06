@@ -1,4 +1,3 @@
-import * as _ from 'lodash';
 import type { ReactNode } from 'react';
 import { useState, useCallback, useEffect } from 'react';
 import {
@@ -10,28 +9,22 @@ import {
   ModalHeader,
   ModalVariant,
 } from '@patternfly/react-core';
+import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import type { To } from 'react-router';
-import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import { ModalComponentProps } from '@console/shared/src/types/modal';
-import { resourceListPathFromModel, ResourceLink } from '../utils/resource-link';
-import {
-  k8sKill,
-  k8sList,
-  referenceForOwnerRef,
-  K8sResourceKind,
-  K8sModel,
-  OwnerReference,
-} from '../../module/k8s/';
-import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
-import { findOwner } from '../../module/k8s/managed-by';
-
-import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
+import { k8sKill, k8sList, referenceForOwnerRef } from '../../module/k8s';
+import type { K8sResourceKind, K8sModel, OwnerReference } from '../../module/k8s';
+import { findOwner } from '../../module/k8s/managed-by';
+import { resourceListPathFromModel, ResourceLink } from '../utils/resource-link';
 
-//Modal for resource deletion and allows cascading deletes if propagationPolicy is provided for the enum
+// Modal for resource deletion and allows cascading deletes if propagationPolicy is provided for the enum
 const DeleteModal = (props: DeleteModalProps) => {
   const navigate = useNavigate();
   const [isChecked, setIsChecked] = useState(true);
@@ -46,28 +39,30 @@ const DeleteModal = (props: DeleteModalProps) => {
       event.preventDefault();
       const { kind, resource, deleteAllResources } = props;
 
-      //https://kubernetes.io/docs/concepts/workloads/controllers/garbage-collection/
+      // https://kubernetes.io/docs/concepts/workloads/controllers/garbage-collection/
       const propagationPolicy = isChecked && kind ? kind.propagationPolicy : 'Orphan';
       const json = propagationPolicy
         ? { kind: 'DeleteOptions', apiVersion: 'v1', propagationPolicy }
         : undefined;
 
-      handlePromise(k8sKill(kind, resource, {}, {}, json)).then(() => {
-        props?.close && props.close();
+      handlePromise(k8sKill(kind, resource, {}, {}, json))
+        .then(() => {
+          props?.close && props.close();
 
-        if (deleteAllResources && isDeleteOtherResourcesChecked) {
-          deleteAllResources();
-        }
+          if (deleteAllResources && isDeleteOtherResourcesChecked) {
+            deleteAllResources();
+          }
 
-        // If we are currently on the deleted resource's page, redirect to the resource list page
-        const re = new RegExp(`/${resource?.metadata?.name}(/|$)`);
-        if (re.test(window.location.pathname)) {
-          const listPath = props.redirectTo
-            ? props.redirectTo
-            : resourceListPathFromModel(kind, _.get(resource, 'metadata.namespace'));
-          navigate(listPath);
-        }
-      });
+          // If we are currently on the deleted resource's page, redirect to the resource list page
+          const re = new RegExp(`/${resource?.metadata?.name}(/|$)`);
+          if (re.test(window.location.pathname)) {
+            const listPath = props.redirectTo
+              ? props.redirectTo
+              : resourceListPathFromModel(kind, _.get(resource, 'metadata.namespace'));
+            navigate(listPath);
+          }
+        })
+        .catch(() => {});
     },
     [isChecked, isDeleteOtherResourcesChecked, props, handlePromise, navigate],
   );

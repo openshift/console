@@ -2,6 +2,7 @@ import type { FC } from 'react';
 import { Table, Thead, Tr, Th, Td, Tbody } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import { ResourceIcon } from '@console/internal/components/utils';
+import { DASH } from '@console/shared/src/constants/ui';
 
 const EndpointRow: FC<EndpointRowProps> = ({ endpoint }) => {
   const { t } = useTranslation('olm');
@@ -16,17 +17,17 @@ const EndpointRow: FC<EndpointRowProps> = ({ endpoint }) => {
       ) : (
         element
       ),
-    <span className="pf-v6-u-text-color-subtle">--</span>,
+    <span className="pf-v6-u-text-color-subtle">{DASH}</span>,
   );
 
   return (
     <Tr>
       <Td dataLabel={t('Port')}>
         <div>
-          <ResourceIcon kind="Service" /> {endpoint.port || '--'}
+          <ResourceIcon kind="Service" /> {endpoint.port || DASH}
         </div>
       </Td>
-      <Td dataLabel={t('Interval')}>{endpoint.interval || '--'}</Td>
+      <Td dataLabel={t('Interval')}>{endpoint.interval || DASH}</Td>
       <Td dataLabel={t('Details')}>{detail}</Td>
     </Tr>
   );

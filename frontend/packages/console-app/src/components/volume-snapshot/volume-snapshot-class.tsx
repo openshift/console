@@ -52,7 +52,7 @@ const getDataViewRowsCreator: (t: TFunction) => GetDataViewRows<VolumeSnapshotCl
           <ResourceLink name={name} kind={kind}>
             {isDefaultSnapshotClass(obj) && (
               <span className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle co-resource-item__help-text">
-                &ndash; {t('Default')}
+                &ndash; {t('console-app~Default')}
               </span>
             )}
           </ResourceLink>

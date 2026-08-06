@@ -1,17 +1,21 @@
-import { applyMiddleware, combineReducers, createStore, compose, ReducersMapObject } from 'redux';
-import { featureFlagMiddleware } from '@console/internal/plugins';
 import * as _ from 'lodash';
+import type { ReducersMapObject } from 'redux';
+import { applyMiddleware, combineReducers, createStore, compose } from 'redux';
 import { thunk } from 'redux-thunk';
-import type { ReduxReducer } from '@console/dynamic-plugin-sdk/src/extensions/redux';
+import type { FeatureSubStore } from '@console/dynamic-plugin-sdk/src/app/features';
 import { SDKReducers } from '@console/dynamic-plugin-sdk/src/app/redux';
 import type { SDKStoreState } from '@console/dynamic-plugin-sdk/src/app/redux-types';
-import type { ResolvedExtension } from '@console/dynamic-plugin-sdk/src/types';
-import { FeatureSubStore } from '@console/dynamic-plugin-sdk/src/app/features';
-import { featureReducer, featureReducerName } from './reducers/features';
-import ObserveReducers, { ObserveState } from './reducers/observe';
-import UIReducers, { UIState } from './reducers/ui';
-import { dashboardsReducer, DashboardsState } from './reducers/dashboards';
 import storeHandler from '@console/dynamic-plugin-sdk/src/app/storeHandler';
+import type { ReduxReducer } from '@console/dynamic-plugin-sdk/src/extensions/redux';
+import type { ResolvedExtension } from '@console/dynamic-plugin-sdk/src/types';
+import { featureFlagMiddleware } from '@console/internal/plugins';
+import type { DashboardsState } from './reducers/dashboards';
+import { dashboardsReducer } from './reducers/dashboards';
+import { featureReducer, featureReducerName } from './reducers/features';
+import type { ObserveState } from './reducers/observe';
+import ObserveReducers from './reducers/observe';
+import type { UIState } from './reducers/ui';
+import UIReducers from './reducers/ui';
 
 const composeEnhancers =
   (process.env.NODE_ENV !== 'production' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose;

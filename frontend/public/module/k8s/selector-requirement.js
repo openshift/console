@@ -2,46 +2,46 @@ import * as _ from 'lodash';
 import { createEquals } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 
 export const requirementFromString = (string) => {
-  string = string.trim();
+  const str = string.trim();
 
   // "key"
-  if (/^[0-9A-Za-z/\-_.]+$/.test(string)) {
+  if (/^[0-9A-Za-z/\-_.]+$/.test(str)) {
     return {
-      key: string,
+      key: str,
       operator: 'Exists',
       values: [],
     };
   }
 
   // "!key"
-  if (/^!\s*[0-9A-Za-z/\-_.]+$/.test(string)) {
+  if (/^!\s*[0-9A-Za-z/\-_.]+$/.test(str)) {
     return {
-      key: string.split(/!\s*/)[1],
+      key: str.split(/!\s*/)[1],
       operator: 'DoesNotExist',
       values: [],
     };
   }
 
   // "key=value" OR "key==value"
-  if (/^[0-9A-Za-z/\-_.]+\s*==?\s*[0-9A-Za-z/\-_.]+$/.test(string)) {
-    const parts = string.split(/\s*==?\s*/);
+  if (/^[0-9A-Za-z/\-_.]+\s*==?\s*[0-9A-Za-z/\-_.]+$/.test(str)) {
+    const parts = str.split(/\s*==?\s*/);
     const key = parts[0];
     const value = parts[1];
     return createEquals(key, value);
   }
 
   // "key!=value"
-  if (/^[0-9A-Za-z/\-_.]+\s*!=\s*[0-9A-Za-z/\-_.]+$/.test(string)) {
+  if (/^[0-9A-Za-z/\-_.]+\s*!=\s*[0-9A-Za-z/\-_.]+$/.test(str)) {
     return {
-      key: string.split(/\s*!=\s*/)[0],
+      key: str.split(/\s*!=\s*/)[0],
       operator: 'NotEquals',
-      values: [string.split(/\s*!=\s*/)[1]],
+      values: [str.split(/\s*!=\s*/)[1]],
     };
   }
 
   // "key in (value1[,value2,...])"
-  if (/^[0-9A-Za-z/\-_.]+\s+in\s+\([0-9A-Za-z/\-_.,\s]+\)$/.test(string)) {
-    const parts = string.split(/\s+in\s+/);
+  if (/^[0-9A-Za-z/\-_.]+\s+in\s+\([0-9A-Za-z/\-_.,\s]+\)$/.test(str)) {
+    const parts = str.split(/\s+in\s+/);
     const key = parts[0];
     const values = parts[1].slice(1, -1).split(',').map(_.trim);
 
@@ -53,8 +53,8 @@ export const requirementFromString = (string) => {
   }
 
   // "key notin (value1[,value2,...])"
-  if (/^[0-9A-Za-z/\-_.]+\s+notin\s+\([0-9A-Za-z/\-_.,\s]+\)$/.test(string)) {
-    const parts = string.split(/\s+notin\s+/);
+  if (/^[0-9A-Za-z/\-_.]+\s+notin\s+\([0-9A-Za-z/\-_.,\s]+\)$/.test(str)) {
+    const parts = str.split(/\s+notin\s+/);
     const key = parts[0];
     const values = parts[1].slice(1, -1).split(',').map(_.trim);
 
@@ -66,8 +66,8 @@ export const requirementFromString = (string) => {
   }
 
   // "key > value1"
-  if (/^[0-9A-Za-z/\-_.]+\s+>\s+[0-9.]+$/.test(string)) {
-    const parts = string.split(/\s+>\s+/);
+  if (/^[0-9A-Za-z/\-_.]+\s+>\s+[0-9.]+$/.test(str)) {
+    const parts = str.split(/\s+>\s+/);
     const key = parts[0];
     const value = parts[1];
 
@@ -79,8 +79,8 @@ export const requirementFromString = (string) => {
   }
 
   // "key < value1"
-  if (/^[0-9A-Za-z/\-_.]+\s+<\s+[0-9.]+$/.test(string)) {
-    const parts = string.split(/\s+<\s+/);
+  if (/^[0-9A-Za-z/\-_.]+\s+<\s+[0-9.]+$/.test(str)) {
+    const parts = str.split(/\s+<\s+/);
     const key = parts[0];
     const value = parts[1];
 
@@ -91,5 +91,5 @@ export const requirementFromString = (string) => {
     };
   }
 
-  return; // falsy means parsing failure
+  // falsy means parsing failure
 };

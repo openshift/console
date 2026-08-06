@@ -1,7 +1,7 @@
-import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
 import { useState, useMemo, useCallback } from 'react';
+import type { RowSearchFilter } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
 import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
-import { RowSearchFilter } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
 /**
  * Handles a state management hack-fix around the label filters auto complete field.
@@ -23,7 +23,7 @@ const useSearchFilters = (searchFilters: RowSearchFilter[], uniqueFilterName: st
     [searchFilters],
   );
 
-  const queryParams = useDeepCompareMemoize(new URLSearchParams(location.search));
+  const queryParams = useDeepCompareMemoize(new URLSearchParams(window.location.search));
 
   const searchFiltersValues: { [filterName: string]: string } = useMemo(
     () =>

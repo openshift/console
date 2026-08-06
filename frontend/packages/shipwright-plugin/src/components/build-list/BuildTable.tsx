@@ -39,42 +39,42 @@ const BuildHeader = () => {
 
   return [
     {
-      title: i18next.t('shipwright-plugin~Name'),
+      title: t('shipwright-plugin~Name'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: columnClassNames[0] },
     },
     {
       id: 'namespace',
-      title: t('Namespace'),
+      title: t('shipwright-plugin~Namespace'),
       sortField: 'metadata.namespace',
       transforms: [sortable],
       props: { className: columnClassNames[1] },
     },
     {
-      title: t('Output'),
+      title: t('shipwright-plugin~Output'),
       props: { className: columnClassNames[2] },
     },
     {
-      title: t('Last run'),
+      title: t('shipwright-plugin~Last run'),
       transforms: [sortable],
       sortField: 'latestBuild.metadata.name',
       props: { className: columnClassNames[3] },
     },
     {
-      title: t('Last run status'),
+      title: t('shipwright-plugin~Last run status'),
       transforms: [sortable],
       sortFunc: 'latestBuildStatus',
       props: { className: columnClassNames[4] },
     },
     {
-      title: t('Last run time'),
+      title: t('shipwright-plugin~Last run time'),
       transforms: [sortable],
       sortField: 'latestBuild.status.completionTime',
       props: { className: columnClassNames[5] },
     },
     {
-      title: t('Last run duration'),
+      title: t('shipwright-plugin~Last run duration'),
       transforms: [sortable],
       sortFunc: 'latestRunDuration',
       props: { className: columnClassNames[6] },

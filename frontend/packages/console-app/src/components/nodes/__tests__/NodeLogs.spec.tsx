@@ -81,7 +81,7 @@ describe('NodeLogs', () => {
     jest.clearAllMocks();
   });
 
-  it('should render SectionHeading when FLAG_NODE_MGMT_V1 is enabled', async () => {
+  it('should render SectionHeading when FLAG_OPENSHIFT_5 is enabled', async () => {
     useFlag.mockReturnValue(true);
 
     render(<NodeLogs obj={mockNode} />);
@@ -94,7 +94,7 @@ describe('NodeLogs', () => {
     expect(heading).toHaveTextContent('Logs');
   });
 
-  it('should not render SectionHeading when FLAG_NODE_MGMT_V1 is disabled', async () => {
+  it('should not render SectionHeading when FLAG_OPENSHIFT_5 is disabled', async () => {
     useFlag.mockReturnValue(false);
 
     render(<NodeLogs obj={mockNode} />);

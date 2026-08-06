@@ -1,12 +1,11 @@
 import type { FC } from 'react';
 import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
-
+import type { ResourceIconProps } from '@console/dynamic-plugin-sdk';
 import { getReference } from '@console/dynamic-plugin-sdk/src/utils/k8s';
-import { ResourceIconProps } from '@console/dynamic-plugin-sdk';
-import { K8sResourceKindReference } from '../../module/k8s';
-import { modelFor } from '../../module/k8s/k8s-models';
+import type { K8sResourceKindReference } from '../../module/k8s';
 import { kindToAbbr } from '../../module/k8s/get-resources';
+import { modelFor } from '../../module/k8s/k8s-models';
 
 const MEMO = {};
 

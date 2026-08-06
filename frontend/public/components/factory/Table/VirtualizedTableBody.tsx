@@ -1,10 +1,10 @@
 import type { ComponentType } from 'react';
-import { memo, useMemo } from 'react';
-import { CellMeasurerCache, CellMeasurer } from 'react-virtualized';
+import { memo, useMemo, useRef } from 'react';
+import type { OnSelect } from '@patternfly/react-table';
 import { VirtualTableBody } from '@patternfly/react-virtualized-extension';
 import type { Scroll } from '@patternfly/react-virtualized-extension/dist/esm/components/Virtualized/types';
-import { OnSelect } from '@patternfly/react-table';
-import {
+import { CellMeasurerCache, CellMeasurer } from 'react-virtualized';
+import type {
   K8sResourceCommon,
   TableColumn,
   RowProps,
@@ -61,11 +61,17 @@ const VirtualizedTableBody = <D extends any, R extends any = {}>({
   onRowsRendered,
   onSelect,
 }: VirtualizedTableBodyProps<D, R>) => {
-  const cellMeasurementCache = new CellMeasurerCache({
-    fixedWidth: true,
-    minHeight: 44,
-    keyMapper: (rowIndex) => (data?.[rowIndex] as K8sResourceCommon)?.metadata?.uid || rowIndex, // TODO custom keyMapper ?
-  });
+  const dataRef = useRef(data);
+  dataRef.current = data;
+
+  const cellMeasurementCache = useRef(
+    new CellMeasurerCache({
+      fixedWidth: true,
+      minHeight: 44,
+      keyMapper: (rowIndex) =>
+        (dataRef.current?.[rowIndex] as K8sResourceCommon)?.metadata?.uid || rowIndex,
+    }),
+  ).current;
 
   const activeColumnIDs = useMemo(() => new Set(columns.map((c) => c.id)), [columns]);
 

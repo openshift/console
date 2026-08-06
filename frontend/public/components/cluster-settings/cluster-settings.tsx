@@ -1,9 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import type { FC, ReactNode } from 'react';
 import { useEffect, useRef, useMemo, useState } from 'react';
-import * as _ from 'lodash';
-import { css } from '@patternfly/react-styles';
-import * as semver from 'semver';
 import {
   Alert,
   AlertActionLink,
@@ -29,41 +26,48 @@ import {
   Stack,
   StackItem,
 } from '@patternfly/react-core';
-import { Link } from 'react-router';
-import { useTranslation } from 'react-i18next';
-
 import {
   RhUiAddCircleIcon,
   RhUiPauseCircleIcon,
   RhUiEditIcon,
+  RhUiAiInfoIcon,
   RhUiInProgressIcon,
 } from '@patternfly/react-icons';
-
+import { css } from '@patternfly/react-styles';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router';
+import * as semver from 'semver';
+import type { WatchK8sResource } from '@console/dynamic-plugin-sdk';
+import { useAccessReview } from '@console/dynamic-plugin-sdk';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
+import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import type { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
+import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
+import { FEATURE_FLAG_LIGHTSPEED_PLUGIN } from '@console/shared/src/components/cluster-updates/constants';
 import { UpdateWorkflowOLSButton } from '@console/shared/src/components/cluster-updates/explain-button';
 import {
   hasAvailableUpdates,
   hasOperatorIssues,
   determineWorkflowButtons,
 } from '@console/shared/src/components/cluster-updates/workflow-utils';
-import { FEATURE_FLAG_LIGHTSPEED_PLUGIN } from '@console/shared/src/components/cluster-updates/constants';
-
-import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
-import { MarkdownView } from '@console/shared/src/components/markdown/MarkdownView';
-import {
-  ClusterServiceVersionKind,
-  ClusterServiceVersionModel,
-} from '@console/operator-lifecycle-manager';
-import { WatchK8sResource, useAccessReview } from '@console/dynamic-plugin-sdk';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import { DescriptionListTermHelp } from '@console/shared/src/components/description-list/DescriptionListTermHelp';
+import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
-
-import { ClusterOperatorPage } from './cluster-operator';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { MarkdownView } from '@console/shared/src/components/markdown/MarkdownView';
+import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
+import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
+import { FLAGS } from '@console/shared/src/constants/common';
 import {
-  LazyClusterChannelModalOverlay,
-  LazyClusterMoreUpdatesModalOverlay,
-  LazyClusterUpdateModalOverlay,
-} from '../modals';
-import { GlobalConfigPage } from './global-config';
+  isClusterExternallyManaged,
+  useCanClusterUpgrade,
+} from '@console/shared/src/hooks/useCanClusterUpgrade';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
+import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import {
   ClusterAutoscalerModel,
   ClusterOperatorModel,
@@ -72,12 +76,17 @@ import {
   MachineConfigModel,
   NodeModel,
 } from '../../models';
+import type {
+  ClusterOperator,
+  ClusterVersionKind,
+  K8sResourceKind,
+  MachineConfigPoolKind,
+  UpdateHistory,
+} from '../../module/k8s';
 import {
   clusterIsUpToDateOrUpdateAvailable,
-  ClusterOperator,
   ClusterUpdateStatus,
   ClusterVersionConditionType,
-  ClusterVersionKind,
   clusterVersionReference,
   getClusterID,
   getClusterOperatorVersion,
@@ -99,52 +108,39 @@ import {
   isMCPWorker,
   isMinorVersionNewer,
   K8sResourceConditionStatus,
-  K8sResourceKind,
   MachineConfigPoolConditionType,
-  MachineConfigPoolKind,
   NodeTypeNames,
   NodeTypes,
   referenceForModel,
   showReleaseNotes,
   sortMCPsByCreationTimestamp,
   splitClusterVersionChannel,
-  UpdateHistory,
 } from '../../module/k8s';
-import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { hasNotRecommendedUpdates } from '../../module/k8s/cluster-settings';
+import {
+  LazyClusterChannelModalOverlay,
+  LazyClusterMoreUpdatesModalOverlay,
+  LazyClusterUpdateModalOverlay,
+} from '../modals';
+import { ErrorModal } from '../modals/error-modal';
+import { UpstreamConfigDetailsItem } from '../utils/details-page';
 import { documentationURLs, getDocumentationURL, isManaged } from '../utils/documentation';
-import { EmptyBox } from '../utils/status-box';
 import { FieldLevelHelp } from '../utils/field-level-help';
+import { SectionHeading } from '../utils/headings';
 import { HorizontalNav } from '../utils/horizontal-nav';
 import { ReleaseNotesLink } from '../utils/release-notes-link';
 import { ResourceLink, resourcePathFromModel } from '../utils/resource-link';
-import { SectionHeading } from '../utils/headings';
-import { togglePaused } from '../utils/workload-pause';
-import { UpstreamConfigDetailsItem } from '../utils/details-page';
-
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import {
-  isClusterExternallyManaged,
-  useCanClusterUpgrade,
-} from '@console/shared/src/hooks/useCanClusterUpgrade';
-import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
-import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
-import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
-import { DescriptionListTermHelp } from '@console/shared/src/components/description-list/DescriptionListTermHelp';
-import { useFlag } from '@console/shared/src/hooks/useFlag';
-import { FLAGS } from '@console/shared/src/constants/common';
-
 import {
   ServiceLevel,
   useServiceLevelTitle,
   ServiceLevelText,
   ServiceLevelLoading,
 } from '../utils/service-level';
-import { hasNotRecommendedUpdates } from '../../module/k8s/cluster-settings';
+import { EmptyBox } from '../utils/status-box';
+import { togglePaused } from '../utils/workload-pause';
+import { ClusterOperatorPage } from './cluster-operator';
 import { UpdateStatus } from './cluster-status';
-import { ErrorModal } from '../modals/error-modal';
-import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
-import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import { GlobalConfigPage } from './global-config';
 
 const clusterAutoscalerReference = referenceForModel(ClusterAutoscalerModel);
 
@@ -796,7 +792,7 @@ const getConditionOfType = (cv: ClusterVersionKind, type: ClusterVersionConditio
 // Returns array of operator details for operators with problems
 const detectOperatorIssues = (
   clusterOperators?: ClusterOperator[],
-): Array<{ name: string; issue: string; condition: any }> => {
+): { name: string; issue: string; condition: any }[] => {
   if (!clusterOperators || clusterOperators.length === 0) {
     return [];
   }
@@ -895,7 +891,7 @@ const parseUpdateFailureMessage = (
       return {
         title: t('public~Cluster has issues preventing updates'),
         message: t(
-          'public~The cluster is not ready to update. Check the cluster operator status and resolve any issues before attempting to update.',
+          'public~Your cluster is not ready to update. Check the cluster operator status and fix any failing or degraded operators before you update.',
         ),
       };
     }
@@ -929,7 +925,7 @@ const parseUpdateFailureMessage = (
     return {
       title: t('public~Update blocked by cluster version overrides'),
       message: t(
-        'public~The cluster has version overrides configured that prevent automatic updates. Remove the overrides from the ClusterVersion object to continue with the update.',
+        'public~Your cluster version overrides are preventing automatic updates. To continue, remove the overrides from your ClusterVersion object.',
       ),
     };
   }
@@ -942,7 +938,7 @@ const parseUpdateFailureMessage = (
     return {
       title: t('public~Update blocked by degraded cluster operators'),
       message: t(
-        'public~Some cluster operators are in a degraded or unavailable state. Fix the operator issues before attempting to update the cluster.',
+        'public~Your cluster operators are in a degraded or unavailable state. Fix the operator issues before you update the cluster.',
       ),
     };
   }
@@ -952,7 +948,7 @@ const parseUpdateFailureMessage = (
     return {
       title: t('public~Update validation failed'),
       message: t(
-        'public~The update payload failed validation checks. This may indicate issues with the update manifest or cluster configuration.',
+        'public~The update payload failed validation checks. Check the update manifest and cluster configuration for errors.',
       ),
     };
   }
@@ -966,7 +962,7 @@ const parseUpdateFailureMessage = (
     return {
       title: t('public~Update failed due to connectivity issues'),
       message: t(
-        'public~Unable to download or validate the update payload. Check network connectivity and registry access.',
+        'public~Your cluster cannot download or validate the update payload. Check your network connectivity and registry access.',
       ),
     };
   }
@@ -976,7 +972,7 @@ const parseUpdateFailureMessage = (
     return {
       title: t('public~Update failed due to insufficient resources'),
       message: t(
-        'public~The cluster does not have enough resources to complete the update. Ensure adequate disk space and memory are available.',
+        'public~Your cluster does not have enough resources to complete the update. Make sure you have enough disk space and memory available.',
       ),
     };
   }
@@ -986,7 +982,7 @@ const parseUpdateFailureMessage = (
     return {
       title: t('public~Update blocked by cluster policy'),
       message: t(
-        'public~The update is blocked by cluster policies or governance rules. Contact your cluster administrator for assistance.',
+        'public~Cluster policies or governance rules are blocking your update. Contact your cluster administrator for help resolving this issue.',
       ),
     };
   }
@@ -1002,7 +998,7 @@ const parseUpdateFailureMessage = (
       message:
         advice ||
         t(
-          'public~The cluster does not meet the required conditions for updating. Check the cluster status and resolve any blocking issues.',
+          'public~Your cluster does not meet the required conditions for updating. Check the cluster status and fix any blocking conditions before you update.',
         ),
     };
   }
@@ -1012,7 +1008,7 @@ const parseUpdateFailureMessage = (
     return {
       title: t('public~Update signature verification failed'),
       message: t(
-        'public~The update payload could not be verified. This may indicate issues with release signatures or registry certificates.',
+        'public~The update payload could not be verified. Check the release signatures and registry certificates for issues.',
       ),
     };
   }
@@ -1065,7 +1061,7 @@ const parseUpdateFailureMessage = (
       return {
         title: t('public~Cluster update conditions need attention'),
         message: t(
-          'public~The cluster has conditions that prevent updates. Check the cluster status and resolve any issues before attempting to update.',
+          'public~Your cluster has conditions that prevent updates. Check the cluster status and fix any blocking conditions before you update.',
         ),
       };
     }
@@ -1099,7 +1095,11 @@ const parseUpdateFailureMessage = (
 
   return {
     title: t('public~Update failed'),
-    message: cleanMessage || t('public~An error occurred during the update process.'),
+    message:
+      cleanMessage ||
+      t(
+        'public~Your cluster update could not be completed. Check the cluster status for details or try the update again.',
+      ),
   };
 };
 
@@ -1132,10 +1132,10 @@ export const ClusterNotUpgradeableAlert: FC<ClusterNotUpgradeableAlertProps> = (
       title={
         currentVersionParsed && newerUpdateParsed
           ? t(
-              'This cluster should not be updated to {{nextMajorMinorVersion}}. You can continue to update to patch releases in {{currentMajorMinorVersion}}.',
+              'Your cluster cannot update to {{nextMajorMinorVersion}}. You can continue to install patch releases in {{currentMajorMinorVersion}}.',
               { nextMajorMinorVersion, currentMajorMinorVersion },
             )
-          : t('This cluster should not be updated to the next minor version.')
+          : t('Your cluster cannot update to the next minor version.')
       }
       className="co-alert"
       actionLinks={
@@ -1258,14 +1258,12 @@ const UpdateAlertContent: FC<AlertContentProps> = ({
 
     if (availableUpdates.length === 1) {
       return t('public~Update Available: {{updateVersion}}', {
-        currentVersion,
         updateVersion: availableUpdates[0]?.version,
       });
     }
 
     if (availableUpdates.length > 1) {
       return t('public~Available Updates (latest: {{latestVersion}})', {
-        currentVersion,
         latestVersion: availableUpdates[0]?.version,
       });
     }
@@ -1361,8 +1359,8 @@ const UpdateAlertContent: FC<AlertContentProps> = ({
         <FlexItem>
           <div className="pf-v6-u-color-200 pf-v6-u-font-size-sm">
             {hasUpdates
-              ? t('public~Check cluster health and update prerequisites.')
-              : t('public~Verify cluster health and operational status.')}
+              ? t('public~Check cluster health and update prerequisites')
+              : t('public~Verify cluster health and operational status')}
           </div>
         </FlexItem>
       </Flex>
@@ -1378,7 +1376,7 @@ const UpdateAlertContent: FC<AlertContentProps> = ({
       </FlexItem>
       <FlexItem>
         <div className="pf-v6-u-color-200 pf-v6-u-font-size-sm">
-          {t('public~Review cluster status.')}
+          {t('public~Review cluster status')}
         </div>
       </FlexItem>
     </Flex>
@@ -1496,13 +1494,13 @@ const UpdateAssessmentCard: FC<{
           'aria-expanded': assessmentExpanded,
         }}
       >
-        <CardTitle>{t('public~AI Assessment')}</CardTitle>
+        <CardTitle>{t('public~AI assessment')}</CardTitle>
       </CardHeader>
       <CardExpandableContent>
         <CardBody>
           <Alert
             variant="info"
-            customIcon={<RhUiInProgressIcon />}
+            customIcon={<RhUiAiInfoIcon />}
             isInline
             title={alertTitle}
             actionLinks={
@@ -1546,6 +1544,16 @@ const UpdateAssessmentCard: FC<{
               cv={cv}
               t={t}
             />
+          </Alert>
+          <Alert
+            variant="warning"
+            isInline
+            isPlain
+            title={t('Cluster updates are irreversible')}
+            className="pf-v6-u-mt-sm"
+            data-test="update-assessment-irreversibility-notice"
+          >
+            {t('After an update begins, you cannot roll back to the previous version.')}
           </Alert>
         </CardBody>
       </CardExpandableContent>

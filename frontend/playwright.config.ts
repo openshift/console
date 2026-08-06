@@ -36,6 +36,7 @@ const chromeArgs = [
   '--no-sandbox',
   '--disable-setuid-sandbox',
   '--disable-background-networking',
+  '--disable-background-timer-throttling',
   '--disable-client-side-phishing-detection',
   '--disable-default-apps',
   '--disable-extensions',
@@ -49,7 +50,9 @@ export default defineConfig({
   testDir: './e2e/tests',
   testMatch: '**/*.spec.ts',
   forbidOnly: isCI,
-  retries: isCI ? 1 : 0,
+  globalTimeout: Number(process.env.GLOBAL_TIMEOUT_MS) || 0,
+  maxFailures: isCI ? 10 : 0,
+  retries: isCI ? 2 : 0,
   timeout: 120_000,
   reporter: isCI
     ? [
@@ -84,7 +87,7 @@ export default defineConfig({
     },
   },
 
-  workers: process.env.WORKERS ? parseInt(process.env.WORKERS, 10) : isCI ? 1 : undefined,
+  workers: process.env.WORKERS ? Number(process.env.WORKERS) || undefined : undefined,
 
   projects: [
     {
@@ -125,11 +128,18 @@ export default defineConfig({
       testMatch: 'teardown.setup.ts',
     },
 
+    {
+      name: 'knative-setup',
+      testDir: path.resolve(__dirname, 'e2e', 'setup'),
+      testMatch: 'knative.setup.ts',
+      dependencies: ['cluster-setup'],
+    },
+
     ...packages.map((pkg) => ({
       name: pkg,
       testDir: path.resolve(__dirname, 'e2e', 'tests', pkg),
       testIgnore: '**/developer/**',
-      dependencies: ['admin-auth'],
+      dependencies: pkg === 'knative' ? ['admin-auth', 'knative-setup'] : ['admin-auth'],
       use: {
         ...chrome,
         storageState: adminStorageState,

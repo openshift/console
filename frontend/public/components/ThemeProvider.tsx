@@ -1,7 +1,7 @@
 import type { FC, ReactNode } from 'react';
 import { createContext, useState, useCallback, useEffect, useMemo, useContext } from 'react';
-import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { IS_OPENSHIFT_5 } from '@console/app/src/features/openshift5';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 
 const THEME_USER_PREFERENCE_KEY = 'console.theme';
 const THEME_LOCAL_STORAGE_KEY = 'bridge/theme';
@@ -23,15 +23,15 @@ const THEME_DEFAULT = 'default';
 export const darkThemeMq = window.matchMedia('(prefers-color-scheme: dark)');
 const contrastThemeMq = window.matchMedia('(prefers-contrast: more)');
 
-type PROCESSED_THEME = typeof THEME_DARK | typeof THEME_LIGHT;
-type PROCESSED_CONTRAST = typeof THEME_CONTRAST | typeof THEME_DEFAULT | typeof THEME_GLASS;
+type ProcessedTheme = typeof THEME_DARK | typeof THEME_LIGHT;
+type ProcessedContrast = typeof THEME_CONTRAST | typeof THEME_DEFAULT | typeof THEME_GLASS;
 
 type Theme = {
-  theme: PROCESSED_THEME;
-  contrast: PROCESSED_CONTRAST;
+  theme: ProcessedTheme;
+  contrast: ProcessedContrast;
 };
 
-const updateColorThemeClass = (htmlTagElement: HTMLElement, theme: string): PROCESSED_THEME => {
+const updateColorThemeClass = (htmlTagElement: HTMLElement, theme: string): ProcessedTheme => {
   const isDarkTheme = theme === THEME_SYSTEM_DEFAULT ? darkThemeMq.matches : theme === THEME_DARK;
   htmlTagElement.classList.toggle(THEME_DARK_CLASS, isDarkTheme);
   return isDarkTheme ? THEME_DARK : THEME_LIGHT;
@@ -40,8 +40,8 @@ const updateColorThemeClass = (htmlTagElement: HTMLElement, theme: string): PROC
 const updateColorContrastClass = (
   htmlTagElement: HTMLElement,
   contrast: string,
-): PROCESSED_CONTRAST => {
-  let resolvedContrast: PROCESSED_CONTRAST = THEME_DEFAULT;
+): ProcessedContrast => {
+  let resolvedContrast: ProcessedContrast = THEME_DEFAULT;
 
   // Glass and contrast is an OCP 5-exclusive feature
   if (IS_OPENSHIFT_5) {
@@ -70,13 +70,13 @@ interface ThemeProviderProps {
 
 /** Hook to determine the theme to apply, based on user preference and system settings. */
 const useProcessedTheme = () => {
-  const localTheme = localStorage.getItem(THEME_LOCAL_STORAGE_KEY) as PROCESSED_THEME;
+  const localTheme = localStorage.getItem(THEME_LOCAL_STORAGE_KEY) as ProcessedTheme;
   const [theme, , themeLoaded] = useUserPreference(
     THEME_USER_PREFERENCE_KEY,
     THEME_SYSTEM_DEFAULT,
     true,
   );
-  const [processedTheme, setProcessedTheme] = useState<PROCESSED_THEME>(localTheme);
+  const [processedTheme, setProcessedTheme] = useState<ProcessedTheme>(localTheme);
 
   const applyTheme = useCallback((isDark: boolean) => {
     const resolved = updateColorThemeClass(
@@ -117,13 +117,13 @@ const useProcessedTheme = () => {
  * OCP 5.x: Default to 'glass' or 'contrast' based on system settings
  */
 const useProcessedContrast = () => {
-  const localContrast = localStorage.getItem(CONTRAST_LOCAL_STORAGE_KEY) as PROCESSED_CONTRAST;
+  const localContrast = localStorage.getItem(CONTRAST_LOCAL_STORAGE_KEY) as ProcessedContrast;
   const [theme, , themeLoaded] = useUserPreference(
     CONTRAST_USER_PREFERENCE_KEY,
     THEME_SYSTEM_DEFAULT,
     true,
   );
-  const [processedContrast, setProcessedContrast] = useState<PROCESSED_CONTRAST>(localContrast);
+  const [processedContrast, setProcessedContrast] = useState<ProcessedContrast>(localContrast);
 
   const applyTheme = useCallback((contrastLevel: string) => {
     const resolved = updateColorContrastClass(document.documentElement, contrastLevel);

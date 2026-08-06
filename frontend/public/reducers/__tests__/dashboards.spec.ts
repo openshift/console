@@ -1,8 +1,5 @@
 import * as Immutable from 'immutable';
 import { noop } from 'lodash';
-
-import { dashboardsReducer, defaults } from '../dashboards';
-import { RESULTS_TYPE } from '../dashboard-results';
 import {
   activateWatch,
   updateWatchTimeout,
@@ -10,6 +7,8 @@ import {
   stopWatch,
   setData,
 } from '../../actions/dashboards';
+import { RESULTS_TYPE } from '../dashboard-results';
+import { dashboardsReducer, defaults } from '../dashboards';
 
 describe('dashboardsReducer', () => {
   it('returns default values if state is uninitialized', () => {

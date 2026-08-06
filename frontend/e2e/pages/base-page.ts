@@ -1,4 +1,8 @@
-import { type Locator, type Page, expect } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
+
+import { expect } from '../fixtures';
+
+import type KubernetesClient from '../clients/kubernetes-client';
 
 export async function getEditorContent(page: Page): Promise<string> {
   await page.waitForFunction(
@@ -23,8 +27,51 @@ export async function setEditorContent(page: Page, content: string): Promise<voi
 }
 
 export async function warmupSPA(page: Page): Promise<void> {
-  await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 60_000 });
-  await expect(page.getByTestId('page-heading')).toBeVisible({ timeout: 30_000 });
+  await expect(async () => {
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 60_000 });
+    await expect(page.locator('#page-sidebar')).toBeVisible({ timeout: 30_000 });
+  }).toPass({ intervals: [1_000, 2_000, 5_000], timeout: 90_000 });
+  await dismissQuickStartDrawer(page);
+}
+
+export async function dismissQuickStartDrawer(page: Page): Promise<void> {
+  const closeButton = page.getByRole('button', { name: 'Close drawer panel' });
+  try {
+    // eslint-disable-next-line no-restricted-syntax
+    await closeButton.waitFor({ state: 'visible', timeout: 5_000 });
+    await closeButton.click();
+  } catch {
+    // No quickstart drawer open — continue
+  }
+}
+
+export async function ensureDeveloperPerspective(
+  page: Page,
+  k8sClient: KubernetesClient,
+): Promise<void> {
+  const toggle = page.getByTestId('perspective-switcher-toggle');
+  await expect(toggle).toBeVisible();
+  const isSinglePerspective =
+    (await toggle.getAttribute('id')) === 'only-one-perspective';
+  if (isSinglePerspective) {
+    await k8sClient.customObjectsApi.patchClusterCustomObject({
+      group: 'operator.openshift.io',
+      version: 'v1',
+      plural: 'consoles',
+      name: 'cluster',
+      body: [
+        {
+          op: 'add',
+          path: '/spec/customization/perspectives',
+          value: [{ id: 'dev', visibility: { state: 'Enabled' } }],
+        },
+      ],
+    });
+    await expect(async () => {
+      await page.reload();
+      await expect(toggle).not.toHaveAttribute('id', 'only-one-perspective');
+    }).toPass({ timeout: 60_000 });
+  }
 }
 
 export default abstract class BasePage {
@@ -166,14 +213,14 @@ export default abstract class BasePage {
       Administrator: ['Administrator', 'Core platform'],
       Developer: ['Developer'],
     };
-    const toggle = this.page.locator('[data-test-id="perspective-switcher-toggle"]');
+    const toggle = this.page.getByTestId('perspective-switcher-toggle');
     const labels = labelMap[target] || [target];
     const currentText = (await toggle.textContent()) || '';
     if (labels.some((label) => currentText.includes(label))) {
       return;
     }
     await this.robustClick(toggle);
-    const menuOption = this.page.locator('[data-test-id="perspective-switcher-menu-option"]');
+    const menuOption = this.page.getByTestId('perspective-switcher-menu-option');
     for (const label of labels) {
       const option = menuOption.filter({ hasText: label });
       if ((await option.count()) > 0) {

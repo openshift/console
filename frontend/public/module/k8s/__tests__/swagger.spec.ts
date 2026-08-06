@@ -43,7 +43,7 @@ describe('fetchSwagger', () => {
   beforeEach(() => {
     jest.isolateModules(() => {
       // Fresh module to reset cachedETag and swaggerDefinitions
-      const swagger = require('../swagger');
+      const swagger = jest.requireActual('../swagger');
       fetchSwagger = swagger.fetchSwagger;
       getSwaggerDefinitions = swagger.getSwaggerDefinitions;
     });

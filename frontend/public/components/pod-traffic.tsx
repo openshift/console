@@ -1,12 +1,12 @@
 import type { FC } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Tooltip } from '@patternfly/react-core';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { EndpointSliceKind } from '../module/k8s';
 import { RhUiConnectedIcon, RhUiDisconnectedIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
 import { EndPointSliceModel } from '@console/app/src/models';
-import { LoadingInline } from '@console/internal/components/utils/status-box';
 import Status from '@console/dynamic-plugin-sdk/src/app/components/status/Status';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { LoadingInline } from '@console/internal/components/utils/status-box';
+import type { EndpointSliceKind } from '../module/k8s';
 
 export type PodTrafficProp = {
   podName: string;
@@ -28,7 +28,8 @@ export const PodTraffic: FC<PodTrafficProp> = ({ podName, namespace, tooltipFlag
 
   if (!loaded) {
     return <LoadingInline />;
-  } else if (loaded && loadError) {
+  }
+  if (loaded && loadError) {
     return <Status status="Error" title={t('Error')} />;
   }
   const allEndpoints = data?.reduce((prev, next) => prev.concat(next?.endpoints), []);

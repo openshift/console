@@ -1,7 +1,6 @@
 import { screen } from '@testing-library/react';
-import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
-
 import { GaugeChart } from '@console/internal/components/graphs/gauge';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 
 const MOCK_GAUGE_DATA = { x: 'CPU Usage', y: 75 };
 const MOCK_ERROR_DATA = { x: 'Memory Usage', y: 85 };
@@ -30,7 +29,7 @@ describe('GaugeChart', () => {
 
   it('should show a loading state', () => {
     renderWithProviders(
-      <GaugeChart title="Loading Gauge" label="Loading" data={MOCK_LOADING_DATA} loading={true} />,
+      <GaugeChart title="Loading Gauge" label="Loading" data={MOCK_LOADING_DATA} loading />,
     );
 
     expect(screen.getByText('Loading')).toBeVisible();

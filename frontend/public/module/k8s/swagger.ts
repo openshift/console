@@ -1,8 +1,7 @@
 import * as _ from 'lodash';
-
-import { coFetch } from '@console/shared/src/utils/console-fetch';
-import { K8sKind } from '@console/dynamic-plugin-sdk/src/api/common-types';
+import type { K8sKind } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { referenceForModel } from '@console/internal/module/k8s/k8s';
+import { coFetch } from '@console/shared/src/utils/console-fetch';
 
 export const getDefinitionKey = _.memoize(
   (model: K8sKind, definitions: SwaggerDefinitions): string => {

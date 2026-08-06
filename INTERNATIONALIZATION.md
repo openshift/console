@@ -81,14 +81,9 @@ t('key' + id)
 #### Adding internationalization to a new package
 Whenever a new package is added, you will need to make a few changes so it is picked up by our existing internationalization tools.
 
-1. In `frontend/webpack.config.ts` (around line 209), add:
-```
-new CopyWebpackPlugin([{ from: './packages/package-name/locales', to: 'locales' }])
-```
+1. Create a new unique namespace for use in `TFunctions` in the package. This will also be the name of the JSON file generated in `package-name/locales`. We typically use the package name for the namespace.
 
-2. Create a new unique namespace for use in `TFunctions` in the package. This will also be the name of the JSON file generated in `package-name/locales`. We typically use the package name for the namespace.
-
-3. Register your new namespace in the `ns` array in `public/i18n.js` on line 34.
+2. Register your new namespace in the `ns` array in `public/i18n.js`.
 
 Example:
 ```

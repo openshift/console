@@ -656,14 +656,14 @@ github.com/openshift/api/image/v1
 github.com/openshift/api/oauth/v1
 github.com/openshift/api/operator/v1
 github.com/openshift/api/route/v1
-# github.com/openshift/client-go v0.0.0-20260108185524-48f4ccfc4e13
-## explicit; go 1.24.0
+# github.com/openshift/client-go v0.0.0-20260317180604-743f664b82d1
+## explicit; go 1.25.0
 github.com/openshift/client-go/oauth/applyconfigurations/internal
 github.com/openshift/client-go/oauth/applyconfigurations/oauth/v1
 github.com/openshift/client-go/oauth/clientset/versioned/scheme
 github.com/openshift/client-go/oauth/clientset/versioned/typed/oauth/v1
-# github.com/openshift/library-go v0.0.0-20231020125034-5a2d9fe760b3
-## explicit; go 1.20
+# github.com/openshift/library-go v0.0.0-20260518122146-385e91fd29b1
+## explicit; go 1.24.0
 github.com/openshift/library-go/pkg/crypto
 # github.com/operator-framework/api v0.42.0
 ## explicit; go 1.25.7

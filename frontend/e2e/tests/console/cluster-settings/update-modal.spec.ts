@@ -48,6 +48,13 @@ test.describe('Cluster Settings cluster update modal', { tag: ['@admin'] }, () =
 
       // Open update modal and dropdown
       await clusterSettings.openUpdateModal();
+
+      // Verify irreversibility notice is always shown
+      const irreversibilityNotice = page.getByTestId(
+        'update-cluster-modal-irreversibility-notice',
+      );
+      await expect(irreversibilityNotice).toBeVisible();
+
       await clusterSettings.openUpdateDropdown();
 
       // Verify switch is disabled when worker is paused

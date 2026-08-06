@@ -1,33 +1,5 @@
 import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
-import * as _ from 'lodash';
-import { useTranslation } from 'react-i18next';
-
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { DASH } from '@console/shared/src/constants/ui';
-import { TableColumn } from '@console/dynamic-plugin-sdk';
-import {
-  actionsCellProps,
-  getNameCellProps,
-  ConsoleDataView,
-  nameCellProps,
-} from '@console/app/src/components/data-view/ConsoleDataView';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
-import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import { MachineAutoscalerModel } from '../models';
-import {
-  groupVersionFor,
-  K8sResourceKind,
-  referenceForGroupVersionKind,
-  referenceForModel,
-} from '../module/k8s';
-import { DetailsPage } from './factory/details';
-import { ListPage } from './factory/list-page';
-import { LoadingBox } from './utils/status-box';
-import { navFactory } from './utils/horizontal-nav';
-import { ResourceLink } from './utils/resource-link';
-import { ResourceSummary } from './utils/details-page';
-import { SectionHeading } from './utils/headings';
 import {
   DescriptionListDescription,
   DescriptionListGroup,
@@ -35,7 +7,30 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import {
+  actionsCellProps,
+  getNameCellProps,
+  ConsoleDataView,
+  nameCellProps,
+} from '@console/app/src/components/data-view/ConsoleDataView';
+import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+import type { TableColumn } from '@console/dynamic-plugin-sdk';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { DASH } from '@console/shared/src/constants/ui';
+import { MachineAutoscalerModel } from '../models';
+import type { K8sResourceKind } from '../module/k8s';
+import { groupVersionFor, referenceForGroupVersionKind, referenceForModel } from '../module/k8s';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { ResourceLink } from './utils/resource-link';
+import { LoadingBox } from './utils/status-box';
 
 const machineAutoscalerReference = referenceForModel(MachineAutoscalerModel);
 
@@ -189,7 +184,7 @@ const MachineAutoscalerList: FC<MachineAutoscalerListProps> = ({
         loadError={loadError}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
+        hideColumnManagement
         isResizable
         resetAllColumnWidths={resetAllColumnWidths}
       />
@@ -237,8 +232,8 @@ export const MachineAutoscalerPage: FC<MachineAutoscalerPageProps> = (props) => 
     {...props}
     ListComponent={MachineAutoscalerList}
     kind={machineAutoscalerReference}
-    canCreate={true}
-    omitFilterToolbar={true}
+    canCreate
+    omitFilterToolbar
   />
 );
 

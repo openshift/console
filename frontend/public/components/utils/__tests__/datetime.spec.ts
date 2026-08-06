@@ -2,7 +2,7 @@ import {
   formatPrometheusDuration,
   parsePrometheusDuration,
 } from '@console/shared/src/utils/datetime';
-import { getDuration, isValid } from '../../../components/utils/datetime';
+import { getDuration, isValid } from '../datetime';
 
 describe('isValid', () => {
   it('rejects non-dates', () => {

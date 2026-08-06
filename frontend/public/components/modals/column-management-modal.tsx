@@ -18,13 +18,12 @@ import {
   ModalVariant,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { ColumnLayout, ManagedColumn } from '@console/dynamic-plugin-sdk';
-
+import type { ColumnLayout, ManagedColumn } from '@console/dynamic-plugin-sdk';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import { COLUMN_MANAGEMENT_USER_PREFERENCE_KEY } from '@console/shared/src/constants/common';
 import type { WithUserPreferenceProps } from '@console/shared/src/hoc/withUserPreference';
 import { withUserPreference } from '@console/shared/src/hoc/withUserPreference';
-import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import type { ModalComponentProps } from '@console/shared/src/types/modal';
 
 const MAX_VIEW_COLS = 9;

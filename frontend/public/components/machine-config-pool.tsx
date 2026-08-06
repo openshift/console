@@ -1,7 +1,5 @@
-import * as _ from 'lodash';
 import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   Card,
   DescriptionList,
@@ -13,46 +11,45 @@ import {
   Tooltip,
 } from '@patternfly/react-core';
 import { RhUiPauseCircleIcon, RhUiSyncIcon } from '@patternfly/react-icons';
-import { TableColumn } from '@console/dynamic-plugin-sdk';
-
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import {
   actionsCellProps,
   getNameCellProps,
   ConsoleDataView,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import { Conditions } from './conditions';
-import { MachineConfigPoolModel } from '../models';
-import { machineConfigReference, MachineConfigPage } from './machine-config';
-import {
-  K8sModel,
-  K8sResourceCondition,
-  K8sResourceConditionStatus,
-  MachineConfigPoolConditionType,
-  MachineConfigPoolKind,
-  referenceForModel,
-} from '../module/k8s';
-import { DetailsPage } from './factory/details';
-import { ListPage } from './factory/list-page';
-import { DASH } from '@console/shared/src/constants/ui';
-import { DetailsItem } from './utils/details-item';
-import { LoadingBox, LoadingInline } from './utils/status-box';
-import { navFactory } from './utils/horizontal-nav';
-import { ResourceLink } from './utils/resource-link';
-import { ResourceSummary } from './utils/details-page';
-import { SectionHeading } from './utils/headings';
-import { Selector } from './utils/selector';
-import { WorkloadPausedAlert } from './utils/workload-pause';
-import { ResourceEventStream } from './events';
-import { MachineConfigPoolsArePausedAlert } from './cluster-settings/cluster-settings';
-import { UpToDateMessage } from './cluster-settings/cluster-status';
+import type { TableColumn } from '@console/dynamic-plugin-sdk';
+import type { Action } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
-import { Action } from '@console/dynamic-plugin-sdk/src/lib-core';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
+import { DASH } from '@console/shared/src/constants/ui';
+import { MachineConfigPoolModel } from '../models';
+import type { K8sModel, K8sResourceCondition, MachineConfigPoolKind } from '../module/k8s';
+import {
+  K8sResourceConditionStatus,
+  MachineConfigPoolConditionType,
+  referenceForModel,
+} from '../module/k8s';
+import { MachineConfigPoolsArePausedAlert } from './cluster-settings/cluster-settings';
+import { UpToDateMessage } from './cluster-settings/cluster-status';
+import { Conditions } from './conditions';
+import { ResourceEventStream } from './events';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
+import { machineConfigReference, MachineConfigPage } from './machine-config';
+import { DetailsItem } from './utils/details-item';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { ResourceLink } from './utils/resource-link';
+import { Selector } from './utils/selector';
+import { LoadingBox, LoadingInline } from './utils/status-box';
+import { WorkloadPausedAlert } from './utils/workload-pause';
 
 const machineConfigPoolReference = referenceForModel(MachineConfigPoolModel);
 
@@ -424,7 +421,7 @@ const MachineConfigPoolList: FC<MachineConfigPoolListProps> = ({
           loadError={loadError}
           columns={columns}
           getDataViewRows={getDataViewRows}
-          hideColumnManagement={true}
+          hideColumnManagement
           isResizable
           resetAllColumnWidths={resetAllColumnWidths}
         />
@@ -438,8 +435,8 @@ export const MachineConfigPoolPage: FC<any> = (props) => (
     {...props}
     ListComponent={MachineConfigPoolList}
     kind={machineConfigPoolReference}
-    canCreate={true}
-    omitFilterToolbar={true}
+    canCreate
+    omitFilterToolbar
   />
 );
 

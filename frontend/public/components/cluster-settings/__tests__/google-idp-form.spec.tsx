@@ -2,8 +2,8 @@ import {
   renderWithProviders,
   verifyInputField,
 } from '@console/shared/src/test-utils/unit-test-utils';
+import { AddGooglePage } from '../google-idp-form';
 import { verifyIDPAddAndCancelButtons, verifyPageTitleAndSubtitle, mockData } from './test-utils';
-import { AddGooglePage } from '../../cluster-settings/google-idp-form';
 
 describe('Add Identity Provider: Google', () => {
   const renderPage = () => {

@@ -52,7 +52,7 @@ const MetricsTooltip: FC<MetricsTooltipProps & { children?: ReactNode }> = ({
     content.splice(
       keepLines,
       numRemoved,
-      <div key="#removed-pods">and {numRemoved} other pods</div>,
+      <div key="#removed-pods">{t('and {{count}} other pods', { count: numRemoved })}</div>,
     );
   }
 

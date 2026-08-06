@@ -1,21 +1,15 @@
 import type { FC } from 'react';
 import { useEffect, useState } from 'react';
 import { css } from '@patternfly/react-styles';
-import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
-
+import { Link } from 'react-router';
+import type { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
+import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
+import type { K8sResourceCommon, OwnerReference } from '../../module/k8s';
+import { referenceForOwnerRef, modelFor, k8sList } from '../../module/k8s';
+import { findOwner, matchOwnerAndCSV } from '../../module/k8s/managed-by';
 import { ResourceIcon } from './resource-icon';
 import { resourcePathFromModel, ResourceLink } from './resource-link';
-import {
-  K8sResourceCommon,
-  referenceForOwnerRef,
-  OwnerReference,
-  modelFor,
-  k8sList,
-} from '../../module/k8s';
-import { findOwner, matchOwnerAndCSV } from '../../module/k8s/managed-by';
-import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
-import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
 
 export const ManagedByOperatorResourceLink: FC<ManagerLinkProps> = ({
   csvName,
@@ -52,7 +46,7 @@ export const ManagedByOperatorResourceLink: FC<ManagerLinkProps> = ({
 export const ManagedByOperatorLink: FC<ManagedByLinkProps> = ({ obj, className }) => {
   const { t } = useTranslation('public');
   const [data, setData] = useState<ClusterServiceVersionKind[] | undefined>(undefined);
-  const namespace = obj.metadata.namespace;
+  const { namespace } = obj.metadata;
   useEffect(() => {
     if (!namespace) {
       return;

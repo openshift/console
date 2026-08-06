@@ -1,7 +1,4 @@
-import * as _ from 'lodash';
 import { useContext, memo } from 'react';
-import { css } from '@patternfly/react-styles';
-import { useTranslation } from 'react-i18next';
 import {
   Card,
   CardBody,
@@ -10,15 +7,18 @@ import {
   Button,
   DescriptionList,
 } from '@patternfly/react-core';
+import { css } from '@patternfly/react-styles';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router';
 import { OverviewDetailItem } from '@console/internal/components/overview/OverviewDetailItem';
+import { GreenCheckCircleIcon } from '@console/shared/src/components/status/icons';
 import { getName } from '@console/shared/src/selectors/common';
 import { getRequester } from '@console/shared/src/selectors/namespace';
-import { GreenCheckCircleIcon } from '@console/shared/src/components/status/icons';
+import { ProjectModel } from '../../../models';
 import { LabelList } from '../../utils/label-list';
 import { resourcePathFromModel } from '../../utils/resource-link';
-import { ProjectModel } from '../../../models';
 import { ProjectDashboardContext } from './project-dashboard-context';
-import { Link } from 'react-router';
 
 export const DetailsCard = memo(() => {
   const { obj } = useContext(ProjectDashboardContext);

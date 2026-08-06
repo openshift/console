@@ -17,7 +17,7 @@ const routes: RouteConfig[] = [
   {
     path: '/',
     assertLoaded: async (page) => {
-      await expect(page.getByTestId('page-heading').locator('h1')).toBeAttached();
+      await expect(page.getByTestId('page-heading').locator('h1')).toBeVisible();
       for (const skeleton of await page.getByTestId('skeleton-chart').all()) {
         await expect(skeleton).toBeHidden();
       }
@@ -26,7 +26,7 @@ const routes: RouteConfig[] = [
   {
     path: '/k8s/cluster/clusterroles/view',
     assertLoaded: async (page) => {
-      await expect(page.getByTestId('page-heading').locator('h1')).toBeAttached();
+      await expect(page.getByTestId('page-heading').locator('h1')).toBeVisible();
     },
   },
   {
@@ -36,7 +36,7 @@ const routes: RouteConfig[] = [
   {
     path: '/k8s/all-namespaces/events',
     assertLoaded: async (page) => {
-      await expect(page.getByRole('row').first()).toBeVisible();
+      await expect(page.getByTestId('event-totals')).toBeVisible();
     },
   },
   {
@@ -60,7 +60,7 @@ const routes: RouteConfig[] = [
   {
     path: '/api-resource/ns/default/core~v1~Pod/schema',
     assertLoaded: async (page) => {
-      await expect(page.getByTestId('resource-sidebar-item').first()).toBeAttached();
+      await expect(page.getByTestId('resource-sidebar-item').first()).toBeVisible();
     },
   },
   {
@@ -123,7 +123,7 @@ const routes: RouteConfig[] = [
   {
     path: '/settings/cluster',
     assertLoaded: async (page) => {
-      await expect(page.getByTestId('cluster-version')).toBeAttached();
+      await expect(page.getByTestId('cluster-version')).toBeVisible();
     },
   },
   {
@@ -152,6 +152,22 @@ test.describe('Visiting other routes', { tag: ['@admin', '@smoke'] }, () => {
 });
 
 test.describe('Perspective query parameters', { tag: ['@admin'] }, () => {
+  let patchedPerspectives = false;
+
+  test.afterAll(async ({ k8sClient }) => {
+    if (patchedPerspectives) {
+      await k8sClient.customObjectsApi
+        .patchClusterCustomObject({
+          group: 'operator.openshift.io',
+          version: 'v1',
+          plural: 'consoles',
+          name: 'cluster',
+          body: [{ op: 'remove', path: '/spec/customization/perspectives' }],
+        })
+        .catch(() => {});
+    }
+  });
+
   test('Developer query parameter switches to Developer perspective', async ({
     page,
     k8sClient,
@@ -163,7 +179,7 @@ test.describe('Perspective query parameters', { tag: ['@admin'] }, () => {
       await expect(toggle).toBeVisible();
 
       const isSinglePerspective =
-        (await toggle.getAttribute('id')) === 'core-platform-perspective';
+        (await toggle.getAttribute('id')) === 'only-one-perspective';
       if (isSinglePerspective) {
         await k8sClient.customObjectsApi.patchClusterCustomObject({
           group: 'operator.openshift.io',
@@ -178,10 +194,11 @@ test.describe('Perspective query parameters', { tag: ['@admin'] }, () => {
             },
           ],
         });
+        patchedPerspectives = true;
       }
       await expect(async () => {
         await page.reload();
-        await expect(toggle).not.toHaveAttribute('id', 'core-platform-perspective');
+        await expect(toggle).not.toHaveAttribute('id', 'only-one-perspective');
       }).toPass({ timeout: 60_000 });
     });
 

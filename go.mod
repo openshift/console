@@ -15,8 +15,8 @@ require (
 	github.com/gorilla/sessions v1.4.0
 	github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674
 	github.com/openshift/api v3.9.0+incompatible
-	github.com/openshift/client-go v0.0.0-20260108185524-48f4ccfc4e13
-	github.com/openshift/library-go v0.0.0-20231020125034-5a2d9fe760b3
+	github.com/openshift/client-go v0.0.0-20260317180604-743f664b82d1
+	github.com/openshift/library-go v0.0.0-20260518122146-385e91fd29b1
 	github.com/operator-framework/api v0.42.0
 	github.com/operator-framework/kubectl-operator v0.6.1-0.20250318134414-b496b1036eaf
 	github.com/operator-framework/operator-controller v1.2.0

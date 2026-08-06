@@ -1,25 +1,26 @@
 import type { FC, ReactElement } from 'react';
-import * as _ from 'lodash';
 import { useState, useCallback, useEffect, useMemo } from 'react';
-import * as fuzzy from 'fuzzysearch';
 import { Alert } from '@patternfly/react-core';
-import { useFlag } from '@console/shared/src/hooks/useFlag';
-import { FLAGS } from '@console/shared/src/constants/common';
-import { ActionItem, ConsoleSelect } from '@console/internal/components/utils/console-select';
-import { LoadingInline } from './status-box';
-import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
-import { ResourceName } from './resource-icon';
-import { flagPending } from '../../reducers/features';
-import { NamespaceModel, ProjectModel } from '@console/internal/models';
+import * as fuzzy from 'fuzzysearch';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useCreateNamespaceModal } from '@console/shared/src/hooks/useCreateNamespaceModal';
-import { useCreateProjectModal } from '@console/shared/src/hooks/useCreateProjectModal';
-import {
+import type {
   K8sResourceCommon,
   K8sModel,
   K8sResourceKind,
   WatchK8sResource,
 } from '@console/dynamic-plugin-sdk/src';
+import type { ActionItem } from '@console/internal/components/utils/console-select';
+import { ConsoleSelect } from '@console/internal/components/utils/console-select';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
+import { NamespaceModel, ProjectModel } from '@console/internal/models';
+import { FLAGS } from '@console/shared/src/constants/common';
+import { useCreateNamespaceModal } from '@console/shared/src/hooks/useCreateNamespaceModal';
+import { useCreateProjectModal } from '@console/shared/src/hooks/useCreateProjectModal';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
+import { flagPending } from '../../reducers/features';
+import { ResourceName } from './resource-icon';
+import { LoadingInline } from './status-box';
 
 const getKey = (key, keyKind) => {
   return keyKind ? `${key}-${keyKind}` : key;
@@ -56,7 +57,7 @@ interface ListDropdownInternalProps extends Omit<ListDropdownProps, 'resources'>
   resources?: Record<string, ListDropdownResource>;
 }
 
-const ListDropdown_: FC<ListDropdownInternalProps> = ({
+const InnerListDropdown: FC<ListDropdownInternalProps> = ({
   desc,
   placeholder,
   loaded,
@@ -235,7 +236,12 @@ export const ListDropdown: FC<ListDropdownProps> = (props) => {
   }, [watchedResources]);
 
   return (
-    <ListDropdown_ {...props} resources={watchedResources} loaded={loaded} loadError={loadError} />
+    <InnerListDropdown
+      {...props}
+      resources={watchedResources}
+      loaded={loaded}
+      loadError={loadError}
+    />
   );
 };
 

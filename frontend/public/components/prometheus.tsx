@@ -1,25 +1,24 @@
 import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
-
-import { ListPage } from './factory/list-page';
-import type { ListPageProps } from './factory/list-page';
-import { LabelList } from './utils/label-list';
-import { ResourceLink } from './utils/resource-link';
-import { Selector } from './utils/selector';
-import { LoadingBox } from './utils/status-box';
-import { PrometheusModel } from '../models';
-import { referenceForModel, referenceFor, K8sResourceKind } from '../module/k8s';
-import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import {
   ConsoleDataView,
   getNameCellProps,
   actionsCellProps,
   cellIsStickyProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import { TableColumn } from '@console/internal/module/k8s';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { DASH } from '@console/shared/src/constants/ui';
+import { PrometheusModel } from '../models';
+import type { K8sResourceKind, TableColumn } from '../module/k8s';
+import { referenceForModel, referenceFor } from '../module/k8s';
+import { ListPage } from './factory/list-page';
+import type { ListPageProps } from './factory/list-page';
+import { LabelList } from './utils/label-list';
+import { ResourceLink } from './utils/resource-link';
+import { Selector } from './utils/selector';
+import { LoadingBox } from './utils/status-box';
 
 const tableColumnInfo = [
   { id: 'name' },
@@ -158,7 +157,7 @@ const PrometheusInstancesList: FC<{ data: K8sResourceKind[]; loaded: boolean }> 
         label={PrometheusModel.labelPlural}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
+        hideColumnManagement
       />
     </Suspense>
   );
@@ -168,8 +167,8 @@ export const PrometheusInstancesPage = (props: Partial<ListPageProps<never>>) =>
   <ListPage
     {...props}
     ListComponent={PrometheusInstancesList}
-    canCreate={true}
+    canCreate
     kind={referenceForModel(PrometheusModel)}
-    omitFilterToolbar={true}
+    omitFilterToolbar
   />
 );

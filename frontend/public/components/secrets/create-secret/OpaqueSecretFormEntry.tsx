@@ -1,11 +1,10 @@
-import type { FC } from 'react';
-import { FormEvent } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Base64 } from 'js-base64';
+import type { FC, FormEvent } from 'react';
 import { TextInput, Button, FormGroup, ActionGroup, FormFieldGroup } from '@patternfly/react-core';
-import { DroppableFileInput } from './DropableFileInput';
-import { OpaqueSecretFormEntryProps } from './types';
 import { RhUiMinusCircleIcon } from '@patternfly/react-icons';
+import { Base64 } from 'js-base64';
+import { useTranslation } from 'react-i18next';
+import { DroppableFileInput } from './DropableFileInput';
+import type { OpaqueSecretFormEntryProps } from './types';
 
 export const OpaqueSecretFormEntry: FC<OpaqueSecretFormEntryProps> = ({
   onChange,

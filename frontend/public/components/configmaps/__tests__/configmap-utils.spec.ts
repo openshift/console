@@ -216,10 +216,10 @@ describe('configmap-utils', () => {
         metadata: {
           ...sampleConfigMap.metadata,
           labels: {
-            ['test.label.one']: 'label1',
+            'test.label.one': 'label1',
           },
           annotations: {
-            ['test.annotation.one']: 'annotation1',
+            'test.annotation.one': 'annotation1',
           },
         },
       };

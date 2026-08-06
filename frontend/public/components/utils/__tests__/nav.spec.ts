@@ -1,6 +1,6 @@
 import { getSortedNavExtensions, sortExtensionItems } from '@console/app/src/components/nav/utils';
+import type { NavExtension } from '@console/dynamic-plugin-sdk/src';
 import type { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
-import { NavExtension } from '@console/dynamic-plugin-sdk/src';
 
 const mockNavItems: LoadedExtension<NavExtension>[] = [
   {

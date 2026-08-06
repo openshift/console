@@ -32,14 +32,14 @@ function filterChips(page: Page) {
 
 async function skipIfGroupsFilterDisabled(page: Page): Promise<void> {
   if (!(await groupsFilter(page).isVisible().catch(() => false))) {
-    test.skip(true, 'FLAG_NODE_MGMT_V1 is not enabled');
+    test.skip(true, 'FLAG_OPENSHIFT_5 is not enabled');
   }
 }
 
 async function skipIfEditGroupsButtonHidden(page: Page): Promise<void> {
   const editButton = page.getByRole('button', { name: /edit groups/i });
   if (!(await editButton.isVisible().catch(() => false))) {
-    test.skip(true, 'FLAG_NODE_MGMT_V1 is not enabled');
+    test.skip(true, 'FLAG_OPENSHIFT_5 is not enabled');
   }
 }
 
@@ -48,7 +48,7 @@ test.describe('Node Groups Filter', () => {
     await gotoNodesPage(page);
   });
 
-  test('should display the Groups filter when FLAG_NODE_MGMT_V1 is enabled', async ({ page }) => {
+  test('should display the Groups filter when FLAG_OPENSHIFT_5 is enabled', async ({ page }) => {
     await skipIfGroupsFilterDisabled(page);
 
     const groupsFilterButton = groupsFilter(page);
@@ -225,7 +225,7 @@ test.describe('Edit Groups Button', () => {
     await gotoNodesPage(page);
   });
 
-  test('should display Edit groups button in page header when FLAG_NODE_MGMT_V1 is enabled', async ({ page }) => {
+  test('should display Edit groups button in page header when FLAG_OPENSHIFT_5 is enabled', async ({ page }) => {
     await skipIfEditGroupsButtonHidden(page);
 
     const editButton = page.getByRole('button', { name: /edit groups/i });

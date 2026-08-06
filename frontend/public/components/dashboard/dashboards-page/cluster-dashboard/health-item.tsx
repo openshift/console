@@ -1,9 +1,9 @@
 import type { ComponentType, FC } from 'react';
 import { useEffect, useContext, useMemo } from 'react';
-import { Map as ImmutableMap } from 'immutable';
-import { useTranslation } from 'react-i18next';
 import { Stack, StackItem } from '@patternfly/react-core';
-import {
+import type { Map as ImmutableMap } from 'immutable';
+import { useTranslation } from 'react-i18next';
+import type {
   ResolvedExtension,
   DashboardsOverviewHealthOperator,
   DashboardsOverviewHealthURLSubsystem,
@@ -25,15 +25,16 @@ import {
   HealthState,
   healthStateMessage,
 } from '@console/shared/src/components/dashboard/status-card/states';
-import { useDynamicK8sWatchResources } from '@console/shared/src/hooks/useDynamicK8sWatchResources';
 import { useDashboardResources } from '@console/shared/src/hooks/useDashboardResources';
-import { K8sKind } from '../../../../module/k8s';
-import { AsyncComponent, LazyLoader } from '../../../utils/async';
-import { resourcePath } from '../../../utils/resource-link';
-import { useK8sWatchResource, useK8sWatchResources } from '../../../utils/k8s-watch-hook';
-import { uniqueResource } from './utils';
+import { useDynamicK8sWatchResources } from '@console/shared/src/hooks/useDynamicK8sWatchResources';
 import { getPrometheusQueryResponse } from '../../../../actions/dashboards';
+import type { K8sKind } from '../../../../module/k8s';
+import type { LazyLoader } from '../../../utils/async';
+import { AsyncComponent } from '../../../utils/async';
+import { useK8sWatchResource, useK8sWatchResources } from '../../../utils/k8s-watch-hook';
+import { resourcePath } from '../../../utils/resource-link';
 import { ClusterDashboardContext } from './context';
+import { uniqueResource } from './utils';
 
 const OperatorRow: FC<
   OperatorRowProps & {

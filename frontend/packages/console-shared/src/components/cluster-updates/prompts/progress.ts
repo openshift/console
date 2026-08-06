@@ -4,6 +4,7 @@ import {
   PROMPT_TIMEOUT_MAX_EXECUTION,
 } from './shared/constants';
 import { getLanguageConstraint } from './shared/language-utils';
+import { securityConstraint, getConfidenceQualifiers } from './shared/security-utils';
 
 export interface OperatorStatusCounts {
   total: number;
@@ -18,6 +19,13 @@ export const createProgressPrompt = (
   operatorCounts: OperatorStatusCounts,
 ) => {
   const languageConstraint = getLanguageConstraint();
+  const confidenceQualifiers = getConfidenceQualifiers({
+    highConfidenceData: 'ClusterVersion + ClusterOperators',
+    highConfidenceQuality: 'progress metrics are unambiguous',
+    moderateConfidenceMissing: 'events, MCPs, nodes, alerts',
+    additionalGuidance: `Apply confidence to ETA predictions:
+- When estimating completion time, qualify as approximate and state the basis for the estimate (e.g., "ETA based on linear extrapolation from 40% completion over 45 minutes").`,
+  });
 
   return `# OpenShift Cluster Upgrade Progress Monitor
 
@@ -63,6 +71,8 @@ export const createProgressPrompt = (
 - Use specific operator counts in all sections, not generic descriptions
 - Identify potential issues early with conservative recommendations
 - ONLY OUTPUT the Summary and TL;DR sections exactly as specified in the output format
+${securityConstraint}
+${confidenceQualifiers}
 ${languageConstraint}
 </constraints>
 
@@ -155,41 +165,41 @@ Conditions have TWO important fields you MUST check:
 
 <output_format>
 ## Summary
-**Upgrade Status**
-- **Current Phase**: [Extract from Progressing condition message, e.g., "Progressing (Working towards 4.21.7: X of Y done (Z% complete))"]
-- **Elapsed Time**: [Human-readable duration from upgrade start to current time]
-- **Progress Indicators**: [Specific progress details and any operators currently updating]
-**Component Status** (Total: ${operatorCounts.total} ClusterOperators)
-- **Updated Operators**: ${operatorCounts.updated} of ${operatorCounts.total} operators at target version ${desiredVersion}
-- **Updating Operators**: ${operatorCounts.updating} of ${operatorCounts.total} operators progressing toward target
-- **⏸ Pending Operators**: ${operatorCounts.pending} of ${operatorCounts.total} operators waiting to start
-- **Failed Operators**: ${operatorCounts.failed} of ${operatorCounts.total} operators with issues
-**Upgrade Target Details**
-- **Target Version**: [${desiredVersion} from status.desired.version]
-- **Target Release Info**: [Errata URL from status.desired.url if available, format as markdown link]
-- **Target Channels**: [List available channels from status.desired.channels, comma-separated]
-- **Upgrade Path**: Current version [${currentVersion}] → Target version [${desiredVersion}]
-**Historical Context**
-- **Previous Upgrade**: [Most recent completed upgrade version and completion timestamp from status.history]
-- **Upgrade Pattern**: [Upgrade frequency analysis and historical success pattern]
-- **Duration Comparison**: [Current upgrade timeline compared to previous upgrade durations and typical patterns]
-**Infrastructure Health During Upgrade**
-- **MachineConfigPool Progress**: [Status of MCPs - are they updating, stuck, or complete?]
-- **Node Resource Pressure**: [From nodes_top - any nodes with high CPU/memory usage?]
+**Upgrade status**
+- **Current phase**: [Extract from Progressing condition message, e.g., "Progressing (Working towards 4.21.7: X of Y done (Z% complete))"]
+- **Elapsed time**: [Human-readable duration from upgrade start to current time]
+- **Progress indicators**: [Specific progress details and any operators currently updating]
+**Component status** (Total: ${operatorCounts.total} ClusterOperators)
+- **Updated operators**: ${operatorCounts.updated} of ${operatorCounts.total} operators at target version ${desiredVersion}
+- **Updating operators**: ${operatorCounts.updating} of ${operatorCounts.total} operators progressing toward target
+- **⏸ Pending operators**: ${operatorCounts.pending} of ${operatorCounts.total} operators waiting to start
+- **Failed operators**: ${operatorCounts.failed} of ${operatorCounts.total} operators with issues
+**Upgrade target details**
+- **Target version**: [${desiredVersion} from status.desired.version]
+- **Target release info**: [Errata URL from status.desired.url if available, format as markdown link]
+- **Target channels**: [List available channels from status.desired.channels, comma-separated]
+- **Upgrade path**: Current version [${currentVersion}] → Target version [${desiredVersion}]
+**Historical context**
+- **Previous upgrade**: [Most recent completed upgrade version and completion timestamp from status.history]
+- **Upgrade pattern**: [Upgrade frequency analysis and historical success pattern]
+- **Duration comparison**: [Current upgrade timeline compared to previous upgrade durations and typical patterns]
+**Infrastructure health during upgrade**
+- **MachineConfigPool progress**: [Status of MCPs - are they updating, stuck, or complete?]
+- **Node resource pressure**: [From nodes_top - any nodes with high CPU/memory usage?]
  - Example: "All nodes healthy - CPU usage 45-60%, memory usage 55-70%"
  - Example: " Warning: master-0 at 92% memory - monitor for slowdowns"
-**Recent Progress Events** (Last 30 minutes):
-- **Event Summary**: [Count of events related to upgrade progress]
-- **Warning Signs**: [Any warning events that might slow progress]
+**Recent progress events** (Last 30 minutes):
+- **Event summary**: [Count of events related to upgrade progress]
+- **Warning signs**: [Any warning events that might slow progress]
  - Example: "ImagePullBackOff in 3 operators - image download issues may slow upgrade"
  - Example: "No concerning events - upgrade progressing normally"
-- **Positive Indicators**: [Events showing healthy progress]
+- **Positive indicators**: [Events showing healthy progress]
  - Example: "12 operators successfully updated to target version"
-**Health Indicators**
-- **Issues Detected**: [Any warning signs, delays, or specific operator issues requiring attention]
-- **Cluster Status**: [Overall cluster condition health based on ClusterVersion conditions]
-- **Active Alerts**: [Warning/critical alerts during upgrade, if available]
-- **Timeline Analysis**:
+**Health indicators**
+- **Issues detected**: [Any warning signs, delays, or specific operator issues requiring attention]
+- **Cluster status**: [Overall cluster condition health based on ClusterVersion conditions]
+- **Active alerts**: [Warning/critical alerts during upgrade, if available]
+- **Timeline analysis**:
  * Upgrade started: [Find the FIRST entry in status.history where state="Partial" - this is the CURRENT upgrade. Use ONLY its startedTime field. Convert from ISO timestamp (e.g., "2026-05-04T16:59:26Z") to human-readable (e.g., "May 4, 2026, 4:59:26 PM UTC"). DO NOT use startedTime from Completed entries!]
  * Elapsed time: [Calculate duration from the Partial entry's startedTime to current time in human-readable format]
  * Current progress: [X% complete based on operator completion ratio]
@@ -198,20 +208,21 @@ Conditions have TWO important fields you MUST check:
 
 ## TL;DR
 - **Progress**: [X% complete - (${operatorCounts.updated} Updated Operators / ${operatorCounts.total} Total Operators) * 100]
-- **Target Version**: [${desiredVersion} with release info if available]
-- **Target Channels**: [Available channels for target release]
-- **Upgrade Duration**: [Elapsed time from upgrade start]
+- **Data completeness**: [Complete | Partial | Limited]
+- **Target version**: [${desiredVersion} with release info if available]
+- **Target channels**: [Available channels for target release]
+- **Upgrade duration**: [Elapsed time from upgrade start]
 - **Status**: [On track | Delayed | Issues detected]
-- **Updated Components**: ${operatorCounts.updated} of ${operatorCounts.total} operators at target version ([X% complete])
-- **Pending Components**: ${operatorCounts.updating} updating + ${operatorCounts.pending} pending operators
-- **Historical Comparison**: [How current upgrade compares to previous ones]
+- **Updated components**: ${operatorCounts.updated} of ${operatorCounts.total} operators at target version ([X% complete])
+- **Pending components**: ${operatorCounts.updating} updating + ${operatorCounts.pending} pending operators
+- **Historical comparison**: [How current upgrade compares to previous ones]
 - **Issues**: [${operatorCounts.failed} operators with issues if any, otherwise "No problems requiring immediate attention"]
-- **Resource Pressure**: [Node CPU/memory status - any nodes >90% usage?]
+- **Resource pressure**: [Node CPU/memory status - any nodes >90% usage?]
 - **MCP Status**: [MachineConfigPool progress - all updating normally?]
-- **Recent Events**: [Count of warning events in last 30 min, user-friendly summary]
+- **Recent events**: [Count of warning events in last 30 min, user-friendly summary]
 - **Alerts**: [Warning/critical alerts during upgrade, if available]
 - **ETA**: [Estimated time remaining based on current progress rate]
-- **Action Required**: [Continue monitoring | Investigate delays | Address operator issues]
+- **Action required**: [Continue monitoring | Investigate delays | Address operator issues]
 </output_format>`;
 };
 

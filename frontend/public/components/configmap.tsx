@@ -1,33 +1,34 @@
 import type { FC } from 'react';
-import * as _ from 'lodash';
 import { Suspense, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { DetailsPage } from './factory/details';
-import { ListPage } from './factory/list-page';
-import { ConfigMapData, ConfigMapBinaryData } from './configmap-and-secret-data';
-import { DASH } from '@console/shared/src/constants/ui';
-import { SectionHeading } from './utils/headings';
-import { navFactory } from './utils/horizontal-nav';
-import { ResourceLink } from './utils/resource-link';
-import { ResourceSummary } from './utils/details-page';
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { ConfigMapModel } from '../models/index';
 import { Grid, GridItem } from '@patternfly/react-core';
-import { ConfigMapKind, referenceForModel, TableColumn } from '../module/k8s';
-import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import {
   actionsCellProps,
   getNameCellProps,
   ConsoleDataView,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
+import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
-import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
-import { sortResourceByValue } from './factory/Table/sort';
-import { sorts } from './factory/table';
+import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
+import { DASH } from '@console/shared/src/constants/ui';
+import { ConfigMapModel } from '../models/index';
+import type { ConfigMapKind, TableColumn } from '../module/k8s';
+import { referenceForModel } from '../module/k8s';
+import { ConfigMapData, ConfigMapBinaryData } from './configmap-and-secret-data';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
+import { sorts } from './factory/table';
+import { sortResourceByValue } from './factory/Table/sort';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { ResourceLink } from './utils/resource-link';
 
 const kind = referenceForModel(ConfigMapModel);
 const tableColumnInfo = [
@@ -151,7 +152,7 @@ const ConfigMaps: FC<ConfigMapsProps> = ({ data, loaded, ...props }) => {
         loaded={loaded}
         columns={columns}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
+        hideColumnManagement
         isResizable
         resetAllColumnWidths={resetAllColumnWidths}
       />
@@ -168,9 +169,9 @@ export const ConfigMapsPage: FC<ConfigMapsPageProps> = (props) => {
       {...props}
       kind={kind}
       ListComponent={ConfigMaps}
-      canCreate={true}
+      canCreate
       createProps={createProps}
-      omitFilterToolbar={true}
+      omitFilterToolbar
     />
   );
 };

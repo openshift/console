@@ -1,20 +1,20 @@
 import type { FC, Ref } from 'react';
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import type { MenuToggleElement } from '@patternfly/react-core';
 import {
   AlertVariant,
   Dropdown,
   DropdownItem,
   DropdownList,
   MenuToggle,
-  MenuToggleElement,
   NotificationDrawerListItem,
   NotificationDrawerListItemBody,
   NotificationDrawerListItemHeader,
 } from '@patternfly/react-core';
 import { RhUiEllipsisVerticalIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { ToastNotification } from '@console/shared/src/components/toast/types';
+import type { ToastNotification } from '@console/shared/src/components/toast/types';
 
 type ToastNotificationDrawerItemProps = {
   notification: ToastNotification;

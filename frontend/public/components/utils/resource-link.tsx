@@ -1,19 +1,18 @@
-import * as _ from 'lodash';
 import type { FC } from 'react';
-import { Link } from 'react-router';
 import { css } from '@patternfly/react-styles';
-
+import * as _ from 'lodash';
+import { Link } from 'react-router';
+import type { ResourceLinkProps } from '@console/dynamic-plugin-sdk';
+import type { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
+import type { K8sResourceKindReference } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { getReference } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { FLAGS } from '@console/shared/src/constants/common';
-import { ResourceLinkProps } from '@console/dynamic-plugin-sdk';
-import { ResourceIcon } from './resource-icon';
-import { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
-import { K8sResourceKindReference } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { K8sResourceKind } from '../../module/k8s/types';
 import { modelFor } from '../../module/k8s/k8s-models';
 import { referenceForModel } from '../../module/k8s/k8s-ref';
+import type { K8sResourceKind } from '../../module/k8s/types';
 import { connectToFlags } from '../../reducers/connectToFlags';
-import { FlagsObject } from '../../reducers/features';
-import { getReference } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import type { FlagsObject } from '../../reducers/features';
+import { ResourceIcon } from './resource-icon';
 
 const unknownKinds = new Set();
 
@@ -90,7 +89,7 @@ export const ResourceLink: FC<ResourceLinkProps> = ({
   }
   const kindReference = groupVersionKind ? getReference(groupVersionKind) : kind;
   const path = linkTo ? resourcePath(kindReference, name, namespace) : undefined;
-  const value = displayName ? displayName : name;
+  const value = displayName || name;
   const classes = css('co-resource-item', className, {
     'co-resource-item--inline': inline,
     'co-resource-item--truncate': truncate,
@@ -126,7 +125,7 @@ export const ResourceLink: FC<ResourceLinkProps> = ({
   );
 };
 
-const NodeLink_: FC<NodeLinkProps> = (props) => {
+const InnerNodeLink: FC<NodeLinkProps> = (props) => {
   const { name, flags } = props;
   if (!name) {
     return <>-</>;
@@ -138,7 +137,7 @@ const NodeLink_: FC<NodeLinkProps> = (props) => {
   );
 };
 
-export const NodeLink = connectToFlags<NodeLinkProps>(FLAGS.CAN_LIST_NODE)(NodeLink_);
+export const NodeLink = connectToFlags<NodeLinkProps>(FLAGS.CAN_LIST_NODE)(InnerNodeLink);
 
 type NodeLinkProps = {
   name: string;

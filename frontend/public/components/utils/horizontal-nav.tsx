@@ -1,34 +1,37 @@
 import type { ComponentType, FC, ReactNode } from 'react';
 import { PureComponent, useContext, memo, useMemo, Suspense } from 'react';
-import { Helmet } from 'react-helmet-async';
+import { Tabs, Tab, TabTitleText } from '@patternfly/react-core';
+import type { TFunction } from 'i18next';
 import * as _ from 'lodash';
+import { Helmet } from 'react-helmet-async';
 /* eslint-disable import/named */
-import { useTranslation, withTranslation, WithTranslation } from 'react-i18next';
-import { TFunction } from 'i18next';
+import type { WithTranslation } from 'react-i18next';
+import { useTranslation, withTranslation } from 'react-i18next';
 import { Routes, Route, useParams, Navigate, useLocation, useNavigate } from 'react-router';
-import {
+import type { ExtensionK8sGroupModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
+import type {
+  HorizontalNavProps as HorizontalNavFacadeProps,
+  NavPage,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type {
   HorizontalNavTab,
-  isHorizontalNavTab,
   NavTab,
+} from '@console/dynamic-plugin-sdk/src/extensions/horizontal-nav-tabs';
+import {
+  isHorizontalNavTab,
   isTab,
 } from '@console/dynamic-plugin-sdk/src/extensions/horizontal-nav-tabs';
-import { ExtensionK8sGroupModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
-import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
-import { Tabs, Tab, TabTitleText } from '@patternfly/react-core';
+import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import { ErrorBoundaryPage } from '@console/shared/src/components/error/fallbacks/ErrorBoundaryPage';
 import PageBody from '@console/shared/src/components/layout/PageBody';
-import { K8sResourceKind, K8sResourceCommon } from '../../module/k8s';
+import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
+import type { K8sResourceKind, K8sResourceCommon } from '../../module/k8s';
 import { referenceFor, referenceForExtensionModel } from '../../module/k8s/k8s';
 import { PodsPage } from '../pod-list';
 import { AsyncComponent } from './async';
 import { ResourceMetricsDashboard } from './resource-metrics';
 import { EmptyBox, LoadingBox, StatusBox } from './status-box';
-import {
-  HorizontalNavProps as HorizontalNavFacadeProps,
-  NavPage,
-} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
-import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
 
 export const editYamlComponent = (props) => (
   <AsyncComponent
@@ -42,7 +45,7 @@ export const viewYamlComponent = (props) => (
     loader={() => import('../edit-yaml').then((c) => c.EditYAML)}
     obj={props.obj}
     create={false}
-    readOnly={true}
+    readOnly
   />
 );
 
@@ -299,7 +302,7 @@ export const HorizontalNav = memo<HorizontalNavProps>((props) => {
   );
 
   const objReference = props.obj?.data ? referenceFor(props.obj.data) : '';
-  const contextId = props.contextId;
+  const { contextId } = props;
   const horizontalTabExtensions = useExtensions<HorizontalNavTab>(isHorizontalNavTab);
   const navTabExtensions = useExtensions<NavTab>(isTab);
 

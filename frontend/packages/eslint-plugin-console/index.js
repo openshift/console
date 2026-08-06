@@ -39,6 +39,7 @@ module.exports = {
         'plugin:console/testing-library-tests',
         'plugin:console/prettier',
       ],
+
       rules: {
         // TODO fix for monorepo support
         'import/no-extraneous-dependencies': 'off',

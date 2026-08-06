@@ -88,6 +88,6 @@ Then('user clicks on the play icon in the code snippet', () => {
 Then(
   'user can see {string} tooltip appears for executing the code in terminal',
   (tooltip: string) => {
-    cy.get('[class="ocs-tooltip"]').contains(tooltip);
+    cy.get('[role="tooltip"]').contains(tooltip);
   },
 );

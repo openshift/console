@@ -1,11 +1,9 @@
 import { screen, waitFor } from '@testing-library/react';
-
-import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpgrade';
-
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
+import { useAlertReceiverLink } from '../cluster-setup-alert-receiver-link';
 import { ClusterSetupGettingStartedCard } from '../cluster-setup-getting-started-card';
 import { useIdentityProviderLink } from '../cluster-setup-identity-provider-link';
-import { useAlertReceiverLink } from '../cluster-setup-alert-receiver-link';
 
 jest.mock('@console/shared/src/hooks/useCanClusterUpgrade', () => ({
   useCanClusterUpgrade: jest.fn(),

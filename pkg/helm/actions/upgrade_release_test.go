@@ -502,7 +502,7 @@ func TestUpgradeReleaseWithoutDependenciesAsync(t *testing.T) {
 			var rel *v1.Secret
 			var err error
 			go func() {
-				rel, err = UpgradeReleaseAsync(tt.namespace, tt.releaseName, tt.chartPath, nil, actionConfig, client, coreClient, false, tt.indexEntry)
+				rel, err = UpgradeReleaseAsync(tt.namespace, tt.releaseName, tt.chartPath, nil, actionConfig, client, coreClient, false, tt.indexEntry, "")
 				if tt.requireErr {
 					fmt.Println("Error", err)
 					require.Error(t, err)
@@ -597,7 +597,7 @@ func TestUpgradeReleaseWithDependenciesAsync(t *testing.T) {
 			store.Create(&r)
 
 			go func() {
-				rel, err = UpgradeReleaseAsync(tt.releaseNamespace, tt.releaseName, tt.chartPath, tt.values, actionConfig, client, coreClient, true, tt.indexEntry)
+				rel, err = UpgradeReleaseAsync(tt.releaseNamespace, tt.releaseName, tt.chartPath, tt.values, actionConfig, client, coreClient, true, tt.indexEntry, "")
 				require.NoError(t, err)
 				require.Equal(t, fmt.Sprintf("sh.helm.release.v1.%v.v2", tt.releaseName), rel.ObjectMeta.Name)
 			}()
@@ -688,7 +688,7 @@ func TestUpgradeReleaseWithCustomValuesAsync(t *testing.T) {
 			var rel *v1.Secret
 			var err error
 			go func() {
-				rel, err = UpgradeReleaseAsync(tt.releaseNamespace, tt.releaseName, tt.chartPath, tt.values, actionConfig, client, coreClient, true, tt.indexEntry)
+				rel, err = UpgradeReleaseAsync(tt.releaseNamespace, tt.releaseName, tt.chartPath, tt.values, actionConfig, client, coreClient, true, tt.indexEntry, "")
 				require.NoError(t, err)
 				require.Equal(t, fmt.Sprintf("sh.helm.release.v1.%v.v2", tt.releaseName), rel.ObjectMeta.Name)
 			}()
@@ -775,7 +775,7 @@ func TestUpgradeAfterURLInstallWithSecrets(t *testing.T) {
 			// Upgrade — chartUrl is recovered from the annotation, auth credentials are applied
 			secretsDriver := driver.NewSecrets(coreClient.Secrets(tt.releaseNamespace))
 			go func() {
-				upgradeResult, upgradeErr := UpgradeReleaseAsync(tt.releaseNamespace, tt.releaseName, "", nil, actionConfig, dynamicClient, coreClient, true, "")
+				upgradeResult, upgradeErr := UpgradeReleaseAsync(tt.releaseNamespace, tt.releaseName, "", nil, actionConfig, dynamicClient, coreClient, true, "", "")
 				require.NoError(t, upgradeErr)
 				require.Equal(t, fmt.Sprintf("sh.helm.release.v1.%v.v2", tt.releaseName), upgradeResult.ObjectMeta.Name)
 			}()
@@ -790,4 +790,142 @@ func TestUpgradeAfterURLInstallWithSecrets(t *testing.T) {
 			require.Equal(t, tt.secretName, rel.Chart.Metadata.Annotations[helmAuthSecretAnnotation])
 		})
 	}
+}
+
+func TestUpgradeAsyncExplicitSecretOverridesAnnotation(t *testing.T) {
+	store := storage.Init(driver.NewMemory())
+	actionConfig := &action.Configuration{
+		RESTClientGetter: FakeConfig{},
+		Releases:         store,
+		KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
+		Capabilities:     common.DefaultCapabilities,
+	}
+
+	// Only create the override secret, not the annotation secret.
+	// If the code incorrectly uses the annotation value ("missing-secret"),
+	// GetUserCredentials will fail because that secret doesn't exist.
+	overrideSecret := &v1.Secret{
+		ObjectMeta: metav1.ObjectMeta{Name: "new-secret", Namespace: "test-ns"},
+		Data:       map[string][]byte{username: []byte("new-user"), password: []byte("new-pass")},
+	}
+	clientInterface := k8sfake.NewSimpleClientset(overrideSecret)
+	coreClient := clientInterface.CoreV1()
+	registryClient, err := GetDefaultOCIRegistry()
+	require.NoError(t, err)
+	actionConfig.RegistryClient = registryClient
+	dynamicClient := K8sDynamicClientFromCRs()
+
+	installRelease := releasev1.Release{
+		Name:      "override-test",
+		Namespace: "test-ns",
+		Info:      &releasev1.Info{FirstDeployed: helmTime.Time{}, Status: "deployed"},
+		Version:   1,
+		Chart: &chart.Chart{
+			Metadata: &chart.Metadata{
+				Name:    "mychart",
+				Version: "0.1.0",
+				Annotations: map[string]string{
+					"chart_url":              "http://localhost:8181/charts/mychart-0.1.0.tgz",
+					helmAuthSecretAnnotation: "missing-secret",
+				},
+			},
+		},
+	}
+	store.Create(&installRelease)
+
+	// Pass "new-secret" explicitly — this should override "missing-secret" from the annotation.
+	// The chart fetch will fail with 401 (fake credentials), but the key assertion is that
+	// it does NOT fail with "failed to get user credentials Secret missing-secret" which
+	// would indicate the annotation value was used instead of the explicit override.
+	_, err = UpgradeReleaseAsync("test-ns", "override-test", "", nil, actionConfig, dynamicClient, coreClient, true, "", "new-secret")
+	require.Error(t, err)
+	require.NotContains(t, err.Error(), "missing-secret", "should use the explicit secret, not the annotation value")
+}
+
+func TestUpgradeAsyncNoneSentinelClearsAnnotationSecret(t *testing.T) {
+	store := storage.Init(driver.NewMemory())
+	actionConfig := &action.Configuration{
+		RESTClientGetter: FakeConfig{},
+		Releases:         store,
+		KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
+		Capabilities:     common.DefaultCapabilities,
+	}
+
+	// Create the annotation secret — if __none__ doesn't work, the code would
+	// fall back to this secret and NOT produce a 401 auth hint.
+	annotationSecret := &v1.Secret{
+		ObjectMeta: metav1.ObjectMeta{Name: "old-secret", Namespace: "test-ns"},
+		Data:       map[string][]byte{username: []byte("user"), password: []byte("pass")},
+	}
+	clientInterface := k8sfake.NewSimpleClientset(annotationSecret)
+	coreClient := clientInterface.CoreV1()
+	registryClient, err := GetDefaultOCIRegistry()
+	require.NoError(t, err)
+	actionConfig.RegistryClient = registryClient
+	dynamicClient := K8sDynamicClientFromCRs()
+
+	installRelease := releasev1.Release{
+		Name:      "none-test",
+		Namespace: "test-ns",
+		Info:      &releasev1.Info{FirstDeployed: helmTime.Time{}, Status: "deployed"},
+		Version:   1,
+		Chart: &chart.Chart{
+			Metadata: &chart.Metadata{
+				Name:    "mychart",
+				Version: "0.1.0",
+				Annotations: map[string]string{
+					"chart_url":              "http://localhost:8181/charts/mychart-0.1.0.tgz",
+					helmAuthSecretAnnotation: "old-secret",
+				},
+			},
+		},
+	}
+	store.Create(&installRelease)
+
+	// "__none__" sentinel — should clear the secret and NOT fall back to the annotation.
+	// The chart fetch will fail with 401 since no auth is applied, proving the sentinel worked.
+	_, err = UpgradeReleaseAsync("test-ns", "none-test", "", nil, actionConfig, dynamicClient, coreClient, true, "", "__none__")
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "registry requires authentication",
+		"should get 401 hint because __none__ cleared the secret and skipped annotation fallback")
+}
+
+func TestUpgradeAsyncGetUserCredentialsFailureReturnsError(t *testing.T) {
+	store := storage.Init(driver.NewMemory())
+	actionConfig := &action.Configuration{
+		RESTClientGetter: FakeConfig{},
+		Releases:         store,
+		KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
+		Capabilities:     common.DefaultCapabilities,
+	}
+
+	// No secrets in the fake client — GetUserCredentials will fail
+	clientInterface := k8sfake.NewSimpleClientset()
+	coreClient := clientInterface.CoreV1()
+	registryClient, err := GetDefaultOCIRegistry()
+	require.NoError(t, err)
+	actionConfig.RegistryClient = registryClient
+	dynamicClient := K8sDynamicClientFromCRs()
+
+	installRelease := releasev1.Release{
+		Name:      "err-test",
+		Namespace: "test-ns",
+		Info:      &releasev1.Info{FirstDeployed: helmTime.Time{}, Status: "deployed"},
+		Version:   1,
+		Chart: &chart.Chart{
+			Metadata: &chart.Metadata{
+				Name:    "mychart",
+				Version: "0.1.0",
+				Annotations: map[string]string{
+					"chart_url": "http://localhost:8181/charts/mychart-0.1.0.tgz",
+				},
+			},
+		},
+	}
+	store.Create(&installRelease)
+
+	// Pass a secret name that doesn't exist — should return an error, not silently log
+	_, err = UpgradeReleaseAsync("test-ns", "err-test", "", nil, actionConfig, dynamicClient, coreClient, true, "", "nonexistent-secret")
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "failed to get user credentials Secret nonexistent-secret")
 }
