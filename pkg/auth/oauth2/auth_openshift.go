@@ -168,11 +168,16 @@ func (o *openShiftAuth) login(w http.ResponseWriter, r *http.Request, token *oau
 		return nil, fmt.Errorf("failed to create session: %w", err)
 	}
 
+	if err := o.sessions.SetRecoveryCookie(w, r, token.AccessToken, token.Expiry); err != nil {
+		klog.V(4).Infof("failed to set recovery cookie: %v", err)
+	}
+
 	return ls, nil
 }
 
 func (o *openShiftAuth) DeleteSession(w http.ResponseWriter, r *http.Request) {
 	o.sessions.DeleteSession(w, r)
+	o.sessions.ClearRecoveryCookie(w, r)
 }
 
 func (o *openShiftAuth) logout(w http.ResponseWriter, r *http.Request) {
@@ -220,6 +225,7 @@ func (o *openShiftAuth) logout(w http.ResponseWriter, r *http.Request) {
 	}
 
 	o.sessions.DeleteSession(w, r)
+	o.sessions.ClearRecoveryCookie(w, r)
 	w.WriteHeader(http.StatusNoContent)
 }
 
@@ -268,8 +274,39 @@ func (o *openShiftAuth) getLoginState(w http.ResponseWriter, r *http.Request) (*
 			return o.refreshSession(r.Context(), w, r, o.oauth2Config(), refreshToken)
 		}
 
+		if ls == nil {
+			if recovered, recoverErr := o.recoverSession(w, r); recoverErr == nil {
+				return recovered, nil
+			}
+		}
+
 		return nil, fmt.Errorf("a session was not found on server or is expired")
 	}
+	return ls, nil
+}
+
+func (o *openShiftAuth) recoverSession(w http.ResponseWriter, r *http.Request) (*sessions.LoginState, error) {
+	accessToken, expiry, ok := o.sessions.GetRecoveryCookie(r)
+	if !ok {
+		return nil, fmt.Errorf("no recovery cookie")
+	}
+
+	if time.Now().After(expiry) {
+		o.sessions.ClearRecoveryCookie(w, r)
+		return nil, fmt.Errorf("recovery token expired")
+	}
+
+	token := &oauth2.Token{
+		AccessToken: accessToken,
+		Expiry:      expiry,
+	}
+
+	ls, err := o.sessions.AddSession(w, r, nil, token)
+	if err != nil {
+		return nil, fmt.Errorf("failed to recover session: %w", err)
+	}
+
+	klog.V(4).Info("session recovered from cookie after pod restart")
 	return ls, nil
 }
 

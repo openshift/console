@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/gorilla/securecookie"
 	gorilla "github.com/gorilla/sessions"
@@ -250,12 +251,49 @@ func (cs *CombinedSessionStore) DeleteSession(w http.ResponseWriter, r *http.Req
 
 	refreshTokenCookie, _ := cs.clientStore.Get(r, openshiftRefreshTokenCookieName)
 	if !refreshTokenCookie.IsNew {
-		// Get always returns a session, only timeout current sessions
 		refreshTokenCookie.Options.MaxAge = -1
-		return cs.clientStore.Save(r, w, refreshTokenCookie)
+		if err := cs.clientStore.Save(r, w, refreshTokenCookie); err != nil {
+			return err
+		}
 	}
 
 	return nil
+}
+
+func (cs *CombinedSessionStore) SetRecoveryCookie(w http.ResponseWriter, r *http.Request, accessToken string, expiry time.Time) error {
+	s, _ := cs.clientStore.Get(r, openshiftRecoveryTokenCookieName)
+	s.Values["access-token"] = accessToken
+	s.Values["expiry"] = expiry.Unix()
+	maxAge := int(time.Until(expiry).Seconds())
+	if maxAge > 0 {
+		s.Options.MaxAge = maxAge
+	}
+	return s.Save(r, w)
+}
+
+func (cs *CombinedSessionStore) GetRecoveryCookie(r *http.Request) (string, time.Time, bool) {
+	s, _ := cs.clientStore.Get(r, openshiftRecoveryTokenCookieName)
+	accessToken, ok := s.Values["access-token"].(string)
+	if !ok || accessToken == "" {
+		return "", time.Time{}, false
+	}
+	expiryUnix, ok := s.Values["expiry"].(int64)
+	if !ok {
+		return "", time.Time{}, false
+	}
+	return accessToken, time.Unix(expiryUnix, 0), true
+}
+
+func (cs *CombinedSessionStore) ClearRecoveryCookie(w http.ResponseWriter, r *http.Request) {
+	http.SetCookie(w, &http.Cookie{
+		Name:     openshiftRecoveryTokenCookieName,
+		Value:    "",
+		Path:     cs.clientStore.Options.Path,
+		MaxAge:   -1,
+		Secure:   cs.clientStore.Options.Secure,
+		HttpOnly: cs.clientStore.Options.HttpOnly,
+		SameSite: cs.clientStore.Options.SameSite,
+	})
 }
 
 // ServerStore returns the underlying server session store.
