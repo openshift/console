@@ -2,7 +2,7 @@ import { test, expect } from '../../fixtures';
 import { OperatorInstallPage } from '../../pages/operator-install-page';
 import { InstalledOperatorsPage } from '../../pages/installed-operators-page';
 import { OperatorDetailsPage, TestOperandProps } from '../../pages/operator-details-page';
-import { cleanupOperatorResources, cleanupAllOperatorsByPackageName } from '../../test-utils/operator-cleanup';
+import { operatorTestCleanup, cleanupOperatorResources, cleanupAllOperatorsByPackageName } from '../../test-utils/operator-cleanup';
 import { generateTestNamespace } from '../../test-utils/test-namespace';
 
 const testOperator = {
@@ -48,14 +48,16 @@ test.describe(`Single Namespace Operator Installation - ${testOperator.name}`, {
     // Then do namespace-specific cleanup
     await cleanupDataGridOperatorSingleNamespace(k8sClient);
 
-    // Clean up only namespaces created by this test worker
+    // Clean up only namespaces created by this test worker (from aborted runs)
     try {
       for (const nsName of ownedNamespaces) {
         console.log(`Cleaning up owned test namespace: ${nsName}`);
-        await cleanupOperatorResources(k8sClient, {
+        await operatorTestCleanup(k8sClient, {
           operatorPackageName,
           operandPlural: 'infinispans',
-          namespace: nsName,
+          testOperand,
+          targetNamespace: nsName,
+          crdPatterns: ['.infinispan.org'], // Clean up Data Grid CRDs
         });
       }
     } catch (error) {
@@ -71,11 +73,19 @@ test.describe(`Single Namespace Operator Installation - ${testOperator.name}`, {
     console.log('=== SINGLE NAMESPACE AFTER EACH: Starting verification ===');
 
     try {
-      // Give UI uninstall a moment to complete
-      await new Promise(resolve => setTimeout(resolve, 3000));
-
-      // Quick verification only - don't do complex checks that could hang
-      console.log('✅ UI uninstall verification complete');
+      // Check each owned namespace for UI uninstall completion (but don't be as aggressive as beforeEach)
+      for (const nsName of ownedNamespaces) {
+        console.log(`🔍 Checking UI uninstall for namespace: ${nsName}`);
+        await operatorTestCleanup(k8sClient, {
+          operatorPackageName,
+          operandPlural: 'infinispans',
+          testOperand,
+          targetNamespace: nsName,
+          crdPatterns: ['.infinispan.org'], // Clean up Data Grid CRDs
+          waitForUiUninstall: true,
+          uiUninstallTimeoutMs: 10_000, // Brief delay before cleanup
+        });
+      }
     } catch (error) {
       console.log(`⚠️ Verification error: ${error.message}`);
     }
@@ -99,12 +109,12 @@ test.describe(`Single Namespace Operator Installation - ${testOperator.name}`, {
 
     await test.step('Install operator in new test namespace', async () => {
       try {
+        cleanup.trackNamespace(testNamespace);
         await installPage.installOperatorInNewNamespace(
           testOperator.name,
           testOperator.operatorCardTestID,
           testNamespace,
         );
-        cleanup.trackNamespace(testNamespace);
       } catch (error) {
         if (error.message?.includes('operator-Data Grid')) {
           test.skip(true, 'Data Grid operator not available in this cluster environment');
@@ -142,7 +152,6 @@ test.describe(`Single Namespace Operator Installation - ${testOperator.name}`, {
 
       await installedOperatorsPage.navigateToOperatorDetails(testOperator.name, testOperator.urlName, testNamespace);
       await operatorDetailsPage.verifyDetailsPageSections();
-      // await operatorDetailsPage.navigateToOperandTab(testOperand.name, false);
     });
 
     await test.step('Create operand', async () => {
@@ -152,7 +161,7 @@ test.describe(`Single Namespace Operator Installation - ${testOperator.name}`, {
 
     await test.step('Navigate to operand details', async () => {
       await operatorDetailsPage.clickOperandLink(testOperand.exampleName);
-      await expect(page).toHaveURL(new RegExp(`${testOperand.exampleName}$`));
+      await expect(page).toHaveURL(url => url.pathname.endsWith(`/${testOperand.exampleName}`));
     });
 
     await test.step('Delete operand instance', async () => {
@@ -169,7 +178,5 @@ test.describe(`Single Namespace Operator Installation - ${testOperator.name}`, {
       await operatorDetailsPage.uninstallOperator();
       await installedOperatorsPage.verifyOperatorNotExists(testOperator.name);
     });
-
-    // Note: The test namespace will be automatically cleaned up via cleanup.trackNamespace()
   });
 });

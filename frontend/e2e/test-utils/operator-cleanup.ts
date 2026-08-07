@@ -16,8 +16,7 @@ async function quickOperatorCheck(k8sClient: any, operatorPackageName: string): 
     const operators = await k8sClient.listClusterCustomResources('operators.coreos.com', 'v1', 'operators');
     const hasOperator = operators.some((op: any) =>
       op.metadata.name?.includes(operatorPackageName) ||
-      op.metadata.name?.includes('datagrid') ||
-      op.metadata.name === 'datagrid.openshift-operators'
+      op.spec?.packageName === operatorPackageName
     );
 
     if (hasOperator) {
@@ -30,7 +29,7 @@ async function quickOperatorCheck(k8sClient: any, operatorPackageName: string): 
       const subscriptions = await k8sClient.listCustomResources('operators.coreos.com', 'v1alpha1', 'openshift-operators', 'subscriptions');
       const hasSubscription = subscriptions.some((sub: any) =>
         sub.metadata.name?.includes(operatorPackageName) ||
-        sub.metadata.name?.includes('datagrid')
+        sub.spec?.name === operatorPackageName
       );
 
       if (hasSubscription) {
@@ -55,14 +54,14 @@ async function quickOperatorCheck(k8sClient: any, operatorPackageName: string): 
  * 2. Delete subscription
  * 3. Delete CSV using currentCSV value
  */
-export async function cleanupAllOperatorsByPackageName(k8sClient: any, operatorPackageName: string): Promise<void> {
+export async function cleanupAllOperatorsByPackageName(k8sClient: any, operatorPackageName: string): Promise<boolean> {
   console.log(`🧹 Checking for ${operatorPackageName} operators to clean up...`);
 
   // Quick check first - if nothing to clean, skip all the heavy work
   const needsCleanup = await quickOperatorCheck(k8sClient, operatorPackageName);
   if (!needsCleanup) {
     console.log(`✅ No cleanup needed for ${operatorPackageName}`);
-    return;
+    return true;
   }
 
   console.log(`🧹 Starting cleanup of ${operatorPackageName} operators...`);
@@ -88,9 +87,7 @@ export async function cleanupAllOperatorsByPackageName(k8sClient: any, operatorP
         const matchingSubscriptions = subscriptions.filter((sub: any) => {
           return (
             sub.metadata.name === operatorPackageName ||
-            sub.spec?.name === operatorPackageName ||
-            sub.metadata.name?.includes('datagrid') ||
-            sub.spec?.name?.includes('datagrid')
+            sub.spec?.name === operatorPackageName
           );
         });
 
@@ -143,9 +140,7 @@ export async function cleanupAllOperatorsByPackageName(k8sClient: any, operatorP
       const operators = await k8sClient.listClusterCustomResources('operators.coreos.com', 'v1', 'operators');
       const matchingOperators = operators.filter((op: any) =>
         op.metadata.name?.includes(operatorPackageName) ||
-        op.spec?.packageName === operatorPackageName ||
-        op.metadata.name?.includes('datagrid') ||
-        op.metadata.name === 'datagrid.openshift-operators'  // Exact match for the stuck one
+        op.spec?.packageName === operatorPackageName
       );
 
       for (const operator of matchingOperators) {
@@ -175,22 +170,24 @@ export async function cleanupAllOperatorsByPackageName(k8sClient: any, operatorP
 
   } catch (error) {
     console.log('Error during proper operator cleanup:', error.message);
+    return false;
   }
 
   console.log('✅ cleanupAllOperatorsByPackageName FINISHED');
+  return true;
 }
 
 /**
  * Force cleanup for when normal cleanup doesn't work - removes finalizers and force deletes
  */
-export async function forceCleanupAllOperatorsByPackageName(k8sClient: any, operatorPackageName: string): Promise<void> {
+export async function forceCleanupAllOperatorsByPackageName(k8sClient: any, operatorPackageName: string): Promise<boolean> {
   console.log(`🔥 Checking if force cleanup is needed for ${operatorPackageName}...`);
 
   // Quick check first - if nothing to clean, skip the force cleanup
   const needsCleanup = await quickOperatorCheck(k8sClient, operatorPackageName);
   if (!needsCleanup) {
     console.log(`✅ No force cleanup needed for ${operatorPackageName}`);
-    return;
+    return true;
   }
 
   console.log(`🔥 Starting force cleanup of ${operatorPackageName} operators...`);
@@ -200,9 +197,7 @@ export async function forceCleanupAllOperatorsByPackageName(k8sClient: any, oper
     const operators = await k8sClient.listClusterCustomResources('operators.coreos.com', 'v1', 'operators');
     const matchingOperators = operators.filter((op: any) =>
       op.metadata.name?.includes(operatorPackageName) ||
-      op.spec?.packageName === operatorPackageName ||
-      op.metadata.name?.includes('datagrid') ||
-      op.metadata.name === 'datagrid.openshift-operators'  // Exact match for the stuck one
+      op.spec?.packageName === operatorPackageName
     );
 
     for (const operator of matchingOperators) {
@@ -236,8 +231,8 @@ export async function forceCleanupAllOperatorsByPackageName(k8sClient: any, oper
         // Force clean CSVs first
         const csvs = await k8sClient.listCustomResources('operators.coreos.com', 'v1alpha1', nsName, 'clusterserviceversions');
         const matchingCSVs = csvs.filter((csv: any) =>
-          csv.metadata.name?.includes('datagrid') ||
-          csv.spec?.displayName?.includes('Data Grid')
+          csv.metadata.name?.includes(operatorPackageName) ||
+          csv.spec?.displayName?.includes(operatorPackageName)
         );
 
         for (const csv of matchingCSVs) {
@@ -253,8 +248,8 @@ export async function forceCleanupAllOperatorsByPackageName(k8sClient: any, oper
         // Force clean subscriptions
         const subscriptions = await k8sClient.listCustomResources('operators.coreos.com', 'v1alpha1', nsName, 'subscriptions');
         const matchingSubs = subscriptions.filter((sub: any) =>
-          sub.metadata.name?.includes('datagrid') ||
-          sub.spec?.name?.includes('datagrid')
+          sub.metadata.name?.includes(operatorPackageName) ||
+          sub.spec?.name?.includes(operatorPackageName)
         );
 
         for (const subscription of matchingSubs) {
@@ -284,40 +279,45 @@ export async function forceCleanupAllOperatorsByPackageName(k8sClient: any, oper
 
   } catch (error) {
     console.log('Error during force cleanup:', error.message);
+    return false;
   }
 
   console.log('🔥 forceCleanupAllOperatorsByPackageName FINISHED');
+  return true;
 }
 
 /**
  * Nuclear option - delete CRDs first, then the operator (this was the missing piece!)
  */
-export async function deleteStuckDatagridOperator(k8sClient: any): Promise<void> {
-  console.log(`💣 Checking for stuck datagrid operator...`);
+export async function deleteStuckOperator(k8sClient: any, operatorName: string, crdPattern: string): Promise<boolean> {
+  console.log(`💣 Checking for stuck ${operatorName} operator...`);
 
   // Quick check first
   try {
-    await k8sClient.getClusterCustomResource('operators.coreos.com', 'v1', 'operators', 'datagrid.openshift-operators');
-    console.log(`💣 Found stuck datagrid operator - starting nuclear cleanup...`);
+    await k8sClient.getClusterCustomResource('operators.coreos.com', 'v1', 'operators', operatorName);
+    console.log(`💣 Found stuck ${operatorName} operator - starting nuclear cleanup...`);
   } catch (error) {
     if (error.message?.includes('404')) {
-      console.log(`✅ No stuck datagrid operator found - nuclear cleanup not needed`);
-      return;
+      console.log(`✅ No stuck ${operatorName} operator found - nuclear cleanup not needed`);
+      return true;
+    } else {
+      console.log(`❌ Error checking for stuck ${operatorName} operator: ${error.message} - aborting nuclear cleanup`);
+      return false;
     }
   }
 
   try {
-    // STEP 1: Check which infinispan.org CRDs actually exist and delete them
-    console.log('Checking for infinispan.org CRDs...');
+    // STEP 1: Check which CRDs actually exist and delete them
+    console.log(`Checking for ${crdPattern} CRDs...`);
     try {
       const allCRDs = await k8sClient.listClusterCustomResources('apiextensions.k8s.io', 'v1', 'customresourcedefinitions');
-      const infinispanCRDs = allCRDs.filter((crd: any) => crd.metadata.name?.endsWith('.infinispan.org'));
+      const operatorCRDs = allCRDs.filter((crd: any) => crd.metadata.name?.endsWith(crdPattern));
 
-      if (infinispanCRDs.length === 0) {
-        console.log('No infinispan.org CRDs found - skipping CRD deletion');
+      if (operatorCRDs.length === 0) {
+        console.log(`No ${crdPattern} CRDs found - skipping CRD deletion`);
       } else {
-        console.log(`Found ${infinispanCRDs.length} infinispan.org CRDs to delete`);
-        for (const crd of infinispanCRDs) {
+        console.log(`Found ${operatorCRDs.length} ${crdPattern} CRDs to delete`);
+        for (const crd of operatorCRDs) {
           try {
             console.log(`Deleting CRD: ${crd.metadata.name}`);
             await k8sClient.deleteClusterCustomResource('apiextensions.k8s.io', 'v1', 'customresourcedefinitions', crd.metadata.name);
@@ -337,18 +337,18 @@ export async function deleteStuckDatagridOperator(k8sClient: any): Promise<void>
 
     // STEP 2: Now delete the operator (should work now that CRDs are gone)
     console.log('Now deleting the operator...');
-    await k8sClient.deleteClusterCustomResource('operators.coreos.com', 'v1', 'operators', 'datagrid.openshift-operators');
-    console.log('✅ Successfully deleted datagrid.openshift-operators');
+    await k8sClient.deleteClusterCustomResource('operators.coreos.com', 'v1', 'operators', operatorName);
+    console.log(`✅ Successfully deleted ${operatorName}`);
 
     // Wait and verify it's gone
     await new Promise(resolve => setTimeout(resolve, 3000));
 
     try {
-      await k8sClient.getClusterCustomResource('operators.coreos.com', 'v1', 'operators', 'datagrid.openshift-operators');
+      await k8sClient.getClusterCustomResource('operators.coreos.com', 'v1', 'operators', operatorName);
       console.log('⚠️ Operator still exists after deletion attempt');
     } catch (error) {
       if (error.message?.includes('404')) {
-        console.log('✅ Confirmed: datagrid.openshift-operators is gone');
+        console.log(`✅ Confirmed: ${operatorName} is gone`);
       } else {
         console.log(`Verification error: ${error.message}`);
       }
@@ -363,25 +363,265 @@ export async function deleteStuckDatagridOperator(k8sClient: any): Promise<void>
         'operators.coreos.com',
         'v1',
         'operators',
-        'datagrid.openshift-operators',
+        operatorName,
         [{ op: 'replace', path: '/metadata/finalizers', value: [] }]
       );
       console.log('Stripped operator finalizers, retrying deletion...');
 
-      await k8sClient.deleteClusterCustomResource('operators.coreos.com', 'v1', 'operators', 'datagrid.openshift-operators');
-      console.log('✅ Successfully force deleted datagrid.openshift-operators');
+      await k8sClient.deleteClusterCustomResource('operators.coreos.com', 'v1', 'operators', operatorName);
+      console.log(`✅ Successfully force deleted ${operatorName}`);
     } catch (forceError) {
       console.log(`Force deletion also failed: ${forceError.message}`);
     }
   }
 
-  console.log('💣 deleteStuckDatagridOperator FINISHED');
+  console.log(`💣 deleteStuckOperator FINISHED for ${operatorName}`);
+  return true;
+}
+
+/**
+ * Shared cleanup logic for operator tests - handles both beforeEach (aborted runs) and afterEach (UI uninstall verification)
+ */
+export async function operatorTestCleanup(
+  k8sClient: any,
+  options: {
+    operatorPackageName: string;
+    operandPlural: string;
+    testOperand: any;
+    targetNamespace: string;
+    crdPatterns?: string[]; // CRD patterns to clean up (e.g., ['.infinispan.org'])
+    waitForUiUninstall?: boolean; // Optional delay before cleanup for afterEach
+    uiUninstallTimeoutMs?: number;
+  }
+): Promise<boolean> {
+  const {
+    operatorPackageName,
+    operandPlural,
+    testOperand,
+    targetNamespace,
+    crdPatterns = [],
+    waitForUiUninstall = false,
+    uiUninstallTimeoutMs = 10_000 // Reduced default since we're just giving UI time
+  } = options;
+
+  try {
+    if (waitForUiUninstall) {
+      // Give UI uninstall a brief moment to start, then proceed with cleanup anyway
+      console.log(`⏳ Giving UI uninstall ${uiUninstallTimeoutMs / 1000}s to start, then cleaning up remaining resources...`);
+      await new Promise(resolve => setTimeout(resolve, uiUninstallTimeoutMs));
+    }
+
+    // Clean up subscription and CSV resources (standard OLM cleanup)
+    console.log(`⏳ Cleaning up operator resources in ${targetNamespace}...`);
+    const cleanupSuccess = await cleanupOperatorResources(k8sClient, {
+      operatorPackageName,
+      operandPlural,
+      testOperand,
+      namespace: targetNamespace,
+    });
+
+    if (!cleanupSuccess) {
+      console.log(`❌ Namespace cleanup failed for ${targetNamespace}`);
+    }
+
+    // Clean up InstallPlans (OpenShift doesn't remove these automatically)
+    console.log(`⏳ Cleaning up InstallPlans for ${operatorPackageName}...`);
+    try {
+      const installPlans = await k8sClient.listCustomResources('operators.coreos.com', 'v1alpha1', targetNamespace, 'installplans');
+      const operatorInstallPlans = installPlans.filter((ip: any) => {
+        const csvNames = ip.spec?.clusterServiceVersionNames || [];
+        return csvNames.some((csvName: string) => csvName.includes(operatorPackageName));
+      });
+
+      for (const installPlan of operatorInstallPlans) {
+        try {
+          console.log(`  Deleting InstallPlan: ${installPlan.metadata.name}`);
+          await k8sClient.deleteCustomResource('operators.coreos.com', 'v1alpha1', targetNamespace, 'installplans', installPlan.metadata.name);
+          console.log(`  ✅ Deleted InstallPlan: ${installPlan.metadata.name}`);
+        } catch (error) {
+          console.log(`  ⚠️ Could not delete InstallPlan ${installPlan.metadata.name}: ${error.message}`);
+        }
+      }
+    } catch (error) {
+      console.log(`Error cleaning up InstallPlans: ${error.message}`);
+    }
+
+    // Clean up cluster Operator resource (OpenShift doesn't remove these automatically)
+    console.log(`⏳ Cleaning up cluster Operator resource for ${operatorPackageName}...`);
+    try {
+      const operators = await k8sClient.listClusterCustomResources('operators.coreos.com', 'v1', 'operators');
+      const matchingOperators = operators.filter((op: any) =>
+        op.metadata.name?.includes(operatorPackageName) ||
+        op.spec?.packageName === operatorPackageName
+      );
+
+      for (const operator of matchingOperators) {
+        try {
+          console.log(`  Attempting to delete cluster Operator: ${operator.metadata.name}`);
+
+          // First try to strip finalizers (operators often have finalizers that prevent deletion)
+          try {
+            console.log(`  Stripping finalizers from ${operator.metadata.name}...`);
+            await k8sClient.patchClusterCustomResource(
+              'operators.coreos.com',
+              'v1',
+              'operators',
+              operator.metadata.name,
+              [{ op: 'replace', path: '/metadata/finalizers', value: [] }]
+            );
+            console.log(`  ✅ Stripped finalizers from ${operator.metadata.name}`);
+          } catch (patchError) {
+            console.log(`  ⚠️ Could not strip finalizers: ${patchError.message}`);
+          }
+
+          // Now delete the operator
+          await k8sClient.deleteClusterCustomResource('operators.coreos.com', 'v1', 'operators', operator.metadata.name);
+          console.log(`  ✅ Deleted cluster Operator: ${operator.metadata.name}`);
+        } catch (error) {
+          console.log(`  ❌ Could not delete cluster Operator ${operator.metadata.name}: ${error.message}`);
+        }
+      }
+
+      // Poll to verify all operators are actually deleted, but don't fail if they persist
+      console.log('⏳ Verifying cluster Operator cleanup...');
+      const pollInterval = 5000; // Check every 5 seconds
+      const maxWaitTime = 20000; // Max 20 seconds (shortened since CRD cleanup may resolve lingering operators)
+      const startTime = Date.now();
+
+      while (Date.now() - startTime < maxWaitTime) {
+        try {
+          const remainingOperators = await k8sClient.listClusterCustomResources('operators.coreos.com', 'v1', 'operators');
+          const stillMatching = remainingOperators.filter((op: any) =>
+            op.metadata.name?.includes(operatorPackageName) ||
+            op.spec?.packageName === operatorPackageName
+          );
+
+          if (stillMatching.length === 0) {
+            console.log(`✅ All ${operatorPackageName} cluster Operators successfully removed`);
+            break;
+          } else {
+            const elapsed = Math.round((Date.now() - startTime) / 1000);
+            console.log(`⏳ Still ${stillMatching.length} operators remaining after ${elapsed}s: ${stillMatching.map((op: any) => op.metadata.name).join(', ')}`);
+          }
+        } catch (error) {
+          console.log(`Error checking operator cleanup status: ${error.message}`);
+        }
+
+        await new Promise(resolve => setTimeout(resolve, pollInterval));
+      }
+
+      // Final check and warn if operators still exist (but continue with cleanup)
+      try {
+        const finalOperators = await k8sClient.listClusterCustomResources('operators.coreos.com', 'v1', 'operators');
+        const stillPresent = finalOperators.filter((op: any) =>
+          op.metadata.name?.includes(operatorPackageName) ||
+          op.spec?.packageName === operatorPackageName
+        );
+
+        if (stillPresent.length > 0) {
+          console.log(`⚠️ Warning: ${stillPresent.length} ${operatorPackageName} operators remain after cleanup. CRD deletion may resolve this.`);
+        }
+      } catch (error) {
+        console.log(`Could not perform final operator check: ${error.message}`);
+      }
+    } catch (error) {
+      console.log(`Error cleaning up cluster Operators: ${error.message}`);
+    }
+
+    console.log(`✅ Standard cleanup complete for ${targetNamespace}`);
+
+    // Clean up specified CRDs if provided (for complete operator cleanup)
+    if (crdPatterns.length > 0) {
+      console.log(`🧹 Cleaning up CRDs matching patterns: ${crdPatterns.join(', ')}`);
+      try {
+        const allCRDs = await k8sClient.listClusterCustomResources('apiextensions.k8s.io', 'v1', 'customresourcedefinitions');
+
+        for (const pattern of crdPatterns) {
+          const matchingCRDs = allCRDs.filter((crd: any) => crd.metadata.name?.endsWith(pattern));
+
+          if (matchingCRDs.length > 0) {
+            console.log(`Found ${matchingCRDs.length} CRDs matching pattern '${pattern}'`);
+            for (const crd of matchingCRDs) {
+              try {
+                console.log(`  Deleting CRD: ${crd.metadata.name}`);
+                await k8sClient.deleteClusterCustomResource('apiextensions.k8s.io', 'v1', 'customresourcedefinitions', crd.metadata.name);
+                console.log(`  ✅ Deleted CRD: ${crd.metadata.name}`);
+              } catch (error) {
+                console.log(`  ⚠️ Could not delete CRD ${crd.metadata.name}: ${error.message}`);
+              }
+            }
+          } else {
+            console.log(`No CRDs found matching pattern '${pattern}'`);
+          }
+        }
+
+        // Poll for CRD deletions to complete
+        if (crdPatterns.some(pattern => allCRDs.some((crd: any) => crd.metadata.name?.endsWith(pattern)))) {
+          console.log('⏳ Polling for CRD deletions to complete...');
+          const pollInterval = 2000; // Check every 2 seconds
+          const maxWaitTime = 30000; // Max 30 seconds for CRD cleanup
+          const startTime = Date.now();
+
+          while (Date.now() - startTime < maxWaitTime) {
+            try {
+              const currentCRDs = await k8sClient.listClusterCustomResources('apiextensions.k8s.io', 'v1', 'customresourcedefinitions');
+              const remainingCRDs = crdPatterns.flatMap(pattern =>
+                currentCRDs.filter((crd: any) => crd.metadata.name?.endsWith(pattern))
+              );
+
+              if (remainingCRDs.length === 0) {
+                const elapsedTime = Math.round((Date.now() - startTime) / 1000);
+                console.log(`✅ All CRDs deleted successfully after ${elapsedTime}s`);
+                break;
+              } else {
+                const elapsedTime = Math.round((Date.now() - startTime) / 1000);
+                console.log(`⏳ Still waiting for CRD cleanup (${elapsedTime}s): ${remainingCRDs.length} CRDs remaining`);
+              }
+            } catch (error) {
+              console.log(`Error checking CRD cleanup status: ${error.message}`);
+            }
+
+            await new Promise(resolve => setTimeout(resolve, pollInterval));
+          }
+        }
+      } catch (error) {
+        console.log(`⚠️ Error during CRD cleanup: ${error.message}`);
+      }
+    }
+
+    // Final verification: check if CRD deletion resolved any lingering operators
+    if (crdPatterns.length > 0) {
+      console.log('🔍 Final verification: checking if operators were resolved by CRD deletion...');
+      try {
+        const finalOperators = await k8sClient.listClusterCustomResources('operators.coreos.com', 'v1', 'operators');
+        const remainingOperators = finalOperators.filter((op: any) =>
+          op.metadata.name?.includes(operatorPackageName) ||
+          op.spec?.packageName === operatorPackageName
+        );
+
+        if (remainingOperators.length === 0) {
+          console.log(`✅ All ${operatorPackageName} operators completely removed after CRD cleanup`);
+        } else {
+          console.log(`⚠️ Warning: ${remainingOperators.length} ${operatorPackageName} operators still present: ${remainingOperators.map((op: any) => op.metadata.name).join(', ')}`);
+          console.log('💡 This may be normal - some operators persist until next OLM sync cycle');
+        }
+      } catch (error) {
+        console.log(`Could not perform final verification: ${error.message}`);
+      }
+    }
+
+    return true;
+
+  } catch (error) {
+    console.log(`❌ Cleanup error: ${error.message}`);
+    return false;
+  }
 }
 
 /**
  * Clean up operator resources in a specific namespace
  */
-export async function cleanupOperatorResources(k8sClient: any, options: OperatorCleanupOptions): Promise<void> {
+export async function cleanupOperatorResources(k8sClient: any, options: OperatorCleanupOptions): Promise<boolean> {
   const { operatorPackageName, operandPlural, testOperand, namespace } = options;
 
   console.log(`Cleaning up ${operatorPackageName} resources in ${namespace}...`);
@@ -414,9 +654,7 @@ export async function cleanupOperatorResources(k8sClient: any, options: Operator
     const matchingSubscriptions = subscriptions.filter((sub: any) => {
       return (
         sub.metadata.name === operatorPackageName ||
-        sub.spec?.name === operatorPackageName ||
-        sub.metadata.name?.includes('datagrid') ||
-        sub.spec?.name?.includes('datagrid')
+        sub.spec?.name === operatorPackageName
       );
     });
 
@@ -482,7 +720,9 @@ export async function cleanupOperatorResources(k8sClient: any, options: Operator
     }
 
     console.log(`✅ cleanupOperatorResources FINISHED for ${namespace}`);
+    return true;
   } catch (error) {
     console.log(`Error cleaning up ${operatorPackageName} in ${namespace}:`, error.message);
+    return false;
   }
 }

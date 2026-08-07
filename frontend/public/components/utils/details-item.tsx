@@ -83,7 +83,6 @@ export const DetailsItem: FC<DetailsItemProps> = ({
       <DescriptionListTermHelpText
         data-test={`details-item-label__${label}`}
         data-test-selector={`details-item-label__${label}`}
-        data-test={`details-item-label__${label}`}
         className={labelClassName}
       >
         <Split className="pf-v6-u-w-100">
