@@ -153,8 +153,8 @@ export const usePerspectives = (): LoadedExtension<PerspectiveExtension>[] => {
 
 export const usePerspectiveExtension = (id: string): LoadedExtension<PerspectiveExtension> => {
   const perspectiveExtensions = usePerspectives();
-  return useMemo(() => perspectiveExtensions.find((e) => e.properties.id === id), [
-    id,
-    perspectiveExtensions,
-  ]);
+  return useMemo(
+    () => perspectiveExtensions.find((e) => e.properties.id === id),
+    [id, perspectiveExtensions],
+  );
 };

@@ -42,25 +42,20 @@ const PodDisruptionBudgetDetails: FC<PodDisruptionBudgetDetailsProps> = ({ obj }
   );
 };
 
-export const PodDisruptionBudgetDetailsPage: FC<PodDisruptionBudgetDetailsPageProps> = (props) => {
-  return (
-    <DetailsPage
-      {...props}
-      kind={props.kind}
-      customActionMenu={(_kindObj: K8sModel, obj: K8sResourceKind) => (
-        <LazyActionMenu
-          context={{ [referenceFor(obj)]: obj }}
-          variant={ActionMenuVariant.DROPDOWN}
-        />
-      )}
-      pages={[
-        navFactory.details(PodDisruptionBudgetDetails),
-        navFactory.editYaml(),
-        navFactory.pods(),
-      ]}
-    />
-  );
-};
+export const PodDisruptionBudgetDetailsPage: FC<PodDisruptionBudgetDetailsPageProps> = (props) => (
+  <DetailsPage
+    {...props}
+    kind={props.kind}
+    customActionMenu={(_kindObj: K8sModel, obj: K8sResourceKind) => (
+      <LazyActionMenu context={{ [referenceFor(obj)]: obj }} variant={ActionMenuVariant.DROPDOWN} />
+    )}
+    pages={[
+      navFactory.details(PodDisruptionBudgetDetails),
+      navFactory.editYaml(),
+      navFactory.pods(),
+    ]}
+  />
+);
 
 export type PodDisruptionBudgetDetailsPageProps = {
   match: any;

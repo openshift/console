@@ -71,8 +71,8 @@ const Completions: FC<CompletionsCellProps> = ({ obj, completions }) => {
   );
 };
 
-const getDataViewRows: GetDataViewRows<JobKind> = (data, columns) => {
-  return data.map(({ obj }) => {
+const getDataViewRows: GetDataViewRows<JobKind> = (data, columns) =>
+  data.map(({ obj }) => {
     const { name, namespace } = obj.metadata;
     const { type, completions } = getJobTypeAndCompletions(obj);
     const context = { [referenceFor(obj)]: obj };
@@ -118,7 +118,6 @@ const getDataViewRows: GetDataViewRows<JobKind> = (data, columns) => {
       };
     });
   });
-};
 
 const JobDetails: FC<JobsDetailsProps> = ({ obj: job }) => {
   const { t } = useTranslation('public');
@@ -232,8 +231,8 @@ const useJobsColumns = (): {
   const { t } = useTranslation('public');
   const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(JobModel);
 
-  const columns = useMemo(() => {
-    return [
+  const columns = useMemo(
+    () => [
       {
         title: t('Name'),
         id: tableColumnInfo[0].id,
@@ -299,8 +298,9 @@ const useJobsColumns = (): {
           ...actionsCellProps,
         },
       },
-    ];
-  }, [t, getResizableProps, getWidth]);
+    ],
+    [t, getResizableProps, getWidth],
+  );
 
   return { columns, resetAllColumnWidths };
 };

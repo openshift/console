@@ -32,7 +32,7 @@ export const CodeEditorSidebar: FC<CodeEditorSidebarProps> = ({
   const editor = editorRef.current?.editor;
 
   const insertYamlContent = useCallback(
-    (id: string = 'default', yamlContent: string = '', kind) => {
+    (id: string = 'default', yamlContent: string = '', kind = undefined) => {
       const yaml = sanitizeYamlContent ? sanitizeYamlContent(id, yamlContent, kind) : yamlContent;
 
       const selection = editor?.getSelection();
@@ -72,7 +72,7 @@ export const CodeEditorSidebar: FC<CodeEditorSidebarProps> = ({
   );
 
   const replaceYamlContent = useCallback(
-    (id: string = 'default', yamlContent: string = '', kind: string) => {
+    (id: string = 'default', yamlContent: string = '', kind: string = undefined) => {
       const yaml = sanitizeYamlContent ? sanitizeYamlContent(id, yamlContent, kind) : yamlContent;
       editor?.setValue(yaml);
     },
@@ -80,7 +80,7 @@ export const CodeEditorSidebar: FC<CodeEditorSidebarProps> = ({
   );
 
   const downloadYamlContent = useCallback(
-    (id: string = 'default', yamlContent: string = '', kind: string) => {
+    (id: string = 'default', yamlContent: string = '', kind: string = undefined) => {
       try {
         const yaml = sanitizeYamlContent ? sanitizeYamlContent(id, yamlContent, kind) : yamlContent;
         downloadYaml(yaml);

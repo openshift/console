@@ -62,17 +62,15 @@ export const ListPageCreateDropdown: FC<ListPageCreateDropdownProps> = ({
 }) => {
   const [isOpen, setOpen] = useState(false);
 
-  const listCreateDropdownItems = Object.keys(items).map((key) => {
-    return (
-      <DropdownItem
-        key={key}
-        data-test={`list-page-create-dropdown-item-${key}`}
-        onClick={() => onClick(key)}
-      >
-        {items[key]}
-      </DropdownItem>
-    );
-  });
+  const listCreateDropdownItems = Object.keys(items).map((key) => (
+    <DropdownItem
+      key={key}
+      data-test={`list-page-create-dropdown-item-${key}`}
+      onClick={() => onClick(key)}
+    >
+      {items[key]}
+    </DropdownItem>
+  ));
 
   return (
     <CreateWithPermissions createAccessReview={createAccessReview}>

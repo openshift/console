@@ -110,22 +110,20 @@ export const sorts = {
 
 // Common table row/columns helper SFCs for implementing accessible data grid
 export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
-  ({ id, index, trKey, style, className, ...props }, ref) => {
-    return (
-      <Tr
-        {...props}
-        ref={ref}
-        data-id={id}
-        data-index={index}
-        data-test="resource-row"
-        data-test-rows="resource-row"
-        data-key={trKey}
-        style={style}
-        className={css('pf-v6-c-table__tr', className)}
-        role="row"
-      />
-    );
-  },
+  ({ id, index, trKey, style, className, ...props }, ref) => (
+    <Tr
+      {...props}
+      ref={ref}
+      data-id={id}
+      data-index={index}
+      data-test="resource-row"
+      data-test-rows="resource-row"
+      data-key={trKey}
+      style={style}
+      className={css('pf-v6-c-table__tr', className)}
+      role="row"
+    />
+  ),
 );
 TableRow.displayName = 'TableRow';
 
@@ -154,7 +152,7 @@ const isColumnVisible = (
   widthInPixels: number,
   columnID: string,
   columns: Set<string> = new Set(),
-  showNamespaceOverride,
+  showNamespaceOverride = undefined,
 ) => {
   const showNamespace =
     columnID !== 'namespace' ||
@@ -192,13 +190,12 @@ export const TableData: FC<TableDataProps> = ({
   dataTest,
   showNamespaceOverride,
   children,
-}) => {
-  return isColumnVisible(window.innerWidth, columnID, columns, showNamespaceOverride) ? (
+}) =>
+  isColumnVisible(window.innerWidth, columnID, columns, showNamespaceOverride) ? (
     <Td data-label={columnID} className={className} role="gridcell" data-test={dataTest}>
       {children}
     </Td>
   ) : null;
-};
 TableData.displayName = 'TableData';
 export type TableDataProps = {
   children?: ReactNode;
@@ -437,29 +434,27 @@ const StandardTable: FC<StandardTableProps> = ({
     <PfTable gridBreakPoint={gridBreakPoint}>
       <TableHeader onSort={onSort} sortBy={sortBy} columns={columns} onSelect={onSelect} />
       <Tbody>
-        {rows.map((row, rowIndex) => {
-          return (
-            // eslint-disable-next-line react/no-array-index-key
-            <Tr key={`row-${rowIndex}`}>
-              {onSelect && (
-                <Td
-                  select={{
-                    rowIndex,
-                    onSelect,
-                    isSelected: row.selected ?? false,
-                    isDisabled: row.disableSelection ?? false,
-                  }}
-                />
-              )}
-              {(Array.isArray(row) ? row : row.cells).map(({ props, title }, colIndex) => (
-                // eslint-disable-next-line react/no-array-index-key
-                <Td key={`col-${colIndex}`} {...(props ?? {})}>
-                  {title}
-                </Td>
-              ))}
-            </Tr>
-          );
-        })}
+        {rows.map((row, rowIndex) => (
+          // eslint-disable-next-line react/no-array-index-key
+          <Tr key={`row-${rowIndex}`}>
+            {onSelect && (
+              <Td
+                select={{
+                  rowIndex,
+                  onSelect,
+                  isSelected: row.selected ?? false,
+                  isDisabled: row.disableSelection ?? false,
+                }}
+              />
+            )}
+            {(Array.isArray(row) ? row : row.cells).map(({ props, title }, colIndex) => (
+              // eslint-disable-next-line react/no-array-index-key
+              <Td key={`col-${colIndex}`} {...(props ?? {})}>
+                {title}
+              </Td>
+            ))}
+          </Tr>
+        ))}
       </Tbody>
     </PfTable>
   );

@@ -25,7 +25,7 @@ import { ANNOTATIONS } from '@console/shared/src/constants/common';
 const normalizeBuilderImages = (
   builderImageStreams: K8sResourceKind[],
   activeNamespace: string = '',
-  t: TFunction,
+  t: TFunction = undefined,
 ): CatalogItem[] => {
   const normalizedBuilderImages = _.map(builderImageStreams, (imageStream) => {
     const uid = imageStream.metadata?.uid || '';
@@ -139,9 +139,8 @@ const useBuilderImages: ExtensionHook<CatalogItem[]> = ({
     namespace: 'openshift',
     prop: 'imageStreams',
   };
-  const [imageStreams, loaded, loadedError] = useK8sWatchResource<K8sResourceKind[]>(
-    resourceSelector,
-  );
+  const [imageStreams, loaded, loadedError] =
+    useK8sWatchResource<K8sResourceKind[]>(resourceSelector);
 
   const builderImageStreams = useMemo(() => _.filter(imageStreams, isBuilder), [imageStreams]);
 

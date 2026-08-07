@@ -27,13 +27,11 @@ jest.mock('fs', () => ({
 
 const parseJSONC = jsoncModule.parseJSONC as jest.Mock;
 const fsExistsSyncMock = fs.existsSync as jest.Mock;
-const validateConsoleExtensionsFileSchema = remotePluginModule.validateConsoleExtensionsFileSchema as jest.Mock;
+const validateConsoleExtensionsFileSchema =
+  remotePluginModule.validateConsoleExtensionsFileSchema as jest.Mock;
 
-const {
-  getLocalPluginsModule,
-  getExecutableCodeRefSource,
-  getDynamicExtensions,
-} = localPluginsModule;
+const { getLocalPluginsModule, getExecutableCodeRefSource, getDynamicExtensions } =
+  localPluginsModule;
 
 beforeEach(() => {
   [parseJSONC, validateConsoleExtensionsFileSchema, fsExistsSyncMock].forEach((mock) =>

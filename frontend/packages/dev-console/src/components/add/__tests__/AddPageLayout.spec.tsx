@@ -6,9 +6,7 @@ import * as accessFilterHook from '../hooks/useAccessFilterExtensions';
 import { useShowAddCardItemDetails } from '../hooks/useShowAddCardItemDetails';
 import { addActionExtensions } from './add-page-test-data';
 
-jest.mock('@console/plugin-sdk/src/api/useExtensions', () => {
-  return { useExtensions: () => [] };
-});
+jest.mock('@console/plugin-sdk/src/api/useExtensions', () => ({ useExtensions: () => [] }));
 
 jest.mock('../hooks/useShowAddCardItemDetails', () => ({
   useShowAddCardItemDetails: jest.fn(),

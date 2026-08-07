@@ -95,17 +95,15 @@ const StatefulSetsList: FC<StatefulSetsListProps> = ({ data, loaded, ...props })
   );
 };
 
-export const StatefulSetsPage: FC<StatefulSetsPageProps> = (props) => {
-  return (
-    <ListPage
-      {...props}
-      kind={referenceForModel(StatefulSetModel)}
-      ListComponent={StatefulSetsList}
-      canCreate
-      omitFilterToolbar
-    />
-  );
-};
+export const StatefulSetsPage: FC<StatefulSetsPageProps> = (props) => (
+  <ListPage
+    {...props}
+    kind={referenceForModel(StatefulSetModel)}
+    ListComponent={StatefulSetsList}
+    canCreate
+    omitFilterToolbar
+  />
+);
 
 const StatefulSetPods: FC<StatefulSetPodsProps> = (props) => <PodsComponent {...props} showNodes />;
 

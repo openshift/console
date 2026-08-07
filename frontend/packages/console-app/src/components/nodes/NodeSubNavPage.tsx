@@ -34,9 +34,8 @@ export const NodeSubNavPage: FC<NodeSubNavPageProps> = ({ obj, pageId, standardP
   const { setAllQueryArguments } = useQueryParamsMutator();
   const activeTabKey = queryParams.get('activeTab');
 
-  const [subTabExtensions, extensionsResolved] = useResolvedExtensions<NodeSubNavTab>(
-    isNodeSubNavTab,
-  );
+  const [subTabExtensions, extensionsResolved] =
+    useResolvedExtensions<NodeSubNavTab>(isNodeSubNavTab);
   const nodeSubTabExtensions = useTranslatedExtensions(subTabExtensions ?? []);
 
   const pages: SubPageType[] = useMemo(() => {
@@ -107,17 +106,15 @@ export const NodeSubNavPage: FC<NodeSubNavPageProps> = ({ obj, pageId, standardP
                 setAllQueryArguments({ activeTab: String(tabId) });
               }}
             >
-              {pages.map(({ nameKey, name, tabId }) => {
-                return (
-                  <Tab
-                    key={tabId}
-                    eventKey={tabId}
-                    data-test-id={`subnav-${tabId}`}
-                    title={<TabTitleText>{nameKey ? t(nameKey) : name}</TabTitleText>}
-                    aria-controls={undefined} // there is no corresponding tab content to control, so this ID is invalid
-                  />
-                );
-              })}
+              {pages.map(({ nameKey, name, tabId }) => (
+                <Tab
+                  key={tabId}
+                  eventKey={tabId}
+                  data-test-id={`subnav-${tabId}`}
+                  title={<TabTitleText>{nameKey ? t(nameKey) : name}</TabTitleText>}
+                  aria-controls={undefined} // there is no corresponding tab content to control, so this ID is invalid
+                />
+              ))}
             </Tabs>
           </FlexItem>
           {Component ? (

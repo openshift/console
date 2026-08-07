@@ -12,14 +12,12 @@ import {
 import type { AccessReviewResourceAttributes, K8sKind } from '@console/internal/module/k8s';
 import { allCatalogImageResourceAccess, allImportResourceAccess } from '../actions/add-resources';
 
-const resourceAttributes = (model: K8sKind, namespace: string): AccessReviewResourceAttributes => {
-  return {
-    group: model.apiGroup || '',
-    resource: model.plural,
-    namespace,
-    verb: 'create',
-  };
-};
+const resourceAttributes = (model: K8sKind, namespace: string): AccessReviewResourceAttributes => ({
+  group: model.apiGroup || '',
+  resource: model.plural,
+  namespace,
+  verb: 'create',
+});
 
 export const useAddToProjectAccess = (activeNamespace: string): string[] => {
   const buildConfigsAccess = useAccessReview(resourceAttributes(BuildConfigModel, activeNamespace));

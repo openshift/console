@@ -21,9 +21,9 @@ export const getImpersonate: GetImpersonate = (state) => state.sdkCore.impersona
  * @param state the root state
  * @returns The the impersonation details props object.
  */
-export const impersonateStateToProps = (state: SDKStoreState) => {
-  return { impersonate: getImpersonate(state) };
-};
+export const impersonateStateToProps = (state: SDKStoreState) => ({
+  impersonate: getImpersonate(state),
+});
 
 /**
  * It provides user details from the redux store.

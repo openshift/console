@@ -22,9 +22,7 @@ import { flagPending } from '../../reducers/features';
 import { ResourceName } from './resource-icon';
 import { LoadingInline } from './status-box';
 
-const getKey = (key, keyKind) => {
-  return keyKind ? `${key}-${keyKind}` : key;
-};
+const getKey = (key, keyKind) => (keyKind ? `${key}-${keyKind}` : key);
 
 interface ListDropdownResource extends Partial<WatchK8sResource & { prop?: string }> {
   data?: K8sResourceCommon[];
@@ -204,36 +202,41 @@ export const ListDropdown: FC<ListDropdownProps> = (props) => {
     if (!props.resources || props.resources.length === 0) {
       return {};
     }
-    return props.resources.reduce((acc, resource) => {
-      // Use prop as key if provided, otherwise fallback to kind
-      const key = resource.prop || resource.kind;
-      acc[key] = {
-        kind: resource.kind,
-        isList: true,
-        namespace: resource.namespace,
-        selector: resource.selector,
-        fieldSelector: resource.fieldSelector,
-        limit: resource.limit,
-        namespaced: resource.namespaced,
-        optional: resource.optional,
-      };
-      return acc;
-    }, {} as Record<string, WatchK8sResource>);
+    return props.resources.reduce(
+      (acc, resource) => {
+        // Use prop as key if provided, otherwise fallback to kind
+        const key = resource.prop || resource.kind;
+        acc[key] = {
+          kind: resource.kind,
+          isList: true,
+          namespace: resource.namespace,
+          selector: resource.selector,
+          fieldSelector: resource.fieldSelector,
+          limit: resource.limit,
+          namespaced: resource.namespaced,
+          optional: resource.optional,
+        };
+        return acc;
+      },
+      {} as Record<string, WatchK8sResource>,
+    );
   }, [props.resources]);
 
-  const watchedResources = useK8sWatchResources<Record<string, K8sResourceCommon[]>>(
-    watchResources,
+  const watchedResources =
+    useK8sWatchResources<Record<string, K8sResourceCommon[]>>(watchResources);
+
+  const loaded = useMemo(
+    () =>
+      Object.values(watchedResources)
+        .filter((r) => !r.loadError)
+        .every((r) => r.loaded),
+    [watchedResources],
   );
 
-  const loaded = useMemo(() => {
-    return Object.values(watchedResources)
-      .filter((r) => !r.loadError)
-      .every((r) => r.loaded);
-  }, [watchedResources]);
-
-  const loadError = useMemo(() => {
-    return Object.values(watchedResources).some((r) => r.loadError);
-  }, [watchedResources]);
+  const loadError = useMemo(
+    () => Object.values(watchedResources).some((r) => r.loadError),
+    [watchedResources],
+  );
 
   return (
     <InnerListDropdown

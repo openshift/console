@@ -105,9 +105,8 @@ const useModelFeatureFlagExtensions = () => {
  * and {@link ModelFeatureFlag} extensions.
  */
 export const FeatureFlagExtensionLoader: FC = () => {
-  const [flagProvider, flagProviderResolved] = useResolvedExtensions<FeatureFlagHookProvider>(
-    isFeatureFlagHookProvider,
-  );
+  const [flagProvider, flagProviderResolved] =
+    useResolvedExtensions<FeatureFlagHookProvider>(isFeatureFlagHookProvider);
   const featureFlagController = useFeatureFlagController();
 
   useFeatureFlagExtensions(featureFlagController);

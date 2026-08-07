@@ -135,8 +135,8 @@ export const FavoriteButton: FC<FavoriteButtonProps> = ({ defaultName }) => {
   const tooltipText = isDisabled
     ? disabledTooltipText
     : isStarred
-    ? t('Remove from favorites')
-    : t('Add to favorites');
+      ? t('Remove from favorites')
+      : t('Add to favorites');
 
   return (
     <div className="co-fav-actions-icon">

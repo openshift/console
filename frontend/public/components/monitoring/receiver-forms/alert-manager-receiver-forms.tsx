@@ -64,12 +64,8 @@ import { WebhookForm } from './webhook-receiver-form';
 const convertDeprecatedReceiverRoutesMatchesToMatchers = (
   receiverRoutes: AlertmanagerRoute,
 ): string[] => {
-  const matches = _.map(receiverRoutes?.match || {}, (v, k) => {
-    return `${k} = ${v}`;
-  });
-  const regexMatches = _.map(receiverRoutes?.match_re || {}, (v, k) => {
-    return `${k} =~ ${v}`;
-  });
+  const matches = _.map(receiverRoutes?.match || {}, (v, k) => `${k} = ${v}`);
+  const regexMatches = _.map(receiverRoutes?.match_re || {}, (v, k) => `${k} =~ ${v}`);
   return [...matches, ...regexMatches];
 };
 
@@ -81,12 +77,10 @@ const convertDeprecatedReceiverRoutesMatchesToMatchers = (
  *   matchers: ["severity = warning"]
  * }
  */
-const createRoute = (receiver: AlertmanagerReceiver, routeLabels: string[]): AlertmanagerRoute => {
-  return {
-    receiver: receiver.name,
-    matchers: routeLabels,
-  };
-};
+const createRoute = (receiver: AlertmanagerReceiver, routeLabels: string[]): AlertmanagerRoute => ({
+  receiver: receiver.name,
+  matchers: routeLabels,
+});
 
 /**
  * Returns new Receiver object

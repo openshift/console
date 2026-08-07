@@ -40,9 +40,8 @@ const ClusterInventoryItem = memo<ClusterInventoryItemProps>(
     const mainResource = useMemo(() => getWatchResource(model), [model]);
     const otherResources = useMemo(() => additionalResources || {}, [additionalResources]);
     const [mapper, setMapper] = useState<StatusGroupMapper>();
-    const [resourceData, resourceLoaded, resourceLoadError] = useK8sWatchResource<
-      K8sResourceCommon[]
-    >(mainResource);
+    const [resourceData, resourceLoaded, resourceLoadError] =
+      useK8sWatchResource<K8sResourceCommon[]>(mainResource);
     const resources = useK8sWatchResources(otherResources);
     useEffect(() => {
       mapperLoader &&
@@ -54,29 +53,26 @@ const ClusterInventoryItem = memo<ClusterInventoryItemProps>(
           });
     }, [mapperLoader]);
 
-    const [
-      additionalResourcesData,
-      additionalResourcesLoaded,
-      additionalResourcesLoadError,
-    ] = useMemo(() => {
-      const resourcesData = {};
-      let resourcesLoaded = true;
-      let resourcesLoadError = false;
+    const [additionalResourcesData, additionalResourcesLoaded, additionalResourcesLoadError] =
+      useMemo(() => {
+        const resourcesData = {};
+        let resourcesLoaded = true;
+        let resourcesLoadError = false;
 
-      if (additionalResources) {
-        resourcesLoaded = Object.keys(additionalResources)
-          .filter((key) => !additionalResources[key].optional)
-          .every((key) => resources[key].loaded);
-        Object.keys(additionalResources).forEach((key) => {
-          resourcesData[key] = resources[key].data;
-        });
-        resourcesLoadError = Object.keys(additionalResources)
-          .filter((key) => !additionalResources[key].optional)
-          .some((key) => !!resources[key].loadError);
-      }
+        if (additionalResources) {
+          resourcesLoaded = Object.keys(additionalResources)
+            .filter((key) => !additionalResources[key].optional)
+            .every((key) => resources[key].loaded);
+          Object.keys(additionalResources).forEach((key) => {
+            resourcesData[key] = resources[key].data;
+          });
+          resourcesLoadError = Object.keys(additionalResources)
+            .filter((key) => !additionalResources[key].optional)
+            .some((key) => !!resources[key].loadError);
+        }
 
-      return [resourcesData, resourcesLoaded, resourcesLoadError];
-    }, [additionalResources, resources]);
+        return [resourcesData, resourcesLoaded, resourcesLoadError];
+      }, [additionalResources, resources]);
 
     return (
       <ResourceInventoryItem
@@ -105,10 +101,10 @@ export const InventoryCard = memo(() => {
     isClusterOverviewInventoryItem,
   );
 
-  const mergedItems = useMemo(() => mergeItems(itemExtensions, replacementExtensions), [
-    itemExtensions,
-    replacementExtensions,
-  ]);
+  const mergedItems = useMemo(
+    () => mergeItems(itemExtensions, replacementExtensions),
+    [itemExtensions, replacementExtensions],
+  );
 
   const { t } = useTranslation('public');
 

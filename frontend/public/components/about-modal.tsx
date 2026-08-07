@@ -43,14 +43,12 @@ const DynamicPlugins: FC = () => {
     );
 
     setItems(
-      sortedLoadedPlugins?.map((plugin) => {
-        return (
-          <Content
-            component="li"
-            key={`${plugin.manifest.name}-${plugin.manifest.version}`}
-          >{`${plugin.manifest.name} (${plugin.manifest.version})`}</Content>
-        );
-      }),
+      sortedLoadedPlugins?.map((plugin) => (
+        <Content
+          component="li"
+          key={`${plugin.manifest.name}-${plugin.manifest.version}`}
+        >{`${plugin.manifest.name} (${plugin.manifest.version})`}</Content>
+      )),
     );
   }, [pluginInfoEntries]);
 

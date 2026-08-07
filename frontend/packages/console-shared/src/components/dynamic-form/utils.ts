@@ -11,9 +11,7 @@ const UNSUPPORTED_SCHEMA_PROPERTIES = ['allOf', 'anyOf', 'oneOf'];
 
 // Transform a path string to a JSON schema path array
 export const stringPathToUISchemaPath = (path: string): string[] =>
-  (_.toPath(path) ?? []).map((subPath) => {
-    return /^\d+$/.test(subPath) ? 'items' : subPath;
-  });
+  (_.toPath(path) ?? []).map((subPath) => (/^\d+$/.test(subPath) ? 'items' : subPath));
 
 export const useSchemaLabel = (schema: JSONSchema7, uiSchema: UiSchema, defaultLabel?: string) => {
   const options = getUiOptions(uiSchema ?? {});
@@ -31,25 +29,23 @@ export const useSchemaDescription = (
     schema?.description ||
     defaultDescription) as string;
 
-export const getSchemaErrors = (schema: JSONSchema7): DynamicFormSchemaError[] => {
-  return [
-    ...(_.isEmpty(schema)
-      ? [
-          {
-            title: 'Empty Schema',
-            message: 'Schema is empty.',
-          },
-        ]
-      : []),
-    ..._.map(
-      _.intersection(_.keys(schema), UNSUPPORTED_SCHEMA_PROPERTIES),
-      (unsupportedProperty) => ({
-        title: 'Unsupported Property',
-        message: `Cannot generate form fields for JSON schema with ${unsupportedProperty} property.`,
-      }),
-    ),
-  ];
-};
+export const getSchemaErrors = (schema: JSONSchema7): DynamicFormSchemaError[] => [
+  ...(_.isEmpty(schema)
+    ? [
+        {
+          title: 'Empty Schema',
+          message: 'Schema is empty.',
+        },
+      ]
+    : []),
+  ..._.map(
+    _.intersection(_.keys(schema), UNSUPPORTED_SCHEMA_PROPERTIES),
+    (unsupportedProperty) => ({
+      title: 'Unsupported Property',
+      message: `Cannot generate form fields for JSON schema with ${unsupportedProperty} property.`,
+    }),
+  ),
+];
 
 // Determine if a schema will produce no form fields.
 export const hasNoFields = (jsonSchema: JSONSchema7 = {}, uiSchema: UiSchema = {}): boolean => {
@@ -81,19 +77,18 @@ export const hasNoFields = (jsonSchema: JSONSchema7 = {}, uiSchema: UiSchema = {
 };
 
 // Recursively find the minimum ui:sortOrder property found within this uiSchema or it's children.
-const getUISortOrder = (uiSchema: UiSchema, fallback: number): number => {
-  return Number(
+const getUISortOrder = (uiSchema: UiSchema, fallback: number): number =>
+  Number(
     uiSchema?.['ui:sortOrder'] ??
       _.min(
-        _.keys(uiSchema).map((key) => {
-          return !key.includes(':') && _.isObject(uiSchema?.[key])
+        _.keys(uiSchema).map((key) =>
+          !key.includes(':') && _.isObject(uiSchema?.[key])
             ? getUISortOrder(uiSchema?.[key], fallback)
-            : fallback;
-        }),
+            : fallback,
+        ),
       ) ??
       fallback,
   );
-};
 
 // Return an array of dependency control field names that exist within uiSchema at the specified
 // path.
@@ -284,6 +279,4 @@ const pruneRecursive = (current: any, sample: any): any => {
 // the above criteria, but the corresponding sample is explicitly defined as an empty vaolue, it
 // will not be pruned.
 // Based on https://stackoverflow.com/a/26202058/8895304
-export const prune = (obj: any, sample?: any): any => {
-  return pruneRecursive(_.cloneDeep(obj), sample);
-};
+export const prune = (obj: any, sample?: any): any => pruneRecursive(_.cloneDeep(obj), sample);

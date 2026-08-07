@@ -30,9 +30,8 @@ interface SourceResourcesProps {
 const SourceResources: FC<SourceResourcesProps> = ({ namespace, isMoveSink }) => {
   const { t } = useTranslation('knative-plugin');
   const [resourceAlert, setResourceAlert] = useState(false);
-  const { setFieldValue, setFieldTouched, validateForm, initialValues } = useFormikContext<
-    FormikValues
-  >();
+  const { setFieldValue, setFieldTouched, validateForm, initialValues } =
+    useFormikContext<FormikValues>();
 
   // Get dynamic channel models
   const { loaded: channelsLoaded, eventSourceChannels: channels } = useChannelModels();
@@ -142,7 +141,7 @@ const SourceResources: FC<SourceResourcesProps> = ({ namespace, isMoveSink }) =>
       )}
       <ResourceDropdownField
         key={resourcesData.length === 0 ? 'no-resources' : 'resources'}
-        menuClassName={'max-height-menu'}
+        menuClassName="max-height-menu"
         data-test="sourcable-resources"
         name="formData.source.key"
         resources={resourcesData}

@@ -8,22 +8,20 @@ export const ActionGroupWithIcons: FC<ActionGroupWithIconsProps> = ({
   onSubmit,
   onClose,
   isDisabled,
-}) => {
-  return (
-    <ActionGroup className="pf-v6-c-form pf-v6-c-form__actions--right">
-      {onSubmit && (
-        <Button
-          icon={<RhUiCheckIcon />}
-          type="submit"
-          onClick={onSubmit}
-          variant={ButtonVariant.plain}
-          data-test="check-icon"
-          data-test-id="check-icon"
-          style={{ padding: '0' }}
-          isDisabled={isDisabled}
-        />
-      )}
-      <CloseButton className="pf-v6-u-p-0" dataTestID="close-icon" onClick={onClose} />
-    </ActionGroup>
-  );
-};
+}) => (
+  <ActionGroup className="pf-v6-c-form pf-v6-c-form__actions--right">
+    {onSubmit && (
+      <Button
+        icon={<RhUiCheckIcon />}
+        type="submit"
+        onClick={onSubmit}
+        variant={ButtonVariant.plain}
+        data-test="check-icon"
+        data-test-id="check-icon"
+        style={{ padding: '0' }}
+        isDisabled={isDisabled}
+      />
+    )}
+    <CloseButton className="pf-v6-u-p-0" dataTestID="close-icon" onClick={onClose} />
+  </ActionGroup>
+);

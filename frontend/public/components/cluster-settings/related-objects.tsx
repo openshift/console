@@ -43,8 +43,8 @@ type RelatedObjectsRowData = {
 const getRelatedObjectsDataViewRows = (
   rowData: RowProps<ClusterOperatorObjectReference, RelatedObjectsRowData>[],
   tableColumns: ConsoleDataViewColumn<ClusterOperatorObjectReference>[],
-): ConsoleDataViewRow[] => {
-  return rowData.map(({ obj, rowData: customData }) => {
+): ConsoleDataViewRow[] =>
+  rowData.map(({ obj, rowData: customData }) => {
     const { name, resource, namespace, group } = obj;
     const { findModel } = customData;
     const model = findModel(group, resource);
@@ -75,12 +75,11 @@ const getRelatedObjectsDataViewRows = (
       };
     });
   });
-};
 
 const useRelatedObjectsColumns = (): TableColumn<ClusterOperatorObjectReference>[] => {
   const { t } = useTranslation('public');
-  const columns = useMemo(() => {
-    return [
+  const columns = useMemo(
+    () => [
       {
         title: t('Name'),
         id: columnIds[0].id,
@@ -114,14 +113,15 @@ const useRelatedObjectsColumns = (): TableColumn<ClusterOperatorObjectReference>
           modifier: 'nowrap',
         },
       },
-    ];
-  }, [t]);
+    ],
+    [t],
+  );
   return columns;
 };
 
-const getObjectMetadata = (object: ClusterOperatorObjectReference): ResourceMetadata => {
-  return { name: object.name };
-};
+const getObjectMetadata = (object: ClusterOperatorObjectReference): ResourceMetadata => ({
+  name: object.name,
+});
 
 const RelatedObjects: FC<RelatedObjectsProps> = ({ data }) => {
   const { findModel } = useModelFinder();

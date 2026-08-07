@@ -37,8 +37,8 @@ import { kindForReference, modelFor, referenceForModel } from '../module/k8s';
 import { split, selectorFromString } from '../module/k8s/selector';
 import { requirementFromString } from '../module/k8s/selector-requirement';
 import { DefaultPage } from './default-resource';
+import { getResourceListPages } from './list-pages';
 import { ResourceListDropdown } from './resource-dropdown';
-import { getResourceListPages } from './resource-pages';
 import { SearchFilterDropdown, SearchFilterValues } from './search-filter-dropdown';
 import { withStartGuide } from './start-guide';
 import { AsyncComponent } from './utils/async';
@@ -324,26 +324,26 @@ const InnerSearchPage: FC<SearchProps> = (props) => {
                   id={`${resource}-toggle`}
                 >
                   {getToggleText(resource)}
-                  {perspective !== 'admin' && pinnedResourcesLoaded && (
-                    <Button
-                      className="co-search-group__pin-toggle"
-                      variant={ButtonVariant.link}
-                      onClick={(e) => pinToggle(e, resource)}
-                    >
-                      {pinnedResources.includes(resource) ? (
-                        <>
-                          <RhUiMinusCircleIcon className="co-search-group__pin-toggle__icon" />
-                          {t('Remove from navigation')}
-                        </>
-                      ) : (
-                        <>
-                          <RhUiAddCircleFillIcon className="co-search-group__pin-toggle__icon" />
-                          {t('Add to navigation')}
-                        </>
-                      )}
-                    </Button>
-                  )}
                 </AccordionToggle>
+                {perspective !== 'admin' && pinnedResourcesLoaded && (
+                  <Button
+                    className="co-search-group__pin-toggle"
+                    variant={ButtonVariant.link}
+                    onClick={(e) => pinToggle(e, resource)}
+                  >
+                    {pinnedResources.includes(resource) ? (
+                      <>
+                        <RhUiMinusCircleIcon className="co-search-group__pin-toggle__icon" />
+                        {t('Remove from navigation')}
+                      </>
+                    ) : (
+                      <>
+                        <RhUiAddCircleFillIcon className="co-search-group__pin-toggle__icon" />
+                        {t('Add to navigation')}
+                      </>
+                    )}
+                  </Button>
+                )}
                 <AccordionContent>
                   {!isCollapsed && (
                     <ResourceList
@@ -362,7 +362,7 @@ const InnerSearchPage: FC<SearchProps> = (props) => {
         </Accordion>
         {selectedItems.size === 0 && (
           <ConsoleEmptyState title={t('No resources selected')}>
-            {<p>{t('Select one or more resources from the dropdown.')}</p>}
+            <p>{t('Select one or more resources from the dropdown.')}</p>
           </ConsoleEmptyState>
         )}
       </PageSection>

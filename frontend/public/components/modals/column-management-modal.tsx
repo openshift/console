@@ -100,9 +100,10 @@ export const ColumnManagementModal: FC<
     columnLayout.columns.forEach(
       (column) => checkedColumns.has(column.id) && orderedCheckedColumns.add(column.id),
     );
-    setTableColumns((prevState) => {
-      return { ...prevState, [columnLayout.id]: [...orderedCheckedColumns] };
-    });
+    setTableColumns((prevState) => ({
+      ...prevState,
+      [columnLayout.id]: [...orderedCheckedColumns],
+    }));
     close();
   };
 

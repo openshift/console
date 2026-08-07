@@ -27,12 +27,9 @@ interface HelmCreateBasicAuthSecretModalProps {
   onClose?: () => void;
 }
 
-export const HelmCreateBasicAuthSecretModal: OverlayComponent<HelmCreateBasicAuthSecretModalProps> = ({
-  closeOverlay,
-  namespace,
-  save,
-  onClose,
-}) => {
+export const HelmCreateBasicAuthSecretModal: OverlayComponent<
+  HelmCreateBasicAuthSecretModalProps
+> = ({ closeOverlay, namespace, save, onClose }) => {
   const { t } = useTranslation('helm-plugin');
   const [secretName, setSecretName] = useState('');
   const [username, setUsername] = useState('');

@@ -7,7 +7,7 @@ describe('determineWorkflowPhase', () => {
   ): ClusterVersionKind =>
     ({
       status: { conditions },
-    } as ClusterVersionKind);
+    }) as ClusterVersionKind;
 
   describe('status phase detection (includes failure conditions)', () => {
     it('should return status when Failing condition is True', () => {

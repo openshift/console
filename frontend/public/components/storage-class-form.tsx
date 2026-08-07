@@ -160,7 +160,7 @@ const StorageClassFormInner: FC<StorageClassFormProps> = (props) => {
         returnVal.error = t('Storage name is required');
         returnVal.nameIsValid = false;
       } else if (resources.current) {
-        _.each(resources.current.data, function (storageClass) {
+        _.each(resources.current.data, (storageClass) => {
           if (storageClass.metadata.name === updatedName.toLowerCase()) {
             returnVal.error = t('Storage name must be unique');
             returnVal.nameIsValid = false;
@@ -325,7 +325,7 @@ const StorageClassFormInner: FC<StorageClassFormProps> = (props) => {
     _.each(defaultParams, (values, param) => {
       const isVisible = _.isFunction(values?.visible)
         ? values.visible(defaultParams)
-        : values?.visible ?? true;
+        : (values?.visible ?? true);
       if (!isVisible && values.value) {
         hiddenParmas[param] = values;
       }

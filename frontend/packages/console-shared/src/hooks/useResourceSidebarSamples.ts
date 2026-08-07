@@ -356,12 +356,10 @@ export const useResourceSidebarSamples = (
 
   const existingSamples = defaultSamples.get(referenceForModel(kindObj)) || [];
   const extensionSamples = !_.isEmpty(yamlSamplesData)
-    ? yamlSamplesData.map((sample: K8sResourceKind) => {
-        return {
-          id: sample.metadata.uid,
-          ...(sample.spec as Exclude<Sample, 'id'>),
-        };
-      })
+    ? yamlSamplesData.map((sample: K8sResourceKind) => ({
+        id: sample.metadata.uid,
+        ...(sample.spec as Exclude<Sample, 'id'>),
+      }))
     : [];
 
   const allSamples = [...existingSamples, ...extensionSamples];

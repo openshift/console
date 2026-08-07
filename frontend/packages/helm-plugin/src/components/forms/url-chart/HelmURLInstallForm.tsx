@@ -53,9 +53,10 @@ const HelmURLInstallForm: FC<FormikProps<HelmURLInstallFormData> & HelmURLInstal
 
   const isSubmitDisabled = isSubmitting || !_.isEmpty(errors) || !!chartError;
 
-  const uiSchema = useMemo(() => (formSchema ? getJSONSchemaOrder(formSchema, {}) : {}), [
-    formSchema,
-  ]);
+  const uiSchema = useMemo(
+    () => (formSchema ? getJSONSchemaOrder(formSchema, {}) : {}),
+    [formSchema],
+  );
   const LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY = 'helm.urlInstallForm.editor.lastView';
 
   const formEditor = formData && formSchema && (

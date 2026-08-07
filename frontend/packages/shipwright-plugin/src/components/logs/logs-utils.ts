@@ -83,8 +83,8 @@ export const pipelineRunStatus = (pipelineRun): ComputedStatus => {
     succeedCondition.status === 'True'
       ? ComputedStatus.Succeeded
       : succeedCondition.status === 'False'
-      ? ComputedStatus.Failed
-      : ComputedStatus.Running;
+        ? ComputedStatus.Failed
+        : ComputedStatus.Running;
 
   if (succeedCondition.reason && succeedCondition.reason !== status) {
     switch (succeedCondition.reason) {

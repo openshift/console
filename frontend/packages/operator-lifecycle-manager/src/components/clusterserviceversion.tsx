@@ -800,8 +800,8 @@ const ClusterServiceVersionList: FC<ClusterServiceVersionListProps> = ({
   const filterOperators = (
     operators: (ClusterServiceVersionKind | SubscriptionKind)[],
     allNamespaceActive: boolean,
-  ): (ClusterServiceVersionKind | SubscriptionKind)[] => {
-    return operators.filter((operator) => {
+  ): (ClusterServiceVersionKind | SubscriptionKind)[] =>
+    operators.filter((operator) => {
       if (isSubscription(operator)) {
         return true;
       }
@@ -818,7 +818,6 @@ const ClusterServiceVersionList: FC<ClusterServiceVersionListProps> = ({
       }
       return isStandaloneCSV(operator);
     });
-  };
 
   const formatTargetNamespaces = (obj: ClusterServiceVersionKind | SubscriptionKind): string => {
     if (obj.kind === 'Subscription') {
@@ -1184,9 +1183,8 @@ const ClusterServiceVersionDetails: FC<ClusterServiceVersionDetailsProps> = (pro
 
   const csvPlugins = getClusterServiceVersionPlugins(metadata?.annotations);
   const permissions = _.uniqBy(spec?.install?.spec?.permissions, 'serviceAccountName');
-  const { deprecatedPackage, deprecatedChannel, deprecatedVersion } = findDeprecatedOperator(
-    subscription,
-  );
+  const { deprecatedPackage, deprecatedChannel, deprecatedVersion } =
+    findDeprecatedOperator(subscription);
 
   return (
     <>

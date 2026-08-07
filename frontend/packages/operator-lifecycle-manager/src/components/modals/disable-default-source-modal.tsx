@@ -83,22 +83,16 @@ const DisableDefaultSourceModal: FC<DisableDefaultSourceModalProps> = ({
 
 export const DisableDefaultSourceModalOverlay: OverlayComponent<DisableDefaultSourceModalProps> = (
   props,
-) => {
-  return (
-    <Modal
-      variant={ModalVariant.small}
-      isOpen
-      onClose={props.closeOverlay}
-      aria-labelledby="disable-default-source-modal-title"
-    >
-      <DisableDefaultSourceModal
-        {...props}
-        close={props.closeOverlay}
-        cancel={props.closeOverlay}
-      />
-    </Modal>
-  );
-};
+) => (
+  <Modal
+    variant={ModalVariant.small}
+    isOpen
+    onClose={props.closeOverlay}
+    aria-labelledby="disable-default-source-modal-title"
+  >
+    <DisableDefaultSourceModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
+  </Modal>
+);
 
 export type DisableDefaultSourceModalProps = {
   kind: K8sKind;

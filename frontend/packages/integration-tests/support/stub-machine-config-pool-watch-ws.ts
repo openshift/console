@@ -9,7 +9,7 @@ export const stubMachineConfigPoolWatchWebSocket = (win: Window) => {
       // MCP list watch URL only; all other sockets stay native.
       if (urlString.includes('machineconfiguration.openshift.io/v1/machineconfigpools')) {
         // eslint-disable-next-line no-constructor-return
-        return ({
+        return {
           close: () => {},
           send: () => {},
           addEventListener: () => {},
@@ -29,14 +29,14 @@ export const stubMachineConfigPoolWatchWebSocket = (win: Window) => {
           OPEN: 1,
           CLOSING: 2,
           CLOSED: 3,
-        } as unknown) as WebSocket;
+        } as unknown as WebSocket;
       }
 
-      return new OriginalWebSocket(url, protocols);
+      super(url, protocols);
     }
   }
 
   // Replace the global WebSocket with our stub
   // eslint-disable-next-line no-param-reassign
-  win.WebSocket = (StubWebSocket as unknown) as typeof WebSocket;
+  win.WebSocket = StubWebSocket as unknown as typeof WebSocket;
 };

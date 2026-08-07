@@ -6,6 +6,6 @@ const OverviewListPageLoader = () =>
     (m) => m.OverviewListPage,
   );
 
-export const OverviewListPage: FC = (props) => {
-  return <AsyncComponent loader={OverviewListPageLoader} {...props} />;
-};
+export const OverviewListPage: FC = (props) => (
+  <AsyncComponent loader={OverviewListPageLoader} {...props} />
+);

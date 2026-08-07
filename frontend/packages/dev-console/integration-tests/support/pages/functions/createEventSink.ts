@@ -5,7 +5,7 @@ import { app, createForm, navigateTo } from '../app';
 
 export const createEventSink = (
   cardName: string = 'Log Sink',
-  target: string,
+  target: string = undefined,
   eventSinkName: string = 'event-sink-one',
 ) => {
   navigateTo(devNavigationMenu.Add);

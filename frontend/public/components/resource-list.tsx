@@ -24,7 +24,8 @@ import {
 } from '../module/k8s';
 import { DefaultPage, DefaultDetailsPage } from './default-resource';
 import { ErrorPage404 } from './error';
-import { getResourceListPages, getResourceDetailsPages } from './resource-pages';
+import { getResourceListPages } from './list-pages';
+import { getResourceDetailsPages } from './resource-pages';
 import { withStartGuide } from './start-guide';
 import { AsyncComponent } from './utils/async';
 import { LoadingBox } from './utils/status-box';

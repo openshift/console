@@ -26,7 +26,7 @@ export const useVACPlatformSupportProvider = (setFeatureFlag: SetFeatureFlag) =>
     if (loaded && !error) {
       const platform = getInfrastructurePlatform(infrastructure);
       const isSupported = VAC_SUPPORTED_PLATFORMS.includes(
-        platform as typeof VAC_SUPPORTED_PLATFORMS[number],
+        platform as (typeof VAC_SUPPORTED_PLATFORMS)[number],
       );
 
       setFeatureFlag(FLAGS.VAC_PLATFORM_SUPPORT, isSupported);

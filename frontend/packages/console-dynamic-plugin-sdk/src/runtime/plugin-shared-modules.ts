@@ -35,7 +35,7 @@ export const initSharedScope = async () => __webpack_init_sharing__(SHARED_SCOPE
 type WebpackShareScopes = {
   [scopeName: string]: {
     [moduleName: string]: {
-      [moduleVersion: string]: typeof __webpack_share_scopes__[string][string];
+      [moduleVersion: string]: (typeof __webpack_share_scopes__)[string][string];
     };
   };
 };
@@ -49,7 +49,7 @@ export const getSharedScope = () => {
   }
 
   // TODO: Remove this type cast once __webpack_share_scopes__ object type is fixed
-  return (__webpack_share_scopes__[SHARED_SCOPE_NAME] as unknown) as WebpackShareScopes[string];
+  return __webpack_share_scopes__[SHARED_SCOPE_NAME] as unknown as WebpackShareScopes[string];
 };
 
 /**

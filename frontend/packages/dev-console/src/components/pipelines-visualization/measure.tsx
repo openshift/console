@@ -31,7 +31,10 @@ const MeasureBounds: FC<MeasureProps> = ({ onResize, children }) => {
   });
 
   const updateRect = useCallback(() => {
-    const { width, height } = measureRef?.current?.getBoundingClientRect();
+    const { width, height } = measureRef?.current?.getBoundingClientRect() ?? {
+      width: 0,
+      height: 0,
+    };
     setContentRect({ bounds: { width, height } });
     onResize && onResize({ bounds: { width, height } });
   }, [onResize]);

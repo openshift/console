@@ -34,8 +34,8 @@ const machineHealthCheckReference = referenceForModel(MachineHealthCheckModel);
 
 const tableColumnInfo = [{ id: 'name' }, { id: 'namespace' }, { id: 'created' }, { id: '' }];
 
-const getDataViewRows: GetDataViewRows<MachineHealthCheckKind> = (data, columns) => {
-  return data.map(({ obj }) => {
+const getDataViewRows: GetDataViewRows<MachineHealthCheckKind> = (data, columns) =>
+  data.map(({ obj }) => {
     const { name, namespace } = obj.metadata;
 
     const rowCells = {
@@ -64,19 +64,17 @@ const getDataViewRows: GetDataViewRows<MachineHealthCheckKind> = (data, columns)
       };
     });
   });
-};
 
 const useMachineHealthCheckColumns = (): {
   columns: TableColumn<MachineHealthCheckKind>[];
   resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('public');
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
-    MachineHealthCheckModel,
-  );
+  const { getResizableProps, resetAllColumnWidths } =
+    useColumnWidthSettings(MachineHealthCheckModel);
 
-  const columns: TableColumn<MachineHealthCheckKind>[] = useMemo(() => {
-    return [
+  const columns: TableColumn<MachineHealthCheckKind>[] = useMemo(
+    () => [
       {
         title: t('Name'),
         id: tableColumnInfo[0].id,
@@ -112,8 +110,9 @@ const useMachineHealthCheckColumns = (): {
           ...actionsCellProps,
         },
       },
-    ];
-  }, [t, getResizableProps]);
+    ],
+    [t, getResizableProps],
+  );
 
   return { columns, resetAllColumnWidths };
 };

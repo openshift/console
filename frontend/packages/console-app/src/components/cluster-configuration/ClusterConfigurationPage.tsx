@@ -43,25 +43,19 @@ const ClusterConfigurationPage: FC = () => {
     navigate(path, { replace: true });
   };
 
-  const [
-    clusterConfigurationGroups,
-    clusterConfigurationGroupsResolved,
-  ] = useClusterConfigurationGroups();
+  const [clusterConfigurationGroups, clusterConfigurationGroupsResolved] =
+    useClusterConfigurationGroups();
 
-  const [
-    clusterConfigurationItems,
-    clusterConfigurationItemsResolved,
-  ] = useClusterConfigurationItems();
+  const [clusterConfigurationItems, clusterConfigurationItemsResolved] =
+    useClusterConfigurationItems();
 
   const loaded = clusterConfigurationGroupsResolved && clusterConfigurationItemsResolved;
 
   const [clusterConfigurationTabs, clusterConfigurationTabContents] = useMemo<
     [React.ReactElement<TabProps>[], React.ReactElement<TabContentProps>[]]
   >(() => {
-    const populatedClusterCongigurationGroups: ClusterConfigurationTabGroup[] = getClusterConfigurationGroups(
-      clusterConfigurationGroups,
-      clusterConfigurationItems,
-    );
+    const populatedClusterCongigurationGroups: ClusterConfigurationTabGroup[] =
+      getClusterConfigurationGroups(clusterConfigurationGroups, clusterConfigurationItems);
     const [tabs, tabContents] = populatedClusterCongigurationGroups.reduce(
       (acc: [ReactElement<TabProps>[], ReactElement<TabContentProps>[]], currGroup) => {
         const { id, label, items } = currGroup;

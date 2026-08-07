@@ -21,7 +21,7 @@ const notification = (id: string, drawerGroup?: string): ToastNotification =>
     timestamp: 0,
     isRead: false,
     drawerGroup: drawerGroup || DEFAULT_TOAST_DRAWER_GROUP,
-  } as ToastNotification);
+  }) as ToastNotification;
 
 describe('toastNotificationUtils', () => {
   it('should group notifications by drawer group', () => {

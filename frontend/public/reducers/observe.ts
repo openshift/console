@@ -125,8 +125,8 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
               value === MONITORING_DASHBOARDS_VARIABLE_ALL_OPTION_KEY || newOptions.includes(value)
                 ? value
                 : perspective === 'dev' && key === 'namespace'
-                ? state.get('activeNamespace')
-                : newOptions[0],
+                  ? state.get('activeNamespace')
+                  : newOptions[0],
           };
       return state.mergeIn(['dashboards', perspective, 'variables', key], ImmutableMap(patch));
     }
@@ -227,9 +227,9 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
     }
 
     case ActionType.QueryBrowserSetAllExpanded: {
-      const queries = state.getIn(['queryBrowser', 'queries']).map((q) => {
-        return q.set('isExpanded', action.payload.isExpanded);
-      });
+      const queries = state
+        .getIn(['queryBrowser', 'queries'])
+        .map((q) => q.set('isExpanded', action.payload.isExpanded));
       return state.setIn(['queryBrowser', 'queries'], queries);
     }
 

@@ -67,12 +67,10 @@ const FunctionsListPage: FC<ComponentProps<typeof ListPage>> = (props) => {
 
 const PageContentsWithStartGuide = withStartGuide(FunctionsListPage);
 
-const FunctionsPage: FC<ComponentProps<typeof ListPage>> = (props) => {
-  return (
-    <NamespacedPage variant={NamespacedPageVariants.light} hideApplications>
-      <PageContentsWithStartGuide {...props} />
-    </NamespacedPage>
-  );
-};
+const FunctionsPage: FC<ComponentProps<typeof ListPage>> = (props) => (
+  <NamespacedPage variant={NamespacedPageVariants.light} hideApplications>
+    <PageContentsWithStartGuide {...props} />
+  </NamespacedPage>
+);
 
 export default FunctionsPage;

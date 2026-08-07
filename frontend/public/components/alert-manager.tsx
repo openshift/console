@@ -125,8 +125,8 @@ const tableColumnInfo = [
   { id: 'nodeSelector' },
 ];
 
-const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {
-  return data.map(({ obj: alertManager }) => {
+const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) =>
+  data.map(({ obj: alertManager }) => {
     const { metadata, spec } = alertManager;
 
     const rowCells = {
@@ -166,12 +166,11 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {
       };
     });
   });
-};
 
 const useAlertManagerColumns = (): TableColumn<K8sResourceKind>[] => {
   const { t } = useTranslation('public');
-  const columns = useMemo(() => {
-    return [
+  const columns = useMemo(
+    () => [
       {
         title: t('Name'),
         id: tableColumnInfo[0].id,
@@ -215,8 +214,9 @@ const useAlertManagerColumns = (): TableColumn<K8sResourceKind>[] => {
           modifier: 'nowrap',
         },
       },
-    ];
-  }, [t]);
+    ],
+    [t],
+  );
   return columns;
 };
 

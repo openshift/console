@@ -20,7 +20,5 @@ export const masthead = {
   userDropdown: () => cy.byTestID('user-dropdown-toggle'),
   quickCreateDropdown: () => cy.byTestID('quick-create-dropdown'),
   copyLoginCommand: () => cy.byTestID('copy-login-command').find('a'),
-  clickMastheadLink: (path: string) => {
-    return cy.byTestID(path).click();
-  },
+  clickMastheadLink: (path: string) => cy.byTestID(path).click(),
 };

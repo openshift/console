@@ -184,9 +184,8 @@ const PerspectiveConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
   const perspectiveExtensions = useExtensions<PerspectiveExtension>(isPerspective);
 
   // Current configuration
-  const [consoleConfig, consoleConfigLoaded, consoleConfigError] = useConsoleOperatorConfig<
-    PerspectivesConsoleConfig
-  >();
+  const [consoleConfig, consoleConfigLoaded, consoleConfigError] =
+    useConsoleOperatorConfig<PerspectivesConsoleConfig>();
   const [configuredPerspectives, setConfiguredPerspectives] = useState<Perspective[]>();
   useEffect(() => {
     if (consoleConfig && consoleConfigLoaded && !configuredPerspectives) {

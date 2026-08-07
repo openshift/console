@@ -22,7 +22,7 @@ const createNavExtension = (
       href: `/${id}`,
       ...overrides,
     },
-  } as LoadedExtension<NavExtension>);
+  }) as LoadedExtension<NavExtension>;
 
 const createNavSection = (
   id: string,
@@ -36,7 +36,7 @@ const createNavSection = (
       name: `Section ${id}`,
       ...overrides,
     },
-  } as LoadedExtension<NavExtension>);
+  }) as LoadedExtension<NavExtension>;
 
 describe('utils', () => {
   describe('stripScopeFromPath', () => {

@@ -5,11 +5,10 @@ import { getResource } from '@console/topology/src/utils/topology-utils';
 import { addPubSubConnectionModal } from '../components/pub-sub/PubSubModalLauncher';
 import { createEventSourceKafkaConnection } from './knative-topology-utils';
 
-const createPubSubConnector = (source: Node, target: Node) => {
-  return Promise.resolve(
+const createPubSubConnector = (source: Node, target: Node) =>
+  Promise.resolve(
     addPubSubConnectionModal({ source: getResource(source), target: getResource(target) }),
   ).then(() => null);
-};
 
 const createKafkaConnection = (source: Node, target: Node) =>
   createEventSourceKafkaConnection(source, target)

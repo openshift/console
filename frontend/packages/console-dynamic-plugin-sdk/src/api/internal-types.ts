@@ -336,7 +336,7 @@ export type GetDataViewRows<TData, TCustomRowData = any> = (
 export type ConsoleDataViewProps<
   TData,
   TCustomRowData = any,
-  TFilters extends ResourceFilters = ResourceFilters
+  TFilters extends ResourceFilters = ResourceFilters,
 > = {
   label?: string;
   data: TData[];

@@ -100,17 +100,11 @@ const App: FC = () => {
   const location = useLocation();
   const params = useParams();
 
-  const isLargeLayout = () => {
-    return window.innerWidth >= NOTIFICATION_DRAWER_BREAKPOINT;
-  };
+  const isLargeLayout = () => window.innerWidth >= NOTIFICATION_DRAWER_BREAKPOINT;
 
-  const isDesktop = () => {
-    return window.innerWidth >= PF_BREAKPOINT_XL;
-  };
+  const isDesktop = () => window.innerWidth >= PF_BREAKPOINT_XL;
 
-  const isMobile = () => {
-    return window.innerWidth < PF_BREAKPOINT_MD;
-  };
+  const isMobile = () => window.innerWidth < PF_BREAKPOINT_MD;
 
   const [prevLocation, setPrevLocation] = useState(location);
   const [prevParams, setPrevParams] = useState(params);
@@ -404,12 +398,15 @@ const updateSwaggerDefinitionContinual = () => {
     console.error('Could not fetch OpenAPI after application start:', e);
   });
   clearInterval(updateSwaggerInterval);
-  updateSwaggerInterval = setInterval(() => {
-    fetchSwagger().catch((e) => {
-      // eslint-disable-next-line no-console
-      console.error('Could not fetch OpenAPI to stay up to date:', e);
-    });
-  }, 5 * 60 * 1000);
+  updateSwaggerInterval = setInterval(
+    () => {
+      fetchSwagger().catch((e) => {
+        // eslint-disable-next-line no-console
+        console.error('Could not fetch OpenAPI to stay up to date:', e);
+      });
+    },
+    5 * 60 * 1000,
+  );
 };
 
 // Load cached API resources from localStorage to speed up page load.
@@ -458,11 +455,13 @@ if ('serviceWorker' in navigator) {
       .register(`${window.SERVER_FLAGS.basePath}load-test.sw.js`)
       .then(
         () =>
-          new Promise<void>((r) =>
-            navigator.serviceWorker.controller
-              ? r()
-              : navigator.serviceWorker.addEventListener('controllerchange', () => r()),
-          ),
+          new Promise<void>((r) => {
+            if (navigator.serviceWorker.controller) {
+              r();
+            } else {
+              navigator.serviceWorker.addEventListener('controllerchange', () => r());
+            }
+          }),
       )
       .then(() =>
         navigator.serviceWorker.controller.postMessage({

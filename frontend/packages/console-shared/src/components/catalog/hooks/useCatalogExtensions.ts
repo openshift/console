@@ -55,17 +55,16 @@ export const useCatalogExtensions = (
     ),
   );
 
-  const [typeMetadataExtensions, itemTypeMetadataResolved] = useResolvedExtensions<
-    CatalogItemTypeMetadata
-  >(
-    useCallback(
-      (e): e is CatalogItemTypeMetadata =>
-        isCatalogItemTypeMetadata(e) &&
-        isEnabledType(e) &&
-        (!catalogType || e.properties.type === catalogType),
-      [catalogType, isEnabledType],
-    ),
-  );
+  const [typeMetadataExtensions, itemTypeMetadataResolved] =
+    useResolvedExtensions<CatalogItemTypeMetadata>(
+      useCallback(
+        (e): e is CatalogItemTypeMetadata =>
+          isCatalogItemTypeMetadata(e) &&
+          isEnabledType(e) &&
+          (!catalogType || e.properties.type === catalogType),
+        [catalogType, isEnabledType],
+      ),
+    );
 
   const [catalogProviderExtensions, providersResolved] = useResolvedExtensions<CatalogItemProvider>(
     useCallback(
@@ -89,33 +88,31 @@ export const useCatalogExtensions = (
     ),
   );
 
-  const [categoryProviderExtensions, categoryProvidersResolved] = useResolvedExtensions<
-    CatalogCategoriesProvider
-  >(
-    useCallback(
-      (e): e is CatalogCategoriesProvider =>
-        isCatalogCategoriesProvider(e) &&
-        isEnabledType(e) &&
-        (!e.properties.catalogId ||
-          e.properties.catalogId === catalogId ||
-          !e.properties.type ||
-          e.properties.type === catalogType),
-      [catalogId, catalogType, isEnabledType],
-    ),
-  );
+  const [categoryProviderExtensions, categoryProvidersResolved] =
+    useResolvedExtensions<CatalogCategoriesProvider>(
+      useCallback(
+        (e): e is CatalogCategoriesProvider =>
+          isCatalogCategoriesProvider(e) &&
+          isEnabledType(e) &&
+          (!e.properties.catalogId ||
+            e.properties.catalogId === catalogId ||
+            !e.properties.type ||
+            e.properties.type === catalogType),
+        [catalogId, catalogType, isEnabledType],
+      ),
+    );
 
-  const [metadataProviderExtensions, metadataProvidersResolved] = useResolvedExtensions<
-    CatalogItemMetadataProvider
-  >(
-    useCallback(
-      (e): e is CatalogItemMetadataProvider =>
-        isCatalogItemMetadataProvider(e) &&
-        isEnabledType(e) &&
-        _.castArray(e.properties.catalogId).includes(catalogId) &&
-        (!catalogType || e.properties.type === catalogType),
-      [catalogId, catalogType, isEnabledType],
-    ),
-  );
+  const [metadataProviderExtensions, metadataProvidersResolved] =
+    useResolvedExtensions<CatalogItemMetadataProvider>(
+      useCallback(
+        (e): e is CatalogItemMetadataProvider =>
+          isCatalogItemMetadataProvider(e) &&
+          isEnabledType(e) &&
+          _.castArray(e.properties.catalogId).includes(catalogId) &&
+          (!catalogType || e.properties.type === catalogType),
+        [catalogId, catalogType, isEnabledType],
+      ),
+    );
 
   const catalogTypeExtensions = useMemo<LoadedAndResolvedExtension<CatalogItemType>[]>(
     () =>

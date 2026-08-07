@@ -71,7 +71,7 @@ describe('Masonry Layout', () => {
     window.HTMLElement.prototype.getBoundingClientRect = () =>
       ({
         width,
-      } as DOMRect);
+      }) as DOMRect;
   };
 
   it('should render loading component if loading is true and LoadingComponent is defined', async () => {
@@ -184,7 +184,9 @@ describe('Masonry Layout', () => {
 
     // Wait for debounce timeout to ensure resize handler completes
     await act(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 150));
+      await new Promise<void>((resolve) => {
+        setTimeout(resolve, 150);
+      });
     });
 
     // Should still show 4 columns because new width does not exceed threshold

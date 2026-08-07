@@ -145,13 +145,12 @@ export const exampleForModel = (csv: ClusterServiceVersionKind, model: K8sKind) 
 export const getManualSubscriptionsInNamespace = (
   subscriptions: SubscriptionKind[],
   namespace: string,
-) => {
-  return subscriptions?.filter(
+) =>
+  subscriptions?.filter(
     (subscription) =>
       subscription.metadata.namespace === namespace &&
       subscription.spec.installPlanApproval === InstallPlanApproval.Manual,
   );
-};
 
 export const OperatorsWithManualApproval: FC<OperatorsWithManualApprovalProps> = ({
   subscriptions,

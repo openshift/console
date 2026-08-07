@@ -27,8 +27,11 @@ export const EventSourceTarget: FC<EventSourceTargetProps> = ({ obj }) => {
     spec,
     status,
   } = obj;
-  const { name: sinkName, kind: sinkKind, apiVersion: sinkApiversion } =
-    spec?.sink?.ref || spec?.sink || {};
+  const {
+    name: sinkName,
+    kind: sinkKind,
+    apiVersion: sinkApiversion,
+  } = spec?.sink?.ref || spec?.sink || {};
   const sinkUri = spec?.sink?.uri || status?.sinkUri;
   const { group, version } = (sinkApiversion && groupVersionFor(sinkApiversion)) || {};
   const isSinkReference = !!(sinkKind && sinkName && group && version);

@@ -57,7 +57,7 @@ export const ClusterSetupGettingStartedCard: FC = () => {
         <RhUiCheckClipboardIcon color="var(--co-global--palette--blue-400)" aria-hidden="true" />
       }
       title={t('Set up your cluster')}
-      titleColor={'var(--co-global--palette--blue-400)'}
+      titleColor="var(--co-global--palette--blue-400)"
       description={t('Finish setting up your cluster with recommended configurations.')}
       links={links}
       moreLink={!isManaged() && moreLink}

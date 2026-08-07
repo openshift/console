@@ -262,9 +262,10 @@ export const NotificationDrawer: FC<NotificationDrawerProps> = ({
     clearAllNotifications,
     markAllNotificationsRead,
   } = useNotificationHistory();
-  const groupedToastNotifications = useMemo(() => groupToastNotifications(toastNotifications), [
-    toastNotifications,
-  ]);
+  const groupedToastNotifications = useMemo(
+    () => groupToastNotifications(toastNotifications),
+    [toastNotifications],
+  );
   const otherAlertsToastNotifications = getToastNotificationsForGroup(
     groupedToastNotifications,
     DEFAULT_TOAST_DRAWER_GROUP,
@@ -281,10 +282,10 @@ export const NotificationDrawer: FC<NotificationDrawerProps> = ({
     navigate(location);
   };
 
-  const alertActionExtensionsMap = useMemo(() => getAlertActions(alertActionExtensions, navigate), [
-    alertActionExtensions,
-    navigate,
-  ]);
+  const alertActionExtensionsMap = useMemo(
+    () => getAlertActions(alertActionExtensions, navigate),
+    [alertActionExtensions, navigate],
+  );
 
   const canUpgrade = useCanClusterUpgrade();
   const updateList: ReactNode[] = getUpdateNotificationEntries(
@@ -297,11 +298,10 @@ export const NotificationDrawer: FC<NotificationDrawerProps> = ({
   const [criticalAlerts, nonCriticalAlerts] = useMemo(() => {
     const criticalAlertLabelSelector = new LabelSelector({ severity: AlertSeverity.Critical });
     return alerts.reduce<AlertAccumulator>(
-      ([criticalAlertAcc, nonCriticalAlertAcc], alert) => {
-        return criticalAlertLabelSelector.matchesLabels(alert.labels)
+      ([criticalAlertAcc, nonCriticalAlertAcc], alert) =>
+        criticalAlertLabelSelector.matchesLabels(alert.labels)
           ? [[...criticalAlertAcc, alert], nonCriticalAlertAcc]
-          : [criticalAlertAcc, [...nonCriticalAlertAcc, alert]];
-      },
+          : [criticalAlertAcc, [...nonCriticalAlertAcc, alert]],
       [[], []],
     );
   }, [alerts]);

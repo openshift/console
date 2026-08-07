@@ -77,36 +77,34 @@ const ActionsMenuDropdown: FC<ActionsMenuDropdownProps> = ({ actions, title, act
   );
 };
 
-export const ActionsMenu = connect(impersonateStateToProps)(
-  ({
-    actions,
-    impersonate,
-    title = undefined,
-  }: ActionsMenuProps & { impersonate?: ImpersonateKind }) => {
-    const [isVisible, setVisible] = useState(false);
+export const ActionsMenu = connect(impersonateStateToProps)(({
+  actions,
+  impersonate,
+  title = undefined,
+}: ActionsMenuProps & { impersonate?: ImpersonateKind }) => {
+  const [isVisible, setVisible] = useState(false);
 
-    // Check if any actions are visible when actions have access reviews.
-    useEffect(() => {
-      if (!actions.length) {
-        setVisible(false);
-        return;
+  // Check if any actions are visible when actions have access reviews.
+  useEffect(() => {
+    if (!actions.length) {
+      setVisible(false);
+      return;
+    }
+    const promises = actions.reduce((acc, action) => {
+      if (action.accessReview) {
+        acc.push(checkAccess(action.accessReview));
       }
-      const promises = actions.reduce((acc, action) => {
-        if (action.accessReview) {
-          acc.push(checkAccess(action.accessReview));
-        }
-        return acc;
-      }, []);
+      return acc;
+    }, []);
 
-      // Only need to resolve if all actions require access review
-      if (promises.length !== actions.length) {
-        setVisible(true);
-        return;
-      }
-      Promise.all(promises)
-        .then((results) => setVisible(some(results, 'status.allowed')))
-        .catch(() => setVisible(true));
-    }, [actions, impersonate, setVisible]);
-    return isVisible ? <ActionsMenuDropdown actions={actions} title={title} /> : null;
-  },
-);
+    // Only need to resolve if all actions require access review
+    if (promises.length !== actions.length) {
+      setVisible(true);
+      return;
+    }
+    Promise.all(promises)
+      .then((results) => setVisible(some(results, 'status.allowed')))
+      .catch(() => setVisible(true));
+  }, [actions, impersonate, setVisible]);
+  return isVisible ? <ActionsMenuDropdown actions={actions} title={title} /> : null;
+});

@@ -816,9 +816,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
   const settingsModal = (
     <EditYamlSettingsModal
       key="edit-yaml-settings-modal"
-      appendTo={() => {
-        return isFullscreen ? fullscreenRef.current : document.body;
-      }}
+      appendTo={() => (isFullscreen ? fullscreenRef.current : document.body)}
     />
   );
 

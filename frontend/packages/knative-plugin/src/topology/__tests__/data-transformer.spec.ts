@@ -57,7 +57,8 @@ jest.mock('@console/dynamic-plugin-sdk/src/app/components/utils/rbac', () => ({
   checkAccess: jest.fn(),
 }));
 
-const getDynamicEventSourcesModelRefsMock = knativefetchutils.getDynamicEventSourcesModelRefs as jest.Mock;
+const getDynamicEventSourcesModelRefsMock =
+  knativefetchutils.getDynamicEventSourcesModelRefs as jest.Mock;
 const k8sKillMock = k8sResourceModule.k8sKill as jest.Mock;
 const k8sListMock = k8sResourceModule.k8sList as jest.Mock;
 const checkAccessMock = rbacModule.checkAccess as jest.Mock;
@@ -89,17 +90,14 @@ const getTransformedTopologyData = (
   });
 };
 
-const getNodeById = (id: string, graphData: Model): NodeModel => {
-  return graphData.nodes.find((n) => n.id === id);
-};
+const getNodeById = (id: string, graphData: Model): NodeModel =>
+  graphData.nodes.find((n) => n.id === id);
 
-const getNodesByType = (type: string, graphData: Model): NodeModel[] => {
-  return graphData.nodes.filter((n) => n.type === type);
-};
+const getNodesByType = (type: string, graphData: Model): NodeModel[] =>
+  graphData.nodes.filter((n) => n.type === type);
 
-const getEdgesByType = (type: string, graphData: Model): EdgeModel[] => {
-  return graphData.edges.filter((n) => n.type === type);
-};
+const getEdgesByType = (type: string, graphData: Model): EdgeModel[] =>
+  graphData.edges.filter((n) => n.type === type);
 
 const filterers = [applyKnativeDisplayOptions];
 

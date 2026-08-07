@@ -40,12 +40,10 @@ export const getDataFromAdapter = <T extends { resource: K8sResourceCommon }, E 
 const usePodsAdapterForWorkloads = (resource: K8sResourceCommon): PodsAdapterDataType => {
   const buildConfigData = useBuildConfigsWatcher(resource);
   const { podData, loaded, loadError } = usePodsWatcher(resource);
-  return useMemo(() => ({ pods: podData?.pods, loaded, loadError, buildConfigData }), [
-    buildConfigData,
-    loadError,
-    loaded,
-    podData,
-  ]);
+  return useMemo(
+    () => ({ pods: podData?.pods, loaded, loadError, buildConfigData }),
+    [buildConfigData, loadError, loaded, podData],
+  );
 };
 
 export const podsAdapterForWorkloads = (
@@ -121,9 +119,10 @@ const usePodsAdapterForCronJobWorkloads = (resource: K8sResourceCommon): PodsAda
   const [pods, setPods] = useState([]);
   const [loaded, setLoaded] = useState<boolean>(false);
   const [loadError, setLoadError] = useState<string>('');
-  const watchedResources = useMemo(() => getResourcesToWatchForPods('CronJob', namespace), [
-    namespace,
-  ]);
+  const watchedResources = useMemo(
+    () => getResourcesToWatchForPods('CronJob', namespace),
+    [namespace],
+  );
 
   const resources = useK8sWatchResources(watchedResources);
 

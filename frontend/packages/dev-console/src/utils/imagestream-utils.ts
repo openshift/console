@@ -50,8 +50,8 @@ export const getSampleContextDir = (tag) => tag?.annotations?.sampleContextDir ?
 
 // Transform image ports to k8s structure.
 // `{ '3306/tcp': {} }` -> `{ containerPort: 3306, protocol: 'TCP' }`
-const portsFromSpec = (portSpec: object): ContainerPort[] => {
-  return _.reduce(
+const portsFromSpec = (portSpec: object): ContainerPort[] =>
+  _.reduce(
     portSpec,
     (result: ContainerPort[], value, key) => {
       const parts = key.split('/');
@@ -74,7 +74,6 @@ const portsFromSpec = (portSpec: object): ContainerPort[] => {
     },
     [],
   );
-};
 
 export const getPorts = (imageStreamImage): ContainerPort[] => {
   const portSpec =
@@ -87,11 +86,8 @@ export const getPorts = (imageStreamImage): ContainerPort[] => {
 export const makePortName = (port: ContainerPort): string =>
   `${port.containerPort}-${port.protocol}`.toLowerCase();
 
-export const prettifyName = (name: string) => {
-  return name.replace(/(-|^)([^-]?)/g, (first, prep, letter) => {
-    return (prep && ' ') + letter.toUpperCase();
-  });
-};
+export const prettifyName = (name: string) =>
+  name.replace(/(-|^)([^-]?)/g, (first, prep, letter) => (prep && ' ') + letter.toUpperCase());
 
 export const normalizeBuilderImages = (
   imageStreams: K8sResourceCommon | K8sResourceCommon[],
@@ -151,21 +147,19 @@ export enum RegistryType {
 export enum BuilderImagesNamespace {
   Openshift = 'openshift',
 }
-export const imageRegistryType = (t: TFunction) => {
-  return {
-    External: {
-      value: RegistryType.External,
-      label: t('devconsole~Image name from external registry'),
-    },
-    Internal: {
-      value: RegistryType.Internal,
-      label: t('devconsole~Image stream tag from internal registry'),
-    },
-  };
-};
+export const imageRegistryType = (t: TFunction) => ({
+  External: {
+    value: RegistryType.External,
+    label: t('devconsole~Image name from external registry'),
+  },
+  Internal: {
+    value: RegistryType.Internal,
+    label: t('devconsole~Image stream tag from internal registry'),
+  },
+});
 
-const getSortedTags = (imageStream: K8sResourceKind) => {
-  return _.isArray(imageStream.status.tags) && imageStream.status.tags.length
+const getSortedTags = (imageStream: K8sResourceKind) =>
+  _.isArray(imageStream.status.tags) && imageStream.status.tags.length
     ? imageStream.status.tags.sort(({ tag: a }, { tag: b }) => {
         const v1 = semver.coerce(a);
         const v2 = semver.coerce(b);
@@ -181,7 +175,6 @@ const getSortedTags = (imageStream: K8sResourceKind) => {
         return semver.rcompare(v1, v2);
       })
     : [];
-};
 export const getImageStreamTags = (imageStream: K8sResourceKind) => {
   const sortedTags = imageStream && !_.isEmpty(imageStream) ? getSortedTags(imageStream) : [];
   return sortedTags.reduce((tags, { tag }) => {

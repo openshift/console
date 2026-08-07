@@ -81,11 +81,13 @@ export const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>((props, ref
   );
 
   // do not render toolbar if the component is null
-  const ToolbarLinks = useMemo(() => {
-    return showShortcuts || toolbarLinks?.length ? (
-      <CodeEditorToolbar toolbarLinks={toolbarLinks} />
-    ) : undefined;
-  }, [toolbarLinks, showShortcuts]);
+  const ToolbarLinks = useMemo(
+    () =>
+      showShortcuts || toolbarLinks?.length ? (
+        <CodeEditorToolbar toolbarLinks={toolbarLinks} />
+      ) : undefined,
+    [toolbarLinks, showShortcuts],
+  );
 
   // recalculate bounds when viewport is changed
   const handleResize = useCallback(() => {

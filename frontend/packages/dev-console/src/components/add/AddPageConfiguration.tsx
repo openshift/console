@@ -53,14 +53,12 @@ const AddPageConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
   const fireTelemetryEvent = useTelemetry();
 
   // Available add page items
-  const [addActionExtensions, addActionExtensionsResolved] = useResolvedExtensions<AddAction>(
-    isAddAction,
-  );
+  const [addActionExtensions, addActionExtensionsResolved] =
+    useResolvedExtensions<AddAction>(isAddAction);
 
   // Current configuration
-  const [consoleConfig, consoleConfigLoaded, consoleConfigError] = useConsoleOperatorConfig<
-    SoftwareCatalogAddPageConfig
-  >();
+  const [consoleConfig, consoleConfigLoaded, consoleConfigError] =
+    useConsoleOperatorConfig<SoftwareCatalogAddPageConfig>();
   const [disabled, setDisabled] = useState<string[]>();
   useEffect(() => {
     if (consoleConfig && consoleConfigLoaded && !disabled) {

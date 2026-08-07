@@ -5,7 +5,7 @@ import type { AutoscaleWindowType } from '../import-types';
 
 export const getAutoscaleWindow = (autoscaleValue: string): AutoscaleWindowType => {
   const windowRegEx = /^[0-9]+|[a-zA-Z]*/g;
-  const [val, unit] = autoscaleValue?.match(windowRegEx);
+  const [val, unit] = autoscaleValue?.match(windowRegEx) ?? [];
   return {
     autoscalewindow: Number(val) || '',
     autoscalewindowUnit: unit || 's',
@@ -34,19 +34,17 @@ export const getOtherKsvcFromDomainMapping = (
 export const removeDuplicateDomainMappings = (
   allDomainMappings: string[],
   connectedDomainMappings: string[],
-): string[] => {
-  return [
-    ...new Set(
-      allDomainMappings
-        ?.filter((dm) =>
-          connectedDomainMappings?.length > 0
-            ? connectedDomainMappings?.includes(removeKsvcInfoFromDomainMapping(dm))
-            : true,
-        )
-        .map((n) => removeKsvcInfoFromDomainMapping(n)),
-    ),
-  ];
-};
+): string[] => [
+  ...new Set(
+    allDomainMappings
+      ?.filter((dm) =>
+        connectedDomainMappings?.length > 0
+          ? connectedDomainMappings?.includes(removeKsvcInfoFromDomainMapping(dm))
+          : true,
+      )
+      .map((n) => removeKsvcInfoFromDomainMapping(n)),
+  ),
+];
 
 export const hasOtherKsvcDomainMappings = (domainMapping: string[]): boolean =>
   domainMapping.some((dm) => new RegExp(DOMAIN_MAPPING_KSVC_INFO_REGEX).test(dm));
@@ -54,7 +52,7 @@ export const hasOtherKsvcDomainMappings = (domainMapping: string[]): boolean =>
 export const getAllOtherDomainMappingInUse = (
   domainMappings: string[],
   data: K8sResourceKind[] = [],
-  serviceName: string,
+  serviceName: string = undefined,
 ): K8sResourceKind[] =>
   domainMappings
     .filter((d) => hasOtherKsvcDomainMappings([d]))

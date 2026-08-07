@@ -19,18 +19,17 @@ const itemDependsOnItem = (s1: NavExtension, s2: NavExtension): boolean => {
 const isPositioned = (item: NavExtension, allItems: NavExtension[]): boolean =>
   !!allItems.find((i) => itemDependsOnItem(item, i));
 
-const findInsertBeforeIndex = (item: NavExtension, allItems: NavExtension[]): number => {
-  return toArray(item.properties.insertBefore).reduce((index, currentItem) => {
+const findInsertBeforeIndex = (item: NavExtension, allItems: NavExtension[]): number =>
+  toArray(item.properties.insertBefore).reduce((index, currentItem) => {
     // take only the first index found
     if (index < 0) {
       return allItems.findIndex((i) => i.properties.id === currentItem);
     }
     return index;
   }, -1);
-};
 
-const findInsertAfterIndex = (item: NavExtension, allItems: NavExtension[]): number => {
-  return toArray(item.properties.insertAfter).reduce((index, currentItem) => {
+const findInsertAfterIndex = (item: NavExtension, allItems: NavExtension[]): number =>
+  toArray(item.properties.insertAfter).reduce((index, currentItem) => {
     if (index < 0) {
       const newIndex = allItems.findIndex((i) => i.properties.id === currentItem);
       if (newIndex >= 0) {
@@ -39,7 +38,6 @@ const findInsertAfterIndex = (item: NavExtension, allItems: NavExtension[]): num
     }
     return index;
   }, -1);
-};
 
 const findIndexForItem = (item: NavExtension, allItems: NavExtension[]) => {
   const insertBeforeIndex = findInsertBeforeIndex(item, allItems);

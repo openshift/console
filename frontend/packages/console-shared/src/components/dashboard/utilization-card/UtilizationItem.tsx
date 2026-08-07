@@ -7,12 +7,12 @@ import type { Humanize, TopConsumerPopoverProps } from '@console/dynamic-plugin-
 import { LIMIT_STATE } from '@console/dynamic-plugin-sdk';
 import type { UtilizationItemProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import type { ColoredIconProps } from '@console/dynamic-plugin-sdk/src/app/components/status/icons';
-import type { DataPoint } from '@console/internal/components/graphs';
 import {
   AreaChart,
   AreaChartStatus,
   chartStatusColors,
 } from '@console/internal/components/graphs/area';
+import type { DataPoint } from '@console/internal/components/graphs/types';
 import { mapLimitsRequests } from '@console/internal/components/graphs/utils';
 import type { ByteDataTypes } from '../../../graph-helper/data-utils';
 import { useUtilizationDuration } from '../../../hooks/useUtilizationDuration';

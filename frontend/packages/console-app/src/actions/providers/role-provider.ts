@@ -48,10 +48,10 @@ export const useRoleActionsProvider = (resource: K8sResourceKind): [Action[], bo
     CommonActionCreator.Delete,
   ] as const);
   const commonActions = useMemo(() => (isReady ? Object.values(actions) : []), [actions, isReady]);
-  const RoleActions = useMemo(() => [...addRoleBindingAction, ...commonActions], [
-    addRoleBindingAction,
-    commonActions,
-  ]);
+  const RoleActions = useMemo(
+    () => [...addRoleBindingAction, ...commonActions],
+    [addRoleBindingAction, commonActions],
+  );
 
   return [RoleActions, !inFlight, false];
 };

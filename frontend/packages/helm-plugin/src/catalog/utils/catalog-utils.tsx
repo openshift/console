@@ -28,9 +28,9 @@ export const normalizeHelmCharts = (
   chartEntries: HelmChartEntries,
   chartRepositories: K8sResourceKind[],
   activeNamespace: string = '',
-  t: TFunction,
-): CatalogItem[] => {
-  return _.reduce(
+  t: TFunction = undefined,
+): CatalogItem[] =>
+  _.reduce(
     chartEntries,
     (normalizedCharts, charts, key) => {
       const chartRepoName = key.split('--').pop();
@@ -171,13 +171,12 @@ export const normalizeHelmCharts = (
         };
 
         // group Helm chart with same name and different version together
-        const existingChartIndex = normalizedCharts.findIndex((currentChart) => {
-          return (
+        const existingChartIndex = normalizedCharts.findIndex(
+          (currentChart) =>
             (currentChart.attributes?.name === name &&
               currentChart.attributes?.chartRepositoryTitle === chartRepositoryTitle) ||
-            (currentChart.name === annotatedName && currentChart.provider === providerName)
-          );
-        });
+            (currentChart.name === annotatedName && currentChart.provider === providerName),
+        );
 
         if (existingChartIndex > -1) {
           const existingChart = normalizedCharts[existingChartIndex];
@@ -198,4 +197,3 @@ export const normalizeHelmCharts = (
     },
     [] as CatalogItem[],
   );
-};

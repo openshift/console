@@ -63,11 +63,12 @@ const useCatalogItems: UseCatalogItems = () => {
       });
   }, [headers]);
 
-  useEffect(() => {
-    return () => {
+  useEffect(
+    () => () => {
       abortControllerRef.current?.abort();
-    };
-  }, []);
+    },
+    [],
+  );
 
   usePoll(fetchItems, 30 * ONE_SECOND);
 

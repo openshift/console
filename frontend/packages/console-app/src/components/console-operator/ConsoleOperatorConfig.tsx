@@ -59,9 +59,8 @@ export const useConsoleOperatorConfigData = () => {
     name: CONSOLE_OPERATOR_CONFIG_NAME,
   };
 
-  const [consoleOperatorConfig, consoleOperatorConfigLoaded] = useK8sWatchResource<K8sResourceKind>(
-    console,
-  );
+  const [consoleOperatorConfig, consoleOperatorConfigLoaded] =
+    useK8sWatchResource<K8sResourceKind>(console);
 
   const canPatchConsoleOperatorConfig = useAccessReview({
     group: ConsoleOperatorConfigModel.apiGroup,
@@ -103,11 +102,8 @@ export const ConsolePluginEnabledStatus: FC<ConsolePluginEnabledStatusProps> = (
   const { t } = useTranslation('console-app');
   const launchModal = useOverlay();
 
-  const {
-    consoleOperatorConfig,
-    consoleOperatorConfigLoaded,
-    canPatchConsoleOperatorConfig,
-  } = useConsoleOperatorConfigData();
+  const { consoleOperatorConfig, consoleOperatorConfigLoaded, canPatchConsoleOperatorConfig } =
+    useConsoleOperatorConfigData();
 
   const labels = enabled ? t('Enabled') : t('Disabled');
 
@@ -325,9 +321,10 @@ const PluginsPage: FC<ConsoleOperatorConfigPageProps> = (props) => {
     isList: true,
     kind: referenceForModel(ConsolePluginModel),
   });
-  const enabledPlugins = useMemo(() => props?.obj?.spec?.plugins ?? [], [
-    props?.obj?.spec?.plugins,
-  ]);
+  const enabledPlugins = useMemo(
+    () => props?.obj?.spec?.plugins ?? [],
+    [props?.obj?.spec?.plugins],
+  );
   const cspViolations = useConsoleSelector<PluginCSPViolations>(({ UI }) =>
     UI.get('pluginCSPViolations'),
   );

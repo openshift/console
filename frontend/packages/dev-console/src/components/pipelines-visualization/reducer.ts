@@ -91,11 +91,12 @@ export type TaskStatus = {
 
 const getMatchingStep = (step, status: TaskStatus): TaskStatusStep => {
   const statusSteps: TaskStatusStep[] = status.steps || [];
-  return statusSteps.find((statusStep) => {
-    // In rare occasions the status step name is prefixed with `step-`
-    // This is likely a bug but this workaround will be temporary as it's investigated separately
-    return statusStep.name === step.name || statusStep.name === `step-${step.name}`;
-  });
+  return statusSteps.find(
+    (statusStep) =>
+      // In rare occasions the status step name is prefixed with `step-`
+      // This is likely a bug but this workaround will be temporary as it's investigated separately
+      statusStep.name === step.name || statusStep.name === `step-${step.name}`,
+  );
 };
 
 const getMatchingStepDuration = (matchingStep?: TaskStatusStep) => {

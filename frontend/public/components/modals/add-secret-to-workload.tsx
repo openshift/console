@@ -52,14 +52,14 @@ const AddSecretToWorkloadModal: FC<AddSecretToWorkloadModalProps> = (props) => {
     const opts = { ns: namespace };
 
     Promise.all(
-      workloadResourceModels.map((model) => {
-        return k8sList(model, opts)
+      workloadResourceModels.map((model) =>
+        k8sList(model, opts)
           .catch((err) => {
             setErrorMessage(err.message);
             return [];
           })
-          .then((res: K8sResourceKind[]): WorkloadItem[] => res.map((obj) => ({ model, obj })));
-      }),
+          .then((res: K8sResourceKind[]): WorkloadItem[] => res.map((obj) => ({ model, obj }))),
+      ),
     )
       .then((responses) => {
         // TODO: Group by kind.
@@ -85,9 +85,7 @@ const AddSecretToWorkloadModal: FC<AddSecretToWorkloadModalProps> = (props) => {
       .catch(() => {});
   }, [namespace]);
 
-  const autocompleteFilter = (text, item) => {
-    return fuzzy(text, item.props.name);
-  };
+  const autocompleteFilter = (text, item) => fuzzy(text, item.props.name);
 
   const onWorkloadChange = (selected: string) => {
     setSelectedWorkloadUID(selected);
@@ -150,9 +148,8 @@ const AddSecretToWorkloadModal: FC<AddSecretToWorkloadModalProps> = (props) => {
     return [...patches, volumePatch];
   };
 
-  const getPatches = (obj) => {
-    return addAs === 'environment' ? getEnvPatches(obj) : getVolumePatches(obj);
-  };
+  const getPatches = (obj) =>
+    addAs === 'environment' ? getEnvPatches(obj) : getVolumePatches(obj);
 
   const submit = (event: FormEvent<EventTarget>) => {
     event.preventDefault();

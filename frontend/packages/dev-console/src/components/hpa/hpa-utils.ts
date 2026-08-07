@@ -73,9 +73,7 @@ export const getFormData = (
 export const getYAMLData = (
   resource: K8sResourceKind,
   existingHPA?: HorizontalPodAutoscalerKind,
-): string => {
-  return safeJSToYAML(getFormData(resource, existingHPA));
-};
+): string => safeJSToYAML(getFormData(resource, existingHPA));
 
 export const getMetricByType = (
   hpa: HorizontalPodAutoscalerKind,
@@ -106,19 +104,17 @@ export const sanitizeHPAToForm = (
 export const sanityForSubmit = (
   targetResource: K8sResourceKind,
   hpa: HorizontalPodAutoscalerKind,
-): HorizontalPodAutoscalerKind => {
-  return {
-    ...hpa,
-    metadata: {
-      ...hpa.metadata,
-      namespace: targetResource.metadata.namespace,
-    },
-    spec: {
-      ...hpa.spec,
-      scaleTargetRef: createScaleTargetRef(targetResource),
-    },
-  };
-};
+): HorizontalPodAutoscalerKind => ({
+  ...hpa,
+  metadata: {
+    ...hpa.metadata,
+    namespace: targetResource.metadata.namespace,
+  },
+  spec: {
+    ...hpa.spec,
+    scaleTargetRef: createScaleTargetRef(targetResource),
+  },
+});
 
 export const hasCustomMetrics = (hpa?: HorizontalPodAutoscalerKind): boolean => {
   const metrics = hpa?.spec?.metrics;

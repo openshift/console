@@ -2,9 +2,7 @@ import { eventSourcePO } from '../pageObjects';
 
 export const editLabels = {
   enterLabel: (labelName: string) => cy.byTestID('tags-input').type(labelName).type('{enter}'),
-  numberOfLabels: () => {
-    return cy.get('tags-input span.tag-item-content');
-  },
+  numberOfLabels: () => cy.get('tags-input span.tag-item-content'),
   removeLabel: (labelName: string) => {
     cy.get(`[aria-label="Close ${labelName}"]`).click();
   },

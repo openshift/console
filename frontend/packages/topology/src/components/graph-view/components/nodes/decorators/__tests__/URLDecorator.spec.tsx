@@ -70,13 +70,12 @@ const routes = [
   },
 ];
 
-const renderInSvg = (element: ReactElement) => {
-  return render(
+const renderInSvg = (element: ReactElement) =>
+  render(
     <svg>
       <SVGDefsProvider>{element}</SVGDefsProvider>
     </svg>,
   );
-};
 
 describe('URLDecorator', () => {
   let mockNode: OdcBaseNode;

@@ -29,23 +29,21 @@ const defineModels = (list: APIResourceList): K8sModel[] => {
   const apiVersion = groupVersionParts.length > 1 ? groupVersionParts[1] : list.groupVersion;
   return list.resources
     .filter(({ name }) => !name.includes('/'))
-    .map(({ name, singularName, namespaced, kind, verbs, shortNames }) => {
-      return {
-        kind,
-        namespaced,
-        verbs,
-        shortNames,
-        label: kind,
-        plural: name,
-        apiVersion,
-        abbr: kindToAbbr(kind),
-        ...(apiGroup ? { apiGroup } : {}),
-        labelPlural: pluralizeKind(kind),
-        path: name,
-        id: singularName,
-        crd: true,
-      };
-    });
+    .map(({ name, singularName, namespaced, kind, verbs, shortNames }) => ({
+      kind,
+      namespaced,
+      verbs,
+      shortNames,
+      label: kind,
+      plural: name,
+      apiVersion,
+      abbr: kindToAbbr(kind),
+      ...(apiGroup ? { apiGroup } : {}),
+      labelPlural: pluralizeKind(kind),
+      path: name,
+      id: singularName,
+      crd: true,
+    }));
 };
 
 const getResources = async (): Promise<DiscoveryResources> => {

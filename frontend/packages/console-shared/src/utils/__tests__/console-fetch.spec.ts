@@ -3,7 +3,7 @@ import {
   unescapeGoUnicode,
   isK8sUrl,
   validateStatus,
-} from '@console/shared/src/utils/console-fetch-utils';
+} from '@console/shared/src/utils/validate-status';
 import { coFetch } from '../console-fetch';
 
 describe('unescapeGoUnicode', () => {

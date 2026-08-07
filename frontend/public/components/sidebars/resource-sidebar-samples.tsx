@@ -62,24 +62,22 @@ const ResourceSidebarSample: FC<ResourceSidebarSampleProps> = ({
 };
 
 const lineHeight = 18;
-const PreviewYAML = ({ maxPreviewLines = 20, yaml }) => {
-  return (
-    <div style={{ paddingTop: 10 }}>
-      <BasicCodeEditor
-        height={`${Math.min(yaml.split('\n').length, maxPreviewLines) * lineHeight}px`}
-        language={Language.yaml}
-        code={yaml}
-        options={{
-          lineHeight,
-          readOnly: true,
-          folding: false,
-          minimap: { enabled: false },
-          scrollBeyondLastLine: false,
-        }}
-      />
-    </div>
-  );
-};
+const PreviewYAML = ({ maxPreviewLines = 20, yaml }) => (
+  <div style={{ paddingTop: 10 }}>
+    <BasicCodeEditor
+      height={`${Math.min(yaml.split('\n').length, maxPreviewLines) * lineHeight}px`}
+      language={Language.yaml}
+      code={yaml}
+      options={{
+        lineHeight,
+        readOnly: true,
+        folding: false,
+        minimap: { enabled: false },
+        scrollBeyondLastLine: false,
+      }}
+    />
+  </div>
+);
 
 interface ResourceSidebarSnippetProps {
   snippet: Sample;
@@ -169,38 +167,34 @@ interface ResourceSidebarSnippetsProps {
 export const ResourceSidebarSnippets: FC<ResourceSidebarSnippetsProps> = ({
   snippets,
   insertSnippetYaml,
-}) => {
-  return (
-    <List isPlain isBordered>
-      {_.map(_.sortBy(snippets, 'title'), (snippet) => (
-        <ResourceSidebarSnippet
-          key={snippet.id}
-          snippet={snippet}
-          insertSnippetYaml={insertSnippetYaml}
-        />
-      ))}
-    </List>
-  );
-};
+}) => (
+  <List isPlain isBordered>
+    {_.map(_.sortBy(snippets, 'title'), (snippet) => (
+      <ResourceSidebarSnippet
+        key={snippet.id}
+        snippet={snippet}
+        insertSnippetYaml={insertSnippetYaml}
+      />
+    ))}
+  </List>
+);
 
 export const ResourceSidebarSamples: FC<ResourceSidebarSamplesProps> = ({
   samples,
   loadSampleYaml,
   downloadSampleYaml,
-}) => {
-  return (
-    <List isPlain isBordered data-test="resource-samples-list">
-      {_.map(_.sortBy(samples, 'title'), (sample) => (
-        <ResourceSidebarSample
-          key={sample.id}
-          sample={sample}
-          loadSampleYaml={loadSampleYaml}
-          downloadSampleYaml={downloadSampleYaml}
-        />
-      ))}
-    </List>
-  );
-};
+}) => (
+  <List isPlain isBordered data-test="resource-samples-list">
+    {_.map(_.sortBy(samples, 'title'), (sample) => (
+      <ResourceSidebarSample
+        key={sample.id}
+        sample={sample}
+        loadSampleYaml={loadSampleYaml}
+        downloadSampleYaml={downloadSampleYaml}
+      />
+    ))}
+  </List>
+);
 
 export type LoadSampleYaml = (id: string, yaml: string, kind: string) => void;
 

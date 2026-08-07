@@ -69,8 +69,8 @@ const getBuilderTags = (imageStream: K8sResourceKind): any[] => {
 };
 
 // Sort tags in reverse order by semver, falling back to a string comparison if not a valid version.
-export const getBuilderTagsSortedByVersion = (imageStream: K8sResourceKind): any[] => {
-  return getBuilderTags(imageStream).sort(({ name: a }, { name: b }) => {
+export const getBuilderTagsSortedByVersion = (imageStream: K8sResourceKind): any[] =>
+  getBuilderTags(imageStream).sort(({ name: a }, { name: b }) => {
     const v1 = semver.coerce(a);
     const v2 = semver.coerce(b);
     if (!v1 && !v2) {
@@ -84,7 +84,6 @@ export const getBuilderTagsSortedByVersion = (imageStream: K8sResourceKind): any
     }
     return semver.rcompare(v1, v2);
   });
-};
 
 export const getMostRecentBuilderTag = (imageStream: K8sResourceKind) => {
   const tags = getBuilderTagsSortedByVersion(imageStream);
@@ -218,8 +217,8 @@ export const ExampleDockerCommandPopover: FC<ImageStreamManipulationHelpProps> =
 const ImageStreamsDetails: FC<ImageStreamsDetailsProps> = ({ obj: imageStream }) => {
   const { t } = useTranslation('public');
 
-  const getImportErrors = (): string[] => {
-    return _.transform(imageStream.status.tags, (acc, tag: any) => {
+  const getImportErrors = (): string[] =>
+    _.transform(imageStream.status.tags, (acc, tag: any) => {
       const importErrorCondition = _.find(
         tag.conditions,
         (condition) => condition.type === 'ImportSuccess' && condition.status === 'False',
@@ -232,7 +231,6 @@ const ImageStreamsDetails: FC<ImageStreamsDetailsProps> = ({ obj: imageStream })
           }),
         );
     });
-  };
 
   const imageRepository = _.get(imageStream, 'status.dockerImageRepository');
   const publicImageRepository = _.get(imageStream, 'status.publicDockerImageRepository');
@@ -337,8 +335,8 @@ const tableColumnInfo = [
   { id: 'actions' },
 ];
 
-const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {
-  return data.map(({ obj: imageStream }) => {
+const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) =>
+  data.map(({ obj: imageStream }) => {
     const { name, namespace, labels, creationTimestamp } = imageStream.metadata;
 
     const rowCells = {
@@ -370,16 +368,14 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {
       };
     });
   });
-};
 
 const useImageStreamColumns = (): {
   columns: TableColumn<K8sResourceKind>[];
   resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('public');
-  const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(
-    ImageStreamModel,
-  );
+  const { getResizableProps, getWidth, resetAllColumnWidths } =
+    useColumnWidthSettings(ImageStreamModel);
 
   const columns: TableColumn<K8sResourceKind>[] = useMemo(() => {
     const labelsColumnId = tableColumnInfo[2].id;

@@ -77,32 +77,30 @@ const Contents: FC<
   );
 };
 
-const TopologyQuickSearch: FC<QuickSearchProps> = ({ namespace, isOpen, setIsOpen }) => {
-  return (
-    <CatalogServiceProvider namespace={namespace} catalogId="dev-catalog">
-      {(catalogService: CatalogService) => (
-        <CatalogServiceProvider namespace={namespace} catalogId="samples-catalog">
-          {(catalogServiceSample: CatalogService) => (
-            <QuickStartsLoader>
-              {(quickStarts, quickStartsLoaded) => (
-                <Contents
-                  {...{
-                    namespace,
-                    isOpen,
-                    setIsOpen,
-                    catalogService,
-                    catalogServiceSample,
-                    quickStarts,
-                    quickStartsLoaded,
-                  }}
-                />
-              )}
-            </QuickStartsLoader>
-          )}
-        </CatalogServiceProvider>
-      )}
-    </CatalogServiceProvider>
-  );
-};
+const TopologyQuickSearch: FC<QuickSearchProps> = ({ namespace, isOpen, setIsOpen }) => (
+  <CatalogServiceProvider namespace={namespace} catalogId="dev-catalog">
+    {(catalogService: CatalogService) => (
+      <CatalogServiceProvider namespace={namespace} catalogId="samples-catalog">
+        {(catalogServiceSample: CatalogService) => (
+          <QuickStartsLoader>
+            {(quickStarts, quickStartsLoaded) => (
+              <Contents
+                {...{
+                  namespace,
+                  isOpen,
+                  setIsOpen,
+                  catalogService,
+                  catalogServiceSample,
+                  quickStarts,
+                  quickStartsLoaded,
+                }}
+              />
+            )}
+          </QuickStartsLoader>
+        )}
+      </CatalogServiceProvider>
+    )}
+  </CatalogServiceProvider>
+);
 
 export default memo<QuickSearchProps>(TopologyQuickSearch);
