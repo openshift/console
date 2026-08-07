@@ -165,9 +165,9 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
   const resourceBundle = i18n.getResourceBundle(language, 'console-app') ?? {};
   const processedResourceBundle = getProcessedResourceBundle(resourceBundle, language);
 
-  // https://github.com/i18next/i18next-parser#caveats
+  // https://github.com/i18next/i18next-cli#comment-based-extraction
   // Need to reference the t() function here for all the keys used in the quickstarts library
-  // so that the i18n-parser can find them, and keep them in sync with the locale json file.
+  // so that the i18n-cli can find them, and keep them in sync with the locale json file.
   // Changes made in this comment block take effect after `yarn i18n` is run.
   // const resources = [
   //   t('console-app~Quick starts'),

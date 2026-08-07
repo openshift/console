@@ -20,7 +20,7 @@ const MemoryCellComponent = memo<MemoryCellComponentProps>(({ memoryByPod, total
 
   return (
     <div className="odc-topology-list-view__metrics-cell__detail--memory">
-      <MetricsTooltip metricLabel="Memory" byPod={memoryByPod}>
+      <MetricsTooltip metricLabel={t('Memory')} byPod={memoryByPod}>
         <span>
           <span className="odc-topology-list-view__metrics-cell__metric-value">
             {formatBytesAsMiB(totalBytes)}
