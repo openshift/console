@@ -97,6 +97,27 @@ const VolumeSource = {
       'public~A projected volume maps several existing volume sources into the same directory.',
     ),
   },
+  downwardAPI: {
+    id: 'downwardAPI',
+    label: i18next.t('public~DownwardAPI'),
+    description: i18next.t(
+      'public~Exposes pod and container fields to a running container as files.',
+    ),
+  },
+  csi: {
+    id: 'csi',
+    label: i18next.t('public~CSI'),
+    description: i18next.t(
+      'public~Volume provided by an external Container Storage Interface driver.',
+    ),
+  },
+  ephemeral: {
+    id: 'ephemeral',
+    label: i18next.t('public~Ephemeral'),
+    description: i18next.t(
+      'public~Volume that is handled by a cluster storage driver and follows the lifecycle of the pod.',
+    ),
+  },
 };
 
 export const getVolumeType = (volume: Volume) => {
@@ -138,6 +159,9 @@ export const getVolumeLocation = (volume: Volume) => {
     case VolumeSource.emptyDir.id:
     case VolumeSource.secret.id:
     case VolumeSource.projected.id:
+    case VolumeSource.downwardAPI.id:
+    case VolumeSource.csi.id:
+    case VolumeSource.ephemeral.id:
       return null;
     // Defaults to space separated sorted keys.
     default:
