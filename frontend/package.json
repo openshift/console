@@ -362,8 +362,13 @@
     "glob-parent": "^5.1.2",
     "postcss": "^8.2.13",
     "axios": "^1.16.0",
+    "immutable": "3.8.3",
     "get-intrinsic": "1.3.0",
-    "immutable": "3.8.3"
+    "minimatch@^3.0.2": "^3.1.3",
+    "minimatch@^3.0.3": "^3.1.3",
+    "minimatch@^3.0.4": "^3.1.3",
+    "minimatch@3.0.4": "^3.1.3",
+    "minimatch@^3.1.1": "^3.1.3"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,json,gql,graphql}": "eslint --color --fix"
