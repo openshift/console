@@ -10,7 +10,6 @@ export class UserPreferencesPage extends BasePage {
     await this.masthead.openUserDropdown();
     const userPrefsLink = this.page.getByRole('menuitem', { name: 'User preferences' });
     await this.robustClick(userPrefsLink);
-    await this.waitForLoadingComplete();
   }
 
   getTab(tabName: string): Locator {

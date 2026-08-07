@@ -138,7 +138,7 @@ test.describe('Edit Build Config', { tag: ['@dev-console'] }, () => {
 
   // eslint-disable-next-line playwright/expect-expect
   test('EBC-01-TC03: Edit BuildConfig via kebab menu', async () => {
-    test.skip(true, 'Deferred — kebab Edit action opens YAML editor, not form editor');
+    test.skip(true, 'Original Cypress scenario tagged @manual — deferred');
   });
 
   // eslint-disable-next-line playwright/expect-expect

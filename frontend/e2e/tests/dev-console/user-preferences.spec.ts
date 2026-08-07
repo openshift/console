@@ -25,7 +25,7 @@ test.describe('User Preferences', { tag: ['@dev-console'] }, () => {
         },
       );
     } catch {
-      // Best-effort reset — don't mask the original test failure
+      // ConfigMap may not exist on fresh clusters where kubeadmin has no user-settings yet
     }
   });
 

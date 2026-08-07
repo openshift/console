@@ -59,7 +59,6 @@ test.describe('Sample Application from Add page', { tag: ['@dev-console', '@gett
     async ({ page, k8sClient, cleanup }) => {
       const ns = await createTestNamespace(k8sClient, cleanup, 'tc02');
       const addPage = new AddPage(page);
-      await warmupSPA(page);
 
       await test.step('Navigate to Samples page', async () => {
         await navigateToSamplesPage(addPage, ns);
@@ -100,8 +99,6 @@ test.describe('Sample Application from Add page', { tag: ['@dev-console', '@gett
     async ({ page, k8sClient, cleanup }) => {
       const ns = await createTestNamespace(k8sClient, cleanup, 'tc03');
       const addPage = new AddPage(page);
-
-      await warmupSPA(page);
 
       await test.step('Navigate to Samples page and select Go', async () => {
         await navigateToSamplesPage(addPage, ns);
