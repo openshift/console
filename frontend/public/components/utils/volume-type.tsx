@@ -16,11 +16,23 @@ const ProjectedVolumeSources: FC<{ volume: Volume; namespace: string }> = ({
   }
 
   const sourceElements: ReactNode[] = [];
+  const usedKeys = new Set<string>();
+  const getUniqueKey = (base: string): string => {
+    let key = base;
+    let counter = 1;
+    while (usedKeys.has(key)) {
+      key = `${base}-${counter}`;
+      counter++;
+    }
+    usedKeys.add(key);
+    return key;
+  };
+
   sources.forEach((source) => {
     if (source.configMap) {
       sourceElements.push(
         <ResourceLink
-          key={`cm-${source.configMap.name}`}
+          key={getUniqueKey(`cm-${source.configMap.name}`)}
           kind="ConfigMap"
           name={source.configMap.name}
           namespace={namespace}
@@ -29,7 +41,7 @@ const ProjectedVolumeSources: FC<{ volume: Volume; namespace: string }> = ({
     } else if (source.secret) {
       sourceElements.push(
         <ResourceLink
-          key={`secret-${source.secret.name}`}
+          key={getUniqueKey(`secret-${source.secret.name}`)}
           kind="Secret"
           name={source.secret.name}
           namespace={namespace}
@@ -38,7 +50,7 @@ const ProjectedVolumeSources: FC<{ volume: Volume; namespace: string }> = ({
     } else if (source.serviceAccountToken) {
       sourceElements.push(
         <span
-          key={`sat-${source.serviceAccountToken.path || 'token'}`}
+          key={getUniqueKey(`sat-${source.serviceAccountToken.path || 'token'}`)}
           className="co-resource-item co-resource-item--inline"
         >
           {t('ServiceAccountToken')}
@@ -46,14 +58,17 @@ const ProjectedVolumeSources: FC<{ volume: Volume; namespace: string }> = ({
       );
     } else if (source.downwardAPI) {
       sourceElements.push(
-        <span key="downwardAPI" className="co-resource-item co-resource-item--inline">
+        <span
+          key={getUniqueKey('downwardAPI')}
+          className="co-resource-item co-resource-item--inline"
+        >
           {t('DownwardAPI')}
         </span>,
       );
     } else if (source.clusterTrustBundle) {
       sourceElements.push(
         <span
-          key={`ctb-${source.clusterTrustBundle.name || 'bundle'}`}
+          key={getUniqueKey(`ctb-${source.clusterTrustBundle.name || 'bundle'}`)}
           className="co-resource-item co-resource-item--inline"
         >
           {t('ClusterTrustBundle')}
