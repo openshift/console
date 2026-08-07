@@ -75,7 +75,7 @@ const ControlPlaneMachineSetCounts: FC<ControlPlaneMachineSetCountsProps> = ({ r
           <DescriptionListTerm>{t('Current count')}</DescriptionListTerm>
           <DescriptionListDescription>
             <Tooltip content={t('The most recently observed number of replicas.')}>
-              <span>{t('{{replicas}} machines', { replicas, count: replicas })}</span>
+              <span>{t('{{replicas}} machine', { replicas, count: replicas })}</span>
             </Tooltip>
           </DescriptionListDescription>
         </Card>
