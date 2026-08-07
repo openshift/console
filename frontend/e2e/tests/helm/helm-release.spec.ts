@@ -50,9 +50,13 @@ test.describe('Helm Release', { tag: ['@helm', '@smoke'] }, () => {
     await test.step('Verify Create Helm Release page', async () => {
       await expect(helmPage.getFormTitle()).toHaveText('Create Helm Release');
       await expect(helmPage.getReleaseNameInput()).toHaveValue('nodejs');
-      await expect(helmPage.getFormViewRadio()).toBeChecked({ timeout: 30_000 });
-      await expect(helmPage.getYamlViewRadio()).not.toBeChecked({ timeout: 10_000 });
-      await expect(helmPage.getFormSections().first()).toBeVisible();
+      await expect(helmPage.getFormViewRadio()).toBeVisible({ timeout: 30_000 });
+      await expect(helmPage.getYamlViewRadio()).toBeVisible();
+      // Default editor type depends on user preferences — switch to form view to verify it works
+      if (!(await helmPage.getFormViewRadio().isChecked())) {
+        await helmPage.getFormViewRadio().click();
+      }
+      await expect(helmPage.getFormSections().first()).toBeVisible({ timeout: 30_000 });
     });
 
     await test.step('Cancel creation', async () => {
