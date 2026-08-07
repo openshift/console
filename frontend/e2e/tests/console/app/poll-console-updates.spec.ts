@@ -78,6 +78,10 @@ async function navigateAndWaitForInit(page: Page) {
 }
 
 test.describe('PollConsoleUpdates', { tag: ['@admin'] }, () => {
+  // Each test needs multiple 15s polling cycles (init + change detection + endpoint readiness).
+  // The default 120s is too tight for CI where auth redirects add overhead.
+  test.setTimeout(300_000);
+
   test('triggers the console update toast when consoleCommit changes', async ({ page }) => {
     const updates = createMutableHandler((route) =>
       route.fulfill({ json: UPDATES_DEFAULT }),
@@ -121,8 +125,6 @@ test.describe('PollConsoleUpdates', { tag: ['@admin'] }, () => {
   test('triggers the console update toast when a plugin is added and a different plugin endpoint is erroring', async ({
     page,
   }) => {
-    test.setTimeout(300_000);
-
     const updates = createMutableHandler((route) =>
       route.fulfill({ json: UPDATES_NEW_PLUGIN }),
     );
