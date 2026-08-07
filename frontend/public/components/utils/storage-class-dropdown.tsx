@@ -42,13 +42,12 @@ type StorageClassItem =
       name: string;
     };
 
-const getTitle = (storageClass: { kindLabel: string; name: string }): ReactNode => {
-  return storageClass.kindLabel ? (
+const getTitle = (storageClass: { kindLabel: string; name: string }): ReactNode =>
+  storageClass.kindLabel ? (
     <ResourceName kind="StorageClass" name={storageClass.name} />
   ) : (
     <span>{storageClass.name}</span>
   );
-};
 
 const StorageClassDropdownEntry = (props) => {
   const storageClassProperties = [
@@ -74,13 +73,11 @@ const StorageClassDropdownEntry = (props) => {
   );
 };
 
-const StorageClassDropdownNoStorageClassOption: FC<{ name: string }> = ({ name }) => {
-  return (
-    <span className="co-resource-item">
-      <span className="co-resource-item__resource-name">{name}</span>
-    </span>
-  );
-};
+const StorageClassDropdownNoStorageClassOption: FC<{ name: string }> = ({ name }) => (
+  <span className="co-resource-item">
+    <span className="co-resource-item__resource-name">{name}</span>
+  </span>
+);
 
 /* Creates a dropdown list of storage classes */
 export const StorageClassDropdown: FC<StorageClassDropdownProps> = ({

@@ -272,7 +272,7 @@ const PipelineTemplate: FC<PipelineTemplateProps> = ({ builderImages, existingPi
           <span className="pf-c-form__label-text">{t('Pipeline')}</span>
           <RadioGroupField
             className="odc-pipeline-section-pac__radio-intent"
-            name={'pipeline.type'}
+            name="pipeline.type"
             onChange={(val: string) => onChangePipelineType(val as PipelineType)}
             options={[
               {

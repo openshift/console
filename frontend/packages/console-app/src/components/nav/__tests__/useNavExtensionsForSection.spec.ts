@@ -28,7 +28,7 @@ const createNavExtension = (
       section,
       insertAfter,
     },
-  } as LoadedExtension<NavExtension>);
+  }) as LoadedExtension<NavExtension>;
 
 describe('useNavExtensionsForSection', () => {
   const mockSetPerspective = jest.fn();

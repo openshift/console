@@ -6,18 +6,16 @@ import { TYPE_KNATIVE_SERVICE } from './const';
 
 export const EXPAND_KNATIVE_SERVICES_FILTER_ID = 'knativeServices';
 
-export const getTopologyFilters = () => {
-  return [
-    {
-      type: TopologyDisplayFilterType.expand,
-      id: EXPAND_KNATIVE_SERVICES_FILTER_ID,
-      // t('knative-plugin~Knative Services')
-      labelKey: 'knative-plugin~Knative Services',
-      priority: 400,
-      value: true,
-    },
-  ];
-};
+export const getTopologyFilters = () => [
+  {
+    type: TopologyDisplayFilterType.expand,
+    id: EXPAND_KNATIVE_SERVICES_FILTER_ID,
+    // t('knative-plugin~Knative Services')
+    labelKey: 'knative-plugin~Knative Services',
+    priority: 400,
+    value: true,
+  },
+];
 
 export const applyKnativeDisplayOptions = (model: Model, filters: DisplayFilters): string[] => {
   const expandServices = isExpanded(EXPAND_KNATIVE_SERVICES_FILTER_ID, filters);

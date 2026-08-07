@@ -252,9 +252,7 @@ const getInitialValues = (globals, receiverConfig) => {
   return initValues;
 };
 
-const isFormInvalid = (formValues): boolean => {
-  return !formValues.pagerdutyIntegrationKey;
-};
+const isFormInvalid = (formValues): boolean => !formValues.pagerdutyIntegrationKey;
 
 const updateGlobals = (globals, formValues) => {
   const updatedGlobals = {};

@@ -31,7 +31,7 @@ Given('user has installed Gitea Server with pre-loaded repositories', () => {
 When('user enters Gitea Repo Name as {string}', (repoName: string) => {
   cy.exec('oc whoami --show-console', {
     failOnNonZeroExit: false,
-  }).then(function (result) {
+  }).then((result) => {
     const consoleUrl = result.stdout;
     const giteaUrl = consoleUrl.replace('https://console-openshift-console', 'http://gitea');
     const gitUrl = `${giteaUrl}/dev/${repoName}`;

@@ -28,7 +28,7 @@ describe('EventSinkSpec', () => {
         namespace={namespace}
         normalizedSink={mockNormalizedSink}
         kameletSink={mockKameletSink}
-        sinkKind={'KameletBinding'}
+        sinkKind="KameletBinding"
       />,
     );
     expect(screen.getByTestId('mock-Formik')).toBeInTheDocument();
@@ -40,7 +40,7 @@ describe('EventSinkSpec', () => {
       <EventSink
         namespace={namespace}
         normalizedSink={mockNormalizedKafkaSink}
-        sinkKind={'KafkaSink'}
+        sinkKind="KafkaSink"
       />,
     );
     expect(screen.getByTestId('mock-Formik')).toBeInTheDocument();

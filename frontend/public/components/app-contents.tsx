@@ -47,9 +47,7 @@ const Memoized = new Map();
 function NamespaceFromURL(Component) {
   let C = Memoized.get(Component);
   if (!C) {
-    C = function NamespaceInjector(props) {
-      return <Component {...props} />;
-    };
+    C = (props) => <Component {...props} />;
     Memoized.set(Component, C);
   }
   return C;
@@ -684,7 +682,7 @@ const AppContents: FC = () => {
       />
 
       <Route
-        path={'/k8s/cluster/storageclasses/~new/form'}
+        path="/k8s/cluster/storageclasses/~new/form"
         element={
           <AsyncComponent
             loader={() =>

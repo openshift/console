@@ -44,8 +44,8 @@ const BuildRunDetailsTab: FC<BuildRunDetailsTabProps> = ({ obj: buildRun }) => {
                     buildRun.status?.buildSpec
                       ? 'status.buildSpec'
                       : isV1Alpha1Resource(buildRun)
-                      ? 'spec.buildSpec'
-                      : 'spec.build.spec'
+                        ? 'spec.buildSpec'
+                        : 'spec.build.spec'
                   }
                 />
               </FlexItem>

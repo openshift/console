@@ -12,7 +12,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useRefWidth } from '../utils/ref-width-hook';
 import { PrometheusGraph, PrometheusGraphLink } from './prometheus-graph';
-import type { DataPoint } from '.';
+import type { DataPoint } from './types';
 
 export const DonutChart: FC<DonutChartProps> = ({
   data,

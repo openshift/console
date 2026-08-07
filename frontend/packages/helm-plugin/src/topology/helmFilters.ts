@@ -6,18 +6,16 @@ import { TYPE_HELM_RELEASE } from './components/const';
 
 export const EXPAND_HELM_RELEASE_FILTER = 'helmGrouping';
 
-export const getTopologyFilters = () => {
-  return [
-    {
-      type: TopologyDisplayFilterType.expand,
-      id: EXPAND_HELM_RELEASE_FILTER,
-      // t('helm-plugin~Helm Releases')
-      labelKey: 'helm-plugin~Helm Releases',
-      priority: 300,
-      value: true,
-    },
-  ];
-};
+export const getTopologyFilters = () => [
+  {
+    type: TopologyDisplayFilterType.expand,
+    id: EXPAND_HELM_RELEASE_FILTER,
+    // t('helm-plugin~Helm Releases')
+    labelKey: 'helm-plugin~Helm Releases',
+    priority: 300,
+    value: true,
+  },
+];
 
 export const applyHelmDisplayOptions = (model: Model, filters: DisplayFilters): string[] => {
   let found = false;

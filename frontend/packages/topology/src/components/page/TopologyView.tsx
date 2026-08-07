@@ -106,15 +106,12 @@ const ConnectedTopologyView: FC<ComponentProps> = ({
   );
   const appliedFilters = useAppliedDisplayFilters();
 
-  const [displayFilterExtensions, displayFilterExtensionsResolved] = useResolvedExtensions<
-    TopologyDisplayFilters
-  >(isTopologyDisplayFilters);
-  const [createConnectors, createConnectorsResolved] = useResolvedExtensions<
-    TopologyCreateConnector
-  >(isTopologyCreateConnector);
-  const [extensionDecorators, extensionDecoratorsResolved] = useResolvedExtensions<
-    TopologyDecoratorProvider
-  >(isTopologyDecoratorProvider);
+  const [displayFilterExtensions, displayFilterExtensionsResolved] =
+    useResolvedExtensions<TopologyDisplayFilters>(isTopologyDisplayFilters);
+  const [createConnectors, createConnectorsResolved] =
+    useResolvedExtensions<TopologyCreateConnector>(isTopologyCreateConnector);
+  const [extensionDecorators, extensionDecoratorsResolved] =
+    useResolvedExtensions<TopologyDecoratorProvider>(isTopologyDecoratorProvider);
   const [relationshipProvider] = useResolvedExtensions<TopologyRelationshipProvider>(
     isTopologyRelationshipProvider,
   );
@@ -342,12 +339,10 @@ const ConnectedTopologyView: FC<ComponentProps> = ({
   return topologyViewComponent;
 };
 
-const TopologyStateToProps = (state: RootState): StateProps => {
-  return {
-    application: getActiveApplication(state),
-    eventSourceEnabled: getEventSourceStatus(state),
-  };
-};
+const TopologyStateToProps = (state: RootState): StateProps => ({
+  application: getActiveApplication(state),
+  eventSourceEnabled: getEventSourceStatus(state),
+});
 
 const TopologyDispatchToProps = (dispatch): DispatchProps => ({
   onSelectTab: (name) => dispatch(selectOverviewDetailsTab(name)),

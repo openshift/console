@@ -109,15 +109,13 @@ export type DeletePVCModalProps = {
   pvc: PersistentVolumeClaimKind;
 } & ModalComponentProps;
 
-export const DeletePVCModalOverlay: OverlayComponent<DeletePVCModalProps> = (props) => {
-  return (
-    <Modal
-      isOpen
-      onClose={props.closeOverlay}
-      variant={ModalVariant.small}
-      aria-labelledby="delete-pvc-modal-title"
-    >
-      <DeletePVCModal {...props} cancel={props.closeOverlay} close={props.closeOverlay} />
-    </Modal>
-  );
-};
+export const DeletePVCModalOverlay: OverlayComponent<DeletePVCModalProps> = (props) => (
+  <Modal
+    isOpen
+    onClose={props.closeOverlay}
+    variant={ModalVariant.small}
+    aria-labelledby="delete-pvc-modal-title"
+  >
+    <DeletePVCModal {...props} cancel={props.closeOverlay} close={props.closeOverlay} />
+  </Modal>
+);

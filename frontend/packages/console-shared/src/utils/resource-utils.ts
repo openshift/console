@@ -118,12 +118,12 @@ export const getOwnedResources = <T extends K8sResourceKind>(
   if (!uid) {
     return [];
   }
-  return _.filter(resources, ({ metadata: { ownerReferences } }) => {
-    return _.some(ownerReferences, {
+  return _.filter(resources, ({ metadata: { ownerReferences } }) =>
+    _.some(ownerReferences, {
       uid,
       controller: true,
-    });
-  });
+    }),
+  );
 };
 
 const sortByRevision = (
@@ -161,9 +161,8 @@ const sortByRevision = (
   return _.toArray(replicators).sort(compare);
 };
 
-const getAnnotation = (obj: K8sResourceCommon, annotation: string): string => {
-  return obj?.metadata?.annotations?.[annotation];
-};
+const getAnnotation = (obj: K8sResourceCommon, annotation: string): string =>
+  obj?.metadata?.annotations?.[annotation];
 
 const getDeploymentRevision = (obj: K8sResourceCommon): number => {
   const revision = getAnnotation(obj, DEPLOYMENT_REVISION_ANNOTATION);
@@ -175,24 +174,20 @@ export const getDeploymentConfigVersion = (obj: K8sResourceCommon): number => {
   return version && parseInt(version, 10);
 };
 
-export const getOwnerNameByKind = (obj: K8sResourceCommon, kind: K8sKind): string => {
-  return obj?.metadata?.ownerReferences?.find(
+export const getOwnerNameByKind = (obj: K8sResourceCommon, kind: K8sKind): string =>
+  obj?.metadata?.ownerReferences?.find(
     (ref) =>
       ref.kind === kind.kind &&
       ((!kind.apiGroup && ref.apiVersion === 'v1') ||
         ref.apiVersion?.startsWith(`${kind.apiGroup}/`)),
   )?.name;
-};
 
-const sortReplicaSetsByRevision = (replicaSets: K8sResourceKind[]): K8sResourceKind[] => {
-  return sortByRevision(replicaSets, getDeploymentRevision);
-};
+const sortReplicaSetsByRevision = (replicaSets: K8sResourceKind[]): K8sResourceKind[] =>
+  sortByRevision(replicaSets, getDeploymentRevision);
 
 const sortReplicationControllersByRevision = (
   replicationControllers: K8sResourceKind[],
-): K8sResourceKind[] => {
-  return sortByRevision(replicationControllers, getDeploymentConfigVersion);
-};
+): K8sResourceKind[] => sortByRevision(replicationControllers, getDeploymentConfigVersion);
 
 const sortBuilds = (builds: K8sResourceKind[]): K8sResourceKind[] => {
   const byCreationTime = (left, right) => {
@@ -301,14 +296,12 @@ export const getReplicationControllerAlerts = (rc: K8sResourceKind): OverviewIte
   }
 };
 
-const getAutoscaledPods = (rc: K8sResourceKind): ExtPodKind[] => {
-  return [
-    {
-      ..._.pick(rc, 'metadata', 'status', 'spec'),
-      status: { phase: AllPodStatus.AutoScaledTo0 },
-    },
-  ];
-};
+const getAutoscaledPods = (rc: K8sResourceKind): ExtPodKind[] => [
+  {
+    ..._.pick(rc, 'metadata', 'status', 'spec'),
+    status: { phase: AllPodStatus.AutoScaledTo0 },
+  },
+];
 
 const getIdledStatus = (
   rc: PodControllerOverviewItem,
@@ -350,20 +343,16 @@ export const getRolloutStatus = (
   return notFailedOrCancelled && previous && previous.pods.length > 0;
 };
 
-const isDeploymentInProgressOrCompleted = (resource: K8sResourceKind): boolean => {
-  return (
-    [
-      DEPLOYMENT_PHASE.new,
-      DEPLOYMENT_PHASE.pending,
-      DEPLOYMENT_PHASE.running,
-      DEPLOYMENT_PHASE.complete,
-    ].indexOf(getDeploymentPhase(resource)) > -1
-  );
-};
+const isDeploymentInProgressOrCompleted = (resource: K8sResourceKind): boolean =>
+  [
+    DEPLOYMENT_PHASE.new,
+    DEPLOYMENT_PHASE.pending,
+    DEPLOYMENT_PHASE.running,
+    DEPLOYMENT_PHASE.complete,
+  ].indexOf(getDeploymentPhase(resource)) > -1;
 
-const isReplicationControllerVisible = (resource: K8sResourceKind): boolean => {
-  return !!_.get(resource, ['status', 'replicas'], isDeploymentInProgressOrCompleted(resource));
-};
+const isReplicationControllerVisible = (resource: K8sResourceKind): boolean =>
+  !!_.get(resource, ['status', 'replicas'], isDeploymentInProgressOrCompleted(resource));
 
 export const getPodsForResource = (resource: K8sResourceKind, resources: any): PodKind[] => {
   const { pods } = resources;
@@ -677,9 +666,7 @@ const getOverviewItemForResource = (
   };
 
   if (utils) {
-    return utils.reduce((acc, util) => {
-      return { ...acc, ...util(obj, resources) };
-    }, overviewItems);
+    return utils.reduce((acc, util) => ({ ...acc, ...util(obj, resources) }), overviewItems);
   }
   return overviewItems;
 };

@@ -4,9 +4,8 @@ import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 export const PREFERRED_NAMESPACE_USER_PREFERENCE_KEY: string = 'console.namespace.favorite';
 
 export const usePreferredNamespace = (): [string, Dispatch<SetStateAction<string>>, boolean] => {
-  const [preferredNamespace, setPreferredNamespace, preferredNamespaceLoaded] = useUserPreference<
-    string
-  >(PREFERRED_NAMESPACE_USER_PREFERENCE_KEY);
+  const [preferredNamespace, setPreferredNamespace, preferredNamespaceLoaded] =
+    useUserPreference<string>(PREFERRED_NAMESPACE_USER_PREFERENCE_KEY);
 
   // This toString is workaround because the useUserPreference hook returns a number or boolean
   // when the saved value represents a number (1234) or boolean (true/false).

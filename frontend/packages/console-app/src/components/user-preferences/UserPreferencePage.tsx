@@ -43,16 +43,17 @@ const UserPreferencePage: FC = () => {
   const navigate = useNavigate();
 
   const userPreferenceGroupExtensions = useExtensions<UserPreferenceGroup>(isUserPreferenceGroup);
-  const sortedUserPreferenceGroups = orderExtensionBasedOnInsertBeforeAndAfter<
-    ResolvedUserPreferenceGroup
-  >(userPreferenceGroupExtensions.map(({ properties }) => properties));
+  const sortedUserPreferenceGroups =
+    orderExtensionBasedOnInsertBeforeAndAfter<ResolvedUserPreferenceGroup>(
+      userPreferenceGroupExtensions.map(({ properties }) => properties),
+    );
 
-  const [userPreferenceItemExtensions, userPreferenceItemResolved] = useResolvedExtensions<
-    UserPreferenceItem
-  >(isUserPreferenceItem);
-  const sortedUserPreferenceItems = orderExtensionBasedOnInsertBeforeAndAfter<
-    ResolvedUserPreferenceItem
-  >(userPreferenceItemExtensions.map(({ properties }) => properties));
+  const [userPreferenceItemExtensions, userPreferenceItemResolved] =
+    useResolvedExtensions<UserPreferenceItem>(isUserPreferenceItem);
+  const sortedUserPreferenceItems =
+    orderExtensionBasedOnInsertBeforeAndAfter<ResolvedUserPreferenceItem>(
+      userPreferenceItemExtensions.map(({ properties }) => properties),
+    );
 
   // fetch the default user preference group from the url params if available
   const { group: groupIdFromUrl } = useParams();

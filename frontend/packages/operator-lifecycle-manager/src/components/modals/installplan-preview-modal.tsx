@@ -51,17 +51,15 @@ export type InstallPlanPreviewModalProps = {
 
 export const InstallPlanPreviewModalOverlay: OverlayComponent<InstallPlanPreviewModalProps> = (
   props,
-) => {
-  return (
-    <Modal
-      variant={ModalVariant.medium}
-      isOpen
-      onClose={props.closeOverlay}
-      aria-labelledby="installplan-preview-modal-title"
-    >
-      <InstallPlanPreview {...props} cancel={props.closeOverlay} close={props.closeOverlay} />
-    </Modal>
-  );
-};
+) => (
+  <Modal
+    variant={ModalVariant.medium}
+    isOpen
+    onClose={props.closeOverlay}
+    aria-labelledby="installplan-preview-modal-title"
+  >
+    <InstallPlanPreview {...props} cancel={props.closeOverlay} close={props.closeOverlay} />
+  </Modal>
+);
 
 InstallPlanPreview.displayName = 'InstallPlanPreview';

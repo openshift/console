@@ -78,14 +78,11 @@ const useOperatorHealth = (name: string): OperatorHealthType => {
   }
 
   const progressing = getCondition(operator, 'Progressing')?.status as
-    | K8sResourceConditionStatus
-    | undefined;
+    K8sResourceConditionStatus | undefined;
   const available = getCondition(operator, 'Available')?.status as
-    | K8sResourceConditionStatus
-    | undefined;
+    K8sResourceConditionStatus | undefined;
   const degraded = getCondition(operator, 'Degraded')?.status as
-    | K8sResourceConditionStatus
-    | undefined;
+    K8sResourceConditionStatus | undefined;
 
   if (progressing === 'True') {
     return {

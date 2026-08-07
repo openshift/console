@@ -7,42 +7,39 @@ import { DASH } from '@console/shared/src/constants/ui';
 import type { HelmRelease } from '../../../types/helm-types';
 import { HelmReleaseStatusLabels, releaseStatus } from '../../../utils/helm-utils';
 
-export const getRevisionRows = (releaseHistory: HelmRelease[]): DataViewTd[][] => {
-  return releaseHistory.map((revision) => {
-    return [
-      {
-        cell: <RadioButtonField value={revision.version} name="revision" />,
-        props: {
-          isStickyColumn: true,
-          stickyMinWidth: '50px',
-        } as TdProps,
-      },
-      {
-        cell: revision.version,
-      },
-      {
-        cell: <Timestamp timestamp={revision.info.last_deployed} />,
-      },
-      {
-        cell: (
-          <Status
-            status={releaseStatus(revision.info.status)}
-            title={HelmReleaseStatusLabels[revision.info.status]}
-          />
-        ),
-      },
-      {
-        cell: revision.chart.metadata.name,
-      },
-      {
-        cell: revision.chart.metadata.version,
-      },
-      {
-        cell: revision.chart.metadata.appVersion || DASH,
-      },
-      {
-        cell: revision.info.description,
-      },
-    ];
-  });
-};
+export const getRevisionRows = (releaseHistory: HelmRelease[]): DataViewTd[][] =>
+  releaseHistory.map((revision) => [
+    {
+      cell: <RadioButtonField value={revision.version} name="revision" />,
+      props: {
+        isStickyColumn: true,
+        stickyMinWidth: '50px',
+      } as TdProps,
+    },
+    {
+      cell: revision.version,
+    },
+    {
+      cell: <Timestamp timestamp={revision.info.last_deployed} />,
+    },
+    {
+      cell: (
+        <Status
+          status={releaseStatus(revision.info.status)}
+          title={HelmReleaseStatusLabels[revision.info.status]}
+        />
+      ),
+    },
+    {
+      cell: revision.chart.metadata.name,
+    },
+    {
+      cell: revision.chart.metadata.version,
+    },
+    {
+      cell: revision.chart.metadata.appVersion || DASH,
+    },
+    {
+      cell: revision.info.description,
+    },
+  ]);

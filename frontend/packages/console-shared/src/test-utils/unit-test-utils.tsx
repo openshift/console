@@ -42,16 +42,15 @@ const setupStore = (initialState?: Partial<RootState>) => {
  * @param pluginStore - Plugin store instance
  * @returns
  */
-const createWrapper = (
-  reduxStore: ReturnType<typeof setupStore>,
-  pluginStore: PluginStore,
-): FC<WrapperProps> => ({ children }) => (
-  <Provider store={reduxStore}>
-    <PluginStoreProvider store={pluginStore}>
-      <MemoryRouter>{children}</MemoryRouter>
-    </PluginStoreProvider>
-  </Provider>
-);
+const createWrapper =
+  (reduxStore: ReturnType<typeof setupStore>, pluginStore: PluginStore): FC<WrapperProps> =>
+  ({ children }) => (
+    <Provider store={reduxStore}>
+      <PluginStoreProvider store={pluginStore}>
+        <MemoryRouter>{children}</MemoryRouter>
+      </PluginStoreProvider>
+    </Provider>
+  );
 
 /**
  * Custom render function wrapper for Redux Provider and React Router

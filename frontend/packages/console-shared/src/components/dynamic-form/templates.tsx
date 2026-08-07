@@ -25,21 +25,19 @@ const AtomicFieldTemplate: FC<FieldTemplateProps> = ({
   required,
   schema,
   uiSchema,
-}) => {
-  return (
-    <FormField id={id} defaultLabel={label} required={required} schema={schema} uiSchema={uiSchema}>
-      {children}
-      {description}
-      {!_.isEmpty(rawErrors) && (
-        <>
-          {_.map(rawErrors, (error) => (
-            <FormHelperText key={error}>{_.capitalize(error)}</FormHelperText>
-          ))}
-        </>
-      )}
-    </FormField>
-  );
-};
+}) => (
+  <FormField id={id} defaultLabel={label} required={required} schema={schema} uiSchema={uiSchema}>
+    {children}
+    {description}
+    {!_.isEmpty(rawErrors) && (
+      <>
+        {_.map(rawErrors, (error) => (
+          <FormHelperText key={error}>{_.capitalize(error)}</FormHelperText>
+        ))}
+      </>
+    )}
+  </FormField>
+);
 
 const AdvancedProperties: FC<Pick<ObjectFieldTemplateProps, 'properties'>> = ({ properties }) => {
   const { t } = useTranslation('console-shared');
@@ -124,27 +122,25 @@ export const ArrayFieldTemplate: FC<ArrayFieldTemplateProps> = ({
       schema={schema}
       uiSchema={uiSchema}
     >
-      {_.map(items ?? [], (item) => {
-        return (
-          <div className="co-dynamic-form__array-field-group-item" key={item.key}>
-            {item.index > 0 && <Divider className="co-divider" />}
-            {item.hasRemove && (
-              <div className="co-dynamic-form__array-field-group-remove">
-                <Button
-                  icon={<RhUiMinusCircleIcon className="co-icon-space-r" />}
-                  id={`${item.key}_remove-btn`}
-                  type="button"
-                  onClick={item.onDropIndexClick(item.index)}
-                  variant="link"
-                >
-                  {t('Remove {{singularLabel}}', { singularLabel: label })}
-                </Button>
-              </div>
-            )}
-            {item.children}
-          </div>
-        );
-      })}
+      {_.map(items ?? [], (item) => (
+        <div className="co-dynamic-form__array-field-group-item" key={item.key}>
+          {item.index > 0 && <Divider className="co-divider" />}
+          {item.hasRemove && (
+            <div className="co-dynamic-form__array-field-group-remove">
+              <Button
+                icon={<RhUiMinusCircleIcon className="co-icon-space-r" />}
+                id={`${item.key}_remove-btn`}
+                type="button"
+                onClick={item.onDropIndexClick(item.index)}
+                variant="link"
+              >
+                {t('Remove {{singularLabel}}', { singularLabel: label })}
+              </Button>
+            </div>
+          )}
+          {item.children}
+        </div>
+      ))}
       <div>
         <Button
           icon={<RhUiAddCircleFillIcon className="co-icon-space-r" />}

@@ -82,9 +82,8 @@ export const secrets = {
   },
   encode: (username, password) => Base64.encode(`${username}:${password}`),
   enterSecretName: (secretName: string) => cy.byTestID('secret-name').type(secretName),
-  getResourceJSON: (name: string, namespace: string, kind: string) => {
-    return cy.exec(`oc get -o json -n ${namespace} ${kind} ${name}`);
-  },
+  getResourceJSON: (name: string, namespace: string, kind: string) =>
+    cy.exec(`oc get -o json -n ${namespace} ${kind} ${name}`),
   save: () => {
     cy.byTestID('save-changes', { timeout: 10000 })
       .should('be.visible')

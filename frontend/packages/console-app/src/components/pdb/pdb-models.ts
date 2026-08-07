@@ -59,25 +59,23 @@ export const pdbToK8sResource = (
   return pdbRes;
 };
 
-export const initialValuesFromK8sResource = (from: PodDisruptionBudgetKind): FormValues => {
-  return {
-    name: from?.metadata?.name || '',
-    namespace: from?.metadata?.namespace || '',
-    minAvailable: from?.spec?.minAvailable ?? '',
-    maxUnavailable: from?.spec?.maxUnavailable ?? '',
-    selector: {
-      matchLabels: from?.spec?.selector.matchLabels,
-      matchExpressions: from?.spec?.selector.matchExpressions,
-    },
+export const initialValuesFromK8sResource = (from: PodDisruptionBudgetKind): FormValues => ({
+  name: from?.metadata?.name || '',
+  namespace: from?.metadata?.namespace || '',
+  minAvailable: from?.spec?.minAvailable ?? '',
+  maxUnavailable: from?.spec?.maxUnavailable ?? '',
+  selector: {
+    matchLabels: from?.spec?.selector.matchLabels,
+    matchExpressions: from?.spec?.selector.matchExpressions,
+  },
 
-    requirement:
-      _.isNil(from?.spec?.minAvailable) && _.isNil(from?.spec?.maxUnavailable)
-        ? i18next.t('console-app~Requirement')
-        : !_.isNil(from?.spec?.minAvailable)
+  requirement:
+    _.isNil(from?.spec?.minAvailable) && _.isNil(from?.spec?.maxUnavailable)
+      ? i18next.t('console-app~Requirement')
+      : !_.isNil(from?.spec?.minAvailable)
         ? 'minAvailable'
         : 'maxUnavailable',
-  };
-};
+});
 
 export const patchPDB = (
   formValues: FormValues,

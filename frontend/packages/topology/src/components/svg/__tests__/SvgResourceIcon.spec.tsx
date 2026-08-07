@@ -2,9 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { SvgResourceIcon, getKindStringAndAbbreviation } from '../SvgResourceIcon';
 
 jest.mock('@patternfly/react-topology', () => ({
-  useSize: jest.fn(() => {
-    return [{ width: 20, height: 10 }, { current: null }];
-  }),
+  useSize: jest.fn(() => [{ width: 20, height: 10 }, { current: null }]),
 }));
 
 describe(getKindStringAndAbbreviation.name, () => {

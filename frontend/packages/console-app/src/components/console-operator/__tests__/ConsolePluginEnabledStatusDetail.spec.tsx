@@ -20,7 +20,8 @@ jest.mock('../ConsoleOperatorConfig', () => ({
   useConsoleOperatorConfigData: jest.fn(),
 }));
 
-const mockUseConsoleOperatorConfigData = ConsoleOperatorConfigModule.useConsoleOperatorConfigData as jest.Mock;
+const mockUseConsoleOperatorConfigData =
+  ConsoleOperatorConfigModule.useConsoleOperatorConfigData as jest.Mock;
 
 describe('ConsolePluginEnabledStatusDetail', () => {
   const createMockObj = (name: string) => ({

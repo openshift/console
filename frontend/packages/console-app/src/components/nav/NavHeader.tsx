@@ -20,29 +20,27 @@ type PerspectiveDropdownItemProps = {
 
 const IconLoadingComponent: FC = () => <>&emsp;</>;
 
-const PerspectiveDropdownItem: FC<PerspectiveDropdownItemProps> = ({ perspective, onClick }) => {
-  return (
-    <SelectOption
-      key={perspective.properties.id}
-      data-test="perspective-switcher-menu-option"
-      data-test-id="perspective-switcher-menu-option"
-      onClick={(e: MouseEvent<HTMLLinkElement>) => {
-        e.preventDefault();
-        onClick(perspective.properties.id);
-      }}
-      icon={
-        <AsyncComponent
-          loader={() => perspective.properties.icon().then((m) => m.default)}
-          LoadingComponent={IconLoadingComponent}
-        />
-      }
-    >
-      <Title headingLevel="h2" size="md">
-        {perspective.properties.name}
-      </Title>
-    </SelectOption>
-  );
-};
+const PerspectiveDropdownItem: FC<PerspectiveDropdownItemProps> = ({ perspective, onClick }) => (
+  <SelectOption
+    key={perspective.properties.id}
+    data-test="perspective-switcher-menu-option"
+    data-test-id="perspective-switcher-menu-option"
+    onClick={(e: MouseEvent<HTMLLinkElement>) => {
+      e.preventDefault();
+      onClick(perspective.properties.id);
+    }}
+    icon={
+      <AsyncComponent
+        loader={() => perspective.properties.icon().then((m) => m.default)}
+        LoadingComponent={IconLoadingComponent}
+      />
+    }
+  >
+    <Title headingLevel="h2" size="md">
+      {perspective.properties.name}
+    </Title>
+  </SelectOption>
+);
 
 const NavHeader: FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
   const [activePerspective, setActivePerspective] = useActivePerspective();

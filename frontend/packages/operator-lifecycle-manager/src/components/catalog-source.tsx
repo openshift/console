@@ -160,9 +160,9 @@ export const CatalogSourceDetails: FC<CatalogSourceDetailsProps> = ({
   );
 };
 
-const CatalogSourceOperatorsPage: FC<CatalogSourceOperatorsPageProps> = (props) => {
-  return <PackageManifestsPage catalogSource={props.obj} showTitle={false} {...props} />;
-};
+const CatalogSourceOperatorsPage: FC<CatalogSourceOperatorsPageProps> = (props) => (
+  <PackageManifestsPage catalogSource={props.obj} showTitle={false} {...props} />
+);
 
 export const CatalogSourceDetailsPage: FC = (props) => {
   const { t } = useTranslation('olm');
@@ -334,56 +334,54 @@ const CatalogSourceTableRow: FC<RowFunctionArgs<CatalogSourceTableRowObj>> = ({
 
 const CatalogSourceList: FC<TableProps> = (props) => {
   const { t } = useTranslation('olm');
-  const CatalogSourceHeader = () => {
-    return [
-      {
-        title: t('Name'),
-        sortField: 'name',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[0] },
-      },
-      {
-        title: t('Status'),
-        sortField: 'status',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[1] },
-      },
-      {
-        title: t('Publisher'),
-        sortField: 'publisher',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[2] },
-      },
-      {
-        title: t('Availability'),
-        sortField: 'availabilitySort',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[3] },
-      },
-      {
-        title: t('Endpoint'),
-        sortField: 'endpoint',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[4] },
-      },
-      {
-        title: t('Registry poll interval'),
-        sortField: 'registryPollInterval',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[5] },
-      },
-      {
-        title: t('# of Operators'),
-        sortField: 'operatorCount',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[6] },
-      },
-      {
-        title: '',
-        props: { className: tableColumnClasses[7] },
-      },
-    ];
-  };
+  const CatalogSourceHeader = () => [
+    {
+      title: t('Name'),
+      sortField: 'name',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[0] },
+    },
+    {
+      title: t('Status'),
+      sortField: 'status',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[1] },
+    },
+    {
+      title: t('Publisher'),
+      sortField: 'publisher',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[2] },
+    },
+    {
+      title: t('Availability'),
+      sortField: 'availabilitySort',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[3] },
+    },
+    {
+      title: t('Endpoint'),
+      sortField: 'endpoint',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[4] },
+    },
+    {
+      title: t('Registry poll interval'),
+      sortField: 'registryPollInterval',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[5] },
+    },
+    {
+      title: t('# of Operators'),
+      sortField: 'operatorCount',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[6] },
+    },
+    {
+      title: '',
+      props: { className: tableColumnClasses[7] },
+    },
+  ];
   return (
     <Table
       {...props}
@@ -432,9 +430,8 @@ const DisabledPopover: FC<DisabledPopoverProps> = ({ operatorHub, sourceName }) 
   );
 };
 
-const getRegistryPollInterval = (catalogSource: CatalogSourceKind): string => {
-  return catalogSource.spec?.updateStrategy?.registryPoll?.interval;
-};
+const getRegistryPollInterval = (catalogSource: CatalogSourceKind): string =>
+  catalogSource.spec?.updateStrategy?.registryPoll?.interval;
 
 const flatten = ({
   catalogSources,

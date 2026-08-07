@@ -14,12 +14,13 @@ export const HashLink: FC<HashLinkProps> = ({ smooth, onClick, to, ...rest }) =>
   const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
   const scrollTargetRef = useRef<string | null>(null);
 
-  useEffect(() => {
-    return () => {
+  useEffect(
+    () => () => {
       observerRef.current?.disconnect();
       clearTimeout(timeoutRef.current);
-    };
-  }, []);
+    },
+    [],
+  );
 
   const scrollOptions = useMemo<ScrollIntoViewOptions | undefined>(
     () => (smooth ? { behavior: 'smooth' } : undefined),

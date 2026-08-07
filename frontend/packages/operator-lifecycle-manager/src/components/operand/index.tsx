@@ -322,8 +322,8 @@ const getK8sWatchResources = (
   models: ProvidedAPIModels,
   providedAPIs: ProvidedAPI[],
   namespace?: string,
-): GetK8sWatchResources => {
-  return providedAPIs.reduce((resourceAccumulator, api) => {
+): GetK8sWatchResources =>
+  providedAPIs.reduce((resourceAccumulator, api) => {
     const reference = referenceForProvidedAPI(api);
     const model = models?.[reference];
 
@@ -342,7 +342,6 @@ const getK8sWatchResources = (
       },
     };
   }, {});
-};
 
 export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
   const { t } = useTranslation('olm');
@@ -441,8 +440,9 @@ export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
   const [staticData, filteredData, onFilterChange] = useListPageFilter(data, rowFilters);
   const loaded = Object.values(resources).every((r) => r.loaded);
   // only pass the first loadError as StatusBox can only display one
-  const loadError: Record<string, any> = Object.values(resources).find((r) => r.loadError)
-    ?.loadError;
+  const loadError: Record<string, any> = Object.values(resources).find(
+    (r) => r.loadError,
+  )?.loadError;
 
   return inFlight ? null : (
     <>
@@ -583,19 +583,17 @@ export const ProvidedAPIPage = (props: ProvidedAPIPageProps) => {
 const PodStatuses: FC<PodStatusesProps> = ({ kindObj, obj, podStatusDescriptors, schema }) =>
   podStatusDescriptors?.length > 0 ? (
     <Grid hasGutter>
-      {podStatusDescriptors.map((statusDescriptor: StatusDescriptor) => {
-        return (
-          <GridItem sm={6} key={statusDescriptor.path}>
-            <DescriptorDetailsItem
-              type={DescriptorType.status}
-              descriptor={statusDescriptor}
-              model={kindObj}
-              obj={obj}
-              schema={schema}
-            />
-          </GridItem>
-        );
-      })}
+      {podStatusDescriptors.map((statusDescriptor: StatusDescriptor) => (
+        <GridItem sm={6} key={statusDescriptor.path}>
+          <DescriptorDetailsItem
+            type={DescriptorType.status}
+            descriptor={statusDescriptor}
+            model={kindObj}
+            obj={obj}
+            schema={schema}
+          />
+        </GridItem>
+      ))}
     </Grid>
   ) : null;
 
@@ -610,49 +608,43 @@ export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: Operan
     [
       ...(csv?.spec?.customresourcedefinitions?.owned ?? []),
       ...(csv?.spec?.customresourcedefinitions?.required ?? []),
-    ].find((def) => {
-      return def.name === crd?.metadata?.name && def.version === kindObj?.apiVersion;
-    }) ?? {};
+    ].find((def) => def.name === crd?.metadata?.name && def.version === kindObj?.apiVersion) ?? {};
 
   const schema =
     crd?.spec?.versions?.find((v) => v.name === version)?.schema?.openAPIV3Schema ??
     (definitionFor(kindObj) as JSONSchema7);
 
-  const {
-    podStatuses,
-    mainStatusDescriptor,
-    conditionsStatusDescriptors,
-    otherStatusDescriptors,
-  } = (statusDescriptors ?? []).reduce((acc, descriptor) => {
-    if (isMainStatusDescriptor(descriptor)) {
+  const { podStatuses, mainStatusDescriptor, conditionsStatusDescriptors, otherStatusDescriptors } =
+    (statusDescriptors ?? []).reduce((acc, descriptor) => {
+      if (isMainStatusDescriptor(descriptor)) {
+        return {
+          ...acc,
+          mainStatusDescriptor: descriptor,
+        };
+      }
+
+      if (
+        descriptor['x-descriptors']?.includes(StatusCapability.conditions) ||
+        descriptor.path === 'conditions'
+      ) {
+        return {
+          ...acc,
+          conditionsStatusDescriptors: [...(acc.conditionsStatusDescriptors ?? []), descriptor],
+        };
+      }
+
+      if (descriptor['x-descriptors']?.includes(StatusCapability.podStatuses)) {
+        return {
+          ...acc,
+          podStatuses: [...(acc.podStatuses ?? []), descriptor],
+        };
+      }
+
       return {
         ...acc,
-        mainStatusDescriptor: descriptor,
+        otherStatusDescriptors: [...(acc.otherStatusDescriptors ?? []), descriptor],
       };
-    }
-
-    if (
-      descriptor['x-descriptors']?.includes(StatusCapability.conditions) ||
-      descriptor.path === 'conditions'
-    ) {
-      return {
-        ...acc,
-        conditionsStatusDescriptors: [...(acc.conditionsStatusDescriptors ?? []), descriptor],
-      };
-    }
-
-    if (descriptor['x-descriptors']?.includes(StatusCapability.podStatuses)) {
-      return {
-        ...acc,
-        podStatuses: [...(acc.podStatuses ?? []), descriptor],
-      };
-    }
-
-    return {
-      ...acc,
-      otherStatusDescriptors: [...(acc.otherStatusDescriptors ?? []), descriptor],
-    };
-  }, {} as any);
+    }, {} as any);
 
   return (
     <div className="co-operand-details co-m-pane">

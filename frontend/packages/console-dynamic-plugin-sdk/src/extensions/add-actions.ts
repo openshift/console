@@ -48,10 +48,7 @@ export type AddActionGroup = Extension<
 
 // Type guards
 
-export const isAddAction = (e: Extension): e is AddAction => {
-  return e.type === 'dev-console.add/action';
-};
+export const isAddAction = (e: Extension): e is AddAction => e.type === 'dev-console.add/action';
 
-export const isAddActionGroup = (e: Extension): e is AddActionGroup => {
-  return e.type === 'dev-console.add/action-group';
-};
+export const isAddActionGroup = (e: Extension): e is AddActionGroup =>
+  e.type === 'dev-console.add/action-group';

@@ -15,16 +15,10 @@ export const useSafeK8s = () => {
     };
   }, []);
 
-  return (
-    kind: K8sKind,
-    name: string,
-    ns: string,
-    opts: Options = {},
-  ): Promise<K8sResourceKind> => {
-    return new Promise((resolve, reject) => {
+  return (kind: K8sKind, name: string, ns: string, opts: Options = {}): Promise<K8sResourceKind> =>
+    new Promise((resolve, reject) => {
       k8sGet(kind, name, ns, opts, { signal: controller.current.signal as AbortSignal })
         .then((data) => mounted.current && resolve(data))
         .catch((error) => mounted.current && reject(error));
     });
-  };
 };

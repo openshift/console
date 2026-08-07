@@ -13,90 +13,88 @@ export const ImpersonateNotifier = connect(
   {
     stopImpersonate: UIActions.stopImpersonate,
   },
-)(
-  ({
-    stopImpersonate,
-    impersonate,
-  }: {
-    stopImpersonate: () => void;
-    impersonate: ImpersonateKind;
-  }) => {
-    const { t } = useTranslation('public');
+)(({
+  stopImpersonate,
+  impersonate,
+}: {
+  stopImpersonate: () => void;
+  impersonate: ImpersonateKind;
+}) => {
+  const { t } = useTranslation('public');
 
-    const handleStopImpersonate = useCallback(() => {
-      stopImpersonate();
-      // Navigate after dispatch to ensure impersonation state is reset.
-      setTimeout(() => {
-        window.location.href = window.SERVER_FLAGS.basePath || '/';
-      }, 0);
-    }, [stopImpersonate]);
+  const handleStopImpersonate = useCallback(() => {
+    stopImpersonate();
+    // Navigate after dispatch to ensure impersonation state is reset.
+    setTimeout(() => {
+      window.location.href = window.SERVER_FLAGS.basePath || '/';
+    }, 0);
+  }, [stopImpersonate]);
 
-    if (!impersonate) {
-      return null;
-    }
-    const kindTranslated = modelFor(impersonate.kind)?.labelKey
-      ? t(modelFor(impersonate.kind).labelKey)
-      : impersonate.kind;
-    const impersonateName = impersonate.name;
+  if (!impersonate) {
+    return null;
+  }
+  const kindTranslated = modelFor(impersonate.kind)?.labelKey
+    ? t(modelFor(impersonate.kind).labelKey)
+    : impersonate.kind;
+  const impersonateName = impersonate.name;
 
-    // Handle UserWithGroups display with enhanced group support
-    const isUserWithGroups = impersonate.kind === 'UserWithGroups';
-    const displayKind = isUserWithGroups ? 'user' : kindTranslated;
-    const displayKindForAccess = isUserWithGroups ? 'multi-group' : kindTranslated;
+  // Handle UserWithGroups display with enhanced group support
+  const isUserWithGroups = impersonate.kind === 'UserWithGroups';
+  const displayKind = isUserWithGroups ? 'user' : kindTranslated;
+  const displayKindForAccess = isUserWithGroups ? 'multi-group' : kindTranslated;
 
-    // Enhanced group display with tooltip for many groups
-    const MAX_GROUPS_DISPLAY = 2;
-    const groups = impersonate.groups || [];
-    const hasGroups = isUserWithGroups && groups.length > 0;
-    const visibleGroups = groups.slice(0, MAX_GROUPS_DISPLAY);
-    const remainingCount = Math.max(0, groups.length - MAX_GROUPS_DISPLAY);
+  // Enhanced group display with tooltip for many groups
+  const MAX_GROUPS_DISPLAY = 2;
+  const groups = impersonate.groups || [];
+  const hasGroups = isUserWithGroups && groups.length > 0;
+  const visibleGroups = groups.slice(0, MAX_GROUPS_DISPLAY);
+  const remainingCount = Math.max(0, groups.length - MAX_GROUPS_DISPLAY);
 
-    const groupsText = hasGroups
-      ? remainingCount > 0
-        ? t(' with groups: {{visibleGroups}}, and', {
-            visibleGroups: visibleGroups.join(', '),
-          })
-        : t(' with groups: {{groups}}', { groups: visibleGroups.join(', ') })
-      : '';
+  const groupsText = hasGroups
+    ? remainingCount > 0
+      ? t(' with groups: {{visibleGroups}}, and', {
+          visibleGroups: visibleGroups.join(', '),
+        })
+      : t(' with groups: {{groups}}', { groups: visibleGroups.join(', ') })
+    : '';
 
-    const groupsTooltip =
-      hasGroups && remainingCount > 0 ? (
-        <Tooltip
-          content={
-            <div>
-              {groups.map((group) => (
-                <div key={group}>{group}</div>
-              ))}
-            </div>
-          }
-        >
-          <span className="pf-v6-u-text-decoration-underline-dotted pf-v6-u-color-brand">
-            {t('{{count}} more', { count: remainingCount })}
-          </span>
-        </Tooltip>
-      ) : null;
-
-    return (
-      <Banner color="blue">
-        <Flex
-          justifyContent={{ default: 'justifyContentCenter' }}
-          flexWrap={{ default: 'nowrap' }}
-          gap={{ default: 'gapSm' }}
-        >
+  const groupsTooltip =
+    hasGroups && remainingCount > 0 ? (
+      <Tooltip
+        content={
           <div>
-            {t('You are impersonating {{kind}} ', { kind: displayKind })}
-            <strong>{impersonateName}</strong>
-            {groupsText}
-            {groupsTooltip && <> {groupsTooltip}</>}
-            {t('. You are viewing all resources and roles this {{kind}} can access. ', {
-              kind: displayKindForAccess,
-            })}
-            <Button isInline type="button" variant="link" onClick={handleStopImpersonate}>
-              {t('Stop impersonating')}
-            </Button>
+            {groups.map((group) => (
+              <div key={group}>{group}</div>
+            ))}
           </div>
-        </Flex>
-      </Banner>
-    );
-  },
-);
+        }
+      >
+        <span className="pf-v6-u-text-decoration-underline-dotted pf-v6-u-color-brand">
+          {t('{{count}} more', { count: remainingCount })}
+        </span>
+      </Tooltip>
+    ) : null;
+
+  return (
+    <Banner color="blue">
+      <Flex
+        justifyContent={{ default: 'justifyContentCenter' }}
+        flexWrap={{ default: 'nowrap' }}
+        gap={{ default: 'gapSm' }}
+      >
+        <div>
+          {t('You are impersonating {{kind}} ', { kind: displayKind })}
+          <strong>{impersonateName}</strong>
+          {groupsText}
+          {groupsTooltip && <> {groupsTooltip}</>}
+          {t('. You are viewing all resources and roles this {{kind}} can access. ', {
+            kind: displayKindForAccess,
+          })}
+          <Button isInline type="button" variant="link" onClick={handleStopImpersonate}>
+            {t('Stop impersonating')}
+          </Button>
+        </div>
+      </Flex>
+    </Banner>
+  );
+});

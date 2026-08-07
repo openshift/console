@@ -14,9 +14,7 @@ declare global {
 
 expect.extend({
   toHaveProperties(received, argument) {
-    const pass = argument.every((arg: string) => {
-      return _.has(received, arg);
-    });
+    const pass = argument.every((arg: string) => _.has(received, arg));
     if (pass) {
       return {
         message: () =>

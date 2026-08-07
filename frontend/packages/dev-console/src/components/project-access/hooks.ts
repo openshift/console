@@ -16,13 +16,16 @@ export const useProjectAccessRoles = (): { data: Roles; loaded: boolean } => {
     if (!availableClusterRoles || !availableClusterRoles.length) {
       return {};
     }
-    return availableClusterRoles.reduce((acc, role) => {
-      acc[role] = {
-        kind: ClusterRoleModel.kind,
-        name: role,
-      };
-      return acc;
-    }, {} as Record<string, WatchK8sResource>);
+    return availableClusterRoles.reduce(
+      (acc, role) => {
+        acc[role] = {
+          kind: ClusterRoleModel.kind,
+          name: role,
+        };
+        return acc;
+      },
+      {} as Record<string, WatchK8sResource>,
+    );
   }, [availableClusterRoles]);
 
   const clusterRoles = useK8sWatchResources<Record<string, ClusterRoleKind>>(watchedClusterRoles);

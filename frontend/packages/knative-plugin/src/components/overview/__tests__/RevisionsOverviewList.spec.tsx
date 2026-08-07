@@ -67,7 +67,8 @@ jest.mock('../RevisionsOverviewListItem', () => ({
 
 jest.mock('react-i18next');
 
-const useTrafficSplittingModalLauncherMock = TrafficSplittingController.useTrafficSplittingModalLauncher as jest.Mock;
+const useTrafficSplittingModalLauncherMock =
+  TrafficSplittingController.useTrafficSplittingModalLauncher as jest.Mock;
 
 describe('RevisionsOverviewList', () => {
   const mockUseAccessReview = useAccessReview as any;

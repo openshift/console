@@ -42,35 +42,30 @@ export const readPackages = (packageFiles: string[]) => {
   };
 };
 
-const sortPluginPackages: PluginPackageFilter = (appPackage, pluginPackages) => {
+const sortPluginPackages: PluginPackageFilter = (appPackage, pluginPackages) =>
   // if appPackage is in the list, make sure it's the first element
-  return _.sortBy(pluginPackages, (pkg) => (appPackage === pkg ? 0 : 1));
-};
-
-export const filterActivePluginPackages: PluginPackageFilter = (appPackage, pluginPackages) => {
+  _.sortBy(pluginPackages, (pkg) => (appPackage === pkg ? 0 : 1));
+export const filterActivePluginPackages: PluginPackageFilter = (appPackage, pluginPackages) =>
   // include dependencies of the appPackage or the appPackage itself
-  return sortPluginPackages(
+  sortPluginPackages(
     appPackage,
     pluginPackages.filter(
       (pkg) => appPackage === pkg || appPackage.dependencies[pkg.name] === pkg.version,
     ),
   );
-};
 
 /**
  * Resolve Console monorepo root directory by traversing `package.json` files.
  */
-export const getMonorepoRootDir = () => {
-  return findUp.sync(
-    (currentDir) => {
-      return fs.existsSync(path.join(currentDir, 'package.json'))
+export const getMonorepoRootDir = () =>
+  findUp.sync(
+    (currentDir) =>
+      fs.existsSync(path.join(currentDir, 'package.json'))
         ? readPkg.sync({ cwd: currentDir, normalize: true }).name === 'openshift-console' &&
-            currentDir
-        : undefined;
-    },
+          currentDir
+        : undefined,
     { cwd: __dirname, type: 'directory' },
   );
-};
 
 /**
  * Resolve Console plugin packages using the provided filter.

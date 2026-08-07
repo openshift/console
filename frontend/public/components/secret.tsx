@@ -46,8 +46,8 @@ const tableColumnInfo = [
   { id: 'actions' },
 ];
 
-const getDataViewRows: GetDataViewRows<SecretKind> = (data, columns) => {
-  return data.map(({ obj }) => {
+const getDataViewRows: GetDataViewRows<SecretKind> = (data, columns) =>
+  data.map(({ obj }) => {
     const { name, namespace } = obj.metadata;
     const resourceKind = referenceFor(obj);
     const context = { [resourceKind]: obj };
@@ -90,7 +90,6 @@ const getDataViewRows: GetDataViewRows<SecretKind> = (data, columns) => {
       };
     });
   });
-};
 
 const SecretDetails: FC<{ obj: SecretKind }> = ({ obj }) => {
   const { t } = useTranslation('public');
@@ -126,8 +125,8 @@ const useSecretsColumns = (): {
   const { t } = useTranslation('public');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(SecretModel);
 
-  const columns = useMemo(() => {
-    return [
+  const columns = useMemo(
+    () => [
       {
         title: t('Name'),
         id: tableColumnInfo[0].id,
@@ -181,8 +180,9 @@ const useSecretsColumns = (): {
           ...actionsCellProps,
         },
       },
-    ];
-  }, [t, getResizableProps]);
+    ],
+    [t, getResizableProps],
+  );
 
   return { columns, resetAllColumnWidths };
 };

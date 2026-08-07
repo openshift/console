@@ -143,12 +143,10 @@ const PageContents: FC<{ noProjectsAvailable?: boolean }> = ({ noProjectsAvailab
 
 const PageContentsWithStartGuide = withStartGuide(PageContents);
 
-const HelmTabbedPage: FC = (props) => {
-  return (
-    <NamespacedPage variant={NamespacedPageVariants.light} hideApplications>
-      <PageContentsWithStartGuide {...props} />
-    </NamespacedPage>
-  );
-};
+const HelmTabbedPage: FC = (props) => (
+  <NamespacedPage variant={NamespacedPageVariants.light} hideApplications>
+    <PageContentsWithStartGuide {...props} />
+  </NamespacedPage>
+);
 
 export default HelmTabbedPage;

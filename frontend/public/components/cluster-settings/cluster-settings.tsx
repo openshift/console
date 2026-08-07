@@ -37,14 +37,11 @@ import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
-import * as semver from 'semver';
 import type { WatchK8sResource } from '@console/dynamic-plugin-sdk';
 import { useAccessReview } from '@console/dynamic-plugin-sdk';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import type { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
-import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
 import { FEATURE_FLAG_LIGHTSPEED_PLUGIN } from '@console/shared/src/components/cluster-updates/constants';
 import { UpdateWorkflowOLSButton } from '@console/shared/src/components/cluster-updates/explain-button';
 import {
@@ -97,8 +94,6 @@ import {
   getLastCompletedUpdate,
   getMCPsToPausePromises,
   getNewerClusterVersionChannel,
-  getNewerMinorVersionUpdate,
-  getNotUpgradeableResources,
   getOCMLink,
   getReleaseNotesLink,
   getSimilarClusterVersionChannels,
@@ -124,7 +119,7 @@ import {
 } from '../modals';
 import { ErrorModal } from '../modals/error-modal';
 import { UpstreamConfigDetailsItem } from '../utils/details-page';
-import { documentationURLs, getDocumentationURL, isManaged } from '../utils/documentation';
+import { isManaged } from '../utils/documentation';
 import { FieldLevelHelp } from '../utils/field-level-help';
 import { SectionHeading } from '../utils/headings';
 import { HorizontalNav } from '../utils/horizontal-nav';
@@ -139,6 +134,11 @@ import {
 import { EmptyBox } from '../utils/status-box';
 import { togglePaused } from '../utils/workload-pause';
 import { ClusterOperatorPage } from './cluster-operator';
+import {
+  ChannelDocLink,
+  ClusterNotUpgradeableAlert,
+  UpdateBlockedLabel,
+} from './cluster-settings-utils';
 import { UpdateStatus } from './cluster-status';
 import { GlobalConfigPage } from './global-config';
 
@@ -147,9 +147,7 @@ const clusterAutoscalerReference = referenceForModel(ClusterAutoscalerModel);
 const getMCPByName = (
   machineConfigPools: MachineConfigPoolKind[],
   name: string,
-): MachineConfigPoolKind => {
-  return machineConfigPools?.find((mcp) => mcp.metadata.name === name);
-};
+): MachineConfigPoolKind => machineConfigPools?.find((mcp) => mcp.metadata.name === name);
 
 const getStartedTimeForCVDesiredVersion = (
   cv: ClusterVersionKind,
@@ -171,13 +169,9 @@ const getUpdatingTimeForMCP = (machineConfigPool: MachineConfigPoolKind): string
 const getUpdatedOperatorsCount = (
   clusterOperators: ClusterOperator[],
   desiredVersion: string,
-): number => {
-  return (
-    clusterOperators?.filter((operator) => {
-      return getClusterOperatorVersion(operator) === desiredVersion;
-    })?.length ?? 0
-  );
-};
+): number =>
+  clusterOperators?.filter((operator) => getClusterOperatorVersion(operator) === desiredVersion)
+    ?.length ?? 0;
 
 const CurrentChannel: FC<CurrentChannelProps> = ({ cv, canUpgrade }) => {
   const { t } = useTranslation('public');
@@ -312,12 +306,6 @@ const CurrentVersionHeader: FC<CurrentVersionProps> = ({ cv }) => {
   );
 };
 
-export const ChannelDocLink: FC<{}> = () => {
-  const upgradeURL = getDocumentationURL(documentationURLs.understandingUpgradeChannels);
-  const { t } = useTranslation('public');
-  return <ExternalLink href={upgradeURL} text={t('Learn more about OpenShift update channels')} />;
-};
-
 const ChannelHeader: FC<{}> = () => {
   const { t } = useTranslation('public');
   return (
@@ -341,47 +329,41 @@ const ChannelHeader: FC<{}> = () => {
   );
 };
 
-const Channel: FC<ChannelProps> = ({ children, endOfLife }) => {
-  return (
-    <div
-      className={css('co-channel', {
-        'co-channel--end-of-life': endOfLife,
-      })}
-      data-test="cv-channel"
-    >
-      {children}
-    </div>
-  );
-};
+const Channel: FC<ChannelProps> = ({ children, endOfLife }) => (
+  <div
+    className={css('co-channel', {
+      'co-channel--end-of-life': endOfLife,
+    })}
+    data-test="cv-channel"
+  >
+    {children}
+  </div>
+);
 
-const ChannelLine: FC<ChannelLineProps> = ({ children, start }) => {
-  return <li className={css('co-channel-line', { 'co-channel-start': start })}>{children}</li>;
-};
+const ChannelLine: FC<ChannelLineProps> = ({ children, start }) => (
+  <li className={css('co-channel-line', { 'co-channel-start': start })}>{children}</li>
+);
 
-const ChannelName: FC<ChannelNameProps> = ({ children, current }) => {
-  return (
-    <span
-      className={css('co-channel-name', {
-        'co-channel-name--current': current,
-      })}
-      data-test="cv-channel-name"
-    >
-      {children}
-    </span>
-  );
-};
+const ChannelName: FC<ChannelNameProps> = ({ children, current }) => (
+  <span
+    className={css('co-channel-name', {
+      'co-channel-name--current': current,
+    })}
+    data-test="cv-channel-name"
+  >
+    {children}
+  </span>
+);
 
-const ChannelPath: FC<ChannelPathProps> = ({ children, current }) => {
-  return (
-    <ul
-      className={css('co-channel-path', {
-        'co-channel-path--current': current,
-      })}
-    >
-      {children}
-    </ul>
-  );
-};
+const ChannelPath: FC<ChannelPathProps> = ({ children, current }) => (
+  <ul
+    className={css('co-channel-path', {
+      'co-channel-path--current': current,
+    })}
+  >
+    {children}
+  </ul>
+);
 
 const ChannelVersion: FC<ChannelVersionProps> = ({ children, current, updateBlocked }) => {
   const test = 'cv-channel-version';
@@ -398,21 +380,6 @@ const ChannelVersion: FC<ChannelVersionProps> = ({ children, current, updateBloc
       )}
       {children}
     </span>
-  );
-};
-
-export const UpdateBlockedLabel = () => {
-  const { t } = useTranslation('public');
-
-  return (
-    <Label
-      status="warning"
-      variant="outline"
-      className="pf-v6-u-ml-sm"
-      data-test="cv-update-blocked"
-    >
-      {t('Update blocked')}
-    </Label>
   );
 };
 
@@ -462,34 +429,30 @@ const ChannelVersionDot: FC<ChannelVersionDotProps> = ({ current, updateBlocked,
   );
 };
 
-const UpdatesBar: FC<UpdatesBarProps> = ({ children }) => {
-  return <div className="co-cluster-settings__updates-bar">{children}</div>;
-};
+const UpdatesBar: FC<UpdatesBarProps> = ({ children }) => (
+  <div className="co-cluster-settings__updates-bar">{children}</div>
+);
 
-const UpdatesGroup: FC<UpdatesGroupProps> = ({ children, divided }) => {
-  return (
-    <div
-      className={css('co-cluster-settings__updates-group', {
-        'co-cluster-settings__updates-group--divided': divided,
-      })}
-      data-test="cv-updates-group"
-    >
-      {children}
-    </div>
-  );
-};
+const UpdatesGroup: FC<UpdatesGroupProps> = ({ children, divided }) => (
+  <div
+    className={css('co-cluster-settings__updates-group', {
+      'co-cluster-settings__updates-group--divided': divided,
+    })}
+    data-test="cv-updates-group"
+  >
+    {children}
+  </div>
+);
 
-const UpdatesProgress: FC<UpdatesProgressProps> = ({ children }) => {
-  return (
-    <div className="co-cluster-settings__updates-progress" data-test="cv-updates-progress">
-      {children}
-    </div>
-  );
-};
+const UpdatesProgress: FC<UpdatesProgressProps> = ({ children }) => (
+  <div className="co-cluster-settings__updates-progress" data-test="cv-updates-progress">
+    {children}
+  </div>
+);
 
-const UpdatesType: FC<UpdatesTypeProps> = ({ children }) => {
-  return <div className="co-cluster-settings__updates-type">{children}</div>;
-};
+const UpdatesType: FC<UpdatesTypeProps> = ({ children }) => (
+  <div className="co-cluster-settings__updates-type">{children}</div>
+);
 
 const NodesUpdatesGroup: FC<NodesUpdatesGroupProps> = ({
   divided,
@@ -600,19 +563,17 @@ const OtherNodes: FC<OtherNodesProps> = ({
     .sort(sortMCPsByCreationTimestamp);
   return (
     <>
-      {otherNodes.map((mcp) => {
-        return (
-          <NodesUpdatesGroup
-            desiredVersion={desiredVersion}
-            divided
-            hideIfComplete={hideIfComplete}
-            key={mcp.metadata.uid}
-            name={mcp.metadata.name}
-            machineConfigPool={mcp}
-            updateStartedTime={updateStartedTime}
-          />
-        );
-      })}
+      {otherNodes.map((mcp) => (
+        <NodesUpdatesGroup
+          desiredVersion={desiredVersion}
+          divided
+          hideIfComplete={hideIfComplete}
+          key={mcp.metadata.uid}
+          name={mcp.metadata.name}
+          machineConfigPool={mcp}
+          updateStartedTime={updateStartedTime}
+        />
+      ))}
     </>
   );
 };
@@ -777,11 +738,6 @@ const UpdateInProgress: FC<UpdateInProgressProps> = ({
       )}
     </UpdatesProgress>
   );
-};
-
-const ClusterServiceVersionResource: WatchK8sResource = {
-  isList: true,
-  kind: referenceForModel(ClusterServiceVersionModel),
 };
 
 // Helper function to get a condition by type from cluster version
@@ -1103,72 +1059,6 @@ const parseUpdateFailureMessage = (
   };
 };
 
-export const ClusterNotUpgradeableAlert: FC<ClusterNotUpgradeableAlertProps> = ({
-  cv,
-  onCancel,
-}) => {
-  const [clusterOperators] = useK8sWatchResource<ClusterOperator[]>(ClusterOperatorsResource);
-  const [clusterServiceVersions] = useK8sWatchResource<ClusterServiceVersionKind[]>(
-    ClusterServiceVersionResource,
-  );
-  const { t } = useTranslation('public');
-  const notUpgradeableClusterOperators = getNotUpgradeableResources(clusterOperators);
-  const notUpgradeableClusterOperatorsPresent = notUpgradeableClusterOperators.length > 0;
-  const notUpgradeableClusterServiceVersions = getNotUpgradeableResources(clusterServiceVersions);
-  const notUpgradeableCSVsPresent = notUpgradeableClusterServiceVersions.length > 0;
-  const clusterUpgradeableFalseCondition = getConditionUpgradeableFalse(cv);
-  const currentVersion = getLastCompletedUpdate(cv);
-  const currentVersionParsed = semver.parse(currentVersion);
-  const currentMajorMinorVersion = `${currentVersionParsed?.major}.${currentVersionParsed?.minor}`;
-  const availableUpdates = getSortedAvailableUpdates(cv);
-  const newerUpdate = getNewerMinorVersionUpdate(currentVersion, availableUpdates);
-  const newerUpdateParsed = semver.parse(newerUpdate?.version);
-  const nextMajorMinorVersion = `${newerUpdateParsed?.major}.${newerUpdateParsed?.minor}`;
-
-  return (
-    <Alert
-      variant="warning"
-      isInline
-      title={
-        currentVersionParsed && newerUpdateParsed
-          ? t(
-              'Your cluster cannot update to {{nextMajorMinorVersion}}. You can continue to install patch releases in {{currentMajorMinorVersion}}.',
-              { nextMajorMinorVersion, currentMajorMinorVersion },
-            )
-          : t('Your cluster cannot update to the next minor version.')
-      }
-      className="co-alert"
-      actionLinks={
-        (notUpgradeableClusterOperatorsPresent || notUpgradeableCSVsPresent) && (
-          <Flex>
-            {notUpgradeableClusterOperatorsPresent && (
-              <FlexItem>
-                <ClusterOperatorsLink onCancel={onCancel} queryString="?status=Cannot+update">
-                  {t('View ClusterOperators')}
-                </ClusterOperatorsLink>
-              </FlexItem>
-            )}
-            {notUpgradeableCSVsPresent && (
-              // TODO:  update link to include filter once installed Operators filters are updated
-              <FlexItem>
-                <Link
-                  onClick={onCancel}
-                  to={`/k8s/ns/all-namespaces/${ClusterServiceVersionModel.plural}`}
-                >
-                  {t('View installed Operators')}
-                </Link>
-              </FlexItem>
-            )}
-          </Flex>
-        )
-      }
-      data-test="cluster-settings-alerts-not-upgradeable"
-    >
-      <MarkdownView content={clusterUpgradeableFalseCondition.message} inline />
-    </Alert>
-  );
-};
-
 export const MachineConfigPoolsArePausedAlert: FC<MachineConfigPoolsArePausedAlertProps> = ({
   machineConfigPools,
 }) => {
@@ -1406,9 +1296,10 @@ const UpdateAssessmentCard: FC<{
     () => conditions.find((c) => c.type === 'Failing' && c.status === 'True'),
     [conditions],
   );
-  const hasOperatorProblems = useMemo(() => hasOperatorIssues(clusterOperators), [
-    clusterOperators,
-  ]);
+  const hasOperatorProblems = useMemo(
+    () => hasOperatorIssues(clusterOperators),
+    [clusterOperators],
+  );
 
   // Determine button visibility using the new unified logic
   const { showStatus, showPreCheck } = useMemo(
@@ -2063,11 +1954,6 @@ type UpdateInProgressProps = {
   machineConfigPools: MachineConfigPoolKind[];
   workerMachineConfigPool: MachineConfigPoolKind;
   updateStartedTime: string;
-};
-
-type ClusterNotUpgradeableAlertProps = {
-  cv: ClusterVersionKind;
-  onCancel?: () => void;
 };
 
 type MachineConfigPoolsArePausedAlertProps = {

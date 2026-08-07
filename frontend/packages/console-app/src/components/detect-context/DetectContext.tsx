@@ -148,22 +148,17 @@ export const ContextProviderExtensionWrapper: FC<{ children: ReactNode }> = ({ c
  * NamespaceContext, and ContextProviderExtensionsContext.
  */
 export const DetectContext: FC<{ children: ReactNode }> = ({ children }) => {
-  const [
-    activePerspective,
-    setActivePerspective,
-    perspectiveLoaded,
-  ] = useValuesForPerspectiveContext();
+  const [activePerspective, setActivePerspective, perspectiveLoaded] =
+    useValuesForPerspectiveContext();
   const { namespace, setNamespace, loaded: namespaceLoaded } = useValuesForNamespaceContext();
 
   const [preferredLanguage, , preferredLanguageLoaded] = usePreferredLanguage();
   useLanguage(preferredLanguage, preferredLanguageLoaded);
 
-  const [reduxReducerExtensions, reducersResolved] = useResolvedExtensions<ReduxReducer>(
-    isReduxReducer,
-  );
-  const [contextProviderExtensions, providersResolved] = useResolvedExtensions<ContextProvider>(
-    isContextProvider,
-  );
+  const [reduxReducerExtensions, reducersResolved] =
+    useResolvedExtensions<ReduxReducer>(isReduxReducer);
+  const [contextProviderExtensions, providersResolved] =
+    useResolvedExtensions<ContextProvider>(isContextProvider);
 
   const perspectiveExtensions = usePerspectives();
   const perspectiveParam = getPerspectiveURLParam(perspectiveExtensions);

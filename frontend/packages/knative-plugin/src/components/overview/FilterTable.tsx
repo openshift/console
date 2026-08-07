@@ -62,7 +62,7 @@ const FilterTable: FC<FilterTableProps> = ({ filters, bordered = true, paddingLe
         {data.rows.map((row) => (
           <Tr key={row.cells[0]?.title}>
             {row.cells.map((cell) => (
-              <Td key={cell?.title + row.cells[0]?.title} {...cell.props}>
+              <Td key={(cell?.title ?? '') + (row.cells[0]?.title ?? '')} {...cell.props}>
                 {cell.title}
               </Td>
             ))}

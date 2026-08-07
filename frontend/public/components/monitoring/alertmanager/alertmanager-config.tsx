@@ -123,7 +123,7 @@ const AlertRouting: FC<AlertRoutingProps> = ({ secret, config }) => {
   );
 };
 
-const getIntegrationTypes = (receiver: AlertmanagerReceiver): string[] => {
+const getIntegrationTypes = (receiver: AlertmanagerReceiver): string[] =>
   /* Given receiver = {
        "name": "team-X-pager",
        "email_configs": [...],
@@ -131,9 +131,7 @@ const getIntegrationTypes = (receiver: AlertmanagerReceiver): string[] => {
      };
      returns ['email_configs', 'pagerduty_configs']
   */
-  return _.filter(_.keys(receiver), (v) => _.endsWith(v, '_configs'));
-};
-
+  _.filter(_.keys(receiver), (v) => _.endsWith(v, '_configs'));
 /**
  * Recursive function which transverses routes and sub-routes to get labels and/or matchers for each receiver.
  * Each entry is a set of labels and/or matchers used to route alerts to a receiver
@@ -184,9 +182,8 @@ const hasSimpleRoute = (
 ): boolean => {
   const routes = _.get(config, ['route', 'routes']);
   return (
-    _.filter(routes, (route) => {
-      return route.receiver === receiver.name && _.isUndefined(route.routes);
-    }).length > 0 || _.isEmpty(receiverRoutingLabels)
+    _.filter(routes, (route) => route.receiver === receiver.name && _.isUndefined(route.routes))
+      .length > 0 || _.isEmpty(receiverRoutingLabels)
   );
 };
 
@@ -299,8 +296,8 @@ const tableColumnInfo = [
 const getReceiverDataViewRows = (
   rowData: RowProps<AlertmanagerReceiver, ReceiverRowData>[],
   tableColumns: ConsoleDataViewColumn<AlertmanagerReceiver>[],
-): ConsoleDataViewRow[] => {
-  return rowData.map(({ obj: receiver, rowData: customData }) => {
+): ConsoleDataViewRow[] =>
+  rowData.map(({ obj: receiver, rowData: customData }) => {
     const {
       secret,
       config,
@@ -388,9 +385,7 @@ const getReceiverDataViewRows = (
       [tableColumnInfo[2].id]: {
         cell: isDefaultReceiver
           ? t('All (default receiver)')
-          : _.map(receiverRoutingLabels, (rte, i) => {
-              return <RoutingLabels data={rte} key={i} />;
-            }),
+          : _.map(receiverRoutingLabels, (rte, i) => <RoutingLabels data={rte} key={i} />),
         props: {
           'data-test': `data-view-cell-${receiver.name}-routing-labels`,
         },
@@ -410,12 +405,11 @@ const getReceiverDataViewRows = (
       };
     });
   });
-};
 
 const useReceiverColumns = (): TableColumn<AlertmanagerReceiver>[] => {
   const { t } = useTranslation('public');
-  const columns = useMemo(() => {
-    return [
+  const columns = useMemo(
+    () => [
       {
         title: t('Name'),
         id: tableColumnInfo[0].id,
@@ -447,14 +441,15 @@ const useReceiverColumns = (): TableColumn<AlertmanagerReceiver>[] => {
           modifier: 'nowrap',
         },
       },
-    ];
-  }, [t]);
+    ],
+    [t],
+  );
   return columns;
 };
 
-const getObjectMetadata = (receiver: AlertmanagerReceiver): ResourceMetadata => {
-  return { name: receiver.name };
-};
+const getObjectMetadata = (receiver: AlertmanagerReceiver): ResourceMetadata => ({
+  name: receiver.name,
+});
 
 const ReceiversTable: FC<ReceiversTableProps> = (props) => {
   const { secret, config, data } = props;

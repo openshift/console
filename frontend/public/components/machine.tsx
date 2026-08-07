@@ -65,8 +65,8 @@ const tableColumnInfo = [
 const getMachineProviderState = (obj: MachineKind): string =>
   obj?.status?.providerStatus?.instanceState;
 
-const getDataViewRows = (data: { obj: MachineKind }[], columns: TableColumn<MachineKind>[]) => {
-  return data.map(({ obj }: { obj: MachineKind }) => {
+const getDataViewRows = (data: { obj: MachineKind }[], columns: TableColumn<MachineKind>[]) =>
+  data.map(({ obj }: { obj: MachineKind }) => {
     const { name, namespace } = obj.metadata;
     const nodeName = getMachineNodeName(obj);
     const region = getMachineRegion(obj);
@@ -111,7 +111,6 @@ const getDataViewRows = (data: { obj: MachineKind }[], columns: TableColumn<Mach
       };
     });
   });
-};
 
 const MachineDetails: FC<MachineDetailsProps> = ({ obj }: { obj: MachineKind }) => {
   const nodeName = getMachineNodeName(obj);
@@ -207,8 +206,8 @@ const useMachineColumns = (): {
   const { t } = useTranslation('public');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(MachineModel);
 
-  const columns: TableColumn<MachineKind>[] = useMemo(() => {
-    return [
+  const columns: TableColumn<MachineKind>[] = useMemo(
+    () => [
       {
         title: t('Name'),
         id: tableColumnInfo[0].id,
@@ -280,8 +279,9 @@ const useMachineColumns = (): {
           ...actionsCellProps,
         },
       },
-    ];
-  }, [t, getResizableProps]);
+    ],
+    [t, getResizableProps],
+  );
 
   return { columns, resetAllColumnWidths };
 };

@@ -55,9 +55,10 @@ export const RegistryPollIntervalDetailItem: FC<RegistryPollIntervalDetailItemPr
   }, [catalogSource.spec.updateStrategy?.registryPoll?.interval]);
 
   const [selectedPollInterval, setSelectedPollInterval] = useState<string>(pollInterval);
-  const items = useMemo<SimpleSelectOption[]>(() => {
-    return getPollIntervals(selectedPollInterval);
-  }, [selectedPollInterval]);
+  const items = useMemo<SimpleSelectOption[]>(
+    () => getPollIntervals(selectedPollInterval),
+    [selectedPollInterval],
+  );
 
   // if the CatalogSource is managed, we can't edit the poll interval
   const managedBy = catalogSource.metadata?.annotations?.['operatorframework.io/managed-by'];

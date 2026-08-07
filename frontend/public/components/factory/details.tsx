@@ -34,9 +34,8 @@ import DetailsBreadcrumbResolver from './details-breadcrumb-resolver';
 const useBreadCrumbsForDetailPage = (
   kindObj: K8sKind,
 ): ResolvedExtension<DetailPageBreadCrumbs> => {
-  const [breadCrumbsExtensions, breadCrumbsResolved] = useResolvedExtensions<DetailPageBreadCrumbs>(
-    isDetailPageBreadCrumbs,
-  );
+  const [breadCrumbsExtensions, breadCrumbsResolved] =
+    useResolvedExtensions<DetailPageBreadCrumbs>(isDetailPageBreadCrumbs);
   return useMemo(
     () =>
       breadCrumbsResolved
@@ -85,28 +84,30 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
   // Build resources to watch
   const watchResources = useMemo(() => {
     const allResources = [...(_.isNil(props.obj) ? [objResource] : []), ...(props.resources ?? [])];
-    return allResources.reduce((acc, r) => {
-      const key = r.prop || r.kind;
-      acc[key] = {
-        kind: r.kind,
-        groupVersionKind: r.groupVersionKind,
-        name: r.name,
-        namespace: r.namespace,
-        isList: r.isList,
-        selector: r.selector,
-        fieldSelector: r.fieldSelector,
-        limit: r.limit,
-        namespaced: r.namespaced,
-        optional: r.optional,
-        partialMetadata: r.partialMetadata,
-      };
-      return acc;
-    }, {} as Record<string, WatchK8sResource>);
+    return allResources.reduce(
+      (acc, r) => {
+        const key = r.prop || r.kind;
+        acc[key] = {
+          kind: r.kind,
+          groupVersionKind: r.groupVersionKind,
+          name: r.name,
+          namespace: r.namespace,
+          isList: r.isList,
+          selector: r.selector,
+          fieldSelector: r.fieldSelector,
+          limit: r.limit,
+          namespaced: r.namespaced,
+          optional: r.optional,
+          partialMetadata: r.partialMetadata,
+        };
+        return acc;
+      },
+      {} as Record<string, WatchK8sResource>,
+    );
   }, [props.obj, props.resources, objResource]);
 
-  const watchedResources = useK8sWatchResources<
-    Record<string, K8sResourceCommon | K8sResourceCommon[]>
-  >(watchResources);
+  const watchedResources =
+    useK8sWatchResources<Record<string, K8sResourceCommon | K8sResourceCommon[]>>(watchResources);
 
   const objData = _.isNil(props.obj) ? watchedResources.obj : props.obj;
 

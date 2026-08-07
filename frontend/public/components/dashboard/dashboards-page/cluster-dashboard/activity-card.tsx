@@ -23,7 +23,7 @@ import { useDashboardResources } from '@console/shared/src/hooks/useDashboardRes
 import { useDynamicK8sWatchResources } from '@console/shared/src/hooks/useDynamicK8sWatchResources';
 import { EventModel } from '../../../../models';
 import type { EventKind, K8sKind, K8sResourceCommon } from '../../../../module/k8s';
-import type { PrometheusResponse } from '../../../graphs';
+import type { PrometheusResponse } from '../../../graphs/types';
 import { useK8sWatchResource } from '../../../utils/k8s-watch-hook';
 import { uniqueResource } from './utils';
 

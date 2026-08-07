@@ -1,8 +1,8 @@
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 import { modal } from '@console/cypress-integration-tests/views/modal';
 import { nav } from '@console/cypress-integration-tests/views/nav';
+import * as yamlView from '@console/cypress-integration-tests/views/yaml-editor';
 import { topologyPO } from '@console/topology/integration-tests/support/page-objects/topology-po';
-import * as yamlView from '../../../../integration-tests/views/yaml-editor';
 import { devNavigationMenu, switchPerspective, pageTitle, adminNavigationBar } from '../constants';
 import { gitPO, yamlPO } from '../pageObjects/add-flow-po';
 import { adminNavigationMenuPO, formPO, devNavigationMenuPO } from '../pageObjects/global-po';

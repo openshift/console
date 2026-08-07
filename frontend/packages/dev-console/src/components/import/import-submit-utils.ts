@@ -1116,14 +1116,14 @@ export const getTelemetryImport = (values: GitImportFormData) => {
     values.application?.selectedKey === values.application?.name
       ? 'default'
       : values.application?.selectedKey === CREATE_APPLICATION_KEY && !!values.application?.name
-      ? 'custom'
-      : 'none';
+        ? 'custom'
+        : 'none';
   const resourceType =
     values.resources === Resources.Kubernetes
       ? 'Deployment'
       : values.resources === Resources.OpenShift
-      ? 'DeploymentConfig'
-      : values.resources === Resources.KnativeService && 'Knative Service';
+        ? 'DeploymentConfig'
+        : values.resources === Resources.KnativeService && 'Knative Service';
   const selStrategy = values.import?.selectedStrategy?.name;
   const telemetryImportData = {
     useRecommended: values.image?.recommended === values.image?.selected,

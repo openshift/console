@@ -11,11 +11,8 @@ export const useEditorType = (
   defaultValue: EditorType,
   checkEditorTypeEnabled?: (type: EditorType) => boolean,
 ): [EditorType, (type: EditorType) => void, boolean] => {
-  const [
-    lastViewedEditorType,
-    setLastViewedEditorType,
-    lastViewedEditorTypeLoaded,
-  ] = useUserPreference<EditorType>(lastViewUserPreferenceKey);
+  const [lastViewedEditorType, setLastViewedEditorType, lastViewedEditorTypeLoaded] =
+    useUserPreference<EditorType>(lastViewUserPreferenceKey);
   const [preferredEditorType, preferredEditorTypeLoaded] = usePreferredCreateEditMethod();
   const isEditorTypeEnabled = (type: EditorType): boolean =>
     checkEditorTypeEnabled ? checkEditorTypeEnabled(type) : true;

@@ -168,6 +168,4 @@ export const useAccessReview = (
 export const useAccessReviewAllowed = (
   resourceAttributes: AccessReviewResourceAttributes,
   impersonate?: ImpersonateKind,
-): boolean => {
-  return useAccessReview(resourceAttributes, impersonate)[0];
-};
+): boolean => useAccessReview(resourceAttributes, impersonate)[0];

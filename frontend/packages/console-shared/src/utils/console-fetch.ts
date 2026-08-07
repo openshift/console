@@ -11,8 +11,8 @@ import {
   applyConsoleHeaders,
   getConsoleRequestHeaders,
   normalizeConsoleHeaders,
-  validateStatus,
 } from './console-fetch-utils';
+import { validateStatus } from './validate-status';
 
 const defaultRequestOptions: RequestInit = {
   headers: {},
@@ -103,23 +103,27 @@ const coFetchCommon = async (
   return dataPromise;
 };
 
-export const coFetchJSON: ConsoleFetchJSON = (url, method = 'GET', options = {}, timeout) => {
+export const coFetchJSON: ConsoleFetchJSON = (
+  url,
+  method = 'GET',
+  options = {},
+  timeout = undefined,
+) => {
   const allOptions = _.defaultsDeep({}, options, {
     headers: { Accept: 'application/json' },
   });
   return coFetchCommon(url, method, allOptions, timeout);
 };
 
-export const coFetchText: ConsoleFetchText = (url, options = {}, timeout) => {
-  return coFetchCommon(url, 'GET', options, timeout);
-};
+export const coFetchText: ConsoleFetchText = (url, options = {}, timeout = undefined) =>
+  coFetchCommon(url, 'GET', options, timeout);
 
 const coFetchSendJSON = (
   url: string,
   method: string,
   json = null,
   options: RequestInit = {},
-  timeout: number,
+  timeout: number = undefined,
 ) => {
   const allOptions: Record<string, any> = {
     headers: {
@@ -136,17 +140,16 @@ const coFetchSendJSON = (
   return coFetchJSON(url, method, _.defaultsDeep(allOptions, options), timeout);
 };
 
-coFetchJSON.delete = (url, json = null, options = {}, timeout) => {
-  return json
+coFetchJSON.delete = (url, json = null, options = {}, timeout = undefined) =>
+  json
     ? coFetchSendJSON(url, 'DELETE', json, options, timeout)
     : coFetchJSON(url, 'DELETE', options, timeout);
-};
 
-coFetchJSON.post = (url: string, json, options = {}, timeout) =>
+coFetchJSON.post = (url: string, json, options = {}, timeout = undefined) =>
   coFetchSendJSON(url, 'POST', json, options, timeout);
 
-coFetchJSON.put = (url: string, json, options = {}, timeout) =>
+coFetchJSON.put = (url: string, json, options = {}, timeout = undefined) =>
   coFetchSendJSON(url, 'PUT', json, options, timeout);
 
-coFetchJSON.patch = (url: string, json, options = {}, timeout) =>
+coFetchJSON.patch = (url: string, json, options = {}, timeout = undefined) =>
   coFetchSendJSON(url, 'PATCH', json, options, timeout);

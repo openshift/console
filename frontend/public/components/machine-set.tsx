@@ -282,8 +282,8 @@ const useMachineSetColumns = (): {
   const context = useContext(CapacityResolverContext);
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(MachineSetModel);
 
-  const columns: TableColumn<MachineSetKind>[] = useMemo(() => {
-    return [
+  const columns: TableColumn<MachineSetKind>[] = useMemo(
+    () => [
       {
         title: t('Name'),
         id: tableColumnInfo[0].id,
@@ -355,17 +355,15 @@ const useMachineSetColumns = (): {
           ...actionsCellProps,
         },
       },
-    ];
-  }, [t, context, getResizableProps]);
+    ],
+    [t, context, getResizableProps],
+  );
 
   return { columns, resetAllColumnWidths };
 };
 
-const getDataViewRows = (
-  data: { obj: MachineSetKind }[],
-  columns: TableColumn<MachineSetKind>[],
-) => {
-  return data.map(({ obj }: { obj: MachineSetKind }) => {
+const getDataViewRows = (data: { obj: MachineSetKind }[], columns: TableColumn<MachineSetKind>[]) =>
+  data.map(({ obj }: { obj: MachineSetKind }) => {
     const { name, namespace } = obj.metadata;
     const readyReplicas = getReadyReplicas(obj);
     const desiredReplicas = getDesiredReplicas(obj);
@@ -412,7 +410,6 @@ const getDataViewRows = (
       };
     });
   });
-};
 
 const MachineSetListContent: FC<MachineSetListProps> = ({ data, loaded, loadError, ...props }) => {
   const { columns, resetAllColumnWidths } = useMachineSetColumns();
@@ -441,9 +438,9 @@ const MachineSetList: FC<MachineSetListProps> = ({ data, loaded, loadError, ...p
 
   const capacityResolver = useCallback(
     (obj: MachineSetKind) => {
-      const machine = (machines ?? [])?.find((m) => {
-        return new LabelSelector(obj.spec.selector).matches(m);
-      });
+      const machine = (machines ?? [])?.find((m) =>
+        new LabelSelector(obj.spec.selector).matches(m),
+      );
       const node = (nodes ?? []).find(
         (n) => machine && machine.status?.nodeRef?.uid === n.metadata.uid,
       );

@@ -103,7 +103,7 @@ jest.mock('@patternfly/react-core', () => ({
   DescriptionList: jest.fn(({ children }) => children),
 }));
 
-const mockDetailsPage = (DetailsPage as unknown) as jest.Mock;
+const mockDetailsPage = DetailsPage as unknown as jest.Mock;
 const mockUseK8sWatchResource = useK8sWatchResource as jest.Mock;
 const mockUseK8sWatchResources = useK8sWatchResources as jest.Mock;
 

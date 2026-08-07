@@ -10,7 +10,7 @@ Given('user has installed Web Terminal Operator', () => {
 Given('user has applied {string}', (yamlFileName: string) => {
   cy.exec(`oc apply -f testData/quick-start/${yamlFileName} -n ${Cypress.expose('NAMESPACE')} `, {
     failOnNonZeroExit: false,
-  }).then(function (result) {
+  }).then((result) => {
     cy.log(result.stdout);
   });
 });

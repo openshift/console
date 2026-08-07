@@ -48,8 +48,7 @@ describe('normalizeConsoleSamples', () => {
       },
       cta: {
         label: 'Create',
-        href:
-          '/import/ns/my-namespace?formType=sample&sample=nodeinfo-git-sample&git.repository=https%3A%2F%2Fgithub.com%2Fopenshift-dev-console%2Fnodejs-sample',
+        href: '/import/ns/my-namespace?formType=sample&sample=nodeinfo-git-sample&git.repository=https%3A%2F%2Fgithub.com%2Fopenshift-dev-console%2Fnodejs-sample',
       },
       data: gitImportSample,
     };
@@ -72,8 +71,7 @@ describe('normalizeConsoleSamples', () => {
       },
       cta: {
         label: 'Create',
-        href:
-          '/deploy-image/ns/my-namespace?sample=nodeinfo-container-sample&image=registry.access.redhat.com%2Fubi8%2Fubi-minimal%3A8.8-860',
+        href: '/deploy-image/ns/my-namespace?sample=nodeinfo-container-sample&image=registry.access.redhat.com%2Fubi8%2Fubi-minimal%3A8.8-860',
       },
       data: containerImportSample,
     };

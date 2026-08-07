@@ -39,8 +39,8 @@ const tableColumnInfo = [
   { id: 'actions' },
 ];
 
-const getDataViewRows: GetDataViewRows<ConfigMapKind> = (data, columns) => {
-  return data.map(({ obj: configMap }) => {
+const getDataViewRows: GetDataViewRows<ConfigMapKind> = (data, columns) =>
+  data.map(({ obj: configMap }) => {
     const { name, namespace } = configMap.metadata;
 
     const rowCells = {
@@ -78,7 +78,6 @@ const getDataViewRows: GetDataViewRows<ConfigMapKind> = (data, columns) => {
       };
     });
   });
-};
 
 const useConfigMapsColumns = (): {
   columns: TableColumn<ConfigMapKind>[];
@@ -178,28 +177,26 @@ export const ConfigMapsPage: FC<ConfigMapsPageProps> = (props) => {
 
 export const ConfigMapsDetailsPage: FC = (props) => {
   const { t } = useTranslation('public');
-  const ConfigMapDetails = ({ obj: configMap }: { obj: ConfigMapKind }) => {
-    return (
-      <>
-        <PaneBody>
-          <SectionHeading text={t('ConfigMap details')} />
-          <Grid hasGutter>
-            <GridItem md={6}>
-              <ResourceSummary resource={configMap} />
-            </GridItem>
-          </Grid>
-        </PaneBody>
-        <PaneBody>
-          <SectionHeading text={t('Data')} />
-          <ConfigMapData data={configMap.data} label={t('Data')} />
-        </PaneBody>
-        <PaneBody>
-          <SectionHeading text={t('Binary data')} />
-          <ConfigMapBinaryData data={configMap.binaryData} />
-        </PaneBody>
-      </>
-    );
-  };
+  const ConfigMapDetails = ({ obj: configMap }: { obj: ConfigMapKind }) => (
+    <>
+      <PaneBody>
+        <SectionHeading text={t('ConfigMap details')} />
+        <Grid hasGutter>
+          <GridItem md={6}>
+            <ResourceSummary resource={configMap} />
+          </GridItem>
+        </Grid>
+      </PaneBody>
+      <PaneBody>
+        <SectionHeading text={t('Data')} />
+        <ConfigMapData data={configMap.data} label={t('Data')} />
+      </PaneBody>
+      <PaneBody>
+        <SectionHeading text={t('Binary data')} />
+        <ConfigMapBinaryData data={configMap.binaryData} />
+      </PaneBody>
+    </>
+  );
 
   return (
     <DetailsPage

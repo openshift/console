@@ -88,8 +88,8 @@ const streamStatusMessages = {
   [STREAM_ACTIVE]: 'Log streaming...',
 };
 
-const replaceVariables = (template: string, values: any): string => {
-  return _.reduce(
+const replaceVariables = (template: string, values: any): string =>
+  _.reduce(
     values,
     (result, value, name) => {
       // Replace all occurrences of template expressions like "${name}" with the URL-encoded value.
@@ -99,7 +99,6 @@ const replaceVariables = (template: string, values: any): string => {
     },
     template,
   );
-};
 
 // Build a log API url for a given resource
 const getResourceLogURL = (

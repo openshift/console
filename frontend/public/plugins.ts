@@ -21,9 +21,8 @@ const CURRENT_OPENSHIFT_VERSION = semver(window.SERVER_FLAGS.releaseVersion) ?? 
 const localPluginNames = localPlugins.map((p) => p.name);
 
 /** Checks if a plugin name is allowed to be loaded in Console. */
-const isAllowedPluginName = (name: string) => {
-  return localPluginNames.includes(name) || dynamicPluginNames.includes(name);
-};
+const isAllowedPluginName = (name: string) =>
+  localPluginNames.includes(name) || dynamicPluginNames.includes(name);
 
 if (process.env.NODE_ENV !== 'test') {
   /* eslint-disable no-console */

@@ -18,7 +18,7 @@ export const coreReducer = (
     userResource: null,
     admissionWebhookWarnings: ImmutableMap<string, AdmissionWebhookWarning>(),
   },
-  action: CoreAction,
+  action: CoreAction = undefined,
 ): CoreState => {
   switch (action.type) {
     case ActionType.BeginImpersonate:

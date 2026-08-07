@@ -11,8 +11,8 @@ import {
   ResourceLog,
 } from './utils/resource-log';
 
-const containersToStatuses = ({ status }, containers) => {
-  return _.reduce(
+const containersToStatuses = ({ status }, containers) =>
+  _.reduce(
     containers,
     (accumulator, { name }, order) => {
       const containerStatus =
@@ -28,7 +28,6 @@ const containersToStatuses = ({ status }, containers) => {
     },
     {},
   );
-};
 
 const containerToLogSourceStatus = (container) => {
   if (!container) {

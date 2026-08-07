@@ -36,17 +36,17 @@ export type KnativeItem = {
   associatedDeployment?: K8sResourceKind;
 };
 
-const isKnativeDeployment = (dc: K8sResourceKind) => {
-  return !!_.get(dc.metadata, `labels["${KNATIVE_SERVING_LABEL}"]`);
-};
+const isKnativeDeployment = (dc: K8sResourceKind) =>
+  !!_.get(dc.metadata, `labels["${KNATIVE_SERVING_LABEL}"]`);
 
 const getKsResource = (dc: K8sResourceKind, { data }: K8sResourceKind): K8sResourceKind[] => {
   let ksResource = [];
   if (isKnativeDeployment(dc)) {
     const name = dc.metadata.labels?.[KNATIVE_SERVING_LABEL];
-    ksResource = _.filter(data, (config: K8sResourceKind) => {
-      return name === _.get(config, 'metadata.name');
-    });
+    ksResource = _.filter(
+      data,
+      (config: K8sResourceKind) => name === _.get(config, 'metadata.name'),
+    );
   }
   return ksResource;
 };
@@ -55,9 +55,10 @@ const getRevisions = (dc: K8sResourceKind, { data }): K8sResourceKind[] => {
   let revisionResource = [];
   if (isKnativeDeployment(dc)) {
     const ownerUid = dc.metadata.ownerReferences?.[0]?.uid;
-    revisionResource = _.filter(data, (revision: K8sResourceKind) => {
-      return ownerUid && ownerUid === revision.metadata.uid;
-    });
+    revisionResource = _.filter(
+      data,
+      (revision: K8sResourceKind) => ownerUid && ownerUid === revision.metadata.uid,
+    );
   }
   return revisionResource;
 };
@@ -70,13 +71,12 @@ export const getDomainMapping = (res: K8sResourceKind, { data }): K8sResourceKin
     kind === ServiceModel.kind &&
     apiVersion === `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`
   ) {
-    domainMappingResource = data.filter((domainMapping) => {
-      return (
+    domainMappingResource = data.filter(
+      (domainMapping) =>
         domainMapping.spec.ref.apiVersion === apiVersion &&
         domainMapping.spec.ref.kind === kind &&
-        domainMapping.spec.ref.name === metadata.name
-      );
-    });
+        domainMapping.spec.ref.name === metadata.name,
+    );
   }
   return domainMappingResource;
 };
@@ -196,44 +196,40 @@ const knativeKafkaSinks = (namespace: string, limit?: number): WatchK8sResourceW
   return knativeResource;
 };
 
-export const kafkaBootStrapServerResourcesWatcher = (namespace: string): WatchK8sResources<any> => {
-  return {
-    [KafkaModel.plural]: {
-      isList: true,
-      kind: referenceForModel(KafkaModel),
-      optional: true,
-    },
-    [KafkaConnectionModel.plural]: {
-      isList: true,
-      kind: referenceForModel(KafkaConnectionModel),
-      namespace,
-      optional: true,
-    },
-  };
-};
+export const kafkaBootStrapServerResourcesWatcher = (
+  namespace: string,
+): WatchK8sResources<any> => ({
+  [KafkaModel.plural]: {
+    isList: true,
+    kind: referenceForModel(KafkaModel),
+    optional: true,
+  },
+  [KafkaConnectionModel.plural]: {
+    isList: true,
+    kind: referenceForModel(KafkaConnectionModel),
+    namespace,
+    optional: true,
+  },
+});
 
-export const kafkaTopicsResourcesWatcher = (): WatchK8sResources<any> => {
-  return {
-    [KafkaTopicModel.plural]: {
-      isList: true,
-      kind: referenceForModel(KafkaTopicModel),
-      optional: true,
-    },
-  };
-};
+export const kafkaTopicsResourcesWatcher = (): WatchK8sResources<any> => ({
+  [KafkaTopicModel.plural]: {
+    isList: true,
+    kind: referenceForModel(KafkaTopicModel),
+    optional: true,
+  },
+});
 
 export const knativeCamelDomainMappingResourceWatchers = (
   namespace: string,
-): WatchK8sResources<{ [key: string]: K8sResourceKind[] }> => {
-  return {
-    [DomainMappingModel.plural]: {
-      isList: true,
-      kind: referenceForModel(DomainMappingModel),
-      namespace,
-      optional: true,
-    },
-  };
-};
+): WatchK8sResources<{ [key: string]: K8sResourceKind[] }> => ({
+  [DomainMappingModel.plural]: {
+    isList: true,
+    kind: referenceForModel(DomainMappingModel),
+    namespace,
+    optional: true,
+  },
+});
 
 export const getTrafficByRevision = (revName: string, service: K8sResourceKind) => {
   if (!service?.status?.traffic?.length) {
@@ -257,15 +253,14 @@ export const getTrafficByRevision = (revName: string, service: K8sResourceKind) 
   };
 };
 
-export const getSinkableResources = (namespace: string): WatchK8sResourceWithProp[] => {
-  return namespace
+export const getSinkableResources = (namespace: string): WatchK8sResourceWithProp[] =>
+  namespace
     ? [
         ...k8sServices(namespace),
         ...knativeServingResourcesServices(namespace),
         ...knativeKafkaSinks(namespace),
       ]
     : [];
-};
 
 export const getKnativeEventingResources = async (): Promise<WatchK8sResourcesGeneric> => {
   // Fetch dynamic event sources and channels at runtime

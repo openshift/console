@@ -49,26 +49,24 @@ export const breadcrumbsForGlobalConfig = (detailsPageKind: string, detailsPageP
   },
 ];
 
-const ItemRow = ({ item, showAPIGroup }) => {
-  return (
-    <Tr data-test-action={item.label}>
-      <Td width={30}>
-        <Link to={item.path} data-test-id={item.label} data-test={item.label}>
-          {item.label}
-        </Link>
-        {showAPIGroup && (
-          <div className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle">{item.apiGroup}</div>
-        )}
-      </Td>
-      <Td visibility={['hidden', 'visibleOnSm']}>
-        <div className="co-line-clamp">{item.description || '-'}</div>
-      </Td>
-      <Td>
-        <Kebab options={item.menuItems} />
-      </Td>
-    </Tr>
-  );
-};
+const ItemRow = ({ item, showAPIGroup }) => (
+  <Tr data-test-action={item.label}>
+    <Td width={30}>
+      <Link to={item.path} data-test-id={item.label} data-test={item.label}>
+        {item.label}
+      </Link>
+      {showAPIGroup && (
+        <div className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle">{item.apiGroup}</div>
+      )}
+    </Td>
+    <Td visibility={['hidden', 'visibleOnSm']}>
+      <div className="co-line-clamp">{item.description || '-'}</div>
+    </Td>
+    <Td>
+      <Kebab options={item.menuItems} />
+    </Td>
+  </Tr>
+);
 
 const useConfigResources = () => {
   const { clusterOperatorConfigResources, configResources } = useConsoleSelector<{
@@ -113,16 +111,16 @@ export const GlobalConfigPage: FC = () => {
   useEffect(() => {
     let isSubscribed = true;
     Promise.all(
-      [...configResources, ...clusterOperatorConfigResources].map((model: K8sKind) => {
-        return k8sList(model)
+      [...configResources, ...clusterOperatorConfigResources].map((model: K8sKind) =>
+        k8sList(model)
           .catch(({ response: { status }, message = `Could not get resource ${model.kind}` }) => {
             if (status !== 403) {
               setErrors((current) => [...current, message]);
             }
             return [];
           })
-          .then((resources) => resources.map((i: K8sKind) => ({ ...i, model })));
-      }),
+          .then((resources) => resources.map((i: K8sKind) => ({ ...i, model }))),
+      ),
     )
       .then((responses) => {
         const flattenedResponses = _.flatten(responses);
@@ -191,12 +189,11 @@ export const GlobalConfigPage: FC = () => {
     // oauthMenuItems, editYAMLMenuItem, viewAPIExplorerMenuItem would cause infinite renders
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clusterOperatorConfigResources, configResources, globalConfigs, t]);
-  const visibleItems = items.filter(({ label, description = '' }) => {
-    return (
+  const visibleItems = items.filter(
+    ({ label, description = '' }) =>
       fuzzyCaseInsensitive(textFilter, label) ||
-      description.toLowerCase().indexOf(textFilter.toLowerCase()) !== -1
-    );
-  });
+      description.toLowerCase().indexOf(textFilter.toLowerCase()) !== -1,
+  );
   const groupedItems = _.groupBy(visibleItems, _.property('label'));
   const showAPIGroup = (item) => groupedItems?.[item]?.length > 1;
 

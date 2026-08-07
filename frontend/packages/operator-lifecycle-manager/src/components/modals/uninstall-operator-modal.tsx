@@ -274,11 +274,13 @@ export const UninstallOperatorModal: FC<UninstallOperatorModalProps> = ({
       });
       // eslint-disable-next-line promise/catch-or-return
       settleAllPromises(operandDeletionPromises).then(([, , results]) => {
-        const operandErrors: OperandError[] = results.reduce((acc: OperandError[], curr, i) => {
-          return curr.status === 'rejected'
-            ? acc.concat({ operand: operands[i], errorMessage: curr.reason })
-            : acc;
-        }, []);
+        const operandErrors: OperandError[] = results.reduce(
+          (acc: OperandError[], curr, i) =>
+            curr.status === 'rejected'
+              ? acc.concat({ operand: operands[i], errorMessage: curr.reason })
+              : acc,
+          [],
+        );
         if (operandErrors.length) {
           setOperandDeletionErrors(operandErrors);
           setOperandsDeleteInProgress(false);
@@ -659,11 +661,9 @@ const OperandErrorList: FC<OperandErrorListProps> = ({ operandErrors, csvName, c
   );
 };
 
-const UninstallOperatorModalOverlay: OverlayComponent<UninstallOperatorModalProps> = (props) => {
-  return (
-    <UninstallOperatorModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
-  );
-};
+const UninstallOperatorModalOverlay: OverlayComponent<UninstallOperatorModalProps> = (props) => (
+  <UninstallOperatorModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
+);
 
 export const useUninstallOperatorModal = (subscription: K8sResourceKind, csv?: K8sResourceKind) => {
   const launchModal = useOverlay();

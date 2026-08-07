@@ -119,11 +119,10 @@ const idFromPath = (path) => `DEPRECATED_root_${path.split('.').join('_')}`;
  * both prefix and suffix are provided, this will return true only if the field has a capability
  * that matches the concatenation of prefix + suffix.
  */
-const hasDescriptor = (field: OperandField, prefix: string, suffix: string = null): boolean => {
-  return suffix
+const hasDescriptor = (field: OperandField, prefix: string, suffix: string = null): boolean =>
+  suffix
     ? _.includes(field.capabilities, `${prefix}${suffix}`)
     : _.some(field.capabilities, (capability) => capability.startsWith(prefix));
-};
 
 /*
  * Accepts an OperandField and returns a name and group type if that field is either a
@@ -396,8 +395,8 @@ const fieldsForOpenAPI = (
   providedAPI: ProvidedAPI,
   obj: K8sResourceKind,
   depth: number = MAX_DEPTH,
-): OperandField[] => {
-  return _.reduce(
+): OperandField[] =>
+  _.reduce(
     schema?.properties || {},
     (openAPIFieldsAccumulator: OperandField[], property: JSONSchema6, propertyName: string) => {
       if (!property?.type || getPropertyDepth(property) > depth) {
@@ -412,7 +411,6 @@ const fieldsForOpenAPI = (
     },
     [],
   );
-};
 
 /*
  * Convert a CRD specDescriptor to appropriate OperandField type. Expands obj array properties
@@ -455,9 +453,7 @@ const specDescriptorToFields = (
 };
 
 const pathToArray = (path: string): (string | number)[] =>
-  _.map(_.toPath(path), (subPath) => {
-    return /^\d+$/.test(subPath) ? _.parseInt(subPath) : subPath;
-  });
+  _.map(_.toPath(path), (subPath) => (/^\d+$/.test(subPath) ? _.parseInt(subPath) : subPath));
 
 const FieldGroup: FC<FieldGroupProps> = ({ children, isExpanded = false, id, label }) => {
   const [expanded, setExpanded] = useState<boolean>(isExpanded);
@@ -991,14 +987,12 @@ export const DEPRECATED_CreateOperandForm: FC<OperandFormProps> = ({
 
     // Remove arrayFieldGroup from fields and replace subsequent arrayFieldGroup fields with
     // left-shifted ones.
-    setFields((currentFields) => {
-      return [
-        // Filter out all removed fields and fields that need to be left-shifted
-        ..._.filter(currentFields, (field) => !_.includes(fieldPathsToRemove, field.path)),
-        // Add new left-shifted fields
-        ...leftShiftedFields,
-      ];
-    });
+    setFields((currentFields) => [
+      // Filter out all removed fields and fields that need to be left-shifted
+      ..._.filter(currentFields, (field) => !_.includes(fieldPathsToRemove, field.path)),
+      // Add new left-shifted fields
+      ...leftShiftedFields,
+    ]);
     regexMatch && handleFormDataDelete(formDataPathToRemove);
   };
 

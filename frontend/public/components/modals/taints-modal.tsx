@@ -47,7 +47,7 @@ const TaintsModal = (props: TaintsModalProps) => {
 
   const change = (e, i: number, field: string) => {
     // Handle both native events (from input) and values (from ConsoleSelect)
-    const newValue = typeof e === 'string' ? e : e.target?.value ?? e;
+    const newValue = typeof e === 'string' ? e : (e.target?.value ?? e);
     setTaints((prevTaints) => {
       const clonedTaints = _.cloneDeep(prevTaints);
       clonedTaints[i][field] = newValue;
@@ -61,9 +61,7 @@ const TaintsModal = (props: TaintsModalProps) => {
     setTaints(tmpTaints);
   };
 
-  const newTaint = (): Taint => {
-    return { key: '', value: '', effect: 'NoSchedule' };
-  };
+  const newTaint = (): Taint => ({ key: '', value: '', effect: 'NoSchedule' });
 
   const addRow = () => {
     setTaints([...taints, newTaint()]);
@@ -192,17 +190,15 @@ type TaintsModalProps = {
   resource: NodeKind;
 } & ModalComponentProps;
 
-const TaintsModalOverlay: OverlayComponent<TaintsModalProps> = (props) => {
-  return (
-    <Modal
-      isOpen
-      onClose={props.closeOverlay}
-      variant={ModalVariant.small}
-      aria-labelledby="taints-modal-title"
-    >
-      <TaintsModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
-    </Modal>
-  );
-};
+const TaintsModalOverlay: OverlayComponent<TaintsModalProps> = (props) => (
+  <Modal
+    isOpen
+    onClose={props.closeOverlay}
+    variant={ModalVariant.small}
+    aria-labelledby="taints-modal-title"
+  >
+    <TaintsModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
+  </Modal>
+);
 
 export { TaintsModalOverlay };

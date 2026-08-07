@@ -12,13 +12,8 @@ import { VolumeAttributesClassModel } from '../../models';
 import type { VolumeAttributesClassKind } from '../../module/k8s';
 import { LoadingInline, ResourceName, ResourceIcon } from '.';
 
-const getTitle = (vac: VolumeAttributesClassDropdownItem): React.ReactNode => {
-  return vac.kindLabel ? (
-    <ResourceName kind={vac.kindLabel} name={vac.name} />
-  ) : (
-    <span>{vac.name}</span>
-  );
-};
+const getTitle = (vac: VolumeAttributesClassDropdownItem): React.ReactNode =>
+  vac.kindLabel ? <ResourceName kind={vac.kindLabel} name={vac.name} /> : <span>{vac.name}</span>;
 
 const VolumeAttributesClassDropdownEntry: FC<{
   kindLabel: string;

@@ -23,10 +23,7 @@ interface TopologyPageToolbarProps {
   onViewChange: (view: TopologyViewType) => void;
 }
 
-const TopologyPageToolbar: FC<TopologyPageToolbarProps> = observer(function TopologyPageToolbar({
-  viewType,
-  onViewChange,
-}) {
+const TopologyPageToolbar: FC<TopologyPageToolbarProps> = observer(({ viewType, onViewChange }) => {
   const { t } = useTranslation('topology');
   const isMobile = useIsMobile();
   const { extensions } = useContext<FileUploadContextType>(FileUploadContext);

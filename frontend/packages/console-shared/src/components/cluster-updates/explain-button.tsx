@@ -54,14 +54,7 @@ interface UpdateWorkflowOLSButtonProps {
   className?: string;
   onClick?: () => void;
   variant?:
-    | 'primary'
-    | 'secondary'
-    | 'tertiary'
-    | 'danger'
-    | 'warning'
-    | 'link'
-    | 'plain'
-    | 'control';
+    'primary' | 'secondary' | 'tertiary' | 'danger' | 'warning' | 'link' | 'plain' | 'control';
   size?: 'sm' | 'lg';
   'data-test'?: string;
 }

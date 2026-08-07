@@ -146,12 +146,10 @@ export const useOperatorLifecycle = (
 
 export const getLifecycleInfoFromSubscription = (
   subscription: SubscriptionKind | undefined,
-): { catalogName: string | undefined; catalogNamespace: string | undefined } => {
-  return {
-    catalogName: subscription?.spec?.source,
-    catalogNamespace: subscription?.spec?.sourceNamespace ?? DEFAULT_SOURCE_NAMESPACE,
-  };
-};
+): { catalogName: string | undefined; catalogNamespace: string | undefined } => ({
+  catalogName: subscription?.spec?.source,
+  catalogNamespace: subscription?.spec?.sourceNamespace ?? DEFAULT_SOURCE_NAMESPACE,
+});
 
 export const getPackageNameFromCSV = (
   csv: ClusterServiceVersionKind,
@@ -166,6 +164,4 @@ export const getPackageNameFromCSV = (
   return undefined;
 };
 
-export const getClusterVersion = (): string | undefined => {
-  return window.SERVER_FLAGS?.releaseVersion;
-};
+export const getClusterVersion = (): string | undefined => window.SERVER_FLAGS?.releaseVersion;

@@ -108,16 +108,14 @@ const EditDeployment: FC<EditDeploymentProps> = ({ heading, resource, namespace,
       validationSchema={validationSchema()}
       enableReinitialize
     >
-      {(formikProps) => {
-        return (
-          <EditDeploymentForm
-            {...formikProps}
-            heading={heading}
-            resource={resource}
-            handleCancel={handleCancel}
-          />
-        );
-      }}
+      {(formikProps) => (
+        <EditDeploymentForm
+          {...formikProps}
+          heading={heading}
+          resource={resource}
+          handleCancel={handleCancel}
+        />
+      )}
     </Formik>
   );
 };

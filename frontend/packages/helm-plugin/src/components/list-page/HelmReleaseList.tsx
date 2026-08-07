@@ -205,12 +205,14 @@ const HelmReleaseList: FC<{ mock?: boolean }> = ({ mock }) => {
 
   const { columns, resetAllColumnWidths } = useHelmReleasesColumns();
 
-  const helmReleaseStatusFilterOptions = useMemo<DataViewFilterOption[]>(() => {
-    return SelectedReleaseStatuses.map((status) => ({
-      value: status,
-      label: HelmReleaseStatusLabels[status],
-    }));
-  }, []);
+  const helmReleaseStatusFilterOptions = useMemo<DataViewFilterOption[]>(
+    () =>
+      SelectedReleaseStatuses.map((status) => ({
+        value: status,
+        label: HelmReleaseStatusLabels[status],
+      })),
+    [],
+  );
 
   const initialFilters = useMemo(() => ({ ...initialFiltersDefault, status: [] }), []);
 

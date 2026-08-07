@@ -117,6 +117,5 @@ export const hasActiveDescendant = (activeId: string, category: CatalogCategory)
   );
 };
 
-export const isActiveTab = (activeId: string, category: CatalogCategory): boolean => {
-  return _.has(category.subcategories, activeId);
-};
+export const isActiveTab = (activeId: string, category: CatalogCategory): boolean =>
+  _.has(category.subcategories, activeId);

@@ -88,17 +88,15 @@ const LogControls: FC<LogControlsProps> = ({
   showSearch,
 }) => {
   const options = (items) =>
-    items.map((value) => {
-      return (
-        <SelectOption
-          key={value}
-          value={value}
-          className={css({ 'co-node-logs__log-select-option': value.length > 50 })}
-        >
-          {value}
-        </SelectOption>
-      );
-    });
+    items.map((value) => (
+      <SelectOption
+        key={value}
+        value={value}
+        className={css({ 'co-node-logs__log-select-option': value.length > 50 })}
+      >
+        {value}
+      </SelectOption>
+    ));
   const { t } = useTranslation('console-app');
 
   return (

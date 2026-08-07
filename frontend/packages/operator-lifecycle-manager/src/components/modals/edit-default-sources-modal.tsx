@@ -129,18 +129,16 @@ const EditDefaultSourcesModal: FC<EditDefaultSourcesModalProps> = ({
 
 export const EditDefaultSourcesModalOverlay: OverlayComponent<EditDefaultSourcesModalProps> = (
   props,
-) => {
-  return (
-    <Modal
-      variant={ModalVariant.small}
-      isOpen
-      onClose={props.closeOverlay}
-      aria-labelledby="edit-default-sources-modal-title"
-    >
-      <EditDefaultSourcesModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
-    </Modal>
-  );
-};
+) => (
+  <Modal
+    variant={ModalVariant.small}
+    isOpen
+    onClose={props.closeOverlay}
+    aria-labelledby="edit-default-sources-modal-title"
+  >
+    <EditDefaultSourcesModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
+  </Modal>
+);
 
 type EditDefaultSourcesModalProps = {
   operatorHub: OperatorHubKind;

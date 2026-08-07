@@ -30,7 +30,7 @@ import type {
   ConsoleDataViewProps,
 } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
-import { LazyColumnManagementModalOverlay } from '@console/internal/components/modals';
+import { LazyColumnManagementModalOverlay } from '@console/internal/components/modals/lazy-column-management-modal';
 import { EmptyBox } from '@console/shared/src/components/empty-state/EmptyBox';
 import { StatusBox } from '@console/shared/src/components/status/StatusBox';
 import { DataViewLabelFilter } from './DataViewLabelFilter';
@@ -40,9 +40,9 @@ import { useConsoleDataViewFilters } from './useConsoleDataViewFilters';
 
 export const initialFiltersDefault: ResourceFilters = { name: '', label: '' };
 
-const BodyLoading: FC<{ columns: number }> = ({ columns }) => {
-  return <SkeletonTableBody rowsCount={5} columnsCount={columns} />;
-};
+const BodyLoading: FC<{ columns: number }> = ({ columns }) => (
+  <SkeletonTableBody rowsCount={5} columnsCount={columns} />
+);
 
 const BodyEmpty: FC<{ label: string; colSpan: number }> = ({ label, colSpan }) => {
   const { t } = useTranslation('console-app');
@@ -63,7 +63,7 @@ const BodyEmpty: FC<{ label: string; colSpan: number }> = ({ label, colSpan }) =
 export const ConsoleDataView = <
   TData,
   TCustomRowData = any,
-  TFilters extends ResourceFilters = ResourceFilters
+  TFilters extends ResourceFilters = ResourceFilters,
 >({
   label,
   data,
@@ -141,14 +141,15 @@ export const ConsoleDataView = <
     selection,
   });
 
-  const bodyLoading = useMemo(() => <BodyLoading columns={dataViewColumns.length} />, [
-    dataViewColumns.length,
-  ]);
+  const bodyLoading = useMemo(
+    () => <BodyLoading columns={dataViewColumns.length} />,
+    [dataViewColumns.length],
+  );
 
-  const bodyEmpty = useMemo(() => <BodyEmpty label={label} colSpan={dataViewColumns.length} />, [
-    dataViewColumns.length,
-    label,
-  ]);
+  const bodyEmpty = useMemo(
+    () => <BodyEmpty label={label} colSpan={dataViewColumns.length} />,
+    [dataViewColumns.length, label],
+  );
 
   const activeState = useMemo(() => {
     if (!loaded) {

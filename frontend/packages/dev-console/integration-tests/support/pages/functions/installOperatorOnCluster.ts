@@ -1,5 +1,5 @@
+import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 import { modal } from '@console/cypress-integration-tests/views/modal';
-import { detailsPage } from '../../../../../integration-tests/views/details-page';
 import { pageTitle, operators, switchPerspective } from '../../constants';
 import { operatorsPO } from '../../pageObjects';
 import { app, perspective, projectNameSpace, sidePane } from '../app';

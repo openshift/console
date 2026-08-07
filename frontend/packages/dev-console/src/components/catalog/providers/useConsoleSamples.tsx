@@ -34,10 +34,10 @@ export const normalizeConsoleSamples = (activeNamespace: string, t: ConsoleTFunc
             url: sample.spec.icon,
           }
         : sample.spec.icon
-        ? {
-            url: `data:image;base64,${sample.spec.icon}`,
-          }
-        : null,
+          ? {
+              url: `data:image;base64,${sample.spec.icon}`,
+            }
+          : null,
       cta: {
         label: createLabel,
         href,

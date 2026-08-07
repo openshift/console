@@ -42,11 +42,8 @@ const k8sUpdateMock = k8sResourceModule.k8sUpdate as jest.Mock;
 const k8sGetMock = k8sResourceModule.k8sGet as jest.Mock;
 const k8sWaitForUpdateMock = k8sInternalResourceModule.k8sWaitForUpdate as jest.Mock;
 
-const {
-  ensurePortExists,
-  createOrUpdateDeployment,
-  createOrUpdateDeployImageResources,
-} = submitUtils;
+const { ensurePortExists, createOrUpdateDeployment, createOrUpdateDeployImageResources } =
+  submitUtils;
 
 describe('DeployImage Submit Utils', () => {
   describe('Ensure Port Exists', () => {

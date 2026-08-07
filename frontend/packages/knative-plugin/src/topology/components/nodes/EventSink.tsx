@@ -75,9 +75,10 @@ const EventSink: FC<EventSinkProps> = ({
     element.getSourceEdges()?.filter((edge: Edge) => edge.getType() === TYPE_KAFKA_CONNECTION_LINK)
       .length > 0;
   const { revisions, associatedDeployment } = resources;
-  const revisionIds = useMemo(() => revisions?.map((revision) => revision.metadata.uid), [
-    revisions,
-  ]);
+  const revisionIds = useMemo(
+    () => revisions?.map((revision) => revision.metadata.uid),
+    [revisions],
+  );
 
   const { loaded, loadError, pods } = usePodsForRevisions(revisionIds, resource.metadata.namespace);
   const controller = useVisualizationController();
@@ -128,7 +129,7 @@ const EventSink: FC<EventSinkProps> = ({
       content={
         edgeOperation === MOVE_EV_SRC_CONNECTOR_OPERATION
           ? t('Move sink to KafkaSink')
-          : tooltipLabel ?? ''
+          : (tooltipLabel ?? '')
       }
       trigger="manual"
       isVisible={dropTarget && canDrop}

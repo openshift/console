@@ -22,10 +22,13 @@ const orderCatalogItems = (allCatalogItems: CatalogItem[], featured: string[]): 
 
   // Prioritze featured catalog items
   if (featured) {
-    const featuredQuickStartsByName = allCatalogItems.reduce((acc, ci) => {
-      acc[ci.uid] = ci;
-      return acc;
-    }, {} as Record<string, CatalogItem>);
+    const featuredQuickStartsByName = allCatalogItems.reduce(
+      (acc, ci) => {
+        acc[ci.uid] = ci;
+        return acc;
+      },
+      {} as Record<string, CatalogItem>,
+    );
     featured.forEach((uid) => {
       if (featuredQuickStartsByName[uid]) {
         orderedCatalogItems.push(featuredQuickStartsByName[uid]);
@@ -69,20 +72,16 @@ export const SampleGettingStartedCard: FC<SampleGettingStartedCardProps> = ({ fe
         }
 
         const links: GettingStartedLink[] = service.loaded
-          ? slicedCatalogItems.map((item) => {
-              return {
-                id: item.uid,
-                title: item.name,
-                href: item.cta?.href,
-                onClick: item.cta?.callback,
-              };
-            })
-          : featured.map((uid) => {
-              return {
-                id: uid,
-                loading: true,
-              };
-            });
+          ? slicedCatalogItems.map((item) => ({
+              id: item.uid,
+              title: item.name,
+              href: item.cta?.href,
+              onClick: item.cta?.callback,
+            }))
+          : featured.map((uid) => ({
+              id: uid,
+              loading: true,
+            }));
 
         return (
           <GettingStartedCard
@@ -91,7 +90,7 @@ export const SampleGettingStartedCard: FC<SampleGettingStartedCardProps> = ({ fe
               <RhUiCatalogAltIcon color="var(--co-global--palette--blue-400)" aria-hidden="true" />
             }
             title={t('Create applications using samples')}
-            titleColor={'var(--co-global--palette--blue-400)'}
+            titleColor="var(--co-global--palette--blue-400)"
             description={t('Choose a code sample to get started creating an application with.')}
             links={links}
             moreLink={moreLink}

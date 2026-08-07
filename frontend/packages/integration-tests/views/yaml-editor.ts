@@ -1,24 +1,18 @@
 import type { editor } from 'monaco-editor/esm/vs/editor/editor.api';
 
-export const getEditorContent = () => {
-  return cy
+export const getEditorContent = () =>
+  cy
     .window()
     .its('monaco.editor.getModels')
     .should('be.a', 'function')
-    .then((getModels: typeof editor.getModels) => {
-      return getModels()[0].getValue();
-    });
-};
+    .then((getModels: typeof editor.getModels) => getModels()[0].getValue());
 
-export const setEditorContent = (text: string) => {
-  return cy
+export const setEditorContent = (text: string) =>
+  cy
     .window()
     .its('monaco.editor.getModels')
     .should('be.a', 'function')
-    .then((getModels: typeof editor.getModels) => {
-      return getModels()[0].setValue(text);
-    });
-};
+    .then((getModels: typeof editor.getModels) => getModels()[0].setValue(text));
 
 // CodeEditor sets data-test="code-editor" once the Monaco editor has mounted.
 // Before that it is "code-editor-mounting", so this check waits for the editor to be ready.
@@ -75,17 +69,14 @@ export const verifyEditorTheme = (themeClass: 'vs-dark' | 'vs' | null) => {
 };
 
 // Font size setting helpers
-export const getFontSizeInput = () => {
-  return cy.get('#ConfigModalItem-font-size').find('input[aria-label="Enter a font size"]');
-};
+export const getFontSizeInput = () =>
+  cy.get('#ConfigModalItem-font-size').find('input[aria-label="Enter a font size"]');
 
-export const getFontSizeIncreaseButton = () => {
-  return cy.get('#ConfigModalItem-font-size').find('button[aria-label="Increase font size"]');
-};
+export const getFontSizeIncreaseButton = () =>
+  cy.get('#ConfigModalItem-font-size').find('button[aria-label="Increase font size"]');
 
-export const getFontSizeDecreaseButton = () => {
-  return cy.get('#ConfigModalItem-font-size').find('button[aria-label="Decrease font size"]');
-};
+export const getFontSizeDecreaseButton = () =>
+  cy.get('#ConfigModalItem-font-size').find('button[aria-label="Decrease font size"]');
 
 export const setFontSize = (size: number) => {
   getFontSizeInput().type(`{selectall}${size}`);

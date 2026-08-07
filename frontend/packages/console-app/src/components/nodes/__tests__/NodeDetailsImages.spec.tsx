@@ -22,7 +22,7 @@ describe('NodeDetailsImages', () => {
       status: {
         images,
       },
-    } as NodeKind);
+    }) as NodeKind;
 
   it('should render section heading', () => {
     const node = createMockNode([]);

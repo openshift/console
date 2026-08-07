@@ -70,32 +70,28 @@ export const NumberWidget: FC<WidgetProps> = ({ value, id, onChange }) => {
   );
 };
 
-export const PasswordWidget: FC<WidgetProps> = ({ value = '', id, onChange }) => {
-  return (
-    <span className="pf-v6-c-form-control">
-      <input
-        key={id}
-        id={id}
-        type="password"
-        onChange={({ currentTarget }) => onChange(currentTarget.value)}
-        value={value}
-      />
-    </span>
-  );
-};
-
-export const CheckboxWidget: FC<WidgetProps> = ({ value = false, id, label, onChange }) => {
-  return (
-    <Checkbox
-      id={id}
+export const PasswordWidget: FC<WidgetProps> = ({ value = '', id, onChange }) => (
+  <span className="pf-v6-c-form-control">
+    <input
       key={id}
-      isChecked={value}
-      data-checked-state={value}
-      label={label}
-      onChange={(_event, checked) => onChange(checked)}
+      id={id}
+      type="password"
+      onChange={({ currentTarget }) => onChange(currentTarget.value)}
+      value={value}
     />
-  );
-};
+  </span>
+);
+
+export const CheckboxWidget: FC<WidgetProps> = ({ value = false, id, label, onChange }) => (
+  <Checkbox
+    id={id}
+    key={id}
+    isChecked={value}
+    data-checked-state={value}
+    label={label}
+    onChange={(_event, checked) => onChange(checked)}
+  />
+);
 
 export const SwitchWidget: FC<WidgetProps> = ({ value, id, label, onChange, options }) => {
   const { t } = useTranslation('console-shared');
@@ -111,18 +107,16 @@ export const SwitchWidget: FC<WidgetProps> = ({ value, id, label, onChange, opti
   );
 };
 
-export const PodCountWidget: FC<WidgetProps> = ({ value, id, onChange }) => {
-  return (
-    <NumberSpinner
-      id={id}
-      value={value}
-      onChange={({ currentTarget }) => onChange(_.toInteger(currentTarget.value))}
-      changeValueBy={(operation) => onChange(_.toInteger(value) + operation)}
-      autoFocus
-      required
-    />
-  );
-};
+export const PodCountWidget: FC<WidgetProps> = ({ value, id, onChange }) => (
+  <NumberSpinner
+    id={id}
+    value={value}
+    onChange={({ currentTarget }) => onChange(_.toInteger(currentTarget.value))}
+    changeValueBy={(operation) => onChange(_.toInteger(value) + operation)}
+    autoFocus
+    required
+  />
+);
 
 const K8sResourceWidget: FC<K8sResourceWidgetProps> = ({
   value,
@@ -176,32 +170,28 @@ const K8sResourceWidget: FC<K8sResourceWidgetProps> = ({
   );
 };
 
-export const ImagePullPolicyWidget: FC<WidgetProps> = ({ id, value, onChange }) => {
-  return (
-    <RadioGroup
-      id={id}
-      currentValue={value}
-      items={_.values(ImagePullPolicy).map((policy) => ({
-        name: id,
-        value: policy,
-        label: policy,
-      }))}
-      onChange={({ currentTarget }) => onChange(currentTarget.value)}
-    />
-  );
-};
+export const ImagePullPolicyWidget: FC<WidgetProps> = ({ id, value, onChange }) => (
+  <RadioGroup
+    id={id}
+    currentValue={value}
+    items={_.values(ImagePullPolicy).map((policy) => ({
+      name: id,
+      value: policy,
+      label: policy,
+    }))}
+    onChange={({ currentTarget }) => onChange(currentTarget.value)}
+  />
+);
 
 export const SelectWidget: FC<WidgetProps> = ({ id, label, onChange, options, schema, value }) => {
   const { t } = useTranslation('console-shared');
   const { enumOptions = [], title } = options;
   const items = _.reduce(
     enumOptions as DynamicFormFieldOptionsList,
-    (itemAccumulator, option) => {
-      return {
-        ...itemAccumulator,
-        [option.label]: option.value,
-      };
-    },
+    (itemAccumulator, option) => ({
+      ...itemAccumulator,
+      [option.label]: option.value,
+    }),
     {},
   );
   return (

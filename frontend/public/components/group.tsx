@@ -35,8 +35,8 @@ import { EmptyBox, LoadingBox } from './utils/status-box';
 
 const tableColumnInfo = [{ id: 'name' }, { id: 'users' }, { id: 'created' }, { id: 'actions' }];
 
-const getDataViewRows: GetDataViewRows<GroupKind> = (data, columns) => {
-  return data.map(({ obj }) => {
+const getDataViewRows: GetDataViewRows<GroupKind> = (data, columns) =>
+  data.map(({ obj }) => {
     const { metadata } = obj;
     const resourceKind = referenceForModel(GroupModel);
     const context = { [resourceKind]: obj };
@@ -74,7 +74,6 @@ const getDataViewRows: GetDataViewRows<GroupKind> = (data, columns) => {
       };
     });
   });
-};
 
 const useGroupColumns = (): {
   columns: TableColumn<GroupKind>[];
@@ -251,22 +250,20 @@ const RoleBindingsTab: FC<RoleBindingsTabProps> = ({ obj }) => (
   />
 );
 
-export const GroupDetailsPage: FC = (props) => {
-  return (
-    <DetailsPage
-      {...props}
-      kind={referenceForModel(GroupModel)}
-      customActionMenu={(_kindObj, data: K8sResourceKind) => (
-        <LazyActionMenu context={{ [referenceForModel(GroupModel)]: data }} />
-      )}
-      pages={[
-        navFactory.details(GroupDetails),
-        navFactory.editYaml(),
-        navFactory.roles(RoleBindingsTab),
-      ]}
-    />
-  );
-};
+export const GroupDetailsPage: FC = (props) => (
+  <DetailsPage
+    {...props}
+    kind={referenceForModel(GroupModel)}
+    customActionMenu={(_kindObj, data: K8sResourceKind) => (
+      <LazyActionMenu context={{ [referenceForModel(GroupModel)]: data }} />
+    )}
+    pages={[
+      navFactory.details(GroupDetails),
+      navFactory.editYaml(),
+      navFactory.roles(RoleBindingsTab),
+    ]}
+  />
+);
 
 type UserKebabProps = {
   group: GroupKind;

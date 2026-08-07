@@ -4,17 +4,16 @@ import { referenceForModel } from '@console/internal/module/k8s/k8s';
 import { coFetch } from '@console/shared/src/utils/console-fetch';
 
 export const getDefinitionKey = _.memoize(
-  (model: K8sKind, definitions: SwaggerDefinitions): string => {
-    return _.findKey(definitions, (def: SwaggerDefinition) => {
-      return _.some(def['x-kubernetes-group-version-kind'], ({ group, version, kind }) => {
-        return (
+  (model: K8sKind, definitions: SwaggerDefinitions): string =>
+    _.findKey(definitions, (def: SwaggerDefinition) =>
+      _.some(
+        def['x-kubernetes-group-version-kind'],
+        ({ group, version, kind }) =>
           (model?.apiGroup ?? '') === (group || '') &&
           model?.apiVersion === version &&
-          model?.kind === kind
-        );
-      });
-    });
-  },
+          model?.kind === kind,
+      ),
+    ),
   referenceForModel,
 );
 

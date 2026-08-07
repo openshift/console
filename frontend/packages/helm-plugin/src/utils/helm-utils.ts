@@ -56,17 +56,15 @@ export const releaseStatusReducer = (release: HelmRelease) => {
   return release.info.status;
 };
 
-export const filterHelmReleasesByStatus = (releases: HelmRelease[], filter: string | string[]) => {
-  return releases.filter((release: HelmRelease) => {
-    return OtherReleaseStatuses.includes(release.info.status)
+export const filterHelmReleasesByStatus = (releases: HelmRelease[], filter: string | string[]) =>
+  releases.filter((release: HelmRelease) =>
+    OtherReleaseStatuses.includes(release.info.status)
       ? filter.includes(HelmReleaseStatus.Other)
-      : filter.includes(release.info.status);
-  });
-};
+      : filter.includes(release.info.status),
+  );
 
-export const filterHelmReleasesByName = (releases: HelmRelease[], filter: string) => {
-  return releases.filter((release: HelmRelease) => fuzzy(filter, release.name));
-};
+export const filterHelmReleasesByName = (releases: HelmRelease[], filter: string) =>
+  releases.filter((release: HelmRelease) => fuzzy(filter, release.name));
 
 export const fetchHelmReleases = (
   namespace: string,

@@ -54,27 +54,21 @@ const TrafficSplittingController: FC<TrafficSplittingControllerProps> = (props) 
 
 type Props = TrafficSplittingControllerProps & ModalComponentProps;
 
-const TrafficSplittingModalProvider: OverlayComponent<Props> = (props) => {
-  return (
-    <Modal
-      isOpen
-      onClose={props.closeOverlay}
-      variant="small"
-      aria-labelledby="traffic-splitting-modal-title"
-    >
-      <TrafficSplittingController
-        cancel={props.closeOverlay}
-        close={props.closeOverlay}
-        {...props}
-      />
-    </Modal>
-  );
-};
+const TrafficSplittingModalProvider: OverlayComponent<Props> = (props) => (
+  <Modal
+    isOpen
+    onClose={props.closeOverlay}
+    variant="small"
+    aria-labelledby="traffic-splitting-modal-title"
+  >
+    <TrafficSplittingController cancel={props.closeOverlay} close={props.closeOverlay} {...props} />
+  </Modal>
+);
 
 export const useTrafficSplittingModalLauncher = (props: Props) => {
   const launcher = useOverlay();
-  return useCallback(() => launcher<Props>(TrafficSplittingModalProvider, props), [
-    launcher,
-    props,
-  ]);
+  return useCallback(
+    () => launcher<Props>(TrafficSplittingModalProvider, props),
+    [launcher, props],
+  );
 };

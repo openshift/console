@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import type { Action } from '@console/dynamic-plugin-sdk';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
-import { LazyRestorePVCModalOverlay } from '@console/internal/components/modals';
+import { LazyRestorePVCModalOverlay } from '@console/internal/components/modals/lazy-restore-pvc-modal';
 import { asAccessReview } from '@console/internal/components/utils/rbac';
 import { VolumeSnapshotModel } from '@console/internal/models';
 import type { VolumeSnapshotKind } from '@console/internal/module/k8s';

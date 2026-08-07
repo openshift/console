@@ -17,7 +17,7 @@ const initialState: State = {
   detachedSessions: [],
 };
 
-export default (state = initialState, action: CloudShellActions): State => {
+export default (state = initialState, action: CloudShellActions = undefined): State => {
   switch (action.type) {
     case Actions.SetCloudShellExpanded:
       return {

@@ -79,10 +79,10 @@ const NodeGroupsEditorModal: OverlayComponent<NodeGroupsEditorModalProps> = ({
     isList: true,
   });
 
-  const nodes = useMemo(() => (retrievedNodes?.length ? retrievedNodes : [node]), [
-    retrievedNodes,
-    node,
-  ]);
+  const nodes = useMemo(
+    () => (retrievedNodes?.length ? retrievedNodes : [node]),
+    [retrievedNodes, node],
+  );
 
   useEffect(() => {
     if (!nodesLoaded || nodesLoadError) {

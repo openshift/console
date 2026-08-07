@@ -52,9 +52,7 @@ export const AddRequestHeaderPage = () => {
     );
   };
 
-  const getOAuthResource = () => {
-    return handlePromise(getOAuth());
-  };
+  const getOAuthResource = () => handlePromise(getOAuth());
 
   const createCAConfigMap = () => {
     if (!caFileContent) {

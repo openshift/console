@@ -132,10 +132,10 @@ const DeleteNamespaceModal: OverlayComponent<DeleteNamespaceModalProps> = ({
 
 export const useDeleteNamespaceModalLauncher = (props: DeleteNamespaceModalProps) => {
   const launcher = useOverlay();
-  return useCallback(() => launcher<DeleteNamespaceModalProps>(DeleteNamespaceModal, props), [
-    launcher,
-    props,
-  ]);
+  return useCallback(
+    () => launcher<DeleteNamespaceModalProps>(DeleteNamespaceModal, props),
+    [launcher, props],
+  );
 };
 
 type DeleteNamespaceModalProps = {

@@ -236,7 +236,7 @@ const IFrameMarkdownView: FC<InnerSyncMarkdownProps> = ({
       {loaded && (
         <RenderExtension
           markup={markup}
-          selector={''}
+          selector=""
           renderExtension={renderExtension}
           docContext={frameRef.current?.contentDocument}
         />

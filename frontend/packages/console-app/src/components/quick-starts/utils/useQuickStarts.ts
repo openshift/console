@@ -16,14 +16,13 @@ export const getQuickStartNameRef = (quickStart: QuickStart) =>
   quickStart.metadata.annotations?.[LOCALIZATION_NAME_LABEL] ||
   quickStart.metadata.name;
 
-export const groupQuickStartsByName = (quickStarts: QuickStart[]) => {
-  return quickStarts.reduce<Record<string, QuickStart[]>>((grouped, quickStart) => {
+export const groupQuickStartsByName = (quickStarts: QuickStart[]) =>
+  quickStarts.reduce<Record<string, QuickStart[]>>((grouped, quickStart) => {
     const name = getQuickStartNameRef(quickStart);
     if (!grouped[name]) grouped[name] = [];
     grouped[name].push(quickStart);
     return grouped;
   }, {});
-};
 
 /**
  * Returns the QuickStart with the best localization match, for the given

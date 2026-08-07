@@ -26,8 +26,8 @@ export const buildBareMetalHostObject = (
   disableCertificateVerification = false,
   online = true,
   description = '',
-  enablePowerManagement,
-  bootMode,
+  enablePowerManagement = undefined,
+  bootMode = undefined,
 ): BareMetalHostKind => {
   const bmh: BareMetalHostKind = {
     apiVersion: `${BareMetalHostModel.apiGroup}/${BareMetalHostModel.apiVersion}`,

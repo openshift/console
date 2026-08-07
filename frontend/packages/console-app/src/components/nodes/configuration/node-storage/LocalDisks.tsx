@@ -50,7 +50,7 @@ const LocalDisks: FC<LocalDisksProps> = ({ node }) => {
 
   const disks = useDeepCompareMemoize(
     bareMetalHostLoaded && !bareMetalHostLoadError && bareMetalHost
-      ? bareMetalHost.status?.hardware?.storage ?? []
+      ? (bareMetalHost.status?.hardware?.storage ?? [])
       : [],
   );
 

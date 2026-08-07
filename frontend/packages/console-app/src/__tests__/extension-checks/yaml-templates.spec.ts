@@ -23,9 +23,9 @@ const entryToKeys = (entry: TemplateEntry) => {
   return keys;
 };
 
-const extensionToKeys = (e: YAMLTemplate) => {
-  return [`${referenceForExtensionModel(e.properties.model)}_${e.properties.name || 'default'}`];
-};
+const extensionToKeys = (e: YAMLTemplate) => [
+  `${referenceForExtensionModel(e.properties.model)}_${e.properties.name || 'default'}`,
+];
 
 const getDuplicates = (arr: string[]) => Object.keys(_.pickBy(_.countBy(arr), (c) => c > 1));
 
