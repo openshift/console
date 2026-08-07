@@ -11,7 +11,7 @@ pushd frontend
 # Dynamic plugin SDK docs are generated as part of the build, check for changes
 GIT_STATUS="$(git status --short --untracked-files -- packages/console-dynamic-plugin-sdk/docs)"
 if [ -n "$GIT_STATUS" ]; then
-  echo "dynamic plugin sdk docs are not up to date. Run 'yarn build-plugin-sdk' then commit changes."
+  echo "dynamic plugin sdk docs are not up to date. Run 'yarn generate' then commit changes."
   git --no-pager diff
   exit 1
 fi
@@ -31,12 +31,6 @@ if ! yarn dedupe --strategy highest --check ; then
   exit 1
 fi
 
-if ! yarn run check-cycles; then
-  echo "Cycle(s) detected!"
-  cat .webpack-cycles
-  exit 1
-fi
-
 yarn run knip
 
 yarn run gherkin-lint
@@ -47,4 +41,11 @@ if [ "$OPENSHIFT_CI" = true ]; then
   JEST_SUITE_NAME="OpenShift Console Unit Tests" JEST_JUNIT_OUTPUT_DIR="$ARTIFACT_DIR" yarn run test --ci --maxWorkers=2 --reporters=default --reporters=jest-junit
 else
   yarn run test
+fi
+
+# check-cycles cleans the SDK dist/production build which is needed for some unit tests
+if ! yarn run check-cycles; then
+  echo "Cycle(s) detected!"
+  cat .webpack-cycles
+  exit 1
 fi
