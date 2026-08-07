@@ -95,6 +95,7 @@ export const iconFor = (pkg: PackageManifestKind) => {
       resourceVersion: [pkg.metadata.name, defaultChannel.name, defaultChannel.currentCSV].join(
         '.',
       ),
+      catalog: pkg?.status?.catalogSource,
     },
   });
 };
