@@ -70,7 +70,7 @@ export const ImpersonateNotifier = connect(
         }
       >
         <span className="pf-v6-u-text-decoration-underline-dotted pf-v6-u-color-brand">
-          {t('{{count}} more', { count: remainingCount })}
+          {t('{{remaining}} more', { remaining: remainingCount })}
         </span>
       </Tooltip>
     ) : null;

@@ -314,8 +314,8 @@ export const ConsoleDataView = <
             className="pf-v6-u-mb-md"
             screenReaderText={
               bannerState.allSelected
-                ? t('You selected all {{count}} {{label}}.', {
-                    count: filteredData.length,
+                ? t('You selected all {{numberOf}} {{label}}.', {
+                    numberOf: filteredData.length,
                     label: label || t('items'),
                   })
                 : t('You selected all {{label}} on this page.', {
@@ -325,8 +325,8 @@ export const ConsoleDataView = <
           >
             {bannerState.allSelected ? (
               <>
-                <Trans ns="console-app" i18nKey="You selected all <1>{{count}}</1> {{label}}.">
-                  You selected all <strong>{{ count: filteredData.length }}</strong>{' '}
+                <Trans ns="console-app" i18nKey="You selected all <1>{{numberOf}}</1> {{label}}.">
+                  You selected all <strong>{{ numberOf: filteredData.length }}</strong>{' '}
                   {{ label: label || t('items') }}.
                 </Trans>{' '}
                 <Button variant="link" isInline onClick={handleUnselectAll}>
@@ -339,8 +339,8 @@ export const ConsoleDataView = <
                   You selected all {{ label: label || t('items') }} on this page.
                 </Trans>{' '}
                 <Button variant="link" isInline onClick={handleSelectAllMatching}>
-                  <Trans ns="console-app" i18nKey="Select all <1>{{count}}</1> {{label}}.">
-                    Select all <strong>{{ count: filteredData.length }}</strong>{' '}
+                  <Trans ns="console-app" i18nKey="Select all <1>{{numberOf}}</1> {{label}}.">
+                    Select all <strong>{{ numberOf: filteredData.length }}</strong>{' '}
                     {{ label: label || t('items') }}.
                   </Trans>
                 </Button>
