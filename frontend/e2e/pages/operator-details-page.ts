@@ -34,11 +34,11 @@ export class OperatorDetailsPage extends BasePage {
    */
   async navigateToOperandTab(operandName: string, isGlobal: boolean = true): Promise<void> {
     // Ensure we're on the operator details page by checking for operator-specific tabs
-    await expect(this.page.getByTestId('horizontal-link-Details')).toBeVisible({ timeout: 30_000 });
+    await expect(this.page.getByTestId('horizontal-link-Details')).toBeVisible({ timeout: 5_000 });
 
     if (isGlobal) {
       // Wait for the "All instances" tab to be available before trying to click it
-      await expect(this.page.getByTestId('horizontal-link-All instances')).toBeVisible({ timeout: 30_000 });
+      await expect(this.page.getByTestId('horizontal-link-All instances')).toBeVisible({ timeout: 5_000 });
       await this.detailsPage.selectTab('All instances');
     } else {
       // For single namespace, try common tab variations
@@ -47,7 +47,7 @@ export class OperatorDetailsPage extends BasePage {
       } catch (error) {
         // If operand name tab doesn't exist, try "All instances" as fallback
         console.log(`Tab ${operandName} not found, trying "All instances"`);
-        await expect(this.page.getByTestId('horizontal-link-All instances')).toBeVisible({ timeout: 10_000 });
+        await expect(this.page.getByTestId('horizontal-link-All instances')).toBeVisible({ timeout: 5_000 });
         await this.detailsPage.selectTab('All instances');
       }
     }
@@ -60,6 +60,9 @@ export class OperatorDetailsPage extends BasePage {
     const { exampleName, createActionID } = testOperand;
 
     await this.navigateToOperandTab(testOperand.name, isGlobal);
+
+    // Wait for the page to load and create button to be visible
+    await expect(this.createItemButton).toBeVisible({ timeout: 30_000 });
 
     // Verify operand doesn't already exist
     await expect(this.getOperandLink(exampleName)).not.toBeAttached();
@@ -101,7 +104,7 @@ export class OperatorDetailsPage extends BasePage {
 
     // Navigate to operand details
     await this.page.getByTestId(exampleName).click();
-    await expect(this.page).toHaveURL(new RegExp(`${exampleName}$`));
+    await expect(this.page).toHaveURL(url => url.pathname.endsWith(`/${exampleName}`));
   }
 
   /**
@@ -110,7 +113,7 @@ export class OperatorDetailsPage extends BasePage {
   async deleteOperand(testOperand: TestOperandProps, isGlobal: boolean = true): Promise<void> {
 
     // Double check that we are on the example operand page
-    await expect(this.page).toHaveURL(new RegExp(`${testOperand.exampleName}$`));
+    await expect(this.page).toHaveURL(url => url.pathname.endsWith(`/${testOperand.exampleName}`));
     // const { kind, exampleName } = testOperand;
 
     // First, ensure we're back on the operator details page (not operand details page)

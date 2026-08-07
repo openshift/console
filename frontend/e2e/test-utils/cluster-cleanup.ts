@@ -23,7 +23,7 @@ export async function cleanupClusterTestResources(k8sClient: any, options: Clust
 
   try {
     // 1. Find all test namespaces
-    const namespaces = await client.listNamespaces();
+    const namespaces = await k8sClient.listNamespaces();
     const testNamespaces = namespaces.filter((ns: any) =>
       ns.metadata.name.startsWith('test-')
     );
