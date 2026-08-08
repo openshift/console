@@ -23,12 +23,16 @@ test.describe('Quotas', { tag: ['@admin'] }, () => {
   });
 
   test.afterAll(async ({ k8sClient }) => {
-    await k8sClient.deleteClusterCustomResource(
-      'quota.openshift.io',
-      'v1',
-      'clusterresourcequotas',
-      clusterQuotaName,
-    );
+    try {
+      await k8sClient.deleteClusterCustomResource(
+        'quota.openshift.io',
+        'v1',
+        'clusterresourcequotas',
+        clusterQuotaName,
+      );
+    } catch (error) {
+      console.warn(`[Cleanup] ClusterResourceQuota ${clusterQuotaName}: ${String(error)}`);
+    }
     await k8sClient.deleteNamespace(namespace);
   });
 
