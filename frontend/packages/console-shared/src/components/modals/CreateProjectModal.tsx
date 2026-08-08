@@ -157,6 +157,7 @@ const DefaultCreateProjectModal: OverlayComponent<CreateProjectModalProps> = ({
               onChange={(_event, value) => setName(value)}
               value={name}
               isRequired
+              autoFocus
             />
           </FormGroup>
           <FormGroup label={t('Display name')} fieldId="input-display-name">
