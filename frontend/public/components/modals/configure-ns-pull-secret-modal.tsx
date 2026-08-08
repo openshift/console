@@ -25,6 +25,8 @@ import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import { CONST } from '@console/shared/src/constants/common';
 import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
+import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import { k8sPatchByName, k8sCreate, k8sGet, K8sResourceKind } from '../../module/k8s';
 import type { ModalComponentProps } from '@console/shared/src/types/modal';
 import { SecretModel, ServiceAccountModel } from '../../models';
 import type { K8sResourceKind } from '../../module/k8s';
@@ -61,10 +63,35 @@ const generateSecretData = (formData: FormData): string => {
 interface ConfigureNamespacePullSecretProps extends ModalComponentProps {
   namespace: K8sResourceKind;
   pullSecret?: K8sResourceKind;
+  onSubmitSuccess?: (pullSecretName: string) => void;
 }
 
+type ServiceAccountKind = K8sResourceKind & {
+  imagePullSecrets?: { name: string }[];
+};
+
+const getDefaultServiceAccountPatch = (
+  pullSecretName: string,
+  defaultServiceAccount: ServiceAccountKind,
+) =>
+  Array.isArray(defaultServiceAccount.imagePullSecrets)
+    ? [
+      {
+        op: 'add' as const,
+        path: '/imagePullSecrets/-',
+        value: { name: pullSecretName },
+      },
+    ]
+    : [
+      {
+        op: 'add' as const,
+        path: '/imagePullSecrets',
+        value: [{ name: pullSecretName }],
+      },
+    ];
+
 const ConfigureNamespacePullSecret: FC<ConfigureNamespacePullSecretProps> = (props) => {
-  const { namespace, cancel, close } = props;
+  const { namespace, cancel, close, onSubmitSuccess } = props;
   const { t } = useTranslation('public');
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
 
@@ -132,27 +159,22 @@ const ConfigureNamespacePullSecret: FC<ConfigureNamespacePullSecretProps> = (pro
         data,
         type: CONST.PULL_SECRET_TYPE,
       };
-      const defaultServiceAccountPatch = [
-        {
-          op: 'add' as const,
-          path: '/imagePullSecrets/-',
-          value: { name: pullSecretName },
-        },
-      ];
-      const promise = k8sCreate(SecretModel, secret).then(() =>
-        k8sPatchByName(
-          ServiceAccountModel,
-          'default',
-          namespace.metadata.name,
-          defaultServiceAccountPatch,
-        ),
-      );
-
-      handlePromise(promise)
-        .then(close)
-        .catch(() => {});
+      const promise = k8sCreate(SecretModel, secret)
+        .then(() => k8sGet(ServiceAccountModel, 'default', namespace.metadata.name, {}))
+        .then((defaultServiceAccount: ServiceAccountKind) =>
+          k8sPatchByName(
+            ServiceAccountModel,
+            'default',
+            namespace.metadata.name,
+            getDefaultServiceAccountPatch(pullSecretName, defaultServiceAccount),
+          ),
+        );
+      handlePromise(promise).then(() => {
+        onSubmitSuccess?.(pullSecretName);
+        close();
+      });
     },
-    [method, fileData, namespace, handlePromise, close],
+    [method, fileData, namespace, onSubmitSuccess, handlePromise, close],
   );
 
   return (
