@@ -46,8 +46,8 @@ const provisionerAccessModeMapping: ProvisionerAccessModeMapping = Object.freeze
     Block: ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany', 'ReadWriteOncePod'],
   },
   'kubernetes.io/cinder': {
-    Filesystem: ['ReadWriteOnce', 'ReadWriteOncePod', 'ReadWriteOncePod'],
-    Block: ['ReadWriteOnce', 'ReadWriteOncePod', 'ReadWriteOncePod'],
+    Filesystem: ['ReadWriteOnce', 'ReadWriteOncePod'],
+    Block: ['ReadWriteOnce', 'ReadWriteOncePod'],
   },
   'kubernetes.io/azure-file': {
     Filesystem: ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany', 'ReadWriteOncePod'],
@@ -99,8 +99,8 @@ const provisionerAccessModeMapping: ProvisionerAccessModeMapping = Object.freeze
     Block: ['ReadWriteOnce'],
   },
   'cinder.csi.openstack.org': {
-    Filesystem: ['ReadWriteOnce'],
-    Block: ['ReadWriteOnce'],
+    Filesystem: ['ReadWriteOnce', 'ReadWriteOncePod'],
+    Block: ['ReadWriteOnce', 'ReadWriteOncePod'],
   },
   'pd.csi.storage.gke.io': {
     Filesystem: ['ReadWriteOnce', 'ReadWriteOncePod'],
