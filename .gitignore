@@ -13,7 +13,6 @@ install-state.gz
 !/vendor/**
 !.vscode/settings.json
 .DS_Store
-cypress-a11y-report.json
 /bin
 /gopath
 /Godeps/_workspace/src/github.com/openshift/console
@@ -31,7 +30,6 @@ cypress-a11y-report.json
 /frontend/e2e/.test-config.json
 /frontend/test-results/
 /frontend/playwright-report/
-/frontend/gui_test_screenshots
 /frontend/package-lock.json
 /frontend/po-files
 /dynamic-demo-plugin/**/node_modules
