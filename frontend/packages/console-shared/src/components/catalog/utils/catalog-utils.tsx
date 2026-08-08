@@ -396,15 +396,22 @@ export const applyCatalogItemMetadata = (
 export const isCatalogTypeEnabled = (catalogType: string): boolean => {
   const softwareCatalogTypes = getSoftwareCatalogTypes();
   if (softwareCatalogTypes) {
+    // Normalize catalog type to lowercase for case-insensitive comparison
+    const normalizedCatalogType = catalogType?.toLowerCase();
+
     if (
       softwareCatalogTypes?.state === CatalogVisibilityState.Enabled &&
       softwareCatalogTypes?.enabled?.length > 0
     ) {
-      return softwareCatalogTypes?.enabled.includes(catalogType);
+      return softwareCatalogTypes?.enabled.some(
+        (type) => type.toLowerCase() === normalizedCatalogType,
+      );
     }
     if (softwareCatalogTypes?.state === CatalogVisibilityState.Disabled) {
       if (softwareCatalogTypes?.disabled?.length > 0) {
-        return !softwareCatalogTypes?.disabled.includes(catalogType);
+        return !softwareCatalogTypes?.disabled.some(
+          (type) => type.toLowerCase() === normalizedCatalogType,
+        );
       }
       return false;
     }
@@ -425,7 +432,8 @@ export const useGetAllDisabledSubCatalogs = () => {
         softwareCatalogTypes?.enabled?.length > 0
       ) {
         const disabledSubCatalogs = catalogTypeExtensions.filter(
-          (val) => !softwareCatalogTypes?.enabled.includes(val),
+          (val) =>
+            !softwareCatalogTypes?.enabled.some((type) => type.toLowerCase() === val.toLowerCase()),
         );
         return [disabledSubCatalogs];
       }

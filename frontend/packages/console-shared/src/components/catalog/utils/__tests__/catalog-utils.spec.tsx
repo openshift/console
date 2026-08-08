@@ -4,6 +4,7 @@ import {
   calculateCatalogItemRelevanceScore,
   getRedHatPriority,
   sortCatalogItems,
+  isCatalogTypeEnabled,
 } from '../catalog-utils';
 import { CatalogSortOrder } from '../types';
 
@@ -464,5 +465,66 @@ describe('sortCatalogItems', () => {
       // Should behave like RELEVANCE mode
       expect(result[0].name).toBe('Zebra Operator'); // Red Hat priority
     });
+  });
+});
+
+describe('isCatalogTypeEnabled - case-insensitive matching', () => {
+  let originalDeveloperCatalogTypes;
+
+  beforeEach(() => {
+    originalDeveloperCatalogTypes = window.SERVER_FLAGS.developerCatalogTypes;
+    delete window.SERVER_FLAGS.developerCatalogTypes;
+  });
+
+  afterEach(() => {
+    if (originalDeveloperCatalogTypes !== undefined) {
+      window.SERVER_FLAGS.developerCatalogTypes = originalDeveloperCatalogTypes;
+    } else {
+      delete window.SERVER_FLAGS.developerCatalogTypes;
+    }
+  });
+
+  it('should return true when no developerCatalogTypes configuration exists', () => {
+    expect(isCatalogTypeEnabled('operator')).toBe(true);
+    expect(isCatalogTypeEnabled('HelmChart')).toBe(true);
+  });
+
+  it('should perform case-insensitive matching for enabled types', () => {
+    window.SERVER_FLAGS.developerCatalogTypes = JSON.stringify({
+      state: 'Enabled',
+      enabled: ['operator', 'HelmChart', 'Template'],
+    });
+
+    // Exact case match
+    expect(isCatalogTypeEnabled('operator')).toBe(true);
+    expect(isCatalogTypeEnabled('HelmChart')).toBe(true);
+
+    // Different capitalization should still match
+    expect(isCatalogTypeEnabled('Operator')).toBe(true);
+    expect(isCatalogTypeEnabled('OPERATOR')).toBe(true);
+    expect(isCatalogTypeEnabled('helmchart')).toBe(true);
+    expect(isCatalogTypeEnabled('template')).toBe(true);
+    expect(isCatalogTypeEnabled('TEMPLATE')).toBe(true);
+
+    // Non-enabled type should return false
+    expect(isCatalogTypeEnabled('Devfile')).toBe(false);
+  });
+
+  it('should perform case-insensitive matching for disabled types', () => {
+    window.SERVER_FLAGS.developerCatalogTypes = JSON.stringify({
+      state: 'Disabled',
+      disabled: ['operator', 'HelmChart'],
+    });
+
+    // Disabled types should return false regardless of capitalization
+    expect(isCatalogTypeEnabled('operator')).toBe(false);
+    expect(isCatalogTypeEnabled('Operator')).toBe(false);
+    expect(isCatalogTypeEnabled('OPERATOR')).toBe(false);
+    expect(isCatalogTypeEnabled('helmchart')).toBe(false);
+    expect(isCatalogTypeEnabled('HelmChart')).toBe(false);
+
+    // Non-disabled types should return true
+    expect(isCatalogTypeEnabled('Template')).toBe(true);
+    expect(isCatalogTypeEnabled('template')).toBe(true);
   });
 });
