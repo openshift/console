@@ -45,5 +45,18 @@ export const OLS_EXTENSION_CONTEXT_ID = 'ols-open-handler';
  * OLS integration behavior options
  */
 export const OLS_SUBMIT_IMMEDIATELY = true;
+/**
+ * When true, the prompt text is not displayed in the OLS chat UI.
+ * This is a UI-only control -- the prompt is still present in client-side
+ * state and visible via browser DevTools or network inspection. Do not rely
+ * on this flag for confidentiality of prompt content.
+ */
 export const OLS_HIDE_PROMPT = true;
 export const OLS_NO_ATTACHMENTS: never[] = [];
+
+/**
+ * Maximum prompt size in characters (defense-in-depth).
+ * OLS backend rejects prompts exceeding ~220K characters with HTTP 413.
+ * Current prompts are typically under 40K characters.
+ */
+export const OLS_MAX_PROMPT_LENGTH = 100_000;

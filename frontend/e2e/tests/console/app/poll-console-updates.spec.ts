@@ -78,6 +78,10 @@ async function navigateAndWaitForInit(page: Page) {
 }
 
 test.describe('PollConsoleUpdates', { tag: ['@admin'] }, () => {
+  // Each test needs multiple 15s polling cycles (init + change detection + endpoint readiness).
+  // The default 120s is too tight for CI where auth redirects add overhead.
+  test.setTimeout(300_000);
+
   test('triggers the console update toast when consoleCommit changes', async ({ page }) => {
     const updates = createMutableHandler((route) =>
       route.fulfill({ json: UPDATES_DEFAULT }),
@@ -138,7 +142,10 @@ test.describe('PollConsoleUpdates', { tag: ['@admin'] }, () => {
 
     updates.setHandler((route) => route.fulfill({ json: UPDATES_NEW_PLUGIN2 }));
 
-    await page.waitForResponse((resp) => resp.url().includes('/api/check-updates'));
+    await page.waitForResponse(
+      (resp) => resp.url().includes('/api/check-updates') && resp.status() === 200,
+      { timeout: 30_000 },
+    );
 
     await expect(page.getByTestId('refresh-web-console')).not.toBeAttached({
       timeout: 30_000,
