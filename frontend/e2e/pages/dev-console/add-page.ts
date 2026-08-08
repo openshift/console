@@ -112,6 +112,44 @@ export class AddPage extends BasePage {
   getNoResultsMessage(): Locator {
     return this.page.getByText('No results');
   }
+
+  getSampleCards(): Locator {
+    return this.page.locator('[data-test^="BuilderImage-"], [data-test^="Devfile-"]');
+  }
+
+  async clickSampleCard(name: string): Promise<void> {
+    await this.robustClick(this.page.getByTestId(`BuilderImage-${name}`));
+  }
+
+  getFormAppName(): Locator {
+    return this.page.getByRole('textbox', { name: 'Name' });
+  }
+
+  getGitUrlInput(): Locator {
+    return this.page.getByRole('textbox', { name: 'Git Repo URL' });
+  }
+
+  getBuilderImageVersionToggle(): Locator {
+    return this.page.getByTestId('console-select-menu-toggle');
+  }
+
+  getBuilderImageVersionItem(version: string): Locator {
+    return this.page.getByTestId('console-select-item').filter({ hasText: version });
+  }
+
+  getSubmitButton(): Locator {
+    return this.page.getByRole('button', { name: 'Create', exact: true });
+  }
+
+  getCancelButton(): Locator {
+    return this.page.getByRole('button', { name: 'Cancel', exact: true });
+  }
+
+  getPinnedResource(name: string): Locator {
+    return this.page
+      .getByRole('region', { name: 'Pinned resources' })
+      .getByRole('link', { name });
+  }
 }
 export class ImportFromGitPage extends BasePage {
   private readonly gitRepoUrlInput: Locator = this.page.getByRole('textbox', {
