@@ -6,7 +6,9 @@ import (
 	"os"
 	"strings"
 	"sync"
+	"time"
 
+	"github.com/gorilla/securecookie"
 	gorilla "github.com/gorilla/sessions"
 	"golang.org/x/oauth2"
 )
@@ -34,6 +36,12 @@ func NewSessionStore(authnKey, encryptKey []byte, secureCookies bool, cookiePath
 	clientStore.Options.HttpOnly = true
 	clientStore.Options.SameSite = http.SameSiteStrictMode
 	clientStore.Options.Path = cookiePath
+
+	for _, codec := range clientStore.Codecs {
+		if sc, ok := codec.(*securecookie.SecureCookie); ok {
+			sc.MaxLength(8192)
+		}
+	}
 
 	return &CombinedSessionStore{
 		serverStore: NewServerSessionStore(32768),
@@ -79,8 +87,7 @@ func (cs *CombinedSessionStore) AddSession(w http.ResponseWriter, r *http.Reques
 
 	clientSession := cs.getCookieSession(r)
 	clientSession.sessionToken.Values["session-token"] = ls.sessionToken
-	// Store only the small reference ID in the cookie, not the full refresh token
-	clientSession.refreshToken.Values["refresh-token-id"] = ls.refreshTokenID
+	clientSession.refreshToken.Values["refresh-token"] = ls.refreshToken
 
 	return ls, clientSession.save(r, w)
 }
@@ -125,12 +132,13 @@ func (cs *CombinedSessionStore) GetSession(w http.ResponseWriter, r *http.Reques
 		refreshToken string
 	)
 
-	if sessionTokenIface, ok := clientSession.sessionToken.Values["session-token"]; ok {
-		sessionToken = sessionTokenIface.(string)
+	if sessionTokenStr, ok := clientSession.sessionToken.Values["session-token"].(string); ok {
+		sessionToken = sessionTokenStr
 	}
-	if refreshTokenID, ok := clientSession.refreshToken.Values["refresh-token-id"]; ok {
-		// Look up the actual refresh token from the ID
-		if actualToken, exists := cs.serverStore.byRefreshTokenID[refreshTokenID.(string)]; exists {
+	if rt, ok := clientSession.refreshToken.Values["refresh-token"].(string); ok {
+		refreshToken = rt
+	} else if refreshTokenID, ok := clientSession.refreshToken.Values["refresh-token-id"].(string); ok {
+		if actualToken, exists := cs.serverStore.byRefreshTokenID[refreshTokenID]; exists {
 			refreshToken = actualToken
 		}
 	}
@@ -140,10 +148,12 @@ func (cs *CombinedSessionStore) GetSession(w http.ResponseWriter, r *http.Reques
 }
 
 func (cs *CombinedSessionStore) GetCookieRefreshToken(r *http.Request) string {
-	// Get always returns a session, even if empty.
 	clientSession, _ := cs.clientStore.Get(r, openshiftRefreshTokenCookieName)
+	if refreshToken, ok := clientSession.Values["refresh-token"].(string); ok {
+		return refreshToken
+	}
+	// Backward compatibility: fall back to reference ID lookup
 	if refreshTokenID, ok := clientSession.Values["refresh-token-id"].(string); ok {
-		// Look up the actual refresh token using the ID
 		if actualToken, exists := cs.serverStore.byRefreshTokenID[refreshTokenID]; exists {
 			return actualToken
 		}
@@ -152,13 +162,9 @@ func (cs *CombinedSessionStore) GetCookieRefreshToken(r *http.Request) string {
 }
 
 func (cs *CombinedSessionStore) UpdateCookieRefreshToken(w http.ResponseWriter, r *http.Request, refreshToken string) error {
-	// Generate a new ID for the refresh token
-	newID := RandomString(32)
-	cs.serverStore.byRefreshTokenID[newID] = refreshToken
-
-	// Store the ID in the cookie, not the full token
 	clientSession, _ := cs.clientStore.Get(r, openshiftRefreshTokenCookieName)
-	clientSession.Values["refresh-token-id"] = newID
+	clientSession.Values["refresh-token"] = refreshToken
+	delete(clientSession.Values, "refresh-token-id")
 	return clientSession.Save(r, w)
 }
 
@@ -166,35 +172,30 @@ func (cs *CombinedSessionStore) UpdateTokens(w http.ResponseWriter, r *http.Requ
 	cs.sessionLock.Lock()
 	defer cs.sessionLock.Unlock()
 
-	// Clean up old session cookies from previous pods when refreshing tokens
-	// This handles the case where a user is load-balanced to a different pod
 	cs.expireOldPodCookies(w, r)
 
 	clientSession := cs.getCookieSession(r)
-	var oldRefreshTokenID string
+
+	// Resolve old refresh token from cookie (new format or legacy ID lookup)
 	var oldRefreshToken string
-	if oldID, ok := clientSession.refreshToken.Values["refresh-token-id"]; ok {
-		oldRefreshTokenID = oldID.(string)
-		// Look up the actual refresh token from the ID
-		if actualToken, exists := cs.serverStore.byRefreshTokenID[oldRefreshTokenID]; exists {
+	if rt, ok := clientSession.refreshToken.Values["refresh-token"].(string); ok {
+		oldRefreshToken = rt
+	} else if oldID, ok := clientSession.refreshToken.Values["refresh-token-id"].(string); ok {
+		if actualToken, exists := cs.serverStore.byRefreshTokenID[oldID]; exists {
 			oldRefreshToken = actualToken
 		}
+		delete(cs.serverStore.byRefreshTokenID, oldID)
 	}
 
-	// Generate a new ID for the new refresh token
-	newRefreshTokenID := RandomString(32)
 	newRefreshToken := tokenResponse.RefreshToken
-	if newRefreshToken != "" {
-		cs.serverStore.byRefreshTokenID[newRefreshTokenID] = newRefreshToken
-	}
 
-	// Store the new ID in the cookie
-	clientSession.refreshToken.Values["refresh-token-id"] = newRefreshTokenID
+	// Store actual refresh token in cookie
+	clientSession.refreshToken.Values["refresh-token"] = newRefreshToken
+	delete(clientSession.refreshToken.Values, "refresh-token-id")
 
 	var loginState *LoginState
-	sessionToken, ok := clientSession.sessionToken.Values["session-token"]
-	if ok {
-		loginState = cs.serverStore.GetSession(sessionToken.(string), "")
+	if sessionToken, ok := clientSession.sessionToken.Values["session-token"].(string); ok {
+		loginState = cs.serverStore.GetSession(sessionToken, "")
 	}
 	if loginState == nil {
 		var err error
@@ -203,19 +204,13 @@ func (cs *CombinedSessionStore) UpdateTokens(w http.ResponseWriter, r *http.Requ
 			return nil, fmt.Errorf("failed to add session to server store: %w", err)
 		}
 		clientSession.sessionToken.Values["session-token"] = loginState.sessionToken
-		// AddSession already generated an ID, so update the cookie with it
-		clientSession.refreshToken.Values["refresh-token-id"] = loginState.refreshTokenID
 	} else {
-		// loginState is a pointer to the cache so this effectively mutates it for everyone
 		if err := loginState.UpdateTokens(tokenVerifier, tokenResponse); err != nil {
 			return nil, err
 		}
-		// Update the ID in the LoginState
-		loginState.refreshTokenID = newRefreshTokenID
 	}
 
-	// index by the old refresh token so that any follow-up requests that arrived
-	// before their cookie was updated with an actual session can still find the login state
+	// Index by old refresh token for in-flight requests with stale cookies
 	if oldRefreshToken != "" {
 		cs.serverStore.byRefreshToken[oldRefreshToken] = loginState
 	}
@@ -241,28 +236,64 @@ func (cs *CombinedSessionStore) DeleteSession(w http.ResponseWriter, r *http.Req
 	}
 
 	cookieSession := cs.getCookieSession(r)
-	if refreshTokenID, ok := cookieSession.refreshToken.Values["refresh-token-id"]; ok {
-		refreshTokenIDStr := refreshTokenID.(string)
-		// Look up the actual refresh token from the ID and delete
+	if refreshToken, ok := cookieSession.refreshToken.Values["refresh-token"].(string); ok && refreshToken != "" {
+		cs.serverStore.DeleteByRefreshToken(refreshToken)
+	} else if refreshTokenIDStr, ok := cookieSession.refreshToken.Values["refresh-token-id"].(string); ok {
 		if actualToken, exists := cs.serverStore.byRefreshTokenID[refreshTokenIDStr]; exists {
 			cs.serverStore.DeleteByRefreshToken(actualToken)
-			// Clean up the ID mapping
 			delete(cs.serverStore.byRefreshTokenID, refreshTokenIDStr)
 		}
 	}
 
-	if sessionToken, ok := cookieSession.sessionToken.Values["session-token"]; ok {
-		cs.serverStore.DeleteBySessionToken(sessionToken.(string))
+	if sessionToken, ok := cookieSession.sessionToken.Values["session-token"].(string); ok {
+		cs.serverStore.DeleteBySessionToken(sessionToken)
 	}
 
 	refreshTokenCookie, _ := cs.clientStore.Get(r, openshiftRefreshTokenCookieName)
 	if !refreshTokenCookie.IsNew {
-		// Get always returns a session, only timeout current sessions
 		refreshTokenCookie.Options.MaxAge = -1
-		return cs.clientStore.Save(r, w, refreshTokenCookie)
+		if err := cs.clientStore.Save(r, w, refreshTokenCookie); err != nil {
+			return err
+		}
 	}
 
 	return nil
+}
+
+func (cs *CombinedSessionStore) SetRecoveryCookie(w http.ResponseWriter, r *http.Request, accessToken string, expiry time.Time) error {
+	s, _ := cs.clientStore.Get(r, openshiftRecoveryTokenCookieName)
+	s.Values["access-token"] = accessToken
+	s.Values["expiry"] = expiry.Unix()
+	maxAge := int(time.Until(expiry).Seconds())
+	if maxAge > 0 {
+		s.Options.MaxAge = maxAge
+	}
+	return s.Save(r, w)
+}
+
+func (cs *CombinedSessionStore) GetRecoveryCookie(r *http.Request) (string, time.Time, bool) {
+	s, _ := cs.clientStore.Get(r, openshiftRecoveryTokenCookieName)
+	accessToken, ok := s.Values["access-token"].(string)
+	if !ok || accessToken == "" {
+		return "", time.Time{}, false
+	}
+	expiryUnix, ok := s.Values["expiry"].(int64)
+	if !ok {
+		return "", time.Time{}, false
+	}
+	return accessToken, time.Unix(expiryUnix, 0), true
+}
+
+func (cs *CombinedSessionStore) ClearRecoveryCookie(w http.ResponseWriter, r *http.Request) {
+	http.SetCookie(w, &http.Cookie{
+		Name:     openshiftRecoveryTokenCookieName,
+		Value:    "",
+		Path:     cs.clientStore.Options.Path,
+		MaxAge:   -1,
+		Secure:   cs.clientStore.Options.Secure,
+		HttpOnly: cs.clientStore.Options.HttpOnly,
+		SameSite: cs.clientStore.Options.SameSite,
+	})
 }
 
 // ServerStore returns the underlying server session store.

@@ -965,14 +965,13 @@ func testOAuth2ConfigConstructor(endpointConfig oauth2.Endpoint) *oauth2.Config 
 }
 
 type testCookieFactory struct {
-	cookieCodecs   []securecookie.Codec
-	sessionToken   *string
-	refreshToken   *string
-	refreshTokenID *string
-	customCookies  map[string]map[interface{}]interface{}
-	serverStore    *sessions.SessionStore // needed to set up refresh token ID mapping
-	tokenVerifier  sessions.IDTokenVerifier
-	signPayload    func(string) string // function to sign an ID token payload
+	cookieCodecs  []securecookie.Codec
+	sessionToken  *string
+	refreshToken  *string
+	customCookies map[string]map[interface{}]interface{}
+	serverStore   *sessions.SessionStore
+	tokenVerifier sessions.IDTokenVerifier
+	signPayload   func(string) string
 }
 
 func (f *testCookieFactory) WithSessionToken(sessionToken string) *testCookieFactory {
@@ -1002,26 +1001,18 @@ func (f *testCookieFactory) Complete(t testing.TB, req *http.Request) *http.Requ
 			f.cookieCodecs)
 	}
 	if f.refreshToken != nil {
-		var id string
 		if f.serverStore != nil && f.tokenVerifier != nil && f.signPayload != nil {
-			// Use AddSession to properly set up the state
 			token := addIDToken(
 				&oauth2.Token{RefreshToken: *f.refreshToken},
 				f.signPayload(`{"sub":"testuser","exp":`+strconv.FormatInt(time.Now().Add(5*time.Minute).Unix(), 10)+`}`),
 			)
-			loginState, err := f.serverStore.AddSession(f.tokenVerifier, token)
+			_, err := f.serverStore.AddSession(f.tokenVerifier, token)
 			require.NoError(t, err)
-			id = loginState.RefreshTokenID()
-		} else {
-			// Fallback to generating a random ID
-			id = randomString(32)
 		}
-		f.refreshTokenID = &id
 
-		// Store only the ID in the cookie
 		attachCookieOrDie(t, req, "openshift-refresh-token",
 			map[interface{}]interface{}{
-				"refresh-token-id": id,
+				"refresh-token": *f.refreshToken,
 			},
 			f.cookieCodecs)
 	}

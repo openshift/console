@@ -29,8 +29,7 @@ type LoginState struct {
 	now            nowFunc
 	sessionToken   string
 	rawToken       string
-	refreshToken   string
-	refreshTokenID string // Small reference ID for the refresh token (stored in cookie)
+	refreshToken string
 }
 
 type LoginJSON struct {
@@ -163,10 +162,6 @@ func (ls *LoginState) SessionToken() string {
 
 func (ls *LoginState) RefreshToken() string {
 	return ls.refreshToken
-}
-
-func (ls *LoginState) RefreshTokenID() string {
-	return ls.refreshTokenID
 }
 
 func (ls *LoginState) IsExpired() bool {

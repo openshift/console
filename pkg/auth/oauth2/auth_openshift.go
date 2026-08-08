@@ -72,19 +72,26 @@ func newOpenShiftAuth(ctx context.Context, k8sClient *http.Client, c *oidcConfig
 	}
 	o.oauthEndpointCache.Run(ctx)
 
-	authnKey, err := utils.RandomString(64)
-	if err != nil {
-		return nil, err
-	}
-
-	encryptionKey, err := utils.RandomString(32)
-	if err != nil {
-		return nil, err
+	var authnKey, encryptionKey []byte
+	if len(c.cookieAuthenticationKey) > 0 && len(c.cookieEncryptionKey) > 0 {
+		authnKey = c.cookieAuthenticationKey
+		encryptionKey = c.cookieEncryptionKey
+	} else {
+		authnKeyStr, err := utils.RandomString(64)
+		if err != nil {
+			return nil, err
+		}
+		encryptionKeyStr, err := utils.RandomString(32)
+		if err != nil {
+			return nil, err
+		}
+		authnKey = []byte(authnKeyStr)
+		encryptionKey = []byte(encryptionKeyStr)
 	}
 
 	o.sessions = sessions.NewSessionStore(
-		[]byte(authnKey),
-		[]byte(encryptionKey),
+		authnKey,
+		encryptionKey,
 		c.secureCookies,
 		c.cookiePath,
 	)
@@ -161,11 +168,16 @@ func (o *openShiftAuth) login(w http.ResponseWriter, r *http.Request, token *oau
 		return nil, fmt.Errorf("failed to create session: %w", err)
 	}
 
+	if err := o.sessions.SetRecoveryCookie(w, r, token.AccessToken, token.Expiry); err != nil {
+		klog.V(4).Infof("failed to set recovery cookie: %v", err)
+	}
+
 	return ls, nil
 }
 
 func (o *openShiftAuth) DeleteSession(w http.ResponseWriter, r *http.Request) {
 	o.sessions.DeleteSession(w, r)
+	o.sessions.ClearRecoveryCookie(w, r)
 }
 
 func (o *openShiftAuth) logout(w http.ResponseWriter, r *http.Request) {
@@ -206,8 +218,14 @@ func (o *openShiftAuth) logout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//  Delete the session
+	if refreshToken := ls.RefreshToken(); refreshToken != "" {
+		if delErr := oauthClient.OAuthAuthorizeTokens().Delete(ctx, tokenToObjectName(refreshToken), metav1.DeleteOptions{}); delErr != nil {
+			klog.V(4).Infof("failed to revoke refresh token on logout: %v", delErr)
+		}
+	}
+
 	o.sessions.DeleteSession(w, r)
+	o.sessions.ClearRecoveryCookie(w, r)
 	w.WriteHeader(http.StatusNoContent)
 }
 
@@ -234,7 +252,7 @@ func (o *openShiftAuth) refreshSession(ctx context.Context, w http.ResponseWrite
 	).Token()
 
 	if err != nil {
-		return nil, fmt.Errorf("failed to refresh a token %s: %w", cookieRefreshToken, err)
+		return nil, fmt.Errorf("failed to refresh a token: %w", err)
 	}
 
 	ls, err := o.sessions.UpdateTokens(w, r, nil, newTokens)
@@ -256,8 +274,39 @@ func (o *openShiftAuth) getLoginState(w http.ResponseWriter, r *http.Request) (*
 			return o.refreshSession(r.Context(), w, r, o.oauth2Config(), refreshToken)
 		}
 
+		if ls == nil {
+			if recovered, recoverErr := o.recoverSession(w, r); recoverErr == nil {
+				return recovered, nil
+			}
+		}
+
 		return nil, fmt.Errorf("a session was not found on server or is expired")
 	}
+	return ls, nil
+}
+
+func (o *openShiftAuth) recoverSession(w http.ResponseWriter, r *http.Request) (*sessions.LoginState, error) {
+	accessToken, expiry, ok := o.sessions.GetRecoveryCookie(r)
+	if !ok {
+		return nil, fmt.Errorf("no recovery cookie")
+	}
+
+	if time.Now().After(expiry) {
+		o.sessions.ClearRecoveryCookie(w, r)
+		return nil, fmt.Errorf("recovery token expired")
+	}
+
+	token := &oauth2.Token{
+		AccessToken: accessToken,
+		Expiry:      expiry,
+	}
+
+	ls, err := o.sessions.AddSession(w, r, nil, token)
+	if err != nil {
+		return nil, fmt.Errorf("failed to recover session: %w", err)
+	}
+
+	klog.V(4).Info("session recovered from cookie after pod restart")
 	return ls, nil
 }
 
