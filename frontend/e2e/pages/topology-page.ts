@@ -98,7 +98,7 @@ export class TopologyPage extends BasePage {
   async verifyGroupLabel(workloadName: string, groupName: string, timeout = 15_000): Promise<void> {
     await this.ensureGraphView();
     await this.search(workloadName);
-    const label = this.page.locator('g[class$="topology__group__label"]');
+    const label = this.page.locator('g[class*="topology__group__label"]');
     const textContent = label.locator('> text');
     await expect(textContent).toHaveText(groupName, { timeout });
   }
@@ -108,6 +108,13 @@ export class TopologyPage extends BasePage {
     return this.page
       .locator('g[class$="topology__node__label"]')
       .filter({ hasText: nodeName });
+  }
+
+  // PF Topology internal class — no data-test available; may break on PF upgrades
+  getGroupNode(groupName: string): Locator {
+    return this.page
+      .locator('g[class*="topology__group__label"]')
+      .filter({ hasText: groupName });
   }
 
   async ensureGraphView(): Promise<void> {
@@ -138,8 +145,22 @@ export class TopologyPage extends BasePage {
     await node.first().click({ button: 'right' });
   }
 
+  async rightClickOnGroup(groupName: string): Promise<void> {
+    await this.ensureGraphView();
+    await this.search(groupName);
+    await expect(this.highlightedNode.first()).toBeVisible({ timeout: 30_000 });
+
+    const group = this.getGroupNode(groupName);
+    await expect(group.first()).toBeVisible({ timeout: 30_000 });
+    await group.first().click({ button: 'right' });
+  }
+
+  getContextMenuItem(action: string): Locator {
+    return this.page.getByRole('menuitem', { name: action });
+  }
+
   async selectContextMenuAction(action: string): Promise<void> {
-    const actionButton = this.page.getByRole('menuitem', { name: action })
+    const actionButton = this.getContextMenuItem(action);
     await expect(actionButton).toBeVisible({ timeout: 10_000 });
     await this.robustClick(actionButton);
   }
