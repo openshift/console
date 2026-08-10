@@ -335,7 +335,10 @@
     "form-data@~2.3.2": "^2.5.6",
     "form-data@~4.0.4": "^4.0.6",
     "follow-redirects": "^1.16.0",
-    "nanoid": "^3.3.12"
+    "nanoid": "^3.3.12",
+    "brace-expansion@^1.1.7": "1.1.18",
+    "brace-expansion@^2.0.2": "2.1.4",
+    "brace-expansion@^5.0.5": "5.0.9"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,json,gql,graphql}": "eslint --color --fix"
