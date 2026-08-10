@@ -98,7 +98,7 @@ const InputField: FC<InputFieldProps> = ({
   return (
     <div className="form-group">
       <fieldset>
-        <label className="co-required">{label}</label>
+        <label>{label}</label>
         <FieldLevelHelp>{helpText}</FieldLevelHelp>
         <div>
           <TextInput
@@ -110,7 +110,6 @@ const InputField: FC<InputFieldProps> = ({
             onChange={(_event, val) => {
               setValue(val);
             }}
-            required
           />
         </div>
       </fieldset>
@@ -485,60 +484,37 @@ export const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (prop
     };
 
     switch (tokenizedAuth) {
-      case 'AWS':
-        subscription.spec.config = {
-          env: [
-            {
-              name: 'ROLEARN',
-              value: roleARNText,
-            },
-          ],
-        };
+      case 'AWS': {
+        const env = [{ name: 'ROLEARN', value: roleARNText }].filter((e) => e.value);
+        if (env.length > 0) {
+          subscription.spec.config = { env };
+        }
         break;
-      case 'Azure':
-        subscription.spec.config = {
-          env: [
-            {
-              name: 'CLIENTID',
-              value: azureClientId,
-            },
-            {
-              name: 'TENANTID',
-              value: azureTenantId,
-            },
-            {
-              name: 'SUBSCRIPTIONID',
-              value: azureSubscriptionId,
-            },
-            {
-              name: 'RESOURCEGROUP',
-              value: azureResourceGroup,
-            },
-          ],
-        };
+      }
+      case 'Azure': {
+        const env = [
+          { name: 'CLIENTID', value: azureClientId },
+          { name: 'TENANTID', value: azureTenantId },
+          { name: 'SUBSCRIPTIONID', value: azureSubscriptionId },
+          { name: 'RESOURCEGROUP', value: azureResourceGroup },
+        ].filter((e) => e.value);
+        if (env.length > 0) {
+          subscription.spec.config = { env };
+        }
         break;
-      case 'GCP':
-        subscription.spec.config = {
-          env: [
-            {
-              name: 'PROJECT_NUMBER',
-              value: gcpProjectNumber,
-            },
-            {
-              name: 'POOL_ID',
-              value: gcpPoolId,
-            },
-            {
-              name: 'PROVIDER_ID',
-              value: gcpProviderId,
-            },
-            {
-              name: 'SERVICE_ACCOUNT_EMAIL',
-              value: gcpServiceAcctEmail,
-            },
-          ],
-        };
+      }
+      case 'GCP': {
+        const env = [
+          { name: 'PROJECT_NUMBER', value: gcpProjectNumber },
+          { name: 'POOL_ID', value: gcpPoolId },
+          { name: 'PROVIDER_ID', value: gcpProviderId },
+          { name: 'SERVICE_ACCOUNT_EMAIL', value: gcpServiceAcctEmail },
+        ].filter((e) => e.value);
+        if (env.length > 0) {
+          subscription.spec.config = { env };
+        }
         break;
+      }
       default:
         break;
     }
@@ -589,14 +565,7 @@ export const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (prop
     subscriptionExists(selectedTargetNamespace) ||
     !namespaceSupports(selectedTargetNamespace)(selectedInstallMode) ||
     (selectedTargetNamespace && cannotResolve) ||
-    !_.isEmpty(conflictingProvidedAPIs(selectedTargetNamespace)) ||
-    (tokenizedAuth === 'AWS' && _.isEmpty(roleARNText)) ||
-    (tokenizedAuth === 'Azure' &&
-      [azureClientId, azureTenantId, azureSubscriptionId, azureResourceGroup].some((v) =>
-        _.isEmpty(v),
-      )) ||
-    (tokenizedAuth === 'GCP' &&
-      [gcpProjectNumber, gcpPoolId, gcpProviderId, gcpServiceAcctEmail].some((v) => _.isEmpty(v)));
+    !_.isEmpty(conflictingProvidedAPIs(selectedTargetNamespace));
 
   const formError = () => {
     return (
