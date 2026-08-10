@@ -1,8 +1,8 @@
 import { Table } from '@console/internal/components/factory';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
-import { fakeVulnFor } from '../../../integration-tests/bad-pods';
 import { Priority } from '../../const';
 import ImageVulnerabilitiesTable from '../ImageVulnerabilitiesTable';
+import { fakeVulnFor } from './bad-pods';
 
 jest.mock('@console/internal/components/factory', () => ({
   Table: jest.fn(() => null),
