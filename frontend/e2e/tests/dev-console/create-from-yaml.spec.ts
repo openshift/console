@@ -1,6 +1,7 @@
 import { test, expect } from '../../fixtures';
 import { warmupSPA } from '../../pages/base-page';
-import { AddPage, ImportYAMLPage, TopologyPage } from '../../pages/dev-console/add-page';
+import { AddPage, ImportYAMLPage } from '../../pages/dev-console/add-page';
+import { TopologyPage } from '../../pages/topology-page';
 
 /**
  * Migrated from:

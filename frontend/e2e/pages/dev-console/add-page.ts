@@ -192,11 +192,9 @@ export class ImportFromGitPage extends BasePage {
 
   async selectResourceType(type: string): Promise<void> {
     const toggle = this.page.locator('#form-select-input-resources-field');
-    // eslint-disable-next-line no-restricted-syntax
-    await toggle.waitFor({ state: 'visible', timeout: 30_000 });
     const currentValue = (await toggle.textContent())?.trim() || '';
     if (currentValue === type) return;
-    await this.robustClick(toggle);
+    await this.robustClick(toggle, { timeout: 30_000 });
     const option = this.page.getByRole('option', { name: new RegExp(`^${type}\\b`) });
     await this.robustClick(option);
   }
@@ -298,7 +296,6 @@ export class DeployImagePage extends BasePage {
   private readonly appNameInput: Locator = this.page.getByTestId('application-form-app-input');
   private readonly createButton: Locator = this.page.getByRole('button', { name: 'Create', exact: true });
   private readonly cancelButton: Locator = this.page.getByRole('button', { name: 'Cancel', exact: true });
-  private readonly saveButton: Locator = this.page.getByRole('button', { name: 'Create', exact: true });
 
   async navigateToDeployImage(namespace: string): Promise<void> {
     await this.goTo(`/deploy-image/ns/${namespace}`);
@@ -344,11 +341,8 @@ export class DeployImagePage extends BasePage {
   }
 
   async selectRuntimeIcon(iconName: string): Promise<void> {
-    // Scope to the FormGroup with fieldId="runtimeIcon" to avoid matching other ConsoleSelect toggles
-    const iconSection = this.page.locator('.odc-icon-dropdown');
-    // eslint-disable-next-line no-restricted-syntax
-    await iconSection.waitFor({ state: 'visible', timeout: 30_000 });
-    await this.robustClick(iconSection.getByTestId('console-select-menu-toggle'));
+    const iconToggle = this.page.locator('.odc-icon-dropdown').getByTestId('console-select-menu-toggle');
+    await this.robustClick(iconToggle, { timeout: 30_000 });
     const option = this.page.getByRole('option', { name: iconName });
     await this.robustClick(option);
   }
@@ -372,11 +366,9 @@ export class DeployImagePage extends BasePage {
 
   async selectResourceType(type: string): Promise<void> {
     const toggle = this.page.locator('#form-select-input-resources-field');
-    // eslint-disable-next-line no-restricted-syntax
-    await toggle.waitFor({ state: 'visible', timeout: 30_000 });
     const currentValue = (await toggle.textContent())?.trim() || '';
     if (currentValue === type) return;
-    await this.robustClick(toggle);
+    await this.robustClick(toggle, { timeout: 30_000 });
     const option = this.page.getByRole('option', { name: new RegExp(`^${type}\\b`) });
     await this.robustClick(option);
   }
@@ -389,117 +381,12 @@ export class DeployImagePage extends BasePage {
     await this.robustClick(this.cancelButton);
   }
 
-  async clickSave(): Promise<void> {
-    await this.robustClick(this.saveButton);
-  }
-
   getAppNameInput(): Locator {
     return this.appNameInput;
   }
 
   getNameInput(): Locator {
     return this.nameInput;
-  }
-}
-
-export class SoftwareCatalogPage extends BasePage {
-  private readonly pageHeading: Locator = this.page.getByTestId('page-heading');
-  private readonly filterInput: Locator = this.page.getByPlaceholder('Filter by keyword');
-
-  async navigateToCatalog(namespace: string): Promise<void> {
-    await this.goTo(`/catalog/ns/${namespace}`);
-    await expect(this.pageHeading).toBeVisible({ timeout: 60_000 });
-  }
-
-  async navigateToAllNamespacesCatalog(): Promise<void> {
-    await this.goTo('/catalog/all-namespaces');
-    await expect(this.pageHeading).toBeVisible({ timeout: 60_000 });
-  }
-
-  async navigateToTemplates(namespace: string): Promise<void> {
-    await this.goTo(`/catalog/ns/${namespace}?catalogType=Template`);
-    await expect(this.pageHeading).toBeVisible({ timeout: 60_000 });
-  }
-
-  async selectTypeOption(typeName: string): Promise<void> {
-    const typeFilter = this.page.getByTestId(`catalog-${typeName}`);
-    if ((await typeFilter.count()) > 0) {
-      await this.robustClick(typeFilter);
-      return;
-    }
-    // data-test-group-item: legacy attr from CatalogServiceProvider (no React source to add data-test)
-    const checkbox = this.page.locator(`[data-test-group-item="${typeName}"]`);
-    if ((await checkbox.count()) > 0) {
-      await this.robustClick(checkbox);
-      return;
-    }
-    // Final fallback: text-based
-    const link = this.page.getByRole('link', { name: typeName });
-    await this.robustClick(link);
-  }
-
-  async selectTemplateCategory(category: string): Promise<void> {
-    const categoryFilter = this.page.getByTestId(`category-${category}`);
-    if ((await categoryFilter.count()) > 0) {
-      await this.robustClick(categoryFilter);
-      return;
-    }
-    const categoryLink = this.page.getByRole('link', { name: category, exact: true });
-    await this.robustClick(categoryLink);
-  }
-
-  async searchAndSelectCard(cardName: string): Promise<void> {
-    await this.filterInput.fill(cardName);
-    // Wait for filtered results to render
-    const card = this.page.getByTestId(`catalog-tile-${cardName}`);
-    // co-catalog-tile: Console's catalog tile class from CatalogTile.tsx
-    const fallbackCard = this.page.locator('.co-catalog-tile').filter({ hasText: cardName });
-    const anyResult = card.or(fallbackCard.first());
-    await expect(anyResult).toBeVisible({ timeout: 10_000 });
-    if ((await card.count()) > 0) {
-      await this.robustClick(card);
-      return;
-    }
-    await this.robustClick(fallbackCard.first());
-  }
-
-  async clickInstantiateTemplate(): Promise<void> {
-    const button = this.page.getByTestId('catalog-details-modal-cta');
-    await this.robustClick(button);
-  }
-
-  async clickCreateApplicationButton(): Promise<void> {
-    const button = this.page.getByRole('link', { name: /create application/i });
-    await this.robustClick(button);
-  }
-
-  async filterByKeyword(keyword: string): Promise<void> {
-    await this.filterInput.fill(keyword);
-  }
-
-  getPageHeading(): Locator {
-    return this.pageHeading;
-  }
-
-  getFilterInput(): Locator {
-    return this.filterInput;
-  }
-
-  getHelpText(text: string): Locator {
-    return this.page.getByText(text);
-  }
-
-  getCatalogTiles(): Locator {
-    // co-catalog-tile: Console's catalog tile class from CatalogTile.tsx
-    return this.page.locator('.co-catalog-tile');
-  }
-
-  getFormSubmitButton(): Locator {
-    return this.page.getByRole('button', { name: 'Create', exact: true });
-  }
-
-  getProjectSelectionMessage(): Locator {
-    return this.page.getByText('Select a Project to view the software catalog');
   }
 }
 
@@ -524,57 +411,3 @@ export class ImportYAMLPage extends BasePage {
   }
 }
 
-export class TopologyPage extends BasePage {
-  async navigateToTopology(namespace: string): Promise<void> {
-    await this.goTo(`/topology/ns/${namespace}`);
-    await this.waitForLoadingComplete(30_000);
-  }
-
-  getWorkload(name: string): Locator {
-    return this.page.locator(`[data-id="${name}"] text`).first().or(
-      this.page.locator('.pf-topology-content').getByText(name, { exact: true }),
-    );
-  }
-
-  async ensureGraphView(): Promise<void> {
-    const switcher = this.page.getByTestId('topology-switcher-view');
-    const currentLabel = await switcher.getAttribute('aria-label');
-    if (currentLabel === 'Graph view') {
-      await this.robustClick(switcher);
-    }
-  }
-
-  async clickWorkload(name: string): Promise<void> {
-    await this.ensureGraphView();
-    const workload = this.getWorkload(name);
-    // eslint-disable-next-line no-restricted-syntax
-    await workload.waitFor({ state: 'visible', timeout: 60_000 });
-    await this.page.keyboard.press('Escape');
-    await expect(async () => {
-      await this.robustClick(workload);
-      await expect(this.getSidebar()).toBeVisible({ timeout: 5_000 });
-    }).toPass({ intervals: [1_000, 2_000, 5_000], timeout: 30_000 });
-  }
-
-  getSidebar(): Locator {
-    return this.page.getByTestId('topology-sidepane');
-  }
-
-  getSidebarTitle(): Locator {
-    return this.page.getByTestId('topology-sidepane').getByTestId('page-heading');
-  }
-
-  async waitForWorkload(name: string, timeoutMs = 120_000): Promise<void> {
-    await this.page.waitForURL(/\/topology\//, { timeout: timeoutMs });
-    const workload = this.getWorkload(name);
-    // eslint-disable-next-line no-restricted-syntax
-    await workload.waitFor({ state: 'visible', timeout: timeoutMs });
-  }
-
-  async switchToListView(): Promise<void> {
-    const listViewBtn = this.page.getByTestId('topology-list-view');
-    if ((await listViewBtn.count()) > 0) {
-      await this.robustClick(listViewBtn);
-    }
-  }
-}

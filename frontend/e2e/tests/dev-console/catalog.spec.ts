@@ -1,10 +1,8 @@
 import { test, expect } from '../../fixtures';
 import { warmupSPA } from '../../pages/base-page';
-import {
-  AddPage,
-  SoftwareCatalogPage,
-  TopologyPage,
-} from '../../pages/dev-console/add-page';
+import { CatalogPage } from '../../pages/catalog-page';
+import { AddPage } from '../../pages/dev-console/add-page';
+import { TopologyPage } from '../../pages/topology-page';
 
 /**
  * Migrated from:
@@ -27,12 +25,12 @@ test.describe(
   () => {
     const ns = `aut-addflow-catalog-${Date.now()}`;
     let addPage: AddPage;
-    let catalogPage: SoftwareCatalogPage;
+    let catalogPage: CatalogPage;
     let topologyPage: TopologyPage;
 
     test.beforeEach(async ({ page, k8sClient, cleanup }) => {
       addPage = new AddPage(page);
-      catalogPage = new SoftwareCatalogPage(page);
+      catalogPage = new CatalogPage(page);
       topologyPage = new TopologyPage(page);
       await k8sClient.createNamespace(ns);
       cleanup.trackNamespace(ns);
@@ -70,12 +68,12 @@ test.describe(
   () => {
     const ns = `aut-addflow-database-${Date.now()}`;
     let addPage: AddPage;
-    let catalogPage: SoftwareCatalogPage;
+    let catalogPage: CatalogPage;
     let topologyPage: TopologyPage;
 
     test.beforeEach(async ({ page, k8sClient, cleanup }) => {
       addPage = new AddPage(page);
-      catalogPage = new SoftwareCatalogPage(page);
+      catalogPage = new CatalogPage(page);
       topologyPage = new TopologyPage(page);
       await k8sClient.createNamespace(ns);
       cleanup.trackNamespace(ns);
@@ -107,10 +105,10 @@ test.describe(
   'Software Catalog with All Namespaces',
   { tag: ['@dev-console', '@regression'] },
   () => {
-    let catalogPage: SoftwareCatalogPage;
+    let catalogPage: CatalogPage;
 
     test.beforeEach(async ({ page }) => {
-      catalogPage = new SoftwareCatalogPage(page);
+      catalogPage = new CatalogPage(page);
       await warmupSPA(page);
     });
 
@@ -151,10 +149,10 @@ test.describe(
   { tag: ['@dev-console', '@regression'] },
   () => {
     const ns = `aut-catalog-pagedetails-${Date.now()}`;
-    let catalogPage: SoftwareCatalogPage;
+    let catalogPage: CatalogPage;
 
     test.beforeEach(async ({ page, k8sClient, cleanup }) => {
-      catalogPage = new SoftwareCatalogPage(page);
+      catalogPage = new CatalogPage(page);
       await k8sClient.createNamespace(ns);
       cleanup.trackNamespace(ns);
       await warmupSPA(page);

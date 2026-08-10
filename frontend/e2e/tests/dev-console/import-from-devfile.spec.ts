@@ -2,8 +2,8 @@ import { test, expect } from '../../fixtures';
 import {
   AddPage,
   ImportFromGitPage,
-  TopologyPage,
 } from '../../pages/dev-console/add-page';
+import { TopologyPage } from '../../pages/topology-page';
 
 /**
  * Migrated from:
