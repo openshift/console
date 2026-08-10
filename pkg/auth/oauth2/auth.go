@@ -206,16 +206,16 @@ func NewOAuth2Authenticator(ctx context.Context, config *Config) (*OAuth2Authent
 	a := newUnstartedAuthenticator(c)
 
 	authConfig := &oidcConfig{
-		getClient:              a.clientFunc,
-		issuerURL:              c.IssuerURL,
-		logoutRedirectOverride: c.LogoutRedirectOverride,
-		clientID:               c.ClientID,
-		consoleBaseAddress:     c.ConsoleBaseAddress,
-		cookiePath:             c.CookiePath,
-		secureCookies:          c.SecureCookies,
+		getClient:               a.clientFunc,
+		issuerURL:               c.IssuerURL,
+		logoutRedirectOverride:  c.LogoutRedirectOverride,
+		clientID:                c.ClientID,
+		consoleBaseAddress:      c.ConsoleBaseAddress,
+		cookiePath:              c.CookiePath,
+		secureCookies:           c.SecureCookies,
 		cookieAuthenticationKey: c.CookieAuthenticationKey,
-		cookieEncryptionKey:    c.CookieEncryptionKey,
-		constructOAuth2Config:  a.oauth2ConfigConstructor,
+		cookieEncryptionKey:     c.CookieEncryptionKey,
+		constructOAuth2Config:   a.oauth2ConfigConstructor,
 	}
 
 	var tokenHandler loginMethod

@@ -14,8 +14,8 @@ import (
 )
 
 const (
-	OpenshiftAccessTokenCookieName  = "openshift-session-token"
-	openshiftRefreshTokenCookieName = "openshift-refresh-token"
+	OpenshiftAccessTokenCookieName   = "openshift-session-token"
+	openshiftRefreshTokenCookieName  = "openshift-refresh-token"
 	openshiftRecoveryTokenCookieName = "openshift-recovery-token"
 )
 

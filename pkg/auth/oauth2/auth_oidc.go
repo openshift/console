@@ -34,16 +34,16 @@ type oidcAuth struct {
 }
 
 type oidcConfig struct {
-	getClient              func() *http.Client
-	issuerURL              string
-	logoutRedirectOverride string
-	clientID               string
-	consoleBaseAddress     string
-	cookiePath             string
-	secureCookies          bool
+	getClient               func() *http.Client
+	issuerURL               string
+	logoutRedirectOverride  string
+	clientID                string
+	consoleBaseAddress      string
+	cookiePath              string
+	secureCookies           bool
 	cookieAuthenticationKey []byte
-	cookieEncryptionKey    []byte
-	constructOAuth2Config  oauth2ConfigConstructor
+	cookieEncryptionKey     []byte
+	constructOAuth2Config   oauth2ConfigConstructor
 }
 
 func newOIDCAuth(ctx context.Context, sessionStore *sessions.CombinedSessionStore, c *oidcConfig, metrics *auth.Metrics) (*oidcAuth, error) {

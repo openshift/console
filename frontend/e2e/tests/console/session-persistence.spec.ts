@@ -118,9 +118,15 @@ test.describe(
       });
 
       await test.step('Wait for console rollout', async () => {
-        // The operator triggers a new rollout when plugin config changes
-        // Wait briefly for the rollout to start, then wait for it to complete
-        await page.waitForTimeout(10_000);
+        // The operator triggers a new rollout when plugin config changes.
+        // Delete the console pods to force immediate restart, then wait for readiness.
+        const pods = await k8sClient.getPods(CONSOLE_NAMESPACE);
+        const consolePods = pods.filter(
+          (p) => p.metadata?.labels?.['component'] === 'ui',
+        );
+        for (const pod of consolePods) {
+          await k8sClient.deletePod(pod.metadata!.name!, CONSOLE_NAMESPACE);
+        }
         await k8sClient.waitForDeploymentReady(CONSOLE_DEPLOYMENT, CONSOLE_NAMESPACE, 180_000);
       });
 
