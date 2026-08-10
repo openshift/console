@@ -1,4 +1,5 @@
 import { test, expect } from '../../fixtures';
+import { warmupSPA } from '../../pages/base-page';
 import { WebTerminalConfigPage } from '../../pages/web-terminal-config-page';
 import {
   ensureWebTerminalOperatorInstalled,
@@ -17,6 +18,10 @@ test.describe('Customization of web terminal options', () => {
 
   test.afterAll(async ({ k8sClient }) => {
     await uninstallWebTerminalOperator(k8sClient);
+  });
+
+  test.beforeEach(async ({ page }) => {
+    await warmupSPA(page);
   });
 
   test(
