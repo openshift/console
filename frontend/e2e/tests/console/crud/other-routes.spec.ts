@@ -175,8 +175,9 @@ test.describe('Perspective query parameters', { tag: ['@admin'] }, () => {
   }) => {
     await test.step('Ensure Developer perspective is available', async () => {
       await warmupSPA(page);
-      await ensureDeveloperPerspective(page, k8sClient);
-      patchedPerspectives = true;
+      if (await ensureDeveloperPerspective(page, k8sClient)) {
+        patchedPerspectives = true;
+      }
     });
 
     await test.step('Navigate with perspective=dev and verify', async () => {
@@ -193,7 +194,9 @@ test.describe('Perspective query parameters', { tag: ['@admin'] }, () => {
   }) => {
     await test.step('Switch to Developer perspective first', async () => {
       await warmupSPA(page);
-      await ensureDeveloperPerspective(page, k8sClient);
+      if (await ensureDeveloperPerspective(page, k8sClient)) {
+        patchedPerspectives = true;
+      }
 
       await page.goto('/topology/all-namespaces?view=graph&perspective=dev');
       await expect(page.getByTestId('perspective-switcher-toggle')).toContainText('Developer', {
