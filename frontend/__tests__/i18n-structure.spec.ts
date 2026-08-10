@@ -44,6 +44,42 @@ describe('i18n structure', () => {
       expect(mismatches).toEqual([]);
     });
 
+    it('must have different values for _one and _other plural keys in EN', () => {
+      const enLocaleFiles = LOCALE_FILES.filter((file) => file.includes('/en/'));
+      const identical: string[] = [];
+
+      for (const file of enLocaleFiles) {
+        const raw = readFileSync(resolve(FRONTEND_DIR, file), 'utf-8');
+        const data = JSON.parse(raw);
+        const lines = raw.split('\n');
+
+        for (const [key, value] of Object.entries(data)) {
+          if (key.endsWith('_one')) {
+            const base = key.slice(0, -4);
+            const otherValue = data[`${base}_other`];
+            if (otherValue !== undefined && value === otherValue) {
+              const line = lines.findIndex((l) => l.includes(`"${key}"`)) + 1;
+              identical.push(`${file}:${line}: "${base}"`);
+            }
+          }
+        }
+      }
+
+      if (identical.length > 0) {
+        throw new Error(
+          [
+            'Found _one/_other pairs with identical values:',
+            '',
+            ...identical,
+            '',
+            'Hint: If the singular and plural forms are genuinely identical, use a',
+            'variable name other than "count" (e.g. "numberOf") to avoid i18next',
+            'plural resolution and use a single key instead of _one/_other pairs.',
+          ].join('\n'),
+        );
+      }
+    });
+
     it('must contain only one file per locale directory', () => {
       const dirCounts: Record<string, string[]> = {};
       for (const file of LOCALE_FILES) {

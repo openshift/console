@@ -19,7 +19,7 @@ cd frontend
 yarn i18n
 ```
 
-This command launches the [code parser](https://github.com/i18next/i18next-parser), generates JSON files containing English key:value pairs for all internationalized strings, and consolidates any English JSON files with identical names to avoid namespace conflicts in i18next.
+This command launches the [code parser](https://github.com/i18next/i18next-cli), generates JSON files containing English key:value pairs for all internationalized strings, and consolidates any English JSON files with identical names to avoid namespace conflicts in i18next.
 
 #### Scope
 We are not able to translate all text in the application. Text located in backend code or non-Red-Hat-controlled development environments may not be accessible for translation.
@@ -55,7 +55,7 @@ Good: t('public~Hello, it is now {{date}}', { date: new Date() })
 ```
 model.labelPluralKey ? t(model.labelPluralKey) :  model.labelPlural
 ```
-* While i18next extracts translation keys in runtime, i18next-parser (the tool we use to generate JSON files) doesn't run the code, so it can't interpolate values in these expressions:
+* At runtime, i18next resolves translation keys to translated text. At build time, i18next-cli (the tool we use to generate JSON files) extracts keys from source code via static analysis without executing it, so it cannot resolve dynamic expressions like:
 
 ```
 t(key)

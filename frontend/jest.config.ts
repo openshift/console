@@ -29,8 +29,6 @@ export default defineConfig({
           type: 'commonjs',
           noInterop: true,
         },
-      // prettier too old to support satisfies operator
-      // eslint-disable-next-line prettier/prettier
       } satisfies SwcOptions,
     ],
   },
