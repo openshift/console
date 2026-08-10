@@ -173,7 +173,7 @@ interface ManifestResource {
           // plugin as Loaded.
           await expect(async () => {
             await consolePluginPage.navigateToConsolePlugins();
-            await expect(page.getByTestId(`${PLUGIN_NAME}-name`)).toBeVisible();
+            await expect(page.getByTestId(`data-view-cell-${PLUGIN_NAME}-name`)).toBeVisible();
             await expect(page.getByTestId(`${PLUGIN_NAME}-status`)).toContainText('Loaded');
           }).toPass({ timeout: 300_000, intervals: [15_000] });
         });
@@ -362,7 +362,7 @@ interface ManifestResource {
           // each retry to get fresh cookies from the new pod.
           await expect(async () => {
             await consolePluginPage.navigateToConsolePlugins();
-            await expect(page.getByTestId(`${PLUGIN_NAME}-name`)).toBeVisible();
+            await expect(page.getByTestId(`data-view-cell-${PLUGIN_NAME}-name`)).toBeVisible();
             const row = consolePluginPage.getPluginNameCell(PLUGIN_NAME).locator('xpath=ancestor::tr');
             await expect(row.getByTestId('edit-console-plugin')).toContainText('Disabled');
             await expect(

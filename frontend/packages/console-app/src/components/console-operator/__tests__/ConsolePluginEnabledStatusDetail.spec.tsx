@@ -1,10 +1,10 @@
 import { screen } from '@testing-library/react';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
-import * as ConsoleOperatorConfigModule from '../ConsoleOperatorConfig';
 import ConsolePluginEnabledStatusDetail from '../ConsolePluginEnabledStatusDetail';
+import * as consolePluginStatusModule from '../ConsolePluginStatus';
 import { addLoadedPlugin, createTestPluginStore } from './pluginTestUtils';
 
-jest.mock('../ConsoleOperatorConfig', () => ({
+jest.mock('../ConsolePluginStatus', () => ({
   ConsolePluginEnabledStatus: ({
     pluginName,
     enabled,
@@ -21,7 +21,7 @@ jest.mock('../ConsoleOperatorConfig', () => ({
 }));
 
 const mockUseConsoleOperatorConfigData =
-  ConsoleOperatorConfigModule.useConsoleOperatorConfigData as jest.Mock;
+  consolePluginStatusModule.useConsoleOperatorConfigData as jest.Mock;
 
 describe('ConsolePluginEnabledStatusDetail', () => {
   const createMockObj = (name: string) => ({

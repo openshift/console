@@ -90,6 +90,7 @@
       "volumeSnapshotContent": "src/components/volume-snapshot/volume-snapshot-content.tsx",
       "volumeSnapshotContentDetails": "src/components/volume-snapshot/volume-snapshot-content-details.tsx",
       "ConsoleOperatorConfig": "src/components/console-operator/ConsoleOperatorConfig.tsx",
+      "ConsolePluginsListPage": "src/components/console-operator/ConsolePluginsTable.tsx",
       "UserPreferencePage": "src/components/user-preferences/UserPreferencePage.tsx",
       "ConsolePluginManifestPage": "src/components/console-operator/ConsolePluginManifestPage.tsx",
       "getGuidedTour": "src/components/guided-tour/index.tsx",

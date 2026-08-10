@@ -25,7 +25,7 @@ export class ConsolePluginPage extends BasePage {
   }
 
   getPluginNameCell(pluginName: string): Locator {
-    return this.page.getByTestId(`${pluginName}-name`);
+    return this.page.getByTestId(`data-view-cell-${pluginName}-name`);
   }
 
   getPluginStatusCell(pluginName: string): Locator {

@@ -7,11 +7,12 @@ import {
   ConsolePluginEnabledStatus,
   developmentMode,
   useConsoleOperatorConfigData,
-} from './ConsoleOperatorConfig';
+} from './ConsolePluginStatus';
 
 const ConsolePluginEnabledStatusDetail: FC<DetailsItemComponentProps> = ({ obj }) => {
   const pluginInfoEntries = usePluginInfo();
-  const { consoleOperatorConfig, consoleOperatorConfigLoaded } = useConsoleOperatorConfigData();
+  const { consoleOperatorConfig, consoleOperatorConfigLoaded, canPatchConsoleOperatorConfig } =
+    useConsoleOperatorConfigData();
 
   const pluginName = useMemo(() => obj?.metadata?.name, [obj?.metadata?.name]);
 
@@ -32,6 +33,8 @@ const ConsolePluginEnabledStatusDetail: FC<DetailsItemComponentProps> = ({ obj }
           ? ((pluginInfo?.status === 'loaded' && pluginInfo.enabled) ?? false)
           : (enabledPlugins.includes(pluginName) ?? false)
       }
+      consoleOperatorConfig={consoleOperatorConfig}
+      canPatch={canPatchConsoleOperatorConfig}
     />
   ) : (
     <>{DASH}</>

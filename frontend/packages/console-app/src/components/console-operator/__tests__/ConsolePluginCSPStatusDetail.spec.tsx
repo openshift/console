@@ -3,7 +3,7 @@ import { Map as ImmutableMap } from 'immutable';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import ConsolePluginCSPStatusDetail from '../ConsolePluginCSPStatusDetail';
 
-jest.mock('../ConsoleOperatorConfig', () => ({
+jest.mock('../ConsolePluginStatus', () => ({
   ConsolePluginCSPStatus: ({ hasViolations }: { hasViolations: boolean }) => (
     <span>{hasViolations ? 'Has violations' : 'No violations'}</span>
   ),
