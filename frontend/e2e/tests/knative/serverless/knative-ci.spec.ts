@@ -1,6 +1,7 @@
 import { execFileSync } from 'child_process';
 
 import { test, expect } from '../../../fixtures';
+import { warmupSPA } from '../../../pages/base-page';
 import { AddFlowPage } from '../../../pages/knative/add-flow-page';
 import { AdminEventingPage } from '../../../pages/knative/admin-eventing-page';
 import { TopologyKnativePage } from '../../../pages/knative/topology-knative-page';
@@ -37,6 +38,10 @@ test.describe(
 
     test.afterAll(async () => {
       await k8sClient.deleteNamespace(namespace);
+    });
+
+    test.beforeEach(async ({ page }) => {
+      await warmupSPA(page);
     });
 
     test('KN-05-TC04: Create knative workload from Git', async ({ page }) => {
