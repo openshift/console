@@ -1,5 +1,6 @@
 import type { Page } from '@playwright/test';
 import { test, expect } from '../../../fixtures';
+import { ensureDeveloperPerspective, warmupSPA } from '../../../pages/base-page';
 import { testA11y } from '../../../utils/a11y';
 
 type RouteConfig = {
@@ -173,33 +174,9 @@ test.describe('Perspective query parameters', { tag: ['@admin'] }, () => {
     k8sClient,
   }) => {
     await test.step('Ensure Developer perspective is available', async () => {
-      await page.goto('/k8s/cluster/projects');
-
-      const toggle = page.getByTestId('perspective-switcher-toggle');
-      await expect(toggle).toBeVisible();
-
-      const isSinglePerspective =
-        (await toggle.getAttribute('id')) === 'only-one-perspective';
-      if (isSinglePerspective) {
-        await k8sClient.customObjectsApi.patchClusterCustomObject({
-          group: 'operator.openshift.io',
-          version: 'v1',
-          plural: 'consoles',
-          name: 'cluster',
-          body: [
-            {
-              op: 'add',
-              path: '/spec/customization/perspectives',
-              value: [{ id: 'dev', visibility: { state: 'Enabled' } }],
-            },
-          ],
-        });
-        patchedPerspectives = true;
-      }
-      await expect(async () => {
-        await page.reload();
-        await expect(toggle).not.toHaveAttribute('id', 'only-one-perspective');
-      }).toPass({ timeout: 60_000 });
+      await warmupSPA(page);
+      await ensureDeveloperPerspective(page, k8sClient);
+      patchedPerspectives = true;
     });
 
     await test.step('Navigate with perspective=dev and verify', async () => {
@@ -212,19 +189,16 @@ test.describe('Perspective query parameters', { tag: ['@admin'] }, () => {
 
   test('Administrator query parameter switches to Administrator perspective', async ({
     page,
+    k8sClient,
   }) => {
     await test.step('Switch to Developer perspective first', async () => {
-      await page.goto('/k8s/cluster/projects');
+      await warmupSPA(page);
+      await ensureDeveloperPerspective(page, k8sClient);
 
-      const toggle = page.getByTestId('perspective-switcher-toggle');
-      await toggle.click();
-
-      const devOption = page
-        .getByTestId('perspective-switcher-menu-option')
-        .filter({ hasText: 'Developer' });
-      await devOption.click();
-
-      await expect(toggle).toContainText('Developer');
+      await page.goto('/topology/all-namespaces?view=graph&perspective=dev');
+      await expect(page.getByTestId('perspective-switcher-toggle')).toContainText('Developer', {
+        timeout: 30_000,
+      });
     });
 
     await test.step('Navigate with perspective=admin and verify', async () => {
