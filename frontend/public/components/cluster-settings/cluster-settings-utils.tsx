@@ -3,33 +3,18 @@ import { Alert, Flex, FlexItem, Label } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import * as semver from 'semver';
-import type { WatchK8sResource } from '@console/dynamic-plugin-sdk';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import type { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { MarkdownView } from '@console/shared/src/components/markdown/MarkdownView';
-import { ClusterOperatorModel } from '../../models';
-import type { ClusterOperator, ClusterVersionKind } from '../../module/k8s';
+import type { ClusterVersionKind } from '../../module/k8s';
 import {
   getConditionUpgradeableFalse,
   getLastCompletedUpdate,
   getNewerMinorVersionUpdate,
-  getNotUpgradeableResources,
   getSortedAvailableUpdates,
-  referenceForModel,
 } from '../../module/k8s';
 import { documentationURLs, getDocumentationURL } from '../utils/documentation';
-
-const ClusterOperatorsResource: WatchK8sResource = {
-  isList: true,
-  kind: referenceForModel(ClusterOperatorModel),
-};
-
-const ClusterServiceVersionResource: WatchK8sResource = {
-  isList: true,
-  kind: referenceForModel(ClusterServiceVersionModel),
-};
+import { resourceListPathFromModel } from '../utils/resource-link';
 
 const ClusterOperatorsLink: FC<ClusterOperatorsLinkProps> = ({
   onCancel,
@@ -73,15 +58,7 @@ export const ClusterNotUpgradeableAlert: FC<ClusterNotUpgradeableAlertProps> = (
   cv,
   onCancel,
 }) => {
-  const [clusterOperators] = useK8sWatchResource<ClusterOperator[]>(ClusterOperatorsResource);
-  const [clusterServiceVersions] = useK8sWatchResource<ClusterServiceVersionKind[]>(
-    ClusterServiceVersionResource,
-  );
   const { t } = useTranslation('public');
-  const notUpgradeableClusterOperators = getNotUpgradeableResources(clusterOperators);
-  const notUpgradeableClusterOperatorsPresent = notUpgradeableClusterOperators.length > 0;
-  const notUpgradeableClusterServiceVersions = getNotUpgradeableResources(clusterServiceVersions);
-  const notUpgradeableCSVsPresent = notUpgradeableClusterServiceVersions.length > 0;
   const clusterUpgradeableFalseCondition = getConditionUpgradeableFalse(cv);
   const currentVersion = getLastCompletedUpdate(cv);
   const currentVersionParsed = semver.parse(currentVersion);
@@ -105,28 +82,19 @@ export const ClusterNotUpgradeableAlert: FC<ClusterNotUpgradeableAlertProps> = (
       }
       className="co-alert"
       actionLinks={
-        (notUpgradeableClusterOperatorsPresent || notUpgradeableCSVsPresent) && (
-          <Flex>
-            {notUpgradeableClusterOperatorsPresent && (
-              <FlexItem>
-                <ClusterOperatorsLink onCancel={onCancel} queryString="?status=Cannot+update">
-                  {t('View ClusterOperators')}
-                </ClusterOperatorsLink>
-              </FlexItem>
-            )}
-            {notUpgradeableCSVsPresent && (
-              // TODO:  update link to include filter once installed Operators filters are updated
-              <FlexItem>
-                <Link
-                  onClick={onCancel}
-                  to={`/k8s/ns/all-namespaces/${ClusterServiceVersionModel.plural}`}
-                >
-                  {t('View installed Operators')}
-                </Link>
-              </FlexItem>
-            )}
-          </Flex>
-        )
+        <Flex>
+          <FlexItem>
+            <ClusterOperatorsLink onCancel={onCancel} queryString="?status=Cannot+update">
+              {t('View ClusterOperators')}
+            </ClusterOperatorsLink>
+          </FlexItem>
+          {/* TODO:  update link to include filter once installed Operators filters are updated */}
+          <FlexItem>
+            <Link onClick={onCancel} to={resourceListPathFromModel(ClusterServiceVersionModel)}>
+              {t('View installed Operators')}
+            </Link>
+          </FlexItem>
+        </Flex>
       }
       data-test="cluster-settings-alerts-not-upgradeable"
     >
