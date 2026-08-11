@@ -48,7 +48,7 @@ export async function dismissQuickStartDrawer(page: Page): Promise<void> {
 export async function ensureDeveloperPerspective(
   page: Page,
   k8sClient: KubernetesClient,
-): Promise<void> {
+): Promise<boolean> {
   const toggle = page.getByTestId('perspective-switcher-toggle');
   await expect(toggle).toBeVisible();
   const isSinglePerspective =
@@ -77,7 +77,9 @@ export async function ensureDeveloperPerspective(
       await expect(devOption).toBeVisible();
       await page.keyboard.press('Escape');
     }).toPass({ timeout: 60_000 });
+    return true;
   }
+  return false;
 }
 
 export default abstract class BasePage {
