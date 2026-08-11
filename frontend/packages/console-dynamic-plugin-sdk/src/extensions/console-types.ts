@@ -884,6 +884,7 @@ export type ResourceYAMLEditorProps = {
   initialResource: K8sResourceKind;
   header?: string;
   onSave?: (content: string) => void;
+  onCancel?: () => void;
   readOnly?: boolean;
   create?: boolean;
   onChange?: (content: string) => void;
