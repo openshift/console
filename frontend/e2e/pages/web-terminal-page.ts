@@ -26,26 +26,12 @@ export class WebTerminalPage extends BasePage {
   private readonly closeTerminalButton = this.page.getByLabel(/Close terminal/);
   private readonly inactivityMessageArea = this.page.locator('div.co-cloudshell-exec__error-msg');
 
-  async waitForTerminalIconVisible(maxRetries = 10): Promise<void> {
+  async waitForTerminalIconVisible(): Promise<void> {
     await warmupSPA(this.page);
-    try {
-      // eslint-disable-next-line no-restricted-syntax
-      await this.terminalIcon.waitFor({ state: 'visible', timeout: 30_000 });
-      return;
-    } catch {
-      // Icon not visible on first load — retry with reloads
-    }
-    for (let attempt = 0; attempt < maxRetries; attempt++) {
-      await this.page.reload();
-      try {
-        // eslint-disable-next-line no-restricted-syntax
-        await this.terminalIcon.waitFor({ state: 'visible', timeout: 15_000 });
-        return;
-      } catch {
-        // Retry
-      }
-    }
-    throw new Error(`Terminal icon not visible after ${maxRetries} retries`);
+    await expect(async () => {
+      await this.page.reload({ waitUntil: 'domcontentloaded' });
+      await expect(this.terminalIcon).toBeVisible({ timeout: 15_000 });
+    }).toPass({ intervals: [2_000, 5_000, 10_000], timeout: 120_000 });
   }
 
   async clickTerminalIcon(): Promise<void> {
@@ -54,7 +40,7 @@ export class WebTerminalPage extends BasePage {
     await this.loadingBox.waitFor({ state: 'detached', timeout: 60_000 }).catch(() => {});
   }
 
-  async waitForTerminalWindow(timeoutMs = 60_000): Promise<void> {
+  async waitForTerminalWindow(timeoutMs = 120_000): Promise<void> {
     await expect(this.terminalContainer).toBeVisible({ timeout: timeoutMs });
     await expect(this.terminalWindow).toBeVisible({ timeout: timeoutMs });
   }

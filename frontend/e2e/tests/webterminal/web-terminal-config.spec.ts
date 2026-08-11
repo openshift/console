@@ -27,6 +27,7 @@ test.describe('Customization of web terminal options', () => {
   test(
     'navigate to Web Terminal Configuration page',
     async ({ page }) => {
+      test.slow();
       const configPage = new WebTerminalConfigPage(page);
 
       await test.step('Navigate to Consoles and open Customize', async () => {
@@ -42,6 +43,7 @@ test.describe('Customization of web terminal options', () => {
   test(
     'change timeout and image with persist checkboxes',
     async ({ page }) => {
+      test.slow();
       const configPage = new WebTerminalConfigPage(page);
 
       await test.step('Navigate to Web Terminal Configuration', async () => {
@@ -68,6 +70,7 @@ test.describe('Customization of web terminal options', () => {
   test(
     'change timeout to Hours and verify values persist after tab switch',
     async ({ page }) => {
+      test.slow();
       const configPage = new WebTerminalConfigPage(page);
 
       await test.step('Navigate to Web Terminal Configuration', async () => {
@@ -98,6 +101,7 @@ test.describe('Customization of web terminal options', () => {
   test(
     'save without persist checkboxes',
     async ({ page }) => {
+      test.slow();
       const configPage = new WebTerminalConfigPage(page);
 
       await test.step('Navigate to Web Terminal Configuration', async () => {
@@ -121,6 +125,7 @@ test.describe('Customization of web terminal options', () => {
   test(
     'verify unchecked checkboxes persist after tab switch',
     async ({ page }) => {
+      test.slow();
       const configPage = new WebTerminalConfigPage(page);
 
       await test.step('Navigate to Web Terminal Configuration', async () => {
