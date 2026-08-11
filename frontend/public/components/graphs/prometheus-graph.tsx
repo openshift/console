@@ -13,7 +13,7 @@ import type { RootState } from '../../redux';
 
 const mapStateToProps = (state: RootState) => ({
   canAccessMonitoring:
-    !!state[featureReducerName].get(FLAGS.CAN_GET_NS) && !!window.SERVER_FLAGS.prometheusBaseURL,
+    !!state[featureReducerName][FLAGS.CAN_GET_NS] && !!window.SERVER_FLAGS.prometheusBaseURL,
   namespace: getActiveNamespace(state),
 });
 

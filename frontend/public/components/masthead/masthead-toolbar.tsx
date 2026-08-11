@@ -179,7 +179,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
     (state) => ({
       clusterID: state.UI.get('clusterID'),
       alertCount: state.observe.getIn(['alertCount']),
-      canAccessNS: !!state[featureReducerName].get(FLAGS.CAN_GET_NS),
+      canAccessNS: !!state[featureReducerName][FLAGS.CAN_GET_NS],
       impersonate: getImpersonate(state),
     }),
     shallowEqual,
