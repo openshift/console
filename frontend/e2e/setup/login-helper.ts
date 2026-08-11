@@ -65,6 +65,13 @@ export async function isOnLoginPage(page: Page, timeoutMs = 0): Promise<boolean>
     .locator('[data-test-id="login"]')
     .or(page.locator('#inputUsername'))
     .first();
+  // timeoutMs === 0 means an instantaneous check. Note that Playwright's
+  // waitFor treats timeout: 0 as "wait forever", so use the non-waiting
+  // isVisible() for the zero case and only wait when a bounded window is asked
+  // for.
+  if (timeoutMs <= 0) {
+    return loginLocator.isVisible().catch(() => false);
+  }
   try {
     // eslint-disable-next-line no-restricted-syntax
     await loginLocator.waitFor({ state: 'visible', timeout: timeoutMs });

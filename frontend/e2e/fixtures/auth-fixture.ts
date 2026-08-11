@@ -27,9 +27,19 @@ function storageStatePath(testInfo: TestInfo): string | undefined {
 /**
  * True for OAuth server / console login URLs — the pages a session-expiry
  * redirect passes through. These are never the route a test wants to resume at.
+ *
+ * Matches against the URL pathname and anchors on known auth path prefixes so
+ * console resource routes that merely contain "auth" or "login" as a segment
+ * (e.g. a Secret named "auth") aren't misclassified.
  */
 function isAuthUrl(url: string): boolean {
-  return /\/oauth\/|\/oauth2\/|\/login(\/|$|\?)|\/auth\//.test(url);
+  let pathname: string;
+  try {
+    pathname = new URL(url).pathname;
+  } catch {
+    return false;
+  }
+  return /^\/(oauth2?|login|auth)(\/|$)/.test(pathname);
 }
 
 /**
@@ -59,34 +69,28 @@ export async function recoverSessionIfExpired(
 
   // Claim the re-login slot synchronously — before any await — so concurrent
   // navigation events can't both pass the check above and launch duplicate
-  // logins. The deferred is published now and settled once we know whether a
-  // recovery is actually needed; if not, we release the slot immediately.
+  // logins. The deferred is published now and settled in the finally below;
+  // keeping every early return and rejection inside the try guarantees the
+  // slot is always released (a stuck claim would block all future recovery).
   let release!: () => void;
   const claim = new Promise<void>((resolve) => {
     release = resolve;
   });
   reloginInProgress.set(page, claim);
 
-  const finish = (): void => {
-    release();
-    reloginInProgress.delete(page);
-  };
-
-  if (!(await isOnLoginPage(page, detectTimeoutMs))) {
-    finish();
-    return false;
-  }
-
-  const statePath = storageStatePath(testInfo);
-  const credentials = statePath ? resolveCredentialsForStorageState(statePath) : null;
-  if (!credentials) {
-    // No credentials to recover with (e.g. auth disabled or dev creds unset).
-    finish();
-    return false;
-  }
-
-  const intendedUrl = lastAppUrl.get(page);
   try {
+    if (!(await isOnLoginPage(page, detectTimeoutMs))) {
+      return false;
+    }
+
+    const statePath = storageStatePath(testInfo);
+    const credentials = statePath ? resolveCredentialsForStorageState(statePath) : null;
+    if (!credentials) {
+      // No credentials to recover with (e.g. auth disabled or dev creds unset).
+      return false;
+    }
+
+    const intendedUrl = lastAppUrl.get(page);
     // eslint-disable-next-line no-console
     console.warn(
       `[auth] Session expired for "${testInfo.titlePath.join(' > ')}"; re-authenticating.`,
@@ -101,10 +105,25 @@ export async function recoverSessionIfExpired(
     if (intendedUrl && intendedUrl !== page.url()) {
       await page.goto(intendedUrl, { waitUntil: 'domcontentloaded' });
     }
+    return true;
   } finally {
-    finish();
+    release();
+    reloginInProgress.delete(page);
   }
-  return true;
+}
+
+/**
+ * Awaits any session recovery currently in progress for the page (no-op if
+ * none). Call this after a navigation so a test action doesn't race an
+ * in-flight re-login triggered by that same navigation.
+ */
+export async function awaitSessionRecovery(page: Page): Promise<void> {
+  const inProgress = reloginInProgress.get(page);
+  if (inProgress) {
+    await inProgress.catch(() => {
+      /* best-effort — recovery errors are surfaced by the failing test action */
+    });
+  }
 }
 
 /**
