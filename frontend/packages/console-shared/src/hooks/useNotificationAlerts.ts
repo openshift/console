@@ -26,8 +26,8 @@ export const useNotificationAlerts = (
     true,
     true,
   );
-  const notificationAlerts = useConsoleSelector<NotificationAlerts | undefined>(({ observe }) =>
-    observe.get('notificationAlerts'),
+  const notificationAlerts = useConsoleSelector<NotificationAlerts | undefined>(
+    ({ observe }) => observe.notificationAlerts,
   );
   const { data: alerts, loaded, loadError } = notificationAlerts ?? emptyNotificationAlerts;
 
