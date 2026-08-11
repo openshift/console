@@ -83,7 +83,7 @@ const generateObjToLoad = (
 const stateToProps = (state: RootState) => ({
   activeNamespace: getActiveNamespace(state),
   impersonate: getImpersonate(state),
-  models: state.k8s.getIn(['RESOURCES', 'models']) as Map<string, K8sModel>,
+  models: state.k8s.RESOURCES?.models as Record<string, K8sModel>,
 });
 
 export interface EditYAMLProps {
@@ -220,7 +220,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
       if (_.isEmpty(obj) || !models) {
         return null;
       }
-      return models.get(referenceFor(obj)) || models.get(obj.kind);
+      return models[referenceFor(obj)] || models[obj.kind];
     },
     [models],
   );

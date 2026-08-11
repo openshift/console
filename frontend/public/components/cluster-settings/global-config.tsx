@@ -73,9 +73,8 @@ const useConfigResources = () => {
     clusterOperatorConfigResources: K8sKind[];
     configResources: K8sKind[];
   }>(({ k8s }) => ({
-    clusterOperatorConfigResources:
-      k8s.getIn(['RESOURCES', 'clusterOperatorConfigResources']) ?? [],
-    configResources: k8s.getIn(['RESOURCES', 'configResources']) ?? [],
+    clusterOperatorConfigResources: k8s.RESOURCES?.clusterOperatorConfigResources ?? [],
+    configResources: k8s.RESOURCES?.configResources ?? [],
   }));
 
   const canClusterUpgrade = useCanClusterUpgrade();

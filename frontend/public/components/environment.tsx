@@ -364,8 +364,7 @@ export const EnvironmentPage: FC<EnvironmentPageProps> = (props) => {
 
   const model = useConsoleSelector(
     (state) =>
-      state.k8s.getIn(['RESOURCES', 'models', referenceFor(obj)]) ||
-      state.k8s.getIn(['RESOURCES', 'models', obj?.kind]),
+      state.k8s.RESOURCES?.models?.[referenceFor(obj)] || state.k8s.RESOURCES?.models?.[obj?.kind],
   );
 
   const impersonate = useConsoleSelector((state) => getImpersonate(state));

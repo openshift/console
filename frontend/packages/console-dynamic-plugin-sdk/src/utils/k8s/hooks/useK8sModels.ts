@@ -1,13 +1,9 @@
 import { useSelector } from 'react-redux';
-import { createSelector } from 'reselect';
 import type { SDKStoreState } from '../../../app/redux-types';
 import type { UseK8sModels } from '../../../extensions/console-types';
 import type { K8sModel } from '../../../lib-core';
 
-const modelsSelector = createSelector(
-  (state: SDKStoreState) => state.k8s.getIn(['RESOURCES', 'models']),
-  (models) => models?.toJS() ?? {},
-);
+const EMPTY_MODELS: { [key: string]: K8sModel } = {};
 
 /**
  * Hook that retrieves all current k8s models from redux.
@@ -22,6 +18,8 @@ const modelsSelector = createSelector(
  * ```
  */
 export const useK8sModels: UseK8sModels = () => [
-  useSelector<SDKStoreState, { [key: string]: K8sModel }>(modelsSelector),
-  useSelector<SDKStoreState, boolean>(({ k8s }) => k8s.getIn(['RESOURCES', 'inFlight'])) ?? false,
+  useSelector<SDKStoreState, { [key: string]: K8sModel }>(
+    ({ k8s }) => k8s.RESOURCES?.models ?? EMPTY_MODELS,
+  ),
+  useSelector<SDKStoreState, boolean>(({ k8s }) => k8s.RESOURCES?.inFlight ?? false),
 ];

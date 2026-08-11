@@ -111,9 +111,9 @@ export const ListPageWrapper: FC<ListPageWrapperProps> = (props) => {
       return undefined;
     }
     return memoizedIds.reduce((acc, id) => {
-      const idFilters = state.k8s.getIn([id, 'filters']);
+      const idFilters = state.k8s[id]?.filters;
       if (idFilters) {
-        idFilters.forEach((value, key) => {
+        Object.entries(idFilters).forEach(([key, value]) => {
           acc[key] = value;
         });
       }
