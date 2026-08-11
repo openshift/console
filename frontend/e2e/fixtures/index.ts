@@ -5,6 +5,7 @@ import { test as base, expect } from '@playwright/test';
 
 import KubernetesClient from '../clients/kubernetes-client';
 
+import { attachSessionRecovery, recoverSessionIfExpired } from './auth-fixture';
 import type { CleanupFixture } from './cleanup-fixture';
 import { createCleanupFixture } from './cleanup-fixture';
 
@@ -24,6 +25,21 @@ type WorkerFixtures = {
 };
 
 export const test = base.extend<TestFixtures, WorkerFixtures>({
+  // Override the built-in page fixture to transparently recover from expired
+  // sessions. Long runs can outlive the OAuth token captured in storageState;
+  // without this, navigations silently redirect to the login page and tests
+  // hang. The listener re-authenticates the persona whenever a navigation
+  // lands on the login page, and a proactive check covers the initial page.
+  page: async ({ page }, use, testInfo) => {
+    const detach = attachSessionRecovery(page, testInfo);
+    try {
+      await recoverSessionIfExpired(page, testInfo);
+      await use(page);
+    } finally {
+      detach();
+    }
+  },
+
   testConfig: [
     async ({}, use) => {
       const configPath = path.resolve(import.meta.dirname, '..', '.test-config.json');

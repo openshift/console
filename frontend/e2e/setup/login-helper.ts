@@ -33,6 +33,36 @@ export function getDeveloperCredentials(): {
   };
 }
 
+/**
+ * Resolves the login credentials for a given storage-state file. The auth
+ * fixture uses this to re-authenticate the correct persona (admin vs.
+ * developer) when a session expires mid-run, mirroring the setup projects.
+ * Returns null when the required credentials are not configured.
+ */
+export function resolveCredentialsForStorageState(
+  storageStatePath: string,
+): { username: string; password: string; idpName: string } | null {
+  const fileName = path.basename(storageStatePath);
+  if (fileName === 'developer.json') {
+    return getDeveloperCredentials();
+  }
+  // Default to the kubeadmin/admin persona.
+  return getAdminCredentials();
+}
+
+/**
+ * Returns true when the given page is currently showing the OAuth login page
+ * (i.e. the session has expired or was never established).
+ */
+export async function isOnLoginPage(page: Page): Promise<boolean> {
+  return page
+    .locator('[data-test-id="login"]')
+    .or(page.locator('#inputUsername'))
+    .first()
+    .isVisible()
+    .catch(() => false);
+}
+
 export async function performLogin(
   page: Page,
   username: string,
