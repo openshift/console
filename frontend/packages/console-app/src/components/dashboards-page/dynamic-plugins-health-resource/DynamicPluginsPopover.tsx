@@ -15,9 +15,7 @@ import NotLoadedDynamicPlugins from './NotLoadedDynamicPlugins';
 const DynamicPluginsPopover: FC<DynamicPluginsPopoverProps> = ({ consolePlugins }) => {
   const { t } = useTranslation('console-app');
   const pluginInfoEntries = usePluginInfo();
-  const cspViolations = useConsoleSelector<PluginCSPViolations>(({ UI }) =>
-    UI.get('pluginCSPViolations'),
-  );
+  const cspViolations = useConsoleSelector<PluginCSPViolations>(({ UI }) => UI.pluginCSPViolations);
   const notLoadedDynamicPluginInfo = pluginInfoEntries.filter(
     (plugin) => plugin.status !== 'loaded',
   );

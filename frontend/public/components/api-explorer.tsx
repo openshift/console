@@ -74,7 +74,7 @@ import { ScrollToTopOnMount } from './utils/scroll-to-top-on-mount';
 import { LoadError, LoadingBox } from './utils/status-box';
 
 const mapStateToProps = (state: RootState): APIResourceLinkStateProps => ({
-  activeNamespace: state.UI.get('activeNamespace'),
+  activeNamespace: state.UI.activeNamespace,
 });
 
 const getAPIResourceLink = (activeNamespace: string, model: K8sKind) => {
