@@ -162,8 +162,8 @@ export const URLHealthItem: FC<URLHealthItemProps> = ({ subsystem, models }) => 
     modelExists ? subsystem.additionalResource : null,
   );
 
-  const healthResult = urlResults.getIn([subsystem.url, 'data']);
-  const healthResultError = urlResults.getIn([subsystem.url, 'loadError']);
+  const healthResult = urlResults?.[subsystem.url]?.data;
+  const healthResultError = urlResults?.[subsystem.url]?.loadError;
 
   const k8sResult = modelExists
     ? { data: k8sData, loaded: k8sLoaded, loadError: k8sLoadError }
