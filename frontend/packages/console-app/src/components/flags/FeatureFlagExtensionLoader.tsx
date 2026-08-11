@@ -22,30 +22,49 @@ import { FeatureFlagExtensionHookResolver } from './FeatureFlagExtensionHookReso
 
 /**
  * React hook that returns a stable {@link SetFeatureFlag} callback.
+ *
+ * Sync calls during render are deferred until after layout effects so we avoid
+ * "Cannot update a component while rendering" with react-redux 8.x (handlers may
+ * invoke this while rendering). Async calls (e.g. after a fetch in a
+ * console.flag/hookProvider) flush immediately so flag-gated extensions update
+ * without waiting for an unrelated re-render.
  */
-const useFeatureFlagController = () => {
+export const useFeatureFlagController = () => {
   const dispatch = useConsoleDispatch();
   const flags = useConsoleSelector(({ FLAGS }) => FLAGS);
+  const flagsRef = useRef(flags);
+  flagsRef.current = flags;
 
   // Queue of flag updates to be dispatched after render
   const pendingUpdatesRef = useRef<Map<string, boolean>>(new Map());
+  const isRenderingRef = useRef(true);
 
-  // Process pending flag updates after render completes.
-  // This avoids "Cannot update a component while rendering" errors with react-redux 8.x
-  // because handlers are called during render (they use hooks) but dispatches happen after.
-  useLayoutEffect(() => {
+  // Mark the render phase; cleared in the layout effect below.
+  isRenderingRef.current = true;
+
+  const flushPendingUpdates = useCallback(() => {
     pendingUpdatesRef.current.forEach((enabled, flag) => {
-      if (flags.get(flag) !== enabled) {
+      if (flagsRef.current.get(flag) !== enabled) {
         dispatch(setFlag(flag, enabled));
       }
     });
     pendingUpdatesRef.current.clear();
+  }, [dispatch]);
+
+  useLayoutEffect(() => {
+    isRenderingRef.current = false;
+    flushPendingUpdates();
   });
 
-  return useCallback<SetFeatureFlag>((flag, enabled) => {
-    // Queue the update to be processed after render
-    pendingUpdatesRef.current.set(flag, enabled);
-  }, []);
+  return useCallback<SetFeatureFlag>(
+    (flag, enabled) => {
+      pendingUpdatesRef.current.set(flag, enabled);
+      if (!isRenderingRef.current) {
+        flushPendingUpdates();
+      }
+    },
+    [flushPendingUpdates],
+  );
 };
 
 /**
