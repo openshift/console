@@ -121,6 +121,10 @@ func setupTestWithTls() error {
 	if err := ExecuteScript("./testdata/chartmuseum.sh", false); err != nil {
 		return err
 	}
+	// Wait immediately — do not interleave long downloads before readiness.
+	if err := waitForTCP("127.0.0.1:9443", 30*time.Second, "./chartmuseum-9443.log"); err != nil {
+		return fmt.Errorf("chartmuseum not ready: %w", err)
+	}
 	if err := ExecuteScript("./testdata/downloadZot.sh", true); err != nil {
 		return err
 	}
@@ -130,10 +134,7 @@ func setupTestWithTls() error {
 	if err := ExecuteScript("./testdata/downloadHelm.sh", true); err != nil {
 		return err
 	}
-	if err := waitForTCP("localhost:9443", 30*time.Second, "./chartmuseum-9443.log"); err != nil {
-		return fmt.Errorf("chartmuseum not ready: %w", err)
-	}
-	if err := waitForTCP("localhost:5443", 30*time.Second); err != nil {
+	if err := waitForTCP("127.0.0.1:5443", 30*time.Second); err != nil {
 		return fmt.Errorf("zot (TLS) not ready: %w", err)
 	}
 	if err := ExecuteScript("./testdata/cacertCreate.sh", true); err != nil {
@@ -155,10 +156,10 @@ func setupTestWithoutTls() error {
 	if err := ExecuteScript("./testdata/zotWithoutTls.sh", false); err != nil {
 		return err
 	}
-	if err := waitForTCP("localhost:9181", 30*time.Second); err != nil {
+	if err := waitForTCP("127.0.0.1:9181", 30*time.Second); err != nil {
 		return fmt.Errorf("chartmuseum (no TLS) not ready: %w", err)
 	}
-	if err := waitForTCP("localhost:5000", 30*time.Second); err != nil {
+	if err := waitForTCP("127.0.0.1:5000", 30*time.Second); err != nil {
 		return fmt.Errorf("zot (no TLS) not ready: %w", err)
 	}
 	if err := ExecuteScript("./testdata/uploadChartsWithoutTls.sh", true); err != nil {
@@ -175,7 +176,7 @@ func setupTestBasicAuth() error {
 	if err := ExecuteScript("./testdata/chartmuseumWithBasicAuth.sh", false); err != nil {
 		return err
 	}
-	if err := waitForTCP("localhost:8181", 30*time.Second); err != nil {
+	if err := waitForTCP("127.0.0.1:8181", 30*time.Second); err != nil {
 		return fmt.Errorf("chartmuseum (basic auth) not ready: %w", err)
 	}
 	if err := ExecuteScript("./testdata/uploadChartsWithBasicAuth.sh", true); err != nil {
@@ -188,7 +189,7 @@ func setupTestOCIBasicAuth() error {
 	if err := ExecuteScript("./testdata/zotWithBasicAuth.sh", false); err != nil {
 		return err
 	}
-	if err := waitForTCP("localhost:5001", 30*time.Second); err != nil {
+	if err := waitForTCP("127.0.0.1:5001", 30*time.Second); err != nil {
 		return fmt.Errorf("zot (basic auth) not ready: %w", err)
 	}
 	if err := ExecuteScript("./testdata/uploadOciCharts.sh", true, "--basic-auth"); err != nil {
@@ -212,22 +213,27 @@ func waitForTCP(addr string, timeout time.Duration, logFiles ...string) error {
 			fmt.Fprintf(os.Stderr, "=== %s ===\n%s\n", f, string(data))
 		}
 	}
-	// Dump listening ports and process state for debugging
+	// Dump listening ports (Linux ss; macOS/BSD fall back to lsof)
 	if ssCmd := exec.Command("ss", "-tlnp"); ssCmd != nil {
 		if out, err := ssCmd.CombinedOutput(); err == nil {
 			fmt.Fprintf(os.Stderr, "=== ss -tlnp ===\n%s\n", string(out))
 		}
 	}
-	// Check if any chartmuseum PID files exist and if processes are alive
+	if lsofCmd := exec.Command("lsof", "-nP", "-iTCP", "-sTCP:LISTEN"); lsofCmd != nil {
+		if out, err := lsofCmd.CombinedOutput(); err == nil {
+			fmt.Fprintf(os.Stderr, "=== lsof -nP -iTCP -sTCP:LISTEN ===\n%s\n", string(out))
+		}
+	}
+	// Check chartmuseum PID file; use kill -0 (works on macOS; /proc is Linux-only)
 	for _, pidFile := range []string{"./chartmuseum-tls.pid"} {
 		if data, err := os.ReadFile(pidFile); err == nil {
-			fmt.Fprintf(os.Stderr, "=== %s: %s ===\n", pidFile, strings.TrimSpace(string(data)))
 			pidStr := strings.TrimSpace(string(data))
-			if checkCmd := exec.Command("ls", "-la", fmt.Sprintf("/proc/%s/exe", pidStr)); checkCmd != nil {
+			fmt.Fprintf(os.Stderr, "=== %s: %s ===\n", pidFile, pidStr)
+			if checkCmd := exec.Command("kill", "-0", pidStr); checkCmd != nil {
 				if out, err := checkCmd.CombinedOutput(); err == nil {
-					fmt.Fprintf(os.Stderr, "/proc/%s/exe -> %s\n", pidStr, string(out))
+					fmt.Fprintf(os.Stderr, "PID %s: alive\n", pidStr)
 				} else {
-					fmt.Fprintf(os.Stderr, "/proc/%s: process dead (%v)\n", pidStr, err)
+					fmt.Fprintf(os.Stderr, "PID %s: not running (%v) %s\n", pidStr, err, string(out))
 				}
 			}
 		}
