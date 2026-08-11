@@ -74,12 +74,15 @@ func New(k8sConfig RestConfigProvider, kubeVersionGetter version.KubeVersionGett
 }
 
 func (p *proxy) IndexFile(onlyCompatible bool, namespace string) (*repo.IndexFile, error) {
-	helmRepos, err := p.helmRepoGetter.List(namespace)
+	helmRepos, configErrors, err := p.helmRepoGetter.List(namespace)
 	if err != nil {
 		return nil, err
 	}
 	annotations := make(map[string]string)
 	var invalidRepos []string
+	for _, ce := range configErrors {
+		invalidRepos = append(invalidRepos, ce.Name)
+	}
 	indexFile := repo.NewIndexFile()
 	var delKeys []string = make([]string, 0, 20)
 	for _, helmRepo := range helmRepos {
