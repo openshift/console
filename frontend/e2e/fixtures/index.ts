@@ -28,8 +28,11 @@ export const test = base.extend<TestFixtures, WorkerFixtures>({
   // Override the built-in page fixture to transparently recover from expired
   // sessions. Long runs can outlive the OAuth token captured in storageState;
   // without this, navigations silently redirect to the login page and tests
-  // hang. The listener re-authenticates the persona whenever a navigation
-  // lands on the login page, and a proactive check covers the initial page.
+  // hang. The navigation listener re-authenticates the persona whenever a
+  // navigation lands on the login page. The proactive check below is a
+  // best-effort guard for a page that somehow starts on the login page; the
+  // page is typically about:blank at fixture setup, so it usually no-ops and
+  // the listener does the real work.
   page: async ({ page }, use, testInfo) => {
     const detach = attachSessionRecovery(page, testInfo);
     try {

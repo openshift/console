@@ -51,16 +51,27 @@ export function resolveCredentialsForStorageState(
 }
 
 /**
- * Returns true when the given page is currently showing the OAuth login page
- * (i.e. the session has expired or was never established).
+ * Returns true when the given page is showing the OAuth login page (i.e. the
+ * session has expired or was never established).
+ *
+ * A session-expiry redirect goes through the OAuth server before the login
+ * form renders, so an instantaneous visibility check can race the redirect
+ * chain and miss it. `timeoutMs` gives the login locator a bounded window to
+ * appear. It defaults to 0 (instantaneous) so callers on the hot path stay
+ * cheap; pass a small timeout only when a redirect may still be settling.
  */
-export async function isOnLoginPage(page: Page): Promise<boolean> {
-  return page
+export async function isOnLoginPage(page: Page, timeoutMs = 0): Promise<boolean> {
+  const loginLocator = page
     .locator('[data-test-id="login"]')
     .or(page.locator('#inputUsername'))
-    .first()
-    .isVisible()
-    .catch(() => false);
+    .first();
+  try {
+    // eslint-disable-next-line no-restricted-syntax
+    await loginLocator.waitFor({ state: 'visible', timeout: timeoutMs });
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 export async function performLogin(

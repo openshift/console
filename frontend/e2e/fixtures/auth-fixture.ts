@@ -1,4 +1,4 @@
-import type { Page, TestInfo } from '@playwright/test';
+import type { Frame, Page, TestInfo } from '@playwright/test';
 
 import {
   isOnLoginPage,
@@ -12,16 +12,32 @@ import {
  */
 const reloginInProgress = new WeakMap<Page, Promise<void>>();
 
+/**
+ * The last app route each page navigated to before any auth redirect. Used to
+ * send the page back where the test intended to be after re-authenticating,
+ * since by the time recovery runs the page URL is the OAuth/login page.
+ */
+const lastAppUrl = new WeakMap<Page, string>();
+
 function storageStatePath(testInfo: TestInfo): string | undefined {
   const state = testInfo.project.use.storageState;
   return typeof state === 'string' ? state : undefined;
 }
 
 /**
+ * True for OAuth server / console login URLs — the pages a session-expiry
+ * redirect passes through. These are never the route a test wants to resume at.
+ */
+function isAuthUrl(url: string): boolean {
+  return /\/oauth\/|\/oauth2\/|\/login(\/|$|\?)|\/auth\//.test(url);
+}
+
+/**
  * Detects when a navigation has landed on the OAuth login page — meaning the
  * session snapshot in storageState has expired — and transparently
  * re-authenticates the current persona, refreshing the stored session so
- * subsequent tests reuse the fresh state.
+ * subsequent tests reuse the fresh state. After re-login, navigates back to
+ * the route the test was heading to so deep-link tests resume in place.
  *
  * The setup projects establish the session once; long runs can outlive the
  * OAuth token, after which every navigation silently redirects to the login
@@ -31,25 +47,46 @@ function storageStatePath(testInfo: TestInfo): string | undefined {
 export async function recoverSessionIfExpired(
   page: Page,
   testInfo: TestInfo,
+  detectTimeoutMs = 0,
 ): Promise<boolean> {
-  if (!(await isOnLoginPage(page))) {
-    return false;
-  }
-
+  // If a re-login is already running (or being set up) for this page, await it
+  // rather than starting a second one.
   const existing = reloginInProgress.get(page);
   if (existing) {
     await existing;
     return true;
   }
 
-  const statePath = storageStatePath(testInfo);
-  const credentials = statePath ? resolveCredentialsForStorageState(statePath) : undefined;
-  if (!credentials) {
-    // No credentials to recover with (e.g. auth disabled or dev creds unset).
+  // Claim the re-login slot synchronously — before any await — so concurrent
+  // navigation events can't both pass the check above and launch duplicate
+  // logins. The deferred is published now and settled once we know whether a
+  // recovery is actually needed; if not, we release the slot immediately.
+  let release!: () => void;
+  const claim = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  reloginInProgress.set(page, claim);
+
+  const finish = (): void => {
+    release();
+    reloginInProgress.delete(page);
+  };
+
+  if (!(await isOnLoginPage(page, detectTimeoutMs))) {
+    finish();
     return false;
   }
 
-  const relogin = (async () => {
+  const statePath = storageStatePath(testInfo);
+  const credentials = statePath ? resolveCredentialsForStorageState(statePath) : null;
+  if (!credentials) {
+    // No credentials to recover with (e.g. auth disabled or dev creds unset).
+    finish();
+    return false;
+  }
+
+  const intendedUrl = lastAppUrl.get(page);
+  try {
     // eslint-disable-next-line no-console
     console.warn(
       `[auth] Session expired for "${testInfo.titlePath.join(' > ')}"; re-authenticating.`,
@@ -58,13 +95,14 @@ export async function recoverSessionIfExpired(
     if (statePath) {
       await saveStorageState(page, statePath);
     }
-  })();
-
-  reloginInProgress.set(page, relogin);
-  try {
-    await relogin;
+    // Restore the route the test was navigating to before the redirect, so
+    // deep-link tests resume where they expected rather than on the console
+    // home page that performLogin lands on.
+    if (intendedUrl && intendedUrl !== page.url()) {
+      await page.goto(intendedUrl, { waitUntil: 'domcontentloaded' });
+    }
   } finally {
-    reloginInProgress.delete(page);
+    finish();
   }
   return true;
 }
@@ -74,13 +112,23 @@ export async function recoverSessionIfExpired(
  * navigation lands on the login page. Returns a disposer to detach it.
  */
 export function attachSessionRecovery(page: Page, testInfo: TestInfo): () => void {
-  const handler = (frame: import('@playwright/test').Frame) => {
+  const handler = (frame: Frame) => {
     if (frame !== page.mainFrame()) {
       return;
     }
+    const url = frame.url();
+    const onAuthUrl = isAuthUrl(url);
+    // Remember the most recent non-auth route so recovery can return to it.
+    if (url && url !== 'about:blank' && !onAuthUrl) {
+      lastAppUrl.set(page, url);
+    }
+    // On a normal (non-auth) navigation, detect the login page instantly so the
+    // hot path adds no latency. When we land on an auth URL the session likely
+    // expired but the login form may still be rendering, so give it a bounded
+    // window to appear before deciding recovery isn't needed.
     // Fire-and-forget: recovery guards its own re-entrancy. Swallow errors so a
     // transient navigation event doesn't reject an unrelated step.
-    void recoverSessionIfExpired(page, testInfo).catch(() => {
+    void recoverSessionIfExpired(page, testInfo, onAuthUrl ? 5_000 : 0).catch(() => {
       /* best-effort recovery */
     });
   };
