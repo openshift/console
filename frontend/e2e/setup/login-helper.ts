@@ -117,6 +117,22 @@ export async function performLogin(
 
 export async function saveStorageState(page: Page, storagePath: string): Promise<void> {
   fs.mkdirSync(STORAGE_STATE_DIR, { recursive: true, mode: 0o700 });
-  await page.context().storageState({ path: storagePath });
-  fs.chmodSync(storagePath, 0o600);
+  // Write to a unique temp file and atomically rename it into place. Workers are
+  // separate processes, so two of them recovering the same persona could
+  // otherwise interleave writes to the same file and leave a reader (another
+  // worker loading storageState) observing a half-written, invalid JSON file.
+  // A same-directory rename is atomic, so readers always see a complete file.
+  const tmpPath = `${storagePath}.${process.pid}.tmp`;
+  try {
+    await page.context().storageState({ path: tmpPath });
+    fs.chmodSync(tmpPath, 0o600);
+    fs.renameSync(tmpPath, storagePath);
+  } catch (error) {
+    try {
+      fs.rmSync(tmpPath, { force: true });
+    } catch {
+      // best-effort cleanup
+    }
+    throw error;
+  }
 }
