@@ -1,6 +1,10 @@
 import { test as base, expect } from '@playwright/test';
 
-import { awaitSessionRecovery } from '../../../fixtures/auth-fixture';
+import {
+  awaitSessionRecovery,
+  getIntendedUrl,
+  rememberIntendedUrl,
+} from '../../../fixtures/auth-fixture';
 import { isOnLoginPage } from '../../../setup/login-helper';
 
 // Regression test for OCPBUGS-105789: https://issues.redhat.com/browse/OCPBUGS-105789
@@ -70,5 +74,21 @@ test.describe('Session recovery detection (OCPBUGS-105789)', () => {
   test('awaitSessionRecovery is a no-op when no recovery is in progress', async ({ page }) => {
     await page.goto(APP_PAGE);
     await expect(awaitSessionRecovery(page)).resolves.toBeUndefined();
+  });
+
+  test('remembers the intended deep-link so recovery restores it, not the login page', async ({
+    page,
+  }) => {
+    await page.goto(APP_PAGE);
+    // The deep link the test was headed to is recorded before navigation.
+    rememberIntendedUrl(page, 'https://console.example/k8s/ns/foo/pods');
+    expect(getIntendedUrl(page)).toBe('https://console.example/k8s/ns/foo/pods');
+    // A subsequent redirect to the OAuth/login page must NOT overwrite it —
+    // otherwise recovery would restore the login page instead of the deep link.
+    rememberIntendedUrl(page, 'https://console.example/oauth/authorize?client_id=x');
+    expect(getIntendedUrl(page)).toBe('https://console.example/k8s/ns/foo/pods');
+    // about:blank is ignored too.
+    rememberIntendedUrl(page, 'about:blank');
+    expect(getIntendedUrl(page)).toBe('https://console.example/k8s/ns/foo/pods');
   });
 });

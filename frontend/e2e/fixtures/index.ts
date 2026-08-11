@@ -10,6 +10,7 @@ import {
   awaitSessionRecovery,
   isRecoveryInProgress,
   recoverSessionIfExpired,
+  rememberIntendedUrl,
 } from './auth-fixture';
 import type { CleanupFixture } from './cleanup-fixture';
 import { createCleanupFixture } from './cleanup-fixture';
@@ -52,6 +53,11 @@ export const test = base.extend<TestFixtures, WorkerFixtures>({
       if (isRecoveryInProgress(page)) {
         return originalGoto(url, options);
       }
+      // Record the intended destination before navigating. If this target
+      // immediately redirects to the login page, the framenavigated handler may
+      // only ever see the auth URL, so recovery would otherwise restore a stale
+      // route instead of where the test was headed.
+      rememberIntendedUrl(page, url);
       const response = await originalGoto(url, options);
       // Drive recovery synchronously here rather than relying on the
       // framenavigated listener, whose dispatch can race goto resolving. This

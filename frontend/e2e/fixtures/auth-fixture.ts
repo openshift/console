@@ -25,6 +25,39 @@ function storageStatePath(testInfo: TestInfo): string | undefined {
 }
 
 /**
+ * Records a page's intended (non-auth) destination so recovery can return there
+ * after re-login. The page.goto override calls this before navigating: if the
+ * target immediately redirects to the login page, the framenavigated handler
+ * may only ever observe the auth URL, so relying on it alone would restore a
+ * stale route. Auth and about:blank targets are ignored — they're never a route
+ * a test wants to resume at. `url` may be relative; it is resolved against the
+ * page's current URL for the auth-vs-app classification.
+ */
+export function rememberIntendedUrl(page: Page, url: string): void {
+  if (!url || url === 'about:blank') {
+    return;
+  }
+  let absolute: string;
+  try {
+    absolute = new URL(url, page.url()).toString();
+  } catch {
+    // Unparseable (e.g. a data: URL used in tests) — record verbatim.
+    absolute = url;
+  }
+  if (!isAuthUrl(absolute)) {
+    lastAppUrl.set(page, absolute);
+  }
+}
+
+/**
+ * The route recovery would restore for a page, or undefined if none recorded.
+ * Exposed for the recovery regression tests.
+ */
+export function getIntendedUrl(page: Page): string | undefined {
+  return lastAppUrl.get(page);
+}
+
+/**
  * True for OAuth server / console login URLs — the pages a session-expiry
  * redirect passes through. These are never the route a test wants to resume at.
  *
@@ -139,14 +172,14 @@ export function isRecoveryInProgress(page: Page): boolean {
 /**
  * Awaits any session recovery currently in progress for the page (no-op if
  * none). Call this after a navigation so a test action doesn't race an
- * in-flight re-login triggered by that same navigation.
+ * in-flight re-login triggered by that same navigation. A recovery failure is
+ * propagated so the caller (e.g. the page.goto override) fails the active test
+ * with the original error rather than silently proceeding on the login page.
  */
 export async function awaitSessionRecovery(page: Page): Promise<void> {
   const inProgress = reloginInProgress.get(page);
   if (inProgress) {
-    await inProgress.catch(() => {
-      /* best-effort — recovery errors are surfaced by the failing test action */
-    });
+    await inProgress;
   }
 }
 
