@@ -39,6 +39,7 @@ export const BasicCodeEditor: FC<BasicCodeEditorProps> = (props) => {
         emptyStateLink={t('Start from scratch')}
         emptyStateTitle={t('Start editing')}
         isDarkTheme={theme === 'dark'}
+        isHighContrastTheme={contrast === 'contrast'}
         {...props}
         className={css('co-code-editor', props.className)}
         editorProps={{
@@ -46,7 +47,6 @@ export const BasicCodeEditor: FC<BasicCodeEditorProps> = (props) => {
             window.monaco = monacoInstance; // for e2e tests
             props?.editorProps?.beforeMount?.(monacoInstance);
           },
-          ...(contrast === 'contrast' ? { theme: theme === 'dark' ? 'hc-black' : 'hc-light' } : {}),
         }}
         options={{
           fontFamily: 'var(--pf-t--global--font--family--mono)',
