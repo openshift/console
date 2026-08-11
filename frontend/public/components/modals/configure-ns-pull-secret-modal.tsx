@@ -25,12 +25,10 @@ import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import { CONST } from '@console/shared/src/constants/common';
 import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
-import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import { k8sPatchByName, k8sCreate, k8sGet, K8sResourceKind } from '../../module/k8s';
 import type { ModalComponentProps } from '@console/shared/src/types/modal';
 import { SecretModel, ServiceAccountModel } from '../../models';
 import type { K8sResourceKind } from '../../module/k8s';
-import { k8sPatchByName, k8sCreate } from '../../module/k8s';
+import { k8sPatchByName, k8sCreate, k8sGet } from '../../module/k8s';
 import { ResourceIcon } from '../utils/resource-icon';
 
 interface FormData {
@@ -76,19 +74,19 @@ const getDefaultServiceAccountPatch = (
 ) =>
   Array.isArray(defaultServiceAccount.imagePullSecrets)
     ? [
-      {
-        op: 'add' as const,
-        path: '/imagePullSecrets/-',
-        value: { name: pullSecretName },
-      },
-    ]
+        {
+          op: 'add' as const,
+          path: '/imagePullSecrets/-',
+          value: { name: pullSecretName },
+        },
+      ]
     : [
-      {
-        op: 'add' as const,
-        path: '/imagePullSecrets',
-        value: [{ name: pullSecretName }],
-      },
-    ];
+        {
+          op: 'add' as const,
+          path: '/imagePullSecrets',
+          value: [{ name: pullSecretName }],
+        },
+      ];
 
 const ConfigureNamespacePullSecret: FC<ConfigureNamespacePullSecretProps> = (props) => {
   const { namespace, cancel, close, onSubmitSuccess } = props;
@@ -169,7 +167,7 @@ const ConfigureNamespacePullSecret: FC<ConfigureNamespacePullSecretProps> = (pro
             getDefaultServiceAccountPatch(pullSecretName, defaultServiceAccount),
           ),
         );
-      handlePromise(promise).then(() => {
+      return handlePromise(promise).then(() => {
         onSubmitSuccess?.(pullSecretName);
         close();
       });
