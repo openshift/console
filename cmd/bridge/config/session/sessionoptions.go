@@ -6,6 +6,7 @@ import (
 	"os"
 
 	utilerrors "k8s.io/apimachinery/pkg/util/errors"
+	"k8s.io/klog/v2"
 
 	"github.com/openshift/console/cmd/bridge/config/flagvalues"
 	"github.com/openshift/console/pkg/serverconfig"
@@ -75,17 +76,27 @@ func (opts *SessionOptions) Complete(userAuthType flagvalues.AuthType) (*Complet
 	if len(opts.CookieEncryptionKeyPath) > 0 {
 		encKey, err := os.ReadFile(opts.CookieEncryptionKeyPath)
 		if err != nil {
-			return nil, fmt.Errorf("failed to open cookie encryption key file %q: %w", opts.CookieEncryptionKeyPath, err)
+			if userAuthType == flagvalues.AuthTypeOpenShift {
+				klog.Warningf("could not read cookie encryption key file %q, falling back to random keys: %v", opts.CookieEncryptionKeyPath, err)
+			} else {
+				return nil, fmt.Errorf("failed to open cookie encryption key file %q: %w", opts.CookieEncryptionKeyPath, err)
+			}
+		} else {
+			completed.CookieEncryptionKey = encKey
 		}
-		completed.CookieEncryptionKey = encKey
 	}
 
 	if len(opts.CookieAuthenticationKeyPath) > 0 {
 		authnKey, err := os.ReadFile(opts.CookieAuthenticationKeyPath)
 		if err != nil {
-			return nil, fmt.Errorf("failed to open cookie authentication key file %q: %w", opts.CookieAuthenticationKeyPath, err)
+			if userAuthType == flagvalues.AuthTypeOpenShift {
+				klog.Warningf("could not read cookie authentication key file %q, falling back to random keys: %v", opts.CookieAuthenticationKeyPath, err)
+			} else {
+				return nil, fmt.Errorf("failed to open cookie authentication key file %q: %w", opts.CookieAuthenticationKeyPath, err)
+			}
+		} else {
+			completed.CookieAuthenticationKey = authnKey
 		}
-		completed.CookieAuthenticationKey = authnKey
 	}
 
 	return &CompletedOptions{
