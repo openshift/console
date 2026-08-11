@@ -3,8 +3,8 @@ import { useState, useMemo, memo, useEffect } from 'react';
 import { FormHelperText, FormSection, Icon, Tooltip } from '@patternfly/react-core';
 import { DualListSelector } from '@patternfly/react-core/deprecated';
 import * as fuzzy from 'fuzzysearch';
-import type { Map as ImmutableMap } from 'immutable';
 import { Set as ImmutableSet } from 'immutable';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import type {
@@ -63,7 +63,7 @@ type DefaultPins = {
 type PinnedResourcesConfigurationProps = {
   readonly: boolean;
   groupVersionMap: DiscoveryResources['groupVersionMap'];
-  allK8sModels: ImmutableMap<string, K8sModel>;
+  allK8sModels: Record<string, K8sModel>;
 };
 
 const PinnedResourcesConfiguration: FC<PinnedResourcesConfigurationProps> = ({
@@ -93,33 +93,37 @@ const PinnedResourcesConfiguration: FC<PinnedResourcesConfigurationProps> = ({
   const resources = useMemo(
     () =>
       allK8sModels
-        ?.filter(({ apiGroup, apiVersion, kind, verbs }) => {
-          if (skipGroups.has(apiGroup) || skipResources.has(`${apiGroup}/${apiVersion}.${kind}`)) {
-            return false;
-          }
+        ? Object.values(allK8sModels)
+            .filter(({ apiGroup, apiVersion, kind, verbs }) => {
+              if (
+                skipGroups.has(apiGroup) ||
+                skipResources.has(`${apiGroup}/${apiVersion}.${kind}`)
+              ) {
+                return false;
+              }
 
-          // Only show resources that can be listed.
-          if (!verbs?.some((v) => v === 'list')) {
-            return false;
-          }
+              // Only show resources that can be listed.
+              if (!verbs?.some((v) => v === 'list')) {
+                return false;
+              }
 
-          // Only show preferred version for resources in the same API group.
-          const preferred = (m: K8sKind) =>
-            groupVersionMap?.[m.apiGroup]?.preferredVersion === m.apiVersion;
+              // Only show preferred version for resources in the same API group.
+              const preferred = (m: K8sKind) =>
+                groupVersionMap?.[m.apiGroup]?.preferredVersion === m.apiVersion;
 
-          const sameGroupKind = (m: K8sKind) =>
-            m.kind === kind && m.apiGroup === apiGroup && m.apiVersion !== apiVersion;
+              const sameGroupKind = (m: K8sKind) =>
+                m.kind === kind && m.apiGroup === apiGroup && m.apiVersion !== apiVersion;
 
-          return !allK8sModels.find((m) => sameGroupKind(m) && preferred(m));
-        })
-        .toOrderedMap()
-        .sortBy(({ kind, apiGroup }) => `${kind} ${apiGroup}`),
+              return !Object.values(allK8sModels).find((m) => sameGroupKind(m) && preferred(m));
+            })
+            .sort((a, b) => `${a.kind} ${a.apiGroup}`.localeCompare(`${b.kind} ${b.apiGroup}`))
+        : [],
     [allK8sModels, groupVersionMap],
   );
 
   // Track duplicate names so we know when to show the group.
-  const kinds = resources.groupBy((m) => m.kind);
-  const isDup = (kind) => kinds.get(kind).size > 1;
+  const kinds = useMemo(() => _.groupBy(resources, (m) => m.kind), [resources]);
+  const isDup = (kind) => kinds[kind]?.length > 1;
 
   type ItemProps = { title?: string; model?: K8sKind };
 
@@ -198,11 +202,9 @@ const PinnedResourcesConfiguration: FC<PinnedResourcesConfigurationProps> = ({
 
   const items = useMemo(
     () =>
-      resources
-        .map((model: K8sKind) => (
-          <Item title={model.labelKey ? t(model.labelKey) : model.kind} model={model} />
-        ))
-        .toArray(),
+      resources.map((model: K8sKind) => (
+        <Item title={model.labelKey ? t(model.labelKey) : model.kind} model={model} />
+      )),
     [resources, t, Item],
   );
 
@@ -327,8 +329,8 @@ const PinnedResourcesConfiguration: FC<PinnedResourcesConfigurationProps> = ({
 };
 
 const mapStateToProps = (state: RootState) => ({
-  groupVersionMap: state.k8s.getIn(['RESOURCES', 'groupToVersionMap']),
-  allK8sModels: state.k8s.getIn(['RESOURCES', 'models']),
+  groupVersionMap: state.k8s.RESOURCES?.groupToVersionMap,
+  allK8sModels: state.k8s.RESOURCES?.models,
 });
 
 export default connect(mapStateToProps)(PinnedResourcesConfiguration);

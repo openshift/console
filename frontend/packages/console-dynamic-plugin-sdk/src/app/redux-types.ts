@@ -1,9 +1,8 @@
-import type { Map as ImmutableMap } from 'immutable';
 import type { AnyAction } from 'redux';
 import type { ThunkDispatch } from 'redux-thunk';
 import type { UserInfo, UserKind } from '../extensions/console-types';
 
-export type K8sState = ImmutableMap<string, any>;
+export type K8sState = Record<string, any>;
 
 export type AdmissionWebhookWarning = {
   kind: string;
