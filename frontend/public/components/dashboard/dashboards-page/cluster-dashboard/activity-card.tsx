@@ -128,13 +128,13 @@ const OngoingActivityComponent: FC<OngoingActivityProps> = ({ models }) => {
       prometheusActivities
         .filter((a) => {
           const queryResults = a.properties.queries.map(
-            (q) => prometheusResults.getIn([q, 'data']) as PrometheusResponse,
+            (q) => prometheusResults?.[q]?.data as PrometheusResponse,
           );
           return a.properties.isActivity(queryResults);
         })
         .map((a) => {
           const queryResults = a.properties.queries.map(
-            (q) => prometheusResults.getIn([q, 'data']) as PrometheusResponse,
+            (q) => prometheusResults?.[q]?.data as PrometheusResponse,
           );
           return {
             component: a.properties.component,
@@ -157,7 +157,7 @@ const OngoingActivityComponent: FC<OngoingActivityProps> = ({ models }) => {
     () =>
       prometheusActivities.every((a) =>
         a.properties.queries.every(
-          (q) => prometheusResults.getIn([q, 'data']) || prometheusResults.getIn([q, 'loadError']),
+          (q) => prometheusResults?.[q]?.data || prometheusResults?.[q]?.loadError,
         ),
       ),
     [prometheusActivities, prometheusResults],
