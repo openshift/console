@@ -176,7 +176,7 @@ const useGetServiceLevel = (
   loadingServiceLevel: boolean;
 } => {
   const { level, daysRemaining, clusterID, trialDateEnd, hasSecretAccess } = useConsoleSelector(
-    ({ UI }) => UI.get('serviceLevel'),
+    ({ UI }) => UI.serviceLevel,
   );
   const [loadingSecret, loadingServiceLevel, loadServiceLevel] = useLoadServiceLevel();
 

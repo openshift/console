@@ -404,7 +404,7 @@ const NamespacesList = (props) => {
     undefined,
     true,
   );
-  const namespaceMetrics = useConsoleSelector(({ UI }) => UI.getIn(['metrics', 'namespace']));
+  const namespaceMetrics = useConsoleSelector(({ UI }) => UI.metrics?.namespace);
 
   // TODO Utilize usePoll hook
   useEffect(() => {
@@ -786,7 +786,7 @@ const ProjectList = (props) => {
   const showMetrics = isPrometheusAvailable;
   const showActions = true;
   const { columns, resetAllColumnWidths } = useProjectsColumns({ showMetrics, showActions });
-  const namespaceMetrics = useConsoleSelector(({ UI }) => UI.getIn(['metrics', 'namespace']));
+  const namespaceMetrics = useConsoleSelector(({ UI }) => UI.metrics?.namespace);
 
   const namespaces = useMemo(
     () => (props.data || []).map((project) => project.metadata?.name).filter(Boolean),

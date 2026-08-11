@@ -532,7 +532,7 @@ const PersistentVolumeClaimList: FC<PersistentVolumeClaimListProps> = ({
 }) => {
   const { t } = useTranslation('public');
   const { columns, resetAllColumnWidths } = usePersistentVolumeClaimColumns();
-  const pvcMetrics = useConsoleSelector<PVCMetrics>(({ UI }) => UI.getIn(['metrics', 'pvc']));
+  const pvcMetrics = useConsoleSelector<PVCMetrics>(({ UI }) => UI.metrics?.pvc);
 
   const getDataViewRows = useMemo(() => getDataViewRowsCreator(t, pvcMetrics), [t, pvcMetrics]);
 
