@@ -72,14 +72,22 @@ export async function recoverSessionIfExpired(
   // logins. The deferred is published now and settled in the finally below;
   // keeping every early return and rejection inside the try guarantees the
   // slot is always released (a stuck claim would block all future recovery).
+  // The claim resolves on success and rejects on failure so joiners (the
+  // `existing` branch above) observe the same outcome instead of a false success.
   let release!: () => void;
-  const claim = new Promise<void>((resolve) => {
+  let fail!: (error: unknown) => void;
+  const claim = new Promise<void>((resolve, reject) => {
     release = resolve;
+    fail = reject;
   });
+  // A rejected claim that nobody awaits is an unhandled rejection; attach a
+  // no-op catch to the stored copy so only explicit awaiters see the error.
+  claim.catch(() => {});
   reloginInProgress.set(page, claim);
 
   try {
     if (!(await isOnLoginPage(page, detectTimeoutMs))) {
+      release();
       return false;
     }
 
@@ -87,6 +95,7 @@ export async function recoverSessionIfExpired(
     const credentials = statePath ? resolveCredentialsForStorageState(statePath) : null;
     if (!credentials) {
       // No credentials to recover with (e.g. auth disabled or dev creds unset).
+      release();
       return false;
     }
 
@@ -105,11 +114,26 @@ export async function recoverSessionIfExpired(
     if (intendedUrl && intendedUrl !== page.url()) {
       await page.goto(intendedUrl, { waitUntil: 'domcontentloaded' });
     }
-    return true;
-  } finally {
     release();
+    return true;
+  } catch (error) {
+    // Propagate the failure to every awaiter of this claim.
+    fail(error);
+    throw error;
+  } finally {
     reloginInProgress.delete(page);
   }
+}
+
+/**
+ * True while a re-login is running (or being set up) for the page. The page.goto
+ * override consults this to skip the recovery step for recovery-owned
+ * navigations — performLogin and the route-restoration goto both call the
+ * overridden page.goto, and re-running recovery there would deadlock the
+ * override on the very claim it is nested inside.
+ */
+export function isRecoveryInProgress(page: Page): boolean {
+  return reloginInProgress.has(page);
 }
 
 /**

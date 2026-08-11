@@ -5,7 +5,12 @@ import { test as base, expect } from '@playwright/test';
 
 import KubernetesClient from '../clients/kubernetes-client';
 
-import { attachSessionRecovery, awaitSessionRecovery, recoverSessionIfExpired } from './auth-fixture';
+import {
+  attachSessionRecovery,
+  awaitSessionRecovery,
+  isRecoveryInProgress,
+  recoverSessionIfExpired,
+} from './auth-fixture';
 import type { CleanupFixture } from './cleanup-fixture';
 import { createCleanupFixture } from './cleanup-fixture';
 
@@ -39,6 +44,14 @@ export const test = base.extend<TestFixtures, WorkerFixtures>({
     const detach = attachSessionRecovery(page, testInfo);
     const originalGoto = page.goto.bind(page);
     page.goto = async (url, options) => {
+      // Recovery itself navigates through this same overridden goto (performLogin
+      // and the route-restoration goto). Those recovery-owned navigations must
+      // bypass the recovery step below — re-entering would deadlock the override
+      // on the very claim it is nested inside. Detect them and pass straight
+      // through to the original goto.
+      if (isRecoveryInProgress(page)) {
+        return originalGoto(url, options);
+      }
       const response = await originalGoto(url, options);
       // Drive recovery synchronously here rather than relying on the
       // framenavigated listener, whose dispatch can race goto resolving. This
