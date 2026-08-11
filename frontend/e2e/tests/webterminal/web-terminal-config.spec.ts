@@ -16,12 +16,12 @@ test.describe('Customization of web terminal options', () => {
     await ensureWebTerminalOperatorInstalled(k8sClient);
   });
 
-  test.afterAll(async ({ k8sClient }) => {
-    await uninstallWebTerminalOperator(k8sClient);
-  });
-
   test.beforeEach(async ({ page }) => {
     await warmupSPA(page);
+  });
+
+  test.afterAll(async ({ k8sClient }) => {
+    await uninstallWebTerminalOperator(k8sClient);
   });
 
   test(

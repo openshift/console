@@ -36,12 +36,12 @@ test.describe(
       } catch { /* ignore on OCP 4 */ }
     });
 
-    test.afterAll(async () => {
-      await k8sClient.deleteNamespace(namespace);
-    });
-
     test.beforeEach(async ({ page }) => {
       await warmupSPA(page);
+    });
+
+    test.afterAll(async () => {
+      await k8sClient.deleteNamespace(namespace);
     });
 
     test('KN-05-TC04: Create knative workload from Git', async ({ page }) => {

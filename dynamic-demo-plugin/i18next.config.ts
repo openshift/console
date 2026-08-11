@@ -7,7 +7,7 @@ export default defineConfig({
     input: 'src/**/*.{js,jsx,ts,tsx}',
     output: 'locales/{{language}}/{{namespace}}.json',
 
-    defaultValue: (key) => key,
+    defaultValue: (key) => key.replace(/_(?:one|other)$/, ''),
     sort: true,
     keySeparator: false,
     nsSeparator: '~',
