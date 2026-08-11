@@ -1,7 +1,7 @@
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
+import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { testNamespace } from '../../../__mocks__/k8sResourcesMocks';
 import { ServiceAccountModel } from '../../models';
