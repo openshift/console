@@ -47,10 +47,7 @@ const useMultilineExecuteCommandExtension = () => {
                 </div>
               </div>
               <div class="pf-v6-c-code-block__content">
-                <pre class="pf-v6-c-code-block__pre pfext-code-block__pre">
-                  <code class="pf-v6-c-code-block__code"
-                    ${MARKDOWN_SNIPPET_ID}="${groupId}">${group.trim()}</code>
-                </pre>
+                <pre class="pf-v6-c-code-block__pre pfext-code-block__pre"><code class="pf-v6-c-code-block__code" ${MARKDOWN_SNIPPET_ID}="${groupId}">${group.trim()}</code></pre>
               </div>
             </div>`;
       },
