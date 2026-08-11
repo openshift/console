@@ -70,6 +70,12 @@ export async function ensureDeveloperPerspective(
     await expect(async () => {
       await page.reload();
       await expect(toggle).not.toHaveAttribute('id', 'only-one-perspective');
+      await toggle.click();
+      const devOption = page
+        .getByTestId('perspective-switcher-menu-option')
+        .filter({ hasText: 'Developer' });
+      await expect(devOption).toBeVisible();
+      await page.keyboard.press('Escape');
     }).toPass({ timeout: 60_000 });
   }
 }

@@ -56,7 +56,7 @@ import { useAccessReview } from './utils/rbac';
 import { ResourceLink } from './utils/resource-link';
 import { Selector } from './utils/selector';
 import { LoadingBox } from './utils/status-box';
-import { convertToBaseValue } from './utils/units';
+import { convertToBaseValue, humanizeBinaryBytes } from './utils/units';
 
 const isClusterQuota = (quota) => !quota.metadata.namespace;
 
@@ -79,6 +79,22 @@ const getQuotaResourceTypes = (quota) => {
     ? _.get(quota, 'spec.quota.hard')
     : _.get(quota, 'spec.hard');
   return _.keys(specHard).sort();
+};
+
+const isBinaryResourceType = (resourceType) =>
+  resourceType.includes('memory') ||
+  resourceType.includes('storage') ||
+  resourceType.includes('ephemeral-storage');
+
+const formatResourceValue = (value, resourceType) => {
+  if (value === null || value === undefined) {
+    return DASH;
+  }
+  if (isBinaryResourceType(resourceType)) {
+    const numericValue = convertToBaseValue(value) ?? 0;
+    return humanizeBinaryBytes(numericValue).string;
+  }
+  return value;
 };
 
 export const getACRQResourceUsage = (quota, resourceType, namespace) => {
@@ -189,9 +205,9 @@ export const ResourceUsageRow = ({ quota, resourceType, namespace = undefined })
         <Td visibility={['hidden', 'visibleOnMd']} className="co-resource-quota-icon">
           <UsageIcon percent={percent.namespace} />
         </Td>
-        <Td>{used.namespace}</Td>
-        <Td>{totalUsed}</Td>
-        <Td>{max}</Td>
+        <Td>{formatResourceValue(used.namespace, resourceType)}</Td>
+        <Td>{formatResourceValue(totalUsed, resourceType)}</Td>
+        <Td>{formatResourceValue(max, resourceType)}</Td>
       </Tr>
     );
   }
@@ -203,8 +219,8 @@ export const ResourceUsageRow = ({ quota, resourceType, namespace = undefined })
       <Td visibility={['hidden', 'visibleOnMd']} className="co-resource-quota-icon">
         <UsageIcon percent={percent} />
       </Td>
-      <Td>{used}</Td>
-      <Td>{max}</Td>
+      <Td>{formatResourceValue(used, resourceType)}</Td>
+      <Td>{formatResourceValue(max, resourceType)}</Td>
     </Tr>
   );
 };

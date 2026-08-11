@@ -350,6 +350,7 @@ const PVCDetails: FC<PVCDetailsProps> = ({ obj: pvc }) => {
             title={t('VolumeAttributesClass modification failed')}
             className="co-alert co-alert--margin-bottom-sm"
             actionClose={<AlertActionCloseButton onClose={() => setIsErrorAlertDismissed(true)} />}
+            data-test="vac-error-alert"
             data-test-id="vac-error-alert"
           >
             {t(
@@ -419,7 +420,7 @@ const PVCDetails: FC<PVCDetailsProps> = ({ obj: pvc }) => {
             <DescriptionList>
               <DescriptionListGroup>
                 <DescriptionListTerm>{t('Status')}</DescriptionListTerm>
-                <DescriptionListDescription data-test-id="pvc-status">
+                <DescriptionListDescription data-test="pvc-status" data-test-id="pvc-status">
                   <PVCStatusComponent pvc={pvc} />
                 </DescriptionListDescription>
               </DescriptionListGroup>
@@ -472,7 +473,10 @@ const PVCDetails: FC<PVCDetailsProps> = ({ obj: pvc }) => {
               {isVACSupported && volumeAttributesClassName !== currentVolumeAttributesClassName && (
                 <DescriptionListGroup>
                   <DescriptionListTerm>{t('Requested VolumeAttributesClass')}</DescriptionListTerm>
-                  <DescriptionListDescription data-test-id="pvc-requested-vac">
+                  <DescriptionListDescription
+                    data-test="pvc-requested-vac"
+                    data-test-id="pvc-requested-vac"
+                  >
                     {volumeAttributesClassName ? (
                       <ResourceLink
                         kind={referenceFor(VolumeAttributesClassModel)}
@@ -487,7 +491,10 @@ const PVCDetails: FC<PVCDetailsProps> = ({ obj: pvc }) => {
               {isVACSupported && !!currentVolumeAttributesClassName && (
                 <DescriptionListGroup>
                   <DescriptionListTerm>{t('VolumeAttributesClass')}</DescriptionListTerm>
-                  <DescriptionListDescription data-test-id="pvc-current-vac">
+                  <DescriptionListDescription
+                    data-test="pvc-current-vac"
+                    data-test-id="pvc-current-vac"
+                  >
                     <ResourceLink
                       kind={referenceFor(VolumeAttributesClassModel)}
                       name={currentVolumeAttributesClassName}

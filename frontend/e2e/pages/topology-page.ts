@@ -233,4 +233,41 @@ export class TopologyPage extends BasePage {
     return this.applicationNameField;
   }
 
+  getWorkload(name: string): Locator {
+    return this.page.locator(`[data-id="${name}"] text`).first().or(
+      this.page.locator('.pf-topology-content').getByText(name, { exact: true }),
+    );
+  }
+
+  async clickWorkload(name: string): Promise<void> {
+    await this.ensureGraphView();
+    const workload = this.getWorkload(name);
+    await this.page.keyboard.press('Escape');
+    await expect(async () => {
+      await this.robustClick(workload, { timeout: 60_000 });
+      await expect(this.getSidebar()).toBeVisible({ timeout: 5_000 });
+    }).toPass({ intervals: [1_000, 2_000, 5_000], timeout: 30_000 });
+  }
+
+  getSidebar(): Locator {
+    return this.page.getByTestId('topology-sidepane');
+  }
+
+  getSidebarTitle(): Locator {
+    return this.page.getByTestId('topology-sidepane').getByTestId('page-heading');
+  }
+
+  async waitForWorkload(name: string, timeoutMs = 120_000): Promise<void> {
+    await this.page.waitForURL(/\/topology\//, { timeout: timeoutMs });
+    const workload = this.getWorkload(name);
+    // eslint-disable-next-line no-restricted-syntax
+    await workload.waitFor({ state: 'visible', timeout: timeoutMs });
+  }
+
+  async switchToListView(): Promise<void> {
+    const listViewBtn = this.page.getByTestId('topology-list-view');
+    if ((await listViewBtn.count()) > 0) {
+      await this.robustClick(listViewBtn);
+    }
+  }
 }
