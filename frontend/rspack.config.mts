@@ -1,14 +1,15 @@
 import { WebpackSharedConfig, WebpackSharedObject } from '@openshift/dynamic-plugin-sdk-webpack';
 import {
+  Configuration,
   CopyRspackPlugin,
   CssExtractRspackPlugin,
+  DefinePlugin,
   LightningCssMinimizerRspackPlugin,
-  SwcJsMinimizerRspackPlugin,
-  NormalModuleReplacementPlugin,
-  Configuration,
   NormalModule,
+  NormalModuleReplacementPlugin,
   ProgressPlugin,
   sharing,
+  SwcJsMinimizerRspackPlugin,
 } from '@rspack/core';
 import { TsCheckerRspackPlugin } from 'ts-checker-rspack-plugin';
 import { ReactRefreshRspackPlugin } from '@rspack/plugin-react-refresh';
@@ -351,6 +352,11 @@ const config: Configuration = {
       // We follow BEM naming to scope CSS.
       // See https://github.com/webpack-contrib/mini-css-extract-plugin/issues/250
       ignoreOrder: true,
+    }),
+    new DefinePlugin({
+      // Surpress a react-router related warning in development mode.
+      // TODO: See if it can be removed in react router 8
+      'import.meta.hot': undefined,
     }),
     ...(REACT_REFRESH ? [new ReactRefreshRspackPlugin()] : [new ProgressPlugin()]),
   ],
