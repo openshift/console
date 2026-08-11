@@ -24,7 +24,7 @@ export default defineConfig({
       );
     },
 
-    defaultValue: (key) => key, // namespace should not be included in the default value
+    defaultValue: (key) => key.replace(/_(?:one|other)$/, ''),
     sort: true,
     keySeparator: false,
     nsSeparator: '~',

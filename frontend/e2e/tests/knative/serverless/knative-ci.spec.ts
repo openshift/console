@@ -1,6 +1,7 @@
 import { execFileSync } from 'child_process';
 
 import { test, expect } from '../../../fixtures';
+import { warmupSPA } from '../../../pages/base-page';
 import { AddFlowPage } from '../../../pages/knative/add-flow-page';
 import { AdminEventingPage } from '../../../pages/knative/admin-eventing-page';
 import { TopologyKnativePage } from '../../../pages/knative/topology-knative-page';
@@ -33,6 +34,10 @@ test.describe(
           '--overwrite',
         ], { encoding: 'utf-8', timeout: 10_000 });
       } catch { /* ignore on OCP 4 */ }
+    });
+
+    test.beforeEach(async ({ page }) => {
+      await warmupSPA(page);
     });
 
     test.afterAll(async () => {
