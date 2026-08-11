@@ -129,8 +129,7 @@ const getKnNodeModelProps = (type: string) => {
  * returns if event source is enabled or not
  * @param Flags
  */
-export const getEventSourceStatus = ({ FLAGS }: RootState): boolean =>
-  FLAGS.get(FLAG_KNATIVE_EVENTING);
+export const getEventSourceStatus = ({ FLAGS }: RootState): boolean => FLAGS[FLAG_KNATIVE_EVENTING];
 
 /**
  * fetch the parent resource from a resource
