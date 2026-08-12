@@ -41,9 +41,11 @@ type oidcConfig struct {
 	consoleBaseAddress      string
 	cookiePath              string
 	secureCookies           bool
-	cookieAuthenticationKey []byte
-	cookieEncryptionKey     []byte
-	constructOAuth2Config   oauth2ConfigConstructor
+	cookieAuthenticationKey          []byte
+	cookieEncryptionKey             []byte
+	previousCookieAuthenticationKey []byte
+	previousCookieEncryptionKey     []byte
+	constructOAuth2Config           oauth2ConfigConstructor
 }
 
 func newOIDCAuth(ctx context.Context, sessionStore *sessions.CombinedSessionStore, c *oidcConfig, metrics *auth.Metrics) (*oidcAuth, error) {

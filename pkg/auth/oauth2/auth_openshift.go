@@ -89,11 +89,17 @@ func newOpenShiftAuth(ctx context.Context, k8sClient *http.Client, c *oidcConfig
 		encryptionKey = []byte(encryptionKeyStr)
 	}
 
+	var previousKeyPairs [][]byte
+	if len(c.previousCookieAuthenticationKey) > 0 && len(c.previousCookieEncryptionKey) > 0 {
+		previousKeyPairs = [][]byte{c.previousCookieAuthenticationKey, c.previousCookieEncryptionKey}
+	}
+
 	o.sessions = sessions.NewSessionStore(
 		authnKey,
 		encryptionKey,
 		c.secureCookies,
 		c.cookiePath,
+		previousKeyPairs...,
 	)
 
 	return o, nil

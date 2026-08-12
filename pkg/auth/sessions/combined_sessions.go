@@ -30,8 +30,10 @@ func SessionCookieName() string {
 	return OpenshiftAccessTokenCookieName + "-" + podName
 }
 
-func NewSessionStore(authnKey, encryptKey []byte, secureCookies bool, cookiePath string) *CombinedSessionStore {
-	clientStore := gorilla.NewCookieStore(authnKey, encryptKey)
+func NewSessionStore(authnKey, encryptKey []byte, secureCookies bool, cookiePath string, previousKeyPairs ...[]byte) *CombinedSessionStore {
+	keyPairs := [][]byte{authnKey, encryptKey}
+	keyPairs = append(keyPairs, previousKeyPairs...)
+	clientStore := gorilla.NewCookieStore(keyPairs...)
 	clientStore.Options.Secure = secureCookies
 	clientStore.Options.HttpOnly = true
 	clientStore.Options.SameSite = http.SameSiteStrictMode

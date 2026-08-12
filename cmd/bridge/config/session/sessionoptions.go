@@ -13,8 +13,10 @@ import (
 )
 
 type SessionOptions struct {
-	CookieEncryptionKeyPath     string
-	CookieAuthenticationKeyPath string
+	CookieEncryptionKeyPath             string
+	CookieAuthenticationKeyPath         string
+	PreviousCookieEncryptionKeyPath     string
+	PreviousCookieAuthenticationKeyPath string
 }
 
 type CompletedOptions struct {
@@ -22,15 +24,14 @@ type CompletedOptions struct {
 }
 
 type completedOptions struct {
-	CookieEncryptionKey     []byte
-	CookieAuthenticationKey []byte
+	CookieEncryptionKey             []byte
+	CookieAuthenticationKey         []byte
+	PreviousCookieEncryptionKey     []byte
+	PreviousCookieAuthenticationKey []byte
 }
 
 func NewSessionOptions() *SessionOptions {
-	return &SessionOptions{
-		CookieEncryptionKeyPath:     "",
-		CookieAuthenticationKeyPath: "",
-	}
+	return &SessionOptions{}
 }
 
 func (opts *SessionOptions) AddFlags(fs *flag.FlagSet) {
@@ -41,6 +42,8 @@ func (opts *SessionOptions) AddFlags(fs *flag.FlagSet) {
 func (opts *SessionOptions) ApplyConfig(config *serverconfig.Session) {
 	serverconfig.SetIfUnset(&opts.CookieEncryptionKeyPath, config.CookieEncryptionKeyFile)
 	serverconfig.SetIfUnset(&opts.CookieAuthenticationKeyPath, config.CookieAuthenticationKeyFile)
+	serverconfig.SetIfUnset(&opts.PreviousCookieEncryptionKeyPath, config.PreviousCookieEncryptionKeyFile)
+	serverconfig.SetIfUnset(&opts.PreviousCookieAuthenticationKeyPath, config.PreviousCookieAuthenticationKeyFile)
 }
 
 func (opts *SessionOptions) Validate(userAuthType flagvalues.AuthType) []error {
@@ -96,6 +99,18 @@ func (opts *SessionOptions) Complete(userAuthType flagvalues.AuthType) (*Complet
 			}
 		} else {
 			completed.CookieAuthenticationKey = authnKey
+		}
+	}
+
+	// Previous keys are always optional — used for graceful key rotation
+	if len(opts.PreviousCookieEncryptionKeyPath) > 0 {
+		if prevEncKey, err := os.ReadFile(opts.PreviousCookieEncryptionKeyPath); err == nil {
+			completed.PreviousCookieEncryptionKey = prevEncKey
+		}
+	}
+	if len(opts.PreviousCookieAuthenticationKeyPath) > 0 {
+		if prevAuthnKey, err := os.ReadFile(opts.PreviousCookieAuthenticationKeyPath); err == nil {
+			completed.PreviousCookieAuthenticationKey = prevAuthnKey
 		}
 	}
 
