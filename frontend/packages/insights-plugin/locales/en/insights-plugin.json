@@ -8,8 +8,8 @@
   "Temporarily unavailable.": "Temporarily unavailable.",
   "Disabled.": "Disabled.",
   "Waiting for results.": "Waiting for results.",
-  "Total issue": "Total issue",
-  "Total issue_plural": "Total issue_plural",
+  "Total issue_one": "Total issue",
+  "Total issue_other": "Total issues",
   "Total risk": "Total risk",
   "Fixable issues": "Fixable issues",
   "View all recommendations in Insights Advisor": "View all recommendations in Insights Advisor",
@@ -21,7 +21,5 @@
   "{{issuesNumber}} issue found": "{{issuesNumber}} issue found",
   "{{issuesNumber}} issues found": "{{issuesNumber}} issues found",
   "Insights": "Insights",
-  "Insights Advisor status": "Insights Advisor status",
-  "Total issue_one": "Total issue",
-  "Total issue_other": "Total issues"
+  "Insights Advisor status": "Insights Advisor status"
 }
