@@ -183,17 +183,26 @@ func (o *openShiftAuth) DeleteSession(w http.ResponseWriter, r *http.Request) {
 func (o *openShiftAuth) logout(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
+	// Always clean up local state (session + recovery cookie) before writing the
+	// HTTP response.  This ensures the user is logged out of the console even when
+	// remote token revocation fails.  Set-Cookie headers must be added before
+	// WriteHeader / http.Error, otherwise Go's ResponseWriter silently drops them.
+	defer func() {
+		o.sessions.DeleteSession(w, r)
+		o.sessions.ClearRecoveryCookie(w, r)
+	}()
+
 	k8sURL, err := url.Parse(o.issuerURL)
 	if err != nil {
 		klog.Errorf("failed to parse the URL to kube-apiserver: %v", err)
-		http.Error(w, "removing the session failed", http.StatusInternalServerError)
+		w.WriteHeader(http.StatusNoContent)
 		return
 	}
 
 	ls, err := o.getLoginState(w, r)
 	if err != nil {
 		klog.Errorf("error logging out: %v", err)
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusNoContent)
 		return
 	}
 
@@ -208,14 +217,13 @@ func (o *openShiftAuth) logout(w http.ResponseWriter, r *http.Request) {
 
 	oauthClient, err := oauthv1client.NewForConfig(configWithBearerToken)
 	if err != nil {
-		klog.Infof("failed setting up the oauthaccesstokens client: %v", err)
-		http.Error(w, "removing the session failed", http.StatusInternalServerError)
+		klog.Errorf("failed setting up the oauthaccesstokens client: %v", err)
+		w.WriteHeader(http.StatusNoContent)
 		return
 	}
-	err = oauthClient.OAuthAccessTokens().Delete(ctx, tokenToObjectName(token), metav1.DeleteOptions{})
-	if err != nil {
-		http.Error(w, "removing the session failed", http.StatusInternalServerError)
-		return
+
+	if err := oauthClient.OAuthAccessTokens().Delete(ctx, tokenToObjectName(token), metav1.DeleteOptions{}); err != nil {
+		klog.Errorf("failed to revoke access token on logout: %v", err)
 	}
 
 	if refreshToken := ls.RefreshToken(); refreshToken != "" {
@@ -224,8 +232,6 @@ func (o *openShiftAuth) logout(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	o.sessions.DeleteSession(w, r)
-	o.sessions.ClearRecoveryCookie(w, r)
 	w.WriteHeader(http.StatusNoContent)
 }
 

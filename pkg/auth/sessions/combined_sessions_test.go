@@ -295,6 +295,25 @@ func TestCombinedSessionStore_GetSession_LegacyCookie(t *testing.T) {
 
 	// Legacy format should resolve through byRefreshTokenID map
 	require.Nil(t, got, "should not find session by refresh token alone without byRefreshToken mapping")
+
+	// Positive case: legacy cookie resolves when byRefreshToken is populated
+	expectedSession := &LoginState{sessionToken: "legacy-session", refreshToken: "refresh-old"}
+	testServerSessions.byRefreshToken["refresh-old"] = expectedSession
+
+	req2, err := http.NewRequest(http.MethodGet, "/", nil)
+	require.NoError(t, err)
+
+	testCookies2 := &testCookieFactory{
+		cookieCodecs: cookieCodecs,
+		serverStore:  cs.serverStore,
+	}
+	testCookies2.WithRefreshToken("refresh-old").WithLegacyFormat()
+	req2 = testCookies2.Complete(t, req2)
+
+	testWriter2 := httptest.NewRecorder()
+	got2, err := cs.GetSession(testWriter2, req2)
+	require.NoError(t, err)
+	require.Equal(t, expectedSession, got2, "legacy cookie should resolve to session via byRefreshToken")
 }
 
 func TestCombinedSessionStore_RecoveryCookie(t *testing.T) {
@@ -307,14 +326,16 @@ func TestCombinedSessionStore_RecoveryCookie(t *testing.T) {
 	expiry := time.Now().Add(24 * time.Hour)
 
 	t.Run("set and get recovery cookie", func(t *testing.T) {
-		req, _ := http.NewRequest(http.MethodGet, "/", nil)
+		req, err := http.NewRequest(http.MethodGet, "/", nil)
+		require.NoError(t, err)
 		w := httptest.NewRecorder()
 
-		err := cs.SetRecoveryCookie(w, req, accessToken, expiry)
+		err = cs.SetRecoveryCookie(w, req, accessToken, expiry)
 		require.NoError(t, err)
 
 		// Build a new request with the cookie from the response
-		req2, _ := http.NewRequest(http.MethodGet, "/", nil)
+		req2, err := http.NewRequest(http.MethodGet, "/", nil)
+		require.NoError(t, err)
 		for _, c := range w.Result().Cookies() {
 			req2.AddCookie(c)
 		}
@@ -326,13 +347,15 @@ func TestCombinedSessionStore_RecoveryCookie(t *testing.T) {
 	})
 
 	t.Run("get recovery cookie from empty request", func(t *testing.T) {
-		req, _ := http.NewRequest(http.MethodGet, "/", nil)
+		req, err := http.NewRequest(http.MethodGet, "/", nil)
+		require.NoError(t, err)
 		_, _, ok := cs.GetRecoveryCookie(req)
 		require.False(t, ok)
 	})
 
 	t.Run("clear recovery cookie", func(t *testing.T) {
-		req, _ := http.NewRequest(http.MethodGet, "/", nil)
+		req, err := http.NewRequest(http.MethodGet, "/", nil)
+		require.NoError(t, err)
 		w := httptest.NewRecorder()
 
 		cs.ClearRecoveryCookie(w, req)
@@ -344,14 +367,16 @@ func TestCombinedSessionStore_RecoveryCookie(t *testing.T) {
 	})
 
 	t.Run("recovery cookie with expired token", func(t *testing.T) {
-		req, _ := http.NewRequest(http.MethodGet, "/", nil)
+		req, err := http.NewRequest(http.MethodGet, "/", nil)
+		require.NoError(t, err)
 		w := httptest.NewRecorder()
 
 		pastExpiry := time.Now().Add(-1 * time.Hour)
-		err := cs.SetRecoveryCookie(w, req, accessToken, pastExpiry)
+		err = cs.SetRecoveryCookie(w, req, accessToken, pastExpiry)
 		require.NoError(t, err)
 
-		req2, _ := http.NewRequest(http.MethodGet, "/", nil)
+		req2, err := http.NewRequest(http.MethodGet, "/", nil)
+		require.NoError(t, err)
 		for _, c := range w.Result().Cookies() {
 			req2.AddCookie(c)
 		}

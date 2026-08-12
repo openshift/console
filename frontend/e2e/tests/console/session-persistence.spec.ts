@@ -11,7 +11,7 @@ test.describe(
     test.setTimeout(300_000);
 
     test('session survives console pod deletion', async ({ page, k8sClient }) => {
-      const baseURL = process.env.WEB_CONSOLE_URL || page.url() || 'http://localhost:9000';
+      const baseURL = process.env.WEB_CONSOLE_URL || 'http://localhost:9000';
 
       await test.step('Log in to the console', async () => {
         const htpasswdUser = process.env.BRIDGE_HTPASSWD_USERNAME;
@@ -65,7 +65,7 @@ test.describe(
     });
 
     test('session survives console plugin toggle', async ({ page, k8sClient }) => {
-      const baseURL = process.env.WEB_CONSOLE_URL || page.url() || 'http://localhost:9000';
+      const baseURL = process.env.WEB_CONSOLE_URL || 'http://localhost:9000';
 
       await test.step('Log in to the console', async () => {
         const htpasswdUser = process.env.BRIDGE_HTPASSWD_USERNAME;
