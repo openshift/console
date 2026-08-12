@@ -384,6 +384,8 @@ export const cellIsStickyProps = {
 export const selectionColumnProps = {
   ...cellIsStickyProps,
   stickyLeftOffset: '0',
+  stickyMinWidth: SELECTION_COLUMN_WIDTH,
+  style: { maxWidth: SELECTION_COLUMN_WIDTH },
 };
 
 export const nameCellProps = {
