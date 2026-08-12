@@ -86,10 +86,10 @@ const CreateHelmChartRepositoryForm: FC<
         ? t('Update Helm Chart repository in the namespace.')
         : t('Add Helm Chart repository in the namespace.')
       : existingRepo
-      ? existingRepo.kind === ProjectHelmChartRepositoryModel.kind
-        ? t('Update Helm Chart repository in the namespace.')
-        : t('Update the Helm Chart repository.')
-      : t('Add Helm Chart repository.');
+        ? existingRepo.kind === ProjectHelmChartRepositoryModel.kind
+          ? t('Update Helm Chart repository in the namespace.')
+          : t('Update the Helm Chart repository.')
+        : t('Add Helm Chart repository.');
 
   return (
     <FlexForm onSubmit={handleSubmit}>
