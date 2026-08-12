@@ -2393,6 +2393,17 @@
     }
   },
   {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "console.openshift.io",
+        "version": "v1",
+        "kind": "ConsolePlugin"
+      },
+      "component": { "$codeRef": "ConsolePluginsListPage.ConsolePluginsListPage" }
+    }
+  },
+  {
     "type": "console.tab/horizontalNav",
     "properties": {
       "model": {

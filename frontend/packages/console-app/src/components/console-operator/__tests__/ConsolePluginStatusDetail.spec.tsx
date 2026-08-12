@@ -8,7 +8,7 @@ import {
   createTestPluginStore,
 } from './pluginTestUtils';
 
-jest.mock('../ConsoleOperatorConfig', () => ({
+jest.mock('../ConsolePluginStatus', () => ({
   ConsolePluginStatus: ({ status, errorMessage }: { status: string; errorMessage?: string }) => (
     <span>
       {status}
