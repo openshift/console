@@ -113,7 +113,7 @@ const PerspectiveVisibilitySelect: FC<{
     {
       value: 'Disabled',
       title: t('Disabled'),
-      description: t('Disable this perspectives for all users.'),
+      description: t('Disable this perspective for all users.'),
       visibility: { state: PerspectiveVisibilityState.Disabled },
       isSelected: value?.state === PerspectiveVisibilityState.Disabled,
     },
