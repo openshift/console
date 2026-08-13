@@ -3,7 +3,6 @@ import {
   Configuration,
   CopyRspackPlugin,
   CssExtractRspackPlugin,
-  DefinePlugin,
   LightningCssMinimizerRspackPlugin,
   NormalModule,
   NormalModuleReplacementPlugin,
@@ -130,8 +129,8 @@ const config: Configuration = {
   },
   performance: {
     // The maximum size in MiB of the entrypoint and generated files permitted by analyze.sh
-    maxEntrypointSize: 8.6 * 1048576,
-    maxAssetSize: 3.8 * 1048576, // the size of the monaco-editor chunk
+    maxEntrypointSize: 8.3 * 1048576,
+    maxAssetSize: 3.71 * 1048576, // the size of the monaco-editor chunk
   },
   devServer: {
     hot: HOT_RELOAD !== 'false',
@@ -353,11 +352,6 @@ const config: Configuration = {
       // See https://github.com/webpack-contrib/mini-css-extract-plugin/issues/250
       ignoreOrder: true,
     }),
-    new DefinePlugin({
-      // Surpress a react-router related warning in development mode.
-      // TODO: See if it can be removed in react router 8
-      'import.meta.hot': undefined,
-    }),
     ...(REACT_REFRESH ? [new ReactRefreshRspackPlugin()] : [new ProgressPlugin()]),
   ],
   devtool: 'cheap-module-source-map',
@@ -414,8 +408,6 @@ if (NODE_ENV === 'production') {
   config.devtool = 'source-map';
   config.output.filename = '[name]-bundle-[chunkhash].min.js';
   config.output.chunkFilename = '[name]-chunk-[chunkhash].min.js';
-  // Causes error in --mode=production due to scope hoisting
-  config.optimization.concatenateModules = false;
   config.stats = 'normal';
 }
 
