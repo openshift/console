@@ -24,7 +24,6 @@ import { ListPageBody } from '@console/dynamic-plugin-sdk';
 import type {
   ColumnLayout,
   RowProps,
-  TableColumn,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
@@ -114,11 +113,11 @@ const tableColumnInfo = [
 
 const usePodsColumns = (
   showNodes: boolean,
-): { columns: TableColumn<PodKind>[]; resetAllColumnWidths: () => void } => {
+): { columns: ConsoleDataViewColumn<PodKind>[]; resetAllColumnWidths: () => void } => {
   const { t } = useTranslation('public');
   const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(PodModel);
 
-  const columns = useMemo(
+  const columns = useMemo<ConsoleDataViewColumn<PodKind>[]>(
     () => [
       {
         title: t('Name'),
@@ -127,7 +126,7 @@ const usePodsColumns = (
         sort: 'metadata.name',
         props: {
           ...nameCellProps,
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -136,7 +135,7 @@ const usePodsColumns = (
         sort: 'metadata.namespace',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -145,7 +144,7 @@ const usePodsColumns = (
         sort: (data, direction) => data.sort(sortResourceByValue(direction, podPhase)),
         resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -155,7 +154,7 @@ const usePodsColumns = (
           data.sort(sortResourceByValue(direction, (obj) => podReadiness(obj).readyCount)),
         resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -164,7 +163,7 @@ const usePodsColumns = (
         sort: (data, direction) => data.sort(sortResourceByValue(direction, podRestarts)),
         resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -173,7 +172,7 @@ const usePodsColumns = (
         sort: showNodes ? 'spec.nodeName' : 'metadata.ownerReferences[0].name',
         resizableProps: getResizableProps(tableColumnInfo[5].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -183,7 +182,7 @@ const usePodsColumns = (
           data.sort(sortResourceByValue(direction, (obj) => UIActions.getPodMetric(obj, 'memory'))),
         resizableProps: getResizableProps(tableColumnInfo[6].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -193,7 +192,7 @@ const usePodsColumns = (
           data.sort(sortResourceByValue(direction, (obj) => UIActions.getPodMetric(obj, 'cpu'))),
         resizableProps: getResizableProps(tableColumnInfo[7].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -202,7 +201,7 @@ const usePodsColumns = (
         sort: 'metadata.creationTimestamp',
         resizableProps: getResizableProps(tableColumnInfo[8].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -211,7 +210,7 @@ const usePodsColumns = (
         sort: 'spec.nodeName',
         resizableProps: getResizableProps(tableColumnInfo[9].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
         additional: true,
       },
@@ -221,7 +220,7 @@ const usePodsColumns = (
         sort: 'metadata.labels',
         resizableProps: getResizableProps(tableColumnInfo[10].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
           ...getLabelsColumnWidthStyleProp(getWidth(tableColumnInfo[3].id)),
         },
         additional: true,
@@ -232,7 +231,7 @@ const usePodsColumns = (
         sort: 'status.podIP',
         resizableProps: getResizableProps(tableColumnInfo[11].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
         additional: true,
       },
@@ -241,7 +240,7 @@ const usePodsColumns = (
         id: tableColumnInfo[12].id,
         resizableProps: getResizableProps(tableColumnInfo[12].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
         additional: true,
       },

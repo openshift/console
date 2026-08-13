@@ -21,7 +21,11 @@ import {
   actionsCellProps,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import type { GetDataViewRows, ResourceFilters } from '@console/app/src/components/data-view/types';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+  ResourceFilters,
+} from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { ListPageBody } from '@console/dynamic-plugin-sdk';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
@@ -34,12 +38,7 @@ import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { getQueryArgument } from '@console/shared/src/hooks/useQueryParamsMutator';
 import { ClusterRoleBindingModel, RoleBindingModel } from '../../models';
-import type {
-  ClusterRoleBindingKind,
-  RoleBindingKind,
-  Subject,
-  TableColumn,
-} from '../../module/k8s';
+import type { ClusterRoleBindingKind, RoleBindingKind, Subject } from '../../module/k8s';
 import { getQN, k8sCreate, k8sPatch, referenceFor } from '../../module/k8s';
 import { flagPending } from '../../reducers/features';
 import type { MultiListPageProps } from '../factory/list-page';
@@ -95,13 +94,13 @@ const tableColumnInfo = [
 ];
 
 const useRoleBindingsColumns = (): {
-  columns: TableColumn<BindingKind>[];
+  columns: ConsoleDataViewColumn<BindingKind>[];
   resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('public');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(RoleBindingModel);
 
-  const columns: TableColumn<BindingKind>[] = useMemo(
+  const columns: ConsoleDataViewColumn<BindingKind>[] = useMemo(
     () => [
       {
         title: t('Name'),
@@ -110,7 +109,7 @@ const useRoleBindingsColumns = (): {
         resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
           ...nameCellProps,
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -119,7 +118,7 @@ const useRoleBindingsColumns = (): {
         sort: 'roleRef.name',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -128,7 +127,7 @@ const useRoleBindingsColumns = (): {
         sort: 'subject.kind',
         resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -137,7 +136,7 @@ const useRoleBindingsColumns = (): {
         sort: 'subject.name',
         resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -146,7 +145,7 @@ const useRoleBindingsColumns = (): {
         sort: 'metadata.namespace',
         resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {

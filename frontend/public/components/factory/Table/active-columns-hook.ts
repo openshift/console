@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import type { TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { ConsoleDataViewColumn } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import {
   ALL_NAMESPACES_KEY,
   COLUMN_MANAGEMENT_USER_PREFERENCE_KEY,
@@ -12,10 +12,10 @@ export const useActiveColumns = <D = any>({
   showNamespaceOverride,
   columnManagementID,
 }: {
-  columns: TableColumn<D>[];
+  columns: ConsoleDataViewColumn<D>[];
   showNamespaceOverride?: boolean;
   columnManagementID?: string;
-}): [TableColumn<D>[], boolean] => {
+}): [ConsoleDataViewColumn<D>[], boolean] => {
   const [tableColumns, , columnPreferenceLoaded] = useUserPreference(
     COLUMN_MANAGEMENT_USER_PREFERENCE_KEY,
     undefined,

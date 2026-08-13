@@ -34,10 +34,7 @@ import type {
   ResourceMetadata,
 } from '@console/app/src/components/data-view/types';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
-import type {
-  RowProps,
-  TableColumn,
-} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { RowProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { NavBar } from '@console/internal/components/utils/horizontal-nav';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
@@ -406,9 +403,9 @@ const getReceiverDataViewRows = (
     });
   });
 
-const useReceiverColumns = (): TableColumn<AlertmanagerReceiver>[] => {
+const useReceiverColumns = (): ConsoleDataViewColumn<AlertmanagerReceiver>[] => {
   const { t } = useTranslation('public');
-  const columns = useMemo(
+  const columns = useMemo<ConsoleDataViewColumn<AlertmanagerReceiver>[]>(
     () => [
       {
         title: t('Name'),
@@ -416,21 +413,21 @@ const useReceiverColumns = (): TableColumn<AlertmanagerReceiver>[] => {
         sort: 'name',
         props: {
           ...cellIsStickyProps,
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
         title: t('Integration type'),
         id: tableColumnInfo[1].id,
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
         title: t('Routing labels'),
         id: tableColumnInfo[2].id,
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -438,7 +435,7 @@ const useReceiverColumns = (): TableColumn<AlertmanagerReceiver>[] => {
         id: tableColumnInfo[3].id,
         props: {
           ...cellIsStickyProps,
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
     ],

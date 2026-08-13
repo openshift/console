@@ -24,7 +24,11 @@ import {
   ConsoleDataView,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import type { ResourceFilters, GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type {
+  ConsoleDataViewColumn,
+  ResourceFilters,
+  GetDataViewRows,
+} from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk';
 import type { PVCStatus, PVCAlert } from '@console/dynamic-plugin-sdk/src/extensions/pvc';
@@ -33,7 +37,6 @@ import {
   isPVCCreateProp,
   isPVCStatus,
 } from '@console/dynamic-plugin-sdk/src/extensions/pvc';
-import type { TableColumn } from '@console/dynamic-plugin-sdk/src/lib-core';
 import type { PVCMetrics } from '@console/internal/actions/ui';
 import { setPVCMetrics } from '@console/internal/actions/ui';
 import { PersistentVolumeClaimModel, VolumeAttributesClassModel } from '@console/internal/models';
@@ -197,7 +200,7 @@ const getDataViewRowsCreator: (
   });
 
 const usePersistentVolumeClaimColumns = (): {
-  columns: TableColumn<PersistentVolumeClaimKind>[];
+  columns: ConsoleDataViewColumn<PersistentVolumeClaimKind>[];
   resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('public');
@@ -205,56 +208,56 @@ const usePersistentVolumeClaimColumns = (): {
     PersistentVolumeClaimModel,
   );
 
-  const columns: TableColumn<PersistentVolumeClaimKind>[] = useMemo(
+  const columns: ConsoleDataViewColumn<PersistentVolumeClaimKind>[] = useMemo(
     () => [
       {
         title: t('Name'),
         sort: 'metadata.name',
         id: tableColumnInfo[0].id,
         resizableProps: getResizableProps(tableColumnInfo[0].id),
-        props: { ...nameCellProps, modifier: 'nowrap' },
+        props: { ...nameCellProps, modifier: 'nowrap' as const },
       },
       {
         title: t('Namespace'),
         sort: 'metadata.namespace',
         id: tableColumnInfo[1].id,
         resizableProps: getResizableProps(tableColumnInfo[1].id),
-        props: { modifier: 'nowrap' },
+        props: { modifier: 'nowrap' as const },
       },
       {
         title: t('Status'),
         sort: 'status.phase',
         id: tableColumnInfo[2].id,
         resizableProps: getResizableProps(tableColumnInfo[2].id),
-        props: { modifier: 'nowrap' },
+        props: { modifier: 'nowrap' as const },
       },
       {
         title: t('PersistentVolume'),
         sort: 'spec.volumeName',
         id: tableColumnInfo[3].id,
         resizableProps: getResizableProps(tableColumnInfo[3].id),
-        props: { modifier: 'nowrap' },
+        props: { modifier: 'nowrap' as const },
       },
       {
         title: t('Capacity'),
         sort: 'pvcStorage',
         id: tableColumnInfo[4].id,
         resizableProps: getResizableProps(tableColumnInfo[4].id),
-        props: { modifier: 'nowrap' },
+        props: { modifier: 'nowrap' as const },
       },
       {
         title: t('Used'),
         sort: 'pvcUsed',
         id: tableColumnInfo[5].id,
         resizableProps: getResizableProps(tableColumnInfo[5].id),
-        props: { modifier: 'nowrap' },
+        props: { modifier: 'nowrap' as const },
       },
       {
         title: t('StorageClass'),
         sort: 'spec.storageClassName',
         id: tableColumnInfo[6].id,
         resizableProps: getResizableProps(tableColumnInfo[6].id),
-        props: { modifier: 'nowrap' },
+        props: { modifier: 'nowrap' as const },
       },
       {
         title: '',

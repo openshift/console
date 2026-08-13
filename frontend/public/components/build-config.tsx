@@ -9,7 +9,10 @@ import {
   ConsoleDataView,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
@@ -20,12 +23,7 @@ import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { Status } from '@console/shared/src/components/status/Status';
 import { DASH } from '@console/shared/src/constants/ui';
 import { BuildModel, BuildConfigModel } from '../models';
-import type {
-  K8sModel,
-  K8sResourceKind,
-  K8sResourceKindReference,
-  TableColumn,
-} from '../module/k8s';
+import type { K8sModel, K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { referenceForModel } from '../module/k8s';
 import { BuildsPage, BuildEnvironmentComponent, PipelineBuildStrategyAlert } from './build';
 import { ResourceEventStream } from './events';
@@ -214,13 +212,13 @@ const getBuildStatus = (buildConfig: BuildConfig) =>
   buildConfig?.latestBuild?.status?.phase || 'Unknown';
 
 const useBuildConfigColumns = (): {
-  columns: TableColumn<BuildConfig>[];
+  columns: ConsoleDataViewColumn<BuildConfig>[];
   resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('public');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(BuildConfigModel);
 
-  const columns = useMemo(
+  const columns = useMemo<ConsoleDataViewColumn<BuildConfig>[]>(
     () => [
       {
         title: t('Name'),
@@ -229,7 +227,7 @@ const useBuildConfigColumns = (): {
         resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
           ...nameCellProps,
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -238,7 +236,7 @@ const useBuildConfigColumns = (): {
         sort: 'metadata.namespace',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -247,7 +245,7 @@ const useBuildConfigColumns = (): {
         sort: 'latestBuild.metadata.name',
         resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -256,7 +254,7 @@ const useBuildConfigColumns = (): {
         sort: 'latestBuild.status.phase',
         resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -265,7 +263,7 @@ const useBuildConfigColumns = (): {
         sort: 'latestBuild.metadata.creationTimestamp',
         resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -274,7 +272,7 @@ const useBuildConfigColumns = (): {
         sort: (data, direction) => data.sort(sortResourceByValue(direction, sorts.buildDuration)),
         resizableProps: getResizableProps(tableColumnInfo[5].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {

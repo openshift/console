@@ -12,10 +12,7 @@ import type {
   ConsoleDataViewRow,
   ResourceMetadata,
 } from '@console/app/src/components/data-view/types';
-import type {
-  RowProps,
-  TableColumn,
-} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { RowProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DASH } from '@console/shared/src/constants/ui';
 import { referenceForModel, useModelFinder } from '../../module/k8s';
@@ -76,9 +73,9 @@ const getRelatedObjectsDataViewRows = (
     });
   });
 
-const useRelatedObjectsColumns = (): TableColumn<ClusterOperatorObjectReference>[] => {
+const useRelatedObjectsColumns = (): ConsoleDataViewColumn<ClusterOperatorObjectReference>[] => {
   const { t } = useTranslation('public');
-  const columns = useMemo(
+  const columns = useMemo<ConsoleDataViewColumn<ClusterOperatorObjectReference>[]>(
     () => [
       {
         title: t('Name'),
@@ -86,7 +83,7 @@ const useRelatedObjectsColumns = (): TableColumn<ClusterOperatorObjectReference>
         sort: 'name',
         props: {
           ...cellIsStickyProps,
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -94,7 +91,7 @@ const useRelatedObjectsColumns = (): TableColumn<ClusterOperatorObjectReference>
         id: columnIds[1].id,
         sort: 'resource',
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -102,7 +99,7 @@ const useRelatedObjectsColumns = (): TableColumn<ClusterOperatorObjectReference>
         id: columnIds[2].id,
         sort: 'group',
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -110,7 +107,7 @@ const useRelatedObjectsColumns = (): TableColumn<ClusterOperatorObjectReference>
         id: columnIds[3].id,
         sort: 'namespace',
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
     ],

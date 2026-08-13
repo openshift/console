@@ -18,9 +18,11 @@ import {
   nameCellProps,
   getLabelsColumnWidthStyleProp,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import type { TableColumn } from '@console/dynamic-plugin-sdk/src/lib-core';
 import type { PersistentVolumeKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
@@ -112,42 +114,42 @@ const getDataViewRowsCreator: (t: TFunction) => GetDataViewRows<PersistentVolume
     });
 
 const usePersistentVolumeColumns = (): {
-  columns: TableColumn<PersistentVolumeKind>[];
+  columns: ConsoleDataViewColumn<PersistentVolumeKind>[];
   resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('public');
   const { getResizableProps, getWidth, resetAllColumnWidths } =
     useColumnWidthSettings(PersistentVolumeModel);
 
-  const columns: TableColumn<PersistentVolumeKind>[] = useMemo(
+  const columns: ConsoleDataViewColumn<PersistentVolumeKind>[] = useMemo(
     () => [
       {
         title: t('Name'),
         sort: 'metadata.name',
         id: tableColumnInfo[0].id,
         resizableProps: getResizableProps(tableColumnInfo[0].id),
-        props: { ...nameCellProps, modifier: 'nowrap' },
+        props: { ...nameCellProps, modifier: 'nowrap' as const },
       },
       {
         title: t('Status'),
         sort: 'status.phase',
         id: tableColumnInfo[1].id,
         resizableProps: getResizableProps(tableColumnInfo[1].id),
-        props: { modifier: 'nowrap' },
+        props: { modifier: 'nowrap' as const },
       },
       {
         title: t('Claim'),
         sort: 'spec.claimRef.name',
         id: tableColumnInfo[2].id,
         resizableProps: getResizableProps(tableColumnInfo[2].id),
-        props: { modifier: 'nowrap' },
+        props: { modifier: 'nowrap' as const },
       },
       {
         title: t('Capacity'),
         sort: 'pvStorage',
         id: tableColumnInfo[3].id,
         resizableProps: getResizableProps(tableColumnInfo[3].id),
-        props: { modifier: 'nowrap' },
+        props: { modifier: 'nowrap' as const },
       },
       {
         title: t('Labels'),
@@ -155,7 +157,7 @@ const usePersistentVolumeColumns = (): {
         id: tableColumnInfo[4].id,
         resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
           ...getLabelsColumnWidthStyleProp(getWidth(tableColumnInfo[4].id)),
         },
       },
@@ -164,7 +166,7 @@ const usePersistentVolumeColumns = (): {
         sort: 'metadata.creationTimestamp',
         id: tableColumnInfo[5].id,
         resizableProps: getResizableProps(tableColumnInfo[5].id),
-        props: { modifier: 'nowrap' },
+        props: { modifier: 'nowrap' as const },
       },
       {
         title: '',

@@ -7,20 +7,16 @@ import { SortByDirection } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router';
-import type { ConsoleDataViewTh } from '@console/dynamic-plugin-sdk/src/api/internal-types';
-import type {
-  TableColumn,
-  RowProps,
-} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { RowProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { useActiveColumns } from '@console/internal/components/factory/Table/active-columns-hook';
 import { sortResourceByValue } from '@console/internal/components/factory/Table/sort';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import type { ConsoleDataViewColumn, GetDataViewRows, ResourceFilters } from './types';
 import { useConsoleDataViewSort, getSortByDirection } from './useConsoleDataViewSort';
 
-const isDataViewConfigurableColumn = (
-  column: ConsoleDataViewTh,
-): column is Extract<DataViewTh, { cell: ReactNode }> => (column as any)?.cell !== undefined;
+const isDataViewConfigurableColumn = <TData,>(
+  column: ConsoleDataViewColumn<TData>,
+): column is ConsoleDataViewColumn<TData> & { cell: ReactNode } => column?.cell !== undefined;
 
 export const useConsoleDataViewData = <
   TData,
@@ -37,7 +33,7 @@ export const useConsoleDataViewData = <
   isResizable = true,
   selection,
 }: {
-  columns: TableColumn<TData>[];
+  columns: ConsoleDataViewColumn<TData>[];
   filteredData: TData[];
   filters: TFilters;
   getDataViewRows: GetDataViewRows<TData, TCustomRowData>;
@@ -97,10 +93,8 @@ export const useConsoleDataViewData = <
 
     return activeColumns.map(({ id, title, sort, props, resizableProps }, index) => {
       // Filter out custom Console props that aren't valid PatternFly ThProps
-      const { isActionCell, ...validThProps } = props || {};
-
       const headerProps: ThProps = {
-        ...validThProps,
+        ...props,
         dataLabel: title,
       };
 
@@ -133,7 +127,7 @@ export const useConsoleDataViewData = <
       return {
         id,
         title,
-        sortFunction: sort,
+        sort,
         props: headerProps,
         resizableProps: isResizable ? resizableProps : undefined,
         cell: title ? (
@@ -141,7 +135,7 @@ export const useConsoleDataViewData = <
         ) : (
           <span className="pf-v6-u-screen-reader">{t('Actions')}</span>
         ),
-      };
+      } satisfies ConsoleDataViewColumn<TData>;
     });
   }, [activeColumns, t, isResizable, selection, filteredData]);
 
@@ -157,14 +151,14 @@ export const useConsoleDataViewData = <
       return filteredData;
     }
 
-    if (typeof sortColumn.sortFunction === 'string') {
+    if (typeof sortColumn.sort === 'string') {
       return filteredData.sort(
-        sortResourceByValue(sortDirection, (obj) => _.get(obj, sortColumn.sortFunction as string)),
+        sortResourceByValue(sortDirection, (obj) => _.get(obj, sortColumn.sort as string)),
       );
     }
 
-    if (typeof sortColumn.sortFunction === 'function') {
-      return sortColumn.sortFunction(filteredData, sortDirection);
+    if (typeof sortColumn.sort === 'function') {
+      return sortColumn.sort(filteredData, sortDirection);
     }
 
     return filteredData;
@@ -186,16 +180,19 @@ export const useConsoleDataViewData = <
   const dataViewRows = getDataViewRows(transformedData, dataViewColumns);
 
   // Apply sort state and select-all handler updates to columns independently
-  const dataViewColumnsWithSortApplied = useMemo(
+  const dataViewColumnsWithSortApplied = useMemo<DataViewTh[]>(
     () =>
       dataViewColumns.map((column) => {
         if (!isDataViewConfigurableColumn(column)) {
-          return column;
+          return {
+            ...column,
+            cell: null,
+          };
         }
 
         let updatedProps = column.props;
 
-        if (column.sortFunction !== undefined && column.props.sort) {
+        if (column.sort !== undefined && column.props.sort) {
           updatedProps = {
             ...updatedProps,
             sort: {

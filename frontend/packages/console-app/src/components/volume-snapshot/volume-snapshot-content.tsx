@@ -7,9 +7,11 @@ import {
   ConsoleDataView,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import type { TableColumn } from '@console/dynamic-plugin-sdk/src/lib-core';
 import {
   ListPageBody,
   ListPageCreate,
@@ -105,7 +107,7 @@ const getDataViewRows: GetDataViewRows<VolumeSnapshotContentKind> = (data, colum
   });
 
 const useVolumeSnapshotContentColumns = (): {
-  columns: TableColumn<VolumeSnapshotContentKind>[];
+  columns: ConsoleDataViewColumn<VolumeSnapshotContentKind>[];
   resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('console-app');
@@ -113,14 +115,14 @@ const useVolumeSnapshotContentColumns = (): {
     VolumeSnapshotContentModel,
   );
 
-  const columns: TableColumn<VolumeSnapshotContentKind>[] = useMemo(
+  const columns: ConsoleDataViewColumn<VolumeSnapshotContentKind>[] = useMemo(
     () => [
       {
         title: t('Name'),
         sort: 'metadata.name',
         id: tableColumnInfo[0].id,
         resizableProps: getResizableProps(tableColumnInfo[0].id),
-        props: { ...nameCellProps, modifier: 'nowrap' },
+        props: { ...nameCellProps, modifier: 'nowrap' as const },
       },
       {
         title: t('Status'),
@@ -128,7 +130,7 @@ const useVolumeSnapshotContentColumns = (): {
           data.sort(sortResourceByValue(direction, sorts.volumeSnapshotStatus)),
         id: tableColumnInfo[1].id,
         resizableProps: getResizableProps(tableColumnInfo[1].id),
-        props: { modifier: 'nowrap' },
+        props: { modifier: 'nowrap' as const },
       },
       {
         title: t('Size'),
@@ -136,28 +138,28 @@ const useVolumeSnapshotContentColumns = (): {
           data.sort(sortResourceByValue(direction, sorts.volumeSnapshotContentSize)),
         id: tableColumnInfo[2].id,
         resizableProps: getResizableProps(tableColumnInfo[2].id),
-        props: { modifier: 'nowrap' },
+        props: { modifier: 'nowrap' as const },
       },
       {
         title: t('VolumeSnapshot'),
         sort: 'spec.volumeSnapshotRef.name',
         id: tableColumnInfo[3].id,
         resizableProps: getResizableProps(tableColumnInfo[3].id),
-        props: { modifier: 'nowrap' },
+        props: { modifier: 'nowrap' as const },
       },
       {
         title: t('SnapshotClass'),
         sort: 'spec.volumeSnapshotClassName',
         id: tableColumnInfo[4].id,
         resizableProps: getResizableProps(tableColumnInfo[4].id),
-        props: { modifier: 'nowrap' },
+        props: { modifier: 'nowrap' as const },
       },
       {
         title: t('Created at'),
         sort: 'metadata.creationTimestamp',
         id: tableColumnInfo[5].id,
         resizableProps: getResizableProps(tableColumnInfo[5].id),
-        props: { modifier: 'nowrap' },
+        props: { modifier: 'nowrap' as const },
       },
       {
         title: '',

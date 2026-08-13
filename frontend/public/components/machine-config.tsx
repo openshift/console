@@ -22,9 +22,11 @@ import {
   ConsoleDataView,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import type { TableColumn } from '@console/dynamic-plugin-sdk';
 import { BlueInfoCircleIcon } from '@console/dynamic-plugin-sdk';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
@@ -194,13 +196,13 @@ const getDataViewRows: GetDataViewRows<MachineConfigKind> = (data, columns) =>
   });
 
 const useMachineConfigColumns = (): {
-  columns: TableColumn<MachineConfigKind>[];
+  columns: ConsoleDataViewColumn<MachineConfigKind>[];
   resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('public');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(MachineConfigModel);
 
-  const columns: TableColumn<MachineConfigKind>[] = useMemo(
+  const columns: ConsoleDataViewColumn<MachineConfigKind>[] = useMemo(
     () => [
       {
         title: t('Name'),
@@ -209,7 +211,7 @@ const useMachineConfigColumns = (): {
         resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
           ...nameCellProps,
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -218,7 +220,7 @@ const useMachineConfigColumns = (): {
         sort: "metadata.annotations['machineconfiguration.openshift.io/generated-by-controller-version']",
         resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -227,7 +229,7 @@ const useMachineConfigColumns = (): {
         sort: 'spec.config.ignition.version',
         resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -236,7 +238,7 @@ const useMachineConfigColumns = (): {
         sort: 'spec.osImageURL',
         resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -245,7 +247,7 @@ const useMachineConfigColumns = (): {
         sort: 'metadata.creationTimestamp',
         resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {

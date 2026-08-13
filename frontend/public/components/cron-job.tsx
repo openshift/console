@@ -10,7 +10,10 @@ import {
   ConsoleDataView,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 import type { RowFilter } from '@console/dynamic-plugin-sdk';
@@ -24,13 +27,7 @@ import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DASH } from '@console/shared/src/constants/ui';
 import { getPodsForResource } from '@console/shared/src/utils/resource-utils';
 import { CronJobModel } from '../models';
-import type {
-  CronJobKind,
-  K8sResourceCommon,
-  K8sResourceKind,
-  TableColumn,
-  PodKind,
-} from '../module/k8s';
+import type { CronJobKind, K8sResourceCommon, K8sResourceKind, PodKind } from '../module/k8s';
 import { referenceForModel, referenceFor, podPhaseFilterReducer } from '../module/k8s';
 import { ResourceEventStream } from './events';
 import { DetailsPage } from './factory/details';
@@ -317,13 +314,13 @@ const CronJobJobsComponent: FC<CronJobJobsComponentProps> = ({ obj }) => {
 };
 
 const useCronJobsColumns = (): {
-  columns: TableColumn<CronJobKind>[];
+  columns: ConsoleDataViewColumn<CronJobKind>[];
   resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('public');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(CronJobModel);
 
-  const columns = useMemo(
+  const columns = useMemo<ConsoleDataViewColumn<CronJobKind>[]>(
     () => [
       {
         title: t('Name'),
@@ -332,7 +329,7 @@ const useCronJobsColumns = (): {
         resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
           ...nameCellProps,
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -341,7 +338,7 @@ const useCronJobsColumns = (): {
         sort: 'metadata.namespace',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -350,7 +347,7 @@ const useCronJobsColumns = (): {
         sort: 'spec.schedule',
         resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -359,7 +356,7 @@ const useCronJobsColumns = (): {
         sort: 'spec.suspend',
         resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -368,7 +365,7 @@ const useCronJobsColumns = (): {
         sort: 'spec.concurrencyPolicy',
         resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -377,7 +374,7 @@ const useCronJobsColumns = (): {
         sort: 'spec.startingDeadlineSeconds',
         resizableProps: getResizableProps(tableColumnInfo[5].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
