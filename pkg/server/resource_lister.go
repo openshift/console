@@ -27,7 +27,7 @@ type resourceLister struct {
 	responseFilter FilterFunction
 }
 
-//HandleResources handles resource requests
+// HandleResources handles resource requests
 func (l *resourceLister) HandleResources(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "GET" {
 		serverutils.SendResponse(w, http.StatusMethodNotAllowed, serverutils.ApiError{Err: "invalid method: only GET is allowed"})
