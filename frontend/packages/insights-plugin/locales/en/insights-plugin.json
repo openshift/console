@@ -21,5 +21,7 @@
   "{{issuesNumber}} issue found": "{{issuesNumber}} issue found",
   "{{issuesNumber}} issues found": "{{issuesNumber}} issues found",
   "Insights": "Insights",
-  "Insights Advisor status": "Insights Advisor status"
+  "Insights Advisor status": "Insights Advisor status",
+  "Total issue_one": "Total issue_one",
+  "Total issue_other": "Total issue_other"
 }
