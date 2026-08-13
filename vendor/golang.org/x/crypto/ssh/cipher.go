@@ -114,7 +114,8 @@ var cipherModes = map[string]*cipherMode{
 	"arcfour": {16, 0, streamCipherMode(0, newRC4)},
 
 	// AEAD ciphers
-	gcmCipherID:        {16, 12, newGCMCipher},
+	gcm128CipherID:     {16, 12, newGCMCipher},
+	gcm256CipherID:     {32, 12, newGCMCipher},
 	chacha20Poly1305ID: {64, 0, newChaCha20Cipher},
 
 	// CBC mode is insecure and so is not included in the default config.
@@ -404,7 +405,7 @@ func (c *gcmCipher) readCipherPacket(seqNum uint32, r io.Reader) ([]byte, error)
 		return nil, fmt.Errorf("ssh: illegal padding %d", padding)
 	}
 
-	if int(padding+1) >= len(plain) {
+	if int(padding)+1 >= len(plain) {
 		return nil, fmt.Errorf("ssh: padding %d too large", padding)
 	}
 	plain = plain[1 : length-uint32(padding)]
