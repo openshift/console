@@ -76,5 +76,8 @@
       "@console/demo-plugin"
     ]
   },
-  "packageManager": "yarn@4.12.0"
+  "packageManager": "yarn@4.12.0",
+  "resolutions": {
+    "nanoid": "^3.3.12"
+  }
 }
