@@ -12,7 +12,7 @@ table in [Console dynamic plugins README](./README.md).
 
 ## 4.23.0-prerelease.6 - TBD
 
-- Minimum compatible version of `@rspack/core` peer dependency increased to `^2.1.9` ([OCPBUGS-105598], [#16950])
+- Minimum compatible version of `@rspack/core` peer dependency increased to `2.1.10` ([OCPBUGS-109592], [#16978])
 
 ## 4.23.0-prerelease.5 - 2026-08-04
 
@@ -168,7 +168,7 @@ table in [Console dynamic plugins README](./README.md).
 [OCPBUGS-83823]: https://issues.redhat.com/browse/OCPBUGS-83823
 [OCPBUGS-84338]: https://issues.redhat.com/browse/OCPBUGS-84338
 [OCPBUGS-88319]: https://issues.redhat.com/browse/OCPBUGS-88319
-[OCPBUGS-105598]: https://issues.redhat.com/browse/OCPBUGS-105598
+[OCPBUGS-109592]: https://issues.redhat.com/browse/OCPBUGS-109592
 [#13188]: https://github.com/openshift/console/pull/13188
 [#13388]: https://github.com/openshift/console/pull/13388
 [#13521]: https://github.com/openshift/console/pull/13521
@@ -199,4 +199,4 @@ table in [Console dynamic plugins README](./README.md).
 [#16585]: https://github.com/openshift/console/pull/16585
 [#16752]: https://github.com/openshift/console/pull/16752
 [#16115]: https://github.com/openshift/console/pull/16115
-[#16950]: https://github.com/openshift/console/pull/16950
+[#16978]: https://github.com/openshift/console/pull/16978
