@@ -1,78 +1,11 @@
 import { test, expect } from '../../fixtures';
-import KubernetesClient from '../../clients/kubernetes-client';
-import { cleanupOperatorResources, cleanupAllOperatorsByPackageName } from '../../test-utils/operator-cleanup';
 import { generateTestNamespace } from '../../test-utils/test-namespace';
 
 const operatorName = '3scale API Management';
 const operatorPackageName = '3scale-community-operator';
 
 test.describe('Create namespace from install operators', { tag: ['@admin'] }, () => {
-  let k8sClient: KubernetesClient;
-  let nsName: string;
-
-  test.beforeEach(async ({ k8sClient: client, page }) => {
-    console.log('=== CREATE NAMESPACE BEFORE EACH: Starting cleanup ===');
-
-    k8sClient = client;
-    nsName = generateTestNamespace();
-
-    // Do aggressive cluster-wide cleanup for 3scale operators
-    await cleanupAllOperatorsByPackageName(k8sClient, operatorPackageName);
-
-    // Clean up any test namespaces from previous runs
-    try {
-      const namespaces = await k8sClient.listNamespaces();
-      const testNamespaces = namespaces.filter((ns: any) => ns.metadata.name.startsWith('test-'));
-
-      for (const testNs of testNamespaces) {
-        const nsName = (testNs as any)?.metadata?.name;
-        if (nsName) {
-          console.log(`Cleaning up test namespace: ${nsName}`);
-          await cleanupOperatorResources(k8sClient, {
-            operatorPackageName,
-            namespace: nsName,
-          });
-          // Also delete the namespace itself
-          try {
-            await k8sClient.deleteNamespace(nsName);
-          } catch (error) {
-            console.log(`Failed to delete namespace ${nsName}:`, error.message);
-          }
-        }
-      }
-    } catch (error) {
-      console.log('Error cleaning up test namespaces:', error.message);
-    }
-
-    // Wait for cleanup to propagate
-    await page.waitForTimeout(10000);
-    console.log('=== CREATE NAMESPACE BEFORE EACH: Cleanup complete ===');
-  });
-
-  test.afterEach(async () => {
-    console.log('=== CREATE NAMESPACE AFTER EACH: Starting cleanup ===');
-
-    // Use our comprehensive cleanup for the test namespace
-    await cleanupOperatorResources(k8sClient, {
-      operatorPackageName,
-      namespace: nsName,
-    });
-
-    // Also do cluster-wide cleanup
-    await cleanupAllOperatorsByPackageName(k8sClient, operatorPackageName);
-
-    // Delete the test namespace
-    try {
-      await k8sClient.deleteNamespace(nsName);
-      console.log(`✅ Deleted test namespace: ${nsName}`);
-    } catch (error) {
-      console.log(`❌ Failed to delete namespace ${nsName}:`, error.message);
-    }
-
-    console.log('=== CREATE NAMESPACE AFTER EACH: Cleanup complete ===');
-  });
-
-  test('creates namespace from operator install page', async ({ page }) => {
+  test('creates namespace from operator install page', async ({ page, cleanup }) => {
     // OLMv1 is enabled by default on techPreview clusters, replacing the OLMv0
     // OperatorHub catalog with an empty Software Catalog. Skip instead of timing out.
     await page.goto('/');
@@ -100,6 +33,16 @@ test.describe('Create namespace from install operators', { tag: ['@admin'] }, ()
       await expect(radio).toBeVisible();
       await radio.click();
     });
+
+    const nsName = generateTestNamespace();
+    cleanup.trackNamespace(nsName);
+    cleanup.trackCustomResource(
+      operatorPackageName,
+      nsName,
+      'operators.coreos.com',
+      'v1alpha1',
+      'subscriptions'
+    );
 
     await test.step('Create a new namespace from the dropdown', async () => {
       await page.getByTestId('dropdown-selectbox').click();

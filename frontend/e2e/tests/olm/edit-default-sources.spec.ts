@@ -12,9 +12,9 @@ test.describe('OperatorHub default sources management', { tag: ['@admin'] }, () 
         'cluster',
         [{ op: 'replace', path: '/spec/sources/0/disabled', value: false }]
       );
-      console.log('✅ Ensured redhat-operators source is enabled');
+      // Successfully re-enabled redhat-operators source
     } catch (error) {
-      console.log('⚠️ Could not ensure redhat-operators source is enabled:', error.message);
+      // Failed to re-enable redhat-operators source
     }
   });
 

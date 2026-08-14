@@ -36,12 +36,12 @@ test.describe('Software Catalog Operator filtering', { tag: ['@admin'] }, () => 
         expect(count).toBeGreaterThan(0);
       }).toPass();
 
-      // Track which tile is first with Community filter
-      const originalTileText = catalogPage.getFirstCatalogTileTitle();
+      // Capture the first tile text with Community filter for later comparison
+      const originalTileText = await catalogPage.getFirstCatalogTileTitleText();
 
       // Validate that we captured a valid tile title
-      await expect(originalTileText).toHaveText();
-      expect(originalTileText?.trim()).not.toBe('');
+      expect(originalTileText).toBeTruthy();
+      expect(originalTileText.trim()).not.toBe('');
 
       // Disable Community filter
       await catalogPage.toggleSourceFilter('community');
@@ -54,7 +54,7 @@ test.describe('Software Catalog Operator filtering', { tag: ['@admin'] }, () => 
       }).toPass();
 
       // Verify the first tile title is different from Community filter
-      await catalogPage.verifyTileTextChanged(originalTileText!);
+      await catalogPage.verifyTileTextChanged(originalTileText);
     });
 
     await test.step('Test operator name search functionality', async () => {
