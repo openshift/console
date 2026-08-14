@@ -375,7 +375,7 @@ const SinglePropertyObjectField: FC<SchemaFieldProps> = (props) => {
   const subIdSchema = { $id: `${idSchema.$id}_${selectedKey}` };
 
   return (
-    <FieldSet defaultLabel={name} idSchema={idSchema} schema={schema} uiSchema={uiSchema}>
+    <FieldSet defaultLabel={name} idSchema={idSchema} schema={schema} uiSchema={uiSchema} required={required}>
       <ConsoleSelect
         id={`${idSchema.$id}_key`}
         title={t('console-shared~Select {{name}}', { name: name || schema.title })}
