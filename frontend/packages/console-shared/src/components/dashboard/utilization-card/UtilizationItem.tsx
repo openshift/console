@@ -70,23 +70,26 @@ export const MultilineUtilizationItem = memo<MultilineUtilizationItemProps>(
     }, [maxDate, updateEndDate]);
 
     const mapTranslatedData = (originalData: DataPoint[][]) => {
-      if (!originalData || originalData.length === 0 || originalData[0].length === 0)
-        return originalData;
+      if (!originalData || originalData.length === 0) return originalData;
       const translatedData = [];
 
       for (const query of originalData) {
-        const currData = [];
-        const desc = query[0].description;
-        for (const item of query) {
-          if (desc === 'in') {
-            currData.push({ ...item, description: t('in') });
-          } else if (desc === 'out') {
-            currData.push({ ...item, description: t('out') });
-          } else {
-            currData.push(item);
+        if (!query || query.length === 0) {
+          translatedData.push(query);
+        } else {
+          const currData = [];
+          const desc = query[0].description;
+          for (const item of query) {
+            if (desc === 'in') {
+              currData.push({ ...item, description: t('in') });
+            } else if (desc === 'out') {
+              currData.push({ ...item, description: t('out') });
+            } else {
+              currData.push(item);
+            }
           }
+          translatedData.push(currData);
         }
-        translatedData.push(currData);
       }
       return translatedData;
     };

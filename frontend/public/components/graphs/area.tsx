@@ -112,9 +112,9 @@ export const AreaChart: FC<AreaChartProps> = ({
   const container = useMemo(() => {
     if (multiLine) {
       const legendData = processedData.map((d) => ({
-        childName: d[0].description,
-        name: d[0].description,
-        symbol: d[0].symbol,
+        childName: d[0]?.description,
+        name: d[0]?.description,
+        symbol: d[0]?.symbol,
       }));
       return (
         <CursorVoronoiContainer
@@ -127,7 +127,7 @@ export const AreaChart: FC<AreaChartProps> = ({
               stack={showAllTooltip}
               legendData={legendData}
               getLabel={getLabel}
-              formatDate={(d) => formatDate(d[0].x)}
+              formatDate={(d) => formatDate(d[0]?.x)}
               mainDataName={mainDataName}
             />
           }
