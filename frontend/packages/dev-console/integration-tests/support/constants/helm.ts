@@ -3,5 +3,5 @@
 export enum helmActions {
   upgrade = 'Upgrade',
   rollback = 'Rollback',
-  deleteHelmRelease = 'Delete Helm Release',
+  deleteHelmRelease = 'Delete Helm release',
 }
