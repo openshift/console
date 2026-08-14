@@ -34,8 +34,10 @@ import { WizardStep } from './types';
 // Only OCI refs use tag (chart:version); HTTP/HTTPS chart URLs (.tgz) must not have :version appended
 const getFullChartURL = (chartURL: string, chartVersion: string): string => {
   if (!chartVersion) return chartURL;
-  const isOCI = chartURL.startsWith('oci://');
-  return isOCI ? `${chartURL}:${chartVersion}` : chartURL;
+  if (!chartURL.startsWith('oci://')) return chartURL;
+  const tag = `:${chartVersion}`;
+  const base = chartURL.endsWith(tag) ? chartURL.slice(0, -tag.length) : chartURL;
+  return `${base}:${chartVersion}`;
 };
 
 const HelmURLChartInstallPage: FunctionComponent = () => {
