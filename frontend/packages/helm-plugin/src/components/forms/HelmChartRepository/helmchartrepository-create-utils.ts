@@ -73,7 +73,7 @@ export const convertToHelmChartRepository = (
 const HTTPS_PROBE_TIMEOUT_MS = 3000;
 
 export const tryHttpsUpgrade = async (httpUrl: string): Promise<string | null> => {
-  if (!httpUrl?.startsWith('http://')) {
+  if (typeof httpUrl !== 'string' || !httpUrl.startsWith('http://')) {
     return null;
   }
   const httpsUrl = httpUrl.replace(/^http:\/\//, 'https://');

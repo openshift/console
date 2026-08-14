@@ -149,7 +149,7 @@ const CreateHelmChartRepositoryFormEditor: FC<CreateHelmChartRepositoryFormEdito
             isInline
             isPlain
             title={t(
-              'HTTP is unencrypted. Credentials may be exposed, and downloaded content may have been tampered with in transit. Use HTTPS whenever possible.',
+              'HTTP is unencrypted, so your credentials and any downloaded content might be exposed or tampered with in transit. Use HTTPS whenever possible.',
             )}
           />
         </>

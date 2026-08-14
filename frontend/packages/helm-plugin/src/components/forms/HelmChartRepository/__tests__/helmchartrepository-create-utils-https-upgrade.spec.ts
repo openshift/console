@@ -51,6 +51,12 @@ describe('tryHttpsUpgrade', () => {
     expect(await tryHttpsUpgrade(undefined)).toBeNull();
   });
 
+  it('should return null for non-string input from YAML parsing', async () => {
+    expect(await tryHttpsUpgrade(123 as unknown as string)).toBeNull();
+    expect(await tryHttpsUpgrade(true as unknown as string)).toBeNull();
+    expect(await tryHttpsUpgrade({} as unknown as string)).toBeNull();
+  });
+
   it('should return null when fetch times out', async () => {
     global.fetch = jest.fn().mockImplementation(
       (_url, options) =>
