@@ -338,7 +338,7 @@ const DropdownField: FC<FieldProps> = ({
 // an object with only the selected key — preventing multiple providers from being injected.
 const SinglePropertyObjectField: FC<SchemaFieldProps> = (props) => {
   const { t } = useTranslation();
-  const { schema, formData = {}, onChange, idSchema, uiSchema, name } = props;
+  const { schema, formData = {}, onChange, idSchema, uiSchema, name, required } = props;
   const propertyNames = _.keys(schema.properties ?? {});
 
   // Determine the initially active key: prefer a key already present in formData, otherwise
