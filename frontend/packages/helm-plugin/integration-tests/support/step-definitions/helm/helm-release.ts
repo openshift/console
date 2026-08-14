@@ -35,10 +35,10 @@ Then(
   },
 );
 
-Then('user is able to see the context menu with actions Upgrade and Delete Helm Release', () => {
+Then('user is able to see the context menu with actions Upgrade and Delete Helm release', () => {
   cy.get('div.odc-topology-context-menu').should('be.visible');
   cy.byTestActionID('Upgrade').should('be.visible');
-  cy.byTestActionID('Delete Helm Release').should('be.visible');
+  cy.byTestActionID('Delete Helm release').should('be.visible');
 });
 
 Given('user is on the topology sidebar of the helm release {string}', (helmReleaseName: string) => {
@@ -64,7 +64,7 @@ Then(
 Then(
   'user is able to see the actions dropdown menu with actions Upgrade and Uninstall Helm Release',
   () => {
-    const actions = ['Upgrade', 'Uninstall Helm Release'];
+    const actions = ['Upgrade', 'Uninstall Helm release'];
     cy.byLegacyTestID('action-items')
       .children()
       .each(($ele) => {
@@ -84,7 +84,7 @@ Given('user is able to see {string} in helm page in admin view', (helmRelease: s
 
 When('user clicks on the Helm Release tab in admin perspective', () => {
   cy.clickNavLink(navPaths.helm);
-  cy.byLegacyTestID('horizontal-link-Helm Releases').should('exist').click({ force: true });
+  cy.byLegacyTestID('horizontal-link-Helm releases').should('exist').click({ force: true });
 });
 
 Then('user will be redirected to Helm Releases page under Helm tab', () => {
@@ -96,7 +96,7 @@ When('user clicks on the Kebab menu', () => {
 });
 
 Then(
-  'user is able to see kebab menu with actions Upgrade, Rollback and Delete Helm Release',
+  'user is able to see kebab menu with actions Upgrade, Rollback and Delete Helm release',
   () => {
     topologySidePane.verifyActions(
       helmActions.upgrade,

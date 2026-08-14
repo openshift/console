@@ -101,7 +101,7 @@ Given('user is at the Helm page', () => {
 
 Given('user is at the Helm Release tab in admin perspective', () => {
   cy.clickNavLink(navPaths.helm);
-  cy.byLegacyTestID('horizontal-link-Helm Releases').should('exist').click({ force: true });
+  cy.byLegacyTestID('horizontal-link-Helm releases').should('exist').click({ force: true });
 });
 
 When('user selects checkbox for the Deployed Helm charts', (workloadName: string) => {
@@ -138,7 +138,7 @@ Then('user will see the Release Notes tab', () => {
 });
 
 Then(
-  'user will see the Actions drop down menu with options Upgrade, Rollback, and Delete Helm Release',
+  'user will see the Actions drop down menu with options Upgrade, Rollback, and Delete Helm release',
   () => {
     helmDetailsPage.verifyActionsDropdown();
     helmDetailsPage.clickActionMenu();
@@ -214,7 +214,7 @@ Then('user is redirected to Repositories tab', () => {
 });
 
 Then('user is able to see Helm Releases and Repositories Tabs', () => {
-  helmDetailsPage.checkHelmTab('Helm Releases');
+  helmDetailsPage.checkHelmTab('Helm releases');
   helmDetailsPage.checkHelmTab('Repositories');
 });
 

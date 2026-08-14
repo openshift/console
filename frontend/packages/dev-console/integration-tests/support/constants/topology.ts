@@ -4,7 +4,7 @@ export enum displayOptions {
   PodCount = 'Pod Count',
   Labels = 'Labels',
   ApplicationGroupings = 'Application Groupings',
-  HelmReleases = 'Helm Releases',
+  HelmReleases = 'Helm releases',
   KnativeServices = 'Knative Services',
 }
 
@@ -30,7 +30,7 @@ export enum nodeActions {
   DeleteService = 'Delete Service',
   EditService = 'Edit Service',
   EditHealthChecks = 'Edit Health Checks',
-  HelmReleases = 'Helm Releases',
+  HelmReleases = 'Helm releases',
   SetTrafficDistribution = 'Set traffic distribution',
   AddSubscription = 'Add Subscription',
   EditInMemoryChannel = 'Edit InMemoryChannel',

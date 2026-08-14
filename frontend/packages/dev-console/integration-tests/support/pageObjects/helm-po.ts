@@ -20,7 +20,7 @@ export const helmPO = {
   failedCheckbox: '[data-ouia-component-id="DataViewCheckboxFilter-filter-item-failed"] input',
   otherCheckbox: '[data-ouia-component-id="DataViewCheckboxFilter-filter-item-other"] input',
   details: {
-    title: '[data-test-section-heading="Helm Release Details"]',
+    title: '[data-test-section-heading="Helm release details"]',
   },
   upgradeHelmRelease: {
     replicaCount: '#root_replicaCount',
@@ -42,6 +42,6 @@ export const helmPO = {
   helmActions: {
     upgrade: '[data-test-action="Upgrade"]',
     rollBack: '[data-test-action="Rollback"]',
-    deleteHelmRelease: '[data-test-action="Delete Helm Release"]',
+    deleteHelmRelease: '[data-test-action="Delete Helm release"]',
   },
 };
