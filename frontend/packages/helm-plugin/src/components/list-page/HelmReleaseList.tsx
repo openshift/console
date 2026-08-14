@@ -16,12 +16,15 @@ import {
   actionsCellProps,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import type { ResourceFilters } from '@console/app/src/components/data-view/types';
+import type {
+  ConsoleDataViewColumn,
+  ResourceFilters,
+} from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { LoadingBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { SecretModel } from '@console/internal/models';
-import type { K8sResourceKind, TableColumn } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { isCatalogTypeEnabled } from '@console/shared/src/components/catalog/utils/catalog-utils';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -40,13 +43,13 @@ import { getDataViewRows, tableColumnInfo } from './HelmReleaseListRow';
 type HelmReleaseFilters = ResourceFilters & { status: string[] };
 
 const useHelmReleasesColumns = (): {
-  columns: TableColumn<HelmRelease>[];
+  columns: ConsoleDataViewColumn<HelmRelease>[];
   resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('helm-plugin');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(HelmReleaseModel);
 
-  const columns = useMemo(
+  const columns = useMemo<ConsoleDataViewColumn<HelmRelease>[]>(
     () => [
       {
         title: t('Name'),
@@ -55,7 +58,7 @@ const useHelmReleasesColumns = (): {
         resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
           ...nameCellProps,
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -64,7 +67,7 @@ const useHelmReleasesColumns = (): {
         sort: 'namespace',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -73,7 +76,7 @@ const useHelmReleasesColumns = (): {
         sort: 'version',
         resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -82,7 +85,7 @@ const useHelmReleasesColumns = (): {
         sort: 'info.last_deployed',
         resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -91,7 +94,7 @@ const useHelmReleasesColumns = (): {
         sort: 'info.status',
         resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -100,7 +103,7 @@ const useHelmReleasesColumns = (): {
         sort: 'chart.metadata.name',
         resizableProps: getResizableProps(tableColumnInfo[5].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -109,7 +112,7 @@ const useHelmReleasesColumns = (): {
         sort: 'chart.metadata.version',
         resizableProps: getResizableProps(tableColumnInfo[6].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -118,7 +121,7 @@ const useHelmReleasesColumns = (): {
         sort: 'chart.metadata.appVersion',
         resizableProps: getResizableProps(tableColumnInfo[7].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {

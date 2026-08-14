@@ -27,7 +27,10 @@ import {
   ConsoleDataView,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import type { ResourceListPage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
 import { isResourceListPage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
@@ -39,12 +42,7 @@ import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { GreenCheckCircleIcon } from '@console/shared/src/components/status/icons';
 import { DASH } from '@console/shared/src/constants/ui';
 import { CustomResourceDefinitionModel } from '../models';
-import type {
-  CRDVersion,
-  CustomResourceDefinitionKind,
-  K8sModel,
-  TableColumn,
-} from '../module/k8s';
+import type { CRDVersion, CustomResourceDefinitionKind, K8sModel } from '../module/k8s';
 import {
   apiVersionCompare,
   getLatestVersionForCRD,
@@ -217,7 +215,7 @@ const tableColumnInfo = [
 ];
 
 const useCustomResourceDefinitionsColumns = (): {
-  columns: TableColumn<CustomResourceDefinitionKind>[];
+  columns: ConsoleDataViewColumn<CustomResourceDefinitionKind>[];
   resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('public');
@@ -225,7 +223,7 @@ const useCustomResourceDefinitionsColumns = (): {
     CustomResourceDefinitionModel,
   );
 
-  const columns: TableColumn<CustomResourceDefinitionKind>[] = useMemo(
+  const columns: ConsoleDataViewColumn<CustomResourceDefinitionKind>[] = useMemo(
     () => [
       {
         title: t('Name'),
@@ -234,7 +232,7 @@ const useCustomResourceDefinitionsColumns = (): {
         resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
           ...nameCellProps,
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -243,7 +241,7 @@ const useCustomResourceDefinitionsColumns = (): {
         sort: 'spec.group',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -255,7 +253,7 @@ const useCustomResourceDefinitionsColumns = (): {
           ),
         resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -264,7 +262,7 @@ const useCustomResourceDefinitionsColumns = (): {
         sort: 'spec.scope',
         resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -272,7 +270,7 @@ const useCustomResourceDefinitionsColumns = (): {
         id: tableColumnInfo[4].id,
         resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {

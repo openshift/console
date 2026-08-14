@@ -449,7 +449,7 @@ const APIResourcesList: FC = () => {
               {
                 cell: t('Kind'),
                 props: {
-                  modifier: 'nowrap',
+                  modifier: 'nowrap' as const,
                   width: 20,
                   sort: {
                     sortBy,
@@ -461,7 +461,7 @@ const APIResourcesList: FC = () => {
               {
                 cell: t('Group'),
                 props: {
-                  modifier: 'nowrap',
+                  modifier: 'nowrap' as const,
                   width: 15,
                   sort: {
                     sortBy,
@@ -473,7 +473,7 @@ const APIResourcesList: FC = () => {
               {
                 cell: t('Version'),
                 props: {
-                  modifier: 'nowrap',
+                  modifier: 'nowrap' as const,
                   sort: {
                     sortBy,
                     onSort,
@@ -484,7 +484,7 @@ const APIResourcesList: FC = () => {
               {
                 cell: t('Namespaced'),
                 props: {
-                  modifier: 'nowrap',
+                  modifier: 'nowrap' as const,
                   sort: {
                     sortBy,
                     onSort,
@@ -492,7 +492,7 @@ const APIResourcesList: FC = () => {
                   },
                 },
               },
-              { cell: t('Description'), props: { modifier: 'nowrap' } },
+              { cell: t('Description'), props: { modifier: 'nowrap' as const } },
             ]}
             rows={paginatedResources.map((model: K8sKind) => [
               <APIResourceLink key={model.kind} model={model} />,
@@ -908,7 +908,7 @@ const APIResourceAccessReview: FC<APIResourceTabProps> = ({
                 {
                   cell: t('Subject'),
                   props: {
-                    modifier: 'nowrap',
+                    modifier: 'nowrap' as const,
                     sort: {
                       sortBy,
                       onSort,
@@ -919,7 +919,7 @@ const APIResourceAccessReview: FC<APIResourceTabProps> = ({
                 {
                   cell: t('Type'),
                   props: {
-                    modifier: 'nowrap',
+                    modifier: 'nowrap' as const,
                     sort: {
                       sortBy,
                       onSort,

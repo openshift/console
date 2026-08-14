@@ -17,10 +17,7 @@ import type {
 } from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import type { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
-import type {
-  RowProps,
-  TableColumn,
-} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { RowProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import {
   LazyActionMenu,
@@ -165,11 +162,11 @@ export const getWorkloadDataViewRows = <T extends K8sResourceKind>(
 
 export const useWorkloadColumns = <T extends K8sResourceKind>(
   model: K8sModel,
-): { columns: TableColumn<T>[]; resetAllColumnWidths: () => void } => {
+): { columns: ConsoleDataViewColumn<T>[]; resetAllColumnWidths: () => void } => {
   const { t } = useTranslation('public');
   const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(model);
 
-  const columns = useMemo(
+  const columns = useMemo<ConsoleDataViewColumn<T>[]>(
     () => [
       {
         title: t('Name'),
@@ -178,7 +175,7 @@ export const useWorkloadColumns = <T extends K8sResourceKind>(
         resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
           ...nameCellProps,
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -187,7 +184,7 @@ export const useWorkloadColumns = <T extends K8sResourceKind>(
         sort: 'metadata.namespace',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -196,7 +193,7 @@ export const useWorkloadColumns = <T extends K8sResourceKind>(
         sort: 'status.replicas',
         resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -205,7 +202,7 @@ export const useWorkloadColumns = <T extends K8sResourceKind>(
         sort: 'metadata.labels',
         resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
           ...getLabelsColumnWidthStyleProp(getWidth(tableColumnInfo[3].id)),
         },
       },
@@ -215,7 +212,7 @@ export const useWorkloadColumns = <T extends K8sResourceKind>(
         sort: 'spec.selector',
         resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {

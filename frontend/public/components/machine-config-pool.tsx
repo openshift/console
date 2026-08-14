@@ -19,9 +19,11 @@ import {
   ConsoleDataView,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import type { TableColumn } from '@console/dynamic-plugin-sdk';
 import type { Action } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
@@ -298,14 +300,14 @@ const tableColumnInfo = [
 ];
 
 const useMachineConfigPoolColumns = (): {
-  columns: TableColumn<MachineConfigPoolKind>[];
+  columns: ConsoleDataViewColumn<MachineConfigPoolKind>[];
   resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('public');
   const { getResizableProps, resetAllColumnWidths } =
     useColumnWidthSettings(MachineConfigPoolModel);
 
-  const columns: TableColumn<MachineConfigPoolKind>[] = useMemo(
+  const columns: ConsoleDataViewColumn<MachineConfigPoolKind>[] = useMemo(
     () => [
       {
         title: t('Name'),
@@ -314,7 +316,7 @@ const useMachineConfigPoolColumns = (): {
         resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
           ...nameCellProps,
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -323,7 +325,7 @@ const useMachineConfigPoolColumns = (): {
         sort: 'status.configuration.name',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -331,7 +333,7 @@ const useMachineConfigPoolColumns = (): {
         id: tableColumnInfo[2].id,
         resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -339,7 +341,7 @@ const useMachineConfigPoolColumns = (): {
         id: tableColumnInfo[3].id,
         resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {

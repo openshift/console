@@ -8,9 +8,11 @@ import {
   ConsoleDataView,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import type { TableColumn } from '@console/dynamic-plugin-sdk/src/lib-core';
 import {
   ListPageBody,
   ListPageCreate,
@@ -81,35 +83,35 @@ const getDataViewRowsCreator: (t: TFunction) => GetDataViewRows<VolumeSnapshotCl
     });
 
 const useVolumeSnapshotClassColumns = (): {
-  columns: TableColumn<VolumeSnapshotClassKind>[];
+  columns: ConsoleDataViewColumn<VolumeSnapshotClassKind>[];
   resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('console-app');
   const { getResizableProps, resetAllColumnWidths } =
     useColumnWidthSettings(VolumeSnapshotClassModel);
 
-  const columns: TableColumn<VolumeSnapshotClassKind>[] = useMemo(
+  const columns: ConsoleDataViewColumn<VolumeSnapshotClassKind>[] = useMemo(
     () => [
       {
         title: t('Name'),
         sort: 'metadata.name',
         id: tableColumnInfo[0].id,
         resizableProps: getResizableProps(tableColumnInfo[0].id),
-        props: { ...nameCellProps, modifier: 'nowrap' },
+        props: { ...nameCellProps, modifier: 'nowrap' as const },
       },
       {
         title: t('Driver'),
         sort: 'driver',
         id: tableColumnInfo[1].id,
         resizableProps: getResizableProps(tableColumnInfo[1].id),
-        props: { modifier: 'nowrap' },
+        props: { modifier: 'nowrap' as const },
       },
       {
         title: t('Deletion policy'),
         sort: 'deletionPolicy',
         id: tableColumnInfo[2].id,
         resizableProps: getResizableProps(tableColumnInfo[2].id),
-        props: { modifier: 'nowrap' },
+        props: { modifier: 'nowrap' as const },
       },
       {
         title: '',

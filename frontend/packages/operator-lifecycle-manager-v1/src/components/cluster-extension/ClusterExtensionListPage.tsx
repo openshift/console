@@ -8,9 +8,11 @@ import {
   getNameCellProps,
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/app/src/components/data-view/types';
 import Status from '@console/dynamic-plugin-sdk/src/app/components/status/Status';
-import type { TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { referenceForModel } from '@console/internal/module/k8s';
@@ -90,9 +92,9 @@ const getDataViewRows: GetDataViewRows<ClusterExtensionKind> = (data, columns) =
     });
   });
 
-const useClusterExtensionColumns = (): TableColumn<ClusterExtensionKind>[] => {
+const useClusterExtensionColumns = (): ConsoleDataViewColumn<ClusterExtensionKind>[] => {
   const { t } = useTranslation('olm-v1');
-  const columns = useMemo<TableColumn<ClusterExtensionKind>[]>(
+  const columns = useMemo<ConsoleDataViewColumn<ClusterExtensionKind>[]>(
     () => [
       {
         title: t('Name'),
@@ -100,21 +102,21 @@ const useClusterExtensionColumns = (): TableColumn<ClusterExtensionKind>[] => {
         sort: 'metadata.name',
         props: {
           ...cellIsStickyProps,
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
         title: t('Status'),
         id: tableColumnInfo[1].id,
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
         title: t('Version'),
         id: tableColumnInfo[2].id,
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -126,14 +128,14 @@ const useClusterExtensionColumns = (): TableColumn<ClusterExtensionKind>[] => {
         id: tableColumnInfo[4].id,
         sort: 'spec.namespace',
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
         title: t('Package'),
         id: tableColumnInfo[5].id,
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {

@@ -26,10 +26,7 @@ import type {
   ConsoleDataViewColumn,
   ConsoleDataViewRow,
 } from '@console/app/src/components/data-view/types';
-import type {
-  RowProps,
-  TableColumn,
-} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { RowProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import {
   GreenCheckCircleIcon,
@@ -129,9 +126,9 @@ const getClusterOperatorDataViewRows = (
     });
   });
 
-const useClusterOperatorColumns = (): TableColumn<ClusterOperator>[] => {
+const useClusterOperatorColumns = (): ConsoleDataViewColumn<ClusterOperator>[] => {
   const { t } = useTranslation('public');
-  const columns = useMemo(
+  const columns = useMemo<ConsoleDataViewColumn<ClusterOperator>[]>(
     () => [
       {
         title: t('Name'),
@@ -139,7 +136,7 @@ const useClusterOperatorColumns = (): TableColumn<ClusterOperator>[] => {
         sort: 'metadata.name',
         props: {
           ...cellIsStickyProps,
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
           width: 20,
         },
       },
@@ -151,7 +148,7 @@ const useClusterOperatorColumns = (): TableColumn<ClusterOperator>[] => {
             sortResourceByValue<ClusterOperator>(direction, sorts.getClusterOperatorStatus),
           ),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
           width: 20,
         },
       },
@@ -163,14 +160,14 @@ const useClusterOperatorColumns = (): TableColumn<ClusterOperator>[] => {
             sortResourceByValue<ClusterOperator>(direction, sorts.getClusterOperatorVersion),
           ),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
         title: t('Message'),
         id: tableColumnInfo[3].id,
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
     ],

@@ -2,7 +2,7 @@ import type { ReactNode, ComponentType, SetStateAction, Dispatch } from 'react';
 import type { QuickStart } from '@patternfly/quickstarts';
 import type { OverflowMenuProps } from '@patternfly/react-core';
 import type { DataViewTh } from '@patternfly/react-data-view/dist/esm/DataViewTable/DataViewTable';
-import type { SortByDirection, ThProps } from '@patternfly/react-table';
+import type { SortByDirection } from '@patternfly/react-table';
 import type { Map as ImmutableMap } from 'immutable';
 import type {
   HealthState,
@@ -301,28 +301,13 @@ export type ResourceMetadata = {
   labels?: { [key: string]: string };
 };
 
-// TODO(react18): Remove this type - CONSOLE-5040
-/**
- * Temporary type to allow type checking to pass on DataView instances that use
- * `TableColumn` as their column type, which is incorrect.
- *
- * @internal This type is internal to console only.
- *
- * @deprecated Always use {@link ConsoleDataViewColumn} or {@link DataViewTh}.
- */
-export type ConsoleDataViewTh =
-  | DataViewTh
-  | {
-      /** Table head cell node */
-      cell?: ReactNode;
-      /** Props passed to Th */
-      props?: ThProps;
-    };
+export type ConsoleDataViewTh = Partial<Extract<DataViewTh, { cell: ReactNode }>>;
 
 export type ConsoleDataViewColumn<TData> = ConsoleDataViewTh & {
   id: string;
   title: string;
-  sortFunction?: string | ((filteredData: TData[], sortDirection: SortByDirection) => TData[]);
+  sort?: string | ((filteredData: TData[], sortDirection: SortByDirection) => TData[]);
+  additional?: boolean;
   resizableProps?: any;
 };
 

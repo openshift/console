@@ -17,10 +17,7 @@ import type {
 } from '@console/app/src/components/data-view/types';
 import type { ResourceActionProvider, ResolvedExtension } from '@console/dynamic-plugin-sdk';
 import { isResourceActionProvider, useResolvedExtensions } from '@console/dynamic-plugin-sdk';
-import type {
-  RowProps,
-  TableColumn,
-} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { RowProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import type { PageComponentProps } from '@console/dynamic-plugin-sdk/src/extensions/horizontal-nav-tabs';
 import { useK8sModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sModel';
 import { getGroupVersionKindForResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
@@ -242,7 +239,7 @@ const getDataViewRows = (
 
 const useDefaultResourceColumns = <T extends K8sResourceKind>(
   additionalPrinterColumns: CRDAdditionalPrinterColumn[],
-): TableColumn<T>[] => {
+): ConsoleDataViewColumn<T>[] => {
   const { t } = useTranslation('public');
   const columns = useMemo(() => {
     const additionalPrinterColumnsHeaders = additionalPrinterColumns.map((col) => {
@@ -254,7 +251,7 @@ const useDefaultResourceColumns = <T extends K8sResourceKind>(
         id: getAdditionaPrinterColumnID(col),
         sort: pathHasSpecialCharacter ? undefined : path.replace(/^\./, ''),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
           'data-test': `additional-printer-column-header-${col.name}`,
         },
       };
@@ -267,7 +264,7 @@ const useDefaultResourceColumns = <T extends K8sResourceKind>(
         sort: 'metadata.name',
         props: {
           ...cellIsStickyProps,
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -275,7 +272,7 @@ const useDefaultResourceColumns = <T extends K8sResourceKind>(
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       ...additionalPrinterColumnsHeaders,
@@ -287,7 +284,7 @@ const useDefaultResourceColumns = <T extends K8sResourceKind>(
         id: tableColumnInfo[2].id,
         sort: 'metadata.creationTimestamp',
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
           'data-test': 'column-header-Created',
         },
       });
@@ -299,7 +296,7 @@ const useDefaultResourceColumns = <T extends K8sResourceKind>(
       sort: '',
       props: {
         ...cellIsStickyProps,
-        modifier: 'nowrap',
+        modifier: 'nowrap' as const,
       },
     });
 

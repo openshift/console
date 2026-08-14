@@ -19,8 +19,8 @@ import {
   nameCellProps,
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
+import type { ConsoleDataViewColumn } from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import type { TableColumn } from '@console/dynamic-plugin-sdk';
 import { ListPageBody } from '@console/dynamic-plugin-sdk';
 import type { ConfigureCountModalProps } from '@console/internal/components/modals/configure-count-modal';
 import { useConfigureCountModal } from '@console/internal/components/modals/configure-count-modal';
@@ -275,14 +275,14 @@ const MachineSetDetails: FC<MachineSetDetailsProps> = ({ obj }) => {
 };
 
 const useMachineSetColumns = (): {
-  columns: TableColumn<MachineSetKind>[];
+  columns: ConsoleDataViewColumn<MachineSetKind>[];
   resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('public');
   const context = useContext(CapacityResolverContext);
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(MachineSetModel);
 
-  const columns: TableColumn<MachineSetKind>[] = useMemo(
+  const columns: ConsoleDataViewColumn<MachineSetKind>[] = useMemo(
     () => [
       {
         title: t('Name'),
@@ -291,7 +291,7 @@ const useMachineSetColumns = (): {
         resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
           ...nameCellProps,
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -300,7 +300,7 @@ const useMachineSetColumns = (): {
         sort: 'metadata.namespace',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -309,7 +309,7 @@ const useMachineSetColumns = (): {
         sort: 'status.readyReplicas',
         resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -319,7 +319,7 @@ const useMachineSetColumns = (): {
           data.sort(sortResourceByValue(direction, getMachineSetInstanceType)),
         resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -331,7 +331,7 @@ const useMachineSetColumns = (): {
           : undefined,
         resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -345,7 +345,7 @@ const useMachineSetColumns = (): {
           : undefined,
         resizableProps: getResizableProps(tableColumnInfo[5].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -362,7 +362,10 @@ const useMachineSetColumns = (): {
   return { columns, resetAllColumnWidths };
 };
 
-const getDataViewRows = (data: { obj: MachineSetKind }[], columns: TableColumn<MachineSetKind>[]) =>
+const getDataViewRows = (
+  data: { obj: MachineSetKind }[],
+  columns: ConsoleDataViewColumn<MachineSetKind>[],
+) =>
   data.map(({ obj }: { obj: MachineSetKind }) => {
     const { name, namespace } = obj.metadata;
     const readyReplicas = getReadyReplicas(obj);

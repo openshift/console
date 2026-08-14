@@ -1,9 +1,10 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { nameCellProps } from '@console/app/src/components/data-view/ConsoleDataView';
+import type { ConsoleDataViewColumn } from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import type { K8sModel } from '@console/dynamic-plugin-sdk';
-import type { K8sResourceKind, TableColumn } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 
 export const tableColumnInfo = [
   { id: 'name' },
@@ -18,13 +19,13 @@ export const tableColumnInfo = [
 export const useRepositoriesColumns = (
   model: K8sModel,
 ): {
-  columns: TableColumn<K8sResourceKind>[];
+  columns: ConsoleDataViewColumn<K8sResourceKind>[];
   resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('helm-plugin');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(model);
 
-  const columns = useMemo(
+  const columns = useMemo<ConsoleDataViewColumn<K8sResourceKind>[]>(
     () => [
       {
         title: t('Name'),
@@ -33,7 +34,7 @@ export const useRepositoriesColumns = (
         resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
           ...nameCellProps,
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -42,7 +43,7 @@ export const useRepositoriesColumns = (
         sort: 'spec.name',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -51,7 +52,7 @@ export const useRepositoriesColumns = (
         sort: 'metadata.namespace',
         resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -60,7 +61,7 @@ export const useRepositoriesColumns = (
         sort: 'spec.disabled',
         resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -69,7 +70,7 @@ export const useRepositoriesColumns = (
         sort: 'spec.connectionConfig.url',
         resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -78,14 +79,14 @@ export const useRepositoriesColumns = (
         sort: 'metadata.creationTimestamp',
         resizableProps: getResizableProps(tableColumnInfo[5].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
         title: '',
         id: tableColumnInfo[6].id,
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
     ],

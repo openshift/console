@@ -17,10 +17,12 @@ import {
   ConsoleDataView,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { useIsKubevirtPluginActive } from '@console/app/src/utils/kubevirt';
-import type { TableColumn } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { StorageClassModel } from '@console/internal/models';
 import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
@@ -116,34 +118,34 @@ const getDataViewRowsCreator: (
   });
 
 const useStorageClassColumns = (): {
-  columns: TableColumn<StorageClassResourceKind>[];
+  columns: ConsoleDataViewColumn<StorageClassResourceKind>[];
   resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('public');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(StorageClassModel);
 
-  const columns: TableColumn<StorageClassResourceKind>[] = useMemo(
+  const columns: ConsoleDataViewColumn<StorageClassResourceKind>[] = useMemo(
     () => [
       {
         title: t('Name'),
         sort: 'metadata.name',
         id: tableColumnInfo[0].id,
         resizableProps: getResizableProps(tableColumnInfo[0].id),
-        props: { ...nameCellProps, modifier: 'nowrap' },
+        props: { ...nameCellProps, modifier: 'nowrap' as const },
       },
       {
         title: t('Provisioner'),
         sort: 'provisioner',
         id: tableColumnInfo[1].id,
         resizableProps: getResizableProps(tableColumnInfo[1].id),
-        props: { modifier: 'nowrap' },
+        props: { modifier: 'nowrap' as const },
       },
       {
         title: t('Reclaim policy'),
         sort: 'reclaimPolicy',
         id: tableColumnInfo[2].id,
         resizableProps: getResizableProps(tableColumnInfo[2].id),
-        props: { modifier: 'nowrap' },
+        props: { modifier: 'nowrap' as const },
       },
       {
         title: '',

@@ -11,9 +11,12 @@ import {
   ConsoleDataView,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import type { ResourceFilters, GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type {
+  ConsoleDataViewColumn,
+  ResourceFilters,
+  GetDataViewRows,
+} from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import type { TableColumn } from '@console/dynamic-plugin-sdk/src/lib-core';
 import {
   ListPageBody,
   ListPageHeader,
@@ -146,11 +149,11 @@ const getDataViewRows: GetDataViewRows<VolumeSnapshotKind, VolumeSnapshotRowData
 
 const useVolumeSnapshotColumns = (
   rowData: VolumeSnapshotRowData,
-): { columns: TableColumn<VolumeSnapshotKind>[]; resetAllColumnWidths: () => void } => {
+): { columns: ConsoleDataViewColumn<VolumeSnapshotKind>[]; resetAllColumnWidths: () => void } => {
   const { t } = useTranslation('console-app');
   const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(VolumeSnapshotModel);
 
-  const columns: TableColumn<VolumeSnapshotKind>[] = useMemo(
+  const columns: ConsoleDataViewColumn<VolumeSnapshotKind>[] = useMemo(
     () =>
       [
         {
@@ -158,14 +161,14 @@ const useVolumeSnapshotColumns = (
           sort: 'metadata.name',
           id: tableColumnInfo[0].id,
           resizableProps: getResizableProps(tableColumnInfo[0].id),
-          props: { ...nameCellProps, modifier: 'nowrap' },
+          props: { ...nameCellProps, modifier: 'nowrap' as const },
         },
         {
           title: t('Namespace'),
           sort: 'metadata.namespace',
           id: tableColumnInfo[1].id,
           resizableProps: getResizableProps(tableColumnInfo[1].id),
-          props: { modifier: 'nowrap' },
+          props: { modifier: 'nowrap' as const },
         },
         {
           title: t('Status'),
@@ -173,7 +176,7 @@ const useVolumeSnapshotColumns = (
             data.sort(sortResourceByValue(direction, sorts.volumeSnapshotStatus)),
           id: tableColumnInfo[2].id,
           resizableProps: getResizableProps(tableColumnInfo[2].id),
-          props: { modifier: 'nowrap' },
+          props: { modifier: 'nowrap' as const },
         },
         {
           title: t('Size'),
@@ -181,7 +184,7 @@ const useVolumeSnapshotColumns = (
             data.sort(sortResourceByValue(direction, sorts.volumeSnapshotSize)),
           id: tableColumnInfo[3].id,
           resizableProps: getResizableProps(tableColumnInfo[3].id),
-          props: { modifier: 'nowrap' },
+          props: { modifier: 'nowrap' as const },
         },
         {
           title: t('Source'),
@@ -189,14 +192,14 @@ const useVolumeSnapshotColumns = (
             data.sort(sortResourceByValue(direction, sorts.volumeSnapshotSource)),
           id: tableColumnInfo[4].id,
           resizableProps: getResizableProps(tableColumnInfo[4].id),
-          props: { modifier: 'nowrap' },
+          props: { modifier: 'nowrap' as const },
         },
         {
           title: t('Snapshot content'),
           sort: 'status.boundVolumeSnapshotContentName',
           id: tableColumnInfo[5].id,
           resizableProps: getResizableProps(tableColumnInfo[5].id),
-          props: { modifier: 'nowrap' },
+          props: { modifier: 'nowrap' as const },
           disabled: rowData.hideSnapshotContentColumn,
         },
         {
@@ -204,14 +207,14 @@ const useVolumeSnapshotColumns = (
           sort: 'spec.volumeSnapshotClassName',
           id: tableColumnInfo[6].id,
           resizableProps: getResizableProps(tableColumnInfo[6].id),
-          props: { modifier: 'nowrap' },
+          props: { modifier: 'nowrap' as const },
         },
         {
           title: t('Created at'),
           sort: 'metadata.creationTimestamp',
           id: tableColumnInfo[7].id,
           resizableProps: getResizableProps(tableColumnInfo[7].id),
-          props: { modifier: 'nowrap' },
+          props: { modifier: 'nowrap' as const },
         },
         {
           title: '',

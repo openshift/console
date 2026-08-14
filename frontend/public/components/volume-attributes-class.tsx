@@ -10,7 +10,10 @@ import {
   ConsoleDataView,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
@@ -19,7 +22,7 @@ import { ActionMenuVariant } from '@console/shared/src/components/actions/types'
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DASH } from '@console/shared/src/constants/ui';
 import { VolumeAttributesClassModel } from '../models';
-import type { VolumeAttributesClassKind, TableColumn, K8sGroupVersionKind } from '../module/k8s';
+import type { VolumeAttributesClassKind, K8sGroupVersionKind } from '../module/k8s';
 import { referenceFor } from '../module/k8s';
 import type { ListPageProps } from './factory';
 import { DetailsPage, ListPage } from './factory';
@@ -44,7 +47,7 @@ const VolumeAttributesClassGVK: K8sGroupVersionKind = {
 const tableColumnInfo = [{ id: 'name' }, { id: 'driverName' }, { id: 'parameters' }, { id: '' }];
 
 const useVolumeAttributesClassColumns = (): {
-  columns: TableColumn<VolumeAttributesClassKind>[];
+  columns: ConsoleDataViewColumn<VolumeAttributesClassKind>[];
   resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation('public');
@@ -52,7 +55,7 @@ const useVolumeAttributesClassColumns = (): {
     VolumeAttributesClassModel,
   );
 
-  const columns: TableColumn<VolumeAttributesClassKind>[] = useMemo(
+  const columns: ConsoleDataViewColumn<VolumeAttributesClassKind>[] = useMemo(
     () => [
       {
         title: t('Name'),
@@ -61,7 +64,7 @@ const useVolumeAttributesClassColumns = (): {
         resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
           ...nameCellProps,
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -70,7 +73,7 @@ const useVolumeAttributesClassColumns = (): {
         sort: 'driverName',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -78,7 +81,7 @@ const useVolumeAttributesClassColumns = (): {
         id: tableColumnInfo[2].id,
         resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {

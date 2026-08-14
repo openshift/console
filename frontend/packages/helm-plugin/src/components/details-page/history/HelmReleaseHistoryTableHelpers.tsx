@@ -68,7 +68,7 @@ export const useHelmReleaseHistoryColumns = (
       {
         cell: t('Revision'),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
           sort: {
             columnIndex: 0,
             sortBy: { index: sortBy.index, direction: sortBy.direction },
@@ -79,7 +79,7 @@ export const useHelmReleaseHistoryColumns = (
       {
         cell: t('Updated'),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
           sort: {
             columnIndex: 1,
             sortBy: { index: sortBy.index, direction: sortBy.direction },
@@ -90,7 +90,7 @@ export const useHelmReleaseHistoryColumns = (
       {
         cell: t('Status'),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
           sort: {
             columnIndex: 2,
             sortBy: { index: sortBy.index, direction: sortBy.direction },
@@ -101,7 +101,7 @@ export const useHelmReleaseHistoryColumns = (
       {
         cell: t('Chart name'),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
           sort: {
             columnIndex: 3,
             sortBy: { index: sortBy.index, direction: sortBy.direction },
@@ -112,7 +112,7 @@ export const useHelmReleaseHistoryColumns = (
       {
         cell: t('Chart version'),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
           sort: {
             columnIndex: 4,
             sortBy: { index: sortBy.index, direction: sortBy.direction },
@@ -123,7 +123,7 @@ export const useHelmReleaseHistoryColumns = (
       {
         cell: t('App version'),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
           sort: {
             columnIndex: 5,
             sortBy: { index: sortBy.index, direction: sortBy.direction },
@@ -134,7 +134,7 @@ export const useHelmReleaseHistoryColumns = (
       {
         cell: t('Description'),
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         } as ThProps,
       },
       {

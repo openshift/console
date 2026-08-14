@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { cellIsStickyProps } from '@console/app/src/components/data-view/ConsoleDataView';
-import type { K8sResourceKind, TableColumn } from '@console/internal/module/k8s';
+import type { ConsoleDataViewColumn } from '@console/app/src/components/data-view/types';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 
 export const tableColumnInfo = [
   { id: 'name' },
@@ -10,7 +11,7 @@ export const tableColumnInfo = [
   { id: 'created' },
 ];
 
-export const useHelmReleaseResourcesColumns = (): TableColumn<K8sResourceKind>[] => {
+export const useHelmReleaseResourcesColumns = (): ConsoleDataViewColumn<K8sResourceKind>[] => {
   const { t } = useTranslation('helm-plugin');
   return useMemo(
     () => [
@@ -20,7 +21,7 @@ export const useHelmReleaseResourcesColumns = (): TableColumn<K8sResourceKind>[]
         sort: 'metadata.name',
         props: {
           ...cellIsStickyProps,
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -28,7 +29,7 @@ export const useHelmReleaseResourcesColumns = (): TableColumn<K8sResourceKind>[]
         id: tableColumnInfo[1].id,
         sort: 'kind',
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -36,7 +37,7 @@ export const useHelmReleaseResourcesColumns = (): TableColumn<K8sResourceKind>[]
         id: tableColumnInfo[2].id,
         sort: 'status.phase',
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
       {
@@ -44,7 +45,7 @@ export const useHelmReleaseResourcesColumns = (): TableColumn<K8sResourceKind>[]
         id: tableColumnInfo[3].id,
         sort: 'metadata.creationTimestamp',
         props: {
-          modifier: 'nowrap',
+          modifier: 'nowrap' as const,
         },
       },
     ],
