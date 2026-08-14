@@ -2,7 +2,6 @@ import { test, expect } from '../../fixtures';
 import { OperatorInstallPage } from '../../pages/operator-install-page';
 import { InstalledOperatorsPage } from '../../pages/installed-operators-page';
 import { OperatorDetailsPage, TestOperandProps } from '../../pages/operator-details-page';
-import { operatorTestCleanup, cleanupOperatorResources, cleanupAllOperatorsByPackageName } from '../../test-utils/operator-cleanup';
 import { generateTestNamespace } from '../../test-utils/test-namespace';
 
 const testOperator = {
@@ -23,77 +22,8 @@ const testOperand: TestOperandProps = {
 const operatorPackageName = 'datagrid';
 const globalNamespace = 'openshift-operators';
 
-// Track namespaces created by this test suite
-const ownedNamespaces = new Set<string>();
-
-// Enhanced cleanup wrapper for Data Grid operator in single namespace tests
-async function cleanupDataGridOperatorSingleNamespace(k8sClient: any) {
-  await cleanupOperatorResources(k8sClient, {
-    operatorPackageName,
-    operandPlural: 'infinispans',
-    testOperand,
-    namespace: globalNamespace, // Will also clean global namespace to be safe
-  });
-}
-
 test.describe(`Single Namespace Operator Installation - ${testOperator.name}`, { tag: ['@admin'] }, () => {
-  test.describe.configure({ timeout: 300_000 }); // 5 minutes instead of 15
-
-  test.beforeEach(async ({ k8sClient, page }) => {
-    console.log('=== SINGLE NAMESPACE BEFORE EACH: Starting cleanup ===');
-
-    // First do aggressive cluster-wide cleanup of all operators for this package
-    await cleanupAllOperatorsByPackageName(k8sClient, operatorPackageName);
-
-    // Then do namespace-specific cleanup
-    await cleanupDataGridOperatorSingleNamespace(k8sClient);
-
-    // Clean up only namespaces created by this test worker (from aborted runs)
-    try {
-      for (const nsName of ownedNamespaces) {
-        console.log(`Cleaning up owned test namespace: ${nsName}`);
-        await operatorTestCleanup(k8sClient, {
-          operatorPackageName,
-          operandPlural: 'infinispans',
-          testOperand,
-          targetNamespace: nsName,
-          crdPatterns: ['.infinispan.org'], // Clean up Data Grid CRDs
-        });
-      }
-    } catch (error) {
-      console.log('Error cleaning up owned test namespaces:', error.message);
-    }
-
-    // Wait for cleanup to propagate
-    await page.waitForTimeout(5000); // Reduced from 15s to 5s
-    console.log('=== SINGLE NAMESPACE BEFORE EACH: Cleanup complete ===');
-  });
-
-  test.afterEach(async ({ k8sClient }) => {
-    console.log('=== SINGLE NAMESPACE AFTER EACH: Starting verification ===');
-
-    try {
-      // Check each owned namespace for UI uninstall completion (but don't be as aggressive as beforeEach)
-      for (const nsName of ownedNamespaces) {
-        console.log(`🔍 Checking UI uninstall for namespace: ${nsName}`);
-        await operatorTestCleanup(k8sClient, {
-          operatorPackageName,
-          operandPlural: 'infinispans',
-          testOperand,
-          targetNamespace: nsName,
-          crdPatterns: ['.infinispan.org'], // Clean up Data Grid CRDs
-          waitForUiUninstall: true,
-          uiUninstallTimeoutMs: 10_000, // Brief delay before cleanup
-        });
-      }
-    } catch (error) {
-      console.log(`⚠️ Verification error: ${error.message}`);
-    }
-
-    // Clear tracked namespaces for this test
-    ownedNamespaces.clear();
-    console.log('=== SINGLE NAMESPACE AFTER EACH: Complete ===');
-  });
+  test.describe.configure({ timeout: 300_000 });
 
   test(`Installs ${testOperator.name} operator in test namespace and manages ${testOperand.name} operand instance`, async ({
     page,
@@ -105,11 +35,19 @@ test.describe(`Single Namespace Operator Installation - ${testOperator.name}`, {
     const operatorDetailsPage = new OperatorDetailsPage(page);
 
     const testNamespace = generateTestNamespace();
-    ownedNamespaces.add(testNamespace);
+    cleanup.trackNamespace(testNamespace);
+
+    // Track the subscription that will be created
+    cleanup.trackCustomResource(
+      operatorPackageName,
+      testNamespace,
+      'operators.coreos.com',
+      'v1alpha1',
+      'subscriptions'
+    );
 
     await test.step('Install operator in new test namespace', async () => {
       try {
-        cleanup.trackNamespace(testNamespace);
         await installPage.installOperatorInNewNamespace(
           testOperator.name,
           testOperator.operatorCardTestID,
@@ -155,6 +93,15 @@ test.describe(`Single Namespace Operator Installation - ${testOperator.name}`, {
     });
 
     await test.step('Create operand', async () => {
+      // Track the operand that will be created
+      cleanup.trackCustomResource(
+        testOperand.exampleName,
+        testNamespace,
+        testOperand.group,
+        testOperand.version,
+        'infinispans'
+      );
+
       await operatorDetailsPage.createOperand(testOperand, false);
       await expect(page.getByTestId(testOperand.exampleName)).toBeVisible();
     });

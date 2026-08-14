@@ -73,6 +73,10 @@ export class CatalogPage extends BasePage {
     return this.getFirstCatalogTile().locator('.catalog-tile-pf-title');
   }
 
+  async getFirstCatalogTileTitleText(): Promise<string> {
+    return this.getFirstCatalogTileTitle().innerText();
+  }
+
   getClearFiltersButton(): Locator {
     return this.clearFiltersButton;
   }
