@@ -1,9 +1,9 @@
 import { screen } from '@testing-library/react';
-import { useAccessReview } from '@console/internal/components/utils/rbac';
 import {
   useK8sWatchResource,
   useK8sWatchResources,
 } from '@console/internal/components/utils/k8s-watch-hook';
+import { useAccessReview } from '@console/internal/components/utils/rbac';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { testPackageManifest } from '../../../../mocks';
 import { OperatorHubSubscribePage } from '../operator-hub-subscribe';
@@ -88,7 +88,7 @@ jest.mock('react-router', () => ({
     state: null,
     key: 'default',
   }),
-  Link: jest.fn(({ children }) => <a>{children}</a>),
+  Link: jest.fn(({ children }) => <a href="#">{children}</a>),
 }));
 
 jest.mock('../../cluster-service-version-logo', () => ({
@@ -145,7 +145,7 @@ jest.mock('../../index', () => ({
   iconFor: jest.fn(() => null),
   NamespaceIncludesManualApproval: jest.fn(() => null),
   providedAPIsForChannel: jest.fn(() => () => []),
-  referenceForProvidedAPI: jest.fn(() => 'test~v1~Kind'),
+  referenceForProvidedAPI: jest.fn(() => () => 'test~v1~Kind'),
   supportedInstallModesFor: jest.fn(() => () => true),
 }));
 
