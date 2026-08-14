@@ -1366,17 +1366,17 @@ __metadata:
   linkType: hard
 
 "browserslist@npm:^4.14.5":
-  version: 4.17.6
-  resolution: "browserslist@npm:4.17.6"
+  version: 4.28.8
+  resolution: "browserslist@npm:4.28.8"
   dependencies:
-    caniuse-lite: "npm:^1.0.30001274"
-    electron-to-chromium: "npm:^1.3.886"
+    caniuse-lite: "npm:^1.0.30001809"
+    electron-to-chromium: "npm:^1.5.402"
     escalade: "npm:^3.1.1"
-    node-releases: "npm:^2.0.1"
+    node-releases: "npm:^2.0.53"
     picocolors: "npm:^1.0.0"
   bin:
     browserslist: cli.js
-  checksum: 10c0/181d5635735740ab08bafcf8210c06d04eaba1c317272229b5502bd9771b5c6e5a6e60a4f94aa8c00c3580c86db66fb1c75e6bd4a4eea9f40ac0157fc87ce3a3
+  checksum: 10c0/047dd517c8d1f1f56a253d752c3127b8ad01c58e4cbb7e21cb5cd07ebd13e083a2237c3afb13eb60674282c9132bd4534aea2c3ff7c6f7d29be0687a00cbd537
   languageName: node
   linkType: hard
 
