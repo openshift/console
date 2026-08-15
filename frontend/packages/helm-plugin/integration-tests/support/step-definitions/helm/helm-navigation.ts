@@ -44,7 +44,7 @@ Then('user will be redirected to Helm releases page', () => {
 });
 
 Then('user will be redirected to Helm releases page under Helm tab', () => {
-  detailsPage.titleShouldContain(pageTitle.HelmReleases);
+  detailsPage.titleShouldContain('Helm');
 });
 
 Then('user is able to see the message {string}', (noHelmReleasesFound: string) => {
