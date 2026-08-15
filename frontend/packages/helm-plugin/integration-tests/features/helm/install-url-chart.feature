@@ -1,6 +1,6 @@
 @helm
 Feature: Install Helm Chart from URL
-              As a user, I want to install a Helm chart from an OCI or HTTP URL
+              As a user, I want to install a Helm Chart from an OCI or HTTP URL
 
 
         Background:

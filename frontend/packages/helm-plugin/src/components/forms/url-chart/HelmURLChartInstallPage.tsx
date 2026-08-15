@@ -229,7 +229,7 @@ const HelmURLChartInstallPage: FunctionComponent = () => {
 
   const chartMetaDescription = chartData ? <HelmChartMetaDescription chart={chartData} /> : null;
 
-  const pageTitle = t('Install Helm chart from Helm registry.');
+  const pageTitle = t('Install Helm Chart from Helm registry.');
 
   return (
     <NamespacedPage
