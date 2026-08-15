@@ -30,7 +30,7 @@ import {
   mergeHelmValuesOnChartVersionChange,
 } from '../helm-utils';
 
-describe('Helm Releases Utils', () => {
+describe('Helm releases Utils', () => {
   it('should return deployed or failed status for a helm release', () => {
     const release = mockHelmReleases[0];
     expect(releaseStatusReducer(release)).toEqual(HelmReleaseStatus.Deployed);

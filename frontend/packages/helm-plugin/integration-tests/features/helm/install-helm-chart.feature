@@ -1,5 +1,5 @@
 @helm
-Feature: Install the Helm Release
+Feature: Install the Helm release
               As a user, I want to install the helm release
 
 
