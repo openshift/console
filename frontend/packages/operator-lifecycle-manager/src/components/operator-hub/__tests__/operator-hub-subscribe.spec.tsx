@@ -88,7 +88,7 @@ jest.mock('react-router', () => ({
     state: null,
     key: 'default',
   }),
-  Link: jest.fn(({ children }) => <a href="#">{children}</a>),
+  Link: jest.fn(({ children }) => <span>{children}</span>),
 }));
 
 jest.mock('../../cluster-service-version-logo', () => ({
