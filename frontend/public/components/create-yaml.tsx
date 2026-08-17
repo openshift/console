@@ -11,6 +11,7 @@ import { connectToPlural } from '../kinds';
 import { getYAMLTemplates } from '../models/yaml-templates';
 import type { K8sKind, K8sResourceKindReference, K8sResourceKind } from '../module/k8s';
 import { apiVersionForModel, referenceForModel } from '../module/k8s';
+import type { EditYAMLProps } from './edit-yaml';
 import { ErrorPage404 } from './error';
 import { AsyncComponent } from './utils/async';
 import { LoadingBox } from './utils/status-box';
@@ -100,11 +101,7 @@ export const CreateYAMLInner: FC<CreateYAMLProps> = ({
       hideHeader={hideHeader}
       resourceObjPath={resourceObjPath}
       onChange={onChange}
-      // Only forward onCancel when provided. EditYAML falls back to its default
-      // navigate-to-list behavior via `'onCancel' in props`, so passing an
-      // explicit `onCancel={undefined}` would suppress that default for other
-      // consumers that rely on it.
-      {...(onCancel && { onCancel })}
+      onCancel={onCancel}
     />
   );
 };
@@ -142,7 +139,7 @@ export const EditYAMLPage: FC<EditYAMLPageProps> = (props) => {
   );
 };
 
-export type CreateYAMLProps = {
+export type CreateYAMLProps = Pick<EditYAMLProps, 'onCancel'> & {
   match?: any;
   params?: any;
   kindsInFlight: boolean;
@@ -154,7 +151,6 @@ export type CreateYAMLProps = {
   isCreate?: boolean;
   resourceObjPath?: (obj: K8sResourceKind, kind: K8sResourceKindReference) => string;
   onChange?: (yaml: string) => any;
-  onCancel?: () => void;
 };
 
 export type EditYAMLPageProps = {

@@ -13,9 +13,9 @@ export const OperandYAML: FC<OperandYAMLProps> = ({
   <CreateYAML
     hideHeader
     onChange={onChange}
+    onCancel={onCancel}
     template={initialYAML}
     {...(next && { resourceObjPath: () => next })}
-    {...(onCancel && { onCancel })}
   />
 );
 

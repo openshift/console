@@ -162,16 +162,14 @@ describe('CreateYAMLInner', () => {
       expect(asyncProps.onCancel).toBe(onCancel);
     });
 
-    it('does not set an onCancel prop when none is provided, preserving the default cancel behavior', async () => {
+    it('leaves onCancel undefined when none is provided, so EditYAML falls back to its default cancel behavior', async () => {
       renderWithProviders(
         <CreateYAMLInner params={defaultParams} kindsInFlight={false} kindObj={PodModel} />,
       );
 
       expect(mockAsyncComponent).toHaveBeenCalledTimes(1);
       const [asyncProps] = mockAsyncComponent.mock.calls[0];
-      // The key must be absent (not merely undefined) so EditYAML's
-      // `'onCancel' in props` check falls back to navigateToResourceList.
-      expect('onCancel' in asyncProps).toBe(false);
+      expect(asyncProps.onCancel).toBeUndefined();
     });
   });
 });

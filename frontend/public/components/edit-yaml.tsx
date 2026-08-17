@@ -240,7 +240,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
     }
   };
   const displayedVersion = useRef('0');
-  const onCancel = 'onCancel' in props ? props.onCancel : navigateToResourceList;
+  const onCancel = props?.onCancel ? props.onCancel : navigateToResourceList;
 
   async function createResources(objs) {
     const results = [];

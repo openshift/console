@@ -54,7 +54,6 @@ describe('CreateOperand', () => {
   });
 
   it('configures SyncedEditor with YAML as initialType when initialEditorType is YAML', () => {
-    // Arrange
     renderWithProviders(
       <CreateOperand
         initialEditorType={EditorType.YAML}
@@ -64,14 +63,12 @@ describe('CreateOperand', () => {
       />,
     );
 
-    // Assert
     expect(mockSyncedEditor).toHaveBeenCalledTimes(1);
     const [syncedEditorProps] = mockSyncedEditor.mock.calls[0];
     expect(syncedEditorProps.initialType).toEqual(EditorType.YAML);
   });
 
   it('configures SyncedEditor with Form as initialType when initialEditorType is Form', () => {
-    // Arrange
     renderWithProviders(
       <CreateOperand
         initialEditorType={EditorType.Form}
@@ -81,14 +78,12 @@ describe('CreateOperand', () => {
       />,
     );
 
-    // Assert
     expect(mockSyncedEditor).toHaveBeenCalledTimes(1);
     const [syncedEditorProps] = mockSyncedEditor.mock.calls[0];
     expect(syncedEditorProps.initialType).toEqual(EditorType.Form);
   });
 
   it('passes sample data to SyncedEditor when CSV contains alm-examples annotation', () => {
-    // Arrange
     const csvWithExamples = {
       ...testClusterServiceVersion,
       metadata: {
@@ -116,7 +111,6 @@ describe('CreateOperand', () => {
       />,
     );
 
-    // Assert
     expect(mockSyncedEditor).toHaveBeenCalledTimes(1);
     const [syncedEditorProps] = mockSyncedEditor.mock.calls[0];
     expect(syncedEditorProps.initialData).toMatchObject({
@@ -136,7 +130,7 @@ describe('CreateOperand', () => {
     // as a side effect. CreateOperand must enrich the sample with schema defaults
     // itself, so the YAML editor shows the same complete content as the Form-first path.
 
-    // Arrange: a CRD whose schema defines a spec default that is NOT in alm-examples
+    // A CRD whose schema defines a spec default that is NOT in alm-examples
     const crdWithSchemaDefault = {
       ...testCRD,
       spec: {
@@ -183,7 +177,6 @@ describe('CreateOperand', () => {
       },
     };
 
-    // Act
     renderWithProviders(
       <CreateOperand
         initialEditorType={EditorType.YAML}
@@ -193,7 +186,7 @@ describe('CreateOperand', () => {
       />,
     );
 
-    // Assert: the schema default was merged into the sample before reaching SyncedEditor
+    // The schema default was merged into the sample before reaching SyncedEditor
     expect(mockSyncedEditor).toHaveBeenCalledTimes(1);
     const [syncedEditorProps] = mockSyncedEditor.mock.calls[0];
     expect(syncedEditorProps.initialData.spec.replicas).toBe(3);
@@ -206,10 +199,9 @@ describe('CreateOperand', () => {
     // SyncedEditor before the CRD watch resolves would freeze the raw, un-enriched
     // YAML. CreateOperand must wait for the CRD watch to load before rendering.
 
-    // Arrange: CRD watch not yet loaded
+    // CRD watch not yet loaded
     mockUseK8sWatchResource.mockReturnValue([{}, false, undefined]);
 
-    // Act
     renderWithProviders(
       <CreateOperand
         initialEditorType={EditorType.YAML}
@@ -219,7 +211,7 @@ describe('CreateOperand', () => {
       />,
     );
 
-    // Assert: editor is withheld until the schema is available
+    // Editor is withheld until the schema is available
     expect(mockSyncedEditor).not.toHaveBeenCalled();
   });
 
@@ -243,7 +235,6 @@ describe('CreateOperand', () => {
   });
 
   it('provides onChangeEditorType callback to SyncedEditor', () => {
-    // Arrange
     renderWithProviders(
       <CreateOperand
         initialEditorType={EditorType.Form}
@@ -253,7 +244,6 @@ describe('CreateOperand', () => {
       />,
     );
 
-    // Assert
     expect(mockSyncedEditor).toHaveBeenCalledTimes(1);
     const [syncedEditorProps] = mockSyncedEditor.mock.calls[0];
     expect(syncedEditorProps.onChangeEditorType).toBeDefined();
@@ -336,13 +326,11 @@ describe('OperandYAML', () => {
     expect(createYAMLProps.onCancel).toBe(onCancel);
   });
 
-  it('does not pass onCancel to CreateYAML when not provided', () => {
+  it('leaves onCancel undefined when not provided, so EditYAML falls back to its default cancel behavior', () => {
     renderWithProviders(<OperandYAML />);
 
     expect(mockCreateYAML).toHaveBeenCalledTimes(1);
     const [createYAMLProps] = mockCreateYAML.mock.calls[0];
-    // The key must be absent (not merely undefined) so CreateYAML's conditional
-    // spread keeps `onCancel` out of the props it forwards to EditYAML.
-    expect('onCancel' in createYAMLProps).toBe(false);
+    expect(createYAMLProps.onCancel).toBeUndefined();
   });
 });
