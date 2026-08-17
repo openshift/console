@@ -123,8 +123,8 @@ describe('HelmReleaseList', () => {
 
     renderWithProviders(<HelmReleaseList />);
 
-    expect(screen.getAllByText('Helm Releases')).toHaveLength(2);
-    expect(screen.getByTestId('data-view-label')).toHaveTextContent('Helm Releases');
+    expect(screen.getAllByText('Helm releases')).toHaveLength(2);
+    expect(screen.getByTestId('data-view-label')).toHaveTextContent('Helm releases');
   });
 
   it('should show ConsoleDataView in loading state when secrets are not loaded', () => {
@@ -141,7 +141,7 @@ describe('HelmReleaseList', () => {
     renderWithProviders(<HelmReleaseList />);
 
     await waitFor(() => {
-      expect(screen.getByText('No Helm Releases found')).toBeVisible();
+      expect(screen.getByText('No Helm releases found')).toBeVisible();
     });
   });
 
@@ -195,6 +195,6 @@ describe('HelmReleaseList', () => {
     renderWithProviders(<HelmReleaseList mock />);
 
     expect(screen.getByTestId('console-data-view')).toBeVisible();
-    expect(screen.queryByText('No Helm Releases found')).not.toBeInTheDocument();
+    expect(screen.queryByText('No Helm releases found')).not.toBeInTheDocument();
   });
 });

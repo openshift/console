@@ -138,7 +138,7 @@ describe('HelmURLChartForm', () => {
   it('should render the form title and description', () => {
     renderWithProviders(<HelmURLChartForm {...defaultProps} />);
 
-    expect(screen.getByText('Install Helm chart from URL')).toBeVisible();
+    expect(screen.getByText('Install Helm Chart from URL')).toBeVisible();
   });
 
   it('should render Chart URL, Release name, and Chart version input fields', () => {

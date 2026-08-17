@@ -199,6 +199,6 @@ describe('CreateHelmChartRepositoryForm', () => {
   it('should show the form description text', () => {
     renderWithProviders(<CreateHelmChartRepositoryForm {...defaultProps} />);
 
-    expect(screen.getByText('Add helm chart repository.')).toBeVisible();
+    expect(screen.getByText('Add Helm Chart repository.')).toBeVisible();
   });
 });

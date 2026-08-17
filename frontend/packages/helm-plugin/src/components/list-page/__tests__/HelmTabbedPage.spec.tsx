@@ -142,7 +142,7 @@ describe('HelmTabbedPage', () => {
 
     const callArgs = mockMultiTabListPage.mock.calls[0][0];
     expect(callArgs.pages).toHaveLength(2);
-    expect(callArgs.pages[0].nameKey).toBe('helm-plugin~Helm Releases');
+    expect(callArgs.pages[0].nameKey).toBe('helm-plugin~Helm releases');
     expect(callArgs.pages[1].nameKey).toBe('helm-plugin~Repositories');
   });
 

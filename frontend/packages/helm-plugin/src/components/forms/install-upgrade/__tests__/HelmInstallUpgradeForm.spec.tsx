@@ -197,7 +197,7 @@ describe('HelmInstallUpgradeForm', () => {
 
     expect(screen.getByText('Install Helm Chart')).toBeVisible();
     expect(screen.getByLabelText('Release name')).toBeVisible();
-    expect(screen.getByText('A unique name for the Helm Release.')).toBeVisible();
+    expect(screen.getByText('A unique name for the Helm release.')).toBeVisible();
   });
 
   it('should render the chart version dropdown with chart name and version', () => {
@@ -250,7 +250,7 @@ describe('HelmInstallUpgradeForm', () => {
         helmActionConfig={{
           ...defaultProps.helmActionConfig,
           type: HelmActionType.Upgrade,
-          title: 'Upgrade Helm Release',
+          title: 'Upgrade Helm release',
         }}
       />,
     );

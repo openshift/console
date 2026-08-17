@@ -86,13 +86,12 @@ const defaultProps = {
   chartIndexEntry: 'test-chart--my-repo',
 };
 
-const renderDropdown = (props = {}) => {
-  return renderWithProviders(
+const renderDropdown = (props = {}) =>
+  renderWithProviders(
     <Formik initialValues={formikInitialValues} onSubmit={jest.fn()}>
       <HelmChartVersionDropdown {...defaultProps} {...props} />
     </Formik>,
   );
-};
 
 describe('HelmChartVersionDropdown', () => {
   beforeEach(() => {

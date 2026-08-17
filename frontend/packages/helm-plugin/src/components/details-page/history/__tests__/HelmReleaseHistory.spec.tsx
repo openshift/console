@@ -146,7 +146,7 @@ describe('HelmReleaseHistory', () => {
     await waitFor(() => {
       expect(screen.getByTestId('status-box')).toBeTruthy();
     });
-    expect(screen.getByText('Unable to load Helm Release history')).toBeTruthy();
+    expect(screen.getByText('Unable to load Helm release history')).toBeTruthy();
   });
 
   it('should render within PaneBody when loaded successfully', async () => {

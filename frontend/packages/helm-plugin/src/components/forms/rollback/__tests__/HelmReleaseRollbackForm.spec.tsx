@@ -149,7 +149,7 @@ const defaultProps = {
   releaseHistory: mockReleaseHistory,
   helmActionConfig: {
     type: HelmActionType.Rollback,
-    title: 'Rollback Helm Release',
+    title: 'Rollback Helm release',
     subTitle: 'Select a version to rollback to.',
     helmReleaseApi: '/api/helm/release',
     fetch: jest.fn(),
@@ -165,7 +165,7 @@ describe('HelmReleaseRollbackForm', () => {
   it('should render the form title', () => {
     renderWithProviders(<HelmReleaseRollbackForm {...defaultProps} />);
 
-    expect(screen.getByText('Rollback Helm Release')).toBeVisible();
+    expect(screen.getByText('Rollback Helm release')).toBeVisible();
   });
 
   it('should display the rollback help text', () => {
