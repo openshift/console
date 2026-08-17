@@ -46,7 +46,7 @@ test.describe('Create namespace from install operators', { tag: ['@admin'] }, ()
 
     await test.step('Create a new namespace from the dropdown', async () => {
       await page.getByTestId('dropdown-selectbox').click();
-      await page.locator('[data-test-dropdown-menu^="Create_"]').click();
+      await page.getByTestId('#CREATE_RESOURCE_ACTION#').click();
 
       await expect(page.getByTestId('input-name')).toBeVisible();
       await page.getByTestId('input-name').fill(nsName);

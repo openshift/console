@@ -7,7 +7,7 @@ import { generateTestNamespace } from '../../test-utils/test-namespace';
 const testOperator = {
   name: 'Data Grid',
   operatorCardTestID: 'operator-Data Grid',
-  urlName: 'datagrid-operator.v8.6.5',
+  urlName: 'datagrid-operator',
 };
 
 const testOperand: TestOperandProps = {

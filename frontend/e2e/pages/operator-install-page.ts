@@ -84,16 +84,21 @@ export class OperatorInstallPage extends BasePage {
     } else {
       // Check if select namespace radio exists with timeout
       try {
-        await this.selectNamespaceRadio.waitFor({ state: 'visible', timeout: 5_000 });
+        await expect(this.selectNamespaceRadio).toBeVisible({ timeout: 5_000 });
         await this.selectNamespaceRadio.check();
-      } catch (error) {
+      } catch {
         // Element not available within timeout, continue without checking it
       }
 
       // Select the namespace
       await this.robustClick(this.namespaceDropdown);
       await this.searchInput.fill(namespace);
-      await this.robustClick(this.page.locator(`[data-test-dropdown-menu="${namespace}-Project"]`));
+      const escapedNamespace = namespace.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const namespaceOption = this.page
+        .getByTestId('dropdown-menu-item-link')
+        .filter({ hasText: new RegExp(`^${escapedNamespace}$`) })
+        .first();
+      await this.robustClick(namespaceOption);
       await expect(this.namespaceDropdown).toContainText(namespace);
     }
 
@@ -133,15 +138,15 @@ export class OperatorInstallPage extends BasePage {
 
     // Check if select namespace radio exists with timeout
     try {
-      await this.selectNamespaceRadio.waitFor({ state: 'visible', timeout: 5_000 });
+      await expect(this.selectNamespaceRadio).toBeVisible({ timeout: 5_000 });
       await this.selectNamespaceRadio.check();
-    } catch (error) {
+    } catch {
       // Element not available within timeout, continue without checking it
     }
 
     // Create new namespace through UI
     await this.robustClick(this.namespaceDropdown);
-    await this.robustClick(this.page.locator('[data-test-dropdown-menu^="Create_"]'));
+    await this.robustClick(this.page.getByTestId('#CREATE_RESOURCE_ACTION#'));
 
     // Fill in the namespace name in the modal
     await expect(this.page.getByTestId('input-name')).toBeVisible();

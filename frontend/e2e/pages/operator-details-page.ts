@@ -302,7 +302,7 @@ export class OperatorDetailsPage extends BasePage {
    * Get section heading locator
    */
   getSectionHeading(text: string): Locator {
-    return this.page.locator(`[data-test-section-heading="${text}"]`);
+    return this.detailsPage.getSectionHeader(text);
   }
 
   /**

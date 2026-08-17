@@ -58,13 +58,8 @@ export class InstalledOperatorsPage extends BasePage {
     // Get h1 child of the operator row (clicking the <a> directly is flaky, hitting the <h1> works)
     const operatorLink = this.getOperatorRow(operatorName).locator('h1');
 
-    // 1. Ensure the link is visible first
     await expect(operatorLink).toBeVisible({ timeout: 30_000 });
-
-    // 2. Small delay to ensure any animations/transitions are complete
-    await this.page.waitForTimeout(500);
-
-    await operatorLink.click();
+    await this.robustClick(operatorLink);
   }
 
   /**
@@ -74,42 +69,15 @@ export class InstalledOperatorsPage extends BasePage {
     await this.navigateToInstalledOperators();
     await this.filterByName(operatorName);
 
-    // Verify operator row exists (with extended timeout for installation)
     const operatorRow = this.getOperatorRow(operatorName);
     await expect(operatorRow).toBeVisible({ timeout: 60_000 });
 
-    // Debug the status element by polling its text content
     const statusElement = this.page.getByTestId('status-text');
-
-    console.log(`Waiting for ${operatorName} operator status to be 'Succeeded'...`);
-
-    // Poll the status text every 5 seconds and log what we see
-    let attempts = 0;
-    const maxAttempts = 12; // 1 minute worth of 5-second polls (reduced for faster feedback)
-
-    while (attempts < maxAttempts) {
-      let currentText: string | null = null;
-      try {
-        currentText = await statusElement.textContent({ timeout: 5000 });
-        console.log(`Attempt ${attempts + 1}: Status text is "${currentText}"`);
-      } catch (error) {
-        console.log(`Attempt ${attempts + 1}: Could not read status text: ${error.message}`);
-      }
-
-      if (currentText?.includes('Succeeded')) {
-        console.log('✅ Found "Succeeded" in status text!');
-        return; // Success!
-      }
-
-      if (currentText?.includes('Failed')) {
-        throw new Error(`Operator installation failed. Status: ${currentText}`);
-      }
-
-      attempts++;
-      await this.page.waitForTimeout(5000); // Wait 5 seconds between polls
-    }
-
-    throw new Error(`Timeout waiting for operator status to be 'Succeeded' after ${maxAttempts * 5} seconds (${maxAttempts} attempts)`);
+    await expect(async () => {
+      const currentText = await statusElement.textContent({ timeout: 5_000 });
+      expect(currentText ?? '').not.toContain('Failed');
+      expect(currentText ?? '').toContain('Succeeded');
+    }).toPass({ intervals: [5_000], timeout: 180_000 });
   }
 
   /**

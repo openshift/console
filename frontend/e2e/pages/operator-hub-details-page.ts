@@ -71,7 +71,7 @@ export class OperatorHubDetailsPage extends BasePage {
    * Verify section heading exists
    */
   async verifySectionHeading(heading: string): Promise<void> {
-    const sectionHeading = this.page.locator(`[data-test-section-heading="${heading}"]`);
+    const sectionHeading = this.page.getByTestId(`section-heading-${heading}`);
     await expect(sectionHeading).toBeVisible();
   }
 

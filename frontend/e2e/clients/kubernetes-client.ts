@@ -582,7 +582,7 @@ export default class KubernetesClient {
     version: string,
     plural: string,
     name: string,
-    patch: object[],
+    patch: object | object[],
   ): Promise<void> {
     await this.coApi.patchClusterCustomObject({
       group,
@@ -590,25 +590,10 @@ export default class KubernetesClient {
       plural,
       version,
       body: patch,
-      contentType: 'application/json-patch+json',
+      contentType: Array.isArray(patch)
+        ? 'application/json-patch+json'
+        : k8s.PatchStrategy.MergePatch,
     } as any);
-  }
-
-  async getClusterCustomResource(
-    group: string,
-    version: string,
-    plural: string,
-    name: string,
-  ): Promise<unknown | null> {
-    try {
-      const response = await this.coApi.getClusterCustomObject({ group, name, plural, version });
-      return response;
-    } catch (err) {
-      if (isNotFound(err)) {
-        return null;
-      }
-      throw err;
-    }
   }
 
   async getCustomResource(
@@ -626,32 +611,6 @@ export default class KubernetesClient {
       version,
     });
     return response;
-  }
-
-  async getClusterCustomResource(
-    group: string,
-    version: string,
-    plural: string,
-    name: string,
-  ): Promise<unknown> {
-    return this.coApi.getClusterCustomObject({ group, name, plural, version });
-  }
-
-  async patchClusterCustomResource(
-    group: string,
-    version: string,
-    plural: string,
-    name: string,
-    patch: object,
-  ): Promise<unknown> {
-    return this.coApi.patchClusterCustomObject({
-      body: patch,
-      group,
-      name,
-      plural,
-      version,
-      contentType: k8s.PatchStrategy.MergePatch,
-    } as any);
   }
 
   async createPVC(namespace: string, body: k8s.V1PersistentVolumeClaim): Promise<unknown> {

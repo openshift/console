@@ -2,13 +2,12 @@ import { test, expect } from '../../fixtures';
 import { InstalledOperatorsPage } from '../../pages/installed-operators-page';
 import { OperatorDetailsPage, type TestOperandProps } from '../../pages/operator-details-page';
 import { OperatorInstallPage } from '../../pages/operator-install-page';
-import { ModalPage } from '../../pages/modal-page';
 import { generateTestNamespace } from '../../test-utils/test-namespace';
 
 const testOperator = {
   name: 'Data Grid',
   operatorCardTestID: 'operator-Data Grid',
-  urlName: 'datagrid-operator.v8.6.5',
+  urlName: 'datagrid-operator',
 };
 
 const testOperand: TestOperandProps = {
@@ -142,4 +141,11 @@ test.describe('Testing uninstall of Data Grid Operator', { tag: ['@admin'] }, ()
     });
 
   });
+
+  test.fixme(
+    'tracks missing "Error Deleting Operands" uninstall parity case',
+    async () => {
+      expect(true).toBe(true);
+    },
+  );
 });
