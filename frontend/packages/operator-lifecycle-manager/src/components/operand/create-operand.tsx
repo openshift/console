@@ -100,19 +100,26 @@ export const CreateOperand: FC<CreateOperandProps> = ({
         ];
   }, [baseSchema]);
 
+  const rawSample = useMemo<K8sResourceKind>(() => exampleForModel(csv, model), [csv, model]);
+
+  // Enrich the sample with CRD schema defaults so the YAML editor shows the same
+  // non-empty defaults as the Form-first path (e.g. logLevel: Normal). Pruning the
+  // enriched result against rawSample strips the empty scaffold objects and arrays
+  // that getDefaultFormState generates for optional nested fields (e.g.
+  // multiKueue.externalFrameworks: [{}]), which the API would reject as invalid.
   const sample = useMemo<K8sResourceKind>(() => {
-    const rawSample = exampleForModel(csv, model);
     if (!schema || !rawSample) {
       return rawSample;
     }
     try {
-      return getDefaultFormState(schema, rawSample, schema) as K8sResourceKind;
+      const enriched = getDefaultFormState(schema, rawSample, schema) as K8sResourceKind;
+      return prune(enriched, rawSample);
     } catch {
       return rawSample;
     }
-  }, [csv, model, schema]);
+  }, [rawSample, schema]);
 
-  const pruneFunc = useCallback((data) => prune(data, sample), [sample]);
+  const pruneFunc = useCallback((data) => prune(data, rawSample), [rawSample]);
 
   const onChangeEditorType = useCallback(
     (newMethod) => {
