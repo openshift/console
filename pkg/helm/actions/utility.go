@@ -183,20 +183,27 @@ func getSecret(ns string, name string, version int, coreclient corev1client.Core
 	if err != nil {
 		return kv1.Secret{}, err
 	}
-	event := <-secretList.ResultChan()
-	if event.Object != nil {
-		obj := event.Object.(*kv1.Secret)
-		//check if secret exist with a field called as error
-		actionError, found := obj.Data["error"]
-		if found {
-			secretList.Stop()
-			//Delete secret created to track errors on installation
+	defer secretList.Stop()
+
+	versionLabel := strconv.Itoa(version)
+	for event := range secretList.ResultChan() {
+		if event.Object == nil {
+			continue
+		}
+		obj, ok := event.Object.(*kv1.Secret)
+		if !ok {
+			continue
+		}
+		// client-go fake Watch (k8s 1.36+) delivers existing objects without
+		// applying LabelSelector, so skip unrelated secrets.
+		if obj.Labels["owner"] != "helm" || obj.Labels["name"] != name || obj.Labels["version"] != versionLabel {
+			continue
+		}
+		if actionError, found := obj.Data["error"]; found {
 			coreclient.Secrets(ns).Delete(context.TODO(), name, v1.DeleteOptions{})
 			return kv1.Secret{}, fmt.Errorf("action error: %s", string(actionError))
-		} else {
-			secretList.Stop()
-			return *obj, nil
 		}
+		return *obj, nil
 	}
 	return kv1.Secret{}, fmt.Errorf("release secret not found")
 }
