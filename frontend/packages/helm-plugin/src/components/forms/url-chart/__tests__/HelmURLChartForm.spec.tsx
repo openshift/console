@@ -83,6 +83,7 @@ const defaultValues = {
   releaseName: '',
   chartVersion: '',
   basicAuthSecretName: '',
+  namespace: 'test-ns',
 };
 
 const defaultFormikProps = {

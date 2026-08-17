@@ -1,4 +1,5 @@
 import { screen } from '@testing-library/react';
+import type { TableProps } from '@console/internal/components/factory';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import RepositoriesList from '../RepositoriesList';
@@ -62,6 +63,13 @@ const mockData: K8sResourceKind[] = [
   },
 ];
 
+const defaultProps: TableProps = {
+  data: [],
+  loaded: false,
+  Header: () => [],
+  'aria-label': 'Repositories',
+};
+
 describe('RepositoriesList', () => {
   beforeEach(() => {
     mockConsoleDataView.mockClear();
@@ -69,7 +77,7 @@ describe('RepositoriesList', () => {
   });
 
   it('should render ConsoleDataView with HelmChartRepositories label', () => {
-    renderWithProviders(<RepositoriesList data={[]} loaded={false} />);
+    renderWithProviders(<RepositoriesList {...defaultProps} />);
 
     expect(screen.getByText('HelmChartRepositories')).toBeInTheDocument();
     expect(mockConsoleDataView).toHaveBeenCalledWith(
@@ -78,7 +86,7 @@ describe('RepositoriesList', () => {
   });
 
   it('should pass data and loaded props to ConsoleDataView', () => {
-    renderWithProviders(<RepositoriesList data={mockData} loaded />);
+    renderWithProviders(<RepositoriesList {...defaultProps} data={mockData} loaded />);
 
     expect(mockConsoleDataView).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -89,7 +97,7 @@ describe('RepositoriesList', () => {
   });
 
   it('should pass the correct data count when loaded with data', () => {
-    renderWithProviders(<RepositoriesList data={mockData} loaded />);
+    renderWithProviders(<RepositoriesList {...defaultProps} data={mockData} loaded />);
 
     const calledProps = mockConsoleDataView.mock.calls[0][0];
     expect(calledProps.data).toHaveLength(2);
@@ -97,7 +105,7 @@ describe('RepositoriesList', () => {
   });
 
   it('should pass loaded as false when not loaded', () => {
-    renderWithProviders(<RepositoriesList data={[]} loaded={false} />);
+    renderWithProviders(<RepositoriesList {...defaultProps} />);
 
     const calledProps = mockConsoleDataView.mock.calls[0][0];
     expect(calledProps.loaded).toBe(false);
@@ -105,7 +113,7 @@ describe('RepositoriesList', () => {
 
   it('should pass loadError to ConsoleDataView when loadError is set', () => {
     const loadError = 'Failed to fetch repositories';
-    renderWithProviders(<RepositoriesList data={[]} loaded loadError={loadError} />);
+    renderWithProviders(<RepositoriesList {...defaultProps} loaded loadError={loadError} />);
 
     expect(mockConsoleDataView).toHaveBeenCalledWith(
       expect.objectContaining({ loadError: 'Failed to fetch repositories' }),
@@ -113,7 +121,7 @@ describe('RepositoriesList', () => {
   });
 
   it('should pass columns and resetAllColumnWidths from useRepositoriesColumns', () => {
-    renderWithProviders(<RepositoriesList data={[]} loaded />);
+    renderWithProviders(<RepositoriesList {...defaultProps} loaded />);
 
     expect(mockConsoleDataView).toHaveBeenCalledWith(
       expect.objectContaining({
