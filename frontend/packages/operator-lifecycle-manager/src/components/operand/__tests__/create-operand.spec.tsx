@@ -130,6 +130,118 @@ describe('CreateOperand', () => {
     });
   });
 
+  it('applies CRD schema defaults to sample data when starting in YAML mode (OCPBUGS-70361)', () => {
+    // When the editor starts directly in YAML mode (from a saved user preference),
+    // the @rjsf/core Form never mounts, so it never applies the CRD schema defaults
+    // as a side effect. CreateOperand must enrich the sample with schema defaults
+    // itself, so the YAML editor shows the same complete content as the Form-first path.
+
+    // Arrange: a CRD whose schema defines a spec default that is NOT in alm-examples
+    const crdWithSchemaDefault = {
+      ...testCRD,
+      spec: {
+        ...testCRD.spec,
+        versions: [
+          {
+            name: 'v1alpha1',
+            served: true,
+            storage: true,
+            schema: {
+              openAPIV3Schema: {
+                type: 'object',
+                properties: {
+                  spec: {
+                    type: 'object',
+                    properties: {
+                      replicas: { type: 'integer', default: 3 },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        ],
+      },
+    };
+    mockUseK8sWatchResource.mockReturnValue([crdWithSchemaDefault, true, undefined]);
+
+    const csvWithMinimalExample = {
+      ...testClusterServiceVersion,
+      metadata: {
+        ...testClusterServiceVersion.metadata,
+        annotations: {
+          ...testClusterServiceVersion.metadata.annotations,
+          'alm-examples': JSON.stringify([
+            {
+              apiVersion: 'testapp.coreos.com/v1alpha1',
+              kind: 'TestResource',
+              metadata: { name: 'example-resource' },
+              spec: {},
+            },
+          ]),
+        },
+      },
+    };
+
+    // Act
+    renderWithProviders(
+      <CreateOperand
+        initialEditorType={EditorType.YAML}
+        csv={csvWithMinimalExample}
+        loaded
+        loadError={undefined}
+      />,
+    );
+
+    // Assert: the schema default was merged into the sample before reaching SyncedEditor
+    expect(mockSyncedEditor).toHaveBeenCalledTimes(1);
+    const [syncedEditorProps] = mockSyncedEditor.mock.calls[0];
+    expect(syncedEditorProps.initialData.spec.replicas).toBe(3);
+  });
+
+  it('does not render SyncedEditor until the CRD watch has loaded (OCPBUGS-70361)', () => {
+    // Regression test for OCPBUGS-70361. SyncedEditor snapshots its initial YAML
+    // from the sample exactly once, on mount, and never re-syncs it. The sample is
+    // only enriched with CRD schema defaults once the CRD has loaded, so mounting
+    // SyncedEditor before the CRD watch resolves would freeze the raw, un-enriched
+    // YAML. CreateOperand must wait for the CRD watch to load before rendering.
+
+    // Arrange: CRD watch not yet loaded
+    mockUseK8sWatchResource.mockReturnValue([{}, false, undefined]);
+
+    // Act
+    renderWithProviders(
+      <CreateOperand
+        initialEditorType={EditorType.YAML}
+        csv={testClusterServiceVersion}
+        loaded
+        loadError={undefined}
+      />,
+    );
+
+    // Assert: editor is withheld until the schema is available
+    expect(mockSyncedEditor).not.toHaveBeenCalled();
+  });
+
+  it('passes an onCancel handler to the YAML editor via yamlContext (OCPBUGS-70361)', () => {
+    // Regression test for OCPBUGS-70361. The YAML view must cancel the same way the
+    // Form view does (back to the operator context) instead of falling through to
+    // EditYAML's generic navigate-to-list behavior, which drops the user onto the
+    // generic create page. CreateOperand supplies that handler via yamlContext.
+    renderWithProviders(
+      <CreateOperand
+        initialEditorType={EditorType.YAML}
+        csv={testClusterServiceVersion}
+        loaded
+        loadError={undefined}
+      />,
+    );
+
+    expect(mockSyncedEditor).toHaveBeenCalledTimes(1);
+    const [syncedEditorProps] = mockSyncedEditor.mock.calls[0];
+    expect(typeof syncedEditorProps.context.yamlContext.onCancel).toBe('function');
+  });
+
   it('provides onChangeEditorType callback to SyncedEditor', () => {
     // Arrange
     renderWithProviders(
@@ -212,5 +324,25 @@ describe('OperandYAML', () => {
     expect(mockCreateYAML).toHaveBeenCalledTimes(1);
     const [createYAMLProps] = mockCreateYAML.mock.calls[0];
     expect(createYAMLProps.resourceObjPath).toBeUndefined();
+  });
+
+  it('forwards onCancel to CreateYAML when provided (OCPBUGS-70361)', () => {
+    const onCancel = jest.fn();
+
+    renderWithProviders(<OperandYAML onCancel={onCancel} />);
+
+    expect(mockCreateYAML).toHaveBeenCalledTimes(1);
+    const [createYAMLProps] = mockCreateYAML.mock.calls[0];
+    expect(createYAMLProps.onCancel).toBe(onCancel);
+  });
+
+  it('does not pass onCancel to CreateYAML when not provided', () => {
+    renderWithProviders(<OperandYAML />);
+
+    expect(mockCreateYAML).toHaveBeenCalledTimes(1);
+    const [createYAMLProps] = mockCreateYAML.mock.calls[0];
+    // The key must be absent (not merely undefined) so CreateYAML's conditional
+    // spread keeps `onCancel` out of the props it forwards to EditYAML.
+    expect('onCancel' in createYAMLProps).toBe(false);
   });
 });
