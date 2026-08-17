@@ -18,8 +18,7 @@ jest.mock('react-i18next', () => ({
   Trans: ({ children }: { children: any }) => children,
 }));
 
-export const t = (key: string): string =>
-  key.includes('~') ? key.substring(key.indexOf('~') + 1) : key;
+const t = (key: string): string => (key.includes('~') ? key.substring(key.indexOf('~') + 1) : key);
 
 const ns = 'test-ns';
 

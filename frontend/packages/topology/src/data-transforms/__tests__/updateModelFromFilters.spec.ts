@@ -26,7 +26,7 @@ function getTransformedTopologyData() {
   return baseDataModelGetter(model, MockResources, workloadResources, []);
 }
 
-describe('topology model ', () => {
+describe('topology model', () => {
   let filters: DisplayFilters;
 
   beforeEach(() => {

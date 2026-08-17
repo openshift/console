@@ -7,11 +7,10 @@ import { GithubService } from '../github-service';
 import { GitlabService } from '../gitlab-service';
 
 describe('Git Service', () => {
-  it('should return correct instance of services based on git providers', (done: any) => {
+  it('should return correct instance of services based on git providers', () => {
     const gitSourceUrl = 'https://bitbucket.org/akshinde/testgitsource';
     expect(getGitService(gitSourceUrl, GitProvider.GITHUB)).toBeInstanceOf(GithubService);
     expect(getGitService(gitSourceUrl, GitProvider.GITLAB)).toBeInstanceOf(GitlabService);
     expect(getGitService(gitSourceUrl, GitProvider.BITBUCKET)).toBeInstanceOf(BitbucketService);
-    done();
   });
 });

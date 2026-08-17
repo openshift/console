@@ -3,14 +3,6 @@ import { DeploymentConfigModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s/types';
 import type { PodControllerOverviewItem } from '../../types/pod';
 import {
-  deploymentConfig,
-  notIdledDeploymentConfig,
-  deployment,
-  mockPod,
-  statefulSets,
-  allpods,
-} from '../__mocks__/pod-utils-test-data';
-import {
   isIdled,
   isKnativeServing,
   getPodStatus,
@@ -18,6 +10,14 @@ import {
   checkPodEditAccess,
   isContainerLoopingFilter,
 } from '../pod-utils';
+import {
+  deploymentConfig,
+  notIdledDeploymentConfig,
+  deployment,
+  mockPod,
+  statefulSets,
+  allpods,
+} from './data/pod-utils-test-data';
 
 jest.mock('@console/dynamic-plugin-sdk/src/app/components/utils/rbac', () => ({
   ...jest.requireActual('@console/dynamic-plugin-sdk/src/app/components/utils/rbac'),
@@ -132,23 +132,15 @@ describe('checkPodEditAccess', () => {
     jest.clearAllMocks();
   });
 
-  it('should have access true if check Access return allowed true', (done) => {
+  it('should have access true if check Access return allowed true', async () => {
     checkAccessMock.mockImplementation(() => Promise.resolve({ status: { allowed: true } }));
-    checkPodEditAccess(obj, DeploymentConfigModel, undefined)
-      .then((resp) => {
-        expect(resp.status.allowed).toBe(true);
-        done();
-      })
-      .catch(() => {});
+    const resp = await checkPodEditAccess(obj, DeploymentConfigModel, undefined);
+    expect(resp.status.allowed).toBe(true);
   });
 
-  it('should have access false if check Access return allowed false', (done) => {
+  it('should have access false if check Access return allowed false', async () => {
     checkAccessMock.mockImplementation(() => Promise.resolve({ status: { allowed: false } }));
-    checkPodEditAccess(obj, DeploymentConfigModel, undefined)
-      .then((resp) => {
-        expect(resp.status.allowed).toBe(false);
-        done();
-      })
-      .catch(() => {});
+    const resp = await checkPodEditAccess(obj, DeploymentConfigModel, undefined);
+    expect(resp.status.allowed).toBe(false);
   });
 });

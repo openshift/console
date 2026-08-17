@@ -107,7 +107,7 @@ const getTopologyDataKafkaSink = async (
   return result.nodes.find((n) => n.data.resources?.obj.metadata.name === name);
 };
 
-describe('ApplicationUtils ', () => {
+describe('ApplicationUtils', () => {
   let mockBuilds = [];
   let mockBuildConfigs = [];
   let mockSecrets = [];

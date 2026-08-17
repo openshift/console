@@ -5,7 +5,7 @@ import { formikFormProps } from '@console/shared/src/test-utils/formik-props-uti
 import {
   mockTrafficData,
   mockRevisionItems,
-} from '../../../utils/__mocks__/traffic-splitting-utils-mock';
+} from '../../../utils/__tests__/data/traffic-splitting-utils-mock';
 import TrafficSplittingModal from '../TrafficSplittingModal';
 
 jest.mock('@patternfly/react-core', () => ({

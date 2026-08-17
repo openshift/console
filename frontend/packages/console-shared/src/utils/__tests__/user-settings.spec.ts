@@ -31,7 +31,7 @@ beforeEach(() => {
 });
 
 describe('createConfigMap', () => {
-  it('calls user settings api ', async () => {
+  it('calls user settings api', async () => {
     coFetchMock.mockReturnValueOnce({
       json: () => configMap,
     });
@@ -47,7 +47,7 @@ describe('createConfigMap', () => {
 });
 
 describe('updateConfigMap', () => {
-  it('calls user settings api ', async () => {
+  it('calls user settings api', async () => {
     coFetchMock.mockReturnValueOnce({
       json: () => configMap,
     });

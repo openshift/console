@@ -1,5 +1,5 @@
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
-import { t } from '../../../../../__mocks__/i18next';
+import { t } from '@console/shared/src/test-utils/i18n-test-utils';
 import {
   mockHelmReleases,
   mockHelmChartData,

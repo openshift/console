@@ -204,15 +204,14 @@ describe('ImpersonateUserModal Integration Tests', () => {
       // Remove the group by clicking the X button
       // eslint-disable-next-line testing-library/no-node-access -- PatternFly chips don't have accessible test IDs
       const closeButtons = document.querySelectorAll('.pf-v6-c-label__actions button');
-      if (closeButtons.length > 0) {
-        await user.click(closeButtons[0]);
+      expect(closeButtons.length).toBeGreaterThan(0);
+      await user.click(closeButtons[0]);
 
-        await waitFor(() => {
-          // eslint-disable-next-line testing-library/no-node-access -- PatternFly chips don't have accessible test IDs
-          const chips = document.querySelectorAll('.pf-v6-c-label');
-          expect(chips.length).toBe(0);
-        });
-      }
+      await waitFor(() => {
+        // eslint-disable-next-line testing-library/no-node-access -- PatternFly chips don't have accessible test IDs
+        const chips = document.querySelectorAll('.pf-v6-c-label');
+        expect(chips.length).toBe(0);
+      });
 
       // Submit with no groups
       const submitButton = screen.getByTestId('impersonate-button');

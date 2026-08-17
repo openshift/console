@@ -3,9 +3,9 @@ import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import type { PipelineKind } from '../../../types/pipeline';
 import { healthChecksProbeInitialData } from '../../health-checks/health-checks-probe-utils';
 import { PipelineType } from '../../pipeline-section/import-types';
-import { serverlessInitialValues } from '../__mocks__/serverless-mock';
 import type { DevfileData, GitImportFormData } from '../import-types';
 import { BuildOptions, InsecureTrafficType, Resources, TerminationType } from '../import-types';
+import { serverlessInitialValues } from './data/serverless-mock';
 
 export const mockPipelineTemplate: PipelineKind = {
   apiVersion: 'tekton.dev/v1alpha1',

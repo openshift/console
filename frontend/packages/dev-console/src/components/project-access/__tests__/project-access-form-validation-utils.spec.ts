@@ -7,21 +7,21 @@ describe('ValidationUtils', () => {
     const mockData = cloneDeep(mockProjectAccessData);
     mockData.projectAccess[0].subject.name = '';
 
-    await validationSchema.isValid(mockData).then((valid) => expect(valid).toEqual(false));
-    await validationSchema.validate(mockData).catch((err) => {
-      expect(err.message).toBe('Required');
-      expect(err.type).toBe('required');
+    expect(await validationSchema.isValid(mockData)).toEqual(false);
+    await expect(validationSchema.validate(mockData)).rejects.toMatchObject({
+      message: 'Required',
+      type: 'required',
     });
   });
 
-  it('should throw an error if no Role is selected ', async () => {
+  it('should throw an error if no Role is selected', async () => {
     const mockData = cloneDeep(mockProjectAccessData);
     mockData.projectAccess[0].role = '';
 
-    await validationSchema.isValid(mockData).then((valid) => expect(valid).toEqual(false));
-    await validationSchema.validate(mockData).catch((err) => {
-      expect(err.message).toBe('Required');
-      expect(err.type).toBe('required');
+    expect(await validationSchema.isValid(mockData)).toEqual(false);
+    await expect(validationSchema.validate(mockData)).rejects.toMatchObject({
+      message: 'Required',
+      type: 'required',
     });
   });
 });

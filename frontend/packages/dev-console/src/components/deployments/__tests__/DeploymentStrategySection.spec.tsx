@@ -3,15 +3,15 @@ import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import store from '@console/internal/redux';
 import { Resources } from '../../import/import-types';
+import DeploymentStrategySection from '../deployment-strategy/DeploymentStrategySection';
+import { convertDeploymentToEditForm } from '../utils/deployment-utils';
 import {
   mockDeployment,
   mockDeploymentConfig,
   mockDeploymentConfig2,
   mockEditDeploymentData,
-} from '../__mocks__/deployment-data';
-import MockForm from '../__mocks__/MockForm';
-import DeploymentStrategySection from '../deployment-strategy/DeploymentStrategySection';
-import { convertDeploymentToEditForm } from '../utils/deployment-utils';
+} from './deployment-data';
+import MockForm from './MockForm';
 
 const handleSubmit = jest.fn();
 

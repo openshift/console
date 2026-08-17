@@ -153,7 +153,7 @@ describe('SourceSection', () => {
     expect(onSubmit).toHaveBeenCalledTimes(0);
   });
 
-  it('should render dockerfile input field when user selects dockerfile ', async () => {
+  it('should render dockerfile input field when user selects dockerfile', async () => {
     const user = userEvent.setup();
     const onSubmit = jest.fn();
 
