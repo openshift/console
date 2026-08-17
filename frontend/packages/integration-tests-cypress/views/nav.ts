@@ -38,11 +38,11 @@ export const nav = {
                   .scrollIntoView()
                   .contains(newPerspective);
               } else {
-                cy.byLegacyTestID('perspective-switcher-toggle')
-                  .click()
-                  .byLegacyTestID('perspective-switcher-menu-option')
+                cy.byLegacyTestID('perspective-switcher-toggle').click();
+                cy.byLegacyTestID('perspective-switcher-menu-option', { timeout: 10000 })
+                  .should('be.visible')
                   .contains(newPerspective)
-                  .click({ force: true });
+                  .click();
               }
             });
             break;
@@ -60,20 +60,20 @@ export const nav = {
                     .contains(newPerspective);
                 } else {
                   checkDeveloperPerspective();
-                  cy.byLegacyTestID('perspective-switcher-toggle')
-                    .click()
-                    .byLegacyTestID('perspective-switcher-menu-option')
+                  cy.byLegacyTestID('perspective-switcher-toggle').click();
+                  cy.byLegacyTestID('perspective-switcher-menu-option', { timeout: 10000 })
+                    .should('be.visible')
                     .contains(newPerspective)
-                    .click({ force: true });
+                    .click();
                 }
               });
             break;
           default:
-            cy.byLegacyTestID('perspective-switcher-toggle')
-              .click()
-              .byLegacyTestID('perspective-switcher-menu-option')
+            cy.byLegacyTestID('perspective-switcher-toggle').click();
+            cy.byLegacyTestID('perspective-switcher-menu-option', { timeout: 10000 })
+              .should('be.visible')
               .contains(newPerspective)
-              .click({ force: true });
+              .click();
         }
       },
     },
