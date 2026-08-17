@@ -23,17 +23,23 @@ test.describe('Quotas', { tag: ['@admin'] }, () => {
   });
 
   test.afterAll(async ({ k8sClient }) => {
-    try {
-      await k8sClient.deleteClusterCustomResource(
+    const [clusterQuotaResult, namespaceResult] = await Promise.allSettled([
+      k8sClient.deleteClusterCustomResource(
         'quota.openshift.io',
         'v1',
         'clusterresourcequotas',
         clusterQuotaName,
-      );
-    } catch (error) {
-      console.warn(`[Cleanup] ClusterResourceQuota ${clusterQuotaName}: ${String(error)}`);
+      ),
+      k8sClient.deleteNamespace(namespace),
+    ]);
+
+    if (namespaceResult.status === 'rejected') {
+      throw namespaceResult.reason;
     }
-    await k8sClient.deleteNamespace(namespace);
+
+    if (clusterQuotaResult.status === 'rejected') {
+      throw clusterQuotaResult.reason;
+    }
   });
 
   test('create ResourceQuota and ClusterResourceQuota via YAML editor', async ({

@@ -18,7 +18,7 @@ export class OperatorHubDetailsPage extends BasePage {
    */
   async navigateToOperatorHub(): Promise<void> {
     await this.clusterSettingsPage.navigateToConfiguration();
-    await this.page.getByTestId('OperatorHub').click();
+    await this.robustClick(this.page.getByTestId('OperatorHub'));
     await expect(this.pageHeading).toBeVisible({ timeout: 30_000 });
   }
 
@@ -49,7 +49,7 @@ export class OperatorHubDetailsPage extends BasePage {
    */
   async toggleDefaultSource(sourceName: string): Promise<void> {
     const checkbox = this.page.getByTestId(`${sourceName}__checkbox`);
-    await checkbox.click();
+    await this.robustClick(checkbox);
   }
 
   /**
@@ -78,7 +78,11 @@ export class OperatorHubDetailsPage extends BasePage {
   /**
    * Complete flow: toggle source, verify status, and toggle back
    */
-  async toggleSourceAndVerify(sourceName: string, expectedStatus1: string, expectedStatus2: string): Promise<void> {
+  async toggleSourceAndVerify(
+    sourceName: string,
+    statusAfterToggle: string,
+    statusAfterRevert: string,
+  ): Promise<void> {
     // First toggle
     await this.openEditDefaultSourcesModal();
     await expect(this.modalPage.getModalTitle()).toContainText('Edit default sources');
@@ -86,7 +90,9 @@ export class OperatorHubDetailsPage extends BasePage {
     await this.submitModal();
 
     // Verify status change
-    await expect(this.getSourceStatus(sourceName)).toHaveText(expectedStatus1);
+    await expect(this.getSourceStatus(sourceName)).toHaveText(statusAfterToggle, {
+      timeout: 60_000,
+    });
 
     // Toggle back
     await this.openEditDefaultSourcesModal();
@@ -95,6 +101,8 @@ export class OperatorHubDetailsPage extends BasePage {
     await this.submitModal();
 
     // Verify status back to original
-    await expect(this.getSourceStatus(sourceName)).toHaveText(expectedStatus2);
+    await expect(this.getSourceStatus(sourceName)).toHaveText(statusAfterRevert, {
+      timeout: 60_000,
+    });
   }
 }

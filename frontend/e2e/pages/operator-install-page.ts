@@ -1,6 +1,8 @@
 import type { Locator } from '@playwright/test';
 import { expect } from '@playwright/test';
 
+import { escapeRegExp } from '../utils/selector-utils';
+
 import BasePage from './base-page';
 import { CatalogPage } from './catalog-page';
 
@@ -18,24 +20,26 @@ export class OperatorInstallPage extends BasePage {
   private readonly installOperatorButton = this.page.getByTestId('install-operator');
   private readonly viewInstalledOperatorsBtn = this.page.getByTestId('view-installed-operators-btn');
 
-  /**
-   * Install an operator globally in openshift-operators
-   */
-  async installOperatorGlobally(operatorName: string, operatorCardTestID: string): Promise<void> {
+  private async openInstallForm(operatorName: string, operatorCardTestID: string): Promise<void> {
     await this.goTo('/catalog/all-namespaces');
 
     await this.catalogPage.clickOperatorTab();
     await this.catalogPage.searchOperators(operatorName);
 
-    // Verify operator exists before clicking
     const operatorCard = this.page.getByTestId(operatorCardTestID);
     await expect(operatorCard).toBeVisible({ timeout: 30_000 });
     await this.robustClick(operatorCard);
 
-    // Wait for install button and verify it has href
     await expect(this.installButton).toBeVisible();
     await expect(this.installButton).toHaveAttribute('href');
     await this.robustClick(this.installButton);
+  }
+
+  /**
+   * Install an operator globally in openshift-operators
+   */
+  async installOperatorGlobally(operatorName: string, operatorCardTestID: string): Promise<void> {
+    await this.openInstallForm(operatorName, operatorCardTestID);
 
     // Verify installation form elements
     await expect(this.channelSelect).toBeVisible();
@@ -61,20 +65,7 @@ export class OperatorInstallPage extends BasePage {
     namespace: string,
     useOperatorRecommended: boolean = false,
   ): Promise<void> {
-    await this.goTo('/catalog/all-namespaces');
-
-    await this.catalogPage.clickOperatorTab();
-    await this.catalogPage.searchOperators(operatorName);
-
-    // Verify operator exists before clicking
-    const operatorCard = this.page.getByTestId(operatorCardTestID);
-    await expect(operatorCard).toBeVisible({ timeout: 30_000 });
-    await this.robustClick(operatorCard);
-
-    // Wait for install button and verify it has href
-    await expect(this.installButton).toBeVisible();
-    await expect(this.installButton).toHaveAttribute('href');
-    await this.robustClick(this.installButton);
+    await this.openInstallForm(operatorName, operatorCardTestID);
 
     // Configure for specific namespace installation
     await this.specificNamespaceRadio.check({ timeout: 30_000 });
@@ -93,7 +84,7 @@ export class OperatorInstallPage extends BasePage {
       // Select the namespace
       await this.robustClick(this.namespaceDropdown);
       await this.searchInput.fill(namespace);
-      const escapedNamespace = namespace.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const escapedNamespace = escapeRegExp(namespace);
       const namespaceOption = this.page
         .getByTestId('dropdown-menu-item-link')
         .filter({ hasText: new RegExp(`^${escapedNamespace}$`) })
@@ -118,20 +109,7 @@ export class OperatorInstallPage extends BasePage {
     operatorCardTestID: string,
     namespace: string,
   ): Promise<void> {
-    await this.goTo('/catalog/all-namespaces');
-
-    await this.catalogPage.clickOperatorTab();
-    await this.catalogPage.searchOperators(operatorName);
-
-    // Verify operator exists before clicking
-    const operatorCard = this.page.getByTestId(operatorCardTestID);
-    await expect(operatorCard).toBeVisible({ timeout: 30_000 });
-    await this.robustClick(operatorCard);
-
-    // Wait for install button and verify it has href
-    await expect(this.installButton).toBeVisible();
-    await expect(this.installButton).toHaveAttribute('href');
-    await this.robustClick(this.installButton);
+    await this.openInstallForm(operatorName, operatorCardTestID);
 
     // Configure for specific namespace installation
     await this.specificNamespaceRadio.check({ timeout: 30_000 });

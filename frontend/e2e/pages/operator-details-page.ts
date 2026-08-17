@@ -225,26 +225,29 @@ export class OperatorDetailsPage extends BasePage {
   async uninstallOperatorWithAPIError(errorType: 'cannot-load-operands' | 'error-deleting-operands'): Promise<void> {
     // Set up API interception based on error type
     if (errorType === 'cannot-load-operands') {
-      await this.page.route('**/apis/operators.coreos.com/v1alpha1/namespaces/*/clusterserviceversions/*/instances**', route => {
-        route.fulfill({
-          status: 500,
-          contentType: 'application/json',
-          body: JSON.stringify({
-            kind: 'Status',
-            apiVersion: 'v1',
-            metadata: {},
-            status: 'Failure',
-            message: 'Internal server error',
-            reason: 'InternalError',
-            code: 500
-          })
-        });
-      });
+      await this.page.route(
+        '**/apis/operators.coreos.com/v1alpha1/namespaces/*/clusterserviceversions/*/instances**',
+        async (route) => {
+          await route.fulfill({
+            status: 500,
+            contentType: 'application/json',
+            body: JSON.stringify({
+              kind: 'Status',
+              apiVersion: 'v1',
+              metadata: {},
+              status: 'Failure',
+              message: 'Internal server error',
+              reason: 'InternalError',
+              code: 500,
+            }),
+          });
+        },
+      );
     } else if (errorType === 'error-deleting-operands') {
       // Intercept DELETE requests for operands
-      await this.page.route('**/apis/*/v*/namespaces/*/devworkspaces/**', route => {
+      await this.page.route('**/apis/*/v*/namespaces/*/devworkspaces/**', async (route) => {
         if (route.request().method() === 'DELETE') {
-          route.fulfill({
+          await route.fulfill({
             status: 500,
             contentType: 'application/json',
             body: JSON.stringify({
@@ -254,11 +257,11 @@ export class OperatorDetailsPage extends BasePage {
               status: 'Failure',
               message: 'Unable to delete operand',
               reason: 'InternalError',
-              code: 500
-            })
+              code: 500,
+            }),
           });
         } else {
-          route.continue();
+          await route.continue();
         }
       });
     }
@@ -271,8 +274,10 @@ export class OperatorDetailsPage extends BasePage {
       // Wait for error alert to appear
       await expect(this.page.getByTestId('alert-danger')).toContainText('Cannot load Operands');
     } else if (errorType === 'error-deleting-operands') {
-      // Check delete all operands option first to trigger the delete requests
-      await this.page.getByTestId('delete-all-operands').click();
+      const deleteAllOperands = this.page.getByTestId('delete-all-operands');
+      await deleteAllOperands.click();
+      await expect(deleteAllOperands).toBeChecked();
+      await this.modalPage.submit();
 
       // Wait for error alert to appear
       await expect(this.page.getByTestId('alert-danger')).toContainText('Error Deleting Operands');

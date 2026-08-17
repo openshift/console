@@ -2,20 +2,33 @@ import { test, expect } from '../../fixtures';
 import { OperatorHubDetailsPage } from '../../pages/operator-hub-details-page';
 
 test.describe('OperatorHub default sources management', { tag: ['@admin'] }, () => {
+  let originalSources: Array<{ name?: string; disabled?: boolean }> | null = null;
+
+  test.beforeEach(async ({ k8sClient }) => {
+    const operatorHub = (await k8sClient.getClusterCustomResource(
+      'config.openshift.io',
+      'v1',
+      'operatorhubs',
+      'cluster',
+    )) as {
+      spec?: {
+        sources?: Array<{ name?: string; disabled?: boolean }>;
+      };
+    };
+
+    originalSources = operatorHub.spec?.sources
+      ? JSON.parse(JSON.stringify(operatorHub.spec.sources))
+      : null;
+  });
+
   test.afterEach(async ({ k8sClient }) => {
-    // Ensure redhat-operators source is always enabled after test
-    try {
-      await k8sClient.patchClusterCustomResource(
-        'config.openshift.io',
-        'v1',
-        'operatorhubs',
-        'cluster',
-        [{ op: 'replace', path: '/spec/sources/0/disabled', value: false }]
-      );
-      // Successfully re-enabled redhat-operators source
-    } catch (error) {
-      // Failed to re-enable redhat-operators source
-    }
+    await k8sClient.patchClusterCustomResource(
+      'config.openshift.io',
+      'v1',
+      'operatorhubs',
+      'cluster',
+      { spec: { sources: originalSources } },
+    );
   });
 
   test('disables and re-enables default catalog sources from OperatorHub details page', async ({
@@ -33,22 +46,11 @@ test.describe('OperatorHub default sources management', { tag: ['@admin'] }, () 
     });
 
     await test.step('Toggle default source and verify status changes', async () => {
-      // First toggle - disable the source
-      await operatorHubPage.openEditDefaultSourcesModal();
-      await expect(operatorHubPage.getModal().getModalTitle()).toContainText('Edit default sources');
-      await operatorHubPage.toggleDefaultSource(defaultSourceToBeToggled);
-      await operatorHubPage.submitModal();
-
-      // Verify status change to Disabled
-      await expect(operatorHubPage.getSourceStatus(defaultSourceToBeToggled)).toHaveText('Disabled');
-
-      // Second toggle - re-enable the source
-      await operatorHubPage.openEditDefaultSourcesModal();
-      await expect(operatorHubPage.getModal().getModalTitle()).toContainText('Edit default sources');
-      await operatorHubPage.toggleDefaultSource(defaultSourceToBeToggled);
-      await operatorHubPage.submitModal();
-
-      // Verify status change back to Enabled
+      await operatorHubPage.toggleSourceAndVerify(
+        defaultSourceToBeToggled,
+        'Disabled',
+        'Enabled',
+      );
       await expect(operatorHubPage.getSourceStatus(defaultSourceToBeToggled)).toHaveText('Enabled');
     });
   });

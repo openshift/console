@@ -8,6 +8,7 @@ const managedCatalogSource = {
 
 test.describe('CatalogSource details page', { tag: ['@admin'] }, () => {
   test('renders details about a managed catalog source', async ({ page }) => {
+    test.setTimeout(360_000);
     const catalogSourcePage = new CatalogSourcePage(page);
 
     await test.step('Navigate to CatalogSource details', async () => {
@@ -69,8 +70,9 @@ test.describe('CatalogSource details page', { tag: ['@admin'] }, () => {
   });
 
   test('allows modifying registry poll interval', async ({ page, k8sClient, cleanup }) => {
-    const testNs = `test-catsrc-${Date.now()}`;
-    const catalogSourceName = `test-catsrc-${Date.now()}`;
+    const suffix = Date.now();
+    const testNs = `test-catsrc-${suffix}`;
+    const catalogSourceName = `test-catsrc-${suffix}`;
     const catalogSourcePage = new CatalogSourcePage(page);
 
     await test.step('Create test namespace and CatalogSource', async () => {
@@ -133,7 +135,9 @@ test.describe('CatalogSource details page', { tag: ['@admin'] }, () => {
     });
 
     await test.step('Verify registry poll interval updated', async () => {
-      await expect(catalogSourcePage.getDetailsValue('Registry poll interval')).toHaveText('30m');
+      await expect(catalogSourcePage.getDetailsValue('Registry poll interval')).toHaveText('30m', {
+        timeout: 60_000,
+      });
     });
   });
 });

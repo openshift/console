@@ -22,6 +22,10 @@ const LATEST_VERSION_OPTION = 'kiali-operator.v1.83.0';
 const TECH_PREVIEW_SKIP_REASON =
   'OLMv1 is active on techPreview clusters — OLMv0 OperatorHub catalog is unavailable';
 const SETUP_TIMEOUT = 360_000;
+const DEFAULT_DEPRECATED_OPERATOR_CATALOG_IMAGE =
+  'quay.io/cajieh0/deprecation-catalog@sha256:0d49292bd51c36644aa703f18f777780af6bffd8748aa8f594111bde9639bcaa';
+const DEPRECATED_OPERATOR_CATALOG_IMAGE =
+  process.env.DEPRECATED_OPERATOR_CATALOG_IMAGE ?? DEFAULT_DEPRECATED_OPERATOR_CATALOG_IMAGE;
 
 const runId = generateTestNamespace().replace('test-', '');
 const catalogSourceName = `test-community-operator-deprecation-${runId}`;
@@ -42,7 +46,7 @@ function buildDeprecatedCatalogSource() {
     },
     spec: {
       displayName: 'Community Operators for testing deprecation',
-      image: 'quay.io/cajieh0/deprecation-catalog',
+      image: DEPRECATED_OPERATOR_CATALOG_IMAGE,
       publisher: 'OLM community',
       sourceType: 'grpc',
       updateStrategy: {
@@ -137,21 +141,34 @@ test.describe('Deprecated operator warnings', { tag: ['@admin'] }, () => {
       return;
     }
 
-    await k8sClient.deleteCustomResource(
-      'operators.coreos.com',
-      'v1alpha1',
-      subscriptionNamespace,
-      'subscriptions',
-      subscriptionName,
-    );
-    await k8sClient.deleteNamespace(subscriptionNamespace);
-    await k8sClient.deleteCustomResource(
-      'operators.coreos.com',
-      'v1alpha1',
-      CATALOG_SOURCE_NAMESPACE,
-      'catalogsources',
-      catalogSourceName,
-    );
+    try {
+      const [subscriptionCleanup, namespaceCleanup] = await Promise.allSettled([
+        k8sClient.deleteCustomResource(
+          'operators.coreos.com',
+          'v1alpha1',
+          subscriptionNamespace,
+          'subscriptions',
+          subscriptionName,
+        ),
+        k8sClient.deleteNamespace(subscriptionNamespace),
+      ]);
+
+      if (namespaceCleanup.status === 'rejected') {
+        throw namespaceCleanup.reason;
+      }
+
+      if (subscriptionCleanup.status === 'rejected') {
+        throw subscriptionCleanup.reason;
+      }
+    } finally {
+      await k8sClient.deleteCustomResource(
+        'operators.coreos.com',
+        'v1alpha1',
+        CATALOG_SOURCE_NAMESPACE,
+        'catalogsources',
+        catalogSourceName,
+      );
+    }
   });
 
   test('displays deprecated badge on operator tile in catalog', async ({ page }) => {
@@ -331,8 +348,25 @@ test.describe('Deprecated operator warnings', { tag: ['@admin'] }, () => {
         };
 
         expect(approvedSubscription.status?.installedCSV).toBeTruthy();
-        installedCsvName = approvedSubscription.status?.installedCSV ?? DEPRECATED_VERSION;
       }).toPass({ timeout: 180_000, intervals: [5_000] });
+
+      const installedSubscription = (await k8sClient.getCustomResource(
+        'operators.coreos.com',
+        'v1alpha1',
+        subscriptionNamespace,
+        'subscriptions',
+        subscriptionName,
+      )) as {
+        status?: {
+          installedCSV?: string;
+        };
+      };
+
+      const nextInstalledCsvName = installedSubscription.status?.installedCSV;
+      if (!nextInstalledCsvName) {
+        throw new Error(`Installed CSV not found for subscription ${subscriptionName}`);
+      }
+      installedCsvName = nextInstalledCsvName;
 
       await expect(async () => {
         const csv = (await k8sClient.getCustomResource(
@@ -441,7 +475,7 @@ test.describe('Deprecated operator warnings', { tag: ['@admin'] }, () => {
       const updateButton = page.getByTestId('subscription-channel-update-button');
       await expect(updateButton).toBeEnabled({ timeout: 30_000 });
       await updateButton.click();
-      await expect(page.locator('.pf-v6-c-modal-box')).toBeVisible({ timeout: 30_000 });
+      await expect(page.getByRole('dialog')).toBeVisible({ timeout: 30_000 });
       await expect(page.getByTestId(LATEST_VERSION_OPTION)).toBeVisible({ timeout: 30_000 });
     });
   });

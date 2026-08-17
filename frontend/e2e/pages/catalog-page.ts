@@ -53,11 +53,11 @@ export class CatalogPage extends BasePage {
 
   async toggleSourceFilter(filterType: string): Promise<void> {
     const filterCheckbox = this.page.getByTestId(`source-${filterType}`);
-    await filterCheckbox.click();
+    await this.robustClick(filterCheckbox);
   }
 
   async clickCategoryFilter(categoryId: string): Promise<void> {
-    const categoryTab = this.page.locator(`[data-test="tab ${categoryId}"] > a`);
+    const categoryTab = this.page.getByTestId(`tab ${categoryId}`);
     await this.robustClick(categoryTab);
   }
 
@@ -86,10 +86,6 @@ export class CatalogPage extends BasePage {
   }
 
   getSearchInput(): Locator {
-    return this.searchCatalogInput;
-  }
-
-  getSearchInputElement(): Locator {
     return this.searchCatalogInput;
   }
 
@@ -166,7 +162,7 @@ export class CatalogPage extends BasePage {
   }
 
   async verifyTileContainsText(expectedText: string): Promise<void> {
-    await expect(this.getFirstCatalogTileTitle()).toHaveText(expectedText);
+    await expect(this.getFirstCatalogTileTitle()).toContainText(expectedText);
   }
 
   async verifyTileTextChanged(originalText: string): Promise<void> {

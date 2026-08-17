@@ -1,5 +1,7 @@
 import type { Locator } from '@playwright/test';
 
+import { quoteAttributeValue } from '../utils/selector-utils';
+
 import BasePage from './base-page';
 
 export class OperandPage extends BasePage {
@@ -19,7 +21,7 @@ export class OperandPage extends BasePage {
   }
 
   async clickOperandLink(name: string): Promise<void> {
-    await this.robustClick(this.getOperandLink(name), { force: true });
+    await this.robustClick(this.getOperandLink(name));
   }
 
   getResourceTitle(): Locator {
@@ -35,7 +37,7 @@ export class OperandPage extends BasePage {
   }
 
   async clickCreate(): Promise<void> {
-    await this.robustClick(this.createButton, { force: true });
+    await this.robustClick(this.createButton);
   }
 
   getFormHeading(): Locator {
@@ -43,7 +45,7 @@ export class OperandPage extends BasePage {
   }
 
   getFormFieldElement(id: string): Locator {
-    return this.page.locator(`#${id}_field`);
+    return this.page.locator(`[id="${quoteAttributeValue(`${id}_field`)}"]`);
   }
 
   getFormFieldLabel(id: string): Locator {
@@ -51,15 +53,15 @@ export class OperandPage extends BasePage {
   }
 
   getFormFieldInput(id: string): Locator {
-    return this.page.locator(`#${id}`);
+    return this.page.locator(`[id="${quoteAttributeValue(id)}"]`);
   }
 
   getFormFieldGroup(id: string): Locator {
-    return this.page.locator(`#${id}_field-group`);
+    return this.page.locator(`[id="${quoteAttributeValue(`${id}_field-group`)}"]`);
   }
 
   getFormFieldGroupToggle(id: string): Locator {
-    return this.page.locator(`#${id}_accordion-toggle`);
+    return this.page.locator(`[id="${quoteAttributeValue(`${id}_accordion-toggle`)}"]`);
   }
 
   async toggleFieldGroup(id: string): Promise<void> {
@@ -67,7 +69,9 @@ export class OperandPage extends BasePage {
   }
 
   getTagItemContent(fieldId: string): Locator {
-    return this.page.locator(`#${fieldId}_field .tag-item-content`);
+    return this.page.locator(
+      `[id="${quoteAttributeValue(`${fieldId}_field`)}"] .tag-item-content`,
+    );
   }
 
   async fillNameField(id: string, value: string): Promise<void> {

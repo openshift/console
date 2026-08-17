@@ -1,13 +1,14 @@
 import { test, expect } from '../../fixtures';
 import { OperandPage } from '../../pages/operand-page';
 
-const CRD_NAME = 'apps.test.tectonic.com';
-const CRD_GROUP = 'test.tectonic.com';
+const TEST_SUFFIX = Date.now().toString();
+const CRD_GROUP = `test-${TEST_SUFFIX}.tectonic.com`;
+const CRD_NAME = `apps.${CRD_GROUP}`;
 const CRD_VERSION = 'v1';
 const CRD_KIND = 'App';
 const CRD_PLURAL = 'apps';
-const CSV_NAME = 'olm-descriptors-test';
-const CR_NAME = 'olm-descriptors-test';
+const CSV_NAME = `olm-descriptors-test-${TEST_SUFFIX}`;
+const CR_NAME = `olm-descriptors-test-${TEST_SUFFIX}`;
 
 const FIELD_IDS = {
   NAME: 'root_metadata_name',

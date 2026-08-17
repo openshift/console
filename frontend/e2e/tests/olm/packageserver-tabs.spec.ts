@@ -5,35 +5,50 @@ import { YamlEditorPage } from '../../pages/yaml-editor-page';
 test.describe('packageserver PackageManifest tabs rendering', { tag: ['@admin'] }, () => {
   const csvNamespace = 'openshift-operator-lifecycle-manager';
   const csvName = 'packageserver';
-  const packageManifestName = '3scale-operator';
-  const baseUrl = `/k8s/ns/${csvNamespace}/operators.coreos.com~v1alpha1~ClusterServiceVersion/${csvName}/packages.operators.coreos.com~v1~PackageManifest/${packageManifestName}`;
   const sectionHeader = 'PackageManifest overview';
+  let packageManifestName: string;
+  let baseUrl: string;
+
+  test.beforeAll(async ({ k8sClient }) => {
+    const packageManifests = (await k8sClient.listCustomResources(
+      'packages.operators.coreos.com',
+      'v1',
+      csvNamespace,
+      'packagemanifests',
+    )) as Array<{ metadata?: { name?: string } }>;
+
+    packageManifestName = packageManifests.find((manifest) => manifest.metadata?.name)?.metadata?.name ?? '';
+    if (!packageManifestName) {
+      throw new Error(`No PackageManifest resources found in namespace ${csvNamespace}`);
+    }
+
+    baseUrl = `/k8s/ns/${csvNamespace}/operators.coreos.com~v1alpha1~ClusterServiceVersion/${csvName}/packages.operators.coreos.com~v1~PackageManifest/${packageManifestName}`;
+  });
 
   test('renders Details tab correctly', async ({ page }) => {
+    const detailsPage = new DetailsPage(page);
+
     await test.step('Navigate to PackageManifest Details tab', async () => {
-      const detailsPage = new DetailsPage(page);
       await detailsPage.navigateToDetailsUrl(baseUrl);
     });
 
     await test.step('Verify page title shows package name', async () => {
-      const detailsPage = new DetailsPage(page);
       await expect(detailsPage.title).toContainText(packageManifestName);
     });
 
     await test.step('Verify Details section header exists', async () => {
-      const detailsPage = new DetailsPage(page);
       await expect(detailsPage.getSectionHeader(sectionHeader)).toBeVisible();
     });
   });
 
   test('renders YAML tab correctly', async ({ page }) => {
+    const yamlEditor = new YamlEditorPage(page);
+
     await test.step('Navigate to PackageManifest YAML tab', async () => {
-      const yamlEditor = new YamlEditorPage(page);
       await yamlEditor.navigateToYamlUrl(`${baseUrl}/yaml`);
     });
 
     await test.step('Verify YAML contains package manifest metadata', async () => {
-      const yamlEditor = new YamlEditorPage(page);
       const content = await yamlEditor.getEditorContent();
       expect(content).toContain(packageManifestName);
       expect(content).toContain('PackageManifest');
@@ -41,25 +56,25 @@ test.describe('packageserver PackageManifest tabs rendering', { tag: ['@admin'] 
   });
 
   test('renders Resources tab correctly', async ({ page }) => {
+    const detailsPage = new DetailsPage(page);
+
     await test.step('Navigate to PackageManifest Resources tab', async () => {
-      const detailsPage = new DetailsPage(page);
       await detailsPage.navigateToDetailsUrl(`${baseUrl}/resources`);
     });
 
     await test.step('Verify resource list is empty', async () => {
-      const detailsPage = new DetailsPage(page);
       await expect(detailsPage.getEmptyState()).toBeVisible();
     });
   });
 
   test('renders Events tab correctly', async ({ page }) => {
+    const detailsPage = new DetailsPage(page);
+
     await test.step('Navigate to PackageManifest Events tab', async () => {
-      const detailsPage = new DetailsPage(page);
       await detailsPage.navigateToDetailsUrl(`${baseUrl}/events`);
     });
 
     await test.step('Verify events stream component is empty', async () => {
-      const detailsPage = new DetailsPage(page);
       await expect(detailsPage.getEmptyState()).toBeVisible();
     });
   });

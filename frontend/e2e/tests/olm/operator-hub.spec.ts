@@ -58,10 +58,11 @@ test.describe('Software Catalog Operator filtering', { tag: ['@admin'] }, () => 
     });
 
     await test.step('Test operator name search functionality', async () => {
-      const operatorName = 'Datadog Operator';
-
       // Clear the Certified source filter left by previous test
       await catalogPage.toggleSourceFilter('certified');
+
+      const operatorName = (await catalogPage.getFirstCatalogTileTitleText()).trim();
+      expect(operatorName).not.toBe('');
 
       await catalogPage.searchOperators(operatorName);
       await expect(async () => {
