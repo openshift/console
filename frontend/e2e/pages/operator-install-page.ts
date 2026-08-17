@@ -20,7 +20,7 @@ export class OperatorInstallPage extends BasePage {
   private readonly installOperatorButton = this.page.getByTestId('install-operator');
   private readonly viewInstalledOperatorsBtn = this.page.getByTestId('view-installed-operators-btn');
   private readonly createNamespaceOption = this.page.getByRole('option', {
-    name: /Create (Project|Namespace)/,
+    name: /^Create (Project|Namespace)$/,
   });
   private readonly namespaceNameInput = this.page.getByTestId('input-name');
   private readonly confirmAction = this.page.getByTestId('confirm-action');
