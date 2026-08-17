@@ -34,13 +34,16 @@ describe('useFeatureFlagController', () => {
   });
 
   it('defers flag updates made during render until after layout effects', () => {
+    let dispatchCountDuringRender = 0;
     const { result } = renderHook(() => {
       const setFeatureFlag = useFeatureFlagController();
       // Simulate console.flag/hookProvider handlers that set flags during render.
       setFeatureFlag('SYNC_FLAG', true);
+      dispatchCountDuringRender = mockDispatch.mock.calls.length;
       return setFeatureFlag;
     });
 
+    expect(dispatchCountDuringRender).toBe(0);
     expect(mockDispatch).toHaveBeenCalledTimes(1);
     expect(mockSetFlag).toHaveBeenCalledWith('SYNC_FLAG', true);
     expect(result.current).toEqual(expect.any(Function));
@@ -58,6 +61,23 @@ describe('useFeatureFlagController', () => {
 
     expect(mockDispatch).toHaveBeenCalledTimes(1);
     expect(mockSetFlag).toHaveBeenCalledWith('ASYNC_FLAG', true);
+  });
+
+  it('dispatches consecutive async updates before the selector re-renders', () => {
+    mockUseSelector.mockReturnValue(ImmutableMap({ TOGGLE_FLAG: false }));
+    const { result } = renderHook(() => useFeatureFlagController());
+
+    mockDispatch.mockClear();
+    mockSetFlag.mockClear();
+
+    act(() => {
+      result.current('TOGGLE_FLAG', true);
+      result.current('TOGGLE_FLAG', false);
+    });
+
+    expect(mockDispatch).toHaveBeenCalledTimes(2);
+    expect(mockSetFlag).toHaveBeenNthCalledWith(1, 'TOGGLE_FLAG', true);
+    expect(mockSetFlag).toHaveBeenNthCalledWith(2, 'TOGGLE_FLAG', false);
   });
 
   it('does not redispatch when the flag already has the requested value', () => {

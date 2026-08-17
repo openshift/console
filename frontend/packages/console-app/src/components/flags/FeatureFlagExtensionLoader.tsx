@@ -46,6 +46,9 @@ export const useFeatureFlagController = () => {
     pendingUpdatesRef.current.forEach((enabled, flag) => {
       if (flagsRef.current.get(flag) !== enabled) {
         dispatch(setFlag(flag, enabled));
+        // Keep the local snapshot in sync so consecutive async updates (e.g. true
+        // then false before Redux re-renders) are not skipped against a stale value.
+        flagsRef.current = flagsRef.current.set(flag, enabled);
       }
     });
     pendingUpdatesRef.current.clear();
