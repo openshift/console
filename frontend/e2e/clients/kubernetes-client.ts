@@ -584,16 +584,19 @@ export default class KubernetesClient {
     name: string,
     patch: object | object[],
   ): Promise<void> {
-    await this.coApi.patchClusterCustomObject({
-      group,
-      name,
-      plural,
-      version,
-      body: patch,
-      contentType: Array.isArray(patch)
-        ? 'application/json-patch+json'
-        : k8s.PatchStrategy.MergePatch,
-    } as any);
+    if (Array.isArray(patch)) {
+      await this.coApi.patchClusterCustomObject({
+        group,
+        name,
+        plural,
+        version,
+        body: patch,
+        contentType: k8s.PatchStrategy.JsonPatch,
+      } as any);
+      return;
+    }
+
+    await this.mergePatchResource(`/apis/${group}/${version}/${plural}/${name}`, patch);
   }
 
   async getCustomResource(

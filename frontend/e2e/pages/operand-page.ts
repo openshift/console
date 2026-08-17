@@ -37,7 +37,7 @@ export class OperandPage extends BasePage {
   }
 
   async clickCreate(): Promise<void> {
-    await this.robustClick(this.createButton);
+    await this.robustClick(this.createButton, { timeout: 60_000 });
   }
 
   getFormHeading(): Locator {

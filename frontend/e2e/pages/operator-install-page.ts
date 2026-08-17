@@ -1,6 +1,6 @@
 import type { Locator } from '@playwright/test';
-import { expect } from '@playwright/test';
 
+import { expect } from '../fixtures';
 import { escapeRegExp } from '../utils/selector-utils';
 
 import BasePage from './base-page';
@@ -19,18 +19,23 @@ export class OperatorInstallPage extends BasePage {
   private readonly searchInput = this.page.getByTestId('console-select-search-input').locator('input');
   private readonly installOperatorButton = this.page.getByTestId('install-operator');
   private readonly viewInstalledOperatorsBtn = this.page.getByTestId('view-installed-operators-btn');
+  private readonly createNamespaceOption = this.page.getByRole('option', {
+    name: /Create (Project|Namespace)/,
+  });
+  private readonly namespaceNameInput = this.page.getByTestId('input-name');
+  private readonly confirmAction = this.page.getByTestId('confirm-action');
+  private readonly detailsModal = this.page.getByRole('dialog');
 
   private async openInstallForm(operatorName: string, operatorCardTestID: string): Promise<void> {
-    await this.goTo('/catalog/all-namespaces');
-
-    await this.catalogPage.clickOperatorTab();
+    await this.goTo('/catalog/all-namespaces?catalogType=operator');
+    await expect(this.catalogPage.getPageHeading()).toBeVisible({ timeout: 60_000 });
     await this.catalogPage.searchOperators(operatorName);
 
-    const operatorCard = this.page.getByTestId(operatorCardTestID);
-    await expect(operatorCard).toBeVisible({ timeout: 30_000 });
-    await this.robustClick(operatorCard);
+    const operatorCard = this.page
+      .getByTestId(operatorCardTestID)
+      .filter({ hasNotText: 'testing deprecation' });
+    await this.robustClick(operatorCard, { timeout: 30_000 });
 
-    await expect(this.installButton).toBeVisible();
     await expect(this.installButton).toHaveAttribute('href');
     await this.robustClick(this.installButton);
   }
@@ -122,18 +127,7 @@ export class OperatorInstallPage extends BasePage {
       // Element not available within timeout, continue without checking it
     }
 
-    // Create new namespace through UI
-    await this.robustClick(this.namespaceDropdown);
-    await this.robustClick(this.page.getByTestId('#CREATE_RESOURCE_ACTION#'));
-
-    // Fill in the namespace name in the modal
-    await expect(this.page.getByTestId('input-name')).toBeVisible();
-    await this.page.getByTestId('input-name').fill(namespace);
-    await this.robustClick(this.page.getByTestId('confirm-action'));
-
-    // Wait for modal to close and namespace to be selected
-    await expect(this.page.getByRole('dialog')).toBeHidden();
-    await expect(this.namespaceDropdown).toContainText(namespace);
+    await this.createNamespaceFromDropdown(namespace);
 
     // Install the operator
     await this.robustClick(this.installOperatorButton);
@@ -141,6 +135,45 @@ export class OperatorInstallPage extends BasePage {
     // Verify installation started and navigate to installed operators
     await expect(this.viewInstalledOperatorsBtn).toContainText('View installed Operators in Namespace');
     await this.robustClick(this.viewInstalledOperatorsBtn);
+  }
+
+  async clickDetailsModalInstall(): Promise<void> {
+    await expect(this.detailsModal).toBeVisible();
+    await this.robustClick(this.detailsModal.getByRole('button', { name: 'Install' }));
+  }
+
+  async selectSpecificNamespaceMode(): Promise<void> {
+    await expect(this.page.getByRole('heading', { name: 'Install Operator' })).toBeVisible();
+    await this.specificNamespaceRadio.check({ timeout: 30_000 });
+  }
+
+  async createNamespaceFromDropdown(namespace: string): Promise<void> {
+    await this.robustClick(this.namespaceDropdown);
+    await this.robustClick(this.createNamespaceOption);
+    await this.namespaceNameInput.fill(namespace);
+    await this.robustClick(this.confirmAction);
+    await expect(this.detailsModal).toBeHidden();
+    await expect(this.namespaceDropdown).toContainText(namespace);
+  }
+
+  async clickInstallOperator(): Promise<void> {
+    await this.robustClick(this.installOperatorButton);
+  }
+
+  getNamespaceDropdown(): Locator {
+    return this.namespaceDropdown;
+  }
+
+  getDeprecatedWarningIcon(kind: 'channel' | 'version'): Locator {
+    return this.page.getByTestId(`deprecated-operator-warning-${kind}-icon`);
+  }
+
+  getChannelOption(channel: string): Locator {
+    return this.page.getByTestId(`channel-option-${channel}`).getByRole('button');
+  }
+
+  getVersionOption(version: string): Locator {
+    return this.page.getByTestId(`version-option-${version}`).getByRole('button');
   }
 
   getChannelSelect(): Locator {

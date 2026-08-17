@@ -1,10 +1,13 @@
 import * as path from 'path';
 
-import type { Browser, Page } from '@playwright/test';
+import type { Browser } from '@playwright/test';
 
 import { test, expect } from '../../fixtures';
+import { gotoAuthenticated } from '../../pages/base-page';
 import { CatalogPage } from '../../pages/catalog-page';
+import { DetailsPage } from '../../pages/details-page';
 import { InstalledOperatorsPage } from '../../pages/installed-operators-page';
+import { OperatorInstallPage } from '../../pages/operator-install-page';
 import { generateTestNamespace } from '../../test-utils/test-namespace';
 
 const BASE_URL = process.env.WEB_CONSOLE_URL || 'http://localhost:9000';
@@ -26,6 +29,7 @@ const DEFAULT_DEPRECATED_OPERATOR_CATALOG_IMAGE =
   'quay.io/cajieh0/deprecation-catalog@sha256:0d49292bd51c36644aa703f18f777780af6bffd8748aa8f594111bde9639bcaa';
 const DEPRECATED_OPERATOR_CATALOG_IMAGE =
   process.env.DEPRECATED_OPERATOR_CATALOG_IMAGE ?? DEFAULT_DEPRECATED_OPERATOR_CATALOG_IMAGE;
+const CATALOG_SOURCE_DISPLAY_NAME = 'Community Operators for testing deprecation';
 
 const runId = generateTestNamespace().replace('test-', '');
 const catalogSourceName = `test-community-operator-deprecation-${runId}`;
@@ -45,7 +49,7 @@ function buildDeprecatedCatalogSource() {
       namespace: CATALOG_SOURCE_NAMESPACE,
     },
     spec: {
-      displayName: 'Community Operators for testing deprecation',
+      displayName: CATALOG_SOURCE_DISPLAY_NAME,
       image: DEPRECATED_OPERATOR_CATALOG_IMAGE,
       publisher: 'OLM community',
       sourceType: 'grpc',
@@ -93,15 +97,19 @@ async function detectTechPreview(browser: Browser): Promise<boolean> {
 
   try {
     const page = await context.newPage();
-    await page.goto(BASE_URL, { waitUntil: 'domcontentloaded' });
+    await gotoAuthenticated(page, BASE_URL);
     return await page.evaluate(() => Boolean(window.SERVER_FLAGS?.techPreview));
   } finally {
     await context.close();
   }
 }
 
-async function expectDeprecatedWarning(page: Page, testId: string, text: string): Promise<void> {
-  await expect(page.getByTestId(testId)).toContainText(text, { timeout: 60_000 });
+async function expectDeprecatedWarning(
+  catalogPage: CatalogPage,
+  testId: string,
+  text: string,
+): Promise<void> {
+  await expect(catalogPage.getDeprecatedWarning(testId)).toContainText(text, { timeout: 60_000 });
 }
 
 test.describe('Deprecated operator warnings', { tag: ['@admin'] }, () => {
@@ -134,6 +142,18 @@ test.describe('Deprecated operator warnings', { tag: ['@admin'] }, () => {
 
       expect(catalogSource.status?.connectionState?.lastObservedState).toBe('READY');
     }).toPass({ timeout: 300_000, intervals: [5_000] });
+
+    await expect(async () => {
+      const manifests = (await k8sClient.listCustomResources(
+        'packages.operators.coreos.com',
+        'v1',
+        OPERATOR_DETAILS_NAMESPACE,
+        'packagemanifests',
+      )) as Array<{ status?: { catalogSource?: string } }>;
+      expect(manifests.some((manifest) => manifest.status?.catalogSource === catalogSourceName)).toBe(
+        true,
+      );
+    }).toPass({ timeout: 180_000, intervals: [5_000] });
   });
 
   test.afterAll(async ({ k8sClient }) => {
@@ -180,9 +200,7 @@ test.describe('Deprecated operator warnings', { tag: ['@admin'] }, () => {
     await catalogPage.clickOperatorTab();
     await expect(catalogPage.getCatalogTiles().first()).toBeVisible({ timeout: 60_000 });
 
-    const catalogSourceFilter = page.getByTestId(`source-${catalogSourceName}`);
-    await expect(catalogSourceFilter).toBeVisible({ timeout: 60_000 });
-    await catalogSourceFilter.click();
+    await catalogPage.toggleSourceFilterByLabel(CATALOG_SOURCE_DISPLAY_NAME);
 
     await catalogPage.searchOperators('kiali');
     const firstTile = catalogPage.getCatalogTiles().first();
@@ -196,12 +214,13 @@ test.describe('Deprecated operator warnings', { tag: ['@admin'] }, () => {
   test('displays package deprecation warnings in operator details', async ({ page }) => {
     test.skip(isTechPreview, TECH_PREVIEW_SKIP_REASON);
 
-    await page.goto(getOperatorDetailsUrl(), { waitUntil: 'domcontentloaded' });
-    await expect(page.getByTestId('deprecated-operator-warning-badge')).toContainText(
-      DEPRECATED_BADGE,
-    );
+    const catalogPage = new CatalogPage(page);
+    await catalogPage.navigateToPath(getOperatorDetailsUrl());
+    await expect(catalogPage.getDeprecatedWarningBadge()).toContainText(DEPRECATED_BADGE, {
+      timeout: 60_000,
+    });
     await expectDeprecatedWarning(
-      page,
+      catalogPage,
       'deprecated-operator-warning-package',
       DEPRECATED_PACKAGE_MESSAGE,
     );
@@ -210,19 +229,18 @@ test.describe('Deprecated operator warnings', { tag: ['@admin'] }, () => {
   test('displays channel deprecation warnings when selecting channel', async ({ page }) => {
     test.skip(isTechPreview, TECH_PREVIEW_SKIP_REASON);
 
-    await page.goto(getOperatorDetailsUrl(), { waitUntil: 'domcontentloaded' });
+    const catalogPage = new CatalogPage(page);
+    const installPage = new OperatorInstallPage(page);
+    await catalogPage.navigateToPath(getOperatorDetailsUrl());
 
-    const channelToggle = page.getByTestId('operator-channel-select-toggle');
-    await expect(channelToggle).toBeVisible({ timeout: 60_000 });
-    await channelToggle.click();
-
-    await expect(page.getByTestId('deprecated-operator-warning-channel-icon')).toBeVisible({
+    await installPage.getChannelSelect().click();
+    await expect(installPage.getDeprecatedWarningIcon('channel')).toBeVisible({
       timeout: 30_000,
     });
-    await page.getByTestId('channel-option-alpha').locator('button').click();
+    await installPage.getChannelOption('alpha').click();
 
     await expectDeprecatedWarning(
-      page,
+      catalogPage,
       'deprecated-operator-warning-channel',
       DEPRECATED_CHANNEL_MESSAGE,
     );
@@ -231,19 +249,18 @@ test.describe('Deprecated operator warnings', { tag: ['@admin'] }, () => {
   test('displays version deprecation warnings when selecting version', async ({ page }) => {
     test.skip(isTechPreview, TECH_PREVIEW_SKIP_REASON);
 
-    await page.goto(getOperatorDetailsUrl(), { waitUntil: 'domcontentloaded' });
+    const catalogPage = new CatalogPage(page);
+    const installPage = new OperatorInstallPage(page);
+    await catalogPage.navigateToPath(getOperatorDetailsUrl());
 
-    const versionToggle = page.getByTestId('operator-version-select-toggle');
-    await expect(versionToggle).toBeVisible({ timeout: 60_000 });
-    await versionToggle.click();
-
-    await expect(page.getByTestId('deprecated-operator-warning-version-icon')).toBeVisible({
+    await installPage.getVersionSelect().click();
+    await expect(installPage.getDeprecatedWarningIcon('version')).toBeVisible({
       timeout: 30_000,
     });
-    await page.getByTestId(`version-option-${DEPRECATED_VERSION}`).locator('button').click();
+    await installPage.getVersionOption(DEPRECATED_VERSION).click();
 
     await expectDeprecatedWarning(
-      page,
+      catalogPage,
       'deprecated-operator-warning-version',
       DEPRECATED_VERSION_MESSAGE,
     );
@@ -252,22 +269,23 @@ test.describe('Deprecated operator warnings', { tag: ['@admin'] }, () => {
   test('displays all deprecation warnings on install page', async ({ page }) => {
     test.skip(isTechPreview, TECH_PREVIEW_SKIP_REASON);
 
-    await page.goto(getInstallPageUrl(), { waitUntil: 'domcontentloaded' });
-    await expect(page.getByTestId('deprecated-operator-warning-badge')).toContainText(
-      DEPRECATED_BADGE,
-    );
+    const catalogPage = new CatalogPage(page);
+    await catalogPage.navigateToPath(getInstallPageUrl());
+    await expect(catalogPage.getDeprecatedWarningBadge()).toContainText(DEPRECATED_BADGE, {
+      timeout: 60_000,
+    });
     await expectDeprecatedWarning(
-      page,
+      catalogPage,
       'deprecated-operator-warning-package',
       DEPRECATED_PACKAGE_MESSAGE,
     );
     await expectDeprecatedWarning(
-      page,
+      catalogPage,
       'deprecated-operator-warning-channel',
       DEPRECATED_CHANNEL_MESSAGE,
     );
     await expectDeprecatedWarning(
-      page,
+      catalogPage,
       'deprecated-operator-warning-version',
       DEPRECATED_VERSION_MESSAGE,
     );
@@ -416,27 +434,28 @@ test.describe('Deprecated operator warnings', { tag: ['@admin'] }, () => {
     test('displays deprecation warnings on CSV details page', async ({ page }) => {
       test.skip(isTechPreview, TECH_PREVIEW_SKIP_REASON);
 
-      await page.goto(
+      const catalogPage = new CatalogPage(page);
+      const detailsPage = new DetailsPage(page);
+      await detailsPage.navigateToDetailsPage(
         `/k8s/ns/${subscriptionNamespace}/operators.coreos.com~v1alpha1~ClusterServiceVersion/${installedCsvName}`,
-        { waitUntil: 'domcontentloaded' },
       );
 
-      await expect(page.getByTestId('horizontal-link-Details')).toBeVisible({ timeout: 60_000 });
-      await expect(page.getByTestId('deprecated-operator-warning-badge')).toContainText(
-        DEPRECATED_BADGE,
-      );
+      await expect(detailsPage.tab('Details')).toBeVisible({ timeout: 60_000 });
+      await expect(catalogPage.getDeprecatedWarningBadge()).toContainText(DEPRECATED_BADGE, {
+        timeout: 60_000,
+      });
       await expectDeprecatedWarning(
-        page,
+        catalogPage,
         'deprecated-operator-warning-package',
         DEPRECATED_PACKAGE_MESSAGE,
       );
       await expectDeprecatedWarning(
-        page,
+        catalogPage,
         'deprecated-operator-warning-channel',
         DEPRECATED_CHANNEL_MESSAGE,
       );
       await expectDeprecatedWarning(
-        page,
+        catalogPage,
         'deprecated-operator-warning-version',
         DEPRECATED_VERSION_MESSAGE,
       );
@@ -445,30 +464,31 @@ test.describe('Deprecated operator warnings', { tag: ['@admin'] }, () => {
     test('displays deprecation warnings on CSV subscription tab', async ({ page }) => {
       test.skip(isTechPreview, TECH_PREVIEW_SKIP_REASON);
 
-      await page.goto(
+      const catalogPage = new CatalogPage(page);
+      const detailsPage = new DetailsPage(page);
+      await detailsPage.navigateToDetailsPage(
         `/k8s/ns/${subscriptionNamespace}/operators.coreos.com~v1alpha1~ClusterServiceVersion/${installedCsvName}/subscription`,
-        { waitUntil: 'domcontentloaded' },
       );
 
-      await expect(page.getByTestId('horizontal-link-Subscription')).toBeVisible({
+      await expect(detailsPage.tab('Subscription')).toBeVisible({
         timeout: 60_000,
       });
       await expectDeprecatedWarning(
-        page,
+        catalogPage,
         'deprecated-operator-warning-package',
         DEPRECATED_PACKAGE_MESSAGE,
       );
       await expectDeprecatedWarning(
-        page,
+        catalogPage,
         'deprecated-operator-warning-channel',
         DEPRECATED_CHANNEL_MESSAGE,
       );
       await expectDeprecatedWarning(
-        page,
+        catalogPage,
         'deprecated-operator-warning-version',
         DEPRECATED_VERSION_MESSAGE,
       );
-      await expect(page.getByTestId('deprecated-operator-warning-subscription-update-icon')).toBeVisible({
+      await expect(catalogPage.getDeprecatedWarning('deprecated-operator-warning-subscription-update-icon')).toBeVisible({
         timeout: 30_000,
       });
 

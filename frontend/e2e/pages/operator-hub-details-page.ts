@@ -72,7 +72,7 @@ export class OperatorHubDetailsPage extends BasePage {
    */
   async verifySectionHeading(heading: string): Promise<void> {
     const sectionHeading = this.page.getByTestId(`section-heading-${heading}`);
-    await expect(sectionHeading).toBeVisible();
+    await expect(sectionHeading).toBeVisible({ timeout: 30_000 });
   }
 
   /**

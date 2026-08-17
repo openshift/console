@@ -295,8 +295,13 @@ test.describe('Using OLM descriptor components', { tag: ['@admin'] }, () => {
   let csvUrl: string;
 
   test.beforeAll(async ({ k8sClient }) => {
+    test.setTimeout(180_000);
     ns = `test-desc-${Date.now()}`;
     await k8sClient.createNamespace(ns);
+    const namespaceReady = await k8sClient.waitForNamespaceReady(ns);
+    if (!namespaceReady) {
+      throw new Error(`Namespace ${ns} did not become ready in time`);
+    }
 
     const testCRD = buildTestCRD();
     await k8sClient.createClusterCustomResource(
@@ -305,6 +310,19 @@ test.describe('Using OLM descriptor components', { tag: ['@admin'] }, () => {
       'customresourcedefinitions',
       testCRD,
     );
+
+    await expect(async () => {
+      const crd = (await k8sClient.getClusterCustomResource(
+        'apiextensions.k8s.io',
+        'v1',
+        'customresourcedefinitions',
+        CRD_NAME,
+      )) as { status?: { conditions?: Array<{ type?: string; status?: string }> } };
+      const established = crd.status?.conditions?.some(
+        (condition) => condition.type === 'Established' && condition.status === 'True',
+      );
+      expect(established).toBe(true);
+    }).toPass({ timeout: 60_000, intervals: [2_000] });
 
     const testCR = buildTestCR(ns);
     const testCSV = buildTestCSV(ns, testCR);
@@ -315,6 +333,17 @@ test.describe('Using OLM descriptor components', { tag: ['@admin'] }, () => {
       'clusterserviceversions',
       testCSV,
     );
+
+    await expect(async () => {
+      const csv = await k8sClient.getCustomResource(
+        'operators.coreos.com',
+        'v1alpha1',
+        ns,
+        'clusterserviceversions',
+        CSV_NAME,
+      );
+      expect(csv).toBeTruthy();
+    }).toPass({ timeout: 60_000, intervals: [2_000] });
 
     csvUrl = `/k8s/ns/${ns}/operators.coreos.com~v1alpha1~ClusterServiceVersion/${CSV_NAME}/${CRD_GROUP}~${CRD_VERSION}~${CRD_KIND}`;
   });
@@ -347,7 +376,7 @@ test.describe('Using OLM descriptor components', { tag: ['@admin'] }, () => {
 
     await test.step('Verify operand link on list page', async () => {
       await operandPage.navigateTo(csvUrl);
-      await expect(operandPage.getOperandLink(CR_NAME)).toBeAttached();
+      await expect(operandPage.getOperandLink(CR_NAME)).toBeVisible({ timeout: 60_000 });
     });
 
     await test.step('Verify resource title on detail page', async () => {

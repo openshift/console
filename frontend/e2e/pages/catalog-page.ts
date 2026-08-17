@@ -28,7 +28,16 @@ export class CatalogPage extends BasePage {
 
   async navigateToSoftwareCatalog(namespace: string): Promise<void> {
     await this.goTo(`/catalog/ns/${namespace}`);
-    await expect(this.pageHeading).toBeVisible({ timeout: 30_000 });
+    await expect(this.pageHeading).toBeVisible({ timeout: 60_000 });
+  }
+
+  async navigateToOperatorCatalog(namespace: string): Promise<void> {
+    await this.goTo(`/catalog/ns/${namespace}?catalogType=operator`);
+    await expect(this.pageHeading).toBeVisible({ timeout: 60_000 });
+  }
+
+  async navigateToPath(url: string): Promise<void> {
+    await this.goTo(url);
   }
 
   async filterByKeyword(keyword: string): Promise<void> {
@@ -54,6 +63,30 @@ export class CatalogPage extends BasePage {
   async toggleSourceFilter(filterType: string): Promise<void> {
     const filterCheckbox = this.page.getByTestId(`source-${filterType}`);
     await this.robustClick(filterCheckbox);
+  }
+
+  async toggleSourceFilterByLabel(label: string): Promise<void> {
+    await this.robustClick(this.page.getByRole('checkbox', { name: label }), {
+      timeout: 60_000,
+    });
+  }
+
+  getOperatorCard(operatorName: string): Locator {
+    return this.page
+      .getByTestId(`operator-${operatorName}`)
+      .filter({ hasNotText: 'testing deprecation' });
+  }
+
+  async clickOperatorCard(operatorName: string): Promise<void> {
+    await this.robustClick(this.getOperatorCard(operatorName), { timeout: 60_000 });
+  }
+
+  getDeprecatedWarningBadge(): Locator {
+    return this.page.getByTestId('deprecated-operator-warning-badge');
+  }
+
+  getDeprecatedWarning(testId: string): Locator {
+    return this.page.getByTestId(testId);
   }
 
   async clickCategoryFilter(categoryId: string): Promise<void> {
