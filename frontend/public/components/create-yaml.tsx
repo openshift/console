@@ -21,6 +21,7 @@ export const CreateYAMLInner: FC<CreateYAMLProps> = ({
   kindObj,
   hideHeader = false,
   onChange = () => null,
+  onCancel,
   resourceObjPath,
   isCreate = true,
   template,
@@ -99,6 +100,11 @@ export const CreateYAMLInner: FC<CreateYAMLProps> = ({
       hideHeader={hideHeader}
       resourceObjPath={resourceObjPath}
       onChange={onChange}
+      // Only forward onCancel when provided. EditYAML falls back to its default
+      // navigate-to-list behavior via `'onCancel' in props`, so passing an
+      // explicit `onCancel={undefined}` would suppress that default for other
+      // consumers that rely on it.
+      {...(onCancel && { onCancel })}
     />
   );
 };
@@ -148,6 +154,7 @@ export type CreateYAMLProps = {
   isCreate?: boolean;
   resourceObjPath?: (obj: K8sResourceKind, kind: K8sResourceKindReference) => string;
   onChange?: (yaml: string) => any;
+  onCancel?: () => void;
 };
 
 export type EditYAMLPageProps = {
