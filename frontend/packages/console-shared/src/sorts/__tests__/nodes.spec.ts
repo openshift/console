@@ -11,20 +11,24 @@ jest.mock('@console/internal/components/factory/Table/sort', () => ({
   sortResourceByValue: jest.fn(),
 }));
 
+type NodeOpts = {
+  readyStatus?: 'True' | 'False' | 'Unknown';
+  unschedulable?: boolean;
+  taints?: Taint[];
+};
+
 const readyCondition = (status: 'True' | 'False' | 'Unknown') => ({
   type: 'Ready',
   status,
 });
 
-const createNode = ({
-  readyStatus,
-  unschedulable = false,
-  taints,
-}: {
-  readyStatus?: 'True' | 'False' | 'Unknown';
-  unschedulable?: boolean;
-  taints?: Taint[];
-} = {}): NodeKind =>
+const taint = (key: string, effect: Taint['effect'], value = ''): Taint => ({
+  key,
+  value,
+  effect,
+});
+
+const createNode = ({ readyStatus, unschedulable = false, taints }: NodeOpts = {}): NodeKind =>
   ({
     apiVersion: 'v1',
     kind: 'Node',
@@ -39,41 +43,41 @@ const createNode = ({
   }) as NodeKind;
 
 describe('nodeReadiness', () => {
-  it.each([
-    ['Ready', { readyStatus: 'True' as const }, 'True|0|0'],
-    ['Not Ready', { readyStatus: 'False' as const }, 'False|0|0'],
-    ['Unknown Ready status', { readyStatus: 'Unknown' as const }, 'Unknown|0|0'],
+  it.each<[string, NodeOpts, string]>([
+    ['Ready', { readyStatus: 'True' }, 'True|0|0'],
+    ['Not Ready', { readyStatus: 'False' }, 'False|0|0'],
+    ['Unknown Ready status', { readyStatus: 'Unknown' }, 'Unknown|0|0'],
     ['missing Ready condition defaults to Unknown', {}, 'Unknown|0|0'],
-    ['Ready + unschedulable', { readyStatus: 'True' as const, unschedulable: true }, 'True|1|0'],
+    ['Ready + unschedulable', { readyStatus: 'True', unschedulable: true }, 'True|1|0'],
     [
       'default control-plane taint does not change the key',
       {
-        readyStatus: 'True' as const,
-        taints: [{ key: 'node-role.kubernetes.io/control-plane', value: '', effect: 'NoSchedule' }],
+        readyStatus: 'True',
+        taints: [taint('node-role.kubernetes.io/control-plane', 'NoSchedule')],
       },
       'True|0|0',
     ],
     [
       'default master taint does not change the key',
       {
-        readyStatus: 'True' as const,
-        taints: [{ key: 'node-role.kubernetes.io/master', value: '', effect: 'NoSchedule' }],
+        readyStatus: 'True',
+        taints: [taint('node-role.kubernetes.io/master', 'NoSchedule')],
       },
       'True|0|0',
     ],
     [
       'extra NoSchedule taint changes the key',
       {
-        readyStatus: 'True' as const,
-        taints: [{ key: 'dedicated', value: 'infra', effect: 'NoSchedule' }],
+        readyStatus: 'True',
+        taints: [taint('dedicated', 'NoSchedule', 'infra')],
       },
       'True|0|1',
     ],
     [
       'extra NoExecute taint changes the key',
       {
-        readyStatus: 'True' as const,
-        taints: [{ key: 'dedicated', value: 'infra', effect: 'NoExecute' }],
+        readyStatus: 'True',
+        taints: [taint('dedicated', 'NoExecute', 'infra')],
       },
       'True|0|1',
     ],
