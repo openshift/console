@@ -16603,6 +16603,7 @@ __metadata:
     puppeteer-core: "npm:^23.9.0"
     pvutils: "npm:^1.1.5"
     react: "npm:^18.3.1"
+    react-compiler-runtime: "npm:^1.0.0"
     react-dom: "npm:^18.3.1"
     react-helmet-async: "npm:^2.0.5"
     react-i18next: "npm:~16.5.8"
@@ -17806,6 +17807,15 @@ __metadata:
   bin:
     randomstring: bin/randomstring
   checksum: 10c0/d0734f212ea03267ca55cb8edc4fc31d59ec4363a0a245848616d0198a954a216e315fd79e8a9da231596cc9c548233a4822ac33a58dd3f64106c0142e113924
+  languageName: node
+  linkType: hard
+
+"react-compiler-runtime@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "react-compiler-runtime@npm:1.0.0"
+  peerDependencies:
+    react: ^17.0.0 || ^18.0.0 || ^19.0.0 || ^0.0.0-experimental
+  checksum: 10c0/e081192380ae32d18bebaf341071ae8aecf80f4401b188f80e4b77e8d8995bb4c7175b8c3f75e8307019eac2015edf45c7999f788dcfcd99fdbe2ba9a2d465a4
   languageName: node
   linkType: hard
 
