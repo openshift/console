@@ -598,10 +598,9 @@ const APIResourceSchema: FC<APIResourceTabProps> = ({ customData: { kindObj } })
 
 const APIResourceInstances: FC<APIResourceTabProps> = ({ customData: { kindObj, namespace } }) => {
   const resourceListPageExtensions = useExtensions<ResourceListPage>(isResourceListPage);
-  const componentLoader = getResourceListPages(resourceListPageExtensions).get(
-    referenceForModel(kindObj),
-    () => Promise.resolve(DefaultPage),
-  );
+  const componentLoader =
+    getResourceListPages(resourceListPageExtensions).get(referenceForModel(kindObj)) ??
+    (() => Promise.resolve(DefaultPage));
   const ns = kindObj.namespaced ? namespace : undefined;
 
   return (

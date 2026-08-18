@@ -191,9 +191,9 @@ const Details: FC<{ obj: CustomResourceDefinitionKind }> = ({ obj: crd }) => {
 const Instances: FC<InstancesProps> = ({ obj, namespace }) => {
   const resourceListPageExtensions = useExtensions<ResourceListPage>(isResourceListPage);
   const crdKind = referenceForCRD(obj);
-  const componentLoader = getResourceListPages(resourceListPageExtensions).get(crdKind, () =>
-    Promise.resolve(DefaultPage),
-  );
+  const componentLoader =
+    getResourceListPages(resourceListPageExtensions).get(crdKind) ??
+    (() => Promise.resolve(DefaultPage));
   return (
     <AsyncComponent
       loader={componentLoader}

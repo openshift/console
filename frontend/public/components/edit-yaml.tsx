@@ -72,7 +72,7 @@ const generateObjToLoad = (
   namespace = 'default',
 ) => {
   const sampleObj: K8sResourceKind = safeLoad(
-    yaml || getYAMLTemplates(templateExtensions).getIn([kind, id]),
+    yaml || getYAMLTemplates(templateExtensions)?.[kind]?.[id],
   ) as K8sResourceKind;
   if (_.has(sampleObj.metadata, 'namespace')) {
     sampleObj.metadata.namespace = namespace;

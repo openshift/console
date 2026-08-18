@@ -3,7 +3,6 @@ import { useState, useMemo, memo, useEffect } from 'react';
 import { FormHelperText, FormSection, Icon, Tooltip } from '@patternfly/react-core';
 import { DualListSelector } from '@patternfly/react-core/deprecated';
 import * as fuzzy from 'fuzzysearch';
-import { Set as ImmutableSet } from 'immutable';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -38,12 +37,12 @@ import { PerspectiveVisibilityState } from '@console/shared/src/utils/override-p
 import './PinnedResourcesConfiguration.scss';
 
 // skip duplicate resources.
-const skipGroups = ImmutableSet([
+const skipGroups = new Set([
   // Prefer rbac.authorization.k8s.io/v1, which has the same resources.
   'authorization.openshift.io',
 ]);
 
-const skipResources = ImmutableSet([
+const skipResources = new Set([
   // Prefer core/v1
   'events.k8s.io/v1beta1.Event',
 ]);

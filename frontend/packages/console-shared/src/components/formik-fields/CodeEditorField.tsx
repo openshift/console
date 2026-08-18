@@ -64,7 +64,7 @@ export const CodeEditorField: FC<CodeEditorFieldProps> = ({
       }
       const yamlByExtension: string = getYAMLTemplates(
         templateExtensions?.filter((e) => e.properties.model.kind === kind),
-      ).getIn([kind, id]);
+      )?.[kind]?.[id];
       return yamlByExtension?.trim() || '';
     },
     [templateExtensions],
