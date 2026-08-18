@@ -13,6 +13,8 @@ table in [Console dynamic plugins README](./README.md).
 ## 4.23.0-prerelease.6 - TBD
 
 - Add `ConsoleRemotePlugin` option `baseDir` to support multi-plugin builds ([OCPBUGS-111520], [#17002])
+- Expand PatternFly CSS package list to include `@patternfly/patternfly` ([#17029])
+- Warn when the plugin has a direct dependency on PatternFly CSS packages ([#17029])
 - Minimum compatible version of `@rspack/core` peer dependency increased to `2.1.10` ([OCPBUGS-109592], [#16978])
 
 ## 4.23.0-prerelease.5 - 2026-08-04
@@ -203,3 +205,4 @@ table in [Console dynamic plugins README](./README.md).
 [#16115]: https://github.com/openshift/console/pull/16115
 [#16978]: https://github.com/openshift/console/pull/16978
 [#17002]: https://github.com/openshift/console/pull/17002
+[#17029]: https://github.com/openshift/console/pull/17029

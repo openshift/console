@@ -55,8 +55,12 @@ const hasPackageDependency = (pkg: readPkg.PackageJson, depName: string) =>
 const getPluginSDKPackagePeerDependencies = () =>
   loadVendorPackageJSON('@openshift-console/dynamic-plugin-sdk').peerDependencies;
 
-const getPatternFlyStyles = (baseDir: string) =>
-  glob.sync(`${baseDir}/node_modules/@patternfly/react-styles/**/*.css`);
+const patternFlyStylePackages = ['@patternfly/patternfly', '@patternfly/react-styles'];
+
+const getPatternFlyCSSFiles = (baseDir: string): string[] =>
+  patternFlyStylePackages
+    .map((moduleName) => glob.sync(`${baseDir}/node_modules/${moduleName}/**/*.css`))
+    .flat();
 
 /**
  * Get webpack shared module configuration to use by Console plugins.
@@ -140,7 +144,7 @@ export const validateConsoleExtensionsFileSchema = (
   return new SchemaValidator(description).validate(schema, extensions);
 };
 
-const getCompileTimeSharedModuleWarnings = (pkg: ConsolePluginPackageJSON): string[] => {
+const getCompileTimeModuleWarnings = (pkg: ConsolePluginPackageJSON): string[] => {
   const warnings: string[] = [];
 
   sharedPluginModules.forEach((moduleName) => {
@@ -151,6 +155,14 @@ const getCompileTimeSharedModuleWarnings = (pkg: ConsolePluginPackageJSON): stri
         deprecated
           ? `[WARNING] Console provided shared module ${moduleName} has been deprecated: ${deprecated}`
           : `[WARNING] Console provided shared module ${moduleName} is aliased, beware of potential skew between aliased vs actual module code`,
+      );
+    }
+  });
+
+  patternFlyStylePackages.forEach((moduleName) => {
+    if (hasPackageDependency(pkg, moduleName)) {
+      warnings.push(
+        `[WARNING] Detected direct dependency on ${moduleName}, its modules are ignored to avoid breaking Console provided PatternFly CSS`,
       );
     }
   });
@@ -458,8 +470,9 @@ export class ConsoleRemotePlugin implements WebpackPluginInstance {
     compiler.options.resolve = compiler.options.resolve ?? {};
     compiler.options.resolve.alias = compiler.options.resolve.alias ?? {};
 
-    // Prevent PatternFly styles from being included in the compilation
-    getPatternFlyStyles(baseDir).forEach((cssFile) => {
+    // Prevent PatternFly CSS files from being included in the webpack compilation.
+    // Console is responsible for loading all supported PatternFly CSS at runtime.
+    getPatternFlyCSSFiles(baseDir).forEach((cssFile) => {
       if (Array.isArray(compiler.options.resolve.alias)) {
         compiler.options.resolve.alias.push({ name: cssFile, alias: false });
       } else {
@@ -515,7 +528,7 @@ export class ConsoleRemotePlugin implements WebpackPluginInstance {
         }
       }
 
-      getCompileTimeSharedModuleWarnings(this.pkg).forEach((message) => {
+      getCompileTimeModuleWarnings(this.pkg).forEach((message) => {
         compilation.warnings.push(new compiler.webpack.WebpackError(message));
       });
     });
