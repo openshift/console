@@ -8,6 +8,18 @@ export class MastheadPage extends BasePage {
   private readonly logo: Locator = this.page.getByTestId('masthead-logo');
   private readonly quickCreateToggle: Locator = this.page.getByTestId('quick-create-dropdown');
   private readonly userDropdownToggle: Locator = this.page.getByTestId('user-dropdown-toggle');
+  private readonly impersonateUserItem: Locator = this.page.getByTestId('impersonate-user');
+  private readonly stopImpersonateItem: Locator = this.page.getByTestId('stop-impersonate');
+  private readonly serviceAccountRadio: Locator = this.page.getByTestId(
+    'impersonate-kind-service-account',
+  );
+  private readonly serviceAccountNamespaceInput: Locator = this.page.getByTestId(
+    'service-account-namespace-input',
+  );
+  private readonly serviceAccountNameInput: Locator = this.page.getByTestId(
+    'service-account-name-input',
+  );
+  private readonly impersonateButton: Locator = this.page.getByTestId('impersonate-button');
   private readonly copyLoginCommandLink: Locator = this.page
     .getByTestId('copy-login-command')
     .locator('a');
@@ -38,6 +50,20 @@ export class MastheadPage extends BasePage {
 
   async openUserDropdown(): Promise<void> {
     await this.userDropdownToggle.click();
+  }
+
+  async impersonateServiceAccount(namespace: string, name: string): Promise<void> {
+    await this.openUserDropdown();
+    await this.robustClick(this.impersonateUserItem);
+    await this.robustClick(this.serviceAccountRadio);
+    await this.serviceAccountNamespaceInput.fill(namespace);
+    await this.serviceAccountNameInput.fill(name);
+    await this.robustClick(this.impersonateButton);
+  }
+
+  async stopImpersonating(): Promise<void> {
+    await this.openUserDropdown();
+    await this.robustClick(this.stopImpersonateItem);
   }
 
   async isAuthDisabled(): Promise<boolean> {

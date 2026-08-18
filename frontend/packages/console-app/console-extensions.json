@@ -2686,7 +2686,7 @@
         "version": "v1",
         "kind": "ServiceAccount"
       },
-      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+      "provider": { "$codeRef": "serviceAccountProvider.useServiceAccountActionsProvider" }
     }
   },
   {

@@ -197,15 +197,17 @@ export const startImpersonate =
     const encodedName = encodeImpersonationValue(name, textEncoder);
 
     let subprotocols;
-    if (kind === 'User') {
+    if ((kind === 'User' || kind === 'ServiceAccount') && (!groups || groups.length === 0)) {
       subprotocols = [`Impersonate-User.${encodedName}`];
     } else if (kind === 'Group') {
       subprotocols = [`Impersonate-Group.${encodedName}`];
-    } else if (kind === 'UserWithGroups' && groups && groups.length > 0) {
-      // User with multiple groups impersonation
-      // Encode user subprotocol
+    } else if (
+      (kind === 'UserWithGroups' || kind === 'ServiceAccount') &&
+      groups &&
+      groups.length > 0
+    ) {
+      // User or service account with multiple groups impersonation
       subprotocols = [`Impersonate-User.${encodedName}`];
-      // Encode each group as a separate subprotocol
       groups.forEach((group) => {
         const encodedGroup = encodeImpersonationValue(group, textEncoder);
         subprotocols.push(`Impersonate-Group.${encodedGroup}`);

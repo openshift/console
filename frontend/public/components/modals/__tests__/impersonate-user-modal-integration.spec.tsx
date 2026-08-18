@@ -75,7 +75,7 @@ describe('ImpersonateUserModal Integration Tests', () => {
       await user.click(submitButton);
 
       await waitFor(() => {
-        expect(onImpersonate).toHaveBeenCalledWith('testuser', []);
+        expect(onImpersonate).toHaveBeenCalledWith('testuser', [], 'User');
         expect(mockStartImpersonate).toHaveBeenCalledWith('User', 'testuser');
       });
     });
@@ -113,7 +113,7 @@ describe('ImpersonateUserModal Integration Tests', () => {
       await user.click(submitButton);
 
       await waitFor(() => {
-        expect(onImpersonate).toHaveBeenCalledWith('multiuser', ['developers']);
+        expect(onImpersonate).toHaveBeenCalledWith('multiuser', ['developers'], 'User');
         expect(mockStartImpersonate).toHaveBeenCalledWith('UserWithGroups', 'multiuser', [
           'developers',
         ]);
@@ -169,7 +169,7 @@ describe('ImpersonateUserModal Integration Tests', () => {
       await user.click(submitButton);
 
       await waitFor(() => {
-        expect(onImpersonate).toHaveBeenCalledWith('groupuser', ['developers', 'admins']);
+        expect(onImpersonate).toHaveBeenCalledWith('groupuser', ['developers', 'admins'], 'User');
       });
     });
 
@@ -218,7 +218,7 @@ describe('ImpersonateUserModal Integration Tests', () => {
       await user.click(submitButton);
 
       await waitFor(() => {
-        expect(onImpersonate).toHaveBeenCalledWith('deselectuser', []);
+        expect(onImpersonate).toHaveBeenCalledWith('deselectuser', [], 'User');
       });
     });
   });
