@@ -36,7 +36,8 @@ export class BitbucketService extends BaseService {
   constructor(gitsource: GitSource) {
     super(gitsource);
     this.metadata = this.getRepoMetadata();
-    if (!this.metadata.host.includes('bitbucket.org')) {
+    const isBitbucketCloud = new URL(this.metadata.host).hostname === 'bitbucket.org';
+    if (!isBitbucketCloud) {
       this.baseURL = `${this.metadata.host}/rest/api/1.0`;
       this.isServer = true;
     }

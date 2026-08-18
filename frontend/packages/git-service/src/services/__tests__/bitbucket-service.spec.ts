@@ -434,6 +434,33 @@ describe('Bitbucket Service', () => {
       scope.done();
     });
 
+    it('should treat lookalike host as Bitbucket Server and NOT retry with Bearer', async () => {
+      const username = 'user';
+      const password = 'my-secret-token';
+      const encodedAuth = Base64.encode(`${username}:${password}`);
+      const gitSource: GitSource = {
+        url: 'https://bitbucket.org.example/owner/repo',
+        secretType: SecretType.BASIC_AUTH,
+        secretContent: {
+          username: Base64.encode(username),
+          password: Base64.encode(password),
+        },
+      };
+
+      const gitService = new BitbucketService(gitSource);
+
+      // Should use Server REST API endpoint, not Cloud API
+      const scope = nock('https://bitbucket.org.example')
+        .get('/rest/api/1.0/projects/owner/repos/repo')
+        .matchHeader('Authorization', `Basic ${encodedAuth}`)
+        .reply(401);
+
+      const status = await gitService.isRepoReachable();
+      // Should return PrivateRepo (Server 401), not retry against Cloud API
+      expect(status).toEqual(RepoStatus.PrivateRepo);
+      scope.done();
+    });
+
     it('should return PrivateRepo for 401 response', async () => {
       const gitSource: GitSource = {
         url: 'https://bitbucket.org/owner/private-repo',
