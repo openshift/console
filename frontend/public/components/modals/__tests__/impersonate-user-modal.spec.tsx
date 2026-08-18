@@ -239,6 +239,30 @@ describe('ImpersonateUserModal', () => {
       });
     });
 
+    it('should reject invalid service account namespace and name values', async () => {
+      const user = userEvent.setup();
+      render(
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
+      );
+
+      await user.click(screen.getByTestId('impersonate-kind-service-account'));
+      await user.type(screen.getByTestId('service-account-namespace-input'), 'Invalid_Namespace');
+      await user.type(screen.getByTestId('service-account-name-input'), 'Builder');
+      await user.click(screen.getByTestId('impersonate-button'));
+
+      expect(
+        screen.getByText(
+          'Service account namespace must contain only lowercase letters, numbers, and hyphens, and must start and end with a letter or number.',
+        ),
+      ).toBeVisible();
+      expect(
+        screen.getByText(
+          'Service account name must contain only lowercase letters, numbers, hyphens, and dots, and must start and end with a letter or number.',
+        ),
+      ).toBeVisible();
+      expect(mockOnImpersonate).not.toHaveBeenCalled();
+    });
+
     it('should close modal after successful submission', async () => {
       const user = userEvent.setup();
       render(

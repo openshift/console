@@ -37,6 +37,15 @@ import { useK8sWatchResource } from '../utils/k8s-watch-hook';
 
 const SELECT_ALL_KEY = '__select_all__';
 const MAX_VISIBLE_CHIPS = 5;
+const DNS_LABEL_MAX_LENGTH = 63;
+const DNS_SUBDOMAIN_MAX_LENGTH = 253;
+const DNS_LABEL_REGEXP = /^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/;
+
+const isDNS1123Label = (value: string): boolean =>
+  value.length <= DNS_LABEL_MAX_LENGTH && DNS_LABEL_REGEXP.test(value);
+
+const isDNS1123Subdomain = (value: string): boolean =>
+  value.length <= DNS_SUBDOMAIN_MAX_LENGTH && value.split('.').every(isDNS1123Label);
 
 type ImpersonateSubjectKind = 'User' | 'ServiceAccount';
 
@@ -62,6 +71,8 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
   const [serviceAccountName, setServiceAccountName] = useState('');
   const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
   const [usernameError, setUsernameError] = useState('');
+  const [serviceAccountNamespaceError, setServiceAccountNamespaceError] = useState('');
+  const [serviceAccountNameError, setServiceAccountNameError] = useState('');
   const [isGroupSelectOpen, setIsGroupSelectOpen] = useState(false);
   const [showAllGroups, setShowAllGroups] = useState(false);
   const [groupSearchFilter, setGroupSearchFilter] = useState('');
@@ -91,6 +102,8 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
     setServiceAccountName('');
     setSelectedGroups([]);
     setUsernameError('');
+    setServiceAccountNamespaceError('');
+    setServiceAccountNameError('');
     onClose();
   }, [prefilledUsername, onClose]);
 
@@ -149,20 +162,47 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
   };
 
   const validateForm = (): boolean => {
+    setUsernameError('');
+    setServiceAccountNamespaceError('');
+    setServiceAccountNameError('');
+
     if (impersonateKind === 'User' && !username.trim()) {
       setUsernameError(t('Username is required'));
       return false;
     }
 
-    if (impersonateKind === 'ServiceAccount' && !serviceAccountNamespace.trim()) {
-      setUsernameError(t('Service account namespace is required'));
-      return false;
+    if (impersonateKind === 'ServiceAccount') {
+      const trimmedNamespace = serviceAccountNamespace.trim();
+      const trimmedName = serviceAccountName.trim();
+      let isValid = true;
+
+      if (!trimmedNamespace) {
+        setServiceAccountNamespaceError(t('Service account namespace is required'));
+        isValid = false;
+      } else if (!isDNS1123Label(trimmedNamespace)) {
+        setServiceAccountNamespaceError(
+          t(
+            'Service account namespace must contain only lowercase letters, numbers, and hyphens, and must start and end with a letter or number.',
+          ),
+        );
+        isValid = false;
+      }
+
+      if (!trimmedName) {
+        setServiceAccountNameError(t('Service account name is required'));
+        isValid = false;
+      } else if (!isDNS1123Subdomain(trimmedName)) {
+        setServiceAccountNameError(
+          t(
+            'Service account name must contain only lowercase letters, numbers, hyphens, and dots, and must start and end with a letter or number.',
+          ),
+        );
+        isValid = false;
+      }
+
+      return isValid;
     }
 
-    if (impersonateKind === 'ServiceAccount' && !serviceAccountName.trim()) {
-      setUsernameError(t('Service account name is required'));
-      return false;
-    }
     return true;
   };
 
@@ -186,6 +226,8 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
       setServiceAccountName('');
       setSelectedGroups([]);
       setUsernameError('');
+      setServiceAccountNamespaceError('');
+      setServiceAccountNameError('');
       setGroupSearchFilter('');
       setShowAllGroups(false);
     }
@@ -277,10 +319,12 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
               id="impersonate-kind-user"
               name="impersonate-kind"
               label={t('User')}
-              checked={impersonateKind === 'User'}
+              isChecked={impersonateKind === 'User'}
               onChange={() => {
                 setImpersonateKind('User');
                 setUsernameError('');
+                setServiceAccountNamespaceError('');
+                setServiceAccountNameError('');
               }}
               data-test="impersonate-kind-user"
             />
@@ -288,10 +332,12 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
               id="impersonate-kind-service-account"
               name="impersonate-kind"
               label={t('ServiceAccount')}
-              checked={impersonateKind === 'ServiceAccount'}
+              isChecked={impersonateKind === 'ServiceAccount'}
               onChange={() => {
                 setImpersonateKind('ServiceAccount');
                 setUsernameError('');
+                setServiceAccountNamespaceError('');
+                setServiceAccountNameError('');
               }}
               data-test="impersonate-kind-service-account"
             />
@@ -349,13 +395,22 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
                   value={serviceAccountNamespace}
                   onChange={(_event, value) => {
                     setServiceAccountNamespace(value);
-                    setUsernameError('');
+                    setServiceAccountNamespaceError('');
                   }}
                   placeholder={t('Enter a namespace')}
                   data-test="service-account-namespace-input"
-                  validated={usernameError ? 'error' : 'default'}
+                  validated={serviceAccountNamespaceError ? 'error' : 'default'}
                   aria-label={t('Service account namespace to impersonate')}
                 />
+                {serviceAccountNamespaceError && (
+                  <FormHelperText>
+                    <HelperText>
+                      <HelperTextItem variant="error" icon={<RhUiErrorFillIcon />}>
+                        {serviceAccountNamespaceError}
+                      </HelperTextItem>
+                    </HelperText>
+                  </FormHelperText>
+                )}
               </FormGroup>
               <FormGroup
                 label={t('Service account name')}
@@ -368,18 +423,18 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
                   value={serviceAccountName}
                   onChange={(_event, value) => {
                     setServiceAccountName(value);
-                    setUsernameError('');
+                    setServiceAccountNameError('');
                   }}
                   placeholder={t('Enter a service account name')}
                   data-test="service-account-name-input"
-                  validated={usernameError ? 'error' : 'default'}
+                  validated={serviceAccountNameError ? 'error' : 'default'}
                   aria-label={t('Service account name to impersonate')}
                 />
-                {usernameError && (
+                {serviceAccountNameError && (
                   <FormHelperText>
                     <HelperText>
                       <HelperTextItem variant="error" icon={<RhUiErrorFillIcon />}>
-                        {usernameError}
+                        {serviceAccountNameError}
                       </HelperTextItem>
                     </HelperText>
                   </FormHelperText>
