@@ -169,6 +169,7 @@
     "node-fetch": "^2.3.0",
     "node-polyfill-webpack-plugin": "4.0.0",
     "prettier": "^3.9.9",
+    "react-compiler-runtime": "^1.0.0",
     "react-refresh": "^0.19.0",
     "read-pkg": "^10.1.0",
     "resolve-url-loader": "^5.0.0",
