@@ -354,6 +354,7 @@
   "ImageStreams": "ImageStreams",
   "Impersonate {{kind}} \"{{name}}\"": "Impersonate {{kind}} \"{{name}}\"",
   "Impersonate Group {{name}}": "Impersonate Group {{name}}",
+  "Impersonate service account {{name}}": "Impersonate service account {{name}}",
   "Impersonate user {{name}}": "Impersonate user {{name}}",
   "In progress": "In progress",
   "In progress ({{statusCount, number}})": "In progress ({{statusCount, number}})",
