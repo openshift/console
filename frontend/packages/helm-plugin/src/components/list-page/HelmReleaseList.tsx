@@ -195,7 +195,7 @@ const HelmReleaseList: FC<{ mock?: boolean }> = ({ mock }) => {
           .catch((err) => {
             if (!destroyed) {
               setReleasesLoaded(true);
-              setLoadError(err.message || t('Unable to load Helm Releases'));
+              setLoadError(err.message || t('Unable to load Helm releases'));
             }
           });
       }
@@ -258,7 +258,7 @@ const HelmReleaseList: FC<{ mock?: boolean }> = ({ mock }) => {
       <EmptyState
         headingLevel="h3"
         icon={HelmCatalogIcon}
-        titleText={<>{t('No Helm Releases found')}</>}
+        titleText={<>{t('No Helm releases found')}</>}
         variant={EmptyStateVariant.full}
       >
         <EmptyStateFooter>
@@ -276,14 +276,14 @@ const HelmReleaseList: FC<{ mock?: boolean }> = ({ mock }) => {
 
   return (
     <>
-      <DocumentTitle>{t('Helm Releases')}</DocumentTitle>
+      <DocumentTitle>{t('Helm releases')}</DocumentTitle>
       <PaneBody>
         <Suspense fallback={<LoadingBox />}>
           {!mock && hasNoReleases ? (
             emptyState()
           ) : (
             <ConsoleDataView<HelmRelease, { obj: HelmRelease }, HelmReleaseFilters>
-              label={t('Helm Releases')}
+              label={t('Helm releases')}
               data={releases}
               loaded={isLoaded}
               loadError={secretsLoadError || loadError}

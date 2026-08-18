@@ -149,7 +149,7 @@ const CreateHelmChartRepositoryFormEditor: FC<CreateHelmChartRepositoryFormEdito
         <FormSection>
           <p className="pf-v6-c-form__helper-text">
             {t(
-              'Add credentials and custom certificate authority (CA) certificates to connect to private helm chart repository.',
+              'Add credentials and custom certificate authority (CA) certificates to connect to a private Helm Chart repository.',
             )}
           </p>
           <ResourceDropdownField

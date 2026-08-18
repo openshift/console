@@ -5,7 +5,7 @@ export const adminNavigationMenu = {
 
 export const messages = {
   helm: {
-    noHelmReleasesFound: 'No Helm Releases found',
+    noHelmReleasesFound: 'No Helm releases found',
   },
   addFlow: {
     gitUrlValidated: 'Validated',
