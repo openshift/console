@@ -2,6 +2,8 @@ import { expect, type Locator } from '@playwright/test';
 
 import BasePage from './base-page';
 
+const escapeRegExp = (value: string): string => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 export class ServiceAccountPage extends BasePage {
   private readonly actionsMenuButton: Locator = this.page.getByTestId('actions-menu-button');
   private readonly impersonateAction: Locator = this.page.getByRole('menuitem', {
@@ -10,7 +12,9 @@ export class ServiceAccountPage extends BasePage {
 
   async navigateToDetails(namespace: string, name: string): Promise<void> {
     await this.goTo(`/k8s/ns/${namespace}/~v1~ServiceAccount/${name}`);
-    await expect(this.page.getByRole('heading', { name: new RegExp(`ServiceAccount.*${name}`) })).toBeVisible({
+    await expect(
+      this.page.getByRole('heading', { name: new RegExp(`ServiceAccount.*${escapeRegExp(name)}`) }),
+    ).toBeVisible({
       timeout: 60_000,
     });
   }
