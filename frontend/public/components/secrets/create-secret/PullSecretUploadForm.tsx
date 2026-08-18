@@ -45,7 +45,6 @@ export const PullSecretUploadForm: React.FC<PullSecretUploadFormProps> = ({
         inputFileData={configFile}
         id="docker-config"
         label={t('public~Configuration file')}
-        inputFieldHelpText={t('public~Upload a .dockercfg or .docker/config.json file.')}
         textareaFieldHelpText={t(
           'public~File with credentials and other configuration for connecting to a secured image registry.',
         )}
