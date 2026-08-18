@@ -75,9 +75,6 @@ module.exports = {
     },
   ],
 
-  // Only allow relative imports from the __mocks__ directory (no tsconfig alias set for frontend/__mocks__)
-  'import/no-relative-packages': ['error', { ignore: ['__mocks__'] }],
-
   // Legitimate use cases for require() exist, such as in the eslint config and in core-api.ts
   'global-require': 'off',
 

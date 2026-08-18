@@ -4,9 +4,9 @@ import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import store from '@console/internal/redux';
 import { Resources } from '../../import/import-types';
-import MockForm from '../__mocks__/MockForm';
 import ContainerField from '../ContainerField';
 import ImagesSection from '../images/ImagesSection';
+import MockForm from './MockForm';
 
 jest.mock('../ContainerField', () => ({
   __esModule: true,

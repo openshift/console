@@ -2,7 +2,6 @@ import * as _ from 'lodash';
 import { getActiveNamespace } from '@console/internal/reducers/ui';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils/namespace';
-import '../../../__mocks__/localStorage';
 import store from '../../redux';
 import * as UIActions from '../ui';
 

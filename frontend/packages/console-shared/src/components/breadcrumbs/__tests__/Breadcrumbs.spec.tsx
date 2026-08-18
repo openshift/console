@@ -20,13 +20,10 @@ describe('Breadcrumbs', () => {
       </MemoryRouter>,
     );
 
-    breadcrumbs.forEach((crumb) => {
-      if (crumb.path) {
-        const link = screen.getByRole('link', { name: crumb.name });
-        expect(link).toHaveAttribute('href', crumb.path);
-      } else {
-        expect(screen.getByText(crumb.name)).toBeInTheDocument();
-      }
-    });
+    const podsLink = screen.getByRole('link', { name: breadcrumbs[0].name });
+    expect(podsLink).toHaveAttribute('href', breadcrumbs[0].path);
+
+    const containersLink = screen.getByRole('link', { name: breadcrumbs[1].name });
+    expect(containersLink).toHaveAttribute('href', breadcrumbs[1].path);
   });
 });

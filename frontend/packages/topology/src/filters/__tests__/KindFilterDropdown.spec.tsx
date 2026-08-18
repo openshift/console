@@ -5,7 +5,7 @@ import { TopologyDisplayFilterType } from '../../topology-types';
 import { DEFAULT_TOPOLOGY_FILTERS } from '../const';
 import KindFilterDropdown from '../KindFilterDropdown';
 
-describe(KindFilterDropdown.displayName, () => {
+describe('KindFilterDropdown', () => {
   let dropdownFilter: DisplayFilters;
   let onChange: jest.Mock;
   let supportedKinds: { [key: string]: number };

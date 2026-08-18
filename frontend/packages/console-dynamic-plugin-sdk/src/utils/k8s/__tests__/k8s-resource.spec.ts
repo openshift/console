@@ -45,7 +45,7 @@ describe('k8s-Resource', () => {
     );
   });
 
-  it('k8sList should call consoleFetchJSON once with proper arguments', async () => {
+  it('k8sList should call consoleFetchJSON once with proper arguments without namespace', async () => {
     spyCoFetchJSON.mockReturnValueOnce(Promise.resolve({}));
     await k8sList(MockPodModel);
     expect(spyCoFetchJSON).toHaveBeenCalled();

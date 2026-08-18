@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
-import { mockDeployImageFormData } from '../../components/import/__mocks__/deployImage-validation-mock';
-import { mockFormData } from '../../components/import/__mocks__/import-validation-mock';
+import { mockDeployImageFormData } from '../../components/import/__tests__/data/deployImage-validation-mock';
+import { mockFormData } from '../../components/import/__tests__/data/import-validation-mock';
 import type { GitImportFormData, DeployImageFormData } from '../../components/import/import-types';
 import { createService, createRoute } from '../shared-submit-utils';
 

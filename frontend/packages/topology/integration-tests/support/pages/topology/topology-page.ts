@@ -190,7 +190,7 @@ export const topologyPage = {
         break;
       case displayOptions.HelmReleases:
         cy.get('label[class$="menu__item"]')
-          .contains('Helm Releases')
+          .contains('Helm releases')
           .within(() => {
             cy.get('[type="checkbox"]').check();
           });

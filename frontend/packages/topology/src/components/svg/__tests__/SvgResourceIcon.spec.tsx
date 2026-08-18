@@ -5,7 +5,7 @@ jest.mock('@patternfly/react-topology', () => ({
   useSize: jest.fn(() => [{ width: 20, height: 10 }, { current: null }]),
 }));
 
-describe(getKindStringAndAbbreviation.name, () => {
+describe('getKindStringAndAbbreviation', () => {
   it('should return correct name and its abbreviation for the given string', () => {
     expect(getKindStringAndAbbreviation('DeploymentConfig')).toEqual({
       kindAbbr: 'DC',
@@ -22,7 +22,7 @@ describe(getKindStringAndAbbreviation.name, () => {
   });
 });
 
-describe(SvgResourceIcon.name, () => {
+describe('SvgResourceIcon', () => {
   it('should render', () => {
     render(<SvgResourceIcon kind="Deployment" x={0} y={0} />);
     expect(screen.getByText('D')).toBeInTheDocument();

@@ -197,7 +197,7 @@ describe('ListPageWrapper component', () => {
   });
 });
 
-describe(' MultiListPage component', () => {
+describe('MultiListPage component', () => {
   beforeEach(() => {
     mockUseK8sWatchResources.mockClear();
   });

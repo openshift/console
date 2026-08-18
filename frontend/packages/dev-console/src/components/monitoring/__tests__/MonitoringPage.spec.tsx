@@ -107,7 +107,7 @@ jest.mock('@console/shared/src/hooks/useCreateNamespaceOrProjectModal', () => ({
   useCreateNamespaceOrProjectModal: jest.fn(() => [jest.fn(), false]),
 }));
 
-describe('Monitoring Page ', () => {
+describe('Monitoring Page', () => {
   beforeEach(() => {
     useAccessReviewMock.mockReturnValue(true);
   });

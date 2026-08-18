@@ -1,8 +1,8 @@
 import { ImportStrategy } from '@console/git-service/src/types/git';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
-import { healthChecksProbeInitialData } from '../../health-checks/health-checks-probe-utils';
-import type { UploadJarFormData } from '../import-types';
-import { Resources } from '../import-types';
+import { healthChecksProbeInitialData } from '../../../health-checks/health-checks-probe-utils';
+import type { UploadJarFormData } from '../../import-types';
+import { Resources } from '../../import-types';
 import { serverlessInitialValues } from './serverless-mock';
 
 export const uploadJarMockFormData: UploadJarFormData = {
