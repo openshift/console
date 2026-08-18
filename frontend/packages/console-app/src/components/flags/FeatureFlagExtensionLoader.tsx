@@ -31,9 +31,6 @@ import { FeatureFlagExtensionHookResolver } from './FeatureFlagExtensionHookReso
  */
 export const useFeatureFlagController = () => {
   const dispatch = useConsoleDispatch();
-  const flags = useConsoleSelector(({ FLAGS }) => FLAGS);
-  const flagsRef = useRef(flags);
-  flagsRef.current = flags;
 
   // Queue of flag updates to be dispatched after render
   const pendingUpdatesRef = useRef<Map<string, boolean>>(new Map());
@@ -42,14 +39,13 @@ export const useFeatureFlagController = () => {
   // Mark the render phase; cleared in the layout effect below.
   isRenderingRef.current = true;
 
+  // Always dispatch pending values. Do not keep a local FLAGS snapshot for
+  // change-detection: flags are also updated elsewhere (e.g. detectFeatures /
+  // setFlag consumers read via useFlag), so a shadow copy can go stale.
+  // Immutable Map.set is a no-op when the value is unchanged.
   const flushPendingUpdates = useCallback(() => {
     pendingUpdatesRef.current.forEach((enabled, flag) => {
-      if (flagsRef.current.get(flag) !== enabled) {
-        dispatch(setFlag(flag, enabled));
-        // Keep the local snapshot in sync so consecutive async updates (e.g. true
-        // then false before Redux re-renders) are not skipped against a stale value.
-        flagsRef.current = flagsRef.current.set(flag, enabled);
-      }
+      dispatch(setFlag(flag, enabled));
     });
     pendingUpdatesRef.current.clear();
   }, [dispatch]);
