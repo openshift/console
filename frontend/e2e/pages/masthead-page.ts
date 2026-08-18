@@ -86,8 +86,16 @@ export class MastheadPage extends BasePage {
   }
 
   async stopImpersonating(): Promise<void> {
+    const currentURL = this.page.url();
     await this.openUserDropdown();
-    await this.robustClick(this.stopImpersonateItem);
+    await Promise.all([
+      this.page.waitForURL((url) => url.href !== currentURL, {
+        timeout: 60_000,
+        waitUntil: 'domcontentloaded',
+      }),
+      this.robustClick(this.stopImpersonateItem),
+    ]);
+    await this.page.waitForLoadState('domcontentloaded');
   }
 
   async isAuthDisabled(): Promise<boolean> {
