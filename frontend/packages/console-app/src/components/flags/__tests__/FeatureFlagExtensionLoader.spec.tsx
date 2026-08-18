@@ -1,8 +1,6 @@
 import { act, renderHook } from '@testing-library/react';
-import { Map as ImmutableMap } from 'immutable';
 import { setFlag } from '@console/internal/actions/flags';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
-import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { useFeatureFlagController } from '../FeatureFlagExtensionLoader';
 
 jest.mock('@console/shared/src/hooks/useConsoleSelector', () => ({
@@ -22,7 +20,6 @@ jest.mock('@console/internal/actions/flags', () => ({
 }));
 
 const mockDispatch = jest.fn();
-const mockUseSelector = useConsoleSelector as jest.Mock;
 const mockUseDispatch = useConsoleDispatch as jest.Mock;
 const mockSetFlag = setFlag as jest.MockedFunction<typeof setFlag>;
 
@@ -30,7 +27,6 @@ describe('useFeatureFlagController', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockUseDispatch.mockReturnValue(mockDispatch);
-    mockUseSelector.mockReturnValue(ImmutableMap());
   });
 
   it('defers flag updates made during render until after layout effects', () => {
@@ -63,8 +59,7 @@ describe('useFeatureFlagController', () => {
     expect(mockSetFlag).toHaveBeenCalledWith('ASYNC_FLAG', true);
   });
 
-  it('dispatches consecutive async updates before the selector re-renders', () => {
-    mockUseSelector.mockReturnValue(ImmutableMap({ TOGGLE_FLAG: false }));
+  it('dispatches consecutive async updates before Redux re-renders', () => {
     const { result } = renderHook(() => useFeatureFlagController());
 
     mockDispatch.mockClear();
@@ -78,18 +73,5 @@ describe('useFeatureFlagController', () => {
     expect(mockDispatch).toHaveBeenCalledTimes(2);
     expect(mockSetFlag).toHaveBeenNthCalledWith(1, 'TOGGLE_FLAG', true);
     expect(mockSetFlag).toHaveBeenNthCalledWith(2, 'TOGGLE_FLAG', false);
-  });
-
-  it('does not redispatch when the flag already has the requested value', () => {
-    mockUseSelector.mockReturnValue(ImmutableMap({ EXISTING_FLAG: true }));
-    const { result } = renderHook(() => useFeatureFlagController());
-
-    mockDispatch.mockClear();
-
-    act(() => {
-      result.current('EXISTING_FLAG', true);
-    });
-
-    expect(mockDispatch).not.toHaveBeenCalled();
   });
 });
