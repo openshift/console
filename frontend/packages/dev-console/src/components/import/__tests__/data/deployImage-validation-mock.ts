@@ -1,6 +1,6 @@
-import { healthChecksProbeInitialData } from '../../health-checks/health-checks-probe-utils';
-import type { DeployImageFormData } from '../import-types';
-import { Resources } from '../import-types';
+import { healthChecksProbeInitialData } from '../../../health-checks/health-checks-probe-utils';
+import type { DeployImageFormData } from '../../import-types';
+import { Resources } from '../../import-types';
 import { serverlessInitialValues } from './serverless-mock';
 
 export const mockDeployImageFormData: DeployImageFormData = {

@@ -1,9 +1,6 @@
 import { OdcBaseNode } from '@console/topology/src/elements/OdcBaseNode';
 import type { OdcNodeModel } from '@console/topology/src/topology-types';
-import {
-  kameletBindingSinkRes,
-  knSinkDeployment,
-} from '../../__tests__/__mocks__/knativeResourcesData';
+import { kameletBindingSinkRes, knSinkDeployment } from '../../__tests__/data/knativeResourcesData';
 import { knativeServiceObj } from '../../__tests__/topology-knative-test-data';
 import { TYPE_EVENT_SOURCE } from '../../const';
 import { KameletType } from '../../topology-types';

@@ -19,7 +19,7 @@ const SDK_NODE_DIRS = [
   'packages/console-plugin-sdk/src/webpack',
   'packages/console-dynamic-plugin-sdk/scripts',
   'packages/console-dynamic-plugin-sdk/src/webpack',
-] as const;
+];
 
 const PACKAGES_EXCLUDE = [
   'packages/eslint-plugin-console/**',
@@ -120,7 +120,6 @@ const config = defineConfig([
       parser: tsParser,
     },
   },
-
   // Rules that are broken or not relevant in non-typed JavaScript
   {
     files: ['public/**/*.{js,jsx}'],
@@ -169,14 +168,7 @@ const config = defineConfig([
     extends: compat.extends('plugin:console/node-typescript-prettier'),
   },
   {
-    files: [
-      'packages/console-plugin-sdk/src/codegen/**/*.{js,ts}',
-      'packages/console-plugin-sdk/src/webpack/**/*.{js,ts}',
-    ],
-    rules: { 'no-underscore-dangle': 'off' },
-  },
-  {
-    files: ['packages/console-dynamic-plugin-sdk/scripts/**/*.{js,ts}'],
+    files: ['packages/console-dynamic-plugin-sdk/scripts/**/*.ts'],
     rules: { 'no-console': 'off' },
   },
 
@@ -199,9 +191,6 @@ const config = defineConfig([
   {
     files: ['i18n-scripts/**/*.{js,jsx,ts,tsx,json}'],
     extends: compat.extends('plugin:console/node-typescript-prettier'),
-  },
-  {
-    files: ['i18n-scripts/**/*.{js,ts}'],
     rules: {
       'no-console': 'off',
       'n/no-unsupported-features/node-builtins': 'off',

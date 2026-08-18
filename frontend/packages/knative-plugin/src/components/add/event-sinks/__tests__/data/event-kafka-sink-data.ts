@@ -1,5 +1,5 @@
 import type { FormikValues } from 'formik';
-import type { EventSinkFormData } from '../../import-types';
+import type { EventSinkFormData } from '../../../import-types';
 
 export const kafkaSinkMockFormData: EventSinkFormData = {
   project: {

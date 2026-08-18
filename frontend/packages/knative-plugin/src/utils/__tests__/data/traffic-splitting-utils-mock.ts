@@ -2,8 +2,8 @@ import * as _ from 'lodash';
 import {
   knativeServiceObj,
   revisionObj,
-} from '../../topology/__tests__/topology-knative-test-data';
-import type { RevisionKind, ServiceKind as knativeServiceKind, Traffic } from '../../types';
+} from '../../../topology/__tests__/topology-knative-test-data';
+import type { RevisionKind, ServiceKind as knativeServiceKind, Traffic } from '../../../types';
 
 export const mockServiceData: knativeServiceKind = _.cloneDeep(knativeServiceObj);
 
@@ -13,12 +13,6 @@ export const mockTrafficData: Traffic[] = [
   { percent: 25, tag: 'tag-3', revisionName: 'overlayimage-bwpxq' },
   { percent: 25, tag: 'tag-4', revisionName: 'overlayimage-n2b7n' },
 ];
-
-export const mockUpdateRequestObj: knativeServiceKind = _.set(
-  _.omit(_.cloneDeep(knativeServiceObj), 'status'),
-  'spec.traffic',
-  mockTrafficData,
-);
 
 export const mockRevisions: RevisionKind[] = [
   revisionObj,

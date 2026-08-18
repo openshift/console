@@ -1,4 +1,4 @@
-import type { ServerlessData } from '../import-types';
+import type { ServerlessData } from '../../import-types';
 
 export const serverlessInitialValues: ServerlessData = {
   scaling: {

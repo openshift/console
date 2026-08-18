@@ -4,10 +4,10 @@ import userEvent from '@testing-library/user-event';
 import * as _ from 'lodash';
 import { Provider } from 'react-redux';
 import store from '@console/internal/redux';
-import { mockEditDeploymentData, mockDeploymentConfig } from '../__mocks__/deployment-data';
-import MockForm from '../__mocks__/MockForm';
 import ContainerField from '../ContainerField';
 import EnvironmentVariablesSection from '../EnvironmentVariablesSection';
+import { mockEditDeploymentData, mockDeploymentConfig } from './deployment-data';
+import MockForm from './MockForm';
 
 const MockContainerField: FC = () => <div>Container: foo</div>;
 

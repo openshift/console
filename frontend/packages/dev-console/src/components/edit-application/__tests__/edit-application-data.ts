@@ -4,7 +4,7 @@ import { ServiceModel } from '@console/knative-plugin/src/models';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import { healthChecksData } from '../../health-checks/__tests__/create-health-checks-probe-data';
 import { healthChecksProbeInitialData } from '../../health-checks/health-checks-probe-utils';
-import { serverlessInitialValues } from '../../import/__mocks__/serverless-mock';
+import { serverlessInitialValues } from '../../import/__tests__/data/serverless-mock';
 import type { DeployImageFormData, GitImportFormData } from '../../import/import-types';
 import { BuildOptions, Resources } from '../../import/import-types';
 import { PipelineType } from '../../pipeline-section/import-types';

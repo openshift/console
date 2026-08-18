@@ -3,8 +3,6 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import * as coFetchModule from '@console/shared/src/utils/console-fetch';
 import { EVENTING_IMC_KIND } from '../../const';
 import { ServiceModel } from '../../models';
-import { mockChannelCRDData } from '../__mocks__/dynamic-channels-crd-mock';
-import { mockEventSourcCRDData } from '../__mocks__/dynamic-event-source-crd-mock';
 import {
   getEventSourceModels,
   fetchEventSourcesCrd,
@@ -19,6 +17,8 @@ import {
   getDynamicChannelModel,
   getLabelPlural,
 } from '../fetch-dynamic-eventsources-utils';
+import { mockChannelCRDData } from './data/dynamic-channels-crd-mock';
+import { mockEventSourcCRDData } from './data/dynamic-event-source-crd-mock';
 
 jest.mock('@console/shared/src/utils/console-fetch', () => ({
   ...jest.requireActual('@console/shared/src/utils/console-fetch'),
@@ -169,7 +169,7 @@ describe('fetch-dynamic-eventsources: Channels', () => {
     expect(resultModel.kind).toEqual(EVENTING_IMC_KIND);
   });
 
-  it('should get model from reference', async () => {
+  it('should return undefined for an invalid model reference', async () => {
     await fetchChannelsCrd();
     const resultModel = getDynamicChannelModel('ab~v1~r');
     expect(resultModel).toEqual(undefined);

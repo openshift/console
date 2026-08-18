@@ -3,7 +3,7 @@ import type { Descriptor } from '../../types';
 import { SpecCapability } from '../../types';
 import { PodStatusChart } from '../pods';
 
-describe(PodStatusChart.displayName, () => {
+describe('PodStatusChart', () => {
   let descriptor: Descriptor;
 
   beforeEach(() => {

@@ -89,7 +89,7 @@ describe('getReduxData', () => {
     expect(firstTime).not.toBe(secondTime);
   });
 
-  it('should return the same JSON array and child objects for unchanged data ', () => {
+  it('should return the same JSON array and child objects for unchanged data', () => {
     const immutableData = ImmutableList([
       ImmutableMap({ a: 1 }),
       ImmutableMap({ b: 2 }),
@@ -107,7 +107,7 @@ describe('getReduxData', () => {
     expect(firstTime[2]).toBe(secondTime[2]);
   });
 
-  it('should return the same JSON array and child objects for unchanged data ', () => {
+  it('should return a new JSON array but same unchanged child objects for changed data', () => {
     const immutableData = ImmutableList([
       ImmutableMap({ a: 1 }),
       ImmutableMap({ b: 2 }),

@@ -1,14 +1,10 @@
 import type { K8sResourceKind } from 'public/module/k8s';
 import {
-  imageStreamsData,
-  knatifyFormCommonInitialValues,
-  ksvcData,
-} from '../__mocks__/knatify-mock';
-import {
   getKnatifyWorkloadData,
   getCommonInitialValues,
   getInitialValuesKnatify,
 } from '../knatify-utils';
+import { imageStreamsData, knatifyFormCommonInitialValues, ksvcData } from './data/knatify-mock';
 import { deploymentData, hpaData } from './knative-serving-data';
 
 describe('knatify-utils', () => {

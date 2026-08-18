@@ -10,6 +10,16 @@ import {
   modelsToMap,
 } from '..';
 import {
+  testNamespace,
+  testOwnedResourceInstance,
+} from '../../../components/__tests__/data/k8sResourcesMocks';
+import {
+  PodModel,
+  DeploymentModel,
+  ClusterResourceQuotaModel,
+  PrometheusModel,
+} from '../../../models';
+import {
   testCRD,
   testCRDInvalidVersion,
   testCRDInvalidVersionTwo,
@@ -22,14 +32,7 @@ import {
   testCRDVersionV1,
   testForValidVersionsCRD,
   testForUnservedVersionsCRD,
-} from '../../../../__mocks__/crds';
-import { testNamespace, testOwnedResourceInstance } from '../../../../__mocks__/k8sResourcesMocks';
-import {
-  PodModel,
-  DeploymentModel,
-  ClusterResourceQuotaModel,
-  PrometheusModel,
-} from '../../../models';
+} from './data/crds';
 
 describe('referenceFor', () => {
   it('returns a reference for objects without an API group', () => {

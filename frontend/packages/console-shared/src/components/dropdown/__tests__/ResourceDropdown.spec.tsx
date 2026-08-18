@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { mockDropdownData } from '../__mocks__/dropdown-data-mock';
 import { ResourceDropdown } from '../ResourceDropdown';
+import { mockDropdownData } from './data/dropdown-data-mock';
 
 jest.mock('@console/shared/src/hooks/useUserPreference', () => ({
   useUserPreference: () => ['', () => {}, true],
