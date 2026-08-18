@@ -1,6 +1,8 @@
 import * as nock from 'nock';
+import { Base64 } from 'js-base64';
 import type { BuildType } from '../../types/build-tools';
 import type { GitSource } from '../../types/git';
+import { SecretType } from '../../types/git';
 import type { RepoFileList, BranchList, RepoLanguageList } from '../../types/repo';
 import { RepoStatus } from '../../types/repo';
 import { DockerFileParser } from '../../utils/dockerfile-parser';
@@ -304,6 +306,149 @@ describe('Bitbucket Service', () => {
     const status = await gitService.isRepoReachable();
     expect(status).toEqual(RepoStatus.Reachable);
     scope.done();
+  });
+
+  describe('Authentication', () => {
+    afterEach(() => {
+      nock.cleanAll();
+    });
+
+    it('should use Bearer token for PERSONAL_ACCESS_TOKEN secret type', async () => {
+      const token = 'my-pat-token';
+      const gitSource: GitSource = {
+        url: 'https://bitbucket.org/owner/repo',
+        secretType: SecretType.PERSONAL_ACCESS_TOKEN,
+        secretContent: { password: Base64.encode(token) },
+      };
+
+      const gitService = new BitbucketService(gitSource);
+
+      const scope = nock('https://api.bitbucket.org')
+        .get('/2.0/repositories/owner/repo')
+        .matchHeader('Authorization', `Bearer ${token}`)
+        .reply(200, { slug: 'repo' });
+
+      const status = await gitService.isRepoReachable();
+      expect(status).toEqual(RepoStatus.Reachable);
+      scope.done();
+    });
+
+    it('should use Bearer token for OAUTH secret type', async () => {
+      const token = 'my-oauth-token';
+      const gitSource: GitSource = {
+        url: 'https://bitbucket.org/owner/repo',
+        secretType: SecretType.OAUTH,
+        secretContent: { password: Base64.encode(token) },
+      };
+
+      const gitService = new BitbucketService(gitSource);
+
+      const scope = nock('https://api.bitbucket.org')
+        .get('/2.0/repositories/owner/repo')
+        .matchHeader('Authorization', `Bearer ${token}`)
+        .reply(200, { slug: 'repo' });
+
+      const status = await gitService.isRepoReachable();
+      expect(status).toEqual(RepoStatus.Reachable);
+      scope.done();
+    });
+
+    it('should use Basic Auth for BASIC_AUTH secret type', async () => {
+      const username = 'user';
+      const password = 'pass';
+      const encodedAuth = Base64.encode(`${username}:${password}`);
+      const gitSource: GitSource = {
+        url: 'https://bitbucket.org/owner/repo',
+        secretType: SecretType.BASIC_AUTH,
+        secretContent: {
+          username: Base64.encode(username),
+          password: Base64.encode(password),
+        },
+      };
+
+      const gitService = new BitbucketService(gitSource);
+
+      const scope = nock('https://api.bitbucket.org')
+        .get('/2.0/repositories/owner/repo')
+        .matchHeader('Authorization', `Basic ${encodedAuth}`)
+        .reply(200, { slug: 'repo' });
+
+      const status = await gitService.isRepoReachable();
+      expect(status).toEqual(RepoStatus.Reachable);
+      scope.done();
+    });
+
+    it('should retry with Bearer token when Basic Auth returns 401 on Bitbucket Cloud', async () => {
+      const username = 'user';
+      const password = 'my-app-password';
+      const encodedAuth = Base64.encode(`${username}:${password}`);
+      const gitSource: GitSource = {
+        url: 'https://bitbucket.org/owner/repo',
+        secretType: SecretType.BASIC_AUTH,
+        secretContent: {
+          username: Base64.encode(username),
+          password: Base64.encode(password),
+        },
+      };
+
+      const gitService = new BitbucketService(gitSource);
+
+      // First request with Basic Auth returns 401
+      const basicScope = nock('https://api.bitbucket.org')
+        .get('/2.0/repositories/owner/repo')
+        .matchHeader('Authorization', `Basic ${encodedAuth}`)
+        .reply(401);
+
+      // Retry with Bearer token succeeds
+      const bearerScope = nock('https://api.bitbucket.org')
+        .get('/2.0/repositories/owner/repo')
+        .matchHeader('Authorization', `Bearer ${password}`)
+        .reply(200, { slug: 'repo' });
+
+      const status = await gitService.isRepoReachable();
+      expect(status).toEqual(RepoStatus.Reachable);
+      basicScope.done();
+      bearerScope.done();
+    });
+
+    it('should NOT retry with Bearer on Bitbucket Server when Basic Auth returns 401', async () => {
+      const username = 'user';
+      const password = 'pass';
+      const gitSource: GitSource = {
+        url: 'http://bb.example.com:7990/scm/PROJ/repo.git',
+        secretType: SecretType.BASIC_AUTH,
+        secretContent: {
+          username: Base64.encode(username),
+          password: Base64.encode(password),
+        },
+      };
+
+      const gitService = new BitbucketService(gitSource);
+
+      const scope = nock('http://bb.example.com:7990')
+        .get('/rest/api/1.0/projects/PROJ/repos/repo')
+        .reply(401);
+
+      const status = await gitService.isRepoReachable();
+      expect(status).toEqual(RepoStatus.PrivateRepo);
+      scope.done();
+    });
+
+    it('should return PrivateRepo for 401 response', async () => {
+      const gitSource: GitSource = {
+        url: 'https://bitbucket.org/owner/private-repo',
+      };
+
+      const gitService = new BitbucketService(gitSource);
+
+      const scope = nock('https://api.bitbucket.org')
+        .get('/2.0/repositories/owner/private-repo')
+        .reply(401);
+
+      const status = await gitService.isRepoReachable();
+      expect(status).toEqual(RepoStatus.PrivateRepo);
+      scope.done();
+    });
   });
 
   describe('getRepoMetadata - Protocol and Port Handling', () => {
