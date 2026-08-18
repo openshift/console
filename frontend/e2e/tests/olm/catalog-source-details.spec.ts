@@ -123,9 +123,15 @@ test.describe('CatalogSource details page', { tag: ['@admin'] }, () => {
       await catalogSourceElement.scrollIntoViewIfNeeded();
 
       await catalogSourcePage.openCatalogSourceDetails(catalogSourceName);
+      await expect(catalogSourcePage.getSectionHeading('CatalogSource details')).toBeVisible({
+        timeout: 60_000,
+      });
     });
 
     await test.step('Edit registry poll interval to 30m', async () => {
+      await expect(catalogSourcePage.getDetailsValue('Registry poll interval')).toBeVisible({
+        timeout: 30_000,
+      });
       await catalogSourcePage.clickEditRegistryPollInterval();
       await expect(catalogSourcePage.getRegistryPollIntervalModalTitle()).toContainText(
         'Edit registry poll interval',

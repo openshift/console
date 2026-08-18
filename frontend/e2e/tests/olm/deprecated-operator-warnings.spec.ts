@@ -206,9 +206,7 @@ test.describe('Deprecated operator warnings', { tag: ['@admin'] }, () => {
     const firstTile = catalogPage.getCatalogTiles().first();
     await expect(firstTile).toBeVisible({ timeout: 60_000 });
     await expect(firstTile).toContainText(/kiali/i);
-    await expect(firstTile.getByTestId('deprecated-operator-warning-badge')).toContainText(
-      DEPRECATED_BADGE,
-    );
+    await expect(firstTile.getByTestId('Deprecated-badge')).toContainText(DEPRECATED_BADGE);
   });
 
   test('displays package deprecation warnings in operator details', async ({ page }) => {
@@ -216,7 +214,7 @@ test.describe('Deprecated operator warnings', { tag: ['@admin'] }, () => {
 
     const catalogPage = new CatalogPage(page);
     await catalogPage.navigateToPath(getOperatorDetailsUrl());
-    await expect(catalogPage.getDeprecatedWarningBadge()).toContainText(DEPRECATED_BADGE, {
+    await expect(catalogPage.getCatalogDeprecatedBadge()).toContainText(DEPRECATED_BADGE, {
       timeout: 60_000,
     });
     await expectDeprecatedWarning(
@@ -271,7 +269,7 @@ test.describe('Deprecated operator warnings', { tag: ['@admin'] }, () => {
 
     const catalogPage = new CatalogPage(page);
     await catalogPage.navigateToPath(getInstallPageUrl());
-    await expect(catalogPage.getDeprecatedWarningBadge()).toContainText(DEPRECATED_BADGE, {
+    await expect(catalogPage.getCatalogDeprecatedBadge()).toContainText(DEPRECATED_BADGE, {
       timeout: 60_000,
     });
     await expectDeprecatedWarning(
