@@ -140,7 +140,7 @@ const config: Configuration = {
   },
   performance: {
     // The maximum size in MiB of the entrypoint and generated files permitted by analyze.sh
-    maxEntrypointSize: 8.3 * 1048576,
+    maxEntrypointSize: 8.6 * 1048576,
     maxAssetSize: 3.71 * 1048576, // the size of the monaco-editor chunk
   },
   devServer: {
@@ -191,6 +191,9 @@ const config: Configuration = {
                   runtime: 'automatic',
                   development: REACT_REFRESH,
                   refresh: REACT_REFRESH,
+                },
+                reactCompiler: {
+                  target: '19',
                 },
               },
               target: 'es2021',
