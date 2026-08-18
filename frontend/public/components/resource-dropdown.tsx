@@ -17,7 +17,6 @@ import {
 } from '@patternfly/react-core';
 import { RhUiCloseIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
-import { Set as ImmutableSet } from 'immutable';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -31,12 +30,12 @@ const RECENT_SEARCH_ITEMS = 5;
 const MAX_VISIBLE_ITEMS = 250;
 
 // Blocklist known duplicate resources.
-const blocklistGroups = ImmutableSet([
+const blocklistGroups = new Set([
   // Prefer rbac.authorization.k8s.io/v1, which has the same resources.
   'authorization.openshift.io',
 ]);
 
-const blocklistResources = ImmutableSet([
+const blocklistResources = new Set([
   // Prefer core/v1
   'events.k8s.io/v1beta1.Event',
 ]);

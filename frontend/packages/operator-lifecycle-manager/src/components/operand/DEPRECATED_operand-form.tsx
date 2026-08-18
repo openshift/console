@@ -21,7 +21,6 @@ import {
 } from '@patternfly/react-core';
 import { RhUiMinusCircleIcon, RhUiAddCircleFillIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
-import * as Immutable from 'immutable';
 import type { JSONSchema6, JSONSchema6TypeName } from 'json-schema';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -192,7 +191,7 @@ const defaultValueFor = (capabilities: Capability[]): any => {
 
   // Resource requirement fields
   if (capabilities.includes(SpecCapability.resourceRequirements)) {
-    return Immutable.fromJS({
+    return {
       limits: {
         cpu: '',
         memory: '',
@@ -203,23 +202,24 @@ const defaultValueFor = (capabilities: Capability[]): any => {
         memory: '',
         'ephemeral-storage': '',
       },
-    });
+    };
   }
 
   // Update strategy
   if (capabilities.includes(SpecCapability.updateStrategy)) {
-    return Immutable.fromJS({
+    return {
       type: 'RollingUpdate',
       rollingUpdate: {
         maxUnavailable: '',
         maxSurge: '',
       },
-    });
+    };
   }
 
   // Node and pod affinities
   if (capabilities.includes(SpecCapability.nodeAffinity)) {
-    return Immutable.fromJS(DEFAULT_NODE_AFFINITY).setIn(
+    return _.set(
+      _.cloneDeep(DEFAULT_NODE_AFFINITY),
       ['preferredDuringSchedulingIgnoredDuringExecution', 'weight'],
       '',
     );
@@ -229,7 +229,8 @@ const defaultValueFor = (capabilities: Capability[]): any => {
     capabilities.includes(SpecCapability.podAffinity) ||
     capabilities.includes(SpecCapability.podAntiAffinity)
   ) {
-    return Immutable.fromJS(DEFAULT_POD_AFFINITY).setIn(
+    return _.set(
+      _.cloneDeep(DEFAULT_POD_AFFINITY),
       ['preferredDuringSchedulingIgnoredDuringExecution', 'weight'],
       '',
     );
@@ -512,23 +513,21 @@ export const DEPRECATED_CreateOperandForm: FC<OperandFormProps> = ({
   const { t } = useTranslation('olm');
   const params = useParams();
   const navigate = useNavigate();
-  const immutableFormData = Immutable.fromJS(formData);
   const handleFormDataUpdate = (path: string, value: any): void => {
     const { regexMatch, index, pathBeforeIndex, pathAfterIndex } = parseArrayPath(path);
 
-    // Immutable will not initialize a deep path as a List if it includes an integer, so we need to manually
-    // initialize non-existent array properties to a List instance before updating state at that path.
     if (regexMatch && index === 0) {
-      const existing = immutableFormData.getIn([...pathToArray(pathBeforeIndex), 0]);
-      const item = Immutable.Map(existing || {}).setIn(pathToArray(pathAfterIndex), value);
-      const list = Immutable.List([item]);
-      onChange(immutableFormData.setIn(pathToArray(pathBeforeIndex), list).toJS());
+      const existing = _.get(formData, [...pathToArray(pathBeforeIndex), 0]) || {};
+      const item = _.set(_.cloneDeep(existing), pathToArray(pathAfterIndex), value);
+      onChange(_.set(_.cloneDeep(formData), pathToArray(pathBeforeIndex), [item]));
     }
-    onChange(immutableFormData.setIn(pathToArray(path), value).toJS());
+    onChange(_.set(_.cloneDeep(formData), pathToArray(path), value));
   };
 
   const handleFormDataDelete = (path) => {
-    onChange(immutableFormData.deleteIn(pathToArray(path)).toJS());
+    const cloned = _.cloneDeep(formData);
+    _.unset(cloned, pathToArray(path));
+    onChange(cloned);
   };
 
   // Map providedAPI spec descriptors and openAPI spec properties to OperandField[] array
@@ -563,9 +562,9 @@ export const DEPRECATED_CreateOperandForm: FC<OperandFormProps> = ({
   });
 
   const labelTags = useMemo(() => {
-    const formValue = immutableFormData.getIn(['metadata', 'labels']);
-    return SelectorInput.arrayify(_.isFunction(formValue?.toJS) ? formValue.toJS() : {});
-  }, [immutableFormData]);
+    const formValue = _.get(formData, ['metadata', 'labels']);
+    return SelectorInput.arrayify(_.isObject(formValue) && !_.isArray(formValue) ? formValue : {});
+  }, [formData]);
 
   const [error, setError] = useState<string>();
 
@@ -668,15 +667,15 @@ export const DEPRECATED_CreateOperandForm: FC<OperandFormProps> = ({
     }));
   }, [groupFields]);
 
-  const getFormData = (path): any => immutableFormData.getIn(pathToArray(path));
+  const getFormData = (path): any => _.get(formData, pathToArray(path));
 
   const submit = (e) => {
     e.preventDefault();
     k8sCreate(
       model,
       model.namespaced
-        ? immutableFormData.setIn(['metadata', 'namespace'], params.ns).toJS()
-        : immutableFormData.toJS(),
+        ? _.set(_.cloneDeep(formData), ['metadata', 'namespace'], params.ns)
+        : _.cloneDeep(formData),
     )
       .then((res) => postFormCallback(res))
       .then(() => next && navigate(next))
@@ -741,9 +740,9 @@ export const DEPRECATED_CreateOperandForm: FC<OperandFormProps> = ({
             <DescriptionListTerm>{t('Limits')}</DescriptionListTerm>
             <DescriptionListDescription>
               <ResourceRequirements
-                cpu={currentValue.getIn?.(_.toPath(cpuLimitsPath))}
-                memory={currentValue.getIn?.(_.toPath(memoryLimitsPath))}
-                storage={currentValue.getIn?.(_.toPath(storageLimitsPath))}
+                cpu={_.get(currentValue, _.toPath(cpuLimitsPath))}
+                memory={_.get(currentValue, _.toPath(memoryLimitsPath))}
+                storage={_.get(currentValue, _.toPath(storageLimitsPath))}
                 onChangeCPU={(value) => handleFormDataUpdate(`${path}.${cpuLimitsPath}`, value)}
                 onChangeMemory={(value) =>
                   handleFormDataUpdate(`${path}.${memoryLimitsPath}`, value)
@@ -759,9 +758,9 @@ export const DEPRECATED_CreateOperandForm: FC<OperandFormProps> = ({
             <DescriptionListTerm>{t('Requests')}</DescriptionListTerm>
             <DescriptionListDescription>
               <ResourceRequirements
-                cpu={currentValue.getIn?.(_.toPath(cpuRequestsPath))}
-                memory={currentValue.getIn?.(_.toPath(memoryRequestsPath))}
-                storage={currentValue.getIn?.(_.toPath(storageRequestsPath))}
+                cpu={_.get(currentValue, _.toPath(cpuRequestsPath))}
+                memory={_.get(currentValue, _.toPath(memoryRequestsPath))}
+                storage={_.get(currentValue, _.toPath(storageRequestsPath))}
                 onChangeCPU={(value) => handleFormDataUpdate(`${path}.${cpuRequestsPath}`, value)}
                 onChangeMemory={(value) =>
                   handleFormDataUpdate(`${path}.${memoryRequestsPath}`, value)
@@ -857,9 +856,9 @@ export const DEPRECATED_CreateOperandForm: FC<OperandFormProps> = ({
       const maxSurgePath = `rollingUpdate.maxSurge`;
       return (
         <ConfigureUpdateStrategy
-          strategyType={currentValue.get('type')}
-          maxUnavailable={currentValue.getIn(_.toPath(maxUnavailablePath))}
-          maxSurge={currentValue.getIn(_.toPath(maxSurgePath))}
+          strategyType={currentValue?.type}
+          maxUnavailable={_.get(currentValue, _.toPath(maxUnavailablePath))}
+          maxSurge={_.get(currentValue, _.toPath(maxSurgePath))}
           onChangeStrategyType={(value) => handleFormDataUpdate(`${path}.type`, value)}
           onChangeMaxUnavailable={(value) =>
             handleFormDataUpdate(`${path}.${maxUnavailablePath}`, value)
@@ -902,8 +901,8 @@ export const DEPRECATED_CreateOperandForm: FC<OperandFormProps> = ({
       return (
         <div style={{ marginLeft: '15px' }}>
           <NodeAffinity
-            affinity={currentValue.toJS() as NodeAffinityType}
-            onChange={(value) => handleFormDataUpdate(path, Immutable.fromJS(value))}
+            affinity={currentValue as NodeAffinityType}
+            onChange={(value) => handleFormDataUpdate(path, value)}
             uid={id}
           />
         </div>
@@ -916,8 +915,8 @@ export const DEPRECATED_CreateOperandForm: FC<OperandFormProps> = ({
       return (
         <div style={{ marginLeft: '15px' }}>
           <PodAffinity
-            affinity={currentValue.toJS()}
-            onChange={(value) => handleFormDataUpdate(path, Immutable.fromJS(value))}
+            affinity={currentValue}
+            onChange={(value) => handleFormDataUpdate(path, value)}
             uid={id}
           />
         </div>
@@ -1127,7 +1126,7 @@ export const DEPRECATED_CreateOperandForm: FC<OperandFormProps> = ({
                     onChange={({ target: { value } }) =>
                       handleFormDataUpdate('metadata.name', value)
                     }
-                    value={immutableFormData.getIn(['metadata', 'name']) || 'example'}
+                    value={_.get(formData, ['metadata', 'name']) || 'example'}
                     id="DEPRECATED_root_metadata_name"
                     required
                   />
@@ -1143,10 +1142,7 @@ export const DEPRECATED_CreateOperandForm: FC<OperandFormProps> = ({
                 </label>
                 <SelectorInput
                   onChange={(value) =>
-                    handleFormDataUpdate(
-                      'metadata.labels',
-                      Immutable.fromJS(SelectorInput.objectify(value)),
-                    )
+                    handleFormDataUpdate('metadata.labels', SelectorInput.objectify(value))
                   }
                   tags={labelTags}
                 />

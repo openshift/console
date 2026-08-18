@@ -42,8 +42,8 @@ export const CreateYAMLInner: FC<CreateYAMLProps> = ({
     }
     const resolvedTemplate =
       template ||
-      yamlTemplates.getIn([referenceForModel(kindObj), 'default']) ||
-      yamlTemplates.getIn(['DEFAULT', 'default']);
+      yamlTemplates?.[referenceForModel(kindObj)]?.default ||
+      yamlTemplates?.DEFAULT?.default;
     if (!resolvedTemplate) {
       return {};
     }
@@ -55,8 +55,7 @@ export const CreateYAMLInner: FC<CreateYAMLProps> = ({
 
     const { metadata, spec } = parsed;
     const { crd, kind, namespaced } = kindObj;
-    const isDefaultTemplate =
-      crd && resolvedTemplate === yamlTemplates.getIn(['DEFAULT', 'default']);
+    const isDefaultTemplate = crd && resolvedTemplate === yamlTemplates?.DEFAULT?.default;
     return {
       ...parsed,
       kind,
