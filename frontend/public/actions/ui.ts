@@ -190,7 +190,7 @@ export const startImpersonate =
     const imp = getImpersonate(getState());
     if ((imp?.name && imp.name !== name) || (imp?.kind && imp.kind !== kind)) {
       // eslint-disable-next-line no-console
-      console.warn(`Impersonate race detected: ${name} vs ${imp.name} / ${kind} ${imp.kind}`);
+      console.warn('Impersonate race detected. Ignoring stale impersonation request.');
       return;
     }
 
