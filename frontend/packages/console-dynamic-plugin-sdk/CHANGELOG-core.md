@@ -10,6 +10,10 @@ For current development version of Console, use `4.x.0-prerelease.n` packages.
 For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility
 table in [Console dynamic plugins README](./README.md).
 
+## 5.1.0-prerelease.1 - TBD
+
+- Removed `immutable` dependency from the redux store and from the package ([CONSOLE-5001], [#17024])
+
 ## 4.23.0-prerelease.6 - TBD
 
 - Add an `onCancel` prop to `ResourceYAMLEditor` to allow overriding the default cancel behavior ([CONSOLE-5438], [#16941])
@@ -245,6 +249,7 @@ table in [Console dynamic plugins README](./README.md).
 [CONSOLE-4951]: https://issues.redhat.com/browse/CONSOLE-4951
 [CONSOLE-4954]: https://issues.redhat.com/browse/CONSOLE-4954
 [CONSOLE-4990]: https://issues.redhat.com/browse/CONSOLE-4990
+[CONSOLE-5001]: https://issues.redhat.com/browse/CONSOLE-5001
 [CONSOLE-5039]: https://issues.redhat.com/browse/CONSOLE-5039
 [CONSOLE-5050]: https://issues.redhat.com/browse/CONSOLE-5050
 [CONSOLE-5063]: https://issues.redhat.com/browse/CONSOLE-5063
@@ -355,3 +360,4 @@ table in [Console dynamic plugins README](./README.md).
 [#16750]: https://github.com/openshift/console/pull/16750
 [#16762]: https://github.com/openshift/console/pull/16762
 [#16941]: https://github.com/openshift/console/pull/16941
+[#17024]: https://github.com/openshift/console/pull/17024
