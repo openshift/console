@@ -231,9 +231,9 @@ const HelmInstallUpgradePage: FC = () => {
 
   const handleNamespaceChange = (ns: string) => {
     if (ns === ALL_NAMESPACES_KEY) {
-      navigate(`/helm/all-namespaces`);
+      navigate(`/helm/all-namespaces${location.search}`);
     } else if (ns !== namespace) {
-      navigate(`/helm/ns/${ns}`);
+      navigate(`/helm/ns/${ns}${location.search}`);
     }
   };
 
