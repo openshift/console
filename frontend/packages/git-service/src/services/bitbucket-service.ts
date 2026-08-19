@@ -36,7 +36,8 @@ export class BitbucketService extends BaseService {
   constructor(gitsource: GitSource) {
     super(gitsource);
     this.metadata = this.getRepoMetadata();
-    if (!this.metadata.host.includes('bitbucket.org')) {
+    const isBitbucketCloud = new URL(this.metadata.host).hostname === 'bitbucket.org';
+    if (!isBitbucketCloud) {
       this.baseURL = `${this.metadata.host}/rest/api/1.0`;
       this.isServer = true;
     }
@@ -44,6 +45,11 @@ export class BitbucketService extends BaseService {
 
   protected getAuthProvider = (): any => {
     switch (this.gitsource.secretType) {
+      case SecretType.PERSONAL_ACCESS_TOKEN:
+      case SecretType.OAUTH: {
+        const { password } = this.gitsource.secretContent;
+        return { Authorization: `Bearer ${Base64.decode(password)}` };
+      }
       case SecretType.BASIC_AUTH: {
         const { username, password } = this.gitsource.secretContent;
         const encodedAuth = Base64.encode(`${Base64.decode(username)}:${Base64.decode(password)}`);
@@ -73,6 +79,33 @@ export class BitbucketService extends BaseService {
       headers: requestHeaders,
       ...(body && { body: JSON.stringify(body) }),
     });
+
+    // Bitbucket Cloud may reject Basic Auth for API calls; retry with Bearer token
+    if (
+      response.status === 401 &&
+      !this.isServer &&
+      this.gitsource.secretType === SecretType.BASIC_AUTH &&
+      this.gitsource.secretContent?.password
+    ) {
+      const bearerHeaders = {
+        Accept: 'application/json',
+        Authorization: `Bearer ${Base64.decode(this.gitsource.secretContent.password)}`,
+        ...headers,
+      };
+      const retryResponse = await fetch(url, {
+        method: requestMethod || 'GET',
+        headers: bearerHeaders,
+        ...(body && { body: JSON.stringify(body) }),
+      });
+      if (!retryResponse.ok) {
+        throw retryResponse;
+      }
+      if (retryResponse.headers.get('Content-Type') === 'text/plain') {
+        return retryResponse.text();
+      }
+      return retryResponse.json();
+    }
+
     if (!response.ok) {
       throw response;
     }
@@ -116,6 +149,7 @@ export class BitbucketService extends BaseService {
         case 429: {
           return RepoStatus.RateLimitExceeded;
         }
+        case 401:
         case 403: {
           return RepoStatus.PrivateRepo;
         }
