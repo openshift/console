@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useCallback, useRef, useEffect, useLayoutEffect } from 'react';
+import { useCallback, useRef, useEffect } from 'react';
 import type {
   FeatureFlagHookProvider,
   ModelFeatureFlag,
@@ -23,46 +23,41 @@ import { FeatureFlagExtensionHookResolver } from './FeatureFlagExtensionHookReso
 /**
  * React hook that returns a stable {@link SetFeatureFlag} callback.
  *
- * Sync calls during render are deferred until after layout effects so we avoid
- * "Cannot update a component while rendering" with react-redux 8.x (handlers may
- * invoke this while rendering). Async calls (e.g. after a fetch in a
- * console.flag/hookProvider) flush immediately so flag-gated extensions update
- * without waiting for an unrelated re-render.
+ * Updates are always flushed on a microtask so handlers invoked during render
+ * (including child FeatureFlagExtensionHookResolver re-renders) never dispatch
+ * synchronously, while async callers (e.g. after a fetch in a
+ * console.flag/hookProvider) still update without waiting for an unrelated re-render.
  */
 export const useFeatureFlagController = () => {
   const dispatch = useConsoleDispatch();
 
-  // Queue of flag updates to be dispatched after render
   const pendingUpdatesRef = useRef<Map<string, boolean>>(new Map());
-  const isRenderingRef = useRef(true);
+  const flushScheduledRef = useRef(false);
 
-  // Mark the render phase; cleared in the layout effect below.
-  isRenderingRef.current = true;
-
-  // Always dispatch pending values. Do not keep a local FLAGS snapshot for
-  // change-detection: flags are also updated elsewhere (e.g. detectFeatures /
-  // setFlag consumers read via useFlag), so a shadow copy can go stale.
-  // Immutable Map.set is a no-op when the value is unchanged.
   const flushPendingUpdates = useCallback(() => {
+    flushScheduledRef.current = false;
     pendingUpdatesRef.current.forEach((enabled, flag) => {
       dispatch(setFlag(flag, enabled));
     });
     pendingUpdatesRef.current.clear();
   }, [dispatch]);
 
-  useLayoutEffect(() => {
-    isRenderingRef.current = false;
-    flushPendingUpdates();
-  });
+  const scheduleFlush = useCallback(() => {
+    if (flushScheduledRef.current) {
+      return;
+    }
+    flushScheduledRef.current = true;
+    queueMicrotask(() => {
+      flushPendingUpdates();
+    });
+  }, [flushPendingUpdates]);
 
   return useCallback<SetFeatureFlag>(
     (flag, enabled) => {
       pendingUpdatesRef.current.set(flag, enabled);
-      if (!isRenderingRef.current) {
-        flushPendingUpdates();
-      }
+      scheduleFlush();
     },
-    [flushPendingUpdates],
+    [scheduleFlush],
   );
 };
 
