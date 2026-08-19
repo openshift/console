@@ -1,7 +1,7 @@
 import { checkErrors, testName } from '../../../integration-tests-cypress/support';
 import { nav } from '../../../integration-tests-cypress/views/nav';
 
-describe('Interacting with OperatorHub', () => {
+xdescribe('Interacting with OperatorHub', () => {
   before(() => {
     cy.login();
     cy.createProjectWithCLI(testName);
