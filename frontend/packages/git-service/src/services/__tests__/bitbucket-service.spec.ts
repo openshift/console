@@ -1,5 +1,5 @@
-import * as nock from 'nock';
 import { Base64 } from 'js-base64';
+import * as nock from 'nock';
 import type { BuildType } from '../../types/build-tools';
 import type { GitSource } from '../../types/git';
 import { SecretType } from '../../types/git';
