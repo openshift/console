@@ -169,11 +169,11 @@ export class OperatorInstallPage extends BasePage {
   }
 
   getChannelOption(channel: string): Locator {
-    return this.page.getByTestId(`channel-option-${channel}`).getByRole('button');
+    return this.page.getByTestId(`channel-option-${channel}`);
   }
 
   getVersionOption(version: string): Locator {
-    return this.page.getByTestId(`version-option-${version}`).getByRole('button');
+    return this.page.getByTestId(`version-option-${version}`);
   }
 
   getChannelSelect(): Locator {

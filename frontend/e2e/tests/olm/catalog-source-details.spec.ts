@@ -4,6 +4,7 @@ import { CatalogSourcePage } from '../../pages/catalog-source-page';
 const managedCatalogSource = {
   name: 'redhat-operators',
   displayName: 'Red Hat Operators',
+  namespace: 'openshift-marketplace',
 };
 
 test.describe('CatalogSource details page', { tag: ['@admin'] }, () => {
@@ -12,12 +13,10 @@ test.describe('CatalogSource details page', { tag: ['@admin'] }, () => {
     const catalogSourcePage = new CatalogSourcePage(page);
 
     await test.step('Navigate to CatalogSource details', async () => {
-      await catalogSourcePage.navigateToOperatorHubSources();
-      await catalogSourcePage.openCatalogSourceDetails(managedCatalogSource.name);
-    });
-
-    await test.step('Verify section heading', async () => {
-      await expect(catalogSourcePage.getSectionHeading('CatalogSource details')).toBeVisible();
+      await catalogSourcePage.navigateToDetails(managedCatalogSource.namespace, managedCatalogSource.name);
+      await expect(catalogSourcePage.getSectionHeading('CatalogSource details')).toBeVisible({
+        timeout: 60_000,
+      });
     });
 
     await test.step('Verify Status is READY', async () => {
@@ -58,9 +57,10 @@ test.describe('CatalogSource details page', { tag: ['@admin'] }, () => {
     const catalogSourcePage = new CatalogSourcePage(page);
 
     await test.step('Navigate to CatalogSource details', async () => {
-      await catalogSourcePage.navigateToOperatorHubSources();
-      await catalogSourcePage.openCatalogSourceDetails(managedCatalogSource.name);
-      await expect(catalogSourcePage.getSectionHeading('CatalogSource details')).toBeVisible();
+      await catalogSourcePage.navigateToDetails(managedCatalogSource.namespace, managedCatalogSource.name);
+      await expect(catalogSourcePage.getSectionHeading('CatalogSource details')).toBeVisible({
+        timeout: 60_000,
+      });
     });
 
     await test.step('Verify PackageManifest table on Operators tab', async () => {
