@@ -166,7 +166,7 @@ Conditions have TWO important fields you MUST check:
 <output_format>
 ## Summary
 **Upgrade status**
-- **Current phase**: [Extract from Progressing condition message, e.g., "Progressing (Working towards 4.21.7: X of Y done (Z% complete))"]
+- **Current phase**: [Extract from Progressing condition message, e.g., "Progressing (Working towards <target version>: X of Y done (Z% complete))"]
 - **Elapsed time**: [Human-readable duration from upgrade start to current time]
 - **Progress indicators**: [Specific progress details and any operators currently updating]
 **Component status** (Total: ${operatorCounts.total} ClusterOperators)
@@ -191,10 +191,10 @@ Conditions have TWO important fields you MUST check:
 **Recent progress events** (Last 30 minutes):
 - **Event summary**: [Count of events related to upgrade progress]
 - **Warning signs**: [Any warning events that might slow progress]
- - Example: "ImagePullBackOff in 3 operators - image download issues may slow upgrade"
+ - Example: "ImagePullBackOff in N operators - image download issues may slow upgrade"
  - Example: "No concerning events - upgrade progressing normally"
 - **Positive indicators**: [Events showing healthy progress]
- - Example: "12 operators successfully updated to target version"
+ - Example: "N operators successfully updated to target version"
 **Health indicators**
 - **Issues detected**: [Any warning signs, delays, or specific operator issues requiring attention]
 - **Cluster status**: [Overall cluster condition health based on ClusterVersion conditions]
