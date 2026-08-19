@@ -12,7 +12,13 @@ jest.mock('@console/dynamic-plugin-sdk/src', () => ({
 let capturedOnNamespaceChange: (ns: string) => void;
 jest.mock('@console/dev-console/src/components/NamespacedPage', () => ({
   __esModule: true,
-  default: ({ children, onNamespaceChange }: { children: ReactNode; onNamespaceChange: (ns: string) => void }) => {
+  default: ({
+    children,
+    onNamespaceChange,
+  }: {
+    children: ReactNode;
+    onNamespaceChange: (ns: string) => void;
+  }) => {
     capturedOnNamespaceChange = onNamespaceChange;
     return <div data-test="namespaced-page">{children}</div>;
   },
@@ -73,7 +79,8 @@ const LocationDisplay = () => {
 };
 
 describe('HelmInstallUpgradePage', () => {
-  const chartSearchParams = '?chartURL=https%3A%2F%2Fexample.com%2Fchart.tgz&indexEntry=repo--chart--1.0.0';
+  const chartSearchParams =
+    '?chartURL=https%3A%2F%2Fexample.com%2Fchart.tgz&indexEntry=repo--chart--1.0.0';
 
   const renderComponent = (initialPath: string = `/helm/ns/foo${chartSearchParams}`) =>
     render(
