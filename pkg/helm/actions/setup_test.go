@@ -1,6 +1,7 @@
 package actions
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"net"
@@ -79,19 +80,19 @@ func startTests(m *testing.M) (exitCode int) {
 	defer func() {
 		// Cleanup: log errors but don't fail — best-effort teardown
 		if _, err := ExecuteScript("./testdata/chartmuseum-stop.sh", false); err != nil {
-			fmt.Println("Warning: chartmuseum-stop.sh failed:", err)
+			fmt.Fprintln(os.Stderr, "Warning: chartmuseum-stop.sh failed:", err)
 			exitCode = 1
 		}
 		if _, err := ExecuteScript("./testdata/zot-stop.sh", false); err != nil {
-			fmt.Println("Warning: zot-stop.sh failed:", err)
+			fmt.Fprintln(os.Stderr, "Warning: zot-stop.sh failed:", err)
 			exitCode = 1
 		}
 		if _, err := ExecuteScript("./testdata/cleanupNonTls.sh", false); err != nil {
-			fmt.Println("Warning: cleanupNonTls.sh failed:", err)
+			fmt.Fprintln(os.Stderr, "Warning: cleanupNonTls.sh failed:", err)
 			exitCode = 1
 		}
 		if _, err := ExecuteScript("./testdata/cleanup.sh", false); err != nil {
-			fmt.Println("Warning: cleanup.sh failed:", err)
+			fmt.Fprintln(os.Stderr, "Warning: cleanup.sh failed:", err)
 			exitCode = 1
 		}
 
@@ -284,18 +285,15 @@ func waitForTCP(addr string, timeout time.Duration, cmd *exec.Cmd, logFiles ...s
 // when the process dies immediately after starting.
 func ExecuteScript(filepath string, waitForCompletion bool, args ...string) (*exec.Cmd, error) {
 	tlsCmd := exec.Command(filepath, args...)
-	tlsCmd.Stdout = os.Stdout
-	tlsCmd.Stderr = os.Stderr
-	err := tlsCmd.Start()
-	if err != nil {
-		bytes, _ := io.ReadAll(os.Stderr)
-		return nil, fmt.Errorf("Error starting program :%s:%s:%w", filepath, string(bytes), err)
+	var stderrBuf bytes.Buffer
+	tlsCmd.Stdout = os.Stderr
+	tlsCmd.Stderr = io.MultiWriter(os.Stderr, &stderrBuf)
+	if err := tlsCmd.Start(); err != nil {
+		return nil, fmt.Errorf("Error starting program :%s:%w", filepath, err)
 	}
 	if waitForCompletion {
-		err = tlsCmd.Wait()
-		if err != nil {
-			bytes, _ := io.ReadAll(os.Stderr)
-			return nil, fmt.Errorf("Error waiting program :%s:%s:%w", filepath, string(bytes), err)
+		if err := tlsCmd.Wait(); err != nil {
+			return nil, fmt.Errorf("Error waiting program :%s:%s:%w", filepath, stderrBuf.String(), err)
 		}
 	}
 	return tlsCmd, nil
