@@ -1,12 +1,7 @@
 /**
- * Generate a randomized test namespace name
- * Format: test-{5 random lowercase letters}
+ * Generate a unique test namespace name based on the current timestamp.
+ * Format: test-{base36 timestamp} — unique across runs, no collision risk.
  */
 export function generateTestNamespace(): string {
-  const chars = 'abcdefghijklmnopqrstuvwxyz';
-  let suffix = '';
-  for (let i = 0; i < 5; i++) {
-    suffix += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return `test-${suffix}`;
+  return `test-${Date.now().toString(36)}`;
 }

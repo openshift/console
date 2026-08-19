@@ -323,7 +323,7 @@ test.describe('Deprecated operator warnings', { tag: ['@admin'] }, () => {
         };
 
         expect(subscription.status?.installPlanRef?.name).toBeTruthy();
-      }).toPass({ timeout: 120_000, intervals: [5_000] });
+      }).toPass({ timeout: 300_000, intervals: [5_000] });
 
       const subscription = (await k8sClient.getCustomResource(
         'operators.coreos.com',

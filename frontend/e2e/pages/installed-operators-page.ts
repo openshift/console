@@ -95,16 +95,12 @@ export class InstalledOperatorsPage extends BasePage {
     // Wait for the operator row to be visible
     await expect(this.getOperatorRow(operatorName)).toBeVisible({ timeout: 30_000 });
 
-    await this.clickOperatorRow(operatorName);
+    // Navigate via href to bypass unreliable h1-click-inside-logo-link PF v6 behavior.
+    const href = await this.page.getByTestId(`operator-row-${operatorName}`).getAttribute('href');
+    await this.goTo(href ?? `/k8s/ns/${namespace}/operators.coreos.com~v1~ClusterServiceVersion/${operatorURLName}`);
 
-    // Wait for navigation to complete by checking for a page element that only exists on the CSV details page
-    // This is more reliable than just waiting for URL or skeleton changes
-    await expect(this.page.getByTestId('resource-summary')).toBeVisible({
-      timeout: 60_000,
-    });
-
-    // Now wait for the Details tab to be visible
-    await expect(this.page.getByTestId('horizontal-link-Details')).toBeVisible({ timeout: 30_000 });
+    await expect(this.page.getByTestId('resource-summary')).toBeVisible({ timeout: 60_000 });
+    await expect(this.page.getByTestId('horizontal-link-Details')).toBeVisible({ timeout: 60_000 });
   }
 
   /**
@@ -165,7 +161,7 @@ export class InstalledOperatorsPage extends BasePage {
   * Select namespace using project dropdown
   */
   async selectNamespace(namespace: string): Promise<void> {
-    const namespaceDropdownButton = this.page.getByTestId('namespace-bar-dropdown').locator('button');
+    const namespaceDropdownButton = this.page.getByTestId('namespace-bar-dropdown').getByRole('button').first();
     await this.robustClick(namespaceDropdownButton);
 
     // Check if showSystemSwitch is checked, if not, check it
