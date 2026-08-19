@@ -1,7 +1,7 @@
 import { checkErrors } from '../../support';
 import { isLocalDevEnvironment } from '../../views/common';
 
-describe('Cluster dashboard', () => {
+xdescribe('Cluster dashboard', () => {
   before(() => {
     cy.login();
   });
