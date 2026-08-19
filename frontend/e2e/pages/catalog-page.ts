@@ -88,8 +88,9 @@ export class CatalogPage extends BasePage {
   // Software Catalog tiles and the catalog details drawer render deprecation via the generic
   // CatalogBadges component, which derives data-test from the badge text (`${text}-badge`) —
   // not the OLM-specific `deprecated-operator-warning-badge` used on CSV/installed-operator pages.
+  // Scoped to the details dialog since the background tile grid renders the same badge testid.
   getCatalogDeprecatedBadge(): Locator {
-    return this.page.getByTestId('Deprecated-badge');
+    return this.page.getByRole('dialog').getByTestId('Deprecated-badge');
   }
 
   getDeprecatedWarning(testId: string): Locator {

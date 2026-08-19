@@ -231,11 +231,11 @@ test.describe('Deprecated operator warnings', { tag: ['@admin'] }, () => {
     const installPage = new OperatorInstallPage(page);
     await catalogPage.navigateToPath(getOperatorDetailsUrl());
 
-    await installPage.getChannelSelect().click();
+    await installPage.openChannelSelect();
     await expect(installPage.getDeprecatedWarningIcon('channel')).toBeVisible({
       timeout: 30_000,
     });
-    await installPage.getChannelOption('alpha').click();
+    await installPage.selectChannelOption('alpha');
 
     await expectDeprecatedWarning(
       catalogPage,
@@ -251,11 +251,11 @@ test.describe('Deprecated operator warnings', { tag: ['@admin'] }, () => {
     const installPage = new OperatorInstallPage(page);
     await catalogPage.navigateToPath(getOperatorDetailsUrl());
 
-    await installPage.getVersionSelect().click();
+    await installPage.openVersionSelect();
     await expect(installPage.getDeprecatedWarningIcon('version')).toBeVisible({
       timeout: 30_000,
     });
-    await installPage.getVersionOption(DEPRECATED_VERSION).click();
+    await installPage.selectVersionOption(DEPRECATED_VERSION);
 
     await expectDeprecatedWarning(
       catalogPage,
@@ -269,7 +269,10 @@ test.describe('Deprecated operator warnings', { tag: ['@admin'] }, () => {
 
     const catalogPage = new CatalogPage(page);
     await catalogPage.navigateToPath(getInstallPageUrl());
-    await expect(catalogPage.getCatalogDeprecatedBadge()).toContainText(DEPRECATED_BADGE, {
+    // The install/subscribe page shows the deprecation Alert (checked below) but does not
+    // render a "Deprecated" CatalogBadges badge — that only appears on the catalog tile and
+    // the catalog details drawer.
+    await expect(catalogPage.getPageHeading()).toContainText('Install Operator', {
       timeout: 60_000,
     });
     await expectDeprecatedWarning(

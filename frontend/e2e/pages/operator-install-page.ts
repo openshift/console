@@ -184,6 +184,22 @@ export class OperatorInstallPage extends BasePage {
     return this.versionSelect;
   }
 
+  async openChannelSelect(): Promise<void> {
+    await this.robustClick(this.channelSelect);
+  }
+
+  async openVersionSelect(): Promise<void> {
+    await this.robustClick(this.versionSelect);
+  }
+
+  async selectChannelOption(channel: string): Promise<void> {
+    await this.robustClick(this.getChannelOption(channel));
+  }
+
+  async selectVersionOption(version: string): Promise<void> {
+    await this.robustClick(this.getVersionOption(version));
+  }
+
   getInstallButton(): Locator {
     return this.installButton;
   }

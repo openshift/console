@@ -26,6 +26,15 @@ export class CatalogSourcePage extends BasePage {
     await this.navigateToTab(this.sourcesTab);
   }
 
+  // The OperatorHub "Sources" tab list is scoped to the currently active project, which is
+  // unreliable for a CatalogSource created in a one-off test namespace. Navigate to its details
+  // page directly instead of locating it via that tab.
+  async navigateToDetails(namespace: string, name: string): Promise<void> {
+    await this.goTo(
+      `/k8s/ns/${namespace}/operators.coreos.com~v1alpha1~CatalogSource/${name}`,
+    );
+  }
+
   async openCatalogSourceDetails(name: string): Promise<void> {
     await this.robustClick(this.page.getByTestId(name));
   }
