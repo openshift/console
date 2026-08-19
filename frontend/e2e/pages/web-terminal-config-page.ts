@@ -12,7 +12,21 @@ export class WebTerminalConfigPage extends BasePage {
   private readonly saveButton = this.page.getByTestId('save-button');
   private readonly successAlert = this.page.getByTestId('success-alert');
 
-  async navigateToWebTerminalConfig(): Promise<void> {
+  async navigateToWebTerminalConfig(maxRetries = 2): Promise<void> {
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      try {
+        await this.openCustomizeDrawer();
+        await this.clickWebTerminalTab();
+        return;
+      } catch (error) {
+        if (attempt >= maxRetries) throw error;
+        // eslint-disable-next-line playwright/no-wait-for-timeout -- ConsolePlugin may not be registered yet, reload and retry
+        await this.page.waitForTimeout(5_000);
+      }
+    }
+  }
+
+  private async openCustomizeDrawer(): Promise<void> {
     await this.goTo('/k8s/cluster/operator.openshift.io~v1~Console/cluster');
     await this.waitForLoadingComplete(10_000);
     const customizeButton = this.page.getByRole('button', { name: 'Customize' });
@@ -30,12 +44,11 @@ export class WebTerminalConfigPage extends BasePage {
       await this.robustClick(customizeAction);
     }
     await this.waitForLoadingComplete(10_000);
-    await this.clickWebTerminalTab();
   }
 
   async clickWebTerminalTab(): Promise<void> {
     const tab = this.page.getByRole('tab', { name: 'Web Terminal' });
-    await this.robustClick(tab, { timeout: 60_000 });
+    await this.robustClick(tab, { timeout: 20_000 });
     await this.waitForLoadingComplete(5_000);
   }
 

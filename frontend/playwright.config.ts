@@ -135,11 +135,23 @@ export default defineConfig({
       dependencies: ['cluster-setup'],
     },
 
+    {
+      name: 'webterminal-setup',
+      testDir: path.resolve(__dirname, 'e2e', 'setup'),
+      testMatch: 'webterminal.setup.ts',
+      dependencies: ['cluster-setup'],
+    },
+
     ...packages.map((pkg) => ({
       name: pkg,
       testDir: path.resolve(__dirname, 'e2e', 'tests', pkg),
       testIgnore: '**/developer/**',
-      dependencies: pkg === 'knative' ? ['admin-auth', 'knative-setup'] : ['admin-auth'],
+      dependencies:
+        pkg === 'knative'
+          ? ['admin-auth', 'knative-setup']
+          : pkg === 'webterminal'
+            ? ['admin-auth', 'webterminal-setup']
+            : ['admin-auth'],
       use: {
         ...chrome,
         storageState: adminStorageState,
@@ -149,7 +161,8 @@ export default defineConfig({
       ? devPackages.map((pkg) => ({
           name: `${pkg}-developer`,
           testDir: path.resolve(__dirname, 'e2e', 'tests', pkg, 'developer'),
-          dependencies: ['developer-auth'],
+          dependencies:
+            pkg === 'webterminal' ? ['developer-auth', 'webterminal-setup'] : ['developer-auth'],
           use: {
             ...chrome,
             storageState: developerStorageState,
