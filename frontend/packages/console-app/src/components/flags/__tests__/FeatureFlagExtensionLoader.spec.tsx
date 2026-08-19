@@ -5,18 +5,6 @@ import { renderHookWithProviders } from '@console/shared/src/test-utils/unit-tes
 import { createTestPluginStore } from '../../console-operator/__tests__/pluginTestUtils';
 import { useFeatureFlagController } from '../FeatureFlagExtensionLoader';
 
-// unit-test-utils / the FLAGS reducer import @console/internal/plugins at module load.
-// Provide a TestPluginStore via the shared helper so that import succeeds in Jest.
-jest.mock('@console/internal/plugins', () => {
-  const { createTestPluginStore: createStore } = jest.requireActual(
-    '../../console-operator/__tests__/pluginTestUtils',
-  );
-  return {
-    pluginStore: createStore(),
-    featureFlagMiddleware: () => (next) => (action) => next(action),
-  };
-});
-
 const renderController = () =>
   renderHookWithProviders(() => useFeatureFlagController(), {
     pluginStore: createTestPluginStore(),
