@@ -17762,6 +17762,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"nanoid@npm:^2.1.0":
+  version: 2.1.11
+  resolution: "nanoid@npm:2.1.11"
+  checksum: 10c0/8640d17698633ff78b2549ec8d5dffd8f56909bad1cf0da08bf3a4012f98553b1b9f2327a2d7fb3613084f33189a8ab4b889eb4c7939f3f9e242d9fd8ff059d5
+  languageName: node
+  linkType: hard
+
 "nanoid@npm:^3.3.12":
   version: 3.3.18
   resolution: "nanoid@npm:3.3.18"
