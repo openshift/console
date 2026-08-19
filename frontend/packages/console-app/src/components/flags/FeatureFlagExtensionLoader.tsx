@@ -35,11 +35,15 @@ export const useFeatureFlagController = () => {
   const flushScheduledRef = useRef(false);
 
   const flushPendingUpdates = useCallback(() => {
+    // Detach the current batch first so reentrant setFeatureFlag calls during
+    // dispatch (e.g. Redux subscribers) write into a fresh map and can schedule a
+    // follow-up flush instead of being cleared with this batch.
+    const updates = pendingUpdatesRef.current;
+    pendingUpdatesRef.current = new Map();
     flushScheduledRef.current = false;
-    pendingUpdatesRef.current.forEach((enabled, flag) => {
+    updates.forEach((enabled, flag) => {
       dispatch(setFlag(flag, enabled));
     });
-    pendingUpdatesRef.current.clear();
   }, [dispatch]);
 
   const scheduleFlush = useCallback(() => {
