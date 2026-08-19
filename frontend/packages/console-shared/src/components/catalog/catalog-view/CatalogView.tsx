@@ -121,8 +121,11 @@ export const CatalogView: FC<CatalogViewProps> = ({
 
   const handleFilterChange = useCallback(
     (filterType, id, value) => {
-      const updatedFilters = _.set(activeFilters, [filterType, id, 'active'], value);
-      updateURLParams(filterType, getFilterSearchParam(updatedFilters[filterType]), navigate);
+      const updatedFilterGroup = {
+        ...activeFilters[filterType],
+        [id]: { ...activeFilters[filterType]?.[id], active: value },
+      };
+      updateURLParams(filterType, getFilterSearchParam(updatedFilterGroup), navigate);
     },
     [activeFilters, navigate],
   );
@@ -150,13 +153,15 @@ export const CatalogView: FC<CatalogViewProps> = ({
     [navigate],
   );
 
-  const handleShowAllToggle = useCallback((groupName) => {
-    setFilterGroupsShowAll((showAll) => {
-      const updatedShowAll = _.clone(showAll);
-      _.set(updatedShowAll, groupName, !(showAll[groupName] ?? false));
-      return updatedShowAll;
-    });
-  }, []);
+  const handleShowAllToggle = useCallback(
+    (groupName) => {
+      setFilterGroupsShowAll((showAll) => ({
+        ...showAll,
+        [groupName]: !(showAll[groupName] ?? false),
+      }));
+    },
+    [setFilterGroupsShowAll],
+  );
 
   const catalogCategories = useMemo<CatalogCategory[]>(() => {
     const allCategory = { id: ALL_CATEGORY, label: t('All items') };

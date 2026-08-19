@@ -22,17 +22,25 @@ const Detector: FC<DetectorProps> = ({
   detectors,
 }) => {
   const location = useLocation();
-  let detectedPerspective: string | undefined;
   const defaultPerspective =
     perspectiveExtensions.find((p) => p.properties.default) || perspectiveExtensions[0];
   const detectionResults = detectors.map((detector) => (detector as any)?.());
 
-  const detectionComplete = detectionResults.every((result, index) => {
+  const detectedPerspectiveIndex = detectionResults.findIndex((result) => {
     if (result) {
       const [enablePerspective, loading] = result;
-      if (!detectedPerspective && !loading && enablePerspective) {
-        detectedPerspective = perspectiveExtensions[index].properties.id;
-      }
+      return !loading && enablePerspective;
+    }
+    return false;
+  });
+  const detectedPerspective =
+    detectedPerspectiveIndex !== -1
+      ? perspectiveExtensions[detectedPerspectiveIndex].properties.id
+      : undefined;
+
+  const detectionComplete = detectionResults.every((result) => {
+    if (result) {
+      const [, loading] = result;
       return loading === false;
     }
     return true;
