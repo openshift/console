@@ -1,19 +1,8 @@
 import type { ReactNode } from 'react';
-import { screen, waitFor } from '@testing-library/react';
-import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
+import { render, screen, waitFor, act } from '@testing-library/react';
+import { MemoryRouter, Routes, Route, useLocation } from 'react-router';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import HelmInstallUpgradePage from '../HelmInstallUpgradePage';
-
-const mockNavigate = jest.fn();
-const mockUseParams = jest.fn();
-const mockUseLocation = jest.fn();
-
-jest.mock('react-router', () => ({
-  ...jest.requireActual('react-router'),
-  useParams: (...args: unknown[]) => mockUseParams(...args),
-  useLocation: (...args: unknown[]) => mockUseLocation(...args),
-  useNavigate: () => mockNavigate,
-}));
 
 const mockUseActivePerspective = jest.fn();
 jest.mock('@console/dynamic-plugin-sdk/src', () => ({
@@ -76,20 +65,35 @@ jest.mock('../../url-chart/useBasicAuthSecretDropdown', () => ({
   NONE_SECRET_KEY: 'none',
 }));
 
+let testLocation: { pathname: string; search: string };
+const LocationDisplay = () => {
+  const location = useLocation();
+  testLocation = { pathname: location.pathname, search: location.search };
+  return null;
+};
+
 describe('HelmInstallUpgradePage', () => {
   const chartSearchParams = '?chartURL=https%3A%2F%2Fexample.com%2Fchart.tgz&indexEntry=repo--chart--1.0.0';
+
+  const renderComponent = (initialPath: string = `/helm/ns/foo${chartSearchParams}`) =>
+    render(
+      <>
+        <Routes>
+          <Route path="/helm/ns/:ns" element={<HelmInstallUpgradePage />} />
+          <Route path="/helm/all-namespaces" element={<div data-test="all-ns-page" />} />
+        </Routes>
+        <LocationDisplay />
+      </>,
+      {
+        wrapper: ({ children }: { children: ReactNode }) => (
+          <MemoryRouter initialEntries={[initialPath]}>{children}</MemoryRouter>
+        ),
+      },
+    );
 
   beforeEach(() => {
     jest.clearAllMocks();
     mockUseActivePerspective.mockReturnValue(['admin', jest.fn()]);
-    mockUseParams.mockReturnValue({ ns: 'foo' });
-    mockUseLocation.mockReturnValue({
-      pathname: '/helm/ns/foo',
-      search: chartSearchParams,
-      state: null,
-      hash: '',
-      key: 'default',
-    });
     mockCoFetchJSON.mockResolvedValue({
       metadata: { name: 'test-chart', version: '1.0.0', appVersion: '1.0', annotations: {} },
       values: {},
@@ -97,45 +101,57 @@ describe('HelmInstallUpgradePage', () => {
   });
 
   it('should preserve query params when namespace changes', async () => {
-    renderWithProviders(<HelmInstallUpgradePage />);
+    renderComponent();
 
     await waitFor(() => {
       expect(capturedOnNamespaceChange).toBeDefined();
     });
 
-    capturedOnNamespaceChange('bar');
+    act(() => {
+      capturedOnNamespaceChange('bar');
+    });
 
-    expect(mockNavigate).toHaveBeenCalledWith(`/helm/ns/bar${chartSearchParams}`);
+    expect(testLocation.pathname).toBe('/helm/ns/bar');
+    expect(testLocation.search).toBe(chartSearchParams);
   });
 
   it('should preserve query params when switching to all-namespaces', async () => {
-    renderWithProviders(<HelmInstallUpgradePage />);
+    renderComponent();
 
     await waitFor(() => {
       expect(capturedOnNamespaceChange).toBeDefined();
     });
 
-    capturedOnNamespaceChange(ALL_NAMESPACES_KEY);
+    act(() => {
+      capturedOnNamespaceChange(ALL_NAMESPACES_KEY);
+    });
 
-    expect(mockNavigate).toHaveBeenCalledWith(`/helm/all-namespaces${chartSearchParams}`);
+    expect(testLocation.pathname).toBe('/helm/all-namespaces');
+    expect(testLocation.search).toBe(chartSearchParams);
   });
 
   it('should not navigate when selecting the same namespace', async () => {
-    renderWithProviders(<HelmInstallUpgradePage />);
+    renderComponent();
 
     await waitFor(() => {
       expect(capturedOnNamespaceChange).toBeDefined();
     });
 
-    capturedOnNamespaceChange('foo');
+    const initialPathname = testLocation.pathname;
+    const initialSearch = testLocation.search;
 
-    expect(mockNavigate).not.toHaveBeenCalled();
+    act(() => {
+      capturedOnNamespaceChange('foo');
+    });
+
+    expect(testLocation.pathname).toBe(initialPathname);
+    expect(testLocation.search).toBe(initialSearch);
   });
 
   it('should show loading state before chart data loads', () => {
     mockCoFetchJSON.mockReturnValue(new Promise(() => {})); // never resolves
 
-    renderWithProviders(<HelmInstallUpgradePage />);
+    renderComponent();
 
     expect(screen.getByTestId('loading-box')).toBeVisible();
   });
