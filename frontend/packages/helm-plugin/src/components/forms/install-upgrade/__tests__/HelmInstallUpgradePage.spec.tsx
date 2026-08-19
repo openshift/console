@@ -1,4 +1,4 @@
-import type { FC, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';

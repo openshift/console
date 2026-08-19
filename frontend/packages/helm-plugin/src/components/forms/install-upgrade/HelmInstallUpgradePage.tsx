@@ -5,7 +5,7 @@ import { safeDump, safeLoad } from 'js-yaml';
 import type { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useParams, useLocation, useNavigate } from 'react-router';
+import { createPath, useParams, useLocation, useNavigate } from 'react-router';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
@@ -231,9 +231,9 @@ const HelmInstallUpgradePage: FC = () => {
 
   const handleNamespaceChange = (ns: string) => {
     if (ns === ALL_NAMESPACES_KEY) {
-      navigate(`/helm/all-namespaces${location.search}`);
+      navigate(createPath({ pathname: '/helm/all-namespaces', search: location.search }));
     } else if (ns !== namespace) {
-      navigate(`/helm/ns/${ns}${location.search}`);
+      navigate(createPath({ pathname: `/helm/ns/${ns}`, search: location.search }));
     }
   };
 
