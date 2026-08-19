@@ -2,7 +2,7 @@ import type { Page } from '@playwright/test';
 
 import { test, expect } from '../../fixtures';
 import type KubernetesClient from '../../clients/kubernetes-client';
-import { getEditorContent, warmupSPA } from '../../pages/base-page';
+import { getEditorContent } from '../../pages/base-page';
 import { WebTerminalPage } from '../../pages/web-terminal-page';
 import {
   ensureWebTerminalOperatorInstalled,
@@ -88,6 +88,7 @@ test.describe('Web Terminal for Admin user', () => {
   test(
     'open and close multiple terminal tabs',
     async ({ page }) => {
+      test.slow();
       const webTerminal = new WebTerminalPage(page);
 
       await test.step('Wait for terminal icon and start terminal', async () => {
@@ -120,6 +121,7 @@ test.describe('Web Terminal for Admin user', () => {
   test(
     'start terminal with timeout and verify DevWorkspace',
     async ({ page, k8sClient }) => {
+      test.slow();
       const webTerminal = new WebTerminalPage(page);
 
       await test.step('Open terminal with 10-minute timeout', async () => {
@@ -139,6 +141,7 @@ test.describe('Web Terminal for Admin user', () => {
   test(
     'start terminal with defaults and verify DevWorkspace',
     async ({ page, k8sClient }) => {
+      test.slow();
       const webTerminal = new WebTerminalPage(page);
 
       await test.step('Open terminal with default settings', async () => {
