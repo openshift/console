@@ -1,7 +1,11 @@
 import type { TFunction } from 'i18next';
 import type { Alert } from '@console/dynamic-plugin-sdk';
 import type { ClusterVersionKind, ClusterOperator } from '@console/internal/module/k8s';
-import { getCurrentVersion, validateVersionString } from './cluster-version-helpers';
+import {
+  getCurrentVersion,
+  getVerifiedClusterVersionConditions,
+  validateVersionString,
+} from './cluster-version-helpers';
 import {
   isClusterFailing,
   isClusterInvalid,
@@ -11,6 +15,7 @@ import {
   hasAnyOperatorIssues,
 } from './predicates';
 import { createPreCheckSpecificVersionPrompt } from './prompts/precheck-specific';
+import { validatePromptLength } from './prompts/shared/validation';
 import type { UpdateWorkflowPhase, UpdateWorkflowContext, MachineConfigPool } from './types';
 import { getUpdateWorkflowConfig } from './workflow-configs';
 
@@ -36,10 +41,13 @@ export const generateUpdatePrompt = (
   // For pre-check phase with target version, use specific version prompt
   if (phase === 'pre-check' && targetVersion) {
     const currentVersion = getCurrentVersion(cv);
-    return createPreCheckSpecificVersionPrompt(
+    const prompt = createPreCheckSpecificVersionPrompt(
       currentVersion,
       validateVersionString(targetVersion),
+      getVerifiedClusterVersionConditions(cv),
     );
+    validatePromptLength(prompt, 'pre-check prompt');
+    return prompt;
   }
 
   // Otherwise use the default workflow configuration
