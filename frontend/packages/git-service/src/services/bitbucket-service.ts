@@ -6,7 +6,7 @@ import type { GitSource } from '../types/git';
 import { SecretType } from '../types/git';
 import type { RepoMetadata, BranchList, RepoLanguageList, RepoFileList } from '../types/repo';
 import { RepoStatus } from '../types/repo';
-import { BaseService } from './base-service';
+import { BaseService, headersToRecord } from './base-service';
 
 type BBWebhookBody = {
   url: string;
@@ -16,7 +16,7 @@ type BBWebhookBody = {
 };
 
 type BitbucketWebhookRequest = {
-  headers: Headers;
+  headers: Record<string, string[]>;
   isServer: boolean;
   baseURL: string;
   owner: string;
@@ -233,7 +233,7 @@ export class BitbucketService extends BaseService {
     };
 
     const webhookRequestBody: BitbucketWebhookRequest = {
-      headers,
+      headers: headersToRecord(headers),
       isServer: this.isServer,
       baseURL: this.baseURL,
       owner: this.metadata.owner,
