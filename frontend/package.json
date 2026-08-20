@@ -67,7 +67,7 @@
     "export-pos": "./i18n-scripts/export-pos.sh",
     "memsource-upload": "./i18n-scripts/memsource-upload.sh",
     "memsource-download": "./i18n-scripts/memsource-download.sh",
-    "prepare-husky": "cd .. && husky install frontend/.husky"
+    "prepare-husky": "[ \"${OPENSHIFT_CI:-}\" = true ] || (cd .. && husky install frontend/.husky)"
   },
   "jest": {
     "moduleFileExtensions": [
@@ -218,7 +218,7 @@
     "redux": "~5.0.1",
     "redux-thunk": "~3.1.0",
     "reselect": "^5.1.1",
-    "sanitize-html": "^2.3.2",
+    "sanitize-html": "^2.17.4",
     "semver": "6.x",
     "subscriptions-transport-ws": "^0.9.16",
     "typesafe-actions": "^5.1.0",
