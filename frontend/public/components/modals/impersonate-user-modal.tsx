@@ -1,13 +1,13 @@
-import type { FC, Ref, MouseEvent } from 'react';
+import type { FC, KeyboardEvent, Ref, MouseEvent } from 'react';
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import type { MenuToggleElement } from '@patternfly/react-core';
 import {
+  Alert,
+  AlertVariant,
   Button,
   Form,
   FormGroup,
   TextInput,
-  Alert,
-  AlertVariant,
   Select,
   SelectList,
   SelectOption,
@@ -35,6 +35,7 @@ import { FieldLevelHelp } from '../utils/field-level-help';
 import { useK8sWatchResource } from '../utils/k8s-watch-hook';
 
 const SELECT_ALL_KEY = '__select_all__';
+const CREATE_KEY = '__create__';
 const MAX_VISIBLE_CHIPS = 5;
 
 export interface ImpersonateUserModalProps {
@@ -70,13 +71,16 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
     isList: true,
   });
 
+  // Whether groups are available from the API (model exists and loaded successfully)
+  const groupsAvailable = groupsLoaded && !groupsLoadError;
+
   // Extract group names from the API response
   const availableGroups = useMemo(() => {
-    if (!groupsLoaded || groupsLoadError) {
+    if (!groupsAvailable) {
       return [];
     }
     return groups.map((group) => group.metadata.name).sort();
-  }, [groups, groupsLoaded, groupsLoadError]);
+  }, [groups, groupsAvailable]);
 
   const handleClose = useCallback(() => {
     setUsername(prefilledUsername);
@@ -102,6 +106,31 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
     );
   }, [groupSearchFilter, availableGroups]);
 
+  // Check if typed text can be created as a new group entry
+  const isCreatableGroup = useMemo(() => {
+    const trimmed = groupSearchFilter.trim();
+    if (!trimmed) {
+      return false;
+    }
+    // Don't show "Create" if it exactly matches an existing available group or is already selected
+    const alreadyExists = availableGroups.some(
+      (g) => g.toLowerCase() === trimmed.toLowerCase(),
+    );
+    return !alreadyExists && !selectedGroups.includes(trimmed);
+  }, [groupSearchFilter, availableGroups, selectedGroups]);
+
+  // Add a free-form group name
+  const handleCreateGroup = useCallback(
+    (groupName: string) => {
+      const trimmed = groupName.trim();
+      if (trimmed && !selectedGroups.includes(trimmed)) {
+        setSelectedGroups([...selectedGroups, trimmed]);
+        setGroupSearchFilter('');
+      }
+    },
+    [selectedGroups],
+  );
+
   const handleSelectAll = useCallback(() => {
     if (selectedGroups.length === filteredGroups.length) {
       // If all filtered groups are selected, deselect all
@@ -116,6 +145,12 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
   const handleGroupSelect = useCallback(
     (_event: MouseEvent | undefined, value: string | number) => {
       const group = value as string;
+
+      // Handle "Create" option
+      if (group === CREATE_KEY) {
+        handleCreateGroup(groupSearchFilter);
+        return;
+      }
 
       // Handle "Select all" option
       if (group === SELECT_ALL_KEY) {
@@ -132,11 +167,22 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
       }
       // Keep dropdown open - don't call setIsGroupSelectOpen(false)
     },
-    [selectedGroups, handleSelectAll],
+    [selectedGroups, handleSelectAll, handleCreateGroup, groupSearchFilter],
   );
 
   const handleGroupRemove = (groupToRemove: string) => {
     setSelectedGroups(selectedGroups.filter((g) => g !== groupToRemove));
+  };
+
+  // Handle Enter key to add free-form group
+  const handleGroupInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      const trimmed = groupSearchFilter.trim();
+      if (trimmed && !selectedGroups.includes(trimmed)) {
+        handleCreateGroup(trimmed);
+      }
+    }
   };
 
   const validateForm = (): boolean => {
@@ -203,6 +249,7 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
               setIsGroupSelectOpen(true);
             }
           }}
+          onKeyDown={handleGroupInputKeyDown}
           autoComplete="off"
           innerRef={textInputGroupRef}
           placeholder={t('Enter groups')}
@@ -228,6 +275,61 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
     </MenuToggle>
   );
 
+  // Build the dropdown options list
+  const renderSelectOptions = () => {
+    const options: JSX.Element[] = [];
+
+    // Show "Select all" only when API groups are available and there are filtered results
+    if (filteredGroups.length > 0) {
+      options.push(
+        <SelectOption
+          key={SELECT_ALL_KEY}
+          value={SELECT_ALL_KEY}
+          isSelected={areAllFilteredGroupsSelected}
+        >
+          {t('Select all')}
+        </SelectOption>,
+      );
+
+      filteredGroups.forEach((group) => {
+        options.push(
+          <SelectOption key={group} value={group} isSelected={selectedGroups.includes(group)}>
+            {group}
+          </SelectOption>,
+        );
+      });
+    }
+
+    // Show "Create" option for free-form entry when typed text is new
+    if (isCreatableGroup) {
+      options.push(
+        <SelectOption key={CREATE_KEY} value={CREATE_KEY} data-test="create-group-option">
+          {t('Create "{{groupName}}"', { groupName: groupSearchFilter.trim() })}
+        </SelectOption>,
+      );
+    }
+
+    // Show hint when no options and no creatable text
+    if (options.length === 0) {
+      if (groupSearchFilter.trim()) {
+        // Text is typed but it's already selected
+        options.push(
+          <SelectOption key="already-added" isDisabled>
+            {t('Group already added')}
+          </SelectOption>,
+        );
+      } else {
+        options.push(
+          <SelectOption key="hint" isDisabled>
+            {groupsAvailable ? t('No results found') : t('Type a group name and press Enter')}
+          </SelectOption>,
+        );
+      }
+    }
+
+    return options;
+  };
+
   return (
     <Modal variant={ModalVariant.small} isOpen={isOpen} onClose={handleClose}>
       <ModalHeader title={t('Impersonate')} />
@@ -240,12 +342,6 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
               'Impersonating a user grants you their exact permissions. You must enter username, but you can also enter a group to simulate the permissions of a member of that group.',
             )}
           />
-
-          {groupsLoadError && (
-            <Alert variant={AlertVariant.danger} isInline title={t('Failed to load groups')}>
-              {groupsLoadError.message}
-            </Alert>
-          )}
 
           <FormGroup
             label={
@@ -304,31 +400,18 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
               aria-label={t('Select groups to impersonate')}
               aria-describedby="groups-help-text"
             >
-              <SelectList id="impersonate-groups-listbox">
-                {filteredGroups.length === 0 ? (
-                  <SelectOption isDisabled>{t('No results found')}</SelectOption>
-                ) : (
-                  <>
-                    <SelectOption
-                      key={SELECT_ALL_KEY}
-                      value={SELECT_ALL_KEY}
-                      isSelected={areAllFilteredGroupsSelected}
-                    >
-                      {t('Select all')}
-                    </SelectOption>
-                    {filteredGroups.map((group) => (
-                      <SelectOption
-                        key={group}
-                        value={group}
-                        isSelected={selectedGroups.includes(group)}
-                      >
-                        {group}
-                      </SelectOption>
-                    ))}
-                  </>
-                )}
-              </SelectList>
+              <SelectList id="impersonate-groups-listbox">{renderSelectOptions()}</SelectList>
             </Select>
+
+            {!groupsAvailable && (
+              <FormHelperText>
+                <HelperText>
+                  <HelperTextItem>
+                    {t('Type group names manually. Press Enter to add each group.')}
+                  </HelperTextItem>
+                </HelperText>
+              </FormHelperText>
+            )}
 
             {selectedGroups.length > 0 && (
               <Flex spaceItems={{ default: 'spaceItemsSm' }} className="pf-v6-u-mt-sm">

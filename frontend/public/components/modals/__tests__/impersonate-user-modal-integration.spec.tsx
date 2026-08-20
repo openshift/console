@@ -250,7 +250,7 @@ describe('ImpersonateUserModal Integration Tests', () => {
       });
     });
 
-    it('should show no results when filter matches nothing', async () => {
+    it('should show "Create" option when filter matches nothing in available groups', async () => {
       const user = userEvent.setup();
       render(
         <Provider store={mockStore}>
@@ -268,31 +268,84 @@ describe('ImpersonateUserModal Integration Tests', () => {
       // Type to filter with non-matching text
       await user.type(groupsInput, 'nonexistent');
 
-      expect(await screen.findByText('No results found')).toBeVisible();
+      // Should show "Create" option instead of just "No results found"
+      expect(await screen.findByText('Create "nonexistent"')).toBeVisible();
     });
   });
 
-  describe('Error handling workflow', () => {
-    it('should show error when groups fail to load', async () => {
-      const error = new Error('Failed to fetch groups');
+  describe('Direct Authentication / model-absent workflow', () => {
+    it('should allow group impersonation when Group model does not exist', async () => {
+      const error = new Error('Model does not exist');
       (useK8sWatchResource as jest.Mock).mockReturnValue([[], false, error]);
+
+      const user = userEvent.setup();
+      const onImpersonate = jest.fn();
 
       render(
         <Provider store={mockStore}>
-          <ImpersonateUserModal isOpen onClose={jest.fn()} onImpersonate={jest.fn()} />
+          <ImpersonateUserModal isOpen onClose={jest.fn()} onImpersonate={onImpersonate} />
         </Provider>,
       );
 
-      expect(await screen.findByText('Failed to load groups')).toBeVisible();
+      // Should NOT show error alert
+      expect(screen.queryByText('Failed to load groups')).not.toBeInTheDocument();
 
-      // Should still allow impersonation without groups
+      // Should show helper text for manual entry
+      expect(
+        screen.getByText('Type group names manually. Press Enter to add each group.'),
+      ).toBeInTheDocument();
+
+      // Enter username
+      const usernameInput = screen.getByTestId('username-input');
+      await user.clear(usernameInput);
+      await user.type(usernameInput, 'oidc-user');
+
+      // Enter groups via free-form
+      const groupInput = screen.getByPlaceholderText('Enter groups');
+      await user.click(groupInput);
+      await user.type(groupInput, 'oidc-admins{Enter}');
+      await user.type(groupInput, 'oidc-devs{Enter}');
+
+      // Both groups should appear as chips
+      await waitFor(() => {
+        expect(screen.getByText('oidc-admins')).toBeInTheDocument();
+        expect(screen.getByText('oidc-devs')).toBeInTheDocument();
+      });
+
+      // Submit
+      const submitButton = screen.getByTestId('impersonate-button');
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(onImpersonate).toHaveBeenCalledWith('oidc-user', ['oidc-admins', 'oidc-devs']);
+      });
+    });
+
+    it('should still allow impersonation without groups when model is absent', async () => {
+      const error = new Error('Model does not exist');
+      (useK8sWatchResource as jest.Mock).mockReturnValue([[], false, error]);
+
       const ue = userEvent.setup();
+      const onImpersonate = jest.fn();
+
+      render(
+        <Provider store={mockStore}>
+          <ImpersonateUserModal isOpen onClose={jest.fn()} onImpersonate={onImpersonate} />
+        </Provider>,
+      );
+
       const usernameInput = screen.getByTestId('username-input');
       await ue.clear(usernameInput);
       await ue.type(usernameInput, 'erroruser');
 
       const submitButton = screen.getByTestId('impersonate-button');
       expect(submitButton).not.toBeDisabled();
+
+      await ue.click(submitButton);
+
+      await waitFor(() => {
+        expect(onImpersonate).toHaveBeenCalledWith('erroruser', []);
+      });
     });
   });
 

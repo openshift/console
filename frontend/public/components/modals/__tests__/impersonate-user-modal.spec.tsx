@@ -163,17 +163,164 @@ describe('ImpersonateUserModal', () => {
       expect(screen.getByPlaceholderText('Enter groups')).toBeInTheDocument();
     });
 
-    it('should show error alert when groups fail to load', () => {
-      const error = new Error('Failed to load groups');
+    it('should gracefully handle group load errors without showing error alert', () => {
+      const error = new Error('Model does not exist');
       (useK8sWatchResource as jest.Mock).mockReturnValue([[], false, error]);
 
       render(
         <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
       );
 
-      // Check for alert with danger variant
-      const alerts = screen.getAllByText('Failed to load groups');
-      expect(alerts.length).toBeGreaterThan(0);
+      // Should NOT show error alert — free-form entry is available instead
+      expect(screen.queryByText('Failed to load groups')).not.toBeInTheDocument();
+      // Should show helper text for manual entry
+      expect(
+        screen.getByText('Type group names manually. Press Enter to add each group.'),
+      ).toBeInTheDocument();
+    });
+  });
+
+  describe('Free-form Group Entry', () => {
+    it('should add a group on Enter key press', async () => {
+      const user = userEvent.setup();
+      // Groups model unavailable
+      const error = new Error('Model does not exist');
+      (useK8sWatchResource as jest.Mock).mockReturnValue([[], false, error]);
+
+      render(
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
+      );
+
+      const groupInput = screen.getByPlaceholderText('Enter groups');
+      await user.click(groupInput);
+      await user.type(groupInput, 'my-custom-group{Enter}');
+
+      // Group chip should appear
+      await waitFor(() => {
+        expect(screen.getByText('my-custom-group')).toBeInTheDocument();
+      });
+    });
+
+    it('should add multiple free-form groups', async () => {
+      const user = userEvent.setup();
+      const error = new Error('Model does not exist');
+      (useK8sWatchResource as jest.Mock).mockReturnValue([[], false, error]);
+
+      render(
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
+      );
+
+      const groupInput = screen.getByPlaceholderText('Enter groups');
+      await user.click(groupInput);
+      await user.type(groupInput, 'group-a{Enter}');
+      await user.type(groupInput, 'group-b{Enter}');
+
+      await waitFor(() => {
+        expect(screen.getByText('group-a')).toBeInTheDocument();
+        expect(screen.getByText('group-b')).toBeInTheDocument();
+      });
+    });
+
+    it('should not add duplicate groups on Enter', async () => {
+      const user = userEvent.setup();
+      const error = new Error('Model does not exist');
+      (useK8sWatchResource as jest.Mock).mockReturnValue([[], false, error]);
+
+      render(
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
+      );
+
+      const groupInput = screen.getByPlaceholderText('Enter groups');
+      await user.click(groupInput);
+      await user.type(groupInput, 'my-group{Enter}');
+      await user.type(groupInput, 'my-group{Enter}');
+
+      await waitFor(() => {
+        // eslint-disable-next-line testing-library/no-node-access -- checking chip count
+        const chips = document.querySelectorAll('.pf-v6-c-label');
+        expect(chips.length).toBe(1);
+      });
+    });
+
+    it('should show "Create" option in dropdown for new group name', async () => {
+      const user = userEvent.setup();
+      render(
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
+      );
+
+      const groupInput = screen.getByPlaceholderText('Enter groups');
+      await user.click(groupInput);
+      await user.type(groupInput, 'new-custom-group');
+
+      await waitFor(() => {
+        expect(screen.getByText('Create "new-custom-group"')).toBeInTheDocument();
+      });
+    });
+
+    it('should add group via "Create" option click', async () => {
+      const user = userEvent.setup();
+      render(
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
+      );
+
+      const groupInput = screen.getByPlaceholderText('Enter groups');
+      await user.click(groupInput);
+      await user.type(groupInput, 'new-custom-group');
+
+      const createOption = await screen.findByTestId('create-group-option');
+      await user.click(createOption);
+
+      await waitFor(() => {
+        // eslint-disable-next-line testing-library/no-node-access -- checking chip appearance
+        const chips = document.querySelectorAll('.pf-v6-c-label');
+        expect(chips.length).toBe(1);
+      });
+    });
+
+    it('should submit free-form groups with onImpersonate', async () => {
+      const user = userEvent.setup();
+      const error = new Error('Model does not exist');
+      (useK8sWatchResource as jest.Mock).mockReturnValue([[], false, error]);
+
+      render(
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
+      );
+
+      const usernameInput = screen.getByTestId('username-input');
+      await user.clear(usernameInput);
+      await user.type(usernameInput, 'testuser');
+
+      const groupInput = screen.getByPlaceholderText('Enter groups');
+      await user.click(groupInput);
+      await user.type(groupInput, 'oidc-admins{Enter}');
+      await user.type(groupInput, 'oidc-developers{Enter}');
+
+      const submitButton = screen.getByTestId('impersonate-button');
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(mockOnImpersonate).toHaveBeenCalledWith('testuser', [
+          'oidc-admins',
+          'oidc-developers',
+        ]);
+      });
+    });
+
+    it('should show hint text when model unavailable and no text typed', async () => {
+      const user = userEvent.setup();
+      const error = new Error('Model does not exist');
+      (useK8sWatchResource as jest.Mock).mockReturnValue([[], false, error]);
+
+      render(
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
+      );
+
+      const groupInput = screen.getByPlaceholderText('Enter groups');
+      await user.click(groupInput);
+
+      await waitFor(() => {
+        expect(screen.getByText('Type a group name and press Enter')).toBeInTheDocument();
+      });
     });
   });
 
