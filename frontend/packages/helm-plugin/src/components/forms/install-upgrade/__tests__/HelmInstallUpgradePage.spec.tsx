@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import { render, screen, waitFor, act } from '@testing-library/react';
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
@@ -74,7 +74,9 @@ jest.mock('../../url-chart/useBasicAuthSecretDropdown', () => ({
 let testLocation: { pathname: string; search: string };
 const LocationDisplay = () => {
   const location = useLocation();
-  testLocation = { pathname: location.pathname, search: location.search };
+  useEffect(() => {
+    testLocation = { pathname: location.pathname, search: location.search };
+  });
   return null;
 };
 
