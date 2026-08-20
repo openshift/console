@@ -151,6 +151,13 @@ export class ListPage extends BasePage {
     }
   }
 
+  async clickStatusButton(resourceName: string): Promise<void> {
+    const cell = this.getCell(resourceName);
+    const row = cell.locator('xpath=ancestor::tr');
+    const statusButton = row.getByTestId('popover-status-button');
+    await this.robustClick(statusButton, { timeout: 60_000 });
+  }
+
   async clickFirstRowLink(): Promise<void> {
     const firstLink = this.dataViewCells.first().locator('a').first();
     await this.robustClick(firstLink);
