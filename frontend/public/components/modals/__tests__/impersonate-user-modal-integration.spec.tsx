@@ -276,7 +276,7 @@ describe('ImpersonateUserModal Integration Tests', () => {
   describe('Direct Authentication / model-absent workflow', () => {
     it('should allow group impersonation when Group model does not exist', async () => {
       const error = new Error('Model does not exist');
-      (useK8sWatchResource as jest.Mock).mockReturnValue([[], false, error]);
+      (useK8sWatchResource as jest.Mock).mockReturnValue([[], true, error]);
 
       const user = userEvent.setup();
       const onImpersonate = jest.fn();
@@ -323,7 +323,7 @@ describe('ImpersonateUserModal Integration Tests', () => {
 
     it('should still allow impersonation without groups when model is absent', async () => {
       const error = new Error('Model does not exist');
-      (useK8sWatchResource as jest.Mock).mockReturnValue([[], false, error]);
+      (useK8sWatchResource as jest.Mock).mockReturnValue([[], true, error]);
 
       const ue = userEvent.setup();
       const onImpersonate = jest.fn();

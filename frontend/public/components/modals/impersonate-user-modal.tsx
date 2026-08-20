@@ -404,7 +404,7 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
             </Select>
 
             {!groupsAvailable && (
-              <FormHelperText>
+              <FormHelperText id="groups-help-text">
                 <HelperText>
                   <HelperTextItem>
                     {t('Type group names manually. Press Enter to add each group.')}

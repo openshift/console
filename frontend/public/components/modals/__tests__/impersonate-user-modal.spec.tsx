@@ -185,7 +185,7 @@ describe('ImpersonateUserModal', () => {
       const user = userEvent.setup();
       // Groups model unavailable
       const error = new Error('Model does not exist');
-      (useK8sWatchResource as jest.Mock).mockReturnValue([[], false, error]);
+      (useK8sWatchResource as jest.Mock).mockReturnValue([[], true, error]);
 
       render(
         <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
@@ -204,7 +204,7 @@ describe('ImpersonateUserModal', () => {
     it('should add multiple free-form groups', async () => {
       const user = userEvent.setup();
       const error = new Error('Model does not exist');
-      (useK8sWatchResource as jest.Mock).mockReturnValue([[], false, error]);
+      (useK8sWatchResource as jest.Mock).mockReturnValue([[], true, error]);
 
       render(
         <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
@@ -224,7 +224,7 @@ describe('ImpersonateUserModal', () => {
     it('should not add duplicate groups on Enter', async () => {
       const user = userEvent.setup();
       const error = new Error('Model does not exist');
-      (useK8sWatchResource as jest.Mock).mockReturnValue([[], false, error]);
+      (useK8sWatchResource as jest.Mock).mockReturnValue([[], true, error]);
 
       render(
         <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
@@ -280,7 +280,7 @@ describe('ImpersonateUserModal', () => {
     it('should submit free-form groups with onImpersonate', async () => {
       const user = userEvent.setup();
       const error = new Error('Model does not exist');
-      (useK8sWatchResource as jest.Mock).mockReturnValue([[], false, error]);
+      (useK8sWatchResource as jest.Mock).mockReturnValue([[], true, error]);
 
       render(
         <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
@@ -309,7 +309,7 @@ describe('ImpersonateUserModal', () => {
     it('should show hint text when model unavailable and no text typed', async () => {
       const user = userEvent.setup();
       const error = new Error('Model does not exist');
-      (useK8sWatchResource as jest.Mock).mockReturnValue([[], false, error]);
+      (useK8sWatchResource as jest.Mock).mockReturnValue([[], true, error]);
 
       render(
         <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
