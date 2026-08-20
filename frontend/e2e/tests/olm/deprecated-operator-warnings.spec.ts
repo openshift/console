@@ -301,6 +301,7 @@ test.describe('Deprecated operator warnings', { tag: ['@admin'] }, () => {
       }
 
       await k8sClient.createNamespace(subscriptionNamespace);
+      await k8sClient.waitForNamespaceReady(subscriptionNamespace);
       await k8sClient.createCustomResource(
         'operators.coreos.com',
         'v1alpha1',

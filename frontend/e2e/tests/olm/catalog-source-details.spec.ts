@@ -77,6 +77,7 @@ test.describe('CatalogSource details page', { tag: ['@admin'] }, () => {
 
     await test.step('Create test namespace and CatalogSource', async () => {
       await k8sClient.createNamespace(testNs);
+      await k8sClient.waitForNamespaceReady(testNs);
       cleanup.trackNamespace(testNs);
 
       await k8sClient.createCustomResource(

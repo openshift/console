@@ -185,6 +185,7 @@ export class InstalledOperatorsPage extends BasePage {
     const normalizedNamespace = escapedNamespace.replace(/\s+/g, '\\s+');
     await expect(namespaceDropdownButton).toHaveText(
       new RegExp(`^(?:Project|Namespace):\\s*${normalizedNamespace}\\s*$`),
+      { timeout: 30_000 },
     );
   }
 
