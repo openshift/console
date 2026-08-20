@@ -3,7 +3,6 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { render } from 'react-dom';
 import { Helmet } from 'react-helmet';
-import { linkify } from 'react-linkify';
 import { Provider, useSelector } from 'react-redux';
 import { Route, Router, Switch } from 'react-router-dom';
 import { CompatRouter } from 'react-router-dom-v5-compat';
@@ -71,9 +70,6 @@ import { graphQLReady } from '../graphql/client';
 
 initI18n();
 
-// Disable linkify 'fuzzy links' across the app.
-// Only linkify url strings beginning with a proper protocol scheme.
-linkify.set({ fuzzyLink: false });
 
 const EnhancedProvider = ({ provider: ContextProvider, useValueHook, children }) => {
   const value = useValueHook();
