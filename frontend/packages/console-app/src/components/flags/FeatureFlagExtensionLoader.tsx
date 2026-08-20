@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useCallback, useRef, useEffect, useLayoutEffect } from 'react';
+import { useCallback, useRef, useEffect } from 'react';
 import type {
   FeatureFlagHookProvider,
   ModelFeatureFlag,
@@ -22,30 +22,47 @@ import { FeatureFlagExtensionHookResolver } from './FeatureFlagExtensionHookReso
 
 /**
  * React hook that returns a stable {@link SetFeatureFlag} callback.
+ *
+ * Updates are always flushed on a microtask so handlers invoked during render
+ * (including child FeatureFlagExtensionHookResolver re-renders) never dispatch
+ * synchronously, while async callers (e.g. after a fetch in a
+ * console.flag/hookProvider) still update without waiting for an unrelated re-render.
  */
-const useFeatureFlagController = () => {
+export const useFeatureFlagController = () => {
   const dispatch = useConsoleDispatch();
-  const flags = useConsoleSelector(({ FLAGS }) => FLAGS);
 
-  // Queue of flag updates to be dispatched after render
   const pendingUpdatesRef = useRef<Map<string, boolean>>(new Map());
+  const flushScheduledRef = useRef(false);
 
-  // Process pending flag updates after render completes.
-  // This avoids "Cannot update a component while rendering" errors with react-redux 8.x
-  // because handlers are called during render (they use hooks) but dispatches happen after.
-  useLayoutEffect(() => {
-    pendingUpdatesRef.current.forEach((enabled, flag) => {
-      if (flags.get(flag) !== enabled) {
-        dispatch(setFlag(flag, enabled));
-      }
+  const flushPendingUpdates = useCallback(() => {
+    // Detach the current batch first so reentrant setFeatureFlag calls during
+    // dispatch (e.g. Redux subscribers) write into a fresh map and can schedule a
+    // follow-up flush instead of being cleared with this batch.
+    const updates = pendingUpdatesRef.current;
+    pendingUpdatesRef.current = new Map();
+    flushScheduledRef.current = false;
+    updates.forEach((enabled, flag) => {
+      dispatch(setFlag(flag, enabled));
     });
-    pendingUpdatesRef.current.clear();
-  });
+  }, [dispatch]);
 
-  return useCallback<SetFeatureFlag>((flag, enabled) => {
-    // Queue the update to be processed after render
-    pendingUpdatesRef.current.set(flag, enabled);
-  }, []);
+  const scheduleFlush = useCallback(() => {
+    if (flushScheduledRef.current) {
+      return;
+    }
+    flushScheduledRef.current = true;
+    queueMicrotask(() => {
+      flushPendingUpdates();
+    });
+  }, [flushPendingUpdates]);
+
+  return useCallback<SetFeatureFlag>(
+    (flag, enabled) => {
+      pendingUpdatesRef.current.set(flag, enabled);
+      scheduleFlush();
+    },
+    [scheduleFlush],
+  );
 };
 
 /**
