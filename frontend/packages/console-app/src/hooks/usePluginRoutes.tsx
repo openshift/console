@@ -24,7 +24,8 @@ const LazyRoutePage: FC<LazyRoutePageProps> = ({ extension }) => {
         uid,
         lazy(async () => {
           const Component = await component();
-          if (typeof Component !== 'function') {
+          // Check falsy to determine if the component wasn't loaded
+          if (!Component) {
             throw new Error(
               `Plugin "${pluginName}" route component resolved to ${typeof Component} (extension ${uid})`,
             );
