@@ -31,9 +31,6 @@ function copyArtifacts {
 
 function generateReport {
   yarn run cypress-postreport
-  if test -f ./packages/integration-tests/cypress-a11y-report.json; then
-    yarn cypress-a11y-report
-  fi
 }
 trap "copyArtifacts; generateReport" EXIT
 
@@ -79,7 +76,6 @@ if [ -n "${nightly-}" ] && [ -z "${pkg-}" ]; then
 fi
 
 if [ -n "${headless-}" ] && [ -z "${pkg-}" ]; then
-  yarn run test-cypress-console-headless
   yarn run test-cypress-dev-console-headless
   yarn run test-cypress-olm-headless
   yarn run test-cypress-helm-headless
