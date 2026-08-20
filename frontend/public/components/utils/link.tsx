@@ -134,8 +134,22 @@ export const ExternalLinkWithCopy = ({
 };
 
 // Open links in a new window and set noopener/noreferrer.
+const linkifyOptions: Opts = {
+  render: ({ attributes, content }: IntermediateRepresentation) => {
+    const { href, ...props } = attributes;
+    return (
+      <ExternalLink href={href} {...props}>
+        {content}
+      </ExternalLink>
+    );
+  },
+  validate: {
+    url: (value: string) => /^https?:\/\//.test(value),
+  },
+};
+
 export const LinkifyExternal = ({ children }: { children: React.ReactNode }) => (
-  <Linkify component={ExternalLink}>{children}</Linkify>
+  <Linkify options={linkifyOptions}>{children}</Linkify>
 );
 LinkifyExternal.displayName = 'LinkifyExternal';
 
