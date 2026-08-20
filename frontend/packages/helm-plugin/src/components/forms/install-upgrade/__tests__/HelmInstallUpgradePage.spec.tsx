@@ -80,7 +80,7 @@ const LocationDisplay = () => {
 
 describe('HelmInstallUpgradePage', () => {
   const chartSearchParams =
-    '?chartURL=https%3A%2F%2Fexample.com%2Fchart.tgz&indexEntry=repo--chart--1.0.0';
+    '?chartURL=https%3A%2F%2Fexample.com%2Fchart.tgz&indexEntry=repo--chart--1.0.0&chartRepoName=example-repo';
 
   const renderComponent = (initialPath: string = `/helm/ns/foo${chartSearchParams}`) =>
     render(
@@ -100,6 +100,7 @@ describe('HelmInstallUpgradePage', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    capturedOnNamespaceChange = undefined;
     mockUseActivePerspective.mockReturnValue(['admin', jest.fn()]);
     mockCoFetchJSON.mockResolvedValue({
       metadata: { name: 'test-chart', version: '1.0.0', appVersion: '1.0', annotations: {} },
