@@ -1,6 +1,11 @@
 import type { ClusterOperator } from '@console/internal/module/k8s';
 import { semVerComparator } from '@console/shared/src/utils/comparators';
-import { getCurrentVersion, getDesiredVersion } from './cluster-version-helpers';
+import {
+  getCurrentVersion,
+  getDesiredVersion,
+  getVerifiedClusterVersionConditions,
+  validateVersionString,
+} from './cluster-version-helpers';
 import { CLUSTER_OPERATOR_CONDITION_PROGRESSING, CONDITION_STATUS_TRUE } from './constants';
 import {
   isClusterFailing,
@@ -14,6 +19,7 @@ import { createPreCheckPrompt } from './prompts/precheck';
 import { createPreCheckNoUpdatesPrompt } from './prompts/precheck-no-updates';
 import { createPreCheckSpecificVersionPrompt } from './prompts/precheck-specific';
 import { createProgressPrompt } from './prompts/progress';
+import { validatePromptLength } from './prompts/shared/validation';
 import { createTroubleshootPrompt } from './prompts/troubleshoot';
 import type { UpdateWorkflowPhase, UpdateWorkflowConfig, UpdateWorkflowContext } from './types';
 
@@ -142,24 +148,49 @@ const createPreCheckWorkflow = (): UpdateWorkflowConfig => ({
     const currentVersion = getCurrentVersion(cv);
     const hasAvailableUpdates = (cv.status?.availableUpdates?.length || 0) > 0;
 
-    // Check if a specific version is selected for update
-    const desiredVersion = cv.status?.desired?.version;
-    const currentDesiredVersion = cv.status?.history?.[0]?.version;
-    const hasSpecificVersionSelected = desiredVersion && desiredVersion !== currentDesiredVersion;
+    // Read the ClusterVersion condition statuses directly and inject them as authoritative
+    // facts, so OLS reports the real cluster state instead of copying the prompt's examples.
+    const verified = getVerifiedClusterVersionConditions(cv);
+
+    // Check if a specific version is selected for update. Normalize both versions through
+    // validateVersionString first so raw, untrusted ClusterVersion strings are never compared
+    // or rendered directly (validateVersionString rejects injection characters and falls back
+    // to 'unknown' for non-semver values).
+    const desiredVersion = validateVersionString(cv.status?.desired?.version);
+    const currentDesiredVersion = validateVersionString(cv.status?.history?.[0]?.version);
+    const hasSpecificVersionSelected =
+      desiredVersion !== 'unknown' && desiredVersion !== currentDesiredVersion;
 
     if (!hasAvailableUpdates) {
       // No updates available - perform health assessment
       // Verifies cluster is up-to-date and operationally healthy
-      return createPreCheckNoUpdatesPrompt(currentVersion);
+      return createPreCheckNoUpdatesPrompt(currentVersion, verified);
     }
     if (hasSpecificVersionSelected) {
       // Specific version selected - assess readiness for that version
       // Validates version is available and checks version-specific compatibility
-      return createPreCheckSpecificVersionPrompt(currentVersion, desiredVersion);
+      return createPreCheckSpecificVersionPrompt(currentVersion, desiredVersion, verified);
     }
     // Updates available - general readiness assessment
     // Lists available updates and checks for any upgrade blockers
-    return createPreCheckPrompt(currentVersion);
+    return createPreCheckPrompt(currentVersion, verified);
+  },
+});
+
+/**
+ * Wrap a workflow config so every generated prompt is validated against the OpenAI
+ * character limit before it is handed off to OpenShift Lightspeed. Oversized prompts
+ * cause validatePromptLength to throw an Error.
+ */
+const withPromptValidation = (
+  phase: UpdateWorkflowPhase,
+  config: UpdateWorkflowConfig,
+): UpdateWorkflowConfig => ({
+  ...config,
+  prompt: (context: UpdateWorkflowContext) => {
+    const prompt = config.prompt(context);
+    validatePromptLength(prompt, `${phase} prompt`);
+    return prompt;
   },
 });
 
@@ -168,8 +199,8 @@ const createPreCheckWorkflow = (): UpdateWorkflowConfig => ({
  * @public
  */
 export const updateWorkflowConfigs: Record<UpdateWorkflowPhase, UpdateWorkflowConfig> = {
-  status: createStatusWorkflow(),
-  'pre-check': createPreCheckWorkflow(),
+  status: withPromptValidation('status', createStatusWorkflow()),
+  'pre-check': withPromptValidation('pre-check', createPreCheckWorkflow()),
 };
 
 /**
