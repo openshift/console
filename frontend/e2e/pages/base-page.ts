@@ -30,8 +30,9 @@ export async function gotoAuthenticated(page: Page, url: string): Promise<void> 
   await expect(async () => {
     await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60_000 });
 
-    // Re-authenticate when session is invalidated and console redirects to the OAuth IDP page.
-    if (await page.getByRole('link', { name: 'kube:admin' }).isVisible({ timeout: 1_000 }).catch(() => false)) {
+    // Re-authenticate on session loss: URL check is instant, 10s isVisible only runs on oauth pages.
+    if (page.url().includes('oauth') &&
+        await page.getByRole('link', { name: 'kube:admin' }).isVisible({ timeout: 10_000 }).catch(() => false)) {
       await page.getByRole('link', { name: 'kube:admin' }).click();
       await page.waitForLoadState('domcontentloaded', { timeout: 30_000 });
       await page.locator('#inputUsername').fill(process.env.OPENSHIFT_USERNAME || 'kubeadmin');
