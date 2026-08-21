@@ -75,7 +75,7 @@ export const WebhookTriggers: FC<WebhookTriggersProps> = (props) => {
     });
   }, [triggers]);
 
-  const secretNames = useMemo(
+  const secretNames = useMemo<string[]>(
     () =>
       _.uniq(
         webhookTriggers.reduce((acc: string[], webhook: WebhookTrigger): string[] => {
