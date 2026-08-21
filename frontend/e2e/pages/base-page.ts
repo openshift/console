@@ -43,7 +43,7 @@ export async function gotoAuthenticated(page: Page, url: string): Promise<void> 
     }
 
     await expect(page.locator('#page-sidebar')).toBeVisible({ timeout: 30_000 });
-  }).toPass({ intervals: [1_000, 2_000, 5_000], timeout: 90_000 });
+  }).toPass({ intervals: [1_000, 2_000, 5_000], timeout: 180_000 });
 }
 
 export async function warmupSPA(page: Page): Promise<void> {

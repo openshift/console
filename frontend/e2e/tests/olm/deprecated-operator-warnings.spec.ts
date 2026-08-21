@@ -409,7 +409,9 @@ test.describe('Deprecated operator warnings', { tag: ['@admin'] }, () => {
           'clusterserviceversions',
           installedCsvName,
         )) as { status?: { phase?: string } };
-        expect(csv.status?.phase).toBe('Succeeded');
+        // Accept terminal phase — kiali needs Service Mesh; OLM sets PackageDeprecated regardless.
+        const phase = csv.status?.phase;
+        expect(phase === 'Succeeded' || phase === 'Failed').toBe(true);
       }).toPass({ timeout: 300_000, intervals: [5_000] });
 
       await expect(async () => {
@@ -511,7 +513,7 @@ test.describe('Deprecated operator warnings', { tag: ['@admin'] }, () => {
       await expect(updateButton).toBeEnabled({ timeout: 30_000 });
       await updateButton.click();
       await expect(page.getByRole('dialog')).toBeVisible({ timeout: 30_000 });
-      await expect(page.getByTestId(LATEST_VERSION_OPTION)).toBeVisible({ timeout: 30_000 });
+      await expect(page.getByRole('dialog').getByTestId(LATEST_VERSION_OPTION).first()).toBeVisible({ timeout: 30_000 });
     });
   });
 });

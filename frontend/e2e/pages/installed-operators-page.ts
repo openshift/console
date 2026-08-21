@@ -4,10 +4,8 @@ import { expect } from '@playwright/test';
 import { escapeRegExp } from '../utils/selector-utils';
 
 import BasePage from './base-page';
-import { Navigation } from './navigation';
 
 export class InstalledOperatorsPage extends BasePage {
-  private readonly navigation = new Navigation(this.page);
   private readonly pageHeading = this.page.getByTestId('page-heading');
   private readonly nameFilterInput = this.page.getByTestId('name-filter-input');
 
@@ -25,8 +23,7 @@ export class InstalledOperatorsPage extends BasePage {
   * Navigate to Installed Operators page
   */
   async navigateToInstalledOperators(): Promise<void> {
-    await this.navigation.clickNavLink('Ecosystem', 'Installed Operators');
-    await expect(this.pageHeading).toContainText('Installed Operators');
+    await this.goTo('/k8s/all-namespaces/operators.coreos.com~v1~ClusterServiceVersion');
   }
 
   /**

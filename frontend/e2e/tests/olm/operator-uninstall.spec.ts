@@ -42,6 +42,25 @@ test.describe('Testing uninstall of Data Grid Operator', { tag: ['@admin'] }, ()
       'subscriptions'
     );
 
+    await test.step('Ensure no conflicting global subscription pre-exists', async () => {
+      // AllNamespaces install in openshift-operators disables Install for all namespaces.
+      try {
+        await k8sClient.getCustomResource(
+          'operators.coreos.com',
+          'v1alpha1',
+          'openshift-operators',
+          'subscriptions',
+          operatorPackageName,
+        );
+        test.skip(true, `${operatorPackageName} is globally installed; cannot install in parallel`);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        if (!message.includes('404') && !message.includes('not found')) {
+          throw error;
+        }
+      }
+    });
+
     await test.step('Install operator in new test namespace', async () => {
       try {
         await installPage.installOperatorInNewNamespace(
