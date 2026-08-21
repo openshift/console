@@ -1,5 +1,6 @@
 import type { Locator } from '@playwright/test';
 
+import { expect } from '../fixtures';
 import { quoteAttributeValue } from '../utils/selector-utils';
 
 import BasePage from './base-page';
@@ -21,7 +22,9 @@ export class OperandPage extends BasePage {
   }
 
   async clickOperandLink(name: string): Promise<void> {
-    await this.robustClick(this.getOperandLink(name), { timeout: 60_000 });
+    // K8s watch propagation after create can take longer than a single robustClick retry window.
+    await expect(this.getOperandLink(name)).toBeVisible({ timeout: 90_000 });
+    await this.robustClick(this.getOperandLink(name));
   }
 
   getResourceTitle(): Locator {

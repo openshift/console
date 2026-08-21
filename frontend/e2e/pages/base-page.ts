@@ -42,8 +42,14 @@ export async function gotoAuthenticated(page: Page, url: string): Promise<void> 
       await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60_000 });
     }
 
+    // "Authentication error" is a distinct console error state, not the OAuth IDP page; retry navigation.
+    const tryAgain = page.getByRole('button', { name: 'Try again' });
+    if (await tryAgain.isVisible({ timeout: 1_000 }).catch(() => false)) {
+      await tryAgain.click();
+    }
+
     await expect(page.locator('#page-sidebar')).toBeVisible({ timeout: 30_000 });
-  }).toPass({ intervals: [1_000, 2_000, 5_000], timeout: 180_000 });
+  }).toPass({ intervals: [1_000, 2_000, 5_000], timeout: 100_000 });
 }
 
 export async function warmupSPA(page: Page): Promise<void> {
