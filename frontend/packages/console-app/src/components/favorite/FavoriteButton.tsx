@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import type { ButtonProps } from '@patternfly/react-core';
 import {
   Button,
@@ -32,7 +32,6 @@ type FavoriteButtonProps = {
 export const FavoriteButton: FC<FavoriteButtonProps> = ({ defaultName }) => {
   const { t } = useTranslation('console-app');
   const triggerTelemetry = useTelemetry();
-  const [isStarred, setIsStarred] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [name, setName] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
@@ -44,13 +43,9 @@ export const FavoriteButton: FC<FavoriteButtonProps> = ({ defaultName }) => {
   const alphanumericRegex = /^[\p{L}\p{N}\s-]*$/u;
 
   const currentUrlPath = window.location.pathname;
-
-  useEffect(() => {
-    if (loaded) {
-      const isCurrentlyFavorited = favorites?.some((favorite) => favorite.url === currentUrlPath);
-      setIsStarred(isCurrentlyFavorited);
-    }
-  }, [loaded, favorites, currentUrlPath]);
+  const isStarred = loaded
+    ? (favorites?.some((favorite) => favorite.url === currentUrlPath) ?? false)
+    : false;
 
   const handleStarClick: ButtonProps['onClick'] = (e) => {
     e.preventDefault();
@@ -59,7 +54,6 @@ export const FavoriteButton: FC<FavoriteButtonProps> = ({ defaultName }) => {
     if (isCurrentlyFavorited) {
       const updatedFavorites = favorites?.filter((favorite) => favorite.url !== currentUrlPath);
       setFavorites(updatedFavorites);
-      setIsStarred(false);
       triggerTelemetry('remove-favorite', {
         url: currentUrlPath,
       });
@@ -106,7 +100,6 @@ export const FavoriteButton: FC<FavoriteButtonProps> = ({ defaultName }) => {
     const newFavorite = { name: name.trim(), url: currentUrlPath };
     const updatedFavorites = [...(favorites || []), newFavorite];
     setFavorites(updatedFavorites);
-    setIsStarred((prev) => !prev);
     setError('');
     setName('');
     setIsModalOpen(false);

@@ -35,10 +35,10 @@ module.exports = {
   'consistent-return': 'off',
 
   // Require consistent use of this alias
-  'consistent-this': ['warn', 'that'],
+  'consistent-this': ['error', 'that'],
 
   // Enforce a maximum depth that callbacks can be nested
-  'max-nested-callbacks': ['warn', 4],
+  'max-nested-callbacks': ['error', 4],
 
   // Disallow use of alert
   'no-alert': 'error',

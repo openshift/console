@@ -24,8 +24,6 @@ if [ "$SCENARIO" == "nightly-cypress" ]; then
   ./integration-tests/test-cypress.sh -n true $PACKAGE
 elif [ "$SCENARIO" == "e2e" ] || [ "$SCENARIO" == "release" ]; then
   ./integration-tests/test-cypress.sh -h true
-elif [ "$SCENARIO" == "login" ]; then
-  ./integration-tests/test-cypress.sh -p console -s 'tests/app/auth-multiuser-login.cy.ts' -h true
 elif [ "$SCENARIO" == "olmFull" ]; then
   ./integration-tests/test-cypress.sh -p olm -h true
 elif [ "$SCENARIO" == "dev-console" ]; then

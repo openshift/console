@@ -12,8 +12,8 @@ export class YamlEditorPage extends BasePage {
   private readonly yamlError = this.page.getByTestId('yaml-error');
   private readonly resourceSidebar = this.page.getByTestId('resource-sidebar');
 
-  async navigateToImportYaml(): Promise<void> {
-    await this.goTo('/k8s/ns/default/import');
+  async navigateToImportYaml(namespace = 'default'): Promise<void> {
+    await this.goTo(`/k8s/ns/${namespace}/import`);
   }
 
   async waitForEditorReady(): Promise<void> {

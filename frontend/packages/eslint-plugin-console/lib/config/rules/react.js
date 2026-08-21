@@ -1,7 +1,7 @@
 module.exports = {
   // Require i18n namespace argument for useTranslation()
   'no-restricted-syntax': [
-    'warn',
+    'error',
     {
       selector: "CallExpression[callee.name='useTranslation'][arguments.length=0]",
       message:
@@ -80,7 +80,7 @@ module.exports = {
   'react/forbid-prop-types': 'off',
 
   // Disallow usage of string refs
-  'react/no-string-refs': 'warn',
+  'react/no-string-refs': 'error',
 
   // Enforce self-closing for components but not HTML elements
   'react/self-closing-comp': ['error', { component: true, html: false }],
