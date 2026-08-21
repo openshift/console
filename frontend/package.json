@@ -91,7 +91,8 @@
       "^dnd-core$": "dnd-core/dist/cjs",
       "^react-dnd$": "react-dnd/dist/cjs",
       "^react-dnd-html5-backend$": "react-dnd-html5-backend/dist/cjs",
-      "linkify-react/dist/linkify-react\\.mjs$": "<rootDir>/__mocks__/linkify-react.js"
+      "linkify-react/dist/linkify-react\\.mjs$": "<rootDir>/__mocks__/linkify-react.js",
+      "^sanitize-html$": "<rootDir>/__mocks__/sanitize-html.js"
     },
     "transform": {
       "^.+\\.(ts|tsx|js|jsx)$": "./node_modules/ts-jest/preprocessor.js",
@@ -211,7 +212,7 @@
     "redux": "^4.0.4",
     "redux-thunk": "2.4.0",
     "reselect": "4.x",
-    "sanitize-html": "^2.3.2",
+    "sanitize-html": "^2.17.4",
     "semver": "6.x",
     "showdown": "1.8.6",
     "subscriptions-transport-ws": "^0.9.16",
