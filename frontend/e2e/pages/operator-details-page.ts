@@ -1,5 +1,6 @@
 import type { Locator } from '@playwright/test';
-import { expect } from '@playwright/test';
+
+import { expect } from '../fixtures';
 
 import BasePage from './base-page';
 import { DetailsPage } from './details-page';

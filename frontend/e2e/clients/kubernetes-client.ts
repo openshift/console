@@ -279,14 +279,6 @@ export default class KubernetesClient {
     }
   }
 
-  getCurrentUser(): any {
-    try {
-      return this.kubeConfig.getCurrentUser();
-    } catch {
-      return { name: 'idk' };
-    }
-  }
-
   async verifyAuthentication(): Promise<boolean> {
     await this.k8sApi.listNamespace({ limit: 1 });
     return true;

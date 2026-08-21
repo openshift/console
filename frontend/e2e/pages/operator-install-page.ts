@@ -179,14 +179,6 @@ export class OperatorInstallPage extends BasePage {
     return this.page.getByTestId(`version-option-${version}`);
   }
 
-  getChannelSelect(): Locator {
-    return this.channelSelect;
-  }
-
-  getVersionSelect(): Locator {
-    return this.versionSelect;
-  }
-
   async openChannelSelect(): Promise<void> {
     await this.robustClick(this.channelSelect);
   }

@@ -1,6 +1,6 @@
 import type { Locator } from '@playwright/test';
-import { expect } from '@playwright/test';
 
+import { expect } from '../fixtures';
 import { escapeRegExp } from '../utils/selector-utils';
 
 import BasePage from './base-page';
@@ -10,7 +10,7 @@ export class InstalledOperatorsPage extends BasePage {
   private readonly nameFilterInput = this.page.getByTestId('name-filter-input');
 
   /**
-  * Navigate to Installed Operators page (legacy method from HEAD)
+  * Navigate to Installed Operators page
   */
   async navigateTo(namespace?: string): Promise<void> {
     const path = namespace
@@ -195,28 +195,28 @@ export class InstalledOperatorsPage extends BasePage {
   }
 
   /**
-  * Get compatible indicator (from HEAD version)
+  * Get compatible indicator
   */
   getCompatibleIndicator(displayName: string): Locator {
     return this.getOperatorRow(displayName).getByTestId('cluster-compatibility-compatible');
   }
 
   /**
-  * Get incompatible indicator (from HEAD version)
+  * Get incompatible indicator
   */
   getIncompatibleIndicator(displayName: string): Locator {
     return this.getOperatorRow(displayName).getByTestId('cluster-compatibility-incompatible');
   }
 
   /**
-  * Get support phase badge (from HEAD version)
+  * Get support phase badge
   */
   getSupportPhaseBadge(displayName: string): Locator {
     return this.getOperatorRow(displayName).getByTestId('support-phase-badge');
   }
 
   /**
-  * Get self support badge (from HEAD version)
+  * Get self support badge
   */
   getSelfSupportBadge(displayName: string): Locator {
     return this.getOperatorRow(displayName).getByTestId('support-phase-self-support');
