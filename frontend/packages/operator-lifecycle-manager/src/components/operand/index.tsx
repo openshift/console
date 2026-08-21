@@ -518,7 +518,12 @@ const DefaultProvidedAPIPage: FC<DefaultProvidedAPIPageProps> = (props) => {
         hideFavoriteButton
         helpText={managesAllNamespaces && <ShowOperandsInAllNamespacesRadioGroup />}
       >
-        <ListPageCreateLink to={createPath}>{t('Create {{label}}', { label })}</ListPageCreateLink>
+        <ListPageCreateLink
+          to={createPath}
+          createAccessReview={{ groupVersionKind: { group, version, kind }, namespace }}
+        >
+          {t('Create {{label}}', { label })}
+        </ListPageCreateLink>
       </ListPageHeader>
       <ListPageBody>
         <ListPageFilter
