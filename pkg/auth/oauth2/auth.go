@@ -124,10 +124,12 @@ type Config struct {
 	SuccessURL string
 	ErrorURL   string
 	// cookiePath is an abstraction leak. (unfortunately, a necessary one.)
-	CookiePath              string
-	SecureCookies           bool
-	CookieEncryptionKey     []byte
-	CookieAuthenticationKey []byte
+	CookiePath                      string
+	SecureCookies                   bool
+	CookieEncryptionKey             []byte
+	CookieAuthenticationKey         []byte
+	PreviousCookieEncryptionKey     []byte
+	PreviousCookieAuthenticationKey []byte
 
 	K8sConfig *rest.Config
 	Metrics   *auth.Metrics
@@ -206,14 +208,18 @@ func NewOAuth2Authenticator(ctx context.Context, config *Config) (*OAuth2Authent
 	a := newUnstartedAuthenticator(c)
 
 	authConfig := &oidcConfig{
-		getClient:              a.clientFunc,
-		issuerURL:              c.IssuerURL,
-		logoutRedirectOverride: c.LogoutRedirectOverride,
-		clientID:               c.ClientID,
-		consoleBaseAddress:     c.ConsoleBaseAddress,
-		cookiePath:             c.CookiePath,
-		secureCookies:          c.SecureCookies,
-		constructOAuth2Config:  a.oauth2ConfigConstructor,
+		getClient:                       a.clientFunc,
+		issuerURL:                       c.IssuerURL,
+		logoutRedirectOverride:          c.LogoutRedirectOverride,
+		clientID:                        c.ClientID,
+		consoleBaseAddress:              c.ConsoleBaseAddress,
+		cookiePath:                      c.CookiePath,
+		secureCookies:                   c.SecureCookies,
+		cookieAuthenticationKey:         c.CookieAuthenticationKey,
+		cookieEncryptionKey:             c.CookieEncryptionKey,
+		previousCookieAuthenticationKey: c.PreviousCookieAuthenticationKey,
+		previousCookieEncryptionKey:     c.PreviousCookieEncryptionKey,
+		constructOAuth2Config:           a.oauth2ConfigConstructor,
 	}
 
 	var tokenHandler loginMethod
@@ -234,11 +240,16 @@ func NewOAuth2Authenticator(ctx context.Context, config *Config) (*OAuth2Authent
 			return nil, err
 		}
 	case AuthSourceOIDC:
+		var prevKeys [][]byte
+		if len(c.PreviousCookieAuthenticationKey) > 0 && len(c.PreviousCookieEncryptionKey) > 0 {
+			prevKeys = [][]byte{c.PreviousCookieAuthenticationKey, c.PreviousCookieEncryptionKey}
+		}
 		sessionStore := sessions.NewSessionStore(
 			c.CookieAuthenticationKey,
 			c.CookieEncryptionKey,
 			c.SecureCookies,
 			c.CookiePath,
+			prevKeys...,
 		)
 		tokenHandler, err = newOIDCAuth(ctx, sessionStore, authConfig, a.metrics)
 		if err != nil {
