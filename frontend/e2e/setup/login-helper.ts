@@ -6,14 +6,40 @@ import { expect } from '@playwright/test';
 
 const STORAGE_STATE_DIR = path.resolve(import.meta.dirname, '..', '.auth');
 
+export function getBaseURL(): string {
+  return process.env.WEB_CONSOLE_URL || 'http://localhost:9000';
+}
+
+export function getAdminCredentials(): { username: string; password: string; idpName: string } {
+  return {
+    username: process.env.OPENSHIFT_USERNAME || 'kubeadmin',
+    password: process.env.BRIDGE_KUBEADMIN_PASSWORD || '',
+    idpName: 'kube:admin',
+  };
+}
+
+export function getDeveloperCredentials(): {
+  username: string;
+  password: string;
+  idpName: string;
+} | null {
+  const username = process.env.BRIDGE_HTPASSWD_USERNAME;
+  const password = process.env.BRIDGE_HTPASSWD_PASSWORD;
+  if (!username || !password) return null;
+  return {
+    username,
+    password,
+    idpName: process.env.BRIDGE_HTPASSWD_IDP || username,
+  };
+}
+
 export async function performLogin(
   page: Page,
-  baseURL: string,
   username: string,
   password: string,
   idpName?: string,
 ): Promise<void> {
-  await page.goto(baseURL, { timeout: 90_000, waitUntil: 'domcontentloaded' });
+  await page.goto(getBaseURL(), { timeout: 90_000, waitUntil: 'domcontentloaded' });
 
   const authDisabled = await page
     .evaluate(() => (window as any).SERVER_FLAGS?.authDisabled)

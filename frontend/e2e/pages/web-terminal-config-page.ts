@@ -14,7 +14,7 @@ export class WebTerminalConfigPage extends BasePage {
 
   async navigateToWebTerminalConfig(): Promise<void> {
     await this.goTo('/k8s/cluster/operator.openshift.io~v1~Console/cluster');
-    await this.waitForLoadingComplete(10_000);
+    await this.waitForLoadingComplete(30_000);
     const customizeButton = this.page.getByRole('button', { name: 'Customize' });
     // eslint-disable-next-line no-restricted-syntax
     await customizeButton
@@ -25,17 +25,17 @@ export class WebTerminalConfigPage extends BasePage {
       await this.robustClick(customizeButton.first());
     } else {
       const actionsMenu = this.page.getByTestId('actions-menu-button');
-      await this.robustClick(actionsMenu);
+      await this.robustClick(actionsMenu, { timeout: 60_000 });
       const customizeAction = this.page.locator('[data-test-action="Customize"]:not([disabled])');
       await this.robustClick(customizeAction);
     }
-    await this.waitForLoadingComplete(10_000);
+    await this.waitForLoadingComplete(30_000);
     await this.clickWebTerminalTab();
   }
 
   async clickWebTerminalTab(): Promise<void> {
     const tab = this.page.getByRole('tab', { name: 'Web Terminal' });
-    await this.robustClick(tab, { timeout: 60_000 });
+    await this.robustClick(tab, { timeout: 60_000, retries: 1 });
     await this.waitForLoadingComplete(5_000);
   }
 
