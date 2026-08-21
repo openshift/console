@@ -21,7 +21,7 @@ export class OperandPage extends BasePage {
   }
 
   async clickOperandLink(name: string): Promise<void> {
-    await this.robustClick(this.getOperandLink(name));
+    await this.robustClick(this.getOperandLink(name), { timeout: 60_000 });
   }
 
   getResourceTitle(): Locator {

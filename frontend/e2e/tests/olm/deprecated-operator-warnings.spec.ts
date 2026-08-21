@@ -302,6 +302,19 @@ test.describe('Deprecated operator warnings', { tag: ['@admin'] }, () => {
 
       await k8sClient.createNamespace(subscriptionNamespace);
       await k8sClient.waitForNamespaceReady(subscriptionNamespace);
+      // OLM ignores subscriptions in namespaces without an OperatorGroup — no InstallPlan is created.
+      await k8sClient.createCustomResource(
+        'operators.coreos.com',
+        'v1',
+        subscriptionNamespace,
+        'operatorgroups',
+        {
+          apiVersion: 'operators.coreos.com/v1',
+          kind: 'OperatorGroup',
+          metadata: { name: subscriptionNamespace, namespace: subscriptionNamespace },
+          spec: { targetNamespaces: [subscriptionNamespace] },
+        },
+      );
       await k8sClient.createCustomResource(
         'operators.coreos.com',
         'v1alpha1',

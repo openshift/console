@@ -27,6 +27,9 @@ export class OperatorInstallPage extends BasePage {
   private readonly detailsModal = this.page.getByRole('dialog');
 
   private async openInstallForm(operatorName: string, operatorCardTestID: string): Promise<void> {
+    // Navigate first so the perspective toggle exists, then switch — Developer perspective shows a project selector not tiles.
+    await this.goTo('/catalog/all-namespaces?catalogType=operator');
+    await this.switchPerspective('Administrator');
     await this.goTo('/catalog/all-namespaces?catalogType=operator');
     await expect(this.catalogPage.getPageHeading()).toBeVisible({ timeout: 60_000 });
     await this.catalogPage.searchOperators(operatorName);
