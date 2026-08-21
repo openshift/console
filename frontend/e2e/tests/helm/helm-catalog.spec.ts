@@ -35,11 +35,7 @@ test.describe('Helm Catalog', { tag: ['@helm', '@regression'] }, () => {
     });
   });
 
-  test('installs Helm Chart from catalog (HR-05-TC04)', async ({
-    page,
-    k8sClient,
-    cleanup,
-  }) => {
+  test('installs Helm Chart from catalog (HR-05-TC04)', async ({ page, k8sClient, cleanup }) => {
     const ns = `aut-helm-install-${Date.now()}`;
     const releaseName = 'nodejs-catalog';
     await k8sClient.createNamespace(ns);
@@ -87,9 +83,7 @@ test.describe('Helm Catalog', { tag: ['@helm', '@regression'] }, () => {
     await test.step('Select all status filters (HR-05-TC09)', async () => {
       await helmPage.navigateToHelmReleases(ns);
       await helmPage.filterByStatus('Deployed');
-      await expect(
-        helmPage.getFilterDropdownItem('deployed').locator('input'),
-      ).toBeChecked();
+      await expect(helmPage.getFilterDropdownItem('deployed').locator('input')).toBeChecked();
     });
 
     await test.step('Clear all filters (HR-05-TC10)', async () => {
@@ -102,10 +96,7 @@ test.describe('Helm Catalog', { tag: ['@helm', '@regression'] }, () => {
     await test.step('Search by name (HR-05-TC11)', async () => {
       await helmPage.searchByName(releaseName);
       await expect(
-        helmPage
-          .getTable()
-          .getByTestId('data-view-cell-helm-release-name')
-          .first(),
+        helmPage.getTable().getByTestId('data-view-cell-helm-release-name').first(),
       ).toBeVisible({ timeout: 30_000 });
 
       await helmPage.searchByName('nonexistent-release-xyz');
@@ -132,7 +123,7 @@ test.describe('Helm Catalog', { tag: ['@helm', '@regression'] }, () => {
     await test.step('Select chart and verify version dropdown', async () => {
       await helmPage.searchAndSelectChart(HELM_CHART_NAME);
       await helmPage.clickCreateOnSidePane();
-      await expect(helmPage.getFormTitle()).toHaveText('Create Helm Release');
+      await expect(helmPage.getFormTitle()).toHaveText('Create Helm release');
       await expect(helmPage.getChartVersionDropdown()).toBeVisible();
     });
 
@@ -175,7 +166,7 @@ test.describe('Helm Catalog', { tag: ['@helm', '@regression'] }, () => {
     });
 
     await test.step('Verify chart versions dropdown', async () => {
-      await expect(helmPage.getFormTitle()).toHaveText('Create Helm Release');
+      await expect(helmPage.getFormTitle()).toHaveText('Create Helm release');
       await expect(helmPage.getChartVersionDropdown()).toBeVisible();
     });
 

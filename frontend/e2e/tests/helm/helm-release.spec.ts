@@ -17,13 +17,13 @@ test.describe('Helm Release', { tag: ['@helm', '@smoke'] }, () => {
     const helmPage = new HelmPage(page);
     await helmPage.navigateToHelmReleases(ns);
 
-    await expect(helmPage.getEmptyMessage()).toContainText('No Helm Releases found', {
+    await expect(helmPage.getEmptyMessage()).toContainText('No Helm releases found', {
       timeout: 60_000,
     });
     await expect(helmPage.getInstallLink()).toBeVisible();
   });
 
-  test('displays Create Helm Release page details (HR-05-TC02)', async ({
+  test('displays Create Helm release page details (HR-05-TC02)', async ({
     page,
     k8sClient,
     cleanup,
@@ -47,8 +47,8 @@ test.describe('Helm Release', { tag: ['@helm', '@smoke'] }, () => {
       await helmPage.clickCreateOnSidePane();
     });
 
-    await test.step('Verify Create Helm Release page', async () => {
-      await expect(helmPage.getFormTitle()).toHaveText('Create Helm Release');
+    await test.step('Verify Create Helm release page', async () => {
+      await expect(helmPage.getFormTitle()).toHaveText('Create Helm release');
       await expect(helmPage.getReleaseNameInput()).toHaveValue('nodejs');
       await expect(helmPage.getFormViewRadio()).toBeVisible({ timeout: 30_000 });
       await expect(helmPage.getYamlViewRadio()).toBeVisible();
@@ -103,10 +103,7 @@ test.describe('Helm Release', { tag: ['@helm', '@smoke'] }, () => {
       await helmPage.filterByStatus('Deployed');
       await expect(helmPage.getFilterDropdownItem('deployed').locator('input')).toBeChecked();
       await expect(
-        helmPage
-          .getTable()
-          .getByTestId('data-view-cell-helm-release-name')
-          .first(),
+        helmPage.getTable().getByTestId('data-view-cell-helm-release-name').first(),
       ).toBeVisible();
     });
 
@@ -129,9 +126,7 @@ test.describe('Helm Release', { tag: ['@helm', '@smoke'] }, () => {
     await test.step('Verify status on details page (HR-01-TC04)', async () => {
       await expect(helmDetailsPage.getPageHeading()).toContainText(releaseName);
       await expect(helmDetailsPage.getStatusIcon().first()).toBeVisible();
-      await expect(
-        helmDetailsPage.getStatusDetails().getByTestId('status-text'),
-      ).toBeVisible();
+      await expect(helmDetailsPage.getStatusDetails().getByTestId('status-text')).toBeVisible();
     });
 
     await test.step('Verify revision history status (HR-01-TC04)', async () => {
