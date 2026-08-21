@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { useMemo } from 'react';
-import { TextInputTypes } from '@patternfly/react-core';
+import { TextInputTypes, Alert } from '@patternfly/react-core';
 import type { FormikValues } from 'formik';
 import { useFormikContext } from 'formik';
 import * as fuzzy from 'fuzzysearch';
@@ -142,6 +142,18 @@ const CreateHelmChartRepositoryFormEditor: FC<CreateHelmChartRepositoryFormEdito
         helpText={t('Helm Chart repository URL.')}
         required
       />
+      {formData.repoUrl?.startsWith('http://') && (
+        <>
+          <Alert
+            variant="warning"
+            isInline
+            isPlain
+            title={t(
+              'HTTP is unencrypted, so your credentials and any downloaded content might be exposed or tampered with in transit. Use HTTPS whenever possible.',
+            )}
+          />
+        </>
+      )}
       <ExpandCollapse
         textExpanded={t('Hide advanced options')}
         textCollapsed={t('Show advanced options')}
