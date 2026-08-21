@@ -112,7 +112,17 @@ test.describe(
       await warmupSPA(page);
     });
 
-    test('forces project selection when all namespaces URL is accessed [A-12-TC01]', async () => {
+    test('forces project selection when all namespaces URL is accessed [A-12-TC01]', async ({
+      page,
+    }) => {
+      // On TechPreview clusters the default perspective is admin, not dev.
+      // CatalogPage.tsx only shows the project selection message when isDevPerspective is true
+      // (see: `showCreateProjectListPage = isDevPerspective && isAllNamespaces`).
+      // Skip when not in the Developer perspective to avoid a false failure.
+      const perspectiveText =
+        (await page.getByTestId('perspective-switcher-toggle').textContent()) ?? '';
+      test.skip(!perspectiveText.includes('Developer'), 'Project selection message is only shown in the Developer perspective');
+
       await test.step('Navigate to catalog all namespaces', async () => {
         await catalogPage.navigateToAllNamespacesCatalog();
       });
@@ -176,3 +186,45 @@ test.describe(
     });
   },
 );
+
+test.describe('Software Catalog operators', { tag: ['@dev-console', '@regression'] }, () => {
+  let catalogPage: CatalogPage;
+
+  test.beforeEach(async ({ page }) => {
+    catalogPage = new CatalogPage(page);
+    await warmupSPA(page);
+  });
+
+  test('displays operator tiles in catalog', async ({ page }) => {
+    await test.step('Navigate to operator catalog', async () => {
+      await page.goto('/catalog/ns/default?catalogType=operator');
+    });
+
+    await test.step('Verify operator tiles are rendered', async () => {
+      await expect(page.locator('[data-test^="operator-"]').first()).toBeVisible({
+        timeout: 30_000,
+      });
+    });
+  });
+
+  test('filters operator tiles by keyword', async ({ page }) => {
+    await test.step('Navigate to operator catalog', async () => {
+      await page.goto('/catalog/ns/default?catalogType=operator');
+    });
+
+    await test.step('Wait for tiles to render', async () => {
+      await expect(catalogPage.getCatalogTiles().first()).toBeVisible({ timeout: 30_000 });
+    });
+
+    await test.step('Filter by non-matching keyword and verify no tiles shown', async () => {
+      await catalogPage.filterByKeyword('zzz-no-match-xyzzy');
+      await expect(catalogPage.getCatalogTiles()).toHaveCount(0);
+      await expect(page.getByText('No results found')).toBeVisible();
+    });
+
+    await test.step('Clear filter and verify tiles return', async () => {
+      await catalogPage.filterByKeyword('');
+      await expect(catalogPage.getCatalogTiles().first()).toBeVisible();
+    });
+  });
+});
