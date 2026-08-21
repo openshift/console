@@ -34,14 +34,14 @@ type oidcAuth struct {
 }
 
 type oidcConfig struct {
-	getClient               func() *http.Client
-	issuerURL               string
-	logoutRedirectOverride  string
-	clientID                string
-	consoleBaseAddress      string
-	cookiePath              string
-	secureCookies           bool
-	cookieAuthenticationKey          []byte
+	getClient                       func() *http.Client
+	issuerURL                       string
+	logoutRedirectOverride          string
+	clientID                        string
+	consoleBaseAddress              string
+	cookiePath                      string
+	secureCookies                   bool
+	cookieAuthenticationKey         []byte
 	cookieEncryptionKey             []byte
 	previousCookieAuthenticationKey []byte
 	previousCookieEncryptionKey     []byte

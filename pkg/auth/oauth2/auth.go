@@ -124,8 +124,8 @@ type Config struct {
 	SuccessURL string
 	ErrorURL   string
 	// cookiePath is an abstraction leak. (unfortunately, a necessary one.)
-	CookiePath              string
-	SecureCookies           bool
+	CookiePath                      string
+	SecureCookies                   bool
 	CookieEncryptionKey             []byte
 	CookieAuthenticationKey         []byte
 	PreviousCookieEncryptionKey     []byte
@@ -208,14 +208,14 @@ func NewOAuth2Authenticator(ctx context.Context, config *Config) (*OAuth2Authent
 	a := newUnstartedAuthenticator(c)
 
 	authConfig := &oidcConfig{
-		getClient:               a.clientFunc,
-		issuerURL:               c.IssuerURL,
-		logoutRedirectOverride:  c.LogoutRedirectOverride,
-		clientID:                c.ClientID,
-		consoleBaseAddress:      c.ConsoleBaseAddress,
-		cookiePath:              c.CookiePath,
-		secureCookies:           c.SecureCookies,
-		cookieAuthenticationKey:          c.CookieAuthenticationKey,
+		getClient:                       a.clientFunc,
+		issuerURL:                       c.IssuerURL,
+		logoutRedirectOverride:          c.LogoutRedirectOverride,
+		clientID:                        c.ClientID,
+		consoleBaseAddress:              c.ConsoleBaseAddress,
+		cookiePath:                      c.CookiePath,
+		secureCookies:                   c.SecureCookies,
+		cookieAuthenticationKey:         c.CookieAuthenticationKey,
 		cookieEncryptionKey:             c.CookieEncryptionKey,
 		previousCookieAuthenticationKey: c.PreviousCookieAuthenticationKey,
 		previousCookieEncryptionKey:     c.PreviousCookieEncryptionKey,

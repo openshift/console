@@ -322,8 +322,8 @@ func (c *completedOptions) getAuthenticator(
 		ErrorURL:   authLoginErrorEndpoint,
 		SuccessURL: authLoginSuccessEndpoint,
 
-		CookiePath:              cookiePath,
-		SecureCookies:           useSecureCookies,
+		CookiePath:                      cookiePath,
+		SecureCookies:                   useSecureCookies,
 		CookieEncryptionKey:             sessionConfig.CookieEncryptionKey,
 		CookieAuthenticationKey:         sessionConfig.CookieAuthenticationKey,
 		PreviousCookieEncryptionKey:     sessionConfig.PreviousCookieEncryptionKey,
