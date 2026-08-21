@@ -1,7 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import classNames from 'classnames';
-import Linkify from 'react-linkify';
+import Linkify from 'linkify-react/dist/linkify-react.mjs';
+import type { IntermediateRepresentation, Opts } from 'linkifyjs';
 import { useTranslation } from 'react-i18next';
 import { ClipboardCopyButton } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons/dist/esm/icons/external-link-alt-icon';
@@ -134,9 +135,23 @@ export const ExternalLinkWithCopy: React.FC<ExternalLinkWithCopyProps> = ({
   );
 };
 
+const linkifyOptions: Opts = {
+  render: ({ attributes, content }: IntermediateRepresentation) => {
+    const { href, ...props } = attributes;
+    return (
+      <a href={href} target="_blank" rel="noopener noreferrer" {...props}>
+        {content}
+      </a>
+    );
+  },
+  validate: {
+    url: (value: string) => /^https?:\/\//.test(value),
+  },
+};
+
 // Open links in a new window and set noopener/noreferrer.
 export const LinkifyExternal: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <Linkify properties={{ target: '_blank', rel: 'noopener noreferrer' }}>{children}</Linkify>
+  <Linkify options={linkifyOptions}>{children}</Linkify>
 );
 LinkifyExternal.displayName = 'LinkifyExternal';
 
