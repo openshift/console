@@ -1,9 +1,19 @@
+import { TestPluginStore } from '@openshift/dynamic-plugin-sdk';
 import { act } from '@testing-library/react';
 import { useStore } from 'react-redux';
 import type { RootState } from '@console/internal/redux';
 import { renderHookWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
-import { createTestPluginStore } from '../../console-operator/__tests__/pluginTestUtils';
 import { useFeatureFlagController } from '../FeatureFlagExtensionLoader';
+
+export const createTestPluginStore = (
+  setup?: (store: TestPluginStore) => void,
+): TestPluginStore => {
+  const pluginStore = new TestPluginStore({
+    autoEnableLoadedPlugins: true,
+  });
+  setup?.(pluginStore);
+  return pluginStore;
+};
 
 const renderController = () =>
   renderHookWithProviders(() => useFeatureFlagController(), {
