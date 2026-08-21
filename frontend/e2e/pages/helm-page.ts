@@ -5,7 +5,7 @@ import { expect } from '../fixtures';
 import BasePage from './base-page';
 
 export class HelmPage extends BasePage {
-  private readonly emptyMessage = this.page.getByText('No Helm Releases found');
+  private readonly emptyMessage = this.page.getByText('No Helm releases found');
   private readonly installCatalogLink = this.page.getByRole('link', {
     name: /browse the catalog/i,
   });
@@ -229,7 +229,11 @@ export class HelmPage extends BasePage {
     return this.page.getByText(/clear filters/i);
   }
 
-  async waitForHelmReleaseDeployed(ns: string, releaseName: string, timeout = 120_000): Promise<void> {
+  async waitForHelmReleaseDeployed(
+    ns: string,
+    releaseName: string,
+    timeout = 120_000,
+  ): Promise<void> {
     await expect(async () => {
       await this.navigateToHelmReleases(ns);
       await this.searchByName(releaseName);
