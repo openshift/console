@@ -1,5 +1,5 @@
 import type { FC, KeyboardEvent, Ref, MouseEvent } from 'react';
-import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import { useState, useMemo, useCallback, useRef } from 'react';
 import type { MenuToggleElement } from '@patternfly/react-core';
 import {
   Alert,
@@ -49,6 +49,16 @@ export interface ImpersonateUserModalProps {
 export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
   isOpen,
   onClose,
+  ...rest
+}) => (
+  <Modal variant={ModalVariant.small} isOpen={isOpen} onClose={onClose}>
+    {isOpen && <ImpersonateUserModalContent onClose={onClose} {...rest} />}
+  </Modal>
+);
+
+/** Inner content component that mounts/unmounts with the modal, resetting state naturally. */
+const ImpersonateUserModalContent: FC<Omit<ImpersonateUserModalProps, 'isOpen'>> = ({
+  onClose,
   onImpersonate,
   prefilledUsername = '',
   isUsernameReadonly = false,
@@ -83,11 +93,8 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
   }, [groups, groupsAvailable]);
 
   const handleClose = useCallback(() => {
-    setUsername(prefilledUsername);
-    setSelectedGroups([]);
-    setUsernameError('');
     onClose();
-  }, [prefilledUsername, onClose]);
+  }, [onClose]);
 
   const handleUsernameChange = (value: string) => {
     setUsername(value);
@@ -200,25 +207,12 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
     }
   };
 
-  // Reset form when modal opens with new prefilled username
-  useEffect(() => {
-    if (isOpen) {
-      setUsername(prefilledUsername);
-      setSelectedGroups([]);
-      setUsernameError('');
-      setGroupSearchFilter('');
-      setShowAllGroups(false);
-    }
-  }, [isOpen, prefilledUsername]);
+  // Derive effective showAllGroups — auto-collapse when groups drop to/below threshold
+  const effectiveShowAllGroups = showAllGroups && selectedGroups.length > MAX_VISIBLE_CHIPS;
 
-  // Reset showAllGroups when selected groups drop to or below MAX_VISIBLE_CHIPS
-  useEffect(() => {
-    if (selectedGroups.length <= MAX_VISIBLE_CHIPS) {
-      setShowAllGroups(false);
-    }
-  }, [selectedGroups.length]);
-
-  const visibleGroups = showAllGroups ? selectedGroups : selectedGroups.slice(0, MAX_VISIBLE_CHIPS);
+  const visibleGroups = effectiveShowAllGroups
+    ? selectedGroups
+    : selectedGroups.slice(0, MAX_VISIBLE_CHIPS);
   const remainingCount = selectedGroups.length - MAX_VISIBLE_CHIPS;
 
   // Check if all filtered groups are selected
@@ -331,7 +325,7 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
   };
 
   return (
-    <Modal variant={ModalVariant.small} isOpen={isOpen} onClose={handleClose}>
+    <>
       <ModalHeader title={t('Impersonate')} />
       <ModalBody>
         <Form>
@@ -448,6 +442,6 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
           {t('Cancel')}
         </Button>
       </ModalFooter>
-    </Modal>
+    </>
   );
 };
