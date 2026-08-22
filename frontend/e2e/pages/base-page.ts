@@ -26,11 +26,34 @@ export async function setEditorContent(page: Page, content: string): Promise<voi
   }, content);
 }
 
-export async function warmupSPA(page: Page): Promise<void> {
+export async function gotoAuthenticated(page: Page, url: string): Promise<void> {
   await expect(async () => {
-    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 60_000 });
+    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60_000 });
+
+    // Re-authenticate on session loss: URL check is instant, 10s isVisible only runs on oauth pages.
+    if (page.url().includes('oauth') &&
+        await page.getByRole('link', { name: 'kube:admin' }).isVisible({ timeout: 10_000 }).catch(() => false)) {
+      await page.getByRole('link', { name: 'kube:admin' }).click();
+      await page.waitForLoadState('domcontentloaded', { timeout: 30_000 });
+      await page.locator('#inputUsername').fill(process.env.OPENSHIFT_USERNAME || 'kubeadmin');
+      await page.locator('#inputPassword').fill(process.env.BRIDGE_KUBEADMIN_PASSWORD || '');
+      await page.locator('button[type="submit"]').click();
+      await page.waitForLoadState('domcontentloaded', { timeout: 30_000 });
+      await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60_000 });
+    }
+
+    // "Authentication error" is a distinct console error state, not the OAuth IDP page; retry navigation.
+    const tryAgain = page.getByRole('button', { name: 'Try again' });
+    if (await tryAgain.isVisible({ timeout: 1_000 }).catch(() => false)) {
+      await tryAgain.click();
+    }
+
     await expect(page.locator('#page-sidebar')).toBeVisible({ timeout: 30_000 });
-  }).toPass({ intervals: [1_000, 2_000, 5_000], timeout: 90_000 });
+  }).toPass({ intervals: [1_000, 2_000, 5_000], timeout: 100_000 });
+}
+
+export async function warmupSPA(page: Page): Promise<void> {
+  await gotoAuthenticated(page, '/');
   await dismissQuickStartDrawer(page);
 }
 
@@ -112,7 +135,7 @@ export default abstract class BasePage {
   }
 
   protected async goTo(url: string): Promise<void> {
-    await this.page.goto(url, { timeout: 90_000 });
+    await gotoAuthenticated(this.page, url);
     await this.waitForLoadingComplete();
   }
 

@@ -119,4 +119,20 @@ export class YamlEditorPage extends BasePage {
     });
     await this.robustClick(viewDetailsButton);
   }
+
+  async getEditorContent(): Promise<string> {
+    return this.page.evaluate(() => {
+      // Check if Monaco is initialized before accessing editor API
+      if (!(window as any).monaco?.editor?.getModels) {
+        return '';
+      }
+      const models = (window as any).monaco.editor.getModels();
+      return models[0]?.getValue() || '';
+    });
+  }
+
+  async navigateToYamlUrl(url: string): Promise<void> {
+    await this.goTo(url);
+    await this.waitForEditorReady();
+  }
 }
