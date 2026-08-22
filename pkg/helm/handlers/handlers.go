@@ -2,14 +2,17 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"helm.sh/helm/v4/pkg/action"
 	chart "helm.sh/helm/v4/pkg/chart/v2"
 	releasecommon "helm.sh/helm/v4/pkg/release"
 	releasev1 "helm.sh/helm/v4/pkg/release/v1"
+	"helm.sh/helm/v4/pkg/storage/driver"
 	kv1 "k8s.io/api/core/v1"
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/rest"
@@ -79,6 +82,24 @@ type helmHandlers struct {
 	newProxy              func(bearerToken string) (chartproxy.Proxy, error)
 }
 
+func determineErrorStatusCode(err error) int {
+	if errors.Is(err, driver.ErrReleaseNotFound) ||
+		errors.Is(err, actions.ErrReleaseNotFound) ||
+		errors.Is(err, actions.ErrReleaseRevisionNotFound) ||
+		errors.Is(err, driver.ErrNoDeployedReleases) {
+		return http.StatusNotFound
+	}
+
+	errMsg := err.Error()
+	if strings.Contains(errMsg, "invalid chart URL") ||
+		strings.Contains(errMsg, "Chart path is invalid") ||
+		strings.Contains(errMsg, "Revision no. should be more than 0") {
+		return http.StatusBadRequest
+	}
+
+	return http.StatusBadGateway
+}
+
 func (h *helmHandlers) restConfig(bearerToken string) *rest.Config {
 	return &rest.Config{
 		Host:        h.ApiServerHost,
@@ -143,7 +164,7 @@ func (h *helmHandlers) HandleHelmInstallAsync(user *auth.User, w http.ResponseWr
 
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
-		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to parse request: %v", err)})
+		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: fmt.Sprintf("Failed to parse request: %v", err)})
 		return
 	}
 
@@ -212,7 +233,7 @@ func (h *helmHandlers) HandleGetRelease(user *auth.User, w http.ResponseWriter, 
 	conf := h.getActionConfigurations(h.ApiServerHost, ns, user.Token, &h.Transport)
 	release, err := h.getRelease(chartName, conf)
 	if err != nil {
-		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to find helm release: %v", err)})
+		serverutils.SendResponse(w, determineErrorStatusCode(err), serverutils.ApiError{Err: fmt.Sprintf("Failed to get helm release: %v", err)})
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
@@ -281,11 +302,7 @@ func (h *helmHandlers) HandleUpgradeRelease(user *auth.User, w http.ResponseWrit
 	}
 	resp, err := h.upgradeRelease(req.Namespace, req.Name, req.ChartUrl, req.Values, conf, handlerClients.DynamicClient, handlerClients.CoreClient, false, req.IndexEntry)
 	if err != nil {
-		if err.Error() == actions.ErrReleaseRevisionNotFound.Error() {
-			serverutils.SendResponse(w, http.StatusNotFound, serverutils.ApiError{Err: fmt.Sprintf("Failed to rollback helm releases: %v", err)})
-			return
-		}
-		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to upgrade helm release: %v", err)})
+		serverutils.SendResponse(w, determineErrorStatusCode(err), serverutils.ApiError{Err: fmt.Sprintf("Failed to upgrade helm release: %v", err)})
 		return
 	}
 
@@ -311,11 +328,7 @@ func (h *helmHandlers) HandleUpgradeReleaseAsync(user *auth.User, w http.Respons
 	}
 	resp, err := h.upgradeReleaseAsync(req.Namespace, req.Name, req.ChartUrl, req.Values, conf, handlerClients.DynamicClient, handlerClients.CoreClient, false, req.IndexEntry, req.BasicAuthSecretName)
 	if err != nil {
-		if err.Error() == actions.ErrReleaseRevisionNotFound.Error() {
-			serverutils.SendResponse(w, http.StatusNotFound, serverutils.ApiError{Err: fmt.Sprintf("Failed to rollback helm releases: %v", err)})
-			return
-		}
-		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to upgrade helm release: %v", err)})
+		serverutils.SendResponse(w, determineErrorStatusCode(err), serverutils.ApiError{Err: fmt.Sprintf("Failed to upgrade helm release: %v", err)})
 		return
 	}
 	serverutils.SendResponse(w, http.StatusCreated, resp)
@@ -329,11 +342,7 @@ func (h *helmHandlers) HandleUninstallRelease(user *auth.User, w http.ResponseWr
 	conf := h.getActionConfigurations(h.ApiServerHost, ns, user.Token, &h.Transport)
 	resp, err := h.uninstallRelease(rel, conf)
 	if err != nil {
-		if err.Error() == actions.ErrReleaseNotFound.Error() {
-			serverutils.SendResponse(w, http.StatusNotFound, serverutils.ApiError{Err: fmt.Sprintf("Failed to uninstall helm release: %v", err)})
-			return
-		}
-		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to uninstall helm release: %v", err)})
+		serverutils.SendResponse(w, determineErrorStatusCode(err), serverutils.ApiError{Err: fmt.Sprintf("Failed to uninstall helm release: %v", err)})
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
@@ -346,18 +355,14 @@ func (h *helmHandlers) HandleRollbackRelease(user *auth.User, w http.ResponseWri
 
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
-		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to parse request: %v", err)})
+		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: fmt.Sprintf("Failed to parse request: %v", err)})
 		return
 	}
 
 	conf := h.getActionConfigurations(h.ApiServerHost, req.Namespace, user.Token, &h.Transport)
 	rel, err := h.rollbackRelease(req.Name, req.Version, conf)
 	if err != nil {
-		if err.Error() == actions.ErrReleaseRevisionNotFound.Error() {
-			serverutils.SendResponse(w, http.StatusNotFound, serverutils.ApiError{Err: fmt.Sprintf("Failed to rollback helm releases: %v", err)})
-			return
-		}
-		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to rollback helm releases: %v", err)})
+		serverutils.SendResponse(w, determineErrorStatusCode(err), serverutils.ApiError{Err: fmt.Sprintf("Failed to rollback helm release: %v", err)})
 		return
 	}
 
@@ -373,11 +378,7 @@ func (h *helmHandlers) HandleGetReleaseHistory(user *auth.User, w http.ResponseW
 	conf := h.getActionConfigurations(h.ApiServerHost, ns, user.Token, &h.Transport)
 	rels, err := h.getReleaseHistory(name, conf)
 	if err != nil {
-		if err.Error() == actions.ErrReleaseNotFound.Error() {
-			serverutils.SendResponse(w, http.StatusNotFound, serverutils.ApiError{Err: fmt.Sprintf("Failed to list helm release history: %v", err)})
-			return
-		}
-		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to list helm release history: %v", err)})
+		serverutils.SendResponse(w, determineErrorStatusCode(err), serverutils.ApiError{Err: fmt.Sprintf("Failed to list helm release history: %v", err)})
 		return
 	}
 	res, _ := json.Marshal(rels)
@@ -440,11 +441,7 @@ func (h *helmHandlers) HandleUninstallReleaseAsync(user *auth.User, w http.Respo
 	}
 	err = h.uninstallReleaseAsync(rel, ns, version, conf, handlerClients.CoreClient)
 	if err != nil {
-		if err.Error() == actions.ErrReleaseNotFound.Error() {
-			serverutils.SendResponse(w, http.StatusNotFound, serverutils.ApiError{Err: fmt.Sprintf("Failed to uninstall helm release: %v", err)})
-			return
-		}
-		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to uninstall helm release: %v", err)})
+		serverutils.SendResponse(w, determineErrorStatusCode(err), serverutils.ApiError{Err: fmt.Sprintf("Failed to uninstall helm release: %v", err)})
 		return
 	}
 	w.WriteHeader(http.StatusNoContent)
@@ -481,3 +478,4 @@ func (h *helmHandlers) HandleURLChartGet(user *auth.User, w http.ResponseWriter,
 	res, _ := json.Marshal(resp)
 	w.Write(res)
 }
+
