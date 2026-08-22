@@ -31,8 +31,11 @@ export const setData = (type: RESULTS_TYPE, key: string, data) =>
   action(ActionType.SetData, { type, key, data });
 export const activateWatch = (type: RESULTS_TYPE, key: string) =>
   action(ActionType.ActivateWatch, { type, key });
-export const updateWatchTimeout = (type: RESULTS_TYPE, key: string, timeout: NodeJS.Timer) =>
-  action(ActionType.UpdateWatchTimeout, { type, key, timeout });
+export const updateWatchTimeout = (
+  type: RESULTS_TYPE,
+  key: string,
+  timeout: ReturnType<typeof setTimeout>,
+) => action(ActionType.UpdateWatchTimeout, { type, key, timeout });
 export const updateWatchInFlight = (type: RESULTS_TYPE, key: string, inFlight: boolean) =>
   action(ActionType.UpdateWatchInFlight, { type, key, inFlight });
 const setError = (type: RESULTS_TYPE, key: string, error) =>
@@ -57,9 +60,8 @@ export const getPrometheusQueryResponse = (
   timespan?: number,
 ): [PrometheusResponse, any] => {
   const queryKey = getQueryKey(query, timespan);
-  const data = prometheusResults.getIn([queryKey, 'data']);
-  const loadError = prometheusResults.getIn([queryKey, 'loadError']);
-  return [data, loadError];
+  const entry = prometheusResults?.[queryKey];
+  return [entry?.data, entry?.loadError];
 };
 
 const fetchPeriodically: FetchPeriodically = async (

@@ -119,7 +119,7 @@ export const featureFlagMiddleware: Middleware<{}, RootState> = (s) => {
 
     if (nextFlags !== prevFlags) {
       prevFlags = nextFlags;
-      pluginStore.setFeatureFlags(nextFlags.toObject());
+      pluginStore.setFeatureFlags({ ...nextFlags });
     }
 
     return result;

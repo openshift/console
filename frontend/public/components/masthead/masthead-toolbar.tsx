@@ -177,9 +177,9 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
   );
   const { clusterID, alertCount, canAccessNS, impersonate } = useConsoleSelector(
     (state) => ({
-      clusterID: state.UI.get('clusterID'),
-      alertCount: state.observe.getIn(['alertCount']),
-      canAccessNS: !!state[featureReducerName].get(FLAGS.CAN_GET_NS),
+      clusterID: state.UI.clusterID,
+      alertCount: state.observe.alertCount,
+      canAccessNS: !!state[featureReducerName][FLAGS.CAN_GET_NS],
       impersonate: getImpersonate(state),
     }),
     shallowEqual,

@@ -20,7 +20,6 @@ import { RhUiFilterIcon } from '@patternfly/react-icons';
 import { InnerScrollContainer, Tbody, Tr, Td } from '@patternfly/react-table';
 import * as fuzzy from 'fuzzysearch';
 import i18next from 'i18next';
-import type { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -74,7 +73,7 @@ import { ScrollToTopOnMount } from './utils/scroll-to-top-on-mount';
 import { LoadError, LoadingBox } from './utils/status-box';
 
 const mapStateToProps = (state: RootState): APIResourceLinkStateProps => ({
-  activeNamespace: state.UI.get('activeNamespace'),
+  activeNamespace: state.UI.activeNamespace,
 });
 
 const getAPIResourceLink = (activeNamespace: string, model: K8sKind) => {
@@ -142,8 +141,8 @@ const BodyEmpty: FC<{ label: string; colSpan: number }> = ({ label, colSpan }) =
 const APIResourcesList: FC = () => {
   const { setQueryArgument, removeQueryArgument } = useQueryParamsMutator();
   const location = useLocation();
-  const models: ImmutableMap<K8sResourceKindReference, K8sKind> = useConsoleSelector((state) =>
-    state.k8s.getIn(['RESOURCES', 'models']),
+  const models: Record<K8sResourceKindReference, K8sKind> = useConsoleSelector(
+    (state) => state.k8s.RESOURCES?.models,
   );
   const ALL = '#all#';
   const GROUP_PARAM = 'g';
@@ -203,7 +202,8 @@ const APIResourcesList: FC = () => {
 
   const navigate = useNavigate();
   // group options
-  const groups: Set<string> = models.reduce(
+  const modelValues = Object.values(models ?? {});
+  const groups: Set<string> = modelValues.reduce(
     (result: Set<string>, { apiGroup }) => (apiGroup ? result.add(apiGroup) : result),
     new Set<string>(),
   );
@@ -231,7 +231,7 @@ const APIResourcesList: FC = () => {
   };
 
   // version options
-  const versions: Set<string> = models.reduce(
+  const versions: Set<string> = modelValues.reduce(
     (result: Set<string>, { apiVersion }) => result.add(apiVersion),
     new Set<string>(),
   );
@@ -257,7 +257,7 @@ const APIResourcesList: FC = () => {
   const scopeSpacer = new Set<string>(['cluster']);
 
   // filter by group, version, or text
-  const filteredResources = models.filter(({ kind, apiGroup, apiVersion, namespaced }) => {
+  const filteredResources = modelValues.filter(({ kind, apiGroup, apiVersion, namespaced }) => {
     if (groupFilter !== ALL && (apiGroup || '') !== groupFilter) {
       return false;
     }
@@ -300,7 +300,7 @@ const APIResourcesList: FC = () => {
   };
 
   const sortedResources = useMemo(() => {
-    const sorted = [...filteredResources.toArray()];
+    const sorted = [...filteredResources];
 
     // Check if user has manually sorted (sortBy params exist in URL)
     const hasUserSort = sortByParam !== '0' || orderByParam !== 'asc';
@@ -440,7 +440,13 @@ const APIResourcesList: FC = () => {
         </ToolbarContent>
       </Toolbar>
       <DataView
-        activeState={!models.size ? 'loading' : sortedResources.length === 0 ? 'empty' : undefined}
+        activeState={
+          !Object.keys(models ?? {}).length
+            ? 'loading'
+            : sortedResources.length === 0
+              ? 'empty'
+              : undefined
+        }
       >
         <InnerScrollContainer>
           <DataViewTable
@@ -592,10 +598,9 @@ const APIResourceSchema: FC<APIResourceTabProps> = ({ customData: { kindObj } })
 
 const APIResourceInstances: FC<APIResourceTabProps> = ({ customData: { kindObj, namespace } }) => {
   const resourceListPageExtensions = useExtensions<ResourceListPage>(isResourceListPage);
-  const componentLoader = getResourceListPages(resourceListPageExtensions).get(
-    referenceForModel(kindObj),
-    () => Promise.resolve(DefaultPage),
-  );
+  const componentLoader =
+    getResourceListPages(resourceListPageExtensions).get(referenceForModel(kindObj)) ??
+    (() => Promise.resolve(DefaultPage));
   const ns = kindObj.namespaced ? namespace : undefined;
 
   return (
@@ -950,7 +955,7 @@ const InnerAPIResourcePage = (props) => {
 
   const kind: string = props.kind || params?.plural;
   const kindObj = getK8sModel(props.k8s, kind);
-  const kindsInFlight = props.k8s.getIn(['RESOURCES', 'inFlight']);
+  const kindsInFlight = props.k8s.RESOURCES?.inFlight;
 
   const namespace = kindObj?.namespaced ? params.ns : undefined;
   const { t } = useTranslation('public');

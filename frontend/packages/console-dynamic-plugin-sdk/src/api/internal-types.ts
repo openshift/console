@@ -3,7 +3,6 @@ import type { QuickStart } from '@patternfly/quickstarts';
 import type { OverflowMenuProps } from '@patternfly/react-core';
 import type { DataViewTh } from '@patternfly/react-data-view/dist/esm/DataViewTable/DataViewTable';
 import type { SortByDirection } from '@patternfly/react-table';
-import type { Map as ImmutableMap } from 'immutable';
 import type {
   HealthState,
   K8sResourceCommon,
@@ -242,14 +241,14 @@ export enum ActionMenuVariant {
 }
 
 type Request<R> = {
-  active: boolean;
-  timeout: NodeJS.Timer;
-  inFlight: boolean;
-  data: R;
-  error: any;
+  active?: number;
+  timeout?: ReturnType<typeof setTimeout>;
+  inFlight?: boolean;
+  data?: R;
+  loadError?: any;
 };
 
-export type RequestMap<R> = ImmutableMap<string, Request<R>>;
+export type RequestMap<R> = Record<string, Request<R>>;
 
 export type Fetch = (url: string) => Promise<any>;
 export type WatchURLProps = {

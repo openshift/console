@@ -1,5 +1,4 @@
 import { useEffect, useMemo } from 'react';
-import type { Map as ImmutableMap } from 'immutable';
 import {
   watchPrometheusQuery,
   stopWatchPrometheusQuery,
@@ -20,15 +19,15 @@ export const usePrometheusQuery: UsePrometheusQuery = (query, humanize) => {
     };
   }, [dispatch, query]);
 
-  const queryResult = useConsoleSelector(({ dashboards }) =>
-    dashboards.getIn([RESULTS_TYPE.PROMETHEUS, query]),
-  ) as ImmutableMap<string, any>;
+  const queryResult = useConsoleSelector(
+    ({ dashboards }) => dashboards[RESULTS_TYPE.PROMETHEUS]?.[query],
+  );
   const results = useMemo<[HumanizeResult, any, number]>(() => {
-    if (!queryResult || !queryResult.get('data')) {
+    if (!queryResult || !queryResult.data) {
       return [{}, null, null] as [HumanizeResult, any, number];
     }
-    const value = getInstantVectorStats(queryResult.get('data'))[0]?.y;
-    return [humanize(value), queryResult.get('loadError'), value];
+    const value = getInstantVectorStats(queryResult.data)[0]?.y;
+    return [humanize(value), queryResult.loadError, value];
   }, [queryResult, humanize]);
 
   return results;

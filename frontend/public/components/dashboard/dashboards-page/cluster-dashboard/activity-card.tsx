@@ -1,7 +1,6 @@
 import type { FC } from 'react';
 import { useEffect, useMemo, memo } from 'react';
 import { Card, CardHeader, CardTitle, CardFooter, Divider } from '@patternfly/react-core';
-import type { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -62,7 +61,7 @@ const RecentEvent: FC = () => {
 };
 
 const mapStateToProps = ({ k8s }) => ({
-  models: k8s.getIn(['RESOURCES', 'models']),
+  models: k8s.RESOURCES?.models,
 });
 
 const OngoingActivityComponent: FC<OngoingActivityProps> = ({ models }) => {
@@ -73,7 +72,7 @@ const OngoingActivityComponent: FC<OngoingActivityProps> = ({ models }) => {
   );
 
   const resourceActivities = useMemo(
-    () => resourceActivityExtensions.filter((e) => !!models.get(e.properties.k8sResource.kind)),
+    () => resourceActivityExtensions.filter((e) => !!models?.[e.properties.k8sResource.kind]),
     [resourceActivityExtensions, models],
   );
 
@@ -128,13 +127,13 @@ const OngoingActivityComponent: FC<OngoingActivityProps> = ({ models }) => {
       prometheusActivities
         .filter((a) => {
           const queryResults = a.properties.queries.map(
-            (q) => prometheusResults.getIn([q, 'data']) as PrometheusResponse,
+            (q) => prometheusResults?.[q]?.data as PrometheusResponse,
           );
           return a.properties.isActivity(queryResults);
         })
         .map((a) => {
           const queryResults = a.properties.queries.map(
-            (q) => prometheusResults.getIn([q, 'data']) as PrometheusResponse,
+            (q) => prometheusResults?.[q]?.data as PrometheusResponse,
           );
           return {
             component: a.properties.component,
@@ -157,7 +156,7 @@ const OngoingActivityComponent: FC<OngoingActivityProps> = ({ models }) => {
     () =>
       prometheusActivities.every((a) =>
         a.properties.queries.every(
-          (q) => prometheusResults.getIn([q, 'data']) || prometheusResults.getIn([q, 'loadError']),
+          (q) => prometheusResults?.[q]?.data || prometheusResults?.[q]?.loadError,
         ),
       ),
     [prometheusActivities, prometheusResults],
@@ -191,5 +190,5 @@ export const ActivityCard = memo(() => {
 });
 
 type OngoingActivityProps = {
-  models: ImmutableMap<string, K8sKind>;
+  models: Record<string, K8sKind>;
 };

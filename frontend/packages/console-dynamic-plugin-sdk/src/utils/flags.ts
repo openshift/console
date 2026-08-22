@@ -9,4 +9,4 @@ export type UseFlag = (flag: string) => boolean;
  * @returns the boolean value of the requested feature flag or undefined
  */
 export const useFlag: UseFlag = (flag) =>
-  useSelector<FeatureSubStore, boolean>(({ FLAGS }) => FLAGS.get(flag));
+  useSelector<FeatureSubStore, boolean>(({ FLAGS }) => FLAGS[flag]);

@@ -87,9 +87,7 @@ export const useCSPViolationDetector = () => {
   const toastContext = useToast();
   const fireTelemetryEvent = useTelemetry();
   const pluginStore = usePluginStore();
-  const cspViolations = useConsoleSelector<PluginCSPViolations>(({ UI }) =>
-    UI.get('pluginCSPViolations'),
-  );
+  const cspViolations = useConsoleSelector<PluginCSPViolations>(({ UI }) => UI.pluginCSPViolations);
   const dispatch = useConsoleDispatch();
   const [, cacheEvent] = useLocalStorageCache<PluginCSPViolationEvent>(
     LOCAL_STORAGE_CSP_VIOLATIONS_KEY,

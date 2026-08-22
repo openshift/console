@@ -687,12 +687,12 @@ const QueryBrowserWrapped: FC<QueryBrowserProps> = ({
   units,
 }) => {
   const { t } = useTranslation('console-shared');
-  const hideGraphs = useConsoleSelector<boolean>(({ observe }) => !!observe.get('hideGraphs'));
+  const hideGraphs = useConsoleSelector<boolean>(({ observe }) => !!observe.hideGraphs);
   const tickInterval = useConsoleSelector<number>(
-    ({ observe }) => pollInterval ?? observe.getIn(['queryBrowser', 'pollInterval']),
+    ({ observe }) => pollInterval ?? observe.queryBrowser?.pollInterval,
   );
-  const lastRequestTime = useConsoleSelector<number>(({ observe }) =>
-    observe.getIn(['queryBrowser', 'lastRequestTime']),
+  const lastRequestTime = useConsoleSelector<number>(
+    ({ observe }) => observe.queryBrowser?.lastRequestTime,
   );
 
   const dispatch = useConsoleDispatch();

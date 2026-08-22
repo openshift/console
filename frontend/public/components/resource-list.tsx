@@ -52,9 +52,9 @@ const InnerResourceListPage = connectToPlural(
       );
     }
     const ref = referenceForModel(kindObj);
-    const componentLoader = getResourceListPages(resourceListPageExtensions).get(ref, () =>
-      Promise.resolve(DefaultPage),
-    );
+    const componentLoader =
+      getResourceListPages(resourceListPageExtensions).get(ref) ??
+      (() => Promise.resolve(DefaultPage));
 
     return (
       <div className="co-m-list">
