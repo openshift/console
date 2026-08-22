@@ -192,7 +192,7 @@ describe('ImpersonateUserModal', () => {
       await user.click(submitButton);
 
       await waitFor(() => {
-        expect(mockOnImpersonate).toHaveBeenCalledWith('testuser', []);
+        expect(mockOnImpersonate).toHaveBeenCalledWith('testuser', [], 'User');
       });
     });
 
@@ -210,8 +210,57 @@ describe('ImpersonateUserModal', () => {
       await user.click(submitButton);
 
       await waitFor(() => {
-        expect(mockOnImpersonate).toHaveBeenCalledWith('testuser', []);
+        expect(mockOnImpersonate).toHaveBeenCalledWith('testuser', [], 'User');
       });
+    });
+
+    it('should call onImpersonate with service account username and groups', async () => {
+      const user = userEvent.setup();
+      render(
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
+      );
+
+      await user.click(screen.getByTestId('impersonate-kind-service-account'));
+      await user.type(screen.getByTestId('service-account-namespace-input'), 'test-ns');
+      await user.type(screen.getByTestId('service-account-name-input'), 'builder');
+
+      const groupInput = screen.getByPlaceholderText('Enter groups');
+      await user.click(groupInput);
+      await user.click(await screen.findByText('developers'));
+
+      await user.click(screen.getByTestId('impersonate-button'));
+
+      await waitFor(() => {
+        expect(mockOnImpersonate).toHaveBeenCalledWith(
+          'system:serviceaccount:test-ns:builder',
+          ['developers'],
+          'ServiceAccount',
+        );
+      });
+    });
+
+    it('should reject invalid service account namespace and name values', async () => {
+      const user = userEvent.setup();
+      render(
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
+      );
+
+      await user.click(screen.getByTestId('impersonate-kind-service-account'));
+      await user.type(screen.getByTestId('service-account-namespace-input'), 'Invalid_Namespace');
+      await user.type(screen.getByTestId('service-account-name-input'), 'Builder');
+      await user.click(screen.getByTestId('impersonate-button'));
+
+      expect(
+        screen.getByText(
+          'Service account namespace must contain only lowercase letters, numbers, and hyphens, and must start and end with a letter or number.',
+        ),
+      ).toBeVisible();
+      expect(
+        screen.getByText(
+          'Service account name must contain only lowercase letters, numbers, hyphens, and dots, and must start and end with a letter or number.',
+        ),
+      ).toBeVisible();
+      expect(mockOnImpersonate).not.toHaveBeenCalled();
     });
 
     it('should close modal after successful submission', async () => {
