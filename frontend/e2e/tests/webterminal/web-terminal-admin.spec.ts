@@ -4,10 +4,6 @@ import { test, expect } from '../../fixtures';
 import type KubernetesClient from '../../clients/kubernetes-client';
 import { getEditorContent, warmupSPA } from '../../pages/base-page';
 import { WebTerminalPage } from '../../pages/web-terminal-page';
-import {
-  ensureWebTerminalOperatorInstalled,
-  uninstallWebTerminalOperator,
-} from './utils/web-terminal-operator';
 
 const DEVWORKSPACE_GROUP = 'workspace.devfile.io';
 const DEVWORKSPACE_VERSION = 'v1alpha2';
@@ -43,10 +39,6 @@ async function verifyDevWorkspaceUid(
 }
 
 test.describe('Web Terminal for Admin user', () => {
-  test.beforeAll(async ({ k8sClient }) => {
-    await ensureWebTerminalOperatorInstalled(k8sClient);
-  });
-
   test.beforeEach(async ({ k8sClient }) => {
     const devWorkspaces = await k8sClient.listCustomResources(
       DEVWORKSPACE_GROUP,
@@ -79,10 +71,6 @@ test.describe('Web Terminal for Admin user', () => {
         await new Promise((resolve) => setTimeout(resolve, 2_000));
       }
     }
-  });
-
-  test.afterAll(async ({ k8sClient }) => {
-    await uninstallWebTerminalOperator(k8sClient);
   });
 
   test(
