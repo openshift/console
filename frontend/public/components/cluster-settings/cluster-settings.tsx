@@ -91,7 +91,11 @@ import { EmptyBox } from '../utils/status-box';
 import { FieldLevelHelp } from '../utils/field-level-help';
 import { HorizontalNav } from '../utils/horizontal-nav';
 import { ReleaseNotesLink } from '../utils/release-notes-link';
-import { ResourceLink, resourceListPathFromModel, resourcePathFromModel } from '../utils/resource-link';
+import {
+  ResourceLink,
+  resourceListPathFromModel,
+  resourcePathFromModel,
+} from '../utils/resource-link';
 import { SectionHeading } from '../utils/headings';
 import { togglePaused } from '../utils/workload-pause';
 import { UpstreamConfigDetailsItem } from '../utils/details-page';

@@ -36,6 +36,8 @@ const clusterVersionUpgradeableFalse: ClusterVersionKind = {
   spec: { channel: 'stable-4.22', clusterID: 'test-id' },
   status: {
     availableUpdates: [],
+    observedGeneration: 1,
+    versionHash: 'test-hash',
     conditions: [
       {
         type: 'Upgradeable',
@@ -47,7 +49,16 @@ const clusterVersionUpgradeableFalse: ClusterVersionKind = {
       },
     ],
     desired: { version: '4.22.0', image: 'test-image' },
-    history: [{ version: '4.22.0', image: 'test-image', state: 'Completed', verified: true }],
+    history: [
+      {
+        version: '4.22.0',
+        image: 'test-image',
+        state: 'Completed',
+        verified: true,
+        startedTime: '2026-01-01T00:00:00Z',
+        completionTime: '2026-01-01T01:00:00Z',
+      },
+    ],
   },
 };
 
