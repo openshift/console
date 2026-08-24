@@ -129,8 +129,8 @@ export const NamespaceBar: FC<NamespaceBarProps & { hideProjects?: boolean }> = 
   children,
   hideProjects = false,
 }) => {
-  const useProjects = useConsoleSelector<boolean>(({ k8s }) =>
-    k8s.hasIn(['RESOURCES', 'models', ProjectModel.kind]),
+  const useProjects = useConsoleSelector<boolean>(
+    ({ k8s }) => !!k8s.RESOURCES?.models?.[ProjectModel.kind],
   );
 
   const [namespaces, loaded, loadError] = useK8sWatchResource(

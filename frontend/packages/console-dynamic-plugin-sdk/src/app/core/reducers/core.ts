@@ -1,5 +1,4 @@
-import { Map as ImmutableMap } from 'immutable';
-import type { AdmissionWebhookWarning, CoreState } from '../../redux-types';
+import type { CoreState } from '../../redux-types';
 import type { CoreAction } from '../actions/core';
 import { ActionType } from '../actions/core';
 
@@ -16,7 +15,7 @@ export const coreReducer = (
   state: CoreState = {
     user: {},
     userResource: null,
-    admissionWebhookWarnings: ImmutableMap<string, AdmissionWebhookWarning>(),
+    admissionWebhookWarnings: {},
   },
   action: CoreAction = undefined,
 ): CoreState => {
@@ -59,16 +58,18 @@ export const coreReducer = (
     case ActionType.SetAdmissionWebhookWarning:
       return {
         ...state,
-        admissionWebhookWarnings: state.admissionWebhookWarnings.set(
-          action.payload.id,
-          action.payload.warning,
-        ),
+        admissionWebhookWarnings: {
+          ...state.admissionWebhookWarnings,
+          [action.payload.id]: action.payload.warning,
+        },
       };
-    case ActionType.RemoveAdmissionWebhookWarning:
+    case ActionType.RemoveAdmissionWebhookWarning: {
+      const { [action.payload.id]: _, ...remaining } = state.admissionWebhookWarnings;
       return {
         ...state,
-        admissionWebhookWarnings: state.admissionWebhookWarnings.remove(action.payload.id),
+        admissionWebhookWarnings: remaining,
       };
+    }
     default:
       return state;
   }

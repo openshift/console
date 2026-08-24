@@ -411,9 +411,7 @@ const ConsolePluginsTable: FC<ConsolePluginsTableProps> = ({
 
 const DevPluginsPage: FC<ConsoleOperatorConfigPageProps> = (props) => {
   const pluginInfo = usePluginInfo();
-  const cspViolations = useConsoleSelector<PluginCSPViolations>(({ UI }) =>
-    UI.get('pluginCSPViolations'),
-  );
+  const cspViolations = useConsoleSelector<PluginCSPViolations>(({ UI }) => UI.pluginCSPViolations);
 
   const rows = useMemo<ConsolePluginTableRow[]>(
     () =>
@@ -439,9 +437,7 @@ const useConsolePluginRows = (enabledPlugins: string[]) => {
     isList: true,
     kind: referenceForModel(ConsolePluginModel),
   });
-  const cspViolations = useConsoleSelector<PluginCSPViolations>(({ UI }) =>
-    UI.get('pluginCSPViolations'),
-  );
+  const cspViolations = useConsoleSelector<PluginCSPViolations>(({ UI }) => UI.pluginCSPViolations);
 
   const rows = useMemo<ConsolePluginTableRow[]>(() => {
     if (!consolePluginsLoaded) {

@@ -100,7 +100,7 @@ const CloudShellDeveloperSetup: FC<Props> = ({
 
 const mapStateToProps = (state: RootState): StateProps => ({
   username: getUser(state)?.username || '',
-  activeNamespace: state.UI.get('activeNamespace'),
+  activeNamespace: state.UI.activeNamespace,
 });
 
 export default connect<StateProps>(mapStateToProps)(CloudShellDeveloperSetup);

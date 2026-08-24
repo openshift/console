@@ -1,5 +1,3 @@
-/* eslint-disable no-barrel-files/no-barrel-files */
-import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash';
 import type { FeatureState } from '@console/dynamic-plugin-sdk/src/app/features';
 import { ActionType as K8sActionType } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
@@ -26,8 +24,7 @@ import { referenceForGroupVersionKind, referenceForModel } from '../module/k8s/k
 import { pluginStore } from '../plugins';
 import type { RootState } from '../redux';
 
-// eslint-disable-next-line prettier/prettier
-export type { FeatureState };
+export type { FeatureState }; // eslint-disable-line no-barrel-files/no-barrel-files -- TODO, rewrite imports
 
 export const defaults = _.mapValues(FLAGS, (flag) => {
   switch (flag) {
@@ -81,19 +78,21 @@ const getModelRef = (e: ModelFeatureFlag) => {
 export const featureReducerName = 'FLAGS';
 export const featureReducer = (state: FeatureState, action: FeatureAction): FeatureState => {
   if (!state) {
-    return ImmutableMap(defaults);
+    return { ...defaults };
   }
 
   switch (action.type) {
     case ActionType.SetFlag:
-      return state.set(action.payload.flag, action.payload.value);
+      if (state[action.payload.flag] === action.payload.value) return state;
+      return { ...state, [action.payload.flag]: action.payload.value };
 
-    case ActionType.ClearSSARFlags:
-      return state.withMutations((s) =>
-        action.payload.flags.reduce((acc, curr) => acc.remove(curr), s),
-      );
+    case ActionType.ClearSSARFlags: {
+      const result = { ...state };
+      action.payload.flags.forEach((flag) => delete result[flag]);
+      return result;
+    }
 
-    case ActionType.UpdateModelFlags:
+    case ActionType.UpdateModelFlags: {
       action.payload.added.forEach((e) => {
         addToCRDs(getModelRef(e), e.properties.flag);
       });
@@ -102,46 +101,52 @@ export const featureReducer = (state: FeatureState, action: FeatureAction): Feat
         delete CRDs[getModelRef(e)];
       });
 
-      return state.withMutations((s) => {
-        const allReferences: Set<string> = action.payload.models.reduce(
-          (acc: Set<string>, curr: K8sModel) => acc.add(referenceForModel(curr)),
-          new Set<string>(),
-        );
+      const allReferences: Set<string> = action.payload.models.reduce(
+        (acc: Set<string>, curr: K8sModel) => acc.add(referenceForModel(curr)),
+        new Set<string>(),
+      );
 
-        // Evaluate new model flags
-        // TODO: Handle model flag removals (when plugin removal without a refresh is supported in console)
-        return action.payload.added.reduce((nextState, e) => {
-          const detected = allReferences.has(getModelRef(e));
-          if (detected) {
-            // eslint-disable-next-line no-console
-            console.log(`${e.properties.flag} was detected.`);
-          }
-          return nextState.set(e.properties.flag, detected);
-        }, s);
+      const updates: Record<string, boolean> = {};
+      // Evaluate new model flags
+      // TODO: Handle model flag removals (when plugin removal without a refresh is supported in console)
+      action.payload.added.forEach((e) => {
+        const detected = allReferences.has(getModelRef(e));
+        if (detected) {
+          // eslint-disable-next-line no-console
+          console.log(`${e.properties.flag} was detected.`);
+        }
+        updates[e.properties.flag] = detected;
       });
 
-    case K8sActionType.ReceivedResources:
-      // Flip all flags to false to signify that we did not see them
-      // eslint-disable-next-line no-param-reassign
-      _.each(CRDs, (v) => (state = state.set(v, false)));
+      return { ...state, ...updates };
+    }
 
-      return action.payload.resources.models
+    case K8sActionType.ReceivedResources: {
+      const flagUpdates: Record<string, boolean> = {};
+      _.each(CRDs, (v) => {
+        flagUpdates[v] = false;
+      });
+
+      action.payload.resources.models
         .filter((model) => CRDs[referenceForModel(model)] !== undefined)
-        .reduce((nextState, model) => {
+        .forEach((model) => {
           const flag = CRDs[referenceForModel(model)];
           // eslint-disable-next-line no-console
           console.log(`${flag} was detected.`);
+          flagUpdates[flag] = true;
+        });
 
-          return nextState.set(flag, true);
-        }, state);
+      return { ...state, ...flagUpdates };
+    }
 
     default:
       return state;
   }
 };
 
-export const getFlagsObject = ({ [featureReducerName]: featureState }: RootState): FlagsObject =>
-  featureState.toObject();
+export const getFlagsObject = ({ [featureReducerName]: featureState }: RootState): FlagsObject => ({
+  ...featureState,
+});
 
 export type FlagsObject = { [key: string]: boolean };
 

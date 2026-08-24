@@ -1,6 +1,4 @@
-/* eslint-disable no-barrel-files/no-barrel-files */
 import { Base64 } from 'js-base64';
-import * as _ from 'lodash';
 import type { ActionType as Action } from 'typesafe-actions';
 import { action } from 'typesafe-actions';
 import {
@@ -26,6 +24,7 @@ import { setClusterID, setCreateProjectMessage, ActionType } from './common';
 import { detectFeatures } from './features';
 import { clearSSARFlags } from './flags';
 
+// eslint-disable-next-line no-barrel-files/no-barrel-files
 export type { NamespaceMetrics } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
 type MetricValuesByNamespace = {
@@ -56,26 +55,26 @@ export type PluginCSPViolations = {
   [pluginName: string]: boolean;
 };
 
-export const getActiveNamespace = (): string => store.getState().UI.get('activeNamespace');
+export const getActiveNamespace = (): string => store.getState().UI.activeNamespace;
 export const getActiveUserName = (): string => getUser(store.getState())?.username;
 
 export const getNamespaceMetric = (ns: K8sResourceKind, metric: string): number => {
-  const metrics = store.getState().UI.getIn(['metrics', 'namespace']);
-  return _.get(metrics, [metric, ns.metadata.name], 0);
+  const metrics = store.getState().UI.metrics?.namespace;
+  return metrics?.[metric]?.[ns.metadata.name] ?? 0;
 };
 
 export const getPodMetric = (pod: PodKind, metric: string): number => {
-  const metrics = store.getState().UI.getIn(['metrics', 'pod']);
+  const metrics = store.getState().UI.metrics?.pod;
   return metrics?.[metric]?.[pod.metadata.namespace]?.[pod.metadata.name] ?? 0;
 };
 
 export const getNodeMetric = (node: NodeKind, metric: string): number => {
-  const metrics = store.getState().UI.getIn(['metrics', 'node']);
+  const metrics = store.getState().UI.metrics?.node;
   return metrics?.[metric]?.[node.metadata.name] ?? 0;
 };
 
 export const getPVCMetric = (pvc: K8sResourceKind, metric: string): number => {
-  const metrics = store.getState().UI.getIn(['metrics', 'pvc']);
+  const metrics = store.getState().UI.metrics?.pvc;
   return metrics?.[metric]?.[pvc.metadata.namespace]?.[pvc.metadata.name] ?? 0;
 };
 

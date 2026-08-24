@@ -484,9 +484,7 @@ export const PodList: FC<PodListProps> = ({
   const { t } = useTranslation('public');
   const { columns, resetAllColumnWidths } = usePodsColumns(showNodes);
 
-  const podMetrics = useConsoleSelector<UIActions.PodMetrics>(({ UI }) =>
-    UI.getIn(['metrics', 'pod']),
-  );
+  const podMetrics = useConsoleSelector<UIActions.PodMetrics>(({ UI }) => UI.metrics?.pod);
 
   const columnManagementID = referenceForModel(PodModel);
 

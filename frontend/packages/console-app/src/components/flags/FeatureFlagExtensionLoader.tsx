@@ -97,7 +97,7 @@ const useModelFeatureFlagExtensions = () => {
   const [resolvedExtensions] = useResolvedExtensions(isModelFeatureFlag);
 
   const dispatch = useConsoleDispatch();
-  const models = useConsoleSelector(({ k8s }) => k8s.getIn(['RESOURCES', 'models']));
+  const models = useConsoleSelector(({ k8s }) => k8s.RESOURCES?.models);
 
   // Use a ref to always access the current models value without changing the callback identity
   const modelsRef = useRef(models);
@@ -109,7 +109,7 @@ const useModelFeatureFlagExtensions = () => {
     (added, removed) => {
       // The feature reducer can't access state from the k8s reducer, so get the
       // models here and include them in the action payload.
-      dispatch(updateModelFlags(added, removed, modelsRef.current));
+      dispatch(updateModelFlags(added, removed, Object.values(modelsRef.current ?? {})));
     },
     [dispatch],
   );
