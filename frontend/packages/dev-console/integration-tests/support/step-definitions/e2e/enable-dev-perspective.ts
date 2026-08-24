@@ -1,5 +1,10 @@
-import { Given, Then, When } from 'cypress-cucumber-preprocessor/steps';
-import { app } from '../../pages';
+import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
+import { switchPerspective } from '../../constants';
+import { app, perspective } from '../../pages';
+
+Given('user is at admin perspective', () => {
+  perspective.switchTo(switchPerspective.Administrator);
+});
 
 Given('user is at Search page in Home section', () => {
   cy.get('[data-quickstart-id="qs-nav-home"]')
@@ -12,35 +17,6 @@ Given('user is at Search page in Home section', () => {
         cy.get('[data-test="nav"][href*="/search"]').click({ force: true });
       }
     });
-});
-
-Given('user is at Cluster Settings page in administration section', () => {
-  //   cy.get('[data-quickstart-id="qs-nav-home"]').click();
-  //   cy.get('[role="combobox"]').click();
-  //   cy.get('[aria-label="Type to filter"]').should('be.visible').type('console');
-  //   cy.get('[class="co-resource-item"]').then(($el) => {
-  //     if ($el.text().includes('operator.openshift.io')) {
-  //       cy.wrap($el).contains('operator.openshift.io').click();
-  //     }
-  //   });
-
-  cy.get('[data-quickstart-id="qs-nav-administration"]')
-    .scrollIntoView()
-    .then(($body) => {
-      if ($body.attr('aria-expanded') === 'false') {
-        cy.wrap($body).click();
-        cy.get('[data-test="nav"][href="/settings/cluster"]').click({ force: true });
-      } else {
-        cy.get('[data-test="nav"][href="/settings/cluster"]').click({ force: true });
-      }
-    });
-});
-
-When('user goes to configuration tab', () => {
-  cy.byLegacyTestID('horizontal-link-Configuration').should('be.visible').click();
-  cy.wait(100000);
-  app.waitForLoad();
-  cy.get('table[role="grid"]').should('be.visible');
 });
 
 When('user searches {string}', (value: string) => {
@@ -88,7 +64,7 @@ When('user will see Saved alert', () => {
 });
 
 Then('user refreshes the page to see developer option', () => {
-  cy.exec(`  oc rollout status -w deploy/console -n openshift-console`, {
+  cy.exec('oc rollout status -w deploy/console -n openshift-console', {
     failOnNonZeroExit: true,
   }).then((result) => {
     cy.log(result.stderr);
