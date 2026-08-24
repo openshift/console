@@ -125,7 +125,7 @@ export const getResource: GetResource = <T = K8sResourceKind>(node: GraphElement
   return (resource as T) || (getTopologyResourceObject(node?.getData()) as T);
 };
 
-export const getResourceKind = (node: Node): K8sResourceKindReference => {
+export const getResourceKind = (node: Node): K8sResourceKindReference | undefined => {
   if (node instanceof OdcBaseNode) {
     return (node as OdcBaseNode).getResourceKind();
   }

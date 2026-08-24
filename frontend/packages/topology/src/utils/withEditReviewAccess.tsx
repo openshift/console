@@ -19,7 +19,7 @@ export const withEditReviewAccess: WithEditReviewAccess = (verb) => (WrappedComp
       name: resourceObj?.metadata?.name,
       namespace: resourceObj?.metadata?.namespace,
     });
-    return <WrappedComponent {...(props as any)} canEdit={editAccess} />;
+    return <WrappedComponent {...(props as any)} canEdit={resourceObj ? editAccess : false} />;
   };
   Component.displayName = `withEditReviewAccess(${
     WrappedComponent.displayName || WrappedComponent.name
