@@ -9,6 +9,53 @@ jest.mock('../../utils/k8s-watch-hook', () => ({
   useK8sWatchResource: jest.fn(),
 }));
 
+// Stub NsDropdown: emits a fixed namespace selection on click
+jest.mock('../../utils/list-dropdown', () => ({
+  NsDropdown: ({
+    selectedKey,
+    onChange,
+    dataTest,
+  }: {
+    selectedKey?: string;
+    dataTest?: string;
+    onChange: (key: string, kind?: string, resource?: { metadata: { name: string } }) => void;
+  }) => (
+    <button
+      type="button"
+      data-test={dataTest}
+      onClick={() => onChange('test-ns', 'Project', { metadata: { name: 'test-ns' } })}
+    >
+      {selectedKey || 'Select project'}
+    </button>
+  ),
+}));
+
+// Stub ResourceDropdown: emits a fixed service account selection on click
+jest.mock('@console/shared/src/components/dropdown/ResourceDropdown', () => ({
+  ResourceDropdown: ({
+    selectedKey,
+    onChange,
+    dataTest,
+    disabled,
+    placeholder,
+  }: {
+    selectedKey?: string | null;
+    dataTest?: string;
+    disabled?: boolean;
+    placeholder?: string;
+    onChange: (key: string, name?: string, resource?: { metadata: { name: string } }) => void;
+  }) => (
+    <button
+      type="button"
+      data-test={dataTest}
+      disabled={disabled}
+      onClick={() => onChange('builder', 'builder', { metadata: { name: 'builder' } })}
+    >
+      {selectedKey || placeholder}
+    </button>
+  ),
+}));
+
 const mockGroups: GroupKind[] = [
   {
     apiVersion: 'user.openshift.io/v1',
@@ -42,14 +89,35 @@ const mockGroups: GroupKind[] = [
   },
 ];
 
+const mockServiceAccounts = [
+  {
+    apiVersion: 'v1',
+    kind: 'ServiceAccount',
+    metadata: { name: 'builder', namespace: 'test-ns', uid: 'sa-1', resourceVersion: '1' },
+  },
+  {
+    apiVersion: 'v1',
+    kind: 'ServiceAccount',
+    metadata: { name: 'deployer', namespace: 'test-ns', uid: 'sa-2', resourceVersion: '1' },
+  },
+];
+
 describe('ImpersonateUserModal', () => {
   const mockOnClose = jest.fn();
   const mockOnImpersonate = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
-    // Default mock: groups loaded successfully
-    (useK8sWatchResource as jest.Mock).mockReturnValue([mockGroups, true, null]);
+    // Default mock: groups and service accounts loaded successfully
+    (useK8sWatchResource as jest.Mock).mockImplementation((resource) => {
+      if (!resource) {
+        return [[], true, null];
+      }
+      if (resource.groupVersionKind?.kind === 'ServiceAccount') {
+        return [mockServiceAccounts, true, null];
+      }
+      return [mockGroups, true, null];
+    });
   });
 
   describe('Basic Rendering', () => {
@@ -221,8 +289,10 @@ describe('ImpersonateUserModal', () => {
       );
 
       await user.click(screen.getByTestId('impersonate-kind-service-account'));
-      await user.type(screen.getByTestId('service-account-namespace-input'), 'test-ns');
-      await user.type(screen.getByTestId('service-account-name-input'), 'builder');
+
+      // Select namespace and service account from the dropdowns
+      await user.click(screen.getByTestId('service-account-namespace-dropdown'));
+      await user.click(screen.getByTestId('service-account-name-dropdown'));
 
       const groupInput = screen.getByPlaceholderText('Enter groups');
       await user.click(groupInput);
@@ -239,28 +309,57 @@ describe('ImpersonateUserModal', () => {
       });
     });
 
-    it('should reject invalid service account namespace and name values', async () => {
+    it('should disable the service account name dropdown until a namespace is selected', async () => {
       const user = userEvent.setup();
       render(
         <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
       );
 
       await user.click(screen.getByTestId('impersonate-kind-service-account'));
-      await user.type(screen.getByTestId('service-account-namespace-input'), 'Invalid_Namespace');
-      await user.type(screen.getByTestId('service-account-name-input'), 'Builder');
-      await user.click(screen.getByTestId('impersonate-button'));
+      expect(screen.getByTestId('service-account-name-dropdown')).toBeDisabled();
 
-      expect(
-        screen.getByText(
-          'Service account namespace must contain only lowercase letters, numbers, and hyphens, and must start and end with a letter or number.',
-        ),
-      ).toBeVisible();
-      expect(
-        screen.getByText(
-          'Service account name must contain only lowercase letters, numbers, hyphens, and dots, and must start and end with a letter or number.',
-        ),
-      ).toBeVisible();
-      expect(mockOnImpersonate).not.toHaveBeenCalled();
+      await user.click(screen.getByTestId('service-account-namespace-dropdown'));
+      expect(screen.getByTestId('service-account-name-dropdown')).toBeEnabled();
+    });
+
+    it('should clear the selected service account when the namespace changes', async () => {
+      const user = userEvent.setup();
+      render(
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
+      );
+
+      await user.click(screen.getByTestId('impersonate-kind-service-account'));
+      await user.click(screen.getByTestId('service-account-namespace-dropdown'));
+
+      const nameDropdown = screen.getByTestId('service-account-name-dropdown');
+      await user.click(nameDropdown);
+      expect(nameDropdown).toHaveTextContent('builder');
+
+      // Selecting the namespace again resets the previously selected service account
+      await user.click(screen.getByTestId('service-account-namespace-dropdown'));
+      expect(nameDropdown).toHaveTextContent('Select a service account');
+    });
+
+    it('should watch service accounts for the selected namespace only', async () => {
+      const user = userEvent.setup();
+      render(
+        <ImpersonateUserModal isOpen onClose={mockOnClose} onImpersonate={mockOnImpersonate} />,
+      );
+
+      await user.click(screen.getByTestId('impersonate-kind-service-account'));
+
+      // No cluster-wide watch before a namespace is chosen
+      expect(useK8sWatchResource).toHaveBeenLastCalledWith(null);
+
+      await user.click(screen.getByTestId('service-account-namespace-dropdown'));
+
+      expect(useK8sWatchResource).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          groupVersionKind: expect.objectContaining({ kind: 'ServiceAccount' }),
+          namespace: 'test-ns',
+          isList: true,
+        }),
+      );
     });
 
     it('should close modal after successful submission', async () => {

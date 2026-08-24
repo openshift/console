@@ -30,22 +30,15 @@ import {
 } from '@patternfly/react-core';
 import { RhUiCloseIcon, RhUiErrorFillIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { GroupModel } from '../../models';
-import type { GroupKind } from '../../module/k8s';
+import { ResourceDropdown } from '@console/shared/src/components/dropdown/ResourceDropdown';
+import { GroupModel, ServiceAccountModel } from '../../models';
+import type { GroupKind, K8sResourceKind } from '../../module/k8s';
 import { FieldLevelHelp } from '../utils/field-level-help';
 import { useK8sWatchResource } from '../utils/k8s-watch-hook';
+import { NsDropdown } from '../utils/list-dropdown';
 
 const SELECT_ALL_KEY = '__select_all__';
 const MAX_VISIBLE_CHIPS = 5;
-const DNS_LABEL_MAX_LENGTH = 63;
-const DNS_SUBDOMAIN_MAX_LENGTH = 253;
-const DNS_LABEL_REGEXP = /^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/;
-
-const isDNS1123Label = (value: string): boolean =>
-  value.length <= DNS_LABEL_MAX_LENGTH && DNS_LABEL_REGEXP.test(value);
-
-const isDNS1123Subdomain = (value: string): boolean =>
-  value.length <= DNS_SUBDOMAIN_MAX_LENGTH && value.split('.').every(isDNS1123Label);
 
 type ImpersonateSubjectKind = 'User' | 'ServiceAccount';
 
@@ -94,6 +87,35 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
     }
     return groups.map((group) => group.metadata.name).sort();
   }, [groups, groupsLoaded, groupsLoadError]);
+
+  // Fetch available service accounts from the selected namespace.
+  // Pass `null` until a namespace is chosen to avoid a cluster-wide watch.
+  const [watchedServiceAccounts, serviceAccountsLoaded, serviceAccountsLoadError] =
+    useK8sWatchResource<K8sResourceKind[]>(
+      serviceAccountNamespace
+        ? {
+            groupVersionKind: {
+              group: ServiceAccountModel.apiGroup,
+              version: ServiceAccountModel.apiVersion,
+              kind: ServiceAccountModel.kind,
+            },
+            namespace: serviceAccountNamespace,
+            isList: true,
+          }
+        : null,
+    );
+
+  const serviceAccounts = useMemo(
+    () => [
+      {
+        data: watchedServiceAccounts ?? [],
+        loaded: serviceAccountsLoaded,
+        loadError: serviceAccountsLoadError,
+        kind: ServiceAccountModel.kind,
+      },
+    ],
+    [watchedServiceAccounts, serviceAccountsLoaded, serviceAccountsLoadError],
+  );
 
   const handleClose = useCallback(() => {
     setImpersonateKind('User');
@@ -172,31 +194,17 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
     }
 
     if (impersonateKind === 'ServiceAccount') {
-      const trimmedNamespace = serviceAccountNamespace.trim();
-      const trimmedName = serviceAccountName.trim();
+      // Namespace and name are selected from existing resources, so only
+      // presence is validated as a safeguard.
       let isValid = true;
 
-      if (!trimmedNamespace) {
+      if (!serviceAccountNamespace.trim()) {
         setServiceAccountNamespaceError(t('Service account namespace is required'));
-        isValid = false;
-      } else if (!isDNS1123Label(trimmedNamespace)) {
-        setServiceAccountNamespaceError(
-          t(
-            'Service account namespace must contain only lowercase letters, numbers, and hyphens, and must start and end with a letter or number.',
-          ),
-        );
         isValid = false;
       }
 
-      if (!trimmedName) {
+      if (!serviceAccountName.trim()) {
         setServiceAccountNameError(t('Service account name is required'));
-        isValid = false;
-      } else if (!isDNS1123Subdomain(trimmedName)) {
-        setServiceAccountNameError(
-          t(
-            'Service account name must contain only lowercase letters, numbers, hyphens, and dots, and must start and end with a letter or number.',
-          ),
-        );
         isValid = false;
       }
 
@@ -389,18 +397,17 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
                 fieldId="impersonate-service-account-namespace"
                 isRequired
               >
-                <TextInput
-                  id="impersonate-service-account-namespace"
-                  name="serviceAccountNamespace"
-                  value={serviceAccountNamespace}
-                  onChange={(_event, value) => {
-                    setServiceAccountNamespace(value);
+                <NsDropdown
+                  id="impersonate-service-account-namespace-dropdown"
+                  selectedKey={serviceAccountNamespace}
+                  onChange={(_key, _kind, resource) => {
+                    setServiceAccountNamespace(resource?.metadata?.name ?? '');
                     setServiceAccountNamespaceError('');
+                    // The service accounts of the previously selected namespace no longer apply
+                    setServiceAccountName('');
+                    setServiceAccountNameError('');
                   }}
-                  placeholder={t('Enter a namespace')}
-                  data-test="service-account-namespace-input"
-                  validated={serviceAccountNamespaceError ? 'error' : 'default'}
-                  aria-label={t('Service account namespace to impersonate')}
+                  dataTest="service-account-namespace-dropdown"
                 />
                 {serviceAccountNamespaceError && (
                   <FormHelperText>
@@ -417,18 +424,22 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
                 fieldId="impersonate-service-account-name"
                 isRequired
               >
-                <TextInput
-                  id="impersonate-service-account-name"
-                  name="serviceAccountName"
-                  value={serviceAccountName}
-                  onChange={(_event, value) => {
-                    setServiceAccountName(value);
+                <ResourceDropdown
+                  resources={serviceAccounts}
+                  loaded={serviceAccountsLoaded}
+                  loadError={serviceAccountsLoadError}
+                  dataSelector={['metadata', 'name']}
+                  id="impersonate-service-account-name-dropdown"
+                  placeholder={t('Select a service account')}
+                  selectedKey={serviceAccountName}
+                  onChange={(key) => {
+                    setServiceAccountName(key ?? '');
                     setServiceAccountNameError('');
                   }}
-                  placeholder={t('Enter a service account name')}
-                  data-test="service-account-name-input"
-                  validated={serviceAccountNameError ? 'error' : 'default'}
-                  aria-label={t('Service account name to impersonate')}
+                  dataTest="service-account-name-dropdown"
+                  disabled={!serviceAccountNamespace}
+                  ariaLabel={t('Service account name to impersonate')}
+                  isFullWidth
                 />
                 {serviceAccountNameError && (
                   <FormHelperText>

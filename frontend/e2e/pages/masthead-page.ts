@@ -14,11 +14,11 @@ export class MastheadPage extends BasePage {
   private readonly serviceAccountRadio: Locator = this.page.getByTestId(
     'impersonate-kind-service-account',
   );
-  private readonly serviceAccountNamespaceInput: Locator = this.page.getByTestId(
-    'service-account-namespace-input',
+  private readonly serviceAccountNamespaceDropdown: Locator = this.page.getByTestId(
+    'service-account-namespace-dropdown',
   );
-  private readonly serviceAccountNameInput: Locator = this.page.getByTestId(
-    'service-account-name-input',
+  private readonly serviceAccountNameDropdown: Locator = this.page.getByTestId(
+    'service-account-name-dropdown',
   );
   private readonly groupInput: Locator = this.page.getByPlaceholder('Enter groups');
   private readonly impersonateButton: Locator = this.page.getByTestId('impersonate-button');
@@ -63,6 +63,15 @@ export class MastheadPage extends BasePage {
     await this.page.mouse.click(20, 20);
   }
 
+  private async fillConsoleSelectSearch(text: string): Promise<void> {
+    await this.page.getByTestId('console-select-search-input').locator('input').fill(text);
+  }
+
+  private async selectConsoleSelectOption(label: string): Promise<void> {
+    const menuList = this.page.getByTestId('console-select-menu-list');
+    await this.robustClick(menuList.getByText(label, { exact: true }).first());
+  }
+
   async impersonateUser(username: string, groups: string[] = []): Promise<void> {
     await this.openUserDropdown();
     await this.robustClick(this.impersonateUserItem);
@@ -79,8 +88,12 @@ export class MastheadPage extends BasePage {
     await this.openUserDropdown();
     await this.robustClick(this.impersonateUserItem);
     await this.robustClick(this.serviceAccountRadio);
-    await this.serviceAccountNamespaceInput.fill(namespace);
-    await this.serviceAccountNameInput.fill(name);
+    await this.robustClick(this.serviceAccountNamespaceDropdown);
+    await this.fillConsoleSelectSearch(namespace);
+    await this.selectConsoleSelectOption(namespace);
+    await this.robustClick(this.serviceAccountNameDropdown);
+    await this.fillConsoleSelectSearch(name);
+    await this.selectConsoleSelectOption(name);
     await this.selectGroups(groups);
     await this.robustClick(this.impersonateButton);
   }
