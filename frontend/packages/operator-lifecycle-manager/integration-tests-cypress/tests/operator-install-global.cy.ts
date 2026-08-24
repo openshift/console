@@ -15,7 +15,7 @@ const testOperand: TestOperandProps = {
   exampleName: 'example-infinispan',
 };
 
-xdescribe(`Globally installing "${testOperator.name}" operator in ${GlobalInstalledNamespace}`, () => {
+describe(`Globally installing "${testOperator.name}" operator in ${GlobalInstalledNamespace}`, () => {
   before(() => {
     cy.login();
     operator.install(testOperator.name, testOperator.operatorHubCardTestID);
