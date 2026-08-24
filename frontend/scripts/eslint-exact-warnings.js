@@ -20,6 +20,7 @@
  * set for the whole run, while rules cannot see cross-file totals or `--max-warnings`.
  */
 
+const fs = require('fs');
 const path = require('path');
 
 /**
@@ -69,6 +70,7 @@ const countResults = (results) =>
  * bin assigns that value to `process.exitCode` *after* the formatter runs. An
  * `'exit'` listener runs later still, so it is the reliable place to set the
  * failing code even when ESLint itself considers the run a pass.
+ * @param {string} testName The name of the test case that failed, for JUnit XML output.
  * @param {string} message The error to print to stderr.
  * @returns {void}
  */
@@ -78,6 +80,14 @@ const failRun = (message) => {
     process.exitCode = 1;
   });
   process.stderr.write(`\n${message}\n`);
+
+  if (process.env.OPENSHIFT_CI === 'true') {
+    const artifactDir = process.env.ARTIFACT_DIR || '/tmp/artifacts';
+    const name = 'eslint-exact-warnings';
+    const xml = `<?xml version="1.0" encoding="UTF-8"?><testsuites><testsuite name="${name}" tests="1" failures="1"><testcase classname="${name}" name="no eslint errors are present and the current number of warnings matches MAX_WARNINGS"><failure>${message}</failure></testcase></testsuite></testsuites>`;
+    fs.mkdirSync(artifactDir, { recursive: true });
+    fs.writeFileSync(path.join(artifactDir, `${name}.junit.xml`), xml);
+  }
 };
 
 /** @type {import('eslint').ESLint.LoadedFormatter['format']} */
@@ -89,22 +99,19 @@ module.exports = (results, context) => {
   const maxWarnings = getMaxWarnings();
   const { errorCount, warningCount } = countResults(results);
 
-  // Already fails if there are errors
-  if (errorCount > 0 || warningCount === maxWarnings) {
-    return output;
-  }
-
-  if (warningCount > maxWarnings) {
-    // ESLint already fails this case; add an actionable hint.
+  if (errorCount > 0) {
+    failRun(
+      `Found ${errorCount} error(s). All eslint errors must be fixed before merging. Found ${warningCount} warning(s) and expected ${maxWarnings}.`
+    );
+  } else if (warningCount > maxWarnings) {
     failRun(
       `Found ${warningCount} warning(s), which exceeds the maximum of ${maxWarnings}. Do not increase the MAX_WARNINGS value, instead fix the warning(s) to bring the count back down to ${maxWarnings}.`,
     );
-    return output;
+  } else if (warningCount < maxWarnings) {
+    failRun(
+      `Found ${warningCount} warning(s) but the count is ${maxWarnings}. Lower the MAX_WARNINGS value in the lint script in package.json to match the actual warning count.`
+    );
   }
 
-  // warningCount < maxWarnings
-  failRun(
-    `Found ${warningCount} warning(s) but the count is ${maxWarnings}. Lower the MAX_WARNINGS value in the lint script in package.json to match the actual warning count.`
-  );
   return output;
 };
