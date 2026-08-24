@@ -121,6 +121,24 @@ export default abstract class BasePage {
     await this.waitForLoadingComplete();
   }
 
+  protected async waitForDetailsActions(actionsButton: Locator, timeoutMs = 60_000): Promise<void> {
+    // Navigating right after impersonation teardown can race the SPA reload and
+    // abort API discovery, leaving the resource watch stuck on "Model does not
+    // exist" with no auto-retry. Recover by reloading until actions render.
+    await expect(async () => {
+      const modelError = await this.page
+        .getByText('Model does not exist')
+        .isVisible()
+        .catch(() => false);
+      if (modelError) {
+        await this.retryOnError();
+      } else {
+        // eslint-disable-next-line no-restricted-syntax
+        await actionsButton.waitFor({ state: 'visible', timeout: 5_000 });
+      }
+    }).toPass({ timeout: timeoutMs });
+  }
+
   protected locator(
     selector: string,
     options?: {

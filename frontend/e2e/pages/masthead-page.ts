@@ -55,8 +55,13 @@ export class MastheadPage extends BasePage {
   }
 
   private async selectGroups(groups: string[]): Promise<void> {
+    if (groups.length === 0) {
+      return;
+    }
+
+    // Open once; the modal keeps the selector open between selections
+    await this.groupInput.click();
     for (const group of groups) {
-      await this.groupInput.click();
       const groupOption = this.page.getByText(group, { exact: true });
       await this.robustClick(groupOption);
     }
