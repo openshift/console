@@ -98,20 +98,16 @@ func startTests(m *testing.M) (exitCode int) {
 
 	}()
 	if err := setupTestWithTls(); err != nil {
-		fmt.Fprintf(os.Stderr, "SKIP: Helm test infrastructure unavailable (TLS setup): %v\n", err)
-		return 0
+		panic(err)
 	}
 	if err := setupTestWithoutTls(); err != nil {
-		fmt.Fprintf(os.Stderr, "SKIP: Helm test infrastructure unavailable (non-TLS setup): %v\n", err)
-		return 0
+		panic(err)
 	}
 	if err := setupTestBasicAuth(); err != nil {
-		fmt.Fprintf(os.Stderr, "SKIP: Helm test infrastructure unavailable (basic auth setup): %v\n", err)
-		return 0
+		panic(err)
 	}
 	if err := setupTestOCIBasicAuth(); err != nil {
-		fmt.Fprintf(os.Stderr, "SKIP: Helm test infrastructure unavailable (OCI basic auth setup): %v\n", err)
-		return 0
+		panic(err)
 	}
 	return m.Run()
 }
