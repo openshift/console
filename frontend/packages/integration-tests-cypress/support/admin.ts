@@ -16,6 +16,9 @@ Cypress.Commands.add('initAdmin', () => {
   cy.log('redirect to home');
   cy.visit('/');
   cy.byTestID('loading-indicator').should('not.exist');
+  cy.document().its('readyState').should('eq', 'complete');
+  // Placeholder toggle is display:none when only one perspective exists.
+  cy.byLegacyTestID('perspective-switcher-toggle', { timeout: 60000 }).should('exist');
   cy.log('ensure perspective switcher is set to Administrator');
   nav.sidenav.switcher.changePerspectiveTo('Administrator');
   nav.sidenav.switcher.shouldHaveText('Administrator');
@@ -27,6 +30,8 @@ Cypress.Commands.add('initDeveloper', () => {
   cy.visit('/add');
   cy.byTestID('loading-indicator').should('not.exist');
   cy.document().its('readyState').should('eq', 'complete');
+  // Placeholder toggle is display:none when only one perspective exists.
+  cy.byLegacyTestID('perspective-switcher-toggle', { timeout: 60000 }).should('exist');
   cy.log('ensure perspective switcher is set to Developer');
   guidedTour.close();
   nav.sidenav.switcher.changePerspectiveTo('Developer');
