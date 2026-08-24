@@ -95,7 +95,8 @@
       "\\.(css|less|scss)$": "<rootDir>/__mocks__/styleMock.js",
       "^dnd-core$": "dnd-core/dist/cjs",
       "^react-dnd$": "react-dnd/dist/cjs",
-      "^react-dnd-html5-backend$": "react-dnd-html5-backend/dist/cjs"
+      "^react-dnd-html5-backend$": "react-dnd-html5-backend/dist/cjs",
+      "linkify-react/dist/linkify-react\\.mjs$": "<rootDir>/__mocks__/linkify-react.js"
     },
     "transform": {
       "^.+\\.(ts|tsx|js|jsx)$": "./node_modules/ts-jest/preprocessor.js",
@@ -184,6 +185,8 @@
     "js-yaml": "^3.15.0",
     "json-schema": "^0.3.0",
     "jsonpath-plus": "^10.3.0",
+    "linkify-react": "^4.2.0",
+    "linkifyjs": "^4.2.0",
     "lodash-es": "^4.18.1",
     "marked": "^15.0.6",
     "monaco-yaml": "^5.3.1",
@@ -199,7 +202,6 @@
     "react-dom": "^17.0.1",
     "react-helmet-async": "^2.0.5",
     "react-i18next": "^11.12.0",
-    "react-linkify": "^0.2.2",
     "react-modal": "^3.16.3",
     "react-redux": "7.2.9",
     "react-router": "5.3.x",
