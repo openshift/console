@@ -1,9 +1,14 @@
-import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
+import { Given, When, Then, After } from 'cypress-cucumber-preprocessor/steps';
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 import { modal } from '@console/cypress-integration-tests/views/modal';
 import { switchPerspective, devNavigationMenu, adminNavigationMenu } from '../../constants';
 import { perspective, projectNameSpace, navigateTo, app } from '../../pages';
 import { checkDeveloperPerspective } from '../../pages/functions/checkDeveloperPerspective';
+
+// Tracks whether the Developer perspective was disabled during a scenario so that
+// the After hook can re-enable it on cleanup, preventing cascade failures in
+// subsequent test files that depend on the Developer perspective being available.
+let devPerspectiveDisabled = false;
 
 Given('user has logged in as a basic user', () => {
   cy.logout();
@@ -21,6 +26,7 @@ Given('user is at developer perspective', () => {
 });
 
 Given('user has only admin perspective enabled', () => {
+  devPerspectiveDisabled = true;
   cy.exec(
     `oc patch console.operator.openshift.io/cluster --type='merge' -p '{"spec":{"customization":{"perspectives":[{"id":"dev","visibility":{"state":"Disabled"}}]}}}'`,
     { failOnNonZeroExit: true },
@@ -89,6 +95,34 @@ When('user is at namespace {string}', (projectName: string) => {
   projectNameSpace.selectOrCreateProject(projectName);
 });
 
+Given('user has logged in as admin user', () => {
+  cy.login();
+  perspective.switchTo(switchPerspective.Administrator);
+});
+
 When('user refreshes the page', () => {
   cy.reload();
+});
+
+// Defensive teardown: re-enable the Developer perspective after any scenario
+// that disabled it. This prevents cascade failures where a crash in the
+// enable-dev-perspective feature leaves the perspective disabled for all
+// subsequent tests (e.g. add-flow-ci.feature).
+After(() => {
+  if (devPerspectiveDisabled) {
+    devPerspectiveDisabled = false;
+    cy.exec(
+      `oc patch console.operator.openshift.io/cluster --type='merge' -p '{"spec":{"customization":{"perspectives":[{"id":"dev","visibility":{"state":"Enabled"}}]}}}'`,
+      { failOnNonZeroExit: false },
+    ).then((result) => {
+      cy.log('After hook: re-enabled Developer perspective');
+      cy.log(result.stdout);
+      if (result.stderr) {
+        cy.log(result.stderr);
+      }
+    });
+    cy.exec('oc rollout status -w deploy/console -n openshift-console', {
+      failOnNonZeroExit: false,
+    });
+  }
 });
