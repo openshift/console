@@ -606,9 +606,7 @@ export const MultiListPage: FC<MultiListPageProps> = (props) => {
     () =>
       Object.entries(watchedResources).find(
         ([key, r]) =>
-          r.loadError &&
-          !(r.loadError instanceof NoModelError) &&
-          !watchResources[key]?.optional,
+          r.loadError && !(r.loadError instanceof NoModelError) && !watchResources[key]?.optional,
       )?.[1]?.loadError,
     [watchedResources, watchResources],
   );
