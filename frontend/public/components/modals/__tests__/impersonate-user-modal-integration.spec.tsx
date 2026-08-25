@@ -23,9 +23,52 @@ jest.mock('../../../actions/ui', () => ({
   stopImpersonate: jest.fn(),
 }));
 
+// Mock ResourceDropdown to avoid deep import chain (plugins.ts → loadSchema)
+jest.mock('@console/shared/src/components/dropdown/ResourceDropdown', () => ({
+  ResourceDropdown: ({
+    selectedKey,
+    onChange,
+    dataTest,
+    disabled,
+    placeholder,
+  }: {
+    selectedKey?: string | null;
+    dataTest?: string;
+    disabled?: boolean;
+    placeholder?: string;
+    onChange: (key: string, name?: string, resource?: { metadata: { name: string } }) => void;
+  }) => (
+    <button
+      type="button"
+      data-test={dataTest}
+      disabled={disabled}
+      onClick={() => onChange('builder', 'builder', { metadata: { name: 'builder' } })}
+    >
+      {placeholder || selectedKey || 'Select resource'}
+    </button>
+  ),
+}));
+
+// Mock NsDropdown to avoid deep import chain + useProjectOrNamespaceModel for namespace model
 jest.mock('../../utils/list-dropdown', () => ({
-  ...jest.requireActual('../../utils/list-dropdown'),
   useProjectOrNamespaceModel: () => [ProjectModel, true],
+  NsDropdown: ({
+    selectedKey,
+    onChange,
+    dataTest,
+  }: {
+    selectedKey?: string;
+    dataTest?: string;
+    onChange: (key: string, kind?: string, resource?: { metadata: { name: string } }) => void;
+  }) => (
+    <button
+      type="button"
+      data-test={dataTest}
+      onClick={() => onChange('test-ns', 'Project', { metadata: { name: 'test-ns' } })}
+    >
+      {selectedKey || 'Select project'}
+    </button>
+  ),
 }));
 
 const mockGroups: GroupKind[] = [
