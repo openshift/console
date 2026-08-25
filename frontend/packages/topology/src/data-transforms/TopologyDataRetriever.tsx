@@ -34,6 +34,7 @@ const TopologyDataRetriever: FC<TopologyDataRetrieverProps> = ({ trafficData }) 
 
   // Wipe the current model on a namespace change
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/immutability -- intentional context model reset on namespace change
     dataModelContext.model = null;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [namespace]);
@@ -42,9 +43,12 @@ const TopologyDataRetriever: FC<TopologyDataRetrieverProps> = ({ trafficData }) 
     if (!_.isEmpty(resources)) {
       updateTopologyDataModel(dataModelContext, resources, trafficData, monitoringAlerts)
         .then((res) => {
+          // eslint-disable-next-line react-hooks/immutability -- intentional context state update
           dataModelContext.loadError = res.loadError;
           if (res.loaded) {
+            // eslint-disable-next-line react-hooks/immutability -- intentional context state update
             dataModelContext.loaded = true;
+            // eslint-disable-next-line react-hooks/immutability -- intentional context state update
             dataModelContext.model = res.model;
           }
         })

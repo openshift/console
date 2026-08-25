@@ -23,27 +23,22 @@ export const ProgressiveListFooter: FC<ProgressiveListFooterProps> = ({
     type: 'conjunction',
   }).format(items);
 
-  let lastIdx = 0;
-  let lastLen = 0;
+  const positions = items.map((item) => formattedString.indexOf(item));
 
   return (
     <Footer>
       <>
-        {items.map((item) => {
-          const currentIdx = formattedString.indexOf(item);
-          const element = (
+        {items.map((item, i) => {
+          const currentIdx = positions[i];
+          const prevEnd = i > 0 ? positions[i - 1] + items[i - 1].length : 0;
+          return (
             <Fragment key={item}>
-              {formattedString.slice(lastIdx + lastLen, currentIdx)}
+              {formattedString.slice(prevEnd, currentIdx)}
               <Button variant="link" isInline onClick={() => onShowItem(item)}>
                 {item}
               </Button>
             </Fragment>
           );
-
-          lastIdx = currentIdx;
-          lastLen = item.length;
-
-          return element;
         })}
       </>
     </Footer>
