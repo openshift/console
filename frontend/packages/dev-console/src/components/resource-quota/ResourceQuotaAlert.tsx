@@ -68,11 +68,9 @@ export const ResourceQuotaAlert: FC<ResourceQuotaAlertProps> = ({ namespace }) =
     [appliedclusterresourcequotas],
   );
 
-  let totalResourcesAtQuota = useMemo(
-    () => [...totalRQatQuota, ...totalACRQatQuota],
-    [totalRQatQuota, totalACRQatQuota],
+  const totalResourcesAtQuota = [...totalRQatQuota, ...totalACRQatQuota].filter(
+    (resourceAtQuota) => resourceAtQuota !== 0,
   );
-  totalResourcesAtQuota = totalResourcesAtQuota.filter((resourceAtQuota) => resourceAtQuota !== 0);
 
   useEffect(() => {
     if (totalResourcesAtQuota.length === 1) {
