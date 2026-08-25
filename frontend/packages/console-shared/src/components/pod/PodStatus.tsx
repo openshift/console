@@ -1,5 +1,5 @@
 import type { ReactElement, FC } from 'react';
-import { useRef, useState, useMemo, memo } from 'react';
+import { useRef, useMemo, memo } from 'react';
 import { ChartDonut } from '@patternfly/react-charts/victory';
 import { Tooltip } from '@patternfly/react-core';
 import * as _ from 'lodash';
@@ -56,7 +56,7 @@ const PodStatusBase: FC<PodStatusProps> = ({
   data,
 }) => {
   const ref = useRef();
-  const [updateOnEnd, setUpdateOnEnd] = useState<boolean>(false);
+  const updateOnEndRef = useRef<boolean>(false);
   const forceUpdate = useForceUpdate();
   const prevVData = useRef<PodData[]>(null);
 
@@ -76,7 +76,7 @@ const PodStatusBase: FC<PodStatusProps> = ({
 
     const prevDataPoints = _.size(_.filter(prevVData.current, (nextData) => nextData.y !== 0));
     const dataPoints = _.size(_.filter(updateVData, (nextData) => nextData.y !== 0));
-    setUpdateOnEnd(dataPoints === 1 && prevDataPoints > 1);
+    updateOnEndRef.current = dataPoints === 1 && prevDataPoints > 1;
 
     if (!_.isEqual(prevVData.current, updateVData)) {
       prevVData.current = updateVData;
@@ -95,7 +95,7 @@ const PodStatusBase: FC<PodStatusProps> = ({
         ariaTitle={`${title}${subTitle && ` ${subTitle}`}`}
         animate={{
           duration: prevVData.current ? ANIMATION_DURATION : 0,
-          onEnd: updateOnEnd ? forceUpdate : undefined,
+          onEnd: updateOnEndRef.current ? forceUpdate : undefined,
         }}
         standalone={standalone}
         innerRadius={innerRadius}
@@ -133,7 +133,6 @@ const PodStatusBase: FC<PodStatusProps> = ({
       subTitleComponent,
       truncTitle,
       titleComponent,
-      updateOnEnd,
       vData,
       x,
       y,
