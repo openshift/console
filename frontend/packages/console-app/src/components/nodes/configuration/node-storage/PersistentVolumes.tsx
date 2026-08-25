@@ -41,7 +41,7 @@ type PersistentVolumeRowProps = {
 const PersistentVolumeRow: FC<PersistentVolumeRowProps> = ({ persistentVolumeData, pods }) => {
   const { t } = useTranslation('console-app');
 
-  const pod = (() => {
+  const pod = useMemo(() => {
     if (persistentVolumeData.vmi) {
       return getVMIPod(persistentVolumeData.vmi, pods);
     }
