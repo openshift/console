@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useRef, useMemo, memo } from 'react';
+import { useRef, memo } from 'react';
 import { Tooltip } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import type { Node, WithContextMenuProps, WithSelectionProps } from '@patternfly/react-topology';
@@ -123,15 +123,9 @@ const PipelineTaskNode: FC<PipelineTaskNodeProps> = ({
       ? `${succeededStepsCount}/${stepStatusList.length}`
       : null;
 
-  const passedData = useMemo(() => {
-    const newData = { ...data };
-    Object.keys(newData).forEach((key) => {
-      if (newData[key] === undefined) {
-        delete newData[key];
-      }
-    });
-    return newData;
-  }, [data]);
+  const passedData = Object.fromEntries(
+    Object.entries(data).filter(([, value]) => value !== undefined),
+  );
 
   const hasTaskIcon = !!(data.taskIconClass || data.taskIcon);
   const tooltipContent = getTooltipContent(data.task?.status?.reason);

@@ -210,9 +210,15 @@ const TopologyComponent: FC<TopologyProps> = ({
 
   useEffect(() => {
     if (model && visualizationReady) {
+      const localModel = {
+        ...model,
+        graph: { ...model.graph },
+        nodes: model.nodes.map((n) => ({ ...n })),
+        edges: model.edges.map((e) => ({ ...e })),
+      };
       if (!storedLayoutApplied.current) {
         if (storedGraphModel) {
-          model.graph = {
+          localModel.graph = {
             ...graphModel.graph,
             x: storedGraphModel.x,
             y: storedGraphModel.y,
@@ -223,7 +229,7 @@ const TopologyComponent: FC<TopologyProps> = ({
         }
         const storedLayout = topologyLayoutDataJson?.[namespace];
         if (storedLayout) {
-          model.nodes.forEach((n) => {
+          localModel.nodes.forEach((n) => {
             const storedNode = storedLayout.nodes.find((sn) => sn.id === n.id);
             if (storedNode) {
               STORED_NODE_LAYOUT_FIELDS.forEach((key) => {
@@ -234,20 +240,20 @@ const TopologyComponent: FC<TopologyProps> = ({
         }
       }
 
-      model.nodes.forEach((n) => {
+      localModel.nodes.forEach((n) => {
         const oldNode = visualization.getNodeById(n.id);
         if (oldNode && _.isEqual(oldNode.getData(), n.data)) {
           n.data = oldNode.getData();
         }
       });
-      model.edges.forEach((e) => {
+      localModel.edges.forEach((e) => {
         const oldEdge = visualization.getEdgeById(e.id);
         if (oldEdge && _.isEqual(oldEdge.getData(), e.data)) {
           e.data = oldEdge.getData();
         }
       });
 
-      visualization.fromModel(model);
+      visualization.fromModel(localModel);
 
       // Make sure something is visible in the case where stored locations are off the screen
       if (!storedLayoutApplied.current) {

@@ -190,10 +190,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
   const launchModal = useOverlay();
 
   const [templateExtensions, resolvedTemplates] = useResolvedExtensions<YAMLTemplate>(
-    useCallback(
-      (e): e is YAMLTemplate => isYAMLTemplate(e) && e.properties.model.kind === props?.obj?.kind,
-      [props?.obj?.kind],
-    ),
+    (e): e is YAMLTemplate => isYAMLTemplate(e) && e.properties.model.kind === props?.obj?.kind,
   );
 
   const { theme, fontSize, showTooltips, stickyScrollEnabled } = useEditYamlSettings();

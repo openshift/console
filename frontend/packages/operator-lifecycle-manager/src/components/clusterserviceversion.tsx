@@ -1173,6 +1173,7 @@ const ClusterServiceVersionDetails: FC<ClusterServiceVersionDetailsProps> = (pro
         url.searchParams.set('utm_source', 'openshift_console');
         return url.toString();
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.error('Error while setting utm_source to support workflow URL', error.message);
       }
     }
