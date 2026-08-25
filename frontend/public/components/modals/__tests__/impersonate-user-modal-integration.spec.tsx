@@ -366,7 +366,11 @@ describe('ImpersonateUserModal Integration Tests', () => {
       await user.click(submitButton);
 
       await waitFor(() => {
-        expect(onImpersonate).toHaveBeenCalledWith('oidc-user', ['oidc-admins', 'oidc-devs'], 'User');
+        expect(onImpersonate).toHaveBeenCalledWith(
+          'oidc-user',
+          ['oidc-admins', 'oidc-devs'],
+          'User',
+        );
       });
     });
 

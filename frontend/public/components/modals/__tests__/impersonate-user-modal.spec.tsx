@@ -369,10 +369,11 @@ describe('ImpersonateUserModal', () => {
       await user.click(submitButton);
 
       await waitFor(() => {
-        expect(mockOnImpersonate).toHaveBeenCalledWith('testuser', [
-          'oidc-admins',
-          'oidc-developers',
-        ], 'User');
+        expect(mockOnImpersonate).toHaveBeenCalledWith(
+          'testuser',
+          ['oidc-admins', 'oidc-developers'],
+          'User',
+        );
       });
     });
 

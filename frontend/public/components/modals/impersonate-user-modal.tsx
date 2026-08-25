@@ -171,12 +171,8 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
       return false;
     }
     // Don't show "Create" if it exactly matches an existing available group or is already selected
-    const alreadyExists = availableGroups.some(
-      (g) => g.toLowerCase() === trimmed.toLowerCase(),
-    );
-    const alreadySelected = selectedGroups.some(
-      (g) => g.toLowerCase() === trimmed.toLowerCase(),
-    );
+    const alreadyExists = availableGroups.some((g) => g.toLowerCase() === trimmed.toLowerCase());
+    const alreadySelected = selectedGroups.some((g) => g.toLowerCase() === trimmed.toLowerCase());
     return !alreadyExists && !alreadySelected;
   }, [groupSearchFilter, availableGroups, selectedGroups]);
 
