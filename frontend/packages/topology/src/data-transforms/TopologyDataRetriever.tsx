@@ -43,9 +43,12 @@ const TopologyDataRetriever: FC<TopologyDataRetrieverProps> = ({ trafficData }) 
     if (!_.isEmpty(resources)) {
       updateTopologyDataModel(dataModelContext, resources, trafficData, monitoringAlerts)
         .then((res) => {
+          // eslint-disable-next-line react-hooks/immutability -- intentional context state update
           dataModelContext.loadError = res.loadError;
           if (res.loaded) {
+            // eslint-disable-next-line react-hooks/immutability -- intentional context state update
             dataModelContext.loaded = true;
+            // eslint-disable-next-line react-hooks/immutability -- intentional context state update
             dataModelContext.model = res.model;
           }
         })

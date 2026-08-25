@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useRef, useMemo, memo } from 'react';
+import { useRef, memo } from 'react';
 import { Tooltip } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import type { Node, WithContextMenuProps, WithSelectionProps } from '@patternfly/react-topology';

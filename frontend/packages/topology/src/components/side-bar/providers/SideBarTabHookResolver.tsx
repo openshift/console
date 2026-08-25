@@ -113,16 +113,20 @@ const TabBarTabHookResolver: FC<TabBarTabHookResolverProps> = ({
   // show default side bar
   if (tabsLoaded && tabs.length === 0) {
     const resource = getResource(graphElement);
-    resource &&
-      tabs.push({
+    const defaultTabs: Tab[] = [];
+    if (resource) {
+      defaultTabs.push({
         name: t('Details'),
         component: () => <DefaultResourceSideBar resource={resource} />,
       });
-    isEdge(graphElement) &&
-      tabs.push({
+    }
+    if (isEdge(graphElement)) {
+      defaultTabs.push({
         name: t('Resources'),
         component: () => <TopologyEdgeResourcesPanel edge={graphElement} />,
       });
+    }
+    return children(defaultTabs, tabsLoaded);
   }
 
   return children(tabs, tabsLoaded);

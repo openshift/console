@@ -1,5 +1,5 @@
 import type { ReactNode, FC } from 'react';
-import { useRef, useMemo } from 'react';
+import { useRef } from 'react';
 import { Tooltip } from '@patternfly/react-core';
 import type {
   Node,
@@ -98,7 +98,7 @@ const EventSink: FC<EventSinkProps> = ({
 
   const isKafkaSink = referenceFor(resource) === referenceForModel(KafkaSinkModel);
 
-  const donutStatus = useMemo(() => {
+  const donutStatus = (() => {
     if (!revisionIds && loadedDeployment && !loadErrorDeployment) {
       return podsDeployment;
     }

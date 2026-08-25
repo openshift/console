@@ -56,6 +56,7 @@ const LifecycleHookField: FC<LifecycleHookFieldProps> = ({
     // eslint-disable-next-line react-hooks-js/immutability -- Intentionally sync the last-saved hook values into Formik's initialValues: onClose() restores from them, so they must track saved state. Runs in a submit handler, never during render.
     initialValues.formData.deploymentStrategy[dataAttribute][lifecycleHookName] =
       deploymentStrategy[dataAttribute][lifecycleHookName];
+    // eslint-disable-next-line react-hooks/immutability -- intentional Formik initialValues sync
     initialValues.formData.deploymentStrategy.imageStreamData[lifecycleHookName] =
       deploymentStrategy.imageStreamData[lifecycleHookName];
   }, [
@@ -79,6 +80,7 @@ const LifecycleHookField: FC<LifecycleHookFieldProps> = ({
     // eslint-disable-next-line react-hooks-js/immutability -- Intentionally sync the removed hook values into Formik's initialValues: onClose() restores from them, so they must track saved state. Runs in a remove handler, never during render.
     initialValues.formData.deploymentStrategy[dataAttribute][lifecycleHookName] =
       data[dataAttribute][lifecycleHookName];
+    // eslint-disable-next-line react-hooks/immutability -- intentional Formik initialValues sync
     initialValues.formData.deploymentStrategy.imageStreamData[lifecycleHookName] =
       data.imageStreamData[lifecycleHookName];
     setFieldValue(
