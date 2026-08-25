@@ -23,7 +23,13 @@ export const ProgressiveListFooter: FC<ProgressiveListFooterProps> = ({
     type: 'conjunction',
   }).format(items);
 
-  const positions = items.map((item) => formattedString.indexOf(item));
+  const positions = items.reduce<number[]>(
+    (result, item, index) => [
+      ...result,
+      formattedString.indexOf(item, index === 0 ? 0 : result[index - 1] + items[index - 1].length),
+    ],
+    [],
+  );
 
   return (
     <Footer>
