@@ -120,7 +120,7 @@ func (cs *CombinedSessionStore) setRefreshTokenCookie(clientSession *session, re
 	}
 
 	refID := RandomString(32)
-	cs.serverStore.byRefreshTokenID[refID] = refreshToken
+	cs.serverStore.SetRefreshTokenID(refID, refreshToken)
 	clientSession.refreshToken.Values["refresh-token-id"] = refID
 	klog.V(4).Infof("refresh token too large for cookie (%d bytes encoded), using reference ID — session recovery after pod restart disabled", len(encoded))
 }
@@ -171,7 +171,7 @@ func (cs *CombinedSessionStore) GetSession(w http.ResponseWriter, r *http.Reques
 	if rt, ok := clientSession.refreshToken.Values["refresh-token"].(string); ok {
 		refreshToken = rt
 	} else if refreshTokenID, ok := clientSession.refreshToken.Values["refresh-token-id"].(string); ok {
-		if actualToken, exists := cs.serverStore.byRefreshTokenID[refreshTokenID]; exists {
+		if actualToken, exists := cs.serverStore.GetRefreshTokenByID(refreshTokenID); exists {
 			refreshToken = actualToken
 		}
 	}
@@ -187,7 +187,7 @@ func (cs *CombinedSessionStore) GetCookieRefreshToken(r *http.Request) string {
 	}
 	// Backward compatibility: fall back to reference ID lookup
 	if refreshTokenID, ok := clientSession.Values["refresh-token-id"].(string); ok {
-		if actualToken, exists := cs.serverStore.byRefreshTokenID[refreshTokenID]; exists {
+		if actualToken, exists := cs.serverStore.GetRefreshTokenByID(refreshTokenID); exists {
 			return actualToken
 		}
 	}
@@ -195,10 +195,9 @@ func (cs *CombinedSessionStore) GetCookieRefreshToken(r *http.Request) string {
 }
 
 func (cs *CombinedSessionStore) UpdateCookieRefreshToken(w http.ResponseWriter, r *http.Request, refreshToken string) error {
-	clientSession, _ := cs.clientStore.Get(r, openshiftRefreshTokenCookieName)
-	clientSession.Values["refresh-token"] = refreshToken
-	delete(clientSession.Values, "refresh-token-id")
-	return clientSession.Save(r, w)
+	clientSession := cs.getCookieSession(r)
+	cs.setRefreshTokenCookie(clientSession, refreshToken)
+	return clientSession.refreshToken.Save(r, w)
 }
 
 func (cs *CombinedSessionStore) UpdateTokens(w http.ResponseWriter, r *http.Request, tokenVerifier IDTokenVerifier, tokenResponse *oauth2.Token) (*LoginState, error) {
@@ -214,10 +213,10 @@ func (cs *CombinedSessionStore) UpdateTokens(w http.ResponseWriter, r *http.Requ
 	if rt, ok := clientSession.refreshToken.Values["refresh-token"].(string); ok {
 		oldRefreshToken = rt
 	} else if oldID, ok := clientSession.refreshToken.Values["refresh-token-id"].(string); ok {
-		if actualToken, exists := cs.serverStore.byRefreshTokenID[oldID]; exists {
+		if actualToken, exists := cs.serverStore.GetRefreshTokenByID(oldID); exists {
 			oldRefreshToken = actualToken
 		}
-		delete(cs.serverStore.byRefreshTokenID, oldID)
+		cs.serverStore.DeleteRefreshTokenID(oldID)
 	}
 
 	newRefreshToken := tokenResponse.RefreshToken
@@ -270,9 +269,9 @@ func (cs *CombinedSessionStore) DeleteSession(w http.ResponseWriter, r *http.Req
 	if refreshToken, ok := cookieSession.refreshToken.Values["refresh-token"].(string); ok && refreshToken != "" {
 		cs.serverStore.DeleteByRefreshToken(refreshToken)
 	} else if refreshTokenIDStr, ok := cookieSession.refreshToken.Values["refresh-token-id"].(string); ok {
-		if actualToken, exists := cs.serverStore.byRefreshTokenID[refreshTokenIDStr]; exists {
+		if actualToken, exists := cs.serverStore.GetRefreshTokenByID(refreshTokenIDStr); exists {
 			cs.serverStore.DeleteByRefreshToken(actualToken)
-			delete(cs.serverStore.byRefreshTokenID, refreshTokenIDStr)
+			cs.serverStore.DeleteRefreshTokenID(refreshTokenIDStr)
 		}
 	}
 

@@ -102,14 +102,34 @@ func (opts *SessionOptions) Complete(userAuthType flagvalues.AuthType) (*Complet
 		}
 	}
 
-	// Previous keys are always optional — used for graceful key rotation
-	if len(opts.PreviousCookieEncryptionKeyPath) > 0 {
-		if prevEncKey, err := os.ReadFile(opts.PreviousCookieEncryptionKeyPath); err == nil {
-			completed.PreviousCookieEncryptionKey = prevEncKey
+	// Previous keys are optional — used for graceful key rotation.
+	// If configured, both must be readable; an incomplete pair would
+	// silently break decryption of cookies encrypted with the prior keys.
+	if len(opts.PreviousCookieEncryptionKeyPath) > 0 || len(opts.PreviousCookieAuthenticationKeyPath) > 0 {
+		var prevEncKey, prevAuthnKey []byte
+		var prevErrs []error
+
+		if len(opts.PreviousCookieEncryptionKeyPath) > 0 {
+			key, err := os.ReadFile(opts.PreviousCookieEncryptionKeyPath)
+			if err != nil {
+				prevErrs = append(prevErrs, fmt.Errorf("failed to read previous cookie encryption key file %q: %w", opts.PreviousCookieEncryptionKeyPath, err))
+			} else {
+				prevEncKey = key
+			}
 		}
-	}
-	if len(opts.PreviousCookieAuthenticationKeyPath) > 0 {
-		if prevAuthnKey, err := os.ReadFile(opts.PreviousCookieAuthenticationKeyPath); err == nil {
+		if len(opts.PreviousCookieAuthenticationKeyPath) > 0 {
+			key, err := os.ReadFile(opts.PreviousCookieAuthenticationKeyPath)
+			if err != nil {
+				prevErrs = append(prevErrs, fmt.Errorf("failed to read previous cookie authentication key file %q: %w", opts.PreviousCookieAuthenticationKeyPath, err))
+			} else {
+				prevAuthnKey = key
+			}
+		}
+
+		if len(prevErrs) > 0 {
+			klog.Warningf("ignoring previous session keys due to errors: %v", utilerrors.NewAggregate(prevErrs))
+		} else if prevEncKey != nil && prevAuthnKey != nil {
+			completed.PreviousCookieEncryptionKey = prevEncKey
 			completed.PreviousCookieAuthenticationKey = prevAuthnKey
 		}
 	}

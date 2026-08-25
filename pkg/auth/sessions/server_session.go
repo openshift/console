@@ -164,6 +164,25 @@ func (ss *SessionStore) deleteIDsForRefreshToken(refreshToken string) {
 	}
 }
 
+func (ss *SessionStore) SetRefreshTokenID(id, token string) {
+	ss.mux.Lock()
+	defer ss.mux.Unlock()
+	ss.byRefreshTokenID[id] = token
+}
+
+func (ss *SessionStore) GetRefreshTokenByID(id string) (string, bool) {
+	ss.mux.Lock()
+	defer ss.mux.Unlock()
+	token, ok := ss.byRefreshTokenID[id]
+	return token, ok
+}
+
+func (ss *SessionStore) DeleteRefreshTokenID(id string) {
+	ss.mux.Lock()
+	defer ss.mux.Unlock()
+	delete(ss.byRefreshTokenID, id)
+}
+
 func (ss *SessionStore) pruneSessions() {
 	ss.mux.Lock()
 	defer ss.mux.Unlock()
