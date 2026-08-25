@@ -18,32 +18,25 @@ export const ProgressiveListFooter: FC<ProgressiveListFooterProps> = ({
     return null;
   }
 
-  const formattedString = new Intl.ListFormat(getLastLanguage() || 'en', {
+  const parts = new Intl.ListFormat(getLastLanguage() || 'en', {
     style: 'long',
     type: 'conjunction',
-  }).format(items);
-
-  const positions = items.reduce<number[]>(
-    (result, item, index) => [
-      ...result,
-      formattedString.indexOf(item, index === 0 ? 0 : result[index - 1] + items[index - 1].length),
-    ],
-    [],
-  );
+  }).formatToParts(items);
 
   return (
     <Footer>
       <>
-        {items.map((item, i) => {
-          const currentIdx = positions[i];
-          const prevEnd = i > 0 ? positions[i - 1] + items[i - 1].length : 0;
+        {/* eslint-disable-next-line react/no-array-index-key -- parts are derived from items prop via formatToParts; index is the only stable key */}
+        {parts.map((part, partIndex) => {
+          if (part.type === 'literal') {
+            // eslint-disable-next-line react/no-array-index-key
+            return <Fragment key={partIndex}>{part.value}</Fragment>;
+          }
           return (
-            <Fragment key={item}>
-              {formattedString.slice(prevEnd, currentIdx)}
-              <Button variant="link" isInline onClick={() => onShowItem(item)}>
-                {item}
-              </Button>
-            </Fragment>
+            // eslint-disable-next-line react/no-array-index-key
+            <Button key={partIndex} variant="link" isInline onClick={() => onShowItem(part.value)}>
+              {part.value}
+            </Button>
           );
         })}
       </>
