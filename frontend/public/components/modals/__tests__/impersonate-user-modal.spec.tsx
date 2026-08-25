@@ -1,5 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { ProjectModel } from '@console/dynamic-plugin-sdk/src/models';
 import type { GroupKind } from '../../../module/k8s';
 import { useK8sWatchResource } from '../../utils/k8s-watch-hook';
 import { ImpersonateUserModal } from '../impersonate-user-modal';
@@ -28,6 +29,7 @@ jest.mock('../../utils/list-dropdown', () => ({
       {selectedKey || 'Select project'}
     </button>
   ),
+  useProjectOrNamespaceModel: () => [ProjectModel, true] as const,
 }));
 
 // Stub ResourceDropdown: emits a fixed service account selection on click

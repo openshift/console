@@ -7,6 +7,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
+import { ProjectModel } from '@console/dynamic-plugin-sdk/src/models';
 import * as UIActions from '../../../actions/ui';
 import type { GroupKind } from '../../../module/k8s';
 import { useK8sWatchResource } from '../../utils/k8s-watch-hook';
@@ -20,6 +21,11 @@ jest.mock('../../utils/k8s-watch-hook', () => ({
 jest.mock('../../../actions/ui', () => ({
   startImpersonate: jest.fn(),
   stopImpersonate: jest.fn(),
+}));
+
+jest.mock('../../utils/list-dropdown', () => ({
+  ...jest.requireActual('../../utils/list-dropdown'),
+  useProjectOrNamespaceModel: () => [ProjectModel, true],
 }));
 
 const mockGroups: GroupKind[] = [
