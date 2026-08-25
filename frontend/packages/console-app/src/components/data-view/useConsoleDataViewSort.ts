@@ -9,7 +9,7 @@ import type { ConsoleDataViewColumn } from './types';
 export const getSortByDirection = (value: string): SortByDirection =>
   value === SortByDirection.desc.valueOf() ? SortByDirection.desc : SortByDirection.asc;
 
-export const getColumnSortKey = <TData>(column?: ConsoleDataViewColumn<TData>): string | null =>
+const getColumnSortKey = <TData>(column?: ConsoleDataViewColumn<TData>): string | null =>
   column?.id || column?.title || null;
 
 export const findSortColumnIndex = <TData>(
