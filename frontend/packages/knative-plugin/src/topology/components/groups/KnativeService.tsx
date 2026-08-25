@@ -38,13 +38,13 @@ const KnativeService: FC<KnativeServiceProps & { children?: ReactNode }> = ({
   const { element } = props;
   const { data } = element.getData();
   const resourceObj = getResource(props.element);
-  const resourceModel = modelFor(referenceFor(resourceObj));
+  const resourceModel = resourceObj ? modelFor(referenceFor(resourceObj)) : undefined;
   const editAccess = useAccessReview({
-    group: resourceModel.apiGroup,
+    group: resourceModel?.apiGroup,
     verb: 'patch',
-    resource: resourceModel.plural,
-    name: resourceObj.metadata.name,
-    namespace: resourceObj.metadata.namespace,
+    resource: resourceModel?.plural,
+    name: resourceObj?.metadata?.name,
+    namespace: resourceObj?.metadata?.namespace,
   });
   const { kindAbbr, kindStr, kindColor } = getKindStringAndAbbreviation(data.kind);
   const badgeClassName = css('odc-resource-icon', {

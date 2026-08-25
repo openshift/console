@@ -260,9 +260,13 @@ export type MetricStats = {
 
 export type GetPodMetricStats = (metrics: NamespaceMetrics, podData: PodRCData) => MetricStats;
 
-export type GetTopologyResourceObject = (topologyObject: TopologyDataObject) => K8sResourceKind;
+export type GetTopologyResourceObject = (
+  topologyObject: TopologyDataObject,
+) => K8sResourceKind | null;
 
-export type GetResource = <T extends K8sResourceKind = K8sResourceKind>(node: GraphElement) => T;
+export type GetResource = <T extends K8sResourceKind = K8sResourceKind>(
+  node: GraphElement,
+) => T | null;
 
 export type GetTopologyEdgeItems = (
   resource: K8sResourceKind,

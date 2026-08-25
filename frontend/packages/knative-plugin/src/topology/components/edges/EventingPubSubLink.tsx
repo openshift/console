@@ -23,7 +23,7 @@ const EventingPubSubLink: FC<EventingPubSubLinkProps> = ({ element, children, ..
   const resourceSourceObj = getTopologyResourceObject(element.getSource().getData());
   const edgeObj = getTopologyResourceObject(element.getData());
   const edgeHasFilter =
-    resourceSourceObj.kind === EventingBrokerModel.kind &&
+    resourceSourceObj?.kind === EventingBrokerModel.kind &&
     Object.keys(edgeObj?.spec?.filter?.attributes ?? {}).length > 0;
 
   let filterMarker: JSX.Element;
