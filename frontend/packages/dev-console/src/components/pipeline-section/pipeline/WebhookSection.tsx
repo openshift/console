@@ -41,6 +41,13 @@ type WebhoookSectionProps = {
   formContextField?: string;
 };
 
+const AccessTokenDocLinks = {
+  [GitProvider.GITHUB]:
+    'https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token',
+  [GitProvider.GITLAB]: 'https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html',
+  [GitProvider.BITBUCKET]: 'https://support.atlassian.com/bitbucket-cloud/docs/app-passwords/',
+};
+
 type WebhookHelpTextProps = {
   gitProvider: GitProvider;
   testId: string;
@@ -66,8 +73,8 @@ const WebhookHelpText: FC<WebhookHelpTextProps> = ({ gitProvider, testId }): Rea
         <Trans t={t} ns="devconsole">
           Use your Gitlab Personal access token. Use this{' '}
           <ExternalLink href={AccessTokenDocLinks[GitProvider.GITLAB]}>link</ExternalLink> to create
-          a token with <b>api</b> scope. Select the role as <b>Maintainer/Owner</b>. Give your
-          token an expiration i.e 30d.
+          a token with <b>api</b> scope. Select the role as <b>Maintainer/Owner</b>. Give your token
+          an expiration i.e 30d.
         </Trans>
       );
       break;
@@ -95,13 +102,6 @@ const WebhookHelpText: FC<WebhookHelpTextProps> = ({ gitProvider, testId }): Rea
   return <div data-test={testId}>{helpText}</div>;
 };
 
-const AccessTokenDocLinks = {
-  [GitProvider.GITHUB]:
-    'https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token',
-  [GitProvider.GITLAB]: 'https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html',
-  [GitProvider.BITBUCKET]: 'https://support.atlassian.com/bitbucket-cloud/docs/app-passwords/',
-};
-
 const WebhookDocLinks = {
   [GitProvider.GITHUB]:
     'https://docs.github.com/en/developers/webhooks-and-events/webhooks/creating-webhooks',
@@ -115,16 +115,14 @@ const WebhookSection: FC<WebhoookSectionProps> = ({ pac, formContextField }) => 
   const { values, setFieldValue } = useFormikContext<FormikValues>();
   const fieldPrefix = formContextField ? `${formContextField}.` : '';
   const { gitProvider, webhook } = _.get(values, formContextField) || values;
-  const [controllerUrl, setControllerUrl] = useState('');
+  const controllerUrl = useMemo(() => pac?.data?.['controller-url'] || '', [pac]);
   const webhookSecret = webhook?.secret ?? '';
   const { t } = useTranslation('devconsole');
   useEffect(() => {
-    const ctlUrl = pac?.data?.['controller-url'];
-    if (ctlUrl) {
-      setControllerUrl(ctlUrl);
-      setFieldValue(`${fieldPrefix}webhook.url`, ctlUrl);
+    if (controllerUrl) {
+      setFieldValue(`${fieldPrefix}webhook.url`, controllerUrl);
     }
-  }, [fieldPrefix, pac, setFieldValue]);
+  }, [fieldPrefix, controllerUrl, setFieldValue]);
 
   const autocompleteFilter = (text: string, item: any): boolean => fuzzy(text, item?.props?.name);
 
@@ -205,7 +203,12 @@ const WebhookSection: FC<WebhoookSectionProps> = ({ pac, formContextField }) => 
               <InputField
                 name={`${fieldPrefix}webhook.token`}
                 type={TextInputTypes.text}
-                helpText={<WebhookHelpText gitProvider={gitProvider} testId={`${values.gitProvider}-helptext`} />}
+                helpText={
+                  <WebhookHelpText
+                    gitProvider={gitProvider}
+                    testId={`${values.gitProvider}-helptext`}
+                  />
+                }
                 required
               />
             ),
