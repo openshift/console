@@ -1,5 +1,5 @@
 import type { BaseSyntheticEvent } from 'react';
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback, useState, useEffect, useRef } from 'react';
 import type { ISortBy } from '@patternfly/react-table';
 import { SortByDirection } from '@patternfly/react-table';
 import * as _ from 'lodash';
@@ -8,6 +8,9 @@ import type { ConsoleDataViewColumn } from './types';
 
 export const getSortByDirection = (value: string): SortByDirection =>
   value === SortByDirection.desc.valueOf() ? SortByDirection.desc : SortByDirection.asc;
+
+export const getColumnSortKey = <TData>(column?: ConsoleDataViewColumn<TData>): string | null =>
+  column?.id || column?.title || null;
 
 export const findSortColumnIndex = <TData>(
   columns: ConsoleDataViewColumn<TData>[],
@@ -29,6 +32,7 @@ export const useConsoleDataViewSort = <TData>({
   sortDirection?: SortByDirection;
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const selectedColumnKeyRef = useRef<string | null>(null);
 
   // Initialize sort state from URL params or defaults
   const getInitialSortState = useCallback<() => ISortBy>(() => {
@@ -38,6 +42,7 @@ export const useConsoleDataViewSort = <TData>({
     const columnIndex = findSortColumnIndex(columns, sortByParam);
 
     if (columnIndex >= 0) {
+      selectedColumnKeyRef.current = getColumnSortKey(columns[columnIndex]);
       return {
         index: columnIndex,
         direction: getSortByDirection(orderByParam),
@@ -50,16 +55,24 @@ export const useConsoleDataViewSort = <TData>({
     };
   }, [searchParams, columns, sortColumnIndex, sortDirection]);
 
-  const [sortBy, setSortBy] = useState<ISortBy>(getInitialSortState);
+  const [sortBy, setSortBy] = useState<ISortBy>(() => {
+    const initialSortState = getInitialSortState();
+    if (!selectedColumnKeyRef.current) {
+      selectedColumnKeyRef.current = getColumnSortKey(columns[initialSortState.index]);
+    }
+    return initialSortState;
+  });
 
   const applySort = useCallback(
     (index: number, direction: SortByDirection) => {
       const sortColumn = columns[index];
+      const sortKey = getColumnSortKey(sortColumn);
 
-      if (sortColumn) {
+      if (sortColumn && sortKey) {
+        selectedColumnKeyRef.current = sortKey;
         setSearchParams((prev) => {
           const newParams = new URLSearchParams(prev);
-          newParams.set('sortBy', sortColumn.id || sortColumn.title);
+          newParams.set('sortBy', sortKey);
           newParams.set('orderBy', direction);
           return newParams;
         });
@@ -80,9 +93,17 @@ export const useConsoleDataViewSort = <TData>({
         return prevSortState;
       }
       // Data refreshes rebuild `columns`. If the URL lost sortBy (or never had it after
-      // a same-route navigation), keep the current column instead of snapping to Name.
-      if (!sortByParam && columns[prevSortState?.index ?? -1]) {
-        return prevSortState;
+      // a same-route navigation), keep the selected column by id instead of snapping to Name.
+      if (!sortByParam) {
+        const resolvedIndex = findSortColumnIndex(columns, selectedColumnKeyRef.current);
+        if (resolvedIndex >= 0) {
+          const preservedSortState = {
+            index: resolvedIndex,
+            direction: prevSortState.direction ?? SortByDirection.asc,
+          };
+          return _.isEqual(prevSortState, preservedSortState) ? prevSortState : preservedSortState;
+        }
+        selectedColumnKeyRef.current = getColumnSortKey(columns[newSortState.index]);
       }
       return newSortState;
     });
