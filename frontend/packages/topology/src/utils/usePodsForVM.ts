@@ -12,34 +12,37 @@ import { findVMIPod } from './kubevirt-utils';
 import type { PodRCData } from './pod-utils';
 
 export const usePodsForVm = (
-  vm: K8sResourceKind,
+  vm: K8sResourceKind | null,
 ): { loaded: boolean; loadError: string; podData: PodRCData } => {
-  const { namespace } = vm.metadata;
+  const namespace = vm?.metadata?.namespace;
   const [loaded, setLoaded] = useState<boolean>(false);
   const [loadError, setLoadError] = useState<string>('');
   const [podData, setPodData] = useState<PodRCData>();
-  const vmName = vm.metadata.name;
+  const vmName = vm?.metadata?.name;
   const vmRef = useRef<K8sResourceKind>(vm);
 
   const watchedResources = useMemo(
-    () => ({
-      replicationControllers: {
-        isList: true,
-        groupVersionKind: getGroupVersionKindForModel(ReplicationControllerModel),
-        namespace,
-      },
-      pods: {
-        isList: true,
-        groupVersionKind: getGroupVersionKindForModel(PodModel),
-        namespace,
-      },
-      virtualmachineinstances: {
-        isList: true,
-        groupVersionKind: getGroupVersionKindForModel(VirtualMachineInstanceModel),
-        namespace,
-        optional: true,
-      },
-    }),
+    () =>
+      namespace
+        ? {
+            replicationControllers: {
+              isList: true,
+              groupVersionKind: getGroupVersionKindForModel(ReplicationControllerModel),
+              namespace,
+            },
+            pods: {
+              isList: true,
+              groupVersionKind: getGroupVersionKindForModel(PodModel),
+              namespace,
+            },
+            virtualmachineinstances: {
+              isList: true,
+              groupVersionKind: getGroupVersionKindForModel(VirtualMachineInstanceModel),
+              namespace,
+              optional: true,
+            },
+          }
+        : {},
     [namespace],
   );
 

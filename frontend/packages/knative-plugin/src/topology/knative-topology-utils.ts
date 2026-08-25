@@ -1372,6 +1372,9 @@ export const createSinkConnection = (source: Node, target: Node): Promise<K8sRes
   }
   const sourceObj = getResource(source);
   const targetObj = getResource(target);
+  if (!sourceObj || !targetObj) {
+    return Promise.reject();
+  }
 
   return createKnativeEventSourceSink(sourceObj, targetObj);
 };
@@ -1405,6 +1408,9 @@ export const createEventSourceKafkaConnection = (
   }
   const sourceObj = getResource(source);
   const targetObj = getResource(target);
+  if (!sourceObj || !targetObj) {
+    return Promise.reject(new Error('Source or target resource not found'));
+  }
   const mkcBoostrapServer = targetObj?.status?.bootstrapServerHost;
   const mkcServiceAccountSecretName = targetObj?.spec?.credentials?.serviceAccountSecretName;
   const knKafkaSourceObj = _.omit(sourceObj, 'status');
@@ -1447,6 +1453,9 @@ export const createSinkPubSubConnection = (
     return Promise.reject();
   }
   const targetObj = getTopologyResourceObject(target);
+  if (!targetObj) {
+    return Promise.reject();
+  }
   return createEventingPubSubSink(resources.obj, targetObj);
 };
 

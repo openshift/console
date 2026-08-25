@@ -144,6 +144,7 @@ const usePodsForEventSource = (resource: K8sResourceKind, data) => {
 export const getEventSinkPodsApdapter = (element: GraphElement) => {
   if (element.getType() === NodeType.EventSink) {
     const resource = getResource(element);
+    if (!resource) return undefined;
     const { revisions, associatedDeployment } = element.getData()?.resources ?? {};
     return {
       resource,
@@ -157,6 +158,7 @@ export const getEventSinkPodsApdapter = (element: GraphElement) => {
 export const getEventSourcePodsApdapter = (element: GraphElement) => {
   if (element.getType() === NodeType.EventSource) {
     const resource = getResource(element);
+    if (!resource) return undefined;
     const { associatedDeployment } = element.getData()?.resources ?? {};
     return {
       resource,

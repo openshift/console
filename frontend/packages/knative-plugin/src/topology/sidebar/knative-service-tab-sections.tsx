@@ -22,6 +22,7 @@ export const useKnativeSidepanelRevisionSection: DetailsTabSectionExtensionHook 
   }
   const knObj = element.getData().resources;
   const resource = getResource(element);
+  if (!resource) return [undefined, true, undefined];
   const section = (
     <TopologySideBarTabSection>
       <RevisionsOverviewList revisions={knObj.revisions} service={resource} />
@@ -35,6 +36,7 @@ export const getKnativeSidepanelBuildAdapterSection = (
 ): AdapterDataType<BuildConfigData> | undefined => {
   if (element.getType() !== NodeType.KnService) return undefined;
   const resource = getResource(element);
+  if (!resource) return undefined;
   return { resource, provider: useBuildConfigsWatcher };
 };
 

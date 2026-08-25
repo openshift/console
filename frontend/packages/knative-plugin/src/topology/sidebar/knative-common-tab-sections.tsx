@@ -84,6 +84,7 @@ export const getKnativeSidepanelPodsAdapterSection = (
 ): AdapterDataType<PodsAdapterDataType> => {
   if (element.getType() === NodeType.KnService || element.getType() === NodeType.Revision) {
     const resource = getResource(element);
+    if (!resource) return undefined;
     return { resource, provider: usePodsAdapterForKnative };
   }
   return undefined;
@@ -126,6 +127,7 @@ export const useKnativeSidepanelRoutesSection: DetailsTabSectionExtensionHook = 
   if (element.getType() === NodeType.KnService || element.getType() === NodeType.Revision) {
     const knObj = element.getData().resources;
     const resource = getResource(element);
+    if (!resource) return [undefined, true, undefined];
     const section = (
       <TopologySideBarTabSection>
         <KSRoutesOverviewList ksroutes={knObj.ksroutes} resource={resource} />
