@@ -205,10 +205,10 @@ export const CatalogSourceDetailsPage: FC = (props) => {
   );
 };
 
-type CreateSubscriptionProps = {
+interface CreateSubscriptionProps {
   packageManifest: { loaded: boolean; data?: PackageManifestKind; loadError?: unknown };
   operatorGroup: { loaded: boolean; data?: OperatorGroupKind[]; loadError?: unknown };
-};
+}
 
 const CreateSubscriptionContent: FC<CreateSubscriptionProps> = (createProps) => {
   const location = useLocation();
