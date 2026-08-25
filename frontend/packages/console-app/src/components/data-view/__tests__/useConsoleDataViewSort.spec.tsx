@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
+import { SortByDirection } from '@patternfly/react-table';
 import { act, renderHook } from '@testing-library/react';
 import { MemoryRouter, useSearchParams } from 'react-router';
-import { SortByDirection } from '@patternfly/react-table';
 import type { ConsoleDataViewColumn } from '../types';
 import { findSortColumnIndex, useConsoleDataViewSort } from '../useConsoleDataViewSort';
 

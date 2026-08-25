@@ -42,7 +42,6 @@ export const useConsoleDataViewSort = <TData>({
     const columnIndex = findSortColumnIndex(columns, sortByParam);
 
     if (columnIndex >= 0) {
-      selectedColumnKeyRef.current = getColumnSortKey(columns[columnIndex]);
       return {
         index: columnIndex,
         direction: getSortByDirection(orderByParam),
@@ -55,13 +54,7 @@ export const useConsoleDataViewSort = <TData>({
     };
   }, [searchParams, columns, sortColumnIndex, sortDirection]);
 
-  const [sortBy, setSortBy] = useState<ISortBy>(() => {
-    const initialSortState = getInitialSortState();
-    if (!selectedColumnKeyRef.current) {
-      selectedColumnKeyRef.current = getColumnSortKey(columns[initialSortState.index]);
-    }
-    return initialSortState;
-  });
+  const [sortBy, setSortBy] = useState<ISortBy>(getInitialSortState);
 
   const applySort = useCallback(
     (index: number, direction: SortByDirection) => {
@@ -88,26 +81,33 @@ export const useConsoleDataViewSort = <TData>({
     const newSortState = getInitialSortState();
     const sortByParam = searchParams.get('sortBy');
 
-    setSortBy((prevSortState) => {
-      if (_.isEqual(prevSortState, newSortState)) {
-        return prevSortState;
-      }
-      // Data refreshes rebuild `columns`. If the URL lost sortBy (or never had it after
-      // a same-route navigation), keep the selected column by id instead of snapping to Name.
-      if (!sortByParam) {
-        const resolvedIndex = findSortColumnIndex(columns, selectedColumnKeyRef.current);
-        if (resolvedIndex >= 0) {
-          const preservedSortState = {
-            index: resolvedIndex,
-            direction: prevSortState.direction ?? SortByDirection.asc,
-          };
-          return _.isEqual(prevSortState, preservedSortState) ? prevSortState : preservedSortState;
-        }
-        selectedColumnKeyRef.current = getColumnSortKey(columns[newSortState.index]);
-      }
-      return newSortState;
-    });
-  }, [getInitialSortState, searchParams, columns]);
+    if (sortByParam) {
+      selectedColumnKeyRef.current = getColumnSortKey(columns[newSortState.index]);
+      setSortBy((prevSortState) =>
+        _.isEqual(prevSortState, newSortState) ? prevSortState : newSortState,
+      );
+      return;
+    }
+
+    // Data refreshes rebuild `columns`. If the URL lost sortBy (or never had it after
+    // a same-route navigation), keep the selected column by id instead of snapping to Name.
+    const resolvedIndex = findSortColumnIndex(columns, selectedColumnKeyRef.current);
+    if (resolvedIndex >= 0) {
+      const preservedSortState: ISortBy = {
+        index: resolvedIndex,
+        direction: sortBy.direction ?? SortByDirection.asc,
+      };
+      setSortBy((prevSortState) =>
+        _.isEqual(prevSortState, preservedSortState) ? prevSortState : preservedSortState,
+      );
+      return;
+    }
+
+    selectedColumnKeyRef.current = getColumnSortKey(columns[newSortState.index]);
+    setSortBy((prevSortState) =>
+      _.isEqual(prevSortState, newSortState) ? prevSortState : newSortState,
+    );
+  }, [getInitialSortState, searchParams, columns, sortBy.direction]);
 
   const onSort = useCallback(
     (event: BaseSyntheticEvent, index: number, direction: SortByDirection) => {
