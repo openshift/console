@@ -478,4 +478,3 @@ func (h *helmHandlers) HandleURLChartGet(user *auth.User, w http.ResponseWriter,
 	res, _ := json.Marshal(resp)
 	w.Write(res)
 }
-
