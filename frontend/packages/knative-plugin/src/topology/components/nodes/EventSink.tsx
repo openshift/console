@@ -1,5 +1,5 @@
 import type { ReactNode, FC } from 'react';
-import { useRef, useMemo } from 'react';
+import { useRef } from 'react';
 import { Tooltip } from '@patternfly/react-core';
 import type {
   Node,
@@ -75,10 +75,7 @@ const EventSink: FC<EventSinkProps> = ({
     element.getSourceEdges()?.filter((edge: Edge) => edge.getType() === TYPE_KAFKA_CONNECTION_LINK)
       .length > 0;
   const { revisions, associatedDeployment } = resources;
-  const revisionIds = useMemo(
-    () => revisions?.map((revision) => revision.metadata.uid),
-    [revisions],
-  );
+  const revisionIds = revisions?.map((revision) => revision.metadata.uid);
 
   const { loaded, loadError, pods } = usePodsForRevisions(revisionIds, resource.metadata.namespace);
   const controller = useVisualizationController();
@@ -97,7 +94,7 @@ const EventSink: FC<EventSinkProps> = ({
 
   const isKafkaSink = referenceFor(resource) === referenceForModel(KafkaSinkModel);
 
-  const donutStatus = useMemo(() => {
+  const donutStatus = (() => {
     if (!revisionIds && loadedDeployment && !loadErrorDeployment) {
       return podsDeployment;
     }
@@ -113,16 +110,7 @@ const EventSink: FC<EventSinkProps> = ({
       };
     }
     return null;
-  }, [
-    revisionIds,
-    loadedDeployment,
-    loadErrorDeployment,
-    loaded,
-    loadError,
-    podsDeployment,
-    pods,
-    resource,
-  ]);
+  })();
 
   return (
     <Tooltip
