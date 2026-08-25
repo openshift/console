@@ -1,4 +1,4 @@
-import type { FC, ReactElement, ComponentType } from 'react';
+import type { FC, ReactElement, ComponentType, LazyExoticComponent } from 'react';
 import { useMemo, lazy, useEffect, Suspense } from 'react';
 import type { RouteProps } from 'react-router';
 import { createPath, Route, useLocation } from 'react-router';
@@ -13,13 +13,13 @@ const isRoutePageExtensionActive: IsRouteExtensionActive = (extension, activePer
   (extension.properties.perspective ?? activePerspective) === activePerspective;
 
 // Cache lazy components by extension UID to prevent recreation on re-renders
-const lazyComponentCache = new Map<string, React.LazyExoticComponent<ComponentType<any>>>();
+const lazyComponentCache = new Map<string, LazyExoticComponent<ComponentType<unknown>>>();
 
 const getOrCreateLazyComponent = (
   uid: string,
   component: () => Promise<ComponentType<any>>,
   pluginName: string,
-): React.LazyExoticComponent<ComponentType<any>> => {
+): LazyExoticComponent<ComponentType<unknown>> => {
   if (!lazyComponentCache.has(uid)) {
     lazyComponentCache.set(
       uid,

@@ -115,7 +115,6 @@ const SpanControls = memo<SpanControlsProps>(
       setText(formatPrometheusDuration(span));
     }, [span]);
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     const debouncedOnChange = useMemo(() => _.debounce(onChange, 400), [onChange]);
 
     const setSpan = (newText: string, isDebounced = false) => {

@@ -40,7 +40,6 @@ const Logs: FC<LogsProps> = ({
   const blockContentRef = useRef<string>('');
   onCompleteRef.current = onComplete;
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const addContentAndScroll = useMemo(
     () =>
       throttle(() => {
