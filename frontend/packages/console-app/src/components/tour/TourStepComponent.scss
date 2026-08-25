@@ -1,3 +1,9 @@
 .co-tour-step-component {
-  display: none !important;
+  .pf-v6-l-grid {
+    align-items: center;
+  }
+
+  > .pf-v6-c-modal-box__footer {
+    display: block;
+  }
 }
