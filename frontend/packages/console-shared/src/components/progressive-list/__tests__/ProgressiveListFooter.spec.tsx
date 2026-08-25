@@ -40,4 +40,18 @@ describe('ProgressiveListFooter', () => {
     const buttons = screen.getAllByRole('button');
     expect(buttons).toHaveLength(3);
   });
+
+  it('should render duplicate item labels with correct conjunction text', () => {
+    const { container } = renderWithProviders(
+      <ProgressiveListFooter Footer={Footer} items={['Foo', 'Foo']} onShowItem={() => {}} />,
+    );
+
+    expect(container.textContent).toBe(
+      'Click on the names to access advanced options for Foo and Foo.',
+    );
+    const buttons = screen.getAllByRole('button');
+    expect(buttons).toHaveLength(2);
+    expect(buttons[0]).toHaveTextContent('Foo');
+    expect(buttons[1]).toHaveTextContent('Foo');
+  });
 });
