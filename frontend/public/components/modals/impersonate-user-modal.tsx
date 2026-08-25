@@ -26,21 +26,26 @@ import {
   HelperTextItem,
   Flex,
   FlexItem,
+  Radio,
 } from '@patternfly/react-core';
 import { RhUiCloseIcon, RhUiErrorFillIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { GroupModel } from '../../models';
-import type { GroupKind } from '../../module/k8s';
+import { ResourceDropdown } from '@console/shared/src/components/dropdown/ResourceDropdown';
+import { GroupModel, ServiceAccountModel } from '../../models';
+import type { GroupKind, K8sResourceKind } from '../../module/k8s';
 import { FieldLevelHelp } from '../utils/field-level-help';
 import { useK8sWatchResource } from '../utils/k8s-watch-hook';
+import { NsDropdown } from '../utils/list-dropdown';
 
 const SELECT_ALL_KEY = '__select_all__';
 const MAX_VISIBLE_CHIPS = 5;
 
+type ImpersonateSubjectKind = 'User' | 'ServiceAccount';
+
 export interface ImpersonateUserModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onImpersonate: (username: string, groups: string[]) => void;
+  onImpersonate: (username: string, groups: string[], kind: ImpersonateSubjectKind) => void;
   prefilledUsername?: string;
   isUsernameReadonly?: boolean;
 }
@@ -53,9 +58,14 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
   isUsernameReadonly = false,
 }) => {
   const { t } = useTranslation('public');
+  const [impersonateKind, setImpersonateKind] = useState<ImpersonateSubjectKind>('User');
   const [username, setUsername] = useState(prefilledUsername);
+  const [serviceAccountNamespace, setServiceAccountNamespace] = useState('');
+  const [serviceAccountName, setServiceAccountName] = useState('');
   const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
   const [usernameError, setUsernameError] = useState('');
+  const [serviceAccountNamespaceError, setServiceAccountNamespaceError] = useState('');
+  const [serviceAccountNameError, setServiceAccountNameError] = useState('');
   const [isGroupSelectOpen, setIsGroupSelectOpen] = useState(false);
   const [showAllGroups, setShowAllGroups] = useState(false);
   const [groupSearchFilter, setGroupSearchFilter] = useState('');
@@ -78,10 +88,44 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
     return groups.map((group) => group.metadata.name).sort();
   }, [groups, groupsLoaded, groupsLoadError]);
 
+  // Fetch available service accounts from the selected namespace.
+  // Pass `null` until a namespace is chosen to avoid a cluster-wide watch.
+  const [watchedServiceAccounts, serviceAccountsLoaded, serviceAccountsLoadError] =
+    useK8sWatchResource<K8sResourceKind[]>(
+      serviceAccountNamespace
+        ? {
+            groupVersionKind: {
+              group: ServiceAccountModel.apiGroup,
+              version: ServiceAccountModel.apiVersion,
+              kind: ServiceAccountModel.kind,
+            },
+            namespace: serviceAccountNamespace,
+            isList: true,
+          }
+        : null,
+    );
+
+  const serviceAccounts = useMemo(
+    () => [
+      {
+        data: watchedServiceAccounts ?? [],
+        loaded: serviceAccountsLoaded,
+        loadError: serviceAccountsLoadError,
+        kind: ServiceAccountModel.kind,
+      },
+    ],
+    [watchedServiceAccounts, serviceAccountsLoaded, serviceAccountsLoadError],
+  );
+
   const handleClose = useCallback(() => {
+    setImpersonateKind('User');
     setUsername(prefilledUsername);
+    setServiceAccountNamespace('');
+    setServiceAccountName('');
     setSelectedGroups([]);
     setUsernameError('');
+    setServiceAccountNamespaceError('');
+    setServiceAccountNameError('');
     onClose();
   }, [prefilledUsername, onClose]);
 
@@ -140,16 +184,43 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
   };
 
   const validateForm = (): boolean => {
-    if (!username.trim()) {
+    setUsernameError('');
+    setServiceAccountNamespaceError('');
+    setServiceAccountNameError('');
+
+    if (impersonateKind === 'User' && !username.trim()) {
       setUsernameError(t('Username is required'));
       return false;
     }
+
+    if (impersonateKind === 'ServiceAccount') {
+      // Namespace and name are selected from existing resources, so only
+      // presence is validated as a safeguard.
+      let isValid = true;
+
+      if (!serviceAccountNamespace.trim()) {
+        setServiceAccountNamespaceError(t('Service account namespace is required'));
+        isValid = false;
+      }
+
+      if (!serviceAccountName.trim()) {
+        setServiceAccountNameError(t('Service account name is required'));
+        isValid = false;
+      }
+
+      return isValid;
+    }
+
     return true;
   };
 
   const handleImpersonate = () => {
     if (validateForm()) {
-      onImpersonate(username.trim(), selectedGroups);
+      const impersonateUsername =
+        impersonateKind === 'ServiceAccount'
+          ? `system:serviceaccount:${serviceAccountNamespace.trim()}:${serviceAccountName.trim()}`
+          : username.trim();
+      onImpersonate(impersonateUsername, selectedGroups, impersonateKind);
       handleClose();
     }
   };
@@ -157,9 +228,14 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
   // Reset form when modal opens with new prefilled username
   useEffect(() => {
     if (isOpen) {
+      setImpersonateKind('User');
       setUsername(prefilledUsername);
+      setServiceAccountNamespace('');
+      setServiceAccountName('');
       setSelectedGroups([]);
       setUsernameError('');
+      setServiceAccountNamespaceError('');
+      setServiceAccountNameError('');
       setGroupSearchFilter('');
       setShowAllGroups(false);
     }
@@ -184,6 +260,11 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
   }, [filteredGroups, selectedGroups]);
 
   const textInputGroupRef = useRef<HTMLDivElement>(null);
+
+  const isImpersonateDisabled =
+    impersonateKind === 'ServiceAccount'
+      ? !serviceAccountNamespace.trim() || !serviceAccountName.trim()
+      : !username.trim();
 
   const toggle = (toggleRef: Ref<MenuToggleElement>) => (
     <MenuToggle
@@ -237,9 +318,38 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
             variant={AlertVariant.warning}
             isInline
             title={t(
-              'Impersonating a user grants you their exact permissions. You must enter username, but you can also enter a group to simulate the permissions of a member of that group.',
+              'Impersonating a user or service account grants you their exact permissions. You must enter a username or service account, but you can also enter a group to simulate the permissions of a member of that group.',
             )}
           />
+
+          <FormGroup label={t('Impersonate')} fieldId="impersonate-kind">
+            <Radio
+              id="impersonate-kind-user"
+              name="impersonate-kind"
+              label={t('User')}
+              isChecked={impersonateKind === 'User'}
+              onChange={() => {
+                setImpersonateKind('User');
+                setUsernameError('');
+                setServiceAccountNamespaceError('');
+                setServiceAccountNameError('');
+              }}
+              data-test="impersonate-kind-user"
+            />
+            <Radio
+              id="impersonate-kind-service-account"
+              name="impersonate-kind"
+              label={t('ServiceAccount')}
+              isChecked={impersonateKind === 'ServiceAccount'}
+              onChange={() => {
+                setImpersonateKind('ServiceAccount');
+                setUsernameError('');
+                setServiceAccountNamespaceError('');
+                setServiceAccountNameError('');
+              }}
+              data-test="impersonate-kind-service-account"
+            />
+          </FormGroup>
 
           {groupsLoadError && (
             <Alert variant={AlertVariant.danger} isInline title={t('Failed to load groups')}>
@@ -247,38 +357,102 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
             </Alert>
           )}
 
-          <FormGroup
-            label={
-              <>
-                {t('Username')}
-                <FieldLevelHelp>{t('The name of the user to impersonate')}</FieldLevelHelp>
-              </>
-            }
-            fieldId="impersonate-username"
-            isRequired
-          >
-            <TextInput
-              id="impersonate-username"
-              name="username"
-              value={username}
-              onChange={(_event, value) => handleUsernameChange(value)}
-              readOnly={isUsernameReadonly}
-              placeholder={t('Enter a username')}
-              data-test="username-input"
-              validated={usernameError ? 'error' : 'default'}
-              aria-label={t('Username to impersonate')}
-              aria-describedby="username-help-text"
-            />
-            {usernameError && (
-              <FormHelperText>
-                <HelperText>
-                  <HelperTextItem variant="error" icon={<RhUiErrorFillIcon />}>
-                    {usernameError}
-                  </HelperTextItem>
-                </HelperText>
-              </FormHelperText>
-            )}
-          </FormGroup>
+          {impersonateKind === 'User' ? (
+            <FormGroup
+              label={
+                <>
+                  {t('Username')}
+                  <FieldLevelHelp>{t('The name of the user to impersonate')}</FieldLevelHelp>
+                </>
+              }
+              fieldId="impersonate-username"
+              isRequired
+            >
+              <TextInput
+                id="impersonate-username"
+                name="username"
+                value={username}
+                onChange={(_event, value) => handleUsernameChange(value)}
+                readOnly={isUsernameReadonly}
+                placeholder={t('Enter a username')}
+                data-test="username-input"
+                validated={usernameError ? 'error' : 'default'}
+                aria-label={t('Username to impersonate')}
+                aria-describedby="username-help-text"
+              />
+              {usernameError && (
+                <FormHelperText>
+                  <HelperText>
+                    <HelperTextItem variant="error" icon={<RhUiErrorFillIcon />}>
+                      {usernameError}
+                    </HelperTextItem>
+                  </HelperText>
+                </FormHelperText>
+              )}
+            </FormGroup>
+          ) : (
+            <>
+              <FormGroup
+                label={t('Service account namespace')}
+                fieldId="impersonate-service-account-namespace"
+                isRequired
+              >
+                <NsDropdown
+                  id="impersonate-service-account-namespace-dropdown"
+                  selectedKey={serviceAccountNamespace}
+                  onChange={(_key, _kind, resource) => {
+                    setServiceAccountNamespace(resource?.metadata?.name ?? '');
+                    setServiceAccountNamespaceError('');
+                    // The service accounts of the previously selected namespace no longer apply
+                    setServiceAccountName('');
+                    setServiceAccountNameError('');
+                  }}
+                  dataTest="service-account-namespace-dropdown"
+                />
+                {serviceAccountNamespaceError && (
+                  <FormHelperText>
+                    <HelperText>
+                      <HelperTextItem variant="error" icon={<RhUiErrorFillIcon />}>
+                        {serviceAccountNamespaceError}
+                      </HelperTextItem>
+                    </HelperText>
+                  </FormHelperText>
+                )}
+              </FormGroup>
+              <FormGroup
+                label={t('Service account name')}
+                fieldId="impersonate-service-account-name"
+                isRequired
+              >
+                <ResourceDropdown
+                  resources={serviceAccounts}
+                  loaded={serviceAccountsLoaded}
+                  loadError={serviceAccountsLoadError}
+                  dataSelector={['metadata', 'name']}
+                  id="impersonate-service-account-name-dropdown"
+                  placeholder={t('Select a service account')}
+                  selectedKey={serviceAccountName}
+                  onChange={(key) => {
+                    setServiceAccountName(key ?? '');
+                    setServiceAccountNameError('');
+                  }}
+                  dataTest="service-account-name-dropdown"
+                  disabled={!serviceAccountNamespace}
+                  ariaLabel={t('Service account name to impersonate')}
+                  isFullWidth
+                />
+                {serviceAccountNameError && (
+                  <FormHelperText>
+                    <HelperText>
+                      <HelperTextItem variant="error" icon={<RhUiErrorFillIcon />}>
+                        {serviceAccountNameError}
+                      </HelperTextItem>
+                    </HelperText>
+                  </FormHelperText>
+                )}
+              </FormGroup>
+            </>
+          )}
 
           <FormGroup
             label={
@@ -356,7 +530,7 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
           key="impersonate"
           variant="primary"
           onClick={handleImpersonate}
-          isDisabled={!username.trim()}
+          isDisabled={isImpersonateDisabled}
           data-test="impersonate-button"
         >
           {t('Impersonate')}

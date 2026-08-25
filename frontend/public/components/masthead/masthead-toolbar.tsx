@@ -863,11 +863,13 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
       <ImpersonateUserModal
         isOpen={isImpersonateModalOpen}
         onClose={() => setIsImpersonateModalOpen(false)}
-        onImpersonate={(userName: string, groups: string[]) => {
-          if (groups && groups.length > 0) {
+        onImpersonate={(userName: string, groups: string[], kind: 'User' | 'ServiceAccount') => {
+          if (kind === 'ServiceAccount') {
+            dispatch(UIActions.startImpersonate(kind, userName, groups));
+          } else if (groups && groups.length > 0) {
             dispatch(UIActions.startImpersonate('UserWithGroups', userName, groups));
           } else {
-            dispatch(UIActions.startImpersonate('User', userName));
+            dispatch(UIActions.startImpersonate(kind, userName));
           }
           setIsImpersonateModalOpen(false);
           // Redirect to projects page to prevent RBAC issues for impersonated users

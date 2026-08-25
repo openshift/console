@@ -46,7 +46,7 @@ export const ImpersonateNotifier = connect(
   // Enhanced group display with tooltip for many groups
   const MAX_GROUPS_DISPLAY = 2;
   const groups = impersonate.groups || [];
-  const hasGroups = isUserWithGroups && groups.length > 0;
+  const hasGroups = groups.length > 0;
   const visibleGroups = groups.slice(0, MAX_GROUPS_DISPLAY);
   const remainingCount = Math.max(0, groups.length - MAX_GROUPS_DISPLAY);
 
