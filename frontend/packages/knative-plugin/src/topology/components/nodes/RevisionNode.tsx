@@ -9,8 +9,8 @@ const RevisionNode: FC<ComponentProps<typeof WorkloadPodsNode>> = (props) => {
   const { element } = props;
   const resource = getTopologyResourceObject(element.getData());
   const { loaded, loadError, pods } = usePodsForRevisions(
-    resource.metadata.uid,
-    resource.metadata.namespace,
+    resource?.metadata?.uid,
+    resource?.metadata?.namespace,
   );
   const donutStatus = useMemo(() => {
     if (loaded && !loadError) {

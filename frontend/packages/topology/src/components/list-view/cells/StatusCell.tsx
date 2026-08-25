@@ -80,7 +80,7 @@ const StatusCell: FC<StatusProps> = ({ item }) => {
   return (
     <DataListCell id={`${item.getId()}_status`}>
       <div className="odc-topology-list-view__detail--status">
-        {loaded && !loadError ? (
+        {loaded && !loadError && resource ? (
           <StatusCellResourceStatus obj={resource} podData={podData} />
         ) : null}
       </div>
