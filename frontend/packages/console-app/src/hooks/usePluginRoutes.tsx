@@ -15,27 +15,32 @@ const isRoutePageExtensionActive: IsRouteExtensionActive = (extension, activePer
 // Cache lazy components by extension UID to prevent recreation on re-renders
 const lazyComponentCache = new Map<string, React.LazyExoticComponent<ComponentType<any>>>();
 
+const getOrCreateLazyComponent = (
+  uid: string,
+  component: () => Promise<ComponentType<any>>,
+  pluginName: string,
+): React.LazyExoticComponent<ComponentType<any>> => {
+  if (!lazyComponentCache.has(uid)) {
+    lazyComponentCache.set(
+      uid,
+      lazy(async () => {
+        const Component = await component();
+        // Check falsy to determine if the component wasn't loaded
+        if (!Component) {
+          throw new Error(
+            `Plugin "${pluginName}" route component resolved to ${typeof Component} (extension ${uid})`,
+          );
+        }
+        return { default: Component };
+      }),
+    );
+  }
+  return lazyComponentCache.get(uid);
+};
+
 const LazyRoutePage: FC<LazyRoutePageProps> = ({ extension }) => {
   const { pluginName, uid, properties } = extension;
-  const { component } = properties;
-  const LazyComponent = useMemo(() => {
-    if (!lazyComponentCache.has(uid)) {
-      lazyComponentCache.set(
-        uid,
-        lazy(async () => {
-          const Component = await component();
-          // Check falsy to determine if the component wasn't loaded
-          if (!Component) {
-            throw new Error(
-              `Plugin "${pluginName}" route component resolved to ${typeof Component} (extension ${uid})`,
-            );
-          }
-          return { default: Component };
-        }),
-      );
-    }
-    return lazyComponentCache.get(uid);
-  }, [uid, component, pluginName]);
+  const LazyComponent = getOrCreateLazyComponent(uid, properties.component, pluginName);
 
   return (
     <Suspense fallback={<LoadingBox blame={`${pluginName}: ${extension.uid}`} />}>
