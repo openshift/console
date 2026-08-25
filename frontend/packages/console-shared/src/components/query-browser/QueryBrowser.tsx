@@ -1,5 +1,5 @@
 import type { FC, Ref, ReactNode, KeyboardEvent, MouseEvent } from 'react';
-import { memo, useState, useEffect, useCallback, useLayoutEffect } from 'react';
+import { memo, useState, useEffect, useCallback, useMemo, useLayoutEffect } from 'react';
 import {
   Chart,
   ChartArea,
@@ -116,7 +116,7 @@ const SpanControls = memo<SpanControlsProps>(
     }, [span]);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    const debouncedOnChange = useCallback(_.debounce(onChange, 400), [onChange]);
+    const debouncedOnChange = useMemo(() => _.debounce(onChange, 400), [onChange]);
 
     const setSpan = (newText: string, isDebounced = false) => {
       const newSpan = parsePrometheusDuration(newText);
@@ -366,7 +366,7 @@ const Graph = memo<GraphProps>(
     const legendData: { name: string }[] = [];
     const { t } = useTranslation('console-shared');
 
-    const [xDomain, setXDomain] = useState(fixedXDomain || getXDomain(Date.now(), span));
+    const [xDomain, setXDomain] = useState(() => fixedXDomain || getXDomain(Date.now(), span));
 
     // Only update X-axis if the time range (fixedXDomain or span) or graph data (allSeries) change
     useEffect(() => {
