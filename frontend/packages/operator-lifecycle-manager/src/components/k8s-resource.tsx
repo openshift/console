@@ -237,13 +237,10 @@ export const Resources: FC<ResourcesProps> = (props) => {
     [t, watchResources],
   );
 
-  const customData = useMemo(
-    () => ({
-      linkFor: linkForCsvResource,
-      providedAPI,
-    }),
-    [providedAPI],
-  );
+  const customData = {
+    linkFor: linkForCsvResource,
+    providedAPI,
+  };
 
   return (
     <MultiListPage
