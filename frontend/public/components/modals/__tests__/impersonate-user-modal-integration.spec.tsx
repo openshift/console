@@ -1,6 +1,6 @@
 /**
  * Integration tests for ImpersonateUserModal
- * Tests the modal integrated with Redux actions and state
+ * Tests the modal rendering and user interaction workflows
  */
 
 import { render, screen, waitFor } from '@testing-library/react';
@@ -8,7 +8,6 @@ import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import { ProjectModel } from '@console/dynamic-plugin-sdk/src/models';
-import * as UIActions from '../../../actions/ui';
 import type { GroupKind } from '../../../module/k8s';
 import { useK8sWatchResource } from '../../utils/k8s-watch-hook';
 import { ImpersonateUserModal } from '../impersonate-user-modal';
@@ -18,9 +17,26 @@ jest.mock('../../utils/k8s-watch-hook', () => ({
   useK8sWatchResource: jest.fn(),
 }));
 
-jest.mock('../../../actions/ui', () => ({
-  startImpersonate: jest.fn(),
-  stopImpersonate: jest.fn(),
+// Mock NsDropdown to avoid deep import chain (list-dropdown → useCreateNamespaceModal → CreateNamespaceModal → resource-link → k8s-models → plugins → loadSchema)
+jest.mock('../../utils/list-dropdown', () => ({
+  useProjectOrNamespaceModel: () => [ProjectModel, true],
+  NsDropdown: ({
+    selectedKey,
+    onChange,
+    dataTest,
+  }: {
+    selectedKey?: string;
+    dataTest?: string;
+    onChange: (key: string, kind?: string, resource?: { metadata: { name: string } }) => void;
+  }) => (
+    <button
+      type="button"
+      data-test={dataTest}
+      onClick={() => onChange('test-ns', 'Project', { metadata: { name: 'test-ns' } })}
+    >
+      {selectedKey || 'Select project'}
+    </button>
+  ),
 }));
 
 // Mock ResourceDropdown to avoid deep import chain (plugins.ts → loadSchema)
@@ -49,28 +65,6 @@ jest.mock('@console/shared/src/components/dropdown/ResourceDropdown', () => ({
   ),
 }));
 
-// Mock NsDropdown to avoid deep import chain + useProjectOrNamespaceModel for namespace model
-jest.mock('../../utils/list-dropdown', () => ({
-  useProjectOrNamespaceModel: () => [ProjectModel, true],
-  NsDropdown: ({
-    selectedKey,
-    onChange,
-    dataTest,
-  }: {
-    selectedKey?: string;
-    dataTest?: string;
-    onChange: (key: string, kind?: string, resource?: { metadata: { name: string } }) => void;
-  }) => (
-    <button
-      type="button"
-      data-test={dataTest}
-      onClick={() => onChange('test-ns', 'Project', { metadata: { name: 'test-ns' } })}
-    >
-      {selectedKey || 'Select project'}
-    </button>
-  ),
-}));
-
 const mockGroups: GroupKind[] = [
   {
     apiVersion: 'user.openshift.io/v1',
@@ -88,27 +82,21 @@ const mockGroups: GroupKind[] = [
 
 describe('ImpersonateUserModal Integration Tests', () => {
   let mockStore: any;
-  let mockStartImpersonate: jest.Mock;
 
   beforeEach(() => {
     jest.clearAllMocks();
     (useK8sWatchResource as jest.Mock).mockReturnValue([mockGroups, true, null]);
-
-    mockStartImpersonate = jest.fn();
-    (UIActions.startImpersonate as jest.Mock).mockImplementation(mockStartImpersonate);
 
     // Create a simple mock store
     const reducer = (state = {}) => state;
     mockStore = createStore(reducer);
   });
 
-  describe('Form submission with Redux integration', () => {
-    it('should dispatch startImpersonate action with user only', async () => {
+  describe('Form submission', () => {
+    it('should call onImpersonate with user only', async () => {
       const user = userEvent.setup();
       const onClose = jest.fn();
-      const onImpersonate = jest.fn((username) => {
-        mockStartImpersonate('User', username);
-      });
+      const onImpersonate = jest.fn();
 
       render(
         <Provider store={mockStore}>
@@ -125,20 +113,13 @@ describe('ImpersonateUserModal Integration Tests', () => {
 
       await waitFor(() => {
         expect(onImpersonate).toHaveBeenCalledWith('testuser', [], 'User');
-        expect(mockStartImpersonate).toHaveBeenCalledWith('User', 'testuser');
       });
     });
 
-    it('should dispatch startImpersonate action with user and groups', async () => {
+    it('should call onImpersonate with user and groups', async () => {
       const user = userEvent.setup();
       const onClose = jest.fn();
-      const onImpersonate = jest.fn((username, groups) => {
-        if (groups.length > 0) {
-          mockStartImpersonate('UserWithGroups', username, groups);
-        } else {
-          mockStartImpersonate('User', username);
-        }
-      });
+      const onImpersonate = jest.fn();
 
       render(
         <Provider store={mockStore}>
@@ -163,9 +144,6 @@ describe('ImpersonateUserModal Integration Tests', () => {
 
       await waitFor(() => {
         expect(onImpersonate).toHaveBeenCalledWith('multiuser', ['developers'], 'User');
-        expect(mockStartImpersonate).toHaveBeenCalledWith('UserWithGroups', 'multiuser', [
-          'developers',
-        ]);
       });
     });
   });
