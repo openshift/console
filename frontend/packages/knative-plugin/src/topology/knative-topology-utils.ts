@@ -1368,12 +1368,12 @@ export const isOperatorBackedKnSinkService = (
 
 export const createSinkConnection = (source: Node, target: Node): Promise<K8sResourceKind> => {
   if (!source || !target || source === target) {
-    return Promise.reject();
+    return Promise.reject(new Error('Invalid source or target node'));
   }
   const sourceObj = getResource(source);
   const targetObj = getResource(target);
   if (!sourceObj || !targetObj) {
-    return Promise.reject();
+    return Promise.reject(new Error('Source or target resource not found'));
   }
 
   return createKnativeEventSourceSink(sourceObj, targetObj);
@@ -1381,7 +1381,7 @@ export const createSinkConnection = (source: Node, target: Node): Promise<K8sRes
 
 const createEventingPubSubSink = (subObj: K8sResourceKind, target: K8sResourceKind) => {
   if (!subObj || !target) {
-    return Promise.reject();
+    return Promise.reject(new Error('Subscription or target resource not found'));
   }
   const subscriptionObj = _.omit(subObj, 'status');
   const sink = {

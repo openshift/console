@@ -19,7 +19,10 @@ export const usePodsForVm = (
   const [loadError, setLoadError] = useState<string>('');
   const [podData, setPodData] = useState<PodRCData>();
   const vmName = vm?.metadata?.name;
-  const vmRef = useRef<K8sResourceKind>(vm);
+  const vmRef = useRef<K8sResourceKind | null>(vm);
+  if (vm) {
+    vmRef.current = vm;
+  }
 
   const watchedResources = useMemo(
     () =>
