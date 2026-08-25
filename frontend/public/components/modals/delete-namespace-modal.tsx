@@ -27,7 +27,7 @@ import type { ModalComponentProps } from '@console/shared/src/types/modal';
 import { setActiveNamespace, formatNamespaceRoute } from '../../actions/ui';
 import { getActiveNamespace } from '../../reducers/ui';
 
-const DeleteNamespaceModal: OverlayComponent<DeleteNamespaceModalProps> = ({
+export const DeleteNamespaceModal: OverlayComponent<DeleteNamespaceModalProps> = ({
   kind,
   resource,
   closeOverlay,
@@ -61,7 +61,7 @@ const DeleteNamespaceModal: OverlayComponent<DeleteNamespaceModalProps> = ({
           setLastNamespace(ALL_NAMESPACES_KEY);
         }
         closeOverlay();
-        navigate(`/k8s/cluster/${kind.plural}`);
+        navigate(`/k8s/cluster/${kind.plural}${window.location.search}`);
       })
       .catch(() => {
         /* do nothing */
