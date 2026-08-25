@@ -474,10 +474,7 @@ const useConsolePluginRows = (enabledPlugins: string[]) => {
 };
 
 const PluginsPage: FC<ConsoleOperatorConfigPageProps> = (props) => {
-  const enabledPlugins = useMemo(
-    () => props?.obj?.spec?.plugins ?? [],
-    [props?.obj?.spec?.plugins],
-  );
+  const enabledPlugins = props?.obj?.spec?.plugins ?? [];
   const { rows, loaded } = useConsolePluginRows(enabledPlugins);
 
   return (

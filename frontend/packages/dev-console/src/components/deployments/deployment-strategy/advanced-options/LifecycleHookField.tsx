@@ -53,8 +53,10 @@ const LifecycleHookField: FC<LifecycleHookFieldProps> = ({
       `formData.deploymentStrategy.${dataAttribute}.${lifecycleHookName}.isAddingLch`,
       false,
     );
+    // eslint-disable-next-line react-hooks/immutability -- intentional Formik initialValues sync
     initialValues.formData.deploymentStrategy[dataAttribute][lifecycleHookName] =
       deploymentStrategy[dataAttribute][lifecycleHookName];
+    // eslint-disable-next-line react-hooks/immutability -- intentional Formik initialValues sync
     initialValues.formData.deploymentStrategy.imageStreamData[lifecycleHookName] =
       deploymentStrategy.imageStreamData[lifecycleHookName];
   }, [
@@ -75,8 +77,10 @@ const LifecycleHookField: FC<LifecycleHookFieldProps> = ({
       resNamespace,
       resourceType,
     );
+    // eslint-disable-next-line react-hooks/immutability -- intentional Formik initialValues sync
     initialValues.formData.deploymentStrategy[dataAttribute][lifecycleHookName] =
       data[dataAttribute][lifecycleHookName];
+    // eslint-disable-next-line react-hooks/immutability -- intentional Formik initialValues sync
     initialValues.formData.deploymentStrategy.imageStreamData[lifecycleHookName] =
       data.imageStreamData[lifecycleHookName];
     setFieldValue(
