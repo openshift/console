@@ -18,12 +18,6 @@ export const ProgressiveListFooter: FC<ProgressiveListFooterProps> = ({
     return null;
   }
 
-  // Use formatToParts instead of format + manual string slicing. The previous approach
-  // tracked mutable index variables (lastIdx, lastLen) inside .map(), which violates
-  // React Compiler immutability rules. formatToParts returns structured parts — 'literal'
-  // for separators/conjunctions (e.g. ", ", " and ") and 'element' for each item — so we
-  // can render each part directly without string position math. This also correctly handles
-  // duplicate items and items whose text matches a conjunction word (e.g. "and").
   const parts = new Intl.ListFormat(getLastLanguage() || 'en', {
     style: 'long',
     type: 'conjunction',
@@ -32,7 +26,6 @@ export const ProgressiveListFooter: FC<ProgressiveListFooterProps> = ({
   return (
     <Footer>
       <>
-        {/* eslint-disable-next-line react/no-array-index-key -- parts are derived from items prop via formatToParts; index is the only stable key */}
         {parts.map((part, partIndex) => {
           // Literal parts are separators/conjunctions (e.g. ", " or " and ") — render as text
           if (part.type === 'literal') {
