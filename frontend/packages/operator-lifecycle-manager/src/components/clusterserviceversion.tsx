@@ -80,7 +80,7 @@ import {
   COLUMN_MANAGEMENT_USER_PREFERENCE_KEY,
 } from '@console/shared/src/constants/common';
 import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants/resource';
-import { useActiveNamespace } from '@console/shared/src/hooks/redux-selectors';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
@@ -663,7 +663,7 @@ const CSVListEmptyMsg = () => {
 
 const CSVListNoDataEmptyMsg = () => {
   const { t } = useTranslation('olm');
-  const project = useActiveNamespace();
+  const [project] = useActiveNamespace();
   const noOperatorsInSingleNamespaceMessage = t(
     'No Operators are available for project {{project}}.',
     { project },
@@ -712,7 +712,7 @@ const ClusterServiceVersionList: FC<ClusterServiceVersionListProps> = ({
   ...rest
 }) => {
   const { t } = useTranslation('olm');
-  const activeNamespace = useActiveNamespace();
+  const [activeNamespace] = useActiveNamespace();
   const lifecycleEnabled = useFlag(Flags.OPERATOR_LIFECYCLE_METADATA);
 
   const nameHeader: Header = {

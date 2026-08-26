@@ -9,6 +9,7 @@ import type { K8sKind } from '@console/internal/module/k8s';
 import { k8sCreate } from '@console/internal/module/k8s';
 import type { RootState } from '@console/internal/redux';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { newCloudShellWorkSpace, createCloudShellResourceName } from '../cloud-shell-utils';
 import type { CloudShellSetupFormData } from './cloud-shell-setup-utils';
 import {
@@ -20,7 +21,6 @@ import CloudShellSetupForm from './CloudShellSetupForm';
 import './CloudShellSetup.scss';
 
 interface StateProps {
-  activeNamespace: string;
   username: string;
 }
 
@@ -32,12 +32,12 @@ type Props = StateProps & {
 };
 
 const CloudShellDeveloperSetup: FC<Props> = ({
-  activeNamespace,
   workspaceModel,
   operatorNamespace,
   onSubmit,
   onCancel,
 }) => {
+  const [activeNamespace] = useActiveNamespace();
   const initialValues: CloudShellSetupFormData = {
     namespace: activeNamespace === ALL_NAMESPACES_KEY ? undefined : activeNamespace,
     advancedOptions: {
@@ -100,7 +100,6 @@ const CloudShellDeveloperSetup: FC<Props> = ({
 
 const mapStateToProps = (state: RootState): StateProps => ({
   username: getUser(state)?.username || '',
-  activeNamespace: state.UI.activeNamespace,
 });
 
 export default connect<StateProps>(mapStateToProps)(CloudShellDeveloperSetup);

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 import { setActiveApplication } from '@console/internal/actions/ui';
-import { getActiveNamespace, getActiveApplication } from '@console/internal/reducers/ui';
+import { getActiveApplication } from '@console/internal/reducers/ui';
 import type { RootState } from '@console/internal/redux';
 import {
   ALL_NAMESPACES_KEY,
@@ -12,6 +12,7 @@ import {
   UNASSIGNED_APPLICATIONS_KEY,
   APPLICATION_USER_PREFERENCE_PREFIX,
 } from '@console/shared/src/constants/common';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import ApplicationDropdown from './ApplicationDropdown';
 
 interface NamespaceBarApplicationSelectorProps {
@@ -19,7 +20,6 @@ interface NamespaceBarApplicationSelectorProps {
 }
 
 interface StateProps {
-  namespace: string;
   application: string;
 }
 
@@ -29,12 +29,8 @@ interface DispatchProps {
 
 type Props = NamespaceBarApplicationSelectorProps & StateProps & DispatchProps;
 
-const NamespaceBarApplicationSelector: FC<Props> = ({
-  namespace,
-  application,
-  onChange,
-  disabled,
-}) => {
+const NamespaceBarApplicationSelector: FC<Props> = ({ application, onChange, disabled }) => {
+  const [namespace] = useActiveNamespace();
   const { t } = useTranslation('topology');
   const allApplicationsTitle = t('All applications');
   const noApplicationsTitle = t('No application group');
@@ -80,7 +76,6 @@ const NamespaceBarApplicationSelector: FC<Props> = ({
 };
 
 const mapStateToProps = (state: RootState): StateProps => ({
-  namespace: getActiveNamespace(state),
   application: getActiveApplication(state),
 });
 

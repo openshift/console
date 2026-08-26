@@ -26,6 +26,7 @@ import type {
 import { defaultChannelFor } from '@console/operator-lifecycle-manager/src/components';
 import type { PackageManifestKind } from '@console/operator-lifecycle-manager/src/types';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useDeepCompareMemoize } from '@console/shared/src/hooks/useDeepCompareMemoize';
 import { getName } from '@console/shared/src/selectors/common';
@@ -153,11 +154,10 @@ const isColumnVisible = (
   columnID: string,
   columns: Set<string> = new Set(),
   showNamespaceOverride = undefined,
+  activeNamespace: string = '',
 ) => {
   const showNamespace =
-    columnID !== 'namespace' ||
-    UIActions.getActiveNamespace() === ALL_NAMESPACES_KEY ||
-    showNamespaceOverride;
+    columnID !== 'namespace' || activeNamespace === ALL_NAMESPACES_KEY || showNamespaceOverride;
   if (_.isEmpty(columns) && showNamespace) {
     return true;
   }
@@ -190,12 +190,20 @@ export const TableData: FC<TableDataProps> = ({
   dataTest,
   showNamespaceOverride,
   children,
-}) =>
-  isColumnVisible(window.innerWidth, columnID, columns, showNamespaceOverride) ? (
+}) => {
+  const [activeNamespace] = useActiveNamespace();
+  return isColumnVisible(
+    window.innerWidth,
+    columnID,
+    columns,
+    showNamespaceOverride,
+    activeNamespace,
+  ) ? (
     <Td data-label={columnID} className={className} role="gridcell" data-test={dataTest}>
       {children}
     </Td>
   ) : null;
+};
 TableData.displayName = 'TableData';
 export type TableDataProps = {
   children?: ReactNode;
@@ -322,6 +330,7 @@ const getActiveColumns = (
   activeColumns: Set<string>,
   columnManagementID: string,
   showNamespaceOverride: boolean,
+  activeNamespace: string,
 ): TableColumn[] => {
   let columns = Header(componentProps);
   let resolvedActiveColumns = activeColumns;
@@ -338,15 +347,19 @@ const getActiveColumns = (
   if (columnManagementID) {
     columns = columns?.filter(
       (col) =>
-        isColumnVisible(windowWidth, col.id, resolvedActiveColumns, showNamespaceOverride) ||
-        col.title === '',
+        isColumnVisible(
+          windowWidth,
+          col.id,
+          resolvedActiveColumns,
+          showNamespaceOverride,
+          activeNamespace,
+        ) || col.title === '',
     );
   } else {
     columns = columns?.filter((col) => resolvedActiveColumns.has(col.id) || col.title === '');
   }
 
-  const showNamespace =
-    UIActions.getActiveNamespace() === ALL_NAMESPACES_KEY || showNamespaceOverride;
+  const showNamespace = activeNamespace === ALL_NAMESPACES_KEY || showNamespaceOverride;
   if (!showNamespace) {
     columns = columns.filter((column) => column.id !== 'namespace');
   }
@@ -500,6 +513,7 @@ export const Table: FC<TableProps> = ({
 }) => {
   const dispatch = useConsoleDispatch();
   const navigate = useNavigate();
+  const [activeNamespace] = useActiveNamespace();
   const filters = useDeepCompareMemoize(initFilters);
   const Header = useDeepCompareMemoize(initHeader);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
@@ -532,6 +546,7 @@ export const Table: FC<TableProps> = ({
         activeColumns,
         columnManagementID,
         showNamespaceOverride,
+        activeNamespace,
       ),
     [
       windowWidth,
@@ -543,6 +558,7 @@ export const Table: FC<TableProps> = ({
       activeColumns,
       columnManagementID,
       showNamespaceOverride,
+      activeNamespace,
     ],
   );
 

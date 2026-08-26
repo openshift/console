@@ -1,5 +1,4 @@
 import { screen } from '@testing-library/react';
-import * as UIActions from '@console/internal/actions/ui';
 import { ResourceLink } from '@console/internal/components/utils';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
@@ -23,13 +22,6 @@ jest.mock('@console/internal/components/utils', () => ({
   ...jest.requireActual('@console/internal/components/utils'),
   ResourceLink: jest.fn(() => null),
 }));
-
-jest.mock('@console/internal/actions/ui', () => ({
-  ...jest.requireActual('@console/internal/actions/ui'),
-  getActiveNamespace: jest.fn(),
-}));
-
-const getActiveNamespaceMock = UIActions.getActiveNamespace as jest.Mock;
 
 const mockClusterServiceVersionLogo = ClusterServiceVersionLogo as jest.Mock;
 const mockTimestamp = Timestamp as jest.Mock;
@@ -62,7 +54,6 @@ describe('PackageManifestTableHeaderWithCatalogSource', () => {
 describe('PackageManifestTableRow', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    getActiveNamespaceMock.mockReturnValue('default');
   });
 
   it('renders column for package name and logo', () => {
