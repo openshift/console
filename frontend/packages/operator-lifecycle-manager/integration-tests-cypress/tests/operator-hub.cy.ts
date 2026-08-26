@@ -24,8 +24,8 @@ describe('Interacting with OperatorHub', () => {
     cy.log('more than one tile should be present');
     cy.get('.co-catalog-tile').its('length').should('be.gt', 0);
 
-    cy.log('enable the Red Hat filter');
-    cy.byTestID('catalogSourceDisplayName-red-hat', { timeout: OPERATOR_HUB_LOAD_TIMEOUT })
+    cy.log('enable the Community filter');
+    cy.byTestID('catalogSourceDisplayName-community', { timeout: OPERATOR_HUB_LOAD_TIMEOUT })
       .should('be.visible')
       .click();
     cy.log('more than one tile should be present');
@@ -36,16 +36,16 @@ describe('Interacting with OperatorHub', () => {
       .first()
       .then(($origCatalogTitle) => {
         const origCatalogTitleTxt = $origCatalogTitle.find('.catalog-tile-pf-title').text();
-        cy.log(`first Red Hat filtered tile title text is ${origCatalogTitleTxt}`);
-        cy.log('disable the Red Hat filter');
-        cy.byTestID('catalogSourceDisplayName-red-hat', { timeout: OPERATOR_HUB_LOAD_TIMEOUT })
+        cy.log(`first Community filtered tile title text is ${origCatalogTitleTxt}`);
+        cy.log('disable the Community filter');
+        cy.byTestID('catalogSourceDisplayName-community', { timeout: OPERATOR_HUB_LOAD_TIMEOUT })
           .should('be.visible')
           .click();
         cy.log('enable the Certified filter');
         cy.byTestID('catalogSourceDisplayName-certified', { timeout: OPERATOR_HUB_LOAD_TIMEOUT })
           .should('be.visible')
           .click();
-        cy.log('wait for the Certified results to replace the Red Hat list');
+        cy.log('wait for the Certified results to replace the Community list');
         cy.get('.co-catalog-tile').should(($tiles) => {
           expect($tiles.length).to.be.gt(0);
           expect($tiles.first().find('.catalog-tile-pf-title').text()).not.to.equal(
