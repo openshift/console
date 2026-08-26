@@ -916,7 +916,7 @@ func TestHelmHandlers_HandleHelmInstallAsync(t *testing.T) {
 			name:             "Error occurred",
 			expectedResponse: `{"error":"Failed to install helm chart: Chart path is invalid"}`,
 			error:            errors.New("Chart path is invalid"),
-			httpStatusCode:   http.StatusBadGateway,
+			httpStatusCode:   http.StatusBadRequest,
 		},
 		{
 			name:             "Successful install returns release info in JSON format",
@@ -1030,7 +1030,7 @@ func TestHelmHandlers_HandleHelmUnInstallAsync(t *testing.T) {
 			name:             "Error occurred",
 			expectedResponse: `{"error":"Failed to install helm chart: Chart path is invalid"}`,
 			error:            errors.New("Chart path is invalid"),
-			httpStatusCode:   http.StatusBadGateway,
+			httpStatusCode:   http.StatusBadRequest,
 		},
 		{
 			name:             "Successful uninstall returns secret info",

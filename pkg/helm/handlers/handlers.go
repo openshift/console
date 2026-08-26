@@ -192,7 +192,7 @@ func (h *helmHandlers) HandleHelmInstallAsync(user *auth.User, w http.ResponseWr
 
 	resp, err := h.installChartAsync(namespace, req.Name, req.ChartUrl, req.Values, conf, handlerClients.DynamicClient, handlerClients.CoreClient, true, req.IndexEntry)
 	if err != nil {
-		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to install helm chart: %v", err)})
+		serverutils.SendResponse(w, determineErrorStatusCode(err), serverutils.ApiError{Err: fmt.Sprintf("Failed to install helm chart: %v", err)})
 		return
 	}
 	serverutils.SendResponse(w, http.StatusCreated, resp)
