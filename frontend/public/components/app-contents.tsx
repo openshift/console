@@ -10,6 +10,7 @@ import { getReferenceForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s'
 import { usePluginInfo } from '@console/plugin-sdk/src/api/usePluginInfo';
 import { ErrorBoundaryPage } from '@console/shared/src/components/error/fallbacks/ErrorBoundaryPage';
 import { FLAGS } from '@console/shared/src/constants/common';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import {
   getPerspectiveVisitedKey,
   usePerspectives,
@@ -157,6 +158,36 @@ const AppContents: FC = () => {
     () => pluginInfoEntries.every((i) => i.status !== 'pending'),
     [pluginInfoEntries],
   );
+
+  const reduxFlags = useConsoleSelector((state) => state.FLAGS);
+
+  // Check if any loaded plugin has extensions with required flags still pending
+  const hasPendingPluginFlags = useMemo(
+    () =>
+      pluginInfoEntries.some((entry) => {
+        if (entry.status === 'pending' || entry.status === 'failed') return false;
+        const extensions = entry.manifest?.extensions;
+        if (!Array.isArray(extensions)) return false;
+        return extensions.some((ext) => {
+          const required = ext.flags?.required;
+          if (!Array.isArray(required) || required.length === 0) return false;
+          return required.some((flagName: string) => flagPending(reduxFlags[flagName]));
+        });
+      }),
+    [pluginInfoEntries, reduxFlags],
+  );
+
+  // Timeout fallback: if flags never resolve (broken hookProvider),
+  // stop blocking after 3 seconds
+  const [flagSettlingTimedOut, setFlagSettlingTimedOut] = useState(false);
+  useEffect(() => {
+    if (allPluginsProcessed && hasPendingPluginFlags && !flagSettlingTimedOut) {
+      const timer = setTimeout(() => setFlagSettlingTimedOut(true), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [allPluginsProcessed, hasPendingPluginFlags, flagSettlingTimedOut]);
+
+  const showNotFound = allPluginsProcessed && (!hasPendingPluginFlags || flagSettlingTimedOut);
 
   const contentRouter = (
     <Routes>
@@ -738,7 +769,7 @@ const AppContents: FC = () => {
       {inactivePluginPageRoutes}
       <Route path="/" element={<DefaultPage />} />
 
-      {allPluginsProcessed ? (
+      {showNotFound ? (
         <Route
           path="*"
           element={
