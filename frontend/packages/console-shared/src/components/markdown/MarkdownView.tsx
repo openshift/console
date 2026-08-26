@@ -160,7 +160,6 @@ const IFrameMarkdownView: FC<InnerSyncMarkdownProps> = ({
     [THEME_GLASS_CLASS]: contrast === THEME_GLASS,
   });
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const updateDimensions = useMemo(
     () =>
       _.debounce(() => {
