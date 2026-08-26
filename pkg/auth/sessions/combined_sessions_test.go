@@ -588,7 +588,7 @@ func TestCombinedSessionStore_DeleteSession(t *testing.T) {
 					continue
 				}
 				if cookie.MaxAge != -1 {
-					t.Errorf("CombinedSessionStore.DeleteSession() expected cookie %q to be set for timeout but its MaxAge is", cookie.MaxAge)
+					t.Errorf("CombinedSessionStore.DeleteSession() expected cookie %q to be set for timeout but its MaxAge is %d", cookie.Name, cookie.MaxAge)
 				}
 				delete(gotCookies, cookieName)
 			}
