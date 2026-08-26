@@ -56,11 +56,10 @@ const PodStatusBase: FC<PodStatusProps> = ({
   data,
 }) => {
   const ref = useRef();
-  const updateOnEndRef = useRef<boolean>(false);
   const forceUpdate = useForceUpdate();
   const prevVData = useRef<PodData[]>(null);
 
-  const vData = useMemo(() => {
+  const { vData, updateOnEnd } = useMemo(() => {
     const updateVData: PodData[] = podStatus.map((pod) => ({
       x: pod,
       y: _.sumBy(data, (d) => +(getPodStatus(d) === pod)) || 0,
@@ -76,13 +75,13 @@ const PodStatusBase: FC<PodStatusProps> = ({
 
     const prevDataPoints = _.size(_.filter(prevVData.current, (nextData) => nextData.y !== 0));
     const dataPoints = _.size(_.filter(updateVData, (nextData) => nextData.y !== 0));
-    updateOnEndRef.current = dataPoints === 1 && prevDataPoints > 1;
+    const shouldUpdateOnEnd = dataPoints === 1 && prevDataPoints > 1;
 
     if (!_.isEqual(prevVData.current, updateVData)) {
       prevVData.current = updateVData;
-      return updateVData;
+      return { vData: updateVData, updateOnEnd: shouldUpdateOnEnd };
     }
-    return prevVData.current;
+    return { vData: prevVData.current, updateOnEnd: shouldUpdateOnEnd };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
   const truncTitle = title ? _.truncate(title, { length: MAX_POD_TITLE_LENGTH }) : undefined;
@@ -95,7 +94,7 @@ const PodStatusBase: FC<PodStatusProps> = ({
         ariaTitle={`${title}${subTitle && ` ${subTitle}`}`}
         animate={{
           duration: prevVData.current ? ANIMATION_DURATION : 0,
-          onEnd: updateOnEndRef.current ? forceUpdate : undefined,
+          onEnd: updateOnEnd ? forceUpdate : undefined,
         }}
         standalone={standalone}
         innerRadius={innerRadius}
@@ -133,6 +132,7 @@ const PodStatusBase: FC<PodStatusProps> = ({
       subTitleComponent,
       truncTitle,
       titleComponent,
+      updateOnEnd,
       vData,
       x,
       y,
