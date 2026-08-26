@@ -36,21 +36,40 @@ func (o *OperatorListOperands) Run(ctx context.Context, packageName string) (*un
 	return result, nil
 }
 
+// dns1123LabelMaxLength is the maximum length of a DNS-1123 label.
+const dns1123LabelMaxLength = 63
+
 // FindOperator finds an operator object on-cluster provided a package and namespace.
 func (o *OperatorListOperands) findOperator(ctx context.Context, packageName string) (*v1.Operator, error) {
-	opKey := types.NamespacedName{
-		Name: fmt.Sprintf("%s.%s", packageName, o.config.Namespace),
-	}
+	name := fmt.Sprintf("%s.%s", packageName, o.config.Namespace)
+	opKey := types.NamespacedName{Name: name}
 
 	operator := v1.Operator{}
 	err := o.config.Client.Get(ctx, opKey, &operator)
-	if err != nil {
-		if apierrors.IsNotFound(err) {
-			return nil, fmt.Errorf("package %q not found in namespace %q", packageName, o.config.Namespace)
-		}
-		return nil, err
+	if err == nil {
+		return &operator, nil
 	}
-	return &operator, nil
+
+	// OLM truncates Operator CR names to 63 characters (DNS-1123 label limit)
+	// when the package.namespace combination is too long. Retry with the
+	// truncated name if the full name was not found.
+	if apierrors.IsNotFound(err) && len(name) > dns1123LabelMaxLength {
+		truncated := name[:dns1123LabelMaxLength]
+		for len(truncated) > 0 && !isAlphanumeric(truncated[len(truncated)-1]) {
+			truncated = truncated[:len(truncated)-1]
+		}
+		if truncated != "" && truncated != name {
+			opKey.Name = truncated
+			if retryErr := o.config.Client.Get(ctx, opKey, &operator); retryErr == nil {
+				return &operator, nil
+			}
+		}
+	}
+
+	if apierrors.IsNotFound(err) {
+		return nil, fmt.Errorf("package %q not found in namespace %q", packageName, o.config.Namespace)
+	}
+	return nil, err
 }
 
 // Unzip finds the CSV referenced by the provided operator and then inspects the spec.customresourcedefinitions.owned
@@ -192,4 +211,8 @@ func inNamespace(ns string, namespaces []string) bool {
 		}
 	}
 	return false
+}
+
+func isAlphanumeric(c byte) bool {
+	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9')
 }
