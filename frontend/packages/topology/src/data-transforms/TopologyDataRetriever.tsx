@@ -36,8 +36,7 @@ const TopologyDataRetriever: FC<TopologyDataRetrieverProps> = ({ trafficData }) 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/immutability -- intentional context model reset on namespace change
     dataModelContext.model = null;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [namespace]);
+  }, [namespace, dataModelContext]);
 
   useEffect(() => {
     if (!_.isEmpty(resources)) {
