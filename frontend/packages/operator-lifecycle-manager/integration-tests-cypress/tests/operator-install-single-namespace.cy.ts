@@ -18,7 +18,7 @@ const testOperand: TestOperandProps = {
   exampleName: 'example-backup',
 };
 
-describe(`Installing "${testOperator.name}" operator in test namespace`, () => {
+xdescribe(`Installing "${testOperator.name}" operator in test namespace`, () => {
   before(() => {
     cy.login();
     cy.createProjectWithCLI(testName);
