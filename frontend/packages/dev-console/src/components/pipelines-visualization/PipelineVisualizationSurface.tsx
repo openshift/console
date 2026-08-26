@@ -111,7 +111,6 @@ const PipelineVisualizationSurface: FC<PipelineVisualizationSurfaceProps> = ({
         : model;
       vis.fromModel(localModel);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [model, vis]);
 
   if (!vis) return null;
