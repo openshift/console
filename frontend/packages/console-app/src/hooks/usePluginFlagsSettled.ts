@@ -40,11 +40,6 @@ export const usePluginFlagsSettled = (pluginInfoEntries: PluginInfoEntry[]): boo
 
   const [flagSettlingTimedOut, setFlagSettlingTimedOut] = useState(false);
 
-  // Reset timeout when pending flags resolve so it can fire again
-  // if new flags become pending (e.g. a late-loading plugin).
-  // This uses React's setState-during-render pattern to avoid the
-  // cascading-render issues of calling setState inside useEffect.
-  // See https://react.dev/reference/react/useState#storing-information-from-previous-renders
   const [prevHasPending, setPrevHasPending] = useState(false);
   if (prevHasPending && !hasPendingPluginFlags) {
     setFlagSettlingTimedOut(false);
