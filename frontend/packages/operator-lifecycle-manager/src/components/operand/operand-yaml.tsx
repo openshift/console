@@ -1,5 +1,6 @@
 import type { FC } from 'react';
 import { CreateYAML } from '@console/internal/components/create-yaml';
+import type { CreateYAMLProps } from '@console/internal/components/create-yaml';
 
 /**
  * Component which wraps the YAML editor to ensure the templates are added from the `ClusterServiceVersion` annotations.
@@ -19,9 +20,8 @@ export const OperandYAML: FC<OperandYAMLProps> = ({
   />
 );
 
-export type OperandYAMLProps = {
+export type OperandYAMLProps = Pick<CreateYAMLProps, 'onCancel'> & {
   initialYAML?: string;
-  onCancel?: () => void;
   onChange?: (yaml: string) => void;
   next?: string;
 };
