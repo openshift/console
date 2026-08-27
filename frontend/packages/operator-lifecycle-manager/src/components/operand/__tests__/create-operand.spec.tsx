@@ -54,7 +54,6 @@ describe('CreateOperand', () => {
   });
 
   it('configures SyncedEditor with YAML as initialType when initialEditorType is YAML', () => {
-    // Arrange
     renderWithProviders(
       <CreateOperand
         initialEditorType={EditorType.YAML}
@@ -64,14 +63,12 @@ describe('CreateOperand', () => {
       />,
     );
 
-    // Assert
     expect(mockSyncedEditor).toHaveBeenCalledTimes(1);
     const [syncedEditorProps] = mockSyncedEditor.mock.calls[0];
     expect(syncedEditorProps.initialType).toEqual(EditorType.YAML);
   });
 
   it('configures SyncedEditor with Form as initialType when initialEditorType is Form', () => {
-    // Arrange
     renderWithProviders(
       <CreateOperand
         initialEditorType={EditorType.Form}
@@ -81,14 +78,12 @@ describe('CreateOperand', () => {
       />,
     );
 
-    // Assert
     expect(mockSyncedEditor).toHaveBeenCalledTimes(1);
     const [syncedEditorProps] = mockSyncedEditor.mock.calls[0];
     expect(syncedEditorProps.initialType).toEqual(EditorType.Form);
   });
 
   it('passes sample data to SyncedEditor when CSV contains alm-examples annotation', () => {
-    // Arrange
     const csvWithExamples = {
       ...testClusterServiceVersion,
       metadata: {
@@ -116,7 +111,6 @@ describe('CreateOperand', () => {
       />,
     );
 
-    // Assert
     expect(mockSyncedEditor).toHaveBeenCalledTimes(1);
     const [syncedEditorProps] = mockSyncedEditor.mock.calls[0];
     expect(syncedEditorProps.initialData).toMatchObject({
@@ -130,8 +124,201 @@ describe('CreateOperand', () => {
     });
   });
 
+  it('applies CRD schema defaults to sample data when starting in YAML mode', () => {
+    // When the editor starts directly in YAML mode (from a saved user preference),
+    // the @rjsf/core Form never mounts, so it never applies the CRD schema defaults
+    // as a side effect. CreateOperand must enrich the sample with schema defaults
+    // itself, so the YAML editor shows the same complete content as the Form-first path.
+
+    // A CRD whose schema defines a spec default that is NOT in alm-examples
+    const crdWithSchemaDefault = {
+      ...testCRD,
+      spec: {
+        ...testCRD.spec,
+        versions: [
+          {
+            name: 'v1alpha1',
+            served: true,
+            storage: true,
+            schema: {
+              openAPIV3Schema: {
+                type: 'object',
+                properties: {
+                  spec: {
+                    type: 'object',
+                    properties: {
+                      replicas: { type: 'integer', default: 3 },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        ],
+      },
+    };
+    mockUseK8sWatchResource.mockReturnValue([crdWithSchemaDefault, true, undefined]);
+
+    const csvWithMinimalExample = {
+      ...testClusterServiceVersion,
+      metadata: {
+        ...testClusterServiceVersion.metadata,
+        annotations: {
+          ...testClusterServiceVersion.metadata.annotations,
+          'alm-examples': JSON.stringify([
+            {
+              apiVersion: 'testapp.coreos.com/v1alpha1',
+              kind: 'TestResource',
+              metadata: { name: 'example-resource' },
+              spec: {},
+            },
+          ]),
+        },
+      },
+    };
+
+    renderWithProviders(
+      <CreateOperand
+        initialEditorType={EditorType.YAML}
+        csv={csvWithMinimalExample}
+        loaded
+        loadError={undefined}
+      />,
+    );
+
+    // The schema default was merged into the sample before reaching SyncedEditor
+    expect(mockSyncedEditor).toHaveBeenCalledTimes(1);
+    const [syncedEditorProps] = mockSyncedEditor.mock.calls[0];
+    expect(syncedEditorProps.initialData.spec.replicas).toBe(3);
+  });
+
+  it('does not render SyncedEditor until the CRD watch has loaded', () => {
+    // SyncedEditor snapshots its initial YAML
+    // from the sample exactly once, on mount, and never re-syncs it. The sample is
+    // only enriched with CRD schema defaults once the CRD has loaded, so mounting
+    // SyncedEditor before the CRD watch resolves would freeze the raw, un-enriched
+    // YAML. CreateOperand must wait for the CRD watch to load before rendering.
+
+    // CRD watch not yet loaded
+    mockUseK8sWatchResource.mockReturnValue([{}, false, undefined]);
+
+    renderWithProviders(
+      <CreateOperand
+        initialEditorType={EditorType.YAML}
+        csv={testClusterServiceVersion}
+        loaded
+        loadError={undefined}
+      />,
+    );
+
+    // Editor is withheld until the schema is available
+    expect(mockSyncedEditor).not.toHaveBeenCalled();
+  });
+
+  it('prune function uses raw sample so empty-string schema defaults are stripped on submit', () => {
+    // getDefaultFormState can produce empty-string
+    // defaults (e.g. logging.level: "") for enum fields where no default is specified.
+    // If the enriched sample is used as the prune template, definedAndEmpty() treats the
+    // empty string as intentional and preserves it in the submitted data, causing API
+    // errors like "Unsupported value: ""; supported values: debug, info, error".
+    // The prune function must use rawSample (not the enriched sample) as its template
+    // so that empty-string schema defaults are still stripped before submission.
+
+    const crdWithEmptyStringDefault = {
+      ...testCRD,
+      spec: {
+        ...testCRD.spec,
+        versions: [
+          {
+            name: 'v1alpha1',
+            served: true,
+            storage: true,
+            schema: {
+              openAPIV3Schema: {
+                type: 'object',
+                properties: {
+                  spec: {
+                    type: 'object',
+                    properties: {
+                      // enum field with no default — getDefaultFormState fills this with ""
+                      loggingLevel: {
+                        type: 'string',
+                        enum: ['debug', 'info', 'error'],
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        ],
+      },
+    };
+    mockUseK8sWatchResource.mockReturnValue([crdWithEmptyStringDefault, true, undefined]);
+
+    const csvWithMinimalExample = {
+      ...testClusterServiceVersion,
+      metadata: {
+        ...testClusterServiceVersion.metadata,
+        annotations: {
+          ...testClusterServiceVersion.metadata.annotations,
+          // alm-example does NOT include loggingLevel
+          'alm-examples': JSON.stringify([
+            {
+              apiVersion: 'testapp.coreos.com/v1alpha1',
+              kind: 'TestResource',
+              metadata: { name: 'example-resource' },
+              spec: {},
+            },
+          ]),
+        },
+      },
+    };
+
+    renderWithProviders(
+      <CreateOperand
+        initialEditorType={EditorType.Form}
+        csv={csvWithMinimalExample}
+        loaded
+        loadError={undefined}
+      />,
+    );
+
+    expect(mockSyncedEditor).toHaveBeenCalledTimes(1);
+    const [syncedEditorProps] = mockSyncedEditor.mock.calls[0];
+
+    // Simulate the form submitting data where loggingLevel is "" (as getDefaultFormState
+    // would populate it). The prune function must strip it since rawSample has no loggingLevel.
+    const submittedData = {
+      apiVersion: 'testapp.coreos.com/v1alpha1',
+      kind: 'TestResource',
+      metadata: { name: 'example-resource' },
+      spec: { loggingLevel: '' },
+    };
+    const pruned = syncedEditorProps.prune(submittedData);
+    expect(pruned.spec.loggingLevel).toBeUndefined();
+  });
+
+  it('passes an onCancel handler to the YAML editor via yamlContext', () => {
+    // The YAML view must cancel the same way the
+    // Form view does (back to the operator context) instead of falling through to
+    // EditYAML's generic navigate-to-list behavior, which drops the user onto the
+    // generic create page. CreateOperand supplies that handler via yamlContext.
+    renderWithProviders(
+      <CreateOperand
+        initialEditorType={EditorType.YAML}
+        csv={testClusterServiceVersion}
+        loaded
+        loadError={undefined}
+      />,
+    );
+
+    expect(mockSyncedEditor).toHaveBeenCalledTimes(1);
+    const [syncedEditorProps] = mockSyncedEditor.mock.calls[0];
+    expect(typeof syncedEditorProps.context.yamlContext.onCancel).toBe('function');
+  });
+
   it('provides onChangeEditorType callback to SyncedEditor', () => {
-    // Arrange
     renderWithProviders(
       <CreateOperand
         initialEditorType={EditorType.Form}
@@ -141,7 +328,6 @@ describe('CreateOperand', () => {
       />,
     );
 
-    // Assert
     expect(mockSyncedEditor).toHaveBeenCalledTimes(1);
     const [syncedEditorProps] = mockSyncedEditor.mock.calls[0];
     expect(syncedEditorProps.onChangeEditorType).toBeDefined();
@@ -212,5 +398,23 @@ describe('OperandYAML', () => {
     expect(mockCreateYAML).toHaveBeenCalledTimes(1);
     const [createYAMLProps] = mockCreateYAML.mock.calls[0];
     expect(createYAMLProps.resourceObjPath).toBeUndefined();
+  });
+
+  it('forwards onCancel to CreateYAML when provided', () => {
+    const onCancel = jest.fn();
+
+    renderWithProviders(<OperandYAML onCancel={onCancel} />);
+
+    expect(mockCreateYAML).toHaveBeenCalledTimes(1);
+    const [createYAMLProps] = mockCreateYAML.mock.calls[0];
+    expect(createYAMLProps.onCancel).toBe(onCancel);
+  });
+
+  it('leaves onCancel undefined when not provided, so EditYAML falls back to its default cancel behavior', () => {
+    renderWithProviders(<OperandYAML />);
+
+    expect(mockCreateYAML).toHaveBeenCalledTimes(1);
+    const [createYAMLProps] = mockCreateYAML.mock.calls[0];
+    expect(createYAMLProps.onCancel).toBeUndefined();
   });
 });

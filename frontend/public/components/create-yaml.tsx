@@ -9,8 +9,9 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
 import { connectToPlural } from '../kinds';
 import { getYAMLTemplates } from '../models/yaml-templates';
-import type { K8sKind, K8sResourceKindReference, K8sResourceKind } from '../module/k8s';
+import type { K8sKind, K8sResourceKind } from '../module/k8s';
 import { apiVersionForModel, referenceForModel } from '../module/k8s';
+import type { EditYAMLProps } from './edit-yaml';
 import { ErrorPage404 } from './error';
 import { AsyncComponent } from './utils/async';
 import { LoadingBox } from './utils/status-box';
@@ -21,6 +22,7 @@ export const CreateYAMLInner: FC<CreateYAMLProps> = ({
   kindObj,
   hideHeader = false,
   onChange = () => null,
+  onCancel,
   resourceObjPath,
   isCreate = true,
   template,
@@ -98,6 +100,7 @@ export const CreateYAMLInner: FC<CreateYAMLProps> = ({
       hideHeader={hideHeader}
       resourceObjPath={resourceObjPath}
       onChange={onChange}
+      onCancel={onCancel}
     />
   );
 };
@@ -135,18 +138,17 @@ export const EditYAMLPage: FC<EditYAMLPageProps> = (props) => {
   );
 };
 
-export type CreateYAMLProps = {
+export type CreateYAMLProps = Pick<
+  EditYAMLProps,
+  'onCancel' | 'onChange' | 'resourceObjPath' | 'hideHeader' | 'header'
+> & {
   match?: any;
   params?: any;
   kindsInFlight: boolean;
   kindObj: K8sKind;
   template?: string;
   download?: boolean;
-  header?: string;
-  hideHeader?: boolean;
   isCreate?: boolean;
-  resourceObjPath?: (obj: K8sResourceKind, kind: K8sResourceKindReference) => string;
-  onChange?: (yaml: string) => any;
 };
 
 export type EditYAMLPageProps = {
