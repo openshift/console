@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 #
 # Prow / CI entrypoint for Playwright E2E tech-preview tests against a live OpenShift cluster.
-# Runs the operator lifecycle metadata test suite, which requires the OLMLifecycleAndCompatibility
-# feature gate to be enabled on the cluster.
+# Runs OLM tests that require Tech Preview to be enabled, including:
+# - Operator catalog items display test (OLMv1 path active on Tech Preview clusters)
+# - Operator lifecycle metadata test (requires OLMLifecycleAndCompatibility feature gate)
 #
 # Run from the openshift/console repository root.
 #
@@ -42,6 +43,6 @@ export BRIDGE_BASE_ADDRESS="$(oc get consoles.config.openshift.io cluster -o jso
 
 pushd frontend
 
-./integration-tests/test-playwright-e2e.sh -- --project=olm e2e/tests/olm/operator-lifecycle-metadata.spec.ts "$@"
+./integration-tests/test-playwright-e2e.sh -- e2e/tests/olm/operator-lifecycle-metadata.spec.ts e2e/tests/dev-console/catalog.spec.ts "$@"
 
 popd
