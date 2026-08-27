@@ -2,7 +2,12 @@ import type { FC, ReactElement, ReactNode } from 'react';
 import type { PluginStore } from '@openshift/dynamic-plugin-sdk';
 import { PluginStoreProvider } from '@openshift/dynamic-plugin-sdk';
 import { Form } from '@patternfly/react-core';
-import type { RenderOptions, BoundFunctions, Queries } from '@testing-library/react';
+import type {
+  RenderOptions,
+  RenderHookOptions,
+  BoundFunctions,
+  Queries,
+} from '@testing-library/react';
 import { render, renderHook, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { FormikValues } from 'formik';
@@ -14,11 +19,24 @@ import storeHandler from '@console/dynamic-plugin-sdk/src/app/storeHandler';
 import { pluginStore as defaultPluginStore } from '@console/internal/plugins';
 import type { RootState } from '@console/internal/redux';
 import { baseReducers } from '@console/internal/redux';
+import type { UserSettingsStore } from '../hooks/UserPreferenceContext';
+import { createUserSettingsStore, UserPreferenceContext } from '../hooks/UserPreferenceContext';
 
-export interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
+export interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries' | 'wrapper'> {
   initialState?: Partial<RootState>;
   store?: ReturnType<typeof setupStore>;
   pluginStore?: PluginStore;
+  userSettingsStore?: UserSettingsStore;
+}
+
+export interface ExtendedRenderHookOptions<TProps> extends Omit<
+  RenderHookOptions<TProps>,
+  'wrapper'
+> {
+  initialState?: Partial<RootState>;
+  store?: ReturnType<typeof setupStore>;
+  pluginStore?: PluginStore;
+  userSettingsStore?: UserSettingsStore;
 }
 
 type WrapperProps = {
@@ -35,19 +53,49 @@ const setupStore = (initialState?: Partial<RootState>) => {
 };
 
 /**
+ * Build a self-contained user-settings store for tests.
+ *
+ * Unlike the real {@link UserPreferenceProvider} it does not watch a ConfigMap (no
+ * `useK8sWatchResource` call) or touch browser storage, so it never perturbs
+ * unrelated assertions (e.g. watch call counts). It starts unloaded, matching a
+ * tree with no backend wired up; writes are kept in memory. Tests that need
+ * loaded values or the real backend should pass their own `userSettingsStore`
+ * (e.g. `createUserSettingsStore()` pre-seeded via `setSnapshot`) or mount
+ * {@link UserPreferenceProvider} themselves.
+ */
+const createMockUserSettingsStore = () => {
+  const store = createUserSettingsStore();
+  store.setUpdateKey(async (sanitizedKey, serializedValue) => {
+    const snapshot = store.getSnapshot();
+    store.setSnapshot({
+      ...snapshot,
+      data: { ...snapshot.data, [sanitizedKey]: serializedValue },
+    });
+  });
+  return store;
+};
+
+/**
  * Create a Wrapper component containing mock providers for redux store,
- * PluginStore, and react-router
+ * PluginStore, user settings, and react-router
  *
  * @param reduxStore - Redux store instance
  * @param pluginStore - Plugin store instance
+ * @param userSettingsStore - User settings store instance
  * @returns
  */
 const createWrapper =
-  (reduxStore: ReturnType<typeof setupStore>, pluginStore: PluginStore): FC<WrapperProps> =>
+  (
+    reduxStore: ReturnType<typeof setupStore>,
+    pluginStore: PluginStore,
+    userSettingsStore: UserSettingsStore,
+  ): FC<WrapperProps> =>
   ({ children }) => (
     <Provider store={reduxStore}>
       <PluginStoreProvider store={pluginStore}>
-        <MemoryRouter>{children}</MemoryRouter>
+        <UserPreferenceContext.Provider value={userSettingsStore}>
+          <MemoryRouter>{children}</MemoryRouter>
+        </UserPreferenceContext.Provider>
       </PluginStoreProvider>
     </Provider>
   );
@@ -65,12 +113,17 @@ export const renderWithProviders = (
     // Create a store instance if no custom store was passed in
     store = setupStore(initialState),
     pluginStore = defaultPluginStore,
+    userSettingsStore = createMockUserSettingsStore(),
     ...renderOptions
   }: ExtendedRenderOptions = {},
 ) => ({
   store,
   pluginStore,
-  ...render(ui, { wrapper: createWrapper(store, pluginStore), ...renderOptions }),
+  userSettingsStore,
+  ...render(ui, {
+    wrapper: createWrapper(store, pluginStore, userSettingsStore),
+    ...renderOptions,
+  }),
 });
 
 /**
@@ -86,13 +139,15 @@ export const renderHookWithProviders = <TResult, TProps>(
     // Create a store instance if no custom store was passed in
     store = setupStore(initialState),
     pluginStore = defaultPluginStore,
+    userSettingsStore = createMockUserSettingsStore(),
     ...renderOptions
-  }: ExtendedRenderOptions = {},
+  }: ExtendedRenderHookOptions<TProps> = {},
 ) => ({
   store,
   pluginStore,
+  userSettingsStore,
   ...renderHook<TResult, TProps>(hook, {
-    wrapper: createWrapper(store, pluginStore),
+    wrapper: createWrapper(store, pluginStore, userSettingsStore),
     ...renderOptions,
   }),
 });

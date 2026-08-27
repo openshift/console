@@ -70,6 +70,7 @@ import { PollConsoleUpdates } from './poll-console-updates';
 import { withoutSensitiveInformations, getTelemetryTitle } from './utils/telemetry';
 import { AdmissionWebhookWarningNotifications } from '@console/app/src/components/admission-webhook-warnings/AdmissionWebhookWarningNotifications';
 import { usePackageManifestCheck } from '@console/shared/src/hooks/usePackageManifestCheck';
+import { UserPreferenceProvider } from '@console/shared/src/hooks/UserPreferenceContext';
 import { useCSPViolationDetector } from '@console/app/src/hooks/useCSPViolationDetector';
 import { useNotificationPoller } from '@console/app/src/hooks/useNotificationPoller';
 import { useImpersonateRefreshFeatures } from './useImpersonateRefreshFeatures';
@@ -486,16 +487,18 @@ root.render(
   <Suspense fallback={<LoadingBox blame="Root suspense" />}>
     <Provider store={store}>
       <PluginStoreProvider store={pluginStore}>
-        <ThemeProvider>
-          <HelmetProvider>
-            <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
-            <ConnectedToastProvider>
-              <PollConsoleUpdates />
-              <AdmissionWebhookWarningNotifications />
-              <AppRouter />
-            </ConnectedToastProvider>
-          </HelmetProvider>
-        </ThemeProvider>
+        <UserPreferenceProvider>
+          <ThemeProvider>
+            <HelmetProvider>
+              <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
+              <ConnectedToastProvider>
+                <PollConsoleUpdates />
+                <AdmissionWebhookWarningNotifications />
+                <AppRouter />
+              </ConnectedToastProvider>
+            </HelmetProvider>
+          </ThemeProvider>
+        </UserPreferenceProvider>
       </PluginStoreProvider>
     </Provider>
   </Suspense>,
