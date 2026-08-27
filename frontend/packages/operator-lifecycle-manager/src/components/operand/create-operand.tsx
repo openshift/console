@@ -136,7 +136,7 @@ export const CreateOperand: FC<CreateOperandProps> = ({
 
   const LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY = 'console.createOperandForm.editor.lastView';
 
-  //  Wait for CRD before mounting SyncedEditor so sample is enriched, not raw data
+  // Wait for CRD before mounting SyncedEditor so sample is enriched, not raw data
   return (
     <StatusBox loaded={loaded && crdLoaded} loadError={loadError} data={csv}>
       <PageHeading
