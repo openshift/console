@@ -20,8 +20,7 @@ export const OperandYAML: FC<OperandYAMLProps> = ({
   />
 );
 
-export type OperandYAMLProps = Pick<CreateYAMLProps, 'onCancel'> & {
-  initialYAML?: string;
-  onChange?: (yaml: string) => void;
+export type OperandYAMLProps = Pick<CreateYAMLProps, 'onCancel' | 'onChange'> & {
   next?: string;
+  initialYAML?: string;
 };

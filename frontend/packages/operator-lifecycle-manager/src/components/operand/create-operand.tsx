@@ -136,13 +136,7 @@ export const CreateOperand: FC<CreateOperandProps> = ({
 
   const LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY = 'console.createOperandForm.editor.lastView';
 
-  // Wait for the CRD watch to resolve before rendering the editor. SyncedEditor
-  // snapshots its initial YAML from `sample` once, on mount, and never re-syncs it
-  // when `sample` later changes. Since `sample` is only enriched with CRD schema
-  // defaults once `crd` (and therefore `schema`) has loaded, mounting the editor
-  // before then would freeze the raw, un-enriched YAML in the YAML-first view.
-  // `crdLoaded` becomes true once the CRD is loaded or errors, so the
-  // fallback-schema path is unaffected.
+  //  Wait for CRD before mounting SyncedEditor so sample is enriched, not raw data
   return (
     <StatusBox loaded={loaded && crdLoaded} loadError={loadError} data={csv}>
       <PageHeading
