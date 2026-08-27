@@ -26,6 +26,10 @@ import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import type { ModalComponentProps } from '@console/shared/src/types/modal';
 import { setActiveNamespace, formatNamespaceRoute } from '../../actions/ui';
 import { getActiveNamespace } from '../../reducers/ui';
+import {
+  getClusterResourceListPath,
+  isOnClusterResourceListPage,
+} from './delete-namespace-modal-utils';
 
 const DeleteNamespaceModal: OverlayComponent<DeleteNamespaceModalProps> = ({
   kind,
@@ -61,7 +65,11 @@ const DeleteNamespaceModal: OverlayComponent<DeleteNamespaceModalProps> = ({
           setLastNamespace(ALL_NAMESPACES_KEY);
         }
         closeOverlay();
-        navigate(`/k8s/cluster/${kind.plural}`);
+        // Stay on the list page so sort/filter/pagination query params are kept.
+        // Redirect only when the user is on a details (or other) page for the deleted resource.
+        if (!isOnClusterResourceListPage(window.location.pathname, kind.plural)) {
+          navigate(getClusterResourceListPath(kind.plural));
+        }
       })
       .catch(() => {
         /* do nothing */
