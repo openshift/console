@@ -1,10 +1,9 @@
 import type { FC, ReactNode } from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { FormikConfig } from 'formik';
 import { Formik } from 'formik';
-import { Provider } from 'react-redux';
-import store from '@console/internal/redux';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import type { EnvironmentVariablesSectionFormData } from '../EnvironmentVariablesSection';
 import EnvironmentVariablesSection from '../EnvironmentVariablesSection';
 
@@ -13,16 +12,14 @@ interface WrapperProps extends FormikConfig<EnvironmentVariablesSectionFormData>
 }
 
 const Wrapper: FC<WrapperProps> = ({ children, ...formikConfig }) => (
-  <Provider store={store}>
-    <Formik {...formikConfig}>
-      {(formikProps) => (
-        <form onSubmit={formikProps.handleSubmit}>
-          {children}
-          <input type="submit" value="Submit" />
-        </form>
-      )}
-    </Formik>
-  </Provider>
+  <Formik {...formikConfig}>
+    {(formikProps) => (
+      <form onSubmit={formikProps.handleSubmit}>
+        {children}
+        <input type="submit" value="Submit" />
+      </form>
+    )}
+  </Formik>
 );
 
 describe('EnvironmentVariablesSection', () => {
@@ -34,7 +31,7 @@ describe('EnvironmentVariablesSection', () => {
     };
     const onSubmit = jest.fn();
 
-    render(
+    renderWithProviders(
       <Wrapper initialValues={initialValues} onSubmit={onSubmit}>
         <EnvironmentVariablesSection namespace="my-namespace" />
       </Wrapper>,
@@ -62,7 +59,7 @@ describe('EnvironmentVariablesSection', () => {
     };
     const onSubmit = jest.fn();
 
-    render(
+    renderWithProviders(
       <Wrapper initialValues={initialValues} onSubmit={onSubmit}>
         <EnvironmentVariablesSection namespace="my-namespace" />
       </Wrapper>,
@@ -104,7 +101,7 @@ describe('EnvironmentVariablesSection', () => {
     };
     const onSubmit = jest.fn();
 
-    render(
+    renderWithProviders(
       <Wrapper initialValues={initialValues} onSubmit={onSubmit}>
         <EnvironmentVariablesSection namespace="my-namespace" />
       </Wrapper>,
@@ -127,7 +124,7 @@ describe('EnvironmentVariablesSection', () => {
     };
     const onSubmit = jest.fn();
 
-    render(
+    renderWithProviders(
       <Wrapper initialValues={initialValues} onSubmit={onSubmit}>
         <EnvironmentVariablesSection namespace="my-namespace" />
       </Wrapper>,

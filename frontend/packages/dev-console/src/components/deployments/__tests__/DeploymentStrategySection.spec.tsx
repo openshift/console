@@ -1,7 +1,6 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Provider } from 'react-redux';
-import store from '@console/internal/redux';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { Resources } from '../../import/import-types';
 import DeploymentStrategySection from '../deployment-strategy/DeploymentStrategySection';
 import { convertDeploymentToEditForm } from '../utils/deployment-utils';
@@ -18,15 +17,13 @@ const handleSubmit = jest.fn();
 describe('DeploymentStrategySection(DeploymentConfig)', () => {
   it('should show strategy fields based on strategy type selected', async () => {
     const user = userEvent.setup();
-    render(
+    renderWithProviders(
       <MockForm handleSubmit={handleSubmit} enableReinitialize>
         {() => (
-          <Provider store={store}>
-            <DeploymentStrategySection
-              resourceObj={mockDeploymentConfig}
-              resourceType={Resources.OpenShift}
-            />
-          </Provider>
+          <DeploymentStrategySection
+            resourceObj={mockDeploymentConfig}
+            resourceType={Resources.OpenShift}
+          />
         )}
       </MockForm>,
     );
@@ -56,7 +53,7 @@ describe('DeploymentStrategySection(DeploymentConfig)', () => {
 
   it('should render additional fields for Recreate strategy type', async () => {
     const user = userEvent.setup();
-    render(
+    renderWithProviders(
       <MockForm
         handleSubmit={handleSubmit}
         initialValues={{
@@ -66,12 +63,10 @@ describe('DeploymentStrategySection(DeploymentConfig)', () => {
         enableReinitialize
       >
         {() => (
-          <Provider store={store}>
-            <DeploymentStrategySection
-              resourceObj={mockDeploymentConfig2}
-              resourceType={Resources.OpenShift}
-            />
-          </Provider>
+          <DeploymentStrategySection
+            resourceObj={mockDeploymentConfig2}
+            resourceType={Resources.OpenShift}
+          />
         )}
       </MockForm>,
     );
@@ -127,7 +122,7 @@ describe('DeploymentStrategySection(DeploymentConfig)', () => {
 describe('DeploymentStrategySection(Deployment)', () => {
   it('should show strategy fields based on strategy type selected', async () => {
     const user = userEvent.setup();
-    render(
+    renderWithProviders(
       <MockForm
         initialValues={{
           ...mockEditDeploymentData,
@@ -137,12 +132,10 @@ describe('DeploymentStrategySection(Deployment)', () => {
         enableReinitialize
       >
         {() => (
-          <Provider store={store}>
-            <DeploymentStrategySection
-              resourceObj={mockDeployment}
-              resourceType={Resources.Kubernetes}
-            />
-          </Provider>
+          <DeploymentStrategySection
+            resourceObj={mockDeployment}
+            resourceType={Resources.Kubernetes}
+          />
         )}
       </MockForm>,
     );
