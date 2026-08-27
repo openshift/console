@@ -329,7 +329,7 @@
     "minimist": "1.2.5",
     "ua-parser-js": "^0.7.24",
     "glob-parent": "^5.1.2",
-    "postcss": "^8.2.13",
+    "postcss": "^8.5.23",
     "async": "^3.2.5",
     "immutable": "3.8.3",
     "minimatch@^3.0.2": "^3.1.3",
