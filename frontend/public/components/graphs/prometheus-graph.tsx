@@ -7,24 +7,23 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { FLAGS } from '@console/shared/src/constants/common';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { featureReducerName } from '../../reducers/features';
-import { getActiveNamespace } from '../../reducers/ui';
 import type { RootState } from '../../redux';
 
 const mapStateToProps = (state: RootState) => ({
   canAccessMonitoring:
     !!state[featureReducerName][FLAGS.CAN_GET_NS] && !!window.SERVER_FLAGS.prometheusBaseURL,
-  namespace: getActiveNamespace(state),
 });
 
 const InnerPrometheusGraphLink: FC<PrometheusGraphLinkProps> = ({
   canAccessMonitoring,
   children,
   query,
-  namespace,
   ariaChartLinkLabel,
 }) => {
   const [activePerspective, setActivePerspective] = useActivePerspective();
+  const [namespace] = useActiveNamespace();
   const queries = _.compact(_.castArray(query));
   if (!queries.length) {
     return <>{children}</>;
@@ -56,7 +55,7 @@ const InnerPrometheusGraphLink: FC<PrometheusGraphLinkProps> = ({
 };
 export const PrometheusGraphLink = connect(mapStateToProps)(
   InnerPrometheusGraphLink,
-) as ComponentType<Omit<PrometheusGraphLinkProps, 'namespace' | 'canAccessMonitoring'>>;
+) as ComponentType<Omit<PrometheusGraphLinkProps, 'canAccessMonitoring'>>;
 
 export const PrometheusGraph = forwardRef<HTMLDivElement, PrometheusGraphProps>(
   ({ children, className, title }, ref) => (
@@ -74,7 +73,6 @@ export const PrometheusGraph = forwardRef<HTMLDivElement, PrometheusGraphProps>(
 type PrometheusGraphLinkProps = {
   canAccessMonitoring: boolean;
   query: string | string[];
-  namespace?: string;
   ariaChartLinkLabel?: string;
   children?: ReactNode;
 };

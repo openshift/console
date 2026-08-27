@@ -1,10 +1,9 @@
 import * as _ from 'lodash';
 import { getUser } from '@console/dynamic-plugin-sdk';
-import { ALL_APPLICATIONS_KEY, ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
+import { ALL_APPLICATIONS_KEY } from '@console/shared/src/constants/common';
 import { ActionType } from '../actions/common';
 import type { UIAction } from '../actions/ui';
 import { OverviewSpecialGroup } from '../components/overview/constants';
-import { getNamespace } from '../components/utils/link';
 import type { RootState } from '../redux';
 
 export type UIState = Record<string, any>;
@@ -16,7 +15,6 @@ export default (state: UIState, action: UIAction): UIState => {
       activeNavSectionId: 'workloads',
       location: pathname,
       showOperandsInAllNamespaces: true,
-      activeNamespace: ALL_NAMESPACES_KEY,
       activeApplication: ALL_APPLICATIONS_KEY,
       pluginCSPViolations: {},
       createProjectMessage: '',
@@ -54,23 +52,8 @@ export default (state: UIState, action: UIAction): UIState => {
     case ActionType.SetActiveApplication:
       return { ...state, activeApplication: action.payload.application };
 
-    case ActionType.SetActiveNamespace:
-      if (!action.payload.namespace) {
-        // eslint-disable-next-line no-console
-        console.warn('setActiveNamespace: Not setting to falsy!');
-        return state;
-      }
-
-      return { ...state, activeNamespace: action.payload.namespace };
-
-    case ActionType.SetCurrentLocation: {
-      const updated = { ...state, location: action.payload.location };
-      const ns = getNamespace(action.payload.location);
-      if (_.isUndefined(ns)) {
-        return updated;
-      }
-      return { ...updated, activeNamespace: ns };
-    }
+    case ActionType.SetCurrentLocation:
+      return { ...state, location: action.payload.location };
     case ActionType.SetServiceLevel:
       return {
         ...state,
@@ -237,8 +220,6 @@ export default (state: UIState, action: UIAction): UIState => {
 };
 
 export const userStateToProps = (state: RootState) => ({ user: getUser(state) });
-
-export const getActiveNamespace = ({ UI }: RootState): string => UI.activeNamespace;
 
 export const getActiveApplication = ({ UI }: RootState): string => UI.activeApplication;
 

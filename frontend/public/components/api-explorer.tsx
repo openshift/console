@@ -39,6 +39,7 @@ import { PageHeading } from '@console/shared/src/components/heading/PageHeading'
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
 import { ALL_NAMESPACES_KEY, FLAGS } from '@console/shared/src/constants/common';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import type { APIError } from '@console/shared/src/types/resource';
@@ -58,7 +59,6 @@ import {
   referenceForModel,
 } from '../module/k8s';
 import { connectToFlags } from '../reducers/connectToFlags';
-import type { RootState } from '../redux';
 import { DefaultPage } from './default-resource';
 import { ErrorPage404 } from './error';
 import { exactMatch, fuzzyCaseInsensitive } from './factory/table-filters';
@@ -71,10 +71,6 @@ import { LinkifyExternal } from './utils/link';
 import { ResourceIcon } from './utils/resource-icon';
 import { ScrollToTopOnMount } from './utils/scroll-to-top-on-mount';
 import { LoadError, LoadingBox } from './utils/status-box';
-
-const mapStateToProps = (state: RootState): APIResourceLinkStateProps => ({
-  activeNamespace: state.UI.activeNamespace,
-});
 
 const getAPIResourceLink = (activeNamespace: string, model: K8sKind) => {
   const ref = referenceForModel(model);
@@ -89,11 +85,9 @@ const getAPIResourceLink = (activeNamespace: string, model: K8sKind) => {
   return `/api-resource/ns/${activeNamespace}/${ref}`;
 };
 
-const InnerAPIResourceLink: FC<APIResourceLinkStateProps & APIResourceLinkOwnProps> = ({
-  activeNamespace,
-  model,
-}) => {
+const InnerAPIResourceLink: FC<APIResourceLinkOwnProps> = ({ model }) => {
   const { t } = useTranslation('public');
+  const [activeNamespace] = useActiveNamespace();
   const to = getAPIResourceLink(activeNamespace, model);
   return (
     <span className="co-resource-item">
@@ -106,9 +100,7 @@ const InnerAPIResourceLink: FC<APIResourceLinkStateProps & APIResourceLinkOwnPro
     </span>
   );
 };
-const APIResourceLink = connect<APIResourceLinkStateProps, {}, APIResourceLinkOwnProps>(
-  mapStateToProps,
-)(InnerAPIResourceLink);
+const APIResourceLink = InnerAPIResourceLink;
 
 const Group: FC<{ value: string }> = ({ value }) => {
   if (!value) {
@@ -1049,10 +1041,6 @@ const k8StateToProps = ({ k8s }) => ({
 export const APIResourcePage = connect(k8StateToProps)(
   connectToFlags(FLAGS.OPENSHIFT)(InnerAPIResourcePage),
 );
-
-type APIResourceLinkStateProps = {
-  activeNamespace: string;
-};
 
 type APIResourceLinkOwnProps = {
   model: K8sKind;

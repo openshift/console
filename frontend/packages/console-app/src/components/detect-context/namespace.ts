@@ -1,12 +1,9 @@
 import { createContext, useState, useEffect, useCallback, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router';
-import {
-  setActiveNamespace as setActiveNamespaceForStore,
-  formatNamespaceRoute,
-} from '@console/internal/actions/ui';
+import { formatNamespaceRoute, setActiveApplication } from '@console/internal/actions/ui';
 import { getNamespace } from '@console/internal/components/utils/link';
 import { flagPending } from '@console/internal/reducers/features';
-import { FLAGS } from '@console/shared/src/constants/common';
+import { ALL_APPLICATIONS_KEY, FLAGS } from '@console/shared/src/constants/common';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { usePreferredNamespace } from '../user-preferences/namespace/usePreferredNamespace';
@@ -48,13 +45,13 @@ export const useValuesForNamespaceContext: UseValuesForNamespaceContext = () => 
     (ns: string) => {
       if (ns !== activeNamespaceRef.current) {
         setActiveNamespace(ns);
+        dispatch(setActiveApplication(ALL_APPLICATIONS_KEY));
         const oldPath = window.location.pathname;
         const newPath = formatNamespaceRoute(ns, oldPath, window.location);
         if (newPath !== oldPath) {
           navigateRef.current(newPath);
         }
       }
-      dispatch(setActiveNamespaceForStore(ns));
     },
     [dispatch],
   );

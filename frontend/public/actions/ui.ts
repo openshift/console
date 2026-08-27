@@ -12,10 +12,7 @@ import type {
   NamespaceMetrics,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import type { DeprecatedOperatorWarning } from '@console/operator-lifecycle-manager/src/types';
-import {
-  ALL_NAMESPACES_KEY,
-  LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
-} from '@console/shared/src/constants/common';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import type { OverviewItem } from '@console/shared/src/types/resource';
 import type { OverviewSpecialGroup } from '../components/overview/constants';
 import type { K8sResourceKind, PodKind, NodeKind } from '../module/k8s';
@@ -55,7 +52,6 @@ export type PluginCSPViolations = {
   [pluginName: string]: boolean;
 };
 
-export const getActiveNamespace = (): string => store.getState().UI.activeNamespace;
 export const getActiveUserName = (): string => getUser(store.getState())?.username;
 
 export const getNamespaceMetric = (ns: K8sResourceKind, metric: string): number => {
@@ -156,21 +152,6 @@ export const setServiceLevel = (
 
 export const setActiveApplication = (application: string) =>
   action(ActionType.SetActiveApplication, { application });
-
-export const setActiveNamespace = (namespace: string = '') => {
-  const trimmedNamespace = namespace.trim();
-  // make it noop when new active namespace is the same
-  // otherwise users will get page refresh and cry about
-  // broken direct links and bookmarks
-  if (trimmedNamespace !== getActiveNamespace()) {
-    // save last namespace in session storage (persisted only for current browser tab). Used to remember/restore if
-    // "All Projects" was selected when returning to the list view (typically from details view) via breadcrumb or
-    // sidebar navigation
-    sessionStorage.setItem(LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY, trimmedNamespace);
-  }
-
-  return action(ActionType.SetActiveNamespace, { namespace: trimmedNamespace });
-};
 
 /**
  * Encodes a string for use in Kubernetes impersonation subprotocols.
@@ -280,7 +261,6 @@ const uiActions = {
   setCurrentLocation,
   setShowOperandsInAllNamespaces,
   setActiveApplication,
-  setActiveNamespace,
   sortList,
   setCreateProjectMessage,
   setClusterID,

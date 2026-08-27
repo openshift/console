@@ -3,10 +3,10 @@ import { Component as ReactComponent } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
-import { getActiveNamespace } from '@console/internal/actions/ui';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceForModel, referenceForGroupVersionKind } from '@console/internal/module/k8s';
 import { ConsoleEmptyState } from '@console/shared/src/components/empty-state/ConsoleEmptyState';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { OPERATOR_NAMESPACE_ANNOTATION } from '../const';
 import { OperatorGroupModel } from '../models';
 import type { OperatorGroupKind, SubscriptionKind, PackageManifestKind } from '../types';
@@ -21,10 +21,11 @@ export const operatorGroupFor = (obj: K8sResourceKind) =>
 
 const NoOperatorGroupMsg: FC = () => {
   const { t } = useTranslation('olm');
+  const [activeNamespace] = useActiveNamespace();
   const actions = [
     <Link
       key="create-operator-group"
-      to={`/ns/${getActiveNamespace()}/${referenceForModel(OperatorGroupModel)}/~new`}
+      to={`/ns/${activeNamespace}/${referenceForModel(OperatorGroupModel)}/~new`}
     >
       {t('Create an OperatorGroup for this Namespace')}
     </Link>,
