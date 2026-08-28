@@ -31,11 +31,11 @@ import {
 import { RhUiCloseIcon, RhUiErrorFillIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { ResourceDropdown } from '@console/shared/src/components/dropdown/ResourceDropdown';
-import { GroupModel, ServiceAccountModel } from '../../models';
+import { GroupModel, NamespaceModel, ServiceAccountModel } from '../../models';
 import type { GroupKind, K8sResourceKind } from '../../module/k8s';
 import { FieldLevelHelp } from '../utils/field-level-help';
 import { useK8sWatchResource } from '../utils/k8s-watch-hook';
-import { NsDropdown } from '../utils/list-dropdown';
+import { NsDropdown, useProjectOrNamespaceModel } from '../utils/list-dropdown';
 
 const SELECT_ALL_KEY = '__select_all__';
 const MAX_VISIBLE_CHIPS = 5;
@@ -69,6 +69,20 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
   const [isGroupSelectOpen, setIsGroupSelectOpen] = useState(false);
   const [showAllGroups, setShowAllGroups] = useState(false);
   const [groupSearchFilter, setGroupSearchFilter] = useState('');
+
+  const [projectNamespaceModel, projectNamespaceModelLoaded] = useProjectOrNamespaceModel();
+  const serviceAccountNamespaceStrings = useMemo(() => {
+    if (!projectNamespaceModelLoaded || projectNamespaceModel.kind === NamespaceModel.kind) {
+      return {
+        label: t('Service account namespace'),
+        placeholder: t('Select a namespace'),
+      };
+    }
+    return {
+      label: t('Service account project'),
+      placeholder: t('Select a project'),
+    };
+  }, [projectNamespaceModel, projectNamespaceModelLoaded, t]);
 
   // Fetch available groups from the cluster
   const [groups, groupsLoaded, groupsLoadError] = useK8sWatchResource<GroupKind[]>({
@@ -189,7 +203,7 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
     setServiceAccountNameError('');
 
     if (impersonateKind === 'User' && !username.trim()) {
-      setUsernameError(t('Username is required'));
+      setUsernameError(t('Select a username'));
       return false;
     }
 
@@ -199,12 +213,12 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
       let isValid = true;
 
       if (!serviceAccountNamespace.trim()) {
-        setServiceAccountNamespaceError(t('Service account namespace is required'));
+        setServiceAccountNamespaceError(serviceAccountNamespaceStrings.placeholder);
         isValid = false;
       }
 
       if (!serviceAccountName.trim()) {
-        setServiceAccountNameError(t('Service account name is required'));
+        setServiceAccountNameError(t('Select a service account'));
         isValid = false;
       }
 
@@ -318,7 +332,7 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
             variant={AlertVariant.warning}
             isInline
             title={t(
-              'Impersonating a user or service account grants you their exact permissions. You must enter a username or service account, but you can also enter a group to simulate the permissions of a member of that group.',
+              'Impersonating a user or service account grants you their exact permissions. You must enter a user name or service account, but you can also enter a group to simulate the permissions of a member of that group.',
             )}
           />
 
@@ -339,7 +353,7 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
             <Radio
               id="impersonate-kind-service-account"
               name="impersonate-kind"
-              label={t('ServiceAccount')}
+              label={t('Service account')}
               isChecked={impersonateKind === 'ServiceAccount'}
               onChange={() => {
                 setImpersonateKind('ServiceAccount');
@@ -393,7 +407,7 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
           ) : (
             <>
               <FormGroup
-                label={t('Service account namespace')}
+                label={serviceAccountNamespaceStrings.label}
                 fieldId="impersonate-service-account-namespace"
                 isRequired
               >
