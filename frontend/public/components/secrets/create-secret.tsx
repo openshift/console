@@ -165,6 +165,17 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
       return acc;
     }, {}),
   );
+  // Store binary data separately to preserve it during edits
+  const binaryData = React.useMemo(
+    () =>
+      Object.entries(props.obj?.data ?? {}).reduce<Record<string, string>>((acc, [key, value]) => {
+        if (isBinary(null, Buffer.from(value, 'base64'))) {
+          acc[key] = value;
+        }
+        return acc;
+      }, {}),
+    [props.obj?.data],
+  );
   const [base64StringData, setBase64StringData] = React.useState(props?.obj?.data ?? {});
   const [disableForm, setDisableForm] = React.useState(false);
 
@@ -172,7 +183,20 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
 
   const onDataChanged = (secretsData) => {
     setStringData({ ...secretsData?.stringData });
-    setBase64StringData({ ...secretsData?.base64StringData });
+    // Preserve binary values by merging them with form data
+    // Only backfill missing keys from binaryData, don't overwrite edited entries
+    const mergedData = Object.entries(binaryData).reduce(
+      (acc, [key, value]) => {
+        // Only add binary entry if it's missing from form data
+        if (acc[key] === undefined) {
+          acc[key] = value;
+        }
+        // Otherwise keep the existing value from form data
+        return acc;
+      },
+      { ...secretsData?.base64StringData },
+    );
+    setBase64StringData(mergedData);
   };
 
   const onError = (err) => {
@@ -1009,55 +1033,22 @@ const DroppableFileInput = (props) => (
   />
 );
 
-class SSHAuthSubformWithTranslation extends React.Component<
-  SSHAuthSubformProps & WithT,
-  SSHAuthSubformState
-> {
-  constructor(props) {
-    super(props);
-    this.state = {
-      'ssh-privatekey': this.props.stringData['ssh-privatekey'] || '',
-    };
-    this.changeData = this.changeData.bind(this);
-    this.onFileChange = this.onFileChange.bind(this);
-  }
-  changeData(event) {
-    this.setState(
-      {
-        'ssh-privatekey': event.target.value.endsWith('\n')
-          ? event.target.value
-          : `${event.target.value}\n`,
-      },
-      () => this.props.onChange(this.state),
-    );
-  }
-  onFileChange(fileData) {
-    this.setState(
-      {
-        'ssh-privatekey': fileData.endsWith('\n') ? fileData : `${fileData}\n`,
-      },
-      () => this.props.onChange(this.state),
-    );
-  }
-  render() {
-    const { t } = this.props;
-    return (
-      <DroppableFileInput
-        onChange={this.onFileChange}
-        inputFileData={this.state['ssh-privatekey']}
-        id="ssh-privatekey"
-        label={t('public~SSH private key')}
-        inputFieldHelpText={t(
-          'public~Drag and drop file with your private SSH key here or browse to upload it.',
-        )}
-        textareaFieldHelpText={t('public~Private SSH key file for Git authentication.')}
-        isRequired={true}
-      />
-    );
-  }
-}
-
-export const SSHAuthSubform = withTranslation()(SSHAuthSubformWithTranslation);
+export const SSHAuthSubform: React.FC<SSHAuthSubformProps> = ({ onChange, stringData }) => {
+  const { t } = useTranslation();
+  const onFileChange = (fileData: string) => {
+    onChange({ 'ssh-privatekey': fileData });
+  };
+  return (
+    <DroppableFileInput
+      onChange={onFileChange}
+      inputFileData={stringData['ssh-privatekey'] || ''}
+      id="ssh-privatekey"
+      label={t('public~SSH private key')}
+      textareaFieldHelpText={t('public~Private SSH key file for Git authentication.')}
+      isRequired={true}
+    />
+  );
+};
 
 export type SecretStringData = Record<string, string>;
 export type Base64StringData = Record<string, string>;
@@ -1311,19 +1302,13 @@ export const SecretLoadingWrapper = withTranslation()(
     readonly state: SecretLoadingWrapperState = {
       secretTypeAbstraction: SecretTypeAbstraction.generic,
     };
-    componentDidUpdate() {
-      if (!_.isEmpty(this.props.obj.data)) {
-        const secretTypeAbstraction = toTypeAbstraction(this.props.obj.data);
-        if (this.state.secretTypeAbstraction !== secretTypeAbstraction) {
-          this.setState({
-            secretTypeAbstraction,
-          });
-        }
-      }
-    }
     render() {
       const { obj, fixedKeys } = this.props;
-      const { secretTypeAbstraction } = this.state;
+      // Compute secretTypeAbstraction from loaded data, not from state
+      const secretTypeAbstraction = !_.isEmpty(obj.data)
+        ? toTypeAbstraction(obj.data)
+        : SecretTypeAbstraction.generic;
+
       if (!secretTypeAbstraction) {
         return <LoadingBox />;
       }
@@ -1445,10 +1430,6 @@ type UploadConfigSubformProps = {
   stringData: {
     [key: string]: Object;
   };
-};
-
-type SSHAuthSubformState = {
-  'ssh-privatekey': string;
 };
 
 type SSHAuthSubformProps = {
