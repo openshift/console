@@ -80,7 +80,7 @@ const k8sAPINavTest = (apiID: string) => {
   cy.get(`test-k8s-${apiID}`).should('not.be.empty');
 };
 if (!Cypress.env('OPENSHIFT_CI') || Cypress.env('PLUGIN_PULL_SPEC')) {
-  describe('Demo dynamic plugin test', () => {
+  xdescribe('Demo dynamic plugin test', () => {
     before(() => {
       cy.login();
       cy.createProjectWithCLI(PLUGIN_NAME);

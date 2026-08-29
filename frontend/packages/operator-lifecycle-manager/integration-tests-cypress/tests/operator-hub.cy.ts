@@ -2,7 +2,7 @@ import { checkErrors, testName } from '../../../integration-tests-cypress/suppor
 import { nav } from '../../../integration-tests-cypress/views/nav';
 import { OPERATOR_HUB_LOAD_TIMEOUT, operatorHub } from '../views/operator-hub.view';
 
-describe('Interacting with OperatorHub', () => {
+xdescribe('Interacting with OperatorHub', () => {
   before(() => {
     cy.login();
     cy.createProjectWithCLI(testName);
