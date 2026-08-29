@@ -2,67 +2,54 @@ import {
   getAccessModeForProvisioner,
   getProvisionerModeMapping,
   getVolumeModeForProvisioner,
-  initialAccessModes,
 } from '../shared';
 
 describe('storage shared helpers', () => {
   describe('getAccessModeForProvisioner', () => {
-    const accessModeCases: {
-      description: string;
-      provisioner: string;
-      ignoreReadOnly?: boolean;
-      volumeMode?: string;
-      expected: string[];
-    }[] = [
-      {
-        description: 'includes ReadWriteOncePod for Cinder CSI Filesystem',
-        provisioner: 'cinder.csi.openstack.org',
-        ignoreReadOnly: false,
-        volumeMode: 'Filesystem',
-        expected: ['ReadWriteOnce', 'ReadWriteOncePod'],
-      },
-      {
-        description: 'includes ReadWriteOncePod for Cinder CSI Block',
-        provisioner: 'cinder.csi.openstack.org',
-        ignoreReadOnly: false,
-        volumeMode: 'Block',
-        expected: ['ReadWriteOnce', 'ReadWriteOncePod'],
-      },
-      {
-        description: 'includes ReadWriteOncePod for in-tree Cinder without duplicates',
-        provisioner: 'kubernetes.io/cinder',
-        ignoreReadOnly: false,
-        volumeMode: 'Filesystem',
-        expected: ['ReadWriteOnce', 'ReadWriteOncePod'],
-      },
-      {
-        description: 'does not enable RWOP for Manila CSI',
-        provisioner: 'manila.csi.openstack.org',
-        expected: ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'],
-      },
-      {
-        description: 'filters ReadOnlyMany when ignoreReadOnly is true',
-        provisioner: 'manila.csi.openstack.org',
-        ignoreReadOnly: true,
-        volumeMode: 'Filesystem',
-        expected: ['ReadWriteOnce', 'ReadWriteMany'],
-      },
-      {
-        description: 'falls back to initialAccessModes for unknown provisioners',
-        provisioner: 'unknown.provisioner.example',
-        expected: initialAccessModes,
-      },
-    ];
+    it('includes ReadWriteOncePod for Cinder CSI Filesystem', () => {
+      expect(getAccessModeForProvisioner('cinder.csi.openstack.org', false, 'Filesystem')).toEqual([
+        'ReadWriteOnce',
+        'ReadWriteOncePod',
+      ]);
+    });
 
-    accessModeCases.forEach(
-      ({ description, provisioner, ignoreReadOnly, volumeMode, expected }) => {
-        it(description, () => {
-          expect(getAccessModeForProvisioner(provisioner, ignoreReadOnly, volumeMode)).toEqual(
-            expected,
-          );
-        });
-      },
-    );
+    it('includes ReadWriteOncePod for Cinder CSI Block', () => {
+      expect(getAccessModeForProvisioner('cinder.csi.openstack.org', false, 'Block')).toEqual([
+        'ReadWriteOnce',
+        'ReadWriteOncePod',
+      ]);
+    });
+
+    it('includes ReadWriteOncePod for in-tree Cinder without duplicates', () => {
+      expect(getAccessModeForProvisioner('kubernetes.io/cinder', false, 'Filesystem')).toEqual([
+        'ReadWriteOnce',
+        'ReadWriteOncePod',
+      ]);
+    });
+
+    it('does not enable RWOP for Manila CSI', () => {
+      expect(getAccessModeForProvisioner('manila.csi.openstack.org')).toEqual([
+        'ReadWriteOnce',
+        'ReadWriteMany',
+        'ReadOnlyMany',
+      ]);
+    });
+
+    it('filters ReadOnlyMany when ignoreReadOnly is true', () => {
+      expect(getAccessModeForProvisioner('manila.csi.openstack.org', true, 'Filesystem')).toEqual([
+        'ReadWriteOnce',
+        'ReadWriteMany',
+      ]);
+    });
+
+    it('falls back to all access modes for unknown provisioners', () => {
+      expect(getAccessModeForProvisioner('unknown.provisioner.example')).toEqual([
+        'ReadWriteOnce',
+        'ReadWriteMany',
+        'ReadOnlyMany',
+        'ReadWriteOncePod',
+      ]);
+    });
 
     it('does not offer RWX or ROX for Cinder CSI', () => {
       const modes = getAccessModeForProvisioner('cinder.csi.openstack.org');
