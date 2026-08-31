@@ -77,4 +77,4 @@ export const deserializeData = (data: string | null) => {
   }
 };
 
-export const seralizeData = <T>(data: T) => JSON.stringify(data);
+export const serializeData = <T>(data: T) => JSON.stringify(data);

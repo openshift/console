@@ -4,7 +4,7 @@ import {
   createConfigMap,
   updateConfigMap,
   deserializeData,
-  seralizeData,
+  serializeData,
   USER_SETTING_CONFIGMAP_NAMESPACE,
 } from '../user-settings';
 
@@ -88,16 +88,16 @@ describe('deserializeData', () => {
   });
 });
 
-describe('seralizeData', () => {
+describe('serializeData', () => {
   it('serializes strings to JSON so number-like strings survive a round-trip', () => {
-    expect(seralizeData('graph')).toBe('"graph"');
-    expect(seralizeData('{ "key": "value" }')).toEqual('"{ \\"key\\": \\"value\\" }"');
+    expect(serializeData('graph')).toBe('"graph"');
+    expect(serializeData('{ "key": "value" }')).toEqual('"{ \\"key\\": \\"value\\" }"');
     // A string which looks like a number must remain a string when read back.
     // See https://bugzilla.redhat.com/show_bug.cgi?id=2009345
-    expect(deserializeData(seralizeData('1234'))).toBe('1234');
+    expect(deserializeData(serializeData('1234'))).toBe('1234');
   });
 
   it('converts objects', () => {
-    expect(seralizeData({ key: 'value' })).toEqual('{"key":"value"}');
+    expect(serializeData({ key: 'value' })).toEqual('{"key":"value"}');
   });
 });

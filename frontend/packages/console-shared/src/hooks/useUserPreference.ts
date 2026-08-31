@@ -2,7 +2,7 @@ import type { SetStateAction, Dispatch } from 'react';
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useSyncExternalStoreWithSelector } from 'use-sync-external-store/with-selector';
 import type { UseUserPreference } from '@console/dynamic-plugin-sdk';
-import { deserializeData, seralizeData } from '../utils/user-settings';
+import { deserializeData, serializeData } from '../utils/user-settings';
 import type { UserSettingsSnapshot } from './UserPreferenceContext';
 import { UserPreferenceContext } from './UserPreferenceContext';
 
@@ -133,7 +133,7 @@ export const useUserPreference: UseUserPreference = <T>(
       persistedDefaultKeyRef.current !== sanitizedKey
     ) {
       persistedDefaultKeyRef.current = sanitizedKey;
-      store.updateKey(sanitizedKey, seralizeData(frozenDefault)).catch(() => {
+      store.updateKey(sanitizedKey, serializeData(frozenDefault)).catch(() => {
         if (persistedDefaultKeyRef.current === sanitizedKey) {
           persistedDefaultKeyRef.current = undefined;
         }
@@ -148,7 +148,7 @@ export const useUserPreference: UseUserPreference = <T>(
         typeof action === 'function' ? (action as (prevState: T) => T)(previousValue as T) : action;
       setValue(newValue);
       if (store.getSnapshot().loaded) {
-        store.updateKey(sanitizedKey, seralizeData(newValue)).catch(() => {
+        store.updateKey(sanitizedKey, serializeData(newValue)).catch(() => {
           setValue(previousValue);
         });
       }

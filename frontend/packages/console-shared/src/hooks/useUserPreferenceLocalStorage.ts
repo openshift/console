@@ -1,6 +1,6 @@
 import type { SetStateAction, Dispatch } from 'react';
 import { useRef, useEffect, useState, useCallback } from 'react';
-import { deserializeData, seralizeData } from '../utils/user-settings';
+import { deserializeData, serializeData } from '../utils/user-settings';
 
 export const useUserPreferenceLocalStorage = <T>(
   key: string,
@@ -38,7 +38,7 @@ export const useUserPreferenceLocalStorage = <T>(
         const configMapData = deserializeData(event.newValue);
         const newData = configMapData?.[keyRef.current];
 
-        if (newData !== undefined && seralizeData(newData) !== seralizeData(dataRef.current)) {
+        if (newData !== undefined && serializeData(newData) !== serializeData(dataRef.current)) {
           setData(newData);
         }
       }
@@ -65,7 +65,7 @@ export const useUserPreferenceLocalStorage = <T>(
       const configMapData = deserializeData(storage.getItem(storageKey)) ?? {};
       if (
         newState !== undefined &&
-        seralizeData(newState) !== seralizeData(configMapData?.[keyRef.current])
+        serializeData(newState) !== serializeData(configMapData?.[keyRef.current])
       ) {
         if (mounted.current) {
           setData(newState);
@@ -78,7 +78,7 @@ export const useUserPreferenceLocalStorage = <T>(
             [keyRef.current]: newState,
           },
         };
-        const newValue = seralizeData(dataToUpdate);
+        const newValue = serializeData(dataToUpdate);
 
         // create a storage event to dispatch locally since browser windows do not fire the
         // storage event if the change originated from the current window

@@ -164,7 +164,7 @@ describe('useUserPreference store', () => {
 });
 
 describe('useUserPreference upgrade compatibility', () => {
-  // Before this change, `seralizeData` stored string values *bare* (e.g. the
+  // Before this change, `serializeData` stored string values *bare* (e.g. the
   // string "graph" was persisted as `graph`, not `"graph"`). Existing users
   // will still have such values in their ConfigMap after upgrading, so they
   // must continue to read back correctly.
