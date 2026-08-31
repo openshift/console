@@ -43,6 +43,10 @@ export BRIDGE_BASE_ADDRESS="$(oc get consoles.config.openshift.io cluster -o jso
 
 pushd frontend
 
+if [ ! -d node_modules ]; then
+  yarn install
+fi
+
 ./integration-tests/test-playwright-e2e.sh -- e2e/tests/olm/operator-lifecycle-metadata.spec.ts e2e/tests/dev-console/catalog.spec.ts "$@"
 
 popd

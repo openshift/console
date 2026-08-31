@@ -74,10 +74,6 @@ BRIDGE_BASE_PATH=${BRIDGE_BASE_PATH:-/}
 export BRIDGE_BASE_PATH
 export WEB_CONSOLE_URL="${WEB_CONSOLE_URL:-${BRIDGE_BASE_ADDRESS}${BRIDGE_BASE_PATH}}"
 
-if [ ! -d node_modules ]; then
-  yarn install
-fi
-
 if [ "$RUN_CREATE_USER" = true ]; then
   "${REPO_ROOT}/contrib/create-user.sh"
   export BRIDGE_HTPASSWD_IDP="${BRIDGE_HTPASSWD_IDP:-test}"
