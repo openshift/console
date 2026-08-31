@@ -295,8 +295,7 @@ const PVCDetails: FC<PVCDetailsProps> = ({ obj: pvc }) => {
   const [infoAlertDismissedUid, setInfoAlertDismissedUid] = useState<string | undefined>();
   const isErrorAlertDismissed =
     !!pvc?.metadata?.uid && errorAlertDismissedUid === pvc?.metadata?.uid;
-  const isInfoAlertDismissed =
-    !!pvc?.metadata?.uid && infoAlertDismissedUid === pvc?.metadata?.uid;
+  const isInfoAlertDismissed = !!pvc?.metadata?.uid && infoAlertDismissedUid === pvc?.metadata?.uid;
 
   const query =
     name && namespace
