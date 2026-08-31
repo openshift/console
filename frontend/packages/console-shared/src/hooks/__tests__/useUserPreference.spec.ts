@@ -1,6 +1,7 @@
 import { createElement } from 'react';
 import type { ReactNode } from 'react';
 import { act, renderHook, waitFor } from '@testing-library/react';
+import { UserPreferenceProvider } from '@console/app/src/providers/user-preferences/UserPreferenceContext';
 import { useFavoritesOptions } from '@console/internal/components/useFavoritesOptions';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import type { ConfigMapKind } from '@console/internal/module/k8s';
@@ -10,7 +11,6 @@ import {
   updateConfigMap,
   USER_SETTING_CONFIGMAP_NAMESPACE,
 } from '../../utils/user-settings';
-import { UserPreferenceProvider } from '../UserPreferenceContext';
 import { useUserPreference } from '../useUserPreference';
 
 // These tests exercise the real ConfigMap backend (create/update, watch

@@ -70,7 +70,7 @@ import { PollConsoleUpdates } from './poll-console-updates';
 import { withoutSensitiveInformations, getTelemetryTitle } from './utils/telemetry';
 import { AdmissionWebhookWarningNotifications } from '@console/app/src/components/admission-webhook-warnings/AdmissionWebhookWarningNotifications';
 import { usePackageManifestCheck } from '@console/shared/src/hooks/usePackageManifestCheck';
-import { UserPreferenceProvider } from '@console/shared/src/hooks/UserPreferenceContext';
+import { UserPreferenceProvider } from '@console/app/src/providers/user-preferences/UserPreferenceContext';
 import { useCSPViolationDetector } from '@console/app/src/hooks/useCSPViolationDetector';
 import { useNotificationPoller } from '@console/app/src/hooks/useNotificationPoller';
 import { useImpersonateRefreshFeatures } from './useImpersonateRefreshFeatures';
