@@ -352,7 +352,7 @@
     "ua-parser-js": "^0.7.24",
     "jest": "21.x",
     "glob-parent": "^5.1.2",
-    "postcss": "^8.2.13",
+    "postcss": "^8.5.23",
     "shell-quote": "^1.8.4",
     "immutable": "3.8.3",
     "minimatch@^3.0.2": "^3.1.3",
