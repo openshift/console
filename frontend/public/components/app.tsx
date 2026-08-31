@@ -21,7 +21,7 @@ import { BrowserRouter, useParams, useLocation, Routes, Route } from 'react-rout
 import {
   ContextProviderExtensionWrapper,
   DetectContext,
-} from '@console/app/src/components/detect-context/DetectContext';
+} from '@console/app/src/providers/detect-context/DetectContext';
 import { FeatureFlagExtensionLoader } from '@console/app/src/components/flags/FeatureFlagExtensionLoader';
 import Lightspeed from '@console/app/src/components/lightspeed/Lightspeed';
 import { Navigation } from '@console/app/src/components/nav';
@@ -58,8 +58,8 @@ import { ConsoleNotifier } from './console-notifier';
 import { AuthenticationErrorPage } from './error';
 import { Masthead } from './masthead/masthead';
 import { NotificationDrawer } from './notification-drawer';
-import { ThemeProvider } from './ThemeProvider';
-import { ConnectedToastProvider } from './toast/ConnectedToastProvider';
+import { ThemeProvider } from '@console/app/src/providers/theme/ThemeProvider';
+import { ToastProvider } from '@console/app/src/providers/toast/ToastProvider';
 import { AsyncComponent } from './utils/async';
 import { getBrandingDetails } from './utils/branding';
 // cloud shell imports must come later than features
@@ -79,7 +79,7 @@ const PF_BREAKPOINT_MD = 768;
 const PF_BREAKPOINT_XL = 1200;
 const NOTIFICATION_DRAWER_BREAKPOINT = 1800;
 
-const root = createRoot(document.getElementById('app')!); // eslint-disable-line @typescript-eslint/no-non-null-assertion
+const root = createRoot(document.getElementById('app')!); // eslint-disable-line @typescript-eslint/no-non-null-assertion -- we know the dom
 root.render(<LoadingBox blame="Init" />);
 
 // Trigger an early authenticated fetch so unauthenticated users are redirected
@@ -491,11 +491,11 @@ root.render(
           <ThemeProvider>
             <HelmetProvider>
               <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
-              <ConnectedToastProvider>
+              <ToastProvider>
                 <PollConsoleUpdates />
                 <AdmissionWebhookWarningNotifications />
                 <AppRouter />
-              </ConnectedToastProvider>
+              </ToastProvider>
             </HelmetProvider>
           </ThemeProvider>
         </UserPreferenceProvider>

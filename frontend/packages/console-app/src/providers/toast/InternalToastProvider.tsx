@@ -1,30 +1,37 @@
 import type { FC, ReactNode } from 'react';
-import { useState, useCallback, useMemo, useRef } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import {
   Alert,
-  AlertGroup,
   AlertActionCloseButton,
   AlertActionLink,
+  AlertGroup,
   AlertVariant,
   Button,
 } from '@patternfly/react-core';
 import { RhUiMinusIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import type {
-  ToastOptions,
   ToastContextValues,
+  ToastOptions,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { NotificationHistoryContext } from './NotificationHistoryContext';
-import { ToastContext } from './ToastContext';
-import { getOverflowCount, getVisibleToasts, normalizeToastOptions } from './toastDisplayUtils';
-import type { ToastNotification, ToastRenderOptions } from './types';
+import {
+  getOverflowCount,
+  getVisibleToasts,
+  normalizeToastOptions,
+} from '@console/shared/src/components/toast/toastDisplayUtils';
+import type {
+  ToastNotification,
+  ToastRenderOptions,
+} from '@console/shared/src/components/toast/types';
 import {
   DEFAULT_MAX_DISPLAYED_TOASTS,
   DEFAULT_MAX_NOTIFICATION_HISTORY,
   DEFAULT_TOAST_DRAWER_GROUP,
-} from './types';
+} from '@console/shared/src/components/toast/types';
+import { NotificationHistoryContext } from './NotificationHistoryContext';
+import { ToastContext } from './ToastContext';
 
-interface ToastProviderProps {
+interface InternalToastProviderProps {
   children?: ReactNode;
   isNotificationDrawerExpanded?: boolean;
   maxDisplayed?: number;
@@ -41,13 +48,13 @@ const toToastNotification = (toast: ToastRenderOptions): ToastNotification => ({
   drawerGroup: toast.drawerGroup ?? DEFAULT_TOAST_DRAWER_GROUP,
 });
 
-export const ToastProvider: FC<ToastProviderProps> = ({
+export const InternalToastProvider: FC<InternalToastProviderProps> = ({
   children,
   isNotificationDrawerExpanded = false,
   maxDisplayed = DEFAULT_MAX_DISPLAYED_TOASTS,
   onNotificationDrawerOpen,
 }) => {
-  const { t } = useTranslation('console-shared');
+  const { t } = useTranslation('console-app');
   const [toasts, setToasts] = useState<ToastRenderOptions[]>([]);
   const [notifications, setNotifications] = useState<ToastNotification[]>([]);
   const toastIdCounterRef = useRef(0);

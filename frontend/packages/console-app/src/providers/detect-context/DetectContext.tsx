@@ -25,8 +25,8 @@ import {
 import { applyReduxExtensions } from '@console/internal/redux';
 import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
 import { usePerspectives } from '@console/shared/src/hooks/usePerspectives';
-import { useLanguage } from '../user-preferences/language/useLanguage';
-import { usePreferredLanguage } from '../user-preferences/language/usePreferredLanguage';
+import { useLanguage } from '../../components/user-preferences/language/useLanguage';
+import { usePreferredLanguage } from '../../components/user-preferences/language/usePreferredLanguage';
 import { NamespaceContext, useValuesForNamespaceContext } from './namespace';
 import PerspectiveDetector from './PerspectiveDetector';
 import { useValuesForPerspectiveContext } from './useValuesForPerspectiveContext';

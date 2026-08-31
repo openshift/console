@@ -6,8 +6,8 @@ import {
   usePerspectives,
 } from '@console/shared/src/hooks/usePerspectives';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
+import { usePreferredPerspective } from '../../components/user-preferences/perspective/usePreferredPerspective';
 import { ACM_PERSPECTIVE_ID } from '../../consts';
-import { usePreferredPerspective } from '../user-preferences/perspective/usePreferredPerspective';
 import { useLastPerspective } from './useLastPerspective';
 
 type SetActivePerspective = ReturnType<UseActivePerspective>[1];

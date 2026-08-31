@@ -24,11 +24,11 @@ jest.mock('../namespace', () => ({
   }),
 }));
 
-jest.mock('../../user-preferences/language/usePreferredLanguage', () => ({
+jest.mock('../../../components/user-preferences/language/usePreferredLanguage', () => ({
   usePreferredLanguage: jest.fn().mockReturnValue(['en', jest.fn(), true]),
 }));
 
-jest.mock('../../user-preferences/language/useLanguage', () => ({
+jest.mock('../../../components/user-preferences/language/useLanguage', () => ({
   useLanguage: jest.fn(),
 }));
 
