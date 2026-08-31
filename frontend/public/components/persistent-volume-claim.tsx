@@ -293,8 +293,10 @@ const PVCDetails: FC<PVCDetailsProps> = ({ obj: pvc }) => {
   // Track which PVC uid the alert was dismissed for — automatically resets when PVC changes
   const [errorAlertDismissedUid, setErrorAlertDismissedUid] = useState<string | undefined>();
   const [infoAlertDismissedUid, setInfoAlertDismissedUid] = useState<string | undefined>();
-  const isErrorAlertDismissed = !!pvc?.metadata?.uid && errorAlertDismissedUid === pvc?.metadata?.uid;
-  const isInfoAlertDismissed = !!pvc?.metadata?.uid && infoAlertDismissedUid === pvc?.metadata?.uid;
+  const isErrorAlertDismissed =
+    !!pvc?.metadata?.uid && errorAlertDismissedUid === pvc?.metadata?.uid;
+  const isInfoAlertDismissed =
+    !!pvc?.metadata?.uid && infoAlertDismissedUid === pvc?.metadata?.uid;
 
   const query =
     name && namespace
