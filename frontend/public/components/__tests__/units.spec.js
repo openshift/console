@@ -1,5 +1,11 @@
 import * as _ from 'lodash';
-import { units, validate, convertToBaseValue, humanizePercentage } from '../utils/units';
+import {
+  units,
+  validate,
+  convertToBaseValue,
+  humanizePercentage,
+  humanizeBinaryBytes,
+} from '../utils/units';
 
 describe('units', () => {
   describe('round', () => {
@@ -371,4 +377,40 @@ describe('convert to base value', () => {
   test_('1G', 1000000000);
   test_('1T', 1000000000000);
   test_('1P', 1000000000000000);
+});
+
+describe('PVC capacity round-trip: convertToBaseValue → humanizeBinaryBytes', () => {
+  const test_ = (input, expectedString) => {
+    it(`${input} → ${expectedString}`, () => {
+      const base = convertToBaseValue(input);
+      expect(base).not.toBeNull();
+      expect(humanizeBinaryBytes(base).string).toEqual(expectedString);
+    });
+  };
+
+  // Binary units (K8s standard for storage)
+  test_('1Ki', '1 KiB');
+  test_('100Ki', '100 KiB');
+  test_('1Mi', '1 MiB');
+  test_('512Mi', '512 MiB');
+  test_('1Gi', '1 GiB');
+  test_('3Gi', '3 GiB');
+  test_('100Gi', '100 GiB');
+  test_('1Ti', '1 TiB');
+  test_('3Ti', '3 TiB');
+  test_('10Ti', '10 TiB');
+  test_('1Pi', '1 PiB');
+  test_('1Ei', '1 EiB');
+
+  // Multi-unit equivalences
+  test_('1024Ki', '1 MiB');
+  test_('1024Mi', '1 GiB');
+  test_('1024Gi', '1 TiB');
+  test_('3072Gi', '3 TiB');
+
+  // Decimal units (some CSI drivers may use these)
+  test_('1k', '1,000 B');
+  test_('1M', '976.6 KiB');
+  test_('1G', '953.7 MiB');
+  test_('1T', '931.3 GiB');
 });

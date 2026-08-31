@@ -313,8 +313,12 @@ const PVCDetails: FC<PVCDetailsProps> = ({ obj: pvc }) => {
 
   const totalCapacityMetric = convertToBaseValue(storage);
   const totalRequestMetric = convertToBaseValue(requestedStorage);
-  const usedMetrics = response?.data?.result?.[0]?.value?.[1];
-  const availableMetrics = usedMetrics ? totalCapacityMetric - Number(usedMetrics) : null;
+  const usedMetricsRaw = response?.data?.result?.[0]?.value?.[1];
+  const usedMetrics = usedMetricsRaw != null ? Number(usedMetricsRaw) : undefined;
+  const availableMetrics =
+    usedMetrics != null && Number.isFinite(usedMetrics)
+      ? totalCapacityMetric - usedMetrics
+      : null;
   const totalCapacity = humanizeBinaryBytes(totalCapacityMetric);
   const availableCapacity = humanizeBinaryBytes(availableMetrics, undefined, totalCapacity.unit);
   const usedCapacity = humanizeBinaryBytes(usedMetrics, undefined, totalCapacity.unit);
@@ -326,12 +330,13 @@ const PVCDetails: FC<PVCDetailsProps> = ({ obj: pvc }) => {
 
   const totalCapacityString = `${Number(totalCapacity.value.toFixed(1))} ${totalCapacity.unit}`;
 
-  const donutData = usedMetrics
-    ? [
-        { x: i18next.t('public~Used'), y: usedCapacity.value },
-        { x: i18next.t('public~Available'), y: availableCapacity.value },
-      ]
-    : [{ x: i18next.t('public~Total'), y: totalCapacity.value }];
+  const donutData =
+    usedMetrics != null && Number.isFinite(usedMetrics)
+      ? [
+          { x: i18next.t('public~Used'), y: usedCapacity.value },
+          { x: i18next.t('public~Available'), y: availableCapacity.value },
+        ]
+      : [{ x: i18next.t('public~Total'), y: totalCapacity.value }];
 
   const [pvcAlertExtensions] = useResolvedExtensions<PVCAlert>(isPVCAlert);
 
@@ -441,11 +446,14 @@ const PVCDetails: FC<PVCDetailsProps> = ({ obj: pvc }) => {
                   </DescriptionListDescription>
                 </DescriptionListGroup>
               )}
-              {usedMetrics && _.isEmpty(loadError) && !loading && (
+              {usedMetrics != null &&
+              Number.isFinite(usedMetrics) &&
+              _.isEmpty(loadError) &&
+              !loading && (
                 <DescriptionListGroup>
                   <DescriptionListTerm>{t('Used')}</DescriptionListTerm>
                   <DescriptionListDescription>
-                    {humanizeBinaryBytes(usedMetrics).string}
+                    {usedCapacity.string}
                   </DescriptionListDescription>
                 </DescriptionListGroup>
               )}
