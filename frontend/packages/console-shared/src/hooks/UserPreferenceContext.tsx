@@ -32,7 +32,7 @@ export type UserSettingsSnapshot = {
 };
 
 export type UserSettingsStore = {
-  subscribe: (listener: () => void) => () => void;
+  subscribe: (listener: VoidFunction) => VoidFunction;
   getSnapshot: () => UserSettingsSnapshot;
   /**
    * Persist a single already-serialized value for the given sanitized key.
@@ -64,7 +64,7 @@ export const createUserSettingsStore = (): UserSettingsStore & {
 } => {
   let snapshot: UserSettingsSnapshot = EMPTY_SNAPSHOT;
   let updateKey: UserSettingsStore['updateKey'] = async () => {};
-  const listeners = new Set<() => void>();
+  const listeners = new Set<VoidFunction>();
   return {
     getSnapshot: () => snapshot,
     subscribe: (listener) => {
