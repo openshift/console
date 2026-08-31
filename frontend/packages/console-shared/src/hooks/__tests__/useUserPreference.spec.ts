@@ -1,3 +1,5 @@
+import { createElement } from 'react';
+import type { ReactNode } from 'react';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { useFavoritesOptions } from '@console/internal/components/useFavoritesOptions';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -8,7 +10,19 @@ import {
   updateConfigMap,
   USER_SETTING_CONFIGMAP_NAMESPACE,
 } from '../../utils/user-settings';
+import { UserPreferenceProvider } from '../UserPreferenceContext';
 import { useUserPreference } from '../useUserPreference';
+
+// These tests exercise the real ConfigMap backend (create/update, watch
+// transitions), which only runs inside UserPreferenceProvider (via
+// useUserSettingsSync). So they mount the actual provider rather than the inert
+// mock store that renderHookWithProviders supplies. useConsoleSelector and
+// useK8sWatchResource are mocked below, so no redux Provider is required.
+const wrapper = ({ children }: { children: ReactNode }) =>
+  createElement(UserPreferenceProvider, null, children);
+
+const renderHookWithRealUserSettings = <TResult>(hook: () => TResult) =>
+  renderHook(hook, { wrapper });
 
 const useK8sWatchResourceMock = useK8sWatchResource as jest.Mock;
 const createConfigMapMock = createConfigMap as jest.Mock;
@@ -19,9 +33,6 @@ const useFavoritesOptionsMock = useFavoritesOptions as jest.Mock;
 jest.mock('@console/internal/components/useFavoritesOptions', () => ({
   useFavoritesOptions: jest.fn(),
 }));
-
-// need to mock StorageEvent because it doesn't exist
-(global as any).StorageEvent = Event;
 
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResource: jest.fn(),
@@ -81,7 +92,7 @@ describe('useUserPreference', () => {
     useK8sWatchResourceMock.mockReturnValue([null, false, null]);
     updateConfigMapMock.mockReturnValue(Promise.resolve({}));
 
-    const { result, rerender } = renderHook(() =>
+    const { result, rerender } = renderHookWithRealUserSettings(() =>
       useUserPreference('console.key', 'default value'),
     );
 
@@ -113,9 +124,44 @@ describe('useUserPreference', () => {
     expect(updateConfigMapMock).toHaveBeenCalledWith(
       emptyConfigMap,
       'console.key',
-      'default value',
+      '"default value"',
     );
     expect(consoleMock).toHaveBeenCalledTimes(0);
+  });
+
+  it('does not fire a second ConfigMap creation while the first is still in flight', async () => {
+    // Keep the first createConfigMap call pending so the in-flight window stays open.
+    let resolveCreate: (value: ConfigMapKind) => void = () => {};
+    createConfigMapMock.mockReturnValue(
+      new Promise<ConfigMapKind>((resolve) => {
+        resolveCreate = resolve;
+      }),
+    );
+    useK8sWatchResourceMock.mockReturnValue([null, false, null]);
+
+    const { rerender } = renderHookWithRealUserSettings(() =>
+      useUserPreference('console.key', 'default value'),
+    );
+
+    // Deliver a 404: the mirror effect kicks off createConfigMap.
+    const firstError: Error & { response?: any } = new Error('Not found');
+    firstError.response = { ok: false, status: 404 };
+    useK8sWatchResourceMock.mockReturnValue([null, false, firstError]);
+    rerender();
+    expect(createConfigMapMock).toHaveBeenCalledTimes(1);
+
+    // The watch re-delivers a fresh 404 error reference (still pending) which
+    // re-runs the effect. The in-flight guard must suppress a duplicate POST.
+    const secondError: Error & { response?: any } = new Error('Not found');
+    secondError.response = { ok: false, status: 404 };
+    useK8sWatchResourceMock.mockReturnValue([null, false, secondError]);
+    rerender();
+    expect(createConfigMapMock).toHaveBeenCalledTimes(1);
+
+    // Let the pending creation settle so the test tears down cleanly.
+    await act(async () => {
+      resolveCreate(emptyConfigMap);
+    });
   });
 
   it('should create and update user settings if watcher returns 403 Forbidden (returned for users who could not access non existing ConfigMaps in openshift-console-user-settings namespace)', async () => {
@@ -123,7 +169,7 @@ describe('useUserPreference', () => {
     useK8sWatchResourceMock.mockReturnValue([null, false, null]);
     updateConfigMapMock.mockReturnValue(Promise.resolve({}));
 
-    const { result, rerender } = renderHook(() =>
+    const { result, rerender } = renderHookWithRealUserSettings(() =>
       useUserPreference('console.key', 'default value'),
     );
 
@@ -155,7 +201,7 @@ describe('useUserPreference', () => {
     expect(updateConfigMapMock).toHaveBeenCalledWith(
       emptyConfigMap,
       'console.key',
-      'default value',
+      '"default value"',
     );
     expect(consoleMock).toHaveBeenCalledTimes(0);
   });
@@ -165,7 +211,7 @@ describe('useUserPreference', () => {
     useK8sWatchResourceMock.mockReturnValue([null, false, null]);
     updateConfigMapMock.mockReturnValue(Promise.resolve({}));
 
-    const { result, rerender } = renderHook(() =>
+    const { result, rerender } = renderHookWithRealUserSettings(() =>
       useUserPreference('console.key', 'default value'),
     );
 
@@ -185,7 +231,7 @@ describe('useUserPreference', () => {
     expect(updateConfigMapMock).toHaveBeenCalledWith(
       emptyConfigMap,
       'console.key',
-      'default value',
+      '"default value"',
     );
     expect(consoleMock).toHaveBeenCalledTimes(0);
   });
@@ -194,7 +240,7 @@ describe('useUserPreference', () => {
     // Mock loading
     useK8sWatchResourceMock.mockReturnValue([null, false, null]);
 
-    const { result, rerender } = renderHook(() =>
+    const { result, rerender } = renderHookWithRealUserSettings(() =>
       useUserPreference('console.key', 'default value'),
     );
 
@@ -224,7 +270,7 @@ describe('useUserPreference', () => {
     };
     useK8sWatchResourceMock.mockReturnValue([savedDataWithEncodedCharConfigMap, true, null]);
 
-    const { result } = renderHook(() =>
+    const { result } = renderHookWithRealUserSettings(() =>
       useUserPreference('invalid-char-:-is-replaced-with-an-underline', 'default value'),
     );
 
@@ -240,7 +286,9 @@ describe('useUserPreference', () => {
     useK8sWatchResourceMock.mockReturnValue([emptyConfigMap, true, null]);
     updateConfigMapMock.mockReturnValue(Promise.resolve({}));
 
-    const { result } = renderHook(() => useUserPreference('console.key', 'default value'));
+    const { result } = renderHookWithRealUserSettings(() =>
+      useUserPreference('console.key', 'default value'),
+    );
 
     // Expect default value with loaded
     expect(result.current).toEqual(['default value', expect.any(Function), true]);
@@ -249,7 +297,7 @@ describe('useUserPreference', () => {
     expect(updateConfigMapMock).toHaveBeenCalledWith(
       emptyConfigMap,
       'console.key',
-      'default value',
+      '"default value"',
     );
     expect(consoleMock).toHaveBeenCalledTimes(0);
   });
@@ -258,7 +306,9 @@ describe('useUserPreference', () => {
     // Mock already loaded data
     useK8sWatchResourceMock.mockReturnValue([savedDataConfigMap, true, null]);
 
-    const { result } = renderHook(() => useUserPreference('console.key', 'default value'));
+    const { result } = renderHookWithRealUserSettings(() =>
+      useUserPreference('console.key', 'default value'),
+    );
 
     // Expect saved data
     expect(result.current).toEqual(['saved value', expect.any(Function), true]);
@@ -271,7 +321,7 @@ describe('useUserPreference', () => {
     // Mock loading
     useK8sWatchResourceMock.mockReturnValue([null, false, null]);
 
-    const { result, rerender } = renderHook(() =>
+    const { result, rerender } = renderHookWithRealUserSettings(() =>
       useUserPreference('console.key', 'default value'),
     );
 
@@ -295,7 +345,9 @@ describe('useUserPreference', () => {
     // Mock already loaded data
     useK8sWatchResourceMock.mockReturnValue([savedDataConfigMap, true, null]);
 
-    const { result } = renderHook(() => useUserPreference('console.key', 'default value'));
+    const { result } = renderHookWithRealUserSettings(() =>
+      useUserPreference('console.key', 'default value'),
+    );
 
     // Expect saved data
     expect(result.current).toEqual(['saved value', expect.any(Function), true]);
@@ -309,7 +361,7 @@ describe('useUserPreference', () => {
     useK8sWatchResourceMock.mockReturnValue([savedDataConfigMap, true, null]);
     updateConfigMapMock.mockReturnValue(Promise.resolve({}));
 
-    const { result, rerender } = renderHook(() =>
+    const { result, rerender } = renderHookWithRealUserSettings(() =>
       useUserPreference('console.key', 'default value'),
     );
 
@@ -332,7 +384,7 @@ describe('useUserPreference', () => {
     expect(updateConfigMapMock).toHaveBeenCalledWith(
       { ...emptyConfigMap, data: { 'console.key': 'saved value' } },
       'console.key',
-      'new value',
+      '"new value"',
     );
     expect(consoleMock).toHaveBeenCalledTimes(0);
   });
@@ -342,7 +394,7 @@ describe('useUserPreference', () => {
     useK8sWatchResourceMock.mockReturnValue([emptyConfigMap, true, null]);
     updateConfigMapMock.mockReturnValue(Promise.resolve({}));
 
-    const { result, rerender } = renderHook(() =>
+    const { result, rerender } = renderHookWithRealUserSettings(() =>
       useUserPreference('console.key', 'default value'),
     );
 
@@ -368,7 +420,7 @@ describe('useUserPreference', () => {
     expect(updateConfigMapMock).toHaveBeenLastCalledWith(
       emptyConfigMap,
       'console.key',
-      'new value',
+      '"new value"',
     );
     expect(consoleMock).toHaveBeenCalledTimes(0);
   });
@@ -378,7 +430,7 @@ describe('useUserPreference', () => {
     useK8sWatchResourceMock.mockReturnValue([emptyConfigMap, true, null]);
     updateConfigMapMock.mockReturnValue(Promise.resolve({}));
 
-    const { result, rerender } = renderHook(() =>
+    const { result, rerender } = renderHookWithRealUserSettings(() =>
       useUserPreference('console.key', 'default value', true),
     );
 
@@ -412,7 +464,7 @@ describe('useUserPreference', () => {
     expect(updateConfigMapMock).toHaveBeenLastCalledWith(
       emptyConfigMap,
       'console.key',
-      'new value',
+      '"new value"',
     );
     expect(consoleMock).toHaveBeenCalledTimes(0);
   });
@@ -422,7 +474,7 @@ describe('useUserPreference', () => {
     useK8sWatchResourceMock.mockReturnValue([savedDataConfigMap, true, null]);
     updateConfigMapMock.mockReturnValue(Promise.resolve({}));
 
-    const { result, rerender } = renderHook(() =>
+    const { result, rerender } = renderHookWithRealUserSettings(() =>
       useUserPreference('console.key', 'default value'),
     );
 
@@ -448,7 +500,7 @@ describe('useUserPreference', () => {
     expect(updateConfigMapMock).toHaveBeenCalledWith(
       { ...emptyConfigMap, data: { 'console.key': 'saved value' } },
       'console.key',
-      'new value',
+      '"new value"',
     );
     expect(consoleMock).toHaveBeenCalledTimes(0);
   });
@@ -458,7 +510,7 @@ describe('useUserPreference', () => {
     useK8sWatchResourceMock.mockReturnValue([savedDataConfigMap, true, null]);
     updateConfigMapMock.mockReturnValue(Promise.resolve({}));
 
-    const { result, rerender } = renderHook(() =>
+    const { result, rerender } = renderHookWithRealUserSettings(() =>
       useUserPreference('console.key', 'default value', true),
     );
 
@@ -492,7 +544,7 @@ describe('useUserPreference', () => {
     expect(updateConfigMapMock).toHaveBeenCalledWith(
       { ...emptyConfigMap, data: { 'console.key': 'saved value' } },
       'console.key',
-      'new value',
+      '"new value"',
     );
     expect(consoleMock).toHaveBeenCalledTimes(0);
   });
@@ -502,7 +554,7 @@ describe('useUserPreference', () => {
     useK8sWatchResourceMock.mockReturnValue([savedDataConfigMap, true, null]);
     updateConfigMapMock.mockReturnValue(Promise.resolve({}));
 
-    const { result, rerender } = renderHook(() =>
+    const { result, rerender } = renderHookWithRealUserSettings(() =>
       useUserPreference('console.key', 'default value'),
     );
 
@@ -542,7 +594,7 @@ describe('useUserPreference', () => {
       // Old configmap must not be the old value, but it's fine.
       { ...emptyConfigMap, data: { 'console.key': 'magically changed value' } },
       'console.key',
-      'new value',
+      '"new value"',
     );
     expect(consoleMock).toHaveBeenCalledTimes(0);
   });
@@ -552,7 +604,7 @@ describe('useUserPreference', () => {
     useK8sWatchResourceMock.mockReturnValue([savedDataConfigMap, true, null]);
     updateConfigMapMock.mockReturnValue(Promise.resolve({}));
 
-    const { result, rerender } = renderHook(() =>
+    const { result, rerender } = renderHookWithRealUserSettings(() =>
       useUserPreference('console.key', 'default value', true),
     );
 
@@ -601,7 +653,7 @@ describe('useUserPreference', () => {
     expect(updateConfigMapMock).toHaveBeenCalledWith(
       { ...emptyConfigMap, data: { 'console.key': 'magically changed value' } },
       'console.key',
-      'new value',
+      '"new value"',
     );
     expect(consoleMock).toHaveBeenCalledTimes(0);
   });
@@ -610,7 +662,7 @@ describe('useUserPreference', () => {
     // Mock loading
     useK8sWatchResourceMock.mockReturnValue([null, false, null]);
 
-    const { result, rerender } = renderHook(() =>
+    const { result, rerender } = renderHookWithRealUserSettings(() =>
       useUserPreference('console.key', 'default value'),
     );
 
@@ -647,7 +699,7 @@ describe('useUserPreference', () => {
     // Mock loading
     useK8sWatchResourceMock.mockReturnValue([null, false, null]);
 
-    const { result, rerender } = renderHook(() =>
+    const { result, rerender } = renderHookWithRealUserSettings(() =>
       useUserPreference('console.key', 'default value'),
     );
 
@@ -681,7 +733,7 @@ describe('useUserPreference', () => {
     // Mock loading
     useK8sWatchResourceMock.mockReturnValue([null, false, null]);
 
-    const { result, rerender } = renderHook(() =>
+    const { result, rerender } = renderHookWithRealUserSettings(() =>
       useUserPreference('console.key', 'default value'),
     );
 
@@ -704,6 +756,51 @@ describe('useUserPreference', () => {
     expect(consoleMock).toHaveBeenCalledTimes(0);
   });
 
+  it('rolls back the shared store for other consumers when a write fails', async () => {
+    // Both consumers observe the same key. The write is held pending on a
+    // deferred promise so we can first assert the optimistic value propagates,
+    // then reject it and assert the rollback.
+    useK8sWatchResourceMock.mockReturnValue([savedDataConfigMap, true, null]);
+    let rejectUpdate: (reason?: unknown) => void = () => {};
+    updateConfigMapMock.mockReturnValue(
+      new Promise((_resolve, reject) => {
+        rejectUpdate = reject;
+      }),
+    );
+
+    const { result } = renderHookWithRealUserSettings(() => {
+      const writer = useUserPreference('console.key', 'default value', true);
+      const [observed] = useUserPreference('console.key', 'default value', true);
+      return { writer, observed };
+    });
+
+    expect(result.current.writer[0]).toBe('saved value');
+    expect(result.current.observed).toBe('saved value');
+
+    act(() => {
+      result.current.writer[1]('new value');
+    });
+
+    // While the write is pending, the optimistic update is visible to the
+    // writer *and* the second consumer reading the same key from the store.
+    await waitFor(() => {
+      expect(result.current.observed).toBe('new value');
+    });
+    expect(result.current.writer[0]).toBe('new value');
+
+    // Once the write fails, the optimistic update is rolled back for the writer
+    // *and* the second consumer.
+    await act(async () => {
+      rejectUpdate(new Error('update failed'));
+    });
+    await waitFor(() => {
+      expect(result.current.observed).toBe('saved value');
+    });
+    expect(result.current.writer[0]).toBe('saved value');
+    expect(updateConfigMapMock).toHaveBeenCalledTimes(1);
+    expect(consoleMock).toHaveBeenCalledTimes(0);
+  });
+
   it('should use session storage when impersonating', async () => {
     // Mock loading
     useK8sWatchResourceMock.mockReturnValue([null, false, null]);
@@ -723,7 +820,9 @@ describe('useUserPreference', () => {
     };
     window.addEventListener('storage', storageListener);
 
-    const { result } = renderHook(() => useUserPreference('impersonate.key', 'impersonate.value'));
+    const { result } = renderHookWithRealUserSettings(() =>
+      useUserPreference('impersonate.key', 'impersonate.value'),
+    );
 
     expect(result.current).toEqual(['impersonate.value', expect.any(Function), true]);
 
@@ -736,6 +835,136 @@ describe('useUserPreference', () => {
     });
     window.removeEventListener('storage', storageListener);
 
+    expect(consoleMock).toHaveBeenCalledTimes(0);
+  });
+
+  it('applies genuine cross-tab storage events, including a key removal after a same-window write', async () => {
+    useK8sWatchResourceMock.mockReturnValue([null, false, null]);
+    useSelectorMock.mockImplementation((selector) =>
+      selector({
+        sdkCore: {
+          user: { uid: 'foo', username: 'testuser' },
+          impersonate: { name: 'imposter' },
+        },
+      }),
+    );
+
+    // While impersonating, settings live in sessionStorage under this key
+    // (getStorageKey(userUid='imposter', impersonate=true)).
+    const storageKey = 'console-user-settings-imposter';
+    window.sessionStorage.clear();
+
+    const { result } = renderHookWithRealUserSettings(() => {
+      const writer = useUserPreference('cross.key', 'default value', true);
+      const [observed] = useUserPreference('cross.key', 'default value', true);
+      return { writer, observed };
+    });
+
+    expect(result.current.observed).toBe('default value');
+
+    // A same-window write; its synthetic echo is suppressed by the backend, but
+    // the optimistic update still propagates to the second consumer.
+    act(() => {
+      result.current.writer[1]('local value');
+    });
+    await waitFor(() => expect(result.current.observed).toBe('local value'));
+
+    // A genuine cross-tab event carrying a different value must update the store.
+    act(() => {
+      window.dispatchEvent(
+        new StorageEvent('storage', {
+          storageArea: window.sessionStorage,
+          key: storageKey,
+          newValue: JSON.stringify({ 'cross.key': 'external value' }),
+        }),
+      );
+    });
+    await waitFor(() => expect(result.current.observed).toBe('external value'));
+
+    // A cross-tab key removal (newValue === null) after a same-window write must
+    // still be applied. The echo-suppression sentinel must not be mistaken for a
+    // removal, otherwise the consumer would incorrectly retain its stale value.
+    act(() => {
+      result.current.writer[1]('another local value');
+    });
+    await waitFor(() => expect(result.current.observed).toBe('another local value'));
+    act(() => {
+      window.dispatchEvent(
+        new StorageEvent('storage', {
+          storageArea: window.sessionStorage,
+          key: storageKey,
+          newValue: null,
+        }),
+      );
+    });
+    await waitFor(() => expect(result.current.observed).toBe('default value'));
+
+    expect(consoleMock).toHaveBeenCalledTimes(0);
+  });
+
+  it('does not persist against a not-yet-loaded ConfigMap after impersonation ends', async () => {
+    // While impersonating, settings live in sessionStorage, which loads
+    // synchronously (loaded === true).
+    useK8sWatchResourceMock.mockReturnValue([null, false, null]);
+    useSelectorMock.mockImplementation((selector) =>
+      selector({
+        sdkCore: {
+          user: { uid: 'foo', username: 'testuser' },
+          impersonate: { name: 'imposter' },
+        },
+      }),
+    );
+
+    const { result, rerender } = renderHookWithRealUserSettings(() =>
+      useUserPreference('console.key', 'default value', true),
+    );
+
+    await waitFor(() => {
+      expect(result.current[2]).toBe(true);
+    });
+
+    // Impersonation ends: the backend switches to the ConfigMap, but the watch
+    // has not delivered data yet.
+    useSelectorMock.mockImplementation((selector) =>
+      selector({ sdkCore: { user: { uid: 'foo', username: 'testuser' } } }),
+    );
+    rerender();
+
+    // The stale `loaded: true` from sessionStorage must not carry over into
+    // ConfigMap mode; the hook reports not-loaded until the ConfigMap arrives.
+    await waitFor(() => {
+      expect(result.current[2]).toBe(false);
+    });
+
+    // A write during this window must be gated. Without gating it would call
+    // updateConfigMap with undefined ConfigMap metadata and throw.
+    act(() => {
+      result.current[1]('new value');
+    });
+    expect(updateConfigMapMock).toHaveBeenCalledTimes(0);
+    expect(consoleMock).toHaveBeenCalledTimes(0);
+
+    // Once the ConfigMap loads, writes go through against real metadata.
+    useK8sWatchResourceMock.mockReturnValue([savedDataConfigMap, true, null]);
+    updateConfigMapMock.mockResolvedValue(savedDataConfigMap);
+    rerender();
+
+    await waitFor(() => {
+      expect(result.current[2]).toBe(true);
+    });
+
+    act(() => {
+      result.current[1]('another value');
+    });
+
+    await waitFor(() => {
+      expect(updateConfigMapMock).toHaveBeenCalledTimes(1);
+    });
+    expect(updateConfigMapMock).toHaveBeenCalledWith(
+      savedDataConfigMap,
+      'console.key',
+      JSON.stringify('another value'),
+    );
     expect(consoleMock).toHaveBeenCalledTimes(0);
   });
 });

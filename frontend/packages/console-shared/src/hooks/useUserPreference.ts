@@ -1,219 +1,160 @@
-import type { SetStateAction } from 'react';
-import { useRef, useCallback, useEffect, useState, useMemo } from 'react';
+import type { SetStateAction, Dispatch } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { useSyncExternalStoreWithSelector } from 'use-sync-external-store/with-selector';
 import type { UseUserPreference } from '@console/dynamic-plugin-sdk';
-import { getImpersonate, getUser } from '@console/dynamic-plugin-sdk';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { ConfigMapModel } from '@console/internal/models';
-import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
-import {
-  createConfigMap,
-  deserializeData,
-  hashUsernameForSettings,
-  seralizeData,
-  updateConfigMap,
-  USER_SETTING_CONFIGMAP_NAMESPACE,
-} from '../utils/user-settings';
-import { useUserPreferenceLocalStorage } from './useUserPreferenceLocalStorage';
+import { deserializeData, serializeData } from '../utils/user-settings';
+import type { UserSettingsSnapshot } from './UserPreferenceContext';
+import { UserPreferenceContext } from './UserPreferenceContext';
 
-const alwaysUseFallbackLocalStorage = window.SERVER_FLAGS.userSettingsLocation === 'localstorage';
+const sanitizeKey = (key: string): string => key?.replace(/[^-._a-zA-Z0-9]/g, '_');
 
-if (alwaysUseFallbackLocalStorage) {
-  // eslint-disable-next-line no-console
-  console.info('user-settings will be stored in localstorage instead of configmap.');
-}
-
-const useCounterRef = (initialValue: number = 0): [boolean, () => void, () => void] => {
-  const counterRef = useRef<number>(initialValue);
-  const increment = useCallback(() => {
-    counterRef.current += 1;
-  }, []);
-  const decrement = useCallback(() => {
-    counterRef.current -= 1;
-  }, []);
-  return [counterRef.current !== initialValue, increment, decrement];
+type SelectedState = {
+  value?: string;
+  loaded: boolean;
+  isLocalStorage: boolean;
 };
 
+/**
+ * Reads and writes a single user setting (user preference).
+ *
+ * Values are always serialized to JSON before being persisted, and only the
+ * component listening to a given key re-renders when that key changes. When
+ * `sync` is `true` the returned value tracks remote changes to the key; when it
+ * is `false` the value is captured on load and only updated by the returned
+ * setter.
+ *
+ * Reads and writes go through the shared {@link UserPreferenceContext} store,
+ * which {@link UserPreferenceProvider} mounts at the app root. The provider is a
+ * required ancestor; the hook throws if none is present.
+ */
 export const useUserPreference: UseUserPreference = <T>(
   key: string,
   defaultValue?: T,
   sync = false,
 ) => {
-  // Mount status for safety state updates
-  const mounted = useRef(true);
-  useEffect(
-    () => () => {
-      mounted.current = false;
-    },
-    [],
+  const sanitizedKey = useMemo(() => sanitizeKey(key), [key]);
+  // Freeze the default value at mount so later changes to the argument don't
+  // re-trigger persistence, matching the original hook's behavior. State (not a
+  // ref) so it can be read during render.
+  const [frozenDefault] = useState<T | undefined>(defaultValue);
+
+  // Reads and writes go through the shared store from <UserPreferenceProvider>,
+  // which is mounted at the app root. It is a required ancestor so that every
+  // consumer observes a single, consistent set of settings (rather than each
+  // hook spinning up its own backend and diverging).
+  const store = useContext(UserPreferenceContext);
+  if (!store) {
+    throw new Error('useUserPreference must be used within a <UserPreferenceProvider>');
+  }
+
+  // Subscribe with a per-key selector so this component only re-renders when it
+  // needs to. When `sync` is false the value is intentionally omitted so remote
+  // changes to the key do not trigger a re-render.
+  const selected = useSyncExternalStoreWithSelector<UserSettingsSnapshot, SelectedState>(
+    store.subscribe,
+    store.getSnapshot,
+    store.getSnapshot,
+    (snapshot) =>
+      sync
+        ? {
+            value: snapshot.data[sanitizedKey],
+            loaded: snapshot.loaded,
+            isLocalStorage: snapshot.isLocalStorage,
+          }
+        : { loaded: snapshot.loaded, isLocalStorage: snapshot.isLocalStorage },
+    (a, b) => a.value === b.value && a.loaded === b.loaded && a.isLocalStorage === b.isLocalStorage,
   );
+  const { loaded } = selected;
 
-  // Keys and values
-  const keyRef = useRef<string>(key?.replace(/[^-._a-zA-Z0-9]/g, '_'));
-  const defaultValueRef = useRef<T>(defaultValue);
+  const readStoreValue = (): T | undefined => {
+    const raw = store.getSnapshot().data[sanitizedKey];
+    return (raw !== undefined ? deserializeData(raw) : frozenDefault) as T;
+  };
 
-  // Settings
-  const [settings, setSettingsUnsafe] = useState<T>();
-  const setSettings: typeof setSettingsUnsafe = useCallback(
-    (...args) => mounted.current && setSettingsUnsafe(...args),
-    [setSettingsUnsafe],
+  // Local copy of the value: the source of truth for what the hook returns. It
+  // is seeded from the store once loaded and thereafter changed only by the
+  // setter and, when syncing, by remote updates.
+  const [value, setValue] = useState<T | undefined>(() =>
+    store.getSnapshot().loaded ? readStoreValue() : undefined,
   );
-  const settingsRef = useRef<T>(settings);
-  settingsRef.current = settings;
-
-  // Loaded
-  const [loaded, setLoadedUnsafe] = useState(false);
-  const setLoaded: typeof setLoadedUnsafe = useCallback(
-    (...args) => mounted.current && setLoadedUnsafe(...args),
-    [setLoadedUnsafe],
+  const [seeded, setSeeded] = useState<boolean>(() => store.getSnapshot().loaded);
+  // Last serialized store value we applied to `value`, so a remote change can be
+  // detected across renders when syncing.
+  const [appliedRaw, setAppliedRaw] = useState<string | undefined>(() =>
+    store.getSnapshot().loaded ? store.getSnapshot().data[sanitizedKey] : undefined,
   );
+  // The key `value`/`appliedRaw` currently reflect, so a change to the `key`
+  // argument can be detected and the state re-seeded for the new key.
+  const [appliedKey, setAppliedKey] = useState<string>(sanitizedKey);
 
-  // Request counter
-  const [isRequestPending, increaseRequest, decreaseRequest] = useCounterRef();
+  // The key whose default we've already persisted, so we persist a missing
+  // default at most once per key (and again if the key changes).
+  const persistedDefaultKeyRef = useRef<string | undefined>(undefined);
 
-  // User and impersonate
-  const userUid = useConsoleSelector((state) => {
-    const impersonateName = getImpersonate(state)?.name;
-    const { uid, username } = getUser(state) ?? {};
-    const hashName = hashUsernameForSettings(username, uid);
-    return impersonateName || hashName || '';
-  });
+  if (sanitizedKey !== appliedKey) {
+    // The key changed: re-seed from the new key's store value (or reset to
+    // unseeded if the store isn't loaded yet). Without this a non-syncing
+    // consumer would keep returning the previous key's value.
+    const nowLoaded = store.getSnapshot().loaded;
+    setAppliedKey(sanitizedKey);
+    setSeeded(nowLoaded);
+    setValue(nowLoaded ? readStoreValue() : undefined);
+    setAppliedRaw(nowLoaded ? store.getSnapshot().data[sanitizedKey] : undefined);
+  } else if (loaded && !seeded) {
+    // Seed once the store becomes loaded (the ConfigMap backend loads async).
+    setValue(readStoreValue());
+    setAppliedRaw(store.getSnapshot().data[sanitizedKey]);
+    setSeeded(true);
+  } else if (sync && seeded && selected.value !== appliedRaw) {
+    // Adopt a remote change to this key when syncing. A local write updates the
+    // store optimistically to exactly this value first, so re-applying it here
+    // is a harmless no-op for the value while keeping `appliedRaw` in sync.
+    setValue(readStoreValue());
+    setAppliedRaw(selected.value);
+  }
 
-  const impersonate: boolean = useConsoleSelector((state) => !!getImpersonate(state));
-
-  // Fallback
-  const [fallbackLocalStorage, setFallbackLocalStorageUnsafe] = useState<boolean>(
-    alwaysUseFallbackLocalStorage,
-  );
-  const setFallbackLocalStorage: typeof setFallbackLocalStorageUnsafe = useCallback(
-    (...args) => mounted.current && setFallbackLocalStorageUnsafe(...args),
-    [setFallbackLocalStorageUnsafe],
-  );
-
-  const isLocalStorage = fallbackLocalStorage || impersonate;
-  const [lsData, setLsDataCallback] = useUserPreferenceLocalStorage(
-    keyRef.current,
-    alwaysUseFallbackLocalStorage && !impersonate
-      ? 'console-user-settings'
-      : `console-user-settings-${userUid}`,
-    defaultValueRef.current,
-    isLocalStorage && sync,
-    impersonate,
-  );
-
-  const configMapResource = useMemo(
-    () =>
-      !userUid || isLocalStorage
-        ? null
-        : {
-            kind: ConfigMapModel.kind,
-            namespace: USER_SETTING_CONFIGMAP_NAMESPACE,
-            isList: false,
-            name: `user-settings-${userUid}`,
-          },
-    [userUid, isLocalStorage],
-  );
-  const [cfData, cfLoaded, cfLoadError] = useK8sWatchResource<K8sResourceKind>(configMapResource);
-
+  // Mirror the latest value into a ref so the setter can read it without being
+  // re-created on every value change.
+  const valueRef = useRef<T | undefined>(value);
   useEffect(() => {
-    if (!userUid || isLocalStorage) {
+    valueRef.current = value;
+  }, [value]);
+
+  // Persist the default value into the ConfigMap when the key is missing.
+  useEffect(() => {
+    if (!loaded) {
       return;
     }
+    const snapshot = store.getSnapshot();
     if (
-      // Expected load error (404 Not found) for kubeadmin or other admins,
-      // who have access to the complete openshift-console-user-settings namespace.
-      cfLoadError?.response?.status === 404 ||
-      // Expected load error (403 Forbidden) for all other (restricted) users,
-      // which have no access to non-existing ConfigMaps in openshift-console-user-settings namespace.
-      cfLoadError?.response?.status === 403 ||
-      (!cfData && cfLoaded)
+      snapshot.data[sanitizedKey] === undefined &&
+      !snapshot.isLocalStorage &&
+      frozenDefault !== undefined &&
+      persistedDefaultKeyRef.current !== sanitizedKey
     ) {
-      (async () => {
-        try {
-          await createConfigMap();
-        } catch (err) {
-          // eslint-disable-next-line no-console
-          console.error('Could not create ConfigMap for user settings:', err);
-          setFallbackLocalStorage(true);
+      persistedDefaultKeyRef.current = sanitizedKey;
+      store.updateKey(sanitizedKey, serializeData(frozenDefault)).catch(() => {
+        if (persistedDefaultKeyRef.current === sanitizedKey) {
+          persistedDefaultKeyRef.current = undefined;
         }
-      })();
-    } else if (
-      /**
-       * update settings if key is present in config map but data is not equal to settings
-       */
-      cfData &&
-      cfLoaded &&
-      cfData.data?.hasOwnProperty(keyRef.current) &&
-      seralizeData(settings) !== cfData.data[keyRef.current]
-    ) {
-      setSettings(deserializeData(cfData.data[keyRef.current]));
-      setLoaded(true);
-    } else if (
-      /**
-       * if key doesn't exist in config map send patch request to add the key with default value
-       */
-      defaultValueRef.current !== undefined &&
-      cfData &&
-      cfLoaded &&
-      !cfData.data?.hasOwnProperty(keyRef.current)
-    ) {
-      // Trigger update also when unmounted
-      increaseRequest();
-      updateConfigMap(cfData, keyRef.current, seralizeData(defaultValueRef.current))
-        .then(() => {
-          decreaseRequest();
-        })
-        .catch(() => {
-          decreaseRequest();
-        });
-      setSettings(defaultValueRef.current);
-      setLoaded(true);
-    } else if (cfLoaded && !cfLoadError) {
-      setSettings(defaultValueRef.current);
-      setLoaded(true);
-    } else if (cfLoadError && cfLoadError.response?.status !== 404) {
-      setFallbackLocalStorage(true);
+      });
     }
-    // This effect should only be run on change of configmap data, status.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cfLoadError, cfLoaded, isLocalStorage]);
+  }, [loaded, store, sanitizedKey, frozenDefault]);
 
-  const callback = useCallback<React.Dispatch<React.SetStateAction<T>>>(
+  const setUserPreference = useCallback<Dispatch<SetStateAction<T>>>(
     (action: SetStateAction<T>) => {
-      const previousSettings = settingsRef.current;
-      const newState =
-        typeof action === 'function' ? (action as (prevState: T) => T)(previousSettings) : action;
-      setSettings(newState);
-      if (cfLoaded) {
-        increaseRequest();
-        updateConfigMap(cfData, keyRef.current, seralizeData(newState))
-          .then(() => {
-            decreaseRequest();
-          })
-          .catch(() => {
-            decreaseRequest();
-            setSettings(previousSettings);
-          });
+      const previousValue = valueRef.current;
+      const newValue =
+        typeof action === 'function' ? (action as (prevState: T) => T)(previousValue as T) : action;
+      setValue(newValue);
+      if (store.getSnapshot().loaded) {
+        store.updateKey(sanitizedKey, serializeData(newValue)).catch(() => {
+          setValue(previousValue);
+        });
       }
     },
-    [cfData, cfLoaded, decreaseRequest, increaseRequest, setSettings],
+    [sanitizedKey, store],
   );
 
-  const resultedSettings = useMemo(() => {
-    if (sync && cfLoaded && cfData && !isRequestPending) {
-      /**
-       * If key is deleted from the config map then return default value
-       */
-      if (!cfData.data?.hasOwnProperty(keyRef.current) && settings !== undefined) {
-        return defaultValueRef.current;
-      }
-      if (seralizeData(settingsRef.current) !== cfData?.data?.[keyRef.current]) {
-        return deserializeData(cfData?.data?.[keyRef.current]);
-      }
-    }
-    return settings;
-  }, [sync, isRequestPending, cfData, cfLoaded, settings]);
-  settingsRef.current = resultedSettings;
-
-  return isLocalStorage ? [lsData, setLsDataCallback, true] : [resultedSettings, callback, loaded];
+  return [value as T, setUserPreference, loaded && seeded];
 };

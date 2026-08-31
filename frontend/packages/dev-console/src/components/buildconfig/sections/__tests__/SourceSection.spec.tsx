@@ -1,13 +1,12 @@
 import type { FC, ReactNode } from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { FormikConfig } from 'formik';
 import { Formik } from 'formik';
-import { Provider } from 'react-redux';
 import * as rbacModule from '@console/dynamic-plugin-sdk/src/app/components/utils/rbac';
 import { GitProvider } from '@console/git-service/src/types/git';
 import * as serverlessFxUtils from '@console/git-service/src/utils/serverless-strategy-detector';
-import store from '@console/internal/redux';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { BuildStrategyType } from '../../types';
 import type { SourceSectionFormData } from '../SourceSection';
 import SourceSection from '../SourceSection';
@@ -45,16 +44,14 @@ interface WrapperProps extends FormikConfig<SourceSectionFormData> {
 }
 
 const Wrapper: FC<WrapperProps> = ({ children, ...formikConfig }) => (
-  <Provider store={store}>
-    <Formik {...formikConfig}>
-      {(formikProps) => (
-        <form onSubmit={formikProps.handleSubmit}>
-          {children}
-          <input type="submit" value="Submit" />
-        </form>
-      )}
-    </Formik>
-  </Provider>
+  <Formik {...formikConfig}>
+    {(formikProps) => (
+      <form onSubmit={formikProps.handleSubmit}>
+        {children}
+        <input type="submit" value="Submit" />
+      </form>
+    )}
+  </Formik>
 );
 
 const getPatternFlyInputForLabel = (label: string) => screen.getByRole('textbox', { name: label });
@@ -111,7 +108,7 @@ describe('SourceSection', () => {
   it('should render form with minimal form data', () => {
     const onSubmit = jest.fn();
 
-    render(
+    renderWithProviders(
       <Wrapper initialValues={initialValues} onSubmit={onSubmit}>
         <SourceSection />
       </Wrapper>,
@@ -133,7 +130,7 @@ describe('SourceSection', () => {
     const user = userEvent.setup();
     const onSubmit = jest.fn();
     spyUseAccessReview.mockReturnValue([true]);
-    render(
+    renderWithProviders(
       <Wrapper initialValues={initialValues} onSubmit={onSubmit}>
         <SourceSection />
       </Wrapper>,
@@ -157,7 +154,7 @@ describe('SourceSection', () => {
     const user = userEvent.setup();
     const onSubmit = jest.fn();
 
-    render(
+    renderWithProviders(
       <Wrapper initialValues={initialValues} onSubmit={onSubmit}>
         <SourceSection />
       </Wrapper>,
@@ -184,7 +181,7 @@ describe('SourceSection', () => {
     const user = userEvent.setup();
     const onSubmit = jest.fn();
     spyUseAccessReview.mockReturnValue([true]);
-    render(
+    renderWithProviders(
       <Wrapper initialValues={initialValues} onSubmit={onSubmit}>
         <SourceSection />
       </Wrapper>,
@@ -242,7 +239,7 @@ describe('SourceSection', () => {
       isBuilderS2I: false,
       values: {},
     });
-    render(
+    renderWithProviders(
       <Wrapper initialValues={initialValues} onSubmit={onSubmit}>
         <SourceSection />
       </Wrapper>,
