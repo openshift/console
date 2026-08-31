@@ -8,6 +8,7 @@ test.describe(
   'Session persistence across pod restarts',
   { tag: ['@admin', '@slow'] },
   () => {
+    test.use({ storageState: { cookies: [], origins: [] } });
     test.setTimeout(300_000);
 
     test('session survives console pod deletion', async ({ page, k8sClient }) => {
