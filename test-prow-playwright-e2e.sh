@@ -52,6 +52,10 @@ export GLOBAL_TIMEOUT_MS="${GLOBAL_TIMEOUT_MS:-6600000}"
 
 pushd frontend
 
+if [ ! -d node_modules ]; then
+  yarn install
+fi
+
 SCENARIO="${1:-e2e}"
 if [ $# -gt 0 ]; then
   shift

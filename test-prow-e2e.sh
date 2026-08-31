@@ -14,6 +14,10 @@ export BRIDGE_BASE_ADDRESS="$(oc get consoles.config.openshift.io cluster -o jso
 
 pushd frontend
 
+if [ ! -d node_modules ]; then
+  yarn install
+fi
+
 SCENARIO="${1:-e2e}"
 
 if [ "$SCENARIO" == "nightly-cypress" ]; then
