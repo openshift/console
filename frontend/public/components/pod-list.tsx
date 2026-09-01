@@ -633,7 +633,6 @@ export const PodsPage: FC<PodPageProps> = ({
             // than helpful. It should be obvious there are no metrics in the list, and
             // if monitoring is broken, it'll be really apparent since none of the
             // graphs and dashboards will load in the UI.
-            // eslint-disable-next-line no-console
             console.error('Unable to fetch pod metrics', e);
           });
       updateMetrics();

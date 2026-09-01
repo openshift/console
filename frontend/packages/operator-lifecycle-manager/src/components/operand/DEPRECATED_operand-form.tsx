@@ -794,7 +794,6 @@ export const DEPRECATED_CreateOperandForm: FC<OperandFormProps> = ({
         .replace('core~v1~', '');
       const k8sModel = modelFor(groupVersionKind);
       if (!k8sModel) {
-        // eslint-disable-next-line no-console
         console.warn('[Legacy CreateOperandForm] Cluster does not have resource', groupVersionKind);
       }
       return k8sModel ? (

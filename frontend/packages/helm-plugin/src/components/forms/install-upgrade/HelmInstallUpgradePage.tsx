@@ -210,7 +210,7 @@ const HelmInstallUpgradePage: FC = () => {
         try {
           helmRelease = await fetchHelmRelease(namespace, releaseName);
         } catch (err) {
-          console.error('Could not fetch the helm release', err); // eslint-disable-line no-console
+          console.error('Could not fetch the helm release', err);
         }
         const resources = loadHelmManifestResources(helmRelease);
         if (isGoingToTopology(resources)) {

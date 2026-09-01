@@ -708,7 +708,6 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
       })
         .then((response) => response.json())
         .then((newstatusPageData) => setstatusPageData(newstatusPageData))
-        // eslint-disable-next-line no-console
         .catch((e) => console.error('Error fetching status page data', e));
     }
   }, [setstatusPageData]);

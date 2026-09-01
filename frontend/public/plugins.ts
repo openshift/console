@@ -25,10 +25,8 @@ const isAllowedPluginName = (name: string) =>
   localPluginNames.includes(name) || dynamicPluginNames.includes(name);
 
 if (process.env.NODE_ENV !== 'test') {
-  /* eslint-disable no-console */
   console.info(`Static plugins: [${localPluginNames.join(', ') || '(empty)'}]`);
   console.info(`Dynamic plugins: [${dynamicPluginNames.join(', ') || '(empty)'}]`);
-  /* eslint-enable no-console */
 }
 
 /**
@@ -132,6 +130,5 @@ Promise.allSettled(localPlugins.map((plugin) => pluginStore.loadPlugin(plugin)))
     initConsolePlugins(pluginStore);
   })
   .catch((err) => {
-    // eslint-disable-next-line no-console
     console.error('Failed to load Console plugins', err);
   });

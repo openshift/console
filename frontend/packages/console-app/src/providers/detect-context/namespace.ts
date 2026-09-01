@@ -72,7 +72,6 @@ export const useValuesForNamespaceContext: UseValuesForNamespaceContext = () => 
           updateNamespace(ns);
         })
         .catch((e) => {
-          // eslint-disable-next-line no-console
           console.warn('Error fetching namespace', e);
         });
     }

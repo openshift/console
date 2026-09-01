@@ -80,7 +80,6 @@ const registerLegacyPluginEntryCallback = () => {
       ? pluginName.slice(0, pluginName.lastIndexOf('@'))
       : pluginName;
 
-    // eslint-disable-next-line no-console
     console.warn(
       `[WARNING] ${pluginName} was built for an older version of Console and may not work correctly in this version.`,
     );
@@ -119,14 +118,12 @@ export const initConsolePlugins = _.once((pluginStore: PluginStore) => {
       // Load all dynamic (remote) plugins
       dynamicPluginNames.forEach((pluginName) => {
         loadAndEnablePlugin(pluginName, pluginStore, (errorMessage, errorCause) => {
-          // eslint-disable-next-line no-console
           console.error(..._.compact([errorMessage, errorCause]));
           addTestError(`${errorMessage}: ${String(errorCause)}`);
         });
       });
     })
     .catch((err) => {
-      // eslint-disable-next-line no-console
       console.error('Error while loading Console plugins', err);
     });
 });

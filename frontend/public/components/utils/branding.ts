@@ -105,7 +105,6 @@ export const useCustomLogoURL = (type: CustomLogo): { logoUrl: string; loading: 
       }
     };
     fetchData().catch((err) => {
-      // eslint-disable-next-line no-console
       console.warn(`Error while fetching ${type} logo: ${err}`);
     });
   }, [theme, type]);

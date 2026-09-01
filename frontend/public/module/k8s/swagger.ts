@@ -36,7 +36,6 @@ export const fetchSwagger = async (): Promise<SwaggerDefinitions> => {
     }
     const data: SwaggerAPISpec = await response.json();
     if (!data.definitions) {
-      // eslint-disable-next-line no-console
       console.error('Definitions missing in OpenAPI response.');
       return null;
     }
@@ -45,7 +44,6 @@ export const fetchSwagger = async (): Promise<SwaggerDefinitions> => {
     window.dispatchEvent(new Event('console_swagger_refresh'));
     return swaggerDefinitions;
   } catch (e) {
-    // eslint-disable-next-line no-console
     console.error('Could not get OpenAPI definitions', e);
     return null;
   }

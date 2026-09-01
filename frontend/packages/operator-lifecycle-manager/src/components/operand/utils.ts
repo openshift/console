@@ -125,7 +125,6 @@ export const descriptorsToUISchema = (
   const uiSchemaFromDescriptors = (descriptors ?? []).reduce((acc: UiSchema, descriptor, index) => {
     const schemaForDescriptor = getSchemaAtPath(jsonSchema, descriptor.path);
     if (!schemaForDescriptor) {
-      // eslint-disable-next-line no-console
       console.warn(
         '[OperandForm] SpecDescriptor path references a non-existent schema property:',
         descriptor.path,

@@ -316,7 +316,6 @@ export const getEventSourceModelsWithAccess = (
     })
       .then((result) => (result.status.allowed ? model : null))
       .catch((e) => {
-        // eslint-disable-next-line no-console
         console.warn('Could not check access for event source models', e);
         return null;
       });
@@ -344,7 +343,6 @@ export const handleRedirect = async (
 ) => {
   const perspectiveData = perspectiveExtensions.find((item) => item.properties.id === perspective);
   if (!perspectiveData || !perspectiveData.properties?.importRedirectURL) {
-    // eslint-disable-next-line no-console
     console.warn(
       `Unable to redirect: perspective data not found or importRedirectURL missing for perspective: ${perspective}`,
     );
@@ -354,7 +352,6 @@ export const handleRedirect = async (
   try {
     const redirectURL = (await perspectiveData.properties.importRedirectURL())(project);
     if (!redirectURL) {
-      // eslint-disable-next-line no-console
       console.warn(
         `Skipping navigation: importRedirectURL returned empty/undefined for perspective ${perspective}`,
       );
@@ -362,7 +359,6 @@ export const handleRedirect = async (
     }
     navigate(redirectURL);
   } catch (error) {
-    // eslint-disable-next-line no-console
     console.error(`Failed to redirect for perspective ${perspective}:`, error);
   }
 };

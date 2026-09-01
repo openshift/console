@@ -178,7 +178,6 @@ export class ExtensibleModel {
       try {
         return getter(this.namespace, resources, workloadResources);
       } catch (e) {
-        // eslint-disable-next-line no-console
         console.error('Unable to add some resources to topology', e);
         return null;
       }
@@ -190,7 +189,6 @@ export class ExtensibleModel {
           try {
             addToTopologyDataModel(model, topologyModel, depicters);
           } catch (e) {
-            // eslint-disable-next-line no-console
             console.error('Unable to add some resources to topology', e);
           }
         }
@@ -205,7 +203,6 @@ export class ExtensibleModel {
       try {
         reconciler(model, resources);
       } catch (e) {
-        // eslint-disable-next-line no-console
         console.error('Unable to reconcile some resources in topology', e);
       }
     });

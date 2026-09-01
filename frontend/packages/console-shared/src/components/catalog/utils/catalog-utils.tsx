@@ -37,7 +37,6 @@ const getSoftwareCatalogTypes = (): SoftwareCatalogTypesConfig | undefined => {
   try {
     return JSON.parse(window.SERVER_FLAGS.developerCatalogTypes) as SoftwareCatalogTypesConfig;
   } catch (e) {
-    // eslint-disable-next-line no-console
     console.error('Failed to parse developerCatalogTypes:', e);
     return undefined;
   }
@@ -151,7 +150,6 @@ export const getRedHatPriority = (item: CatalogItem): number => {
 
 // Enhanced keyword comparison with relevance scoring and Red Hat prioritization
 export const keywordCompare = (filterString: string, items: CatalogItem[]): CatalogItem[] => {
-  // eslint-disable-next-line no-console
   console.log('🔍 Enhanced keywordCompare called:', {
     filterString,
     itemCount: items.length,
@@ -175,7 +173,6 @@ export const keywordCompare = (filterString: string, items: CatalogItem[]): Cata
 
     // Reduced logging - detailed logging now happens in CatalogView after all filtering
     if (sortedItems.length > 0 && sortedItems[0]?.type === 'operator') {
-      // eslint-disable-next-line no-console
       console.log(
         `📂 keywordCompare (No Search) - Red Hat Priority Sorting (${sortedItems.length} items)`,
       );
@@ -222,7 +219,6 @@ export const keywordCompare = (filterString: string, items: CatalogItem[]): Cata
 
   // Reduced logging - detailed logging now happens in CatalogView after all filtering
   if (sortedItems.length > 0 && sortedItems[0]?.type === 'operator') {
-    // eslint-disable-next-line no-console
     console.log(
       `🔍 keywordCompare (Search: "${filterString}") - Relevance Scoring (${sortedItems.length} matches)`,
     );

@@ -16,7 +16,6 @@ import {
 const alwaysUseFallbackLocalStorage = window.SERVER_FLAGS.userSettingsLocation === 'localstorage';
 
 if (alwaysUseFallbackLocalStorage) {
-  // eslint-disable-next-line no-console
   console.info('user-settings will be stored in localstorage instead of configmap.');
 }
 
@@ -220,7 +219,6 @@ const useLocalStorageBackend = (
       try {
         storage.setItem(storageKey, newValue);
       } catch (err) {
-        // eslint-disable-next-line no-console
         console.error(`Error while updating storage for key ${storageKey}`, err);
         // Roll back the optimistic update and surface the failure so the caller
         // can revert its local copy too.
@@ -388,7 +386,6 @@ const useConfigMapBackend = (
             await createConfigMap();
             // The watch will deliver the newly created (empty) ConfigMap.
           } catch (err) {
-            // eslint-disable-next-line no-console
             console.error('Could not create ConfigMap for user settings:', err);
             setFallbackLocalStorage(true);
           } finally {

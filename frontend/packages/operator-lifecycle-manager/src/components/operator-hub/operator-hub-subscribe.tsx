@@ -215,14 +215,12 @@ const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
     currentCSVDesc.annotations?.['operatorframework.io/suggested-namespace'];
   const suggestedNamespaceTemplate =
     getSuggestedNamespaceTemplate(currentCSVDesc.annotations, {
-      // eslint-disable-next-line no-console
       onError: () => console.error('Could not parse JSON annotation.'),
     }) ?? {};
   const suggestedNamespaceTemplateName = suggestedNamespaceTemplate?.metadata?.name;
   const operatorRequestsMonitoring =
     currentCSVDesc.annotations?.['operatorframework.io/cluster-monitoring'] === 'true';
   const initializationResource = getInitializationResource(currentCSVDesc.annotations, {
-    // eslint-disable-next-line no-console
     onError: () => console.error('Operator Hub Subscribe: Could not get initialization resource.'),
   });
   const canPatchConsoleOperatorConfig = useAccessReview({

@@ -811,7 +811,6 @@ const QueryBrowserWrapped: FC<QueryBrowserProps> = ({
               }
               let defaultEmptyValue = null;
               if (isStack && _.some(values, (value) => Number.isNaN(Number(value[1])))) {
-                // eslint-disable-next-line no-console
                 console.warn(
                   'Invalid response values for stacked graph converted to 0 for query: ',
                   queries[queryIndex],

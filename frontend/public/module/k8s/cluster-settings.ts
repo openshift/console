@@ -37,7 +37,6 @@ export const getSortedAvailableUpdates = (cv: ClusterVersionKind): VersionUpdate
   try {
     return available.sort(({ version: left }, { version: right }) => semver.rcompare(left, right));
   } catch (e) {
-    // eslint-disable-next-line no-console
     console.error('error sorting available cluster updates', e);
     return available;
   }
@@ -69,7 +68,6 @@ export const getSortedNotRecommendedUpdates = (cv: ClusterVersionKind): Conditio
       semver.rcompare(left, right),
     );
   } catch (e) {
-    // eslint-disable-next-line no-console
     console.error('error sorting conditional cluster updates', e);
     return notRecommended;
   }

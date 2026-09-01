@@ -395,14 +395,12 @@ let updateSwaggerInterval;
  */
 const updateSwaggerDefinitionContinual = () => {
   fetchSwagger().catch((e) => {
-    // eslint-disable-next-line no-console
     console.error('Could not fetch OpenAPI after application start:', e);
   });
   clearInterval(updateSwaggerInterval);
   updateSwaggerInterval = setInterval(
     () => {
       fetchSwagger().catch((e) => {
-        // eslint-disable-next-line no-console
         console.error('Could not fetch OpenAPI to stay up to date:', e);
       });
     },
@@ -439,14 +437,12 @@ window.onerror = (message, source, lineno, colno, error) => {
   const formattedStack = error?.stack?.replace(/\\n/g, '\n');
   const formattedMessage = `unhandled error: ${message} ${formattedStack || ''}`;
   addTestError(formattedMessage);
-  // eslint-disable-next-line no-console
   console.error(formattedMessage, error || message);
 };
 window.onunhandledrejection = (promiseRejectionEvent) => {
   const { reason } = promiseRejectionEvent;
   const formattedMessage = `unhandled promise rejection: ${reason}`;
   addTestError(formattedMessage);
-  // eslint-disable-next-line no-console
   console.error(formattedMessage, reason);
 };
 
@@ -471,14 +467,12 @@ if ('serviceWorker' in navigator) {
         }),
       )
       .catch((e) => {
-        // eslint-disable-next-line no-console
         console.warn('Error registering load test service worker', e);
       });
   } else {
     navigator.serviceWorker
       .getRegistrations()
       .then((registrations) => registrations.forEach((reg) => reg.unregister()))
-      // eslint-disable-next-line no-console
       .catch((e) => console.warn('Error unregistering service workers', e));
   }
 }

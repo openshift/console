@@ -94,7 +94,6 @@ export const useUserPreferenceLocalStorage = <T>(
           // update storage
           storage.setItem(storageKey, newValue);
         } catch (err) {
-          // eslint-disable-next-line no-console
           console.error(`Error while updating local storage for key ${storageKey}`, err);
         }
 

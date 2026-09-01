@@ -113,7 +113,6 @@ describe('useDynamicK8sWatchResources', () => {
       result.current.watchResource('', podResource);
     });
 
-    // eslint-disable-next-line no-console
     expect(console.warn).toHaveBeenCalledWith(
       '[useDynamicK8sWatchResources] watchResource called without key - resource will not be watched',
     );
@@ -126,7 +125,6 @@ describe('useDynamicK8sWatchResources', () => {
       result.current.stopWatchResource('');
     });
 
-    // eslint-disable-next-line no-console
     expect(console.warn).toHaveBeenCalledWith(
       '[useDynamicK8sWatchResources] stopWatchResource called without key - no action taken',
     );

@@ -182,7 +182,7 @@ const HelmURLChartInstallPage: FunctionComponent = () => {
       try {
         helmRelease = await fetchHelmRelease(namespace, releaseName);
       } catch (err) {
-        console.error('Could not fetch Helm release.', err); // eslint-disable-line no-console
+        console.error('Could not fetch Helm release.', err);
       }
 
       const resources = helmRelease ? loadHelmManifestResources(helmRelease) : [];

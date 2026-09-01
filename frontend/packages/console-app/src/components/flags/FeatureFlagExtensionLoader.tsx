@@ -78,7 +78,6 @@ const useFeatureFlagExtensions = (featureFlagController: SetFeatureFlag) => {
         try {
           handler(featureFlagController);
         } catch (e) {
-          // eslint-disable-next-line no-console
           console.error(`FeatureFlag handler from plugin ${pluginName} threw an error:`, e);
         }
       });

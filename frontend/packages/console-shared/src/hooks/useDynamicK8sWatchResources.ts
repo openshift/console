@@ -67,7 +67,6 @@ export const useDynamicK8sWatchResources = (): UseDynamicK8sWatchResourcesResult
    */
   const watchResource = useCallback((key: string, resource: WatchK8sResource) => {
     if (!key) {
-      // eslint-disable-next-line no-console
       console.warn(
         '[useDynamicK8sWatchResources] watchResource called without key - resource will not be watched',
       );
@@ -92,7 +91,6 @@ export const useDynamicK8sWatchResources = (): UseDynamicK8sWatchResourcesResult
    */
   const stopWatchResource = useCallback((key: string) => {
     if (!key) {
-      // eslint-disable-next-line no-console
       console.warn(
         '[useDynamicK8sWatchResources] stopWatchResource called without key - no action taken',
       );

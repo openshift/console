@@ -37,7 +37,6 @@ const SAMPLE_SESSION = Math.random() < 0.2;
 // https://segment.com/docs/connections/sources/catalog/libraries/website/javascript/quickstart/#step-2-install-segment-to-your-site
 const initSegmentAnalytics = () => {
   if (TELEMETRY_DEBUG) {
-    // eslint-disable-next-line no-console
     console.info('Initialize Segment Analytics', {
       TELEMETRY_API_HOST,
       TELEMETRY_API_KEY,
@@ -51,7 +50,6 @@ const initSegmentAnalytics = () => {
     return;
   }
   if (analytics.invoked) {
-    // eslint-disable-next-line no-console
     console.error('Analytics snippet included twice');
     return;
   }
@@ -112,7 +110,6 @@ const initSegmentAnalytics = () => {
 };
 
 if (!SAMPLE_SESSION) {
-  // eslint-disable-next-line no-console
   console.debug('Analytics session is not being sampled, telemetry events will be ignored');
 }
 

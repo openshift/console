@@ -176,7 +176,6 @@ const HelmReleaseDetails: FC<HelmReleaseDetailsProps> = () => {
           setHelmReleaseData(helmRelease);
         }
       } catch (err) {
-        // eslint-disable-next-line no-console
         console.log('Error while loading helm release', err);
         setHelmReleaseError(err);
       }

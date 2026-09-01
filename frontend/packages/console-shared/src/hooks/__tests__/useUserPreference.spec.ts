@@ -77,12 +77,10 @@ beforeEach(() => {
   );
   useFavoritesOptionsMock.mockReturnValue([[], jest.fn(), true]);
 
-  // eslint-disable-next-line no-console
   ['log', 'info', 'warn', 'error'].forEach((key) => (console[key] = consoleMock));
 });
 
 afterEach(() => {
-  // eslint-disable-next-line no-console
   ['log', 'info', 'warn', 'error'].forEach((key) => (console[key] = originalConsole[key]));
 });
 

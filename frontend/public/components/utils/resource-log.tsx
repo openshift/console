@@ -294,7 +294,6 @@ const LogControls: FC<LogControlsProps> = ({
             return null;
           }
         } catch (e) {
-          // eslint-disable-next-line no-console
           console.warn('invalid log link regex', namespaceFilter, e);
           return null;
         }
