@@ -129,7 +129,7 @@
     "sanitize-html": "^2.17.6",
     "semver": "^7.8.5",
     "typesafe-actions": "^5.1.0",
-    "use-sync-external-store": "1.6.0",
+    "use-sync-external-store": "^1.6.0",
     "victory": "^37.3.6",
     "yaml-ast-parser": "^0.0.43",
     "yup": "^1.7.1"
