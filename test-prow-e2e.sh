@@ -58,10 +58,10 @@ if [ $# -gt 0 ]; then
 fi
 
 if [ "$SCENARIO" == "e2e" ] || [ "$SCENARIO" == "release" ]; then
-  ./integration-tests/test-playwright-e2e.sh "$@"
+  ./integration-tests/test-playwright.sh "$@"
 elif [ "$SCENARIO" == "smoke" ]; then
-  # End of script flags before Playwright's --project (test-playwright-e2e.sh only parses -c).
-  ./integration-tests/test-playwright-e2e.sh -- --project=smoke "$@"
+  # End of script flags before Playwright's --project (test-playwright.sh only parses -c).
+  ./integration-tests/test-playwright.sh -- --project=smoke "$@"
 else
   echo "error: unknown scenario '$SCENARIO' (use: e2e, release, or smoke)" >&2
   exit 1
