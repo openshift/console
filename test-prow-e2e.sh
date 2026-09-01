@@ -1,8 +1,39 @@
 #!/usr/bin/env bash
+#
+# Prow / CI entrypoint for Playwright E2E against a live OpenShift cluster console.
+#
+# Usage:
+#   ./test-prow-e2e.sh [e2e|release|smoke] [arguments passed to: playwright test ...]
+#
+# Scenarios (first argument; default: e2e):
+#   e2e, release  — full Playwright suite (default project / config)
+#   smoke         — Playwright smoke project (--project=smoke)
+#
+# Environment (typical Prow / installer):
+#   ARTIFACT_DIR, INSTALLER_DIR, KUBEADMIN_PASSWORD_FILE
+#
 
 set -exuo pipefail
 
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "${REPO_ROOT}"
+
+ARTIFACT_DIR=${ARTIFACT_DIR:-/tmp/artifacts}
 INSTALLER_DIR=${INSTALLER_DIR:=${ARTIFACT_DIR}/installer}
+
+# Validate ARTIFACT_DIR is set and is an absolute path
+if [ -z "$ARTIFACT_DIR" ]; then
+  echo "Error: ARTIFACT_DIR is not set" >&2
+  exit 1
+fi
+case "$ARTIFACT_DIR" in
+  /) echo "Error: ARTIFACT_DIR must not be '/'" >&2; exit 1 ;;
+  /*) ;; # absolute path, OK
+  *) echo "Error: ARTIFACT_DIR must be an absolute path, got: $ARTIFACT_DIR" >&2; exit 1 ;;
+esac
+
+export ARTIFACT_DIR INSTALLER_DIR
+mkdir -p "${ARTIFACT_DIR}"
 
 # don't log kubeadmin-password
 set +x
@@ -12,6 +43,9 @@ export BRIDGE_BASE_ADDRESS="$(oc get consoles.config.openshift.io cluster -o jso
 
 ./contrib/create-user.sh
 
+export WORKERS="${WORKERS:-2}"
+export GLOBAL_TIMEOUT_MS="${GLOBAL_TIMEOUT_MS:-6600000}"
+
 pushd frontend
 
 if [ ! -d node_modules ]; then
@@ -19,24 +53,18 @@ if [ ! -d node_modules ]; then
 fi
 
 SCENARIO="${1:-e2e}"
+if [ $# -gt 0 ]; then
+  shift
+fi
 
-if [ "$SCENARIO" == "nightly-cypress" ]; then
-  PACKAGE=""
-  if [ $# -gt 1 ]; then
-    PACKAGE="-p $2"
-  fi
-  ./integration-tests/test-cypress.sh -n true $PACKAGE
-elif [ "$SCENARIO" == "e2e" ] || [ "$SCENARIO" == "release" ]; then
-  ./integration-tests/test-cypress.sh -h true
-elif [ "$SCENARIO" == "olmFull" ]; then
-  ./integration-tests/test-cypress.sh -p olm -h true
-elif [ "$SCENARIO" == "dev-console" ]; then
-  ./integration-tests/test-cypress.sh -p dev-console -h true
-elif [ "$SCENARIO" == "pipelines" ]; then
-  ./integration-tests/test-cypress.sh -p pipelines -h true
-# Disabled: knative-ci.feature failing in CI (OCPBUGS-82512)
-# elif [ "$SCENARIO" == "knative" ]; then
-#   ./integration-tests/test-cypress.sh -p knative -h true
+if [ "$SCENARIO" == "e2e" ] || [ "$SCENARIO" == "release" ]; then
+  ./integration-tests/test-playwright-e2e.sh "$@"
+elif [ "$SCENARIO" == "smoke" ]; then
+  # End of script flags before Playwright's --project (test-playwright-e2e.sh only parses -c).
+  ./integration-tests/test-playwright-e2e.sh -- --project=smoke "$@"
+else
+  echo "error: unknown scenario '$SCENARIO' (use: e2e, release, or smoke)" >&2
+  exit 1
 fi
 
 env NO_SANDBOX=true yarn test-puppeteer-csp
