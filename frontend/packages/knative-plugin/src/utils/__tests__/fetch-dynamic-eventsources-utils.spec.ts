@@ -55,7 +55,6 @@ describe('fetch-dynamic-eventsources: EventSources', () => {
     await fetchEventSourcesCrd();
     expect(getEventSourceModels()).toHaveLength(0);
 
-    // eslint-disable-next-line no-console
     (console.warn as any).mockRestore();
   });
 

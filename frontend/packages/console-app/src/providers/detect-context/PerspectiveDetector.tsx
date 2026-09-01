@@ -89,7 +89,6 @@ const PerspectiveDetector: FC<PerspectiveDetectorProps> = ({ setActivePerspectiv
             }
           })
           .catch((e) => {
-            // eslint-disable-next-line no-console
             console.error('Perspective detection failed', e);
           });
       } else {

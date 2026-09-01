@@ -408,7 +408,6 @@ export const EnvironmentPage: FC<EnvironmentPageProps> = (props) => {
     checkAccess(resourceAttributes, impersonate)
       .then((resp) => setAllowed(resp.status.allowed))
       .catch((e) => {
-        // eslint-disable-next-line no-console
         console.warn('Error while check edit access for environment variables', e);
       });
   }, [obj, model, impersonate, readOnly]);

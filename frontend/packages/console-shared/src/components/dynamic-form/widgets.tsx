@@ -134,7 +134,6 @@ const K8sResourceWidget: FC<K8sResourceWidgetProps> = ({
     try {
       return selectorFromString(selector);
     } catch (e) {
-      // eslint-disable-next-line no-console
       console.error(
         `Invalid selector string provided to K8sResourceWidget: '${selector}'. If using OLM descriptors, please validate the provided selector.`,
       );

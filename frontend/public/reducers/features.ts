@@ -112,7 +112,6 @@ export const featureReducer = (state: FeatureState, action: FeatureAction): Feat
       action.payload.added.forEach((e) => {
         const detected = allReferences.has(getModelRef(e));
         if (detected) {
-          // eslint-disable-next-line no-console
           console.log(`${e.properties.flag} was detected.`);
         }
         updates[e.properties.flag] = detected;
@@ -131,7 +130,6 @@ export const featureReducer = (state: FeatureState, action: FeatureAction): Feat
         .filter((model) => CRDs[referenceForModel(model)] !== undefined)
         .forEach((model) => {
           const flag = CRDs[referenceForModel(model)];
-          // eslint-disable-next-line no-console
           console.log(`${flag} was detected.`);
           flagUpdates[flag] = true;
         });

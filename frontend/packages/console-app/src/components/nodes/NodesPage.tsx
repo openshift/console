@@ -1105,7 +1105,6 @@ export const NodesPage: FC<NodesPageProps> = ({ selector }) => {
         const metrics = await fetchNodeMetrics(nodes);
         dispatch(setNodeMetrics(metrics));
       } catch (e) {
-        // eslint-disable-next-line no-console
         console.error('Error fetching node metrics: ', e);
       }
     };

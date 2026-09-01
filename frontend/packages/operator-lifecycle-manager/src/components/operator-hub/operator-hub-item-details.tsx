@@ -257,7 +257,6 @@ export const OperatorDescription: FC<OperatorDescriptionProps> = ({
       clusterIsAzureWIF,
       clusterIsGCPWIF,
       onError: (error) => {
-        // eslint-disable-next-line no-console
         console.warn(
           `Error parsing infrastructure features from PackageManifest "${packageManifest?.metadata?.name}":`,
           error,
@@ -391,7 +390,6 @@ export const OperatorHubItemDetails: FC<OperatorHubItemDetailsProps> = ({
       clusterIsAzureWIF,
       clusterIsGCPWIF,
       onError: (error) => {
-        // eslint-disable-next-line no-console
         console.warn(
           `Error parsing infrastructure features from PackageManifest "${obj?.metadata?.name}":`,
           error,
@@ -410,7 +408,6 @@ export const OperatorHubItemDetails: FC<OperatorHubItemDetailsProps> = ({
         url.searchParams.set('utm_source', 'openshift_console');
         return url.toString();
       } catch (error) {
-        // eslint-disable-next-line no-console
         console.error('Error while setting utm_source to support workflow URL', error.message);
       }
     }

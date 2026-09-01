@@ -85,7 +85,6 @@ interface ManifestResource {
             { name: 'BUNDLER', value: bundler },
           ];
 
-          // eslint-disable-next-line no-console
           console.log(
             `Deploying ${PLUGIN_NAME} [${bundler}] with image: ${deploymentContainers[0]?.image ?? 'unknown'}`,
           );

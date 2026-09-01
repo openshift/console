@@ -183,7 +183,6 @@ export const Kebab: KebabComponent = (props) => {
     _.each(options, (option: KebabOption) => {
       if (option.accessReview) {
         checkAccess(option.accessReview).catch((e) => {
-          // eslint-disable-next-line no-console
           console.warn('Error while check action menu access review', e);
         });
       }

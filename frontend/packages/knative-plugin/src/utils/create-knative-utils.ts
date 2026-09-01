@@ -297,7 +297,6 @@ const getDomainMappingResources = (
       return domainMappingResources;
     })
     .catch((err) => {
-      // eslint-disable-next-line no-console
       console.log('Failed to get domain mapping resources', err);
       return domainMappingResources;
     });

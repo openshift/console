@@ -26,7 +26,6 @@ const moreRecent = (a, b) => {
 
 const removeFromList = (list: Record<string, any>, resource) => {
   const qualifiedName = getQN(resource);
-  // eslint-disable-next-line no-console
   console.log(`deleting ${qualifiedName}`);
   const { [qualifiedName]: _removed, ...remaining } = list;
   return remaining;
@@ -76,7 +75,6 @@ const loadList = (oldList: Record<string, any>, resources) => {
     const r = newList[k];
     const { metadata } = r;
     if (!metadata.deletionTimestamp) {
-      // eslint-disable-next-line no-console
       console.warn(`${metadata.namespace}-${metadata.name} is gone with no deletion timestamp!`);
     }
     delete newList[k];
@@ -228,7 +226,6 @@ const sdkK8sReducers = (state: K8sState, action: K8sAction): K8sState => {
       if (!getK8sDataById(state, action.payload.id)) {
         return state;
       }
-      // eslint-disable-next-line no-console
       console.info(`loaded ${action.payload.id}`);
       newList = loadList(getK8sDataById(state, action.payload.id), action.payload.k8sObjects);
       return {
@@ -253,7 +250,6 @@ const sdkK8sReducers = (state: K8sState, action: K8sAction): K8sState => {
             newList = updateList(newList, object);
             break;
           default:
-            // eslint-disable-next-line no-console
             console.warn(`unknown websocket action: ${type}`);
         }
       }

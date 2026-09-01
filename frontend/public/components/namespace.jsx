@@ -150,12 +150,9 @@ const fetchNamespaceMetrics = () => {
       }, {}),
     );
   });
-  return (
-    Promise.all(promises)
-      .then((data) => _.assign({}, ...data))
-      // eslint-disable-next-line no-console
-      .catch(console.error)
-  );
+  return Promise.all(promises)
+    .then((data) => _.assign({}, ...data))
+    .catch(console.error);
 };
 
 const DNS_LABEL_RE = /^[a-z]([a-z0-9-]{0,61}[a-z0-9])?$/;
@@ -808,7 +805,6 @@ const ProjectList = (props) => {
           dispatch(UIActions.setNamespaceMetrics(result));
         }
       } catch (e) {
-        // eslint-disable-next-line no-console
         console.error(e);
       }
     };
@@ -954,7 +950,6 @@ export const PullSecret = (props) => {
         setIsLoading(false);
         setData([]);
         setError(true);
-        // eslint-disable-next-line no-console
         console.error('Error getting default ServiceAccount', err);
       });
   }, [namespace.metadata.name]);

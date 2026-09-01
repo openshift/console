@@ -21,7 +21,7 @@ import { BrowserRouter, useParams, useLocation, Routes, Route } from 'react-rout
 import {
   ContextProviderExtensionWrapper,
   DetectContext,
-} from '@console/app/src/components/detect-context/DetectContext';
+} from '@console/app/src/providers/detect-context/DetectContext';
 import { FeatureFlagExtensionLoader } from '@console/app/src/components/flags/FeatureFlagExtensionLoader';
 import Lightspeed from '@console/app/src/components/lightspeed/Lightspeed';
 import { Navigation } from '@console/app/src/components/nav';
@@ -58,8 +58,8 @@ import { ConsoleNotifier } from './console-notifier';
 import { AuthenticationErrorPage } from './error';
 import { Masthead } from './masthead/masthead';
 import { NotificationDrawer } from './notification-drawer';
-import { ThemeProvider } from './ThemeProvider';
-import { ConnectedToastProvider } from './toast/ConnectedToastProvider';
+import { ThemeProvider } from '@console/app/src/providers/theme/ThemeProvider';
+import { ToastProvider } from '@console/app/src/providers/toast/ToastProvider';
 import { AsyncComponent } from './utils/async';
 import { getBrandingDetails } from './utils/branding';
 // cloud shell imports must come later than features
@@ -70,7 +70,7 @@ import { PollConsoleUpdates } from './poll-console-updates';
 import { withoutSensitiveInformations, getTelemetryTitle } from './utils/telemetry';
 import { AdmissionWebhookWarningNotifications } from '@console/app/src/components/admission-webhook-warnings/AdmissionWebhookWarningNotifications';
 import { usePackageManifestCheck } from '@console/shared/src/hooks/usePackageManifestCheck';
-import { UserPreferenceProvider } from '@console/shared/src/hooks/UserPreferenceContext';
+import { UserPreferenceProvider } from '@console/app/src/providers/user-preferences/UserPreferenceContext';
 import { useCSPViolationDetector } from '@console/app/src/hooks/useCSPViolationDetector';
 import { useNotificationPoller } from '@console/app/src/hooks/useNotificationPoller';
 import { useImpersonateRefreshFeatures } from './useImpersonateRefreshFeatures';
@@ -79,7 +79,7 @@ const PF_BREAKPOINT_MD = 768;
 const PF_BREAKPOINT_XL = 1200;
 const NOTIFICATION_DRAWER_BREAKPOINT = 1800;
 
-const root = createRoot(document.getElementById('app')!); // eslint-disable-line @typescript-eslint/no-non-null-assertion
+const root = createRoot(document.getElementById('app')!); // eslint-disable-line @typescript-eslint/no-non-null-assertion -- we know the dom
 root.render(<LoadingBox blame="Init" />);
 
 // Trigger an early authenticated fetch so unauthenticated users are redirected
@@ -395,14 +395,12 @@ let updateSwaggerInterval;
  */
 const updateSwaggerDefinitionContinual = () => {
   fetchSwagger().catch((e) => {
-    // eslint-disable-next-line no-console
     console.error('Could not fetch OpenAPI after application start:', e);
   });
   clearInterval(updateSwaggerInterval);
   updateSwaggerInterval = setInterval(
     () => {
       fetchSwagger().catch((e) => {
-        // eslint-disable-next-line no-console
         console.error('Could not fetch OpenAPI to stay up to date:', e);
       });
     },
@@ -439,14 +437,12 @@ window.onerror = (message, source, lineno, colno, error) => {
   const formattedStack = error?.stack?.replace(/\\n/g, '\n');
   const formattedMessage = `unhandled error: ${message} ${formattedStack || ''}`;
   addTestError(formattedMessage);
-  // eslint-disable-next-line no-console
   console.error(formattedMessage, error || message);
 };
 window.onunhandledrejection = (promiseRejectionEvent) => {
   const { reason } = promiseRejectionEvent;
   const formattedMessage = `unhandled promise rejection: ${reason}`;
   addTestError(formattedMessage);
-  // eslint-disable-next-line no-console
   console.error(formattedMessage, reason);
 };
 
@@ -471,14 +467,12 @@ if ('serviceWorker' in navigator) {
         }),
       )
       .catch((e) => {
-        // eslint-disable-next-line no-console
         console.warn('Error registering load test service worker', e);
       });
   } else {
     navigator.serviceWorker
       .getRegistrations()
       .then((registrations) => registrations.forEach((reg) => reg.unregister()))
-      // eslint-disable-next-line no-console
       .catch((e) => console.warn('Error unregistering service workers', e));
   }
 }
@@ -491,11 +485,11 @@ root.render(
           <ThemeProvider>
             <HelmetProvider>
               <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
-              <ConnectedToastProvider>
+              <ToastProvider>
                 <PollConsoleUpdates />
                 <AdmissionWebhookWarningNotifications />
                 <AppRouter />
-              </ConnectedToastProvider>
+              </ToastProvider>
             </HelmetProvider>
           </ThemeProvider>
         </UserPreferenceProvider>

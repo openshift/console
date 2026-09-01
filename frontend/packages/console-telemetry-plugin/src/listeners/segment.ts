@@ -32,7 +32,6 @@ export const eventListener: TelemetryEventListener = async (
 
   if (!analyticsEnabled) {
     if (TELEMETRY_DEBUG) {
-      // eslint-disable-next-line no-console
       console.debug(
         'console-telemetry-plugin: analytics is disabled, ignoring telemetry event',
         eventType,
@@ -71,7 +70,6 @@ export const eventListener: TelemetryEventListener = async (
           }
 
           if (TELEMETRY_DEBUG) {
-            // eslint-disable-next-line no-console
             console.debug(
               'console-telemetry-plugin: use anonymized user identifier to group events',
               { username, clusterId, organizationId, userId, processedUserId },
@@ -80,7 +78,6 @@ export const eventListener: TelemetryEventListener = async (
 
           analytics.identify(processedUserId, otherProperties, anonymousIP);
         } else {
-          // eslint-disable-next-line no-console
           console.error(
             'console-telemetry-plugin: unable to identify as no user name was provided',
             properties,

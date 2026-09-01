@@ -13,7 +13,6 @@ export const checkNamespaceExists = async (ns: string, useProjects: boolean): Pr
     await k8sGet(useProjects ? ProjectModel : NamespaceModel, ns);
     return true;
   } catch (e) {
-    // eslint-disable-next-line no-console
     console.warn('Error fetching namespace', e);
     return false;
   }

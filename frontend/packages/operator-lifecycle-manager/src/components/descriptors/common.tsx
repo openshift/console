@@ -60,7 +60,6 @@ export const K8sResourceLinkCapability: FC<CommonCapabilityProps<string>> = ({
     const [, suffix] = capability.match(REGEXP_K8S_RESOURCE_SUFFIX) ?? [];
     const gvk = suffix?.replace(/:/g, '~');
     if (!_.isString(value)) {
-      // eslint-disable-next-line no-console
       console.warn(
         `[Invalid descriptor] descriptor is incompatible with property ${descriptor.path} and will have no effect`,
         descriptor,

@@ -616,14 +616,12 @@ const GitSection: FC<GitSectionProps> = ({
             }
             // handleSearch(containerImport.image);
           } else {
-            // eslint-disable-next-line no-console
             console.error(
               `Unsupported ConsoleSample "${sampleName}" source type ${sample.spec?.source?.type}`,
             );
           }
         })
         .catch((error) => {
-          // eslint-disable-next-line no-console
           console.error(`Error while loading ConsoleSample "${sampleName}":`, error);
         });
     } else if (formType === 'sample' && imageStreamTagSampleRepo) {

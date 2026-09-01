@@ -6,7 +6,7 @@ import { flagPending } from '@console/internal/reducers/features';
 import { ALL_APPLICATIONS_KEY, FLAGS } from '@console/shared/src/constants/common';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
-import { usePreferredNamespace } from '../user-preferences/namespace/usePreferredNamespace';
+import { usePreferredNamespace } from '../../components/user-preferences/namespace/usePreferredNamespace';
 import { getValueForNamespace } from './getValueForNamespace';
 import { useLastNamespace } from './useLastNamespace';
 
@@ -72,7 +72,6 @@ export const useValuesForNamespaceContext: UseValuesForNamespaceContext = () => 
           updateNamespace(ns);
         })
         .catch((e) => {
-          // eslint-disable-next-line no-console
           console.warn('Error fetching namespace', e);
         });
     }

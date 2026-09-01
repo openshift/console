@@ -3,14 +3,14 @@ import { AlertVariant } from '@patternfly/react-core';
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ToastContextValues } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { renderWithProviders } from '../../../test-utils/unit-test-utils';
+import type { NotificationHistoryContextValues } from '@console/shared/src/components/toast/types';
+import { DEFAULT_MAX_DISPLAYED_TOASTS } from '@console/shared/src/components/toast/types';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
+import { InternalToastProvider } from '../InternalToastProvider';
 import { NotificationHistoryContext } from '../NotificationHistoryContext';
 import { ToastContext } from '../ToastContext';
-import { ToastProvider } from '../ToastProvider';
-import type { NotificationHistoryContextValues } from '../types';
-import { DEFAULT_MAX_DISPLAYED_TOASTS } from '../types';
 
-describe('ToastProvider', () => {
+describe('InternalToastProvider', () => {
   let toastContext: ToastContextValues;
   let notificationHistoryContext: NotificationHistoryContextValues;
 
@@ -22,9 +22,9 @@ describe('ToastProvider', () => {
 
   it('should provide a context', () => {
     renderWithProviders(
-      <ToastProvider>
+      <InternalToastProvider>
         <TestComponent />
-      </ToastProvider>,
+      </InternalToastProvider>,
     );
 
     expect(typeof toastContext.addToast).toBe('function');
@@ -34,9 +34,9 @@ describe('ToastProvider', () => {
 
   it('should add and remove alerts', async () => {
     renderWithProviders(
-      <ToastProvider>
+      <InternalToastProvider>
         <TestComponent />
-      </ToastProvider>,
+      </InternalToastProvider>,
     );
 
     // fixed id
@@ -84,9 +84,9 @@ describe('ToastProvider', () => {
   it('should cap visible toasts and show overflow message', async () => {
     const onNotificationDrawerOpen = jest.fn();
     renderWithProviders(
-      <ToastProvider maxDisplayed={2} onNotificationDrawerOpen={onNotificationDrawerOpen}>
+      <InternalToastProvider maxDisplayed={2} onNotificationDrawerOpen={onNotificationDrawerOpen}>
         <TestComponent />
-      </ToastProvider>,
+      </InternalToastProvider>,
     );
 
     act(() => {
@@ -124,9 +124,9 @@ describe('ToastProvider', () => {
 
   it('should keep incrementing generated toast ids when notification drawer expansion changes', async () => {
     const { rerender } = renderWithProviders(
-      <ToastProvider isNotificationDrawerExpanded={false}>
+      <InternalToastProvider isNotificationDrawerExpanded={false}>
         <TestComponent />
-      </ToastProvider>,
+      </InternalToastProvider>,
     );
 
     act(() => {
@@ -149,9 +149,9 @@ describe('ToastProvider', () => {
     });
 
     rerender(
-      <ToastProvider isNotificationDrawerExpanded>
+      <InternalToastProvider isNotificationDrawerExpanded>
         <TestComponent />
-      </ToastProvider>,
+      </InternalToastProvider>,
     );
 
     let thirdToastId: string;
@@ -183,9 +183,9 @@ describe('ToastProvider', () => {
   it('should clear notification history and invoke onClose when cleared from the drawer', async () => {
     const onClose = jest.fn();
     renderWithProviders(
-      <ToastProvider>
+      <InternalToastProvider>
         <TestComponent />
-      </ToastProvider>,
+      </InternalToastProvider>,
     );
 
     act(() => {
@@ -217,9 +217,9 @@ describe('ToastProvider', () => {
     const onCloseOne = jest.fn();
     const onCloseTwo = jest.fn();
     renderWithProviders(
-      <ToastProvider>
+      <InternalToastProvider>
         <TestComponent />
-      </ToastProvider>,
+      </InternalToastProvider>,
     );
 
     act(() => {
@@ -258,9 +258,9 @@ describe('ToastProvider', () => {
 
   it('should replace notification history when a toast is removed and replaced', async () => {
     renderWithProviders(
-      <ToastProvider>
+      <InternalToastProvider>
         <TestComponent />
-      </ToastProvider>,
+      </InternalToastProvider>,
     );
 
     act(() => {
@@ -296,9 +296,9 @@ describe('ToastProvider', () => {
 
   it('should not show toast when notification drawer is expanded', async () => {
     renderWithProviders(
-      <ToastProvider isNotificationDrawerExpanded>
+      <InternalToastProvider isNotificationDrawerExpanded>
         <TestComponent />
-      </ToastProvider>,
+      </InternalToastProvider>,
     );
 
     act(() => {
@@ -318,9 +318,9 @@ describe('ToastProvider', () => {
 
   it('should hide visible toasts when notification drawer is opened', async () => {
     const { rerender } = renderWithProviders(
-      <ToastProvider isNotificationDrawerExpanded={false}>
+      <InternalToastProvider isNotificationDrawerExpanded={false}>
         <TestComponent />
-      </ToastProvider>,
+      </InternalToastProvider>,
     );
 
     act(() => {
@@ -337,9 +337,9 @@ describe('ToastProvider', () => {
     });
 
     rerender(
-      <ToastProvider isNotificationDrawerExpanded>
+      <InternalToastProvider isNotificationDrawerExpanded>
         <TestComponent />
-      </ToastProvider>,
+      </InternalToastProvider>,
     );
 
     await waitFor(() => {
@@ -350,9 +350,9 @@ describe('ToastProvider', () => {
 
   it('should not persist default toasts in the drawer', async () => {
     renderWithProviders(
-      <ToastProvider>
+      <InternalToastProvider>
         <TestComponent />
-      </ToastProvider>,
+      </InternalToastProvider>,
     );
 
     act(() => {
@@ -371,9 +371,9 @@ describe('ToastProvider', () => {
 
   it('should persist toast in drawer when persistInDrawer is true', async () => {
     renderWithProviders(
-      <ToastProvider>
+      <InternalToastProvider>
         <TestComponent />
-      </ToastProvider>,
+      </InternalToastProvider>,
     );
 
     act(() => {
@@ -394,9 +394,9 @@ describe('ToastProvider', () => {
   it('should default skipOverflow to false when persistInDrawer is true', async () => {
     const totalToasts = DEFAULT_MAX_DISPLAYED_TOASTS + 1;
     renderWithProviders(
-      <ToastProvider maxDisplayed={DEFAULT_MAX_DISPLAYED_TOASTS}>
+      <InternalToastProvider maxDisplayed={DEFAULT_MAX_DISPLAYED_TOASTS}>
         <TestComponent />
-      </ToastProvider>,
+      </InternalToastProvider>,
     );
 
     act(() => {
@@ -423,9 +423,9 @@ describe('ToastProvider', () => {
 
   it('should show all default toasts without overflow link', async () => {
     renderWithProviders(
-      <ToastProvider maxDisplayed={DEFAULT_MAX_DISPLAYED_TOASTS}>
+      <InternalToastProvider maxDisplayed={DEFAULT_MAX_DISPLAYED_TOASTS}>
         <TestComponent />
-      </ToastProvider>,
+      </InternalToastProvider>,
     );
 
     act(() => {
@@ -449,9 +449,9 @@ describe('ToastProvider', () => {
 
   it('should always show skipOverflow toasts without triggering overflow', async () => {
     renderWithProviders(
-      <ToastProvider maxDisplayed={1}>
+      <InternalToastProvider maxDisplayed={1}>
         <TestComponent />
-      </ToastProvider>,
+      </InternalToastProvider>,
     );
 
     act(() => {
@@ -488,9 +488,9 @@ describe('ToastProvider', () => {
     const user = userEvent.setup();
     const actionFn = jest.fn();
     renderWithProviders(
-      <ToastProvider>
+      <InternalToastProvider>
         <TestComponent />
-      </ToastProvider>,
+      </InternalToastProvider>,
     );
 
     act(() => {
@@ -525,9 +525,9 @@ describe('ToastProvider', () => {
   it('should have anchor tag if component "a" is passed', async () => {
     const actionFn = jest.fn();
     renderWithProviders(
-      <ToastProvider>
+      <InternalToastProvider>
         <TestComponent />
-      </ToastProvider>,
+      </InternalToastProvider>,
     );
 
     act(() => {
@@ -559,9 +559,9 @@ describe('ToastProvider', () => {
     const user = userEvent.setup();
     const actionFn = jest.fn();
     renderWithProviders(
-      <ToastProvider>
+      <InternalToastProvider>
         <TestComponent />
-      </ToastProvider>,
+      </InternalToastProvider>,
     );
 
     act(() => {
@@ -598,9 +598,9 @@ describe('ToastProvider', () => {
     const user = userEvent.setup();
     const toastClose = jest.fn();
     renderWithProviders(
-      <ToastProvider>
+      <InternalToastProvider>
         <TestComponent />
-      </ToastProvider>,
+      </InternalToastProvider>,
     );
 
     act(() => {
@@ -629,9 +629,9 @@ describe('ToastProvider', () => {
     const user = userEvent.setup();
     const onClose = jest.fn();
     renderWithProviders(
-      <ToastProvider>
+      <InternalToastProvider>
         <TestComponent />
-      </ToastProvider>,
+      </InternalToastProvider>,
     );
 
     act(() => {
@@ -684,9 +684,9 @@ describe('ToastProvider', () => {
     const user = userEvent.setup();
     const onClose = jest.fn();
     renderWithProviders(
-      <ToastProvider>
+      <InternalToastProvider>
         <TestComponent />
-      </ToastProvider>,
+      </InternalToastProvider>,
     );
 
     act(() => {
@@ -727,9 +727,9 @@ describe('ToastProvider', () => {
 
   it('should render the minimize action at the position specified in the actions array', async () => {
     renderWithProviders(
-      <ToastProvider>
+      <InternalToastProvider>
         <TestComponent />
-      </ToastProvider>,
+      </InternalToastProvider>,
     );
 
     act(() => {
@@ -766,9 +766,9 @@ describe('ToastProvider', () => {
     const user = userEvent.setup();
     const minimizeCallback = jest.fn();
     renderWithProviders(
-      <ToastProvider>
+      <InternalToastProvider>
         <TestComponent />
-      </ToastProvider>,
+      </InternalToastProvider>,
     );
 
     act(() => {
@@ -799,9 +799,9 @@ describe('ToastProvider', () => {
   it('should render an explicit minimize action even without persistInDrawer, but clicking it has no effect', async () => {
     const user = userEvent.setup();
     renderWithProviders(
-      <ToastProvider>
+      <InternalToastProvider>
         <TestComponent />
-      </ToastProvider>,
+      </InternalToastProvider>,
     );
 
     act(() => {
@@ -829,9 +829,9 @@ describe('ToastProvider', () => {
 
   it('should not minimize a toast that is not persisted in the drawer', async () => {
     renderWithProviders(
-      <ToastProvider>
+      <InternalToastProvider>
         <TestComponent />
-      </ToastProvider>,
+      </InternalToastProvider>,
     );
 
     act(() => {
@@ -860,9 +860,9 @@ describe('ToastProvider', () => {
   it('should not reset a notification to unread when its toast was already cleared from the visible stack', async () => {
     const user = userEvent.setup();
     renderWithProviders(
-      <ToastProvider maxDisplayed={1}>
+      <InternalToastProvider maxDisplayed={1}>
         <TestComponent />
-      </ToastProvider>,
+      </InternalToastProvider>,
     );
 
     act(() => {
@@ -912,9 +912,9 @@ describe('ToastProvider', () => {
 
   it('should not render an automatic Minimize icon button when minimizable or persistInDrawer is missing, or no actions are given', async () => {
     renderWithProviders(
-      <ToastProvider>
+      <InternalToastProvider>
         <TestComponent />
-      </ToastProvider>,
+      </InternalToastProvider>,
     );
 
     act(() => {
@@ -945,9 +945,9 @@ describe('ToastProvider', () => {
 
   it('should render both the icon button and an explicit minimize action when both are configured', async () => {
     renderWithProviders(
-      <ToastProvider>
+      <InternalToastProvider>
         <TestComponent />
-      </ToastProvider>,
+      </InternalToastProvider>,
     );
 
     act(() => {
@@ -977,9 +977,9 @@ describe('ToastProvider', () => {
 
   it('should not render the icon button when minimizable is not set, even with an explicit minimize action', async () => {
     renderWithProviders(
-      <ToastProvider>
+      <InternalToastProvider>
         <TestComponent />
-      </ToastProvider>,
+      </InternalToastProvider>,
     );
 
     act(() => {
@@ -1008,9 +1008,9 @@ describe('ToastProvider', () => {
     const user = userEvent.setup();
     const onClose = jest.fn();
     renderWithProviders(
-      <ToastProvider>
+      <InternalToastProvider>
         <TestComponent />
-      </ToastProvider>,
+      </InternalToastProvider>,
     );
 
     act(() => {

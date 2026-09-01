@@ -5,10 +5,10 @@
 # Playwright's --project flag (project names match the `packages` array in playwright.config.ts).
 #
 # Usage (from repo frontend/):
-#   ./integration-tests/test-playwright-e2e.sh [playwright test args...]
-#   ./integration-tests/test-playwright-e2e.sh --project=helm
-#   ./integration-tests/test-playwright-e2e.sh --project=smoke
-#   ./integration-tests/test-playwright-e2e.sh -c [--] [playwright test args...]
+#   ./integration-tests/test-playwright.sh [playwright test args...]
+#   ./integration-tests/test-playwright.sh --project=helm
+#   ./integration-tests/test-playwright.sh --project=smoke
+#   ./integration-tests/test-playwright.sh -c [--] [playwright test args...]
 #
 # -c  Run contrib/create-user.sh before tests.
 #

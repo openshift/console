@@ -133,7 +133,6 @@ const formReducer = (formValues: FormState, action: FormAction): FormState => {
       ...action.payload,
     };
   }
-  // eslint-disable-next-line no-console
   console.error('Unrecognized Alertmanager form reducer action', action);
   return formValues;
 };
