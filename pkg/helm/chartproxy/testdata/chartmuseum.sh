@@ -11,7 +11,10 @@ if [ ! -x "$BINARY" ]; then
   exit 1
 fi
 echo "Starting chartmuseum (chartproxy) on port 9553..." >&2
-echo $$ > ./chartmuseum-chartproxy.pid
+if ! echo $$ > ./chartmuseum-chartproxy.pid; then
+  echo "ERROR: failed to write PID file ./chartmuseum-chartproxy.pid" >&2
+  exit 1
+fi
 exec "$BINARY" --debug --port=9553 \
   --storage="local" \
   --storage-local-rootdir="./chartstore-9553" \
