@@ -1,5 +1,5 @@
 import type { FC, ReactNode, ReactElement } from 'react';
-import { useState, useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import {
   Content,
   TextInputTypes,
