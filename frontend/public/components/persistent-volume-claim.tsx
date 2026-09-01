@@ -455,7 +455,9 @@ const PVCDetails: FC<PVCDetailsProps> = ({ obj: pvc }) => {
                 !loading && (
                   <DescriptionListGroup>
                     <DescriptionListTerm>{t('Used')}</DescriptionListTerm>
-                    <DescriptionListDescription>{usedCapacity.string}</DescriptionListDescription>
+                    <DescriptionListDescription>
+                      {humanizeBinaryBytes(usedMetrics).string}
+                    </DescriptionListDescription>
                   </DescriptionListGroup>
                 )}
               {!_.isEmpty(accessModes) && (
