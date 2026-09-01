@@ -49,7 +49,8 @@ jest.mock('@console/internal/redux', () => ({
 
 jest.mock('react-router', () => ({
   useLocation: jest.fn(),
-  createPath: jest.fn((loc) => loc.pathname),
+  useNavigate: jest.fn(() => jest.fn()),
+  createPath: jest.fn((loc) => `${loc.pathname}${loc.search || ''}${loc.hash || ''}`),
 }));
 
 const useValuesForPerspectiveContextMock = useValuesForPerspectiveContext as jest.Mock;
