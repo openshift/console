@@ -28,6 +28,7 @@ import { shallowEqual } from 'react-redux';
 import { useNavigate } from 'react-router';
 import { action as reduxAction } from 'typesafe-actions';
 import { TourContext, TourActions } from '@console/app/src/components/tour';
+import { useTheme, THEME_DARK } from '@console/app/src/providers/theme/ThemeProvider';
 import { getImpersonate, useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { ExternalLinkButton } from '@console/shared/src/components/links/ExternalLinkButton';
 import { LinkTo } from '@console/shared/src/components/links/LinkTo';
@@ -57,7 +58,6 @@ import { flagPending, featureReducerName } from '../../reducers/features';
 import { AboutModal } from '../about-modal';
 import { ImpersonateUserModal } from '../modals/impersonate-user-modal';
 import QuickCreate, { QuickCreateImportFromGit, QuickCreateContainerImages } from '../QuickCreate';
-import { useTheme, THEME_DARK } from '../ThemeProvider';
 import { openshiftHelpBase } from '../utils/documentation';
 import '@patternfly/react-user-feedback/dist/esm/Feedback/Feedback.css';
 import { useK8sWatchResource } from '../utils/k8s-watch-hook';
@@ -708,7 +708,6 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
       })
         .then((response) => response.json())
         .then((newstatusPageData) => setstatusPageData(newstatusPageData))
-        // eslint-disable-next-line no-console
         .catch((e) => console.error('Error fetching status page data', e));
     }
   }, [setstatusPageData]);

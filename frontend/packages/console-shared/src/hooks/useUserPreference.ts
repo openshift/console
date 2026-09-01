@@ -1,10 +1,10 @@
 import type { SetStateAction, Dispatch } from 'react';
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useSyncExternalStoreWithSelector } from 'use-sync-external-store/with-selector';
+import type { UserSettingsSnapshot } from '@console/app/src/providers/user-preferences/UserPreferenceContext';
+import { UserPreferenceContext } from '@console/app/src/providers/user-preferences/UserPreferenceContext';
 import type { UseUserPreference } from '@console/dynamic-plugin-sdk';
 import { deserializeData, serializeData } from '../utils/user-settings';
-import type { UserSettingsSnapshot } from './UserPreferenceContext';
-import { UserPreferenceContext } from './UserPreferenceContext';
 
 const sanitizeKey = (key: string): string => key?.replace(/[^-._a-zA-Z0-9]/g, '_');
 

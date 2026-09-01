@@ -12,10 +12,6 @@ jest.mock('@console/dynamic-plugin-sdk/src/utils/flags', () => ({
   useFlag: jest.fn(() => false),
 }));
 
-jest.mock('@console/internal/components/ThemeProvider', () => ({
-  useTheme: jest.fn(() => ({ isDark: false })),
-}));
-
 jest.mock('@console/internal/components/utils', () => ({
   SectionHeading: ({ text }) => <h2 data-test="section-heading">{text}</h2>,
 }));

@@ -15,12 +15,15 @@ import { Formik } from 'formik';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router';
 import { combineReducers, createStore } from 'redux';
+import type { UserSettingsStore } from '@console/app/src/providers/user-preferences/UserPreferenceContext';
+import {
+  createUserSettingsStore,
+  UserPreferenceContext,
+} from '@console/app/src/providers/user-preferences/UserPreferenceContext';
 import storeHandler from '@console/dynamic-plugin-sdk/src/app/storeHandler';
 import { pluginStore as defaultPluginStore } from '@console/internal/plugins';
 import type { RootState } from '@console/internal/redux';
 import { baseReducers } from '@console/internal/redux';
-import type { UserSettingsStore } from '../hooks/UserPreferenceContext';
-import { createUserSettingsStore, UserPreferenceContext } from '../hooks/UserPreferenceContext';
 
 export interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries' | 'wrapper'> {
   initialState?: Partial<RootState>;

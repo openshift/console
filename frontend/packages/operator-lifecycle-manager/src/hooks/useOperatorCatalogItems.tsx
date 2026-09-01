@@ -52,14 +52,12 @@ import { useOperatorHubPackageManifests } from './useOperatorHubPackageManifests
 import { useSubscriptions } from './useSubscriptions';
 
 const onInfrastructureFeaturesAnnotationError = (error: Error, pkg: PackageManifestKind) =>
-  // eslint-disable-next-line no-console
   console.warn(
     `Error parsing infrastructure features from PackageManifest "${pkg.metadata.name}":`,
     error,
   );
 
 const onValidSubscriptionAnnotationError = (error: Error, pkg: PackageManifestKind) =>
-  // eslint-disable-next-line no-console
   console.warn(
     `Error parsing valid subscription from PackageManifest "${pkg.metadata.name}":`,
     error,
@@ -432,7 +430,6 @@ const useOperatorCatalogItems: ExtensionHook<CatalogItem[], CatalogExtensionHook
     const uniqueItems = _.uniqBy(allItems, 'uid');
     const dupCount = allItems.length - uniqueItems.length;
     if (dupCount > 0) {
-      // eslint-disable-next-line no-console
       console.warn(`${dupCount} duplicate PackageManifests.`);
     }
     return uniqueItems;

@@ -294,7 +294,6 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
           editorMounted && getEditor()?.updateOptions({ readOnly: notAll });
         })
         .catch((e) => {
-          // eslint-disable-next-line no-console
           console.warn('Error while check edit access', e);
         });
     },
@@ -433,7 +432,6 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
         setOwner(own);
       })
       .catch((e) => {
-        // eslint-disable-next-line no-console
         console.error('Could not fetch CSVs', e);
       });
   }, [create, props.obj]);

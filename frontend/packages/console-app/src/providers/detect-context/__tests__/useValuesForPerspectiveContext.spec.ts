@@ -7,8 +7,8 @@ import {
   usePerspectives,
 } from '@console/shared/src/hooks/usePerspectives';
 import { renderHookWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
+import { usePreferredPerspective } from '../../../components/user-preferences/perspective/usePreferredPerspective';
 import { ACM_PERSPECTIVE_ID } from '../../../consts';
-import { usePreferredPerspective } from '../../user-preferences/perspective/usePreferredPerspective';
 import { useLastPerspective } from '../useLastPerspective';
 import { useValuesForPerspectiveContext } from '../useValuesForPerspectiveContext';
 
@@ -25,7 +25,7 @@ jest.mock('../useLastPerspective', () => ({
   useLastPerspective: jest.fn(),
 }));
 
-jest.mock('../../user-preferences/perspective/usePreferredPerspective', () => ({
+jest.mock('../../../components/user-preferences/perspective/usePreferredPerspective', () => ({
   usePreferredPerspective: jest.fn(),
 }));
 

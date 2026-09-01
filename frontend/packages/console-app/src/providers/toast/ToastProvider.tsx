@@ -1,16 +1,16 @@
 import type { FC, ReactNode } from 'react';
 import { useCallback } from 'react';
-import { ToastProvider } from '@console/shared/src/components/toast/ToastProvider';
+import * as UIActions from '@console/internal/actions/ui';
+import { isNotificationDrawerExpanded } from '@console/internal/reducers/ui';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
-import * as UIActions from '../../actions/ui';
-import { isNotificationDrawerExpanded } from '../../reducers/ui';
+import { InternalToastProvider } from './InternalToastProvider';
 
-type ConnectedToastProviderProps = {
+interface ToastProviderProps {
   children?: ReactNode;
-};
+}
 
-export const ConnectedToastProvider: FC<ConnectedToastProviderProps> = ({ children }) => {
+export const ToastProvider: FC<ToastProviderProps> = ({ children }) => {
   const dispatch = useConsoleDispatch();
   const isDrawerExpanded = useConsoleSelector(isNotificationDrawerExpanded);
 
@@ -21,11 +21,11 @@ export const ConnectedToastProvider: FC<ConnectedToastProviderProps> = ({ childr
   }, [dispatch, isDrawerExpanded]);
 
   return (
-    <ToastProvider
+    <InternalToastProvider
       isNotificationDrawerExpanded={isDrawerExpanded}
       onNotificationDrawerOpen={onNotificationDrawerOpen}
     >
       {children}
-    </ToastProvider>
+    </InternalToastProvider>
   );
 };

@@ -5,7 +5,7 @@ import { k8sGet } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
-import { usePreferredNamespace } from '../../user-preferences/namespace/usePreferredNamespace';
+import { usePreferredNamespace } from '../../../components/user-preferences/namespace/usePreferredNamespace';
 import { useValuesForNamespaceContext } from '../namespace';
 import { useLastNamespace } from '../useLastNamespace';
 
@@ -36,7 +36,7 @@ jest.mock('../useLastNamespace', () => ({
   useLastNamespace: jest.fn(),
 }));
 
-jest.mock('../../user-preferences/namespace/usePreferredNamespace', () => ({
+jest.mock('../../../components/user-preferences/namespace/usePreferredNamespace', () => ({
   usePreferredNamespace: jest.fn(),
 }));
 

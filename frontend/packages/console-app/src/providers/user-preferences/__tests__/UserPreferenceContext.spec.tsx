@@ -1,12 +1,12 @@
 import { act } from '@testing-library/react';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import type { RootState } from '@console/internal/redux';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import {
   renderHookWithProviders,
   renderWithProviders,
 } from '@console/shared/src/test-utils/unit-test-utils';
 import { createUserSettingsStore } from '../UserPreferenceContext';
-import { useUserPreference } from '../useUserPreference';
 
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResource: jest.fn(),

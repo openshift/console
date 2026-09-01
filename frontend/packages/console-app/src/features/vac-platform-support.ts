@@ -31,7 +31,6 @@ export const useVACPlatformSupportProvider = (setFeatureFlag: SetFeatureFlag) =>
 
       setFeatureFlag(FLAGS.VAC_PLATFORM_SUPPORT, isSupported);
     } else if (error) {
-      // eslint-disable-next-line no-console
       console.warn('Failed to detect platform for VAC support:', error);
       setFeatureFlag(FLAGS.VAC_PLATFORM_SUPPORT, false);
     }

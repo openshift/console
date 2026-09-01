@@ -311,7 +311,6 @@ describe('Import Submit Utils', () => {
       expect(errorLogger).toHaveBeenCalled();
 
       // re-enable logs for future tests
-      // eslint-disable-next-line no-console
       (console.warn as any).mockRestore();
     });
 
@@ -340,7 +339,6 @@ describe('Import Submit Utils', () => {
       expect(returnValue).toHaveLength(7);
 
       // re-enable logs for future tests
-      // eslint-disable-next-line no-console
       (console.log as any).mockRestore();
     });
 

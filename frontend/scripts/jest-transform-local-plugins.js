@@ -27,7 +27,6 @@ module.exports = {
     const { code, diagnostics } = getLocalPluginsModuleData(pluginPackages, 'cjs');
 
     if (diagnostics.errors.length > 0) {
-      // eslint-disable-next-line no-console
       console.error('Local plugins module errors:', diagnostics.errors);
     }
 

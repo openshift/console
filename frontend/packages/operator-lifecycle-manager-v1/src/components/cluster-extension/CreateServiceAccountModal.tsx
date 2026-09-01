@@ -77,7 +77,6 @@ export const CreateServiceAccountModal: OverlayComponent<CreateServiceAccountMod
         }
       })
       .catch((err) => {
-        // eslint-disable-next-line no-console
         console.error(`Failed to create ServiceAccount:`, err);
       });
   };

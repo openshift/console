@@ -11,12 +11,11 @@ import {
   hashUsernameForSettings,
   updateConfigMap,
   USER_SETTING_CONFIGMAP_NAMESPACE,
-} from '../utils/user-settings';
+} from '@console/shared/src/utils/user-settings';
 
 const alwaysUseFallbackLocalStorage = window.SERVER_FLAGS.userSettingsLocation === 'localstorage';
 
 if (alwaysUseFallbackLocalStorage) {
-  // eslint-disable-next-line no-console
   console.info('user-settings will be stored in localstorage instead of configmap.');
 }
 
@@ -25,14 +24,14 @@ if (alwaysUseFallbackLocalStorage) {
  * serialized (JSON string) value, matching the ConfigMap `data` format so that
  * both the ConfigMap and localStorage backends can be consumed uniformly.
  */
-export type UserSettingsSnapshot = {
+export interface UserSettingsSnapshot {
   data: { [key: string]: string };
   loaded: boolean;
   isLocalStorage: boolean;
-};
+}
 
-export type UserSettingsStore = {
-  subscribe: (listener: () => void) => () => void;
+export interface UserSettingsStore {
+  subscribe: (listener: VoidFunction) => VoidFunction;
   getSnapshot: () => UserSettingsSnapshot;
   /**
    * Persist a single already-serialized value for the given sanitized key.
@@ -44,7 +43,12 @@ export type UserSettingsStore = {
    * a backend once it has also installed the real implementation.
    */
   updateKey: (sanitizedKey: string, serializedValue: string) => Promise<void>;
-};
+}
+
+interface MutableUserSettingsStore extends UserSettingsStore {
+  setSnapshot: (next: UserSettingsSnapshot) => void;
+  setUpdateKey: (fn: UserSettingsStore['updateKey']) => void;
+}
 
 // Sentinel meaning "no same-window synthetic storage event is pending". Distinct
 // from any real `StorageEvent.newValue` (always `string | null`) so it can never
@@ -58,13 +62,10 @@ const EMPTY_SNAPSHOT: UserSettingsSnapshot = {
   isLocalStorage: alwaysUseFallbackLocalStorage,
 };
 
-export const createUserSettingsStore = (): UserSettingsStore & {
-  setSnapshot: (next: UserSettingsSnapshot) => void;
-  setUpdateKey: (fn: UserSettingsStore['updateKey']) => void;
-} => {
+export const createUserSettingsStore = (): MutableUserSettingsStore => {
   let snapshot: UserSettingsSnapshot = EMPTY_SNAPSHOT;
   let updateKey: UserSettingsStore['updateKey'] = async () => {};
-  const listeners = new Set<() => void>();
+  const listeners = new Set<VoidFunction>();
   return {
     getSnapshot: () => snapshot,
     subscribe: (listener) => {
@@ -75,14 +76,13 @@ export const createUserSettingsStore = (): UserSettingsStore & {
     },
     setSnapshot: (next) => {
       if (
-        next.loaded === snapshot.loaded &&
-        next.isLocalStorage === snapshot.isLocalStorage &&
-        next.data === snapshot.data
+        next.loaded !== snapshot.loaded ||
+        next.isLocalStorage !== snapshot.isLocalStorage ||
+        next.data !== snapshot.data
       ) {
-        return;
+        snapshot = next;
+        listeners.forEach((listener) => listener());
       }
-      snapshot = next;
-      listeners.forEach((listener) => listener());
     },
     updateKey: (sanitizedKey, serializedValue) => updateKey(sanitizedKey, serializedValue),
     setUpdateKey: (fn) => {
@@ -91,6 +91,7 @@ export const createUserSettingsStore = (): UserSettingsStore & {
   };
 };
 
+/** @internal - this should only be used by `useUserPreference`. */
 export const UserPreferenceContext = createContext<UserSettingsStore | null>(null);
 
 const getStorageKey = (userUid: string, impersonate: boolean): string =>
@@ -116,7 +117,7 @@ const localStorageObjectToData = (obj: unknown): UserSettingsSnapshot['data'] =>
 // Optimistically write a single serialized value into the shared store ahead of
 // the backend confirming it, so consumers reflect the change immediately.
 const optimisticallySetKey = (
-  store: ReturnType<typeof createUserSettingsStore>,
+  store: MutableUserSettingsStore,
   sanitizedKey: string,
   serializedValue: string,
 ): void => {
@@ -131,7 +132,7 @@ const optimisticallySetKey = (
 // previous serialized value (or removing it when it had none). Rebased on the
 // latest snapshot so a concurrent write to a different key is preserved.
 const revertKey = (
-  store: ReturnType<typeof createUserSettingsStore>,
+  store: MutableUserSettingsStore,
   sanitizedKey: string,
   previousValue: string | undefined,
 ): void => {
@@ -153,13 +154,13 @@ const revertKey = (
  * after the ConfigMap backend has been found to be unavailable (via
  * `setFallbackLocalStorage`).
  */
-type UserSettingsIdentity = {
+interface UserSettingsIdentity {
   userUid: string;
   isLocalStorage: boolean;
   storage: Storage;
   storageKey: string;
   setFallbackLocalStorage: (fallback: boolean) => void;
-};
+}
 
 const useUserSettingsIdentity = (): UserSettingsIdentity => {
   const userUid = useConsoleSelector((state) => {
@@ -187,7 +188,7 @@ const useUserSettingsIdentity = (): UserSettingsIdentity => {
  * `isLocalStorage` is `true`.
  */
 const useLocalStorageBackend = (
-  store: ReturnType<typeof createUserSettingsStore>,
+  store: MutableUserSettingsStore,
   enabled: boolean,
   { isLocalStorage, storage, storageKey }: UserSettingsIdentity,
 ): void => {
@@ -218,7 +219,6 @@ const useLocalStorageBackend = (
       try {
         storage.setItem(storageKey, newValue);
       } catch (err) {
-        // eslint-disable-next-line no-console
         console.error(`Error while updating storage for key ${storageKey}`, err);
         // Roll back the optimistic update and surface the failure so the caller
         // can revert its local copy too.
@@ -281,7 +281,7 @@ const useLocalStorageBackend = (
  * `isLocalStorage` is `false`.
  */
 const useConfigMapBackend = (
-  store: ReturnType<typeof createUserSettingsStore>,
+  store: MutableUserSettingsStore,
   enabled: boolean,
   { userUid, isLocalStorage, setFallbackLocalStorage }: UserSettingsIdentity,
 ): void => {
@@ -386,7 +386,6 @@ const useConfigMapBackend = (
             await createConfigMap();
             // The watch will deliver the newly created (empty) ConfigMap.
           } catch (err) {
-            // eslint-disable-next-line no-console
             console.error('Could not create ConfigMap for user settings:', err);
             setFallbackLocalStorage(true);
           } finally {
@@ -422,10 +421,7 @@ const useConfigMapBackend = (
  * Composes the user identity with the two mutually-exclusive storage backends;
  * only the backend matching `identity.isLocalStorage` does any work.
  */
-const useUserSettingsSync = (
-  store: ReturnType<typeof createUserSettingsStore>,
-  enabled: boolean,
-): void => {
+const useUserSettingsSync = (store: MutableUserSettingsStore, enabled: boolean): void => {
   const identity = useUserSettingsIdentity();
   useLocalStorageBackend(store, enabled, identity);
   useConfigMapBackend(store, enabled, identity);

@@ -24,7 +24,6 @@ export const ConsoleNotifier: FC<ConsoleNotifierProps> = ({ location }) => {
   );
 
   if (loadError) {
-    // eslint-disable-next-line no-console
     console.error('Error loading console notifications:', loadError);
     return null;
   }

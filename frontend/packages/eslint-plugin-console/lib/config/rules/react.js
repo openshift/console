@@ -40,6 +40,12 @@ module.exports = {
           group: ['@patternfly/*/dist/js/**', '@patternfly/*/dist/cjs/**'],
           message: 'Import from the package index instead of the CJS dist path.',
         },
+        {
+          group: ['use-sync-external-store', 'use-sync-external-store/shim'],
+          importNames: ['useSyncExternalStore'],
+          message:
+            "Use the useSyncExternalStore shim from 'react' instead of importing the polyfill.",
+        },
       ],
     },
   ],
