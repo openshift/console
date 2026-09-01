@@ -3,7 +3,11 @@ import { useLocation, useNavigate } from 'react-router';
 import { formatNamespaceRoute, setActiveApplication } from '@console/internal/actions/ui';
 import { getNamespace } from '@console/internal/components/utils/link';
 import { flagPending } from '@console/internal/reducers/features';
-import { ALL_APPLICATIONS_KEY, FLAGS } from '@console/shared/src/constants/common';
+import {
+  ALL_APPLICATIONS_KEY,
+  FLAGS,
+  LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
+} from '@console/shared/src/constants/common';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { usePreferredNamespace } from '../../components/user-preferences/namespace/usePreferredNamespace';
@@ -44,6 +48,7 @@ export const useValuesForNamespaceContext: UseValuesForNamespaceContext = () => 
   const updateNamespace = useCallback(
     (ns: string) => {
       if (ns !== activeNamespaceRef.current) {
+        sessionStorage.setItem(LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY, ns.trim());
         setActiveNamespace(ns);
         dispatch(setActiveApplication(ALL_APPLICATIONS_KEY));
         const oldPath = window.location.pathname;
@@ -91,6 +96,14 @@ export const useValuesForNamespaceContext: UseValuesForNamespaceContext = () => 
       updateNamespace(urlNamespace);
     }
   }, [urlNamespace, updateNamespace]);
+
+  // Mirror the active namespace into session storage (scoped to the current
+  // browser tab) so components that render outside NamespaceContext can read it
+  useEffect(() => {
+    if (activeNamespace) {
+      sessionStorage.setItem(LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY, activeNamespace.trim());
+    }
+  }, [activeNamespace]);
 
   // Change active namespace (in context and redux state) as well as last used namespace
   // when a component calls setNamespace, for example via useActiveNamespace()
