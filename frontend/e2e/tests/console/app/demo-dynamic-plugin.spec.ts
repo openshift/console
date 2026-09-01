@@ -237,8 +237,7 @@ interface ManifestResource {
 
     test('shows Dynamic Plugins in About modal', async ({ page }) => {
       await consolePluginPage.navigateToOverview();
-      await page.getByTestId('help-dropdown-toggle').click();
-      await page.getByText('About', { exact: true }).click();
+      await consolePluginPage.openAboutModal();
       await expect(page.locator('dt', { hasText: 'Dynamic plugins' })).toBeVisible();
       await expect(page.getByText('console-demo-plugin (0.0.0)')).toBeVisible();
       await page.getByRole('button', { name: 'Close Dialog' }).click();
