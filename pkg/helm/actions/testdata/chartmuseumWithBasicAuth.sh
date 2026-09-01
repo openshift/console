@@ -8,7 +8,10 @@ if [ ! -x "$BINARY" ]; then
   exit 1
 fi
 echo "Starting chartmuseum (basic auth) on port 8181..." >&2
-echo $$ > ./chartmuseum-basicauth.pid
+if ! echo $$ > ./chartmuseum-basicauth.pid; then
+  echo "ERROR: failed to write PID file ./chartmuseum-basicauth.pid" >&2
+  exit 1
+fi
 exec "$BINARY" --debug --port=8181 \
   --storage="local" \
   --storage-local-rootdir="./chartstore-8181" \
