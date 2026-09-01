@@ -258,8 +258,8 @@ func waitForTCP(addr string, timeout time.Duration, cmd *exec.Cmd, logFiles ...s
 			fmt.Fprintf(os.Stderr, "=== lsof -nP -iTCP -sTCP:LISTEN ===\n%s\n", string(out))
 		}
 	}
-	// Check chartmuseum PID file; use kill -0 (works on macOS; /proc is Linux-only)
-	for _, pidFile := range []string{"./chartmuseum-tls.pid"} {
+	// Check chartmuseum PID files; use kill -0 (works on macOS; /proc is Linux-only)
+	for _, pidFile := range []string{"./chartmuseum-tls.pid", "./chartmuseum-no-tls.pid", "./chartmuseum-basicauth.pid"} {
 		if data, err := os.ReadFile(pidFile); err == nil {
 			pidStr := strings.TrimSpace(string(data))
 			fmt.Fprintf(os.Stderr, "=== %s: %s ===\n", pidFile, pidStr)

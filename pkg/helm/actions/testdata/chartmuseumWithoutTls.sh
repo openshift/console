@@ -8,6 +8,7 @@ if [ ! -x "$BINARY" ]; then
   exit 1
 fi
 echo "Starting chartmuseum (no TLS) on port 9181..." >&2
+echo $$ > ./chartmuseum-no-tls.pid
 exec "$BINARY" --debug --port=9181 \
   --storage="local" \
   --storage-local-rootdir="./chartstore-9181"
