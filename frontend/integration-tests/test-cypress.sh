@@ -18,10 +18,6 @@ if [ "$OPENSHIFT_CI" = true ]; then
   export NO_COLOR=1
 fi
 
-if [ ! -d node_modules ]; then
-  yarn install
-fi
-
 function copyArtifacts {
   if [ -d "$ARTIFACT_DIR" ] && [ -d "$SCREENSHOTS_DIR" ]; then
     echo "Copying artifacts from $(pwd)..."
