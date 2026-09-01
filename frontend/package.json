@@ -20,7 +20,7 @@
     "check-cycles": "CHECK_CYCLES=true yarn dev-once",
     "coverage": "jest --coverage .",
     "eslint": "node ./node_modules/.bin/eslint --max-warnings ${MAX_WARNINGS:-0} --color",
-    "lint": "NODE_OPTIONS=--max-old-space-size=4096 MAX_WARNINGS=338 yarn eslint --format ./scripts/eslint-exact-warnings.js .",
+    "lint": "NODE_OPTIONS=--max-old-space-size=4096 MAX_WARNINGS=310 yarn eslint --format ./scripts/eslint-exact-warnings.js .",
     "gherkin-lint": "./node_modules/.bin/gherkin-lint -c ./packages/dev-console/integration-tests/.gherkin-lintrc ./packages/*/integration-tests/features",
     "test": "LANG=en_US.UTF-8 jest",
     "debug-test": "node --inspect-brk node_modules/.bin/jest --runInBand",
