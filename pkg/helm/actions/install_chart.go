@@ -48,9 +48,9 @@ var (
 	httpURLRe = regexp.MustCompile(`(?i)^https?://` + hostPort + `/.+\.(?:tar\.gz|tgz)$`)
 )
 
-// isValidChartURL validates chart URLs using RFC-compliant hostname labels.
+// IsValidChartURL validates chart URLs using RFC-compliant hostname labels.
 // Accepts oci://<registry>/<path> and http(s)://<host>/<path>.tgz|tar.gz URLs.
-func isValidChartURL(raw string) bool {
+func IsValidChartURL(raw string) bool {
 	return ociURLRe.MatchString(raw) || httpURLRe.MatchString(raw)
 }
 
@@ -263,7 +263,7 @@ func InstallChartAsync(ns, name, url string, vals map[string]interface{}, conf *
 // If not provided, version is extracted from the OCI URL tag when applicable.
 func InstallChartFromURL(ns, name, url string, vals map[string]interface{}, conf *action.Configuration, coreClient corev1client.CoreV1Interface, version string) (*kv1.Secret, error) {
 
-	if !isValidChartURL(url) {
+	if !IsValidChartURL(url) {
 		return nil, fmt.Errorf("invalid chart URL: %s, must be oci:// URL or http(s)://*.tgz", url)
 	}
 

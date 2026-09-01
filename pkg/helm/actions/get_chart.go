@@ -65,7 +65,7 @@ func GetChart(url string, conf *action.Configuration, repositoryNamespace string
 
 func GetChartFromURL(url string, conf *action.Configuration, namespace string, client dynamic.Interface, coreClient corev1client.CoreV1Interface, filesCleanup bool) (*chart.Chart, error) {
 
-	if !isValidChartURL(url) {
+	if !IsValidChartURL(url) {
 		return nil, fmt.Errorf("invalid chart URL: %s, must be oci:// URL or http(s)://*.tgz", url)
 	}
 	cmd := action.NewInstall(conf)
