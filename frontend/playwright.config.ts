@@ -11,6 +11,9 @@ const chrome = { ...devices['Desktop Chrome'], userAgent: INTEGRATION_TEST_USER_
 const isDebug = process.env.DEBUG === '1' || process.env.DEBUG === 'true';
 const baseURL = process.env.WEB_CONSOLE_URL || 'http://localhost:9000';
 
+// Keep these paths in sync with adminStorageState/developerStorageState in
+// e2e/setup/login-helper.ts. They cannot be imported here: that module uses
+// import.meta (ESM) while Playwright loads this config as CommonJS.
 const adminStorageState = path.resolve(__dirname, 'e2e', '.auth', 'kubeadmin.json');
 const developerStorageState = path.resolve(__dirname, 'e2e', '.auth', 'developer.json');
 const hasDeveloper = !!process.env.BRIDGE_HTPASSWD_USERNAME;

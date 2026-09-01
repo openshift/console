@@ -1,5 +1,5 @@
 import { test, expect } from '../../fixtures';
-import { performLogin } from '../../setup/login-helper';
+import { loginFromEnv } from '../../setup/login-helper';
 
 const CONSOLE_NAMESPACE = 'openshift-console';
 const CONSOLE_DEPLOYMENT = 'console';
@@ -12,26 +12,20 @@ test.describe(
     test.setTimeout(300_000);
 
     test('session survives console pod deletion', async ({ page, k8sClient }) => {
-      const baseURL = process.env.WEB_CONSOLE_URL || 'http://localhost:9000';
-
       await test.step('Log in to the console', async () => {
-        const htpasswdUser = process.env.BRIDGE_HTPASSWD_USERNAME;
-        const htpasswdPass = process.env.BRIDGE_HTPASSWD_PASSWORD;
-        const htpasswdIdp = process.env.BRIDGE_HTPASSWD_IDP;
-
-        if (htpasswdUser && htpasswdPass) {
-          await performLogin(page, baseURL, htpasswdUser, htpasswdPass, htpasswdIdp);
-        } else {
-          const kubeadminPassword = process.env.BRIDGE_KUBEADMIN_PASSWORD;
-          test.skip(!kubeadminPassword, 'No credentials configured');
-          await performLogin(page, baseURL, 'kubeadmin', kubeadminPassword!, 'kube:admin');
-        }
+        // These are @admin tests, so always authenticate as the admin persona
+        // regardless of whether developer (htpasswd) credentials are configured.
+        test.skip(
+          !process.env.BRIDGE_KUBEADMIN_PASSWORD,
+          'No kubeadmin credentials configured',
+        );
+        await loginFromEnv(page, 'admin');
 
         await expect(page.getByTestId('user-dropdown-toggle')).toBeVisible({ timeout: 60_000 });
       });
 
       await test.step('Verify dashboard loads', async () => {
-        await page.goto(`${baseURL}/dashboards`, { waitUntil: 'domcontentloaded' });
+        await page.goto('/dashboards', { waitUntil: 'domcontentloaded' });
         await expect(page).toHaveTitle(/Overview/);
       });
 
@@ -53,7 +47,7 @@ test.describe(
       });
 
       await test.step('Verify session persisted — no login redirect', async () => {
-        await page.goto(`${baseURL}/k8s/cluster/nodes`, {
+        await page.goto('/k8s/cluster/nodes', {
           waitUntil: 'domcontentloaded',
           timeout: 60_000,
         });
@@ -66,20 +60,14 @@ test.describe(
     });
 
     test('session survives console plugin toggle', async ({ page, k8sClient }) => {
-      const baseURL = process.env.WEB_CONSOLE_URL || 'http://localhost:9000';
-
       await test.step('Log in to the console', async () => {
-        const htpasswdUser = process.env.BRIDGE_HTPASSWD_USERNAME;
-        const htpasswdPass = process.env.BRIDGE_HTPASSWD_PASSWORD;
-        const htpasswdIdp = process.env.BRIDGE_HTPASSWD_IDP;
-
-        if (htpasswdUser && htpasswdPass) {
-          await performLogin(page, baseURL, htpasswdUser, htpasswdPass, htpasswdIdp);
-        } else {
-          const kubeadminPassword = process.env.BRIDGE_KUBEADMIN_PASSWORD;
-          test.skip(!kubeadminPassword, 'No credentials configured');
-          await performLogin(page, baseURL, 'kubeadmin', kubeadminPassword!, 'kube:admin');
-        }
+        // These are @admin tests, so always authenticate as the admin persona
+        // regardless of whether developer (htpasswd) credentials are configured.
+        test.skip(
+          !process.env.BRIDGE_KUBEADMIN_PASSWORD,
+          'No kubeadmin credentials configured',
+        );
+        await loginFromEnv(page, 'admin');
 
         await expect(page.getByTestId('user-dropdown-toggle')).toBeVisible({ timeout: 60_000 });
       });
@@ -132,7 +120,7 @@ test.describe(
       });
 
       await test.step('Verify session persisted after plugin toggle', async () => {
-        await page.goto(`${baseURL}/dashboards`, {
+        await page.goto('/dashboards', {
           waitUntil: 'domcontentloaded',
           timeout: 60_000,
         });
