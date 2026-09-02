@@ -6,7 +6,13 @@ for pidfile in chartmuseum-tls.pid chartmuseum-no-tls.pid chartmuseum-basicauth.
   if [ -f "$pidfile" ]; then
     pid=$(< "$pidfile")
     if [[ "$pid" =~ ^[1-9][0-9]*$ ]]; then
-      kill -TERM "$pid" 2>/dev/null || echo "chartmuseum ($pidfile) is not currently running."
+      if ! kill -0 "$pid" 2>/dev/null; then
+        echo "chartmuseum ($pidfile) is not currently running."
+      elif [[ "$(ps -p "$pid" -o comm= 2>/dev/null)" == "chartmuseum" ]]; then
+        kill -TERM "$pid" 2>/dev/null
+      else
+        echo "PID $pid from $pidfile is not chartmuseum, skipping" >&2
+      fi
     else
       echo "chartmuseum ($pidfile) contains invalid PID: $pid" >&2
     fi
