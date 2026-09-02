@@ -54,7 +54,6 @@ export default defineConfig({
   testMatch: '**/*.spec.ts',
   forbidOnly: isCI,
   globalTimeout: Number(process.env.GLOBAL_TIMEOUT_MS) || 0,
-  maxFailures: isCI ? 10 : 0,
   retries: isCI ? 2 : 0,
   timeout: 120_000,
   reporter: isCI
