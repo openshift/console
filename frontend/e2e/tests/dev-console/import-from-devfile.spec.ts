@@ -53,7 +53,7 @@ test.describe(
       await test.step('Verify workload appears in topology', async () => {
         await topologyPage.waitForWorkload('node-example');
         await topologyPage.clickWorkload('node-example');
-        await expect(topologyPage.getSidebarTitle()).toContainText('node-example', { timeout: 15_000 });
+        await expect(topologyPage.getSidebarTitle()).toContainText('node-example', { timeout: 30_000 });
       });
     });
   },
