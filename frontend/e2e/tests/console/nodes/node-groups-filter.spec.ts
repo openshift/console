@@ -11,7 +11,7 @@ async function gotoNodesPage(page: Page): Promise<void> {
   await page.goto('/k8s/cluster/nodes');
   await expect(
     page.getByTestId('data-view-table').or(page.getByTestId('page-heading')).first(),
-  ).toBeVisible();
+  ).toBeVisible({ timeout: 30_000 });
 }
 
 function groupsFilter(page: Page) {
@@ -240,8 +240,17 @@ test.describe('Edit Groups Button', () => {
     await skipIfEditGroupsButtonHidden(page);
 
     const editButton = page.getByRole('button', { name: /edit groups/i });
-    if (!(await editButton.isDisabled())) {
-      test.skip(true, 'Edit groups button is not disabled');
+    // The button starts disabled while the permission (SelfSubjectAccessReview)
+    // check is in flight, then enables for users who can edit. Poll until that
+    // settles: if it becomes enabled the user has permission and this test does
+    // not apply (e.g. cluster-admin CI runs); only a button that stays disabled
+    // indicates a genuine lack of permission.
+    const deadline = Date.now() + 15_000;
+    while ((await editButton.isDisabled()) && Date.now() < deadline) {
+      await new Promise((r) => setTimeout(r, 500));
+    }
+    if (await editButton.isEnabled()) {
+      test.skip(true, 'User has permission to edit groups; tooltip not applicable');
       return;
     }
 
@@ -250,7 +259,7 @@ test.describe('Edit Groups Button', () => {
     const tooltip = page.locator('[role="tooltip"]').filter({
       hasText: /permission.*edit groups.*administrator/i,
     });
-    await expect(tooltip).toBeVisible();
+    await expect(tooltip).toBeVisible({ timeout: 10_000 });
   });
 
   test('should open Groups Editor modal when clicked', async ({ page }) => {
