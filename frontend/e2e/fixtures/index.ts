@@ -5,6 +5,13 @@ import { test as base, expect } from '@playwright/test';
 
 import KubernetesClient from '../clients/kubernetes-client';
 
+import {
+  attachSessionRecovery,
+  awaitSessionRecovery,
+  isRecoveryInProgress,
+  recoverSessionIfExpired,
+  rememberIntendedUrl,
+} from './auth-fixture';
 import type { CleanupFixture } from './cleanup-fixture';
 import { createCleanupFixture } from './cleanup-fixture';
 
@@ -24,6 +31,53 @@ type WorkerFixtures = {
 };
 
 export const test = base.extend<TestFixtures, WorkerFixtures>({
+  // Override the built-in page fixture to transparently recover from expired
+  // sessions. Long runs can outlive the OAuth token captured in storageState;
+  // without this, navigations silently redirect to the login page and tests
+  // hang. A navigation listener re-authenticates the persona whenever a
+  // navigation lands on the login page.
+  //
+  // We also wrap page.goto so that after every navigation the caller awaits any
+  // recovery the navigation itself triggered — otherwise the action that hit
+  // the expiry would race the background re-login and act on the login page.
+  // This covers both raw page.goto calls in tests and BasePage.goTo.
+  page: async ({ page }, use, testInfo) => {
+    const detach = attachSessionRecovery(page, testInfo);
+    const originalGoto = page.goto.bind(page);
+    page.goto = async (url, options) => {
+      // Recovery itself navigates through this same overridden goto (performLogin
+      // and the route-restoration goto). Those recovery-owned navigations must
+      // bypass the recovery step below — re-entering would deadlock the override
+      // on the very claim it is nested inside. Detect them and pass straight
+      // through to the original goto.
+      if (isRecoveryInProgress(page)) {
+        return originalGoto(url, options);
+      }
+      // Record the intended destination before navigating. If this target
+      // immediately redirects to the login page, the framenavigated handler may
+      // only ever see the auth URL, so recovery would otherwise restore a stale
+      // route instead of where the test was headed.
+      rememberIntendedUrl(page, url);
+      const response = await originalGoto(url, options);
+      // Drive recovery synchronously here rather than relying on the
+      // framenavigated listener, whose dispatch can race goto resolving. This
+      // call is guarded/idempotent: it no-ops when not on the login page and
+      // joins any recovery the listener already started.
+      await recoverSessionIfExpired(page, testInfo, 2_000);
+      await awaitSessionRecovery(page);
+      return response;
+    };
+    try {
+      // Best-effort guard for a page that somehow starts on the login page; at
+      // fixture setup the page is typically about:blank, so this usually no-ops
+      // and the listener does the real work.
+      await recoverSessionIfExpired(page, testInfo);
+      await use(page);
+    } finally {
+      detach();
+    }
+  },
+
   testConfig: [
     async ({}, use) => {
       const configPath = path.resolve(import.meta.dirname, '..', '.test-config.json');
