@@ -188,7 +188,9 @@ const fetchNamespaceTenancyMetrics = async (namespaces) => {
       ];
       const metricResults = await Promise.all(
         metrics.map(async ({ key, query }) => {
-          const url = `${PROMETHEUS_TENANCY_BASE_PATH}/api/v1/query?namespace=${ns}&query=${encodeURIComponent(query)}`;
+          const url = `${PROMETHEUS_TENANCY_BASE_PATH}/api/v1/query?namespace=${ns}&query=${encodeURIComponent(
+            query,
+          )}`;
           try {
             const {
               data: { result },
