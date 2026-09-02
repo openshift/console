@@ -150,18 +150,17 @@ test.describe('Perform actions on topology', { tag: ['@smoke'] }, () => {
   test('Edit workload application groupings: T-09-TC01', async ({ page }) => {
     test.setTimeout(300_000);
     const topology = new TopologyPage(page);
+    const sidebar = new TopologySidebarPage(page);
     await createWorkload(page, 'dotnet-edit-test');
 
-    await test.step('Prepare for right-click: clear search and close any sidebar', async () => {
-      // Clear the search field to avoid interference
-      await topology.search('');
-      // Close sidebar if open
-      await topology.closeSidebarIfOpen();
-    });
-
-    await test.step('Right-click workload and select Edit', async () => {
-      await topology.rightClickOnNode('dotnet-edit-test');
-      await topology.selectContextMenuAction('Edit dotnet-edit-test');
+    await test.step('Open workload sidebar and select Edit', async () => {
+      // Use the sidebar Actions menu rather than the topology right-click context
+      // menu: PF Topology nodes are SVG groups with no usable bounding box, so a
+      // real right-click cannot be dispatched reliably in headless runs. This is
+      // the same interaction path deleteWorkload uses.
+      await topology.clickOnNode('dotnet-edit-test');
+      await sidebar.verify();
+      await sidebar.selectAction('Edit dotnet-edit-test');
     });
 
     await test.step('Change application groupings to "app"', async () => {

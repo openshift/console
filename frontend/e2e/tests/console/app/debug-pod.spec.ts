@@ -83,7 +83,10 @@ test.describe('Debug pod', () => {
     page,
     k8sClient,
   }) => {
-    test.setTimeout(300_000);
+    // This test is image-pull and reconcile heavy: it waits for a pod to
+    // CrashLoopBackOff and then spins up three separate debug pods. On a cold or
+    // slow CI cluster the default 300s is not enough, so allow more headroom.
+    test.setTimeout(480_000);
 
     const detailsPage = new DetailsPage(page);
     const listPage = new ListPage(page);
