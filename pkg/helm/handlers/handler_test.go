@@ -14,6 +14,7 @@ import (
 	releasecommon "helm.sh/helm/v4/pkg/release/common"
 	releasev1 "helm.sh/helm/v4/pkg/release/v1"
 	repo "helm.sh/helm/v4/pkg/repo/v1"
+	"helm.sh/helm/v4/pkg/storage/driver"
 	kv1 "k8s.io/api/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -358,7 +359,7 @@ func TestHelmHandlers_HandleGetRelease(t *testing.T) {
 			error:            errors.New("unknown error occurred"),
 			httpStatusCode:   http.StatusBadGateway,
 			releaseName:      "Test",
-			expectedResponse: `{"error":"Failed to find helm release: unknown error occurred"}`,
+			expectedResponse: `{"error":"Failed to get helm release: unknown error occurred"}`,
 		},
 		{
 			name:             "Return the requested release serialized in JSON format",
@@ -454,7 +455,7 @@ func TestHelmHandlers_HandleGetReleaseHistory(t *testing.T) {
 			name:                "chart release history should error out when there is error from helm",
 			error:               errors.New("Chart path is invalid"),
 			expectedResponse:    `{"error":"Failed to list helm release history: Chart path is invalid"}`,
-			httpStatusCode:      http.StatusBadGateway,
+			httpStatusCode:      http.StatusBadRequest,
 			expectedContentType: "application/json",
 			releaseName:         "test",
 		},
@@ -513,7 +514,7 @@ func TestHelmHandlers_HandleHelmUninstallRelease(t *testing.T) {
 			name:                "Invalid chart uninstall release test",
 			error:               errors.New("Chart path is invalid"),
 			expectedResponse:    `{"error":"Failed to uninstall helm release: Chart path is invalid"}`,
-			httpStatusCode:      http.StatusBadGateway,
+			httpStatusCode:      http.StatusBadRequest,
 			expectedContentType: "application/json",
 			releaseName:         "test",
 			releaseNamespace:    "test-namespace",
@@ -576,8 +577,8 @@ func TestHelmHandlers_HandleHelmRollbackRelease(t *testing.T) {
 			name:                "Invalid chart rollback release test",
 			error:               errors.New("Chart path is invalid"),
 			body:                `{"name": "test", "namespace":"test", "version":1}`,
-			expectedResponse:    `{"error":"Failed to rollback helm releases: Chart path is invalid"}`,
-			httpStatusCode:      http.StatusBadGateway,
+			expectedResponse:    `{"error":"Failed to rollback helm release: Chart path is invalid"}`,
+			httpStatusCode:      http.StatusBadRequest,
 			expectedContentType: "application/json",
 			releaseName:         "test",
 			releaseNamespace:    "test",
@@ -605,7 +606,7 @@ func TestHelmHandlers_HandleHelmRollbackRelease(t *testing.T) {
 			body:                `{"name": "test", "namespace":"test", "version":"abc"}`,
 			expectedContentType: "application/json",
 			error:               errors.New(`{"error":"Failed to parse request: json: cannot unmarshal string into Go struct field HelmRequest.version of type int"}`),
-			httpStatusCode:      http.StatusBadGateway,
+			httpStatusCode:      http.StatusBadRequest,
 			releaseName:         "test",
 			releaseNamespace:    "test",
 		},
@@ -613,7 +614,7 @@ func TestHelmHandlers_HandleHelmRollbackRelease(t *testing.T) {
 			name:                "Non exist release rollback should return revision not found error",
 			error:               actions.ErrReleaseRevisionNotFound,
 			body:                `{"name": "test", "namespace":"test", "version":1}`,
-			expectedResponse:    `{"error":"Failed to rollback helm releases: revision not found for provided release"}`,
+			expectedResponse:    `{"error":"Failed to rollback helm release: revision not found for provided release"}`,
 			httpStatusCode:      http.StatusNotFound,
 			expectedContentType: "application/json",
 			releaseName:         "test",
@@ -661,7 +662,7 @@ func TestHelmHandlers_HandleHelmUpgradeRelease(t *testing.T) {
 			name:                "Invalid chart path upgrade release test",
 			error:               errors.New("Chart path is invalid"),
 			expectedResponse:    `{"error":"Failed to upgrade helm release: Chart path is invalid"}`,
-			httpStatusCode:      http.StatusBadGateway,
+			httpStatusCode:      http.StatusBadRequest,
 			expectedContentType: "application/json",
 			requestBody:         `{"name":"test", "namespace": "test-namespace", "version": 1}`,
 			releaseName:         "test",
@@ -680,7 +681,7 @@ func TestHelmHandlers_HandleHelmUpgradeRelease(t *testing.T) {
 		},
 		{
 			name:                "Upgrade of non exist release should return no revision found error",
-			expectedResponse:    `{"error":"Failed to rollback helm releases: revision not found for provided release"}`,
+			expectedResponse:    `{"error":"Failed to upgrade helm release: revision not found for provided release"}`,
 			release:             &fakeRelease,
 			expectedContentType: "application/json",
 			error:               actions.ErrReleaseRevisionNotFound,
@@ -915,7 +916,7 @@ func TestHelmHandlers_HandleHelmInstallAsync(t *testing.T) {
 			name:             "Error occurred",
 			expectedResponse: `{"error":"Failed to install helm chart: Chart path is invalid"}`,
 			error:            errors.New("Chart path is invalid"),
-			httpStatusCode:   http.StatusBadGateway,
+			httpStatusCode:   http.StatusBadRequest,
 		},
 		{
 			name:             "Successful install returns release info in JSON format",
@@ -962,7 +963,7 @@ func TestHelmHandlers_HandleHelmUpgradeReleaseAsync(t *testing.T) {
 			name:                "Invalid chart path upgrade release test",
 			error:               errors.New("Chart path is invalid"),
 			expectedResponse:    `{"error":"Failed to upgrade helm release: Chart path is invalid"}`,
-			httpStatusCode:      http.StatusBadGateway,
+			httpStatusCode:      http.StatusBadRequest,
 			expectedContentType: "application/json",
 			requestBody:         `{"name":"test", "namespace": "test-namespace", "version": 1}`,
 			releaseName:         "test",
@@ -981,7 +982,7 @@ func TestHelmHandlers_HandleHelmUpgradeReleaseAsync(t *testing.T) {
 		},
 		{
 			name:                "Upgrade of non exist release should return no revision found error",
-			expectedResponse:    `{"error":"Failed to rollback helm releases: revision not found for provided release"}`,
+			expectedResponse:    `{"error":"Failed to upgrade helm release: revision not found for provided release"}`,
 			secret:              &fakeSecret,
 			expectedContentType: "application/json",
 			error:               actions.ErrReleaseRevisionNotFound,
@@ -1029,7 +1030,7 @@ func TestHelmHandlers_HandleHelmUnInstallAsync(t *testing.T) {
 			name:             "Error occurred",
 			expectedResponse: `{"error":"Failed to install helm chart: Chart path is invalid"}`,
 			error:            errors.New("Chart path is invalid"),
-			httpStatusCode:   http.StatusBadGateway,
+			httpStatusCode:   http.StatusBadRequest,
 		},
 		{
 			name:             "Successful uninstall returns secret info",
@@ -1073,7 +1074,7 @@ func TestHelmHandlers_HandleHelmInstallAsyncNoRepo(t *testing.T) {
 			name:             "Invalid JSON request",
 			requestBody:      `{invalid}`,
 			expectedResponse: `{"error":"Failed to parse request: invalid character 'i' looking for beginning of object key string"}`,
-			httpStatusCode:   http.StatusBadGateway,
+			httpStatusCode:   http.StatusBadRequest,
 		},
 		{
 			name:             "Error occurred during chart install from URL",
@@ -1108,6 +1109,32 @@ func TestHelmHandlers_HandleHelmInstallAsyncNoRepo(t *testing.T) {
 			}
 			if response.Body.String() != tt.expectedResponse {
 				t.Errorf("response body not matching expected is %s and received is %s", tt.expectedResponse, response.Body.String())
+			}
+		})
+	}
+}
+
+func TestDetermineErrorStatusCode(t *testing.T) {
+	tests := []struct {
+		name     string
+		err      error
+		expected int
+	}{
+		{"actions ErrReleaseNotFound", actions.ErrReleaseNotFound, http.StatusNotFound},
+		{"driver ErrReleaseNotFound", driver.ErrReleaseNotFound, http.StatusNotFound},
+		{"actions ErrReleaseRevisionNotFound", actions.ErrReleaseRevisionNotFound, http.StatusNotFound},
+		{"driver ErrNoDeployedReleases", driver.ErrNoDeployedReleases, http.StatusNotFound},
+		{"wrapped driver ErrReleaseNotFound", fmt.Errorf("wrap: %w", driver.ErrReleaseNotFound), http.StatusNotFound},
+		{"invalid chart URL", fmt.Errorf("invalid chart URL: foo"), http.StatusBadRequest},
+		{"Chart path is invalid", errors.New("Chart path is invalid"), http.StatusBadRequest},
+		{"invalid revision", errors.New("Revision no. should be more than 0"), http.StatusBadRequest},
+		{"unknown error", errors.New("something broke"), http.StatusBadGateway},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := determineErrorStatusCode(tt.err)
+			if got != tt.expected {
+				t.Errorf("determineErrorStatusCode() = %d, want %d", got, tt.expected)
 			}
 		})
 	}
