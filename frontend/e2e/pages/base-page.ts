@@ -1,7 +1,6 @@
 import type { Locator, Page } from '@playwright/test';
 
-import { expect, test } from '../fixtures';
-import { loginFromEnv } from '../setup/login-helper';
+import { expect } from '../fixtures';
 
 import type KubernetesClient from '../clients/kubernetes-client';
 
@@ -28,17 +27,11 @@ export async function setEditorContent(page: Page, content: string): Promise<voi
 }
 
 export async function warmupSPA(page: Page): Promise<void> {
+  // Session recovery on OAuth redirect is handled by the guarded `page` fixture
+  // (e2e/fixtures/index.ts), which re-authenticates on any navigation — during
+  // warmup or mid-test — that gets bounced to the login page.
   await expect(async () => {
     await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 60_000 });
-    // A shared storageState session can expire or be invalidated mid-run (e.g. by
-    // a console rollout triggered in another spec), bouncing us to the OAuth login
-    // page. Re-authenticate with the current project's persona so storageState
-    // reliant specs can self-heal instead of hanging on the providers page.
-    if (/\/oauth\/|oauth-openshift|\/login\b/.test(page.url())) {
-      const persona = test.info().project.name.endsWith('-developer') ? 'developer' : 'admin';
-      await loginFromEnv(page, persona);
-      await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 60_000 });
-    }
     await expect(page.locator('#page-sidebar')).toBeVisible({ timeout: 30_000 });
   }).toPass({ intervals: [1_000, 2_000, 5_000], timeout: 90_000 });
   await dismissQuickStartDrawer(page);

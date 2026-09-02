@@ -4,9 +4,15 @@ import * as path from 'path';
 import { test as base, expect } from '@playwright/test';
 
 import KubernetesClient from '../clients/kubernetes-client';
+import { loginFromEnv } from '../setup/login-helper';
 
 import type { CleanupFixture } from './cleanup-fixture';
 import { createCleanupFixture } from './cleanup-fixture';
+
+// URLs the console redirects to when a shared storageState session expires or is
+// invalidated (e.g. by a console rollout in another spec). Matches the OAuth
+// server and the console's own login route.
+const OAUTH_REDIRECT_RE = /\/oauth\/|oauth-openshift|\/auth\/login\b/;
 
 export interface SharedTestConfig {
   testNamespace: string;
@@ -24,6 +30,44 @@ type WorkerFixtures = {
 };
 
 export const test = base.extend<TestFixtures, WorkerFixtures>({
+  // Override the built-in `page` fixture to self-heal lost sessions. When any
+  // navigation is bounced to the OAuth login page — during warmup or mid-test —
+  // re-authenticate the current persona and retry the original target so the
+  // caller transparently lands on the page it asked for. loginFromEnv returns
+  // quickly when the OAuth SSO cookie is still valid (the flow auto-completes)
+  // and resubmits credentials when it isn't. Persona is derived from the project
+  // name, matching the storageState mapping in playwright.config.ts.
+  page: async ({ page }, use, testInfo) => {
+    const persona = testInfo.project.name.endsWith('-developer') ? 'developer' : 'admin';
+    const originalGoto = page.goto.bind(page);
+    let recovering = false;
+
+    const recoverIfRedirectedToLogin = async (): Promise<boolean> => {
+      // Guard against re-entrancy: loginFromEnv navigates internally, and those
+      // navigations flow back through this override.
+      if (recovering || !OAUTH_REDIRECT_RE.test(page.url())) {
+        return false;
+      }
+      recovering = true;
+      try {
+        await loginFromEnv(page, persona);
+      } finally {
+        recovering = false;
+      }
+      return true;
+    };
+
+    page.goto = async (url, options) => {
+      const response = await originalGoto(url, options);
+      if (await recoverIfRedirectedToLogin()) {
+        return originalGoto(url, options);
+      }
+      return response;
+    };
+
+    await use(page);
+  },
+
   testConfig: [
     async ({}, use) => {
       const configPath = path.resolve(import.meta.dirname, '..', '.test-config.json');
