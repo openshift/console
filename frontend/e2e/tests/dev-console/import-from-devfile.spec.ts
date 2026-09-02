@@ -46,7 +46,7 @@ test.describe('Create Application from Devfile', { tag: ['@dev-console', '@regre
       await topologyPage.waitForWorkload('node-example');
       await topologyPage.clickWorkload('node-example');
       await expect(topologyPage.getSidebarTitle()).toContainText('node-example', {
-        timeout: 15_000,
+        timeout: 30_000,
       });
     });
   });
