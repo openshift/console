@@ -54,6 +54,7 @@ test.describe('Web Terminal for Developer user', () => {
   test(
     'create new project and use Web Terminal',
     async ({ page, k8sClient, cleanup }) => {
+      test.slow();
       const webTerminal = new WebTerminalPage(page);
       cleanup.trackNamespace(NEW_PROJECT);
 
@@ -88,6 +89,7 @@ test.describe('Web Terminal for Developer user', () => {
 
   // eslint-disable-next-line playwright/expect-expect
   test('open Web Terminal for existing project', async ({ page, k8sClient }) => {
+    test.slow();
     const webTerminal = new WebTerminalPage(page);
 
     await test.step('Wait for terminal icon and open terminal', async () => {

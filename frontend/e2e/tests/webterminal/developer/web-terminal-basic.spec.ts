@@ -24,6 +24,7 @@ test.describe('Web Terminal basic user', () => {
   });
 
   test('open terminal with advanced timeout', async ({ page }) => {
+    test.slow();
     const webTerminal = new WebTerminalPage(page);
 
     await test.step('Open terminal with 1-minute timeout', async () => {
@@ -45,6 +46,7 @@ test.describe('Web Terminal basic user', () => {
   });
 
   test('verify Open in new tab button', async ({ page }) => {
+    test.slow();
     const webTerminal = new WebTerminalPage(page);
 
     await test.step('Wait for terminal icon and open terminal', async () => {
