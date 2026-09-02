@@ -1,6 +1,7 @@
 import type { Page } from '@playwright/test';
 
 import { test, expect } from '../../../fixtures';
+import { warmupSPA } from '../../../pages/base-page';
 
 /**
  * E2E tests for Node Groups filtering functionality
@@ -8,6 +9,10 @@ import { test, expect } from '../../../fixtures';
  */
 
 async function gotoNodesPage(page: Page): Promise<void> {
+  // Warm the SPA shell first (self-heals a lost session and waits out plugin
+  // init) so navigating straight to this data-heavy page doesn't race a cold
+  // bootstrap — the direct goto was timing out on CI before the shell rendered.
+  await warmupSPA(page);
   await page.goto('/k8s/cluster/nodes');
   await expect(
     page.getByTestId('data-view-table').or(page.getByTestId('page-heading')).first(),
