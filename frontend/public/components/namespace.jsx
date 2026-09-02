@@ -76,7 +76,7 @@ import { LazyConfigureNamespacePullSecretModalOverlay } from './modals';
 import { RoleBindingsPage } from './RBAC';
 import { Bar } from './graphs/bar';
 import { Area } from './graphs/area';
-import { PROMETHEUS_BASE_PATH } from './graphs/consts';
+import { PROMETHEUS_BASE_PATH, PROMETHEUS_TENANCY_BASE_PATH } from './graphs/consts';
 import { flagPending } from '../reducers/features';
 import { OpenShiftGettingStarted } from './start-guide';
 import { OverviewListPage } from './overview';
@@ -162,6 +162,50 @@ const fetchNamespaceMetrics = () => {
       // eslint-disable-next-line no-console
       .catch(console.error)
   );
+};
+
+const DNS_LABEL_RE = /^[a-z]([a-z0-9-]{0,61}[a-z0-9])?$/;
+
+const fetchNamespaceTenancyMetrics = async (namespaces) => {
+  if (!PROMETHEUS_TENANCY_BASE_PATH || namespaces.length === 0) {
+    return {};
+  }
+  const sanitizedNamespaces = namespaces.filter((ns) => DNS_LABEL_RE.test(ns));
+  if (sanitizedNamespaces.length === 0) {
+    return {};
+  }
+  const results = await Promise.all(
+    sanitizedNamespaces.map(async (ns) => {
+      const metrics = [
+        {
+          key: 'memory',
+          query: `sum(container_memory_working_set_bytes{namespace='${ns}',container='',pod!=''}) BY (namespace)`,
+        },
+        {
+          key: 'cpu',
+          query: `namespace:container_cpu_usage:sum{namespace='${ns}'}`,
+        },
+      ];
+      const metricResults = await Promise.all(
+        metrics.map(async ({ key, query }) => {
+          const url = `${PROMETHEUS_TENANCY_BASE_PATH}/api/v1/query?namespace=${ns}&query=${encodeURIComponent(query)}`;
+          try {
+            const {
+              data: { result },
+            } = await coFetchJSON(url);
+            if (result.length === 0) {
+              return {};
+            }
+            return { [key]: { [ns]: Number(result[0].value[1]) } };
+          } catch {
+            return {};
+          }
+        }),
+      );
+      return _.merge({}, ...metricResults);
+    }),
+  );
+  return _.merge({}, ...results);
 };
 
 const namespaceColumnInfo = [
@@ -758,21 +802,48 @@ export const ProjectList = (props) => {
     true,
   );
   const isPrometheusAvailable = usePrometheusGate();
-  const showMetrics = isPrometheusAvailable && canGetNS;
+  const showMetrics = isPrometheusAvailable;
   const showActions = true;
   const { columns, resetAllColumnWidths } = useProjectsColumns({ showMetrics, showActions });
   const namespaceMetrics = useConsoleSelector(({ UI }) => UI.getIn(['metrics', 'namespace']));
 
+  const namespaces = useMemo(
+    () => (props.data || []).map((project) => project.metadata?.name).filter(Boolean),
+    [props.data],
+  );
+
   // TODO Utilize usePoll hook
   useEffect(() => {
-    if (showMetrics) {
-      const updateMetrics = () =>
-        fetchNamespaceMetrics().then((result) => dispatch(UIActions.setNamespaceMetrics(result)));
-      updateMetrics();
-      const id = setInterval(updateMetrics, 30 * 1000);
-      return () => clearInterval(id);
+    if (!showMetrics || flagPending(canGetNS)) {
+      return;
     }
-  }, [dispatch, showMetrics]);
+    let active = true;
+    const updateMetrics = async () => {
+      try {
+        const result = canGetNS
+          ? await fetchNamespaceMetrics()
+          : await fetchNamespaceTenancyMetrics(namespaces);
+        if (active) {
+          dispatch(UIActions.setNamespaceMetrics(result));
+        }
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error(e);
+      }
+    };
+    let id;
+    const poll = async () => {
+      await updateMetrics();
+      if (active) {
+        id = setTimeout(poll, 30 * 1000);
+      }
+    };
+    poll();
+    return () => {
+      active = false;
+      clearTimeout(id);
+    };
+  }, [dispatch, showMetrics, canGetNS, namespaces]);
 
   const columnLayout = useMemo(
     () => ({
