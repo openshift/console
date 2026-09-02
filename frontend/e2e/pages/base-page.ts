@@ -27,6 +27,9 @@ export async function setEditorContent(page: Page, content: string): Promise<voi
 }
 
 export async function warmupSPA(page: Page): Promise<void> {
+  // Session recovery on OAuth redirect is handled by the guarded `page` fixture
+  // (e2e/fixtures/index.ts), which re-authenticates on any navigation — during
+  // warmup or mid-test — that gets bounced to the login page.
   await expect(async () => {
     await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 60_000 });
     await expect(page.locator('#page-sidebar')).toBeVisible({ timeout: 30_000 });
