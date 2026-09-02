@@ -6,7 +6,13 @@ const CONSOLE_DEPLOYMENT = 'console';
 
 test.describe(
   'Session persistence across pod restarts',
-  { tag: ['@admin', '@slow'] },
+  {
+    tag: ['@admin', '@slow'],
+    // Opt out of the page fixture's transparent OAuth re-auth: these tests
+    // assert the session survives on its own, so auto-recovery would mask a
+    // real regression.
+    annotation: { type: 'no-auto-reauth', description: 'asserts session survival directly' },
+  },
   () => {
     test.use({ storageState: { cookies: [], origins: [] } });
     test.setTimeout(300_000);
