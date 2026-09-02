@@ -1,26 +1,14 @@
 import { test, expect } from '../../../fixtures';
 import { WebTerminalPage } from '../../../pages/web-terminal-page';
-import {
-  ensureWebTerminalOperatorInstalled,
-  uninstallWebTerminalOperator,
-} from '../utils/web-terminal-operator';
 
 const INACTIVITY_MESSAGE = 'The terminal connection has closed due to inactivity.';
 const TERMINAL_IDLING_TIMEOUT = Number(process.env.TERMINAL_IDLING_TIMEOUT) || 200_000;
 const TEST_NAMESPACE = 'aut-terminal-basic';
 
 test.describe('Web Terminal basic user', () => {
-  test.beforeAll(async ({ k8sClient }) => {
-    await ensureWebTerminalOperatorInstalled(k8sClient);
-  });
-
   test.beforeEach(async ({ k8sClient, cleanup }) => {
     await k8sClient.createNamespace(TEST_NAMESPACE);
     cleanup.trackNamespace(TEST_NAMESPACE);
-  });
-
-  test.afterAll(async ({ k8sClient }) => {
-    await uninstallWebTerminalOperator(k8sClient);
   });
 
   test('open terminal with advanced timeout', async ({ page }) => {
