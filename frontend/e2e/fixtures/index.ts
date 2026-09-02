@@ -37,7 +37,16 @@ export const test = base.extend<TestFixtures, WorkerFixtures>({
   // quickly when the OAuth SSO cookie is still valid (the flow auto-completes)
   // and resubmits credentials when it isn't. Persona is derived from the project
   // name, matching the storageState mapping in playwright.config.ts.
+  //
+  // Tests that assert on session/auth behavior directly (e.g. session
+  // persistence across pod restarts) must opt out with a
+  // `{ type: 'no-auto-reauth' }` annotation, otherwise transparent recovery
+  // would mask the very failure they check for.
   page: async ({ page }, use, testInfo) => {
+    if (testInfo.annotations.some((a) => a.type === 'no-auto-reauth')) {
+      await use(page);
+      return;
+    }
     const persona = testInfo.project.name.endsWith('-developer') ? 'developer' : 'admin';
     const originalGoto = page.goto.bind(page);
     let recovering = false;
@@ -59,6 +68,20 @@ export const test = base.extend<TestFixtures, WorkerFixtures>({
 
     page.goto = async (url, options) => {
       const response = await originalGoto(url, options);
+      // The console redirects to the OAuth login page client-side, a beat after
+      // the initial document loads, so `page.url()` can still read the target
+      // right after goto resolves. Wait for auth to settle before deciding: the
+      // console boots with a `co-auth-pending` class on <html> and removes it
+      // once its authenticated bootstrap fetch succeeds (see public/components/
+      // app.tsx); a 401 instead redirects to OAuth. Race that class dropping
+      // against the OAuth redirect so we neither miss the redirect nor stall the
+      // happy path.
+      if (!recovering) {
+        // eslint-disable-next-line no-restricted-syntax -- waiting for state, no action follows
+        const authSettled = page.locator('html:not(.co-auth-pending)').waitFor({ state: 'attached', timeout: 30_000 });
+        const redirectedToLogin = page.waitForURL(OAUTH_REDIRECT_RE, { timeout: 30_000 });
+        await Promise.race([authSettled.catch(() => {}), redirectedToLogin.catch(() => {})]);
+      }
       if (await recoverIfRedirectedToLogin()) {
         return originalGoto(url, options);
       }
