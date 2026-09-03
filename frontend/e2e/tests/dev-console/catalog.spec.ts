@@ -115,7 +115,7 @@ test.describe(
     test('forces project selection when all namespaces URL is accessed [A-12-TC01]', async ({
       page,
     }) => {
-      // TechPreview clusters run only a limited set of tests via test-prow-playwright-e2e-techpreview.sh
+      // TechPreview clusters run only a limited set of tests via test-prow-e2e-techpreview.sh
       // and do not enable the Developer perspective. CatalogPage.tsx only shows the project selection
       // message when isDevPerspective is true (see: `showCreateProjectListPage = isDevPerspective &&
       // isAllNamespaces`), so this test would always fail on TechPreview. Skip it there; it is
