@@ -10,7 +10,9 @@ export class ServiceAccountPage extends BasePage {
 
   async navigateToDetails(namespace: string, name: string): Promise<void> {
     await this.goTo(`/k8s/ns/${namespace}/~v1~ServiceAccount/${name}`);
-    await expect(this.page.getByRole('heading', { level: 1 }).filter({ hasText: name })).toBeVisible({
+    await expect(
+      this.page.getByRole('heading', { level: 1 }).filter({ hasText: name }),
+    ).toBeVisible({
       timeout: 60_000,
     });
     await this.waitForDetailsActions(this.actionsMenuButton);

@@ -12,7 +12,9 @@ export class UserPage extends BasePage {
 
   async navigateToDetails(name: string): Promise<void> {
     await this.goTo(`/k8s/cluster/user.openshift.io~v1~User/${name}`);
-    await expect(this.page.getByRole('heading', { level: 1 }).filter({ hasText: name })).toBeVisible({
+    await expect(
+      this.page.getByRole('heading', { level: 1 }).filter({ hasText: name }),
+    ).toBeVisible({
       timeout: 60_000,
     });
     await this.waitForDetailsActions(this.actionsMenuButton);

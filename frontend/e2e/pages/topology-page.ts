@@ -9,7 +9,9 @@ export class TopologyPage extends BasePage {
   private readonly noResourcesFound = this.page.getByTestId('no-resources-found');
   private readonly startBuildingLink = this.page.getByTestId('start-building-your-application');
   private readonly addPageLink = this.page.getByTestId('add-page');
-  private readonly filterByResourceDropdown = this.page.getByTestId('filter-by-resource').getByRole('button');
+  private readonly filterByResourceDropdown = this.page
+    .getByTestId('filter-by-resource')
+    .getByRole('button');
   private readonly displayOptionsButton = this.page
     .getByRole('button')
     .filter({ hasText: 'Display options' });
@@ -25,7 +27,9 @@ export class TopologyPage extends BasePage {
   private readonly workloadNameField = this.page.getByTestId('application-form-app-name');
   private readonly resourceTypeField = this.page.getByTestId('form-select-input-resources-field');
   private readonly saveChangesButton = this.page.getByTestId('save-changes');
-  private readonly applicationDropdown = this.page.getByTestId('form-dropdown-application-name-field');
+  private readonly applicationDropdown = this.page.getByTestId(
+    'form-dropdown-application-name-field',
+  );
   private readonly sidebarCloseButton = this.page.getByTestId('sidebar-close-button');
 
   async navigateToTopology(namespace?: string): Promise<void> {
@@ -35,9 +39,7 @@ export class TopologyPage extends BasePage {
   }
 
   async navigateToTopologyGraph(namespace?: string): Promise<void> {
-    const url = namespace
-      ? `/topology/ns/${namespace}?view=graph`
-      : '/topology?view=graph';
+    const url = namespace ? `/topology/ns/${namespace}?view=graph` : '/topology?view=graph';
     await this.goTo(url);
     await this.waitForLoadingComplete(10_000);
   }
@@ -105,9 +107,7 @@ export class TopologyPage extends BasePage {
 
   // PF Topology internal class — no data-test available; may break on PF upgrades
   getNode(nodeName: string): Locator {
-    return this.page
-      .locator('g[class$="topology__node__label"]')
-      .filter({ hasText: nodeName });
+    return this.page.locator('g[class$="topology__node__label"]').filter({ hasText: nodeName });
   }
 
   async ensureGraphView(): Promise<void> {
@@ -139,7 +139,7 @@ export class TopologyPage extends BasePage {
   }
 
   async selectContextMenuAction(action: string): Promise<void> {
-    const actionButton = this.page.getByRole('menuitem', { name: action })
+    const actionButton = this.page.getByRole('menuitem', { name: action });
     await expect(actionButton).toBeVisible({ timeout: 10_000 });
     await this.robustClick(actionButton);
   }
@@ -195,7 +195,10 @@ export class TopologyPage extends BasePage {
 
   async fillApplicationName(appName: string): Promise<void> {
     // eslint-disable-next-line no-restricted-syntax
-    const hasDropdown = await this.applicationDropdown.waitFor({ state: 'visible', timeout: 2_000 }).then(() => true).catch(() => false);
+    const hasDropdown = await this.applicationDropdown
+      .waitFor({ state: 'visible', timeout: 2_000 })
+      .then(() => true)
+      .catch(() => false);
     if (hasDropdown) {
       await this.applicationDropdown.click();
       await this.page.getByRole('option', { name: 'Create application' }).click();
@@ -218,11 +221,7 @@ export class TopologyPage extends BasePage {
 
   async selectBuilderImageFromList(pattern: RegExp): Promise<void> {
     await expect(this.page.getByRole('progressbar')).not.toBeAttached({ timeout: 60_000 });
-    await this.page
-      .getByRole('listitem')
-      .filter({ hasText: pattern })
-      .first()
-      .click();
+    await this.page.getByRole('listitem').filter({ hasText: pattern }).first().click();
   }
 
   async clickCreateButton(): Promise<void> {
@@ -234,9 +233,10 @@ export class TopologyPage extends BasePage {
   }
 
   getWorkload(name: string): Locator {
-    return this.page.locator(`[data-id="${name}"] text`).first().or(
-      this.page.locator('.pf-topology-content').getByText(name, { exact: true }),
-    );
+    return this.page
+      .locator(`[data-id="${name}"] text`)
+      .first()
+      .or(this.page.locator('.pf-topology-content').getByText(name, { exact: true }));
   }
 
   async clickWorkload(name: string): Promise<void> {

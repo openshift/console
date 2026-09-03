@@ -32,9 +32,7 @@ test.describe('Insights Popup on Cluster Dashboard', { tag: ['@admin'] }, () => 
     await dashboard.openInsightsPopup();
 
     await expect(
-      dashboard
-        .getPopover()
-        .getByText('Red Hat Lightspeed Advisor identifies and prioritizes'),
+      dashboard.getPopover().getByText('Red Hat Lightspeed Advisor identifies and prioritizes'),
     ).toBeVisible();
   });
 
@@ -71,7 +69,9 @@ test.describe('Insights Popup on Cluster Dashboard', { tag: ['@admin'] }, () => 
     test.skip(!dataAvailable, 'Insights data is not available on this cluster');
 
     const popover = dashboard.getPopover();
-    const advisorLink = popover.getByText(/View (all recommendations|more) in Red Hat Lightspeed Advisor/);
+    const advisorLink = popover.getByText(
+      /View (all recommendations|more) in Red Hat Lightspeed Advisor/,
+    );
     await expect(advisorLink).toBeVisible();
   });
 });

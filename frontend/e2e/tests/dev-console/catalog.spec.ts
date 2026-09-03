@@ -19,87 +19,79 @@ import { TopologyPage } from '../../pages/topology-page';
  *   - A-09-TC011 (@manual) - Devfiles on Software Catalog
  */
 
-test.describe(
-  'Create Application from Catalog',
-  { tag: ['@dev-console', '@smoke'] },
-  () => {
-    const ns = `aut-addflow-catalog-${Date.now()}`;
-    let addPage: AddPage;
-    let catalogPage: CatalogPage;
-    let topologyPage: TopologyPage;
+test.describe('Create Application from Catalog', { tag: ['@dev-console', '@smoke'] }, () => {
+  const ns = `aut-addflow-catalog-${Date.now()}`;
+  let addPage: AddPage;
+  let catalogPage: CatalogPage;
+  let topologyPage: TopologyPage;
 
-    test.beforeEach(async ({ page, k8sClient, cleanup }) => {
-      addPage = new AddPage(page);
-      catalogPage = new CatalogPage(page);
-      topologyPage = new TopologyPage(page);
-      await k8sClient.createNamespace(ns);
-      cleanup.trackNamespace(ns);
-      await warmupSPA(page);
+  test.beforeEach(async ({ page, k8sClient, cleanup }) => {
+    addPage = new AddPage(page);
+    catalogPage = new CatalogPage(page);
+    topologyPage = new TopologyPage(page);
+    await k8sClient.createNamespace(ns);
+    cleanup.trackNamespace(ns);
+    await warmupSPA(page);
+  });
+
+  test('deploy application using Catalog Template - MariaDB [A-01-TC02]', async () => {
+    test.slow();
+
+    await test.step('Navigate to Templates in Software Catalog', async () => {
+      await catalogPage.navigateToTemplates(ns);
     });
 
-    test('deploy application using Catalog Template - MariaDB [A-01-TC02]', async () => {
-      test.slow();
-
-      await test.step('Navigate to Templates in Software Catalog', async () => {
-        await catalogPage.navigateToTemplates(ns);
-      });
-
-      await test.step('Select Databases category and MariaDB template', async () => {
-        await catalogPage.selectTemplateCategory('Databases');
-        await catalogPage.searchAndSelectCard('MariaDB');
-      });
-
-      await test.step('Instantiate template', async () => {
-        await catalogPage.clickInstantiateTemplate();
-        await catalogPage.getFormSubmitButton().click();
-      });
-
-      await test.step('Verify workload in topology', async () => {
-        await topologyPage.waitForWorkload('mariadb');
-        await expect(topologyPage.getWorkload('mariadb')).toBeVisible();
-      });
-    });
-  },
-);
-
-test.describe(
-  'Create Database from Add page',
-  { tag: ['@dev-console', '@smoke'] },
-  () => {
-    const ns = `aut-addflow-database-${Date.now()}`;
-    let addPage: AddPage;
-    let catalogPage: CatalogPage;
-    let topologyPage: TopologyPage;
-
-    test.beforeEach(async ({ page, k8sClient, cleanup }) => {
-      addPage = new AddPage(page);
-      catalogPage = new CatalogPage(page);
-      topologyPage = new TopologyPage(page);
-      await k8sClient.createNamespace(ns);
-      cleanup.trackNamespace(ns);
-      await addPage.ensureDevPerspectiveAndNavigate(ns, k8sClient);
+    await test.step('Select Databases category and MariaDB template', async () => {
+      await catalogPage.selectTemplateCategory('Databases');
+      await catalogPage.searchAndSelectCard('MariaDB');
     });
 
-    test('create Database from Add page - MariaDB [A-03-TC01]', async () => {
-      test.slow();
-
-      await test.step('Click Database card', async () => {
-        await addPage.clickDatabaseCard();
-      });
-
-      await test.step('Select MariaDB and instantiate', async () => {
-        await catalogPage.searchAndSelectCard('MariaDB');
-        await catalogPage.clickInstantiateTemplate();
-        await catalogPage.getFormSubmitButton().click();
-      });
-
-      await test.step('Verify workload in topology', async () => {
-        await topologyPage.waitForWorkload('mariadb');
-        await expect(topologyPage.getWorkload('mariadb')).toBeVisible();
-      });
+    await test.step('Instantiate template', async () => {
+      await catalogPage.clickInstantiateTemplate();
+      await catalogPage.getFormSubmitButton().click();
     });
-  },
-);
+
+    await test.step('Verify workload in topology', async () => {
+      await topologyPage.waitForWorkload('mariadb');
+      await expect(topologyPage.getWorkload('mariadb')).toBeVisible();
+    });
+  });
+});
+
+test.describe('Create Database from Add page', { tag: ['@dev-console', '@smoke'] }, () => {
+  const ns = `aut-addflow-database-${Date.now()}`;
+  let addPage: AddPage;
+  let catalogPage: CatalogPage;
+  let topologyPage: TopologyPage;
+
+  test.beforeEach(async ({ page, k8sClient, cleanup }) => {
+    addPage = new AddPage(page);
+    catalogPage = new CatalogPage(page);
+    topologyPage = new TopologyPage(page);
+    await k8sClient.createNamespace(ns);
+    cleanup.trackNamespace(ns);
+    await addPage.ensureDevPerspectiveAndNavigate(ns, k8sClient);
+  });
+
+  test('create Database from Add page - MariaDB [A-03-TC01]', async () => {
+    test.slow();
+
+    await test.step('Click Database card', async () => {
+      await addPage.clickDatabaseCard();
+    });
+
+    await test.step('Select MariaDB and instantiate', async () => {
+      await catalogPage.searchAndSelectCard('MariaDB');
+      await catalogPage.clickInstantiateTemplate();
+      await catalogPage.getFormSubmitButton().click();
+    });
+
+    await test.step('Verify workload in topology', async () => {
+      await topologyPage.waitForWorkload('mariadb');
+      await expect(topologyPage.getWorkload('mariadb')).toBeVisible();
+    });
+  });
+});
 
 test.describe(
   'Software Catalog with All Namespaces',
@@ -154,38 +146,34 @@ test.describe(
   },
 );
 
-test.describe(
-  'Software Catalog Page details',
-  { tag: ['@dev-console', '@regression'] },
-  () => {
-    const ns = `aut-catalog-pagedetails-${Date.now()}`;
-    let catalogPage: CatalogPage;
+test.describe('Software Catalog Page details', { tag: ['@dev-console', '@regression'] }, () => {
+  const ns = `aut-catalog-pagedetails-${Date.now()}`;
+  let catalogPage: CatalogPage;
 
-    test.beforeEach(async ({ page, k8sClient, cleanup }) => {
-      catalogPage = new CatalogPage(page);
-      await k8sClient.createNamespace(ns);
-      cleanup.trackNamespace(ns);
-      await warmupSPA(page);
-      await catalogPage.navigateToCatalog(ns);
+  test.beforeEach(async ({ page, k8sClient, cleanup }) => {
+    catalogPage = new CatalogPage(page);
+    await k8sClient.createNamespace(ns);
+    cleanup.trackNamespace(ns);
+    await warmupSPA(page);
+    await catalogPage.navigateToCatalog(ns);
+  });
+
+  test('Software Catalog page default view [A-09-TC01]', async () => {
+    await expect(catalogPage.getFilterInput()).toBeVisible();
+  });
+
+  test('Helm Charts on Software Catalog [A-09-TC06]', async () => {
+    await test.step('Click on Helm Charts type', async () => {
+      await catalogPage.selectTypeOption('Helm Charts');
     });
 
-    test('Software Catalog page default view [A-09-TC01]', async () => {
+    await test.step('Verify Helm Charts are displayed', async () => {
+      const tiles = catalogPage.getCatalogTiles();
+      await expect(tiles.first()).toBeVisible({ timeout: 30_000 });
       await expect(catalogPage.getFilterInput()).toBeVisible();
     });
-
-    test('Helm Charts on Software Catalog [A-09-TC06]', async () => {
-      await test.step('Click on Helm Charts type', async () => {
-        await catalogPage.selectTypeOption('Helm Charts');
-      });
-
-      await test.step('Verify Helm Charts are displayed', async () => {
-        const tiles = catalogPage.getCatalogTiles();
-        await expect(tiles.first()).toBeVisible({ timeout: 30_000 });
-        await expect(catalogPage.getFilterInput()).toBeVisible();
-      });
-    });
-  },
-);
+  });
+});
 
 test.describe('Software Catalog operators', { tag: ['@dev-console', '@regression'] }, () => {
   let catalogPage: CatalogPage;

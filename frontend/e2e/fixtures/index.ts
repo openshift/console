@@ -78,7 +78,9 @@ export const test = base.extend<TestFixtures, WorkerFixtures>({
       // happy path.
       if (!recovering) {
         // eslint-disable-next-line no-restricted-syntax -- waiting for state, no action follows
-        const authSettled = page.locator('html:not(.co-auth-pending)').waitFor({ state: 'attached', timeout: 30_000 });
+        const authSettled = page
+          .locator('html:not(.co-auth-pending)')
+          .waitFor({ state: 'attached', timeout: 30_000 });
         const redirectedToLogin = page.waitForURL(OAUTH_REDIRECT_RE, { timeout: 30_000 });
         await Promise.race([authSettled.catch(() => {}), redirectedToLogin.catch(() => {})]);
       }
