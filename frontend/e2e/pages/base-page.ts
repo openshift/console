@@ -21,9 +21,19 @@ export async function setEditorContent(page: Page, content: string): Promise<voi
   await page.waitForFunction(() => (window as any).monaco?.editor?.getModels()?.[0], {
     timeout: 10_000,
   });
-  await page.evaluate((text) => {
-    (window as any).monaco.editor.getModels()[0].setValue(text);
-  }, content);
+  // Monaco can swap its model during initialisation, silently dropping an early
+  // setValue and leaving the editor empty — which then submits an empty
+  // definition. Set and verify with retries so the content is guaranteed to
+  // stick before the caller proceeds.
+  await expect(async () => {
+    await page.evaluate((text) => {
+      (window as any).monaco.editor.getModels()[0].setValue(text);
+    }, content);
+    const value = await page.evaluate(() =>
+      (window as any).monaco.editor.getModels()[0].getValue(),
+    );
+    expect(value.trim()).toBe(content.trim());
+  }).toPass({ timeout: 15_000, intervals: [300, 700, 1500] });
 }
 
 export async function warmupSPA(page: Page): Promise<void> {

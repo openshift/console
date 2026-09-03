@@ -1,5 +1,5 @@
 import { test, expect } from '../../fixtures';
-import { warmupSPA } from '../../pages/base-page';
+import { setEditorContent, warmupSPA } from '../../pages/base-page';
 import { AddPage, ImportYAMLPage } from '../../pages/dev-console/add-page';
 import { TopologyPage } from '../../pages/topology-page';
 
@@ -68,14 +68,13 @@ test.describe(
       });
 
       await test.step('Enter YAML content and create', async () => {
-        await page.waitForFunction(
-          () => !!(window as any).monaco?.editor?.getModels()?.[0],
-          { timeout: 30_000 },
-        );
-        await page.evaluate((yaml) => {
-          (window as any).monaco.editor.getModels()[0].setValue(yaml);
-        }, GIT_DC_YAML);
+        await setEditorContent(page, GIT_DC_YAML);
         await yamlPage.getSubmitButton().click();
+        // The editor issues the create POST asynchronously and redirects to the
+        // new resource on success. Wait for that redirect before navigating
+        // away — otherwise the next navigation aborts the in-flight create
+        // request ("Failed to fetch") and the workload is never created.
+        await page.waitForURL(/\/deploymentconfigs\/shell-app(\/|$|\?)/, { timeout: 60_000 });
       });
 
       await test.step('Verify workload in topology', async () => {
