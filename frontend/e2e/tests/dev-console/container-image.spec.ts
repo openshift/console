@@ -1,8 +1,5 @@
 import { test, expect } from '../../fixtures';
-import {
-  AddPage,
-  DeployImagePage,
-} from '../../pages/dev-console/add-page';
+import { AddPage, DeployImagePage } from '../../pages/dev-console/add-page';
 import { TopologyPage } from '../../pages/topology-page';
 
 /**
@@ -67,49 +64,45 @@ test.describe(
   },
 );
 
-test.describe(
-  'Deploy image from internal registry',
-  { tag: ['@dev-console', '@smoke'] },
-  () => {
-    const ns = `aut-addflow-deploy-int-${Date.now()}`;
-    let addPage: AddPage;
-    let deployPage: DeployImagePage;
-    let topologyPage: TopologyPage;
+test.describe('Deploy image from internal registry', { tag: ['@dev-console', '@smoke'] }, () => {
+  const ns = `aut-addflow-deploy-int-${Date.now()}`;
+  let addPage: AddPage;
+  let deployPage: DeployImagePage;
+  let topologyPage: TopologyPage;
 
-    test.beforeEach(async ({ page, k8sClient, cleanup }) => {
-      addPage = new AddPage(page);
-      deployPage = new DeployImagePage(page);
-      topologyPage = new TopologyPage(page);
-      await k8sClient.createNamespace(ns);
-      cleanup.trackNamespace(ns);
-      await addPage.ensureDevPerspectiveAndNavigate(ns, k8sClient);
+  test.beforeEach(async ({ page, k8sClient, cleanup }) => {
+    addPage = new AddPage(page);
+    deployPage = new DeployImagePage(page);
+    topologyPage = new TopologyPage(page);
+    await k8sClient.createNamespace(ns);
+    cleanup.trackNamespace(ns);
+    await addPage.ensureDevPerspectiveAndNavigate(ns, k8sClient);
+  });
+
+  test('deploy image from internal registry with Runtime icon [A-02-TC03]', async () => {
+    test.slow();
+
+    await test.step('Navigate to Deploy Image page', async () => {
+      await addPage.clickContainerImage();
     });
 
-    test('deploy image from internal registry with Runtime icon [A-02-TC03]', async () => {
-      test.slow();
-
-      await test.step('Navigate to Deploy Image page', async () => {
-        await addPage.clickContainerImage();
-      });
-
-      await test.step('Select internal registry image stream', async () => {
-        await deployPage.selectImageStreamTag();
-        await deployPage.selectProject('openshift');
-        await deployPage.selectImageStream('golang');
-        await deployPage.selectTag('latest');
-      });
-
-      await test.step('Configure and create deployment', async () => {
-        await deployPage.selectRuntimeIcon('fedora');
-        await deployPage.enterName('hello-internal');
-        await deployPage.selectResourceType('Deployment');
-        await deployPage.clickCreate();
-      });
-
-      await test.step('Verify workload in topology', async () => {
-        await topologyPage.waitForWorkload('hello-internal');
-        await expect(topologyPage.getWorkload('hello-internal')).toBeVisible();
-      });
+    await test.step('Select internal registry image stream', async () => {
+      await deployPage.selectImageStreamTag();
+      await deployPage.selectProject('openshift');
+      await deployPage.selectImageStream('golang');
+      await deployPage.selectTag('latest');
     });
-  },
-);
+
+    await test.step('Configure and create deployment', async () => {
+      await deployPage.selectRuntimeIcon('fedora');
+      await deployPage.enterName('hello-internal');
+      await deployPage.selectResourceType('Deployment');
+      await deployPage.clickCreate();
+    });
+
+    await test.step('Verify workload in topology', async () => {
+      await topologyPage.waitForWorkload('hello-internal');
+      await expect(topologyPage.getWorkload('hello-internal')).toBeVisible();
+    });
+  });
+});

@@ -14,16 +14,12 @@ test.describe('User Preferences', { tag: ['@dev-console'] }, () => {
 
   test.afterEach(async ({ k8sClient }) => {
     try {
-      await k8sClient.patchConfigMap(
-        'user-settings-kubeadmin',
-        'openshift-console-user-settings',
-        {
-          'console.preferredPerspective': '',
-          'console.preferredCreateEditMethod': '',
-          'topology.preferredView': '',
-          'devconsole.preferredResource': '',
-        },
-      );
+      await k8sClient.patchConfigMap('user-settings-kubeadmin', 'openshift-console-user-settings', {
+        'console.preferredPerspective': '',
+        'console.preferredCreateEditMethod': '',
+        'topology.preferredView': '',
+        'devconsole.preferredResource': '',
+      });
     } catch {
       // ConfigMap may not exist on fresh clusters where kubeadmin has no user-settings yet
     }
@@ -66,7 +62,6 @@ test.describe('User Preferences', { tag: ['@dev-console'] }, () => {
         const perspectiveToggle = userPrefs.getPerspectiveSwitcherToggle();
         await expect(perspectiveToggle).toContainText('Developer', { timeout: 30_000 });
       });
-
     },
   );
 
@@ -94,7 +89,6 @@ test.describe('User Preferences', { tag: ['@dev-console'] }, () => {
       await test.step('Verify graph view is active', async () => {
         await expect(userPrefs.getTopologyCanvas()).toBeVisible({ timeout: 30_000 });
       });
-
     },
   );
 
@@ -111,10 +105,7 @@ test.describe('User Preferences', { tag: ['@dev-console'] }, () => {
 
       await test.step('Set create/edit resource method to YAML', async () => {
         await userPrefs.navigateToPreferences();
-        await userPrefs.selectPreferenceOption(
-          'console.preferredCreateEditMethod',
-          'YAML',
-        );
+        await userPrefs.selectPreferenceOption('console.preferredCreateEditMethod', 'YAML');
       });
 
       await test.step('Navigate to a create form and verify YAML view', async () => {
@@ -125,7 +116,6 @@ test.describe('User Preferences', { tag: ['@dev-console'] }, () => {
         const yamlRadio = userPrefs.getEditorRadio('YAML view');
         await expect(yamlRadio).toBeChecked();
       });
-
     },
   );
 
@@ -140,10 +130,7 @@ test.describe('User Preferences', { tag: ['@dev-console'] }, () => {
       });
 
       await test.step('Set resource type to DeploymentConfig', async () => {
-        await userPrefs.selectPreferenceOption(
-          'devconsole.preferredResource',
-          'DeploymentConfig',
-        );
+        await userPrefs.selectPreferenceOption('devconsole.preferredResource', 'DeploymentConfig');
       });
 
       await test.step('Verify DeploymentConfig is selected', async () => {

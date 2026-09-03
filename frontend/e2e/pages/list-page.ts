@@ -120,9 +120,7 @@ export class ListPage extends BasePage {
   }
 
   async clickResourceRowKebabAction(resourceName: string, actionName: string): Promise<void> {
-    const row = this.resourceRows
-      .filter({ hasText: resourceName })
-      .first();
+    const row = this.resourceRows.filter({ hasText: resourceName }).first();
     const kebab = row.getByTestId('kebab-button');
     await this.robustClick(kebab);
     await this.robustClick(this.page.getByTestId(actionName));
@@ -136,9 +134,7 @@ export class ListPage extends BasePage {
 
     if (await this.dataViewFilters.isVisible()) {
       await this.page.locator('.pf-v6-c-menu__list-item', { hasText: filterName }).click();
-      const checkboxFilter = this.page.locator(
-        '[data-ouia-component-id="DataViewCheckboxFilter"]',
-      );
+      const checkboxFilter = this.page.locator('[data-ouia-component-id="DataViewCheckboxFilter"]');
       await this.robustClick(checkboxFilter);
       const filterItem = this.page.locator(
         `[data-ouia-component-id="DataViewCheckboxFilter-filter-item-${checkboxLabel}"]`,

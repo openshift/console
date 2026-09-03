@@ -41,62 +41,57 @@ spec:
                 - ALL
 `;
 
-test.describe(
-  'Create Application from YAML file',
-  { tag: ['@dev-console', '@smoke'] },
-  () => {
-    const ns = `aut-addflow-yaml-${Date.now()}`;
-    let addPage: AddPage;
-    let yamlPage: ImportYAMLPage;
-    let topologyPage: TopologyPage;
+test.describe('Create Application from YAML file', { tag: ['@dev-console', '@smoke'] }, () => {
+  const ns = `aut-addflow-yaml-${Date.now()}`;
+  let addPage: AddPage;
+  let yamlPage: ImportYAMLPage;
+  let topologyPage: TopologyPage;
 
-    test.beforeEach(async ({ page, k8sClient, cleanup }) => {
-      addPage = new AddPage(page);
-      yamlPage = new ImportYAMLPage(page);
-      topologyPage = new TopologyPage(page);
-      await k8sClient.createNamespace(ns);
-      cleanup.trackNamespace(ns);
-      await warmupSPA(page);
-      await addPage.ensureDevPerspectiveAndNavigate(ns, k8sClient);
+  test.beforeEach(async ({ page, k8sClient, cleanup }) => {
+    addPage = new AddPage(page);
+    yamlPage = new ImportYAMLPage(page);
+    topologyPage = new TopologyPage(page);
+    await k8sClient.createNamespace(ns);
+    cleanup.trackNamespace(ns);
+    await warmupSPA(page);
+    await addPage.ensureDevPerspectiveAndNavigate(ns, k8sClient);
+  });
+
+  test('create a workload from YAML file [A-07-TC01]', async ({ page }) => {
+    test.slow();
+
+    await test.step('Navigate to Import YAML page', async () => {
+      await addPage.clickImportYAML();
     });
 
-    test('create a workload from YAML file [A-07-TC01]', async ({ page }) => {
-      test.slow();
-
-      await test.step('Navigate to Import YAML page', async () => {
-        await addPage.clickImportYAML();
+    await test.step('Enter YAML content and create', async () => {
+      await page.waitForFunction(() => !!(window as any).monaco?.editor?.getModels()?.[0], {
+        timeout: 30_000,
       });
-
-      await test.step('Enter YAML content and create', async () => {
-        await page.waitForFunction(
-          () => !!(window as any).monaco?.editor?.getModels()?.[0],
-          { timeout: 30_000 },
-        );
-        await page.evaluate((yaml) => {
-          (window as any).monaco.editor.getModels()[0].setValue(yaml);
-        }, GIT_DC_YAML);
-        await yamlPage.getSubmitButton().click();
-      });
-
-      await test.step('Verify workload in topology', async () => {
-        await topologyPage.navigateToTopology(ns);
-        await topologyPage.waitForWorkload('shell-app');
-        await expect(topologyPage.getWorkload('shell-app')).toBeVisible();
-      });
+      await page.evaluate((yaml) => {
+        (window as any).monaco.editor.getModels()[0].setValue(yaml);
+      }, GIT_DC_YAML);
+      await yamlPage.getSubmitButton().click();
     });
 
-    test('cancel operation on YAML file redirects to Add page [A-07-TC02]', async () => {
-      await test.step('Navigate to Import YAML page', async () => {
-        await addPage.clickImportYAML();
-      });
-
-      await test.step('Click cancel', async () => {
-        await yamlPage.getCancelButton().click();
-      });
-
-      await test.step('Verify redirect to Add page', async () => {
-        await expect(addPage.getPageHeading()).toBeVisible();
-      });
+    await test.step('Verify workload in topology', async () => {
+      await topologyPage.navigateToTopology(ns);
+      await topologyPage.waitForWorkload('shell-app');
+      await expect(topologyPage.getWorkload('shell-app')).toBeVisible();
     });
-  },
-);
+  });
+
+  test('cancel operation on YAML file redirects to Add page [A-07-TC02]', async () => {
+    await test.step('Navigate to Import YAML page', async () => {
+      await addPage.clickImportYAML();
+    });
+
+    await test.step('Click cancel', async () => {
+      await yamlPage.getCancelButton().click();
+    });
+
+    await test.step('Verify redirect to Add page', async () => {
+      await expect(addPage.getPageHeading()).toBeVisible();
+    });
+  });
+});

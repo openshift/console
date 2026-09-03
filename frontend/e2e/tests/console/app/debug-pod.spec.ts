@@ -95,9 +95,9 @@ test.describe('Debug pod', () => {
       await yamlEditorPage.setEditorContent(podYaml);
       await yamlEditorPage.clickSave();
       await expect(yamlEditorPage.getYamlError()).not.toBeAttached();
-      await expect(
-        page.getByTestId('section-heading-Pod details'),
-      ).toBeVisible({ timeout: 30_000 });
+      await expect(page.getByTestId('section-heading-Pod details')).toBeVisible({
+        timeout: 30_000,
+      });
     });
 
     await test.step('Wait for pod to enter CrashLoopBackOff', async () => {

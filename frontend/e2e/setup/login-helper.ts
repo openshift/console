@@ -68,7 +68,9 @@ export async function loginFromEnv(
     const username = process.env.BRIDGE_HTPASSWD_USERNAME;
     const password = process.env.BRIDGE_HTPASSWD_PASSWORD;
     if (!username || !password) {
-      throw new Error('Developer credentials (BRIDGE_HTPASSWD_USERNAME/PASSWORD) are not configured');
+      throw new Error(
+        'Developer credentials (BRIDGE_HTPASSWD_USERNAME/PASSWORD) are not configured',
+      );
     }
     const idpName = process.env.BRIDGE_HTPASSWD_IDP || username;
     await performLogin(page, baseURL, username, password, idpName);
