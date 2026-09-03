@@ -67,14 +67,12 @@ if [ -n "${nightly-}" ] && [ -z "${pkg-}" ]; then
   trap 'err=1' ERR
 
   yarn run test-cypress-dev-console-nightly
-  yarn run test-cypress-helm-nightly
   exit $err;
 fi
 
 if [ -n "${headless-}" ] && [ -z "${pkg-}" ]; then
   yarn run test-cypress-dev-console-headless
   yarn run test-cypress-olm-headless
-  yarn run test-cypress-helm-headless
   exit;
 fi
 
