@@ -1,8 +1,5 @@
 import { test, expect } from '../../fixtures';
-import {
-  AddPage,
-  ImportFromGitPage,
-} from '../../pages/dev-console/add-page';
+import { AddPage, ImportFromGitPage } from '../../pages/dev-console/add-page';
 import { TopologyPage } from '../../pages/topology-page';
 
 /**
@@ -20,105 +17,96 @@ import { TopologyPage } from '../../pages/topology-page';
  *   - A-06-TC17 (@broken-test) - Secure Route option
  */
 
-test.describe(
-  'Create Application from git form',
-  { tag: ['@dev-console', '@regression'] },
-  () => {
-    const ns = `aut-addflow-git-${Date.now()}`;
-    let addPage: AddPage;
-    let gitPage: ImportFromGitPage;
-    let topologyPage: TopologyPage;
+test.describe('Create Application from git form', { tag: ['@dev-console', '@regression'] }, () => {
+  const ns = `aut-addflow-git-${Date.now()}`;
+  let addPage: AddPage;
+  let gitPage: ImportFromGitPage;
+  let topologyPage: TopologyPage;
 
-    test.beforeEach(async ({ page, k8sClient, cleanup }) => {
-      addPage = new AddPage(page);
-      gitPage = new ImportFromGitPage(page);
-      topologyPage = new TopologyPage(page);
-      await k8sClient.createNamespace(ns);
-      cleanup.trackNamespace(ns);
-      await addPage.ensureDevPerspectiveAndNavigate(ns, k8sClient);
+  test.beforeEach(async ({ page, k8sClient, cleanup }) => {
+    addPage = new AddPage(page);
+    gitPage = new ImportFromGitPage(page);
+    topologyPage = new TopologyPage(page);
+    await k8sClient.createNamespace(ns);
+    cleanup.trackNamespace(ns);
+    await addPage.ensureDevPerspectiveAndNavigate(ns, k8sClient);
+  });
+
+  test('cancel git workload creation [A-06-TC03]', async ({ page }) => {
+    await test.step('Navigate to Import from Git', async () => {
+      await addPage.clickImportFromGit();
     });
 
-    test('cancel git workload creation [A-06-TC03]', async ({ page }) => {
-      await test.step('Navigate to Import from Git', async () => {
-        await addPage.clickImportFromGit();
-      });
-
-      await test.step('Enter git URL and cancel', async () => {
-        await gitPage.enterGitRepoURL('https://github.com/sclorg/dancer-ex.git');
-        await gitPage.clickCancel();
-      });
-
-      await test.step('Verify redirect to Add page', async () => {
-        await expect(page).toHaveURL(new RegExp(`/add/ns/${ns}`), { timeout: 15_000 });
-        await expect(addPage.getPageHeading()).toBeVisible();
-      });
+    await test.step('Enter git URL and cancel', async () => {
+      await gitPage.enterGitRepoURL('https://github.com/sclorg/dancer-ex.git');
+      await gitPage.clickCancel();
     });
 
-    test('create workload without application route [A-06-TC04]', async ({ k8sClient }) => {
-      test.slow();
+    await test.step('Verify redirect to Add page', async () => {
+      await expect(page).toHaveURL(new RegExp(`/add/ns/${ns}`), { timeout: 15_000 });
+      await expect(addPage.getPageHeading()).toBeVisible();
+    });
+  });
 
-      await test.step('Navigate to Import from Git', async () => {
-        await addPage.clickImportFromGit();
-      });
+  test('create workload without application route [A-06-TC04]', async ({ k8sClient }) => {
+    test.slow();
 
-      await test.step('Fill form without route', async () => {
-        await gitPage.enterGitRepoURL('https://github.com/sclorg/dancer-ex.git');
-        await gitPage.waitForGitValidation();
-        await gitPage.enterApplicationName('app-no-route');
-        await gitPage.enterName('name-no-route');
-        await gitPage.uncheckCreateRoute();
-        await gitPage.clickCreate();
-      });
+    await test.step('Navigate to Import from Git', async () => {
+      await addPage.clickImportFromGit();
+    });
 
-      await test.step('Verify workload in topology', async () => {
-        await topologyPage.waitForWorkload('name-no-route');
-        await topologyPage.clickWorkload('name-no-route');
-        await expect(topologyPage.getSidebarTitle()).toContainText('name-no-route', { timeout: 15_000 });
-      });
+    await test.step('Fill form without route', async () => {
+      await gitPage.enterGitRepoURL('https://github.com/sclorg/dancer-ex.git');
+      await gitPage.waitForGitValidation();
+      await gitPage.enterApplicationName('app-no-route');
+      await gitPage.enterName('name-no-route');
+      await gitPage.uncheckCreateRoute();
+      await gitPage.clickCreate();
+    });
 
-      await test.step('Verify no Route was created', async () => {
-        const routes = await k8sClient.listCustomResources(
-          'route.openshift.io',
-          'v1',
-          ns,
-          'routes',
-        );
-        const matching = (routes as any[]).filter(
-          (r) => r.metadata?.name === 'name-no-route',
-        );
-        expect(matching).toHaveLength(0);
+    await test.step('Verify workload in topology', async () => {
+      await topologyPage.waitForWorkload('name-no-route');
+      await topologyPage.clickWorkload('name-no-route');
+      await expect(topologyPage.getSidebarTitle()).toContainText('name-no-route', {
+        timeout: 15_000,
       });
     });
 
-    test('disable devfile import strategy for non-standard git type [A-06-TC18]', async () => {
-      await test.step('Navigate to Import from Git', async () => {
-        await addPage.clickImportFromGit();
-      });
+    await test.step('Verify no Route was created', async () => {
+      const routes = await k8sClient.listCustomResources('route.openshift.io', 'v1', ns, 'routes');
+      const matching = (routes as any[]).filter((r) => r.metadata?.name === 'name-no-route');
+      expect(matching).toHaveLength(0);
+    });
+  });
 
-      await test.step('Enter non-standard git URL', async () => {
-        await gitPage.enterGitRepoURL('https://mysupersecretgit.example.com/org/repo');
-      });
-
-      await test.step('Verify devfile strategy is disabled', async () => {
-        await expect(gitPage.getDevfileStrategyDisabled()).toBeVisible({ timeout: 15_000 });
-      });
+  test('disable devfile import strategy for non-standard git type [A-06-TC18]', async () => {
+    await test.step('Navigate to Import from Git', async () => {
+      await addPage.clickImportFromGit();
     });
 
-    test('devfile not detected warning [A-06-TC19]', async () => {
-      await test.step('Navigate to Import from Git', async () => {
-        await addPage.clickImportFromGit();
-      });
-
-      await test.step('Enter devfile URL and invalid path', async () => {
-        await gitPage.enterGitRepoURL('https://github.com/nodeshift-starters/devfile-sample');
-        await gitPage.waitForGitValidation();
-        await gitPage.clickEditImportStrategy();
-        await gitPage.enterDevfilePath('devfile1');
-      });
-
-      await test.step('Verify devfile not detected message', async () => {
-        await expect(gitPage.getDevfileNotDetectedMessage()).toBeVisible({ timeout: 15_000 });
-      });
+    await test.step('Enter non-standard git URL', async () => {
+      await gitPage.enterGitRepoURL('https://mysupersecretgit.example.com/org/repo');
     });
-  },
-);
+
+    await test.step('Verify devfile strategy is disabled', async () => {
+      await expect(gitPage.getDevfileStrategyDisabled()).toBeVisible({ timeout: 15_000 });
+    });
+  });
+
+  test('devfile not detected warning [A-06-TC19]', async () => {
+    await test.step('Navigate to Import from Git', async () => {
+      await addPage.clickImportFromGit();
+    });
+
+    await test.step('Enter devfile URL and invalid path', async () => {
+      await gitPage.enterGitRepoURL('https://github.com/nodeshift-starters/devfile-sample');
+      await gitPage.waitForGitValidation();
+      await gitPage.clickEditImportStrategy();
+      await gitPage.enterDevfilePath('devfile1');
+    });
+
+    await test.step('Verify devfile not detected message', async () => {
+      await expect(gitPage.getDevfileNotDetectedMessage()).toBeVisible({ timeout: 15_000 });
+    });
+  });
+});

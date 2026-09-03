@@ -78,8 +78,20 @@ test.describe('Image pull secrets', () => {
       await expect(secretsPage.getPageHeading()).toContainText('Create image pull secret');
       await secretsPage.enterSecretName(secretName);
       await secretsPage.clickAddCredentials();
-      await secretsPage.fillCredentialEntry(0, `${address}0`, `${username}0`, `${password}0`, `${mail}0`);
-      await secretsPage.fillCredentialEntry(1, `${address}1`, `${username}1`, `${password}1`, `${mail}1`);
+      await secretsPage.fillCredentialEntry(
+        0,
+        `${address}0`,
+        `${username}0`,
+        `${password}0`,
+        `${mail}0`,
+      );
+      await secretsPage.fillCredentialEntry(
+        1,
+        `${address}1`,
+        `${username}1`,
+        `${password}1`,
+        `${mail}1`,
+      );
       await secretsPage.save();
     });
 

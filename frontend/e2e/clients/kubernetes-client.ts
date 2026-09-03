@@ -375,10 +375,9 @@ export default class KubernetesClient {
     const existing = await this.k8sApi.readNamespacedConfigMap({ name, namespace });
     const existingData = (existing as any)?.data || {};
     const mergedData = { ...existingData, ...patchData };
-    await this.mergePatchResource(
-      `/api/v1/namespaces/${namespace}/configmaps/${name}`,
-      { data: mergedData },
-    );
+    await this.mergePatchResource(`/api/v1/namespaces/${namespace}/configmaps/${name}`, {
+      data: mergedData,
+    });
   }
 
   async createConfigMap(
@@ -455,10 +454,9 @@ export default class KubernetesClient {
     namespace: string,
     annotations: Record<string, string | null>,
   ): Promise<void> {
-    await this.mergePatchResource(
-      `/api/v1/namespaces/${namespace}/configmaps/${name}`,
-      { metadata: { annotations } },
-    );
+    await this.mergePatchResource(`/api/v1/namespaces/${namespace}/configmaps/${name}`, {
+      metadata: { annotations },
+    });
   }
 
   async labelConfigMap(
@@ -466,10 +464,9 @@ export default class KubernetesClient {
     namespace: string,
     labels: Record<string, string | null>,
   ): Promise<void> {
-    await this.mergePatchResource(
-      `/api/v1/namespaces/${namespace}/configmaps/${name}`,
-      { metadata: { labels } },
-    );
+    await this.mergePatchResource(`/api/v1/namespaces/${namespace}/configmaps/${name}`, {
+      metadata: { labels },
+    });
   }
 
   async deleteConfigMap(name: string, namespace: string): Promise<void> {
@@ -640,11 +637,7 @@ export default class KubernetesClient {
     }
   }
 
-  async patchDeployment(
-    name: string,
-    namespace: string,
-    patch: object,
-  ): Promise<unknown> {
+  async patchDeployment(name: string, namespace: string, patch: object): Promise<unknown> {
     return this.appsApi.patchNamespacedDeployment({
       name,
       namespace,
@@ -687,7 +680,6 @@ export default class KubernetesClient {
     });
   }
 
-
   async waitForDeploymentReady(
     name: string,
     namespace: string,
@@ -702,9 +694,7 @@ export default class KubernetesClient {
           return (
             status?.availableReplicas === desired &&
             status?.updatedReplicas === desired &&
-            (status?.conditions ?? []).some(
-              (c) => c.type === 'Available' && c.status === 'True',
-            )
+            (status?.conditions ?? []).some((c) => c.type === 'Available' && c.status === 'True')
           );
         } catch {
           return false;
@@ -748,9 +738,11 @@ export default class KubernetesClient {
           const state = cs.state?.waiting
             ? `Waiting: ${cs.state.waiting.reason} - ${cs.state.waiting.message ?? ''}`
             : cs.state?.terminated
-            ? `Terminated: ${cs.state.terminated.reason}`
-            : 'Running';
-          lines.push(`  container ${cs.name}: ready=${cs.ready}, restarts=${cs.restartCount}, ${state}`);
+              ? `Terminated: ${cs.state.terminated.reason}`
+              : 'Running';
+          lines.push(
+            `  container ${cs.name}: ready=${cs.ready}, restarts=${cs.restartCount}, ${state}`,
+          );
         }
         try {
           const events = await this.k8sApi.listNamespacedEvent({
@@ -760,8 +752,7 @@ export default class KubernetesClient {
           const recent = events.items
             .sort(
               (a, b) =>
-                new Date(b.lastTimestamp ?? 0).getTime() -
-                new Date(a.lastTimestamp ?? 0).getTime(),
+                new Date(b.lastTimestamp ?? 0).getTime() - new Date(a.lastTimestamp ?? 0).getTime(),
             )
             .slice(0, 10);
           for (const ev of recent) {

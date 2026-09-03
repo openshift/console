@@ -87,8 +87,6 @@ export class DetailsPage extends BasePage {
   }
 
   async confirmDelete(): Promise<void> {
-    await this.robustClick(
-      this.page.getByRole('button', { name: 'Delete', exact: true }),
-    );
+    await this.robustClick(this.page.getByRole('button', { name: 'Delete', exact: true }));
   }
 }

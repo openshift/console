@@ -121,9 +121,7 @@ test.describe('CustomResourceDefinitions', { tag: ['@admin'] }, () => {
       await setEditorContent(page, yaml.dump(merged, { sortKeys: true }));
       await yamlEditor.clickSave();
       await expect(yamlEditor.getYamlError()).not.toBeAttached();
-      await expect(page).toHaveURL(
-        new RegExp(`/k8s/cluster/customresourcedefinitions/${crdName}`),
-      );
+      await expect(page).toHaveURL(new RegExp(`/k8s/cluster/customresourcedefinitions/${crdName}`));
     });
 
     await test.step('Verify CRD in list and navigate to instances', async () => {

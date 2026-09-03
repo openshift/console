@@ -1,6 +1,7 @@
 import type { Page } from '@playwright/test';
 
 import { test, expect } from '../../../fixtures';
+import { warmupSPA } from '../../../pages/base-page';
 
 /**
  * E2E tests for Node Groups filtering functionality
@@ -8,10 +9,14 @@ import { test, expect } from '../../../fixtures';
  */
 
 async function gotoNodesPage(page: Page): Promise<void> {
+  // Warm the SPA shell first (self-heals a lost session and waits out plugin
+  // init) so navigating straight to this data-heavy page doesn't race a cold
+  // bootstrap — the direct goto was timing out on CI before the shell rendered.
+  await warmupSPA(page);
   await page.goto('/k8s/cluster/nodes');
   await expect(
     page.getByTestId('data-view-table').or(page.getByTestId('page-heading')).first(),
-  ).toBeVisible();
+  ).toBeVisible({ timeout: 30_000 });
 }
 
 function groupsFilter(page: Page) {
@@ -31,7 +36,11 @@ function filterChips(page: Page) {
 }
 
 async function skipIfGroupsFilterDisabled(page: Page): Promise<void> {
-  if (!(await groupsFilter(page).isVisible().catch(() => false))) {
+  if (
+    !(await groupsFilter(page)
+      .isVisible()
+      .catch(() => false))
+  ) {
     test.skip(true, 'FLAG_OPENSHIFT_5 is not enabled');
   }
 }
@@ -54,9 +63,9 @@ test.describe('Node Groups Filter', () => {
     const groupsFilterButton = groupsFilter(page);
     await expect(groupsFilterButton).toBeVisible();
 
-    const filtersToolbar = page.locator('[data-testid="filter-toolbar"]').or(
-      page.locator('.pf-v6-c-toolbar'),
-    );
+    const filtersToolbar = page
+      .locator('[data-testid="filter-toolbar"]')
+      .or(page.locator('.pf-v6-c-toolbar'));
     await expect(filtersToolbar).toBeVisible();
 
     const groupsFilterInToolbar = page
@@ -105,8 +114,12 @@ test.describe('Node Groups Filter', () => {
     const dropdown = filterDropdown(page);
     await expect(dropdown).toBeVisible();
 
-    const firstOption = dropdown.locator('[role="menuitemcheckbox"], .pf-v6-c-check__input').first();
-    const optionCount = await dropdown.locator('[role="menuitemcheckbox"], .pf-v6-c-check__label').count();
+    const firstOption = dropdown
+      .locator('[role="menuitemcheckbox"], .pf-v6-c-check__input')
+      .first();
+    const optionCount = await dropdown
+      .locator('[role="menuitemcheckbox"], .pf-v6-c-check__label')
+      .count();
 
     if (optionCount === 0) {
       await page.keyboard.press('Escape');
@@ -160,7 +173,9 @@ test.describe('Node Groups Filter', () => {
 
     await groupsFilter(page).click();
     const dropdown = filterDropdown(page);
-    const firstOption = dropdown.locator('[role="menuitemcheckbox"], .pf-v6-c-check__input').first();
+    const firstOption = dropdown
+      .locator('[role="menuitemcheckbox"], .pf-v6-c-check__input')
+      .first();
     const optionCount = await dropdown.locator('[role="menuitemcheckbox"]').count();
 
     if (optionCount === 0) {
@@ -209,7 +224,9 @@ test.describe('Node Groups Filter', () => {
 
     await groupsFilter(page).click();
     const groupsDropdown = filterDropdown(page);
-    const firstGroup = groupsDropdown.locator('[role="menuitemcheckbox"], .pf-v6-c-check__input').first();
+    const firstGroup = groupsDropdown
+      .locator('[role="menuitemcheckbox"], .pf-v6-c-check__input')
+      .first();
     await expect(firstGroup).toBeVisible();
     await firstGroup.click();
     await page.keyboard.press('Escape');
@@ -225,7 +242,9 @@ test.describe('Edit Groups Button', () => {
     await gotoNodesPage(page);
   });
 
-  test('should display Edit groups button in page header when FLAG_OPENSHIFT_5 is enabled', async ({ page }) => {
+  test('should display Edit groups button in page header when FLAG_OPENSHIFT_5 is enabled', async ({
+    page,
+  }) => {
     await skipIfEditGroupsButtonHidden(page);
 
     const editButton = page.getByRole('button', { name: /edit groups/i });
@@ -240,8 +259,17 @@ test.describe('Edit Groups Button', () => {
     await skipIfEditGroupsButtonHidden(page);
 
     const editButton = page.getByRole('button', { name: /edit groups/i });
-    if (!(await editButton.isDisabled())) {
-      test.skip(true, 'Edit groups button is not disabled');
+    // The button starts disabled while the permission (SelfSubjectAccessReview)
+    // check is in flight, then enables for users who can edit. Poll until that
+    // settles: if it becomes enabled the user has permission and this test does
+    // not apply (e.g. cluster-admin CI runs); only a button that stays disabled
+    // indicates a genuine lack of permission.
+    const deadline = Date.now() + 15_000;
+    while ((await editButton.isDisabled()) && Date.now() < deadline) {
+      await new Promise((r) => setTimeout(r, 500));
+    }
+    if (await editButton.isEnabled()) {
+      test.skip(true, 'User has permission to edit groups; tooltip not applicable');
       return;
     }
 
@@ -250,7 +278,7 @@ test.describe('Edit Groups Button', () => {
     const tooltip = page.locator('[role="tooltip"]').filter({
       hasText: /permission.*edit groups.*administrator/i,
     });
-    await expect(tooltip).toBeVisible();
+    await expect(tooltip).toBeVisible({ timeout: 10_000 });
   });
 
   test('should open Groups Editor modal when clicked', async ({ page }) => {
@@ -269,7 +297,10 @@ test.describe('Edit Groups Button', () => {
     });
     await expect(modal).toBeVisible();
 
-    const closeButton = modal.locator('[aria-label="Close"], button').filter({ hasText: /cancel|close/i }).first();
+    const closeButton = modal
+      .locator('[aria-label="Close"], button')
+      .filter({ hasText: /cancel|close/i })
+      .first();
     await expect(closeButton).toBeVisible();
     await closeButton.click();
     await expect(modal).toBeHidden();
@@ -292,7 +323,9 @@ test.describe('Node Detail Page - Edit Groups Button', () => {
 
     const nodeLink = rows.first().locator('a').first();
     await nodeLink.click();
-    await expect(page.locator('[data-test-id="details-card"], .pf-v6-c-card').first()).toBeVisible();
+    await expect(
+      page.locator('[data-test-id="details-card"], .pf-v6-c-card').first(),
+    ).toBeVisible();
 
     const groupsSection = page.locator('text=/groups/i').first();
     if (!(await groupsSection.isVisible().catch(() => false))) {
@@ -300,7 +333,8 @@ test.describe('Node Detail Page - Edit Groups Button', () => {
       return;
     }
 
-    const editButton = page.locator('[data-test="details-card"], .pf-v6-c-card')
+    const editButton = page
+      .locator('[data-test="details-card"], .pf-v6-c-card')
       .getByRole('button', { name: /^edit$/i });
 
     if (!(await editButton.isVisible().catch(() => false))) {
@@ -323,9 +357,12 @@ test.describe('Node Detail Page - Edit Groups Button', () => {
 
     const nodeLink = rows.first().locator('a').first();
     await nodeLink.click();
-    await expect(page.locator('[data-test-id="details-card"], .pf-v6-c-card').first()).toBeVisible();
+    await expect(
+      page.locator('[data-test-id="details-card"], .pf-v6-c-card').first(),
+    ).toBeVisible();
 
-    const editButton = page.locator('[data-test="details-card"], .pf-v6-c-card')
+    const editButton = page
+      .locator('[data-test="details-card"], .pf-v6-c-card')
       .getByRole('button', { name: /^edit$/i });
 
     if (!(await editButton.isVisible().catch(() => false))) {

@@ -83,7 +83,10 @@ test.describe('Debug pod', () => {
     page,
     k8sClient,
   }) => {
-    test.setTimeout(300_000);
+    // This test is image-pull and reconcile heavy: it waits for a pod to
+    // CrashLoopBackOff and then spins up three separate debug pods. On a cold or
+    // slow CI cluster the default 300s is not enough, so allow more headroom.
+    test.setTimeout(480_000);
 
     const detailsPage = new DetailsPage(page);
     const listPage = new ListPage(page);
@@ -95,9 +98,9 @@ test.describe('Debug pod', () => {
       await yamlEditorPage.setEditorContent(podYaml);
       await yamlEditorPage.clickSave();
       await expect(yamlEditorPage.getYamlError()).not.toBeAttached();
-      await expect(
-        page.getByTestId('section-heading-Pod details'),
-      ).toBeVisible({ timeout: 30_000 });
+      await expect(page.getByTestId('section-heading-Pod details')).toBeVisible({
+        timeout: 30_000,
+      });
     });
 
     await test.step('Wait for pod to enter CrashLoopBackOff', async () => {

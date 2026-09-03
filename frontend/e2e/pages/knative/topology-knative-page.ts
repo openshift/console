@@ -11,7 +11,9 @@ export class TopologyKnativePage extends BasePage {
   private readonly highlightedNode = this.page.locator('.is-filtered').first();
   private readonly knativeServiceNode = this.page.locator('[data-type="knative-service"]');
   private readonly sidePane = this.page.getByTestId('topology-sidepane');
-  private readonly sidePaneClose = this.page.getByTestId('topology-sidepane').locator('button[aria-label="Close"]');
+  private readonly sidePaneClose = this.page
+    .getByTestId('topology-sidepane')
+    .locator('button[aria-label="Close"]');
   private readonly editAnnotationsLink = this.page.getByTestId('edit-annotations');
   private readonly modalTitle = this.page.getByTestId('modal-title');
   private readonly modalCancel = this.page.getByTestId('modal-cancel-action');
@@ -79,9 +81,7 @@ export class TopologyKnativePage extends BasePage {
   }
 
   async selectContextMenuAction(action: string): Promise<void> {
-    const menuItem = this.page.locator(
-      `[data-test="${action}"], [data-test-action="${action}"]`,
-    );
+    const menuItem = this.page.locator(`[data-test="${action}"], [data-test-action="${action}"]`);
     await this.robustClick(menuItem.first(), { timeout: 10_000 });
   }
 
@@ -193,7 +193,9 @@ export class TopologyKnativePage extends BasePage {
   }
 
   async verifyKnativeRevisionVisible(timeout = 60_000): Promise<void> {
-    await expect(this.page.locator('[data-type="knative-revision"]').first()).toBeAttached({ timeout });
+    await expect(this.page.locator('[data-type="knative-revision"]').first()).toBeAttached({
+      timeout,
+    });
   }
 
   async getRevisionCount(): Promise<number> {
@@ -201,9 +203,9 @@ export class TopologyKnativePage extends BasePage {
   }
 
   async verifyRevisionCount(expected: number, timeout = 60_000): Promise<void> {
-    await expect(
-      this.page.getByTestId('revision-list').locator('li'),
-    ).toHaveCount(expected, { timeout });
+    await expect(this.page.getByTestId('revision-list').locator('li')).toHaveCount(expected, {
+      timeout,
+    });
   }
 
   async openServiceAction(
@@ -213,13 +215,13 @@ export class TopologyKnativePage extends BasePage {
     kind = 'serving.knative.dev~v1~Service',
   ): Promise<void> {
     await this.goTo(`/k8s/ns/${namespace}/${kind}/${resourceName}`);
-    const actionsButton = this.page.locator(
-      '[data-test="actions-menu-button"], [data-test-id="actions-menu-button"]',
-    ).first();
+    const actionsButton = this.page
+      .locator('[data-test="actions-menu-button"], [data-test-id="actions-menu-button"]')
+      .first();
     await this.robustClick(actionsButton, { timeout: 30_000 });
-    const actionItem = this.page.locator(
-      `[data-test="${action}"], [data-test-action="${action}"]`,
-    ).first();
+    const actionItem = this.page
+      .locator(`[data-test="${action}"], [data-test-action="${action}"]`)
+      .first();
     await this.robustClick(actionItem, { timeout: 10_000 });
   }
 
@@ -238,9 +240,12 @@ export class TopologyKnativePage extends BasePage {
     const appInput = this.page.getByTestId('application-form-app-input');
     if ((await appDropdown.count()) > 0) {
       await appDropdown.click();
-      await this.page.locator(
-        '[data-test="#CREATE_APPLICATION_KEY#"], [data-test-dropdown-menu="#CREATE_APPLICATION_KEY#"]',
-      ).first().click();
+      await this.page
+        .locator(
+          '[data-test="#CREATE_APPLICATION_KEY#"], [data-test-dropdown-menu="#CREATE_APPLICATION_KEY#"]',
+        )
+        .first()
+        .click();
     }
     await appInput.clear();
     await appInput.fill(appName);

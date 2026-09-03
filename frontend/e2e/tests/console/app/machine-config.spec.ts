@@ -24,7 +24,15 @@ test.describe('MachineConfig resource details page', () => {
       'v1',
       'machineconfigs',
       MC_WITH_CONFIG_FILES,
-    )) as { spec?: { config?: { storage?: { files?: Array<{ contents?: { source?: string }; mode?: number; overwrite?: boolean }> } } } };
+    )) as {
+      spec?: {
+        config?: {
+          storage?: {
+            files?: Array<{ contents?: { source?: string }; mode?: number; overwrite?: boolean }>;
+          };
+        };
+      };
+    };
 
     const file = mc.spec?.config?.storage?.files?.[0];
     expect(file).toBeDefined();
@@ -39,9 +47,9 @@ test.describe('MachineConfig resource details page', () => {
     await expect(descriptionList.getByText(String(file!.mode), { exact: true })).toBeVisible({
       timeout: 10_000,
     });
-    await expect(
-      descriptionList.getByText(String(file!.overwrite), { exact: true }),
-    ).toBeVisible({ timeout: 10_000 });
+    await expect(descriptionList.getByText(String(file!.overwrite), { exact: true })).toBeVisible({
+      timeout: 10_000,
+    });
 
     const decodedContent = decodeURIComponent(file!.contents!.source!)
       .replace(/^(data:,)/, '')

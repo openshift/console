@@ -71,9 +71,7 @@ spec:
         await page.goto(`/k8s/cluster/console.openshift.io~v1~${crd}`);
 
         // Additional printer columns should not exist for this CRD
-        await expect(
-          page.getByTestId(/^additional-printer-column-header-/).first(),
-        ).toBeHidden();
+        await expect(page.getByTestId(/^additional-printer-column-header-/).first()).toBeHidden();
 
         // Created column should exist since Age does not
         await expect(page.getByTestId('column-header-Created')).toBeVisible();
