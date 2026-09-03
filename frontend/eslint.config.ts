@@ -214,7 +214,10 @@ const config = defineConfig([
   {
     files: ['e2e/**/*.{js,jsx,ts,tsx,json}'],
     ignores: ['e2e/**/testData/**'],
-    extends: compat.extends('plugin:console/playwright'),
+    extends: compat.extends(
+      'plugin:console/prettier',
+      'plugin:console/playwright'
+    ),
     languageOptions: {
       parser: tsParser,
       parserOptions: {
