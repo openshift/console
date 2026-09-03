@@ -1,8 +1,5 @@
 import { test, expect } from '../../fixtures';
-import {
-  AddPage,
-  ImportFromGitPage,
-} from '../../pages/dev-console/add-page';
+import { AddPage, ImportFromGitPage } from '../../pages/dev-console/add-page';
 import { TopologyPage } from '../../pages/topology-page';
 
 /**
@@ -15,46 +12,42 @@ import { TopologyPage } from '../../pages/topology-page';
  *   - A-04-TC05 (@to-do) - Create Devfiles workload from Software Catalog
  */
 
-test.describe(
-  'Create Application from Devfile',
-  { tag: ['@dev-console', '@regression'] },
-  () => {
-    const ns = `aut-addflow-devfile-${Date.now()}`;
-    let addPage: AddPage;
-    let gitPage: ImportFromGitPage;
-    let topologyPage: TopologyPage;
+test.describe('Create Application from Devfile', { tag: ['@dev-console', '@regression'] }, () => {
+  const ns = `aut-addflow-devfile-${Date.now()}`;
+  let addPage: AddPage;
+  let gitPage: ImportFromGitPage;
+  let topologyPage: TopologyPage;
 
-    test.beforeEach(async ({ page, k8sClient, cleanup }) => {
-      addPage = new AddPage(page);
-      gitPage = new ImportFromGitPage(page);
-      topologyPage = new TopologyPage(page);
-      await k8sClient.createNamespace(ns);
-      cleanup.trackNamespace(ns);
-      await addPage.ensureDevPerspectiveAndNavigate(ns, k8sClient);
+  test.beforeEach(async ({ page, k8sClient, cleanup }) => {
+    addPage = new AddPage(page);
+    gitPage = new ImportFromGitPage(page);
+    topologyPage = new TopologyPage(page);
+    await k8sClient.createNamespace(ns);
+    cleanup.trackNamespace(ns);
+    await addPage.ensureDevPerspectiveAndNavigate(ns, k8sClient);
+  });
+
+  test('deploy git workload with devfile from add page [A-04-TC02]', async () => {
+    test.slow();
+
+    await test.step('Navigate to Import from Git form', async () => {
+      await addPage.clickImportFromGit();
     });
 
-    test('deploy git workload with devfile from add page [A-04-TC02]', async () => {
-      test.slow();
+    await test.step('Fill out the devfile import form', async () => {
+      await gitPage.enterGitRepoURL('https://github.com/nodeshift-starters/devfile-sample');
+      await gitPage.waitForGitValidation();
+      await expect(gitPage.getDevfileDetectedHeading()).toBeVisible({ timeout: 30_000 });
+      await gitPage.enterWorkloadName('node-example');
+      await gitPage.clickCreate();
+    });
 
-      await test.step('Navigate to Import from Git form', async () => {
-        await addPage.clickImportFromGit();
-      });
-
-      await test.step('Fill out the devfile import form', async () => {
-        await gitPage.enterGitRepoURL(
-          'https://github.com/nodeshift-starters/devfile-sample',
-        );
-        await gitPage.waitForGitValidation();
-        await expect(gitPage.getDevfileDetectedHeading()).toBeVisible({ timeout: 30_000 });
-        await gitPage.enterWorkloadName('node-example');
-        await gitPage.clickCreate();
-      });
-
-      await test.step('Verify workload appears in topology', async () => {
-        await topologyPage.waitForWorkload('node-example');
-        await topologyPage.clickWorkload('node-example');
-        await expect(topologyPage.getSidebarTitle()).toContainText('node-example', { timeout: 30_000 });
+    await test.step('Verify workload appears in topology', async () => {
+      await topologyPage.waitForWorkload('node-example');
+      await topologyPage.clickWorkload('node-example');
+      await expect(topologyPage.getSidebarTitle()).toContainText('node-example', {
+        timeout: 30_000,
       });
     });
-  },
-);
+  });
+});

@@ -105,9 +105,9 @@ test.describe('Impersonation', { tag: ['@admin'] }, () => {
       await expect(page.getByText(`You are impersonating user ${username}`)).toBeVisible({
         timeout: 60_000,
       });
-      await expect(
-        page.getByText(`with groups: ${groupName}, ${secondGroupName}`),
-      ).toBeVisible({ timeout: 60_000 });
+      await expect(page.getByText(`with groups: ${groupName}, ${secondGroupName}`)).toBeVisible({
+        timeout: 60_000,
+      });
     });
 
     await test.step('Stop impersonating user with multiple groups', async () => {
@@ -119,21 +119,27 @@ test.describe('Impersonation', { tag: ['@admin'] }, () => {
 
     await test.step('Impersonate service account from masthead modal', async () => {
       await masthead.impersonateServiceAccount(namespace, serviceAccountName);
-      await expect(page.getByText(`You are impersonating ServiceAccount ${serviceAccountUsername}`)).toBeVisible({
+      await expect(
+        page.getByText(`You are impersonating ServiceAccount ${serviceAccountUsername}`),
+      ).toBeVisible({
         timeout: 60_000,
       });
     });
 
     await test.step('Stop impersonating service account', async () => {
       await masthead.stopImpersonating();
-      await expect(page.getByText(`You are impersonating ServiceAccount ${serviceAccountUsername}`)).toBeHidden({
+      await expect(
+        page.getByText(`You are impersonating ServiceAccount ${serviceAccountUsername}`),
+      ).toBeHidden({
         timeout: 60_000,
       });
     });
 
     await test.step('Impersonate service account with group from masthead modal', async () => {
       await masthead.impersonateServiceAccount(namespace, serviceAccountName, [groupName]);
-      await expect(page.getByText(`You are impersonating ServiceAccount ${serviceAccountUsername}`)).toBeVisible({
+      await expect(
+        page.getByText(`You are impersonating ServiceAccount ${serviceAccountUsername}`),
+      ).toBeVisible({
         timeout: 60_000,
       });
       await expect(page.getByText(`with groups: ${groupName}`)).toBeVisible({ timeout: 60_000 });
@@ -141,7 +147,9 @@ test.describe('Impersonation', { tag: ['@admin'] }, () => {
 
     await test.step('Stop impersonating service account with group', async () => {
       await masthead.stopImpersonating();
-      await expect(page.getByText(`You are impersonating ServiceAccount ${serviceAccountUsername}`)).toBeHidden({
+      await expect(
+        page.getByText(`You are impersonating ServiceAccount ${serviceAccountUsername}`),
+      ).toBeHidden({
         timeout: 60_000,
       });
     });
@@ -151,17 +159,21 @@ test.describe('Impersonation', { tag: ['@admin'] }, () => {
         groupName,
         secondGroupName,
       ]);
-      await expect(page.getByText(`You are impersonating ServiceAccount ${serviceAccountUsername}`)).toBeVisible({
+      await expect(
+        page.getByText(`You are impersonating ServiceAccount ${serviceAccountUsername}`),
+      ).toBeVisible({
         timeout: 60_000,
       });
-      await expect(
-        page.getByText(`with groups: ${groupName}, ${secondGroupName}`),
-      ).toBeVisible({ timeout: 60_000 });
+      await expect(page.getByText(`with groups: ${groupName}, ${secondGroupName}`)).toBeVisible({
+        timeout: 60_000,
+      });
     });
 
     await test.step('Stop impersonating service account with multiple groups', async () => {
       await masthead.stopImpersonating();
-      await expect(page.getByText(`You are impersonating ServiceAccount ${serviceAccountUsername}`)).toBeHidden({
+      await expect(
+        page.getByText(`You are impersonating ServiceAccount ${serviceAccountUsername}`),
+      ).toBeHidden({
         timeout: 60_000,
       });
     });
@@ -169,14 +181,18 @@ test.describe('Impersonation', { tag: ['@admin'] }, () => {
     await test.step('Impersonate service account from resource details action', async () => {
       await serviceAccountPage.navigateToDetails(namespace, serviceAccountName);
       await serviceAccountPage.impersonateFromDetails();
-      await expect(page.getByText(`You are impersonating ServiceAccount ${serviceAccountUsername}`)).toBeVisible({
+      await expect(
+        page.getByText(`You are impersonating ServiceAccount ${serviceAccountUsername}`),
+      ).toBeVisible({
         timeout: 60_000,
       });
     });
 
     await test.step('Stop impersonating service account', async () => {
       await masthead.stopImpersonating();
-      await expect(page.getByText(`You are impersonating ServiceAccount ${serviceAccountUsername}`)).toBeHidden({
+      await expect(
+        page.getByText(`You are impersonating ServiceAccount ${serviceAccountUsername}`),
+      ).toBeHidden({
         timeout: 60_000,
       });
     });

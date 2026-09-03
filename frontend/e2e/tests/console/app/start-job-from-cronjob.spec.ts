@@ -48,18 +48,18 @@ spec:
       await yamlEditorPage.waitForEditorReady();
       await yamlEditorPage.setEditorContent(cronJobYaml);
       await yamlEditorPage.clickSave();
-      await expect(
-        page.getByTestId('section-heading-CronJob details'),
-      ).toBeVisible({ timeout: 30_000 });
+      await expect(page.getByTestId('section-heading-CronJob details')).toBeVisible({
+        timeout: 30_000,
+      });
     });
 
     await test.step('Start Job from CronJob details page', async () => {
       await detailsPage.clickActionsMenuAction('Start Job');
       await detailsPage.waitForPageLoad();
       await retryOnModelNotFound(page);
-      await expect(
-        page.getByTestId('section-heading-Job details'),
-      ).toBeVisible({ timeout: 30_000 });
+      await expect(page.getByTestId('section-heading-Job details')).toBeVisible({
+        timeout: 30_000,
+      });
       await expect(detailsPage.title).toContainText(CRONJOB_NAME, { timeout: 30_000 });
     });
 
@@ -92,9 +92,9 @@ spec:
 
       await detailsPage.waitForPageLoad();
       await retryOnModelNotFound(page);
-      await expect(
-        page.getByTestId('section-heading-Job details'),
-      ).toBeVisible({ timeout: 30_000 });
+      await expect(page.getByTestId('section-heading-Job details')).toBeVisible({
+        timeout: 30_000,
+      });
       await expect(detailsPage.title).toContainText(CRONJOB_NAME, { timeout: 30_000 });
     });
 

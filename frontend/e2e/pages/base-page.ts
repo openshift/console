@@ -64,8 +64,7 @@ export async function ensureDeveloperPerspective(
 ): Promise<boolean> {
   const toggle = page.getByTestId('perspective-switcher-toggle');
   await expect(toggle).toBeVisible();
-  const isSinglePerspective =
-    (await toggle.getAttribute('id')) === 'only-one-perspective';
+  const isSinglePerspective = (await toggle.getAttribute('id')) === 'only-one-perspective';
   if (isSinglePerspective) {
     await k8sClient.customObjectsApi.patchClusterCustomObject({
       group: 'operator.openshift.io',
@@ -218,10 +217,9 @@ export default abstract class BasePage {
   }
 
   async waitForEditorReady(): Promise<void> {
-    await this.page.waitForFunction(
-      () => !!(window as any).monaco?.editor?.getModels()?.[0],
-      { timeout: 30_000 },
-    );
+    await this.page.waitForFunction(() => !!(window as any).monaco?.editor?.getModels()?.[0], {
+      timeout: 30_000,
+    });
   }
 
   async getEditorContent(): Promise<string> {

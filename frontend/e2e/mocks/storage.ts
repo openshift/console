@@ -105,8 +105,18 @@ export const provisionersMap: Record<string, Parameter[]> = {
     { name: 'Availability zone', id: 'availability', values: 'lalitpur' },
   ],
   'kubernetes.io/azure-file': [
-    { name: 'SKU name', id: 'skuName', hintText: 'Azure storage account SKU tier', values: 'sample-name' },
-    { name: 'Location', id: 'location', hintText: 'Azure storage account name', values: 'bhaktapur' },
+    {
+      name: 'SKU name',
+      id: 'skuName',
+      hintText: 'Azure storage account SKU tier',
+      values: 'sample-name',
+    },
+    {
+      name: 'Location',
+      id: 'location',
+      hintText: 'Azure storage account name',
+      values: 'bhaktapur',
+    },
     {
       name: 'Azure storage account name',
       id: 'storageAccount',
@@ -115,7 +125,12 @@ export const provisionersMap: Record<string, Parameter[]> = {
     },
   ],
   'kubernetes.io/azure-disk': [
-    { name: 'Storage account type', id: 'storageaccounttype', hintText: 'Storage account type', values: 'tester' },
+    {
+      name: 'Storage account type',
+      id: 'storageaccounttype',
+      hintText: 'Storage account type',
+      values: 'tester',
+    },
     { name: 'Account kind', id: 'kind', values: ['shared', 'dedicated', 'managed'] },
   ],
   'kubernetes.io/quobyte': [
@@ -128,7 +143,11 @@ export const provisionersMap: Record<string, Parameter[]> = {
     { name: 'Quobyte tenant', id: 'quobyteTenant', values: 'tester' },
   ],
   'kubernetes.io/vsphere-volume': [
-    { name: 'Disk format', id: 'diskformat', values: ['thin', 'zeroed thick', 'eager zeroed thick'] },
+    {
+      name: 'Disk format',
+      id: 'diskformat',
+      values: ['thin', 'zeroed thick', 'eager zeroed thick'],
+    },
     { name: 'Datastore', id: 'datastore', values: 'store-thin' },
   ],
   'kubernetes.io/portworx-volume': [

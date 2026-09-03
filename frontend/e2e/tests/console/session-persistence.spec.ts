@@ -21,10 +21,7 @@ test.describe(
       await test.step('Log in to the console', async () => {
         // These are @admin tests, so always authenticate as the admin persona
         // regardless of whether developer (htpasswd) credentials are configured.
-        test.skip(
-          !process.env.BRIDGE_KUBEADMIN_PASSWORD,
-          'No kubeadmin credentials configured',
-        );
+        test.skip(!process.env.BRIDGE_KUBEADMIN_PASSWORD, 'No kubeadmin credentials configured');
         await loginFromEnv(page, 'admin');
 
         await expect(page.getByTestId('user-dropdown-toggle')).toBeVisible({ timeout: 60_000 });
@@ -37,9 +34,7 @@ test.describe(
 
       await test.step('Delete all console pods', async () => {
         const pods = await k8sClient.getPods(CONSOLE_NAMESPACE);
-        const consolePods = pods.filter(
-          (p) => p.metadata?.labels?.['component'] === 'ui',
-        );
+        const consolePods = pods.filter((p) => p.metadata?.labels?.['component'] === 'ui');
 
         expect(consolePods.length).toBeGreaterThan(0);
 
@@ -69,10 +64,7 @@ test.describe(
       await test.step('Log in to the console', async () => {
         // These are @admin tests, so always authenticate as the admin persona
         // regardless of whether developer (htpasswd) credentials are configured.
-        test.skip(
-          !process.env.BRIDGE_KUBEADMIN_PASSWORD,
-          'No kubeadmin credentials configured',
-        );
+        test.skip(!process.env.BRIDGE_KUBEADMIN_PASSWORD, 'No kubeadmin credentials configured');
         await loginFromEnv(page, 'admin');
 
         await expect(page.getByTestId('user-dropdown-toggle')).toBeVisible({ timeout: 60_000 });
@@ -88,8 +80,7 @@ test.describe(
           name: 'cluster',
         });
 
-        const plugins: string[] =
-          (consoleOperator.body as any)?.spec?.plugins ?? [];
+        const plugins: string[] = (consoleOperator.body as any)?.spec?.plugins ?? [];
         pluginName = plugins[0];
         test.skip(!pluginName, 'No enabled ConsolePlugins found on this cluster');
       });
@@ -102,23 +93,19 @@ test.describe(
           name: 'cluster',
         });
 
-        const currentPlugins: string[] =
-          (consoleOperator.body as any)?.spec?.plugins ?? [];
+        const currentPlugins: string[] = (consoleOperator.body as any)?.spec?.plugins ?? [];
         const updatedPlugins = currentPlugins.filter((p: string) => p !== pluginName);
 
-        await k8sClient.mergePatchResource(
-          '/apis/operator.openshift.io/v1/consoles/cluster',
-          { spec: { plugins: updatedPlugins } },
-        );
+        await k8sClient.mergePatchResource('/apis/operator.openshift.io/v1/consoles/cluster', {
+          spec: { plugins: updatedPlugins },
+        });
       });
 
       await test.step('Wait for console rollout', async () => {
         // The operator triggers a new rollout when plugin config changes.
         // Delete the console pods to force immediate restart, then wait for readiness.
         const pods = await k8sClient.getPods(CONSOLE_NAMESPACE);
-        const consolePods = pods.filter(
-          (p) => p.metadata?.labels?.['component'] === 'ui',
-        );
+        const consolePods = pods.filter((p) => p.metadata?.labels?.['component'] === 'ui');
         for (const pod of consolePods) {
           await k8sClient.deletePod(pod.metadata!.name!, CONSOLE_NAMESPACE);
         }
@@ -145,14 +132,12 @@ test.describe(
           name: 'cluster',
         });
 
-        const currentPlugins: string[] =
-          (consoleOperator.body as any)?.spec?.plugins ?? [];
+        const currentPlugins: string[] = (consoleOperator.body as any)?.spec?.plugins ?? [];
         if (!currentPlugins.includes(pluginName!)) {
           currentPlugins.push(pluginName!);
-          await k8sClient.mergePatchResource(
-            '/apis/operator.openshift.io/v1/consoles/cluster',
-            { spec: { plugins: currentPlugins } },
-          );
+          await k8sClient.mergePatchResource('/apis/operator.openshift.io/v1/consoles/cluster', {
+            spec: { plugins: currentPlugins },
+          });
         }
       });
     });
