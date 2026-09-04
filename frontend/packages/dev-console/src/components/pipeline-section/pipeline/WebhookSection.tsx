@@ -87,8 +87,7 @@ const WebhookHelpText: FC<WebhookHelpTextProps> = ({ gitProvider, testId }): Rea
           create a token with <strong>Read and Write </strong>scopes in{' '}
           <strong>
             Account, Workspace membership, Projects, Issues, Pull requests and Webhooks
-          </strong>
-          .
+          </strong>.
         </Trans>
       );
       break;
