@@ -224,7 +224,7 @@ const TopologyComponent: FC<TopologyProps> = ({
             y: storedGraphModel.y,
             scale: storedGraphModel.scale,
             scaleExtent: storedGraphModel.scaleExtent,
-            data: visualization.getGraph()?.getData(),
+            data: visualization.getGraph()?.getData() ?? model.graph?.data,
           };
         }
         const storedLayout = topologyLayoutDataJson?.[namespace];
