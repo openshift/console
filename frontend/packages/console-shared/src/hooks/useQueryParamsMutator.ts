@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import * as _ from 'lodash';
 import { useSearchParams, useLocation, useNavigate } from 'react-router';
 
@@ -34,10 +34,14 @@ export const useQueryParamsMutator = () => {
   // Use refs to access current location and searchParams without adding them to dependency arrays
   // This prevents callbacks from being recreated on every location/searchParams change
   const locationRef = useRef(location);
-  locationRef.current = location;
+  useEffect(() => {
+    locationRef.current = location;
+  });
 
   const searchParamsRef = useRef(searchParams);
-  searchParamsRef.current = searchParams;
+  useEffect(() => {
+    searchParamsRef.current = searchParams;
+  });
 
   const getQueryArgument = useCallback((arg: string) => searchParamsRef.current.get(arg), []);
 

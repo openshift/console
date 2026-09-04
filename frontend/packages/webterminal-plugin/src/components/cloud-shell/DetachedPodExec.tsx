@@ -43,7 +43,9 @@ const DetachedPodExec: FC<DetachedPodExecProps> = ({
   const isOpenShift = useFlag(FLAGS.OPENSHIFT);
   const impersonate = useConsoleSelector(getImpersonate);
   const impersonateRef = useRef(impersonate);
-  impersonateRef.current = impersonate;
+  useEffect(() => {
+    impersonateRef.current = impersonate;
+  });
 
   const onData = useCallback((data: string): void => {
     ws.current?.send(`0${Base64.encode(data)}`);

@@ -77,16 +77,24 @@ export const FetchProgressModal: FC<FetchProgressModalProps> = ({
   const abortControllerRef = useRef<AbortController | null>(null);
 
   const addToastRef = useRef(toaster.addToast);
-  addToastRef.current = toaster.addToast;
+  useEffect(() => {
+    addToastRef.current = toaster.addToast;
+  });
 
   const urlRef = useRef(url);
-  urlRef.current = url;
+  useEffect(() => {
+    urlRef.current = url;
+  });
 
   const callbackRef = useRef(callback);
-  callbackRef.current = callback;
+  useEffect(() => {
+    callbackRef.current = callback;
+  });
 
   const maxBytesRef = useRef(maxBytes);
-  maxBytesRef.current = maxBytes;
+  useEffect(() => {
+    maxBytesRef.current = maxBytes;
+  });
 
   const fetchData = useCallback(async () => {
     setBytesDownloaded(0);
