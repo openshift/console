@@ -24,13 +24,15 @@ export const useUserPreferenceLocalStorage = <T>(
   const [data, setData] = useState(() => {
     const valueInStorage =
       storage.getItem(storageKey) !== null && deserializeData(storage.getItem(storageKey));
-    return valueInStorage?.hasOwnProperty(keyRef.current) &&
-      valueInStorage[keyRef.current] !== undefined
-      ? valueInStorage[keyRef.current]
-      : defaultValueRef.current;
+    return valueInStorage?.hasOwnProperty(key) &&
+      valueInStorage[key] !== undefined
+      ? valueInStorage[key]
+      : defaultValue;
   });
   const dataRef = useRef<T>(data);
-  dataRef.current = data;
+  useEffect(() => {
+    dataRef.current = data;
+  });
 
   const storageUpdated = useCallback(
     (event: StorageEvent) => {

@@ -193,7 +193,9 @@ const NodeTerminal: FC<NodeTerminalProps> = ({ obj: node }) => {
   const isWindows = node.status?.nodeInfo?.operatingSystem === 'windows';
   const detachedSessions = useConsoleSelector(getDetachedSessions);
   const detachedSessionsRef = useRef(detachedSessions);
-  detachedSessionsRef.current = detachedSessions;
+  useEffect(() => {
+    detachedSessionsRef.current = detachedSessions;
+  });
 
   const watchResource = useMemo(
     () =>

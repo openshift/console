@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { Button, Flex, FlexItem } from '@patternfly/react-core';
 import { RhUiCompressIcon, RhUiDownloadIcon, RhUiExpandIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
@@ -30,17 +30,19 @@ const LogsWrapperComponent: FC<LogsWrapperComponentProps> = ({
   ...props
 }) => {
   const { t } = useTranslation('shipwright-plugin');
-  const resourceRef = useRef(null);
+  const [trackedResource, setTrackedResource] = useState<PodKind | null>(null);
   const [obj, loaded, error] = useK8sWatchResource<PodKind>(resource);
   const [fullscreenRef, fullscreenToggle, isFullscreen] = useFullscreen();
   const [downloadAllStatus, setDownloadAllStatus] = useState(false);
   const currentLogGetterRef = useRef<() => string>();
 
-  if (loaded && !error && resource.name === obj.metadata.name) {
-    resourceRef.current = obj;
-  } else if (error) {
-    resourceRef.current = null;
-  }
+  useEffect(() => {
+    if (loaded && !error && resource.name === obj?.metadata?.name) {
+      setTrackedResource(obj);
+    } else if (error) {
+      setTrackedResource(null);
+    }
+  }, [loaded, error, obj, resource?.name]);
 
   const downloadLogs = () => {
     if (!currentLogGetterRef.current) {
@@ -119,7 +121,7 @@ const LogsWrapperComponent: FC<LogsWrapperComponentProps> = ({
         <MultiStreamLogs
           {...props}
           taskName={taskName}
-          resource={resourceRef.current}
+          resource={trackedResource}
           setCurrentLogsGetter={setLogGetter}
         />
       ) : (

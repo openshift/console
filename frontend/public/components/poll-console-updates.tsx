@@ -70,8 +70,8 @@ export const PollConsoleUpdates = memo(() => {
     prevUpdateDataRef.current = updateData;
     prevPluginManifestsDataRef.current = pluginManifestsData;
   });
-  const prevUpdateData = prevUpdateDataRef.current;
-  const prevPluginManifestsData = prevPluginManifestsDataRef.current;
+  const prevUpdateData = prevUpdateDataRef.current; // eslint-disable-line react-hooks/refs -- usePrevious pattern: reading previous render's value
+  const prevPluginManifestsData = prevPluginManifestsDataRef.current; // eslint-disable-line react-hooks/refs
   const stateInitialized = _.isEmpty(updateError) && !_.isEmpty(prevUpdateData);
   const pluginsAddedList = updateData?.plugins.filter((x) => !prevUpdateData?.plugins.includes(x));
   const pluginsRemovedList = prevUpdateData?.plugins.filter(

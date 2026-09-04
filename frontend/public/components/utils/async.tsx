@@ -76,15 +76,16 @@ export const AsyncComponent = <C extends ComponentType>({
   const loaderRef = useRef<LazyLoader<C> | null>(null);
   const lazyComponentRef = useRef<ReturnType<typeof lazy> | null>(null);
 
+  // eslint-disable-next-line react-hooks/refs -- Synchronous lazy component initialization requires render-time ref access for custom loader comparison
   if (!sameLoader(loaderRef.current, loader)) {
-    loaderRef.current = loader;
-    lazyComponentRef.current = lazy(() =>
+    loaderRef.current = loader; // eslint-disable-line react-hooks/refs
+    lazyComponentRef.current = lazy(() => // eslint-disable-line react-hooks/refs
       withRetry(loader)().then((module) => ({ default: module })),
     );
   }
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const LazyComponent = lazyComponentRef.current!;
+  const LazyComponent = lazyComponentRef.current!; // eslint-disable-line react-hooks/refs
 
   /*
    * It's a bit tricky to get TypeScript to understand that props is compatible, while

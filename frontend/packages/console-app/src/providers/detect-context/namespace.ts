@@ -39,11 +39,17 @@ export const useValuesForNamespaceContext: UseValuesForNamespaceContext = () => 
   const dispatch = useConsoleDispatch();
 
   const activeNamespaceRef = useRef(activeNamespace);
-  activeNamespaceRef.current = activeNamespace;
+  useEffect(() => {
+    activeNamespaceRef.current = activeNamespace;
+  });
   const navigateRef = useRef(navigate);
-  navigateRef.current = navigate;
+  useEffect(() => {
+    navigateRef.current = navigate;
+  });
   const lastNamespaceRef = useRef(lastNamespace);
-  lastNamespaceRef.current = lastNamespace;
+  useEffect(() => {
+    lastNamespaceRef.current = lastNamespace;
+  });
 
   const updateNamespace = useCallback(
     (ns: string) => {

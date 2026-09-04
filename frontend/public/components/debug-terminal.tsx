@@ -123,7 +123,9 @@ const DebugTerminal: FC<DebugTerminalProps> = ({ podData, containerName }) => {
   const { t } = useTranslation('public');
   const detachedSessions = useConsoleSelector(getDetachedSessions);
   const detachedSessionsRef = useRef(detachedSessions);
-  detachedSessionsRef.current = detachedSessions;
+  useEffect(() => {
+    detachedSessionsRef.current = detachedSessions;
+  });
   const podNamespace = podData?.metadata.namespace;
   const podContainerName = containerName || podData?.spec.containers[0].name;
   const debugPodName = `${podData?.metadata?.name?.replace(/\./g, '-')}-debug-`;
