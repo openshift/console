@@ -196,7 +196,7 @@ export const AreaChart: FC<AreaChartProps> = ({
 };
 
 export const Area: FC<AreaProps> = ({
-  endTime = Date.now(),
+  endTime: endTimeProp,
   namespace,
   query,
   limitQuery,
@@ -206,6 +206,7 @@ export const Area: FC<AreaProps> = ({
   timespan = DEFAULT_PROMETHEUS_TIMESPAN,
   ...rest
 }) => {
+  const endTime = useMemo(() => endTimeProp ?? Date.now(), [endTimeProp]);
   const prometheusPollProps = {
     endpoint: PrometheusEndpoint.QUERY_RANGE,
     endTime,

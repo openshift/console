@@ -160,14 +160,14 @@ const IFrameMarkdownView: FC<InnerSyncMarkdownProps> = ({
     [THEME_GLASS_CLASS]: contrast === THEME_GLASS,
   });
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const updateDimensions = useCallback(
-    _.debounce(() => {
-      const el = frameRef.current?.contentWindow?.document?.body?.firstElementChild;
-      if (el) {
-        setFrameHeight(el.scrollHeight + (exactHeight ? 0 : 15));
-      }
-    }, 100),
+  const updateDimensions = useMemo(
+    () =>
+      _.debounce(() => {
+        const el = frameRef.current?.contentWindow?.document?.body?.firstElementChild;
+        if (el) {
+          setFrameHeight(el.scrollHeight + (exactHeight ? 0 : 15));
+        }
+      }, 100),
     [exactHeight],
   );
 

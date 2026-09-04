@@ -1,5 +1,5 @@
 import type { FC, ReactNode, ReactElement } from 'react';
-import { useState, useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import {
   Content,
   TextInputTypes,
@@ -48,6 +48,62 @@ const AccessTokenDocLinks = {
   [GitProvider.BITBUCKET]: 'https://support.atlassian.com/bitbucket-cloud/docs/app-passwords/',
 };
 
+interface WebhookHelpTextProps {
+  gitProvider: GitProvider;
+  testId: string;
+}
+
+const WebhookHelpText: FC<WebhookHelpTextProps> = ({ gitProvider, testId }): ReactElement => {
+  const { t } = useTranslation('devconsole');
+  let helpText: ReactNode;
+  switch (gitProvider) {
+    case GitProvider.GITHUB:
+      helpText = (
+        <Trans t={t} ns="devconsole">
+          Use your GitHub Personal token. Use this{' '}
+          <ExternalLink href={AccessTokenDocLinks[GitProvider.GITHUB]}>link</ExternalLink> to create
+          a <strong>classic</strong> token with <strong>repo</strong> &{' '}
+          <strong>admin:repo_hook</strong> scopes and give your token an expiration, i.e 30d.
+        </Trans>
+      );
+      break;
+
+    case GitProvider.GITLAB:
+      helpText = (
+        <Trans t={t} ns="devconsole">
+          Use your Gitlab Personal access token. Use this{' '}
+          <ExternalLink href={AccessTokenDocLinks[GitProvider.GITLAB]}>link</ExternalLink> to create
+          a token with <strong>api</strong> scope. Select the role as{' '}
+          <strong>Maintainer/Owner</strong>. Give your token an expiration i.e 30d.
+        </Trans>
+      );
+      break;
+
+    case GitProvider.BITBUCKET:
+      helpText = (
+        <Trans t={t} ns="devconsole">
+          Use your Bitbucket App password. Use this{' '}
+          <ExternalLink href={AccessTokenDocLinks[GitProvider.BITBUCKET]}>link</ExternalLink> to
+          create a token with <strong>Read and Write </strong>scopes in{' '}
+          <strong>
+            Account, Workspace membership, Projects, Issues, Pull requests and Webhooks
+          </strong>.
+        </Trans>
+      );
+      break;
+
+    default:
+      helpText = (
+        <Trans t={t} ns="devconsole">
+          Use your Git Personal token. Create a token with repo, public_repo & admin:repo_hook
+          scopes and give your token an expiration, i.e 30d.
+        </Trans>
+      );
+  }
+
+  return <div data-test={testId}>{helpText}</div>;
+};
+
 const WebhookDocLinks = {
   [GitProvider.GITHUB]:
     'https://docs.github.com/en/developers/webhooks-and-events/webhooks/creating-webhooks',
@@ -61,16 +117,14 @@ const WebhookSection: FC<WebhoookSectionProps> = ({ pac, formContextField }) => 
   const { values, setFieldValue } = useFormikContext<FormikValues>();
   const fieldPrefix = formContextField ? `${formContextField}.` : '';
   const { gitProvider, webhook } = _.get(values, formContextField) || values;
-  const [controllerUrl, setControllerUrl] = useState('');
+  const controllerUrl = useMemo(() => pac?.data?.['controller-url'] || '', [pac]);
   const webhookSecret = webhook?.secret ?? '';
   const { t } = useTranslation('devconsole');
   useEffect(() => {
-    const ctlUrl = pac?.data?.['controller-url'];
-    if (ctlUrl) {
-      setControllerUrl(ctlUrl);
-      setFieldValue(`${fieldPrefix}webhook.url`, ctlUrl);
+    if (controllerUrl) {
+      setFieldValue(`${fieldPrefix}webhook.url`, controllerUrl);
     }
-  }, [fieldPrefix, pac, setFieldValue]);
+  }, [fieldPrefix, controllerUrl, setFieldValue]);
 
   const autocompleteFilter = (text: string, item: any): boolean => fuzzy(text, item?.props?.name);
 
@@ -115,54 +169,6 @@ const WebhookSection: FC<WebhoookSectionProps> = ({ pac, formContextField }) => 
     }
   };
 
-  const HelpText = (): ReactElement => {
-    let helpText: ReactNode;
-    switch (gitProvider) {
-      case GitProvider.GITHUB:
-        helpText = (
-          <Trans t={t} ns="devconsole">
-            Use your GitHub Personal token. Use this{' '}
-            <ExternalLink href={AccessTokenDocLinks[GitProvider.GITHUB]}>link</ExternalLink> to
-            create a <b>classic</b> token with <b>repo</b> & <b>admin:repo_hook</b> scopes and give
-            your token an expiration, i.e 30d.
-          </Trans>
-        );
-        break;
-
-      case GitProvider.GITLAB:
-        helpText = (
-          <Trans t={t} ns="devconsole">
-            Use your Gitlab Personal access token. Use this{' '}
-            <ExternalLink href={AccessTokenDocLinks[GitProvider.GITLAB]}>link</ExternalLink> to
-            create a token with <b>api</b> scope. Select the role as <b>Maintainer/Owner</b>. Give
-            your token an expiration i.e 30d.
-          </Trans>
-        );
-        break;
-
-      case GitProvider.BITBUCKET:
-        helpText = (
-          <Trans t={t} ns="devconsole">
-            Use your Bitbucket App password. Use this{' '}
-            <ExternalLink href={AccessTokenDocLinks[GitProvider.BITBUCKET]}>link</ExternalLink> to
-            create a token with <b>Read and Write </b>scopes in{' '}
-            <b>Account, Workspace membership, Projects, Issues, Pull requests and Webhooks</b>.
-          </Trans>
-        );
-        break;
-
-      default:
-        helpText = (
-          <Trans t={t} ns="devconsole">
-            Use your Git Personal token. Create a token with repo, public_repo & admin:repo_hook
-            scopes and give your token an expiration, i.e 30d.
-          </Trans>
-        );
-    }
-
-    return <div data-test={`${values.gitProvider}-helptext`}>{helpText}</div>;
-  };
-
   return (
     <FormSection fullWidth={!fieldPrefix} extraMargin>
       {gitProvider && gitProvider === GitProvider.BITBUCKET ? (
@@ -199,7 +205,12 @@ const WebhookSection: FC<WebhoookSectionProps> = ({ pac, formContextField }) => 
               <InputField
                 name={`${fieldPrefix}webhook.token`}
                 type={TextInputTypes.text}
-                helpText={<HelpText />}
+                helpText={
+                  <WebhookHelpText
+                    gitProvider={gitProvider}
+                    testId={`${values.gitProvider}-helptext`}
+                  />
+                }
                 required
               />
             ),
