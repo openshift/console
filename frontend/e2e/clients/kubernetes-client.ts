@@ -566,6 +566,28 @@ export default class KubernetesClient {
     }
   }
 
+  async patchClusterCustomResource(
+    group: string,
+    version: string,
+    plural: string,
+    name: string,
+    patch: object | object[],
+  ): Promise<void> {
+    if (Array.isArray(patch)) {
+      await this.coApi.patchClusterCustomObject({
+        group,
+        name,
+        plural,
+        version,
+        body: patch,
+        contentType: k8s.PatchStrategy.JsonPatch,
+      } as any);
+      return;
+    }
+
+    await this.mergePatchResource(`/apis/${group}/${version}/${plural}/${name}`, patch);
+  }
+
   async getCustomResource(
     group: string,
     version: string,
@@ -581,32 +603,6 @@ export default class KubernetesClient {
       version,
     });
     return response;
-  }
-
-  async getClusterCustomResource(
-    group: string,
-    version: string,
-    plural: string,
-    name: string,
-  ): Promise<unknown> {
-    return this.coApi.getClusterCustomObject({ group, name, plural, version });
-  }
-
-  async patchClusterCustomResource(
-    group: string,
-    version: string,
-    plural: string,
-    name: string,
-    patch: object,
-  ): Promise<unknown> {
-    return this.coApi.patchClusterCustomObject({
-      body: patch,
-      group,
-      name,
-      plural,
-      version,
-      contentType: k8s.PatchStrategy.MergePatch,
-    } as any);
   }
 
   async createPVC(namespace: string, body: k8s.V1PersistentVolumeClaim): Promise<unknown> {
@@ -646,6 +642,26 @@ export default class KubernetesClient {
     } as any);
   }
 
+  async patchCustomResource(
+    group: string,
+    version: string,
+    namespace: string,
+    plural: string,
+    name: string,
+    patch: object[],
+  ): Promise<unknown> {
+    const response = await this.coApi.patchNamespacedCustomObject({
+      body: patch,
+      group,
+      name,
+      namespace,
+      plural,
+      version,
+      contentType: k8s.PatchStrategy.JsonPatch,
+    } as any);
+    return response;
+  }
+
   async listCustomResources(
     group: string,
     version: string,
@@ -660,6 +676,32 @@ export default class KubernetesClient {
         version,
       });
       return (response as any)?.items || [];
+    } catch {
+      return [];
+    }
+  }
+
+  async listClusterCustomResources(
+    group: string,
+    version: string,
+    plural: string,
+  ): Promise<unknown[]> {
+    try {
+      const response = await this.coApi.listClusterCustomObject({
+        group,
+        plural,
+        version,
+      });
+      return (response as any)?.items || [];
+    } catch {
+      return [];
+    }
+  }
+
+  async listNamespaces(): Promise<unknown[]> {
+    try {
+      const response = await this.k8sApi.listNamespace();
+      return (response?.items || []);
     } catch {
       return [];
     }

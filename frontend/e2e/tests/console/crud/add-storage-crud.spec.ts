@@ -19,6 +19,10 @@ test.describe('Add storage for workloads', { tag: ['@admin'] }, () => {
   test.beforeAll(async ({ k8sClient }) => {
     namespace = `test-storage-${Date.now()}`;
     await k8sClient.createNamespace(namespace);
+    const namespaceReady = await k8sClient.waitForNamespaceReady(namespace);
+    if (!namespaceReady) {
+      throw new Error(`Namespace ${namespace} did not become ready in time`);
+    }
   });
 
   test.afterAll(async ({ k8sClient }) => {
