@@ -37,12 +37,17 @@ const LogsWrapperComponent: FC<LogsWrapperComponentProps> = ({
   const currentLogGetterRef = useRef<() => string>();
 
   useEffect(() => {
+    if (!resource) {
+      setTrackedResource(null);
+      return;
+    }
     if (loaded && !error && resource.name === obj?.metadata?.name) {
       setTrackedResource(obj);
-    } else if (error) {
+    } else {
+      // Reset when loading a new resource or on error to avoid showing stale data
       setTrackedResource(null);
     }
-  }, [loaded, error, obj, resource?.name]);
+  }, [loaded, error, obj, resource]);
 
   const downloadLogs = () => {
     if (!currentLogGetterRef.current) {
