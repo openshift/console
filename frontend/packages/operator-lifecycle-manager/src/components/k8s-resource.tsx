@@ -1,5 +1,4 @@
 import type { FC } from 'react';
-import { useMemo } from 'react';
 import { sortable } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -166,13 +165,10 @@ export const Resources: FC<ResourcesProps> = (props) => {
     },
   );
 
-  const customData = useMemo(
-    () => ({
-      linkFor: linkForCsvResource,
-      providedAPI,
-    }),
-    [providedAPI],
-  );
+  const customData = {
+    linkFor: linkForCsvResource,
+    providedAPI,
+  };
 
   return (
     <MultiListPage

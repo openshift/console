@@ -96,24 +96,21 @@ const PipelineVisualizationSurface: FC<PipelineVisualizationSurfaceProps> = ({
       });
       setVis(visualization);
     } else {
-      const graph = storedGraphModel.current;
-      if (graph) {
-        model.graph = graph;
-      }
-      vis.fromModel(model);
+      const localModel = storedGraphModel.current
+        ? { ...model, graph: storedGraphModel.current }
+        : model;
+      vis.fromModel(localModel);
       vis.getGraph().layout();
     }
   }, [vis, model, onLayoutUpdate, componentFactory]);
 
   useEffect(() => {
     if (model && vis) {
-      const graph = storedGraphModel.current;
-      if (graph) {
-        model.graph = graph;
-      }
-      vis.fromModel(model);
+      const localModel = storedGraphModel.current
+        ? { ...model, graph: storedGraphModel.current }
+        : model;
+      vis.fromModel(localModel);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [model, vis]);
 
   if (!vis) return null;
