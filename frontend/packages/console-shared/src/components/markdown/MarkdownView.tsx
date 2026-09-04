@@ -105,11 +105,12 @@ const RenderExtension: FC<RenderExtensionProps> = ({
 }) => {
   const forceRender = useForceRender();
   const markupRef = useRef<string>(null);
+  // eslint-disable-next-line react-hooks/refs -- Intentional render-time ref access: delays extension rendering by one cycle to let DOM update via dangerouslySetInnerHTML
   const shouldRenderExtension = useCallback(() => {
-    if (markupRef.current === markup) {
+    if (markupRef.current === markup) { // eslint-disable-line react-hooks/refs
       return true;
     }
-    markupRef.current = markup;
+    markupRef.current = markup; // eslint-disable-line react-hooks/refs
     return false;
   }, [markup]);
   /**
@@ -238,7 +239,7 @@ const IFrameMarkdownView: FC<InnerSyncMarkdownProps> = ({
           markup={markup}
           selector=""
           renderExtension={renderExtension}
-          docContext={frameRef.current?.contentDocument}
+          docContext={frameRef.current?.contentDocument} // eslint-disable-line react-hooks/refs -- DOM ref read after load; iframe is mounted when loaded=true
         />
       )}
     </>

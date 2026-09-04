@@ -245,7 +245,7 @@ const HelmReleaseList: FC<{ mock?: boolean }> = ({ mock }) => {
     [helmReleaseStatusFilterOptions],
   );
 
-  const isLoaded = secretsLoaded && releasesLoaded && newCount === secretsCountRef.current;
+  const isLoaded = secretsLoaded && releasesLoaded && newCount === secretsCountRef.current; // eslint-disable-line react-hooks/refs -- Reading previous count for loading state comparison
   const hasNoReleases = isLoaded && releases.length === 0 && !loadError && !secretsLoadError;
 
   const emptyState = () => {

@@ -29,12 +29,10 @@ export const CodeEditorSidebar: FC<CodeEditorSidebarProps> = ({
   sanitizeYamlContent,
   toggleSidebar,
 }) => {
-  const editor = editorRef.current?.editor;
-
   const insertYamlContent = useCallback(
     (id: string = 'default', yamlContent: string = '', kind = undefined) => {
       const yaml = sanitizeYamlContent ? sanitizeYamlContent(id, yamlContent, kind) : yamlContent;
-
+      const editor = editorRef.current?.editor;
       const selection = editor?.getSelection();
       const range = new Range(
         selection.startLineNumber,
@@ -68,15 +66,15 @@ export const CodeEditorSidebar: FC<CodeEditorSidebarProps> = ({
       editor?.executeEdits(id, [op], [newContentSelection]);
       editor?.focus();
     },
-    [editor, sanitizeYamlContent],
+    [editorRef, sanitizeYamlContent],
   );
 
   const replaceYamlContent = useCallback(
     (id: string = 'default', yamlContent: string = '', kind: string = undefined) => {
       const yaml = sanitizeYamlContent ? sanitizeYamlContent(id, yamlContent, kind) : yamlContent;
-      editor?.setValue(yaml);
+      editorRef.current?.editor?.setValue(yaml);
     },
-    [editor, sanitizeYamlContent],
+    [editorRef, sanitizeYamlContent],
   );
 
   const downloadYamlContent = useCallback(
