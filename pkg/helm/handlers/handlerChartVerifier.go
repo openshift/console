@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"regexp"
 
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/helm/actions"
@@ -13,6 +14,13 @@ import (
 	"github.com/openshift/console/pkg/version"
 	"helm.sh/helm/v3/pkg/action"
 	"k8s.io/client-go/rest"
+)
+
+var (
+	dnsLabel  = `[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?`
+	hostPort  = dnsLabel + `(?:\.` + dnsLabel + `)*\.?(?::\d+)?`
+	ociURLRe  = regexp.MustCompile(`(?i)^oci://` + hostPort)
+	httpURLRe = regexp.MustCompile(`(?i)^https?://` + hostPort + `/.+\.(?:tar\.gz|tgz)$`)
 )
 
 // helmHandlers provides handlers to handle helm related requests
@@ -47,12 +55,23 @@ func (h *verifierHandlers) restConfig(bearerToken string) *rest.Config {
 		Transport:   h.Transport,
 	}
 }
+
+// isValidChartURL validates chart URLs using RFC-compliant hostname labels.
+// Accepts oci://<registry>/<path> and http(s)://<host>/<path>.tgz|tar.gz URLs.
+func isValidChartURL(raw string) bool {
+	return ociURLRe.MatchString(raw) || httpURLRe.MatchString(raw)
+}
+
 func (h *verifierHandlers) HandleChartVerifier(user *auth.User, w http.ResponseWriter, r *http.Request) {
 	var req HelmVerifierRequest
 
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
 		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: fmt.Sprintf("Failed to parse request: %v", err)})
+		return
+	}
+	if !isValidChartURL(req.ChartUrl) {
+		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: "invalid chart URL: must be oci:// or http(s)://*.tgz"})
 		return
 	}
 	conf := h.getActionConfigurations(h.ApiServerHost, "default", user.Token, &h.Transport)
