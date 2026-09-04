@@ -1,5 +1,5 @@
 import type { ReactNode, FC } from 'react';
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { Alert } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
 import { PodConnectLoader } from '@console/internal/components/pod';
@@ -193,7 +193,7 @@ const NodeTerminal: FC<NodeTerminalProps> = ({ obj: node }) => {
   const isWindows = node.status?.nodeInfo?.operatingSystem === 'windows';
   const detachedSessions = useConsoleSelector(getDetachedSessions);
   const detachedSessionsRef = useRef(detachedSessions);
-  useEffect(() => {
+  useLayoutEffect(() => {
     detachedSessionsRef.current = detachedSessions;
   });
 

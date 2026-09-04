@@ -1,5 +1,5 @@
 import type { ComponentType } from 'react';
-import { memo, useEffect, useMemo, useRef } from 'react';
+import { memo, useMemo, useRef } from 'react';
 import type { OnSelect } from '@patternfly/react-table';
 import { VirtualTableBody } from '@patternfly/react-virtualized-extension';
 import type { Scroll } from '@patternfly/react-virtualized-extension/dist/esm/components/Virtualized/types';
@@ -62,9 +62,8 @@ const VirtualizedTableBody = <D extends any, R extends any = {}>({
   onSelect,
 }: VirtualizedTableBodyProps<D, R>) => {
   const dataRef = useRef(data);
-  useEffect(() => {
-    dataRef.current = data;
-  });
+  // eslint-disable-next-line react-hooks/refs -- keyMapper reads dataRef synchronously during render for cache key resolution; must be current before measurement
+  dataRef.current = data;
 
   const cellMeasurementCache = useRef(
     new CellMeasurerCache({
