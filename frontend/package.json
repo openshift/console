@@ -352,7 +352,7 @@
     "ua-parser-js": "^0.7.24",
     "@types/jest": "21.x",
     "glob-parent": "^5.1.2",
-    "postcss": "^8.2.13",
+    "postcss": "^8.5.26",
     "immutable": "3.8.3",
     "axios@npm:^0.21.1": "patch:axios@npm%3A0.33.0#~/.yarn/patches/axios-npm-0.33.0-023deda7e4.patch"
   },
