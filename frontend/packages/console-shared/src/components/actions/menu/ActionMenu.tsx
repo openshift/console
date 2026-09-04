@@ -105,7 +105,7 @@ export const ActionMenu: FC<ActionMenuProps> = ({
           popper={menu}
           placement="bottom-end"
           isVisible={isOpen}
-          appendTo={appendTo || containerRef.current}
+          appendTo={appendTo || (() => containerRef.current)}
         />
       </div>
     )

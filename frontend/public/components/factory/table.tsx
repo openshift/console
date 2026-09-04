@@ -235,7 +235,9 @@ const VirtualBody: FC<VirtualBodyProps> = (props) => {
   } = props;
 
   const dataRef = useRef(data);
-  dataRef.current = data;
+  useEffect(() => {
+    dataRef.current = data;
+  });
 
   const cellMeasurementCache = useRef(
     new CellMeasurerCache({
