@@ -2,12 +2,11 @@ import { renderHook, waitFor } from '@testing-library/react';
 import { HttpError } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
 import { k8sListResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import { settleAllPromises } from '@console/dynamic-plugin-sdk/src/utils/promise';
-import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { mockHelmChartRepositories } from '../../components/__tests__/helm-release-mock-data';
 import { FLAG_OPENSHIFT_HELM } from '../../const';
 import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../models/helm';
-import { hasEnabledHelmCharts, useDetectHelmChartRepositories } from '../helm-detection-provider';
+import { useDetectHelmChartRepositories } from '../helm-detection-provider';
 
 const ns: string = 'ns';
 
@@ -27,30 +26,6 @@ jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource', () => ({
 const settleAllPromisesMock = settleAllPromises as jest.Mock;
 const useActiveNamespaceMock = useActiveNamespace as jest.Mock;
 const k8sListResourceMock = k8sListResource as jest.Mock;
-
-describe('hasEnabledHelmCharts', () => {
-  it('should return false if all chart repositories are disabled', () => {
-    const disabledHelmChartRepositories: K8sResourceKind[] = mockHelmChartRepositories.map(
-      (hcr) => ({ ...hcr, spec: { ...hcr.spec, disabled: true } }),
-    );
-    expect(hasEnabledHelmCharts(disabledHelmChartRepositories)).toBe(false);
-  });
-  it('should return true if any chart repository is not disabled', () => {
-    const helmChartRepositories: K8sResourceKind[] = mockHelmChartRepositories.map((hcr, index) => {
-      if (index === 0) {
-        return { ...hcr, spec: { ...hcr.spec, disabled: true } };
-      }
-      return hcr;
-    });
-    expect(hasEnabledHelmCharts(helmChartRepositories)).toBe(true);
-  });
-  it('should return false if helmChartRepositories is null or undefined', () => {
-    expect(hasEnabledHelmCharts(undefined)).toBe(false);
-  });
-  it('should return false if helmChartRepositories is an empty array', () => {
-    expect(hasEnabledHelmCharts([])).toBe(false);
-  });
-});
 
 describe('useDetectHelmChartRepositories', () => {
   const setFeatureFlag = jest.fn();
@@ -120,13 +95,43 @@ describe('useDetectHelmChartRepositories', () => {
     expect(setFeatureFlag.mock.calls[0]).toEqual([FLAG_OPENSHIFT_HELM, true]);
   });
 
-  it('should call setFeatureFlag with FLAG_OPENSHIFT_HELM flag and false if no CR helm chart repository is available', async () => {
+  it('should call setFeatureFlag with FLAG_OPENSHIFT_HELM flag and true if APIs are available but no CR helm chart repository instances exist', async () => {
     settleAllPromisesMock.mockReturnValue(Promise.resolve([[[], []], [], []]));
     renderHook(() => useDetectHelmChartRepositories(setFeatureFlag));
     await waitFor(() => {
       expect(setFeatureFlag).toHaveBeenCalledTimes(1);
     });
-    expect(setFeatureFlag.mock.calls[0]).toEqual([FLAG_OPENSHIFT_HELM, false]);
+    expect(setFeatureFlag.mock.calls[0]).toEqual([FLAG_OPENSHIFT_HELM, true]);
+  });
+
+  it('should call setFeatureFlag with FLAG_OPENSHIFT_HELM flag and true if all chart repositories are disabled', async () => {
+    const disabledRepos = mockHelmChartRepositories.map((hcr) => ({
+      ...hcr,
+      spec: { ...hcr.spec, disabled: true },
+    }));
+    settleAllPromisesMock.mockReturnValue(
+      Promise.resolve([[disabledRepos, disabledRepos], [], []]),
+    );
+    renderHook(() => useDetectHelmChartRepositories(setFeatureFlag));
+    await waitFor(() => {
+      expect(setFeatureFlag).toHaveBeenCalledTimes(1);
+    });
+    expect(setFeatureFlag.mock.calls[0]).toEqual([FLAG_OPENSHIFT_HELM, true]);
+  });
+
+  it('should call setFeatureFlag with FLAG_OPENSHIFT_HELM flag and true if one list call succeeds and the other fails', async () => {
+    const error500 = new HttpError('500', 500, {
+      status: 500,
+    } as Response);
+    // One fulfilled value (cluster-scoped succeeds), one rejected reason (project-scoped fails)
+    settleAllPromisesMock.mockReturnValue(
+      Promise.resolve([[mockHelmChartRepositories], [error500], []]),
+    );
+    renderHook(() => useDetectHelmChartRepositories(setFeatureFlag));
+    await waitFor(() => {
+      expect(setFeatureFlag).toHaveBeenCalledTimes(1);
+    });
+    expect(setFeatureFlag.mock.calls[0]).toEqual([FLAG_OPENSHIFT_HELM, true]);
   });
 
   it('should call setFeatureFlag with FLAG_OPENSHIFT_HELM flag and false if k8sListResource returns rejected promise for both cluster and project scoped helm chart repositories with atleast one of them being error 404', async () => {
