@@ -99,7 +99,7 @@
     "i18next-v4-format-converter": "^1.1.2",
     "istextorbinary": "^9.5.0",
     "js-base64": "^3.9.2",
-    "js-yaml": "^3.15.0",
+    "js-yaml": "^3.15.2",
     "json-schema": "^0.4.0",
     "jsonpath-plus": "^10.4.0",
     "linkify-react": "^4.3.3",
