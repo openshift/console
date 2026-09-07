@@ -94,14 +94,20 @@ if (!Cypress.env('OPENSHIFT_CI') || Cypress.env('PLUGIN_PULL_SPEC')) {
           deployment.spec.template.spec.containers[0].image = PLUGIN_PULL_SPEC;
           const service = yamlManifest.find(({ kind }) => kind === 'Service');
           const consolePlugin = yamlManifest.find(({ kind }) => kind === 'ConsolePlugin');
-          cy.exec(` echo '${JSON.stringify(deployment)}' | oc create -f -`, {
+          // Create the Service first so its serving-cert annotation creates the
+          // TLS secret before the Deployment tries to mount it.
+          cy.exec(` echo '${JSON.stringify(service)}' | oc create -f -`, {
             failOnNonZeroExit: false,
           })
+            .then((result) => {
+              console.log('Error: ', result.stderr);
+              console.log('Success: ', result.stdout);
+            })
             .its('stdout')
             .should('contain', 'created')
             .then(() =>
               cy
-                .exec(` echo '${JSON.stringify(service)}' | oc create -f -`, {
+                .exec(` echo '${JSON.stringify(deployment)}' | oc create -f -`, {
                   failOnNonZeroExit: false,
                 })
                 .then((result) => {
@@ -110,6 +116,12 @@ if (!Cypress.env('OPENSHIFT_CI') || Cypress.env('PLUGIN_PULL_SPEC')) {
                 })
                 .its('stdout')
                 .should('contain', 'created'),
+            )
+            .then(() =>
+              cy.exec(
+                `oc rollout status deployment/${PLUGIN_NAME} -n ${PLUGIN_NAME} --timeout=2m`,
+                { timeout: 180000 },
+              ),
             )
             .then(() =>
               cy
