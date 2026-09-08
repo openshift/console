@@ -16,29 +16,36 @@ test.describe(
       await expect(customizationPage.getHeading()).toBeVisible({ timeout: 30_000 });
     });
 
-    // eslint-disable-next-line playwright/expect-expect
     test('DC-01-TC01: Disable Developer catalog', async () => {
-      test.skip(true, 'Deferred to a future batch');
+      await customizationPage.moveAvailableToChosen('catalog-types', 'Developer Catalog');
+      await expect(customizationPage.getSuccessAlert()).toBeVisible({ timeout: 30_000 });
+      await customizationPage.moveChosenToAvailable('catalog-types', 'Developer Catalog');
     });
 
-    // eslint-disable-next-line playwright/expect-expect
     test('DC-01-TC02: Disable specific sub-catalogs', async () => {
-      test.skip(true, 'Deferred to a future batch');
+      await customizationPage.moveAvailableToChosen('catalog-types', 'Builder Images');
+      await expect(customizationPage.getSuccessAlert()).toBeVisible({ timeout: 30_000 });
+      await customizationPage.moveChosenToAvailable('catalog-types', 'Builder Images');
     });
 
-    // eslint-disable-next-line playwright/expect-expect
     test('DC-01-TC03: Disable Add page items', async () => {
-      test.skip(true, 'Deferred to a future batch');
+      await customizationPage.moveAvailableToChosen('add-page', 'Import from Git');
+      await expect(customizationPage.getSuccessAlert()).toBeVisible({ timeout: 30_000 });
+      await customizationPage.moveChosenToAvailable('add-page', 'Import from Git');
     });
 
-    // eslint-disable-next-line playwright/expect-expect
     test('DC-01-TC04: Re-enable catalogs after disabling', async () => {
-      test.skip(true, 'Deferred to a future batch');
+      await customizationPage.moveAvailableToChosen('catalog-types', 'Builder Images');
+      await customizationPage.moveChosenToAvailable('catalog-types', 'Builder Images');
+      await expect(customizationPage.getSuccessAlert()).toBeVisible({ timeout: 30_000 });
     });
 
-    // eslint-disable-next-line playwright/expect-expect
     test('DC-01-TC05: Verify console rollout after customization', async () => {
-      test.skip(true, 'Deferred to a future batch');
+      await customizationPage.moveAvailableToChosen('catalog-types', 'Builder Images');
+      await expect(customizationPage.getSuccessAlert()).toBeVisible({ timeout: 30_000 });
+      await customizationPage.moveChosenToAvailable('catalog-types', 'Builder Images');
+      await customizationPage.navigateToCustomize();
+      await expect(customizationPage.getHeading()).toBeVisible({ timeout: 30_000 });
     });
 
     test('verifies perspectives section on General tab', async () => {

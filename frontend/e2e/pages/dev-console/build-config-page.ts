@@ -27,6 +27,42 @@ export class BuildConfigPage extends BasePage {
     return this.page.getByText('Git Repo URL');
   }
 
+  getGitRepoUrlInput(): Locator {
+    return this.page.getByRole('textbox', { name: 'Git Repo URL' });
+  }
+
+  getEnvironmentSection(): Locator {
+    return this.page.getByTestId('section environment-variables');
+  }
+
+  getImageOption(type: 'build-from' | 'push-to'): Locator {
+    return this.page.getByTestId(`${type} type`);
+  }
+
+  getImageInput(
+    type: 'build-from' | 'push-to',
+    input: 'image-stream-image' | 'docker-image',
+  ): Locator {
+    return this.page.getByTestId(`${type} ${input}`).getByRole('textbox');
+  }
+
+  async selectImageOption(type: 'build-from' | 'push-to', option: string): Promise<void> {
+    await this.robustClick(this.getImageOption(type));
+    await this.robustClick(this.page.getByRole('option', { name: option, exact: true }));
+  }
+
+  async addEnvironmentVariable(name: string, value: string): Promise<void> {
+    const section = this.getEnvironmentSection();
+    await this.robustClick(section.getByRole('button', { name: /add/i }));
+    const row = section.getByRole('row').last();
+    await row.getByRole('textbox').nth(0).fill(name);
+    await row.getByRole('textbox').nth(1).fill(value);
+  }
+
+  async save(): Promise<void> {
+    await this.robustClick(this.page.getByRole('button', { name: 'Save', exact: true }));
+  }
+
   async expandAdvancedOption(optionName: string): Promise<void> {
     const toggle = this.page.getByRole('button', { name: optionName });
     await this.robustClick(toggle);

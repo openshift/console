@@ -1,3 +1,5 @@
+import type { Locator } from '@playwright/test';
+
 import { expect } from '../../fixtures';
 import BasePage from '../base-page';
 
@@ -28,5 +30,24 @@ export class DeploymentPage extends BasePage {
   async create(): Promise<void> {
     await expect(this.createButton).toBeEnabled();
     await this.robustClick(this.createButton);
+  }
+
+  async navigateToEditForm(namespace: string, name: string): Promise<void> {
+    await this.goTo(`/k8s/ns/${namespace}/deployments/${name}/form`);
+    await this.ensureFormView(this.nameInput);
+  }
+
+  getAutoDeployImage(): Locator {
+    return this.page.getByRole('checkbox', { name: 'Auto deploy when new Image is available' });
+  }
+
+  getAutoDeployConfig(): Locator {
+    return this.page.getByRole('checkbox', {
+      name: 'Auto deploy when deployment configuration changes',
+    });
+  }
+
+  async save(): Promise<void> {
+    await this.robustClick(this.page.getByRole('button', { name: 'Save', exact: true }));
   }
 }

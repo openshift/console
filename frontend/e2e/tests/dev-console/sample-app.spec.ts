@@ -3,6 +3,7 @@ import type { CleanupFixture } from '../../fixtures';
 import { test, expect } from '../../fixtures';
 import { ensureDeveloperPerspective, warmupSPA } from '../../pages/base-page';
 import { AddPage } from '../../pages/dev-console/add-page';
+import { TopologyPage } from '../../pages/topology-page';
 
 const NS_PREFIX = 'aut-addflow-samples';
 
@@ -13,6 +14,7 @@ async function createTestNamespace(
 ): Promise<string> {
   const ns = `${NS_PREFIX}-${suffix}-${Date.now()}`;
   await k8sClient.createNamespace(ns);
+  await k8sClient.waitForNamespaceReady(ns);
   cleanup.trackNamespace(ns);
   return ns;
 }
@@ -123,9 +125,7 @@ test.describe(
         await test.step('Verify builder image version can be changed', async () => {
           const versionToggle = addPage.getBuilderImageVersionToggle();
           await expect(versionToggle).toBeVisible();
-          await versionToggle.click();
-          const latestOption = addPage.getBuilderImageVersionItem('latest');
-          await expect(latestOption).toBeVisible();
+          await addPage.selectBuilderImageVersion('latest');
         });
 
         // Note: This test does not submit the form or verify the application appears in topology.
@@ -133,14 +133,27 @@ test.describe(
       },
     );
 
-    // eslint-disable-next-line playwright/expect-expect
-    test('GS-03-TC04: Submit sample application form — placeholder', async () => {
-      test.skip(true, 'Deferred to a future batch');
+    test('GS-03-TC04: Submit sample application form', async ({ page, k8sClient, cleanup }) => {
+      const ns = await createTestNamespace(k8sClient, cleanup, 'tc04');
+      const addPage = new AddPage(page);
+      await navigateToSamplesPage(addPage, ns);
+      await addPage.clickSampleCard('Httpd');
+      await addPage.getFormAppName().fill('httpd-sample');
+      await addPage.clickCreate();
+      await expect(page).toHaveURL(/\/topology\//, { timeout: 60_000 });
     });
 
-    // eslint-disable-next-line playwright/expect-expect
-    test('GS-03-TC05: Verify application in topology — placeholder', async () => {
-      test.skip(true, 'Deferred to a future batch');
+    test('GS-03-TC05: Verify application in topology', async ({ page, k8sClient, cleanup }) => {
+      const ns = await createTestNamespace(k8sClient, cleanup, 'tc05');
+      const addPage = new AddPage(page);
+      await navigateToSamplesPage(addPage, ns);
+      await addPage.clickSampleCard('Httpd');
+      await addPage.getFormAppName().fill('httpd-sample');
+      await addPage.clickCreate();
+      const topology = new TopologyPage(page);
+      await topology.navigateToTopology(ns);
+      await topology.switchToListView();
+      await expect(topology.getWorkload('httpd-sample')).toBeVisible({ timeout: 120_000 });
     });
   },
 );
