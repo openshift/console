@@ -10,30 +10,99 @@ import { dynamicPluginNames } from '@console/plugin-sdk/src/utils/allowed-plugin
 import { addTestError } from '@console/shared/src/utils/test-errors';
 import { REMOTE_ENTRY_CALLBACK } from '../constants';
 import type { ErrorWithCause } from '../utils/error/custom-error';
+import { HttpError, TimeoutError } from '../utils/error/http-error';
 import { resolveURL } from '../utils/url';
+
+/** Matches the number of attempts used by `coFetch` for RetryError. */
+export const PLUGIN_MANIFEST_MAX_ATTEMPTS = 3;
+
+const RETRYABLE_HTTP_STATUS_CODES = new Set([401, 408, 429, 500, 502, 503, 504]);
+
+/**
+ * True when a plugin manifest fetch failed for a transient reason.
+ *
+ * A 401 is retryable because Console sessions are stored per pod. The first
+ * request after login can land on a replica that does not have the session
+ * and return Unauthorized; a later attempt may hit the replica that does.
+ *
+ * Walks `cause` so SDK `ErrorWithCause` wrappers around `HttpError` still match.
+ */
+export const isRetryablePluginManifestError = (err: unknown): boolean => {
+  const visited = new Set<unknown>();
+  let current: unknown = err;
+
+  while (current != null && !visited.has(current)) {
+    visited.add(current);
+
+    if (current instanceof HttpError && RETRYABLE_HTTP_STATUS_CODES.has(current.code ?? 0)) {
+      return true;
+    }
+
+    if (current instanceof TimeoutError || current instanceof TypeError) {
+      return true;
+    }
+
+    current =
+      typeof current === 'object' && 'cause' in current
+        ? (current as { cause: unknown }).cause
+        : undefined;
+  }
+
+  return false;
+};
 
 /**
  * Calls {@link PluginStore.loadPlugin} for the given plugin name, and
  * checks if the plugin was loaded successfully.
  *
  * Our `PluginStore` is configured to automatically enable loaded plugins.
+ *
+ * Manifest fetch failures that look transient (401 from a replica without a
+ * session, 5xx, timeouts, network errors) are retried. `PluginStore` does not
+ * register the plugin until the manifest is fetched, so a retry is a clean
+ * second attempt rather than a reload of a failed plugin.
  */
-const loadAndEnablePlugin = async (
+export const loadAndEnablePlugin = async (
   pluginName: string,
   pluginStore: PluginStore,
   onError: (errorMessage: string, errorCause?: unknown) => void = _.noop,
 ) => {
-  await pluginStore
-    .loadPlugin(
-      resolveURL(
-        `${window.SERVER_FLAGS.basePath}api/plugins/${pluginName}/`,
-        'plugin-manifest.json',
-      ),
-    )
-    .catch((err: ErrorWithCause) => {
+  const manifestURL = resolveURL(
+    `${window.SERVER_FLAGS.basePath}api/plugins/${pluginName}/`,
+    'plugin-manifest.json',
+  );
+
+  let lastError: { message: string; cause?: unknown } | undefined;
+
+  for (let attempt = 1; attempt <= PLUGIN_MANIFEST_MAX_ATTEMPTS; attempt++) {
+    try {
+      // eslint-disable-next-line no-await-in-loop -- sequential retries of a single plugin load
+      await pluginStore.loadPlugin(manifestURL);
+      lastError = undefined;
+      break;
+    } catch (err) {
       // ErrorWithCause isn't the exact type but it's close enough for our use
-      onError(`[loadAndEnablePlugin] ${pluginName} loadPlugin failed: ${err.message}`, err.cause);
-    });
+      const error = err as ErrorWithCause;
+      lastError = { message: error.message, cause: error.cause };
+
+      if (!isRetryablePluginManifestError(error) || attempt === PLUGIN_MANIFEST_MAX_ATTEMPTS) {
+        break;
+      }
+
+      // eslint-disable-next-line no-console
+      console.warn(
+        `[loadAndEnablePlugin] ${pluginName} manifest fetch failed (attempt ${attempt}/${PLUGIN_MANIFEST_MAX_ATTEMPTS}), retrying`,
+        error.cause ?? error,
+      );
+    }
+  }
+
+  if (lastError) {
+    onError(
+      `[loadAndEnablePlugin] ${pluginName} loadPlugin failed: ${lastError.message}`,
+      lastError.cause,
+    );
+  }
 
   const plugin = pluginStore.getPluginInfo().find((p) => p.manifest.name === pluginName);
 
