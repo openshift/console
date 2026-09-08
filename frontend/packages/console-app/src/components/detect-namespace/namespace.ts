@@ -57,7 +57,7 @@ export const useValuesForNamespaceContext: UseValuesForNamespaceContext = () => 
     !flagPending(useProjects) && preferredNamespaceLoaded && lastNamespaceLoaded;
   React.useEffect(() => {
     if (!urlNamespace && resourcesLoaded) {
-      getValueForNamespace(preferredNamespace, lastNamespace, useProjects)
+      getValueForNamespace(preferredNamespace, lastNamespace, useProjects, activeNamespace)
         .then((ns: string) => {
           updateNamespace(ns);
         })

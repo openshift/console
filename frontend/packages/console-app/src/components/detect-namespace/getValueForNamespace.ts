@@ -5,7 +5,11 @@ export const getValueForNamespace = async (
   preferredNamespace: string,
   lastNamespace: string,
   useProjects: boolean,
+  activeNamespace?: string,
 ): Promise<string> => {
+  if (await checkNamespaceExists(activeNamespace, useProjects)) {
+    return activeNamespace;
+  }
   if (await checkNamespaceExists(preferredNamespace, useProjects)) {
     return preferredNamespace;
   }
