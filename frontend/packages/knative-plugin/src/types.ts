@@ -1,12 +1,12 @@
-import type { K8sResourceKind, K8sResourceCondition } from '@console/internal/module/k8s';
+import type { K8sResourceCommon, K8sResourceCondition } from '@console/internal/module/k8s';
 
-export type RevisionKind = {
+export interface RevisionKind extends K8sResourceCommon {
   status?: {
     conditions?: RevisionCondition[];
   };
-} & K8sResourceKind;
+}
 
-export type ServiceKind = K8sResourceKind & {
+export interface ServiceKind extends K8sResourceCommon {
   metadata?: {
     generation?: number;
   };
@@ -14,14 +14,14 @@ export type ServiceKind = K8sResourceKind & {
     url?: string;
     traffic?: Traffic[];
   };
-};
+}
 
-export type RouteKind = {
+export interface RouteKind extends K8sResourceCommon {
   status: {
     url: string;
     traffic: Traffic[];
   };
-} & K8sResourceKind;
+}
 
 export enum ConditionTypes {
   Ready = 'Ready',
@@ -30,41 +30,165 @@ export enum ConditionTypes {
   ResourcesAvailable = 'ResourcesAvailable',
 }
 
-type RevisionCondition = {
+interface RevisionCondition extends K8sResourceCondition {
   type: keyof typeof ConditionTypes;
-} & K8sResourceCondition;
+}
 
-export type Traffic = {
+export interface Traffic {
   revisionName: string;
   percent: number;
   latestRevision?: boolean;
   tag?: string;
   url?: string;
-};
+}
 
-export type RoutesOverviewListItem = {
+export interface RoutesOverviewListItem {
   uid: string;
   url: string;
   percent: string;
   name: string;
   namespace: string;
-};
+}
 
-export type EventSourceKind = {
-  status: {
-    conditions: EventSourceCondition[];
+export interface EventSourceKind extends K8sResourceCommon {
+  status?: {
+    conditions?: EventSourceCondition[];
   };
-} & K8sResourceKind;
+}
 
 export enum EventSourceConditionTypes {
   Ready = 'Ready',
 }
 
-type EventSourceCondition = {
+interface EventSourceCondition extends K8sResourceCondition {
   type: keyof typeof EventSourceConditionTypes;
-} & K8sResourceCondition;
+}
 
-export type EventSubscriptionKind = {
+interface SinkRef {
+  apiVersion?: string;
+  kind?: string;
+  name?: string;
+}
+
+interface Sink {
+  uri?: string;
+  ref?: SinkRef;
+}
+
+export interface PingSourceKind extends EventSourceKind {
+  spec: {
+    data?: string;
+    schedule?: string;
+    sink?: Sink;
+    deadLetterSink?: Sink;
+    timeZone?: string;
+  };
+}
+
+export interface ApiServerSourceKind extends EventSourceKind {
+  spec: {
+    mode: string;
+    serviceAccountName?: string;
+    resources?: {
+      apiVersion?: string;
+      kind?: string;
+      namespace?: string;
+    }[];
+    sink?: Sink;
+    deadLetterSink?: Sink;
+  };
+}
+
+export interface ContainerSourceKind extends EventSourceKind {
+  spec: {
+    template: {
+      metadata?: object;
+      spec: {
+        containers: {
+          image?: string;
+          name?: string;
+          args?: string[];
+          env?: { name?: string; value?: string; valueFrom?: object }[];
+        }[];
+        imagePullSecrets?: { name?: string }[];
+      };
+    };
+    sink?: Sink;
+  };
+}
+
+interface KafkaSourceNetSecret {
+  enable?: boolean;
+  user?: {
+    secretKeyRef?: {
+      name?: string;
+      key?: string;
+    };
+  };
+  password?: {
+    secretKeyRef?: {
+      name?: string;
+      key?: string;
+    };
+  };
+}
+
+interface KafkaSourceNetTls {
+  enable?: boolean;
+  caCert?: {
+    secretKeyRef?: {
+      name?: string;
+      key?: string;
+    };
+  };
+  cert?: {
+    secretKeyRef?: {
+      name?: string;
+      key?: string;
+    };
+  };
+  key?: {
+    secretKeyRef?: {
+      name?: string;
+      key?: string;
+    };
+  };
+}
+
+export interface KafkaSourceKind extends EventSourceKind {
+  spec: {
+    bootstrapServers?: string[];
+    topics?: string[];
+    consumerGroup?: string;
+    net?: {
+      sasl?: KafkaSourceNetSecret;
+      tls?: KafkaSourceNetTls;
+    };
+    sink?: Sink;
+  };
+}
+
+export type AnySourceKind =
+  PingSourceKind | ApiServerSourceKind | ContainerSourceKind | KafkaSourceKind;
+
+export interface KameletBindingKind extends EventSourceKind {
+  spec: {
+    source?: {
+      ref?: SinkRef;
+      properties?: {
+        [key: string]: any;
+      };
+    };
+    sink?: {
+      ref?: SinkRef;
+      properties?: {
+        [key: string]: any;
+      };
+    };
+  };
+}
+
+export interface EventSubscriptionKind extends K8sResourceCommon {
   metadata?: {
     generation?: number;
   };
@@ -87,9 +211,9 @@ export type EventSubscriptionKind = {
       subscriberURI: string;
     };
   };
-} & K8sResourceKind;
+}
 
-export type EventChannelKind = {
+export interface EventChannelKind extends K8sResourceCommon {
   metadata?: {
     generation?: number;
   };
@@ -98,13 +222,13 @@ export type EventChannelKind = {
       url: string;
     };
   };
-} & K8sResourceKind;
+}
 
 export enum ChannelConditionTypes {
   Ready = 'Ready',
 }
 
-export type EventBrokerKind = {
+export interface EventBrokerKind extends K8sResourceCommon {
   metadata?: {
     generation?: number;
   };
@@ -113,15 +237,15 @@ export type EventBrokerKind = {
       url: string;
     };
   };
-} & K8sResourceKind;
+}
 
 export enum TriggerConditionTypes {
   Ready = 'Ready',
 }
 
-type TriggerCondition = {
+interface TriggerCondition extends K8sResourceCondition {
   type: keyof typeof TriggerConditionTypes;
-} & K8sResourceCondition;
+}
 
 export enum BrokerConditionTypes {
   Ready = 'Ready',
@@ -131,7 +255,7 @@ export enum SubscriptionConditionTypes {
   Ready = 'Ready',
 }
 
-export type EventTriggerKind = {
+export interface EventTriggerKind extends K8sResourceCommon {
   metadata?: {
     generation?: number;
   };
@@ -153,12 +277,12 @@ export type EventTriggerKind = {
   status?: {
     conditions?: TriggerCondition[];
   };
-} & K8sResourceKind;
+}
 
-export type DomainMappingResponse = {
+export interface DomainMappingResponse {
   action: string;
-  resource: K8sResourceKind;
-};
+  resource: K8sResourceCommon;
+}
 
 export enum DomainMappingResponseAction {
   Create = 'Create',
