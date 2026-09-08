@@ -154,7 +154,7 @@ test.describe('Operator lifecycle metadata', { tag: ['@admin'] }, () => {
 
     const serverFlags = await page.evaluate(() => window.SERVER_FLAGS);
     test.skip(
-      !serverFlags.olmLifecycleMetadata,
+      !serverFlags?.olmLifecycleMetadata,
       'Lifecycle metadata columns require the OLMLifecycleAndCompatibility feature gate',
     );
     const releaseVersion = serverFlags.releaseVersion ?? '';

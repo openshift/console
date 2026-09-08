@@ -97,7 +97,6 @@ test.describe('CustomResourceDefinitions', { tag: ['@admin'] }, () => {
     };
 
     const customResource = {
-      name: crdName,
       apiVersion: `${group}/v1`,
       kind: crdKind,
       metadata: {
@@ -105,7 +104,6 @@ test.describe('CustomResourceDefinitions', { tag: ['@admin'] }, () => {
         namespace,
       },
       spec: {},
-      plural: 'customresourcedefinitions',
     };
 
     await test.step('Create CRD via YAML editor', async () => {

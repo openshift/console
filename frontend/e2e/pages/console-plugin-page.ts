@@ -50,6 +50,11 @@ export class ConsolePluginPage extends BasePage {
     await this.goTo('/');
   }
 
+  async openAboutModal(): Promise<void> {
+    await this.robustClick(this.page.getByTestId('help-dropdown-toggle'));
+    await this.robustClick(this.page.getByRole('menuitem', { name: 'About', exact: true }));
+  }
+
   async navigateToDynamicRoute(id: string): Promise<void> {
     await this.goTo(`/dynamic-route-${id}`);
   }

@@ -22,6 +22,7 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
     roleBindingName = `test-rb-${suffix}`;
     clusterRoleBindingName = `test-crb-${suffix}`;
     await k8sClient.createNamespace(namespace);
+    await k8sClient.waitForNamespaceReady(namespace);
   });
 
   test.beforeEach(async ({ page }) => {
