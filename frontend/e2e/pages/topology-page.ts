@@ -112,9 +112,7 @@ export class TopologyPage extends BasePage {
 
   // PF Topology internal class — no data-test available; may break on PF upgrades
   getGroupNode(groupName: string): Locator {
-    return this.page
-      .locator('g[class*="topology__group__label"]')
-      .filter({ hasText: groupName });
+    return this.page.locator('g[class*="topology__group__label"]').filter({ hasText: groupName });
   }
 
   async ensureGraphView(): Promise<void> {

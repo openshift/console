@@ -36,7 +36,6 @@ test.describe('Helm Topology', { tag: ['@helm', '@regression'] }, () => {
     });
 
     await test.step('Verify kebab menu options on Helm page (HR-01-TC02)', async () => {
-
       await helmPage.clickKebabMenu();
       await expect(helmDetailsPage.getActionMenuItem('Upgrade')).toBeVisible();
       await expect(helmDetailsPage.getActionMenuItem('Delete Helm Release')).toBeVisible();

@@ -89,5 +89,4 @@ export class HelmRepositoryPage extends BasePage {
   async clickEditAction(resourceType: string): Promise<void> {
     await this.robustClick(this.page.getByTestId(`Edit ${resourceType}`));
   }
-
 }
