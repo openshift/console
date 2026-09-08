@@ -5,11 +5,9 @@ import BasePage from './base-page';
 export class HelmDetailsPage extends BasePage {
   private readonly sectionHeading = this.page.getByTestId('section-heading-Helm Release details');
   private readonly resourcesTab = this.page.getByTestId('horizontal-link-Resources');
-  private readonly revisionHistoryTab = this.page.getByTestId('horizontal-link-Revision history',
-  );
+  private readonly revisionHistoryTab = this.page.getByTestId('horizontal-link-Revision history');
   private readonly releaseNotesTab = this.page.getByTestId('horizontal-link-Release notes');
-  private readonly actionsMenuButton = this.page.getByTestId('actions-menu-button',
-  );
+  private readonly actionsMenuButton = this.page.getByTestId('actions-menu-button');
   private readonly pageHeading = this.page.getByTestId('page-heading').locator('h1');
   private readonly statusIcon = this.page.getByTestId('success-icon');
   private readonly statusText = this.page.getByTestId('status-text');
@@ -72,5 +70,4 @@ export class HelmDetailsPage extends BasePage {
   async confirmDelete(): Promise<void> {
     await this.robustClick(this.confirmActionButton);
   }
-
 }

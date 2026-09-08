@@ -19,7 +19,9 @@ export class HelmURLChartPage extends BasePage {
   private readonly nonConfigurableAlert = this.page.getByText(
     "Helm release is not configurable since the Helm Chart doesn't define any values.",
   );
-  private readonly urlValidationError = this.page.getByText('Must be a valid OCI URL or a valid HTTP/HTTPS tar file');
+  private readonly urlValidationError = this.page.getByText(
+    'Must be a valid OCI URL or a valid HTTP/HTTPS tar file',
+  );
 
   async navigateToUrlChart(namespace: string): Promise<void> {
     await this.goTo(`/helm/ns/${namespace}/url-chart`);

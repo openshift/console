@@ -120,38 +120,35 @@ test.describe('Helm URL Chart Install', { tag: ['@helm', '@regression'] }, () =>
   });
 
   // OCI registry install depends on external registry availability
-  test.fixme(
-    'installs from OCI registry (HR-URL-TC05)',
-    async ({ page, k8sClient, cleanup }) => {
-      test.setTimeout(300_000);
-      const ns = `aut-helm-url-oci-${Date.now()}`;
-      await k8sClient.createNamespace(ns);
-      cleanup.trackNamespace(ns);
+  test.fixme('installs from OCI registry (HR-URL-TC05)', async ({ page, k8sClient, cleanup }) => {
+    test.setTimeout(300_000);
+    const ns = `aut-helm-url-oci-${Date.now()}`;
+    await k8sClient.createNamespace(ns);
+    cleanup.trackNamespace(ns);
 
-      const helmPage = new HelmPage(page);
-      const urlChartPage = new HelmURLChartPage(page);
+    const helmPage = new HelmPage(page);
+    const urlChartPage = new HelmURLChartPage(page);
 
-      await test.step('Fill step 1 with OCI URL', async () => {
-        await urlChartPage.navigateToUrlChart(ns);
-        await urlChartPage.fillChartUrl('oci://ghcr.io/stefanprodan/charts/podinfo');
-        await urlChartPage.fillChartVersion('6.7.1');
+    await test.step('Fill step 1 with OCI URL', async () => {
+      await urlChartPage.navigateToUrlChart(ns);
+      await urlChartPage.fillChartUrl('oci://ghcr.io/stefanprodan/charts/podinfo');
+      await urlChartPage.fillChartVersion('6.7.1');
 
-        await expect(urlChartPage.getReleaseNameField()).toHaveValue('podinfo', {
-          timeout: 10_000,
-        });
+      await expect(urlChartPage.getReleaseNameField()).toHaveValue('podinfo', {
+        timeout: 10_000,
       });
+    });
 
-      await test.step('Complete install', async () => {
-        await urlChartPage.clickNext();
-        await urlChartPage.clickInstall();
-        await expect(page).toHaveURL(/\/helm\/|\/topology\//, { timeout: 60_000 });
-      });
+    await test.step('Complete install', async () => {
+      await urlChartPage.clickNext();
+      await urlChartPage.clickInstall();
+      await expect(page).toHaveURL(/\/helm\/|\/topology\//, { timeout: 60_000 });
+    });
 
-      await test.step('Verify release exists', async () => {
-        await helmPage.navigateToHelmReleases(ns);
-        await helmPage.searchByName('podinfo');
-        await expect(helmPage.getTable()).toBeVisible({ timeout: 30_000 });
-      });
-    },
-  );
+    await test.step('Verify release exists', async () => {
+      await helmPage.navigateToHelmReleases(ns);
+      await helmPage.searchByName('podinfo');
+      await expect(helmPage.getTable()).toBeVisible({ timeout: 30_000 });
+    });
+  });
 });
