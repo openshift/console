@@ -15,6 +15,14 @@ Given('user has logged in as a basic user', () => {
   app.waitForLoad();
 });
 
+Given('user has logged in as admin user', () => {
+  cy.login();
+});
+
+Given('user is at admin perspective', () => {
+  cy.initAdmin();
+});
+
 Given('user is at developer perspective', () => {
   checkDeveloperPerspective();
   app.waitForLoad();
