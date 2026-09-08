@@ -89,7 +89,10 @@ test.describe('Pod log viewer', { tag: ['@admin'] }, () => {
     await test.step('Create namespace and pod', async () => {
       await k8sClient.createNamespace(ns);
       cleanup.trackNamespace(ns);
-      await k8sClient.createPod({ ...examplePodSpec, metadata: { ...examplePodSpec.metadata, namespace: ns } } as any);
+      await k8sClient.createPod({
+        ...examplePodSpec,
+        metadata: { ...examplePodSpec.metadata, namespace: ns },
+      } as any);
       await k8sClient.waitForPodReady('examplepod1', ns);
     });
 
@@ -124,8 +127,14 @@ test.describe('Pod log viewer', { tag: ['@admin'] }, () => {
     await test.step('Create namespace and pods', async () => {
       await k8sClient.createNamespace(ns);
       cleanup.trackNamespace(ns);
-      await k8sClient.createPod({ ...examplePodSpec, metadata: { ...examplePodSpec.metadata, namespace: ns } } as any);
-      await k8sClient.createPod({ ...wrapPodSpec, metadata: { ...wrapPodSpec.metadata, namespace: ns } } as any);
+      await k8sClient.createPod({
+        ...examplePodSpec,
+        metadata: { ...examplePodSpec.metadata, namespace: ns },
+      } as any);
+      await k8sClient.createPod({
+        ...wrapPodSpec,
+        metadata: { ...wrapPodSpec.metadata, namespace: ns },
+      } as any);
       await Promise.all([
         k8sClient.waitForPodReady('examplepod1', ns),
         k8sClient.waitForPodReady('wraplogpod', ns),

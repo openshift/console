@@ -50,9 +50,7 @@ test.describe('Cluster Settings cluster update modal', { tag: ['@admin'] }, () =
       await clusterSettings.openUpdateModal();
 
       // Verify irreversibility notice is always shown
-      const irreversibilityNotice = page.getByTestId(
-        'update-cluster-modal-irreversibility-notice',
-      );
+      const irreversibilityNotice = page.getByTestId('update-cluster-modal-irreversibility-notice');
       await expect(irreversibilityNotice).toBeVisible();
 
       await clusterSettings.openUpdateDropdown();

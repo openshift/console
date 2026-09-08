@@ -68,9 +68,7 @@ export async function ensureWebTerminalOperatorInstalled(
 
 const CSV_PLURAL = 'clusterserviceversions';
 
-export async function uninstallWebTerminalOperator(
-  k8sClient: KubernetesClient,
-): Promise<void> {
+export async function uninstallWebTerminalOperator(k8sClient: KubernetesClient): Promise<void> {
   try {
     await k8sClient.deleteCustomResource(
       SUBSCRIPTION_GROUP,
@@ -86,8 +84,8 @@ export async function uninstallWebTerminalOperator(
       OPERATOR_NAMESPACE,
       CSV_PLURAL,
     );
-    const webTerminalCsv = csvs.find(
-      (csv) => (csv as any).metadata?.name?.startsWith('web-terminal'),
+    const webTerminalCsv = csvs.find((csv) =>
+      (csv as any).metadata?.name?.startsWith('web-terminal'),
     );
     if (webTerminalCsv) {
       await k8sClient.deleteCustomResource(

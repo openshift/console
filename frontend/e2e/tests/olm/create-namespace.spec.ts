@@ -57,7 +57,10 @@ test.describe('Create namespace from install operators', { tag: ['@admin'] }, ()
     // OperatorHub catalog with an empty Software Catalog. Skip instead of timing out.
     await page.goto('/');
     const isTechPreview = await page.evaluate(() => window.SERVER_FLAGS.techPreview);
-    test.skip(isTechPreview, 'OLMv1 is active on techPreview clusters — OLMv0 OperatorHub catalog is unavailable');
+    test.skip(
+      isTechPreview,
+      'OLMv1 is active on techPreview clusters — OLMv0 OperatorHub catalog is unavailable',
+    );
 
     await test.step('Navigate to catalog and open operator details', async () => {
       await page.goto('/catalog/ns/default?catalogType=operator');

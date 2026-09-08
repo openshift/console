@@ -73,9 +73,7 @@ const routes: RouteConfig[] = [
   {
     path: '/api-resource/ns/default/core~v1~Pod/access',
     assertLoaded: async (page) => {
-      await expect(
-        page.locator('[data-ouia-component-type$="TableRow"]').first(),
-      ).toBeVisible();
+      await expect(page.locator('[data-ouia-component-type$="TableRow"]').first()).toBeVisible();
     },
   },
   {

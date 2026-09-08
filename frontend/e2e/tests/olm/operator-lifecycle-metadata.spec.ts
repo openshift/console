@@ -97,9 +97,7 @@ test.describe('Operator lifecycle metadata', { tag: ['@admin'] }, () => {
     }
 
     if (!csv) {
-      throw new Error(
-        `Timed out waiting for ${PACKAGE_NAME} CSV to reach Succeeded phase`,
-      );
+      throw new Error(`Timed out waiting for ${PACKAGE_NAME} CSV to reach Succeeded phase`);
     }
 
     operatorVersion = csv.spec?.version ?? '';
@@ -171,17 +169,18 @@ test.describe('Operator lifecycle metadata', { tag: ['@admin'] }, () => {
       );
 
       await page.reload();
-      await expect(
-        installedOperators.getOperatorRow(operatorDisplayName),
-      ).toBeVisible({ timeout: 30_000 });
+      await expect(installedOperators.getOperatorRow(operatorDisplayName)).toBeVisible({
+        timeout: 30_000,
+      });
 
-      await expect(
-        installedOperators.getCompatibleIndicator(operatorDisplayName),
-      ).toContainText('Compatible', { timeout: 30_000 });
+      await expect(installedOperators.getCompatibleIndicator(operatorDisplayName)).toContainText(
+        'Compatible',
+        { timeout: 30_000 },
+      );
 
-      await expect(
-        installedOperators.getSupportPhaseBadge(operatorDisplayName),
-      ).toContainText('Maintenance support');
+      await expect(installedOperators.getSupportPhaseBadge(operatorDisplayName)).toContainText(
+        'Maintenance support',
+      );
     });
 
     await test.step('Unsupported when all phases expired', async () => {
@@ -192,26 +191,28 @@ test.describe('Operator lifecycle metadata', { tag: ['@admin'] }, () => {
       );
 
       await page.reload();
-      await expect(
-        installedOperators.getOperatorRow(operatorDisplayName),
-      ).toBeVisible({ timeout: 30_000 });
+      await expect(installedOperators.getOperatorRow(operatorDisplayName)).toBeVisible({
+        timeout: 30_000,
+      });
 
-      await expect(
-        installedOperators.getSelfSupportBadge(operatorDisplayName),
-      ).toContainText('Unsupported', { timeout: 30_000 });
+      await expect(installedOperators.getSelfSupportBadge(operatorDisplayName)).toContainText(
+        'Unsupported',
+        { timeout: 30_000 },
+      );
     });
 
     await test.step('Incompatible when cluster version not in compatibility list', async () => {
       activeLifecycleData = makeLifecycleIncompatible(PACKAGE_NAME, operatorVersion);
 
       await page.reload();
-      await expect(
-        installedOperators.getOperatorRow(operatorDisplayName),
-      ).toBeVisible({ timeout: 30_000 });
+      await expect(installedOperators.getOperatorRow(operatorDisplayName)).toBeVisible({
+        timeout: 30_000,
+      });
 
-      await expect(
-        installedOperators.getIncompatibleIndicator(operatorDisplayName),
-      ).toContainText('Incompatible', { timeout: 30_000 });
+      await expect(installedOperators.getIncompatibleIndicator(operatorDisplayName)).toContainText(
+        'Incompatible',
+        { timeout: 30_000 },
+      );
     });
   });
 });

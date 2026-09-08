@@ -1,8 +1,5 @@
 import { test, expect } from '../../fixtures';
-import {
-  AddPage,
-  ImportFromGitPage,
-} from '../../pages/dev-console/add-page';
+import { AddPage, ImportFromGitPage } from '../../pages/dev-console/add-page';
 import { TopologyPage } from '../../pages/topology-page';
 
 /**
@@ -37,17 +34,14 @@ test.describe(
       });
 
       await test.step('Enter Dockerfile git URL', async () => {
-        await gitPage.enterGitRepoURL(
-          'https://github.com/rohitkrai03/flask-dockerfile-example',
-        );
+        await gitPage.enterGitRepoURL('https://github.com/rohitkrai03/flask-dockerfile-example');
         await gitPage.waitForGitValidation();
       });
 
       await test.step('Verify auto-detected values', async () => {
-        await expect(gitPage.getAppNameInput()).toHaveValue(
-          'flask-dockerfile-example-app',
-          { timeout: 15_000 },
-        );
+        await expect(gitPage.getAppNameInput()).toHaveValue('flask-dockerfile-example-app', {
+          timeout: 15_000,
+        });
         await expect(gitPage.getNameInput()).toHaveValue('flask-dockerfile-example');
       });
     });
@@ -60,9 +54,7 @@ test.describe(
       });
 
       await test.step('Enter URL and cancel', async () => {
-        await gitPage.enterGitRepoURL(
-          'https://github.com/rohitkrai03/flask-dockerfile-example',
-        );
+        await gitPage.enterGitRepoURL('https://github.com/rohitkrai03/flask-dockerfile-example');
         await gitPage.waitForGitValidation();
         await gitPage.selectResourceType('Deployment');
         await gitPage.clickCancel();
@@ -81,9 +73,7 @@ test.describe(
       });
 
       await test.step('Fill form with Dockerfile repo and create', async () => {
-        await gitPage.enterGitRepoURL(
-          'https://github.com/rohitkrai03/flask-dockerfile-example',
-        );
+        await gitPage.enterGitRepoURL('https://github.com/rohitkrai03/flask-dockerfile-example');
         await gitPage.waitForGitValidation();
         await gitPage.enterName('dockerfile-5000');
         await gitPage.selectResourceType('Deployment');

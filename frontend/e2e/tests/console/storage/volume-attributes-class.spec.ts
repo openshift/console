@@ -71,19 +71,17 @@ test.describe('VolumeAttributesClass E2E tests', { tag: ['@admin', '@storage'] }
 
     await test.step('Verify PVC details with requested VAC', async () => {
       await expect(page.getByTestId('page-heading')).toContainText(TEST_PVC);
-      await expect(page.getByTestId('pvc-requested-vac')).toContainText(
-        TEST_VAC_LOW_IOPS,
-        { timeout: 30_000 },
-      );
+      await expect(page.getByTestId('pvc-requested-vac')).toContainText(TEST_VAC_LOW_IOPS, {
+        timeout: 30_000,
+      });
       await expect(
         page.getByTestId('pvc-status').locator('[data-test="status-text"]'),
       ).toContainText('Bound', {
         timeout: 120_000,
       });
-      await expect(page.getByTestId('pvc-current-vac')).toContainText(
-        TEST_VAC_LOW_IOPS,
-        { timeout: 30_000 },
-      );
+      await expect(page.getByTestId('pvc-current-vac')).toContainText(TEST_VAC_LOW_IOPS, {
+        timeout: 30_000,
+      });
     });
 
     await test.step('Modify VolumeAttributesClass to high IOPS', async () => {
@@ -96,14 +94,12 @@ test.describe('VolumeAttributesClass E2E tests', { tag: ['@admin', '@storage'] }
       await modal.submit();
       await modal.waitForClosed();
 
-      await expect(page.getByTestId('pvc-requested-vac')).toContainText(
-        TEST_VAC_HIGH_IOPS,
-        { timeout: 30_000 },
-      );
-      await expect(page.getByTestId('pvc-current-vac')).toContainText(
-        TEST_VAC_HIGH_IOPS,
-        { timeout: 30_000 },
-      );
+      await expect(page.getByTestId('pvc-requested-vac')).toContainText(TEST_VAC_HIGH_IOPS, {
+        timeout: 30_000,
+      });
+      await expect(page.getByTestId('pvc-current-vac')).toContainText(TEST_VAC_HIGH_IOPS, {
+        timeout: 30_000,
+      });
     });
 
     await test.step('Attempt invalid VAC modification and verify error', async () => {
@@ -116,14 +112,12 @@ test.describe('VolumeAttributesClass E2E tests', { tag: ['@admin', '@storage'] }
       await modal.submit();
       await modal.waitForClosed();
 
-      await expect(page.getByTestId('pvc-requested-vac')).toContainText(
-        TEST_VAC_INVALID,
-        { timeout: 30_000 },
-      );
-      await expect(page.getByTestId('pvc-current-vac')).toContainText(
-        TEST_VAC_HIGH_IOPS,
-        { timeout: 30_000 },
-      );
+      await expect(page.getByTestId('pvc-requested-vac')).toContainText(TEST_VAC_INVALID, {
+        timeout: 30_000,
+      });
+      await expect(page.getByTestId('pvc-current-vac')).toContainText(TEST_VAC_HIGH_IOPS, {
+        timeout: 30_000,
+      });
 
       await expect(page.getByTestId('vac-error-alert')).toBeVisible({
         timeout: 60_000,

@@ -7,15 +7,11 @@ export class ConsolePluginPage extends BasePage {
   private readonly pfCodeEditor = this.page.locator('.pf-v6-c-code-editor');
 
   async navigateToConsolePlugins(): Promise<void> {
-    await this.goTo(
-      '/k8s/cluster/operator.openshift.io~v1~Console/cluster/console-plugins',
-    );
+    await this.goTo('/k8s/cluster/operator.openshift.io~v1~Console/cluster/console-plugins');
   }
 
   async navigateToPluginDetails(pluginName: string): Promise<void> {
-    await this.goTo(
-      `/k8s/cluster/console.openshift.io~v1~ConsolePlugin/${pluginName}`,
-    );
+    await this.goTo(`/k8s/cluster/console.openshift.io~v1~ConsolePlugin/${pluginName}`);
   }
 
   async navigateToPluginManifest(pluginName: string): Promise<void> {

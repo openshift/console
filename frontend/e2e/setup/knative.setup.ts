@@ -10,15 +10,9 @@ const SUBSCRIPTION_YAML = path.resolve(
   '../mocks/knative/serverlessOperatorSubscription.yaml',
 );
 
-const SERVING_YAML = path.resolve(
-  import.meta.dirname,
-  '../mocks/knative/knative-serving.yaml',
-);
+const SERVING_YAML = path.resolve(import.meta.dirname, '../mocks/knative/knative-serving.yaml');
 
-const EVENTING_YAML = path.resolve(
-  import.meta.dirname,
-  '../mocks/knative/knative-eventing.yaml',
-);
+const EVENTING_YAML = path.resolve(import.meta.dirname, '../mocks/knative/knative-eventing.yaml');
 
 const isRetryableError = (err: unknown): boolean => {
   const msg = err instanceof Error ? err.message : String(err);
@@ -37,7 +31,7 @@ const isRetryableError = (err: unknown): boolean => {
 
 setup.describe.configure({ mode: 'serial' });
 
-setup('install OpenShift Serverless operator if not present', async ({ }) => {
+setup('install OpenShift Serverless operator if not present', async ({}) => {
   setup.setTimeout(600_000);
 
   const k8sClient = new KubernetesClient(
@@ -115,11 +109,13 @@ setup('install OpenShift Serverless operator if not present', async ({ }) => {
     await new Promise((r) => setTimeout(r, 10_000));
   }
   if (!csvSucceeded) {
-    throw new Error(`Serverless operator CSV did not reach Succeeded phase after ${Math.round((Date.now() - startTime) / 1000)}s`);
+    throw new Error(
+      `Serverless operator CSV did not reach Succeeded phase after ${Math.round((Date.now() - startTime) / 1000)}s`,
+    );
   }
 });
 
-setup('create KnativeServing and KnativeEventing instances', async ({ }) => {
+setup('create KnativeServing and KnativeEventing instances', async ({}) => {
   setup.setTimeout(600_000);
 
   const k8sClient = new KubernetesClient(

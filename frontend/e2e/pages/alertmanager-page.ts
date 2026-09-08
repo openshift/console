@@ -105,7 +105,9 @@ export function getGlobalsAndReceiverConfig(
 } {
   const parsed = yaml.load(yamlContent);
   const config: AlertmanagerConfig =
-    typeof parsed === 'object' && parsed !== null ? (parsed as AlertmanagerConfig) : ({} as AlertmanagerConfig);
+    typeof parsed === 'object' && parsed !== null
+      ? (parsed as AlertmanagerConfig)
+      : ({} as AlertmanagerConfig);
   const receiver: AlertmanagerReceiver | undefined = config.receivers?.find(
     (r) => r.name === receiverName,
   );

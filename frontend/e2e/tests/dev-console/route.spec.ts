@@ -102,29 +102,29 @@ test.describe('Route', { tag: ['@dev-console'] }, () => {
     });
   });
 
-  test('deletes route via Actions menu', { tag: ['@regression'] }, async ({
-    page,
-    k8sClient,
-    cleanup,
-  }) => {
-    const ns = `aut-routes-delete-${Date.now()}`;
-    const routeName = 'test-route';
-    const detailsPage = new DetailsPage(page);
+  test(
+    'deletes route via Actions menu',
+    { tag: ['@regression'] },
+    async ({ page, k8sClient, cleanup }) => {
+      const ns = `aut-routes-delete-${Date.now()}`;
+      const routeName = 'test-route';
+      const detailsPage = new DetailsPage(page);
 
-    await test.step('Set up namespace and create route', async () => {
-      await createRoutePrerequisites(k8sClient, cleanup, ns);
-      await createTestRoute(k8sClient, ns, routeName);
-    });
+      await test.step('Set up namespace and create route', async () => {
+        await createRoutePrerequisites(k8sClient, cleanup, ns);
+        await createTestRoute(k8sClient, ns, routeName);
+      });
 
-    await test.step('Navigate to route details and delete', async () => {
-      await detailsPage.navigateToDetailsPage(`/k8s/ns/${ns}/routes/${routeName}`);
-      await expect(detailsPage.getHeadingByName(routeName)).toBeVisible({ timeout: 30_000 });
-      await detailsPage.clickActionsMenuAction('Delete Route');
-    });
+      await test.step('Navigate to route details and delete', async () => {
+        await detailsPage.navigateToDetailsPage(`/k8s/ns/${ns}/routes/${routeName}`);
+        await expect(detailsPage.getHeadingByName(routeName)).toBeVisible({ timeout: 30_000 });
+        await detailsPage.clickActionsMenuAction('Delete Route');
+      });
 
-    await test.step('Confirm deletion', async () => {
-      await detailsPage.confirmDelete();
-      await expect(detailsPage.getHeadingByName('Routes')).toBeVisible({ timeout: 30_000 });
-    });
-  });
+      await test.step('Confirm deletion', async () => {
+        await detailsPage.confirmDelete();
+        await expect(detailsPage.getHeadingByName('Routes')).toBeVisible({ timeout: 30_000 });
+      });
+    },
+  );
 });

@@ -85,76 +85,67 @@ test.describe('Web Terminal for Admin user', () => {
     await uninstallWebTerminalOperator(k8sClient);
   });
 
-  test(
-    'open and close multiple terminal tabs',
-    async ({ page }) => {
-      const webTerminal = new WebTerminalPage(page);
+  test('open and close multiple terminal tabs', async ({ page }) => {
+    const webTerminal = new WebTerminalPage(page);
 
-      await test.step('Wait for terminal icon and start terminal', async () => {
-        await webTerminal.waitForTerminalIconVisible();
-        await webTerminal.clickTerminalIcon();
-        await webTerminal.clickStartButton();
-        await webTerminal.waitForTerminalWindow();
-      });
+    await test.step('Wait for terminal icon and start terminal', async () => {
+      await webTerminal.waitForTerminalIconVisible();
+      await webTerminal.clickTerminalIcon();
+      await webTerminal.clickStartButton();
+      await webTerminal.waitForTerminalWindow();
+    });
 
-      await test.step('Open 3 additional tabs', async () => {
-        await webTerminal.addTerminalTabs(3);
-      });
+    await test.step('Open 3 additional tabs', async () => {
+      await webTerminal.addTerminalTabs(3);
+    });
 
-      await test.step('Close the 2nd tab', async () => {
-        await webTerminal.closeTerminalTab(1);
-      });
+    await test.step('Close the 2nd tab', async () => {
+      await webTerminal.closeTerminalTab(1);
+    });
 
-      await test.step('Verify 3 tabs remain', async () => {
-        const tabCount = await webTerminal.getOpenTabCount();
-        expect(tabCount).toEqual(3);
-      });
+    await test.step('Verify 3 tabs remain', async () => {
+      const tabCount = await webTerminal.getOpenTabCount();
+      expect(tabCount).toEqual(3);
+    });
 
-      await test.step('Close terminal drawer', async () => {
-        await webTerminal.closeTerminalDrawer();
-      });
-    },
-  );
+    await test.step('Close terminal drawer', async () => {
+      await webTerminal.closeTerminalDrawer();
+    });
+  });
 
   // eslint-disable-next-line playwright/expect-expect
-  test(
-    'start terminal with timeout and verify DevWorkspace',
-    async ({ page, k8sClient }) => {
-      const webTerminal = new WebTerminalPage(page);
+  test('start terminal with timeout and verify DevWorkspace', async ({ page, k8sClient }) => {
+    const webTerminal = new WebTerminalPage(page);
 
-      await test.step('Open terminal with 10-minute timeout', async () => {
-        await webTerminal.waitForTerminalIconVisible();
-        await webTerminal.clickTerminalIcon();
-        await webTerminal.clickAdvancedTimeout();
-        await webTerminal.setTimeoutValue('10');
-        await webTerminal.clickStartButton();
-      });
+    await test.step('Open terminal with 10-minute timeout', async () => {
+      await webTerminal.waitForTerminalIconVisible();
+      await webTerminal.clickTerminalIcon();
+      await webTerminal.clickAdvancedTimeout();
+      await webTerminal.setTimeoutValue('10');
+      await webTerminal.clickStartButton();
+    });
 
-      await test.step('Verify DevWorkspace UID matches YAML editor', async () => {
-        await verifyDevWorkspaceUid(page, k8sClient, webTerminal, TERMINAL_NAMESPACE);
-      });
-    },
-  );
+    await test.step('Verify DevWorkspace UID matches YAML editor', async () => {
+      await verifyDevWorkspaceUid(page, k8sClient, webTerminal, TERMINAL_NAMESPACE);
+    });
+  });
 
-  test(
-    'start terminal with defaults and verify DevWorkspace',
-    async ({ page, k8sClient }) => {
-      const webTerminal = new WebTerminalPage(page);
+  test('start terminal with defaults and verify DevWorkspace', async ({ page, k8sClient }) => {
+    const webTerminal = new WebTerminalPage(page);
 
-      await test.step('Open terminal with default settings', async () => {
-        await webTerminal.waitForTerminalIconVisible();
-        await webTerminal.clickTerminalIcon();
-        await webTerminal.clickStartButton();
-      });
+    await test.step('Open terminal with default settings', async () => {
+      await webTerminal.waitForTerminalIconVisible();
+      await webTerminal.clickTerminalIcon();
+      await webTerminal.clickStartButton();
+    });
 
-      await test.step('Verify terminal window is visible', async () => {
-        await webTerminal.waitForTerminalWindow();
-        await expect(webTerminal.getTerminalWindow()).toBeVisible();
-      });
+    await test.step('Verify terminal window is visible', async () => {
+      await webTerminal.waitForTerminalWindow();
+      await expect(webTerminal.getTerminalWindow()).toBeVisible();
+    });
 
-      await test.step('Verify DevWorkspace UID matches YAML editor', async () => {
-        await verifyDevWorkspaceUid(page, k8sClient, webTerminal, TERMINAL_NAMESPACE);
-      });
-    },
-  );
+    await test.step('Verify DevWorkspace UID matches YAML editor', async () => {
+      await verifyDevWorkspaceUid(page, k8sClient, webTerminal, TERMINAL_NAMESPACE);
+    });
+  });
 });

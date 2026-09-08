@@ -89,9 +89,7 @@ export class YamlEditorPage extends BasePage {
   }
 
   async closeSettingsModal(): Promise<void> {
-    await this.robustClick(
-      this.getSettingsModal().locator('button[aria-label="Close"]'),
-    );
+    await this.robustClick(this.getSettingsModal().locator('button[aria-label="Close"]'));
   }
 
   async selectTheme(themeName: 'Dark' | 'Light' | 'Use theme setting'): Promise<void> {

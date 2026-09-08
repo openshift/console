@@ -124,9 +124,7 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
     await expect(page.locator('th', { hasText: 'Actions' })).not.toBeAttached();
   });
 
-  test('displays Resource names and Verbs columns in ClusterRole rules table', async ({
-    page,
-  }) => {
+  test('displays Resource names and Verbs columns in ClusterRole rules table', async ({ page }) => {
     const listPage = new ListPage(page);
 
     await page.goto('/k8s/all-namespaces/roles');
@@ -151,10 +149,7 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
       await page.goto(`/k8s/ns/${namespace}/${resource}`);
       await listPage.selectProject(namespace);
       await expect(namespaceDropdown).toContainText(namespace);
-      await listPage.filterByCheckbox(
-        rolesOrBindings === 'Roles' ? 'Role' : 'Kind',
-        'namespace',
-      );
+      await listPage.filterByCheckbox(rolesOrBindings === 'Roles' ? 'Role' : 'Kind', 'namespace');
       await listPage.filterByName(name);
       await listPage.clickRowByName(name);
 
@@ -184,10 +179,7 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
       await page.goto(`/k8s/all-namespaces/${resource}`);
       await listPage.selectAllProjects();
       await expect(namespaceDropdown).toContainText('All Projects');
-      await listPage.filterByCheckbox(
-        rolesOrBindings === 'Roles' ? 'Role' : 'Kind',
-        'cluster',
-      );
+      await listPage.filterByCheckbox(rolesOrBindings === 'Roles' ? 'Role' : 'Kind', 'cluster');
       await listPage.filterByName(clusterName);
       await listPage.clickRowByName(clusterName);
 
@@ -208,10 +200,7 @@ test.describe('Roles and RoleBindings', { tag: ['@admin'] }, () => {
       await page.goto(`/k8s/ns/${namespace}/${resource}`);
       await listPage.selectProject(namespace);
       await expect(namespaceDropdown).toContainText(namespace);
-      await listPage.filterByCheckbox(
-        rolesOrBindings === 'Roles' ? 'Role' : 'Kind',
-        'cluster',
-      );
+      await listPage.filterByCheckbox(rolesOrBindings === 'Roles' ? 'Role' : 'Kind', 'cluster');
       await listPage.filterByName(clusterName);
       await listPage.clickRowByName(clusterName);
 
