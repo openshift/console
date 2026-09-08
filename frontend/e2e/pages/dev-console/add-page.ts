@@ -141,6 +141,15 @@ export class AddPage extends BasePage {
     return this.page.getByRole('button', { name: 'Create', exact: true });
   }
 
+  async clickCreate(): Promise<void> {
+    await this.robustClick(this.getSubmitButton());
+  }
+
+  async selectBuilderImageVersion(version: string): Promise<void> {
+    await this.robustClick(this.getBuilderImageVersionToggle());
+    await this.robustClick(this.getBuilderImageVersionItem(version));
+  }
+
   getCancelButton(): Locator {
     return this.page.getByRole('button', { name: 'Cancel', exact: true });
   }

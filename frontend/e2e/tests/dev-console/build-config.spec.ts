@@ -55,6 +55,7 @@ test.describe('Edit Build Config', { tag: ['@dev-console'] }, () => {
 
       await test.step('Create namespace and BuildConfig', async () => {
         await k8sClient.createNamespace(ns);
+        await k8sClient.waitForNamespaceReady(ns);
         cleanup.trackNamespace(ns);
         await k8sClient.createCustomResource(
           'build.openshift.io',
@@ -96,6 +97,7 @@ test.describe('Edit Build Config', { tag: ['@dev-console'] }, () => {
 
       await test.step('Create namespace and BuildConfig', async () => {
         await k8sClient.createNamespace(ns);
+        await k8sClient.waitForNamespaceReady(ns);
         cleanup.trackNamespace(ns);
         await k8sClient.createCustomResource(
           'build.openshift.io',
@@ -141,18 +143,63 @@ test.describe('Edit Build Config', { tag: ['@dev-console'] }, () => {
     test.skip(true, 'Original Cypress scenario tagged @manual — deferred');
   });
 
-  // eslint-disable-next-line playwright/expect-expect
-  test('EBC-01-TC04: Edit Env variables — placeholder', async () => {
-    test.skip(true, 'Deferred to a future batch');
+  test('EBC-01-TC04: Edit environment variables', async ({ page, k8sClient, cleanup }) => {
+    const ns = `aut-build-config-env-${Date.now()}`;
+    await k8sClient.createNamespace(ns);
+    await k8sClient.waitForNamespaceReady(ns);
+    cleanup.trackNamespace(ns);
+    await k8sClient.createCustomResource(
+      'build.openshift.io',
+      'v1',
+      ns,
+      'buildconfigs',
+      createBuildConfigBody(ns, BUILDCONFIG_NAME),
+    );
+    await buildConfigPage.navigateToEditForm(ns, BUILDCONFIG_NAME);
+    await buildConfigPage.ensureFormView();
+    await buildConfigPage.addEnvironmentVariable('TEST_ENV', 'test-value');
+    await expect(buildConfigPage.getEnvironmentSection()).toContainText('TEST_ENV');
+    await buildConfigPage.save();
   });
 
-  // eslint-disable-next-line playwright/expect-expect
-  test('EBC-01-TC05: Edit git source — placeholder', async () => {
-    test.skip(true, 'Deferred to a future batch');
+  test('EBC-01-TC05: Edit git source', async ({ k8sClient, cleanup }) => {
+    const ns = `aut-build-config-source-${Date.now()}`;
+    await k8sClient.createNamespace(ns);
+    await k8sClient.waitForNamespaceReady(ns);
+    cleanup.trackNamespace(ns);
+    await k8sClient.createCustomResource(
+      'build.openshift.io',
+      'v1',
+      ns,
+      'buildconfigs',
+      createBuildConfigBody(ns, BUILDCONFIG_NAME),
+    );
+    await buildConfigPage.navigateToEditForm(ns, BUILDCONFIG_NAME);
+    await buildConfigPage.ensureFormView();
+    const gitUrl = buildConfigPage.getGitRepoUrlInput();
+    await gitUrl.fill('https://github.com/sclorg/nodejs-ex.git');
+    await expect(gitUrl).toHaveValue('https://github.com/sclorg/nodejs-ex.git');
+    await buildConfigPage.save();
   });
 
-  // eslint-disable-next-line playwright/expect-expect
-  test('EBC-01-TC06: Edit images — placeholder', async () => {
-    test.skip(true, 'Deferred to a future batch');
+  test('EBC-01-TC06: Edit images', async ({ k8sClient, cleanup }) => {
+    const ns = `aut-build-config-images-${Date.now()}`;
+    await k8sClient.createNamespace(ns);
+    await k8sClient.waitForNamespaceReady(ns);
+    cleanup.trackNamespace(ns);
+    await k8sClient.createCustomResource(
+      'build.openshift.io',
+      'v1',
+      ns,
+      'buildconfigs',
+      createBuildConfigBody(ns, BUILDCONFIG_NAME),
+    );
+    await buildConfigPage.navigateToEditForm(ns, BUILDCONFIG_NAME);
+    await buildConfigPage.ensureFormView();
+    await buildConfigPage.selectImageOption('build-from', 'External container image');
+    const image = buildConfigPage.getImageInput('build-from', 'docker-image');
+    await image.fill('quay.io/example/builder:latest');
+    await expect(image).toHaveValue('quay.io/example/builder:latest');
+    await buildConfigPage.save();
   });
 });
