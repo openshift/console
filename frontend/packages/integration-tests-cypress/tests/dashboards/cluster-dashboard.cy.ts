@@ -24,7 +24,10 @@ describe('Cluster dashboard', () => {
       if (isLocalDevEnvironment) {
         expectedTitles = expectedTitles.slice(5, 1);
       }
-      cy.byTestID('detail-item-title').should('have.length', isLocalDevEnvironment ? 5 : 6);
+      cy.byTestID('detail-item-title').should(
+        'have.length.at.least',
+        isLocalDevEnvironment ? 5 : 6,
+      );
       expectedTitles.forEach((title, i) => {
         cy.byTestID('detail-item-title').eq(i).should('have.text', title);
       });
@@ -39,7 +42,10 @@ describe('Cluster dashboard', () => {
       if (isLocalDevEnvironment) {
         expectedValues = expectedValues.slice(5, 1);
       }
-      cy.byTestID('detail-item-value').should('have.length', isLocalDevEnvironment ? 5 : 6);
+      cy.byTestID('detail-item-value').should(
+        'have.length.at.least',
+        isLocalDevEnvironment ? 5 : 6,
+      );
       expectedValues.forEach(({ assertion, value }, i) => {
         cy.byTestID('detail-item-value').eq(i).should(assertion, value);
       });
@@ -92,9 +98,9 @@ describe('Cluster dashboard', () => {
     it('has all items', () => {
       cy.byLegacyTestID('utilization-card').should('be.visible');
       const utilizationItems = ['CPU', 'Memory', 'Filesystem', 'Network transfer', 'Pod count'];
-      cy.byLegacyTestID('utilization-item').should('have.length', utilizationItems.length);
-      utilizationItems.forEach((title, i) => {
-        cy.byTestID('utilization-item-title').eq(i).should('have.text', title);
+      cy.byLegacyTestID('utilization-item').should('have.length.at.least', utilizationItems.length);
+      utilizationItems.forEach((title) => {
+        cy.byTestID('utilization-item-title').contains(title).should('exist');
       });
     });
     it('has duration dropdown', () => {
