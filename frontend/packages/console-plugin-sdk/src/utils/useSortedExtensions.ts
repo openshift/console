@@ -44,13 +44,13 @@ export const useSortedExtensions = <TExtension extends Extension>(
     const currentUIDs = sorted.map((e) => e.uid).join(',');
 
     // Return previous result if the extensions haven't changed
-    if (currentUIDs === prevUIDsRef.current) { // eslint-disable-line react-hooks/refs
-      return prevResultRef.current; // eslint-disable-line react-hooks/refs
+    if (currentUIDs === prevUIDsRef.current) { // eslint-disable-line react-hooks/refs -- compares previous UIDs for referential stability
+      return prevResultRef.current; // eslint-disable-line react-hooks/refs -- returns cached result when UIDs unchanged
     }
 
     // Update refs and return new result
-    prevResultRef.current = sorted; // eslint-disable-line react-hooks/refs
-    prevUIDsRef.current = currentUIDs; // eslint-disable-line react-hooks/refs
+    prevResultRef.current = sorted; // eslint-disable-line react-hooks/refs -- caches new sorted result for next comparison
+    prevUIDsRef.current = currentUIDs; // eslint-disable-line react-hooks/refs -- caches new UIDs for next comparison
 
     return sorted;
   }, [extensions]);

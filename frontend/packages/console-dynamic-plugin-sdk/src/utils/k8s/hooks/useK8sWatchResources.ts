@@ -62,7 +62,7 @@ export const useK8sWatchResources: UseK8sWatchResources = (initResources) => {
     const requiredModels = Object.values(resources).map((r) =>
       transformGroupVersionKindToReference(r.groupVersionKind || r.kind),
     );
-    k8sModelsRef.current = Object.fromEntries( // eslint-disable-line react-hooks/refs
+    k8sModelsRef.current = Object.fromEntries( // eslint-disable-line react-hooks/refs -- custom memoization: conditionally updates ref to avoid re-triggering watches
       Object.entries(allK8sModels ?? {}).filter(
         ([, model]) =>
           requiredModels.includes(getReferenceForModel(model)) ||
@@ -71,7 +71,7 @@ export const useK8sWatchResources: UseK8sWatchResources = (initResources) => {
     );
   }
 
-  const k8sModels = k8sModelsRef.current; // eslint-disable-line react-hooks/refs
+  const k8sModels = k8sModelsRef.current; // eslint-disable-line react-hooks/refs -- custom memoization: reads memoized models map
 
   const reduxIDs = useMemo<{
     [key: string]: ReturnType<GetIDAndDispatch<OpenShiftReduxRootState>> & { noModel: boolean };
