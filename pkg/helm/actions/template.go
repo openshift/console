@@ -11,7 +11,6 @@ import (
 	"github.com/openshift/api/helm/v1beta1"
 	"helm.sh/helm/v3/pkg/action"
 	"helm.sh/helm/v3/pkg/chart/loader"
-	"helm.sh/helm/v3/pkg/cli"
 	"helm.sh/helm/v3/pkg/releaseutil"
 	"k8s.io/client-go/dynamic"
 	corev1client "k8s.io/client-go/kubernetes/typed/core/v1"
@@ -64,7 +63,7 @@ func RenderManifests(name string, url string, vals map[string]interface{}, conf 
 	} else {
 		chartLocation = chartInfo.Name
 	}
-	cp, err := client.ChartPathOptions.LocateChart(chartLocation, cli.New())
+	cp, err := client.ChartPathOptions.LocateChart(chartLocation, settings)
 	if err != nil {
 		return emptyResponse, err
 	}
