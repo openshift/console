@@ -1,6 +1,6 @@
 /**
  * Integration tests for ImpersonateUserModal
- * Tests the modal integrated with Redux actions and state
+ * Tests the modal rendering and user interaction workflows
  */
 
 import { render, screen, waitFor } from '@testing-library/react';
@@ -8,7 +8,6 @@ import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import { ProjectModel } from '@console/dynamic-plugin-sdk/src/models';
-import * as UIActions from '../../../actions/ui';
 import type { GroupKind } from '../../../module/k8s';
 import { useK8sWatchResource } from '../../utils/k8s-watch-hook';
 import { ImpersonateUserModal } from '../impersonate-user-modal';
@@ -18,14 +17,52 @@ jest.mock('../../utils/k8s-watch-hook', () => ({
   useK8sWatchResource: jest.fn(),
 }));
 
-jest.mock('../../../actions/ui', () => ({
-  startImpersonate: jest.fn(),
-  stopImpersonate: jest.fn(),
+// Mock NsDropdown to avoid deep import chain (list-dropdown → useCreateNamespaceModal → CreateNamespaceModal → resource-link → k8s-models → plugins → loadSchema)
+jest.mock('../../utils/list-dropdown', () => ({
+  useProjectOrNamespaceModel: () => [ProjectModel, true],
+  NsDropdown: ({
+    selectedKey,
+    onChange,
+    dataTest,
+  }: {
+    selectedKey?: string;
+    dataTest?: string;
+    onChange: (key: string, kind?: string, resource?: { metadata: { name: string } }) => void;
+  }) => (
+    <button
+      type="button"
+      data-test={dataTest}
+      onClick={() => onChange('test-ns', 'Project', { metadata: { name: 'test-ns' } })}
+    >
+      {selectedKey || 'Select project'}
+    </button>
+  ),
 }));
 
-jest.mock('../../utils/list-dropdown', () => ({
-  ...jest.requireActual('../../utils/list-dropdown'),
-  useProjectOrNamespaceModel: () => [ProjectModel, true],
+// Mock ResourceDropdown to avoid deep import chain (plugins.ts → loadSchema)
+jest.mock('@console/shared/src/components/dropdown/ResourceDropdown', () => ({
+  ResourceDropdown: ({
+    selectedKey,
+    onChange,
+    dataTest,
+    disabled,
+    placeholder,
+  }: {
+    selectedKey?: string | null;
+    dataTest?: string;
+    disabled?: boolean;
+    placeholder?: string;
+    onChange: (key: string, name?: string, resource?: { metadata: { name: string } }) => void;
+  }) => (
+    <button
+      type="button"
+      data-test={dataTest}
+      disabled={disabled}
+      onClick={() => onChange('builder', 'builder', { metadata: { name: 'builder' } })}
+    >
+      {placeholder || selectedKey || 'Select resource'}
+    </button>
+  ),
 }));
 
 const mockGroups: GroupKind[] = [
@@ -45,27 +82,21 @@ const mockGroups: GroupKind[] = [
 
 describe('ImpersonateUserModal Integration Tests', () => {
   let mockStore: any;
-  let mockStartImpersonate: jest.Mock;
 
   beforeEach(() => {
     jest.clearAllMocks();
     (useK8sWatchResource as jest.Mock).mockReturnValue([mockGroups, true, null]);
-
-    mockStartImpersonate = jest.fn();
-    (UIActions.startImpersonate as jest.Mock).mockImplementation(mockStartImpersonate);
 
     // Create a simple mock store
     const reducer = (state = {}) => state;
     mockStore = createStore(reducer);
   });
 
-  describe('Form submission with Redux integration', () => {
-    it('should dispatch startImpersonate action with user only', async () => {
+  describe('Form submission', () => {
+    it('should call onImpersonate with user only', async () => {
       const user = userEvent.setup();
       const onClose = jest.fn();
-      const onImpersonate = jest.fn((username) => {
-        mockStartImpersonate('User', username);
-      });
+      const onImpersonate = jest.fn();
 
       render(
         <Provider store={mockStore}>
@@ -82,20 +113,13 @@ describe('ImpersonateUserModal Integration Tests', () => {
 
       await waitFor(() => {
         expect(onImpersonate).toHaveBeenCalledWith('testuser', [], 'User');
-        expect(mockStartImpersonate).toHaveBeenCalledWith('User', 'testuser');
       });
     });
 
-    it('should dispatch startImpersonate action with user and groups', async () => {
+    it('should call onImpersonate with user and groups', async () => {
       const user = userEvent.setup();
       const onClose = jest.fn();
-      const onImpersonate = jest.fn((username, groups) => {
-        if (groups.length > 0) {
-          mockStartImpersonate('UserWithGroups', username, groups);
-        } else {
-          mockStartImpersonate('User', username);
-        }
-      });
+      const onImpersonate = jest.fn();
 
       render(
         <Provider store={mockStore}>
@@ -120,9 +144,6 @@ describe('ImpersonateUserModal Integration Tests', () => {
 
       await waitFor(() => {
         expect(onImpersonate).toHaveBeenCalledWith('multiuser', ['developers'], 'User');
-        expect(mockStartImpersonate).toHaveBeenCalledWith('UserWithGroups', 'multiuser', [
-          'developers',
-        ]);
       });
     });
   });
@@ -256,7 +277,7 @@ describe('ImpersonateUserModal Integration Tests', () => {
       });
     });
 
-    it('should show no results when filter matches nothing', async () => {
+    it('should show "Create" option when filter matches nothing in available groups', async () => {
       const user = userEvent.setup();
       render(
         <Provider store={mockStore}>
@@ -274,31 +295,88 @@ describe('ImpersonateUserModal Integration Tests', () => {
       // Type to filter with non-matching text
       await user.type(groupsInput, 'nonexistent');
 
-      expect(await screen.findByText('No results found')).toBeVisible();
+      // Should show "Create" option instead of just "No results found"
+      expect(await screen.findByText('Create "nonexistent"')).toBeVisible();
     });
   });
 
-  describe('Error handling workflow', () => {
-    it('should show error when groups fail to load', async () => {
-      const error = new Error('Failed to fetch groups');
-      (useK8sWatchResource as jest.Mock).mockReturnValue([[], false, error]);
+  describe('Direct Authentication / model-absent workflow', () => {
+    it('should allow group impersonation when Group model does not exist', async () => {
+      const error = new Error('Model does not exist');
+      (useK8sWatchResource as jest.Mock).mockReturnValue([[], true, error]);
+
+      const user = userEvent.setup();
+      const onImpersonate = jest.fn();
 
       render(
         <Provider store={mockStore}>
-          <ImpersonateUserModal isOpen onClose={jest.fn()} onImpersonate={jest.fn()} />
+          <ImpersonateUserModal isOpen onClose={jest.fn()} onImpersonate={onImpersonate} />
         </Provider>,
       );
 
-      expect(await screen.findByText('Failed to load groups')).toBeVisible();
+      // Should NOT show error alert
+      expect(screen.queryByText('Failed to load groups')).not.toBeInTheDocument();
 
-      // Should still allow impersonation without groups
+      // Should show helper text for manual entry
+      expect(
+        screen.getByText('Type group names manually. Press Enter to add each group.'),
+      ).toBeInTheDocument();
+
+      // Enter username
+      const usernameInput = screen.getByTestId('username-input');
+      await user.clear(usernameInput);
+      await user.type(usernameInput, 'oidc-user');
+
+      // Enter groups via free-form
+      const groupInput = screen.getByPlaceholderText('Enter groups');
+      await user.click(groupInput);
+      await user.type(groupInput, 'oidc-admins{Enter}');
+      await user.type(groupInput, 'oidc-devs{Enter}');
+
+      // Both groups should appear as chips
+      await waitFor(() => {
+        expect(screen.getByText('oidc-admins')).toBeInTheDocument();
+        expect(screen.getByText('oidc-devs')).toBeInTheDocument();
+      });
+
+      // Submit
+      const submitButton = screen.getByTestId('impersonate-button');
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(onImpersonate).toHaveBeenCalledWith(
+          'oidc-user',
+          ['oidc-admins', 'oidc-devs'],
+          'User',
+        );
+      });
+    });
+
+    it('should still allow impersonation without groups when model is absent', async () => {
+      const error = new Error('Model does not exist');
+      (useK8sWatchResource as jest.Mock).mockReturnValue([[], true, error]);
+
       const ue = userEvent.setup();
+      const onImpersonate = jest.fn();
+
+      render(
+        <Provider store={mockStore}>
+          <ImpersonateUserModal isOpen onClose={jest.fn()} onImpersonate={onImpersonate} />
+        </Provider>,
+      );
+
       const usernameInput = screen.getByTestId('username-input');
       await ue.clear(usernameInput);
       await ue.type(usernameInput, 'erroruser');
 
       const submitButton = screen.getByTestId('impersonate-button');
       expect(submitButton).not.toBeDisabled();
+
+      await ue.click(submitButton);
+
+      await waitFor(() => {
+        expect(onImpersonate).toHaveBeenCalledWith('erroruser', [], 'User');
+      });
     });
   });
 
