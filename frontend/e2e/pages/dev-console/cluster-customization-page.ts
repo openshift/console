@@ -45,6 +45,15 @@ export class ClusterCustomizationPage extends BasePage {
     return this.page.getByTestId(`${name}-selector`);
   }
 
+  private getSelectorPane(
+    name: 'catalog-types' | 'add-page',
+    list: 'available' | 'chosen',
+  ): Locator {
+    return this.getSelector(name).locator(
+      `#${name}-selector-list-${list === 'available' ? 'available' : 'chosen'}-pane`,
+    );
+  }
+
   private async ensureFormSection(name: 'catalog-types' | 'add-page'): Promise<Locator> {
     const section = this.getFormSection(name);
     if (!(await section.isVisible().catch(() => false))) {
@@ -62,9 +71,10 @@ export class ClusterCustomizationPage extends BasePage {
     await this.ensureFormSection(name);
     const searchName = list === 'available' ? 'Available search input' : 'Chosen search input';
     const selector = this.getSelector(name);
-    const search = selector.getByRole('textbox', { name: searchName });
+    const pane = this.getSelectorPane(name, list);
+    const search = pane.getByRole('textbox', { name: searchName });
     await search.fill(item);
-    await expect(selector.getByRole('option').filter({ hasText: item }).first()).toBeVisible({
+    await expect(pane.getByRole('option').filter({ hasText: item }).first()).toBeVisible({
       timeout: 30_000,
     });
   }
@@ -77,18 +87,19 @@ export class ClusterCustomizationPage extends BasePage {
     await this.navigateToCustomize();
     await this.ensureFormSection(name);
     const searchName = list === 'available' ? 'Available search input' : 'Chosen search input';
-    const selector = this.getSelector(name);
-    const search = selector.getByRole('textbox', { name: searchName });
+    const pane = this.getSelectorPane(name, list);
+    const search = pane.getByRole('textbox', { name: searchName });
     await search.fill(item);
-    return (await selector.getByRole('option').filter({ hasText: item }).count()) > 0;
+    return (await pane.getByRole('option').filter({ hasText: item }).count()) > 0;
   }
 
   async moveAvailableToChosen(name: 'catalog-types' | 'add-page', item: string): Promise<void> {
     await this.ensureFormSection(name);
     const selector = this.getSelector(name);
-    const search = selector.getByRole('textbox', { name: 'Available search input' });
+    const pane = this.getSelectorPane(name, 'available');
+    const search = pane.getByRole('textbox', { name: 'Available search input' });
     await search.fill(item);
-    const option = selector.getByRole('option').filter({ hasText: item }).first();
+    const option = pane.getByRole('option').filter({ hasText: item }).first();
     const addButton = selector.getByRole('button', { name: 'Add selected' });
     await this.robustClick(option);
     await expect(addButton).toBeEnabled({ timeout: 10_000 });
@@ -98,9 +109,10 @@ export class ClusterCustomizationPage extends BasePage {
   async moveChosenToAvailable(name: 'catalog-types' | 'add-page', item: string): Promise<void> {
     await this.ensureFormSection(name);
     const selector = this.getSelector(name);
-    const search = selector.getByRole('textbox', { name: 'Chosen search input' });
+    const pane = this.getSelectorPane(name, 'chosen');
+    const search = pane.getByRole('textbox', { name: 'Chosen search input' });
     await search.fill(item);
-    const option = selector.getByRole('option').filter({ hasText: item }).first();
+    const option = pane.getByRole('option').filter({ hasText: item }).first();
     const removeButton = selector.getByRole('button', { name: 'Remove selected' });
     await this.robustClick(option);
     await expect(removeButton).toBeEnabled({ timeout: 10_000 });

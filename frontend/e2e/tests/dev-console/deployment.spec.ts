@@ -24,9 +24,7 @@ async function waitForEditableWorkload(
         )) as Array<{ metadata?: { name?: string } }>;
         if (deploymentConfigs.some((item) => item.metadata?.name)) return true;
         const response = await k8sClient.appsV1Api.listNamespacedDeployment({ namespace });
-        return response.items?.some(
-          (item) => item.metadata?.name && !/-\d+-deployment$/.test(item.metadata.name),
-        );
+        return response.items?.some((item) => item.metadata?.name);
       },
       { timeout: 60_000 },
     )
@@ -45,8 +43,11 @@ async function waitForEditableWorkload(
   const deploymentName = response.items.find(
     (item) => item.metadata?.name && !/-\d+-deployment$/.test(item.metadata.name),
   )?.metadata?.name;
-  if (!deploymentName) throw new Error(`Editable workload was not created in ${namespace}`);
-  return { name: deploymentName, resource: 'deployments' };
+  if (deploymentName) return { name: deploymentName, resource: 'deployments' };
+  const rolloutName = response.items[0]?.metadata?.name;
+  const parentName = rolloutName?.replace(/-\d+-deployment$/, '');
+  if (parentName) return { name: parentName, resource: 'deploymentconfigs' };
+  throw new Error(`Editable workload was not created in ${namespace}`);
 }
 
 test.describe('Deployment form view', { tag: ['@dev-console', '@smoke'] }, () => {

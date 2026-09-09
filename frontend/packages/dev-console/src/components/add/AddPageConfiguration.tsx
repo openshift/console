@@ -62,7 +62,6 @@ const AddPageConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
   const [disabled, setDisabled] = useState<string[]>();
   useEffect(() => {
     if (consoleConfig && consoleConfigLoaded && !disabled) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDisabled(consoleConfig?.spec?.customization?.addPage?.disabledActions || []);
     }
   }, [consoleConfig, consoleConfigLoaded, disabled]);
@@ -153,6 +152,7 @@ const AddPageConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
       </FormHelperText>
       <div data-test="add-page-selector">
         <DualListSelector
+          id="add-page-selector-list"
           availableOptionsTitle={t('Enabled actions')}
           chosenOptionsTitle={t('Disabled actions')}
           isSearchable
