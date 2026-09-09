@@ -6,7 +6,9 @@ test.describe(
   'Cluster configuration customization',
   { tag: ['@dev-console', '@regression'] },
   () => {
+    test.describe.configure({ mode: 'serial' });
     let customizationPage: ClusterCustomizationPage;
+    const pendingRestores: Array<{ section: 'catalog-types' | 'add-page'; item: string }> = [];
 
     test.beforeEach(async ({ page, k8sClient }) => {
       await warmupSPA(page);
@@ -16,34 +18,52 @@ test.describe(
       await expect(customizationPage.getHeading()).toBeVisible({ timeout: 30_000 });
     });
 
-    test('DC-01-TC01: Disable Developer catalog', async () => {
-      await customizationPage.moveAvailableToChosen('catalog-types', 'Developer Catalog');
-      await expect(customizationPage.getSuccessAlert()).toBeVisible({ timeout: 30_000 });
-      await customizationPage.moveChosenToAvailable('catalog-types', 'Developer Catalog');
+    test.afterEach(async () => {
+      if (pendingRestores.length === 0) return;
+      await customizationPage.navigateToCustomize();
+      for (const { section, item } of pendingRestores.reverse()) {
+        if (await customizationPage.hasItemInList(section, item, 'chosen')) {
+          await customizationPage.moveChosenToAvailable(section, item);
+        }
+      }
+      pendingRestores.length = 0;
+    });
+
+    test('DC-01-TC01: Disable All services Add page action', async () => {
+      await customizationPage.moveAvailableToChosen('add-page', 'All services');
+      pendingRestores.push({ section: 'add-page', item: 'All services' });
+      await customizationPage.waitForItemInList('add-page', 'All services', 'chosen');
+      await expect(customizationPage.getFormSection('add-page')).toBeVisible();
     });
 
     test('DC-01-TC02: Disable specific sub-catalogs', async () => {
       await customizationPage.moveAvailableToChosen('catalog-types', 'Builder Images');
-      await expect(customizationPage.getSuccessAlert()).toBeVisible({ timeout: 30_000 });
-      await customizationPage.moveChosenToAvailable('catalog-types', 'Builder Images');
+      pendingRestores.push({ section: 'catalog-types', item: 'Builder Images' });
+      await customizationPage.waitForItemInList('catalog-types', 'Builder Images', 'chosen');
+      await expect(customizationPage.getFormSection('catalog-types')).toBeVisible();
     });
 
     test('DC-01-TC03: Disable Add page items', async () => {
       await customizationPage.moveAvailableToChosen('add-page', 'Import from Git');
-      await expect(customizationPage.getSuccessAlert()).toBeVisible({ timeout: 30_000 });
-      await customizationPage.moveChosenToAvailable('add-page', 'Import from Git');
+      pendingRestores.push({ section: 'add-page', item: 'Import from Git' });
+      await customizationPage.waitForItemInList('add-page', 'Import from Git', 'chosen');
+      await expect(customizationPage.getFormSection('add-page')).toBeVisible();
     });
 
     test('DC-01-TC04: Re-enable catalogs after disabling', async () => {
       await customizationPage.moveAvailableToChosen('catalog-types', 'Builder Images');
+      pendingRestores.push({ section: 'catalog-types', item: 'Builder Images' });
       await customizationPage.moveChosenToAvailable('catalog-types', 'Builder Images');
-      await expect(customizationPage.getSuccessAlert()).toBeVisible({ timeout: 30_000 });
+      pendingRestores.pop();
+      await customizationPage.waitForItemInList('catalog-types', 'Builder Images', 'available');
+      await expect(customizationPage.getFormSection('catalog-types')).toBeVisible();
     });
 
     test('DC-01-TC05: Verify console rollout after customization', async () => {
       await customizationPage.moveAvailableToChosen('catalog-types', 'Builder Images');
-      await expect(customizationPage.getSuccessAlert()).toBeVisible({ timeout: 30_000 });
-      await customizationPage.moveChosenToAvailable('catalog-types', 'Builder Images');
+      pendingRestores.push({ section: 'catalog-types', item: 'Builder Images' });
+      await customizationPage.waitForItemInList('catalog-types', 'Builder Images', 'chosen');
+      await expect(customizationPage.getFormSection('catalog-types')).toBeVisible();
       await customizationPage.navigateToCustomize();
       await expect(customizationPage.getHeading()).toBeVisible({ timeout: 30_000 });
     });

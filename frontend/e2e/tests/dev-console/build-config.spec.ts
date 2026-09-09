@@ -55,7 +55,9 @@ test.describe('Edit Build Config', { tag: ['@dev-console'] }, () => {
 
       await test.step('Create namespace and BuildConfig', async () => {
         await k8sClient.createNamespace(ns);
-        await k8sClient.waitForNamespaceReady(ns);
+        expect(await k8sClient.waitForNamespaceReady(ns), 'Namespace did not become ready').toBe(
+          true,
+        );
         cleanup.trackNamespace(ns);
         await k8sClient.createCustomResource(
           'build.openshift.io',
@@ -97,7 +99,9 @@ test.describe('Edit Build Config', { tag: ['@dev-console'] }, () => {
 
       await test.step('Create namespace and BuildConfig', async () => {
         await k8sClient.createNamespace(ns);
-        await k8sClient.waitForNamespaceReady(ns);
+        expect(await k8sClient.waitForNamespaceReady(ns), 'Namespace did not become ready').toBe(
+          true,
+        );
         cleanup.trackNamespace(ns);
         await k8sClient.createCustomResource(
           'build.openshift.io',
@@ -146,7 +150,7 @@ test.describe('Edit Build Config', { tag: ['@dev-console'] }, () => {
   test('EBC-01-TC04: Edit environment variables', async ({ page, k8sClient, cleanup }) => {
     const ns = `aut-build-config-env-${Date.now()}`;
     await k8sClient.createNamespace(ns);
-    await k8sClient.waitForNamespaceReady(ns);
+    expect(await k8sClient.waitForNamespaceReady(ns), 'Namespace did not become ready').toBe(true);
     cleanup.trackNamespace(ns);
     await k8sClient.createCustomResource(
       'build.openshift.io',
@@ -158,14 +162,34 @@ test.describe('Edit Build Config', { tag: ['@dev-console'] }, () => {
     await buildConfigPage.navigateToEditForm(ns, BUILDCONFIG_NAME);
     await buildConfigPage.ensureFormView();
     await buildConfigPage.addEnvironmentVariable('TEST_ENV', 'test-value');
-    await expect(buildConfigPage.getEnvironmentSection()).toContainText('TEST_ENV');
+    await expect(buildConfigPage.getEnvironmentVariableNames().last()).toHaveValue('TEST_ENV');
+    await expect(buildConfigPage.getEnvironmentVariableValues().last()).toHaveValue('test-value');
     await buildConfigPage.save();
+    await expect
+      .poll(
+        async () => {
+          const buildConfig = (await k8sClient.getCustomResource(
+            'build.openshift.io',
+            'v1',
+            ns,
+            'buildconfigs',
+            BUILDCONFIG_NAME,
+          )) as {
+            spec?: {
+              strategy?: { sourceStrategy?: { env?: Array<{ name: string; value: string }> } };
+            };
+          };
+          return buildConfig.spec?.strategy?.sourceStrategy?.env;
+        },
+        { timeout: 30_000 },
+      )
+      .toEqual(expect.arrayContaining([{ name: 'TEST_ENV', value: 'test-value' }]));
   });
 
   test('EBC-01-TC05: Edit git source', async ({ k8sClient, cleanup }) => {
     const ns = `aut-build-config-source-${Date.now()}`;
     await k8sClient.createNamespace(ns);
-    await k8sClient.waitForNamespaceReady(ns);
+    expect(await k8sClient.waitForNamespaceReady(ns), 'Namespace did not become ready').toBe(true);
     cleanup.trackNamespace(ns);
     await k8sClient.createCustomResource(
       'build.openshift.io',
@@ -177,15 +201,24 @@ test.describe('Edit Build Config', { tag: ['@dev-console'] }, () => {
     await buildConfigPage.navigateToEditForm(ns, BUILDCONFIG_NAME);
     await buildConfigPage.ensureFormView();
     const gitUrl = buildConfigPage.getGitRepoUrlInput();
-    await gitUrl.fill('https://github.com/sclorg/nodejs-ex.git');
-    await expect(gitUrl).toHaveValue('https://github.com/sclorg/nodejs-ex.git');
+    const updatedGitUrl = 'https://github.com/sclorg/django-ex.git';
+    await gitUrl.fill(updatedGitUrl);
+    await expect(gitUrl).toHaveValue(updatedGitUrl);
     await buildConfigPage.save();
+    const buildConfig = (await k8sClient.getCustomResource(
+      'build.openshift.io',
+      'v1',
+      ns,
+      'buildconfigs',
+      BUILDCONFIG_NAME,
+    )) as { spec?: { source?: { git?: { uri?: string } } } };
+    expect(buildConfig.spec?.source?.git?.uri).toBe(updatedGitUrl);
   });
 
   test('EBC-01-TC06: Edit images', async ({ k8sClient, cleanup }) => {
     const ns = `aut-build-config-images-${Date.now()}`;
     await k8sClient.createNamespace(ns);
-    await k8sClient.waitForNamespaceReady(ns);
+    expect(await k8sClient.waitForNamespaceReady(ns), 'Namespace did not become ready').toBe(true);
     cleanup.trackNamespace(ns);
     await k8sClient.createCustomResource(
       'build.openshift.io',
@@ -201,5 +234,18 @@ test.describe('Edit Build Config', { tag: ['@dev-console'] }, () => {
     await image.fill('quay.io/example/builder:latest');
     await expect(image).toHaveValue('quay.io/example/builder:latest');
     await buildConfigPage.save();
+    const buildConfig = (await k8sClient.getCustomResource(
+      'build.openshift.io',
+      'v1',
+      ns,
+      'buildconfigs',
+      BUILDCONFIG_NAME,
+    )) as {
+      spec?: { strategy?: { sourceStrategy?: { from?: { kind?: string; name?: string } } } };
+    };
+    expect(buildConfig.spec?.strategy?.sourceStrategy?.from).toMatchObject({
+      kind: 'DockerImage',
+      name: 'quay.io/example/builder:latest',
+    });
   });
 });

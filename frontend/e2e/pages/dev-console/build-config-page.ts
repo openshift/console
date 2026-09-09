@@ -35,6 +35,14 @@ export class BuildConfigPage extends BasePage {
     return this.page.getByTestId('section environment-variables');
   }
 
+  getEnvironmentVariableNames(): Locator {
+    return this.getEnvironmentSection().getByTestId('pairs-list-name');
+  }
+
+  getEnvironmentVariableValues(): Locator {
+    return this.getEnvironmentSection().getByTestId('pairs-list-value');
+  }
+
   getImageOption(type: 'build-from' | 'push-to'): Locator {
     return this.page.getByTestId(`${type} type`);
   }
@@ -43,7 +51,7 @@ export class BuildConfigPage extends BasePage {
     type: 'build-from' | 'push-to',
     input: 'image-stream-image' | 'docker-image',
   ): Locator {
-    return this.page.getByTestId(`${type} ${input}`).getByRole('textbox');
+    return this.page.getByTestId(`${type} ${input}`);
   }
 
   async selectImageOption(type: 'build-from' | 'push-to', option: string): Promise<void> {
@@ -53,10 +61,9 @@ export class BuildConfigPage extends BasePage {
 
   async addEnvironmentVariable(name: string, value: string): Promise<void> {
     const section = this.getEnvironmentSection();
-    await this.robustClick(section.getByRole('button', { name: /add/i }));
-    const row = section.getByRole('row').last();
-    await row.getByRole('textbox').nth(0).fill(name);
-    await row.getByRole('textbox').nth(1).fill(value);
+    await this.robustClick(section.getByTestId('add-button'));
+    await this.getEnvironmentVariableNames().last().fill(name);
+    await this.getEnvironmentVariableValues().last().fill(value);
   }
 
   async save(): Promise<void> {

@@ -47,6 +47,16 @@ export class DeploymentPage extends BasePage {
     });
   }
 
+  async reloadIfStale(): Promise<void> {
+    const reloadButton = this.page.getByRole('button', { name: 'Reload', exact: true });
+    const staleAlert = this.page.getByText('This object has been updated.', { exact: true });
+    if (await staleAlert.isVisible().catch(() => false)) {
+      await this.robustClick(reloadButton);
+      await this.ensureFormView(this.nameInput);
+      await expect(staleAlert).not.toBeVisible({ timeout: 30_000 });
+    }
+  }
+
   async save(): Promise<void> {
     await this.robustClick(this.page.getByRole('button', { name: 'Save', exact: true }));
   }
