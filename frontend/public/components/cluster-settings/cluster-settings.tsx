@@ -28,10 +28,7 @@ import { AddCircleOIcon, PauseCircleIcon, PencilAltIcon } from '@patternfly/reac
 
 import { removeQueryArgument } from '@console/internal/components/utils/router';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
-import {
-  ClusterServiceVersionKind,
-  ClusterServiceVersionModel,
-} from '@console/operator-lifecycle-manager';
+import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
 import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
@@ -68,7 +65,6 @@ import {
   getMCPsToPausePromises,
   getNewerClusterVersionChannel,
   getNewerMinorVersionUpdate,
-  getNotUpgradeableResources,
   getOCMLink,
   getReleaseNotesLink,
   getSimilarClusterVersionChannels,
@@ -101,6 +97,7 @@ import {
   isManaged,
   ReleaseNotesLink,
   ResourceLink,
+  resourceListPathFromModel,
   resourcePathFromModel,
   SectionHeading,
   togglePaused,
@@ -749,24 +746,11 @@ export const UpdateInProgress: React.FC<UpdateInProgressProps> = ({
   );
 };
 
-const ClusterServiceVersionResource: WatchK8sResource = {
-  isList: true,
-  kind: referenceForModel(ClusterServiceVersionModel),
-};
-
 export const ClusterNotUpgradeableAlert: React.FC<ClusterNotUpgradeableAlertProps> = ({
   cv,
   onCancel,
 }) => {
-  const [clusterOperators] = useK8sWatchResource<ClusterOperator[]>(ClusterOperatorsResource);
-  const [clusterServiceVersions] = useK8sWatchResource<ClusterServiceVersionKind[]>(
-    ClusterServiceVersionResource,
-  );
   const { t } = useTranslation();
-  const notUpgradeableClusterOperators = getNotUpgradeableResources(clusterOperators);
-  const notUpgradeableClusterOperatorsPresent = notUpgradeableClusterOperators.length > 0;
-  const notUpgradeableClusterServiceVersions = getNotUpgradeableResources(clusterServiceVersions);
-  const notUpgradeableCSVsPresent = notUpgradeableClusterServiceVersions.length > 0;
   const clusterUpgradeableFalseCondition = getConditionUpgradeableFalse(cv);
   const currentVersion = getLastCompletedUpdate(cv);
   const currentVersionParsed = semver.parse(currentVersion);
@@ -790,31 +774,22 @@ export const ClusterNotUpgradeableAlert: React.FC<ClusterNotUpgradeableAlertProp
       }
       className="co-alert"
       actionLinks={
-        (notUpgradeableClusterOperatorsPresent || notUpgradeableCSVsPresent) && (
-          <Flex>
-            {notUpgradeableClusterOperatorsPresent && (
-              <FlexItem>
-                <ClusterOperatorsLink
-                  onCancel={onCancel}
-                  queryString="?rowFilter-cluster-operator-status=Cannot+update"
-                >
-                  {t('public~View ClusterOperators')}
-                </ClusterOperatorsLink>
-              </FlexItem>
-            )}
-            {notUpgradeableCSVsPresent && (
-              // TODO:  update link to include filter once installed Operators filters are updated
-              <FlexItem>
-                <Link
-                  onClick={onCancel}
-                  to={`/k8s/ns/all-namespaces/${ClusterServiceVersionModel.plural}`}
-                >
-                  {t('public~View installed Operators')}
-                </Link>
-              </FlexItem>
-            )}
-          </Flex>
-        )
+        <Flex>
+          <FlexItem>
+            <ClusterOperatorsLink
+              onCancel={onCancel}
+              queryString="?rowFilter-cluster-operator-status=Cannot+update"
+            >
+              {t('public~View ClusterOperators')}
+            </ClusterOperatorsLink>
+          </FlexItem>
+          {/* TODO:  update link to include filter once installed Operators filters are updated */}
+          <FlexItem>
+            <Link onClick={onCancel} to={resourceListPathFromModel(ClusterServiceVersionModel)}>
+              {t('public~View installed Operators')}
+            </Link>
+          </FlexItem>
+        </Flex>
       }
       data-test="cluster-settings-alerts-not-upgradeable"
     >
