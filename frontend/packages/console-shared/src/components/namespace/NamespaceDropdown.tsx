@@ -177,6 +177,7 @@ export const Footer: FC<{
               setOpen(false);
               onCreateNew();
             }}
+            data-test="#CREATE_RESOURCE_ACTION#"
             data-test-dropdown-menu="#CREATE_RESOURCE_ACTION#"
           >
             {isProject ? t('Create Project') : t('Create Namespace')}

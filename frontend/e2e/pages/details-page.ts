@@ -89,4 +89,16 @@ export class DetailsPage extends BasePage {
   async confirmDelete(): Promise<void> {
     await this.robustClick(this.page.getByRole('button', { name: 'Delete', exact: true }));
   }
+  getSectionHeader(text: string): Locator {
+    return this.page.getByTestId(`section-heading-${text}`);
+  }
+
+  getEmptyState(): Locator {
+    return this.page.getByTestId('console-empty-state');
+  }
+
+  async navigateToDetailsUrl(url: string): Promise<void> {
+    await this.goTo(url);
+    await this.waitForPageLoad();
+  }
 }
