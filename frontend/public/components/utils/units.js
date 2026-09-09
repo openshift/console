@@ -237,7 +237,7 @@ export const humanizeCpuCores = (v) => {
 };
 export const humanizePercentage = (value) => {
   // 2nd check converts -0 to 0.
-  let currentValue = value;
+  let currentValue = typeof value === 'string' ? Number(value) : value;
   if (!Number.isFinite(currentValue) || currentValue === 0) {
     currentValue = 0;
   }
