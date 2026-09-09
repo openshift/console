@@ -84,8 +84,8 @@ export const AsyncComponent = <C extends ComponentType>({
     );
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const LazyComponent = lazyComponentRef.current!; // eslint-disable-line react-hooks/refs -- reads synchronously initialized lazy component
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion, react-hooks/refs -- reads synchronously initialized lazy component
+  const LazyComponent = lazyComponentRef.current!;
 
   /*
    * It's a bit tricky to get TypeScript to understand that props is compatible, while
