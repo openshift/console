@@ -3,6 +3,7 @@ package server
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"path"
 	"strings"
@@ -14,6 +15,11 @@ import (
 	devfile "github.com/devfile/library/pkg/devfile"
 	"github.com/devfile/library/pkg/devfile/parser"
 )
+
+// maxDevfileRequestBodySize caps the size of a devfile request body the console
+// backend will read. Devfiles are small YAML documents, so 1 MiB is generous
+// while preventing unbounded memory growth from malicious large POSTs.
+const maxDevfileRequestBodySize = 1 << 20 // 1 MiB
 
 func (s *Server) devfileSamplesHandler(w http.ResponseWriter, r *http.Request) {
 
@@ -42,9 +48,23 @@ func (s *Server) devfileHandler(w http.ResponseWriter, r *http.Request) {
 		devfileObj parser.DevfileObj
 	)
 
-	err := json.NewDecoder(r.Body).Decode(&data)
+	r.Body = http.MaxBytesReader(w, r.Body, maxDevfileRequestBodySize)
+
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&data)
 	if err != nil {
 		errMsg := fmt.Sprintf("Failed to decode response: %v", err)
+		klog.Error(errMsg)
+		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: errMsg})
+		return
+	}
+
+	// Decode reads only the first JSON value and stops, so it would silently accept
+	// (and never fully read under MaxBytesReader) a small valid object followed by
+	// arbitrary trailing data. Require the body to contain exactly one JSON value by
+	// confirming the stream is at EOF.
+	if err := decoder.Decode(&struct{}{}); err != io.EOF {
+		errMsg := "Request body must contain a single JSON object"
 		klog.Error(errMsg)
 		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: errMsg})
 		return
@@ -56,15 +76,19 @@ func (s *Server) devfileHandler(w http.ResponseWriter, r *http.Request) {
 	httpTimeout := 10
 	devfileObj, _, err = devfile.ParseDevfileAndValidate(parser.ParserArgs{Data: devfileContentBytes, HTTPTimeout: &httpTimeout})
 	if err != nil {
-		errMsg := "Failed to parse devfile:"
+		// The parser resolves parent.uri, kubernetes.uri, and plugin references
+		// over HTTP and can embed the resolved response body in its error. Never
+		// reflect the raw error to the client, as that would turn a parse failure
+		// into a partial-read SSRF oracle. Log the full error server-side and
+		// return a generic message instead.
+		klog.Errorf("Failed to parse devfile: %v", err)
+
+		clientErrMsg := "Failed to parse devfile."
 		if strings.Contains(err.Error(), "schemaVersion not present in devfile") {
-			errMsg = fmt.Sprintf("%s schemaVersion not present in devfile. Only devfile 2.2.0 or above is supported. The devfile needs to have the schemaVersion set in the metadata section with a value of 2.2.0 or above.", errMsg)
-		} else {
-			errMsg = fmt.Sprintf("%s %s", errMsg, err)
+			clientErrMsg = "Failed to parse devfile: schemaVersion not present in devfile. Only devfile 2.2.0 or above is supported. The devfile needs to have the schemaVersion set in the metadata section with a value of 2.2.0 or above."
 		}
 
-		klog.Error(errMsg)
-		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: errMsg})
+		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: clientErrMsg})
 		return
 	}
 
