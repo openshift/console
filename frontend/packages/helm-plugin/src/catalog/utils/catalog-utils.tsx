@@ -39,6 +39,12 @@ export const normalizeHelmCharts = (
       charts.forEach((chart: HelmChartMetaData) => {
         const { name, created, version, appVersion, description, keywords, annotations } = chart;
 
+        // Skip charts with missing or empty urls — malformed chart metadata
+        // from misconfigured repositories can omit the urls field entirely.
+        if (!chart.urls?.length) {
+          return;
+        }
+
         const annotatedName = annotations?.[CHART_NAME_ANNOTATION] ?? '';
         const providerType = annotations?.[PROVIDER_TYPE_ANNOTATION] ?? '';
         const providerName = annotations?.[PROVIDER_NAME_ANNOTATION] ?? '';
