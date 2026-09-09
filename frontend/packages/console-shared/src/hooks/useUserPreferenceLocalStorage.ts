@@ -20,7 +20,6 @@ export const useUserPreferenceLocalStorage = <T>(
 
   const storage = session ? sessionStorage : localStorage;
   const keyRef = useRef(key);
-  const defaultValueRef = useRef(defaultValue);
   const [data, setData] = useState(() => {
     const valueInStorage =
       storage.getItem(storageKey) !== null && deserializeData(storage.getItem(storageKey));
