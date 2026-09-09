@@ -24,8 +24,6 @@
     "gherkin-lint": "./node_modules/.bin/gherkin-lint -c ./packages/dev-console/integration-tests/.gherkin-lintrc ./packages/*/integration-tests/features",
     "test": "LANG=en_US.UTF-8 jest",
     "debug-test": "node --inspect-brk node_modules/.bin/jest --runInBand",
-    "test-cypress-olm": "cd packages/operator-lifecycle-manager/integration-tests && yarn run test-cypress",
-    "test-cypress-olm-headless": "cd packages/operator-lifecycle-manager/integration-tests && yarn run test-cypress-headless",
     "test-cypress-dev-console": "cd packages/dev-console/integration-tests && yarn run test-cypress",
     "test-cypress-dev-console-headless": "cd packages/dev-console/integration-tests && yarn run test-cypress-headless",
     "test-cypress-dev-console-nightly": "cd packages/dev-console/integration-tests && yarn run test-cypress-nightly",
