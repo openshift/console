@@ -29,7 +29,7 @@ if [ "$SCENARIO" == "nightly-cypress" ]; then
 elif [ "$SCENARIO" == "e2e" ] || [ "$SCENARIO" == "release" ]; then
   ./integration-tests/test-cypress.sh -h true
 elif [ "$SCENARIO" == "olmFull" ]; then
-  ./integration-tests/test-cypress.sh -p olm -h true
+  ./integration-tests/test-playwright.sh -- --project=olm
 elif [ "$SCENARIO" == "dev-console" ]; then
   ./integration-tests/test-cypress.sh -p dev-console -h true
 elif [ "$SCENARIO" == "pipelines" ]; then

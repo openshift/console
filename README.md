@@ -288,15 +288,13 @@ console/frontend > ./integration-tests/test-cypress.sh
 
 Runs Cypress tests in Test Runner or headless mode
 Usage: test-cypress [-p] <package> [-s] <filemask> [-h true]
-  '-p <package>' may be 'console, 'olm' or 'devconsole'
+  '-p <package>' may be 'console', 'dev-console', or 'helm'
   '-s <specmask>' is a file mask for spec test files, such as 'tests/monitoring/*'. Used only in headless mode when '-p' is specified.
   '-h true' runs Cypress in headless mode. When omitted, launches Cypress Test Runner
 Examples:
   ./integration-tests/test-cypress.sh                                       // displays this help text
   ./integration-tests/test-cypress.sh -p console                            // opens Cypress Test Runner for console tests
-  ./integration-tests/test-cypress.sh -p olm                                // opens Cypress Test Runner for OLM tests
   ./integration-tests/test-cypress.sh -h true                               // runs all packages in headless mode
-  ./integration-tests/test-cypress.sh -p olm -h true                        // runs OLM tests in headless mode
   ./integration-tests/test-cypress.sh -p console -s 'tests/crud/*' -h true  // runs console CRUD tests in headless mode
 ```
 
@@ -314,7 +312,7 @@ in the [openshift/release](https://github.com/openshift/release) repo and were g
 
 CI runs the [test-prow-e2e.sh](test-prow-e2e.sh) script, which runs [frontend/integration-tests/test-cypress.sh](frontend/integration-tests/test-cypress.sh).
 
-`test-cypress.sh` runs all Cypress tests, in all 'packages' (console, olm, and devconsole), in `-- headless` mode via:
+`test-cypress.sh` runs the remaining Cypress tests, in the supported packages, in `-- headless` mode via:
 
 `test-cypress.sh -h true`
 
