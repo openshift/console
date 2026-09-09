@@ -1,5 +1,3 @@
-import type { Locator } from '@playwright/test';
-
 import { expect } from '../../fixtures';
 import BasePage from '../base-page';
 
@@ -20,30 +18,34 @@ export class RoutePage extends BasePage {
     await this.robustClick(this.page.getByRole('menuitem', { name: 'Edit Route' }));
   }
 
-  async fill(name: string, service: string, port: string, host?: string): Promise<void> {
-    if ((await this.name.count()) === 0) {
-      await this.setEditorContent(
-        [
-          'apiVersion: route.openshift.io/v1',
-          'kind: Route',
-          'metadata:',
-          `  name: ${name}`,
-          'spec:',
-          `  ${host ? `host: ${host}\n  ` : ''}to:`,
-          '    kind: Service',
-          `    name: ${service}`,
-          '  port:',
-          `    targetPort: ${port}`,
-        ].join('\n'),
-      );
-      return;
-    }
+  isFormView(): Promise<boolean> {
+    return this.name.count().then((count) => count > 0);
+  }
+
+  async fillForm(name: string, service: string, port: string, host?: string): Promise<void> {
     await this.name.fill(name);
     await this.robustClick(this.service);
     await this.robustClick(this.page.getByRole('option', { name: service, exact: true }));
     await this.robustClick(this.targetPort);
     await this.robustClick(this.page.getByRole('option', { name: port, exact: true }));
     if (host) await this.hostname.fill(host);
+  }
+
+  async fillYaml(name: string, service: string, port: string, host?: string): Promise<void> {
+    await this.setEditorContent(
+      [
+        'apiVersion: route.openshift.io/v1',
+        'kind: Route',
+        'metadata:',
+        `  name: ${name}`,
+        'spec:',
+        `  ${host ? `host: ${host}\n  ` : ''}to:`,
+        '    kind: Service',
+        `    name: ${service}`,
+        '  port:',
+        `    targetPort: ${port}`,
+      ].join('\n'),
+    );
   }
 
   async create(): Promise<void> {
@@ -54,22 +56,19 @@ export class RoutePage extends BasePage {
     await this.robustClick(this.page.getByRole('button', { name: 'Save', exact: true }));
   }
 
-  async setHostname(host: string): Promise<void> {
-    await expect(
-      this.hostname.or(this.page.getByRole('textbox', { name: /Editor content/ })).first(),
-    ).toBeVisible({ timeout: 30_000 });
-    if ((await this.hostname.count()) > 0) {
-      await this.hostname.fill(host);
-      return;
-    }
+  async setFormHostname(host: string): Promise<void> {
+    await expect(this.hostname).toBeVisible({ timeout: 30_000 });
+    await this.hostname.fill(host);
+  }
+
+  async setYamlHostname(host: string): Promise<void> {
+    await expect(this.page.getByRole('textbox', { name: /Editor content/ })).toBeVisible({
+      timeout: 30_000,
+    });
     const content = await this.getEditorContent();
     const updated = /^spec:\n/m.test(content)
       ? content.replace(/^(spec:\n)/m, `$1  host: ${host}\n`)
       : content;
     await this.setEditorContent(updated);
-  }
-
-  getHostname(): Locator {
-    return this.hostname;
   }
 }

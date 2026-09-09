@@ -85,9 +85,11 @@ test.describe('Route', { tag: ['@dev-console'] }, () => {
     await createRoutePrerequisites(k8sClient, cleanup, ns);
     const routePage = new RoutePage(page);
     await routePage.navigateToCreate(ns);
-    // The form interaction is encapsulated by the page object.
-    // eslint-disable-next-line playwright/prefer-locator
-    await routePage.fill('created-route', SERVICE_NAME, String(SERVICE_PORT));
+    if (await routePage.isFormView()) {
+      await routePage.fillForm('created-route', SERVICE_NAME, String(SERVICE_PORT));
+    } else {
+      await routePage.fillYaml('created-route', SERVICE_NAME, String(SERVICE_PORT));
+    }
     await routePage.create();
     await expect(new DetailsPage(page).getHeadingByName('created-route')).toBeVisible({
       timeout: 30_000,
@@ -100,7 +102,11 @@ test.describe('Route', { tag: ['@dev-console'] }, () => {
     await createTestRoute(k8sClient, ns, 'test-route');
     const routePage = new RoutePage(page);
     await routePage.navigateToEdit(ns, 'test-route');
-    await routePage.setHostname('edited.example.test');
+    if (await routePage.isFormView()) {
+      await routePage.setFormHostname('edited.example.test');
+    } else {
+      await routePage.setYamlHostname('edited.example.test');
+    }
     await routePage.save();
     const route = (await k8sClient.getCustomResource(
       'route.openshift.io',

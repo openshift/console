@@ -62,6 +62,7 @@ const AddPageConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
   const [disabled, setDisabled] = useState<string[]>();
   useEffect(() => {
     if (consoleConfig && consoleConfigLoaded && !disabled) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDisabled(consoleConfig?.spec?.customization?.addPage?.disabledActions || []);
     }
   }, [consoleConfig, consoleConfigLoaded, disabled]);
@@ -150,18 +151,20 @@ const AddPageConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
           'Option to disable individual actions from the "+Add" page to simplify and standardize your development processes. Users can still create resources from a cli or via YAML. The "Search" and "Topology" will still show such resources.',
         )}
       </FormHelperText>
-      <DualListSelector
-        availableOptionsTitle={t('Enabled actions')}
-        chosenOptionsTitle={t('Disabled actions')}
-        isSearchable
-        availableOptions={enabledOptions}
-        chosenOptions={disabledOptions}
-        onListChange={onListChange}
-        filterOption={filterOption}
-        isDisabled={
-          readonly || !addActionExtensionsResolved || !consoleConfigLoaded || consoleConfigError
-        }
-      />
+      <div data-test="add-page-selector">
+        <DualListSelector
+          availableOptionsTitle={t('Enabled actions')}
+          chosenOptionsTitle={t('Disabled actions')}
+          isSearchable
+          availableOptions={enabledOptions}
+          chosenOptions={disabledOptions}
+          onListChange={onListChange}
+          filterOption={filterOption}
+          isDisabled={
+            readonly || !addActionExtensionsResolved || !consoleConfigLoaded || consoleConfigError
+          }
+        />
+      </div>
 
       <LoadError error={consoleConfigError} />
       <SaveStatus {...saveStatus} />

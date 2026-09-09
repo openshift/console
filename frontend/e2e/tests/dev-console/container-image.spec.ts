@@ -16,12 +16,10 @@ test.describe(
     const ns = `aut-addflow-containerimg-${Date.now()}`;
     let addPage: AddPage;
     let deployPage: DeployImagePage;
-    let topologyPage: TopologyPage;
 
     test.beforeEach(async ({ page, k8sClient, cleanup }) => {
       addPage = new AddPage(page);
       deployPage = new DeployImagePage(page);
-      topologyPage = new TopologyPage(page);
       await k8sClient.createNamespace(ns);
       cleanup.trackNamespace(ns);
       await addPage.ensureDevPerspectiveAndNavigate(ns, k8sClient);

@@ -67,6 +67,7 @@ const CatalogTypesConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
   const [types, setTypes] = useState<Types>();
   useEffect(() => {
     if (consoleConfig && consoleConfigLoaded && !types) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setTypes(consoleConfig?.spec?.customization?.developerCatalog?.types);
     }
   }, [consoleConfig, consoleConfigLoaded, types]);
@@ -245,18 +246,23 @@ const CatalogTypesConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
           'Another option to customize and standardize your development process. As an admin, you can disable the complete Software Catalog, or individual sub-catalogs (available as Types in the Software Catalog). Also here the "Search" and "Topology" will still show such resources.',
         )}
       </FormHelperText>
-      <DualListSelector
-        availableOptionsTitle={t('Enabled types')}
-        chosenOptionsTitle={t('Disabled types')}
-        isSearchable
-        availableOptions={enabledOptions}
-        chosenOptions={disabledOptions}
-        onListChange={onListChange}
-        filterOption={filterOption}
-        isDisabled={
-          readonly || !catalogTypesExtensionsLoaded || !consoleConfigLoaded || !!consoleConfigError
-        }
-      />
+      <div data-test="catalog-types-selector">
+        <DualListSelector
+          availableOptionsTitle={t('Enabled types')}
+          chosenOptionsTitle={t('Disabled types')}
+          isSearchable
+          availableOptions={enabledOptions}
+          chosenOptions={disabledOptions}
+          onListChange={onListChange}
+          filterOption={filterOption}
+          isDisabled={
+            readonly ||
+            !catalogTypesExtensionsLoaded ||
+            !consoleConfigLoaded ||
+            !!consoleConfigError
+          }
+        />
+      </div>
 
       <LoadError error={consoleConfigError} />
       <SaveStatus {...saveStatus} />
