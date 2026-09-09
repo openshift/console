@@ -143,8 +143,8 @@ test.describe('Edit Build Config', { tag: ['@dev-console'] }, () => {
   );
 
   // eslint-disable-next-line playwright/expect-expect
-  test('EBC-01-TC03: Edit BuildConfig via kebab menu', async () => {
-    test.skip(true, 'Original Cypress scenario tagged @manual — deferred');
+  test('EBC-01-TC03: Switch from Form to YAML view for editing BuildConfig', async () => {
+    test.skip(true, 'Original Cypress scenario tagged @manual: YAML/form toggle workflow deferred');
   });
 
   test('EBC-01-TC04: Edit environment variables', async ({ page, k8sClient, cleanup }) => {
