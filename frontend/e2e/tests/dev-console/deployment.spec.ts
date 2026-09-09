@@ -64,6 +64,7 @@ test.describe('Deployment form view', { tag: ['@dev-console', '@smoke'] }, () =>
     await deployPage.selectProject('openshift');
     await deployPage.selectImageStream('httpd');
     await deployPage.selectTag('latest');
+    await deployPage.selectResourceType('Deployment');
     await deployPage.enterName('image-stream-deployment');
     await deployPage.clickCreate();
     const workload = await waitForEditableWorkload(k8sClient, ns);
@@ -87,6 +88,7 @@ test.describe('Deployment form view', { tag: ['@dev-console', '@smoke'] }, () =>
     await deployImagePage.selectProject('openshift');
     await deployImagePage.selectImageStream('httpd');
     await deployImagePage.selectTag('latest');
+    await deployImagePage.selectResourceType('Deployment');
     await deployImagePage.enterName('editable-deployment');
     await deployImagePage.clickCreate();
     const workload = await waitForEditableWorkload(k8sClient, ns);
