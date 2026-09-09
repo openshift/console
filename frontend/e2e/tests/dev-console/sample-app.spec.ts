@@ -14,7 +14,7 @@ async function createTestNamespace(
 ): Promise<string> {
   const ns = `${NS_PREFIX}-${suffix}-${Date.now()}`;
   await k8sClient.createNamespace(ns);
-  await k8sClient.waitForNamespaceReady(ns);
+  expect(await k8sClient.waitForNamespaceReady(ns), 'Namespace did not become ready').toBe(true);
   cleanup.trackNamespace(ns);
   return ns;
 }
@@ -23,6 +23,21 @@ async function navigateToSamplesPage(addPage: AddPage, ns: string): Promise<void
   await addPage.switchPerspective('Developer');
   await addPage.navigateToAdd(ns);
   await addPage.clickViewAllSamples();
+}
+
+async function waitForSampleDeployment(
+  k8sClient: KubernetesClient,
+  namespace: string,
+): Promise<void> {
+  await expect
+    .poll(
+      async () => {
+        const response = await k8sClient.appsV1Api.listNamespacedDeployment({ namespace });
+        return response.items.some((deployment) => deployment.metadata?.name === 'httpd-sample');
+      },
+      { timeout: 120_000 },
+    )
+    .toBe(true);
 }
 
 test.describe(
@@ -150,10 +165,21 @@ test.describe(
       await addPage.clickSampleCard('Httpd');
       await addPage.getFormAppName().fill('httpd-sample');
       await addPage.clickCreate();
+      await waitForSampleDeployment(k8sClient, ns);
       const topology = new TopologyPage(page);
       await topology.navigateToTopology(ns);
       await topology.switchToListView();
-      await expect(topology.getWorkload('httpd-sample')).toBeVisible({ timeout: 120_000 });
+      await expect
+        .poll(
+          async () => {
+            await topology.navigateToTopology(ns);
+            await topology.switchToListView();
+            return (await topology.getWorkload('httpd-sample').count()) > 0;
+          },
+          { timeout: 120_000 },
+        )
+        .toBe(true);
+      await expect(topology.getWorkload('httpd-sample')).toBeVisible();
     });
   },
 );

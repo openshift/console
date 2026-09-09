@@ -13,7 +13,9 @@ async function createRoutePrerequisites(
   namespace: string,
 ): Promise<void> {
   await k8sClient.createNamespace(namespace);
-  await k8sClient.waitForNamespaceReady(namespace);
+  expect(await k8sClient.waitForNamespaceReady(namespace), 'Namespace did not become ready').toBe(
+    true,
+  );
   cleanup.trackNamespace(namespace);
 
   await k8sClient.createDeployment(namespace, {
@@ -98,8 +100,16 @@ test.describe('Route', { tag: ['@dev-console'] }, () => {
     await createTestRoute(k8sClient, ns, 'test-route');
     const routePage = new RoutePage(page);
     await routePage.navigateToEdit(ns, 'test-route');
-    await routePage.getHostname().fill('edited.example.test');
+    await routePage.setHostname('edited.example.test');
     await routePage.save();
+    const route = (await k8sClient.getCustomResource(
+      'route.openshift.io',
+      'v1',
+      ns,
+      'routes',
+      'test-route',
+    )) as { spec?: { host?: string } };
+    expect(route.spec?.host).toBe('edited.example.test');
     await expect(new DetailsPage(page).getHeadingByName('test-route')).toBeVisible({
       timeout: 30_000,
     });
