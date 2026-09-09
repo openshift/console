@@ -171,6 +171,6 @@ Integration/E2E tests validate full user workflows against a real/simulated Open
 For full prerequisites (cluster login, Cypress install), see [README.md#integration-tests](README.md#integration-tests).
 
 See `package.json` scripts for a list of available commands to run E2E tests in different modes.
-- `yarn test-cypress-<suite>` to open an interactive window for a specific Cypress test suite (e.g., `yarn test-cypress-devconsole`). **AI agents may struggle with interactive mode**.
+- `yarn test-cypress-<suite>` to open an interactive window for a specific Cypress test suite (e.g., `yarn test-cypress-dev-console`). **AI agents may struggle with interactive mode**.
 - `yarn test-cypress-<suite>-headless` to run the same suite in headless mode (e.g., `yarn test-cypress-dev-console-headless`)
 - `yarn test-cypress-<suite>-nightly` runs an extended suite of tests in headless mode, intended for CI/nightly runs.
