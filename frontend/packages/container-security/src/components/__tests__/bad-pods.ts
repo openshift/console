@@ -1,6 +1,6 @@
-import type { Priority } from '../src/const';
-import { vulnPriority } from '../src/const';
-import type { ImageManifestVuln } from '../src/types';
+import type { Priority } from '../../const';
+import { vulnPriority } from '../../const';
+import type { ImageManifestVuln } from '../../types';
 
 export const fakeVulnFor = (priority: Priority): ImageManifestVuln => ({
   apiVersion: 'secscan.quay.redhat.com/v1alpha1',
