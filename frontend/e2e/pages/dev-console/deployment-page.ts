@@ -32,8 +32,12 @@ export class DeploymentPage extends BasePage {
     await this.robustClick(this.createButton);
   }
 
-  async navigateToEditForm(namespace: string, name: string): Promise<void> {
-    await this.goTo(`/k8s/ns/${namespace}/deployments/${name}/form`);
+  async navigateToEditForm(
+    namespace: string,
+    name: string,
+    resource: 'deployments' | 'deploymentconfigs' = 'deployments',
+  ): Promise<void> {
+    await this.goTo(`/k8s/ns/${namespace}/${resource}/${name}/form`);
     await this.ensureFormView(this.nameInput);
   }
 

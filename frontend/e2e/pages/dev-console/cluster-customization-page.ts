@@ -41,6 +41,10 @@ export class ClusterCustomizationPage extends BasePage {
     return this.page.getByTestId(`${name} form-section`);
   }
 
+  private getSelector(name: 'catalog-types' | 'add-page'): Locator {
+    return this.page.getByTestId(`${name}-selector`);
+  }
+
   private async ensureFormSection(name: 'catalog-types' | 'add-page'): Promise<Locator> {
     const section = this.getFormSection(name);
     if (!(await section.isVisible().catch(() => false))) {
@@ -55,14 +59,12 @@ export class ClusterCustomizationPage extends BasePage {
     item: string,
     list: 'available' | 'chosen',
   ): Promise<void> {
-    const section = await this.ensureFormSection(name);
+    await this.ensureFormSection(name);
     const searchName = list === 'available' ? 'Available search input' : 'Chosen search input';
-    const search = section.getByRole('textbox', { name: searchName });
+    const selector = this.getSelector(name);
+    const search = selector.getByRole('textbox', { name: searchName });
     await search.fill(item);
-    const pane = search.locator(
-      'xpath=ancestor::div[contains(@class, "dual-list-selector__pane")][1]',
-    );
-    await expect(pane.getByRole('option').filter({ hasText: item }).first()).toBeVisible({
+    await expect(selector.getByRole('option').filter({ hasText: item }).first()).toBeVisible({
       timeout: 30_000,
     });
   }
@@ -73,47 +75,35 @@ export class ClusterCustomizationPage extends BasePage {
     list: 'available' | 'chosen',
   ): Promise<boolean> {
     await this.navigateToCustomize();
-    const section = await this.ensureFormSection(name);
+    await this.ensureFormSection(name);
     const searchName = list === 'available' ? 'Available search input' : 'Chosen search input';
-    const search = section.getByRole('textbox', { name: searchName });
+    const selector = this.getSelector(name);
+    const search = selector.getByRole('textbox', { name: searchName });
     await search.fill(item);
-    const pane = search.locator(
-      'xpath=ancestor::div[contains(@class, "dual-list-selector__pane")][1]',
-    );
-    return (await pane.getByRole('option').filter({ hasText: item }).count()) > 0;
-  }
-
-  getAvailableSearch(name: 'catalog-types' | 'add-page'): Locator {
-    return this.getFormSection(name).getByRole('textbox', { name: 'Available search input' });
-  }
-
-  getChosenSearch(name: 'catalog-types' | 'add-page'): Locator {
-    return this.getFormSection(name).getByRole('textbox', { name: 'Chosen search input' });
+    return (await selector.getByRole('option').filter({ hasText: item }).count()) > 0;
   }
 
   async moveAvailableToChosen(name: 'catalog-types' | 'add-page', item: string): Promise<void> {
-    const section = await this.ensureFormSection(name);
-    const search = section.getByRole('textbox', { name: 'Available search input' });
+    await this.ensureFormSection(name);
+    const selector = this.getSelector(name);
+    const search = selector.getByRole('textbox', { name: 'Available search input' });
     await search.fill(item);
-    const option = section.getByRole('option').filter({ hasText: item }).first();
-    const addButton = section.getByRole('button', { name: 'Add selected' });
+    const option = selector.getByRole('option').filter({ hasText: item }).first();
+    const addButton = selector.getByRole('button', { name: 'Add selected' });
     await this.robustClick(option);
     await expect(addButton).toBeEnabled({ timeout: 10_000 });
     await this.robustClick(addButton);
   }
 
   async moveChosenToAvailable(name: 'catalog-types' | 'add-page', item: string): Promise<void> {
-    const section = await this.ensureFormSection(name);
-    const search = section.getByRole('textbox', { name: 'Chosen search input' });
+    await this.ensureFormSection(name);
+    const selector = this.getSelector(name);
+    const search = selector.getByRole('textbox', { name: 'Chosen search input' });
     await search.fill(item);
-    const option = section.getByRole('option').filter({ hasText: item }).first();
-    const removeButton = section.getByRole('button', { name: 'Remove selected' });
+    const option = selector.getByRole('option').filter({ hasText: item }).first();
+    const removeButton = selector.getByRole('button', { name: 'Remove selected' });
     await this.robustClick(option);
     await expect(removeButton).toBeEnabled({ timeout: 10_000 });
     await this.robustClick(removeButton);
-  }
-
-  getSuccessAlert(): Locator {
-    return this.page.getByRole('alert').filter({ hasText: /success|saved/i });
   }
 }

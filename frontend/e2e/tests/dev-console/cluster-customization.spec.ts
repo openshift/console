@@ -6,6 +6,7 @@ test.describe(
   'Cluster configuration customization',
   { tag: ['@dev-console', '@regression'] },
   () => {
+    // These tests mutate cluster-wide Console configuration; serialize them so tracked restores cannot race.
     test.describe.configure({ mode: 'serial' });
     let customizationPage: ClusterCustomizationPage;
     const pendingRestores: Array<{ section: 'catalog-types' | 'add-page'; item: string }> = [];

@@ -21,12 +21,10 @@ import { TopologyPage } from '../../pages/topology-page';
 
 test.describe('Create Application from Catalog', { tag: ['@dev-console', '@smoke'] }, () => {
   const ns = `aut-addflow-catalog-${Date.now()}`;
-  let addPage: AddPage;
   let catalogPage: CatalogPage;
   let topologyPage: TopologyPage;
 
   test.beforeEach(async ({ page, k8sClient, cleanup }) => {
-    addPage = new AddPage(page);
     catalogPage = new CatalogPage(page);
     topologyPage = new TopologyPage(page);
     await k8sClient.createNamespace(ns);

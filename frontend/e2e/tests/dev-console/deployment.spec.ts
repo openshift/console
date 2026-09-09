@@ -4,23 +4,49 @@ import { DetailsPage } from '../../pages/details-page';
 import { DeploymentPage } from '../../pages/dev-console/deployment-page';
 import { DeployImagePage } from '../../pages/dev-console/add-page';
 
-async function waitForDeploymentCreated(
+type EditableWorkload = {
+  name: string;
+  resource: 'deployments' | 'deploymentconfigs';
+};
+
+async function waitForEditableWorkload(
   k8sClient: KubernetesClient,
   namespace: string,
-): Promise<string> {
+): Promise<EditableWorkload> {
   await expect
     .poll(
       async () => {
+        const deploymentConfigs = (await k8sClient.listCustomResources(
+          'apps.openshift.io',
+          'v1',
+          namespace,
+          'deploymentconfigs',
+        )) as Array<{ metadata?: { name?: string } }>;
+        if (deploymentConfigs.some((item) => item.metadata?.name)) return true;
         const response = await k8sClient.appsV1Api.listNamespacedDeployment({ namespace });
-        return response.items?.length ?? 0;
+        return response.items?.some(
+          (item) => item.metadata?.name && !/-\d+-deployment$/.test(item.metadata.name),
+        );
       },
       { timeout: 60_000 },
     )
-    .toBeGreaterThan(0);
+    .toBe(true);
+  const deploymentConfigs = (await k8sClient.listCustomResources(
+    'apps.openshift.io',
+    'v1',
+    namespace,
+    'deploymentconfigs',
+  )) as Array<{ metadata?: { name?: string } }>;
+  const deploymentConfigName = deploymentConfigs.find((item) => item.metadata?.name)?.metadata
+    ?.name;
+  if (deploymentConfigName) return { name: deploymentConfigName, resource: 'deploymentconfigs' };
+
   const response = await k8sClient.appsV1Api.listNamespacedDeployment({ namespace });
-  const name = response.items[0]?.metadata?.name;
-  if (!name) throw new Error(`Deployment was created in ${namespace} without a name`);
-  return name;
+  const deploymentName = response.items.find(
+    (item) => item.metadata?.name && !/-\d+-deployment$/.test(item.metadata.name),
+  )?.metadata?.name;
+  if (!deploymentName) throw new Error(`Editable workload was not created in ${namespace}`);
+  return { name: deploymentName, resource: 'deployments' };
 }
 
 test.describe('Deployment form view', { tag: ['@dev-console', '@smoke'] }, () => {
@@ -39,10 +65,10 @@ test.describe('Deployment form view', { tag: ['@dev-console', '@smoke'] }, () =>
     await deployPage.selectTag('latest');
     await deployPage.enterName('image-stream-deployment');
     await deployPage.clickCreate();
-    const deploymentName = await waitForDeploymentCreated(k8sClient, ns);
+    const workload = await waitForEditableWorkload(k8sClient, ns);
     const detailsPage = new DetailsPage(page);
-    await detailsPage.navigateToDetailsUrl(`/k8s/ns/${ns}/deployments/${deploymentName}`);
-    await expect(detailsPage.title).toContainText(deploymentName);
+    await detailsPage.navigateToDetailsUrl(`/k8s/ns/${ns}/${workload.resource}/${workload.name}`);
+    await expect(detailsPage.title).toContainText(workload.name);
   });
 
   test('D-01-TC03: Create and edit deployment, verify auto-deploy persistence', async ({
@@ -62,16 +88,16 @@ test.describe('Deployment form view', { tag: ['@dev-console', '@smoke'] }, () =>
     await deployImagePage.selectTag('latest');
     await deployImagePage.enterName('editable-deployment');
     await deployImagePage.clickCreate();
-    const deploymentName = await waitForDeploymentCreated(k8sClient, ns);
+    const workload = await waitForEditableWorkload(k8sClient, ns);
     const deployPage = new DeploymentPage(page);
-    await deployPage.navigateToEditForm(ns, deploymentName);
+    await deployPage.navigateToEditForm(ns, workload.name, workload.resource);
     await deployPage.reloadIfStale();
     const autoDeploy = deployPage.getAutoDeployImage();
     if (!(await autoDeploy.isChecked())) {
       await autoDeploy.check();
       await deployPage.save();
     }
-    await deployPage.navigateToEditForm(ns, deploymentName);
+    await deployPage.navigateToEditForm(ns, workload.name, workload.resource);
     await expect(deployPage.getAutoDeployImage()).toBeChecked();
   });
 
