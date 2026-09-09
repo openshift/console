@@ -19,7 +19,10 @@ export class RoutePage extends BasePage {
   }
 
   isFormView(): Promise<boolean> {
-    return this.name.count().then((count) => count > 0);
+    const yamlEditor = this.page.getByRole('textbox', { name: /Editor content/ });
+    return expect(this.name.or(yamlEditor).first())
+      .toBeVisible({ timeout: 30_000 })
+      .then(async () => this.name.isVisible());
   }
 
   async fillForm(name: string, service: string, port: string, host?: string): Promise<void> {
