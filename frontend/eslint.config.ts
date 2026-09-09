@@ -2,7 +2,6 @@ import * as path from 'path';
 import { defineConfig, globalIgnores } from 'eslint/config';
 import { FlatCompat } from '@eslint/eslintrc';
 import * as js from '@eslint/js';
-import * as globals from 'globals';
 // TODO: change moduleResolution to "bundler"
 // @ts-expect-error types not resolvable under moduleResolution "node"
 import * as tsParser from '@typescript-eslint/parser';
