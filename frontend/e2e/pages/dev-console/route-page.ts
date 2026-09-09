@@ -2,7 +2,7 @@ import { expect } from '../../fixtures';
 import BasePage from '../base-page';
 
 export class RoutePage extends BasePage {
-  private readonly name = this.page.getByRole('textbox', { name: 'Name' });
+  private readonly name = this.page.getByRole('textbox', { name: 'Name', exact: true });
   private readonly service = this.page.getByRole('combobox', { name: /Service/i });
   private readonly targetPort = this.page.getByRole('combobox', { name: /Target Port/i });
   private readonly hostname = this.page.getByRole('textbox', { name: 'Hostname' });

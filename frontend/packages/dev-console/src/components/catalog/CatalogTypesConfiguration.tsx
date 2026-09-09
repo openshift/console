@@ -67,7 +67,6 @@ const CatalogTypesConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
   const [types, setTypes] = useState<Types>();
   useEffect(() => {
     if (consoleConfig && consoleConfigLoaded && !types) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setTypes(consoleConfig?.spec?.customization?.developerCatalog?.types);
     }
   }, [consoleConfig, consoleConfigLoaded, types]);
@@ -248,6 +247,7 @@ const CatalogTypesConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
       </FormHelperText>
       <div data-test="catalog-types-selector">
         <DualListSelector
+          id="catalog-types-selector-list"
           availableOptionsTitle={t('Enabled types')}
           chosenOptionsTitle={t('Disabled types')}
           isSearchable
