@@ -1548,12 +1548,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@console/operator-lifecycle-manager-integration-tests@workspace:packages/operator-lifecycle-manager/integration-tests":
-  version: 0.0.0-use.local
-  resolution: "@console/operator-lifecycle-manager-integration-tests@workspace:packages/operator-lifecycle-manager/integration-tests"
-  languageName: unknown
-  linkType: soft
-
 "@console/operator-lifecycle-manager-v1@npm:0.0.0-fixed, @console/operator-lifecycle-manager-v1@workspace:packages/operator-lifecycle-manager-v1":
   version: 0.0.0-use.local
   resolution: "@console/operator-lifecycle-manager-v1@workspace:packages/operator-lifecycle-manager-v1"
