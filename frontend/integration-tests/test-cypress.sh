@@ -30,14 +30,6 @@ function generateReport {
 }
 trap "copyArtifacts; generateReport" EXIT
 
-function runOmlCypress {
-  if [ -n "$(find packages/operator-lifecycle-manager/integration-tests/tests -type f -name '*.cy.*' -print -quit)" ]; then
-    yarn run test-cypress-olm-headless
-  else
-    echo "Skipping OLM Cypress: no Cypress specs remain after Playwright migration"
-  fi
-}
-
 while getopts p:s:h:l:n: flag
 do
   case "${flag}" in
@@ -51,17 +43,15 @@ done
 if [ $# -eq 0 ]; then
     echo "Runs Cypress tests in Test Runner or headless mode"
     echo "Usage: test-cypress [-p] <package> [-s] <filemask> [-h true] [-n true/false]"
-    echo "  '-p <package>' may be 'console, 'olm', 'devconsole'"
+    echo "  '-p <package>' may be 'console', 'devconsole', or 'helm'"
     echo "  '-s <specmask>' is a file mask for spec test files, such as 'tests/monitoring/*'. Used only in headless mode when '-p' is specified."
     echo "  '-h true' runs Cypress in headless mode. When omitted, launches Cypress Test Runner"
     echo "  '-n true' runs the 'nightly' suite, all specs from selected packages in headless mode"
     echo "Examples:"
     echo "  test-cypress.sh                                       // displays this help text"
     echo "  test-cypress.sh -p console                            // opens Cypress Test Runner for console tests"
-    echo "  test-cypress.sh -p olm                                // opens Cypress Test Runner for OLM tests"
     echo "  test-cypress.sh -p dev-console                        // opens Cypress Test Runner for Dev-Console tests"
     echo "  test-cypress.sh -h true                               // runs all packages in headless mode"
-    echo "  test-cypress.sh -p olm -h true                        // runs OLM tests in headless mode"
     echo "  test-cypress.sh -p console -s 'tests/crud/*' -h true  // runs console CRUD tests in headless mode"
     echo "  test-cypress.sh -n true                               // runs the whole nightly suite"
     trap EXIT
@@ -81,7 +71,6 @@ fi
 
 if [ -n "${headless-}" ] && [ -z "${pkg-}" ]; then
   yarn run test-cypress-dev-console-headless
-  runOmlCypress
   yarn run test-cypress-helm-headless
   exit;
 fi
@@ -100,11 +89,6 @@ fi
 
 if [ -n "${spec-}" ] && [ -z "${nightly-}"]; then
   yarn_script="$yarn_script --spec '$spec'"
-fi
-
-if [ "${pkg-}" = "olm" ] && [ -z "$(find packages/operator-lifecycle-manager/integration-tests/tests -type f -name '*.cy.*' -print -quit)" ]; then
-  echo "Skipping OLM Cypress: no Cypress specs remain after Playwright migration"
-  exit 0
 fi
 
 yarn run $yarn_script
