@@ -7,6 +7,7 @@
 #
 # Scenarios (first argument; default: e2e):
 #   e2e, release  — full Playwright suite (default project / config)
+#   login         — auth-multiuser-login spec only (--project=console)
 #   smoke         — Playwright smoke project (--project=smoke)
 #
 # Environment (typical Prow / installer):
@@ -59,6 +60,11 @@ fi
 
 if [ "$SCENARIO" == "e2e" ] || [ "$SCENARIO" == "release" ]; then
   ./integration-tests/test-playwright.sh "$@"
+elif [ "$SCENARIO" == "login" ]; then
+  export BRIDGE_HTPASSWD_IDP="${BRIDGE_HTPASSWD_IDP:-test}"
+  export BRIDGE_HTPASSWD_USERNAME="${BRIDGE_HTPASSWD_USERNAME:-test}"
+  export BRIDGE_HTPASSWD_PASSWORD="${BRIDGE_HTPASSWD_PASSWORD:-test}"
+  ./integration-tests/test-playwright.sh -- --project=console e2e/tests/console/app/auth-multiuser-login.spec.ts "$@"
 elif [ "$SCENARIO" == "smoke" ]; then
   # End of script flags before Playwright's --project (test-playwright.sh only parses -c).
   ./integration-tests/test-playwright.sh -- --project=smoke "$@"
