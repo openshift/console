@@ -83,7 +83,7 @@ test.describe('Helm Catalog', { tag: ['@helm', '@regression'] }, () => {
     await test.step('Select all status filters (HR-05-TC09)', async () => {
       await helmPage.navigateToHelmReleases(ns);
       await helmPage.filterByStatus('Deployed');
-      await expect(helmPage.getFilterDropdownItem('deployed').locator('input')).toBeChecked();
+      await expect(page).toHaveURL(/[?&]status=deployed(?:&|$)/);
     });
 
     await test.step('Clear all filters (HR-05-TC10)', async () => {
@@ -142,7 +142,7 @@ test.describe('Helm Catalog', { tag: ['@helm', '@regression'] }, () => {
     cleanup.trackNamespace(ns);
 
     const helmPage = new HelmPage(page);
-    await helmPage.goTo(`/add/ns/${ns}`);
+    await helmPage.navigateToAddPage(ns);
     await expect(helmPage.getAddPageHelmCard()).toBeVisible({ timeout: 30_000 });
     await expect(helmPage.getAddPageHelmCard()).toContainText('Helm Chart');
   });

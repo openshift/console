@@ -101,7 +101,7 @@ test.describe('Helm Release', { tag: ['@helm', '@smoke'] }, () => {
 
     await test.step('Filter by Deployed status (HR-05-TC06)', async () => {
       await helmPage.filterByStatus('Deployed');
-      await expect(helmPage.getFilterDropdownItem('deployed').locator('input')).toBeChecked();
+      await expect(page).toHaveURL(/[?&]status=deployed(?:&|$)/);
       await expect(
         helmPage.getTable().getByTestId('data-view-cell-helm-release-name').first(),
       ).toBeVisible();
@@ -119,7 +119,7 @@ test.describe('Helm Release', { tag: ['@helm', '@smoke'] }, () => {
 
       await helmDetailsPage.clickActionsMenu();
       await expect(helmDetailsPage.getActionMenuItem('Upgrade')).toBeVisible();
-      await expect(helmDetailsPage.getActionMenuItem('Delete Helm Release')).toBeVisible();
+      await expect(helmDetailsPage.getActionMenuItem('Delete Helm release')).toBeVisible();
       await page.keyboard.press('Escape');
     });
 
@@ -155,7 +155,7 @@ test.describe('Helm Release', { tag: ['@helm', '@smoke'] }, () => {
       const upgradeAction = helmDetailsPage.getActionMenuItem('Upgrade');
       await expect(upgradeAction).toBeVisible({ timeout: 15_000 });
       await expect(helmDetailsPage.getActionMenuItem('Rollback')).toBeVisible();
-      await expect(helmDetailsPage.getActionMenuItem('Delete Helm Release')).toBeVisible();
+      await expect(helmDetailsPage.getActionMenuItem('Delete Helm release')).toBeVisible();
       await page.keyboard.press('Escape');
     });
 
@@ -183,7 +183,7 @@ test.describe('Helm Release', { tag: ['@helm', '@smoke'] }, () => {
       await helmPage.navigateToHelmReleases(ns);
       await helmPage.searchByName(releaseName);
       await helmPage.clickKebabMenu();
-      await helmPage.selectAction('Delete Helm Release');
+      await helmPage.selectAction('Delete Helm release');
       await helmDetailsPage.enterReleaseNameInDeletePopup(releaseName);
       await helmDetailsPage.confirmDelete();
       await expect(page).toHaveURL(/\/helm\//, { timeout: 30_000 });

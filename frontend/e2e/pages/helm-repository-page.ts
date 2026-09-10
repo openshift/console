@@ -11,7 +11,6 @@ export class HelmRepositoryPage extends BasePage {
   private readonly displayNameField = this.page.getByTestId('repo-display-name');
   private readonly descriptionField = this.page.getByTestId('repo-description');
   private readonly urlField = this.page.getByTestId('repo-url');
-  private readonly disabledCheckbox = this.page.getByTestId('repo-disabled');
   private readonly submitButton = this.page.getByTestId('save-changes');
   private readonly cancelButton = this.page.getByTestId('reset-button');
   private readonly repositoriesList = this.page.getByTestId('repositories-list');

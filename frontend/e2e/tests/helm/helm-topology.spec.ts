@@ -38,7 +38,7 @@ test.describe('Helm Topology', { tag: ['@helm', '@regression'] }, () => {
     await test.step('Verify kebab menu options on Helm page (HR-01-TC02)', async () => {
       await helmPage.clickKebabMenu();
       await expect(helmDetailsPage.getActionMenuItem('Upgrade')).toBeVisible();
-      await expect(helmDetailsPage.getActionMenuItem('Delete Helm Release')).toBeVisible();
+      await expect(helmDetailsPage.getActionMenuItem('Delete Helm release')).toBeVisible();
       await page.keyboard.press('Escape');
     });
 
@@ -48,9 +48,9 @@ test.describe('Helm Topology', { tag: ['@helm', '@regression'] }, () => {
         await topologyPage.navigateToTopologyGraph(ns);
         await topologyPage.verifyWorkloadVisible(releaseName);
       }).toPass({ intervals: [5_000, 10_000], timeout: 60_000 });
-      await topologyPage.rightClickOnGroup(releaseName);
+      await topologyPage.openHelmReleaseContextMenu(releaseName);
       await expect(topologyPage.getContextMenuItem('Upgrade')).toBeVisible({ timeout: 10_000 });
-      await expect(topologyPage.getContextMenuItem('Delete Helm Release')).toBeVisible();
+      await expect(topologyPage.getContextMenuItem('Delete Helm release')).toBeVisible();
       await page.keyboard.press('Escape');
     });
 

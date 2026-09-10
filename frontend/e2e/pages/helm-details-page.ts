@@ -3,7 +3,7 @@ import type { Locator } from '@playwright/test';
 import BasePage from './base-page';
 
 export class HelmDetailsPage extends BasePage {
-  private readonly sectionHeading = this.page.getByTestId('section-heading-Helm Release details');
+  private readonly sectionHeading = this.page.getByTestId('section-heading-Helm release details');
   private readonly resourcesTab = this.page.getByTestId('horizontal-link-Resources');
   private readonly revisionHistoryTab = this.page.getByTestId('horizontal-link-Revision history');
   private readonly releaseNotesTab = this.page.getByTestId('horizontal-link-Release notes');

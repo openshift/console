@@ -73,6 +73,10 @@ export class HelmPage extends BasePage {
     await this.goTo(`/catalog/ns/${namespace}`);
   }
 
+  async navigateToAddPage(namespace: string): Promise<void> {
+    await this.goTo(`/add/ns/${namespace}`);
+  }
+
   async selectHelmChartsType(): Promise<void> {
     await this.robustClick(this.page.getByTestId('tab HelmChart'));
   }
@@ -167,12 +171,6 @@ export class HelmPage extends BasePage {
 
   getFormSections(): Locator {
     return this.formSection;
-  }
-
-  getFilterDropdownItem(status: string): Locator {
-    return this.page.locator(
-      `[data-ouia-component-id="DataViewCheckboxFilter-filter-item-${status.toLowerCase()}"]`,
-    );
   }
 
   getHelmReleasesTab(): Locator {
