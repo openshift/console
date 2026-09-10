@@ -195,13 +195,14 @@ const TopologyComponent: FC<TopologyProps> = ({
     return newVisualization;
   }, [namespace, onGraphModelChange, onSelect, setTopologyLayoutData, topologyLayoutDataJson]);
 
+  // eslint-disable-next-line react-hooks/refs -- Lazy initialization: visualization is created synchronously once preferences load and must be available in the same render
   const visualizationRef = useRef<Visualization | null>(null);
   if (topologyPreferenceLoaded) {
-    if (!visualizationRef.current) {
-      visualizationRef.current = createVisualization();
+    if (!visualizationRef.current) { // eslint-disable-line react-hooks/refs -- lazy init: checks if visualization exists before creating
+      visualizationRef.current = createVisualization(); // eslint-disable-line react-hooks/refs -- lazy init: creates visualization synchronously on first render
     }
   }
-  const visualization = visualizationRef.current;
+  const visualization = visualizationRef.current; // eslint-disable-line react-hooks/refs -- lazy init: reads synchronously created visualization
   useEffect(() => {
     if (visualization) {
       setVisualization(visualization);

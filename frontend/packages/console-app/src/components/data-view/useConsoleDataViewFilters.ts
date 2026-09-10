@@ -46,7 +46,9 @@ export const useConsoleDataViewFilters = <
   // This effect ensures filters stay in sync when the URL changes externally
   // (e.g., the Search page updating query params without remounting).
   const filtersRef = useRef(filters);
-  filtersRef.current = filters;
+  useEffect(() => {
+    filtersRef.current = filters;
+  });
   useEffect(() => {
     const updates: Partial<TFilters> = {};
     let hasChanges = false;

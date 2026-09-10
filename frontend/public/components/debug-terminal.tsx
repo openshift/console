@@ -1,5 +1,5 @@
 import type { FC, ReactNode } from 'react';
-import { useState, useMemo, useEffect, useRef } from 'react';
+import { useState, useMemo, useEffect, useLayoutEffect, useRef } from 'react';
 import { Alert } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -123,7 +123,9 @@ const DebugTerminal: FC<DebugTerminalProps> = ({ podData, containerName }) => {
   const { t } = useTranslation('public');
   const detachedSessions = useConsoleSelector(getDetachedSessions);
   const detachedSessionsRef = useRef(detachedSessions);
-  detachedSessionsRef.current = detachedSessions;
+  useLayoutEffect(() => {
+    detachedSessionsRef.current = detachedSessions;
+  });
   const podNamespace = podData?.metadata.namespace;
   const podContainerName = containerName || podData?.spec.containers[0].name;
   const debugPodName = `${podData?.metadata?.name?.replace(/\./g, '-')}-debug-`;

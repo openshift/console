@@ -104,7 +104,9 @@ export const StorageClassDropdown: FC<StorageClassDropdownProps> = ({
   }, [selectedKeyProp]);
 
   const onChangeRef = useRef(onChangeProp);
-  onChangeRef.current = onChangeProp;
+  useEffect(() => {
+    onChangeRef.current = onChangeProp;
+  });
 
   // Process resources into sorted items and find default storage class
   const { items, defaultClass } = useMemo<{
