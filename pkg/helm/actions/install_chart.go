@@ -45,6 +45,12 @@ func InstallChart(ns, name, url string, vals map[string]interface{}, conf *actio
 		chartInfo = getChartInfoFromIndexEntry(indexEntry, ns, url)
 	}
 
+	// Validate the URL before setting up authentication so a rejected URL
+	// returns before any temporary TLS files are created.
+	if err := validateChartURL(url); err != nil {
+		return nil, err
+	}
+
 	connectionConfig, isClusterScoped, err := getRepositoryConnectionConfig(chartInfo.RepositoryName, ns, client)
 	if err != nil {
 		return nil, err
