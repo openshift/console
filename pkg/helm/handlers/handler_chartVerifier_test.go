@@ -79,14 +79,14 @@ func TestHelmHandlers_HandleChartVerifier_AcceptsValidURLs(t *testing.T) {
 		name string
 		url  string
 	}{
-		{"valid OCI registry", "oci://ghcr.io/charts/mychart:1.0.0"},
-		{"valid OCI registry with port", "oci://registry.example.com:5000/charts/mychart"},
-		{"valid HTTPS tgz", validChartURL},
-		{"valid HTTP tgz", "http://example.com/charts/mychart-1.0.0.tgz"},
-		{"valid HTTPS tar.gz", "https://example.com/charts/mychart-1.0.0.tar.gz"},
-		{"valid HTTP IPv4 tgz", "http://172.28.1.76:8849/chart.tgz"},
-		{"valid HTTP localhost tgz", "http://localhost/chart.tgz"},
-		{"valid HTTP loopback tgz", "http://127.0.0.1/chart.tgz"},
+		// Literal public IPs are used so these cases exercise the format check
+		// and SSRF guard offline, without depending on live DNS resolution.
+		{"valid OCI registry", "oci://8.8.8.8/charts/mychart:1.0.0"},
+		{"valid OCI registry with port", "oci://8.8.8.8:5000/charts/mychart"},
+		{"valid HTTPS tgz", "https://93.184.216.34/charts/mychart-1.0.0.tgz"},
+		{"valid HTTP tgz", "http://93.184.216.34/charts/mychart-1.0.0.tgz"},
+		{"valid HTTPS tar.gz", "https://93.184.216.34/charts/mychart-1.0.0.tar.gz"},
+		{"valid HTTP public IPv4 tgz", "http://1.1.1.1:8849/chart.tgz"},
 	}
 
 	for _, tt := range tests {
@@ -158,6 +158,57 @@ func TestHelmHandlers_HandleChartVerifier_RejectsInvalidURLs(t *testing.T) {
 			}
 			if response.Body.String() != `{"error":"invalid chart URL: must be oci:// or http(s)://*.tgz"}` {
 				t.Errorf("unexpected response body: %s", response.Body.String())
+			}
+			if actionConfigCalled {
+				t.Error("did not expect action configuration to be created")
+			}
+			if verifierCalled {
+				t.Error("did not expect chart verifier to be called")
+			}
+		})
+	}
+}
+
+// TestHelmHandlers_HandleChartVerifier_RejectsSSRFURLs covers well-formed .tgz
+// and OCI URLs whose host is private, loopback, link-local metadata, or
+// cluster-internal. These pass the format check (isValidChartURL) but must still
+// be blocked by the SSRF guard before the verifier fetches them from the console
+// pod. Only literal IPs and cluster-internal names are used so the guard rejects
+// them without any DNS resolution.
+func TestHelmHandlers_HandleChartVerifier_RejectsSSRFURLs(t *testing.T) {
+	tests := []struct {
+		name string
+		body string
+	}{
+		{"rejects loopback IP tgz", `{"chart_url":"http://127.0.0.1/chart.tgz"}`},
+		{"rejects private IP tgz", `{"chart_url":"https://10.0.0.5/chart.tgz"}`},
+		{"rejects link-local metadata IP tgz", `{"chart_url":"http://169.254.169.254/latest/chart.tgz"}`},
+		{"rejects cluster-internal svc tgz", `{"chart_url":"https://myrepo.default.svc/chart.tgz"}`},
+		{"rejects kubernetes.default OCI", `{"chart_url":"oci://kubernetes.default/charts/chart"}`},
+		{"rejects localhost OCI", `{"chart_url":"oci://localhost:5000/charts/chart"}`},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			handlers := fakeVerifierHandler()
+			actionConfigCalled := false
+			verifierCalled := false
+			handlers.getActionConfigurations = func(string, string, string, *http.RoundTripper) *action.Configuration {
+				actionConfigCalled = true
+				return &action.Configuration{}
+			}
+			handlers.chartVerifier = func(chartURL string, values map[string]interface{}, conf *action.Configuration) (string, error) {
+				verifierCalled = true
+				return fakeReportSummary, nil
+			}
+
+			request := httptest.NewRequest(http.MethodPost, "/api/helm/verify", strings.NewReader(tt.body))
+			response := httptest.NewRecorder()
+
+			handlers.HandleChartVerifier(&auth.User{}, response, request)
+
+			if response.Code != http.StatusBadRequest {
+				t.Errorf("expected status 400 but got %v", response.Code)
 			}
 			if actionConfigCalled {
 				t.Error("did not expect action configuration to be created")

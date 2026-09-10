@@ -20,6 +20,9 @@ func GetChart(url string, conf *action.Configuration, repositoryNamespace string
 	tlsFiles := []*os.File{}
 	cmd := action.NewInstall(conf)
 	if repositoryNamespace == "" {
+		if err := validateChartURL(url); err != nil {
+			return nil, err
+		}
 		chartLocation, err := cmd.ChartPathOptions.LocateChart(url, settings)
 		if err != nil {
 			return nil, err
@@ -27,6 +30,11 @@ func GetChart(url string, conf *action.Configuration, repositoryNamespace string
 		return loader.Load(chartLocation)
 	}
 	chartInfo = getChartInfoFromIndexEntry(indexEntry, repositoryNamespace, url)
+	// Validate the URL before setting up authentication so a rejected URL
+	// returns before any temporary TLS files are created.
+	if err := validateChartURL(url); err != nil {
+		return nil, err
+	}
 	connectionConfig, isClusterScoped, err := getRepositoryConnectionConfig(chartInfo.RepositoryName, chartInfo.RepositoryNamespace, client)
 	if err != nil {
 		return nil, err
