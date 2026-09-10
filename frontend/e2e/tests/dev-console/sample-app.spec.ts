@@ -28,12 +28,31 @@ async function navigateToSamplesPage(addPage: AddPage, ns: string): Promise<void
 async function waitForSampleDeployment(
   k8sClient: KubernetesClient,
   namespace: string,
+  workloadName: string,
 ): Promise<void> {
   await expect
     .poll(
       async () => {
+        const deploymentConfigs = await k8sClient.listCustomResources(
+          'apps.openshift.io',
+          'v1',
+          namespace,
+          'deploymentconfigs',
+        );
+        if (
+          deploymentConfigs.some(
+            (resource) =>
+              (resource as { metadata?: { name?: string } }).metadata?.name === workloadName,
+          )
+        ) {
+          return true;
+        }
         const response = await k8sClient.appsV1Api.listNamespacedDeployment({ namespace });
-        return response.items.some((deployment) => deployment.metadata?.name === 'httpd-sample');
+        return response.items.some(
+          (deployment) =>
+            deployment.metadata?.name === workloadName ||
+            deployment.metadata?.name?.startsWith(`${workloadName}-`),
+        );
       },
       { timeout: 120_000 },
     )
@@ -158,28 +177,40 @@ test.describe(
       await expect(page).toHaveURL(/\/topology\//, { timeout: 60_000 });
     });
 
-    test('GS-03-TC05: Verify application in topology', async ({ page, k8sClient, cleanup }) => {
-      const ns = await createTestNamespace(k8sClient, cleanup, 'tc05');
-      const addPage = new AddPage(page);
-      await navigateToSamplesPage(addPage, ns);
-      await addPage.clickSampleCard('Httpd');
-      await addPage.getFormAppName().fill('httpd-sample');
-      await addPage.clickCreate();
-      await waitForSampleDeployment(k8sClient, ns);
-      const topology = new TopologyPage(page);
-      await topology.navigateToTopology(ns);
-      await topology.switchToListView();
-      await expect
-        .poll(
-          async () => {
-            await topology.navigateToTopology(ns);
-            await topology.switchToListView();
-            return (await topology.getWorkload('httpd-sample').count()) > 0;
-          },
-          { timeout: 120_000 },
-        )
-        .toBe(true);
-      await expect(topology.getWorkload('httpd-sample')).toBeVisible();
-    });
+    for (const sample of [
+      { card: 'Httpd', header: 'Create Sample application', workload: 'httpd-sample' },
+      { card: 'Go', header: 'Create Sample application', workload: 'go-basic' },
+    ]) {
+      test(`GS-03-TC05: Verify ${sample.card} application in topology`, async ({
+        page,
+        k8sClient,
+        cleanup,
+      }) => {
+        const ns = await createTestNamespace(
+          k8sClient,
+          cleanup,
+          sample.card === 'Httpd' ? 'tc05-h' : 'tc05-g',
+        );
+        const addPage = new AddPage(page);
+        await navigateToSamplesPage(addPage, ns);
+        await addPage.clickSampleCard(sample.card);
+        await expect(addPage.getPageHeading()).toContainText(sample.header, { timeout: 30_000 });
+        await addPage.getFormAppName().fill(sample.workload);
+        await addPage.clickCreate();
+        await waitForSampleDeployment(k8sClient, ns, sample.workload);
+        const topology = new TopologyPage(page);
+        await expect
+          .poll(
+            async () => {
+              await topology.navigateToTopology(ns);
+              await topology.switchToListView();
+              return (await topology.getWorkload(sample.workload).count()) > 0;
+            },
+            { timeout: 120_000 },
+          )
+          .toBe(true);
+        await expect(topology.getWorkload(sample.workload)).toBeVisible();
+      });
+    }
   },
 );
