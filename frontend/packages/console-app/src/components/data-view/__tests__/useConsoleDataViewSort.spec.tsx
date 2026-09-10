@@ -29,6 +29,14 @@ describe('findSortColumnIndex', () => {
     expect(findSortColumnIndex(columns, null)).toBe(-1);
     expect(findSortColumnIndex(columns, 'unknown')).toBe(-1);
   });
+
+  it('prefers an id match over an earlier title with the same value', () => {
+    const collidingColumns: ConsoleDataViewColumn<unknown>[] = [
+      { id: 'name', title: 'created', sort: 'metadata.name', cell: 'Name' },
+      { id: 'created', title: 'Created', sort: 'metadata.creationTimestamp', cell: 'Created' },
+    ];
+    expect(findSortColumnIndex(collidingColumns, 'created')).toBe(1);
+  });
 });
 
 describe('useConsoleDataViewSort', () => {

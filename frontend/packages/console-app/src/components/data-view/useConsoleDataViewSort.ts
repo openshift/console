@@ -19,7 +19,8 @@ export const findSortColumnIndex = <TData>(
   if (!sortKey || columns.length === 0) {
     return -1;
   }
-  return columns.findIndex((column) => column.id === sortKey || column.title === sortKey);
+  const idIndex = columns.findIndex((column) => column.id === sortKey);
+  return idIndex >= 0 ? idIndex : columns.findIndex((column) => column.title === sortKey);
 };
 
 export const useConsoleDataViewSort = <TData>({
