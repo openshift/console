@@ -21,6 +21,9 @@ func GetChart(url string, conf *action.Configuration, repositoryNamespace string
 	tlsFiles := []*os.File{}
 	cmd := action.NewInstall(conf)
 	if repositoryNamespace == "" {
+		if err := validateChartURL(url); err != nil {
+			return nil, err
+		}
 		chartLocation, err := cmd.ChartPathOptions.LocateChart(url, settings)
 		if err != nil {
 			return nil, err
@@ -28,6 +31,11 @@ func GetChart(url string, conf *action.Configuration, repositoryNamespace string
 		return loader.Load(chartLocation)
 	}
 	chartInfo = getChartInfoFromIndexEntry(indexEntry, repositoryNamespace, url)
+	// Validate the URL before setting up authentication so a rejected URL
+	// returns before any temporary TLS files are created.
+	if err := validateChartURL(url); err != nil {
+		return nil, err
+	}
 	connectionConfig, isClusterScoped, err := getRepositoryConnectionConfig(chartInfo.RepositoryName, chartInfo.RepositoryNamespace, client)
 	if err != nil {
 		return nil, err
@@ -68,8 +76,11 @@ func GetChart(url string, conf *action.Configuration, repositoryNamespace string
 // Secret in namespace with username and password keys when the registry requires authentication.
 func GetChartFromURL(url string, conf *action.Configuration, namespace string, client dynamic.Interface, coreClient corev1client.CoreV1Interface, filesCleanup bool, basicAuthSecretName string) (*chart.Chart, error) {
 
-	if !IsValidChartURL(url) {
+	if !IsChartURLWellFormed(url) {
 		return nil, fmt.Errorf("invalid chart URL: %s, must be oci:// URL or http(s)://*.tgz", url)
+	}
+	if err := validateChartURL(url); err != nil {
+		return nil, err
 	}
 	cmd := action.NewInstall(conf)
 	cmd.Namespace = namespace
