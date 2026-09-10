@@ -43,16 +43,15 @@ done
 if [ $# -eq 0 ]; then
     echo "Runs Cypress tests in Test Runner or headless mode"
     echo "Usage: test-cypress [-p] <package> [-s] <filemask> [-h true] [-n true/false]"
-    echo "  '-p <package>' may be 'console', 'dev-console', or 'helm'"
+    echo "  '-p <package>' may be 'dev-console' or 'helm'"
     echo "  '-s <specmask>' is a file mask for spec test files, such as 'tests/monitoring/*'. Used only in headless mode when '-p' is specified."
     echo "  '-h true' runs Cypress in headless mode. When omitted, launches Cypress Test Runner"
     echo "  '-n true' runs the 'nightly' suite, all specs from selected packages in headless mode"
     echo "Examples:"
     echo "  test-cypress.sh                                       // displays this help text"
-    echo "  test-cypress.sh -p console                            // opens Cypress Test Runner for console tests"
     echo "  test-cypress.sh -p dev-console                        // opens Cypress Test Runner for Dev-Console tests"
     echo "  test-cypress.sh -h true                               // runs all packages in headless mode"
-    echo "  test-cypress.sh -p console -s 'tests/crud/*' -h true  // runs console CRUD tests in headless mode"
+    echo "  test-cypress.sh -p dev-console -s 'tests/crud/*' -h true  // runs Dev Console CRUD tests in headless mode"
     echo "  test-cypress.sh -n true                               // runs the whole nightly suite"
     trap EXIT
     exit;
