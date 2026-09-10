@@ -4,7 +4,26 @@ import { BuildConfigPage } from '../../pages/dev-console/build-config-page';
 
 const BUILDCONFIG_NAME = 'test-bc';
 
-function createBuildConfigBody(namespace: string, name: string): Record<string, unknown> {
+function createBuildConfigBody(
+  namespace: string,
+  name: string,
+  buildFrom = 'nodejs:latest',
+  strategyType: 'Source' | 'Docker' = 'Source',
+): Record<string, unknown> {
+  const strategy =
+    strategyType === 'Docker'
+      ? {
+          type: 'Docker',
+          dockerStrategy: {
+            from: { kind: 'ImageStreamTag', namespace: 'openshift', name: buildFrom },
+          },
+        }
+      : {
+          type: 'Source',
+          sourceStrategy: {
+            from: { kind: 'ImageStreamTag', namespace: 'openshift', name: buildFrom },
+          },
+        };
   return {
     apiVersion: 'build.openshift.io/v1',
     kind: 'BuildConfig',
@@ -19,16 +38,7 @@ function createBuildConfigBody(namespace: string, name: string): Record<string, 
           uri: 'https://github.com/sclorg/nodejs-ex.git',
         },
       },
-      strategy: {
-        type: 'Source',
-        sourceStrategy: {
-          from: {
-            kind: 'ImageStreamTag',
-            namespace: 'openshift',
-            name: 'nodejs:latest',
-          },
-        },
-      },
+      strategy,
       output: {
         to: {
           kind: 'ImageStreamTag',
@@ -157,10 +167,14 @@ test.describe('Edit Build Config', { tag: ['@dev-console'] }, () => {
       'v1',
       ns,
       'buildconfigs',
-      createBuildConfigBody(ns, BUILDCONFIG_NAME),
+      // The Cypress source used python:3.8; 5.1 clusters expose the current python:3.9-ubi9 tag.
+      createBuildConfigBody(ns, BUILDCONFIG_NAME, 'python:3.9-ubi9'),
     );
     await buildConfigPage.navigateToEditForm(ns, BUILDCONFIG_NAME);
     await buildConfigPage.ensureFormView();
+    await buildConfigPage.selectImageStreamTag('build-from', 'openshift', 'python', '3.9-ubi9');
+    await expect(buildConfigPage.getImageStreamTagSection('build-from')).toContainText('python');
+    await expect(buildConfigPage.getImageStreamTagSection('build-from')).toContainText('3.9-ubi9');
     await buildConfigPage.addEnvironmentVariable('TEST_ENV', 'test-value');
     await expect(buildConfigPage.getEnvironmentVariableNames().last()).toHaveValue('TEST_ENV');
     await expect(buildConfigPage.getEnvironmentVariableValues().last()).toHaveValue('test-value');
@@ -196,10 +210,12 @@ test.describe('Edit Build Config', { tag: ['@dev-console'] }, () => {
       'v1',
       ns,
       'buildconfigs',
-      createBuildConfigBody(ns, BUILDCONFIG_NAME),
+      createBuildConfigBody(ns, BUILDCONFIG_NAME, 'nodejs:latest', 'Docker'),
     );
     await buildConfigPage.navigateToEditForm(ns, BUILDCONFIG_NAME);
     await buildConfigPage.ensureFormView();
+    await buildConfigPage.expandAdvancedGitOptions();
+    await buildConfigPage.getContextDirInput().fill('/beginner/static-site');
     const gitUrl = buildConfigPage.getGitRepoUrlInput();
     const updatedGitUrl = 'https://github.com/sclorg/django-ex.git';
     await gitUrl.fill(updatedGitUrl);
@@ -213,6 +229,14 @@ test.describe('Edit Build Config', { tag: ['@dev-console'] }, () => {
       BUILDCONFIG_NAME,
     )) as { spec?: { source?: { git?: { uri?: string } } } };
     expect(buildConfig.spec?.source?.git?.uri).toBe(updatedGitUrl);
+    const persistedBuildConfig = (await k8sClient.getCustomResource(
+      'build.openshift.io',
+      'v1',
+      ns,
+      'buildconfigs',
+      BUILDCONFIG_NAME,
+    )) as { spec?: { source?: { contextDir?: string } } };
+    expect(persistedBuildConfig.spec?.source?.contextDir).toBe('/beginner/static-site');
   });
 
   test('EBC-01-TC06: Edit images', async ({ k8sClient, cleanup }) => {
@@ -229,6 +253,7 @@ test.describe('Edit Build Config', { tag: ['@dev-console'] }, () => {
     );
     await buildConfigPage.navigateToEditForm(ns, BUILDCONFIG_NAME);
     await buildConfigPage.ensureFormView();
+    await buildConfigPage.addEnvironmentVariable('path', '/home');
     await buildConfigPage.selectImageOption('build-from', 'External container image');
     const image = buildConfigPage.getImageInput('build-from', 'docker-image');
     await image.fill('quay.io/example/builder:latest');
@@ -247,5 +272,9 @@ test.describe('Edit Build Config', { tag: ['@dev-console'] }, () => {
       kind: 'DockerImage',
       name: 'quay.io/example/builder:latest',
     });
+    await buildConfigPage.navigateToEditForm(ns, BUILDCONFIG_NAME);
+    await buildConfigPage.ensureFormView();
+    await expect(buildConfigPage.getEnvironmentVariableNames().last()).toHaveValue('path');
+    await expect(buildConfigPage.getEnvironmentVariableValues().last()).toHaveValue('/home');
   });
 });

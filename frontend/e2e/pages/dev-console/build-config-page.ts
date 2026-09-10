@@ -1,5 +1,6 @@
 import type { Locator } from '@playwright/test';
 
+import { expect } from '../../fixtures';
 import BasePage from '../base-page';
 
 export class BuildConfigPage extends BasePage {
@@ -54,9 +55,40 @@ export class BuildConfigPage extends BasePage {
     return this.page.getByTestId(`${type} ${input}`);
   }
 
+  getImageStreamTagSection(type: 'build-from' | 'push-to'): Locator {
+    return this.page.getByTestId(`${type} image-stream-tag`);
+  }
+
+  getContextDirInput(): Locator {
+    return this.page.getByRole('textbox', { name: 'Context dir' });
+  }
+
   async selectImageOption(type: 'build-from' | 'push-to', option: string): Promise<void> {
     await this.robustClick(this.getImageOption(type));
     await this.robustClick(this.page.getByRole('option', { name: option, exact: true }));
+  }
+
+  async selectImageStreamTag(
+    type: 'build-from' | 'push-to',
+    project: string,
+    imageStream: string,
+    tag: string,
+  ): Promise<void> {
+    await this.selectImageOption(type, 'Image Stream Tag');
+    const section = this.getImageStreamTagSection(type);
+    for (const [label, value] of [
+      ['Project', project],
+      ['Image Stream', imageStream],
+      ['Tag', tag],
+    ]) {
+      await this.robustClick(section.getByRole('button', { name: label }));
+      await this.robustClick(this.page.getByRole('option', { name: value, exact: true }));
+    }
+  }
+
+  async expandAdvancedGitOptions(): Promise<void> {
+    await this.robustClick(this.page.getByRole('button', { name: /advanced Git options/i }));
+    await expect(this.getContextDirInput()).toBeVisible({ timeout: 30_000 });
   }
 
   async addEnvironmentVariable(name: string, value: string): Promise<void> {

@@ -69,9 +69,10 @@ export class RoutePage extends BasePage {
       timeout: 30_000,
     });
     const content = await this.getEditorContent();
-    const updated = /^spec:\n/m.test(content)
-      ? content.replace(/^(spec:\n)/m, `$1  host: ${host}\n`)
-      : content;
+    if (!/^spec:\n/m.test(content)) {
+      throw new Error('Route YAML does not contain a top-level spec field');
+    }
+    const updated = content.replace(/^(spec:\n)/m, `$1  host: ${host}\n`);
     await this.setEditorContent(updated);
   }
 }

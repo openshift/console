@@ -1,5 +1,7 @@
 import { test, expect } from '../../fixtures';
 import { ensureDeveloperPerspective, warmupSPA } from '../../pages/base-page';
+import { CatalogPage } from '../../pages/catalog-page';
+import { AddPage } from '../../pages/dev-console/add-page';
 import { ClusterCustomizationPage } from '../../pages/dev-console/cluster-customization-page';
 
 test.describe(
@@ -9,11 +11,13 @@ test.describe(
     // These tests mutate cluster-wide Console configuration; serialize them so tracked restores cannot race.
     test.describe.configure({ mode: 'serial' });
     let customizationPage: ClusterCustomizationPage;
+    let targetNamespace: string;
     let originalCustomization: { addPage?: unknown; developerCatalog?: unknown } | undefined;
 
-    test.beforeEach(async ({ page, k8sClient }) => {
+    test.beforeEach(async ({ page, k8sClient, testConfig }) => {
       await warmupSPA(page);
       await ensureDeveloperPerspective(page, k8sClient);
+      targetNamespace = testConfig.testNamespace;
       const consoleConfig = (await k8sClient.getClusterCustomResource(
         'operator.openshift.io',
         'v1',
@@ -48,22 +52,31 @@ test.describe(
       originalCustomization = undefined;
     });
 
-    test('DC-01-TC01: Disable All services Add page action', async () => {
+    test('DC-01-TC01: Disable All services Add page action', async ({ page, k8sClient }) => {
       await customizationPage.moveAvailableToChosen('add-page', 'All services');
       await customizationPage.waitForItemInList('add-page', 'All services', 'chosen');
       await expect(customizationPage.getFormSection('add-page')).toBeVisible();
+      const addPage = new AddPage(page);
+      await addPage.ensureDevPerspectiveAndNavigate(targetNamespace, k8sClient);
+      await expect(addPage.getCardItem('dev-catalog')).toBeHidden();
     });
 
-    test('DC-01-TC02: Disable specific sub-catalogs', async () => {
+    test('DC-01-TC02: Disable specific sub-catalogs', async ({ page }) => {
       await customizationPage.moveAvailableToChosen('catalog-types', 'Builder Images');
       await customizationPage.waitForItemInList('catalog-types', 'Builder Images', 'chosen');
       await expect(customizationPage.getFormSection('catalog-types')).toBeVisible();
+      const catalogPage = new CatalogPage(page);
+      await catalogPage.navigateToSoftwareCatalog(targetNamespace);
+      await expect(page.getByText('Builder Images', { exact: true })).toBeHidden();
     });
 
-    test('DC-01-TC03: Disable Add page items', async () => {
+    test('DC-01-TC03: Disable Add page items', async ({ page, k8sClient }) => {
       await customizationPage.moveAvailableToChosen('add-page', 'Import from Git');
       await customizationPage.waitForItemInList('add-page', 'Import from Git', 'chosen');
       await expect(customizationPage.getFormSection('add-page')).toBeVisible();
+      const addPage = new AddPage(page);
+      await addPage.ensureDevPerspectiveAndNavigate(targetNamespace, k8sClient);
+      await expect(addPage.getCardItem('import-from-git')).toBeHidden();
     });
 
     test('DC-01-TC04: Re-enable catalogs after disabling', async () => {
@@ -71,14 +84,6 @@ test.describe(
       await customizationPage.moveChosenToAvailable('catalog-types', 'Builder Images');
       await customizationPage.waitForItemInList('catalog-types', 'Builder Images', 'available');
       await expect(customizationPage.getFormSection('catalog-types')).toBeVisible();
-    });
-
-    test('DC-01-TC05: Verify console rollout after customization', async () => {
-      await customizationPage.moveAvailableToChosen('catalog-types', 'Builder Images');
-      await customizationPage.waitForItemInList('catalog-types', 'Builder Images', 'chosen');
-      await expect(customizationPage.getFormSection('catalog-types')).toBeVisible();
-      await customizationPage.navigateToCustomize();
-      await expect(customizationPage.getHeading()).toBeVisible({ timeout: 30_000 });
     });
 
     test('verifies perspectives section on General tab', async () => {
