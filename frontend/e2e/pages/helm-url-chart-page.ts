@@ -20,7 +20,7 @@ export class HelmURLChartPage extends BasePage {
     "Helm release is not configurable since the Helm Chart doesn't define any values.",
   );
   private readonly urlValidationError = this.page.getByText(
-    'Must be a valid OCI URL or a valid HTTP/HTTPS tar file',
+    'Must be a valid OCI URL or a valid HTTP/HTTPS .tar file',
   );
 
   async navigateToUrlChart(namespace: string): Promise<void> {

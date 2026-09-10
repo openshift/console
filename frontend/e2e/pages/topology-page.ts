@@ -110,11 +110,6 @@ export class TopologyPage extends BasePage {
     return this.page.locator('g[class$="topology__node__label"]').filter({ hasText: nodeName });
   }
 
-  // PF Topology internal class — no data-test available; may break on PF upgrades
-  getGroupNode(groupName: string): Locator {
-    return this.page.locator('g[class*="topology__group__label"]').filter({ hasText: groupName });
-  }
-
   async ensureGraphView(): Promise<void> {
     const currentLabel = await this.switcher.getAttribute('aria-label');
     if (currentLabel === 'Graph view') {
@@ -143,14 +138,23 @@ export class TopologyPage extends BasePage {
     await node.first().click({ button: 'right' });
   }
 
-  async rightClickOnGroup(groupName: string): Promise<void> {
+  async openHelmReleaseContextMenu(releaseName: string): Promise<void> {
     await this.ensureGraphView();
-    await this.search(groupName);
+    await this.search(releaseName);
     await expect(this.highlightedNode.first()).toBeVisible({ timeout: 30_000 });
 
-    const group = this.getGroupNode(groupName);
-    await expect(group.first()).toBeVisible({ timeout: 30_000 });
-    await group.first().click({ button: 'right' });
+    // PF Topology internal class — no data-test available; may break on PF upgrades
+    const helmReleaseGroup = this.page
+      .locator('[data-type="helm-release"] g.odc-base-node__label')
+      .filter({ hasText: releaseName })
+      .first();
+    await expect(helmReleaseGroup).toBeVisible({ timeout: 30_000 });
+
+    await expect(async () => {
+      await this.page.keyboard.press('Escape');
+      await helmReleaseGroup.click({ button: 'right' });
+      await expect(this.getContextMenuItem('Upgrade')).toBeVisible({ timeout: 5_000 });
+    }).toPass({ intervals: [1_000, 2_000, 5_000], timeout: 30_000 });
   }
 
   getContextMenuItem(action: string): Locator {
