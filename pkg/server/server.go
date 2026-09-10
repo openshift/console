@@ -356,7 +356,14 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 		Checks: []health.Checkable{},
 	}.ServeHTTP)
 
-	handle(catalogdEndpoint, s.CatalogdHandler())
+	// catalogd only serves read-only catalog index data, so restrict the proxy
+	// to GET and HEAD. This also blocks state-changing methods (which are
+	// CSRF-exempt only for safe methods) from reaching the cluster-internal
+	// catalogd service.
+	handle(catalogdEndpoint, authHandler(middleware.AllowMethods(
+		[]string{http.MethodGet, http.MethodHead},
+		s.CatalogdHandler().ServeHTTP,
+	)))
 
 	handle(k8sProxyEndpoint, http.StripPrefix(
 		proxy.SingleJoiningSlash(s.BaseURL.Path, k8sProxyEndpoint),
