@@ -27,6 +27,7 @@ func fakeChartVerification(reportSummary string, err error) func(chartUrl string
 func TestHelmHandlers_HandleChartVerifier(t *testing.T) {
 	tests := []struct {
 		name             string
+		requestBody      string
 		expectedResponse string
 		ReportSummary    string
 		error
@@ -34,12 +35,14 @@ func TestHelmHandlers_HandleChartVerifier(t *testing.T) {
 	}{
 		{
 			name:             "Error occurred",
+			requestBody:      `{"chart_url":"https://93.184.216.34/mychart-1.0.0.tgz"}`,
 			expectedResponse: `{"error":"Failed to verify chart: Chart path is invalid"}`,
 			error:            errors.New("Chart path is invalid"),
 			httpStatusCode:   http.StatusBadGateway,
 		},
 		{
 			name:             "Successful chart verification",
+			requestBody:      `{"chart_url":"https://93.184.216.34/mychart-1.0.0.tgz"}`,
 			ReportSummary:    fakeReportSummary,
 			httpStatusCode:   http.StatusOK,
 			expectedResponse: ``,
@@ -50,7 +53,7 @@ func TestHelmHandlers_HandleChartVerifier(t *testing.T) {
 			handlers := fakeVerifierHandler()
 			handlers.chartVerifier = fakeChartVerification(tt.ReportSummary, tt.error)
 
-			request := httptest.NewRequest("", "/foo", strings.NewReader("{}"))
+			request := httptest.NewRequest("", "/foo", strings.NewReader(tt.requestBody))
 			response := httptest.NewRecorder()
 
 			handlers.HandleChartVerifier(&auth.User{}, response, request)
