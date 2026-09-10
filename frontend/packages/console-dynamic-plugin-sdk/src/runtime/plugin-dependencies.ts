@@ -34,7 +34,7 @@ const formatUnmetDependency = (depName: string, requiredRange: string, currentVe
  */
 export const resolvePluginDependencies = (
   manifest: StandardConsolePluginManifest,
-  consolePluginAPIVersion: string,
+  consolePluginAPIVersion: string | null,
   allowedPluginNames: string[],
 ) => {
   const pluginID = getPluginID(manifest);

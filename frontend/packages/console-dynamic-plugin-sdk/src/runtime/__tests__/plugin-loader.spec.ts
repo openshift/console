@@ -150,6 +150,27 @@ describe('loadDynamicPlugin', () => {
     }
   });
 
+  it('throws an error if plugin data is missing when scripts finish loading', async () => {
+    const manifest = getPluginManifest('Test', '1.2.3');
+    const promise = loadDynamicPlugin(manifest);
+    const script = getFirstPluginScript(manifest);
+
+    getStateForTestPurposes().pluginMap.delete('Test@1.2.3');
+
+    act(() => {
+      Simulate.load(script);
+    });
+
+    try {
+      await promise;
+      fail('Expected that loadDynamicPlugin fails and throws an error');
+    } catch (error) {
+      expect(error).toEqual(
+        new Error('Scripts of plugin Test@1.2.3 loaded without entry callback'),
+      );
+    }
+  });
+
   it('throws an error if the script was not loaded successfully', async () => {
     const manifest = getPluginManifest('Test', '1.2.3');
     const promise = loadDynamicPlugin(manifest);
@@ -220,7 +241,7 @@ describe('window.loadPluginEntry', () => {
       resolveEncodedCodeRefs,
     )('Test@1.2.3', entryModule);
 
-    expect(pluginMap.get('Test@1.2.3').entryCallbackFired).toBe(true);
+    expect(pluginMap.get('Test@1.2.3')?.entryCallbackFired).toBe(true);
     expect(initSharedPluginModules).toHaveBeenCalledWith(entryModule);
 
     expect(resolveEncodedCodeRefs).toHaveBeenCalledWith(
@@ -236,6 +257,7 @@ describe('window.loadPluginEntry', () => {
   it('does nothing if the plugin ID is not registered', () => {
     const pluginStore = new PluginStore();
     const addDynamicPlugin = jest.spyOn(pluginStore, 'addDynamicPlugin');
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
     const [, entryModule] = getEntryModuleMocks({});
     const { pluginMap } = getStateForTestPurposes();
@@ -249,15 +271,19 @@ describe('window.loadPluginEntry', () => {
       resolveEncodedCodeRefs,
     )('Test@1.2.3', entryModule);
 
+    expect(consoleErrorSpy).toHaveBeenCalledWith('Received callback for unknown plugin Test@1.2.3');
     expect(pluginMap.size).toBe(0);
     expect(initSharedPluginModules).not.toHaveBeenCalled();
     expect(resolveEncodedCodeRefs).not.toHaveBeenCalled();
     expect(addDynamicPlugin).not.toHaveBeenCalled();
+
+    consoleErrorSpy.mockReset();
   });
 
   it('does nothing if called a second time for the same plugin', () => {
     const pluginStore = new PluginStore();
     const addDynamicPlugin = jest.spyOn(pluginStore, 'addDynamicPlugin');
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
     const manifest = getPluginManifest('Test', '1.2.3');
     const [, entryModule] = getEntryModuleMocks({});
@@ -280,10 +306,15 @@ describe('window.loadPluginEntry', () => {
       resolveEncodedCodeRefs,
     )('Test@1.2.3', entryModule);
 
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      'Received callback for already loaded plugin Test@1.2.3',
+    );
     expect(pluginMap.size).toBe(1);
     expect(initSharedPluginModules).toHaveBeenCalledTimes(1);
     expect(resolveEncodedCodeRefs).toHaveBeenCalledTimes(1);
     expect(addDynamicPlugin).toHaveBeenCalledTimes(1);
+
+    consoleErrorSpy.mockReset();
   });
 
   it('does nothing if overriding shared modules throws an error', () => {
