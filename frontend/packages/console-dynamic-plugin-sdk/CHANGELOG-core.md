@@ -16,7 +16,13 @@ table in [Console dynamic plugins README](./README.md).
 
 ## 4.23.0-prerelease.6 - TBD
 
-- Add an `onCancel` prop to `ResourceYAMLEditor` to allow overriding the default cancel behavior ([CONSOLE-5438], [#16941])
+- Replace the hand-rolled Segment snippet with `@segment/analytics-next` (`AnalyticsBrowser`). The library is bundled into the Console frontend and initialized at module load time ([#XXXX], [JIRA-KEY])
+- **Type change**: `GetSegmentAnalytics` now types `analytics` as `AnalyticsBrowser | undefined` instead of `Record<string, ...>`. Re-export `AnalyticsBrowser` from `@openshift-console/dynamic-plugin-sdk` for explicit typing ([#XXXX], [JIRA-KEY])
+- **Dependency**: `@openshift-console/dynamic-plugin-sdk` now lists `@segment/analytics-next` as a runtime dependency ([#XXXX], [JIRA-KEY])
+- **Configuration**: add `SEGMENT_CDN_URL` as the preferred way to override Segment's CDN endpoint. `SEGMENT_JS_HOST` and `SEGMENT_JS_URL` remain supported for backward compatibility but are deprecated ([#XXXX], [JIRA-KEY])
+- **Deprecated**: `SEGMENT_JS_URL` and `SEGMENT_JS_HOST` as CDN configuration. `SEGMENT_JS_URL` values that do not match the `/analytics.js/v1` path pattern are no longer used; configure `SEGMENT_CDN_URL` instead ([#XXXX], [JIRA-KEY])
+- **Behavior change**: remove the automatic `analytics.page()` call on Segment initialization. Page events are now sent only through Console's telemetry flow (after user identification and routing), preventing unidentified page events ([#XXXX], [JIRA-KEY])
+- **Behavior change**: `analyticsEnabled` is set to `false` if Segment initialization fails ([#XXXX], [JIRA-KEY])
 
 ## 4.23.0-prerelease.5 - 2026-08-04
 
