@@ -10,15 +10,9 @@ const SUBSCRIPTION_YAML = path.resolve(
   '../mocks/knative/serverlessOperatorSubscription.yaml',
 );
 
-const SERVING_YAML = path.resolve(
-  import.meta.dirname,
-  '../mocks/knative/knative-serving.yaml',
-);
+const SERVING_YAML = path.resolve(import.meta.dirname, '../mocks/knative/knative-serving.yaml');
 
-const EVENTING_YAML = path.resolve(
-  import.meta.dirname,
-  '../mocks/knative/knative-eventing.yaml',
-);
+const EVENTING_YAML = path.resolve(import.meta.dirname, '../mocks/knative/knative-eventing.yaml');
 
 const isRetryableError = (err: unknown): boolean => {
   const msg = err instanceof Error ? err.message : String(err);
@@ -37,7 +31,7 @@ const isRetryableError = (err: unknown): boolean => {
 
 setup.describe.configure({ mode: 'serial' });
 
-setup('install OpenShift Serverless operator if not present', async ({ }) => {
+setup('install OpenShift Serverless operator if not present', async ({}) => {
   setup.setTimeout(600_000);
 
   const k8sClient = new KubernetesClient(
@@ -60,7 +54,6 @@ setup('install OpenShift Serverless operator if not present', async ({ }) => {
     const items = (csvList as { items?: Array<{ status?: { phase?: string } }> }).items || [];
     const installed = items.some((csv) => csv.status?.phase === 'Succeeded');
     if (installed) {
-      // eslint-disable-next-line no-console
       console.log('Serverless operator already installed, skipping installation');
       return;
     }
@@ -72,14 +65,12 @@ setup('install OpenShift Serverless operator if not present', async ({ }) => {
   // Install using oc apply — same approach as the Cypress tests.
   // Using oc apply ensures OLM creates deployments with proper seccompProfile
   // which is required on OCP 5.0 clusters with PodSecurity "restricted".
-  // eslint-disable-next-line no-console
   console.log('Installing Serverless operator...');
   try {
     const output = execSync(`oc apply -f ${SUBSCRIPTION_YAML}`, {
       encoding: 'utf-8',
       timeout: 60_000,
     });
-    // eslint-disable-next-line no-console
     console.log(output.trim());
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
@@ -89,7 +80,6 @@ setup('install OpenShift Serverless operator if not present', async ({ }) => {
   }
 
   // Wait for the CSV to reach Succeeded phase
-  // eslint-disable-next-line no-console
   console.log('Waiting for Serverless operator CSV to succeed...');
   const startTime = Date.now();
   const csvTimeout = 540_000;
@@ -104,7 +94,6 @@ setup('install OpenShift Serverless operator if not present', async ({ }) => {
       });
       const items = (csvList as { items?: Array<{ status?: { phase?: string } }> }).items || [];
       if (items.some((csv) => csv.status?.phase === 'Succeeded')) {
-        // eslint-disable-next-line no-console
         console.log('Serverless operator installed successfully');
         csvSucceeded = true;
         break;
@@ -115,11 +104,13 @@ setup('install OpenShift Serverless operator if not present', async ({ }) => {
     await new Promise((r) => setTimeout(r, 10_000));
   }
   if (!csvSucceeded) {
-    throw new Error(`Serverless operator CSV did not reach Succeeded phase after ${Math.round((Date.now() - startTime) / 1000)}s`);
+    throw new Error(
+      `Serverless operator CSV did not reach Succeeded phase after ${Math.round((Date.now() - startTime) / 1000)}s`,
+    );
   }
 });
 
-setup('create KnativeServing and KnativeEventing instances', async ({ }) => {
+setup('create KnativeServing and KnativeEventing instances', async ({}) => {
   setup.setTimeout(600_000);
 
   const k8sClient = new KubernetesClient(
@@ -150,7 +141,6 @@ setup('create KnativeServing and KnativeEventing instances', async ({ }) => {
   }
 
   // Wait for Serving and Eventing to be Ready
-  // eslint-disable-next-line no-console
   console.log('Waiting for KnativeServing and KnativeEventing to be ready...');
   const waitForReady = async (
     plural: string,
@@ -172,7 +162,6 @@ setup('create KnativeServing and KnativeEventing instances', async ({ }) => {
           (c: { type: string }) => c.type === 'Ready',
         );
         if (ready?.status === 'True') {
-          // eslint-disable-next-line no-console
           console.log(`${name} in ${namespace} is Ready`);
           return;
         }

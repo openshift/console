@@ -17,8 +17,6 @@ import {
 } from '@patternfly/react-core';
 import { RhUiCloseIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
-import type { Map as ImmutableMap } from 'immutable';
-import { Set as ImmutableSet } from 'immutable';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -32,12 +30,12 @@ const RECENT_SEARCH_ITEMS = 5;
 const MAX_VISIBLE_ITEMS = 250;
 
 // Blocklist known duplicate resources.
-const blocklistGroups = ImmutableSet([
+const blocklistGroups = new Set([
   // Prefer rbac.authorization.k8s.io/v1, which has the same resources.
   'authorization.openshift.io',
 ]);
 
-const blocklistResources = ImmutableSet([
+const blocklistResources = new Set([
   // Prefer core/v1
   'events.k8s.io/v1beta1.Event',
 ]);
@@ -65,15 +63,18 @@ export const InnerResourceListDropdown: FC<ResourceListDropdownProps> = (props) 
   const textInputRef = useRef<HTMLInputElement>();
 
   const resources = useMemo(() => {
+    if (!allModels) {
+      return [];
+    }
     // Pre-compute which group+kind combinations have a visible preferred version (O(n))
     const preferredGroupKinds = new Set<string>();
-    allModels.forEach((m) => {
+    Object.values(allModels).forEach((m) => {
       if (groupToVersionMap?.[m.apiGroup]?.preferredVersion === m.apiVersion && isVisible(m)) {
         preferredGroupKinds.add(`${m.kind}~${m.apiGroup}`);
       }
     });
 
-    return allModels
+    return Object.values(allModels)
       .filter((m) => {
         if (!isVisible(m)) {
           return false;
@@ -91,13 +92,12 @@ export const InnerResourceListDropdown: FC<ResourceListDropdownProps> = (props) 
 
         return true;
       })
-      .toOrderedMap()
-      .sortBy(({ kind, apiGroup }) => `${kind} ${apiGroup}`);
+      .sort((a, b) => `${a.kind} ${a.apiGroup}`.localeCompare(`${b.kind} ${b.apiGroup}`));
   }, [allModels, groupToVersionMap]);
 
   const initialSelectOptions = useMemo<ExtendedSelectOptionProps[]>(
     () =>
-      resources.toArray().map((resource) => {
+      resources.map((resource) => {
         const reference = referenceForModel(resource);
         return {
           value: reference,
@@ -157,8 +157,8 @@ export const InnerResourceListDropdown: FC<ResourceListDropdownProps> = (props) 
   }, [resources]);
 
   // Track duplicate names so we know when to show the group.
-  const kinds = useMemo(() => resources.groupBy((m) => m.kind), [resources]);
-  const isDup = (kind) => kinds.get(kind).size > 1;
+  const kinds = useMemo(() => _.groupBy(resources, (m) => m.kind), [resources]);
+  const isDup = (kind) => kinds[kind]?.length > 1;
 
   const visibleSelectOptions = selectOptions.slice(0, MAX_VISIBLE_ITEMS);
   const items = visibleSelectOptions.map((option: SelectOptionProps, index) => {
@@ -510,8 +510,8 @@ interface ExtendedSelectOptionProps extends SelectOptionProps {
 }
 
 const resourceListDropdownStateToProps = ({ k8s }) => ({
-  allModels: k8s.getIn(['RESOURCES', 'models']),
-  groupToVersionMap: k8s.getIn(['RESOURCES', 'groupToVersionMap']),
+  allModels: k8s.RESOURCES?.models,
+  groupToVersionMap: k8s.RESOURCES?.groupToVersionMap,
 });
 
 export const ResourceListDropdown = connect<ResourceListDropdownStateToProps>(
@@ -527,6 +527,6 @@ export type ResourceListDropdownProps = ResourceListDropdownStateToProps & {
 };
 
 type ResourceListDropdownStateToProps = {
-  allModels: ImmutableMap<K8sResourceKindReference, K8sKind>;
+  allModels: Record<K8sResourceKindReference, K8sKind>;
   groupToVersionMap: DiscoveryResources['groupVersionMap'];
 };

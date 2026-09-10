@@ -123,7 +123,6 @@ export const ExportApplicationModal: FC<ExportApplicationModalProps> = (props) =
       }
     } catch (err) {
       createExportCR().catch((createError) =>
-        // eslint-disable-next-line no-console
         console.warn('Could not createExportCR:', createError),
       );
     }
@@ -142,7 +141,6 @@ export const ExportApplicationModal: FC<ExportApplicationModalProps> = (props) =
       }
     } catch (error) {
       createExportCR().catch((createError) =>
-        // eslint-disable-next-line no-console
         console.warn('Could not createExportCR:', createError),
       );
     }
@@ -262,7 +260,6 @@ export const handleExportApplication = async (
       toast,
     });
   } catch (err) {
-    // eslint-disable-next-line no-console
     console.warn('Error while getting export resource:', err);
     launchModal(ExportApplicationModalOverlay, { name, namespace, toast });
   }

@@ -21,12 +21,25 @@ export async function setEditorContent(page: Page, content: string): Promise<voi
   await page.waitForFunction(() => (window as any).monaco?.editor?.getModels()?.[0], {
     timeout: 10_000,
   });
-  await page.evaluate((text) => {
-    (window as any).monaco.editor.getModels()[0].setValue(text);
-  }, content);
+  // Monaco can swap its model during initialisation, silently dropping an early
+  // setValue and leaving the editor empty — which then submits an empty
+  // definition. Set and verify with retries so the content is guaranteed to
+  // stick before the caller proceeds.
+  await expect(async () => {
+    await page.evaluate((text) => {
+      (window as any).monaco.editor.getModels()[0].setValue(text);
+    }, content);
+    const value = await page.evaluate(() =>
+      (window as any).monaco.editor.getModels()[0].getValue(),
+    );
+    expect(value.trim()).toBe(content.trim());
+  }).toPass({ timeout: 15_000, intervals: [300, 700, 1500] });
 }
 
 export async function warmupSPA(page: Page): Promise<void> {
+  // Session recovery on OAuth redirect is handled by the guarded `page` fixture
+  // (e2e/fixtures/index.ts), which re-authenticates on any navigation — during
+  // warmup or mid-test — that gets bounced to the login page.
   await expect(async () => {
     await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 60_000 });
     await expect(page.locator('#page-sidebar')).toBeVisible({ timeout: 30_000 });
@@ -51,8 +64,7 @@ export async function ensureDeveloperPerspective(
 ): Promise<boolean> {
   const toggle = page.getByTestId('perspective-switcher-toggle');
   await expect(toggle).toBeVisible();
-  const isSinglePerspective =
-    (await toggle.getAttribute('id')) === 'only-one-perspective';
+  const isSinglePerspective = (await toggle.getAttribute('id')) === 'only-one-perspective';
   if (isSinglePerspective) {
     await k8sClient.customObjectsApi.patchClusterCustomObject({
       group: 'operator.openshift.io',
@@ -121,6 +133,24 @@ export default abstract class BasePage {
     await this.waitForLoadingComplete();
   }
 
+  protected async waitForDetailsActions(actionsButton: Locator, timeoutMs = 60_000): Promise<void> {
+    // Navigating right after impersonation teardown can race the SPA reload and
+    // abort API discovery, leaving the resource watch stuck on "Model does not
+    // exist" with no auto-retry. Recover by reloading until actions render.
+    await expect(async () => {
+      const modelError = await this.page
+        .getByText('Model does not exist')
+        .isVisible()
+        .catch(() => false);
+      if (modelError) {
+        await this.retryOnError();
+      } else {
+        // eslint-disable-next-line no-restricted-syntax
+        await actionsButton.waitFor({ state: 'visible', timeout: 5_000 });
+      }
+    }).toPass({ timeout: timeoutMs });
+  }
+
   protected locator(
     selector: string,
     options?: {
@@ -187,10 +217,9 @@ export default abstract class BasePage {
   }
 
   async waitForEditorReady(): Promise<void> {
-    await this.page.waitForFunction(
-      () => !!(window as any).monaco?.editor?.getModels()?.[0],
-      { timeout: 30_000 },
-    );
+    await this.page.waitForFunction(() => !!(window as any).monaco?.editor?.getModels()?.[0], {
+      timeout: 30_000,
+    });
   }
 
   async getEditorContent(): Promise<string> {

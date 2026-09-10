@@ -40,7 +40,6 @@ export const coFetch: ConsoleFetch = async (url, options = {}, timeout = 60000) 
         if (e instanceof RetryError) {
           retry = true;
         } else {
-          // eslint-disable-next-line no-console
           console.warn(`consoleFetch failed for url ${url}`, e);
           throw e;
         }

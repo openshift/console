@@ -62,9 +62,8 @@ const WebhookSection: FC<WebhoookSectionProps> = ({ pac, formContextField }) => 
   const fieldPrefix = formContextField ? `${formContextField}.` : '';
   const { gitProvider, webhook } = _.get(values, formContextField) || values;
   const [controllerUrl, setControllerUrl] = useState('');
-  const [webhookSecret, setWebhookSecret] = useState('');
+  const webhookSecret = webhook?.secret ?? '';
   const { t } = useTranslation('devconsole');
-
   useEffect(() => {
     const ctlUrl = pac?.data?.['controller-url'];
     if (ctlUrl) {
@@ -100,7 +99,7 @@ const WebhookSection: FC<WebhoookSectionProps> = ({ pac, formContextField }) => 
   );
 
   const generateWebhookSecret = () => {
-    setWebhookSecret(generateSecret());
+    setFieldValue(`${fieldPrefix}webhook.secret`, generateSecret());
   };
 
   const getPermssionSectionHeading = (git: GitProvider) => {
@@ -226,7 +225,7 @@ const WebhookSection: FC<WebhoookSectionProps> = ({ pac, formContextField }) => 
                     setFieldValue(`${fieldPrefix}webhook.secretObj`, res);
                     const secret = res?.data['webhook.secret'];
                     if (secret) {
-                      setWebhookSecret(Base64.decode(secret));
+                      setFieldValue(`${fieldPrefix}webhook.secret`, Base64.decode(secret));
                     }
                   }
                 }}

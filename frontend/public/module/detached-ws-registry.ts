@@ -42,7 +42,6 @@ export async function cleanupDetachedResource(
       await k8sKillByName(PodModel, cleanup.name, cleanup.namespace);
     }
   } catch (e) {
-    // eslint-disable-next-line no-console
     console.warn('Could not clean up detached debug resource:', e);
   }
 }

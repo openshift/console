@@ -217,7 +217,6 @@ const NodeTerminal: FC<NodeTerminalProps> = ({ obj: node }) => {
       try {
         await k8sKillByName(NamespaceModel, ns);
       } catch (e) {
-        // eslint-disable-next-line no-console
         console.warn('Could not delete node terminal debug namespace.', e);
       }
     };

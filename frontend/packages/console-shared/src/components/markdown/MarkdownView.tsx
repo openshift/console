@@ -13,7 +13,7 @@ import {
   THEME_GLASS,
   THEME_GLASS_CLASS,
   useTheme,
-} from '@console/internal/components/ThemeProvider';
+} from '@console/app/src/providers/theme/ThemeProvider';
 import { useForceRender } from '../../hooks/useForceRender';
 import { useResizeObserver } from '../../hooks/useResizeObserver';
 

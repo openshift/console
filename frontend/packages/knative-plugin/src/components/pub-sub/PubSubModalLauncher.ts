@@ -6,7 +6,6 @@ export const addPubSubConnectionModal = (props) =>
   import('./PubSubController' /* webpackChunkName: "pub-sub-connectors" */).then((m) => {
     const launchPubSubModalRef = getLaunchPubSubModalRef();
     if (!launchPubSubModalRef) {
-      // eslint-disable-next-line no-console
       console.error(
         'PubSub modal launcher not initialized. Make sure SyncPubSubModalLauncher is rendered in the topology component tree.',
       );

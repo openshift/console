@@ -73,7 +73,7 @@ export const asAccessReview = (
   subresource?: string,
 ): AccessReviewResourceAttributes => {
   if (!obj) {
-    console.warn('review obj should not be null'); // eslint-disable-line no-console
+    console.warn('review obj should not be null');
     return null;
   }
   return {

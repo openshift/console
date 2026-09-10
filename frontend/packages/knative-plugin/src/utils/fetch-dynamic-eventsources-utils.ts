@@ -75,7 +75,6 @@ export const fetchEventSourcesCrd = async () => {
     eventSourceData.eventSourceModels = allModels;
   } catch (err) {
     // show warning if there is an error fetching the CRDs
-    // eslint-disable-next-line no-console
     console.warn('Error fetching CRDs for dynamic event sources', err);
     eventSourceData.eventSourceModels = [];
   }
@@ -93,7 +92,6 @@ export const useEventSourceModels = (): EventSourcetData => {
         })
         .catch((err) => {
           setModelsData({ loaded: true, eventSourceModels: eventSourceData.eventSourceModels });
-          // eslint-disable-next-line no-console
           console.warn('Error fetching CRDs for dynamic event sources', err);
         });
     } else {
@@ -185,7 +183,6 @@ export const useChannelModels = () => {
         })
         .catch((err) => {
           setModelsData({ loaded: true, eventSourceChannels: eventSourceData.eventSourceChannels });
-          // eslint-disable-next-line no-console
           console.warn('Error fetching CRDs for dynamic event sources', err);
         });
     } else {
@@ -222,7 +219,6 @@ export const useChannelResourcesList = (): EventChannelData => {
         })
         .catch((err) => {
           setModelRefs({ channels: [], loaded: true });
-          // eslint-disable-next-line no-console
           console.warn('Error fetching CRDs for dynamic channel model refs', err);
         });
     } else {

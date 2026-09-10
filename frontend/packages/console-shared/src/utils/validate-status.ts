@@ -60,7 +60,6 @@ export const validateStatus = async (
           authSvc.resetRedirectCount();
         })
         .catch((e) => {
-          // eslint-disable-next-line no-console
           console.error('Error resetting redirect counter', e);
         });
     }
@@ -79,7 +78,6 @@ export const validateStatus = async (
         authSvc.handle401(next);
       })
       .catch((e) => {
-        // eslint-disable-next-line no-console
         console.error('Error during logout after 401 response', e);
       });
   }

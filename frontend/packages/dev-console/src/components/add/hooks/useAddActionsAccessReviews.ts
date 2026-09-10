@@ -58,7 +58,6 @@ export const useAddActionsAccessReviews = (
             });
           })
           .catch((e) => {
-            // eslint-disable-next-line no-console
             console.warn('SelfSubjectAccessReview failed', e);
             setAccessReviewResults({
               [id]: AccessReviewStatus.FAILED,

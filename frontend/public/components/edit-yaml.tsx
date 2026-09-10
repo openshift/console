@@ -18,7 +18,6 @@ import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/us
 import type { CodeEditorProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { ActionType, getOLSCodeBlock } from '@console/internal/reducers/ols';
-import { getActiveNamespace } from '@console/internal/reducers/ui';
 import type { RootState } from '@console/internal/redux';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 import { getBadgeFromType } from '@console/shared/src/components/badges/badge-factory';
@@ -30,6 +29,7 @@ import { fold } from '@console/shared/src/components/editor/yaml-editor-utils';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import PageBody from '@console/shared/src/components/layout/PageBody';
 import { FLAGS, ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
@@ -72,7 +72,7 @@ const generateObjToLoad = (
   namespace = 'default',
 ) => {
   const sampleObj: K8sResourceKind = safeLoad(
-    yaml || getYAMLTemplates(templateExtensions).getIn([kind, id]),
+    yaml || getYAMLTemplates(templateExtensions)?.[kind]?.[id],
   ) as K8sResourceKind;
   if (_.has(sampleObj.metadata, 'namespace')) {
     sampleObj.metadata.namespace = namespace;
@@ -81,9 +81,8 @@ const generateObjToLoad = (
 };
 
 const stateToProps = (state: RootState) => ({
-  activeNamespace: getActiveNamespace(state),
   impersonate: getImpersonate(state),
-  models: state.k8s.getIn(['RESOURCES', 'models']) as Map<string, K8sModel>,
+  models: state.k8s.RESOURCES?.models as Record<string, K8sModel>,
 });
 
 export interface EditYAMLProps {
@@ -152,6 +151,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
     isCodeImportRedirect,
   } = props;
 
+  const [activeNamespace] = useActiveNamespace();
   const navigate = useNavigate();
   const hasYAMLSampleFlag = useFlag(FLAGS.CONSOLE_YAML_SAMPLE);
 
@@ -220,7 +220,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
       if (_.isEmpty(obj) || !models) {
         return null;
       }
-      return models.get(referenceFor(obj)) || models.get(obj.kind);
+      return models[referenceFor(obj)] || models[obj.kind];
     },
     [models],
   );
@@ -231,16 +231,14 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
   const navigateToResourceList = () => {
     if (model) {
       const namespace =
-        model.namespaced && props.activeNamespace !== ALL_NAMESPACES_KEY
-          ? props.activeNamespace
-          : undefined;
+        model.namespaced && activeNamespace !== ALL_NAMESPACES_KEY ? activeNamespace : undefined;
       navigate(resourceListPathFromModel(model, namespace));
     } else {
       navigate(-1); // fallback to previous page if no model available
     }
   };
   const displayedVersion = useRef('0');
-  const onCancel = 'onCancel' in props ? props.onCancel : navigateToResourceList;
+  const onCancel = props?.onCancel ? props.onCancel : navigateToResourceList;
 
   async function createResources(objs) {
     const results = [];
@@ -296,7 +294,6 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
           editorMounted && getEditor()?.updateOptions({ readOnly: notAll });
         })
         .catch((e) => {
-          // eslint-disable-next-line no-console
           console.warn('Error while check edit access', e);
         });
     },
@@ -435,7 +432,6 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
         setOwner(own);
       })
       .catch((e) => {
-        // eslint-disable-next-line no-console
         console.error('Could not fetch CSVs', e);
       });
   }, [create, props.obj]);
@@ -573,13 +569,13 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
 
       // If this is a namespaced resource, default to the active namespace when none is specified in the YAML.
       if (!obj.metadata.namespace && objModel.namespaced) {
-        if (props.activeNamespace === ALL_NAMESPACES_KEY) {
+        if (activeNamespace === ALL_NAMESPACES_KEY) {
           return t('No "metadata.namespace" field found in YAML.');
         }
-        obj.metadata.namespace = props.activeNamespace;
+        obj.metadata.namespace = activeNamespace;
       }
     },
-    [props.activeNamespace, t, getModel],
+    [activeNamespace, t, getModel],
   );
 
   const [saving, setSaving] = useState(false);

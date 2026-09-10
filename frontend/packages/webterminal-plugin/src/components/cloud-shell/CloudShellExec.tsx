@@ -188,10 +188,9 @@ const CloudShellExec: FC<CloudShellExecProps> = ({
             if (!unmounted) setWsError(error);
           })
           .catch((e) => {
-            // eslint-disable-next-line no-console
             console.error('Cloud shell error', e);
           });
-      }) // eslint-disable-next-line no-console
+      })
       .onerror((evt) => console.error(`WS error?! ${evt}`));
 
     if (ws.current !== websocket) {

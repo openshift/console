@@ -323,7 +323,7 @@ const ConnectedTopologyListView: FC<
 );
 
 const stateToProps = ({ UI }): TopologyListViewPropsFromState => ({
-  metrics: UI.get('overview').toJS(),
+  metrics: UI.overview,
 });
 
 const dispatchToProps = (dispatch): TopologyListViewPropsFromDispatch => ({

@@ -46,8 +46,8 @@ module.exports = {
   // Disallow use of constant expressions in conditions
   'no-constant-condition': 'error',
 
-  // Disallow console statements
-  'no-console': 'error',
+  // Devtools console is used across the codebase for debugging in production.
+  'no-console': 'off',
 
   // Sort imports into groups
   'import/order': [

@@ -68,7 +68,6 @@ const initialLoad = async (
     });
 
     if (!secret.data) {
-      // eslint-disable-next-line no-console
       console.error(`Unexpected structure of the "${VSPHERE_CREDS_SECRET_NAME}" secret`);
     }
 
@@ -77,7 +76,6 @@ const initialLoad = async (
     password = decodeBase64(secretKeyValues[`${vCenterServer}.password`]);
   } catch (e) {
     // It should be there if referenced
-    // eslint-disable-next-line no-console
     console.error(
       `Failed to load "${VSPHERE_CREDS_SECRET_NAME}" from "${VSPHERE_CREDS_SECRET_NAMESPACE}" secret: `,
       e,

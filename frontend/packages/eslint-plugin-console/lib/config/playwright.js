@@ -2,7 +2,6 @@ module.exports = {
   plugins: ['playwright'],
   extends: ['plugin:playwright/recommended'],
   rules: {
-    'no-console': 'off',
     'no-empty-pattern': 'off',
     'no-restricted-syntax': [
       'error',

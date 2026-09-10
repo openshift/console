@@ -52,17 +52,14 @@ function setupNodeEvents(on, config) {
   // `on` is used to hook into various events Cypress emits
   on('task', {
     log(message) {
-      // eslint-disable-next-line no-console
       console.log(message);
       return null;
     },
     logError(message) {
-      // eslint-disable-next-line no-console
       console.error(message);
       return null;
     },
     logTable(data) {
-      // eslint-disable-next-line no-console
       console.table(data);
       return null;
     },

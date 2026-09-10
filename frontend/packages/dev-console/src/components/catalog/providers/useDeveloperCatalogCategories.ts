@@ -13,7 +13,6 @@ export const useDeveloperCatalogCategories = (): CatalogCategory[] =>
       const categoriesArray: CatalogCategory[] = JSON.parse(categoriesString);
 
       if (!Array.isArray(categoriesArray)) {
-        // eslint-disable-next-line no-console
         console.error(
           `Unexpected server flag "developerCatalogCategories" format. Expected array, got ${typeof categoriesArray}:`,
           categoriesArray,
@@ -23,7 +22,6 @@ export const useDeveloperCatalogCategories = (): CatalogCategory[] =>
 
       return categoriesArray;
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.error('Could not parse server flag "developerCatalogCategories":', error);
       return defaultCatalogCategories;
     }

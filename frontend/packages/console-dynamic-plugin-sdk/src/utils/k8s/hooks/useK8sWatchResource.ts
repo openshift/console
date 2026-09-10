@@ -1,5 +1,4 @@
 import { useMemo, useEffect } from 'react';
-import type { Map as ImmutableMap } from 'immutable';
 import { useDispatch, useSelector } from 'react-redux';
 import * as k8sActions from '../../../app/k8s/actions/k8s';
 import { getReduxIdPayload } from '../../../app/k8s/reducers/k8sSelector';
@@ -48,7 +47,7 @@ export const useK8sWatchResource: UseK8sWatchResource = (initResource) => {
 
   const resourceK8s = useSelector<SDKStoreState>((state) =>
     reduxID ? getReduxIdPayload(state, reduxID.id) : null,
-  ) as ImmutableMap<string, any>;
+  ) as Record<string, any>;
 
   return useMemo(() => {
     if (!resource) {
@@ -61,9 +60,9 @@ export const useK8sWatchResource: UseK8sWatchResource = (initResource) => {
         : [data, false, undefined];
     }
 
-    const data = getReduxData(resourceK8s.get('data'), resource);
-    const loaded = resourceK8s.get('loaded');
-    const loadError = resourceK8s.get('loadError');
+    const data = getReduxData(resourceK8s?.data, resource);
+    const loaded = resourceK8s?.loaded;
+    const loadError = resourceK8s?.loadError;
     return [data, loaded, loadError];
   }, [resource, resourceK8s, modelsLoaded, k8sModel]);
 };

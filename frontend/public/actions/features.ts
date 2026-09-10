@@ -69,7 +69,6 @@ const detectUser = (dispatch: Dispatch) =>
             newUserInfo.extra =
               typeof userInfo.extra === 'string' ? JSON.parse(userInfo.extra) : userInfo.extra;
           } catch (error) {
-            // eslint-disable-next-line no-console
             console.error('Error parsing UserInfo JSON:', error);
           }
         }
@@ -79,7 +78,6 @@ const detectUser = (dispatch: Dispatch) =>
         dispatch(setUser(newUserInfo));
       },
       (err) => {
-        // eslint-disable-next-line no-console
         console.error('Error retrieving SelfSubjectReview: ', err);
         if (!_.includes([400, 404, 500], err?.response?.status)) {
           retryFlagDetection(dispatch, detectUser);

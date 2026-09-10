@@ -1,9 +1,8 @@
 import type { FC } from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as _ from 'lodash';
-import { Provider } from 'react-redux';
-import store from '@console/internal/redux';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import ContainerField from '../ContainerField';
 import EnvironmentVariablesSection from '../EnvironmentVariablesSection';
 import { mockEditDeploymentData, mockDeploymentConfig } from './deployment-data';
@@ -30,13 +29,9 @@ beforeAll(() => {
 });
 
 const renderEnvironmentVariablesSection = () =>
-  render(
+  renderWithProviders(
     <MockForm initialValues={mockInitialValues} handleSubmit={handleSubmit}>
-      {() => (
-        <Provider store={store}>
-          <EnvironmentVariablesSection resourceObj={mockDeploymentConfig} />
-        </Provider>
-      )}
+      {() => <EnvironmentVariablesSection resourceObj={mockDeploymentConfig} />}
     </MockForm>,
   );
 

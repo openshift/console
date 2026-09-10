@@ -462,7 +462,6 @@ __metadata:
   dependencies:
     "@openshift/api-types": "npm:^1.0.0"
     "@openshift/dynamic-plugin-sdk": "npm:^9.1.0"
-    immutable: "npm:^3.8.3"
     lodash: "npm:^4.18.1"
     reselect: "npm:^5.1.1"
     typesafe-actions: "npm:^5.1.0"
@@ -2378,13 +2377,6 @@ __metadata:
   peerDependencies:
     postcss: ^8.1.0
   checksum: 10c0/39c92936fabd23169c8611d2b5cc39e39d10b19b0d223352f20a7579f75b39d5f786114a6b8fc62bee8c5fed59ba9e0d38f7219a4db383e324fb3061664b043d
-  languageName: node
-  linkType: hard
-
-"immutable@npm:^3.8.3":
-  version: 3.8.3
-  resolution: "immutable@npm:3.8.3"
-  checksum: 10c0/bafa7b8371b7622bc3d128cd9e6bba3a654b968f09a237929629f43ac26f7e974a5879cd38baad0c26f6f0628753968611bf832add7bf0c44d647bf4306a2988
   languageName: node
   linkType: hard
 

@@ -1,4 +1,3 @@
-import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash';
 import type { K8sModel, MatchExpression, MatchLabels, Selector } from '../../api/common-types';
 import type { Options } from '../../api/internal-types';
@@ -173,10 +172,13 @@ export const k8sWatch = (
 const modelKey = (model: K8sModel): string =>
   // TODO: Use `referenceForModel` even for known API objects
   model.crd ? getReferenceForModel(model) : model.kind;
-const modelsToMap = (models: K8sModel[]): ImmutableMap<K8sResourceKindReference, K8sModel> =>
-  ImmutableMap<K8sResourceKindReference, K8sModel>().withMutations((map) => {
-    models.forEach((model) => map.set(modelKey(model), model));
+const modelsToMap = (models: K8sModel[]): Record<K8sResourceKindReference, K8sModel> => {
+  const map: Record<string, K8sModel> = {};
+  models.forEach((model) => {
+    map[modelKey(model)] = model;
   });
+  return map;
+};
 
 /**
  * Contains static resource definitions for Kubernetes objects.
@@ -204,7 +206,7 @@ export const allModels = getK8sModels;
 export const getNamespacedResources = () => {
   if (!namespacedResources) {
     namespacedResources = new Set();
-    allModels().forEach((v, k) => {
+    Object.entries(allModels()).forEach(([k, v]: [string, K8sModel]) => {
       if (!v.namespaced) {
         return;
       }

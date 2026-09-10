@@ -175,7 +175,6 @@ export class GiteaService extends BaseService {
       const data = await this.fetchJson(url);
       return data as string;
     } catch (e) {
-      // eslint-disable-next-line no-console
       console.warn('Error fetching file content', e);
       return null;
     }

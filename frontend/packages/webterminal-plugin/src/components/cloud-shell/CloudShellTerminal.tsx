@@ -1,16 +1,13 @@
 import type { FC } from 'react';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
 import { getUser } from '@console/dynamic-plugin-sdk';
 import { AsyncComponent } from '@console/internal/components/utils';
 import { useAccessReview2 } from '@console/internal/components/utils/rbac';
 import { StatusBox, LoadError } from '@console/internal/components/utils/status-box';
-import type { UserInfo } from '@console/internal/module/k8s';
-import type { RootState } from '@console/internal/redux';
-import type { WithUserPreferenceProps } from '@console/shared/src/hoc/withUserPreference';
-import { withUserPreference } from '@console/shared/src/hoc/withUserPreference';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { v1alpha1WorkspaceModel, WorkspaceModel } from '../../../models';
 import { FLAG_V1ALPHA2DEVWORKSPACE } from '../../const';
 import type { TerminalInitData } from './cloud-shell-utils';
@@ -24,10 +21,6 @@ import useCloudShellWorkspace from './useCloudShellWorkspace';
 
 import './CloudShellTerminal.scss';
 
-type StateProps = {
-  user: UserInfo;
-};
-
 type CloudShellTerminalProps = {
   onCancel?: () => void;
   terminalNumber?: number;
@@ -35,17 +28,20 @@ type CloudShellTerminalProps = {
   setWorkspaceNamespace?: (namespace: string, terminalNumber: number) => void;
 };
 
-type CloudShellTerminalInternalProps = StateProps & CloudShellTerminalProps;
+type CloudShellTerminalContentProps = CloudShellTerminalProps & {
+  namespace: string;
+  setNamespace: (namespace: string) => void;
+};
 
-const CloudShellTerminal: FC<CloudShellTerminalInternalProps & WithUserPreferenceProps<string>> = ({
-  user,
+const CloudShellTerminalContent: FC<CloudShellTerminalContentProps> = ({
   onCancel,
-  userSettingState: namespace,
-  setUserSettingState: setNamespace,
   terminalNumber,
   setWorkspaceName,
   setWorkspaceNamespace,
+  namespace,
+  setNamespace,
 }) => {
+  const user = useConsoleSelector(getUser);
   const [operatorNamespace, namespaceLoadError] = useCloudShellNamespace();
   const [initData, setInitData] = useState<TerminalInitData>();
   const [initError, setInitError] = useState<string>();
@@ -247,15 +243,19 @@ const CloudShellTerminal: FC<CloudShellTerminalInternalProps & WithUserPreferenc
   );
 };
 
-// For testing
-export const InternalCloudShellTerminal = CloudShellTerminal;
-
-const stateToProps = (state: RootState): StateProps => ({
-  user: getUser(state),
-});
-
-export default connect<StateProps, null, CloudShellTerminalProps>(stateToProps)(
-  withUserPreference<CloudShellTerminalProps & WithUserPreferenceProps<string>, string>(
+const CloudShellTerminal: FC<CloudShellTerminalProps> = (props) => {
+  const [namespace, setNamespace, namespacePreferenceLoaded] = useUserPreference<string>(
     CLOUD_SHELL_NAMESPACE_CONFIG_USER_PREFERENCE_KEY,
-  )(CloudShellTerminal),
-);
+  );
+
+  // Wait for the namespace preference to load before mounting the workspace
+  // logic. Otherwise useCloudShellWorkspace would run with an undefined
+  // namespace and could kick off a premature cluster-wide workspace search.
+  if (!namespacePreferenceLoaded) {
+    return null;
+  }
+
+  return <CloudShellTerminalContent {...props} namespace={namespace} setNamespace={setNamespace} />;
+};
+
+export default CloudShellTerminal;

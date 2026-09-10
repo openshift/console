@@ -1,4 +1,3 @@
-import { Map as ImmutableMap } from 'immutable';
 import { PodDisruptionBudgetModel } from '@console/app/src/models';
 import type { ResourceListPage } from '@console/dynamic-plugin-sdk';
 import {
@@ -55,7 +54,7 @@ type ResourceMapKey = GroupVersionKind | string;
 type ResourceMapValue = () => Promise<React.ComponentType<any>>;
 
 const addDynamicResourcePage = (
-  map: ImmutableMap<ResourceMapKey, ResourceMapValue>,
+  map: Map<ResourceMapKey, ResourceMapValue>,
   page: ResourceListPage,
 ) => {
   const key = referenceForExtensionModel(page.properties.model);
@@ -64,7 +63,7 @@ const addDynamicResourcePage = (
   }
 };
 
-const baseListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
+const baseListPages: Map<ResourceMapKey, ResourceMapValue> = new Map()
   .set(referenceForModel(ConfigMapModel), () =>
     import('./configmap' /* webpackChunkName: "configmap" */).then((m) => m.ConfigMapsPage),
   )
@@ -253,11 +252,8 @@ const baseListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
     ).then((m) => m.VolumeSnapshotClassPage),
   );
 
-export const getResourceListPages = (pluginPages: ResourceListPage[] = []) =>
-  ImmutableMap<ResourceMapKey, ResourceMapValue>()
-    .merge(baseListPages)
-    .withMutations((map) => {
-      pluginPages.forEach((page) => {
-        addDynamicResourcePage(map, page);
-      });
-    });
+export const getResourceListPages = (pluginPages: ResourceListPage[] = []) => {
+  const map = new Map(baseListPages);
+  pluginPages.forEach((page) => addDynamicResourcePage(map, page));
+  return map;
+};

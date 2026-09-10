@@ -22,8 +22,7 @@ import type { ColumnLayout, ManagedColumn } from '@console/dynamic-plugin-sdk';
 import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import { COLUMN_MANAGEMENT_USER_PREFERENCE_KEY } from '@console/shared/src/constants/common';
-import type { WithUserPreferenceProps } from '@console/shared/src/hoc/withUserPreference';
-import { withUserPreference } from '@console/shared/src/hoc/withUserPreference';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import type { ModalComponentProps } from '@console/shared/src/types/modal';
 
 const MAX_VIEW_COLS = 9;
@@ -72,9 +71,17 @@ const NamespaceColumnHelpText: FC = () => {
   return <>{t('The namespace column is only shown when in "All projects"')}</>;
 };
 
-export const ColumnManagementModal: FC<
-  ColumnManagementModalProps & WithUserPreferenceProps<object>
-> = ({ cancel, close, columnLayout, setUserSettingState: setTableColumns, noLimit }) => {
+export const ColumnManagementModal: FC<ColumnManagementModalProps> = ({
+  cancel,
+  close,
+  columnLayout,
+  noLimit,
+}) => {
+  const [, setTableColumns, preferenceLoaded] = useUserPreference<object>(
+    COLUMN_MANAGEMENT_USER_PREFERENCE_KEY,
+    undefined,
+    true,
+  );
   const { t } = useTranslation('public');
   const defaultColumns = columnLayout.columns.filter((column) => column.id && !column.additional);
   const additionalColumns = columnLayout.columns.filter((column) => column.additional);
@@ -84,6 +91,10 @@ export const ColumnManagementModal: FC<
       ? new Set(columnLayout.selectedColumns)
       : new Set(defaultColumns.map((col) => col.id)),
   );
+
+  if (!preferenceLoaded) {
+    return null;
+  }
 
   const onColumnChange = (event: SyntheticEvent): void => {
     const updatedCheckedColumns = new Set<string>(checkedColumns);
@@ -211,15 +222,6 @@ export const ColumnManagementModal: FC<
   );
 };
 
-const ColumnManagementModalWithSettings = withUserPreference<
-  ColumnManagementModalProps & WithUserPreferenceProps<object>,
-  object
->(
-  COLUMN_MANAGEMENT_USER_PREFERENCE_KEY,
-  undefined,
-  true,
-)(ColumnManagementModal);
-
 export const ColumnManagementModalOverlay: OverlayComponent<ColumnManagementModalProps> = (
   props,
 ) => (
@@ -229,11 +231,7 @@ export const ColumnManagementModalOverlay: OverlayComponent<ColumnManagementModa
     variant={ModalVariant.small}
     aria-labelledby="column-management-modal-title"
   >
-    <ColumnManagementModalWithSettings
-      {...props}
-      cancel={props.closeOverlay}
-      close={props.closeOverlay}
-    />
+    <ColumnManagementModal {...props} cancel={props.closeOverlay} close={props.closeOverlay} />
   </Modal>
 );
 

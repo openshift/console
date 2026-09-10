@@ -68,9 +68,7 @@ spec:
     await expect(page.getByTestId('section-heading-Pod details')).toBeVisible({ timeout: 30_000 });
     const warning = page.getByTestId(WARNING_ID);
     await expect(warning).toContainText('Admission Webhook Warning', { timeout: 10_000 });
-    await expect(warning).toContainText(
-      `Pod ${POD_NAME}-a violates policy ${WARNING_FOO}`,
-    );
+    await expect(warning).toContainText(`Pod ${POD_NAME}-a violates policy ${WARNING_FOO}`);
     await expect(page.getByTestId(LEARN_MORE_ID)).toContainText('Learn more');
     await page.getByTestId(LEARN_MORE_ID).click();
   });

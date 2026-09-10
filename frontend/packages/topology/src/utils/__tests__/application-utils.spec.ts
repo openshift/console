@@ -144,11 +144,11 @@ describe('ApplicationUtils', () => {
     const removedModels = allArgs.map((arg) => arg[0]);
 
     expect(k8sKillMock.mock.calls.length).toEqual(6);
-    expect(removedModels).toContain(DeploymentConfigModel);
-    expect(removedModels).toContain(ImageStreamModel);
-    expect(removedModels).toContain(ServiceModel);
-    expect(removedModels).toContain(RouteModel);
-    expect(removedModels).toContain(BuildConfigModel);
+    expect(removedModels).toContainEqual(DeploymentConfigModel);
+    expect(removedModels).toContainEqual(ImageStreamModel);
+    expect(removedModels).toContainEqual(ServiceModel);
+    expect(removedModels).toContainEqual(RouteModel);
+    expect(removedModels).toContainEqual(BuildConfigModel);
     expect(removedModels.filter((model) => model.kind === 'Secret')).toHaveLength(1);
   });
 
@@ -160,10 +160,10 @@ describe('ApplicationUtils', () => {
     const removedModels = allArgs.map((arg) => arg[0]);
 
     expect(k8sKillMock.mock.calls.length).toEqual(4);
-    expect(removedModels).toContain(DeploymentConfigModel);
-    expect(removedModels).toContain(ImageStreamModel);
-    expect(removedModels).toContain(ServiceModel);
-    expect(removedModels).toContain(RouteModel);
+    expect(removedModels).toContainEqual(DeploymentConfigModel);
+    expect(removedModels).toContainEqual(ImageStreamModel);
+    expect(removedModels).toContainEqual(ServiceModel);
+    expect(removedModels).toContainEqual(RouteModel);
   });
 
   it('Should delete all the specific models related to deployment config if the build config is present', async () => {
@@ -173,11 +173,11 @@ describe('ApplicationUtils', () => {
     const allArgs = k8sKillMock.mock.calls;
     const removedModels = allArgs.map((arg) => arg[0]);
     expect(k8sKillMock.mock.calls.length).toEqual(5);
-    expect(removedModels).toContain(BuildConfigModel);
-    expect(removedModels).toContain(DeploymentConfigModel);
-    expect(removedModels).toContain(ImageStreamModel);
-    expect(removedModels).toContain(ServiceModel);
-    expect(removedModels).toContain(RouteModel);
+    expect(removedModels).toContainEqual(BuildConfigModel);
+    expect(removedModels).toContainEqual(DeploymentConfigModel);
+    expect(removedModels).toContainEqual(ImageStreamModel);
+    expect(removedModels).toContainEqual(ServiceModel);
+    expect(removedModels).toContainEqual(RouteModel);
   });
 
   it('Should delete all the specific models related to daemonsets', async () => {
@@ -186,7 +186,7 @@ describe('ApplicationUtils', () => {
     const allArgs = k8sKillMock.mock.calls;
     const removedModels = allArgs.map((arg) => arg[0]);
     expect(k8sKillMock.mock.calls.length).toEqual(1);
-    expect(removedModels).toContain(DaemonSetModel);
+    expect(removedModels).toContainEqual(DaemonSetModel);
     expect(removedModels.filter((model) => model.kind === 'Secret')).toHaveLength(0);
   });
 
@@ -196,7 +196,7 @@ describe('ApplicationUtils', () => {
     const allArgs = k8sKillMock.mock.calls;
     const removedModels = allArgs.map((arg) => arg[0]);
     expect(k8sKillMock.mock.calls.length).toEqual(1);
-    expect(removedModels).toContain(StatefulSetModel);
+    expect(removedModels).toContainEqual(StatefulSetModel);
     expect(removedModels.filter((model) => model.kind === 'Secret')).toHaveLength(0);
   });
 
@@ -211,8 +211,8 @@ describe('ApplicationUtils', () => {
     const allArgs = k8sKillMock.mock.calls;
     const removedModels = allArgs.map((arg) => arg[0]);
     expect(k8sKillMock.mock.calls.length).toEqual(2);
-    expect(removedModels).toContain(ImageStreamModel);
-    expect(removedModels).toContain(KnativeServiceModel);
+    expect(removedModels).toContainEqual(ImageStreamModel);
+    expect(removedModels).toContainEqual(KnativeServiceModel);
     expect(removedModels.filter((model) => model.kind === 'Secret')).toHaveLength(0);
   });
 
@@ -228,7 +228,7 @@ describe('ApplicationUtils', () => {
     const allArgs = k8sKillMock.mock.calls;
     const removedModels = allArgs.map((arg) => arg[0]);
     expect(k8sKillMock.mock.calls.length).toEqual(1);
-    expect(removedModels).toContain(CamelKameletBindingModel);
+    expect(removedModels).toContainEqual(CamelKameletBindingModel);
     expect(removedModels.filter((model) => model.kind === 'Secret')).toHaveLength(0);
   });
 
@@ -244,7 +244,7 @@ describe('ApplicationUtils', () => {
     const allArgs = k8sKillMock.mock.calls;
     const removedModels = allArgs.map((arg) => arg[0]);
     expect(k8sKillMock.mock.calls.length).toEqual(1);
-    expect(removedModels).toContain(KafkaSinkModel);
+    expect(removedModels).toContainEqual(KafkaSinkModel);
     expect(removedModels.filter((model) => model.kind === 'Secret')).toHaveLength(0);
   });
 

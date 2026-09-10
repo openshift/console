@@ -20,7 +20,6 @@ const getLocalPlugins = ({ pluginPackages }, loaderContext) => {
   } = getLocalPluginsModuleData(pluginPackages, 'esm');
 
   if (errors.length > 0 || warnings.length > 0) {
-    // eslint-disable-next-line no-console
     console.log(
       `Console local plugins virtual module code generated with ${errors.length} errors and ${warnings.length} warnings`,
     );

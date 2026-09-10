@@ -1,6 +1,4 @@
 import { useRef, useMemo, useEffect } from 'react';
-import type { Iterable as ImmutableIterable } from 'immutable';
-import { Map as ImmutableMap } from 'immutable';
 import { useDispatch, useSelector } from 'react-redux';
 import { createSelectorCreator, lruMemoize } from 'reselect';
 import type { K8sModel } from '../../../api/common-types';
@@ -40,14 +38,15 @@ export const useK8sWatchResources: UseK8sWatchResources = (initResources) => {
   const resources = useDeepCompareMemoize(initResources, true);
   const modelsLoaded = useModelsLoaded();
 
-  const allK8sModels = useSelector<SDKStoreState>((state) =>
-    state.k8s.getIn(['RESOURCES', 'models']),
-  ) as ImmutableMap<string, K8sModel>;
+  const allK8sModels = useSelector<SDKStoreState>((state) => state.k8s.RESOURCES?.models) as Record<
+    string,
+    K8sModel
+  >;
 
   const prevK8sModels = usePrevious(allK8sModels);
   const prevResources = usePrevious(resources);
 
-  const k8sModelsRef = useRef<ImmutableIterable<string, K8sModel>>(ImmutableMap());
+  const k8sModelsRef = useRef<Record<string, K8sModel>>({});
 
   if (
     prevResources !== resources ||
@@ -62,9 +61,12 @@ export const useK8sWatchResources: UseK8sWatchResources = (initResources) => {
     const requiredModels = Object.values(resources).map((r) =>
       transformGroupVersionKindToReference(r.groupVersionKind || r.kind),
     );
-    k8sModelsRef.current = allK8sModels.filter(
-      (model) =>
-        requiredModels.includes(getReferenceForModel(model)) || requiredModels.includes(model.kind),
+    k8sModelsRef.current = Object.fromEntries(
+      Object.entries(allK8sModels ?? {}).filter(
+        ([, model]) =>
+          requiredModels.includes(getReferenceForModel(model)) ||
+          requiredModels.includes(model.kind),
+      ),
     );
   }
 
@@ -82,8 +84,8 @@ export const useK8sWatchResources: UseK8sWatchResources = (initResources) => {
 
             const resourceModel =
               modelReference &&
-              (k8sModels.get(modelReference) ||
-                k8sModels.get(getGroupVersionKindForReference(modelReference).kind));
+              (k8sModels[modelReference] ||
+                k8sModels[getGroupVersionKindForReference(modelReference).kind]);
             if (!resourceModel) {
               ids[key] = {
                 noModel: true,
@@ -122,13 +124,10 @@ export const useK8sWatchResources: UseK8sWatchResources = (initResources) => {
       createSelectorCreator({
         memoize: lruMemoize,
         memoizeOptions: {
-          equalityCheck: (
-            oldK8s: ImmutableMap<string, K8sModel>,
-            newK8s: ImmutableMap<string, K8sModel>,
-          ) =>
+          equalityCheck: (oldK8s: Record<string, any>, newK8s: Record<string, any>) =>
             Object.keys(reduxIDs || {})
               .filter((k) => !reduxIDs[k].noModel)
-              .every((k) => oldK8s.get(reduxIDs[k].id) === newK8s.get(reduxIDs[k].id)),
+              .every((k) => oldK8s[reduxIDs[k].id] === newK8s[reduxIDs[k].id]),
         },
       }),
     [reduxIDs],
@@ -154,10 +153,10 @@ export const useK8sWatchResources: UseK8sWatchResources = (initResources) => {
             loaded: true,
             loadError: new NoModelError(),
           };
-        } else if (resourceK8s.has(reduxIDs?.[key].id)) {
-          const data = getReduxData(resourceK8s.getIn([reduxIDs[key].id, 'data']), resources[key]);
-          const loaded = resourceK8s.getIn([reduxIDs[key].id, 'loaded']);
-          const loadError = resourceK8s.getIn([reduxIDs[key].id, 'loadError']);
+        } else if (reduxIDs?.[key].id in (resourceK8s ?? {})) {
+          const data = getReduxData(resourceK8s[reduxIDs[key].id]?.data, resources[key]);
+          const loaded = resourceK8s[reduxIDs[key].id]?.loaded;
+          const loadError = resourceK8s[reduxIDs[key].id]?.loadError;
           acc[key] = { data, loaded, loadError };
         } else {
           acc[key] = {

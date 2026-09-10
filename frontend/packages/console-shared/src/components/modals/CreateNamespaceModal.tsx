@@ -107,7 +107,6 @@ export const CreateNamespaceModal: OverlayComponent<CreateProjectModalProps> = (
         }
       })
       .catch((err) => {
-        // eslint-disable-next-line no-console
         console.error(`Failed to create Namespace:`, err);
       });
   };

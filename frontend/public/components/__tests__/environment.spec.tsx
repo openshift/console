@@ -1,5 +1,4 @@
 import { screen, waitFor } from '@testing-library/react';
-import { fromJS, Map as ImmutableMap } from 'immutable';
 import * as rbacModule from '@console/dynamic-plugin-sdk/src/app/components/utils/rbac';
 import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
@@ -22,13 +21,13 @@ const k8sGetMock = k8sResourceModule.k8sGet as jest.Mock;
 // Provide DeploymentModel in the Redux store so checkEditAccess proceeds
 // past the `!model` guard and actually calls checkAccess.
 const initialState = {
-  k8s: fromJS({
+  k8s: {
     RESOURCES: {
-      models: ImmutableMap<string, any>().set('Deployment', DeploymentModel),
+      models: { Deployment: DeploymentModel },
       inFlight: false,
       loaded: true,
     },
-  }),
+  },
 };
 
 describe('EnvironmentPage', () => {

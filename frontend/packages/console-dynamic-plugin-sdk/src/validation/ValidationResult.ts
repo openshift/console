@@ -68,7 +68,6 @@ export class ValidationResult {
 
   report(throwOnErrors: boolean = true) {
     if (this.hasErrors()) {
-      // eslint-disable-next-line no-console
       console.error(this.formatErrors());
 
       if (throwOnErrors) {

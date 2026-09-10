@@ -1,7 +1,6 @@
 import type { FC, ReactNode } from 'react';
 import { useMemo } from 'react';
 import { Gallery, GalleryItem, Card, CardHeader, CardTitle } from '@patternfly/react-core';
-import type { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -55,7 +54,7 @@ const filterSubsystems = (
   subsystems: (
     DashboardsOverviewHealthSubsystem | ResolvedExtension<DashboardsOverviewHealthSubsystem>
   )[],
-  k8sModels: ImmutableMap<string, K8sKind>,
+  k8sModels: Record<string, K8sKind>,
 ) =>
   subsystems.filter((s) => {
     if (
@@ -67,7 +66,7 @@ const filterSubsystems = (
         | ResolvedExtension<DashboardsOverviewHealthURLSubsystem>;
       return subsystem.properties.additionalResource &&
         !subsystem.properties.additionalResource.optional
-        ? !!k8sModels.get(subsystem.properties.additionalResource.kind)
+        ? !!k8sModels?.[subsystem.properties.additionalResource.kind]
         : true;
     }
     return true;
@@ -122,7 +121,7 @@ export const DashboardNamespacedAlerts: FC<DashboardNamespacedAlertsProps> = ({ 
 };
 
 const mapStateToProps = (state: RootState) => ({
-  k8sModels: state.k8s.getIn(['RESOURCES', 'models']),
+  k8sModels: state.k8s.RESOURCES?.models,
 });
 export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels }) => {
   const [subsystemExtensions] = useResolvedExtensions<DashboardsOverviewHealthSubsystem>(
@@ -220,7 +219,7 @@ export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels
 });
 
 type StatusCardProps = {
-  k8sModels: ImmutableMap<string, K8sKind>;
+  k8sModels: Record<string, K8sKind>;
 };
 
 type DashboardAlertsProps = {

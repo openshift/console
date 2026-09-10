@@ -14,8 +14,9 @@ import (
 )
 
 const (
-	OpenshiftAccessTokenCookieName  = "openshift-session-token"
-	openshiftRefreshTokenCookieName = "openshift-refresh-token"
+	OpenshiftAccessTokenCookieName   = "openshift-session-token"
+	openshiftRefreshTokenCookieName  = "openshift-refresh-token"
+	openshiftRecoveryTokenCookieName = "openshift-recovery-token"
 )
 
 var sessionPruningPeriod = 5 * time.Minute
@@ -59,14 +60,8 @@ func (ss *SessionStore) AddSession(tokenVerifier IDTokenVerifier, token *oauth2.
 	}
 	ls.sessionToken = sessionToken
 
-	// Generate a small reference ID for the refresh token (stored in cookie instead of full token)
-	ls.refreshTokenID = RandomString(32)
-
 	ss.mux.Lock()
 	ss.byToken[sessionToken] = ls
-	if ls.refreshToken != "" {
-		ss.byRefreshTokenID[ls.refreshTokenID] = ls.refreshToken
-	}
 
 	// Assume token expiration is always the same time in the future. Should be close enough for government work.
 	ss.byAge = append(ss.byAge, ls)
@@ -167,6 +162,25 @@ func (ss *SessionStore) deleteIDsForRefreshToken(refreshToken string) {
 			delete(ss.byRefreshTokenID, refreshTokenID)
 		}
 	}
+}
+
+func (ss *SessionStore) SetRefreshTokenID(id, token string) {
+	ss.mux.Lock()
+	defer ss.mux.Unlock()
+	ss.byRefreshTokenID[id] = token
+}
+
+func (ss *SessionStore) GetRefreshTokenByID(id string) (string, bool) {
+	ss.mux.Lock()
+	defer ss.mux.Unlock()
+	token, ok := ss.byRefreshTokenID[id]
+	return token, ok
+}
+
+func (ss *SessionStore) DeleteRefreshTokenID(id string) {
+	ss.mux.Lock()
+	defer ss.mux.Unlock()
+	delete(ss.byRefreshTokenID, id)
 }
 
 func (ss *SessionStore) pruneSessions() {

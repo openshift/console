@@ -26,9 +26,15 @@ const getPluginNameFromResourceURL = (url: string): string =>
     : null;
 
 const sameHostname = (a: string, b: string): boolean => {
-  const urlA = new URL(a);
-  const urlB = new URL(b);
-  return urlA.hostname === urlB.hostname;
+  // SecurityPolicyViolationEvent URIs can be tokens such as "inline" or
+  // "eval", not necessarily absolute URLs.
+  try {
+    const urlA = new URL(a);
+    const urlB = new URL(b);
+    return urlA.hostname === urlB.hostname;
+  } catch {
+    return false;
+  }
 };
 
 const pluginCSPViolationsAreEqual = (
@@ -87,9 +93,7 @@ export const useCSPViolationDetector = () => {
   const toastContext = useToast();
   const fireTelemetryEvent = useTelemetry();
   const pluginStore = usePluginStore();
-  const cspViolations = useConsoleSelector<PluginCSPViolations>(({ UI }) =>
-    UI.get('pluginCSPViolations'),
-  );
+  const cspViolations = useConsoleSelector<PluginCSPViolations>(({ UI }) => UI.pluginCSPViolations);
   const dispatch = useConsoleDispatch();
   const [, cacheEvent] = useLocalStorageCache<PluginCSPViolationEvent>(
     LOCAL_STORAGE_CSP_VIOLATIONS_KEY,
@@ -99,7 +103,6 @@ export const useCSPViolationDetector = () => {
 
   const reportViolation = useCallback(
     (event: SecurityPolicyViolationEvent) => {
-      // eslint-disable-next-line no-console
       console.warn('Content Security Policy violation detected', event);
 
       reportCSPViolationToCypress(event);
@@ -124,7 +127,6 @@ export const useCSPViolationDetector = () => {
         const validPlugin = !!pluginInfo;
         const pluginIsLoaded = validPlugin && pluginInfo.status === 'loaded';
 
-        // eslint-disable-next-line no-console
         console.warn(
           `Content Security Policy violation seems to originate from ${
             validPlugin ? `plugin ${pluginName}` : `unknown plugin ${pluginName}`

@@ -384,7 +384,6 @@ export const SpecDescriptorDetailsItem: FC<SpecCapabilityProps> = ({ className, 
         return null;
       default:
         if (_.isObject(props.value)) {
-          // eslint-disable-next-line no-console
           console.warn(
             `[Invalid SpecDescriptor] Cannot render 'spec.${props.descriptor.path}'. A valid x-descriptor must be provided for non-primitive properties.`,
             'See https://github.com/openshift/console/blob/master/frontend/packages/operator-lifecycle-manager/src/components/descriptors/reference/reference.md#olm-descriptor-reference',

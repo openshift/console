@@ -12,11 +12,11 @@ export const fakeVulnFor = (priority: Priority): ImageManifestVuln => ({
       'default/3scale-operator-7864b9bb5d-frhnt': 'true',
     },
     name: `sha256.e94c22ba519b1e0ae035e1786a7d2eb9425d62ff60be8ba2dc6b86234540bcb${
-      vulnPriority.get(priority).index
+      vulnPriority[priority].index
     }`,
     namespace: 'default',
     resourceVersion: '3082821',
-    uid: `74b640b4-0503-4fbe-9354-1939630e082${vulnPriority.get(priority).index}`,
+    uid: `74b640b4-0503-4fbe-9354-1939630e082${vulnPriority[priority].index}`,
   },
   spec: {
     features: [
@@ -33,7 +33,7 @@ export const fakeVulnFor = (priority: Priority): ImageManifestVuln => ({
             link: 'https://access.redhat.com/errata/RHSA-2019:1880',
             name: 'RHSA-2019:1880',
             namespaceName: 'centos:7',
-            severity: vulnPriority.get(priority).title,
+            severity: vulnPriority[priority].title,
           },
         ],
       },
@@ -76,7 +76,7 @@ export const fakeVulnFor = (priority: Priority): ImageManifestVuln => ({
     },
     fixableCount: 0,
     highCount: 0,
-    highestSeverity: vulnPriority.get(priority).title,
+    highestSeverity: vulnPriority[priority].title,
     lastUpdate: '2019-12-27 22:00:48.328470155 +0000 UTC',
     lowCount: 1,
     mediumCount: 1,

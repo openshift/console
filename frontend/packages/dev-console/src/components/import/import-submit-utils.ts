@@ -625,7 +625,6 @@ const managePipelineResources = async (
       const triggerResources = await createTrigger(managedPipeline, git.detectedType);
       pipelineResources.push(...triggerResources);
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.warn('Error occured while creating triggers', error);
     }
   }
@@ -658,7 +657,6 @@ const managePipelineResources = async (
       const pipelineRun = await createPipelineRunForImportFlow(managedPipeline);
       pipelineResources.push(pipelineRun);
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.log('Failed to create PipelineRun for import flow', error);
       setPipelineNotStarted(managedPipeline.metadata.name, managedPipeline.metadata.namespace);
     }

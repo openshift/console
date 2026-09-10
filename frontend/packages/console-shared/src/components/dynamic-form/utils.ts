@@ -1,6 +1,5 @@
 import type { UiSchema } from '@rjsf/core';
 import { getSchemaType, getUiOptions } from '@rjsf/core/dist/cjs/utils';
-import * as Immutable from 'immutable';
 import type { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { THOUSAND, MILLION, BILLION } from './const';
@@ -205,11 +204,11 @@ export const getJSONSchemaOrder = (
       return {};
     }
 
-    const uiOrder = Immutable.Set(propertyNames)
-      .sortBy((property) =>
-        getJSONSchemaPropertySortWeight(property, jsonSchema, uiSchema, currentPath ?? []),
-      )
-      .toJS();
+    const uiOrder = [...new Set(propertyNames)].sort(
+      (a, b) =>
+        getJSONSchemaPropertySortWeight(a, jsonSchema, uiSchema, currentPath ?? []) -
+        getJSONSchemaPropertySortWeight(b, jsonSchema, uiSchema, currentPath ?? []),
+    );
 
     return {
       ...(uiOrder.length > 1 && { 'ui:order': uiOrder }),

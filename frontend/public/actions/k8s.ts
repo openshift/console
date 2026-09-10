@@ -34,7 +34,6 @@ export const getResources = () => (dispatch: Dispatch) => {
       cacheResources(resources);
       dispatch(receivedResources(resources));
     })
-    // eslint-disable-next-line no-console
     .catch((err) => console.error('Fetching resource failed:', err));
 };
 
@@ -47,7 +46,6 @@ export const startAPIDiscovery = () => (dispatch) => {
   })
     .then((res) => {
       if (res.status.allowed) {
-        // eslint-disable-next-line no-console
         console.log('API discovery method: Watching');
         // Always dispatch an initial call
         dispatch(getResources());
@@ -69,7 +67,6 @@ export const startAPIDiscovery = () => (dispatch) => {
           ),
         );
       } else {
-        // eslint-disable-next-line no-console
         console.log('API discovery method: Polling');
         // Always dispatch an initial call
         dispatch(getResources());
@@ -85,7 +82,6 @@ export const startAPIDiscovery = () => (dispatch) => {
       }
     })
     .catch((e) => {
-      // eslint-disable-next-line no-console
       console.warn('Error while start API discovery', e);
     });
 };

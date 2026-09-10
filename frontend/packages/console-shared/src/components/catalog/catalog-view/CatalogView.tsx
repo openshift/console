@@ -87,7 +87,6 @@ export const CatalogView: FC<CatalogViewProps> = ({
       try {
         _.set(attributeFilters, filterGroup, JSON.parse(attributeFilterParam));
       } catch (e) {
-        // eslint-disable-next-line no-console
         console.warn('could not update filters from url params: could not parse search params', e);
       }
     });

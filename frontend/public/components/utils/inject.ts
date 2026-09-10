@@ -25,7 +25,6 @@ const lastKind = new Set<K8sResourceKindReference>();
  */
 export const kindObj = (kind: K8sResourceKindReference): K8sModel => {
   if (kindForReference(kind) === kind && !lastKind.has(kind)) {
-    // eslint-disable-next-line no-console
     console.warn(
       `Attempting to get Kubernetes object model using string kind: ${kind}, which is not guaranteed to be unique!`,
     );
@@ -33,7 +32,6 @@ export const kindObj = (kind: K8sResourceKindReference): K8sModel => {
   }
   const model = modelFor(kind);
   if (!model) {
-    // eslint-disable-next-line no-console
     console.warn('kindObj: no model for kind', kind);
   }
 

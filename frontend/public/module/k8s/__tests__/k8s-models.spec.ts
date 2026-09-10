@@ -89,14 +89,14 @@ describe('versionForReference', () => {
 
 describe('modelsToMap', () => {
   it('returns a map with keys based on model.kind for models with crd:false', () => {
-    expect(modelsToMap([PodModel, DeploymentModel]).toObject()).toEqual({
+    expect(modelsToMap([PodModel, DeploymentModel])).toEqual({
       [PodModel.kind]: PodModel,
       [DeploymentModel.kind]: DeploymentModel,
     });
   });
 
   it('returns a map with keys based on referenceForModel for models with crd:true', () => {
-    expect(modelsToMap([ClusterResourceQuotaModel, PrometheusModel]).toObject()).toEqual({
+    expect(modelsToMap([ClusterResourceQuotaModel, PrometheusModel])).toEqual({
       [referenceForModel(ClusterResourceQuotaModel)]: ClusterResourceQuotaModel,
       [referenceForModel(PrometheusModel)]: PrometheusModel,
     });

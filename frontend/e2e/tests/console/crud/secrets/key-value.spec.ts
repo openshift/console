@@ -43,10 +43,7 @@ test.describe('Create key/value secrets', () => {
     await k8sClient.deleteNamespace(namespace);
   });
 
-  test('creates and edits a key/value secret with a binary file', async ({
-    page,
-    k8sClient,
-  }) => {
+  test('creates and edits a key/value secret with a binary file', async ({ page, k8sClient }) => {
     const secretName = `kv-binary-${Date.now()}`;
     const secretsPage = new SecretsPage(page);
     const detailsPage = new DetailsPage(page);

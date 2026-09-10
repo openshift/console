@@ -8,7 +8,7 @@ import type { GitSource } from '../types/git';
 import { SecretType } from '../types/git';
 import type { RepoMetadata, BranchList, RepoLanguageList, RepoFileList } from '../types/repo';
 import { RepoStatus } from '../types/repo';
-import { BaseService } from './base-service';
+import { BaseService, headersToRecord } from './base-service';
 
 type GitlabRepo = {
   id: number;
@@ -24,7 +24,7 @@ type GLWebhookBody = {
 };
 
 type GitlabWebhookRequest = {
-  headers: Headers;
+  headers: Record<string, string[]>;
   hostName: string;
   projectID: string;
   body: GLWebhookBody;
@@ -208,7 +208,7 @@ export class GitlabService extends BaseService {
     };
 
     const webhookRequestBody: GitlabWebhookRequest = {
-      headers,
+      headers: headersToRecord(headers),
       hostName: this.metadata.host,
       projectID: projectID.toString(),
       body,

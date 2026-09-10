@@ -69,6 +69,6 @@ export enum SecretFilterValues {
   image = 'Image',
   source = 'Source',
   tls = 'TLS',
-  sa = 'Service Account Token',
+  sa = 'Service account token',
   opaque = 'Opaque',
 }

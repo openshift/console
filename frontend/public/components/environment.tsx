@@ -364,8 +364,7 @@ export const EnvironmentPage: FC<EnvironmentPageProps> = (props) => {
 
   const model = useConsoleSelector(
     (state) =>
-      state.k8s.getIn(['RESOURCES', 'models', referenceFor(obj)]) ||
-      state.k8s.getIn(['RESOURCES', 'models', obj?.kind]),
+      state.k8s.RESOURCES?.models?.[referenceFor(obj)] || state.k8s.RESOURCES?.models?.[obj?.kind],
   );
 
   const impersonate = useConsoleSelector((state) => getImpersonate(state));
@@ -409,7 +408,6 @@ export const EnvironmentPage: FC<EnvironmentPageProps> = (props) => {
     checkAccess(resourceAttributes, impersonate)
       .then((resp) => setAllowed(resp.status.allowed))
       .catch((e) => {
-        // eslint-disable-next-line no-console
         console.warn('Error while check edit access for environment variables', e);
       });
   }, [obj, model, impersonate, readOnly]);

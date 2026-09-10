@@ -234,8 +234,8 @@ const WorkloadNode: FC<WorkloadNodeProps> = observer(({ element, ...rest }) => {
   const resource = getTopologyResourceObject(element.getData());
   const { podData, loadError, loaded } = usePodsWatcher(
     resource,
-    resource.kind,
-    resource.metadata.namespace,
+    resource?.kind,
+    resource?.metadata?.namespace,
   );
   return (
     <WorkloadPodsNode

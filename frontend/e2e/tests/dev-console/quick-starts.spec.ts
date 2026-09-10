@@ -15,12 +15,10 @@ test.describe('Quick Starts - Developer Perspective', { tag: ['@dev-console'] },
       });
 
       await test.step('Verify known quick starts are visible', async () => {
-        await expect(
-          quickStarts.getQuickStartCard('sample-application'),
-        ).toBeVisible({ timeout: 30_000 });
-        await expect(
-          quickStarts.getQuickStartCard('add-healthchecks'),
-        ).toBeVisible();
+        await expect(quickStarts.getQuickStartCard('sample-application')).toBeVisible({
+          timeout: 30_000,
+        });
+        await expect(quickStarts.getQuickStartCard('add-healthchecks')).toBeVisible();
       });
 
       await test.step('Verify duration info is shown on cards', async () => {

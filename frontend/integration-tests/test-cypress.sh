@@ -18,10 +18,6 @@ if [ "$OPENSHIFT_CI" = true ]; then
   export NO_COLOR=1
 fi
 
-if [ ! -d node_modules ]; then
-  yarn install
-fi
-
 function copyArtifacts {
   if [ -d "$ARTIFACT_DIR" ] && [ -d "$SCREENSHOTS_DIR" ]; then
     echo "Copying artifacts from $(pwd)..."
@@ -33,6 +29,14 @@ function generateReport {
   yarn run cypress-postreport
 }
 trap "copyArtifacts; generateReport" EXIT
+
+function runOmlCypress {
+  if [ -n "$(find packages/operator-lifecycle-manager/integration-tests/tests -type f -name '*.cy.*' -print -quit)" ]; then
+    yarn run test-cypress-olm-headless
+  else
+    echo "Skipping OLM Cypress: no Cypress specs remain after Playwright migration"
+  fi
+}
 
 while getopts p:s:h:l:n: flag
 do
@@ -77,7 +81,7 @@ fi
 
 if [ -n "${headless-}" ] && [ -z "${pkg-}" ]; then
   yarn run test-cypress-dev-console-headless
-  yarn run test-cypress-olm-headless
+  runOmlCypress
   yarn run test-cypress-helm-headless
   exit;
 fi
@@ -96,6 +100,11 @@ fi
 
 if [ -n "${spec-}" ] && [ -z "${nightly-}"]; then
   yarn_script="$yarn_script --spec '$spec'"
+fi
+
+if [ "${pkg-}" = "olm" ] && [ -z "$(find packages/operator-lifecycle-manager/integration-tests/tests -type f -name '*.cy.*' -print -quit)" ]; then
+  echo "Skipping OLM Cypress: no Cypress specs remain after Playwright migration"
+  exit 0
 fi
 
 yarn run $yarn_script

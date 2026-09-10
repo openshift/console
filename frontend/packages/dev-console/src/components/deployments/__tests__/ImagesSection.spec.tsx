@@ -1,8 +1,7 @@
 import type { FC } from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Provider } from 'react-redux';
-import store from '@console/internal/redux';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { Resources } from '../../import/import-types';
 import ContainerField from '../ContainerField';
 import ImagesSection from '../images/ImagesSection';
@@ -24,13 +23,9 @@ beforeAll(() => {
 });
 
 const renderImagesSection = (resourceType = Resources.OpenShift) =>
-  render(
+  renderWithProviders(
     <MockForm handleSubmit={handleSubmit}>
-      {() => (
-        <Provider store={store}>
-          <ImagesSection resourceType={resourceType} />
-        </Provider>
-      )}
+      {() => <ImagesSection resourceType={resourceType} />}
     </MockForm>,
   );
 
@@ -92,11 +87,7 @@ describe('ImagesSection', () => {
     const user = userEvent.setup();
     view.rerender(
       <MockForm handleSubmit={handleSubmit}>
-        {() => (
-          <Provider store={store}>
-            <ImagesSection resourceType={Resources.Kubernetes} />
-          </Provider>
-        )}
+        {() => <ImagesSection resourceType={Resources.Kubernetes} />}
       </MockForm>,
     );
 

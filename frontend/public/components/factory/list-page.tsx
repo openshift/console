@@ -111,9 +111,9 @@ export const ListPageWrapper: FC<ListPageWrapperProps> = (props) => {
       return undefined;
     }
     return memoizedIds.reduce((acc, id) => {
-      const idFilters = state.k8s.getIn([id, 'filters']);
+      const idFilters = state.k8s[id]?.filters;
       if (idFilters) {
-        idFilters.forEach((value, key) => {
+        Object.entries(idFilters).forEach(([key, value]) => {
           acc[key] = value;
         });
       }
@@ -604,10 +604,11 @@ export const MultiListPage: FC<MultiListPageProps> = (props) => {
 
   const loadError = useMemo(
     () =>
-      Object.values(watchedResources).find(
-        (r) => r.loadError && !(r.loadError instanceof NoModelError),
-      )?.loadError,
-    [watchedResources],
+      Object.entries(watchedResources).find(
+        ([key, r]) =>
+          r.loadError && !(r.loadError instanceof NoModelError) && !watchResources[key]?.optional,
+      )?.[1]?.loadError,
+    [watchedResources, watchResources],
   );
 
   const reduxIDs = useMemo(

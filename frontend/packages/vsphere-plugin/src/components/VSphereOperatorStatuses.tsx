@@ -68,7 +68,6 @@ const useOperatorHealth = (name: string): OperatorHealthType => {
   }
 
   if (error) {
-    // eslint-disable-next-line no-console
     console.error(`Failed to load operator "${name}": `, error);
     return {
       message: t('Error'),

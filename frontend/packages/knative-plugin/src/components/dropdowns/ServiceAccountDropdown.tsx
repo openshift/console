@@ -2,30 +2,21 @@ import type { FC } from 'react';
 import { useMemo } from 'react';
 import * as fuzzy from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ServiceAccountModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { getActiveNamespace } from '@console/internal/reducers/ui';
-import type { RootState } from '@console/internal/redux';
 import type { ResourceDropdownItems } from '@console/shared/src/components/dropdown/ResourceDropdown';
 import { ResourceDropdownField } from '@console/shared/src/components/formik-fields/ResourceDropdownField';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 
 interface ServiceAccountDropdownProps {
   name: string;
   onLoad?: (items: ResourceDropdownItems) => void;
 }
 
-interface StateProps {
-  namespace: string;
-}
-
-const ServiceAccountDropdown: FC<ServiceAccountDropdownProps & StateProps> = ({
-  name,
-  onLoad,
-  namespace,
-}) => {
+const ServiceAccountDropdown: FC<ServiceAccountDropdownProps> = ({ name, onLoad }) => {
   const { t } = useTranslation('knative-plugin');
+  const [namespace] = useActiveNamespace();
   const autocompleteFilter = (strText, item): boolean => fuzzy(strText, item?.props?.name);
 
   const [saData, saLoaded, saLoadError] = useK8sWatchResource<K8sResourceKind[]>({
@@ -63,10 +54,4 @@ const ServiceAccountDropdown: FC<ServiceAccountDropdownProps & StateProps> = ({
   );
 };
 
-const mapStateToProps = (state: RootState): StateProps => ({
-  namespace: getActiveNamespace(state),
-});
-
-export default connect<StateProps, null, ServiceAccountDropdownProps>(mapStateToProps)(
-  ServiceAccountDropdown,
-);
+export default ServiceAccountDropdown;

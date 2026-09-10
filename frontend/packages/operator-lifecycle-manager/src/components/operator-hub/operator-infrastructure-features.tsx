@@ -19,7 +19,6 @@ export const OperatorInfrastructureFeatures: FC<OperatorInfrastructureFeaturesPr
     clusterIsAzureWIF,
     clusterIsGCPWIF,
     onError: (error) =>
-      // eslint-disable-next-line no-console
       console.warn(
         `Error parsing infrastructure features from PackageManifest "${packageManifest.metadata.name}":`,
         error,

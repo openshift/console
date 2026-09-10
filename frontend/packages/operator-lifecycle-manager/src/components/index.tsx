@@ -121,7 +121,6 @@ export const parseALMExamples = (
     }
     return JSON.parse(csv?.metadata?.annotations?.['alm-examples'] ?? '[]');
   } catch (e) {
-    // eslint-disable-next-line no-console
     console.warn('Unable to parse ALM expamples\n', e);
     return [];
   }

@@ -242,7 +242,7 @@ const SecretsPage: FC<SecretsPageProps> = (props) => {
     },
     {
       id: SecretFilterValues.sa,
-      title: t('Service Account Token'),
+      title: t('Service account token'),
     },
     {
       id: SecretFilterValues.opaque,

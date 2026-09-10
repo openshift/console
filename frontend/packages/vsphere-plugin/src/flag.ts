@@ -24,7 +24,6 @@ export const useVSphereFlagHandler = (setFeatureFlag: SetFeatureFlag) => {
           return;
         }
       } catch (e) {
-        // eslint-disable-next-line no-console
         console.error('Error when reading infrastructure CR: ', e);
       }
 

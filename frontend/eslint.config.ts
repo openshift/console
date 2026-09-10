@@ -141,7 +141,6 @@ const config = defineConfig([
       },
     },
     rules: {
-      'no-console': 'off',
       '@typescript-eslint/no-namespace': 'off',
       'no-redeclare': 'off',
       'promise/catch-or-return': 'off',
@@ -167,10 +166,6 @@ const config = defineConfig([
     files: SDK_NODE_DIRS.map((dir) => `${dir}/**/*.{js,jsx,ts,tsx,json}`),
     extends: compat.extends('plugin:console/node-typescript-prettier'),
   },
-  {
-    files: ['packages/console-dynamic-plugin-sdk/scripts/**/*.ts'],
-    rules: { 'no-console': 'off' },
-  },
 
   // ------------------------------------------------
   // Scope: eslint-plugin-console (base + node + json + prettier)
@@ -192,7 +187,6 @@ const config = defineConfig([
     files: ['i18n-scripts/**/*.{js,jsx,ts,tsx,json}'],
     extends: compat.extends('plugin:console/node-typescript-prettier'),
     rules: {
-      'no-console': 'off',
       'n/no-unsupported-features/node-builtins': 'off',
     },
   },
@@ -203,7 +197,10 @@ const config = defineConfig([
   {
     files: ['e2e/**/*.{js,jsx,ts,tsx,json}'],
     ignores: ['e2e/**/testData/**'],
-    extends: compat.extends('plugin:console/playwright'),
+    extends: compat.extends(
+      'plugin:console/prettier',
+      'plugin:console/playwright'
+    ),
     languageOptions: {
       parser: tsParser,
       parserOptions: {

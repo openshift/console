@@ -27,8 +27,7 @@ test.describe('Add Secret to Workloads', () => {
             containers: [
               {
                 name: 'httpd',
-                image:
-                  'image-registry.openshift-image-registry.svc:5000/openshift/httpd:latest',
+                image: 'image-registry.openshift-image-registry.svc:5000/openshift/httpd:latest',
               },
             ],
           },

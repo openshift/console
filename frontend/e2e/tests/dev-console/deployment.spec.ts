@@ -16,7 +16,11 @@ test.describe('Deployment form view', { tag: ['@dev-console', '@smoke'] }, () =>
   });
 
   for (const strategyName of strategies) {
-    test(`creates deployment with ${strategyName} strategy`, async ({ page, k8sClient, cleanup }) => {
+    test(`creates deployment with ${strategyName} strategy`, async ({
+      page,
+      k8sClient,
+      cleanup,
+    }) => {
       const ns = `aut-deploy-${strategyName.replace(/\s+/g, '').toLowerCase()}-${Date.now()}`;
       const deploymentName = 'test-deploy';
       const deploymentPage = new DeploymentPage(page);

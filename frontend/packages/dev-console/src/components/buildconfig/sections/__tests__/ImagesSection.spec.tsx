@@ -1,13 +1,12 @@
 import type { FC, ReactNode } from 'react';
 import { FormGroup } from '@patternfly/react-core';
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { FormikConfig } from 'formik';
 import { Formik } from 'formik';
 import * as _ from 'lodash';
-import { Provider } from 'react-redux';
-import store from '@console/internal/redux';
 import { DropdownField } from '@console/shared/src/components/formik-fields/DropdownField';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { BuildStrategyType } from '../../types';
 import type { ImagesSectionFormData } from '../ImagesSection';
 import ImagesSection from '../ImagesSection';
@@ -44,16 +43,14 @@ interface WrapperProps extends FormikConfig<ImagesSectionFormData> {
 }
 
 const Wrapper: FC<WrapperProps> = ({ children, ...formikConfig }) => (
-  <Provider store={store}>
-    <Formik {...formikConfig}>
-      {(formikProps) => (
-        <form onSubmit={formikProps.handleSubmit}>
-          {children}
-          <input type="submit" value="Submit" />
-        </form>
-      )}
-    </Formik>
-  </Provider>
+  <Formik {...formikConfig}>
+    {(formikProps) => (
+      <form onSubmit={formikProps.handleSubmit}>
+        {children}
+        <input type="submit" value="Submit" />
+      </form>
+    )}
+  </Formik>
 );
 
 const emptyInitialValues: ImagesSectionFormData = {
@@ -129,7 +126,7 @@ describe('ImagesSection', () => {
   it('should render form without subforms', () => {
     const onSubmit = jest.fn();
 
-    render(
+    renderWithProviders(
       <Wrapper initialValues={emptyInitialValues} onSubmit={onSubmit}>
         <ImagesSection />
       </Wrapper>,
@@ -147,7 +144,7 @@ describe('ImagesSection', () => {
     const user = userEvent.setup();
     const onSubmit = jest.fn();
 
-    render(
+    renderWithProviders(
       <Wrapper initialValues={emptyInitialValues} onSubmit={onSubmit}>
         <ImagesSection />
       </Wrapper>,
@@ -178,7 +175,7 @@ describe('ImagesSection', () => {
     initialValues.formData.images.strategyType = BuildStrategyType.Docker;
     const onSubmit = jest.fn();
 
-    render(
+    renderWithProviders(
       <Wrapper initialValues={initialValues} onSubmit={onSubmit}>
         <ImagesSection />
       </Wrapper>,
@@ -207,7 +204,7 @@ describe('ImagesSection', () => {
     const user = userEvent.setup();
     const onSubmit = jest.fn();
 
-    render(
+    renderWithProviders(
       <Wrapper initialValues={emptyInitialValues} onSubmit={onSubmit}>
         <ImagesSection />
       </Wrapper>,
@@ -236,7 +233,7 @@ describe('ImagesSection', () => {
     const user = userEvent.setup();
     const onSubmit = jest.fn();
 
-    render(
+    renderWithProviders(
       <Wrapper initialValues={emptyInitialValues} onSubmit={onSubmit}>
         <ImagesSection />
       </Wrapper>,
@@ -256,7 +253,7 @@ describe('ImagesSection', () => {
     const user = userEvent.setup();
     const onSubmit = jest.fn();
 
-    render(
+    renderWithProviders(
       <Wrapper initialValues={emptyInitialValues} onSubmit={onSubmit}>
         <ImagesSection />
       </Wrapper>,
@@ -274,7 +271,7 @@ describe('ImagesSection', () => {
     const user = userEvent.setup();
     const onSubmit = jest.fn();
 
-    render(
+    renderWithProviders(
       <Wrapper initialValues={emptyInitialValues} onSubmit={onSubmit}>
         <ImagesSection />
       </Wrapper>,
@@ -292,7 +289,7 @@ describe('ImagesSection', () => {
     const user = userEvent.setup();
     const onSubmit = jest.fn();
 
-    render(
+    renderWithProviders(
       <Wrapper initialValues={emptyInitialValues} onSubmit={onSubmit}>
         <ImagesSection />
       </Wrapper>,
@@ -366,7 +363,7 @@ describe('ImagesSection', () => {
     const user = userEvent.setup();
     const onSubmit = jest.fn();
 
-    render(
+    renderWithProviders(
       <Wrapper initialValues={emptyInitialValues} onSubmit={onSubmit}>
         <ImagesSection />
       </Wrapper>,
@@ -409,7 +406,7 @@ describe('ImagesSection', () => {
     const user = userEvent.setup();
     const onSubmit = jest.fn();
 
-    render(
+    renderWithProviders(
       <Wrapper initialValues={emptyInitialValues} onSubmit={onSubmit}>
         <ImagesSection />
       </Wrapper>,

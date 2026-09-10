@@ -89,9 +89,7 @@ export class YamlEditorPage extends BasePage {
   }
 
   async closeSettingsModal(): Promise<void> {
-    await this.robustClick(
-      this.getSettingsModal().locator('button[aria-label="Close"]'),
-    );
+    await this.robustClick(this.getSettingsModal().locator('button[aria-label="Close"]'));
   }
 
   async selectTheme(themeName: 'Dark' | 'Light' | 'Use theme setting'): Promise<void> {
@@ -99,7 +97,7 @@ export class YamlEditorPage extends BasePage {
     await this.robustClick(
       themeSection.locator('button[aria-labelledby="ConfigModalItem-color-theme-title"]'),
     );
-    await this.page.getByText(themeName, { exact: true }).click();
+    await this.page.getByRole('option', { name: new RegExp(`^${themeName}\\b`) }).click();
   }
 
   async setFontSize(size: number): Promise<void> {
@@ -118,5 +116,21 @@ export class YamlEditorPage extends BasePage {
       hasText: 'View details',
     });
     await this.robustClick(viewDetailsButton);
+  }
+
+  async getEditorContent(): Promise<string> {
+    return this.page.evaluate(() => {
+      // Check if Monaco is initialized before accessing editor API
+      if (!(window as any).monaco?.editor?.getModels) {
+        return '';
+      }
+      const models = (window as any).monaco.editor.getModels();
+      return models[0]?.getValue() || '';
+    });
+  }
+
+  async navigateToYamlUrl(url: string): Promise<void> {
+    await this.goTo(url);
+    await this.waitForEditorReady();
   }
 }

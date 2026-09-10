@@ -1,6 +1,4 @@
-import type { Map as ImmutableMap } from 'immutable';
-
-export type FeatureState = ImmutableMap<string, boolean>;
+export type FeatureState = Record<string, boolean>;
 
 export type FeatureSubStore = {
   FLAGS: FeatureState;

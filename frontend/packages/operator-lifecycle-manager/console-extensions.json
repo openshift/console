@@ -440,6 +440,9 @@
           }
         }
       ]
+    },
+    "flags": {
+      "disallowed": ["OLMV1_ENABLED"]
     }
   },
   {

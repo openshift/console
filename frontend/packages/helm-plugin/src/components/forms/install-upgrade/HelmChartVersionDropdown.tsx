@@ -200,7 +200,7 @@ const HelmChartVersionDropdown: FC<HelmChartVersionDropdownProps> = ({
           setInitialYamlData(mergedYaml);
           setInitialFormData(mergedValues);
         } catch (err) {
-          console.error('Failed to serialize merged values:', err); // eslint-disable-line no-console
+          console.error('Failed to serialize merged values:', err);
           // Fall back to using the merged values object without YAML serialization
           setFieldValue('editorType', nextEditorType);
           setFieldValue('formSchema', valuesSchema);
@@ -213,7 +213,7 @@ const HelmChartVersionDropdown: FC<HelmChartVersionDropdownProps> = ({
         }
       })
       .catch((err) => {
-        console.error(`Could not fetch helm chart with chart URL ${chartURL}:`, err); // eslint-disable-line no-console
+        console.error(`Could not fetch helm chart with chart URL ${chartURL}:`, err);
       });
   };
 

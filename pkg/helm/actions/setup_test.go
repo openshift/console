@@ -98,20 +98,16 @@ func startTests(m *testing.M) (exitCode int) {
 
 	}()
 	if err := setupTestWithTls(); err != nil {
-		fmt.Fprintf(os.Stderr, "SKIP: Helm test infrastructure unavailable (TLS setup): %v\n", err)
-		return 0
+		panic(err)
 	}
 	if err := setupTestWithoutTls(); err != nil {
-		fmt.Fprintf(os.Stderr, "SKIP: Helm test infrastructure unavailable (non-TLS setup): %v\n", err)
-		return 0
+		panic(err)
 	}
 	if err := setupTestBasicAuth(); err != nil {
-		fmt.Fprintf(os.Stderr, "SKIP: Helm test infrastructure unavailable (basic auth setup): %v\n", err)
-		return 0
+		panic(err)
 	}
 	if err := setupTestOCIBasicAuth(); err != nil {
-		fmt.Fprintf(os.Stderr, "SKIP: Helm test infrastructure unavailable (OCI basic auth setup): %v\n", err)
-		return 0
+		panic(err)
 	}
 	return m.Run()
 }
@@ -262,8 +258,8 @@ func waitForTCP(addr string, timeout time.Duration, cmd *exec.Cmd, logFiles ...s
 			fmt.Fprintf(os.Stderr, "=== lsof -nP -iTCP -sTCP:LISTEN ===\n%s\n", string(out))
 		}
 	}
-	// Check chartmuseum PID file; use kill -0 (works on macOS; /proc is Linux-only)
-	for _, pidFile := range []string{"./chartmuseum-tls.pid"} {
+	// Check chartmuseum PID files; use kill -0 (works on macOS; /proc is Linux-only)
+	for _, pidFile := range []string{"./chartmuseum-tls.pid", "./chartmuseum-no-tls.pid", "./chartmuseum-basicauth.pid"} {
 		if data, err := os.ReadFile(pidFile); err == nil {
 			pidStr := strings.TrimSpace(string(data))
 			fmt.Fprintf(os.Stderr, "=== %s: %s ===\n", pidFile, pidStr)
