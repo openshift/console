@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useRef, useState, useCallback, useEffect } from 'react';
+import { useRef, useState, useCallback, useEffect, useMemo } from 'react';
 import { Alert } from '@patternfly/react-core';
 import { Base64 } from 'js-base64';
 import { throttle } from 'lodash';
@@ -40,17 +40,17 @@ const Logs: FC<LogsProps> = ({
   const blockContentRef = useRef<string>('');
   onCompleteRef.current = onComplete;
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const addContentAndScroll = useCallback(
-    throttle(() => {
-      if (contentRef.current) {
-        contentRef.current.innerText += blockContentRef.current;
-      }
-      if (scrollToRef.current) {
-        scrollToRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
-      }
-      blockContentRef.current = '';
-    }, 1000),
+  const addContentAndScroll = useMemo(
+    () =>
+      throttle(() => {
+        if (contentRef.current) {
+          contentRef.current.innerText += blockContentRef.current;
+        }
+        if (scrollToRef.current) {
+          scrollToRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        }
+        blockContentRef.current = '';
+      }, 1000),
     [],
   );
 
