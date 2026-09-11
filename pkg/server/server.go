@@ -350,7 +350,11 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	schema := graphql.MustParseSchema(string(graphQLSchema), &rootResolver, opts...)
 	handler := graphqlws.NewHandler()
 	handler.InitPayload = resolver.InitPayload
-	graphQLHandler := handler.NewHandlerFunc(schema, gql.NewHttpHandler(schema))
+	// NOTE: graph-gophers/graphql-go v1.5.0 only disables introspection on the
+	// HTTP (Exec) path, not on the websocket (Subscribe) path used by graphql-ws.
+	// Wrap the schema so introspection queries are also rejected over the
+	// websocket. See OCPBUGS-113759. (Fixed upstream in v1.6.0, used by 4.19+.)
+	graphQLHandler := handler.NewHandlerFunc(gql.NewIntrospectionBlocker(schema), gql.NewHttpHandler(schema))
 	handle("/api/graphql", authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(context.Background(), resolver.HeadersKey, map[string]string{
 			"Authorization": fmt.Sprintf("Bearer %s", user.Token),
