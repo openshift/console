@@ -54,8 +54,8 @@ const provisionerAccessModeMapping: ProvisionerAccessModeMapping = Object.freeze
     Block: ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany', 'ReadWriteOncePod'],
   },
   'kubernetes.io/azure-disk': {
-    Filesystem: ['ReadWriteOnce'],
-    Block: ['ReadWriteOnce'],
+    Filesystem: ['ReadWriteOnce', 'ReadWriteOncePod'],
+    Block: ['ReadWriteOnce', 'ReadWriteOncePod'],
   },
   'kubernetes.io/quobyte': {
     Filesystem: ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'],
@@ -87,12 +87,12 @@ const provisionerAccessModeMapping: ProvisionerAccessModeMapping = Object.freeze
     Block: ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'],
   },
   'ebs.csi.aws.com': {
-    Filesystem: ['ReadWriteOnce'],
-    Block: ['ReadWriteOnce'],
+    Filesystem: ['ReadWriteOnce', 'ReadWriteOncePod'],
+    Block: ['ReadWriteOnce', 'ReadWriteOncePod'],
   },
   'block.csi.ibm.com': {
-    Filesystem: ['ReadWriteOnce', 'ReadWriteMany'],
-    Block: ['ReadWriteOnce', 'ReadWriteMany'],
+    Filesystem: ['ReadWriteOnce', 'ReadWriteMany', 'ReadWriteOncePod'],
+    Block: ['ReadWriteOnce', 'ReadWriteMany', 'ReadWriteOncePod'],
   },
   'csi.ovirt.org': {
     Filesystem: ['ReadWriteOnce'],
