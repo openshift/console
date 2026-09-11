@@ -5,6 +5,7 @@ import { TopologyPage } from '../../pages/topology-page';
 /**
  * Migrated from:
  *   frontend/packages/dev-console/integration-tests/features/addFlow/create-from-container-image.feature
+ *   frontend/packages/dev-console/integration-tests/features/e2e/add-flow-ci.feature
  *
  * All automatable scenarios are included.
  */
@@ -16,10 +17,12 @@ test.describe(
     const ns = `aut-addflow-containerimg-${Date.now()}`;
     let addPage: AddPage;
     let deployPage: DeployImagePage;
+    let topologyPage: TopologyPage;
 
     test.beforeEach(async ({ page, k8sClient, cleanup }) => {
       addPage = new AddPage(page);
       deployPage = new DeployImagePage(page);
+      topologyPage = new TopologyPage(page);
       await k8sClient.createNamespace(ns);
       cleanup.trackNamespace(ns);
       await addPage.ensureDevPerspectiveAndNavigate(ns, k8sClient);
@@ -41,6 +44,36 @@ test.describe(
         await expect(deployPage.getNameInput()).toHaveValue('hello-openshift');
       });
     });
+
+    for (const scenario of [
+      {
+        imageName: 'ghcr.io/logonoff/fortune-cowsay-motd:latest',
+        customIcon: 'https://i.imgur.com/cxiObse.jpeg',
+        workloadName: 'fortune-cowsay-motd',
+      },
+    ]) {
+      test(`deploy image with custom icon [ODC-7803]`, async () => {
+        test.slow();
+
+        await test.step('Configure the external image and custom icon', async () => {
+          await addPage.clickContainerImage();
+          await deployPage.enterExternalRegistryImage(scenario.imageName);
+          await deployPage.selectCustomIcon(scenario.customIcon);
+          await deployPage.enterName(scenario.workloadName);
+          await deployPage.selectResourceType('Deployment');
+        });
+
+        await test.step('Create the deployment', async () => {
+          await deployPage.clickCreate();
+        });
+
+        await test.step('Verify the custom icon in topology', async () => {
+          await topologyPage.verifyWorkloadVisible(scenario.workloadName);
+          await expect(topologyPage.getHighlightedNode().first()).toBeAttached();
+          await topologyPage.verifyWorkloadIcon(scenario.workloadName, scenario.customIcon);
+        });
+      });
+    }
 
     test('cancel operation on Container image form [A-02-TC04]', async () => {
       await test.step('Navigate to Deploy Image page', async () => {
