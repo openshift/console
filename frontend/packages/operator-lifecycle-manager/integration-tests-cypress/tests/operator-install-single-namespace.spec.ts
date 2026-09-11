@@ -18,7 +18,7 @@ const testOperand: TestOperandProps = {
   exampleName: `backend1-sample`,
 };
 
-xdescribe(`Installing "${testOperator.name}" operator in test namespace`, () => {
+describe(`Installing "${testOperator.name}" operator in test namespace`, () => {
   before(() => {
     cy.login();
     cy.visit('/');

@@ -53,11 +53,13 @@ export const operator = {
       cy.byTestID('All namespaces on the cluster-radio-input').should('be.checked');
     }
     if (!useOperatorRecommendedNamespace) {
-      cy.log(`verify namespace dropdown shows the "${installToNamespace}" namespace`);
+      cy.log(`select "${installToNamespace}" namespace from dropdown`);
+      cy.byTestID('dropdown-selectbox').click();
+      cy.contains('[data-test="dropdown-menu-item-link"]', installToNamespace).click();
       cy.byTestID('dropdown-selectbox').should('contain', installToNamespace);
     }
     // Install
-    cy.byTestID('install-operator').click();
+    cy.byTestID('install-operator').should('not.be.disabled').click();
     cy.log('verify Operator began installation');
     cy.byTestID('view-installed-operators-btn').should(
       'contain',
