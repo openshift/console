@@ -111,6 +111,16 @@ func (p *PluginsHandler) HandleI18nResources(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
+	if !isSinglePathSegment(lang) {
+		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: "invalid 'lng' query parameter: value must be a single path segment"})
+		return
+	}
+
+	if !isSinglePathSegment(namespace) {
+		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: "invalid 'ns' query parameter: value must be a single path segment"})
+		return
+	}
+
 	if !strings.HasPrefix(namespace, "plugin__") {
 		http.ServeFile(w, r, path.Join(p.PublicDir, "locales", lang, fmt.Sprintf("%s.json", namespace)))
 		return
@@ -225,4 +235,9 @@ func parsePluginNameAndAssetPath(urlPath string) (string, string) {
 		return nameAndAssetPath[0], ""
 	}
 	return nameAndAssetPath[0], nameAndAssetPath[1]
+}
+
+// Restrict user-controlled locale identifiers to a single path segment.
+func isSinglePathSegment(value string) bool {
+	return value != "." && value != ".." && path.Clean(value) == value && !strings.ContainsAny(value, `/\\`)
 }
