@@ -198,6 +198,7 @@
     "node-polyfill-webpack-plugin": "~4.0.0",
     "prettier": "^3.9.6",
     "puppeteer-core": "^23.9.0",
+    "react-compiler-runtime": "^1.0.0",
     "react-refresh": "^0.18.0",
     "read-pkg": "5.x",
     "resolve-url-loader": "^5.0.0",
