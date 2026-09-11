@@ -27,6 +27,12 @@ export async function performLogin(
   }
 
   const userMenu = page.getByTestId('user-dropdown-toggle');
+
+  if (process.env.BRIDGE_AUTH_TYPE === 'oidc') {
+    await performKeycloakLogin(page, userMenu, username, password);
+    return;
+  }
+
   const loginForm = page.locator('[data-test-id="login"]').or(page.locator('#inputUsername'));
 
   // The context may already be authenticated (e.g. a reused storageState). In that
@@ -53,11 +59,44 @@ export async function performLogin(
 }
 
 /**
+ * Drive a Keycloak login form. The console redirects to the Keycloak realm login
+ * page when external OIDC is configured. No IDP selector is shown — the form
+ * renders directly with username/password fields.
+ */
+async function performKeycloakLogin(
+  page: Page,
+  userMenu: ReturnType<Page['getByTestId']>,
+  username: string,
+  password: string,
+): Promise<void> {
+  // Keycloak form selectors — use .or() for robustness across themes
+  const usernameField = page.locator('#username').or(page.locator('input[name="username"]'));
+  const passwordField = page.locator('#password').or(page.locator('input[name="password"]'));
+  const submitButton = page.locator('#kc-login').or(page.locator('input[type="submit"]'));
+
+  // Wait for either the Keycloak login form or an already-authenticated session
+  await expect(userMenu.or(usernameField).first()).toBeVisible({ timeout: 60_000 });
+  if (await userMenu.isVisible().catch(() => false)) {
+    return;
+  }
+
+  await expect(usernameField).toBeVisible({ timeout: 30_000 });
+  await usernameField.fill(username);
+  await passwordField.fill(password);
+  await submitButton.click();
+
+  await expect(userMenu).toBeVisible({ timeout: 60_000 });
+}
+
+/**
  * Log in using the credentials configured via environment variables for the
  * given persona. Admin uses the kubeadmin / kube:admin identity provider;
- * developer uses the htpasswd identity provider. Used both by the auth setup
- * projects and as a re-authentication fallback for specs whose shared
- * storageState session has expired or been invalidated mid-run.
+ * developer uses the htpasswd identity provider. When BRIDGE_AUTH_TYPE=oidc
+ * (external OIDC / Keycloak), admin and developer credentials are read from
+ * the same env vars but the Keycloak login form is driven instead.
+ * Used both by the auth setup projects and as a re-authentication fallback
+ * for specs whose shared storageState session has expired or been invalidated
+ * mid-run.
  */
 export async function loginFromEnv(
   page: Page,
@@ -72,6 +111,7 @@ export async function loginFromEnv(
         'Developer credentials (BRIDGE_HTPASSWD_USERNAME/PASSWORD) are not configured',
       );
     }
+    // Under OIDC the IDP selector is not shown; performLogin branches internally
     const idpName = process.env.BRIDGE_HTPASSWD_IDP || username;
     await performLogin(page, baseURL, username, password, idpName);
     return;
@@ -79,6 +119,7 @@ export async function loginFromEnv(
 
   const username = process.env.OPENSHIFT_USERNAME || 'kubeadmin';
   const password = process.env.BRIDGE_KUBEADMIN_PASSWORD || '';
+  // Under OIDC, performLogin drives the Keycloak form; idpName is unused
   await performLogin(page, baseURL, username, password, 'kube:admin');
 }
 
