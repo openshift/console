@@ -370,6 +370,15 @@ export class DeployImagePage extends BasePage {
     await this.robustClick(option);
   }
 
+  async selectCustomIcon(iconUrl: string): Promise<void> {
+    await this.robustClick(this.page.getByTestId('add-custom-icon'));
+    const urlInput = this.page.getByTestId('import-custom-icon-url-input');
+    await expect(urlInput).toBeVisible();
+    await expect(urlInput).toBeEnabled();
+    await urlInput.fill(iconUrl);
+    await this.robustClick(this.page.getByTestId('import-custom-icon-confirm'));
+  }
+
   async selectApplication(appName: string): Promise<void> {
     const dropdown = this.page.getByTestId('application-form-app-dropdown');
     await this.robustClick(dropdown);
