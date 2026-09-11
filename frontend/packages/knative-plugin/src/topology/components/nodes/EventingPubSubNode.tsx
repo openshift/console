@@ -59,7 +59,7 @@ const EventingPubSubNode: FC<EventingPubSubNodeProps> = ({
     <Tooltip
       triggerRef={ref}
       content={t('Move sink to {{resourceObjKind}}', {
-        resourceObjKind: resourceObj.kind,
+        resourceObjKind: resourceObj?.kind,
       })}
       trigger="manual"
       isVisible={dropTarget && canDrop}

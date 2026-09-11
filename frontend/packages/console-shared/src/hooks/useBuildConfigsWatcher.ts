@@ -10,27 +10,33 @@ export type BuildConfigData = {
   buildConfigs: BuildConfigOverviewItem[];
 };
 
-export const useBuildConfigsWatcher = (resource: K8sResourceKind): BuildConfigData => {
-  const { namespace } = resource.metadata;
+export const useBuildConfigsWatcher = (resource: K8sResourceKind | null): BuildConfigData => {
+  const namespace = resource?.metadata?.namespace;
   const watchedResources = useMemo(
-    () => ({
-      buildConfigs: {
-        isList: true,
-        kind: 'BuildConfig',
-        namespace,
-      },
-      builds: {
-        isList: true,
-        kind: 'Build',
-        namespace,
-      },
-    }),
+    () =>
+      namespace
+        ? {
+            buildConfigs: {
+              isList: true,
+              kind: 'BuildConfig',
+              namespace,
+            },
+            builds: {
+              isList: true,
+              kind: 'Build',
+              namespace,
+            },
+          }
+        : {},
     [namespace],
   );
 
   const resources = useK8sWatchResources(watchedResources);
 
   const result = useMemo(() => {
+    if (!resource) {
+      return { loaded: true, loadError: null, buildConfigs: null };
+    }
     const resourceWithLoadError = Object.values(resources).find((r) => r.loadError);
     if (resourceWithLoadError) {
       return { loaded: false, loadError: resourceWithLoadError.loadError, buildConfigs: null };
