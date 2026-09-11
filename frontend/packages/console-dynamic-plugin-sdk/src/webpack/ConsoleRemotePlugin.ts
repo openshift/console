@@ -25,9 +25,9 @@ import { ValidationResult } from '../validation/ValidationResult';
 import type { DynamicModulePackageSpecs } from './DynamicModuleImportPlugin';
 import { DynamicModuleImportPlugin, resolveDynamicModuleMaps } from './DynamicModuleImportPlugin';
 
-const loadPluginPackageJSON = () => readPkg.sync({ normalize: false }) as ConsolePluginPackageJSON;
-
-// Resolve from cwd, not this file's real path, so symlinked SDK installations work
+// Resolve from process.cwd(), not this file's real path, so symlinked SDK installations work.
+// It should not be necessary to customize the process.cwd() resolution base path since module
+// bundlers typically use a hoisted top-level node_modules hierarchy.
 const loadVendorPackageJSON = (moduleName: string) =>
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   require(
@@ -216,6 +216,15 @@ export const dynamicModuleImportTransformFilter = (moduleRequest: string) => {
 
 export type ConsoleRemotePluginOptions = Partial<{
   /**
+   * Base directory for resolving relative paths when processing plugin assets.
+   *
+   * Must be an absolute path.
+   *
+   * If not specified, `process.cwd()` will be used as the base directory.
+   */
+  baseDir: string;
+
+  /**
    * Console dynamic plugin metadata.
    *
    * If not specified, plugin metadata will be parsed from `consolePlugin` object within
@@ -316,7 +325,7 @@ export type ConsoleRemotePluginOptions = Partial<{
      *
      * If not specified, the list will contain a single entry:
      * ```ts
-     * path.resolve(process.cwd(), 'node_modules')
+     * path.resolve(baseDir, 'node_modules')
      * ```
      */
     modulePaths: string[];
@@ -352,25 +361,28 @@ export type ConsoleRemotePluginOptions = Partial<{
 /**
  * Generates Console dynamic plugin remote container and related assets.
  *
- * Refer to `console-dynamic-plugin-sdk/src/shared-modules.ts` for details on Console provided
- * shared modules and their configuration.
- *
- * @see {@link sharedPluginModules}
- * @see {@link getSharedModuleMetadata}
+ * Refer to {@link sharedPluginModules} for details on Console provided shared modules and their configuration.
  */
 export class ConsoleRemotePlugin implements WebpackPluginInstance {
   private readonly adaptedOptions: Required<ConsoleRemotePluginOptions>;
 
-  private readonly baseDir = process.cwd();
-
-  private readonly pkg = loadPluginPackageJSON();
+  private readonly pkg: ConsolePluginPackageJSON;
 
   private readonly dynamicModuleMaps: Record<string, DynamicModuleMap>;
 
   constructor(options: ConsoleRemotePluginOptions = {}) {
+    const baseDir = options.baseDir ?? process.cwd();
+
+    if (!path.isAbsolute(baseDir)) {
+      throw new Error(`baseDir must be an absolute path: ${baseDir}`);
+    }
+
+    this.pkg = readPkg.sync({ cwd: baseDir, normalize: false });
+
     this.adaptedOptions = {
+      baseDir,
       pluginMetadata: options.pluginMetadata ?? this.pkg.consolePlugin,
-      extensions: options.extensions ?? parseJSONC(path.resolve(this.baseDir, extensionsFile)),
+      extensions: options.extensions ?? parseJSONC(path.resolve(baseDir, extensionsFile)),
       validateExtensionSchema: options.validateExtensionSchema ?? true,
       validateExtensionIntegrity: options.validateExtensionIntegrity ?? true,
       validateSharedModules: options.validateSharedModules ?? true,
@@ -401,7 +413,7 @@ export class ConsoleRemotePlugin implements WebpackPluginInstance {
     }
 
     const resolvedModulePaths = this.adaptedOptions.sharedDynamicModuleSettings.modulePaths ?? [
-      path.resolve(process.cwd(), 'node_modules'),
+      path.resolve(baseDir, 'node_modules'),
     ];
 
     this.dynamicModuleMaps = resolveDynamicModuleMaps(
@@ -412,8 +424,13 @@ export class ConsoleRemotePlugin implements WebpackPluginInstance {
   }
 
   apply(compiler: Compiler) {
-    const { pluginMetadata, extensions, validateExtensionIntegrity, sharedDynamicModuleSettings } =
-      this.adaptedOptions;
+    const {
+      baseDir,
+      pluginMetadata,
+      extensions,
+      validateExtensionIntegrity,
+      sharedDynamicModuleSettings,
+    } = this.adaptedOptions;
 
     const {
       name,
@@ -442,7 +459,7 @@ export class ConsoleRemotePlugin implements WebpackPluginInstance {
     compiler.options.resolve.alias = compiler.options.resolve.alias ?? {};
 
     // Prevent PatternFly styles from being included in the compilation
-    getPatternFlyStyles(this.baseDir).forEach((cssFile) => {
+    getPatternFlyStyles(baseDir).forEach((cssFile) => {
       if (Array.isArray(compiler.options.resolve.alias)) {
         compiler.options.resolve.alias.push({ name: cssFile, alias: false });
       } else {
@@ -487,7 +504,7 @@ export class ConsoleRemotePlugin implements WebpackPluginInstance {
           compilation,
           extensions,
           exposedModules ?? {},
-          path.dirname(path.resolve(this.baseDir, extensionsFile)),
+          path.dirname(path.resolve(baseDir, extensionsFile)),
         );
 
         if (result.hasErrors()) {
