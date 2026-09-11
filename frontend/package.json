@@ -81,6 +81,7 @@
     "@patternfly/react-user-feedback": "~6.4.0",
     "@patternfly/react-virtualized-extension": "~6.2.0",
     "@rjsf/core": "^4.2.3",
+    "@segment/analytics-next": "1.84.1",
     "@xterm/addon-fit": "0.10.0",
     "@xterm/xterm": "^5.5.0",
     "ajv": "^6.12.3",

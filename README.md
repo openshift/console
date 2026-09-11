@@ -518,12 +518,14 @@ Console Bridge server.
 ```sh
 # https://github.com/openshift/console-operator/blob/main/manifests/05-telemetry-config.yaml
 API_HOST="console.redhat.com/connections/api/v1"
+CDN_URL="https://console.redhat.com/connections/cdn"
 JS_HOST="console.redhat.com/connections/cdn"
 PUBLIC_API_KEY="..." # Use API key from the link above
 
 # The BRIDGE_TELEMETRY variable contains a comma separated list of Console telemetry options
 export BRIDGE_TELEMETRY=\
 SEGMENT_API_HOST="${API_HOST}",\
+SEGMENT_CDN_URL="${CDN_URL}",\
 SEGMENT_JS_HOST="${JS_HOST}",\
 SEGMENT_API_KEY="${PUBLIC_API_KEY}",\
 DISABLED="false"
