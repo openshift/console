@@ -55,7 +55,7 @@ const PersistentVolumeRow: FC<PersistentVolumeRowProps> = ({ persistentVolumeDat
       ),
     );
     return podsForPVC ? getCurrentPod(podsForPVC) : undefined;
-  }, [persistentVolumeData.vmi, persistentVolumeData.persistentVolumeClaim?.metadata.name, pods]);
+  }, [persistentVolumeData, pods]);
 
   return (
     <tr className="pf-v6-c-table__tr">
