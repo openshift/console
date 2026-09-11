@@ -587,6 +587,7 @@ export const PodList: FC<PodListProps> = ({
         columns={columns}
         columnLayout={columnLayout}
         columnManagementID={columnManagementID}
+        showNamespaceOverride={showNamespaceOverride}
         initialFilters={initialFilters}
         additionalFilterNodes={additionalFilterNodes}
         matchesAdditionalFilters={matchesAdditionalFilters}
