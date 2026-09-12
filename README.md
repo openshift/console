@@ -272,10 +272,10 @@ Launch Cypress test runner:
 ```
 cd frontend
 oc login ...
-yarn run test-cypress-console
+yarn --cwd packages/dev-console/integration-tests run test-cypress
 ```
 
-This will launch the Cypress Test Runner UI in the `console` package, where you can run one or all Cypress tests.
+This will launch the Cypress Test Runner UI for the Dev Console package, where you can run one or all Cypress tests.
 
 **Important:**  when testing with authentication, set `BRIDGE_KUBEADMIN_PASSWORD` environment variable in your shell.
 
@@ -288,16 +288,14 @@ console/frontend > ./integration-tests/test-cypress.sh
 
 Runs Cypress tests in Test Runner or headless mode
 Usage: test-cypress [-p] <package> [-s] <filemask> [-h true]
-  '-p <package>' may be 'console, 'olm' or 'devconsole'
+  '-p <package>' may be 'dev-console' or 'helm'
   '-s <specmask>' is a file mask for spec test files, such as 'tests/monitoring/*'. Used only in headless mode when '-p' is specified.
   '-h true' runs Cypress in headless mode. When omitted, launches Cypress Test Runner
 Examples:
   ./integration-tests/test-cypress.sh                                       // displays this help text
-  ./integration-tests/test-cypress.sh -p console                            // opens Cypress Test Runner for console tests
-  ./integration-tests/test-cypress.sh -p olm                                // opens Cypress Test Runner for OLM tests
+  ./integration-tests/test-cypress.sh -p dev-console                        // opens Cypress Test Runner for Dev Console tests
   ./integration-tests/test-cypress.sh -h true                               // runs all packages in headless mode
-  ./integration-tests/test-cypress.sh -p olm -h true                        // runs OLM tests in headless mode
-  ./integration-tests/test-cypress.sh -p console -s 'tests/crud/*' -h true  // runs console CRUD tests in headless mode
+  ./integration-tests/test-cypress.sh -p dev-console -s 'tests/crud/*' -h true  // runs Dev Console CRUD tests in headless mode
 ```
 
 When running in headless mode, Cypress will test using its integrated Electron browser, but if you want to use Chrome or Firefox instead, set `BRIDGE_E2E_BROWSER_NAME` environment variable in your shell with the value `chrome` or `firefox`.
@@ -314,7 +312,7 @@ in the [openshift/release](https://github.com/openshift/release) repo and were g
 
 CI runs the [test-prow-e2e.sh](test-prow-e2e.sh) script, which runs [frontend/integration-tests/test-cypress.sh](frontend/integration-tests/test-cypress.sh).
 
-`test-cypress.sh` runs all Cypress tests, in all 'packages' (console, olm, and devconsole), in `-- headless` mode via:
+`test-cypress.sh` runs the remaining Cypress tests, in the supported packages, in `-- headless` mode via:
 
 `test-cypress.sh -h true`
 

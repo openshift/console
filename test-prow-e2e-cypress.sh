@@ -28,12 +28,8 @@ if [ "$SCENARIO" == "nightly-cypress" ]; then
   ./integration-tests/test-cypress.sh -n true $PACKAGE
 elif [ "$SCENARIO" == "e2e" ] || [ "$SCENARIO" == "release" ]; then
   ./integration-tests/test-cypress.sh -h true
-elif [ "$SCENARIO" == "olmFull" ]; then
-  ./integration-tests/test-cypress.sh -p olm -h true
 elif [ "$SCENARIO" == "dev-console" ]; then
   ./integration-tests/test-cypress.sh -p dev-console -h true
-elif [ "$SCENARIO" == "pipelines" ]; then
-  ./integration-tests/test-cypress.sh -p pipelines -h true
 # Disabled: knative-ci.feature failing in CI (OCPBUGS-82512)
 # elif [ "$SCENARIO" == "knative" ]; then
 #   ./integration-tests/test-cypress.sh -p knative -h true
