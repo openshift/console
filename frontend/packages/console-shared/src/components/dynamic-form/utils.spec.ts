@@ -1,6 +1,6 @@
 import type { JSONSchema7 } from 'json-schema';
 import { JSONSchemaType } from './types';
-import { hasNoFields, prune } from './utils';
+import { hasNoFields, isSinglePropertyObject, prune } from './utils';
 
 const OBJECT: JSONSchema7 = {
   type: JSONSchemaType.object,
@@ -115,6 +115,67 @@ describe('hasNoFields', () => {
 
   it('Returns false for array schema type with properly defined items', () => {
     expect(hasNoFields(ARRAY)).toBeFalsy();
+  });
+});
+
+describe('isSinglePropertyObject', () => {
+  it('Returns true for an object with maxProperties: 1 and multiple defined properties', () => {
+    const schema: JSONSchema7 = {
+      type: JSONSchemaType.object,
+      maxProperties: 1,
+      properties: {
+        providerA: { type: JSONSchemaType.object, properties: { url: { type: JSONSchemaType.string } } },
+        providerB: { type: JSONSchemaType.object, properties: { host: { type: JSONSchemaType.string } } },
+      },
+    };
+    expect(isSinglePropertyObject(schema)).toBeTruthy();
+  });
+
+  it('Returns false when maxProperties is not 1', () => {
+    const schema: JSONSchema7 = {
+      type: JSONSchemaType.object,
+      maxProperties: 2,
+      properties: {
+        a: { type: JSONSchemaType.string },
+        b: { type: JSONSchemaType.string },
+      },
+    };
+    expect(isSinglePropertyObject(schema)).toBeFalsy();
+  });
+
+  it('Returns false when maxProperties is 1 but only one property is defined', () => {
+    const schema: JSONSchema7 = {
+      type: JSONSchemaType.object,
+      maxProperties: 1,
+      properties: {
+        onlyProp: { type: JSONSchemaType.string },
+      },
+    };
+    expect(isSinglePropertyObject(schema)).toBeFalsy();
+  });
+
+  it('Returns false when maxProperties is absent', () => {
+    const schema: JSONSchema7 = {
+      type: JSONSchemaType.object,
+      properties: {
+        a: { type: JSONSchemaType.string },
+        b: { type: JSONSchemaType.string },
+      },
+    };
+    expect(isSinglePropertyObject(schema)).toBeFalsy();
+  });
+
+  it('Returns false for a non-object schema type', () => {
+    const schema: JSONSchema7 = {
+      type: JSONSchemaType.array,
+      maxProperties: 1,
+    } as JSONSchema7;
+    expect(isSinglePropertyObject(schema)).toBeFalsy();
+  });
+
+  it('Returns false for a null/undefined schema', () => {
+    expect(isSinglePropertyObject(null)).toBeFalsy();
+    expect(isSinglePropertyObject(undefined)).toBeFalsy();
   });
 });
 
