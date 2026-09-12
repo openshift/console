@@ -76,6 +76,10 @@ export class TopologyPage extends BasePage {
     return this.graphSurface;
   }
 
+  getHighlightedNode(): Locator {
+    return this.highlightedNode;
+  }
+
   async clickStartBuilding(): Promise<void> {
     await this.robustClick(this.startBuildingLink);
   }
@@ -94,6 +98,13 @@ export class TopologyPage extends BasePage {
     await this.ensureGraphView();
     await this.search(workloadName);
     await expect(this.highlightedNode.first()).toBeAttached({ timeout });
+  }
+
+  async verifyWorkloadIcon(workloadName: string, iconUrl: string): Promise<void> {
+    await this.ensureGraphView();
+    await this.search(workloadName);
+    const icon = this.highlightedNode.first().getByTestId('base-node-handler').locator('image');
+    await expect(icon).toHaveAttribute('xlink:href', iconUrl);
   }
 
   // PF Topology internal class — no data-test available; may break on PF upgrades
