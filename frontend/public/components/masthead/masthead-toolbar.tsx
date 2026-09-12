@@ -187,7 +187,11 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
 
   // Use centralized user hook for user data
   const { displayName, username } = useUser();
-  const { unreadCount: toastUnreadCount, hasUnreadDangerNotifications } = useNotificationHistory();
+  const {
+    notifications: toastNotifications,
+    unreadCount: toastUnreadCount,
+    hasUnreadDangerNotifications,
+  } = useNotificationHistory();
   const notificationCount = (alertCount || 0) + toastUnreadCount;
   const notificationBadgeVariant = getNotificationsVariant(
     toastUnreadCount,
@@ -749,7 +753,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
 
   const launchActions = getLaunchActions();
   const alertAccess = canAccessNS && !!window.SERVER_FLAGS.prometheusBaseURL;
-  const showNotificationBadge = alertAccess || toastUnreadCount > 0;
+  const showNotificationBadge = alertAccess || toastNotifications.length > 0;
   return (
     <>
       <Toolbar isFullHeight isStatic>
@@ -837,12 +841,12 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
             visibility={{ default: isMastheadStacked ? 'visible' : 'hidden' }}
           >
             <SystemStatusButton statusPageData={statusPageData} />
-            {showNotificationBadge && notificationCount > 0 && (
+            {showNotificationBadge && (
               <NotificationBadge
                 aria-label={t('Notification drawer')}
                 onClick={drawerToggle}
                 variant={notificationBadgeVariant}
-                count={notificationCount}
+                count={notificationCount || 0}
                 icon={<RhUiNotificationIcon />}
                 data-quickstart-id="qs-masthead-notifications"
               />
