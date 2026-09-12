@@ -141,6 +141,15 @@ export class AddPage extends BasePage {
     return this.page.getByRole('button', { name: 'Create', exact: true });
   }
 
+  async clickCreate(): Promise<void> {
+    await this.robustClick(this.getSubmitButton());
+  }
+
+  async selectBuilderImageVersion(version: string): Promise<void> {
+    await this.robustClick(this.getBuilderImageVersionToggle());
+    await this.robustClick(this.getBuilderImageVersionItem(version));
+  }
+
   getCancelButton(): Locator {
     return this.page.getByRole('button', { name: 'Cancel', exact: true });
   }
@@ -359,6 +368,15 @@ export class DeployImagePage extends BasePage {
     await this.robustClick(iconToggle, { timeout: 30_000 });
     const option = this.page.getByRole('option', { name: iconName });
     await this.robustClick(option);
+  }
+
+  async selectCustomIcon(iconUrl: string): Promise<void> {
+    await this.robustClick(this.page.getByTestId('add-custom-icon'));
+    const urlInput = this.page.getByTestId('import-custom-icon-url-input');
+    await expect(urlInput).toBeVisible();
+    await expect(urlInput).toBeEnabled();
+    await urlInput.fill(iconUrl);
+    await this.robustClick(this.page.getByTestId('import-custom-icon-confirm'));
   }
 
   async selectApplication(appName: string): Promise<void> {
