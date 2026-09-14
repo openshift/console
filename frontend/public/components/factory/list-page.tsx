@@ -604,10 +604,11 @@ export const MultiListPage: FC<MultiListPageProps> = (props) => {
 
   const loadError = useMemo(
     () =>
-      Object.values(watchedResources).find(
-        (r) => r.loadError && !(r.loadError instanceof NoModelError),
-      )?.loadError,
-    [watchedResources],
+      Object.entries(watchedResources).find(
+        ([key, r]) =>
+          r.loadError && !(r.loadError instanceof NoModelError) && !watchResources[key]?.optional,
+      )?.[1]?.loadError,
+    [watchedResources, watchResources],
   );
 
   const reduxIDs = useMemo(

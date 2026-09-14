@@ -221,4 +221,58 @@ describe(' MultiListPage component', () => {
     expect(watchConfig?.Pod?.kind).toBe('Pod');
     expect(watchConfig?.Pod?.name).toBe('example-pod');
   });
+
+  it('does not treat errors from optional resources as fatal page errors', () => {
+    let receivedLoadError: unknown;
+    const ListComponent = (props: { loadError?: unknown }) => {
+      receivedLoadError = props.loadError;
+      return <div>List Content</div>;
+    };
+
+    mockUseK8sWatchResources.mockReturnValue({
+      Pod: { data: [{ kind: 'Pod' }], loaded: true, loadError: undefined },
+      CatalogSource: {
+        data: [],
+        loaded: true,
+        loadError: 'catalogsources.operators.coreos.com is forbidden',
+      },
+    });
+
+    renderWithProviders(
+      <MultiListPage
+        ListComponent={ListComponent}
+        resources={[
+          { kind: 'Pod', prop: 'Pod' },
+          { kind: 'CatalogSource', prop: 'CatalogSource', optional: true },
+        ]}
+        filterLabel="by name"
+      />,
+    );
+
+    expect(screen.getByText('List Content')).toBeVisible();
+    expect(receivedLoadError).toBeUndefined();
+  });
+
+  it('treats errors from non-optional resources as fatal page errors', () => {
+    let receivedLoadError: unknown;
+    const ListComponent = (props: { loadError?: unknown }) => {
+      receivedLoadError = props.loadError;
+      return <div>List Content</div>;
+    };
+
+    const forbiddenError = 'pods is forbidden';
+    mockUseK8sWatchResources.mockReturnValue({
+      Pod: { data: [], loaded: true, loadError: forbiddenError },
+    });
+
+    renderWithProviders(
+      <MultiListPage
+        ListComponent={ListComponent}
+        resources={[{ kind: 'Pod', prop: 'Pod' }]}
+        filterLabel="by name"
+      />,
+    );
+
+    expect(receivedLoadError).toBe(forbiddenError);
+  });
 });
