@@ -65,6 +65,7 @@ const ImportSampleForm: FC<Props> = ({
         disableSubmit={!_.isEmpty(errors) || isSubmitting}
         resetLabel={t('Cancel')}
         sticky
+        namespace={values?.project?.name}
       />
     </form>
   );
