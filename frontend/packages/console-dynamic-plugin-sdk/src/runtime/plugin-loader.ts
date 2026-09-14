@@ -98,7 +98,8 @@ export const loadDynamicPlugin = (manifest: StandardConsolePluginManifest) =>
         return;
       }
 
-      if (!pluginMap.get(pluginID).entryCallbackFired) {
+      const pluginData = pluginMap.get(pluginID);
+      if (!pluginData?.entryCallbackFired) {
         reject(new Error(`Scripts of plugin ${pluginID} loaded without entry callback`));
         return;
       }
@@ -112,12 +113,12 @@ export const getPluginEntryCallback = (
   initSharedPluginModulesCallback: typeof initSharedPluginModules,
   resolveEncodedCodeRefsCallback: typeof resolveEncodedCodeRefs,
 ) => (pluginID: string, entryModule: RemoteEntryModule) => {
-  if (!pluginMap.has(pluginID)) {
+  const pluginData = pluginMap.get(pluginID);
+
+  if (!pluginData) {
     console.error(`Received callback for unknown plugin ${pluginID}`);
     return;
   }
-
-  const pluginData = pluginMap.get(pluginID);
 
   if (pluginData.entryCallbackFired) {
     console.error(`Received callback for already loaded plugin ${pluginID}`);

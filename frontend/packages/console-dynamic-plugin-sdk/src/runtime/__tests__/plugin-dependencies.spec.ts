@@ -49,29 +49,24 @@ describe('resolvePluginDependencies', () => {
     errorMessage: `Test error message for plugin ${manifest.name}`,
   });
 
-  it('throws an error if Console plugin API dependency is not met', async () => {
+  it('throws an error if Console plugin API dependency is not met', () => {
     const manifest = getPluginManifest('Test', '1.2.3');
     manifest.dependencies = { '@console/pluginAPI': '~4.12' };
 
-    try {
-      await resolvePluginDependencies(manifest, '4.11.1-test.2', ['Test']);
-    } catch (e) {
-      expect(e.message).toEqual(
-        'Unmet dependency on Console plugin API:\n' +
-          '@console/pluginAPI: required ~4.12, current 4.11.1-test.2',
-      );
-      expect(subscribeToDynamicPlugins).not.toHaveBeenCalled();
-      expect(getStateForTestPurposes().unsubListenerMap.size).toBe(0);
-    }
+    expect(() => resolvePluginDependencies(manifest, '4.11.1-test.2', ['Test'])).toThrow(
+      'Unmet dependency on Console plugin API:\n' +
+        '@console/pluginAPI: required ~4.12, current 4.11.1-test.2',
+    );
 
-    expect.assertions(3);
+    expect(subscribeToDynamicPlugins).not.toHaveBeenCalled();
+    expect(getStateForTestPurposes().unsubListenerMap.size).toBe(0);
   });
 
   it('skips Console plugin API dependency check if the actual version is null', async () => {
     const manifest = getPluginManifest('Test', '1.2.3');
     manifest.dependencies = { '@console/pluginAPI': '~4.12' };
 
-    await resolvePluginDependencies(manifest, null, ['Test']);
+    await expect(resolvePluginDependencies(manifest, null, ['Test'])).resolves.toBeUndefined();
 
     expect(subscribeToDynamicPlugins).not.toHaveBeenCalled();
     expect(getStateForTestPurposes().unsubListenerMap.size).toBe(0);
