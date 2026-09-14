@@ -36,6 +36,10 @@ export class YamlEditorPage extends BasePage {
     return this.yamlError;
   }
 
+  getDefaultNamespaceDeploymentWarning(): Locator {
+    return this.page.getByTestId('default-namespace-deployment-warning');
+  }
+
   getMonacoEditor(): Locator {
     return this.page.locator('.monaco-editor').first();
   }

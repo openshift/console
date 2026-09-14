@@ -150,7 +150,7 @@ export const NamespaceGroup: FC<{
               isSelected={selectedKey === option.key}
               data-test="dropdown-menu-item-link"
             >
-              {option.title}
+              <span data-test="namespace-dropdown-item-text">{option.title}</span>
               <DefaultNamespaceLabel isProject={isProjects} namespace={option.key} />
             </MenuItem>
           ))}
