@@ -17,6 +17,7 @@ import type {
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DASH } from '@console/shared/src/constants/ui';
@@ -258,7 +259,10 @@ export const GroupDetailsPage: FC = (props) => (
     {...props}
     kind={referenceForModel(GroupModel)}
     customActionMenu={(_kindObj, data: K8sResourceKind) => (
-      <LazyActionMenu context={{ [referenceForModel(GroupModel)]: data }} />
+      <LazyActionMenu
+        context={{ [referenceForModel(GroupModel)]: data }}
+        variant={ActionMenuVariant.DROPDOWN}
+      />
     )}
     pages={[
       navFactory.details(GroupDetails),
