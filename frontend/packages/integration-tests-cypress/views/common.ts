@@ -11,7 +11,11 @@ export const projectDropdown = {
   shouldExist: () => cy.byLegacyTestID('namespace-bar-dropdown').should('exist'),
   selectProject: (projectName: string) => {
     cy.byLegacyTestID('namespace-bar-dropdown').contains('Project:').click();
-    cy.byTestID('showSystemSwitch').check();
+    cy.get('body').then(($body) => {
+      if ($body.find('[data-test="showSystemSwitch"]').length > 0) {
+        cy.byTestID('showSystemSwitch').check();
+      }
+    });
     cy.byTestID('dropdown-menu-item-link').contains(projectName).click();
   },
   shouldContain: (name: string) =>
