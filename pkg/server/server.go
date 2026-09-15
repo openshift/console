@@ -332,8 +332,8 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 		authHandlerWithHeader(k8sProxy.ServeHTTP),
 	))
 
-	handleFunc(devfileEndpoint, devfile.DevfileHandler)
-	handleFunc(devfileSamplesEndpoint, devfile.DevfileSamplesHandler)
+	handleFunc(devfileEndpoint, authHandler(devfile.DevfileHandler))
+	handleFunc(devfileSamplesEndpoint, authHandler(devfile.DevfileSamplesHandler))
 
 	terminalProxy := terminal.NewProxy(
 		s.TerminalProxyTLSConfig,
