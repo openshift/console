@@ -102,6 +102,13 @@ test.describe('Helm Release', { tag: ['@helm', '@smoke'] }, () => {
     await test.step('Filter by Deployed status (HR-05-TC06)', async () => {
       await helmPage.filterByStatus('Deployed');
       await expect(page).toHaveURL(/[?&]status=deployed(?:&|$)/);
+      await page.reload({ waitUntil: 'domcontentloaded' });
+      await expect(page).toHaveURL(/[?&]status=deployed(?:&|$)/);
+      await helmPage.openStatusFilter();
+      await expect(helmPage.getStatusFilterCheckbox('Deployed')).toBeChecked();
+      await helmPage.closeStatusFilter();
+      await expect(helmPage.getStatusText()).toHaveCount(1);
+      await expect(helmPage.getStatusText().first()).toHaveText('Deployed');
       await expect(
         helmPage.getTable().getByTestId('data-view-cell-helm-release-name').first(),
       ).toBeVisible();
@@ -165,6 +172,7 @@ test.describe('Helm Release', { tag: ['@helm', '@smoke'] }, () => {
       await helmPage.upgradeChartVersion();
       await helmPage.clickUpgradeButton();
       await expect(page).toHaveURL(/\/helm\//, { timeout: 30_000 });
+      await helmPage.waitForHelmReleaseDeployed(ns, releaseName);
     });
 
     await test.step('Rollback helm release (HR-08-TC03)', async () => {

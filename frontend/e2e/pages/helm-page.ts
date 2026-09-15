@@ -43,15 +43,30 @@ export class HelmPage extends BasePage {
   }
 
   async filterByStatus(status: string): Promise<void> {
+    await this.openStatusFilter();
+    await this.robustClick(this.getStatusFilterItem(status));
+    await this.closeStatusFilter();
+  }
+
+  async openStatusFilter(): Promise<void> {
     const filterToggle = this.dataViewFilters.getByRole('button').first();
     await this.robustClick(filterToggle);
     await this.page.getByRole('menuitem', { name: 'Status' }).click();
     await this.robustClick(this.filterDropdown);
-    const filterItem = this.page.locator(
+  }
+
+  async closeStatusFilter(): Promise<void> {
+    await this.robustClick(this.filterDropdown);
+  }
+
+  getStatusFilterCheckbox(status: string): Locator {
+    return this.getStatusFilterItem(status).getByRole('checkbox');
+  }
+
+  private getStatusFilterItem(status: string): Locator {
+    return this.page.locator(
       `[data-ouia-component-id="DataViewCheckboxFilter-filter-item-${status.toLowerCase()}"]`,
     );
-    await this.robustClick(filterItem);
-    await this.robustClick(this.filterDropdown);
   }
 
   async clickReleaseName(name: string): Promise<void> {
@@ -108,12 +123,14 @@ export class HelmPage extends BasePage {
       await items.first().click();
     }
     const confirmButton = this.page.getByRole('button', { name: 'Proceed' });
-    try {
-      // eslint-disable-next-line no-restricted-syntax
-      await confirmButton.waitFor({ state: 'visible', timeout: 2_000 });
+    const confirmationRequired = await expect(confirmButton)
+      .toBeVisible({ timeout: 2_000 })
+      .then(
+        () => true,
+        () => false,
+      );
+    if (confirmationRequired) {
       await this.robustClick(confirmButton);
-    } catch {
-      // Confirmation not required for this chart version
     }
   }
 

@@ -67,6 +67,10 @@ export class HelmURLChartPage extends BasePage {
     return this.urlValidationError;
   }
 
+  getRequiredFieldError(fieldName: 'chartURL' | 'releaseName' | 'chartVersion'): Locator {
+    return this.page.getByTestId(`form-input-${fieldName}-field-error`);
+  }
+
   async fillChartUrl(url: string): Promise<void> {
     await this.chartUrlField.clear();
     await this.chartUrlField.fill(url);
