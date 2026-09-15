@@ -99,6 +99,9 @@ const config: Configuration = {
   },
   resolve: {
     extensions: ['.glsl', '.ts', '.tsx', '.js', '.jsx'],
+    alias: {
+      htmlparser2: path.resolve(__dirname, 'node_modules/htmlparser2/lib/index.js'),
+    },
   },
   node: {
     fs: 'empty',
