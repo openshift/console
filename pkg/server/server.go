@@ -360,8 +360,8 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 
 	handle(apiDiscoveryEndpoint, middleware.WithGZIPEncoding(authHandler(apiDiscoveryHandler(k8sProxy))))
 
-	handleFunc(devfileEndpoint, devfile.DevfileHandler)
-	handleFunc(devfileSamplesEndpoint, devfile.DevfileSamplesHandler)
+	handleFunc(devfileEndpoint, authHandler(devfile.DevfileHandler))
+	handleFunc(devfileSamplesEndpoint, authHandler(devfile.DevfileSamplesHandler))
 
 	terminalProxy := terminal.NewProxy(
 		s.TerminalProxyTLSConfig,
