@@ -55,8 +55,15 @@ func (h *verifierHandlers) HandleChartVerifier(user *auth.User, w http.ResponseW
 		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: fmt.Sprintf("Failed to parse request: %v", err)})
 		return
 	}
-	if !actions.IsValidChartURL(req.ChartUrl) {
+	if !actions.IsChartURLWellFormed(req.ChartUrl) {
 		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: "invalid chart URL: must be oci:// or http(s)://*.tgz"})
+		return
+	}
+	// The chart verifier fetches the chart URL from the console pod, so it needs
+	// the same SSRF guard applied to LocateChart call sites. IsChartURLWellFormed
+	// only checks the URL's format, not where it points.
+	if err := actions.ValidateChartURL(req.ChartUrl); err != nil {
+		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: err.Error()})
 		return
 	}
 	conf := h.getActionConfigurations(h.ApiServerHost, "default", user.Token, &h.Transport)
