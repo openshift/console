@@ -78,6 +78,11 @@ test.describe('Helm Repositories', { tag: ['@helm', '@regression'] }, () => {
       await repoPage.clickEditAction('ProjectHelmChartRepository');
       await repoPage.fillDisplayName(updatedDisplayName);
       await repoPage.clickSave();
+      await helmPage.navigateToHelmReleases(ns);
+      await helmPage.clickRepositoriesTab();
+      await expect(repoPage.getRepositoryRow(repoName)).toContainText(updatedDisplayName, {
+        timeout: 30_000,
+      });
     });
   });
 
@@ -125,6 +130,11 @@ test.describe('Helm Repositories', { tag: ['@helm', '@regression'] }, () => {
       await repoPage.clickEditAction('HelmChartRepository');
       await repoPage.fillUrl(updatedUrl);
       await repoPage.clickSave();
+      await helmPage.navigateToHelmReleases(ns);
+      await helmPage.clickRepositoriesTab();
+      await expect(repoPage.getRepositoryRow(repoName)).toContainText(updatedUrl, {
+        timeout: 30_000,
+      });
     });
   });
 

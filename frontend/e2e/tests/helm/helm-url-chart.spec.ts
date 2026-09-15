@@ -51,6 +51,9 @@ test.describe('Helm URL Chart Install', { tag: ['@helm', '@regression'] }, () =>
       await urlChartPage.getChartUrlField().click();
 
       await expect(urlChartPage.getSubmitButton()).toBeDisabled();
+      await expect(urlChartPage.getRequiredFieldError('chartURL')).toHaveText('Required');
+      await expect(urlChartPage.getRequiredFieldError('releaseName')).toHaveText('Required');
+      await expect(urlChartPage.getRequiredFieldError('chartVersion')).toHaveText('Required');
     });
 
     await test.step('Validate invalid URL format shows error (HR-URL-TC03)', async () => {
