@@ -1,4 +1,3 @@
-import type { Map as ImmutableMap } from 'immutable';
 import type { UserInfo, UserKind } from '../../../extensions';
 import type { ImpersonateKind, SDKStoreState, AdmissionWebhookWarning } from '../../redux-types';
 
@@ -7,7 +6,7 @@ type GetUser = (state: SDKStoreState) => UserInfo;
 type GetUserResource = (state: SDKStoreState) => UserKind;
 type GetAdmissionWebhookWarnings = (
   state: SDKStoreState,
-) => ImmutableMap<string, AdmissionWebhookWarning>;
+) => Record<string, AdmissionWebhookWarning>;
 
 /**
  * It provides impersonation details from the redux store.

@@ -162,11 +162,11 @@ export const DroppableFileInput: FC<DroppableFileInputProps> = ({
         {!inputFileIsBinary && (
           <div className={styles.fileUploadFileDetails}>
             <TextArea
+              data-test="file-input-textarea"
               data-test-id="file-input-textarea"
               className="co-file-dropzone__textarea"
               readOnly={isLoading}
               resizeOrientation="vertical"
-              data-test={`${id}-textarea`}
               onChange={(e) => {
                 const fileContent = e.target.value;
                 onChange(fileContent, false);

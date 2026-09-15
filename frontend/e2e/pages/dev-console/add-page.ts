@@ -141,14 +141,21 @@ export class AddPage extends BasePage {
     return this.page.getByRole('button', { name: 'Create', exact: true });
   }
 
+  async clickCreate(): Promise<void> {
+    await this.robustClick(this.getSubmitButton());
+  }
+
+  async selectBuilderImageVersion(version: string): Promise<void> {
+    await this.robustClick(this.getBuilderImageVersionToggle());
+    await this.robustClick(this.getBuilderImageVersionItem(version));
+  }
+
   getCancelButton(): Locator {
     return this.page.getByRole('button', { name: 'Cancel', exact: true });
   }
 
   getPinnedResource(name: string): Locator {
-    return this.page
-      .getByRole('region', { name: 'Pinned resources' })
-      .getByRole('link', { name });
+    return this.page.getByRole('region', { name: 'Pinned resources' }).getByRole('link', { name });
   }
 }
 export class ImportFromGitPage extends BasePage {
@@ -157,8 +164,14 @@ export class ImportFromGitPage extends BasePage {
   });
   private readonly appNameInput: Locator = this.page.getByTestId('application-form-app-input');
   private readonly nameInput: Locator = this.page.getByTestId('application-form-app-name');
-  private readonly createButton: Locator = this.page.getByRole('button', { name: 'Create', exact: true });
-  private readonly cancelButton: Locator = this.page.getByRole('button', { name: 'Cancel', exact: true });
+  private readonly createButton: Locator = this.page.getByRole('button', {
+    name: 'Create',
+    exact: true,
+  });
+  private readonly cancelButton: Locator = this.page.getByRole('button', {
+    name: 'Cancel',
+    exact: true,
+  });
 
   async navigateToImportFromGit(namespace: string): Promise<void> {
     await this.goTo(`/import/ns/${namespace}`);
@@ -294,12 +307,20 @@ export class DeployImagePage extends BasePage {
   private readonly imageNameInput: Locator = this.page.getByRole('textbox', { name: 'Image name' });
   private readonly nameInput: Locator = this.page.getByTestId('application-form-app-name');
   private readonly appNameInput: Locator = this.page.getByTestId('application-form-app-input');
-  private readonly createButton: Locator = this.page.getByRole('button', { name: 'Create', exact: true });
-  private readonly cancelButton: Locator = this.page.getByRole('button', { name: 'Cancel', exact: true });
+  private readonly createButton: Locator = this.page.getByRole('button', {
+    name: 'Create',
+    exact: true,
+  });
+  private readonly cancelButton: Locator = this.page.getByRole('button', {
+    name: 'Cancel',
+    exact: true,
+  });
 
   async navigateToDeployImage(namespace: string): Promise<void> {
     await this.goTo(`/deploy-image/ns/${namespace}`);
-    await expect(this.imageNameInput.or(this.page.getByTestId('internal-view-input')).first()).toBeVisible({ timeout: 60_000 });
+    await expect(
+      this.imageNameInput.or(this.page.getByTestId('internal-view-input')).first(),
+    ).toBeVisible({ timeout: 60_000 });
   }
 
   async enterExternalRegistryImage(imageName: string): Promise<void> {
@@ -341,10 +362,21 @@ export class DeployImagePage extends BasePage {
   }
 
   async selectRuntimeIcon(iconName: string): Promise<void> {
-    const iconToggle = this.page.locator('.odc-icon-dropdown').getByTestId('console-select-menu-toggle');
+    const iconToggle = this.page
+      .locator('.odc-icon-dropdown')
+      .getByTestId('console-select-menu-toggle');
     await this.robustClick(iconToggle, { timeout: 30_000 });
     const option = this.page.getByRole('option', { name: iconName });
     await this.robustClick(option);
+  }
+
+  async selectCustomIcon(iconUrl: string): Promise<void> {
+    await this.robustClick(this.page.getByTestId('add-custom-icon'));
+    const urlInput = this.page.getByTestId('import-custom-icon-url-input');
+    await expect(urlInput).toBeVisible();
+    await expect(urlInput).toBeEnabled();
+    await urlInput.fill(iconUrl);
+    await this.robustClick(this.page.getByTestId('import-custom-icon-confirm'));
   }
 
   async selectApplication(appName: string): Promise<void> {
@@ -391,8 +423,14 @@ export class DeployImagePage extends BasePage {
 }
 
 export class ImportYAMLPage extends BasePage {
-  private readonly submitButton: Locator = this.page.getByRole('button', { name: 'Create', exact: true });
-  private readonly cancelButton: Locator = this.page.getByRole('button', { name: 'Cancel', exact: true });
+  private readonly submitButton: Locator = this.page.getByRole('button', {
+    name: 'Create',
+    exact: true,
+  });
+  private readonly cancelButton: Locator = this.page.getByRole('button', {
+    name: 'Cancel',
+    exact: true,
+  });
 
   getSubmitButton(): Locator {
     return this.submitButton;
@@ -410,4 +448,3 @@ export class ImportYAMLPage extends BasePage {
     await this.robustClick(this.cancelButton);
   }
 }
-

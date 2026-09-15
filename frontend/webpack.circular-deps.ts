@@ -1,5 +1,3 @@
-/* eslint-disable no-console */
-
 import type { Configuration, Compiler } from '@rspack/core';
 import { CircularCheckRspackPlugin } from '@rspack/core';
 import * as path from 'path';

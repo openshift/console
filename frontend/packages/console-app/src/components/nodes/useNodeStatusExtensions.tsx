@@ -58,7 +58,6 @@ export const useNodeStatusExtensions = () => {
               statuses.push(title);
             }
           } catch (err) {
-            // eslint-disable-next-line no-console
             console.error(`Extension ${uid}, ${type} failed:`, err);
           }
         },

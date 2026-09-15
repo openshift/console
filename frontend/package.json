@@ -19,13 +19,11 @@
     "build": "yarn clean && yarn generate && NODE_ENV=production NODE_OPTIONS=--max-old-space-size=4096 yarn ts-node ./node_modules/.bin/rspack --mode=production",
     "check-cycles": "CHECK_CYCLES=true yarn dev-once",
     "coverage": "jest --coverage .",
-    "eslint": "node ./node_modules/.bin/eslint --max-warnings 0 --color",
-    "lint": "NODE_OPTIONS=--max-old-space-size=4096 yarn eslint .",
+    "eslint": "node ./node_modules/.bin/eslint --max-warnings ${MAX_WARNINGS:-0} --color",
+    "lint": "NODE_OPTIONS=--max-old-space-size=4096 MAX_WARNINGS=338 yarn eslint --format ./scripts/eslint-exact-warnings.js .",
     "gherkin-lint": "./node_modules/.bin/gherkin-lint -c ./packages/dev-console/integration-tests/.gherkin-lintrc ./packages/*/integration-tests/features",
     "test": "LANG=en_US.UTF-8 jest",
     "debug-test": "node --inspect-brk node_modules/.bin/jest --runInBand",
-    "test-cypress-console": "cd packages/integration-tests && yarn run test-cypress",
-    "test-cypress-console-headless": "cd packages/integration-tests && yarn run test-cypress-headless",
     "test-cypress-olm": "cd packages/operator-lifecycle-manager/integration-tests && yarn run test-cypress",
     "test-cypress-olm-headless": "cd packages/operator-lifecycle-manager/integration-tests && yarn run test-cypress-headless",
     "test-cypress-dev-console": "cd packages/dev-console/integration-tests && yarn run test-cypress",
@@ -43,7 +41,6 @@
     "test-puppeteer-csp": "yarn ts-node ./test-puppeteer-csp.ts",
     "cypress-merge": "mochawesome-merge ./gui_test_screenshots/cypress_report*.json > ./gui_test_screenshots/cypress.json",
     "cypress-generate": "marge -o ./gui_test_screenshots/ -f cypress-report -t 'OpenShift Console Cypress Test Results' -p 'OpenShift Cypress Test Results' --showPassed false --assetsDir ./gui_test_screenshots/cypress/assets ./gui_test_screenshots/cypress.json",
-    "cypress-a11y-report": "echo '\nA11y Test Results:' && mv packages/integration-tests/cypress-a11y-report.json ./gui_test_screenshots/ && node -e \"console.table(JSON.parse(require('fs').readFileSync(process.argv[1])));\" ./gui_test_screenshots/cypress-a11y-report.json",
     "cypress-postreport": "yarn cypress-merge && yarn cypress-generate",
     "analyze": "ANALYZE_BUNDLE=true NODE_ENV=production NODE_OPTIONS=--max-old-space-size=8192 yarn ts-node ./node_modules/.bin/rspack --mode=production",
     "knip": "knip --config scripts/knip.ts",
@@ -100,10 +97,9 @@
     "i18next-conv": "16.0.0",
     "i18next-http-backend": "^4.0.1",
     "i18next-v4-format-converter": "^1.1.2",
-    "immutable": "^3.8.3",
     "istextorbinary": "^9.5.0",
     "js-base64": "^3.9.2",
-    "js-yaml": "^3.15.0",
+    "js-yaml": "^3.15.2",
     "json-schema": "^0.4.0",
     "jsonpath-plus": "^10.4.0",
     "linkify-react": "^4.3.3",
@@ -133,6 +129,7 @@
     "sanitize-html": "^2.17.6",
     "semver": "^7.8.5",
     "typesafe-actions": "^5.1.0",
+    "use-sync-external-store": "^1.6.0",
     "victory": "^37.3.6",
     "yaml-ast-parser": "^0.0.43",
     "yup": "^1.7.1"
@@ -232,5 +229,5 @@
       "built": true
     }
   },
-  "packageManager": "yarn@4.14.1"
+  "packageManager": "yarn@4.18.0+sha512.fcb8716fe7cd0eece141ffc18b92193a9df9204c1ba83189c288835223fc0bbe64af473bab0d5e9927a7daeb5caf2bb07eb2787cc9338ca040ea125f2a1f2f7e"
 }

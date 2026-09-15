@@ -51,40 +51,37 @@ test.describe('Web Terminal for Developer user', () => {
     await uninstallWebTerminalOperator(k8sClient);
   });
 
-  test(
-    'create new project and use Web Terminal',
-    async ({ page, k8sClient, cleanup }) => {
-      const webTerminal = new WebTerminalPage(page);
-      cleanup.trackNamespace(NEW_PROJECT);
+  test('create new project and use Web Terminal', async ({ page, k8sClient, cleanup }) => {
+    const webTerminal = new WebTerminalPage(page);
+    cleanup.trackNamespace(NEW_PROJECT);
 
-      await test.step('Wait for terminal icon', async () => {
-        await webTerminal.waitForTerminalIconVisible();
-      });
+    await test.step('Wait for terminal icon', async () => {
+      await webTerminal.waitForTerminalIconVisible();
+    });
 
-      await test.step('Create new project from terminal init screen', async () => {
-        await webTerminal.clickTerminalIcon();
-        await webTerminal.clickProjectDropdown();
-        await webTerminal.selectCreateProject();
-        await webTerminal.typeProjectName(NEW_PROJECT);
-        await webTerminal.confirmProjectCreation();
-      });
+    await test.step('Create new project from terminal init screen', async () => {
+      await webTerminal.clickTerminalIcon();
+      await webTerminal.clickProjectDropdown();
+      await webTerminal.selectCreateProject();
+      await webTerminal.typeProjectName(NEW_PROJECT);
+      await webTerminal.confirmProjectCreation();
+    });
 
-      await test.step('Set timeout and start terminal', async () => {
-        await webTerminal.clickAdvancedTimeout();
-        await webTerminal.setTimeoutValue('1');
-        await webTerminal.clickStartButton();
-      });
+    await test.step('Set timeout and start terminal', async () => {
+      await webTerminal.clickAdvancedTimeout();
+      await webTerminal.setTimeoutValue('1');
+      await webTerminal.clickStartButton();
+    });
 
-      await test.step('Verify terminal window is visible', async () => {
-        await webTerminal.waitForTerminalWindow();
-        await expect(webTerminal.getTerminalWindow()).toBeVisible();
-      });
+    await test.step('Verify terminal window is visible', async () => {
+      await webTerminal.waitForTerminalWindow();
+      await expect(webTerminal.getTerminalWindow()).toBeVisible();
+    });
 
-      await test.step('Verify DevWorkspace is running in developer namespace', async () => {
-        await verifyDevWorkspaceRunning(page, k8sClient, webTerminal, NEW_PROJECT);
-      });
-    },
-  );
+    await test.step('Verify DevWorkspace is running in developer namespace', async () => {
+      await verifyDevWorkspaceRunning(page, k8sClient, webTerminal, NEW_PROJECT);
+    });
+  });
 
   // eslint-disable-next-line playwright/expect-expect
   test('open Web Terminal for existing project', async ({ page, k8sClient }) => {

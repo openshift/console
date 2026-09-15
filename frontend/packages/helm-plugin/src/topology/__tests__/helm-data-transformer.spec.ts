@@ -34,7 +34,7 @@ import {
 
 const filterers = [applyHelmDisplayOptions];
 
-export function getTransformedTopologyData(mockData: TopologyDataResources) {
+function getTransformedTopologyData(mockData: TopologyDataResources) {
   const dc = _.cloneDeep(sampleDeploymentConfigs.data[0]);
   dc.metadata.labels = {
     app: 'nodejs',
@@ -51,7 +51,7 @@ export function getTransformedTopologyData(mockData: TopologyDataResources) {
   return baseDataModelGetter(model, data, workloadResources, []);
 }
 
-describe('HELM data transformer ', () => {
+describe('HELM data transformer', () => {
   let mockResources: TopologyDataResources;
   let filters;
   beforeEach(() => {

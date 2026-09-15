@@ -125,12 +125,10 @@ const updateResources = () => (dispatch: Dispatch) => {
       cacheResources(resources);
       dispatch(receivedResources(resources));
     })
-    // eslint-disable-next-line no-console
     .catch((err) => console.error('Fetching resource failed:', err));
 };
 
 const startAPIDiscovery = () => (dispatch) => {
-  // eslint-disable-next-line no-console
   console.log('API discovery method: Polling');
   // Poll API discovery every 30 seconds since we can't watch CRDs
   dispatch(updateResources());

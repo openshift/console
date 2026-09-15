@@ -1,10 +1,13 @@
-import { t } from '../../../../../../../../__mocks__/i18next';
+import type { TFunction } from 'i18next';
 import { Resources } from '../../../../import/import-types';
 import {
   getDeploymentStrategyItems,
   getDeploymentStrategyHelpText,
 } from '../deployment-strategy-utils';
 import type { DeploymentStrategyType } from '../types';
+
+const t: TFunction = ((key: string) =>
+  key.includes('~') ? key.substring(key.indexOf('~') + 1) : key) as TFunction;
 
 describe('getDeploymentStrategyItems', () => {
   it('returns items for kubernetes resources', () => {
@@ -14,7 +17,7 @@ describe('getDeploymentStrategyItems', () => {
     });
   });
 
-  it('returns items for kubernetes resources', () => {
+  it('returns items for openshift resources', () => {
     expect(getDeploymentStrategyItems(Resources.OpenShift, t)).toEqual({
       Custom: 'Custom',
       Recreate: 'Recreate',
@@ -22,7 +25,7 @@ describe('getDeploymentStrategyItems', () => {
     });
   });
 
-  it('returns no items for kubernetes resources', () => {
+  it('returns no items for knative resources', () => {
     expect(getDeploymentStrategyItems(Resources.KnativeService, t)).toEqual({});
   });
 });

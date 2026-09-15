@@ -1,6 +1,4 @@
-/* eslint-disable no-barrel-files/no-barrel-files */
 import { Base64 } from 'js-base64';
-import * as _ from 'lodash';
 import type { ActionType as Action } from 'typesafe-actions';
 import { action } from 'typesafe-actions';
 import {
@@ -14,10 +12,7 @@ import type {
   NamespaceMetrics,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import type { DeprecatedOperatorWarning } from '@console/operator-lifecycle-manager/src/types';
-import {
-  ALL_NAMESPACES_KEY,
-  LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
-} from '@console/shared/src/constants/common';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import type { OverviewItem } from '@console/shared/src/types/resource';
 import type { OverviewSpecialGroup } from '../components/overview/constants';
 import type { K8sResourceKind, PodKind, NodeKind } from '../module/k8s';
@@ -26,6 +21,7 @@ import { setClusterID, setCreateProjectMessage, ActionType } from './common';
 import { detectFeatures } from './features';
 import { clearSSARFlags } from './flags';
 
+// eslint-disable-next-line no-barrel-files/no-barrel-files
 export type { NamespaceMetrics } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
 type MetricValuesByNamespace = {
@@ -56,26 +52,25 @@ export type PluginCSPViolations = {
   [pluginName: string]: boolean;
 };
 
-export const getActiveNamespace = (): string => store.getState().UI.get('activeNamespace');
 export const getActiveUserName = (): string => getUser(store.getState())?.username;
 
 export const getNamespaceMetric = (ns: K8sResourceKind, metric: string): number => {
-  const metrics = store.getState().UI.getIn(['metrics', 'namespace']);
-  return _.get(metrics, [metric, ns.metadata.name], 0);
+  const metrics = store.getState().UI.metrics?.namespace;
+  return metrics?.[metric]?.[ns.metadata.name] ?? 0;
 };
 
 export const getPodMetric = (pod: PodKind, metric: string): number => {
-  const metrics = store.getState().UI.getIn(['metrics', 'pod']);
+  const metrics = store.getState().UI.metrics?.pod;
   return metrics?.[metric]?.[pod.metadata.namespace]?.[pod.metadata.name] ?? 0;
 };
 
 export const getNodeMetric = (node: NodeKind, metric: string): number => {
-  const metrics = store.getState().UI.getIn(['metrics', 'node']);
+  const metrics = store.getState().UI.metrics?.node;
   return metrics?.[metric]?.[node.metadata.name] ?? 0;
 };
 
 export const getPVCMetric = (pvc: K8sResourceKind, metric: string): number => {
-  const metrics = store.getState().UI.getIn(['metrics', 'pvc']);
+  const metrics = store.getState().UI.metrics?.pvc;
   return metrics?.[metric]?.[pvc.metadata.namespace]?.[pvc.metadata.name] ?? 0;
 };
 
@@ -158,21 +153,6 @@ export const setServiceLevel = (
 export const setActiveApplication = (application: string) =>
   action(ActionType.SetActiveApplication, { application });
 
-export const setActiveNamespace = (namespace: string = '') => {
-  const trimmedNamespace = namespace.trim();
-  // make it noop when new active namespace is the same
-  // otherwise users will get page refresh and cry about
-  // broken direct links and bookmarks
-  if (trimmedNamespace !== getActiveNamespace()) {
-    // save last namespace in session storage (persisted only for current browser tab). Used to remember/restore if
-    // "All Projects" was selected when returning to the list view (typically from details view) via breadcrumb or
-    // sidebar navigation
-    sessionStorage.setItem(LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY, trimmedNamespace);
-  }
-
-  return action(ActionType.SetActiveNamespace, { namespace: trimmedNamespace });
-};
-
 /**
  * Encodes a string for use in Kubernetes impersonation subprotocols.
  * Subprotocols are comma-separated, so commas aren't allowed. Also "="
@@ -189,23 +169,24 @@ export const startImpersonate =
 
     const imp = getImpersonate(getState());
     if ((imp?.name && imp.name !== name) || (imp?.kind && imp.kind !== kind)) {
-      // eslint-disable-next-line no-console
-      console.warn(`Impersonate race detected: ${name} vs ${imp.name} / ${kind} ${imp.kind}`);
+      console.warn('Impersonate race detected. Ignoring stale impersonation request.');
       return;
     }
 
     const encodedName = encodeImpersonationValue(name, textEncoder);
 
     let subprotocols;
-    if (kind === 'User') {
+    if ((kind === 'User' || kind === 'ServiceAccount') && (!groups || groups.length === 0)) {
       subprotocols = [`Impersonate-User.${encodedName}`];
     } else if (kind === 'Group') {
       subprotocols = [`Impersonate-Group.${encodedName}`];
-    } else if (kind === 'UserWithGroups' && groups && groups.length > 0) {
-      // User with multiple groups impersonation
-      // Encode user subprotocol
+    } else if (
+      (kind === 'UserWithGroups' || kind === 'ServiceAccount') &&
+      groups &&
+      groups.length > 0
+    ) {
+      // User or service account with multiple groups impersonation
       subprotocols = [`Impersonate-User.${encodedName}`];
-      // Encode each group as a separate subprotocol
       groups.forEach((group) => {
         const encodedGroup = encodeImpersonationValue(group, textEncoder);
         subprotocols.push(`Impersonate-Group.${encodedGroup}`);
@@ -279,7 +260,6 @@ const uiActions = {
   setCurrentLocation,
   setShowOperandsInAllNamespaces,
   setActiveApplication,
-  setActiveNamespace,
   sortList,
   setCreateProjectMessage,
   setClusterID,

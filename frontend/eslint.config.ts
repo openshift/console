@@ -19,7 +19,7 @@ const SDK_NODE_DIRS = [
   'packages/console-plugin-sdk/src/webpack',
   'packages/console-dynamic-plugin-sdk/scripts',
   'packages/console-dynamic-plugin-sdk/src/webpack',
-] as const;
+];
 
 const PACKAGES_EXCLUDE = [
   'packages/eslint-plugin-console/**',
@@ -120,7 +120,6 @@ const config = defineConfig([
       parser: tsParser,
     },
   },
-
   // Rules that are broken or not relevant in non-typed JavaScript
   {
     files: ['public/**/*.{js,jsx}'],
@@ -142,7 +141,6 @@ const config = defineConfig([
       },
     },
     rules: {
-      'no-console': 'off',
       '@typescript-eslint/no-namespace': 'off',
       'no-redeclare': 'off',
       'promise/catch-or-return': 'off',
@@ -168,17 +166,6 @@ const config = defineConfig([
     files: SDK_NODE_DIRS.map((dir) => `${dir}/**/*.{js,jsx,ts,tsx,json}`),
     extends: compat.extends('plugin:console/node-typescript-prettier'),
   },
-  {
-    files: [
-      'packages/console-plugin-sdk/src/codegen/**/*.{js,ts}',
-      'packages/console-plugin-sdk/src/webpack/**/*.{js,ts}',
-    ],
-    rules: { 'no-underscore-dangle': 'off' },
-  },
-  {
-    files: ['packages/console-dynamic-plugin-sdk/scripts/**/*.{js,ts}'],
-    rules: { 'no-console': 'off' },
-  },
 
   // ------------------------------------------------
   // Scope: eslint-plugin-console (base + node + json + prettier)
@@ -199,11 +186,7 @@ const config = defineConfig([
   {
     files: ['i18n-scripts/**/*.{js,jsx,ts,tsx,json}'],
     extends: compat.extends('plugin:console/node-typescript-prettier'),
-  },
-  {
-    files: ['i18n-scripts/**/*.{js,ts}'],
     rules: {
-      'no-console': 'off',
       'n/no-unsupported-features/node-builtins': 'off',
     },
   },
@@ -214,7 +197,10 @@ const config = defineConfig([
   {
     files: ['e2e/**/*.{js,jsx,ts,tsx,json}'],
     ignores: ['e2e/**/testData/**'],
-    extends: compat.extends('plugin:console/playwright'),
+    extends: compat.extends(
+      'plugin:console/prettier',
+      'plugin:console/playwright'
+    ),
     languageOptions: {
       parser: tsParser,
       parserOptions: {

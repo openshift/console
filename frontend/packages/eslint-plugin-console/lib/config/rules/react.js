@@ -1,7 +1,7 @@
 module.exports = {
   // Require i18n namespace argument for useTranslation()
   'no-restricted-syntax': [
-    'warn',
+    'error',
     {
       selector: "CallExpression[callee.name='useTranslation'][arguments.length=0]",
       message:
@@ -39,6 +39,12 @@ module.exports = {
         {
           group: ['@patternfly/*/dist/js/**', '@patternfly/*/dist/cjs/**'],
           message: 'Import from the package index instead of the CJS dist path.',
+        },
+        {
+          group: ['use-sync-external-store', 'use-sync-external-store/shim'],
+          importNames: ['useSyncExternalStore'],
+          message:
+            "Use the useSyncExternalStore shim from 'react' instead of importing the polyfill.",
         },
       ],
     },
@@ -80,7 +86,7 @@ module.exports = {
   'react/forbid-prop-types': 'off',
 
   // Disallow usage of string refs
-  'react/no-string-refs': 'warn',
+  'react/no-string-refs': 'error',
 
   // Enforce self-closing for components but not HTML elements
   'react/self-closing-comp': ['error', { component: true, html: false }],

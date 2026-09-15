@@ -2,10 +2,10 @@ import type { FC } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
-import { getActiveNamespace } from '@console/internal/actions/ui';
 import { SidebarSectionHeading } from '@console/internal/components/utils';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceFor } from '@console/internal/module/k8s';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import TopologyApplicationResourceList from './TopologyApplicationList';
 
 const MAX_RESOURCES = 5;
@@ -22,13 +22,14 @@ const ApplicationGroupResource: FC<ApplicationGroupResourceProps> = ({
   group,
 }) => {
   const { t } = useTranslation('topology');
+  const [activeNamespace] = useActiveNamespace();
   return !_.isEmpty(resourcesData) ? (
     <div className="overview__sidebar-pane-body">
       <SidebarSectionHeading text={title}>
         {_.size(resourcesData) > MAX_RESOURCES && (
           <Link
             className="sidebar__section-view-all"
-            to={`/search/ns/${getActiveNamespace()}?kind=${referenceFor(
+            to={`/search/ns/${activeNamespace}?kind=${referenceFor(
               resourcesData[0],
             )}&q=${encodeURIComponent(`app.kubernetes.io/part-of=${group}`)}`}
           >

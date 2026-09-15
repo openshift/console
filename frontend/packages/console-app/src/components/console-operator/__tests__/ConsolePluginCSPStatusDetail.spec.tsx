@@ -1,5 +1,4 @@
 import { screen } from '@testing-library/react';
-import { Map as ImmutableMap } from 'immutable';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import ConsolePluginCSPStatusDetail from '../ConsolePluginCSPStatusDetail';
 
@@ -17,9 +16,9 @@ describe('ConsolePluginCSPStatusDetail', () => {
   const renderWithCSPState = (pluginName: string, cspViolations: Record<string, boolean>) => {
     renderWithProviders(<ConsolePluginCSPStatusDetail obj={createMockObj(pluginName)} />, {
       initialState: {
-        UI: ImmutableMap({
+        UI: {
           pluginCSPViolations: cspViolations,
-        }),
+        },
       },
     });
   };

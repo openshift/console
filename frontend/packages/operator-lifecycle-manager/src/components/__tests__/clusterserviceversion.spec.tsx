@@ -34,10 +34,6 @@ jest.mock('@console/dynamic-plugin-sdk', () => ({
   useAccessReviewAllowed: () => true,
 }));
 
-jest.mock('@console/shared/src/hooks/redux-selectors', () => ({
-  useActiveNamespace: jest.fn(),
-}));
-
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),
   useParams: jest.fn(() => ({})),

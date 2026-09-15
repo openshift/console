@@ -1,9 +1,9 @@
 import { render, screen } from '@testing-library/react';
 import { useFormikContext } from 'formik';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { mockKameletSink } from '../../__mocks__/Kamelet-data';
-import { formikMockDataKafkaSink } from '../__mocks__/event-kafka-sink-data';
+import { mockKameletSink } from '../../__tests__/data/Kamelet-data';
 import EventSinkSection from '../EventSinkSection';
+import { formikMockDataKafkaSink } from './data/event-kafka-sink-data';
 
 jest.mock('../KafkaSinkSection', () => ({
   __esModule: true,

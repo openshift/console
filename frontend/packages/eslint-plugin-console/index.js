@@ -15,9 +15,6 @@ module.exports = {
     jest: require('./lib/config/jest'),
     playwright: require('./lib/config/playwright'),
 
-    // React Testing Library (test/spec files only). Also merged into `react-typescript-prettier`.
-    'testing-library-tests': require('./lib/config/testing-library-tests'),
-
     node: require('./lib/config/node'),
 
     // Add JSON linting (optional)
@@ -33,10 +30,8 @@ module.exports = {
       extends: [
         'plugin:console/react',
         'plugin:console/typescript',
-        // TODO enable when we stop using jest with jasmine types
-        // 'plugin:console/jest',
+        'plugin:console/jest',
         'plugin:console/json',
-        'plugin:console/testing-library-tests',
         'plugin:console/prettier',
       ],
 
@@ -52,8 +47,7 @@ module.exports = {
         'plugin:console/base',
         'plugin:console/typescript',
         'plugin:console/node',
-        // TODO enable when we stop using jest with jasmine types
-        // 'plugin:console/jest',
+        'plugin:console/jest',
         'plugin:console/json',
         'plugin:console/prettier',
       ],

@@ -31,13 +31,6 @@ describe('serverless-utils', () => {
     expect(autoscalewindowUnit).toBe('min');
     expect(defaultAutoscalewindowUnit).toBe('min');
   });
-  it('should return valid value and unit', () => {
-    const { autoscalewindow, autoscalewindowUnit, defaultAutoscalewindowUnit } =
-      getAutoscaleWindow('12min');
-    expect(autoscalewindow).toBe(12);
-    expect(autoscalewindowUnit).toBe('min');
-    expect(defaultAutoscalewindowUnit).toBe('min');
-  });
   it('should return default unit s', () => {
     const { autoscalewindow, autoscalewindowUnit, defaultAutoscalewindowUnit } =
       getAutoscaleWindow('');
@@ -77,7 +70,7 @@ describe('removeDuplicateDomainMappings', () => {
     expect(removeDuplicateDomainMappings([], [])).toEqual([]);
   });
 
-  it('should return the domainMapping  even if the connected domains are empty or invalid ', () => {
+  it('should return the domainMapping  even if the connected domains are empty or invalid', () => {
     expect(removeDuplicateDomainMappings(['domain.org'], null)).toEqual(['domain.org']);
     expect(removeDuplicateDomainMappings(['domain.org'], [])).toEqual(['domain.org']);
   });

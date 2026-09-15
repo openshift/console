@@ -8,6 +8,20 @@ export class MastheadPage extends BasePage {
   private readonly logo: Locator = this.page.getByTestId('masthead-logo');
   private readonly quickCreateToggle: Locator = this.page.getByTestId('quick-create-dropdown');
   private readonly userDropdownToggle: Locator = this.page.getByTestId('user-dropdown-toggle');
+  private readonly impersonateUserItem: Locator = this.page.getByTestId('impersonate-user');
+  private readonly stopImpersonateItem: Locator = this.page.getByTestId('stop-impersonate');
+  private readonly usernameInput: Locator = this.page.getByTestId('username-input');
+  private readonly serviceAccountRadio: Locator = this.page.getByTestId(
+    'impersonate-kind-service-account',
+  );
+  private readonly serviceAccountNamespaceDropdown: Locator = this.page.getByTestId(
+    'service-account-namespace-dropdown',
+  );
+  private readonly serviceAccountNameDropdown: Locator = this.page.getByTestId(
+    'service-account-name-dropdown',
+  );
+  private readonly groupInput: Locator = this.page.getByPlaceholder('Enter groups');
+  private readonly impersonateButton: Locator = this.page.getByTestId('impersonate-button');
   private readonly copyLoginCommandLink: Locator = this.page
     .getByTestId('copy-login-command')
     .locator('a');
@@ -38,6 +52,68 @@ export class MastheadPage extends BasePage {
 
   async openUserDropdown(): Promise<void> {
     await this.userDropdownToggle.click();
+  }
+
+  private async selectGroups(groups: string[]): Promise<void> {
+    if (groups.length === 0) {
+      return;
+    }
+
+    // Open once; the modal keeps the selector open between selections
+    await this.groupInput.click();
+    for (const group of groups) {
+      const groupOption = this.page.getByText(group, { exact: true });
+      await this.robustClick(groupOption);
+    }
+    await this.page.mouse.click(20, 20);
+  }
+
+  private async fillConsoleSelectSearch(text: string): Promise<void> {
+    await this.page.getByTestId('console-select-search-input').locator('input').fill(text);
+  }
+
+  private async selectConsoleSelectOption(label: string): Promise<void> {
+    const menuList = this.page.getByTestId('console-select-menu-list');
+    await this.robustClick(menuList.getByText(label, { exact: true }).first());
+  }
+
+  async impersonateUser(username: string, groups: string[] = []): Promise<void> {
+    await this.openUserDropdown();
+    await this.robustClick(this.impersonateUserItem);
+    await this.usernameInput.fill(username);
+    await this.selectGroups(groups);
+    await this.robustClick(this.impersonateButton);
+  }
+
+  async impersonateServiceAccount(
+    namespace: string,
+    name: string,
+    groups: string[] = [],
+  ): Promise<void> {
+    await this.openUserDropdown();
+    await this.robustClick(this.impersonateUserItem);
+    await this.robustClick(this.serviceAccountRadio);
+    await this.robustClick(this.serviceAccountNamespaceDropdown);
+    await this.fillConsoleSelectSearch(namespace);
+    await this.selectConsoleSelectOption(namespace);
+    await this.robustClick(this.serviceAccountNameDropdown);
+    await this.fillConsoleSelectSearch(name);
+    await this.selectConsoleSelectOption(name);
+    await this.selectGroups(groups);
+    await this.robustClick(this.impersonateButton);
+  }
+
+  async stopImpersonating(): Promise<void> {
+    const currentURL = this.page.url();
+    await this.openUserDropdown();
+    await Promise.all([
+      this.page.waitForURL((url) => url.href !== currentURL, {
+        timeout: 60_000,
+        waitUntil: 'domcontentloaded',
+      }),
+      this.robustClick(this.stopImpersonateItem),
+    ]);
+    await this.page.waitForLoadState('domcontentloaded');
   }
 
   async isAuthDisabled(): Promise<boolean> {

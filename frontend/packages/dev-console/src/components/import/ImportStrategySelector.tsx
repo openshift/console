@@ -13,13 +13,13 @@ import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { useAccessReview } from '@console/dynamic-plugin-sdk/src';
 import { GitProvider, ImportStrategy } from '@console/git-service/src/types/git';
-import { getActiveNamespace } from '@console/internal/actions/ui';
 import { BuildStrategyType } from '@console/internal/components/utils/build-utils';
 import { FLAG_KNATIVE_SERVING_SERVICE } from '@console/knative-plugin/src/const';
 import { ServiceModel as ksvcModel } from '@console/knative-plugin/src/models';
 import { ServerlessBuildStrategyType } from '@console/knative-plugin/src/types';
 import { ServerlessFunctionIcon } from '@console/knative-plugin/src/utils/icons';
 import { getFieldId } from '@console/shared/src/components/formik-fields/field-utils';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { useFormikValidationFix } from '@console/shared/src/hooks/useFormikValidationFix';
 
@@ -78,10 +78,11 @@ const ImportStrategySelector: FC = () => {
     },
   ];
 
+  const [activeNamespace] = useActiveNamespace();
   const [knativeServiceAccess] = useAccessReview({
     group: ksvcModel.apiGroup,
     resource: ksvcModel.plural,
-    namespace: getActiveNamespace(),
+    namespace: activeNamespace,
     verb: 'create',
   });
 

@@ -62,7 +62,6 @@ const LogsWrapperComponent: FC<LogsWrapperComponentProps> = ({
       })
       .catch((err: Error) => {
         setDownloadAllStatus(false);
-        // eslint-disable-next-line no-console
         console.warn(err.message || 'Error downloading logs.');
       });
   };

@@ -31,6 +31,7 @@ const getPollIntervals = (selected: string): SimpleSelectOption[] => {
     content: interval,
     value: interval,
     selected: selected === interval,
+    'data-test': `dropdown-menu-${interval}`,
     'data-test-dropdown-menu': interval,
   }));
 };
@@ -132,6 +133,7 @@ export const RegistryPollIntervalDetailItem: FC<RegistryPollIntervalDetailItemPr
         <ModalFooter>
           <Button
             key="confirm-action"
+            data-test="confirm-action"
             variant="primary"
             isLoading={inProgress}
             type="submit"

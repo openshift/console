@@ -138,7 +138,6 @@ const DebugTerminal: FC<DebugTerminalProps> = ({ podData, containerName }) => {
       try {
         await k8sKillByName(PodModel, podToDelete, podNamespace);
       } catch (e) {
-        // eslint-disable-next-line no-console
         console.warn('Could not delete container terminal debug pod.', e);
       }
     };

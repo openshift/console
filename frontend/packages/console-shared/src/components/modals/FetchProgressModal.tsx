@@ -146,7 +146,6 @@ export const FetchProgressModal: FC<FetchProgressModalProps> = ({
         setEndState(undefined);
         return;
       }
-      // eslint-disable-next-line no-console
       console.error('Failed to fetch:', error);
       setErrorMessage(error?.message || t('Could not fetch data'));
       setEndState('failed');

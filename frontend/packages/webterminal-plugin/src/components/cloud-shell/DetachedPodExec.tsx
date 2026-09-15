@@ -81,7 +81,6 @@ const DetachedPodExec: FC<DetachedPodExecProps> = ({
             setWsError(error);
           }
         })
-        // eslint-disable-next-line no-console
         .onerror((evt: any) => console.error(`WS error?! ${evt}`));
 
       ws.current?.destroy();
@@ -156,7 +155,6 @@ const DetachedPodExec: FC<DetachedPodExecProps> = ({
             setWsError(error);
           }
         })
-        // eslint-disable-next-line no-console
         .onerror((evt: any) => console.error(`WS error?! ${evt}`));
 
       if (ws.current !== websocket) {

@@ -2,10 +2,9 @@ module.exports = {
   plugins: ['playwright'],
   extends: ['plugin:playwright/recommended'],
   rules: {
-    'no-console': 'off',
     'no-empty-pattern': 'off',
     'no-restricted-syntax': [
-      'warn',
+      'error',
       {
         selector: 'CallExpression[callee.property.name="waitFor"]',
         message:
@@ -16,6 +15,6 @@ module.exports = {
       },
     ],
     'playwright/no-conditional-in-test': 'off',
-    'playwright/no-skipped-test': ['warn', { allowConditional: true }],
+    'playwright/no-skipped-test': ['error', { allowConditional: true }],
   },
 };

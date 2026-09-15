@@ -109,7 +109,6 @@ const OLSButtonInner: FC<UpdateWorkflowOLSButtonProps & OLSButtonInnerProps> = (
     );
 
     if (prompt.length > OLS_MAX_PROMPT_LENGTH) {
-      // eslint-disable-next-line no-console
       console.warn(
         `[OLS] Prompt size (${prompt.length} chars) exceeds maximum (${OLS_MAX_PROMPT_LENGTH}). Truncating.`,
       );

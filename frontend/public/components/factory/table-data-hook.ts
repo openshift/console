@@ -104,12 +104,8 @@ export const useTableData = ({
   const sortSelector = useMemo(
     () =>
       tableSelectorCreator(
-        (state: RootState) => state.UI.getIn(['listSorts', listId]),
-        (sortsState: any) => [
-          sortsState?.get('field'),
-          sortsState?.get('func'),
-          sortsState?.get('orderBy'),
-        ],
+        (state: RootState) => state.UI.listSorts?.[listId],
+        (sortsState: any) => [sortsState?.field, sortsState?.func, sortsState?.orderBy],
       ),
     [tableSelectorCreator, listId],
   );

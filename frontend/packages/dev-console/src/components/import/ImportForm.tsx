@@ -254,7 +254,6 @@ const ImportForm: FC<ImportFormProps & StateProps> = ({
         );
       })
       .catch((err) => {
-        // eslint-disable-next-line no-console
         console.warn('Error while submitting import form:', err);
         actions.setStatus({ submitError: err.message });
       });

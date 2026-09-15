@@ -125,7 +125,7 @@ describe('ServiceRow', () => {
   });
 
   it('should render properly when conditions indicate not ready state', () => {
-    const notReadySvcData = {
+    const notReadySvcData: RowFunctionArgs<ServiceKind> = {
       ...svcData,
       obj: {
         ...svcData.obj,

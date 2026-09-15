@@ -19,10 +19,7 @@ export async function hasOperatorSubscription(
     );
     return true;
   } catch (err) {
-    const code =
-      (err as any).statusCode ??
-      (err as any).response?.statusCode ??
-      (err as any).code;
+    const code = (err as any).statusCode ?? (err as any).response?.statusCode ?? (err as any).code;
     if (code === 404) {
       return false;
     }

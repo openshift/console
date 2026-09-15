@@ -126,7 +126,6 @@ export const StatusDescriptorDetailsItem: FC<StatusCapabilityProps> = ({ classNa
         return null;
       default:
         if (_.isObject(props.value)) {
-          // eslint-disable-next-line no-console
           console.warn(
             `[Invalid StatusDescriptor] Cannot render a descriptor detail item for 'status.${props.descriptor.path}'. A valid x-descriptor must be provided for non-primitive properties.`,
             'See https://github.com/openshift/console/blob/master/frontend/packages/operator-lifecycle-manager/src/components/descriptors/reference/reference.md#olm-descriptor-reference',

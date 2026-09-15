@@ -41,7 +41,6 @@ export const ExploreType: FC<ExploreTypeProps> = (props) => {
           setAllDefinitions(response);
         })
         .catch((err) => {
-          // eslint-disable-next-line no-console
           console.error('Could not fetch swagger definitions', err);
         });
     } else if (schema) {

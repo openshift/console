@@ -513,7 +513,7 @@ export const MachineSetDetailsPage: FC = (props) => (
   <DetailsPage
     {...props}
     kind={machineSetReference}
-    customActionMenu={(obj: K8sResourceKind) => (
+    customActionMenu={(_kindObj: K8sKind, obj: K8sResourceKind) => (
       <LazyActionMenu context={{ [machineSetReference]: obj }} />
     )}
     pages={[

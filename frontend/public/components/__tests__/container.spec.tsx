@@ -2,11 +2,11 @@ import { screen } from '@testing-library/react';
 import * as ReactRouter from 'react-router';
 import { useFavoritesOptions } from '@console/internal/components/useFavoritesOptions';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
-import { testPodInstance } from '../../../__mocks__/k8sResourcesMocks';
 import type { PodKind } from '../../module/k8s';
 import { getContainerStatus } from '../../module/k8s/container';
 import { ContainersDetailsPage, ContainerDetails, ContainerDetailsList } from '../container';
 import { useK8sWatchResource } from '../utils/k8s-watch-hook';
+import { testPodInstance } from './data/k8sResourcesMocks';
 
 // Mock router hooks
 jest.mock('react-router', () => ({

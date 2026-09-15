@@ -48,7 +48,6 @@ const ClusterInventoryItem = memo<ClusterInventoryItemProps>(
         mapperLoader()
           .then((res) => setMapper(() => res))
           .catch(() => {
-            // eslint-disable-next-line no-console
             console.error('Mapper does not exist in module');
           });
     }, [mapperLoader]);

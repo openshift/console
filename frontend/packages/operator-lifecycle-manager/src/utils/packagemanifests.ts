@@ -45,7 +45,6 @@ const isStandaloneOperator = (pkg: PackageManifestKind) => {
   const { channels, defaultChannel } = pkg.status ?? {};
   // if a package does not have status.defaultChannel, exclude it so the app doesn't fail
   if (!defaultChannel) {
-    // eslint-disable-next-line no-console
     console.warn(
       `PackageManifest ${pkg.metadata.name} has no status.defaultChannel and has been excluded`,
     );

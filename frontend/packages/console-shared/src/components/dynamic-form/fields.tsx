@@ -348,7 +348,6 @@ const CustomSchemaField: FC<SchemaFieldProps> = (props) => {
   try {
     resolvedSchema = retrieveSchema(fieldSchema, rootSchema, formData);
   } catch (error) {
-    // eslint-disable-next-line no-console
     console.error('dynamic-form CustomSchemaField retrieveSchema error:', error);
   }
 

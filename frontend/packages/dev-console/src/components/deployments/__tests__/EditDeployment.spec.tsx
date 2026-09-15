@@ -1,8 +1,8 @@
 import { screen } from '@testing-library/react';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
-import { mockDeploymentConfig } from '../__mocks__/deployment-data';
-import MockForm from '../__mocks__/MockForm';
 import DeploymentForm from '../DeploymentForm';
+import { mockDeploymentConfig } from './deployment-data';
+import MockForm from './MockForm';
 
 jest.mock('../ContainerField', () => ({
   __esModule: true,

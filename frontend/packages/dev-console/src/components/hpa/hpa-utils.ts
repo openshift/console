@@ -46,9 +46,7 @@ export const getRequestsWarning = (resource: K8sResourceKind): string | null => 
   return null;
 };
 
-const defaultHPAYAML = baseTemplates
-  .get(referenceForModel(HorizontalPodAutoscalerModel))
-  .get('default');
+const defaultHPAYAML = baseTemplates[referenceForModel(HorizontalPodAutoscalerModel)]?.default;
 
 const createScaleTargetRef = (resource: K8sResourceKind) => ({
   apiVersion: resource.apiVersion,

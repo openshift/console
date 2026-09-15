@@ -39,7 +39,6 @@ const getOverridePerspectives = (): Perspective[] | undefined => {
 
       return value as Perspective[];
     } catch (e) {
-      // eslint-disable-next-line no-console
       console.warn('Failed to parse perspectives override', e);
     }
   }

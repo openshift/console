@@ -104,19 +104,22 @@ export const determineAvailableFilters = (
   return filters;
 };
 
-export const getActiveFilters = (attributeFilters, activeFilters): CatalogFilters => {
-  _.forOwn(attributeFilters, (filterValues, filterType) => {
-    // removing default and localstore filters if Filters are present over URL
-    _.each(_.keys(activeFilters[filterType]), (key) =>
-      _.set(activeFilters, [filterType, key, 'active'], false),
-    );
-    _.each(filterValues, (filterValue) => {
-      _.set(activeFilters, [filterType, filterValue, 'active'], true);
-    });
-  });
-
-  return activeFilters;
-};
+export const getActiveFilters = (attributeFilters, initialFilters): CatalogFilters =>
+  Object.entries(attributeFilters ?? {}).reduce<CatalogFilters>(
+    (acc, [filterType, filterValues]) => {
+      if (!acc[filterType]) return acc;
+      return {
+        ...acc,
+        [filterType]: Object.fromEntries(
+          Object.entries(acc[filterType]).map(([key, filter]) => [
+            key,
+            { ...filter, active: Array.isArray(filterValues) && filterValues.includes(key) },
+          ]),
+        ),
+      };
+    },
+    initialFilters,
+  );
 
 export const getFilterGroupCounts = (
   items: CatalogItem[],

@@ -180,8 +180,10 @@ class ProwJUnitReporter implements Reporter {
 
     for (const projectSuite of this.suite.suites) {
       for (const fileSuite of projectSuite.suites) {
-        const { entry, tests, failures, errors, skipped, flaky, failed } =
-          this._buildTestSuite(projectSuite.title, fileSuite);
+        const { entry, tests, failures, errors, skipped, flaky, failed } = this._buildTestSuite(
+          projectSuite.title,
+          fileSuite,
+        );
         suiteEntries.push(entry);
         totalTests += tests;
         totalFailures += failures;
@@ -230,7 +232,14 @@ class ProwJUnitReporter implements Reporter {
       await fs.promises.writeFile(linkFile, html);
     }
 
-    this._printSummary(totalTests, failedTests.length, totalSkipped, flakyTests, failedTests, result);
+    this._printSummary(
+      totalTests,
+      failedTests.length,
+      totalSkipped,
+      flakyTests,
+      failedTests,
+      result,
+    );
   }
 
   private _buildTestSuite(

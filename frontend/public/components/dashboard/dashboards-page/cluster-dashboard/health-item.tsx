@@ -1,7 +1,6 @@
 import type { ComponentType, FC } from 'react';
 import { useEffect, useContext, useMemo } from 'react';
 import { Stack, StackItem } from '@patternfly/react-core';
-import type { Map as ImmutableMap } from 'immutable';
 import { useTranslation } from 'react-i18next';
 import type {
   ResolvedExtension,
@@ -156,14 +155,13 @@ export const URLHealthItem: FC<URLHealthItemProps> = ({ subsystem, models }) => 
     [subsystem.url, subsystem.fetch],
   );
   const { urlResults } = useDashboardResources({ urls });
-  const modelExists =
-    subsystem.additionalResource && !!models.get(subsystem.additionalResource.kind);
+  const modelExists = subsystem.additionalResource && !!models?.[subsystem.additionalResource.kind];
   const [k8sData, k8sLoaded, k8sLoadError] = useK8sWatchResource(
     modelExists ? subsystem.additionalResource : null,
   );
 
-  const healthResult = urlResults.getIn([subsystem.url, 'data']);
-  const healthResultError = urlResults.getIn([subsystem.url, 'loadError']);
+  const healthResult = urlResults?.[subsystem.url]?.data;
+  const healthResultError = urlResults?.[subsystem.url]?.loadError;
 
   const k8sResult = modelExists
     ? { data: k8sData, loaded: k8sLoaded, loadError: k8sLoadError }
@@ -204,8 +202,7 @@ export const PrometheusHealthItem: FC<PrometheusHealthItemProps> = ({ subsystem,
   );
   const { prometheusResults } = useDashboardResources({ prometheusQueries });
 
-  const modelExists =
-    subsystem.additionalResource && !!models.get(subsystem.additionalResource.kind);
+  const modelExists = subsystem.additionalResource && !!models?.[subsystem.additionalResource.kind];
   const [k8sData, k8sLoaded, k8sLoadError] = useK8sWatchResource(
     modelExists ? subsystem.additionalResource : null,
   );
@@ -295,12 +292,12 @@ type OperatorHealthItemProps = {
 
 type URLHealthItemProps = {
   subsystem: ResolvedExtension<DashboardsOverviewHealthURLSubsystem<any>>['properties'];
-  models: ImmutableMap<string, K8sKind>;
+  models: Record<string, K8sKind>;
 };
 
 type PrometheusHealthItemProps = {
   subsystem: ResolvedExtension<DashboardsOverviewHealthPrometheusSubsystem>['properties'];
-  models: ImmutableMap<string, K8sKind>;
+  models: Record<string, K8sKind>;
 };
 
 type ResourceHealthItemProps = {

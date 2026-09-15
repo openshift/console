@@ -30,7 +30,6 @@ const getLightspeedInstallationStatus = async () => {
     return true;
   } catch (err) {
     if (err.response.status !== 404) {
-      // eslint-disable-next-line no-console
       console.log(err.message);
     }
     return false;

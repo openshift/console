@@ -244,7 +244,6 @@ const getPipelineRunData = (
   options?: { generateName: boolean },
 ): PipelineRunKind => {
   if (!pipeline && !latestRun) {
-    // eslint-disable-next-line no-console
     console.error('Missing parameters, unable to create new PipelineRun');
     return null;
   }

@@ -12,12 +12,10 @@ const trackUsage = (data: { event: string; perspective: string }) =>
   })
     .then((response) => {
       if (!response.ok) {
-        // eslint-disable-next-line no-console
         console.error('console-telemetry-plugin: unable to track usage:', response.statusText);
       }
     })
     .catch((error) => {
-      // eslint-disable-next-line no-console
       console.error('console-telemetry-plugin: unable to track usage:', error);
     });
 

@@ -178,7 +178,6 @@ const getHelmReleaseMap = (namespace: string) =>
             }
           });
         } catch (e) {
-          // eslint-disable-next-line no-console
           console.error('Could not fetch or parse helm chart releases', e);
         }
         return acc;

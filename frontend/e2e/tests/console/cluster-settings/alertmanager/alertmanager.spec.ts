@@ -1,9 +1,6 @@
 import { test, expect } from '../../../../fixtures';
 import jsYaml from 'js-yaml';
-import {
-  AlertmanagerPage,
-  getGlobalsAndReceiverConfig,
-} from '../../../../pages/alertmanager-page';
+import { AlertmanagerPage, getGlobalsAndReceiverConfig } from '../../../../pages/alertmanager-page';
 import KubernetesClient from '../../../../clients/kubernetes-client';
 import { resetAlertmanagerConfig } from './alertmanager-test-utils';
 
@@ -727,19 +724,16 @@ test.describe('Alertmanager Receiver Forms', { tag: ['@admin'] }, () => {
       await alertmanager.save();
     });
 
-    await test.step(
-      'Verify pagerduty_url saved with Receiver and global still exists',
-      async () => {
-        await expect(async () => {
-          await alertmanager.navigateToYAMLPage();
-          const yamlContent = await alertmanager.getYAMLContent();
-          const configs = getGlobalsAndReceiverConfig(receiverName, configName, yamlContent);
+    await test.step('Verify pagerduty_url saved with Receiver and global still exists', async () => {
+      await expect(async () => {
+        await alertmanager.navigateToYAMLPage();
+        const yamlContent = await alertmanager.getYAMLContent();
+        const configs = getGlobalsAndReceiverConfig(receiverName, configName, yamlContent);
 
-          expect(configs.globals.pagerduty_url).toBe(pagerDutyURL2);
-          expect(configs.receiverConfig.url).toBe(pagerDutyURL3);
-        }).toPass({ intervals: [2_000, 3_000, 5_000], timeout: 30_000 });
-      },
-    );
+        expect(configs.globals.pagerduty_url).toBe(pagerDutyURL2);
+        expect(configs.receiverConfig.url).toBe(pagerDutyURL3);
+      }).toPass({ intervals: [2_000, 3_000, 5_000], timeout: 30_000 });
+    });
 
     await test.step('Update advanced configuration fields', async () => {
       await alertmanager.navigateToEditReceiver(receiverName);

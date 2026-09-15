@@ -1,10 +1,10 @@
+import { trafficDataForPatch, getRevisionItems } from '../traffic-splitting-utils';
 import {
   mockServiceData,
   mockTrafficData,
   mockRevisions,
   mockRevisionItems,
-} from '../__mocks__/traffic-splitting-utils-mock';
-import { trafficDataForPatch, getRevisionItems } from '../traffic-splitting-utils';
+} from './data/traffic-splitting-utils-mock';
 
 describe('Traffic Splitting', () => {
   it('should construct the traffic data for path Request replace', () => {

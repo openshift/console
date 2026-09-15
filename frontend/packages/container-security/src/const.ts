@@ -6,7 +6,6 @@ import { chart_color_red_orange_300 as redorange300 } from '@patternfly/react-to
 import { chart_color_red_orange_400 as redorange400 } from '@patternfly/react-tokens/dist/esm/chart_color_red_orange_400';
 import { chart_color_yellow_400 as yellow400 } from '@patternfly/react-tokens/dist/esm/chart_color_yellow_400';
 /* eslint-enable @typescript-eslint/naming-convention */
-import { Map as ImmutableMap } from 'immutable';
 import type { ImageManifestVuln } from './types';
 
 export enum Priority {
@@ -19,78 +18,6 @@ export enum Priority {
   Unknown = 'Unknown',
 }
 
-export const vulnPriority = ImmutableMap<Priority, VulnPriorityDescription>()
-  .set(Priority.Defcon1, {
-    color: redorange400,
-    description:
-      'Defcon1 is a Critical problem which has been manually highlighted by the Quay team. It requires immediate attention.',
-    index: 0,
-    level: 'error',
-    score: 11,
-    title: 'Defcon 1',
-    value: 'Defcon1',
-  })
-  .set(Priority.Critical, {
-    color: redorange300,
-    description:
-      'Critical is a world-burning problem, exploitable for nearly all people in a installation of the package. Includes remote root privilege escalations, or massive data loss.',
-    index: 1,
-    level: 'error',
-    score: 10,
-    title: 'Critical',
-    value: 'Critical',
-  })
-  .set(Priority.High, {
-    color: redorange100,
-    description:
-      'High is a real problem, exploitable for many people in a default installation. Includes serious remote denial of services, local root privilege escalations, or data loss.',
-    index: 2,
-    level: 'warning',
-    score: 9,
-    title: 'High',
-    value: 'High',
-  })
-  .set(Priority.Medium, {
-    color: orange300,
-    description:
-      'Medium is a real security problem, and is exploitable for many people. Includes network daemon denial of service attacks, cross-site scripting, and gaining user privileges.',
-    index: 3,
-    level: 'warning',
-    score: 6,
-    title: 'Medium',
-    value: 'Medium',
-  })
-  .set(Priority.Low, {
-    color: yellow400,
-    description:
-      'Low is a security problem, but is hard to exploit due to environment, requires a user-assisted attack, a small install base, or does very little damage.',
-    index: 4,
-    level: 'warning',
-    score: 3,
-    title: 'Low',
-    value: 'Low',
-  })
-  .set(Priority.Negligible, {
-    color: black500,
-    description:
-      'Negligible is technically a security problem, but is only theoretical in nature, requires a very special situation, has almost no install base, or does no real damage.',
-    index: 5,
-    level: 'info',
-    score: 1,
-    title: 'Negligible',
-    value: 'Negligible',
-  })
-  .set(Priority.Unknown, {
-    color: black500,
-    description:
-      'Unknown is either a security problem that has not been assigned to a priority yet or a priority that our system did not recognize',
-    index: 6,
-    level: 'info',
-    score: 0,
-    title: 'Unknown',
-    value: 'Unknown',
-  });
-
 export type VulnPriorityDescription = {
   color: any;
   description: string;
@@ -98,8 +25,81 @@ export type VulnPriorityDescription = {
   level: 'error' | 'warning' | 'info';
   score: number;
   title: string;
-  value: string;
+  value: Priority;
 };
+
+export const vulnPriority: Record<Priority, VulnPriorityDescription> = Object.freeze({
+  [Priority.Defcon1]: {
+    color: redorange400,
+    description:
+      'Defcon1 is a Critical problem which has been manually highlighted by the Quay team. It requires immediate attention.',
+    index: 0,
+    level: 'error',
+    score: 11,
+    title: 'Defcon 1',
+    value: Priority.Defcon1,
+  },
+  [Priority.Critical]: {
+    color: redorange300,
+    description:
+      'Critical is a world-burning problem, exploitable for nearly all people in a installation of the package. Includes remote root privilege escalations, or massive data loss.',
+    index: 1,
+    level: 'error',
+    score: 10,
+    title: 'Critical',
+    value: Priority.Critical,
+  },
+  [Priority.High]: {
+    color: redorange100,
+    description:
+      'High is a real problem, exploitable for many people in a default installation. Includes serious remote denial of services, local root privilege escalations, or data loss.',
+    index: 2,
+    level: 'warning',
+    score: 9,
+    title: 'High',
+    value: Priority.High,
+  },
+  [Priority.Medium]: {
+    color: orange300,
+    description:
+      'Medium is a real security problem, and is exploitable for many people. Includes network daemon denial of service attacks, cross-site scripting, and gaining user privileges.',
+    index: 3,
+    level: 'warning',
+    score: 6,
+    title: 'Medium',
+    value: Priority.Medium,
+  },
+  [Priority.Low]: {
+    color: yellow400,
+    description:
+      'Low is a security problem, but is hard to exploit due to environment, requires a user-assisted attack, a small install base, or does very little damage.',
+    index: 4,
+    level: 'warning',
+    score: 3,
+    title: 'Low',
+    value: Priority.Low,
+  },
+  [Priority.Negligible]: {
+    color: black500,
+    description:
+      'Negligible is technically a security problem, but is only theoretical in nature, requires a very special situation, has almost no install base, or does no real damage.',
+    index: 5,
+    level: 'info',
+    score: 1,
+    title: 'Negligible',
+    value: Priority.Negligible,
+  },
+  [Priority.Unknown]: {
+    color: black500,
+    description:
+      'Unknown is either a security problem that has not been assigned to a priority yet or a priority that our system did not recognize',
+    index: 6,
+    level: 'info',
+    score: 0,
+    title: 'Unknown',
+    value: Priority.Unknown,
+  },
+});
 
 export const totalFor = (priority: Priority) => (obj: ImageManifestVuln) => {
   switch (priority) {
@@ -148,12 +148,14 @@ export const totalVulnFor =
     }
   };
 
-const vulnPriorityByTitle = vulnPriority.mapEntries(
-  ([, vulnPriorityDescription]: [Priority, VulnPriorityDescription]) => [
-    vulnPriorityDescription.title,
-    vulnPriorityDescription,
-  ],
-) as ImmutableMap<string, VulnPriorityDescription>;
+const vulnPriorityByTitle: Record<string, VulnPriorityDescription> = Object.values(
+  vulnPriority,
+).reduce(
+  (acc, desc) => ({ ...acc, [desc.title]: desc }),
+  {} as Record<string, VulnPriorityDescription>,
+);
 
 export const priorityFor = (severityTitle: string) =>
-  vulnPriorityByTitle.get(severityTitle) || vulnPriority.get(Priority.Unknown);
+  Object.prototype.hasOwnProperty.call(vulnPriorityByTitle, severityTitle)
+    ? vulnPriorityByTitle[severityTitle]
+    : vulnPriority[Priority.Unknown];

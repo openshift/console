@@ -8,20 +8,14 @@ export class AddFlowPage extends BasePage {
   private readonly componentNameInput = this.page.locator('#form-input-name-field');
   private readonly appNameInput = this.page.locator('#form-input-application-name-field');
   private readonly createButton = this.page.getByTestId('save-changes');
-  private readonly resourcesDropdown = this.page.locator(
-    '#form-select-input-resources-field',
-  );
-  private readonly knativeResourceOption = this.page.locator(
-    '#select-option-resources-knative',
-  );
+  private readonly resourcesDropdown = this.page.locator('#form-select-input-resources-field');
+  private readonly knativeResourceOption = this.page.locator('#select-option-resources-knative');
   private readonly importStrategyEditButton = this.page.getByTestId('import-strategy-button');
   private readonly dockerfileStrategy = this.page.getByTestId('import-strategy-Dockerfile');
   private readonly dockerfilePathInput = this.page.locator(
     '#form-input-docker-dockerfilePath-field',
   );
-  private readonly externalRegistryInput = this.page.locator(
-    '#form-input-searchTerm-field',
-  );
+  private readonly externalRegistryInput = this.page.locator('#form-input-searchTerm-field');
   private readonly pageHeading = this.page.getByTestId('page-heading').locator('h1');
 
   async navigateToAddPage(namespace: string): Promise<void> {
@@ -48,7 +42,10 @@ export class AddFlowPage extends BasePage {
     await this.gitUrlInput.clear();
     await this.gitUrlInput.fill(url);
     await expect(
-      this.page.locator('.pf-v6-c-helper-text').filter({ hasText: /Validated|Rate limit/ }).first(),
+      this.page
+        .locator('.pf-v6-c-helper-text')
+        .filter({ hasText: /Validated|Rate limit/ })
+        .first(),
     ).toBeVisible({ timeout: 60_000 });
 
     // If rate limited, auto-detection fails — manually select Builder Image strategy and Node.js
@@ -99,7 +96,10 @@ export class AddFlowPage extends BasePage {
     await this.externalRegistryInput.clear();
     await this.externalRegistryInput.fill(imageName);
     await expect(
-      this.page.locator('.pf-v6-c-helper-text').filter({ hasText: /Validated|Loading/ }).first(),
+      this.page
+        .locator('.pf-v6-c-helper-text')
+        .filter({ hasText: /Validated|Loading/ })
+        .first(),
     ).toBeVisible({ timeout: 60_000 });
     await expect(this.componentNameInput).not.toHaveValue('', { timeout: 30_000 });
   }

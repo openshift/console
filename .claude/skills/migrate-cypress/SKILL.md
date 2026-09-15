@@ -1,8 +1,8 @@
 ---
 name: migrate-cypress
-description: Migrate a Cypress test file (.cy.ts) or Gherkin feature file (.feature) to Playwright following Console's architecture. This is the ONLY skill for Cypress-to-Playwright conversion work, you can perform full migration, analysis-only (--analyze), or dry-run (--dry-run) modes.
+description: Migrate a Cypress test file (.cy.ts) or Gherkin feature file (.feature) to Playwright following Console's architecture. This is the ONLY skill for Cypress-to-Playwright conversion work, supporting full migration, analysis-only (--analyze), or dry-run (--dry-run) modes. Use this skill whenever the user wants to convert, port, rewrite, or migrate Cypress or Gherkin tests to Playwright, mentions "old cypress tests", "remaining e2e tests", or provides a .cy.ts or .feature file path in a migration context.
 when_to_use: |
-  TRIGGER on: "migrate", "convert cypress", "port to playwright", file paths ending in .cy.ts or .feature in a migration context, requests to rewrite Gherkin scenarios as Playwright specs, or explicit /migrate-cypress invocations. Also trigger when user mentions converting "old cypress tests", "remaining e2e tests", or moving test suites from Cypress to Playwright.
+  TRIGGER on: "migrate cypress", "migrate e2e", "migrate test", "convert cypress", "port to playwright", "rewrite in playwright", "convert these old tests", file paths ending in .cy.ts or .feature in a migration context, requests to rewrite Gherkin scenarios as Playwright specs, or explicit /migrate-cypress invocations. Also trigger when user mentions converting "old cypress tests", "remaining e2e tests", or moving test suites from Cypress to Playwright.
   DO NOT trigger for: writing new Playwright tests from scratch (no Cypress source), fixing or debugging existing .spec.ts files (use debug-test instead), running test suites, editing test infrastructure (base-page.ts, fixtures, KubernetesClient), or questions about Playwright API without migration intent.
 model: opus
 argument-hint: "<path/to/file.cy.ts or .feature> [--analyze] [--dry-run]"
@@ -16,7 +16,8 @@ Translate Cypress E2E tests into idiomatic Playwright code following Console's l
 ## Before Starting
 
 1. Check that `frontend/e2e/.env` exists. If missing, copy `frontend/e2e/.env.example` to `frontend/e2e/.env` and tell the user to fill in their cluster values before continuing.
-2. Read `.claude/migration-context.md` for the complete API translation tables, structural transformation rules, Console selector mappings, and migration checklist. That file is the single source of truth for all translation context.
+2. Read `.claude/e2e-context.md` for project conventions, patterns, and rules, page objects, selectors, fixtures, cleanup, waits, and things to never do. That file is the single source of truth for how Playwright tests should be structured.
+3. Read `.claude/migration-context.md` for the Cypress → Playwright API translation tables, structural transformation rules, Gherkin collapse mappings, and migration checklist.
 
 ## Input
 
@@ -69,7 +70,7 @@ Expected output: a structured plan listing each test's intent, the Playwright co
 1. Resize viewport to 1920×1080
 2. Navigate to target pages in the live UI
 3. Snapshot accessibility tree to discover `data-test` attributes and element roles
-4. Verify interactive elements work (click, type)
+4. Verify selectors with non-submitting interactions (click navigation elements, type in search fields). Do not submit forms or perform create/update/delete actions during discovery. Ask the user before login or credential entry
 5. Update migration plan with verified selectors
 
 If MCP is unavailable or no cluster is reachable, log a warning: "Playwright MCP not available — selectors translated literally. They may be stale. Run `/debug-test` after deployment to verify." Proceed to Phase 3.
@@ -107,7 +108,7 @@ Example:
    ```
 2. Write the spec file following project template:
    - `import { test, expect } from '../../fixtures'`
-   - `test.describe` with tags (e.g. `{ tag: ['@smoke'] }`)
+   - Tags are optional. Only add them if they enable filtering beyond the directory structure (see `e2e-context.md` Tags section)
    - Admin tests go in `e2e/tests/<package>/`, developer tests in `e2e/tests/<package>/developer/`
    - Self-contained: create → assert → cleanup in each `test()`
    - Use `test.step()` for logical grouping when a test has 3+ distinct phases
@@ -120,9 +121,11 @@ Example:
 ### Phase 4: Validation
 
 1. Run with `npx playwright test --project=<package> <output-file> --retries=0`. The project name matches the package directory under `e2e/tests/` (e.g. `--project=helm`, `--project=console`). For developer tests, use `--project=<package>-developer`. Add `--ui` only if the user requests interactive debugging. Note: `e2e/.env` may override `WEB_CONSOLE_URL` with a remote cluster URL. If running against localhost, ensure the user has updated `e2e/.env` or override with `WEB_CONSOLE_URL=http://localhost:9000`.
-2. Debug failures using Playwright MCP (navigate → snapshot → console → network)
-3. Verify no orphaned resources after run
-4. Produce migration summary:
+2. If the first run passes, run 2 additional times with `--retries=0` to catch intermittent failures. A migrated test that passes once but fails on subsequent runs is flaky and must be fixed before the migration is complete.
+3. Debug failures using Playwright MCP (navigate → snapshot → console → network). Fix and re-run.
+4. If a test still fails after 3 fix attempts, stop trying and ask the user if they want to run `/debug-test <spec-file>` for deeper MCP-assisted diagnosis.
+5. Verify no orphaned resources after run
+6. Produce migration summary:
    ```
    Migration complete: <source-file> → <output-file>
      Tests migrated: N
@@ -141,6 +144,16 @@ Example:
    ```
    The "Assertions" column shows `<cypress count> → <playwright count>`. If a Playwright test has fewer assertions than its Cypress counterpart, flag it with `⚠` and investigate — assertions may have been silently dropped.
 5. If validation passes, delete the original Cypress test file. Also check imported view and support files — if they are no longer imported by any other Cypress test, delete them too.
+
+## Flakiness Prevention
+
+Migration is the biggest source of flaky tests. Cypress and Playwright have fundamentally different execution models, and patterns that are stable in Cypress can be intermittent in Playwright. Watch for these during migration:
+
+- **Cypress retries assertions implicitly.** `cy.get(s).should('be.visible')` retries for up to 4 seconds by default. Playwright's `expect(locator).toBeVisible()` also retries, but with a different timeout (5s default). If the Cypress test relied on a long implicit wait, pass an explicit timeout: `await expect(locator).toBeVisible({ timeout: 30_000 })`.
+- **Cypress `cy.wait()` masks timing issues.** A `cy.wait(3000)` in Cypress often hides a race condition. Don't replace it with `page.waitForTimeout(3000)`. Instead, find what the wait is actually waiting for (a network response, a DOM element, a state change) and wait for that condition explicitly.
+- **Cypress shared state hides flakes.** With `testIsolation: false`, sequential `it` blocks share cookies, DOM, and navigation state. A test that passes in Cypress because the previous `it` left the page in the right state will fail intermittently in Playwright if the navigation or setup is incomplete. When merging `it` blocks into `test.step()`, make each step's preconditions explicit.
+- **PatternFly overlays intercept clicks.** Cypress `click({ force: true })` bypasses overlay checks. In Playwright, use `robustClick()` in page objects. This retries with scroll-into-view and falls back to force-click, which is more reliable than a single forced click.
+- **Resource creation races.** Cypress `cy.exec('oc create ...')` is synchronous within the test. `k8sClient.createNamespace()` is async. If the test navigates to a resource page immediately after creation, add an explicit wait for the resource to be ready: `await k8sClient.waitForNamespaceReady(ns)`.
 
 ## Key Translation Rules
 
@@ -172,5 +185,5 @@ Compare assertion count with the original Cypress test. If the migrated test has
 
 - Always read the Cypress source before writing any code
 - Use Playwright MCP to verify selectors against the live UI
-- Follow `.claude/migration-context.md` for API translation tables
+- Follow `.claude/e2e-context.md` for Playwright patterns and `.claude/migration-context.md` for Cypress translation tables
 - **DO NOT commit** — the user handles git operations
