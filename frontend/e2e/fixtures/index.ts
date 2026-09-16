@@ -8,6 +8,8 @@ import { loginFromEnv } from '../setup/login-helper';
 
 import type { CleanupFixture } from './cleanup-fixture';
 import { createCleanupFixture } from './cleanup-fixture';
+import type { CSPViolationReport } from './csp-violation-tracker';
+import { assertNoCSPViolations, trackCSPViolations } from './csp-violation-tracker';
 
 // URLs the console redirects to when a shared storageState session expires or is
 // invalidated (e.g. by a console rollout in another spec). Matches the OAuth
@@ -42,55 +44,67 @@ export const test = base.extend<TestFixtures, WorkerFixtures>({
   // persistence across pod restarts) must opt out with a
   // `{ type: 'no-auto-reauth' }` annotation, otherwise transparent recovery
   // would mask the very failure they check for.
-  page: async ({ page }, use, testInfo) => {
-    if (testInfo.annotations.some((a) => a.type === 'no-auto-reauth')) {
+  //
+  // Also tracks Content Security Policy violations for the lifetime of the
+  // page and fails the test if any occurred, regardless of which branch below
+  // runs. See csp-violation-tracker.ts for why this works even though
+  // Console's CSP header is report-only.
+  page: async ({ page, baseURL }, use, testInfo) => {
+    const cspViolations: CSPViolationReport[] = [];
+    await trackCSPViolations(page, cspViolations, baseURL);
+
+    try {
+      if (testInfo.annotations.some((a) => a.type === 'no-auto-reauth')) {
+        await use(page);
+        return;
+      }
+      const persona = testInfo.project.name.endsWith('-developer') ? 'developer' : 'admin';
+      const originalGoto = page.goto.bind(page);
+      let recovering = false;
+
+      const recoverIfRedirectedToLogin = async (): Promise<boolean> => {
+        // Guard against re-entrancy: loginFromEnv navigates internally, and those
+        // navigations flow back through this override.
+        if (recovering || !OAUTH_REDIRECT_RE.test(page.url())) {
+          return false;
+        }
+        recovering = true;
+        try {
+          await loginFromEnv(page, persona);
+        } finally {
+          recovering = false;
+        }
+        return true;
+      };
+
+      page.goto = async (url, options) => {
+        const response = await originalGoto(url, options);
+        // The console redirects to the OAuth login page client-side, a beat after
+        // the initial document loads, so `page.url()` can still read the target
+        // right after goto resolves. Wait for auth to settle before deciding: the
+        // console boots with a `co-auth-pending` class on <html> and removes it
+        // once its authenticated bootstrap fetch succeeds (see public/components/
+        // app.tsx); a 401 instead redirects to OAuth. Race that class dropping
+        // against the OAuth redirect so we neither miss the redirect nor stall the
+        // happy path.
+        if (!recovering) {
+          // eslint-disable-next-line no-restricted-syntax -- waiting for state, no action follows
+          const authSettled = page
+            .locator('html:not(.co-auth-pending)')
+            .waitFor({ state: 'attached', timeout: 30_000 });
+          const redirectedToLogin = page.waitForURL(OAUTH_REDIRECT_RE, { timeout: 30_000 });
+          await Promise.race([authSettled.catch(() => {}), redirectedToLogin.catch(() => {})]);
+        }
+        if (await recoverIfRedirectedToLogin()) {
+          return originalGoto(url, options);
+        }
+        return response;
+      };
+
       await use(page);
-      return;
+    } finally {
+      assertNoCSPViolations(cspViolations);
     }
-    const persona = testInfo.project.name.endsWith('-developer') ? 'developer' : 'admin';
-    const originalGoto = page.goto.bind(page);
-    let recovering = false;
-
-    const recoverIfRedirectedToLogin = async (): Promise<boolean> => {
-      // Guard against re-entrancy: loginFromEnv navigates internally, and those
-      // navigations flow back through this override.
-      if (recovering || !OAUTH_REDIRECT_RE.test(page.url())) {
-        return false;
-      }
-      recovering = true;
-      try {
-        await loginFromEnv(page, persona);
-      } finally {
-        recovering = false;
-      }
-      return true;
-    };
-
-    page.goto = async (url, options) => {
-      const response = await originalGoto(url, options);
-      // The console redirects to the OAuth login page client-side, a beat after
-      // the initial document loads, so `page.url()` can still read the target
-      // right after goto resolves. Wait for auth to settle before deciding: the
-      // console boots with a `co-auth-pending` class on <html> and removes it
-      // once its authenticated bootstrap fetch succeeds (see public/components/
-      // app.tsx); a 401 instead redirects to OAuth. Race that class dropping
-      // against the OAuth redirect so we neither miss the redirect nor stall the
-      // happy path.
-      if (!recovering) {
-        // eslint-disable-next-line no-restricted-syntax -- waiting for state, no action follows
-        const authSettled = page
-          .locator('html:not(.co-auth-pending)')
-          .waitFor({ state: 'attached', timeout: 30_000 });
-        const redirectedToLogin = page.waitForURL(OAUTH_REDIRECT_RE, { timeout: 30_000 });
-        await Promise.race([authSettled.catch(() => {}), redirectedToLogin.catch(() => {})]);
-      }
-      if (await recoverIfRedirectedToLogin()) {
-        return originalGoto(url, options);
-      }
-      return response;
-    };
-
-    await use(page);
   },
 
   testConfig: [

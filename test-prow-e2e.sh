@@ -84,6 +84,4 @@ case "$SCENARIO" in
     ;;
 esac
 
-env NO_SANDBOX=true yarn test-puppeteer-csp
-
 popd
