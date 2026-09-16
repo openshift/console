@@ -10,6 +10,7 @@ import type { CleanupFixture } from './cleanup-fixture';
 import { createCleanupFixture } from './cleanup-fixture';
 import type { CSPViolationReport } from './csp-violation-tracker';
 import { assertNoCSPViolations, trackCSPViolations } from './csp-violation-tracker';
+import { assertNoWindowErrors } from './window-error-tracker';
 
 // URLs the console redirects to when a shared storageState session expires or is
 // invalidated (e.g. by a console rollout in another spec). Matches the OAuth
@@ -31,6 +32,21 @@ type WorkerFixtures = {
   k8sClient: KubernetesClient;
 };
 
+/** Runs a number of assertion callbacks independently, failing the test if any of them throw. */
+const assertNoErrorsThrown = async (...callbacks: (() => void | Promise<void>)[]) => {
+  const errors: string[] = [];
+  for (const callback of callbacks) {
+    try {
+      await callback();
+    } catch (error) {
+      errors.push(error instanceof Error ? error.message : String(error));
+    }
+  }
+  if (errors.length > 0) {
+    throw new Error(errors.join('\n\n'));
+  }
+};
+
 export const test = base.extend<TestFixtures, WorkerFixtures>({
   // Override the built-in `page` fixture to self-heal lost sessions. When any
   // navigation is bounced to the OAuth login page — during warmup or mid-test —
@@ -45,10 +61,12 @@ export const test = base.extend<TestFixtures, WorkerFixtures>({
   // `{ type: 'no-auto-reauth' }` annotation, otherwise transparent recovery
   // would mask the very failure they check for.
   //
-  // Also tracks Content Security Policy violations for the lifetime of the
-  // page and fails the test if any occurred, regardless of which branch below
-  // runs. See csp-violation-tracker.ts for why this works even though
-  // Console's CSP header is report-only.
+  // Also tracks Content Security Policy violations and unhandled page errors
+  // (window.onerror / unhandledrejection / CSP / plugin load failures — see
+  // window-error-tracker.ts) for the lifetime of the page and fails the test
+  // if either occurred, regardless of which branch below runs. See
+  // csp-violation-tracker.ts for why CSP tracking works even though Console's
+  // CSP header is report-only.
   page: async ({ page, baseURL }, use, testInfo) => {
     const cspViolations: CSPViolationReport[] = [];
     await trackCSPViolations(page, cspViolations, baseURL);
@@ -103,7 +121,10 @@ export const test = base.extend<TestFixtures, WorkerFixtures>({
 
       await use(page);
     } finally {
-      assertNoCSPViolations(cspViolations);
+      await assertNoErrorsThrown(
+        () => assertNoCSPViolations(cspViolations),
+        () => assertNoWindowErrors(page),
+      );
     }
   },
 
