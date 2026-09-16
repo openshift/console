@@ -519,6 +519,22 @@ func main() {
 			InsecureSkipVerify: *fK8sModeOffClusterSkipVerifyTLS,
 		})
 
+		// Honor -ca-file for off-cluster proxy trust (mirrors the in-cluster
+		// branch's RootCAs handling); otherwise off-cluster falls back to the
+		// system trust store and can't verify an API server signed by a
+		// private CA without -k8s-mode-off-cluster-skip-verify-tls.
+		if *fCAFile != "" {
+			caPEM, err := os.ReadFile(*fCAFile)
+			if err != nil {
+				klog.Fatalf("Failed to read ca-file %q: %v", *fCAFile, err)
+			}
+			rootCAs := x509.NewCertPool()
+			if !rootCAs.AppendCertsFromPEM(caPEM) {
+				klog.Fatalf("No CA found in ca-file %q", *fCAFile)
+			}
+			serviceProxyTLSConfig.RootCAs = rootCAs
+		}
+
 		srv.ServiceClient = &http.Client{
 			Transport: &http.Transport{
 				TLSClientConfig: serviceProxyTLSConfig,
