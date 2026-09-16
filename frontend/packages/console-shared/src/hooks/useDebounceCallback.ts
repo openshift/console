@@ -1,4 +1,4 @@
-import { useRef, useMemo } from 'react';
+import { useEffect, useRef, useMemo } from 'react';
 import type { DebounceSettings } from 'lodash';
 import { debounce } from 'lodash';
 import { useDeepCompareMemoize } from './useDeepCompareMemoize';
@@ -17,8 +17,10 @@ export const useDebounceCallback = <T extends (...args: any[]) => any>(
   },
 ): ((...args) => any) & Cancelable => {
   const memDebounceParams = useDeepCompareMemoize(debounceParams);
-  const callbackRef = useRef<T>();
-  callbackRef.current = callback;
+  const callbackRef = useRef<T>(callback);
+  useEffect(() => {
+    callbackRef.current = callback;
+  });
 
   return useMemo(
     () => debounce((...args) => callbackRef.current(...args), timeout, memDebounceParams),
