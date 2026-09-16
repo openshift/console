@@ -81,9 +81,111 @@ func TestAnonymousK8SClientConfig(t *testing.T) {
 	})
 }
 
-// testCAFile writes a valid PEM-encoded CA certificate to a temp file and
-// returns its path.
-func testCAFile(t *testing.T) string {
+func TestOffClusterProxyTLSConfigs(t *testing.T) {
+	t.Run("falls back to the KAS pool when service-ca-file is unset", func(t *testing.T) {
+		caFile, _ := writeTestCAFile(t, "ca.crt")
+
+		k8sCfg, serviceCfg := offClusterProxyTLSConfigs(caFile, "", false)
+
+		if serviceCfg != k8sCfg {
+			t.Error("expected the service config to be the same config as the KAS config when service-ca-file is unset")
+		}
+		if !serviceCfg.RootCAs.Equal(k8sCfg.RootCAs) {
+			t.Error("expected the service pool to trust the KAS CA")
+		}
+	})
+
+	t.Run("uses a distinct pool for each CA when both are set", func(t *testing.T) {
+		kasCAFile, kasCert := writeTestCAFile(t, "kas-ca.crt")
+		serviceCAFile, serviceCert := writeTestCAFile(t, "service-ca.crt")
+
+		k8sCfg, serviceCfg := offClusterProxyTLSConfigs(kasCAFile, serviceCAFile, false)
+
+		if serviceCfg == k8sCfg {
+			t.Fatal("expected distinct configs when both CA files are set")
+		}
+		if !poolContainsSubject(k8sCfg.RootCAs, kasCert.RawSubject) {
+			t.Error("expected the KAS pool to trust the KAS CA")
+		}
+		if poolContainsSubject(k8sCfg.RootCAs, serviceCert.RawSubject) {
+			t.Error("expected the KAS pool to not trust the service CA")
+		}
+		if !poolContainsSubject(serviceCfg.RootCAs, serviceCert.RawSubject) {
+			t.Error("expected the service pool to trust the service CA")
+		}
+		if poolContainsSubject(serviceCfg.RootCAs, kasCert.RawSubject) {
+			t.Error("expected the service pool to not trust the KAS CA")
+		}
+	})
+
+	t.Run("propagates skip-verify-tls to both configs", func(t *testing.T) {
+		k8sCfg, serviceCfg := offClusterProxyTLSConfigs("", "", true)
+
+		if !k8sCfg.InsecureSkipVerify {
+			t.Error("expected the KAS config to have InsecureSkipVerify set")
+		}
+		if !serviceCfg.InsecureSkipVerify {
+			t.Error("expected the service config to have InsecureSkipVerify set")
+		}
+	})
+
+	t.Run("leaves RootCAs nil when no CA files are provided", func(t *testing.T) {
+		k8sCfg, serviceCfg := offClusterProxyTLSConfigs("", "", false)
+
+		if k8sCfg.RootCAs != nil {
+			t.Error("expected a nil RootCAs (system trust store) when ca-file is unset")
+		}
+		if serviceCfg.RootCAs != nil {
+			t.Error("expected a nil RootCAs (system trust store) when service-ca-file is unset")
+		}
+	})
+}
+
+func TestMustLoadCAPool(t *testing.T) {
+	t.Run("valid PEM file returns a pool containing the CA", func(t *testing.T) {
+		path, cert := writeTestCAFile(t, "ca.crt")
+
+		pool := mustLoadCAPool(path)
+
+		if !poolContainsSubject(pool, cert.RawSubject) {
+			t.Error("expected pool to contain the loaded CA's subject")
+		}
+	})
+
+	t.Run("bundle with two certs loads both", func(t *testing.T) {
+		path := filepath.Join(t.TempDir(), "bundle.crt")
+		certA := generateTestCA(t, "ca-a")
+		certB := generateTestCA(t, "ca-b")
+		bundle := append(encodeCertPEM(certA), encodeCertPEM(certB)...)
+		if err := os.WriteFile(path, bundle, 0o600); err != nil {
+			t.Fatalf("failed to write bundle: %v", err)
+		}
+
+		pool := mustLoadCAPool(path)
+
+		if !poolContainsSubject(pool, certA.RawSubject) || !poolContainsSubject(pool, certB.RawSubject) {
+			t.Error("expected pool to contain both bundled CAs")
+		}
+	})
+}
+
+// writeTestCAFile generates a self-signed CA certificate, writes it (PEM
+// encoded) to a temp file named fileName, and returns the file's path along
+// with the parsed certificate.
+func writeTestCAFile(t *testing.T, fileName string) (string, *x509.Certificate) {
+	t.Helper()
+
+	cert := generateTestCA(t, fileName)
+	path := filepath.Join(t.TempDir(), fileName)
+	if err := os.WriteFile(path, encodeCertPEM(cert), 0o600); err != nil {
+		t.Fatalf("failed to write test CA: %v", err)
+	}
+	return path, cert
+}
+
+// generateTestCA creates a self-signed CA certificate with the given common
+// name and returns its parsed form.
+func generateTestCA(t *testing.T, commonName string) *x509.Certificate {
 	t.Helper()
 
 	key, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
@@ -92,7 +194,7 @@ func testCAFile(t *testing.T) string {
 	}
 	tmpl := &x509.Certificate{
 		SerialNumber:          big.NewInt(1),
-		Subject:               pkix.Name{CommonName: "test-ca"},
+		Subject:               pkix.Name{CommonName: commonName},
 		NotBefore:             time.Now().Add(-time.Hour),
 		NotAfter:              time.Now().Add(time.Hour),
 		IsCA:                  true,
@@ -103,11 +205,30 @@ func testCAFile(t *testing.T) string {
 	if err != nil {
 		t.Fatalf("failed to create certificate: %v", err)
 	}
-	pemBytes := pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: der})
-
-	path := filepath.Join(t.TempDir(), "ca.crt")
-	if err := os.WriteFile(path, pemBytes, 0o600); err != nil {
-		t.Fatalf("failed to write test CA: %v", err)
+	cert, err := x509.ParseCertificate(der)
+	if err != nil {
+		t.Fatalf("failed to parse certificate: %v", err)
 	}
+	return cert
+}
+
+func encodeCertPEM(cert *x509.Certificate) []byte {
+	return pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: cert.Raw})
+}
+
+func poolContainsSubject(pool *x509.CertPool, subject []byte) bool {
+	for _, s := range pool.Subjects() { //nolint:staticcheck // Subjects is deprecated but sufficient for this test comparison.
+		if string(s) == string(subject) {
+			return true
+		}
+	}
+	return false
+}
+
+// testCAFile writes a valid PEM-encoded CA certificate to a temp file and
+// returns its path.
+func testCAFile(t *testing.T) string {
+	t.Helper()
+	path, _ := writeTestCAFile(t, "ca.crt")
 	return path
 }
