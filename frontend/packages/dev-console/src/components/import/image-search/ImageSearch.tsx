@@ -223,7 +223,9 @@ const ImageSearch: FC = () => {
   // handleSearch changes on every render where its deps (touched, values.name,
   // etc.) change, which happens on every keystroke via resetFields().
   const handleSearchRef = useRef(handleSearch);
-  handleSearchRef.current = handleSearch;
+  useEffect(() => {
+    handleSearchRef.current = handleSearch;
+  });
 
   useEffect(() => {
     !dirty && values.searchTerm && handleSearchRef.current(values.searchTerm);
