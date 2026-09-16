@@ -40,6 +40,11 @@ func RenderManifests(name string, url string, vals map[string]interface{}, conf 
 		chartInfo = getChartInfoFromIndexEntry(indexEntry, ns, url)
 	}
 	client.ChartPathOptions.Version = chartInfo.Version
+	// Validate the URL before setting up authentication so a rejected URL
+	// returns before any temporary TLS files are created.
+	if err := validateChartURL(url); err != nil {
+		return emptyResponse, err
+	}
 	connectionConfig, isClusterScoped, err := getRepositoryConnectionConfig(chartInfo.RepositoryName, ns, dynamicClient)
 	if err != nil {
 		return "", err
