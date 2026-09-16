@@ -23,8 +23,7 @@ export const useUserPreferenceLocalStorage = <T>(
   const [data, setData] = useState(() => {
     const valueInStorage =
       storage.getItem(storageKey) !== null && deserializeData(storage.getItem(storageKey));
-    return valueInStorage?.hasOwnProperty(key) &&
-      valueInStorage[key] !== undefined
+    return valueInStorage?.hasOwnProperty(key) && valueInStorage[key] !== undefined
       ? valueInStorage[key]
       : defaultValue;
   });
