@@ -258,53 +258,65 @@ Run frontend tests:
 
 ### Integration Tests
 
-Cypress integration tests are implemented in [Cypress.io](https://www.cypress.io/).
+Integration tests are implemented in [Playwright](https://playwright.dev/).
 
-To install Cypress:
+To install Playwright:
 
 ```
 cd frontend
-yarn run cypress install
+yarn playwright install chromium
 ```
 
-Launch Cypress test runner:
+Launch the Playwright test runner:
 
 ```
 cd frontend
 oc login ...
-yarn run test-cypress-console
+yarn run test-playwright-ui
 ```
 
-This will launch the Cypress Test Runner UI in the `console` package, where you can run one or all Cypress tests.
+This will launch the Playwright Test Runner UI, where you can run one or all Playwright tests.
 
-**Important:**  when testing with authentication, set `BRIDGE_KUBEADMIN_PASSWORD` environment variable in your shell.
+**Important:**  when testing with authentication, populate `.env` in the `frontend/e2e` directory with
+`BRIDGE_KUBEADMIN_PASSWORD` or set the environment variable in your shell.
 
-#### Execute Cypress in different packages
+Tests target `WEB_CONSOLE_URL` (default `http://localhost:9000`), which is deliberately separate
+from `BRIDGE_BASE_ADDRESS` so you can be `oc login`'d to a cluster while testing a local bridge.
+Copy [frontend/e2e/.env.example](frontend/e2e/.env.example) to `frontend/e2e/.env` to set these
+persistently.
 
-An alternate way to execute cypress tests is via [frontend/integration-tests/test-cypress.sh](frontend/integration-tests/test-cypress.sh) which takes a `-p <package>` parameter to allow execution in different packages. It also can run Cypress tests in the Test Runner UI or in `-- headless` mode:
+See [TESTING.md](TESTING.md#end-to-end-testing-with-playwright) for conventions on writing these
+tests (fixtures, page objects, selectors, cluster access).
+
+#### Execute Playwright in different packages
+
+Each package is a Playwright _project_, selected with `--project`. The projects come from the
+`packages` array in [frontend/playwright.config.ts](frontend/playwright.config.ts): `smoke`,
+`console`, `dev-console`, `helm`, `knative`, `olm`, `topology` and `webterminal`. Packages with
+developer-persona tests also get a `<project>-developer` variant, which only exists when
+`BRIDGE_HTPASSWD_USERNAME` is set.
 
 ```
-console/frontend > ./integration-tests/test-cypress.sh
-
-Runs Cypress tests in Test Runner or headless mode
-Usage: test-cypress [-p] <package> [-s] <filemask> [-h true]
-  '-p <package>' may be 'console, 'olm' or 'devconsole'
-  '-s <specmask>' is a file mask for spec test files, such as 'tests/monitoring/*'. Used only in headless mode when '-p' is specified.
-  '-h true' runs Cypress in headless mode. When omitted, launches Cypress Test Runner
-Examples:
-  ./integration-tests/test-cypress.sh                                       // displays this help text
-  ./integration-tests/test-cypress.sh -p console                            // opens Cypress Test Runner for console tests
-  ./integration-tests/test-cypress.sh -p olm                                // opens Cypress Test Runner for OLM tests
-  ./integration-tests/test-cypress.sh -h true                               // runs all packages in headless mode
-  ./integration-tests/test-cypress.sh -p olm -h true                        // runs OLM tests in headless mode
-  ./integration-tests/test-cypress.sh -p console -s 'tests/crud/*' -h true  // runs console CRUD tests in headless mode
+cd frontend
+yarn test-playwright --project=olm                      # run the OLM project
+yarn test-playwright --project=console --project=olm    # run several projects
+yarn test-playwright e2e/tests/console/crud             # run tests matching a path
+yarn test-playwright --grep "secret"                    # run tests matching a title
+yarn test-playwright-admin                              # all admin-persona projects
+yarn test-playwright-developer                          # all developer-persona projects
 ```
 
-When running in headless mode, Cypress will test using its integrated Electron browser, but if you want to use Chrome or Firefox instead, set `BRIDGE_E2E_BROWSER_NAME` environment variable in your shell with the value `chrome` or `firefox`.
+[frontend/integration-tests/test-playwright.sh](frontend/integration-tests/test-playwright.sh) is
+the CI-oriented wrapper around the same command: it resolves `BRIDGE_BASE_ADDRESS` via `oc`,
+derives `WEB_CONSOLE_URL`, and copies reports and traces into `$ARTIFACT_DIR` afterwards. It
+forwards its arguments to `playwright test` and takes one flag of its own, `-c`, which runs
+`contrib/create-user.sh` first to create the htpasswd user the developer-persona tests need. Use
+`--` to separate its flags from Playwright's.
 
-[**_More information on Console's Cypress usage_**](frontend/packages/integration-tests/README.md)
-
-[**_More information on DevConsole's Cypress usage_**](frontend/packages/dev-console/integration-tests/README.md)
+```
+console/frontend > ./integration-tests/test-playwright.sh --project=smoke
+console/frontend > ./integration-tests/test-playwright.sh -c -- --project=dev-console-developer
+```
 
 #### How the Integration Tests Run in CI
 
@@ -312,13 +324,11 @@ The end-to-end tests run against pull requests using [ci-operator](https://githu
 The tests are defined in [this manifest](https://github.com/openshift/release/blob/main/ci-operator/jobs/openshift/console/openshift-console-main-presubmits.yaml)
 in the [openshift/release](https://github.com/openshift/release) repo and were generated with [ci-operator-prowgen](https://github.com/openshift/ci-operator-prowgen).
 
-CI runs the [test-prow-e2e.sh](test-prow-e2e.sh) script, which runs [frontend/integration-tests/test-cypress.sh](frontend/integration-tests/test-cypress.sh).
+CI runs the [test-prow-e2e.sh](test-prow-e2e.sh) script, which runs [frontend/integration-tests/test-playwright.sh](frontend/integration-tests/test-playwright.sh).
 
-`test-cypress.sh` runs all Cypress tests, in all 'packages' (console, olm, and devconsole), in `-- headless` mode via:
+`test-playwright.sh e2e` will then run all Playwright tests in the `frontend/e2e` directory.
 
-`test-cypress.sh -h true`
-
-For more information on `test-cypress.sh` usage please see [Execute Cypress in different packages](#execute-cypress-in-different-packages)
+For more information on `test-playwright.sh` usage please see [Execute Playwright in different packages](#execute-playwright-in-different-packages)
 
 ### Internationalization
 
