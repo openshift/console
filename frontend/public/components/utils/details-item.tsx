@@ -75,7 +75,8 @@ export const DetailsItem: FC<DetailsItemProps> = ({
   const { t } = useTranslation('public');
   const [model] = useK8sModel(obj ? referenceFor(obj) : '');
   const hide = hideEmpty && _.isEmpty(_.get(obj, path));
-  const popoverContent: string = description ?? getPropertyDescription(model, path);
+  const popoverContent: string | null =
+    description ?? (model ? getPropertyDescription(model, path) : null);
   const value: ReactNode = children || _.get(obj, path, defaultValue);
   const editable = onEdit && canEdit;
   return hide ? null : (
