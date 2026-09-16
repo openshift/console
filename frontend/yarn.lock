@@ -20302,7 +20302,7 @@ __metadata:
     redux-thunk: "npm:2.4.0"
     reselect: "npm:4.x"
     resolve-url-loader: "npm:2.x"
-    sanitize-html: "npm:^2.17.4"
+    sanitize-html: "npm:>=2.17.4 <2.17.6"
     sass: "npm:^1.42.1"
     sass-loader: "npm:^10.1.1"
     screenfull: "npm:4.x"
@@ -23667,18 +23667,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sanitize-html@npm:^2.17.4":
-  version: 2.17.7
-  resolution: "sanitize-html@npm:2.17.7"
+"sanitize-html@npm:>=2.17.4 <2.17.6":
+  version: 2.17.5
+  resolution: "sanitize-html@npm:2.17.5"
   dependencies:
     deepmerge: "npm:^4.2.2"
     escape-string-regexp: "npm:^4.0.0"
-    htmlparser2: "npm:^12.0.0"
+    htmlparser2: "npm:^10.1.0"
     is-plain-object: "npm:^5.0.0"
     launder: "npm:^1.7.1"
     parse-srcset: "npm:^1.0.2"
     postcss: "npm:^8.3.11"
-  checksum: 10c0/d4783bf47f5379d619c9b2ff327e4ea355b5f95952295c4b69ab7f8bd7834bdaabbd274c6b519b3bdf3f909fec4727b544256c3e1a5985e4a85ee9aa079267f7
+  checksum: 10c0/b3e1c0f42a87dece0a02c1ee4aee663be69d33661b94f7dbc006f341a34577b3ddb9ace5ff415ddd62efbc4e944845265ef2fe2702ad0ede8d3575bf7a36b9df
   languageName: node
   linkType: hard
 
