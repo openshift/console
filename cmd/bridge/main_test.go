@@ -26,7 +26,7 @@ func TestAnonymousK8SClientConfig(t *testing.T) {
 	}
 
 	t.Run("with ca-file sets CAFile so a CA-aware transport can be built", func(t *testing.T) {
-		got := anonymousK8SClientConfig(source, "/var/run/guest-ca/ca.crt")
+		got := anonymousK8SClientConfig(source, "/var/run/guest-ca/ca.crt", false)
 
 		if got.Transport != nil {
 			t.Errorf("expected nil Transport (so TransportFor builds a CA-aware one), got %T", got.Transport)
@@ -40,10 +40,33 @@ func TestAnonymousK8SClientConfig(t *testing.T) {
 	})
 
 	t.Run("without ca-file leaves CAFile empty", func(t *testing.T) {
-		got := anonymousK8SClientConfig(source, "")
+		got := anonymousK8SClientConfig(source, "", false)
 
 		if got.TLSClientConfig.CAFile != "" {
 			t.Errorf("expected empty CAFile when no ca-file provided, got %q", got.TLSClientConfig.CAFile)
+		}
+	})
+
+	t.Run("does not override an existing CAFile (e.g. in-cluster service account CA)", func(t *testing.T) {
+		inClusterSource := &rest.Config{
+			Host: "https://kubernetes.default.svc",
+			TLSClientConfig: rest.TLSClientConfig{
+				CAFile: "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt",
+			},
+		}
+
+		got := anonymousK8SClientConfig(inClusterSource, "/some/other/ca-file", false)
+
+		if got.TLSClientConfig.CAFile != "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt" {
+			t.Errorf("expected in-cluster CAFile to be preserved, got %q", got.TLSClientConfig.CAFile)
+		}
+	})
+
+	t.Run("skip-verify-tls is propagated to the anonymous config", func(t *testing.T) {
+		got := anonymousK8SClientConfig(source, "", true)
+
+		if !got.Insecure {
+			t.Error("expected Insecure to be true when skip-verify-tls is set")
 		}
 	})
 
@@ -51,7 +74,7 @@ func TestAnonymousK8SClientConfig(t *testing.T) {
 		// rest.TransportFor rejects a config that both carries a custom
 		// Transport and requests CA trust; this guards against reintroducing
 		// that combination (the original bug's inverse).
-		cfg := anonymousK8SClientConfig(source, testCAFile(t))
+		cfg := anonymousK8SClientConfig(source, testCAFile(t), false)
 		if _, err := rest.TransportFor(cfg); err != nil {
 			t.Fatalf("rest.TransportFor rejected the anonymous config: %v", err)
 		}
