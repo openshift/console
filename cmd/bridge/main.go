@@ -733,7 +733,7 @@ func main() {
 		knative.ChannelFilter,
 	)
 
-	srv.AnonymousInternalProxiedK8SRT, err = rest.TransportFor(rest.AnonymousClientConfig(srv.InternalProxiedK8SClientConfig))
+	srv.AnonymousInternalProxiedK8SRT, err = rest.TransportFor(anonymousK8SClientConfig(srv.InternalProxiedK8SClientConfig, *fCAFile))
 	if err != nil {
 		klog.Fatalf("Failed to create anonymous k8s HTTP client: %v", err)
 	}
@@ -818,6 +818,22 @@ func main() {
 	}
 
 	httpsrv.Serve(listener)
+}
+
+// anonymousK8SClientConfig derives the anonymous variant of the off-cluster
+// proxied k8s client config. rest.AnonymousClientConfig drops the source
+// config's Transport (which carries the off-cluster proxy's RootCAs), so when
+// -ca-file is set we re-supply trust via TLSClientConfig.CAFile. This lets
+// rest.TransportFor build a CA-aware transport; without it the anonymous
+// transport falls back to the system trust store and can't verify an API server
+// signed by a private CA -- which breaks the consumers of this transport (the
+// user-settings handler and the login-role metrics).
+func anonymousK8SClientConfig(config *rest.Config, caFile string) *rest.Config {
+	anonymous := rest.AnonymousClientConfig(config)
+	if caFile != "" {
+		anonymous.TLSClientConfig.CAFile = caFile
+	}
+	return anonymous
 }
 
 func listen(scheme, host, certFile, keyFile, minTLSVersion string, cipherSuites []string) (net.Listener, error) {
