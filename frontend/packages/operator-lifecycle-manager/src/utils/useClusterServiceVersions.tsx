@@ -8,10 +8,9 @@ import {
   CatalogItemDetailsDescription,
   CatalogItemDetailsProperty,
 } from '@console/dynamic-plugin-sdk';
+import { k8sList } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import { ExpandCollapse } from '@console/internal/components/utils';
-import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
-import { referenceForModel } from '@console/internal/module/k8s';
 import { getImageForCSVIcon } from '@console/shared';
 import { providedAPIsForCSV, referenceForProvidedAPI } from '../components';
 import { GLOBAL_COPIED_CSV_NAMESPACE, GLOBAL_OPERATOR_NAMESPACES } from '../const';
@@ -145,44 +144,42 @@ const useClusterServiceVersions: ExtensionHook<CatalogItem[]> = ({
   namespace,
 }): [CatalogItem[], boolean, any] => {
   const { t } = useTranslation();
-  const resourceSelector = React.useMemo(
-    () => ({
-      csvs: {
-        isList: true,
-        kind: referenceForModel(ClusterServiceVersionModel),
-        namespaced: ClusterServiceVersionModel.namespaced,
-        namespace,
-      },
-      ...(window.SERVER_FLAGS.copiedCSVsDisabled && !GLOBAL_OPERATOR_NAMESPACES.includes(namespace)
-        ? {
-            globalCsvs: {
-              isList: true,
-              kind: referenceForModel(ClusterServiceVersionModel),
-              namespaced: ClusterServiceVersionModel.namespaced,
-              namespace: GLOBAL_COPIED_CSV_NAMESPACE,
-            },
-          }
-        : {}),
-    }),
-    [namespace],
-  );
+  const [csvs, setCsvs] = React.useState<ClusterServiceVersionKind[]>([]);
+  const [globalCsvs, setGlobalCsvs] = React.useState<ClusterServiceVersionKind[]>([]);
+  const [loaded, setLoaded] = React.useState(false);
+  const [loadError, setLoadError] = React.useState<any>(undefined);
 
-  const csvsResources = useK8sWatchResources<{
-    csvs: ClusterServiceVersionKind[];
-    globalCsvs?: ClusterServiceVersionKind[];
-  }>(resourceSelector);
+  React.useEffect(() => {
+    setLoaded(false);
+    setLoadError(undefined);
+
+    const fetchCsvs = k8sList(ClusterServiceVersionModel, {
+      ns: namespace,
+    }).then((items) => setCsvs(items as ClusterServiceVersionKind[]));
+
+    // When copiedCSVsDisabled, OLM no longer copies CSVs to every namespace.
+    // Fetch from the global namespace so operators installed cluster-wide are visible.
+    const fetchGlobalCsvs =
+      window.SERVER_FLAGS.copiedCSVsDisabled && !GLOBAL_OPERATOR_NAMESPACES.includes(namespace)
+        ? k8sList(ClusterServiceVersionModel, {
+            ns: GLOBAL_COPIED_CSV_NAMESPACE,
+          }).then((items) => setGlobalCsvs(items as ClusterServiceVersionKind[]))
+        : Promise.resolve();
+
+    Promise.all([fetchCsvs, fetchGlobalCsvs])
+      .then(() => setLoaded(true))
+      .catch((err) => {
+        setLoadError(err);
+        setLoaded(true);
+      });
+  }, [namespace]);
 
   const normalizedCSVs = React.useMemo(
-    () =>
-      normalizeClusterServiceVersions(
-        [...(csvsResources.csvs?.data ?? []), ...(csvsResources.globalCsvs?.data ?? [])],
-        namespace,
-        t,
-      ),
-    [csvsResources, namespace, t],
+    () => normalizeClusterServiceVersions([...csvs, ...globalCsvs], namespace, t),
+    [csvs, globalCsvs, namespace, t],
   );
 
-  return [normalizedCSVs, csvsResources.csvs?.loaded, csvsResources.csvs?.loadError];
+  return [normalizedCSVs, loaded, loadError];
 };
 
 export default useClusterServiceVersions;
