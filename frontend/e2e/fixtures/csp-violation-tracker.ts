@@ -3,7 +3,13 @@ import type { Page } from '@playwright/test';
 export interface CSPViolationReport {
   'csp-report': Pick<
     SecurityPolicyViolationEvent,
-    'documentURI' | 'violatedDirective' | 'blockedURI' | 'sourceFile' | 'lineNumber' | 'disposition'
+    | 'documentURI'
+    | 'violatedDirective'
+    | 'effectiveDirective'
+    | 'blockedURI'
+    | 'sourceFile'
+    | 'lineNumber'
+    | 'disposition'
   > & {
     [key: string]: unknown;
   };
@@ -15,6 +21,7 @@ export interface CSPViolationReport {
 interface RawCSPReportBody {
   'document-uri'?: string;
   'violated-directive'?: string;
+  'effective-directive'?: string;
   'blocked-uri'?: string;
   'source-file'?: string;
   'line-number'?: number;
@@ -43,6 +50,7 @@ const parseCSPReport = (postData: string | undefined, fallbackURI: string): CSPV
       'csp-report': {
         documentURI: fallbackURI,
         violatedDirective: 'unknown',
+        effectiveDirective: 'unknown',
         blockedURI: 'unknown',
         sourceFile: undefined,
         lineNumber: undefined,
@@ -56,6 +64,7 @@ const parseCSPReport = (postData: string | undefined, fallbackURI: string): CSPV
     'csp-report': {
       documentURI: raw['document-uri'],
       violatedDirective: raw['violated-directive'],
+      effectiveDirective: raw['effective-directive'],
       blockedURI: raw['blocked-uri'],
       sourceFile: raw['source-file'],
       lineNumber: raw['line-number'],
@@ -63,6 +72,13 @@ const parseCSPReport = (postData: string | undefined, fallbackURI: string): CSPV
     },
   };
 };
+
+// Import from Git e2e tests make direct browser requests to api.github.com
+// which violates connect-src CSP. This is expected since git hosting can be
+// on any arbitrary hostname (e.g. Gitea) and cannot be allowlisted in CSP.
+const isExpectedGitConnectViolation = (report: CSPViolationReport['csp-report']) =>
+  report.effectiveDirective === 'connect-src' &&
+  report.blockedURI?.startsWith('https://api.github.com/');
 
 // Resuming an intercepted request routinely fails with a "target closed" error
 // when the request is still paused as the page is torn down at the end of a
@@ -126,7 +142,10 @@ export const trackCSPViolations = async (
     // When such request occurs, we manually fulfill that request before it is sent over
     // the network and therefore avoiding the need to implement that reporting endpoint.
     else if (resourceType === 'CSPViolationReport' && request.url === CSP_REPORT_URL) {
-      violations.push(parseCSPReport(request.postData, request.url));
+      const report = parseCSPReport(request.postData, request.url);
+      if (!isExpectedGitConnectViolation(report['csp-report'])) {
+        violations.push(report);
+      }
       ignoreClosedTarget(cdpSession.send('Fetch.fulfillRequest', { requestId, responseCode: 200 }));
     }
 
