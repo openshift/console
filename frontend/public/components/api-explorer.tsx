@@ -25,14 +25,11 @@ import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { useLocation, useParams, Link, useSearchParams, useNavigate } from 'react-router';
 import { useExactSearch } from '@console/app/src/components/user-preferences/search/useExactSearch';
-import type { ResourceListPage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
-import { isResourceListPage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
 import { getK8sModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sModel';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import type { Page } from '@console/internal/components/utils/horizontal-nav';
 import { HorizontalNav } from '@console/internal/components/utils/horizontal-nav';
 import { useAccessReview } from '@console/internal/components/utils/rbac';
-import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import { DescriptionListTermHelp } from '@console/shared/src/components/description-list/DescriptionListTermHelp';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
@@ -63,10 +60,8 @@ import { DefaultPage } from './default-resource';
 import { ErrorPage404 } from './error';
 import { exactMatch, fuzzyCaseInsensitive } from './factory/table-filters';
 import { TextFilter } from './factory/text-filter';
-import { getResourceListPages } from './list-pages';
 import { RowFilter } from './row-filter';
 import { ExploreType } from './sidebars/explore-type-sidebar';
-import { AsyncComponent } from './utils/async';
 import { LinkifyExternal } from './utils/link';
 import { ResourceIcon } from './utils/resource-icon';
 import { ScrollToTopOnMount } from './utils/scroll-to-top-on-mount';
@@ -588,16 +583,12 @@ const APIResourceSchema: FC<APIResourceTabProps> = ({ customData: { kindObj } })
   </PaneBody>
 );
 
+// Always render the default list to encompass all API resource instances
 const APIResourceInstances: FC<APIResourceTabProps> = ({ customData: { kindObj, namespace } }) => {
-  const resourceListPageExtensions = useExtensions<ResourceListPage>(isResourceListPage);
-  const componentLoader =
-    getResourceListPages(resourceListPageExtensions).get(referenceForModel(kindObj)) ??
-    (() => Promise.resolve(DefaultPage));
   const ns = kindObj.namespaced ? namespace : undefined;
 
   return (
-    <AsyncComponent
-      loader={componentLoader}
+    <DefaultPage
       namespace={ns}
       kind={kindObj.crd ? referenceForModel(kindObj) : kindObj.kind}
       showTitle={false}

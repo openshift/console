@@ -32,10 +32,7 @@ import type {
   GetDataViewRows,
 } from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import type { ResourceListPage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
-import { isResourceListPage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
-import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -54,9 +51,6 @@ import { DefaultPage } from './default-resource';
 import { DetailsPage } from './factory/details';
 import { ListPage } from './factory/list-page';
 import { sortResourceByValue } from './factory/Table/sort';
-// eslint-disable-next-line import/no-cycle -- import to this module is dynamic
-import { getResourceListPages } from './list-pages';
-import { AsyncComponent } from './utils/async';
 import { DetailsItem } from './utils/details-item';
 import { ResourceSummary } from './utils/details-page';
 import { SectionHeading } from './utils/headings';
@@ -188,15 +182,11 @@ const Details: FC<{ obj: CustomResourceDefinitionKind }> = ({ obj: crd }) => {
   );
 };
 
+// Always render the default list to encompass all CRD resource instances
 const Instances: FC<InstancesProps> = ({ obj, namespace }) => {
-  const resourceListPageExtensions = useExtensions<ResourceListPage>(isResourceListPage);
   const crdKind = referenceForCRD(obj);
-  const componentLoader =
-    getResourceListPages(resourceListPageExtensions).get(crdKind) ??
-    (() => Promise.resolve(DefaultPage));
   return (
-    <AsyncComponent
-      loader={componentLoader}
+    <DefaultPage
       namespace={namespace || undefined}
       kind={crdKind}
       showTitle={false}
