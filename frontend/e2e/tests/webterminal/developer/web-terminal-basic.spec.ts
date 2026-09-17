@@ -2,12 +2,13 @@ import { test, expect } from '../../../fixtures';
 import { WebTerminalPage } from '../../../pages/web-terminal-page';
 import {
   ensureWebTerminalOperatorInstalled,
-  uninstallWebTerminalOperator,
+  TERMINAL_NAMESPACE_PREFERENCE,
 } from '../utils/web-terminal-operator';
 
 const INACTIVITY_MESSAGE = 'The terminal connection has closed due to inactivity.';
 const TERMINAL_IDLING_TIMEOUT = Number(process.env.TERMINAL_IDLING_TIMEOUT) || 200_000;
 const TEST_NAMESPACE = 'aut-terminal-basic';
+const DEVELOPER_USERNAME = process.env.BRIDGE_HTPASSWD_USERNAME || 'test';
 
 test.describe('Web Terminal basic user', () => {
   test.beforeAll(async ({ k8sClient }) => {
@@ -15,12 +16,20 @@ test.describe('Web Terminal basic user', () => {
   });
 
   test.beforeEach(async ({ k8sClient, cleanup }) => {
-    await k8sClient.createNamespace(TEST_NAMESPACE);
+    // The console remembers the last namespace a terminal ran in. These specs
+    // delete their namespaces, so a stale preference makes the next terminal
+    // watch a namespace that no longer exists and render "Restricted access".
+    await k8sClient.clearUserSettings(DEVELOPER_USERNAME, [TERMINAL_NAMESPACE_PREFERENCE]);
+    // runLevelZero: false — the DevWorkspace pod must pass the namespace's
+    // enforced `restricted` Pod Security level, which needs SCC admission left
+    // on so it can inject seccompProfile.
+    await k8sClient.createNamespace(TEST_NAMESPACE, undefined, { runLevelZero: false });
     cleanup.trackNamespace(TEST_NAMESPACE);
-  });
-
-  test.afterAll(async ({ k8sClient }) => {
-    await uninstallWebTerminalOperator(k8sClient);
+    // k8sClient is cluster-admin, the browser is the htpasswd developer user.
+    // Without an explicit binding the namespace never shows up in that user's
+    // project list, so the terminal setup form falls back to "Create Project"
+    // with an empty name and keeps Start disabled.
+    await k8sClient.grantNamespaceAccess(TEST_NAMESPACE, DEVELOPER_USERNAME);
   });
 
   test('open terminal with advanced timeout', async ({ page }) => {
@@ -29,6 +38,8 @@ test.describe('Web Terminal basic user', () => {
     await test.step('Open terminal with 1-minute timeout', async () => {
       await webTerminal.waitForTerminalIconVisible();
       await webTerminal.clickTerminalIcon();
+      await webTerminal.clickProjectDropdown();
+      await webTerminal.selectProjectFromDropdown(TEST_NAMESPACE);
       await webTerminal.clickAdvancedTimeout();
       await webTerminal.setTimeoutValue('1');
       await webTerminal.clickStartButton();
@@ -66,6 +77,13 @@ test.describe('Web Terminal basic user', () => {
     await test.step('Open terminal and wait for terminal window', async () => {
       await webTerminal.waitForTerminalIconVisible();
       await webTerminal.clickTerminalIcon();
+      await webTerminal.clickProjectDropdown();
+      await webTerminal.selectProjectFromDropdown(TEST_NAMESPACE);
+      // The idle timeout has to be set explicitly: without it the DevWorkspace
+      // keeps the operator default (15m), which no practical test timeout can
+      // wait out.
+      await webTerminal.clickAdvancedTimeout();
+      await webTerminal.setTimeoutValue('1');
       await webTerminal.clickStartButton();
       await webTerminal.waitForTerminalWindow();
       await expect(webTerminal.getTerminalWindow()).toBeVisible();

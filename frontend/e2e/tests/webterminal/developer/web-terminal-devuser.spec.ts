@@ -5,7 +5,7 @@ import type KubernetesClient from '../../../clients/kubernetes-client';
 import { WebTerminalPage } from '../../../pages/web-terminal-page';
 import {
   ensureWebTerminalOperatorInstalled,
-  uninstallWebTerminalOperator,
+  TERMINAL_NAMESPACE_PREFERENCE,
 } from '../utils/web-terminal-operator';
 
 const DEVWORKSPACE_GROUP = 'workspace.devfile.io';
@@ -13,6 +13,7 @@ const DEVWORKSPACE_VERSION = 'v1alpha2';
 const DEVWORKSPACE_PLURAL = 'devworkspaces';
 const EXISTING_PROJECT = 'aut-terminal-testuser-existed';
 const NEW_PROJECT = 'aut-terminal-testuser';
+const DEVELOPER_USERNAME = process.env.BRIDGE_HTPASSWD_USERNAME || 'test';
 
 async function verifyDevWorkspaceRunning(
   page: Page,
@@ -43,12 +44,19 @@ test.describe('Web Terminal for Developer user', () => {
   });
 
   test.beforeEach(async ({ k8sClient, cleanup }) => {
-    await k8sClient.createNamespace(EXISTING_PROJECT);
+    // The console remembers the last namespace a terminal ran in. These specs
+    // delete their namespaces, so a stale preference makes the next terminal
+    // watch a namespace that no longer exists and render "Restricted access".
+    await k8sClient.clearUserSettings(DEVELOPER_USERNAME, [TERMINAL_NAMESPACE_PREFERENCE]);
+    // runLevelZero: false — the DevWorkspace pod must pass the namespace's
+    // enforced `restricted` Pod Security level, which needs SCC admission left
+    // on so it can inject seccompProfile.
+    await k8sClient.createNamespace(EXISTING_PROJECT, undefined, { runLevelZero: false });
     cleanup.trackNamespace(EXISTING_PROJECT);
-  });
-
-  test.afterAll(async ({ k8sClient }) => {
-    await uninstallWebTerminalOperator(k8sClient);
+    // k8sClient is cluster-admin, the browser is the htpasswd developer user.
+    // Without an explicit binding the namespace never shows up in that user's
+    // project list, so the terminal setup form cannot select it.
+    await k8sClient.grantNamespaceAccess(EXISTING_PROJECT, DEVELOPER_USERNAME);
   });
 
   test('create new project and use Web Terminal', async ({ page, k8sClient, cleanup }) => {
@@ -59,12 +67,13 @@ test.describe('Web Terminal for Developer user', () => {
       await webTerminal.waitForTerminalIconVisible();
     });
 
-    await test.step('Create new project from terminal init screen', async () => {
+    // No confirmation step: the terminal setup form creates the ProjectRequest
+    // itself on submit, so the project only exists once Start is clicked below.
+    await test.step('Name a new project on the terminal init screen', async () => {
       await webTerminal.clickTerminalIcon();
       await webTerminal.clickProjectDropdown();
       await webTerminal.selectCreateProject();
       await webTerminal.typeProjectName(NEW_PROJECT);
-      await webTerminal.confirmProjectCreation();
     });
 
     await test.step('Set timeout and start terminal', async () => {
