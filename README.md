@@ -298,8 +298,6 @@ Examples:
 
 When running in headless mode, Cypress will test using its integrated Electron browser, but if you want to use Chrome or Firefox instead, set `BRIDGE_E2E_BROWSER_NAME` environment variable in your shell with the value `chrome` or `firefox`.
 
-[**_More information on Console's Cypress usage_**](frontend/packages/integration-tests/README.md)
-
 
 #### How the Integration Tests Run in CI
 
@@ -497,8 +495,6 @@ Currently this feature is behind feature gate.
 - [dev-console](./frontend/packages/dev-console/README.md)
 
 - [eslint-plugin-console](./frontend/packages/eslint-plugin-console/README.md)
-
-- [integration-tests](./frontend/packages/integration-tests/README.md)
 
 - [knative-plugin](./frontend/packages/knative-plugin/README.md)
 
