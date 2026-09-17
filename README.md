@@ -260,14 +260,14 @@ Run frontend tests:
 
 E2E integration tests are implemented using [Playwright](https://playwright.dev/). Tests live under `frontend/e2e/tests/` and are configured via [frontend/playwright.config.ts](frontend/playwright.config.ts).
 
-**Important:** Set `BRIDGE_KUBEADMIN_PASSWORD` and `BRIDGE_BASE_ADDRESS` environment variables in your shell when testing against a live cluster.
+**Important:** Set `BRIDGE_KUBEADMIN_PASSWORD` and `WEB_CONSOLE_URL` environment variables in your shell when testing against a live cluster.
 
 #### Running Playwright tests locally
 
 ```
 cd frontend
 oc login ...
-export BRIDGE_BASE_ADDRESS="$(oc get consoles.config.openshift.io cluster -o jsonpath='{.status.consoleURL}')"
+export WEB_CONSOLE_URL="$(oc get consoles.config.openshift.io cluster -o jsonpath='{.status.consoleURL}')"
 export BRIDGE_KUBEADMIN_PASSWORD=<your-kubeadmin-password>
 yarn test-playwright                          # run all tests
 yarn test-playwright --project=smoke          # run smoke tests only
