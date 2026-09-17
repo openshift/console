@@ -1,6 +1,6 @@
 FROM quay.io/openshift/origin-cli-artifacts:4.22 AS origincli
 
-FROM registry.ci.openshift.org/ocp/builder:rhel-9-golang-1.25-openshift-4.22 AS gobuilder
+FROM registry.ci.openshift.org/ocp/builder:rhel-9-golang-1.26-openshift-5.0 AS gobuilder
 
 ENV HOME=/go/src/github.com/openshift/console/
 RUN mkdir -p ${HOME}

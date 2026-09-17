@@ -16,7 +16,7 @@ The console is a more friendly `kubectl` in the form of a single page webapp. It
 ### Dependencies:
 
 1. [node.js](https://nodejs.org/) >= 22 with [corepack](https://npmjs.com/package/corepack) enabled for [yarn berry](https://yarnpkg.com/)
-2. [go](https://go.dev/) >= 1.25
+2. [go](https://go.dev/) >= 1.26
 3. [oc](https://mirror.openshift.com/pub/openshift-v4/clients/oc/latest/) or [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl) and an OpenShift or Kubernetes cluster
 4. [jq](https://stedolan.github.io/jq/download/) (used by scripts and tests; see [code usage](https://github.com/search?q=repo%3Aopenshift%2Fconsole+%2F+jq+%2F+-path%3A**%2F*.md+-path%3A**%2FDockerfile*&type=code))
 
@@ -197,7 +197,7 @@ See [STYLEGUIDE](STYLEGUIDE.md) for file format and coding style guide.
 
 ### Dev Dependencies
 
-go 1.25+, nodejs/yarn, kubectl
+go 1.26+, nodejs/yarn, kubectl
 
 ### Frontend Development
 
