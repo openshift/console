@@ -1,3 +1,7 @@
+// Both suites drive the same developer user's single cloud shell session, and
+// the console reconnects to whichever DevWorkspace that user already has
+// running, wherever it lives. Playwright parallelises by file, so they have to
+// stay in one file to run sequentially in a single worker.
 import type { Page } from '@playwright/test';
 
 import { test, expect } from '../../../fixtures';
@@ -8,12 +12,15 @@ import {
   TERMINAL_NAMESPACE_PREFERENCE,
 } from '../utils/web-terminal-operator';
 
+const INACTIVITY_MESSAGE = 'The terminal connection has closed due to inactivity.';
+const TERMINAL_IDLING_TIMEOUT = Number(process.env.TERMINAL_IDLING_TIMEOUT) || 200_000;
+const TEST_NAMESPACE = 'aut-terminal-basic';
+const DEVELOPER_USERNAME = process.env.BRIDGE_HTPASSWD_USERNAME || 'test';
 const DEVWORKSPACE_GROUP = 'workspace.devfile.io';
 const DEVWORKSPACE_VERSION = 'v1alpha2';
 const DEVWORKSPACE_PLURAL = 'devworkspaces';
 const EXISTING_PROJECT = 'aut-terminal-testuser-existed';
 const NEW_PROJECT = 'aut-terminal-testuser';
-const DEVELOPER_USERNAME = process.env.BRIDGE_HTPASSWD_USERNAME || 'test';
 
 async function verifyDevWorkspaceRunning(
   page: Page,
@@ -37,6 +44,98 @@ async function verifyDevWorkspaceRunning(
   const phase = (devWorkspaces[0] as any).status?.phase;
   expect(phase).toBe('Running');
 }
+
+test.describe('Web Terminal basic user', () => {
+  test.beforeAll(async ({ k8sClient }) => {
+    await ensureWebTerminalOperatorInstalled(k8sClient);
+  });
+
+  test.beforeEach(async ({ k8sClient, cleanup }) => {
+    // The console remembers the last namespace a terminal ran in. These specs
+    // delete their namespaces, so a stale preference makes the next terminal
+    // watch a namespace that no longer exists and render "Restricted access".
+    await k8sClient.clearUserSettings(DEVELOPER_USERNAME, [TERMINAL_NAMESPACE_PREFERENCE]);
+    // runLevelZero: false — the DevWorkspace pod must pass the namespace's
+    // enforced `restricted` Pod Security level, which needs SCC admission left
+    // on so it can inject seccompProfile.
+    await k8sClient.createNamespace(TEST_NAMESPACE, undefined, { runLevelZero: false });
+    cleanup.trackNamespace(TEST_NAMESPACE);
+    // k8sClient is cluster-admin, the browser is the htpasswd developer user.
+    // Without an explicit binding the namespace never shows up in that user's
+    // project list, so the terminal setup form falls back to "Create Project"
+    // with an empty name and keeps Start disabled.
+    await k8sClient.grantNamespaceAccess(TEST_NAMESPACE, DEVELOPER_USERNAME);
+  });
+
+  test('open terminal with advanced timeout', async ({ page }) => {
+    const webTerminal = new WebTerminalPage(page);
+
+    await test.step('Open terminal with 1-minute timeout', async () => {
+      await webTerminal.waitForTerminalIconVisible();
+      await webTerminal.clickTerminalIcon();
+      await webTerminal.clickProjectDropdown();
+      await webTerminal.selectProjectFromDropdown(TEST_NAMESPACE);
+      await webTerminal.clickAdvancedTimeout();
+      await webTerminal.setTimeoutValue('1');
+      await webTerminal.clickStartButton();
+    });
+
+    await test.step('Verify terminal window is visible', async () => {
+      await webTerminal.waitForTerminalWindow();
+      await expect(webTerminal.getTerminalWindow()).toBeVisible();
+    });
+
+    await test.step('Close terminal session', async () => {
+      await webTerminal.closeTerminalSession();
+    });
+  });
+
+  test('verify Open in new tab button', async ({ page }) => {
+    const webTerminal = new WebTerminalPage(page);
+
+    await test.step('Wait for terminal icon and open terminal', async () => {
+      await webTerminal.waitForTerminalIconVisible();
+      await webTerminal.clickTerminalIcon();
+    });
+
+    await test.step('Verify Open in new tab link has target _blank', async () => {
+      const newTabLink = webTerminal.getOpenInNewTabLink();
+      await expect(newTabLink).toBeVisible();
+      await expect(newTabLink).toHaveAttribute('target', '_blank');
+    });
+  });
+
+  test('inactivity timeout closes terminal', async ({ page }) => {
+    test.slow();
+    const webTerminal = new WebTerminalPage(page);
+
+    await test.step('Open terminal and wait for terminal window', async () => {
+      await webTerminal.waitForTerminalIconVisible();
+      await webTerminal.clickTerminalIcon();
+      await webTerminal.clickProjectDropdown();
+      await webTerminal.selectProjectFromDropdown(TEST_NAMESPACE);
+      // The idle timeout has to be set explicitly: without it the DevWorkspace
+      // keeps the operator default (15m), which no practical test timeout can
+      // wait out.
+      await webTerminal.clickAdvancedTimeout();
+      await webTerminal.setTimeoutValue('1');
+      await webTerminal.clickStartButton();
+      await webTerminal.waitForTerminalWindow();
+      await expect(webTerminal.getTerminalWindow()).toBeVisible();
+    });
+
+    await test.step('Wait for inactivity message', async () => {
+      await expect(webTerminal.getInactivityMessageArea()).toContainText(INACTIVITY_MESSAGE, {
+        timeout: TERMINAL_IDLING_TIMEOUT,
+      });
+    });
+
+    await test.step('Verify restart button is shown', async () => {
+      const restartButton = page.getByRole('button', { name: 'Restart terminal' });
+      await expect(restartButton).toBeVisible();
+    });
+  });
+});
 
 test.describe('Web Terminal for Developer user', () => {
   test.beforeAll(async ({ k8sClient }) => {
