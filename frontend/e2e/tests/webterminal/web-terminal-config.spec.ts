@@ -1,10 +1,7 @@
 import { test, expect } from '../../fixtures';
 import { warmupSPA } from '../../pages/base-page';
 import { WebTerminalConfigPage } from '../../pages/web-terminal-config-page';
-import {
-  ensureWebTerminalOperatorInstalled,
-  uninstallWebTerminalOperator,
-} from './utils/web-terminal-operator';
+import { ensureWebTerminalOperatorInstalled } from './utils/web-terminal-operator';
 
 const TEST_IMAGE_805 =
   'registry.redhat.io/web-terminal/web-terminal-tooling-rhel8@sha256:9ff1f660fccd3a2f0515ba997d48ad87d2ba47c40b67062c74580bbea9446805';
@@ -18,10 +15,6 @@ test.describe('Customization of web terminal options', () => {
 
   test.beforeEach(async ({ page }) => {
     await warmupSPA(page);
-  });
-
-  test.afterAll(async ({ k8sClient }) => {
-    await uninstallWebTerminalOperator(k8sClient);
   });
 
   test('navigate to Web Terminal Configuration page', async ({ page }) => {
