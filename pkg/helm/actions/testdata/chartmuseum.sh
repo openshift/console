@@ -13,6 +13,23 @@ if [ ! -x "$BINARY" ]; then
   ls -la "./$GOOS-$GOARCH/" >&2
   exit 1
 fi
+
+# Verify binary can execute (catches glibc/library incompatibility)
+if ! "$BINARY" --version > /dev/null 2>&1; then
+  echo "ERROR: chartmuseum binary cannot execute (likely library incompatibility)" >&2
+  echo "ldd output:" >&2
+  ldd "$BINARY" >&2 || true
+  file "$BINARY" >&2 || true
+  exit 1
+fi
+
+# Verify TLS files exist
+if [ ! -f ./server.crt ] || [ ! -f ./server.key ]; then
+  echo "ERROR: TLS cert/key missing. Expected ./server.crt and ./server.key" >&2
+  ls -la ./server.* >&2 || true
+  exit 1
+fi
+
 echo "Starting chartmuseum TLS on port 9443..." >&2
 # PID stays the same across exec; stop scripts / diagnostics can read it.
 if ! echo $$ > ./chartmuseum-tls.pid; then
