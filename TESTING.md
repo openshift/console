@@ -158,7 +158,7 @@ Prerequisites: `oc login` to a cluster, set `BRIDGE_KUBEADMIN_PASSWORD` and `WEB
 
 Integration/E2E tests validate full user workflows against a real/simulated OpenShift cluster using Cypress + Cucumber (Gherkin BDD).
 
-- **Focus Areas**: Core Console, OLM, Dev Console, Shipwright, Web Terminal, Telemetry, Knative, Helm, Topology.
+- **Focus Areas**: Core Console, Shipwright, Web Terminal, Telemetry, Knative, Helm, Topology.
 - **Key Characteristics**: Gherkin scenarios (.feature files) + step definitions; supports headless/interactive modes; integrates axe-core for a11y.
 
 - **Structure**: Use Gherkin for scenarios (Given/When/Then) in .feature files; implement steps in JS/TS.
@@ -171,6 +171,6 @@ Integration/E2E tests validate full user workflows against a real/simulated Open
 For full prerequisites (cluster login, Cypress install), see [README.md#integration-tests](README.md#integration-tests).
 
 See `package.json` scripts for a list of available commands to run E2E tests in different modes.
-- `yarn test-cypress-<suite>` to open an interactive window for a specific Cypress test suite (e.g., `yarn test-cypress-dev-console`). **AI agents may struggle with interactive mode**.
-- `yarn test-cypress-<suite>-headless` to run the same suite in headless mode (e.g., `yarn test-cypress-dev-console-headless`)
+- `yarn test-cypress-<suite>` to open an interactive window for a specific Cypress test suite (e.g., `yarn test-cypress-helm`). **AI agents may struggle with interactive mode**.
+- `yarn test-cypress-<suite>-headless` to run the same suite in headless mode (e.g., `yarn test-cypress-helm-headless`)
 - `yarn test-cypress-<suite>-nightly` runs an extended suite of tests in headless mode, intended for CI/nightly runs.
