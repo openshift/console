@@ -116,7 +116,7 @@ export const RegistryPollIntervalDetailItem: FC<RegistryPollIntervalDetailItemPr
                 id="pollInterval_dropdown"
                 toggleProps={{
                   isFullWidth: true,
-                  // @ts-expect-error non-prop attribute is used for cypress
+                  // @ts-expect-error non-prop attribute is used for E2E tests
                   'data-test': 'registry-poll-interval-dropdown',
                 }}
                 initialOptions={items}
