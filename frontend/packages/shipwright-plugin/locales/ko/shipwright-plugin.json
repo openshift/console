@@ -19,7 +19,7 @@
   "BuildRun": "BuildRun",
   "BuildRun details": "BuildRun 세부 정보",
   "BuildRun status": "BuildRun 상태",
-  "BuildRun status doesn't contain a TaskRun reference yet.": "BuildRun 상태에는 아직 TaskRun 참조가 포함되어 있지 않습니다.",
+  "BuildRun status doesn't contain a TaskRun reference yet.": "BuildSpec 상태에는 아직 TaskRun 참조가 포함되어 있지 않습니다.",
   "BuildRuns": "BuildRuns",
   "Builds": "빌드",
   "BuildSpec details": "BuildSpec 세부 정보",
