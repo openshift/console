@@ -168,10 +168,21 @@ func (p *PluginsHandler) proxyPluginRequest(requestURL *url.URL, pluginName stri
 	if err != nil {
 		errMsg := fmt.Sprintf("failed to send GET request for %q plugin: %v", pluginName, err)
 		klog.Error(errMsg)
-		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: errMsg})
+		serverutils.SendResponse(w, http.StatusServiceUnavailable, serverutils.ApiError{Err: errMsg})
 		return
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			klog.Errorf("failed to close response body from %q plugin: %v", pluginName, err)
+		}
+	}()
+
+	if resp.StatusCode == http.StatusBadGateway {
+		errMsg := fmt.Sprintf("plugin %q service returned 502", pluginName)
+		klog.Warning(errMsg)
+		serverutils.SendResponse(w, http.StatusServiceUnavailable, serverutils.ApiError{Err: errMsg})
+		return
+	}
 
 	// filter unwanted headers from the response
 	proxy.FilterHeaders(resp)
@@ -182,7 +193,6 @@ func (p *PluginsHandler) proxyPluginRequest(requestURL *url.URL, pluginName stri
 		}
 	}
 
-	// Make sure to copy status code from the plugin service response
 	w.WriteHeader(resp.StatusCode)
 
 	_, err = io.Copy(w, resp.Body)
