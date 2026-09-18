@@ -67,6 +67,12 @@ func UpgradeRelease(
 			chartInfo = getChartInfoFromIndexEntry(indexEntry, releaseNamespace, chartUrl)
 		}
 
+		// Validate the URL before setting up authentication so a rejected URL
+		// returns before any temporary TLS files are created.
+		if err := validateChartURL(chartUrl); err != nil {
+			return nil, err
+		}
+
 		if chartInfo.RepositoryName != "" {
 			connectionConfig, isClusterScoped, err := getRepositoryConnectionConfig(chartInfo.RepositoryName, releaseNamespace, dynamicClient)
 			if err != nil {
@@ -178,6 +184,12 @@ func UpgradeReleaseAsync(
 			}
 		} else {
 			chartInfo = getChartInfoFromIndexEntry(indexEntry, releaseNamespace, chartUrl)
+		}
+
+		// Validate the URL before setting up authentication so a rejected URL
+		// returns before any temporary TLS files are created.
+		if err := validateChartURL(chartUrl); err != nil {
+			return nil, err
 		}
 
 		if chartInfo.RepositoryName != "" {
