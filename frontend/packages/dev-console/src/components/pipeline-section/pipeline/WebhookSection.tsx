@@ -62,8 +62,8 @@ const WebhookHelpText: FC<WebhookHelpTextProps> = ({ gitProvider, testId }): Rea
         <Trans t={t} ns="devconsole">
           Use your GitHub Personal token. Use this{' '}
           <ExternalLink href={AccessTokenDocLinks[GitProvider.GITHUB]}>link</ExternalLink> to create
-          a <strong>classic</strong> token with <strong>repo</strong> &{' '}
-          <strong>admin:repo_hook</strong> scopes and give your token an expiration, i.e 30d.
+          a <b>classic</b> token with <b>repo</b> & <b>admin:repo_hook</b> scopes and give your
+          token an expiration, i.e 30d.
         </Trans>
       );
       break;
@@ -73,8 +73,8 @@ const WebhookHelpText: FC<WebhookHelpTextProps> = ({ gitProvider, testId }): Rea
         <Trans t={t} ns="devconsole">
           Use your Gitlab Personal access token. Use this{' '}
           <ExternalLink href={AccessTokenDocLinks[GitProvider.GITLAB]}>link</ExternalLink> to create
-          a token with <strong>api</strong> scope. Select the role as{' '}
-          <strong>Maintainer/Owner</strong>. Give your token an expiration i.e 30d.
+          a token with <b>api</b> scope. Select the role as <b>Maintainer/Owner</b>. Give your
+          token an expiration i.e 30d.
         </Trans>
       );
       break;
@@ -84,10 +84,8 @@ const WebhookHelpText: FC<WebhookHelpTextProps> = ({ gitProvider, testId }): Rea
         <Trans t={t} ns="devconsole">
           Use your Bitbucket App password. Use this{' '}
           <ExternalLink href={AccessTokenDocLinks[GitProvider.BITBUCKET]}>link</ExternalLink> to
-          create a token with <strong>Read and Write </strong>scopes in{' '}
-          <strong>
-            Account, Workspace membership, Projects, Issues, Pull requests and Webhooks
-          </strong>.
+          create a token with <b>Read and Write </b>scopes in{' '}
+          <b>Account, Workspace membership, Projects, Issues, Pull requests and Webhooks</b>.
         </Trans>
       );
       break;
