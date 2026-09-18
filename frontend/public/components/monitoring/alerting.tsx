@@ -103,6 +103,7 @@ import {
   alertState,
   alertURL,
   getAlertsAndRules,
+  isSafeExternalURL,
   labelsToParams,
   RuleResource,
   silenceMatcherEqualitySymbol,
@@ -821,7 +822,11 @@ const AlertsDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
                     <>
                       <dt>{t('public~Runbook')}</dt>
                       <dd>
-                        <ExternalLink href={runbookURL} text={runbookURL} />
+                        {isSafeExternalURL(runbookURL) ? (
+                          <ExternalLink href={runbookURL} text={runbookURL} />
+                        ) : (
+                          runbookURL
+                        )}
                       </dd>
                     </>
                   )}
@@ -1063,7 +1068,11 @@ const AlertRulesDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
                     <>
                       <dt>{t('public~Runbook')}</dt>
                       <dd>
-                        <ExternalLink href={runbookURL} text={runbookURL} />
+                        {isSafeExternalURL(runbookURL) ? (
+                          <ExternalLink href={runbookURL} text={runbookURL} />
+                        ) : (
+                          runbookURL
+                        )}
                       </dd>
                     </>
                   )}

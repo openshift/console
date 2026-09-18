@@ -34,6 +34,15 @@ export const SilenceResource: MonitoringResource = {
   abbr: 'SL',
 };
 
+export const isSafeExternalURL = (value: string): boolean => {
+  try {
+    const { protocol } = new URL(value);
+    return protocol === 'http:' || protocol === 'https:';
+  } catch {
+    return false;
+  }
+};
+
 export const labelsToParams = (labels: PrometheusLabels) =>
   _.map(labels, (v, k) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join('&');
 
