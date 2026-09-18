@@ -3,7 +3,7 @@
   "{{loadErrorMessage}}. Try adding bootstrap servers manually.": "{{loadErrorMessage}}. 수동으로 부트 스트랩 서버를 추가해 보십시오.",
   "{{OKcount}} OK / {{conditionsSize}}": "{{OKcount}} OK / {{conditionsSize}}",
   "​​**Event sinks** are resources that can receive incoming events from other resources.": "​​**이벤트 싱크**는 다른 리소스에서 들어오는 이벤트를 수신할 수 있는 리소스입니다.",
-  "**Event sources** are objects that link to an event producer and an event sink or consumer.": "**이벤트 소스**는 이벤트 생성자 및 이벤트 싱크 또는 소비자에 연결되는 개체입니다.",
+  "**Event sources** are objects that link to an event producer and an event sink or consumer.": "** 이벤트 소스 **는 이벤트 생성자 및 이벤트 싱크 또는 소비자에 연결되는 개체입니다.",
   "​​**Event Types** available that can be consumed with Serverless Functions or regular Deployments.": "서버리스 기능 또는 일반 배포에서 사용할 수 있는 **이벤트 유형**입니다.",
   "A distributed messaging system consisting of servers and clients that communicate via a high-performance TCP network protocol. This source will send Apache Kafka messages from monitored Apache Kafka topics to a configured sink, packaged as CloudEvents.": "고성능 TCP 네트워크 프로토콜을 통해 통신하는 서버와 클라이언트로 구성된 분산 메시징 시스템입니다. 이 소스는 모니터링되는 Apache Kafka 주제에서 CloudEvents로 패키징된 구성된 싱크로 Apache Kafka 메시지를 보냅니다.",
   "A group that tracks maximum offset consumed": "소비된 최대 오프셋을 추적하는 그룹",
