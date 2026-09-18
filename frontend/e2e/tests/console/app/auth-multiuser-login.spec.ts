@@ -37,13 +37,12 @@ test.describe(
         });
       });
 
-      await test.step('Switch to Admin perspective', async () => {
+      await test.step('Verify Core platform perspective', async () => {
+        // A fresh session defaults to the Core platform perspective without
+        // needing to switch, same as the kubeadmin test below. This user also
+        // has no RBAC granting other perspectives, so the switcher renders as
+        // a static label with no dropdown to open.
         const toggle = page.getByTestId('perspective-switcher-toggle');
-        await toggle.click();
-        const adminOption = page
-          .getByTestId('perspective-switcher-menu-option')
-          .filter({ hasText: 'Core platform' });
-        await adminOption.click();
         await expect(toggle).toContainText('Core platform', { timeout: 30_000 });
       });
 
