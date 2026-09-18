@@ -205,12 +205,53 @@ export const CatalogSourceDetailsPage: FC = (props) => {
   );
 };
 
-export const CreateSubscriptionYAML: FC = () => {
-  type CreateProps = {
-    packageManifest: { loaded: boolean; data?: PackageManifestKind; loadError?: unknown };
-    operatorGroup: { loaded: boolean; data?: OperatorGroupKind[]; loadError?: unknown };
-  };
+interface CreateSubscriptionProps {
+  packageManifest: { loaded: boolean; data?: PackageManifestKind; loadError?: unknown };
+  operatorGroup: { loaded: boolean; data?: OperatorGroupKind[]; loadError?: unknown };
+}
+
+const CreateSubscriptionContent: FC<CreateSubscriptionProps> = (createProps) => {
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+
+  if (createProps.packageManifest.loaded && createProps.packageManifest.data) {
+    const pkg = createProps.packageManifest.data;
+    const channel = pkg.status.defaultChannel
+      ? pkg.status.channels.find(({ name }) => name === pkg.status.defaultChannel)
+      : pkg.status.channels[0];
+
+    const template = `
+          apiVersion: ${SubscriptionModel.apiGroup}/${SubscriptionModel.apiVersion}
+          kind: ${SubscriptionModel.kind},
+          metadata:
+            generateName: ${pkg.metadata.name}-
+            namespace: default
+          spec:
+            source: ${searchParams.get('catalog')}
+            sourceNamespace: ${searchParams.get('catalogNamespace')}
+            name: ${pkg.metadata.name}
+            startingCSV: ${channel.currentCSV}
+            channel: ${channel.name}
+        `;
+    return <CreateYAML plural={SubscriptionModel.plural} template={template} />;
+  }
+  return <LoadingBox />;
+};
+
+const CreateSubscriptionFallback: FC = () => {
   const { t } = useTranslation('olm');
+  return (
+    <ConsoleEmptyState title={t('Package not found')}>
+      {t('Cannot create a Subscription to a non-existent package.')}
+    </ConsoleEmptyState>
+  );
+};
+
+const CreateSubscription = requireOperatorGroup(
+  withFallback<CreateSubscriptionProps>(CreateSubscriptionContent, CreateSubscriptionFallback),
+);
+
+export const CreateSubscriptionYAML: FC = () => {
   const params = useParams();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -232,42 +273,11 @@ export const CreateSubscriptionYAML: FC = () => {
     },
   });
 
-  const Create = requireOperatorGroup(
-    withFallback<CreateProps>(
-      (createProps) => {
-        if (createProps.packageManifest.loaded && createProps.packageManifest.data) {
-          const pkg = createProps.packageManifest.data;
-          const channel = pkg.status.defaultChannel
-            ? pkg.status.channels.find(({ name }) => name === pkg.status.defaultChannel)
-            : pkg.status.channels[0];
-
-          const template = `
-          apiVersion: ${SubscriptionModel.apiGroup}/${SubscriptionModel.apiVersion}
-          kind: ${SubscriptionModel.kind},
-          metadata:
-            generateName: ${pkg.metadata.name}-
-            namespace: default
-          spec:
-            source: ${searchParams.get('catalog')}
-            sourceNamespace: ${searchParams.get('catalogNamespace')}
-            name: ${pkg.metadata.name}
-            startingCSV: ${channel.currentCSV}
-            channel: ${channel.name}
-        `;
-          return <CreateYAML plural={SubscriptionModel.plural} template={template} />;
-        }
-        return <LoadingBox />;
-      },
-      () => (
-        <ConsoleEmptyState title={t('Package not found')}>
-          {t('Cannot create a Subscription to a non-existent package.')}
-        </ConsoleEmptyState>
-      ),
-    ),
-  );
-
   return (
-    <Create packageManifest={resources.packageManifest} operatorGroup={resources.operatorGroup} />
+    <CreateSubscription
+      packageManifest={resources.packageManifest}
+      operatorGroup={resources.operatorGroup}
+    />
   );
 };
 
