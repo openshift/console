@@ -25,9 +25,13 @@ import { CodeEditor } from '@console/shared/src/components/editor/CodeEditor';
 import { CodeEditorSidebar } from '@console/shared/src/components/editor/CodeEditorSidebar';
 import { ToggleSidebarButton } from '@console/shared/src/components/editor/ToggleSidebarButton';
 import { downloadYaml } from '@console/shared/src/components/editor/yaml-download-utils';
-import { fold } from '@console/shared/src/components/editor/yaml-editor-utils';
+import {
+  getNamespacesFromYAML,
+  fold,
+} from '@console/shared/src/components/editor/yaml-editor-utils';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import PageBody from '@console/shared/src/components/layout/PageBody';
+import { DefaultNamespaceDeploymentWarning } from '@console/shared/src/components/namespace/DefaultNamespaceWarning';
 import { FLAGS, ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
@@ -187,6 +191,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
   const [resourceObjects, setResourceObjects] = useState();
   const [editorMounted, setEditorMounted] = useState(false);
   const [fullscreenRef, toggleFullscreen, isFullscreen, canUseFullScreen] = useFullscreen();
+  const [namespaces, setNamespaces] = useState<string[]>([]);
   const launchModal = useOverlay();
 
   const [templateExtensions, resolvedTemplates] = useResolvedExtensions<YAMLTemplate>(
@@ -773,6 +778,10 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
     return sanitizedYaml;
   };
 
+  const onCodeChange = useCallback<CodeEditorProps['onCodeChange']>((newCode) => {
+    setNamespaces(getNamespacesFromYAML(newCode));
+  }, []);
+
   useEffect(() => {
     editorMounted && getEditor()?.updateOptions({ hover: { enabled: showTooltips } });
     editorMounted && getEditor()?.updateOptions({ stickyScroll: { enabled: stickyScrollEnabled } });
@@ -875,6 +884,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
                 onChange={onChange}
                 onSave={() => (allowMultiple ? saveAll() : save())}
                 onEditorDidMount={() => setEditorMounted(true)}
+                onCodeChange={onCodeChange}
               />
               <div className="yaml-editor__buttons" ref={buttons}>
                 {customAlerts}
@@ -962,6 +972,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
                     </Button>
                   )}
                 </ActionGroup>
+                {create && <DefaultNamespaceDeploymentWarning namespaces={namespaces} />}
               </div>
             </div>
           </div>

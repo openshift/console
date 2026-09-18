@@ -32,6 +32,7 @@ export const NSDropdownField: FC<DropdownFieldProps> = ({
           setFieldValue(props.name, value);
           setFieldTouched(props.name, true);
         }}
+        showDefaultWarning
       />
 
       <FormHelperText>
