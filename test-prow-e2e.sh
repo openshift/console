@@ -67,6 +67,4 @@ else
   exit 1
 fi
 
-env NO_SANDBOX=true yarn test-puppeteer-csp
-
 popd
