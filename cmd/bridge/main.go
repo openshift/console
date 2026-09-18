@@ -379,6 +379,7 @@ func main() {
 
 			srv.CatalogdProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
+				HeaderBlacklist: srv.ProxyHeaderDenyList,
 				Endpoint:        &url.URL{Scheme: "https", Host: catalogdHost},
 			}
 
@@ -458,6 +459,7 @@ func main() {
 			flags.FatalIfFailed(err)
 			srv.CatalogdProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
+				HeaderBlacklist: srv.ProxyHeaderDenyList,
 				Endpoint:        offClusterCatalogdURL,
 			}
 		}
