@@ -151,7 +151,13 @@ export class ListPage extends BasePage {
     const cell = this.getCell(resourceName);
     const row = cell.locator('xpath=ancestor::tr');
     const statusButton = row.getByTestId('popover-status-button');
-    await this.robustClick(statusButton, { timeout: 60_000 });
+    await this.robustClick(statusButton, { timeout: 30_000, force: true });
+  }
+
+  async clickDebugContainerLink(containerName: string): Promise<void> {
+    await this.robustClick(this.page.getByTestId(`popup-debug-container-link-${containerName}`), {
+      timeout: 30_000,
+    });
   }
 
   async clickFirstRowLink(): Promise<void> {
