@@ -79,14 +79,14 @@ func TestHelmHandlers_HandleChartVerifier_AcceptsValidURLs(t *testing.T) {
 		name string
 		url  string
 	}{
+		// Only public, resolvable hosts belong here: the handler runs the
+		// strict SSRF guard (this test binary does not relax it), so URLs whose
+		// host is private, loopback, cluster-internal, or unresolvable are
+		// rejected by design and are covered by RejectsInvalidURLs instead.
 		{"valid OCI registry", "oci://ghcr.io/charts/mychart:1.0.0"},
-		{"valid OCI registry with port", "oci://registry.example.com:5000/charts/mychart"},
 		{"valid HTTPS tgz", validChartURL},
 		{"valid HTTP tgz", "http://example.com/charts/mychart-1.0.0.tgz"},
 		{"valid HTTPS tar.gz", "https://example.com/charts/mychart-1.0.0.tar.gz"},
-		{"valid HTTP IPv4 tgz", "http://172.28.1.76:8849/chart.tgz"},
-		{"valid HTTP localhost tgz", "http://localhost/chart.tgz"},
-		{"valid HTTP loopback tgz", "http://127.0.0.1/chart.tgz"},
 	}
 
 	for _, tt := range tests {
