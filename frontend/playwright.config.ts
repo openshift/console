@@ -16,7 +16,8 @@ const baseURL = process.env.WEB_CONSOLE_URL || 'http://localhost:9000';
 // import.meta (ESM) while Playwright loads this config as CommonJS.
 const adminStorageState = path.resolve(__dirname, 'e2e', '.auth', 'kubeadmin.json');
 const developerStorageState = path.resolve(__dirname, 'e2e', '.auth', 'developer.json');
-const hasDeveloper = !!process.env.BRIDGE_HTPASSWD_USERNAME;
+const hasDeveloper =
+  !!process.env.BRIDGE_HTPASSWD_USERNAME || process.env.BRIDGE_AUTH_TYPE === 'oidc';
 
 const packages = [
   'smoke',

@@ -102,6 +102,12 @@ export default class KubernetesClient {
     username: string,
     password: string,
   ): Promise<string> {
+    if (process.env.BRIDGE_AUTH_TYPE === 'oidc') {
+      throw new Error(
+        'getOAuthToken is not available under external OIDC authentication. ' +
+          'The OpenShift OAuth server is disabled when using an external OIDC provider.',
+      );
+    }
     const oauthServerUrl = await KubernetesClient.getOAuthServerUrl(clusterUrl);
     return new Promise((resolve, reject) => {
       const authHeader = Buffer.from(`${username}:${password}`).toString('base64');
@@ -185,6 +191,12 @@ export default class KubernetesClient {
     password: string,
     outputPath: string,
   ): Promise<string> {
+    if (process.env.BRIDGE_AUTH_TYPE === 'oidc') {
+      throw new Error(
+        'generateKubeconfig via OAuth is not available under external OIDC authentication. ' +
+          'Use the existing kubeconfig provided by the CI environment instead.',
+      );
+    }
     const token = await KubernetesClient.getOAuthToken(clusterUrl, username, password);
     const kubeconfigYaml = [
       'apiVersion: v1',

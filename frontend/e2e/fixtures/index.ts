@@ -11,8 +11,9 @@ import { createCleanupFixture } from './cleanup-fixture';
 
 // URLs the console redirects to when a shared storageState session expires or is
 // invalidated (e.g. by a console rollout in another spec). Matches the OAuth
-// server and the console's own login route.
-const OAUTH_REDIRECT_RE = /\/oauth\/|oauth-openshift|\/auth\/login\b/;
+// server, the console's own login route, and Keycloak OIDC redirect URLs.
+const OAUTH_REDIRECT_RE =
+  /\/oauth\/|oauth-openshift|\/auth\/login\b|\/realms\/|\/protocol\/openid-connect\//;
 
 export interface SharedTestConfig {
   testNamespace: string;

@@ -35,13 +35,55 @@ esac
 export ARTIFACT_DIR INSTALLER_DIR
 mkdir -p "${ARTIFACT_DIR}"
 
-# don't log kubeadmin-password
-set +x
-export BRIDGE_KUBEADMIN_PASSWORD="$(cat "${KUBEADMIN_PASSWORD_FILE:-${INSTALLER_DIR}/auth/kubeadmin-password}")"
-set -x
+# Source CI runtime environment (e.g. Keycloak OIDC credentials) if available
+if [ -f "${SHARED_DIR:-}/runtime_env" ]; then
+  set +x
+  # shellcheck disable=SC1091
+  source "${SHARED_DIR}/runtime_env"
+  set -x
+fi
+
 export BRIDGE_BASE_ADDRESS="$(oc get consoles.config.openshift.io cluster -o jsonpath='{.status.consoleURL}')"
 
-./contrib/create-user.sh
+if [ -n "${KEYCLOAK_ISSUER:-}" ]; then
+  # --- External OIDC (Keycloak) mode ---
+  export BRIDGE_AUTH_TYPE="oidc"
+
+  # Parse admin (first) and developer (second) users from KEYCLOAK_TEST_USERS
+  # Format: "user1:pass1,user2:pass2,..."
+  set +x
+  IFS=',' read -ra _kc_users <<< "${KEYCLOAK_TEST_USERS}"
+  _kc_admin_entry="${_kc_users[0]}"
+  _kc_dev_entry="${_kc_users[1]:-}"
+  _kc_admin_user="${_kc_admin_entry%%:*}"
+  _kc_admin_pass="${_kc_admin_entry#*:}"
+
+  export OPENSHIFT_USERNAME="${_kc_admin_user}"
+  export BRIDGE_KUBEADMIN_PASSWORD="${_kc_admin_pass}"
+
+  if [ -n "${_kc_dev_entry}" ]; then
+    _kc_dev_user="${_kc_dev_entry%%:*}"
+    _kc_dev_pass="${_kc_dev_entry#*:}"
+    export BRIDGE_HTPASSWD_USERNAME="${_kc_dev_user}"
+    export BRIDGE_HTPASSWD_PASSWORD="${_kc_dev_pass}"
+  fi
+  set -x
+
+  # Grant cluster-admin to the admin Keycloak user's OIDC identity
+  _oidc_identity="oidc-user-test:${_kc_admin_user}@example.com"
+  oc adm policy add-cluster-role-to-user cluster-admin "${_oidc_identity}" || true
+
+  unset _kc_users _kc_admin_entry _kc_dev_entry _kc_admin_user _kc_admin_pass
+  unset _kc_dev_user _kc_dev_pass _oidc_identity
+else
+  # --- Standard OAuth mode ---
+  # don't log kubeadmin-password
+  set +x
+  export BRIDGE_KUBEADMIN_PASSWORD="$(cat "${KUBEADMIN_PASSWORD_FILE:-${INSTALLER_DIR}/auth/kubeadmin-password}")"
+  set -x
+
+  ./contrib/create-user.sh
+fi
 
 export WORKERS="${WORKERS:-2}"
 export GLOBAL_TIMEOUT_MS="${GLOBAL_TIMEOUT_MS:-6600000}"
