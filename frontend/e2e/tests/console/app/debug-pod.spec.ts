@@ -7,6 +7,12 @@ import { retryOnModelNotFound } from '../../../utils/retry-model-error';
 
 const POD_NAME = 'pod1';
 const CONTAINER_NAME = 'container1';
+const DEBUG_POD_PREFIX = `${POD_NAME}-debug-`;
+
+type DebugPodInfo = {
+  name: string;
+  podIP: string;
+};
 
 const podYaml = `apiVersion: v1
 kind: Pod
@@ -20,6 +26,10 @@ spec:
   containers:
     - name: ${CONTAINER_NAME}
       image: quay.io/fedora/fedora
+      command:
+        - /bin/sh
+        - -c
+        - exit 1
       securityContext:
         allowPrivilegeEscalation: false
         capabilities:
@@ -27,39 +37,77 @@ spec:
           - ALL
   restartPolicy: Always`;
 
-async function waitForPodCrashState(
+async function waitForPodCrashLoopBackOff(
   k8sClient: KubernetesClient,
   namespace: string,
   podName: string,
   timeoutMs = 120_000,
-): Promise<boolean> {
-  const deadline = Date.now() + timeoutMs;
+): Promise<void> {
+  await expect
+    .poll(
+      async () => {
+        try {
+          const pods = await k8sClient.getPods(namespace);
+          const pod = pods.find((p) => p.metadata?.name === podName);
+          return pod?.status?.containerStatuses?.find((c) => c.name === CONTAINER_NAME)?.state
+            ?.waiting?.reason;
+        } catch {
+          return undefined;
+        }
+      },
+      { timeout: timeoutMs },
+    )
+    .toBe('CrashLoopBackOff');
+}
 
-  while (Date.now() < deadline) {
-    try {
-      const pods = await k8sClient.getPods(namespace);
-      const pod = pods.find((p) => p.metadata?.name === podName);
-      if (!pod) {
-        await new Promise((r) => setTimeout(r, 3_000));
-        continue;
-      }
-      const container = pod.status?.containerStatuses?.[0];
-      const waitingReason = container?.state?.waiting?.reason;
-      const restartCount = container?.restartCount ?? 0;
-      if (
-        waitingReason === 'CrashLoopBackOff' ||
-        waitingReason === 'CreateContainerConfigError' ||
-        restartCount >= 1
-      ) {
+async function waitForDebugPodRunning(
+  k8sClient: KubernetesClient,
+  namespace: string,
+  timeoutMs = 120_000,
+): Promise<DebugPodInfo> {
+  let debugPodInfo: DebugPodInfo | undefined;
+
+  await expect
+    .poll(
+      async () => {
+        const pods = await k8sClient.getPods(namespace);
+        const debugPod = pods.find(
+          (p) =>
+            p.metadata?.name?.startsWith(DEBUG_POD_PREFIX) &&
+            !p.metadata.deletionTimestamp &&
+            p.status?.phase === 'Running' &&
+            p.status.podIP,
+        );
+        if (!debugPod?.metadata?.name || !debugPod.status?.podIP) {
+          return false;
+        }
+        debugPodInfo = { name: debugPod.metadata.name, podIP: debugPod.status.podIP };
         return true;
-      }
-    } catch {
-      // API call failed, retry
-    }
+      },
+      { timeout: timeoutMs },
+    )
+    .toBe(true);
 
-    await new Promise((r) => setTimeout(r, 3_000));
+  if (!debugPodInfo) {
+    throw new Error('Debug pod reached Running without a name or IP address');
   }
-  return false;
+  return debugPodInfo;
+}
+
+async function waitForNoDebugPods(
+  k8sClient: KubernetesClient,
+  namespace: string,
+  timeoutMs = 60_000,
+): Promise<void> {
+  await expect
+    .poll(
+      async () => {
+        const pods = await k8sClient.getPods(namespace);
+        return pods.filter((p) => p.metadata?.name?.startsWith(DEBUG_POD_PREFIX)).length;
+      },
+      { timeout: timeoutMs },
+    )
+    .toBe(0);
 }
 
 test.describe('Debug pod', () => {
@@ -91,6 +139,7 @@ test.describe('Debug pod', () => {
     const detailsPage = new DetailsPage(page);
     const listPage = new ListPage(page);
     const yamlEditorPage = new YamlEditorPage(page);
+    let lastDebugPod: DebugPodInfo | undefined;
 
     await test.step('Create pod via YAML import', async () => {
       await yamlEditorPage.navigateToImportYaml(ns);
@@ -104,8 +153,7 @@ test.describe('Debug pod', () => {
     });
 
     await test.step('Wait for pod to enter CrashLoopBackOff', async () => {
-      const crashed = await waitForPodCrashState(k8sClient, ns, POD_NAME);
-      expect(crashed, 'Pod never entered a crash/error state').toBe(true);
+      await waitForPodCrashLoopBackOff(k8sClient, ns, POD_NAME);
     });
 
     await test.step('Open debug terminal from Logs tab', async () => {
@@ -117,77 +165,72 @@ test.describe('Debug pod', () => {
       await retryOnModelNotFound(page);
       await detailsPage.selectTab('Logs');
 
-      await page.getByTestId('debug-container-link').click({ timeout: 30_000 });
+      await detailsPage.clickDebugContainerFromLogs();
       await expect(listPage.heading).toContainText(`Debug ${CONTAINER_NAME}`, {
         timeout: 30_000,
       });
-      await expect(detailsPage.xtermViewport).toBeAttached({ timeout: 30_000 });
+      await waitForDebugPodRunning(k8sClient, ns);
+      await detailsPage.waitForTerminalReady();
 
       await detailsPage.getBreadcrumb(0).click();
       await expect(listPage.cell(POD_NAME)).toBeVisible({ timeout: 30_000 });
+      await waitForNoDebugPods(k8sClient, ns);
     });
 
     await test.step('Open debug terminal from Pod Details status popover', async () => {
       await detailsPage.navigateToDetailsPage(`/k8s/ns/${ns}/pods/${POD_NAME}`);
       await detailsPage.waitForPageLoad();
       await retryOnModelNotFound(page);
+      await waitForPodCrashLoopBackOff(k8sClient, ns, POD_NAME);
 
-      await page.getByTestId('popover-status-button').click({ timeout: 60_000 });
-      const debugLink = page.getByTestId(`popup-debug-container-link-${CONTAINER_NAME}`);
-      await expect(debugLink).toBeVisible({ timeout: 10_000 });
-      await debugLink.click();
+      await detailsPage.clickStatusButton();
+      await detailsPage.clickDebugContainerLink(CONTAINER_NAME);
 
       await expect(listPage.heading).toContainText(`Debug ${CONTAINER_NAME}`, {
         timeout: 30_000,
       });
-      await expect(detailsPage.xtermViewport).toBeAttached({ timeout: 30_000 });
+      await waitForDebugPodRunning(k8sClient, ns);
+      await detailsPage.waitForTerminalReady();
 
       await detailsPage.getBreadcrumb(0).click();
       await expect(listPage.cell(POD_NAME)).toBeVisible({ timeout: 30_000 });
+      await waitForNoDebugPods(k8sClient, ns);
     });
 
     await test.step('Open debug terminal from Pods list status popover', async () => {
       await listPage.navigateToListPage(`/k8s/ns/${ns}/pods`);
       await expect(listPage.cell(POD_NAME)).toBeVisible({ timeout: 30_000 });
+      await waitForPodCrashLoopBackOff(k8sClient, ns, POD_NAME);
 
       await listPage.clickStatusButton(POD_NAME);
-      const debugLink = page.getByTestId(`popup-debug-container-link-${CONTAINER_NAME}`);
-      await expect(debugLink).toBeVisible({ timeout: 10_000 });
-      await debugLink.click();
+      await listPage.clickDebugContainerLink(CONTAINER_NAME);
 
       await expect(listPage.heading).toContainText(`Debug ${CONTAINER_NAME}`, {
         timeout: 30_000,
       });
-      await expect(detailsPage.xtermViewport).toBeAttached({ timeout: 30_000 });
+      lastDebugPod = await waitForDebugPodRunning(k8sClient, ns);
+      await detailsPage.waitForTerminalReady();
     });
 
     await test.step('Verify debug pod has a different IP than the main pod', async () => {
       const pods = await k8sClient.getPods(ns);
-      expect(pods.length).toBeGreaterThanOrEqual(2);
       const mainPod = pods.find((p) => p.metadata?.name === POD_NAME);
-      const debugPod = pods.find((p) => p.metadata?.name !== POD_NAME);
       expect(mainPod?.status?.podIP).toBeTruthy();
-      expect(debugPod?.status?.podIP).toBeTruthy();
-      expect(mainPod?.status?.podIP).not.toEqual(debugPod?.status?.podIP);
+      expect(lastDebugPod?.podIP).toBeTruthy();
+      expect(mainPod?.status?.podIP).not.toEqual(lastDebugPod?.podIP);
     });
 
     await test.step('Verify debug pod is terminated after leaving debug page', async () => {
       await detailsPage.getBreadcrumb(0).click();
       await expect(listPage.cell(POD_NAME)).toBeVisible({ timeout: 30_000 });
+      await waitForNoDebugPods(k8sClient, ns);
 
       await listPage.navigateToListPage(`/k8s/ns/${ns}/pods`);
       await expect(listPage.cell(POD_NAME)).toBeVisible({ timeout: 30_000 });
-      await listPage.filterByCheckbox('Status', 'Running');
-
-      await expect
-        .poll(
-          async () => {
-            const pods = await k8sClient.getPods(ns);
-            return pods.filter((p) => p.metadata?.name !== POD_NAME).length;
-          },
-          { timeout: 60_000 },
-        )
-        .toBe(0);
+      if (!lastDebugPod) {
+        throw new Error('Expected the final debug pod to have been created');
+      }
+      await expect(listPage.cell(lastDebugPod.name)).not.toBeAttached();
     });
   });
 });

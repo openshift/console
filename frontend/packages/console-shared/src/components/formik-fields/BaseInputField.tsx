@@ -63,7 +63,11 @@ const BaseInputField: FC<
       >
         <HelperText>
           {!isValid ? (
-            <HelperTextItem variant="error">{errorMessage || helpTextInvalid}</HelperTextItem>
+            <HelperTextItem variant="error">
+              <span data-test={`form-input-${name.replace(/\./g, '-')}-field-error`}>
+                {errorMessage || helpTextInvalid}
+              </span>
+            </HelperTextItem>
           ) : (
             <HelperTextItem variant={validated}>{helpText}</HelperTextItem>
           )}
