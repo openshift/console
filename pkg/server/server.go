@@ -337,8 +337,8 @@ func (s *Server) HTTPHandler() http.Handler {
 		})),
 	)
 
-	handleFunc(devfileEndpoint, s.devfileHandler)
-	handleFunc(devfileSamplesEndpoint, s.devfileSamplesHandler)
+	handle(devfileEndpoint, authHandler(s.devfileHandler))
+	handle(devfileSamplesEndpoint, authHandler(s.devfileSamplesHandler))
 
 	terminalProxy := terminal.NewProxy(
 		s.TerminalProxyTLSConfig,

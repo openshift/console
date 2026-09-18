@@ -59,6 +59,9 @@ func RenderManifests(name string, url string, vals map[string]interface{}, conf 
 	}
 	client.ReleaseName = name
 	if len(tlsFiles) == 0 {
+		if err := validateChartURL(url); err != nil {
+			return emptyResponse, err
+		}
 		chartLocation = url
 	} else {
 		chartLocation = chartInfo.Name
