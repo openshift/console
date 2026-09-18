@@ -27,5 +27,8 @@
     "fs-extra": "9.x",
     "ts-json-schema-generator": "2.3.0",
     "tsutils": "3.21.0"
+  },
+  "dependencies": {
+    "@segment/analytics-next": "1.84.1"
   }
 }

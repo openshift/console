@@ -44,7 +44,20 @@ declare interface Window {
     controlPlaneTopology: string;
     telemetry?: Partial<{
       /** All of the following should be always available on prod env. */
-      SEGMENT_API_HOST: string;
+      /**
+       * The API host to which the Segment script will talk to. Defaults to
+       * "api.segment.io/v1" if undefined.
+       */
+      SEGMENT_API_HOST?: string;
+      /**
+       * Segment's CDN url setting, which must include "https://" and no
+       * trailing slashes. Defaults to "https://cdn.segment.com" if undefined.
+       */
+      SEGMENT_CDN_URL?: string;
+      /**
+       * Legacy way of specifying Segment's CDN host.
+       * @deprecated Use `SEGMENT_CDN_URL` instead.
+       */
       SEGMENT_JS_HOST: string;
       /** One of the following should be always available on prod env. */
       SEGMENT_API_KEY: string;
@@ -52,7 +65,14 @@ declare interface Window {
       // DevSandbox-specific configuration
       DEVSANDBOX_SEGMENT_API_KEY: string;
       DEVSANDBOX: 'true' | 'false';
-      /** Optional override for analytics.min.js script URL */
+      /**
+       * Legacy way of specifying the full URL from which the Segment script
+       * would be loaded.
+       * @deprecated Use `SEGMENT_CDN_URL` instead because the Segment
+       * script is now bundled in the UI. Given a full URL like "https://example.redhat.com/cdn/analytics.js/v1/segmentKey/analytics.min.js",
+       * only the part of the URL until "/analytics.js/v1" is used, excluding
+       * that part.
+       */
       SEGMENT_JS_URL: string;
       // Additional telemetry options passed to Console frontend
       DEBUG: 'true' | 'false';
