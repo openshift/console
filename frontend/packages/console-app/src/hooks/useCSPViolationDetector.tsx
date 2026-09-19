@@ -70,9 +70,9 @@ export const newPluginCSPViolationEvent = (
 });
 
 /**
- * Report CSP violation event for Cypress test purposes.
+ * Report CSP violation event for E2E test purposes.
  */
-const reportCSPViolationToCypress = (event: SecurityPolicyViolationEvent) => {
+const reportCSPViolationToTestError = (event: SecurityPolicyViolationEvent) => {
   // Import from Git e2e tests make direct browser requests to api.github.com
   // which violates connect-src CSP. This is expected since git hosting can be
   // on any arbitrary hostname (e.g. Gitea) and cannot be allowlisted in CSP.
@@ -105,7 +105,7 @@ export const useCSPViolationDetector = () => {
     (event: SecurityPolicyViolationEvent) => {
       console.warn('Content Security Policy violation detected', event);
 
-      reportCSPViolationToCypress(event);
+      reportCSPViolationToTestError(event);
 
       // Attempt to infer Console plugin name from SecurityPolicyViolation event
       const pluginName =

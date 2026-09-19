@@ -286,7 +286,7 @@ export const FireMan: FC<FireManProps & { filterList?: typeof filterList }> = (p
           toggleProps={{
             variant: 'primary',
             id: 'item-create',
-            // @ts-expect-error non-prop attribute is used for cypress
+            // @ts-expect-error non-prop attribute is used for E2E tests
             'data-test': 'item-create',
           }}
           toggleContent={createButtonText}

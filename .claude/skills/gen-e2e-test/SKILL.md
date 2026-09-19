@@ -3,7 +3,7 @@ name: gen-e2e-test
 description: Generate Playwright e2e tests for OpenShift Console features. Creates spec files and page objects following the project's established patterns and conventions. Use this skill whenever the user wants to create, write, or add e2e tests, asks to cover a feature with e2e, describes a UI workflow to test, says "I need to test this feature", "add test coverage for X", or invokes /gen-e2e-test explicitly.
 when_to_use: |
   TRIGGER on: "create e2e test", "write e2e test", "generate e2e", "add playwright test", "new e2e spec", "write a spec for", "add e2e coverage", "I need to test this feature", "cover this with e2e", "test this workflow", or explicit /gen-e2e-test invocations. Also trigger when user describes a UI workflow to test or asks to add test coverage for a feature.
-  DO NOT trigger for: migrating Cypress tests (use migrate-cypress), fixing or debugging existing .spec.ts files (use debug-test), writing unit tests (use gen-rtl-test), running existing test suites.
+  DO NOT trigger for: fixing or debugging existing .spec.ts files (use debug-test), writing unit tests (use gen-rtl-test), running existing test suites.
 model: opus
 argument-hint: "<feature description> [--project=<name>] [--analyze]"
 allowed-tools: Read, Write, Edit, Bash(find *), Bash(grep *), Bash(ls *), Bash(npx tsc *), Bash(npx playwright *), Bash(git diff *), Bash(git status), mcp__plugin_playwright_playwright__browser_navigate, mcp__plugin_playwright_playwright__browser_snapshot, mcp__plugin_playwright_playwright__browser_click, mcp__plugin_playwright_playwright__browser_console_messages, mcp__plugin_playwright_playwright__browser_take_screenshot, mcp__plugin_playwright_playwright__browser_resize, mcp__plugin_playwright_playwright__browser_run_code_unsafe, mcp__plugin_playwright_playwright__browser_evaluate, mcp__plugin_playwright_playwright__browser_close, mcp__plugin_playwright_playwright__browser_type, mcp__plugin_playwright_playwright__browser_wait_for, mcp__plugin_playwright_playwright__browser_network_requests, AskUserQuestion
@@ -125,7 +125,32 @@ Create idiomatic Playwright e2e tests for OpenShift Console features following t
      Page objects reused: [list]
      Files written: [list]
      Validation: passed
-   ```
+    ```
+
+## Migrating Existing Cypress Tests
+
+Use this skill for both new Playwright coverage and Cypress-to-Playwright migration. Read the
+source `.cy.ts` or `.feature` file, its step definitions, page objects, commands, fixtures, and
+imported helpers before writing code. Use `.claude/migration-context.md` for API translations,
+Gherkin mappings, and the migration checklist.
+
+- Preserve the scenario intent and every meaningful assertion; compare Cypress and Playwright
+  assertion counts and flag any reduction.
+- Convert Gherkin `Scenario Outline` examples into a `for...of` loop.
+- Collapse sequential Cypress steps into one self-contained Playwright test with explicit
+  `test.step()` phases and independent preconditions.
+- Reuse existing page objects and Kubernetes clients before adding helpers. Keep selectors in
+  page objects and scenarios in specs.
+- Replace `cy.exec()` with `KubernetesClient`; never shell out from an E2E test.
+- Replace fixed waits with URL, DOM, network, resource-readiness, or assertion conditions.
+- Use `data-test` and semantic locators. Add `data-test` beside legacy attributes in React source;
+  do not remove legacy attributes.
+- Track namespaces and resources through the cleanup fixture. Do not use try/catch cleanup when
+  shared cleanup methods already handle missing resources.
+- Run the migrated spec three times with `--retries=0` after the first passing run. If live
+  selector discovery is unavailable, state that limitation and run `/debug-test` after deployment.
+- Do not delete the Cypress source until the migrated test is validated and no other Cypress test
+  imports the support file.
 
 ## Rules
 

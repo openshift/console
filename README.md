@@ -115,28 +115,6 @@ In order to enable the monitoring UI and see the "Observe" navigation item while
   export BRIDGE_PLUGINS="monitoring-plugin=http://localhost:9001"
   ```
 
-#### Updating `tectonic-console-builder` image
-The `tectonic-console-builder` image is used to run Cypress tests in CI. Updating it is
-needed when there is a change in the Node.js version. Note that the instance of `go` present
-in the container image is unused, because the backend tests use a different image.
-
-In order to update the `tectonic-console-builder` to a new version (e.g., v29), follow these steps:
-
-1. Update the `tectonic-console-builder` image tag in files listed below:
-   - .ci-operator.yaml
-   - Dockerfile.dev
-   - Dockerfile.plugins.demo
-   For example, `tectonic-console-builder:29`
-2. Update the dependencies in Dockerfile.builder file by setting the `NODE_VERSION`
-   and `YARN_VERSION` environment variables to the desired versions.
-3. Run `./push-builder.sh` script build and push the updated builder image to quay.io.
-   Note: You can test the image using `./builder-run.sh ./build-backend.sh`.
-   To update the image on quay.io, you need edit permission to the [`coreos/tectonic-console-builder` repo](https://quay.io/repository/coreos/tectonic-console-builder).
-4. Lastly, update the mapping of `tectonic-console-builder` image tag in
-   [openshift/release](https:// github.com/openshift/release/blob/master/core-services/image-mirroring/supplemental-ci-images/mapping_supplemental_ci_images_ci) repository.
-   Note: There could be scenario were you would have to add the new image reference in the "mapping_supplemental_ci_images_ci" file, i.e. to avoid CI downtime for upcoming release cycle.
-   Optional: Request for the [rhel-8-base-nodejs-openshift-4.15](https://github.com/openshift-eng/ocp-build-data/pull/3775/files) nodebuilder update if it doesn't match the node version in `tectonic-console-builder`.
-
 #### CodeReady Containers
 
 If you want to use CodeReady for local development, first make sure [it is set up](https://crc.dev/docs/networking/#setting-up-on-a-remote-server), and the [OpenShift cluster is started](https://crc.dev/docs/getting-started/#creating-openshift-preset).
@@ -258,67 +236,32 @@ Run frontend tests:
 
 ### Integration Tests
 
-Cypress integration tests are implemented in [Cypress.io](https://www.cypress.io/).
+E2E integration tests are implemented using [Playwright](https://playwright.dev/). Tests live under `frontend/e2e/tests/` and are configured via [frontend/playwright.config.ts](frontend/playwright.config.ts).
 
-To install Cypress:
+**Important:** Set `BRIDGE_KUBEADMIN_PASSWORD` and `WEB_CONSOLE_URL` environment variables in your shell when testing against a live cluster.
 
-```
-cd frontend
-yarn run cypress install
-```
-
-Launch Cypress test runner:
+#### Running Playwright tests locally
 
 ```
 cd frontend
 oc login ...
-yarn run test-cypress-console
+export WEB_CONSOLE_URL="$(oc get consoles.config.openshift.io cluster -o jsonpath='{.status.consoleURL}')"
+export BRIDGE_KUBEADMIN_PASSWORD=<your-kubeadmin-password>
+yarn test-playwright                          # run all tests
+yarn test-playwright --project=smoke          # run smoke tests only
+yarn test-playwright --project=console        # run console tests only
+yarn test-playwright --headed                 # run with browser visible
+yarn test-playwright --debug                  # run in debug mode
+yarn test-playwright --ui                     # run with Playwright UI
 ```
-
-This will launch the Cypress Test Runner UI in the `console` package, where you can run one or all Cypress tests.
-
-**Important:**  when testing with authentication, set `BRIDGE_KUBEADMIN_PASSWORD` environment variable in your shell.
-
-#### Execute Cypress in different packages
-
-An alternate way to execute cypress tests is via [frontend/integration-tests/test-cypress.sh](frontend/integration-tests/test-cypress.sh) which takes a `-p <package>` parameter to allow execution in different packages. It also can run Cypress tests in the Test Runner UI or in `-- headless` mode:
-
-```
-console/frontend > ./integration-tests/test-cypress.sh
-
-Runs Cypress tests in Test Runner or headless mode
-Usage: test-cypress [-p] <package> [-s] <filemask> [-h true]
-  '-p <package>' may be 'console, 'olm' or 'devconsole'
-  '-s <specmask>' is a file mask for spec test files, such as 'tests/monitoring/*'. Used only in headless mode when '-p' is specified.
-  '-h true' runs Cypress in headless mode. When omitted, launches Cypress Test Runner
-Examples:
-  ./integration-tests/test-cypress.sh                                       // displays this help text
-  ./integration-tests/test-cypress.sh -p console                            // opens Cypress Test Runner for console tests
-  ./integration-tests/test-cypress.sh -p olm                                // opens Cypress Test Runner for OLM tests
-  ./integration-tests/test-cypress.sh -h true                               // runs all packages in headless mode
-  ./integration-tests/test-cypress.sh -p olm -h true                        // runs OLM tests in headless mode
-  ./integration-tests/test-cypress.sh -p console -s 'tests/crud/*' -h true  // runs console CRUD tests in headless mode
-```
-
-When running in headless mode, Cypress will test using its integrated Electron browser, but if you want to use Chrome or Firefox instead, set `BRIDGE_E2E_BROWSER_NAME` environment variable in your shell with the value `chrome` or `firefox`.
-
-[**_More information on Console's Cypress usage_**](frontend/packages/integration-tests/README.md)
-
-[**_More information on DevConsole's Cypress usage_**](frontend/packages/dev-console/integration-tests/README.md)
 
 #### How the Integration Tests Run in CI
 
 The end-to-end tests run against pull requests using [ci-operator](https://github.com/openshift/ci-operator/).
-The tests are defined in [this manifest](https://github.com/openshift/release/blob/main/ci-operator/jobs/openshift/console/openshift-console-main-presubmits.yaml)
-in the [openshift/release](https://github.com/openshift/release) repo and were generated with [ci-operator-prowgen](https://github.com/openshift/ci-operator-prowgen).
+The tests are defined in the [ci-operator config](https://github.com/openshift/release/blob/main/ci-operator/config/openshift/console/openshift-console-main.yaml)
+in the [openshift/release](https://github.com/openshift/release) repo.
 
-CI runs the [test-prow-e2e.sh](test-prow-e2e.sh) script, which runs [frontend/integration-tests/test-cypress.sh](frontend/integration-tests/test-cypress.sh).
-
-`test-cypress.sh` runs all Cypress tests, in all 'packages' (console, olm, and devconsole), in `-- headless` mode via:
-
-`test-cypress.sh -h true`
-
-For more information on `test-cypress.sh` usage please see [Execute Cypress in different packages](#execute-cypress-in-different-packages)
+CI runs the [test-prow-e2e.sh](test-prow-e2e.sh) script, which runs [frontend/integration-tests/test-playwright-e2e.sh](frontend/integration-tests/test-playwright-e2e.sh).
 
 ### Internationalization
 

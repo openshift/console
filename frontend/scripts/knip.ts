@@ -239,11 +239,7 @@ const config: KnipConfig = {
   },
 
   // Not shipped in production so we don't mind being loosey-goosey
-  ignoreWorkspaces: [
-    'packages/eslint-plugin-console',
-    'packages/integration-tests',
-    'packages/*/integration-tests',
-  ],
+  ignoreWorkspaces: ['packages/eslint-plugin-console'],
 
   ignoreDependencies: [
     '@console/.*', // cross-references via yarn workspaces
