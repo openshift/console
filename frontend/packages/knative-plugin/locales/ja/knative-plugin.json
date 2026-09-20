@@ -87,7 +87,7 @@
   "Create function with guided documentation": "ガイド付きドキュメントを使用した関数の作成",
   "Create functions using samples": "サンプルを使用した関数の作成",
   "Create Serverless functions using CLI": "CLI を使用して Serverless 関数を作成する",
-  "Create Serverless functions using IDE": "IDE を使用して Serverless 関数を作成する",
+  "Create Serverless functions using IDE": "IDEA を使用して Serverless 関数を作成する",
   "Created": "作成済み",
   "Data": "データ",
   "Default {{channelName}} ({{defaultConfiguredChannel}})": "デフォルト {{channelName}} ({{defaultConfiguredChannel}})",

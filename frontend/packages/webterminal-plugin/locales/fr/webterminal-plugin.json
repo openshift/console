@@ -9,7 +9,7 @@
   "Command line terminal": "Terminal de ligne de commande",
   "Configure default timeout and image of web terminal operator.": "Configurez le délai d’expiration et l’image par défaut de l’opérateur du terminal Web.",
   "connecting to {{container}}": "connexion à {{container}}",
-  "Connecting to {{podName}}/{{containerName}}...": "Connexion à {{podName}}/{{containerName}}...",
+  "Connecting to {{podName}}/{{containerName}}...": "Connection à {{podName}}/{{containerName}}...",
   "Connecting to your OpenShift command line terminal ...": "Connexion à votre terminal de ligne de commande OpenShift...",
   "Create Project": "Créer Projet",
   "detached": "détaché",
