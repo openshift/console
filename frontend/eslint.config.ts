@@ -27,8 +27,6 @@ const PACKAGES_EXCLUDE = [
 ];
 
 const CYPRESS_INTEGRATION_DIRS = [
-  'packages/integration-tests',
-  'packages/dev-console/integration-tests',
   'packages/knative-plugin/integration-tests',
   'packages/helm-plugin/integration-tests',
 ];
