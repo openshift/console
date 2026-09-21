@@ -1,6 +1,7 @@
 import type { FC } from 'react';
 import { Fragment, useContext, useState, useRef, useCallback, useEffect } from 'react';
 import {
+  AlertVariant,
   Dropdown,
   Divider,
   DropdownGroup,
@@ -35,6 +36,7 @@ import { LinkTo } from '@console/shared/src/components/links/LinkTo';
 import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import { getNotificationsVariant } from '@console/shared/src/components/toast/toastNotificationUtils';
 import { useNotificationHistory } from '@console/shared/src/components/toast/useNotificationHistory';
+import { useToast } from '@console/shared/src/components/toast/useToast';
 import { ACM_LINK_ID, FLAGS } from '@console/shared/src/constants/common';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
@@ -59,6 +61,7 @@ import { AboutModal } from '../about-modal';
 import { ImpersonateUserModal } from '../modals/impersonate-user-modal';
 import QuickCreate, { QuickCreateImportFromGit, QuickCreateContainerImages } from '../QuickCreate';
 import { openshiftHelpBase } from '../utils/documentation';
+import { downloadKubeconfig } from '../utils/download-kubeconfig';
 import '@patternfly/react-user-feedback/dist/esm/Feedback/Feedback.css';
 import { useK8sWatchResource } from '../utils/k8s-watch-hook';
 import { useFeedbackLocal } from './feedback-local';
@@ -161,6 +164,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
 }) => {
   const { t } = useTranslation('public');
   const navigate = useNavigate();
+  const toast = useToast();
   const fireTelemetryEvent = useTelemetry();
   const { tourDispatch, tour } = useContext(TourContext);
   const authEnabledFlag = useFlag(FLAGS.AUTH_ENABLED);
@@ -590,6 +594,20 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
           label: t('Copy login command'),
         });
       }
+
+      userActions.push({
+        label: t('Download kubeconfig'),
+        callback: () => {
+          downloadKubeconfig('User').catch((e) => {
+            toast.addToast({
+              variant: AlertVariant.danger,
+              title: t('Failed to download kubeconfig'),
+              content: e.message,
+            });
+          });
+        },
+        dataTest: 'download-kubeconfig',
+      });
 
       userActions.push({
         label: t('Log out'),
