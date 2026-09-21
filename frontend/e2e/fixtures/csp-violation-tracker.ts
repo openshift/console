@@ -104,10 +104,20 @@ const ignoreClosedTarget = (send: Promise<unknown>) =>
 // understands it, and document navigations regularly leave that origin (the
 // OAuth login flow redirects to the cluster's OAuth server), so without the
 // scope this internal test-only header would be sent to third parties.
+export interface CSPViolationTracker {
+  violations: CSPViolationReport[];
+  // CDP delivers events and command responses over the same ordered channel,
+  // so round-tripping a command guarantees any 'Fetch.requestPaused' events
+  // already in flight (e.g. from a violation triggered by the test's last
+  // action) have been received and pushed to `violations` before this
+  // resolves. Callers must await this before reading `violations`.
+  waitForPendingReports: () => Promise<void>;
+}
+
 export const trackCSPViolations = async (
   page: Page,
   baseURL: string,
-): Promise<CSPViolationReport[]> => {
+): Promise<CSPViolationTracker> => {
   const violations: CSPViolationReport[] = [];
 
   // Create a Chrome DevTools Protocol (CDP) session for the page.
@@ -156,7 +166,12 @@ export const trackCSPViolations = async (
     patterns: [{ resourceType: 'Document' }, { resourceType: 'CSPViolationReport' }],
   });
 
-  return violations;
+  const waitForPendingReports = () =>
+    ignoreClosedTarget(cdpSession.send('Runtime.evaluate', { expression: 'void 0' })).then(
+      () => {},
+    );
+
+  return { violations, waitForPendingReports };
 };
 
 export const assertNoCSPViolations = (violations: CSPViolationReport[]) => {

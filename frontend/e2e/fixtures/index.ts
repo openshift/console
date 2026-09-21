@@ -67,7 +67,10 @@ export const test = base.extend<TestFixtures, WorkerFixtures>({
   // csp-violation-tracker.ts for why CSP tracking works even though Console's
   // CSP header is report-only.
   page: async ({ page, baseURL }, use, testInfo) => {
-    const cspViolations = await trackCSPViolations(page, baseURL);
+    const { violations: cspViolations, waitForPendingReports } = await trackCSPViolations(
+      page,
+      baseURL,
+    );
 
     try {
       if (testInfo.annotations.some((a) => a.type === 'no-auto-reauth')) {
@@ -119,6 +122,10 @@ export const test = base.extend<TestFixtures, WorkerFixtures>({
 
       await use(page);
     } finally {
+      // Drain any 'Fetch.requestPaused' events already in flight (e.g. a
+      // violation triggered by the test's last action) before reading
+      // `cspViolations`, otherwise a late-arriving report is silently missed.
+      await waitForPendingReports();
       await assertNoErrorsThrown(
         () => assertNoCSPViolations(cspViolations),
         () => assertNoWindowErrors(page),
