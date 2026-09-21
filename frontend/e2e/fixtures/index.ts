@@ -8,7 +8,6 @@ import { loginFromEnv } from '../setup/login-helper';
 
 import type { CleanupFixture } from './cleanup-fixture';
 import { createCleanupFixture } from './cleanup-fixture';
-import type { CSPViolationReport } from './csp-violation-tracker';
 import { assertNoCSPViolations, trackCSPViolations } from './csp-violation-tracker';
 import { assertNoWindowErrors } from './window-error-tracker';
 
@@ -68,8 +67,7 @@ export const test = base.extend<TestFixtures, WorkerFixtures>({
   // csp-violation-tracker.ts for why CSP tracking works even though Console's
   // CSP header is report-only.
   page: async ({ page, baseURL }, use, testInfo) => {
-    const cspViolations: CSPViolationReport[] = [];
-    await trackCSPViolations(page, cspViolations, baseURL);
+    const cspViolations = await trackCSPViolations(page, baseURL);
 
     try {
       if (testInfo.annotations.some((a) => a.type === 'no-auto-reauth')) {

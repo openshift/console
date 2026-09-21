@@ -10,9 +10,7 @@ export interface CSPViolationReport {
     | 'sourceFile'
     | 'lineNumber'
     | 'disposition'
-  > & {
-    [key: string]: unknown;
-  };
+  >;
 }
 
 // Shape of the POST body the browser sends to a `report-uri` endpoint. It uses
@@ -41,8 +39,9 @@ const parseCSPReport = (postData: string | undefined, fallbackURI: string): CSPV
   let raw: RawCSPReportBody | undefined;
   try {
     raw = JSON.parse(postData)?.['csp-report'];
-  } catch {
+  } catch (e) {
     raw = undefined;
+    console.warn('[CSP] Failed to parse CSP report POST data', e);
   }
 
   if (!raw || typeof raw !== 'object') {
@@ -55,7 +54,6 @@ const parseCSPReport = (postData: string | undefined, fallbackURI: string): CSPV
         sourceFile: undefined,
         lineNumber: undefined,
         disposition: undefined,
-        parseError: `Failed to parse CSP report body: ${postData ?? '<missing>'}`,
       },
     };
   }
@@ -108,17 +106,15 @@ const ignoreClosedTarget = (send: Promise<unknown>) =>
 // scope this internal test-only header would be sent to third parties.
 export const trackCSPViolations = async (
   page: Page,
-  violations: CSPViolationReport[],
-  baseURL?: string,
-) => {
+  baseURL: string,
+): Promise<CSPViolationReport[]> => {
+  const violations: CSPViolationReport[] = [];
+
   // Create a Chrome DevTools Protocol (CDP) session for the page.
   const cdpSession = await page.context().newCDPSession(page);
 
-  const consoleOrigin = baseURL ? new URL(baseURL).origin : undefined;
+  const consoleOrigin = new URL(baseURL).origin;
   const isConsoleURL = (url: string) => {
-    if (!consoleOrigin) {
-      return true;
-    }
     try {
       return new URL(url).origin === consoleOrigin;
     } catch {
@@ -159,6 +155,8 @@ export const trackCSPViolations = async (
   await cdpSession.send('Fetch.enable', {
     patterns: [{ resourceType: 'Document' }, { resourceType: 'CSPViolationReport' }],
   });
+
+  return violations;
 };
 
 export const assertNoCSPViolations = (violations: CSPViolationReport[]) => {
