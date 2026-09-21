@@ -1,11 +1,11 @@
 import type {
   ComponentType,
-  ReactNode,
-  ReactText,
-  ReactNodeArray,
-  SetStateAction,
   Dispatch,
   ElementType,
+  ReactNode,
+  ReactNodeArray,
+  ReactText,
+  SetStateAction,
 } from 'react';
 import type { K8sResourceCommon, ObjectMetadata } from '@openshift/api-types';
 import type {
@@ -35,14 +35,15 @@ import type {
   PrometheusValue,
   Selector,
 } from '../api/common-types';
+import type { SegmentAnalyticsClient } from '../api/segment-analytics';
 import type { CustomDataSource } from './dashboard-data-source';
 
 /* eslint-disable no-barrel-files/no-barrel-files */
 export type {
-  ManagedFieldsEntry,
-  OwnerReference,
-  ObjectMetadata,
   K8sResourceCommon,
+  ManagedFieldsEntry,
+  ObjectMetadata,
+  OwnerReference,
 } from '@openshift/api-types';
 /* eslint-enable no-barrel-files/no-barrel-files */
 
@@ -270,8 +271,7 @@ export type UseResolvedExtensions = <E extends Extension>(
 ) => [LoadedAndResolvedExtension<E>[], boolean, any[]];
 
 export type GetSegmentAnalytics = () => {
-  // TODO: use proper Segment Analytics API type
-  analytics: Record<string, (...args: any) => any>;
+  analytics: SegmentAnalyticsClient | undefined;
   analyticsEnabled: boolean;
 };
 

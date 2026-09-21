@@ -1,127 +1,107 @@
+import type { InitOptions } from '@segment/analytics-next';
+import { AnalyticsBrowser } from '@segment/analytics-next';
 import type { GetSegmentAnalytics } from '../extensions/console-types';
+import { hasSegmentCdnOverride, resolveSegmentCdnUrl } from './segment-utils';
 
-// Segment API key. Must be present for telemetry to be enabled.
-// When running in DevSandbox mode, prefer the DevSandbox-specific key.
-const TELEMETRY_API_KEY =
+// Segment's API key. When the cluster is running in the Developer Sandbox
+// environment, use their API key instead.
+const apiKey =
   (window.SERVER_FLAGS.telemetry?.DEVSANDBOX === 'true' &&
     window.SERVER_FLAGS.telemetry?.DEVSANDBOX_SEGMENT_API_KEY) ||
   window.SERVER_FLAGS.telemetry?.SEGMENT_API_KEY ||
   window.SERVER_FLAGS.telemetry?.SEGMENT_PUBLIC_API_KEY ||
   '';
 
-// Segment "apiHost" parameter, should be like "api.segment.io/v1"
-const TELEMETRY_API_HOST = window.SERVER_FLAGS.telemetry?.SEGMENT_API_HOST || '';
+// Overrideable Segment's API host. The Segment client falls back to its
+// default value "api.segment.io/v1" if none defined.
+const apiHost = window.SERVER_FLAGS.telemetry?.SEGMENT_API_HOST;
 
-// Segment JS host, defaults to "cdn.segment.com" if not defined
-const TELEMETRY_JS_HOST = window.SERVER_FLAGS.telemetry?.SEGMENT_JS_HOST || 'cdn.segment.com';
+// Overrideable Segment's CDN URL. The Segment client falls back to its
+// default value "https://cdn.segment.com" if no overrides have been given.
+const cdnURL = resolveSegmentCdnUrl();
+const hasCdnOverride = hasSegmentCdnOverride();
 
-// Segment analytics.min.js script URL
-const TELEMETRY_JS_URL =
-  window.SERVER_FLAGS.telemetry?.SEGMENT_JS_URL ||
-  `https://${TELEMETRY_JS_HOST}/analytics.js/v1/${encodeURIComponent(
-    TELEMETRY_API_KEY,
-  )}/analytics.min.js`;
+// Flag whether we want the debug logs for our telemetry code.
+const isDebugModeEnabled = window.SERVER_FLAGS.telemetry?.DEBUG === 'true';
 
-export const TELEMETRY_DISABLED =
-  !TELEMETRY_API_KEY ||
+// Sample 20% of sessions
+const isSessionBeingSampled = Math.random() < 0.2;
+
+if (!isSessionBeingSampled && isDebugModeEnabled) {
+  console.debug('Analytics session is not being sampled, telemetry events will be ignored');
+}
+
+// Make sure that we have the required configuration bits to enable the
+// Segment integration.
+const isDisabled =
+  !apiKey ||
   window.SERVER_FLAGS.telemetry?.DISABLED === 'true' ||
   window.SERVER_FLAGS.telemetry?.DEVSANDBOX_DISABLED === 'true' ||
   window.SERVER_FLAGS.telemetry?.TELEMETER_CLIENT_DISABLED === 'true';
 
-export const TELEMETRY_DEBUG = window.SERVER_FLAGS.telemetry?.DEBUG === 'true';
-
-// Sample 20% of sessions
-const SAMPLE_SESSION = Math.random() < 0.2;
-
-// TODO: replace this copy-pasted Segment init snippet with proper use of Segment package
-// https://segment.com/docs/connections/sources/catalog/libraries/website/javascript/quickstart/#step-2-install-segment-to-your-site
-const initSegmentAnalytics = () => {
-  if (TELEMETRY_DEBUG) {
-    console.info('Initialize Segment Analytics', {
-      TELEMETRY_API_HOST,
-      TELEMETRY_API_KEY,
-      TELEMETRY_JS_HOST,
-      TELEMETRY_JS_URL,
-    });
-  }
-  // eslint-disable-next-line no-multi-assign
-  const analytics = ((window as any).analytics = (window as any).analytics || []);
-  if (analytics.initialize) {
-    return;
-  }
-  if (analytics.invoked) {
-    console.error('Analytics snippet included twice');
-    return;
-  }
-  analytics.invoked = true;
-  analytics.methods = [
-    'trackSubmit',
-    'trackClick',
-    'trackLink',
-    'trackForm',
-    'pageview',
-    'identify',
-    'reset',
-    'group',
-    'track',
-    'ready',
-    'alias',
-    'debug',
-    'page',
-    'once',
-    'off',
-    'on',
-    'addSourceMiddleware',
-    'addIntegrationMiddleware',
-    'setAnonymousId',
-    'addDestinationMiddleware',
-  ];
-  analytics.factory = function (e: string) {
-    return function () {
-      // eslint-disable-next-line prefer-rest-params
-      const t = Array.prototype.slice.call(arguments);
-      t.unshift(e);
-      analytics.push(t);
-      return analytics;
-    };
-  };
-  for (const key of analytics.methods) {
-    analytics[key] = analytics.factory(key);
-  }
-  analytics.load = function (key: string, e: Event) {
-    const t = document.createElement('script');
-    t.type = 'text/javascript';
-    t.async = true;
-    t.src = TELEMETRY_JS_URL;
-    const n = document.getElementsByTagName('script')[0];
-    if (n.parentNode) {
-      n.parentNode.insertBefore(t, n);
-    }
-    // eslint-disable-next-line no-underscore-dangle
-    analytics._loadOptions = e;
-  };
-  analytics.SNIPPET_VERSION = '4.13.1';
-  const options: Record<string, any> = {};
-  if (TELEMETRY_API_HOST) {
-    options.integrations = { 'Segment.io': { apiHost: TELEMETRY_API_HOST } };
-  }
-  analytics.load(TELEMETRY_API_KEY, options);
-  analytics.page(); // Make the first page call to load the integrations
-};
-
-if (!SAMPLE_SESSION) {
-  console.debug('Analytics session is not being sampled, telemetry events will be ignored');
-}
-
-const analyticsEnabled = !TELEMETRY_DISABLED && SAMPLE_SESSION;
+// We only want the Segment integration enabled for the sessions that are
+// being sampled.
+let isEnabled = !isDisabled && isSessionBeingSampled;
 
 // Initialize Segment Analytics as soon as possible, outside of React useEffect.
 // This ensures that analytics.load method is invoked before any other methods.
-if (analyticsEnabled) {
-  initSegmentAnalytics();
+let analytics: AnalyticsBrowser | undefined;
+if (isEnabled) {
+  if (hasCdnOverride && cdnURL === undefined) {
+    if (isDebugModeEnabled) {
+      console.warn('Segment CDN URL override is invalid; disabling analytics');
+    }
+    isEnabled = false;
+  } else {
+    if (isDebugModeEnabled) {
+      console.info('Initialize Segment Analytics', {
+        apiHost,
+        apiKey,
+        cdnURL,
+      });
+    }
+
+    const options: InitOptions = {};
+    if (apiHost) {
+      options.integrations = { 'Segment.io': { apiHost } };
+    }
+
+    analytics = new AnalyticsBrowser();
+    analytics
+      .load(
+        {
+          cdnURL,
+          writeKey: apiKey,
+        },
+        options,
+      )
+      .catch((error) => {
+        console.error('Unable to initialize Segment analytics script', error);
+        isEnabled = false;
+      });
+  }
 }
 
+/**
+ * Segment analytics client returned by `getSegmentAnalytics`.
+ * @see getSegmentAnalytics in `@openshift-console/dynamic-plugin-sdk-internal`.
+ */
+export type SegmentAnalyticsClient = AnalyticsBrowser;
+
 export const getSegmentAnalytics: GetSegmentAnalytics = () => ({
-  analytics: (window as any).analytics,
-  analyticsEnabled,
+  analytics,
+  analyticsEnabled: isEnabled,
 });
+
+/**
+ * Whether telemetry is disabled by cluster configuration. Use
+ * `getSegmentAnalytics().analyticsEnabled` to determine if the current
+ * session is being sampled and if we are actively sending events to Segment.
+ */
+export { isDisabled as isSegmentDisabled };
+
+/**
+ * Whether debug mode is enabled to report any extra information that we might
+ * want to log.
+ */
+export { isDebugModeEnabled as isSegmentDebugModeEnabled };

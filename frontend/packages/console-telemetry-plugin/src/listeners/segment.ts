@@ -1,6 +1,6 @@
 import {
-  TELEMETRY_DEBUG,
   getSegmentAnalytics,
+  isSegmentDebugModeEnabled,
 } from '@console/dynamic-plugin-sdk/src/api/segment-analytics';
 import type { TelemetryEventListener } from '@console/dynamic-plugin-sdk/src/extensions/telemetry';
 import type { TelemetryEventProperties } from '@console/shared/src/hooks/useTelemetry';
@@ -30,8 +30,8 @@ export const eventListener: TelemetryEventListener = async (
 ) => {
   const { analytics, analyticsEnabled } = getSegmentAnalytics();
 
-  if (!analyticsEnabled) {
-    if (TELEMETRY_DEBUG) {
+  if (!analytics || !analyticsEnabled) {
+    if (isSegmentDebugModeEnabled) {
       console.debug(
         'console-telemetry-plugin: analytics is disabled, ignoring telemetry event',
         eventType,
@@ -69,7 +69,7 @@ export const eventListener: TelemetryEventListener = async (
             processedUserId = await anonymizeId(userId);
           }
 
-          if (TELEMETRY_DEBUG) {
+          if (isSegmentDebugModeEnabled) {
             console.debug(
               'console-telemetry-plugin: use anonymized user identifier to group events',
               { username, clusterId, organizationId, userId, processedUserId },
@@ -86,7 +86,7 @@ export const eventListener: TelemetryEventListener = async (
       }
       break;
     case 'page':
-      analytics.page(undefined, properties, anonymousIP);
+      analytics.page(undefined, undefined, properties, anonymousIP);
       break;
     default:
       analytics.track(eventType, properties, anonymousIP);
