@@ -154,6 +154,9 @@ Prerequisites: `oc login` to a cluster, set `BRIDGE_KUBEADMIN_PASSWORD` and `WEB
 - `yarn test-playwright-admin` — run only admin persona tests
 - `yarn test-playwright-developer` — run only developer persona tests
 
+The OLM and Dev Console suites in this PR run through Playwright; remaining legacy Cypress
+cleanup is tracked separately in PR #16883.
+
 ## End-to-End Testing with Cypress (legacy)
 
 Integration/E2E tests validate full user workflows against a real/simulated OpenShift cluster using Cypress + Cucumber (Gherkin BDD).
