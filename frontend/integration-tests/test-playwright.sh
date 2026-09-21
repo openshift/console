@@ -84,6 +84,11 @@ export WEB_CONSOLE_URL="${WEB_CONSOLE_URL:-${BRIDGE_BASE_ADDRESS}${BRIDGE_BASE_P
 
 if [ -n "${KEYCLOAK_ISSUER:-}" ]; then
   # --- External OIDC (Keycloak) mode ---
+  if [ -z "${KEYCLOAK_TEST_USERS:-}" ]; then
+    echo "ERROR: KEYCLOAK_ISSUER is set but KEYCLOAK_TEST_USERS is missing or empty" >&2
+    exit 1
+  fi
+
   export BRIDGE_AUTH_TYPE="oidc"
 
   # Parse admin (first) and developer (second) users from KEYCLOAK_TEST_USERS
