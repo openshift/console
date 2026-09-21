@@ -30,7 +30,7 @@ interface RawCSPReportBody {
 
 // Fake reporting endpoint. Requests to it never hit the network: they're
 // intercepted and fulfilled locally via CDP below.
-const CSP_REPORT_URL = 'https://csp-violation-report.invalid/report';
+const CSP_REPORT_URL = 'https://csp-violation-report.test/report';
 
 // Normalize the browser's kebab-case report body into the camelCase shape
 // callers expect. The body can also be missing entirely: CDP omits
