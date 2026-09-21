@@ -57,9 +57,9 @@ const getImpersonateAction = (
   startImpersonate: StartImpersonate,
   navigate: NavigateFunction,
 ): KebabAction => (kind: K8sKind, group: GroupKind) => ({
-  label: i18next.t('public~Impersonate Group {{name}}', group.metadata),
+  label: i18next.t('public~Impersonate Group {{name}}', { name: group?.metadata?.name }),
   callback: () => {
-    startImpersonate('Group', group.metadata.name);
+    startImpersonate('Group', group?.metadata?.name);
     navigate(window.SERVER_FLAGS.basePath);
   },
   // Must use API group authorization.k8s.io, NOT user.openshift.io
@@ -67,7 +67,7 @@ const getImpersonateAction = (
   accessReview: {
     group: 'authorization.k8s.io',
     resource: 'groups',
-    name: group.metadata.name,
+    name: group?.metadata?.name,
     verb: 'impersonate',
   },
 });
