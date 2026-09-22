@@ -13,7 +13,7 @@ import {
 import { InfoCircleIcon } from '@patternfly/react-icons/dist/esm/icons/info-circle-icon';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
-import { Alert } from '@console/dynamic-plugin-sdk';
+import { Alert, useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { sortEvents } from '@console/internal/components/events';
 import { FirehoseResult, LoadingBox } from '@console/internal/components/utils';
 import { DeploymentConfigModel } from '@console/internal/models';
@@ -34,11 +34,26 @@ type MonitoringOverviewProps = {
 const MonitoringOverview: React.FC<MonitoringOverviewProps> = (props) => {
   const { t } = useTranslation();
   const { resource, pods, resourceEvents, monitoringAlerts } = props;
+  const [perspective] = useActivePerspective();
   const firingAlerts = getFiringAlerts(monitoringAlerts);
   const [expanded, setExpanded] = React.useState([
     'metrics',
     ...(firingAlerts.length > 0 ? ['monitoring-alerts'] : []),
   ]);
+
+  const resourceLink = React.useMemo(() => {
+    const params = new URLSearchParams({
+      namespace: resource?.metadata?.namespace,
+      type: resource?.kind?.toLowerCase(),
+    });
+
+    if (perspective === 'dev') {
+      params.set('dashboard', 'dashboard-k8s-resources-workloads-namespace');
+      return `/dev-monitoring/ns/${resource?.metadata?.namespace}?${params.toString()}`;
+    }
+
+    return `/monitoring/dashboards/dashboard-k8s-resources-workloads-namespace?${params.toString()}`;
+  }, [resource, perspective]);
 
   if (
     !resourceEvents ||
@@ -128,14 +143,7 @@ const MonitoringOverview: React.FC<MonitoringOverviewProps> = (props) => {
             ) : (
               <>
                 <div className="odc-monitoring-overview__view-monitoring-dashboards">
-                  <Link
-                    to={`/dev-monitoring/ns/${
-                      resource?.metadata?.namespace
-                    }?dashboard=grafana-dashboard-k8s-resources-workload&workload=${
-                      resource?.metadata?.name
-                    }&type=${resource?.kind?.toLowerCase()}`}
-                    data-test="observe-dashboards-link"
-                  >
+                  <Link to={resourceLink} data-test="observe-dashboards-link">
                     {t('devconsole~View dashboards')}
                   </Link>
                 </div>
