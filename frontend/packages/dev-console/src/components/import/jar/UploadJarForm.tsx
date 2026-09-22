@@ -76,6 +76,7 @@ const UploadJarForm: FC<FormikProps<FormikValues> & UploadJarFormProps> = ({
         sticky
         disableSubmit={!dirty || !_.isEmpty(errors) || isSubmitting}
         resetLabel={t('Cancel')}
+        namespace={values?.project?.name}
       />
     </FlexForm>
   );

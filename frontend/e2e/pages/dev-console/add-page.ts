@@ -178,6 +178,17 @@ export class ImportFromGitPage extends BasePage {
     await expect(this.gitRepoUrlInput).toBeVisible({ timeout: 60_000 });
   }
 
+  getDefaultNamespaceDeploymentWarning(): Locator {
+    return this.page.getByTestId('default-namespace-deployment-warning');
+  }
+
+  /** "Default" label rendered on the Project dropdown toggle for system projects. */
+  getProjectDropdownDefaultLabel(): Locator {
+    return this.page
+      .locator('#form-ns-dropdown-project-name-field')
+      .getByTestId('default-namespace-label');
+  }
+
   async enterGitRepoURL(url: string): Promise<void> {
     await this.gitRepoUrlInput.fill(url);
   }
