@@ -41,6 +41,10 @@ const (
 	// caVerifyTimeout bounds the one-time TLS handshake used to check whether the
 	// provided cluster CA can verify the public API server's serving certificate.
 	caVerifyTimeout = 5 * time.Second
+
+	// maxRequestBodyBytes caps the request body size. The body holds three short
+	// strings (resourceType, name, namespace), so 1KB is generous.
+	maxRequestBodyBytes int64 = 1024
 )
 
 // request is the JSON body accepted by the /api/kubeconfig endpoint.
@@ -102,6 +106,10 @@ func (h *KubeConfigHandler) Handle(user *auth.User, w http.ResponseWriter, r *ht
 		serverutils.SendResponse(w, http.StatusMethodNotAllowed, serverutils.ApiError{Err: "Unsupported method, supported methods are POST"})
 		return
 	}
+
+	// The body is three short strings; cap it to guard against an authenticated
+	// client streaming an oversized payload to exhaust memory.
+	r.Body = http.MaxBytesReader(w, r.Body, maxRequestBodyBytes)
 
 	var req request
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {

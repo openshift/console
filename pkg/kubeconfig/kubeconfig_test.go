@@ -229,6 +229,19 @@ func TestHandleServiceAccountMissingFields(t *testing.T) {
 	}
 }
 
+func TestHandleOversizedBody(t *testing.T) {
+	h := newTestHandler(fake.NewSimpleClientset(), []byte(testCAData))
+
+	oversized := `{"resourceType":"User","name":"` + strings.Repeat("a", int(maxRequestBodyBytes)+1) + `"}`
+	w := httptest.NewRecorder()
+	r := httptest.NewRequest(http.MethodPost, "/api/kubeconfig", strings.NewReader(oversized))
+	h.Handle(&auth.User{Username: "alice", Token: "session-token"}, w, r)
+
+	if w.Code != http.StatusBadRequest {
+		t.Fatalf("expected 400 for an oversized body, got %d: %s", w.Code, w.Body.String())
+	}
+}
+
 func TestHandleUnsupportedResourceType(t *testing.T) {
 	h := newTestHandler(fake.NewSimpleClientset(), []byte(testCAData))
 
