@@ -151,8 +151,9 @@ func (h *KubeConfigHandler) Handle(user *auth.User, w http.ResponseWriter, r *ht
 		return
 	}
 
+	filename := kubeconfigFilename(req.ResourceType, req.Namespace, req.Name)
 	w.Header().Set("Content-Type", "application/yaml")
-	w.Header().Set("Content-Disposition", `attachment; filename="kubeconfig"`)
+	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%q", filename))
 	// The response embeds a bearer token; prevent any caching of the credential.
 	w.Header().Set("Cache-Control", "no-store")
 	w.WriteHeader(http.StatusOK)
@@ -215,6 +216,33 @@ func (h *KubeConfigHandler) generateKubeConfig(token, authInfoKey, namespace str
 	config.CurrentContext = contextName
 
 	return clientcmd.Write(*config)
+}
+
+// kubeconfigFilename builds the download filename. ServiceAccount kubeconfigs
+// get a descriptive name (e.g. "kubeconfig-my-namespace-my-sa") so downloads for
+// different ServiceAccounts don't overwrite each other; the current user's
+// kubeconfig keeps the plain "kubeconfig" name.
+func kubeconfigFilename(resourceType, namespace, name string) string {
+	if resourceType == resourceTypeServiceAccount {
+		return sanitizeFilename(fmt.Sprintf("kubeconfig-%s-%s", namespace, name))
+	}
+	return "kubeconfig"
+}
+
+// sanitizeFilename reduces a string to characters that are safe in both an HTTP
+// Content-Disposition header value and a filesystem name, replacing anything
+// else with a dash.
+func sanitizeFilename(s string) string {
+	var b strings.Builder
+	for _, r := range s {
+		switch {
+		case r >= 'a' && r <= 'z', r >= 'A' && r <= 'Z', r >= '0' && r <= '9', r == '-', r == '_', r == '.':
+			b.WriteRune(r)
+		default:
+			b.WriteRune('-')
+		}
+	}
+	return b.String()
 }
 
 // resolveClusterCA returns the CA bundle to embed in generated kubeconfigs.

@@ -15,15 +15,21 @@ describe('downloadKubeconfig', () => {
   const mockSaveAs = fileSaver.saveAs as jest.Mock;
   const blob = new Blob(['kubeconfig content']);
 
-  beforeEach(() => {
-    jest.clearAllMocks();
-    const mockResponse: Partial<Response> = {
-      blob: jest.fn().mockResolvedValue(blob),
-    };
-    mockConsoleFetch.mockResolvedValue(mockResponse as Response);
+  const mockResponseWithDisposition = (disposition: string | null): Partial<Response> => ({
+    blob: jest.fn().mockResolvedValue(blob),
+    headers: {
+      get: (name: string) => (name === 'Content-Disposition' ? disposition : null),
+    } as unknown as Headers,
   });
 
-  it('POSTs the ServiceAccount request body and saves the returned blob', async () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockConsoleFetch.mockResolvedValue(
+      mockResponseWithDisposition('attachment; filename="kubeconfig-my-ns-my-sa"') as Response,
+    );
+  });
+
+  it('POSTs the ServiceAccount request body and saves the blob using the header filename', async () => {
     await downloadKubeconfig('ServiceAccount', 'my-sa', 'my-ns');
 
     expect(mockConsoleFetch).toHaveBeenCalledWith('/api/kubeconfig', {
@@ -35,10 +41,13 @@ describe('downloadKubeconfig', () => {
         namespace: 'my-ns',
       }),
     });
-    expect(mockSaveAs).toHaveBeenCalledWith(blob, 'kubeconfig');
+    expect(mockSaveAs).toHaveBeenCalledWith(blob, 'kubeconfig-my-ns-my-sa');
   });
 
-  it('POSTs a User request without name or namespace', async () => {
+  it('POSTs a User request without name or namespace and keeps the plain filename', async () => {
+    mockConsoleFetch.mockResolvedValue(
+      mockResponseWithDisposition('attachment; filename="kubeconfig"') as Response,
+    );
     await downloadKubeconfig('User');
 
     expect(mockConsoleFetch).toHaveBeenCalledWith('/api/kubeconfig', {
@@ -46,6 +55,13 @@ describe('downloadKubeconfig', () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ resourceType: 'User' }),
     });
+    expect(mockSaveAs).toHaveBeenCalledWith(blob, 'kubeconfig');
+  });
+
+  it('falls back to "kubeconfig" when no Content-Disposition header is present', async () => {
+    mockConsoleFetch.mockResolvedValue(mockResponseWithDisposition(null) as Response);
+    await downloadKubeconfig('User');
+
     expect(mockSaveAs).toHaveBeenCalledWith(blob, 'kubeconfig');
   });
 

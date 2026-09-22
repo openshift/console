@@ -271,6 +271,45 @@ func TestResolveClusterCA(t *testing.T) {
 	}
 }
 
+func TestKubeconfigFilename(t *testing.T) {
+	tests := []struct {
+		name         string
+		resourceType string
+		namespace    string
+		saName       string
+		want         string
+	}{
+		{"service account", resourceTypeServiceAccount, "my-ns", "my-sa", "kubeconfig-my-ns-my-sa"},
+		{"service account name sanitized", resourceTypeServiceAccount, "my-ns", "weird:name", "kubeconfig-my-ns-weird-name"},
+		{"user keeps plain name", resourceTypeUser, "", "", "kubeconfig"},
+	}
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			if got := kubeconfigFilename(tc.resourceType, tc.namespace, tc.saName); got != tc.want {
+				t.Errorf("kubeconfigFilename() = %q, want %q", got, tc.want)
+			}
+		})
+	}
+}
+
+func TestHandleServiceAccountFilename(t *testing.T) {
+	client := fake.NewSimpleClientset()
+	client.PrependReactor("create", "serviceaccounts", func(action k8stesting.Action) (bool, runtime.Object, error) {
+		return true, &authenticationv1.TokenRequest{
+			Status: authenticationv1.TokenRequestStatus{Token: "minted-sa-token"},
+		}, nil
+	})
+	h := newTestHandler(client, []byte(testCAData))
+
+	w := httptest.NewRecorder()
+	r := httptest.NewRequest(http.MethodPost, "/api/kubeconfig", strings.NewReader(`{"resourceType":"ServiceAccount","name":"my-sa","namespace":"my-ns"}`))
+	h.Handle(&auth.User{Username: "alice", Token: "session-token"}, w, r)
+
+	if cd := w.Header().Get("Content-Disposition"); !strings.Contains(cd, `filename="kubeconfig-my-ns-my-sa"`) {
+		t.Errorf("expected filename kubeconfig-my-ns-my-sa in Content-Disposition, got %q", cd)
+	}
+}
+
 func TestClusterNameFromURL(t *testing.T) {
 	tests := map[string]string{
 		"https://api.test-cluster.example.com:6443": "api-test-cluster-example-com-6443",

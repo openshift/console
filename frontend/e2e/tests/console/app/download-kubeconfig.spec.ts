@@ -50,7 +50,7 @@ test.describe('Download kubeconfig', { tag: ['@admin'] }, () => {
       expect(response.status()).toBe(200);
 
       const download = await downloadPromise;
-      expect(download.suggestedFilename()).toBe('kubeconfig');
+      expect(download.suggestedFilename()).toBe(`kubeconfig-${namespace}-${serviceAccountName}`);
 
       const contents = await readDownload(download);
       expect(contents).toContain('kind: Config');
@@ -81,6 +81,7 @@ test.describe('Download kubeconfig', { tag: ['@admin'] }, () => {
     expect(response.status()).toBe(200);
 
     const download = await downloadPromise;
+    // The current user's kubeconfig keeps the plain filename.
     expect(download.suggestedFilename()).toBe('kubeconfig');
 
     const contents = await readDownload(download);
