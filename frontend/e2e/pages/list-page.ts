@@ -1,6 +1,7 @@
 import { type Locator, expect } from '@playwright/test';
 
 import BasePage from './base-page';
+import { escapeRegExp } from '../utils/selector-utils';
 
 export class ListPage extends BasePage {
   private readonly pageHeading: Locator = this.page.getByTestId('page-heading').locator('h1');
@@ -199,14 +200,18 @@ export class ListPage extends BasePage {
     }
 
     await searchInput.fill(projectName);
-    const item = this.page.getByRole('menuitem', { name: projectName, exact: true });
+    const item = this.page
+      .getByTestId('namespace-dropdown-item-text')
+      .filter({ hasText: new RegExp(`^${escapeRegExp(projectName)}$`) });
     await this.robustClick(item);
   }
 
   async selectAllProjects(): Promise<void> {
     const dropdownButton = this.namespaceDropdown.getByRole('button');
     await this.robustClick(dropdownButton);
-    const item = this.page.getByRole('menuitem', { name: 'All Projects', exact: true });
+    const item = this.page
+      .getByTestId('namespace-dropdown-item-text')
+      .filter({ hasText: /^All Projects$/ });
     await this.robustClick(item);
   }
 
