@@ -3,13 +3,14 @@ export const nav = {
     switcher: {
       shouldHaveText: (text: string) =>
         cy.byLegacyTestID('perspective-switcher-toggle').scrollIntoView().contains(text),
-      changePerspectiveTo: (newPerspective: string) =>
-        cy
-          .byLegacyTestID('perspective-switcher-toggle')
-          .click()
-          .byLegacyTestID('perspective-switcher-menu-option')
+      changePerspectiveTo: (newPerspective: string) => {
+        cy.byLegacyTestID('perspective-switcher-toggle').click();
+        // PF5 menu: the option title can be covered by the menu item button; force click.
+        cy.byLegacyTestID('perspective-switcher-menu-option', { timeout: 10000 })
+          .should('be.visible')
           .contains(newPerspective)
-          .click({ force: true }),
+          .click({ force: true });
+      },
     },
     clusters: {
       shouldHaveText: (text: string) => cy.byLegacyTestID('cluster-dropdown-toggle').contains(text),
