@@ -246,6 +246,7 @@ const config: KnipConfig = {
   ignoreDependencies: [
     '@console/.*', // cross-references via yarn workspaces
     'lodash', // remapped to lodash-es by NormalModuleReplacementPlugin
+    'lodash-es', // remapped to lodash by NormalModuleReplacementPlugin
     '@patternfly/patternfly', // imported via SCSS, which knip cannot trace
   ],
 
