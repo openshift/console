@@ -577,5 +577,17 @@
   "Cluster": "Cluster",
   "Control Plane": "Control Plane",
   "Control Plane status": "Control Plane status",
-  "Cluster operators": "Cluster operators"
+  "Cluster operators": "Cluster operators",
+  "Taint_one": "Taint_one",
+  "Taint_other": "Taint_other",
+  "Annotation_one": "Annotation_one",
+  "Annotation_other": "Annotation_other",
+  "Min available {{minAvailable}} of {{count}} pod_one": "Min available {{minAvailable}} of {{count}} pod_one",
+  "Min available {{minAvailable}} of {{count}} pod_other": "Min available {{minAvailable}} of {{count}} pod_other",
+  "Max unavailable {{maxUnavailable}} of {{count}} pod_one": "Max unavailable {{maxUnavailable}} of {{count}} pod_one",
+  "Max unavailable {{maxUnavailable}} of {{count}} pod_other": "Max unavailable {{maxUnavailable}} of {{count}} pod_other",
+  "{{count, number}} item_one": "{{count, number}} item_one",
+  "{{count, number}} item_other": "{{count, number}} item_other",
+  "In this quick start, you will complete {{count, number}} task_one": "In this quick start, you will complete {{count, number}} task_one",
+  "In this quick start, you will complete {{count, number}} task_other": "In this quick start, you will complete {{count, number}} task_other"
 }
