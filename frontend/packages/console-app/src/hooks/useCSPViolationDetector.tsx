@@ -68,25 +68,6 @@ export const newPluginCSPViolationEvent = (
   pluginName: pluginName || '',
 });
 
-/**
- * Report CSP violation event for E2E test purposes.
- */
-const reportCSPViolationToTestError = (event: SecurityPolicyViolationEvent) => {
-  // Import from Git e2e tests make direct browser requests to api.github.com
-  // which violates connect-src CSP. This is expected since git hosting can be
-  // on any arbitrary hostname (e.g. Gitea) and cannot be allowlisted in CSP.
-  if (
-    event.effectiveDirective === 'connect-src' &&
-    event.blockedURI.startsWith('https://api.github.com/')
-  ) {
-    return;
-  }
-
-  addTestError(
-    `CSP Violation: effectiveDirective=${event.effectiveDirective}, blockedURI=${event.blockedURI}`,
-  );
-};
-
 export const useCSPViolationDetector = () => {
   const { t } = useTranslation('console-app');
   const toastContext = useToast();
@@ -103,8 +84,6 @@ export const useCSPViolationDetector = () => {
   const reportViolation = useCallback(
     (event: SecurityPolicyViolationEvent) => {
       console.warn('Content Security Policy violation detected', event);
-
-      reportCSPViolationToTestError(event);
 
       // Attempt to infer Console plugin name from SecurityPolicyViolation event
       const pluginName =

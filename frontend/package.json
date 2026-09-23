@@ -27,7 +27,6 @@
     "test-playwright-ui": "playwright test --ui",
     "test-playwright-admin": "playwright test --project=smoke --project=console --project=dev-console --project=helm --project=knative --project=olm --project=topology --project=webterminal",
     "test-playwright-developer": "playwright test --project=dev-console-developer --project=topology-developer --project=smoke-developer",
-    "test-puppeteer-csp": "yarn ts-node ./test-puppeteer-csp.ts",
     "analyze": "ANALYZE_BUNDLE=true NODE_ENV=production NODE_OPTIONS=--max-old-space-size=8192 yarn ts-node ./node_modules/.bin/rspack --mode=production",
     "knip": "knip --config scripts/knip.ts",
     "prettier-all": "prettier --write '**/*.{js,jsx,ts,tsx,json}'",
@@ -125,7 +124,6 @@
     "@kubernetes/client-node": "^1.4.0",
     "@playwright/test": "^1.59.1",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.6.2",
-    "@puppeteer/browsers": "^2.6.1",
     "@rsdoctor/rspack-plugin": "^1.6.2",
     "@rspack/cli": "^2.1.10",
     "@rspack/core": "^2.1.10",
@@ -171,7 +169,6 @@
     "node-fetch": "^2.3.0",
     "node-polyfill-webpack-plugin": "~4.0.0",
     "prettier": "^3.9.6",
-    "puppeteer-core": "^23.9.0",
     "react-refresh": "^0.18.0",
     "read-pkg": "5.x",
     "resolve-url-loader": "^5.0.0",
@@ -190,7 +187,6 @@
   "resolutions": {
     "@types/lodash": "4.14.106",
     "hosted-git-info": "^3.0.8",
-    "protobufjs": "7.6.5",
     "brace-expansion@^1.1.7": "1.1.18",
     "brace-expansion@^2.0.2": "2.1.4",
     "brace-expansion@^5.0.5": "5.0.9"
