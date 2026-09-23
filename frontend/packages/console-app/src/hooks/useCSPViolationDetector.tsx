@@ -12,7 +12,6 @@ import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { useLocalStorageCache } from '@console/shared/src/hooks/useLocalStorageCache';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
-import { addTestError } from '@console/shared/src/utils/test-errors';
 
 const CSP_VIOLATION_EXPIRATION = ONE_DAY;
 const LOCAL_STORAGE_CSP_VIOLATIONS_KEY = 'console/csp_violations';
@@ -69,25 +68,6 @@ export const newPluginCSPViolationEvent = (
   pluginName: pluginName || '',
 });
 
-/**
- * Report CSP violation event for Cypress test purposes.
- */
-const reportCSPViolationToCypress = (event: SecurityPolicyViolationEvent) => {
-  // Import from Git e2e tests make direct browser requests to api.github.com
-  // which violates connect-src CSP. This is expected since git hosting can be
-  // on any arbitrary hostname (e.g. Gitea) and cannot be allowlisted in CSP.
-  if (
-    event.effectiveDirective === 'connect-src' &&
-    event.blockedURI.startsWith('https://api.github.com/')
-  ) {
-    return;
-  }
-
-  addTestError(
-    `CSP Violation: effectiveDirective=${event.effectiveDirective}, blockedURI=${event.blockedURI}`,
-  );
-};
-
 export const useCSPViolationDetector = () => {
   const { t } = useTranslation('console-app');
   const toastContext = useToast();
@@ -107,8 +87,6 @@ export const useCSPViolationDetector = () => {
     (event: SecurityPolicyViolationEvent) => {
       // eslint-disable-next-line no-console
       console.warn('Content Security Policy violation detected', event);
-
-      reportCSPViolationToCypress(event);
 
       // Attempt to infer Console plugin name from SecurityPolicyViolation event
       const pluginName =
