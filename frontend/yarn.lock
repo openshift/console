@@ -9057,13 +9057,13 @@ __metadata:
   linkType: hard
 
 "gettext-converter@npm:^1.3.0":
-  version: 1.3.1
-  resolution: "gettext-converter@npm:1.3.1"
+  version: 1.3.3
+  resolution: "gettext-converter@npm:1.3.3"
   dependencies:
     arrify: "npm:^2.0.1"
     content-type: "npm:1.0.5"
     encoding: "npm:0.1.13"
-  checksum: 10c0/d25bb8c91f69147265a65ee5e1a9b0f126795f25cae3b31ff1b5f88707e3d660bb3067e575a872060a662bbb312643ed50b6b198f624319a091bd2e868c6c5f5
+  checksum: 10c0/f141dcf48fd2291fd09537ce029e2ea438acc61e4fa49c9fcf731281758d57c26481d8d24ca277e4ec580af110670ac6416dda4ab4491ea1a6c329c148bdeb8c
   languageName: node
   linkType: hard
 
