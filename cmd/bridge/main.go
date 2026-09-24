@@ -414,6 +414,10 @@ func main() {
 		k8sCertPEM []byte
 	)
 
+	if *fK8sModeOffClusterSkipVerifyTLS && *fK8sMode != "off-cluster" {
+		flags.FatalIfFailed(flags.NewInvalidFlagError("k8s-mode-off-cluster-skip-verify-tls", "can only be set when -k8s-mode=off-cluster"))
+	}
+
 	var k8sEndpoint *url.URL
 	switch *fK8sMode {
 	case "in-cluster":
