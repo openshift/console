@@ -1,5 +1,9 @@
 import * as _ from 'lodash';
 import type { K8sKind } from '@console/dynamic-plugin-sdk/src/api/common-types';
+import type {
+  SwaggerDefinition,
+  SwaggerDefinitions,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { referenceForModel } from '@console/internal/module/k8s/k8s';
 import { coFetch } from '@console/shared/src/utils/console-fetch';
 
@@ -127,23 +131,6 @@ export const getResourceDescription = _.memoize((kindObj: K8sKind): string => {
   const key = getDefinitionKey(kindObj, swaggerDefinitions);
   return _.get(swaggerDefinitions, [key, 'description']);
 }, referenceForModel);
-
-export type SwaggerDefinition = {
-  definitions?: SwaggerDefinitions;
-  description?: string;
-  type?: string[] | string;
-  enum?: string[];
-  $ref?: string;
-  items?: SwaggerDefinition;
-  required?: string[];
-  properties?: {
-    [prop: string]: SwaggerDefinition;
-  };
-};
-
-export type SwaggerDefinitions = {
-  [name: string]: SwaggerDefinition;
-};
 
 export type SwaggerAPISpec = {
   swagger: string;

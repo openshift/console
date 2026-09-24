@@ -6,4 +6,4 @@ export type {
   ConsoleDataViewColumn,
   ConsoleDataViewRow,
   GetDataViewRows,
-} from '@console/dynamic-plugin-sdk/src/api/internal-types';
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';

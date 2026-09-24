@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import type { ConsoleDataViewColumn } from '@console/dynamic-plugin-sdk/src/api/internal-types';
+import type { ConsoleDataViewColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import {
   ALL_NAMESPACES_KEY,
   COLUMN_MANAGEMENT_USER_PREFERENCE_KEY,
