@@ -1,12 +1,14 @@
-import { WebpackSharedConfig, WebpackSharedObject } from '@openshift/dynamic-plugin-sdk-webpack';
 import {
-  Configuration,
+  type Configuration,
   CopyRspackPlugin,
   CssExtractRspackPlugin,
   LightningCssMinimizerRspackPlugin,
   NormalModule,
   NormalModuleReplacementPlugin,
   ProgressPlugin,
+  type Shared,
+  type SharedConfig,
+  type SharedObject,
   sharing,
   SwcJsMinimizerRspackPlugin,
 } from '@rspack/core';
@@ -80,11 +82,11 @@ const dynamicModuleMaps = resolveDynamicModuleMaps(dynamicModulePackageSpecs, [
  *
  * @see https://webpack.js.org/plugins/module-federation-plugin/#sharing-hints
  */
-const getWebpackSharedModules = () => {
-  const consoleProvidedSharedModules = sharedPluginModules.reduce<WebpackSharedObject>(
+const getWebpackSharedModules = (): Shared => {
+  const consoleProvidedSharedModules = sharedPluginModules.reduce<SharedObject>(
     (acc, moduleName) => {
       const { singleton } = getSharedModuleMetadata(moduleName);
-      const moduleConfig: WebpackSharedConfig = { singleton, eager: true };
+      const moduleConfig: SharedConfig = { singleton, eager: true };
 
       moduleConfig.import = getSharedModuleImport(moduleName);
 
@@ -92,11 +94,11 @@ const getWebpackSharedModules = () => {
       return acc;
     },
     {},
-  );
+  ) satisfies SharedObject;
 
-  const sharedDynamicModules = Object.entries(dynamicModuleMaps).reduce<WebpackSharedObject>(
+  const sharedDynamicModules = Object.entries(dynamicModuleMaps).reduce<SharedObject>(
     (acc, [moduleName, dynamicModuleMap]) => {
-      const moduleConfig: WebpackSharedConfig = { eager: true };
+      const moduleConfig: SharedConfig = { eager: true };
 
       // eslint-disable-next-line @typescript-eslint/no-require-imports
       const moduleVersion = require(`${moduleName}/package.json`).version;
@@ -112,7 +114,7 @@ const getWebpackSharedModules = () => {
       return acc;
     },
     {},
-  );
+  ) satisfies SharedObject;
 
   return { ...consoleProvidedSharedModules, ...sharedDynamicModules };
 };

@@ -235,6 +235,7 @@ const VirtualBody: FC<VirtualBodyProps> = (props) => {
   } = props;
 
   const dataRef = useRef(data);
+  // eslint-disable-next-line react-hooks/refs -- keyMapper reads dataRef synchronously during render for cache key resolution; must be current before measurement
   dataRef.current = data;
 
   const cellMeasurementCache = useRef(

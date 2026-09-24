@@ -111,7 +111,7 @@ FFMPEG_INSTALL=$(install_cmd_for ffmpeg)
 if command -v ffmpeg >/dev/null 2>&1; then
   echo "OK: ffmpeg ($(command -v ffmpeg))"
 else
-  echo "OPTIONAL: ffmpeg not found — GIF creation will be skipped${FFMPEG_INSTALL:+ (install with: $FFMPEG_INSTALL)}"
+  echo "OPTIONAL: ffmpeg not found — per-step baseline/candidate flicker GIFs will be skipped${FFMPEG_INSTALL:+ (install with: $FFMPEG_INSTALL)}"
   INSTALL_CMDS="${INSTALL_CMDS}${FFMPEG_INSTALL}\n"
   WARNINGS=$((WARNINGS + 1))
 fi
@@ -165,6 +165,25 @@ if command -v gh >/dev/null 2>&1; then
     ERRORS=$((ERRORS + 1))
   else
     echo "OK: GitHub CLI authenticated"
+  fi
+
+  # gh >= 2.99.0 supports native `--attach` for images/video on issue/PR create/edit/comment,
+  # which is how this skill posts evidence — an insufficient version is a hard error, not a
+  # warning. --attach also requires write (push) access to the repo (or a fork to stage
+  # through), which is checked separately at Phase 3 setup since it needs to know the target
+  # repo, not here.
+  GH_VERSION=$(gh --version 2>/dev/null | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+  if [ -n "$GH_VERSION" ]; then
+    GH_MAJOR=$(echo "$GH_VERSION" | cut -d. -f1)
+    GH_MINOR=$(echo "$GH_VERSION" | cut -d. -f2)
+    if [ "$GH_MAJOR" -gt 2 ] || { [ "$GH_MAJOR" -eq 2 ] && [ "$GH_MINOR" -ge 99 ]; }; then
+      echo "OK: gh $GH_VERSION (native --attach supported)"
+    else
+      GH_INSTALL=$(install_cmd_for gh)
+      echo "ERROR: gh $GH_VERSION — need >= 2.99.0 for native --attach uploads${GH_INSTALL:+ (e.g. $GH_INSTALL)}"
+      echo "       There is no fallback; evidence cannot be posted to a PR without it."
+      ERRORS=$((ERRORS + 1))
+    fi
   fi
 fi
 

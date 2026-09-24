@@ -64,6 +64,27 @@ const countResults = (results) =>
   );
 
 /**
+ * Writes a JUnit XML file to the ARTIFACT_DIR if running in OpenShift CI.
+ * @param {boolean} failed Whether the test case failed.
+ * @param {string} [message] The failure message if the test case failed.
+ * @returns {void}
+ */
+const writeJunitXml = (failed, message) => {
+  if (process.env.OPENSHIFT_CI === 'true') {
+    const artifactDir = process.env.ARTIFACT_DIR || '/tmp/artifacts';
+    const name = 'eslint-exact-warnings';
+    const testCaseName = 'no eslint errors are present and the current number of warnings matches MAX_WARNINGS';
+
+    const xml = failed ?
+      `<?xml version="1.0" encoding="UTF-8"?><testsuites><testsuite name="${name}" tests="1" failures="1"><testcase classname="${name}" name="${testCaseName}"><failure>${message}</failure></testcase></testsuite></testsuites>` :
+      `<?xml version="1.0" encoding="UTF-8"?><testsuites><testsuite name="${name}" tests="1" failures="0"><testcase classname="${name}" name="${testCaseName}"/></testsuite></testsuites>`;
+
+    fs.mkdirSync(artifactDir, { recursive: true });
+    fs.writeFileSync(path.join(artifactDir, `${name}.junit.xml`), xml);
+  }
+};
+
+/**
  * Force the run to fail with exit code 1.
  *
  * A formatter cannot change the value `cli.execute()` returns, and the ESLint
@@ -81,13 +102,7 @@ const failRun = (message) => {
   });
   process.stderr.write(`\n${message}\n`);
 
-  if (process.env.OPENSHIFT_CI === 'true') {
-    const artifactDir = process.env.ARTIFACT_DIR || '/tmp/artifacts';
-    const name = 'eslint-exact-warnings';
-    const xml = `<?xml version="1.0" encoding="UTF-8"?><testsuites><testsuite name="${name}" tests="1" failures="1"><testcase classname="${name}" name="no eslint errors are present and the current number of warnings matches MAX_WARNINGS"><failure>${message}</failure></testcase></testsuite></testsuites>`;
-    fs.mkdirSync(artifactDir, { recursive: true });
-    fs.writeFileSync(path.join(artifactDir, `${name}.junit.xml`), xml);
-  }
+  writeJunitXml(true, message);
 };
 
 /** @type {import('eslint').ESLint.LoadedFormatter['format']} */
@@ -111,6 +126,8 @@ module.exports = (results, context) => {
     failRun(
       `Found ${warningCount} warning(s) but the count is ${maxWarnings}. Lower the MAX_WARNINGS value in the lint script in package.json to match the actual warning count.`
     );
+  } else {
+    writeJunitXml(false);
   }
 
   return output;

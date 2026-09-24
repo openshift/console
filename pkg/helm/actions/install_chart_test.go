@@ -635,7 +635,7 @@ func TestInstallChartFromURL(t *testing.T) {
 	}
 }
 
-func TestIsValidChartURL(t *testing.T) {
+func TestIsChartURLWellFormed(t *testing.T) {
 	tests := []struct {
 		name  string
 		url   string
@@ -663,9 +663,9 @@ func TestIsValidChartURL(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := IsValidChartURL(tt.url)
+			got := IsChartURLWellFormed(tt.url)
 			if got != tt.valid {
-				t.Errorf("IsValidChartURL(%q) = %v, want %v", tt.url, got, tt.valid)
+				t.Errorf("IsChartURLWellFormed(%q) = %v, want %v", tt.url, got, tt.valid)
 			}
 		})
 	}

@@ -3,7 +3,8 @@
 # See dynamic-demo-plugin/README.md for details.
 
 # Stage 0: build the demo plugin
-FROM quay.io/coreos/tectonic-console-builder:v29 AS build
+FROM node:22 AS build
+RUN npm install --global corepack@0.34.6 && corepack enable
 
 RUN mkdir -p /src/console
 COPY . /src/console

@@ -79,7 +79,7 @@ export const ActionMenu: FC<ActionMenuProps> = ({
 
   const menu = (
     <Menu ref={menuRef} containsFlyout onSelect={hideMenu}>
-      <MenuContent data-test-id="action-items">
+      <MenuContent data-test-id="action-items" data-test="action-items">
         <MenuList className={className}>
           <ActionMenuContent options={menuOptions} onClick={hideMenu} focusItem={menuOptions[0]} />
         </MenuList>
@@ -105,7 +105,7 @@ export const ActionMenu: FC<ActionMenuProps> = ({
           popper={menu}
           placement="bottom-end"
           isVisible={isOpen}
-          appendTo={appendTo || containerRef.current}
+          appendTo={appendTo || (() => containerRef.current)}
         />
       </div>
     )

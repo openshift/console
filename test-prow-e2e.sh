@@ -3,11 +3,13 @@
 # Prow / CI entrypoint for Playwright E2E against a live OpenShift cluster console.
 #
 # Usage:
-#   ./test-prow-e2e.sh [e2e|release|smoke] [arguments passed to: playwright test ...]
+#   ./test-prow-e2e.sh [e2e|release|smoke|login|olmFull] [arguments passed to: playwright test ...]
 #
 # Scenarios (first argument; default: e2e):
-#   e2e, release  — full Playwright suite (default project / config)
-#   smoke         — Playwright smoke project (--project=smoke)
+#   e2e, release  — full Playwright suite (all projects)
+#   smoke         — Playwright smoke project; no Prow job, kept for manual runs
+#   login         — multi-user htpasswd login spec
+#   olmFull       — OLM project
 #
 # Environment (typical Prow / installer):
 #   ARTIFACT_DIR, INSTALLER_DIR, KUBEADMIN_PASSWORD_FILE
@@ -43,6 +45,10 @@ export BRIDGE_BASE_ADDRESS="$(oc get consoles.config.openshift.io cluster -o jso
 
 ./contrib/create-user.sh
 
+export BRIDGE_HTPASSWD_IDP="${BRIDGE_HTPASSWD_IDP:-test}"
+export BRIDGE_HTPASSWD_USERNAME="${BRIDGE_HTPASSWD_USERNAME:-test}"
+export BRIDGE_HTPASSWD_PASSWORD="${BRIDGE_HTPASSWD_PASSWORD:-test}"
+
 export WORKERS="${WORKERS:-2}"
 export GLOBAL_TIMEOUT_MS="${GLOBAL_TIMEOUT_MS:-6600000}"
 
@@ -57,16 +63,25 @@ if [ $# -gt 0 ]; then
   shift
 fi
 
-if [ "$SCENARIO" == "e2e" ] || [ "$SCENARIO" == "release" ]; then
-  ./integration-tests/test-playwright.sh "$@"
-elif [ "$SCENARIO" == "smoke" ]; then
-  # End of script flags before Playwright's --project (test-playwright.sh only parses -c).
-  ./integration-tests/test-playwright.sh -- --project=smoke "$@"
-else
-  echo "error: unknown scenario '$SCENARIO' (use: e2e, release, or smoke)" >&2
-  exit 1
-fi
-
-env NO_SANDBOX=true yarn test-puppeteer-csp
+# `--` ends this script's flags before Playwright's own (test-playwright.sh only parses -c).
+case "$SCENARIO" in
+  e2e | release)
+    ./integration-tests/test-playwright.sh "$@"
+    ;;
+  smoke)
+    ./integration-tests/test-playwright.sh -- --project=smoke "$@"
+    ;;
+  login)
+    ./integration-tests/test-playwright.sh -- \
+      --project=console e2e/tests/console/app/auth-multiuser-login.spec.ts "$@"
+    ;;
+  olmFull)
+    ./integration-tests/test-playwright.sh -- --project=olm "$@"
+    ;;
+  *)
+    echo "error: unknown scenario '$SCENARIO' (use: e2e, release, smoke, login, or olmFull)" >&2
+    exit 1
+    ;;
+esac
 
 popd

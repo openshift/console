@@ -16,6 +16,7 @@ export interface FormFooterProps {
   infoMessage?: string;
   hideSubmit?: boolean;
   shadow?: boolean;
+  namespace?: string;
 }
 
 export interface ActionGroupWithIconsProps {
