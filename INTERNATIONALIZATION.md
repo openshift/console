@@ -76,7 +76,7 @@ t('key' + id)
 ```
 
 * The optional i18nKey property on the [react-i18next Trans component](https://react.i18next.com/latest/trans-component) should only be used as a last resort. There is a known (rare) issue with the parser, where it will sometimes incorrectly generate a key that contains HTML tags. If this is the case, you will see a missingKey error in the developer tools of your browser or in our end to end tests. In this instance, the i18nKey prop should be used and made the same as the text being internationalized. HTML tags like `<strong>` can be used directly in the i18nKey prop.
-* Write tests for pseudolocalized code in Cypress
+* Write tests for pseudolocalized code in Playwright
 
 #### Adding internationalization to a new package
 Whenever a new package is added, you will need to make a few changes so it is picked up by our existing internationalization tools.
@@ -114,7 +114,7 @@ These scripts can all be found in `./frontend/i18n-scripts`.
 For more information, please review the [README](./frontend/i18n-scripts/README.md).
 
 #### Testing
-We test that internationalization is working for various pages and components using the [i18next-pseudo](https://github.com/MattBoatman/i18next-pseudo) JavaScript library, which returns translated strings in "pseudolocalization" format. Our Cypress custom commands [cy.isPseudoLocalized()](https://github.com/openshift/console/blob/9c930b7b411f5e88f2f890639159e09bdadb78dc/frontend/packages/integration-tests-cypress/support/i18n.ts#L45) and [cy.testI18n()](https://github.com/openshift/console/blob/9c930b7b411f5e88f2f890639159e09bdadb78dc/frontend/packages/integration-tests-cypress/support/i18n.ts#L13) append query params to URLs to invoke "pseudolocalization" and are used in various test suites such as [pseudolocalization.cy.ts](https://github.com/openshift/console/blob/175a6a274204bbe44def1963daf572e4463c36f9/frontend/packages/integration-tests-cypress/tests/i18n/pseudolocalization.cy.ts#L27) to verify strings in the masthead, dashboard, navigation menu, list views, and detail pages are translated.
+We test that internationalization is working for various pages and components using the [i18next-pseudo](https://github.com/MattBoatman/i18next-pseudo) JavaScript library, which returns translated strings in "pseudolocalization" format. Playwright E2E tests under `frontend/e2e/tests/console/i18n/` append query params to URLs to invoke "pseudolocalization" and verify strings in the masthead, dashboard, navigation menu, list views, and detail pages are translated.
 
 #### Supported Languages representation
 Supported languages are represented using the ISO 639-1 Code defined in `frontend/packages/console-app/src/components/user-preferences/language/const.ts` with the exception of Chinese. While locale directories for Chinese still follow the ISO 639-1 Code format, the region code is also included to distinguish the supported simplified Chinese from other variants.
