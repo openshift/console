@@ -122,20 +122,23 @@ const ssarCheckActions = ssarChecks.map(({ flag, resourceAttributes, after }) =>
             after(dispatch, allowed);
           }
         },
-        (err) => handleError({ response: err.graphQLErrors[0]?.extensions }, flag, dispatch, fn),
+        (err) => {
+          handleError({ response: err.graphQLErrors[0]?.extensions }, flag, dispatch, fn);
+        },
       );
   return fn;
 });
 
-export const detectFeatures = () => (dispatch: Dispatch) => {
-  [
-    detectOpenShift,
-    detectCanCreateProject,
-    detectClusterVersion,
-    detectUser,
-    ...ssarCheckActions,
-  ].forEach((detect) => detect(dispatch));
-};
+export const detectFeatures = () => (dispatch: Dispatch) =>
+  Promise.all(
+    [
+      detectOpenShift,
+      detectCanCreateProject,
+      detectClusterVersion,
+      detectUser,
+      ...ssarCheckActions,
+    ].map((detect) => detect(dispatch)),
+  );
 
 export const featureFlagController: SetFeatureFlag = (flag, enabled) => {
   store.dispatch(setFlag(flag, enabled));
