@@ -10,14 +10,15 @@ Focuses on testing individual React components, hooks, and utilities in isolatio
 
 ### Integration tests
 - Tool: Playwright
-- Specialized test suites for components:
+- Specialized test suites (projects) for:
   - Core Console
   - OLM (Operator Lifecycle Manager)
   - Dev Console
-  - Shipwright
-  - Web Terminal
-  - Telemetry
+  - Helm
   - Knative
+  - Topology
+  - Web Terminal
+  - Smoke
   - Helm
   - Topology
 - Supports headless and interactive modes
@@ -153,3 +154,5 @@ Prerequisites: `oc login` to a cluster, set `BRIDGE_KUBEADMIN_PASSWORD` and `WEB
 - `yarn test-playwright-ui` — run in interactive UI mode
 - `yarn test-playwright-admin` — run only admin persona tests
 - `yarn test-playwright-developer` — run only developer persona tests
+
+See [README.md#integration-tests](README.md#integration-tests) for full prerequisites and running instructions.
