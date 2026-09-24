@@ -812,13 +812,17 @@ func main() {
 // which breaks the consumers of this transport (the user-settings handler and
 // the login-role metrics). caFile is only applied when the source config
 // doesn't already carry a CAFile, so in-cluster mode's service-account CA is
-// left untouched.
+// left untouched. Insecure is set first, and CAFile only when the result
+// isn't already insecure: rest.TransportFor rejects a config that carries
+// both a CA and Insecure, and -k8s-mode-off-cluster-skip-verify-tls=true is
+// commonly paired with -ca-file (e.g. examples/run-bridge.sh), which would
+// otherwise crash the bridge on startup.
 func anonymousK8SClientConfig(config *rest.Config, caFile string, insecureSkipVerify bool) *rest.Config {
 	anonymous := rest.AnonymousClientConfig(config)
-	if caFile != "" && anonymous.CAFile == "" {
+	anonymous.Insecure = anonymous.Insecure || insecureSkipVerify
+	if caFile != "" && anonymous.CAFile == "" && !anonymous.Insecure {
 		anonymous.CAFile = caFile
 	}
-	anonymous.Insecure = anonymous.Insecure || insecureSkipVerify
 	return anonymous
 }
 

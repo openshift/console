@@ -79,6 +79,24 @@ func TestAnonymousK8SClientConfig(t *testing.T) {
 			t.Fatalf("rest.TransportFor rejected the anonymous config: %v", err)
 		}
 	})
+
+	t.Run("ca-file and skip-verify-tls together does not crash rest.TransportFor", func(t *testing.T) {
+		// rest.TransportFor errors out when a config carries both a CA and
+		// Insecure=true. -ca-file and -k8s-mode-off-cluster-skip-verify-tls
+		// are commonly set together (see examples/run-bridge.sh), so this
+		// combination must not produce that error.
+		got := anonymousK8SClientConfig(source, testCAFile(t), true)
+
+		if !got.Insecure {
+			t.Error("expected Insecure to be true")
+		}
+		if got.TLSClientConfig.CAFile != "" {
+			t.Errorf("expected CAFile to be left empty when Insecure is true, got %q", got.TLSClientConfig.CAFile)
+		}
+		if _, err := rest.TransportFor(got); err != nil {
+			t.Fatalf("rest.TransportFor rejected the anonymous config: %v", err)
+		}
+	})
 }
 
 func TestOffClusterProxyTLSConfigs(t *testing.T) {
