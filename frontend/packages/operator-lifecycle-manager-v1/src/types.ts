@@ -52,9 +52,11 @@ export type OLMCatalogItem = {
   support: string;
   validSubscription: string[];
   version: string;
+  lifecycleData?: Record<string, unknown> | null;
 };
 
 export type OLMCatalogItemData = {
   categories: string[];
   latestVersion: string;
+  lifecycleData: Record<string, unknown> | null;
 };

@@ -5,15 +5,15 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/openshift/console/pkg/auth"
 	"github.com/operator-framework/kubectl-operator/pkg/action"
 	"github.com/operator-framework/operator-registry/alpha/declcfg"
 	"github.com/operator-framework/operator-registry/alpha/property"
-
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/rest"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+
+	"github.com/openshift/console/pkg/auth"
 )
 
 func (o *OLMHandler) getOperatorMeta(r *http.Request) (string, string, error) {
