@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 
 	"github.com/operator-framework/kubectl-operator/pkg/action"
 	olmv1 "github.com/operator-framework/operator-lifecycle-manager/pkg/package-server/apis/operators/v1"
@@ -30,17 +31,27 @@ func NewOLMHandler(apiServerURL string, client *http.Client, service *CatalogSer
 		catalogService: service,
 	}
 	mux := http.NewServeMux()
-	mux.HandleFunc("/api/olm/catalog-items/", o.catalogItemsHandler)
+	mux.HandleFunc("/api/olm/catalog-items", o.catalogItemsHandler)
+	mux.HandleFunc("/api/olm/catalog-items/{catalogName}", middleware.AllowMethod(http.MethodGet, o.catalogItemsHandler))
+	mux.HandleFunc("/api/olm/catalog-items/{catalogName}/{packageName}", middleware.AllowMethod(http.MethodGet, o.catalogItemHandler))
 	mux.HandleFunc("/api/olm/catalogd/metas/{catalogName}", middleware.AllowMethod(http.MethodGet, o.catalogdMetasHandler))
 	mux.HandleFunc("/api/olm/catalog-icons/{catalogName}/{packageName}", middleware.AllowMethod(http.MethodGet, o.catalogIconHandler))
 	mux.HandleFunc("/api/olm/lifecycle/{catalogNamespace}/{catalogName}/{packageName}", middleware.AllowMethod(http.MethodGet, o.lifecycleHandler))
-	mux.HandleFunc("/api/olm/list-operands/", o.operandsListHandler)
-	mux.HandleFunc("/api/olm/check-package-manifests/", o.checkPackageManifestHandler)
+	mux.HandleFunc("/api/olm/list-operands", o.operandsListHandler)
+	mux.HandleFunc("/api/olm/check-package-manifests", o.checkPackageManifestHandler)
 	o.mux = mux
 	return o
 }
 
 func (o *OLMHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	// Ignore trailing slashes without turning resource routes into subtree matches.
+	if strings.HasSuffix(r.URL.EscapedPath(), "/") {
+		r = r.Clone(r.Context())
+		for strings.HasSuffix(r.URL.EscapedPath(), "/") {
+			r.URL.Path = strings.TrimSuffix(r.URL.Path, "/")
+			r.URL.RawPath = strings.TrimSuffix(r.URL.RawPath, "/")
+		}
+	}
 	o.mux.ServeHTTP(w, r)
 }
 
@@ -67,6 +78,23 @@ func (o *OLMHandler) catalogdMetasHandler(w http.ResponseWriter, r *http.Request
 }
 
 func (o *OLMHandler) catalogItemsHandler(w http.ResponseWriter, r *http.Request) {
+	var items []ConsoleCatalogItem
+	var err error
+	if catalogName := r.PathValue("catalogName"); catalogName != "" {
+		items, err = o.catalogService.GetCatalogItemsForCatalog(catalogName)
+		if err == nil && items == nil {
+			serverutils.SendResponse(w, http.StatusNotFound, serverutils.ApiError{Err: "catalog not found"})
+			return
+		}
+	} else {
+		items, err = o.catalogService.GetCatalogItems()
+	}
+	if err != nil {
+		klog.Errorf("failed to get catalog items: %v", err)
+		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: "failed to get catalog items"})
+		return
+	}
+
 	lastModified := o.catalogService.LastModified
 	modified, err := serverutils.ModifiedSince(r, lastModified)
 	if err != nil {
@@ -81,18 +109,41 @@ func (o *OLMHandler) catalogItemsHandler(w http.ResponseWriter, r *http.Request)
 	}
 
 	klog.V(4).Info("catalog items modified, returning 200")
-	items, err := o.catalogService.GetCatalogItems()
-	if err != nil {
-		serverutils.SendResponse(w, http.StatusInternalServerError, err.Error())
-		return
-	}
-
 	if lastModified != "" {
 		w.Header().Set("Last-Modified", lastModified)
 	}
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(items); err != nil {
 		serverutils.SendResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+}
+
+// catalogItemHandler serves a single catalog item by catalog and package name.
+func (o *OLMHandler) catalogItemHandler(w http.ResponseWriter, r *http.Request) {
+	catalogName := r.PathValue("catalogName")
+	packageName := r.PathValue("packageName")
+
+	if catalogName == "" || packageName == "" {
+		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: "catalog name and package name are required"})
+		return
+	}
+
+	item, err := o.catalogService.GetCatalogItem(catalogName, packageName)
+	if err != nil {
+		klog.Errorf("failed to get catalog item %s/%s: %v", catalogName, packageName, err)
+		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: "failed to get catalog item"})
+		return
+	}
+
+	if item == nil {
+		serverutils.SendResponse(w, http.StatusNotFound, serverutils.ApiError{Err: "catalog item not found"})
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(item); err != nil {
+		klog.Errorf("failed to encode catalog item %s/%s: %v", catalogName, packageName, err)
 		return
 	}
 }
