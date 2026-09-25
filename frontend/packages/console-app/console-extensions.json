@@ -722,7 +722,7 @@
       "name": "%console-app~Builds%",
       "dataAttributes": { "data-quickstart-id": "qs-nav-builds" }
     },
-    "flags": { "required": ["OPENSHIFT"] }
+    "flags": { "required": ["OPENSHIFT_BUILDCONFIG"] }
   },
   {
     "type": "console.navigation/section",
@@ -1164,7 +1164,8 @@
         "version": "v1",
         "kind": "ImageStream"
       }
-    }
+    },
+    "flags": { "required": ["OPENSHIFT_BUILDCONFIG"] }
   },
   {
     "type": "console.navigation/resource-cluster",
