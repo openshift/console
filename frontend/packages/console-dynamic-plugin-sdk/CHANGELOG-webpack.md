@@ -10,8 +10,10 @@ For current development version of Console, use `4.x.0-prerelease.n` packages.
 For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility
 table in [Console dynamic plugins README](./README.md).
 
-## 4.23.0-prerelease.6 - TBD
+## 5.1.0-prerelease.1 - TBD
 
+- Add `ConsoleRemotePlugin` option `baseDir` to support multi-plugin builds ([OCPBUGS-111520], [#17002])
+- Dependency bumps for `read-pkg` ([CONSOLE-5065], [#17259])
 - Minimum compatible version of `@rspack/core` peer dependency increased to `2.1.10` ([OCPBUGS-109592], [#16978])
 
 ## 4.23.0-prerelease.5 - 2026-08-04
@@ -169,6 +171,7 @@ table in [Console dynamic plugins README](./README.md).
 [OCPBUGS-84338]: https://issues.redhat.com/browse/OCPBUGS-84338
 [OCPBUGS-88319]: https://issues.redhat.com/browse/OCPBUGS-88319
 [OCPBUGS-109592]: https://issues.redhat.com/browse/OCPBUGS-109592
+[OCPBUGS-111520]: https://issues.redhat.com/browse/OCPBUGS-111520
 [#13188]: https://github.com/openshift/console/pull/13188
 [#13388]: https://github.com/openshift/console/pull/13388
 [#13521]: https://github.com/openshift/console/pull/13521
@@ -200,3 +203,5 @@ table in [Console dynamic plugins README](./README.md).
 [#16752]: https://github.com/openshift/console/pull/16752
 [#16115]: https://github.com/openshift/console/pull/16115
 [#16978]: https://github.com/openshift/console/pull/16978
+[#17002]: https://github.com/openshift/console/pull/17002
+[#17259]: https://github.com/openshift/console/pull/17259
