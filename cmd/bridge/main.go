@@ -463,11 +463,7 @@ func main() {
 				RootCAs: serviceProxyRootCAs,
 			})
 
-			srv.ServiceClient = &http.Client{
-				Transport: &http.Transport{
-					TLSClientConfig: serviceProxyTLSConfig,
-				},
-			}
+			srv.ServiceClient = newServiceHTTPClient(serviceProxyTLSConfig)
 
 			srv.CatalogdProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
@@ -521,11 +517,7 @@ func main() {
 
 		k8sProxyTLSConfig, serviceProxyTLSConfig := offClusterProxyTLSConfigs(*fCAFile, *fServiceCAFile, *fK8sModeOffClusterSkipVerifyTLS)
 
-		srv.ServiceClient = &http.Client{
-			Transport: &http.Transport{
-				TLSClientConfig: serviceProxyTLSConfig,
-			},
-		}
+		srv.ServiceClient = newServiceHTTPClient(serviceProxyTLSConfig)
 
 		srv.InternalProxiedK8SClientConfig = &rest.Config{
 			Host:      k8sEndpoint.String(),
@@ -842,6 +834,23 @@ func mustLoadCAPool(caFile string) *x509.CertPool {
 		klog.Fatalf("No CA found in ca file %q", caFile)
 	}
 	return pool
+}
+
+// newServiceHTTPClient builds the client used for direct (non-reverse-proxy)
+// calls to OpenShift services -- currently just the catalogd client's own
+// requests to a catalog's baseURL (pkg/olm.CatalogdClient). It needs the same
+// environment-proxy support as proxy.NewProxy (pkg/proxy/proxy.go), which
+// every proxy.Config-based service proxy already gets: in a HyperShift
+// control-plane-side deployment, guest-cluster services are only reachable
+// through the konnectivity socks5 proxy exposed via HTTP(S)_PROXY, and
+// without this, catalogd requests fail outright instead of tunneling.
+func newServiceHTTPClient(tlsConfig *tls.Config) *http.Client {
+	return &http.Client{
+		Transport: &http.Transport{
+			Proxy:           http.ProxyFromEnvironment,
+			TLSClientConfig: tlsConfig,
+		},
+	}
 }
 
 // offClusterProxyTLSConfigs builds the two TLS trust domains needed by

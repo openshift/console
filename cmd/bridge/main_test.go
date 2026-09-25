@@ -4,6 +4,7 @@ import (
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/rand"
+	"crypto/tls"
 	"crypto/x509"
 	"crypto/x509/pkix"
 	"encoding/pem"
@@ -97,6 +98,22 @@ func TestAnonymousK8SClientConfig(t *testing.T) {
 			t.Fatalf("rest.TransportFor rejected the anonymous config: %v", err)
 		}
 	})
+}
+
+func TestNewServiceHTTPClient(t *testing.T) {
+	tlsConfig := &tls.Config{}
+	client := newServiceHTTPClient(tlsConfig)
+
+	transport, ok := client.Transport.(*http.Transport)
+	if !ok {
+		t.Fatalf("expected *http.Transport, got %T", client.Transport)
+	}
+	if transport.TLSClientConfig != tlsConfig {
+		t.Error("expected the given TLS config to be used")
+	}
+	if transport.Proxy == nil {
+		t.Error("expected Proxy to be set so HTTP(S)_PROXY is honored -- e.g. the konnectivity proxy in a HyperShift control-plane-side deployment")
+	}
 }
 
 func TestOffClusterProxyTLSConfigs(t *testing.T) {
