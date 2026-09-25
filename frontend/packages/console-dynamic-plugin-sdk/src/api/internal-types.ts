@@ -1,8 +1,5 @@
 import type { ReactNode, ComponentType, SetStateAction, Dispatch } from 'react';
 import type { QuickStart } from '@patternfly/quickstarts';
-import type { OverflowMenuProps } from '@patternfly/react-core';
-import type { DataViewTh } from '@patternfly/react-data-view/dist/esm/DataViewTable/DataViewTable';
-import type { SortByDirection } from '@patternfly/react-table';
 import type {
   HealthState,
   K8sResourceCommon,
@@ -11,8 +8,6 @@ import type {
   QueryParams,
   StatusGroupMapper,
   TopConsumerPopoverProps,
-  ColumnLayout,
-  RowProps,
 } from '../extensions/console-types';
 import type { Alert, K8sModel } from './common-types';
 
@@ -289,120 +284,5 @@ export type UseURLPoll = <R>(
   delay?: number,
   ...dependencies: any[]
 ) => [R, any, boolean];
-
-export type ResourceFilters = {
-  name: string;
-  label: string;
-};
-
-export type ResourceMetadata = {
-  name: string;
-  labels?: { [key: string]: string };
-};
-
-export type ConsoleDataViewTh = Partial<Extract<DataViewTh, { cell: ReactNode }>>;
-
-export type ConsoleDataViewColumn<TData> = ConsoleDataViewTh & {
-  id: string;
-  title: string;
-  sort?: string | ((filteredData: TData[], sortDirection: SortByDirection) => TData[]);
-  additional?: boolean;
-  resizableProps?: any;
-};
-
-export type ConsoleDataViewRow = any[];
-
-export type GetDataViewRows<TData, TCustomRowData = any> = (
-  data: RowProps<TData, TCustomRowData>[],
-  columns: ConsoleDataViewColumn<TData>[],
-) => ConsoleDataViewRow[];
-
-export type ConsoleDataViewProps<
-  TData,
-  TCustomRowData = any,
-  TFilters extends ResourceFilters = ResourceFilters,
-> = {
-  label?: string;
-  data: TData[];
-  loaded: boolean;
-  loadError?: unknown;
-  columns: ConsoleDataViewColumn<TData>[];
-  columnLayout?: ColumnLayout;
-  columnManagementID?: string;
-  initialFilters?: TFilters;
-  additionalFilterNodes?: ReactNode[];
-  getObjectMetadata?: (obj: TData) => ResourceMetadata;
-  matchesAdditionalFilters?: (obj: TData, filters: TFilters) => boolean;
-  getDataViewRows: GetDataViewRows<TData, TCustomRowData>;
-  customRowData?: TCustomRowData;
-  showNamespaceOverride?: boolean;
-  hideNameLabelFilters?: boolean;
-  hideLabelFilter?: boolean;
-  hideColumnManagement?: boolean;
-  mock?: boolean;
-  isResizable?: boolean;
-  /** When provided and isResizable is true, a toolbar action is shown to reset all column widths. */
-  resetAllColumnWidths?: () => void;
-  /** Additional actions to display in the toolbar when items are selected (inside ResponsiveActions). */
-  additionalActions?: ReactNode;
-  /** Custom actions to display in the toolbar outside ResponsiveActions (for actions that should not be responsive via ResponsiveActions). */
-  customActions?: ReactNode;
-  /** Selection configuration for enabling row selection via checkboxes. When provided, a checkbox column is added to the table with select-all in the header. */
-  selection?: {
-    /** Set of selected item IDs. */
-    selectedItems: Set<string>;
-    /** Callback when a single row is selected/deselected. */
-    onSelect: (itemId: string, isSelecting: boolean) => void;
-    /** Callback when select all is toggled. Receives filtered items matching current filters. */
-    onSelectAll?: (isSelecting: boolean, filteredItems: TData[]) => void;
-    /** Function to extract unique ID from an item for selection tracking. */
-    getItemId: (item: TData) => string;
-    /** Callback to receive filtered selected items whenever filters or selection changes. */
-    onFilteredSelectionChange?: (filteredSelectedItems: TData[]) => void;
-  };
-  /** Breakpoint at which toolbar actions switch between horizontal and dropdown layout. Default is 'md'. */
-  actionsBreakpoint?: OverflowMenuProps['breakpoint'];
-};
-
-// ConsoleDataView helper types
-export type CellIsStickyProps = {
-  isStickyColumn: true;
-  stickyMinWidth: '0';
-};
-
-export type GetNameCellProps = (
-  name: string,
-  withBulkSelect?: boolean,
-) => CellIsStickyProps & {
-  hasRightBorder: true;
-  'data-test': string;
-};
-
-export type ActionsCellProps = CellIsStickyProps & {
-  hasLeftBorder: true;
-  isActionCell: true;
-};
-
-// Swagger types
-// Note: These types are duplicated from @console/internal/module/k8s/swagger
-// to avoid circular dependency issues with the SDK package
-export type SwaggerDefinition = {
-  definitions?: SwaggerDefinitions;
-  description?: string;
-  type?: string[] | string;
-  enum?: string[];
-  $ref?: string;
-  items?: SwaggerDefinition;
-  required?: string[];
-  properties?: {
-    [prop: string]: SwaggerDefinition;
-  };
-};
-
-export type SwaggerDefinitions = {
-  [name: string]: SwaggerDefinition;
-};
-
-export type DefinitionFor = (model: K8sModel) => SwaggerDefinition;
 
 export type GetCSRFToken = () => string;

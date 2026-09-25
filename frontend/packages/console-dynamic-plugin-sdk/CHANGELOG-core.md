@@ -13,6 +13,7 @@ table in [Console dynamic plugins README](./README.md).
 ## 5.1.0-prerelease.1 - TBD
 
 - Removed `immutable` dependency from the redux store and from the package ([CONSOLE-5001], [#17024])
+- Added `ConsoleDataView` component, related utilities for `ConsoleDataView`, and `definitionFor` ([CONSOLE-5131], [#17307])
 
 ## 4.23.0-prerelease.6 - TBD
 
@@ -256,6 +257,7 @@ table in [Console dynamic plugins README](./README.md).
 [CONSOLE-5065]: https://issues.redhat.com/browse/CONSOLE-5065
 [CONSOLE-5093]: https://issues.redhat.com/browse/CONSOLE-5093
 [CONSOLE-5108]: https://issues.redhat.com/browse/CONSOLE-5108
+[CONSOLE-5131]: https://issues.redhat.com/browse/CONSOLE-5131
 [CONSOLE-5273]: https://issues.redhat.com/browse/CONSOLE-5273
 [CONSOLE-5315]: https://issues.redhat.com/browse/CONSOLE-5315
 [CONSOLE-5355]: https://issues.redhat.com/browse/CONSOLE-5355
@@ -361,3 +363,4 @@ table in [Console dynamic plugins README](./README.md).
 [#16762]: https://github.com/openshift/console/pull/16762
 [#16941]: https://github.com/openshift/console/pull/16941
 [#17024]: https://github.com/openshift/console/pull/17024
+[#17307]: https://github.com/openshift/console/pull/17307
