@@ -31,6 +31,7 @@ func NewOLMHandler(apiServerURL string, client *http.Client, service *CatalogSer
 	}
 	mux := http.NewServeMux()
 	mux.HandleFunc("/api/olm/catalog-items/", o.catalogItemsHandler)
+	mux.HandleFunc("/api/olm/catalog-items/{catalogName}/{packageName}", middleware.AllowMethod(http.MethodGet, o.catalogItemHandler))
 	mux.HandleFunc("/api/olm/catalogd/metas/{catalogName}", middleware.AllowMethod(http.MethodGet, o.catalogdMetasHandler))
 	mux.HandleFunc("/api/olm/catalog-icons/{catalogName}/{packageName}", middleware.AllowMethod(http.MethodGet, o.catalogIconHandler))
 	mux.HandleFunc("/api/olm/lifecycle/{catalogNamespace}/{catalogName}/{packageName}", middleware.AllowMethod(http.MethodGet, o.lifecycleHandler))
@@ -92,6 +93,34 @@ func (o *OLMHandler) catalogItemsHandler(w http.ResponseWriter, r *http.Request)
 	}
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(items); err != nil {
+		serverutils.SendResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+}
+
+// catalogItemHandler serves a single catalog item by catalog and package name.
+func (o *OLMHandler) catalogItemHandler(w http.ResponseWriter, r *http.Request) {
+	catalogName := r.PathValue("catalogName")
+	packageName := r.PathValue("packageName")
+
+	if catalogName == "" || packageName == "" {
+		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: "catalog name and package name are required"})
+		return
+	}
+
+	item, err := o.catalogService.GetCatalogItem(catalogName, packageName)
+	if err != nil {
+		serverutils.SendResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	if item == nil {
+		serverutils.SendResponse(w, http.StatusNotFound, serverutils.ApiError{Err: "catalog item not found"})
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(item); err != nil {
 		serverutils.SendResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}

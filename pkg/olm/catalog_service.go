@@ -29,6 +29,7 @@ type CatalogServiceInterface interface {
 	UpdateCatalog(catalogName string, baseURL string) error
 	RemoveCatalog(catalogName string)
 	GetCatalogItems() ([]ConsoleCatalogItem, error)
+	GetCatalogItem(catalogName, packageName string) (*ConsoleCatalogItem, error)
 }
 
 // catalogService orchestrates the fetching, caching, and polling of catalog data.
@@ -284,6 +285,29 @@ func (s *CatalogService) GetCatalogItems() (items []ConsoleCatalogItem, err erro
 
 	klog.V(4).Infof("Returning %d catalog items", len(allItems))
 	return allItems, nil
+}
+
+// GetCatalogItem returns the cached catalog item for the given catalog and package name.
+// It returns a nil item, with no error, if no matching item is found.
+func (s *CatalogService) GetCatalogItem(catalogName, packageName string) (*ConsoleCatalogItem, error) {
+	itemsKey := getCatalogItemsKey(catalogName)
+	cacheContent, ok := s.cache.Get(itemsKey)
+	if !ok {
+		return nil, nil
+	}
+
+	catalogItems, ok := cacheContent.([]ConsoleCatalogItem)
+	if !ok {
+		return nil, fmt.Errorf("malformed cache content for catalog %s", catalogName)
+	}
+
+	for i := range catalogItems {
+		if catalogItems[i].Name == packageName {
+			return &catalogItems[i], nil
+		}
+	}
+
+	return nil, nil
 }
 
 func (s *CatalogService) processCatalog(resp *http.Response) ([]*declcfg.Package, []*declcfg.Bundle, error) {
