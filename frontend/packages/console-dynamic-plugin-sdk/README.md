@@ -119,6 +119,9 @@ Console.
 
 Console application is responsible for loading base styles for all supported PatternFly version(s).
 
+As a result, plugins should not use PatternFly versions that are newer than what the console supports.
+For example, if the console loads PatternFly 6.5.x, plugins should not use PatternFly 6.6.x or newer.
+
 Plugins should only include styles that are specific to their user interfaces to be evaluated on
 top of base PatternFly styles. Avoid importing styles such as `@patternfly/react-styles/**/*.css`
 or any styles from `@patternfly/patternfly` package in your plugin.
