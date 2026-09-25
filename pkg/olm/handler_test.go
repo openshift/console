@@ -60,6 +60,63 @@ func TestOLMHandler_catalogItemsHandler(t *testing.T) {
 	})
 }
 
+func TestOLMHandler_catalogItemHandler(t *testing.T) {
+	items := []ConsoleCatalogItem{{Name: "test-item", Catalog: "test-catalog"}}
+	tests := []struct {
+		name        string
+		method      string
+		packageName string
+		cachedItems []ConsoleCatalogItem
+		wantStatus  int
+		wantItem    *ConsoleCatalogItem
+	}{
+		{
+			name:        "returns a single catalog item",
+			method:      http.MethodGet,
+			packageName: "test-item",
+			cachedItems: items,
+			wantStatus:  http.StatusOK,
+			wantItem:    &items[0],
+		},
+		{
+			name:        "returns not found when the item is missing",
+			method:      http.MethodGet,
+			packageName: "missing-item",
+			cachedItems: []ConsoleCatalogItem{},
+			wantStatus:  http.StatusNotFound,
+		},
+		{
+			name:        "rejects unsupported methods",
+			method:      http.MethodPost,
+			packageName: "test-item",
+			cachedItems: items,
+			wantStatus:  http.StatusMethodNotAllowed,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := cache.New(5*time.Minute, 10*time.Minute)
+			c.Set(getCatalogItemsKey("test-catalog"), tt.cachedItems, cache.NoExpiration)
+			service := NewCatalogService(&http.Client{}, nil, c)
+			handler := NewOLMHandler("", nil, service)
+
+			path := "/api/olm/catalog-items/test-catalog/" + tt.packageName
+			req := httptest.NewRequest(tt.method, path, nil)
+			rr := httptest.NewRecorder()
+			handler.ServeHTTP(rr, req)
+
+			assert.Equal(t, tt.wantStatus, rr.Code)
+			if tt.wantItem != nil {
+				var returnedItem ConsoleCatalogItem
+				err := json.Unmarshal(rr.Body.Bytes(), &returnedItem)
+				require.NoError(t, err)
+				assert.Equal(t, *tt.wantItem, returnedItem)
+			}
+		})
+	}
+}
+
 func TestOLMHandler_catalogdMetasHandler(t *testing.T) {
 	t.Run("should return metas from catalogd", func(t *testing.T) {
 		// Create a mock catalogd server
